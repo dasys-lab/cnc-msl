@@ -1,0 +1,32 @@
+if [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+fi
+
+#These are suggested additions to ~/.bashrc
+export EDITOR="vim"
+
+
+alias ".."="cd .."
+alias "cd.."="cd .."
+alias "robodeb"="ssh cn@10.0.0.1 -X"
+alias "hairy"="ssh cn@hairy -X"
+alias "nase"="ssh cn@nase -X"
+alias "mops"="ssh cn@mops -X"
+alias "scotti"="ssh cn@scotti -X"
+alias "muecke"="ssh cn@muecke -X"
+alias "zwerg"="ssh cn@zwerg -X"
+alias "savvy"="ssh cn@savvy -X"
+alias "myo"="ssh cn@myo -X"
+
+
+
+export ES_ROOT="$HOME/path-to-cn-repository"
+export MONO_PATH="$ES_ROOT/lib:$ES_ROOT/bin"
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${ES_ROOT}/lib"
+#fancy prompt that also shows the current branch
+export PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \[\033[01;31m\]$(__git_ps1 "[%s]")\[\033[01;34m\]\$\[\033[00m\] '
+
+source /opt/ros/electric/setup.bash
+export ROS_PACKAGE_PATH="${ROS_PACKAGE_PATH}:$ES_ROOT"
+
+
