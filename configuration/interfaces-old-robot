@@ -1,0 +1,23 @@
+auto lo
+iface lo inet loopback
+
+iface eth0 inet static
+address 192.168.0.5
+netmask 255.255.255.0
+auto eth0
+
+iface wlan0 inet static
+address 172.16.40.14
+netmask 255.255.255.0
+gateway 172.16.40.1
+
+#for das-lgb:
+#wpa-psk 0f2d2a94289080f958c03dcd6a51b9318ffa8e01ae0f1116e3ab27915f5f1467
+#for das lab:
+wpa-psk 65eba0166308aa98dba75456528f7441533a6597218d2c4547fb26c2b26ff924
+wpa-driver wext
+wpa-key-mgmt WPA-PSK
+wpa-proto WPA
+wpa-ssid das-lab
+
+auto wlan0
