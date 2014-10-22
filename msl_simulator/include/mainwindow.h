@@ -59,7 +59,7 @@ public slots:
 
     void customFPS(int fps);
     void showAbout();
-    void reconnectCommandSocket();
+    void restartTimer();
     void reconnectYellowStatusSocket();
     void reconnectBlueStatusSocket();
     void reconnectVisionSocket();
@@ -86,7 +86,7 @@ private:
     QSize lastSize;
     RoboCupSSLServer *visionServer;
     msl_simulator::MSLSimulatorROSCommunication *rosCommunicator;
-    QUdpSocket *commandSocket;
+    QTimer *recvTimer;
     QUdpSocket *blueStatusSocket,*yellowStatusSocket;
 };
 

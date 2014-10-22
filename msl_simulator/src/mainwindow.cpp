@@ -73,17 +73,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     visionServer = NULL;
     rosCommunicator = NULL;
-    commandSocket = NULL;
     blueStatusSocket = NULL;
     yellowStatusSocket = NULL;
     reconnectVisionSocket();
-    reconnectCommandSocket();
+    restartTimer();
     reconnectBlueStatusSocket();
     reconnectYellowStatusSocket();
 
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->rosCommunicator = rosCommunicator;
-    glwidget->ssl->commandSocket = commandSocket;
+    glwidget->ssl->recvTimer = recvTimer;
     glwidget->ssl->blueStatusSocket = blueStatusSocket;
     glwidget->ssl->yellowStatusSocket = yellowStatusSocket;
 
@@ -367,7 +366,7 @@ void MainWindow::restartSimulator()
     glwidget->ssl->glinit();
     glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->rosCommunicator = rosCommunicator;
-    glwidget->ssl->commandSocket = commandSocket;
+    glwidget->ssl->recvTimer = recvTimer;
     glwidget->ssl->blueStatusSocket = blueStatusSocket;
     glwidget->ssl->yellowStatusSocket = yellowStatusSocket;
 }
@@ -473,17 +472,16 @@ void MainWindow::reconnectYellowStatusSocket()
         logStatus(QString("Status send port binded for Yellow Team on: %1").arg(configwidget->YellowStatusSendPort()),QColor("green"));
 }
 
-void MainWindow::reconnectCommandSocket()
+void MainWindow::restartTimer()
 {
-    if (commandSocket!=NULL)
+    if (recvTimer!=NULL)
     {
-        QObject::disconnect(commandSocket,SIGNAL(readyRead()),this,SLOT(recvActions()));
-        delete commandSocket;
+        QObject::disconnect(recvTimer,SIGNAL(timeout()),this,SLOT(recvActions()));
+        delete recvTimer;
     }
-    commandSocket = new QUdpSocket(this);
-    if (commandSocket->bind(QHostAddress::Any,configwidget->CommandListenPort()))
-        logStatus(QString("Command listen port binded on: %1").arg(configwidget->CommandListenPort()),QColor("green"));
-    QObject::connect(commandSocket,SIGNAL(readyRead()),this,SLOT(recvActions()));
+    recvTimer = new QTimer(this);
+    QObject::connect(recvTimer,SIGNAL(timeout()),this,SLOT(recvActions()));
+    recvTimer->start(15);
 }
 
 void MainWindow::reconnectVisionSocket()

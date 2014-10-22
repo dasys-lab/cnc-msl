@@ -84,7 +84,7 @@ public:
     dReal cursor_radius;
     RoboCupSSLServer *visionServer;
     msl_simulator::MSLSimulatorROSCommunication *rosCommunicator;
-    QUdpSocket *commandSocket;
+    QTimer *recvTimer;
     QUdpSocket *blueStatusSocket,*yellowStatusSocket;
     bool updatedCursor;
     Robot* robots[ROBOT_COUNT*2];
