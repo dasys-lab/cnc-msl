@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     glwidget->setWindowTitle(tr("Simulator"));
     glwidget->resize(512,512);    
 
-    visionServer = NULL;
+    //visionServer = NULL;
     rosCommunicator = NULL;
     blueStatusSocket = NULL;
     yellowStatusSocket = NULL;
@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
     reconnectBlueStatusSocket();
     reconnectYellowStatusSocket();
 
-    glwidget->ssl->visionServer = visionServer;
+    //glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->rosCommunicator = rosCommunicator;
     glwidget->ssl->recvTimer = recvTimer;
     glwidget->ssl->blueStatusSocket = blueStatusSocket;
@@ -364,7 +364,7 @@ void MainWindow::restartSimulator()
     delete glwidget->ssl;
     glwidget->ssl = new SSLWorld(glwidget,glwidget->cfg,glwidget->forms[2],glwidget->forms[2]);
     glwidget->ssl->glinit();
-    glwidget->ssl->visionServer = visionServer;
+    //glwidget->ssl->visionServer = visionServer;
     glwidget->ssl->rosCommunicator = rosCommunicator;
     glwidget->ssl->recvTimer = recvTimer;
     glwidget->ssl->blueStatusSocket = blueStatusSocket;
@@ -486,13 +486,13 @@ void MainWindow::restartTimer()
 
 void MainWindow::reconnectVisionSocket()
 {
-    if (visionServer == NULL) {
+    /*if (visionServer == NULL) {
         visionServer = new RoboCupSSLServer(this);
     }
     visionServer->change_address(configwidget->VisionMulticastAddr());
     visionServer->change_port(configwidget->VisionMulticastPort());
     logStatus(QString("Vision server connected on: %1").arg(configwidget->VisionMulticastPort()),QColor("green"));
-
+*/
     if (rosCommunicator == NULL) {
     	rosCommunicator = new msl_simulator::MSLSimulatorROSCommunication();
     	rosCommunicator->startCommunication();

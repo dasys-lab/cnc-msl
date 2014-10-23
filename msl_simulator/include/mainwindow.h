@@ -84,7 +84,6 @@ private:
     QGraphicsScene *scene;
     GLWidgetGraphicsView *view;
     QSize lastSize;
-    RoboCupSSLServer *visionServer;
     msl_simulator::MSLSimulatorROSCommunication *rosCommunicator;
     QTimer *recvTimer;
     QUdpSocket *blueStatusSocket,*yellowStatusSocket;

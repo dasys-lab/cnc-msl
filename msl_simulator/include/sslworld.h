@@ -82,7 +82,6 @@ public:
     bool show3DCursor;
     dReal cursor_x,cursor_y,cursor_z;
     dReal cursor_radius;
-    RoboCupSSLServer *visionServer;
     msl_simulator::MSLSimulatorROSCommunication *rosCommunicator;
     QTimer *recvTimer;
     QUdpSocket *blueStatusSocket,*yellowStatusSocket;

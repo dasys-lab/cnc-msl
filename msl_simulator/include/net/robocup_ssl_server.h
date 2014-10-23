@@ -19,8 +19,12 @@
   \author  Jan Segre, 2012
 */
 //========================================================================
-#ifndef ROBOCUP_SSL_SERVER_H
 #define ROBOCUP_SSL_SERVER_H
+
+
+
+
+#ifndef ROBOCUP_SSL_SERVER_H
 #include <string>
 #include <QMutex>
 #include <QObject>

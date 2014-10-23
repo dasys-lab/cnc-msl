@@ -142,19 +142,19 @@ include_directories(${VARTYPES_INCLUDE_DIRS})
 list(APPEND libs ${VARTYPES_LIBRARIES})
 
 # Protobuf
-find_package(Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-list(APPEND libs ${PROTOBUF_LIBRARIES})
+#find_package(Protobuf REQUIRED)
+#include_directories(${PROTOBUF_INCLUDE_DIRS})
+#list(APPEND libs ${PROTOBUF_LIBRARIES})
 
-protobuf_generate_cpp(PROTO_CPP PROTO_H
-    src/proto/messages_robocup_ssl_detection.proto
-    src/proto/messages_robocup_ssl_geometry.proto
-    src/proto/messages_robocup_ssl_wrapper.proto
-    src/proto/messages_robocup_ssl_refbox_log.proto
-    src/proto/grSim_Replacement.proto
-    src/proto/grSim_Commands.proto
-    src/proto/grSim_Packet.proto
-)
+#protobuf_generate_cpp(PROTO_CPP PROTO_H
+#    src/proto/messages_robocup_ssl_detection.proto
+#    src/proto/messages_robocup_ssl_geometry.proto
+#    src/proto/messages_robocup_ssl_wrapper.proto
+#    src/proto/messages_robocup_ssl_refbox_log.proto
+#    src/proto/grSim_Replacement.proto
+#    src/proto/grSim_Commands.proto
+#    src/proto/grSim_Packet.proto
+#)
 
 
 qt4_add_resources(msl_simulator_RESOURCES
@@ -183,9 +183,9 @@ set(msl_simulator_SOURCES src/main.cpp
     src/physics/pcylinder.cpp
     src/physics/pbox.cpp
     src/physics/pray.cpp
-    src/net/robocup_ssl_server.cpp
+    #src/net/robocup_ssl_server.cpp
     src/net/MSLSimulatorROSCommunication.cpp
-    src/net/robocup_ssl_client.cpp
+    #src/net/robocup_ssl_client.cpp
     src/sslworld.cpp
     src/robot.cpp
     src/configwidget.cpp
@@ -206,8 +206,8 @@ set(msl_simulator_HEADERS
     include/physics/pcylinder.h
     include/physics/pbox.h
     include/physics/pray.h
-    include/net/robocup_ssl_server.h
-    include/net/robocup_ssl_client.h
+    #include/net/robocup_ssl_server.h
+    #include/net/robocup_ssl_client.h
     include/net/MSLSimulatorROSCommunication.h
     include/sslworld.h
     include/robot.h
@@ -228,8 +228,8 @@ set_source_files_properties(${msl_simulator_CONFIG_FILES}  PROPERTIES MACOSX_PAC
 add_executable(msl_simulator     
     ${msl_simulator_SOURCES}
     ${msl_simulator_CONFIG_FILES}
-    ${PROTO_CPP}
-    ${PROTO_H}
+    #${PROTO_CPP}
+    #${PROTO_H}
     ${msl_simulator_HEADERS}
     ${msl_simulator_RESOURCES};
 )

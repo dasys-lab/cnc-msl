@@ -69,7 +69,6 @@ namespace msl_simulator
 	bool MSLSimulatorROSCommunication::isQueueEmpty()
 	{
 		boost::lock_guard<boost::mutex> lock(mutex);
-		cout << recvQueue.size() << " " <<recvQueue.empty() << endl;
 		return recvQueue.empty();
 	}
 

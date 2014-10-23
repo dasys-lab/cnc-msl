@@ -25,10 +25,6 @@
 
 #include "logger.h"
 
-#include "grSim_Packet.pb.h"
-#include "grSim_Commands.pb.h"
-#include "grSim_Replacement.pb.h"
-
 #include "msl_simulator/sim_packet.h"
 
 #define ROBOT_GRAY 0.4
@@ -459,7 +455,6 @@ void SSLWorld::step(dReal dt)
 void SSLWorld::recvActions()
 {
 	int team = 0;
-	cerr << "recvActions called..." << endl;
  	while (!rosCommunicator->isQueueEmpty())
 	{
 		msl_simulator::sim_packetPtr packet = rosCommunicator->getSimPacket();
