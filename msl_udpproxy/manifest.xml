@@ -1,0 +1,23 @@
+<package>
+  <description brief="MSLDDSProxy">
+
+     MSLDDSProxy
+
+  </description>
+  <author>hendrik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/MSLDDSProxy</url>
+  <!--  <depend package="rosdds"/> --> <!-- That probably is IMPERA specific -->
+  <depend package="udp_proxy_generator"/>
+  <depend package="Castor"/>
+  <depend package="AlicaEngine"/>
+  <depend package="ConsensusEngine"/>
+  <depend package="CNActuatorMsgs"/>
+  <depend package="MSLWorldModel"/>
+  <depend package="MSLHelpers"/>
+  <depend package="MSLSimulator"/>
+  
+</package>
+
+
