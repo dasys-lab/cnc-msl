@@ -235,6 +235,7 @@ add_executable(msl_simulator
 )
 
 target_link_libraries(msl_simulator ${libs} ${catkin_LIBRARIES})
+add_dependencies(msl_simulator ${PROJECT_NAME}_generate_messages_cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -113,7 +113,7 @@ add_executable(msl_udpproxy
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_udpproxy ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_dependencies(msl_udpproxy ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PROJECT_NAME}_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_udpproxy ${catkin_LIBRARIES} ${Boost_LIBRARIES})
