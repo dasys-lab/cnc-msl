@@ -30,6 +30,8 @@ namespace msl
 		ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
 		ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
 
+		wm = MSLWorldModel::get();
+
 		ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);
 	}
 

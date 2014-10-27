@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp system_config fsystem autodiff event_handling alica_engine alica_ros_proxy msl_expressions)
+find_package(catkin REQUIRED roscpp system_config fsystem autodiff event_handling alica_engine alica_ros_proxy msl_expressions msl_worldmodel)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -31,7 +31,7 @@ find_package(catkin REQUIRED roscpp system_config fsystem autodiff event_handlin
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES alica_engine msl_expressions
-  CATKIN_DEPENDS alica_engine alica_ros_proxy msl_expressions msl_simulator
+  CATKIN_DEPENDS alica_engine alica_ros_proxy msl_expressions msl_simulator msl_worldmodel
 #  DEPENDS tinyxml
 )
 

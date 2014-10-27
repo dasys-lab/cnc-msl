@@ -15,6 +15,7 @@
 #include "ConditionCreator.h"
 #include "UtilityFunctionCreator.h"
 #include "ConstraintCreator.h"
+#include "MSLWorldModel.h"
 
 using namespace std;
 
@@ -34,6 +35,7 @@ namespace msl
 		alica::ConditionCreator* cc;
 		alica::UtilityFunctionCreator* uc;
 		alica::ConstraintCreator* crc;
+		MSLWorldModel* wm;
 
 	protected:
 		//blabla...
