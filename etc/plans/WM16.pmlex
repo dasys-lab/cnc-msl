@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564408"/>
-    <value width="401" height="212"/>
+    <value width="657" height="373"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564410"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992572149"/>
-    <value xPos="261" yPos="102"/>
+    <value xPos="335" yPos="83" width="75" height="65" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992575757"/>
@@ -22,6 +22,10 @@
   </extensions>
   <extensions>
     <key href="Behaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/DriveForward.beh#1414427354149"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

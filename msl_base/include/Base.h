@@ -8,7 +8,15 @@
 #ifndef BASE_H_
 #define BASE_H_
 
-#include <engine/AlicaEngine.h>
+#include <iostream>
+
+#include "engine/AlicaEngine.h"
+#include "BehaviourCreator.h"
+#include "ConditionCreator.h"
+#include "UtilityFunctionCreator.h"
+#include "ConstraintCreator.h"
+
+using namespace std;
 
 namespace msl
 {
@@ -16,14 +24,16 @@ namespace msl
 	class Base
 	{
 	public:
-		Base();
+		Base(string roleSetName, string masterPlanName, string roleSetDir);
 		virtual ~Base();
 
+		void start();
+
 		alica::AlicaEngine* ae;
-		alicaTests::TestBehaviourCreator* bc;
-		alicaTests::TestConditionCreator* cc;
-		alicaTests::TestUtilityFunctionCreator* uc;
-		alicaTests::TestConstraintCreator* crc;
+		alica::BehaviourCreator* bc;
+		alica::ConditionCreator* cc;
+		alica::UtilityFunctionCreator* uc;
+		alica::ConstraintCreator* crc;
 
 	protected:
 		//blabla...
