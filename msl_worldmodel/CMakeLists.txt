@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config)
+find_package(catkin REQUIRED system_config msl_simulator)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -103,11 +103,12 @@ catkin_package(
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp system_config)
+add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp system_config msl_simulator)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_worldmodel
-  ${catkin_LIBRARIES} system_config
+  ${catkin_LIBRARIES} 
+  system_config
 )
 
 #############

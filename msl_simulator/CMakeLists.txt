@@ -58,9 +58,19 @@ add_message_files(
    DIRECTORY msg FILES
    log_frame.msg  
    messages_robocup_ssl_refbox_log.msg 
-   sim_commands.msg     sim_robot_command.msg      ssl_detection_robot.msg
-messages_robocup_ssl_detection.msg  messages_robocup_ssl_wrapper.msg     sim_packet.msg       sim_robot_replacement.msg  ssl_geometry_camera_calibration.msg
-messages_robocup_ssl_geometry.msg   sim_ball_replacement.msg             sim_replacement.msg  ssl_detection_ball.msg     ssl_geometry_field_size.msg;
+   sim_commands.msg
+   sim_robot_command.msg      
+   ssl_detection_robot.msg
+   messages_robocup_ssl_detection.msg  
+   messages_robocup_ssl_wrapper.msg     
+   sim_packet.msg       
+   sim_robot_replacement.msg  
+   ssl_geometry_camera_calibration.msg
+   messages_robocup_ssl_geometry.msg   
+   sim_ball_replacement.msg             
+   sim_replacement.msg  
+   ssl_detection_ball.msg     
+   ssl_geometry_field_size.msg;
 )
 
 ## Generate services in the 'srv' folder
