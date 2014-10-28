@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //visionServer = NULL;
     rosCommunicator = NULL;
+    recvTimer = NULL;
     blueStatusSocket = NULL;
     yellowStatusSocket = NULL;
     reconnectVisionSocket();
