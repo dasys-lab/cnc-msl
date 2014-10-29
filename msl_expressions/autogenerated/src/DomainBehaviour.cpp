@@ -1,28 +1,20 @@
-/*
- * MSLBehaviour.cpp
- *
- *  Created on: 27.10.2014
- *      Author: endy
- */
+#include "DomainBehaviour.h"
 
-#include "MSLBehaviour.h"
-
-namespace msl
+namespace alica
 {
-
-	MSLBehaviour::MSLBehaviour(string name) : alica::BasicBehaviour(name)
-	{
+DomainBehaviour::DomainBehaviour(string name) :
+    BasicBehaviour(name)
+{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
 		simlatorPub = n.advertise<msl_simulator::sim_packet>("/MSLSimulator/SimPacket", 1000);
-	}
+}
 
-	MSLBehaviour::~MSLBehaviour()
-	{
-	}
-
-	void MSLBehaviour::send(msl_simulator::sim_robot_command& p)
+DomainBehaviour::~DomainBehaviour()
+{
+}
+void DomainBehaviour::send(msl_simulator::sim_robot_command& p)
 	{
 		p.id = ownID;
 		msl_simulator::sim_packet pa;
@@ -31,4 +23,4 @@ namespace msl
 		simlatorPub.publish(pa);
 	}
 
-} /* namespace msl */
+} /* namespace alica */

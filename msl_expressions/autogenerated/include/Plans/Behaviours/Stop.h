@@ -1,12 +1,12 @@
 #ifndef Stop_H_
 #define Stop_H_
 
-#include "engine/BasicBehaviour.h"
+#include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1413992604875) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
 {
-class Stop : public BasicBehaviour
+class Stop : public DomainBehaviour
 {
 public:
   Stop();

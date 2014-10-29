@@ -25,7 +25,7 @@ pair<double, double> alica::DriveForward::allo2Ego(pair<double, double>& p,
 /*PROTECTED REGION END*/
 namespace alica {
 DriveForward::DriveForward() :
-		msl::MSLBehaviour("DriveForward") {
+		DomainBehaviour("DriveForward") {
 	/*PROTECTED REGION ID(con1414427325853) ENABLED START*/ //Add additional options here
 	/*PROTECTED REGION END*/}
 DriveForward::~DriveForward() {
@@ -57,10 +57,14 @@ void DriveForward::run(void* msg) {
 
 	}
 
-	this->send(c);
+  this->send(c);
 
-	/*PROTECTED REGION END*/}
-void DriveForward::initialiseParameters() {
-	/*PROTECTED REGION ID(initialiseParameters1414427325853) ENABLED START*/ //Add additional options here
-	/*PROTECTED REGION END*/}
-} /* namespace alica */
+
+  /*PROTECTED REGION END*/}
+void DriveForward::initialiseParameters()
+{
+  /*PROTECTED REGION ID(initialiseParameters1414427325853) ENABLED START*/ //Add additional options here
+  /*PROTECTED REGION END*/}
+/*PROTECTED REGION ID(methods1414427325853) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/} /* namespace alica */
+

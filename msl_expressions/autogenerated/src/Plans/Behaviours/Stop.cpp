@@ -5,8 +5,9 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-Stop::Stop() :
-    BasicBehaviour("Stop")
+/*PROTECTED REGION ID(staticVars1413992604875) ENABLED START*/ //initialise static variables here
+/*PROTECTED REGION END*/Stop::Stop() :
+    DomainBehaviour("Stop")
 {
   /*PROTECTED REGION ID(con1413992604875) ENABLED START*/ //Add additional options here
   /*PROTECTED REGION END*/}
@@ -22,4 +23,5 @@ void Stop::initialiseParameters()
 {
   /*PROTECTED REGION ID(initialiseParameters1413992604875) ENABLED START*/ //Add additional options here
   /*PROTECTED REGION END*/}
-} /* namespace alica */
+/*PROTECTED REGION ID(methods1413992604875) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/} /* namespace alica */
