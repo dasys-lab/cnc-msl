@@ -1,0 +1,3 @@
+#!/bin/sh
+
+VISION_FORCE=true ./VisionPlayer --drawCircle --localizeDebug --input | grep LP:

@@ -1,0 +1,375 @@
+Simple integer type definitions
+
+No comments are necessary here, I think.
+
+#define uint_t   unsigned int
+#define uint16_t unsigned short int
+#define uint64_t unsigned long long int
+#define uchar_t  unsigned char
+
+Libdc1394 revision codes
+
+A few revision codes are defined in version 2.0.0. They were not defined in earlier version. Their purpose is to let you dynamically verify which version of libdc1394 is installed. Four numbers are defined in two different classes:
+
+    * LIBDC1394_VERSION represents the release number of the library, e.g. 2.0.0. It consists in 4 digits, 2 for each number in the version. Version 2.1 will thus appear as 0201. The last version number is not used because a ".1" increment (as opposed to ".0.1") is necessary if the API had significant changes justifying the use of this number.
+    * LIBDC1394_VERSION_xxx are the version codes used by libtool and defined in configure.in. _MAJOR is for API changes (compat break), _REVISION is for backward compatible API changes (e.g. new functions) and _AGE is when the API does not change (only code changes). At least that is my wild guess. These numbers can be used to adapt the function calls to the library version installed on the machine. 
+
+#define LIBDC1394_VERSION            0200
+#define LIBDC1394_VERSION_MAJOR        20
+#define LIBDC1394_VERSION_REVISION      0
+#define LIBDC1394_VERSION_AGE           0
+
+ISO speed transmission
+
+These definitions specify the isochronous speed at which the transmission should occur. 100 stands for 100Mbps, 400 for 400Mbps,... Note that speeds of 1600 and 3200 Mbps are for future use only: they are not supported by any hardware or software at the moment. The definitions below can be used with functions like dc1394_video_get/set_iso_speed().
+
+typedef enum {
+  DC1394_ISO_SPEED_100= 0,
+  DC1394_ISO_SPEED_200,
+  DC1394_ISO_SPEED_400,
+  DC1394_ISO_SPEED_800,
+  DC1394_ISO_SPEED_1600,
+  DC1394_ISO_SPEED_3200
+} dc1394speed_t;
+#define DC1394_ISO_SPEED_MIN                   DC1394_ISO_SPEED_100
+#define DC1394_ISO_SPEED_MAX                   DC1394_ISO_SPEED_3200
+#define DC1394_ISO_SPEED_NUM                  (DC1394_ISO_SPEED_MAX - DC1394_ISO_SPEED_MIN + 1)
+
+Framerates
+
+Framerates are used with fixed-size image formats (Format_0 to Format_2). To be used with dc1394_video_get/set_framerate(). Note that you may also be able to set the framerate with the FRAMERATE feature. If you use Format_7 you should set the framerate by adjusting the number of bytes per packet. A list of all the framerates supported by your camera for a specific video mode can be obtained with dc1394_video_get_supported_framerates().
+
+typedef enum {
+  DC1394_FRAMERATE_1_875= 32,
+  DC1394_FRAMERATE_3_75,
+  DC1394_FRAMERATE_7_5,
+  DC1394_FRAMERATE_15,
+  DC1394_FRAMERATE_30,
+  DC1394_FRAMERATE_60,
+  DC1394_FRAMERATE_120,
+  DC1394_FRAMERATE_240
+} dc1394framerate_t;
+#define DC1394_FRAMERATE_MIN               DC1394_FRAMERATE_1_875
+#define DC1394_FRAMERATE_MAX               DC1394_FRAMERATE_240
+#define DC1394_FRAMERATE_NUM              (DC1394_FRAMERATE_MAX - DC1394_FRAMERATE_MIN + 1)
+
+Video modes
+
+The video modes are what let you choose the image size and color format. Two special format classes exist: the EXIF mode (which is actually not supported by any known camera) and Format_7 which is the scalable image format. Format_7 allows you to change the image size, framerate, color coding and crop region. Important note: your camera will not support all the video modes below but will only supports a more or less limited subset of them. To get/set the current video mode you should use the following definitions with the functions dc1394_video_get/set_mode(). A list of all the modes supported by your camera can be obtained with dc1394_video_get_supported_modes().
+
+typedef enum {
+  DC1394_VIDEO_MODE_160x120_YUV444= 64,
+  DC1394_VIDEO_MODE_320x240_YUV422,
+  DC1394_VIDEO_MODE_640x480_YUV411,
+  DC1394_VIDEO_MODE_640x480_YUV422,
+  DC1394_VIDEO_MODE_640x480_RGB8,
+  DC1394_VIDEO_MODE_640x480_MONO8,
+  DC1394_VIDEO_MODE_640x480_MONO16,
+  DC1394_VIDEO_MODE_800x600_YUV422,
+  DC1394_VIDEO_MODE_800x600_RGB8,
+  DC1394_VIDEO_MODE_800x600_MONO8,
+  DC1394_VIDEO_MODE_1024x768_YUV422,
+  DC1394_VIDEO_MODE_1024x768_RGB8,
+  DC1394_VIDEO_MODE_1024x768_MONO8,
+  DC1394_VIDEO_MODE_800x600_MONO16,
+  DC1394_VIDEO_MODE_1024x768_MONO16,
+  DC1394_VIDEO_MODE_1280x960_YUV422,
+  DC1394_VIDEO_MODE_1280x960_RGB8,
+  DC1394_VIDEO_MODE_1280x960_MONO8,
+  DC1394_VIDEO_MODE_1600x1200_YUV422,
+  DC1394_VIDEO_MODE_1600x1200_RGB8,
+  DC1394_VIDEO_MODE_1600x1200_MONO8,
+  DC1394_VIDEO_MODE_1280x960_MONO16,
+  DC1394_VIDEO_MODE_1600x1200_MONO16,
+  DC1394_VIDEO_MODE_EXIF,
+  DC1394_VIDEO_MODE_FORMAT7_0,
+  DC1394_VIDEO_MODE_FORMAT7_1,
+  DC1394_VIDEO_MODE_FORMAT7_2,
+  DC1394_VIDEO_MODE_FORMAT7_3,
+  DC1394_VIDEO_MODE_FORMAT7_4,
+  DC1394_VIDEO_MODE_FORMAT7_5,
+  DC1394_VIDEO_MODE_FORMAT7_6,
+  DC1394_VIDEO_MODE_FORMAT7_7
+} dc1394video_mode_t;
+
+/* All formats: */
+#define DC1394_VIDEO_MODE_MIN	    DC1394_VIDEO_MODE_160x120_YUV444
+#define DC1394_VIDEO_MODE_MAX       DC1394_VIDEO_MODE_FORMAT7_7
+#define DC1394_VIDEO_MODE_NUM      (DC1394_VIDEO_MODE_MAX - DC1394_VIDEO_MODE_MIN)
+
+/* Format_7 */
+#define DC1394_VIDEO_MODE_FORMAT7_MIN       DC1394_VIDEO_MODE_FORMAT7_0
+#define DC1394_VIDEO_MODE_FORMAT7_MAX       DC1394_VIDEO_MODE_FORMAT7_7
+#define DC1394_VIDEO_MODE_FORMAT7_NUM      (DC1394_VIDEO_MODE_FORMAT7_MAX - DC1394_VIDEO_MODE_FORMAT7_MIN + 1)
+
+Color codings
+
+Color codings define the type of color space (YUV, RGB, monochrome,...) as well as the bit depth of each value (8 or 16bit). They are used only for Format_7. Used with functions dc1394_format7_get/set_color_coding(). A list of all supported color codings for a specific format can be obtained with dc1394_format7_get_color_codings().
+
+typedef enum {
+  DC1394_COLOR_CODING_MONO8= 320,
+  DC1394_COLOR_CODING_YUV411,
+  DC1394_COLOR_CODING_YUV422,
+  DC1394_COLOR_CODING_YUV444,
+  DC1394_COLOR_CODING_RGB8,
+  DC1394_COLOR_CODING_MONO16,
+  DC1394_COLOR_CODING_RGB16,
+  DC1394_COLOR_CODING_MONO16S,
+  DC1394_COLOR_CODING_RGB16S,
+  DC1394_COLOR_CODING_RAW8,
+  DC1394_COLOR_CODING_RAW16
+} dc1394color_coding_t;
+#define DC1394_COLOR_CODING_MIN     DC1394_COLOR_CODING_MONO8
+#define DC1394_COLOR_CODING_MAX     DC1394_COLOR_CODING_RAW16
+#define DC1394_COLOR_CODING_NUM    (DC1394_COLOR_CODING_MAX - DC1394_COLOR_CODING_MIN + 1)
+
+Trigger modes
+
+Trigger mode mostly refer to external trigger. Each trigger has a meaning specified in the IIDC specifications.
+
+    * Mode 0: Exposure starts with a falling edge and stops when the the exposure specified by the SHUTTER feature is elapsed.
+    * Mode 1: Exposure starts with a falling edge and stops with the next rising edge.
+    * Mode 2: The camera starts the exposure at the first falling edge and stops the integration at the nth falling edge. The parameter n is a prameter of the trigger that can be set with dc1394_feature_set_value().
+    * Mode 3: This is an internal trigger mode. The trigger is generated every n*(period of fastest framerate). Once again, the parameter n can be set with dc1394_feature_set_value().
+    * Mode 4: A multiple exposure mode. N exposures are performed each time a falling edge is observed on the trigger signal. Each exposure is as long as defined by the SHUTTER feature.
+    * Mode 5: Another multiple exposure mode. Same as Mode 4 except that the exposure is is defined by the length of the trigger pulse instead of the SHUTTER feature.
+    * Mode 14 and 15: vendor specified trigger mode. 
+
+(Note: Your camera may support the inversion of the the polarity of the trigger signal.)
+
+typedef enum {
+  DC1394_TRIGGER_MODE_0= 352,
+  DC1394_TRIGGER_MODE_1,
+  DC1394_TRIGGER_MODE_2,
+  DC1394_TRIGGER_MODE_3,
+  DC1394_TRIGGER_MODE_4,
+  DC1394_TRIGGER_MODE_5,
+  DC1394_TRIGGER_MODE_14,
+  DC1394_TRIGGER_MODE_15
+} dc1394trigger_mode_t;
+#define DC1394_TRIGGER_MODE_MIN     DC1394_TRIGGER_MODE_0
+#define DC1394_TRIGGER_MODE_MAX     DC1394_TRIGGER_MODE_15
+#define DC1394_TRIGGER_MODE_NUM    (DC1394_TRIGGER_MODE_MAX - DC1394_TRIGGER_MODE_MIN + 1)
+
+Features
+
+In IIDC, 'features' refer to a number of image parameters that can be tuned like exposure, white balance, etc... Features are adjusted with a number of specific functions. The name of each feature is relatively easy to understand. The only trick is that the EXPOSURE feature is actually an AUTO exposure function. Its behaviour depends on the manufacturer.
+
+typedef enum {
+  DC1394_FEATURE_BRIGHTNESS= 416,
+  DC1394_FEATURE_EXPOSURE,
+  DC1394_FEATURE_SHARPNESS,
+  DC1394_FEATURE_WHITE_BALANCE,
+  DC1394_FEATURE_HUE,
+  DC1394_FEATURE_SATURATION,
+  DC1394_FEATURE_GAMMA,
+  DC1394_FEATURE_SHUTTER,
+  DC1394_FEATURE_GAIN,
+  DC1394_FEATURE_IRIS,
+  DC1394_FEATURE_FOCUS,
+  DC1394_FEATURE_TEMPERATURE,
+  DC1394_FEATURE_TRIGGER,
+  DC1394_FEATURE_TRIGGER_DELAY,
+  DC1394_FEATURE_WHITE_SHADING,
+  DC1394_FEATURE_FRAME_RATE,
+  DC1394_FEATURE_ZOOM,
+  DC1394_FEATURE_PAN,
+  DC1394_FEATURE_TILT,
+  DC1394_FEATURE_OPTICAL_FILTER,
+  DC1394_FEATURE_CAPTURE_SIZE,
+  DC1394_FEATURE_CAPTURE_QUALITY
+} dc1394feature_id_t;
+#define DC1394_FEATURE_MIN           DC1394_FEATURE_BRIGHTNESS
+#define DC1394_FEATURE_MAX           DC1394_FEATURE_CAPTURE_QUALITY
+#define DC1394_FEATURE_NUM          (DC1394_FEATURE_MAX - DC1394_FEATURE_MIN + 1)
+
+Operation modes
+
+As the IEEE1394 speeds were increased with IEEE-1394b specifications, a new type of control is necessary when the camera is operating in iso speeds over 800Mbps. If you wish to use a 1394b camera you may need to switch the operation mode to 1394b. Legacy mode refers to speeds less than 400Mbps. You can play with the operation mode thanks to the functions dc1394_video_get/set_operation_mode().
+
+typedef enum {
+  DC1394_OPERATION_MODE_LEGACY = 480,
+  DC1394_OPERATION_MODE_1394B
+} dc1394operation_mode_t;
+
+(Note: libdc1394 has not been much tested for 1394b operation. Hence, it 'should' work but this is not a firm statement.)
+Color sensor layout
+
+When using a RAW image format the color is sent in... raw bayer format. Each pixel has one and only one color and the image can be interpolated in the host computer instead of the camera (thereby saving bandwidth on the 1394 bus). Four elementary tiles exist for this bayer code. The raw image consists in a two dimensional repetition of one of these patterns: RGGB, GBRG, GRBG, BGGR which refer to the following 2D tiles (respectively):
+
+    RG    GB    GR    BG
+    GB    RG    BG    GR
+
+You will need to specify the tile when working with interpolating functions.
+
+typedef enum {
+  DC1394_COLOR_FILTER_RGGB = 512,
+  DC1394_COLOR_FILTER_GBRG,
+  DC1394_COLOR_FILTER_GRBG,
+  DC1394_COLOR_FILTER_BGGR
+} dc1394color_filter_t;
+#define DC1394_COLOR_FILTER_MIN        DC1394_COLOR_FILTER_RGGB
+#define DC1394_COLOR_FILTER_MAX        DC1394_COLOR_FILTER_BGGR
+#define DC1394_COLOR_FILTER_NUM       (DC1394_COLOR_FILTER_MAX - DC1394_COLOR_FILTER_MIN + 1)
+
+IIDC version
+
+This is a list of the IIDC versions in case you need to adapt your software according to this read-only parameter. Versions up to 1.31 are defined at the moment, other versions are for future use only. The PTGREY version is used in some stereo products of Point Grey Research in order to avoid the standard Windoze layers to deal with the image flow.
+
+typedef enum {
+  DC1394_IIDC_VERSION_1_04 = 544,
+  DC1394_IIDC_VERSION_1_20,
+  DC1394_IIDC_VERSION_PTGREY,
+  DC1394_IIDC_VERSION_1_30,
+  DC1394_IIDC_VERSION_1_31,
+  DC1394_IIDC_VERSION_1_32,
+  DC1394_IIDC_VERSION_1_33,
+  DC1394_IIDC_VERSION_1_34,
+  DC1394_IIDC_VERSION_1_35,
+  DC1394_IIDC_VERSION_1_36,
+  DC1394_IIDC_VERSION_1_37,
+  DC1394_IIDC_VERSION_1_38,
+  DC1394_IIDC_VERSION_1_39
+} dc1394iidc_version_t;
+#define DC1394_IIDC_VERSION_MIN        DC1394_IIDC_VERSION_1_04
+#define DC1394_IIDC_VERSION_MAX        DC1394_IIDC_VERSION_1_39
+#define DC1394_IIDC_VERSION_NUM       (DC1394_IIDC_VERSION_MAX - DC1394_IIDC_VERSION_MIN + 1)
+
+Interface info
+
+This information may be removed soon. Use at your own risk.
+
+/* Enumeration of power classes */
+typedef enum {
+  DC1394_POWER_CLASS_NONE=608,
+  DC1394_POWER_CLASS_PROV_MIN_15W,
+  DC1394_POWER_CLASS_PROV_MIN_30W,
+  DC1394_POWER_CLASS_PROV_MIN_45W,
+  DC1394_POWER_CLASS_USES_MAX_1W,
+  DC1394_POWER_CLASS_USES_MAX_3W,
+  DC1394_POWER_CLASS_USES_MAX_6W,
+  DC1394_POWER_CLASS_USES_MAX_10W
+} dc1394power_class_t;
+#define DC1394_POWER_CLASS_MIN         DC1394_POWER_CLASS_NONE
+#define DC1394_POWER_CLASS_MAX         DC1394_POWER_CLASS_USES_MAX_10W
+#define DC1394_POWER_CLASS_NUM        (DC1394_POWER_CLASS_MAX - DC1394_POWER_CLASS_MIN + 1)
+
+/* Enumeration of PHY delays */
+typedef enum {
+  DC1394_PHY_DELAY_MAX_144_NS=640,
+  DC1394_PHY_DELAY_UNKNOWN_0,
+  DC1394_PHY_DELAY_UNKNOWN_1,
+  DC1394_PHY_DELAY_UNKNOWN_2
+} dc1394phy_delay_t;
+#define DC1394_PHY_DELAY_MIN           DC1394_PHY_DELAY_MAX_144_NS
+#define DC1394_PHY_DELAY_MAX           DC1394_PHY_DELAY_UNKNOWN_0
+#define DC1394_PHY_DELAY_NUM          (DC1394_PHY_DELAY_MAX - DC1394_PHY_DELAY_MIN + 1)
+
+Trigger sources
+
+Some cameras let you select the external trigger input. These are the codes to be sent to the appropriate functions:
+
+typedef enum {
+  DC1394_TRIGGER_SOURCE_0= 576,
+  DC1394_TRIGGER_SOURCE_1,
+  DC1394_TRIGGER_SOURCE_2,
+  DC1394_TRIGGER_SOURCE_3,
+} dc1394trigger_source_t;
+#define DC1394_TRIGGER_SOURCE_MIN     DC1394_TRIGGER_SOURCE_0
+#define DC1394_TRIGGER_SOURCE_MAX     DC1394_TRIGGER_SOURCE_3
+#define DC1394_TRIGGER_SOURCE_NUM    (DC1394_TRIGGER_SOURCE_MAX - DC1394_TRIGGER_SOURCE_MIN + 1)
+
+Error codes
+
+Several error codes are defined but actually only a few are used in the library at the moment: don't be surprised if you receive only generic errors... One error code is negative which shows it is only a warning. Therefor I have to warn you: dont use comparisons such as "<=0" to detect success.
+
+typedef enum {
+  DC1394_SUCCESS=0,   /* Success is zero */
+  DC1394_FAILURE,     /* Errors are positive numbers */
+  DC1394_NO_FRAME=-2, /* Warnings or info are negative numbers*/
+  DC1394_NO_CAMERA=3,
+  DC1394_NOT_A_CAMERA,
+  DC1394_FUNCTION_NOT_SUPPORTED,
+  DC1394_CAMERA_NOT_INITITIALIZED, 
+  DC1394_INVALID_FEATURE,
+  DC1394_INVALID_FORMAT,
+  DC1394_INVALID_MODE,
+  DC1394_INVALID_FRAMERATE,
+  DC1394_INVALID_TRIGGER_MODE,
+  DC1394_INVALID_TRIGGER_SOURCE,
+  DC1394_INVALID_ISO_SPEED,
+  DC1394_INVALID_IIDC_VERSION,
+  DC1394_INVALID_COLOR_MODE,
+  DC1394_INVALID_FORMAT7_COLOR_TILE,
+  DC1394_REQ_VALUE_OUTSIDE_RANGE,
+  DC1394_INVALID_ERROR_CODE,
+  DC1394_MEMORY_ALLOCATION_FAILURE,
+  DC1394_TAGGED_REGISTER_NOT_FOUND,
+  DC1394_FORMAT7_ERROR_FLAG_1,
+  DC1394_FORMAT7_ERROR_FLAG_2,
+  DC1394_INVALID_BAYER_METHOD,
+  DC1394_HANDLE_CREATION_FAILURE,
+  DC1394_GENERIC_INVALID_ARGUMENT,
+  DC1394_INVALID_VIDEO1394_DEVICE,
+  DC1394_NO_ISO_CHANNEL,
+  DC1394_NO_BANDWIDTH,
+  DC1394_IOCTL_FAILURE,
+  DC1394_CAPTURE_IS_NOT_SET = -30,
+  DC1394_CAPTURE_IS_RUNNING = 31,
+  DC1394_RAW1394_FAILURE,
+  DC1394_BASLER_NO_MORE_SFF_CHUNKS,
+  DC1394_BASLER_CORRUPTED_SFF_CHUNK,
+  DC1394_BASLER_UNKNOWN_SFF_CHUNK
+} dc1394error_t;
+#define DC1394_ERROR_NUM DC1394_BASLER_UNKNOWN_SFF_CHUNK+1
+
+ROI setting gizmos
+
+The following definitions can be used to set ROI of Format_7 in a simpler fashion. QUERY_FROM_CAMERA will use the current value used by the camera, USE_MAX_AVAIL will set the value to its maximum and USE_RECOMMENDED can be used for the bytes-per-packet setting.
+
+#define DC1394_QUERY_FROM_CAMERA -1
+#define DC1394_USE_MAX_AVAIL     -2
+#define DC1394_USE_RECOMMENDED   -3
+
+VIDEO1394 policy
+
+When capturing a frame you can choose to either wait for the frame indefinitely (WAIT) or return immediately if no frame arrived yet (POLL).
+
+typedef enum { 
+  DC1394_CAPTURE_POLICY_WAIT=0,
+  DC1394_CAPTURE_POLICY_POLL
+} dc1394capture_policy_t;
+
+Trigger polarity
+
+You've guessed it: it's used to set the tigger polarity.
+
+typedef enum {
+  DC1394_TRIGGER_ACTIVE_LOW= 0,
+  DC1394_TRIGGER_ACTIVE_HIGH
+} dc1394trigger_polarity_t;
+
+Feature mode
+
+Feature modes are the way the feature is controlled. Three modes exist: MANUAL, AUTO and ONE_PUSH_AUTO. The latter performs an automatic setting before self-clearing.
+
+typedef enum {
+  DC1394_FEATURE_MODE_MANUAL= 0,
+  DC1394_FEATURE_MODE_AUTO,
+  DC1394_FEATURE_MODE_ONE_PUSH_AUTO
+} dc1394feature_mode_t;
+
+Boolean types
+
+Two types are used: one is indeed boolean and the other one is more like a binary switch. This makes programs easier to read (you switch a feature ON; you don't set it to TRUE).
+
+typedef enum {
+  DC1394_FALSE= 0,
+  DC1394_TRUE
+} dc1394bool_t;
+
+typedef enum {
+  DC1394_OFF= 0,
+  DC1394_ON
+} dc1394switch_t;
+
