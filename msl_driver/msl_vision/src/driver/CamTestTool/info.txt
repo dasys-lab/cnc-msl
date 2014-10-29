@@ -1,0 +1,4 @@
+#gcc -g guppy_test.cpp -I/usr/include/opencv  -o GuppyTest XVDisplay.o ../dc1394camera.o ../guppy.o ../marlin.o ../pike.o ../imagingsource.o -L. -ldc1394 -L/usr/X11R6/lib -lXv -lXext -lX11 -lICE -lSM
+#gcc -g cam_test.cpp -I/usr/include/opencv  -o CamTest XVDisplay.o ../dc1394camera.o ../guppy.o ../marlin.o ../pike.o ../imagingsource.o -L. -ldc1394 -L/usr/X11R6/lib -lXv -lXext -lX11 -lICE -lSM
+#gcc guppy_test.cpp -I/usr/include/opencv -L. -lcv -lcvaux -lhighgui -o GuppyTest
+gcc -g cam_test.cpp -o CamTest XVDisplay.o ../dc1394camera.o ../guppy.o ../marlin.o ../pike.o ../imagingsource.o -L. -ldc1394 -L/usr/X11R6/lib -lXv -lXext -lX11 -lICE -lSM

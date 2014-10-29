@@ -1,7 +1,7 @@
 #ifndef WM16_H_
 #define WM16_H_
 
-#include "engine/BasicCondition.h"
+#include "DomainCondition.h"
 #include "engine/BasicUtilityFunction.h"
 #include "engine/UtilityFunction.h"
 #include "engine/DefaultUtilityFunction.h"
@@ -20,7 +20,7 @@ class UtilityFunction1413992564408 : public BasicUtilityFunction
   shared_ptr<UtilityFunction> getUtilityFunction(Plan* plan);
 };
 
-class TransitionCondition1413992578046 : public BasicCondition
+class TransitionCondition1413992578046 : public DomainCondition
 {
   bool evaluate(shared_ptr<RunningPlan> rp);
 };
