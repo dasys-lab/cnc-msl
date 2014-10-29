@@ -1,14 +1,13 @@
 #ifndef DriveForward_H_
 #define DriveForward_H_
 
-#include "engine/BasicBehaviour.h"
-#include "MSLBehaviour.h"
+#include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1414427325853) ENABLED START*/ //Add additional includes here
 #include "MSLWorldModel.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
-class DriveForward : public msl::MSLBehaviour
+class DriveForward : public DomainBehaviour
 {
 public:
   DriveForward();
