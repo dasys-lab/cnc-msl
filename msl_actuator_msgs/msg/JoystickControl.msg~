@@ -1,0 +1,6 @@
+JoystickRobotIDs robotIDs
+msl_cnc_msgs/MotionInfo motion
+KickControl kick
+BallHandleCmd ballHandle
+ShovelSelectCmd shovel
+BallCatchCmd ballCatch

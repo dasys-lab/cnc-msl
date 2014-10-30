@@ -79,7 +79,7 @@ find_package(SSE)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-  LIBRARIES msl_vision
+  LIBRARIES lib_msl_vision lib_msl_vision_3d
   CATKIN_DEPENDS system_config
   DEPENDS ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} pthread m Xv X11 Xext ICE SM dc1394 raw1394
 )

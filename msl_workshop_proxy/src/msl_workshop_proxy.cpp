@@ -8,7 +8,7 @@
 #include <iostream>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
-#include "flooding_test/TestMessage.h"
+#include "msl_workshop_proxy/TestMessage.h"
 #include "CaceMultiCastChannel.h"
 
 #include <sstream>
@@ -139,7 +139,7 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
 /**
  * This tutorial demonstrates simple receipt of messages over the ROS system.
  */
-void messageCallback(flooding_test::TestMessagePtr msg)
+void messageCallback(msl_workshop_proxy::TestMessagePtr msg)
 {
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
@@ -232,7 +232,7 @@ int main(int argc, char **argv)
 	 * than we can send them, the number here specifies how many messages to
 	 * buffer up before throwing some away.
 	 */
-	ros::Publisher chatter_pub = n.advertise<flooding_test::TestMessage>("flooding_test/TestMessage", 10);
+	ros::Publisher chatter_pub = n.advertise<msl_workshop_proxy::TestMessage>("flooding_test/TestMessage", 10);
 
 	ros::Rate loop_rate(10);
 
@@ -274,7 +274,7 @@ int main(int argc, char **argv)
 		/**
 		 * This is a message object. You stuff it with data, and then publish it.
 		 */
-		flooding_test::TestMessage msg;
+		msl_workshop_proxy::TestMessage msg;
 
 		msg.id = count;
 		msg.sender = ownID;

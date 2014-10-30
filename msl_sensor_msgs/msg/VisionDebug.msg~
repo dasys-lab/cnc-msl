@@ -1,0 +1,7 @@
+int32 senderID
+CNMessages/Point2dInfo[] list
+CNMessages/PositionInfo position
+CNSensorMsgs/DistanceScanInfo distanceScan
+CNSensorMsgs/ObstacleInfo[] obstacles
+CNSensorMsgs/LocalizationType locType
+CNSensorMsgs/BallInfo ball
