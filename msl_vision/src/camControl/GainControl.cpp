@@ -26,7 +26,7 @@
 
 
 GainControl::GainControl(string file, string confName):BasisControl(file, confName){	
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[file.c_str()];
 
 	LUTAdd=camParam->get<double>(file.c_str(), "GainLUT", "LUTGainAdd", NULL);

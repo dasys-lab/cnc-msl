@@ -48,7 +48,7 @@
 
 #define V4L2_CID_SHARPNESS			(V4L2_CID_PRIVATE_BASE+2)
 
-using namespace castor;
+using namespace supplementary;
 
 typedef enum {
         IO_METHOD_READ,
@@ -111,7 +111,7 @@ class CameraQuickCam
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void errno_exit(const char * s);
 		int xioctl(int fd, int request, void * arg);

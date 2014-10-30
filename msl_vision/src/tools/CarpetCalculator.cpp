@@ -10,7 +10,7 @@
 #define NSECTORS 360
 
 using namespace std;
-using namespace castor;
+using namespace supplementary;
 
 double angleDiff(double a, double b) {
 	return min(abs(a-b)*1.0, 2.0*3.141592-abs(a-b));

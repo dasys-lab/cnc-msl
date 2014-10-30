@@ -38,8 +38,8 @@ FilterExtractImages::FilterExtractImages()
 {
 	cout << "Start FilterExtractImages Constructor" << endl;
 	
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-	castor::Configuration *vision3D = (*sc)["Vision3D"];
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
 	
 	lTsize	= 256*256;
 	lTUVYsize	= 256*256*256;

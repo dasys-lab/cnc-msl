@@ -25,7 +25,7 @@
 
 #include <boost/thread/mutex.hpp>
 //#include <NetAddress.h>
-#include <CNSensorMsgs/CompassInfo.h>
+#include <msl_sensor_msgs/CompassInfo.h>
 #include <string>
 #include "ros/ros.h"
 
@@ -58,7 +58,7 @@ class CompassValueHelper{
 		
 		ros::AsyncSpinner* spinner;
 
-		void handleCompassInfo(const CNSensorMsgs::CompassInfo::ConstPtr& message);
+		void handleCompassInfo(const msl_sensor_msgs::CompassInfo::ConstPtr& message);
 
 		boost::mutex mutex;
 

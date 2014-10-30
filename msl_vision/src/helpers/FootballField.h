@@ -25,7 +25,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class FootballField{
 
@@ -49,7 +49,7 @@ class FootballField{
 
 	private:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		static FootballField * instance;
 		FootballField();

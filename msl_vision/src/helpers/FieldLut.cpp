@@ -127,7 +127,7 @@ namespace Cox
     __lut = new field_lut_entry_t[__entries_x * __entries_y];
 
 
-    castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
+    supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
     std::string globalsfn = sc->getConfigPath() + "/Globals.conf";
     std::string LUfn = sc->getConfigPath() + "/CoxGradientLut.dat";
     

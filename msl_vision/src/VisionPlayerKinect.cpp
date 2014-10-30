@@ -479,7 +479,7 @@ int main(int argc,char *argv[]) {
 
 	while(ros::ok()) {
 		unsigned long long visionTimeOmniCamLong =
-				castor::DateTime::getUtcNowC();
+				supplementary::DateTime::getUtcNowC();
 		visionTimeOmniCamLong -= 1000000;
 		TimeHelper::getInstance()->setVisionTimeOmniCam(visionTimeOmniCamLong);
 

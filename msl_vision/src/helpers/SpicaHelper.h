@@ -24,12 +24,12 @@
 #define SpicaHelper_h
 
 #include "ros/ros.h"
-#include <CNSensorMsgs/WorldModelData.h>
-#include <CNSensorMsgs/VisionDebug.h>
-#include <CNSensorMsgs/VisionControl.h>
-#include <CNSensorMsgs/VisionImage.h>
-#include <CNSensorMsgs/VisionGameState.h>
-#include <CNActuatorMsgs/VisionRelocTrigger.h>
+#include <msl_sensor_msgs/WorldModelData.h>
+#include <msl_sensor_msgs/VisionDebug.h>
+#include <msl_sensor_msgs/VisionControl.h>
+#include <msl_sensor_msgs/VisionImage.h>
+#include <msl_sensor_msgs/VisionGameState.h>
+#include <msl_actuator_msgs/VisionRelocTrigger.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -44,9 +44,9 @@
 class SpicaHelper {
 	public:
 		static void initialize();
-		static CNSensorMsgs::WorldModelData* wm;
-		static CNSensorMsgs::VisionDebug* vdd;
-		static CNSensorMsgs::VisionImage* vi;
+		static msl_sensor_msgs::WorldModelData* wm;
+		static msl_sensor_msgs::VisionDebug* vdd;
+		static msl_sensor_msgs::VisionImage* vi;
 		static bool reloc;
 
 		static ros::Publisher womopub;
@@ -62,9 +62,8 @@ class SpicaHelper {
         static char duel;
 
 
-		static void handleVisionControl(const CNSensorMsgs::VisionControl::ConstPtr& msg);
-		static void handleVisionRelocTrigger(const
-				CNActuatorMsgs::VisionRelocTrigger::ConstPtr& msg);
+		static void handleVisionControl(const msl_sensor_msgs::VisionControl::ConstPtr& msg);
+		static void handleVisionRelocTrigger(const msl_actuator_msgs::VisionRelocTrigger::ConstPtr& msg);
 		
 		static ros::NodeHandle* visionNode;
 		static void send();

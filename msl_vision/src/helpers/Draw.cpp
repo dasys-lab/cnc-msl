@@ -34,8 +34,8 @@ Draw::Draw()
 {
 	cout << "Start Draw Constructor" << endl;
 	
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-	castor::Configuration *vision3D	= (*sc)["Vision3D"];
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+	supplementary::Configuration *vision3D	= (*sc)["Vision3D"];
 	
 	cout << "Image" << endl;
 	cout << "\tWidth_";

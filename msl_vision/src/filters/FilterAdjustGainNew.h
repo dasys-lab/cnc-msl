@@ -29,7 +29,7 @@ int process(Camera1394 &camera, unsigned char* src, int area, FilterDistanceProf
 #endif
 
 	protected:
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		int gain;
 

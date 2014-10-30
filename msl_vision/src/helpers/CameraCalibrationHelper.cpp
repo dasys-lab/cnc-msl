@@ -27,7 +27,7 @@ void CameraCalibrationHelper::initialize() {
 
     cameraSettings = new Settings();
     cameraSettingsMsgs = new CNSensorMsgs::CameraSettings();
-    cameraSettingsMsgs->senderID = castor::SystemConfig::GetOwnRobotID();
+    cameraSettingsMsgs->senderID = supplementary::SystemConfig::GetOwnRobotID();
     cameraSettingsMsgs->receiverID = -1;
 
     settingPub = visionNode->advertise<CNSensorMsgs::CameraSettings>("CNCalibration/CameraSettings", 1);
@@ -55,8 +55,8 @@ void CameraCalibrationHelper::sendSettings(Settings* settings) {
     settingPub.publish(*cameraSettingsMsgs);
 }
 
-void CameraCalibrationHelper::handleCameraSettings(const CNSensorMsgs::CameraSettings::ConstPtr& msg) {
-    if(castor::SystemConfig::GetOwnRobotID() != msg->receiverID) return;
+void CameraCalibrationHelper::handleCameraSettings(const msl_sensor_msgs::CameraSettings::ConstPtr& msg) {
+    if(supplementary::SystemConfig::getOwnRobotID() != msg->receiverID) return;
     std::cout << "CamCalib\thandleCameraSettings" << std::endl;
     cameraSettings->useBrightness = msg->useBrightness;
     cameraSettings->brightness = msg->brightness;
@@ -75,7 +75,7 @@ void CameraCalibrationHelper::handleCameraSettings(const CNSensorMsgs::CameraSet
     setSettings = true;
 }
 
-void CameraCalibrationHelper::handleCameraSettingsRequest(const CNSensorMsgs::CameraSettingsRequest::ConstPtr& msg) {
+void CameraCalibrationHelper::handleCameraSettingsRequest(const msl_sensor_msgs::CameraSettingsRequest::ConstPtr& msg) {
     for (int i = 0; i < msg->receiverID.size(); ++i) {
         if (msg->receiverID.at(i) == castor::SystemConfig::GetOwnRobotID()) {
             std::cout << "CamCalib\thandleCameraSettingsRequest" << std::endl;

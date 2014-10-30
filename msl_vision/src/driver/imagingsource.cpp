@@ -109,8 +109,8 @@ namespace camera
 
     unsigned short ImagingSource::getImageWidth(std::string camera_model)
     {
-        castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-        castor::Configuration *vision3D = (*sc)["Vision3D"];
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        supplementary::Configuration *vision3D = (*sc)["Vision3D"];
         unsigned short width = vision3D->get<unsigned short>("Parameter", camera_model.c_str(), "image_width", NULL);
         return width;
     }
@@ -122,8 +122,8 @@ namespace camera
 
     unsigned short ImagingSource::getImageHeight(std::string camera_model)
     {
-        castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-        castor::Configuration *vision3D = (*sc)["Vision3D"];
+    	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+    	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
         unsigned short height = vision3D->get<unsigned short>("Parameter", camera_model.c_str(), "image_height", NULL);
         return height;
     }

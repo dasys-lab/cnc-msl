@@ -28,7 +28,7 @@ class FilterAdjustGain  : public Filter {
 #endif
 
 	protected:
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		int gain;
 

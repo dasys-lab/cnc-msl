@@ -751,7 +751,7 @@ int main(int argc,char *argv[]){
 					ih.writeImage(imageRGB, true);
 				}
 */
-				visionTimeOmniCamLong = castor::DateTime::getUtcNowC();
+				visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 
 				counter++;
 
@@ -880,7 +880,7 @@ int main(int argc,char *argv[]){
 
 				}
 				else {
-					visionTimeOmniCamLong = castor::DateTime::getUtcNowC();
+					visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 				}
 			}
 
@@ -1172,7 +1172,7 @@ int main(int argc,char *argv[]){
 					SpicaHelper::vdd->ball = SpicaHelper::wm->ball;
 					SpicaHelper::vdd->locType.type = SpicaHelper::wm->odometry.locType.type;
 					SpicaHelper::vdd->obstacles = SpicaHelper::wm->obstacles;
-					SpicaHelper::vdd->senderID = castor::SystemConfig::GetOwnRobotID();
+					SpicaHelper::vdd->senderID = supplementary::SystemConfig::getOwnRobotID();
 				}
 				SpicaHelper::sendLinePoints();
 				fclose(fd);

@@ -49,7 +49,7 @@ void SharedBallDirectedHelper::handleSharedBallInfo(const SharedBallInfo::ConstP
 	ball.y = message->point.y;
 	ball.confidence = message->confidence;
 	ball.evidence = message->evidence;
-	ball.timestamp = castor::DateTime::getUtcNowC();
+	ball.timestamp = supplementary::DateTime::getUtcNowC();
 
 }
 

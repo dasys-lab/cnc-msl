@@ -9,7 +9,7 @@ find_package(catkin REQUIRED)
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
-find_package(SSE)
+#find_package(SSE)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -240,7 +240,7 @@ add_library(lib_msl_vision_3d ${lib_msl_vision_3d_SOURCES})
 target_link_libraries(lib_msl_vision_3d pthread m system_config Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS})
 set_target_properties(lib_msl_vision_3d PROPERTIES COMPILE_FLAGS -DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
-rosbuild_add_executable(msl_vision_3d src/VisionPlayer3D.cpp)
+add_executable(msl_vision_3d src/VisionPlayer3D.cpp)
 target_link_libraries(msl_vision_3d pthread m system_config Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision_3d ${Boost_LIBRARIES})
 set_target_properties(msl_vision_3d PROPERTIES COMPILE_FLAGS -DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
@@ -296,13 +296,13 @@ set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS -DSWITCHLOC -ft
 
 add_executable(msl_calculator src/helpers/ConfigHelper.cpp src/tools/Calculator.cpp src/tools/distcalc.cpp src/tools/Calculator.cpp)
 target_link_libraries(msl_calculator pthread m system_config X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES})
-set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
+set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize "${SSE_FLAGS}" -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
 ## Ray Calculator
 
 add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
 target_link_libraries(msl_ray_calculator pthread m system_config X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES})
-set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
+set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize "${SSE_FLAGS}" -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -317,10 +317,10 @@ ENDIF(ROBOT STREQUAL "")
 
 IF(NOT ROBOT STREQUAL "mops")
 	ADD_CUSTOM_COMMAND(
-		OUTPUT ${EXECUTABLE_OUTPUT_PATH}/DistanceLookup.dat
-		COMMAND ${EXECUTABLE_OUTPUT_PATH}/msl_calculator
-		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-		DEPENDS ${EXECUTABLE_OUTPUT_PATH}/msl_calculator
+		OUTPUT DistanceLookup.dat
+		COMMAND msl_calculator
+#		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		DEPENDS msl_calculator
 		COMMENT "Creating Lookuptable"
 	)
 	ADD_CUSTOM_TARGET(DistanceLookup ALL
@@ -328,10 +328,10 @@ IF(NOT ROBOT STREQUAL "mops")
 	)
 
 	ADD_CUSTOM_COMMAND(
-		OUTPUT ${EXECUTABLE_OUTPUT_PATH}/RayLookup.dat
-		COMMAND ${EXECUTABLE_OUTPUT_PATH}/msl_ray_calculator
-		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-		DEPENDS ${EXECUTABLE_OUTPUT_PATH}/msl_ray_calculator
+		OUTPUT RayLookup.dat
+		COMMAND msl_ray_calculator
+#		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		DEPENDS msl_ray_calculator
 		COMMENT "Creating RayLookuptable"
 	)
 	ADD_CUSTOM_TARGET(RayLookup ALL

@@ -29,7 +29,7 @@
 #include <SystemConfig.h>
 
 
-using namespace castor;
+using namespace supplementary;
 
 class PositionHelper {
 
@@ -62,7 +62,7 @@ class PositionHelper {
 		int CameraZ;
 
 		void goForLine(short ax, short ay, short ex, short ey, double angle, int * xcoord, int * ycoord);
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		PositionHelper();
 		static PositionHelper * instance;

@@ -40,7 +40,7 @@ struct CornerPost {
 	bool yellow;
 };
 
-using namespace castor;
+using namespace supplementary;
 
 
 class CornerPostHelper{
@@ -54,7 +54,7 @@ class CornerPostHelper{
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 		
 		void init();
 		void cleanup();

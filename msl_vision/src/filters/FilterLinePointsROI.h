@@ -33,7 +33,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class FilterLinePointsROI  : public Filter {
 
@@ -50,7 +50,7 @@ class FilterLinePointsROI  : public Filter {
 		void visualizeROIs(unsigned char * src, std::vector<ROIData>& ROIrects, int width, int height);
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

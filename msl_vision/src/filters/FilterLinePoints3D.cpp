@@ -42,10 +42,10 @@ FilterLinePoints3D::FilterLinePoints3D()
 {
 	cout << "Start FilterLinePoints3D Constructor" << endl;
 	
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
 	
-	castor::Configuration *vision3D	= (*sc)["Vision3D"];
-	castor::Configuration *loc	= (*sc)["Localization3D"];
+	supplementary::Configuration *vision3D	= (*sc)["Vision3D"];
+	supplementary::Configuration *loc	= (*sc)["Localization3D"];
 	
 	confPath = sc->getConfigPath();
 	

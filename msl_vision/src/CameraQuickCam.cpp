@@ -24,9 +24,7 @@
 #include <iostream>
 
 
-CameraQuickCam::CameraQuickCam() : sc()
-
-
+CameraQuickCam::CameraQuickCam()
 {
 
 	this->sc = SystemConfig::getInstance();

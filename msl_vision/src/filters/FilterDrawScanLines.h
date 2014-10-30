@@ -32,7 +32,7 @@
 #include <vector>
 
 
-using namespace castor;
+using namespace supplementary;
 
 class FilterDrawScanLines  : public Filter {
 
@@ -46,7 +46,7 @@ class FilterDrawScanLines  : public Filter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_vision)
 
+## Use c++ 11x std
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED system_config)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -90,7 +93,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 link_directories("/usr/X11R6/lib")
 
@@ -296,13 +299,13 @@ set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS -DSWITCHLOC -ft
 
 add_executable(msl_calculator src/helpers/ConfigHelper.cpp src/tools/Calculator.cpp src/tools/distcalc.cpp src/tools/Calculator.cpp)
 target_link_libraries(msl_calculator pthread m system_config X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES})
-set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
+set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize "${SSE_FLAGS}" -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
 ## Ray Calculator
 
 add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
 target_link_libraries(msl_ray_calculator pthread m system_config X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES})
-set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
+set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS -ftree-vectorize "${SSE_FLAGS}" -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -317,25 +320,25 @@ ENDIF(ROBOT STREQUAL "")
 
 IF(NOT ROBOT STREQUAL "mops")
 	ADD_CUSTOM_COMMAND(
-		OUTPUT ${EXECUTABLE_OUTPUT_PATH}/DistanceLookup.dat
-		COMMAND ${EXECUTABLE_OUTPUT_PATH}/msl_calculator
-		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-		DEPENDS ${EXECUTABLE_OUTPUT_PATH}/msl_calculator
+		OUTPUT DistanceLookup.dat
+		COMMAND msl_calculator
+#		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		DEPENDS msl_calculator
 		COMMENT "Creating Lookuptable"
 	)
 	ADD_CUSTOM_TARGET(DistanceLookup ALL
-	DEPENDS ${EXECUTABLE_OUTPUT_PATH}/DistanceLookup.dat
+	DEPENDS DistanceLookup.dat
 	)
 
 	ADD_CUSTOM_COMMAND(
-		OUTPUT ${EXECUTABLE_OUTPUT_PATH}/RayLookup.dat
-		COMMAND ${EXECUTABLE_OUTPUT_PATH}/msl_ray_calculator
-		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-		DEPENDS ${EXECUTABLE_OUTPUT_PATH}/msl_ray_calculator
+		OUTPUT RayLookup.dat
+		COMMAND msl_ray_calculator
+#		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		DEPENDS msl_ray_calculator
 		COMMENT "Creating RayLookuptable"
 	)
 	ADD_CUSTOM_TARGET(RayLookup ALL
-		DEPENDS ${EXECUTABLE_OUTPUT_PATH}/RayLookup.dat
+		DEPENDS RayLookup.dat
 	)
 ENDIF(NOT ROBOT STREQUAL "mops")
 

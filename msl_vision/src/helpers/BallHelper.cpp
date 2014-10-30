@@ -32,7 +32,7 @@ using namespace std;
 #include <sys/time.h>
 
 #include "FootballField.h"
-#include <CNSensorMsgs/BallInfo.h>
+#include <msl_sensor_msgs/BallInfo.h>
 //#include <BallInfoCovMatrix.h> //merge to dev 
 #include "SpicaHelper.h"
 #include "BallIntegrator.h"
@@ -49,8 +49,8 @@ using namespace std;
 
 
 //#define VERBOSE
-using namespace CNSensorMsgs;
-using namespace CNMessages;
+using namespace msl_sensor_msgs;
+using namespace msl_msgs;
 
 BallHelper::BallHelper(int area) : ballBuf(30){
 

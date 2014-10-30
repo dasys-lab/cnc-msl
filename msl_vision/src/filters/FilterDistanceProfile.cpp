@@ -24,7 +24,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <CNSensorMsgs/DistanceScanInfo.h>
+#include <msl_sensor_msgs/DistanceScanInfo.h>
 #include <math.h>
 
 #include "../helpers/Lookuptable.h"

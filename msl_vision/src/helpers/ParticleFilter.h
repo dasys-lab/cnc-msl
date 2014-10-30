@@ -36,9 +36,9 @@
 #include <vector>
 
 #include <SystemConfig.h>
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 
-using namespace castor;
+using namespace supplementary;
 
 
 
@@ -62,9 +62,9 @@ class ParticleFilter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
-		CNSensorMsgs::CorrectedOdometryInfo coi;
+		msl_sensor_msgs::CorrectedOdometryInfo coi;
 
 		int nParticles;
 		void initParticles();

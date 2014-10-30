@@ -29,7 +29,7 @@
 
 //#include "floatfann.h"
 using namespace std;
-//using namespace castor;
+//using namespace supplementary;
 
 Brightness *Brightness::theBrightnessInstance = NULL;
 
@@ -60,7 +60,7 @@ Brightness::Brightness(int width, int height, camera::ImagingSource *cam, string
 
 	cout<<"CONF_DAT"<<CONF_DAT<<endl;
 
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[CONF_DAT];
 
 	gc->setTargetControlValue(zielHell);
@@ -80,7 +80,7 @@ Brightness::Brightness(int width, int height, camera::ImagingSource* cam):BasisA
 
 	cout<<"CONF_DAT"<<CONF_DAT<<endl;
 
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[CONF_DAT];
 
 	gc->setTargetControlValue(camParam->get<int>(CONF_DAT, "Bright", NULL));

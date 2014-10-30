@@ -52,7 +52,7 @@ class  FilterTemplateMatchingGoalie : public Filter {
 		static const int B_SIZE = 4;
 		static const int MAXBALLNUM = 500;		
 		static const int RADNUM = 50;
-		static const float pi = 3.14159265;
+		static const float pi;
 		static const int CIRCPOINTS = 12;
 		static const int COFFSET = 3*CIRCPOINTS;
 		static const int Bx1 = 202, Bx2 = 233, Bx3 = 262, By1 = 247, By2 = 198, By3 = 246;

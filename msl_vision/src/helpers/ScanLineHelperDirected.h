@@ -30,7 +30,7 @@
 
 #define MAXPOINTSDIRECTED 600
 
-using namespace castor;
+using namespace supplementary;
 
 class ScanLineHelperDirected {
 
@@ -49,7 +49,7 @@ class ScanLineHelperDirected {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 		
 		void init();
 		int DrawLine(short * line, short ax, short ay, short ex, short ey);

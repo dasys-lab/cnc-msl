@@ -25,7 +25,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class TimeHelper{
 
@@ -46,7 +46,7 @@ class TimeHelper{
 
 	private:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		static TimeHelper * instance;
 		TimeHelper();

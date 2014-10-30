@@ -37,8 +37,7 @@
 #include <pthread.h>
 
 using namespace std;
-using namespace castor;
-using namespace boost;;
+using namespace supplementary;
 
 
 class BasisControl{

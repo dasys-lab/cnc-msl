@@ -49,7 +49,7 @@ struct Range {
 
 };
 
-using namespace castor;
+using namespace supplementary;
 
 class FilterDistanceProfileNew  : public Filter {
 
@@ -66,7 +66,7 @@ class FilterDistanceProfileNew  : public Filter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

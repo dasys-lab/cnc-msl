@@ -51,8 +51,8 @@
 
 
 using namespace std;
-using namespace castor;
-using namespace boost;
+using namespace supplementary;
+
 
 class BasisAutoParam{
 

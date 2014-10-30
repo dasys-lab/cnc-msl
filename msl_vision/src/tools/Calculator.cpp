@@ -35,7 +35,7 @@
 //#define WIDTH 640
 #define NSECTORS 360
 
-using namespace castor;
+using namespace supplementary;
 using namespace std;
 
 int main(int argc, char * argv[]){

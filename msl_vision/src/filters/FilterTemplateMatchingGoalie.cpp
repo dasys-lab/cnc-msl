@@ -32,6 +32,8 @@
 
 using namespace std;
 
+const float FilterTemplateMatchingGoalie::pi = 3.14159265;
+
 FilterTemplateMatchingGoalie::FilterTemplateMatchingGoalie(int width, int height):Filter(OF_GRAY, width, height){
 
 	AreaLookup = (unsigned char *) malloc(width*height*sizeof(unsigned char));

@@ -28,12 +28,12 @@
 
 //#include "floatfann.h"
 using namespace std;
-using namespace castor;
+using namespace supplementary;
 
 FilterYUVExtractSubImages::FilterYUVExtractSubImages(int width, int height, int area_):Filter(OF_ZERO, width, height){
 
 	printf("before malloc!!!\n");
-    SystemConfigPtr sc = SystemConfig::getInstance();
+    SystemConfig* sc = SystemConfig::getInstance();
         Configuration *vision = (*sc)["Vision"];
 
     UVYMAX = vision->tryGet<int>(80, "Vision", "UVYMAX", NULL);
@@ -117,7 +117,7 @@ FilterYUVExtractSubImages::FilterYUVExtractSubImages(int width, int height, int 
 }
 
 void FilterYUVExtractSubImages::loadAllLookupTables() {
-    SystemConfigPtr sc = SystemConfig::getInstance();
+    SystemConfig* sc = SystemConfig::getInstance();
 
     loadLookupTable(string(sc->getConfigPath())+string("/")+sc->getHostname()+string("/LookupTableGreen.txt"), lookupTableGreen);
     loadLookupTable(string(sc->getConfigPath())+string("/")+sc->getHostname()+string("/LookupTable.txt"), lookupTable);

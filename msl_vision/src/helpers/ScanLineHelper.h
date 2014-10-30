@@ -30,7 +30,7 @@
 
 #define MAXPOINTS 350
 
-using namespace castor;
+using namespace supplementary;
 
 class ScanLineHelper{
 
@@ -54,7 +54,7 @@ class ScanLineHelper{
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 		
 		void init();
 		void DrawLine(short * line, short * nPoints, short ax, short ay, short ex, short ey);

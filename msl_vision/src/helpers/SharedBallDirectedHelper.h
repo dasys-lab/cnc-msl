@@ -24,13 +24,13 @@
 #define SharedBallDirectedHelper_H
 
 #include <boost/thread/mutex.hpp>
-#include <CNSensorMsgs/SharedBallInfo.h>
+#include <msl_sensor_msgs/SharedBallInfo.h>
 #include <string>
 #include "ros/ros.h"
 
 #include "../global/Types.h"
 
-using namespace CNSensorMsgs;
+using namespace msl_sensor_msgs;
 
 
 class SharedBallDirectedHelper{

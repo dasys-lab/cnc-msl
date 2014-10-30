@@ -56,7 +56,7 @@ FilterLinePointsCalib::FilterLinePointsCalib(int area):Filter(OF_ZERO, area, are
 
 	short nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
 	
-	boost::shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
+	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();
@@ -154,7 +154,7 @@ FilterLinePointsCalib::FilterLinePointsCalib(int width, int height):Filter(OF_ZE
 	short nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
 	
 
-	boost::shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
+	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();

@@ -25,7 +25,7 @@
 
 #include <boost/thread/mutex.hpp>
 #include "ros/ros.h"
-#include <CNActuatorMsgs/RawOdometryInfo.h>
+#include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <string>
 
 #include "../global/Types.h"
@@ -83,7 +83,7 @@ class RawOdometryHelper{
 		Position getPosDiffVector(Position posNew, Position posOld);
 		Position updatePositionWithVector(Position pos, double deltaX, double deltaY, double deltaH, Position relPos);
 
-		void handleRawOdometryInfo(const CNActuatorMsgs::RawOdometryInfo::ConstPtr& message);
+		void handleRawOdometryInfo(const msl_actuator_msgs::RawOdometryInfo::ConstPtr& message);
 
 		bool initialized;
 

@@ -28,8 +28,8 @@
 #include "../global/Types.h"
 #include "ParticleFilter.h"
 #include "SpicaHelper.h"
-#include <MSLHelpers/PassMsg.h>
-#include <CNMessages/Point2dInfo.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_msgs/Point2dInfo.h>
 #include "BallIntegrator.h"
 #include "FootballField.h"
 #include "ObjectTracker.h"
@@ -38,10 +38,10 @@
 #include "RawOdometryHelper.h"
 #include "PositionHelper.h"
 #include "ObjectContainer.h"
-#include <DateTime.h>
+//#include <DateTime.h>
 #include "ros/ros.h"
 
-using namespace MSLHelpers;
+using namespace msl_helper_msgs;
 
 class BallHelper {
 
@@ -72,8 +72,8 @@ class BallHelper {
 
 		bool isGoalie;
 
-		CNMessages::Point2dInfo origin;
-		CNMessages::Point2dInfo destination;
+		msl_msgs::Point2dInfo origin;
+		msl_msgs::Point2dInfo destination;
 		struct timeval passMsgTime;
 		bool passMsgAvailable;
 
@@ -81,7 +81,7 @@ class BallHelper {
 
 		MovingObject mv;
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		int MX;
 		int MY;

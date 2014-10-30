@@ -49,7 +49,7 @@ Whitepoint::Whitepoint(int width, int height, camera::ImagingSource* cam, string
 	pcV = new PControl(CONF_DAT, "V");
 	ra = new ReferenceArea(width/2, height, CONF_DAT, area.c_str());
 
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[CONF_DAT];
 	pcU->setTargetControlValue(camParam->get<int>(CONF_DAT, "U", NULL));
 	pcV->setTargetControlValue(camParam->get<int>(CONF_DAT, "V", NULL));
@@ -66,7 +66,7 @@ Whitepoint::Whitepoint(int width, int height, camera::ImagingSource* cam):BasisA
 	pcV = new PControl(CONF_DAT, "V");
     ra = new ReferenceArea(width/2, height, CONF_DAT, CONF_RA_W);
 
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[CONF_DAT];
 	pcU->setTargetControlValue(camParam->get<int>(CONF_DAT, "U", NULL));
 	pcV->setTargetControlValue(camParam->get<int>(CONF_DAT, "V", NULL));

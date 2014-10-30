@@ -38,7 +38,7 @@
 
 #define NSECTORS 60 
 
-using namespace castor;
+using namespace supplementary;
 
 class FilterDistanceProfile  : public Filter {
 
@@ -55,7 +55,7 @@ class FilterDistanceProfile  : public Filter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

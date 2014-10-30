@@ -41,7 +41,7 @@ BasisAutoParam::BasisAutoParam(int _width, int _height, int _usedDim, camera::Im
 	cam->enableTrigger(false); 
 	cam->enableGamma(false);
 
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[CONF_DAT];
 	nImage=camParam->tryGet<int>(10, CONF_DAT, "nImage", NULL);
 	showImage=(unsigned char*)malloc(imageSize*sizeof(unsigned char)*4);

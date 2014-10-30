@@ -28,7 +28,7 @@
 #include "../global/Types.h"
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class PositionHelperDirected{
 

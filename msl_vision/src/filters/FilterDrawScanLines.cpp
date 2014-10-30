@@ -41,7 +41,7 @@ FilterDrawScanLines::FilterDrawScanLines(int width, int height):Filter(OF_ZERO, 
 	negRanges[2][0] = vision->get<short>("Vision", "Holder", "NegRange_2_0", NULL);
 	negRanges[2][1] = vision->get<short>("Vision", "Holder", "NegRange_2_1", NULL);
 
-	boost::shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
+	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();

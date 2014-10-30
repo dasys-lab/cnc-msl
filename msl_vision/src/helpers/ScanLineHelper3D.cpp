@@ -17,8 +17,8 @@ ScanLineHelper3D::ScanLineHelper3D()
 {
 	cout << "Start ScanLineHelper3D Constructor" << endl;
 	
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-	castor::Configuration *vision3D = (*sc)["Vision3D"];
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
 	
 	// Get configs
 	cout << "ScanLines" << endl;

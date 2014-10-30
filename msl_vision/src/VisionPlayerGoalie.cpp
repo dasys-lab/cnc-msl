@@ -402,7 +402,7 @@ int main(int argc,char *argv[]){
 			}
 
 
-			visionTimeOmniCamLong = castor::DateTime::getUtcNowC(); 
+			visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 
 			visionTimeOmniCamLong -= 700000;
 

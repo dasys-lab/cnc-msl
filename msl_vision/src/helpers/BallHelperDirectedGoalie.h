@@ -65,7 +65,7 @@ class BallHelperDirectedGoalie{
 
 		MovingObject mv;
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		ObservedPoint * observations;
 

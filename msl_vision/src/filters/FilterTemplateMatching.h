@@ -30,7 +30,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class  FilterTemplateMatching : public Filter {
 
@@ -59,7 +59,7 @@ class  FilterTemplateMatching : public Filter {
 		static const int B_SIZE = 4;
 		static const int MAXBALLNUM = 10000;		
 		static const int RADNUM = 50;
-		static const float pi = 3.14159265;
+		static const float pi;
 		static const int CIRCPOINTS = 12;
 		static const int COFFSET = 3*CIRCPOINTS;
 		//static const int Bx1 = 202, Bx2 = 232, Bx3 = 262, By1 = 249, By2 = 196, By3 = 248;
@@ -69,7 +69,7 @@ class  FilterTemplateMatching : public Filter {
 		void init(int width, int height);
 		void cleanup();
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 		unsigned char * AreaLookup;
 		int templateLookUp[RADNUM*CIRCPOINTS*3];
 		int *ballKickerPos;

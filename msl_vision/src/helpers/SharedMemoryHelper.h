@@ -44,7 +44,7 @@
 #define KEY_CO_SHM 5682
 #define KEY_CO_SEM 5683
 
-using namespace castor;
+using namespace supplementary;
 
 class SharedMemoryHelper{
 
@@ -70,7 +70,7 @@ class SharedMemoryHelper{
 
 		static SharedMemoryHelper * instance_;
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 		
 		void init();
 		void cleanup();

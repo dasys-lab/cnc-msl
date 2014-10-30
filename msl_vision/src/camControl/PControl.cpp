@@ -26,7 +26,7 @@
 #include <stdlib.h>
 
 PControl::PControl(string file, string confName):BasisControl(file, confName){
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[file.c_str()];
 	m=camParam->get<double>(file.c_str(), confName.c_str(), "m", NULL);
 b=camParam->get<double>(file.c_str(), confName.c_str(), "b", NULL);	

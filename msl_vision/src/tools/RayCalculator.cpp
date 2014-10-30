@@ -49,10 +49,10 @@ int main ( int argc, char * argv[] )
 	cout << "RayCalculator start" << endl;
 	
 	// Initialize the vision config files.
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
 	string confPath = sc->getConfigPath();
 	
-	castor::Configuration *vision3D		= (*sc)["Vision3D"];
+	supplementary::Configuration *vision3D		= (*sc)["Vision3D"];
 	
 	cout << "Camera" << endl;
 	cout << "\tModel_";

@@ -33,7 +33,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 using namespace std;
 
 class FilterLinePointsCalib : public Filter {
@@ -48,7 +48,7 @@ class FilterLinePointsCalib : public Filter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

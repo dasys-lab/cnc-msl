@@ -34,7 +34,7 @@
 
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class FilterLinePointsROIDirected  : public Filter {
 
@@ -53,7 +53,7 @@ class FilterLinePointsROIDirected  : public Filter {
 
 	protected:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		void init();
 		void cleanup();

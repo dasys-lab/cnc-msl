@@ -36,8 +36,8 @@ FilterExtractLineImage::FilterExtractLineImage(void)
 {
 	cout << "Start FilterExtractLineImage Constructor" << endl;
 	
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
-	castor::Configuration *vision3D = (*sc)["Vision3D"];
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
 	
 	cout << "Image" << endl;
 	cout << "\tWidth_";

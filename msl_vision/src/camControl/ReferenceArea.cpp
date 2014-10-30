@@ -44,7 +44,7 @@ ReferenceArea::~ReferenceArea(){
 void ReferenceArea::setNextPrioRefPixels(string file, string confName){
 
 	prioPixelSize=0;
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[file.c_str()];
 
     	nextPrioPixel.clear();

@@ -21,10 +21,10 @@ Distance3DHelper::Distance3DHelper()
 	
 	/// Read Lookup3D
 	// Initialize the vision config files.
-	castor::SystemConfigPtr sc = castor::SystemConfig::getInstance();
+	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
 	string confPath = sc->getConfigPath();
 	
-	castor::Configuration *vision3D	= (*sc)["Vision3D"];
+	supplementary::Configuration *vision3D	= (*sc)["Vision3D"];
 	
 	cout << "Image" << endl;
 	cout << "\tWidth_";

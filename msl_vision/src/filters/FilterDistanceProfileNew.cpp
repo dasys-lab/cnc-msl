@@ -24,17 +24,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <CNSensorMsgs/DistanceScanInfo.h>
+#include <msl_sensor_msgs/DistanceScanInfo.h>
 #include <math.h>
 
 
-#include <CNMessages/Point2dInfo.h>
-#include <CNSensorMsgs/ObstacleInfo.h>
+#include <msl_msgs/Point2dInfo.h>
+#include <msl_sensor_msgs/ObstacleInfo.h>
 
 #include "../helpers/Lookuptable.h"
 #include "../helpers/SpicaHelper.h"
 
-using namespace CNSensorMsgs;
+using namespace msl_sensor_msgs;
 
 
 FilterDistanceProfileNew::FilterDistanceProfileNew(int width, int height):Filter(OF_ZERO, width, height){
@@ -58,7 +58,7 @@ FilterDistanceProfileNew::FilterDistanceProfileNew(int width, int height):Filter
 	negRanges[2][1] = vision->get<short>("Vision", "Holder", "NegRange_2_1", NULL);
 	numberOfLines = -1;
 
-	boost::shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
+	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();

@@ -37,7 +37,7 @@ BasisControl::BasisControl(double _minMV, double _maxMV, double _minDiffMV, doub
 
 
 BasisControl::BasisControl(string file, string confName){
-	SystemConfigPtr sCon = SystemConfig::getInstance();
+	SystemConfig* sCon = SystemConfig::getInstance();
 	Configuration *camParam = (*sCon)[file.c_str()];
 
 	cout<<file.c_str()<<" - "<<confName.c_str()<<endl;

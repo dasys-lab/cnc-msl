@@ -98,14 +98,14 @@ void SpicaHelper::sendGameState() {
     statepub.publish(vgs);
 }
 
-void SpicaHelper::handleVisionControl(const CNSensorMsgs::VisionControl::ConstPtr& msg) {
-	if(castor::SystemConfig::GetOwnRobotID() != msg->receiverID) return;
+void SpicaHelper::handleVisionControl(const msl_sensor_msgs::VisionControl::ConstPtr& msg) {
+	if(supplementary::SystemConfig::getOwnRobotID() != msg->receiverID) return;
 	key = msg->key;
 }
 
 void SpicaHelper::handleVisionRelocTrigger(const
-		CNActuatorMsgs::VisionRelocTrigger::ConstPtr& msg) {
-	if(castor::SystemConfig::GetOwnRobotID() != msg->receiverID) return;
+		msl_acutator_msgs::VisionRelocTrigger::ConstPtr& msg) {
+	if(supplementary::SystemConfig::getOwnRobotID() != msg->receiverID) return;
 	reloc = true;	
 }
 
@@ -128,7 +128,7 @@ void SpicaHelper::streamGreyMJPEG(unsigned char* img, int width, int height) {
 	cpar.push_back(CV_IMWRITE_JPEG_QUALITY);
 	cpar.push_back(45);
 
-	vi->senderID = castor::SystemConfig::GetOwnRobotID();
+	vi->senderID = supplementary::SystemConfig::getOwnRobotID();
 	vi->imageData.clear();
 	vi->width = width;
 	vi->height = height;

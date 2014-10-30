@@ -432,7 +432,7 @@ int main(int argc,char *argv[]){
 					imageRGB = filterYUVToRGB.process((unsigned char *) frame.getImagePtr(), imagesize_.width * imagesize_.height * 2);
 				}
 				currImage = (unsigned char *) frame.getImagePtr();
-				visionTimeOmniCamLong = castor::DateTime::getUtcNowC();
+				visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 				counter++;
 
 				if(log && counter >= 200 && counter % 10 >= 0){
@@ -495,7 +495,7 @@ int main(int argc,char *argv[]){
 				if(drawRGB) {
 					imageRGB = filterYUVToRGB.process(currImage, imagesize_.width* imagesize_.height*2);
 				}
-				visionTimeOmniCamLong = castor::DateTime::getUtcNowC();
+				visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 			}
 
 			struct timeval tv_before;
@@ -622,7 +622,7 @@ int main(int argc,char *argv[]){
 					SpicaHelper::vdd->ball = SpicaHelper::wm->ball;
 					SpicaHelper::vdd->locType.type = SpicaHelper::wm->odometry.locType.type;
 					SpicaHelper::vdd->obstacles = SpicaHelper::wm->obstacles;
-					SpicaHelper::vdd->senderID = castor::SystemConfig::GetOwnRobotID();
+					SpicaHelper::vdd->senderID = supplementary::SystemConfig::getOwnRobotID();
 				}
 				SpicaHelper::sendLinePoints();
 			}

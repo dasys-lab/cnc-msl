@@ -65,7 +65,7 @@ class BallHelperDirected2{
 
 		MovingObject mv;
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		ObservedPoint * observations;
 

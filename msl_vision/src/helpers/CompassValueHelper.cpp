@@ -52,7 +52,7 @@ void CompassValueHelper::handleCompassInfo(const CompassInfo::ConstPtr& message)
 
 	integrateData(message->value);
 
-	Logger::getInstance()->logCompassValue(message->value, castor::DateTime::getUtcNowC());
+	Logger::getInstance()->logCompassValue(message->value, supplementary::DateTime::getUtcNowC());
 
 }
 
