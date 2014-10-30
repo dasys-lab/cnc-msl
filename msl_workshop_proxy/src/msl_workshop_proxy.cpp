@@ -18,15 +18,121 @@ using namespace multicast;
 
 int ownID = 0;
 
-class MultiCastReceive {
-public:
-	MultiCastReceive() {}
-	~MultiCastReceive() {}
+const int mixed_team_flag_size = 1;
+const int ball_size = 36;
+const int opp_size = 4;
+const int opp_count = 10;
+const int position_size = 4;
 
-	void callback(char* buffer, int size) {
-		cout << size << endl;
+
+
+struct ballPos
+{
+	int16_t ballX;
+	int16_t ballY;
+	int16_t ballZ;
+	int16_t ballVX;
+	int16_t ballVY;
+	int16_t ballVZ;
+	void append(unsigned char* ptr)
+	{
+		int16_t arr[] = {ballX, ballY, ballZ, ballVX, ballVY, ballVZ};
+		unsigned char* it = (unsigned char*)&arr[0];
+		for (int i = 0; i < ball_size; i++)
+		{
+			ptr[i] = it[i];
+		}
+	}
+
+	void desrializeFromPtr(unsigned char* ptr)
+	{
+		int16_t* it = (int16_t*)&ptr[0];
+		ballX = *it;
+		it++;
+		ballY = *it;
+		it++;
+		ballZ = *it;
+		it++;
+		ballVX = *it;
+		it++;
+		ballVY = *it;
+		it++;
+		ballVZ = *it;
+		it++;
+	}
+	void print() {
+		cout << "(" << ballX << ":" << ballY << ":" << ballZ << ") ";
+		cout << "(" << ballVX << ":" << ballVY << ":" << ballVZ << ")";
 	}
 };
+
+struct point
+{
+	int16_t x;
+	int16_t y;
+	void append(unsigned char* ptr)
+	{
+		int16_t arr[] = {x, y};
+		unsigned char* it = (unsigned char*)&arr[0];
+		for (int i = 0; i < opp_size; i++)
+		{
+			ptr[i] = it[i];
+		}
+	}
+
+	void desrializeFromPtr(unsigned char* ptr)
+	{
+		int16_t* it = (int16_t*)&ptr[0];
+		x = *it;
+		it++;
+		y = *it;
+	}
+
+	void print() {
+		cout << "(" << x << ":" << y << ")";
+	}
+};
+
+class MultiCastReceive
+{
+public:
+	MultiCastReceive()
+	{
+	}
+	~MultiCastReceive()
+	{
+	}
+
+	void callback(char* buffer, int size)
+	{
+		ballPos bp;
+		point opps[10];
+		point self;
+		if(mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size) {
+			cout << "strange packet received. Size:" << size << endl;
+		}
+		unsigned char* it = (unsigned char*)buffer;
+		unsigned char flag = *it;
+		it++;
+		bp.desrializeFromPtr(it);
+		it+=ball_size;
+		for(int i=0; i<opp_count; i++) {
+			opps[i].desrializeFromPtr(it);
+			it += opp_size;
+		}
+		self.desrializeFromPtr(it);
+
+
+		cout << "Received ("<< size << " Bytes) MID is:" << endl;
+		bp.print();
+		self.print();
+		for(int i=0; i<opp_count; i++) {
+			opps[i].print();
+		}
+		cout << endl;
+	}
+};
+
 
 MultiCastChannel<MultiCastReceive>* commandChannel;
 
@@ -35,7 +141,44 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(flooding_test::TestMessagePtr msg)
 {
-	commandChannel->publish("asd", 3);
+	unsigned char mixed_team_flag = 123;
+	ballPos bp;
+	bp.ballX = 1001;
+	bp.ballY = 1001;
+	bp.ballZ = 1001;
+	bp.ballVX = 1001;
+	bp.ballVY = 1001;
+	bp.ballVZ = 1001;
+
+	point opps[10];
+
+	point self;
+	self.x = 1001;
+	self.y = 1001;
+
+	unsigned char *arr = new unsigned char[mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size];
+	unsigned char *it = &arr[0];
+	it[0] = mixed_team_flag;
+	it += 1;
+	bp.append(it);
+	it += ball_size;
+	for (int i = 0; i < opp_count; i++)
+	{
+		opps[i].x = 1001;
+		opps[i].y = 1001;
+		opps[i].append(it);
+		it += opp_size;
+	}
+	self.append(it);
+	it += opp_size;
+
+	unsigned int packetSize = it - arr;
+	if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != packetSize)
+	{
+		cout << "strange stuff happend packetsend size is: " << packetSize << endl;
+	}
+
+	commandChannel->publish((const char*)arr, packetSize);
 	//cout << "I heard: " << to_string(msg->id) << " from NodeID: " << msg->sender << endl;
 }
 
@@ -123,8 +266,7 @@ int main(int argc, char **argv)
 
 	MultiCastReceive mcr;
 	string addr = "224.16.32.40";
-    commandChannel = new MultiCastChannel<MultiCastReceive>(
-			addr, 50000, &MultiCastReceive::callback, &mcr);
+	commandChannel = new MultiCastChannel<MultiCastReceive>(addr, 50000, &MultiCastReceive::callback, &mcr);
 
 	while (ros::ok())
 	{
@@ -143,7 +285,7 @@ int main(int argc, char **argv)
 		 * given as a template parameter to the advertise<>() call, as was done
 		 * in the constructor above.
 		 */
-		cout << "Sending: " << msg.id << endl;
+		//cout << "Sending: " << msg.id << endl;
 		chatter_pub.publish(msg);
 
 		ros::spinOnce();
