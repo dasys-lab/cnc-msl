@@ -57,7 +57,7 @@ PositionHelperDirected::PositionHelperDirected() {
 
 	//Sony Cam
 
-	SystemConfigPtr sc = SystemConfig::getInstance();
+	SystemConfig* sc = SystemConfig::getInstance();
 
 	Configuration *vision = (*sc)["Vision"];
 
@@ -84,15 +84,15 @@ PositionHelperDirected::PositionHelperDirected() {
 
 
 
-	
+
 }
 
 PositionHelperDirected * PositionHelperDirected::getInstance(){
-	
+
 	if(instance == NULL){
 		instance = new PositionHelperDirected();
 	}
-	
+
 	return instance;
 
 }
@@ -123,7 +123,7 @@ Point3D PositionHelperDirected::getPointCam2Point3D(double x, double y, double r
 
 	//p.z = this->camZ - dz;
 
-	double projDist = sqrt(ball_dist*ball_dist - dz*dz); 
+	double projDist = sqrt(ball_dist*ball_dist - dz*dz);
 
 	dx = cos(p.angleHori) * projDist;
 	dy = sin(p.angleHori) * projDist;
@@ -142,7 +142,7 @@ Point PositionHelperDirected::getPointCam2Field(double x, double y) {
 	Point p1;
 
 	p1 = getPointCam2Angle(x, y);
- 
+
 
 	double horizAngle = this->camAngle + p1.x;
 	if(horizAngle >= M_PI/2.0){
@@ -249,7 +249,7 @@ Point3D PositionHelperDirected::getPointCam2Point3DSony(double x, double y, doub
 	double ZCoord_raw = -midY_centered_new;
 	double YCoord_raw = midX_centered_new;
 
-	
+
 	double borderX = fabs(midX_centered) + cos(atan2(fabs(midY_centered), fabs(midX_centered)))*r;
 	double borderY = fabs(midY_centered) + sin(atan2(fabs(midY_centered), fabs(midX_centered)))*r;
 
@@ -308,11 +308,11 @@ Point PositionHelperDirected::getPoint3D2CamSony(double x, double y, double z){
 
 	p = CorrectAngleInv(p);
 	p = NormalizePoint3D(p);
-	
+
 	double factor = DistanceToPixelPlane/p.x;
 	p.x *= factor;
 	p.y *= factor;
-	p.z *= factor;	
+	p.z *= factor;
 
 	double midY_centered_new = -p.z;
 	double midX_centered_new = p.y;
@@ -418,7 +418,7 @@ Point3D PositionHelperDirected::CorrectAngle(Point3D p){
 	ret.z = p.x * sin(alpha) + cos(alpha)*p.z;
 
 	return ret;
-	
+
 }
 
 
@@ -432,7 +432,7 @@ Point3D PositionHelperDirected::CorrectAngleInv(Point3D p){
 	ret.z = p.x * sin(alpha) + cos(alpha)*p.z;
 
 	return ret;
-	
+
 }
 
 

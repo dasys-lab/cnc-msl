@@ -31,8 +31,8 @@
 //#include "../global/Packets.h"
 //#include "PacketHelper.h"
 #include "FootballField.h"
-#include <CNSensorMsgs/BallInfo.h>
-#include <CNSensorMsgs/ObstacleInfo.h>
+#include <msl_sensor_msgs/BallInfo.h>
+#include <msl_sensor_msgs/ObstacleInfo.h>
 #include "SpicaHelper.h"
 
 
@@ -84,7 +84,7 @@ void OpponentHelper::processOpponentBlobs(std::vector<BlobBounds> & potOpponentB
 	std::vector<ObservedPoint> observedPoints;
 	observedPoints.clear();
 
-	for(unsigned int i = 0; i < potOpponentBlobs.size(); i++){ 
+	for(unsigned int i = 0; i < potOpponentBlobs.size(); i++){
 
 		int midX = (potOpponentBlobs[i].top + potOpponentBlobs[i].bottom)/2;
 		int midY = (potOpponentBlobs[i].left + potOpponentBlobs[i].right)/2;
@@ -114,7 +114,7 @@ void OpponentHelper::processOpponentBlobs(std::vector<BlobBounds> & potOpponentB
 	unsigned char * validity = (unsigned char *) malloc(observedPoints.size()*sizeof(unsigned char));
 	unsigned char * assignedPoints = (unsigned char *) malloc(observedPoints.size()*sizeof(unsigned char));
 
-	free(validity);		
+	free(validity);
 	free(assignedPoints);
 */
 }

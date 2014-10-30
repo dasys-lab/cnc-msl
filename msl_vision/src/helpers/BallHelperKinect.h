@@ -45,7 +45,7 @@ class BallHelperKinect {
 	public:
 		BallHelperKinect();
 		~BallHelperKinect();
-	
+
 		void assignCluster(uint16_t*);
 		Point getBallCluster();
 		Point getSimpleBallCluster();
@@ -68,7 +68,7 @@ class BallHelperKinect {
 
 		ObjectContainer ballBuf;
 		MovingObject mv;
-		castor::SystemConfigPtr sc;
+		supplementary::SystemConfig* sc;
 		ObservedPoint * observations;
 
 	private:

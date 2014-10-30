@@ -33,16 +33,16 @@ using std::endl;
 Draw::Draw()
 {
 	cout << "Start Draw Constructor" << endl;
-	
-	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	supplementary::Configuration *vision3D	= (*sc)["Vision3D"];
-	
+
 	cout << "Image" << endl;
 	cout << "\tWidth_";
 	width	= vision3D->get<uint16_t>("Image", "Width", NULL);
 	cout << "\tHeight_";
 	height	= vision3D->get<uint16_t>("Image", "Height", NULL);
-	
+
 	cout << "End Draw Constructor" << endl;
 }
 
@@ -60,19 +60,19 @@ void Draw::Circle(unsigned char *&dst, struct Circle &circ)
 	uint16_t	x		= circ.x + width/2;
 	uint16_t	y		= circ.y + height/2;
 	uint16_t	radius	= circ.radius;
-	
+
 	int32_t	f		= 1 - radius;
 	int32_t	ddF_x	= 0;
 	int32_t	ddF_y	= -2 * radius;
 	int32_t	currX	= 0;
 	int32_t	currY	= radius;
-	
+
 	unsigned char intensity = 0;
 	uint32_t mid = x + y * width;
-	
+
 	if( dst[mid+radius] < 128 )
 		intensity = 255;
-	
+
 	if( radius < width/2 )
 	{
 	  dst[mid+radius]		= intensity;
@@ -83,7 +83,7 @@ void Draw::Circle(unsigned char *&dst, struct Circle &circ)
 	  dst[mid+radius*width]	= intensity;
 	  dst[mid-radius*width]	= intensity;
 	}
-	
+
 	while(currX<currY)
 	{
 		if(f >= 0)
@@ -95,7 +95,7 @@ void Draw::Circle(unsigned char *&dst, struct Circle &circ)
 		currX++;
 		ddF_x += 2;
 		f += ddF_x + 1;
-		
+
 		if( (currX < width/2) && (currY < height/2) )
 		{
 		  dst[mid+currX+currY*width] = intensity;
@@ -118,28 +118,28 @@ void Draw::Circle(unsigned char *&dst, struct Circle &circ)
 void Draw::ScanLine(unsigned char * &dst)
 {
 	unsigned char * ptr = dst;
-	
+
 	uint16_t x;
 	uint16_t y;
 	uint32_t index;
 	uint16_t * lines;
 	uint32_t * linesOffsets;
 	bool thick = false;
-	
+
 	// Inner lines
 	lines 		= ScanLineHelper3D::getLinesInner();
 	linesOffsets	= ScanLineHelper3D::getLinesInnerOffsets();
-	
+
 	// For each line
 	for(uint16_t a = 0; a < ScanLineHelper3D::getNumberLines(); a++)
 	{
 		uint16_t * line = lines + linesOffsets[a];
-		
+
 		for(uint32_t j = linesOffsets[a]; j < linesOffsets[a+1]; j+=2)
 		{
 			x = *line++;
 			y = *line++;
-			
+
 			index = y*width+x;
 			ptr[index] = 255;
 			if (thick)
@@ -151,21 +151,21 @@ void Draw::ScanLine(unsigned char * &dst)
 			}
 		}
 	}
-	
+
 	// Outer lines
 	lines		= ScanLineHelper3D::getLinesOuter();
 	linesOffsets	= ScanLineHelper3D::getLinesOuterOffsets();
-	
+
 	// For each line
 	for(uint16_t a = 0; a < ScanLineHelper3D::getNumberLines(); a++)
 	{
 		uint16_t * line = lines + linesOffsets[a];
-		
+
 		for(uint32_t j = linesOffsets[a] + 2; j < linesOffsets[a+1]; j+=2)
 		{
 			x = *line++;
 			y = *line++;
-			
+
 			index = y*width+x;
 			ptr[index] = 255;
 			if (thick)

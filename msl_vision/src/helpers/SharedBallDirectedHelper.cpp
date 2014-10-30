@@ -33,7 +33,7 @@
 #include "TimeHelper.h"
 #include "Logger.h"
 
-using namespace CNSensorMsgs;
+using namespace msl_sensor_msgs;
 
 SharedBallDirectedHelper *SharedBallDirectedHelper::instance = NULL;
 
@@ -42,7 +42,7 @@ void SharedBallDirectedHelper::handleSharedBallInfo(const SharedBallInfo::ConstP
 	// TODO: Handle SharedBallInfo
 
 	boost::mutex::scoped_lock(this->mutex);
-	
+
 	printf("Received SharedBall %f %f %f %d\n", message->point.x, message->point.y, message->confidence, message->evidence);
 
 	ball.x = message->point.x;
@@ -91,6 +91,6 @@ void SharedBallDirectedHelper::cleanup(){
 SharedBall SharedBallDirectedHelper::getBall(){
 
 	boost::mutex::scoped_lock(this->mutex);
-	return ball;	
+	return ball;
 
 }

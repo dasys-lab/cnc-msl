@@ -37,13 +37,13 @@ using std::ifstream;
 FilterExtractImages::FilterExtractImages()
 {
 	cout << "Start FilterExtractImages Constructor" << endl;
-	
-	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
-	
+
 	lTsize	= 256*256;
 	lTUVYsize	= 256*256*256;
-	
+
 	cout << "Image" << endl;
 	cout << "\tWidth_";
 	width	= vision3D->get<uint16_t>("Image", "Width", NULL);
@@ -60,15 +60,15 @@ FilterExtractImages::FilterExtractImages()
 	oRadiusStart	= vision3D->get<uint16_t>("ScanLines", "OuterRadiusStart", NULL);
 	cout << "\tOuterRadiusEnd_";
 	oRadiusEnd	= vision3D->get<uint16_t>("ScanLines", "OuterRadiusEnd", NULL);
-	
+
 	/// Memory Alloc
 	grayImage	= new unsigned char [width*height];
 	uvImage	= new unsigned char [width*height*2];
-	
+
 	/// Setup lookupTableUVY
 	lookupTableUVY	= new unsigned char [lTUVYsize];
 	if(lookupTableUVY == NULL)	cout << "lookupTableuvy = null!!!" << endl;
-	
+
 	for(int y=0; y<256; y++)
 	{
 		for(int u=0; u<256; u++)
@@ -82,18 +82,18 @@ FilterExtractImages::FilterExtractImages()
 			}
 		}
 	}
-	
+
 	/// Setup lookupTable
 	lookupTable	= new unsigned char [lTsize];
 	if(lookupTable == NULL)	cout << "lookupTable = null!!!" << endl;
-	
+
 	init();
-	
+
 	string filename = string(sc->getConfigPath())+string("/LookupTable");
 	ifstream ifs(filename.c_str());
-	
+
 	double t;
-	
+
 	for(int u=0; u<256; u++)
 	{
 		for(int v=255; v>=0; v--)
@@ -102,7 +102,7 @@ FilterExtractImages::FilterExtractImages()
 			lookupTable[u*256+v] = (unsigned char) t;
 		}
 	}
-	
+
 	ifs.close();
 
 	cout << "End FilterExtractImages Constructor" << endl;
@@ -112,7 +112,7 @@ FilterExtractImages::FilterExtractImages()
 FilterExtractImages::~FilterExtractImages()
 {
 	cout << "Destructor of FilterExtractImages" << endl;;
-	
+
 	if(uvImage != NULL)			delete[] uvImage;
 	if(grayImage != NULL)		delete[] grayImage;
 	if(lookupTable != NULL)		delete[] lookupTable;
@@ -124,7 +124,7 @@ bool FilterExtractImages::setLookupTableValue( const uint32_t index, const unsig
 {
 	if(index>=lTsize)
 		return 0;
-	
+
 	lookupTable[index] = value;
 	return 1;
 }
@@ -133,7 +133,7 @@ bool FilterExtractImages::setLookupTableUVYValue(uint32_t const index, unsigned 
 {
 	if(index>=lTUVYsize)
 		return 0;
-	
+
 	lookupTableUVY[index] = value;
 	return 1;
 }
@@ -158,13 +158,13 @@ void FilterExtractImages::process(unsigned char * &src, unsigned char * &grayIma
 	unsigned char *grayPointer	= grayImage;
 	unsigned char *uvPointer		= uvImage;
 	unsigned char *ptr			= src;
-	
+
 	register unsigned char u = 0;
 	register unsigned char y = 0;
 	register unsigned char v = 0;
 	register int color;
-	
-	
+
+
 	for(uint16_t i = 0; i<height; i++)
 	{
 		for(uint16_t j = 0; j<width; j++)
@@ -172,17 +172,17 @@ void FilterExtractImages::process(unsigned char * &src, unsigned char * &grayIma
 			/* Get uv */
 			if(j%2==0)	u = *ptr++;
 			else		v = *ptr++;
-			
+
 			/* Calculate color */
 			color = u*256 + v;
-			
+
 			/* Store uv */
 			if(y <= 220)	*uvPointer++ = lookupTable[color];
 			else			*uvPointer++ = 0;
-			
+
 			/* Get gray */
 			y = *ptr++;
-			
+
 			/* Store gray */
 			*grayPointer++ = y;
 		}
@@ -196,7 +196,7 @@ void FilterExtractImages::init()
 {
 	int center = 128;
 	double angle = atan2(150 - center, 70 - center);
-	
+
 	for(int u = 0; u < 256; u++){
 		for(int v = 0; v < 256; v ++)
 		{
@@ -206,18 +206,18 @@ void FilterExtractImages::init()
 			if(diffAngle > M_PI)
 				diffAngle = fabs(diffAngle - 2.0*M_PI);
 			value -= (int) lrint(7.5*diffAngle*180.0/M_PI*(0.3*distance + 1.0));
-			
+
 			int value2 = 0;//(int) lrint( (((double)(pow(v, 1.8)-u))/64.0)-0.1*diffAngle*(180.0/M_PI) );
-			
+
 			if(value2 > value)
 				value = value2;
-			
+
 			if(value < 0)
 				value = 0;
 			if(value > 255)
 				value = 255;
-			
-			lookupTable[u*256 + v] = (unsigned char) value; 
+
+			lookupTable[u*256 + v] = (unsigned char) value;
 		}
 	}
 }

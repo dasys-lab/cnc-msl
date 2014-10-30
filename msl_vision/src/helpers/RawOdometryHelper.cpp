@@ -31,7 +31,7 @@
 #include "TimeHelper.h"
 #include "Logger.h"
 
-using namespace CNActuatorMsgs;
+using namespace msl_actuator_msgs;
 
 RawOdometryHelper * RawOdometryHelper::instance_ = NULL;
 
@@ -42,8 +42,8 @@ RawOdometryHelper * RawOdometryHelper::getInstance(){
 }
 
 
-void RawOdometryHelper::handleRawOdometryInfo(const CNActuatorMsgs::RawOdometryInfo::ConstPtr& message) {
-	
+void RawOdometryHelper::handleRawOdometryInfo(const msl_actuator_msgs::RawOdometryInfo::ConstPtr& message) {
+
 printf("GOT MSG RawOdometry\n");
 	printf("1234567891 x: %f y: %f heading: %f %lld\n", message->position.x, message->position.y, message->position.angle, message->timestamp);
 
@@ -237,7 +237,7 @@ Position RawOdometryHelper::getPositionData(unsigned long long time){
 		unsigned long long timeDiff = TimeHelper::getTimeDiff(time,timestampBuffer[i]);
 		if(timeDiff < minDiff){
 			minDiff = timeDiff;
-			minIndex = i;	
+			minIndex = i;
 		}
 	}
 
@@ -267,7 +267,7 @@ Position RawOdometryHelper::updatePositionWithOdoData(Position pos){
 		if(previousIndex < 0)
 			previousIndex += RAWODOBUFSIZE;
 
-		Position update = getPosDiffVector(positionBuffer[currIndex], positionBuffer[previousIndex]);		
+		Position update = getPosDiffVector(positionBuffer[currIndex], positionBuffer[previousIndex]);
 
 		retPos = updatePositionWithVector(retPos, update.x, update.y, update.heading, positionBuffer[previousIndex]);
 
@@ -283,9 +283,9 @@ Position RawOdometryHelper::updatePositionWithOdoData(Position pos){
 		int previousIndex = odoIndex - 1;
 		if(previousIndex < 0)
 			previousIndex += RAWODOBUFSIZE;
-		
-		Position update = getPosDiffVector(positionBuffer[odoIndex], positionBuffer[previousIndex]);		
-		
+
+		Position update = getPosDiffVector(positionBuffer[odoIndex], positionBuffer[previousIndex]);
+
 		retPos = updatePositionWithVector(retPos, update.x, update.y, update.heading, positionBuffer[previousIndex]);
 
 	}
@@ -327,7 +327,7 @@ Position RawOdometryHelper::updatePositionWithVector(Position pos, double deltaX
 
 	double newDeltaX = cos(rotAngle)*deltaX - sin(rotAngle)*deltaY;
 	double newDeltaY = sin(rotAngle)*deltaX + cos(rotAngle)*deltaY;
-	
+
 	//printf("UP: newV deltaX: %f deltaY: %f\n", newDeltaX, newDeltaY);
 
 	retPos.x += newDeltaX;
@@ -384,7 +384,7 @@ Point RawOdometryHelper::ego2Allo(Point p, Position pos){
 	allo.x += cos(pos.heading)*p.x - sin(pos.heading)*p.y;
 	allo.y += sin(pos.heading)*p.x + cos(pos.heading)*p.y;
 
-	return allo; 
+	return allo;
 
 }
 
@@ -412,7 +412,7 @@ Point RawOdometryHelper::allo2Ego(Point p, Position pos){
 Velocity RawOdometryHelper::ego2Allo(Velocity vel, Position pos){
 
 	Velocity allo;
-			
+
 	allo.vx = cos(pos.heading)*vel.vx - sin(pos.heading)*vel.vy;
 	allo.vy = sin(pos.heading)*vel.vx + cos(pos.heading)*vel.vy;
 
@@ -459,14 +459,14 @@ int RawOdometryHelper::getVisionIndex(){
 		unsigned long long timeDiff = TimeHelper::getInstance()->getTimeDiffToOmniCam(timestampBuffer[i]);
 		if(timeDiff < minDiff){
 			minDiff = timeDiff;
-			minIndex = i;	
+			minIndex = i;
 		}
 	}
 
 	printf("1234567891 %lld\n", TimeHelper::getInstance()->getVisionTimeOmniCam());
 
 	if(minDiff >= 10000000){
-		
+
 		printf("1234567891 RawOdometryHelper: Something going wrong with Odometry - using odoIndex\n");
 		return odoIndex;
 	}

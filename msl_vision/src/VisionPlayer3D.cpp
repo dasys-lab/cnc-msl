@@ -129,7 +129,7 @@ int main(int argc,char **argv)
 {
 	// Check the arguments, set the flags and print the help.
 	checkArg(argc, argv);
-	
+
 	// Initialize classes
 	if(panno)
 	{
@@ -143,14 +143,14 @@ int main(int argc,char **argv)
 	}
 	linePoints3D	= new FilterLinePoints3D;
 	draw			= new Draw;
-	
+
 // 	ros::init(argc, argv, "CNVision3D");
 	SpicaHelper::initialize();
-	
+
 	FILE *launch;
-	
+
 	initial();
-	
+
 	if(online)
 	{
 		if(color)
@@ -162,7 +162,7 @@ int main(int argc,char **argv)
 			sub = SpicaHelper::visionNode->subscribe("camera/image_rect_color", 10, vision);
 		else
 			sub = SpicaHelper::visionNode->subscribe("camera/image_rect", 10, vision);
-		
+
 		// Start the loop.
 		while(ros::ok())
 		{
@@ -176,34 +176,34 @@ int main(int argc,char **argv)
 			offlineImg = new unsigned char [width*height*2];
 		else
 			offlineImg = new unsigned char [width*height];
-		
+
 		// Start loop.
 		while(ros::ok())
 		{
 			// Read image.
 			readImage(offlineImg);
-			
+
 			// Start algorithm.
 			algo(offlineImg);
 		}
-		
+
 		// Deallocate Memory.
 		if(offlineImg != NULL)	delete[] offlineImg;
 	}
-	
+
 	printf("\n\nRos is not OK!!!\n\n");
-	
-	if(launch != NULL)	pclose(launch);	
-	
+
+	if(launch != NULL)	pclose(launch);
+
 	release();
 }
 
 
 void vision(const sensor_msgs::Image::ConstPtr &img)
-{	
+{
 	printf("Encoding format: %s\n\n", img->encoding.c_str());
 	uint32_t counter = 0;
-	
+
 	if(color)
 	{
 		// Convert RGB to YUV422
@@ -241,7 +241,7 @@ void vision(const sensor_msgs::Image::ConstPtr &img)
 			}
 		}
 	}
-	
+
 	algo(img_);
 }
 
@@ -250,19 +250,19 @@ void algo(unsigned char * &rawFrame)
 {
 	/// Rise FrameCoutner.
 	frameCounter++;
-	
-	
+
+
 	/// Get time
 	gettimeofday(&tvBefore, NULL);
-	
-	
+
+
 	/// Extrat UV and gray image
 	cout << "DEBUG filterExtractImages" << endl;
 	if(color)
 		extractImages->process(rawFrame, imageGray, imageUV);
 	else
 		imageGray = rawFrame;
-	
+
 	if(panno)
 	{
 		/// Extract gray Panno image
@@ -272,11 +272,11 @@ void algo(unsigned char * &rawFrame)
 		color = false;		// HACK
 		extractPannoLineImage->process(imagePanno, pannoLine);
 		color = temp;		// HACK
-		
+
 		linePoints3D->panno(imagePanno, pannoLine, innerSize, outerSize);
 		xvDisplayPanno->displayFrameGRAY(imagePanno);
 	}
-	
+
 	/// Log images for offline mode
 	if(logFlag)
 	{
@@ -285,29 +285,29 @@ void algo(unsigned char * &rawFrame)
 			logImage(rawFrame);
 		return;
 	}
-	
-	
+
+
 	/// Draw Scan Line
 	if(printScanLines)
 	{
 		cout << "DEBUG draw.Line" << endl;
 		draw->ScanLine(imageGray);
 	}
-	
-	
+
+
 	/// Extract lines out of YUV image
 	cout << "DEBUG filterExtractLineImage" << endl;
 	extractLineImage->process(rawFrame, imageLine);
-	
-	
+
+
 	/// Filter 3D Line Points
 //	if(!ssh || (ssh && !(frameCounter%100)))
 	if(!panno)
 	{
 		linePoints3D->process(imageGray, imageLine);
 	}
-	
-	
+
+
 	/// Draw mirror borders
 	if(drawBorders)
 	{
@@ -330,20 +330,20 @@ void algo(unsigned char * &rawFrame)
 		draw->Circle(imageGray, c2);
 		draw->Circle(imageGray, c3);
 		draw->Circle(imageGray, c4);
-	}	
-	
+	}
+
 	/// Center Marker
-	cout << "DEBUG Center marker" << endl;	
+	cout << "DEBUG Center marker" << endl;
 	imageGray[imageCenterX+imageCenterY*width] = 128;
 	imageGray[imageCenterX+imageCenterY*width-1] = 128;
 	imageGray[imageCenterX+imageCenterY*width-width] = 128;
 	imageGray[imageCenterX+imageCenterY*width-width-1] = 128;
-	
-	
+
+
 	/// Get titan braces
 // 	filterTitanBraces.process(imageGray);
-	
-	
+
+
 	/// Timemeasure
 	gettimeofday(&tvAfter, NULL);
 	timediff = tvAfter.tv_usec - tvBefore.tv_usec;
@@ -359,7 +359,7 @@ void algo(unsigned char * &rawFrame)
 		printf("Sleep for %ld microseconds\n\n", timediff);
 		usleep(timediff);
 	}
-	
+
 	/// Display Images
 	printf("Stage 14: Show Images\n");
 	if((xvDisplayGray != NULL) && (!ssh || (ssh && frameCounter%33==0)))// <-- for ssh
@@ -380,11 +380,11 @@ void algo(unsigned char * &rawFrame)
 	{
  		xvDisplayYUV->displayFrameYUV(rawFrame);
 	}
-	
+
 	// Pause offline player
 // 	if(!online)
 // 		usleep(15000);
-		
+
 	if( fixed_image )
 	{
 		usleep(100);
@@ -452,7 +452,7 @@ void checkArg (int &argc, char **&argv)
 			cout << "Something wrong with your argument " << argv[i] << endl;
 		}
 	}
-	
+
 	if(help)
 	{
 		printf("\nOptions for VisionPlayer3D:\n\n");
@@ -469,7 +469,7 @@ void checkArg (int &argc, char **&argv)
 		printf("--rgb:\t Print the rgb image; Only works with \"--color\", which have to be decleared before.\n");
 		printf("--scanlines:\t Print the scan lines.\n");
 		printf("--ssh:\t\t Less image publishing.\n");
-		
+
 		exit(EXIT_SUCCESS);
 	}
 }
@@ -481,9 +481,9 @@ void checkArg (int &argc, char **&argv)
 void initial (void)
 {
 	// Initialize the vision config files.
-	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	supplementary::Configuration * vision3D = (*sc)["Vision3D"];
-	
+
 	cout << "Image";
 	cout << "\tWidth_";
 	width	= vision3D->get<uint16_t>("Image", "Width", NULL);
@@ -496,7 +496,7 @@ void initial (void)
 
 	imageCenterX = width/2 + imageOffsetX;
 	imageCenterY = height/2 + imageOffsetY;
-	
+
 	cout << "ScanLines" << endl;
 	cout << "\tInnerRadiusStart_";
 	innerRadiusStart	= vision3D->get<uint16_t>("ScanLines", "InnerRadiusStart", NULL);
@@ -506,7 +506,7 @@ void initial (void)
 	outerRadiusEnd		= vision3D->get<uint16_t>("ScanLines", "OuterRadiusEnd", NULL);
 	cout << "\tOuterRadiusStart_";
 	outerRadiusStart	= vision3D->get<uint16_t>("ScanLines", "OuterRadiusStart", NULL);
-	
+
 	// Allocate memory for images.
 	if(color)
 		img_	= new unsigned char [width*height*2];
@@ -541,7 +541,7 @@ void release(void )
 void readImage( unsigned char *&output )
 {
 	static int16_t imCounter = fixed_number;
-	
+
 	/* Get filename and path */
 	char filename[256];
 	sprintf(filename, "/log-image-%04d.raw", imCounter);
@@ -549,11 +549,11 @@ void readImage( unsigned char *&output )
 	strcpy(path, getenv("VISION_LOG"));
 	char * path_filename = strcat(path, filename);
 
-	
+
 	printf("Processing LogFile: %s\n", path_filename);
-	
+
 	logfile = fopen(path_filename, "r");
-	
+
 	if(logfile != NULL)
 	{
 		if(color)
@@ -565,20 +565,20 @@ void readImage( unsigned char *&output )
 	else
 	{
 		printf("Log file not found ... Restarting\n");
-		
+
 		/* Reset counter */
 		imCounter = 1;
-		
+
 		/* Get filename and path */
 		char filename[256];
 		sprintf(filename, "/log-image-%04d.raw", imCounter);
 		char path[256];
 		strcpy(path, getenv("VISION_LOG"));
 		char * path_filename = strcat(path, filename);
-		
+
 		/* Open logfile */
 		logfile = fopen(path_filename, "r");
-		
+
 		/* Check logfile */
 		if(logfile != NULL)
 		{
@@ -606,20 +606,20 @@ void logImage( unsigned char * &image )
 {
 	char filename[256];
 	char path[256];
-	
+
 	strcpy(path, getenv("VISION_LOG"));
 	sprintf(filename, "/log-image-%04d.raw", writeCounter);
 	char * path_filename = strcat(path, filename);
-	
+
 	FILE * logfile = fopen(path_filename, "w");
-	
+
 	if(color)
 		fwrite(image, sizeof(char), width*height*2, logfile);
 	else
 		fwrite(image, sizeof(char), width*height, logfile);
-	
+
 	fclose(logfile);
-	
+
 	writeCounter++;
 }
 

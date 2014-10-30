@@ -28,6 +28,7 @@
 #include "CoxLocalization.h"
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 #include <utility>
 
 namespace Cox
@@ -248,7 +249,7 @@ namespace Cox
       transform_scan(cur_pose);
       get_cumulative_error(gradient, cur_pose);
       rprob(cur_pose, gradient, former_gradient, stepsize);
-      
+
     }
     float middle = 0.0;
 
@@ -279,8 +280,11 @@ namespace Cox
     for (unsigned int iterations = 0; iterations < 1000; iterations++)
     {
       pose_vector.clear();
-      int x = (rand() % ( abs( __lut.get_max_x() - __lut.get_min_x() ) )) - abs(__lut.get_min_x()) ;
-      int y = (rand() % ( abs( __lut.get_max_y() - __lut.get_min_y() ) )) - abs(__lut.get_min_y()) ;
+      // TODO(Stopfer):once here there were these two lines, but then they did not compile anymore?!
+      //int x = (rand() % abs( __lut.get_max_x() - __lut.get_min_x() )) - abs(__lut.get_min_x()) ;
+      //int y = (rand() % abs( __lut.get_max_y() - __lut.get_min_y() )) - abs(__lut.get_min_y()) ;
+      int x = (fmod(rand(), abs( __lut.get_max_x() - __lut.get_min_x() ))) - abs(__lut.get_min_x()) ;
+      int y = (fmod(rand(), abs( __lut.get_max_y() - __lut.get_min_y() ))) - abs(__lut.get_min_y()) ;
 //      float phi = (float((rand() % 2*314)) - 314) / 100;
       float phi = pose_init.phi;
       pose_vector.push_back(x);
@@ -362,8 +366,8 @@ namespace Cox
     __xy_2nd_threshold = xy;
     __phi_2nd_threshold = phi;
   }
-  
 
-  
+
+
 
 } //END: namespace Cox

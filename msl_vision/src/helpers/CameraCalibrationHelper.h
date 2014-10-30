@@ -2,8 +2,8 @@
 #define CameraCalibrationHelper_h
 
 #include "ros/ros.h"
-#include <CNSensorMsgs/CameraSettings.h>
-#include <CNSensorMsgs/CameraSettingsRequest.h>
+#include <msl_sensor_msgs/CameraSettings.h>
+#include <msl_sensor_msgs/CameraSettingsRequest.h>
 
 namespace CameraCalibration {
     class Settings {
@@ -32,7 +32,7 @@ namespace CameraCalibration {
         static bool setSettings;
         static Settings* cameraSettings;
 
-        static CNSensorMsgs::CameraSettings* cameraSettingsMsgs;
+        static msl_sensor_msgs::CameraSettings* cameraSettingsMsgs;
 
         static ros::Publisher settingPub;
         static ros::Subscriber settingSub;
@@ -40,8 +40,8 @@ namespace CameraCalibration {
         static ros::NodeHandle* visionNode;
 
         static void sendSettings(Settings* settings);
-        static void handleCameraSettings(const CNSensorMsgs::CameraSettings::ConstPtr& msg);
-        static void handleCameraSettingsRequest(const CNSensorMsgs::CameraSettingsRequest::ConstPtr& msg);
+        static void handleCameraSettings(const msl_sensor_msgs::CameraSettings::ConstPtr& msg);
+        static void handleCameraSettingsRequest(const msl_sensor_msgs::CameraSettingsRequest::ConstPtr& msg);
     };
 }
 

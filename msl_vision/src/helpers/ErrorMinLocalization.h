@@ -11,7 +11,7 @@
 #include "LineDistanceHelper.h"
 #include "ParticleFilter.h"
 #include <iostream>
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 //#include <CorrectedOdometryCovInfo.h> // merge to dev
 #include "SharedMemoryHelper.h"
 
@@ -27,7 +27,7 @@ namespace redwolf {
 			Cox::field_pose_t pos2pose(Position pos);
 			Position pose2pos(Cox::field_pose_t pose);
 			void writeCoi();
-		
+
 		protected:
 			unsigned long long lastIteration;
 			RawOdometryHelper *rawOdometryHelper;
@@ -46,9 +46,9 @@ namespace redwolf {
 			MovingRobot mr;
 			MovingRobot mrOld;
 			//CorrectedOdometryCovInfoPtr coi;
-			CNSensorMsgs::CorrectedOdometryInfo coi;
+			msl_sensor_msgs::CorrectedOdometryInfo coi;
 
-			
+
 
 	};
 }

@@ -24,7 +24,7 @@
 #define Logger_H
 
 #include <boost/thread/mutex.hpp>
-#include <CNActuatorMsgs/RawOdometryInfo.h>
+#include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +57,7 @@ class Logger{
 		Logger();
 
 		static Logger * instance_;
-		
+
 		void init();
 		void cleanup();
 

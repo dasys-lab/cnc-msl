@@ -32,7 +32,7 @@
 #include "Logger.h"
 
 
-using namespace CNSensorMsgs;
+using namespace msl_sensor_msgs;
 
 CompassValueHelper * CompassValueHelper::instance_ = NULL;
 
@@ -47,7 +47,7 @@ CompassValueHelper * CompassValueHelper::getInstance(){
 
 void CompassValueHelper::handleCompassInfo(const CompassInfo::ConstPtr& message) {
 
-	
+
 	printf("GOT COMPASS VALUE %ld\n", message->value);
 
 	integrateData(message->value);
@@ -68,7 +68,7 @@ CompassValueHelper::CompassValueHelper() : mutex() {
 	char * envVariable = getenv("VISION_FORCE");
 	if(envVariable != NULL)
 		workWithoutCompass = true;
-		
+
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 

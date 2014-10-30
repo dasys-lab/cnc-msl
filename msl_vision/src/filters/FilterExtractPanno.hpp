@@ -30,18 +30,18 @@
 #include "../XVDisplay.h"
 
 using namespace std;
-using namespace castor;
+using namespace supplementary;
 
 class FilterExtractPanno
 {
 	public:
 		FilterExtractPanno(ImageSize &innerSize, ImageSize &outerSize, ImageSize &pannoSize);
 		~FilterExtractPanno();
-		
+
 		void process(unsigned char *&src, unsigned char *&inner, unsigned char *&outer, unsigned char *&panno);
 		uint16_t * getInnerTrafo() 	{	return innerPannoTrafo;	};
 		uint16_t * getOuterTrafo()	{	return outerPannoTrafo;	};
-		
+
 	protected:
 		uint16_t width;
 		uint16_t height;
@@ -50,21 +50,21 @@ class FilterExtractPanno
 		uint16_t pHeight;
 		uint16_t pHeightInner;
 		uint16_t pHeightOuter;
-		
-		SystemConfigPtr sc;
-		
+
+		SystemConfig* sc;
+
 		uint16_t iRadiusStart;
 		uint16_t iRadiusEnd;
 		uint16_t oRadiusStart;
 		uint16_t oRadiusEnd;
 		uint16_t iRadiusOffset;
-		
+
 		unsigned char * pannoImage;
 		unsigned char * innerPanno;
 		uint16_t * innerPannoTrafo;
 		unsigned char * outerPanno;
 		uint16_t * outerPannoTrafo;
-		
+
 		XVDisplay *pannoDisplay;
 };
 

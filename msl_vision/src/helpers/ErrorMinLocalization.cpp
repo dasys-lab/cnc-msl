@@ -3,11 +3,11 @@
 #include "SpicaHelper.h"
 #include "TimeHelper.h"
 #include "EgoMotionEstimator.h"
-#include <CNMessages/MotionInfo.h>
-#include <CNMessages/PositionInfo.h>
-#include <CNSensorMsgs/LocalizationType.h>
+#include <msl_msgs/MotionInfo.h>
+#include <msl_msgs/PositionInfo.h>
+#include <msl_sensor_msgs/LocalizationType.h>
 
-using namespace CNMessages;
+using namespace msl_msgs;
 
 
 namespace redwolf {
@@ -15,7 +15,7 @@ namespace redwolf {
 	ErrorMinLocalization::ErrorMinLocalization()
 	{
 		rawOdometryHelper = RawOdometryHelper::getInstance();
-		
+
 		fieldLines = getLines();
 
 		fieldCircles = getCircles();
@@ -24,7 +24,7 @@ namespace redwolf {
 		bufferInitPosition.x = 0.0;
 		bufferInitPosition.y = 0.0;
 		bufferInitPosition.heading = 0.0;
-		
+
 		for(int i = 0; i < RAWODOBUFSIZE; i++){
 			positionBuffer[i] = bufferInitPosition;
 			timestampBuffer[i] = 0;
@@ -57,7 +57,7 @@ namespace redwolf {
 	}
 
 	//double calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, unsigned char * linePointsInvalidity, int invCounter);
-		
+
 //	CorrectedOdometryInfoPtr coi = CorrectedOdometryInfo::create();
 	WeightedPosition ErrorMinLocalization::estimatedPosition(Position curPos, std::vector<LinePoint> lp, LineDistanceHelper & lineDistHelper)
 	{
@@ -65,9 +65,9 @@ namespace redwolf {
 		WeightedPosition weightPos;
 		Cox::line_points_t detectedLP;
 		linePoint2linePointst(lp, detectedLP);
-		
+
 		Cox::field_pose_t pose = pos2pose(curPos);
-		
+
 		Position pos1 = rawOdometryHelper->getPositionData(lastIteration);
 		Position pos2 = rawOdometryHelper->getPositionData();
 
@@ -77,22 +77,22 @@ namespace redwolf {
 		updatePos.heading = pos2.heading - pos1.heading;
 		if(updatePos.heading > M_PI) updatePos.heading -= 2.0*M_PI;
 		if(updatePos.heading < -M_PI) updatePos.heading += 2.0*M_PI;
-		
+
 		//updatePos.x = 0.0;
 		//updatePos.y = 0.0;
-		//updatePos.heading = 0.0;		
-		
+		//updatePos.heading = 0.0;
+
 		Cox::field_pose_t rawPose = pos2pose(updatePos);
 		float dphi = pose.phi + rawPose.phi;
 		float dr = rawPose.x;
 		float ds = rawPose.y;
-		
+
 //		float phi2 = pose.phi - rawPose.phi;
 		if(dphi < -M_PI)
 			dphi += 2.0*M_PI;
 		if(dphi > M_PI)
 			dphi -= 2.0*M_PI;
-		
+
 		pose.x +=  dr * cos(dphi) + ds * -sin(dphi);
 		pose.y +=  dr * sin(dphi) + ds * cos(dphi);
 		pose.phi = dphi;
@@ -103,10 +103,10 @@ namespace redwolf {
 			pose.phi += 2.0*M_PI;
 		Cox::field_pose_t oldPos = pose;
 		coxLoc->get_pose(pose, detectedLP );
-		
+
 		//if (pose.x > FootballField::FieldLength/2+maxOverLines || pose.x< -FootballField::FieldLength/2-maxOverLines || pose.y > FootballField::FieldWidth/2+maxOverLines || pose.y < -FootballField::FieldWidth/2-maxOverLines) coxLoc->global_localization(oldPos, detectedLP);
 		Position newPosition = pose2pos(pose);
-		
+
 		// initialize buffer (ball velocity)
 		if(bufferInitialized){
 			integrationIndex++;
@@ -126,12 +126,12 @@ namespace redwolf {
 		mrOld = mr;
 
 		mr = estimator->trackObject(positionBuffer, timestampBuffer, RAWODOBUFSIZE, integrationIndex, 0.4E07);
-		
+
 
 
 		PositionInfo robotPosition;
 		MotionInfo robotVelocity;
-	
+
 		robotPosition.x = (newPosition.x);
 		robotPosition.y = (newPosition.y);
 		robotPosition.angle = (newPosition.heading);
@@ -147,47 +147,47 @@ namespace redwolf {
 		robotVelocity.translation = (sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy));
 		robotVelocity.rotation = (mr.velocity.w);
 		robotVelocity.angle = (atan2(mr.velocity.vy, mr.velocity.vx));
-	
 
-	
-	
-	
+
+
+
+
 		std::vector<LinePoint>::const_iterator first, last = lp.end();
 
 		int invCounter = 0;
 		unsigned char * linePointsInvalidity = (unsigned char *) malloc(lp.size());
 		memset((void *) linePointsInvalidity, 0, lp.size());
-		
-		if((fabs(newPosition.x) > FootballField::FieldLength/2.0 - 2000.0 || fabs(newPosition.y) > FootballField::FieldWidth/2.0 - 2000.0)) 
+
+		if((fabs(newPosition.x) > FootballField::FieldLength/2.0 - 2000.0 || fabs(newPosition.y) > FootballField::FieldWidth/2.0 - 2000.0))
 		{
-		
-		
+
+
 			double cos_ = cos(newPosition.heading);
 			double sin_ = sin(newPosition.heading);
-		
+
 			int invIndex = 0;
 
 
 			for(first = lp.begin(); first != last; ++first)
 			{
 
-	
-	
+
+
 				double realx = newPosition.x + cos_*(first->x) - sin_*(first->y);
 				double realy = newPosition.y + sin_*(first->x) + cos_*(first->y);
 				if(fabs(realx) > (FootballField::FieldLength/2.0 + 800.0) || fabs(realy) > (FootballField::FieldWidth/2.0 + 800.0) ){
 					linePointsInvalidity[invIndex] = 1;
 					invCounter++;
-				
+
 
 				}
-				invIndex++;	
+				invIndex++;
 
 			}
 
 		}
 
-		
+
 		weightPos.x = newPosition.x;
 		weightPos.y = newPosition.y;
 		weightPos.heading = newPosition.heading;
@@ -195,8 +195,8 @@ namespace redwolf {
 		coi.position = (robotPosition);
 		coi.motion = (robotVelocity);
 		coi.certainty = (weightPos.weight);
-		coi.locType.type = (CNSensorMsgs::LocalizationType::ErrorMin);
-		
+		coi.locType.type = (msl_sensor_msgs::LocalizationType::ErrorMin);
+
 
 		//Corrected Odometry for Directed Camera
 		CorrectedOdometry corrOdo;
@@ -208,26 +208,26 @@ namespace redwolf {
 
 		/*CovMatrix3DPtr covMatrix = CovMatrix3D::create();
 		boost::shared_ptr<std::vector<double> > covariances = boost::shared_ptr<std::vector<double> >(new std::vector<double>);
-		
+
 		for(int i = 0; i < 9; i++){
-			covariances->push_back(0.0);			
+			covariances->push_back(0.0);
 		}
-		
+
 		(*covariances)[0] = 3.0*180.0/M_PI*3.0*180.0/M_PI;
 		(*covariances)[4] = 150.0*150.0;
 		(*covariances)[8] = 150.0*150.0;
-		
+
 		covMatrix->setValues(covariances);
-		
+
 		coi->setCovarianceMatrix(covMatrix);
 */
-		
-//double calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, unsigned char * linePointsInvalidity, int invCounter);		
-	
+
+//double calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, unsigned char * linePointsInvalidity, int invCounter);
+
 		BallIntegrator::getInstance()->setRefPosition(newPosition);
 
 		lastIteration = TimeHelper::getInstance()->getVisionTimeOmniCam();
-		
+
 		return weightPos;
 
 
@@ -235,7 +235,7 @@ namespace redwolf {
 
 	void ErrorMinLocalization::writeCoi()
 	{
-		
+
 		//printf("Gain NewLoc ErrorMin im WM\n");
 		unsigned long long timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
                 coi.timestamp =(timestamp);
@@ -250,7 +250,7 @@ namespace redwolf {
 		//mid circle
 		field_circles.push_back(Cox::circle_t(FootballField::MiddleCircleRadius, 0, 0));
 		//cornercircles
-		if (FootballField::CornerCircleExists) 
+		if (FootballField::CornerCircleExists)
 		{
 			field_circles.push_back(Cox::circle_t(FootballField::CornerCircleRadius, FootballField::FieldLength/2, FootballField::FieldWidth/2));
 			field_circles.push_back(Cox::circle_t(FootballField::CornerCircleRadius, FootballField::FieldLength/2, -FootballField::FieldWidth/2));
@@ -260,16 +260,16 @@ namespace redwolf {
 		std::cout<<"NewLoc nr of circles "<<field_circles.size()<<std::endl;
 		return field_circles;
 	}
-	
+
 	Cox::field_lines_t ErrorMinLocalization::getLines()
 	{
 
 		Cox::field_lines_t lines;
 		int start_x, start_y, end_x, end_y;
-		
-		
-		
-		//field lines	
+
+
+
+		//field lines
 		start_x = FootballField::FieldLength/2;
 		start_y = FootballField::FieldWidth/2;
 		end_x = FootballField::FieldLength/2;
@@ -306,7 +306,7 @@ namespace redwolf {
 		std::cout<<"NewLoc ("<<start_x<<","<<start_y<<") "<<"("<<end_x<<","<<end_y<<") "<<std::endl;
 		lines.push_back(Cox::Line2D(start_x,start_y,end_x,end_y));
 
-		//goal left 6	
+		//goal left 6
 		start_x =  -FootballField::FieldLength/2;
 		start_y =  -FootballField::GoalInnerAreaLength/2;
 		end_x 	=  -FootballField::FieldLength/2 + FootballField::GoalInnerAreaWidth;

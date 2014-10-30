@@ -1,11 +1,11 @@
 #include "ExtensionDirectedHelper.h"
-#include <CNActuatorMsgs/KickControl.h>
+#include <msl_actuator_msgs/KickControl.h>
 #include "SpicaDirectedHelper.h"
 #include "SpicaHelper.h"
 
 #define BUF_SIZE 500
 
-using namespace CNActuatorMsgs;
+using namespace msl_actuator_msgs;
 
 //SpicaDirectedHelper ExtensionDirectedHelper::helper;
 //CommunicationPtr ExtensionDirectedHelper::comm(Communication::getInstance());

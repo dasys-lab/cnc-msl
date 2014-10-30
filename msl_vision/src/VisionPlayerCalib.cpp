@@ -135,7 +135,7 @@ int main(int argc,char *argv[]){
 
 	std::cout << "DEBUG: Camera Resolution: " << imagesize_.width << " x " << imagesize_.height << std::endl;
 
-	SystemConfigPtr sc;
+	SystemConfig* sc;
 
 	try {
 
@@ -510,7 +510,7 @@ int main(int argc,char *argv[]){
 
 			printf("Stage 1: Image precomputation\n");
 
-			
+
 			if(softhdr) {
 				currRealImage = currImage;
 				if(counter>0) {
@@ -520,7 +520,7 @@ int main(int argc,char *argv[]){
 				}
 			}
 
-			
+
 
 
 
@@ -542,7 +542,7 @@ int main(int argc,char *argv[]){
 
 			printf("Stage 3: Detect ROIs\n");
 			roiData = filterLinePointsROI.process((unsigned char *) image_roi, area, area, linePointsROI, distanceHelper, scanHelperBall);
-			
+
 			//New Ball
 			//does what?
 			printf("Stage 4: Compute Sobel on ROIs\n");
@@ -578,7 +578,7 @@ int main(int argc,char *argv[]){
 		                }
 		                if(!valid)
                 		        continue;
-				
+
 				if(irad>=9 && irad<=13 && d < 150*150 && d > 120*120) {
 					angle = atan2(-bY, bX)*180/3.141592;
 					if(angle < 0) angle += 360;
@@ -626,7 +626,7 @@ int main(int argc,char *argv[]){
 				}
 				SpicaHelper::sendLinePoints();
 			}
-			
+
 			if(softhdr) {
 			  memcpy(prevImage, currRealImage, imagesize_.width*imagesize_.height*2);
 			}
@@ -688,7 +688,7 @@ int main(int argc,char *argv[]){
 			} else if (sendROIImage) {
 				SpicaHelper::streamGreyMJPEG(image_roi, area, area);
 			}
-			
+
 			SpicaHelper::send();
 			if(input) KeyHelper::checkKeyPress();
 			KeyHelper::checkRemoteKey();
@@ -700,7 +700,7 @@ int main(int argc,char *argv[]){
 					cam->setSaturation(cam->getSaturation()-5);
 					printf("Parameter Adjustmen - Saturation: %d\n", cam->getSaturation());
 				}
-				if(KeyHelper::checkKey('S')) { 
+				if(KeyHelper::checkKey('S')) {
 					cam->setSaturation(cam->getSaturation()+5);
 					printf("Parameter Adjustmen - Saturation: %d\n", cam->getSaturation());
 
@@ -710,10 +710,10 @@ int main(int argc,char *argv[]){
 				if(KeyHelper::checkKey('W')) {
 				}
 				if(KeyHelper::checkKey('e')) {
-				}	
+				}
 				if(KeyHelper::checkKey('E')) {
 				}
-				
+
 
 				printf("Stage 15:\n");
 				if(softhdr && !offline) {
@@ -725,7 +725,7 @@ int main(int argc,char *argv[]){
 						cam->setGain(currGain);
 				} else {
                                         if(enableGainFilter) filterAdjustGain.process(*cam,filterDistanceProfileNew, linePoints, maxParticle);*/
-					
+
 				}
 				//Auto-Gain
 				if(enableGainFilter) br->process(frame.getImagePtr(), counter);

@@ -127,10 +127,10 @@ namespace Cox
     __lut = new field_lut_entry_t[__entries_x * __entries_y];
 
 
-    supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+    supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
     std::string globalsfn = sc->getConfigPath() + "/Globals.conf";
     std::string LUfn = sc->getConfigPath() + "/CoxGradientLut.dat";
-    
+
 	if(true || getModifyTime(globalsfn.c_str()) > getModifyTime(LUfn.c_str())) {
 		std::cout << "Regenerating GradientLookUp " << globalsfn.c_str() << " Modificationdates: " << getModifyTime(globalsfn.c_str()) << "\t" << getModifyTime(LUfn.c_str()) << std::endl;
 	    for (float y = __min_y; y <= __max_y; y += __resolution)

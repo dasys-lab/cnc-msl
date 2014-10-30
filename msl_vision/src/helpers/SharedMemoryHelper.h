@@ -23,7 +23,7 @@
 #ifndef SharedMemoryHelper_H
 #define SharedMemoryHelper_H
 
-#include <string>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -52,7 +52,7 @@ class SharedMemoryHelper{
 	public:
 
 		~SharedMemoryHelper();
-		
+
 		void writeDirectedBallPosition(ObservedPoint * p);
 		ObservedPoint * readDirectedBallPosition();
 
@@ -61,7 +61,7 @@ class SharedMemoryHelper{
 
 		void writeCorrectedOdometry(CorrectedOdometry *co);
 		CorrectedOdometry *readCorrectedOdometry();
-		
+
 		static SharedMemoryHelper * getInstance();
 
 	protected:
@@ -71,7 +71,7 @@ class SharedMemoryHelper{
 		static SharedMemoryHelper * instance_;
 
 		SystemConfig* sc;
-		
+
 		void init();
 		void cleanup();
 
@@ -88,9 +88,9 @@ class SharedMemoryHelper{
 					shmid(0), semid(0), sops(NULL)
 				{
 					std::string es_root(getenv("ES_ROOT"));
-					
+
 					std::string filename = es_root + "/etc/Vision.conf";
-					
+
 					key_t shmidKey = ftok(filename.c_str(), SHMKEY);
 					key_t semidKey = ftok(filename.c_str(), SEMKEY);
 
@@ -98,7 +98,7 @@ class SharedMemoryHelper{
 						if ((shmid = shmget(shmidKey, sizeof(T) * 10, IPC_CREAT | 0666)) < 0) {
 							std::cerr << "Could not get segment " << shmidKey << std::endl;
 							exit(1);
-							
+
 						}
 					}
 
@@ -109,7 +109,7 @@ class SharedMemoryHelper{
 					bzero(type, sizeof(T) * 10);
 
 					sops = (struct sembuf *)malloc(2 * sizeof(struct sembuf));
-					
+
 					if ((semid = semget(semidKey, 1, IPC_CREAT | IPC_EXCL | 0666)) == -1) {
 						if ((semid = semget(semidKey, 1, IPC_CREAT | 0666)) == -1) {
 							std::cerr << "Could not get semaphore for " << shmidKey << std::endl;
@@ -121,7 +121,7 @@ class SharedMemoryHelper{
 				~ShmInfo() {
 					free(sops);
 				}
-				
+
 				T *get() {
 					return type;
 				}
@@ -136,7 +136,7 @@ class SharedMemoryHelper{
 					sops[0].sem_op = 0; /* wait for semaphore flag to become zero */
 					sops[0].sem_flg = SEM_UNDO; /* take off semaphore asynchronous  */
 
-				 
+
 					sops[1].sem_num = 0;
 					sops[1].sem_op = 1; /* increment semaphore -- take control of track */
 					sops[1].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */

@@ -29,7 +29,7 @@
 #include "../filters/FilterExtractBlobs.h"
 #include "DistanceLookupHelper.h"
 
-using namespace castor;
+using namespace supplementary;
 
 class ROIHelperOmniCam {
 
@@ -46,7 +46,7 @@ class ROIHelperOmniCam {
 
 		static ROIHelperOmniCam * instance_;
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		int scWIDTH;
 		int scHEIGHT;

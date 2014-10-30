@@ -40,13 +40,13 @@ class OpponentHelper{
 	public:
 		OpponentHelper();
 		~OpponentHelper();
-	
+
 		void processOpponentBlobs(std::vector<BlobBounds> & potOpponentBlobs, Particle * maxParticle);
 
 	protected:
 
-		SystemConfigPtr sc;
-		
+		SystemConfig* sc;
+
 		void init();
 		void cleanup();
 

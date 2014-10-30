@@ -26,7 +26,7 @@
 #include <string>
 #include <SystemConfig.h>
 
-using namespace castor;
+using namespace supplementary;
 
 class Environment{
 
@@ -40,12 +40,12 @@ class Environment{
 		void setLoggingMode(bool mode);
 
 		std::string getLogFileName();
-		bool getLoggingMode(); 
+		bool getLoggingMode();
 
 
 	private:
 
-		SystemConfigPtr sc;
+		SystemConfig* sc;
 
 		std::string logFileName;
 		bool loggingMode;
@@ -53,7 +53,7 @@ class Environment{
 		static Environment * instance;
 		Environment();
 		~Environment();
-		
+
 
 
 };

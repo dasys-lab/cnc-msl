@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include "TimeHelper.h"
+#include <string.h>
 
 ObjectContainer::ObjectContainer(int size_){
 
@@ -132,7 +133,7 @@ void ObjectContainer::invalidate(int ms){
 			points[currIndex].valid = false;
 			startIndex = currIndex + 1;
 			if(startIndex >= size)
-				startIndex -= size;	
+				startIndex -= size;
 		}
 
 		currIndex++;
@@ -146,7 +147,7 @@ void ObjectContainer::invalidate(int ms){
 		points[lastIndex].valid = false;
 		startIndex = lastIndex;
 	}
-	
+
 
 	validCounter = 0;
 	lastValidIndex = -1;

@@ -28,8 +28,8 @@
 #include <string>
 
 using namespace std;
-using namespace CNSensorMsgs;
-using namespace CNActuatorMsgs;
+using namespace msl_sensor_msgs;
+using namespace msl_actuator_msgs;
 
 WorldModelData* SpicaHelper::wm;
 VisionDebug* SpicaHelper::vdd;
@@ -61,8 +61,8 @@ void SpicaHelper::initialize() {
 	visionNode = new ros::NodeHandle();
 	reloc = false;
 
-	VCsub = visionNode->subscribe<CNSensorMsgs::VisionControl>("CNVision/VisionControl", 1, &SpicaHelper::handleVisionControl);
-    RelocSub = visionNode->subscribe<CNActuatorMsgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger",
+	VCsub = visionNode->subscribe<msl_sensor_msgs::VisionControl>("CNVision/VisionControl", 1, &SpicaHelper::handleVisionControl);
+    RelocSub = visionNode->subscribe<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger",
 				1, &SpicaHelper::handleVisionRelocTrigger);
 
 	womopub = visionNode->advertise<WorldModelData>("WorldModel/WorldModelData", 1);
@@ -104,9 +104,9 @@ void SpicaHelper::handleVisionControl(const msl_sensor_msgs::VisionControl::Cons
 }
 
 void SpicaHelper::handleVisionRelocTrigger(const
-		msl_acutator_msgs::VisionRelocTrigger::ConstPtr& msg) {
+		msl_actuator_msgs::VisionRelocTrigger::ConstPtr& msg) {
 	if(supplementary::SystemConfig::getOwnRobotID() != msg->receiverID) return;
-	reloc = true;	
+	reloc = true;
 }
 
 void SpicaHelper::sendLinePoints() {
@@ -117,7 +117,7 @@ void SpicaHelper::sendLinePoints() {
 
 void SpicaHelper::send() {
 	std::cout << "Sending WorldModelData " << std::endl;
-	womopub.publish(*wm);	
+	womopub.publish(*wm);
 	wm->distanceScan.sectors.clear();
 }
 

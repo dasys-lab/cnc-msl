@@ -30,7 +30,7 @@
 #include "EgoMotionEstimator.h"
 //#include "PacketHelper.h"
 
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
@@ -38,8 +38,8 @@
 #define DISTNONE 20000.0
 #define SIGMA 20
 
-using namespace CNSensorMsgs;
-using namespace CNMessages;
+using namespace msl_sensor_msgs;
+using namespace msl_msgs;
 
 ParticleFilter::ParticleFilter(int nParticles_) : sc() {
 	printf("ParticleFilter Constructor!\n");
@@ -49,7 +49,7 @@ ParticleFilter::ParticleFilter(int nParticles_) : sc() {
 	yellowGoalDirection = -1;
 	nParticles = nParticles_;
 	lastIteration = 0;
-	particles = NULL;	
+	particles = NULL;
 
 	rawOdometryHelper = RawOdometryHelper::getInstance();
 	compassValueHelper = CompassValueHelper::getInstance();
@@ -65,7 +65,7 @@ ParticleFilter::ParticleFilter(int nParticles_) : sc() {
 
 	integrationIndex = 0;
 	bufferInitialized = false;
-	msgid = 0;	
+	msgid = 0;
 
 	//isGoalie = (*this->sc)["Globals"]->get<bool>("Globals", "Team", SystemConfig::getHostname().c_str(), "IsGoalie", NULL);
 	//printf("++++++++ System isGoalie %d\n", isGoalie);
@@ -111,7 +111,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 
 	printf("Particlefilter MaxParticle Before Update: %f %f %f\n", maxParticle.posx, maxParticle.posy, maxParticle.heading);
 
-	
+
 	Position pos1 = rawOdometryHelper->getPositionData(lastIteration);
 	Position pos2 = rawOdometryHelper->getPositionData();
 
@@ -121,7 +121,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 	updatePos.y = pos2.y - pos1.y;
 	updatePos.heading = pos2.heading - pos1.heading;
 	normalizeAngle(updatePos.heading);
-	
+
 
 	updateParticles(updatePos.x, updatePos.y, updatePos.heading);
 
@@ -163,18 +163,18 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 
 	//if position is at the field border
 	/*if((fabs(rawUpdatedPosition.x) > FootballField::FieldLength/2.0 - 2000.0 || fabs(rawUpdatedPosition.y) > FootballField::FieldWidth/2.0 - 2000.0) && posConfidence > 0.4) {
-		
-		
+
+
 		double cos_ = cos(rawUpdatedPosition.heading);
 		double sin_ = sin(rawUpdatedPosition.heading);
-		
+
 		int invIndex = 0;
 
 	//WTF???? isGoalie nach außen?
 		for(first = linePoints.begin(); first != last; ++first){
 
-	
-	
+
+
 			double realx = rawUpdatedPosition.x + cos_*(first->x) - sin_*(first->y);
 			double realy = rawUpdatedPosition.y + sin_*(first->x) + cos_*(first->y);
 
@@ -185,14 +185,14 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 				}
 
 			}
-			invIndex++;	
+			invIndex++;
 
 		}
 
 	}*/
 
 	int compassValue = compassValueHelper->getCompassData();
-	//printf("Particlefilter compass %d", compassValue); 
+	//printf("Particlefilter compass %d", compassValue);
 
 
 	unsigned char * LineLookup = lineDistHelper.getLineLookup();
@@ -230,7 +230,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		linePointsEgoAngles[i] = atan2(linePoints[i].y, linePoints[i].x);
 
 		//???
-		double compare_distance = (LinePointSigma + (distance - 400.0)*0.005); 
+		double compare_distance = (LinePointSigma + (distance - 400.0)*0.005);
 		int int_c_dist = lrint(compare_distance);
 		if(int_c_dist < 0)
 			int_c_dist = 0;
@@ -253,12 +253,12 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 	double goalDegrees = (((double) yellowGoalDirection) / 10.0)*2.0*M_PI/360.0;
 	double goalX = cos(-goalDegrees);
 	double goalY = sin(-goalDegrees);
-	
+
 	// Is this the same as: compassHeading = goalDegrees - degrees; ?
 	double compassHeading = atan2(compY, compX) - atan2(goalY, goalX);
 	normalizeAngle(compassHeading);
 	//Compute compassheading end
-	
+
 
 	for(int i = 0; i < nParticles; i++){
 
@@ -273,7 +273,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 			leftPostEgoAngle -= 2.0*M_PI;
 		if(leftPostEgoAngle < -M_PI)
 			leftPostEgoAngle += 2.0*M_PI;
-		
+
 
 		Point drP;
 		drP.x = -FootballField::FieldLength/2.0 - particles[i].posx;
@@ -306,7 +306,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		//Do not Consider Particles with an angle difference to compass < pi/3
 		if(yellowGoalDirection >= 0 && compassValue >= 0){
 			double diffHeading = compassHeading - particles[i].heading;
-			
+
 			normalizeAngle(diffHeading);
 
 			if(fabs(diffHeading) > M_PI/3.0){
@@ -333,25 +333,25 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 			for(first = linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist){
 
 				if(linePointsInvalidity[invIndex] == 0){
-		
+
 					//Transform LinePoint in coordinate system of current particle
 					realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
 					realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
-		
+
 					//Compute index in distance lookup
 					int indX = lrint(-realy*resolution_1) + IHEIGHT_2;
 					int indY = lrint(realx*resolution_1) + IWIDTH_2;
-		
+
 					//Compute "Distance value" [0-254]
 					if(indX >= 0 && indX < IHEIGHT && indY >= 0 && indY < IWIDTH){
 						dist = LineLookup[indX*IWIDTH + indY];
 					}
 					else dist = 255;
-					
-					//Count linepoints within a certain range	
+
+					//Count linepoints within a certain range
 					/* Only for Old Weight
 					if(dist < (*firstDist)){
-						posLinePoints++;	
+						posLinePoints++;
 					}*/
 
 					/*else if(isGoalie){
@@ -396,7 +396,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 			  weight = 0.1;
 
 		}
-		
+
 
 		particles[i].weight = weight;
 		if(weight > maxWeight) {
@@ -431,7 +431,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 
 	//Update rawUpdatedPosition;
 	Position rawPosition = rawOdometryHelper->getPositionData();
-	
+
 	double rotAngle = rawUpdatedPosition.heading - rawPosition.heading;
 	normalizeAngle(rotAngle);
 
@@ -450,7 +450,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		bool updateAllowed = true;
 
 		//If Position is within a corner
-		if(fabs(rawUpdatedPosition.x) > FootballField::FieldLength/2.0 - FootballField::GoalAreaWidth && 
+		if(fabs(rawUpdatedPosition.x) > FootballField::FieldLength/2.0 - FootballField::GoalAreaWidth &&
 				fabs(rawUpdatedPosition.y) > FootballField::GoalAreaLength/2.0){
 
 			double diffX = maxParticle.posx - rawUpdatedPosition.x;
@@ -480,7 +480,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		//Update always allowed if weights < 0.4
 		if(rawMaxWeight < 0.4)
 			updateAllowed = true;
-		
+
 		double estimatedPositionWeight = particles[nParticles-2].weight;
 
 		if(updateAllowed){
@@ -489,12 +489,12 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 			if(headingDiff > M_PI){
 				headingDiff -= 2.0*M_PI;
 			}
-		
+
 			if(fabs(headingDiff) > M_PI/360.0){
 				rawUpdatedPosition.heading = maxParticle.heading;
 			}
 
-			double dist = sqrt((maxParticle.posx - rawUpdatedPosition.x)*(maxParticle.posx - rawUpdatedPosition.x) + (maxParticle.posy - rawUpdatedPosition.y)*(maxParticle.posy - rawUpdatedPosition.y)); 
+			double dist = sqrt((maxParticle.posx - rawUpdatedPosition.x)*(maxParticle.posx - rawUpdatedPosition.x) + (maxParticle.posy - rawUpdatedPosition.y)*(maxParticle.posy - rawUpdatedPosition.y));
 
 			//Update rawUpdatePosition to best particle within 50mm
 			rawUpdatedPosition.x = particles[maxTrackedIndex].posx;
@@ -538,7 +538,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 	mr = estimator->trackObject(positionBuffer, timestampBuffer, RAWODOBUFSIZE, integrationIndex, 0.4E07);
 
 	//If position or velocity jumped or if Velocity is very small -> Use old Velocity Estimation
-	if(jump || (fabs(sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) - sqrt(mrOld.velocity.vx*mrOld.velocity.vx + mrOld.velocity.vy*mrOld.velocity.vy)) > 400.0 && sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) < 1.0E-32)) 
+	if(jump || (fabs(sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) - sqrt(mrOld.velocity.vx*mrOld.velocity.vx + mrOld.velocity.vy*mrOld.velocity.vy)) > 400.0 && sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) < 1.0E-32))
 		mr.velocity = mrOld.velocity;
 
 	int logTime = (int) ((TimeHelper::getInstance()->getVisionTimeOmniCam()/1000) % 1000000);
@@ -554,17 +554,17 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 
 		PositionInfo robotPosition;
 		MotionInfo robotVelocity;
-		
+
 		robotPosition.x = (mr.position.x);
 		robotPosition.y = (mr.position.y);
 		robotPosition.angle = (mr.position.heading);
 
-		//Auskommentieren, wenn Delay zu groß! 
+		//Auskommentieren, wenn Delay zu groß!
 		rawUpdatedPositionNew.x = mr.position.x;
 		rawUpdatedPositionNew.y = mr.position.y;
 		rawUpdatedPositionNew.heading = mr.position.heading;
 		unsigned long long timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-		
+
 		int logTime = (int) ((timestamp/1000) % 1000000);
 		if(logTime > 500000)
 			logTime -= 1000000;
@@ -582,7 +582,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, lineDistHelper, linePointsInvalidity, 0));
 		coi.locType.type = (LocalizationType::ParticleFilter);
 
-		printf("ParticleFilter MaxParticle Confidence %f\n", coi.certainty);		
+		printf("ParticleFilter MaxParticle Confidence %f\n", coi.certainty);
 #ifndef SWITCHLOC
 		writeCoi();
 #endif
@@ -593,11 +593,11 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, LineDistanceHe
 		printf("Loc1: Previous MaxParticle with low confidence\n");
 	if(particles[nParticles - 2].weight < 0.5)
 		printf("Loc1: Previous RawUpdatedPos with low confidence\n");
-	
+
 	resample(gaussHelper);
 
 	lastIteration = TimeHelper::getInstance()->getVisionTimeOmniCam();
-	
+
 	if(maxParticle.weight < LocalizationSuccess && linePoints.size() > 75){
 		printf("Something going wrong with Localization!\n");
 		printf("Cannot match Line Points!\n");
@@ -648,7 +648,7 @@ void ParticleFilter::initParticles(){
 		}
 	}
 }
-		
+
 void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 	double maxX = FootballField::FieldLength/2.0 + 500.0;
 	double maxY = FootballField::FieldWidth/2.0 + 500.0;
@@ -677,9 +677,9 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 				bool repFound = false;
 				//?????????????????????????????? WTF
 				for(unsigned int j = 0; j < nRepParticles; j++){
-					double distance = (repParticles[j].posx - particles[i].posx)*(repParticles[j].posx - particles[i].posx) + 
+					double distance = (repParticles[j].posx - particles[i].posx)*(repParticles[j].posx - particles[i].posx) +
 								(repParticles[j].posy - particles[i].posy)*(repParticles[j].posy - particles[i].posy);
-	
+
 					if(distance < distThreshold){
 						repFound = true;
 						if(particles[i].weight > repParticles[j].weight){
@@ -704,7 +704,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 
 	//Compute cumlative weight + normalization factor
 	for(unsigned int i = 0; i < nRepParticles; i++){
-		sum += repParticles[i].weight;		
+		sum += repParticles[i].weight;
 		cumWeights[i] = sum;
 	}
 	//Normalize Weights
@@ -725,7 +725,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 		particles[i].posx = (RandomHelper::rand01() - 0.5)*2.0*maxX;
 		particles[i].posy = (RandomHelper::rand01() - 0.5)*2.0*maxY;
 		particles[i].heading = (RandomHelper::rand01() - 0.5)*2.0*maxAngle;
-		particles[i].weight = 0.5;		
+		particles[i].weight = 0.5;
 	}
 
 	//Mutation of last 400
@@ -745,7 +745,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 		particles[i].weight = 0.5;
 	}
 
-	//Last two Particles are MaxParticle and rawUpdatesPosition			
+	//Last two Particles are MaxParticle and rawUpdatesPosition
 	particles[nParticles-1].posx = maxParticle.posx;
 	particles[nParticles-1].posy = maxParticle.posy;
 	particles[nParticles-1].heading = maxParticle.heading;
@@ -755,7 +755,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 	particles[nParticles-2].posy = rawUpdatedPosition.y;
 	particles[nParticles-2].heading = rawUpdatedPosition.heading;
 	particles[nParticles-2].weight = maxParticle.weight;
-	
+
 	free(tmpParticles);
 	free(cumWeights);
 }
@@ -764,7 +764,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 void ParticleFilter::updateParticles(double deltaX, double deltaY, double deltaH){
 	//Move all Particles by RawOdometry
 	Position rawPosition = rawOdometryHelper->getPositionData(lastIteration);
-	
+
 	for(int i = 0; i < nParticles; i++){
 		double rotAngle = particles[i].heading - rawPosition.heading;
 		normalizeAngle(rotAngle);
@@ -818,13 +818,13 @@ WeightedPosition ParticleFilter::getEstimatedPosition(){
 double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, unsigned char * linePointsInvalidity, int invCounter){
 	unsigned char * LineLookup = lineDistHelper.getLineLookup();
 
-	SystemConfigPtr sysconf = SystemConfig::getInstance();
+	SystemConfig* sysconf = SystemConfig::getInstance();
 	double LinePointSigma = (*sysconf)["Localization"]->get<double>("Localization", "LinePointSigma", NULL);
 	double offset = (*sysconf)["Localization"]->get<double>("Localization", "LinePointOffset", NULL);
 	double t = 0.9999;
 	double h = (linePoints.size() - invCounter)*1.0;
 	double pv = pow((t/(1-t)),(1/h))/(1 + pow((t/(1-t)),(1/h)));
-	
+
 	int IHEIGHT_2 = IHEIGHT/2;
 	int IWIDTH_2 = IWIDTH/2;
 
@@ -850,23 +850,23 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 
 		for(first = linePoints.begin(); first != last; ++first){
 			double distance = sqrt((first->x)*(first->x) + (first->y)*(first->y));
-		
-			double compare_distance = (LinePointSigma + (distance - 400.0)*0.005); 
+
+			double compare_distance = (LinePointSigma + (distance - 400.0)*0.005);
 			int int_c_dist = lrint(compare_distance);
 			if(int_c_dist < 0)
 				int_c_dist = 0;
 			if(int_c_dist > 255)
 				int_c_dist = 255;
-	
+
 			unsigned char c = (unsigned char) int_c_dist;
 
 			if(linePointsInvalidity[invIndex] == 0){
 				realx = pos.x + cos_*(first->x) - sin_*(first->y);
 				realy = pos.y + sin_*(first->x) + cos_*(first->y);
-				
+
 					int indX = lrint(-realy*resolution_1) + IHEIGHT_2;
 					int indY = lrint(realx*resolution_1) + IWIDTH_2;
-		
+
 					if(indX >= 0 && indX < IHEIGHT && indY >= 0 && indY < IWIDTH){
 						dist = LineLookup[indX*IWIDTH + indY];
 					}
@@ -886,7 +886,7 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 					unsigned char new_dist = (unsigned char) lrint(new_dist_real);
 
 					if(new_dist < c){
-						posLinePoints++;	
+						posLinePoints++;
 					}
 
 					tribotWeight += dist;
@@ -916,7 +916,7 @@ void ParticleFilter::writeCoi()
 	if (coi.certainty != -1 ) {
 		unsigned long long timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
 		coi.timestamp = (timestamp);
-		SpicaHelper::wm->odometry = (coi);	
+		SpicaHelper::wm->odometry = (coi);
 		printf("NewLoc PF im WM\n");
 	}
 	else printf("NewLoc: OOOPS no coi in particlefilter");

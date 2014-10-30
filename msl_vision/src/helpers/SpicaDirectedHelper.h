@@ -24,9 +24,9 @@
 #define SpicaDirectedHelper_h
 
 #include "ros/ros.h"
-#include <CNSensorMsgs/WorldModelData.h>
+#include <msl_sensor_msgs/WorldModelData.h>
 
-using namespace CNSensorMsgs;
+using namespace msl_sensor_msgs;
 
 class SpicaDirectedHelper {
 	public:

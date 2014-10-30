@@ -1,8 +1,8 @@
 #include "ExtensionHelper.h"
 #include "SpicaHelper.h"
-#include "CNActuatorMsgs/KickControl.h"
+#include "msl_actuator_msgs/KickControl.h"
 
-using namespace CNActuatorMsgs;
+using namespace msl_actuator_msgs;
 
 #define BUF_SIZE 500
 

@@ -24,7 +24,7 @@
 #define CorrectedOdometryHelper_H
 
 #include <boost/thread/mutex.hpp>
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <string>
 
 #include "../global/Types.h"

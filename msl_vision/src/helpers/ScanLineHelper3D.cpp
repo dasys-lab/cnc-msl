@@ -16,10 +16,10 @@ extern uint16_t dir;
 ScanLineHelper3D::ScanLineHelper3D()
 {
 	cout << "Start ScanLineHelper3D Constructor" << endl;
-	
-	supplementary::SystemConfigPtr sc = supplementary::SystemConfig::getInstance();
+
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	supplementary::Configuration *vision3D = (*sc)["Vision3D"];
-	
+
 	// Get configs
 	cout << "ScanLines" << endl;
 	cout << "\tInnerRadiusStart_";
@@ -34,7 +34,7 @@ ScanLineHelper3D::ScanLineHelper3D()
 	nLines		= vision3D->get<uint16_t>("ScanLines", "Number", NULL);
 	cout << "\tMaxPoints_";
 	maxPoints	= vision3D->get<uint16_t>("ScanLines", "maxPoints", NULL);
-	
+
 	cout << "Image" << endl;
 	cout << "\tWidth_";
 	width	= vision3D->get<uint16_t>("Image", "Width", NULL);
@@ -44,12 +44,12 @@ ScanLineHelper3D::ScanLineHelper3D()
 	int16_t offsetX = vision3D->get<uint16_t>("Image", "Offset_X", NULL);
 	cout << "\tOffsetY_";
 	int16_t offsetY = vision3D->get<uint16_t>("Image", "Offset_Y", NULL);
-	
+
 	centerX	= width/2 + offsetX;
 	centerY	= height/2 + offsetY;
-	
+
 	init();
-	
+
 	cout << "End ScanLineHelper3D Constructor" << endl;
 }
 
@@ -61,26 +61,26 @@ ScanLineHelper3D::ScanLineHelper3D()
 ** linesXOffsets points on the start of each line in linesX
 */
 void ScanLineHelper3D::init()
-{	
+{
 	double startX	= 0.0;
 	double startY	= 0.0;
 	double endX	= 0.0;
 	double endY	= 0.0;
-	
+
 	double middleCorrectur = -0.5;
-	
+
 	// "lines" Structure: x,y
 	linesInner	= new uint16_t [nLines * maxPoints * 2];
 	linesOuter	= new uint16_t [nLines * maxPoints * 2];
 	// Offset in "lines" to the startpoint of the specified line.
 	linesInnerOffsets	= new uint32_t [nLines + 1];
 	linesOuterOffsets	= new uint32_t [nLines + 1];
-	
+
 	uint32_t innerOffsetCounter = 0;
 	uint32_t outerOffsetCounter = 0;
 	uint16_t offset;
 	uint16_t * line;
-	
+
 	holders = new double [6];
 
 	holders[0]	= grad2rad(358.2);	// FirstStart
@@ -89,8 +89,8 @@ void ScanLineHelper3D::init()
 	holders[3]	= grad2rad(122.0);	// SecondEnd
 	holders[4]	= grad2rad(237.9);	// ThirdStart
 	holders[5]	= grad2rad(242.0);	// ThirdEnd
-	
-	
+
+
 	for(uint16_t i = 0; i < nLines; i++)
 	{
 		double angle = 1.0 * i * 2 * M_PI / nLines;
@@ -119,7 +119,7 @@ void ScanLineHelper3D::init()
 				border2	= (dir-borderWidth)*M_PI/180;
 			}
 		}
-		
+
 		// Leave out the titan holders
 		if( (dir==400 && ((angle > holders[0] || angle < holders[1]) ||
 			(angle > holders[2] && angle < holders[3]) ||
@@ -132,27 +132,27 @@ void ScanLineHelper3D::init()
 			linesOuterOffsets[i] = outerOffsetCounter;
 			continue;
 		}
-		
+
 		/// Inner lines
 		line = linesInner + innerOffsetCounter;
 		linesInnerOffsets[i] = innerOffsetCounter;
-		
+
 		// Beginpoint
 		startX	= cos(angle) * iRadiusStart + centerX + middleCorrectur;
 		startY	= sin(angle) * iRadiusStart + centerY + middleCorrectur;
-		
+
 		// Endpoint
 		endX	= cos(angle) * iRadiusEnd + centerX + middleCorrectur;
 		endY	= sin(angle) * iRadiusEnd + centerY + middleCorrectur;
-		
+
 		// Fill the line with the points and get the offset.
 		offset = ScanLineHelper3D::GetLinePoints(line, startX, startY, endX, endY);
 		innerOffsetCounter += 2*offset;
-		
+
 		/// Outer Lines
 		line = linesOuter + outerOffsetCounter;
 		linesOuterOffsets[i] = outerOffsetCounter;
-		
+
 		// Beginpoint
 		for (uint16_t j=0; j<width; j++)
 		{
@@ -161,16 +161,16 @@ void ScanLineHelper3D::init()
 			if ( (round(startX) < width) && (round(startY) < height) && (round(startX) > 0) && (round(startY) > 0) )
 				break;
 		}
-		
+
 		// Endpoint
 		endX	= cos(angle) * oRadiusEnd + centerX + middleCorrectur;
 		endY	= sin(angle) * oRadiusEnd + centerY + middleCorrectur;
-		
+
 		// Fill the line with the points and get the offset.
 		offset = ScanLineHelper3D::GetLinePoints(line, startX, startY, endX, endY);
 		outerOffsetCounter += 2*offset;
 	}
-	
+
 	// Save the last offsets
 	linesInnerOffsets[nLines] = innerOffsetCounter;
 	linesOuterOffsets[nLines] = outerOffsetCounter;
@@ -185,17 +185,17 @@ uint16_t ScanLineHelper3D::GetLinePoints(uint16_t * &line, double &startX, doubl
 	double	stepY	= 0.5;	// Step/Direction
 	double	D	= 0;	// Helper variable
 	uint16_t	counter	= 0;	// Pointcounter
-	
+
 	// Debug
 // 	printf("ax: %f ay: %f ex: %f ey: %f\n", startX, startY, endX, endY);
-	
+
 	// Get positiv deltas and maybe correct the step direction.
 	if(dx < 0.0)	{	stepX = -0.5;	dx = -dx;	}
 	if(dy < 0.0)	{	stepY = -0.5;	dy = -dy;	}
-	
+
 	double DX = 2 * dx;	// Helper variable
 	double DY = 2 * dy;	// Helper variable
-	
+
 	// Check for better way to draw the line.
 	if(dy>dx)
 	{
@@ -213,13 +213,13 @@ uint16_t ScanLineHelper3D::GetLinePoints(uint16_t * &line, double &startX, doubl
 				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!1\n");
 				break;
 			}
-			
+
 			// Check for finishing the line.
 			if(round(startY) == round(endY))	break;
-			
+
 			// Take a step to Y
 			startY += stepY;
-			
+
 			// Check for a step to X
 			D += DX;
 			if(round(D) > round(dy))
@@ -245,23 +245,23 @@ uint16_t ScanLineHelper3D::GetLinePoints(uint16_t * &line, double &startX, doubl
 				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
-			
+
 			// Check for finishing the line.
 			if(round(startX) == round(endX))	break;
-			
+
 			// Take a step to X.
 			startX += stepX;
-			
+
 			// Check for a step to Y
 			D += DY;
 			if(round(D) > round(dx))
 			{
-				startY += stepY; 
+				startY += stepY;
 				D -= DX;
 			}
 		}
 	}
-	
+
 	// Debug
 // 	std::cout << "Size of line: " << counter << std::endl;
 
@@ -289,7 +289,7 @@ uint16_t ScanLineHelper3D::getOuterRadiusEnd() const	{	return oRadiusEnd;	}
 ScanLineHelper3D::~ScanLineHelper3D()
 {
 	std::cout << "Destructor of ScanLineHelper3D" << std::endl;
-	
+
 	if( linesInner != NULL )			delete[] linesInner;
 	if( linesOuter != NULL )			delete[] linesOuter;
 	if( linesInnerOffsets != NULL )	delete[] linesInnerOffsets;

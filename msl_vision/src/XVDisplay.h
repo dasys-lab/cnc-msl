@@ -53,11 +53,11 @@
 
 class XVDisplay
 {
-	
+
 	public:
 		XVDisplay(long width, long height, long _format);
 		~XVDisplay();
-		
+
 
 		static void iyu12yuy2 (unsigned char *src, unsigned char *dest, int NumPixels);
 		static void rgb2yuy2 (unsigned char *RGB, unsigned char *YUV, int NumPixels);

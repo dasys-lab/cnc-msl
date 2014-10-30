@@ -24,13 +24,13 @@ int nearestAngleIndes(vector< vector<double> > &dangles, double angle) {
 		if(dangles[i][0]==0) continue;
 		bool hasValues=false;
 		for(int j=1; j<dangles[i].size(); j++) if(dangles[i][j]!=0) hasValues = true;
-		if(!hasValues) continue;		
+		if(!hasValues) continue;
 
 		double dang = angleDiff(dangles[i][0], angle);
 		if(dang < minDist) {
 			minIndex = i;
 			minDist  = dang;
-			
+
 		}
 	}
 	return minIndex;
@@ -40,7 +40,7 @@ int nearestAngleIndes(vector< vector<double> > &dangles, double angle) {
 
 
 int main(int argc, char * argv[]){
-	SystemConfigPtr sc = SystemConfig::getInstance();
+	SystemConfig* sc = SystemConfig::getInstance();
         std::string confPath = sc->getConfigPath();
 	Configuration *vision = (*sc)["Vision"];
         int dcHEIGHT = vision->get<int>("Vision", "ImageArea", NULL);
@@ -51,7 +51,7 @@ int main(int argc, char * argv[]){
 	char line[4096];
 	double val;
 	stringstream ss(stringstream::in | stringstream::out);
-	
+
 	vector<double> realDist;
 	realDist.push_back(0);
 	realDist.push_back(1000);
@@ -70,7 +70,7 @@ int main(int argc, char * argv[]){
 		if(ifs.eof()) break;
 
 		ss << line;
-		
+
 		int i=0;
 		while(!ss.eof()) {
 			i++;
@@ -80,7 +80,7 @@ int main(int argc, char * argv[]){
 		distances.push_back(tmp);
 		ss.clear();
 	}
-	
+
 	for(int i=0; i<8; i++)	cout << distances[44][i] << " ";
 	cout << endl;
 
@@ -102,7 +102,7 @@ int main(int argc, char * argv[]){
 			double dist = sqrt(realx*realx + realy*realy);
 			int minIndex = nearestAngleIndes(distances, angle);
 			//cout << angle << " " << minIndex << " " << distances[minIndex][0] << endl;
-			
+
 			double d=0, m=0;
 			int limit = distances[minIndex].size();
 			int nextInd=0;
@@ -147,8 +147,8 @@ int main(int argc, char * argv[]){
 				if(!(distances[minIndex][i+1]==0 ||  distances[minIndex][i]>dist && distances[minIndex][i+1]<dist) && i!=limit) continue;
 				double m=0;
 				if(i==1) {
-					if(distances[minIndex][1]!=0) { 
-						d = (1000/distances[minIndex][1])*dist;	
+					if(distances[minIndex][1]!=0) {
+						d = (1000/distances[minIndex][1])*dist;
 						m = 1000/distances[minIndex][1];
 					}
 					maxM = max(maxM, m);
@@ -180,7 +180,7 @@ int main(int argc, char * argv[]){
 				//if(m>696) cout << d << " " << minIndex << " " << dist << " " << i << " " << limit << endl;
 				lookup[y*area+x] = d;
 			}*/
-			
+
 			ofs << lookup[y*dcHEIGHT+x] << " ";
 		}
 		ofs << endl;

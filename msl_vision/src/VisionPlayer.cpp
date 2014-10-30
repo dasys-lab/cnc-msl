@@ -322,7 +322,7 @@ int main(int argc,char *argv[]){
 			}
 			//Gamma ... here unsigned char
 			cam->setGamma(vision->get<int>("Vision", "Camera1394Settings", "Gamma", NULL));
-			
+
 			if (vision->tryGet<bool>(false, "Vision", "Camera1394Settings", "UseBrightness", NULL)) {
 				std::cout << "Param setting Brightness" << std::endl;
 				cam->setBrightness(vision->get<int>("Vision", "Camera1394Settings", "Brightness", NULL));
@@ -498,7 +498,7 @@ int main(int argc,char *argv[]){
 		relocPos.heading = pos.heading;
 		relocPos.x = pos.x;
 		relocPos.y = pos.y;
-		const double cornerOffset = localization->get<double>("Localization", "CornerOffset", NULL);		
+		const double cornerOffset = localization->get<double>("Localization", "CornerOffset", NULL);
 
 		const double switchToParticle = localization->get<double>("Localization", "SwitchToParticle", NULL);
 		const double switchToErrorMin = localization->get<double>("Localization", "SwitchToErrorMin", NULL);
@@ -898,7 +898,7 @@ int main(int argc,char *argv[]){
 
 			printf("Stage 1: Image precomputation\n");
 
-			
+
 			if(softhdr) {
 				currRealImage = currImage;
 				if(counter>0) {
@@ -908,7 +908,7 @@ int main(int argc,char *argv[]){
 				}
 			}
 
-			
+
 
 
 
@@ -941,7 +941,7 @@ int main(int argc,char *argv[]){
 
 			printf("Stage 5: Detect ROIs\n");
 			roiData = filterLinePointsROI.process((unsigned char *) image_uv, area, area, linePointsROI, distanceHelper, scanHelperBall);
-			
+
 			// rio Data contains which info???
 			printf("Stage 6: Insert Tracked ROI into ROI List\n");
 			roiData.insert(roiData.end()-kickerCount, curBallROI);
@@ -983,7 +983,7 @@ int main(int argc,char *argv[]){
 
 			printf("MovingObject imageNumber %d\n", imCounter);
 
-#ifdef SWITCHLOC		
+#ifdef SWITCHLOC
 			if (useParticleFilter) {
 			    if(!isGoalie)
 				particleFilter.iterate(linePoints, lineDistHelper, gaussHelper, yellowGoals, blueGoals, cornerPosts);
@@ -1015,7 +1015,7 @@ int main(int argc,char *argv[]){
 				for (i = 0;i<weightBufferSize; i++) {
 					if (weightBuffer[i] == -1.0) break;
 					weightBufferValue += weightBuffer[i];
-					
+
 				}
 				weightBufferValue = weightBufferValue/i;
 				printf("VisionPlayer NewLoc weightBufferValue %f\n",weightBufferValue);
@@ -1035,16 +1035,16 @@ int main(int argc,char *argv[]){
 				cout << "LOC DEBUG: " << emWeight << "\t" << pfWeight << endl;
 //				printf("NewLoc ParticleFilter: %f: %f %f %f\n",weightPosParticleFilter.weight, weightPosParticleFilter.x, weightPosParticleFilter.y,weightPosParticleFilter.heading);
 //				printf("NewLoc em: %f: %f %f %f\n",weightPosErrorMin.weight, weightPosErrorMin.x, weightPosErrorMin.y, weightPosErrorMin.heading);
-				if (particleFilterAllowed && 
-					(!(isInCorner && (weightBufferValue > 0.9|| weightBufferValue <0.8)) 
+				if (particleFilterAllowed &&
+					(!(isInCorner && (weightBufferValue > 0.9|| weightBufferValue <0.8))
 					&&
-						 (	
+						 (
 							(
-								useParticleFilter && 
+								useParticleFilter &&
 								(pfIterationCount < nrOfPfIterations || pfWeight < switchToErrorMin)
 							)
-						|| 
-							(emWeight < switchToParticle ) 
+						||
+							(emWeight < switchToParticle )
 						)
 					)
 				)
@@ -1073,7 +1073,7 @@ int main(int argc,char *argv[]){
                                         pos.y = weightPosErrorMin.y;
                                         pos.heading = weightPosErrorMin.heading;
 					weightBuffer[weightBufferCount] = weightPosErrorMin.weight;
-					
+
 					printf("VisionPlayer Loc ErrorMin: %f: %f %f %f\n",weightPosErrorMin.weight, pos.x, pos.y, pos.heading);
 					newLoc->writeCoi();
 					pfIterationCount = 0;
@@ -1101,7 +1101,7 @@ int main(int argc,char *argv[]){
 			WeightedPosition wpos;
 			if(isGoalie) wpos = particleFilter.getEstimatedPosition();
 			else wpos = particleFilterGoalie.getEstimatedPosition();
-			Position pos; 
+			Position pos;
 			pos.x = wpos.x;
 			pos.y = wpos.y;
 			pos.heading = wpos.heading;
@@ -1132,7 +1132,7 @@ int main(int argc,char *argv[]){
 				timediff += 1000000;
 
 			printf("\n\nTime for FilterChain: %ld\n\n", timediff);
-			
+
 			// reloc trigger
 			if(SpicaHelper::reloc == true){
 				SpicaHelper::reloc = false;
@@ -1158,11 +1158,11 @@ int main(int argc,char *argv[]){
 				SpicaHelper::vdd->list.clear();
 				for(unsigned int i = 0; i < linePoints.size(); i++){
 					fprintf(fd, "%f %f %f\n", linePoints[i].x, linePoints[i].y, pos.heading);
-					CNMessages::Point2dInfo tmp;
+					msl_msgs::Point2dInfo tmp;
 					tmp.x = linePoints[i].x;
 					tmp.y = linePoints[i].y;
 					SpicaHelper::vdd->list.push_back(tmp);
-					CNMessages::PositionInfo pi;
+					msl_msgs::PositionInfo pi;
 					pi.x = pos.x;
 					pi.y = pos.y;
 					pi.angle = pos.heading;
@@ -1190,7 +1190,7 @@ int main(int argc,char *argv[]){
 				localizeDebug.drawFieldForParticle(drawParticle, 0);
 				localizeDebug.drawParticlesOnField(particleFilter);
 			}
-			
+
 			if(softhdr) {
 			  memcpy(prevImage, currRealImage, imagesize_.width*imagesize_.height*2);
 			}
@@ -1254,8 +1254,8 @@ int main(int argc,char *argv[]){
 			} else if (sendROIImage) {
 				SpicaHelper::streamGreyMJPEG(image_roi, area, area);
 			}
-			
-/*			
+
+/*
 			if(streamMJpeg){
 				//imageRGB = filterYUVToRGB.process(currImage, imagesize_.width * imagesize_.height * 2);
 				//image_gray_circle = filterYUVToGray.process(currImage, imagesize_.width*imagesize_.height*2);
@@ -1264,7 +1264,7 @@ int main(int argc,char *argv[]){
 				ih.writeImage(image_roi, true, area, area);
 //				ih.writeImage(imageRGB, true);
 			}
-*/			
+*/
 
 			SpicaHelper::send();
             SpicaHelper::sendGameState();
@@ -1278,7 +1278,7 @@ int main(int argc,char *argv[]){
 					cam->setSaturation(cam->getSaturation()-5);
 					printf("Parameter Adjustmen - Saturation: %d\n", cam->getSaturation());
 				}
-				if(KeyHelper::checkKey('S')) { 
+				if(KeyHelper::checkKey('S')) {
 					cam->setSaturation(cam->getSaturation()+5);
 					printf("Parameter Adjustmen - Saturation: %d\n", cam->getSaturation());
 
@@ -1288,10 +1288,10 @@ int main(int argc,char *argv[]){
 				if(KeyHelper::checkKey('W')) {
 				}
 				if(KeyHelper::checkKey('e')) {
-				}	
+				}
 				if(KeyHelper::checkKey('E')) {
 				}
-				
+
 
 				printf("Stage 15:\n");
 				if(softhdr && !offline) {
@@ -1303,7 +1303,7 @@ int main(int argc,char *argv[]){
 						cam->setGain(currGain);
 				} else {
                                         if(enableGainFilter) filterAdjustGain.process(*cam,filterDistanceProfileNew, linePoints, maxParticle);*/
-					
+
 				}
 				//Auto-Gain
 				if(enableGainFilter){
@@ -1318,7 +1318,7 @@ int main(int argc,char *argv[]){
 				// pause offline player
 				usleep(15000);
 			}
-			
+
 		} //end while
 	} // end big try block
 	catch (camera::CameraException e) { //(Camera1394Exception e) {

@@ -36,8 +36,8 @@
 #include <vector>
 
 #include <SystemConfig.h>
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
-using namespace castor;
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+using namespace supplementary;
 
 
 
@@ -51,22 +51,22 @@ class ParticleFilterGoalie {
 		~ParticleFilterGoalie();
 
 		void iterate(std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, RandomGaussHelper & gaussHelper, std::vector<Goal> yellowGoals, std::vector<Goal> blueGoals, std::vector<CornerPost> cornerPosts, bool sendOdometry = true);
-		void updateParticles(double deltaX, double deltaY, double deltaH); 
+		void updateParticles(double deltaX, double deltaY, double deltaH);
 		Particle getMaxParticle();
 
 		int getNumberParticles();
 		Particle * getParticles();
 
 		WeightedPosition getEstimatedPosition();
-	
+
 		static double calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, LineDistanceHelper & lineDistHelper, unsigned char * linePointsInvalidity, int invCounter);
 		void writeCoi();
 
 	protected:
 
-		SystemConfigPtr sc;
-	
-		CNSensorMsgs::CorrectedOdometryInfo coi;
+		SystemConfig* sc;
+
+		msl_sensor_msgs::CorrectedOdometryInfo coi;
 
 		int nParticles;
 		void initParticles();
@@ -86,7 +86,7 @@ class ParticleFilterGoalie {
 
 		Position rawUpdatedPosition;
 		unsigned short msgid;
-		
+
 		bool isGoalie;
 		bool isGoalie2;
 
@@ -95,7 +95,7 @@ class ParticleFilterGoalie {
 		bool UseRepParticles;
 		bool UseBlueGoal;
 		bool UseCornerPosts;
-		
+
 		int yellowGoalDirection;
 
 		unsigned long long lastIteration;

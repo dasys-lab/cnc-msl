@@ -10,7 +10,7 @@ bool CameraCalibrationHelper::settingsAreRequested;
 bool CameraCalibrationHelper::setSettings;
 Settings* CameraCalibrationHelper::cameraSettings;
 
-CNSensorMsgs::CameraSettings* CameraCalibrationHelper::cameraSettingsMsgs;
+msl_sensor_msgs::CameraSettings* CameraCalibrationHelper::cameraSettingsMsgs;
 
 ros::Publisher CameraCalibrationHelper::settingPub;
 ros::Subscriber CameraCalibrationHelper::settingSub;
@@ -26,15 +26,15 @@ void CameraCalibrationHelper::initialize() {
     setSettings = false;
 
     cameraSettings = new Settings();
-    cameraSettingsMsgs = new CNSensorMsgs::CameraSettings();
-    cameraSettingsMsgs->senderID = supplementary::SystemConfig::GetOwnRobotID();
+    cameraSettingsMsgs = new msl_sensor_msgs::CameraSettings();
+    cameraSettingsMsgs->senderID = supplementary::SystemConfig::getOwnRobotID();
     cameraSettingsMsgs->receiverID = -1;
 
-    settingPub = visionNode->advertise<CNSensorMsgs::CameraSettings>("CNCalibration/CameraSettings", 1);
+    settingPub = visionNode->advertise<msl_sensor_msgs::CameraSettings>("CNCalibration/CameraSettings", 1);
 
-    settingSub = visionNode->subscribe<CNSensorMsgs::CameraSettings>("CNCalibration/CameraSettings", 1, &CameraCalibrationHelper::handleCameraSettings);
+    settingSub = visionNode->subscribe<msl_sensor_msgs::CameraSettings>("CNCalibration/CameraSettings", 1, &CameraCalibrationHelper::handleCameraSettings);
 
-    settingRequestSub = visionNode->subscribe<CNSensorMsgs::CameraSettingsRequest>("CNCalibration/CameraSettingsRequest", 1, &CameraCalibrationHelper::handleCameraSettingsRequest);
+    settingRequestSub = visionNode->subscribe<msl_sensor_msgs::CameraSettingsRequest>("CNCalibration/CameraSettingsRequest", 1, &CameraCalibrationHelper::handleCameraSettingsRequest);
 }
 
 void CameraCalibrationHelper::sendSettings(Settings* settings) {
@@ -77,7 +77,7 @@ void CameraCalibrationHelper::handleCameraSettings(const msl_sensor_msgs::Camera
 
 void CameraCalibrationHelper::handleCameraSettingsRequest(const msl_sensor_msgs::CameraSettingsRequest::ConstPtr& msg) {
     for (int i = 0; i < msg->receiverID.size(); ++i) {
-        if (msg->receiverID.at(i) == castor::SystemConfig::GetOwnRobotID()) {
+        if (msg->receiverID.at(i) == supplementary::SystemConfig::getOwnRobotID()) {
             std::cout << "CamCalib\thandleCameraSettingsRequest" << std::endl;
             settingsAreRequested = true;
             return;
