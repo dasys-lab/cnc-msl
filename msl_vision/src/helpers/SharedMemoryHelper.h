@@ -87,9 +87,9 @@ class SharedMemoryHelper{
 				ShmInfo() :
 					shmid(0), semid(0), sops(NULL)
 				{
-					std::string es_root(getenv("ES_ROOT"));
+					std::string es_root(getenv("DOMAIN_CONFIG_FOLDER"));
 
-					std::string filename = es_root + "/etc/Vision.conf";
+					std::string filename = es_root + "/Vision.conf";
 
 					key_t shmidKey = ftok(filename.c_str(), SHMKEY);
 					key_t semidKey = ftok(filename.c_str(), SEMKEY);

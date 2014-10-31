@@ -73,9 +73,9 @@ ConfigHelper::ConfigHelper(std::string configName){
 	gethostname(buffer, 256);
 
 	std::string hostname(buffer);
-	std::string es_root(getenv("ES_ROOT"));
+	std::string es_root(getenv("DOMAIN_CONFIG_FOLDER"));
 	
-	std::string filename = es_root + "/etc/" + hostname + "/" + configName;
+	std::string filename = es_root + hostname + "/" + configName;
 
 	printf("FileName %s\n", filename.c_str());
 

@@ -90,25 +90,29 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 {
+	//setup data to serialize
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
 	point b;
 	b.x = msg->ball.point.x;
 	b.y = msg->ball.point.y;
 	b = ego2Allo(b, msg->odometry.position);
+	swap(b.x, b.y);
+	b.y = -b.y;
 
 	bp.ballX = b.x;
 	bp.ballY = b.y;
 	bp.ballZ = msg->ball.point.z;
-	bp.ballVX = cos(msg->odometry.position.angle) * msg->ball.velocity.vx - sin(msg->odometry.position.angle) * msg->ball.velocity.vy;
-	bp.ballVY = sin(msg->odometry.position.angle) * msg->ball.velocity.vx + cos(msg->odometry.position.angle) * msg->ball.velocity.vy;
+	bp.ballVY = (cos(msg->odometry.position.angle) * msg->ball.velocity.vx - sin(msg->odometry.position.angle) * msg->ball.velocity.vy);
+	bp.ballVX = -(sin(msg->odometry.position.angle) * msg->ball.velocity.vx + cos(msg->odometry.position.angle) * msg->ball.velocity.vy);
 	bp.ballVZ = msg->ball.velocity.vz;
 
 	point opps[10];
 	point self;
-	self.x = msg->odometry.position.x;
-	self.y = msg->odometry.position.y;
+	self.y = msg->odometry.position.x;
+	self.x = -msg->odometry.position.y;
 
+	//serialize
 	unsigned char *arr = new unsigned char[mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size];
 	unsigned char *it = &arr[0];
 	it[0] = mixed_team_flag;
@@ -119,8 +123,8 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		if (i < msg->obstacles.size())
 		{
-			opps[i].x = msg->obstacles[i].x;
-			opps[i].y = msg->obstacles[i].y;
+			opps[i].y = msg->obstacles[i].x;
+			opps[i].x = -msg->obstacles[i].y;
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
 		}
 		else
@@ -134,14 +138,15 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	self.append(it);
 	it += opp_size;
 
+	//check
 	unsigned int packetSize = it - arr;
 	if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != packetSize)
 	{
 		cout << "strange stuff happend packetsend size is: " << packetSize << endl;
 	}
 
+	//send via multicast
 	commandChannel->publish((const char*)arr, packetSize);
-	//cout << "I heard: " << to_string(msg->id) << " from NodeID: " << msg->sender << endl;
 }
 
 /**
