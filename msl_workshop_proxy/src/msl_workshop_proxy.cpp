@@ -60,6 +60,7 @@ class MultiCastReceive
 public:
 	void callback(char* buffer, int size)
 	{
+		cout << "X" << flush;
 		ballPos bp;
 		point opps[10];
 		point self;
@@ -79,7 +80,7 @@ public:
 		}
 		self.desrializeFromPtr(it);
 
-		cout << "Received (" << size << " Bytes) MID is:" << endl;
+		/*cout << "Received (" << size << " Bytes) MID is:" << endl;
 		bp.print();
 		cout << "-";
 		self.print();
@@ -88,7 +89,7 @@ public:
 		{
 			opps[i].print();
 		}
-		cout << endl;
+		cout << endl;*/
 	}
 };
 
@@ -99,6 +100,7 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 {
+	cout << "." << flush;
 	//setup data to serialize
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
@@ -214,14 +216,14 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "flooding_test_node");
 
 	ros::NodeHandle n;
-	ros::Publisher chatter_pub = n.advertise<msl_sensor_msgs::WorldModelData>("WorldModel/WorldModelData", 10);
+	ros::Publisher chatter_pub = n.advertise<msl_sensor_msgs::WorldModelData>("WorldModel/WorldModelData", 1);
 
-	ballPub = n.advertise<PointCloud>("/ball", 10);
-	selfPub = n.advertise<PointCloud>("/self", 10);
-	obstaclesPub = n.advertise<PointCloud>("/obstacles", 10);
+	ballPub = n.advertise<PointCloud>("/ball", 1);
+	selfPub = n.advertise<PointCloud>("/self", 1);
+	obstaclesPub = n.advertise<PointCloud>("/obstacles", 1);
 
-	ros::Rate loop_rate(10);
-	ros::Subscriber sub = n.subscribe("WorldModel/WorldModelData", 30, messageCallback);
+	ros::Rate loop_rate(30);
+	ros::Subscriber sub = n.subscribe("WorldModel/WorldModelData", 1, messageCallback);
 
 	MultiCastReceive mcr;
 	string addr = "224.16.32.40";
@@ -231,7 +233,7 @@ int main(int argc, char **argv)
 	while (ros::ok())
 	{
 		ros::spinOnce();
-		msl_sensor_msgs::WorldModelData msg;
+		/*msl_sensor_msgs::WorldModelData msg;
 		msg.odometry.position.x = 1;
 		msg.odometry.position.y = 1;
 		msg.odometry.position.angle = 3.14159265 / 4.0;
@@ -240,9 +242,9 @@ int main(int argc, char **argv)
 		msg.ball.point.y = 0;
 		msg.ball.velocity.vx = 0;
 		msg.ball.velocity.vy = 1000;
-		chatter_pub.publish(msg);
+		chatter_pub.publish(msg);*/
 
-		ros::spinOnce();
+		//ros::spinOnce();
 		loop_rate.sleep();
 	}
 
