@@ -1,7 +1,7 @@
 #ifndef EPOSCAN_H
 #define EPOSCAN_H 1
 #include "controller.h"
-#include "canlistener.h"
+#include <canlistener.h>
 #include "canconnection.h"
 #include "eposprotocol.h"
 #include <stdint.h>  /* int types with given size */

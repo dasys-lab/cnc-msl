@@ -36,6 +36,9 @@
   <build_depend>system_config</build_depend>
   <build_depend>msl_msgs</build_depend>
   <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>can_connection</build_depend>
+  <build_depend>message_generation</build_depend>
+  
 
   <!-- Use buildtool_depend for build tool packages: -->
   <buildtool_depend>catkin</buildtool_depend>
@@ -45,6 +48,8 @@
   <run_depend>system_config</run_depend>
   <run_depend>msl_msgs</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>can_connection</run_depend>
+  <run_depend>message_runtime</run_depend>
 
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
