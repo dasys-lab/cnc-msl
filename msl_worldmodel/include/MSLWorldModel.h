@@ -28,6 +28,7 @@ namespace msl
 
 		tuple<double, double, double> getOwnPosition();
 		pair<double, double> getBallPosition();
+		pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 

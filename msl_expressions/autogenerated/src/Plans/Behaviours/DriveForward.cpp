@@ -3,62 +3,51 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1414427325853) ENABLED START*/ //Add additional includes here
 #include <tuple>
-
+#include <MSLWorldModel.h>
 using namespace std;
-
-pair<double, double> alica::DriveForward::allo2Ego(pair<double, double>& p,
-		tuple<double, double, double>& ownPos) {
-	pair<double, double> ego;
-
-	double x = p.first - get<0>(ownPos);
-	double y = p.second - get<1>(ownPos);
-
-	double angle = atan2(y, x) - get<2>(ownPos);
-	double dist = sqrt(x * x + y * y);
-
-	ego.first = cos(angle) * dist;
-	ego.second = sin(angle) * dist;
-
-	return ego;
-}
-
 /*PROTECTED REGION END*/
-namespace alica {
-DriveForward::DriveForward() :
-		DomainBehaviour("DriveForward") {
-	/*PROTECTED REGION ID(con1414427325853) ENABLED START*/ //Add additional options here
-	/*PROTECTED REGION END*/}
-DriveForward::~DriveForward() {
-	/*PROTECTED REGION ID(dcon1414427325853) ENABLED START*/ //Add additional options here
-	/*PROTECTED REGION END*/}
-void DriveForward::run(void* msg) {
-	/*PROTECTED REGION ID(run1414427325853) ENABLED START*/ //Add additional options here
-	msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-	tuple<double, double, double> ownPos = wm->getOwnPosition();
-	pair<double, double> alloBallPos = wm->getBallPosition();
-	pair<double, double> egoBallPos = this->allo2Ego(alloBallPos, ownPos);
+namespace alica
+{
+/*PROTECTED REGION ID(staticVars1414427325853) ENABLED START*/ //initialise static variables here
+/*PROTECTED REGION END*/DriveForward::DriveForward() :
+    DomainBehaviour("DriveForward")
+{
+  /*PROTECTED REGION ID(con1414427325853) ENABLED START*/ //Add additional options here
+  /*PROTECTED REGION END*/}
+DriveForward::~DriveForward()
+{
+  /*PROTECTED REGION ID(dcon1414427325853) ENABLED START*/ //Add additional options here
+  /*PROTECTED REGION END*/}
+void DriveForward::run(void* msg)
+{
+  /*PROTECTED REGION ID(run1414427325853) ENABLED START*/ //Add additional options here
+  msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+  tuple<double, double, double> ownPos = wm->getOwnPosition();
+  pair<double, double> alloBallPos = wm->getBallPosition();
+  pair<double, double> egoBallPos = wm->allo2Ego(alloBallPos, ownPos);
 
-	cout << "OwnPosition: ( " << get<0>(ownPos) << " ; " << get<1>(ownPos)
-			<< " ; " << get<2>(ownPos) << " )\t Ball: ( " << alloBallPos.first
-			<< " ; " << alloBallPos.second << " )" << endl;
+  cout << "OwnPosition: ( " << get < 0 > (ownPos) << " ; " << get < 1 > (ownPos) << " ; " << get < 2
+      > (ownPos) << " )\t Ball: ( " << alloBallPos.first << " ; " << alloBallPos.second << " )" << endl;
 
-	msl_simulator::sim_robot_command c;
+  msl_simulator::sim_robot_command c;
 
-	if(fabs(egoBallPos.first)<= 125 && fabs(egoBallPos.second) <= 125) {
-		c.velangular = 0;
-		c.velnormal = 0;
-		c.veltangent = 0;
-		c.kickspeedx = 2;
-		c.kickspeedz = 0;
-	} else {
-		c.velnormal = min(egoBallPos.second * 0.002, 0.8);
-		c.veltangent = min(egoBallPos.first * 0.002, 0.8);
-		c.velangular = 2 * atan2(egoBallPos.second, egoBallPos.first);
+  if (fabs(egoBallPos.first) <= 125 && fabs(egoBallPos.second) <= 125)
+  {
+    c.velangular = 0;
+    c.velnormal = 0;
+    c.veltangent = 0;
+    c.kickspeedx = 2;
+    c.kickspeedz = 0;
+  }
+  else
+  {
+    c.velnormal = min(egoBallPos.second * 0.002, 2.0);
+    c.veltangent = min(egoBallPos.first * 0.002, 2.0);
+    c.velangular = 3 * atan2(egoBallPos.second, egoBallPos.first);
 
-	}
+  }
 
   this->send(c);
-
 
   /*PROTECTED REGION END*/}
 void DriveForward::initialiseParameters()
@@ -67,4 +56,3 @@ void DriveForward::initialiseParameters()
   /*PROTECTED REGION END*/}
 /*PROTECTED REGION ID(methods1414427325853) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/} /* namespace alica */
-

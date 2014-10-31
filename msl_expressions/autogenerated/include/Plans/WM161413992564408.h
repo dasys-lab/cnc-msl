@@ -7,6 +7,7 @@
 #include "engine/DefaultUtilityFunction.h"
 /*PROTECTED REGION ID(incl1413992564408) ENABLED START*/
 //Add inlcudes here
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 using namespace alica;
 
@@ -21,6 +22,16 @@ class UtilityFunction1413992564408 : public BasicUtilityFunction
 };
 
 class TransitionCondition1413992578046 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
+class TransitionCondition1414752354525 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
+class TransitionCondition1414769686605 : public DomainCondition
 {
   bool evaluate(shared_ptr<RunningPlan> rp);
 };

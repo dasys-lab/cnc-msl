@@ -7,6 +7,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/Stop.h"
 
+#include  "Plans/Behaviours/DribbleToPoint.h"
+
 namespace alica
 {
 
@@ -31,6 +33,11 @@ shared_ptr<BasicBehaviour> BehaviourCreator::createBehaviour(long behaviourConfI
     case 1413992626194:
 
       return make_shared<Stop>();
+      break;
+
+    case 1414752423981:
+
+      return make_shared<DribbleToPoint>();
       break;
 
     default:

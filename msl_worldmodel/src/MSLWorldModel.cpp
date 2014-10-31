@@ -82,5 +82,20 @@ namespace msl
 		}
 		return ret;
 	}
+	pair<double, double> MSLWorldModel::allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos)
+	{
+	  pair<double, double> ego;
+
+	  double x = p.first - std::get<0>(ownPos);
+	  double y = p.second - std::get<1>(ownPos);
+
+	  double angle = atan2(y, x) - std::get<2>(ownPos);
+	  double dist = sqrt(x * x + y * y);
+
+	  ego.first = cos(angle) * dist;
+	  ego.second = sin(angle) * dist;
+
+	  return ego;
+	}
 
 } /* namespace msl */

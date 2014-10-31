@@ -24,6 +24,18 @@ shared_ptr<BasicCondition> ConditionCreator::createConditions(long conditionConf
 
       break;
 
+    case 1414752354525:
+
+      return make_shared<TransitionCondition1414752354525>();
+
+      break;
+
+    case 1414769686605:
+
+      return make_shared<TransitionCondition1414769686605>();
+
+      break;
+
     default:
       cerr << "ConditionCreator: Unknown condition id requested: " << conditionConfId << endl;
       throw new exception();
