@@ -70,7 +70,7 @@ void ImageMaskHelper::init(){
 		LookupTable = (unsigned char *) malloc(imWidth*imHeight*sizeof(unsigned char));
 	}
 
-	std::string file_name = std::string(getenv("ES_ROOT")) + "/src/Vision5/" + std::string(MASKFILENAME);
+	std::string file_name = std::string(getenv("DOMAIN_FOLDER")) + "/src/Vision5/" + std::string(MASKFILENAME);
 
 
 	FILE * fd = fopen(file_name.c_str(), "r");

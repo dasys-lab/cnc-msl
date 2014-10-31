@@ -147,7 +147,7 @@ void DistanceLookupHelper::init(char* name){
 		HorizontalLookupTable = (double *) malloc(HLOOKUPSIZE*sizeof(double));
 	}
 
-	std::string file_name = std::string(getenv("ES_ROOT")) + "/etc/" + std::string(name);
+	std::string file_name = std::string(getenv("DOMAIN_CONFIG_FOLDER")) +"/"+ std::string(name);
 
 	FILE * fd = fopen(file_name.c_str(), "r");
 	if(fd != NULL){

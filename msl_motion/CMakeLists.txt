@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_workshop_proxy)
+project(msl_motion)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -7,7 +7,10 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp message_generation geometry_msgs)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  system_config
+)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -43,10 +46,11 @@ find_package(Boost REQUIRED COMPONENTS system)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(
-   DIRECTORY msg FILES
-   PointList.msg
- )
+# add_message_files(
+#   FILES
+#   Message1.msg
+#   Message2.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -63,11 +67,10 @@ find_package(Boost REQUIRED COMPONENTS system)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-   std_msgs  # Or other packages containing msgs
-   geometry_msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#   std_msgs  # Or other packages containing msgs
+# )
 
 ###################################
 ## catkin specific configuration ##
@@ -80,8 +83,8 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES flooding_test
-#  CATKIN_DEPENDS other_catkin_pkg
+#  LIBRARIES msl_motion
+#  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
 
@@ -91,24 +94,52 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
+# include_directories(include)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
-## Declare a cpp library
-# add_library(flooding_test
-#   src/${PROJECT_NAME}/flooding_test.cpp
-# )
+## msl_motion
+add_executable(msl_motion
+  src/RosHelper.cpp
+  src/settings.cpp
+  src/driver/udpcanconnection.cpp
+  src/driver/usbcanconnection.cpp
+  src/driver/controller.cpp
+  src/driver/eposcan.cpp
+  src/logging.cpp
+  src/gonzales.cpp
+  src/EposGonzales.cpp
+)
+target_link_libraries(msl_motion pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(msl_motion PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror")
 
-## Declare a cpp executable
-add_executable(msl_workshop_proxy src/msl_workshop_proxy.cpp src/PracticalSocket.cpp)
+## msl_motion_lifetest
+add_executable(msl_motion_lifetest
+  src/RosHelper.cpp
+  src/settings.cpp
+  src/driver/udpcanconnection.cpp
+  src/driver/usbcanconnection.cpp
+  src/driver/controller.cpp
+  src/driver/eposcan.cpp
+  src/logging.cpp
+  src/gonzales.cpp
+  src/epostest.cpp
+)
+target_link_libraries(msl_motion_lifetest pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(msl_motion_lifetest PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror")
+
+## canconnection
+add_library(canconnection src/driver/usbcanconnection.cpp)
+set_target_properties(canconnection PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC")
+
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_workshop_proxy msl_workshop_proxy_generate_messages_cpp)
+# add_dependencies(msl_motion_node msl_motion_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(msl_workshop_proxy
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(msl_motion_node
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -125,7 +156,7 @@ target_link_libraries(msl_workshop_proxy
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS flooding_test flooding_test_node
+# install(TARGETS msl_motion msl_motion_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -150,7 +181,7 @@ target_link_libraries(msl_workshop_proxy
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_flooding_test.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_motion.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
