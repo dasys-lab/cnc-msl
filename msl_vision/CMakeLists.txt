@@ -216,7 +216,6 @@ FILE(GLOB lib_msl_vision_SOURCES
 
 ## Vision 2D
 
-message ("<<<<<<<<<<<<<< ${catkin_LIBRARIES}")
 add_library(lib_msl_vision ${lib_msl_vision_SOURCES})
 target_link_libraries(lib_msl_vision pthread m system_config Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES} freenect)
 set_target_properties(lib_msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
