@@ -43,10 +43,11 @@ int main(int argc, char * argv[]){
 
 	DistCalculator DC;
 
-	SystemConfigPtr sc = SystemConfig::getInstance();
+	SystemConfig* sc = SystemConfig::getInstance();
 	std::string confPath = sc->getConfigPath();
 
 	Configuration *vision = (*sc)["Vision"];
+	if(vision==nullptr) return 0;
 
 	int MX;// = atoi((vision->Values["CameraMX"]).c_str());
 	int MY;// = atoi((vision->Values["CameraMY"]).c_str());

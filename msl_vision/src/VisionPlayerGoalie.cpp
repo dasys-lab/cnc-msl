@@ -130,7 +130,7 @@ int main(int argc,char *argv[]){
 
 	try {
 
-		SystemConfigPtr sc = SystemConfig::getInstance();
+		SystemConfig* sc = SystemConfig::getInstance();
 
 	
 		if(argc > 1){

@@ -53,6 +53,7 @@ int main ( int argc, char * argv[] )
 	string confPath = sc->getConfigPath();
 
 	supplementary::Configuration *vision3D		= (*sc)["Vision3D"];
+	if(vision3D==nullptr) return 0;
 
 	cout << "Camera" << endl;
 	cout << "\tModel_";

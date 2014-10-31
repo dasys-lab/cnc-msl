@@ -143,7 +143,7 @@ int main(int argc,char *argv[]){
 
 	std::cout << "DEBUG: Camera Resolution: " << imagesize_.width << " x " << imagesize_.height << std::endl;
 
-	SystemConfigPtr sc;
+	SystemConfig* sc;
 
 	try {
 

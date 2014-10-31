@@ -462,7 +462,7 @@ int main(int argc,char *argv[]) {
 		}
 	}
 
-	SystemConfigPtr sc = SystemConfig::getInstance();
+	SystemConfig* sc = SystemConfig::getInstance();
 	BallHelperKinect ballHelper;
 
 	const char* vision = "Vision";

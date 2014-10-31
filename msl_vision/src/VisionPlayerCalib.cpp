@@ -608,11 +608,11 @@ int main(int argc,char *argv[]){
 			if(localizeDebugFlag && counter >= 0){
 				SpicaHelper::vdd->list.clear();
 				for(unsigned int i = 0; i < linePoints.size(); i++){
-					CNMessages::Point2dInfo tmp;
+					msl_msgs::Point2dInfo tmp;
 					tmp.x = linePoints[i].x;
 					tmp.y = linePoints[i].y;
 					SpicaHelper::vdd->list.push_back(tmp);
-					CNMessages::PositionInfo pi;
+					msl_msgs::PositionInfo pi;
 					pi.x = 0;
 					pi.y = 0;
 					pi.angle = 0;
