@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp message_generation)
+find_package(catkin REQUIRED roscpp message_generation geometry_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -45,7 +45,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## Generate messages in the 'msg' folder
  add_message_files(
    DIRECTORY msg FILES
-   TestMessage.msg
+   PointList.msg
  )
 
 ## Generate services in the 'srv' folder
@@ -66,6 +66,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 generate_messages(
   DEPENDENCIES
    std_msgs  # Or other packages containing msgs
+   geometry_msgs
 )
 
 ###################################
