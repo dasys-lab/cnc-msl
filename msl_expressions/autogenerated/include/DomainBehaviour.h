@@ -6,6 +6,7 @@
 #include "ros/ros.h"
 #include "msl_simulator/sim_packet.h"
 #include "SystemConfig.h"
+#include "MSLWorldModel.h"
 namespace alica
 {
 class DomainBehaviour : public BasicBehaviour
@@ -14,8 +15,10 @@ class DomainBehaviour : public BasicBehaviour
 		DomainBehaviour(string name);
 		virtual ~DomainBehaviour();
 		void send(msl_simulator::sim_robot_command& p);
+		msl::MSLWorldModel* wm;
 
 	private:
+
 		int ownID;
 		ros::Publisher simlatorPub;
 	};

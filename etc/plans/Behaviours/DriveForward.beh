@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1414427325853" name="DriveForward" comment="" destinationPath="Plans/Behaviours">
-  <configurations id="1414427354149" name="DriveForwardDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1414840433813" name="DriveForward" comment="" destinationPath="">
+  <configurations id="1414840446941" name="New BehaviourDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
 </alica:Behaviour>
