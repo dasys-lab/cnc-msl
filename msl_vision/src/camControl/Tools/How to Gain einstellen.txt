@@ -1,0 +1,22 @@
+	0 Inahlt
+1. Allgemein
+2. Kamera ausmessen
+3. LUT errechnen
+4. LUTGainAdd setzen 
+
+	1. Allgemein
+Der Gain wird über ein spezielles Regelverfahren geregelt (s. hierzu Projektbericht, im speziellen Alorithmus 1). Der Gain benötigt eine Look-Up-Table, und den Parameter "LUTGainAdd". LUT und "LUTGainAdd" stehen in einem Zusammenhang und müssen für jeden Kameratyp einmal ermittelt werden. Wie die LUT erstellt wurd steht in "How to LUT erstellen.txt". Für schnelle Bugfixes: "LUTGainAdd" senken bei Überschwingern, oder erhöhen bei einer zu langsamen Regelung. Ist dies nötig ist die Kamera sehr schlecht Parametrisiert. Mögliche Gründe: Sehr stark ausgeregelter Weißabgleich (z.B. im Keller durch den grünen Teppich) oder falsche LUT für den Kameratyp.
+
+	2. Kamera ausmessen
+Hierzu den Code von Programm ga.cpp öffnen. In ga.cpp befindet sich eine doppelte for-Schleife die Gain und Shutter einstellt, und dabei die Helligkeit ausliesst.  Ziel ist, in der Kamera verschiedene Shutter- und Gaineinstellungen zu setzen, und dabei die Helligkeit der Referenzfläche auszulesen. Hierbei muss die Referenzfläche Helligkeiten von 0-255 annehmen. Deshalb müssen die numerischen Werte der for-Schleifen - Variablen auf den Kameratyp angepasst werden. Da gemittelt werden muss, ist es hilfreich sehr viele Messwerte aufzunehmen (Der Durchlauf der beiden for-Schleifen, kann ruhig eine Stunde dauern.) Die Ergebnisse befinden sich in MW.csv
+
+	3. LUT errechnen
+Die Dateien octabeImplentierung.m und octaveAufruf.m beinhalten Funktionen zur Berechnung der LUT. Hierzu muss folgendes getan werden:
+ - Den Inhalt der octaveImplementierung in eine Octavefenster kopieren.
+ - In der octaveAufruf.m muss der Pfad zu MW.csv eingetragen werden.
+ - In Zeile Zwei der octaveAufruf.m muss eingetragen werden, wieviele Gainwerte pro Shutterwert in der ga.ccp aufgerufen wurden.
+ - Dann den Inhalt der octaveAufruf in eine Octavezeile kopieren.
+ - Die ausgegebene LUT in die Configdatei kopieren
+
+	4. LUTGainAdd setzen
+"LUTGainAdd" bekommt den Werten, um den der Gain in der for - Schleife von ga.ccp erhöht wurde.
