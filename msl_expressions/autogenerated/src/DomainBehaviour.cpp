@@ -2,6 +2,8 @@
 
 namespace alica
 {
+msl::MSLWorldModel* wm;
+
 DomainBehaviour::DomainBehaviour(string name) :
     BasicBehaviour(name)
 {
@@ -9,11 +11,13 @@ DomainBehaviour::DomainBehaviour(string name) :
 		ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
 		simlatorPub = n.advertise<msl_simulator::sim_packet>("/MSLSimulator/SimPacket", 1000);
+		wm = msl::MSLWorldModel::get();
 }
 
 DomainBehaviour::~DomainBehaviour()
 {
 }
+
 void DomainBehaviour::send(msl_simulator::sim_robot_command& p)
 	{
 		p.id = ownID;

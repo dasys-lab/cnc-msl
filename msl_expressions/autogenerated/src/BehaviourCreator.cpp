@@ -3,6 +3,8 @@ using namespace std;
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
 
+#include  "Plans/Behaviours/GetBall.h"
+
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/Behaviours/Stop.h"
@@ -25,7 +27,14 @@ shared_ptr<BasicBehaviour> BehaviourCreator::createBehaviour(long behaviourConfI
   switch (behaviourConfId)
   {
 
-    case 1414427354149:
+    case 1414828313541:
+
+    case 1414840399972:
+
+      return make_shared<GetBall>();
+      break;
+
+    case 1414840446941:
 
       return make_shared<DriveForward>();
       break;
