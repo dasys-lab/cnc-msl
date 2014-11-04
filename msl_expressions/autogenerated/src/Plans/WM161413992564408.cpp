@@ -76,7 +76,8 @@ bool TransitionCondition1414752354525::evaluate(shared_ptr<RunningPlan> rp)
   tuple<double, double, double> ownPos = wm->getOwnPosition();
   pair<double, double> egoBallPos = wm->allo2Ego(alloBallPos, ownPos);
 
-  if (fabs(egoBallPos.first) <= 125 && fabs(egoBallPos.second) <= 125)
+
+  if (fabs(egoBallPos.first) <= 125 && fabs(egoBallPos.second) <= 125 && fabs(atan2(egoBallPos.second, egoBallPos.first)) <=0.075)
   {
     return true;
   }
@@ -115,7 +116,7 @@ bool TransitionCondition1414883779788::evaluate(shared_ptr<RunningPlan> rp)
   tuple<double, double, double> ownPos = wm->getOwnPosition();
   pair<double, double> egoBallPos = wm->allo2Ego(alloBallPos, ownPos);
 
-  if (fabs(egoBallPos.first) >= 130 || fabs(egoBallPos.second) >= 130)
+  if (fabs(egoBallPos.first) >= 130 || fabs(egoBallPos.second) >= 130 || fabs(atan2(egoBallPos.second, egoBallPos.first)) >= 0.075)
   {
 	 return true;
   }

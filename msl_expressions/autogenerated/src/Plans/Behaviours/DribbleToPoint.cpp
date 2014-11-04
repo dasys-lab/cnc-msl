@@ -40,15 +40,18 @@ void DribbleToPoint::run(void* msg)
   double p = atan2(egoPos.second-egoBallPos.second, egoPos.first-egoBallPos.first);
 
 
-	  if(fabs(p)<=0.175) {
-		   c.velnormal = min(egoPos.second * 0.002, 1.0);
-		   c.veltangent = min(egoPos.first * 0.002, 1.0);
-		   c.velangular = 0;
+	  if(fabs(p)<=0.115) {
+		  c.velangular = p;
+		  c.velnormal = -(p*r);
+		  c.veltangent = min(egoPos.first * 0.001, 1.0);
+		  c.spinner = true;
 	  } else {
-		   c.velangular = p*2;
-		   c.velnormal = -(p*r)*2;
-		   c.veltangent = 0;
+		   c.velangular = p*1.5;
+		   c.velnormal = -(p*r)*1.5;
+		   c.veltangent = min(egoBallPos.first * 0.05, 1.0);
+		   c.spinner = true;
 	  }
+
 
 //  c.velangular = 4.1;
 //  c.velnormal = -(4.1*r);
