@@ -26,6 +26,8 @@ ros::Publisher ballPub;
 ros::Publisher selfPub;
 ros::Publisher obstaclesPub;
 
+int sendCounter = 0;
+
 point allo2Ego(point& p, msl_msgs::PositionInfo& ownPos)
 {
 	point ego;
@@ -66,10 +68,12 @@ public:
 		point self;
 		if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size)
 		{
-			cout << "strange packet received. Size:" << size << endl;
+			cout << "strange packet received. Size:" << size << " but should be: " << mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << endl;
 		}
 		unsigned char* it = (unsigned char*)buffer;
 		unsigned char flag = *it;
+		it++;
+		int robotID = *it;
 		it++;
 		bp.desrializeFromPtr(it);
 		it += ball_size;
@@ -100,8 +104,12 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 {
+	if(++sendCounter % 10 != 0) {
+		return;
+	}
 	cout << "." << flush;
 	//setup data to serialize
+	unsigned char robotID = 8;
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
 	point b;
@@ -119,18 +127,22 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	bp.ballVX = -(sin(msg->odometry.position.angle) * msg->ball.velocity.vx
 			+ cos(msg->odometry.position.angle) * msg->ball.velocity.vy);
 	bp.ballVZ = msg->ball.velocity.vz;
+	bp.confidence = (uint8_t)(msg->ball.confidence*255.0);
 
 	point opps[10];
 	point self;
 	self.y = msg->odometry.position.x;
 	self.x = -msg->odometry.position.y;
+	self.confidence = (uint8_t)(msg->odometry.position.certainty*255.0);
 
 	//serialize
 	unsigned char *arr = new unsigned char[mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size];
 	unsigned char *it = &arr[0];
 	it[0] = mixed_team_flag;
 	it += 1;
+	it[0] = robotID;
 	bp.append(it);
+	it += 1;
 	it += ball_size;
 	for (int i = 0; i < opp_count; i++)
 	{
@@ -138,12 +150,14 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 		{
 			opps[i].y = msg->obstacles[i].x;
 			opps[i].x = -msg->obstacles[i].y;
+			bp.confidence = (uint8_t)(msg->obstacles[i].diameter*255.0);
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
 		}
 		else
 		{
 			opps[i].x = 0;
 			opps[i].y = 0;
+			bp.confidence = 0;
 		}
 		opps[i].append(it);
 		it += opp_size;
@@ -233,7 +247,7 @@ int main(int argc, char **argv)
 	while (ros::ok())
 	{
 		ros::spinOnce();
-		/*msl_sensor_msgs::WorldModelData msg;
+		msl_sensor_msgs::WorldModelData msg;
 		msg.odometry.position.x = 1;
 		msg.odometry.position.y = 1;
 		msg.odometry.position.angle = 3.14159265 / 4.0;
@@ -242,7 +256,7 @@ int main(int argc, char **argv)
 		msg.ball.point.y = 0;
 		msg.ball.velocity.vx = 0;
 		msg.ball.velocity.vy = 1000;
-		chatter_pub.publish(msg);*/
+		chatter_pub.publish(msg);
 
 		//ros::spinOnce();
 		loop_rate.sleep();
