@@ -74,10 +74,10 @@ public:
 		point self;
 		if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size)
 		{
-			cout << "strange packet received. Size:" << size << " but should be: "
+			/*cout << "strange packet received. Size:" << size << " but should be: "
 					<< mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << " from robot: ";
 			if (size > 2)
-				cout << buffer[1] << endl;
+				cout << buffer[1] << endl;*/
 			return;
 		}
 		unsigned char* it = (unsigned char*)buffer;
@@ -190,6 +190,7 @@ public:
 				bool isOpp = true;
 				for (auto item : robotPositions)
 				{
+					cout << (curTime - lastUpdateTime[item.first]) << "\t" <<  timeout << endl;
 					if ((curTime - lastUpdateTime[item.first]) < timeout)
 					{
 						if (fabs(item.second.x - pa.x) < 350 && fabs(item.second.y - pa.y) < 350)
