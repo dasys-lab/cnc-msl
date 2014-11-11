@@ -190,10 +190,9 @@ public:
 				bool isOpp = true;
 				for (auto item : robotPositions)
 				{
-					cout << (curTime - lastUpdateTime[item.first]) << "\t" <<  timeout << endl;
 					if ((curTime - lastUpdateTime[item.first]) < timeout)
 					{
-						if (fabs(item.second.x - pa.x) < 350 && fabs(item.second.y - pa.y) < 350)
+						if (fabs(item.second.x - pa.x*1000.0) < 350 && fabs(item.second.y - pa.y*1000.0) < 350)
 						{
 							isOpp = false;
 						}
