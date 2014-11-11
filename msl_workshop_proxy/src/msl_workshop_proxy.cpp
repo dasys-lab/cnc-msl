@@ -33,6 +33,7 @@ int ownID = 4;
 unsigned long timeout = 1000000000;
 map<int, ballPos> ballPositions;
 map<int, point> robotPositions;
+vector<point> allOpps;
 map<int, unsigned long> lastUpdateTime;
 
 point allo2Ego(point& p, msl_msgs::PositionInfo& ownPos)
@@ -75,9 +76,9 @@ public:
 		if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size)
 		{
 			/*cout << "strange packet received. Size:" << size << " but should be: "
-					<< mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << " from robot: ";
-			if (size > 2)
-				cout << buffer[1] << endl;*/
+			 << mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << " from robot: ";
+			 if (size > 2)
+			 cout << buffer[1] << endl;*/
 			return;
 		}
 		unsigned char* it = (unsigned char*)buffer;
@@ -109,9 +110,18 @@ public:
 		auto pointinTime = now.time_since_epoch();
 		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(pointinTime).count();
 
-		if(robotID != ownID) ballPositions[robotID] = bp;
+		ballPositions[robotID] = bp;
 		robotPositions[robotID] = self;
 		lastUpdateTime[robotID] = curTime;
+
+		for (auto& copp : opps)
+		{
+			if (robotID == ownID
+					|| ((fabs(copp.x - self.x * 1000.0) < 1200 && fabs(copp.y - self.y * 1000.0) < 1200)))
+			{
+				allOpps.push_back(copp);
+			}
+		}
 
 		if (robotID != ownID)
 		{
@@ -141,7 +151,7 @@ public:
 				ballPos bestBP;
 				for (auto item : ballPositions)
 				{
-					if ((curTime - lastUpdateTime[item.first]) < timeout)
+					if ((curTime - lastUpdateTime[item.first]) < 3 * timeout)
 					{
 						if (item.second.ballX != -32768 && item.second.ballY != -32768)
 						{
@@ -175,15 +185,15 @@ public:
 		}
 
 		{
-			for (int i = 0; i < opp_count; i++)
+			for (point& copp : allOpps)
 			{
-				if (opps[i].x == -32768 || opps[i].y == -32768)
+				if (copp.x == -32768 || copp.y == -32768)
 				{
 					continue;
 				}
 				Point32 pa;
-				pa.x = opps[i].x / 1000.0;
-				pa.y = opps[i].y / 1000.0;
+				pa.x = copp.x / 1000.0;
+				pa.y = copp.y / 1000.0;
 				pa.z = 250.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "opps";
@@ -192,10 +202,18 @@ public:
 				{
 					if ((curTime - lastUpdateTime[item.first]) < timeout)
 					{
-						if (fabs(item.second.x - pa.x*1000.0) < 350 && fabs(item.second.y - pa.y*1000.0) < 350)
+						if (fabs(item.second.x - pa.x * 1000.0) < 350 && fabs(item.second.y - pa.y * 1000.0) < 350)
 						{
 							isOpp = false;
 						}
+					}
+				}
+				for (auto& alreadyadded : obstacles.points)
+				{
+					if (fabs(alreadyadded.x * 1000.0 - pa.x * 1000.0) < 350
+							&& fabs(alreadyadded.y * 1000.0 - pa.y * 1000.0) < 350)
+					{
+						isOpp = false;
 					}
 				}
 				if (isOpp)
@@ -205,6 +223,7 @@ public:
 				}
 			}
 			obstaclesPub.publish(obstacles);
+			allOpps.clear();
 		}
 	}
 };
