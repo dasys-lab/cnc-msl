@@ -227,7 +227,7 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
  */
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "flooding_test_node");
+	ros::init(argc, argv, "msl_workshop_proxy");
 
 	ros::NodeHandle n;
 	ros::Publisher chatter_pub = n.advertise<msl_sensor_msgs::WorldModelData>("WorldModel/WorldModelData", 1);
@@ -240,14 +240,14 @@ int main(int argc, char **argv)
 	ros::Subscriber sub = n.subscribe("WorldModel/WorldModelData", 1, messageCallback);
 
 	MultiCastReceive mcr;
-	string addr = "224.16.32.40";
-	unsigned short port = 50000;
+	string addr = "224.16.32.75";
+	unsigned short port = 2005;
 	commandChannel = new MultiCastChannel<MultiCastReceive>(addr, port, &MultiCastReceive::callback, &mcr);
 
 	while (ros::ok())
 	{
 		ros::spinOnce();
-		msl_sensor_msgs::WorldModelData msg;
+		/*msl_sensor_msgs::WorldModelData msg;
 		msg.odometry.position.x = 1;
 		msg.odometry.position.y = 1;
 		msg.odometry.position.angle = 3.14159265 / 4.0;
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
 		msg.ball.point.y = 0;
 		msg.ball.velocity.vx = 0;
 		msg.ball.velocity.vy = 1000;
-		chatter_pub.publish(msg);
+		chatter_pub.publish(msg);*/
 
 		//ros::spinOnce();
 		loop_rate.sleep();
