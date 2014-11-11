@@ -148,10 +148,12 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		if (i < msg->obstacles.size())
 		{
-			opps[i].y = msg->obstacles[i].x;
-			opps[i].x = -msg->obstacles[i].y;
+			opps[i].y = msg->obstacles[i].y;
+			opps[i].x = msg->obstacles[i].x;
 			bp.confidence = (uint8_t)(msg->obstacles[i].diameter*255.0);
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
+			opps[i].y = opps[i].x;
+			opps[i].x = -opps[i].y;
 		}
 		else
 		{
