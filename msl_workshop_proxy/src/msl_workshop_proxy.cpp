@@ -124,7 +124,7 @@ public:
 		obstacles.header = ballCloud.header;
 
 		{
-			if (bp.ballX != -32768 || bp.ballY != -32768)
+			if (false && (bp.ballX != -32768 || bp.ballY != -32768))
 			{
 				Point32 p;
 				p.x = bp.ballX / 1000.0;
