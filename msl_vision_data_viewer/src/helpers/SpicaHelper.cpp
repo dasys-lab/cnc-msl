@@ -39,11 +39,6 @@ void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstP
 }
 
 
-void SpicaHelper::handleWorldmodelData(const msl_sensor_msgs::WorldModelData::ConstPtr& msg) {
-	wmdirty=true;
-}
-
-
 void SpicaHelper::handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr& msg) {
 	if(vidirty) return;
 	if(msg->senderID != receiverID) return;

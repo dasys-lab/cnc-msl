@@ -27,7 +27,6 @@
 #include <msl_sensor_msgs/VisionDebug.h>
 #include <msl_sensor_msgs/VisionControl.h>
 #include <msl_sensor_msgs/VisionImage.h>
-#include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_sensor_msgs/BallInfo.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <msl_sensor_msgs/LocalizationType.h>
@@ -43,14 +42,12 @@ class SpicaHelper {
 	public:
 		ros::Subscriber sub;
 		ros::Subscriber viSub;
-		ros::Subscriber subwm;
 		ros::Publisher VCPub;
 		msl_sensor_msgs::VisionDebug* vdd;
 		msl_sensor_msgs::BallInfo bi;
 
 		void handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr& msg);
 		void handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr& msg);
-		void handleWorldmodelData(const msl_sensor_msgs::WorldModelData::ConstPtr& msg);
 		void sendVisionControl(char key, char debugMode);
 
 		void initialize(const char* nodename, bool imagedata);
