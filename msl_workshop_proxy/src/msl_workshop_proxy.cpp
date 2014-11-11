@@ -109,7 +109,7 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	}
 	cout << "." << flush;
 	//setup data to serialize
-	unsigned char robotID = 8;
+	unsigned char robotID = 5;
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
 	point b;
