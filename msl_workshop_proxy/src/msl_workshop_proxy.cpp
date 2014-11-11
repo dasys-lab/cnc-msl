@@ -131,8 +131,8 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 
 	point opps[10];
 	point self;
-	self.y = msg->odometry.position.x;
-	self.x = -msg->odometry.position.y;
+	self.y = -msg->odometry.position.x;
+	self.x = msg->odometry.position.y;
 	self.confidence = (uint8_t)(msg->odometry.position.certainty*255.0);
 
 	//serialize
