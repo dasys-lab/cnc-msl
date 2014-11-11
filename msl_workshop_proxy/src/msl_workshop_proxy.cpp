@@ -109,7 +109,7 @@ public:
 		auto pointinTime = now.time_since_epoch();
 		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(pointinTime).count();
 
-		ballPositions[robotID] = bp;
+		if(robotID != ownID) ballPositions[robotID] = bp;
 		robotPositions[robotID] = self;
 		lastUpdateTime[robotID] = curTime;
 
@@ -124,7 +124,7 @@ public:
 		obstacles.header = ballCloud.header;
 
 		{
-			if (false && (bp.ballX != -32768 || bp.ballY != -32768))
+			if (bp.ballX != -32768 || bp.ballY != -32768)
 			{
 				Point32 p;
 				p.x = bp.ballX / 1000.0;
