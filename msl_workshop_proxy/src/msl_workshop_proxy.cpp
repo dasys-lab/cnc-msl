@@ -104,8 +104,8 @@ public:
 		self.desrializeFromPtr(it);
 
 		auto now = std::chrono::high_resolution_clock::now();
-		auto duration = now.time_since_epoch();
-		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+		auto pointinTime = now.time_since_epoch();
+		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(pointinTime).count();
 
 		ballPositions[robotID] = bp;
 		robotPositions[robotID] = self;
@@ -142,9 +142,10 @@ public:
 				Point32 p;
 				p.x = item.second.x / 1000.0;
 				p.y = item.second.y / 1000.0;
-				p.z = 0 / 1000.0;
+				p.z = 500.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "self";
+				chan.values.push_back(item.first);
 				if ((curTime - lastUpdateTime[item.first]) < timeout)
 				{
 					ownPosition.points.push_back(p);
@@ -164,7 +165,7 @@ public:
 				Point32 pa;
 				pa.x = opps[i].x / 1000.0;
 				pa.y = opps[i].y / 1000.0;
-				pa.z = 0 / 1000.0;
+				pa.z = 500.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "opps";
 				bool isOpp = true;
