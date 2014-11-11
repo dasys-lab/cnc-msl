@@ -69,14 +69,15 @@ class MultiCastReceive
 public:
 	void callback(char* buffer, int size)
 	{
-		cout << "X" << flush;
 		ballPos bp;
 		point opps[10];
 		point self;
 		if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size)
 		{
 			cout << "strange packet received. Size:" << size << " but should be: "
-					<< mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << endl;
+					<< mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << " from robot: ";
+			if (size > 2)
+				cout << buffer[1] << endl;
 			return;
 		}
 		unsigned char* it = (unsigned char*)buffer;
@@ -88,6 +89,7 @@ public:
 		}
 		it++;
 		int robotID = *it;
+		cout << (int)robotID << flush;
 		if (robotID > 6)
 		{
 			cout << "received strange robotID" << endl;
@@ -127,12 +129,29 @@ public:
 				Point32 p;
 				p.x = bp.ballX / 1000.0;
 				p.y = bp.ballY / 1000.0;
-				p.z = bp.ballZ / 1000.0;
+				p.z = 120.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "ball";
 				ballCloud.points.push_back(p);
 				ballCloud.channels.push_back(chan);
 				ballPub.publish(ballCloud);
+			}
+			else
+			{
+				ballPos bestBP;
+				for (auto item : ballPositions)
+				{
+					if ((curTime - lastUpdateTime[item.first]) < timeout)
+					{
+						if (item.second.ballX != -32768 && item.second.ballY != -32768)
+						{
+							if (item.second.confidence >= bestBP.confidence)
+							{
+								bestBP = item.second;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -142,7 +161,7 @@ public:
 				Point32 p;
 				p.x = item.second.x / 1000.0;
 				p.y = item.second.y / 1000.0;
-				p.z = 500.0 / 1000.0;
+				p.z = 250.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "self";
 				chan.values.push_back(item.first);
@@ -165,7 +184,7 @@ public:
 				Point32 pa;
 				pa.x = opps[i].x / 1000.0;
 				pa.y = opps[i].y / 1000.0;
-				pa.z = 500.0 / 1000.0;
+				pa.z = 250.0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "opps";
 				bool isOpp = true;
