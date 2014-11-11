@@ -30,7 +30,7 @@ ros::Publisher obstaclesPub;
 int sendCounter = 0;
 
 int ownID = 4;
-
+unsigned long timeout = 1000000000;
 map<int, ballPos> ballPositions;
 map<int, point> robotPositions;
 map<int, unsigned long> lastUpdateTime;
@@ -81,8 +81,16 @@ public:
 		}
 		unsigned char* it = (unsigned char*)buffer;
 		unsigned char flag = *it;
+		if(flag!=123) {
+			cout << "received strange mixed team flag" << endl;
+			return;
+		}
 		it++;
 		int robotID = *it;
+		if(robotID>6) {
+			cout << "received strange robotID" << endl;
+			return;
+		}
 		it++;
 		bp.desrializeFromPtr(it);
 		it += ball_size;
@@ -93,9 +101,13 @@ public:
 		}
 		self.desrializeFromPtr(it);
 
+		auto now = std::chrono::high_resolution_clock::now();
+		auto duration = now.time_since_epoch();
+		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+
 		ballPositions[robotID] = bp;
 		robotPositions[robotID] = self;
-		lastUpdateTime[robotID] = 0;
+		lastUpdateTime[robotID] = curTime;
 
 		if (robotID != ownID)
 		{
@@ -133,8 +145,8 @@ public:
 				chan.name = "self";
 				ownPosition.points.push_back(p);
 				ownPosition.channels.push_back(chan);
-				selfPub.publish(ownPosition);
 			}
+			selfPub.publish(ownPosition);
 		}
 
 		{
