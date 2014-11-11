@@ -152,8 +152,8 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 			opps[i].x = msg->obstacles[i].x;
 			opps[i].confidence = 128;
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
-			opps[i].y = -opps[i].x;
-			opps[i].x = opps[i].y;
+			swap(opps[i].y, opps[i].x);
+			opps[i].y = -opps[i].y;
 		}
 		else
 		{
