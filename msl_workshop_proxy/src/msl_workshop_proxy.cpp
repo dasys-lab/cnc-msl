@@ -16,6 +16,7 @@
 #include "CaceMultiCastChannel.h"
 
 #include <sstream>
+#include <map>
 
 using namespace std;
 using namespace multicast;
@@ -27,6 +28,12 @@ ros::Publisher selfPub;
 ros::Publisher obstaclesPub;
 
 int sendCounter = 0;
+
+int ownID = 4;
+unsigned long timeout = 1000000000;
+map<int, ballPos> ballPositions;
+map<int, point> robotPositions;
+map<int, unsigned long> lastUpdateTime;
 
 point allo2Ego(point& p, msl_msgs::PositionInfo& ownPos)
 {
@@ -68,12 +75,22 @@ public:
 		point self;
 		if (mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size != size)
 		{
-			cout << "strange packet received. Size:" << size << " but should be: " << mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << endl;
+			cout << "strange packet received. Size:" << size << " but should be: "
+					<< mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size << endl;
+			return;
 		}
 		unsigned char* it = (unsigned char*)buffer;
 		unsigned char flag = *it;
+		if(flag!=123) {
+			cout << "received strange mixed team flag" << endl;
+			return;
+		}
 		it++;
 		int robotID = *it;
+		if(robotID>6) {
+			cout << "received strange robotID" << endl;
+			return;
+		}
 		it++;
 		bp.desrializeFromPtr(it);
 		it += ball_size;
@@ -84,16 +101,80 @@ public:
 		}
 		self.desrializeFromPtr(it);
 
-		/*cout << "Received (" << size << " Bytes) MID is:" << endl;
-		bp.print();
-		cout << "-";
-		self.print();
-		cout << "-";
-		for (int i = 0; i < opp_count; i++)
+		auto now = std::chrono::high_resolution_clock::now();
+		auto duration = now.time_since_epoch();
+		unsigned long curTime = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+
+		ballPositions[robotID] = bp;
+		robotPositions[robotID] = self;
+		lastUpdateTime[robotID] = curTime;
+
+		if (robotID != ownID)
 		{
-			opps[i].print();
+			return;
 		}
-		cout << endl;*/
+		//sending visualisation data
+		PointCloud ballCloud, ownPosition, obstacles;
+		ballCloud.header.frame_id = "/map";
+		ownPosition.header = ballCloud.header;
+		obstacles.header = ballCloud.header;
+
+		{
+			if (bp.ballX != -32768 || bp.ballY != -32768)
+			{
+				Point32 p;
+				p.x = bp.ballX / 1000.0;
+				p.y = bp.ballY / 1000.0;
+				p.z = bp.ballZ / 1000.0;
+				ChannelFloat32 chan;
+				chan.name = "ball";
+				ballCloud.points.push_back(p);
+				ballCloud.channels.push_back(chan);
+				ballPub.publish(ballCloud);
+			}
+		}
+
+		{
+			for (auto item : robotPositions)
+			{
+				Point32 p;
+				p.x = item.second.x / 1000.0;
+				p.y = item.second.y / 1000.0;
+				p.z = 0 / 1000.0;
+				ChannelFloat32 chan;
+				chan.name = "self";
+				ownPosition.points.push_back(p);
+				ownPosition.channels.push_back(chan);
+			}
+			selfPub.publish(ownPosition);
+		}
+
+		{
+			for (int i = 0; i < opp_count; i++)
+			{
+				if (opps[i].x == -32768 || opps[i].y == -32768)
+				{
+					continue;
+				}
+				Point32 pa;
+				pa.x = opps[i].x / 1000.0;
+				pa.y = opps[i].y / 1000.0;
+				pa.z = 0 / 1000.0;
+				ChannelFloat32 chan;
+				chan.name = "opps";
+				bool isOpp = true;
+				for (auto item : robotPositions) {
+					if(fabs(item.second.x-pa.x)<350 && fabs(item.second.y-pa.y)<350) {
+						isOpp = false;
+					}
+				}
+				if(isOpp) {
+					obstacles.points.push_back(pa);
+					obstacles.channels.push_back(chan);
+				}
+			}
+			obstaclesPub.publish(obstacles);
+		}
 	}
 };
 
@@ -104,12 +185,13 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 {
-	if(++sendCounter % 10 != 0) {
+	if (++sendCounter % 10 != 0)
+	{
 		return;
 	}
 	cout << "." << flush;
 	//setup data to serialize
-	unsigned char robotID = 8;
+	unsigned char robotID = ownID;
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
 	point b;
@@ -127,13 +209,13 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	bp.ballVX = -(sin(msg->odometry.position.angle) * msg->ball.velocity.vx
 			+ cos(msg->odometry.position.angle) * msg->ball.velocity.vy);
 	bp.ballVZ = msg->ball.velocity.vz;
-	bp.confidence = (uint8_t)(msg->ball.confidence*255.0);
+	bp.confidence = (uint8_t)(msg->ball.confidence * 255.0);
 
 	point opps[10];
 	point self;
-	self.y = msg->odometry.position.x;
-	self.x = -msg->odometry.position.y;
-	self.confidence = (uint8_t)(msg->odometry.position.certainty*255.0);
+	self.y = -msg->odometry.position.x;
+	self.x = msg->odometry.position.y;
+	self.confidence = (uint8_t)(msg->odometry.position.certainty * 255.0);
 
 	//serialize
 	unsigned char *arr = new unsigned char[mixed_team_flag_size + ball_size + (opp_size * opp_count) + position_size];
@@ -141,23 +223,25 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	it[0] = mixed_team_flag;
 	it += 1;
 	it[0] = robotID;
-	bp.append(it);
 	it += 1;
+	bp.append(it);
 	it += ball_size;
 	for (int i = 0; i < opp_count; i++)
 	{
 		if (i < msg->obstacles.size())
 		{
-			opps[i].y = msg->obstacles[i].x;
-			opps[i].x = -msg->obstacles[i].y;
-			bp.confidence = (uint8_t)(msg->obstacles[i].diameter*255.0);
+			opps[i].y = msg->obstacles[i].y;
+			opps[i].x = msg->obstacles[i].x;
+			opps[i].confidence = 128;
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
+			swap(opps[i].y, opps[i].x);
+			opps[i].y = -opps[i].y;
 		}
 		else
 		{
-			opps[i].x = 0;
-			opps[i].y = 0;
-			bp.confidence = 0;
+			opps[i].x = -32768;
+			opps[i].y = -32768;
+			opps[i].confidence = 0;
 		}
 		opps[i].append(it);
 		it += opp_size;
@@ -174,52 +258,6 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 
 	//send via multicast
 	commandChannel->publish((const char*)arr, packetSize);
-
-	//sending visualisation data
-	PointCloud ballCloud, ownPosition, obstacles;
-	ballCloud.header.frame_id = "/map";
-	ownPosition.header = ballCloud.header;
-	obstacles.header = ballCloud.header;
-
-	{
-		Point32 p;
-		p.x = bp.ballX/1000.0;
-		p.y = bp.ballY/1000.0;
-		p.z = bp.ballZ/1000.0;
-		ChannelFloat32 chan;
-		chan.name = "ball";
-		ballCloud.points.push_back(p);
-		ballCloud.channels.push_back(chan);
-		ballPub.publish(ballCloud);
-	}
-
-	{
-		Point32 p;
-		p.x = self.x/1000.0;
-		p.y = self.y/1000.0;
-		p.z = 0/1000.0;
-		ChannelFloat32 chan;
-		chan.name = "self";
-		ownPosition.points.push_back(p);
-		ownPosition.channels.push_back(chan);
-		selfPub.publish(ownPosition);
-	}
-
-	{
-		for (int i = 0; i < msg->obstacles.size(); i++)
-		{
-			Point32 p;
-			p.x = opps[i].x/1000.0;
-			p.y = opps[i].y/1000.0;
-			p.z = 0/1000.0;
-			ChannelFloat32 chan;
-			chan.name = "opps";
-			obstacles.points.push_back(p);
-			obstacles.channels.push_back(chan);
-		}
-		obstaclesPub.publish(obstacles);
-	}
-
 }
 
 /**
@@ -248,15 +286,15 @@ int main(int argc, char **argv)
 	{
 		ros::spinOnce();
 		/*msl_sensor_msgs::WorldModelData msg;
-		msg.odometry.position.x = 1;
-		msg.odometry.position.y = 1;
-		msg.odometry.position.angle = 3.14159265 / 4.0;
+		 msg.odometry.position.x = 1;
+		 msg.odometry.position.y = 1;
+		 msg.odometry.position.angle = 3.14159265 / 4.0;
 
-		msg.ball.point.x = 1000;
-		msg.ball.point.y = 0;
-		msg.ball.velocity.vx = 0;
-		msg.ball.velocity.vy = 1000;
-		chatter_pub.publish(msg);*/
+		 msg.ball.point.x = 1000;
+		 msg.ball.point.y = 0;
+		 msg.ball.velocity.vx = 0;
+		 msg.ball.velocity.vy = 1000;
+		 chatter_pub.publish(msg);*/
 
 		//ros::spinOnce();
 		loop_rate.sleep();
