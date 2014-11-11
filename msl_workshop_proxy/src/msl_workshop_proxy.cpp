@@ -109,7 +109,7 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	}
 	cout << "." << flush;
 	//setup data to serialize
-	unsigned char robotID = 5;
+	unsigned char robotID = 4;
 	unsigned char mixed_team_flag = 123;
 	ballPos bp;
 	point b;
@@ -150,16 +150,16 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 		{
 			opps[i].y = msg->obstacles[i].y;
 			opps[i].x = msg->obstacles[i].x;
-			bp.confidence = (uint8_t)(msg->obstacles[i].diameter*255.0);
+			opps[i].confidence = 128;
 			opps[i] = ego2Allo(opps[i], msg->odometry.position);
-			opps[i].y = opps[i].x;
-			opps[i].x = -opps[i].y;
+			opps[i].y = -opps[i].x;
+			opps[i].x = opps[i].y;
 		}
 		else
 		{
-			opps[i].x = 0;
-			opps[i].y = 0;
-			bp.confidence = 0;
+			opps[i].x = -32768;
+			opps[i].y = -32768;
+			opps[i].confidence = 0;
 		}
 		opps[i].append(it);
 		it += opp_size;

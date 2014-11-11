@@ -35,7 +35,8 @@ struct ballPos
 		{
 			for (int i = n*(ball_size/3); i < ball_size/3 - 1; i++)
 			{
-				ptr[i] = it[i];
+				if(n==0) ptr[i] = it[i];
+				else ptr[i] = -32768;
 			}
 			ptr[(n+1)*(ball_size/3) - 1] = confidence;
 		}
