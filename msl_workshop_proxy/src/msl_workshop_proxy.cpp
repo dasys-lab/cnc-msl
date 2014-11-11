@@ -141,8 +141,8 @@ void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 	it[0] = mixed_team_flag;
 	it += 1;
 	it[0] = robotID;
-	bp.append(it);
 	it += 1;
+	bp.append(it);
 	it += ball_size;
 	for (int i = 0; i < opp_count; i++)
 	{
