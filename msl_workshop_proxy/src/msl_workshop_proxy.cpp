@@ -81,13 +81,15 @@ public:
 		}
 		unsigned char* it = (unsigned char*)buffer;
 		unsigned char flag = *it;
-		if(flag!=123) {
+		if (flag != 123)
+		{
 			cout << "received strange mixed team flag" << endl;
 			return;
 		}
 		it++;
 		int robotID = *it;
-		if(robotID>6) {
+		if (robotID > 6)
+		{
 			cout << "received strange robotID" << endl;
 			return;
 		}
@@ -143,8 +145,11 @@ public:
 				p.z = 0 / 1000.0;
 				ChannelFloat32 chan;
 				chan.name = "self";
-				ownPosition.points.push_back(p);
-				ownPosition.channels.push_back(chan);
+				if ((curTime - lastUpdateTime[item.first]) < timeout)
+				{
+					ownPosition.points.push_back(p);
+					ownPosition.channels.push_back(chan);
+				}
 			}
 			selfPub.publish(ownPosition);
 		}
@@ -163,12 +168,18 @@ public:
 				ChannelFloat32 chan;
 				chan.name = "opps";
 				bool isOpp = true;
-				for (auto item : robotPositions) {
-					if(fabs(item.second.x-pa.x)<350 && fabs(item.second.y-pa.y)<350) {
-						isOpp = false;
+				for (auto item : robotPositions)
+				{
+					if ((curTime - lastUpdateTime[item.first]) < timeout)
+					{
+						if (fabs(item.second.x - pa.x) < 350 && fabs(item.second.y - pa.y) < 350)
+						{
+							isOpp = false;
+						}
 					}
 				}
-				if(isOpp) {
+				if (isOpp)
+				{
 					obstacles.points.push_back(pa);
 					obstacles.channels.push_back(chan);
 				}
