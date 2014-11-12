@@ -5,7 +5,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
-#include  "Plans/Behaviours/DriveForward.h"
+#include  "Plans/Behaviours/GoalKick.h"
+
+#include  "Plans/Behaviours/AlineToGoal.h"
 
 #include  "Plans/Behaviours/Stop.h"
 
@@ -34,9 +36,14 @@ shared_ptr<BasicBehaviour> BehaviourCreator::createBehaviour(long behaviourConfI
       return make_shared<GetBall>();
       break;
 
-    case 1414840446941:
+    case 1415205578139:
 
-      return make_shared<DriveForward>();
+      return make_shared<GoalKick>();
+      break;
+
+    case 1415205285582:
+
+      return make_shared<AlineToGoal>();
       break;
 
     case 1413992626194:

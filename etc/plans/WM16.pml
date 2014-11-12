@@ -8,12 +8,26 @@
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1413992575757</inTransitions>
     <inTransitions>#1414883776988</inTransitions>
+    <inTransitions>#1415207005689</inTransitions>
+    <inTransitions>#1415207059261</inTransitions>
     <outTransitions>#1414752349075</outTransitions>
   </states>
   <states id="1414752333556" name="Dribble" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleToPoint.beh#1414752423981</plans>
     <inTransitions>#1414752349075</inTransitions>
     <outTransitions>#1414883776988</outTransitions>
+    <outTransitions>#1415205265272</outTransitions>
+  </states>
+  <states id="1415205191506" name="AlineToGoal" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/AlineToGoal.beh#1415205285582</plans>
+    <inTransitions>#1415205265272</inTransitions>
+    <outTransitions>#1415206978594</outTransitions>
+    <outTransitions>#1415207005689</outTransitions>
+  </states>
+  <states id="1415206960125" name="GoalKick" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/GoalKick.beh#1415205578139</plans>
+    <inTransitions>#1415206978594</inTransitions>
+    <outTransitions>#1415207059261</outTransitions>
   </states>
   <transitions id="1413992575757" name="" comment="" msg="">
     <preCondition id="1413992578046" name="" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -28,6 +42,26 @@
   <transitions id="1414883776988" name="lostBall" comment="" msg="">
     <preCondition id="1414883779788" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1414752333556</inState>
+    <outState>#1413992572149</outState>
+  </transitions>
+  <transitions id="1415205265272" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1415205268720" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1414752333556</inState>
+    <outState>#1415205191506</outState>
+  </transitions>
+  <transitions id="1415206978594" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1415206979578" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1415205191506</inState>
+    <outState>#1415206960125</outState>
+  </transitions>
+  <transitions id="1415207005689" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1415207006891" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1415205191506</inState>
+    <outState>#1413992572149</outState>
+  </transitions>
+  <transitions id="1415207059261" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1415207067102" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1415206960125</inState>
     <outState>#1413992572149</outState>
   </transitions>
   <entryPoints id="1413992564410" name="" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
