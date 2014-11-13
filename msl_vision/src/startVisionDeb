@@ -1,0 +1,3 @@
+#!/bin/sh
+
+VISION_FORCE=true ../bin/CNVision --drawROI --ball --gray --localizeDebug --input | grep LP:

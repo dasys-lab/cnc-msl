@@ -1,0 +1,73 @@
+	0. Inhalt
+-----------------------------------------
+1. Version
+2. Die Konfiguratinsdatei
+3. Zielparameter
+4. Auf welchen Bilder regeln/Regelung ausschalten
+5. Regler setzen - Allgemein
+6. Regler setzen - Gain
+7. Referenzfläche angeben
+8. Weitere Hinweise
+
+
+	1. Version
+Kameraparametrisierung entspricht dem Projektbericht.
+Februar 2012 von Claas.
+
+	2. Die Konfigurationsdatei
+Über die Methode SystemConfig::getInstance() wird die Datei "VisControl.conf" gesucht. Beispiele für die "Point Grey"- und "Imaging Source"-Kamera liegen im Ordner dieses "How to".
+
+	3. Zielparameter
+"Bright": Setzt die Helligkeit, auf welche die Referenzfläche geregelt wird. Wertebereich: 0-255. Generell gilt: Dunkle Referenzflächen benötigen ein kleines "Bright" (schwarze Referenzfläche ->"Bright": 20-30) und helle Referenzflächen ein Großes (weiße Referenzfläche -> "Bright": 200-255). 
+"U" & "V": Setzt den Weißabgleich. Wenn die Referenzfläche unfarbig ist, sollte U=V=128 eingestellt werden, um weiße Objekte in weißer Farbe aufzunehmen. Ansonsten müssen "U" & "V" auf die Farbe der Referenzfläche abgestimmt werden. Eine helle Referenzfläche hilft, der Regelung.
+
+	4. Auf welchen Bilder regeln/Regelung ausschalten
+"nImage": Gesetzte Kameraparameter wirken sich nur verzögert auf das Kamerabild aus (was an einer verzögerten Ausgabe der Bilder, oder einer trägen Kamera liegen könnte). Somit darf die Kamera nur alle n Bilder Regeln. (Neue Kameraparameter sollen erst neu gesetzt werden, wenn sich die zuletzt neu gesetzten Kameraparameter, im aktuell verfügbaren Bild ausgewirkt haben.) Ein Beispielwert für "nImage" ist 5. Zu kleine Werte für nImage führen zu Überschwingern, zu große Werte zu einer langsamen Regelung.
+!Wird "nImage=0" gestellt, ist die Regelung aus gestellt. 
+
+	5. Regler setzen - Allgemein
+Es gibt für die Kameraparameter "Schutter", "U" und "V" die hier beschriebenen Parameter. Die drei Kameraparameter werden durch einen PI-Regler geregelt. Beim "Gain" ist die regelung eine Andere. Deshalb fehlen dort "m" und "b". 
+"minMV": Minimaler, an die Kamera übergebener Parameter.
+"maxMV": Maximaler, an die Kamera übergebener Parameter.
+"minDiffMV": Minimale Parameteränderung (oft ist minDiffMV=0 sinnvoll)
+"maxDiffMV": Maximale Parameteränderung. Ist eine zusätzliche Absicherung gegen ein Instabieles System. So werden starken Abweichungen zwischen Soll- und Istzustand große Parameteränderungen unterdrückt.
+"startMV": Startwert für den Kameraparameter
+"m": Linearer Multiplikator des PI-Reglers
+"b": Zuaddierter/subtraierter Wert des PI-Reglers, sobald eine Abweichung vom Sollwert vorliegt. 
+
+	6. Regler setzen - Gain
+Der Gain wird über ein spezielles Regelverfahren geregelt (s. hierzu Projektbericht, im speziellen Alorithmus 1). Der Gain benötigt eine Look-Up-Table, und den Parameter "LUTGainAdd". LUT und "LUTGainAdd" stehen in einem Zusammenhang und müssen für jeden Kameratyp einmal ermittelt werden. Wie die LUT erstellt wurd steht in "How to LUT erstellen.txt". Für schnelle Bugfixes: "LUTGainAdd" senken bei Überschwingern, oder erhöhen bei einer zu langsamen Regelung. Ist dies nötig ist die Kamera sehr schlecht Parametrisiert. Mögliche Gründe: Sehr stark ausgeregelter Weißabgleich (z.B. im Keller durch den grünen Teppich) oder falsche LUT für den Kameratyp.
+
+
+	7. Referenzfläche angeben
+Es folgt ein Beispiel, wie eine Referenzfläche angegeben werden kann.
+	[RALinse]
+		[Rect1]
+			bottom = 210
+			top = 250
+			left = 7
+			right = 17
+			prio = 1
+		[!Rect1]
+
+		[Circle1]
+			bottom = 220
+			top = 260
+			left = 620
+			right = 630
+			prio = -1
+		[!Circle1]
+	[!RALinse]
+Für die Angabe einer Referenzfläche ist folgendes zu beachten:
+ - Es können beligib viele Referenzflächen ins Configfile geschrieben werden, die im [VisControl]-Block der VisControl.conf liegen müssen. (Die Beispielreferenzfläche wurde [RALinse] genannt. 
+ - Eine Referenzfläche kann aus belibig vielen Rechtecken und Kreisen bestehen.
+ - Die Laufzeit hängt (einmal abgesehen von der Laufzeit des Konstruktors) von der Größe der Referenzfläche (in Pixeln) ab, aber nicht von der Menge der angegeben Flächen.
+ - Kreise müssen in [Circle"n"], Rechtecke mit [Rect"n"] eingeleitet werden. Das "n" muss einer natürliche Zahl von "1" - "Unendlich" entsprechen. Die Nummerierung der Flächen muss (für Rect bzw. Circle einzelnt) mit "1" beginnen und fortlaufend sein. (Bspw. würde Rect3 nicht eingelesen, wenn Rect2 fehlt. Dann Rect3 in Rect2 umbenennen.)
+ - "prio" gibt die Priorität der Teilreferenzfläche an. So kann bspw. eine halb so große Referenzfläche auf der einen Seite, dass gleiche Gewicht bekommen, wie die Größere auf der anderen Seite. Durch negative "prio" können Flächen ausgeschnitten werden.
+
+Für alle Referenzflächen gibt es noch den Parameter "unusedHistoPixelPercent". Dieser soll Rauschen unterdrücken, indem zu helle- bzw. zu dunkle Pixel aussortiert. Die Angabe ist in %. Der Defaultwert ist 20.
+
+	8. Weitere Hinweise
+ - Weitere Infos: s. Projektbericht.
+ - Das Projekt wurde von Andreas betreut.
+ - Claas_Luehring@gmx.de
