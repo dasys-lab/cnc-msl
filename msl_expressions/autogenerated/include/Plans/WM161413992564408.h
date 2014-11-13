@@ -36,6 +36,26 @@ class TransitionCondition1414883779788 : public DomainCondition
   bool evaluate(shared_ptr<RunningPlan> rp);
 };
 
+class TransitionCondition1415205268720 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
+class TransitionCondition1415206979578 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
+class TransitionCondition1415207006891 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
+class TransitionCondition1415207067102 : public DomainCondition
+{
+  bool evaluate(shared_ptr<RunningPlan> rp);
+};
+
 } /* namespace alica */
 
 #endif
