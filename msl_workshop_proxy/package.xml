@@ -7,13 +7,13 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="endy@todo.todo">endy</maintainer>
+  <maintainer email="witsch@vs.uni-kassel.de">Andreas Witsch</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>BSD</license>
 
 
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
@@ -32,18 +32,17 @@
   <!-- Dependencies can be catkin packages or system dependencies -->
   <!-- Examples: -->
   <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
+  <build_depend>message_generation</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
   <!-- Use buildtool_depend for build tool packages: -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
+  <buildtool_depend>catkin</buildtool_depend>
   <!-- Use run_depend for packages you need at runtime: -->
-  <!--   <run_depend>message_runtime</run_depend> -->
+  <run_depend>message_runtime</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
-  <buildtool_depend>catkin</buildtool_depend>
   
-  <build_depend>msl_actuator_msgs</build_depend>
   
-  <run_depend>msl_sensor_msgs</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
