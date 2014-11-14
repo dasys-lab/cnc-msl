@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_kick_control)
+project(msl_actuation_control)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -7,10 +7,10 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED can_connection system_config roscpp usb_can_proxy)
+find_package(catkin REQUIRED system_config roscpp can_connection)
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -79,10 +79,10 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES msl_kick_control
-  CATKIN_DEPENDS can_connection
-  DEPENDS ${Boost_LIBRARIES}
+#  INCLUDE_DIRS include
+#  LIBRARIES msl_actuation_control
+#  CATKIN_DEPENDS other_catkin_pkg
+#  DEPENDS system_lib
 )
 
 ###########
@@ -93,18 +93,15 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(include ${Boost_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
 
-## Declare a cpp library
-# add_library(msl_kick_control
-#   src/${PROJECT_NAME}/msl_kick_control.cpp
-# )
-
 ## Declare a cpp executable
-add_executable(msl_kick_control src/Kicker.cpp)
-target_link_libraries(msl_kick_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+add_executable(msl_actuation_control src/ActuationControl.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(msl_kick_control_node msl_kick_control_generate_messages_cpp)
+add_dependencies(msl_actuation_control system_config can_connection)
+
+## Specify libraries to link a library or executable target against
+target_link_libraries(msl_actuation_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -121,7 +118,7 @@ target_link_libraries(msl_kick_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS msl_kick_control msl_kick_control_node
+# install(TARGETS msl_actuation_control msl_actuation_control_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -146,7 +143,7 @@ target_link_libraries(msl_kick_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_kick_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_actuation_control.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
