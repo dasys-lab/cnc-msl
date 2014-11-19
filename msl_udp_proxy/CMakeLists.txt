@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config roscpp roslib sensor_msgs)
+find_package(catkin REQUIRED system_config roscpp roslib sensor_msgs msl_sensor_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)
@@ -79,9 +79,9 @@ find_package(Boost REQUIRED COMPONENTS system filesystem regex)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS
- #LIBRARIES 
- CATKIN_DEPENDS 
+# INCLUDE_DIRS include
+# LIBRARIES 
+ CATKIN_DEPENDS system_config roscpp roslib sensor_msgs msl_sensor_msgs
  DEPENDS system filesystem regex
 )
 
@@ -89,32 +89,27 @@ catkin_package(
 ## Build ##
 ###########
 
-
-
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/proxy_gen/ros2udpProxy.cpp
     COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/relayMsgs.conf udp_proxy_generator
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Generating Code ..."
+    COMMENT "${PROJECT_NAME}: Generating Code ..."
 )
 
-## Declare a cpp library
+## Declare a cpp executable
 add_executable(${PROJECT_NAME}
   proxy_gen/ros2udpProxy.cpp
 )
 
-## Declare a cpp executable
-# add_executable(system_config_node src/system_config_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PROJECT_NAME}_generate_messages_cpp)
-
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+## Add cmake target dependencies of the executable/library
+## as an example, message headers may need to be generated before nodes
+#add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_sensor_msgs_gencpp)
