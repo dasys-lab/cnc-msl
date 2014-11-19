@@ -298,7 +298,7 @@ int main(int argc, char** argv) {
 		}
 		if (shoveldelta > settings.shovelInterval) {
 			
-			CNCanProxyMsg::CanMsg msg;
+			usb_can_proxy::CanMsg msg;
 			msg.id = BallHandler;
 // 			msg.data.push_back(0);
 // 			msg.data.push_back(CanPriNorm);

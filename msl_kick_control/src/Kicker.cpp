@@ -249,9 +249,11 @@ msldriver::Kicker::Kicker() : lastCapacitorsVoltage(0),lastPower (0), lastSupply
 
 	// init publisher and subscriber
 	this->rosNode = new ros::NodeHandle();
-	this->sub = rosNode->subscribe("CNUsbCanProxy/Rekick", 30, &msldriver::Kicker::onKickerMsg, (msldriver::Kicker*)this);
+	this->sub = rosNode->subscribe("usb_can_proxy/Rekick", 30, &msldriver::Kicker::onKickerMsg, (msldriver::Kicker*)this);
 	this->kickSub = rosNode->subscribe("KickControl", 30, &msldriver::Kicker::onKickCmd, (msldriver::Kicker*)this);
-	this->rekickPub = rosNode->advertise<usb_can_proxy::CanMsg>("CNUsbCanProxy/CanSub", 30);
+	//Change this to other subscribe
+	//this->rekickPub = rosNode->advertise<usb_can_proxy::CanMsg>("CNUsbCanProxy/CanSub", 30);
+	this->rekickPub = rosNode->advertise<usb_can_proxy::CanMsg>("usb_can_proxy/CanSub", 30);
 	this->kickerTime = rosNode->advertise<msl_actuator_msgs::KickTime>("KickTime", 30);
 	this->kickerStat = rosNode->advertise<msl_actuator_msgs::KickerStatInfo>("KickerStatInfo", 30);
 }

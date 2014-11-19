@@ -99,7 +99,9 @@ class ActuationControl {
 			brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
 			bsPub = node.advertise<VisionRelocTrigger>("CNActuator/BundleStatus", 10);
 			mbPub = node.advertise<MotionBurst>("CNActuator/MotionBurst", 10);
-			canPub = node.advertise<usb_can_proxy::CanMsg>("CNUsbCanProxy/CanSub", 30);
+			canPub = node.advertise<usb_can_proxy::CanMsg>("usb_can_proxy/CanSub", 30);
+			//change 
+			//canPub = node.advertise<usb_can_proxy::CanMsg>("CNUsbCanProxy/CanSub", 30);
 
 			spinner = new ros::AsyncSpinner(1);
 			spinner->start();
