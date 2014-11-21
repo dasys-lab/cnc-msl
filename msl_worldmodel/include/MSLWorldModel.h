@@ -15,6 +15,8 @@
 #include <tuple>
 
 #include "SystemConfig.h"
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
 
 using namespace std;
 
@@ -26,16 +28,18 @@ namespace msl
 	public:
 		static MSLWorldModel* get();
 
-		tuple<double, double, double> getOwnPosition();
-		pair<double, double> getBallPosition();
-		pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
+		CNPosition getOwnPosition();
+		CNPoint2D getBallPosition();
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
+		bool haveBall();
+		bool nearPos(CNPoint2D p);
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
 
 	private:
+		int hasBallIteration;
 		int ownID;
 		ros::NodeHandle n;
 		ros::Subscriber sub;

@@ -18,8 +18,8 @@ Stop::~Stop()
 void Stop::run(void* msg)
 {
   /*PROTECTED REGION ID(run1413992604875) ENABLED START*/ //Add additional options here
-  pair<double, double> alloBallPos = wm->getBallPosition();
-  cout << "BallPosition: (" << alloBallPos.first << " | " << alloBallPos.second << ")" << endl;
+  CNPoint2D alloBallPos = wm->getBallPosition();
+  cout << "BallPosition: (" << alloBallPos.x << " | " << alloBallPos.y << ")" << endl;
 
   /*PROTECTED REGION END*/}
 void Stop::initialiseParameters()
