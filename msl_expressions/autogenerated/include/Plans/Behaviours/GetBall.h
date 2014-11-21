@@ -2,6 +2,11 @@
 #define GetBall_H_
 
 #include "DomainBehaviour.h"
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
+
+using namespace msl;
+
 /*PROTECTED REGION ID(inc1414828300860) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica

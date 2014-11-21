@@ -7,6 +7,7 @@
 #include "msl_simulator/sim_packet.h"
 #include "SystemConfig.h"
 #include "MSLWorldModel.h"
+
 namespace alica
 {
 class DomainBehaviour : public BasicBehaviour

@@ -21,18 +21,23 @@ GetBall::~GetBall()
 void GetBall::run(void* msg)
 {
   /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-  tuple<double, double, double> ownPos = wm->getOwnPosition();
-  pair<double, double> alloBallPos = wm->getBallPosition();
-  pair<double, double> egoBallPos = wm->allo2Ego(alloBallPos, ownPos);
+  CNPosition ownPos = wm->getOwnPosition();
+  CNPoint2D alloBallPos = wm->getBallPosition();
+  CNPoint2D egoBallPos = alloBallPos.alloToEgo(ownPos);
 
-  cout << "DriveForward: " << "OwnPosition: ( " << get < 0 > (ownPos) << " ; " << get < 1 > (ownPos) << " ; " << get < 2
-      > (ownPos) << " )\t Ball: ( " << alloBallPos.first << " ; " << alloBallPos.second << " )" << endl;
+
 
   msl_simulator::sim_robot_command c;
 
-  c.velnormal = min(egoBallPos.second * 0.002, 2.0);
-  c.veltangent = min(egoBallPos.first * 0.002, 2.0);
-  c.velangular = 3 * atan2(egoBallPos.second, egoBallPos.first);
+  c.velnormal = min(egoBallPos.y * 0.002, 2.0);
+  c.veltangent = min(egoBallPos.x * 0.002, 2.0);
+  c.velangular = 3 * atan2(egoBallPos.y, egoBallPos.x);
+
+  CNPoint2D p1(0,1);
+  CNPoint2D p2(0,0);
+  p2 = p1.rotate(3.141*0.5);
+
+  cout << "GetBall: Point1: (" << p1.x << ","<< p1.y << ")" << " Point2: (" << p2.x << ","<< p2.y << ")"<< endl;
 
   this->send(c);
   /*PROTECTED REGION END*/}

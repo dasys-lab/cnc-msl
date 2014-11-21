@@ -3,7 +3,14 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1414752367688) ENABLED START*/ //Add additional includes here
-#include "MSLWorldModel.h"
+#include <tuple>
+#include <MSLWorldModel.h>
+#include "GeometryTransformer.h"
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
+
+using namespace msl;
+using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -14,9 +21,6 @@ public:
   virtual ~DribbleToPoint();
   virtual void run(void* msg);
   /*PROTECTED REGION ID(pub1414752367688) ENABLED START*/ //Add additional public methods here
-  bool haveBall();
-  void getBall();
-  pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
   /*PROTECTED REGION END*/
 protected:
   virtual void initialiseParameters();
@@ -24,6 +28,14 @@ protected:
   /*PROTECTED REGION END*/
 private:
   /*PROTECTED REGION ID(prv1414752367688) ENABLED START*/ //Add additional private methods here
+  CNPoint2D alloBallPos;
+
+   CNPosition ownPos;
+   CNPoint2D egoBallPos;
+
+   CNPoint2D alloTargetPos;
+   CNPoint2D egoTargetPos;
+
   /*PROTECTED REGION END*/};
 } /* namespace alica */
 
