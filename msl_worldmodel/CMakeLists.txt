@@ -96,6 +96,9 @@ catkin_package(
 ## Declare a cpp library
  add_library(msl_worldmodel
    src/MSLWorldModel.cpp
+   src/GeometryTransformer.cpp
+   src/container/CNPoint2D.cpp
+   src/container/CNPosition.cpp
  )
 
 ## Declare a cpp executable
@@ -103,7 +106,7 @@ catkin_package(
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp system_config msl_simulator)
+add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp geometry_msgs_generate_messages_cpp system_config msl_simulator)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_worldmodel

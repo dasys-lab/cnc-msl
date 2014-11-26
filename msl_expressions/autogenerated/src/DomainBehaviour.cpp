@@ -1,25 +1,32 @@
 #include "DomainBehaviour.h"
 
-namespace alica
-{
-msl::MSLWorldModel* wm;
+namespace alica {
+	msl::MSLWorldModel* wm;
 
-DomainBehaviour::DomainBehaviour(string name) :
-    BasicBehaviour(name)
-{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+	DomainBehaviour::DomainBehaviour(string name) :
+			BasicBehaviour(name) {
+		supplementary::SystemConfig* sc =
+				supplementary::SystemConfig::getInstance();
 		ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
-		simlatorPub = n.advertise<msl_simulator::sim_packet>("/MSLSimulator/SimPacket", 1000);
+		simlatorPub = n.advertise<msl_simulator::sim_packet>(
+				"/MSLSimulator/SimPacket", 1000);
 		wm = msl::MSLWorldModel::get();
-}
 
-DomainBehaviour::~DomainBehaviour()
-{
-}
+		motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(
+				"/MotionControl", 10);
 
-void DomainBehaviour::send(msl_simulator::sim_robot_command& p)
-	{
+		ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(
+				"/BallHandleControl", 10);
+
+		kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(
+				"/KickControl", 10);
+	}
+
+	DomainBehaviour::~DomainBehaviour() {
+	}
+
+	void DomainBehaviour::send(msl_simulator::sim_robot_command& p) {
 		p.id = ownID;
 		msl_simulator::sim_packet pa;
 		pa.commands.isteamyellow = true;
@@ -27,4 +34,21 @@ void DomainBehaviour::send(msl_simulator::sim_robot_command& p)
 		simlatorPub.publish(pa);
 	}
 
+	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc) {
+		mc.senderID = ownID;
+		motionControlPub.publish(mc);
+	}
+
+	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh) {
+		bh.enabled = true;
+		bh.senderID = ownID;
+		ballHandlePub.publish(bh);
+
+	}
+
+	void alica::DomainBehaviour::send(msl_actuator_msgs::KickControl& kc) {
+		kc.senderID = ownID;
+		kickControlPub.publish(kc);
+	}
 } /* namespace alica */
+

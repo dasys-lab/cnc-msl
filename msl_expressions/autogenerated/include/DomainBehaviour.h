@@ -7,6 +7,10 @@
 #include "msl_simulator/sim_packet.h"
 #include "SystemConfig.h"
 #include "MSLWorldModel.h"
+#include "msl_actuator_msgs/MotionControl.h"
+#include "msl_actuator_msgs/BallHandleCmd.h"
+#include "msl_actuator_msgs/KickControl.h"
+
 namespace alica
 {
 class DomainBehaviour : public BasicBehaviour
@@ -15,12 +19,18 @@ class DomainBehaviour : public BasicBehaviour
 		DomainBehaviour(string name);
 		virtual ~DomainBehaviour();
 		void send(msl_simulator::sim_robot_command& p);
+		void send(msl_actuator_msgs::MotionControl& mc);
+		void send(msl_actuator_msgs::BallHandleCmd& bh);
+		void send(msl_actuator_msgs::KickControl& kc);
 		msl::MSLWorldModel* wm;
 
 	private:
 
 		int ownID;
 		ros::Publisher simlatorPub;
+		ros::Publisher motionControlPub;
+		ros::Publisher ballHandlePub;
+		ros::Publisher kickControlPub;
 	};
 } /* namespace alica */
 
