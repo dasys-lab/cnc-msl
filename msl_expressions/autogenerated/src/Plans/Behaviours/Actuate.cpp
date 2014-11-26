@@ -22,9 +22,19 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417017518918) ENABLED START*/ //Add additional options here
     	msl_actuator_msgs::BallHandleCmd bhc;
+    	msl_actuator_msgs::RawOdometryInfoPtr rodo = wm->getRawOdometryInfo();
+    	int left,right;
 
-    	bhc.leftMotor = 10;
-    	bhc.rightMotor = 10;
+    	if(rodo == nullptr) {
+    		cout << "Actuate RODO is empty help" << endl;
+    		return;
+    	}
+
+    	left = rodo->motion.translation * (1.0/40.0) * -1;
+    	right = rodo->motion.translation * (1.0/40.0) * -1;
+
+    	bhc.leftMotor = max(min(left, 60),-60);
+    	bhc.rightMotor = max(min(right, 60),-60);
 
     	this->send(bhc);
         /*PROTECTED REGION END*/

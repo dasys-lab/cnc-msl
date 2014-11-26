@@ -17,7 +17,7 @@ namespace msl {
 
 	void MSLWorldModel::onSimulatorData(
 			msl_simulator::messages_robocup_ssl_wrapperPtr msg) {
-		if (simData.size() > 10) {
+		if (simData.size() > ringBufferLength) {
 			simData.pop_back();
 		}
 		simData.push_front(msg);
@@ -25,11 +25,32 @@ namespace msl {
 
 	MSLWorldModel::MSLWorldModel() {
 		hasBallIteration = 0;
+		ringBufferLength = 10;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
 		sub = n.subscribe("/MSLSimulator/MessagesRoboCupSSLWrapper", 10,
 				&MSLWorldModel::onSimulatorData, (MSLWorldModel*) this);
 		spinner->start();
+
+		rawOdomSub = n.subscribe("/RawOdometryInfo", 10,
+				&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);
+	}
+
+	void MSLWorldModel::onRawOdometryInfo(
+			msl_actuator_msgs::RawOdometryInfoPtr msg) {
+		lock_guard<mutex> lock(rawOdometryMutex);
+		if(rawOdometryData.size() > ringBufferLength) {
+			rawOdometryData.pop_back();
+		}
+		rawOdometryData.push_front(msg);
+	}
+
+	msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo() {
+		lock_guard<mutex> lock(rawOdometryMutex);
+		if(rawOdometryData.size() == 0) {
+			return nullptr;
+		}
+		return rawOdometryData.front();
 	}
 
 	MSLWorldModel::~MSLWorldModel() {
