@@ -33,7 +33,7 @@ namespace msl
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		bool haveBall();
-		bool nearPos(CNPoint2D p);
+		bool nearPoint(CNPoint2D p);
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();

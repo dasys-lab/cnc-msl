@@ -98,7 +98,7 @@ namespace msl {
 		}
 	}
 
-	bool MSLWorldModel::nearPos(CNPoint2D alloTargetPos) {
+	bool MSLWorldModel::nearPoint(CNPoint2D alloTargetPos) {
 		CNPosition ownPos = this->getOwnPosition();
 		CNPoint2D egoTargetPos = alloTargetPos.alloToEgo(ownPos);
 

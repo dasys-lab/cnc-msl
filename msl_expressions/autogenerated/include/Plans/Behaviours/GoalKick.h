@@ -6,21 +6,21 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-class GoalKick : public DomainBehaviour
-{
-public:
-  GoalKick();
-  virtual ~GoalKick();
-  virtual void run(void* msg);
-  /*PROTECTED REGION ID(pub1415205565589) ENABLED START*/ //Add additional public methods here
-  /*PROTECTED REGION END*/
-protected:
-  virtual void initialiseParameters();
-  /*PROTECTED REGION ID(pro1415205565589) ENABLED START*/ //Add additional protected methods here
-  /*PROTECTED REGION END*/
-private:
-  /*PROTECTED REGION ID(prv1415205565589) ENABLED START*/ //Add additional private methods here
-  /*PROTECTED REGION END*/};
+    class GoalKick : public DomainBehaviour
+    {
+    public:
+        GoalKick();
+        virtual ~GoalKick();
+        virtual void run(void* msg);
+        /*PROTECTED REGION ID(pub1415205565589) ENABLED START*/ //Add additional public methods here
+        /*PROTECTED REGION END*/
+    protected:
+        virtual void initialiseParameters();
+        /*PROTECTED REGION ID(pro1415205565589) ENABLED START*/ //Add additional protected methods here
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1415205565589) ENABLED START*/ //Add additional private methods here
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* GoalKick_H_ */
