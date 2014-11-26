@@ -32,7 +32,7 @@ namespace msl {
 				&MSLWorldModel::onSimulatorData, (MSLWorldModel*) this);
 		spinner->start();
 
-		rawOdomSub = n.subscribe("/RawOdometryInfo", 10,
+		rawOdomSub = n.subscribe("/RawOdometry", 10,
 				&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);
 	}
 
