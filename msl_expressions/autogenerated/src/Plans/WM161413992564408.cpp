@@ -137,7 +137,7 @@ bool TransitionCondition1415205268720::evaluate(shared_ptr<RunningPlan> rp)
 {
   /*PROTECTED REGION ID(1415205265272) ENABLED START*/
 
-  return wm->nearPoint(CNPoint2D(0,0)); //DribbleToPoint::haveBall();
+  return false;
 
   /*PROTECTED REGION END*/
 

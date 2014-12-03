@@ -11,6 +11,7 @@
 #include <ros/ros.h>
 #include <msl_simulator/messages_robocup_ssl_wrapper.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
+#include <msl_sensor_msgs/WorldModelData.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -32,15 +33,15 @@ namespace msl
 	public:
 		static MSLWorldModel* get();
 
-		CNPosition getOwnPosition();
-		CNPoint2D getBallPosition();
+		shared_ptr<CNPosition> getOwnPosition();
+		shared_ptr<CNPoint2D> getAlloBallPosition();
+		shared_ptr<CNPoint2D> getEgoBallPosition();
 
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		bool haveBall();
-		bool nearPoint(CNPoint2D p);
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 
