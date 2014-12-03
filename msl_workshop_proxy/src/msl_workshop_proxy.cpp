@@ -235,7 +235,7 @@ MultiCastChannel<MultiCastReceive>* commandChannel;
  */
 void messageCallback(msl_sensor_msgs::WorldModelDataPtr msg)
 {
-	if (++sendCounter % 10 != 0)
+	if (++sendCounter % 3 != 0)
 	{
 		return;
 	}
