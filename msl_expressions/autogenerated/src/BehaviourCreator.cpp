@@ -7,15 +7,21 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalKick.h"
 
+#include  "Plans/GenericBehaviours/Stop.h"
+
 #include  "Plans/Behaviours/Actuate.h"
 
 #include  "Plans/Behaviours/AlineToGoal.h"
 
 #include  "Plans/Behaviours/DriveForward.h"
 
-#include  "Plans/Behaviours/Stop.h"
+#include  "Plans/GenericBehaviours/DriveToPoint.h"
+
+#include  "Plans/GenericBehaviours/InterseptCarefully.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
+
+#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledBall.h"
 
 namespace alica
 {
@@ -45,6 +51,11 @@ namespace alica
                 return make_shared<GoalKick>();
                 break;
 
+            case 1413992626194:
+
+                return make_shared<Stop>();
+                break;
+
             case 1417017552846:
 
                 return make_shared<Actuate>();
@@ -60,14 +71,24 @@ namespace alica
                 return make_shared<DriveForward>();
                 break;
 
-            case 1413992626194:
+            case 1417620583364:
 
-                return make_shared<Stop>();
+                return make_shared<DriveToPoint>();
+                break;
+
+            case 1417620676868:
+
+                return make_shared<InterseptCarefully>();
                 break;
 
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
+                break;
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledBall>();
                 break;
 
             default:

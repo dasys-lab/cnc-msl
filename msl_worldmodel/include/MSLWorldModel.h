@@ -38,9 +38,11 @@ namespace msl
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		bool haveBall();
 		bool nearPoint(CNPoint2D p);
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
+		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
@@ -52,11 +54,17 @@ namespace msl
 		ros::NodeHandle n;
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;
+		ros::Subscriber wmDataSub;
 
 		list<msl_simulator::messages_robocup_ssl_wrapperPtr> simData;
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
 		mutex rawOdometryMutex;
+		list<msl_sensor_msgs::WorldModelDataPtr> wmData;
+		mutex wmMutex;
 		ros::AsyncSpinner* spinner;
+
+	protected:
+		void transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg);
 	};
 
 } /* namespace msl */

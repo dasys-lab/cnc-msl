@@ -53,6 +53,24 @@ namespace msl {
 		return rawOdometryData.front();
 	}
 
+	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg) {
+		lock_guard<mutex> lock(wmMutex);
+		if(wmData.size() > ringBufferLength) {
+
+			wmData.pop_back();
+		}
+		transformToWorldCoordinates(msg);
+		wmData.push_front(msg);
+	}
+
+	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData() {
+		lock_guard<mutex> lock(wmMutex);
+		if(wmData.size() == 0) {
+			return nullptr;
+		}
+		return wmData.front();
+	}
+
 	MSLWorldModel::~MSLWorldModel() {
 		spinner->stop();
 		delete spinner;
@@ -128,6 +146,10 @@ namespace msl {
 			return true;
 		}
 		return false;
+	}
+
+	void MSLWorldModel::transformToWorldCoordinates(
+			msl_sensor_msgs::WorldModelDataPtr& msg) {
 	}
 
 } /* namespace msl */
