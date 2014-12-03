@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: msl_simulator
+Description: Description of msl_simulator
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib 
+Requires: roscpp message_runtime

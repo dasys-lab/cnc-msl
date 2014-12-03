@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "msl_simulator")
+set(msl_simulator_MAINTAINER "Stephan Opfer <opfer@vs.uni-kassel.de>")
+set(msl_simulator_DEPRECATED "")
+set(msl_simulator_VERSION "0.0.0")
+set(msl_simulator_BUILD_DEPENDS "roscpp" "message_generation")
+set(msl_simulator_RUN_DEPENDS "roscpp" "message_runtime")
+set(msl_simulator_BUILDTOOL_DEPENDS "catkin")
