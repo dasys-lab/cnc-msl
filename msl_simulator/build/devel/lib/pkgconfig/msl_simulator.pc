@@ -1,8 +1,0 @@
-prefix=/home/snook/Development/workspace_alica/src/cnc-msl/msl_simulator/build/devel
-
-Name: msl_simulator
-Description: Description of msl_simulator
-Version: 0.0.0
-Cflags: -I/home/snook/Development/workspace_alica/src/cnc-msl/msl_simulator/build/devel/include -I/home/snook/Development/workspace_alica/src/cnc-msl/msl_simulator/include
-Libs: -L/home/snook/Development/workspace_alica/src/cnc-msl/msl_simulator/build/devel/lib 
-Requires: roscpp message_runtime

@@ -1,2 +1,0 @@
-set(msl_simulator_MESSAGE_FILES "msg/log_frame.msg;msg/messages_robocup_ssl_refbox_log.msg;msg/sim_commands.msg;msg/sim_robot_command.msg;msg/ssl_detection_robot.msg;msg/messages_robocup_ssl_detection.msg;msg/messages_robocup_ssl_wrapper.msg;msg/sim_packet.msg;msg/sim_robot_replacement.msg;msg/ssl_geometry_camera_calibration.msg;msg/messages_robocup_ssl_geometry.msg;msg/sim_ball_replacement.msg;msg/sim_replacement.msg;msg/ssl_detection_ball.msg;msg/ssl_geometry_field_size.msg")
-set(msl_simulator_SERVICE_FILES "")
