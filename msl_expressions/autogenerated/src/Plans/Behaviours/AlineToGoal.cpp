@@ -21,9 +21,9 @@ namespace alica
     void AlineToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
-        CNPosition ownPos = wm->getOwnPosition();
+        shared_ptr < CNPosition > ownPos = wm->getOwnPosition();
         CNPoint2D alloEnemyGoal = CNPoint2D(-3000, 0);
-        CNPoint2D egoEnemyGoal = alloEnemyGoal.alloToEgo(ownPos);
+        CNPoint2D egoEnemyGoal = *alloEnemyGoal.alloToEgo(*ownPos);
 
         msl_simulator::sim_robot_command c;
 

@@ -24,9 +24,9 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-        CNPosition ownPos = wm->getOwnPosition();
-        CNPoint2D alloBallPos = wm->getBallPosition();
-        CNPoint2D egoBallPos = alloBallPos.alloToEgo(ownPos);
+        shared_ptr < CNPosition > ownPos = wm->getOwnPosition();
+        shared_ptr < CNPoint2D > alloBallPos = wm->getAlloBallPosition();
+        CNPoint2D egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
         msl_simulator::sim_robot_command c;
 

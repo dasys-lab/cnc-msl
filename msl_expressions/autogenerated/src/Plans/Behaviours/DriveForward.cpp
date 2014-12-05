@@ -22,13 +22,13 @@ namespace alica
     void DriveForward::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417017564406) ENABLED START*/ //Add additional options here
-    	msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
-    	mc.motion.angle = M_PI;
-    	mc.motion.rotation = 0;
-    	mc.motion.translation = 500;
+        mc.motion.angle = M_PI;
+        mc.motion.rotation = 0;
+        mc.motion.translation = 500;
 
-    	this->send(mc);
+        this->send(mc);
 
         /*PROTECTED REGION END*/
     }

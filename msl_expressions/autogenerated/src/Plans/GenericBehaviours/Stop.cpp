@@ -1,5 +1,5 @@
 using namespace std;
-#include "Plans/Behaviours/Stop.h"
+#include "Plans/GenericBehaviours/Stop.h"
 
 /*PROTECTED REGION ID(inccpp1413992604875) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
@@ -21,9 +21,6 @@ namespace alica
     void Stop::run(void* msg)
     {
         /*PROTECTED REGION ID(run1413992604875) ENABLED START*/ //Add additional options here
-        CNPoint2D alloBallPos = wm->getBallPosition();
-        cout << "BallPosition: (" << alloBallPos.x << " | " << alloBallPos.y << ")" << endl;
-
         /*PROTECTED REGION END*/
     }
     void Stop::initialiseParameters()
