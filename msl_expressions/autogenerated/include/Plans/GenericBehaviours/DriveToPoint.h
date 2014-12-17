@@ -21,6 +21,8 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1417620568675) ENABLED START*/ //Add additional protected methods here
+        CNPoint2D alloTarget;
+        double defaultTranslation;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1417620568675) ENABLED START*/ //Add additional private methods here

@@ -25,8 +25,8 @@ namespace msl {
 		CNPoint2D() : CNPoint2D(0,0) {}
 
 		double length();
-		CNPoint2D rotate(double radian);
-		double angleTo(CNPosition& me);
+		shared_ptr<CNPoint2D> rotate(double radian);
+		double angleTo();
 		shared_ptr<CNPoint2D> alloToEgo(CNPosition& me);
 		shared_ptr<CNPoint2D> egoToAllo(CNPosition& me);
 

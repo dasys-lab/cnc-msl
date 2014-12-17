@@ -98,7 +98,10 @@ catkin_package(
    src/MSLWorldModel.cpp
    src/GeometryTransformer.cpp
    src/container/CNPoint2D.cpp
+   src/container/CNPoint3D.cpp
    src/container/CNPosition.cpp
+   src/MSLFootballField.cpp
+   src/robotmovement/RobotMovement.cpp
  )
 
 ## Declare a cpp executable

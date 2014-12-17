@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/GenericBehaviours/InterseptCarefully.h"
 
 /*PROTECTED REGION ID(inccpp1417620641918) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,6 +22,12 @@ namespace alica
     void InterseptCarefully::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620641918) ENABLED START*/ //Add additional options here
+    	auto me = wm->getOwnPosition();
+    	auto egoBallPos = wm->getEgoBallPosition();
+
+    	MotionControl mc =msl::RobotMovement::interseptCarefully(egoBallPos, egoBallPos, 100);
+
+    	send(mc);
         /*PROTECTED REGION END*/
     }
     void InterseptCarefully::initialiseParameters()

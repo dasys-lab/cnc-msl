@@ -13,6 +13,7 @@
 #include "Base.h"
 #include "clock/AlicaROSClock.h"
 #include "communication/AlicaRosCommunication.h"
+#include "robotmovement/RobotMovement.h"
 
 using namespace std;
 using namespace msl;
@@ -31,6 +32,8 @@ namespace msl
 		ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
 
 		wm = MSLWorldModel::get();
+
+		RobotMovement::readConfigParameters();
 
 		ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);
 	}

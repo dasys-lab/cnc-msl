@@ -21,18 +21,13 @@ namespace msl {
 		return sqrt(x * x + y * y);
 	}
 
-	CNPoint2D CNPoint2D::rotate(double radian) {
-		CNPoint2D newPoint(0, 0);
-		newPoint.x = this->x * cos(radian) - this->y * sin(radian);
-		newPoint.y = this->x * sin(radian) + this->y * cos(radian);
-		return newPoint;
-
+	shared_ptr<CNPoint2D> CNPoint2D::rotate(double radian) {
+		return make_shared<CNPoint2D>(this->x * cos(radian) - this->y * sin(radian), this->x * sin(radian) + this->y * cos(radian));
 	}
 
-	double CNPoint2D::angleTo(CNPosition& me) {
-		shared_ptr<CNPoint2D> p;
-		p = this->alloToEgo(me);
-		return atan2(p->y, p->x);
+
+	double CNPoint2D::angleTo() {
+		return atan2(y, x);
 	}
 
 	shared_ptr<CNPoint2D> CNPoint2D::alloToEgo(CNPosition& me) {
