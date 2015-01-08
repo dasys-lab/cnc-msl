@@ -219,10 +219,13 @@ FILE(GLOB lib_msl_vision_SOURCES
 add_library(lib_msl_vision ${lib_msl_vision_SOURCES})
 target_link_libraries(lib_msl_vision pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES} freenect)
 set_target_properties(lib_msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+add_dependencies(lib_msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 add_executable(msl_vision src/VisionPlayer.cpp)
 target_link_libraries(msl_vision pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+add_dependencies(msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
+
 
 ## Vision 3D
 FILE(GLOB lib_msl_vision_3d_SOURCES
@@ -249,10 +252,12 @@ FILE(GLOB lib_msl_vision_3d_SOURCES
 add_library(lib_msl_vision_3d ${lib_msl_vision_3d_SOURCES})
 target_link_libraries(lib_msl_vision_3d pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES})
 set_target_properties(lib_msl_vision_3d PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+add_dependencies(lib_msl_vision_3d msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 add_executable(msl_vision_3d src/VisionPlayer3D.cpp)
 target_link_libraries(msl_vision_3d pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision_3d ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_3d PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+add_dependencies(msl_vision_3d msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 ## Vision Calibration
 
@@ -313,9 +318,6 @@ add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
 target_link_libraries(msl_ray_calculator pthread m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(msl_vision_node msl_vision_generate_messages_cpp)
 
 SET(ROBOT "$ENV{ROBOT}")
 IF(ROBOT STREQUAL "")
