@@ -5,8 +5,8 @@
  *      Author: endy
  */
 
+#include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
-#include "GeometryTransformer.h"
 
 namespace msl {
 
@@ -177,6 +177,14 @@ bool MSLWorldModel::haveBall() {
 	} else {
 		return false;
 	}
+}
+
+double MSLWorldModel::getKickerVoltage() {
+	return this->kickerVoltage;
+}
+
+void MSLWorldModel::setKickerVoltage(double voltage) {
+	this->kickerVoltage = voltage;
 }
 
 void MSLWorldModel::transformToWorldCoordinates(

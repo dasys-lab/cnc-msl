@@ -59,5 +59,47 @@ namespace msl {
 	CNPoint2D::~CNPoint2D() {
 		// TODO Auto-generated destructor stub
 	}
+	shared_ptr<CNPoint2D> msl::CNPoint2D::normalize() {
+		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
+		double length = this->length();
+
+		norm->x = this->x / length;
+		norm->y = this->y / length;
+
+		return norm;
+	}
+
+	shared_ptr<CNPoint2D> CNPoint2D::operator*(const double& right) {
+		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		ret->x *= right;
+		ret->y *= right;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> operator*(const shared_ptr<CNPoint2D>& left, const double& right)
+	{
+		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		ret->x *= right;
+		ret->y *= right;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> CNPoint2D::operator+(const shared_ptr<CNPoint2D>& right) {
+		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		ret->x += right->x;
+		ret->y += right->y;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& left, const shared_ptr<CNPoint2D>& right)
+	{
+		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		ret->x += right->x;
+		ret->y += right->y;
+		return ret;
+	}
 }
 

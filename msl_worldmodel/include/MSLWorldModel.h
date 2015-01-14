@@ -36,6 +36,8 @@ namespace msl
 		shared_ptr<CNPosition> getOwnPosition();
 		shared_ptr<CNPoint2D> getAlloBallPosition();
 		shared_ptr<CNPoint2D> getEgoBallPosition();
+		double getKickerVoltage();
+		void setKickerVoltage(double voltage);
 
 
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
@@ -52,6 +54,8 @@ namespace msl
 		int hasBallIteration;
 		int ownID;
 		int ringBufferLength;
+		double kickerVoltage;
+
 		ros::NodeHandle n;
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;

@@ -1,3 +1,4 @@
+
 using namespace std;
 
 #include "BehaviourCreator.h"
@@ -21,7 +22,7 @@ using namespace std;
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
-#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledBall.h"
+#include  <Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h>
 
 namespace alica
 {
@@ -88,7 +89,7 @@ namespace alica
 
             case 1417620730939:
 
-                return make_shared<AlignAndShootTwoHoledBall>();
+                return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
             default:
