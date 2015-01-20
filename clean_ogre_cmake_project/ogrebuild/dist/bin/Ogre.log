@@ -1,0 +1,54 @@
+18:50:39: Creating resource group General
+18:50:39: Creating resource group Internal
+18:50:39: Creating resource group Autodetect
+18:50:39: SceneManagerFactory for type 'DefaultSceneManager' registered.
+18:50:39: Registering ResourceManager for type Material
+18:50:39: Registering ResourceManager for type Mesh
+18:50:39: Registering ResourceManager for type Skeleton
+18:50:39: MovableObjectFactory for type 'ParticleSystem' registered.
+18:50:39: OverlayElementFactory for type Panel registered.
+18:50:39: OverlayElementFactory for type BorderPanel registered.
+18:50:39: OverlayElementFactory for type TextArea registered.
+18:50:39: Registering ResourceManager for type Font
+18:50:39: ArchiveFactory for archive type FileSystem registered.
+18:50:39: ArchiveFactory for archive type Zip registered.
+18:50:39: ArchiveFactory for archive type EmbeddedZip registered.
+18:50:39: DDS codec registering
+18:50:39: FreeImage version: 3.15.4
+18:50:39: This program uses FreeImage, a free, open source image library supporting all common bitmap formats. See http://freeimage.sourceforge.net for details
+18:50:39: Supported formats: bmp,ico,jpg,jif,jpeg,jpe,jng,koa,iff,lbm,mng,pbm,pbm,pcd,pcx,pgm,pgm,png,ppm,ppm,ras,tga,targa,tif,tiff,wap,wbmp,wbm,psd,cut,xbm,xpm,gif,hdr,g3,sgi,exr,j2k,j2c,jp2,pfm,pct,pict,pic,3fr,arw,bay,bmq,cap,cine,cr2,crw,cs1,dc2,dcr,drf,dsc,dng,erf,fff,ia,iiq,k25,kc2,kdc,mdc,mef,mos,mrw,nef,nrw,orf,pef,ptx,pxn,qtk,raf,raw,rdc,rw2,rwl,rwz,sr2,srf,srw,sti
+18:50:39: Registering ResourceManager for type HighLevelGpuProgram
+18:50:39: Registering ResourceManager for type Compositor
+18:50:39: MovableObjectFactory for type 'Entity' registered.
+18:50:39: MovableObjectFactory for type 'Light' registered.
+18:50:39: MovableObjectFactory for type 'BillboardSet' registered.
+18:50:39: MovableObjectFactory for type 'ManualObject' registered.
+18:50:39: MovableObjectFactory for type 'BillboardChain' registered.
+18:50:39: MovableObjectFactory for type 'RibbonTrail' registered.
+18:50:39: Loading library /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/RenderSystem_GL
+18:50:39: Installing plugin: GL RenderSystem
+18:50:39: OpenGL Rendering Subsystem created.
+18:50:39: Plugin successfully installed
+18:50:39: Loading library /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_ParticleFX
+18:50:39: Installing plugin: ParticleFX
+18:50:39: Particle Emitter Type 'Point' registered
+18:50:39: Particle Emitter Type 'Box' registered
+18:50:39: Particle Emitter Type 'Ellipsoid' registered
+18:50:39: Particle Emitter Type 'Cylinder' registered
+18:50:39: Particle Emitter Type 'Ring' registered
+18:50:39: Particle Emitter Type 'HollowEllipsoid' registered
+18:50:39: Particle Affector Type 'LinearForce' registered
+18:50:39: Particle Affector Type 'ColourFader' registered
+18:50:39: Particle Affector Type 'ColourFader2' registered
+18:50:39: Particle Affector Type 'ColourImage' registered
+18:50:39: Particle Affector Type 'ColourInterpolator' registered
+18:50:39: Particle Affector Type 'Scaler' registered
+18:50:39: Particle Affector Type 'Rotator' registered
+18:50:39: Particle Affector Type 'DirectionRandomiser' registered
+18:50:39: Particle Affector Type 'DeflectorPlane' registered
+18:50:39: Plugin successfully installed
+18:50:39: Loading library /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_BSPSceneManager
+18:50:39: Installing plugin: BSP Scene Manager
+18:50:39: Plugin successfully installed
+18:50:39: Loading library /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_CgProgramManager
+18:50:39: OGRE EXCEPTION(7:InternalErrorException): Could not load dynamic library /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_CgProgramManager.  System Error: /usr/lib/x86_64-linux-gnu/OGRE-1.8.0/Plugin_CgProgramManager.so: cannot open shared object file: No such file or directory in DynLib::load at /build/buildd/ogre-1.8-1.8.1+dfsg/OgreMain/src/OgreDynLib.cpp (line 93)

@@ -1,0 +1,1 @@
+/usr/bin/c++   -O2 -g -DNDEBUG    CMakeFiles/OgreApp.dir/BaseApplication.cpp.o CMakeFiles/OgreApp.dir/TutorialApplication.cpp.o  -o dist/bin/OgreApp -rdynamic -lOgreMain -lboost_thread -lboost_date_time -lboost_system -lpthread -lOIS -lboost_thread -lboost_date_time -lboost_system -lpthread -lOIS 
