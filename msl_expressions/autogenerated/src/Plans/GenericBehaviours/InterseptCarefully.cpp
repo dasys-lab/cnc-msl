@@ -22,12 +22,12 @@ namespace alica
     void InterseptCarefully::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620641918) ENABLED START*/ //Add additional options here
-    	auto me = wm->getOwnPosition();
-    	auto egoBallPos = wm->getEgoBallPosition();
+        auto me = wm->getOwnPosition();
+        auto egoBallPos = wm->getEgoBallPosition();
 
-    	MotionControl mc =msl::RobotMovement::interseptCarefully(egoBallPos, egoBallPos, 100);
+        MotionControl mc = msl::RobotMovement::interseptCarefully(egoBallPos, egoBallPos, 100);
 
-    	send(mc);
+        send(mc);
         /*PROTECTED REGION END*/
     }
     void InterseptCarefully::initialiseParameters()

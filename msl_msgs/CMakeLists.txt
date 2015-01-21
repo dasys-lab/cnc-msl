@@ -55,6 +55,10 @@ add_message_files(
   Velocity3dInfo.msg
   VelocityInfo.msg
   JoystickCommand.msg
+  GameStage.msg
+  RefereeBoxControlBody.msg
+  RefereeBoxInfoBody.msg
+  RefereeBoxState.msg
 )
 
 ## Generate services in the 'srv' folder
