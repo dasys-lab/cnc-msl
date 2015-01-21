@@ -46,6 +46,7 @@ namespace alica {
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::KickControl& kc) {
+		kc.enabled = true;
 		kc.senderID = ownID;
 		kickControlPub.publish(kc);
 	}

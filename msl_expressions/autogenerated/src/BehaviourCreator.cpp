@@ -1,8 +1,9 @@
-
 using namespace std;
 
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
+
+#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 #include  "Plans/Behaviours/GetBall.h"
 
@@ -18,11 +19,11 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
+#include  "Plans/Behaviours/Joystick.h"
+
 #include  "Plans/GenericBehaviours/InterseptCarefully.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
-
-#include  <Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h>
 
 namespace alica
 {
@@ -39,6 +40,11 @@ namespace alica
     {
         switch (behaviourConfId)
         {
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledWall>();
+                break;
 
             case 1414828313541:
 
@@ -77,6 +83,11 @@ namespace alica
                 return make_shared<DriveToPoint>();
                 break;
 
+            case 1421854995808:
+
+                return make_shared<Joystick>();
+                break;
+
             case 1417620676868:
 
                 return make_shared<InterseptCarefully>();
@@ -85,11 +96,6 @@ namespace alica
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
-                break;
-
-            case 1417620730939:
-
-                return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
             default:

@@ -34,8 +34,29 @@ MSLWorldModel::MSLWorldModel() {
 
 	rawOdomSub = n.subscribe("/RawOdometry", 10,
 			&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);
-}
 
+	joystickSub = n.subscribe("/Joystick", 10,
+			&MSLWorldModel::onJoystickCommand, (MSLWorldModel*) this);
+
+	refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10,
+			&MSLWorldModel::onRefereeBoxInfoBody, (MSLWorldModel*) this);
+}
+void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
+	if (msg->robotId == this->ownID) {
+		lock_guard<mutex> lock(joystickMutex);
+		if (joystickCommandData.size() > ringBufferLength) {
+			joystickCommandData.pop_back();
+		}
+		joystickCommandData.push_front(msg);
+	}
+}
+msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo() {
+	lock_guard<mutex> lock(joystickMutex);
+	if (joystickCommandData.size() == 0) {
+		return nullptr;
+	}
+	return joystickCommandData.front();
+}
 void MSLWorldModel::onRawOdometryInfo(
 		msl_actuator_msgs::RawOdometryInfoPtr msg) {
 	lock_guard<mutex> lock(rawOdometryMutex);
@@ -185,6 +206,22 @@ double MSLWorldModel::getKickerVoltage() {
 
 void MSLWorldModel::setKickerVoltage(double voltage) {
 	this->kickerVoltage = voltage;
+}
+
+void MSLWorldModel::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg) {
+	lock_guard<mutex> lock(refereeMutex);
+			if (refereeBoxInfoBodyCommandData.size() > ringBufferLength) {
+				refereeBoxInfoBodyCommandData.pop_back();
+			}
+			refereeBoxInfoBodyCommandData.push_front(msg);
+}
+
+msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody() {
+	lock_guard<mutex> lock(refereeMutex);
+		if (refereeBoxInfoBodyCommandData.size() == 0) {
+			return nullptr;
+		}
+		return refereeBoxInfoBodyCommandData.front();
 }
 
 void MSLWorldModel::transformToWorldCoordinates(

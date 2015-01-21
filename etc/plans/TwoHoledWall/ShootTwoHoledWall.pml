@@ -6,7 +6,7 @@
     <outTransitions>#1417620267846</outTransitions>
   </states>
   <states id="1417620225739" name="AlignAndShoot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">AlignAndShootTwoHoledBall.beh#1417620730939</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">AlignAndShootTwoHoledWall.beh#1417620730939</plans>
     <inTransitions>#1417620267846</inTransitions>
     <outTransitions>#1417620285804</outTransitions>
     <outTransitions>#1417620327753</outTransitions>
