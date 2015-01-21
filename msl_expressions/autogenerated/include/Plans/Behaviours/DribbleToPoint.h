@@ -1,7 +1,6 @@
 #ifndef DribbleToPoint_H_
 #define DribbleToPoint_H_
 
-#include <GeometryCalculator.h>
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1414752367688) ENABLED START*/ //Add additional includes here
 #include <tuple>

@@ -37,6 +37,9 @@ MSLWorldModel::MSLWorldModel() {
 
 	joystickSub = n.subscribe("/Joystick", 10,
 			&MSLWorldModel::onJoystickCommand, (MSLWorldModel*) this);
+
+	refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10,
+			&MSLWorldModel::onRefereeBoxInfoBody, (MSLWorldModel*) this);
 }
 void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 {
@@ -204,6 +207,22 @@ double MSLWorldModel::getKickerVoltage() {
 
 void MSLWorldModel::setKickerVoltage(double voltage) {
 	this->kickerVoltage = voltage;
+}
+
+void MSLWorldModel::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg) {
+	lock_guard<mutex> lock(refereeMutex);
+			if (refereeBoxInfoBodyCommandData.size() > ringBufferLength) {
+				refereeBoxInfoBodyCommandData.pop_back();
+			}
+			refereeBoxInfoBodyCommandData.push_front(msg);
+}
+
+msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody() {
+	lock_guard<mutex> lock(refereeMutex);
+		if (refereeBoxInfoBodyCommandData.size() == 0) {
+			return nullptr;
+		}
+		return refereeBoxInfoBodyCommandData.front();
 }
 
 void MSLWorldModel::transformToWorldCoordinates(
