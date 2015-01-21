@@ -38,13 +38,22 @@ MSLWorldModel::MSLWorldModel() {
 	joystickSub = n.subscribe("/Joystick", 10,
 			&MSLWorldModel::onJoystickCommand, (MSLWorldModel*) this);
 }
-void MSLWorldModel::onJoystickCommand(msl_keyboard_joystick::JoystickCommandPtr msg)
+void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 {
+	lock_guard<mutex> lock(joystickMutex);
+		if (joystickCommandData.size() > ringBufferLength) {
+			joystickCommandData.pop_back();
+		}
+		joystickCommandData.push_front(msg);
 
 }
-msl_keyboard_joystick::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
+msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
 {
-
+	lock_guard<mutex> lock(joystickMutex);
+		if (joystickCommandData.size() == 0) {
+			return nullptr;
+		}
+		return joystickCommandData.front();
 }
 void MSLWorldModel::onRawOdometryInfo(
 		msl_actuator_msgs::RawOdometryInfoPtr msg) {
