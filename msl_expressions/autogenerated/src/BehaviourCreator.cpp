@@ -19,6 +19,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
+#include  "Plans/Behaviours/Joystick.h"
+
 #include  "Plans/GenericBehaviours/InterseptCarefully.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
@@ -79,6 +81,11 @@ namespace alica
             case 1417620583364:
 
                 return make_shared<DriveToPoint>();
+                break;
+
+            case 1421854995808:
+
+                return make_shared<Joystick>();
                 break;
 
             case 1417620676868:
