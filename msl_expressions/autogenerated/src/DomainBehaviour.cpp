@@ -5,8 +5,7 @@ namespace alica {
 
 	DomainBehaviour::DomainBehaviour(string name) :
 			BasicBehaviour(name) {
-		supplementary::SystemConfig* sc =
-				supplementary::SystemConfig::getInstance();
+		sc = supplementary::SystemConfig::getInstance();
 		ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
 		simlatorPub = n.advertise<msl_simulator::sim_packet>(

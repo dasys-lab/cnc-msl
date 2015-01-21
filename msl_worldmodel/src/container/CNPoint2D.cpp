@@ -21,18 +21,13 @@ namespace msl {
 		return sqrt(x * x + y * y);
 	}
 
-	CNPoint2D CNPoint2D::rotate(double radian) {
-		CNPoint2D newPoint(0, 0);
-		newPoint.x = this->x * cos(radian) - this->y * sin(radian);
-		newPoint.y = this->x * sin(radian) + this->y * cos(radian);
-		return newPoint;
-
+	shared_ptr<CNPoint2D> CNPoint2D::rotate(double radian) {
+		return make_shared<CNPoint2D>(this->x * cos(radian) - this->y * sin(radian), this->x * sin(radian) + this->y * cos(radian));
 	}
 
-	double CNPoint2D::angleTo(CNPosition& me) {
-		shared_ptr<CNPoint2D> p;
-		p = this->alloToEgo(me);
-		return atan2(p->y, p->x);
+
+	double CNPoint2D::angleTo() {
+		return atan2(y, x);
 	}
 
 	shared_ptr<CNPoint2D> CNPoint2D::alloToEgo(CNPosition& me) {
@@ -63,6 +58,48 @@ namespace msl {
 
 	CNPoint2D::~CNPoint2D() {
 		// TODO Auto-generated destructor stub
+	}
+	shared_ptr<CNPoint2D> msl::CNPoint2D::normalize() {
+		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
+		double length = this->length();
+
+		norm->x = this->x / length;
+		norm->y = this->y / length;
+
+		return norm;
+	}
+
+	shared_ptr<CNPoint2D> CNPoint2D::operator*(const double& right) {
+		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		ret->x *= right;
+		ret->y *= right;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> operator*(const shared_ptr<CNPoint2D>& left, const double& right)
+	{
+		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		ret->x *= right;
+		ret->y *= right;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> CNPoint2D::operator+(const shared_ptr<CNPoint2D>& right) {
+		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		ret->x += right->x;
+		ret->y += right->y;
+		return ret;
+	}
+
+
+	shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& left, const shared_ptr<CNPoint2D>& right)
+	{
+		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		ret->x += right->x;
+		ret->y += right->y;
+		return ret;
 	}
 }
 

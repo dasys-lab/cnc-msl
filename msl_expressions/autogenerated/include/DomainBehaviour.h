@@ -24,6 +24,9 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_actuator_msgs::KickControl& kc);
 		msl::MSLWorldModel* wm;
 
+	protected:
+		supplementary::SystemConfig* sc;
+
 	private:
 
 		int ownID;

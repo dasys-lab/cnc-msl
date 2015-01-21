@@ -35,10 +35,9 @@ namespace alica
         c.velangular = 3 * atan2(egoBallPos.y, egoBallPos.x);
 
         CNPoint2D p1(0, 1);
-        CNPoint2D p2(0, 0);
-        p2 = p1.rotate(3.141 * 0.5);
+        auto p2 = p1.rotate(3.141 * 0.5);
 
-        cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2.x << "," << p2.y << ")"
+        cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2->x << "," << p2->y << ")"
                 << endl;
 
         this->send(c);

@@ -21,7 +21,7 @@ find_package(catkin REQUIRED system_config msl_simulator)
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
-
+ 
 ## To declare and build messages, services or actions from within this
 ## package, follow these steps:
 ## * Let MSG_DEP_SET be the set of packages whose message types you use in
@@ -96,9 +96,12 @@ catkin_package(
 ## Declare a cpp library
  add_library(msl_worldmodel
    src/MSLWorldModel.cpp
-   src/GeometryTransformer.cpp
+   src/GeometryCalculator.cpp
    src/container/CNPoint2D.cpp
+   src/container/CNPoint3D.cpp
    src/container/CNPosition.cpp
+   src/MSLFootballField.cpp
+   src/robotmovement/RobotMovement.cpp
  )
 
 ## Declare a cpp executable

@@ -19,7 +19,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp system_config fsystem autodiff ev
 # catkin_python_setup()
 
 
-
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################

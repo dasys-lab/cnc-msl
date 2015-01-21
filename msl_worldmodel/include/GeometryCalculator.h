@@ -16,14 +16,15 @@ using namespace std;
 
 namespace msl {
 
-	class GeometryTransformer {
+	class GeometryCalculator {
 	public:
 
-		virtual ~GeometryTransformer(){};
-		static pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
+		virtual ~GeometryCalculator(){};
+//		static pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
+		static double deltaAngle(double angle1, double angle2);
 
 	private:
-		GeometryTransformer();
+		GeometryCalculator();
 	};
 
 } /* namespace msl */
