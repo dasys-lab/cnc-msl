@@ -34,8 +34,18 @@ MSLWorldModel::MSLWorldModel() {
 
 	rawOdomSub = n.subscribe("/RawOdometry", 10,
 			&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);
-}
 
+	joystickSub = n.subscribe("/Joystick", 10,
+			&MSLWorldModel::onJoystickCommand, (MSLWorldModel*) this);
+}
+void MSLWorldModel::onJoystickCommand(msl_keyboard_joystick::JoystickCommandPtr msg)
+{
+
+}
+msl_keyboard_joystick::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
+{
+
+}
 void MSLWorldModel::onRawOdometryInfo(
 		msl_actuator_msgs::RawOdometryInfoPtr msg) {
 	lock_guard<mutex> lock(rawOdometryMutex);

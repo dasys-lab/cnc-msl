@@ -56,6 +56,7 @@ namespace msl
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
+		ros::Subscriber joystickSub;
 
 		list<msl_simulator::messages_robocup_ssl_wrapperPtr> simData;
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
