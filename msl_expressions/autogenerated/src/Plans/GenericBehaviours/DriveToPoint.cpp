@@ -27,6 +27,10 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 150);
 
+        if(egoTarget->length() < 250) {
+        	this->success = true;
+        }
+
         send(mc);
 
         /*PROTECTED REGION END*/

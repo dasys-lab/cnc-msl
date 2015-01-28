@@ -7,7 +7,7 @@
 
 #include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
-
+#include "HaveBall.h"
 namespace msl {
 
 MSLWorldModel* MSLWorldModel::get() {
@@ -23,8 +23,7 @@ void MSLWorldModel::onSimulatorData(
 	simData.push_front(msg);
 }
 
-MSLWorldModel::MSLWorldModel() {
-	hasBallIteration = 0;
+MSLWorldModel::MSLWorldModel() : haveBall(this) {
 	ringBufferLength = 10;
 	ownID = supplementary::SystemConfig::getOwnRobotID();
 	spinner = new ros::AsyncSpinner(4);
@@ -182,23 +181,6 @@ shared_ptr<CNPoint2D> MSLWorldModel::getEgoBallPosition() {
 	return p;
 }
 
-bool MSLWorldModel::haveBall() {
-	shared_ptr<CNPosition> ownPos = this->getOwnPosition();
-	shared_ptr<CNPoint2D> egoBallPos = this->getEgoBallPosition();
-
-	if (fabs(egoBallPos->x) <= 125 && fabs(egoBallPos->y) <= 125
-			&& fabs(atan2(egoBallPos->y, egoBallPos->x)) <= 0.075) {
-		hasBallIteration++;
-	} else {
-		hasBallIteration = 0;
-	}
-
-	if (hasBallIteration >= 5) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 double MSLWorldModel::getKickerVoltage() {
 	return this->kickerVoltage;
@@ -228,5 +210,16 @@ void MSLWorldModel::transformToWorldCoordinates(
 		msl_sensor_msgs::WorldModelDataPtr& msg) {
 }
 
+bool MSLWorldModel::checkSituation(Situation situation) {
+	auto ref = getRefereeBoxInfoBody();
+	if(!ref) {
+		return false;
+	}
+	if(ref->lastCommand == situation)
+	{
+		return true;
+	}
+	return false;
+}
 } /* namespace msl */
 

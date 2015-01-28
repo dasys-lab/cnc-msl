@@ -22,6 +22,8 @@
 #include "SystemConfig.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "HaveBall.h"
+#include "Situation.h"
 
 
 
@@ -34,6 +36,7 @@ namespace msl
 	{
 	public:
 		static MSLWorldModel* get();
+		HaveBall haveBall;
 
 		shared_ptr<CNPosition> getOwnPosition();
 		shared_ptr<CNPoint2D> getAlloBallPosition();
@@ -46,8 +49,8 @@ namespace msl
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg);
+		bool checkSituation(Situation situation);
 
-		bool haveBall();
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
@@ -57,7 +60,7 @@ namespace msl
 		virtual ~MSLWorldModel();
 
 	private:
-		int hasBallIteration;
+
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;

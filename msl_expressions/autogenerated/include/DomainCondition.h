@@ -3,6 +3,7 @@
 
 #include "engine/BasicCondition.h"
 #include <MSLWorldModel.h>
+#include <Situation.h>
 namespace alica
 {
 class DomainCondition : public BasicCondition

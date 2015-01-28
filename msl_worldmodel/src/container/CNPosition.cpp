@@ -16,7 +16,6 @@ namespace msl {
 	}
 
 	CNPosition::~CNPosition() {
-		// TODO Auto-generated destructor stub
 	}
 }
 
