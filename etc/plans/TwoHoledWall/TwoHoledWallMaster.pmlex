@@ -52,4 +52,30 @@
     <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464768858"/>
+    <value xPos="550" yPos="297" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464816725"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464819985"/>
+    <value>
+      <bendpoints xPos="548" yPos="243"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464823873"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464874668"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/Joystick.beh#1421854995808"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

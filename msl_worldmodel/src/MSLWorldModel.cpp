@@ -212,6 +212,9 @@ void MSLWorldModel::transformToWorldCoordinates(
 
 bool MSLWorldModel::checkSituation(Situation situation) {
 	auto ref = getRefereeBoxInfoBody();
+	if(!ref) {
+		return false;
+	}
 	if(ref->lastCommand == situation)
 	{
 		return true;

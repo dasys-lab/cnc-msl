@@ -32,6 +32,8 @@ namespace msl
 
 		DroppedBall = 23, Parking = 76,
 
+		Joystick = 254,
+
 //              OwnGoal=24,
 //              OppGoal=25,
 

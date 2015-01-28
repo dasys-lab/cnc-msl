@@ -17,10 +17,10 @@ HaveBall::HaveBall(MSLWorldModel* wm) {
 	this->wm = wm;
 	sc = SystemConfig::getInstance();
 
-	KICKER_DISTANCE = (*this->sc)["Dribble"]->get<double>("Dribble", "KickerDistance");
+	KICKER_DISTANCE = (*this->sc)["Dribble"]->get<double>("Dribble", "KickerDistance", NULL);
 	KICKER_ANGLE = M_PI;
-	HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble");
-	HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta");
+	HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
+	HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
 }
 
 HaveBall::~HaveBall() {
