@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>276</width>
-    <height>232</height>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,23 +25,30 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="robotIdLabel">
         <property name="text">
-         <string>TextLabel</string>
+         <string>RobotId:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="motionLabel">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Motion:</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="kickPowerLabel">
         <property name="text">
-         <string>TextLabel</string>
+         <string>KickPower:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="directionLabel">
+        <property name="text">
+         <string>Direction:</string>
         </property>
        </widget>
       </item>
@@ -50,23 +57,30 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QLabel" name="label_8">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="robotIdEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="motionValue">
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_9">
+       <widget class="QLabel" name="kickPowerValue">
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_7">
+       <widget class="QLabel" name="directionValue">
         <property name="text">
-         <string>TextLabel</string>
+         <string/>
         </property>
        </widget>
       </item>

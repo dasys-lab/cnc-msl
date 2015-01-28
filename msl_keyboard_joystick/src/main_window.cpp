@@ -12,6 +12,7 @@
 #include <QtGui>
 #include <QMessageBox>
 #include <iostream>
+#include <math.h>
 #include "../include/msl_keyboard_joystick/main_window.hpp"
 
 /*****************************************************************************
@@ -36,6 +37,8 @@ MainWindow::MainWindow(int argc, char** argv, QWidget *parent)
 	setWindowIcon(QIcon(":/images/icon.png"));
     QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
 
+    QObject::connect(ui.robotIdEdit, SIGNAL(textChanged(QString)), this, SLOT(onRobotIdEdited(QString)));
+
 	/*********************
 	** Logging
 	**********************/
@@ -48,6 +51,21 @@ MainWindow::MainWindow(int argc, char** argv, QWidget *parent)
     /*if ( ui.checkbox_remember_settings->isChecked() ) {
         on_button_connect_clicked(true);
     }*/
+
+    keyPressed[6];
+    kick = false;
+    robotId = 0;
+    ui.robotIdEdit->setText(std::to_string(robotId).c_str());
+    translation = 0;
+    angle = 0;
+    rotation = 0;
+    kickPower = 0;
+    shovelIdx = 0;
+    ballHandleLeftMotor = 0;
+    ballHandleRightMotor = 0;
+    selectedActuator = 0;
+
+
 }
 
 MainWindow::~MainWindow() {}
@@ -87,7 +105,101 @@ void MainWindow::updateLoggingView() {
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     std::cout << event->key() << std::endl;
+
+    switch (event->key()) {
+    case Qt::Key_Up:
+        keyPressed[0] = true;
+        break;
+    case Qt::Key_Down:
+        keyPressed[1] = true;
+        break;
+    case Qt:: Key_Left:
+        keyPressed[2] = true;
+        break;
+    case Qt::Key_Right:
+        keyPressed[3] = true;
+        break;
+    case Qt::Key_Less:
+        keyPressed[4] = true;
+        break;
+    case Qt::Key_Y:
+        keyPressed[5] = true;
+        break;
+    case Qt::Key_Space:
+        kick = true;
+        break;
+    case Qt::Key_Q:
+        //rotation speed +
+        if (rotation < 16 * M_PI) {
+            rotation = rotation + M_PI / 8;
+        }
+        break;
+    case Qt::Key_A:
+        //rotation speed -
+        if (rotation > 0) {
+            rotation = rotation - M_PI / 8;
+        }
+        break;
+    case Qt::Key_W:
+        //kick power +
+        if (kickPower < 3600) {
+            kickPower = kickPower + 25;
+        }
+        break;
+    case Qt::Key_S:
+        //kick power -
+        if (kickPower > 0) {
+            kickPower = kickPower - 25;
+        }
+        break;
+    case Qt::Key_E:
+
+        //switch shovel
+
+        if (shovelIdx == 0) {
+            shovelIdx = 1;
+        } else {
+            shovelIdx = 0;
+        }
+        break;
+    default:
+        break;
+    }
 }
+
+void MainWindow::keyReleaseEvent(QKeyEvent* event) {
+    std::cout << event->key() << std::endl;
+    switch (event->key()) {
+    case Qt::Key_Up:
+        keyPressed[0] = false;
+        break;
+    case Qt::Key_Down:
+        keyPressed[1] = false;
+        break;
+    case Qt:: Key_Left:
+        keyPressed[2] = false;
+        break;
+    case Qt::Key_Right:
+        keyPressed[3] = false;
+        break;
+    case Qt::Key_Less:
+        keyPressed[4] = false;
+        break;
+    case Qt::Key_Y:
+        keyPressed[5] = false;
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::onRobotIdEdited(QString text) {
+    std::cout << text.toStdString() << std::endl;
+
+    robotId = text.toInt();
+}
+
+
 
 /*****************************************************************************
 ** Implementation [Menu]

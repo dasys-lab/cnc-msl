@@ -50,10 +50,18 @@ public Q_SLOTS:
     /******************************************
     ** Manual connections
     *******************************************/
+    void onRobotIdEdited(QString text);
     void updateLoggingView(); // no idea why this can't connect automatically
 
-private:
-    void keyPressEvent(QKeyEvent* event);
+private:   
+
+    int robotId;
+    double angle, translation, rotation;
+    unsigned short kickPower;
+    char shovelIdx, ballHandleLeftMotor, ballHandleRightMotor, selectedActuator;
+    bool keyPressed[], kick;
+	void keyPressEvent(QKeyEvent* event); 
+    void keyReleaseEvent(QKeyEvent* event);
 	Ui::MainWindowDesign ui;
 	QNode qnode;
 };
