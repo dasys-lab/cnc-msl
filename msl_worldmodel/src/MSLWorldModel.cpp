@@ -228,5 +228,13 @@ void MSLWorldModel::transformToWorldCoordinates(
 		msl_sensor_msgs::WorldModelDataPtr& msg) {
 }
 
+bool MSLWorldModel::checkSituation(Situation situation) {
+	auto ref = getRefereeBoxInfoBody();
+	if(ref->lastCommand == situation)
+	{
+		return true;
+	}
+	return false;
+}
 } /* namespace msl */
 
