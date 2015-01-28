@@ -23,6 +23,7 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include "HaveBall.h"
+#include "Situation.h"
 
 
 
@@ -48,6 +49,7 @@ namespace msl
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg);
+		bool checkSituation(Situation situation);
 
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();

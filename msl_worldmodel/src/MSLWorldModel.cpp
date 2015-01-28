@@ -40,22 +40,21 @@ MSLWorldModel::MSLWorldModel() : haveBall(this) {
 	refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10,
 			&MSLWorldModel::onRefereeBoxInfoBody, (MSLWorldModel*) this);
 }
-void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
-{
-	lock_guard<mutex> lock(joystickMutex);
+void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
+	if (msg->robotId == this->ownID) {
+		lock_guard<mutex> lock(joystickMutex);
 		if (joystickCommandData.size() > ringBufferLength) {
 			joystickCommandData.pop_back();
 		}
 		joystickCommandData.push_front(msg);
-
+	}
 }
-msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
-{
+msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo() {
 	lock_guard<mutex> lock(joystickMutex);
-		if (joystickCommandData.size() == 0) {
-			return nullptr;
-		}
-		return joystickCommandData.front();
+	if (joystickCommandData.size() == 0) {
+		return nullptr;
+	}
+	return joystickCommandData.front();
 }
 void MSLWorldModel::onRawOdometryInfo(
 		msl_actuator_msgs::RawOdometryInfoPtr msg) {
@@ -211,5 +210,13 @@ void MSLWorldModel::transformToWorldCoordinates(
 		msl_sensor_msgs::WorldModelDataPtr& msg) {
 }
 
+bool MSLWorldModel::checkSituation(Situation situation) {
+	auto ref = getRefereeBoxInfoBody();
+	if(ref->lastCommand == situation)
+	{
+		return true;
+	}
+	return false;
+}
 } /* namespace msl */
 
