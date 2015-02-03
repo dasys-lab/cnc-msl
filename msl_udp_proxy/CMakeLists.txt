@@ -93,6 +93,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
+# Please note, that the following command does not work, if you compile your workspace the first time, because rosrun does not know anything about udp_proxy_generator in that case.
+# We could exchange the command with something more ROS-Independent, like calling the binary without rosrun.
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/proxy_gen/ros2udpProxy.cpp
     COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
