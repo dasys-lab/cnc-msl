@@ -63,7 +63,7 @@ MWind::MWind(QMainWindow *parent)
 
 	/* Inicialização do update widget */
 	UpdateWG =new UpdateWidget();
-	Robots_info = UpdateWG->get_info_pointer();
+/*	Robots_info = UpdateWG->get_info_pointer();
     FIW->get_info_pointer( Robots_info );
 	FieldW->get_info_pointer( Robots_info );
 	RefBoxWG->get_info_pointer( Robots_info );
@@ -78,7 +78,7 @@ MWind::MWind(QMainWindow *parent)
 
 	RefBoxWG->get_coach_pointer( db_coach_info );
 	FieldW->get_coach_pointer( db_coach_info );
-
+*/
 
 	/* Inicializar a combobox dos roles */
 	AllRoleCombo->clear();
@@ -181,12 +181,12 @@ MWind::MWind(QMainWindow *parent)
 	loggerWatcher->start();
 
 	/* Inicializar o GameClock */
-	db_coach_info->gTimeSecOffset=0;
+	/*db_coach_info->gTimeSecOffset=0;
 	db_coach_info->GameTime.start();
 	db_coach_info->Coach_Info.time=0;
 	db_coach_info->Coach_Info_in.time=0;
 	db_coach_info->logTimeOffset=0;
-	db_coach_info->addLogTimeOffset=false;
+	db_coach_info->addLogTimeOffset=false;*/
 	QTime GTime;
 	GTime.setHMS(0,0,0);
 	Game_time_clock->setText(GTime.toString("mm:ss"));
@@ -344,12 +344,12 @@ for (unsigned i=0; i<NROBOTS; i++)
 	if (team == 0) 
 	{
 		plt.setColor(QPalette::Button, Mag);
-		if (db_coach_info != NULL) db_coach_info->TeamColor=Magenta;
+		//if (db_coach_info != NULL) db_coach_info->TeamColor=Magenta;
 	}
 	else 
 	{
 		plt.setColor(QPalette::Button, Cy);
-		if (db_coach_info != NULL) db_coach_info->TeamColor=Cyan;
+		//if (db_coach_info != NULL) db_coach_info->TeamColor=Cyan;
 	}
 	
 	TeamColorCombo->setPalette(plt);

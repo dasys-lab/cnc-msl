@@ -270,7 +270,9 @@ void RefBoxWidget::updateStateInfo(void)
 		QColor back_color = QColor::fromRgb(72,72,72,255);
 		QPalette plt;
 		
-		QString gmstate= QString(refbox_signal_names[db_coach_info->Coach_Info.gameState]);
+		//QString gmstate= QString(refbox_signal_names[db_coach_info->Coach_Info.gameState]);
+		
+		QString gmstate= QString("Start");
 		
 		if ( gmstate.contains("SIGstop"))
 		{
@@ -283,7 +285,7 @@ void RefBoxWidget::updateStateInfo(void)
 		else
 			color=White;
 
-		State_val->setText(QString(" ")+refbox_signal_names[db_coach_info->Coach_Info.gameState]);
+		State_val->setText(QString(" ")+"Start");
 
 		plt.setColor(QPalette::Background, back_color);
 		plt.setColor(QPalette::Foreground, color);

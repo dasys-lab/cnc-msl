@@ -48,7 +48,7 @@ void LowLevelInfo::updateInfo()
 {
 	float x, y, o, dxReal, dyReal, dwReal;
 
-	CMD_Pos_GET( &x , &y , &o, &dxReal, &dyReal, &dwReal );
+	//CMD_Pos_GET( &x , &y , &o, &dxReal, &dyReal, &dwReal );
 	realDx = dxReal;
 	realDy = dyReal;
 	realDw = dwReal;
@@ -70,10 +70,10 @@ void LowLevelInfo::updateInfo()
 	odoOrientation = o;
 
 	unsigned short bat[3];
-	CMD_Info_GET( &bat[0], &bat[1], &bat[2], NULL, &justKicked);
+	//CMD_Info_GET( &bat[0], &bat[1], &bat[2], NULL, &justKicked);
 
 	unsigned int lArm, rArm;
-	CMD_Grabber_Info_GET(&lArm, &rArm, NULL, NULL);
+	//CMD_Grabber_Info_GET(&lArm, &rArm, NULL, NULL);
 
 	if (barrierState == false)
 	{

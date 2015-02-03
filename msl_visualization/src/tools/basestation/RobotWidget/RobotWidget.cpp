@@ -21,6 +21,7 @@
  */
 
 #include "RobotWidget.h"
+#include <stdio.h>
 
 RWidget::RWidget(QWidget *parent)
 {
@@ -442,11 +443,11 @@ if(NA_flag==0)
 	
 	//QString val;
 	//val.setNum(DB_Info->Robot_info[my_number].coordinationFlag);
-	if (DB_Info->Robot_info[my_number].coordinationFlag[0] <= num_coordination_types && DB_Info->Robot_info[my_number].coordinationFlag[0] >= 0)
+	/*if (DB_Info->Robot_info[my_number].coordinationFlag[0] <= num_coordination_types && DB_Info->Robot_info[my_number].coordinationFlag[0] >= 0)
 	{
 		QString val = QString(coordination_names[DB_Info->Robot_info[my_number].coordinationFlag[0]]);
 		CF_val->setText(val.trimmed());
-	}
+	}*/
 
 	
 
@@ -542,13 +543,13 @@ void RWidget::GoalColorChanged(int color_id)
 
 		if (color_id == 0)
 		{
-			db_coach_info->Coach_Info.playerInfo[my_number].goalColor = Yellow;
+			//db_coach_info->Coach_Info.playerInfo[my_number].goalColor = Yellow;
 			plt.setColor(QPalette::Button, Yell);
 			robotGoalBox->setCurrentIndex(0);
 		}
 		else
 		{
-			db_coach_info->Coach_Info.playerInfo[my_number].goalColor = Blue;
+			//db_coach_info->Coach_Info.playerInfo[my_number].goalColor = Blue;
 			plt.setColor(QPalette::Button, Bl);
 			robotGoalBox->setCurrentIndex(1);
 		}

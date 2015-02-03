@@ -23,10 +23,9 @@
 #include "FieldWidget3D.h"
 #include <vtkLineWidget.h>
 
-#include "ConfigXML.h"
+//#include "ConfigXML.h"
 
 using namespace cambada;
-using namespace cambada::util;
 
 class MouseInteractorStyle : public vtkInteractorStyleTerrain
 {
@@ -181,31 +180,31 @@ vtkStandardNewMacro(MouseInteractorStyle);
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
     QVTKWidget(parent)
 {
-    ConfigXML config;
+    /*ConfigXML config;
     if( config.parse("../config/cambada.conf.xml") == false )
     {
         cerr << "ERROR " << endl;
         exit(1);
-    }
+    }*/
 
     Update_timer = new QTimer();
     connect(Update_timer, SIGNAL(timeout()), this, SLOT(update_robot_info()));
 
     /* Dimensions */
-    _FIELD_LENGTH			= config.getField("field_length")/1000.0;
-    _FIELD_WIDTH			= config.getField("field_width")/1000.0;
-    _LINE_THICKNESS			= config.getField("line_thickness")/1000.0;
-    _GOAL_AREA_LENGTH		= config.getField("goal_area_length")/1000.0;
-    _GOAL_AREA_WIDTH		= config.getField("goal_area_width")/1000.0;
-    _PENALTY_AREA_LENGTH	= config.getField("penalty_area_length")/1000.0;
-    _PENALTY_AREA_WIDTH		= config.getField("penalty_area_width")/1000.0;
-    _CENTER_CIRCLE_RADIUS	= config.getField("center_circle_radius")/1000.0;
-    _BALL_DIAMETER			= config.getField("ball_diameter")/1000.0;
-    _CORNER_CIRCLE_RADIUS	= config.getField("corner_arc_radius")/1000.0;
-    _PENALTY_MARK_DISTANCE	= config.getField("penalty_marker_distance")/1000.0;
+    _FIELD_LENGTH			= 18;
+    _FIELD_WIDTH			= 12;
+    _LINE_THICKNESS			= 0.1;
+    _GOAL_AREA_LENGTH		= 2.5;
+    _GOAL_AREA_WIDTH		= 8;
+    _PENALTY_AREA_LENGTH	= 1;
+    _PENALTY_AREA_WIDTH		= 6;
+    _CENTER_CIRCLE_RADIUS	= 2;
+    _BALL_DIAMETER			= 0.25;
+    _CORNER_CIRCLE_RADIUS	= 0.3;
+    _PENALTY_MARK_DISTANCE	= 3;
     _BLACK_POINT_WIDTH		= _FIELD_WIDTH/4.0;
-    _BLACK_POINT_LENGTH		= config.getField("penalty_marker_distance")/1000.0;
-    _ROBOT_RADIUS			= config.getField("robot_radius")/1000.0;
+    _BLACK_POINT_LENGTH		= 2;
+    _ROBOT_RADIUS			= 0.25;
 
     /* Init Colors */
     float robotsColorR[] = { 244.0/255.0, 1, 1, 188.0/255.0, 201.0/255.0, 115.0/255.0};
@@ -1160,9 +1159,9 @@ void FieldWidget3D::updateGridView()
     int i = 0;
 
     //addtions
-    GridView grid;
-    DB_get(0,GRIDVIEW, &grid);
-    if(grid.count > 0)
+    //GridView grid;
+    //DB_get(0,GRIDVIEW, &grid);
+    /*if(grid.count > 0)
     {
 
     	for(int i=0;i<grid.count;i++)
@@ -1195,7 +1194,7 @@ void FieldWidget3D::updateGridView()
     	minz = 0.0;
     	maxz = 0.0;
     }
-
+*/
     if(height3D)
     {
         for(int j = 0; j < i; j++)
@@ -1237,7 +1236,7 @@ void FieldWidget3D::updateGridView()
         heightPolyDataAfterInterp->GetPoint(i,p);
 
         double dcolor[3];
-        colorLookupTable->GetColor(grid.grid[i].val, dcolor);
+        //colorLookupTable->GetColor(grid.grid[i].val, dcolor);
         unsigned char color[3];
         for(unsigned int j = 0; j < 3; j++)
         {

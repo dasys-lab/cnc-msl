@@ -21,7 +21,7 @@
  */
 
 #include "WorldState.h"
-#include "ConfigXML.h"
+//#include "ConfigXML.h"
 
 using namespace cambada::geom;
 
@@ -29,10 +29,10 @@ namespace cambada {
 
 Robot* WorldState::me = NULL;
 
-WorldState::WorldState( ConfigXML* config) {
+WorldState::WorldState() {
 
-	this->config = config; 							// Set 'config' object
-	field = new Field( config ); 					// Initialize 'field' object
+//	this->config = config; 							// Set 'config' object
+	field = new Field(); 					// Initialize 'field' object
 
 	gameState = stopRobot;							// Init gameState as STOP
 
@@ -52,15 +52,15 @@ WorldState::WorldState( ConfigXML* config) {
 	 * param3 = distance to clip width (until "param3", the sonar is a cone)
 	 * param4 = number of sensors
 	 */
-	freeMoveSonar = Sonar(config->getParam("avoid_distance"), 0.9, 1.5, (int)(config->getParam("avoid_nSensors")) );	//moving free, the corridor may be thinner, so use only 1 meter for sonar opening.
-	dribbleSonar = Sonar(4.0, 1.5, 1.5, (int)(config->getParam("avoid_nSensors")));
+	freeMoveSonar = Sonar(1.0, 0.9, 1.5, 1);	//moving free, the corridor may be thinner, so use only 1 meter for sonar opening.
+	dribbleSonar = Sonar(4.0, 1.5, 1.5, 1);
 
-	mapObstacles = new HeightMap();
+	/*mapObstacles = new HeightMap();
 	mapDribble = new HeightMap();
 	mapReceiveBallFP = new HeightMap();
 	mapTheirGoalFOV = new HeightMap();
 	mapKick2Goal = new HeightMap();
-	receiverSPMap = new HeightMap();
+	receiverSPMap = new HeightMap();*/
 
 	grabberWasTouched = false;
 
@@ -86,13 +86,14 @@ WorldState::WorldState( ConfigXML* config) {
 
 WorldState::~WorldState() {
 	delete field;
-
+/*
 	delete mapKick2Goal;
 	delete mapTheirGoalFOV;
 	delete mapReceiveBallFP;
 	delete mapDribble;
 	delete mapObstacles;
 	delete receiverSPMap;
+*/
 }
 
 Vec WorldState::rel2abs(const Vec& rel, int robotIdx)
@@ -643,7 +644,7 @@ double WorldState::getGoalSideOffset(double dist)
 	}
 	else
 	{
-		offset = (config->getParam("goal_side_offset_factor") / dist) ;
+		offset = 2 / dist;
 		if(offset > 0.5)
 		{
 			offset = 0.5;
@@ -763,7 +764,7 @@ bool WorldState::obstaclesToTheirGoal(float distance, Vec position) {
 	return false;
 }
 
-void WorldState::calcMaps()
+/*void WorldState::calcMaps()
 {
 	// --- All Obstacles Map --
 
@@ -943,21 +944,23 @@ void WorldState::calcMaps()
 	mapKick2Goal->normalize();
 
 	// This block draws a "Color scale" for a normalized grid view
-	/*for (float y = -field->halfLength; y <= field->halfLength; y+=SCALE )
+	for (float y = -field->halfLength; y <= field->halfLength; y+=SCALE )
 	{
 		Vec pos = Vec(field->halfWidth,y);
 		int gX, gY;
 		mapKick2Goal->world2grid(pos, gX, gY);
 		float val = (y/field->halfLength + 1) / 2;
 		mapKick2Goal->map->setValue(gX,gY,val);
-	}*/
+	}
 
 	mapKick2Goal->fillRtdb();
 
 	//mapObstacles->fillRtdb();
-}
+}*/
 
-HeightMap* WorldState::calcReceiverSPMap(Vec testPoint, float maxDistance, int idReplacer, int robotIdx ){
+
+
+/*HeightMap* WorldState::calcReceiverSPMap(Vec testPoint, float maxDistance, int idReplacer, int robotIdx ){
 	float MIN_LINE_CLEAR = 1.0;
 	Robot *me;
 	me = &robot[robotIdx];
@@ -980,7 +983,7 @@ HeightMap* WorldState::calcReceiverSPMap(Vec testPoint, float maxDistance, int i
 		bool closeToBall =
 				(me->obstacles[i].absCenter - ball).length() < 1.5;
 		bool closeToMe = (me->obstacles[i].absCenter - me->pos).length() < 0.75;
-		if (/*!me->obstacles[i].isTeamMate() &&*/!closeToBall)
+		if (!me->obstacles[i].isTeamMate() &&!closeToBall)
 		{ //considerar os teammates como obstaculos ou nao?
 			for (int ix = -2; ix <= 2; ix++)
 				for (int iy = -2; iy <= 2; iy++)
@@ -1111,7 +1114,7 @@ HeightMap* WorldState::calcReceiverSPMap(Vec testPoint, float maxDistance, int i
 		}
 	}
 	return receiverSPMap;
-}
+}*/
 
 bool WorldState::updateOpponentDribbling()
 {

@@ -23,18 +23,18 @@
 #ifndef FIELD_H_
 #define FIELD_H_
 
-#include "ConfigXML.h"
+//#include "ConfigXML.h"
 #include "Vec.h"
 #include "geometry.h"
 
-using namespace cambada::util;
+//using namespace cambada::util;
 
 namespace cambada{
 
 class Field {
 public:
 	Field();
-	Field( ConfigXML* config );
+	//Field( ConfigXML* config );
 
 	// Field dimensions
 	float width,length;
@@ -121,7 +121,7 @@ public:
 
 
 private:
-	ConfigXML* config;
+	//ConfigXML* config;
 
 };
 

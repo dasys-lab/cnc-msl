@@ -152,7 +152,7 @@ void RefBoxDialog::connectToHost(void)
 	else if (NewRefBox_Bot->isChecked() && connected == 0)
 	{
 		/* open multicast port */
-		MulticastSocket sock;
+		/*MulticastSocket sock;
 		if (sock.openSocket(interface.toAscii().constData(), destHost.toAscii().constData(), destPort) == -1)
 		{
 			Status_val->setText("Creating Socket error");
@@ -175,7 +175,7 @@ void RefBoxDialog::connectToHost(void)
 		DestHost_val->setEnabled(0);
 		DestPort_val->setEnabled(0);
 
-		connected = 2;
+		connected = 2;*/
 	}
 
 	/* disconnect old (TCP) mode if connected in refbox mode */

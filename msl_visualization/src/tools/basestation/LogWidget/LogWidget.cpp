@@ -35,7 +35,7 @@ LogWidget::LogWidget(QWidget * parent)
 	coachLogRobots = new CoachLogRobotsInfo();
 	coachLogFlag = new CoachLogModeFlag();
 	coachLogFlag->log = false;
-	DB_put(COACHLOGMODEFLAG,coachLogFlag);
+	//DB_put(COACHLOGMODEFLAG,coachLogFlag);
 
 	ReadyToRead=true;
 	DB_Info=NULL;
@@ -363,7 +363,7 @@ void LogWidget::LoadFrame( int frame_number )
 
 	//Update FrameLabel
 	FrameNumber->setText(QString::number(currentFrame));
-	DB_put(COACHLOGROBOTSINFO,coachLogRobots);
+	//DB_put(COACHLOGROBOTSINFO,coachLogRobots);
 	
 }
 
@@ -398,7 +398,7 @@ void LogWidget::SetLogViewMode_slot(int check_state)
 		emit SetLogViewMode_signal(false);
 		coachLogFlag->log= false;
 	}
-	DB_put(COACHLOGMODEFLAG,coachLogFlag);
+	//DB_put(COACHLOGMODEFLAG,coachLogFlag);
 
 	return;
 }

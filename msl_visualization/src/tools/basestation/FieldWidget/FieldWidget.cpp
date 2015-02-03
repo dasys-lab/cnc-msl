@@ -27,10 +27,9 @@
 
 #include <GL/glut.h>
 #include "FieldWidget.h"
-#include "ConfigXML.h"
+//#include "ConfigXML.h"
 
 using namespace cambada;
-using namespace cambada::util;
 
 //==================================================== Constructor ==========================================
 FieldWidget::FieldWidget(QWidget *parent)
@@ -52,27 +51,27 @@ FieldWidget::FieldWidget(QWidget *parent)
 	debug_point=0;
 	ballVel=0;			//added by Joao
 	
-	ConfigXML config;
+	/*ConfigXML config;
 	if( config.parse("../config/cambada.conf.xml") == false )
 	{
 		cerr << "ERROR " << endl;
 		exit(1);	
-	}
+	}*/
 
-	_FIELD_HEIGHT			= config.getField("field_length")/1000.0;
-	_FIELD_WIDTH			= config.getField("field_width")/1000.0;
-	_LINE_THICKNESS			= config.getField("line_thickness")/1000.0;
-	_GOAL_AREA_LENGTH		= config.getField("goal_area_length")/1000.0;
-	_GOAL_AREA_WIDTH		= config.getField("goal_area_width")/1000.0;
-	_PENALTY_AREA_LENGTH	= config.getField("penalty_area_length")/1000.0;
-	_PENALTY_AREA_WIDTH		= config.getField("penalty_area_width")/1000.0;
-	_CENTER_CIRCLE_RADIUS	= config.getField("center_circle_radius")/1000.0;
-	_BALL_DIAMETER			= config.getField("ball_diameter")/1000.0;
-	_CORNER_CIRCLE_RADIUS	= config.getField("corner_arc_radius")/1000.0;
-	_PENALTY_MARK_DISTANCE	= config.getField("penalty_marker_distance")/1000.0;
+	_FIELD_HEIGHT			= 18;
+	_FIELD_WIDTH			= 12;
+	_LINE_THICKNESS			= 0.1;
+	_GOAL_AREA_LENGTH		= 2.5;
+	_GOAL_AREA_WIDTH		= 8;
+	_PENALTY_AREA_LENGTH	= 6;
+	_PENALTY_AREA_WIDTH		= 1;
+	_CENTER_CIRCLE_RADIUS	= 2;
+	_BALL_DIAMETER			= 0.25;
+	_CORNER_CIRCLE_RADIUS	= 0.3;
+	_PENALTY_MARK_DISTANCE	= 3;
 	_BLACK_POINT_WIDTH		= _FIELD_WIDTH/4.0;
-	_BLACK_POINT_LENGTH		= config.getField("penalty_marker_distance")/1000.0;
-	_ROBOT_RADIUS			= config.getField("robot_radius")/1000.0;
+	_BLACK_POINT_LENGTH		= 3;
+	_ROBOT_RADIUS			= 0.25;
 
 	/* Constantes de trabalho */
 	Pi = 3.14159265358979323846;

@@ -28,16 +28,19 @@
 
 #include "WorldStateDefs.h"
 #include "CoachInfo.h"
-#include "ConfigXML.h"
+//#include "ConfigXML.h"
+#include "Timer.h"
 #include "geometry.h"
 #include "Zones.h"
-#include "HeightMap.h"
+//#include "HeightMap.h"
 #include "Timer.h"
 #include "LowLevelInfo.h"
 
 #include "Field.h"
 #include "Robot.h"
 #include "Sonar.h"
+
+using namespace cambada::util;
 
 namespace cambada {
 
@@ -51,14 +54,14 @@ namespace cambada {
  */
 class WorldState{
 public:
-	WorldState(ConfigXML* config);
+	WorldState();
 	virtual ~WorldState();
 
 	WSGameState gameState;
 
 	Robot robot[N_AGENTS-1];		// Pointers to all robots
 	static Robot* me;				// Pointer to me
-	ConfigXML* config;				// Configuration pointer
+//	ConfigXML* config;				// Configuration pointer
 
 	CoachInfo coach;
 
@@ -69,7 +72,7 @@ public:
 	Sonar freeMoveSonar;
 
 	// Height Maps
-	void calcMaps();
+/*	void calcMaps();
 	HeightMap* calcReceiverSPMap(Vec testPoint, float maxDistance,int idReplacer, int robotIdx = 0);
 
 	HeightMap* mapObstacles;
@@ -78,7 +81,7 @@ public:
 	HeightMap* mapTheirGoalFOV;
 	HeightMap* mapKick2Goal;
 	HeightMap* receiverSPMap;
-
+*/
 	// for Integrator:
 	bool isFormationCoachAvailable;
 	unsigned long timeStamp;

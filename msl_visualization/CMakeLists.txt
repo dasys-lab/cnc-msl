@@ -171,7 +171,7 @@ SET( pman_SRC # this is a variable
 )
 
 ADD_LIBRARY( pman ${pman_SRC} )
-TARGET_LINK_LIBRARIES( pman util )
+TARGET_LINK_LIBRARIES( pman cambada_util )
 set_target_properties( pman PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 
@@ -239,14 +239,14 @@ SET( util_SRC
         #src/util/SetPieces.cxx
         src/util/PID.cpp
         src/util/Clock.cpp
-        src/util/ConfigXML.cpp
+        #src/util/ConfigXML.cpp
         src/util/LinRegression.cpp
         src/util/Param.cpp
         src/util/SharedTimer.cpp
         src/util/SlidingWindow.cpp
         src/util/Timer.cpp
         src/util/KickerConf.cpp
-        src/util/HeightMap.cpp
+        #src/util/HeightMap.cpp
         src/util/ClippedRamp.cpp
         
         # Utilities for WorldState
@@ -258,8 +258,8 @@ SET( util_SRC
         src/util/StuckRobotSensor.cpp
 )
 
-ADD_LIBRARY( util ${util_SRC} )
-set_target_properties( util PROPERTIES COMPILE_FLAGS "-fPIC" )
+ADD_LIBRARY( cambada_util ${util_SRC} )
+set_target_properties( cambada_util PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 
 
@@ -363,7 +363,8 @@ QT4_WRAP_UI( BASESTATION_UI_HDRS ${BASESTATION_UIS} ) #Generate headers using QT
 QT4_WRAP_CPP( BASESTATION_MOC_SRCS ${BASESTATION_MOC_HDRS} ) #Generate CPP files from moh headers
 QT4_ADD_RESOURCES( BASESTATION_RC_SRCS ${BASESTATION_RCS} )
 
-ADD_EXECUTABLE( basestation EXCLUDE_FROM_ALL
+#ADD_EXECUTABLE( basestation EXCLUDE_FROM_ALL
+ADD_EXECUTABLE( basestation 
  ${BASESTATION_SRCS} 
  ${BASESTATION_MOC_SRCS} 
  ${BASESTATION_RC_SRCS} 
@@ -373,7 +374,7 @@ ADD_EXECUTABLE( basestation EXCLUDE_FROM_ALL
 TARGET_LINK_LIBRARIES( basestation 
  ${QT_LIBRARIES} 
 # ${LIBXMLPP_LIBRARY} 
- util 
+ cambada_util 
  #rtdb 
  worldstate 
  geom 
@@ -391,6 +392,24 @@ TARGET_LINK_LIBRARIES( basestation
 ADD_CUSTOM_TARGET( tools DEPENDS
  basestation
 )
+
+SET( worldstate_SRC # this is a variable
+src/agent/world/Field.cpp
+src/agent/world/Obstacle.cpp
+src/agent/world/Robot.cpp
+src/agent/world/Sonar.cpp
+src/agent/world/Ball.cpp
+src/agent/world/VisionInfo.cpp
+src/agent/world/LowLevelInfo.cpp
+src/agent/world/WorldState.cpp
+src/agent/world/Compass.cpp
+src/agent/world/Zones.cpp
+src/agent/world/CoachInfo.cpp
+src/agent/world/SystemInfo.cpp
+)
+ADD_LIBRARY( worldstate ${worldstate_SRC} )
+TARGET_LINK_LIBRARIES( worldstate cambada_util geom )
+set_target_properties( worldstate PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 #############
 ## Install ##

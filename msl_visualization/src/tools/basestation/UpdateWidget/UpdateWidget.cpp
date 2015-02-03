@@ -50,13 +50,13 @@ UpdateWidget::UpdateWidget()
 	}
 
 	/* incializações da base de dados */
-    for (unsigned i=0; i<NROBOTS; i++){
+/*    for (unsigned i=0; i<10; i++){
 		Robots_info.lifetime[i] = 0;
         Robots_info.lpBat[i].status = 0;
         Robots_info.lpBat[i].charge = 0;
         Robots_info.Robot_status[i] = STATUS_NA;
         Robots_info.Robot_info[i].currentGameState = stopRobot;
-    }
+    }*/
 
 	//DB_Coach.GameTime.setHMS(0,0,0);
 	//DB_Coach.GamePart=0;
@@ -84,14 +84,14 @@ void UpdateWidget::UpdateInfo(void)
 	}
 	//return;
 	
-	Robot temp_info;
-	LaptopInfo lpBatTemp[NROBOTS];
+	/*Robot temp_info;
+	LaptopInfo lpBatTemp[10];
 	CoachInfo coach_temp;
     FormationInfo formation_temp;
 
 	int CoachLifetime;
 	bool valid_info=true;
-	/*if( (CoachLifetime=DB_get( Whoami(), COACH_INFO, (void*)&coach_temp)) == -1 )
+	if( (CoachLifetime=DB_get( Whoami(), COACH_INFO, (void*)&coach_temp)) == -1 )
 		if((CoachLifetime=DB_get( Whoami(), COACH_INFO, (void*)&coach_temp)) == -1 )
 		{
 			printf("RtDB read coach info error\n");
@@ -103,16 +103,15 @@ void UpdateWidget::UpdateInfo(void)
         DB_Coach.Coach_Info_in=coach_temp;
         if(formationCombo != NULL)
             formationCombo->setCurrentIndex(coach_temp.half);
-*/
     }
 
-  /*  if( (CoachLifetime=DB_get( Whoami(), FORMATION_INFO, (void*)&formation_temp)) == -1 )
+    if( (CoachLifetime=DB_get( Whoami(), FORMATION_INFO, (void*)&formation_temp)) == -1 )
         if((CoachLifetime=DB_get( Whoami(), FORMATION_INFO, (void*)&formation_temp)) == -1 )
         {
             printf("RtDB read coach info error\n");
             valid_info=false;
         }
-*/
+
     if(valid_info)
     {
         if(formationCombo != NULL)
@@ -120,11 +119,11 @@ void UpdateWidget::UpdateInfo(void)
 
     }
 
-	for(int i=0; i<NROBOTS;i++)
+	for(int i=0; i<10;i++)
 	{
 		long lifetime;
 		valid_info = true;
-/*
+
 		if( (lifetime=DB_get( i+1, ROBOT_WS, (void*)&temp_info)) == -1 )
 			if( (lifetime=DB_get( i+1, ROBOT_WS, (void*)&temp_info)) == -1 )
 			{
@@ -173,11 +172,11 @@ void UpdateWidget::UpdateInfo(void)
 
 		Robots_info.lifetime[i] = lifetime;
 
-*/
+
 		//printf("robot %d status %d running %d number %d\n", i,Robots_info.Robot_status[i], Robots_info.Robot_info[i].me.running, temp_info.me.number);
 	}
 
-
+*/
 
 
 }
@@ -193,7 +192,7 @@ void UpdateWidget::setFormationCombo(QComboBox * _formationCombo){
 
 void UpdateWidget::transmitFormation(int formationId)
 {
-    FormationInfo formation_temp;
+    /*FormationInfo formation_temp;
 
     bool valid_info=true;
 
@@ -206,7 +205,7 @@ void UpdateWidget::transmitFormation(int formationId)
         formation_temp.formationIdFreePlay = formationId; //FIXME need to add new formationIdSP
         //DB_put( FORMATION_INFO , (void*) &formation_temp );
     }
-
+*/
 }
 
 void UpdateWidget::transmitCoach(void)
