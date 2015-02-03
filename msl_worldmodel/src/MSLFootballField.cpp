@@ -44,18 +44,18 @@ namespace msl {
 
 		this->sc = SystemConfig::getInstance();
 
-		FieldLength = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "FieldLength", NULL);
-		FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "FieldWidth", NULL);
-		GoalAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "PenaltyAreaXSize", NULL);
-		GoalAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "PenaltyAreaYSize", NULL);
-		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "MiddleCircleRadius", NULL);
-		GoalInnerAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "GoalAreaXSize", NULL);
-		GoalInnerAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "GoalAreaYSize", NULL);
-		CornerCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "CornerCircleRadius", NULL);
-		LineWidth = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "LineWidth", NULL);
-		GoalWidth = (*this->sc)["Globals"]->get<double>("Globals", "MSLFootballField", "GoalWidth", NULL);
-		GoalInnerAreaExists = (*this->sc)["Globals"]->get<bool>("Globals", "MSLFootballField", "GoalInnerAreaExists", NULL);
-		CornerCircleExists = (*this->sc)["Globals"]->get<bool>("Globals", "MSLFootballField", "CornerCircleExists", NULL);
+		FieldLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldLength", NULL);
+		FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldWidth", NULL);
+		GoalAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaXSize", NULL);
+		GoalAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaYSize", NULL);
+		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "MiddleCircleRadius", NULL);
+		GoalInnerAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaXSize", NULL);
+		GoalInnerAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaYSize", NULL);
+		CornerCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "CornerCircleRadius", NULL);
+		LineWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "LineWidth", NULL);
+		GoalWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalWidth", NULL);
+		GoalInnerAreaExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "GoalInnerAreaExists", NULL);
+		CornerCircleExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "CornerCircleExists", NULL);
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
 		std::cout << "MSLFootballField::FieldWidth = " << FieldWidth << std::endl;

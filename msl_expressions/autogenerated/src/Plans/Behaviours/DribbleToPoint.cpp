@@ -35,24 +35,20 @@ namespace alica
         double w = 4.1;
         double p = atan2(egoTargetPos.y - egoBallPos.y, egoTargetPos.x - egoBallPos.x);
 
-
-
-		if (fabs(p) <= 0.115)
-		{
-			c.velangular = p;
-			c.velnormal = -(p * radius);
-			c.veltangent = min(egoTargetPos.x * 0.001, 1.0);
-			c.spinner = true;
-		}
-		else
-		{
-			c.velangular = p * 1.5;
-			c.velnormal = -(p * radius) * 1.5;
-			c.veltangent = min(egoBallPos.x * 0.05, 1.0);
-			c.spinner = true;
-		}
-
-
+        if (fabs(p) <= 0.115)
+        {
+            c.velangular = p;
+            c.velnormal = -(p * radius);
+            c.veltangent = min(egoTargetPos.x * 0.001, 1.0);
+            c.spinner = true;
+        }
+        else
+        {
+            c.velangular = p * 1.5;
+            c.velnormal = -(p * radius) * 1.5;
+            c.veltangent = min(egoBallPos.x * 0.05, 1.0);
+            c.spinner = true;
+        }
 
 //  c.velangular = 4.1;
 //  c.velnormal = -(4.1*r);

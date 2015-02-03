@@ -21,14 +21,13 @@ namespace alica
     void Stop::run(void* msg)
     {
         /*PROTECTED REGION ID(run1413992604875) ENABLED START*/ //Add additional options here
-    	msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
-    	mc.motion.angle = 0;
-    	mc.motion.rotation = 0;
-    	mc.motion.translation = 0;
+        mc.motion.angle = 0;
+        mc.motion.rotation = 0;
+        mc.motion.translation = 0;
 
-
-    	send(mc);
+        send(mc);
 
         /*PROTECTED REGION END*/
     }

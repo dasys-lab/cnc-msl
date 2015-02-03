@@ -57,8 +57,8 @@ namespace msl {
 	}
 
 	CNPoint2D::~CNPoint2D() {
-		// TODO Auto-generated destructor stub
 	}
+
 	shared_ptr<CNPoint2D> msl::CNPoint2D::normalize() {
 		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
 		double length = this->length();

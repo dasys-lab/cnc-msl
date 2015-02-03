@@ -23,7 +23,6 @@ namespace msl {
 	}
 
 	CNPoint3D::~CNPoint3D() {
-		// TODO Auto-generated destructor stub
 	}
 }
 

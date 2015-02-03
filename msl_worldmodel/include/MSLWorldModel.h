@@ -12,6 +12,8 @@
 #include <msl_simulator/messages_robocup_ssl_wrapper.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <msl_sensor_msgs/WorldModelData.h>
+#include <msl_msgs/JoystickCommand.h>
+#include <msl_msgs/RefereeBoxInfoBody.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -20,6 +22,8 @@
 #include "SystemConfig.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "HaveBall.h"
+#include "Situation.h"
 
 
 
@@ -32,6 +36,7 @@ namespace msl
 	{
 	public:
 		static MSLWorldModel* get();
+		HaveBall haveBall;
 
 		shared_ptr<CNPosition> getOwnPosition();
 		shared_ptr<CNPoint2D> getAlloBallPosition();
@@ -39,19 +44,23 @@ namespace msl
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
 
-
 		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
-		bool haveBall();
+		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
+		void onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg);
+		bool checkSituation(Situation situation);
+
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
+		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
+		msl_msgs::RefereeBoxInfoBodyPtr getRefereeBoxInfoBody();
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
 
 	private:
-		int hasBallIteration;
+
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
@@ -60,12 +69,19 @@ namespace msl
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
+		ros::Subscriber joystickSub;
+		ros::Subscriber refereeBoxInfoBodySub;
 
 		list<msl_simulator::messages_robocup_ssl_wrapperPtr> simData;
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
-		mutex rawOdometryMutex;
+		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
+		list<msl_msgs::RefereeBoxInfoBodyPtr> refereeBoxInfoBodyCommandData;
 		list<msl_sensor_msgs::WorldModelDataPtr> wmData;
+
+		mutex rawOdometryMutex;
 		mutex wmMutex;
+		mutex joystickMutex;
+		mutex refereeMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:
