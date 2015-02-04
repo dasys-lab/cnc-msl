@@ -32,6 +32,10 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd bhc;
         msl_actuator_msgs::KickControl kc;
 
+        if(!joy.operator bool()) {
+        	return;
+        }
+
         switch (joy->selectedActuator)
         {
             case msl_msgs::JoystickCommand::ALL:

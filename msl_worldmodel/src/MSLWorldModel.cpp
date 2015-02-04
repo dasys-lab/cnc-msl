@@ -194,8 +194,18 @@ void MSLWorldModel::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg) {
 	lock_guard<mutex> lock(refereeMutex);
 			if (refereeBoxInfoBodyCommandData.size() > ringBufferLength) {
 				refereeBoxInfoBodyCommandData.pop_back();
+
 			}
 			refereeBoxInfoBodyCommandData.push_front(msg);
+
+
+			if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start) {
+				currentSituation = Situation::Start;
+			} else if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::stop) {
+				currentSituation = Situation::Stop;
+			} else if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::command_joystick) {
+				currentSituation = Situation::Joystick;
+			}
 }
 
 msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody() {
@@ -211,15 +221,8 @@ void MSLWorldModel::transformToWorldCoordinates(
 }
 
 bool MSLWorldModel::checkSituation(Situation situation) {
-	auto ref = getRefereeBoxInfoBody();
-	if(!ref) {
-		return false;
-	}
-	if(ref->lastCommand == situation)
-	{
-		return true;
-	}
-	return false;
+	lock_guard<mutex> lock(situationChecker);
+	return currentSituation == situation;
 }
 } /* namespace msl */
 

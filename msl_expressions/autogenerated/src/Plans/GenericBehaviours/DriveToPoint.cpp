@@ -23,6 +23,9 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         auto me = wm->getOwnPosition();
+        if(!me.operator bool()) {
+        	return;
+        }
         auto egoTarget = alloTarget.alloToEgo(*me);
 
         msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 150);

@@ -64,6 +64,7 @@ namespace msl
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
+		Situation currentSituation;
 
 		ros::NodeHandle n;
 		ros::Subscriber sub;
@@ -82,6 +83,7 @@ namespace msl
 		mutex wmMutex;
 		mutex joystickMutex;
 		mutex refereeMutex;
+		mutex situationChecker;
 		ros::AsyncSpinner* spinner;
 
 	protected:
