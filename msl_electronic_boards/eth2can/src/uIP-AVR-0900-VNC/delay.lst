@@ -1,0 +1,61 @@
+   1               		.file	"delay.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  30               	.global	delay_ms
+  32               	delay_ms:
+   1:delay.c       **** #include "delay.h"
+   2:delay.c       **** 
+   3:delay.c       **** 
+   4:delay.c       **** void delay_ms(unsigned char ms)
+   5:delay.c       **** {
+  34               	.LM0:
+  35               	.LFBB1:
+  36               	/* prologue: frame size=0 */
+  37               	/* prologue end (size=0) */
+   6:delay.c       ****    unsigned short delay_count = F_CPU / 4000;
+   7:delay.c       **** #ifdef __GNUC__
+   8:delay.c       ****     unsigned short cnt;
+   9:delay.c       ****     asm volatile ("\n"
+  39               	.LM1:
+  40 0000 20EA      		ldi r18,lo8(4000)
+  41 0002 3FE0      		ldi r19,hi8(4000)
+  42               	/* #APP */
+  43               		
+  44               	L_dl17:
+  45 0004 E22F      		mov r30, r18
+  46 0006 F32F      		mov r31, r19
+  47               	L_dl27:
+  48 0008 3197      		sbiw r30, 1
+  49 000a 01F4      		brne L_dl27
+  50 000c 8A95      		dec r24
+  51 000e 01F4      		brne L_dl17
+  52               		
+  53               	/* #NOAPP */
+  54               	/* epilogue: frame size=0 */
+  55 0010 0895      		ret
+  56               	/* epilogue end (size=1) */
+  57               	/* function delay_ms size 23 (22) */
+  62               	.Lscope1:
+  64               	.Letext0:
+  65               	/* File "delay.c": code   23 = 0x0017 (  22), prologues   0, epilogues   1 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 delay.c
+     /tmp/ccohC9YT.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccohC9YT.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccohC9YT.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccohC9YT.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccohC9YT.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccohC9YT.s:32     .text:00000000 delay_ms
+     /tmp/ccohC9YT.s:44     .text:00000004 L_dl17
+     /tmp/ccohC9YT.s:47     .text:00000008 L_dl27
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

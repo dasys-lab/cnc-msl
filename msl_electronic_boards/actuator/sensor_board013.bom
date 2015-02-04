@@ -1,0 +1,61 @@
+Stückliste exportiert aus /home/puto/workspace/impera/cn/CNDevices/sensor_board_motor_control/sensor_board013.sch am 26.09.12 11:18
+
+Bauteil      Wert               Device             Package   Description                                                            
+C1           100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C5           100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C6           100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C7           100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C8           22p                C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C9           22p                C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C14          220µF/35V          CPOL-EUE5-10.5     E5-10,5   POLARIZED CAPACITOR, European symbol                                   
+C15          220µF/25V          CPOL-EUE3.5-10     E3,5-10   POLARIZED CAPACITOR, European symbol                                   
+C19          100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C20          100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C21          100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C22          100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C23          100n               C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C28          22p                C-EUC0603          C0603     CAPACITOR, European symbol                                             
+C29          22p                C-EUC0603          C0603     CAPACITOR, European symbol                                             
+CAN                             90-4               90-4      WEIDMUELLER CLAMP CONNECTOR                                            
+COM2                            F09HP              F09HP     SUB-D                                                                  
+D1           1N4001             1N4004             DO41-10   DIODE                                                                  
+D2           MBRS360            SCHOTTKY-DIODESMC  SMC       Schottky Diode                                                         
+F1                              SH22,5A            SH22,5A   FUSE HOLDER grid 22,5mm, isolated cap OGN0031 8201, Schurter (Buerklin)
+F2           3425L              3425L              3425L                                                                            
+H1           MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD   MOUNTING PAD, round                                                    
+H2           MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD   MOUNTING PAD, round                                                    
+H3           MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD   MOUNTING PAD, round                                                    
+H4           MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD   MOUNTING PAD, round                                                    
+IC1          LM2576-5V          LM2596TV           TO220-51  STEP-DOWN VOLTAGE REGULATOR                                            
+IC2          MEGA128-A          MEGA128-A          TQFP64    MICROCONTROLLER                                                        
+IC4          MCP2515-E/SO       MCP2515-E/SO       SO18L                                                                            
+IC5          PCA82C250T         PCA82C250T         SO8       CAN CONTROLLER INTERFACE                                               
+IC6          MAX3232CSE         MAX3232CSE         SO16      True RS-232 Transceivers 3.0V to 5.5V, Low-Power                       
+ISP                             MA05-2             MA05-2    PIN HEADER                                                             
+ISP1                            MA05-2             MA05-2    PIN HEADER                                                             
+ISP2                            MA05-2             MA05-2    PIN HEADER                                                             
+JP1                             JP2QE              JP2Q      JUMPER                                                                 
+JP2                             JP1E               JP1       JUMPER                                                                 
+JP3                             JP1E               JP1       JUMPER                                                                 
+L1                              L-PISR             PISR      Fastron SMD Power Inductors (also Shielded) - PISR Series              
+MOTION_LEFT                     MA05-1             MA05-1    PIN HEADER                                                             
+MOTION_RIGHT                    MA05-1             MA05-1    PIN HEADER                                                             
+MOTION_STOP                     MA05-1             MA05-1    PIN HEADER                                                             
+MPOWER                          AK500/2-H          AK500/2-H CONNECTOR                                                              
+POTI                            MA03-1             MA03-1    PIN HEADER                                                             
+POWER                           AK500/2-H          AK500/2-H CONNECTOR                                                              
+Q1           16MHz              CRYSTALHC49U-V     HC49U-V   CRYSTAL                                                                
+Q3           16MHz              CRYSTALHC49U-V     HC49U-V   CRYSTAL                                                                
+R1           1k                 R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R2           10k                R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R3           1k                 R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R4           4k7                R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R5           4k7                R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R6           4k7                R-EU_R0805         R0805     RESISTOR, European symbol                                              
+R20          4k7                R-EU_R0805         R0805     RESISTOR, European symbol                                              
+SERVO                           MA03-1             MA03-1    PIN HEADER                                                             
+SV1                             MA07-1             MA07-1    PIN HEADER                                                             
+SV2                             MA08-1             MA08-1    PIN HEADER                                                             
+SV3                             MA04-1             MA04-1    PIN HEADER                                                             
+SV4                             MA03-1             MA03-1    PIN HEADER                                                             
+SV6                             MA05-1             MA05-1    PIN HEADER                                                             

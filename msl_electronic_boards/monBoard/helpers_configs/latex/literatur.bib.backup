@@ -1,0 +1,59 @@
+@Proceedings{1,
+ title = {safety},
+ year = {2000},
+ OPTpublisher = {somebody},
+}
+@Book{,
+ title = {Development of Safe and Secure Control Software for Autonomous Mobile
+Robots, Mobile Robots - Control Architectures, Bio-Interfacing, Navigation, Multi Robot Motion Planning and
+Operator Training},
+ publisher = {InTech},
+ year = {2011},
+ ALTauthor = {Jerzy A. Barchanski},
+ ALTeditor = {Dr. Janusz Bȩdkowski},
+ OPTisbn = {978-953-307-842-7},
+}
+
+
+ (). Development of Safe and Secure Control Software for Autonomous Mobile
+Robots, Mobile Robots - Control Architectures, Bio-Interfacing, Navigation, Multi Robot Motion Planning and
+Operator Training,  (Ed.), ISBN: , 
+
+@misc{5,
+   author = "Wikipedia",
+   title = "physikalische Größen",
+   year = "2013",
+   url = "http://de.wikipedia.org/wiki/Liste_physikalischer_Gr%C3%B6%C3%9Fen",
+   note = "[Online; Stand 7. März 2013]"
+}
+@misc{6,
+   author = "Wikipedia",
+   title = "Skalierbarkeit",
+   year = "2013",
+   url = "http://de.wikipedia.org/wiki/Liste_physikalischer_Gr%C3%B6%C3%9Fen",
+   note = "[Online; Stand 5. Februar 2013]"
+}
+@book{2,
+    author  = {Michael R. Lyu},
+    title   = {Handbook of Software Reliability Engineering},
+    publisher = {IEEE Computer Society Press and McGraw-Hill Book Company},
+    year    = {2005},
+}
+
+@TechReport{4,
+ author = {Carpe Noctem},
+ title = {teamsheet RoboCup},
+ institution = {Fachgebiet Verteilte Systeme},
+ year = {2013},
+}
+@book{3,
+    author  = {Russel},
+    title   = {Roboter},
+    publisher  = {nachschaune},
+    year    = {2005},
+}
+
+
+
+
+  Handbook of Software Reliability Engineering, IEEE Computer Society Press and McGraw-Hill Book Company.

@@ -1,0 +1,243 @@
+\documentclass[
+	11pt,								% 11 Punkt Schrift verwenden (auch 10pt, 12pt moeglich)
+	a4paper,						% Dokumentgroesse A4
+	oneside,						% einseitiger Druck (auch twoside moeglich)
+	titlepage,					% Titelblatt generieren
+	headsepline,				% Kopfzeile duch Linie vom text getrennt
+	DIV13,							% Groesse des Satzspiegels
+	abstracton,	 				% zeigt die Abstractueberschrift (abstracton oder abtractoff)
+	BCOR0cm,						% Groesse des Bindungsrandes (z. B.: BCOR2.5cm)
+	bibliography=totoc, % bibliography is added to the table of contents
+]{scrreprt}							% Dokumentenklasse (KomaScript - Report)
+%]{report}							% Dokumentenklasse (Native Latex - Report)
+
+% MATH, FORMULAE AND SIGNS PACKAGES
+\usepackage{amsmath}								% besser als standard math
+\usepackage{amssymb}
+
+% LANGUAGE PACKAGES
+%\usepackage[german]{				% Anpassungen ensprechend der Sprache
+%\usepackage[latin1]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage[utf8]{inputenc}				% direkte Eingabe von Umlauten
+\usepackage{csquotes}							% Anfuehrungszeichen entsprechend der Sprache
+
+% GRAPHIC PACKAGES
+\usepackage{graphicx}							 % Packet zu Einbindung von Graphiken
+\usepackage{subfig}									% fuer die Erstellung von Unterabbildungen
+
+% LAYOUT PACKAGES
+\usepackage{fancyhdr}
+\usepackage{parskip}								% besseres Absatzlayout (Leerzeile statt Einrückung)
+\usepackage[official,right]{eurosym}% für ein \euro{} Symbol
+\usepackage{hyperref}							% F\"ur Hyperlinks
+\hypersetup{
+	hypertexnames=true,
+	unicode = {true},
+	colorlinks = {true},
+	pdftitle = {Entwicklung eines Systems ...},
+	pdfauthor = {Christian Schaub},
+	pdfkeywords = {keywords},
+	pdfborder = {0 0 0},
+	linkcolor = black,
+	citecolor = black,
+	urlcolor = black,
+	breaklinks = true,
+}
+\usepackage{url}										% fuer URLs als Literaturverzeichnis
+\usepackage{color}
+\usepackage{setspace}
+\usepackage{rotfloat}
+%\usepackage{verbatim}								% multiline comments
+\usepackage{nextpage}
+\usepackage[textsize=scriptsize]{todonotes}
+\usepackage[numbers]{natbib}
+
+
+%\usepackage[
+%	block=nbpar,
+%	citestyle=numeric-comp,
+%	bibstyle=stopfer,
+%	maxbibnames=10
+%]{biblatex}
+%\addbibresource{bibtex_database.bib}
+
+% OPTIONS, DEFINITIONS
+\usetikzlibrary{arrows,automata,shapes.multipart,trees}
+\onehalfspacing							% anderthalbzeilig (oder auch \doublespace)
+\pagestyle{headings}				% Überschrift in der Kopfzeile und Seitenzahlen
+\setcapindent{0mm}
+\addtokomafont{caption}{\small}
+
+% OWN COMMANDS
+
+% Adding lines above and below the chapter head
+\newcommand*{\ORIGchapterheadstartvskip}{}
+\let\ORIGchapterheadstartvskip=\chapterheadstartvskip
+\renewcommand*{\chapterheadstartvskip}{
+	 \ORIGchapterheadstartvskip{
+			 \setlength{\parskip}{-40pt}
+			 \noindent\rule{.3\textwidth}{3pt}\rule[2.5pt]{.7\linewidth}{.5pt}\par
+	 }
+}
+
+\newcommand*{\ORIGchapterheadendvskip}{}
+\let\ORIGchapterheadendvskip=\chapterheadendvskip
+\renewcommand*{\chapterheadendvskip}{
+	 {
+			 \setlength{\parskip}{0pt}
+			 \noindent\rule{.3\textwidth}{.5pt}\par
+	 }
+	 \ORIGchapterheadendvskip
+}
+
+\newcommand{\eclipse}{$\mbox{ECL}^i\mbox{PS}^e$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%DOCUMENT%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+% Cover
+	%\pagenumbering{alpha}
+	\thispagestyle{empty}
+	\includegraphics[height=1.2cm]{images/vsLogo.png}
+	\hfill\includegraphics[height=1.2cm]{images/uniLogo.pdf}\\[1cm]
+
+	\begin{center}
+		\begin{LARGE}\bfseries Entwicklung eines intelligenten und kommunikationsfähigen Systems zur Überwachung elektrischer Größen 
+					in autonomen Robotersystemen\end{LARGE}\\
+		[2cm]
+		\Large{Universität Kassel}\\
+		[1cm]
+		\large{Projektbericht von}\\
+		\Large{Christian Schaub}\\
+		[1cm]
+		\large{At}\\ \Large{Distributed Systems Research Group}\\
+		[1cm]
+	\end{center}
+	\begin{abstract}
+Decision making is an important part of planning in multi-agent systems. Aside requirements like real-time capability, robustness against sensor noise and consistent decisions over all agents, reusability and intelligibility are often neglected. In the context of this project work a constraint vocabulary based on non-linear continuous constraint satisfaction problems is implemented. The design of the constraint vocabulary benefits its reusability and intelligibility, due to its parametrisability and hierarchical structure. The constraints of the vocabulary focus on the  Middle Size League of the RoboCup  domain. Due to the constraint vocabulary the positioning of agents of a MSL team is very simplified. The robustness against sensor noise is evaluated, considering the requirements of MSL~\cite{Aiello2007}.
+	\end{abstract}
+
+	\vfill
+	\begin{Large}
+		\begin{tabular}{r l}
+			Reviewer: & Prof. Dr. Kurt Geihs\\
+			[1cm]
+			Supervisor: & Dipl.-Ing. Dominik Kirchner\\
+		\end{tabular}
+	\end{Large}
+	\vfill
+
+	\begin{center}Datum: Januar 21, 2012\end{center}
+
+	
+
+	\tableofcontents
+
+	
+	%\input{Inhalt} %Inhalt.tex
+\chapter{Einleitung}
+\label{cha:Einleitung}
+Motivation...Roboter handeln autonom ..Verlässlichkeit...mechnik, elektronik, software -> bezug auf dominiks Arbeit ??
+
+
+\section{Related work}
+\label{sec:1Related work}
+bla
+
+% ab Einleitung zählen !!
+\pagenumbering{Roman}
+
+
+\chapter{Abstrakt}
+\label{cha:Abstrakt}
+\begin{flushleft}
+Datenerfassung...HW Zustände im System bereitstellen
+Reaktion auf Daten direkt im Controller -> Reflexe
+Daraus abgeleitet folgende benötigte Funktionalitäten ---- vllt cooleres Wort ausdenken
+\end{flushleft}
+
+\section{Funktionalitäten}
+\label{sec:2Requirements}
+\begin{enumerate}
+ \item Kommunikation
+ \item Messen versch. Spannungsbereiche 1,5,24,400 V
+ \item Schalten von Lasten im Bereich > 1 A
+ \item Intelligenz im C (Reflexe)
+\end{enumerate}
+
+
+
+
+
+%\begin{figure}[htb]
+%\centering
+%\includegraphics[width=0.2\textwidth]{mkDoc-Logo.png}
+%\caption{mkDoc}
+%\label{fig:mkDoc}
+%\end{figure}
+
+\chapter{Konzept}
+\label{cha:Konzept}
+\begin{flushleft}
+Diskussion der Lösungen um Funktionalitäten zu erreichen... \linebreak
+versch. Kanäle - redundant -> ausfallsicher \linebreak 
+versch. Spannungsteiler, Z- Dioden, interne Schottky Dioden d. Controller \linebreak
+kleine spannungen - OP Amp \linebreak
+Implementierungnen Controller (Reflexe) \linebreak
+Controller -- Transistor -- Relaisschaltung (Lasten)
+\end{flushleft}
+
+
+\chapter{Umsetzung}
+\label{cha:Umsetzung}
+Wie wurden konzeptionelle Lösungen umgesetzt, Beschreibung in Arbeitsschritten...
+Observer -> System 
+
+\section{Arbeitsschritte}
+\label{sec:4Arbeitsschritte}
+
+Darstellung der einzelnen Schritte
+
+\section{Meilensteine}
+\label{sec:5Meilensteine}
+
+\chapter{Evaluierung}
+
+\label{cha:Evaluierung}
+
+
+Evaluierung der Funktionalitäten mittels verschiedener Versuchsaufbauten und anschliessender Dokumentation
+der Messreihen...
+
+\section{Messreihen}
+\label{sec:6Messreihen}
+\begin{center}
+Messreihe 5 V Messungen:
+\begin{tabular}{lllllll}
+Spannungswert & Messung  0 & Messung 2 & Messung 3 & Messung 4 & Messung 5 & Messung 6\\
+0 V & 0 & 0 & 0 & 0 & 0 & 0\\
+1,3 V & 0 & 0 & 0 & 0 & 0 & 0\\
+2,5 V & 0 & 0 & 0 & 0 & 0 & 0\\
+3,5 V & 0 & 0 & 0 & 0 & 0 & 0\\
+4,9 V & 0 & 0 & 0 & 0 & 0 & 0
+\end{tabular}
+\end{center}
+
+
+
+\chapter{Zusammenfassung}
+\label{cha:Zusammenfassung}
+Zusammenfassung ....
+
+\chapter{Abbildungsverzeichnis}
+\label{cha:Abbildungsverzeichnis}
+
+
+\bibliographystyle{plainnat}
+\bibliography{bibtex_database}
+
+\end{document}

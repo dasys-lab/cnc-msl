@@ -1,0 +1,87 @@
+/*
+ * $Id: main.c 1976 2007-04-03 19:35:39Z kb $
+ *
+ *
+ * Copyright 2005,2006 Carpe Noctem, Distributed Systems Group,
+ * University of Kassel. All right reserved.
+ *
+ * The code is derived from the software contributed to Carpe Noctem by
+ * the Carpe Noctem Team.
+ *
+ * The code is licensed under the Carpe Noctem Userfriendly BSD-Based
+ * License (CNUBBL). Redistribution and use in source and binary forms,
+ * with or without modification, are permitted provided that the
+ * conditions of the CNUBBL are met.
+ *
+ * You should have received a copy of the CNUBBL along with this
+ * software. The license is also available on our website:
+ * http://carpenoctem.das-lab.net/license.txt
+ *
+ *
+ * <description>
+ */
+/*
+ * note:
+ *
+ *  the kicker number one is on the opposite side of axis number one
+ *  the kicker number two is on the opposite side of axis number two
+ */
+
+//#include <stdio.h>
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
+#include "i2c.h"
+#include "cmps03.h"
+#include "mcp2515.h"
+//#include "global.h"
+//#include "defaults.h"
+//#include "uart.h"
+
+#define UART_BAUD_RATE			9600
+
+volatile uint16_t ms_count;
+void sleepawhile(void)
+{
+ // TCNT0  = 0;
+ int32_t tmp = 0,tmo = 0;
+  while (tmp <100000) {
+  	while (tmo <2500) tmo++;
+    tmp++;
+  }
+}
+int main(void) {
+
+	// init
+	//uart_init(UART_BAUD_SELECT(UART_BAUD_RATE, F_CPU));
+        mcp2515_init();
+
+	// enable interrupts after resetting the kicker
+	sei();
+
+//	uart_puts_P("\n* Device initialized. Enter main loop\n");
+	char str[10];
+	int16_t d;
+	TWSR = 0;
+	TWBR=28;
+	for (;;) {
+//		d=bearing16();
+//		sprintf(str,"%d\n",d);
+//		uart_puts(str);
+
+
+		tCAN message;
+        	mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+
+        	message.id = 0x123;
+        	message.header.rtr = 0;
+       	 	message.header.length = 2;
+        	message.data[0] = 0xab;
+        	message.data[1] = 0xcd;
+
+		
+		 mcp2515_send_message(&message);
+		 sleepawhile();
+	}
+	return 0;
+}
+

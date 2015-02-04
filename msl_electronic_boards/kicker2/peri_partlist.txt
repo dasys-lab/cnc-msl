@@ -1,0 +1,74 @@
+Partlist
+
+Exported from Peri.sch at 02.04.2007 09:52:59 
+
+EAGLE Version 4.16r1 Copyright (c) 1988-2006 CadSoft
+
+Part     Value              Device             Package  Library        Sheet
+
+C1       220uF/25V          CPOL-EUE3.5-8      E3,5-8   rcl            1
+C15      100n               C-EUC0603K         C0603K   rcl            1
+C16      100n               C-EUC0603K         C0603K   rcl            1
+C17      100n               C-EUC0603K         C0603K   rcl            1
+C18      100n               C-EUC0603K         C0603K   rcl            1
+C19      100n               C-EUC0603K         C0603K   rcl            1
+C20      100n               C-EUC0603K         C0603K   rcl            1
+C21      100n               C-EUC0603K         C0603K   rcl            1
+C22      100n               C-EUC0603K         C0603K   rcl            1
+D2       BAS70-05           BAS70-05           SOT23    diode          1
+D3       BAS70-05           BAS70-05           SOT23    diode          1
+D4       BAS70-05           BAS70-05           SOT23    diode          1
+D5       BAS70-05           BAS70-05           SOT23    diode          1
+H1       MOUNT-PAD-ROUND2.8 MOUNT-PAD-ROUND2.8 2,8-PAD  holes          1
+H2       MOUNT-PAD-ROUND2.8 MOUNT-PAD-ROUND2.8 2,8-PAD  holes          1
+H3       MOUNT-PAD-ROUND2.8 MOUNT-PAD-ROUND2.8 2,8-PAD  holes          1
+H4       MOUNT-PAD-ROUND2.8 MOUNT-PAD-ROUND2.8 2,8-PAD  holes          1
+INPUT    socket             FE06-2             FE06-2   con-lsta       1
+K1       RR1A               RR1A               RR1A     relay          1
+K2       RR1A               RR1A               RR1A     relay          1
+K3       RR1A               RR1A               RR1A     relay          1
+K4       RR1A               RR1A               RR1A     relay          1
+K5       RR1A               RR1A               RR1A     relay          1
+K6       RR1A               RR1A               RR1A     relay          1
+K7       RR1A               RR1A               RR1A     relay          1
+K8       RR1A               RR1A               RR1A     relay          1
+R4       100                R-EU_R0805         R0805    rcl            1
+R5       100                R-EU_R0805         R0805    rcl            1
+R6       100                R-EU_R0805         R0805    rcl            1
+R7       100                R-EU_R0805         R0805    rcl            1
+R8       10k                R-EU_R0805         R0805    rcl            1
+R9       10k                R-EU_R0805         R0805    rcl            1
+R10      10k                R-EU_R0805         R0805    rcl            1
+R11      10k                R-EU_R0805         R0805    rcl            1
+R12      4k7                R-EU_R0805         R0805    rcl            1
+R13      4k7                R-EU_R0805         R0805    rcl            1
+R14      4k7                R-EU_R0805         R0805    rcl            1
+R15      4k7                R-EU_R0805         R0805    rcl            1
+R16      4k7                R-EU_R0805         R0805    rcl            1
+R17      4k7                R-EU_R0805         R0805    rcl            1
+R18      4k7                R-EU_R0805         R0805    rcl            1
+R19      4k7                R-EU_R0805         R0805    rcl            1
+R20      10k                R-EU_R0805         R0805    rcl            1
+R21      10k                R-EU_R0805         R0805    rcl            1
+R22      10k                R-EU_R0805         R0805    rcl            1
+R23      10k                R-EU_R0805         R0805    rcl            1
+R24      10k                R-EU_R0805         R0805    rcl            1
+R25      10k                R-EU_R0805         R0805    rcl            1
+R26      10k                R-EU_R0805         R0805    rcl            1
+R27      10k                R-EU_R0805         R0805    rcl            1
+R28      100                R-EU_R0805         R0805    rcl            1
+R29      100                R-EU_R0805         R0805    rcl            1
+R30      10k                R-EU_R0805         R0805    rcl            1
+R31      10k                R-EU_R0805         R0805    rcl            1
+SERVO    socket             MA03-1             MA03-1   con-lstb       1
+SV1      socket             ML20E              ML20     con-harting-ml 1
+T1       BC847              BC847              SOT23    transistor     1
+T2       BC847              BC847              SOT23    transistor     1
+T3       BC847              BC847              SOT23    transistor     1
+T4       BC847              BC847              SOT23    transistor     1
+T5       BC847              BC847              SOT23    transistor     1
+T6       BC847              BC847              SOT23    transistor     1
+T7       BC847              BC847              SOT23    transistor     1
+T8       BC847              BC847              SOT23    transistor     1
+X2       socket             AK500/8            AK500/8  con-ptr500     1
+X3       socket             AK500/8            AK500/8  con-ptr500     1

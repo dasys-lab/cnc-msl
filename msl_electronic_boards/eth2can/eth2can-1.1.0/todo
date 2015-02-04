@@ -1,0 +1,28 @@
+sd karte
+atmega48 weg
+sd/mmc karte
+i2c und miso bus rauslegen, mit weitere chipselects
+Sicherung in SMD
+verpolschutz-diode im layout zu gross gewählt
+eth stecker falsch
+ISP mehr abstand vom CAN
+keine vias unterm eth
+andere power-ok LED
+ISP muss an 
+	MOSI -> PE0
+	MISO -> PE1
+	SCK -> PB1
+www.mikrocontroller.net/articles/AVR_Checkliste#Besonderheiten_bei_ATmega64_.2F_ATmega128
+multiplexer vor max202 wegen isp
+
+FUSES: cksel 1111
+sut: 11
+ckopt 0 <- bei probleme mit akkus mal die toggeln :)
+
+http://www.mikrocontroller.net/articles/AVR_Fuses
+interrupt (A10) kann weg - unnötig
+
+spannungsmessung zur kontrolle
+R13 ist zu groß, jetzt ist 4k7 drin und geht
+
+spannungsmessung 12V-bereich

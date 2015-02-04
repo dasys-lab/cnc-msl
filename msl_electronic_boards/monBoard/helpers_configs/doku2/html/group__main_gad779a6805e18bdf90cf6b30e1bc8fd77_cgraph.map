@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__main.html#ga2c557028dbc226ddcf2e0a7957178c32" title="get the light intensity with a level of 0&#45;100, 0 means its dark and 100 is very bright" alt="" coords="193,5,311,35"/>
+<area shape="rect" id="node5" href="$group__main.html#ga11287b16260f611508b59bc017646b8b" title="get the temperature measured with the temp&#45;sensor" alt="" coords="216,59,288,88"/>
+<area shape="rect" id="node7" href="$group__main.html#gae80c6f2768f1758503261fbc18ee9eb7" title="get noise level with the mic sensor, with level 0&#45;100 100 is very loud" alt="" coords="215,112,289,141"/>
+<area shape="rect" id="node9" href="$group__main.html#ga9d5a721bb90868a091edb6940bd7eb8d" title="get the distance to the next object near to the ultrasonic sensor" alt="" coords="207,165,297,195"/>
+<area shape="rect" id="node11" href="$group__uart.html#gae52facc0a56086a365bb0018160d8d71" title="Put string to ringbuffer for transmitting via UART." alt="" coords="215,219,289,248"/>
+<area shape="rect" id="node13" href="$group__uart.html#gad975221bc08b901e4c7ad69f9c9a97e2" title="Put byte to ringbuffer for transmitting via UART." alt="" coords="215,272,289,301"/>
+</map>

@@ -1,0 +1,134 @@
+Stückliste exportiert aus /home/puto/workspace/impera/cn/CNDevices/rekick2010/pcb/rekickNewGeneration006.sch am 26.09.12 11:18
+
+Bauteil  Wert               Device                 Package      Description                                                            
+BOOSTER  CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+C1       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C2       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C3       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C4       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C5       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C6       100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C7       0n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C8       22p                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C9       22p                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C10      100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C11      100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C12      22p                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C13      22p                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C14      220µF/35V          CPOL-EUE5-10.5         E5-10,5      POLARIZED CAPACITOR, European symbol                                   
+C15      220µF/25V          CPOL-EUE3.5-10         E3,5-10      POLARIZED CAPACITOR, European symbol                                   
+C16      0n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C17      10n                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C18      10n                C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C19      2n2                C-EU150-054X183        C150-054X183 CAPACITOR, European symbol                                             
+C20      FKP-1-1600 100n    C-EU375-192X418        C375-192X418 CAPACITOR, European symbol                                             
+C21      2n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C22      100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C23      100µF/35V          CPOL-EUE5-10.5         E5-10,5      POLARIZED CAPACITOR, European symbol                                   
+C24      2n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C25      100n               C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C28      0n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+C29      0n                 C-EUC0603              C0603        CAPACITOR, European symbol                                             
+CAN                         90-4                   90-4         WEIDMUELLER CLAMP CONNECTOR                                            
+D1       1N4001             1N4004                 DO41-10      DIODE                                                                  
+D2       MBRS360            SCHOTTKY-DIODESMC      SMC          Schottky Diode                                                         
+D3       15KE350A           15KEXX                 CB429-17     DIODE                                                                  
+D4       1N4148             1N4148                 DO35-10      DIODE                                                                  
+D5       DSEI30-10A         DEIS10-30A             TO247AD                                                                             
+D6       DSEI30-10A         DEIS10-30A             TO247AD                                                                             
+D7       24V                ZENER-DIODEDO35Z10     DO35Z10      Z-Diode                                                                
+D9       5V                 ZENER-DIODESOT23       SOT23        Z-Diode                                                                
+D10      18V                ZENER-DIODEDO35Z10     DO35Z10      Z-Diode                                                                
+ELKO-GND CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+ELKO-VCC CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+F1                          SH22,5A                SH22,5A      FUSE HOLDER grid 22,5mm, isolated cap OGN0031 8201, Schurter (Buerklin)
+GND      CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+H1       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H2       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H3       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H4       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H5       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H6       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H7       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+H8       MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0     3,0-PAD      MOUNTING PAD, round                                                    
+IC1      4081D              4081D                  SO14         Quad 2-input AND                                                       
+IC2      MEGA32-A           MEGA32-A               TQFP44       MICROCONTROLLER                                                        
+IC3      PCA82C250T         PCA82C250T             SO8          CAN CONTROLLER INTERFACE                                               
+IC4      MCP2515-E/SO       MCP2515-E/SO           SO18L                                                                               
+IC5      LM2576-5V          LM2596TV               TO220-51     STEP-DOWN VOLTAGE REGULATOR                                            
+IN       CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+L1                          L-PISR                 PISR         Fastron SMD Power Inductors (also Shielded) - PISR Series              
+LED1                        LEDCHIP-LED0805        CHIP-LED0805 LED                                                                    
+LED2                        LEDCHIP-LED0805        CHIP-LED0805 LED                                                                    
+LED3                        LEDCHIP-LED0805        CHIP-LED0805 LED                                                                    
+LED4                        LEDCHIP-LED0805        CHIP-LED0805 LED                                                                    
+ON       green              LED3MM                 LED3MM       LED                                                                    
+OUT      CN-2.2OFFSET       CN-2.2OFFSET           CN-2,1                                                                              
+POWER                       AK500/2-H              AK500/2-H    CONNECTOR                                                              
+PROG                        ML10                   ML10         HARTING                                                                
+Q1       16MHz              CRYSTALHC49S           HC49/S       CRYSTAL                                                                
+Q2       16MHz              CRYSTALHC49U-V         HC49U-V      CRYSTAL                                                                
+Q3       BC857              BC857ASMD              SOT23-BEC    PNP Transistror                                                        
+Q4       IRF840             IRF740                 TO220BV      N-CHANNEL MOS FET                                                      
+Q5       IXFH24N80P         IRFPC40                TO247BV      N-CHANNEL MOS FET                                                      
+Q6       BC847              BC817-25SMD            SOT23-BEC    NPN Transistor                                                         
+Q7       K40T1202           IRFPC40                TO247BV      N-CHANNEL MOS FET                                                      
+Q8       BC847              BC817-25SMD            SOT23-BEC    NPN Transistor                                                         
+Q9       BC847              BC817-25SMD            SOT23-BEC    NPN Transistor                                                         
+R1       10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R2       0                  R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R3       0                  R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R4       2k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R5       4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R6       4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R7       4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R8       4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R9       100                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R10      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R11      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R12      47k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R13      270k               R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R14      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R16      100                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R17      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R18      100                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R19      4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R20      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R21      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R22      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R23      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R24      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R25      470k               R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R26      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R27      220                RHS25                  HS25         Power Resitor                                                          
+R28      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R29      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R30      220                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R31      220                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R32      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R33      220                RHS25                  HS25         Power Resitor                                                          
+R34      10                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R35      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R36      390k               R-EU_0207/15           0207/15      RESISTOR, European symbol                                              
+R37      4k7                R-EU_0207/15           0207/15      RESISTOR, European symbol                                              
+R38      220                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R39      220                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R40      33k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R41      4k7                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R42      0                  R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R43      22                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R44      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R45      10k                R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R46      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+R47      1k                 R-EU_R0805             R0805        RESISTOR, European symbol                                              
+SV1                         ML10E                  ML10         HARTING                                                                
+SV3                         ML10E                  ML10         HARTING                                                                
+T1       BC847A             BC817-25-NPN-SOT23-BEC SOT23-BEC    NPN Transistror                                                        
+T2       BC847A             BC817-25-NPN-SOT23-BEC SOT23-BEC    NPN Transistror                                                        
+T3       BC857A             BC807-25-PNP-SOT23-BEC SOT23-BEC    PNP Transistror                                                        
+U$1      FQA12P20           FQA12P20               TO247BV                                                                             
+U$2      HCPL-J312          HCPL-J312              DIL08                                                                               
+U$3      CN-COIL            CN-COIL                CN-TJ6-U1-2                                                                         
+U$4      HCPL-J312          HCPL-J312              DIL08                                                                               
+U$5      IA2412S            IA2412S                SIP                                                                                 
+X2       AKL 230-02         AK500/2                AK500/2      CONNECTOR                                                              

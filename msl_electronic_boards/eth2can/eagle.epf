@@ -1,0 +1,19 @@
+[Eagle]
+Version="04 16 10"
+Platform="Linux"
+Serial="6A1B6EFE1E-LSR-L-1SS"
+Globals="Globals"
+Desktop="Desktop"
+
+[Globals]
+AutoSaveProject=1
+
+[Win_1]
+Type="Control Panel"
+Loc="1280 25 2549 969"
+State=2
+Number=0
+
+[Desktop]
+Screen="2560 1024"
+Window="Win_1"

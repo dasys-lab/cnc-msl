@@ -1,0 +1,44 @@
+Partlist
+
+Exported from Main.brd at 02.04.2007 09:52:31 
+
+EAGLE Version 4.16r1 Copyright (c) 1988-2006 CadSoft
+
+Part     Value              Package   Library        Position (mm)         Orientation
+
+C1       220uF/25V          E3,5-8    rcl            (34.29 45.72)         R270
+C2       100n               C0603K    rcl            (41.91 45.72)         MR270
+C3       100n               C0603K    rcl            (55.88 43.18)         MR90
+C4       10uF/35V           E2-5      rcl            (45.72 43.18)         R90
+C5       100n               C0603K    rcl            (73.66 33.02)         MR0
+C6       100n               C0603K    rcl            (77.47 33.02)         MR0
+C7       100n               C0603K    rcl            (71.12 26.67)         MR270
+C8       100n               C0603K    rcl            (81.28 33.02)         MR180
+C9       100n               C0603K    rcl            (68.58 29.21)         MR180
+C10      22p                C0603K    rcl            (49.53 25.4)          R90
+C11      22p                C0603K    rcl            (49.53 21.59)         R270
+C12      100n               C0603K    rcl            (45.72 25.4)          MR180
+C13      100n               C0603K    rcl            (41.91 41.91)         MR270
+C14      100n               C0603K    rcl            (6.35 27.94)          MR270
+D1       BY550              DO27-15   diode          (20.32 46.99)         R180
+GREEN    low_current_3mm    LED3MM    led            (87.63 3.81)          R0
+H1       MOUNT-PAD-ROUND2.8 2,8-PAD   holes          (5.08 5.08)           R0
+H2       MOUNT-PAD-ROUND2.8 2,8-PAD   holes          (5.08 48.26)          R0
+H3       MOUNT-PAD-ROUND2.8 2,8-PAD   holes          (96.52 48.26)         R0
+H4       MOUNT-PAD-ROUND2.8 2,8-PAD   holes          (96.52 5.08)          R0
+IC1      MEGA168            TQFP32-08 atmel          (36.83 25.4)          MR0
+IC2      78S05              TO220H    linear         (73.66 44.45)         R270
+IC3      MAX3232CSE         SO16      maxim          (77.47 26.67)         MR180
+ISP      socket             MA05-2    con-lstb       (6.35 16.51)          R270
+Q1       20Mhz              HC49U-V   crystal        (53.34 22.86)         R90
+R1       10k                R0805     rcl            (44.45 38.1)          MR180
+R2       0                  R0805     rcl            (12.7 24.13)          MR0
+R3       0                  R0805     rcl            (12.7 19.05)          MR0
+R4       2k7                R0805     rcl            (88.9 8.89)           MR90
+R5       2k7                R0805     rcl            (82.55 8.89)          MR90
+R6       2k7                R0805     rcl            (76.2 8.89)           MR90
+RED      low_current_3mm    LED3MM    led            (74.93 3.81)          R0
+RS232    socket             F09HP     con-subd       (88.9 26.67)          R270
+SV1      socket             ML20      con-harting-ml (49.53 5.08)          R0
+X1                          737992-5  con-conrad     (6.35 36.83)          R270
+YELLOW   low_current_3mm    LED3MM    led            (81.28 3.81)          R0

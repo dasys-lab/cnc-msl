@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$group__main.html#gad2edb4f30990738fb53001fe0c0f4ee5" title="reacts on measured values e.g. by setting a port High or Low to switch the relais &#45;&#45;&#45; sends a Hn &#160;whe..." alt="" coords="141,5,259,35"/>
+<area shape="rect" id="node5" href="$group__main.html#ga840291bc02cba5474a4cb46a9b9566fe" title="the main method with statemachine loop as follows: statemachine &#45;&#45;&#45;&#45;!!!" alt="" coords="317,57,368,87"/>
+<area shape="rect" id="node7" href="$group__main.html#gad779a6805e18bdf90cf6b30e1bc8fd77" title="send measured data by uart Format: P:n;x y &#160;&#160;&#45;&#45;&#45; n = portnumber, x = value, y = unit" alt="" coords="132,109,268,139"/>
+</map>
