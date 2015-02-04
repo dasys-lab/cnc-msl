@@ -24,6 +24,7 @@
 #include <GL/glut.h>
 #include <signal.h>
 #include "MainWindow.h"
+#include <ros/ros.h>
 
 QApplication* app = NULL;
 
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
 		cerr << "basetation :: Register SIGINT Error"<<endl;
 		return 1;
 	}
-  
+  	ros::init(argc, argv, "basestation");
 	app = new QApplication(argc, argv);
 	QMainWindow Mwind;    
 	

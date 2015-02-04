@@ -368,12 +368,12 @@ for (unsigned i=0; i<NROBOTS; i++)
 
 	if (goal == 0) 
 	{
-		if (db_coach_info != NULL) db_coach_info->GoalColor=Yellow;
+		//if (db_coach_info != NULL) db_coach_info->GoalColor=Yellow;
 		plt.setColor(QPalette::Button, Yell);
 	}
 	else 
 	{
-		if (db_coach_info != NULL) db_coach_info->GoalColor=Blue;
+		//if (db_coach_info != NULL) db_coach_info->GoalColor=Blue;
 		plt.setColor(QPalette::Button, Bl);
 	}
 
@@ -510,7 +510,7 @@ QTime GTime;
 int min=0, sec=0;
 
 
-	if(db_coach_info != NULL) 
+	/*if(db_coach_info != NULL)
 	{	
 	//printf("UpdateGoals %d\n",db_coach_info->Coach_Info_in.ourGoals);
 		/* Score */
@@ -533,7 +533,7 @@ int min=0, sec=0;
 //			db_coach_info->Coach_Info.time= (int) (gameTime+0.5);
 			transmitCoach();
 			//printf()
-		}*/
+		}
 		
 		min = (int)( (db_coach_info->Coach_Info_in.time) / 60 );
 		sec = (int)( (db_coach_info->Coach_Info_in.time) % 60 );
@@ -560,7 +560,7 @@ int min=0, sec=0;
 
 		}
 
-		else /* Reset dos contadores */
+		else /* Reset dos contadores
 		{
 			//GTime.setHMS(0,min, sec);
 			//Game_time_clock->setText(GTime.toString("mm:ss"));
@@ -573,17 +573,17 @@ int min=0, sec=0;
 		}
 
 #endif
-	}
+	}*/
 
 }
 void MWind::UpdateGameParameters(void)
 {
-	if(db_coach_info != NULL) 
+	/*if(db_coach_info != NULL)
 		{
 			//Game_time_clock->setText(db_coach_info->GameTime.toString("mm:ss"));
 			UpdateGameTime();
 
-		}
+		}*/
 
 }
 
@@ -607,20 +607,20 @@ void MWind::ManualFormationChanged(int state)
     if(state == Qt::Checked ){
         FormationCombo->setEnabled(true);
 
-        if(db_coach_info != NULL){
+       /* if(db_coach_info != NULL){
             db_coach_info->Coach_Info.manualFormation = true;
             db_coach_info->Coach_Info.half=FormationCombo->currentIndex();
             UpdateWG->transmitCoach();
-        }
+        }*/
 
     }else{
         FormationCombo->setEnabled(false);
 
-        if(db_coach_info != NULL){
+        /*if(db_coach_info != NULL){
             db_coach_info->Coach_Info.manualFormation = false;
             FormationCombo->setCurrentIndex(db_coach_info->Coach_Info.half);
             UpdateWG->transmitCoach();
-        }
+        }*/
     }
 
 }
@@ -653,12 +653,12 @@ void MWind::on_checkBoxManualFormation_stateChanged(int arg1)
 {
 
 
-    if(db_coach_info != NULL) {
+    /*if(db_coach_info != NULL) {
         db_coach_info->Coach_Info.manualFormation = this->checkBoxManualFormation->isChecked();
         UpdateWG->transmitCoach();
         cout << "hellot\n";
         FormationCombo->setEnabled(this->checkBoxManualFormation->isChecked());
-    }
+    }*/
 }
 
 void MWind::on_actionTaxi_Follow_Mode_toggled(bool arg1)

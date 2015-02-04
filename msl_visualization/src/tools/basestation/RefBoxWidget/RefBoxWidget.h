@@ -23,6 +23,8 @@
 #ifndef __REFBOXWIDGET_H
 #define __REFBOXWIDGET_H
 
+#include "ros/ros.h"
+
 #include "ui_RefBoxWG.h"
 #include "RefBoxDialog.h"
 #include <QDialog>
@@ -50,7 +52,9 @@ private:
 	RefBoxDialog *RBDial;
 	QTimer *UpdateTimer;
 
-	
+protected:
+	ros::Publisher RefereeBoxInfoBodyPublisher;
+	ros::NodeHandle* rosNode;
 
 public slots:
 	void detailsBotPressed(void);
@@ -60,6 +64,7 @@ public slots:
 	void HaltPressed(void);
 	void DroppedBallPressed(void);
 	void ParkingPressed(void);
+	void JoystickPressed(void);
 
 	/* our */
 	void OurKickOffPressed(void);

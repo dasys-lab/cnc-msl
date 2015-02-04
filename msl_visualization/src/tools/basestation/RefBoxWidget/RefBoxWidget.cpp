@@ -21,6 +21,10 @@
  */
 
 #include "RefBoxWidget.h"
+#include "msl_msgs/RefereeBoxInfoBody.h"
+#include <ros/node_handle.h>
+#include <ros/publisher.h>
+
 
 RefBoxWidget::RefBoxWidget(QWidget * parent)
 {
@@ -29,7 +33,10 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	RBDialog = new QDialog(parent);
 	RBDial = new RefBoxDialog(RBDialog);
 	UpdateTimer = new QTimer();
+	rosNode = new ros::NodeHandle();
 
+	RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>(
+			"/RefereeBoxInfoBody", 2);
 
 	/* Inicialização das comboboxes (our & their)*/
 
@@ -57,7 +64,7 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	connect(Their_Corner_Kick_bot, SIGNAL(clicked()), this, SLOT(TheirCornerKickPressed()));
 	connect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
 
-
+	connect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 	connect(RBDial, SIGNAL(transmitCoach()), this, SLOT(updateCoachInfo()));
 	
 	connect(RBDial, SIGNAL(changeGoalColor(int)), this, SLOT(changeGoalColor_sl(int)));
@@ -100,6 +107,7 @@ RefBoxWidget::~RefBoxWidget()
 	disconnect(RBDial, SIGNAL(updateGameParam()), this, SLOT(UpdateGameParameter_slot()));
 	disconnect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 	disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
+	disconnect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 
 	if( this->LogW!= NULL ) delete this->LogW; this->LogW = NULL;
 
@@ -131,82 +139,74 @@ void RefBoxWidget::get_coach_pointer( DB_Coach_Info * ci)
 /*================================================== Game States =====================================*/
 void RefBoxWidget::PlayOnPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGstart;
-
-emit transmitCoach();
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::start;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::StopPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGstop;
-
-emit transmitCoach();
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::stop;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::HaltPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGhalt;
+//db_coach_info->Coach_Info.gameState = SIGhalt;
 
-emit transmitCoach();
+//emit transmitCoach();
 }
 
 void RefBoxWidget::DroppedBallPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGdropBall;
+//db_coach_info->Coach_Info.gameState = SIGdropBall;
 
-emit transmitCoach();
+//emit transmitCoach();
 }
 
 void RefBoxWidget::ParkingPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGparking;
 
-emit transmitCoach();
 }
 
+void RefBoxWidget::JoystickPressed(void)
+{
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::command_joystick;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
+}
 //================================================ Our States =======================================
 
 
 void RefBoxWidget::OurKickOffPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourKickOff;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::OurFreeKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourFreeKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::OurGoalKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourGoalKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::OurThrowinPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourThrowIn;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::OurCornerKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourCornerKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::OurPenaltyPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGourPenalty;
 
-emit transmitCoach();
 }
 
 
@@ -215,44 +215,32 @@ emit transmitCoach();
 
 void RefBoxWidget::TheirKickOffPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirKickOff;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::TheirFreeKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirFreeKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::TheirGoalKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirGoalKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::TheirThrowinPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirThrowIn;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::TheirCornerKickPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirCornerKick;
 
-emit transmitCoach();
 }
 
 void RefBoxWidget::TheirPenaltyPressed(void)
 {
-db_coach_info->Coach_Info.gameState = SIGtheirPenalty;
 
-emit transmitCoach();
 }
 
 
@@ -261,7 +249,7 @@ emit transmitCoach();
 void RefBoxWidget::updateStateInfo(void)
 {
 
-	if (db_coach_info != NULL)
+	/*if (db_coach_info != NULL)
 	{
 		QColor color;
 		QColor White = Qt::white;//QColor::fromRgb(0,0,0,255);
@@ -290,7 +278,7 @@ void RefBoxWidget::updateStateInfo(void)
 		plt.setColor(QPalette::Background, back_color);
 		plt.setColor(QPalette::Foreground, color);
 		State_val->setPalette(plt);
-	}
+	}*/
 }
 
 void RefBoxWidget::updateCoachInfo(void)
