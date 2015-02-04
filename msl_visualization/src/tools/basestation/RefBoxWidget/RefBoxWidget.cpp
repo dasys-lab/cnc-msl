@@ -118,8 +118,7 @@ RefBoxWidget::~RefBoxWidget()
 	
 void RefBoxWidget::detailsBotPressed(void)
 {
-	RBDial->update_manual_config();
-	RBDialog->show();
+
 }
 
 void RefBoxWidget::get_info_pointer( DB_Robot_Info * rw)
@@ -153,21 +152,23 @@ void RefBoxWidget::StopPressed(void)
 
 void RefBoxWidget::HaltPressed(void)
 {
-//db_coach_info->Coach_Info.gameState = SIGhalt;
-
-//emit transmitCoach();
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::halt;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::DroppedBallPressed(void)
 {
-//db_coach_info->Coach_Info.gameState = SIGdropBall;
-
-//emit transmitCoach();
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::droppedBall;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::ParkingPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::park;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::JoystickPressed(void)
@@ -181,32 +182,44 @@ void RefBoxWidget::JoystickPressed(void)
 
 void RefBoxWidget::OurKickOffPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurFreeKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurGoalKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurThrowinPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurCornerKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurPenaltyPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyMagenta;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 
@@ -215,32 +228,44 @@ void RefBoxWidget::OurPenaltyPressed(void)
 
 void RefBoxWidget::TheirKickOffPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirFreeKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirGoalKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirThrowinPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirCornerKickPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirPenaltyPressed(void)
 {
-
+	msl_msgs::RefereeBoxInfoBody ref;
+	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyCyan;
+	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 
@@ -287,7 +312,7 @@ void RefBoxWidget::updateCoachInfo(void)
 	//Update Ref Log
 	updateRefLog();
 
-	emit transmitCoach();
+	//emit transmitCoach();
 }
 
 void RefBoxWidget::updateRefLog(void)
@@ -316,15 +341,15 @@ void RefBoxWidget::changeGoalColor_sl(int goal)
 {
 
 	printf("emit change color RefBWidget\n");
-	emit changeGoalColor(goal);
+	//emit changeGoalColor(goal);
 }
 
 void RefBoxWidget::UpdateGameParameter_slot(void)
 {
-emit UpdateGameParameter_signal();
+//emit UpdateGameParameter_signal();
 }
 
 void RefBoxWidget::SetLogViewMode_slot(bool on_off)
 {
-emit SetLogViewMode_signal(on_off);
+//emit SetLogViewMode_signal(on_off);
 }
