@@ -10,7 +10,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules CACHE INTERNAL ""
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  alica_engine
+  system_config
+  roscpp
+  message_generation
+  msl_msgs)
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)
@@ -67,10 +72,11 @@ SET( QT_USE_QTXML       TRUE )
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
+#add_message_files(
+#    DIRECTORY msg FILES
+#    RefereeBoxControlBody.msg
+#    RefereeBoxInfoBody.msg
+#    RefereeBoxSate.msg
 # )
 
 ## Generate services in the 'srv' folder
@@ -88,9 +94,9 @@ SET( QT_USE_QTXML       TRUE )
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+#generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
+#   msl_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -158,7 +164,6 @@ INCLUDE_DIRECTORIES(
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(msl_visualization_node msl_visualization_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(msl_visualization_node
@@ -373,6 +378,7 @@ ADD_EXECUTABLE( basestation
 
 TARGET_LINK_LIBRARIES( basestation 
  ${QT_LIBRARIES} 
+ ${catkin_LIBRARIES}
 # ${LIBXMLPP_LIBRARY} 
  cambada_util 
  #rtdb 
@@ -387,7 +393,7 @@ TARGET_LINK_LIBRARIES( basestation
  QVTK
 )
 
-
+add_dependencies(basestation msl_msgs_generate_messages_cpp)
 
 ADD_CUSTOM_TARGET( tools DEPENDS
  basestation
