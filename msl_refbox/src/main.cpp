@@ -9,9 +9,9 @@
 ** Includes
 *****************************************************************************/
 
+#include <RefBoxWindow.hpp>
 #include <QtGui>
 #include <QApplication>
-#include "../include/main_window.hpp"
 
 /*****************************************************************************
 ** Main
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     ** Qt
     **********************/
     QApplication app(argc, argv);
-    msl_refbox::RefoboxWindow w(argc,argv);
+    msl_refbox::RefBoxWindow w(argc,argv);
     w.show();
     app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     int result = app.exec();

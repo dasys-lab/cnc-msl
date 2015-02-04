@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RefboxWindowDesign</class>
- <widget class="QMainWindow" name="RefboxWindowDesign">
+ <class>RefBoxWindowDesign</class>
+ <widget class="QMainWindow" name="RefBoxWindowDesign">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -138,7 +138,7 @@
   <connection>
    <sender>action_Quit</sender>
    <signal>triggered()</signal>
-   <receiver>RefboxWindowDesign</receiver>
+   <receiver>RefBoxWindowDesign</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

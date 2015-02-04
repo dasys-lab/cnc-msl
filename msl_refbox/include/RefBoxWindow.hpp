@@ -13,7 +13,7 @@
 *****************************************************************************/
 
 #include <QtGui/QMainWindow>
-#include "ui_main_window.h"
+#include "ui_RefBoxWindow.h"
 #include "qnode.hpp"
 
 /*****************************************************************************
@@ -28,18 +28,21 @@ namespace msl_refbox {
 /**
  * @brief Qt central, all operations relating to the view part here.
  */
-class RefoboxWindow : public QMainWindow {
+class RefBoxWindow : public QMainWindow , public Ui::RefBoxWindowDesign {
 Q_OBJECT
 
 public:
-	RefoboxWindow(int argc, char** argv, QWidget *parent = 0);
-	~RefoboxWindow();
+	RefBoxWindow(int argc, char** argv, QWidget *parent = 0);
+	~RefBoxWindow();
 
 	void ReadSettings(); // Load up qt program settings at startup
 	void WriteSettings(); // Save qt program settings when closing
 
 	void closeEvent(QCloseEvent *event); // Overloaded function
 	void showNoMasterMessage();
+
+protected:
+	bool event(QObject *obj, QEvent *event);
 
 public Q_SLOTS:
 	/******************************************
@@ -55,7 +58,7 @@ public Q_SLOTS:
     void updateLoggingView(); // no idea why this can't connect automatically
 
 private:
-	Ui::RefboxWindowDesign ui;
+	Ui::RefBoxWindowDesign ui;
 	QNode qnode;
 };
 

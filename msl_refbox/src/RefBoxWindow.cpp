@@ -6,63 +6,81 @@
  * @date February 2011
  **/
 /*****************************************************************************
-** Includes
-*****************************************************************************/
+ ** Includes
+ *****************************************************************************/
 
+#include <RefBoxWindow.hpp>
 #include <QtGui>
 #include <QMessageBox>
 #include <iostream>
-#include "../include/main_window.hpp"
 
 /*****************************************************************************
-** Namespaces
-*****************************************************************************/
+ ** Namespaces
+ *****************************************************************************/
 
 namespace msl_refbox {
 
 using namespace Qt;
 
 /*****************************************************************************
-** Implementation [MainWindow]
-*****************************************************************************/
+ ** Implementation [MainWindow]
+ *****************************************************************************/
 
-RefoboxWindow::RefoboxWindow(int argc, char** argv, QWidget *parent)
-	: QMainWindow(parent)
-	, qnode(argc,argv)
-{
+RefBoxWindow::RefBoxWindow(int argc, char** argv, QWidget *parent) :
+		QMainWindow(parent), qnode(argc, argv) {
 	ui.setupUi(this); // Calling this incidentally connects all ui's triggers to on_...() callbacks in this class.
-    QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt())); // qApp is a global variable for the application
+	QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp,
+			SLOT(aboutQt())); // qApp is a global variable for the application
 
-    ReadSettings();
+	ReadSettings();
 	setWindowIcon(QIcon(":/images/icon.png"));
 	//ui.tab_manager->setCurrentIndex(0); // ensure the first tab is showing - qt-designer should have this already hardwired, but often loses it (settings?).
-    QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
+	QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
 
 	/*********************
-	** Logging
-	**********************/
+	 ** Logging
+	 **********************/
 	//ui.view_logging->setModel(qnode.loggingModel());
-    QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(updateLoggingView()));
+	QObject::connect(&qnode, SIGNAL(loggingUpdated()), this,
+			SLOT(updateLoggingView()));
 
-    /*********************
-    ** Auto Start
-    **********************/
+	parent->installEventFilter(this);
+
+	/*********************
+	 ** Auto Start
+	 **********************/
 //    if ( ui.checkbox_remember_settings->isChecked() ) {
 //        on_button_connect_clicked(true);
 //    }
 }
 
-RefoboxWindow::~RefoboxWindow() {}
+
+bool RefBoxWindow::event(QObject *obj, QEvent *event) {
+	if (event->type() == QEvent::KeyPress) {
+
+		/* Shortcuts da basestation */
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+
+		if (keyEvent->key() == Qt::Key_C) {
+			RefBoxWG->detailsBotPressed();
+			return true;
+		}
+	}
+	return false;
+}
+
+RefBoxWindow::~RefBoxWindow() {
+}
 
 /*****************************************************************************
-** Implementation [Slots]
-*****************************************************************************/
+ ** Implementation [Slots]
+ *****************************************************************************/
 
-void RefoboxWindow::showNoMasterMessage() {
+void RefBoxWindow::showNoMasterMessage() {
 	QMessageBox msgBox;
 	msgBox.setText("Couldn't find the ros master.");
 	msgBox.exec();
-    close();
+	close();
 }
 
 /*
@@ -70,7 +88,7 @@ void RefoboxWindow::showNoMasterMessage() {
  * is already checked or not.
  */
 
-void RefoboxWindow::on_button_connect_clicked(bool check ) {
+void RefBoxWindow::on_button_connect_clicked(bool check) {
 //	if ( ui.checkbox_use_environment->isChecked() ) {
 //		if ( !qnode.init() ) {
 //			showNoMasterMessage();
@@ -90,8 +108,7 @@ void RefoboxWindow::on_button_connect_clicked(bool check ) {
 //	}
 }
 
-
-void RefoboxWindow::on_checkbox_use_environment_stateChanged(int state) {
+void RefBoxWindow::on_checkbox_use_environment_stateChanged(int state) {
 //	bool enabled;
 //	if ( state == 0 ) {
 //		enabled = true;
@@ -104,31 +121,33 @@ void RefoboxWindow::on_checkbox_use_environment_stateChanged(int state) {
 }
 
 /*****************************************************************************
-** Implemenation [Slots][manually connected]
-*****************************************************************************/
+ ** Implemenation [Slots][manually connected]
+ *****************************************************************************/
 
 /**
  * This function is signalled by the underlying model. When the model changes,
  * this will drop the cursor down to the last line in the QListview to ensure
  * the user can always see the latest log message.
  */
-void RefoboxWindow::updateLoggingView() {
+void RefBoxWindow::updateLoggingView() {
 //        ui.view_logging->scrollToBottom();
 }
 
 /*****************************************************************************
-** Implementation [Menu]
-*****************************************************************************/
+ ** Implementation [Menu]
+ *****************************************************************************/
 
-void RefoboxWindow::on_actionAbout_triggered() {
-    QMessageBox::about(this, tr("About ..."),tr("<h2>PACKAGE_NAME Test Program 0.10</h2><p>Copyright Yujin Robot</p><p>This package needs an about description.</p>"));
+void RefBoxWindow::on_actionAbout_triggered() {
+	QMessageBox::about(this, tr("About ..."),
+			tr(
+					"<h2>PACKAGE_NAME Test Program 0.10</h2><p>Copyright Yujin Robot</p><p>This package needs an about description.</p>"));
 }
 
 /*****************************************************************************
-** Implementation [Configuration]
-*****************************************************************************/
+ ** Implementation [Configuration]
+ *****************************************************************************/
 
-void RefoboxWindow::ReadSettings() {
+void RefBoxWindow::ReadSettings() {
 //    QSettings settings("Qt-Ros Package", "msl_refbox");
 //    restoreGeometry(settings.value("geometry").toByteArray());
 //    restoreState(settings.value("windowState").toByteArray());
@@ -149,7 +168,7 @@ void RefoboxWindow::ReadSettings() {
 //    }
 }
 
-void RefoboxWindow::WriteSettings() {
+void RefBoxWindow::WriteSettings() {
 //    QSettings settings("Qt-Ros Package", "msl_refbox");
 //    settings.setValue("master_url",ui.line_edit_master->text());
 //    settings.setValue("host_url",ui.line_edit_host->text());
@@ -161,8 +180,7 @@ void RefoboxWindow::WriteSettings() {
 
 }
 
-void RefoboxWindow::closeEvent(QCloseEvent *event)
-{
+void RefBoxWindow::closeEvent(QCloseEvent *event) {
 	WriteSettings();
 	QMainWindow::closeEvent(event);
 }

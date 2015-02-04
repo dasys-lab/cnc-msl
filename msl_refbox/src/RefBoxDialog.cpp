@@ -411,8 +411,8 @@ void RefBoxDialog::SetHostPort(int val)
 void RefBoxDialog::update_manual_config(void)
 {
 	// TODO
-	cambada_goals_sb->setValue(1); // own goals
-	mf_goals_sb->setValue(2); // their goals
+	//cambada_goals_sb->setValue(1); // own goals
+	//mf_goals_sb->setValue(2); // their goals
 
 	// TODO
 	printf("Set the game period \"setCurrentIndes(X)\" to 2, 1, or 0");
