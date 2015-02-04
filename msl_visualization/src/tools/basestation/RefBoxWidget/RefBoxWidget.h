@@ -64,6 +64,7 @@ public slots:
 	void HaltPressed(void);
 	void DroppedBallPressed(void);
 	void ParkingPressed(void);
+	void JoystickPressed(void);
 
 	/* our */
 	void OurKickOffPressed(void);

@@ -547,7 +547,7 @@ void LogWidget::saveCurrentDBInfo()
 	Log_Information currentData;
 
 	if (DB_Info == NULL || db_coach_info == NULL) {
-		fprintf(stderr,"Error wrinting log: RTDB pointer null\n");
+//		fprintf(stderr,"Error wrinting log: RTDB pointer null\n");
 		return;
 	}
 

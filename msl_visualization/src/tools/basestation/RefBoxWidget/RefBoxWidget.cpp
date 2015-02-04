@@ -64,7 +64,7 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	connect(Their_Corner_Kick_bot, SIGNAL(clicked()), this, SLOT(TheirCornerKickPressed()));
 	connect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
 
-
+	connect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 	connect(RBDial, SIGNAL(transmitCoach()), this, SLOT(updateCoachInfo()));
 	
 	connect(RBDial, SIGNAL(changeGoalColor(int)), this, SLOT(changeGoalColor_sl(int)));
@@ -107,6 +107,7 @@ RefBoxWidget::~RefBoxWidget()
 	disconnect(RBDial, SIGNAL(updateGameParam()), this, SLOT(UpdateGameParameter_slot()));
 	disconnect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 	disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
+	disconnect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 
 	if( this->LogW!= NULL ) delete this->LogW; this->LogW = NULL;
 
@@ -166,11 +167,15 @@ void RefBoxWidget::DroppedBallPressed(void)
 
 void RefBoxWidget::ParkingPressed(void)
 {
+
+}
+
+void RefBoxWidget::JoystickPressed(void)
+{
 	msl_msgs::RefereeBoxInfoBody ref;
 	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::command_joystick;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
-
 //================================================ Our States =======================================
 
 
