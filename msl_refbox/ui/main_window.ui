@@ -23,7 +23,23 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout">
     <item>
-     <widget class="RefBoxWidget" name="RefBoxWG" native="true">
+         <widget class="QGroupBox" name="Group_RB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Ref. Box</string>
+          </property>
+          <widget class="RefBoxWidget" name="RefBoxWG" native="true">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -54,7 +70,8 @@
             <bool>true</bool>
            </property>
           </widget>
-    </item>
+         </widget>
+        </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
