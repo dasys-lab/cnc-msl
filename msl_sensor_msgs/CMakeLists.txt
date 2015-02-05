@@ -59,6 +59,7 @@ add_message_files(
   LocalizationType.msg
   ObstacleInfo.msg
   SharedBallInfo.msg
+  SharedWorldInfo.msg
   TrackedOdometryInfo.msg
   VisionControl.msg
   VisionDebug.msg

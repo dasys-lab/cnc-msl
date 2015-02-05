@@ -1,5 +1,0 @@
-CNMessages/PositionInfo position
-CNMessages/MotionInfo motion
-uint64 timestamp
-float64 certainty
-LocalizationType locType
