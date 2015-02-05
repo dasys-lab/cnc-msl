@@ -5,6 +5,9 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(msl_refbox)
 
+## Use c++ 11x std
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 ##############################################################################
 # Catkin
 ##############################################################################

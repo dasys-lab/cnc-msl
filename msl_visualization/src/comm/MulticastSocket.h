@@ -20,8 +20,8 @@
  * along with this package.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _CAMBADA_MULTICAST_COMM_
-#define _CAMBADA_MULTICAST_COMM_
+#ifndef _CAMBADA_MULTICAST_COMM_REF_
+#define _CAMBADA_MULTICAST_COMM_REF_
 
 #define DFL_MULTICAST_PORT 2000
 #define DFL_MULTICAST_GROUP "224.16.32.200"

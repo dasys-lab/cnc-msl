@@ -23,75 +23,74 @@
 #ifndef __REFBOXWIDGET_H
 #define __REFBOXWIDGET_H
 
-#include "ui_RefBoxWG.h"
+#include "ui_RefBoxWidget.h"
 #include "RefBoxDialog.h"
 #include <QDialog>
 #include <QTimer>
 #include <QTime>
+#include <iostream>
 
-class RefBoxWidget: public QWidget, public Ui::RefBoxWG
+namespace msl_refbox
 {
+
+	class RefBoxWidget : public QWidget, public Ui::RefBoxWidget
+	{
 	Q_OBJECT
 
-public:
-	RefBoxWidget(QWidget * parent =0);
-	~RefBoxWidget();
+	public:
+		RefBoxWidget(QWidget * parent = 0);
+		~RefBoxWidget();
 
-private:
+	private:
 
-	QDialog *RBDialog;
-	RefBoxDialog *RBDial;
-	QTimer *UpdateTimer;
+		QDialog *RBDialog;
+		RefBoxDialog *RBDial;
+		QTimer *UpdateTimer;
 
-	
+	public Q_SLOTS:
+		void detailsBotPressed(void);
 
-public Q_SLOTS:
-	void detailsBotPressed(void);
+		void PlayOnPressed(void);
+		void StopPressed(void);
+		void HaltPressed(void);
+		void DroppedBallPressed(void);
+		void ParkingPressed(void);
 
-	void PlayOnPressed(void);
-	void StopPressed(void);
-	void HaltPressed(void);
-	void DroppedBallPressed(void);
-	void ParkingPressed(void);
+		/* our */
+		void OurKickOffPressed(void);
+		void OurFreeKickPressed(void);
+		void OurGoalKickPressed(void);
+		void OurThrowinPressed(void);
+		void OurCornerKickPressed(void);
+		void OurPenaltyPressed(void);
 
-	/* our */
-	void OurKickOffPressed(void);
-	void OurFreeKickPressed(void);
-	void OurGoalKickPressed(void);
-	void OurThrowinPressed(void);
-	void OurCornerKickPressed(void);
-	void OurPenaltyPressed(void);
+		/* their */
+		void TheirKickOffPressed(void);
+		void TheirFreeKickPressed(void);
+		void TheirGoalKickPressed(void);
+		void TheirThrowinPressed(void);
+		void TheirCornerKickPressed(void);
+		void TheirPenaltyPressed(void);
 
-	/* their */
-	void TheirKickOffPressed(void);
-	void TheirFreeKickPressed(void);
-	void TheirGoalKickPressed(void);
-	void TheirThrowinPressed(void);
-	void TheirCornerKickPressed(void);
-	void TheirPenaltyPressed(void);
+		void updateStateInfo(void);
 
+		void updateCoachInfo(void);
 
-	void updateStateInfo(void);
+		void changeGoalColor_sl(int);
 
-	void updateCoachInfo(void);
+		void UpdateGameParameter_slot(void);
 
-	void changeGoalColor_sl(int);
+		void updateRefLog(void);
 
-	void UpdateGameParameter_slot(void);
-
-	void updateRefLog(void);
-
-	void SetLogViewMode_slot(bool);
-
-
-	
-
+		void SetLogViewMode_slot(bool);
 
 	Q_SIGNALS:
-	void transmitCoach(void);
-	void changeGoalColor (int);
-	void UpdateGameParameter_signal(void);
-	void SetLogViewMode_signal(bool);
-};
+		void transmitCoach(void);
+		void changeGoalColor(int);
+		void UpdateGameParameter_signal(void);
+		void SetLogViewMode_signal(bool);
+	};
+
+}
 
 #endif

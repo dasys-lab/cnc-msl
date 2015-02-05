@@ -415,7 +415,7 @@ void RefBoxDialog::update_manual_config(void)
 	//mf_goals_sb->setValue(2); // their goals
 
 	// TODO
-	printf("Set the game period \"setCurrentIndes(X)\" to 2, 1, or 0");
+	printf("Set the game period \"setCurrentIndes(X)\" to 2, 1, or 0\n");
 //	if (db_coach_info->GamePart == 2)
 //	{
 //		game_period_cb->setCurrentIndex(2);
