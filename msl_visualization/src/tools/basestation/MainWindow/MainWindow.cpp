@@ -303,7 +303,7 @@ void MWind::UpdateGameTime(void)
 	int min=0, sec=0;
 }
 
-void MWind::handleSharedWorldInfo(boost::shared_ptr<msl_msgs::SharedWorldInfo> info)
+void MWind::handleSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
 {
 }
 

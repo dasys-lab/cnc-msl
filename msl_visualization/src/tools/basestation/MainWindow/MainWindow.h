@@ -31,7 +31,7 @@
 
 #include <iostream>
 #include <string>
-#include "msl_msgs/SharedWorldInfo.h"
+#include "msl_sensor_msgs/SharedWorldInfo.h"
 using namespace std;
 
 
@@ -64,7 +64,7 @@ private:
 	FInfoWind *FIW;
 
 	QTimer *UpdateTimer;
-	void handleSharedWorldInfo(boost::shared_ptr<msl_msgs::SharedWorldInfo> info);
+	void handleSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
