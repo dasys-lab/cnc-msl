@@ -4,7 +4,7 @@ from distutils.core import setup
 from catkin_pkg.python_setup import generate_distutils_setup
 
 d = generate_distutils_setup(
-    packages=['rqt_rviz'],
+    packages=['rqt_msl_refbox'],
     package_dir={'': 'src'}
 )
 
