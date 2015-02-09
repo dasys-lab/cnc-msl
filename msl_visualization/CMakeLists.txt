@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_visualization)
 
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
 SET( CAMBADA_CONFIG_DIR ${BASE_DIR}/config )
 SET( CAMBADA_SRC_DIR ${BASE_DIR}/src )

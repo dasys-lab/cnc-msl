@@ -69,6 +69,7 @@
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkPointData.h>
+#include <vtkCubeSource.h>
 
 #include <QVTKInteractor.h>
 
@@ -94,7 +95,7 @@ public:
     vtkActor* field;
     vtkActor* robots[6];
     vtkActor* robotNum[6];
-    vtkActor* balls[6];
+    vtkActor* ball;
     vtkActor* taxiLine;
     vtkLineSource* taxiSource;
 
@@ -111,6 +112,7 @@ public:
 
 
 private:
+    QWidget* parent;
     float _FIELD_LENGTH;
     float _FIELD_WIDTH;
     float _LINE_THICKNESS;
@@ -131,7 +133,7 @@ private:
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
-    void initBalls(vtkRenderer* renderer);
+    void initBall(vtkRenderer* renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();

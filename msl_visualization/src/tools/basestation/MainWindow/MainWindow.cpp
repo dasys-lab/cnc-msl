@@ -27,7 +27,8 @@ MWind *wind;
 MWind::MWind(QMainWindow *parent)
 {
 	rosNode = new ros::NodeHandle();
-	sharedWorldInfoSubscriber = rosNode->subscribe("/SharedWorldInfo", 10, &MWind::handleSharedWorldInfo, (MWind*)this);
+	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
+	sharedWorldInfoSubscriber = rosNode->subscribe("/SharedWorldInfo", 10, &MWind::onSharedWorldInfo, (MWind*)this);
 	/* Criação da janela */
 	setupUi( parent );
 	
@@ -134,7 +135,6 @@ MWind::MWind(QMainWindow *parent)
     connect(actionVisible, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMapVisible(bool)));
     connect(action3D, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMap3D(bool)));
     connect(actionColor, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMapColor(bool)));
-
 }
 
 
@@ -303,8 +303,19 @@ void MWind::UpdateGameTime(void)
 	int min=0, sec=0;
 }
 
-void MWind::handleSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
+void MWind::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
 {
+	lock_guard<mutex> lock(swmMutex);
+	if (savedSharedWorldInfo.size() > ringBufferLength) {
+		savedSharedWorldInfo.pop_back();
+
+	}
+	savedSharedWorldInfo.push_front(info);
+}
+
+list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > MWind::getSavedSharedWorldInfo()
+{
+	return savedSharedWorldInfo;
 }
 
 void MWind::UpdateGameParameters(void)
