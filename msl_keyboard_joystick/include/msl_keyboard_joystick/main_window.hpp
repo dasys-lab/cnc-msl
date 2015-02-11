@@ -54,7 +54,7 @@ public Q_SLOTS:
     /******************************************
     ** Manual connections
     *******************************************/
-    void onRobotIdEdited(QString text);
+    void onRobotIdEdited();
     void updateLoggingView(); // no idea why this can't connect automatically
 
 private:   
