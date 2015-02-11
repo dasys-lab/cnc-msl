@@ -29,6 +29,8 @@
 #include "Robot.h"
 #include "DB_Robot_info.h"
 
+
+
 #define NDEBUG_POINTS 4
 
 class FieldWidget : public QGLWidget
