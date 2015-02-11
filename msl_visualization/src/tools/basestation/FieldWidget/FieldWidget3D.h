@@ -25,6 +25,11 @@
 
 #include <QTimer>
 #include <QFile>
+#include "msl_sensor_msgs/SharedWorldInfo.h"
+#include <mutex>
+#include <ros/ros.h>
+#include <list>
+#include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
 
 #include <QVTKWidget.h>
 
@@ -69,6 +74,11 @@
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkPointData.h>
+#include <vtkCubeSource.h>
+#include <vtkPyramid.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkDataSetMapper.h>
+#include <vtkRegularPolygonSource.h>
 
 #include <QVTKInteractor.h>
 
@@ -86,6 +96,8 @@ public:
     explicit FieldWidget3D(QWidget *parent = 0);
     void get_info_pointer( DB_Robot_Info * rw);
     void get_coach_pointer( DB_Coach_Info * ci);
+    list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > getSavedSharedWorldInfo();
+
 
     vtkRenderWindow *renderWindow;
     vtkRenderer *renderer;
@@ -94,7 +106,7 @@ public:
     vtkActor* field;
     vtkActor* robots[6];
     vtkActor* robotNum[6];
-    vtkActor* balls[6];
+    vtkActor* ball;
     vtkActor* taxiLine;
     vtkLineSource* taxiSource;
 
@@ -111,6 +123,21 @@ public:
 
 
 private:
+
+    void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
+    void moveBall(double x, double y, double z);
+    void drawOpponent(vtkRenderer* renderer, double x, double y, double z);
+    void drawTeamRobot(vtkRenderer* renderer, double x, double y, double z);
+    list<shared_ptr<RobotVisualization>> obstacles;
+    list<shared_ptr<RobotVisualization>> team;
+    void removeObstacles(vtkRenderer* renderer);
+    void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
+    mutex swmMutex;
+    list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+	ros::Subscriber sharedWorldInfoSubscriber;
+	ros::NodeHandle* rosNode;
+	int ringBufferLength = 10;
+    QWidget* parent;
     float _FIELD_LENGTH;
     float _FIELD_WIDTH;
     float _LINE_THICKNESS;
@@ -131,7 +158,7 @@ private:
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
-    void initBalls(vtkRenderer* renderer);
+    void initBall(vtkRenderer* renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_visualization)
 
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 SET( BASE_DIR ${CMAKE_SOURCE_DIR} )
 SET( CAMBADA_CONFIG_DIR ${BASE_DIR}/config )
 SET( CAMBADA_SRC_DIR ${BASE_DIR}/src )
@@ -316,6 +318,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 SET( BASESTATION_SRCS 
         src/tools/basestation/FieldWidget/FieldWidget.cpp
         src/tools/basestation/FieldWidget/FieldWidget3D.cpp
+        src/tools/basestation/RobotVisualization/RobotVisualization.cpp
         src/tools/basestation/FullInfoWindow/FullInfoWindow.cpp
         src/tools/basestation/FullWindow/FullWindow.cpp
         src/tools/basestation/LogWidget/LogWidget.cpp
@@ -333,6 +336,7 @@ SET( BASESTATION_SRCS
 SET( BASESTATION_MOC_HDRS
         src/tools/basestation/FieldWidget/FieldWidget.h
         src/tools/basestation/FieldWidget/FieldWidget3D.h
+        src/tools/basestation/RobotVisualization/RobotVisualization.h
         src/tools/basestation/FullInfoWindow/FullInfoWindow.h
         src/tools/basestation/FullWindow/FullWindow.h
         src/tools/basestation/LogWidget/LogWidget.h

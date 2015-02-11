@@ -1,0 +1,1831 @@
+   1               		.file	"rtl8019.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+ 102               	.global	rtl8019Write
+ 104               	rtl8019Write:
+   1:rtl8019.c     **** #include "rtl8019.h"
+   2:rtl8019.c     **** #include "uip_arp.h"
+   3:rtl8019.c     **** #include <avr/eeprom.h>
+   4:rtl8019.c     **** 
+   5:rtl8019.c     **** 
+   6:rtl8019.c     **** #ifdef DISPLAY_MAC
+   7:rtl8019.c     **** 	#include "lcd.h"
+   8:rtl8019.c     **** #endif
+   9:rtl8019.c     **** 
+  10:rtl8019.c     **** 
+  11:rtl8019.c     **** /*****************************************************************************
+  12:rtl8019.c     **** *  Module Name:       Realtek 8019AS Driver
+  13:rtl8019.c     **** *
+  14:rtl8019.c     **** *  Created By:        Louis Beaudoin (www.embedded-creations.com)
+  15:rtl8019.c     **** *
+  16:rtl8019.c     **** *  Original Release:  September 21, 2002
+  17:rtl8019.c     **** *
+  18:rtl8019.c     **** *  Module Description:
+  19:rtl8019.c     **** *  Provides functions to initialize the Realtek 8019AS, and send and retreive
+  20:rtl8019.c     **** *  packets
+  21:rtl8019.c     **** 
+  22:rtl8019.c     **** *  August 28, 2004 - Volker Troyke (www.troyke.de)
+  23:rtl8019.c     **** *  	Added Suport for 93LC46 EEPROM containing Ethernet MAC (NE2000 Standard)
+  24:rtl8019.c     **** *		Automatically reads the MAC from the EEPROM and sets this to the ARP-Module
+  25:rtl8019.c     **** *		Fixed Bug in  rtl8019SetupPorts() setting the Adress-Port DDR (should be |= not =)
+  26:rtl8019.c     **** *		In Function rtl8019Read added additional nop() for CPU running at 15,36MHz
+  27:rtl8019.c     **** *
+  28:rtl8019.c     **** *  November 16, 2003 - Louis Beaudoin
+  29:rtl8019.c     **** *    The rtl8019Write and Read functions/macros were changed to support
+  30:rtl8019.c     **** *      three methods of communcating with the NIC
+  31:rtl8019.c     **** *    Interfacing with the AVR ports changed from sbi/cbi/etc functions
+  32:rtl8019.c     **** *      to direct port names
+  33:rtl8019.c     **** *    Renamed functions to be more consistant with the two NIC drivers
+  34:rtl8019.c     **** *    Overrun function now retransmits if resend is set (thanks Krzysztof)
+  35:rtl8019.c     **** *
+  36:rtl8019.c     **** *  November 15, 2002 - Louis Beaudoin
+  37:rtl8019.c     **** *    processRTL8019Interrupt() - bit mask mistake fixed
+  38:rtl8019.c     **** *
+  39:rtl8019.c     **** *  November 8, 2003 - Louis Beaudoin
+  40:rtl8019.c     **** *    Changed delay library function calls
+  41:rtl8019.c     **** *
+  42:rtl8019.c     **** *  September 30, 2002 - Louis Beaudoin
+  43:rtl8019.c     **** *    Receive functions modified to handle errors encountered when receiving a
+  44:rtl8019.c     **** *      fast data stream.  Functions now manually retreive data instead of
+  45:rtl8019.c     **** *      using the send packet command.  Interface improved by checking for
+  46:rtl8019.c     **** *      overruns and data in the buffer internally.
+  47:rtl8019.c     **** *    Corrected the overrun function - overrun flag was not reset after overrun
+  48:rtl8019.c     **** *    Added support for the Imagecraft Compiler
+  49:rtl8019.c     **** *    Added support to communicate with the NIC using general I/O ports
+  50:rtl8019.c     **** *
+  51:rtl8019.c     **** *****************************************************************************/
+  52:rtl8019.c     **** 
+  53:rtl8019.c     **** 
+  54:rtl8019.c     **** /*****************************************************************************
+  55:rtl8019.c     **** *  rtl8019Write( RTL_ADDRESS, RTL_DATA )
+  56:rtl8019.c     **** *  Args:        1. unsigned char RTL_ADDRESS - register offset of RTL register
+  57:rtl8019.c     **** *               2. unsigned char RTL_DATA - data to write to register
+  58:rtl8019.c     **** *  Created By:  Louis Beaudoin
+  59:rtl8019.c     **** *  Date:        September 21, 2002
+  60:rtl8019.c     **** *  Description: Writes byte to RTL8019 register.
+  61:rtl8019.c     **** *
+  62:rtl8019.c     **** *  Notes - If using the External SRAM Interface, performs a write to
+  63:rtl8019.c     **** *            address MEMORY_MAPPED_RTL8019_OFFSET + (RTL_ADDRESS<<8)
+  64:rtl8019.c     **** *            The address is sent in the non-multiplxed upper address port so
+  65:rtl8019.c     **** *            no latch is required.
+  66:rtl8019.c     **** *
+  67:rtl8019.c     **** *          If using general I/O ports, the data port is left in the input
+  68:rtl8019.c     **** *            state with pullups enabled
+  69:rtl8019.c     **** *
+  70:rtl8019.c     **** *****************************************************************************/
+  71:rtl8019.c     **** #if NIC_CONNECTION == MEMORY_MAPPED_HIGHADDR
+  72:rtl8019.c     **** #define rtl8019Write(RTL_ADDRESS,RTL_DATA) do{ *(volatile unsigned char *) \
+  73:rtl8019.c     ****                              (MEMORY_MAPPED_RTL8019_OFFSET \
+  74:rtl8019.c     ****                              + (((unsigned char)(RTL_ADDRESS)) << 8)) = \
+  75:rtl8019.c     ****                              (unsigned char)(RTL_DATA); } while(0)
+  76:rtl8019.c     **** 
+  77:rtl8019.c     **** #endif
+  78:rtl8019.c     **** 
+  79:rtl8019.c     **** #if NIC_CONNECTION == MEMORY_MAPPED
+  80:rtl8019.c     **** #define rtl8019Write(RTL_ADDRESS,RTL_DATA) do{ *(volatile unsigned char *) \
+  81:rtl8019.c     ****                              (MEMORY_MAPPED_RTL8019_OFFSET \
+  82:rtl8019.c     ****                              + (unsigned char)(RTL_ADDRESS)) = \
+  83:rtl8019.c     ****                              (unsigned char)(RTL_DATA); } while(0)
+  84:rtl8019.c     **** 
+  85:rtl8019.c     **** #endif
+  86:rtl8019.c     **** 
+  87:rtl8019.c     **** #if NIC_CONNECTION == GENERAL_IO
+  88:rtl8019.c     **** 
+  89:rtl8019.c     **** void rtl8019Write(unsigned char address, unsigned char data)
+  90:rtl8019.c     **** {
+ 106               	.LM0:
+ 107               	.LFBB1:
+ 108               	/* prologue: frame size=0 */
+ 109               	/* prologue end (size=0) */
+  91:rtl8019.c     **** 	// assert the address, leaving the non-address pins intact
+  92:rtl8019.c     ****     address |= (RTL8019_ADDRESS_PORT & ~RTL8019_ADDRESS_MASK);
+ 111               	.LM1:
+ 112 0000 95B3      		in r25,53-0x20
+ 113 0002 907E      		andi r25,lo8(-32)
+ 114 0004 982B      		or r25,r24
+  93:rtl8019.c     ****     RTL8019_ADDRESS_PORT = address;
+ 116               	.LM2:
+ 117 0006 95BB      		out 53-0x20,r25
+  94:rtl8019.c     **** 
+  95:rtl8019.c     **** 	// set data bus as output and place data on bus
+  96:rtl8019.c     ****     RTL8019_DATA_DDR = 0xFF;
+ 119               	.LM3:
+ 120 0008 8FEF      		ldi r24,lo8(-1)
+ 121 000a 8ABB      		out 58-0x20,r24
+  97:rtl8019.c     ****     RTL8019_DATA_PORT = data;
+ 123               	.LM4:
+ 124 000c 6BBB      		out 59-0x20,r22
+  98:rtl8019.c     **** 
+  99:rtl8019.c     **** 	// toggle write pin
+ 100:rtl8019.c     ****     RTL8019_CONTROL_PORT &= ~_BV(RTL8019_CONTROL_WRITEPIN);
+ 126               	.LM5:
+ 127 000e AE98      		cbi 53-0x20,6
+ 101:rtl8019.c     ****     nop();
+ 129               	.LM6:
+ 130               	/* #APP */
+ 131 0010 0000      		nop
+ 132               		
+ 102:rtl8019.c     **** nop();
+ 134               	.LM7:
+ 135 0012 0000      		nop
+ 136               		
+ 103:rtl8019.c     ****     RTL8019_CONTROL_PORT |= _BV(RTL8019_CONTROL_WRITEPIN);
+ 138               	.LM8:
+ 139               	/* #NOAPP */
+ 140 0014 AE9A      		sbi 53-0x20,6
+ 104:rtl8019.c     **** 
+ 105:rtl8019.c     **** 	// set data port back to input with pullups enabled
+ 106:rtl8019.c     ****     RTL8019_DATA_DDR = 0x00;
+ 142               	.LM9:
+ 143 0016 1ABA      		out 58-0x20,__zero_reg__
+ 107:rtl8019.c     ****     RTL8019_DATA_PORT = 0xFF;
+ 145               	.LM10:
+ 146 0018 8BBB      		out 59-0x20,r24
+ 147               	/* epilogue: frame size=0 */
+ 148 001a 0895      		ret
+ 149               	/* epilogue end (size=1) */
+ 150               	/* function rtl8019Write size 20 (19) */
+ 152               	.Lscope1:
+ 155               	.global	rtl8019Read
+ 157               	rtl8019Read:
+ 108:rtl8019.c     **** 
+ 109:rtl8019.c     **** }
+ 110:rtl8019.c     **** 
+ 111:rtl8019.c     **** #endif
+ 112:rtl8019.c     **** 
+ 113:rtl8019.c     **** /*****************************************************************************
+ 114:rtl8019.c     **** *  rtl8019Read(RTL_ADDRESS)
+ 115:rtl8019.c     **** *  Args:        unsigned char RTL_ADDRESS - register offset of RTL register
+ 116:rtl8019.c     **** *  Created By:  Louis Beaudoin
+ 117:rtl8019.c     **** *  Date:        September 21, 2002
+ 118:rtl8019.c     **** *  Description: Reads byte from RTL8019 register
+ 119:rtl8019.c     **** *
+ 120:rtl8019.c     **** *  Notes - If using the External SRAM Interface, performs a read from
+ 121:rtl8019.c     **** *            address MEMORY_MAPPED_RTL8019_OFFSET + (RTL_ADDRESS<<8)
+ 122:rtl8019.c     **** *            The address is sent in the non-multiplxed upper address port so
+ 123:rtl8019.c     **** *            no latch is required.
+ 124:rtl8019.c     **** *
+ 125:rtl8019.c     **** *          If using general I/O ports, the data port is assumed to already be
+ 126:rtl8019.c     **** *            an input, and is left as an input port when done
+ 127:rtl8019.c     **** *
+ 128:rtl8019.c     **** *****************************************************************************/
+ 129:rtl8019.c     **** #if NIC_CONNECTION == MEMORY_MAPPED_HIGHADDR
+ 130:rtl8019.c     **** #define rtl8019Read(RTL_ADDRESS) (*(volatile unsigned char *) \
+ 131:rtl8019.c     ****                        (MEMORY_MAPPED_RTL8019_OFFSET \
+ 132:rtl8019.c     ****                        + (((unsigned char)(RTL_ADDRESS)) << 8)) )
+ 133:rtl8019.c     **** #endif
+ 134:rtl8019.c     **** 
+ 135:rtl8019.c     **** #if NIC_CONNECTION == MEMORY_MAPPED
+ 136:rtl8019.c     **** 
+ 137:rtl8019.c     **** #define rtl8019Read(RTL_ADDRESS) (*(volatile unsigned char *) \
+ 138:rtl8019.c     ****                        (MEMORY_MAPPED_RTL8019_OFFSET \
+ 139:rtl8019.c     ****                        + (unsigned char)(RTL_ADDRESS)) )
+ 140:rtl8019.c     **** #endif
+ 141:rtl8019.c     **** 
+ 142:rtl8019.c     **** #if NIC_CONNECTION == GENERAL_IO
+ 143:rtl8019.c     **** 
+ 144:rtl8019.c     **** unsigned char rtl8019Read(unsigned char address)
+ 145:rtl8019.c     **** {
+ 159               	.LM11:
+ 160               	.LFBB2:
+ 161               	/* prologue: frame size=0 */
+ 162               	/* prologue end (size=0) */
+ 146:rtl8019.c     ****     unsigned char byte;
+ 147:rtl8019.c     **** 
+ 148:rtl8019.c     ****     // assert the address, leaving the non-address pins intact
+ 149:rtl8019.c     ****     address |= (RTL8019_ADDRESS_PORT & ~RTL8019_ADDRESS_MASK);
+ 164               	.LM12:
+ 165 001c 95B3      		in r25,53-0x20
+ 166 001e 907E      		andi r25,lo8(-32)
+ 167 0020 982B      		or r25,r24
+ 150:rtl8019.c     ****     RTL8019_ADDRESS_PORT = address;
+ 169               	.LM13:
+ 170 0022 95BB      		out 53-0x20,r25
+ 151:rtl8019.c     **** 
+ 152:rtl8019.c     ****     // assert read
+ 153:rtl8019.c     ****     RTL8019_CONTROL_PORT &= ~_BV(RTL8019_CONTROL_READPIN);
+ 172               	.LM14:
+ 173 0024 AD98      		cbi 53-0x20,5
+ 154:rtl8019.c     ****     nop();
+ 175               	.LM15:
+ 176               	/* #APP */
+ 177 0026 0000      		nop
+ 178               		
+ 155:rtl8019.c     **** 	 nop();
+ 180               	.LM16:
+ 181 0028 0000      		nop
+ 182               		
+ 156:rtl8019.c     ****     // read in the data
+ 157:rtl8019.c     ****     byte = RTL8019_DATA_PIN;
+ 184               	.LM17:
+ 185               	/* #NOAPP */
+ 186 002a 89B3      		in r24,57-0x20
+ 158:rtl8019.c     **** 
+ 159:rtl8019.c     ****     // negate read
+ 160:rtl8019.c     ****     RTL8019_CONTROL_PORT |= _BV(RTL8019_CONTROL_READPIN);
+ 188               	.LM18:
+ 189 002c AD9A      		sbi 53-0x20,5
+ 161:rtl8019.c     **** 
+ 162:rtl8019.c     ****     return byte;
+ 163:rtl8019.c     **** }
+ 191               	.LM19:
+ 192 002e 9927      		clr r25
+ 193               	/* epilogue: frame size=0 */
+ 194 0030 0895      		ret
+ 195               	/* epilogue end (size=1) */
+ 196               	/* function rtl8019Read size 17 (16) */
+ 201               	.Lscope2:
+ 203               	.global	rtl8019SetupPorts
+ 205               	rtl8019SetupPorts:
+ 164:rtl8019.c     **** 
+ 165:rtl8019.c     **** #endif
+ 166:rtl8019.c     **** 
+ 167:rtl8019.c     **** 
+ 168:rtl8019.c     **** 
+ 169:rtl8019.c     **** /*****************************************************************************
+ 170:rtl8019.c     **** *  rtl8019SetupPorts(void);
+ 171:rtl8019.c     **** *
+ 172:rtl8019.c     **** *  Created By:  Louis Beaudoin
+ 173:rtl8019.c     **** *  Date:        September 21, 2002
+ 174:rtl8019.c     **** *  Description: Sets up the ports used for communication with the RTL8019 NIC
+ 175:rtl8019.c     **** *                 (data bus, address bus, read, write, and reset)
+ 176:rtl8019.c     **** *****************************************************************************/
+ 177:rtl8019.c     **** void rtl8019SetupPorts(void)
+ 178:rtl8019.c     **** {
+ 207               	.LM20:
+ 208               	.LFBB3:
+ 209               	/* prologue: frame size=0 */
+ 210               	/* prologue end (size=0) */
+ 179:rtl8019.c     **** 
+ 180:rtl8019.c     **** #if NIC_CONNECTION == GENERAL_IO
+ 181:rtl8019.c     **** 
+ 182:rtl8019.c     ****     // make the address port output
+ 183:rtl8019.c     **** 	RTL8019_ADDRESS_DDR |= RTL8019_ADDRESS_MASK;
+ 212               	.LM21:
+ 213 0032 84B3      		in r24,52-0x20
+ 214 0034 8F61      		ori r24,lo8(31)
+ 215 0036 84BB      		out 52-0x20,r24
+ 184:rtl8019.c     **** 
+ 185:rtl8019.c     ****     // make the data port input with pull-ups
+ 186:rtl8019.c     ****     RTL8019_DATA_PORT = 0xFF;
+ 217               	.LM22:
+ 218 0038 8FEF      		ldi r24,lo8(-1)
+ 219 003a 8BBB      		out 59-0x20,r24
+ 187:rtl8019.c     **** 
+ 188:rtl8019.c     **** 	// make the control port read and write pins outputs and asserted
+ 189:rtl8019.c     **** 	RTL8019_CONTROL_DDR |= _BV(RTL8019_CONTROL_READPIN);
+ 221               	.LM23:
+ 222 003c A59A      		sbi 52-0x20,5
+ 190:rtl8019.c     ****    RTL8019_CONTROL_DDR |= _BV(RTL8019_CONTROL_WRITEPIN);
+ 224               	.LM24:
+ 225 003e A69A      		sbi 52-0x20,6
+ 191:rtl8019.c     **** 
+ 192:rtl8019.c     **** 	RTL8019_CONTROL_PORT |= _BV(RTL8019_CONTROL_READPIN);
+ 227               	.LM25:
+ 228 0040 AD9A      		sbi 53-0x20,5
+ 193:rtl8019.c     **** 	RTL8019_CONTROL_PORT |= _BV(RTL8019_CONTROL_WRITEPIN);
+ 230               	.LM26:
+ 231 0042 AE9A      		sbi 53-0x20,6
+ 194:rtl8019.c     **** 
+ 195:rtl8019.c     **** #else
+ 196:rtl8019.c     **** 
+ 197:rtl8019.c     ****   	// enable external SRAM interface - no wait states
+ 198:rtl8019.c     ****     MCUCR |= _BV(SRE);
+ 199:rtl8019.c     **** 
+ 200:rtl8019.c     **** #endif
+ 201:rtl8019.c     **** 
+ 202:rtl8019.c     **** 	// enable output pin for Resetting the RTL8019
+ 203:rtl8019.c     **** 	RTL8019_RESET_DDR |= _BV(RTL8019_RESET_PIN);
+ 233               	.LM27:
+ 234 0044 A79A      		sbi 52-0x20,7
+ 235               	/* epilogue: frame size=0 */
+ 236 0046 0895      		ret
+ 237               	/* epilogue end (size=1) */
+ 238               	/* function rtl8019SetupPorts size 11 (10) */
+ 240               	.Lscope3:
+ 243               	.global	rtl8019BeginPacketSend
+ 245               	rtl8019BeginPacketSend:
+ 204:rtl8019.c     **** }
+ 205:rtl8019.c     **** 
+ 206:rtl8019.c     **** 
+ 207:rtl8019.c     **** 
+ 208:rtl8019.c     **** /*****************************************************************************
+ 209:rtl8019.c     **** *  HARD_RESET_RTL8019()
+ 210:rtl8019.c     **** *
+ 211:rtl8019.c     **** *  Created By:  Louis Beaudoin
+ 212:rtl8019.c     **** *  Date:        September 21, 2002
+ 213:rtl8019.c     **** *  Description: Simply toggles the pin that resets the NIC
+ 214:rtl8019.c     **** *****************************************************************************/
+ 215:rtl8019.c     **** #define HARD_RESET_RTL8019() do{ RTL8019_RESET_PORT |= _BV(RTL8019_RESET_PIN);\
+ 216:rtl8019.c     ****                                 delay_ms(10); \
+ 217:rtl8019.c     ****                                 RTL8019_RESET_PORT &= ~_BV(RTL8019_RESET_PIN);}\
+ 218:rtl8019.c     ****                                 while(0)
+ 219:rtl8019.c     **** 
+ 220:rtl8019.c     **** 
+ 221:rtl8019.c     **** 
+ 222:rtl8019.c     **** /*****************************************************************************
+ 223:rtl8019.c     **** *  rtl8019Overrun(void);
+ 224:rtl8019.c     **** *
+ 225:rtl8019.c     **** *  Created By:  Louis Beaudoin
+ 226:rtl8019.c     **** *  Date:        September 21, 2002
+ 227:rtl8019.c     **** *  Description: "Canned" receive buffer overrun function originally from
+ 228:rtl8019.c     **** *                 a National Semiconductor appnote
+ 229:rtl8019.c     **** *  Notes:       This function must be called before retreiving packets from
+ 230:rtl8019.c     **** *                 the NIC if there is a buffer overrun
+ 231:rtl8019.c     **** *****************************************************************************/
+ 232:rtl8019.c     **** void rtl8019Overrun(void);
+ 233:rtl8019.c     **** 
+ 234:rtl8019.c     **** 
+ 235:rtl8019.c     **** 
+ 236:rtl8019.c     **** 
+ 237:rtl8019.c     **** //******************************************************************
+ 238:rtl8019.c     **** //*	REALTEK CONTROL REGISTER OFFSETS
+ 239:rtl8019.c     **** //*   All offsets in Page 0 unless otherwise specified
+ 240:rtl8019.c     **** //*	  All functions accessing CR must leave CR in page 0 upon exit
+ 241:rtl8019.c     **** //******************************************************************
+ 242:rtl8019.c     **** #define CR		 	0x00
+ 243:rtl8019.c     **** #define PSTART		0x01
+ 244:rtl8019.c     **** #define PAR0      	0x01    // Page 1
+ 245:rtl8019.c     **** #define CR9346    	0x01    // Page 3
+ 246:rtl8019.c     **** #define PSTOP		0x02
+ 247:rtl8019.c     **** #define BNRY		0x03
+ 248:rtl8019.c     **** #define TSR			0x04
+ 249:rtl8019.c     **** #define TPSR		0x04
+ 250:rtl8019.c     **** #define TBCR0		0x05
+ 251:rtl8019.c     **** #define NCR			0x05
+ 252:rtl8019.c     **** #define TBCR1		0x06
+ 253:rtl8019.c     **** #define ISR			0x07
+ 254:rtl8019.c     **** #define CURR		0x07   // Page 1
+ 255:rtl8019.c     **** #define RSAR0		0x08
+ 256:rtl8019.c     **** #define CRDA0		0x08
+ 257:rtl8019.c     **** #define RSAR1		0x09
+ 258:rtl8019.c     **** #define CRDA1		0x09
+ 259:rtl8019.c     **** #define RBCR0		0x0A
+ 260:rtl8019.c     **** #define RBCR1		0x0B
+ 261:rtl8019.c     **** #define RSR			0x0C
+ 262:rtl8019.c     **** #define RCR			0x0C
+ 263:rtl8019.c     **** #define TCR			0x0D
+ 264:rtl8019.c     **** #define CNTR0		0x0D
+ 265:rtl8019.c     **** #define DCR			0x0E
+ 266:rtl8019.c     **** #define CNTR1		0x0E
+ 267:rtl8019.c     **** #define IMR			0x0F
+ 268:rtl8019.c     **** #define CNTR2		0x0F
+ 269:rtl8019.c     **** #define RDMAPORT  	0x10
+ 270:rtl8019.c     **** #define RSTPORT   	0x18
+ 271:rtl8019.c     **** #define CONFIG2     0x05    // page 3
+ 272:rtl8019.c     **** #define CONFIG3     0x06    // page 3
+ 273:rtl8019.c     **** #define RTL_EECR        0x01    // page 3
+ 274:rtl8019.c     **** 
+ 275:rtl8019.c     **** 
+ 276:rtl8019.c     **** 
+ 277:rtl8019.c     **** /*****************************************************************************
+ 278:rtl8019.c     **** *
+ 279:rtl8019.c     **** * RTL ISR Register Bits
+ 280:rtl8019.c     **** *
+ 281:rtl8019.c     **** *****************************************************************************/
+ 282:rtl8019.c     **** #define ISR_RST	7
+ 283:rtl8019.c     **** #define ISR_OVW 4
+ 284:rtl8019.c     **** #define ISR_PRX 0
+ 285:rtl8019.c     **** #define ISR_RDC 6
+ 286:rtl8019.c     **** #define ISR_PTX 1
+ 287:rtl8019.c     **** 
+ 288:rtl8019.c     **** 
+ 289:rtl8019.c     **** /*****************************************************************************
+ 290:rtl8019.c     **** *
+ 291:rtl8019.c     **** *  RTL Register Initialization Values
+ 292:rtl8019.c     **** *
+ 293:rtl8019.c     **** *****************************************************************************/
+ 294:rtl8019.c     **** // RCR : accept broadcast packets and packets destined to this MAC
+ 295:rtl8019.c     **** //         drop short frames and receive errors
+ 296:rtl8019.c     **** #define RCR_INIT		0x04
+ 297:rtl8019.c     **** 
+ 298:rtl8019.c     **** // TCR : default transmit operation - CRC is generated
+ 299:rtl8019.c     **** #define TCR_INIT		0x00
+ 300:rtl8019.c     **** 
+ 301:rtl8019.c     **** // DCR : allows send packet to be used for packet retreival
+ 302:rtl8019.c     **** //         FIFO threshold: 8-bits (works)
+ 303:rtl8019.c     **** //         8-bit transfer mode
+ 304:rtl8019.c     **** #define DCR_INIT		0x58
+ 305:rtl8019.c     **** 
+ 306:rtl8019.c     **** // IMR : interrupt enabled for receive and overrun events
+ 307:rtl8019.c     **** #define IMR_INIT		0x11
+ 308:rtl8019.c     **** 
+ 309:rtl8019.c     **** // buffer boundaries - transmit has 6 256-byte pages
+ 310:rtl8019.c     **** //   receive has 26 256-byte pages
+ 311:rtl8019.c     **** //   entire available packet buffer space is allocated
+ 312:rtl8019.c     **** #define TXSTART_INIT   	0x40
+ 313:rtl8019.c     **** #define RXSTART_INIT   	0x46
+ 314:rtl8019.c     **** #define RXSTOP_INIT    	0x60
+ 315:rtl8019.c     **** 
+ 316:rtl8019.c     **** 
+ 317:rtl8019.c     **** 
+ 318:rtl8019.c     **** void rtl8019BeginPacketSend(unsigned int packetLength)
+ 319:rtl8019.c     **** {
+ 247               	.LM28:
+ 248               	.LFBB4:
+ 249               	/* prologue: frame size=0 */
+ 250 0048 0F93      		push r16
+ 251 004a 1F93      		push r17
+ 252 004c CF93      		push r28
+ 253 004e DF93      		push r29
+ 254               	/* prologue end (size=4) */
+ 255 0050 EC01      		movw r28,r24
+ 320:rtl8019.c     **** 	unsigned int sendPacketLength;
+ 321:rtl8019.c     **** 	sendPacketLength = (packetLength>=ETHERNET_MIN_PACKET_LENGTH) ?
+ 257               	.LM29:
+ 258 0052 8C01      		movw r16,r24
+ 259 0054 CC97      		sbiw r24,60
+ 260 0056 00F4      		brsh .L8
+ 262               	.LM30:
+ 263 0058 CCE3      		ldi r28,lo8(60)
+ 264 005a D0E0      		ldi r29,hi8(60)
+ 265               	.L8:
+ 322:rtl8019.c     **** 	                 packetLength : ETHERNET_MIN_PACKET_LENGTH ;
+ 323:rtl8019.c     **** 
+ 324:rtl8019.c     **** 	//start the NIC
+ 325:rtl8019.c     **** 	rtl8019Write(CR,0x22);	//elm: page0 + abort DMA + start
+ 267               	.LM31:
+ 268 005c 62E2      		ldi r22,lo8(34)
+ 269 005e 80E0      		ldi r24,lo8(0)
+ 270 0060 0E94 0000 		call rtl8019Write
+ 271               	.L9:
+ 326:rtl8019.c     **** 
+ 327:rtl8019.c     **** 	// still transmitting a packet - wait for it to finish
+ 328:rtl8019.c     **** 	while( rtl8019Read(CR) & 0x04 );
+ 273               	.LM32:
+ 274 0064 80E0      		ldi r24,lo8(0)
+ 275 0066 0E94 0000 		call rtl8019Read
+ 276 006a 82FD      		sbrc r24,2
+ 277 006c 00C0      		rjmp .L9
+ 329:rtl8019.c     **** 
+ 330:rtl8019.c     **** 	//load beginning page for transmit buffer
+ 331:rtl8019.c     **** 	rtl8019Write(TPSR,TXSTART_INIT);
+ 279               	.LM33:
+ 280 006e 60E4      		ldi r22,lo8(64)
+ 281 0070 84E0      		ldi r24,lo8(4)
+ 282 0072 0E94 0000 		call rtl8019Write
+ 332:rtl8019.c     **** 
+ 333:rtl8019.c     **** 	//set start address for remote DMA operation
+ 334:rtl8019.c     **** 	rtl8019Write(RSAR0,0x00);
+ 284               	.LM34:
+ 285 0076 60E0      		ldi r22,lo8(0)
+ 286 0078 88E0      		ldi r24,lo8(8)
+ 287 007a 0E94 0000 		call rtl8019Write
+ 335:rtl8019.c     **** 	rtl8019Write(RSAR1,0x40);
+ 289               	.LM35:
+ 290 007e 60E4      		ldi r22,lo8(64)
+ 291 0080 89E0      		ldi r24,lo8(9)
+ 292 0082 0E94 0000 		call rtl8019Write
+ 336:rtl8019.c     **** 
+ 337:rtl8019.c     **** 	//clear the packet stored interrupt
+ 338:rtl8019.c     **** 	rtl8019Write(ISR,(1<<ISR_PTX));
+ 294               	.LM36:
+ 295 0086 62E0      		ldi r22,lo8(2)
+ 296 0088 87E0      		ldi r24,lo8(7)
+ 297 008a 0E94 0000 		call rtl8019Write
+ 339:rtl8019.c     **** 
+ 340:rtl8019.c     **** 	//load data byte count for remote DMA
+ 341:rtl8019.c     **** 	rtl8019Write(RBCR0, (unsigned char)(packetLength));
+ 299               	.LM37:
+ 300 008e 602F      		mov r22,r16
+ 301 0090 8AE0      		ldi r24,lo8(10)
+ 302 0092 0E94 0000 		call rtl8019Write
+ 342:rtl8019.c     **** 	rtl8019Write(RBCR1, (unsigned char)(packetLength>>8));
+ 304               	.LM38:
+ 305 0096 612F      		mov r22,r17
+ 306 0098 7727      		clr r23
+ 307 009a 8BE0      		ldi r24,lo8(11)
+ 308 009c 0E94 0000 		call rtl8019Write
+ 343:rtl8019.c     **** 
+ 344:rtl8019.c     **** 	rtl8019Write(TBCR0, (unsigned char)(sendPacketLength));
+ 310               	.LM39:
+ 311 00a0 6C2F      		mov r22,r28
+ 312 00a2 85E0      		ldi r24,lo8(5)
+ 313 00a4 0E94 0000 		call rtl8019Write
+ 345:rtl8019.c     **** 	rtl8019Write(TBCR1, (unsigned char)((sendPacketLength)>>8));
+ 315               	.LM40:
+ 316 00a8 6D2F      		mov r22,r29
+ 317 00aa 7727      		clr r23
+ 318 00ac 86E0      		ldi r24,lo8(6)
+ 319 00ae 0E94 0000 		call rtl8019Write
+ 346:rtl8019.c     **** 
+ 347:rtl8019.c     **** 	//do remote write operation
+ 348:rtl8019.c     **** 	rtl8019Write(CR,0x12);
+ 321               	.LM41:
+ 322 00b2 62E1      		ldi r22,lo8(18)
+ 323 00b4 80E0      		ldi r24,lo8(0)
+ 324 00b6 0E94 0000 		call rtl8019Write
+ 325               	/* epilogue: frame size=0 */
+ 326 00ba DF91      		pop r29
+ 327 00bc CF91      		pop r28
+ 328 00be 1F91      		pop r17
+ 329 00c0 0F91      		pop r16
+ 330 00c2 0895      		ret
+ 331               	/* epilogue end (size=5) */
+ 332               	/* function rtl8019BeginPacketSend size 63 (54) */
+ 337               	.Lscope4:
+ 341               	.global	rtl8019SendPacketData
+ 343               	rtl8019SendPacketData:
+ 349:rtl8019.c     **** }
+ 350:rtl8019.c     **** 
+ 351:rtl8019.c     **** 
+ 352:rtl8019.c     **** 
+ 353:rtl8019.c     **** void rtl8019SendPacketData(unsigned char * localBuffer, unsigned int length)
+ 354:rtl8019.c     **** {
+ 345               	.LM42:
+ 346               	.LFBB5:
+ 347               	/* prologue: frame size=0 */
+ 348 00c4 EF92      		push r14
+ 349 00c6 FF92      		push r15
+ 350 00c8 0F93      		push r16
+ 351 00ca 1F93      		push r17
+ 352 00cc CF93      		push r28
+ 353 00ce DF93      		push r29
+ 354               	/* prologue end (size=6) */
+ 355 00d0 7C01      		movw r14,r24
+ 356 00d2 8B01      		movw r16,r22
+ 357 00d4 C0E0      		ldi r28,lo8(0)
+ 358 00d6 D0E0      		ldi r29,hi8(0)
+ 359 00d8 00C0      		rjmp .L15
+ 360               	.L16:
+ 355:rtl8019.c     **** 	unsigned int i;
+ 356:rtl8019.c     **** 
+ 357:rtl8019.c     **** 	for(i=0;i<length;i++)
+ 358:rtl8019.c     **** 		rtl8019Write(RDMAPORT, localBuffer[i]);
+ 362               	.LM43:
+ 363 00da F701      		movw r30,r14
+ 364 00dc EC0F      		add r30,r28
+ 365 00de FD1F      		adc r31,r29
+ 366 00e0 6081      		ld r22,Z
+ 367 00e2 80E1      		ldi r24,lo8(16)
+ 368 00e4 0E94 0000 		call rtl8019Write
+ 370               	.LM44:
+ 371 00e8 2196      		adiw r28,1
+ 372               	.L15:
+ 373 00ea C017      		cp r28,r16
+ 374 00ec D107      		cpc r29,r17
+ 375 00ee 01F4      		brne .L16
+ 376               	/* epilogue: frame size=0 */
+ 377 00f0 DF91      		pop r29
+ 378 00f2 CF91      		pop r28
+ 379 00f4 1F91      		pop r17
+ 380 00f6 0F91      		pop r16
+ 381 00f8 FF90      		pop r15
+ 382 00fa EF90      		pop r14
+ 383 00fc 0895      		ret
+ 384               	/* epilogue end (size=7) */
+ 385               	/* function rtl8019SendPacketData size 29 (16) */
+ 390               	.Lscope5:
+ 392               	.global	rtl8019EndPacketSend
+ 394               	rtl8019EndPacketSend:
+ 359:rtl8019.c     **** }
+ 360:rtl8019.c     **** 
+ 361:rtl8019.c     **** 
+ 362:rtl8019.c     **** 
+ 363:rtl8019.c     **** void rtl8019EndPacketSend(void)
+ 364:rtl8019.c     **** {
+ 396               	.LM45:
+ 397               	.LFBB6:
+ 398               	/* prologue: frame size=0 */
+ 399               	/* prologue end (size=0) */
+ 365:rtl8019.c     **** 	//send the contents of the transmit buffer onto the network
+ 366:rtl8019.c     **** 	rtl8019Write(CR,0x24);
+ 401               	.LM46:
+ 402 00fe 64E2      		ldi r22,lo8(36)
+ 403 0100 80E0      		ldi r24,lo8(0)
+ 404 0102 0E94 0000 		call rtl8019Write
+ 367:rtl8019.c     **** 
+ 368:rtl8019.c     **** 	// clear the remote DMA interrupt
+ 369:rtl8019.c     **** 	rtl8019Write(ISR, (1<<ISR_RDC));
+ 406               	.LM47:
+ 407 0106 60E4      		ldi r22,lo8(64)
+ 408 0108 87E0      		ldi r24,lo8(7)
+ 409 010a 0E94 0000 		call rtl8019Write
+ 410               	/* epilogue: frame size=0 */
+ 411 010e 0895      		ret
+ 412               	/* epilogue end (size=1) */
+ 413               	/* function rtl8019EndPacketSend size 9 (8) */
+ 415               	.Lscope6:
+ 419               	.global	rtl8019RetreivePacketData
+ 421               	rtl8019RetreivePacketData:
+ 370:rtl8019.c     **** }
+ 371:rtl8019.c     **** 
+ 372:rtl8019.c     **** 
+ 373:rtl8019.c     **** 
+ 374:rtl8019.c     **** 
+ 375:rtl8019.c     **** // pointers to locations in the RTL8019 receive buffer
+ 376:rtl8019.c     **** static unsigned char nextPage;
+ 377:rtl8019.c     **** static unsigned int currentRetreiveAddress;
+ 378:rtl8019.c     **** 
+ 379:rtl8019.c     **** // location of items in the RTL8019's page header
+ 380:rtl8019.c     **** #define  enetpacketstatus     0x00
+ 381:rtl8019.c     **** #define  nextblock_ptr        0x01
+ 382:rtl8019.c     **** #define	 enetpacketLenL		  0x02
+ 383:rtl8019.c     **** #define	 enetpacketLenH		  0x03
+ 384:rtl8019.c     **** 
+ 385:rtl8019.c     **** unsigned int rtl8019BeginPacketRetreive(void)
+ 386:rtl8019.c     **** {
+ 387:rtl8019.c     **** 	unsigned char i;
+ 388:rtl8019.c     **** 	unsigned char bnry;
+ 389:rtl8019.c     **** 
+ 390:rtl8019.c     **** 	unsigned char pageheader[4];
+ 391:rtl8019.c     **** 	unsigned int rxlen;
+ 392:rtl8019.c     **** 
+ 393:rtl8019.c     **** 	// check for and handle an overflow
+ 394:rtl8019.c     **** 	rtl8019ProcessInterrupt();
+ 395:rtl8019.c     **** 
+ 396:rtl8019.c     **** 	// read CURR from page 1
+ 397:rtl8019.c     **** 	rtl8019Write(CR,0x62);
+ 398:rtl8019.c     **** 	i = rtl8019Read(CURR);
+ 399:rtl8019.c     **** 
+ 400:rtl8019.c     **** 	// return to page 0
+ 401:rtl8019.c     **** 	rtl8019Write(CR,0x22);
+ 402:rtl8019.c     **** 
+ 403:rtl8019.c     **** 	// read the boundary register - pointing to the beginning of the packet
+ 404:rtl8019.c     **** 	bnry = rtl8019Read(BNRY) ;
+ 405:rtl8019.c     **** 
+ 406:rtl8019.c     **** 	// return if there is no packet in the buffer
+ 407:rtl8019.c     **** 	if( bnry == i )
+ 408:rtl8019.c     **** 		return 0;
+ 409:rtl8019.c     **** 
+ 410:rtl8019.c     **** 
+ 411:rtl8019.c     **** 	// clear the packet received interrupt flag
+ 412:rtl8019.c     **** 	rtl8019Write(ISR, (1<<ISR_PRX));
+ 413:rtl8019.c     **** 
+ 414:rtl8019.c     **** 	// the boundary pointer is invalid, reset the contents of the buffer and exit
+ 415:rtl8019.c     **** 	if( (bnry >= RXSTOP_INIT) || (bnry < RXSTART_INIT) )
+ 416:rtl8019.c     **** 	{
+ 417:rtl8019.c     **** 		rtl8019Write(BNRY, RXSTART_INIT);
+ 418:rtl8019.c     **** 		rtl8019Write(CR, 0x62);
+ 419:rtl8019.c     **** 		rtl8019Write(CURR, RXSTART_INIT);
+ 420:rtl8019.c     **** 		rtl8019Write(CR, 0x22);
+ 421:rtl8019.c     **** 
+ 422:rtl8019.c     **** 		return 0;
+ 423:rtl8019.c     **** 	}
+ 424:rtl8019.c     **** 
+ 425:rtl8019.c     **** 	// initiate DMA to transfer the RTL8019 packet header
+ 426:rtl8019.c     ****     rtl8019Write(RBCR0, 4);
+ 427:rtl8019.c     ****     rtl8019Write(RBCR1, 0);
+ 428:rtl8019.c     ****     rtl8019Write(RSAR0, 0);
+ 429:rtl8019.c     ****     rtl8019Write(RSAR1, bnry);
+ 430:rtl8019.c     ****     rtl8019Write(CR, 0x0A);
+ 431:rtl8019.c     **** 	for(i=0;i<4;i++)
+ 432:rtl8019.c     **** 		pageheader[i] = rtl8019Read(RDMAPORT);
+ 433:rtl8019.c     **** 
+ 434:rtl8019.c     **** 	// end the DMA operation
+ 435:rtl8019.c     ****     rtl8019Write(CR, 0x22);
+ 436:rtl8019.c     ****     for(i = 0; i <= 20; i++)
+ 437:rtl8019.c     ****         if(rtl8019Read(ISR) & 1<<6)
+ 438:rtl8019.c     ****             break;
+ 439:rtl8019.c     ****     rtl8019Write(ISR, 1<<6);
+ 440:rtl8019.c     **** 
+ 441:rtl8019.c     **** 
+ 442:rtl8019.c     **** 	rxlen = (pageheader[enetpacketLenH]<<8) + pageheader[enetpacketLenL];
+ 443:rtl8019.c     **** 	nextPage = pageheader[nextblock_ptr] ;
+ 444:rtl8019.c     **** 
+ 445:rtl8019.c     **** 	currentRetreiveAddress = (bnry<<8) + 4;
+ 446:rtl8019.c     **** 
+ 447:rtl8019.c     **** 	// if the nextPage pointer is invalid, the packet is not ready yet - exit
+ 448:rtl8019.c     **** 	if( (nextPage >= RXSTOP_INIT) || (nextPage < RXSTART_INIT) )
+ 449:rtl8019.c     **** 		return 0;
+ 450:rtl8019.c     **** 
+ 451:rtl8019.c     ****     return rxlen-4;
+ 452:rtl8019.c     **** }
+ 453:rtl8019.c     **** 
+ 454:rtl8019.c     **** 
+ 455:rtl8019.c     **** void rtl8019RetreivePacketData(unsigned char * localBuffer, unsigned int length)
+ 456:rtl8019.c     **** {
+ 423               	.LM48:
+ 424               	.LFBB7:
+ 425               	/* prologue: frame size=0 */
+ 426 0110 CF92      		push r12
+ 427 0112 DF92      		push r13
+ 428 0114 EF92      		push r14
+ 429 0116 FF92      		push r15
+ 430 0118 0F93      		push r16
+ 431 011a 1F93      		push r17
+ 432 011c CF93      		push r28
+ 433 011e DF93      		push r29
+ 434               	/* prologue end (size=8) */
+ 435 0120 6C01      		movw r12,r24
+ 436 0122 8B01      		movw r16,r22
+ 457:rtl8019.c     **** 	unsigned int i;
+ 458:rtl8019.c     **** 
+ 459:rtl8019.c     **** 	// initiate DMA to transfer the data
+ 460:rtl8019.c     ****     rtl8019Write(RBCR0, (unsigned char)length);
+ 438               	.LM49:
+ 439 0124 8AE0      		ldi r24,lo8(10)
+ 440 0126 0E94 0000 		call rtl8019Write
+ 461:rtl8019.c     ****     rtl8019Write(RBCR1, (unsigned char)(length>>8));
+ 442               	.LM50:
+ 443 012a 612F      		mov r22,r17
+ 444 012c 7727      		clr r23
+ 445 012e 8BE0      		ldi r24,lo8(11)
+ 446 0130 0E94 0000 		call rtl8019Write
+ 462:rtl8019.c     ****     rtl8019Write(RSAR0, (unsigned char)currentRetreiveAddress);
+ 448               	.LM51:
+ 449 0134 E090 0000 		lds r14,currentRetreiveAddress
+ 450 0138 F090 0000 		lds r15,(currentRetreiveAddress)+1
+ 451 013c 6E2D      		mov r22,r14
+ 452 013e 88E0      		ldi r24,lo8(8)
+ 453 0140 0E94 0000 		call rtl8019Write
+ 463:rtl8019.c     ****     rtl8019Write(RSAR1, (unsigned char)(currentRetreiveAddress>>8));
+ 455               	.LM52:
+ 456 0144 6F2D      		mov r22,r15
+ 457 0146 7727      		clr r23
+ 458 0148 89E0      		ldi r24,lo8(9)
+ 459 014a 0E94 0000 		call rtl8019Write
+ 464:rtl8019.c     ****     rtl8019Write(CR, 0x0A);
+ 461               	.LM53:
+ 462 014e 6AE0      		ldi r22,lo8(10)
+ 463 0150 80E0      		ldi r24,lo8(0)
+ 464 0152 0E94 0000 		call rtl8019Write
+ 465 0156 C0E0      		ldi r28,lo8(0)
+ 466 0158 D0E0      		ldi r29,hi8(0)
+ 467 015a 00C0      		rjmp .L22
+ 468               	.L23:
+ 465:rtl8019.c     **** 	for(i=0;i<length;i++)
+ 466:rtl8019.c     **** 		localBuffer[i] = rtl8019Read(RDMAPORT);
+ 470               	.LM54:
+ 471 015c 80E1      		ldi r24,lo8(16)
+ 472 015e 0E94 0000 		call rtl8019Read
+ 473 0162 F601      		movw r30,r12
+ 474 0164 EC0F      		add r30,r28
+ 475 0166 FD1F      		adc r31,r29
+ 476 0168 8083      		st Z,r24
+ 478               	.LM55:
+ 479 016a 2196      		adiw r28,1
+ 480               	.L22:
+ 481 016c C017      		cp r28,r16
+ 482 016e D107      		cpc r29,r17
+ 483 0170 01F4      		brne .L23
+ 467:rtl8019.c     **** 
+ 468:rtl8019.c     **** 	// end the DMA operation
+ 469:rtl8019.c     ****     rtl8019Write(CR, 0x22);
+ 485               	.LM56:
+ 486 0172 62E2      		ldi r22,lo8(34)
+ 487 0174 80E0      		ldi r24,lo8(0)
+ 488 0176 0E94 0000 		call rtl8019Write
+ 489 017a C0E0      		ldi r28,lo8(0)
+ 490 017c D0E0      		ldi r29,hi8(0)
+ 491               	.L25:
+ 470:rtl8019.c     ****     for(i = 0; i <= 20; i++)
+ 471:rtl8019.c     ****         if(rtl8019Read(ISR) & 1<<6)
+ 493               	.LM57:
+ 494 017e 87E0      		ldi r24,lo8(7)
+ 495 0180 0E94 0000 		call rtl8019Read
+ 496 0184 86FD      		sbrc r24,6
+ 497 0186 00C0      		rjmp .L26
+ 499               	.LM58:
+ 500 0188 2196      		adiw r28,1
+ 501 018a C531      		cpi r28,21
+ 502 018c D105      		cpc r29,__zero_reg__
+ 503 018e 01F4      		brne .L25
+ 504               	.L26:
+ 472:rtl8019.c     ****             break;
+ 473:rtl8019.c     ****     rtl8019Write(ISR, 1<<6);
+ 506               	.LM59:
+ 507 0190 60E4      		ldi r22,lo8(64)
+ 508 0192 87E0      		ldi r24,lo8(7)
+ 509 0194 0E94 0000 		call rtl8019Write
+ 474:rtl8019.c     **** 
+ 475:rtl8019.c     ****     currentRetreiveAddress += length;
+ 511               	.LM60:
+ 512 0198 B801      		movw r22,r16
+ 513 019a 6E0D      		add r22,r14
+ 514 019c 7F1D      		adc r23,r15
+ 515 019e 7093 0000 		sts (currentRetreiveAddress)+1,r23
+ 516 01a2 6093 0000 		sts currentRetreiveAddress,r22
+ 476:rtl8019.c     ****     if( currentRetreiveAddress >= 0x6000 )
+ 518               	.LM61:
+ 519 01a6 80E6      		ldi r24,hi8(24576)
+ 520 01a8 6030      		cpi r22,lo8(24576)
+ 521 01aa 7807      		cpc r23,r24
+ 522 01ac 00F0      		brlo .L30
+ 477:rtl8019.c     ****     	currentRetreiveAddress = currentRetreiveAddress - (0x6000-0x4600) ;
+ 524               	.LM62:
+ 525 01ae 6050      		subi r22,lo8(-(-6656))
+ 526 01b0 7A41      		sbci r23,hi8(-(-6656))
+ 527 01b2 7093 0000 		sts (currentRetreiveAddress)+1,r23
+ 528 01b6 6093 0000 		sts currentRetreiveAddress,r22
+ 529               	.L30:
+ 530               	/* epilogue: frame size=0 */
+ 531 01ba DF91      		pop r29
+ 532 01bc CF91      		pop r28
+ 533 01be 1F91      		pop r17
+ 534 01c0 0F91      		pop r16
+ 535 01c2 FF90      		pop r15
+ 536 01c4 EF90      		pop r14
+ 537 01c6 DF90      		pop r13
+ 538 01c8 CF90      		pop r12
+ 539 01ca 0895      		ret
+ 540               	/* epilogue end (size=9) */
+ 541               	/* function rtl8019RetreivePacketData size 94 (77) */
+ 546               	.Lscope7:
+ 548               	.global	rtl8019EndPacketRetreive
+ 550               	rtl8019EndPacketRetreive:
+ 478:rtl8019.c     **** }
+ 479:rtl8019.c     **** 
+ 480:rtl8019.c     **** 
+ 481:rtl8019.c     **** 
+ 482:rtl8019.c     **** void rtl8019EndPacketRetreive(void)
+ 483:rtl8019.c     **** {
+ 552               	.LM63:
+ 553               	.LFBB8:
+ 554               	/* prologue: frame size=0 */
+ 555 01cc 1F93      		push r17
+ 556               	/* prologue end (size=1) */
+ 484:rtl8019.c     **** 	unsigned char i;
+ 485:rtl8019.c     **** 
+ 486:rtl8019.c     **** 	// end the DMA operation
+ 487:rtl8019.c     ****     rtl8019Write(CR, 0x22);
+ 558               	.LM64:
+ 559 01ce 62E2      		ldi r22,lo8(34)
+ 560 01d0 80E0      		ldi r24,lo8(0)
+ 561 01d2 0E94 0000 		call rtl8019Write
+ 562 01d6 10E0      		ldi r17,lo8(0)
+ 563               	.L33:
+ 488:rtl8019.c     ****     for(i = 0; i <= 20; i++)
+ 489:rtl8019.c     ****         if(rtl8019Read(ISR) & 1<<6)
+ 565               	.LM65:
+ 566 01d8 87E0      		ldi r24,lo8(7)
+ 567 01da 0E94 0000 		call rtl8019Read
+ 568 01de 86FD      		sbrc r24,6
+ 569 01e0 00C0      		rjmp .L34
+ 571               	.LM66:
+ 572 01e2 1F5F      		subi r17,lo8(-(1))
+ 573 01e4 1531      		cpi r17,lo8(21)
+ 574 01e6 01F4      		brne .L33
+ 575               	.L34:
+ 490:rtl8019.c     ****             break;
+ 491:rtl8019.c     ****     rtl8019Write(ISR, 1<<6);
+ 577               	.LM67:
+ 578 01e8 60E4      		ldi r22,lo8(64)
+ 579 01ea 87E0      		ldi r24,lo8(7)
+ 580 01ec 0E94 0000 		call rtl8019Write
+ 492:rtl8019.c     **** 
+ 493:rtl8019.c     **** 	// set the boundary register to point to the start of the next packet
+ 494:rtl8019.c     ****     rtl8019Write(BNRY, nextPage);
+ 582               	.LM68:
+ 583 01f0 6091 0000 		lds r22,nextPage
+ 584 01f4 83E0      		ldi r24,lo8(3)
+ 585 01f6 0E94 0000 		call rtl8019Write
+ 586               	/* epilogue: frame size=0 */
+ 587 01fa 1F91      		pop r17
+ 588 01fc 0895      		ret
+ 589               	/* epilogue end (size=2) */
+ 590               	/* function rtl8019EndPacketRetreive size 25 (22) */
+ 595               	.Lscope8:
+ 597               	.global	rtl8019Init
+ 599               	rtl8019Init:
+ 495:rtl8019.c     **** }
+ 496:rtl8019.c     **** 
+ 497:rtl8019.c     **** 
+ 498:rtl8019.c     **** void rtl8019Overrun(void)
+ 499:rtl8019.c     **** {
+ 500:rtl8019.c     **** 	unsigned char data_L, resend;
+ 501:rtl8019.c     **** 
+ 502:rtl8019.c     **** 	data_L = rtl8019Read(CR);
+ 503:rtl8019.c     **** 	rtl8019Write(CR, 0x21);
+ 504:rtl8019.c     **** 	delay_ms(2);
+ 505:rtl8019.c     **** 	rtl8019Write(RBCR0, 0x00);
+ 506:rtl8019.c     **** 	rtl8019Write(RBCR1, 0x00);
+ 507:rtl8019.c     **** 	if(!(data_L & 0x04))
+ 508:rtl8019.c     **** 		resend = 0;
+ 509:rtl8019.c     **** 	else if(data_L & 0x04)
+ 510:rtl8019.c     **** 	{
+ 511:rtl8019.c     **** 		data_L = rtl8019Read(ISR);
+ 512:rtl8019.c     **** 		if((data_L & 0x02) || (data_L & 0x08))
+ 513:rtl8019.c     **** 	    	resend = 0;
+ 514:rtl8019.c     **** 	    else
+ 515:rtl8019.c     **** 	    	resend = 1;
+ 516:rtl8019.c     **** 	}
+ 517:rtl8019.c     **** 
+ 518:rtl8019.c     **** 	rtl8019Write(TCR, 0x02);
+ 519:rtl8019.c     **** 	rtl8019Write(CR, 0x22);
+ 520:rtl8019.c     **** 	rtl8019Write(BNRY, RXSTART_INIT);
+ 521:rtl8019.c     **** 	rtl8019Write(CR, 0x62);
+ 522:rtl8019.c     **** 	rtl8019Write(CURR, RXSTART_INIT);
+ 523:rtl8019.c     **** 	rtl8019Write(CR, 0x22);
+ 524:rtl8019.c     **** 	rtl8019Write(ISR, 0x10);
+ 525:rtl8019.c     **** 	rtl8019Write(TCR, TCR_INIT);
+ 526:rtl8019.c     **** 
+ 527:rtl8019.c     ****     if(resend)
+ 528:rtl8019.c     ****         rtl8019Write(CR, 0x26);
+ 529:rtl8019.c     **** 
+ 530:rtl8019.c     ****     rtl8019Write(ISR, 0xFF);
+ 531:rtl8019.c     **** }
+ 532:rtl8019.c     **** 
+ 533:rtl8019.c     **** /*****************************************************************************
+ 534:rtl8019.c     **** *  rtl8019_read_eprom_word(u08 adr);
+ 535:rtl8019.c     **** *
+ 536:rtl8019.c     **** *  Created By:  Volker Troyke www.troyke.de
+ 537:rtl8019.c     **** *  Date:        September 28, 2004
+ 538:rtl8019.c     **** *  Description: Read the 93LC46 EEPROM containing Ethernet MAC (NE2000 Standard)
+ 539:rtl8019.c     **** *               connected to the rtl8019
+ 540:rtl8019.c     **** *****************************************************************************/
+ 541:rtl8019.c     **** #ifdef MAC_FROM_EEPROM
+ 542:rtl8019.c     **** u16 rtl8019_read_eeprom_word(u08 adr)
+ 543:rtl8019.c     **** {
+ 544:rtl8019.c     **** 	u08 i, temp;
+ 545:rtl8019.c     **** 	u16 result;
+ 546:rtl8019.c     **** 
+ 547:rtl8019.c     **** 	temp = ((adr & 0x1F) | 0x80);
+ 548:rtl8019.c     **** 
+ 549:rtl8019.c     **** 	rtl8019Write(CR, 0xE1);			// Page 3
+ 550:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x80); // 9346 programming
+ 551:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x84); // 9346 programming CLK on
+ 552:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x80); // 9346 programming CKL off
+ 553:rtl8019.c     **** 
+ 554:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x8A); // 9346 programming CS on Data on
+ 555:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x8E); // 9346 programming CLK on
+ 556:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x8A); // 9346 programming CKL off
+ 557:rtl8019.c     **** 
+ 558:rtl8019.c     **** 	for(i=0;i<8;i++)  // Write "read" Command and Word-Adress
+ 559:rtl8019.c     **** 	{
+ 560:rtl8019.c     **** 		if( (temp >> (7-i)) & 0x01 )
+ 561:rtl8019.c     **** 		{
+ 562:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x8A); // 9346 programming DI on
+ 563:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x8E); // 9346 programming CLK on
+ 564:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x8A); // 9346 programming CKL off
+ 565:rtl8019.c     **** 			}
+ 566:rtl8019.c     **** 		else
+ 567:rtl8019.c     **** 		{
+ 568:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x88); // 9346 programming DI off
+ 569:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x8C); // 9346 programming CLK on
+ 570:rtl8019.c     **** 			rtl8019Write(RTL_EECR, 0x88); // 9346 programming CKL off
+ 571:rtl8019.c     **** 		}
+ 572:rtl8019.c     **** 	}
+ 573:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x88); // 9346 programming DI off
+ 574:rtl8019.c     **** 
+ 575:rtl8019.c     **** 	result = 0;
+ 576:rtl8019.c     **** 
+ 577:rtl8019.c     **** 	for(i=0;i<16;i++)	// Read 16 Bits of Data
+ 578:rtl8019.c     **** 	{
+ 579:rtl8019.c     **** 		rtl8019Write(RTL_EECR, 0x8C); // 9346 programming CLK on
+ 580:rtl8019.c     **** 		rtl8019Write(RTL_EECR, 0x88); // 9346 programming CKL off
+ 581:rtl8019.c     **** 		if( (rtl8019Read(RTL_EECR)) & 0x01)
+ 582:rtl8019.c     **** 		{
+ 583:rtl8019.c     **** 			result |= (1 << (15-i));
+ 584:rtl8019.c     **** 		}
+ 585:rtl8019.c     **** 	}
+ 586:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x80); // 9346 programming CS off
+ 587:rtl8019.c     **** 
+ 588:rtl8019.c     **** 	return result;
+ 589:rtl8019.c     **** }
+ 590:rtl8019.c     **** #endif
+ 591:rtl8019.c     **** 
+ 592:rtl8019.c     **** 
+ 593:rtl8019.c     **** void rtl8019Init(void)
+ 594:rtl8019.c     **** {
+ 601               	.LM69:
+ 602               	.LFBB9:
+ 603               	/* prologue: frame size=6 */
+ 604 01fe EF92      		push r14
+ 605 0200 FF92      		push r15
+ 606 0202 1F93      		push r17
+ 607 0204 CF93      		push r28
+ 608 0206 DF93      		push r29
+ 609 0208 CDB7      		in r28,__SP_L__
+ 610 020a DEB7      		in r29,__SP_H__
+ 611 020c 2697      		sbiw r28,6
+ 612 020e 0FB6      		in __tmp_reg__,__SREG__
+ 613 0210 F894      		cli
+ 614 0212 DEBF      		out __SP_H__,r29
+ 615 0214 0FBE      		out __SREG__,__tmp_reg__
+ 616 0216 CDBF      		out __SP_L__,r28
+ 617               	/* prologue end (size=13) */
+ 595:rtl8019.c     **** 
+ 596:rtl8019.c     **** 
+ 597:rtl8019.c     **** 	struct uip_eth_addr eth_adr;
+ 598:rtl8019.c     **** 	u8_t i;
+ 599:rtl8019.c     **** 
+ 600:rtl8019.c     **** 	rtl8019SetupPorts();
+ 619               	.LM70:
+ 620 0218 0E94 0000 		call rtl8019SetupPorts
+ 601:rtl8019.c     **** 
+ 602:rtl8019.c     **** 	HARD_RESET_RTL8019();
+ 622               	.LM71:
+ 623 021c AF9A      		sbi 53-0x20,7
+ 624 021e 8AE0      		ldi r24,lo8(10)
+ 625 0220 0E94 0000 		call delay_ms
+ 626 0224 AF98      		cbi 53-0x20,7
+ 603:rtl8019.c     **** 
+ 604:rtl8019.c     **** 	// do soft reset
+ 605:rtl8019.c     **** 	//rtl8019Write( ISR, rtl8019Read(ISR) ) ;
+ 606:rtl8019.c     **** //rtl8019Write( ISR, 0xff ) ;
+ 607:rtl8019.c     **** 
+ 608:rtl8019.c     **** 	delay_ms(20);
+ 628               	.LM72:
+ 629 0226 84E1      		ldi r24,lo8(20)
+ 630 0228 0E94 0000 		call delay_ms
+ 609:rtl8019.c     **** 
+ 610:rtl8019.c     **** 	// switch to page 3 to load config registers
+ 611:rtl8019.c     **** 	// elm: page3 + abort dma + stop
+ 612:rtl8019.c     **** 	rtl8019Write(CR, 0xE1);
+ 632               	.LM73:
+ 633 022c 61EE      		ldi r22,lo8(-31)
+ 634 022e 80E0      		ldi r24,lo8(0)
+ 635 0230 0E94 0000 		call rtl8019Write
+ 613:rtl8019.c     **** 
+ 614:rtl8019.c     **** 	// disable EEPROM write protect of config registers
+ 615:rtl8019.c     **** 	// elm: remove write protection
+ 616:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0xC0);
+ 637               	.LM74:
+ 638 0234 60EC      		ldi r22,lo8(-64)
+ 639 0236 81E0      		ldi r24,lo8(1)
+ 640 0238 0E94 0000 		call rtl8019Write
+ 617:rtl8019.c     **** 
+ 618:rtl8019.c     **** 	// set network type to 10 Base-T link test
+ 619:rtl8019.c     **** 	// elm: BROM disable
+ 620:rtl8019.c     **** 	rtl8019Write(CONFIG2, 0x20);
+ 642               	.LM75:
+ 643 023c 60E2      		ldi r22,lo8(32)
+ 644 023e 85E0      		ldi r24,lo8(5)
+ 645 0240 0E94 0000 		call rtl8019Write
+ 621:rtl8019.c     **** 
+ 622:rtl8019.c     **** 	// disable powerdown and sleep
+ 623:rtl8019.c     **** 	// elm: disable powerdown and sleep
+ 624:rtl8019.c     **** 	rtl8019Write(CONFIG3, 0x00);
+ 647               	.LM76:
+ 648 0244 60E0      		ldi r22,lo8(0)
+ 649 0246 86E0      		ldi r24,lo8(6)
+ 650 0248 0E94 0000 		call rtl8019Write
+ 625:rtl8019.c     **** 	delay_ms(20);
+ 652               	.LM77:
+ 653 024c 84E1      		ldi r24,lo8(20)
+ 654 024e 0E94 0000 		call delay_ms
+ 655 0252 20E0      		ldi r18,lo8(0)
+ 656 0254 30E0      		ldi r19,hi8(0)
+ 626:rtl8019.c     **** 
+ 627:rtl8019.c     **** 	// read Ethernet MAC from EEPROM        
+ 628:rtl8019.c     **** 	for(i=0;i<6;i++)
+ 629:rtl8019.c     **** 	{
+ 630:rtl8019.c     **** 		eth_adr.addr[i] =  eeprom_read_byte(AT_EEPROM_MAC_ADDRESS+i);
+ 658               	.LM78:
+ 659 0256 7E01      		movw r14,r28
+ 660 0258 0894      		sec
+ 661 025a E11C      		adc r14,__zero_reg__
+ 662 025c F11C      		adc r15,__zero_reg__
+ 663               	.L39:
+ 665               	.LM79:
+ 666 025e D901      		movw r26,r18
+ 667 0260 1296      		adiw r26,2
+ 668               	.LBB4:
+ 669               	.LBB5:
+ 671               	.Ltext1:
+   1:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* Copyright (c) 2002, 2003, 2004, 2007 Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Copyright (c) 2005, 2006 Bjoern Haase
+   3:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    All rights reserved.
+   4:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+   5:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Redistribution and use in source and binary forms, with or without
+   6:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    modification, are permitted provided that the following conditions are met:
+   7:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+   8:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Redistributions of source code must retain the above copyright
+   9:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      notice, this list of conditions and the following disclaimer.
+  10:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  11:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Redistributions in binary form must reproduce the above copyright
+  12:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      notice, this list of conditions and the following disclaimer in
+  13:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      the documentation and/or other materials provided with the
+  14:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      distribution.
+  15:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  16:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Neither the name of the copyright holders nor the names of
+  17:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      contributors may be used to endorse or promote products derived
+  18:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      from this software without specific prior written permission.
+  19:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  20:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  21:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  22:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  23:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  24:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  25:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  26:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  27:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  28:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  29:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  30:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  31:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  32:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* $Id: eeprom.h,v 1.17.2.4 2007/01/23 15:34:58 joerg_wunsch Exp $ */
+  33:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  34:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /*
+  35:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    eeprom.h
+  36:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  37:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Contributors:
+  38:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Created by Marek Michalkiewicz <marekm@linux.org.pl>
+  39:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      eeprom_write_word and eeprom_write_block added by Artur Lipowski 
+  40:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      <LAL@pro.onet.pl>
+  41:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Complete rewrite using the original interface by Bjoern Haase 
+  42:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      <bjoern.haase@de.bosch.com>. 
+  43:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****  */
+  44:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  45:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef _EEPROM_H_
+  46:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _EEPROM_H_ 1
+  47:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  48:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define __need_size_t
+  49:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <stddef.h>
+  50:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <inttypes.h>
+  51:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  52:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \file */
+  53:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  54:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifdef __AVR_MEGA__
+  55:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define XCALL "call"
+  56:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #else
+  57:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define XCALL "rcall"
+  58:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  59:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  60:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <avr/io.h>
+  61:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef __EEPROM_REG_LOCATIONS__
+  62:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def __EEPROM_REG_LOCATIONS__
+  63:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+  64:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      In order to be able to work without a requiring a multilib 
+  65:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      approach for dealing with controllers having the EEPROM registers
+  66:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      at different positions in memory space, the eeprom functions evaluate
+  67:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      __EEPROM_REG_LOCATIONS__: It is assumed to be defined by
+  68:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      the device io header and contains 6 uppercase hex digits encoding the 
+  69:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      addresses of EECR,EEDR and EEAR. 
+  70:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      First two letters:  EECR address.
+  71:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Second two letters: EEDR address.
+  72:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Last two letters:   EEAR address.
+  73:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      The default 1C1D1E corresponds to the
+  74:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      register location that is valid for most controllers. The value
+  75:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      of this define symbol is used for appending it to the base name of the
+  76:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      assembler functions.  */
+  77:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define __EEPROM_REG_LOCATIONS__ 1C1D1E
+  78:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  79:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _STR2(EXP) _STR1(EXP)
+  80:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _STR1(EXP) #EXP
+  81:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _REG_LOCATION_SUFFIX _STR2(__EEPROM_REG_LOCATIONS__)
+  82:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  83:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef CR_TAB
+  84:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define CR_TAB "\n\t"
+  85:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  86:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  87:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  88:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \defgroup avr_eeprom <avr/eeprom.h>: EEPROM handling
+  89:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \code #include <avr/eeprom.h> \endcode
+  90:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  91:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     This header file declares the interface to some simple library
+  92:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     routines suitable for handling the data EEPROM contained in the
+  93:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     AVR microcontrollers.  The implementation uses a simple polled
+  94:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     mode interface.  Applications that require interrupt-controlled
+  95:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     EEPROM access to ensure that no time will be wasted in spinloops
+  96:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     will have to deploy their own implementation.
+  97:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  98:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note All of the read/write functions first make sure the EEPROM
+  99:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      is ready to be accessed.  Since this may cause long delays if a
+ 100:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      write operation is still pending, time-critical applications
+ 101:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      should first poll the EEPROM e. g. using eeprom_is_ready() before
+ 102:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      attempting any actual I/O.
+ 103:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 104:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note This header file declares inline functions that call the
+ 105:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      assembler subroutines directly. This prevents that the compiler
+ 106:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      generates push/pops for the call-clobbered registers. This way
+ 107:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      also a specific calling convention could be used for the eeprom
+ 108:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      routines e.g. by passing values in __tmp_reg__, eeprom addresses in
+ 109:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      X and memory addresses in Z registers. Method is optimized for code 
+ 110:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      size.
+ 111:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 112:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note Presently supported are two locations of the EEPROM register
+ 113:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      set: 0x1F,0x20,0x21 and 0x1C,0x1D,0x1E 
+ 114:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      (see ::__EEPROM_REG_LOCATIONS__).
+ 115:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 116:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note As these functions modify IO registers, they are known to be
+ 117:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      non-reentrant.  If any of these functions are used from both,
+ 118:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      standard and interrupt context, the applications must ensure
+ 119:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      proper protection (e.g. by disabling interrupts before accessing
+ 120:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      them).
+ 121:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 122:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** */
+ 123:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 124:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 125:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* forward declarations of the inline functions so that doxygen does
+ 126:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    not get confused by the attribute expression.  */
+ 127:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 128:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline uint8_t __attribute__ ((always_inline))
+ 129:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_byte (const uint8_t *addr);
+ 130:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 131:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline uint16_t __attribute__ ((always_inline)) 
+ 132:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_word (const uint16_t *addr);
+ 133:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 134:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 135:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_block (void *pointer_ram,
+ 136:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    const void *pointer_eeprom,
+ 137:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    size_t size);
+ 138:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 139:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 140:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_byte (uint8_t *addr,uint8_t value);
+ 141:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 142:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 143:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_word (uint16_t *addr,uint16_t value);
+ 144:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 145:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 146:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_block (const void *pointer_ram,
+ 147:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                     void *pointer_eeprom,
+ 148:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                     size_t size);
+ 149:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 150:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \name avr-libc declarations */
+ 151:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 152:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /*@{*/
+ 153:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 154:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def EEMEM
+ 155:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 156:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Attribute expression causing a variable to be allocated within the .eeprom
+ 157:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      section.  */
+ 158:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define EEMEM __attribute__((section(".eeprom")))
+ 159:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 160:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def eeprom_is_ready
+ 161:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 162:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \returns 1 if EEPROM is ready for a new read/write operation, 0 if not. */
+ 163:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 164:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #if defined(__DOXYGEN__)
+ 165:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready()
+ 166:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(EEWE)
+ 167:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(EECR, EEWE)
+ 168:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(EEPE)
+ 169:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(EECR, EEPE)
+ 170:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(DEECR) && defined(EEL)
+ 171:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(DEECR, EEL)
+ 172:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #else
+ 173:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # error "No write enable bit known for this device's EEPROM."
+ 174:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+ 175:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 176:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def eeprom_busy_wait
+ 177:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 178:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 179:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Loops until the eeprom is no longer busy.
+ 180:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 181:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \returns Nothing. */
+ 182:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 183:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define eeprom_busy_wait() do {} while (!eeprom_is_ready())
+ 184:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 185:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 186:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \ingroup avr_eeprom
+ 187:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Read one byte from EEPROM address \c addr. */
+ 188:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 189:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** uint8_t 
+ 190:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_byte (const uint8_t *addr) 
+ 191:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** {
+ 192:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   uint8_t result;
+ 193:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   __asm__ __volatile__
+ 673               	.LM80:
+ 674               	/* #APP */
+ 675 0262 0E94 0000 		call __eeprom_read_byte_1C1D1E
+ 676 0266 802D      		mov r24,__tmp_reg__
+ 677               	/* #NOAPP */
+ 678               	.LBE5:
+ 679               	.LBE4:
+ 681               	.Ltext2:
+ 683               	.LM81:
+ 684 0268 F701      		movw r30,r14
+ 685 026a E20F      		add r30,r18
+ 686 026c F31F      		adc r31,r19
+ 687 026e 8083      		st Z,r24
+ 688 0270 2F5F      		subi r18,lo8(-(1))
+ 689 0272 3F4F      		sbci r19,hi8(-(1))
+ 691               	.LM82:
+ 692 0274 2630      		cpi r18,6
+ 693 0276 3105      		cpc r19,__zero_reg__
+ 694 0278 01F4      		brne .L39
+ 631:rtl8019.c     **** 	}
+ 632:rtl8019.c     **** 
+ 633:rtl8019.c     **** 
+ 634:rtl8019.c     **** #ifdef MAC_FROM_EEPROM
+ 635:rtl8019.c     **** 	// read Ethernet MAC from EEPROM
+ 636:rtl8019.c     **** 	for(i=0;i<3;i++)
+ 637:rtl8019.c     **** 	{
+ 638:rtl8019.c     **** 		temp = rtl8019_read_eeprom_word(0x02+i);
+ 639:rtl8019.c     **** 		eth_adr.addr[(2*i)+1] = temp >> 8;
+ 640:rtl8019.c     **** 		eth_adr.addr[(2*i)] = temp & 0x00FF;
+ 641:rtl8019.c     **** 	}
+ 642:rtl8019.c     **** #endif
+ 643:rtl8019.c     **** 
+ 644:rtl8019.c     **** 	// reenable EEPROM write protect
+ 645:rtl8019.c     **** 	// elm: reenable write protection
+ 646:rtl8019.c     **** 	rtl8019Write(RTL_EECR, 0x00);
+ 696               	.LM83:
+ 697 027a 60E0      		ldi r22,lo8(0)
+ 698 027c 81E0      		ldi r24,lo8(1)
+ 699 027e 0E94 0000 		call rtl8019Write
+ 647:rtl8019.c     **** 	// go back to page 0
+ 648:rtl8019.c     **** 
+ 649:rtl8019.c     **** 	// elm: page0 + abort dma + stop
+ 650:rtl8019.c     **** 	rtl8019Write(CR,0x21);       // stop the NIC, abort DMA, page 0
+ 701               	.LM84:
+ 702 0282 61E2      		ldi r22,lo8(33)
+ 703 0284 80E0      		ldi r24,lo8(0)
+ 704 0286 0E94 0000 		call rtl8019Write
+ 651:rtl8019.c     **** 	delay_ms(2);               // make sure nothing is coming in or going out
+ 706               	.LM85:
+ 707 028a 82E0      		ldi r24,lo8(2)
+ 708 028c 0E94 0000 		call delay_ms
+ 652:rtl8019.c     **** 	rtl8019Write(DCR, DCR_INIT);    // elm: data config register: init
+ 710               	.LM86:
+ 711 0290 68E5      		ldi r22,lo8(88)
+ 712 0292 8EE0      		ldi r24,lo8(14)
+ 713 0294 0E94 0000 		call rtl8019Write
+ 653:rtl8019.c     **** 	rtl8019Write(RBCR0,0x00);	// elm: Remote Byte Count Registers: resrt to 0
+ 715               	.LM87:
+ 716 0298 60E0      		ldi r22,lo8(0)
+ 717 029a 8AE0      		ldi r24,lo8(10)
+ 718 029c 0E94 0000 		call rtl8019Write
+ 654:rtl8019.c     **** 	rtl8019Write(RBCR1,0x00);
+ 720               	.LM88:
+ 721 02a0 60E0      		ldi r22,lo8(0)
+ 722 02a2 8BE0      		ldi r24,lo8(11)
+ 723 02a4 0E94 0000 		call rtl8019Write
+ 655:rtl8019.c     **** 	rtl8019Write(RCR,0x04);		//elm: Receive Configuration Register: accept broadcast
+ 725               	.LM89:
+ 726 02a8 64E0      		ldi r22,lo8(4)
+ 727 02aa 8CE0      		ldi r24,lo8(12)
+ 728 02ac 0E94 0000 		call rtl8019Write
+ 656:rtl8019.c     **** 	rtl8019Write(TPSR, TXSTART_INIT);	//elm: This register sets the start page address of the packet t
+ 730               	.LM90:
+ 731 02b0 60E4      		ldi r22,lo8(64)
+ 732 02b2 84E0      		ldi r24,lo8(4)
+ 733 02b4 0E94 0000 		call rtl8019Write
+ 657:rtl8019.c     **** 	rtl8019Write(TCR,0x02);		//elm: no CRC + Internal Lookback
+ 735               	.LM91:
+ 736 02b8 62E0      		ldi r22,lo8(2)
+ 737 02ba 8DE0      		ldi r24,lo8(13)
+ 738 02bc 0E94 0000 		call rtl8019Write
+ 658:rtl8019.c     **** 	rtl8019Write(PSTART, RXSTART_INIT);	//elm: The Page Start register sets the start page address of 
+ 740               	.LM92:
+ 741 02c0 66E4      		ldi r22,lo8(70)
+ 742 02c2 81E0      		ldi r24,lo8(1)
+ 743 02c4 0E94 0000 		call rtl8019Write
+ 659:rtl8019.c     **** 	rtl8019Write(BNRY, RXSTART_INIT);	//elm: BNRY = last read input page. RXSTART_INIT == 0x46
+ 745               	.LM93:
+ 746 02c8 66E4      		ldi r22,lo8(70)
+ 747 02ca 83E0      		ldi r24,lo8(3)
+ 748 02cc 0E94 0000 		call rtl8019Write
+ 660:rtl8019.c     **** 	rtl8019Write(PSTOP, RXSTOP_INIT);	//elm: end page adress ir the receive buffer ring. RXSTOP_INIT =
+ 750               	.LM94:
+ 751 02d0 60E6      		ldi r22,lo8(96)
+ 752 02d2 82E0      		ldi r24,lo8(2)
+ 753 02d4 0E94 0000 		call rtl8019Write
+ 661:rtl8019.c     **** 	rtl8019Write(CR, 0x61);		//elm: page1 + abort DMA + stop
+ 755               	.LM95:
+ 756 02d8 61E6      		ldi r22,lo8(97)
+ 757 02da 80E0      		ldi r24,lo8(0)
+ 758 02dc 0E94 0000 		call rtl8019Write
+ 662:rtl8019.c     **** 	delay_ms(2);
+ 760               	.LM96:
+ 761 02e0 82E0      		ldi r24,lo8(2)
+ 762 02e2 0E94 0000 		call delay_ms
+ 663:rtl8019.c     **** 	rtl8019Write(CURR, RXSTART_INIT); //elm: This register points to the page address of the first rec
+ 764               	.LM97:
+ 765 02e6 66E4      		ldi r22,lo8(70)
+ 766 02e8 87E0      		ldi r24,lo8(7)
+ 767 02ea 0E94 0000 		call rtl8019Write
+ 664:rtl8019.c     **** 		
+ 665:rtl8019.c     **** 
+ 666:rtl8019.c     **** 	rtl8019Write(CR, 0x61); //elm: Page 1 + abort DMA + stop
+ 769               	.LM98:
+ 770 02ee 61E6      		ldi r22,lo8(97)
+ 771 02f0 80E0      		ldi r24,lo8(0)
+ 772 02f2 0E94 0000 		call rtl8019Write
+ 773 02f6 10E0      		ldi r17,lo8(0)
+ 774               	.L41:
+ 667:rtl8019.c     **** 
+ 668:rtl8019.c     **** 	for(i=0;i<6;i++)			// write MAC from EEPROM to rtl8019 Registers
+ 669:rtl8019.c     **** 	{
+ 670:rtl8019.c     **** 		rtl8019Write(PAR0+i,eth_adr.addr[i]);
+ 776               	.LM99:
+ 777 02f8 1F5F      		subi r17,lo8(-(1))
+ 778 02fa F701      		movw r30,r14
+ 779 02fc 6191      		ld r22,Z+
+ 780 02fe 7F01      		movw r14,r30
+ 781 0300 812F      		mov r24,r17
+ 782 0302 0E94 0000 		call rtl8019Write
+ 784               	.LM100:
+ 785 0306 1630      		cpi r17,lo8(6)
+ 786 0308 01F4      		brne .L41
+ 671:rtl8019.c     **** 	}
+ 672:rtl8019.c     **** 	
+ 673:rtl8019.c     **** 	//set over status port
+ 674:rtl8019.c     **** //	rtl8019Write(PAR0+0, MYMAC_0);
+ 675:rtl8019.c     **** //	rtl8019Write(PAR0+1, MYMAC_1);
+ 676:rtl8019.c     **** //	rtl8019Write(PAR0+2, MYMAC_2);
+ 677:rtl8019.c     **** //	rtl8019Write(PAR0+3, MYMAC_3);
+ 678:rtl8019.c     **** //	rtl8019Write(PAR0+4, MYMAC_4);
+ 679:rtl8019.c     **** //	rtl8019Write(PAR0+5, MYMAC_5);
+ 680:rtl8019.c     **** 
+ 681:rtl8019.c     **** 
+ 682:rtl8019.c     **** 	uip_setethaddr(eth_adr);
+ 788               	.LM101:
+ 789 030a 8981      		ldd r24,Y+1
+ 790 030c 8093 0000 		sts uip_ethaddr,r24
+ 791 0310 8A81      		ldd r24,Y+2
+ 792 0312 8093 0000 		sts uip_ethaddr+1,r24
+ 793 0316 8B81      		ldd r24,Y+3
+ 794 0318 8093 0000 		sts uip_ethaddr+2,r24
+ 795 031c 8C81      		ldd r24,Y+4
+ 796 031e 8093 0000 		sts uip_ethaddr+3,r24
+ 797 0322 8D81      		ldd r24,Y+5
+ 798 0324 8093 0000 		sts uip_ethaddr+4,r24
+ 799 0328 8E81      		ldd r24,Y+6
+ 800 032a 8093 0000 		sts uip_ethaddr+5,r24
+ 683:rtl8019.c     **** 
+ 684:rtl8019.c     **** 	rtl8019Write(CR,0x21);		//elm: page0 + abort DMA + stop
+ 802               	.LM102:
+ 803 032e 61E2      		ldi r22,lo8(33)
+ 804 0330 80E0      		ldi r24,lo8(0)
+ 805 0332 0E94 0000 		call rtl8019Write
+ 685:rtl8019.c     **** 	rtl8019Write(DCR, DCR_INIT);	//elm: noch mal init FIXME
+ 807               	.LM103:
+ 808 0336 68E5      		ldi r22,lo8(88)
+ 809 0338 8EE0      		ldi r24,lo8(14)
+ 810 033a 0E94 0000 		call rtl8019Write
+ 686:rtl8019.c     **** 	rtl8019Write(CR,0x22);		//elm: page0 + abort DMA + start
+ 812               	.LM104:
+ 813 033e 62E2      		ldi r22,lo8(34)
+ 814 0340 80E0      		ldi r24,lo8(0)
+ 815 0342 0E94 0000 		call rtl8019Write
+ 687:rtl8019.c     **** 	rtl8019Write(ISR,0xFF);		//elm: cleanup alle interruptflags
+ 817               	.LM105:
+ 818 0346 6FEF      		ldi r22,lo8(-1)
+ 819 0348 87E0      		ldi r24,lo8(7)
+ 820 034a 0E94 0000 		call rtl8019Write
+ 688:rtl8019.c     **** 	rtl8019Write(IMR, IMR_INIT);	//elm: interrupt mask; 0x11, received packet + receivbuffer exhausted
+ 822               	.LM106:
+ 823 034e 61E1      		ldi r22,lo8(17)
+ 824 0350 8FE0      		ldi r24,lo8(15)
+ 825 0352 0E94 0000 		call rtl8019Write
+ 689:rtl8019.c     **** 	rtl8019Write(TCR, TCR_INIT);	//elm: Transmit Configuration Register: enable CRC
+ 827               	.LM107:
+ 828 0356 60E0      		ldi r22,lo8(0)
+ 829 0358 8DE0      		ldi r24,lo8(13)
+ 830 035a 0E94 0000 		call rtl8019Write
+ 690:rtl8019.c     **** 
+ 691:rtl8019.c     **** 	rtl8019Write(CR, 0x22);	// start the NIC
+ 832               	.LM108:
+ 833 035e 62E2      		ldi r22,lo8(34)
+ 834 0360 80E0      		ldi r24,lo8(0)
+ 835 0362 0E94 0000 		call rtl8019Write
+ 836               	/* epilogue: frame size=6 */
+ 837 0366 2696      		adiw r28,6
+ 838 0368 0FB6      		in __tmp_reg__,__SREG__
+ 839 036a F894      		cli
+ 840 036c DEBF      		out __SP_H__,r29
+ 841 036e 0FBE      		out __SREG__,__tmp_reg__
+ 842 0370 CDBF      		out __SP_L__,r28
+ 843 0372 DF91      		pop r29
+ 844 0374 CF91      		pop r28
+ 845 0376 1F91      		pop r17
+ 846 0378 FF90      		pop r15
+ 847 037a EF90      		pop r14
+ 848 037c 0895      		ret
+ 849               	/* epilogue end (size=12) */
+ 850               	/* function rtl8019Init size 193 (168) */
+ 862               	.Lscope9:
+ 864               	.global	rtl8019Overrun
+ 866               	rtl8019Overrun:
+ 868               	.LM109:
+ 869               	.LFBB10:
+ 870               	/* prologue: frame size=0 */
+ 871 037e 1F93      		push r17
+ 872               	/* prologue end (size=1) */
+ 874               	.LM110:
+ 875 0380 80E0      		ldi r24,lo8(0)
+ 876 0382 0E94 0000 		call rtl8019Read
+ 877 0386 182F      		mov r17,r24
+ 879               	.LM111:
+ 880 0388 61E2      		ldi r22,lo8(33)
+ 881 038a 80E0      		ldi r24,lo8(0)
+ 882 038c 0E94 0000 		call rtl8019Write
+ 884               	.LM112:
+ 885 0390 82E0      		ldi r24,lo8(2)
+ 886 0392 0E94 0000 		call delay_ms
+ 888               	.LM113:
+ 889 0396 60E0      		ldi r22,lo8(0)
+ 890 0398 8AE0      		ldi r24,lo8(10)
+ 891 039a 0E94 0000 		call rtl8019Write
+ 893               	.LM114:
+ 894 039e 60E0      		ldi r22,lo8(0)
+ 895 03a0 8BE0      		ldi r24,lo8(11)
+ 896 03a2 0E94 0000 		call rtl8019Write
+ 898               	.LM115:
+ 899 03a6 12FF      		sbrs r17,2
+ 900 03a8 00C0      		rjmp .L49
+ 902               	.LM116:
+ 903 03aa 87E0      		ldi r24,lo8(7)
+ 904 03ac 0E94 0000 		call rtl8019Read
+ 906               	.LM117:
+ 907 03b0 9927      		clr r25
+ 908 03b2 81FD      		sbrc r24,1
+ 909 03b4 00C0      		rjmp .L49
+ 910 03b6 83FD      		sbrc r24,3
+ 911 03b8 00C0      		rjmp .L49
+ 912 03ba 11E0      		ldi r17,lo8(1)
+ 913 03bc 00C0      		rjmp .L53
+ 914               	.L49:
+ 915 03be 10E0      		ldi r17,lo8(0)
+ 916               	.L53:
+ 918               	.LM118:
+ 919 03c0 62E0      		ldi r22,lo8(2)
+ 920 03c2 8DE0      		ldi r24,lo8(13)
+ 921 03c4 0E94 0000 		call rtl8019Write
+ 923               	.LM119:
+ 924 03c8 62E2      		ldi r22,lo8(34)
+ 925 03ca 80E0      		ldi r24,lo8(0)
+ 926 03cc 0E94 0000 		call rtl8019Write
+ 928               	.LM120:
+ 929 03d0 66E4      		ldi r22,lo8(70)
+ 930 03d2 83E0      		ldi r24,lo8(3)
+ 931 03d4 0E94 0000 		call rtl8019Write
+ 933               	.LM121:
+ 934 03d8 62E6      		ldi r22,lo8(98)
+ 935 03da 80E0      		ldi r24,lo8(0)
+ 936 03dc 0E94 0000 		call rtl8019Write
+ 938               	.LM122:
+ 939 03e0 66E4      		ldi r22,lo8(70)
+ 940 03e2 87E0      		ldi r24,lo8(7)
+ 941 03e4 0E94 0000 		call rtl8019Write
+ 943               	.LM123:
+ 944 03e8 62E2      		ldi r22,lo8(34)
+ 945 03ea 80E0      		ldi r24,lo8(0)
+ 946 03ec 0E94 0000 		call rtl8019Write
+ 948               	.LM124:
+ 949 03f0 60E1      		ldi r22,lo8(16)
+ 950 03f2 87E0      		ldi r24,lo8(7)
+ 951 03f4 0E94 0000 		call rtl8019Write
+ 953               	.LM125:
+ 954 03f8 60E0      		ldi r22,lo8(0)
+ 955 03fa 8DE0      		ldi r24,lo8(13)
+ 956 03fc 0E94 0000 		call rtl8019Write
+ 958               	.LM126:
+ 959 0400 1123      		tst r17
+ 960 0402 01F0      		breq .L54
+ 962               	.LM127:
+ 963 0404 66E2      		ldi r22,lo8(38)
+ 964 0406 80E0      		ldi r24,lo8(0)
+ 965 0408 0E94 0000 		call rtl8019Write
+ 966               	.L54:
+ 968               	.LM128:
+ 969 040c 6FEF      		ldi r22,lo8(-1)
+ 970 040e 87E0      		ldi r24,lo8(7)
+ 971 0410 0E94 0000 		call rtl8019Write
+ 972               	/* epilogue: frame size=0 */
+ 973 0414 1F91      		pop r17
+ 974 0416 0895      		ret
+ 975               	/* epilogue end (size=2) */
+ 976               	/* function rtl8019Overrun size 77 (74) */
+ 982               	.Lscope10:
+ 984               	.global	rtl8019ProcessInterrupt
+ 986               	rtl8019ProcessInterrupt:
+ 692:rtl8019.c     **** }
+ 693:rtl8019.c     **** 
+ 694:rtl8019.c     **** 
+ 695:rtl8019.c     **** void rtl8019ProcessInterrupt(void)
+ 696:rtl8019.c     **** {
+ 988               	.LM129:
+ 989               	.LFBB11:
+ 990               	/* prologue: frame size=0 */
+ 991               	/* prologue end (size=0) */
+ 697:rtl8019.c     **** 	unsigned char byte = rtl8019Read(ISR);
+ 993               	.LM130:
+ 994 0418 87E0      		ldi r24,lo8(7)
+ 995 041a 0E94 0000 		call rtl8019Read
+ 698:rtl8019.c     **** 
+ 699:rtl8019.c     **** 	if( byte & (1<<ISR_OVW) )
+ 997               	.LM131:
+ 998 041e 84FF      		sbrs r24,4
+ 999 0420 00C0      		rjmp .L60
+ 700:rtl8019.c     **** 		rtl8019Overrun();
+ 1001               	.LM132:
+ 1002 0422 0E94 0000 		call rtl8019Overrun
+ 1003               	.L60:
+ 1004 0426 0895      		ret
+ 1005               	/* epilogue: frame size=0 */
+ 1006               	/* epilogue: noreturn */
+ 1007               	/* epilogue end (size=0) */
+ 1008               	/* function rtl8019ProcessInterrupt size 8 (8) */
+ 1010               	.Lscope11:
+ 1012               	.global	rtl8019BeginPacketRetreive
+ 1014               	rtl8019BeginPacketRetreive:
+ 1016               	.LM133:
+ 1017               	.LFBB12:
+ 1018               	/* prologue: frame size=4 */
+ 1019 0428 DF92      		push r13
+ 1020 042a EF92      		push r14
+ 1021 042c FF92      		push r15
+ 1022 042e 0F93      		push r16
+ 1023 0430 1F93      		push r17
+ 1024 0432 CF93      		push r28
+ 1025 0434 DF93      		push r29
+ 1026 0436 CDB7      		in r28,__SP_L__
+ 1027 0438 DEB7      		in r29,__SP_H__
+ 1028 043a 2497      		sbiw r28,4
+ 1029 043c 0FB6      		in __tmp_reg__,__SREG__
+ 1030 043e F894      		cli
+ 1031 0440 DEBF      		out __SP_H__,r29
+ 1032 0442 0FBE      		out __SREG__,__tmp_reg__
+ 1033 0444 CDBF      		out __SP_L__,r28
+ 1034               	/* prologue end (size=15) */
+ 1036               	.LM134:
+ 1037 0446 0E94 0000 		call rtl8019ProcessInterrupt
+ 1039               	.LM135:
+ 1040 044a 62E6      		ldi r22,lo8(98)
+ 1041 044c 80E0      		ldi r24,lo8(0)
+ 1042 044e 0E94 0000 		call rtl8019Write
+ 1044               	.LM136:
+ 1045 0452 87E0      		ldi r24,lo8(7)
+ 1046 0454 0E94 0000 		call rtl8019Read
+ 1047 0458 182F      		mov r17,r24
+ 1049               	.LM137:
+ 1050 045a 62E2      		ldi r22,lo8(34)
+ 1051 045c 80E0      		ldi r24,lo8(0)
+ 1052 045e 0E94 0000 		call rtl8019Write
+ 1054               	.LM138:
+ 1055 0462 83E0      		ldi r24,lo8(3)
+ 1056 0464 0E94 0000 		call rtl8019Read
+ 1057 0468 D82E      		mov r13,r24
+ 1059               	.LM139:
+ 1060 046a 8117      		cp r24,r17
+ 1061 046c 01F4      		brne .+2
+ 1062 046e 00C0      		rjmp .L62
+ 1064               	.LM140:
+ 1065 0470 61E0      		ldi r22,lo8(1)
+ 1066 0472 87E0      		ldi r24,lo8(7)
+ 1067 0474 0E94 0000 		call rtl8019Write
+ 1069               	.LM141:
+ 1070 0478 8D2D      		mov r24,r13
+ 1071 047a 8654      		subi r24,lo8(-(-70))
+ 1072 047c 8A31      		cpi r24,lo8(26)
+ 1073 047e 00F0      		brlo .L64
+ 1075               	.LM142:
+ 1076 0480 66E4      		ldi r22,lo8(70)
+ 1077 0482 83E0      		ldi r24,lo8(3)
+ 1078 0484 0E94 0000 		call rtl8019Write
+ 1080               	.LM143:
+ 1081 0488 62E6      		ldi r22,lo8(98)
+ 1082 048a 80E0      		ldi r24,lo8(0)
+ 1083 048c 0E94 0000 		call rtl8019Write
+ 1085               	.LM144:
+ 1086 0490 66E4      		ldi r22,lo8(70)
+ 1087 0492 87E0      		ldi r24,lo8(7)
+ 1088 0494 0E94 0000 		call rtl8019Write
+ 1090               	.LM145:
+ 1091 0498 62E2      		ldi r22,lo8(34)
+ 1092 049a 80E0      		ldi r24,lo8(0)
+ 1093 049c 0E94 0000 		call rtl8019Write
+ 1094 04a0 00C0      		rjmp .L62
+ 1095               	.L64:
+ 1097               	.LM146:
+ 1098 04a2 64E0      		ldi r22,lo8(4)
+ 1099 04a4 8AE0      		ldi r24,lo8(10)
+ 1100 04a6 0E94 0000 		call rtl8019Write
+ 1102               	.LM147:
+ 1103 04aa 60E0      		ldi r22,lo8(0)
+ 1104 04ac 8BE0      		ldi r24,lo8(11)
+ 1105 04ae 0E94 0000 		call rtl8019Write
+ 1107               	.LM148:
+ 1108 04b2 60E0      		ldi r22,lo8(0)
+ 1109 04b4 88E0      		ldi r24,lo8(8)
+ 1110 04b6 0E94 0000 		call rtl8019Write
+ 1112               	.LM149:
+ 1113 04ba 6D2D      		mov r22,r13
+ 1114 04bc 89E0      		ldi r24,lo8(9)
+ 1115 04be 0E94 0000 		call rtl8019Write
+ 1117               	.LM150:
+ 1118 04c2 6AE0      		ldi r22,lo8(10)
+ 1119 04c4 80E0      		ldi r24,lo8(0)
+ 1120 04c6 0E94 0000 		call rtl8019Write
+ 1121 04ca 8E01      		movw r16,r28
+ 1122 04cc 0F5F      		subi r16,lo8(-(1))
+ 1123 04ce 1F4F      		sbci r17,hi8(-(1))
+ 1125               	.LM151:
+ 1126 04d0 75E0      		ldi r23,lo8(5)
+ 1127 04d2 E72E      		mov r14,r23
+ 1128 04d4 F12C      		mov r15,__zero_reg__
+ 1129 04d6 EC0E      		add r14,r28
+ 1130 04d8 FD1E      		adc r15,r29
+ 1131               	.L67:
+ 1133               	.LM152:
+ 1134 04da 80E1      		ldi r24,lo8(16)
+ 1135 04dc 0E94 0000 		call rtl8019Read
+ 1136 04e0 F801      		movw r30,r16
+ 1137 04e2 8193      		st Z+,r24
+ 1138 04e4 8F01      		movw r16,r30
+ 1140               	.LM153:
+ 1141 04e6 EE15      		cp r30,r14
+ 1142 04e8 FF05      		cpc r31,r15
+ 1143 04ea 01F4      		brne .L67
+ 1145               	.LM154:
+ 1146 04ec 62E2      		ldi r22,lo8(34)
+ 1147 04ee 80E0      		ldi r24,lo8(0)
+ 1148 04f0 0E94 0000 		call rtl8019Write
+ 1149 04f4 10E0      		ldi r17,lo8(0)
+ 1150               	.L69:
+ 1152               	.LM155:
+ 1153 04f6 87E0      		ldi r24,lo8(7)
+ 1154 04f8 0E94 0000 		call rtl8019Read
+ 1155 04fc 86FD      		sbrc r24,6
+ 1156 04fe 00C0      		rjmp .L70
+ 1158               	.LM156:
+ 1159 0500 1F5F      		subi r17,lo8(-(1))
+ 1160 0502 1531      		cpi r17,lo8(21)
+ 1161 0504 01F4      		brne .L69
+ 1162               	.L70:
+ 1164               	.LM157:
+ 1165 0506 60E4      		ldi r22,lo8(64)
+ 1166 0508 87E0      		ldi r24,lo8(7)
+ 1167 050a 0E94 0000 		call rtl8019Write
+ 1169               	.LM158:
+ 1170 050e 3C81      		ldd r19,Y+4
+ 1171 0510 4B81      		ldd r20,Y+3
+ 1173               	.LM159:
+ 1174 0512 2A81      		ldd r18,Y+2
+ 1175 0514 2093 0000 		sts nextPage,r18
+ 1177               	.LM160:
+ 1178 0518 8D2D      		mov r24,r13
+ 1179 051a 9927      		clr r25
+ 1180 051c 982F      		mov r25,r24
+ 1181 051e 8827      		clr r24
+ 1182 0520 0496      		adiw r24,4
+ 1183 0522 9093 0000 		sts (currentRetreiveAddress)+1,r25
+ 1184 0526 8093 0000 		sts currentRetreiveAddress,r24
+ 1186               	.LM161:
+ 1187 052a 2654      		subi r18,lo8(-(-70))
+ 1188 052c 2A31      		cpi r18,lo8(26)
+ 1189 052e 00F4      		brsh .L62
+ 1191               	.LM162:
+ 1192 0530 832F      		mov r24,r19
+ 1193 0532 9927      		clr r25
+ 1194 0534 982F      		mov r25,r24
+ 1195 0536 8827      		clr r24
+ 1196 0538 840F      		add r24,r20
+ 1197 053a 911D      		adc r25,__zero_reg__
+ 1198 053c 0497      		sbiw r24,4
+ 1199 053e 00C0      		rjmp .L66
+ 1200               	.L62:
+ 1201 0540 80E0      		ldi r24,lo8(0)
+ 1202 0542 90E0      		ldi r25,hi8(0)
+ 1203               	.L66:
+ 1204               	/* epilogue: frame size=4 */
+ 1205 0544 2496      		adiw r28,4
+ 1206 0546 0FB6      		in __tmp_reg__,__SREG__
+ 1207 0548 F894      		cli
+ 1208 054a DEBF      		out __SP_H__,r29
+ 1209 054c 0FBE      		out __SREG__,__tmp_reg__
+ 1210 054e CDBF      		out __SP_L__,r28
+ 1211 0550 DF91      		pop r29
+ 1212 0552 CF91      		pop r28
+ 1213 0554 1F91      		pop r17
+ 1214 0556 0F91      		pop r16
+ 1215 0558 FF90      		pop r15
+ 1216 055a EF90      		pop r14
+ 1217 055c DF90      		pop r13
+ 1218 055e 0895      		ret
+ 1219               	/* epilogue end (size=14) */
+ 1220               	/* function rtl8019BeginPacketRetreive size 156 (127) */
+ 1227               	.Lscope12:
+ 1228               		.lcomm nextPage,1
+ 1229               		.lcomm currentRetreiveAddress,2
+ 1230               		.comm eth2can_status,2,1
+ 1231               		.comm eth2can_can,2,1
+ 1232               		.comm eth2can_uart0,2,1
+ 1233               		.comm eth2can_uart1,2,1
+ 1234               		.comm send_init,1,1
+ 1243               	.Letext0:
+ 1244               	/* File "rtl8019.c": code  702 = 0x02be ( 599), prologues  48, epilogues  55 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 rtl8019.c
+     /tmp/cccsGmnK.s:2      *ABS*:0000003f __SREG__
+     /tmp/cccsGmnK.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cccsGmnK.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cccsGmnK.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cccsGmnK.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cccsGmnK.s:104    .text:00000000 rtl8019Write
+     /tmp/cccsGmnK.s:157    .text:0000001c rtl8019Read
+     /tmp/cccsGmnK.s:205    .text:00000032 rtl8019SetupPorts
+     /tmp/cccsGmnK.s:245    .text:00000048 rtl8019BeginPacketSend
+     /tmp/cccsGmnK.s:343    .text:000000c4 rtl8019SendPacketData
+     /tmp/cccsGmnK.s:394    .text:000000fe rtl8019EndPacketSend
+     /tmp/cccsGmnK.s:421    .text:00000110 rtl8019RetreivePacketData
+     /tmp/cccsGmnK.s:1228   .bss:00000001 currentRetreiveAddress
+     /tmp/cccsGmnK.s:550    .text:000001cc rtl8019EndPacketRetreive
+                             .bss:00000000 nextPage
+     /tmp/cccsGmnK.s:599    .text:000001fe rtl8019Init
+     /tmp/cccsGmnK.s:866    .text:0000037e rtl8019Overrun
+     /tmp/cccsGmnK.s:986    .text:00000418 rtl8019ProcessInterrupt
+     /tmp/cccsGmnK.s:1014   .text:00000428 rtl8019BeginPacketRetreive
+                            *COM*:00000002 eth2can_status
+                            *COM*:00000002 eth2can_can
+                            *COM*:00000002 eth2can_uart0
+                            *COM*:00000002 eth2can_uart1
+                            *COM*:00000001 send_init
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+delay_ms
+__eeprom_read_byte_1C1D1E
+uip_ethaddr

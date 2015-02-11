@@ -1,0 +1,146 @@
+\section{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/m\-Board.h \-File \-Reference}
+\label{m_board_8h}\index{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/m\-Board.\-h@{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/m\-Board.\-h}}
+\subsection*{\-Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define {\bf \-T\-I\-M\-E\-R\-C\-O\-U\-N\-T\-E\-R}~\-T\-C\-N\-T0\label{group__main_ga1a329b3e30dfee7d342abb5ca42627c1}
+
+\begin{DoxyCompactList}\small\item\em led test counter \end{DoxyCompactList}\item 
+\#define {\bf \-T\-I\-M\-E\-R\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B}~\-T\-C\-C\-R0\-B\label{group__main_ga92b6fba9f92d06d079d00bd6df3176d9}
+
+\begin{DoxyCompactList}\small\item\em prescaler led counter \end{DoxyCompactList}\item 
+\#define {\bf \-A\-C\-K\-\_\-\-C\-A\-N}~10\label{group__main_gaa267303b3341b8fb4d5229ef059d6c4b}
+
+\begin{DoxyCompactList}\small\item\em ports are ranged from 0 to 7 -\/-\/-\/ 10 for \-A\-C\-K \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bf port\-Measure\-Modes} \{ \*
+{\bfseries \-N\-O\-T\-\_\-\-U\-S\-E\-D}, 
+{\bfseries \-Temp}, 
+{\bfseries \-Light}, 
+{\bfseries \-Vol}, 
+\*
+{\bfseries \-Noise}, 
+{\bfseries \-Distance}, 
+{\bfseries \-Led}
+ \}
+\begin{DoxyCompactList}\small\item\em values interval when reaction is triggerd, without interval the relais jitters \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf sleep} (uint32\-\_\-t val)
+\begin{DoxyCompactList}\small\item\em sleep methode self-\/made sleep method for better timing \end{DoxyCompactList}\item 
+void {\bf init\-Ports} (void)\label{group__main_gaca4002ebd1dcbb1eff2ec63ee924892f}
+
+\begin{DoxyCompactList}\small\item\em init the ports used as in or output and init the \-A\-D\-C with 125 k\-Hz \end{DoxyCompactList}\item 
+void {\bf init\-Voltage\-Multiplikator} (void)\label{group__main_gacb3e16f99a51bb18c29e0668a8b0a75d}
+
+\begin{DoxyCompactList}\small\item\em init the multiplicator for the voltage calc 1, 5,24, or 111 for 400 \-V \end{DoxyCompactList}\item 
+double {\bf get\-Temp} (void)\label{group__main_ga11287b16260f611508b59bc017646b8b}
+
+\begin{DoxyCompactList}\small\item\em get the temperature measured with the temp-\/sensor \end{DoxyCompactList}\item 
+double {\bf get\-Light\-Intensity} (void)\label{group__main_ga2c557028dbc226ddcf2e0a7957178c32}
+
+\begin{DoxyCompactList}\small\item\em get the light intensity with a level of 0-\/100, 0 means its dark and 100 is very bright \end{DoxyCompactList}\item 
+double {\bf get\-Noise} (void)\label{group__main_gae80c6f2768f1758503261fbc18ee9eb7}
+
+\begin{DoxyCompactList}\small\item\em get noise level with the mic sensor, with level 0-\/100 100 is very loud \end{DoxyCompactList}\item 
+double {\bf get\-Distance} (void)\label{group__main_ga9d5a721bb90868a091edb6940bd7eb8d}
+
+\begin{DoxyCompactList}\small\item\em get the distance to the next object near to the ultrasonic sensor \end{DoxyCompactList}\item 
+uint16\-\_\-t {\bf start\-Measure} (unsigned int \-X)\label{group__main_ga66087cffe6c68fe543621343e8bcd751}
+
+\begin{DoxyCompactList}\small\item\em measure voltage on port x \end{DoxyCompactList}\item 
+void {\bf measure\-And\-Scale} (uint8\-\_\-t port)\label{group__main_ga42a0809c7a977aba4306fadc6d779545}
+
+\begin{DoxyCompactList}\small\item\em use start\-Measure to measure and scale with given scalingfactor \end{DoxyCompactList}\item 
+double {\bf get\-Unit} (uint8\-\_\-t port)
+\begin{DoxyCompactList}\small\item\em calculate the value of the real unit e.\-g. \-Distance in cm from measure \end{DoxyCompactList}\item 
+void {\bf send\-React\-C\-A\-N} (uint8\-\_\-t port, char \-Ho\-L)
+\begin{DoxyCompactList}\small\item\em send a msg over \-C\-A\-N that the system has reacted format\-: \-Hn , \-Ln; \-H when switched off (relais high) and \-L when back on, n is the port \end{DoxyCompactList}\item 
+void {\bf react\-On\-Measure} (uint8\-\_\-t port)\label{group__main_gad2edb4f30990738fb53001fe0c0f4ee5}
+
+\begin{DoxyCompactList}\small\item\em reacts on measured values e.\-g. by setting a port \-High or \-Low to switch the relais -\/-\/-\/ sends a \-Hn\par
+ when set \-High \-Ln\par
+ when \-Low, n is the port \end{DoxyCompactList}\item 
+void {\bf send\-Measure\-U\-A\-R\-T} (uint8\-\_\-t port)
+\begin{DoxyCompactList}\small\item\em send measured data by uart \-Format\-: \-P\-:n;x y \par
+ -\/-\/-\/ n = portnumber, x = value, y = unit \end{DoxyCompactList}\item 
+void {\bf generate\-C\-A\-N\-Msg} ({\bf t\-Extended\-C\-A\-N} $\ast$\-M, uint8\-\_\-t port)
+\begin{DoxyCompactList}\small\item\em generates a can message format\-: bits [0-\/5] value, bit[6] unit, bit [7] port \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bfseries read\-U\-A\-R\-T\-Config} (unsigned char conf)\label{group__main_gaf04f40a07e81cb2ca26d3d8922664937}
+
+\item 
+uint8\-\_\-t {\bfseries read\-U\-A\-R\-T\-Conf\-Modes} (unsigned char conf)\label{group__main_gadc64e664206404b3c654bcd71d0e1d5e}
+
+\item 
+uint8\-\_\-t {\bf react\-On\-U\-A\-R\-T\-Command} (unsigned char c)
+\begin{DoxyCompactList}\small\item\em reaction for given commands \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bf react\-On\-C\-A\-N\-Command} (char $\ast$data)
+\begin{DoxyCompactList}\small\item\em reaction for given commands \end{DoxyCompactList}\item 
+void {\bf can\-\_\-init} (void)\label{group__main_gac7781a37ca14c5bf42c4fe9de1f4daa8}
+
+\begin{DoxyCompactList}\small\item\em initialize the can driver \end{DoxyCompactList}\item 
+int {\bf main} (void)
+\begin{DoxyCompactList}\small\item\em the main method with statemachine loop as follows\-: statemachine -\/-\/-\/-\/!!! \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Variables}
+\begin{DoxyCompactItemize}
+\item 
+uint8\-\_\-t {\bf measuring\-Voltage\-Faktor} [8]\label{group__main_gaeca23ad01b13484c7312b200ed6784f5}
+
+\begin{DoxyCompactList}\small\item\em the scalings (1,5,26,111 to calc the voltage, 0 means no measurement. 400 -\/$>$ 111 as voltagefaktor \end{DoxyCompactList}\item 
+char {\bf voltage\-Value\-Buffer} [7]\label{group__main_gae5aef890ef31321222ea054aa00125bf}
+
+\begin{DoxyCompactList}\small\item\em char buffer for measure conversion in string \end{DoxyCompactList}\item 
+double {\bf measurement}\label{group__main_ga62e8e90e87e4843689cf8ddcf8aa8644}
+
+\begin{DoxyCompactList}\small\item\em the measurement \end{DoxyCompactList}\item 
+double {\bf led\-Last\-Measure}\label{group__main_gab340f4007d4f592c05d26af52abdd76a}
+
+\begin{DoxyCompactList}\small\item\em led test last measure \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bfseries led\-Tick} = 150\label{group__main_ga4087d222fc7fd5618b4ef683f759e4dd}
+
+\item 
+uint8\-\_\-t {\bf serial\-Communikation} = 1\label{group__main_gac183334870c7d6b315d6eab9a63d36d2}
+
+\begin{DoxyCompactList}\small\item\em en-\//disable serial line \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bf can\-Communikation} = 1\label{group__main_ga7931e0891699e412246d057cb3a3ec6d}
+
+\begin{DoxyCompactList}\small\item\em en-\//disable can \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bf eth\-Communikation} = 0\label{group__main_ga48cf4117469613426debd4f85c460808}
+
+\begin{DoxyCompactList}\small\item\em en-\//disable eternet line \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bfseries port\-To\-Relais} [8]\label{group__main_ga57b981cfd8c3af7a1cdf90770f85aa8d}
+
+\item 
+uint8\-\_\-t {\bf reaction\-Value\-Mode} [8]\label{group__main_ga56c8fe85f8461ba0d291361c3a933870}
+
+\begin{DoxyCompactList}\small\item\em which port korresponds to which relais to react \end{DoxyCompactList}\item 
+uint32\-\_\-t {\bf reaction\-Values} [8]\label{group__main_ga8908e7ed7819607140342740d85e2b56}
+
+\begin{DoxyCompactList}\small\item\em should be switched when measure is higher or lower val \end{DoxyCompactList}\item 
+uint8\-\_\-t {\bf port\-Mode\-Measure} [$\,$]
+\begin{DoxyCompactList}\small\item\em modes how we can measure \end{DoxyCompactList}\item 
+double {\bf interval\-Values} [7]\label{group__main_gabf0863d719058ff6e45a37b5bcf04b48}
+
+\begin{DoxyCompactList}\small\item\em which measure mode on specific port \end{DoxyCompactList}\item 
+double {\bf distance\-Scale} = 250\label{group__main_gab3ee56c263833429c4f874777c7c8213}
+
+\begin{DoxyCompactList}\small\item\em the specific relais-\/switch interval to handle relais jittering\-: \-Temp 1\-C, \-Light 7\%, \-Vol 0,5, \-Distance 5cm \end{DoxyCompactList}\item 
+double {\bf heart\-Beat} = 180.\-0\label{group__main_ga247b18b1a4a3625b0ff4f0792c8d1d3d}
+
+\begin{DoxyCompactList}\small\item\em \-Vcc/512 $\ast$ 2,54 (inch -\/$>$ cm) \end{DoxyCompactList}\item 
+double {\bf mea} [200]\label{group__main_ga4bd78858057f77134858778f80f12f48}
+
+\begin{DoxyCompactList}\small\item\em standard beat 330 ms tune up to 1,5 s with poti \end{DoxyCompactList}\item 
+double {\bfseries loop\-Counter} = 0.\-0\label{group__main_gad08068c1a902b6de5c7ff899e3a731fa}
+
+\item 
+char {\bf te} [33]\label{group__main_ga46b9c288b9e05a095968531ed38f9877}
+
+\begin{DoxyCompactList}\small\item\em the counter for the inner measure loop \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-The main loop 

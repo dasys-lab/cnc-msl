@@ -1,0 +1,73 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include "pwm.h"
+#include "motor.h"
+#include "messages.h"
+#include "timer.h"
+#include "defaults.h"
+#include <util/delay.h>
+#include <avr/wdt.h>
+#include "mcp2515.h"
+
+int main(void)
+{
+// 	request_position = 0;
+// 	request_dir = 1;
+
+	sei();
+
+	timer_init();
+	can_init();
+// 	pwm_init();
+// 	adc_init();
+// 	motor_init();
+
+	debug("Init Multi");
+	
+	tExtendedCAN message;
+	
+	// this is the hardcoded id: 0x00404000
+	message.id[0] = 0x02;
+	message.id[1] = 0x0C;
+	message.id[2] = 0x40;
+	message.id[3] = 0x00;
+	
+	message.header.rtr = 0;
+	
+	//init kicker pos
+// 	servo_set(50);
+	
+	DDRD = 0x00;
+	//PORTF = 0xff;
+	
+	static volatile uint8_t number;
+	
+	//enable watchdog
+// 	wdt_enable(WDTO_30MS);
+	for (;;) {
+// 		timer_trigger_callbacks();
+		message_handler();
+		
+// 		uint32_t time = timer_get_ms();
+		number = 0;
+		if ( PIND & (1<<PIND1) ) {
+			number = 5;
+		} else {
+			number = 7;
+		}
+		
+		message.header.length = 1;
+		message.data[0] = number;
+		mcp2515_send_extmessage(&message);
+
+// 		check_motors(time);
+// 		ballhandler_control();		
+// 		stop_control();
+
+		//reset watchdog
+// 		wdt_reset();
+		//_delay_ms(100);
+	}
+	
+	return 0;
+}

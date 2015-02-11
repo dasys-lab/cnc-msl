@@ -1,0 +1,77 @@
+Stückliste exportiert aus /home/puto/workspace/impera/cn/CNDevices/monBoard/monBoard_1_1.sch am 26.09.12 11:21
+
+Bauteil   Wert               Device             Package      Description                                                            
+3V3REGLER 7805TV             7805TV             TO220V       Positive VOLTAGE REGULATOR                                             
+5VREGLER  7805TV             7805TV             TO220V       Positive VOLTAGE REGULATOR                                             
+C1        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C2        10n                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C3        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C5        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C6        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C7        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C8        100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C9        22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C10       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C11       10µF/50V           CPOL-EUE3.5-8      E3,5-8       POLARIZED CAPACITOR, European symbol                                   
+C12       10µF/50V           CPOL-EUE3.5-8      E3,5-8       POLARIZED CAPACITOR, European symbol                                   
+C13       22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C14       10µF/50V           CPOL-EUE3.5-8      E3,5-8       POLARIZED CAPACITOR, European symbol                                   
+C15       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C16       22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C17       22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C18       10n                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C19       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C20       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C21       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C22       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C23       10µF/50V           CPOL-EUE3.5-8      E3,5-8       POLARIZED CAPACITOR, European symbol                                   
+C24       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C25       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C26       100n               C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C27       10n                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C28       22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+C29       22p                C-EUC0603          C0603        CAPACITOR, European symbol                                             
+CAN                          90-4               90-4         WEIDMUELLER CLAMP CONNECTOR                                            
+CAN1                         LEDCHIP-LED0805    CHIP-LED0805 LED                                                                    
+COM2                         F09HP              F09HP        SUB-D                                                                  
+D1        1N4001             1N4004             DO41-10      DIODE                                                                  
+D2        1N4001             1N4004             DO41-10      DIODE                                                                  
+D3        1N4001             1N4004             DO41-10      DIODE                                                                  
+ETHA1                        LEDCHIP-LED0805    CHIP-LED0805 LED                                                                    
+ETHA2                        LEDCHIP-LED0805    CHIP-LED0805 LED                                                                    
+F1                           SH22,5A            SH22,5A      FUSE HOLDER grid 22,5mm, isolated cap OGN0031 8201, Schurter (Buerklin)
+H1        MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD      MOUNTING PAD, round                                                    
+H2        MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD      MOUNTING PAD, round                                                    
+H3        MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD      MOUNTING PAD, round                                                    
+H4        MOUNT-PAD-ROUND3.0 MOUNT-PAD-ROUND3.0 3,0-PAD      MOUNTING PAD, round                                                    
+IC1       ATMEGA644-20PU     ATMEGA644-20PU     DIL40        8-bit Microcontroller with 64K Bytes In-System Programmable Flash      
+IC2       ENC28J60SP         ENC28J60SP         DIL28-3      Stand-Alone Ethernet Controller with SPI Interface                     
+IC3       MCP2515-E/SO       MCP2515-E/SO       SO18L                                                                               
+IC5       PCA82C250          PCA82C250          DIL08        CAN CONTROLLER INTERFACE                                               
+IC6       MAX3232CSE         MAX3232CSE         SO16         True RS-232 Transceivers 3.0V to 5.5V, Low-Power                       
+ISP                          ML10               ML10         HARTING                                                                
+POWER                        AK500/2-H          AK500/2-H    CONNECTOR                                                              
+POWER2                       AK500/2-H          AK500/2-H    CONNECTOR                                                              
+Q1                           CRYSTALHC49U-V     HC49U-V      CRYSTAL                                                                
+Q3        16MHz              CRYSTALHC49U-V     HC49U-V      CRYSTAL                                                                
+Q_CPU1    16MHz              CRYSTALHC49U-V     HC49U-V      CRYSTAL                                                                
+R1        4k7                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R2        10k                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_1      10k                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_2      10k                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_3      2k7                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_4      270                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_5      270                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_6      50                 R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_7      50                 R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_8      50                 R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R3_9      50                 R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R4        4k7                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R5        4k7                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+R15       150                R-EU_R0805         R0805        RESISTOR, European symbol                                              
+SV1                          FE08-1             FE08         FEMALE HEADER                                                          
+SV2                          FE08-1             FE08         FEMALE HEADER                                                          
+SV3                          FE06-1             FE06         FEMALE HEADER                                                          
+SV4                          FE06-1             FE06         FEMALE HEADER                                                          
+SV5                          FE05-1             FE05-1       FEMALE HEADER                                                          
+X1        RJ45-6LC2-S        RJ45-6LC2-S        RJ45-SHIELD2 RJ45 Low Profile Shield Type 2                                         

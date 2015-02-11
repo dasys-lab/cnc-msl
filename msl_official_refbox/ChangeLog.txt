@@ -1,0 +1,118 @@
+The document summaries the most import changes of the MSL refbox
+
+MSL Refbox 2013 - version 2.02 (Release on: 2013-06-25)
+=======================================================
+- auto parking command at end half (optional via config)
+- update address new teams (TC)
+- multithread configurable
+- external command configurable (visible in history)
+- correct protocol 2009 team commands
+
+MSL Refbox 2010 - version 1.30 (Release on: 2009-09-24)
+=======================================================
+- (protocol) Protocol 2010 
+   - GameInfo element is changed.
+   - Card and Goal data element contain stage and time attributes.
+- Game setup: 
+	- add second assistant referee field 
+	- rename goal assistant to additional assistant referee (UEFA term)
+- Status viewer application displays all possible relevant information.
+- Team Setup verification:
+	- Team name must be unique. 	
+	- Team leader name must be unique. 	
+	- Minimum number of players in team and on field is verified (settings via configuration file). 	
+- A pop-up message is shown if after a player change the minimum number of players on field not correct. 
+- Team setup tool: data to send is verified: 
+		- name and leader must be filled in
+		- player-setup is verified (minimum number of players in team and on the field)
+- Player change dialog disabled after finishing the game.	
+- Generating game sheet auto is started after the game is finished.	
+- Generate game sheet button on history tab will be enabled after the game is finished.	
+- Add correct file-extension to saved files if not provided. 
+- Columns can not be re-ordered anymore (Refbox, TeamSetup, Status viewer)
+- TestClient protocol 2009 uses the first communication configuration data from the configuration data (with sender is true)
+- (Fix) No green kick-off button after finished game.
+
+MSL Refbox 2010 - version 1.04 (Release on: 2009-09-11)
+=======================================================
+- (Fix) team setup administration was not corrected (bug introduced in version 1.03)
+- Improve readability of the network and, game administration tab.
+- (Team Setup Tool) Number of robots in the field limited to number specificity in the configuration file
+- (Fix) remove unnecessary logging when team setup data is received.
+- Improve readability of tables on game administration tab.
+- Improve layout of change dialog
+- TestClient protocol 2010 uses the first communication configuration data from the configuration data (with sender is true)
+- Improve used threading mechanism.
+- (Fix) retrieving data by status displayer
+
+MSL Refbox 2010 - version 1.03 (Release on: 2009-09-07)
+=======================================================
+- Teams can send the team setup via an upload tool to send MSL Refbox. 
+	- A event is logged in network tab when a team set-up is received.
+- Before teams setup is completed (locked), possible to switch to tabs for 
+  game setup, history and network tab. A message dialog is showed if tab is unavailable. 
+ 
+
+MSL Refbox 2010 - version 1.02 (Release on: 2009-08-30)
+=======================================================
+- (protocol) Protocol 2010 
+   - Documentation: Detailed comment is added to the XSD.
+   - support player change functionality (reason + minimum time of field is added ).
+   - GameInfo element is changed.
+- Highlight kick-off button for correct team after a goal is scored (stay highlighted still start is pressed)
+- (fix) Highlight the kick-off for the correct team at the beginning of the second half 
+- (fix) typing error in Player Change dialog
+- Add documentation to distribution.
+- Remove unused files from binary part of the distribution.
+- The number of robots on the field in the Setup tab is limited to configurable number (currently: 6)
+- (fix) change player dialog for the right team displayed wrong team color and name
+- (fix) player selected for repair, is removed from list of robots Out-list and add to In-list 
+- change player dialog: robots out for repair can only return after being a minimum time 
+  out of the field (this can be set via configuration file) or immediately during Pre-game or half-time.
+- change player dialog: robots out due to temporary sent-off can only return after being a minimum time 
+  out of the field.
+- time for temporary sent off can be set via configuration file.    
+- multi-cast address can be set via configuration-file.  
+- Clarify some labels at Game setup tab.
+- Cards can only be awarded to players on the field.
+- Player will be sent off automatically temporary after a 2nd yellow card or for the 
+  remaining of the game in case of a 3rd yellow card or a red card 
+- Request is sent to return to the field for a player after a card who sent the player off the field is canceled. 
+- (fix) cards can be canceled in pre-game stage.
+- (Protocol 2010) GameInfo is now encapsulated in a RefBoxEvent
+- (Protocol 2010) GameInfo provide much more information.
+- Overview of players on the field and bench is added in the game command tab (background color is card color depended).
+
+MSL Refbox 2010 - version 1.01 (Release on: 2009-08-12)
+=======================================================
+- Using a public available subversion repository (https://msl-refbox.svn.sourceforge.net/svnroot/msl-refbox/trunk)
+- Using maven2 as build tool (compiler and managing the dependencies). 
+- Deployment of the project became 1 zip file. This zip-file contains the binaries, the required libraries and the source files. 
+- Documentation for developpers is added (in doc-directory)
+- The MSL refbox supports 2 protocols: protocol 2009 and protocol 2010. 
+  - Protocol 2009 is the character based protocol as used in Graz. 
+  - Protocol 2010 is an XML based protocol (defined in a XSD), this is the previous proposed protocol 2008 updated with the parking functionality.
+- The MSL refbox support 2 types of communication: peer-to-peer (TCP/IP) and a multicast (default: multicast is enabled). 
+  (this is configurable via the configuration file)
+- Test code is added. (verified in build process)
+- Quality checks are possible via build (mvn site dashboard:dashboard). Tools as PMD, PMD-CPD, checkStyle, findBugs, cobertura are runned.
+- Enlarge the state window a little at the game command tab.
+- Highlight the kick-off for the correct team at the beginning of the second half 
+- substitute / repair / entrance functionality is added.
+- a second yellow card: 2 minutes sent off.
+- a red card: completely sent off.
+- After 3rd sent off the rest of the game (like red).
+- Cards, a third yellow card is not detected as a red one: still 3rd yellow card (but warning to send it off).
+- Cards: After a third yellow card, more cards can be given. Add warning that it should be out of play
+- Make it possible to specify the substitution of players during a game
+  and keep track of the number of substitutions performed by each team.  
+- improving administration of players at start (which is on the field, which is on the bench) 
+- (internal) update version of used tooling
+  
+
+MSL Refbox 2008 - version 1.19 (Release on: 2008-05-22)
+=======================================================
+- Introduction of a XML-based protocol (defined in XSD).
+- Introduction of test client for receiving XML messages
+- Card administration (card can be awarded before kickoff, improve warning when player must be sent-off).
+- Teams can be switch sides (left-right) in the GUI

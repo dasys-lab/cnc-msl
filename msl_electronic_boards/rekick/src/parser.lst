@@ -1,0 +1,820 @@
+   1               		.file	"parser.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  92               		.data
+  93               	.LC0:
+  94 0000 4552 5220 		.string	"ERR DATE"
+  94      4441 5445 
+  94      00
+  95               	.LC1:
+  96 0009 4552 5220 		.string	"ERR NAN"
+  96      4E41 4E00 
+  97               	.LC2:
+  98 0011 6E74 2564 		.string	"nt%d\n"
+  98      0A00 
+  99               	.LC3:
+ 100 0017 5265 6C65 		.string	"Release"
+ 100      6173 6500 
+ 101               	.LC4:
+ 102 001f 4552 5220 		.string	"ERR IMPL"
+ 102      494D 504C 
+ 102      00
+ 103               		.text
+ 106               	.global	parse_manual
+ 108               	parse_manual:
+   1:parser.c      **** #include <stdio.h>
+   2:parser.c      **** #include <string.h>
+   3:parser.c      **** #include <util/delay.h>
+   4:parser.c      **** 
+   5:parser.c      **** #include "mcp2515.h"
+   6:parser.c      **** #include "canprint.h"
+   7:parser.c      **** #include "booster.h"
+   8:parser.c      **** #include "kicker.h"
+   9:parser.c      **** #include "timer.h"
+  10:parser.c      **** #include "ports.h"
+  11:parser.c      **** #include "global.h"
+  12:parser.c      **** #include "defaults.h"
+  13:parser.c      **** #include "version.h"
+  14:parser.c      **** 
+  15:parser.c      **** #define STRING(a)	# a
+  16:parser.c      **** #define XSTRING(s)	STRING(s)
+  17:parser.c      **** 
+  18:parser.c      **** // prototypes
+  19:parser.c      **** void parse_default(tExtendedCAN *m);
+  20:parser.c      **** void parse_manual(tExtendedCAN *m);
+  21:parser.c      **** 
+  22:parser.c      **** // globales
+  23:parser.c      **** void (*parse_data)(tExtendedCAN *) = parse_default;
+  24:parser.c      **** uint8_t release_time = 50;
+  25:parser.c      **** 
+  26:parser.c      **** void print_voltage(void) {
+  27:parser.c      **** 	
+  28:parser.c      **** 	char str[20];
+  29:parser.c      **** 	
+  30:parser.c      **** 	sprintf(str, "%dV", get_capacitors_voltage());
+  31:parser.c      **** 	debug(str);
+  32:parser.c      **** }
+  33:parser.c      **** 
+  34:parser.c      **** void clear_receive_buffer(void) {
+  35:parser.c      **** 
+  36:parser.c      **** 	tExtendedCAN reply;
+  37:parser.c      **** 
+  38:parser.c      **** 	while (mcp2515_check_message())
+  39:parser.c      **** 		mcp2515_get_extmessage(&reply);
+  40:parser.c      **** }
+  41:parser.c      **** 
+  42:parser.c      **** void message_handler(void) {
+  43:parser.c      **** 
+  44:parser.c      **** 	tExtendedCAN reply;
+  45:parser.c      **** 
+  46:parser.c      **** 	if (mcp2515_check_message()) {
+  47:parser.c      **** 		mcp2515_get_extmessage(&reply);
+  48:parser.c      **** 		// softwarefilter
+  49:parser.c      **** 		if (reply.id[3] == REKICK_ID) {
+  50:parser.c      **** 			parse_data(&reply);
+  51:parser.c      **** 		}
+  52:parser.c      **** 
+  53:parser.c      **** 	}
+  54:parser.c      **** }
+  55:parser.c      **** 
+  56:parser.c      **** void send_version(void) {
+  57:parser.c      **** 
+  58:parser.c      **** 	char *version = "RK" XSTRING(MAJOR) "." XSTRING(MINOR);
+  59:parser.c      **** 	uint8_t len = strlen(version);
+  60:parser.c      **** 
+  61:parser.c      **** 	if (len > 7)
+  62:parser.c      **** 		len = 7;
+  63:parser.c      **** 
+  64:parser.c      **** 	can_put_cmd(CMD_VERSION, (uint8_t*) version, len);
+  65:parser.c      **** 
+  66:parser.c      **** 	return;
+  67:parser.c      **** }
+  68:parser.c      **** 
+  69:parser.c      **** void parse_default(tExtendedCAN *m) {
+  70:parser.c      **** 
+  71:parser.c      **** 	uint16_t tmp = 0;
+  72:parser.c      **** 
+  73:parser.c      **** 	switch (m->data[0]) {
+  74:parser.c      **** 		case CMD_PING:
+  75:parser.c      **** 			last_heartbeat = timer_get_ms();
+  76:parser.c      **** 			can_put_cmd(CMD_PONG, NULL, 0);
+  77:parser.c      **** 			break;
+  78:parser.c      **** 		case CMD_ROTATE:
+  79:parser.c      **** 			if (m->header.length == 2)
+  80:parser.c      **** 				kicker_rotate_servo(m->data[1]);
+  81:parser.c      **** 			break;
+  82:parser.c      **** 		case CMD_KICK:
+  83:parser.c      **** 			if (timer_get_ms() > 1000) {
+  84:parser.c      **** 				if (m->header.length == 2)
+  85:parser.c      **** 					kicker_release(m->data[1]);
+  86:parser.c      **** 				else if (m->header.length == 3)
+  87:parser.c      **** 					kicker_release_forced(m->data[1], m->data[2]);
+  88:parser.c      **** 			}
+  89:parser.c      **** 			break;
+  90:parser.c      **** 		case CMD_SET_PULSE_WIDTH:
+  91:parser.c      **** 			if (m->header.length == 7) {
+  92:parser.c      **** 				tmp = (m->data[1] << 8) + m->data[2];
+  93:parser.c      **** 				kicker_set_servo_pos(1, tmp);
+  94:parser.c      **** 				tmp = (m->data[3] << 8) + m->data[4];
+  95:parser.c      **** 				kicker_set_servo_pos(2, tmp);
+  96:parser.c      **** 				tmp = (m->data[5] << 8) + m->data[6];
+  97:parser.c      **** 				kicker_set_servo_pos(3, tmp);
+  98:parser.c      **** 			}
+  99:parser.c      **** 			break;
+ 100:parser.c      **** 		case CMD_SET_MAX_VOLTAGE:
+ 101:parser.c      **** 			if (m->header.length == 1) {
+ 102:parser.c      **** 				booster_set_max_voltage(m->data[1]);
+ 103:parser.c      **** 			}
+ 104:parser.c      **** 			break;
+ 105:parser.c      **** 		case CMD_GET_VERSION:
+ 106:parser.c      **** 			send_version();
+ 107:parser.c      **** 			break;
+ 108:parser.c      **** 		case CMD_GET_STATE:
+ 109:parser.c      **** 			booster_send_info();
+ 110:parser.c      **** 			break;
+ 111:parser.c      **** 		case 'm':
+ 112:parser.c      **** 			debug("manual");
+ 113:parser.c      **** 			timer_register(print_voltage, 1000);
+ 114:parser.c      **** 			manual_mode = true;
+ 115:parser.c      **** 			parse_data = parse_manual;
+ 116:parser.c      **** 			break;
+ 117:parser.c      **** 		default:
+ 118:parser.c      **** 			error("Command not implemented");
+ 119:parser.c      **** 			break;
+ 120:parser.c      **** 	}
+ 121:parser.c      **** }
+ 122:parser.c      **** 
+ 123:parser.c      **** void parse_manual(tExtendedCAN *m) {
+ 110               	.LM0:
+ 111               	.LFBB1:
+ 112               	/* prologue: frame size=8 */
+ 113 0000 0F93      		push r16
+ 114 0002 1F93      		push r17
+ 115 0004 CF93      		push r28
+ 116 0006 DF93      		push r29
+ 117 0008 CDB7      		in r28,__SP_L__
+ 118 000a DEB7      		in r29,__SP_H__
+ 119 000c 2897      		sbiw r28,8
+ 120 000e 0FB6      		in __tmp_reg__,__SREG__
+ 121 0010 F894      		cli
+ 122 0012 DEBF      		out __SP_H__,r29
+ 123 0014 0FBE      		out __SREG__,__tmp_reg__
+ 124 0016 CDBF      		out __SP_L__,r28
+ 125               	/* prologue end (size=12) */
+ 126 0018 DC01      		movw r26,r24
+ 124:parser.c      **** 
+ 125:parser.c      **** 	uint16_t tmp = 0;
+ 126:parser.c      **** 	uint8_t i;
+ 127:parser.c      **** 	char str[8];
+ 128:parser.c      **** 
+ 129:parser.c      **** 	if (m->data[0] == 's') {
+ 128               	.LM1:
+ 129 001a FC01      		movw r30,r24
+ 130 001c 8581      		ldd r24,Z+5
+ 131 001e 8337      		cpi r24,lo8(115)
+ 132 0020 01F0      		breq .+2
+ 133 0022 00C0      		rjmp .L2
+ 130:parser.c      **** 		for (i = 1; i < m->header.length; i++) {
+ 135               	.LM2:
+ 136 0024 8481      		ldd r24,Z+4
+ 137 0026 8695      		lsr r24
+ 138 0028 8F70      		andi r24,lo8(15)
+ 139 002a 682F      		mov r22,r24
+ 140 002c 7727      		clr r23
+ 141 002e 20E0      		ldi r18,lo8(0)
+ 142 0030 30E0      		ldi r19,hi8(0)
+ 143 0032 51E0      		ldi r21,lo8(1)
+ 144 0034 00C0      		rjmp .L4
+ 145               	.L5:
+ 131:parser.c      **** 			if (m->data[i] >= 0x30 && m->data[i] <= 0x39) {
+ 147               	.LM3:
+ 148 0036 EA0F      		add r30,r26
+ 149 0038 FB1F      		adc r31,r27
+ 150 003a 4581      		ldd r20,Z+5
+ 151 003c 842F      		mov r24,r20
+ 152 003e 8053      		subi r24,lo8(-(-48))
+ 153 0040 8A30      		cpi r24,lo8(10)
+ 154 0042 00F4      		brsh .L6
+ 132:parser.c      **** 				tmp = tmp * 10 + (m->data[i] - 0x30);
+ 156               	.LM4:
+ 157 0044 C901      		movw r24,r18
+ 158 0046 F3E0      		ldi r31,3
+ 159 0048 880F      	1:	lsl r24
+ 160 004a 991F      		rol r25
+ 161 004c FA95      		dec r31
+ 162 004e 01F4      		brne 1b
+ 163 0050 220F      		lsl r18
+ 164 0052 331F      		rol r19
+ 165 0054 280F      		add r18,r24
+ 166 0056 391F      		adc r19,r25
+ 167 0058 2053      		subi r18,lo8(-(-48))
+ 168 005a 3040      		sbci r19,hi8(-(-48))
+ 169 005c 240F      		add r18,r20
+ 170 005e 311D      		adc r19,__zero_reg__
+ 133:parser.c      **** 				if (tmp > 254) {
+ 172               	.LM5:
+ 173 0060 2F3F      		cpi r18,255
+ 174 0062 3105      		cpc r19,__zero_reg__
+ 175 0064 00F0      		brlo .L8
+ 134:parser.c      **** 					error("ERR DATE");
+ 177               	.LM6:
+ 178 0066 80E0      		ldi r24,lo8(.LC0)
+ 179 0068 90E0      		ldi r25,hi8(.LC0)
+ 180 006a 00C0      		rjmp .L25
+ 181               	.L6:
+ 135:parser.c      **** 					return;
+ 136:parser.c      **** 				}
+ 137:parser.c      **** 			}
+ 138:parser.c      **** 			else {
+ 139:parser.c      **** 				error("ERR NAN");
+ 183               	.LM7:
+ 184 006c 80E0      		ldi r24,lo8(.LC1)
+ 185 006e 90E0      		ldi r25,hi8(.LC1)
+ 186 0070 00C0      		rjmp .L25
+ 187               	.L8:
+ 189               	.LM8:
+ 190 0072 5F5F      		subi r21,lo8(-(1))
+ 191               	.L4:
+ 192 0074 E52F      		mov r30,r21
+ 193 0076 FF27      		clr r31
+ 194 0078 E617      		cp r30,r22
+ 195 007a F707      		cpc r31,r23
+ 196 007c 04F0      		brlt .L5
+ 140:parser.c      **** 				return;
+ 141:parser.c      **** 			}
+ 142:parser.c      **** 		}
+ 143:parser.c      **** 		release_time = tmp;
+ 198               	.LM9:
+ 199 007e 2093 0000 		sts release_time,r18
+ 144:parser.c      **** 		sprintf(str, "nt%d\n", tmp);
+ 201               	.LM10:
+ 202 0082 3F93      		push r19
+ 203 0084 2F93      		push r18
+ 204 0086 80E0      		ldi r24,lo8(.LC2)
+ 205 0088 90E0      		ldi r25,hi8(.LC2)
+ 206 008a 9F93      		push r25
+ 207 008c 8F93      		push r24
+ 208 008e 8E01      		movw r16,r28
+ 209 0090 0F5F      		subi r16,lo8(-(1))
+ 210 0092 1F4F      		sbci r17,hi8(-(1))
+ 211 0094 1F93      		push r17
+ 212 0096 0F93      		push r16
+ 213 0098 0E94 0000 		call sprintf
+ 145:parser.c      **** 		debug(str);
+ 215               	.LM11:
+ 216 009c C801      		movw r24,r16
+ 217 009e 0E94 0000 		call debug
+ 218 00a2 8DB7      		in r24,__SP_L__
+ 219 00a4 9EB7      		in r25,__SP_H__
+ 220 00a6 0696      		adiw r24,6
+ 221 00a8 0FB6      		in __tmp_reg__,__SREG__
+ 222 00aa F894      		cli
+ 223 00ac 9EBF      		out __SP_H__,r25
+ 224 00ae 0FBE      		out __SREG__,__tmp_reg__
+ 225 00b0 8DBF      		out __SP_L__,r24
+ 226 00b2 00C0      		rjmp .L24
+ 227               	.L2:
+ 146:parser.c      **** 	}
+ 147:parser.c      **** 	else if (m->data[0] == ' ') {
+ 229               	.LM12:
+ 230 00b4 8032      		cpi r24,lo8(32)
+ 231 00b6 01F4      		brne .L12
+ 148:parser.c      **** 		if (release_time > 0)
+ 233               	.LM13:
+ 234 00b8 8091 0000 		lds r24,release_time
+ 235 00bc 8823      		tst r24
+ 236 00be 01F0      		breq .L14
+ 149:parser.c      **** 			kicker_release(release_time);
+ 238               	.LM14:
+ 239 00c0 0E94 0000 		call kicker_release
+ 240               	.L14:
+ 150:parser.c      **** 		debug("Release");
+ 242               	.LM15:
+ 243 00c4 80E0      		ldi r24,lo8(.LC3)
+ 244 00c6 90E0      		ldi r25,hi8(.LC3)
+ 245 00c8 0E94 0000 		call debug
+ 246 00cc 00C0      		rjmp .L24
+ 247               	.L12:
+ 151:parser.c      **** 	}
+ 152:parser.c      **** 	else if (m->data[0] == 'e') {
+ 249               	.LM16:
+ 250 00ce 8536      		cpi r24,lo8(101)
+ 251 00d0 01F4      		brne .L16
+ 153:parser.c      **** 		auto_boost = true;
+ 253               	.LM17:
+ 254 00d2 81E0      		ldi r24,lo8(1)
+ 255 00d4 8093 0000 		sts auto_boost,r24
+ 256 00d8 00C0      		rjmp .L24
+ 257               	.L16:
+ 154:parser.c      **** 	}
+ 155:parser.c      **** 	else if (m->data[0] == 'w') {
+ 259               	.LM18:
+ 260 00da 8737      		cpi r24,lo8(119)
+ 261 00dc 01F4      		brne .L18
+ 156:parser.c      **** 		auto_boost = false;
+ 263               	.LM19:
+ 264 00de 1092 0000 		sts auto_boost,__zero_reg__
+ 157:parser.c      **** 		booster_pwm_enable();
+ 266               	.LM20:
+ 267 00e2 0E94 0000 		call booster_pwm_enable
+ 268 00e6 00C0      		rjmp .L24
+ 269               	.L18:
+ 158:parser.c      **** 	}
+ 159:parser.c      **** 	else if (m->data[0] == 'q') {
+ 271               	.LM21:
+ 272 00e8 8137      		cpi r24,lo8(113)
+ 273 00ea 01F4      		brne .L20
+ 160:parser.c      **** 		auto_boost = false;
+ 275               	.LM22:
+ 276 00ec 1092 0000 		sts auto_boost,__zero_reg__
+ 161:parser.c      **** 		booster_pwm_disable();
+ 278               	.LM23:
+ 279 00f0 0E94 0000 		call booster_pwm_disable
+ 280 00f4 00C0      		rjmp .L24
+ 281               	.L20:
+ 162:parser.c      **** 	}
+ 163:parser.c      **** 	else if (m->data[0] == 'a') {
+ 283               	.LM24:
+ 284 00f6 8136      		cpi r24,lo8(97)
+ 285 00f8 01F4      		brne .L22
+ 164:parser.c      **** 		timer_deregister(print_voltage);
+ 287               	.LM25:
+ 288 00fa 80E0      		ldi r24,lo8(pm(print_voltage))
+ 289 00fc 90E0      		ldi r25,hi8(pm(print_voltage))
+ 290 00fe 0E94 0000 		call timer_deregister
+ 165:parser.c      **** 		auto_boost = true;
+ 292               	.LM26:
+ 293 0102 81E0      		ldi r24,lo8(1)
+ 294 0104 8093 0000 		sts auto_boost,r24
+ 166:parser.c      **** 		manual_mode = false;
+ 296               	.LM27:
+ 297 0108 1092 0000 		sts manual_mode,__zero_reg__
+ 167:parser.c      **** 		parse_data = parse_default;
+ 299               	.LM28:
+ 300 010c 80E0      		ldi r24,lo8(pm(parse_default))
+ 301 010e 90E0      		ldi r25,hi8(pm(parse_default))
+ 302 0110 9093 0000 		sts (parse_data)+1,r25
+ 303 0114 8093 0000 		sts parse_data,r24
+ 304 0118 00C0      		rjmp .L24
+ 305               	.L22:
+ 168:parser.c      **** 	}
+ 169:parser.c      **** 	else {
+ 170:parser.c      **** 		error("ERR IMPL");
+ 307               	.LM29:
+ 308 011a 80E0      		ldi r24,lo8(.LC4)
+ 309 011c 90E0      		ldi r25,hi8(.LC4)
+ 310               	.L25:
+ 311 011e 0E94 0000 		call error
+ 312               	.L24:
+ 313               	/* epilogue: frame size=8 */
+ 314 0122 2896      		adiw r28,8
+ 315 0124 0FB6      		in __tmp_reg__,__SREG__
+ 316 0126 F894      		cli
+ 317 0128 DEBF      		out __SP_H__,r29
+ 318 012a 0FBE      		out __SREG__,__tmp_reg__
+ 319 012c CDBF      		out __SP_L__,r28
+ 320 012e DF91      		pop r29
+ 321 0130 CF91      		pop r28
+ 322 0132 1F91      		pop r17
+ 323 0134 0F91      		pop r16
+ 324 0136 0895      		ret
+ 325               	/* epilogue end (size=11) */
+ 326               	/* function parse_manual size 156 (133) */
+ 333               	.Lscope1:
+ 334               		.data
+ 335               	.LC5:
+ 336 0028 524B 312E 		.string	"RK1.0"
+ 336      3000 
+ 337               		.text
+ 339               	.global	send_version
+ 341               	send_version:
+ 343               	.LM30:
+ 344               	.LFBB2:
+ 345               	/* prologue: frame size=0 */
+ 346               	/* prologue end (size=0) */
+ 348               	.LM31:
+ 349 0138 45E0      		ldi r20,lo8(5)
+ 350 013a 60E0      		ldi r22,lo8(.LC5)
+ 351 013c 70E0      		ldi r23,hi8(.LC5)
+ 352 013e 83EF      		ldi r24,lo8(-13)
+ 353 0140 0E94 0000 		call can_put_cmd
+ 354               	/* epilogue: frame size=0 */
+ 355 0144 0895      		ret
+ 356               	/* epilogue end (size=1) */
+ 357               	/* function send_version size 7 (6) */
+ 359               	.Lscope2:
+ 360               		.data
+ 361               	.LC6:
+ 362 002e 6D61 6E75 		.string	"manual"
+ 362      616C 00
+ 363               	.LC7:
+ 364 0035 436F 6D6D 		.string	"Command not implemented"
+ 364      616E 6420 
+ 364      6E6F 7420 
+ 364      696D 706C 
+ 364      656D 656E 
+ 365               		.text
+ 368               	.global	parse_default
+ 370               	parse_default:
+ 372               	.LM32:
+ 373               	.LFBB3:
+ 374               	/* prologue: frame size=0 */
+ 375 0146 CF93      		push r28
+ 376 0148 DF93      		push r29
+ 377               	/* prologue end (size=2) */
+ 378 014a EC01      		movw r28,r24
+ 380               	.LM33:
+ 381 014c 8D81      		ldd r24,Y+5
+ 382 014e 8033      		cpi r24,lo8(48)
+ 383 0150 01F4      		brne .+2
+ 384 0152 00C0      		rjmp .L33
+ 386               	.LM34:
+ 387 0154 8133      		cpi r24,lo8(49)
+ 388 0156 00F4      		brsh .L38
+ 389 0158 8230      		cpi r24,lo8(2)
+ 390 015a 01F0      		breq .L31
+ 391 015c 8330      		cpi r24,lo8(3)
+ 392 015e 01F0      		breq .L32
+ 393 0160 8130      		cpi r24,lo8(1)
+ 394 0162 01F0      		breq .+2
+ 395 0164 00C0      		rjmp .L29
+ 396 0166 00C0      		rjmp .L30
+ 397               	.L38:
+ 398 0168 8034      		cpi r24,lo8(64)
+ 399 016a 01F4      		brne .+2
+ 400 016c 00C0      		rjmp .L35
+ 401 016e 8134      		cpi r24,lo8(65)
+ 402 0170 00F4      		brsh .L39
+ 403 0172 8133      		cpi r24,lo8(49)
+ 404 0174 01F0      		breq .+2
+ 405 0176 00C0      		rjmp .L29
+ 406 0178 00C0      		rjmp .L34
+ 407               	.L39:
+ 408 017a 8134      		cpi r24,lo8(65)
+ 409 017c 01F4      		brne .+2
+ 410 017e 00C0      		rjmp .L36
+ 411 0180 8D36      		cpi r24,lo8(109)
+ 412 0182 01F0      		breq .+2
+ 413 0184 00C0      		rjmp .L29
+ 414 0186 00C0      		rjmp .L37
+ 415               	.L30:
+ 417               	.LM35:
+ 418 0188 0E94 0000 		call timer_get_ms
+ 419 018c 6093 0000 		sts last_heartbeat,r22
+ 420 0190 7093 0000 		sts (last_heartbeat)+1,r23
+ 421 0194 8093 0000 		sts (last_heartbeat)+2,r24
+ 422 0198 9093 0000 		sts (last_heartbeat)+3,r25
+ 424               	.LM36:
+ 425 019c 40E0      		ldi r20,lo8(0)
+ 426 019e 60E0      		ldi r22,lo8(0)
+ 427 01a0 70E0      		ldi r23,hi8(0)
+ 428 01a2 81EF      		ldi r24,lo8(-15)
+ 429 01a4 0E94 0000 		call can_put_cmd
+ 430 01a8 00C0      		rjmp .L48
+ 431               	.L31:
+ 433               	.LM37:
+ 434 01aa 8C81      		ldd r24,Y+4
+ 435 01ac 8E71      		andi r24,lo8(30)
+ 436 01ae 8430      		cpi r24,lo8(4)
+ 437 01b0 01F0      		breq .+2
+ 438 01b2 00C0      		rjmp .L48
+ 440               	.LM38:
+ 441 01b4 8E81      		ldd r24,Y+6
+ 442 01b6 0E94 0000 		call kicker_rotate_servo
+ 443 01ba 00C0      		rjmp .L48
+ 444               	.L32:
+ 446               	.LM39:
+ 447 01bc 0E94 0000 		call timer_get_ms
+ 448 01c0 695E      		subi r22,lo8(1001)
+ 449 01c2 7340      		sbci r23,hi8(1001)
+ 450 01c4 8040      		sbci r24,hlo8(1001)
+ 451 01c6 9040      		sbci r25,hhi8(1001)
+ 452 01c8 00F4      		brsh .+2
+ 453 01ca 00C0      		rjmp .L48
+ 455               	.LM40:
+ 456 01cc 8C81      		ldd r24,Y+4
+ 457 01ce 8E71      		andi r24,lo8(30)
+ 458 01d0 8430      		cpi r24,lo8(4)
+ 459 01d2 01F4      		brne .L43
+ 461               	.LM41:
+ 462 01d4 8E81      		ldd r24,Y+6
+ 463 01d6 0E94 0000 		call kicker_release
+ 464 01da 00C0      		rjmp .L48
+ 465               	.L43:
+ 467               	.LM42:
+ 468 01dc 8630      		cpi r24,lo8(6)
+ 469 01de 01F0      		breq .+2
+ 470 01e0 00C0      		rjmp .L48
+ 472               	.LM43:
+ 473 01e2 6F81      		ldd r22,Y+7
+ 474 01e4 8E81      		ldd r24,Y+6
+ 475 01e6 0E94 0000 		call kicker_release_forced
+ 476 01ea 00C0      		rjmp .L48
+ 477               	.L33:
+ 479               	.LM44:
+ 480 01ec 8C81      		ldd r24,Y+4
+ 481 01ee 8E71      		andi r24,lo8(30)
+ 482 01f0 8E30      		cpi r24,lo8(14)
+ 483 01f2 01F0      		breq .+2
+ 484 01f4 00C0      		rjmp .L48
+ 486               	.LM45:
+ 487 01f6 6E81      		ldd r22,Y+6
+ 488 01f8 7727      		clr r23
+ 489 01fa 762F      		mov r23,r22
+ 490 01fc 6627      		clr r22
+ 491 01fe 8F81      		ldd r24,Y+7
+ 492 0200 680F      		add r22,r24
+ 493 0202 711D      		adc r23,__zero_reg__
+ 494 0204 81E0      		ldi r24,lo8(1)
+ 495 0206 0E94 0000 		call kicker_set_servo_pos
+ 497               	.LM46:
+ 498 020a 6885      		ldd r22,Y+8
+ 499 020c 7727      		clr r23
+ 500 020e 762F      		mov r23,r22
+ 501 0210 6627      		clr r22
+ 502 0212 8985      		ldd r24,Y+9
+ 503 0214 680F      		add r22,r24
+ 504 0216 711D      		adc r23,__zero_reg__
+ 505 0218 82E0      		ldi r24,lo8(2)
+ 506 021a 0E94 0000 		call kicker_set_servo_pos
+ 508               	.LM47:
+ 509 021e 6A85      		ldd r22,Y+10
+ 510 0220 7727      		clr r23
+ 511 0222 762F      		mov r23,r22
+ 512 0224 6627      		clr r22
+ 513 0226 8B85      		ldd r24,Y+11
+ 514 0228 680F      		add r22,r24
+ 515 022a 711D      		adc r23,__zero_reg__
+ 516 022c 83E0      		ldi r24,lo8(3)
+ 517 022e 0E94 0000 		call kicker_set_servo_pos
+ 518 0232 00C0      		rjmp .L48
+ 519               	.L34:
+ 521               	.LM48:
+ 522 0234 8C81      		ldd r24,Y+4
+ 523 0236 8E71      		andi r24,lo8(30)
+ 524 0238 8230      		cpi r24,lo8(2)
+ 525 023a 01F4      		brne .L48
+ 527               	.LM49:
+ 528 023c 8E81      		ldd r24,Y+6
+ 529 023e 0E94 0000 		call booster_set_max_voltage
+ 530 0242 00C0      		rjmp .L48
+ 531               	.L36:
+ 533               	.LM50:
+ 534 0244 0E94 0000 		call send_version
+ 535 0248 00C0      		rjmp .L48
+ 536               	.L35:
+ 538               	.LM51:
+ 539 024a 0E94 0000 		call booster_send_info
+ 540 024e 00C0      		rjmp .L48
+ 541               	.L37:
+ 543               	.LM52:
+ 544 0250 80E0      		ldi r24,lo8(.LC6)
+ 545 0252 90E0      		ldi r25,hi8(.LC6)
+ 546 0254 0E94 0000 		call debug
+ 548               	.LM53:
+ 549 0258 68EE      		ldi r22,lo8(1000)
+ 550 025a 73E0      		ldi r23,hi8(1000)
+ 551 025c 80E0      		ldi r24,lo8(pm(print_voltage))
+ 552 025e 90E0      		ldi r25,hi8(pm(print_voltage))
+ 553 0260 0E94 0000 		call timer_register
+ 555               	.LM54:
+ 556 0264 81E0      		ldi r24,lo8(1)
+ 557 0266 8093 0000 		sts manual_mode,r24
+ 559               	.LM55:
+ 560 026a 80E0      		ldi r24,lo8(pm(parse_manual))
+ 561 026c 90E0      		ldi r25,hi8(pm(parse_manual))
+ 562 026e 9093 0000 		sts (parse_data)+1,r25
+ 563 0272 8093 0000 		sts parse_data,r24
+ 564 0276 00C0      		rjmp .L48
+ 565               	.L29:
+ 567               	.LM56:
+ 568 0278 80E0      		ldi r24,lo8(.LC7)
+ 569 027a 90E0      		ldi r25,hi8(.LC7)
+ 570 027c 0E94 0000 		call error
+ 571               	.L48:
+ 572               	/* epilogue: frame size=0 */
+ 573 0280 DF91      		pop r29
+ 574 0282 CF91      		pop r28
+ 575 0284 0895      		ret
+ 576               	/* epilogue end (size=3) */
+ 577               	/* function parse_default size 163 (158) */
+ 579               	.Lscope3:
+ 581               	.global	message_handler
+ 583               	message_handler:
+ 585               	.LM57:
+ 586               	.LFBB4:
+ 587               	/* prologue: frame size=13 */
+ 588 0286 0F93      		push r16
+ 589 0288 1F93      		push r17
+ 590 028a CF93      		push r28
+ 591 028c DF93      		push r29
+ 592 028e CDB7      		in r28,__SP_L__
+ 593 0290 DEB7      		in r29,__SP_H__
+ 594 0292 2D97      		sbiw r28,13
+ 595 0294 0FB6      		in __tmp_reg__,__SREG__
+ 596 0296 F894      		cli
+ 597 0298 DEBF      		out __SP_H__,r29
+ 598 029a 0FBE      		out __SREG__,__tmp_reg__
+ 599 029c CDBF      		out __SP_L__,r28
+ 600               	/* prologue end (size=12) */
+ 602               	.LM58:
+ 603 029e 0E94 0000 		call mcp2515_check_message
+ 604 02a2 8823      		tst r24
+ 605 02a4 01F0      		breq .L53
+ 607               	.LM59:
+ 608 02a6 8E01      		movw r16,r28
+ 609 02a8 0F5F      		subi r16,lo8(-(1))
+ 610 02aa 1F4F      		sbci r17,hi8(-(1))
+ 611 02ac C801      		movw r24,r16
+ 612 02ae 0E94 0000 		call mcp2515_get_extmessage
+ 614               	.LM60:
+ 615 02b2 8C81      		ldd r24,Y+4
+ 616 02b4 8036      		cpi r24,lo8(96)
+ 617 02b6 01F4      		brne .L53
+ 619               	.LM61:
+ 620 02b8 E091 0000 		lds r30,parse_data
+ 621 02bc F091 0000 		lds r31,(parse_data)+1
+ 622 02c0 C801      		movw r24,r16
+ 623 02c2 0995      		icall
+ 624               	.L53:
+ 625               	/* epilogue: frame size=13 */
+ 626 02c4 2D96      		adiw r28,13
+ 627 02c6 0FB6      		in __tmp_reg__,__SREG__
+ 628 02c8 F894      		cli
+ 629 02ca DEBF      		out __SP_H__,r29
+ 630 02cc 0FBE      		out __SREG__,__tmp_reg__
+ 631 02ce CDBF      		out __SP_L__,r28
+ 632 02d0 DF91      		pop r29
+ 633 02d2 CF91      		pop r28
+ 634 02d4 1F91      		pop r17
+ 635 02d6 0F91      		pop r16
+ 636 02d8 0895      		ret
+ 637               	/* epilogue end (size=11) */
+ 638               	/* function message_handler size 42 (19) */
+ 643               	.Lscope4:
+ 645               	.global	clear_receive_buffer
+ 647               	clear_receive_buffer:
+ 649               	.LM62:
+ 650               	.LFBB5:
+ 651               	/* prologue: frame size=13 */
+ 652 02da 0F93      		push r16
+ 653 02dc 1F93      		push r17
+ 654 02de CF93      		push r28
+ 655 02e0 DF93      		push r29
+ 656 02e2 CDB7      		in r28,__SP_L__
+ 657 02e4 DEB7      		in r29,__SP_H__
+ 658 02e6 2D97      		sbiw r28,13
+ 659 02e8 0FB6      		in __tmp_reg__,__SREG__
+ 660 02ea F894      		cli
+ 661 02ec DEBF      		out __SP_H__,r29
+ 662 02ee 0FBE      		out __SREG__,__tmp_reg__
+ 663 02f0 CDBF      		out __SP_L__,r28
+ 664               	/* prologue end (size=12) */
+ 666               	.LM63:
+ 667 02f2 8E01      		movw r16,r28
+ 668 02f4 0F5F      		subi r16,lo8(-(1))
+ 669 02f6 1F4F      		sbci r17,hi8(-(1))
+ 670 02f8 00C0      		rjmp .L55
+ 671               	.L56:
+ 673               	.LM64:
+ 674 02fa C801      		movw r24,r16
+ 675 02fc 0E94 0000 		call mcp2515_get_extmessage
+ 676               	.L55:
+ 678               	.LM65:
+ 679 0300 0E94 0000 		call mcp2515_check_message
+ 680 0304 8823      		tst r24
+ 681 0306 01F4      		brne .L56
+ 682               	/* epilogue: frame size=13 */
+ 683 0308 2D96      		adiw r28,13
+ 684 030a 0FB6      		in __tmp_reg__,__SREG__
+ 685 030c F894      		cli
+ 686 030e DEBF      		out __SP_H__,r29
+ 687 0310 0FBE      		out __SREG__,__tmp_reg__
+ 688 0312 CDBF      		out __SP_L__,r28
+ 689 0314 DF91      		pop r29
+ 690 0316 CF91      		pop r28
+ 691 0318 1F91      		pop r17
+ 692 031a 0F91      		pop r16
+ 693 031c 0895      		ret
+ 694               	/* epilogue end (size=11) */
+ 695               	/* function clear_receive_buffer size 34 (11) */
+ 700               	.Lscope5:
+ 701               		.data
+ 702               	.LC8:
+ 703 004d 2564 5600 		.string	"%dV"
+ 704               		.text
+ 706               	.global	print_voltage
+ 708               	print_voltage:
+ 710               	.LM66:
+ 711               	.LFBB6:
+ 712               	/* prologue: frame size=20 */
+ 713 031e 0F93      		push r16
+ 714 0320 1F93      		push r17
+ 715 0322 CF93      		push r28
+ 716 0324 DF93      		push r29
+ 717 0326 CDB7      		in r28,__SP_L__
+ 718 0328 DEB7      		in r29,__SP_H__
+ 719 032a 6497      		sbiw r28,20
+ 720 032c 0FB6      		in __tmp_reg__,__SREG__
+ 721 032e F894      		cli
+ 722 0330 DEBF      		out __SP_H__,r29
+ 723 0332 0FBE      		out __SREG__,__tmp_reg__
+ 724 0334 CDBF      		out __SP_L__,r28
+ 725               	/* prologue end (size=12) */
+ 727               	.LM67:
+ 728 0336 0E94 0000 		call get_capacitors_voltage
+ 729 033a 9F93      		push r25
+ 730 033c 8F93      		push r24
+ 731 033e 80E0      		ldi r24,lo8(.LC8)
+ 732 0340 90E0      		ldi r25,hi8(.LC8)
+ 733 0342 9F93      		push r25
+ 734 0344 8F93      		push r24
+ 735 0346 8E01      		movw r16,r28
+ 736 0348 0F5F      		subi r16,lo8(-(1))
+ 737 034a 1F4F      		sbci r17,hi8(-(1))
+ 738 034c 1F93      		push r17
+ 739 034e 0F93      		push r16
+ 740 0350 0E94 0000 		call sprintf
+ 742               	.LM68:
+ 743 0354 C801      		movw r24,r16
+ 744 0356 0E94 0000 		call debug
+ 745 035a 8DB7      		in r24,__SP_L__
+ 746 035c 9EB7      		in r25,__SP_H__
+ 747 035e 0696      		adiw r24,6
+ 748 0360 0FB6      		in __tmp_reg__,__SREG__
+ 749 0362 F894      		cli
+ 750 0364 9EBF      		out __SP_H__,r25
+ 751 0366 0FBE      		out __SREG__,__tmp_reg__
+ 752 0368 8DBF      		out __SP_L__,r24
+ 753               	/* epilogue: frame size=20 */
+ 754 036a 6496      		adiw r28,20
+ 755 036c 0FB6      		in __tmp_reg__,__SREG__
+ 756 036e F894      		cli
+ 757 0370 DEBF      		out __SP_H__,r29
+ 758 0372 0FBE      		out __SREG__,__tmp_reg__
+ 759 0374 CDBF      		out __SP_L__,r28
+ 760 0376 DF91      		pop r29
+ 761 0378 CF91      		pop r28
+ 762 037a 1F91      		pop r17
+ 763 037c 0F91      		pop r16
+ 764 037e 0895      		ret
+ 765               	/* epilogue end (size=11) */
+ 766               	/* function print_voltage size 49 (26) */
+ 771               	.Lscope6:
+ 772               	.global	parse_data
+ 773               		.data
+ 776               	parse_data:
+ 777 0051 0000      		.word	pm(parse_default)
+ 778               	.global	release_time
+ 781               	release_time:
+ 782 0053 32        		.byte	50
+ 785               		.text
+ 787               	.Letext0:
+ 788               	/* File "parser.c": code  451 = 0x01c3 ( 353), prologues  50, epilogues  48 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 parser.c
+     /tmp/ccSR8XnV.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccSR8XnV.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccSR8XnV.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccSR8XnV.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccSR8XnV.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccSR8XnV.s:108    .text:00000000 parse_manual
+     /tmp/ccSR8XnV.s:781    .data:00000053 release_time
+     /tmp/ccSR8XnV.s:708    .text:0000031e print_voltage
+     /tmp/ccSR8XnV.s:370    .text:00000146 parse_default
+     /tmp/ccSR8XnV.s:776    .data:00000051 parse_data
+     /tmp/ccSR8XnV.s:341    .text:00000138 send_version
+     /tmp/ccSR8XnV.s:583    .text:00000286 message_handler
+     /tmp/ccSR8XnV.s:647    .text:000002da clear_receive_buffer
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+sprintf
+debug
+kicker_release
+auto_boost
+booster_pwm_enable
+booster_pwm_disable
+timer_deregister
+manual_mode
+error
+can_put_cmd
+timer_get_ms
+last_heartbeat
+kicker_rotate_servo
+kicker_release_forced
+kicker_set_servo_pos
+booster_set_max_voltage
+booster_send_info
+timer_register
+mcp2515_check_message
+mcp2515_get_extmessage
+get_capacitors_voltage

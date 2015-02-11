@@ -1,0 +1,440 @@
+Archive member included because of file (symbol)
+
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_udivmodhi4.o)
+                              ./port.o (__udivmodhi4)
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+                              /usr/avr/lib/avr4/crtm8.o (exit)
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+                              ./main.o (__do_copy_data)
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+                              ./main.o (__do_clear_bss)
+/usr/avr/lib/avr4/libc.a(sprintf.o)
+                              ./main.o (sprintf)
+/usr/avr/lib/avr4/libc.a(vfprintf_std.o)
+                              /usr/avr/lib/avr4/libc.a(sprintf.o) (vfprintf)
+/usr/avr/lib/avr4/libc.a(strnlen_P.o)
+                              /usr/avr/lib/avr4/libc.a(vfprintf_std.o) (strnlen_P)
+/usr/avr/lib/avr4/libc.a(strnlen.o)
+                              /usr/avr/lib/avr4/libc.a(vfprintf_std.o) (strnlen)
+/usr/avr/lib/avr4/libc.a(fputc.o)
+                              /usr/avr/lib/avr4/libc.a(vfprintf_std.o) (fputc)
+/usr/avr/lib/avr4/libc.a(ultoa_invert.o)
+                              /usr/avr/lib/avr4/libc.a(vfprintf_std.o) (__ultoa_invert)
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_prologue.o)
+                              /usr/avr/lib/avr4/libc.a(sprintf.o) (__prologue_saves__)
+/usr/lib/gcc/avr/4.5.2/libgcc.a(_epilogue.o)
+                              /usr/avr/lib/avr4/libc.a(sprintf.o) (__epilogue_restores__)
+
+Allocating common symbols
+Common symbol       size              file
+
+timeoutState4       0x1               ./main.o
+uExtern             0x2               ./main.o
+time                0x1               ./main.o
+uIntern             0x2               ./main.o
+taster              0x1               ./main.o
+beepTime            0x1               ./main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x0000000000000000 0x0000000000002000 xr
+data             0x0000000000800060 0x000000000000ffa0 rw !x
+eeprom           0x0000000000810000 0x0000000000010000 rw !x
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD /usr/avr/lib/avr4/crtm8.o
+LOAD ./main.o
+LOAD ./port.o
+LOAD ./uart.o
+LOAD /usr/lib/gcc/avr/4.5.2/libgcc.a
+LOAD /usr/avr/lib/avr4/libc.a
+LOAD /usr/lib/gcc/avr/4.5.2/libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x0000000000000000     0x1288
+ *(.vectors)
+ .vectors       0x0000000000000000       0x26 /usr/avr/lib/avr4/crtm8.o
+                0x0000000000000000                __vectors
+                0x0000000000000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+                0x0000000000000026                . = ALIGN (0x2)
+                0x0000000000000026                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x0000000000000026        0x0 linker stubs
+ *(.trampolines*)
+                0x0000000000000026                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x0000000000000026                __ctors_start = .
+ *(.ctors)
+                0x0000000000000026                __ctors_end = .
+                0x0000000000000026                __dtors_start = .
+ *(.dtors)
+                0x0000000000000026                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x0000000000000026        0x0 /usr/avr/lib/avr4/crtm8.o
+                0x0000000000000026                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x0000000000000026        0xc /usr/avr/lib/avr4/crtm8.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x0000000000000032       0x18 /usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+                0x0000000000000032                __do_copy_data
+ .init4         0x000000000000004a       0x10 /usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+                0x000000000000004a                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x000000000000005a        0x4 /usr/avr/lib/avr4/crtm8.o
+ *(.init9)
+ *(.text)
+ .text          0x000000000000005e        0x2 /usr/avr/lib/avr4/crtm8.o
+                0x000000000000005e                __vector_1
+                0x000000000000005e                __bad_interrupt
+                0x000000000000005e                __vector_6
+                0x000000000000005e                __vector_3
+                0x000000000000005e                __vector_13
+                0x000000000000005e                __vector_17
+                0x000000000000005e                __vector_7
+                0x000000000000005e                __vector_5
+                0x000000000000005e                __vector_2
+                0x000000000000005e                __vector_15
+                0x000000000000005e                __vector_8
+                0x000000000000005e                __vector_10
+                0x000000000000005e                __vector_16
+                0x000000000000005e                __vector_18
+ .text          0x0000000000000060      0x8b6 ./main.o
+                0x0000000000000060                isTaster0
+                0x00000000000000a6                setFreq
+                0x00000000000000e4                playMelody
+                0x000000000000011a                __vector_9
+                0x0000000000000216                __vector_4
+                0x0000000000000236                __vector_14
+                0x0000000000000352                main
+ .text          0x0000000000000916       0xe4 ./port.o
+                0x0000000000000916                read_adc
+                0x00000000000009ac                select_adc_channel
+ .text          0x00000000000009fa      0x2be ./uart.o
+                0x00000000000009fa                __vector_11
+                0x0000000000000a88                __vector_12
+                0x0000000000000b0a                uart_init
+                0x0000000000000b7c                uart_getc
+                0x0000000000000bd8                uart_putc
+                0x0000000000000c2c                uart_puts
+                0x0000000000000c68                uart_puts_p
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_udivmodhi4.o)
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(sprintf.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(vfprintf_std.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(strnlen_P.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(strnlen.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(fputc.o)
+ .text          0x0000000000000cb8        0x0 /usr/avr/lib/avr4/libc.a(ultoa_invert.o)
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_prologue.o)
+ .text          0x0000000000000cb8        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_epilogue.o)
+                0x0000000000000cb8                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x0000000000000cb8       0x2c /usr/lib/gcc/avr/4.5.2/libgcc.a(_udivmodhi4.o)
+                0x0000000000000cb8                __udivmodhi4
+ .text.libgcc   0x0000000000000ce4        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+ .text.libgcc   0x0000000000000ce4        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+ .text.libgcc   0x0000000000000ce4        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+ .text.avr-libc
+                0x0000000000000ce4       0x40 /usr/avr/lib/avr4/libc.a(sprintf.o)
+                0x0000000000000ce4                sprintf
+ .text.avr-libc
+                0x0000000000000d24      0x3b0 /usr/avr/lib/avr4/libc.a(vfprintf_std.o)
+                0x0000000000000d24                vfprintf
+ .text.avr-libc
+                0x00000000000010d4       0x16 /usr/avr/lib/avr4/libc.a(strnlen_P.o)
+                0x00000000000010d4                strnlen_P
+ .text.avr-libc
+                0x00000000000010ea       0x16 /usr/avr/lib/avr4/libc.a(strnlen.o)
+                0x00000000000010ea                strnlen
+ .text.avr-libc
+                0x0000000000001100       0x58 /usr/avr/lib/avr4/libc.a(fputc.o)
+                0x0000000000001100                fputc
+ .text.avr-libc
+                0x0000000000001158       0xbc /usr/avr/lib/avr4/libc.a(ultoa_invert.o)
+                0x0000000000001158                __ultoa_invert
+ .text.libgcc   0x0000000000001214       0x38 /usr/lib/gcc/avr/4.5.2/libgcc.a(_prologue.o)
+                0x0000000000001214                __prologue_saves__
+ .text.libgcc   0x000000000000124c       0x38 /usr/lib/gcc/avr/4.5.2/libgcc.a(_epilogue.o)
+                0x000000000000124c                __epilogue_restores__
+                0x0000000000001284                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x0000000000001284        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+                0x0000000000001284                exit
+                0x0000000000001284                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x0000000000001284        0x4 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+ *(.fini0)
+                0x0000000000001288                _etext = .
+
+.data           0x0000000000800060       0x6a load address 0x0000000000001288
+                0x0000000000800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x0000000000800060        0x0 /usr/avr/lib/avr4/crtm8.o
+ .data          0x0000000000800060       0x69 ./main.o
+                0x0000000000800060                melody1
+                0x000000000080006b                melody2
+                0x0000000000800076                melody3
+                0x0000000000800080                melody4
+                0x000000000080008a                melody
+ .data          0x00000000008000c9        0x0 ./port.o
+ .data          0x00000000008000c9        0x0 ./uart.o
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_udivmodhi4.o)
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(sprintf.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(vfprintf_std.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(strnlen_P.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(strnlen.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(fputc.o)
+ .data          0x00000000008000c9        0x0 /usr/avr/lib/avr4/libc.a(ultoa_invert.o)
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_prologue.o)
+ .data          0x00000000008000c9        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_epilogue.o)
+ *(.data*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x00000000008000ca                . = ALIGN (0x2)
+ *fill*         0x00000000008000c9        0x1 00
+                0x00000000008000ca                _edata = .
+                0x00000000008000ca                PROVIDE (__data_end, .)
+
+.bss            0x00000000008000ca       0x51
+                0x00000000008000ca                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x00000000008000ca        0x0 /usr/avr/lib/avr4/crtm8.o
+ .bss           0x00000000008000ca        0x4 ./main.o
+                0x00000000008000ca                state
+ .bss           0x00000000008000ce        0x0 ./port.o
+ .bss           0x00000000008000ce       0x45 ./uart.o
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_udivmodhi4.o)
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_exit.o)
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_copy_data.o)
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_clear_bss.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(sprintf.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(vfprintf_std.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(strnlen_P.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(strnlen.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(fputc.o)
+ .bss           0x0000000000800113        0x0 /usr/avr/lib/avr4/libc.a(ultoa_invert.o)
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_prologue.o)
+ .bss           0x0000000000800113        0x0 /usr/lib/gcc/avr/4.5.2/libgcc.a(_epilogue.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x0000000000800113        0x8 ./main.o
+                0x0000000000800113                timeoutState4
+                0x0000000000800114                uExtern
+                0x0000000000800116                time
+                0x0000000000800117                uIntern
+                0x0000000000800119                taster
+                0x000000000080011a                beepTime
+                0x000000000080011b                PROVIDE (__bss_end, .)
+                0x0000000000001288                __data_load_start = LOADADDR (.data)
+                0x00000000000012f2                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x000000000080011b        0x0
+                0x000000000080011b                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x000000000080011b                PROVIDE (__noinit_end, .)
+                0x000000000080011b                _end = .
+                0x000000000080011b                PROVIDE (__heap_start, .)
+
+.eeprom         0x0000000000810000        0x0
+ *(.eeprom*)
+                0x0000000000810000                __eeprom_end = .
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo .zdebug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames .zdebug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges .zdebug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames .zdebug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.* .zdebug_info)
+
+.debug_abbrev
+ *(.debug_abbrev .zdebug_abbrev)
+
+.debug_line
+ *(.debug_line .zdebug_line)
+
+.debug_frame
+ *(.debug_frame .zdebug_frame)
+
+.debug_str
+ *(.debug_str .zdebug_str)
+
+.debug_loc
+ *(.debug_loc .zdebug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo .zdebug_macinfo)
+OUTPUT(powerSwitch.elf elf32-avr)
+LOAD linker stubs

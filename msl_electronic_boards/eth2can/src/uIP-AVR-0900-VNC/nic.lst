@@ -1,0 +1,229 @@
+   1               		.file	"nic.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  91               	.global	nic_poll
+  93               	nic_poll:
+   1:nic.c         **** /*****************************************************************************
+   2:nic.c         **** *  Module Name:       NIC Driver Interface for uIP-AVR Port
+   3:nic.c         **** *  
+   4:nic.c         **** *  Created By:        Louis Beaudoin (www.embedded-creations.com)
+   5:nic.c         **** *
+   6:nic.c         **** *  Original Release:  November 16, 2003 
+   7:nic.c         **** *
+   8:nic.c         **** *  Module Description:  
+   9:nic.c         **** *  Provides three functions to interface with a NIC driver
+  10:nic.c         **** *  These functions can be called directly from the main uIP control loop
+  11:nic.c         **** *  to send packets from uip_buf and uip_appbuf, and store incoming packets to
+  12:nic.c         **** *  uip_buf
+  13:nic.c         **** *
+  14:nic.c         **** *
+  15:nic.c         **** *****************************************************************************/
+  16:nic.c         **** 
+  17:nic.c         **** #include "nic.h"
+  18:nic.c         **** 
+  19:nic.c         **** 
+  20:nic.c         **** #define IP_TCP_HEADER_LENGTH 40
+  21:nic.c         **** #define TOTAL_HEADER_LENGTH (IP_TCP_HEADER_LENGTH+ETHERNET_HEADER_LENGTH)
+  22:nic.c         **** 
+  23:nic.c         **** 
+  24:nic.c         **** void nic_init(void)
+  25:nic.c         **** {
+  26:nic.c         **** 	NICInit();
+  27:nic.c         **** }
+  28:nic.c         **** 
+  29:nic.c         **** 
+  30:nic.c         **** void nic_send(void)
+  31:nic.c         **** {
+  32:nic.c         **** 	NICBeginPacketSend(uip_len);
+  33:nic.c         **** 
+  34:nic.c         **** 	// send packet, using data in uip_appdata if over the IP+TCP header size
+  35:nic.c         **** 	if( uip_len <= TOTAL_HEADER_LENGTH )
+  36:nic.c         **** 	{
+  37:nic.c         **** 		NICSendPacketData(uip_buf, uip_len);
+  38:nic.c         **** 	} else {
+  39:nic.c         **** 		uip_len -= TOTAL_HEADER_LENGTH;
+  40:nic.c         **** 		NICSendPacketData(uip_buf, TOTAL_HEADER_LENGTH);
+  41:nic.c         **** 		NICSendPacketData((unsigned char *)uip_appdata, uip_len);
+  42:nic.c         **** 	}
+  43:nic.c         **** 
+  44:nic.c         **** 	NICEndPacketSend();
+  45:nic.c         **** }
+  46:nic.c         **** 
+  47:nic.c         **** 
+  48:nic.c         **** 
+  49:nic.c         **** #if UIP_BUFSIZE > 255
+  50:nic.c         **** unsigned int nic_poll(void)
+  51:nic.c         **** #else 
+  52:nic.c         **** unsigned char nic_poll(void)
+  53:nic.c         **** #endif /* UIP_BUFSIZE > 255 */
+  54:nic.c         **** {
+  95               	.LM0:
+  96               	.LFBB1:
+  97               	/* prologue: frame size=0 */
+  98 0000 CF93      		push r28
+  99 0002 DF93      		push r29
+ 100               	/* prologue end (size=2) */
+  55:nic.c         **** 	unsigned int packetLength;
+  56:nic.c         **** 	
+  57:nic.c         **** 	packetLength = NICBeginPacketRetreive();
+ 102               	.LM1:
+ 103 0004 0E94 0000 		call rtl8019BeginPacketRetreive
+ 104 0008 EC01      		movw r28,r24
+  58:nic.c         **** 
+  59:nic.c         **** 	// if there's no packet or an error - exit without ending the operation
+  60:nic.c         **** 	if( !packetLength )
+ 106               	.LM2:
+ 107 000a 892B      		or r24,r25
+ 108 000c 01F0      		breq .L2
+  61:nic.c         **** 	  return 0;
+  62:nic.c         **** 
+  63:nic.c         **** 	// drop anything too big for the buffer
+  64:nic.c         **** 	if( packetLength > UIP_BUFSIZE )
+ 110               	.LM3:
+ 111 000e 85E0      		ldi r24,hi8(1501)
+ 112 0010 CD3D      		cpi r28,lo8(1501)
+ 113 0012 D807      		cpc r29,r24
+ 114 0014 00F0      		brlo .L4
+  65:nic.c         **** 	{
+  66:nic.c         **** 	  NICEndPacketRetreive();
+ 116               	.LM4:
+ 117 0016 0E94 0000 		call rtl8019EndPacketRetreive
+ 118 001a C0E0      		ldi r28,lo8(0)
+ 119 001c D0E0      		ldi r29,hi8(0)
+ 120 001e 00C0      		rjmp .L2
+ 121               	.L4:
+  67:nic.c         **** 	  return 0;
+  68:nic.c         **** 	}
+  69:nic.c         **** 	
+  70:nic.c         **** 	// copy the packet data into the uIP packet buffer
+  71:nic.c         **** 	NICRetreivePacketData( uip_buf, packetLength );
+ 123               	.LM5:
+ 124 0020 BE01      		movw r22,r28
+ 125 0022 80E0      		ldi r24,lo8(uip_buf)
+ 126 0024 90E0      		ldi r25,hi8(uip_buf)
+ 127 0026 0E94 0000 		call rtl8019RetreivePacketData
+  72:nic.c         **** 	NICEndPacketRetreive();
+ 129               	.LM6:
+ 130 002a 0E94 0000 		call rtl8019EndPacketRetreive
+ 131               	.L2:
+  73:nic.c         **** 		
+  74:nic.c         **** #if UIP_BUFSIZE > 255
+  75:nic.c         **** 	return packetLength;
+  76:nic.c         **** #else 
+  77:nic.c         **** 	return (unsigned char)packetLength;
+  78:nic.c         **** #endif /* UIP_BUFSIZE > 255 */
+  79:nic.c         **** 		
+  80:nic.c         **** }
+ 133               	.LM7:
+ 134 002e CE01      		movw r24,r28
+ 135               	/* epilogue: frame size=0 */
+ 136 0030 DF91      		pop r29
+ 137 0032 CF91      		pop r28
+ 138 0034 0895      		ret
+ 139               	/* epilogue end (size=3) */
+ 140               	/* function nic_poll size 27 (22) */
+ 145               	.Lscope1:
+ 147               	.global	nic_send
+ 149               	nic_send:
+ 151               	.LM8:
+ 152               	.LFBB2:
+ 153               	/* prologue: frame size=0 */
+ 154               	/* prologue end (size=0) */
+ 156               	.LM9:
+ 157 0036 8091 0000 		lds r24,uip_len
+ 158 003a 9091 0000 		lds r25,(uip_len)+1
+ 159 003e 0E94 0000 		call rtl8019BeginPacketSend
+ 161               	.LM10:
+ 162 0042 8091 0000 		lds r24,uip_len
+ 163 0046 9091 0000 		lds r25,(uip_len)+1
+ 164 004a C797      		sbiw r24,55
+ 165 004c 00F4      		brsh .L8
+ 167               	.LM11:
+ 168 004e 6091 0000 		lds r22,uip_len
+ 169 0052 7091 0000 		lds r23,(uip_len)+1
+ 170 0056 80E0      		ldi r24,lo8(uip_buf)
+ 171 0058 90E0      		ldi r25,hi8(uip_buf)
+ 172 005a 00C0      		rjmp .L12
+ 173               	.L8:
+ 175               	.LM12:
+ 176 005c 8091 0000 		lds r24,uip_len
+ 177 0060 9091 0000 		lds r25,(uip_len)+1
+ 178 0064 C697      		sbiw r24,54
+ 179 0066 9093 0000 		sts (uip_len)+1,r25
+ 180 006a 8093 0000 		sts uip_len,r24
+ 182               	.LM13:
+ 183 006e 66E3      		ldi r22,lo8(54)
+ 184 0070 70E0      		ldi r23,hi8(54)
+ 185 0072 80E0      		ldi r24,lo8(uip_buf)
+ 186 0074 90E0      		ldi r25,hi8(uip_buf)
+ 187 0076 0E94 0000 		call rtl8019SendPacketData
+ 189               	.LM14:
+ 190 007a 6091 0000 		lds r22,uip_len
+ 191 007e 7091 0000 		lds r23,(uip_len)+1
+ 192 0082 8091 0000 		lds r24,uip_appdata
+ 193 0086 9091 0000 		lds r25,(uip_appdata)+1
+ 194               	.L12:
+ 195 008a 0E94 0000 		call rtl8019SendPacketData
+ 197               	.LM15:
+ 198 008e 0E94 0000 		call rtl8019EndPacketSend
+ 199               	/* epilogue: frame size=0 */
+ 200 0092 0895      		ret
+ 201               	/* epilogue end (size=1) */
+ 202               	/* function nic_send size 48 (47) */
+ 204               	.Lscope2:
+ 206               	.global	nic_init
+ 208               	nic_init:
+ 210               	.LM16:
+ 211               	.LFBB3:
+ 212               	/* prologue: frame size=0 */
+ 213               	/* prologue end (size=0) */
+ 215               	.LM17:
+ 216 0094 0E94 0000 		call rtl8019Init
+ 217               	/* epilogue: frame size=0 */
+ 218 0098 0895      		ret
+ 219               	/* epilogue end (size=1) */
+ 220               	/* function nic_init size 3 (2) */
+ 222               	.Lscope3:
+ 223               		.comm eth2can_status,2,1
+ 224               		.comm eth2can_can,2,1
+ 225               		.comm eth2can_uart0,2,1
+ 226               		.comm eth2can_uart1,2,1
+ 227               		.comm send_init,1,1
+ 234               	.Letext0:
+ 235               	/* File "nic.c": code   78 = 0x004e (  71), prologues   2, epilogues   5 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 nic.c
+     /tmp/cciRKUUS.s:2      *ABS*:0000003f __SREG__
+     /tmp/cciRKUUS.s:3      *ABS*:0000003e __SP_H__
+     /tmp/cciRKUUS.s:4      *ABS*:0000003d __SP_L__
+     /tmp/cciRKUUS.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cciRKUUS.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cciRKUUS.s:93     .text:00000000 nic_poll
+     /tmp/cciRKUUS.s:149    .text:00000036 nic_send
+     /tmp/cciRKUUS.s:208    .text:00000094 nic_init
+                            *COM*:00000002 eth2can_status
+                            *COM*:00000002 eth2can_can
+                            *COM*:00000002 eth2can_uart0
+                            *COM*:00000002 eth2can_uart1
+                            *COM*:00000001 send_init
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+rtl8019BeginPacketRetreive
+rtl8019EndPacketRetreive
+uip_buf
+rtl8019RetreivePacketData
+uip_len
+rtl8019BeginPacketSend
+rtl8019SendPacketData
+uip_appdata
+rtl8019EndPacketSend
+rtl8019Init

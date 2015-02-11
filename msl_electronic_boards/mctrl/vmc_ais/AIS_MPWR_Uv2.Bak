@@ -1,0 +1,191 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (AISC167B), 0x0002 // Tools: '166/167'
+
+Group (source files)
+Group (header files)
+
+File 1,1,<.\main.c><main.c> 0x0 
+File 1,2,<.\start_aisb1.a66><start_aisb1.a66> 0x0 
+File 1,1,<.\init.c><init.c> 0x0 
+File 1,1,<.\aisc167b\ais_adc.c><ais_adc.c> 0x0 
+File 1,1,<.\aisc167b\ais_eeprom.c><ais_eeprom.c> 0x0 
+File 1,1,<.\aisc167b\ais_gpt.c><ais_gpt.c> 0x0 
+File 1,1,<.\aisc167b\ais_i2c.c><ais_i2c.c> 0x0 
+File 1,1,<.\aisc167b\ais_pwm.c><ais_pwm.c> 0x0 
+File 1,1,<.\mpwr\ais_mpwr.c><ais_mpwr.c> 0x0 
+File 1,1,<.\system\ais_astring.c><ais_astring.c> 0x0 
+File 1,1,<.\system\ais_cmdbuff.c><ais_cmdbuff.c> 0x0 
+File 1,1,<.\system\ais_select.c><ais_select.c> 0x0 
+File 1,1,<.\system\ais_system.c><ais_system.c> 0x0 
+File 1,1,<.\system\ais_utils.c><ais_utils.c> 0x0 
+File 1,1,<.\controller\ais_controller.c><ais_controller.c> 0x0 
+File 1,1,<.\motorctrl\ais_motorcmd.c><ais_motorcmd.c> 0x0 
+File 1,1,<.\motorctrl\ais_configmanager.c><ais_configmanager.c> 0x0 
+File 1,1,<.\motorctrl\ais_motorconfig.c><ais_motorconfig.c> 0x0 
+File 1,1,<.\motorctrl\ais_motorctrl.c><ais_motorctrl.c> 0x0 
+File 1,1,<.\aisc167b\ais_led.c><ais_led.c> 0x0 
+File 1,1,<.\motorctrl\ais_error.c><ais_error.c> 0x0 
+File 1,1,<.\motorctrl\ais_calculatestate.c><ais_calculatestate.c> 0x0 
+File 1,1,<.\motorctrl\ais_output.c><ais_output.c> 0x0 
+File 1,1,<.\motorctrl\ais_limiter.c><ais_limiter.c> 0x0 
+File 1,1,<.\comasc\ais_asc0.c><ais_asc0.c> 0x0 
+File 1,1,<.\comasc\ais_ascbuff.c><ais_ascbuff.c> 0x0 
+File 1,1,<.\comasc\ais_asccom.c><ais_asccom.c> 0x0 
+File 1,1,<.\aisc167b\ais_bioport.c><ais_bioport.c> 0x0 
+File 1,1,<.\can_stuff\TMC_CAN.c><TMC_CAN.c> 0x0 
+File 1,1,<.\can_stuff\tmc2can.c><tmc2can.c> 0x0 
+File 2,5,<.\init.h><init.h> 0x0 
+File 2,5,<.\ais_typedef.h><ais_typedef.h> 0x0 
+File 2,5,<.\aisc167b\ais_adc.h><ais_adc.h> 0x0 
+File 2,5,<.\aisc167b\ais_eeprom.h><ais_eeprom.h> 0x0 
+File 2,5,<.\aisc167b\ais_gpt.h><ais_gpt.h> 0x0 
+File 2,5,<.\aisc167b\ais_i2c.h><ais_i2c.h> 0x0 
+File 2,5,<.\aisc167b\ais_pwm.h><ais_pwm.h> 0x0 
+File 2,5,<.\mpwr\ais_mpwr.h><ais_mpwr.h> 0x0 
+File 2,5,<.\system\ais_astring.h><ais_astring.h> 0x0 
+File 2,5,<.\system\ais_cmdbuff.h><ais_cmdbuff.h> 0x0 
+File 2,5,<.\system\ais_select.h><ais_select.h> 0x0 
+File 2,5,<.\system\ais_system.h><ais_system.h> 0x0 
+File 2,5,<.\system\ais_utils.h><ais_utils.h> 0x0 
+File 2,5,<.\controller\ais_controller.h><ais_controller.h> 0x0 
+File 2,5,<.\motorctrl\ais_motorcmd.h><ais_motorcmd.h> 0x0 
+File 2,5,<.\motorctrl\ais_configmanager.h><ais_configmanager.h> 0x0 
+File 2,5,<.\motorctrl\ais_motorconfig.h><ais_motorconfig.h> 0x0 
+File 2,5,<.\motorctrl\ais_motorctrl.h><ais_motorctrl.h> 0x0 
+File 2,5,<.\aisc167b\ais_led.h><ais_led.h> 0x0 
+File 2,5,<.\motorctrl\ais_error.h><ais_error.h> 0x0 
+File 2,5,<.\motorctrl\ais_calculatestate.h><ais_calculatestate.h> 0x0 
+File 2,5,<.\motorctrl\ais_output.h><ais_output.h> 0x0 
+File 2,5,<.\motorctrl\ais_limiter.h><ais_limiter.h> 0x0 
+File 2,5,<.\comasc\ais_asccom.h><ais_asccom.h> 0x0 
+File 2,5,<.\comasc\ais_asc0.h><ais_asc0.h> 0x0 
+File 2,5,<.\comasc\ais_ascbuff.h><ais_ascbuff.h> 0x0 
+File 2,5,<.\aisc167b\ais_bioport.h><ais_bioport.h> 0x0 
+File 2,1,<.\can_stuff\ais_can.h><ais_can.h> 0x0 
+
+
+Options 1,0,0  // Target 'AISC167B'
+ Device (C167CR-LM)
+ Vendor (Infineon)
+ Cpu (IRAM (0xF600 - 0xFDFF) XRAM(0xE000-0xE7FF) ICAN(0xE800-0xEFFF) CLOCK(20000000) MOD167)
+ FlashUt ()
+ StupF ()
+ FlashDR ()
+ DevID ()
+ Rgf ()
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin (d:\Keil\C166\BIN\)
+ EnvInc (d:\Keil\C166\INC\)
+ EnvLib (d:\Keil\C166\LIB\)
+ EnvReg ()
+ OrgReg ()
+ TgStat=16
+ OutDir (.\output\)
+ OutName (AIS_MPWR)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=0
+ Browse=0
+ LstDir (.\output\)
+ HexSel=0
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ SVCSID <>
+ Model=6
+ RTOS=0
+ nHold=6
+ iHold=65535
+ sHold=65535
+ bHold=65535
+ MOD167=1
+ MODV2=0
+ UseOnChipRom=0
+ UseOnchipXCAN=1
+ UseOnchipXRAM2=0
+ NearRam=0
+ NearRom=0
+ ExtMem 0 1,0,524288
+ ExtMem 1 0,524288,131072
+ ExtMem 2 0,0,0
+ ExtMem 3 0,0,0
+ ExtMem 4 0,0,0
+ ExtMem 5 0,0,0
+ Optimize=6
+ SpeedSize=1
+ RegColor=0
+ Static=0
+ WarningLev=3
+ Alias=1
+ Order=0
+ UnsignedChar=0
+ NoDppSave=1
+ Float64=0
+ SaveUsr=0
+ Reorder=0
+ cMisc (MOD167)
+ Define ()
+ Undefine ()
+ INCC6 ()
+ EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ECMISC ()
+ ECDEFINE ()
+ ECUNDEF ()
+ ECINC ()
+ MPL=1
+ CASE=0
+ aMisc (MOD167)
+ aSet ()
+ aReset ()
+ INCA6 ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ useLinkFile=0
+ LnkFile (.\L166.lin)
+ LinkOnly=0
+ UseTargSet=1
+ DppUse=0
+ nDataSel=2
+ nConstSel=1
+ NearDataStr ()
+ NearConstStr ()
+ CinitTab (0x010000 - 0x07FFFF)
+ IntVectAddr ()
+ lWarnLev=2
+ lDisWarn ()
+ lAssign ()
+ lRegbank ()
+ lReserve (8H-BH)
+ lMisc ()
+ lClasses ()
+ lSect ()
+  OPTDL (S166.DLL)()(D167.DLL)(-p167CR)(S166.DLL)()(T167.DLL)(-p167CR)
+  OPTDBG 49149,0,()()()()()()()()()() ()()()()
+ FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
+ FLASH2 ()
+ FLASH3 ()
+ FLASH4 ()
+EndOpt
+

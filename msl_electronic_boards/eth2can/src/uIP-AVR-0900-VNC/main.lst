@@ -1,0 +1,556 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+ 118               	.global	initTimer
+ 120               	initTimer:
+   1:main.c        **** /*****************************************************************************
+   2:main.c        **** *  Module Name:       uIP-AVR Port - main control loop shell
+   3:main.c        **** *  
+   4:main.c        **** *  Created By:        Louis Beaudoin (www.embedded-creations.com)
+   5:main.c        **** *
+   6:main.c        **** *  Original Release:  September 21, 2002 
+   7:main.c        **** *
+   8:main.c        **** *  Module Description:  
+   9:main.c        **** *  This main control loop shell provides everything required for a basic uIP
+  10:main.c        **** *  application using the RTL8019AS NIC
+  11:main.c        **** *
+  12:main.c        **** *   
+  13:main.c        **** *  November 16, 2003
+  14:main.c        **** *    Changed NIC interface from RTL8019 specific to general NIC calls
+  15:main.c        **** *    Calls the uip_arp_timer function every 10 seconds
+  16:main.c        **** *    
+  17:main.c        **** *  September 30, 2002
+  18:main.c        **** *    Added support for Imagecraft Compiler
+  19:main.c        **** *****************************************************************************/
+  20:main.c        **** 
+  21:main.c        **** #include "uip.h"
+  22:main.c        **** #include "nic.h"
+  23:main.c        **** #include "uip_arp.h"
+  24:main.c        **** #include <util/delay.h>
+  25:main.c        **** #include "compiler.h"
+  26:main.c        **** #include <stdio.h>
+  27:main.c        **** 
+  28:main.c        **** #include <avr/interrupt.h>
+  29:main.c        **** #include <avr/pgmspace.h>
+  30:main.c        **** #include <avr/signal.h>
+  31:main.c        **** #include<avr/io.h>
+  32:main.c        **** 
+  33:main.c        **** #include "uart.h"
+  34:main.c        **** #define UART_BAUD_RATE                  57600
+  35:main.c        **** #define UART_BAUD_RATE_KICKER           57600
+  36:main.c        **** 
+  37:main.c        **** #define BUF ((struct uip_eth_hdr *)&uip_buf[0])
+  38:main.c        **** 
+  39:main.c        **** 
+  40:main.c        **** 
+  41:main.c        **** /*****************************************************************************
+  42:main.c        **** *  Periodic Timout Functions and variables
+  43:main.c        **** *
+  44:main.c        **** *  The periodic timeout rate can be changed depeding on your application
+  45:main.c        **** *  Modify these functions and variables based on your AVR device and clock
+  46:main.c        **** *    rate
+  47:main.c        **** *  The current setup will interrupt every 256 timer ticks when the timer
+  48:main.c        **** *    counter overflows.  timerCounter must count until 0.5 seconds have
+  49:main.c        **** *    alapsed
+  50:main.c        **** *****************************************************************************/
+  51:main.c        **** 
+  52:main.c        **** #define TIMER_PRESCALE    1024
+  53:main.c        **** 
+  54:main.c        **** #define TIMERCOUNTER_PERIODIC_TIMEOUT (F_CPU / TIMER_PRESCALE / 2 / 256)
+  55:main.c        **** 
+  56:main.c        **** static unsigned char timerCounter, blink;
+  57:main.c        **** static char do_can_poll;
+  58:main.c        **** 
+  59:main.c        **** void initTimer(void)
+  60:main.c        **** {
+ 122               	.LM0:
+ 123               	.LFBB1:
+ 124               	/* prologue: frame size=0 */
+ 125               	/* prologue end (size=0) */
+  61:main.c        ****   TCCR0 = 0x07; // This is big shit. use bitshiftings to explain what there
+ 127               	.LM1:
+ 128 0000 87E0      		ldi r24,lo8(7)
+ 129 0002 83BF      		out 83-0x20,r24
+  62:main.c        ****             // is going on
+  63:main.c        **** 
+  64:main.c        ****   // interrupt on overflow
+  65:main.c        ****   TIMSK = (1 << TOIE0);
+ 131               	.LM2:
+ 132 0004 81E0      		ldi r24,lo8(1)
+ 133 0006 87BF      		out 87-0x20,r24
+  66:main.c        **** 	
+  67:main.c        ****   timerCounter = 0;
+ 135               	.LM3:
+ 136 0008 1092 0000 		sts timerCounter,__zero_reg__
+  68:main.c        ****   blink = 0;
+ 138               	.LM4:
+ 139 000c 1092 0000 		sts blink,__zero_reg__
+ 140               	/* epilogue: frame size=0 */
+ 141 0010 0895      		ret
+ 142               	/* epilogue end (size=1) */
+ 143               	/* function initTimer size 9 (8) */
+ 145               	.Lscope1:
+ 147               	.global	__vector_16
+ 149               	__vector_16:
+  69:main.c        **** }
+  70:main.c        **** 
+  71:main.c        **** 
+  72:main.c        **** 
+  73:main.c        **** #ifdef __IMAGECRAFT__
+  74:main.c        **** #pragma interrupt_handler SIG_OVERFLOW0:iv_TIMER0_OVF
+  75:main.c        **** #endif
+  76:main.c        **** 
+  77:main.c        **** SIGNAL(SIG_OVERFLOW0)
+  78:main.c        **** {
+ 151               	.LM5:
+ 152               	.LFBB2:
+ 153               	/* prologue: frame size=0 */
+ 154 0012 1F92      		push __zero_reg__
+ 155 0014 0F92      		push __tmp_reg__
+ 156 0016 0FB6      		in __tmp_reg__,__SREG__
+ 157 0018 0F92      		push __tmp_reg__
+ 158 001a 1124      		clr __zero_reg__
+ 159 001c 6F93      		push r22
+ 160 001e 7F93      		push r23
+ 161 0020 8F93      		push r24
+ 162 0022 9F93      		push r25
+ 163               	/* prologue end (size=9) */
+  79:main.c        ****   if(++blink%10==0) PORTF ^= (1 << PF3);
+ 165               	.LM6:
+ 166 0024 8091 0000 		lds r24,blink
+ 167 0028 8F5F      		subi r24,lo8(-(1))
+ 168 002a 8093 0000 		sts blink,r24
+ 169 002e 6AE0      		ldi r22,lo8(10)
+ 170 0030 0E94 0000 		call __udivmodqi4
+ 171 0034 9923      		tst r25
+ 172 0036 01F4      		brne .L4
+ 174               	.LM7:
+ 175 0038 8091 6200 		lds r24,98
+ 176 003c 98E0      		ldi r25,lo8(8)
+ 177 003e 8927      		eor r24,r25
+ 178 0040 8093 6200 		sts 98,r24
+ 179               	.L4:
+  80:main.c        ****   timerCounter++;
+ 181               	.LM8:
+ 182 0044 8091 0000 		lds r24,timerCounter
+ 183 0048 8F5F      		subi r24,lo8(-(1))
+ 184 004a 8093 0000 		sts timerCounter,r24
+ 185               	/* epilogue: frame size=0 */
+ 186 004e 9F91      		pop r25
+ 187 0050 8F91      		pop r24
+ 188 0052 7F91      		pop r23
+ 189 0054 6F91      		pop r22
+ 190 0056 0F90      		pop __tmp_reg__
+ 191 0058 0FBE      		out __SREG__,__tmp_reg__
+ 192 005a 0F90      		pop __tmp_reg__
+ 193 005c 1F90      		pop __zero_reg__
+ 194 005e 1895      		reti
+ 195               	/* epilogue end (size=9) */
+ 196               	/* function __vector_16 size 39 (21) */
+ 198               	.Lscope2:
+ 200               	.global	__vector_7
+ 202               	__vector_7:
+  81:main.c        **** }
+  82:main.c        **** 
+  83:main.c        **** 
+  84:main.c        **** SIGNAL (INT6_vect)
+  85:main.c        **** { 
+ 204               	.LM9:
+ 205               	.LFBB3:
+ 206               	/* prologue: frame size=0 */
+ 207 0060 1F92      		push __zero_reg__
+ 208 0062 0F92      		push __tmp_reg__
+ 209 0064 0FB6      		in __tmp_reg__,__SREG__
+ 210 0066 0F92      		push __tmp_reg__
+ 211 0068 1124      		clr __zero_reg__
+ 212 006a 8F93      		push r24
+ 213               	/* prologue end (size=6) */
+  86:main.c        **** 	++do_can_poll;
+ 215               	.LM10:
+ 216 006c 8091 0000 		lds r24,do_can_poll
+ 217 0070 8F5F      		subi r24,lo8(-(1))
+ 218 0072 8093 0000 		sts do_can_poll,r24
+ 219               	/* epilogue: frame size=0 */
+ 220 0076 8F91      		pop r24
+ 221 0078 0F90      		pop __tmp_reg__
+ 222 007a 0FBE      		out __SREG__,__tmp_reg__
+ 223 007c 0F90      		pop __tmp_reg__
+ 224 007e 1F90      		pop __zero_reg__
+ 225 0080 1895      		reti
+ 226               	/* epilogue end (size=6) */
+ 227               	/* function __vector_7 size 17 (5) */
+ 229               	.Lscope3:
+ 230               		.data
+ 231               	.LC0:
+ 232 0000 696E 6974 		.string	"init"
+ 232      00
+ 233               		.text
+ 235               	.global	main
+ 237               	main:
+  87:main.c        **** }
+  88:main.c        **** 
+  89:main.c        **** 
+  90:main.c        **** /*****************************************************************************
+  91:main.c        **** *  Main Control Loop
+  92:main.c        **** *
+  93:main.c        **** *  
+  94:main.c        **** *****************************************************************************/
+  95:main.c        **** int main(void)
+  96:main.c        **** {
+ 239               	.LM11:
+ 240               	.LFBB4:
+ 241               	/* prologue: frame size=0 */
+ 242 0082 C0E0      		ldi r28,lo8(__stack - 0)
+ 243 0084 D0E0      		ldi r29,hi8(__stack - 0)
+ 244 0086 DEBF      		out __SP_H__,r29
+ 245 0088 CDBF      		out __SP_L__,r28
+ 246               	/* prologue end (size=4) */
+  97:main.c        ****   unsigned char arptimer=0;
+  98:main.c        ****   char* init_buf = "init";
+  99:main.c        **** 
+ 100:main.c        ****   //for (int i=0;i<10;++i) delay_ms(50);
+ 101:main.c        ****   
+ 102:main.c        ****   // init NIC device driver
+ 103:main.c        ****   nic_init();
+ 248               	.LM12:
+ 249 008a 0E94 0000 		call nic_init
+ 104:main.c        **** 
+ 105:main.c        ****   DDRF = (1<<PF3);
+ 251               	.LM13:
+ 252 008e 88E0      		ldi r24,lo8(8)
+ 253 0090 8093 6100 		sts 97,r24
+ 106:main.c        ****   PORTF |= (1 << PF3);
+ 255               	.LM14:
+ 256 0094 8091 6200 		lds r24,98
+ 257 0098 8860      		ori r24,lo8(8)
+ 258 009a 8093 6200 		sts 98,r24
+ 107:main.c        **** 
+ 108:main.c        ****   // init uIP
+ 109:main.c        ****   uip_init();
+ 260               	.LM15:
+ 261 009e 0E94 0000 		call uip_init
+ 110:main.c        **** 
+ 111:main.c        ****   // init ARP cache
+ 112:main.c        ****   uip_arp_init();
+ 263               	.LM16:
+ 264 00a2 0E94 0000 		call uip_arp_init
+ 113:main.c        **** 
+ 114:main.c        ****    // init app
+ 115:main.c        ****   connection_init();
+ 266               	.LM17:
+ 267 00a6 0E94 0000 		call connection_init
+ 268               	.LBB4:
+ 269               	.LBB5:
+ 271               	.LM18:
+ 272 00aa 87E0      		ldi r24,lo8(7)
+ 273 00ac 83BF      		out 83-0x20,r24
+ 275               	.LM19:
+ 276 00ae 81E0      		ldi r24,lo8(1)
+ 277 00b0 87BF      		out 87-0x20,r24
+ 279               	.LM20:
+ 280 00b2 1092 0000 		sts timerCounter,__zero_reg__
+ 282               	.LM21:
+ 283 00b6 1092 0000 		sts blink,__zero_reg__
+ 284               	.LBE5:
+ 285               	.LBE4:
+ 116:main.c        **** 
+ 117:main.c        ****   // init periodic timer
+ 118:main.c        ****   initTimer();
+ 119:main.c        ****   sei();
+ 287               	.LM22:
+ 288               	/* #APP */
+ 289 00ba 7894      		sei
+ 120:main.c        **** 
+ 121:main.c        ****   //set can interupt
+ 122:main.c        ****   do_can_poll = 5;
+ 291               	.LM23:
+ 292               	/* #NOAPP */
+ 293 00bc 85E0      		ldi r24,lo8(5)
+ 294 00be 8093 0000 		sts do_can_poll,r24
+ 123:main.c        ****   EICRB |= (0<<ISC61) | (1<<ISC60);
+ 296               	.LM24:
+ 297 00c2 8AB7      		in r24,90-0x20
+ 298 00c4 8061      		ori r24,lo8(16)
+ 299 00c6 8ABF      		out 90-0x20,r24
+ 124:main.c        ****   EIMSK |= (1<<INT6);
+ 301               	.LM25:
+ 302 00c8 89B7      		in r24,89-0x20
+ 303 00ca 8064      		ori r24,lo8(64)
+ 304 00cc 89BF      		out 89-0x20,r24
+ 125:main.c        **** 
+ 126:main.c        ****   sei();
+ 306               	.LM26:
+ 307               	/* #APP */
+ 308 00ce 7894      		sei
+ 127:main.c        **** 
+ 128:main.c        ****   // init uart
+ 129:main.c        ****   uart1_init(UART_BAUD_SELECT(UART_BAUD_RATE_KICKER, F_CPU));
+ 310               	.LM27:
+ 311               	/* #NOAPP */
+ 312 00d0 80E1      		ldi r24,lo8(16)
+ 313 00d2 90E0      		ldi r25,hi8(16)
+ 314 00d4 0E94 0000 		call uart1_init
+ 130:main.c        ****   uart_init(UART_BAUD_SELECT(UART_BAUD_RATE, F_CPU));
+ 316               	.LM28:
+ 317 00d8 80E1      		ldi r24,lo8(16)
+ 318 00da 90E0      		ldi r25,hi8(16)
+ 319 00dc 0E94 0000 		call uart_init
+ 320 00e0 FF24      		clr r15
+ 321 00e2 C0E0      		ldi r28,lo8(.LC0)
+ 322 00e4 D0E0      		ldi r29,hi8(.LC0)
+ 323               	.L30:
+ 131:main.c        **** 
+ 132:main.c        ****   while(1) {
+ 133:main.c        **** 
+ 134:main.c        **** 	  //poll data from uart
+ 135:main.c        **** 	  poll_uart0();
+ 325               	.LM29:
+ 326 00e6 0E94 0000 		call poll_uart0
+ 136:main.c        **** 	  poll_uart1();
+ 328               	.LM30:
+ 329 00ea 0E94 0000 		call poll_uart1
+ 137:main.c        **** 
+ 138:main.c        **** 	  //poll can
+ 139:main.c        **** 	  if (do_can_poll-- > 0) {
+ 331               	.LM31:
+ 332 00ee 8091 0000 		lds r24,do_can_poll
+ 333 00f2 8150      		subi r24,lo8(-(-1))
+ 334 00f4 8093 0000 		sts do_can_poll,r24
+ 335 00f8 8F3F      		cpi r24,lo8(-1)
+ 336 00fa 01F0      		breq .L11
+ 140:main.c        **** 		  poll_can();
+ 338               	.LM32:
+ 339 00fc 0E94 0000 		call poll_can
+ 340               	.L11:
+ 141:main.c        **** 	  }
+ 142:main.c        **** 
+ 143:main.c        **** 	  // look for a packet
+ 144:main.c        **** 	  uip_len = nic_poll();
+ 342               	.LM33:
+ 343 0100 0E94 0000 		call nic_poll
+ 344 0104 9093 0000 		sts (uip_len)+1,r25
+ 345 0108 8093 0000 		sts uip_len,r24
+ 145:main.c        **** 
+ 146:main.c        **** 	  if(uip_len == 0) {
+ 347               	.LM34:
+ 348 010c 8091 0000 		lds r24,uip_len
+ 349 0110 9091 0000 		lds r25,(uip_len)+1
+ 350 0114 892B      		or r24,r25
+ 351 0116 01F4      		brne .L13
+ 147:main.c        **** 		  if(send_init && timerCounter%10==0) {
+ 353               	.LM35:
+ 354 0118 8091 0000 		lds r24,send_init
+ 355 011c 8823      		tst r24
+ 356 011e 01F0      		breq .L15
+ 357 0120 8091 0000 		lds r24,timerCounter
+ 358 0124 6AE0      		ldi r22,lo8(10)
+ 359 0126 0E94 0000 		call __udivmodqi4
+ 360 012a 9923      		tst r25
+ 361 012c 01F4      		brne .L15
+ 148:main.c        **** 			  //send "init" on resart
+ 149:main.c        **** 			  uip_udp_sendto(init_buf, 4, eth2can_status);
+ 363               	.LM36:
+ 364 012e 4091 0000 		lds r20,eth2can_status
+ 365 0132 5091 0000 		lds r21,(eth2can_status)+1
+ 366 0136 64E0      		ldi r22,lo8(4)
+ 367 0138 70E0      		ldi r23,hi8(4)
+ 368 013a CE01      		movw r24,r28
+ 369 013c 0E94 0000 		call uip_udp_sendto
+ 150:main.c        **** 			  uip_arp_out();
+ 371               	.LM37:
+ 372 0140 0E94 0000 		call uip_arp_out
+ 151:main.c        **** 			  nic_send();
+ 374               	.LM38:
+ 375 0144 0E94 0000 		call nic_send
+ 376               	.L15:
+ 152:main.c        **** 		  }
+ 153:main.c        **** 		  
+ 154:main.c        **** 		  // if timed out, call periodic function for each connection
+ 155:main.c        **** 		  if(timerCounter > TIMERCOUNTER_PERIODIC_TIMEOUT) {
+ 378               	.LM39:
+ 379 0148 8091 0000 		lds r24,timerCounter
+ 380 014c 8F31      		cpi r24,lo8(31)
+ 381 014e 00F0      		brlo .L30
+ 156:main.c        **** #if UIP_TCP
+ 157:main.c        **** 			  timerCounter = 0;
+ 158:main.c        **** 
+ 159:main.c        **** 			  for(i = 0; i < UIP_CONNS; i++) {
+ 160:main.c        **** 				  uip_periodic(i);
+ 161:main.c        **** 
+ 162:main.c        **** 				  // transmit a packet, if one is ready
+ 163:main.c        **** 				  if(uip_len > 0)  {
+ 164:main.c        **** //					  uart1_puts_P(".");
+ 165:main.c        **** 					  uip_arp_out();
+ 166:main.c        **** 					  nic_send();
+ 167:main.c        **** 				  }
+ 168:main.c        **** 			  }
+ 169:main.c        **** #endif
+ 170:main.c        **** #if UIP_UDP_elm
+ 171:main.c        **** //			  for(i = 0; i < UIP_UDP_CONNS; i++) {
+ 172:main.c        **** //				  uip_udp_periodic(i);
+ 173:main.c        **** 				  /* If the above function invocation resulted in data that
+ 174:main.c        **** 				   *  should be sent out on the network, the global variable
+ 175:main.c        **** 				   *  uip_len is set to a value > 0. */
+ 176:main.c        **** //				  if(uip_len > 0) {
+ 177:main.c        **** //					  uip_arp_out();
+ 178:main.c        **** //					  nic_send();
+ 179:main.c        **** //				  }
+ 180:main.c        **** //			  }
+ 181:main.c        **** #endif /* UIP_UDP */
+ 182:main.c        **** 
+ 183:main.c        **** 			  /* Call the ARP timer function every 10 seconds. */
+ 184:main.c        **** 			  if(++arptimer == 200)
+ 383               	.LM40:
+ 384 0150 F394      		inc r15
+ 385 0152 88EC      		ldi r24,lo8(-56)
+ 386 0154 F816      		cp r15,r24
+ 387 0156 01F4      		brne .L30
+ 185:main.c        **** 			  {	
+ 186:main.c        **** 				  uip_arp_timer();
+ 389               	.LM41:
+ 390 0158 0E94 0000 		call uip_arp_timer
+ 391 015c FF24      		clr r15
+ 392 015e 00C0      		rjmp .L30
+ 393               	.L13:
+ 187:main.c        **** 				  arptimer = 0;
+ 188:main.c        **** 			  }
+ 189:main.c        **** 		  }
+ 190:main.c        **** 	  }
+ 191:main.c        **** 	  else  // packet received
+ 192:main.c        **** 	  {
+ 193:main.c        **** 		  // process an IP packet
+ 194:main.c        **** 		  if(BUF->type == htons(UIP_ETHTYPE_IP))
+ 395               	.LM42:
+ 396 0160 0091 0000 		lds r16,uip_buf+12
+ 397 0164 1091 0000 		lds r17,(uip_buf+12)+1
+ 398 0168 80E0      		ldi r24,lo8(2048)
+ 399 016a 98E0      		ldi r25,hi8(2048)
+ 400 016c 0E94 0000 		call htons
+ 401 0170 0817      		cp r16,r24
+ 402 0172 1907      		cpc r17,r25
+ 403 0174 01F4      		brne .L20
+ 195:main.c        **** 		  {
+ 196:main.c        **** 			  // add the source to the ARP cache
+ 197:main.c        **** 			  // also correctly set the ethernet packet length before processing
+ 198:main.c        **** 			  uip_arp_ipin();
+ 405               	.LM43:
+ 406 0176 0E94 0000 		call uip_arp_ipin
+ 199:main.c        **** 			  uip_input();
+ 408               	.LM44:
+ 409 017a 81E0      		ldi r24,lo8(1)
+ 410 017c 0E94 0000 		call uip_process
+ 200:main.c        **** 
+ 201:main.c        **** 			  // transmit a packet, if one is ready
+ 202:main.c        **** 			  if(uip_len > 0)
+ 412               	.LM45:
+ 413 0180 8091 0000 		lds r24,uip_len
+ 414 0184 9091 0000 		lds r25,(uip_len)+1
+ 415 0188 892B      		or r24,r25
+ 416 018a 01F4      		brne .+2
+ 417 018c 00C0      		rjmp .L30
+ 203:main.c        **** 			  {
+ 204:main.c        **** 				  uip_arp_out();
+ 419               	.LM46:
+ 420 018e 0E94 0000 		call uip_arp_out
+ 421 0192 00C0      		rjmp .L29
+ 422               	.L20:
+ 205:main.c        **** 				  nic_send();
+ 206:main.c        **** 			  }
+ 207:main.c        **** 		  }
+ 208:main.c        **** 		  // process an ARP packet
+ 209:main.c        **** 		  else if(BUF->type == htons(UIP_ETHTYPE_ARP))
+ 424               	.LM47:
+ 425 0194 0091 0000 		lds r16,uip_buf+12
+ 426 0198 1091 0000 		lds r17,(uip_buf+12)+1
+ 427 019c 86E0      		ldi r24,lo8(2054)
+ 428 019e 98E0      		ldi r25,hi8(2054)
+ 429 01a0 0E94 0000 		call htons
+ 430 01a4 0817      		cp r16,r24
+ 431 01a6 1907      		cpc r17,r25
+ 432 01a8 01F0      		breq .+2
+ 433 01aa 00C0      		rjmp .L30
+ 210:main.c        **** 		  {
+ 211:main.c        **** 			  uip_arp_arpin();
+ 435               	.LM48:
+ 436 01ac 0E94 0000 		call uip_arp_arpin
+ 212:main.c        **** 
+ 213:main.c        **** 			  // transmit a packet, if one is ready
+ 214:main.c        **** 			  if(uip_len > 0)
+ 438               	.LM49:
+ 439 01b0 8091 0000 		lds r24,uip_len
+ 440 01b4 9091 0000 		lds r25,(uip_len)+1
+ 441 01b8 892B      		or r24,r25
+ 442 01ba 01F4      		brne .+2
+ 443 01bc 00C0      		rjmp .L30
+ 444               	.L29:
+ 215:main.c        **** 				  nic_send();
+ 446               	.LM50:
+ 447 01be 0E94 0000 		call nic_send
+ 448 01c2 00C0      		rjmp .L30
+ 449               	/* epilogue: frame size=0 */
+ 450               	/* epilogue: noreturn */
+ 451               	/* epilogue end (size=0) */
+ 452               	/* function main size 163 (159) */
+ 457               	.Lscope4:
+ 458               		.lcomm timerCounter,1
+ 459               		.lcomm blink,1
+ 460               		.lcomm do_can_poll,1
+ 461               		.comm eth2can_status,2,1
+ 462               		.comm eth2can_can,2,1
+ 463               		.comm eth2can_uart0,2,1
+ 464               		.comm eth2can_uart1,2,1
+ 465               		.comm send_init,1,1
+ 475               	.Letext0:
+ 476               	/* File "main.c": code  228 = 0x00e4 ( 193), prologues  19, epilogues  16 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccVabLFn.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccVabLFn.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccVabLFn.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccVabLFn.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccVabLFn.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccVabLFn.s:120    .text:00000000 initTimer
+                             .bss:00000000 timerCounter
+     /tmp/ccVabLFn.s:458    .bss:00000001 blink
+     /tmp/ccVabLFn.s:149    .text:00000012 __vector_16
+     /tmp/ccVabLFn.s:202    .text:00000060 __vector_7
+     /tmp/ccVabLFn.s:459    .bss:00000002 do_can_poll
+     /tmp/ccVabLFn.s:237    .text:00000082 main
+                            *COM*:00000001 send_init
+                            *COM*:00000002 eth2can_status
+                            *COM*:00000002 eth2can_can
+                            *COM*:00000002 eth2can_uart0
+                            *COM*:00000002 eth2can_uart1
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+__udivmodqi4
+__stack
+nic_init
+uip_init
+uip_arp_init
+connection_init
+uart1_init
+uart_init
+poll_uart0
+poll_uart1
+poll_can
+nic_poll
+uip_len
+uip_udp_sendto
+uip_arp_out
+nic_send
+uip_arp_timer
+uip_buf
+htons
+uip_arp_ipin
+uip_process
+uip_arp_arpin
