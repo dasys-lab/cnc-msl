@@ -39,6 +39,9 @@ MSLWorldModel::MSLWorldModel() : haveBall(this) {
 
 	refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10,
 			&MSLWorldModel::onRefereeBoxInfoBody, (MSLWorldModel*) this);
+
+	wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10,
+			&MSLWorldModel::onWorldModelData, (MSLWorldModel*) this);
 }
 void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
 	if (msg->robotId == this->ownID) {
