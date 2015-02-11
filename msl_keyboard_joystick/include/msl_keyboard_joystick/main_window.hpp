@@ -16,6 +16,10 @@
 #include "ui_main_window.h"
 #include "qnode.hpp"
 
+
+#include "ros/ros.h"
+#include "msl_msgs/JoystickCommand.h"
+
 /*****************************************************************************
 ** Namespace
 *****************************************************************************/
@@ -55,13 +59,20 @@ public Q_SLOTS:
 
 private:   
 
+    void sendJoystickMessage();
+
+    ros::Publisher joystickpub;
+    ros::NodeHandle n;
+    ros::AsyncSpinner* spinner;
     int robotId;
     double angle, translation, rotation;
     unsigned short kickPower;
     char shovelIdx, ballHandleLeftMotor, ballHandleRightMotor, selectedActuator;
-    bool keyPressed[], kick;
+    bool *keyPressed;
+    bool kick;
 	void keyPressEvent(QKeyEvent* event); 
     void keyReleaseEvent(QKeyEvent* event);
+    bool checkNumber(QString text);
 	Ui::MainWindowDesign ui;
 	QNode qnode;
 };

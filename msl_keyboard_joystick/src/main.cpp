@@ -12,6 +12,7 @@
 #include <QtGui>
 #include <QApplication>
 #include "../include/msl_keyboard_joystick/main_window.hpp"
+#include <ros/ros.h>
 
 /*****************************************************************************
 ** Main
@@ -22,6 +23,7 @@ int main(int argc, char **argv) {
     /*********************
     ** Qt
     **********************/
+    ros::init(argc, argv, "JoystickNode");
     QApplication app(argc, argv);
     msl_keyboard_joystick::MainWindow w(argc,argv);
     w.show();
