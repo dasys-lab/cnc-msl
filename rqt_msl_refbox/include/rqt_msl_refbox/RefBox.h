@@ -9,31 +9,31 @@
 
 #include <QWidget>
 
-namespace rqt_msl_refbox {
-
-class RefBox
-  : public rqt_gui_cpp::Plugin
+namespace rqt_msl_refbox
 {
 
-  Q_OBJECT
+	class RefBox : public rqt_gui_cpp::Plugin
+	{
 
-public:
+	Q_OBJECT
 
-  RefBox();
+	public:
 
-  virtual void initPlugin(qt_gui_cpp::PluginContext& context);
+		RefBox();
 
-  virtual void shutdownPlugin();
+		virtual void initPlugin(qt_gui_cpp::PluginContext& context);
 
-  virtual void saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const;
+		virtual void shutdownPlugin();
 
-  virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings);
+		virtual void saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const;
 
-  Ui::RefBoxWidget ui_;
+		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings);
 
-  QWidget* widget_;
+		Ui::RefBoxWidget ui_;
 
-};
+		QWidget* widget_;
+
+	};
 
 }
 
