@@ -8,6 +8,7 @@
 #include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
 #include "HaveBall.h"
+#include "sharedworldmodel/MSLSharedWorldModel.h"
 namespace msl {
 
 MSLWorldModel* MSLWorldModel::get() {
@@ -42,6 +43,9 @@ MSLWorldModel::MSLWorldModel() : haveBall(this) {
 
 	wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10,
 			&MSLWorldModel::onWorldModelData, (MSLWorldModel*) this);
+
+	this->sharedWolrdModel = new MSLSharedWorldModel(this);
+
 }
 void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
 	if (msg->robotId == this->ownID) {
@@ -97,6 +101,7 @@ msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData() {
 MSLWorldModel::~MSLWorldModel() {
 	spinner->stop();
 	delete spinner;
+	delete this->sharedWolrdModel;
 }
 
 /**
@@ -217,6 +222,10 @@ msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody() {
 			return nullptr;
 		}
 		return refereeBoxInfoBodyCommandData.front();
+}
+
+MSLSharedWorldModel* MSLWorldModel::getSharedWolrdModel() {
+	return this->sharedWolrdModel;
 }
 
 void MSLWorldModel::transformToWorldCoordinates(
