@@ -25,10 +25,13 @@ public:
 	void setId(int id);
 	std::string getName();
 	void setName(std::string name);
+	int getSenderId();
+	void setSenderId(int senderId);
 
 private:
 	std::string name;
 	int id;
+	int senderId;
 	vtkSmartPointer<vtkActor> top;
 	vtkSmartPointer<vtkActor> bottom;
 };

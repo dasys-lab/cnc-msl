@@ -57,3 +57,12 @@ void RobotVisualization::setName(std::string name)
 	this->name = name;
 }
 
+int RobotVisualization::getSenderId()
+{
+	return senderId;
+}
+
+void RobotVisualization::setSenderId(int senderId)
+{
+	this->senderId = senderId;
+}

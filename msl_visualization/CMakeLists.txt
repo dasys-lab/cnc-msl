@@ -318,6 +318,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 SET( BASESTATION_SRCS 
         src/tools/basestation/FieldWidget/FieldWidget.cpp
         src/tools/basestation/FieldWidget/FieldWidget3D.cpp
+        src/tools/basestation/FieldWidget/RobotInfo.cpp
         src/tools/basestation/RobotVisualization/RobotVisualization.cpp
         src/tools/basestation/FullInfoWindow/FullInfoWindow.cpp
         src/tools/basestation/FullWindow/FullWindow.cpp
@@ -336,6 +337,7 @@ SET( BASESTATION_SRCS
 SET( BASESTATION_MOC_HDRS
         src/tools/basestation/FieldWidget/FieldWidget.h
         src/tools/basestation/FieldWidget/FieldWidget3D.h
+        src/tools/basestation/FieldWidget/RobotInfo.h
         src/tools/basestation/RobotVisualization/RobotVisualization.h
         src/tools/basestation/FullInfoWindow/FullInfoWindow.h
         src/tools/basestation/FullWindow/FullWindow.h

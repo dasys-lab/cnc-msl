@@ -30,6 +30,8 @@
 #include <ros/ros.h>
 #include <list>
 #include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
+#include <thread>
+#include <atomic>
 
 #include <QVTKWidget.h>
 
@@ -86,6 +88,7 @@
 #include "GridView.h"
 #include "Robot.h"
 #include "Vec.h"
+#include "RobotInfo.h"
 
 #define OBSTACLE_HEIGHT 0.2
 
@@ -107,7 +110,6 @@ public:
     vtkActor* robots[6];
     vtkActor* robotNum[6];
     vtkActor* ball;
-    vtkActor* taxiLine;
     vtkLineSource* taxiSource;
 
     DB_Robot_Info *DB_Info;
@@ -123,13 +125,14 @@ public:
 
 
 private:
-
+    ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
     void moveBall(double x, double y, double z);
-    void drawOpponent(vtkRenderer* renderer, double x, double y, double z);
-    void drawTeamRobot(vtkRenderer* renderer, double x, double y, double z);
+    void drawOpponent(double x, double y, double z);
+    void drawTeamRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     list<shared_ptr<RobotVisualization>> obstacles;
     list<shared_ptr<RobotVisualization>> team;
+    list<shared_ptr<RobotInfo>> latestInfo;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     mutex swmMutex;
@@ -168,13 +171,6 @@ private:
     vtkActor* createDebugPt();
     vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
-
-
-
-    // Score board
-    vtkActor2D* score_board;
-    vtkTextActor* score_cambada;
-    vtkTextActor* score_other;
 
     vtkActor* testActor;
 
