@@ -27,12 +27,10 @@
 
 #include "ui_MainWindow.h"
 #include "FullInfoWindow.h"
-#include <ros/ros.h>
 
 #include <iostream>
 #include <string>
-#include "msl_sensor_msgs/SharedWorldInfo.h"
-#include <mutex>
+
 
 
 using namespace std;
@@ -54,7 +52,7 @@ public:
 	}
 	void incrementTheirGoals(){}
 
-	list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > getSavedSharedWorldInfo();
+
 
 	/*const WSColor ourColor() const{
 	  assert(db_coach_info!=NULL);
@@ -68,17 +66,11 @@ private:
 	QMainWindow *mwind;  		//ponteiro para o mainwindow pai (parent*)
 	QMainWindow *fullinfowindow;	//ponteiro para a fullinfowindow
 	FInfoWind *FIW;
-	int ringBufferLength = 10;
 	QTimer *UpdateTimer;
-	void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
-	mutex swmMutex;
-	list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
-
-	ros::Subscriber sharedWorldInfoSubscriber;
-	ros::NodeHandle* rosNode;
 
 
 public slots:

@@ -48,7 +48,7 @@
       <item>
        <widget class="QLabel" name="directionLabel">
         <property name="text">
-         <string>Direction:</string>
+         <string>RotationSpeed:</string>
         </property>
        </widget>
       </item>
@@ -58,8 +58,18 @@
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="topMargin">
+         <number>20</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
         <item>
-         <widget class="QLineEdit" name="robotIdEdit"/>
+         <widget class="QLineEdit" name="robotIdEdit">
+          <property name="inputMask">
+           <string>D0000000000</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -78,7 +88,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="directionValue">
+       <widget class="QLabel" name="rotationValue">
         <property name="text">
          <string/>
         </property>

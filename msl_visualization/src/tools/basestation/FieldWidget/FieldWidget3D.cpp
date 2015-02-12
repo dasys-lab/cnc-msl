@@ -181,6 +181,9 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
     QVTKWidget(parent)
 {
 	this->parent = parent;
+	rosNode = new ros::NodeHandle();
+	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
+	sharedWorldInfoSubscriber = rosNode->subscribe("/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo, (FieldWidget3D*)this);
     /*ConfigXML config;
     if( config.parse("../config/cambada.conf.xml") == false )
     {
@@ -225,9 +228,13 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
     renderWindow->AddRenderer(renderer);
     this->SetRenderWindow(renderWindow);
 
+    //TODO drawing methods
+
     drawField(renderer);
     drawGoals(renderer);
     initBall(renderer);
+    drawOpponent(renderer, 1,1,0);
+    drawTeamRobot(renderer, -1,-1,0);
 
     // Camera properties
     camera = vtkCamera::New();
@@ -1371,3 +1378,170 @@ void FieldWidget3D::lock(bool lock)
 {
     this->lockCam = lock;
 }
+
+
+//TODO marker to find implemented methods
+
+void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
+{
+	lock_guard<mutex> lock(swmMutex);
+	if (savedSharedWorldInfo.size() > ringBufferLength) {
+		savedSharedWorldInfo.pop_back();
+
+	}
+	savedSharedWorldInfo.push_front(info);
+	moveBall(info->ball.point.x/1000, info->ball.point.y/1000, info->ball.point.z/1000);
+}
+
+list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > FieldWidget3D::getSavedSharedWorldInfo()
+{
+	return savedSharedWorldInfo;
+}
+
+void FieldWidget3D::moveBall(double x, double y, double z)
+{
+	ball->SetPosition(x, y, z);
+}
+
+void FieldWidget3D::drawOpponent(vtkRenderer* renderer, double x, double y, double z)
+{
+
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+	float p0[3] = {0.26, 0.26, 0};
+	float p1[3] = {-0.26, 0.26, 0};
+	float p2[3] = {-0.26, -0.26, 0};
+	float p3[3] = {0.26, -0.26, 0};
+	float p4[3] = {0.0, 0.0, 0.4};
+
+	points->InsertNextPoint(p0);
+	points->InsertNextPoint(p1);
+	points->InsertNextPoint(p2);
+	points->InsertNextPoint(p3);
+	points->InsertNextPoint(p4);
+
+	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
+	pyramid->GetPointIds()->SetId(0,0);
+	pyramid->GetPointIds()->SetId(1,1);
+	pyramid->GetPointIds()->SetId(2,2);
+	pyramid->GetPointIds()->SetId(3,3);
+	pyramid->GetPointIds()->SetId(4,4);
+
+	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	cells->InsertNextCell (pyramid);
+
+	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	ug->SetPoints(points);
+	ug->InsertNextCell(pyramid->GetCellType(),pyramid->GetPointIds());
+
+	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
+	cubeSrc->SetXLength(0.52);
+	cubeSrc->SetYLength(0.52);
+	cubeSrc->SetZLength(0.4);
+
+	vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
+
+	vtkSmartPointer<vtkDataSetMapper> obstacleTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+	obstacleTopMapper->SetInput(ug);
+
+	vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
+	obstacleBottom->SetMapper(obstacleBottomMapper);
+	obstacleBottom->SetPosition(x, y, z + 0.2);
+	obstacleBottom->GetProperty()->SetColor(0, 0, 0);
+	obstacleBottom->GetProperty()->SetDiffuse(0.4);
+	obstacleBottom->GetProperty()->SetAmbient(0.8);
+	renderer->AddActor(obstacleBottom);
+
+	vtkSmartPointer<vtkActor> obstacleTop = vtkSmartPointer<vtkActor>::New();
+	obstacleTop->SetMapper(obstacleTopMapper);
+	obstacleTop->SetPosition(x, y, z + 0.4);
+	obstacleTop->GetProperty()->SetColor(0, 0, 0);
+	obstacleTop->GetProperty()->SetDiffuse(0.4);
+	obstacleTop->GetProperty()->SetAmbient(0.8);
+	renderer->AddActor(obstacleTop);
+	shared_ptr<RobotVisualization> robot = make_shared<RobotVisualization>();
+	robot->setTop(obstacleTop);
+	robot->setBottom(obstacleBottom);
+	obstacles.push_front(robot);
+}
+
+void FieldWidget3D::removeObstacles(vtkRenderer* renderer)
+{
+	for(shared_ptr<RobotVisualization> actor : obstacles)
+	{
+		renderer->RemoveActor(actor->getTop());
+		renderer->RemoveActor(actor->getBottom());
+	}
+	obstacles.clear();
+}
+
+void FieldWidget3D::drawTeamRobot(vtkRenderer* renderer, double x, double y, double z)
+{
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+
+	float p0[3] = {0.26, 0.26, 0};
+	float p1[3] = {-0.26, 0.26, 0};
+	float p2[3] = {-0.26, -0.26, 0};
+	float p3[3] = {0.26, -0.26, 0};
+	float p4[3] = {0.0, 0.0, 0.4};
+
+	points->InsertNextPoint(p0);
+	points->InsertNextPoint(p1);
+	points->InsertNextPoint(p2);
+	points->InsertNextPoint(p3);
+	points->InsertNextPoint(p4);
+
+	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
+	pyramid->GetPointIds()->SetId(0,0);
+	pyramid->GetPointIds()->SetId(1,1);
+	pyramid->GetPointIds()->SetId(2,2);
+	pyramid->GetPointIds()->SetId(3,3);
+	pyramid->GetPointIds()->SetId(4,4);
+
+	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+	cells->InsertNextCell (pyramid);
+
+	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	ug->SetPoints(points);
+	ug->InsertNextCell(pyramid->GetCellType(),pyramid->GetPointIds());
+
+	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
+	cubeSrc->SetXLength(0.52);
+	cubeSrc->SetYLength(0.52);
+	cubeSrc->SetZLength(0.4);
+
+	vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
+
+	vtkSmartPointer<vtkDataSetMapper> obstacleTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+	obstacleTopMapper->SetInput(ug);
+
+	vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
+	obstacleBottom->SetMapper(obstacleBottomMapper);
+	obstacleBottom->SetPosition(x, y, z + 0.2);
+	obstacleBottom->GetProperty()->SetColor(1, 1, 1);
+	obstacleBottom->GetProperty()->SetDiffuse(0.4);
+	obstacleBottom->GetProperty()->SetAmbient(0.8);
+	renderer->AddActor(obstacleBottom);
+
+	vtkSmartPointer<vtkActor> obstacleTop = vtkSmartPointer<vtkActor>::New();
+	obstacleTop->SetMapper(obstacleTopMapper);
+	obstacleTop->SetPosition(x, y, z + 0.4);
+	obstacleTop->GetProperty()->SetColor(1, 1, 1);
+	obstacleTop->GetProperty()->SetDiffuse(0.4);
+	obstacleTop->GetProperty()->SetAmbient(0.8);
+	renderer->AddActor(obstacleTop);
+	shared_ptr<RobotVisualization> robot = make_shared<RobotVisualization>();
+	robot->setTop(obstacleTop);
+	robot->setBottom(obstacleBottom);
+	team.push_front(robot);
+}
+
+void FieldWidget3D::moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z)
+{
+	robot->getTop()->SetPosition(x, y, z + 0.4);
+	robot->getBottom()->SetPosition(x, y, z + 0.2);
+}
+
+

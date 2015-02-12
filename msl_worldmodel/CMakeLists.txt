@@ -103,6 +103,7 @@ catkin_package(
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
    src/HaveBall.cpp
+   src/sharedworldmodel/MSLSharedWorldModel.cpp
  )
 
 ## Declare a cpp executable
