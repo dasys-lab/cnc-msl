@@ -453,7 +453,7 @@ void WorldState::update()
 	case postOwnCornerKick:
 	case postOwnThrowIn:
 	case postOwnFreeKick:
-		timeAfterOurSetPiece.restart();
+//		timeAfterOurSetPiece.restart();
 		break;
 	case preOpponentKickOff:
 	case preOpponentGoalKick:
@@ -465,7 +465,7 @@ void WorldState::update()
 	case postOpponentCornerKick:
 	case postOpponentThrowIn:
 	case postOpponentFreeKick:
-		timeAfterTheirSetPiece.restart();
+//		timeAfterTheirSetPiece.restart();
 		break;
 	default:
 		break;

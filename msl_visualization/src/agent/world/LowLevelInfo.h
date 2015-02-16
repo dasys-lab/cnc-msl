@@ -66,7 +66,7 @@ public:
 	float		dx, dy, dw;
 	float		realDx, realDy, realDw;
 	//Variables for adding a timer threshold when deciding ball not engaged
-	util::Timer		notEngagedTimer;
+//	util::Timer		notEngagedTimer;
 	bool			ballOut;
 	bool			justKicked;
 

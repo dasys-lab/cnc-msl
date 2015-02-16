@@ -75,7 +75,7 @@ void LowLevelInfo::updateInfo()
 	unsigned int lArm, rArm;
 	//CMD_Grabber_Info_GET(&lArm, &rArm, NULL, NULL);
 
-	if (barrierState == false)
+	/*if (barrierState == false)
 	{
 		if (lArm > ENGAGED_THRESHOLD_HIGH && rArm > ENGAGED_THRESHOLD_HIGH)
 		{
@@ -96,7 +96,7 @@ void LowLevelInfo::updateInfo()
 			if (ballOut && notEngagedTimer.elapsed() > DISENGAGE_TIME_THRESHOLD)
 				barrierState = false;
 		}
-	}
+	}*/
 
 	for( int i = 0 ; i < N_BATTERIES ; i++ )
 	{
@@ -123,17 +123,20 @@ float LowLevelInfo::getDW() {return realDw;}
 
 /*!\return the XX velocity*/
 float LowLevelInfo::getVelX() {
-	return getDX() / (MOTION_TICK/1000);
+	//return getDX() / (MOTION_TICK/1000);
+	return 0;
 }
 
 /*!\return the YY velocity*/
 float LowLevelInfo::getVelY() {
-	return getDY() / (MOTION_TICK/1000);
+//	return getDY() / (MOTION_TICK/1000);
+	return 0;
 }
 
 /*!\return the angular velocity*/
 float LowLevelInfo::getVelW() {
-	return getDW() / (MOTION_TICK/1000);
+//	return getDW() / (MOTION_TICK/1000);
+	return 0;
 }
 
 bool LowLevelInfo::getJustKicked() {return justKicked;}

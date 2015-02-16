@@ -120,7 +120,7 @@ catkin_package(
 
 INCLUDE_DIRECTORIES(
         .
-        
+        ${catkin_INCLUDE_DIRS}
         # Workaround for hxx/cxx files
         ${CAMBADA_CONFIG_DIR}
 	src

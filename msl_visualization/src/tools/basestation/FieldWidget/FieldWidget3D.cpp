@@ -25,8 +25,6 @@
 
 //#include "ConfigXML.h"
 
-using namespace cambada;
-
 class MouseInteractorStyle : public vtkInteractorStyleTerrain
 {
 public:
@@ -69,16 +67,6 @@ public:
 		if (LastPickedActor != NULL)
 		{
 			robotIdx = -1;
-			for (int i = 0; i < NROBOTS; i++)
-			{
-				if (this->LastPickedActor == parent->robots[i])
-				{
-					fprintf(stderr, "ROBOT PICKED = %d\n", i);
-					robotIdx = i;
-					break;
-				}
-			}
-
 			if (robotIdx < 0)
 			{
 				// Foward the event as a vtkInteractorStyleTerrain event
@@ -114,8 +102,6 @@ public:
 			if (robotIdx >= 0 && robotIdx < NROBOTS)
 			{
 				Vec pos = Vec(position[0], position[1]);
-				parent->db_coach_info->Coach_Info.taxiRobotSN[robotIdx]++;
-				parent->db_coach_info->Coach_Info.taxiPos = pos;
 			}
 			fprintf(stderr, "POS: (%.1lf, %.1lf, %.1lf)\n", position[0], position[1], position[2]);
 		}
@@ -139,19 +125,6 @@ public:
 			if (picker->GetActor() != NULL && picker->GetActor() == parent->field)
 			{
 
-				if (parent->taxiFollow)
-				{
-					// If taxiFollow is activated
-					// If the picker returns a position within the field
-					double* position = picker->GetPickPosition();
-					// Pass the new vec to the db_coach_info struct
-					Vec pos = Vec(position[0], position[1]);
-					parent->db_coach_info->Coach_Info.taxiRobotSN[robotIdx]++;
-					parent->db_coach_info->Coach_Info.taxiPos = pos;
-					// Create the vector (actor)
-					//double* startPosition = parent->robots[robotIdx]->GetPosition();
-
-				}
 			}
 		}
 		else
@@ -186,6 +159,8 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 													(FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+
 	/*ConfigXML config;
 	 if( config.parse("../config/cambada.conf.xml") == false )
 	 {
@@ -197,8 +172,9 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	Update_timer->setInterval(1);
 	connect(Update_timer, SIGNAL(timeout()), this, SLOT(update_robot_info()));
 
+	(*sc)["Alica"]->get<double>("Alica.EngineFrequency", NULL);
 	/* Dimensions */
-	_FIELD_LENGTH = 18;
+	/*_FIELD_LENGTH = 18;
 	_FIELD_WIDTH = 12;
 	_LINE_THICKNESS = 0.1;
 	_GOAL_AREA_LENGTH = 2.5;
@@ -211,18 +187,21 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	_PENALTY_MARK_DISTANCE = 3;
 	_BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
 	_BLACK_POINT_LENGTH = 2;
-	_ROBOT_RADIUS = 0.25;
-
-	/* Init Colors */
-	float robotsColorR[] = {244.0 / 255.0, 1, 1, 188.0 / 255.0, 201.0 / 255.0, 115.0 / 255.0};
-	float robotsColorG[] = {194.0 / 255.0, 216.0 / 255.0, 153.0 / 255.0, 143.0 / 255.0, 160.0 / 255.0, 194.0 / 255.0};
-	float robotsColorB[] = {194.0 / 255.0, 0, 153.0 / 255.0, 143.0 / 255.0, 220.0 / 255.0, 251.0 / 255.0};
-	for (int i = 0; i < 6; i++)
-	{
-		this->robotsColorR[i] = robotsColorR[i];
-		this->robotsColorG[i] = robotsColorG[i];
-		this->robotsColorB[i] = robotsColorB[i];
-	}
+	_ROBOT_RADIUS = 0.25;*/
+	_FIELD_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL) / 1000;
+	_FIELD_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL) / 1000;
+	_LINE_THICKNESS = (*sc)["Globals"]->get<double>("Globals.FootballField.LineWidth", NULL) / 1000;
+	_GOAL_AREA_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.GoalAreaXSize", NULL) / 1000;
+	_GOAL_AREA_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.GoalAreaYSize", NULL) / 1000;
+	_PENALTY_AREA_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaXSize", NULL) / 1000;
+	_PENALTY_AREA_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaYSize", NULL) / 1000;
+	_CENTER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.MiddleCircleRadius", NULL) / 1000;
+	_BALL_DIAMETER = (*sc)["Globals"]->get<double>("Globals.Dimensions.DiameterBall", NULL) / 1000;
+	_CORNER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.CornerCircleRadius", NULL) / 1000;
+	_PENALTY_MARK_DISTANCE = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
+	_BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
+	_BLACK_POINT_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
+	_ROBOT_RADIUS = (*sc)["Globals"]->get<double>("Globals.Dimensions.DiameterRobot", NULL) / 1000;
 
 	renderWindow = vtkRenderWindow::New();
 	renderer = vtkRenderer::New();
@@ -321,7 +300,7 @@ void FieldWidget3D::update_robot_info(void)
 		{
 			drawOpponent(x.x / 1000, x.y / 1000, 0);
 		}
-		moveBall(robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000, robot->getMsg()->ball.point.z / 1000 + 0.11);
+		moveBall(robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000, robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 		bool alreadyIn = false;
 		for (auto member : team)
 		{
@@ -445,30 +424,19 @@ void FieldWidget3D::addArc(vtkRenderer *renderer, float x, float y, float radius
 	}
 }
 
-void FieldWidget3D::get_info_pointer(DB_Robot_Info * rw)
-{
-	DB_Info = rw;
-}
-
-void FieldWidget3D::get_coach_pointer(DB_Coach_Info * ci)
-{
-	db_coach_info = ci;
-}
-
 void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 {
-	// Goals
-	// vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
+	double post = 0.125;
+
 	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-	cubeSrc->SetXLength(0.125);
-	cubeSrc->SetYLength(0.125);
+	cubeSrc->SetXLength(post);
+	cubeSrc->SetYLength(post);
 	cubeSrc->SetZLength(1);
+
 	vtkSmartPointer<vtkCubeSource> cubeSrc2 = vtkSmartPointer<vtkCubeSource>::New();
-	cubeSrc2->SetXLength(2 + 2 * 0.125);
-	cubeSrc2->SetYLength(0.125);
-	cubeSrc2->SetZLength(0.125);
-	//  reader->SetFileName("../config/3DModels/goal.obj");
-	//reader->Update();
+	cubeSrc2->SetXLength(2 + 2 * post);
+	cubeSrc2->SetYLength(post);
+	cubeSrc2->SetZLength(post);
 
 	vtkSmartPointer<vtkPolyDataMapper> goalMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	goalMapper->SetInput(cubeSrc->GetOutput());
@@ -478,7 +446,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalBlue = vtkSmartPointer<vtkActor>::New();
 	goalBlue->SetMapper(goalMapper);
-	goalBlue->SetPosition(0 - 1 - 0.125 / 2, -_FIELD_LENGTH / 2 - 0.125 / 2, 0.5);
+	goalBlue->SetPosition(0 - 1 - post / 2, -_FIELD_LENGTH / 2 - post / 2, 0.5);
 	goalBlue->GetProperty()->SetColor(0.2, 0.2, 1);
 	goalBlue->GetProperty()->SetDiffuse(0.4);
 	goalBlue->GetProperty()->SetAmbient(0.8);
@@ -486,7 +454,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalBlue2 = vtkSmartPointer<vtkActor>::New();
 	goalBlue2->SetMapper(goalMapper);
-	goalBlue2->SetPosition(0 + 1 + 0.125 / 2, -_FIELD_LENGTH / 2 - 0.125 / 2, 0.5);
+	goalBlue2->SetPosition(0 + 1 + post / 2, -_FIELD_LENGTH / 2 - post / 2, 0.5);
 	goalBlue2->GetProperty()->SetColor(0.2, 0.2, 1);
 	goalBlue2->GetProperty()->SetDiffuse(0.4);
 	goalBlue2->GetProperty()->SetAmbient(0.8);
@@ -494,7 +462,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalBlue3 = vtkSmartPointer<vtkActor>::New();
 	goalBlue3->SetMapper(goalMapper2);
-	goalBlue3->SetPosition(0, -_FIELD_LENGTH / 2 - 0.125 / 2, 1);
+	goalBlue3->SetPosition(0, -_FIELD_LENGTH / 2 - post / 2, 1);
 	goalBlue3->GetProperty()->SetColor(0.2, 0.2, 1);
 	goalBlue3->GetProperty()->SetDiffuse(0.4);
 	goalBlue3->GetProperty()->SetAmbient(0.8);
@@ -502,7 +470,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalYellow = vtkSmartPointer<vtkActor>::New();
 	goalYellow->SetMapper(goalMapper);
-	goalYellow->SetPosition(0 - 1 - 0.125 / 2, _FIELD_LENGTH / 2 + 0.125 / 2, 0.5);
+	goalYellow->SetPosition(0 - 1 - post / 2, _FIELD_LENGTH / 2 + post / 2, 0.5);
 	goalYellow->GetProperty()->SetColor(1, 1, 0.2);
 	goalYellow->GetProperty()->SetDiffuse(0.4);
 	goalYellow->GetProperty()->SetAmbient(0.8);
@@ -510,7 +478,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalYellow2 = vtkSmartPointer<vtkActor>::New();
 	goalYellow2->SetMapper(goalMapper);
-	goalYellow2->SetPosition(0 + 1 + 0.125 / 2, _FIELD_LENGTH / 2 + 0.125 / 2, 0.5);
+	goalYellow2->SetPosition(0 + 1 + post / 2, _FIELD_LENGTH / 2 + post / 2, 0.5);
 	goalYellow2->GetProperty()->SetColor(1, 1, 0.2);
 	goalYellow2->GetProperty()->SetDiffuse(0.4);
 	goalYellow2->GetProperty()->SetAmbient(0.8);
@@ -518,7 +486,7 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 
 	vtkSmartPointer<vtkActor> goalYellow3 = vtkSmartPointer<vtkActor>::New();
 	goalYellow3->SetMapper(goalMapper2);
-	goalYellow3->SetPosition(0, _FIELD_LENGTH / 2 + 0.125 / 2, 1);
+	goalYellow3->SetPosition(0, _FIELD_LENGTH / 2 + post / 2, 1);
 	goalYellow3->GetProperty()->SetColor(1, 1, 0.2);
 	goalYellow3->GetProperty()->SetDiffuse(0.4);
 	goalYellow3->GetProperty()->SetAmbient(0.8);
@@ -530,7 +498,7 @@ void FieldWidget3D::drawField(vtkRenderer* renderer)
 	// Draw plane
 	vtkSmartPointer<vtkPlaneSource> planeSrc = vtkSmartPointer<vtkPlaneSource>::New();
 	planeSrc->SetOrigin(0, 0, 0);
-	planeSrc->SetPoint1(+_FIELD_WIDTH + 2.0, 0, 0);
+	planeSrc->SetPoint1(_FIELD_WIDTH + 2.0, 0, 0);
 	planeSrc->SetPoint2(0, _FIELD_LENGTH + 2.0, 0);
 	vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	planeMapper->SetInput(planeSrc->GetOutput());
@@ -646,16 +614,19 @@ void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool blac
 void FieldWidget3D::initBall(vtkRenderer* renderer)
 {
 	vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
-	sphereSrc->SetRadius(0.11);
+	sphereSrc->SetRadius(_BALL_DIAMETER);
 	vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	sphereMapper->SetInput(sphereSrc->GetOutput());
 	ball = vtkActor::New();
 	ball->SetMapper(sphereMapper);
 	ball->GetProperty()->SetRepresentationToSurface();
 	ball->GetProperty()->SetColor(255, 0, 0);
-	ball->SetPosition(0, 0, 0.11);
+	ball->SetPosition(0, 0, _BALL_DIAMETER);
 	renderer->AddActor(ball);
-
+	if (!this->GetRenderWindow()->CheckInRenderStatus())
+	{
+		this->GetRenderWindow()->Render();
+	}
 }
 
 vtkActor* FieldWidget3D::createText(QString text)

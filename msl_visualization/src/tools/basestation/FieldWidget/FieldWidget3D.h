@@ -89,6 +89,7 @@
 #include "Robot.h"
 #include "Vec.h"
 #include "RobotInfo.h"
+#include <SystemConfig.h>
 
 #define OBSTACLE_HEIGHT 0.2
 
@@ -97,8 +98,6 @@ class FieldWidget3D : public QVTKWidget
     Q_OBJECT
 public:
     explicit FieldWidget3D(QWidget *parent = 0);
-    void get_info_pointer( DB_Robot_Info * rw);
-    void get_coach_pointer( DB_Coach_Info * ci);
     list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > getSavedSharedWorldInfo();
 
 
@@ -107,15 +106,8 @@ public:
     vtkCamera* camera;
 
     vtkActor* field;
-    vtkActor* robots[6];
-    vtkActor* robotNum[6];
     vtkActor* ball;
-    vtkLineSource* taxiSource;
 
-    DB_Robot_Info *DB_Info;
-    DB_Coach_Info *db_coach_info;
-
-    bool taxiFollow;
     bool heightVisible;
     bool heightColor;
     bool height3D;
@@ -141,20 +133,20 @@ private:
 	ros::NodeHandle* rosNode;
 	int ringBufferLength = 10;
     QWidget* parent;
-    float _FIELD_LENGTH;
-    float _FIELD_WIDTH;
-    float _LINE_THICKNESS;
-    float _GOAL_AREA_LENGTH;
-    float _GOAL_AREA_WIDTH;
-    float _PENALTY_AREA_LENGTH;
-    float _PENALTY_AREA_WIDTH;
-    float _CENTER_CIRCLE_RADIUS;
-    float _BALL_DIAMETER;
-    float _CORNER_CIRCLE_RADIUS;
-    float _PENALTY_MARK_DISTANCE;
-    float _BLACK_POINT_WIDTH;
-    float _BLACK_POINT_LENGTH;
-    float _ROBOT_RADIUS;
+    double _FIELD_LENGTH;
+    double _FIELD_WIDTH;
+    double _LINE_THICKNESS;
+    double _GOAL_AREA_LENGTH;
+    double _GOAL_AREA_WIDTH;
+    double _PENALTY_AREA_LENGTH;
+    double _PENALTY_AREA_WIDTH;
+    double _CENTER_CIRCLE_RADIUS;
+    double _BALL_DIAMETER;
+    double _CORNER_CIRCLE_RADIUS;
+    double _PENALTY_MARK_DISTANCE;
+    double _BLACK_POINT_WIDTH;
+    double _BLACK_POINT_LENGTH;
+    double _ROBOT_RADIUS;
 
 
     vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2);
@@ -172,8 +164,6 @@ private:
     vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
 
-    vtkActor* testActor;
-
     vtkLineSource* velocityLineSrc;
     vtkActor* velocityLine;
 
@@ -184,10 +174,6 @@ private:
     vtkDelaunay2D* heightDelaunay;
     vtkPolyData* heightPolyDataAfterInterp;
     vtkActor* heightActor;
-
-    float robotsColorR[6];
-    float robotsColorG[6];
-    float robotsColorB[6];
 
     // Timer to update objects positions
     QTimer *Update_timer;

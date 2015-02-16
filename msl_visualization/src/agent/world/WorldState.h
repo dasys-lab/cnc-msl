@@ -89,8 +89,8 @@ public:
 	LowLevelInfo lowlevel;
 
 	Vec origBallPos;
-	Timer timeAfterOurSetPiece;
-	Timer timeAfterTheirSetPiece;
+	//Timer timeAfterOurSetPiece;
+	//Timer timeAfterTheirSetPiece;
 
 	int pointsRighOfBall;
 	int pointsLeftOfBall;
