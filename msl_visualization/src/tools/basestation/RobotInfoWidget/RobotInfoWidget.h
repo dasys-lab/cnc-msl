@@ -24,7 +24,6 @@
 #define __ROBOTINFOWIGDET_H
 
 #include "ui_RobotInfoWG.h"
-#include "DB_Robot_info.h"
 #include <QTimer>
 #include <QEvent>
 
@@ -35,12 +34,10 @@ class RobotInfoWidget : public QWidget, public Ui::RBInfoWG
 public:
 	RobotInfoWidget(QWidget * parent=0);
 	~RobotInfoWidget();
-	void get_info_pointer( DB_Robot_Info * rw);
 	void get_robot_number(int num);
 
 
 private:
-	DB_Robot_Info *DB_Info; //informação da base de dados
 	int my_number;
 	QTimer *UpdateTimer;
 	double Pi;

@@ -25,6 +25,7 @@
 
 #include <QTimer>
 #include <QFile>
+#include <QtGui>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <mutex>
 #include <ros/ros.h>
@@ -81,15 +82,13 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkDataSetMapper.h>
 #include <vtkRegularPolygonSource.h>
+#include <vtkTetra.h>
 
 #include <QVTKInteractor.h>
 
-#include "DB_Robot_info.h"
-#include "GridView.h"
-#include "Robot.h"
-#include "Vec.h"
 #include "RobotInfo.h"
 #include <SystemConfig.h>
+#include <vtkArrowSource.h>
 
 #define OBSTACLE_HEIGHT 0.2
 
@@ -107,6 +106,8 @@ public:
 
     vtkActor* field;
     vtkActor* ball;
+    vtkSmartPointer<vtkCubeSource> ballVelocity;
+	vtkSmartPointer<vtkActor> ballVelocityActor;
 
     bool heightVisible;
     bool heightColor;
@@ -164,11 +165,6 @@ private:
     vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
 
-    vtkLineSource* velocityLineSrc;
-    vtkActor* velocityLine;
-
-    vector<vtkActor*> toDeleteActors;
-
     vtkPoints* heightPoints;
     vtkPolyData* heightPolyData;
     vtkDelaunay2D* heightDelaunay;
@@ -178,11 +174,10 @@ private:
     // Timer to update objects positions
     QTimer *Update_timer;
 
-    bool option_draw_debug[NROBOTS];
-    bool option_draw_obstacles[NROBOTS];
+    bool option_draw_debug[10];
+    bool option_draw_obstacles[10];
 
 signals:
-    
 public slots:
     void flip(void);
     void lock(bool);

@@ -31,8 +31,6 @@
 
 #include <fstream>
 
-#include "DB_Robot_info.h"
-#include "CoachLogModeInfo.h"
 
 #define LOG_STOPED 0
 #define LOG_PLAYING 1
@@ -40,14 +38,10 @@
 #define FILE_DUMP_FREQUENCY 600		//number of frames accumulated before dumping to the file (600 is 1 minute)		10 for each second
 #define N_FILES MAX_AUTOLOG_REGISTERS / FILE_DUMP_FREQUENCY
 
-using namespace cambada;
 
 class Log_Information
 {
 	public:
-	FormationInfo finfo;
-	CoachInfo coach;
-	Robot robot[NROBOTS];
 };
 
 class LogWidget: public QWidget, public Ui::LogWG
@@ -57,14 +51,8 @@ class LogWidget: public QWidget, public Ui::LogWG
 public:
 	LogWidget(QWidget * parent =0);
 	~LogWidget();
-	void get_info_pointer( DB_Robot_Info * rw);
-	void get_coach_pointer( DB_Coach_Info * ci);
 
 private:
-	DB_Robot_Info *DB_Info;
-	DB_Coach_Info *db_coach_info;
-	CoachLogRobotsInfo *coachLogRobots;
-	CoachLogModeFlag *coachLogFlag;
 
 	std::deque<Log_Information> LogInfo;
 

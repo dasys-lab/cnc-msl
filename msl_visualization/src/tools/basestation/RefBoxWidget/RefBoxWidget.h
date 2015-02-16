@@ -26,11 +26,9 @@
 #include "ros/ros.h"
 
 #include "ui_RefBoxWG.h"
-#include "RefBoxDialog.h"
 #include <QDialog>
 #include <QTimer>
 
-#include "DB_Robot_info.h"
 
 class RefBoxWidget: public QWidget, public Ui::RefBoxWG
 {
@@ -40,16 +38,9 @@ public:
 	RefBoxWidget(QWidget * parent =0);
 	~RefBoxWidget();
 
-	void get_coach_pointer( DB_Coach_Info * ci);
-	void get_info_pointer( DB_Robot_Info * rw);
-	
-
 private:
-	DB_Coach_Info *db_coach_info;
-	DB_Robot_Info *DB_Info;
-
+	
 	QDialog *RBDialog;
-	RefBoxDialog *RBDial;
 	QTimer *UpdateTimer;
 
 protected:

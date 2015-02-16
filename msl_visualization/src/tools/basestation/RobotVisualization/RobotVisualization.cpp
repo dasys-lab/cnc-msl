@@ -9,8 +9,8 @@
 
 RobotVisualization::RobotVisualization()
 {
-	// TODO Auto-generated constructor stub
-
+	id = 0;
+	senderId = 0;
 }
 
 RobotVisualization::~RobotVisualization()

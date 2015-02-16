@@ -26,7 +26,6 @@
 #include <QtGui>
 
 #include "ui_MainWindow.h"
-#include "FullInfoWindow.h"
 
 #include <iostream>
 #include <string>
@@ -65,7 +64,6 @@ private:
 	bool fullscreenflag; 		//indica se a janela se encontra no modo fullscreen
 	QMainWindow *mwind;  		//ponteiro para o mainwindow pai (parent*)
 	QMainWindow *fullinfowindow;	//ponteiro para a fullinfowindow
-	FInfoWind *FIW;
 	QTimer *UpdateTimer;
 
 
