@@ -24,7 +24,6 @@
 #define __ROBOTDIALOG_H
 
 #include "ui_RobotDialog.h"
-#include "DB_Robot_info.h"
 
 
 class RobotDialog : public QDialog, public Ui::RobotDialog
@@ -34,13 +33,9 @@ class RobotDialog : public QDialog, public Ui::RobotDialog
 public:
 	RobotDialog(QDialog *parent=0);
 	~RobotDialog();
-	void get_info_pointer( DB_Robot_Info * rw);
-	void get_coach_pointer( DB_Coach_Info * ci);
 	void get_robot_number(int num);
 
 private:
-	DB_Robot_Info *DB_Info; //informação da base de dados
-	DB_Coach_Info *db_coach_info;
 	int my_number;
 
 public slots:

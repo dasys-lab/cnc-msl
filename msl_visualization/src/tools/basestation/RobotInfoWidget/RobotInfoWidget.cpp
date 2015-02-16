@@ -31,7 +31,6 @@ RobotInfoWidget::RobotInfoWidget(QWidget *parent)
 	/* Inicialização das variáveis */
 	Pi = 3.14159265358979323846;
 	my_number = 0;
-	DB_Info = NULL;
 	UpdateTimer = new QTimer();
 
 	/* conecções dos objectos */
@@ -47,11 +46,6 @@ RobotInfoWidget::~RobotInfoWidget()
 	delete UpdateTimer;
 }
 
-void RobotInfoWidget::get_info_pointer( DB_Robot_Info * rw)
-{
-	DB_Info = rw;
-}
-
 void RobotInfoWidget::get_robot_number(int num)
 {
 	my_number = num;
@@ -60,17 +54,17 @@ void RobotInfoWidget::get_robot_number(int num)
 void RobotInfoWidget::updateInfo(void)
 {
 
- if (DB_Info != NULL)
+ /*if (DB_Info != NULL)
  {
 
 	QString str;
 
 
-	/* Robot Number & Running status */
+	/* Robot Number & Running status
 	Robot_number_lb->setNum(DB_Info->Robot_info[my_number].number);
 	Robot_Running_lb->setNum(DB_Info->Robot_info[my_number].running);
 
-	/* posição , velocidade e oreientação do robot */
+	/* posição , velocidade e oreientação do robot
 	str = QString("%1").arg(DB_Info->Robot_info[my_number].pos.x, 3, 'f',2);
 	Robot_position_lb_x->setText(str);
 
@@ -93,9 +87,9 @@ void RobotInfoWidget::updateInfo(void)
 	robot_orientation_lb_rad->setText(str);
 
 
-	/* posição e velocidade da bola */
+	/* posição e velocidade da bola
 
-		/* Passar as coordenadas relativas da bola para coordenadas absolutas */
+		/* Passar as coordenadas relativas da bola para coordenadas absolutas
 		double abs_x=DB_Info->Robot_info[my_number].ball.pos.x,
 			abs_y=DB_Info->Robot_info[my_number].ball.pos.y;
 		double 	rel_x=DB_Info->Robot_info[my_number].ball.posRel.x,
@@ -107,7 +101,7 @@ void RobotInfoWidget::updateInfo(void)
 			
 		abs_y = DB_Info->Robot_info[my_number].pos.y +
 			sin(DB_Info->Robot_info[my_number].orientation)*
-			rel_x+cos(DB_Info->Robot_info[my_number].orientation)*rel_y;*/
+			rel_x+cos(DB_Info->Robot_info[my_number].orientation)*rel_y;
 
 
 
@@ -132,7 +126,7 @@ void RobotInfoWidget::updateInfo(void)
 
 
 
-	/* Role Info */
+	/* Role Info
 	if ( 	(DB_Info->Robot_info[my_number].role < num_roles) &&
 		(DB_Info->Robot_info[my_number].role >=0)		)
 		robot_role_lb->setText(role_names[DB_Info->Robot_info[my_number].role]);
@@ -140,7 +134,7 @@ void RobotInfoWidget::updateInfo(void)
 		robot_role_lb->setText("Unknown");
 
 
-	/* Behaviour info */
+	/* Behaviour info
 	if ( 	(DB_Info->Robot_info[my_number].behaviour < num_behaviours) &&
 		(DB_Info->Robot_info[my_number].behaviour >=0)			)
 		
@@ -153,8 +147,7 @@ void RobotInfoWidget::updateInfo(void)
 	robot_visible_lb->setNum(1);
 	robot_coaching_lb->setNum(DB_Info->Robot_info[my_number].coaching);
 
-
-	/* Team & Goal color */
+	/* Team & Goal color
 	if (DB_Info->Robot_info[my_number].teamColor == Magenta)
 		team_color_lb->setText("Magenta");
 
@@ -176,9 +169,9 @@ void RobotInfoWidget::updateInfo(void)
 
 
 
-	/* Informação do estado das baterias */
+	/* Informação do estado das baterias
 	
-		/* Carregar uma palete de cores para alterar os labels com as cores certas */
+		/* Carregar uma palete de cores para alterar os labels com as cores certas
 		QColor vermelho = Qt::red;
 		QColor branco = QColor::fromRgb(255, 255, 255, 255);
 		QColor azul = QColor::fromRgb(128,160,191,255);
@@ -187,7 +180,7 @@ void RobotInfoWidget::updateInfo(void)
 
 
 
-	/* bateria 0 */
+	/* bateria 0
 	if (DB_Info->Robot_info[my_number].battery[0] > 0.5)
 		str.setNum(DB_Info->Robot_info[my_number].battery[0]);
 
@@ -207,7 +200,7 @@ void RobotInfoWidget::updateInfo(void)
 
 
 
-	/* bateria 1 */
+	/* bateria 1
 	if (DB_Info->Robot_info[my_number].battery[1] > 0.5)
 		str.setNum(DB_Info->Robot_info[my_number].battery[1]);
 
@@ -223,7 +216,7 @@ void RobotInfoWidget::updateInfo(void)
 	plt.setColor(QPalette::Foreground, color);
 	bat_info_2->setPalette(plt);
 
-	/* bateria 2*/
+	/* bateria 2
 	if (DB_Info->Robot_info[my_number].battery[2] > 0.5)
 		str.setNum(DB_Info->Robot_info[my_number].battery[2]);
 
@@ -240,8 +233,8 @@ void RobotInfoWidget::updateInfo(void)
 	bat_info_3->setPalette(plt);
 
 
-	/* Suporte para a bateria do portátil */
-	/* bateria 3*/
+	/* Suporte para a bateria do portátil
+	/* bateria 3
 
 	str.setNum(DB_Info->lpBat[my_number].status);
 
@@ -260,7 +253,7 @@ void RobotInfoWidget::updateInfo(void)
 
 
 
- }
+ }*/
 }
 
 

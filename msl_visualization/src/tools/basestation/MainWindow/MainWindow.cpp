@@ -41,7 +41,6 @@ MWind::MWind(QMainWindow *parent)
 	Group_RB->setPalette(plt);
 
 	fullinfowindow = new QMainWindow;
-	FIW = new FInfoWind(fullinfowindow);
 
 	/* inicialização das variáveis */
 	mwind = parent;
@@ -51,13 +50,6 @@ MWind::MWind(QMainWindow *parent)
 
 	QString str;
 	QString rm = "Role";
-	for (int i = 1; i < num_roles; i++)
-	{
-		str = role_names[i];
-
-		if (i != 0)
-			str.remove(rm);
-	}
 
 	/* Inicializar o Timer de update do game time*/
 	UpdateTimer = new QTimer();
@@ -138,9 +130,6 @@ MWind::~MWind()
 	if (fullinfowindow != NULL)
 		delete fullinfowindow;
 	fullinfowindow = NULL;
-	if (FIW != NULL)
-		delete FIW;
-	FIW = NULL;
 
 	if (this->RefBoxWG != NULL)
 		delete this->RefBoxWG;

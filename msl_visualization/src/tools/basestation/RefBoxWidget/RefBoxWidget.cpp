@@ -31,7 +31,6 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	setupUi(parent);
 
 	RBDialog = new QDialog(parent);
-	RBDial = new RefBoxDialog(RBDialog);
 	UpdateTimer = new QTimer();
 	rosNode = new ros::NodeHandle();
 
@@ -65,12 +64,7 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	connect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
 
 	connect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
-	connect(RBDial, SIGNAL(transmitCoach()), this, SLOT(updateCoachInfo()));
 	
-	connect(RBDial, SIGNAL(changeGoalColor(int)), this, SLOT(changeGoalColor_sl(int)));
-
-	connect(RBDial, SIGNAL(updateGameParam()), this, SLOT(UpdateGameParameter_slot()));
-
 	connect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
@@ -102,9 +96,6 @@ RefBoxWidget::~RefBoxWidget()
 	disconnect(Their_Throwin_bot, SIGNAL(clicked()), this, SLOT(TheirThrowinPressed()));
 	disconnect(Their_Corner_Kick_bot, SIGNAL(clicked()), this, SLOT(TheirCornerKickPressed()));
 	disconnect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
-	disconnect(RBDial, SIGNAL(transmitCoach()), this, SLOT(updateCoachInfo()));
-	disconnect(RBDial, SIGNAL(changeGoalColor(int)), this, SLOT(changeGoalColor_sl(int)));
-	disconnect(RBDial, SIGNAL(updateGameParam()), this, SLOT(UpdateGameParameter_slot()));
 	disconnect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 	disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
 	disconnect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
@@ -112,7 +103,6 @@ RefBoxWidget::~RefBoxWidget()
 	if( this->LogW!= NULL ) delete this->LogW; this->LogW = NULL;
 
 	delete RBDialog;
-	delete RBDial;
 	delete UpdateTimer;
 }
 	
@@ -120,20 +110,6 @@ void RefBoxWidget::detailsBotPressed(void)
 {
 
 }
-
-void RefBoxWidget::get_info_pointer( DB_Robot_Info * rw)
-{
-	DB_Info=rw;
-	LogW->get_info_pointer( rw );
-}
-
-void RefBoxWidget::get_coach_pointer( DB_Coach_Info * ci)	
-{
-	db_coach_info=ci;
-	RBDial->get_coach_pointer( ci );
-	LogW->get_coach_pointer( ci );
-}
-
 
 /*================================================== Game States =====================================*/
 void RefBoxWidget::PlayOnPressed(void)
@@ -318,7 +294,7 @@ void RefBoxWidget::updateCoachInfo(void)
 void RefBoxWidget::updateRefLog(void)
 {
 
-QTime GTime;
+/*QTime GTime;
 int min=0, sec=0;
 
 	if(db_coach_info != NULL) 
@@ -334,7 +310,7 @@ int min=0, sec=0;
 		//QString* Msg = new QString(refbox_signal_names[db_coach_info->Coach_Info.gameState]);
 		RefLog->append(Msg);
 	}
-
+*/
 }
 
 void RefBoxWidget::changeGoalColor_sl(int goal)

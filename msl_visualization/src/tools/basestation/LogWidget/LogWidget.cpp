@@ -32,14 +32,9 @@ using namespace std;
 LogWidget::LogWidget(QWidget * parent)
 {
 	setupUi(parent);
-	coachLogRobots = new CoachLogRobotsInfo();
-	coachLogFlag = new CoachLogModeFlag();
-	coachLogFlag->log = false;
 	//DB_put(COACHLOGMODEFLAG,coachLogFlag);
 
 	ReadyToRead=true;
-	DB_Info=NULL;
-	db_coach_info=NULL;
 	currentFrame=0;
 
 	PlayerStatus=LOG_STOPED;
@@ -158,7 +153,7 @@ void LogWidget::OpenFilePressed(void)
 
 	while( exitLoad == false )
 	{
-		nItems = fscanf(LoadLogFile, "<Instance gametime=\"%d\" gamestate=\"%d\" cambada=\"%d\" mf=\"%d\" formation=\"%d\">\n",
+		/*nItems = fscanf(LoadLogFile, "<Instance gametime=\"%d\" gamestate=\"%d\" cambada=\"%d\" mf=\"%d\" formation=\"%d\">\n",
 				&(LI.coach.time) , &(LI.coach.gameState), &(LI.coach.ourGoals), &(LI.coach.theirGoals), &(LI.finfo.formationIdFreePlay));//FIXME need to add new formationIdSP
 
 		if(nItems!=5)
@@ -305,7 +300,7 @@ void LogWidget::OpenFilePressed(void)
 
 		fscanf(LoadLogFile, "</Instance>\n");
 		LogInfo.push_back(LI);
-		cerr << "nFrames " << LogInfo.size() << endl;
+		cerr << "nFrames " << LogInfo.size() << endl;*/
 
 	}
 
@@ -321,10 +316,6 @@ void LogWidget::OpenFilePressed(void)
 
 void LogWidget::LoadNextFrame(void)
 {
-	if(DB_Info == NULL || db_coach_info == NULL || ReadyToRead==false || LogInfo.size()<=0)
-	{
-		return;
-	}
 
 	if((currentFrame+1)>LogInfo.size())
 	{
@@ -339,15 +330,12 @@ void LogWidget::LoadNextFrame(void)
 
 void LogWidget::LoadFrame( int frame_number )
 {
-	if(DB_Info == NULL || db_coach_info == NULL || ReadyToRead==false || LogInfo.size()<=0)
-	{
-		return;
-	}
+
 
 	currentFrame=frame_number;
 
 	//Fill RTBD local representation
-	for (int i=0; i<NROBOTS; i++)
+	/*for (int i=0; i<NROBOTS; i++)
 	{
 		DB_Info->Robot_info[i]=LogInfo[currentFrame-1].robot[i];
 		coachLogRobots->robot[i]=LogInfo[currentFrame-1].robot[i];//Log information for coach to calc maps
@@ -359,22 +347,12 @@ void LogWidget::LoadFrame( int frame_number )
 			DB_Info->Robot_status[i]=STATUS_SB;
 	}
 
-	db_coach_info->Coach_Info_in = LogInfo[currentFrame-1].coach;
+	db_coach_info->Coach_Info_in = LogInfo[currentFrame-1].coach;*/
 
 	//Update FrameLabel
 	FrameNumber->setText(QString::number(currentFrame));
 	//DB_put(COACHLOGROBOTSINFO,coachLogRobots);
 	
-}
-
-void LogWidget::get_info_pointer( DB_Robot_Info * rw)
-{
-	DB_Info=rw;
-}
-
-void LogWidget::get_coach_pointer( DB_Coach_Info * ci)	
-{
-	db_coach_info=ci;
 }
 
 void LogWidget::SetLogViewMode_slot(int check_state)
@@ -386,17 +364,11 @@ void LogWidget::SetLogViewMode_slot(int check_state)
 		saveTimer->stop();
 		currentFrame = LogInfo.size();
 		MovieSlider->setValue(currentFrame);
-		db_coach_info->logTimeOffset = db_coach_info->Coach_Info.time-db_coach_info->gTimeSecOffset;	//When entering log mode, save current time, for restoring later
-		emit SetLogViewMode_signal(true);
-		coachLogFlag->log= true;
 	}
 	else if(check_state==0)
 	{
 		//WHEN NOT IN LOG MODE, START SAVING
 		saveTimer->start(100);
-		db_coach_info->addLogTimeOffset = true;		//When leaving log mode, flag coachInfo to restore the time before the log viewing started
-		emit SetLogViewMode_signal(false);
-		coachLogFlag->log= false;
 	}
 	//DB_put(COACHLOGMODEFLAG,coachLogFlag);
 
@@ -546,20 +518,14 @@ void LogWidget::saveCurrentDBInfo()
 
 	Log_Information currentData;
 
-	if (DB_Info == NULL || db_coach_info == NULL) {
-//		fprintf(stderr,"Error wrinting log: RTDB pointer null\n");
-		return;
-	}
 
 	//Save current coach data
-	currentData.coach = db_coach_info->Coach_Info_in;
 	//Create current coach data String
-	logLine += QString("<Instance gametime=\"" + QString::number(currentData.coach.time) + "\" gamestate=\"" + QString::number(currentData.coach.gameState) + "\" cambada=\"" + QString::number(currentData.coach.ourGoals) + "\" mf=\"" + QString::number(currentData.coach.theirGoals) + "\" formation=\"" + QString::number(0) + "\">\n");
 
 //	sprintf("<Instance gametime=\"%d\" gamestate=\"%d\" cambada=\"%d\" mf=\"%d\" formation=\"%d\">",
 //		currentData.coach.time , currentData.coach.gameState, currentData.coach.ourGoals, currentData.coach.theirGoals, 0);//FIXME finfo.formationID);
 
-	for( int i = 0 ; i < N_CAMBADAS ; i++ )
+	/*for( int i = 0 ; i < N_CAMBADAS ; i++ )
 	{
 		//Save current robot data
 		currentData.robot[i] = DB_Info->Robot_info[i];
@@ -600,7 +566,7 @@ void LogWidget::saveCurrentDBInfo()
 		}
 
 		logLine += "</Agent>\n";
-	}
+	}*/
 	logLine += "</Instance>\n";
 
 	LogInfo.push_back(currentData);

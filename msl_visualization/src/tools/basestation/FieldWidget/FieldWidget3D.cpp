@@ -99,10 +99,7 @@ public:
 		if (picker->GetActor() != NULL && picker->GetActor() == parent->field)
 		{
 			double* position = picker->GetPickPosition();
-			if (robotIdx >= 0 && robotIdx < NROBOTS)
-			{
-				Vec pos = Vec(position[0], position[1]);
-			}
+
 			fprintf(stderr, "POS: (%.1lf, %.1lf, %.1lf)\n", position[0], position[1], position[2]);
 		}
 
@@ -160,34 +157,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-
-	/*ConfigXML config;
-	 if( config.parse("../config/cambada.conf.xml") == false )
-	 {
-	 cerr << "ERROR " << endl;
-	 exit(1);
-	 }*/
-
 	Update_timer = new QTimer();
 	Update_timer->setInterval(1);
 	connect(Update_timer, SIGNAL(timeout()), this, SLOT(update_robot_info()));
 
-	(*sc)["Alica"]->get<double>("Alica.EngineFrequency", NULL);
-	/* Dimensions */
-	/*_FIELD_LENGTH = 18;
-	_FIELD_WIDTH = 12;
-	_LINE_THICKNESS = 0.1;
-	_GOAL_AREA_LENGTH = 2.5;
-	_GOAL_AREA_WIDTH = 8;
-	_PENALTY_AREA_LENGTH = 1;
-	_PENALTY_AREA_WIDTH = 6;
-	_CENTER_CIRCLE_RADIUS = 2;
-	_BALL_DIAMETER = 0.25;
-	_CORNER_CIRCLE_RADIUS = 0.3;
-	_PENALTY_MARK_DISTANCE = 3;
-	_BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
-	_BLACK_POINT_LENGTH = 2;
-	_ROBOT_RADIUS = 0.25;*/
 	_FIELD_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL) / 1000;
 	_FIELD_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL) / 1000;
 	_LINE_THICKNESS = (*sc)["Globals"]->get<double>("Globals.FootballField.LineWidth", NULL) / 1000;
@@ -227,7 +200,6 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	QVTKInteractor* iren = this->GetInteractor();
 	vtkSmartPointer<MouseInteractorStyle> intStyle = vtkSmartPointer<MouseInteractorStyle>::New();
 	intStyle->setParent(this);
-	//vtkSmartPointer<vtkInteractorStyleTerrain> intStyle = vtkSmartPointer<vtkInteractorStyleTerrain>::New();
 	iren->SetInteractorStyle(intStyle);
 	renderWindow->SetInteractor(iren);
 	// WIPFIX renderer->Render();
@@ -240,21 +212,6 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	actorMapper->SetInput(readerCbd->GetOutput());
 
 	// WIPFIX renderer->Render();
-
-	velocityLineSrc = vtkLineSource::New();
-	vtkSmartPointer<vtkPolyDataMapper> velLineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	velLineMapper->SetInput(velocityLineSrc->GetOutput());
-	velocityLine = vtkActor::New();
-	velocityLine->SetMapper(velLineMapper);
-	velocityLine->GetProperty()->SetColor(1.0, 0, 0);
-	velocityLine->GetProperty()->SetLineWidth(2);
-	velocityLine->GetProperty()->SetOpacity(0);
-	renderer->AddActor(velocityLine);
-
-	//renderer->AddLight();
-
-	//vtkTextWidget* textCbd = vtkTextWidget::New();
-	//textCbd->SetInteractor;
 
 	// View heightmap
 	heightVisible = false;
@@ -356,26 +313,20 @@ void FieldWidget3D::flip(void)
 
 void FieldWidget3D::obstacles_point_flip(unsigned int Robot_no, bool on_off)
 {
-	if (Robot_no < NROBOTS)
 		option_draw_obstacles[Robot_no] = on_off;
 }
 
 void FieldWidget3D::obstacles_point_flip_all(bool on_off)
 {
-	for (unsigned int i = 0; i < NROBOTS; i++)
-		obstacles_point_flip(i, on_off);
 }
 
 void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
 {
-	if (Robot_no < NROBOTS)
 		option_draw_debug[Robot_no] = on_off;
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
 {
-	for (unsigned int i = 0; i < NROBOTS; i++)
-		debug_point_flip(i, on_off);
 }
 
 vtkActor* FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2)
@@ -623,10 +574,21 @@ void FieldWidget3D::initBall(vtkRenderer* renderer)
 	ball->GetProperty()->SetColor(255, 0, 0);
 	ball->SetPosition(0, 0, _BALL_DIAMETER);
 	renderer->AddActor(ball);
-	if (!this->GetRenderWindow()->CheckInRenderStatus())
-	{
-		this->GetRenderWindow()->Render();
-	}
+	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
+	cubeSrc->SetXLength(1);
+	cubeSrc->SetYLength(0.05);
+	cubeSrc->SetZLength(0.05);
+	ballVelocity = cubeSrc;
+	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	velocityMapper->SetInput(cubeSrc->GetOutput());
+	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
+	velocity->SetMapper(velocityMapper);
+	velocity->SetPosition(0,0,_BALL_DIAMETER);
+	velocity->GetProperty()->SetColor(1, 0, 0);
+	velocity->GetProperty()->SetDiffuse(0.4);
+	velocity->GetProperty()->SetAmbient(0.8);
+	ballVelocityActor = velocity;
+	renderer->AddActor(velocity);
 }
 
 vtkActor* FieldWidget3D::createText(QString text)
@@ -960,6 +922,7 @@ list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > FieldWidget3D::getSav
 void FieldWidget3D::moveBall(double x, double y, double z)
 {
 	ball->SetPosition(x, y, z);
+	ballVelocityActor->SetPosition(x,y,_BALL_DIAMETER);
 }
 
 void FieldWidget3D::drawOpponent(double x, double y, double z)
@@ -1039,31 +1002,32 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 {
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
-	float p0[3] = {0.26, 0.26, 0};
+	float p0[3] = {0.26, 0, 0};
 	float p1[3] = {-0.26, 0.26, 0};
 	float p2[3] = {-0.26, -0.26, 0};
-	float p3[3] = {0.26, -0.26, 0};
-	float p4[3] = {0.0, 0.0, 0.4};
+	float p3[3] = {0.0, 0.0, 0.4};
 
 	points->InsertNextPoint(p0);
 	points->InsertNextPoint(p1);
 	points->InsertNextPoint(p2);
 	points->InsertNextPoint(p3);
-	points->InsertNextPoint(p4);
 
-	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
-	pyramid->GetPointIds()->SetId(0, 0);
-	pyramid->GetPointIds()->SetId(1, 1);
-	pyramid->GetPointIds()->SetId(2, 2);
-	pyramid->GetPointIds()->SetId(3, 3);
-	pyramid->GetPointIds()->SetId(4, 4);
+
+	 vtkSmartPointer<vtkTetra> tetra =
+	    vtkSmartPointer<vtkTetra>::New();
+//	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
+	 tetra->GetPointIds()->SetId(0, 0);
+	 tetra->GetPointIds()->SetId(1, 1);
+	 tetra->GetPointIds()->SetId(2, 2);
+	 tetra->GetPointIds()->SetId(3, 3);
+//	pyramid->GetPointIds()->SetId(4, 4);
 
 	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	cells->InsertNextCell(pyramid);
+	cells->InsertNextCell(tetra);
 
 	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
 	ug->SetPoints(points);
-	ug->InsertNextCell(pyramid->GetCellType(), pyramid->GetPointIds());
+	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
 
 	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
 	cubeSrc->SetXLength(0.52);
@@ -1087,7 +1051,7 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	vtkSmartPointer<vtkActor> teamTop = vtkSmartPointer<vtkActor>::New();
 	teamTop->SetMapper(teamTopMapper);
 	teamTop->SetPosition(x, y, z + 0.4);
-	teamTop->GetProperty()->SetColor(1, 1, 1);
+	teamTop->GetProperty()->SetColor(150.0/255.0, 150.0/255.0, 150.0/255.0);
 	teamTop->GetProperty()->SetDiffuse(0.4);
 	teamTop->GetProperty()->SetAmbient(0.8);
 	renderer->AddActor(teamTop);

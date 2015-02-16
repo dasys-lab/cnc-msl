@@ -9,8 +9,8 @@
 
 RobotInfo::RobotInfo()
 {
-	// TODO Auto-generated constructor stub
-
+	id = 0;
+	timeStamp = 0;
 }
 
 RobotInfo::~RobotInfo()
