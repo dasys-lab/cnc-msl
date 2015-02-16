@@ -7,10 +7,15 @@
 
 #include <ros/macros.h>
 
+#include <QtGui>
 #include <QWidget>
+#include <QDialog>
 
 namespace rqt_msl_refbox
 {
+	using namespace std;
+
+	class RefBoxCommunication;
 
 	class RefBox : public rqt_gui_cpp::Plugin
 	{
@@ -32,6 +37,15 @@ namespace rqt_msl_refbox
 		Ui::RefBoxWidget ui_;
 
 		QWidget* widget_;
+
+	private:
+
+		void showRBDialog();
+
+		bool eventFilter(QObject* watched, QEvent* event);
+
+		QDialog* RBCommQDialog;
+		RefBoxCommunication* RBComm;
 
 	};
 
