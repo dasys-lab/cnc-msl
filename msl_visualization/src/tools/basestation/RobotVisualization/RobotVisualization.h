@@ -11,6 +11,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
 #include <string>
+#include <vtkLineSource.h>
+
 
 class RobotVisualization
 {
@@ -27,13 +29,23 @@ public:
 	void setName(std::string name);
 	int getSenderId();
 	void setSenderId(int senderId);
+	vtkActor* getBall();
+	void setBall(vtkActor* ball);
+	vtkSmartPointer<vtkLineSource> getBallVelocity();
+	void setBallVelocity(vtkSmartPointer<vtkLineSource> ballVelocity);
+	vtkSmartPointer<vtkActor> getBallVelocityActor();
+	void setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelocityActor);
 
 private:
-	std::string name;
-	int id;
-	int senderId;
-	vtkSmartPointer<vtkActor> top;
-	vtkSmartPointer<vtkActor> bottom;
+	std::string name = "";
+	int id = 0;
+	int senderId = 0;
+	vtkSmartPointer<vtkActor> top = nullptr;
+	vtkSmartPointer<vtkActor> bottom = nullptr;
+    vtkActor* ball = nullptr;
+    vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
+	vtkSmartPointer<vtkActor> ballVelocityActor = nullptr;
+	vtkSmartPointer<vtkRegularPolygonSource> polygonSource = nullptr;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_ */

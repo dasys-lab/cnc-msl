@@ -187,7 +187,6 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 
 	drawField(renderer);
 	drawGoals(renderer);
-	initBall(renderer);
 
 	// Camera properties
 	camera = vtkCamera::New();
@@ -237,15 +236,18 @@ void FieldWidget3D::update_robot_info(void)
 
 		auto tmp = ros::Time::now();
 		unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
-		if((now - robot->getTimeStamp()) > 2000000000)
+		if ((now - robot->getTimeStamp()) > 2000000000)
 		{
 			shared_ptr<RobotVisualization> toBeRemoved;
-			for(auto r : team)
+			for (auto r : team)
 			{
-				if(r->getId() == robot->getId())
+				if (r->getId() == robot->getId())
 				{
 					renderer->RemoveActor(r->getTop());
 					renderer->RemoveActor(r->getBottom());
+					renderer->RemoveActor(r->getBall());
+					renderer->RemoveActor(r->getBallVelocityActor());
+					r->setBallVelocity(nullptr);
 					toBeRemoved = r;
 					break;
 				}
@@ -253,11 +255,10 @@ void FieldWidget3D::update_robot_info(void)
 			team.remove(toBeRemoved);
 			continue;
 		}
-		for(auto x : robot->getMsg()->mergedOpponents)
+		for (auto x : robot->getMsg()->mergedOpponents)
 		{
 			drawOpponent(x.x / 1000, x.y / 1000, 0);
 		}
-		moveBall(robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000, robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 		bool alreadyIn = false;
 		for (auto member : team)
 		{
@@ -271,6 +272,20 @@ void FieldWidget3D::update_robot_info(void)
 			shared_ptr<RobotVisualization> r = make_shared<RobotVisualization>();
 			r->setId(robot->getMsg()->senderID);
 			drawTeamRobot(r, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000, 0);
+			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
+			{
+				initBall(r, renderer);
+			}
+			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+			{
+				moveBall(r, robot->getMsg(), robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000,
+							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
+			}
+			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+			{
+				renderer->RemoveActor(r->getBall());
+				r->setBall(nullptr);
+			}
 		}
 		else
 		{
@@ -278,10 +293,24 @@ void FieldWidget3D::update_robot_info(void)
 			{
 				if (member->getId() == robot->getMsg()->senderID)
 				{
-					moveRobot(member, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000, 0);
+					moveRobot(member, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000,
+								0);
+					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
+					{
+						initBall(member, renderer);
+					}
+					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+					{
+						moveBall(member, robot->getMsg(), robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000,
+									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
+					}
+					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+					{
+						renderer->RemoveActor(member->getBall());
+						member->setBall(nullptr);
+					}
 				}
 			}
-
 		}
 		alreadyIn = false;
 	}
@@ -313,7 +342,7 @@ void FieldWidget3D::flip(void)
 
 void FieldWidget3D::obstacles_point_flip(unsigned int Robot_no, bool on_off)
 {
-		option_draw_obstacles[Robot_no] = on_off;
+	option_draw_obstacles[Robot_no] = on_off;
 }
 
 void FieldWidget3D::obstacles_point_flip_all(bool on_off)
@@ -322,7 +351,7 @@ void FieldWidget3D::obstacles_point_flip_all(bool on_off)
 
 void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
 {
-		option_draw_debug[Robot_no] = on_off;
+	option_draw_debug[Robot_no] = on_off;
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
@@ -355,8 +384,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1
 	line->SetPoint2(x2, y2, z2);
 	lineMapper->SetInputConnection(line->GetOutputPort());
 	lineActor->SetMapper(lineMapper);
-	lineActor->GetProperty()->SetLineWidth(3);
-
+	lineActor->GetProperty()->SetLineWidth(_LINE_THICKNESS * 1000);
 	return lineActor;
 }
 
@@ -562,32 +590,30 @@ void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool blac
 	renderer->AddActor(blackDot1);
 }
 
-void FieldWidget3D::initBall(vtkRenderer* renderer)
+void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
 {
 	vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
 	sphereSrc->SetRadius(_BALL_DIAMETER);
 	vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	sphereMapper->SetInput(sphereSrc->GetOutput());
-	ball = vtkActor::New();
-	ball->SetMapper(sphereMapper);
-	ball->GetProperty()->SetRepresentationToSurface();
-	ball->GetProperty()->SetColor(255, 0, 0);
-	ball->SetPosition(0, 0, _BALL_DIAMETER);
-	renderer->AddActor(ball);
-	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-	cubeSrc->SetXLength(1);
-	cubeSrc->SetYLength(0.05);
-	cubeSrc->SetZLength(0.05);
-	ballVelocity = cubeSrc;
+	robot->setBall(vtkActor::New());
+	robot->getBall()->SetMapper(sphereMapper);
+	robot->getBall()->GetProperty()->SetRepresentationToSurface();
+	robot->getBall()->GetProperty()->SetColor(255, 0, 0);
+	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER);
+	renderer->AddActor(robot->getBall());
+	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1], robot->getBall()->GetPosition()[2]);
+	line->SetPoint2(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1], robot->getBall()->GetPosition()[2]);
+	robot->setBallVelocity(line);
 	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	velocityMapper->SetInput(cubeSrc->GetOutput());
+	velocityMapper->SetInput(line->GetOutput());
 	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
 	velocity->SetMapper(velocityMapper);
-	velocity->SetPosition(0,0,_BALL_DIAMETER);
 	velocity->GetProperty()->SetColor(1, 0, 0);
 	velocity->GetProperty()->SetDiffuse(0.4);
 	velocity->GetProperty()->SetAmbient(0.8);
-	ballVelocityActor = velocity;
+	robot->setBallVelocityActor(velocity);
 	renderer->AddActor(velocity);
 }
 
@@ -919,10 +945,22 @@ list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > FieldWidget3D::getSav
 	return savedSharedWorldInfo;
 }
 
-void FieldWidget3D::moveBall(double x, double y, double z)
+void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z)
 {
-	ball->SetPosition(x, y, z);
-	ballVelocityActor->SetPosition(x,y,_BALL_DIAMETER);
+	robot->getBall()->SetPosition(x, y, z);
+	robot->getBallVelocity()->SetPoint1(x, y, z);
+	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx, y + info->ball.velocity.vy, z + info->ball.velocity.vz);
+	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
+	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
+	velocity->SetMapper(velocityMapper);
+	velocity->GetProperty()->SetColor(1, 0, 0);
+	velocity->GetProperty()->SetDiffuse(0.4);
+	velocity->GetProperty()->SetAmbient(0.8);
+	renderer->RemoveActor(robot->getBallVelocityActor());
+	robot->setBallVelocityActor(velocity);
+	renderer->AddActor(velocity);
+
 }
 
 void FieldWidget3D::drawOpponent(double x, double y, double z)
@@ -1012,14 +1050,12 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	points->InsertNextPoint(p2);
 	points->InsertNextPoint(p3);
 
-
-	 vtkSmartPointer<vtkTetra> tetra =
-	    vtkSmartPointer<vtkTetra>::New();
+	vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
 //	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
-	 tetra->GetPointIds()->SetId(0, 0);
-	 tetra->GetPointIds()->SetId(1, 1);
-	 tetra->GetPointIds()->SetId(2, 2);
-	 tetra->GetPointIds()->SetId(3, 3);
+	tetra->GetPointIds()->SetId(0, 0);
+	tetra->GetPointIds()->SetId(1, 1);
+	tetra->GetPointIds()->SetId(2, 2);
+	tetra->GetPointIds()->SetId(3, 3);
 //	pyramid->GetPointIds()->SetId(4, 4);
 
 	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
@@ -1051,7 +1087,7 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	vtkSmartPointer<vtkActor> teamTop = vtkSmartPointer<vtkActor>::New();
 	teamTop->SetMapper(teamTopMapper);
 	teamTop->SetPosition(x, y, z + 0.4);
-	teamTop->GetProperty()->SetColor(150.0/255.0, 150.0/255.0, 150.0/255.0);
+	teamTop->GetProperty()->SetColor(150.0 / 255.0, 150.0 / 255.0, 150.0 / 255.0);
 	teamTop->GetProperty()->SetDiffuse(0.4);
 	teamTop->GetProperty()->SetAmbient(0.8);
 	renderer->AddActor(teamTop);

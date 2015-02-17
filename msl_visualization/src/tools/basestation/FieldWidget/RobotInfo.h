@@ -10,7 +10,9 @@
 
 #include <boost/shared_ptr.hpp>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "../RobotVisualization/RobotVisualization.h"
 #include <ros/ros.h>
+#include <memory>
 
 class RobotInfo
 {
@@ -23,11 +25,14 @@ public:
 	void setMsg(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> msg);
 	unsigned long getTimeStamp();
 	void setTimeStamp(unsigned long timeStamp);
+	std::shared_ptr<RobotVisualization> getVisualization();
+	void setVisualization(std::shared_ptr<RobotVisualization> visualization);
 
 private:
-	int id;
-	unsigned long timeStamp;
-	boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> msg;
+	int id = 0;
+	unsigned long timeStamp = 0;
+	boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> msg = nullptr;
+	std::shared_ptr<RobotVisualization> visualization = nullptr;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_ */

@@ -66,3 +66,33 @@ void RobotVisualization::setSenderId(int senderId)
 {
 	this->senderId = senderId;
 }
+
+vtkActor* RobotVisualization::getBall()
+{
+	return ball;
+}
+
+void RobotVisualization::setBall(vtkActor* ball)
+{
+	this->ball = ball;
+}
+
+vtkSmartPointer<vtkLineSource> RobotVisualization::getBallVelocity()
+{
+	return ballVelocity;
+}
+
+void RobotVisualization::setBallVelocity(vtkSmartPointer<vtkLineSource> ballVelocity)
+{
+	this->ballVelocity = ballVelocity;
+}
+
+vtkSmartPointer<vtkActor> RobotVisualization::getBallVelocityActor()
+{
+	return ballVelocityActor;
+}
+
+void RobotVisualization::setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelocityActor)
+{
+	this->ballVelocityActor = ballVelocityActor;
+}

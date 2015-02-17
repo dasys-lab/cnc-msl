@@ -100,14 +100,11 @@ public:
     list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > getSavedSharedWorldInfo();
 
 
-    vtkRenderWindow *renderWindow;
-    vtkRenderer *renderer;
-    vtkCamera* camera;
+    vtkRenderWindow *renderWindow = nullptr;
+    vtkRenderer *renderer = nullptr;
+    vtkCamera* camera = nullptr;
 
-    vtkActor* field;
-    vtkActor* ball;
-    vtkSmartPointer<vtkCubeSource> ballVelocity;
-	vtkSmartPointer<vtkActor> ballVelocityActor;
+    vtkActor* field = nullptr;
 
     bool heightVisible;
     bool heightColor;
@@ -120,7 +117,7 @@ public:
 private:
     ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
-    void moveBall(double x, double y, double z);
+    void moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z);
     void drawOpponent(double x, double y, double z);
     void drawTeamRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     list<shared_ptr<RobotVisualization>> obstacles;
@@ -154,7 +151,7 @@ private:
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
-    void initBall(vtkRenderer* renderer);
+    void initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();
