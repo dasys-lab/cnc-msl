@@ -36,8 +36,8 @@ public:
 	void setBallVelocity(vtkSmartPointer<vtkLineSource> ballVelocity);
 	vtkSmartPointer<vtkActor> getBallVelocityActor();
 	void setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelocityActor);
-	vtkSmartPointer<vtkRegularPolygonSource> getPolygonSource();
-	void setPolygonSource(vtkSmartPointer<vtkRegularPolygonSource> polygonSource);
+	vtkSmartPointer<vtkActor> getSharedBall();
+	void setSharedBall(vtkSmartPointer<vtkActor> sharedBall);
 
 private:
 	std::string name = "";
@@ -48,7 +48,7 @@ private:
     vtkActor* ball = nullptr;
     vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
 	vtkSmartPointer<vtkActor> ballVelocityActor = nullptr;
-	vtkSmartPointer<vtkRegularPolygonSource> polygonSource = nullptr;
+	vtkSmartPointer<vtkActor> sharedBall = nullptr;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_ */

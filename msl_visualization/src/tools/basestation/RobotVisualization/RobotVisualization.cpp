@@ -97,12 +97,12 @@ void RobotVisualization::setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelo
 	this->ballVelocityActor = ballVelocityActor;
 }
 
-vtkSmartPointer<vtkRegularPolygonSource> RobotVisualization::getPolygonSource()
+vtkSmartPointer<vtkActor> RobotVisualization::getSharedBall()
 {
-	return polygonSource;
+	return sharedBall;
 }
 
-void RobotVisualization::setPolygonSource(vtkSmartPointer<vtkRegularPolygonSource> polygonSource)
+void RobotVisualization::setSharedBall(vtkSmartPointer<vtkActor> sharedBall)
 {
-	this->polygonSource = polygonSource;
+	this->sharedBall = sharedBall;
 }

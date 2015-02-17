@@ -118,6 +118,7 @@ private:
     ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
     void moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z);
+    void moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void drawOpponent(double x, double y, double z);
     void drawTeamRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     list<shared_ptr<RobotVisualization>> obstacles;
@@ -152,6 +153,7 @@ private:
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
     void initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
+    void initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();

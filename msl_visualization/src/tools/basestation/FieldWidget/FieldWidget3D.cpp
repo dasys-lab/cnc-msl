@@ -247,6 +247,7 @@ void FieldWidget3D::update_robot_info(void)
 					renderer->RemoveActor(r->getBottom());
 					renderer->RemoveActor(r->getBall());
 					renderer->RemoveActor(r->getBallVelocityActor());
+					renderer->RemoveActor(r->getSharedBall());
 					r->setBallVelocity(nullptr);
 					toBeRemoved = r;
 					break;
@@ -286,6 +287,21 @@ void FieldWidget3D::update_robot_info(void)
 				renderer->RemoveActor(r->getBall());
 				r->setBall(nullptr);
 			}
+			if (r->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
+			{
+				initSharedBall(r, renderer);
+			}
+			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+			{
+				moveSharedBall(r, robot->getMsg()->sharedBall.point.x / 1000,
+								robot->getMsg()->sharedBall.point.y / 1000,
+								robot->getMsg()->sharedBall.point.z / 1000);
+			}
+			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+			{
+				renderer->RemoveActor(r->getSharedBall());
+				r->setSharedBall(nullptr);
+			}
 		}
 		else
 		{
@@ -301,13 +317,29 @@ void FieldWidget3D::update_robot_info(void)
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
 					{
-						moveBall(member, robot->getMsg(), robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000,
+						moveBall(member, robot->getMsg(), robot->getMsg()->ball.point.x / 1000,
+									robot->getMsg()->ball.point.y / 1000,
 									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
 					{
 						renderer->RemoveActor(member->getBall());
 						member->setBall(nullptr);
+					}
+					if (member->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
+					{
+						initSharedBall(member, renderer);
+					}
+					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+					{
+						moveSharedBall(member, robot->getMsg()->sharedBall.point.x / 1000,
+										robot->getMsg()->sharedBall.point.y / 1000,
+										robot->getMsg()->sharedBall.point.z / 1000);
+					}
+					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+					{
+						renderer->RemoveActor(member->getSharedBall());
+						member->setSharedBall(nullptr);
 					}
 				}
 			}
@@ -603,8 +635,10 @@ void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* 
 	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER);
 	renderer->AddActor(robot->getBall());
 	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
-	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1], robot->getBall()->GetPosition()[2]);
-	line->SetPoint2(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1], robot->getBall()->GetPosition()[2]);
+	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],
+					robot->getBall()->GetPosition()[2]);
+	line->SetPoint2(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],
+					robot->getBall()->GetPosition()[2]);
 	robot->setBallVelocity(line);
 	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	velocityMapper->SetInput(line->GetOutput());
@@ -946,11 +980,13 @@ list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > FieldWidget3D::getSav
 	return savedSharedWorldInfo;
 }
 
-void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z)
+void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot,
+								boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z)
 {
 	robot->getBall()->SetPosition(x, y, z);
 	robot->getBallVelocity()->SetPoint1(x, y, z);
-	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx, y + info->ball.velocity.vy, z + info->ball.velocity.vz);
+	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx, y + info->ball.velocity.vy,
+										z + info->ball.velocity.vz);
 	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
 	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
@@ -1103,5 +1139,32 @@ void FieldWidget3D::moveRobot(shared_ptr<RobotVisualization> robot, double x, do
 {
 	robot->getTop()->SetPosition(x, y, z + 0.4);
 	robot->getBottom()->SetPosition(x, y, z + 0.2);
+}
+
+void FieldWidget3D::moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z)
+{
+	robot->getSharedBall()->SetPosition(x, y, z + 0.01);
+}
+
+void FieldWidget3D::initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
+{
+	// Create a circle
+	vtkSmartPointer<vtkRegularPolygonSource> polygonSource = vtkSmartPointer<vtkRegularPolygonSource>::New();
+
+	//polygonSource->GeneratePolygonOff();
+	polygonSource->SetNumberOfSides(50);
+	polygonSource->SetRadius(_BALL_DIAMETER * 1.5);
+	polygonSource->Update();
+
+	// Visualize
+	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	mapper->SetInputConnection(polygonSource->GetOutputPort());
+	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+	actor->SetMapper(mapper);
+	actor->GetProperty()->SetColor(0.3, 0.3, 0.5);
+	actor->GetProperty()->SetDiffuse(0.4);
+	actor->GetProperty()->SetAmbient(0.8);
+	robot->setSharedBall(actor);
+	renderer->AddActor(actor);
 }
 
