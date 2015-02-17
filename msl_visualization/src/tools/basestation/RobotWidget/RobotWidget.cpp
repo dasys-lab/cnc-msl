@@ -120,7 +120,6 @@ RWidget::~RWidget()
 
 	delete UpdateTimer;
 	delete RobotDetailsDialog;
-	delete RDial;
 }
 
 void RWidget::changeRobotStatus(QString *status)

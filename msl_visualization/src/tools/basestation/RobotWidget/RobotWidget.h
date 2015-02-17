@@ -24,7 +24,6 @@
 #define __ROBOTWIDGET_H
 
 #include "ui_robotwidget.h"
-#include "RobotDialog.h"
 #include <QTimer>
 #include <QDialog>
 
@@ -82,7 +81,6 @@ private:
 	QTimer *UpdateTimer;
 
 	QDialog *RobotDetailsDialog;
-	RobotDialog *RDial;
 
 	QString *KO;
 	QString *NA;
