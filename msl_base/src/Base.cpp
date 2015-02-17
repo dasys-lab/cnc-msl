@@ -13,6 +13,7 @@
 #include "Base.h"
 #include "clock/AlicaROSClock.h"
 #include "communication/AlicaRosCommunication.h"
+#include "SigFault.h"
 
 using namespace std;
 using namespace msl;
@@ -58,6 +59,10 @@ int main(int argc, char** argv)
 {
 	cout << "Initing Ros" << endl;
 	ros::init(argc, argv, "AlicaEngine");
+
+	//This makes segfaults to exceptions
+	segfaultdebug::init_segfault_exceptions();
+
 	cout << "Starting Base" << endl;
 	if (argc < 2)
 	{
