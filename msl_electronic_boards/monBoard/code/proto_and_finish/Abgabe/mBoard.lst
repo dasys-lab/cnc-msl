@@ -1,0 +1,2922 @@
+   1               		.file	"mBoard.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__ = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.global	sleep
+  11               	sleep:
+  12               	/* prologue: function */
+  13               	/* frame size = 0 */
+  14               	/* stack size = 0 */
+  15               	.L__stack_usage = 0
+  16 0000 00C0      		rjmp .L2
+  17               	.L3:
+  18 0002 EFE9      		 ldi r30,lo8(3999)
+  19 0004 FFE0      	    ldi r31,hi8(3999)
+  20 0006 3197      	    1:sbiw r30,1
+  21 0008 01F4      	    brne 1b
+  22 000a 00C0      		rjmp .
+  23 000c 0000      		nop
+  24 000e 6150      		subi r22,lo8(-(-1))
+  25 0010 7040      		sbci r23,hi8(-(-1))
+  26 0012 8040      		sbci r24,hlo8(-(-1))
+  27 0014 9040      		sbci r25,hhi8(-(-1))
+  28               	.L2:
+  29 0016 6115      		cp r22,__zero_reg__
+  30 0018 7105      		cpc r23,__zero_reg__
+  31 001a 8105      		cpc r24,__zero_reg__
+  32 001c 9105      		cpc r25,__zero_reg__
+  33 001e 01F4      		brne .L3
+  34               	/* epilogue start */
+  35 0020 0895      		ret
+  37               	.global	initPorts
+  39               	initPorts:
+  40               	/* prologue: function */
+  41               	/* frame size = 0 */
+  42               	/* stack size = 0 */
+  43               	.L__stack_usage = 0
+  44 0022 389A      		sbi 39-32,0
+  45 0024 3D9A      		sbi 39-32,5
+  46 0026 399A      		sbi 39-32,1
+  47 0028 3A9A      		sbi 39-32,2
+  48 002a 3B9A      		sbi 39-32,3
+  49 002c 3F9A      		sbi 39-32,7
+  50 002e 2098      		cbi 36-32,0
+  51 0030 289A      		sbi 37-32,0
+  52 0032 87E8      		ldi r24,lo8(-121)
+  53 0034 8093 7A00 		sts 122,r24
+  54               	/* epilogue start */
+  55 0038 0895      		ret
+  57               	.global	initVoltageMultiplikator
+  59               	initVoltageMultiplikator:
+  60               	/* prologue: function */
+  61               	/* frame size = 0 */
+  62               	/* stack size = 0 */
+  63               	.L__stack_usage = 0
+  64 003a 85E0      		ldi r24,lo8(5)
+  65 003c 8093 0000 		sts measuringVoltageFaktor,r24
+  66 0040 8093 0000 		sts measuringVoltageFaktor+1,r24
+  67 0044 8093 0000 		sts measuringVoltageFaktor+2,r24
+  68 0048 8093 0000 		sts measuringVoltageFaktor+3,r24
+  69 004c 1092 0000 		sts measuringVoltageFaktor+4,__zero_reg__
+  70 0050 1092 0000 		sts measuringVoltageFaktor+5,__zero_reg__
+  71 0054 8093 0000 		sts measuringVoltageFaktor+6,r24
+  72 0058 1092 0000 		sts measuringVoltageFaktor+7,__zero_reg__
+  73 005c 8FE6      		ldi r24,lo8(111)
+  74 005e 8093 0000 		sts portToRelais+1,r24
+  75 0062 8093 0000 		sts portToRelais+2,r24
+  76 0066 8093 0000 		sts portToRelais+3,r24
+  77 006a 8093 0000 		sts portToRelais+4,r24
+  78 006e 8093 0000 		sts portToRelais+5,r24
+  79 0072 8093 0000 		sts portToRelais+6,r24
+  80 0076 8093 0000 		sts portToRelais+7,r24
+  81 007a 81E0      		ldi r24,lo8(1)
+  82 007c 8093 0000 		sts portToRelais,r24
+  83 0080 86E1      		ldi r24,lo8(22)
+  84 0082 90E0      		ldi r25,hi8(22)
+  85 0084 A0E0      		ldi r26,hlo8(22)
+  86 0086 B0E0      		ldi r27,hhi8(22)
+  87 0088 8093 0000 		sts reactionValues,r24
+  88 008c 9093 0000 		sts reactionValues+1,r25
+  89 0090 A093 0000 		sts reactionValues+2,r26
+  90 0094 B093 0000 		sts reactionValues+3,r27
+  91 0098 84EF      		ldi r24,lo8(500)
+  92 009a 91E0      		ldi r25,hi8(500)
+  93 009c A0E0      		ldi r26,hlo8(500)
+  94 009e B0E0      		ldi r27,hhi8(500)
+  95 00a0 8093 0000 		sts reactionValues+4,r24
+  96 00a4 9093 0000 		sts reactionValues+4+1,r25
+  97 00a8 A093 0000 		sts reactionValues+4+2,r26
+  98 00ac B093 0000 		sts reactionValues+4+3,r27
+  99 00b0 8093 0000 		sts reactionValues+8,r24
+ 100 00b4 9093 0000 		sts reactionValues+8+1,r25
+ 101 00b8 A093 0000 		sts reactionValues+8+2,r26
+ 102 00bc B093 0000 		sts reactionValues+8+3,r27
+ 103 00c0 8093 0000 		sts reactionValues+12,r24
+ 104 00c4 9093 0000 		sts reactionValues+12+1,r25
+ 105 00c8 A093 0000 		sts reactionValues+12+2,r26
+ 106 00cc B093 0000 		sts reactionValues+12+3,r27
+ 107 00d0 8093 0000 		sts reactionValues+16,r24
+ 108 00d4 9093 0000 		sts reactionValues+16+1,r25
+ 109 00d8 A093 0000 		sts reactionValues+16+2,r26
+ 110 00dc B093 0000 		sts reactionValues+16+3,r27
+ 111 00e0 8093 0000 		sts reactionValues+20,r24
+ 112 00e4 9093 0000 		sts reactionValues+20+1,r25
+ 113 00e8 A093 0000 		sts reactionValues+20+2,r26
+ 114 00ec B093 0000 		sts reactionValues+20+3,r27
+ 115 00f0 8093 0000 		sts reactionValues+24,r24
+ 116 00f4 9093 0000 		sts reactionValues+24+1,r25
+ 117 00f8 A093 0000 		sts reactionValues+24+2,r26
+ 118 00fc B093 0000 		sts reactionValues+24+3,r27
+ 119 0100 8093 0000 		sts reactionValues+28,r24
+ 120 0104 9093 0000 		sts reactionValues+28+1,r25
+ 121 0108 A093 0000 		sts reactionValues+28+2,r26
+ 122 010c B093 0000 		sts reactionValues+28+3,r27
+ 123 0110 1092 0000 		sts reactionTriggerMode,__zero_reg__
+ 124 0114 82E0      		ldi r24,lo8(2)
+ 125 0116 8093 0000 		sts reactionTriggerMode+1,r24
+ 126 011a 8093 0000 		sts reactionTriggerMode+2,r24
+ 127 011e 8093 0000 		sts reactionTriggerMode+3,r24
+ 128 0122 8093 0000 		sts reactionTriggerMode+4,r24
+ 129 0126 8093 0000 		sts reactionTriggerMode+5,r24
+ 130 012a 8093 0000 		sts reactionTriggerMode+6,r24
+ 131 012e 8093 0000 		sts reactionTriggerMode+7,r24
+ 132 0132 80E0      		ldi r24,lo8(0x3f000000)
+ 133 0134 90E0      		ldi r25,hi8(0x3f000000)
+ 134 0136 A0E0      		ldi r26,hlo8(0x3f000000)
+ 135 0138 BFE3      		ldi r27,hhi8(0x3f000000)
+ 136 013a 8093 0000 		sts intervalValues+4,r24
+ 137 013e 9093 0000 		sts intervalValues+4+1,r25
+ 138 0142 A093 0000 		sts intervalValues+4+2,r26
+ 139 0146 B093 0000 		sts intervalValues+4+3,r27
+ 140 014a 8093 0000 		sts intervalValues+12,r24
+ 141 014e 9093 0000 		sts intervalValues+12+1,r25
+ 142 0152 A093 0000 		sts intervalValues+12+2,r26
+ 143 0156 B093 0000 		sts intervalValues+12+3,r27
+ 144 015a 80E0      		ldi r24,lo8(0x41700000)
+ 145 015c 90E0      		ldi r25,hi8(0x41700000)
+ 146 015e A0E7      		ldi r26,hlo8(0x41700000)
+ 147 0160 B1E4      		ldi r27,hhi8(0x41700000)
+ 148 0162 8093 0000 		sts intervalValues+8,r24
+ 149 0166 9093 0000 		sts intervalValues+8+1,r25
+ 150 016a A093 0000 		sts intervalValues+8+2,r26
+ 151 016e B093 0000 		sts intervalValues+8+3,r27
+ 152 0172 80E0      		ldi r24,lo8(0x40a00000)
+ 153 0174 90E0      		ldi r25,hi8(0x40a00000)
+ 154 0176 A0EA      		ldi r26,hlo8(0x40a00000)
+ 155 0178 B0E4      		ldi r27,hhi8(0x40a00000)
+ 156 017a 8093 0000 		sts intervalValues+20,r24
+ 157 017e 9093 0000 		sts intervalValues+20+1,r25
+ 158 0182 A093 0000 		sts intervalValues+20+2,r26
+ 159 0186 B093 0000 		sts intervalValues+20+3,r27
+ 160               	/* epilogue start */
+ 161 018a 0895      		ret
+ 163               	.global	getTemp
+ 165               	getTemp:
+ 166               	/* prologue: function */
+ 167               	/* frame size = 0 */
+ 168               	/* stack size = 0 */
+ 169               	.L__stack_usage = 0
+ 170 018c 6091 0000 		lds r22,measurement
+ 171 0190 7091 0000 		lds r23,measurement+1
+ 172 0194 8091 0000 		lds r24,measurement+2
+ 173 0198 9091 0000 		lds r25,measurement+3
+ 174 019c 20E0      		ldi r18,lo8(0x40a00000)
+ 175 019e 30E0      		ldi r19,hi8(0x40a00000)
+ 176 01a0 40EA      		ldi r20,hlo8(0x40a00000)
+ 177 01a2 50E4      		ldi r21,hhi8(0x40a00000)
+ 178 01a4 0E94 0000 		call __subsf3
+ 179 01a8 9058      		subi r25,0x80
+ 180 01aa 2DEC      		ldi r18,lo8(0x3d4ccccd)
+ 181 01ac 3CEC      		ldi r19,hi8(0x3d4ccccd)
+ 182 01ae 4CE4      		ldi r20,hlo8(0x3d4ccccd)
+ 183 01b0 5DE3      		ldi r21,hhi8(0x3d4ccccd)
+ 184 01b2 0E94 0000 		call __divsf3
+ 185               	/* epilogue start */
+ 186 01b6 0895      		ret
+ 188               	.global	getLightIntensity
+ 190               	getLightIntensity:
+ 191               	/* prologue: function */
+ 192               	/* frame size = 0 */
+ 193               	/* stack size = 0 */
+ 194               	.L__stack_usage = 0
+ 195 01b8 6091 0000 		lds r22,measurement
+ 196 01bc 7091 0000 		lds r23,measurement+1
+ 197 01c0 8091 0000 		lds r24,measurement+2
+ 198 01c4 9091 0000 		lds r25,measurement+3
+ 199 01c8 2AE9      		ldi r18,lo8(0x4089999a)
+ 200 01ca 39E9      		ldi r19,hi8(0x4089999a)
+ 201 01cc 49E8      		ldi r20,hlo8(0x4089999a)
+ 202 01ce 50E4      		ldi r21,hhi8(0x4089999a)
+ 203 01d0 0E94 0000 		call __divsf3
+ 204 01d4 20E0      		ldi r18,lo8(0x42c80000)
+ 205 01d6 30E0      		ldi r19,hi8(0x42c80000)
+ 206 01d8 48EC      		ldi r20,hlo8(0x42c80000)
+ 207 01da 52E4      		ldi r21,hhi8(0x42c80000)
+ 208 01dc 0E94 0000 		call __mulsf3
+ 209 01e0 562F      		mov r21,r22
+ 210 01e2 472F      		mov r20,r23
+ 211 01e4 382F      		mov r19,r24
+ 212 01e6 292F      		mov r18,r25
+ 213 01e8 60E0      		ldi r22,lo8(0x42c80000)
+ 214 01ea 70E0      		ldi r23,hi8(0x42c80000)
+ 215 01ec 88EC      		ldi r24,hlo8(0x42c80000)
+ 216 01ee 92E4      		ldi r25,hhi8(0x42c80000)
+ 217 01f0 DA01      		movw r26,r20
+ 218 01f2 F901      		movw r30,r18
+ 219 01f4 2B2F      		mov r18,r27
+ 220 01f6 3A2F      		mov r19,r26
+ 221 01f8 4F2F      		mov r20,r31
+ 222 01fa 5E2F      		mov r21,r30
+ 223 01fc 0E94 0000 		call __subsf3
+ 224 0200 0E94 0000 		call __fixsfsi
+ 225 0204 77FF      		sbrs r23,7
+ 226 0206 00C0      		rjmp .L8
+ 227 0208 7095      		com r23
+ 228 020a 6195      		neg r22
+ 229 020c 7F4F      		sbci r23,lo8(-1)
+ 230               	.L8:
+ 231 020e 8827      		clr r24
+ 232 0210 77FD      		sbrc r23,7
+ 233 0212 8095      		com r24
+ 234 0214 982F      		mov r25,r24
+ 235 0216 0E94 0000 		call __floatsisf
+ 236               	/* epilogue start */
+ 237 021a 0895      		ret
+ 239               	.global	getNoise
+ 241               	getNoise:
+ 242               	/* prologue: function */
+ 243               	/* frame size = 0 */
+ 244               	/* stack size = 0 */
+ 245               	.L__stack_usage = 0
+ 246 021c 5091 0000 		lds r21,measurement
+ 247 0220 4091 0000 		lds r20,measurement+1
+ 248 0224 3091 0000 		lds r19,measurement+2
+ 249 0228 2091 0000 		lds r18,measurement+3
+ 250 022c 652F      		mov r22,r21
+ 251 022e 742F      		mov r23,r20
+ 252 0230 832F      		mov r24,r19
+ 253 0232 922F      		mov r25,r18
+ 254               	/* epilogue start */
+ 255 0234 0895      		ret
+ 257               	.global	getDistance
+ 259               	getDistance:
+ 260               	/* prologue: function */
+ 261               	/* frame size = 0 */
+ 262               	/* stack size = 0 */
+ 263               	.L__stack_usage = 0
+ 264 0236 6091 0000 		lds r22,measurement
+ 265 023a 7091 0000 		lds r23,measurement+1
+ 266 023e 8091 0000 		lds r24,measurement+2
+ 267 0242 9091 0000 		lds r25,measurement+3
+ 268 0246 2091 0000 		lds r18,distanceScale
+ 269 024a 3091 0000 		lds r19,distanceScale+1
+ 270 024e 4091 0000 		lds r20,distanceScale+2
+ 271 0252 5091 0000 		lds r21,distanceScale+3
+ 272 0256 0E94 0000 		call __mulsf3
+ 273               	/* epilogue start */
+ 274 025a 0895      		ret
+ 276               	.global	startMeasure
+ 278               	startMeasure:
+ 279               	/* prologue: function */
+ 280               	/* frame size = 0 */
+ 281               	/* stack size = 0 */
+ 282               	.L__stack_usage = 0
+ 283 025c 8093 7C00 		sts 124,r24
+ 284 0260 8091 7C00 		lds r24,124
+ 285 0264 8064      		ori r24,lo8(64)
+ 286 0266 8093 7C00 		sts 124,r24
+ 287 026a 8091 7A00 		lds r24,122
+ 288 026e 8064      		ori r24,lo8(64)
+ 289 0270 8093 7A00 		sts 122,r24
+ 290               	.L12:
+ 291 0274 8091 7A00 		lds r24,122
+ 292 0278 86FD      		sbrc r24,6
+ 293 027a 00C0      		rjmp .L12
+ 294 027c 8091 7800 		lds r24,120
+ 295 0280 9091 7900 		lds r25,120+1
+ 296 0284 8091 7A00 		lds r24,122
+ 297 0288 8064      		ori r24,lo8(64)
+ 298 028a 8093 7A00 		sts 122,r24
+ 299               	.L13:
+ 300 028e 8091 7A00 		lds r24,122
+ 301 0292 86FD      		sbrc r24,6
+ 302 0294 00C0      		rjmp .L13
+ 303 0296 2091 7800 		lds r18,120
+ 304 029a 3091 7900 		lds r19,120+1
+ 305 029e C901      		movw r24,r18
+ 306               	/* epilogue start */
+ 307 02a0 0895      		ret
+ 309               	.global	measureAndScale
+ 311               	measureAndScale:
+ 312 02a2 1F93      		push r17
+ 313               	/* prologue: function */
+ 314               	/* frame size = 0 */
+ 315               	/* stack size = 1 */
+ 316               	.L__stack_usage = 1
+ 317 02a4 182F      		mov r17,r24
+ 318 02a6 90E0      		ldi r25,lo8(0)
+ 319 02a8 0E94 0000 		call startMeasure
+ 320 02ac BC01      		movw r22,r24
+ 321 02ae 80E0      		ldi r24,lo8(0)
+ 322 02b0 90E0      		ldi r25,hi8(0)
+ 323 02b2 0E94 0000 		call __floatunsisf
+ 324 02b6 6093 0000 		sts measurement,r22
+ 325 02ba 7093 0000 		sts measurement+1,r23
+ 326 02be 8093 0000 		sts measurement+2,r24
+ 327 02c2 9093 0000 		sts measurement+3,r25
+ 328 02c6 E12F      		mov r30,r17
+ 329 02c8 F0E0      		ldi r31,lo8(0)
+ 330 02ca E050      		subi r30,lo8(-(measuringVoltageFaktor))
+ 331 02cc F040      		sbci r31,hi8(-(measuringVoltageFaktor))
+ 332 02ce 2081      		ld r18,Z
+ 333 02d0 2130      		cpi r18,lo8(1)
+ 334 02d2 01F4      		brne .L17
+ 335 02d4 29E9      		ldi r18,lo8(0x3a7e4799)
+ 336 02d6 37E4      		ldi r19,hi8(0x3a7e4799)
+ 337 02d8 4EE7      		ldi r20,hlo8(0x3a7e4799)
+ 338 02da 5AE3      		ldi r21,hhi8(0x3a7e4799)
+ 339 02dc 00C0      		rjmp .L21
+ 340               	.L17:
+ 341 02de 2530      		cpi r18,lo8(5)
+ 342 02e0 01F4      		brne .L19
+ 343 02e2 22E5      		ldi r18,lo8(0x3b9d4952)
+ 344 02e4 39E4      		ldi r19,hi8(0x3b9d4952)
+ 345 02e6 4DE9      		ldi r20,hlo8(0x3b9d4952)
+ 346 02e8 5BE3      		ldi r21,hhi8(0x3b9d4952)
+ 347 02ea 00C0      		rjmp .L21
+ 348               	.L19:
+ 349 02ec 2A31      		cpi r18,lo8(26)
+ 350 02ee 01F4      		brne .L20
+ 351 02f0 22E4      		ldi r18,lo8(0x3ce56042)
+ 352 02f2 30E6      		ldi r19,hi8(0x3ce56042)
+ 353 02f4 45EE      		ldi r20,hlo8(0x3ce56042)
+ 354 02f6 5CE3      		ldi r21,hhi8(0x3ce56042)
+ 355 02f8 00C0      		rjmp .L21
+ 356               	.L20:
+ 357 02fa 2F36      		cpi r18,lo8(111)
+ 358 02fc 01F4      		brne .L16
+ 359 02fe 29EB      		ldi r18,lo8(0x3ec7fcb9)
+ 360 0300 3CEF      		ldi r19,hi8(0x3ec7fcb9)
+ 361 0302 47EC      		ldi r20,hlo8(0x3ec7fcb9)
+ 362 0304 5EE3      		ldi r21,hhi8(0x3ec7fcb9)
+ 363               	.L21:
+ 364 0306 0E94 0000 		call __mulsf3
+ 365 030a 6093 0000 		sts measurement,r22
+ 366 030e 7093 0000 		sts measurement+1,r23
+ 367 0312 8093 0000 		sts measurement+2,r24
+ 368 0316 9093 0000 		sts measurement+3,r25
+ 369               	.L16:
+ 370               	/* epilogue start */
+ 371 031a 1F91      		pop r17
+ 372 031c 0895      		ret
+ 374               	.global	getUnit
+ 376               	getUnit:
+ 377               	/* prologue: function */
+ 378               	/* frame size = 0 */
+ 379               	/* stack size = 0 */
+ 380               	.L__stack_usage = 0
+ 381 031e E82F      		mov r30,r24
+ 382 0320 F0E0      		ldi r31,lo8(0)
+ 383 0322 E050      		subi r30,lo8(-(portModeMeasure))
+ 384 0324 F040      		sbci r31,hi8(-(portModeMeasure))
+ 385 0326 8081      		ld r24,Z
+ 386 0328 8330      		cpi r24,lo8(3)
+ 387 032a 01F0      		breq .L27
+ 388 032c 8430      		cpi r24,lo8(4)
+ 389 032e 00F4      		brsh .L29
+ 390 0330 8130      		cpi r24,lo8(1)
+ 391 0332 01F0      		breq .L24
+ 392 0334 8230      		cpi r24,lo8(2)
+ 393 0336 01F4      		brne .L30
+ 394 0338 00C0      		rjmp .L31
+ 395               	.L29:
+ 396 033a 8430      		cpi r24,lo8(4)
+ 397 033c 01F0      		breq .L27
+ 398 033e 8530      		cpi r24,lo8(5)
+ 399 0340 01F4      		brne .L30
+ 400 0342 00C0      		rjmp .L32
+ 401               	.L31:
+ 402 0344 0E94 0000 		call getLightIntensity
+ 403 0348 00C0      		rjmp .L23
+ 404               	.L24:
+ 405 034a 0E94 0000 		call getTemp
+ 406 034e 00C0      		rjmp .L23
+ 407               	.L27:
+ 408 0350 6091 0000 		lds r22,measurement
+ 409 0354 7091 0000 		lds r23,measurement+1
+ 410 0358 8091 0000 		lds r24,measurement+2
+ 411 035c 9091 0000 		lds r25,measurement+3
+ 412 0360 00C0      		rjmp .L23
+ 413               	.L32:
+ 414 0362 0E94 0000 		call getDistance
+ 415 0366 00C0      		rjmp .L23
+ 416               	.L30:
+ 417 0368 60E0      		ldi r22,lo8(0)
+ 418 036a 70E0      		ldi r23,lo8(0)
+ 419 036c 80E8      		ldi r24,lo8(-128)
+ 420 036e 9FEB      		ldi r25,lo8(-65)
+ 421               	.L23:
+ 422               	/* epilogue start */
+ 423 0370 0895      		ret
+ 425               	.global	sendReactCAN
+ 427               	sendReactCAN:
+ 428               	/* prologue: function */
+ 429               	/* frame size = 0 */
+ 430               	/* stack size = 0 */
+ 431               	.L__stack_usage = 0
+ 432 0372 80E0      		ldi r24,lo8(0)
+ 433 0374 90E0      		ldi r25,hi8(0)
+ 434 0376 0E94 0000 		call mcp2515_send_extmessage
+ 435               	/* epilogue start */
+ 436 037a 0895      		ret
+ 438               		.data
+ 439               	.LC0:
+ 440 0000 4830 3A00 		.string	"H0:"
+ 441               	.LC1:
+ 442 0004 4C30 3A00 		.string	"L0:"
+ 443               	.LC2:
+ 444 0008 4831 3A00 		.string	"H1:"
+ 445               	.LC3:
+ 446 000c 4C31 3A00 		.string	"L1:"
+ 447               		.text
+ 448               	.global	reactOnMeasure
+ 450               	reactOnMeasure:
+ 451 037c CF92      		push r12
+ 452 037e DF92      		push r13
+ 453 0380 EF92      		push r14
+ 454 0382 FF92      		push r15
+ 455 0384 1F93      		push r17
+ 456 0386 CF93      		push r28
+ 457 0388 DF93      		push r29
+ 458               	/* prologue: function */
+ 459               	/* frame size = 0 */
+ 460               	/* stack size = 7 */
+ 461               	.L__stack_usage = 7
+ 462 038a 182F      		mov r17,r24
+ 463 038c 0E94 0000 		call getUnit
+ 464 0390 6B01      		movw r12,r22
+ 465 0392 7C01      		movw r14,r24
+ 466 0394 C12F      		mov r28,r17
+ 467 0396 D0E0      		ldi r29,lo8(0)
+ 468 0398 FE01      		movw r30,r28
+ 469 039a E050      		subi r30,lo8(-(portToRelais))
+ 470 039c F040      		sbci r31,hi8(-(portToRelais))
+ 471 039e 8081      		ld r24,Z
+ 472 03a0 8823      		tst r24
+ 473 03a2 01F0      		breq .L36
+ 474 03a4 8130      		cpi r24,lo8(1)
+ 475 03a6 01F0      		breq .+2
+ 476 03a8 00C0      		rjmp .L34
+ 477 03aa 00C0      		rjmp .L67
+ 478               	.L36:
+ 479 03ac FE01      		movw r30,r28
+ 480 03ae E050      		subi r30,lo8(-(reactionTriggerMode))
+ 481 03b0 F040      		sbci r31,hi8(-(reactionTriggerMode))
+ 482 03b2 8081      		ld r24,Z
+ 483 03b4 8130      		cpi r24,lo8(1)
+ 484 03b6 01F0      		breq .+2
+ 485 03b8 00C0      		rjmp .L38
+ 486 03ba FE01      		movw r30,r28
+ 487 03bc EE0F      		lsl r30
+ 488 03be FF1F      		rol r31
+ 489 03c0 EE0F      		lsl r30
+ 490 03c2 FF1F      		rol r31
+ 491 03c4 E050      		subi r30,lo8(-(reactionValues))
+ 492 03c6 F040      		sbci r31,hi8(-(reactionValues))
+ 493 03c8 6081      		ld r22,Z
+ 494 03ca 7181      		ldd r23,Z+1
+ 495 03cc 8281      		ldd r24,Z+2
+ 496 03ce 9381      		ldd r25,Z+3
+ 497 03d0 0E94 0000 		call __floatunsisf
+ 498 03d4 FE01      		movw r30,r28
+ 499 03d6 E050      		subi r30,lo8(-(portModeMeasure))
+ 500 03d8 F040      		sbci r31,hi8(-(portModeMeasure))
+ 501 03da E081      		ld r30,Z
+ 502 03dc F0E0      		ldi r31,lo8(0)
+ 503 03de EE0F      		lsl r30
+ 504 03e0 FF1F      		rol r31
+ 505 03e2 EE0F      		lsl r30
+ 506 03e4 FF1F      		rol r31
+ 507 03e6 E050      		subi r30,lo8(-(intervalValues))
+ 508 03e8 F040      		sbci r31,hi8(-(intervalValues))
+ 509 03ea 2081      		ld r18,Z
+ 510 03ec 3181      		ldd r19,Z+1
+ 511 03ee 4281      		ldd r20,Z+2
+ 512 03f0 5381      		ldd r21,Z+3
+ 513 03f2 0E94 0000 		call __addsf3
+ 514 03f6 9B01      		movw r18,r22
+ 515 03f8 AC01      		movw r20,r24
+ 516 03fa C701      		movw r24,r14
+ 517 03fc B601      		movw r22,r12
+ 518 03fe 0E94 0000 		call __ltsf2
+ 519 0402 87FF      		sbrs r24,7
+ 520 0404 00C0      		rjmp .L39
+ 521 0406 3199      		sbic 38-32,1
+ 522 0408 00C0      		rjmp .L39
+ 523 040a 419A      		sbi 40-32,1
+ 524 040c 8091 0000 		lds r24,serialCommunikation
+ 525 0410 8823      		tst r24
+ 526 0412 01F0      		breq .L41
+ 527 0414 80E0      		ldi r24,lo8(.LC0)
+ 528 0416 90E0      		ldi r25,hi8(.LC0)
+ 529 0418 0E94 0000 		call uart_puts
+ 530 041c 812F      		mov r24,r17
+ 531 041e 805D      		subi r24,lo8(-(48))
+ 532 0420 0E94 0000 		call uart_putc
+ 533 0424 8AE0      		ldi r24,lo8(10)
+ 534 0426 0E94 0000 		call uart_putc
+ 535               	.L41:
+ 536 042a 8091 0000 		lds r24,canCommunikation
+ 537 042e 8823      		tst r24
+ 538 0430 01F0      		breq .L39
+ 539 0432 812F      		mov r24,r17
+ 540 0434 68E4      		ldi r22,lo8(72)
+ 541 0436 0E94 0000 		call sendReactCAN
+ 542               	.L39:
+ 543 043a FE01      		movw r30,r28
+ 544 043c EE0F      		lsl r30
+ 545 043e FF1F      		rol r31
+ 546 0440 EE0F      		lsl r30
+ 547 0442 FF1F      		rol r31
+ 548 0444 E050      		subi r30,lo8(-(reactionValues))
+ 549 0446 F040      		sbci r31,hi8(-(reactionValues))
+ 550 0448 6081      		ld r22,Z
+ 551 044a 7181      		ldd r23,Z+1
+ 552 044c 8281      		ldd r24,Z+2
+ 553 044e 9381      		ldd r25,Z+3
+ 554 0450 0E94 0000 		call __floatunsisf
+ 555 0454 9B01      		movw r18,r22
+ 556 0456 AC01      		movw r20,r24
+ 557 0458 C701      		movw r24,r14
+ 558 045a B601      		movw r22,r12
+ 559 045c 0E94 0000 		call __gtsf2
+ 560 0460 1816      		cp __zero_reg__,r24
+ 561 0462 04F4      		brge .L38
+ 562 0464 319B      		sbis 38-32,1
+ 563 0466 00C0      		rjmp .L38
+ 564 0468 4198      		cbi 40-32,1
+ 565 046a 8091 0000 		lds r24,serialCommunikation
+ 566 046e 8823      		tst r24
+ 567 0470 01F0      		breq .L43
+ 568 0472 80E0      		ldi r24,lo8(.LC1)
+ 569 0474 90E0      		ldi r25,hi8(.LC1)
+ 570 0476 0E94 0000 		call uart_puts
+ 571 047a 812F      		mov r24,r17
+ 572 047c 805D      		subi r24,lo8(-(48))
+ 573 047e 0E94 0000 		call uart_putc
+ 574 0482 8AE0      		ldi r24,lo8(10)
+ 575 0484 0E94 0000 		call uart_putc
+ 576               	.L43:
+ 577 0488 8091 0000 		lds r24,canCommunikation
+ 578 048c 8823      		tst r24
+ 579 048e 01F0      		breq .L38
+ 580 0490 812F      		mov r24,r17
+ 581 0492 6CE4      		ldi r22,lo8(76)
+ 582 0494 0E94 0000 		call sendReactCAN
+ 583               	.L38:
+ 584 0498 FE01      		movw r30,r28
+ 585 049a E050      		subi r30,lo8(-(reactionTriggerMode))
+ 586 049c F040      		sbci r31,hi8(-(reactionTriggerMode))
+ 587 049e 8081      		ld r24,Z
+ 588 04a0 8823      		tst r24
+ 589 04a2 01F0      		breq .+2
+ 590 04a4 00C0      		rjmp .L34
+ 591 04a6 FE01      		movw r30,r28
+ 592 04a8 EE0F      		lsl r30
+ 593 04aa FF1F      		rol r31
+ 594 04ac EE0F      		lsl r30
+ 595 04ae FF1F      		rol r31
+ 596 04b0 E050      		subi r30,lo8(-(reactionValues))
+ 597 04b2 F040      		sbci r31,hi8(-(reactionValues))
+ 598 04b4 6081      		ld r22,Z
+ 599 04b6 7181      		ldd r23,Z+1
+ 600 04b8 8281      		ldd r24,Z+2
+ 601 04ba 9381      		ldd r25,Z+3
+ 602 04bc 0E94 0000 		call __floatunsisf
+ 603 04c0 9B01      		movw r18,r22
+ 604 04c2 AC01      		movw r20,r24
+ 605 04c4 C701      		movw r24,r14
+ 606 04c6 B601      		movw r22,r12
+ 607 04c8 0E94 0000 		call __gtsf2
+ 608 04cc 1816      		cp __zero_reg__,r24
+ 609 04ce 04F4      		brge .L44
+ 610 04d0 3199      		sbic 38-32,1
+ 611 04d2 00C0      		rjmp .L44
+ 612 04d4 419A      		sbi 40-32,1
+ 613 04d6 8091 0000 		lds r24,serialCommunikation
+ 614 04da 8823      		tst r24
+ 615 04dc 01F0      		breq .L46
+ 616 04de 80E0      		ldi r24,lo8(.LC0)
+ 617 04e0 90E0      		ldi r25,hi8(.LC0)
+ 618 04e2 0E94 0000 		call uart_puts
+ 619 04e6 812F      		mov r24,r17
+ 620 04e8 805D      		subi r24,lo8(-(48))
+ 621 04ea 0E94 0000 		call uart_putc
+ 622 04ee 8AE0      		ldi r24,lo8(10)
+ 623 04f0 0E94 0000 		call uart_putc
+ 624               	.L46:
+ 625 04f4 8091 0000 		lds r24,canCommunikation
+ 626 04f8 8823      		tst r24
+ 627 04fa 01F0      		breq .L44
+ 628 04fc 812F      		mov r24,r17
+ 629 04fe 68E4      		ldi r22,lo8(72)
+ 630 0500 0E94 0000 		call sendReactCAN
+ 631               	.L44:
+ 632 0504 FE01      		movw r30,r28
+ 633 0506 EE0F      		lsl r30
+ 634 0508 FF1F      		rol r31
+ 635 050a EE0F      		lsl r30
+ 636 050c FF1F      		rol r31
+ 637 050e E050      		subi r30,lo8(-(reactionValues))
+ 638 0510 F040      		sbci r31,hi8(-(reactionValues))
+ 639 0512 6081      		ld r22,Z
+ 640 0514 7181      		ldd r23,Z+1
+ 641 0516 8281      		ldd r24,Z+2
+ 642 0518 9381      		ldd r25,Z+3
+ 643 051a 0E94 0000 		call __floatunsisf
+ 644 051e C050      		subi r28,lo8(-(portModeMeasure))
+ 645 0520 D040      		sbci r29,hi8(-(portModeMeasure))
+ 646 0522 E881      		ld r30,Y
+ 647 0524 F0E0      		ldi r31,lo8(0)
+ 648 0526 EE0F      		lsl r30
+ 649 0528 FF1F      		rol r31
+ 650 052a EE0F      		lsl r30
+ 651 052c FF1F      		rol r31
+ 652 052e E050      		subi r30,lo8(-(intervalValues))
+ 653 0530 F040      		sbci r31,hi8(-(intervalValues))
+ 654 0532 2081      		ld r18,Z
+ 655 0534 3181      		ldd r19,Z+1
+ 656 0536 4281      		ldd r20,Z+2
+ 657 0538 5381      		ldd r21,Z+3
+ 658 053a 0E94 0000 		call __subsf3
+ 659 053e 9B01      		movw r18,r22
+ 660 0540 AC01      		movw r20,r24
+ 661 0542 C701      		movw r24,r14
+ 662 0544 B601      		movw r22,r12
+ 663 0546 0E94 0000 		call __ltsf2
+ 664 054a 87FF      		sbrs r24,7
+ 665 054c 00C0      		rjmp .L34
+ 666 054e 319B      		sbis 38-32,1
+ 667 0550 00C0      		rjmp .L34
+ 668 0552 4198      		cbi 40-32,1
+ 669 0554 80E0      		ldi r24,lo8(.LC1)
+ 670 0556 90E0      		ldi r25,hi8(.LC1)
+ 671 0558 0E94 0000 		call uart_puts
+ 672 055c 812F      		mov r24,r17
+ 673 055e 805D      		subi r24,lo8(-(48))
+ 674 0560 0E94 0000 		call uart_putc
+ 675 0564 8AE0      		ldi r24,lo8(10)
+ 676 0566 0E94 0000 		call uart_putc
+ 677 056a 00C0      		rjmp .L34
+ 678               	.L67:
+ 679 056c FE01      		movw r30,r28
+ 680 056e E050      		subi r30,lo8(-(reactionTriggerMode))
+ 681 0570 F040      		sbci r31,hi8(-(reactionTriggerMode))
+ 682 0572 8081      		ld r24,Z
+ 683 0574 8130      		cpi r24,lo8(1)
+ 684 0576 01F0      		breq .+2
+ 685 0578 00C0      		rjmp .L48
+ 686 057a FE01      		movw r30,r28
+ 687 057c EE0F      		lsl r30
+ 688 057e FF1F      		rol r31
+ 689 0580 EE0F      		lsl r30
+ 690 0582 FF1F      		rol r31
+ 691 0584 E050      		subi r30,lo8(-(reactionValues))
+ 692 0586 F040      		sbci r31,hi8(-(reactionValues))
+ 693 0588 6081      		ld r22,Z
+ 694 058a 7181      		ldd r23,Z+1
+ 695 058c 8281      		ldd r24,Z+2
+ 696 058e 9381      		ldd r25,Z+3
+ 697 0590 0E94 0000 		call __floatunsisf
+ 698 0594 FE01      		movw r30,r28
+ 699 0596 E050      		subi r30,lo8(-(portModeMeasure))
+ 700 0598 F040      		sbci r31,hi8(-(portModeMeasure))
+ 701 059a E081      		ld r30,Z
+ 702 059c F0E0      		ldi r31,lo8(0)
+ 703 059e EE0F      		lsl r30
+ 704 05a0 FF1F      		rol r31
+ 705 05a2 EE0F      		lsl r30
+ 706 05a4 FF1F      		rol r31
+ 707 05a6 E050      		subi r30,lo8(-(intervalValues))
+ 708 05a8 F040      		sbci r31,hi8(-(intervalValues))
+ 709 05aa 2081      		ld r18,Z
+ 710 05ac 3181      		ldd r19,Z+1
+ 711 05ae 4281      		ldd r20,Z+2
+ 712 05b0 5381      		ldd r21,Z+3
+ 713 05b2 0E94 0000 		call __subsf3
+ 714 05b6 9B01      		movw r18,r22
+ 715 05b8 AC01      		movw r20,r24
+ 716 05ba C701      		movw r24,r14
+ 717 05bc B601      		movw r22,r12
+ 718 05be 0E94 0000 		call __ltsf2
+ 719 05c2 87FF      		sbrs r24,7
+ 720 05c4 00C0      		rjmp .L49
+ 721 05c6 3299      		sbic 38-32,2
+ 722 05c8 00C0      		rjmp .L49
+ 723 05ca 429A      		sbi 40-32,2
+ 724 05cc 8091 0000 		lds r24,serialCommunikation
+ 725 05d0 8823      		tst r24
+ 726 05d2 01F0      		breq .L51
+ 727 05d4 80E0      		ldi r24,lo8(.LC2)
+ 728 05d6 90E0      		ldi r25,hi8(.LC2)
+ 729 05d8 0E94 0000 		call uart_puts
+ 730 05dc 812F      		mov r24,r17
+ 731 05de 805D      		subi r24,lo8(-(48))
+ 732 05e0 0E94 0000 		call uart_putc
+ 733 05e4 8AE0      		ldi r24,lo8(10)
+ 734 05e6 0E94 0000 		call uart_putc
+ 735               	.L51:
+ 736 05ea 8091 0000 		lds r24,canCommunikation
+ 737 05ee 8823      		tst r24
+ 738 05f0 01F0      		breq .L49
+ 739 05f2 812F      		mov r24,r17
+ 740 05f4 68E4      		ldi r22,lo8(72)
+ 741 05f6 0E94 0000 		call sendReactCAN
+ 742               	.L49:
+ 743 05fa FE01      		movw r30,r28
+ 744 05fc EE0F      		lsl r30
+ 745 05fe FF1F      		rol r31
+ 746 0600 EE0F      		lsl r30
+ 747 0602 FF1F      		rol r31
+ 748 0604 E050      		subi r30,lo8(-(reactionValues))
+ 749 0606 F040      		sbci r31,hi8(-(reactionValues))
+ 750 0608 6081      		ld r22,Z
+ 751 060a 7181      		ldd r23,Z+1
+ 752 060c 8281      		ldd r24,Z+2
+ 753 060e 9381      		ldd r25,Z+3
+ 754 0610 0E94 0000 		call __floatunsisf
+ 755 0614 FE01      		movw r30,r28
+ 756 0616 E050      		subi r30,lo8(-(portModeMeasure))
+ 757 0618 F040      		sbci r31,hi8(-(portModeMeasure))
+ 758 061a E081      		ld r30,Z
+ 759 061c F0E0      		ldi r31,lo8(0)
+ 760 061e EE0F      		lsl r30
+ 761 0620 FF1F      		rol r31
+ 762 0622 EE0F      		lsl r30
+ 763 0624 FF1F      		rol r31
+ 764 0626 E050      		subi r30,lo8(-(intervalValues))
+ 765 0628 F040      		sbci r31,hi8(-(intervalValues))
+ 766 062a 2081      		ld r18,Z
+ 767 062c 3181      		ldd r19,Z+1
+ 768 062e 4281      		ldd r20,Z+2
+ 769 0630 5381      		ldd r21,Z+3
+ 770 0632 0E94 0000 		call __addsf3
+ 771 0636 9B01      		movw r18,r22
+ 772 0638 AC01      		movw r20,r24
+ 773 063a C701      		movw r24,r14
+ 774 063c B601      		movw r22,r12
+ 775 063e 0E94 0000 		call __gtsf2
+ 776 0642 1816      		cp __zero_reg__,r24
+ 777 0644 04F4      		brge .L48
+ 778 0646 329B      		sbis 38-32,2
+ 779 0648 00C0      		rjmp .L48
+ 780 064a 4298      		cbi 40-32,2
+ 781 064c 8091 0000 		lds r24,serialCommunikation
+ 782 0650 8823      		tst r24
+ 783 0652 01F0      		breq .L53
+ 784 0654 80E0      		ldi r24,lo8(.LC3)
+ 785 0656 90E0      		ldi r25,hi8(.LC3)
+ 786 0658 0E94 0000 		call uart_puts
+ 787 065c 812F      		mov r24,r17
+ 788 065e 805D      		subi r24,lo8(-(48))
+ 789 0660 0E94 0000 		call uart_putc
+ 790 0664 8AE0      		ldi r24,lo8(10)
+ 791 0666 0E94 0000 		call uart_putc
+ 792               	.L53:
+ 793 066a 8091 0000 		lds r24,canCommunikation
+ 794 066e 8823      		tst r24
+ 795 0670 01F0      		breq .L48
+ 796 0672 812F      		mov r24,r17
+ 797 0674 6CE4      		ldi r22,lo8(76)
+ 798 0676 0E94 0000 		call sendReactCAN
+ 799               	.L48:
+ 800 067a FE01      		movw r30,r28
+ 801 067c E050      		subi r30,lo8(-(reactionTriggerMode))
+ 802 067e F040      		sbci r31,hi8(-(reactionTriggerMode))
+ 803 0680 8081      		ld r24,Z
+ 804 0682 8823      		tst r24
+ 805 0684 01F0      		breq .+2
+ 806 0686 00C0      		rjmp .L34
+ 807 0688 FE01      		movw r30,r28
+ 808 068a EE0F      		lsl r30
+ 809 068c FF1F      		rol r31
+ 810 068e EE0F      		lsl r30
+ 811 0690 FF1F      		rol r31
+ 812 0692 E050      		subi r30,lo8(-(reactionValues))
+ 813 0694 F040      		sbci r31,hi8(-(reactionValues))
+ 814 0696 6081      		ld r22,Z
+ 815 0698 7181      		ldd r23,Z+1
+ 816 069a 8281      		ldd r24,Z+2
+ 817 069c 9381      		ldd r25,Z+3
+ 818 069e 0E94 0000 		call __floatunsisf
+ 819 06a2 FE01      		movw r30,r28
+ 820 06a4 E050      		subi r30,lo8(-(portModeMeasure))
+ 821 06a6 F040      		sbci r31,hi8(-(portModeMeasure))
+ 822 06a8 E081      		ld r30,Z
+ 823 06aa F0E0      		ldi r31,lo8(0)
+ 824 06ac EE0F      		lsl r30
+ 825 06ae FF1F      		rol r31
+ 826 06b0 EE0F      		lsl r30
+ 827 06b2 FF1F      		rol r31
+ 828 06b4 E050      		subi r30,lo8(-(intervalValues))
+ 829 06b6 F040      		sbci r31,hi8(-(intervalValues))
+ 830 06b8 2081      		ld r18,Z
+ 831 06ba 3181      		ldd r19,Z+1
+ 832 06bc 4281      		ldd r20,Z+2
+ 833 06be 5381      		ldd r21,Z+3
+ 834 06c0 0E94 0000 		call __addsf3
+ 835 06c4 9B01      		movw r18,r22
+ 836 06c6 AC01      		movw r20,r24
+ 837 06c8 C701      		movw r24,r14
+ 838 06ca B601      		movw r22,r12
+ 839 06cc 0E94 0000 		call __gtsf2
+ 840 06d0 1816      		cp __zero_reg__,r24
+ 841 06d2 04F4      		brge .L54
+ 842 06d4 3299      		sbic 38-32,2
+ 843 06d6 00C0      		rjmp .L54
+ 844 06d8 429A      		sbi 40-32,2
+ 845 06da 8091 0000 		lds r24,serialCommunikation
+ 846 06de 8823      		tst r24
+ 847 06e0 01F0      		breq .L56
+ 848 06e2 80E0      		ldi r24,lo8(.LC2)
+ 849 06e4 90E0      		ldi r25,hi8(.LC2)
+ 850 06e6 0E94 0000 		call uart_puts
+ 851 06ea 812F      		mov r24,r17
+ 852 06ec 805D      		subi r24,lo8(-(48))
+ 853 06ee 0E94 0000 		call uart_putc
+ 854 06f2 8AE0      		ldi r24,lo8(10)
+ 855 06f4 0E94 0000 		call uart_putc
+ 856               	.L56:
+ 857 06f8 8091 0000 		lds r24,canCommunikation
+ 858 06fc 8823      		tst r24
+ 859 06fe 01F0      		breq .L54
+ 860 0700 812F      		mov r24,r17
+ 861 0702 68E4      		ldi r22,lo8(72)
+ 862 0704 0E94 0000 		call sendReactCAN
+ 863               	.L54:
+ 864 0708 FE01      		movw r30,r28
+ 865 070a EE0F      		lsl r30
+ 866 070c FF1F      		rol r31
+ 867 070e EE0F      		lsl r30
+ 868 0710 FF1F      		rol r31
+ 869 0712 E050      		subi r30,lo8(-(reactionValues))
+ 870 0714 F040      		sbci r31,hi8(-(reactionValues))
+ 871 0716 6081      		ld r22,Z
+ 872 0718 7181      		ldd r23,Z+1
+ 873 071a 8281      		ldd r24,Z+2
+ 874 071c 9381      		ldd r25,Z+3
+ 875 071e 0E94 0000 		call __floatunsisf
+ 876 0722 C050      		subi r28,lo8(-(portModeMeasure))
+ 877 0724 D040      		sbci r29,hi8(-(portModeMeasure))
+ 878 0726 E881      		ld r30,Y
+ 879 0728 F0E0      		ldi r31,lo8(0)
+ 880 072a EE0F      		lsl r30
+ 881 072c FF1F      		rol r31
+ 882 072e EE0F      		lsl r30
+ 883 0730 FF1F      		rol r31
+ 884 0732 E050      		subi r30,lo8(-(intervalValues))
+ 885 0734 F040      		sbci r31,hi8(-(intervalValues))
+ 886 0736 2081      		ld r18,Z
+ 887 0738 3181      		ldd r19,Z+1
+ 888 073a 4281      		ldd r20,Z+2
+ 889 073c 5381      		ldd r21,Z+3
+ 890 073e 0E94 0000 		call __subsf3
+ 891 0742 9B01      		movw r18,r22
+ 892 0744 AC01      		movw r20,r24
+ 893 0746 C701      		movw r24,r14
+ 894 0748 B601      		movw r22,r12
+ 895 074a 0E94 0000 		call __ltsf2
+ 896 074e 87FF      		sbrs r24,7
+ 897 0750 00C0      		rjmp .L34
+ 898 0752 329B      		sbis 38-32,2
+ 899 0754 00C0      		rjmp .L34
+ 900 0756 4298      		cbi 40-32,2
+ 901 0758 8091 0000 		lds r24,serialCommunikation
+ 902 075c 8823      		tst r24
+ 903 075e 01F0      		breq .L58
+ 904 0760 80E0      		ldi r24,lo8(.LC3)
+ 905 0762 90E0      		ldi r25,hi8(.LC3)
+ 906 0764 0E94 0000 		call uart_puts
+ 907 0768 812F      		mov r24,r17
+ 908 076a 805D      		subi r24,lo8(-(48))
+ 909 076c 0E94 0000 		call uart_putc
+ 910 0770 8AE0      		ldi r24,lo8(10)
+ 911 0772 0E94 0000 		call uart_putc
+ 912               	.L58:
+ 913 0776 8091 0000 		lds r24,canCommunikation
+ 914 077a 8823      		tst r24
+ 915 077c 01F0      		breq .L34
+ 916 077e 812F      		mov r24,r17
+ 917 0780 6CE4      		ldi r22,lo8(76)
+ 918 0782 0E94 0000 		call sendReactCAN
+ 919               	.L34:
+ 920               	/* epilogue start */
+ 921 0786 DF91      		pop r29
+ 922 0788 CF91      		pop r28
+ 923 078a 1F91      		pop r17
+ 924 078c FF90      		pop r15
+ 925 078e EF90      		pop r14
+ 926 0790 DF90      		pop r13
+ 927 0792 CF90      		pop r12
+ 928 0794 0895      		ret
+ 930               		.data
+ 931               	.LC4:
+ 932 0010 503A 00   		.string	"P:"
+ 933               	.LC5:
+ 934 0013 2056 00   		.string	" V"
+ 935               	.LC6:
+ 936 0016 204C 00   		.string	" L"
+ 937               	.LC7:
+ 938 0019 2043 00   		.string	" C"
+ 939               	.LC8:
+ 940 001c 2053 00   		.string	" S"
+ 941               	.LC9:
+ 942 001f 2063 6D00 		.string	" cm"
+ 943               		.text
+ 944               	.global	sendMeasureUART
+ 946               	sendMeasureUART:
+ 947 0796 FF92      		push r15
+ 948 0798 0F93      		push r16
+ 949 079a 1F93      		push r17
+ 950 079c CF93      		push r28
+ 951 079e DF93      		push r29
+ 952               	/* prologue: function */
+ 953               	/* frame size = 0 */
+ 954               	/* stack size = 5 */
+ 955               	.L__stack_usage = 5
+ 956 07a0 F82E      		mov r15,r24
+ 957 07a2 C82F      		mov r28,r24
+ 958 07a4 D0E0      		ldi r29,lo8(0)
+ 959 07a6 FE01      		movw r30,r28
+ 960 07a8 E050      		subi r30,lo8(-(portModeMeasure))
+ 961 07aa F040      		sbci r31,hi8(-(portModeMeasure))
+ 962 07ac 8081      		ld r24,Z
+ 963 07ae 8330      		cpi r24,lo8(3)
+ 964 07b0 01F0      		breq .L73
+ 965 07b2 8430      		cpi r24,lo8(4)
+ 966 07b4 00F4      		brsh .L75
+ 967 07b6 8130      		cpi r24,lo8(1)
+ 968 07b8 01F0      		breq .L70
+ 969 07ba 8230      		cpi r24,lo8(2)
+ 970 07bc 01F4      		brne .L69
+ 971 07be 00C0      		rjmp .L86
+ 972               	.L75:
+ 973 07c0 8430      		cpi r24,lo8(4)
+ 974 07c2 01F0      		breq .L73
+ 975 07c4 8530      		cpi r24,lo8(5)
+ 976 07c6 01F4      		brne .L69
+ 977 07c8 00C0      		rjmp .L87
+ 978               	.L86:
+ 979 07ca 0E94 0000 		call getLightIntensity
+ 980 07ce 00C0      		rjmp .L85
+ 981               	.L70:
+ 982 07d0 0E94 0000 		call getTemp
+ 983 07d4 00C0      		rjmp .L85
+ 984               	.L73:
+ 985 07d6 6091 0000 		lds r22,measurement
+ 986 07da 7091 0000 		lds r23,measurement+1
+ 987 07de 8091 0000 		lds r24,measurement+2
+ 988 07e2 9091 0000 		lds r25,measurement+3
+ 989 07e6 47E0      		ldi r20,lo8(7)
+ 990 07e8 23E0      		ldi r18,lo8(3)
+ 991 07ea 00C0      		rjmp .L83
+ 992               	.L87:
+ 993 07ec 0E94 0000 		call getDistance
+ 994               	.L85:
+ 995 07f0 47E0      		ldi r20,lo8(7)
+ 996 07f2 21E0      		ldi r18,lo8(1)
+ 997               	.L83:
+ 998 07f4 00E0      		ldi r16,lo8(voltageValueBuffer)
+ 999 07f6 10E0      		ldi r17,hi8(voltageValueBuffer)
+ 1000 07f8 0E94 0000 		call dtostrf
+ 1001               	.L69:
+ 1002 07fc 80E0      		ldi r24,lo8(.LC4)
+ 1003 07fe 90E0      		ldi r25,hi8(.LC4)
+ 1004 0800 0E94 0000 		call uart_puts
+ 1005 0804 8F2D      		mov r24,r15
+ 1006 0806 805D      		subi r24,lo8(-(48))
+ 1007 0808 0E94 0000 		call uart_putc
+ 1008 080c 8BE3      		ldi r24,lo8(59)
+ 1009 080e 0E94 0000 		call uart_putc
+ 1010 0812 80E0      		ldi r24,lo8(voltageValueBuffer+1)
+ 1011 0814 90E0      		ldi r25,hi8(voltageValueBuffer+1)
+ 1012 0816 0E94 0000 		call uart_puts
+ 1013 081a C050      		subi r28,lo8(-(portModeMeasure))
+ 1014 081c D040      		sbci r29,hi8(-(portModeMeasure))
+ 1015 081e 8881      		ld r24,Y
+ 1016 0820 8330      		cpi r24,lo8(3)
+ 1017 0822 01F0      		breq .L79
+ 1018 0824 8430      		cpi r24,lo8(4)
+ 1019 0826 00F4      		brsh .L82
+ 1020 0828 8130      		cpi r24,lo8(1)
+ 1021 082a 01F0      		breq .L77
+ 1022 082c 8230      		cpi r24,lo8(2)
+ 1023 082e 01F4      		brne .L76
+ 1024 0830 00C0      		rjmp .L88
+ 1025               	.L82:
+ 1026 0832 8430      		cpi r24,lo8(4)
+ 1027 0834 01F0      		breq .L80
+ 1028 0836 8530      		cpi r24,lo8(5)
+ 1029 0838 01F4      		brne .L76
+ 1030 083a 00C0      		rjmp .L89
+ 1031               	.L79:
+ 1032 083c 80E0      		ldi r24,lo8(.LC5)
+ 1033 083e 90E0      		ldi r25,hi8(.LC5)
+ 1034 0840 00C0      		rjmp .L84
+ 1035               	.L88:
+ 1036 0842 80E0      		ldi r24,lo8(.LC6)
+ 1037 0844 90E0      		ldi r25,hi8(.LC6)
+ 1038 0846 00C0      		rjmp .L84
+ 1039               	.L77:
+ 1040 0848 80E0      		ldi r24,lo8(.LC7)
+ 1041 084a 90E0      		ldi r25,hi8(.LC7)
+ 1042 084c 00C0      		rjmp .L84
+ 1043               	.L80:
+ 1044 084e 80E0      		ldi r24,lo8(.LC8)
+ 1045 0850 90E0      		ldi r25,hi8(.LC8)
+ 1046 0852 00C0      		rjmp .L84
+ 1047               	.L89:
+ 1048 0854 80E0      		ldi r24,lo8(.LC9)
+ 1049 0856 90E0      		ldi r25,hi8(.LC9)
+ 1050               	.L84:
+ 1051 0858 0E94 0000 		call uart_puts
+ 1052               	.L76:
+ 1053 085c 8AE0      		ldi r24,lo8(10)
+ 1054 085e 0E94 0000 		call uart_putc
+ 1055               	/* epilogue start */
+ 1056 0862 DF91      		pop r29
+ 1057 0864 CF91      		pop r28
+ 1058 0866 1F91      		pop r17
+ 1059 0868 0F91      		pop r16
+ 1060 086a FF90      		pop r15
+ 1061 086c 0895      		ret
+ 1063               	.global	generateCANMsg
+ 1065               	generateCANMsg:
+ 1066 086e DF92      		push r13
+ 1067 0870 EF92      		push r14
+ 1068 0872 FF92      		push r15
+ 1069 0874 0F93      		push r16
+ 1070 0876 1F93      		push r17
+ 1071 0878 DF93      		push r29
+ 1072 087a CF93      		push r28
+ 1073 087c 00D0      		rcall .
+ 1074 087e 00D0      		rcall .
+ 1075 0880 0F92      		push __tmp_reg__
+ 1076 0882 CDB7      		in r28,__SP_L__
+ 1077 0884 DEB7      		in r29,__SP_H__
+ 1078               	/* prologue: function */
+ 1079               	/* frame size = 5 */
+ 1080               	/* stack size = 12 */
+ 1081               	.L__stack_usage = 12
+ 1082 0886 7C01      		movw r14,r24
+ 1083 0888 D62E      		mov r13,r22
+ 1084 088a 862F      		mov r24,r22
+ 1085 088c 8B50      		subi r24,lo8(-(-11))
+ 1086 088e 8230      		cpi r24,lo8(2)
+ 1087 0890 00F4      		brsh .L91
+ 1088 0892 F701      		movw r30,r14
+ 1089 0894 1082      		st Z,__zero_reg__
+ 1090 0896 80E4      		ldi r24,lo8(64)
+ 1091 0898 8183      		std Z+1,r24
+ 1092 089a 80E5      		ldi r24,lo8(80)
+ 1093 089c 8283      		std Z+2,r24
+ 1094 089e 1382      		std Z+3,__zero_reg__
+ 1095 08a0 8481      		ldd r24,Z+4
+ 1096 08a2 807E      		andi r24,lo8(-32)
+ 1097 08a4 8A60      		ori r24,lo8(10)
+ 1098 08a6 8483      		std Z+4,r24
+ 1099 08a8 8FE6      		ldi r24,lo8(111)
+ 1100 08aa 8583      		std Z+5,r24
+ 1101 08ac 8BE6      		ldi r24,lo8(107)
+ 1102 08ae 8683      		std Z+6,r24
+ 1103 08b0 8AE3      		ldi r24,lo8(58)
+ 1104 08b2 8783      		std Z+7,r24
+ 1105 08b4 862F      		mov r24,r22
+ 1106 08b6 8A50      		subi r24,lo8(-(-10))
+ 1107 08b8 8087      		std Z+8,r24
+ 1108 08ba 80E2      		ldi r24,lo8(32)
+ 1109 08bc 8187      		std Z+9,r24
+ 1110 08be 00C0      		rjmp .L92
+ 1111               	.L91:
+ 1112 08c0 6D30      		cpi r22,lo8(13)
+ 1113 08c2 01F4      		brne .L93
+ 1114 08c4 8EE6      		ldi r24,lo8(110)
+ 1115 08c6 F701      		movw r30,r14
+ 1116 08c8 8583      		std Z+5,r24
+ 1117 08ca 8FE6      		ldi r24,lo8(111)
+ 1118 08cc 8683      		std Z+6,r24
+ 1119 08ce 92E6      		ldi r25,lo8(98)
+ 1120 08d0 9783      		std Z+7,r25
+ 1121 08d2 8087      		std Z+8,r24
+ 1122 08d4 81E6      		ldi r24,lo8(97)
+ 1123 08d6 8187      		std Z+9,r24
+ 1124 08d8 82E7      		ldi r24,lo8(114)
+ 1125 08da 8287      		std Z+10,r24
+ 1126 08dc 00C0      		rjmp .L94
+ 1127               	.L93:
+ 1128 08de 6E30      		cpi r22,lo8(14)
+ 1129 08e0 01F4      		brne .L92
+ 1130 08e2 8CE6      		ldi r24,lo8(108)
+ 1131 08e4 F701      		movw r30,r14
+ 1132 08e6 8583      		std Z+5,r24
+ 1133 08e8 85E6      		ldi r24,lo8(101)
+ 1134 08ea 8683      		std Z+6,r24
+ 1135 08ec 84E6      		ldi r24,lo8(100)
+ 1136 08ee 8783      		std Z+7,r24
+ 1137 08f0 00C0      		rjmp .L94
+ 1138               	.L92:
+ 1139 08f2 FD2D      		mov r31,r13
+ 1140 08f4 FA30      		cpi r31,lo8(10)
+ 1141 08f6 01F4      		brne .L94
+ 1142 08f8 F701      		movw r30,r14
+ 1143 08fa 1082      		st Z,__zero_reg__
+ 1144 08fc 80E4      		ldi r24,lo8(64)
+ 1145 08fe 8183      		std Z+1,r24
+ 1146 0900 80E5      		ldi r24,lo8(80)
+ 1147 0902 8283      		std Z+2,r24
+ 1148 0904 1382      		std Z+3,__zero_reg__
+ 1149 0906 8481      		ldd r24,Z+4
+ 1150 0908 807E      		andi r24,lo8(-32)
+ 1151 090a 8E60      		ori r24,lo8(14)
+ 1152 090c 8483      		std Z+4,r24
+ 1153 090e 81E6      		ldi r24,lo8(97)
+ 1154 0910 8583      		std Z+5,r24
+ 1155 0912 83E6      		ldi r24,lo8(99)
+ 1156 0914 8683      		std Z+6,r24
+ 1157 0916 3199      		sbic 38-32,1
+ 1158 0918 00C0      		rjmp .L113
+ 1159 091a 82E5      		ldi r24,lo8(82)
+ 1160 091c 00C0      		rjmp .L95
+ 1161               	.L113:
+ 1162 091e 82E7      		ldi r24,lo8(114)
+ 1163               	.L95:
+ 1164 0920 F701      		movw r30,r14
+ 1165 0922 8783      		std Z+7,r24
+ 1166 0924 80E2      		ldi r24,lo8(32)
+ 1167 0926 8087      		std Z+8,r24
+ 1168 0928 8AE3      		ldi r24,lo8(58)
+ 1169 092a 8187      		std Z+9,r24
+ 1170 092c 3299      		sbic 38-32,2
+ 1171 092e 00C0      		rjmp .L114
+ 1172 0930 82E5      		ldi r24,lo8(82)
+ 1173 0932 00C0      		rjmp .L96
+ 1174               	.L114:
+ 1175 0934 82E7      		ldi r24,lo8(114)
+ 1176               	.L96:
+ 1177 0936 F701      		movw r30,r14
+ 1178 0938 8287      		std Z+10,r24
+ 1179 093a 80E2      		ldi r24,lo8(32)
+ 1180 093c 8387      		std Z+11,r24
+ 1181 093e 00C0      		rjmp .L90
+ 1182               	.L94:
+ 1183 0940 F701      		movw r30,r14
+ 1184 0942 1082      		st Z,__zero_reg__
+ 1185 0944 80E4      		ldi r24,lo8(64)
+ 1186 0946 8183      		std Z+1,r24
+ 1187 0948 80E5      		ldi r24,lo8(80)
+ 1188 094a 8283      		std Z+2,r24
+ 1189 094c 1382      		std Z+3,__zero_reg__
+ 1190 094e 8481      		ldd r24,Z+4
+ 1191 0950 807E      		andi r24,lo8(-32)
+ 1192 0952 8061      		ori r24,lo8(16)
+ 1193 0954 8483      		std Z+4,r24
+ 1194 0956 ED2D      		mov r30,r13
+ 1195 0958 F0E0      		ldi r31,lo8(0)
+ 1196 095a E050      		subi r30,lo8(-(portModeMeasure))
+ 1197 095c F040      		sbci r31,hi8(-(portModeMeasure))
+ 1198 095e 8081      		ld r24,Z
+ 1199 0960 8330      		cpi r24,lo8(3)
+ 1200 0962 01F0      		breq .L101
+ 1201 0964 8E01      		movw r16,r28
+ 1202 0966 0F5F      		subi r16,lo8(-(1))
+ 1203 0968 1F4F      		sbci r17,hi8(-(1))
+ 1204 096a 8430      		cpi r24,lo8(4)
+ 1205 096c 00F4      		brsh .L104
+ 1206 096e 8130      		cpi r24,lo8(1)
+ 1207 0970 01F0      		breq .L99
+ 1208 0972 8230      		cpi r24,lo8(2)
+ 1209 0974 01F4      		brne .L98
+ 1210 0976 00C0      		rjmp .L123
+ 1211               	.L104:
+ 1212 0978 8430      		cpi r24,lo8(4)
+ 1213 097a 01F0      		breq .L102
+ 1214 097c 8530      		cpi r24,lo8(5)
+ 1215 097e 01F4      		brne .L98
+ 1216 0980 00C0      		rjmp .L124
+ 1217               	.L101:
+ 1218 0982 6091 0000 		lds r22,measurement
+ 1219 0986 7091 0000 		lds r23,measurement+1
+ 1220 098a 8091 0000 		lds r24,measurement+2
+ 1221 098e 9091 0000 		lds r25,measurement+3
+ 1222 0992 00C0      		rjmp .L105
+ 1223               	.L123:
+ 1224 0994 0E94 0000 		call getLightIntensity
+ 1225 0998 00C0      		rjmp .L106
+ 1226               	.L99:
+ 1227 099a 0E94 0000 		call getTemp
+ 1228 099e 00C0      		rjmp .L107
+ 1229               	.L102:
+ 1230 09a0 6091 0000 		lds r22,measurement
+ 1231 09a4 7091 0000 		lds r23,measurement+1
+ 1232 09a8 8091 0000 		lds r24,measurement+2
+ 1233 09ac 9091 0000 		lds r25,measurement+3
+ 1234 09b0 00C0      		rjmp .L108
+ 1235               	.L124:
+ 1236 09b2 0E94 0000 		call getDistance
+ 1237 09b6 00C0      		rjmp .L109
+ 1238               	.L98:
+ 1239 09b8 8330      		cpi r24,lo8(3)
+ 1240 09ba 01F0      		breq .L117
+ 1241 09bc 8430      		cpi r24,lo8(4)
+ 1242 09be 00F4      		brsh .L111
+ 1243 09c0 8130      		cpi r24,lo8(1)
+ 1244 09c2 01F0      		breq .L115
+ 1245 09c4 8230      		cpi r24,lo8(2)
+ 1246 09c6 01F0      		breq .+2
+ 1247 09c8 00C0      		rjmp .L110
+ 1248 09ca 00C0      		rjmp .L125
+ 1249               	.L111:
+ 1250 09cc 8430      		cpi r24,lo8(4)
+ 1251 09ce 01F0      		breq .L118
+ 1252 09d0 8530      		cpi r24,lo8(5)
+ 1253 09d2 01F4      		brne .L110
+ 1254 09d4 00C0      		rjmp .L126
+ 1255               	.L117:
+ 1256 09d6 60E0      		ldi r22,lo8(0x0)
+ 1257 09d8 70E0      		ldi r23,hi8(0x0)
+ 1258 09da CB01      		movw r24,r22
+ 1259               	.L105:
+ 1260 09dc 45E0      		ldi r20,lo8(5)
+ 1261 09de 21E0      		ldi r18,lo8(1)
+ 1262 09e0 8E01      		movw r16,r28
+ 1263 09e2 0F5F      		subi r16,lo8(-(1))
+ 1264 09e4 1F4F      		sbci r17,hi8(-(1))
+ 1265 09e6 0E94 0000 		call dtostrf
+ 1266 09ea 86E5      		ldi r24,lo8(86)
+ 1267 09ec 00C0      		rjmp .L122
+ 1268               	.L125:
+ 1269 09ee 60E0      		ldi r22,lo8(0x0)
+ 1270 09f0 70E0      		ldi r23,hi8(0x0)
+ 1271 09f2 CB01      		movw r24,r22
+ 1272               	.L106:
+ 1273 09f4 45E0      		ldi r20,lo8(5)
+ 1274 09f6 22E0      		ldi r18,lo8(2)
+ 1275 09f8 0E94 0000 		call dtostrf
+ 1276 09fc 80E2      		ldi r24,lo8(32)
+ 1277 09fe F701      		movw r30,r14
+ 1278 0a00 8187      		std Z+9,r24
+ 1279 0a02 8287      		std Z+10,r24
+ 1280 0a04 8CE4      		ldi r24,lo8(76)
+ 1281 0a06 00C0      		rjmp .L121
+ 1282               	.L115:
+ 1283 0a08 60E0      		ldi r22,lo8(0x0)
+ 1284 0a0a 70E0      		ldi r23,hi8(0x0)
+ 1285 0a0c CB01      		movw r24,r22
+ 1286               	.L107:
+ 1287 0a0e 45E0      		ldi r20,lo8(5)
+ 1288 0a10 22E0      		ldi r18,lo8(2)
+ 1289 0a12 0E94 0000 		call dtostrf
+ 1290 0a16 80E2      		ldi r24,lo8(32)
+ 1291 0a18 F701      		movw r30,r14
+ 1292 0a1a 8287      		std Z+10,r24
+ 1293 0a1c 83E4      		ldi r24,lo8(67)
+ 1294 0a1e 00C0      		rjmp .L121
+ 1295               	.L118:
+ 1296 0a20 60E0      		ldi r22,lo8(0x0)
+ 1297 0a22 70E0      		ldi r23,hi8(0x0)
+ 1298 0a24 CB01      		movw r24,r22
+ 1299               	.L108:
+ 1300 0a26 45E0      		ldi r20,lo8(5)
+ 1301 0a28 21E0      		ldi r18,lo8(1)
+ 1302 0a2a 0E94 0000 		call dtostrf
+ 1303 0a2e 83E5      		ldi r24,lo8(83)
+ 1304               	.L122:
+ 1305 0a30 F701      		movw r30,r14
+ 1306 0a32 00C0      		rjmp .L121
+ 1307               	.L126:
+ 1308 0a34 60E0      		ldi r22,lo8(0x0)
+ 1309 0a36 70E0      		ldi r23,hi8(0x0)
+ 1310 0a38 CB01      		movw r24,r22
+ 1311               	.L109:
+ 1312 0a3a 45E0      		ldi r20,lo8(5)
+ 1313 0a3c 21E0      		ldi r18,lo8(1)
+ 1314 0a3e 0E94 0000 		call dtostrf
+ 1315 0a42 80E2      		ldi r24,lo8(32)
+ 1316 0a44 F701      		movw r30,r14
+ 1317 0a46 8187      		std Z+9,r24
+ 1318 0a48 8287      		std Z+10,r24
+ 1319 0a4a 84E4      		ldi r24,lo8(68)
+ 1320               	.L121:
+ 1321 0a4c 8387      		std Z+11,r24
+ 1322               	.L110:
+ 1323 0a4e D701      		movw r26,r14
+ 1324 0a50 1596      		adiw r26,5
+ 1325 0a52 FE01      		movw r30,r28
+ 1326 0a54 3196      		adiw r30,1
+ 1327 0a56 85E0      		ldi r24,lo8(5)
+ 1328               	.L112:
+ 1329 0a58 0190      		ld r0,Z+
+ 1330 0a5a 0D92      		st X+,r0
+ 1331 0a5c 8150      		subi r24,lo8(-(-1))
+ 1332 0a5e 01F4      		brne .L112
+ 1333 0a60 F701      		movw r30,r14
+ 1334 0a62 D486      		std Z+12,r13
+ 1335               	.L90:
+ 1336               	/* epilogue start */
+ 1337 0a64 0F90      		pop __tmp_reg__
+ 1338 0a66 0F90      		pop __tmp_reg__
+ 1339 0a68 0F90      		pop __tmp_reg__
+ 1340 0a6a 0F90      		pop __tmp_reg__
+ 1341 0a6c 0F90      		pop __tmp_reg__
+ 1342 0a6e CF91      		pop r28
+ 1343 0a70 DF91      		pop r29
+ 1344 0a72 1F91      		pop r17
+ 1345 0a74 0F91      		pop r16
+ 1346 0a76 FF90      		pop r15
+ 1347 0a78 EF90      		pop r14
+ 1348 0a7a DF90      		pop r13
+ 1349 0a7c 0895      		ret
+ 1351               		.data
+ 1352               	.LC10:
+ 1353 0023 3236 2073 		.string	"26 set \n"
+ 1353      6574 200A 
+ 1353      00
+ 1354               	.LC11:
+ 1355 002c 3520 7365 		.string	"5 set \n"
+ 1355      7420 0A00 
+ 1356               	.LC12:
+ 1357 0034 3430 3020 		.string	"400 set \n"
+ 1357      7365 7420 
+ 1357      0A00 
+ 1358               	.LC13:
+ 1359 003e 0A0A 202D 		.string	"\n\n ---  new config set !!! \n\n"
+ 1359      2D2D 2020 
+ 1359      6E65 7720 
+ 1359      636F 6E66 
+ 1359      6967 2073 
+ 1360               	.LC14:
+ 1361 005c 7465 6D70 		.string	"temp set \n"
+ 1361      2073 6574 
+ 1361      200A 00
+ 1362               	.LC15:
+ 1363 0067 6C69 6768 		.string	"light set \n"
+ 1363      7420 7365 
+ 1363      7420 0A00 
+ 1364               	.LC16:
+ 1365 0073 766F 6C20 		.string	"vol set \n"
+ 1365      7365 7420 
+ 1365      0A00 
+ 1366               	.LC17:
+ 1367 007d 6E6F 6973 		.string	"noise set \n"
+ 1367      6520 7365 
+ 1367      7420 0A00 
+ 1368               	.LC18:
+ 1369 0089 6469 7374 		.string	"distance set \n"
+ 1369      616E 6365 
+ 1369      2073 6574 
+ 1369      200A 00
+ 1370               		.text
+ 1371               	.global	readUARTConfig
+ 1373               	readUARTConfig:
+ 1374 0a7e BF92      		push r11
+ 1375 0a80 CF92      		push r12
+ 1376 0a82 DF92      		push r13
+ 1377 0a84 EF92      		push r14
+ 1378 0a86 FF92      		push r15
+ 1379 0a88 0F93      		push r16
+ 1380 0a8a 1F93      		push r17
+ 1381               	/* prologue: function */
+ 1382               	/* frame size = 0 */
+ 1383               	/* stack size = 7 */
+ 1384               	.L__stack_usage = 7
+ 1385 0a8c 8134      		cpi r24,lo8(65)
+ 1386 0a8e 01F4      		brne .L128
+ 1387 0a90 18E0      		ldi r17,lo8(8)
+ 1388 0a92 5FE6      		ldi r21,lo8(111)
+ 1389 0a94 D52E      		mov r13,r21
+ 1390 0a96 45E0      		ldi r20,lo8(5)
+ 1391 0a98 E42E      		mov r14,r20
+ 1392 0a9a 3AE1      		ldi r19,lo8(26)
+ 1393 0a9c F32E      		mov r15,r19
+ 1394               	.L133:
+ 1395 0a9e 0E94 0000 		call uart_getc
+ 1396 0aa2 082F      		mov r16,r24
+ 1397 0aa4 0E94 0000 		call uart_getc
+ 1398 0aa8 8A33      		cpi r24,lo8(58)
+ 1399 0aaa 01F0      		breq .+2
+ 1400 0aac 00C0      		rjmp .L156
+ 1401 0aae 0E94 0000 		call uart_getc
+ 1402 0ab2 8233      		cpi r24,lo8(50)
+ 1403 0ab4 01F4      		brne .L130
+ 1404 0ab6 E02F      		mov r30,r16
+ 1405 0ab8 F0E0      		ldi r31,lo8(0)
+ 1406 0aba E050      		subi r30,lo8(-(measuringVoltageFaktor-48))
+ 1407 0abc F040      		sbci r31,hi8(-(measuringVoltageFaktor-48))
+ 1408 0abe F082      		st Z,r15
+ 1409 0ac0 80E0      		ldi r24,lo8(.LC10)
+ 1410 0ac2 90E0      		ldi r25,hi8(.LC10)
+ 1411 0ac4 00C0      		rjmp .L159
+ 1412               	.L130:
+ 1413 0ac6 8533      		cpi r24,lo8(53)
+ 1414 0ac8 01F4      		brne .L132
+ 1415 0aca E02F      		mov r30,r16
+ 1416 0acc F0E0      		ldi r31,lo8(0)
+ 1417 0ace E050      		subi r30,lo8(-(measuringVoltageFaktor-48))
+ 1418 0ad0 F040      		sbci r31,hi8(-(measuringVoltageFaktor-48))
+ 1419 0ad2 E082      		st Z,r14
+ 1420 0ad4 80E0      		ldi r24,lo8(.LC11)
+ 1421 0ad6 90E0      		ldi r25,hi8(.LC11)
+ 1422 0ad8 00C0      		rjmp .L159
+ 1423               	.L132:
+ 1424 0ada 8433      		cpi r24,lo8(52)
+ 1425 0adc 01F4      		brne .L131
+ 1426 0ade E02F      		mov r30,r16
+ 1427 0ae0 F0E0      		ldi r31,lo8(0)
+ 1428 0ae2 E050      		subi r30,lo8(-(measuringVoltageFaktor-48))
+ 1429 0ae4 F040      		sbci r31,hi8(-(measuringVoltageFaktor-48))
+ 1430 0ae6 D082      		st Z,r13
+ 1431 0ae8 80E0      		ldi r24,lo8(.LC12)
+ 1432 0aea 90E0      		ldi r25,hi8(.LC12)
+ 1433               	.L159:
+ 1434 0aec 0E94 0000 		call uart_puts
+ 1435               	.L131:
+ 1436 0af0 0E94 0000 		call uart_getc
+ 1437 0af4 8B33      		cpi r24,lo8(59)
+ 1438 0af6 01F0      		breq .+2
+ 1439 0af8 00C0      		rjmp .L156
+ 1440 0afa 1150      		subi r17,lo8(-(-1))
+ 1441 0afc 01F4      		brne .L133
+ 1442               	.L128:
+ 1443 0afe 0E94 0000 		call uart_getc
+ 1444 0b02 8534      		cpi r24,lo8(69)
+ 1445 0b04 01F4      		brne .+2
+ 1446 0b06 00C0      		rjmp .L161
+ 1447               	.L134:
+ 1448 0b08 8D34      		cpi r24,lo8(77)
+ 1449 0b0a 01F0      		breq .+2
+ 1450 0b0c 00C0      		rjmp .L135
+ 1451 0b0e 18E0      		ldi r17,lo8(8)
+ 1452 0b10 25E0      		ldi r18,lo8(5)
+ 1453 0b12 C22E      		mov r12,r18
+ 1454 0b14 94E0      		ldi r25,lo8(4)
+ 1455 0b16 D92E      		mov r13,r25
+ 1456 0b18 83E0      		ldi r24,lo8(3)
+ 1457 0b1a E82E      		mov r14,r24
+ 1458 0b1c 02E0      		ldi r16,lo8(2)
+ 1459 0b1e F02E      		mov r15,r16
+ 1460 0b20 01E0      		ldi r16,lo8(1)
+ 1461               	.L142:
+ 1462 0b22 0E94 0000 		call uart_getc
+ 1463 0b26 B82E      		mov r11,r24
+ 1464 0b28 0E94 0000 		call uart_getc
+ 1465 0b2c 8A33      		cpi r24,lo8(58)
+ 1466 0b2e 01F0      		breq .+2
+ 1467 0b30 00C0      		rjmp .L156
+ 1468 0b32 0E94 0000 		call uart_getc
+ 1469 0b36 8133      		cpi r24,lo8(49)
+ 1470 0b38 01F4      		brne .L136
+ 1471 0b3a EB2D      		mov r30,r11
+ 1472 0b3c F0E0      		ldi r31,lo8(0)
+ 1473 0b3e E050      		subi r30,lo8(-(portModeMeasure-48))
+ 1474 0b40 F040      		sbci r31,hi8(-(portModeMeasure-48))
+ 1475 0b42 0083      		st Z,r16
+ 1476 0b44 80E0      		ldi r24,lo8(.LC14)
+ 1477 0b46 90E0      		ldi r25,hi8(.LC14)
+ 1478 0b48 00C0      		rjmp .L160
+ 1479               	.L136:
+ 1480 0b4a 8233      		cpi r24,lo8(50)
+ 1481 0b4c 01F4      		brne .L138
+ 1482 0b4e EB2D      		mov r30,r11
+ 1483 0b50 F0E0      		ldi r31,lo8(0)
+ 1484 0b52 E050      		subi r30,lo8(-(portModeMeasure-48))
+ 1485 0b54 F040      		sbci r31,hi8(-(portModeMeasure-48))
+ 1486 0b56 F082      		st Z,r15
+ 1487 0b58 80E0      		ldi r24,lo8(.LC15)
+ 1488 0b5a 90E0      		ldi r25,hi8(.LC15)
+ 1489 0b5c 00C0      		rjmp .L160
+ 1490               	.L138:
+ 1491 0b5e 8333      		cpi r24,lo8(51)
+ 1492 0b60 01F4      		brne .L139
+ 1493 0b62 EB2D      		mov r30,r11
+ 1494 0b64 F0E0      		ldi r31,lo8(0)
+ 1495 0b66 E050      		subi r30,lo8(-(portModeMeasure-48))
+ 1496 0b68 F040      		sbci r31,hi8(-(portModeMeasure-48))
+ 1497 0b6a E082      		st Z,r14
+ 1498 0b6c 80E0      		ldi r24,lo8(.LC16)
+ 1499 0b6e 90E0      		ldi r25,hi8(.LC16)
+ 1500 0b70 00C0      		rjmp .L160
+ 1501               	.L139:
+ 1502 0b72 8433      		cpi r24,lo8(52)
+ 1503 0b74 01F4      		brne .L141
+ 1504 0b76 EB2D      		mov r30,r11
+ 1505 0b78 F0E0      		ldi r31,lo8(0)
+ 1506 0b7a E050      		subi r30,lo8(-(portModeMeasure-48))
+ 1507 0b7c F040      		sbci r31,hi8(-(portModeMeasure-48))
+ 1508 0b7e D082      		st Z,r13
+ 1509 0b80 80E0      		ldi r24,lo8(.LC17)
+ 1510 0b82 90E0      		ldi r25,hi8(.LC17)
+ 1511 0b84 00C0      		rjmp .L160
+ 1512               	.L141:
+ 1513 0b86 8533      		cpi r24,lo8(53)
+ 1514 0b88 01F4      		brne .L140
+ 1515 0b8a EB2D      		mov r30,r11
+ 1516 0b8c F0E0      		ldi r31,lo8(0)
+ 1517 0b8e E050      		subi r30,lo8(-(portModeMeasure-48))
+ 1518 0b90 F040      		sbci r31,hi8(-(portModeMeasure-48))
+ 1519 0b92 C082      		st Z,r12
+ 1520 0b94 80E0      		ldi r24,lo8(.LC18)
+ 1521 0b96 90E0      		ldi r25,hi8(.LC18)
+ 1522               	.L160:
+ 1523 0b98 0E94 0000 		call uart_puts
+ 1524               	.L140:
+ 1525 0b9c 0E94 0000 		call uart_getc
+ 1526 0ba0 8B33      		cpi r24,lo8(59)
+ 1527 0ba2 01F0      		breq .+2
+ 1528 0ba4 00C0      		rjmp .L156
+ 1529 0ba6 1150      		subi r17,lo8(-(-1))
+ 1530 0ba8 01F0      		breq .+2
+ 1531 0baa 00C0      		rjmp .L142
+ 1532               	.L135:
+ 1533 0bac 0E94 0000 		call uart_getc
+ 1534 0bb0 8534      		cpi r24,lo8(69)
+ 1535 0bb2 01F4      		brne .+2
+ 1536 0bb4 00C0      		rjmp .L161
+ 1537               	.L143:
+ 1538 0bb6 8435      		cpi r24,lo8(84)
+ 1539 0bb8 01F4      		brne .L144
+ 1540 0bba 0E94 0000 		call uart_getc
+ 1541 0bbe 64E6      		ldi r22,lo8(100)
+ 1542 0bc0 869F      		mul r24,r22
+ 1543 0bc2 B001      		movw r22,r0
+ 1544 0bc4 1124      		clr r1
+ 1545 0bc6 605C      		subi r22,lo8(-(-4800))
+ 1546 0bc8 7241      		sbci r23,hi8(-(-4800))
+ 1547 0bca 80E0      		ldi r24,lo8(0)
+ 1548 0bcc 90E0      		ldi r25,hi8(0)
+ 1549 0bce 0E94 0000 		call __floatunsisf
+ 1550 0bd2 6093 0000 		sts heartBeat,r22
+ 1551 0bd6 7093 0000 		sts heartBeat+1,r23
+ 1552 0bda 8093 0000 		sts heartBeat+2,r24
+ 1553 0bde 9093 0000 		sts heartBeat+3,r25
+ 1554 0be2 0E94 0000 		call uart_getc
+ 1555 0be6 8B33      		cpi r24,59
+ 1556 0be8 9105      		cpc r25,__zero_reg__
+ 1557 0bea 01F4      		brne .L156
+ 1558               	.L144:
+ 1559 0bec 0E94 0000 		call uart_getc
+ 1560 0bf0 8534      		cpi r24,lo8(69)
+ 1561 0bf2 01F0      		breq .L161
+ 1562               	.L145:
+ 1563 0bf4 8334      		cpi r24,lo8(67)
+ 1564 0bf6 01F4      		brne .L146
+ 1565 0bf8 0E94 0000 		call uart_getc
+ 1566 0bfc 8335      		cpi r24,lo8(83)
+ 1567 0bfe 01F4      		brne .L147
+ 1568 0c00 81E0      		ldi r24,lo8(1)
+ 1569 0c02 8093 0000 		sts serialCommunikation,r24
+ 1570 0c06 00C0      		rjmp .L148
+ 1571               	.L147:
+ 1572 0c08 8337      		cpi r24,lo8(115)
+ 1573 0c0a 01F4      		brne .L148
+ 1574 0c0c 1092 0000 		sts serialCommunikation,__zero_reg__
+ 1575               	.L148:
+ 1576 0c10 0E94 0000 		call uart_getc
+ 1577 0c14 8334      		cpi r24,lo8(67)
+ 1578 0c16 01F4      		brne .L149
+ 1579 0c18 81E0      		ldi r24,lo8(1)
+ 1580 0c1a 8093 0000 		sts canCommunikation,r24
+ 1581 0c1e 00C0      		rjmp .L150
+ 1582               	.L149:
+ 1583 0c20 8336      		cpi r24,lo8(99)
+ 1584 0c22 01F4      		brne .L150
+ 1585 0c24 1092 0000 		sts canCommunikation,__zero_reg__
+ 1586               	.L150:
+ 1587 0c28 0E94 0000 		call uart_getc
+ 1588               	.L146:
+ 1589 0c2c 0E94 0000 		call uart_getc
+ 1590 0c30 8534      		cpi r24,lo8(69)
+ 1591 0c32 01F4      		brne .L156
+ 1592               	.L161:
+ 1593 0c34 80E0      		ldi r24,lo8(.LC13)
+ 1594 0c36 90E0      		ldi r25,hi8(.LC13)
+ 1595 0c38 0E94 0000 		call uart_puts
+ 1596 0c3c 81E0      		ldi r24,lo8(1)
+ 1597 0c3e 00C0      		rjmp .L129
+ 1598               	.L156:
+ 1599 0c40 80E0      		ldi r24,lo8(0)
+ 1600               	.L129:
+ 1601               	/* epilogue start */
+ 1602 0c42 1F91      		pop r17
+ 1603 0c44 0F91      		pop r16
+ 1604 0c46 FF90      		pop r15
+ 1605 0c48 EF90      		pop r14
+ 1606 0c4a DF90      		pop r13
+ 1607 0c4c CF90      		pop r12
+ 1608 0c4e BF90      		pop r11
+ 1609 0c50 0895      		ret
+ 1611               		.data
+ 1612               	.LC19:
+ 1613 0098 6869 6768 		.string	"higher set \n"
+ 1613      6572 2073 
+ 1613      6574 200A 
+ 1613      00
+ 1614               	.LC20:
+ 1615 00a5 6C6F 7765 		.string	"lower set \n"
+ 1615      7220 7365 
+ 1615      7420 0A00 
+ 1616               		.text
+ 1617               	.global	readUARTConfModes
+ 1619               	readUARTConfModes:
+ 1620 0c52 FF92      		push r15
+ 1621 0c54 0F93      		push r16
+ 1622 0c56 1F93      		push r17
+ 1623               	/* prologue: function */
+ 1624               	/* frame size = 0 */
+ 1625               	/* stack size = 3 */
+ 1626               	.L__stack_usage = 3
+ 1627 0c58 8834      		cpi r24,lo8(72)
+ 1628 0c5a 01F4      		brne .L163
+ 1629 0c5c 18E0      		ldi r17,lo8(8)
+ 1630 0c5e FF24      		clr r15
+ 1631 0c60 F394      		inc r15
+ 1632               	.L167:
+ 1633 0c62 0E94 0000 		call uart_getc
+ 1634 0c66 082F      		mov r16,r24
+ 1635 0c68 0E94 0000 		call uart_getc
+ 1636 0c6c 8A33      		cpi r24,lo8(58)
+ 1637 0c6e 01F4      		brne .L174
+ 1638 0c70 0E94 0000 		call uart_getc
+ 1639 0c74 8133      		cpi r24,lo8(49)
+ 1640 0c76 01F4      		brne .L165
+ 1641 0c78 E02F      		mov r30,r16
+ 1642 0c7a F0E0      		ldi r31,lo8(0)
+ 1643 0c7c E050      		subi r30,lo8(-(reactionTriggerMode-48))
+ 1644 0c7e F040      		sbci r31,hi8(-(reactionTriggerMode-48))
+ 1645 0c80 F082      		st Z,r15
+ 1646 0c82 80E0      		ldi r24,lo8(.LC19)
+ 1647 0c84 90E0      		ldi r25,hi8(.LC19)
+ 1648 0c86 00C0      		rjmp .L177
+ 1649               	.L165:
+ 1650 0c88 8033      		cpi r24,lo8(48)
+ 1651 0c8a 01F4      		brne .L166
+ 1652 0c8c E02F      		mov r30,r16
+ 1653 0c8e F0E0      		ldi r31,lo8(0)
+ 1654 0c90 E050      		subi r30,lo8(-(reactionTriggerMode-48))
+ 1655 0c92 F040      		sbci r31,hi8(-(reactionTriggerMode-48))
+ 1656 0c94 1082      		st Z,__zero_reg__
+ 1657 0c96 80E0      		ldi r24,lo8(.LC20)
+ 1658 0c98 90E0      		ldi r25,hi8(.LC20)
+ 1659               	.L177:
+ 1660 0c9a 0E94 0000 		call uart_puts
+ 1661               	.L166:
+ 1662 0c9e 0E94 0000 		call uart_getc
+ 1663 0ca2 8B33      		cpi r24,lo8(59)
+ 1664 0ca4 01F4      		brne .L174
+ 1665 0ca6 1150      		subi r17,lo8(-(-1))
+ 1666 0ca8 01F4      		brne .L167
+ 1667               	.L163:
+ 1668 0caa 0E94 0000 		call uart_getc
+ 1669 0cae 8635      		cpi r24,lo8(86)
+ 1670 0cb0 01F4      		brne .L168
+ 1671 0cb2 18E0      		ldi r17,lo8(8)
+ 1672               	.L169:
+ 1673 0cb4 0E94 0000 		call uart_getc
+ 1674 0cb8 0E94 0000 		call uart_getc
+ 1675 0cbc 8A33      		cpi r24,lo8(58)
+ 1676 0cbe 01F4      		brne .L174
+ 1677 0cc0 0E94 0000 		call uart_getc
+ 1678 0cc4 0E94 0000 		call uart_getc
+ 1679 0cc8 0E94 0000 		call uart_getc
+ 1680 0ccc 8B33      		cpi r24,lo8(59)
+ 1681 0cce 01F4      		brne .L174
+ 1682 0cd0 1150      		subi r17,lo8(-(-1))
+ 1683 0cd2 01F4      		brne .L169
+ 1684               	.L168:
+ 1685 0cd4 0E94 0000 		call uart_getc
+ 1686 0cd8 8534      		cpi r24,lo8(69)
+ 1687 0cda 01F4      		brne .L174
+ 1688 0cdc 80E0      		ldi r24,lo8(.LC13)
+ 1689 0cde 90E0      		ldi r25,hi8(.LC13)
+ 1690 0ce0 0E94 0000 		call uart_puts
+ 1691 0ce4 81E0      		ldi r24,lo8(1)
+ 1692 0ce6 00C0      		rjmp .L164
+ 1693               	.L174:
+ 1694 0ce8 80E0      		ldi r24,lo8(0)
+ 1695               	.L164:
+ 1696               	/* epilogue start */
+ 1697 0cea 1F91      		pop r17
+ 1698 0cec 0F91      		pop r16
+ 1699 0cee FF90      		pop r15
+ 1700 0cf0 0895      		ret
+ 1702               	.global	printVreal
+ 1704               	printVreal:
+ 1705 0cf2 0F93      		push r16
+ 1706 0cf4 1F93      		push r17
+ 1707 0cf6 DF93      		push r29
+ 1708 0cf8 CF93      		push r28
+ 1709 0cfa CDB7      		in r28,__SP_L__
+ 1710 0cfc DEB7      		in r29,__SP_H__
+ 1711 0cfe A197      		sbiw r28,33
+ 1712 0d00 0FB6      		in __tmp_reg__,__SREG__
+ 1713 0d02 F894      		cli
+ 1714 0d04 DEBF      		out __SP_H__,r29
+ 1715 0d06 0FBE      		out __SREG__,__tmp_reg__
+ 1716 0d08 CDBF      		out __SP_L__,r28
+ 1717               	/* prologue: function */
+ 1718               	/* frame size = 33 */
+ 1719               	/* stack size = 37 */
+ 1720               	.L__stack_usage = 37
+ 1721 0d0a 182F      		mov r17,r24
+ 1722 0d0c 8091 0000 		lds r24,x.2197
+ 1723 0d10 9091 0000 		lds r25,x.2197+1
+ 1724 0d14 BE01      		movw r22,r28
+ 1725 0d16 6F5F      		subi r22,lo8(-(1))
+ 1726 0d18 7F4F      		sbci r23,hi8(-(1))
+ 1727 0d1a 4AE0      		ldi r20,lo8(10)
+ 1728 0d1c 50E0      		ldi r21,hi8(10)
+ 1729 0d1e 0E94 0000 		call itoa
+ 1730 0d22 E12F      		mov r30,r17
+ 1731 0d24 F0E0      		ldi r31,lo8(0)
+ 1732 0d26 E050      		subi r30,lo8(-(portModeMeasure))
+ 1733 0d28 F040      		sbci r31,hi8(-(portModeMeasure))
+ 1734 0d2a 8081      		ld r24,Z
+ 1735 0d2c 8330      		cpi r24,lo8(3)
+ 1736 0d2e 01F0      		breq .L182
+ 1737 0d30 8430      		cpi r24,lo8(4)
+ 1738 0d32 00F4      		brsh .L185
+ 1739 0d34 8130      		cpi r24,lo8(1)
+ 1740 0d36 01F0      		breq .L180
+ 1741 0d38 8230      		cpi r24,lo8(2)
+ 1742 0d3a 01F4      		brne .L179
+ 1743 0d3c 00C0      		rjmp .L188
+ 1744               	.L185:
+ 1745 0d3e 8430      		cpi r24,lo8(4)
+ 1746 0d40 01F0      		breq .L183
+ 1747 0d42 8530      		cpi r24,lo8(5)
+ 1748 0d44 01F4      		brne .L179
+ 1749 0d46 00C0      		rjmp .L189
+ 1750               	.L182:
+ 1751 0d48 6091 0000 		lds r22,measurement
+ 1752 0d4c 7091 0000 		lds r23,measurement+1
+ 1753 0d50 8091 0000 		lds r24,measurement+2
+ 1754 0d54 9091 0000 		lds r25,measurement+3
+ 1755 0d58 47E0      		ldi r20,lo8(7)
+ 1756 0d5a 23E0      		ldi r18,lo8(3)
+ 1757 0d5c 00C0      		rjmp .L186
+ 1758               	.L188:
+ 1759 0d5e 0E94 0000 		call getLightIntensity
+ 1760 0d62 00C0      		rjmp .L187
+ 1761               	.L180:
+ 1762 0d64 0E94 0000 		call getTemp
+ 1763 0d68 00C0      		rjmp .L187
+ 1764               	.L183:
+ 1765 0d6a 6091 0000 		lds r22,measurement
+ 1766 0d6e 7091 0000 		lds r23,measurement+1
+ 1767 0d72 8091 0000 		lds r24,measurement+2
+ 1768 0d76 9091 0000 		lds r25,measurement+3
+ 1769 0d7a 00C0      		rjmp .L187
+ 1770               	.L189:
+ 1771 0d7c 0E94 0000 		call getDistance
+ 1772               	.L187:
+ 1773 0d80 47E0      		ldi r20,lo8(7)
+ 1774 0d82 21E0      		ldi r18,lo8(1)
+ 1775               	.L186:
+ 1776 0d84 00E0      		ldi r16,lo8(voltageValueBuffer)
+ 1777 0d86 10E0      		ldi r17,hi8(voltageValueBuffer)
+ 1778 0d88 0E94 0000 		call dtostrf
+ 1779               	.L179:
+ 1780 0d8c CE01      		movw r24,r28
+ 1781 0d8e 0196      		adiw r24,1
+ 1782 0d90 0E94 0000 		call uart_puts
+ 1783 0d94 89E0      		ldi r24,lo8(9)
+ 1784 0d96 0E94 0000 		call uart_putc
+ 1785 0d9a 80E0      		ldi r24,lo8(voltageValueBuffer+1)
+ 1786 0d9c 90E0      		ldi r25,hi8(voltageValueBuffer+1)
+ 1787 0d9e 0E94 0000 		call uart_puts
+ 1788 0da2 8AE0      		ldi r24,lo8(10)
+ 1789 0da4 0E94 0000 		call uart_putc
+ 1790 0da8 8091 0000 		lds r24,x.2197
+ 1791 0dac 9091 0000 		lds r25,x.2197+1
+ 1792 0db0 0196      		adiw r24,1
+ 1793 0db2 9093 0000 		sts x.2197+1,r25
+ 1794 0db6 8093 0000 		sts x.2197,r24
+ 1795               	/* epilogue start */
+ 1796 0dba A196      		adiw r28,33
+ 1797 0dbc 0FB6      		in __tmp_reg__,__SREG__
+ 1798 0dbe F894      		cli
+ 1799 0dc0 DEBF      		out __SP_H__,r29
+ 1800 0dc2 0FBE      		out __SREG__,__tmp_reg__
+ 1801 0dc4 CDBF      		out __SP_L__,r28
+ 1802 0dc6 CF91      		pop r28
+ 1803 0dc8 DF91      		pop r29
+ 1804 0dca 1F91      		pop r17
+ 1805 0dcc 0F91      		pop r16
+ 1806 0dce 0895      		ret
+ 1808               	.global	printVmeasure
+ 1810               	printVmeasure:
+ 1811 0dd0 BF92      		push r11
+ 1812 0dd2 CF92      		push r12
+ 1813 0dd4 DF92      		push r13
+ 1814 0dd6 EF92      		push r14
+ 1815 0dd8 FF92      		push r15
+ 1816 0dda 0F93      		push r16
+ 1817 0ddc 1F93      		push r17
+ 1818 0dde DF93      		push r29
+ 1819 0de0 CF93      		push r28
+ 1820 0de2 CDB7      		in r28,__SP_L__
+ 1821 0de4 DEB7      		in r29,__SP_H__
+ 1822 0de6 A197      		sbiw r28,33
+ 1823 0de8 0FB6      		in __tmp_reg__,__SREG__
+ 1824 0dea F894      		cli
+ 1825 0dec DEBF      		out __SP_H__,r29
+ 1826 0dee 0FBE      		out __SREG__,__tmp_reg__
+ 1827 0df0 CDBF      		out __SP_L__,r28
+ 1828               	/* prologue: function */
+ 1829               	/* frame size = 33 */
+ 1830               	/* stack size = 42 */
+ 1831               	.L__stack_usage = 42
+ 1832 0df2 B82E      		mov r11,r24
+ 1833 0df4 8091 0000 		lds r24,x.2209
+ 1834 0df8 9091 0000 		lds r25,x.2209+1
+ 1835 0dfc 6E01      		movw r12,r28
+ 1836 0dfe 0894      		sec
+ 1837 0e00 C11C      		adc r12,__zero_reg__
+ 1838 0e02 D11C      		adc r13,__zero_reg__
+ 1839 0e04 B601      		movw r22,r12
+ 1840 0e06 4AE0      		ldi r20,lo8(10)
+ 1841 0e08 50E0      		ldi r21,hi8(10)
+ 1842 0e0a 0E94 0000 		call itoa
+ 1843 0e0e 6091 0000 		lds r22,measurement
+ 1844 0e12 7091 0000 		lds r23,measurement+1
+ 1845 0e16 8091 0000 		lds r24,measurement+2
+ 1846 0e1a 9091 0000 		lds r25,measurement+3
+ 1847 0e1e E0E0      		ldi r30,lo8(voltageValueBuffer)
+ 1848 0e20 EE2E      		mov r14,r30
+ 1849 0e22 E0E0      		ldi r30,hi8(voltageValueBuffer)
+ 1850 0e24 FE2E      		mov r15,r30
+ 1851 0e26 47E0      		ldi r20,lo8(7)
+ 1852 0e28 23E0      		ldi r18,lo8(3)
+ 1853 0e2a 8701      		movw r16,r14
+ 1854 0e2c 0E94 0000 		call dtostrf
+ 1855 0e30 C601      		movw r24,r12
+ 1856 0e32 0E94 0000 		call uart_puts
+ 1857 0e36 89E0      		ldi r24,lo8(9)
+ 1858 0e38 0E94 0000 		call uart_putc
+ 1859 0e3c C701      		movw r24,r14
+ 1860 0e3e 0196      		adiw r24,1
+ 1861 0e40 0E94 0000 		call uart_puts
+ 1862 0e44 89E0      		ldi r24,lo8(9)
+ 1863 0e46 0E94 0000 		call uart_putc
+ 1864 0e4a 8B2D      		mov r24,r11
+ 1865 0e4c 805D      		subi r24,lo8(-(48))
+ 1866 0e4e 0E94 0000 		call uart_putc
+ 1867 0e52 8AE0      		ldi r24,lo8(10)
+ 1868 0e54 0E94 0000 		call uart_putc
+ 1869 0e58 8091 0000 		lds r24,x.2209
+ 1870 0e5c 9091 0000 		lds r25,x.2209+1
+ 1871 0e60 0196      		adiw r24,1
+ 1872 0e62 9093 0000 		sts x.2209+1,r25
+ 1873 0e66 8093 0000 		sts x.2209,r24
+ 1874               	/* epilogue start */
+ 1875 0e6a A196      		adiw r28,33
+ 1876 0e6c 0FB6      		in __tmp_reg__,__SREG__
+ 1877 0e6e F894      		cli
+ 1878 0e70 DEBF      		out __SP_H__,r29
+ 1879 0e72 0FBE      		out __SREG__,__tmp_reg__
+ 1880 0e74 CDBF      		out __SP_L__,r28
+ 1881 0e76 CF91      		pop r28
+ 1882 0e78 DF91      		pop r29
+ 1883 0e7a 1F91      		pop r17
+ 1884 0e7c 0F91      		pop r16
+ 1885 0e7e FF90      		pop r15
+ 1886 0e80 EF90      		pop r14
+ 1887 0e82 DF90      		pop r13
+ 1888 0e84 CF90      		pop r12
+ 1889 0e86 BF90      		pop r11
+ 1890 0e88 0895      		ret
+ 1892               		.data
+ 1893               	.LC21:
+ 1894 00b1 7265 6163 		.string	"react \n"
+ 1894      7420 0A00 
+ 1895               	.LC22:
+ 1896 00b9 6F6B 2020 		.string	"ok      \n"
+ 1896      2020 2020 
+ 1896      0A00 
+ 1897               		.text
+ 1898               	.global	reactOnUARTCommand
+ 1900               	reactOnUARTCommand:
+ 1901 0e8a 1F93      		push r17
+ 1902               	/* prologue: function */
+ 1903               	/* frame size = 0 */
+ 1904               	/* stack size = 1 */
+ 1905               	.L__stack_usage = 1
+ 1906 0e8c 182F      		mov r17,r24
+ 1907 0e8e 80E0      		ldi r24,lo8(.LC21)
+ 1908 0e90 90E0      		ldi r25,hi8(.LC21)
+ 1909 0e92 0E94 0000 		call uart_puts
+ 1910 0e96 1336      		cpi r17,lo8(99)
+ 1911 0e98 01F4      		brne .+2
+ 1912 0e9a 00C0      		rjmp .L194
+ 1913 0e9c 1436      		cpi r17,lo8(100)
+ 1914 0e9e 00F4      		brsh .L197
+ 1915 0ea0 1235      		cpi r17,lo8(82)
+ 1916 0ea2 01F0      		breq .+2
+ 1917 0ea4 00C0      		rjmp .L214
+ 1918 0ea6 00C0      		rjmp .L218
+ 1919               	.L197:
+ 1920 0ea8 1037      		cpi r17,lo8(112)
+ 1921 0eaa 01F0      		breq .L195
+ 1922 0eac 1237      		cpi r17,lo8(114)
+ 1923 0eae 01F4      		brne .L214
+ 1924 0eb0 00C0      		rjmp .L219
+ 1925               	.L195:
+ 1926 0eb2 81E0      		ldi r24,lo8(1)
+ 1927 0eb4 8093 0000 		sts serialCommunikationK,r24
+ 1928 0eb8 0E94 0000 		call uart_getc
+ 1929 0ebc 8534      		cpi r24,69
+ 1930 0ebe 9105      		cpc r25,__zero_reg__
+ 1931 0ec0 01F4      		brne .L214
+ 1932 0ec2 00C0      		rjmp .L208
+ 1933               	.L218:
+ 1934 0ec4 0E94 0000 		call uart_getc
+ 1935 0ec8 90E0      		ldi r25,lo8(0)
+ 1936 0eca C097      		sbiw r24,48
+ 1937 0ecc 8230      		cpi r24,2
+ 1938 0ece 9105      		cpc r25,__zero_reg__
+ 1939 0ed0 01F0      		breq .L200
+ 1940 0ed2 8330      		cpi r24,3
+ 1941 0ed4 9105      		cpc r25,__zero_reg__
+ 1942 0ed6 01F0      		breq .L201
+ 1943 0ed8 8130      		cpi r24,1
+ 1944 0eda 9105      		cpc r25,__zero_reg__
+ 1945 0edc 01F4      		brne .L214
+ 1946 0ede 419A      		sbi 40-32,1
+ 1947 0ee0 00C0      		rjmp .L206
+ 1948               	.L200:
+ 1949 0ee2 429A      		sbi 40-32,2
+ 1950 0ee4 00C0      		rjmp .L206
+ 1951               	.L201:
+ 1952 0ee6 439A      		sbi 40-32,3
+ 1953 0ee8 00C0      		rjmp .L206
+ 1954               	.L219:
+ 1955 0eea 0E94 0000 		call uart_getc
+ 1956 0eee 90E0      		ldi r25,lo8(0)
+ 1957 0ef0 C097      		sbiw r24,48
+ 1958 0ef2 8230      		cpi r24,2
+ 1959 0ef4 9105      		cpc r25,__zero_reg__
+ 1960 0ef6 01F0      		breq .L204
+ 1961 0ef8 8330      		cpi r24,3
+ 1962 0efa 9105      		cpc r25,__zero_reg__
+ 1963 0efc 01F0      		breq .L205
+ 1964 0efe 8130      		cpi r24,1
+ 1965 0f00 9105      		cpc r25,__zero_reg__
+ 1966 0f02 01F4      		brne .L214
+ 1967 0f04 4198      		cbi 40-32,1
+ 1968 0f06 00C0      		rjmp .L206
+ 1969               	.L204:
+ 1970 0f08 4298      		cbi 40-32,2
+ 1971 0f0a 00C0      		rjmp .L206
+ 1972               	.L205:
+ 1973 0f0c 4398      		cbi 40-32,3
+ 1974 0f0e 00C0      		rjmp .L206
+ 1975               	.L208:
+ 1976 0f10 80E0      		ldi r24,lo8(.LC22)
+ 1977 0f12 90E0      		ldi r25,hi8(.LC22)
+ 1978 0f14 0E94 0000 		call uart_puts
+ 1979 0f18 00C0      		rjmp .L209
+ 1980               	.L194:
+ 1981 0f1a 0E94 0000 		call uart_getc
+ 1982 0f1e 0E94 0000 		call readUARTConfig
+ 1983 0f22 8130      		cpi r24,lo8(1)
+ 1984 0f24 01F4      		brne .L214
+ 1985               	.L209:
+ 1986 0f26 459A      		sbi 40-32,5
+ 1987 0f28 81E0      		ldi r24,lo8(1)
+ 1988 0f2a 00C0      		rjmp .L192
+ 1989               	.L214:
+ 1990 0f2c 80E0      		ldi r24,lo8(0)
+ 1991               	.L192:
+ 1992               	/* epilogue start */
+ 1993 0f2e 1F91      		pop r17
+ 1994 0f30 0895      		ret
+ 1995               	.L206:
+ 1996 0f32 0E94 0000 		call uart_getc
+ 1997 0f36 8534      		cpi r24,69
+ 1998 0f38 9105      		cpc r25,__zero_reg__
+ 1999 0f3a 01F4      		brne .L209
+ 2000 0f3c 00C0      		rjmp .L208
+ 2002               		.data
+ 2003               	.LC23:
+ 2004 00c3 7265 6C61 		.string	"relais1 on by can \n"
+ 2004      6973 3120 
+ 2004      6F6E 2062 
+ 2004      7920 6361 
+ 2004      6E20 0A00 
+ 2005               	.LC24:
+ 2006 00d7 7265 6C61 		.string	"relais2 on by can \n"
+ 2006      6973 3220 
+ 2006      6F6E 2062 
+ 2006      7920 6361 
+ 2006      6E20 0A00 
+ 2007               	.LC25:
+ 2008 00eb 7265 6C61 		.string	"relais1 off by can \n"
+ 2008      6973 3120 
+ 2008      6F66 6620 
+ 2008      6279 2063 
+ 2008      616E 200A 
+ 2009               	.LC26:
+ 2010 0100 7265 6C61 		.string	"relais2 off by can \n"
+ 2010      6973 3220 
+ 2010      6F66 6620 
+ 2010      6279 2063 
+ 2010      616E 200A 
+ 2011               		.text
+ 2012               	.global	reactOnCANCommand
+ 2014               	reactOnCANCommand:
+ 2015 0f3e EF92      		push r14
+ 2016 0f40 FF92      		push r15
+ 2017 0f42 0F93      		push r16
+ 2018 0f44 1F93      		push r17
+ 2019 0f46 DF93      		push r29
+ 2020 0f48 CF93      		push r28
+ 2021 0f4a CDB7      		in r28,__SP_L__
+ 2022 0f4c DEB7      		in r29,__SP_H__
+ 2023 0f4e 2D97      		sbiw r28,13
+ 2024 0f50 0FB6      		in __tmp_reg__,__SREG__
+ 2025 0f52 F894      		cli
+ 2026 0f54 DEBF      		out __SP_H__,r29
+ 2027 0f56 0FBE      		out __SREG__,__tmp_reg__
+ 2028 0f58 CDBF      		out __SP_L__,r28
+ 2029               	/* prologue: function */
+ 2030               	/* frame size = 13 */
+ 2031               	/* stack size = 19 */
+ 2032               	.L__stack_usage = 19
+ 2033 0f5a 7C01      		movw r14,r24
+ 2034 0f5c FC01      		movw r30,r24
+ 2035 0f5e 8181      		ldd r24,Z+1
+ 2036 0f60 9081      		ld r25,Z
+ 2037 0f62 9336      		cpi r25,lo8(99)
+ 2038 0f64 01F0      		breq .L223
+ 2039 0f66 9436      		cpi r25,lo8(100)
+ 2040 0f68 00F4      		brsh .L226
+ 2041 0f6a 9235      		cpi r25,lo8(82)
+ 2042 0f6c 01F0      		breq .+2
+ 2043 0f6e 00C0      		rjmp .L237
+ 2044 0f70 00C0      		rjmp .L244
+ 2045               	.L226:
+ 2046 0f72 9037      		cpi r25,lo8(112)
+ 2047 0f74 01F0      		breq .L224
+ 2048 0f76 9237      		cpi r25,lo8(114)
+ 2049 0f78 01F0      		breq .+2
+ 2050 0f7a 00C0      		rjmp .L237
+ 2051 0f7c 00C0      		rjmp .L245
+ 2052               	.L224:
+ 2053 0f7e 81E0      		ldi r24,lo8(1)
+ 2054 0f80 8093 0000 		sts canCommunikationK,r24
+ 2055 0f84 8E01      		movw r16,r28
+ 2056 0f86 0F5F      		subi r16,lo8(-(1))
+ 2057 0f88 1F4F      		sbci r17,hi8(-(1))
+ 2058 0f8a C801      		movw r24,r16
+ 2059 0f8c 6AE0      		ldi r22,lo8(10)
+ 2060 0f8e 0E94 0000 		call generateCANMsg
+ 2061 0f92 459A      		sbi 40-32,5
+ 2062 0f94 C801      		movw r24,r16
+ 2063 0f96 0E94 0000 		call mcp2515_send_extmessage
+ 2064 0f9a 00C0      		rjmp .L240
+ 2065               	.L223:
+ 2066 0f9c F701      		movw r30,r14
+ 2067 0f9e 9281      		ldd r25,Z+2
+ 2068 0fa0 9033      		cpi r25,lo8(48)
+ 2069 0fa2 01F0      		breq .+2
+ 2070 0fa4 00C0      		rjmp .L243
+ 2071 0fa6 880F      		lsl r24
+ 2072 0fa8 982F      		mov r25,r24
+ 2073 0faa 990F      		lsl r25
+ 2074 0fac 990F      		lsl r25
+ 2075 0fae 980F      		add r25,r24
+ 2076 0fb0 892F      		mov r24,r25
+ 2077 0fb2 90E0      		ldi r25,lo8(0)
+ 2078 0fb4 A0E0      		ldi r26,lo8(0)
+ 2079 0fb6 B0E0      		ldi r27,hi8(0)
+ 2080 0fb8 8093 0000 		sts TEMP_SEND,r24
+ 2081 0fbc 9093 0000 		sts TEMP_SEND+1,r25
+ 2082 0fc0 A093 0000 		sts TEMP_SEND+2,r26
+ 2083 0fc4 B093 0000 		sts TEMP_SEND+3,r27
+ 2084 0fc8 00C0      		rjmp .L243
+ 2085               	.L244:
+ 2086 0fca 90E0      		ldi r25,lo8(0)
+ 2087 0fcc C097      		sbiw r24,48
+ 2088 0fce 8230      		cpi r24,2
+ 2089 0fd0 9105      		cpc r25,__zero_reg__
+ 2090 0fd2 01F0      		breq .L231
+ 2091 0fd4 8330      		cpi r24,3
+ 2092 0fd6 9105      		cpc r25,__zero_reg__
+ 2093 0fd8 01F0      		breq .L232
+ 2094 0fda 8130      		cpi r24,1
+ 2095 0fdc 9105      		cpc r25,__zero_reg__
+ 2096 0fde 01F0      		breq .+2
+ 2097 0fe0 00C0      		rjmp .L233
+ 2098 0fe2 419A      		sbi 40-32,1
+ 2099 0fe4 8E01      		movw r16,r28
+ 2100 0fe6 0F5F      		subi r16,lo8(-(1))
+ 2101 0fe8 1F4F      		sbci r17,hi8(-(1))
+ 2102 0fea C801      		movw r24,r16
+ 2103 0fec 6BE0      		ldi r22,lo8(11)
+ 2104 0fee 0E94 0000 		call generateCANMsg
+ 2105 0ff2 C801      		movw r24,r16
+ 2106 0ff4 0E94 0000 		call mcp2515_send_extmessage
+ 2107 0ff8 C701      		movw r24,r14
+ 2108 0ffa 0E94 0000 		call uart_puts
+ 2109 0ffe 80E0      		ldi r24,lo8(.LC23)
+ 2110 1000 90E0      		ldi r25,hi8(.LC23)
+ 2111 1002 00C0      		rjmp .L239
+ 2112               	.L231:
+ 2113 1004 429A      		sbi 40-32,2
+ 2114 1006 8E01      		movw r16,r28
+ 2115 1008 0F5F      		subi r16,lo8(-(1))
+ 2116 100a 1F4F      		sbci r17,hi8(-(1))
+ 2117 100c C801      		movw r24,r16
+ 2118 100e 6CE0      		ldi r22,lo8(12)
+ 2119 1010 0E94 0000 		call generateCANMsg
+ 2120 1014 C801      		movw r24,r16
+ 2121 1016 0E94 0000 		call mcp2515_send_extmessage
+ 2122 101a C701      		movw r24,r14
+ 2123 101c 0E94 0000 		call uart_puts
+ 2124 1020 80E0      		ldi r24,lo8(.LC24)
+ 2125 1022 90E0      		ldi r25,hi8(.LC24)
+ 2126 1024 00C0      		rjmp .L239
+ 2127               	.L232:
+ 2128 1026 439A      		sbi 40-32,3
+ 2129 1028 8E01      		movw r16,r28
+ 2130 102a 0F5F      		subi r16,lo8(-(1))
+ 2131 102c 1F4F      		sbci r17,hi8(-(1))
+ 2132 102e C801      		movw r24,r16
+ 2133 1030 6DE0      		ldi r22,lo8(13)
+ 2134 1032 00C0      		rjmp .L242
+ 2135               	.L245:
+ 2136 1034 90E0      		ldi r25,lo8(0)
+ 2137 1036 C097      		sbiw r24,48
+ 2138 1038 8230      		cpi r24,2
+ 2139 103a 9105      		cpc r25,__zero_reg__
+ 2140 103c 01F0      		breq .L235
+ 2141 103e 8330      		cpi r24,3
+ 2142 1040 9105      		cpc r25,__zero_reg__
+ 2143 1042 01F0      		breq .L236
+ 2144 1044 8130      		cpi r24,1
+ 2145 1046 9105      		cpc r25,__zero_reg__
+ 2146 1048 01F4      		brne .L233
+ 2147 104a 4198      		cbi 40-32,1
+ 2148 104c 8E01      		movw r16,r28
+ 2149 104e 0F5F      		subi r16,lo8(-(1))
+ 2150 1050 1F4F      		sbci r17,hi8(-(1))
+ 2151 1052 C801      		movw r24,r16
+ 2152 1054 6AE0      		ldi r22,lo8(10)
+ 2153 1056 0E94 0000 		call generateCANMsg
+ 2154 105a C801      		movw r24,r16
+ 2155 105c 0E94 0000 		call mcp2515_send_extmessage
+ 2156 1060 C701      		movw r24,r14
+ 2157 1062 0E94 0000 		call uart_puts
+ 2158 1066 80E0      		ldi r24,lo8(.LC25)
+ 2159 1068 90E0      		ldi r25,hi8(.LC25)
+ 2160 106a 00C0      		rjmp .L239
+ 2161               	.L235:
+ 2162 106c 4298      		cbi 40-32,2
+ 2163 106e 8E01      		movw r16,r28
+ 2164 1070 0F5F      		subi r16,lo8(-(1))
+ 2165 1072 1F4F      		sbci r17,hi8(-(1))
+ 2166 1074 C801      		movw r24,r16
+ 2167 1076 6AE0      		ldi r22,lo8(10)
+ 2168 1078 0E94 0000 		call generateCANMsg
+ 2169 107c C801      		movw r24,r16
+ 2170 107e 0E94 0000 		call mcp2515_send_extmessage
+ 2171 1082 C701      		movw r24,r14
+ 2172 1084 0E94 0000 		call uart_puts
+ 2173 1088 80E0      		ldi r24,lo8(.LC26)
+ 2174 108a 90E0      		ldi r25,hi8(.LC26)
+ 2175               	.L239:
+ 2176 108c 0E94 0000 		call uart_puts
+ 2177 1090 00C0      		rjmp .L233
+ 2178               	.L236:
+ 2179 1092 4398      		cbi 40-32,3
+ 2180               	.L243:
+ 2181 1094 8E01      		movw r16,r28
+ 2182 1096 0F5F      		subi r16,lo8(-(1))
+ 2183 1098 1F4F      		sbci r17,hi8(-(1))
+ 2184 109a C801      		movw r24,r16
+ 2185 109c 6AE0      		ldi r22,lo8(10)
+ 2186               	.L242:
+ 2187 109e 0E94 0000 		call generateCANMsg
+ 2188 10a2 C801      		movw r24,r16
+ 2189 10a4 0E94 0000 		call mcp2515_send_extmessage
+ 2190               	.L233:
+ 2191 10a8 459A      		sbi 40-32,5
+ 2192               	.L240:
+ 2193 10aa 81E0      		ldi r24,lo8(1)
+ 2194 10ac 00C0      		rjmp .L221
+ 2195               	.L237:
+ 2196 10ae 80E0      		ldi r24,lo8(0)
+ 2197               	.L221:
+ 2198               	/* epilogue start */
+ 2199 10b0 2D96      		adiw r28,13
+ 2200 10b2 0FB6      		in __tmp_reg__,__SREG__
+ 2201 10b4 F894      		cli
+ 2202 10b6 DEBF      		out __SP_H__,r29
+ 2203 10b8 0FBE      		out __SREG__,__tmp_reg__
+ 2204 10ba CDBF      		out __SP_L__,r28
+ 2205 10bc CF91      		pop r28
+ 2206 10be DF91      		pop r29
+ 2207 10c0 1F91      		pop r17
+ 2208 10c2 0F91      		pop r16
+ 2209 10c4 FF90      		pop r15
+ 2210 10c6 EF90      		pop r14
+ 2211 10c8 0895      		ret
+ 2213               		.data
+ 2214               	.LC27:
+ 2215 0115 4665 686C 		.string	"Fehler: kann MCP2515 nicht ansprechen!\n\n"
+ 2215      6572 3A20 
+ 2215      6B61 6E6E 
+ 2215      204D 4350 
+ 2215      3235 3135 
+ 2216               	.LC28:
+ 2217 013e 4D43 5032 		.string	"MCP2515 is aktiv\n\n"
+ 2217      3531 3520 
+ 2217      6973 2061 
+ 2217      6B74 6976 
+ 2217      0A0A 00
+ 2218               		.text
+ 2219               	.global	can_init
+ 2221               	can_init:
+ 2222               	/* prologue: function */
+ 2223               	/* frame size = 0 */
+ 2224               	/* stack size = 0 */
+ 2225               	.L__stack_usage = 0
+ 2226 10ca 0E94 0000 		call mcp2515_init
+ 2227 10ce 8823      		tst r24
+ 2228 10d0 01F4      		brne .L247
+ 2229 10d2 80E0      		ldi r24,lo8(.LC27)
+ 2230 10d4 90E0      		ldi r25,hi8(.LC27)
+ 2231 10d6 00C0      		rjmp .L249
+ 2232               	.L247:
+ 2233 10d8 80E0      		ldi r24,lo8(.LC28)
+ 2234 10da 90E0      		ldi r25,hi8(.LC28)
+ 2235               	.L249:
+ 2236 10dc 0E94 0000 		call uart_puts
+ 2237 10e0 0895      		ret
+ 2239               	.global	startTimerLed
+ 2241               	startTimerLed:
+ 2242               	/* prologue: function */
+ 2243               	/* frame size = 0 */
+ 2244               	/* stack size = 0 */
+ 2245               	.L__stack_usage = 0
+ 2246 10e2 85B5      		in r24,69-32
+ 2247 10e4 8360      		ori r24,lo8(3)
+ 2248 10e6 85BD      		out 69-32,r24
+ 2249               	/* epilogue start */
+ 2250 10e8 0895      		ret
+ 2252               	.global	checkLedTime
+ 2254               	checkLedTime:
+ 2255               	/* prologue: function */
+ 2256               	/* frame size = 0 */
+ 2257               	/* stack size = 0 */
+ 2258               	.L__stack_usage = 0
+ 2259 10ea 80E0      		ldi r24,lo8(0)
+ 2260               	/* epilogue start */
+ 2261 10ec 0895      		ret
+ 2263               		.data
+ 2264               	.LC29:
+ 2265 0151 4869 2068 		.string	"Hi have fun using the System  !! \n"
+ 2265      6176 6520 
+ 2265      6675 6E20 
+ 2265      7573 696E 
+ 2265      6720 7468 
+ 2266               	.LC30:
+ 2267 0174 5379 7374 		.string	"Systems running in general mode  !! \n"
+ 2267      656D 7320 
+ 2267      7275 6E6E 
+ 2267      696E 6720 
+ 2267      696E 2067 
+ 2268               	.LC31:
+ 2269 019a 2063 6F6D 		.string	" command UART "
+ 2269      6D61 6E64 
+ 2269      2055 4152 
+ 2269      5420 00
+ 2270               	.LC32:
+ 2271 01a9 2072 6561 		.string	" read incomplete !!!\n"
+ 2271      6420 696E 
+ 2271      636F 6D70 
+ 2271      6C65 7465 
+ 2271      2021 2121 
+ 2272               	.LC33:
+ 2273 01bf 2063 6F6D 		.string	" command CAN "
+ 2273      6D61 6E64 
+ 2273      2043 414E 
+ 2273      2000 
+ 2274               		.text
+ 2275               	.global	main
+ 2277               	main:
+ 2278 10ee 2F92      		push r2
+ 2279 10f0 3F92      		push r3
+ 2280 10f2 4F92      		push r4
+ 2281 10f4 5F92      		push r5
+ 2282 10f6 6F92      		push r6
+ 2283 10f8 7F92      		push r7
+ 2284 10fa 8F92      		push r8
+ 2285 10fc 9F92      		push r9
+ 2286 10fe AF92      		push r10
+ 2287 1100 BF92      		push r11
+ 2288 1102 CF92      		push r12
+ 2289 1104 DF92      		push r13
+ 2290 1106 EF92      		push r14
+ 2291 1108 FF92      		push r15
+ 2292 110a 0F93      		push r16
+ 2293 110c 1F93      		push r17
+ 2294 110e DF93      		push r29
+ 2295 1110 CF93      		push r28
+ 2296 1112 CDB7      		in r28,__SP_L__
+ 2297 1114 DEB7      		in r29,__SP_H__
+ 2298 1116 A397      		sbiw r28,35
+ 2299 1118 0FB6      		in __tmp_reg__,__SREG__
+ 2300 111a F894      		cli
+ 2301 111c DEBF      		out __SP_H__,r29
+ 2302 111e 0FBE      		out __SREG__,__tmp_reg__
+ 2303 1120 CDBF      		out __SP_L__,r28
+ 2304               	/* prologue: function */
+ 2305               	/* frame size = 35 */
+ 2306               	/* stack size = 53 */
+ 2307               	.L__stack_usage = 53
+ 2308               	/* #APP */
+ 2309               	 ;  880 "mBoard.c" 1
+ 2310 1122 7894      		sei
+ 2311               	 ;  0 "" 2
+ 2312               	/* #NOAPP */
+ 2313 1124 0E94 0000 		call initPorts
+ 2314 1128 0E94 0000 		call initVoltageMultiplikator
+ 2315 112c 87E6      		ldi r24,lo8(103)
+ 2316 112e 90E0      		ldi r25,hi8(103)
+ 2317 1130 0E94 0000 		call uart_init
+ 2318 1134 80E0      		ldi r24,lo8(.LC29)
+ 2319 1136 90E0      		ldi r25,hi8(.LC29)
+ 2320 1138 0E94 0000 		call uart_puts
+ 2321 113c 80E0      		ldi r24,lo8(.LC30)
+ 2322 113e 90E0      		ldi r25,hi8(.LC30)
+ 2323 1140 0E94 0000 		call uart_puts
+ 2324 1144 0E94 0000 		call can_init
+ 2325 1148 409A      		sbi 40-32,0
+ 2326 114a 1092 8500 		sts 132+1,__zero_reg__
+ 2327 114e 1092 8400 		sts 132,__zero_reg__
+ 2328 1152 8091 8100 		lds r24,129
+ 2329 1156 8560      		ori r24,lo8(5)
+ 2330 1158 8093 8100 		sts 129,r24
+ 2331 115c EE24      		clr r14
+ 2332 115e FF24      		clr r15
+ 2333 1160 8701      		movw r16,r14
+ 2334 1162 8824      		clr r8
+ 2335 1164 9924      		clr r9
+ 2336 1166 5401      		movw r10,r8
+ 2337 1168 2224      		clr r2
+ 2338 116a 3324      		clr r3
+ 2339 116c 2101      		movw r4,r2
+ 2340 116e 1F8E      		std Y+31,__zero_reg__
+ 2341 1170 18A2      		std Y+32,__zero_reg__
+ 2342 1172 19A2      		std Y+33,__zero_reg__
+ 2343 1174 1AA2      		std Y+34,__zero_reg__
+ 2344 1176 1B8E      		std Y+27,__zero_reg__
+ 2345 1178 1C8E      		std Y+28,__zero_reg__
+ 2346 117a 1D8E      		std Y+29,__zero_reg__
+ 2347 117c 1E8E      		std Y+30,__zero_reg__
+ 2348 117e CC24      		clr r12
+ 2349 1180 DD24      		clr r13
+ 2350               	.L279:
+ 2351 1182 189B      		sbis 35-32,0
+ 2352 1184 00C0      		rjmp .L254
+ 2353               	.L280:
+ 2354 1186 6090 8400 		lds r6,132
+ 2355 118a 7090 8500 		lds r7,132+1
+ 2356 118e 6091 0000 		lds r22,heartBeat
+ 2357 1192 7091 0000 		lds r23,heartBeat+1
+ 2358 1196 8091 0000 		lds r24,heartBeat+2
+ 2359 119a 9091 0000 		lds r25,heartBeat+3
+ 2360 119e 0E94 0000 		call __fixsfsi
+ 2361 11a2 6615      		cp r22,r6
+ 2362 11a4 7705      		cpc r23,r7
+ 2363 11a6 00F4      		brsh .L255
+ 2364 11a8 2B8D      		ldd r18,Y+27
+ 2365 11aa 3C8D      		ldd r19,Y+28
+ 2366 11ac 4D8D      		ldd r20,Y+29
+ 2367 11ae 5E8D      		ldd r21,Y+30
+ 2368 11b0 2F5F      		subi r18,lo8(-(1))
+ 2369 11b2 3F4F      		sbci r19,hi8(-(1))
+ 2370 11b4 4F4F      		sbci r20,hlo8(-(1))
+ 2371 11b6 5F4F      		sbci r21,hhi8(-(1))
+ 2372 11b8 2B8F      		std Y+27,r18
+ 2373 11ba 3C8F      		std Y+28,r19
+ 2374 11bc 4D8F      		std Y+29,r20
+ 2375 11be 5E8F      		std Y+30,r21
+ 2376 11c0 8F8D      		ldd r24,Y+31
+ 2377 11c2 98A1      		ldd r25,Y+32
+ 2378 11c4 A9A1      		ldd r26,Y+33
+ 2379 11c6 BAA1      		ldd r27,Y+34
+ 2380 11c8 0196      		adiw r24,1
+ 2381 11ca A11D      		adc r26,__zero_reg__
+ 2382 11cc B11D      		adc r27,__zero_reg__
+ 2383 11ce 8F8F      		std Y+31,r24
+ 2384 11d0 98A3      		std Y+32,r25
+ 2385 11d2 A9A3      		std Y+33,r26
+ 2386 11d4 BAA3      		std Y+34,r27
+ 2387 11d6 0894      		sec
+ 2388 11d8 211C      		adc r2,__zero_reg__
+ 2389 11da 311C      		adc r3,__zero_reg__
+ 2390 11dc 411C      		adc r4,__zero_reg__
+ 2391 11de 511C      		adc r5,__zero_reg__
+ 2392 11e0 0894      		sec
+ 2393 11e2 811C      		adc r8,__zero_reg__
+ 2394 11e4 911C      		adc r9,__zero_reg__
+ 2395 11e6 A11C      		adc r10,__zero_reg__
+ 2396 11e8 B11C      		adc r11,__zero_reg__
+ 2397 11ea 0894      		sec
+ 2398 11ec E11C      		adc r14,__zero_reg__
+ 2399 11ee F11C      		adc r15,__zero_reg__
+ 2400 11f0 011D      		adc r16,__zero_reg__
+ 2401 11f2 111D      		adc r17,__zero_reg__
+ 2402 11f4 1092 8500 		sts 132+1,__zero_reg__
+ 2403 11f8 1092 8400 		sts 132,__zero_reg__
+ 2404               	.L255:
+ 2405 11fc 8091 0000 		lds r24,TEMP_SEND
+ 2406 1200 9091 0000 		lds r25,TEMP_SEND+1
+ 2407 1204 A091 0000 		lds r26,TEMP_SEND+2
+ 2408 1208 B091 0000 		lds r27,TEMP_SEND+3
+ 2409 120c 2B8D      		ldd r18,Y+27
+ 2410 120e 3C8D      		ldd r19,Y+28
+ 2411 1210 4D8D      		ldd r20,Y+29
+ 2412 1212 5E8D      		ldd r21,Y+30
+ 2413 1214 8217      		cp r24,r18
+ 2414 1216 9307      		cpc r25,r19
+ 2415 1218 A407      		cpc r26,r20
+ 2416 121a B507      		cpc r27,r21
+ 2417 121c 00F4      		brsh .L256
+ 2418 121e 1092 0000 		sts sendFlag,__zero_reg__
+ 2419 1222 1B8E      		std Y+27,__zero_reg__
+ 2420 1224 1C8E      		std Y+28,__zero_reg__
+ 2421 1226 1D8E      		std Y+29,__zero_reg__
+ 2422 1228 1E8E      		std Y+30,__zero_reg__
+ 2423 122a 00C0      		rjmp .L257
+ 2424               	.L256:
+ 2425 122c 8091 0000 		lds r24,VOL_SEND
+ 2426 1230 9091 0000 		lds r25,VOL_SEND+1
+ 2427 1234 A091 0000 		lds r26,VOL_SEND+2
+ 2428 1238 B091 0000 		lds r27,VOL_SEND+3
+ 2429 123c 2F8D      		ldd r18,Y+31
+ 2430 123e 38A1      		ldd r19,Y+32
+ 2431 1240 49A1      		ldd r20,Y+33
+ 2432 1242 5AA1      		ldd r21,Y+34
+ 2433 1244 8217      		cp r24,r18
+ 2434 1246 9307      		cpc r25,r19
+ 2435 1248 A407      		cpc r26,r20
+ 2436 124a B507      		cpc r27,r21
+ 2437 124c 00F4      		brsh .L258
+ 2438 124e 31E0      		ldi r19,lo8(1)
+ 2439 1250 3093 0000 		sts sendFlag,r19
+ 2440 1254 1F8E      		std Y+31,__zero_reg__
+ 2441 1256 18A2      		std Y+32,__zero_reg__
+ 2442 1258 19A2      		std Y+33,__zero_reg__
+ 2443 125a 1AA2      		std Y+34,__zero_reg__
+ 2444 125c 00C0      		rjmp .L257
+ 2445               	.L258:
+ 2446 125e 8091 0000 		lds r24,DISTANCE_SEND
+ 2447 1262 9091 0000 		lds r25,DISTANCE_SEND+1
+ 2448 1266 A091 0000 		lds r26,DISTANCE_SEND+2
+ 2449 126a B091 0000 		lds r27,DISTANCE_SEND+3
+ 2450 126e 8215      		cp r24,r2
+ 2451 1270 9305      		cpc r25,r3
+ 2452 1272 A405      		cpc r26,r4
+ 2453 1274 B505      		cpc r27,r5
+ 2454 1276 00F4      		brsh .L259
+ 2455 1278 42E0      		ldi r20,lo8(2)
+ 2456 127a 4093 0000 		sts sendFlag,r20
+ 2457 127e 2224      		clr r2
+ 2458 1280 3324      		clr r3
+ 2459 1282 2101      		movw r4,r2
+ 2460 1284 00C0      		rjmp .L257
+ 2461               	.L259:
+ 2462 1286 8091 0000 		lds r24,NOISE_SEND
+ 2463 128a 9091 0000 		lds r25,NOISE_SEND+1
+ 2464 128e A091 0000 		lds r26,NOISE_SEND+2
+ 2465 1292 B091 0000 		lds r27,NOISE_SEND+3
+ 2466 1296 8815      		cp r24,r8
+ 2467 1298 9905      		cpc r25,r9
+ 2468 129a AA05      		cpc r26,r10
+ 2469 129c BB05      		cpc r27,r11
+ 2470 129e 00F4      		brsh .L260
+ 2471 12a0 53E0      		ldi r21,lo8(3)
+ 2472 12a2 5093 0000 		sts sendFlag,r21
+ 2473 12a6 8824      		clr r8
+ 2474 12a8 9924      		clr r9
+ 2475 12aa 5401      		movw r10,r8
+ 2476 12ac 00C0      		rjmp .L257
+ 2477               	.L260:
+ 2478 12ae 8D2D      		mov r24,r13
+ 2479 12b0 8830      		cpi r24,lo8(8)
+ 2480 12b2 01F4      		brne .L261
+ 2481 12b4 DD24      		clr r13
+ 2482               	.L261:
+ 2483 12b6 6D2C      		mov r6,r13
+ 2484 12b8 7724      		clr r7
+ 2485 12ba F301      		movw r30,r6
+ 2486 12bc E050      		subi r30,lo8(-(measuringVoltageFaktor))
+ 2487 12be F040      		sbci r31,hi8(-(measuringVoltageFaktor))
+ 2488 12c0 8081      		ld r24,Z
+ 2489 12c2 8823      		tst r24
+ 2490 12c4 01F0      		breq .L262
+ 2491 12c6 8D2D      		mov r24,r13
+ 2492 12c8 0E94 0000 		call measureAndScale
+ 2493 12cc F301      		movw r30,r6
+ 2494 12ce EE0F      		lsl r30
+ 2495 12d0 FF1F      		rol r31
+ 2496 12d2 EE0F      		lsl r30
+ 2497 12d4 FF1F      		rol r31
+ 2498 12d6 E050      		subi r30,lo8(-(reactionValues))
+ 2499 12d8 F040      		sbci r31,hi8(-(reactionValues))
+ 2500 12da 8081      		ld r24,Z
+ 2501 12dc 9181      		ldd r25,Z+1
+ 2502 12de A281      		ldd r26,Z+2
+ 2503 12e0 B381      		ldd r27,Z+3
+ 2504 12e2 843F      		cpi r24,lo8(500)
+ 2505 12e4 21E0      		ldi r18,hi8(500)
+ 2506 12e6 9207      		cpc r25,r18
+ 2507 12e8 20E0      		ldi r18,hlo8(500)
+ 2508 12ea A207      		cpc r26,r18
+ 2509 12ec 20E0      		ldi r18,hhi8(500)
+ 2510 12ee B207      		cpc r27,r18
+ 2511 12f0 01F0      		breq .L262
+ 2512 12f2 853F      		cpi r24,lo8(501)
+ 2513 12f4 31E0      		ldi r19,hi8(501)
+ 2514 12f6 9307      		cpc r25,r19
+ 2515 12f8 30E0      		ldi r19,hlo8(501)
+ 2516 12fa A307      		cpc r26,r19
+ 2517 12fc 30E0      		ldi r19,hhi8(501)
+ 2518 12fe B307      		cpc r27,r19
+ 2519 1300 01F0      		breq .L262
+ 2520 1302 8D2D      		mov r24,r13
+ 2521 1304 0E94 0000 		call reactOnMeasure
+ 2522               	.L262:
+ 2523 1308 4D2D      		mov r20,r13
+ 2524 130a 4630      		cpi r20,lo8(6)
+ 2525 130c 01F4      		brne .L263
+ 2526 130e 55E1      		ldi r21,lo8(21)
+ 2527 1310 E516      		cp r14,r21
+ 2528 1312 F104      		cpc r15,__zero_reg__
+ 2529 1314 0105      		cpc r16,__zero_reg__
+ 2530 1316 1105      		cpc r17,__zero_reg__
+ 2531 1318 00F0      		brlo .L263
+ 2532 131a E090 0000 		lds r14,measurement
+ 2533 131e F090 0000 		lds r15,measurement+1
+ 2534 1322 0091 0000 		lds r16,measurement+2
+ 2535 1326 1091 0000 		lds r17,measurement+3
+ 2536 132a C801      		movw r24,r16
+ 2537 132c B701      		movw r22,r14
+ 2538 132e 20E0      		ldi r18,lo8(0x3f800000)
+ 2539 1330 30E0      		ldi r19,hi8(0x3f800000)
+ 2540 1332 40E8      		ldi r20,hlo8(0x3f800000)
+ 2541 1334 5FE3      		ldi r21,hhi8(0x3f800000)
+ 2542 1336 0E94 0000 		call __ltsf2
+ 2543 133a 87FF      		sbrs r24,7
+ 2544 133c 00C0      		rjmp .L264
+ 2545 133e 0F2E      		mov __tmp_reg__,r31
+ 2546 1340 F0E0      		ldi r31,lo8(0x3f800000)
+ 2547 1342 EF2E      		mov r14,r31
+ 2548 1344 F0E0      		ldi r31,hi8(0x3f800000)
+ 2549 1346 FF2E      		mov r15,r31
+ 2550 1348 F0E8      		ldi r31,hlo8(0x3f800000)
+ 2551 134a 0F2F      		mov r16,r31
+ 2552 134c FFE3      		ldi r31,hhi8(0x3f800000)
+ 2553 134e 1F2F      		mov r17,r31
+ 2554 1350 F02D      		mov r31,__tmp_reg__
+ 2555               	.L264:
+ 2556 1352 C801      		movw r24,r16
+ 2557 1354 B701      		movw r22,r14
+ 2558 1356 20E0      		ldi r18,lo8(0x42480000)
+ 2559 1358 30E0      		ldi r19,hi8(0x42480000)
+ 2560 135a 48E4      		ldi r20,hlo8(0x42480000)
+ 2561 135c 52E4      		ldi r21,hhi8(0x42480000)
+ 2562 135e 0E94 0000 		call __mulsf3
+ 2563 1362 6093 0000 		sts heartBeat,r22
+ 2564 1366 7093 0000 		sts heartBeat+1,r23
+ 2565 136a 8093 0000 		sts heartBeat+2,r24
+ 2566 136e 9093 0000 		sts heartBeat+3,r25
+ 2567 1372 EE24      		clr r14
+ 2568 1374 FF24      		clr r15
+ 2569 1376 8701      		movw r16,r14
+ 2570               	.L263:
+ 2571 1378 D394      		inc r13
+ 2572 137a 00C0      		rjmp .L280
+ 2573               	.L257:
+ 2574 137c 8091 0000 		lds r24,serialCommunikation
+ 2575 1380 8823      		tst r24
+ 2576 1382 01F0      		breq .L267
+ 2577 1384 0E94 0000 		call uart_getc
+ 2578 1388 282F      		mov r18,r24
+ 2579 138a 8336      		cpi r24,lo8(99)
+ 2580 138c 01F0      		breq .L268
+ 2581 138e 8037      		cpi r24,lo8(112)
+ 2582 1390 01F0      		breq .L268
+ 2583 1392 8337      		cpi r24,lo8(115)
+ 2584 1394 01F0      		breq .L268
+ 2585 1396 8235      		cpi r24,lo8(82)
+ 2586 1398 01F0      		breq .L268
+ 2587 139a 8237      		cpi r24,lo8(114)
+ 2588 139c 01F4      		brne .L269
+ 2589               	.L268:
+ 2590 139e 822F      		mov r24,r18
+ 2591 13a0 2BA3      		std Y+35,r18
+ 2592 13a2 0E94 0000 		call reactOnUARTCommand
+ 2593 13a6 8823      		tst r24
+ 2594 13a8 01F4      		brne .L269
+ 2595 13aa 80E0      		ldi r24,lo8(.LC31)
+ 2596 13ac 90E0      		ldi r25,hi8(.LC31)
+ 2597 13ae 0E94 0000 		call uart_puts
+ 2598 13b2 2BA1      		ldd r18,Y+35
+ 2599 13b4 822F      		mov r24,r18
+ 2600 13b6 0E94 0000 		call uart_putc
+ 2601 13ba 80E0      		ldi r24,lo8(.LC32)
+ 2602 13bc 90E0      		ldi r25,hi8(.LC32)
+ 2603 13be 0E94 0000 		call uart_puts
+ 2604 13c2 479A      		sbi 40-32,7
+ 2605               	.L269:
+ 2606 13c4 8091 0000 		lds r24,sendFlag
+ 2607 13c8 E82F      		mov r30,r24
+ 2608 13ca F0E0      		ldi r31,lo8(0)
+ 2609 13cc E050      		subi r30,lo8(-(measuringVoltageFaktor))
+ 2610 13ce F040      		sbci r31,hi8(-(measuringVoltageFaktor))
+ 2611 13d0 9081      		ld r25,Z
+ 2612 13d2 9923      		tst r25
+ 2613 13d4 01F0      		breq .L267
+ 2614 13d6 0E94 0000 		call measureAndScale
+ 2615 13da 8091 0000 		lds r24,sendFlag
+ 2616 13de 0E94 0000 		call reactOnMeasure
+ 2617 13e2 8091 0000 		lds r24,serialCommunikationK
+ 2618 13e6 8823      		tst r24
+ 2619 13e8 01F0      		breq .L267
+ 2620 13ea 8091 0000 		lds r24,sendFlag
+ 2621 13ee 0E94 0000 		call sendMeasureUART
+ 2622 13f2 88B1      		in r24,40-32
+ 2623 13f4 91E0      		ldi r25,lo8(1)
+ 2624 13f6 8927      		eor r24,r25
+ 2625 13f8 88B9      		out 40-32,r24
+ 2626               	.L267:
+ 2627 13fa 8091 0000 		lds r24,canCommunikation
+ 2628 13fe 8823      		tst r24
+ 2629 1400 01F4      		brne .+2
+ 2630 1402 00C0      		rjmp .L270
+ 2631 1404 CE01      		movw r24,r28
+ 2632 1406 0E96      		adiw r24,14
+ 2633 1408 0E94 0000 		call mcp2515_get_extmessage
+ 2634 140c 8823      		tst r24
+ 2635 140e 01F0      		breq .L271
+ 2636 1410 8D89      		ldd r24,Y+21
+ 2637 1412 8233      		cpi r24,lo8(50)
+ 2638 1414 01F4      		brne .L271
+ 2639 1416 8B89      		ldd r24,Y+19
+ 2640 1418 8037      		cpi r24,lo8(112)
+ 2641 141a 01F0      		breq .L272
+ 2642 141c 8336      		cpi r24,lo8(99)
+ 2643 141e 01F0      		breq .L272
+ 2644 1420 8337      		cpi r24,lo8(115)
+ 2645 1422 01F0      		breq .L272
+ 2646 1424 8235      		cpi r24,lo8(82)
+ 2647 1426 01F0      		breq .L272
+ 2648 1428 8237      		cpi r24,lo8(114)
+ 2649 142a 01F4      		brne .L271
+ 2650               	.L272:
+ 2651 142c CE01      		movw r24,r28
+ 2652 142e 4396      		adiw r24,19
+ 2653 1430 0E94 0000 		call reactOnCANCommand
+ 2654 1434 8823      		tst r24
+ 2655 1436 01F4      		brne .L271
+ 2656 1438 80E0      		ldi r24,lo8(.LC33)
+ 2657 143a 90E0      		ldi r25,hi8(.LC33)
+ 2658 143c 0E94 0000 		call uart_puts
+ 2659 1440 8B89      		ldd r24,Y+19
+ 2660 1442 0E94 0000 		call uart_putc
+ 2661 1446 80E0      		ldi r24,lo8(.LC32)
+ 2662 1448 90E0      		ldi r25,hi8(.LC32)
+ 2663 144a 0E94 0000 		call uart_puts
+ 2664               	.L271:
+ 2665 144e 8091 0000 		lds r24,sendFlag
+ 2666 1452 E82F      		mov r30,r24
+ 2667 1454 F0E0      		ldi r31,lo8(0)
+ 2668 1456 E050      		subi r30,lo8(-(measuringVoltageFaktor))
+ 2669 1458 F040      		sbci r31,hi8(-(measuringVoltageFaktor))
+ 2670 145a 9081      		ld r25,Z
+ 2671 145c 9923      		tst r25
+ 2672 145e 01F0      		breq .L270
+ 2673 1460 0E94 0000 		call measureAndScale
+ 2674 1464 8091 0000 		lds r24,sendFlag
+ 2675 1468 0E94 0000 		call reactOnMeasure
+ 2676 146c 8091 0000 		lds r24,canCommunikationK
+ 2677 1470 8823      		tst r24
+ 2678 1472 01F0      		breq .L270
+ 2679 1474 CE01      		movw r24,r28
+ 2680 1476 0196      		adiw r24,1
+ 2681 1478 6091 0000 		lds r22,sendFlag
+ 2682 147c 0E94 0000 		call generateCANMsg
+ 2683 1480 CE01      		movw r24,r28
+ 2684 1482 0196      		adiw r24,1
+ 2685 1484 0E94 0000 		call mcp2515_send_extmessage
+ 2686 1488 88B1      		in r24,40-32
+ 2687 148a A1E0      		ldi r26,lo8(1)
+ 2688 148c 8A27      		eor r24,r26
+ 2689 148e 88B9      		out 40-32,r24
+ 2690               	.L270:
+ 2691 1490 B7E3      		ldi r27,lo8(55)
+ 2692 1492 B093 0000 		sts sendFlag,r27
+ 2693 1496 2C2D      		mov r18,r12
+ 2694 1498 2330      		cpi r18,lo8(3)
+ 2695 149a 01F4      		brne .L273
+ 2696 149c 4798      		cbi 40-32,7
+ 2697 149e CC24      		clr r12
+ 2698               	.L273:
+ 2699 14a0 479B      		sbis 40-32,7
+ 2700 14a2 00C0      		rjmp .L279
+ 2701 14a4 C394      		inc r12
+ 2702 14a6 00C0      		rjmp .L279
+ 2703               	.L254:
+ 2704 14a8 CE01      		movw r24,r28
+ 2705 14aa 0E96      		adiw r24,14
+ 2706 14ac 64E7      		ldi r22,lo8(116)
+ 2707 14ae 0E94 0000 		call generateCANMsg
+ 2708 14b2 00C0      		rjmp .L279
+ 2710               	.global	sendFlag
+ 2711               		.data
+ 2714               	sendFlag:
+ 2715 01cd 37        		.byte	55
+ 2716               	.global	NOISE_SEND
+ 2719               	NOISE_SEND:
+ 2720 01ce 3C        		.byte	60
+ 2721 01cf 00        		.byte	0
+ 2722 01d0 00        		.byte	0
+ 2723 01d1 00        		.byte	0
+ 2724               	.global	VOL_SEND
+ 2727               	VOL_SEND:
+ 2728 01d2 64        		.byte	100
+ 2729 01d3 00        		.byte	0
+ 2730 01d4 00        		.byte	0
+ 2731 01d5 00        		.byte	0
+ 2732               	.global	DISTANCE_SEND
+ 2735               	DISTANCE_SEND:
+ 2736 01d6 96        		.byte	-106
+ 2737 01d7 00        		.byte	0
+ 2738 01d8 00        		.byte	0
+ 2739 01d9 00        		.byte	0
+ 2740               	.global	LIGHT_SEND
+ 2743               	LIGHT_SEND:
+ 2744 01da AA        		.byte	-86
+ 2745 01db 00        		.byte	0
+ 2746 01dc 00        		.byte	0
+ 2747 01dd 00        		.byte	0
+ 2748               	.global	TEMP_SEND
+ 2751               	TEMP_SEND:
+ 2752 01de C8        		.byte	-56
+ 2753 01df 00        		.byte	0
+ 2754 01e0 00        		.byte	0
+ 2755 01e1 00        		.byte	0
+ 2756               	.global	comboReactCheck1
+ 2757               	.global	comboReactCheck1
+ 2758               		.section .bss
+ 2761               	comboReactCheck1:
+ 2762 0000 00        		.skip 1,0
+ 2763               	.global	comboReactCheck2
+ 2764               	.global	comboReactCheck2
+ 2767               	comboReactCheck2:
+ 2768 0001 00        		.skip 1,0
+ 2769               	.global	ledTick
+ 2770               		.data
+ 2773               	ledTick:
+ 2774 01e2 96        		.byte	-106
+ 2775               	.global	serialCommunikation
+ 2778               	serialCommunikation:
+ 2779 01e3 01        		.byte	1
+ 2780               	.global	canCommunikation
+ 2783               	canCommunikation:
+ 2784 01e4 01        		.byte	1
+ 2785               	.global	serialCommunikationK
+ 2786               	.global	serialCommunikationK
+ 2787               		.section .bss
+ 2790               	serialCommunikationK:
+ 2791 0002 00        		.skip 1,0
+ 2792               	.global	canCommunikationK
+ 2793               	.global	canCommunikationK
+ 2796               	canCommunikationK:
+ 2797 0003 00        		.skip 1,0
+ 2798               	.global	reactions
+ 2799               		.data
+ 2802               	reactions:
+ 2803 01e5 01        		.byte	1
+ 2804               	.global	portModeMeasure
+ 2807               	portModeMeasure:
+ 2808 01e6 01        		.byte	1
+ 2809 01e7 03        		.byte	3
+ 2810 01e8 05        		.byte	5
+ 2811 01e9 04        		.byte	4
+ 2812 01ea 00        		.byte	0
+ 2813 01eb 00        		.byte	0
+ 2814 01ec 03        		.byte	3
+ 2815 01ed 00        		.byte	0
+ 2816               	.global	distanceScale
+ 2819               	distanceScale:
+ 2820 01ee 00        		.byte	0
+ 2821 01ef 00        		.byte	0
+ 2822 01f0 7A        		.byte	122
+ 2823 01f1 43        		.byte	67
+ 2824               	.global	heartBeat
+ 2827               	heartBeat:
+ 2828 01f2 00        		.byte	0
+ 2829 01f3 00        		.byte	0
+ 2830 01f4 48        		.byte	72
+ 2831 01f5 42        		.byte	66
+ 2832               	.global	loopCounter
+ 2833               	.global	loopCounter
+ 2834               		.section .bss
+ 2837               	loopCounter:
+ 2838 0004 0000      		.skip 2,0
+ 2839               		.comm measuringVoltageFaktor,8,1
+ 2840               		.comm voltageValueBuffer,7,1
+ 2841               		.comm measurement,4,1
+ 2842               		.comm ledLastMeasure,4,1
+ 2843               		.comm portToRelais,8,1
+ 2844               		.comm reactionTriggerMode,8,1
+ 2845               		.comm reactionValues,32,1
+ 2846               		.comm intervalValues,28,1
+ 2847               		.comm mea,800,1
+ 2848               		.comm te,33,1
+ 2849               		.lcomm x.2209,2
+ 2850               		.lcomm x.2197,2
+ 2851               	.global __do_copy_data
+ 2852               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:00000000 mBoard.c
+     /tmp/ccu4H9JH.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccu4H9JH.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccu4H9JH.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccu4H9JH.s:5      *ABS*:00000034 __CCP__
+     /tmp/ccu4H9JH.s:6      *ABS*:00000000 __tmp_reg__
+     /tmp/ccu4H9JH.s:7      *ABS*:00000001 __zero_reg__
+     /tmp/ccu4H9JH.s:11     .text:00000000 sleep
+     /tmp/ccu4H9JH.s:39     .text:00000022 initPorts
+     /tmp/ccu4H9JH.s:59     .text:0000003a initVoltageMultiplikator
+                            *COM*:00000008 measuringVoltageFaktor
+                            *COM*:00000008 portToRelais
+                            *COM*:00000020 reactionValues
+                            *COM*:00000008 reactionTriggerMode
+                            *COM*:0000001c intervalValues
+     /tmp/ccu4H9JH.s:165    .text:0000018c getTemp
+                            *COM*:00000004 measurement
+     /tmp/ccu4H9JH.s:190    .text:000001b8 getLightIntensity
+     /tmp/ccu4H9JH.s:241    .text:0000021c getNoise
+     /tmp/ccu4H9JH.s:259    .text:00000236 getDistance
+     /tmp/ccu4H9JH.s:2819   .data:000001ee distanceScale
+     /tmp/ccu4H9JH.s:278    .text:0000025c startMeasure
+     /tmp/ccu4H9JH.s:311    .text:000002a2 measureAndScale
+     /tmp/ccu4H9JH.s:376    .text:0000031e getUnit
+     /tmp/ccu4H9JH.s:2807   .data:000001e6 portModeMeasure
+     /tmp/ccu4H9JH.s:427    .text:00000372 sendReactCAN
+     /tmp/ccu4H9JH.s:450    .text:0000037c reactOnMeasure
+     /tmp/ccu4H9JH.s:2778   .data:000001e3 serialCommunikation
+     /tmp/ccu4H9JH.s:2783   .data:000001e4 canCommunikation
+     /tmp/ccu4H9JH.s:946    .text:00000796 sendMeasureUART
+                            *COM*:00000007 voltageValueBuffer
+     /tmp/ccu4H9JH.s:1065   .text:0000086e generateCANMsg
+     /tmp/ccu4H9JH.s:1373   .text:00000a7e readUARTConfig
+     /tmp/ccu4H9JH.s:2827   .data:000001f2 heartBeat
+     /tmp/ccu4H9JH.s:1619   .text:00000c52 readUARTConfModes
+     /tmp/ccu4H9JH.s:1704   .text:00000cf2 printVreal
+     /tmp/ccu4H9JH.s:2849   .bss:00000008 x.2197
+     /tmp/ccu4H9JH.s:1810   .text:00000dd0 printVmeasure
+                             .bss:00000006 x.2209
+     /tmp/ccu4H9JH.s:1900   .text:00000e8a reactOnUARTCommand
+     /tmp/ccu4H9JH.s:2790   .bss:00000002 serialCommunikationK
+     /tmp/ccu4H9JH.s:2014   .text:00000f3e reactOnCANCommand
+     /tmp/ccu4H9JH.s:2796   .bss:00000003 canCommunikationK
+     /tmp/ccu4H9JH.s:2751   .data:000001de TEMP_SEND
+     /tmp/ccu4H9JH.s:2221   .text:000010ca can_init
+     /tmp/ccu4H9JH.s:2241   .text:000010e2 startTimerLed
+     /tmp/ccu4H9JH.s:2254   .text:000010ea checkLedTime
+     /tmp/ccu4H9JH.s:2277   .text:000010ee main
+     /tmp/ccu4H9JH.s:2714   .data:000001cd sendFlag
+     /tmp/ccu4H9JH.s:2727   .data:000001d2 VOL_SEND
+     /tmp/ccu4H9JH.s:2735   .data:000001d6 DISTANCE_SEND
+     /tmp/ccu4H9JH.s:2719   .data:000001ce NOISE_SEND
+     /tmp/ccu4H9JH.s:2743   .data:000001da LIGHT_SEND
+     /tmp/ccu4H9JH.s:2761   .bss:00000000 comboReactCheck1
+     /tmp/ccu4H9JH.s:2767   .bss:00000001 comboReactCheck2
+     /tmp/ccu4H9JH.s:2773   .data:000001e2 ledTick
+     /tmp/ccu4H9JH.s:2802   .data:000001e5 reactions
+     /tmp/ccu4H9JH.s:2837   .bss:00000004 loopCounter
+                            *COM*:00000004 ledLastMeasure
+                            *COM*:00000320 mea
+                            *COM*:00000021 te
+
+UNDEFINED SYMBOLS
+__subsf3
+__divsf3
+__mulsf3
+__fixsfsi
+__floatsisf
+__floatunsisf
+mcp2515_send_extmessage
+__addsf3
+__ltsf2
+uart_puts
+uart_putc
+__gtsf2
+dtostrf
+uart_getc
+itoa
+mcp2515_init
+uart_init
+mcp2515_get_extmessage
+__do_copy_data
+__do_clear_bss

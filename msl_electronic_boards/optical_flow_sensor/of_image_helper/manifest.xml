@@ -1,0 +1,15 @@
+<package>
+  <description brief="of_image_helper">
+
+     of_image_helper
+
+  </description>
+  <author>Daniel Saur</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/of_image_helper</url>
+  <depend package="roscs" />
+
+</package>
+
+

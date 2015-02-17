@@ -1,0 +1,28 @@
+Partlist
+
+Exported from kompass6.brd at 14.01.2008 09:37:23 
+
+EAGLE Version 4.16r1 Copyright (c) 1988-2006 CadSoft
+
+Part     Value          Package   Library              Position (inch)       Orientation
+
+C3       100n           C0603     rcl                  (0.46 0.32)           MR180
+C4       100n           C0603     rcl                  (0.46 0.27)           MR180
+C5       100n           C0603     rcl                  (0.46 0.22)           MR180
+C6       100n           C0603     rcl                  (1.26 0.56)           MR0
+C7       22p            C0603     rcl                  (1.12 0.9)            MR0
+C8       22p            C0603     rcl                  (0.98 0.9)            MR180
+C9       100n           C0603     rcl                  (1.65 0.8)            MR0
+IC1      MEGA8-AI       TQFP32-08 atmel                (0.43 0.59)           MR270
+IC2      MCP2515-E/SO   SO18L     mcp2515              (0.93 0.54)           MR180
+IC3      PCA82C250      DIL08     micro-philips        (1.66 0.53)           R180
+Q2       16MHz          HC49U-V   crystal              (1.05 0.83)           R0
+R1       10K            R0805     rcl                  (0.46 0.13)           MR180
+R2       4K7            R0805     rcl                  (1.2 0.37)            MR90
+R3       4K7            R0805     rcl                  (1 0.19)              MR0
+R4       4K7            R0805     rcl                  (1.27 0.37)           MR90
+R5       4K7            R0805     rcl                  (0.29 0.27)           MR270
+R6       4K7            R0805     rcl                  (0.22 0.27)           MR270
+SV1                     MA03-2    con-lstb             (1.23 0.19)           R0
+SV2                     FE09      con-lsta             (0.101898 0.503937)   R90
+X1                      90-4      con-weidmueller-sl35 (1.68 -0.05)          R0

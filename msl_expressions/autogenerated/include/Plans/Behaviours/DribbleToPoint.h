@@ -5,7 +5,6 @@
 /*PROTECTED REGION ID(inc1414752367688) ENABLED START*/ //Add additional includes here
 #include <tuple>
 #include <MSLWorldModel.h>
-#include "GeometryTransformer.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 
@@ -28,9 +27,9 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1414752367688) ENABLED START*/ //Add additional private methods here
-        CNPoint2D alloBallPos;
+        shared_ptr<CNPoint2D> alloBallPos;
 
-        CNPosition ownPos;
+        shared_ptr<CNPosition> ownPos;
         CNPoint2D egoBallPos;
 
         CNPoint2D alloTargetPos;

@@ -1,0 +1,7 @@
+1.
+use this avrdude conf when building the board with new parameters or logic...standard version has no atmega644 support...
+
+2.
+the fusebit set with avr_burn_o_mat...necessary when adding new atmega or building up new board
+
+

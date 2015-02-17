@@ -1,0 +1,70 @@
+\section{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/mcp2515.c \-File \-Reference}
+\label{mcp2515_8c}\index{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/mcp2515.\-c@{workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/mcp2515.\-c}}
+
+
+the functions to interact with the can bus controller and the spi bus  
+
+
+{\ttfamily \#include $<$avr/io.\-h$>$}\*
+{\ttfamily \#include $<$util/delay.\-h$>$}\*
+{\ttfamily \#include $<$avr/pgmspace.\-h$>$}\*
+{\ttfamily \#include \char`\"{}mcp2515.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}defaults.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}uart.\-h\char`\"{}}\*
+\-Include dependency graph for mcp2515.\-c\-:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{mcp2515_8c__incl}
+\end{center}
+\end{figure}
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+uint8\-\_\-t {\bfseries spi\-\_\-putc} (uint8\-\_\-t data)\label{group__can_gac4133801d9adaaf42e7a43018c159127}
+
+\item 
+void {\bfseries spi\-\_\-init} (void)\label{mcp2515_8c_ae909944aa85ae98323073c628be541aa}
+
+\item 
+void {\bfseries mcp2515\-\_\-bit\-\_\-modify} (uint8\-\_\-t adress, uint8\-\_\-t mask, uint8\-\_\-t data)\label{group__can_ga29ca95ce06b46820080e6bf39aca3f5d}
+
+\item 
+void {\bfseries test\-Can} (void)\label{group__can_gaff8c7fc3028fe24b6a3dfc003054d3eb}
+
+\item 
+void {\bfseries print\-\_\-can\-\_\-message} ({\bf t\-C\-A\-N} $\ast$message)\label{group__can_ga52abe12031912f44f79fe7e6af042d1b}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-init} (void)\label{group__can_ga7be3d201a4dda59f8a16898c935c2b39}
+
+\item 
+void {\bfseries mcp2515\-\_\-write\-\_\-register} (uint8\-\_\-t adress, uint8\-\_\-t data)\label{group__can_gaf18f4716d0060c65756daf517d339968}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-read\-\_\-register} (uint8\-\_\-t adress)\label{group__can_ga9f78b3c42a3e8039350f2332aacef2b9}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-read\-\_\-rx\-\_\-status} (void)\label{mcp2515_8c_a164ed93db39889e151cd8521cec2c8d4}
+
+\item 
+uint8\-\_\-t {\bfseries can\-\_\-get\-\_\-message} ({\bf t\-C\-A\-N} $\ast$p\-\_\-message)\label{group__can_ga0926474bc6315f1d7d9d81492629e6ca}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-read\-\_\-status} (uint8\-\_\-t type)\label{group__can_gab3e48a42131e0f03105ed354041bbdba}
+
+\item 
+uint8\-\_\-t {\bfseries can\-\_\-send\-\_\-message} ({\bf t\-C\-A\-N} $\ast$p\-\_\-message)\label{group__can_gac0bc127d4f90b38d86aa09297379697b}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-get\-\_\-extmessage} ({\bf t\-Extended\-C\-A\-N} $\ast$message)\label{group__can_ga8119e51b53388c64e3bdd771bd9ab642}
+
+\item 
+uint8\-\_\-t {\bfseries mcp2515\-\_\-send\-\_\-extmessage} ({\bf t\-Extended\-C\-A\-N} $\ast$message)\label{group__can_ga3efadd966e76741e5e8f711e9bc7ed9d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+the functions to interact with the can bus controller and the spi bus 

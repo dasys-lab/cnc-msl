@@ -1,0 +1,1201 @@
+   1               		.file	"uip_arp.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  54               	.global	uip_arp_timer
+  56               	uip_arp_timer:
+   1:uip_arp.c     **** /**
+   2:uip_arp.c     ****  * \addtogroup uip
+   3:uip_arp.c     ****  * @{
+   4:uip_arp.c     ****  */
+   5:uip_arp.c     **** 
+   6:uip_arp.c     **** /**
+   7:uip_arp.c     ****  * \defgroup uiparp uIP Address Resolution Protocol
+   8:uip_arp.c     ****  * @{
+   9:uip_arp.c     ****  * 
+  10:uip_arp.c     ****  * The Address Resolution Protocol ARP is used for mapping between IP
+  11:uip_arp.c     ****  * addresses and link level addresses such as the Ethernet MAC
+  12:uip_arp.c     ****  * addresses. ARP uses broadcast queries to ask for the link level
+  13:uip_arp.c     ****  * address of a known IP address and the host which is configured with
+  14:uip_arp.c     ****  * the IP address for which the query was meant, will respond with its
+  15:uip_arp.c     ****  * link level address.
+  16:uip_arp.c     ****  *
+  17:uip_arp.c     ****  * \note This ARP implementation only supports Ethernet.
+  18:uip_arp.c     ****  */
+  19:uip_arp.c     ****  
+  20:uip_arp.c     **** /**
+  21:uip_arp.c     ****  * \file
+  22:uip_arp.c     ****  * Implementation of the ARP Address Resolution Protocol.
+  23:uip_arp.c     ****  * \author Adam Dunkels <adam@dunkels.com>
+  24:uip_arp.c     ****  *
+  25:uip_arp.c     ****  */
+  26:uip_arp.c     **** 
+  27:uip_arp.c     **** /*
+  28:uip_arp.c     ****  * Copyright (c) 2001-2003, Adam Dunkels.
+  29:uip_arp.c     ****  * All rights reserved. 
+  30:uip_arp.c     ****  *
+  31:uip_arp.c     ****  * Redistribution and use in source and binary forms, with or without 
+  32:uip_arp.c     ****  * modification, are permitted provided that the following conditions 
+  33:uip_arp.c     ****  * are met: 
+  34:uip_arp.c     ****  * 1. Redistributions of source code must retain the above copyright 
+  35:uip_arp.c     ****  *    notice, this list of conditions and the following disclaimer. 
+  36:uip_arp.c     ****  * 2. Redistributions in binary form must reproduce the above copyright 
+  37:uip_arp.c     ****  *    notice, this list of conditions and the following disclaimer in the 
+  38:uip_arp.c     ****  *    documentation and/or other materials provided with the distribution. 
+  39:uip_arp.c     ****  * 3. The name of the author may not be used to endorse or promote
+  40:uip_arp.c     ****  *    products derived from this software without specific prior
+  41:uip_arp.c     ****  *    written permission.  
+  42:uip_arp.c     ****  *
+  43:uip_arp.c     ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
+  44:uip_arp.c     ****  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  45:uip_arp.c     ****  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  46:uip_arp.c     ****  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+  47:uip_arp.c     ****  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  48:uip_arp.c     ****  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  49:uip_arp.c     ****  * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  50:uip_arp.c     ****  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  51:uip_arp.c     ****  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  52:uip_arp.c     ****  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  53:uip_arp.c     ****  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  54:uip_arp.c     ****  *
+  55:uip_arp.c     ****  * This file is part of the uIP TCP/IP stack.
+  56:uip_arp.c     ****  *
+  57:uip_arp.c     ****  * $Id: uip_arp.c,v 1.1 2004/05/09 00:24:48 Louis Exp $
+  58:uip_arp.c     ****  *
+  59:uip_arp.c     ****  */
+  60:uip_arp.c     **** 
+  61:uip_arp.c     **** 
+  62:uip_arp.c     **** #include "uip_arp.h"
+  63:uip_arp.c     **** 
+  64:uip_arp.c     **** #include <string.h>
+  65:uip_arp.c     **** 
+  66:uip_arp.c     **** struct arp_hdr {
+  67:uip_arp.c     ****   struct uip_eth_hdr ethhdr;
+  68:uip_arp.c     ****   u16_t hwtype;
+  69:uip_arp.c     ****   u16_t protocol;
+  70:uip_arp.c     ****   u8_t hwlen;
+  71:uip_arp.c     ****   u8_t protolen;
+  72:uip_arp.c     ****   u16_t opcode;
+  73:uip_arp.c     ****   struct uip_eth_addr shwaddr;
+  74:uip_arp.c     ****   u16_t sipaddr[2];
+  75:uip_arp.c     ****   struct uip_eth_addr dhwaddr;
+  76:uip_arp.c     ****   u16_t dipaddr[2]; 
+  77:uip_arp.c     **** };
+  78:uip_arp.c     **** 
+  79:uip_arp.c     **** struct ethip_hdr {
+  80:uip_arp.c     ****   struct uip_eth_hdr ethhdr;
+  81:uip_arp.c     ****   /* IP header. */
+  82:uip_arp.c     ****   u8_t vhl,
+  83:uip_arp.c     ****     tos,          
+  84:uip_arp.c     ****     len[2],       
+  85:uip_arp.c     ****     ipid[2],        
+  86:uip_arp.c     ****     ipoffset[2],  
+  87:uip_arp.c     ****     ttl,          
+  88:uip_arp.c     ****     proto;     
+  89:uip_arp.c     ****   u16_t ipchksum;
+  90:uip_arp.c     ****   u16_t srcipaddr[2], 
+  91:uip_arp.c     ****     destipaddr[2];
+  92:uip_arp.c     **** };
+  93:uip_arp.c     **** 
+  94:uip_arp.c     **** #define ARP_REQUEST 1
+  95:uip_arp.c     **** #define ARP_REPLY   2
+  96:uip_arp.c     **** 
+  97:uip_arp.c     **** #define ARP_HWTYPE_ETH 1
+  98:uip_arp.c     **** 
+  99:uip_arp.c     **** struct arp_entry {
+ 100:uip_arp.c     ****   u16_t ipaddr[2];
+ 101:uip_arp.c     ****   struct uip_eth_addr ethaddr;
+ 102:uip_arp.c     ****   u8_t time;
+ 103:uip_arp.c     **** };
+ 104:uip_arp.c     **** 
+ 105:uip_arp.c     **** struct uip_eth_addr uip_ethaddr = {{UIP_ETHADDR0,
+ 106:uip_arp.c     **** 				    UIP_ETHADDR1,
+ 107:uip_arp.c     **** 				    UIP_ETHADDR2,
+ 108:uip_arp.c     **** 				    UIP_ETHADDR3,
+ 109:uip_arp.c     **** 				    UIP_ETHADDR4,
+ 110:uip_arp.c     **** 				    UIP_ETHADDR5}};
+ 111:uip_arp.c     **** 
+ 112:uip_arp.c     **** static struct arp_entry arp_table[UIP_ARPTAB_SIZE];
+ 113:uip_arp.c     **** static u16_t ipaddr[2];
+ 114:uip_arp.c     **** static u8_t i, c;
+ 115:uip_arp.c     **** 
+ 116:uip_arp.c     **** static u8_t arptime;
+ 117:uip_arp.c     **** static u8_t tmpage;
+ 118:uip_arp.c     **** 
+ 119:uip_arp.c     **** #define BUF   ((struct arp_hdr *)&uip_buf[0])
+ 120:uip_arp.c     **** #define IPBUF ((struct ethip_hdr *)&uip_buf[0])
+ 121:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 122:uip_arp.c     **** /**
+ 123:uip_arp.c     ****  * Initialize the ARP module.
+ 124:uip_arp.c     ****  *
+ 125:uip_arp.c     ****  */
+ 126:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 127:uip_arp.c     **** void
+ 128:uip_arp.c     **** uip_arp_init(void)
+ 129:uip_arp.c     **** {
+ 130:uip_arp.c     ****   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+ 131:uip_arp.c     ****     memset(arp_table[i].ipaddr, 0, 4);
+ 132:uip_arp.c     ****   }
+ 133:uip_arp.c     **** }
+ 134:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 135:uip_arp.c     **** /**
+ 136:uip_arp.c     ****  * Periodic ARP processing function.
+ 137:uip_arp.c     ****  *
+ 138:uip_arp.c     ****  * This function performs periodic timer processing in the ARP module
+ 139:uip_arp.c     ****  * and should be called at regular intervals. The recommended interval
+ 140:uip_arp.c     ****  * is 10 seconds between the calls.
+ 141:uip_arp.c     ****  *
+ 142:uip_arp.c     ****  */
+ 143:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 144:uip_arp.c     **** void
+ 145:uip_arp.c     **** uip_arp_timer(void)
+ 146:uip_arp.c     **** {
+  58               	.LM0:
+  59               	.LFBB1:
+  60               	/* prologue: frame size=0 */
+  61               	/* prologue end (size=0) */
+ 147:uip_arp.c     ****   struct arp_entry *tabptr;
+ 148:uip_arp.c     ****   
+ 149:uip_arp.c     ****   ++arptime;
+  63               	.LM1:
+  64 0000 8091 0000 		lds r24,arptime
+  65 0004 8F5F      		subi r24,lo8(-(1))
+  66 0006 8093 0000 		sts arptime,r24
+ 150:uip_arp.c     ****   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+  68               	.LM2:
+  69 000a 1092 0000 		sts i,__zero_reg__
+  70 000e 00C0      		rjmp .L2
+  71               	.L3:
+ 151:uip_arp.c     ****     tabptr = &arp_table[i];
+  73               	.LM3:
+  74 0010 8BE0      		ldi r24,lo8(11)
+  75 0012 289F      		mul r18,r24
+  76 0014 F001      		movw r30,r0
+  77 0016 1124      		clr r1
+  78 0018 E050      		subi r30,lo8(-(arp_table))
+  79 001a F040      		sbci r31,hi8(-(arp_table))
+ 152:uip_arp.c     ****     if((tabptr->ipaddr[0] | tabptr->ipaddr[1]) != 0 &&
+  81               	.LM4:
+  82 001c 8281      		ldd r24,Z+2
+  83 001e 9381      		ldd r25,Z+3
+  84 0020 2081      		ld r18,Z
+  85 0022 3181      		ldd r19,Z+1
+  86 0024 822B      		or r24,r18
+  87 0026 932B      		or r25,r19
+  88 0028 892B      		or r24,r25
+  89 002a 01F0      		breq .L4
+  90 002c 8091 0000 		lds r24,arptime
+  91 0030 9927      		clr r25
+  92 0032 2285      		ldd r18,Z+10
+  93 0034 821B      		sub r24,r18
+  94 0036 9109      		sbc r25,__zero_reg__
+  95 0038 8837      		cpi r24,120
+  96 003a 9105      		cpc r25,__zero_reg__
+  97 003c 04F0      		brlt .L4
+ 153:uip_arp.c     ****        arptime - tabptr->time >= UIP_ARP_MAXAGE) {
+ 154:uip_arp.c     ****       memset(tabptr->ipaddr, 0, 4);
+  99               	.LM5:
+ 100 003e 1082      		st Z,__zero_reg__
+ 101 0040 1182      		std Z+1,__zero_reg__
+ 102 0042 1282      		std Z+2,__zero_reg__
+ 103 0044 1382      		std Z+3,__zero_reg__
+ 104               	.L4:
+ 106               	.LM6:
+ 107 0046 8091 0000 		lds r24,i
+ 108 004a 8F5F      		subi r24,lo8(-(1))
+ 109 004c 8093 0000 		sts i,r24
+ 110               	.L2:
+ 111 0050 2091 0000 		lds r18,i
+ 112 0054 2430      		cpi r18,lo8(4)
+ 113 0056 00F0      		brlo .L3
+ 114               	/* epilogue: frame size=0 */
+ 115 0058 0895      		ret
+ 116               	/* epilogue end (size=1) */
+ 117               	/* function uip_arp_timer size 45 (44) */
+ 122               	.Lscope1:
+ 124               	.global	uip_arp_init
+ 126               	uip_arp_init:
+ 128               	.LM7:
+ 129               	.LFBB2:
+ 130               	/* prologue: frame size=0 */
+ 131               	/* prologue end (size=0) */
+ 133               	.LM8:
+ 134 005a 1092 0000 		sts i,__zero_reg__
+ 135 005e 00C0      		rjmp .L10
+ 136               	.L11:
+ 138               	.LM9:
+ 139 0060 EBE0      		ldi r30,lo8(11)
+ 140 0062 8E9F      		mul r24,r30
+ 141 0064 F001      		movw r30,r0
+ 142 0066 1124      		clr r1
+ 143 0068 E050      		subi r30,lo8(-(arp_table))
+ 144 006a F040      		sbci r31,hi8(-(arp_table))
+ 145 006c 1082      		st Z,__zero_reg__
+ 146 006e 1182      		std Z+1,__zero_reg__
+ 147 0070 1282      		std Z+2,__zero_reg__
+ 148 0072 1382      		std Z+3,__zero_reg__
+ 150               	.LM10:
+ 151 0074 8F5F      		subi r24,lo8(-(1))
+ 152 0076 8093 0000 		sts i,r24
+ 153               	.L10:
+ 154 007a 8091 0000 		lds r24,i
+ 155 007e 8430      		cpi r24,lo8(4)
+ 156 0080 00F0      		brlo .L11
+ 157               	/* epilogue: frame size=0 */
+ 158 0082 0895      		ret
+ 159               	/* epilogue end (size=1) */
+ 160               	/* function uip_arp_init size 21 (20) */
+ 162               	.Lscope2:
+ 164               	.global	uip_arp_out
+ 166               	uip_arp_out:
+ 155:uip_arp.c     ****     }
+ 156:uip_arp.c     ****   }
+ 157:uip_arp.c     **** 
+ 158:uip_arp.c     **** }
+ 159:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 160:uip_arp.c     **** static void
+ 161:uip_arp.c     **** uip_arp_update(u16_t *ipaddr, struct uip_eth_addr *ethaddr)
+ 162:uip_arp.c     **** {
+ 163:uip_arp.c     ****   register struct arp_entry *tabptr;
+ 164:uip_arp.c     ****   /* Walk through the ARP mapping table and try to find an entry to
+ 165:uip_arp.c     ****      update. If none is found, the IP -> MAC address mapping is
+ 166:uip_arp.c     ****      inserted in the ARP table. */
+ 167:uip_arp.c     ****   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+ 168:uip_arp.c     **** 
+ 169:uip_arp.c     ****     tabptr = &arp_table[i];
+ 170:uip_arp.c     ****     /* Only check those entries that are actually in use. */
+ 171:uip_arp.c     ****     if(tabptr->ipaddr[0] != 0 &&
+ 172:uip_arp.c     ****        tabptr->ipaddr[1] != 0) {
+ 173:uip_arp.c     **** 
+ 174:uip_arp.c     ****       /* Check if the source IP address of the incoming packet matches
+ 175:uip_arp.c     ****          the IP address in this ARP table entry. */
+ 176:uip_arp.c     ****       if(ipaddr[0] == tabptr->ipaddr[0] &&
+ 177:uip_arp.c     **** 	 ipaddr[1] == tabptr->ipaddr[1]) {
+ 178:uip_arp.c     **** 	 
+ 179:uip_arp.c     **** 	/* An old entry found, update this and return. */
+ 180:uip_arp.c     **** 	memcpy(tabptr->ethaddr.addr, ethaddr->addr, 6);
+ 181:uip_arp.c     **** 	tabptr->time = arptime;
+ 182:uip_arp.c     **** 
+ 183:uip_arp.c     **** 	return;
+ 184:uip_arp.c     ****       }
+ 185:uip_arp.c     ****     }
+ 186:uip_arp.c     ****   }
+ 187:uip_arp.c     **** 
+ 188:uip_arp.c     ****   /* If we get here, no existing ARP table entry was found, so we
+ 189:uip_arp.c     ****      create one. */
+ 190:uip_arp.c     **** 
+ 191:uip_arp.c     ****   /* First, we try to find an unused entry in the ARP table. */
+ 192:uip_arp.c     ****   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+ 193:uip_arp.c     ****     tabptr = &arp_table[i];
+ 194:uip_arp.c     ****     if(tabptr->ipaddr[0] == 0 &&
+ 195:uip_arp.c     ****        tabptr->ipaddr[1] == 0) {
+ 196:uip_arp.c     ****       break;
+ 197:uip_arp.c     ****     }
+ 198:uip_arp.c     ****   }
+ 199:uip_arp.c     **** 
+ 200:uip_arp.c     ****   /* If no unused entry is found, we try to find the oldest entry and
+ 201:uip_arp.c     ****      throw it away. */
+ 202:uip_arp.c     ****   if(i == UIP_ARPTAB_SIZE) {
+ 203:uip_arp.c     ****     tmpage = 0;
+ 204:uip_arp.c     ****     c = 0;
+ 205:uip_arp.c     ****     for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+ 206:uip_arp.c     ****       tabptr = &arp_table[i];
+ 207:uip_arp.c     ****       if(arptime - tabptr->time > tmpage) {
+ 208:uip_arp.c     **** 	tmpage = arptime - tabptr->time;
+ 209:uip_arp.c     **** 	c = i;
+ 210:uip_arp.c     ****       }
+ 211:uip_arp.c     ****     }
+ 212:uip_arp.c     ****     i = c;
+ 213:uip_arp.c     ****   }
+ 214:uip_arp.c     **** 
+ 215:uip_arp.c     ****   /* Now, i is the ARP table entry which we will fill with the new
+ 216:uip_arp.c     ****      information. */
+ 217:uip_arp.c     ****   //elm FIXME bug -> i ist der aeltestes eintrag aber tabptr wird genommen
+ 218:uip_arp.c     ****   //vorschlag: tabptr = &arp_table[i];
+ 219:uip_arp.c     ****   
+ 220:uip_arp.c     ****   memcpy(tabptr->ipaddr, ipaddr, 4);
+ 221:uip_arp.c     ****   memcpy(tabptr->ethaddr.addr, ethaddr->addr, 6);
+ 222:uip_arp.c     ****   tabptr->time = arptime;
+ 223:uip_arp.c     **** }
+ 224:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 225:uip_arp.c     **** /**
+ 226:uip_arp.c     ****  * ARP processing for incoming IP packets
+ 227:uip_arp.c     ****  *
+ 228:uip_arp.c     ****  * This function should be called by the device driver when an IP
+ 229:uip_arp.c     ****  * packet has been received. The function will check if the address is
+ 230:uip_arp.c     ****  * in the ARP cache, and if so the ARP cache entry will be
+ 231:uip_arp.c     ****  * refreshed. If no ARP cache entry was found, a new one is created.
+ 232:uip_arp.c     ****  *
+ 233:uip_arp.c     ****  * This function expects an IP packet with a prepended Ethernet header
+ 234:uip_arp.c     ****  * in the uip_buf[] buffer, and the length of the packet in the global
+ 235:uip_arp.c     ****  * variable uip_len.
+ 236:uip_arp.c     ****  */
+ 237:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 238:uip_arp.c     **** void
+ 239:uip_arp.c     **** uip_arp_ipin(void)
+ 240:uip_arp.c     **** {
+ 241:uip_arp.c     ****   uip_len -= sizeof(struct uip_eth_hdr);
+ 242:uip_arp.c     **** 	
+ 243:uip_arp.c     ****   /* Only insert/update an entry if the source IP address of the
+ 244:uip_arp.c     ****      incoming IP packet comes from a host on the local network. */
+ 245:uip_arp.c     ****   if((IPBUF->srcipaddr[0] & uip_arp_netmask[0]) !=
+ 246:uip_arp.c     ****      (uip_hostaddr[0] & uip_arp_netmask[0])) {
+ 247:uip_arp.c     ****     return;
+ 248:uip_arp.c     ****   }
+ 249:uip_arp.c     ****   if((IPBUF->srcipaddr[1] & uip_arp_netmask[1]) !=
+ 250:uip_arp.c     ****      (uip_hostaddr[1] & uip_arp_netmask[1])) {
+ 251:uip_arp.c     ****     return;
+ 252:uip_arp.c     ****   }
+ 253:uip_arp.c     ****   uip_arp_update(IPBUF->srcipaddr, &(IPBUF->ethhdr.src));
+ 254:uip_arp.c     ****   
+ 255:uip_arp.c     ****   return;
+ 256:uip_arp.c     **** }
+ 257:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 258:uip_arp.c     **** /**
+ 259:uip_arp.c     ****  * ARP processing for incoming ARP packets.
+ 260:uip_arp.c     ****  *
+ 261:uip_arp.c     ****  * This function should be called by the device driver when an ARP
+ 262:uip_arp.c     ****  * packet has been received. The function will act differently
+ 263:uip_arp.c     ****  * depending on the ARP packet type: if it is a reply for a request
+ 264:uip_arp.c     ****  * that we previously sent out, the ARP cache will be filled in with
+ 265:uip_arp.c     ****  * the values from the ARP reply. If the incoming ARP packet is an ARP
+ 266:uip_arp.c     ****  * request for our IP address, an ARP reply packet is created and put
+ 267:uip_arp.c     ****  * into the uip_buf[] buffer.
+ 268:uip_arp.c     ****  *
+ 269:uip_arp.c     ****  * When the function returns, the value of the global variable uip_len
+ 270:uip_arp.c     ****  * indicates whether the device driver should send out a packet or
+ 271:uip_arp.c     ****  * not. If uip_len is zero, no packet should be sent. If uip_len is
+ 272:uip_arp.c     ****  * non-zero, it contains the length of the outbound packet that is
+ 273:uip_arp.c     ****  * present in the uip_buf[] buffer.
+ 274:uip_arp.c     ****  *
+ 275:uip_arp.c     ****  * This function expects an ARP packet with a prepended Ethernet
+ 276:uip_arp.c     ****  * header in the uip_buf[] buffer, and the length of the packet in the
+ 277:uip_arp.c     ****  * global variable uip_len.
+ 278:uip_arp.c     ****  */
+ 279:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 280:uip_arp.c     **** void
+ 281:uip_arp.c     **** uip_arp_arpin(void)
+ 282:uip_arp.c     **** {
+ 283:uip_arp.c     **** 
+ 284:uip_arp.c     ****   if(uip_len < sizeof(struct arp_hdr)) {
+ 285:uip_arp.c     ****     uip_len = 0;
+ 286:uip_arp.c     ****     return;
+ 287:uip_arp.c     ****   }
+ 288:uip_arp.c     **** 
+ 289:uip_arp.c     ****   uip_len = 0;
+ 290:uip_arp.c     ****   
+ 291:uip_arp.c     ****   switch(BUF->opcode) {
+ 292:uip_arp.c     ****   case HTONS(ARP_REQUEST):
+ 293:uip_arp.c     ****     /* ARP request. If it asked for our address, we send out a
+ 294:uip_arp.c     ****        reply. */
+ 295:uip_arp.c     ****     if(BUF->dipaddr[0] == uip_hostaddr[0] &&
+ 296:uip_arp.c     ****        BUF->dipaddr[1] == uip_hostaddr[1]) {
+ 297:uip_arp.c     ****       /* The reply opcode is 2. */
+ 298:uip_arp.c     ****       BUF->opcode = HTONS(2);
+ 299:uip_arp.c     **** 
+ 300:uip_arp.c     ****       memcpy(BUF->dhwaddr.addr, BUF->shwaddr.addr, 6);
+ 301:uip_arp.c     ****       memcpy(BUF->shwaddr.addr, uip_ethaddr.addr, 6);
+ 302:uip_arp.c     ****       memcpy(BUF->ethhdr.src.addr, uip_ethaddr.addr, 6);
+ 303:uip_arp.c     ****       memcpy(BUF->ethhdr.dest.addr, BUF->dhwaddr.addr, 6);
+ 304:uip_arp.c     ****       
+ 305:uip_arp.c     ****       BUF->dipaddr[0] = BUF->sipaddr[0];
+ 306:uip_arp.c     ****       BUF->dipaddr[1] = BUF->sipaddr[1];
+ 307:uip_arp.c     ****       BUF->sipaddr[0] = uip_hostaddr[0];
+ 308:uip_arp.c     ****       BUF->sipaddr[1] = uip_hostaddr[1];
+ 309:uip_arp.c     **** 
+ 310:uip_arp.c     ****       BUF->ethhdr.type = HTONS(UIP_ETHTYPE_ARP);      
+ 311:uip_arp.c     ****       uip_len = sizeof(struct arp_hdr);
+ 312:uip_arp.c     ****     }      
+ 313:uip_arp.c     ****     break;
+ 314:uip_arp.c     ****   case HTONS(ARP_REPLY):
+ 315:uip_arp.c     ****     /* ARP reply. We insert or update the ARP table if it was meant
+ 316:uip_arp.c     ****        for us. */
+ 317:uip_arp.c     ****     if(BUF->dipaddr[0] == uip_hostaddr[0] &&
+ 318:uip_arp.c     ****        BUF->dipaddr[1] == uip_hostaddr[1]) {
+ 319:uip_arp.c     **** 
+ 320:uip_arp.c     ****       uip_arp_update(BUF->sipaddr, &BUF->shwaddr);
+ 321:uip_arp.c     ****     }
+ 322:uip_arp.c     ****     break;
+ 323:uip_arp.c     ****   }
+ 324:uip_arp.c     **** 
+ 325:uip_arp.c     ****   return;
+ 326:uip_arp.c     **** }
+ 327:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 328:uip_arp.c     **** /**
+ 329:uip_arp.c     ****  * Prepend Ethernet header to an outbound IP packet and see if we need
+ 330:uip_arp.c     ****  * to send out an ARP request.
+ 331:uip_arp.c     ****  *
+ 332:uip_arp.c     ****  * This function should be called before sending out an IP packet. The
+ 333:uip_arp.c     ****  * function checks the destination IP address of the IP packet to see
+ 334:uip_arp.c     ****  * what Ethernet MAC address that should be used as a destination MAC
+ 335:uip_arp.c     ****  * address on the Ethernet.
+ 336:uip_arp.c     ****  *
+ 337:uip_arp.c     ****  * If the destination IP address is in the local network (determined
+ 338:uip_arp.c     ****  * by logical ANDing of netmask and our IP address), the function
+ 339:uip_arp.c     ****  * checks the ARP cache to see if an entry for the destination IP
+ 340:uip_arp.c     ****  * address is found. If so, an Ethernet header is prepended and the
+ 341:uip_arp.c     ****  * function returns. If no ARP cache entry is found for the
+ 342:uip_arp.c     ****  * destination IP address, the packet in the uip_buf[] is replaced by
+ 343:uip_arp.c     ****  * an ARP request packet for the IP address. The IP packet is dropped
+ 344:uip_arp.c     ****  * and it is assumed that they higher level protocols (e.g., TCP)
+ 345:uip_arp.c     ****  * eventually will retransmit the dropped packet.
+ 346:uip_arp.c     ****  *
+ 347:uip_arp.c     ****  * If the destination IP address is not on the local network, the IP
+ 348:uip_arp.c     ****  * address of the default router is used instead.
+ 349:uip_arp.c     ****  *
+ 350:uip_arp.c     ****  * When the function returns, a packet is present in the uip_buf[]
+ 351:uip_arp.c     ****  * buffer, and the length of the packet is in the global variable
+ 352:uip_arp.c     ****  * uip_len.
+ 353:uip_arp.c     ****  */
+ 354:uip_arp.c     **** /*-----------------------------------------------------------------------------------*/
+ 355:uip_arp.c     **** void
+ 356:uip_arp.c     **** uip_arp_out(void)
+ 357:uip_arp.c     **** {
+ 168               	.LM11:
+ 169               	.LFBB3:
+ 170               	/* prologue: frame size=0 */
+ 171 0084 CF93      		push r28
+ 172 0086 DF93      		push r29
+ 173               	/* prologue end (size=2) */
+ 358:uip_arp.c     ****   struct arp_entry *tabptr;
+ 359:uip_arp.c     ****   /* Find the destination IP address in the ARP table and construct
+ 360:uip_arp.c     ****      the Ethernet header. If the destination IP addres isn't on the
+ 361:uip_arp.c     ****      local network, we use the default router's IP address instead.
+ 362:uip_arp.c     **** 
+ 363:uip_arp.c     ****      If not ARP table entry is found, we overwrite the original IP
+ 364:uip_arp.c     ****      packet with an ARP request for the IP address. */
+ 365:uip_arp.c     **** 
+ 366:uip_arp.c     ****   /* Check if the destination address is on the local network. */
+ 367:uip_arp.c     ****   if((IPBUF->destipaddr[0] & uip_arp_netmask[0]) !=
+ 175               	.LM12:
+ 176 0088 E091 0000 		lds r30,uip_buf+30
+ 177 008c F091 0000 		lds r31,(uip_buf+30)+1
+ 178 0090 8091 0000 		lds r24,uip_arp_netmask
+ 179 0094 9091 0000 		lds r25,(uip_arp_netmask)+1
+ 180 0098 C091 0000 		lds r28,uip_hostaddr
+ 181 009c D091 0000 		lds r29,(uip_hostaddr)+1
+ 182 00a0 9C01      		movw r18,r24
+ 183 00a2 2E23      		and r18,r30
+ 184 00a4 3F23      		and r19,r31
+ 185 00a6 8C23      		and r24,r28
+ 186 00a8 9D23      		and r25,r29
+ 187 00aa 2817      		cp r18,r24
+ 188 00ac 3907      		cpc r19,r25
+ 189 00ae 01F4      		brne .L15
+ 191               	.LM13:
+ 192 00b0 6091 0000 		lds r22,uip_buf+32
+ 193 00b4 7091 0000 		lds r23,(uip_buf+32)+1
+ 194 00b8 8091 0000 		lds r24,uip_arp_netmask+2
+ 195 00bc 9091 0000 		lds r25,(uip_arp_netmask+2)+1
+ 196 00c0 AC01      		movw r20,r24
+ 197 00c2 4623      		and r20,r22
+ 198 00c4 5723      		and r21,r23
+ 199 00c6 2091 0000 		lds r18,uip_hostaddr+2
+ 200 00ca 3091 0000 		lds r19,(uip_hostaddr+2)+1
+ 201 00ce 8223      		and r24,r18
+ 202 00d0 9323      		and r25,r19
+ 203 00d2 4817      		cp r20,r24
+ 204 00d4 5907      		cpc r21,r25
+ 205 00d6 01F0      		breq .L17
+ 206               	.L15:
+ 368:uip_arp.c     ****      (uip_hostaddr[0] & uip_arp_netmask[0]) ||
+ 369:uip_arp.c     ****      (IPBUF->destipaddr[1] & uip_arp_netmask[1]) !=
+ 370:uip_arp.c     ****      (uip_hostaddr[1] & uip_arp_netmask[1])) {
+ 371:uip_arp.c     ****     /* Destination address was not on the local network, so we need to
+ 372:uip_arp.c     ****        use the default router's IP address instead of the destination
+ 373:uip_arp.c     ****        address when determining the MAC address. */
+ 374:uip_arp.c     ****     ipaddr[0] = uip_arp_draddr[0];
+ 208               	.LM14:
+ 209 00d8 8091 0000 		lds r24,uip_arp_draddr
+ 210 00dc 9091 0000 		lds r25,(uip_arp_draddr)+1
+ 211 00e0 9093 0000 		sts (ipaddr)+1,r25
+ 212 00e4 8093 0000 		sts ipaddr,r24
+ 375:uip_arp.c     ****     ipaddr[1] = uip_arp_draddr[1];
+ 214               	.LM15:
+ 215 00e8 8091 0000 		lds r24,uip_arp_draddr+2
+ 216 00ec 9091 0000 		lds r25,(uip_arp_draddr+2)+1
+ 217 00f0 9093 0000 		sts (ipaddr+2)+1,r25
+ 218 00f4 8093 0000 		sts ipaddr+2,r24
+ 219 00f8 00C0      		rjmp .L18
+ 220               	.L17:
+ 376:uip_arp.c     ****   } else {
+ 377:uip_arp.c     ****     /* Else, we use the destination IP address. */
+ 378:uip_arp.c     ****     ipaddr[0] = IPBUF->destipaddr[0];
+ 222               	.LM16:
+ 223 00fa F093 0000 		sts (ipaddr)+1,r31
+ 224 00fe E093 0000 		sts ipaddr,r30
+ 379:uip_arp.c     ****     ipaddr[1] = IPBUF->destipaddr[1];
+ 226               	.LM17:
+ 227 0102 7093 0000 		sts (ipaddr+2)+1,r23
+ 228 0106 6093 0000 		sts ipaddr+2,r22
+ 229               	.L18:
+ 380:uip_arp.c     ****   }
+ 381:uip_arp.c     ****       
+ 382:uip_arp.c     ****   for(i = 0; i < UIP_ARPTAB_SIZE; ++i) {
+ 231               	.LM18:
+ 232 010a 1092 0000 		sts i,__zero_reg__
+ 383:uip_arp.c     ****     tabptr = &arp_table[i];
+ 384:uip_arp.c     ****     if(ipaddr[0] == tabptr->ipaddr[0] &&
+ 234               	.LM19:
+ 235 010e 6091 0000 		lds r22,ipaddr
+ 236 0112 7091 0000 		lds r23,(ipaddr)+1
+ 237 0116 4091 0000 		lds r20,ipaddr+2
+ 238 011a 5091 0000 		lds r21,(ipaddr+2)+1
+ 239 011e 20E0      		ldi r18,lo8(0)
+ 240 0120 00C0      		rjmp .L19
+ 241               	.L20:
+ 243               	.LM20:
+ 244 0122 8BE0      		ldi r24,lo8(11)
+ 245 0124 289F      		mul r18,r24
+ 246 0126 F001      		movw r30,r0
+ 247 0128 1124      		clr r1
+ 248 012a E050      		subi r30,lo8(-(arp_table))
+ 249 012c F040      		sbci r31,hi8(-(arp_table))
+ 251               	.LM21:
+ 252 012e 8081      		ld r24,Z
+ 253 0130 9181      		ldd r25,Z+1
+ 254 0132 6817      		cp r22,r24
+ 255 0134 7907      		cpc r23,r25
+ 256 0136 01F4      		brne .L21
+ 257 0138 8281      		ldd r24,Z+2
+ 258 013a 9381      		ldd r25,Z+3
+ 259 013c 4817      		cp r20,r24
+ 260 013e 5907      		cpc r21,r25
+ 261 0140 01F4      		brne .L21
+ 262 0142 2093 0000 		sts i,r18
+ 263 0146 00C0      		rjmp .L24
+ 264               	.L21:
+ 265 0148 2F5F      		subi r18,lo8(-(1))
+ 266               	.L19:
+ 268               	.LM22:
+ 269 014a 2430      		cpi r18,lo8(4)
+ 270 014c 00F0      		brlo .L20
+ 271 014e 2093 0000 		sts i,r18
+ 385:uip_arp.c     ****        ipaddr[1] == tabptr->ipaddr[1])
+ 386:uip_arp.c     ****       break;
+ 387:uip_arp.c     ****   }
+ 388:uip_arp.c     **** 
+ 389:uip_arp.c     ****   if(i == UIP_ARPTAB_SIZE) {
+ 273               	.LM23:
+ 274 0152 2430      		cpi r18,lo8(4)
+ 275 0154 01F0      		breq .+2
+ 276 0156 00C0      		rjmp .L24
+ 390:uip_arp.c     ****     /* The destination address was not in our ARP table, so we
+ 391:uip_arp.c     ****        overwrite the IP packet with an ARP request. */
+ 392:uip_arp.c     **** 
+ 393:uip_arp.c     ****     memset(BUF->ethhdr.dest.addr, 0xff, 6);
+ 278               	.LM24:
+ 279 0158 46E0      		ldi r20,lo8(6)
+ 280 015a 50E0      		ldi r21,hi8(6)
+ 281 015c 6FEF      		ldi r22,lo8(255)
+ 282 015e 70E0      		ldi r23,hi8(255)
+ 283 0160 80E0      		ldi r24,lo8(uip_buf)
+ 284 0162 90E0      		ldi r25,hi8(uip_buf)
+ 285 0164 0E94 0000 		call memset
+ 394:uip_arp.c     ****     memset(BUF->dhwaddr.addr, 0x00, 6);
+ 287               	.LM25:
+ 288 0168 E0E0      		ldi r30,lo8(uip_buf+32)
+ 289 016a F0E0      		ldi r31,hi8(uip_buf+32)
+ 290 016c 86E0      		ldi r24,lo8(6)
+ 291 016e DF01      		movw r26,r30
+ 292 0170 1D92      		st X+,__zero_reg__
+ 293 0172 8A95      	        dec r24
+ 294 0174 01F4      		brne .-6
+ 395:uip_arp.c     ****     memcpy(BUF->ethhdr.src.addr, uip_ethaddr.addr, 6);
+ 296               	.LM26:
+ 297 0176 7A97      		sbiw r30,26
+ 298 0178 A0E0      		ldi r26,lo8(uip_ethaddr)
+ 299 017a B0E0      		ldi r27,hi8(uip_ethaddr)
+ 300 017c 86E0      		ldi r24,lo8(6)
+ 301               	.L27:
+ 302 017e 0D90      		ld r0,X+
+ 303 0180 0192      		st Z+,r0
+ 304 0182 8150      		subi r24,lo8(-(-1))
+ 305 0184 01F4      		brne .L27
+ 396:uip_arp.c     ****     memcpy(BUF->shwaddr.addr, uip_ethaddr.addr, 6);
+ 307               	.LM27:
+ 308 0186 A0E0      		ldi r26,lo8(uip_buf+22)
+ 309 0188 B0E0      		ldi r27,hi8(uip_buf+22)
+ 310 018a E0E0      		ldi r30,lo8(uip_ethaddr)
+ 311 018c F0E0      		ldi r31,hi8(uip_ethaddr)
+ 312 018e 86E0      		ldi r24,lo8(6)
+ 313               	.L28:
+ 314 0190 0190      		ld r0,Z+
+ 315 0192 0D92      		st X+,r0
+ 316 0194 8150      		subi r24,lo8(-(-1))
+ 317 0196 01F4      		brne .L28
+ 397:uip_arp.c     ****     
+ 398:uip_arp.c     ****     BUF->dipaddr[0] = ipaddr[0];
+ 319               	.LM28:
+ 320 0198 8091 0000 		lds r24,ipaddr
+ 321 019c 9091 0000 		lds r25,(ipaddr)+1
+ 322 01a0 9093 0000 		sts (uip_buf+38)+1,r25
+ 323 01a4 8093 0000 		sts uip_buf+38,r24
+ 399:uip_arp.c     ****     BUF->dipaddr[1] = ipaddr[1];
+ 325               	.LM29:
+ 326 01a8 8091 0000 		lds r24,ipaddr+2
+ 327 01ac 9091 0000 		lds r25,(ipaddr+2)+1
+ 328 01b0 9093 0000 		sts (uip_buf+40)+1,r25
+ 329 01b4 8093 0000 		sts uip_buf+40,r24
+ 400:uip_arp.c     ****     BUF->sipaddr[0] = uip_hostaddr[0];
+ 331               	.LM30:
+ 332 01b8 D093 0000 		sts (uip_buf+28)+1,r29
+ 333 01bc C093 0000 		sts uip_buf+28,r28
+ 401:uip_arp.c     ****     BUF->sipaddr[1] = uip_hostaddr[1];
+ 335               	.LM31:
+ 336 01c0 8091 0000 		lds r24,uip_hostaddr+2
+ 337 01c4 9091 0000 		lds r25,(uip_hostaddr+2)+1
+ 338 01c8 9093 0000 		sts (uip_buf+30)+1,r25
+ 339 01cc 8093 0000 		sts uip_buf+30,r24
+ 402:uip_arp.c     ****     BUF->opcode = HTONS(ARP_REQUEST); /* ARP request. */
+ 341               	.LM32:
+ 342 01d0 80E0      		ldi r24,lo8(256)
+ 343 01d2 91E0      		ldi r25,hi8(256)
+ 344 01d4 9093 0000 		sts (uip_buf+20)+1,r25
+ 345 01d8 8093 0000 		sts uip_buf+20,r24
+ 403:uip_arp.c     ****     BUF->hwtype = HTONS(ARP_HWTYPE_ETH);
+ 347               	.LM33:
+ 348 01dc 9093 0000 		sts (uip_buf+14)+1,r25
+ 349 01e0 8093 0000 		sts uip_buf+14,r24
+ 404:uip_arp.c     ****     BUF->protocol = HTONS(UIP_ETHTYPE_IP);
+ 351               	.LM34:
+ 352 01e4 88E0      		ldi r24,lo8(8)
+ 353 01e6 90E0      		ldi r25,hi8(8)
+ 354 01e8 9093 0000 		sts (uip_buf+16)+1,r25
+ 355 01ec 8093 0000 		sts uip_buf+16,r24
+ 405:uip_arp.c     ****     BUF->hwlen = 6;
+ 357               	.LM35:
+ 358 01f0 86E0      		ldi r24,lo8(6)
+ 359 01f2 8093 0000 		sts uip_buf+18,r24
+ 406:uip_arp.c     ****     BUF->protolen = 4;
+ 361               	.LM36:
+ 362 01f6 84E0      		ldi r24,lo8(4)
+ 363 01f8 8093 0000 		sts uip_buf+19,r24
+ 407:uip_arp.c     ****     BUF->ethhdr.type = HTONS(UIP_ETHTYPE_ARP);
+ 365               	.LM37:
+ 366 01fc 88E0      		ldi r24,lo8(1544)
+ 367 01fe 96E0      		ldi r25,hi8(1544)
+ 368 0200 9093 0000 		sts (uip_buf+12)+1,r25
+ 369 0204 8093 0000 		sts uip_buf+12,r24
+ 408:uip_arp.c     **** 
+ 409:uip_arp.c     ****     uip_appdata = &uip_buf[40 + UIP_LLH_LEN];
+ 371               	.LM38:
+ 372 0208 80E0      		ldi r24,lo8(uip_buf+54)
+ 373 020a 90E0      		ldi r25,hi8(uip_buf+54)
+ 374 020c 9093 0000 		sts (uip_appdata)+1,r25
+ 375 0210 8093 0000 		sts uip_appdata,r24
+ 410:uip_arp.c     ****     
+ 411:uip_arp.c     ****     uip_len = sizeof(struct arp_hdr);
+ 377               	.LM39:
+ 378 0214 8AE2      		ldi r24,lo8(42)
+ 379 0216 90E0      		ldi r25,hi8(42)
+ 380 0218 00C0      		rjmp .L41
+ 381               	.L24:
+ 412:uip_arp.c     ****     return;
+ 413:uip_arp.c     ****   }
+ 414:uip_arp.c     **** 
+ 415:uip_arp.c     ****   /* Build an ethernet header. */
+ 416:uip_arp.c     ****   memcpy(IPBUF->ethhdr.dest.addr, tabptr->ethaddr.addr, 6);
+ 383               	.LM40:
+ 384 021a A0E0      		ldi r26,lo8(uip_buf)
+ 385 021c B0E0      		ldi r27,hi8(uip_buf)
+ 386 021e 3496      		adiw r30,4
+ 387 0220 86E0      		ldi r24,lo8(6)
+ 388               	.L30:
+ 389 0222 0190      		ld r0,Z+
+ 390 0224 0D92      		st X+,r0
+ 391 0226 8150      		subi r24,lo8(-(-1))
+ 392 0228 01F4      		brne .L30
+ 417:uip_arp.c     ****   memcpy(IPBUF->ethhdr.src.addr, uip_ethaddr.addr, 6);
+ 394               	.LM41:
+ 395 022a A0E0      		ldi r26,lo8(uip_buf+6)
+ 396 022c B0E0      		ldi r27,hi8(uip_buf+6)
+ 397 022e E0E0      		ldi r30,lo8(uip_ethaddr)
+ 398 0230 F0E0      		ldi r31,hi8(uip_ethaddr)
+ 399 0232 86E0      		ldi r24,lo8(6)
+ 400               	.L31:
+ 401 0234 0190      		ld r0,Z+
+ 402 0236 0D92      		st X+,r0
+ 403 0238 8150      		subi r24,lo8(-(-1))
+ 404 023a 01F4      		brne .L31
+ 418:uip_arp.c     ****   
+ 419:uip_arp.c     ****   IPBUF->ethhdr.type = HTONS(UIP_ETHTYPE_IP);
+ 406               	.LM42:
+ 407 023c 88E0      		ldi r24,lo8(8)
+ 408 023e 90E0      		ldi r25,hi8(8)
+ 409 0240 E0E0      		ldi r30,lo8(uip_buf)
+ 410 0242 F0E0      		ldi r31,hi8(uip_buf)
+ 411 0244 9587      		std Z+13,r25
+ 412 0246 8487      		std Z+12,r24
+ 420:uip_arp.c     **** 
+ 421:uip_arp.c     ****   uip_len += sizeof(struct uip_eth_hdr);
+ 414               	.LM43:
+ 415 0248 8091 0000 		lds r24,uip_len
+ 416 024c 9091 0000 		lds r25,(uip_len)+1
+ 417 0250 0E96      		adiw r24,14
+ 418               	.L41:
+ 419 0252 9093 0000 		sts (uip_len)+1,r25
+ 420 0256 8093 0000 		sts uip_len,r24
+ 421               	/* epilogue: frame size=0 */
+ 422 025a DF91      		pop r29
+ 423 025c CF91      		pop r28
+ 424 025e 0895      		ret
+ 425               	/* epilogue end (size=3) */
+ 426               	/* function uip_arp_out size 242 (237) */
+ 431               	.Lscope3:
+ 436               	uip_arp_update:
+ 438               	.LM44:
+ 439               	.LFBB4:
+ 440               	/* prologue: frame size=0 */
+ 441 0260 EF92      		push r14
+ 442 0262 FF92      		push r15
+ 443 0264 1F93      		push r17
+ 444 0266 CF93      		push r28
+ 445 0268 DF93      		push r29
+ 446               	/* prologue end (size=5) */
+ 447 026a DC01      		movw r26,r24
+ 448 026c 7B01      		movw r14,r22
+ 450               	.LM45:
+ 451 026e 1092 0000 		sts i,__zero_reg__
+ 452 0272 10E0      		ldi r17,lo8(0)
+ 453 0274 00C0      		rjmp .L43
+ 454               	.L44:
+ 456               	.LM46:
+ 457 0276 8BE0      		ldi r24,lo8(11)
+ 458 0278 189F      		mul r17,r24
+ 459 027a E001      		movw r28,r0
+ 460 027c 1124      		clr r1
+ 461 027e C050      		subi r28,lo8(-(arp_table))
+ 462 0280 D040      		sbci r29,hi8(-(arp_table))
+ 464               	.LM47:
+ 465 0282 4881      		ld r20,Y
+ 466 0284 5981      		ldd r21,Y+1
+ 467 0286 4115      		cp r20,__zero_reg__
+ 468 0288 5105      		cpc r21,__zero_reg__
+ 469 028a 01F0      		breq .L45
+ 470 028c 2A81      		ldd r18,Y+2
+ 471 028e 3B81      		ldd r19,Y+3
+ 472 0290 2115      		cp r18,__zero_reg__
+ 473 0292 3105      		cpc r19,__zero_reg__
+ 474 0294 01F0      		breq .L45
+ 476               	.LM48:
+ 477 0296 8D91      		ld r24,X+
+ 478 0298 9C91      		ld r25,X
+ 479 029a 1197      		sbiw r26,1
+ 480 029c 8417      		cp r24,r20
+ 481 029e 9507      		cpc r25,r21
+ 482 02a0 01F4      		brne .L45
+ 483 02a2 FD01      		movw r30,r26
+ 484 02a4 8281      		ldd r24,Z+2
+ 485 02a6 9381      		ldd r25,Z+3
+ 486 02a8 8217      		cp r24,r18
+ 487 02aa 9307      		cpc r25,r19
+ 488 02ac 01F4      		brne .L45
+ 489 02ae 1093 0000 		sts i,r17
+ 491               	.LM49:
+ 492 02b2 DE01      		movw r26,r28
+ 493 02b4 1496      		adiw r26,4
+ 494 02b6 F701      		movw r30,r14
+ 495 02b8 86E0      		ldi r24,lo8(6)
+ 496               	.L50:
+ 497 02ba 0190      		ld r0,Z+
+ 498 02bc 0D92      		st X+,r0
+ 499 02be 8150      		subi r24,lo8(-(-1))
+ 500 02c0 01F4      		brne .L50
+ 501 02c2 00C0      		rjmp .L72
+ 502               	.L45:
+ 504               	.LM50:
+ 505 02c4 1F5F      		subi r17,lo8(-(1))
+ 506               	.L43:
+ 508               	.LM51:
+ 509 02c6 1430      		cpi r17,lo8(4)
+ 510 02c8 00F0      		brlo .L44
+ 512               	.LM52:
+ 513 02ca 1092 0000 		sts i,__zero_reg__
+ 514 02ce 20E0      		ldi r18,lo8(0)
+ 515 02d0 00C0      		rjmp .L53
+ 516               	.L54:
+ 518               	.LM53:
+ 519 02d2 8BE0      		ldi r24,lo8(11)
+ 520 02d4 289F      		mul r18,r24
+ 521 02d6 E001      		movw r28,r0
+ 522 02d8 1124      		clr r1
+ 523 02da C050      		subi r28,lo8(-(arp_table))
+ 524 02dc D040      		sbci r29,hi8(-(arp_table))
+ 526               	.LM54:
+ 527 02de 8881      		ld r24,Y
+ 528 02e0 9981      		ldd r25,Y+1
+ 529 02e2 892B      		or r24,r25
+ 530 02e4 01F4      		brne .L55
+ 531 02e6 8A81      		ldd r24,Y+2
+ 532 02e8 9B81      		ldd r25,Y+3
+ 533 02ea 892B      		or r24,r25
+ 534 02ec 01F4      		brne .L55
+ 535 02ee 2093 0000 		sts i,r18
+ 536 02f2 00C0      		rjmp .L58
+ 537               	.L55:
+ 538 02f4 2F5F      		subi r18,lo8(-(1))
+ 539               	.L53:
+ 541               	.LM55:
+ 542 02f6 2430      		cpi r18,lo8(4)
+ 543 02f8 00F0      		brlo .L54
+ 544 02fa 2093 0000 		sts i,r18
+ 546               	.LM56:
+ 547 02fe 2430      		cpi r18,lo8(4)
+ 548 0300 01F4      		brne .L58
+ 550               	.LM57:
+ 551 0302 1092 0000 		sts tmpage,__zero_reg__
+ 553               	.LM58:
+ 554 0306 1092 0000 		sts c,__zero_reg__
+ 556               	.LM59:
+ 557 030a 1091 0000 		lds r17,arptime
+ 558 030e 612F      		mov r22,r17
+ 559 0310 7727      		clr r23
+ 560 0312 F0E0      		ldi r31,lo8(0)
+ 561 0314 E0E0      		ldi r30,lo8(0)
+ 562 0316 50E0      		ldi r21,lo8(0)
+ 563 0318 00C0      		rjmp .L61
+ 564               	.L62:
+ 566               	.LM60:
+ 567 031a 8BE0      		ldi r24,lo8(11)
+ 568 031c 589F      		mul r21,r24
+ 569 031e E001      		movw r28,r0
+ 570 0320 1124      		clr r1
+ 571 0322 C050      		subi r28,lo8(-(arp_table))
+ 572 0324 D040      		sbci r29,hi8(-(arp_table))
+ 574               	.LM61:
+ 575 0326 4A85      		ldd r20,Y+10
+ 576 0328 9B01      		movw r18,r22
+ 577 032a 241B      		sub r18,r20
+ 578 032c 3109      		sbc r19,__zero_reg__
+ 579 032e 8E2F      		mov r24,r30
+ 580 0330 9927      		clr r25
+ 581 0332 8217      		cp r24,r18
+ 582 0334 9307      		cpc r25,r19
+ 583 0336 04F4      		brge .L63
+ 585               	.LM62:
+ 586 0338 E12F      		mov r30,r17
+ 587 033a E41B      		sub r30,r20
+ 588 033c F52F      		mov r31,r21
+ 589               	.L63:
+ 590 033e 5F5F      		subi r21,lo8(-(1))
+ 591               	.L61:
+ 593               	.LM63:
+ 594 0340 5430      		cpi r21,lo8(4)
+ 595 0342 00F0      		brlo .L62
+ 596 0344 F093 0000 		sts c,r31
+ 597 0348 E093 0000 		sts tmpage,r30
+ 599               	.LM64:
+ 600 034c F093 0000 		sts i,r31
+ 601               	.L58:
+ 603               	.LM65:
+ 604 0350 8D91      		ld r24,X+
+ 605 0352 9D91      		ld r25,X+
+ 606 0354 0D90      		ld __tmp_reg__,X+
+ 607 0356 BC91      		ld r27,X
+ 608 0358 A02D      		mov r26,__tmp_reg__
+ 609 035a FE01      		movw r30,r28
+ 610 035c 8193      		st Z+,r24
+ 611 035e 9193      		st Z+,r25
+ 612 0360 A193      		st Z+,r26
+ 613 0362 B193      		st Z+,r27
+ 615               	.LM66:
+ 616 0364 D701      		movw r26,r14
+ 617 0366 86E0      		ldi r24,lo8(6)
+ 618               	.L66:
+ 619 0368 0D90      		ld r0,X+
+ 620 036a 0192      		st Z+,r0
+ 621 036c 8150      		subi r24,lo8(-(-1))
+ 622 036e 01F4      		brne .L66
+ 623               	.L72:
+ 625               	.LM67:
+ 626 0370 8091 0000 		lds r24,arptime
+ 627 0374 8A87      		std Y+10,r24
+ 628               	/* epilogue: frame size=0 */
+ 629 0376 DF91      		pop r29
+ 630 0378 CF91      		pop r28
+ 631 037a 1F91      		pop r17
+ 632 037c FF90      		pop r15
+ 633 037e EF90      		pop r14
+ 634 0380 0895      		ret
+ 635               	/* epilogue end (size=6) */
+ 636               	/* function uip_arp_update size 147 (136) */
+ 641               	.Lscope4:
+ 643               	.global	uip_arp_arpin
+ 645               	uip_arp_arpin:
+ 647               	.LM68:
+ 648               	.LFBB5:
+ 649               	/* prologue: frame size=0 */
+ 650 0382 CF93      		push r28
+ 651 0384 DF93      		push r29
+ 652               	/* prologue end (size=2) */
+ 654               	.LM69:
+ 655 0386 8091 0000 		lds r24,uip_len
+ 656 038a 9091 0000 		lds r25,(uip_len)+1
+ 657 038e 8A97      		sbiw r24,42
+ 658 0390 00F4      		brsh .L74
+ 660               	.LM70:
+ 661 0392 1092 0000 		sts (uip_len)+1,__zero_reg__
+ 662 0396 1092 0000 		sts uip_len,__zero_reg__
+ 663 039a 00C0      		rjmp .L87
+ 664               	.L74:
+ 666               	.LM71:
+ 667 039c 1092 0000 		sts (uip_len)+1,__zero_reg__
+ 668 03a0 1092 0000 		sts uip_len,__zero_reg__
+ 670               	.LM72:
+ 671 03a4 A0E0      		ldi r26,lo8(uip_buf)
+ 672 03a6 B0E0      		ldi r27,hi8(uip_buf)
+ 673 03a8 8091 0000 		lds r24,uip_buf+20
+ 674 03ac 9091 0000 		lds r25,(uip_buf+20)+1
+ 675 03b0 21E0      		ldi r18,hi8(256)
+ 676 03b2 8030      		cpi r24,lo8(256)
+ 677 03b4 9207      		cpc r25,r18
+ 678 03b6 01F0      		breq .L77
+ 679 03b8 8050      		subi r24,lo8(512)
+ 680 03ba 9240      		sbci r25,hi8(512)
+ 681 03bc 01F0      		breq .+2
+ 682 03be 00C0      		rjmp .L87
+ 683 03c0 00C0      		rjmp .L78
+ 684               	.L77:
+ 686               	.LM73:
+ 687 03c2 4091 0000 		lds r20,uip_buf+38
+ 688 03c6 5091 0000 		lds r21,(uip_buf+38)+1
+ 689 03ca 8091 0000 		lds r24,uip_hostaddr
+ 690 03ce 9091 0000 		lds r25,(uip_hostaddr)+1
+ 691 03d2 4817      		cp r20,r24
+ 692 03d4 5907      		cpc r21,r25
+ 693 03d6 01F0      		breq .+2
+ 694 03d8 00C0      		rjmp .L87
+ 695 03da 2091 0000 		lds r18,uip_buf+40
+ 696 03de 3091 0000 		lds r19,(uip_buf+40)+1
+ 697 03e2 8091 0000 		lds r24,uip_hostaddr+2
+ 698 03e6 9091 0000 		lds r25,(uip_hostaddr+2)+1
+ 699 03ea 2817      		cp r18,r24
+ 700 03ec 3907      		cpc r19,r25
+ 701 03ee 01F0      		breq .+2
+ 702 03f0 00C0      		rjmp .L87
+ 704               	.LM74:
+ 705 03f2 80E0      		ldi r24,lo8(512)
+ 706 03f4 92E0      		ldi r25,hi8(512)
+ 707 03f6 9093 0000 		sts (uip_buf+20)+1,r25
+ 708 03fa 8093 0000 		sts uip_buf+20,r24
+ 710               	.LM75:
+ 711 03fe ED01      		movw r28,r26
+ 712 0400 A096      		adiw r28,32
+ 713 0402 FD01      		movw r30,r26
+ 714 0404 7696      		adiw r30,22
+ 715 0406 86E0      		ldi r24,lo8(6)
+ 716               	.L81:
+ 717 0408 0190      		ld r0,Z+
+ 718 040a 0992      		st Y+,r0
+ 719 040c 8150      		subi r24,lo8(-(-1))
+ 720 040e 01F4      		brne .L81
+ 722               	.LM76:
+ 723 0410 C0E0      		ldi r28,lo8(uip_buf+22)
+ 724 0412 D0E0      		ldi r29,hi8(uip_buf+22)
+ 725 0414 E0E0      		ldi r30,lo8(uip_ethaddr)
+ 726 0416 F0E0      		ldi r31,hi8(uip_ethaddr)
+ 727 0418 86E0      		ldi r24,lo8(6)
+ 728               	.L82:
+ 729 041a 0190      		ld r0,Z+
+ 730 041c 0992      		st Y+,r0
+ 731 041e 8150      		subi r24,lo8(-(-1))
+ 732 0420 01F4      		brne .L82
+ 734               	.LM77:
+ 735 0422 C0E0      		ldi r28,lo8(uip_buf+6)
+ 736 0424 D0E0      		ldi r29,hi8(uip_buf+6)
+ 737 0426 E0E0      		ldi r30,lo8(uip_ethaddr)
+ 738 0428 F0E0      		ldi r31,hi8(uip_ethaddr)
+ 739 042a 86E0      		ldi r24,lo8(6)
+ 740               	.L83:
+ 741 042c 0190      		ld r0,Z+
+ 742 042e 0992      		st Y+,r0
+ 743 0430 8150      		subi r24,lo8(-(-1))
+ 744 0432 01F4      		brne .L83
+ 746               	.LM78:
+ 747 0434 E0E0      		ldi r30,lo8(uip_buf)
+ 748 0436 F0E0      		ldi r31,hi8(uip_buf)
+ 749 0438 EF01      		movw r28,r30
+ 750 043a A096      		adiw r28,32
+ 751 043c 86E0      		ldi r24,lo8(6)
+ 752               	.L84:
+ 753 043e 0990      		ld r0,Y+
+ 754 0440 0192      		st Z+,r0
+ 755 0442 8150      		subi r24,lo8(-(-1))
+ 756 0444 01F4      		brne .L84
+ 758               	.LM79:
+ 759 0446 8091 0000 		lds r24,uip_buf+28
+ 760 044a 9091 0000 		lds r25,(uip_buf+28)+1
+ 761 044e FD01      		movw r30,r26
+ 762 0450 97A3      		std Z+39,r25
+ 763 0452 86A3      		std Z+38,r24
+ 765               	.LM80:
+ 766 0454 8091 0000 		lds r24,uip_buf+30
+ 767 0458 9091 0000 		lds r25,(uip_buf+30)+1
+ 768 045c 91A7      		std Z+41,r25
+ 769 045e 80A7      		std Z+40,r24
+ 771               	.LM81:
+ 772 0460 558F      		std Z+29,r21
+ 773 0462 448F      		std Z+28,r20
+ 775               	.LM82:
+ 776 0464 378F      		std Z+31,r19
+ 777 0466 268F      		std Z+30,r18
+ 779               	.LM83:
+ 780 0468 88E0      		ldi r24,lo8(1544)
+ 781 046a 96E0      		ldi r25,hi8(1544)
+ 782 046c 9587      		std Z+13,r25
+ 783 046e 8487      		std Z+12,r24
+ 785               	.LM84:
+ 786 0470 8AE2      		ldi r24,lo8(42)
+ 787 0472 90E0      		ldi r25,hi8(42)
+ 788 0474 9093 0000 		sts (uip_len)+1,r25
+ 789 0478 8093 0000 		sts uip_len,r24
+ 790 047c 00C0      		rjmp .L87
+ 791               	.L78:
+ 793               	.LM85:
+ 794 047e 2091 0000 		lds r18,uip_buf+38
+ 795 0482 3091 0000 		lds r19,(uip_buf+38)+1
+ 796 0486 8091 0000 		lds r24,uip_hostaddr
+ 797 048a 9091 0000 		lds r25,(uip_hostaddr)+1
+ 798 048e 2817      		cp r18,r24
+ 799 0490 3907      		cpc r19,r25
+ 800 0492 01F4      		brne .L87
+ 801 0494 2091 0000 		lds r18,uip_buf+40
+ 802 0498 3091 0000 		lds r19,(uip_buf+40)+1
+ 803 049c 8091 0000 		lds r24,uip_hostaddr+2
+ 804 04a0 9091 0000 		lds r25,(uip_hostaddr+2)+1
+ 805 04a4 2817      		cp r18,r24
+ 806 04a6 3907      		cpc r19,r25
+ 807 04a8 01F4      		brne .L87
+ 809               	.LM86:
+ 810 04aa 60E0      		ldi r22,lo8(uip_buf+22)
+ 811 04ac 70E0      		ldi r23,hi8(uip_buf+22)
+ 812 04ae 80E0      		ldi r24,lo8(uip_buf+28)
+ 813 04b0 90E0      		ldi r25,hi8(uip_buf+28)
+ 814 04b2 0E94 0000 		call uip_arp_update
+ 815               	.L87:
+ 816               	/* epilogue: frame size=0 */
+ 817 04b6 DF91      		pop r29
+ 818 04b8 CF91      		pop r28
+ 819 04ba 0895      		ret
+ 820               	/* epilogue end (size=3) */
+ 821               	/* function uip_arp_arpin size 163 (158) */
+ 823               	.Lscope5:
+ 825               	.global	uip_arp_ipin
+ 827               	uip_arp_ipin:
+ 829               	.LM87:
+ 830               	.LFBB6:
+ 831               	/* prologue: frame size=0 */
+ 832               	/* prologue end (size=0) */
+ 834               	.LM88:
+ 835 04bc 8091 0000 		lds r24,uip_len
+ 836 04c0 9091 0000 		lds r25,(uip_len)+1
+ 837 04c4 0E97      		sbiw r24,14
+ 838 04c6 9093 0000 		sts (uip_len)+1,r25
+ 839 04ca 8093 0000 		sts uip_len,r24
+ 841               	.LM89:
+ 842 04ce 8091 0000 		lds r24,uip_arp_netmask
+ 843 04d2 9091 0000 		lds r25,(uip_arp_netmask)+1
+ 844 04d6 2091 0000 		lds r18,uip_buf+26
+ 845 04da 3091 0000 		lds r19,(uip_buf+26)+1
+ 846 04de 2823      		and r18,r24
+ 847 04e0 3923      		and r19,r25
+ 848 04e2 4091 0000 		lds r20,uip_hostaddr
+ 849 04e6 5091 0000 		lds r21,(uip_hostaddr)+1
+ 850 04ea 8423      		and r24,r20
+ 851 04ec 9523      		and r25,r21
+ 852 04ee 2817      		cp r18,r24
+ 853 04f0 3907      		cpc r19,r25
+ 854 04f2 01F4      		brne .L100
+ 856               	.LM90:
+ 857 04f4 8091 0000 		lds r24,uip_arp_netmask+2
+ 858 04f8 9091 0000 		lds r25,(uip_arp_netmask+2)+1
+ 859 04fc 2091 0000 		lds r18,uip_buf+28
+ 860 0500 3091 0000 		lds r19,(uip_buf+28)+1
+ 861 0504 2823      		and r18,r24
+ 862 0506 3923      		and r19,r25
+ 863 0508 4091 0000 		lds r20,uip_hostaddr+2
+ 864 050c 5091 0000 		lds r21,(uip_hostaddr+2)+1
+ 865 0510 8423      		and r24,r20
+ 866 0512 9523      		and r25,r21
+ 867 0514 2817      		cp r18,r24
+ 868 0516 3907      		cpc r19,r25
+ 869 0518 01F4      		brne .L100
+ 871               	.LM91:
+ 872 051a 60E0      		ldi r22,lo8(uip_buf+6)
+ 873 051c 70E0      		ldi r23,hi8(uip_buf+6)
+ 874 051e 80E0      		ldi r24,lo8(uip_buf+26)
+ 875 0520 90E0      		ldi r25,hi8(uip_buf+26)
+ 876 0522 0E94 0000 		call uip_arp_update
+ 877               	.L100:
+ 878 0526 0895      		ret
+ 879               	/* epilogue: frame size=0 */
+ 880               	/* epilogue: noreturn */
+ 881               	/* epilogue end (size=0) */
+ 882               	/* function uip_arp_ipin size 54 (54) */
+ 884               	.Lscope6:
+ 885               	.global	uip_ethaddr
+ 886               		.data
+ 889               	uip_ethaddr:
+ 890 0000 30        		.byte	48
+ 891 0001 46        		.byte	70
+ 892 0002 46        		.byte	70
+ 893 0003 49        		.byte	73
+ 894 0004 43        		.byte	67
+ 895 0005 45        		.byte	69
+ 896               		.lcomm arp_table,44
+ 897               		.lcomm ipaddr,4
+ 898               		.lcomm i,1
+ 899               		.lcomm c,1
+ 900               		.lcomm arptime,1
+ 901               		.lcomm tmpage,1
+ 902               		.comm eth2can_status,2,1
+ 903               		.comm eth2can_can,2,1
+ 904               		.comm eth2can_uart0,2,1
+ 905               		.comm eth2can_uart1,2,1
+ 906               		.comm send_init,1,1
+ 919               		.text
+ 921               	.Letext0:
+ 922               	/* File "uip_arp.c": code  672 = 0x02a0 ( 649), prologues   9, epilogues  14 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 uip_arp.c
+     /tmp/ccEipDK2.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccEipDK2.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccEipDK2.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccEipDK2.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccEipDK2.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccEipDK2.s:56     .text:00000000 uip_arp_timer
+     /tmp/ccEipDK2.s:899    .bss:00000032 arptime
+     /tmp/ccEipDK2.s:897    .bss:00000030 i
+                             .bss:00000000 arp_table
+     /tmp/ccEipDK2.s:126    .text:0000005a uip_arp_init
+     /tmp/ccEipDK2.s:166    .text:00000084 uip_arp_out
+     /tmp/ccEipDK2.s:896    .bss:0000002c ipaddr
+     /tmp/ccEipDK2.s:889    .data:00000000 uip_ethaddr
+     /tmp/ccEipDK2.s:436    .text:00000260 uip_arp_update
+     /tmp/ccEipDK2.s:900    .bss:00000033 tmpage
+     /tmp/ccEipDK2.s:898    .bss:00000031 c
+     /tmp/ccEipDK2.s:645    .text:00000382 uip_arp_arpin
+     /tmp/ccEipDK2.s:827    .text:000004bc uip_arp_ipin
+                            *COM*:00000002 eth2can_status
+                            *COM*:00000002 eth2can_can
+                            *COM*:00000002 eth2can_uart0
+                            *COM*:00000002 eth2can_uart1
+                            *COM*:00000001 send_init
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+uip_buf
+uip_arp_netmask
+uip_hostaddr
+uip_arp_draddr
+memset
+uip_appdata
+uip_len

@@ -1,0 +1,632 @@
+   1               		.file	"pwm.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  86               	.global	pwmInit56
+  88               	pwmInit56:
+   1:pwm.c         **** // IMPORTANT : The following code was done for the Roboduino board.
+   2:pwm.c         **** //The Roboduino is ATmega168 based so the hardware is the same. Only
+   3:pwm.c         **** //difference is that I used pin numbers instead of port numbers. To see
+   4:pwm.c         **** //what pin //number correlates to what port number use this chart -
+   5:pwm.c         **** //http://www.arduino.cc/en/Hacking/PinMapping168 .
+   6:pwm.c         **** 
+   7:pwm.c         **** // http://www.CuriousInventor.com/kits/roboduino
+   8:pwm.c         **** 
+   9:pwm.c         ****  
+  10:pwm.c         **** #include <avr/io.h>
+  11:pwm.c         **** #include <avr/pgmspace.h>
+  12:pwm.c         **** 
+  13:pwm.c         **** //For example  pwmInit56 is for pins 5 and 6 which translates into PD5 and PD6
+  14:pwm.c         **** 
+  15:pwm.c         **** //There are two channels of PWM per timer, in the comments I wrote down which pin is which
+  16:pwm.c         **** 
+  17:pwm.c         **** //thanks to mbateman for his PWM on ATmega640 code which I modified
+  18:pwm.c         **** 
+  19:pwm.c         **** //code by airman00 - Visit narobo.com
+  20:pwm.c         **** 
+  21:pwm.c         **** #define sbi(p,n)        (p) |= (1<<(n))
+  22:pwm.c         **** #define cbi(p,n)        (p) &= ~(1<<(n))
+  23:pwm.c         **** #define outb(p,n)       (p) = (n)
+  24:pwm.c         **** #define   inb(p)          (p)
+  25:pwm.c         **** 
+  26:pwm.c         **** void pwmInit56(void)  {    // Pin 6 is channel A and Pin 5 is channel B
+  90               	.LM0:
+  91               	.LFBB1:
+  92               	/* prologue: function */
+  93               	/* frame size = 0 */
+  27:pwm.c         ****    /***************************************************/
+  28:pwm.c         ****    /* Initialize timer0 for PWM  */
+  29:pwm.c         ****    /***************************************************/
+  30:pwm.c         ****    // 00   A off, toggle on compare
+  31:pwm.c         ****    // 00   B off, toggle on compare
+  32:pwm.c         ****    // 00   C channel does not exist
+  33:pwm.c         ****    // 11   Low part of WGM: PWM, Fast PWM
+  34:pwm.c         ****    TCCR0A=0b00000011;
+  95               	.LM1:
+  96 0000 83E0      		ldi r24,lo8(3)
+  97 0002 84BD      		out 68-0x20,r24
+  35:pwm.c         ****    // 0   No input noise cancelling
+  36:pwm.c         ****    // 0   Input edge select does not matter
+  37:pwm.c         ****    // 0   Not used
+  38:pwm.c         ****    // 00   Fast PWM
+  39:pwm.c         ****    // 010   Prescale 8
+  40:pwm.c         ****    TCCR0B=0b00000010;              
+  99               	.LM2:
+ 100 0004 82E0      		ldi r24,lo8(2)
+ 101 0006 85BD      		out 69-0x20,r24
+  41:pwm.c         ****    // Clear TCNT
+  42:pwm.c         ****    TCNT0=0x00;  
+ 103               	.LM3:
+ 104 0008 16BC      		out 70-0x20,__zero_reg__
+ 105               	/* epilogue start */
+  43:pwm.c         **** 
+  44:pwm.c         **** }
+ 107               	.LM4:
+ 108 000a 0895      		ret
+ 110               	.Lscope1:
+ 112               	.global	pwmOff56
+ 114               	pwmOff56:
+  45:pwm.c         **** 
+  46:pwm.c         **** void pwmOff56(void) {
+ 116               	.LM5:
+ 117               	.LFBB2:
+ 118               	/* prologue: function */
+ 119               	/* frame size = 0 */
+  47:pwm.c         ****  /**********************************************************/
+  48:pwm.c         ****  /* Return timer and pins to normal use */
+  49:pwm.c         ****  /**********************************************************/
+  50:pwm.c         ****    // 00   A off, pin works as general I/O
+  51:pwm.c         ****    // 00   B off, pin works as general I/O
+  52:pwm.c         ****    // 00   C off, pin works as general I/O
+  53:pwm.c         ****    // 00   Low part of WGM: Normal
+  54:pwm.c         ****    TCCR0A=0x00;
+ 121               	.LM6:
+ 122 000c 14BC      		out 68-0x20,__zero_reg__
+  55:pwm.c         ****    // 0   No input noise cancelling
+  56:pwm.c         ****    // 0   Input edge select does not matter
+  57:pwm.c         ****    // 0   Not used
+  58:pwm.c         ****    // 00   High part of WGM: Normal
+  59:pwm.c         ****    // 000   Prescale None
+  60:pwm.c         ****    TCCR0B=0x00;
+ 124               	.LM7:
+ 125 000e 15BC      		out 69-0x20,__zero_reg__
+  61:pwm.c         ****    // Clear TCNT
+  62:pwm.c         ****    TCNT0=0x00;
+ 127               	.LM8:
+ 128 0010 16BC      		out 70-0x20,__zero_reg__
+ 129               	/* epilogue start */
+  63:pwm.c         **** }
+ 131               	.LM9:
+ 132 0012 0895      		ret
+ 134               	.Lscope2:
+ 136               	.global	pwmInit311
+ 138               	pwmInit311:
+  64:pwm.c         **** 
+  65:pwm.c         **** void pwmInit311(void)  {  // Pin 11 is Channel A and pin 3 is channel B
+ 140               	.LM10:
+ 141               	.LFBB3:
+ 142               	/* prologue: function */
+ 143               	/* frame size = 0 */
+  66:pwm.c         ****    /***************************************************/
+  67:pwm.c         ****    /* Initialize timer0 for PWM  */ 
+  68:pwm.c         ****    /***************************************************/
+  69:pwm.c         ****    // 00   A off, pin works as general I/O
+  70:pwm.c         ****    // 00   B off, pin works as general I/O
+  71:pwm.c         ****    // 00   C channel does not exist
+  72:pwm.c         ****    // 11   Low part of WGM: Fast PWM
+  73:pwm.c         ****    TCCR2A=0b00000011;
+ 145               	.LM11:
+ 146 0014 83E0      		ldi r24,lo8(3)
+ 147 0016 8093 B000 		sts 176,r24
+  74:pwm.c         ****    // 0   No input noise cancelling
+  75:pwm.c         ****    // 0   Input edge select does not matter
+  76:pwm.c         ****    // 0   Not used
+  77:pwm.c         ****    // 00   Fast PWM
+  78:pwm.c         ****    // 010   Prescale 8
+  79:pwm.c         ****    TCCR2B=0b00000010;              
+ 149               	.LM12:
+ 150 001a 82E0      		ldi r24,lo8(2)
+ 151 001c 8093 B100 		sts 177,r24
+  80:pwm.c         ****    // Clear TCNT
+  81:pwm.c         ****    TCNT2=0x00;  
+ 153               	.LM13:
+ 154 0020 1092 B200 		sts 178,__zero_reg__
+ 155               	/* epilogue start */
+  82:pwm.c         **** }
+ 157               	.LM14:
+ 158 0024 0895      		ret
+ 160               	.Lscope3:
+ 162               	.global	pwmOff311
+ 164               	pwmOff311:
+  83:pwm.c         **** 
+  84:pwm.c         **** void pwmOff311(void) {
+ 166               	.LM15:
+ 167               	.LFBB4:
+ 168               	/* prologue: function */
+ 169               	/* frame size = 0 */
+  85:pwm.c         ****  /**********************************************************/
+  86:pwm.c         ****  /* Return timer and pins to normal use */
+  87:pwm.c         ****  /**********************************************************/
+  88:pwm.c         ****    // 00   A off, pin works as general I/O
+  89:pwm.c         ****    // 00   B off, pin works as general I/O
+  90:pwm.c         ****    // 00   C off,pin works as general I/O
+  91:pwm.c         ****    // 00   Low part of WGM: Normal
+  92:pwm.c         ****    TCCR2A=0x00;
+ 171               	.LM16:
+ 172 0026 1092 B000 		sts 176,__zero_reg__
+  93:pwm.c         ****    // 0   No input noise cancelling
+  94:pwm.c         ****    // 0   Input edge select does not matter
+  95:pwm.c         ****    // 0   Not used
+  96:pwm.c         ****    // 00   High part of WGM: Normal
+  97:pwm.c         ****    // 000   Prescale None
+  98:pwm.c         ****    TCCR2B=0x00;
+ 174               	.LM17:
+ 175 002a 1092 B100 		sts 177,__zero_reg__
+  99:pwm.c         ****    // Clear TCNT
+ 100:pwm.c         ****    TCNT2=0x00;
+ 177               	.LM18:
+ 178 002e 1092 B200 		sts 178,__zero_reg__
+ 179               	/* epilogue start */
+ 101:pwm.c         **** }
+ 181               	.LM19:
+ 182 0032 0895      		ret
+ 184               	.Lscope4:
+ 186               	.global	pwmInit910
+ 188               	pwmInit910:
+ 102:pwm.c         **** 
+ 103:pwm.c         **** void pwmInit910(void) {  // pin 9 is channel A and pin 10 is channel B
+ 190               	.LM20:
+ 191               	.LFBB5:
+ 192               	/* prologue: function */
+ 193               	/* frame size = 0 */
+ 104:pwm.c         ****    /***************************************************/
+ 105:pwm.c         ****    /* Initialize timer1 for PWM */
+ 106:pwm.c         ****    /***************************************************/
+ 107:pwm.c         ****    // 00   A off, pin works as general I/O
+ 108:pwm.c         ****    // 00   B off,pin works as general I/O
+ 109:pwm.c         ****    // 00   C off,pin works as general I/O
+ 110:pwm.c         ****    // 00   Low part of WGM: PWM, phase & freq, ICRn
+ 111:pwm.c         ****    TCCR1A=0x00;
+ 195               	.LM21:
+ 196 0034 1092 8000 		sts 128,__zero_reg__
+ 112:pwm.c         ****    // 0   No input noise cancelling
+ 113:pwm.c         ****    // 0   Input edge select does not matter
+ 114:pwm.c         ****    // 0   Not used
+ 115:pwm.c         ****    // 10   High part of WGM: PWM, phase & freq, ICRn
+ 116:pwm.c         ****    // 010   Prescale 8
+ 117:pwm.c         ****    TCCR1B=0b00010010;
+ 198               	.LM22:
+ 199 0038 82E1      		ldi r24,lo8(18)
+ 200 003a 8093 8100 		sts 129,r24
+ 118:pwm.c         ****    // Clear TCNT
+ 119:pwm.c         ****    TCNT1=0b00000000;
+ 202               	.LM23:
+ 203 003e 1092 8500 		sts (132)+1,__zero_reg__
+ 204 0042 1092 8400 		sts 132,__zero_reg__
+ 120:pwm.c         **** 
+ 121:pwm.c         **** ICR1 = 1000; // every 1000 uS or 1mS
+ 206               	.LM24:
+ 207 0046 88EE      		ldi r24,lo8(1000)
+ 208 0048 93E0      		ldi r25,hi8(1000)
+ 209 004a 9093 8700 		sts (134)+1,r25
+ 210 004e 8093 8600 		sts 134,r24
+ 211               	/* epilogue start */
+ 122:pwm.c         **** }
+ 213               	.LM25:
+ 214 0052 0895      		ret
+ 216               	.Lscope5:
+ 218               	.global	pwmOff910
+ 220               	pwmOff910:
+ 123:pwm.c         **** 
+ 124:pwm.c         **** 
+ 125:pwm.c         **** void pwmOff910(void) {
+ 222               	.LM26:
+ 223               	.LFBB6:
+ 224               	/* prologue: function */
+ 225               	/* frame size = 0 */
+ 126:pwm.c         ****    /**********************************************************/
+ 127:pwm.c         ****    /* Return timer and pins to normal use */
+ 128:pwm.c         ****    /**********************************************************/
+ 129:pwm.c         ****    // 00   A off
+ 130:pwm.c         ****    // 00   B off
+ 131:pwm.c         ****    // 00   C off
+ 132:pwm.c         ****    // 00   Low part of WGM: Normal
+ 133:pwm.c         ****    TCCR1A=0x00;
+ 227               	.LM27:
+ 228 0054 1092 8000 		sts 128,__zero_reg__
+ 134:pwm.c         ****    // 0   No input noise cancelling
+ 135:pwm.c         ****    // 0   Input edge select does not matter
+ 136:pwm.c         ****    // 0   Not used
+ 137:pwm.c         ****    // 00   High part of WGM: Normal
+ 138:pwm.c         ****    // 000   Prescale None
+ 139:pwm.c         ****    TCCR1B=0x00;
+ 230               	.LM28:
+ 231 0058 1092 8100 		sts 129,__zero_reg__
+ 140:pwm.c         ****    // Clear TCNT
+ 141:pwm.c         ****    TCNT1=0x00;
+ 233               	.LM29:
+ 234 005c 1092 8500 		sts (132)+1,__zero_reg__
+ 235 0060 1092 8400 		sts 132,__zero_reg__
+ 236               	/* epilogue start */
+ 142:pwm.c         **** }
+ 238               	.LM30:
+ 239 0064 0895      		ret
+ 241               	.Lscope6:
+ 243               	.global	pwmOn9
+ 245               	pwmOn9:
+ 143:pwm.c         **** 
+ 144:pwm.c         **** void pwmOn9(void) {
+ 247               	.LM31:
+ 248               	.LFBB7:
+ 249               	/* prologue: function */
+ 250               	/* frame size = 0 */
+ 145:pwm.c         ****    /****************************/
+ 146:pwm.c         ****    /* Pin 9 on*/
+ 147:pwm.c         ****    /****************************/
+ 148:pwm.c         **** 
+ 149:pwm.c         **** //9 A on - set at Bottom, clear at compare match
+ 150:pwm.c         ****    sbi(TCCR1A,7);
+ 252               	.LM32:
+ 253 0066 E0E8      		ldi r30,lo8(128)
+ 254 0068 F0E0      		ldi r31,hi8(128)
+ 255 006a 8081      		ld r24,Z
+ 256 006c 8068      		ori r24,lo8(-128)
+ 257 006e 8083      		st Z,r24
+ 151:pwm.c         ****   cbi(TCCR1A,6);
+ 259               	.LM33:
+ 260 0070 8081      		ld r24,Z
+ 261 0072 8F7B      		andi r24,lo8(-65)
+ 262 0074 8083      		st Z,r24
+ 263               	/* epilogue start */
+ 152:pwm.c         **** 
+ 153:pwm.c         **** }
+ 265               	.LM34:
+ 266 0076 0895      		ret
+ 268               	.Lscope7:
+ 270               	.global	pwmOff9
+ 272               	pwmOff9:
+ 154:pwm.c         **** 
+ 155:pwm.c         **** void pwmOff9(void) {
+ 274               	.LM35:
+ 275               	.LFBB8:
+ 276               	/* prologue: function */
+ 277               	/* frame size = 0 */
+ 156:pwm.c         ****    /********************************/
+ 157:pwm.c         ****    /* Pin 9 off */
+ 158:pwm.c         ****    /********************************/
+ 159:pwm.c         ****    // 00   A off , pin works as general I/O
+ 160:pwm.c         ****    cbi(TCCR1A,7);
+ 279               	.LM36:
+ 280 0078 E0E8      		ldi r30,lo8(128)
+ 281 007a F0E0      		ldi r31,hi8(128)
+ 282 007c 8081      		ld r24,Z
+ 283 007e 8F77      		andi r24,lo8(127)
+ 284 0080 8083      		st Z,r24
+ 161:pwm.c         ****    cbi(TCCR1A,6);
+ 286               	.LM37:
+ 287 0082 8081      		ld r24,Z
+ 288 0084 8F7B      		andi r24,lo8(-65)
+ 289 0086 8083      		st Z,r24
+ 290               	/* epilogue start */
+ 162:pwm.c         **** }
+ 292               	.LM38:
+ 293 0088 0895      		ret
+ 295               	.Lscope8:
+ 297               	.global	pwmOn10
+ 299               	pwmOn10:
+ 163:pwm.c         **** 
+ 164:pwm.c         **** void pwmOn10(void) {
+ 301               	.LM39:
+ 302               	.LFBB9:
+ 303               	/* prologue: function */
+ 304               	/* frame size = 0 */
+ 165:pwm.c         ****    /****************************/
+ 166:pwm.c         ****    /* Pin 10 on */
+ 167:pwm.c         ****    /****************************/
+ 168:pwm.c         ****    // 10   B on, set at Bottom, clear at compare match
+ 169:pwm.c         ****    sbi(TCCR1A,5);
+ 306               	.LM40:
+ 307 008a E0E8      		ldi r30,lo8(128)
+ 308 008c F0E0      		ldi r31,hi8(128)
+ 309 008e 8081      		ld r24,Z
+ 310 0090 8062      		ori r24,lo8(32)
+ 311 0092 8083      		st Z,r24
+ 170:pwm.c         ****    cbi(TCCR1A,4);
+ 313               	.LM41:
+ 314 0094 8081      		ld r24,Z
+ 315 0096 8F7E      		andi r24,lo8(-17)
+ 316 0098 8083      		st Z,r24
+ 317               	/* epilogue start */
+ 171:pwm.c         **** }
+ 319               	.LM42:
+ 320 009a 0895      		ret
+ 322               	.Lscope9:
+ 324               	.global	pwmOff10
+ 326               	pwmOff10:
+ 172:pwm.c         **** 
+ 173:pwm.c         **** void pwmOff10(void) {
+ 328               	.LM43:
+ 329               	.LFBB10:
+ 330               	/* prologue: function */
+ 331               	/* frame size = 0 */
+ 174:pwm.c         ****    /********************************/
+ 175:pwm.c         ****    /* Pin 10 off */
+ 176:pwm.c         ****    /********************************/
+ 177:pwm.c         ****    // 00   B off pin works as general I/O
+ 178:pwm.c         ****    cbi(TCCR1A,5);
+ 333               	.LM44:
+ 334 009c E0E8      		ldi r30,lo8(128)
+ 335 009e F0E0      		ldi r31,hi8(128)
+ 336 00a0 8081      		ld r24,Z
+ 337 00a2 8F7D      		andi r24,lo8(-33)
+ 338 00a4 8083      		st Z,r24
+ 179:pwm.c         ****    cbi(TCCR1A,4);
+ 340               	.LM45:
+ 341 00a6 8081      		ld r24,Z
+ 342 00a8 8F7E      		andi r24,lo8(-17)
+ 343 00aa 8083      		st Z,r24
+ 344               	/* epilogue start */
+ 180:pwm.c         **** }
+ 346               	.LM46:
+ 347 00ac 0895      		ret
+ 349               	.Lscope10:
+ 351               	.global	pwmOn6
+ 353               	pwmOn6:
+ 181:pwm.c         **** 
+ 182:pwm.c         **** void pwmOn6(void) {
+ 355               	.LM47:
+ 356               	.LFBB11:
+ 357               	/* prologue: function */
+ 358               	/* frame size = 0 */
+ 183:pwm.c         ****    /****************************/
+ 184:pwm.c         ****   /* Pin 6 on */
+ 185:pwm.c         ****    /****************************/
+ 186:pwm.c         ****    // 6  A on, set at Bottom, clear at compare match
+ 187:pwm.c         ****    sbi(TCCR0A,7);
+ 360               	.LM48:
+ 361 00ae 84B5      		in r24,68-0x20
+ 362 00b0 8068      		ori r24,lo8(-128)
+ 363 00b2 84BD      		out 68-0x20,r24
+ 188:pwm.c         ****    cbi(TCCR0A,6);
+ 365               	.LM49:
+ 366 00b4 84B5      		in r24,68-0x20
+ 367 00b6 8F7B      		andi r24,lo8(-65)
+ 368 00b8 84BD      		out 68-0x20,r24
+ 369               	/* epilogue start */
+ 189:pwm.c         **** }
+ 371               	.LM50:
+ 372 00ba 0895      		ret
+ 374               	.Lscope11:
+ 376               	.global	pwmOff6
+ 378               	pwmOff6:
+ 190:pwm.c         **** 
+ 191:pwm.c         **** void pwmOff6(void) {
+ 380               	.LM51:
+ 381               	.LFBB12:
+ 382               	/* prologue: function */
+ 383               	/* frame size = 0 */
+ 192:pwm.c         ****    /********************************/
+ 193:pwm.c         ****    /* Pin 6 off */
+ 194:pwm.c         ****    /********************************/
+ 195:pwm.c         ****    // 00   A off pin works as general I/O
+ 196:pwm.c         ****    cbi(TCCR0A,7);
+ 385               	.LM52:
+ 386 00bc 84B5      		in r24,68-0x20
+ 387 00be 8F77      		andi r24,lo8(127)
+ 388 00c0 84BD      		out 68-0x20,r24
+ 197:pwm.c         ****    cbi(TCCR0A,6);
+ 390               	.LM53:
+ 391 00c2 84B5      		in r24,68-0x20
+ 392 00c4 8F7B      		andi r24,lo8(-65)
+ 393 00c6 84BD      		out 68-0x20,r24
+ 394               	/* epilogue start */
+ 198:pwm.c         **** }
+ 396               	.LM54:
+ 397 00c8 0895      		ret
+ 399               	.Lscope12:
+ 401               	.global	pwmOn5
+ 403               	pwmOn5:
+ 199:pwm.c         **** 
+ 200:pwm.c         **** void pwmOn5(void) {
+ 405               	.LM55:
+ 406               	.LFBB13:
+ 407               	/* prologue: function */
+ 408               	/* frame size = 0 */
+ 201:pwm.c         ****    /****************************/
+ 202:pwm.c         ****    /*pin 5 on */
+ 203:pwm.c         ****    /****************************/
+ 204:pwm.c         ****    // 5   B on, set at Bottom, clear at compare match
+ 205:pwm.c         ****    sbi(TCCR0A,5);
+ 410               	.LM56:
+ 411 00ca 84B5      		in r24,68-0x20
+ 412 00cc 8062      		ori r24,lo8(32)
+ 413 00ce 84BD      		out 68-0x20,r24
+ 206:pwm.c         ****    cbi(TCCR0A,4);
+ 415               	.LM57:
+ 416 00d0 84B5      		in r24,68-0x20
+ 417 00d2 8F7E      		andi r24,lo8(-17)
+ 418 00d4 84BD      		out 68-0x20,r24
+ 419               	/* epilogue start */
+ 207:pwm.c         **** }
+ 421               	.LM58:
+ 422 00d6 0895      		ret
+ 424               	.Lscope13:
+ 426               	.global	pwmOff5
+ 428               	pwmOff5:
+ 208:pwm.c         **** 
+ 209:pwm.c         **** void pwmOff5(void) {
+ 430               	.LM59:
+ 431               	.LFBB14:
+ 432               	/* prologue: function */
+ 433               	/* frame size = 0 */
+ 210:pwm.c         ****    /********************************/
+ 211:pwm.c         ****    /* pin 5 off pin works as general I/O */
+ 212:pwm.c         ****    /********************************/
+ 213:pwm.c         ****    // 00   B off
+ 214:pwm.c         ****    cbi(TCCR0A,5);
+ 435               	.LM60:
+ 436 00d8 84B5      		in r24,68-0x20
+ 437 00da 8F7D      		andi r24,lo8(-33)
+ 438 00dc 84BD      		out 68-0x20,r24
+ 215:pwm.c         ****    cbi(TCCR0A,4);
+ 440               	.LM61:
+ 441 00de 84B5      		in r24,68-0x20
+ 442 00e0 8F7E      		andi r24,lo8(-17)
+ 443 00e2 84BD      		out 68-0x20,r24
+ 444               	/* epilogue start */
+ 216:pwm.c         **** }
+ 446               	.LM62:
+ 447 00e4 0895      		ret
+ 449               	.Lscope14:
+ 451               	.global	pwmOn11
+ 453               	pwmOn11:
+ 217:pwm.c         **** 
+ 218:pwm.c         **** void pwmOn11(void) {
+ 455               	.LM63:
+ 456               	.LFBB15:
+ 457               	/* prologue: function */
+ 458               	/* frame size = 0 */
+ 219:pwm.c         ****    /****************************/
+ 220:pwm.c         ****    /* Pin 11 on*/
+ 221:pwm.c         ****    /****************************/
+ 222:pwm.c         ****    // 11   A on, set at Bottom, clear at compare match
+ 223:pwm.c         ****    sbi(TCCR2A,7);
+ 460               	.LM64:
+ 461 00e6 E0EB      		ldi r30,lo8(176)
+ 462 00e8 F0E0      		ldi r31,hi8(176)
+ 463 00ea 8081      		ld r24,Z
+ 464 00ec 8068      		ori r24,lo8(-128)
+ 465 00ee 8083      		st Z,r24
+ 224:pwm.c         ****    cbi(TCCR2A,6);
+ 467               	.LM65:
+ 468 00f0 8081      		ld r24,Z
+ 469 00f2 8F7B      		andi r24,lo8(-65)
+ 470 00f4 8083      		st Z,r24
+ 471               	/* epilogue start */
+ 225:pwm.c         **** }
+ 473               	.LM66:
+ 474 00f6 0895      		ret
+ 476               	.Lscope15:
+ 478               	.global	pwmOff11
+ 480               	pwmOff11:
+ 226:pwm.c         **** 
+ 227:pwm.c         **** void pwmOff11(void) {
+ 482               	.LM67:
+ 483               	.LFBB16:
+ 484               	/* prologue: function */
+ 485               	/* frame size = 0 */
+ 228:pwm.c         ****    /********************************/
+ 229:pwm.c         ****    /* Pin 11 off */
+ 230:pwm.c         ****    /********************************/
+ 231:pwm.c         ****    // 00   A off ,pin works as general I/O
+ 232:pwm.c         ****    cbi(TCCR2A,7);
+ 487               	.LM68:
+ 488 00f8 E0EB      		ldi r30,lo8(176)
+ 489 00fa F0E0      		ldi r31,hi8(176)
+ 490 00fc 8081      		ld r24,Z
+ 491 00fe 8F77      		andi r24,lo8(127)
+ 492 0100 8083      		st Z,r24
+ 233:pwm.c         ****    cbi(TCCR2A,6);
+ 494               	.LM69:
+ 495 0102 8081      		ld r24,Z
+ 496 0104 8F7B      		andi r24,lo8(-65)
+ 497 0106 8083      		st Z,r24
+ 498               	/* epilogue start */
+ 234:pwm.c         **** }
+ 500               	.LM70:
+ 501 0108 0895      		ret
+ 503               	.Lscope16:
+ 505               	.global	pwmOn3
+ 507               	pwmOn3:
+ 235:pwm.c         **** 
+ 236:pwm.c         **** void pwmOn3(void) {
+ 509               	.LM71:
+ 510               	.LFBB17:
+ 511               	/* prologue: function */
+ 512               	/* frame size = 0 */
+ 237:pwm.c         ****    /****************************/
+ 238:pwm.c         ****    /*pin 3 on */
+ 239:pwm.c         ****    /****************************/
+ 240:pwm.c         ****    // 3   B on,set at Bottom, clear at compare match
+ 241:pwm.c         ****    sbi(TCCR2A,5);
+ 514               	.LM72:
+ 515 010a E0EB      		ldi r30,lo8(176)
+ 516 010c F0E0      		ldi r31,hi8(176)
+ 517 010e 8081      		ld r24,Z
+ 518 0110 8062      		ori r24,lo8(32)
+ 519 0112 8083      		st Z,r24
+ 242:pwm.c         ****    cbi(TCCR2A,4);
+ 521               	.LM73:
+ 522 0114 8081      		ld r24,Z
+ 523 0116 8F7E      		andi r24,lo8(-17)
+ 524 0118 8083      		st Z,r24
+ 525               	/* epilogue start */
+ 243:pwm.c         **** }
+ 527               	.LM74:
+ 528 011a 0895      		ret
+ 530               	.Lscope17:
+ 532               	.global	pwmOff3
+ 534               	pwmOff3:
+ 244:pwm.c         **** 
+ 245:pwm.c         **** void pwmOff3(void) {
+ 536               	.LM75:
+ 537               	.LFBB18:
+ 538               	/* prologue: function */
+ 539               	/* frame size = 0 */
+ 246:pwm.c         ****    /********************************/
+ 247:pwm.c         ****    /* pin 3 off , pin works as general I/O */
+ 248:pwm.c         ****    /***************************/
+ 249:pwm.c         ****    // 00   B off
+ 250:pwm.c         ****    cbi(TCCR2A,5);
+ 541               	.LM76:
+ 542 011c E0EB      		ldi r30,lo8(176)
+ 543 011e F0E0      		ldi r31,hi8(176)
+ 544 0120 8081      		ld r24,Z
+ 545 0122 8F7D      		andi r24,lo8(-33)
+ 546 0124 8083      		st Z,r24
+ 251:pwm.c         ****    cbi(TCCR2A,4);
+ 548               	.LM77:
+ 549 0126 8081      		ld r24,Z
+ 550 0128 8F7E      		andi r24,lo8(-17)
+ 551 012a 8083      		st Z,r24
+ 552               	/* epilogue start */
+ 252:pwm.c         **** }
+ 554               	.LM78:
+ 555 012c 0895      		ret
+ 557               	.Lscope18:
+ 559               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 pwm.c
+     /tmp/ccODTmQB.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccODTmQB.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccODTmQB.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccODTmQB.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccODTmQB.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccODTmQB.s:88     .text:00000000 pwmInit56
+     /tmp/ccODTmQB.s:114    .text:0000000c pwmOff56
+     /tmp/ccODTmQB.s:138    .text:00000014 pwmInit311
+     /tmp/ccODTmQB.s:164    .text:00000026 pwmOff311
+     /tmp/ccODTmQB.s:188    .text:00000034 pwmInit910
+     /tmp/ccODTmQB.s:220    .text:00000054 pwmOff910
+     /tmp/ccODTmQB.s:245    .text:00000066 pwmOn9
+     /tmp/ccODTmQB.s:272    .text:00000078 pwmOff9
+     /tmp/ccODTmQB.s:299    .text:0000008a pwmOn10
+     /tmp/ccODTmQB.s:326    .text:0000009c pwmOff10
+     /tmp/ccODTmQB.s:353    .text:000000ae pwmOn6
+     /tmp/ccODTmQB.s:378    .text:000000bc pwmOff6
+     /tmp/ccODTmQB.s:403    .text:000000ca pwmOn5
+     /tmp/ccODTmQB.s:428    .text:000000d8 pwmOff5
+     /tmp/ccODTmQB.s:453    .text:000000e6 pwmOn11
+     /tmp/ccODTmQB.s:480    .text:000000f8 pwmOff11
+     /tmp/ccODTmQB.s:507    .text:0000010a pwmOn3
+     /tmp/ccODTmQB.s:534    .text:0000011c pwmOff3
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

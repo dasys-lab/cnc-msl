@@ -1,0 +1,47 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: monitoringboardv2.aux
+The style file: plain.bst
+Database file #1: literatur.bib
+Warning--to sort, need author, organization, or key in 8
+You've used 8 entries,
+            2118 wiz_defined-function locations,
+            526 strings with 4837 characters,
+and the built_in function-call counts, 1641 in all, are:
+= -- 148
+> -- 56
+< -- 0
++ -- 24
+- -- 16
+* -- 62
+:= -- 284
+add.period$ -- 21
+call.type$ -- 8
+change.case$ -- 29
+chr.to.int$ -- 0
+cite$ -- 9
+duplicate$ -- 73
+empty$ -- 167
+format.name$ -- 16
+if$ -- 350
+int.to.chr$ -- 0
+int.to.str$ -- 8
+missing$ -- 6
+newline$ -- 40
+num.names$ -- 14
+pop$ -- 60
+preamble$ -- 1
+purify$ -- 24
+quote$ -- 0
+skip$ -- 52
+stack$ -- 0
+substring$ -- 40
+swap$ -- 7
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 26
+warning$ -- 1
+while$ -- 14
+width$ -- 9
+write$ -- 76
+(There was 1 warning)

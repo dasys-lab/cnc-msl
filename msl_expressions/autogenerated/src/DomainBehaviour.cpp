@@ -5,8 +5,7 @@ namespace alica {
 
 	DomainBehaviour::DomainBehaviour(string name) :
 			BasicBehaviour(name) {
-		supplementary::SystemConfig* sc =
-				supplementary::SystemConfig::getInstance();
+		sc = supplementary::SystemConfig::getInstance();
 		ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
 		simlatorPub = n.advertise<msl_simulator::sim_packet>(
@@ -47,6 +46,7 @@ namespace alica {
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::KickControl& kc) {
+		kc.enabled = true;
 		kc.senderID = ownID;
 		kickControlPub.publish(kc);
 	}

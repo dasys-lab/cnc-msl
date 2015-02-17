@@ -9,10 +9,14 @@
 #define CNC_MSL_MSL_WORLDMODEL_SRC_CONTAINER_POINT2D_H_
 
 #include "geometry_msgs/Point.h"
-#include "CNPosition.h"
+#include <memory>
+
+using namespace std;
 
 
 namespace msl {
+	class CNPosition;
+
 	class CNPoint2D : public geometry_msgs::Point {
 	public:
 
@@ -21,11 +25,19 @@ namespace msl {
 		CNPoint2D() : CNPoint2D(0,0) {}
 
 		double length();
-		CNPoint2D rotate(double radian);
-		double alpha(CNPosition me);
-		CNPoint2D alloToEgo(CNPosition me);
+		shared_ptr<CNPoint2D> rotate(double radian);
+		double angleTo();
+		shared_ptr<CNPoint2D> alloToEgo(CNPosition& me);
+		shared_ptr<CNPoint2D> egoToAllo(CNPosition& me);
+		shared_ptr<CNPoint2D> normalize();
+
+		shared_ptr<CNPoint2D> operator*(const double& right);
+		shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& right);
 
 		virtual ~CNPoint2D();
 	};
+
+	shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& left, const shared_ptr<CNPoint2D>& right);
+	shared_ptr<CNPoint2D> operator*(const shared_ptr<CNPoint2D>& left, const double& right);
 }
 #endif /* CNC_MSL_MSL_WORLDMODEL_SRC_CONTAINER_POINT2D_H_ */

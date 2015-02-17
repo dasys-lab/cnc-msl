@@ -11,13 +11,13 @@ namespace alica
             DomainBehaviour("DribbleToPoint")
     {
         /*PROTECTED REGION ID(con1414752367688) ENABLED START*/ //Add additional options here
-        alloBallPos = wm->getBallPosition();
+        alloBallPos = wm->getAlloBallPosition();
 
         ownPos = wm->getOwnPosition();
-        egoBallPos = alloBallPos.alloToEgo(ownPos);
+        egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
         alloTargetPos = CNPoint2D(0, 0);
-        egoTargetPos = alloTargetPos.alloToEgo(ownPos);
+        egoTargetPos = *alloTargetPos.alloToEgo(*ownPos);
 
         /*PROTECTED REGION END*/
     }
@@ -35,28 +35,18 @@ namespace alica
         double w = 4.1;
         double p = atan2(egoTargetPos.y - egoBallPos.y, egoTargetPos.x - egoBallPos.x);
 
-        if (!(wm->nearPoint(alloTargetPos)))
+        if (fabs(p) <= 0.115)
         {
-            if (fabs(p) <= 0.115)
-            {
-                c.velangular = p;
-                c.velnormal = -(p * radius);
-                c.veltangent = min(egoTargetPos.x * 0.001, 1.0);
-                c.spinner = true;
-            }
-            else
-            {
-                c.velangular = p * 1.5;
-                c.velnormal = -(p * radius) * 1.5;
-                c.veltangent = min(egoBallPos.x * 0.05, 1.0);
-                c.spinner = true;
-            }
+            c.velangular = p;
+            c.velnormal = -(p * radius);
+            c.veltangent = min(egoTargetPos.x * 0.001, 1.0);
+            c.spinner = true;
         }
         else
         {
-            c.velangular = 0;
-            c.velnormal = 0;
-            c.veltangent = 0;
+            c.velangular = p * 1.5;
+            c.velnormal = -(p * radius) * 1.5;
+            c.veltangent = min(egoBallPos.x * 0.05, 1.0);
             c.spinner = true;
         }
 

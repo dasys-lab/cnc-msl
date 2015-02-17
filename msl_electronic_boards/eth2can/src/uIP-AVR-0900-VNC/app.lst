@@ -1,0 +1,1308 @@
+   1               		.file	"app.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+ 112               	.global	tcp_connection_app
+ 114               	tcp_connection_app:
+   1:app.c         **** /*****************************************************************************
+   2:app.c         **** *  "A Very Simple Application" from the uIP 0.9 documentation
+   3:app.c         **** *****************************************************************************/
+   4:app.c         **** #include <avr/io.h>
+   5:app.c         **** #include "app.h"
+   6:app.c         **** #include <util/delay.h>
+   7:app.c         **** #include <avr/interrupt.h>
+   8:app.c         **** #include <avr/pgmspace.h>
+   9:app.c         **** 
+  10:app.c         **** #include <avr/wdt.h>
+  11:app.c         **** #include "uip_arp.h"
+  12:app.c         **** #include <avr/eeprom.h>
+  13:app.c         **** 
+  14:app.c         **** 
+  15:app.c         **** // CAN
+  16:app.c         **** #include "mcp2515.h"
+  17:app.c         **** #include "global.h"
+  18:app.c         **** #include "defaults.h"
+  19:app.c         **** 
+  20:app.c         **** // UART
+  21:app.c         **** #include "uart.h"
+  22:app.c         **** 
+  23:app.c         **** #define BUFFERLENGTH 256
+  24:app.c         **** 
+  25:app.c         **** bool uart0_quote = false;
+  26:app.c         **** int uart0_status = 0;
+  27:app.c         **** char *bla;
+  28:app.c         **** char c;
+  29:app.c         **** u16_t temp;
+  30:app.c         **** struct uip_eth_addr eth_adr;
+  31:app.c         **** static char status[20];
+  32:app.c         **** 
+  33:app.c         **** tExtendedCAN *message;
+  34:app.c         **** tExtendedCAN m;
+  35:app.c         **** //static char recbuf[BUFFERLENGTH];
+  36:app.c         **** static char canbuf[20];
+  37:app.c         **** 
+  38:app.c         **** void poll_uart1(void);
+  39:app.c         **** 
+  40:app.c         **** void connection_init(void)
+  41:app.c         **** {
+  42:app.c         **** 	int j,i;	
+  43:app.c         **** 	u16_t ipaddr;
+  44:app.c         **** 	char* init_buf = "init";
+  45:app.c         **** 
+  46:app.c         **** 	
+  47:app.c         ****         uip_ipaddr(&ipaddr, 192,168,0,5);
+  48:app.c         **** 	
+  49:app.c         **** 	//open ports
+  50:app.c         ****         eth2can_status = uip_udp_listen(&ipaddr,10000);
+  51:app.c         **** 	eth2can_uart0 = uip_udp_listen(&ipaddr,10001);
+  52:app.c         **** 	eth2can_uart1 = uip_udp_listen(&ipaddr,10002);
+  53:app.c         **** 	eth2can_can = uip_udp_listen(&ipaddr,10003);
+  54:app.c         **** 
+  55:app.c         **** 	
+  56:app.c         **** 	mcp2515_init();
+  57:app.c         **** 	mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+  58:app.c         **** 	
+  59:app.c         **** 	//send "init" on resart for arp reply
+  60:app.c         **** 	uip_udp_sendto(init_buf, 4, eth2can_uart1);
+  61:app.c         **** 	uip_arp_out();
+  62:app.c         **** 	nic_send();
+  63:app.c         **** 
+  64:app.c         **** 	send_init = 0;
+  65:app.c         **** 
+  66:app.c         **** }
+  67:app.c         **** 
+  68:app.c         **** 
+  69:app.c         **** void tcp_connection_app(void)
+  70:app.c         **** {
+ 116               	.LM0:
+ 117               	.LFBB1:
+ 118               	/* prologue: frame size=0 */
+ 119               	/* prologue end (size=0) */
+ 120               	/* epilogue: frame size=0 */
+ 121 0000 0895      		ret
+ 122               	/* epilogue end (size=1) */
+ 123               	/* function tcp_connection_app size 1 (0) */
+ 125               	.Lscope1:
+ 127               	.global	poll_uart1
+ 129               	poll_uart1:
+  71:app.c         **** }
+  72:app.c         **** 
+  73:app.c         **** /*
+  74:app.c         ****  * Bearbeitet Pakete der 3 UDP Verbindungen
+  75:app.c         ****  */
+  76:app.c         **** void udp_connection_app(void) {
+  77:app.c         **** 	if(uip_newdata() || uip_rexmit())
+  78:app.c         **** 	{
+  79:app.c         **** 		// Daten der UART0 Verbindung einfach auf die UART Rausschreiben
+  80:app.c         **** 		if(uip_udp_conn==eth2can_uart0) {
+  81:app.c         **** 			bla = (char*)uip_appdata;
+  82:app.c         **** 			uart_puts(bla);
+  83:app.c         **** 		}
+  84:app.c         **** 		// Daten der UART1 Verbindung einfach auf die UART Rausschreiben
+  85:app.c         **** 		if(uip_udp_conn==eth2can_uart1) {
+  86:app.c         **** 			bla = (char*)uip_appdata;
+  87:app.c         **** 			uart1_puts(bla);
+  88:app.c         **** 		}
+  89:app.c         **** 		// Can Daten in Messagestruktur Paken und auf Can Rausschreiben.
+  90:app.c         **** 		else if(uip_udp_conn==eth2can_can) {
+  91:app.c         **** 			message = (tExtendedCAN*)uip_appdata;
+  92:app.c         **** 			mcp2515_send_extmessage(message);
+  93:app.c         **** 		}
+  94:app.c         **** 		// Status Protokoll
+  95:app.c         **** 		else if(uip_udp_conn==eth2can_status) {
+  96:app.c         **** 			switch(uip_appdata[0]) { 
+  97:app.c         **** 				case 'P':
+  98:app.c         **** 					uip_appdata[0]++;
+  99:app.c         **** 					uip_udp_sendto(uip_appdata, 1, eth2can_status);
+ 100:app.c         **** 					uip_arp_out();
+ 101:app.c         **** 					nic_send();
+ 102:app.c         **** 					return;
+ 103:app.c         **** 				case 'C':
+ 104:app.c         **** 					status[0] = mcp2515_read_register(EFLG);
+ 105:app.c         **** 					status[1] = mcp2515_read_register(TEC);
+ 106:app.c         **** 					status[2] = mcp2515_read_register(REC);
+ 107:app.c         **** 					status[3] = 0x00;
+ 108:app.c         **** 					uip_udp_sendto(status, 4, eth2can_status);
+ 109:app.c         **** 					uip_arp_out();
+ 110:app.c         **** 					nic_send();
+ 111:app.c         **** 					return;
+ 112:app.c         **** 				case 'A':
+ 113:app.c         **** 					uip_appdata[0]++;
+ 114:app.c         **** 					uip_arp_init();
+ 115:app.c         **** 					uip_udp_sendto(uip_appdata, 1, eth2can_status);
+ 116:app.c         **** 					uip_arp_out();
+ 117:app.c         **** 					nic_send();
+ 118:app.c         **** 					return;
+ 119:app.c         **** 				case 'S':
+ 120:app.c         **** 					goto *((void**) 0);
+ 121:app.c         **** 					return;
+ 122:app.c         **** 				case 'R':
+ 123:app.c         **** 					cli();
+ 124:app.c         **** 					wdt_enable (WDTO_15MS);
+ 125:app.c         **** 					while (1);
+ 126:app.c         **** 					return;
+ 127:app.c         **** 				case 'I':
+ 128:app.c         **** 					mcp2515_init();
+ 129:app.c         **** 					mcp2515_bit_modify(CANCTRL, (1<<REQOP2)|(1<<REQOP1)|(1<<REQOP0), 0);
+ 130:app.c         **** 					break;
+ 131:app.c         **** 				case 'M':
+ 132:app.c         **** 					for(c=0;c<6;c++)
+ 133:app.c         **** 					{
+ 134:app.c         **** 						status[c] = eeprom_read_byte(AT_EEPROM_MAC_ADDRESS+c);
+ 135:app.c         **** 					}
+ 136:app.c         **** 					status[6]=0x00;
+ 137:app.c         **** 					uip_udp_sendto(status, 6, eth2can_status);
+ 138:app.c         **** 					uip_arp_out();
+ 139:app.c         **** 					nic_send();
+ 140:app.c         **** 					break;
+ 141:app.c         **** 				case 'E':
+ 142:app.c         **** 					for(c=0;c<6;c++) eeprom_write_byte(AT_EEPROM_MAC_ADDRESS+c, uip_appdata[c+1]);
+ 143:app.c         **** 					break;
+ 144:app.c         **** 				case 'X':
+ 145:app.c         **** 					send_init = 0;
+ 146:app.c         **** 					break;
+ 147:app.c         **** 			}
+ 148:app.c         **** 		}
+ 149:app.c         **** 	}
+ 150:app.c         **** }
+ 151:app.c         **** 
+ 152:app.c         **** 
+ 153:app.c         **** void poll_can(void) {
+ 154:app.c         **** 	if(mcp2515_check_message()) {
+ 155:app.c         **** 		mcp2515_get_extmessage(&m);
+ 156:app.c         **** 		uip_udp_sendto((char*)&m, 15, eth2can_can);
+ 157:app.c         ****                 uip_arp_out();
+ 158:app.c         ****                 nic_send();
+ 159:app.c         **** 	}
+ 160:app.c         **** }
+ 161:app.c         **** 
+ 162:app.c         **** void poll_uart0(void) {
+ 163:app.c         **** 	static char recbuf[BUFFERLENGTH];
+ 164:app.c         **** 	unsigned int c;
+ 165:app.c         **** 	static uint8_t i = 0;
+ 166:app.c         **** 	static uint8_t len = 0;
+ 167:app.c         **** 	static char overflow = 0;
+ 168:app.c         **** 
+ 169:app.c         **** 	c = uart_getc();
+ 170:app.c         **** 
+ 171:app.c         **** //	if (c & UART_NO_DATA) {
+ 172:app.c         **** //		return;
+ 173:app.c         **** //	}
+ 174:app.c         **** 
+ 175:app.c         **** 	// check for error
+ 176:app.c         **** /*	if (c & UART_FRAME_ERROR) {
+ 177:app.c         **** 		return;
+ 178:app.c         **** 	}
+ 179:app.c         **** 	if (c & UART_OVERRUN_ERROR) {
+ 180:app.c         **** 		return;
+ 181:app.c         **** 	}
+ 182:app.c         **** 	if (c & UART_BUFFER_OVERFLOW) {
+ 183:app.c         **** 		return;
+ 184:app.c         **** 	}
+ 185:app.c         **** */
+ 186:app.c         **** 	// echo back the received char
+ 187:app.c         **** 
+ 188:app.c         **** 	// avoid inserting NULL-Byte in strings
+ 189:app.c         **** 	//if (c == 0x00)
+ 190:app.c         **** 	//	return;
+ 191:app.c         **** 	// \n\r -> leerpaket!
+ 192:app.c         ****                      //   uip_udp_sendto(c, 1, eth2can_uart0);
+ 193:app.c         ****                        // uip_arp_out();
+ 194:app.c         ****                         //nic_send();
+ 195:app.c         **** 
+ 196:app.c         **** 	
+ 197:app.c         **** 	if (uart0_status == 0) { // auf daten warten
+ 198:app.c         **** 		if (c == 0x7B && !uart0_quote) {
+ 199:app.c         **** 			uart0_status = 1;
+ 200:app.c         **** 			len = 0;
+ 201:app.c         **** 			recbuf[len++] = c;
+ 202:app.c         **** 		}
+ 203:app.c         **** //	} else if (uart0_status == 1) { // daten sammeln
+ 204:app.c         **** 	} else {
+ 205:app.c         **** 		recbuf[len++] = c;
+ 206:app.c         **** 		if (c == 0x7D && !uart0_quote) {
+ 207:app.c         **** 			recbuf[len] = 0x00;
+ 208:app.c         **** 			uip_udp_sendto(recbuf, len, eth2can_uart0);
+ 209:app.c         **** 			uip_arp_out();
+ 210:app.c         **** 			nic_send();
+ 211:app.c         **** 			len = 0;
+ 212:app.c         **** 			uart0_status = 0;
+ 213:app.c         **** 		}
+ 214:app.c         **** 	} 
+ 215:app.c         **** 
+ 216:app.c         **** 	if (uart0_quote) uart0_quote = false;
+ 217:app.c         **** 	else if (c == 0x5C) uart0_quote = true;
+ 218:app.c         **** 
+ 219:app.c         **** 	if (len > 0)  {
+ 220:app.c         **** 		uip_udp_sendto(recbuf, len, eth2can_uart0);
+ 221:app.c         **** 		uip_arp_out();
+ 222:app.c         **** 		nic_send();
+ 223:app.c         **** 	}
+ 224:app.c         **** 
+ 225:app.c         **** 
+ 226:app.c         **** /*
+ 227:app.c         **** 	if (c == '\n' || c == '\r') {
+ 228:app.c         **** 		if (overflow) {
+ 229:app.c         **** 			overflow = 0;
+ 230:app.c         **** 			len = 0;
+ 231:app.c         **** 			return;
+ 232:app.c         **** 		}
+ 233:app.c         **** 		if (len == 0)
+ 234:app.c         **** 			return;
+ 235:app.c         **** 		// add trailing NULL-byte
+ 236:app.c         **** 		recbuf[len] = 0x00;
+ 237:app.c         **** 		uip_udp_sendto(recbuf, len, eth2can_uart0);
+ 238:app.c         **** 		uip_arp_out();
+ 239:app.c         **** 		nic_send();
+ 240:app.c         **** 		len = 0;
+ 241:app.c         **** 	}
+ 242:app.c         **** 	else {
+ 243:app.c         **** 		if (len >= BUFFERLENGTH-1) {
+ 244:app.c         **** 			overflow = 1;
+ 245:app.c         **** 			return;
+ 246:app.c         **** 		}
+ 247:app.c         **** 		else {
+ 248:app.c         **** 			recbuf[len++] = c;
+ 249:app.c         **** 		}
+ 250:app.c         **** 	}
+ 251:app.c         **** */
+ 252:app.c         **** 
+ 253:app.c         **** }
+ 254:app.c         **** 
+ 255:app.c         **** 
+ 256:app.c         **** void poll_uart1(void) {
+ 131               	.LM1:
+ 132               	.LFBB2:
+ 133               	/* prologue: frame size=0 */
+ 134               	/* prologue end (size=0) */
+ 257:app.c         **** 	static char recbuf[BUFFERLENGTH];
+ 258:app.c         **** 	unsigned int c;
+ 259:app.c         **** 	static uint8_t i = 0;
+ 260:app.c         **** 	static uint8_t len = 0;
+ 261:app.c         **** 	static char overflow = 0;
+ 262:app.c         **** 
+ 263:app.c         **** 	c = uart1_getc();
+ 136               	.LM2:
+ 137 0002 0E94 0000 		call uart1_getc
+ 264:app.c         **** 
+ 265:app.c         **** 	if (c & UART_NO_DATA) {
+ 139               	.LM3:
+ 140 0006 90FD      		sbrc r25,0
+ 141 0008 00C0      		rjmp .L18
+ 266:app.c         **** 		return;
+ 267:app.c         **** 	}
+ 268:app.c         **** 
+ 269:app.c         **** 	// check for error
+ 270:app.c         **** 	if (c & UART_FRAME_ERROR) {
+ 143               	.LM4:
+ 144 000a 93FD      		sbrc r25,3
+ 145 000c 00C0      		rjmp .L18
+ 271:app.c         **** 		return;
+ 272:app.c         **** 	}
+ 273:app.c         **** 	if (c & UART_OVERRUN_ERROR) {
+ 147               	.LM5:
+ 148 000e 92FD      		sbrc r25,2
+ 149 0010 00C0      		rjmp .L18
+ 274:app.c         **** 		return;
+ 275:app.c         **** 	}
+ 276:app.c         **** 	if (c & UART_BUFFER_OVERFLOW) {
+ 151               	.LM6:
+ 152 0012 91FD      		sbrc r25,1
+ 153 0014 00C0      		rjmp .L18
+ 277:app.c         **** 		return;
+ 278:app.c         **** 	}
+ 279:app.c         **** 
+ 280:app.c         **** 	// echo back the received char
+ 281:app.c         **** 
+ 282:app.c         **** 	// avoid inserting NULL-Byte in strings
+ 283:app.c         **** 	if (c == 0x00)
+ 155               	.LM7:
+ 156 0016 0097      		sbiw r24,0
+ 157 0018 01F0      		breq .L18
+ 284:app.c         **** 		return;
+ 285:app.c         **** 
+ 286:app.c         **** // hier \n bzw \r rausnehmen daimt keine leerpakete kommen
+ 287:app.c         **** 	if (c == '\n' || c == '\r') {
+ 159               	.LM8:
+ 160 001a 8A30      		cpi r24,10
+ 161 001c 9105      		cpc r25,__zero_reg__
+ 162 001e 01F0      		breq .L10
+ 163 0020 8D30      		cpi r24,13
+ 164 0022 9105      		cpc r25,__zero_reg__
+ 165 0024 01F4      		brne .L12
+ 166               	.L10:
+ 288:app.c         **** 		if (overflow) {
+ 168               	.LM9:
+ 169 0026 8091 0000 		lds r24,overflow.2056
+ 170 002a 8823      		tst r24
+ 171 002c 01F0      		breq .L13
+ 289:app.c         **** 			overflow = 0;
+ 173               	.LM10:
+ 174 002e 1092 0000 		sts overflow.2056,__zero_reg__
+ 175 0032 00C0      		rjmp .L19
+ 176               	.L13:
+ 290:app.c         **** 			len = 0;
+ 291:app.c         **** 			return;
+ 292:app.c         **** 		}
+ 293:app.c         **** 		if (len == 0)
+ 178               	.LM11:
+ 179 0034 6091 0000 		lds r22,len.2055
+ 180 0038 6623      		tst r22
+ 181 003a 01F0      		breq .L18
+ 294:app.c         **** 			return;
+ 295:app.c         **** 		// add trailing NULL-byte
+ 296:app.c         **** 		recbuf[len] = 0x00;
+ 183               	.LM12:
+ 184 003c 7727      		clr r23
+ 185 003e FB01      		movw r30,r22
+ 186 0040 E050      		subi r30,lo8(-(recbuf.2052))
+ 187 0042 F040      		sbci r31,hi8(-(recbuf.2052))
+ 188 0044 1082      		st Z,__zero_reg__
+ 297:app.c         **** 		uip_udp_sendto(recbuf, len, eth2can_uart1);
+ 190               	.LM13:
+ 191 0046 4091 0000 		lds r20,eth2can_uart1
+ 192 004a 5091 0000 		lds r21,(eth2can_uart1)+1
+ 193 004e 80E0      		ldi r24,lo8(recbuf.2052)
+ 194 0050 90E0      		ldi r25,hi8(recbuf.2052)
+ 195 0052 0E94 0000 		call uip_udp_sendto
+ 298:app.c         **** 		uip_arp_out();
+ 197               	.LM14:
+ 198 0056 0E94 0000 		call uip_arp_out
+ 299:app.c         **** 		nic_send();
+ 200               	.LM15:
+ 201 005a 0E94 0000 		call nic_send
+ 202               	.L19:
+ 300:app.c         **** 		len = 0;
+ 204               	.LM16:
+ 205 005e 1092 0000 		sts len.2055,__zero_reg__
+ 206 0062 0895      		ret
+ 207               	.L12:
+ 301:app.c         **** 	}
+ 302:app.c         **** 	else {
+ 303:app.c         **** 		if (len >= BUFFERLENGTH-1) {
+ 209               	.LM17:
+ 210 0064 2091 0000 		lds r18,len.2055
+ 211 0068 2F3F      		cpi r18,lo8(-1)
+ 212 006a 01F4      		brne .L16
+ 304:app.c         **** 			overflow = 1;
+ 214               	.LM18:
+ 215 006c 81E0      		ldi r24,lo8(1)
+ 216 006e 8093 0000 		sts overflow.2056,r24
+ 217 0072 0895      		ret
+ 218               	.L16:
+ 305:app.c         **** 			return;
+ 306:app.c         **** 		}
+ 307:app.c         **** 		else {
+ 308:app.c         **** 			recbuf[len++] = c;
+ 220               	.LM19:
+ 221 0074 E22F      		mov r30,r18
+ 222 0076 FF27      		clr r31
+ 223 0078 E050      		subi r30,lo8(-(recbuf.2052))
+ 224 007a F040      		sbci r31,hi8(-(recbuf.2052))
+ 225 007c 8083      		st Z,r24
+ 226 007e 2F5F      		subi r18,lo8(-(1))
+ 227 0080 2093 0000 		sts len.2055,r18
+ 228               	.L18:
+ 229 0084 0895      		ret
+ 230               	/* epilogue: frame size=0 */
+ 231               	/* epilogue: noreturn */
+ 232               	/* epilogue end (size=0) */
+ 233               	/* function poll_uart1 size 66 (66) */
+ 241               	.Lscope2:
+ 243               	.global	poll_uart0
+ 245               	poll_uart0:
+ 247               	.LM20:
+ 248               	.LFBB3:
+ 249               	/* prologue: frame size=0 */
+ 250 0086 CF93      		push r28
+ 251 0088 DF93      		push r29
+ 252               	/* prologue end (size=2) */
+ 254               	.LM21:
+ 255 008a 0E94 0000 		call uart_getc
+ 256 008e EC01      		movw r28,r24
+ 258               	.LM22:
+ 259 0090 8091 0000 		lds r24,uart0_status
+ 260 0094 9091 0000 		lds r25,(uart0_status)+1
+ 261 0098 892B      		or r24,r25
+ 262 009a 01F4      		brne .L21
+ 264               	.LM23:
+ 265 009c CB37      		cpi r28,123
+ 266 009e D105      		cpc r29,__zero_reg__
+ 267 00a0 01F4      		brne .L23
+ 268 00a2 8091 0000 		lds r24,uart0_quote
+ 269 00a6 8823      		tst r24
+ 270 00a8 01F4      		brne .L23
+ 272               	.LM24:
+ 273 00aa 81E0      		ldi r24,lo8(1)
+ 274 00ac 90E0      		ldi r25,hi8(1)
+ 275 00ae 9093 0000 		sts (uart0_status)+1,r25
+ 276 00b2 8093 0000 		sts uart0_status,r24
+ 278               	.LM25:
+ 279 00b6 8BE7      		ldi r24,lo8(123)
+ 280 00b8 8093 0000 		sts recbuf.2035,r24
+ 281 00bc 81E0      		ldi r24,lo8(1)
+ 282 00be 8093 0000 		sts len.2038,r24
+ 283 00c2 00C0      		rjmp .L23
+ 284               	.L21:
+ 286               	.LM26:
+ 287 00c4 8091 0000 		lds r24,len.2038
+ 288 00c8 E82F      		mov r30,r24
+ 289 00ca FF27      		clr r31
+ 290 00cc E050      		subi r30,lo8(-(recbuf.2035))
+ 291 00ce F040      		sbci r31,hi8(-(recbuf.2035))
+ 292 00d0 C083      		st Z,r28
+ 293 00d2 682F      		mov r22,r24
+ 294 00d4 6F5F      		subi r22,lo8(-(1))
+ 295 00d6 6093 0000 		sts len.2038,r22
+ 297               	.LM27:
+ 298 00da CD37      		cpi r28,125
+ 299 00dc D105      		cpc r29,__zero_reg__
+ 300 00de 01F4      		brne .L23
+ 301 00e0 8091 0000 		lds r24,uart0_quote
+ 302 00e4 8823      		tst r24
+ 303 00e6 01F4      		brne .L23
+ 305               	.LM28:
+ 306 00e8 7727      		clr r23
+ 307 00ea FB01      		movw r30,r22
+ 308 00ec E050      		subi r30,lo8(-(recbuf.2035))
+ 309 00ee F040      		sbci r31,hi8(-(recbuf.2035))
+ 310 00f0 1082      		st Z,__zero_reg__
+ 312               	.LM29:
+ 313 00f2 4091 0000 		lds r20,eth2can_uart0
+ 314 00f6 5091 0000 		lds r21,(eth2can_uart0)+1
+ 315 00fa 80E0      		ldi r24,lo8(recbuf.2035)
+ 316 00fc 90E0      		ldi r25,hi8(recbuf.2035)
+ 317 00fe 0E94 0000 		call uip_udp_sendto
+ 319               	.LM30:
+ 320 0102 0E94 0000 		call uip_arp_out
+ 322               	.LM31:
+ 323 0106 0E94 0000 		call nic_send
+ 325               	.LM32:
+ 326 010a 1092 0000 		sts len.2038,__zero_reg__
+ 328               	.LM33:
+ 329 010e 1092 0000 		sts (uart0_status)+1,__zero_reg__
+ 330 0112 1092 0000 		sts uart0_status,__zero_reg__
+ 331               	.L23:
+ 333               	.LM34:
+ 334 0116 8091 0000 		lds r24,uart0_quote
+ 335 011a 8823      		tst r24
+ 336 011c 01F0      		breq .L28
+ 337 011e 1092 0000 		sts uart0_quote,__zero_reg__
+ 338 0122 00C0      		rjmp .L30
+ 339               	.L28:
+ 341               	.LM35:
+ 342 0124 CC35      		cpi r28,92
+ 343 0126 D105      		cpc r29,__zero_reg__
+ 344 0128 01F4      		brne .L30
+ 345 012a 81E0      		ldi r24,lo8(1)
+ 346 012c 8093 0000 		sts uart0_quote,r24
+ 347               	.L30:
+ 349               	.LM36:
+ 350 0130 6091 0000 		lds r22,len.2038
+ 351 0134 6623      		tst r22
+ 352 0136 01F0      		breq .L34
+ 354               	.LM37:
+ 355 0138 4091 0000 		lds r20,eth2can_uart0
+ 356 013c 5091 0000 		lds r21,(eth2can_uart0)+1
+ 357 0140 7727      		clr r23
+ 358 0142 80E0      		ldi r24,lo8(recbuf.2035)
+ 359 0144 90E0      		ldi r25,hi8(recbuf.2035)
+ 360 0146 0E94 0000 		call uip_udp_sendto
+ 362               	.LM38:
+ 363 014a 0E94 0000 		call uip_arp_out
+ 365               	.LM39:
+ 366 014e 0E94 0000 		call nic_send
+ 367               	.L34:
+ 368               	/* epilogue: frame size=0 */
+ 369 0152 DF91      		pop r29
+ 370 0154 CF91      		pop r28
+ 371 0156 0895      		ret
+ 372               	/* epilogue end (size=3) */
+ 373               	/* function poll_uart0 size 105 (100) */
+ 380               	.Lscope3:
+ 382               	.global	poll_can
+ 384               	poll_can:
+ 386               	.LM40:
+ 387               	.LFBB4:
+ 388               	/* prologue: frame size=0 */
+ 389               	/* prologue end (size=0) */
+ 391               	.LM41:
+ 392 0158 0E94 0000 		call mcp2515_check_message
+ 393 015c 8823      		tst r24
+ 394 015e 01F0      		breq .L38
+ 396               	.LM42:
+ 397 0160 80E0      		ldi r24,lo8(m)
+ 398 0162 90E0      		ldi r25,hi8(m)
+ 399 0164 0E94 0000 		call mcp2515_get_extmessage
+ 401               	.LM43:
+ 402 0168 4091 0000 		lds r20,eth2can_can
+ 403 016c 5091 0000 		lds r21,(eth2can_can)+1
+ 404 0170 6FE0      		ldi r22,lo8(15)
+ 405 0172 70E0      		ldi r23,hi8(15)
+ 406 0174 80E0      		ldi r24,lo8(m)
+ 407 0176 90E0      		ldi r25,hi8(m)
+ 408 0178 0E94 0000 		call uip_udp_sendto
+ 410               	.LM44:
+ 411 017c 0E94 0000 		call uip_arp_out
+ 413               	.LM45:
+ 414 0180 0E94 0000 		call nic_send
+ 415               	.L38:
+ 416 0184 0895      		ret
+ 417               	/* epilogue: frame size=0 */
+ 418               	/* epilogue: noreturn */
+ 419               	/* epilogue end (size=0) */
+ 420               	/* function poll_can size 23 (23) */
+ 422               	.Lscope4:
+ 424               	.global	udp_connection_app
+ 426               	udp_connection_app:
+ 428               	.LM46:
+ 429               	.LFBB5:
+ 430               	/* prologue: frame size=0 */
+ 431               	/* prologue end (size=0) */
+ 433               	.LM47:
+ 434 0186 8091 0000 		lds r24,uip_flags
+ 435 018a 81FD      		sbrc r24,1
+ 436 018c 00C0      		rjmp .L40
+ 438               	.LM48:
+ 439 018e 8091 0000 		lds r24,uip_flags
+ 440 0192 82FF      		sbrs r24,2
+ 441 0194 00C0      		rjmp .L68
+ 442               	.L40:
+ 444               	.LM49:
+ 445 0196 2091 0000 		lds r18,uip_udp_conn
+ 446 019a 3091 0000 		lds r19,(uip_udp_conn)+1
+ 447 019e 8091 0000 		lds r24,eth2can_uart0
+ 448 01a2 9091 0000 		lds r25,(eth2can_uart0)+1
+ 449 01a6 2817      		cp r18,r24
+ 450 01a8 3907      		cpc r19,r25
+ 451 01aa 01F4      		brne .L43
+ 453               	.LM50:
+ 454 01ac 8091 0000 		lds r24,uip_appdata
+ 455 01b0 9091 0000 		lds r25,(uip_appdata)+1
+ 456 01b4 9093 0000 		sts (bla)+1,r25
+ 457 01b8 8093 0000 		sts bla,r24
+ 459               	.LM51:
+ 460 01bc 0E94 0000 		call uart_puts
+ 461               	.L43:
+ 463               	.LM52:
+ 464 01c0 4091 0000 		lds r20,uip_udp_conn
+ 465 01c4 5091 0000 		lds r21,(uip_udp_conn)+1
+ 466 01c8 8091 0000 		lds r24,eth2can_uart1
+ 467 01cc 9091 0000 		lds r25,(eth2can_uart1)+1
+ 468 01d0 4817      		cp r20,r24
+ 469 01d2 5907      		cpc r21,r25
+ 470 01d4 01F4      		brne .L45
+ 472               	.LM53:
+ 473 01d6 8091 0000 		lds r24,uip_appdata
+ 474 01da 9091 0000 		lds r25,(uip_appdata)+1
+ 475 01de 9093 0000 		sts (bla)+1,r25
+ 476 01e2 8093 0000 		sts bla,r24
+ 478               	.LM54:
+ 479 01e6 0E94 0000 		call uart1_puts
+ 480 01ea 0895      		ret
+ 481               	.L45:
+ 483               	.LM55:
+ 484 01ec 8091 0000 		lds r24,eth2can_can
+ 485 01f0 9091 0000 		lds r25,(eth2can_can)+1
+ 486 01f4 4817      		cp r20,r24
+ 487 01f6 5907      		cpc r21,r25
+ 488 01f8 01F4      		brne .L47
+ 490               	.LM56:
+ 491 01fa 8091 0000 		lds r24,uip_appdata
+ 492 01fe 9091 0000 		lds r25,(uip_appdata)+1
+ 493 0202 9093 0000 		sts (message)+1,r25
+ 494 0206 8093 0000 		sts message,r24
+ 496               	.LM57:
+ 497 020a 0E94 0000 		call mcp2515_send_extmessage
+ 498 020e 0895      		ret
+ 499               	.L47:
+ 501               	.LM58:
+ 502 0210 8091 0000 		lds r24,eth2can_status
+ 503 0214 9091 0000 		lds r25,(eth2can_status)+1
+ 504 0218 4817      		cp r20,r24
+ 505 021a 5907      		cpc r21,r25
+ 506 021c 01F0      		breq .+2
+ 507 021e 00C0      		rjmp .L68
+ 509               	.LM59:
+ 510 0220 E091 0000 		lds r30,uip_appdata
+ 511 0224 F091 0000 		lds r31,(uip_appdata)+1
+ 512 0228 8081      		ld r24,Z
+ 513 022a 8D34      		cpi r24,lo8(77)
+ 514 022c 01F4      		brne .+2
+ 515 022e 00C0      		rjmp .L54
+ 516 0230 8E34      		cpi r24,lo8(78)
+ 517 0232 00F4      		brsh .L59
+ 518 0234 8334      		cpi r24,lo8(67)
+ 519 0236 01F0      		breq .L51
+ 520 0238 8434      		cpi r24,lo8(68)
+ 521 023a 00F4      		brsh .L60
+ 522 023c 8134      		cpi r24,lo8(65)
+ 523 023e 01F0      		breq .+2
+ 524 0240 00C0      		rjmp .L68
+ 525 0242 00C0      		rjmp .L50
+ 526               	.L60:
+ 527 0244 8534      		cpi r24,lo8(69)
+ 528 0246 01F4      		brne .+2
+ 529 0248 00C0      		rjmp .L52
+ 530 024a 8934      		cpi r24,lo8(73)
+ 531 024c 01F0      		breq .+2
+ 532 024e 00C0      		rjmp .L68
+ 533 0250 00C0      		rjmp .L53
+ 534               	.L59:
+ 535 0252 8235      		cpi r24,lo8(82)
+ 536 0254 01F0      		breq .L56
+ 537 0256 8335      		cpi r24,lo8(83)
+ 538 0258 00F4      		brsh .L61
+ 539 025a 8035      		cpi r24,lo8(80)
+ 540 025c 01F0      		breq .+2
+ 541 025e 00C0      		rjmp .L68
+ 542 0260 00C0      		rjmp .L55
+ 543               	.L61:
+ 544 0262 8335      		cpi r24,lo8(83)
+ 545 0264 01F0      		breq .L57
+ 546 0266 8835      		cpi r24,lo8(88)
+ 547 0268 01F0      		breq .+2
+ 548 026a 00C0      		rjmp .L68
+ 549 026c 00C0      		rjmp .L58
+ 550               	.L55:
+ 552               	.LM60:
+ 553 026e 8081      		ld r24,Z
+ 554 0270 8F5F      		subi r24,lo8(-(1))
+ 555 0272 8083      		st Z,r24
+ 556 0274 00C0      		rjmp .L71
+ 557               	.L51:
+ 559               	.LM61:
+ 560 0276 8DE2      		ldi r24,lo8(45)
+ 561 0278 0E94 0000 		call mcp2515_read_register
+ 562 027c 8093 0000 		sts status,r24
+ 564               	.LM62:
+ 565 0280 8CE1      		ldi r24,lo8(28)
+ 566 0282 0E94 0000 		call mcp2515_read_register
+ 567 0286 8093 0000 		sts status+1,r24
+ 569               	.LM63:
+ 570 028a 8DE1      		ldi r24,lo8(29)
+ 571 028c 0E94 0000 		call mcp2515_read_register
+ 572 0290 8093 0000 		sts status+2,r24
+ 574               	.LM64:
+ 575 0294 1092 0000 		sts status+3,__zero_reg__
+ 577               	.LM65:
+ 578 0298 4091 0000 		lds r20,eth2can_status
+ 579 029c 5091 0000 		lds r21,(eth2can_status)+1
+ 580 02a0 64E0      		ldi r22,lo8(4)
+ 581 02a2 70E0      		ldi r23,hi8(4)
+ 582 02a4 00C0      		rjmp .L70
+ 583               	.L50:
+ 585               	.LM66:
+ 586 02a6 8081      		ld r24,Z
+ 587 02a8 8F5F      		subi r24,lo8(-(1))
+ 588 02aa 8083      		st Z,r24
+ 590               	.LM67:
+ 591 02ac 0E94 0000 		call uip_arp_init
+ 592               	.L71:
+ 594               	.LM68:
+ 595 02b0 4091 0000 		lds r20,eth2can_status
+ 596 02b4 5091 0000 		lds r21,(eth2can_status)+1
+ 597 02b8 61E0      		ldi r22,lo8(1)
+ 598 02ba 70E0      		ldi r23,hi8(1)
+ 599 02bc 8091 0000 		lds r24,uip_appdata
+ 600 02c0 9091 0000 		lds r25,(uip_appdata)+1
+ 601 02c4 00C0      		rjmp .L69
+ 602               	.L57:
+ 604               	.LM69:
+ 605 02c6 E0E0      		ldi r30,lo8(0)
+ 606 02c8 F0E0      		ldi r31,hi8(0)
+ 607 02ca 0994      		ijmp
+ 608               	.L56:
+ 610               	.LM70:
+ 611               	/* #APP */
+ 612 02cc F894      		cli
+ 614               	.LM71:
+ 615               	/* #NOAPP */
+ 616 02ce 88E1      		ldi r24,lo8(24)
+ 617 02d0 90E0      		ldi r25,hi8(24)
+ 618 02d2 28E0      		ldi r18,lo8(8)
+ 619               	/* #APP */
+ 620 02d4 0FB6      		in __tmp_reg__,__SREG__
+ 621 02d6 F894      		cli
+ 622 02d8 A895      		wdr
+ 623 02da 81BD      		out 33,r24
+ 624 02dc 0FBE      		out __SREG__,__tmp_reg__
+ 625 02de 21BD      		out 33,r18
+ 626               	/* #NOAPP */
+ 627               	.L62:
+ 628 02e0 00C0      		rjmp .L62
+ 629               	.L53:
+ 631               	.LM72:
+ 632 02e2 0E94 0000 		call mcp2515_init
+ 634               	.LM73:
+ 635 02e6 40E0      		ldi r20,lo8(0)
+ 636 02e8 60EE      		ldi r22,lo8(-32)
+ 637 02ea 8FE0      		ldi r24,lo8(15)
+ 638 02ec 0E94 0000 		call mcp2515_bit_modify
+ 639 02f0 0895      		ret
+ 640               	.L54:
+ 642               	.LM74:
+ 643 02f2 90E0      		ldi r25,lo8(0)
+ 644 02f4 00C0      		rjmp .L63
+ 645               	.L64:
+ 647               	.LM75:
+ 648 02f6 E92F      		mov r30,r25
+ 649 02f8 FF27      		clr r31
+ 650 02fa DF01      		movw r26,r30
+ 651 02fc 1296      		adiw r26,2
+ 652               	.LBB6:
+ 653               	.LBB7:
+ 655               	.Ltext1:
+   1:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* Copyright (c) 2002, 2003, 2004, 2007 Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Copyright (c) 2005, 2006 Bjoern Haase
+   3:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    All rights reserved.
+   4:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+   5:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Redistribution and use in source and binary forms, with or without
+   6:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    modification, are permitted provided that the following conditions are met:
+   7:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+   8:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Redistributions of source code must retain the above copyright
+   9:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      notice, this list of conditions and the following disclaimer.
+  10:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  11:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Redistributions in binary form must reproduce the above copyright
+  12:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      notice, this list of conditions and the following disclaimer in
+  13:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      the documentation and/or other materials provided with the
+  14:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      distribution.
+  15:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  16:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    * Neither the name of the copyright holders nor the names of
+  17:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      contributors may be used to endorse or promote products derived
+  18:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      from this software without specific prior written permission.
+  19:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  20:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  21:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  22:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  23:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  24:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  25:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  26:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  27:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  28:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  29:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  30:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  31:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  32:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* $Id: eeprom.h,v 1.17.2.4 2007/01/23 15:34:58 joerg_wunsch Exp $ */
+  33:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  34:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /*
+  35:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    eeprom.h
+  36:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  37:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    Contributors:
+  38:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Created by Marek Michalkiewicz <marekm@linux.org.pl>
+  39:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      eeprom_write_word and eeprom_write_block added by Artur Lipowski 
+  40:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      <LAL@pro.onet.pl>
+  41:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Complete rewrite using the original interface by Bjoern Haase 
+  42:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      <bjoern.haase@de.bosch.com>. 
+  43:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****  */
+  44:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  45:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef _EEPROM_H_
+  46:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _EEPROM_H_ 1
+  47:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  48:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define __need_size_t
+  49:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <stddef.h>
+  50:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <inttypes.h>
+  51:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  52:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \file */
+  53:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  54:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifdef __AVR_MEGA__
+  55:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define XCALL "call"
+  56:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #else
+  57:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define XCALL "rcall"
+  58:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  59:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  60:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #include <avr/io.h>
+  61:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef __EEPROM_REG_LOCATIONS__
+  62:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def __EEPROM_REG_LOCATIONS__
+  63:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+  64:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      In order to be able to work without a requiring a multilib 
+  65:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      approach for dealing with controllers having the EEPROM registers
+  66:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      at different positions in memory space, the eeprom functions evaluate
+  67:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      __EEPROM_REG_LOCATIONS__: It is assumed to be defined by
+  68:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      the device io header and contains 6 uppercase hex digits encoding the 
+  69:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      addresses of EECR,EEDR and EEAR. 
+  70:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      First two letters:  EECR address.
+  71:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Second two letters: EEDR address.
+  72:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      Last two letters:   EEAR address.
+  73:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      The default 1C1D1E corresponds to the
+  74:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      register location that is valid for most controllers. The value
+  75:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      of this define symbol is used for appending it to the base name of the
+  76:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      assembler functions.  */
+  77:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define __EEPROM_REG_LOCATIONS__ 1C1D1E
+  78:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  79:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _STR2(EXP) _STR1(EXP)
+  80:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _STR1(EXP) #EXP
+  81:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define _REG_LOCATION_SUFFIX _STR2(__EEPROM_REG_LOCATIONS__)
+  82:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  83:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #ifndef CR_TAB
+  84:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define CR_TAB "\n\t"
+  85:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+  86:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  87:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  88:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \defgroup avr_eeprom <avr/eeprom.h>: EEPROM handling
+  89:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \code #include <avr/eeprom.h> \endcode
+  90:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  91:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     This header file declares the interface to some simple library
+  92:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     routines suitable for handling the data EEPROM contained in the
+  93:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     AVR microcontrollers.  The implementation uses a simple polled
+  94:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     mode interface.  Applications that require interrupt-controlled
+  95:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     EEPROM access to ensure that no time will be wasted in spinloops
+  96:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     will have to deploy their own implementation.
+  97:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+  98:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note All of the read/write functions first make sure the EEPROM
+  99:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      is ready to be accessed.  Since this may cause long delays if a
+ 100:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      write operation is still pending, time-critical applications
+ 101:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      should first poll the EEPROM e. g. using eeprom_is_ready() before
+ 102:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      attempting any actual I/O.
+ 103:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 104:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note This header file declares inline functions that call the
+ 105:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      assembler subroutines directly. This prevents that the compiler
+ 106:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      generates push/pops for the call-clobbered registers. This way
+ 107:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      also a specific calling convention could be used for the eeprom
+ 108:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      routines e.g. by passing values in __tmp_reg__, eeprom addresses in
+ 109:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      X and memory addresses in Z registers. Method is optimized for code 
+ 110:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      size.
+ 111:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 112:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note Presently supported are two locations of the EEPROM register
+ 113:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      set: 0x1F,0x20,0x21 and 0x1C,0x1D,0x1E 
+ 114:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      (see ::__EEPROM_REG_LOCATIONS__).
+ 115:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 116:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \note As these functions modify IO registers, they are known to be
+ 117:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      non-reentrant.  If any of these functions are used from both,
+ 118:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      standard and interrupt context, the applications must ensure
+ 119:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      proper protection (e.g. by disabling interrupts before accessing
+ 120:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      them).
+ 121:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 122:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** */
+ 123:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 124:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 125:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /* forward declarations of the inline functions so that doxygen does
+ 126:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****    not get confused by the attribute expression.  */
+ 127:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 128:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline uint8_t __attribute__ ((always_inline))
+ 129:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_byte (const uint8_t *addr);
+ 130:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 131:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline uint16_t __attribute__ ((always_inline)) 
+ 132:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_word (const uint16_t *addr);
+ 133:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 134:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 135:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_block (void *pointer_ram,
+ 136:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    const void *pointer_eeprom,
+ 137:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    size_t size);
+ 138:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 139:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 140:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_byte (uint8_t *addr,uint8_t value);
+ 141:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 142:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 143:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_word (uint16_t *addr,uint16_t value);
+ 144:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 145:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** static inline void __attribute__ ((always_inline))
+ 146:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_block (const void *pointer_ram,
+ 147:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                     void *pointer_eeprom,
+ 148:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                     size_t size);
+ 149:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 150:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \name avr-libc declarations */
+ 151:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 152:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /*@{*/
+ 153:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 154:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def EEMEM
+ 155:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 156:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Attribute expression causing a variable to be allocated within the .eeprom
+ 157:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****      section.  */
+ 158:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define EEMEM __attribute__((section(".eeprom")))
+ 159:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 160:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def eeprom_is_ready
+ 161:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 162:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \returns 1 if EEPROM is ready for a new read/write operation, 0 if not. */
+ 163:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 164:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #if defined(__DOXYGEN__)
+ 165:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready()
+ 166:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(EEWE)
+ 167:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(EECR, EEWE)
+ 168:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(EEPE)
+ 169:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(EECR, EEPE)
+ 170:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #elif defined(DEECR) && defined(EEL)
+ 171:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # define eeprom_is_ready() bit_is_clear(DEECR, EEL)
+ 172:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #else
+ 173:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** # error "No write enable bit known for this device's EEPROM."
+ 174:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #endif
+ 175:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 176:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \def eeprom_busy_wait
+ 177:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \ingroup avr_eeprom
+ 178:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 179:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Loops until the eeprom is no longer busy.
+ 180:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 181:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \returns Nothing. */
+ 182:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 183:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** #define eeprom_busy_wait() do {} while (!eeprom_is_ready())
+ 184:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 185:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 186:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \ingroup avr_eeprom
+ 187:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Read one byte from EEPROM address \c addr. */
+ 188:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 189:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** uint8_t 
+ 190:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_byte (const uint8_t *addr) 
+ 191:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** {
+ 192:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   uint8_t result;
+ 193:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   __asm__ __volatile__
+ 657               	.LM76:
+ 658               	/* #APP */
+ 659 02fe 0E94 0000 		call __eeprom_read_byte_1C1D1E
+ 660 0302 802D      		mov r24,__tmp_reg__
+ 661               	/* #NOAPP */
+ 662               	.LBE7:
+ 663               	.LBE6:
+ 665               	.Ltext2:
+ 667               	.LM77:
+ 668 0304 E050      		subi r30,lo8(-(status))
+ 669 0306 F040      		sbci r31,hi8(-(status))
+ 670 0308 8083      		st Z,r24
+ 671 030a 9F5F      		subi r25,lo8(-(1))
+ 672               	.L63:
+ 674               	.LM78:
+ 675 030c 9630      		cpi r25,lo8(6)
+ 676 030e 00F0      		brlo .L64
+ 677 0310 9093 0000 		sts c,r25
+ 679               	.LM79:
+ 680 0314 1092 0000 		sts status+6,__zero_reg__
+ 682               	.LM80:
+ 683 0318 66E0      		ldi r22,lo8(6)
+ 684 031a 70E0      		ldi r23,hi8(6)
+ 685               	.L70:
+ 686 031c 80E0      		ldi r24,lo8(status)
+ 687 031e 90E0      		ldi r25,hi8(status)
+ 688               	.L69:
+ 689 0320 0E94 0000 		call uip_udp_sendto
+ 691               	.LM81:
+ 692 0324 0E94 0000 		call uip_arp_out
+ 694               	.LM82:
+ 695 0328 0E94 0000 		call nic_send
+ 696 032c 0895      		ret
+ 697               	.L52:
+ 699               	.LM83:
+ 700 032e 1092 0000 		sts c,__zero_reg__
+ 701 0332 00C0      		rjmp .L66
+ 702               	.L67:
+ 703 0334 E091 0000 		lds r30,uip_appdata
+ 704 0338 F091 0000 		lds r31,(uip_appdata)+1
+ 705 033c 3196      		adiw r30,1
+ 706 033e BB27      		clr r27
+ 707 0340 EA0F      		add r30,r26
+ 708 0342 FB1F      		adc r31,r27
+ 709 0344 8081      		ld r24,Z
+ 710 0346 1296      		adiw r26,2
+ 711               	.LBB8:
+ 712               	.LBB9:
+ 714               	.Ltext3:
+ 194:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       ( XCALL " __eeprom_read_byte_" _REG_LOCATION_SUFFIX CR_TAB
+ 195:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****         "mov %1,__tmp_reg__"
+ 196:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****        : "+x" (addr),
+ 197:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****          "=r" (result)
+ 198:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****        : );
+ 199:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   return result;
+ 200:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** }
+ 201:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 202:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \ingroup avr_eeprom
+ 203:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Read one 16-bit word (little endian) from EEPROM address \c addr. */
+ 204:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** uint16_t
+ 205:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_word (const uint16_t *addr)
+ 206:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** {
+ 207:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   uint16_t result;
+ 208:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 209:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   __asm__ __volatile__ (
+ 210:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****         XCALL " __eeprom_read_word_" _REG_LOCATION_SUFFIX CR_TAB
+ 211:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****        : "+x" (addr),
+ 212:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****          "=z" (result)
+ 213:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****        : );
+ 214:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   return result;
+ 215:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** }
+ 216:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 217:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \ingroup avr_eeprom
+ 218:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Read a block of \c n bytes from EEPROM address \c pointer_eeprom to
+ 219:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     \c pointer_ram.  For constant n <= 256 bytes a library function is used.
+ 220:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     For block sizes unknown at compile time or block sizes > 256 an inline
+ 221:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     loop is expanded. */
+ 222:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 223:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** void 
+ 224:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_read_block (void *pointer_ram,
+ 225:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    const void *pointer_eeprom,
+ 226:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    size_t n)
+ 227:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** {
+ 228:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   if (!__builtin_constant_p (n)
+ 229:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       || n > 256)
+ 230:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     {
+ 231:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       /* make sure size is a 16 bit variable.  */
+ 232:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       uint16_t size = n; 
+ 233:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 234:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       __asm__ __volatile__ ( 
+ 235:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             ".%=_start:" CR_TAB
+ 236:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "sbiw %2,1" CR_TAB
+ 237:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "brlt .%=_finished" CR_TAB
+ 238:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****              XCALL " __eeprom_read_byte_" _REG_LOCATION_SUFFIX CR_TAB
+ 239:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "st z+,__tmp_reg__" CR_TAB
+ 240:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "rjmp .%=_start" CR_TAB
+ 241:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             ".%=_finished:" 
+ 242:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****           : "=x" (pointer_eeprom),
+ 243:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "=z" (pointer_ram),
+ 244:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             "+w" (size)
+ 245:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****            : "x" (pointer_eeprom), 
+ 246:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****              "z" (pointer_ram)
+ 247:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****            : "memory");
+ 248:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     }
+ 249:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   else
+ 250:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     {
+ 251:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****       if (n != 0)
+ 252:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****         {
+ 253:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****           if (n == 256)
+ 254:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             {
+ 255:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****               __asm__ __volatile__ (
+ 256:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                   XCALL " __eeprom_read_block_" _REG_LOCATION_SUFFIX 
+ 257:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "+x" (pointer_eeprom),
+ 258:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                   "=z" (pointer_ram)
+ 259:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "z"  (pointer_ram)
+ 260:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "memory");
+ 261:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             }
+ 262:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****           else
+ 263:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             {
+ 264:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****               /* Needed in order to truncate to 8 bit.  */
+ 265:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****               uint8_t len;
+ 266:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****               len = (uint8_t) n; 
+ 267:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 268:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****               __asm__ __volatile__ (
+ 269:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                   "mov __zero_reg__,%2"      CR_TAB
+ 270:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                    XCALL " __eeprom_read_block_" _REG_LOCATION_SUFFIX 
+ 271:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "+x" (pointer_eeprom),
+ 272:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                   "=z" (pointer_ram)
+ 273:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "r"  (len),
+ 274:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                   "z"  (pointer_ram)
+ 275:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****                 : "memory");
+ 276:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****             }
+ 277:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****         }
+ 278:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     }
+ 279:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** }
+ 280:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 281:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** /** \ingroup avr_eeprom
+ 282:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****     Write a byte \c value to EEPROM address \c addr. */
+ 283:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** 
+ 284:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** void 
+ 285:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** eeprom_write_byte (uint8_t *addr,uint8_t value)
+ 286:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h **** {
+ 287:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/avr/eeprom.h ****   __asm__ __volatile__ (
+ 716               	.LM84:
+ 717               	/* #APP */
+ 718 0348 082E      		mov __tmp_reg__,r24
+ 719 034a 0E94 0000 		call __eeprom_write_byte_1C1D1E
+ 720               	/* #NOAPP */
+ 721               	.LBE9:
+ 722               	.LBE8:
+ 724               	.Ltext4:
+ 726               	.LM85:
+ 727 034e 8091 0000 		lds r24,c
+ 728 0352 8F5F      		subi r24,lo8(-(1))
+ 729 0354 8093 0000 		sts c,r24
+ 730               	.L66:
+ 731 0358 A091 0000 		lds r26,c
+ 732 035c A630      		cpi r26,lo8(6)
+ 733 035e 00F0      		brlo .L67
+ 734 0360 0895      		ret
+ 735               	.L58:
+ 737               	.LM86:
+ 738 0362 1092 0000 		sts send_init,__zero_reg__
+ 739               	.L68:
+ 740 0366 0895      		ret
+ 741               	/* epilogue: frame size=0 */
+ 742               	/* epilogue: noreturn */
+ 743               	/* epilogue end (size=0) */
+ 744               	/* function udp_connection_app size 250 (250) */
+ 756               	.Lscope5:
+ 757               		.data
+ 758               	.LC0:
+ 759 0000 696E 6974 		.string	"init"
+ 759      00
+ 760               		.text
+ 762               	.global	connection_init
+ 764               	connection_init:
+ 766               	.LM87:
+ 767               	.LFBB6:
+ 768               	/* prologue: frame size=2 */
+ 769 0368 0F93      		push r16
+ 770 036a 1F93      		push r17
+ 771 036c CF93      		push r28
+ 772 036e DF93      		push r29
+ 773 0370 CDB7      		in r28,__SP_L__
+ 774 0372 DEB7      		in r29,__SP_H__
+ 775 0374 2297      		sbiw r28,2
+ 776 0376 0FB6      		in __tmp_reg__,__SREG__
+ 777 0378 F894      		cli
+ 778 037a DEBF      		out __SP_H__,r29
+ 779 037c 0FBE      		out __SREG__,__tmp_reg__
+ 780 037e CDBF      		out __SP_L__,r28
+ 781               	/* prologue end (size=12) */
+ 783               	.LM88:
+ 784 0380 80EC      		ldi r24,lo8(-22336)
+ 785 0382 98EA      		ldi r25,hi8(-22336)
+ 786 0384 9A83      		std Y+2,r25
+ 787 0386 8983      		std Y+1,r24
+ 788 0388 80E0      		ldi r24,lo8(1280)
+ 789 038a 95E0      		ldi r25,hi8(1280)
+ 790 038c 9C83      		std Y+4,r25
+ 791 038e 8B83      		std Y+3,r24
+ 793               	.LM89:
+ 794 0390 60E1      		ldi r22,lo8(10000)
+ 795 0392 77E2      		ldi r23,hi8(10000)
+ 796 0394 8E01      		movw r16,r28
+ 797 0396 0F5F      		subi r16,lo8(-(1))
+ 798 0398 1F4F      		sbci r17,hi8(-(1))
+ 799 039a C801      		movw r24,r16
+ 800 039c 0E94 0000 		call uip_udp_listen
+ 801 03a0 9093 0000 		sts (eth2can_status)+1,r25
+ 802 03a4 8093 0000 		sts eth2can_status,r24
+ 804               	.LM90:
+ 805 03a8 61E1      		ldi r22,lo8(10001)
+ 806 03aa 77E2      		ldi r23,hi8(10001)
+ 807 03ac C801      		movw r24,r16
+ 808 03ae 0E94 0000 		call uip_udp_listen
+ 809 03b2 9093 0000 		sts (eth2can_uart0)+1,r25
+ 810 03b6 8093 0000 		sts eth2can_uart0,r24
+ 812               	.LM91:
+ 813 03ba 62E1      		ldi r22,lo8(10002)
+ 814 03bc 77E2      		ldi r23,hi8(10002)
+ 815 03be C801      		movw r24,r16
+ 816 03c0 0E94 0000 		call uip_udp_listen
+ 817 03c4 9093 0000 		sts (eth2can_uart1)+1,r25
+ 818 03c8 8093 0000 		sts eth2can_uart1,r24
+ 820               	.LM92:
+ 821 03cc 63E1      		ldi r22,lo8(10003)
+ 822 03ce 77E2      		ldi r23,hi8(10003)
+ 823 03d0 C801      		movw r24,r16
+ 824 03d2 0E94 0000 		call uip_udp_listen
+ 825 03d6 9093 0000 		sts (eth2can_can)+1,r25
+ 826 03da 8093 0000 		sts eth2can_can,r24
+ 828               	.LM93:
+ 829 03de 0E94 0000 		call mcp2515_init
+ 831               	.LM94:
+ 832 03e2 40E0      		ldi r20,lo8(0)
+ 833 03e4 60EE      		ldi r22,lo8(-32)
+ 834 03e6 8FE0      		ldi r24,lo8(15)
+ 835 03e8 0E94 0000 		call mcp2515_bit_modify
+ 837               	.LM95:
+ 838 03ec 4091 0000 		lds r20,eth2can_uart1
+ 839 03f0 5091 0000 		lds r21,(eth2can_uart1)+1
+ 840 03f4 64E0      		ldi r22,lo8(4)
+ 841 03f6 70E0      		ldi r23,hi8(4)
+ 842 03f8 80E0      		ldi r24,lo8(.LC0)
+ 843 03fa 90E0      		ldi r25,hi8(.LC0)
+ 844 03fc 0E94 0000 		call uip_udp_sendto
+ 846               	.LM96:
+ 847 0400 0E94 0000 		call uip_arp_out
+ 849               	.LM97:
+ 850 0404 0E94 0000 		call nic_send
+ 852               	.LM98:
+ 853 0408 1092 0000 		sts send_init,__zero_reg__
+ 854               	/* epilogue: frame size=2 */
+ 855 040c 2296      		adiw r28,2
+ 856 040e 0FB6      		in __tmp_reg__,__SREG__
+ 857 0410 F894      		cli
+ 858 0412 DEBF      		out __SP_H__,r29
+ 859 0414 0FBE      		out __SREG__,__tmp_reg__
+ 860 0416 CDBF      		out __SP_L__,r28
+ 861 0418 DF91      		pop r29
+ 862 041a CF91      		pop r28
+ 863 041c 1F91      		pop r17
+ 864 041e 0F91      		pop r16
+ 865 0420 0895      		ret
+ 866               	/* epilogue end (size=11) */
+ 867               	/* function connection_init size 93 (70) */
+ 872               	.Lscope6:
+ 873               	.global	uart0_quote
+ 874               	.global	uart0_quote
+ 875               		.section .bss
+ 878               	uart0_quote:
+ 879 0000 00        		.skip 1,0
+ 880               	.global	uart0_status
+ 881               	.global	uart0_status
+ 884               	uart0_status:
+ 885 0001 0000      		.skip 2,0
+ 886               		.lcomm overflow.2056,1
+ 887               		.lcomm len.2055,1
+ 888               		.lcomm recbuf.2052,256
+ 889               		.lcomm len.2038,1
+ 890               		.lcomm recbuf.2035,256
+ 891               		.lcomm status,20
+ 892               		.comm eth2can_status,2,1
+ 893               		.comm eth2can_can,2,1
+ 894               		.comm eth2can_uart0,2,1
+ 895               		.comm eth2can_uart1,2,1
+ 896               		.comm send_init,1,1
+ 897               		.comm bla,2,1
+ 898               		.comm c,1,1
+ 899               		.comm temp,2,1
+ 900               		.comm eth_adr,6,1
+ 901               		.comm message,2,1
+ 902               		.comm m,13,1
+ 922               		.text
+ 924               	.Letext0:
+ 925               	/* File "app.c": code  538 = 0x021a ( 509), prologues  14, epilogues  15 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 app.c
+     /tmp/ccr3gnX7.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccr3gnX7.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccr3gnX7.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccr3gnX7.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccr3gnX7.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccr3gnX7.s:114    .text:00000000 tcp_connection_app
+     /tmp/ccr3gnX7.s:129    .text:00000002 poll_uart1
+                             .bss:00000003 overflow.2056
+     /tmp/ccr3gnX7.s:886    .bss:00000004 len.2055
+     /tmp/ccr3gnX7.s:887    .bss:00000005 recbuf.2052
+                            *COM*:00000002 eth2can_uart1
+     /tmp/ccr3gnX7.s:245    .text:00000086 poll_uart0
+     /tmp/ccr3gnX7.s:884    .bss:00000001 uart0_status
+     /tmp/ccr3gnX7.s:878    .bss:00000000 uart0_quote
+     /tmp/ccr3gnX7.s:889    .bss:00000106 recbuf.2035
+     /tmp/ccr3gnX7.s:888    .bss:00000105 len.2038
+                            *COM*:00000002 eth2can_uart0
+     /tmp/ccr3gnX7.s:384    .text:00000158 poll_can
+                            *COM*:0000000d m
+                            *COM*:00000002 eth2can_can
+     /tmp/ccr3gnX7.s:426    .text:00000186 udp_connection_app
+                            *COM*:00000002 bla
+                            *COM*:00000002 message
+                            *COM*:00000002 eth2can_status
+     /tmp/ccr3gnX7.s:890    .bss:00000206 status
+                            *COM*:00000001 c
+                            *COM*:00000001 send_init
+     /tmp/ccr3gnX7.s:764    .text:00000368 connection_init
+                            *COM*:00000002 temp
+                            *COM*:00000006 eth_adr
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+uart1_getc
+uip_udp_sendto
+uip_arp_out
+nic_send
+uart_getc
+mcp2515_check_message
+mcp2515_get_extmessage
+uip_flags
+uip_udp_conn
+uip_appdata
+uart_puts
+uart1_puts
+mcp2515_send_extmessage
+mcp2515_read_register
+uip_arp_init
+mcp2515_init
+mcp2515_bit_modify
+__eeprom_read_byte_1C1D1E
+__eeprom_write_byte_1C1D1E
+uip_udp_listen

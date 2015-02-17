@@ -1,0 +1,2000 @@
+   1               		.file	"mcp2515.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  78               	.global	spi_putc
+  80               	spi_putc:
+   1:mcp2515.c     **** /* Copyright (c) 2007 Fabian Greif
+   2:mcp2515.c     ****  * All rights reserved.
+   3:mcp2515.c     ****  *
+   4:mcp2515.c     ****  * Redistribution and use in source and binary forms, with or without
+   5:mcp2515.c     ****  * modification, are permitted provided that the following conditions
+   6:mcp2515.c     ****  * are met:
+   7:mcp2515.c     ****  *
+   8:mcp2515.c     ****  * 1. Redistributions of source code must retain the above copyright
+   9:mcp2515.c     ****  *    notice, this list of conditions and the following disclaimer.
+  10:mcp2515.c     ****  * 2. Redistributions in binary form must reproduce the above copyright
+  11:mcp2515.c     ****  *    notice, this list of conditions and the following disclaimer in the
+  12:mcp2515.c     ****  *    documentation and/or other materials provided with the distribution.
+  13:mcp2515.c     ****  *
+  14:mcp2515.c     ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
+  15:mcp2515.c     ****  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  16:mcp2515.c     ****  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  17:mcp2515.c     ****  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+  18:mcp2515.c     ****  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  19:mcp2515.c     ****  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  20:mcp2515.c     ****  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  21:mcp2515.c     ****  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  22:mcp2515.c     ****  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  23:mcp2515.c     ****  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  24:mcp2515.c     ****  * SUCH DAMAGE.
+  25:mcp2515.c     ****  */
+  26:mcp2515.c     **** // ----------------------------------------------------------------------------
+  27:mcp2515.c     **** 
+  28:mcp2515.c     **** 
+  29:mcp2515.c     **** #include <avr/io.h>
+  30:mcp2515.c     **** #include <util/delay.h>
+  31:mcp2515.c     **** 
+  32:mcp2515.c     **** #include "mcp2515.h"
+  33:mcp2515.c     **** #include "mcp2515_defs.h"
+  34:mcp2515.c     **** 
+  35:mcp2515.c     **** #include "global.h"
+  36:mcp2515.c     **** #include "defaults.h"
+  37:mcp2515.c     **** 
+  38:mcp2515.c     **** // -------------------------------------------------------------------------
+  39:mcp2515.c     **** // Schreibt/liest ein Byte ueber den Hardware SPI Bus
+  40:mcp2515.c     **** 
+  41:mcp2515.c     **** uint8_t spi_putc( uint8_t data )
+  42:mcp2515.c     **** {
+  82               	.LM0:
+  83               	.LFBB1:
+  84               	/* prologue: frame size=0 */
+  85               	/* prologue end (size=0) */
+  43:mcp2515.c     **** 	// put byte in send-buffer
+  44:mcp2515.c     **** 	SPDR = data;
+  87               	.LM1:
+  88 0000 8FB9      		out 47-0x20,r24
+  89               	.L2:
+  45:mcp2515.c     **** 	
+  46:mcp2515.c     **** 	// wait until byte was send
+  47:mcp2515.c     **** 	while( !( SPSR & (1<<SPIF) ) )
+  91               	.LM2:
+  92 0002 779B      		sbis 46-0x20,7
+  93 0004 00C0      		rjmp .L2
+  48:mcp2515.c     **** 		;
+  49:mcp2515.c     **** 	
+  50:mcp2515.c     **** 	return SPDR;
+  95               	.LM3:
+  96 0006 8FB1      		in r24,47-0x20
+  51:mcp2515.c     **** }
+  98               	.LM4:
+  99 0008 9927      		clr r25
+ 100               	/* epilogue: frame size=0 */
+ 101 000a 0895      		ret
+ 102               	/* epilogue end (size=1) */
+ 103               	/* function spi_putc size 6 (5) */
+ 105               	.Lscope1:
+ 109               	.global	mcp2515_write_register
+ 111               	mcp2515_write_register:
+  52:mcp2515.c     **** 
+  53:mcp2515.c     **** // -------------------------------------------------------------------------
+  54:mcp2515.c     **** void mcp2515_write_register( uint8_t adress, uint8_t data )
+  55:mcp2515.c     **** {
+ 113               	.LM5:
+ 114               	.LFBB2:
+ 115               	/* prologue: frame size=0 */
+ 116               	/* prologue end (size=0) */
+ 117 000c 982F      		mov r25,r24
+  56:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 119               	.LM6:
+ 120 000e C098      		cbi 56-0x20,0
+ 121               	.LBB38:
+ 122               	.LBB39:
+ 124               	.LM7:
+ 125 0010 82E0      		ldi r24,lo8(2)
+ 126 0012 8FB9      		out 47-0x20,r24
+ 127               	.L8:
+ 129               	.LM8:
+ 130 0014 779B      		sbis 46-0x20,7
+ 131 0016 00C0      		rjmp .L8
+ 133               	.LM9:
+ 134 0018 8FB1      		in r24,47-0x20
+ 135               	.LBE39:
+ 136               	.LBE38:
+ 137               	.LBB40:
+ 138               	.LBB41:
+ 140               	.LM10:
+ 141 001a 9FB9      		out 47-0x20,r25
+ 142               	.L10:
+ 144               	.LM11:
+ 145 001c 779B      		sbis 46-0x20,7
+ 146 001e 00C0      		rjmp .L10
+ 148               	.LM12:
+ 149 0020 8FB1      		in r24,47-0x20
+ 150               	.LBE41:
+ 151               	.LBE40:
+ 152               	.LBB42:
+ 153               	.LBB43:
+ 155               	.LM13:
+ 156 0022 6FB9      		out 47-0x20,r22
+ 157               	.L12:
+ 159               	.LM14:
+ 160 0024 779B      		sbis 46-0x20,7
+ 161 0026 00C0      		rjmp .L12
+ 163               	.LM15:
+ 164 0028 8FB1      		in r24,47-0x20
+ 165               	.LBE43:
+ 166               	.LBE42:
+  57:mcp2515.c     **** 	
+  58:mcp2515.c     **** 	spi_putc(SPI_WRITE);
+  59:mcp2515.c     **** 	spi_putc(adress);
+  60:mcp2515.c     **** 	spi_putc(data);
+  61:mcp2515.c     **** 	
+  62:mcp2515.c     **** 	SET(MCP2515_CS);
+ 168               	.LM16:
+ 169 002a C09A      		sbi 56-0x20,0
+ 170               	/* epilogue: frame size=0 */
+ 171 002c 0895      		ret
+ 172               	/* epilogue end (size=1) */
+ 173               	/* function mcp2515_write_register size 17 (16) */
+ 175               	.Lscope2:
+ 178               	.global	mcp2515_read_register
+ 180               	mcp2515_read_register:
+  63:mcp2515.c     **** }
+  64:mcp2515.c     **** 
+  65:mcp2515.c     **** // -------------------------------------------------------------------------
+  66:mcp2515.c     **** uint8_t mcp2515_read_register(uint8_t adress)
+  67:mcp2515.c     **** {
+ 182               	.LM17:
+ 183               	.LFBB3:
+ 184               	/* prologue: frame size=0 */
+ 185               	/* prologue end (size=0) */
+ 186 002e 982F      		mov r25,r24
+  68:mcp2515.c     **** 	uint8_t data;
+  69:mcp2515.c     **** 	
+  70:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 188               	.LM18:
+ 189 0030 C098      		cbi 56-0x20,0
+ 190               	.LBB44:
+ 191               	.LBB45:
+ 193               	.LM19:
+ 194 0032 83E0      		ldi r24,lo8(3)
+ 195 0034 8FB9      		out 47-0x20,r24
+ 196               	.L22:
+ 198               	.LM20:
+ 199 0036 779B      		sbis 46-0x20,7
+ 200 0038 00C0      		rjmp .L22
+ 202               	.LM21:
+ 203 003a 8FB1      		in r24,47-0x20
+ 204               	.LBE45:
+ 205               	.LBE44:
+ 206               	.LBB46:
+ 207               	.LBB47:
+ 209               	.LM22:
+ 210 003c 9FB9      		out 47-0x20,r25
+ 211               	.L24:
+ 213               	.LM23:
+ 214 003e 779B      		sbis 46-0x20,7
+ 215 0040 00C0      		rjmp .L24
+ 217               	.LM24:
+ 218 0042 8FB1      		in r24,47-0x20
+ 219               	.LBE47:
+ 220               	.LBE46:
+ 221               	.LBB48:
+ 222               	.LBB49:
+ 224               	.LM25:
+ 225 0044 8FEF      		ldi r24,lo8(-1)
+ 226 0046 8FB9      		out 47-0x20,r24
+ 227               	.L26:
+ 229               	.LM26:
+ 230 0048 779B      		sbis 46-0x20,7
+ 231 004a 00C0      		rjmp .L26
+ 233               	.LM27:
+ 234 004c 8FB1      		in r24,47-0x20
+ 235               	.LBE49:
+ 236               	.LBE48:
+  71:mcp2515.c     **** 	
+  72:mcp2515.c     **** 	spi_putc(SPI_READ);
+  73:mcp2515.c     **** 	spi_putc(adress);
+  74:mcp2515.c     **** 	
+  75:mcp2515.c     **** 	data = spi_putc(0xff);	
+  76:mcp2515.c     **** 	
+  77:mcp2515.c     **** 	SET(MCP2515_CS);
+ 238               	.LM28:
+ 239 004e C09A      		sbi 56-0x20,0
+  78:mcp2515.c     **** 	
+  79:mcp2515.c     **** 	return data;
+  80:mcp2515.c     **** }
+ 241               	.LM29:
+ 242 0050 9927      		clr r25
+ 243               	/* epilogue: frame size=0 */
+ 244 0052 0895      		ret
+ 245               	/* epilogue end (size=1) */
+ 246               	/* function mcp2515_read_register size 19 (18) */
+ 248               	.Lscope3:
+ 253               	.global	mcp2515_bit_modify
+ 255               	mcp2515_bit_modify:
+  81:mcp2515.c     **** 
+  82:mcp2515.c     **** // -------------------------------------------------------------------------
+  83:mcp2515.c     **** void mcp2515_bit_modify(uint8_t adress, uint8_t mask, uint8_t data)
+  84:mcp2515.c     **** {
+ 257               	.LM30:
+ 258               	.LFBB4:
+ 259               	/* prologue: frame size=0 */
+ 260               	/* prologue end (size=0) */
+ 261 0054 982F      		mov r25,r24
+  85:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 263               	.LM31:
+ 264 0056 C098      		cbi 56-0x20,0
+ 265               	.LBB50:
+ 266               	.LBB51:
+ 268               	.LM32:
+ 269 0058 85E0      		ldi r24,lo8(5)
+ 270 005a 8FB9      		out 47-0x20,r24
+ 271               	.L36:
+ 273               	.LM33:
+ 274 005c 779B      		sbis 46-0x20,7
+ 275 005e 00C0      		rjmp .L36
+ 277               	.LM34:
+ 278 0060 8FB1      		in r24,47-0x20
+ 279               	.LBE51:
+ 280               	.LBE50:
+ 281               	.LBB52:
+ 282               	.LBB53:
+ 284               	.LM35:
+ 285 0062 9FB9      		out 47-0x20,r25
+ 286               	.L38:
+ 288               	.LM36:
+ 289 0064 779B      		sbis 46-0x20,7
+ 290 0066 00C0      		rjmp .L38
+ 292               	.LM37:
+ 293 0068 8FB1      		in r24,47-0x20
+ 294               	.LBE53:
+ 295               	.LBE52:
+ 296               	.LBB54:
+ 297               	.LBB55:
+ 299               	.LM38:
+ 300 006a 6FB9      		out 47-0x20,r22
+ 301               	.L40:
+ 303               	.LM39:
+ 304 006c 779B      		sbis 46-0x20,7
+ 305 006e 00C0      		rjmp .L40
+ 307               	.LM40:
+ 308 0070 8FB1      		in r24,47-0x20
+ 309               	.LBE55:
+ 310               	.LBE54:
+ 311               	.LBB56:
+ 312               	.LBB57:
+ 314               	.LM41:
+ 315 0072 4FB9      		out 47-0x20,r20
+ 316               	.L42:
+ 318               	.LM42:
+ 319 0074 779B      		sbis 46-0x20,7
+ 320 0076 00C0      		rjmp .L42
+ 322               	.LM43:
+ 323 0078 8FB1      		in r24,47-0x20
+ 324               	.LBE57:
+ 325               	.LBE56:
+  86:mcp2515.c     **** 	
+  87:mcp2515.c     **** 	spi_putc(SPI_BIT_MODIFY);
+  88:mcp2515.c     **** 	spi_putc(adress);
+  89:mcp2515.c     **** 	spi_putc(mask);
+  90:mcp2515.c     **** 	spi_putc(data);
+  91:mcp2515.c     **** 	
+  92:mcp2515.c     **** 	SET(MCP2515_CS);
+ 327               	.LM44:
+ 328 007a C09A      		sbi 56-0x20,0
+ 329               	/* epilogue: frame size=0 */
+ 330 007c 0895      		ret
+ 331               	/* epilogue end (size=1) */
+ 332               	/* function mcp2515_bit_modify size 21 (20) */
+ 334               	.Lscope4:
+ 337               	.global	mcp2515_read_status
+ 339               	mcp2515_read_status:
+  93:mcp2515.c     **** }
+  94:mcp2515.c     **** 
+  95:mcp2515.c     **** // ----------------------------------------------------------------------------
+  96:mcp2515.c     **** uint8_t mcp2515_read_status(uint8_t type)
+  97:mcp2515.c     **** {
+ 341               	.LM45:
+ 342               	.LFBB5:
+ 343               	/* prologue: frame size=0 */
+ 344               	/* prologue end (size=0) */
+  98:mcp2515.c     **** 	uint8_t data;
+  99:mcp2515.c     **** 	
+ 100:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 346               	.LM46:
+ 347 007e C098      		cbi 56-0x20,0
+ 348               	.LBB58:
+ 349               	.LBB59:
+ 351               	.LM47:
+ 352 0080 8FB9      		out 47-0x20,r24
+ 353               	.L54:
+ 355               	.LM48:
+ 356 0082 779B      		sbis 46-0x20,7
+ 357 0084 00C0      		rjmp .L54
+ 359               	.LM49:
+ 360 0086 8FB1      		in r24,47-0x20
+ 361               	.LBE59:
+ 362               	.LBE58:
+ 363               	.LBB60:
+ 364               	.LBB61:
+ 366               	.LM50:
+ 367 0088 8FEF      		ldi r24,lo8(-1)
+ 368 008a 8FB9      		out 47-0x20,r24
+ 369               	.L56:
+ 371               	.LM51:
+ 372 008c 779B      		sbis 46-0x20,7
+ 373 008e 00C0      		rjmp .L56
+ 375               	.LM52:
+ 376 0090 8FB1      		in r24,47-0x20
+ 377               	.LBE61:
+ 378               	.LBE60:
+ 101:mcp2515.c     **** 	
+ 102:mcp2515.c     **** 	spi_putc(type);
+ 103:mcp2515.c     **** 	data = spi_putc(0xff);
+ 104:mcp2515.c     **** 	
+ 105:mcp2515.c     **** 	SET(MCP2515_CS);
+ 380               	.LM53:
+ 381 0092 C09A      		sbi 56-0x20,0
+ 106:mcp2515.c     **** 	
+ 107:mcp2515.c     **** 	return data;
+ 108:mcp2515.c     **** }
+ 383               	.LM54:
+ 384 0094 9927      		clr r25
+ 385               	/* epilogue: frame size=0 */
+ 386 0096 0895      		ret
+ 387               	/* epilogue end (size=1) */
+ 388               	/* function mcp2515_read_status size 13 (12) */
+ 390               	.Lscope5:
+ 392               	.global	mcp2515_check_message
+ 394               	mcp2515_check_message:
+ 109:mcp2515.c     **** 
+ 110:mcp2515.c     **** // -------------------------------------------------------------------------
+ 111:mcp2515.c     **** bool mcp2515_init(void)
+ 112:mcp2515.c     **** {
+ 113:mcp2515.c     **** 	SET(MCP2515_CS);
+ 114:mcp2515.c     **** 	SET_OUTPUT(MCP2515_CS);
+ 115:mcp2515.c     **** 	
+ 116:mcp2515.c     **** 	RESET(P_SCK);
+ 117:mcp2515.c     **** 	RESET(P_MOSI);
+ 118:mcp2515.c     **** 	RESET(P_MISO);
+ 119:mcp2515.c     **** 	
+ 120:mcp2515.c     **** 	SET_OUTPUT(P_SCK);
+ 121:mcp2515.c     **** 	SET_OUTPUT(P_MOSI);
+ 122:mcp2515.c     **** 	SET_INPUT(P_MISO);
+ 123:mcp2515.c     **** 	
+ 124:mcp2515.c     **** 	SET_INPUT(MCP2515_INT);
+ 125:mcp2515.c     **** 	SET(MCP2515_INT);
+ 126:mcp2515.c     **** 	
+ 127:mcp2515.c     **** 	// active SPI master interface
+ 128:mcp2515.c     **** 	SPCR = (1<<SPE)|(1<<MSTR) | (0<<SPR1)|(1<<SPR0);
+ 129:mcp2515.c     **** 	SPSR = 0;
+ 130:mcp2515.c     **** 	
+ 131:mcp2515.c     **** 	// reset MCP2515 by software reset.
+ 132:mcp2515.c     **** 	// After this he is in configuration mode.
+ 133:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 134:mcp2515.c     **** 	spi_putc(SPI_RESET);
+ 135:mcp2515.c     **** 	SET(MCP2515_CS);
+ 136:mcp2515.c     **** 	
+ 137:mcp2515.c     **** 	// wait a little bit until the MCP2515 has restarted
+ 138:mcp2515.c     **** 	_delay_us(10);
+ 139:mcp2515.c     **** 	
+ 140:mcp2515.c     **** 	// load CNF1..3 Register
+ 141:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 142:mcp2515.c     **** 	spi_putc(SPI_WRITE);
+ 143:mcp2515.c     **** 	spi_putc(CNF3);
+ 144:mcp2515.c     **** 	
+ 145:mcp2515.c     **** 	spi_putc((1<<PHSEG21));		// Bitrate 125 kbps at 16 MHz
+ 146:mcp2515.c     **** 	spi_putc((1<<BTLMODE)|(1<<PHSEG11));
+ 147:mcp2515.c     **** 
+ 148:mcp2515.c     **** 	//ENDY: Hier kann man Bitrate ändern -> einfach ersten 2 Klammren weg
+ 149:mcp2515.c     **** 	spi_putc(0);
+ 150:mcp2515.c     **** 	//spi_putc((1<<BRP2)|(1<<BRP1)|(1<<BRP0));
+ 151:mcp2515.c     **** 	// activate interrupts
+ 152:mcp2515.c     **** 	spi_putc((1<<RX1IE)|(1<<RX0IE));
+ 153:mcp2515.c     **** 	SET(MCP2515_CS);
+ 154:mcp2515.c     **** 	
+ 155:mcp2515.c     **** 	// test if we could read back the value => is the chip accessible?
+ 156:mcp2515.c     **** 	//if (mcp2515_read_register(CNF1) != ((1<<BRP2)|(1<<BRP1)|(1<<BRP0))) {
+ 157:mcp2515.c     **** 	//	return false;
+ 158:mcp2515.c     **** 	//}
+ 159:mcp2515.c     **** 	if (mcp2515_read_register(CNF1) != 0) {
+ 160:mcp2515.c     **** 		return false;
+ 161:mcp2515.c     **** 	}
+ 162:mcp2515.c     **** 
+ 163:mcp2515.c     **** 	// deaktivate the RXnBF Pins (High Impedance State)
+ 164:mcp2515.c     **** 	mcp2515_write_register(BFPCTRL, 0x0F);
+ 165:mcp2515.c     **** 	
+ 166:mcp2515.c     **** 	// set TXnRTS as inputs
+ 167:mcp2515.c     **** 	mcp2515_write_register(TXRTSCTRL, 0);
+ 168:mcp2515.c     **** 	
+ 169:mcp2515.c     **** 	// turn off filters => receive any message
+ 170:mcp2515.c     **** 	mcp2515_write_register(RXB0CTRL, (1<<RXM1)|(1<<RXM0));
+ 171:mcp2515.c     **** 	mcp2515_write_register(RXB1CTRL, (1<<RXM1)|(1<<RXM0));
+ 172:mcp2515.c     **** 	
+ 173:mcp2515.c     **** 	// reset device to normal mode
+ 174:mcp2515.c     **** 	mcp2515_write_register(CANCTRL, 0);
+ 175:mcp2515.c     **** 	
+ 176:mcp2515.c     **** 	return true;
+ 177:mcp2515.c     **** }
+ 178:mcp2515.c     **** 
+ 179:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 180:mcp2515.c     **** // check if there are any new messages waiting
+ 181:mcp2515.c     **** 
+ 182:mcp2515.c     **** uint8_t mcp2515_check_message(void) {
+ 396               	.LM55:
+ 397               	.LFBB6:
+ 398               	/* prologue: frame size=0 */
+ 399               	/* prologue end (size=0) */
+ 183:mcp2515.c     **** 	return (!IS_SET(MCP2515_INT));
+ 401               	.LM56:
+ 402 0098 81B1      		in r24,33-0x20
+ 403 009a 9927      		clr r25
+ 404 009c 26E0      		ldi r18,6
+ 405 009e 9695      	1:	lsr r25
+ 406 00a0 8795      		ror r24
+ 407 00a2 2A95      		dec r18
+ 408 00a4 01F4      		brne 1b
+ 409 00a6 8095      		com r24
+ 410 00a8 9095      		com r25
+ 184:mcp2515.c     **** }
+ 412               	.LM57:
+ 413 00aa 8170      		andi r24,lo8(1)
+ 414 00ac 9070      		andi r25,hi8(1)
+ 415               	/* epilogue: frame size=0 */
+ 416 00ae 0895      		ret
+ 417               	/* epilogue end (size=1) */
+ 418               	/* function mcp2515_check_message size 12 (11) */
+ 420               	.Lscope6:
+ 422               	.global	mcp2515_check_free_buffer
+ 424               	mcp2515_check_free_buffer:
+ 185:mcp2515.c     **** 
+ 186:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 187:mcp2515.c     **** // check if there is a free buffer to send messages
+ 188:mcp2515.c     **** 
+ 189:mcp2515.c     **** bool mcp2515_check_free_buffer(void)
+ 190:mcp2515.c     **** {
+ 426               	.LM58:
+ 427               	.LFBB7:
+ 428               	/* prologue: frame size=0 */
+ 429               	/* prologue end (size=0) */
+ 191:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 431               	.LM59:
+ 432 00b0 80EA      		ldi r24,lo8(-96)
+ 433 00b2 0E94 0000 		call mcp2515_read_status
+ 434 00b6 90E0      		ldi r25,lo8(0)
+ 435 00b8 8475      		andi r24,lo8(84)
+ 436 00ba 8435      		cpi r24,lo8(84)
+ 437 00bc 01F4      		brne .L66
+ 439               	.LM60:
+ 440 00be 91E0      		ldi r25,lo8(1)
+ 441               	.L66:
+ 442 00c0 81E0      		ldi r24,lo8(1)
+ 443 00c2 9827      		eor r25,r24
+ 192:mcp2515.c     **** 	
+ 193:mcp2515.c     **** 	if ((status & 0x54) == 0x54) {
+ 194:mcp2515.c     **** 		// all buffers used
+ 195:mcp2515.c     **** 		return false;
+ 196:mcp2515.c     **** 	}
+ 197:mcp2515.c     **** 	
+ 198:mcp2515.c     **** 	return true;
+ 199:mcp2515.c     **** }
+ 445               	.LM61:
+ 446 00c4 892F      		mov r24,r25
+ 447 00c6 9927      		clr r25
+ 448               	/* epilogue: frame size=0 */
+ 449 00c8 0895      		ret
+ 450               	/* epilogue end (size=1) */
+ 451               	/* function mcp2515_check_free_buffer size 13 (12) */
+ 453               	.Lscope7:
+ 456               	.global	mcp2515_send_extmessage
+ 458               	mcp2515_send_extmessage:
+ 200:mcp2515.c     **** 
+ 201:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 202:mcp2515.c     **** uint8_t mcp2515_get_message(tCAN *message)
+ 203:mcp2515.c     **** {
+ 204:mcp2515.c     **** 	// read status
+ 205:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_RX_STATUS);
+ 206:mcp2515.c     **** 	uint8_t addr;
+ 207:mcp2515.c     **** 	
+ 208:mcp2515.c     **** 	if (bit_is_set(status,6)) {
+ 209:mcp2515.c     **** 		// message in buffer 0
+ 210:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 211:mcp2515.c     **** 	}
+ 212:mcp2515.c     **** 	else if (bit_is_set(status,7)) {
+ 213:mcp2515.c     **** 		// message in buffer 1
+ 214:mcp2515.c     **** 		addr = SPI_READ_RX | 0x04;
+ 215:mcp2515.c     **** 	}
+ 216:mcp2515.c     **** 	else {
+ 217:mcp2515.c     **** 		// Error: no message available
+ 218:mcp2515.c     **** 		return 0;
+ 219:mcp2515.c     **** 	}
+ 220:mcp2515.c     **** 
+ 221:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 222:mcp2515.c     **** 	spi_putc(addr);
+ 223:mcp2515.c     **** 	
+ 224:mcp2515.c     **** 	// read id
+ 225:mcp2515.c     **** 	message->id  = (uint16_t) spi_putc(0xff) << 3;
+ 226:mcp2515.c     **** 	message->id |=            spi_putc(0xff) >> 5;
+ 227:mcp2515.c     **** 	
+ 228:mcp2515.c     **** 	spi_putc(0xff);
+ 229:mcp2515.c     **** 	spi_putc(0xff);
+ 230:mcp2515.c     **** 	
+ 231:mcp2515.c     **** 	// read DLC
+ 232:mcp2515.c     **** 	uint8_t length = spi_putc(0xff) & 0x0f;
+ 233:mcp2515.c     **** 	
+ 234:mcp2515.c     **** 	message->header.length = length;
+ 235:mcp2515.c     **** 	message->header.rtr = (bit_is_set(status, 3)) ? 1 : 0;
+ 236:mcp2515.c     **** 	
+ 237:mcp2515.c     **** 	// read data
+ 238:mcp2515.c     **** 	for (uint8_t i=0;i<length;i++) {
+ 239:mcp2515.c     **** 		message->data[i] = spi_putc(0xff);
+ 240:mcp2515.c     **** 	}
+ 241:mcp2515.c     **** 	SET(MCP2515_CS);
+ 242:mcp2515.c     **** 	
+ 243:mcp2515.c     **** 	// clear interrupt flag
+ 244:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 245:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
+ 246:mcp2515.c     **** 	}
+ 247:mcp2515.c     **** 	else {
+ 248:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+ 249:mcp2515.c     **** 	}
+ 250:mcp2515.c     **** 	
+ 251:mcp2515.c     **** 	return (status & 0x07) + 1;
+ 252:mcp2515.c     **** }
+ 253:mcp2515.c     **** 
+ 254:mcp2515.c     **** uint8_t mcp2515_get_extmessage(tExtendedCAN *message)
+ 255:mcp2515.c     **** {
+ 256:mcp2515.c     **** 	// read status
+ 257:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_RX_STATUS);
+ 258:mcp2515.c     **** 	uint8_t addr;
+ 259:mcp2515.c     **** 	
+ 260:mcp2515.c     **** 	if (bit_is_set(status,6)) {
+ 261:mcp2515.c     **** 		// message in buffer 0
+ 262:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 263:mcp2515.c     **** 	}
+ 264:mcp2515.c     **** 	else if (bit_is_set(status,7)) {
+ 265:mcp2515.c     **** 		// message in buffer 1
+ 266:mcp2515.c     **** 		addr = SPI_READ_RX | 0x04;
+ 267:mcp2515.c     **** 	}
+ 268:mcp2515.c     **** 	else {
+ 269:mcp2515.c     **** 		// Error: no message available
+ 270:mcp2515.c     **** 		return 0;
+ 271:mcp2515.c     **** 	}
+ 272:mcp2515.c     **** 
+ 273:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 274:mcp2515.c     **** 	spi_putc(addr);
+ 275:mcp2515.c     **** 	
+ 276:mcp2515.c     **** 	// read id
+ 277:mcp2515.c     **** 	message->id[0]  = (char) spi_putc(0xff);
+ 278:mcp2515.c     **** 	message->id[1]  = (char) spi_putc(0xff);
+ 279:mcp2515.c     **** 	
+ 280:mcp2515.c     **** 	message->id[2] = spi_putc(0xff);
+ 281:mcp2515.c     **** 	message->id[3] = spi_putc(0xff);
+ 282:mcp2515.c     **** 	
+ 283:mcp2515.c     **** 	// read DLC
+ 284:mcp2515.c     **** 	uint8_t length = spi_putc(0xff) & 0x0f;
+ 285:mcp2515.c     **** 	
+ 286:mcp2515.c     **** 	message->header.length = length;
+ 287:mcp2515.c     **** 	message->header.rtr = (bit_is_set(status, 3)) ? 1 : 0;
+ 288:mcp2515.c     **** 	
+ 289:mcp2515.c     **** 	// read data
+ 290:mcp2515.c     **** 	for (uint8_t i=0;i<length;i++) {
+ 291:mcp2515.c     **** 		message->data[i] = spi_putc(0xff);
+ 292:mcp2515.c     **** 	}
+ 293:mcp2515.c     **** 	SET(MCP2515_CS);
+ 294:mcp2515.c     **** 	
+ 295:mcp2515.c     **** 	// clear interrupt flag
+ 296:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 297:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
+ 298:mcp2515.c     **** 	}
+ 299:mcp2515.c     **** 	else {
+ 300:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+ 301:mcp2515.c     **** 	}
+ 302:mcp2515.c     **** 	
+ 303:mcp2515.c     **** 	return (status & 0x07) + 1;
+ 304:mcp2515.c     **** }
+ 305:mcp2515.c     **** 
+ 306:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 307:mcp2515.c     **** uint8_t mcp2515_send_message(tCAN *message)
+ 308:mcp2515.c     **** {
+ 309:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 310:mcp2515.c     **** 	
+ 311:mcp2515.c     **** 	/* Statusbyte:
+ 312:mcp2515.c     **** 	 *
+ 313:mcp2515.c     **** 	 * Bit	Function
+ 314:mcp2515.c     **** 	 *  2	TXB0CNTRL.TXREQ
+ 315:mcp2515.c     **** 	 *  4	TXB1CNTRL.TXREQ
+ 316:mcp2515.c     **** 	 *  6	TXB2CNTRL.TXREQ
+ 317:mcp2515.c     **** 	 */
+ 318:mcp2515.c     **** 	uint8_t address;
+ 319:mcp2515.c     **** 	if (bit_is_clear(status, 2)) {
+ 320:mcp2515.c     **** 		address = 0x00;
+ 321:mcp2515.c     **** 	}
+ 322:mcp2515.c     **** 	else if (bit_is_clear(status, 4)) {
+ 323:mcp2515.c     **** 		address = 0x02;
+ 324:mcp2515.c     **** 	} 
+ 325:mcp2515.c     **** 	else if (bit_is_clear(status, 6)) {
+ 326:mcp2515.c     **** 		address = 0x04;
+ 327:mcp2515.c     **** 	}
+ 328:mcp2515.c     **** 	else {
+ 329:mcp2515.c     **** 		// all buffer used => could not send message
+ 330:mcp2515.c     **** 		return 0;
+ 331:mcp2515.c     **** 	}
+ 332:mcp2515.c     **** 	
+ 333:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 334:mcp2515.c     **** 	spi_putc(SPI_WRITE_TX | address);
+ 335:mcp2515.c     **** 	
+ 336:mcp2515.c     **** 	spi_putc(message->id >> 3);
+ 337:mcp2515.c     ****     spi_putc(message->id << 5);
+ 338:mcp2515.c     **** 	
+ 339:mcp2515.c     **** 	spi_putc(0);
+ 340:mcp2515.c     **** 	spi_putc(0);
+ 341:mcp2515.c     **** 	
+ 342:mcp2515.c     **** 	uint8_t length = message->header.length & 0x0f;
+ 343:mcp2515.c     **** 	
+ 344:mcp2515.c     **** 	if (message->header.rtr) {
+ 345:mcp2515.c     **** 		// a rtr-frame has a length, but contains no data
+ 346:mcp2515.c     **** 		spi_putc((1<<RTR) | length);
+ 347:mcp2515.c     **** 	}
+ 348:mcp2515.c     **** 	else {
+ 349:mcp2515.c     **** 		// set message length
+ 350:mcp2515.c     **** 		spi_putc(length);
+ 351:mcp2515.c     **** 		
+ 352:mcp2515.c     **** 		// data
+ 353:mcp2515.c     **** 		for (uint8_t i=0;i<length;i++) {
+ 354:mcp2515.c     **** 			spi_putc(message->data[i]);
+ 355:mcp2515.c     **** 		}
+ 356:mcp2515.c     **** 	}
+ 357:mcp2515.c     **** 	SET(MCP2515_CS);
+ 358:mcp2515.c     **** 	
+ 359:mcp2515.c     **** 	_delay_us(1);
+ 360:mcp2515.c     **** 	
+ 361:mcp2515.c     **** 	// send message
+ 362:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 363:mcp2515.c     **** 	address = (address == 0) ? 1 : address;
+ 364:mcp2515.c     **** 	spi_putc(SPI_RTS | address);
+ 365:mcp2515.c     **** 	SET(MCP2515_CS);
+ 366:mcp2515.c     **** 	
+ 367:mcp2515.c     **** 	return address;
+ 368:mcp2515.c     **** }
+ 369:mcp2515.c     **** 
+ 370:mcp2515.c     **** /*
+ 371:mcp2515.c     **** uint8_t mcp2515_send_extmessage(tExtendedCAN *message)
+ 372:mcp2515.c     **** {
+ 373:mcp2515.c     **** 	// Verschickt eine Nachricht ueber Puffer 0
+ 374:mcp2515.c     **** 	//  * 2 Datenbytes (0x04, 0xf3)
+ 375:mcp2515.c     **** 	//   * Standard ID: 0x0123
+ 376:mcp2515.c     **** 	//    
+ 377:mcp2515.c     **** 	//uint16_t id = 0x0123;
+ 378:mcp2515.c     **** 
+ 379:mcp2515.c     **** 	// Nachrichten Puffer auf Hoechste Prioritaet einstellen
+ 380:mcp2515.c     **** 	//    (braucht man nicht wenn man nur mit einem Puffer sendet, siehe Text) 
+ 381:mcp2515.c     **** 	mcp2515_bit_modify( TXB0CTRL, (1<<TXP1)|(1<<TXP0), (1<<TXP1)|(1<<TXP0) );
+ 382:mcp2515.c     **** 
+ 383:mcp2515.c     **** 	// ID einstellen
+ 384:mcp2515.c     **** 	mcp2515_write_register(TXB0SIDH, (uint8_t) (message->id[0]));
+ 385:mcp2515.c     **** 	mcp2515_write_register(TXB0SIDL, (uint8_t) (message->id[1]));
+ 386:mcp2515.c     **** 	mcp2515_write_register(TXB0EID8, (uint8_t) (message->id[2]));
+ 387:mcp2515.c     **** 	mcp2515_write_register(TXB0EID0, (uint8_t) (message->id[3]));
+ 388:mcp2515.c     **** 	//
+ 389:mcp2515.c     **** 	//
+ 390:mcp2515.c     **** 	// // Nachrichten Laenge + RTR einstellen
+ 391:mcp2515.c     **** 	mcp2515_write_register(TXB0DLC, 2);
+ 392:mcp2515.c     **** 	//
+ 393:mcp2515.c     **** 	// // Daten
+ 394:mcp2515.c     **** 	mcp2515_write_register(TXB0D0, 0x04);
+ 395:mcp2515.c     **** 	mcp2515_write_register(TXB0D1, 0xf3);
+ 396:mcp2515.c     **** 	//
+ 397:mcp2515.c     **** 	// // CAN Nachricht verschicken
+ 398:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 399:mcp2515.c     **** 	spi_putc(SPI_RTS | 0x01);
+ 400:mcp2515.c     **** 	SET(MCP2515_CS);
+ 401:mcp2515.c     **** 
+ 402:mcp2515.c     **** }*/
+ 403:mcp2515.c     **** uint8_t mcp2515_send_extmessage(tExtendedCAN *message)
+ 404:mcp2515.c     **** {
+ 460               	.LM62:
+ 461               	.LFBB8:
+ 462               	/* prologue: frame size=1 */
+ 463 00ca 0F93      		push r16
+ 464 00cc 1F93      		push r17
+ 465 00ce CF93      		push r28
+ 466 00d0 DF93      		push r29
+ 467 00d2 CDB7      		in r28,__SP_L__
+ 468 00d4 DEB7      		in r29,__SP_H__
+ 469 00d6 2197      		sbiw r28,1
+ 470 00d8 0FB6      		in __tmp_reg__,__SREG__
+ 471 00da F894      		cli
+ 472 00dc DEBF      		out __SP_H__,r29
+ 473 00de 0FBE      		out __SREG__,__tmp_reg__
+ 474 00e0 CDBF      		out __SP_L__,r28
+ 475               	/* prologue end (size=12) */
+ 476 00e2 8C01      		movw r16,r24
+ 405:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 478               	.LM63:
+ 479 00e4 80EA      		ldi r24,lo8(-96)
+ 480 00e6 0E94 0000 		call mcp2515_read_status
+ 481 00ea 8983      		std Y+1,r24
+ 406:mcp2515.c     **** 	
+ 407:mcp2515.c     **** 	/* Statusbyte:
+ 408:mcp2515.c     **** 	 *
+ 409:mcp2515.c     **** 	 * Bit	Function
+ 410:mcp2515.c     **** 	 *  2	TXB0CNTRL.TXREQ
+ 411:mcp2515.c     **** 	 *  4	TXB1CNTRL.TXREQ
+ 412:mcp2515.c     **** 	 *  6	TXB2CNTRL.TXREQ
+ 413:mcp2515.c     **** 	 */
+ 414:mcp2515.c     **** 	uint8_t address;
+ 415:mcp2515.c     **** 	if (bit_is_clear(status, 2)) {
+ 483               	.LM64:
+ 484 00ec 8981      		ldd r24,Y+1
+ 485 00ee 82FD      		sbrc r24,2
+ 486 00f0 00C0      		rjmp .L69
+ 488               	.LM65:
+ 489 00f2 90E0      		ldi r25,lo8(0)
+ 490 00f4 00C0      		rjmp .L71
+ 491               	.L69:
+ 416:mcp2515.c     **** 		address = 0x00;
+ 417:mcp2515.c     **** 	}
+ 418:mcp2515.c     **** 	else if (bit_is_clear(status, 4)) {
+ 493               	.LM66:
+ 494 00f6 8981      		ldd r24,Y+1
+ 495 00f8 84FD      		sbrc r24,4
+ 496 00fa 00C0      		rjmp .L72
+ 497 00fc 92E0      		ldi r25,lo8(2)
+ 498 00fe 00C0      		rjmp .L71
+ 499               	.L72:
+ 419:mcp2515.c     **** 		address = 0x02;
+ 420:mcp2515.c     **** 	} 
+ 421:mcp2515.c     **** 	else if (bit_is_clear(status, 6)) {
+ 501               	.LM67:
+ 502 0100 8981      		ldd r24,Y+1
+ 503 0102 86FF      		sbrs r24,6
+ 504 0104 00C0      		rjmp .L74
+ 505 0106 80E0      		ldi r24,lo8(0)
+ 506 0108 90E0      		ldi r25,hi8(0)
+ 507 010a 00C0      		rjmp .L76
+ 508               	.L74:
+ 509 010c 94E0      		ldi r25,lo8(4)
+ 510               	.L71:
+ 422:mcp2515.c     **** 		address = 0x04;
+ 423:mcp2515.c     **** 	}
+ 424:mcp2515.c     **** 	else {
+ 425:mcp2515.c     **** 		// all buffer used => could not send message
+ 426:mcp2515.c     **** 		return 0;
+ 427:mcp2515.c     **** 	}
+ 428:mcp2515.c     **** 	
+ 429:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 512               	.LM68:
+ 513 010e C098      		cbi 56-0x20,0
+ 430:mcp2515.c     **** 	spi_putc(SPI_WRITE_TX | address);
+ 515               	.LM69:
+ 516 0110 892F      		mov r24,r25
+ 517 0112 8064      		ori r24,lo8(64)
+ 518               	.LBB91:
+ 519               	.LBB92:
+ 521               	.LM70:
+ 522 0114 8FB9      		out 47-0x20,r24
+ 523               	.L77:
+ 525               	.LM71:
+ 526 0116 779B      		sbis 46-0x20,7
+ 527 0118 00C0      		rjmp .L77
+ 529               	.LM72:
+ 530 011a 8FB1      		in r24,47-0x20
+ 531               	.LBE92:
+ 532               	.LBE91:
+ 431:mcp2515.c     **** 	
+ 432:mcp2515.c     **** 	spi_putc(message->id[0]);
+ 534               	.LM73:
+ 535 011c F801      		movw r30,r16
+ 536 011e 8081      		ld r24,Z
+ 537               	.LBB93:
+ 538               	.LBB94:
+ 540               	.LM74:
+ 541 0120 8FB9      		out 47-0x20,r24
+ 542               	.L79:
+ 544               	.LM75:
+ 545 0122 779B      		sbis 46-0x20,7
+ 546 0124 00C0      		rjmp .L79
+ 548               	.LM76:
+ 549 0126 8FB1      		in r24,47-0x20
+ 550               	.LBE94:
+ 551               	.LBE93:
+ 433:mcp2515.c     **** 	spi_putc(message->id[1]);
+ 553               	.LM77:
+ 554 0128 F801      		movw r30,r16
+ 555 012a 8181      		ldd r24,Z+1
+ 556               	.LBB95:
+ 557               	.LBB96:
+ 559               	.LM78:
+ 560 012c 8FB9      		out 47-0x20,r24
+ 561               	.L81:
+ 563               	.LM79:
+ 564 012e 779B      		sbis 46-0x20,7
+ 565 0130 00C0      		rjmp .L81
+ 567               	.LM80:
+ 568 0132 8FB1      		in r24,47-0x20
+ 569               	.LBE96:
+ 570               	.LBE95:
+ 434:mcp2515.c     **** 	
+ 435:mcp2515.c     **** 	spi_putc(message->id[2]);
+ 572               	.LM81:
+ 573 0134 F801      		movw r30,r16
+ 574 0136 8281      		ldd r24,Z+2
+ 575               	.LBB97:
+ 576               	.LBB98:
+ 578               	.LM82:
+ 579 0138 8FB9      		out 47-0x20,r24
+ 580               	.L83:
+ 582               	.LM83:
+ 583 013a 779B      		sbis 46-0x20,7
+ 584 013c 00C0      		rjmp .L83
+ 586               	.LM84:
+ 587 013e 8FB1      		in r24,47-0x20
+ 588               	.LBE98:
+ 589               	.LBE97:
+ 436:mcp2515.c     **** 	spi_putc(message->id[3]);
+ 591               	.LM85:
+ 592 0140 F801      		movw r30,r16
+ 593 0142 8381      		ldd r24,Z+3
+ 594               	.LBB99:
+ 595               	.LBB100:
+ 597               	.LM86:
+ 598 0144 8FB9      		out 47-0x20,r24
+ 599               	.L85:
+ 601               	.LM87:
+ 602 0146 779B      		sbis 46-0x20,7
+ 603 0148 00C0      		rjmp .L85
+ 605               	.LM88:
+ 606 014a 8FB1      		in r24,47-0x20
+ 607               	.LBE100:
+ 608               	.LBE99:
+ 437:mcp2515.c     **** 	
+ 438:mcp2515.c     **** 	uint8_t length = message->header.length & 0x0f;
+ 610               	.LM89:
+ 611 014c F801      		movw r30,r16
+ 612 014e 8481      		ldd r24,Z+4
+ 613 0150 282F      		mov r18,r24
+ 614 0152 2695      		lsr r18
+ 615 0154 2F70      		andi r18,lo8(15)
+ 439:mcp2515.c     **** 	
+ 440:mcp2515.c     **** 	if (message->header.rtr) {
+ 617               	.LM90:
+ 618 0156 80FF      		sbrs r24,0
+ 619 0158 00C0      		rjmp .L87
+ 441:mcp2515.c     **** 		// a rtr-frame has a length, but contains no data
+ 442:mcp2515.c     **** 		spi_putc((1<<RTR) | length);
+ 621               	.LM91:
+ 622 015a 2064      		ori r18,lo8(64)
+ 623               	.LBB101:
+ 624               	.LBB102:
+ 626               	.LM92:
+ 627 015c 2FB9      		out 47-0x20,r18
+ 628               	.L89:
+ 630               	.LM93:
+ 631 015e 779B      		sbis 46-0x20,7
+ 632 0160 00C0      		rjmp .L89
+ 634               	.LM94:
+ 635 0162 8FB1      		in r24,47-0x20
+ 636 0164 00C0      		rjmp .L91
+ 637               	.L87:
+ 638               	.LBE102:
+ 639               	.LBE101:
+ 640               	.LBB103:
+ 641               	.LBB104:
+ 643               	.LM95:
+ 644 0166 2FB9      		out 47-0x20,r18
+ 645               	.L92:
+ 647               	.LM96:
+ 648 0168 779B      		sbis 46-0x20,7
+ 649 016a 00C0      		rjmp .L92
+ 651               	.LM97:
+ 652 016c 8FB1      		in r24,47-0x20
+ 653 016e 30E0      		ldi r19,lo8(0)
+ 654 0170 00C0      		rjmp .L94
+ 655               	.L95:
+ 656               	.LBE104:
+ 657               	.LBE103:
+ 658               	.LBB105:
+ 443:mcp2515.c     **** 	}
+ 444:mcp2515.c     **** 	else {
+ 445:mcp2515.c     **** 		// set message length
+ 446:mcp2515.c     **** 		spi_putc(length);
+ 447:mcp2515.c     **** 		
+ 448:mcp2515.c     **** 		// data
+ 449:mcp2515.c     **** 		for (uint8_t i=0;i<length;i++) {
+ 450:mcp2515.c     **** 			spi_putc(message->data[i]);
+ 660               	.LM98:
+ 661 0172 F801      		movw r30,r16
+ 662 0174 E30F      		add r30,r19
+ 663 0176 F11D      		adc r31,__zero_reg__
+ 664 0178 8581      		ldd r24,Z+5
+ 665               	.LBB106:
+ 666               	.LBB107:
+ 668               	.LM99:
+ 669 017a 8FB9      		out 47-0x20,r24
+ 670               	.L96:
+ 672               	.LM100:
+ 673 017c 779B      		sbis 46-0x20,7
+ 674 017e 00C0      		rjmp .L96
+ 676               	.LM101:
+ 677 0180 8FB1      		in r24,47-0x20
+ 678               	.LBE107:
+ 679               	.LBE106:
+ 681               	.LM102:
+ 682 0182 3F5F      		subi r19,lo8(-(1))
+ 683               	.L94:
+ 684 0184 3217      		cp r19,r18
+ 685 0186 01F4      		brne .L95
+ 686               	.L91:
+ 687               	.LBE105:
+ 451:mcp2515.c     **** 		}
+ 452:mcp2515.c     **** 	}
+ 453:mcp2515.c     **** 	SET(MCP2515_CS);
+ 689               	.LM103:
+ 690 0188 C09A      		sbi 56-0x20,0
+ 691               	.LBB108:
+ 692               	.LBB109:
+ 693               	.LBB110:
+ 694               	.LBB111:
+ 696               	.Ltext1:
+   1:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    Copyright (c) 2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    All rights reserved.
+   4:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+   5:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    Redistribution and use in source and binary forms, with or without
+   6:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    modification, are permitted provided that the following conditions are met:
+   7:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+   8:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Redistributions of source code must retain the above copyright
+   9:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer.
+  10:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  11:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Redistributions in binary form must reproduce the above copyright
+  12:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      notice, this list of conditions and the following disclaimer in
+  13:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      the documentation and/or other materials provided with the
+  14:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      distribution.
+  15:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  16:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****    * Neither the name of the copyright holders nor the names of
+  17:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      contributors may be used to endorse or promote products derived
+  18:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****      from this software without specific prior written permission.
+  19:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  20:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  21:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  22:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  23:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  24:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  25:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  26:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  27:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  28:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  29:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  30:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  31:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  32:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /* $Id: delay_basic.h,v 1.1.2.2 2007/05/13 21:26:06 joerg_wunsch Exp $ */
+  33:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  34:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #ifndef _UTIL_DELAY_BASIC_H_
+  35:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #define _UTIL_DELAY_BASIC_H_ 1
+  36:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  37:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #include <inttypes.h>
+  38:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  39:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \file */
+  40:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \defgroup util_delay_basic <util/delay_basic.h>: Basic busy-wait delay loops
+  41:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     \code
+  42:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     #include <util/delay_basic.h>
+  43:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     \endcode
+  44:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  45:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     The functions in this header file implement simple delay loops
+  46:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     that perform a busy-waiting.  They are typically used to
+  47:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     facilitate short delays in the program execution.  They are
+  48:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     implemented as count-down loops with a well-known CPU cycle
+  49:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     count per loop iteration.  As such, no other processing can
+  50:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     occur simultaneously.  It should be kept in mind that the
+  51:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     functions described here do not disable interrupts.
+  52:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  53:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     In general, for long delays, the use of hardware timers is
+  54:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     much preferrable, as they free the CPU, and allow for
+  55:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     concurrent processing of other events while the timer is
+  56:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     running.  However, in particular for very short delays, the
+  57:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     overhead of setting up a hardware timer is too much compared
+  58:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     to the overall delay time.
+  59:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  60:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Two inline functions are provided for the actual delay algorithms.
+  61:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  62:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** */
+  63:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  64:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #if !defined(__DOXYGEN__)
+  65:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_1(uint8_t __count) __attribute__((always_inline));
+  66:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** static inline void _delay_loop_2(uint16_t __count) __attribute__((always_inline));
+  67:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** #endif
+  68:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  69:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** /** \ingroup util_delay_basic
+  70:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  71:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Delay loop using an 8-bit counter \c __count, so up to 256
+  72:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     iterations are possible.  (The value 256 would have to be passed
+  73:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     as 0.)  The loop executes three CPU cycles per iteration, not
+  74:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     including the overhead the compiler needs to setup the counter
+  75:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     register.
+  76:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 
+  77:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     Thus, at a CPU speed of 1 MHz, delays of up to 768 microseconds
+  78:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h ****     can be achieved.
+  79:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** */
+  80:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** void
+  81:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** _delay_loop_1(uint8_t __count)
+  82:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** {
+  83:/usr/lib/gcc/avr/4.2.2/../../../../avr/include/util/delay_basic.h **** 	__asm__ volatile (
+ 698               	.LM104:
+ 699 018a 85E0      		ldi r24,lo8(5)
+ 700               	/* #APP */
+ 701 018c 8A95      		1: dec r24
+ 702 018e 01F4      		brne 1b
+ 703               	/* #NOAPP */
+ 704               	.LBE111:
+ 705               	.LBE110:
+ 706               	.LBE109:
+ 707               	.LBE108:
+ 709               	.Ltext2:
+ 454:mcp2515.c     **** 	
+ 455:mcp2515.c     **** 	_delay_us(1);
+ 456:mcp2515.c     **** 	
+ 457:mcp2515.c     **** 	// send message
+ 458:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 711               	.LM105:
+ 712 0190 C098      		cbi 56-0x20,0
+ 459:mcp2515.c     **** 	address = (address == 0) ? 1 : address;
+ 714               	.LM106:
+ 715 0192 9923      		tst r25
+ 716 0194 01F4      		brne .L98
+ 717 0196 91E0      		ldi r25,lo8(1)
+ 718               	.L98:
+ 460:mcp2515.c     **** 	spi_putc(SPI_RTS | address);
+ 720               	.LM107:
+ 721 0198 892F      		mov r24,r25
+ 722 019a 8068      		ori r24,lo8(-128)
+ 723               	.LBB112:
+ 724               	.LBB113:
+ 726               	.LM108:
+ 727 019c 8FB9      		out 47-0x20,r24
+ 728               	.L100:
+ 730               	.LM109:
+ 731 019e 779B      		sbis 46-0x20,7
+ 732 01a0 00C0      		rjmp .L100
+ 734               	.LM110:
+ 735 01a2 8FB1      		in r24,47-0x20
+ 736               	.LBE113:
+ 737               	.LBE112:
+ 461:mcp2515.c     **** 	SET(MCP2515_CS);
+ 739               	.LM111:
+ 740 01a4 C09A      		sbi 56-0x20,0
+ 462:mcp2515.c     **** 	
+ 463:mcp2515.c     **** 	return address;
+ 742               	.LM112:
+ 743 01a6 892F      		mov r24,r25
+ 744 01a8 9927      		clr r25
+ 745               	.L76:
+ 746               	/* epilogue: frame size=1 */
+ 747 01aa 2196      		adiw r28,1
+ 748 01ac 0FB6      		in __tmp_reg__,__SREG__
+ 749 01ae F894      		cli
+ 750 01b0 DEBF      		out __SP_H__,r29
+ 751 01b2 0FBE      		out __SREG__,__tmp_reg__
+ 752 01b4 CDBF      		out __SP_L__,r28
+ 753 01b6 DF91      		pop r29
+ 754 01b8 CF91      		pop r28
+ 755 01ba 1F91      		pop r17
+ 756 01bc 0F91      		pop r16
+ 757 01be 0895      		ret
+ 758               	/* epilogue end (size=11) */
+ 759               	/* function mcp2515_send_extmessage size 125 (102) */
+ 781               	.Lscope8:
+ 784               	.global	mcp2515_send_message
+ 786               	mcp2515_send_message:
+ 788               	.LM113:
+ 789               	.LFBB9:
+ 790               	/* prologue: frame size=1 */
+ 791 01c0 0F93      		push r16
+ 792 01c2 1F93      		push r17
+ 793 01c4 CF93      		push r28
+ 794 01c6 DF93      		push r29
+ 795 01c8 CDB7      		in r28,__SP_L__
+ 796 01ca DEB7      		in r29,__SP_H__
+ 797 01cc 2197      		sbiw r28,1
+ 798 01ce 0FB6      		in __tmp_reg__,__SREG__
+ 799 01d0 F894      		cli
+ 800 01d2 DEBF      		out __SP_H__,r29
+ 801 01d4 0FBE      		out __SREG__,__tmp_reg__
+ 802 01d6 CDBF      		out __SP_L__,r28
+ 803               	/* prologue end (size=12) */
+ 804 01d8 8C01      		movw r16,r24
+ 806               	.LM114:
+ 807 01da 80EA      		ldi r24,lo8(-96)
+ 808 01dc 0E94 0000 		call mcp2515_read_status
+ 809 01e0 8983      		std Y+1,r24
+ 811               	.LM115:
+ 812 01e2 8981      		ldd r24,Y+1
+ 813 01e4 82FD      		sbrc r24,2
+ 814 01e6 00C0      		rjmp .L122
+ 816               	.LM116:
+ 817 01e8 40E0      		ldi r20,lo8(0)
+ 818 01ea 00C0      		rjmp .L124
+ 819               	.L122:
+ 821               	.LM117:
+ 822 01ec 8981      		ldd r24,Y+1
+ 823 01ee 84FD      		sbrc r24,4
+ 824 01f0 00C0      		rjmp .L125
+ 825 01f2 42E0      		ldi r20,lo8(2)
+ 826 01f4 00C0      		rjmp .L124
+ 827               	.L125:
+ 829               	.LM118:
+ 830 01f6 8981      		ldd r24,Y+1
+ 831 01f8 86FF      		sbrs r24,6
+ 832 01fa 00C0      		rjmp .L127
+ 833 01fc 80E0      		ldi r24,lo8(0)
+ 834 01fe 90E0      		ldi r25,hi8(0)
+ 835 0200 00C0      		rjmp .L129
+ 836               	.L127:
+ 837 0202 44E0      		ldi r20,lo8(4)
+ 838               	.L124:
+ 840               	.LM119:
+ 841 0204 C098      		cbi 56-0x20,0
+ 843               	.LM120:
+ 844 0206 842F      		mov r24,r20
+ 845 0208 8064      		ori r24,lo8(64)
+ 846               	.LBB143:
+ 847               	.LBB144:
+ 849               	.LM121:
+ 850 020a 8FB9      		out 47-0x20,r24
+ 851               	.L130:
+ 853               	.LM122:
+ 854 020c 779B      		sbis 46-0x20,7
+ 855 020e 00C0      		rjmp .L130
+ 857               	.LM123:
+ 858 0210 8FB1      		in r24,47-0x20
+ 859               	.LBE144:
+ 860               	.LBE143:
+ 862               	.LM124:
+ 863 0212 F801      		movw r30,r16
+ 864 0214 2081      		ld r18,Z
+ 865 0216 3181      		ldd r19,Z+1
+ 866 0218 C901      		movw r24,r18
+ 867 021a 33E0      		ldi r19,3
+ 868 021c 9695      	1:	lsr r25
+ 869 021e 8795      		ror r24
+ 870 0220 3A95      		dec r19
+ 871 0222 01F4      		brne 1b
+ 872               	.LBB145:
+ 873               	.LBB146:
+ 875               	.LM125:
+ 876 0224 8FB9      		out 47-0x20,r24
+ 877               	.L132:
+ 879               	.LM126:
+ 880 0226 779B      		sbis 46-0x20,7
+ 881 0228 00C0      		rjmp .L132
+ 883               	.LM127:
+ 884 022a 8FB1      		in r24,47-0x20
+ 885               	.LBE146:
+ 886               	.LBE145:
+ 888               	.LM128:
+ 889 022c 822F      		mov r24,r18
+ 890 022e 8295      		swap r24
+ 891 0230 880F      		lsl r24
+ 892 0232 807E      		andi r24,0xe0
+ 893               	.LBB147:
+ 894               	.LBB148:
+ 896               	.LM129:
+ 897 0234 8FB9      		out 47-0x20,r24
+ 898               	.L134:
+ 900               	.LM130:
+ 901 0236 779B      		sbis 46-0x20,7
+ 902 0238 00C0      		rjmp .L134
+ 904               	.LM131:
+ 905 023a 8FB1      		in r24,47-0x20
+ 906               	.LBE148:
+ 907               	.LBE147:
+ 908               	.LBB149:
+ 909               	.LBB150:
+ 911               	.LM132:
+ 912 023c 1FB8      		out 47-0x20,__zero_reg__
+ 913               	.L136:
+ 915               	.LM133:
+ 916 023e 779B      		sbis 46-0x20,7
+ 917 0240 00C0      		rjmp .L136
+ 919               	.LM134:
+ 920 0242 8FB1      		in r24,47-0x20
+ 921               	.LBE150:
+ 922               	.LBE149:
+ 923               	.LBB151:
+ 924               	.LBB152:
+ 926               	.LM135:
+ 927 0244 1FB8      		out 47-0x20,__zero_reg__
+ 928               	.L138:
+ 930               	.LM136:
+ 931 0246 779B      		sbis 46-0x20,7
+ 932 0248 00C0      		rjmp .L138
+ 934               	.LM137:
+ 935 024a 8FB1      		in r24,47-0x20
+ 936               	.LBE152:
+ 937               	.LBE151:
+ 939               	.LM138:
+ 940 024c F801      		movw r30,r16
+ 941 024e 8281      		ldd r24,Z+2
+ 942 0250 982F      		mov r25,r24
+ 943 0252 9695      		lsr r25
+ 944 0254 9F70      		andi r25,lo8(15)
+ 946               	.LM139:
+ 947 0256 80FF      		sbrs r24,0
+ 948 0258 00C0      		rjmp .L140
+ 950               	.LM140:
+ 951 025a 9064      		ori r25,lo8(64)
+ 952               	.LBB153:
+ 953               	.LBB154:
+ 955               	.LM141:
+ 956 025c 9FB9      		out 47-0x20,r25
+ 957               	.L142:
+ 959               	.LM142:
+ 960 025e 779B      		sbis 46-0x20,7
+ 961 0260 00C0      		rjmp .L142
+ 963               	.LM143:
+ 964 0262 8FB1      		in r24,47-0x20
+ 965 0264 00C0      		rjmp .L144
+ 966               	.L140:
+ 967               	.LBE154:
+ 968               	.LBE153:
+ 969               	.LBB155:
+ 970               	.LBB156:
+ 972               	.LM144:
+ 973 0266 9FB9      		out 47-0x20,r25
+ 974               	.L145:
+ 976               	.LM145:
+ 977 0268 779B      		sbis 46-0x20,7
+ 978 026a 00C0      		rjmp .L145
+ 980               	.LM146:
+ 981 026c 8FB1      		in r24,47-0x20
+ 982 026e 20E0      		ldi r18,lo8(0)
+ 983 0270 00C0      		rjmp .L147
+ 984               	.L148:
+ 985               	.LBE156:
+ 986               	.LBE155:
+ 987               	.LBB157:
+ 989               	.LM147:
+ 990 0272 F801      		movw r30,r16
+ 991 0274 E20F      		add r30,r18
+ 992 0276 F11D      		adc r31,__zero_reg__
+ 993 0278 8381      		ldd r24,Z+3
+ 994               	.LBB158:
+ 995               	.LBB159:
+ 997               	.LM148:
+ 998 027a 8FB9      		out 47-0x20,r24
+ 999               	.L149:
+ 1001               	.LM149:
+ 1002 027c 779B      		sbis 46-0x20,7
+ 1003 027e 00C0      		rjmp .L149
+ 1005               	.LM150:
+ 1006 0280 8FB1      		in r24,47-0x20
+ 1007               	.LBE159:
+ 1008               	.LBE158:
+ 1010               	.LM151:
+ 1011 0282 2F5F      		subi r18,lo8(-(1))
+ 1012               	.L147:
+ 1013 0284 2917      		cp r18,r25
+ 1014 0286 01F4      		brne .L148
+ 1015               	.L144:
+ 1016               	.LBE157:
+ 1018               	.LM152:
+ 1019 0288 C09A      		sbi 56-0x20,0
+ 1020               	.LBB160:
+ 1021               	.LBB161:
+ 1022               	.LBB162:
+ 1023               	.LBB163:
+ 1025               	.Ltext3:
+ 1027               	.LM153:
+ 1028 028a 85E0      		ldi r24,lo8(5)
+ 1029               	/* #APP */
+ 1030 028c 8A95      		1: dec r24
+ 1031 028e 01F4      		brne 1b
+ 1032               	/* #NOAPP */
+ 1033               	.LBE163:
+ 1034               	.LBE162:
+ 1035               	.LBE161:
+ 1036               	.LBE160:
+ 1038               	.Ltext4:
+ 1040               	.LM154:
+ 1041 0290 C098      		cbi 56-0x20,0
+ 1043               	.LM155:
+ 1044 0292 4423      		tst r20
+ 1045 0294 01F4      		brne .L151
+ 1046 0296 41E0      		ldi r20,lo8(1)
+ 1047               	.L151:
+ 1049               	.LM156:
+ 1050 0298 842F      		mov r24,r20
+ 1051 029a 8068      		ori r24,lo8(-128)
+ 1052               	.LBB164:
+ 1053               	.LBB165:
+ 1055               	.LM157:
+ 1056 029c 8FB9      		out 47-0x20,r24
+ 1057               	.L153:
+ 1059               	.LM158:
+ 1060 029e 779B      		sbis 46-0x20,7
+ 1061 02a0 00C0      		rjmp .L153
+ 1063               	.LM159:
+ 1064 02a2 8FB1      		in r24,47-0x20
+ 1065               	.LBE165:
+ 1066               	.LBE164:
+ 1068               	.LM160:
+ 1069 02a4 C09A      		sbi 56-0x20,0
+ 1071               	.LM161:
+ 1072 02a6 842F      		mov r24,r20
+ 1073 02a8 9927      		clr r25
+ 1074               	.L129:
+ 1075               	/* epilogue: frame size=1 */
+ 1076 02aa 2196      		adiw r28,1
+ 1077 02ac 0FB6      		in __tmp_reg__,__SREG__
+ 1078 02ae F894      		cli
+ 1079 02b0 DEBF      		out __SP_H__,r29
+ 1080 02b2 0FBE      		out __SREG__,__tmp_reg__
+ 1081 02b4 CDBF      		out __SP_L__,r28
+ 1082 02b6 DF91      		pop r29
+ 1083 02b8 CF91      		pop r28
+ 1084 02ba 1F91      		pop r17
+ 1085 02bc 0F91      		pop r16
+ 1086 02be 0895      		ret
+ 1087               	/* epilogue end (size=11) */
+ 1088               	/* function mcp2515_send_message size 130 (107) */
+ 1113               	.Lscope9:
+ 1116               	.global	mcp2515_get_extmessage
+ 1118               	mcp2515_get_extmessage:
+ 1120               	.LM162:
+ 1121               	.LFBB10:
+ 1122               	/* prologue: frame size=1 */
+ 1123 02c0 0F93      		push r16
+ 1124 02c2 1F93      		push r17
+ 1125 02c4 CF93      		push r28
+ 1126 02c6 DF93      		push r29
+ 1127 02c8 CDB7      		in r28,__SP_L__
+ 1128 02ca DEB7      		in r29,__SP_H__
+ 1129 02cc 2197      		sbiw r28,1
+ 1130 02ce 0FB6      		in __tmp_reg__,__SREG__
+ 1131 02d0 F894      		cli
+ 1132 02d2 DEBF      		out __SP_H__,r29
+ 1133 02d4 0FBE      		out __SREG__,__tmp_reg__
+ 1134 02d6 CDBF      		out __SP_L__,r28
+ 1135               	/* prologue end (size=12) */
+ 1136 02d8 8C01      		movw r16,r24
+ 1138               	.LM163:
+ 1139 02da 80EB      		ldi r24,lo8(-80)
+ 1140 02dc 0E94 0000 		call mcp2515_read_status
+ 1141 02e0 8983      		std Y+1,r24
+ 1143               	.LM164:
+ 1144 02e2 DE01      		movw r26,r28
+ 1145 02e4 1196      		adiw r26,1
+ 1146 02e6 8981      		ldd r24,Y+1
+ 1147 02e8 86FF      		sbrs r24,6
+ 1148 02ea 00C0      		rjmp .L175
+ 1150               	.LM165:
+ 1151 02ec 80E9      		ldi r24,lo8(-112)
+ 1152 02ee 00C0      		rjmp .L177
+ 1153               	.L175:
+ 1155               	.LM166:
+ 1156 02f0 8981      		ldd r24,Y+1
+ 1157 02f2 87FD      		sbrc r24,7
+ 1158 02f4 00C0      		rjmp .L178
+ 1159 02f6 80E0      		ldi r24,lo8(0)
+ 1160 02f8 90E0      		ldi r25,hi8(0)
+ 1161 02fa 00C0      		rjmp .L180
+ 1162               	.L178:
+ 1163 02fc 84E9      		ldi r24,lo8(-108)
+ 1164               	.L177:
+ 1166               	.LM167:
+ 1167 02fe C098      		cbi 56-0x20,0
+ 1168               	.LBB181:
+ 1169               	.LBB182:
+ 1171               	.LM168:
+ 1172 0300 8FB9      		out 47-0x20,r24
+ 1173               	.L181:
+ 1175               	.LM169:
+ 1176 0302 779B      		sbis 46-0x20,7
+ 1177 0304 00C0      		rjmp .L181
+ 1179               	.LM170:
+ 1180 0306 8FB1      		in r24,47-0x20
+ 1181               	.LBE182:
+ 1182               	.LBE181:
+ 1183               	.LBB183:
+ 1184               	.LBB184:
+ 1186               	.LM171:
+ 1187 0308 8FEF      		ldi r24,lo8(-1)
+ 1188 030a 8FB9      		out 47-0x20,r24
+ 1189               	.L183:
+ 1191               	.LM172:
+ 1192 030c 779B      		sbis 46-0x20,7
+ 1193 030e 00C0      		rjmp .L183
+ 1195               	.LM173:
+ 1196 0310 8FB1      		in r24,47-0x20
+ 1197               	.LBE184:
+ 1198               	.LBE183:
+ 1200               	.LM174:
+ 1201 0312 F801      		movw r30,r16
+ 1202 0314 8083      		st Z,r24
+ 1203               	.LBB185:
+ 1204               	.LBB186:
+ 1206               	.LM175:
+ 1207 0316 8FEF      		ldi r24,lo8(-1)
+ 1208 0318 8FB9      		out 47-0x20,r24
+ 1209               	.L185:
+ 1211               	.LM176:
+ 1212 031a 779B      		sbis 46-0x20,7
+ 1213 031c 00C0      		rjmp .L185
+ 1215               	.LM177:
+ 1216 031e 8FB1      		in r24,47-0x20
+ 1217               	.LBE186:
+ 1218               	.LBE185:
+ 1220               	.LM178:
+ 1221 0320 F801      		movw r30,r16
+ 1222 0322 8183      		std Z+1,r24
+ 1223               	.LBB187:
+ 1224               	.LBB188:
+ 1226               	.LM179:
+ 1227 0324 8FEF      		ldi r24,lo8(-1)
+ 1228 0326 8FB9      		out 47-0x20,r24
+ 1229               	.L187:
+ 1231               	.LM180:
+ 1232 0328 779B      		sbis 46-0x20,7
+ 1233 032a 00C0      		rjmp .L187
+ 1235               	.LM181:
+ 1236 032c 8FB1      		in r24,47-0x20
+ 1237               	.LBE188:
+ 1238               	.LBE187:
+ 1240               	.LM182:
+ 1241 032e F801      		movw r30,r16
+ 1242 0330 8283      		std Z+2,r24
+ 1243               	.LBB189:
+ 1244               	.LBB190:
+ 1246               	.LM183:
+ 1247 0332 8FEF      		ldi r24,lo8(-1)
+ 1248 0334 8FB9      		out 47-0x20,r24
+ 1249               	.L189:
+ 1251               	.LM184:
+ 1252 0336 779B      		sbis 46-0x20,7
+ 1253 0338 00C0      		rjmp .L189
+ 1255               	.LM185:
+ 1256 033a 8FB1      		in r24,47-0x20
+ 1257               	.LBE190:
+ 1258               	.LBE189:
+ 1260               	.LM186:
+ 1261 033c F801      		movw r30,r16
+ 1262 033e 8383      		std Z+3,r24
+ 1263               	.LBB191:
+ 1264               	.LBB192:
+ 1266               	.LM187:
+ 1267 0340 8FEF      		ldi r24,lo8(-1)
+ 1268 0342 8FB9      		out 47-0x20,r24
+ 1269               	.L191:
+ 1271               	.LM188:
+ 1272 0344 779B      		sbis 46-0x20,7
+ 1273 0346 00C0      		rjmp .L191
+ 1275               	.LM189:
+ 1276 0348 4FB1      		in r20,47-0x20
+ 1277               	.LBE192:
+ 1278               	.LBE191:
+ 1280               	.LM190:
+ 1281 034a 4F70      		andi r20,lo8(15)
+ 1283               	.LM191:
+ 1284 034c 342F      		mov r19,r20
+ 1285 034e 330F      		lsl r19
+ 1286 0350 F801      		movw r30,r16
+ 1287 0352 2481      		ldd r18,Z+4
+ 1288 0354 207E      		andi r18,lo8(-32)
+ 1290               	.LM192:
+ 1291 0356 8C91      		ld r24,X
+ 1292 0358 9927      		clr r25
+ 1293 035a 53E0      		ldi r21,3
+ 1294 035c 9695      	1:	lsr r25
+ 1295 035e 8795      		ror r24
+ 1296 0360 5A95      		dec r21
+ 1297 0362 01F4      		brne 1b
+ 1298 0364 8170      		andi r24,lo8(1)
+ 1299 0366 232B      		or r18,r19
+ 1300 0368 282B      		or r18,r24
+ 1301 036a 2483      		std Z+4,r18
+ 1302 036c 90E0      		ldi r25,lo8(0)
+ 1303 036e 00C0      		rjmp .L193
+ 1304               	.L194:
+ 1305               	.LBB193:
+ 1306               	.LBB194:
+ 1307               	.LBB195:
+ 1309               	.LM193:
+ 1310 0370 8FEF      		ldi r24,lo8(-1)
+ 1311 0372 8FB9      		out 47-0x20,r24
+ 1312               	.L195:
+ 1314               	.LM194:
+ 1315 0374 779B      		sbis 46-0x20,7
+ 1316 0376 00C0      		rjmp .L195
+ 1318               	.LM195:
+ 1319 0378 8FB1      		in r24,47-0x20
+ 1320               	.LBE195:
+ 1321               	.LBE194:
+ 1323               	.LM196:
+ 1324 037a F801      		movw r30,r16
+ 1325 037c E90F      		add r30,r25
+ 1326 037e F11D      		adc r31,__zero_reg__
+ 1327 0380 8583      		std Z+5,r24
+ 1329               	.LM197:
+ 1330 0382 9F5F      		subi r25,lo8(-(1))
+ 1331               	.L193:
+ 1332 0384 9417      		cp r25,r20
+ 1333 0386 01F4      		brne .L194
+ 1334               	.LBE193:
+ 1336               	.LM198:
+ 1337 0388 C09A      		sbi 56-0x20,0
+ 1339               	.LM199:
+ 1340 038a 8C91      		ld r24,X
+ 1341 038c 86FF      		sbrs r24,6
+ 1342 038e 00C0      		rjmp .L198
+ 1344               	.LM200:
+ 1345 0390 40E0      		ldi r20,lo8(0)
+ 1346 0392 61E0      		ldi r22,lo8(1)
+ 1347 0394 00C0      		rjmp .L216
+ 1348               	.L198:
+ 1350               	.LM201:
+ 1351 0396 40E0      		ldi r20,lo8(0)
+ 1352 0398 62E0      		ldi r22,lo8(2)
+ 1353               	.L216:
+ 1354 039a 8CE2      		ldi r24,lo8(44)
+ 1355 039c 0E94 0000 		call mcp2515_bit_modify
+ 1357               	.LM202:
+ 1358 03a0 8981      		ldd r24,Y+1
+ 1359 03a2 8770      		andi r24,lo8(7)
+ 1360 03a4 8F5F      		subi r24,lo8(-(1))
+ 1361 03a6 9927      		clr r25
+ 1362               	.L180:
+ 1363               	/* epilogue: frame size=1 */
+ 1364 03a8 2196      		adiw r28,1
+ 1365 03aa 0FB6      		in __tmp_reg__,__SREG__
+ 1366 03ac F894      		cli
+ 1367 03ae DEBF      		out __SP_H__,r29
+ 1368 03b0 0FBE      		out __SREG__,__tmp_reg__
+ 1369 03b2 CDBF      		out __SP_L__,r28
+ 1370 03b4 DF91      		pop r29
+ 1371 03b6 CF91      		pop r28
+ 1372 03b8 1F91      		pop r17
+ 1373 03ba 0F91      		pop r16
+ 1374 03bc 0895      		ret
+ 1375               	/* epilogue end (size=11) */
+ 1376               	/* function mcp2515_get_extmessage size 127 (104) */
+ 1386               	.Lscope10:
+ 1389               	.global	mcp2515_get_message
+ 1391               	mcp2515_get_message:
+ 1393               	.LM203:
+ 1394               	.LFBB11:
+ 1395               	/* prologue: frame size=1 */
+ 1396 03be 0F93      		push r16
+ 1397 03c0 1F93      		push r17
+ 1398 03c2 CF93      		push r28
+ 1399 03c4 DF93      		push r29
+ 1400 03c6 CDB7      		in r28,__SP_L__
+ 1401 03c8 DEB7      		in r29,__SP_H__
+ 1402 03ca 2197      		sbiw r28,1
+ 1403 03cc 0FB6      		in __tmp_reg__,__SREG__
+ 1404 03ce F894      		cli
+ 1405 03d0 DEBF      		out __SP_H__,r29
+ 1406 03d2 0FBE      		out __SREG__,__tmp_reg__
+ 1407 03d4 CDBF      		out __SP_L__,r28
+ 1408               	/* prologue end (size=12) */
+ 1409 03d6 8C01      		movw r16,r24
+ 1411               	.LM204:
+ 1412 03d8 80EB      		ldi r24,lo8(-80)
+ 1413 03da 0E94 0000 		call mcp2515_read_status
+ 1414 03de 8983      		std Y+1,r24
+ 1416               	.LM205:
+ 1417 03e0 DE01      		movw r26,r28
+ 1418 03e2 1196      		adiw r26,1
+ 1419 03e4 8981      		ldd r24,Y+1
+ 1420 03e6 86FF      		sbrs r24,6
+ 1421 03e8 00C0      		rjmp .L218
+ 1423               	.LM206:
+ 1424 03ea 80E9      		ldi r24,lo8(-112)
+ 1425 03ec 00C0      		rjmp .L220
+ 1426               	.L218:
+ 1428               	.LM207:
+ 1429 03ee 8981      		ldd r24,Y+1
+ 1430 03f0 87FD      		sbrc r24,7
+ 1431 03f2 00C0      		rjmp .L221
+ 1432 03f4 80E0      		ldi r24,lo8(0)
+ 1433 03f6 90E0      		ldi r25,hi8(0)
+ 1434 03f8 00C0      		rjmp .L223
+ 1435               	.L221:
+ 1436 03fa 84E9      		ldi r24,lo8(-108)
+ 1437               	.L220:
+ 1439               	.LM208:
+ 1440 03fc C098      		cbi 56-0x20,0
+ 1441               	.LBB211:
+ 1442               	.LBB212:
+ 1444               	.LM209:
+ 1445 03fe 8FB9      		out 47-0x20,r24
+ 1446               	.L224:
+ 1448               	.LM210:
+ 1449 0400 779B      		sbis 46-0x20,7
+ 1450 0402 00C0      		rjmp .L224
+ 1452               	.LM211:
+ 1453 0404 8FB1      		in r24,47-0x20
+ 1454               	.LBE212:
+ 1455               	.LBE211:
+ 1456               	.LBB213:
+ 1457               	.LBB214:
+ 1459               	.LM212:
+ 1460 0406 8FEF      		ldi r24,lo8(-1)
+ 1461 0408 8FB9      		out 47-0x20,r24
+ 1462               	.L226:
+ 1464               	.LM213:
+ 1465 040a 779B      		sbis 46-0x20,7
+ 1466 040c 00C0      		rjmp .L226
+ 1468               	.LM214:
+ 1469 040e 2FB1      		in r18,47-0x20
+ 1470               	.LBE214:
+ 1471               	.LBE213:
+ 1472               	.LBB215:
+ 1473               	.LBB216:
+ 1475               	.LM215:
+ 1476 0410 8FEF      		ldi r24,lo8(-1)
+ 1477 0412 8FB9      		out 47-0x20,r24
+ 1478               	.L228:
+ 1480               	.LM216:
+ 1481 0414 779B      		sbis 46-0x20,7
+ 1482 0416 00C0      		rjmp .L228
+ 1484               	.LM217:
+ 1485 0418 8FB1      		in r24,47-0x20
+ 1486               	.LBE216:
+ 1487               	.LBE215:
+ 1489               	.LM218:
+ 1490 041a 8295      		swap r24
+ 1491 041c 8695      		lsr r24
+ 1492 041e 8770      		andi r24,0x7
+ 1493 0420 9927      		clr r25
+ 1494 0422 3327      		clr r19
+ 1495 0424 73E0      		ldi r23,3
+ 1496 0426 220F      	1:	lsl r18
+ 1497 0428 331F      		rol r19
+ 1498 042a 7A95      		dec r23
+ 1499 042c 01F4      		brne 1b
+ 1500 042e 822B      		or r24,r18
+ 1501 0430 932B      		or r25,r19
+ 1502 0432 F801      		movw r30,r16
+ 1503 0434 9183      		std Z+1,r25
+ 1504 0436 8083      		st Z,r24
+ 1505               	.LBB217:
+ 1506               	.LBB218:
+ 1508               	.LM219:
+ 1509 0438 8FEF      		ldi r24,lo8(-1)
+ 1510 043a 8FB9      		out 47-0x20,r24
+ 1511               	.L230:
+ 1513               	.LM220:
+ 1514 043c 779B      		sbis 46-0x20,7
+ 1515 043e 00C0      		rjmp .L230
+ 1517               	.LM221:
+ 1518 0440 8FB1      		in r24,47-0x20
+ 1519               	.LBE218:
+ 1520               	.LBE217:
+ 1521               	.LBB219:
+ 1522               	.LBB220:
+ 1524               	.LM222:
+ 1525 0442 8FEF      		ldi r24,lo8(-1)
+ 1526 0444 8FB9      		out 47-0x20,r24
+ 1527               	.L232:
+ 1529               	.LM223:
+ 1530 0446 779B      		sbis 46-0x20,7
+ 1531 0448 00C0      		rjmp .L232
+ 1533               	.LM224:
+ 1534 044a 8FB1      		in r24,47-0x20
+ 1535               	.LBE220:
+ 1536               	.LBE219:
+ 1537               	.LBB221:
+ 1538               	.LBB222:
+ 1540               	.LM225:
+ 1541 044c 8FEF      		ldi r24,lo8(-1)
+ 1542 044e 8FB9      		out 47-0x20,r24
+ 1543               	.L234:
+ 1545               	.LM226:
+ 1546 0450 779B      		sbis 46-0x20,7
+ 1547 0452 00C0      		rjmp .L234
+ 1549               	.LM227:
+ 1550 0454 4FB1      		in r20,47-0x20
+ 1551               	.LBE222:
+ 1552               	.LBE221:
+ 1554               	.LM228:
+ 1555 0456 4F70      		andi r20,lo8(15)
+ 1557               	.LM229:
+ 1558 0458 342F      		mov r19,r20
+ 1559 045a 330F      		lsl r19
+ 1560 045c F801      		movw r30,r16
+ 1561 045e 2281      		ldd r18,Z+2
+ 1562 0460 207E      		andi r18,lo8(-32)
+ 1564               	.LM230:
+ 1565 0462 8C91      		ld r24,X
+ 1566 0464 9927      		clr r25
+ 1567 0466 63E0      		ldi r22,3
+ 1568 0468 9695      	1:	lsr r25
+ 1569 046a 8795      		ror r24
+ 1570 046c 6A95      		dec r22
+ 1571 046e 01F4      		brne 1b
+ 1572 0470 8170      		andi r24,lo8(1)
+ 1573 0472 232B      		or r18,r19
+ 1574 0474 282B      		or r18,r24
+ 1575 0476 2283      		std Z+2,r18
+ 1576 0478 90E0      		ldi r25,lo8(0)
+ 1577 047a 00C0      		rjmp .L236
+ 1578               	.L237:
+ 1579               	.LBB223:
+ 1580               	.LBB224:
+ 1581               	.LBB225:
+ 1583               	.LM231:
+ 1584 047c 8FEF      		ldi r24,lo8(-1)
+ 1585 047e 8FB9      		out 47-0x20,r24
+ 1586               	.L238:
+ 1588               	.LM232:
+ 1589 0480 779B      		sbis 46-0x20,7
+ 1590 0482 00C0      		rjmp .L238
+ 1592               	.LM233:
+ 1593 0484 8FB1      		in r24,47-0x20
+ 1594               	.LBE225:
+ 1595               	.LBE224:
+ 1597               	.LM234:
+ 1598 0486 F801      		movw r30,r16
+ 1599 0488 E90F      		add r30,r25
+ 1600 048a F11D      		adc r31,__zero_reg__
+ 1601 048c 8383      		std Z+3,r24
+ 1603               	.LM235:
+ 1604 048e 9F5F      		subi r25,lo8(-(1))
+ 1605               	.L236:
+ 1606 0490 9417      		cp r25,r20
+ 1607 0492 01F4      		brne .L237
+ 1608               	.LBE223:
+ 1610               	.LM236:
+ 1611 0494 C09A      		sbi 56-0x20,0
+ 1613               	.LM237:
+ 1614 0496 8C91      		ld r24,X
+ 1615 0498 86FF      		sbrs r24,6
+ 1616 049a 00C0      		rjmp .L241
+ 1618               	.LM238:
+ 1619 049c 40E0      		ldi r20,lo8(0)
+ 1620 049e 61E0      		ldi r22,lo8(1)
+ 1621 04a0 00C0      		rjmp .L259
+ 1622               	.L241:
+ 1624               	.LM239:
+ 1625 04a2 40E0      		ldi r20,lo8(0)
+ 1626 04a4 62E0      		ldi r22,lo8(2)
+ 1627               	.L259:
+ 1628 04a6 8CE2      		ldi r24,lo8(44)
+ 1629 04a8 0E94 0000 		call mcp2515_bit_modify
+ 1631               	.LM240:
+ 1632 04ac 8981      		ldd r24,Y+1
+ 1633 04ae 8770      		andi r24,lo8(7)
+ 1634 04b0 8F5F      		subi r24,lo8(-(1))
+ 1635 04b2 9927      		clr r25
+ 1636               	.L223:
+ 1637               	/* epilogue: frame size=1 */
+ 1638 04b4 2196      		adiw r28,1
+ 1639 04b6 0FB6      		in __tmp_reg__,__SREG__
+ 1640 04b8 F894      		cli
+ 1641 04ba DEBF      		out __SP_H__,r29
+ 1642 04bc 0FBE      		out __SREG__,__tmp_reg__
+ 1643 04be CDBF      		out __SP_L__,r28
+ 1644 04c0 DF91      		pop r29
+ 1645 04c2 CF91      		pop r28
+ 1646 04c4 1F91      		pop r17
+ 1647 04c6 0F91      		pop r16
+ 1648 04c8 0895      		ret
+ 1649               	/* epilogue end (size=11) */
+ 1650               	/* function mcp2515_get_message size 134 (111) */
+ 1660               	.Lscope11:
+ 1662               	.global	mcp2515_init
+ 1664               	mcp2515_init:
+ 1666               	.LM241:
+ 1667               	.LFBB12:
+ 1668               	/* prologue: frame size=0 */
+ 1669               	/* prologue end (size=0) */
+ 1671               	.LM242:
+ 1672 04ca C09A      		sbi 56-0x20,0
+ 1674               	.LM243:
+ 1675 04cc B89A      		sbi 55-0x20,0
+ 1677               	.LM244:
+ 1678 04ce C198      		cbi 56-0x20,1
+ 1680               	.LM245:
+ 1681 04d0 C298      		cbi 56-0x20,2
+ 1683               	.LM246:
+ 1684 04d2 C398      		cbi 56-0x20,3
+ 1686               	.LM247:
+ 1687 04d4 B99A      		sbi 55-0x20,1
+ 1689               	.LM248:
+ 1690 04d6 BA9A      		sbi 55-0x20,2
+ 1692               	.LM249:
+ 1693 04d8 BB98      		cbi 55-0x20,3
+ 1695               	.LM250:
+ 1696 04da 1698      		cbi 34-0x20,6
+ 1698               	.LM251:
+ 1699 04dc 1E9A      		sbi 35-0x20,6
+ 1701               	.LM252:
+ 1702 04de 81E5      		ldi r24,lo8(81)
+ 1703 04e0 8DB9      		out 45-0x20,r24
+ 1705               	.LM253:
+ 1706 04e2 1EB8      		out 46-0x20,__zero_reg__
+ 1708               	.LM254:
+ 1709 04e4 C098      		cbi 56-0x20,0
+ 1710               	.LBB250:
+ 1711               	.LBB251:
+ 1713               	.LM255:
+ 1714 04e6 80EC      		ldi r24,lo8(-64)
+ 1715 04e8 8FB9      		out 47-0x20,r24
+ 1716               	.L261:
+ 1718               	.LM256:
+ 1719 04ea 779B      		sbis 46-0x20,7
+ 1720 04ec 00C0      		rjmp .L261
+ 1722               	.LM257:
+ 1723 04ee 8FB1      		in r24,47-0x20
+ 1724               	.LBE251:
+ 1725               	.LBE250:
+ 1727               	.LM258:
+ 1728 04f0 C09A      		sbi 56-0x20,0
+ 1729               	.LBB252:
+ 1730               	.LBB253:
+ 1731               	.LBB254:
+ 1732               	.LBB255:
+ 1734               	.Ltext5:
+ 1736               	.LM259:
+ 1737 04f2 85E3      		ldi r24,lo8(53)
+ 1738               	/* #APP */
+ 1739 04f4 8A95      		1: dec r24
+ 1740 04f6 01F4      		brne 1b
+ 1741               	/* #NOAPP */
+ 1742               	.LBE255:
+ 1743               	.LBE254:
+ 1744               	.LBE253:
+ 1745               	.LBE252:
+ 1747               	.Ltext6:
+ 1749               	.LM260:
+ 1750 04f8 C098      		cbi 56-0x20,0
+ 1751               	.LBB256:
+ 1752               	.LBB257:
+ 1754               	.LM261:
+ 1755 04fa 82E0      		ldi r24,lo8(2)
+ 1756 04fc 8FB9      		out 47-0x20,r24
+ 1757               	.L263:
+ 1759               	.LM262:
+ 1760 04fe 779B      		sbis 46-0x20,7
+ 1761 0500 00C0      		rjmp .L263
+ 1763               	.LM263:
+ 1764 0502 8FB1      		in r24,47-0x20
+ 1765               	.LBE257:
+ 1766               	.LBE256:
+ 1767               	.LBB258:
+ 1768               	.LBB259:
+ 1770               	.LM264:
+ 1771 0504 88E2      		ldi r24,lo8(40)
+ 1772 0506 8FB9      		out 47-0x20,r24
+ 1773               	.L265:
+ 1775               	.LM265:
+ 1776 0508 779B      		sbis 46-0x20,7
+ 1777 050a 00C0      		rjmp .L265
+ 1779               	.LM266:
+ 1780 050c 8FB1      		in r24,47-0x20
+ 1781               	.LBE259:
+ 1782               	.LBE258:
+ 1783               	.LBB260:
+ 1784               	.LBB261:
+ 1786               	.LM267:
+ 1787 050e 82E0      		ldi r24,lo8(2)
+ 1788 0510 8FB9      		out 47-0x20,r24
+ 1789               	.L267:
+ 1791               	.LM268:
+ 1792 0512 779B      		sbis 46-0x20,7
+ 1793 0514 00C0      		rjmp .L267
+ 1795               	.LM269:
+ 1796 0516 8FB1      		in r24,47-0x20
+ 1797               	.LBE261:
+ 1798               	.LBE260:
+ 1799               	.LBB262:
+ 1800               	.LBB263:
+ 1802               	.LM270:
+ 1803 0518 80E9      		ldi r24,lo8(-112)
+ 1804 051a 8FB9      		out 47-0x20,r24
+ 1805               	.L269:
+ 1807               	.LM271:
+ 1808 051c 779B      		sbis 46-0x20,7
+ 1809 051e 00C0      		rjmp .L269
+ 1811               	.LM272:
+ 1812 0520 8FB1      		in r24,47-0x20
+ 1813               	.LBE263:
+ 1814               	.LBE262:
+ 1815               	.LBB264:
+ 1816               	.LBB265:
+ 1818               	.LM273:
+ 1819 0522 1FB8      		out 47-0x20,__zero_reg__
+ 1820               	.L271:
+ 1822               	.LM274:
+ 1823 0524 779B      		sbis 46-0x20,7
+ 1824 0526 00C0      		rjmp .L271
+ 1826               	.LM275:
+ 1827 0528 8FB1      		in r24,47-0x20
+ 1828               	.LBE265:
+ 1829               	.LBE264:
+ 1830               	.LBB266:
+ 1831               	.LBB267:
+ 1833               	.LM276:
+ 1834 052a 83E0      		ldi r24,lo8(3)
+ 1835 052c 8FB9      		out 47-0x20,r24
+ 1836               	.L273:
+ 1838               	.LM277:
+ 1839 052e 779B      		sbis 46-0x20,7
+ 1840 0530 00C0      		rjmp .L273
+ 1842               	.LM278:
+ 1843 0532 8FB1      		in r24,47-0x20
+ 1844               	.LBE267:
+ 1845               	.LBE266:
+ 1847               	.LM279:
+ 1848 0534 C09A      		sbi 56-0x20,0
+ 1850               	.LM280:
+ 1851 0536 8AE2      		ldi r24,lo8(42)
+ 1852 0538 0E94 0000 		call mcp2515_read_register
+ 1853 053c 8823      		tst r24
+ 1854 053e 01F0      		breq .L275
+ 1855 0540 80E0      		ldi r24,lo8(0)
+ 1856 0542 90E0      		ldi r25,hi8(0)
+ 1857 0544 0895      		ret
+ 1858               	.L275:
+ 1860               	.LM281:
+ 1861 0546 6FE0      		ldi r22,lo8(15)
+ 1862 0548 8CE0      		ldi r24,lo8(12)
+ 1863 054a 0E94 0000 		call mcp2515_write_register
+ 1865               	.LM282:
+ 1866 054e 60E0      		ldi r22,lo8(0)
+ 1867 0550 8DE0      		ldi r24,lo8(13)
+ 1868 0552 0E94 0000 		call mcp2515_write_register
+ 1870               	.LM283:
+ 1871 0556 60E6      		ldi r22,lo8(96)
+ 1872 0558 80E6      		ldi r24,lo8(96)
+ 1873 055a 0E94 0000 		call mcp2515_write_register
+ 1875               	.LM284:
+ 1876 055e 60E6      		ldi r22,lo8(96)
+ 1877 0560 80E7      		ldi r24,lo8(112)
+ 1878 0562 0E94 0000 		call mcp2515_write_register
+ 1880               	.LM285:
+ 1881 0566 60E0      		ldi r22,lo8(0)
+ 1882 0568 8FE0      		ldi r24,lo8(15)
+ 1883 056a 0E94 0000 		call mcp2515_write_register
+ 1884 056e 81E0      		ldi r24,lo8(1)
+ 1885 0570 90E0      		ldi r25,hi8(1)
+ 1887               	.LM286:
+ 1888 0572 0895      		ret
+ 1889               	/* epilogue: frame size=0 */
+ 1890               	/* epilogue: noreturn */
+ 1891               	/* epilogue end (size=0) */
+ 1892               	/* function mcp2515_init size 87 (87) */
+ 1897               	.Lscope12:
+ 1899               	.Letext0:
+ 1900               	/* File "mcp2515.c": code  704 = 0x02c0 ( 605), prologues  48, epilogues  51 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 mcp2515.c
+     /tmp/ccWgPdMg.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccWgPdMg.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccWgPdMg.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccWgPdMg.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccWgPdMg.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccWgPdMg.s:80     .text:00000000 spi_putc
+     /tmp/ccWgPdMg.s:111    .text:0000000c mcp2515_write_register
+     /tmp/ccWgPdMg.s:180    .text:0000002e mcp2515_read_register
+     /tmp/ccWgPdMg.s:255    .text:00000054 mcp2515_bit_modify
+     /tmp/ccWgPdMg.s:339    .text:0000007e mcp2515_read_status
+     /tmp/ccWgPdMg.s:394    .text:00000098 mcp2515_check_message
+     /tmp/ccWgPdMg.s:424    .text:000000b0 mcp2515_check_free_buffer
+     /tmp/ccWgPdMg.s:458    .text:000000ca mcp2515_send_extmessage
+     /tmp/ccWgPdMg.s:786    .text:000001c0 mcp2515_send_message
+     /tmp/ccWgPdMg.s:1118   .text:000002c0 mcp2515_get_extmessage
+     /tmp/ccWgPdMg.s:1391   .text:000003be mcp2515_get_message
+     /tmp/ccWgPdMg.s:1664   .text:000004ca mcp2515_init
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

@@ -1,0 +1,15 @@
+4 Addressbyte (Wie Canspezifikationen)
+1 Bit rtr (1 : 0)
+1 Byte Länge
+0-8 Byte Datemnits
+
+
+Can Spezifikation für erste 4 Byte:
+Feldname Bits
+Start of Frame 1
+IDa 11
+Substitute remote request 1
+Identifier extension bit (IDE) 1
+IDb 18
+
+

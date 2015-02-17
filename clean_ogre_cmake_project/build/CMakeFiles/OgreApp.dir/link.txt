@@ -1,1 +1,0 @@
-/usr/bin/c++   -O2 -g -DNDEBUG    CMakeFiles/OgreApp.dir/BaseApplication.cpp.o CMakeFiles/OgreApp.dir/TutorialApplication.cpp.o  -o dist/bin/OgreApp -rdynamic -lOgreMain -lOIS 

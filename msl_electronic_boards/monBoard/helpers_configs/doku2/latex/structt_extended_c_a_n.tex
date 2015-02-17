@@ -1,0 +1,37 @@
+\section{t\-Extended\-C\-A\-N \-Struct \-Reference}
+\label{structt_extended_c_a_n}\index{t\-Extended\-C\-A\-N@{t\-Extended\-C\-A\-N}}
+
+
+\-The extended \-C\-A\-N message length 8 byte \-This message type is used in this projekt, dont use other, this will cause problems with the \-C\-A\-N-\/usb cable.  
+
+
+
+
+{\ttfamily \#include $<$mcp2515.\-h$>$}
+
+\subsection*{\-Data \-Fields}
+\begin{DoxyCompactItemize}
+\item 
+char {\bfseries id} [4]\label{group__can_gace593da5319500315498c8f845ee2368}
+
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>int8\_t {\bfseries rtr}: 1\\
+\>uint8\_t {\bfseries length}: 4\\
+\} {\bfseries header}\label{group__can_ga16dcd6dee09e1abfcc9597f67b3b2c32}
+\\
+
+\end{tabbing}\item 
+uint8\-\_\-t {\bfseries data} [8]\label{group__can_gafb87d045bbf32b236fc425efe02bdc7b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-The extended \-C\-A\-N message length 8 byte \-This message type is used in this projekt, dont use other, this will cause problems with the \-C\-A\-N-\/usb cable. 
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+workspace/\-Uniprojekt/\-Platine16\-Mhz/\-Abgabe/{\bf mcp2515.\-h}\end{DoxyCompactItemize}

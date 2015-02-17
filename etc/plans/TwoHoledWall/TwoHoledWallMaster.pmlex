@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621468964"/>
+    <value xPos="118" yPos="135" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621468963"/>
+    <value xPos="14" yPos="2" width="794" height="487"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621468965"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621580835"/>
+    <value xPos="302" yPos="287" width="197" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621589489"/>
+    <value xPos="358" yPos="97" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621598841"/>
+    <value>
+      <bendpoints xPos="347" yPos="338"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621602033"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621605061"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1417621607473"/>
+    <value>
+      <bendpoints xPos="403" yPos="315"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ShootTwoHoledWall.pml#1417620189234"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464768858"/>
+    <value xPos="550" yPos="297" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464816725"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464819985"/>
+    <value>
+      <bendpoints xPos="548" yPos="243"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464823873"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TwoHoledWallMaster.pml#1422464874668"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/Joystick.beh#1421854995808"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

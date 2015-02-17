@@ -1,0 +1,306 @@
+   1               		.file	"uip_arch.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  46               	.global	uip_add32
+  48               	uip_add32:
+   1:uip_arch.c    **** /*
+   2:uip_arch.c    ****  * Copyright (c) 2001, Adam Dunkels.
+   3:uip_arch.c    ****  * All rights reserved. 
+   4:uip_arch.c    ****  *
+   5:uip_arch.c    ****  * Redistribution and use in source and binary forms, with or without 
+   6:uip_arch.c    ****  * modification, are permitted provided that the following conditions 
+   7:uip_arch.c    ****  * are met: 
+   8:uip_arch.c    ****  * 1. Redistributions of source code must retain the above copyright 
+   9:uip_arch.c    ****  *    notice, this list of conditions and the following disclaimer. 
+  10:uip_arch.c    ****  * 2. Redistributions in binary form must reproduce the above copyright 
+  11:uip_arch.c    ****  *    notice, this list of conditions and the following disclaimer in the 
+  12:uip_arch.c    ****  *    documentation and/or other materials provided with the distribution. 
+  13:uip_arch.c    ****  * 3. The name of the author may not be used to endorse or promote
+  14:uip_arch.c    ****  *    products derived from this software without specific prior
+  15:uip_arch.c    ****  *    written permission.  
+  16:uip_arch.c    ****  *
+  17:uip_arch.c    ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS
+  18:uip_arch.c    ****  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  19:uip_arch.c    ****  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  20:uip_arch.c    ****  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+  21:uip_arch.c    ****  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  22:uip_arch.c    ****  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+  23:uip_arch.c    ****  * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  24:uip_arch.c    ****  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  25:uip_arch.c    ****  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  26:uip_arch.c    ****  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  27:uip_arch.c    ****  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+  28:uip_arch.c    ****  *
+  29:uip_arch.c    ****  * This file is part of the uIP TCP/IP stack.
+  30:uip_arch.c    ****  *
+  31:uip_arch.c    ****  * $Id: uip_arch.c,v 1.1 2004/05/09 00:24:47 Louis Exp $
+  32:uip_arch.c    ****  *
+  33:uip_arch.c    ****  */
+  34:uip_arch.c    **** 
+  35:uip_arch.c    **** #include "uipopt.h"
+  36:uip_arch.c    **** #include "uip.h"
+  37:uip_arch.c    **** #include "uip_arch.h"
+  38:uip_arch.c    **** 
+  39:uip_arch.c    **** #define BUF ((uip_tcpip_hdr *)&uip_buf[UIP_LLH_LEN])
+  40:uip_arch.c    **** #define IP_PROTO_TCP    6
+  41:uip_arch.c    **** 
+  42:uip_arch.c    **** /*-----------------------------------------------------------------------------------*/
+  43:uip_arch.c    **** void
+  44:uip_arch.c    **** uip_add32(u8_t *op32, u16_t op16)
+  45:uip_arch.c    **** {
+  50               	.LM0:
+  51               	.LFBB1:
+  52               	/* prologue: frame size=0 */
+  53               	/* prologue end (size=0) */
+  54 0000 FC01      		movw r30,r24
+  46:uip_arch.c    ****   
+  47:uip_arch.c    ****   uip_acc32[3] = op32[3] + (op16 & 0xff);
+  56               	.LM1:
+  57 0002 8381      		ldd r24,Z+3
+  58 0004 860F      		add r24,r22
+  59 0006 8093 0000 		sts uip_acc32+3,r24
+  48:uip_arch.c    ****   uip_acc32[2] = op32[2] + (op16 >> 8);
+  61               	.LM2:
+  62 000a 272F      		mov r18,r23
+  63 000c 3327      		clr r19
+  64 000e 8281      		ldd r24,Z+2
+  65 0010 820F      		add r24,r18
+  66 0012 8093 0000 		sts uip_acc32+2,r24
+  49:uip_arch.c    ****   uip_acc32[1] = op32[1];
+  68               	.LM3:
+  69 0016 8181      		ldd r24,Z+1
+  70 0018 8093 0000 		sts uip_acc32+1,r24
+  50:uip_arch.c    ****   uip_acc32[0] = op32[0];
+  72               	.LM4:
+  73 001c 8081      		ld r24,Z
+  74 001e 8093 0000 		sts uip_acc32,r24
+  51:uip_arch.c    ****   
+  52:uip_arch.c    ****   if(uip_acc32[2] < (op16 >> 8)) {
+  76               	.LM5:
+  77 0022 8091 0000 		lds r24,uip_acc32+2
+  78 0026 9927      		clr r25
+  79 0028 8217      		cp r24,r18
+  80 002a 9307      		cpc r25,r19
+  81 002c 00F4      		brsh .L2
+  53:uip_arch.c    ****     ++uip_acc32[1];    
+  83               	.LM6:
+  84 002e 8091 0000 		lds r24,uip_acc32+1
+  85 0032 8F5F      		subi r24,lo8(-(1))
+  86 0034 8093 0000 		sts uip_acc32+1,r24
+  54:uip_arch.c    ****     if(uip_acc32[1] == 0) {
+  88               	.LM7:
+  89 0038 8091 0000 		lds r24,uip_acc32+1
+  90 003c 8823      		tst r24
+  91 003e 01F4      		brne .L2
+  55:uip_arch.c    ****       ++uip_acc32[0];
+  93               	.LM8:
+  94 0040 8091 0000 		lds r24,uip_acc32
+  95 0044 8F5F      		subi r24,lo8(-(1))
+  96 0046 8093 0000 		sts uip_acc32,r24
+  97               	.L2:
+  56:uip_arch.c    ****     }
+  57:uip_arch.c    ****   }
+  58:uip_arch.c    ****   
+  59:uip_arch.c    ****   if(uip_acc32[3] < (op16 & 0xff)) {
+  99               	.LM9:
+ 100 004a 8091 0000 		lds r24,uip_acc32+3
+ 101 004e 9927      		clr r25
+ 102 0050 7070      		andi r23,hi8(255)
+ 103 0052 8617      		cp r24,r22
+ 104 0054 9707      		cpc r25,r23
+ 105 0056 00F4      		brsh .L9
+  60:uip_arch.c    ****     ++uip_acc32[2];  
+ 107               	.LM10:
+ 108 0058 8091 0000 		lds r24,uip_acc32+2
+ 109 005c 8F5F      		subi r24,lo8(-(1))
+ 110 005e 8093 0000 		sts uip_acc32+2,r24
+  61:uip_arch.c    ****     if(uip_acc32[2] == 0) {
+ 112               	.LM11:
+ 113 0062 8091 0000 		lds r24,uip_acc32+2
+ 114 0066 8823      		tst r24
+ 115 0068 01F4      		brne .L9
+  62:uip_arch.c    ****       ++uip_acc32[1];    
+ 117               	.LM12:
+ 118 006a 8091 0000 		lds r24,uip_acc32+1
+ 119 006e 8F5F      		subi r24,lo8(-(1))
+ 120 0070 8093 0000 		sts uip_acc32+1,r24
+  63:uip_arch.c    ****       if(uip_acc32[1] == 0) {
+ 122               	.LM13:
+ 123 0074 8091 0000 		lds r24,uip_acc32+1
+ 124 0078 8823      		tst r24
+ 125 007a 01F4      		brne .L9
+  64:uip_arch.c    **** 	++uip_acc32[0];
+ 127               	.LM14:
+ 128 007c 8091 0000 		lds r24,uip_acc32
+ 129 0080 8F5F      		subi r24,lo8(-(1))
+ 130 0082 8093 0000 		sts uip_acc32,r24
+ 131               	.L9:
+ 132 0086 0895      		ret
+ 133               	/* epilogue: frame size=0 */
+ 134               	/* epilogue: noreturn */
+ 135               	/* epilogue end (size=0) */
+ 136               	/* function uip_add32 size 69 (69) */
+ 138               	.Lscope1:
+ 142               	.global	uip_chksum
+ 144               	uip_chksum:
+  65:uip_arch.c    ****       }
+  66:uip_arch.c    ****     }
+  67:uip_arch.c    ****   }
+  68:uip_arch.c    **** }
+  69:uip_arch.c    **** /*-----------------------------------------------------------------------------------*/
+  70:uip_arch.c    **** u16_t
+  71:uip_arch.c    **** uip_chksum(u16_t *sdata, u16_t len)
+  72:uip_arch.c    **** {
+ 146               	.LM15:
+ 147               	.LFBB2:
+ 148               	/* prologue: frame size=0 */
+ 149 0088 0F93      		push r16
+ 150 008a 1F93      		push r17
+ 151 008c CF93      		push r28
+ 152 008e DF93      		push r29
+ 153               	/* prologue end (size=4) */
+ 154 0090 8C01      		movw r16,r24
+ 155 0092 C0E0      		ldi r28,lo8(0)
+ 156 0094 D0E0      		ldi r29,hi8(0)
+ 157 0096 00C0      		rjmp .L11
+ 158               	.L12:
+  73:uip_arch.c    ****   u16_t acc;
+  74:uip_arch.c    ****   
+  75:uip_arch.c    ****   for(acc = 0; len > 1; len -= 2) {
+  76:uip_arch.c    ****     acc += *sdata;
+ 160               	.LM16:
+ 161 0098 F801      		movw r30,r16
+ 162 009a 8081      		ld r24,Z
+ 163 009c 9181      		ldd r25,Z+1
+ 164 009e C80F      		add r28,r24
+ 165 00a0 D91F      		adc r29,r25
+  77:uip_arch.c    ****     if(acc < *sdata) {
+ 167               	.LM17:
+ 168 00a2 C817      		cp r28,r24
+ 169 00a4 D907      		cpc r29,r25
+ 170 00a6 00F4      		brsh .L13
+  78:uip_arch.c    ****       /* Overflow, so we add the carry to acc (i.e., increase by
+  79:uip_arch.c    ****          one). */
+  80:uip_arch.c    ****       ++acc;
+ 172               	.LM18:
+ 173 00a8 2196      		adiw r28,1
+ 174               	.L13:
+  81:uip_arch.c    ****     }
+  82:uip_arch.c    ****     ++sdata;
+ 176               	.LM19:
+ 177 00aa 0E5F      		subi r16,lo8(-(2))
+ 178 00ac 1F4F      		sbci r17,hi8(-(2))
+ 180               	.LM20:
+ 181 00ae 6250      		subi r22,lo8(-(-2))
+ 182 00b0 7040      		sbci r23,hi8(-(-2))
+ 183               	.L11:
+ 184 00b2 6230      		cpi r22,2
+ 185 00b4 7105      		cpc r23,__zero_reg__
+ 186 00b6 00F4      		brsh .L12
+  83:uip_arch.c    ****   }
+  84:uip_arch.c    **** 
+  85:uip_arch.c    ****   /* add up any odd byte */
+  86:uip_arch.c    ****   if(len == 1) {
+ 188               	.LM21:
+ 189 00b8 6130      		cpi r22,1
+ 190 00ba 7105      		cpc r23,__zero_reg__
+ 191 00bc 01F4      		brne .L16
+  87:uip_arch.c    ****     acc += htons(((u16_t)(*(u8_t *)sdata)) << 8);
+ 193               	.LM22:
+ 194 00be F801      		movw r30,r16
+ 195 00c0 8081      		ld r24,Z
+ 196 00c2 9927      		clr r25
+ 197 00c4 982F      		mov r25,r24
+ 198 00c6 8827      		clr r24
+ 199 00c8 0E94 0000 		call htons
+ 200 00cc C80F      		add r28,r24
+ 201 00ce D91F      		adc r29,r25
+  88:uip_arch.c    ****     if(acc < htons(((u16_t)(*(u8_t *)sdata)) << 8)) {
+ 203               	.LM23:
+ 204 00d0 F801      		movw r30,r16
+ 205 00d2 8081      		ld r24,Z
+ 206 00d4 9927      		clr r25
+ 207 00d6 982F      		mov r25,r24
+ 208 00d8 8827      		clr r24
+ 209 00da 0E94 0000 		call htons
+ 210 00de C817      		cp r28,r24
+ 211 00e0 D907      		cpc r29,r25
+ 212 00e2 00F4      		brsh .L16
+  89:uip_arch.c    ****       ++acc;
+ 214               	.LM24:
+ 215 00e4 2196      		adiw r28,1
+ 216               	.L16:
+  90:uip_arch.c    ****     }
+  91:uip_arch.c    ****   }
+  92:uip_arch.c    **** 
+  93:uip_arch.c    ****   return acc;
+  94:uip_arch.c    **** }
+ 218               	.LM25:
+ 219 00e6 CE01      		movw r24,r28
+ 220               	/* epilogue: frame size=0 */
+ 221 00e8 DF91      		pop r29
+ 222 00ea CF91      		pop r28
+ 223 00ec 1F91      		pop r17
+ 224 00ee 0F91      		pop r16
+ 225 00f0 0895      		ret
+ 226               	/* epilogue end (size=5) */
+ 227               	/* function uip_chksum size 53 (44) */
+ 232               	.Lscope2:
+ 234               	.global	uip_ipchksum
+ 236               	uip_ipchksum:
+  95:uip_arch.c    **** /*-----------------------------------------------------------------------------------*/
+  96:uip_arch.c    **** u16_t
+  97:uip_arch.c    **** uip_ipchksum(void)
+  98:uip_arch.c    **** {
+ 238               	.LM26:
+ 239               	.LFBB3:
+ 240               	/* prologue: frame size=0 */
+ 241               	/* prologue end (size=0) */
+  99:uip_arch.c    ****   return uip_chksum((u16_t *)&uip_buf[UIP_LLH_LEN], 20);
+ 243               	.LM27:
+ 244 00f2 64E1      		ldi r22,lo8(20)
+ 245 00f4 70E0      		ldi r23,hi8(20)
+ 246 00f6 80E0      		ldi r24,lo8(uip_buf+14)
+ 247 00f8 90E0      		ldi r25,hi8(uip_buf+14)
+ 248 00fa 0E94 0000 		call uip_chksum
+ 249               	/* epilogue: frame size=0 */
+ 250 00fe 0895      		ret
+ 251               	/* epilogue end (size=1) */
+ 252               	/* function uip_ipchksum size 7 (6) */
+ 254               	.Lscope3:
+ 255               		.comm eth2can_status,2,1
+ 256               		.comm eth2can_can,2,1
+ 257               		.comm eth2can_uart0,2,1
+ 258               		.comm eth2can_uart1,2,1
+ 259               		.comm send_init,1,1
+ 266               	.Letext0:
+ 267               	/* File "uip_arch.c": code  129 = 0x0081 ( 119), prologues   4, epilogues   6 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 uip_arch.c
+     /tmp/ccmMNka9.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccmMNka9.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccmMNka9.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccmMNka9.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccmMNka9.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccmMNka9.s:48     .text:00000000 uip_add32
+     /tmp/ccmMNka9.s:144    .text:00000088 uip_chksum
+     /tmp/ccmMNka9.s:236    .text:000000f2 uip_ipchksum
+                            *COM*:00000002 eth2can_status
+                            *COM*:00000002 eth2can_can
+                            *COM*:00000002 eth2can_uart0
+                            *COM*:00000002 eth2can_uart1
+                            *COM*:00000001 send_init
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+uip_acc32
+htons
+uip_buf

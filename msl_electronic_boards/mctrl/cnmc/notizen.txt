@@ -1,0 +1,26 @@
+nachricht senden
+nachricht empfangen
+  -- bearbeitung quittieren
+
+
+ablauf:
+  sensordaten abfragen
+  nachricht abfragen
+  parameter setzen
+  nachrichten senden
+  regeln
+  zyklusende abwarten
+
+strukturen:
+  sensordaten
+    encoderwerte
+    spannungen
+    versorgunsspannung
+    ausgangs-stromstärken(?) (berechnen?) [limitieren]
+
+  configuration
+    viele parameter
+
+  nachrichten
+    einheitlich für seriell/can (?)
+    

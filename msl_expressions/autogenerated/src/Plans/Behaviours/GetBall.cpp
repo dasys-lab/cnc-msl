@@ -24,9 +24,9 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-        CNPosition ownPos = wm->getOwnPosition();
-        CNPoint2D alloBallPos = wm->getBallPosition();
-        CNPoint2D egoBallPos = alloBallPos.alloToEgo(ownPos);
+        shared_ptr < CNPosition > ownPos = wm->getOwnPosition();
+        shared_ptr < CNPoint2D > alloBallPos = wm->getAlloBallPosition();
+        CNPoint2D egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
         msl_simulator::sim_robot_command c;
 
@@ -35,10 +35,9 @@ namespace alica
         c.velangular = 3 * atan2(egoBallPos.y, egoBallPos.x);
 
         CNPoint2D p1(0, 1);
-        CNPoint2D p2(0, 0);
-        p2 = p1.rotate(3.141 * 0.5);
+        auto p2 = p1.rotate(3.141 * 0.5);
 
-        cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2.x << "," << p2.y << ")"
+        cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2->x << "," << p2->y << ")"
                 << endl;
 
         this->send(c);
