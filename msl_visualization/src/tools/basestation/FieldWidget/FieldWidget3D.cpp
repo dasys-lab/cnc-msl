@@ -610,6 +610,7 @@ void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* 
 	velocityMapper->SetInput(line->GetOutput());
 	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
 	velocity->SetMapper(velocityMapper);
+	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
 	velocity->GetProperty()->SetColor(1, 0, 0);
 	velocity->GetProperty()->SetDiffuse(0.4);
 	velocity->GetProperty()->SetAmbient(0.8);
@@ -954,6 +955,7 @@ void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot, boost::shared
 	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
 	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
 	velocity->SetMapper(velocityMapper);
+	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
 	velocity->GetProperty()->SetColor(1, 0, 0);
 	velocity->GetProperty()->SetDiffuse(0.4);
 	velocity->GetProperty()->SetAmbient(0.8);

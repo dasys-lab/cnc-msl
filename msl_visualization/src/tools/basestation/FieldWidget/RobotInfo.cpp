@@ -47,13 +47,3 @@ void RobotInfo::setTimeStamp(unsigned long timeStamp)
 {
 	this->timeStamp = timeStamp;
 }
-
-std::shared_ptr<RobotVisualization> RobotInfo::getVisualization()
-{
-	return visualization;
-}
-
-void RobotInfo::setVisualization(std::shared_ptr<RobotVisualization> visualization)
-{
-	this->visualization = visualization;
-}

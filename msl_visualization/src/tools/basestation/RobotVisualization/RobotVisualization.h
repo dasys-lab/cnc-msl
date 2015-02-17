@@ -12,6 +12,7 @@
 #include <vtkActor.h>
 #include <string>
 #include <vtkLineSource.h>
+#include <vtkRegularPolygonSource.h>
 
 
 class RobotVisualization
@@ -35,6 +36,8 @@ public:
 	void setBallVelocity(vtkSmartPointer<vtkLineSource> ballVelocity);
 	vtkSmartPointer<vtkActor> getBallVelocityActor();
 	void setBallVelocityActor(vtkSmartPointer<vtkActor> ballVelocityActor);
+	vtkSmartPointer<vtkRegularPolygonSource> getPolygonSource();
+	void setPolygonSource(vtkSmartPointer<vtkRegularPolygonSource> polygonSource);
 
 private:
 	std::string name = "";
