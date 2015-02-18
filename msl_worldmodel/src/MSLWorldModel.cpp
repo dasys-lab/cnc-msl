@@ -9,232 +9,320 @@
 #include "MSLWorldModel.h"
 #include "HaveBall.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-namespace msl {
+#include "RawSensorData.h"
+#include "msl_sensor_msgs/SharedWorldInfo.h"
+namespace msl
+{
 
-MSLWorldModel* MSLWorldModel::get() {
-	static MSLWorldModel instance;
-	return &instance;
-}
-
-void MSLWorldModel::onSimulatorData(
-		msl_simulator::messages_robocup_ssl_wrapperPtr msg) {
-	if (simData.size() > ringBufferLength) {
-		simData.pop_back();
+	MSLWorldModel* MSLWorldModel::get()
+	{
+		static MSLWorldModel instance;
+		return &instance;
 	}
-	simData.push_front(msg);
-}
 
-MSLWorldModel::MSLWorldModel() : haveBall(this) {
-	ringBufferLength = 10;
-	ownID = supplementary::SystemConfig::getOwnRobotID();
-	spinner = new ros::AsyncSpinner(4);
-	sub = n.subscribe("/MSLSimulator/MessagesRoboCupSSLWrapper", 10,
-			&MSLWorldModel::onSimulatorData, (MSLWorldModel*) this);
-	spinner->start();
+	void MSLWorldModel::onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg)
+	{
+		if (simData.size() > ringBufferLength)
+		{
+			simData.pop_back();
+		}
+		simData.push_front(msg);
+	}
 
-	rawOdomSub = n.subscribe("/RawOdometry", 10,
-			&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);
+	MSLWorldModel::MSLWorldModel() :
+			ringBufferLength(10), haveBall(this), rawSensorData(this, ringBufferLength)
+	{
+		ownID = supplementary::SystemConfig::getOwnRobotID();
+		spinner = new ros::AsyncSpinner(4);
+		sub = n.subscribe("/MSLSimulator/MessagesRoboCupSSLWrapper", 10, &MSLWorldModel::onSimulatorData,
+							(MSLWorldModel*)this);
+		spinner->start();
 
-	joystickSub = n.subscribe("/Joystick", 10,
-			&MSLWorldModel::onJoystickCommand, (MSLWorldModel*) this);
+		rawOdomSub = n.subscribe("/RawOdometry", 10, &MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*)this);
 
-	refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10,
-			&MSLWorldModel::onRefereeBoxInfoBody, (MSLWorldModel*) this);
+		joystickSub = n.subscribe("/Joystick", 10, &MSLWorldModel::onJoystickCommand, (MSLWorldModel*)this);
 
-	wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10,
-			&MSLWorldModel::onWorldModelData, (MSLWorldModel*) this);
+		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &MSLWorldModel::onRefereeBoxInfoBody,
+											(MSLWorldModel*)this);
 
-	this->sharedWolrdModel = new MSLSharedWorldModel(this);
+		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
+								(MSLWorldModel*)this);
 
-}
-void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
-	if (msg->robotId == this->ownID) {
+		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/SharedWorldInfo", 10);
+
+		this->sharedWolrdModel = new MSLSharedWorldModel(this);
+
+	}
+	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
+	{
+		if (msg->robotId == this->ownID)
+		{
+			lock_guard<mutex> lock(joystickMutex);
+			if (joystickCommandData.size() > ringBufferLength)
+			{
+				joystickCommandData.pop_back();
+			}
+			joystickCommandData.push_front(msg);
+		}
+	}
+	msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
+	{
 		lock_guard<mutex> lock(joystickMutex);
-		if (joystickCommandData.size() > ringBufferLength) {
-			joystickCommandData.pop_back();
+		if (joystickCommandData.size() == 0)
+		{
+			return nullptr;
 		}
-		joystickCommandData.push_front(msg);
+		return joystickCommandData.front();
 	}
-}
-msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo() {
-	lock_guard<mutex> lock(joystickMutex);
-	if (joystickCommandData.size() == 0) {
-		return nullptr;
+	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
+	{
+		lock_guard<mutex> lock(rawOdometryMutex);
+		if (rawOdometryData.size() > ringBufferLength)
+		{
+			rawOdometryData.pop_back();
+		}
+		rawOdometryData.push_front(msg);
 	}
-	return joystickCommandData.front();
-}
-void MSLWorldModel::onRawOdometryInfo(
-		msl_actuator_msgs::RawOdometryInfoPtr msg) {
-	lock_guard<mutex> lock(rawOdometryMutex);
-	if (rawOdometryData.size() > ringBufferLength) {
-		rawOdometryData.pop_back();
+
+	msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo()
+	{
+		lock_guard<mutex> lock(rawOdometryMutex);
+		if (rawOdometryData.size() == 0)
+		{
+			return nullptr;
+		}
+		return rawOdometryData.front();
 	}
-	rawOdometryData.push_front(msg);
-}
 
-msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo() {
-	lock_guard<mutex> lock(rawOdometryMutex);
-	if (rawOdometryData.size() == 0) {
-		return nullptr;
-	}
-	return rawOdometryData.front();
-}
-
-void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg) {
-	lock_guard<mutex> lock(wmMutex);
-	if (wmData.size() > ringBufferLength) {
-
-		wmData.pop_back();
-	}
-	transformToWorldCoordinates(msg);
-	wmData.push_front(msg);
-}
-
-msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData() {
-	lock_guard<mutex> lock(wmMutex);
-	if (wmData.size() == 0) {
-		return nullptr;
-	}
-	return wmData.front();
-}
-
-MSLWorldModel::~MSLWorldModel() {
-	spinner->stop();
-	delete spinner;
-	delete this->sharedWolrdModel;
-}
-
-/**
- * returns x,y orientation:
- * (0,0) Is the field center
- * positive y = right side of the field (playing direction from yellow to blue)
- * negative x = blue goal
- * orientation of -pi = towards blue side
- *
- */
-shared_ptr<CNPosition> MSLWorldModel::getOwnPosition() {
-	msl_sensor_msgs::WorldModelDataPtr wmd;
+	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		lock_guard<mutex> lock(wmMutex);
-		if (wmData.size() > 0) {
-			wmd = *wmData.begin();
-		}
-	}
-	shared_ptr<CNPosition> p;
-	if (wmd.operator bool()) {
-		p = make_shared<CNPosition>();
-		p->x = wmd->odometry.position.x;
-		p->y = wmd->odometry.position.y;
-		p->theta = wmd->odometry.position.angle;
-		return p;
-	} else {
+		if (wmData.size() > ringBufferLength)
+		{
 
-		double x, y, oriantation;
-		if (simData.size() > 0) {
-			auto data = *simData.begin();
-			for (auto& r : data->detection.robots_yellow) {
-				if (r.robot_id == ownID) {
-					x = r.x;
-					y = r.y;
-					oriantation = r.orientation;
-				}
+			wmData.pop_back();
+		}
+		transformToWorldCoordinates(msg);
+		wmData.push_front(msg);
+	}
+
+	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
+	{
+		lock_guard<mutex> lock(wmMutex);
+		if (wmData.size() == 0)
+		{
+			return nullptr;
+		}
+		return wmData.front();
+	}
+
+	MSLWorldModel::~MSLWorldModel()
+	{
+		spinner->stop();
+		delete spinner;
+		delete this->sharedWolrdModel;
+	}
+
+	/**
+	 * returns x,y orientation:
+	 * (0,0) Is the field center
+	 * positive y = right side of the field (playing direction from yellow to blue)
+	 * negative x = blue goal
+	 * orientation of -pi = towards blue side
+	 *
+	 */
+	shared_ptr<CNPosition> MSLWorldModel::getOwnPosition()
+	{
+		msl_sensor_msgs::WorldModelDataPtr wmd;
+		{
+			lock_guard<mutex> lock(wmMutex);
+			if (wmData.size() > 0)
+			{
+				wmd = *wmData.begin();
 			}
+		}
+		shared_ptr<CNPosition> p;
+		if (wmd.operator bool())
+		{
 			p = make_shared<CNPosition>();
-			p->x = x;
-			p->y = y;
-			p->theta = oriantation;
+			p->x = wmd->odometry.position.x;
+			p->y = wmd->odometry.position.y;
+			p->theta = wmd->odometry.position.angle;
+			return p;
+		}
+		else
+		{
+
+			double x, y, oriantation;
+			if (simData.size() > 0)
+			{
+				auto data = *simData.begin();
+				for (auto& r : data->detection.robots_yellow)
+				{
+					if (r.robot_id == ownID)
+					{
+						x = r.x;
+						y = r.y;
+						oriantation = r.orientation;
+					}
+				}
+				p = make_shared<CNPosition>();
+				p->x = x;
+				p->y = y;
+				p->theta = oriantation;
+
+			}
 
 		}
-
+		return p;
 	}
-	return p;
-}
 
-shared_ptr<CNPoint2D> MSLWorldModel::getAlloBallPosition() {
-	shared_ptr<CNPoint2D> p;
-	auto ownPos = this->getOwnPosition();
-	if (ownPos.operator bool()) {
-		p = this->getEgoBallPosition();
-		p = p->egoToAllo(*ownPos);
-	}
-	return p;
-}
-
-shared_ptr<CNPoint2D> MSLWorldModel::getEgoBallPosition() {
-	msl_sensor_msgs::WorldModelDataPtr wmd;
+	shared_ptr<CNPoint2D> MSLWorldModel::getAlloBallPosition()
 	{
-		lock_guard<mutex> lock(wmMutex);
-		if (wmData.size() > 0) {
-			wmd = *wmData.begin();
+		shared_ptr<CNPoint2D> p;
+		auto ownPos = this->getOwnPosition();
+		if (ownPos.operator bool())
+		{
+			p = this->getEgoBallPosition();
+			p = p->egoToAllo(*ownPos);
 		}
+		return p;
 	}
-	shared_ptr<CNPoint2D> p;
-	if (wmd.operator bool()) {
-		if (wmd->ball.confidence > 0) {
-			p = make_shared<CNPoint2D>(wmd->ball.point.x, wmd->ball.point.y);
+
+	shared_ptr<CNPoint2D> MSLWorldModel::getEgoBallPosition()
+	{
+		msl_sensor_msgs::WorldModelDataPtr wmd;
+		{
+			lock_guard<mutex> lock(wmMutex);
+			if (wmData.size() > 0)
+			{
+				wmd = *wmData.begin();
+			}
 		}
-	} else {
-		if (simData.size() > 0) {
-			auto data = *simData.begin();
-			if (data->detection.balls.size() > 0) {
-				p = make_shared<CNPoint2D>(data->detection.balls.begin()->x,
-						data->detection.balls.begin()->y);
-				auto ownPos = this->getOwnPosition();
-				if (ownPos.operator bool()) {
-					p = p->alloToEgo(*ownPos);
+		shared_ptr<CNPoint2D> p;
+		if (wmd.operator bool())
+		{
+			if (wmd->ball.confidence > 0)
+			{
+				p = make_shared<CNPoint2D>(wmd->ball.point.x, wmd->ball.point.y);
+			}
+		}
+		else
+		{
+			if (simData.size() > 0)
+			{
+				auto data = *simData.begin();
+				if (data->detection.balls.size() > 0)
+				{
+					p = make_shared<CNPoint2D>(data->detection.balls.begin()->x, data->detection.balls.begin()->y);
+					auto ownPos = this->getOwnPosition();
+					if (ownPos.operator bool())
+					{
+						p = p->alloToEgo(*ownPos);
+					}
 				}
 			}
 		}
+		return p;
 	}
-	return p;
-}
 
+	double MSLWorldModel::getKickerVoltage()
+	{
+		return this->kickerVoltage;
+	}
 
-double MSLWorldModel::getKickerVoltage() {
-	return this->kickerVoltage;
-}
+	void MSLWorldModel::setKickerVoltage(double voltage)
+	{
+		this->kickerVoltage = voltage;
+	}
 
-void MSLWorldModel::setKickerVoltage(double voltage) {
-	this->kickerVoltage = voltage;
-}
+	void MSLWorldModel::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg)
+	{
+		lock_guard<mutex> lock(refereeMutex);
+		if (refereeBoxInfoBodyCommandData.size() > ringBufferLength)
+		{
+			refereeBoxInfoBodyCommandData.pop_back();
 
-void MSLWorldModel::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg) {
-	lock_guard<mutex> lock(refereeMutex);
-			if (refereeBoxInfoBodyCommandData.size() > ringBufferLength) {
-				refereeBoxInfoBodyCommandData.pop_back();
+		}
+		refereeBoxInfoBodyCommandData.push_front(msg);
 
-			}
-			refereeBoxInfoBodyCommandData.push_front(msg);
+		if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start)
+		{
+			currentSituation = Situation::Start;
+		}
+		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::stop)
+		{
+			currentSituation = Situation::Stop;
+		}
+		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::command_joystick)
+		{
+			currentSituation = Situation::Joystick;
+		}
+	}
 
-
-			if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start) {
-				currentSituation = Situation::Start;
-			} else if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::stop) {
-				currentSituation = Situation::Stop;
-			} else if((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::command_joystick) {
-				currentSituation = Situation::Joystick;
-			}
-}
-
-msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody() {
-	lock_guard<mutex> lock(refereeMutex);
-		if (refereeBoxInfoBodyCommandData.size() == 0) {
+	msl_msgs::RefereeBoxInfoBodyPtr MSLWorldModel::getRefereeBoxInfoBody()
+	{
+		lock_guard<mutex> lock(refereeMutex);
+		if (refereeBoxInfoBodyCommandData.size() == 0)
+		{
 			return nullptr;
 		}
 		return refereeBoxInfoBodyCommandData.front();
-}
+	}
 
-MSLSharedWorldModel* MSLWorldModel::getSharedWolrdModel() {
-	return this->sharedWolrdModel;
-}
+	MSLSharedWorldModel* MSLWorldModel::getSharedWolrdModel()
+	{
+		return this->sharedWolrdModel;
+	}
 
-void MSLWorldModel::transformToWorldCoordinates(
-		msl_sensor_msgs::WorldModelDataPtr& msg) {
-}
+	unsigned long MSLWorldModel::getTime()
+	{
+		return (unsigned long)ros::Time::now().sec * (unsigned long)1000000000 + (unsigned long)ros::Time::now().nsec;
+	}
 
-bool MSLWorldModel::checkSituation(Situation situation) {
-	lock_guard<mutex> lock(situationChecker);
-	return currentSituation == situation;
-}
+	void MSLWorldModel::sendSharedWorldModelData()
+	{
+		msl_sensor_msgs::SharedWorldInfo msg;
+		auto ball = rawSensorData.getBallPosition();
+		if (ball != nullptr)
+		{
+			msg.ball.point.x = ball->x;
+			msg.ball.point.y = ball->y;
+		}
+
+		auto ballVel = rawSensorData.getBallVelocity();
+		if (ballVel != nullptr)
+		{
+			msg.ball.velocity.vx = ballVel->x;
+			msg.ball.velocity.vy = ballVel->y;
+		}
+
+		auto ownPos = rawSensorData.getOwnPositionVision();
+		if (ownPos != nullptr)
+		{
+			msg.odom.position.x = ownPos->x;
+			msg.odom.position.y = ownPos->y;
+		}
+
+		auto ownVel = rawSensorData.getOwnVelocityVision();
+		if (ownVel != nullptr)
+		{
+			msg.odom.motion.angle = ownVel->angle;
+			msg.odom.motion.rotation = ownVel->rotation;
+			msg.odom.motion.translation = ownVel->translation;
+		}
+
+		sharedWorldPub.publish(msg);
+	}
+
+	void MSLWorldModel::transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg)
+	{
+	}
+
+	bool MSLWorldModel::checkSituation(Situation situation)
+	{
+		lock_guard<mutex> lock(situationChecker);
+		return currentSituation == situation;
+	}
 } /* namespace msl */
 
