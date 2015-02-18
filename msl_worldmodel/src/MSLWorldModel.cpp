@@ -283,6 +283,7 @@ namespace msl
 	void MSLWorldModel::sendSharedWorldModelData()
 	{
 		msl_sensor_msgs::SharedWorldInfo msg;
+		msg.senderID = 9;
 		auto ball = rawSensorData.getBallPosition();
 		if (ball != nullptr)
 		{
