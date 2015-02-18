@@ -3,11 +3,13 @@ project(msl_base)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+## Enable exception handling for segfaults
+set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp system_config fsystem autodiff event_handling alica_engine alica_ros_proxy msl_expressions msl_worldmodel)
+find_package(catkin REQUIRED roscpp system_config system_util fsystem autodiff event_handling alica_engine alica_ros_proxy msl_expressions msl_worldmodel)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

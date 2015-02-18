@@ -25,11 +25,14 @@
 
 #include <QTimer>
 #include <QFile>
+#include <QtGui>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <mutex>
 #include <ros/ros.h>
 #include <list>
 #include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
+#include <thread>
+#include <atomic>
 
 #include <QVTKWidget.h>
 
@@ -79,13 +82,13 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkDataSetMapper.h>
 #include <vtkRegularPolygonSource.h>
+#include <vtkTetra.h>
 
 #include <QVTKInteractor.h>
 
-#include "DB_Robot_info.h"
-#include "GridView.h"
-#include "Robot.h"
-#include "Vec.h"
+#include "RobotInfo.h"
+#include <SystemConfig.h>
+#include <vtkArrowSource.h>
 
 #define OBSTACLE_HEIGHT 0.2
 
@@ -94,26 +97,15 @@ class FieldWidget3D : public QVTKWidget
     Q_OBJECT
 public:
     explicit FieldWidget3D(QWidget *parent = 0);
-    void get_info_pointer( DB_Robot_Info * rw);
-    void get_coach_pointer( DB_Coach_Info * ci);
     list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > getSavedSharedWorldInfo();
 
 
-    vtkRenderWindow *renderWindow;
-    vtkRenderer *renderer;
-    vtkCamera* camera;
+    vtkRenderWindow *renderWindow = nullptr;
+    vtkRenderer *renderer = nullptr;
+    vtkCamera* camera = nullptr;
 
-    vtkActor* field;
-    vtkActor* robots[6];
-    vtkActor* robotNum[6];
-    vtkActor* ball;
-    vtkActor* taxiLine;
-    vtkLineSource* taxiSource;
+    vtkActor* field = nullptr;
 
-    DB_Robot_Info *DB_Info;
-    DB_Coach_Info *db_coach_info;
-
-    bool taxiFollow;
     bool heightVisible;
     bool heightColor;
     bool height3D;
@@ -123,13 +115,15 @@ public:
 
 
 private:
-
+    ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
-    void moveBall(double x, double y, double z);
-    void drawOpponent(vtkRenderer* renderer, double x, double y, double z);
-    void drawTeamRobot(vtkRenderer* renderer, double x, double y, double z);
+    void moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z);
+    void moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z);
+    void drawOpponent(double x, double y, double z);
+    void drawTeamRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     list<shared_ptr<RobotVisualization>> obstacles;
     list<shared_ptr<RobotVisualization>> team;
+    list<shared_ptr<RobotInfo>> latestInfo;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     mutex swmMutex;
@@ -138,27 +132,28 @@ private:
 	ros::NodeHandle* rosNode;
 	int ringBufferLength = 10;
     QWidget* parent;
-    float _FIELD_LENGTH;
-    float _FIELD_WIDTH;
-    float _LINE_THICKNESS;
-    float _GOAL_AREA_LENGTH;
-    float _GOAL_AREA_WIDTH;
-    float _PENALTY_AREA_LENGTH;
-    float _PENALTY_AREA_WIDTH;
-    float _CENTER_CIRCLE_RADIUS;
-    float _BALL_DIAMETER;
-    float _CORNER_CIRCLE_RADIUS;
-    float _PENALTY_MARK_DISTANCE;
-    float _BLACK_POINT_WIDTH;
-    float _BLACK_POINT_LENGTH;
-    float _ROBOT_RADIUS;
+    double _FIELD_LENGTH;
+    double _FIELD_WIDTH;
+    double _LINE_THICKNESS;
+    double _GOAL_AREA_LENGTH;
+    double _GOAL_AREA_WIDTH;
+    double _PENALTY_AREA_LENGTH;
+    double _PENALTY_AREA_WIDTH;
+    double _CENTER_CIRCLE_RADIUS;
+    double _BALL_DIAMETER;
+    double _CORNER_CIRCLE_RADIUS;
+    double _PENALTY_MARK_DISTANCE;
+    double _BLACK_POINT_WIDTH;
+    double _BLACK_POINT_LENGTH;
+    double _ROBOT_RADIUS;
 
 
     vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
-    void initBall(vtkRenderer* renderer);
+    void initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
+    void initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();
@@ -169,38 +164,19 @@ private:
     vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
 
-
-
-    // Score board
-    vtkActor2D* score_board;
-    vtkTextActor* score_cambada;
-    vtkTextActor* score_other;
-
-    vtkActor* testActor;
-
-    vtkLineSource* velocityLineSrc;
-    vtkActor* velocityLine;
-
-    vector<vtkActor*> toDeleteActors;
-
     vtkPoints* heightPoints;
     vtkPolyData* heightPolyData;
     vtkDelaunay2D* heightDelaunay;
     vtkPolyData* heightPolyDataAfterInterp;
     vtkActor* heightActor;
 
-    float robotsColorR[6];
-    float robotsColorG[6];
-    float robotsColorB[6];
-
     // Timer to update objects positions
     QTimer *Update_timer;
 
-    bool option_draw_debug[NROBOTS];
-    bool option_draw_obstacles[NROBOTS];
+    bool option_draw_debug[10];
+    bool option_draw_obstacles[10];
 
 signals:
-    
 public slots:
     void flip(void);
     void lock(bool);

@@ -26,12 +26,12 @@
 #include "Situation.h"
 
 
-
 using namespace std;
 
 namespace msl
 {
 
+	class MSLSharedWorldModel;
 	class MSLWorldModel
 	{
 	public:
@@ -55,6 +55,7 @@ namespace msl
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
 		msl_msgs::RefereeBoxInfoBodyPtr getRefereeBoxInfoBody();
+		MSLSharedWorldModel* getSharedWolrdModel();
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
@@ -65,6 +66,7 @@ namespace msl
 		int ringBufferLength;
 		double kickerVoltage;
 		Situation currentSituation;
+		MSLSharedWorldModel* sharedWolrdModel;
 
 		ros::NodeHandle n;
 		ros::Subscriber sub;

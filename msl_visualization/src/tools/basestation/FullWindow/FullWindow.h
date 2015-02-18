@@ -25,8 +25,6 @@
 
 #include "ui_FullWindow.h"
 #include <QtGui>
-#include "FieldWidget.h"
-#include "Robot.h"
 
 class FWind : public QMainWindow , public Ui::FullWindow
 {
@@ -35,15 +33,10 @@ class FWind : public QMainWindow , public Ui::FullWindow
 public:
 	FWind(QMainWindow *parent =0);
 	~FWind();
-	void get_info_pointer( DB_Robot_Info * rw);
-	void get_coach_pointer( DB_Coach_Info * ci);
 
 private:
 	bool fullscreenflag;
 	QMainWindow *fullwindow;
-
-	DB_Robot_Info *Robots_info;
-	DB_Coach_Info *db_coach_info;
 
 	//FieldWidget *Fieldwdg;
 

@@ -24,9 +24,6 @@
 #define __ROBOTWIDGET_H
 
 #include "ui_robotwidget.h"
-#include "Robot.h"
-#include "DB_Robot_info.h"
-#include "RobotDialog.h"
 #include <QTimer>
 #include <QDialog>
 
@@ -75,21 +72,15 @@ public:
 	RWidget(QWidget *partent = 0);
 	~RWidget();
 	void changeRobotStatus(QString *status);
-	void get_info_pointer( DB_Robot_Info * rw);
-	void get_robot_number(int num);
-	void get_coach_pointer( DB_Coach_Info * ci);
 
 private:
 
-	DB_Robot_Info *DB_Info; //informação da base de dados
-	DB_Coach_Info *db_coach_info;
 	int my_number;
 	char NA_flag;
 	
 	QTimer *UpdateTimer;
 
 	QDialog *RobotDetailsDialog;
-	RobotDialog *RDial;
 
 	QString *KO;
 	QString *NA;

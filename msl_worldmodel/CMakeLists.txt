@@ -3,6 +3,9 @@ project(msl_worldmodel)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+## Enable exception handling for segfaults using SigFault.h
+set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
+
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -103,6 +106,7 @@ catkin_package(
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
    src/HaveBall.cpp
+   src/sharedworldmodel/MSLSharedWorldModel.cpp
  )
 
 ## Declare a cpp executable

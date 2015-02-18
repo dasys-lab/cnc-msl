@@ -120,7 +120,7 @@ catkin_package(
 
 INCLUDE_DIRECTORIES(
         .
-        
+        ${catkin_INCLUDE_DIRS}
         # Workaround for hxx/cxx files
         ${CAMBADA_CONFIG_DIR}
 	src
@@ -128,24 +128,7 @@ INCLUDE_DIRECTORIES(
 	src/libs/libtcod-1.5.1/include
         src/libs/pman
         #src/libs/rtdb
-
-        src/comm                                    # Comm
-        src/util                                    # Utilities
-        src/geom                                    # Geometry
-        
-        # Agent
-        src/agent/
-        src/agent/loc                               # loc
-        src/agent/world                             # worldstate
-        src/agent/behaviours                        # behaviours
-        src/agent/roles                             # roles
-        src/agent/strategy                          # strategy
-
-        # Integrator
-        src/agent/integrator/localization           # subdirectory localization
-        src/agent/integrator/filters                # subdirectory filters
-        src/agent/integrator                        # integrator
-)
+ )
 
 
 ###########
@@ -178,7 +161,7 @@ SET( pman_SRC # this is a variable
 )
 
 ADD_LIBRARY( pman ${pman_SRC} )
-TARGET_LINK_LIBRARIES( pman cambada_util )
+TARGET_LINK_LIBRARIES( pman )
 set_target_properties( pman PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 
@@ -221,16 +204,6 @@ set_target_properties( pman PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 #ADD_EXECUTABLE ( xrtdb ${rtdbparser_SRC} )
 
-
-# Create cambada.conf.cxx/hxx
-add_custom_command(
-        OUTPUT cambada.conf.cxx
-        OUTPUT cambada.conf.hxx
-        COMMAND ${XSD_EXECUTABLE}
-        ARGS cxx-tree --generate-serialization ${CAMBADA_CONFIG_DIR}/cambada.conf.xsd
-        VERBATIM
-)
-
 # Create SetPieces.cxx/hxx
 add_custom_command(
         OUTPUT SetPieces.cxx
@@ -239,47 +212,6 @@ add_custom_command(
         ARGS cxx-tree --generate-serialization ${CAMBADA_CONFIG_DIR}/SetPieces.xsd
         VERBATIM
 )
-
-# sources for utils library
-SET( util_SRC
-        #src/util/cambada.conf.cxx
-        #src/util/SetPieces.cxx
-        src/util/PID.cpp
-        src/util/Clock.cpp
-        #src/util/ConfigXML.cpp
-        src/util/LinRegression.cpp
-        src/util/Param.cpp
-        src/util/SharedTimer.cpp
-        src/util/SlidingWindow.cpp
-        src/util/Timer.cpp
-        src/util/KickerConf.cpp
-        #src/util/HeightMap.cpp
-        src/util/ClippedRamp.cpp
-        
-        # Utilities for WorldState
-        src/util/EgoMotionEstimator.cpp
-        src/util/BallPositionKalman.cpp
-        src/util/BallPositionParticle.cpp
-        src/util/VelocityRegression.cpp
-        src/util/LinearRegression.cpp
-        src/util/StuckRobotSensor.cpp
-)
-
-ADD_LIBRARY( cambada_util ${util_SRC} )
-set_target_properties( cambada_util PROPERTIES COMPILE_FLAGS "-fPIC" )
-
-
-
-
-SET( geom_SRC
-        src/geom/Angle.cc
-        src/geom/Vec.cc
-        src/geom/geometry.cc
-        src/geom/Frame2D.cc
-)
-
-ADD_LIBRARY( geom ${geom_SRC} )
-set_target_properties( geom PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 
 #ADD_LIBRARY( comm src/comm/MulticastSocket.cpp )
@@ -303,63 +235,49 @@ include(${VTK_USE_FILE})
 INCLUDE_DIRECTORIES(
         .
         src/tools/basestation/FieldWidget
-        src/tools/basestation/FullInfoWindow
         src/tools/basestation/FullWindow
         src/tools/basestation/LogWidget
         src/tools/basestation/MainWindow
         src/tools/basestation/RefBoxWidget
         src/tools/basestation/RobotInfoWidget
         src/tools/basestation/RobotWidget
-        src/tools/basestation/UpdateWidget
 )
 
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 
 SET( BASESTATION_SRCS 
-        src/tools/basestation/FieldWidget/FieldWidget.cpp
         src/tools/basestation/FieldWidget/FieldWidget3D.cpp
+        src/tools/basestation/FieldWidget/RobotInfo.cpp
         src/tools/basestation/RobotVisualization/RobotVisualization.cpp
-        src/tools/basestation/FullInfoWindow/FullInfoWindow.cpp
         src/tools/basestation/FullWindow/FullWindow.cpp
         src/tools/basestation/LogWidget/LogWidget.cpp
         src/tools/basestation/MainWindow/MainWindow.cpp
-        src/tools/basestation/RefBoxWidget/RefBoxDialog.cpp
         src/tools/basestation/RefBoxWidget/RefBoxWidget.cpp
-#       src/tools/basestation/RefBoxWidget/RefBoxXML.cpp
         src/tools/basestation/RobotInfoWidget/RobotInfoWidget.cpp
-        src/tools/basestation/RobotWidget/RobotDialog.cpp
         src/tools/basestation/RobotWidget/RobotWidget.cpp
-        src/tools/basestation/UpdateWidget/UpdateWidget.cpp
         src/tools/basestation/main.cpp
 )
 # another list, this time it includes all header files that should be treated with moc
 SET( BASESTATION_MOC_HDRS
-        src/tools/basestation/FieldWidget/FieldWidget.h
         src/tools/basestation/FieldWidget/FieldWidget3D.h
+        src/tools/basestation/FieldWidget/RobotInfo.h
         src/tools/basestation/RobotVisualization/RobotVisualization.h
-        src/tools/basestation/FullInfoWindow/FullInfoWindow.h
         src/tools/basestation/FullWindow/FullWindow.h
         src/tools/basestation/LogWidget/LogWidget.h
         src/tools/basestation/MainWindow/MainWindow.h
-        src/tools/basestation/RefBoxWidget/RefBoxDialog.h
         src/tools/basestation/RefBoxWidget/RefBoxWidget.h
 #       src/tools/basestation/RefBoxWidget/RefBoxXML.h
         src/tools/basestation/RobotInfoWidget/RobotInfoWidget.h
-        src/tools/basestation/RobotWidget/RobotDialog.h
         src/tools/basestation/RobotWidget/RobotWidget.h
-        src/tools/basestation/UpdateWidget/UpdateWidget.h
 )
 
 # some .ui files
 SET( BASESTATION_UIS
-        src/tools/basestation/FullInfoWindow/FullInfoWindow_WG.ui
         src/tools/basestation/FullWindow/FullWindow.ui
         src/tools/basestation/LogWidget/LogWidget.ui
         src/tools/basestation/MainWindow/MainWindow.ui
-        src/tools/basestation/RefBoxWidget/RefBoxDialog.ui
         src/tools/basestation/RefBoxWidget/RefBoxWG.ui
         src/tools/basestation/RobotInfoWidget/RobotInfoWG.ui
-        src/tools/basestation/RobotWidget/RobotDialog.ui
         src/tools/basestation/RobotWidget/robotwidget.ui
 )
 
@@ -384,10 +302,7 @@ TARGET_LINK_LIBRARIES( basestation
  ${QT_LIBRARIES} 
  ${catkin_LIBRARIES}
 # ${LIBXMLPP_LIBRARY} 
- cambada_util 
  #rtdb 
- worldstate 
- geom 
  xerces-c 
  #comm 
  pthread
@@ -402,24 +317,6 @@ add_dependencies(basestation msl_msgs_generate_messages_cpp)
 ADD_CUSTOM_TARGET( tools DEPENDS
  basestation
 )
-
-SET( worldstate_SRC # this is a variable
-src/agent/world/Field.cpp
-src/agent/world/Obstacle.cpp
-src/agent/world/Robot.cpp
-src/agent/world/Sonar.cpp
-src/agent/world/Ball.cpp
-src/agent/world/VisionInfo.cpp
-src/agent/world/LowLevelInfo.cpp
-src/agent/world/WorldState.cpp
-src/agent/world/Compass.cpp
-src/agent/world/Zones.cpp
-src/agent/world/CoachInfo.cpp
-src/agent/world/SystemInfo.cpp
-)
-ADD_LIBRARY( worldstate ${worldstate_SRC} )
-TARGET_LINK_LIBRARIES( worldstate cambada_util geom )
-set_target_properties( worldstate PROPERTIES COMPILE_FLAGS "-fPIC" )
 
 #############
 ## Install ##

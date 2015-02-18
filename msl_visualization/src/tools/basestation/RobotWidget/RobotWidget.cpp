@@ -48,13 +48,10 @@ RWidget::RWidget(QWidget *parent)
 	stat_Green = 	QColor::fromRgb(208, 240, 192, 255);
 	stat_blue = 	QColor::fromRgb(70, 130, 180, 255);
 */
-	DB_Info = NULL;
-	db_coach_info = NULL;
 	my_number = 0;
 
 	UpdateTimer = new QTimer();
 	RobotDetailsDialog = new QDialog (parent);
-	RDial = new RobotDialog(RobotDetailsDialog);
 
 	RunBotFlip = 0;
 
@@ -64,13 +61,13 @@ RWidget::RWidget(QWidget *parent)
 	QString str;
 	QString rm = "Role";
 	RobotRoleCombo->insertItem(0, "Auto");
-	for (int i=1; i<num_roles;i++)
+	/*for (int i=1; i<num_roles;i++)
 	{
 		str=role_names[i];
 		
 		if(i!=0) str.remove(rm);
 		RobotRoleCombo->insertItem(i, str);
-	}
+	}*/
 
 
 	/* conecções dos objectos */
@@ -123,7 +120,6 @@ RWidget::~RWidget()
 
 	delete UpdateTimer;
 	delete RobotDetailsDialog;
-	delete RDial;
 }
 
 void RWidget::changeRobotStatus(QString *status)
@@ -235,10 +231,8 @@ void RWidget::changeRobotRun (void)
 		runBot->setText("Stop");
 
 		/* Difunde a informação */
-		db_coach_info->Coach_Info.playerInfo[my_number].running = true;
 		RunBotFlip=1;
 		runBot->setChecked(1);
-		emit transmitCoach();	
 	}
 }
 
@@ -257,23 +251,9 @@ void RWidget::changeRobotStop (void)
 
 		/* Difunde a informação */
 
-		db_coach_info->Coach_Info.playerInfo[my_number].running = false;
 		RunBotFlip=0;
 		runBot->setChecked(0);
-		emit transmitCoach();	
 	}
-}
-
-
-void RWidget::get_info_pointer( DB_Robot_Info * rw)
-{
-	DB_Info = rw;
-}
-
-void RWidget::get_robot_number(int num)
-{
-	my_number = num;
-	RDial->get_robot_number(my_number);
 }
 
 void RWidget::updateInfo(void)
@@ -281,7 +261,7 @@ void RWidget::updateInfo(void)
 
 
 
-	if(DB_Info != NULL)
+	/*if(DB_Info != NULL)
 	{
 	 	switch (DB_Info->Robot_status[my_number])
 	 	{
@@ -302,7 +282,7 @@ void RWidget::updateInfo(void)
 	 	}
 
 		
-		/* Role Info */
+		/* Role Info
 		if ( 	(DB_Info->Robot_info[my_number].role < num_roles) &&
 			(DB_Info->Robot_info[my_number].role >=0)		)
 
@@ -310,14 +290,14 @@ void RWidget::updateInfo(void)
 		else
 			Role_info_lb->setText("Auto");
 
-		/* Behaviour info */
+		/* Behaviour info
 		if ( 	(DB_Info->Robot_info[my_number].behaviour < num_behaviours) &&
 		(DB_Info->Robot_info[my_number].behaviour >=0)			)
 		
 		Behaviour_info_lb->setText(behaviour_names[DB_Info->Robot_info[my_number].behaviour]);
 		else
 		Behaviour_info_lb->setText("Unknown");
-
+*/
 
 	/* Informação do estado das baterias */
 	
@@ -335,7 +315,7 @@ void RWidget::updateInfo(void)
 
 if(NA_flag==0)
 {	
-	/* bateria 0 */
+	/* bateria 0
 	if ((DB_Info->Robot_info[my_number].battery[0] > 0.5))// && (DB_Info->lifetime[my_number] > NOT_RUNNING_TIMEOUT))
 		str = QString("%1").arg(DB_Info->Robot_info[my_number].battery[0], 3, 'f',1);
 
@@ -350,7 +330,7 @@ if(NA_flag==0)
 	plt.setColor(QPalette::Foreground, color);
 	Bat_1_info_lb->setPalette(plt);
 
-	/* bateria 1 */
+	/* bateria 1
 	if ((DB_Info->Robot_info[my_number].battery[1] > 0.5))// && (DB_Info->lifetime[my_number] > NOT_RUNNING_TIMEOUT))
 		str = QString("%1").arg(DB_Info->Robot_info[my_number].battery[1], 3, 'f',1);
 
@@ -366,7 +346,7 @@ if(NA_flag==0)
 	plt.setColor(QPalette::Foreground, color);
 	Bat_2_info_lb->setPalette(plt);
 
-	/* bateria 2*/
+	/* bateria 2
 	if ((DB_Info->Robot_info[my_number].battery[2] > 0.5) )//&& (DB_Info->lifetime[my_number] > NOT_RUNNING_TIMEOUT))
 		str = QString("%1").arg(DB_Info->Robot_info[my_number].battery[2], 3, 'f',1);
 
@@ -384,8 +364,8 @@ if(NA_flag==0)
 
 
 
-/* Suporte para a bateria do portátil -> Basta descomentar */
-	/* bateria 3*/
+/* Suporte para a bateria do portátil -> Basta descomentar
+	/* bateria 3
 
 	//str = QString("%1").arg(DB_Info->lpBat[my_number].status, 3, 'f',3);
 
@@ -408,7 +388,7 @@ if(NA_flag==0)
 
 	QString val;
 
-	/* DB lifetime*/
+	/* DB lifetime
 	if (DB_Info->lifetime[my_number] > 0.5)
 	{
 		if (DB_Info->lifetime[my_number] < NOT_RUNNING_TIMEOUT) 
@@ -447,7 +427,7 @@ if(NA_flag==0)
 	{
 		QString val = QString(coordination_names[DB_Info->Robot_info[my_number].coordinationFlag[0]]);
 		CF_val->setText(val.trimmed());
-	}*/
+	*/}
 
 	
 
@@ -456,7 +436,6 @@ if(NA_flag==0)
 void RWidget::detailsBotPressed (void)
 {
 
-	if (DB_Info != NULL) RDial->updateInfo();
 
 	RobotDetailsDialog->show();
 }
@@ -475,19 +454,13 @@ void RWidget::ChangeTextSize(int size)
 	RelocBot->setFont(newFont);
 }
 
-void RWidget::get_coach_pointer( DB_Coach_Info * ci)	
-{
-	db_coach_info=ci;
-	RDial->get_coach_pointer(ci);
-}
-
 void RWidget::RoleChanged(int role_id)
 {
 
 	if (!lock_flag)
 	{
 
-		if (role_id < 1) db_coach_info->Coach_Info.playerInfo[my_number].roleAuto = true;
+		/*if (role_id < 1) db_coach_info->Coach_Info.playerInfo[my_number].roleAuto = true;
 
 		else
 		{
@@ -497,7 +470,7 @@ void RWidget::RoleChanged(int role_id)
 
 	
 		RobotRoleCombo->setCurrentIndex(role_id);
-		emit transmitCoach();
+		emit transmitCoach();*/
 	}
 }
 
@@ -514,20 +487,17 @@ void RWidget::TeamColorChanged(int color_id)
 
 		if (color_id == 0)
 		{
-			if (db_coach_info != NULL) db_coach_info->Coach_Info.playerInfo[my_number].teamColor = Magenta;
 			plt.setColor(QPalette::Button, Mag);
 		}
 
 		else 
 		{
-			if (db_coach_info != NULL) db_coach_info->Coach_Info.playerInfo[my_number].teamColor = Cyan;
 			plt.setColor(QPalette::Button, Cy);
 		}
 
 		robotTeamBox->setCurrentIndex(color_id);
 		robotTeamBox->setPalette(plt);
 
-		emit transmitCoach();	
 	}
 }
 
@@ -558,7 +528,6 @@ void RWidget::GoalColorChanged(int color_id)
 		robotGoalBox->setPalette(plt);
 
 
-		emit transmitCoach();	
 	}
 }
 
@@ -648,9 +617,7 @@ void RWidget::monitor_off_Pressed(void)
 }
 void RWidget::relocBotPressed (void)
 {
-	if (db_coach_info != NULL) db_coach_info->Coach_Info.changePositionSN[my_number]++;
 
-	emit transmitCoach();	
 
 }
 
