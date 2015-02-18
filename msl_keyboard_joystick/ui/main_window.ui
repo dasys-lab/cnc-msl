@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>276</width>
+    <width>369</width>
     <height>300</height>
    </rect>
   </property>
@@ -52,6 +52,20 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="translationLabel">
+        <property name="text">
+         <string>Translation:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="shovelLabel">
+        <property name="text">
+         <string>Shovel:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -59,10 +73,10 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="topMargin">
-         <number>20</number>
+         <number>10</number>
         </property>
         <property name="bottomMargin">
-         <number>10</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QLineEdit" name="robotIdEdit">
@@ -94,6 +108,66 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QLabel" name="translationValue">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="shovelValue">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_5">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>W -&gt; + | S -&gt; -</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Q -&gt; + | A -&gt; -</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>R -&gt; + | F = -&gt; -</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>E</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -103,7 +177,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>276</width>
+     <width>369</width>
      <height>25</height>
     </rect>
    </property>
