@@ -33,11 +33,13 @@ namespace msl
 		virtual ~RawSensorData();
 		shared_ptr<vector<double>> getDistanceScan(int index = 0);
 		shared_ptr<CNPoint2D> getBallPosition(int index = 0);
+		shared_ptr<pair<shared_ptr<CNPoint2D>, double>> getBallPositionAndCertaincy(int index = 0);
 		shared_ptr<CNVelocity2D> getBallVelocity(int index = 0);
 		shared_ptr<bool> getLightBarrier(int index = 0);
 		shared_ptr<CNPoint2D> getOpticalFlow(int index = 0);
 		shared_ptr<CNPosition> getOwnPositionMotion(int index = 0);
 		shared_ptr<CNPosition> getOwnPositionVision(int index = 0);
+		shared_ptr<pair<shared_ptr<CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
 		shared_ptr<int> getCompass(int index = 0);

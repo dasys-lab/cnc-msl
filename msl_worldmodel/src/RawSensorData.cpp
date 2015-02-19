@@ -41,7 +41,7 @@ namespace msl
 	shared_ptr<CNPoint2D> RawSensorData::getOpticalFlow(int index)
 	{
 		auto x = opticalFlow.getLast(index);
-if(x==nullptr) return nullptr;
+		if(x==nullptr) return nullptr;
 		return x->getInformation();
 	}
 
@@ -94,6 +94,26 @@ if(x==nullptr) return nullptr;
 		return x->getInformation();
 	}
 
+	shared_ptr<pair<shared_ptr<CNPoint2D>, double>> RawSensorData::getBallPositionAndCertaincy(int index)
+	{
+		shared_ptr<pair<shared_ptr<CNPoint2D>, double>> ret = make_shared<pair<shared_ptr<CNPoint2D>, double>>();
+		auto x = ballPosition.getLast(index);
+		if(x==nullptr) return nullptr;
+		ret->first = x->getInformation();
+		ret->second = x->certainty;
+		return ret;
+	}
+
+	shared_ptr<pair<shared_ptr<CNPosition>, double>> RawSensorData::getOwnPositionVisionAndCertaincy(int index)
+	{
+		shared_ptr<pair<shared_ptr<CNPosition>, double>> ret = make_shared<pair<shared_ptr<CNPosition>, double>>();
+		auto x = ownPositionVision.getLast(index);
+		if(x==nullptr) return nullptr;
+		ret->first = x->getInformation();
+		ret->second = x->certainty;
+		return ret;
+	}
+
 	void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 	{
 		unsigned long time = wm->getTime();
@@ -106,7 +126,6 @@ if(x==nullptr) return nullptr;
 																												time);
 			odometry->certainty = data->odometry.certainty;
 			ownPositionVision.add(odometry);
-
 			shared_ptr<msl_msgs::MotionInfo> vel = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> v = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(vel, time);
@@ -114,7 +133,7 @@ if(x==nullptr) return nullptr;
 			ownVelocityVision.add(v);
 		}
 
-		if (data->ball.confidence)
+		if (data->ball.confidence > 0)
 		{
 			shared_ptr<CNPoint2D> ballPos = make_shared<CNPoint2D>(data->ball.point.x, data->ball.point.y);
 			shared_ptr<InformationElement<CNPoint2D>> ball = make_shared<InformationElement<CNPoint2D>>(ballPos, time);

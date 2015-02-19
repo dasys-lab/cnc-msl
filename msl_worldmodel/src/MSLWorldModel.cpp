@@ -30,7 +30,7 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), haveBall(this), rawSensorData(this, ringBufferLength)
+			ringBufferLength(10), haveBall(this), rawSensorData(this, 10)
 	{
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
@@ -45,7 +45,7 @@ namespace msl
 		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &MSLWorldModel::onRefereeBoxInfoBody,
 											(MSLWorldModel*)this);
 
-		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
+		wmDataSub = n.subscribe("/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/SharedWorldInfo", 10);
@@ -97,13 +97,7 @@ namespace msl
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		lock_guard<mutex> lock(wmMutex);
-		if (wmData.size() > ringBufferLength)
-		{
-
-			wmData.pop_back();
-		}
-		transformToWorldCoordinates(msg);
-		wmData.push_front(msg);
+		rawSensorData.processWorldModelData(msg);
 	}
 
 	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
@@ -284,12 +278,13 @@ namespace msl
 	{
 		msl_sensor_msgs::SharedWorldInfo msg;
 		msg.senderID = 9;
-		auto ball = rawSensorData.getBallPosition();
+		auto ball = rawSensorData.getBallPositionAndCertaincy();
 		if (ball != nullptr)
 		{
-			msg.ball.point.x = ball->x;
-			msg.ball.point.y = ball->y;
-		}
+			msg.ball.point.x = ball->first->x;
+			msg.ball.point.y = ball->first->y;
+			msg.ball.confidence = ball->second;
+ 		}
 
 		auto ballVel = rawSensorData.getBallVelocity();
 		if (ballVel != nullptr)
@@ -298,11 +293,13 @@ namespace msl
 			msg.ball.velocity.vy = ballVel->y;
 		}
 
-		auto ownPos = rawSensorData.getOwnPositionVision();
+		auto ownPos = rawSensorData.getOwnPositionVisionAndCertaincy();
 		if (ownPos != nullptr)
 		{
-			msg.odom.position.x = ownPos->x;
-			msg.odom.position.y = ownPos->y;
+			msg.odom.position.x = ownPos->first->x;
+			msg.odom.position.y = ownPos->first->y;
+			msg.odom.position.angle = ownPos->first->theta;
+			msg.odom.certainty = ownPos->second;
 		}
 
 		auto ownVel = rawSensorData.getOwnVelocityVision();
