@@ -1,3 +1,0 @@
-messages_robocup_ssl_detection detection
-messages_robocup_ssl_geometry geometry
-

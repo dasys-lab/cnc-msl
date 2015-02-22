@@ -9,7 +9,6 @@
 #define MSLWORLDMODEL_H_
 
 #include <ros/ros.h>
-#include <msl_simulator/messages_robocup_ssl_wrapper.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_msgs/JoystickCommand.h>
@@ -44,7 +43,6 @@ namespace msl
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
 
-		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
@@ -75,7 +73,6 @@ namespace msl
 		ros::Subscriber joystickSub;
 		ros::Subscriber refereeBoxInfoBodySub;
 
-		list<msl_simulator::messages_robocup_ssl_wrapperPtr> simData;
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 		list<msl_msgs::RefereeBoxInfoBodyPtr> refereeBoxInfoBodyCommandData;

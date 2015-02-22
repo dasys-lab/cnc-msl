@@ -16,20 +16,11 @@ MSLWorldModel* MSLWorldModel::get() {
 	return &instance;
 }
 
-void MSLWorldModel::onSimulatorData(
-		msl_simulator::messages_robocup_ssl_wrapperPtr msg) {
-	if (simData.size() > ringBufferLength) {
-		simData.pop_back();
-	}
-	simData.push_front(msg);
-}
 
 MSLWorldModel::MSLWorldModel() : haveBall(this) {
 	ringBufferLength = 10;
 	ownID = supplementary::SystemConfig::getOwnRobotID();
 	spinner = new ros::AsyncSpinner(4);
-	sub = n.subscribe("/MSLSimulator/MessagesRoboCupSSLWrapper", 10,
-			&MSLWorldModel::onSimulatorData, (MSLWorldModel*) this);
 	spinner->start();
 
 	rawOdomSub = n.subscribe("/RawOdometry", 10,
@@ -127,25 +118,6 @@ shared_ptr<CNPosition> MSLWorldModel::getOwnPosition() {
 		p->y = wmd->odometry.position.y;
 		p->theta = wmd->odometry.position.angle;
 		return p;
-	} else {
-
-		double x, y, oriantation;
-		if (simData.size() > 0) {
-			auto data = *simData.begin();
-			for (auto& r : data->detection.robots_yellow) {
-				if (r.robot_id == ownID) {
-					x = r.x;
-					y = r.y;
-					oriantation = r.orientation;
-				}
-			}
-			p = make_shared<CNPosition>();
-			p->x = x;
-			p->y = y;
-			p->theta = oriantation;
-
-		}
-
 	}
 	return p;
 }
@@ -172,18 +144,6 @@ shared_ptr<CNPoint2D> MSLWorldModel::getEgoBallPosition() {
 	if (wmd.operator bool()) {
 		if (wmd->ball.confidence > 0) {
 			p = make_shared<CNPoint2D>(wmd->ball.point.x, wmd->ball.point.y);
-		}
-	} else {
-		if (simData.size() > 0) {
-			auto data = *simData.begin();
-			if (data->detection.balls.size() > 0) {
-				p = make_shared<CNPoint2D>(data->detection.balls.begin()->x,
-						data->detection.balls.begin()->y);
-				auto ownPos = this->getOwnPosition();
-				if (ownPos.operator bool()) {
-					p = p->alloToEgo(*ownPos);
-				}
-			}
 		}
 	}
 	return p;
