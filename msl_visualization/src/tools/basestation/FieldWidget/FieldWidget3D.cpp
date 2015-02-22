@@ -272,9 +272,11 @@ void FieldWidget3D::update_robot_info(void)
 		{
 			shared_ptr<RobotVisualization> r = make_shared<RobotVisualization>();
 			r->setId(robot->getMsg()->senderID);
+			r->setBall(nullptr);
 			drawTeamRobot(r, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000, 0);
 			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 			{
+				cout << "FieldWidget no ball 1" << endl;
 				initBall(r, renderer);
 			}
 			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
@@ -282,7 +284,7 @@ void FieldWidget3D::update_robot_info(void)
 				moveBall(r, robot->getMsg(), robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000,
 							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 			}
-			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 			{
 				renderer->RemoveActor(r->getBall());
 				r->setBall(nullptr);
@@ -297,7 +299,7 @@ void FieldWidget3D::update_robot_info(void)
 								robot->getMsg()->sharedBall.point.y / 1000,
 								robot->getMsg()->sharedBall.point.z / 1000);
 			}
-			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
 			{
 				renderer->RemoveActor(r->getSharedBall());
 				r->setSharedBall(nullptr);
@@ -313,6 +315,7 @@ void FieldWidget3D::update_robot_info(void)
 								0);
 					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 					{
+						cout << "FieldWidget no ball 2" << endl;
 						initBall(member, renderer);
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
@@ -321,7 +324,7 @@ void FieldWidget3D::update_robot_info(void)
 									robot->getMsg()->ball.point.y / 1000,
 									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 					}
-					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 					{
 						renderer->RemoveActor(member->getBall());
 						member->setBall(nullptr);
@@ -336,7 +339,7 @@ void FieldWidget3D::update_robot_info(void)
 										robot->getMsg()->sharedBall.point.y / 1000,
 										robot->getMsg()->sharedBall.point.z / 1000);
 					}
-					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
 					{
 						renderer->RemoveActor(member->getSharedBall());
 						member->setSharedBall(nullptr);

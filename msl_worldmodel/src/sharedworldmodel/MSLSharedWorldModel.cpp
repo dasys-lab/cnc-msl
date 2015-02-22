@@ -8,6 +8,7 @@
 #include <ios>
 #include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "MSLWorldModel.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ MSLSharedWorldModel::MSLSharedWorldModel(MSLWorldModel* wm) {
 	ownID = sc->getOwnRobotID();
 
 	sharedWolrdModelPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>(
-					"/WorldModel/SharedWorldInfo", 2);
+					"/SharedWorldInfo", 2);
 
 
 
@@ -33,10 +34,7 @@ MSLSharedWorldModel::~MSLSharedWorldModel() {
 }
 
 void MSLSharedWorldModel::sendSharedWorldModelData(const ros::TimerEvent& e) {
-	msl_sensor_msgs::SharedWorldInfo shwm;
-	shwm.senderID = ownID;
-
-	sharedWolrdModelPub.publish(shwm);
+	wm->sendSharedWorldModelData();
 }
 
 } /* namespace msl */

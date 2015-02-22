@@ -2,26 +2,30 @@
  * MSLWorldModel.cpp
  *
  *  Created on: 27.10.2014
- *      Author: endy
+ *      Author: Andreas Witsch
  */
 
 #include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
 #include "HaveBall.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-namespace msl {
+#include "RawSensorData.h"
+#include "msl_sensor_msgs/SharedWorldInfo.h"
+namespace msl
+{
 
-MSLWorldModel* MSLWorldModel::get() {
-	static MSLWorldModel instance;
-	return &instance;
-}
+	MSLWorldModel* MSLWorldModel::get()
+	{
+		static MSLWorldModel instance;
+		return &instance;
+	}
 
-
-MSLWorldModel::MSLWorldModel() : haveBall(this) {
-	ringBufferLength = 10;
-	ownID = supplementary::SystemConfig::getOwnRobotID();
-	spinner = new ros::AsyncSpinner(4);
-	spinner->start();
+	MSLWorldModel::MSLWorldModel() :
+			ringBufferLength(10), haveBall(this), rawSensorData(this, 10)
+	{
+		ownID = supplementary::SystemConfig::getOwnRobotID();
+		spinner = new ros::AsyncSpinner(4);
+		spinner->start();
 
 	rawOdomSub = n.subscribe("/RawOdometry", 10,
 			&MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*) this);

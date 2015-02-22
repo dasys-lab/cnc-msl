@@ -23,6 +23,7 @@
 #include "container/CNPosition.h"
 #include "HaveBall.h"
 #include "Situation.h"
+#include "RawSensorData.h"
 
 
 using namespace std;
@@ -54,9 +55,13 @@ namespace msl
 		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
 		msl_msgs::RefereeBoxInfoBodyPtr getRefereeBoxInfoBody();
 		MSLSharedWorldModel* getSharedWolrdModel();
+		unsigned long getTime();
+		void sendSharedWorldModelData();
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
+
+		RawSensorData rawSensorData;
 
 	private:
 
@@ -72,6 +77,7 @@ namespace msl
 		ros::Subscriber wmDataSub;
 		ros::Subscriber joystickSub;
 		ros::Subscriber refereeBoxInfoBodySub;
+		ros::Publisher sharedWorldPub;
 
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;

@@ -143,6 +143,8 @@ void MainWindow::sendJoystickMessage() {
 
 	ui.motionValue->setText(std::to_string(motionAngle).c_str());
 	ui.kickPowerValue->setText(std::to_string(kickPower).c_str());
+	ui.translationValue->setText(std::to_string(translation).c_str());
+	ui.shovelValue->setText(std::to_string(shovelIdx).c_str());
 
 	msg.motion.angle = motionAngle;
 
@@ -240,6 +242,18 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 			//kick power -
 			if (kickPower > 0) {
 				kickPower = kickPower - 25;
+			}
+			break;
+		case Qt::Key_R:
+			//Speed (translation) +
+			if (translation < 1000) {
+				translation = translation + 100;
+			}
+			break;
+		case Qt::Key_F:
+			//Speed (translation) -
+			if (translation > 0) {
+				translation = translation - 100;
 			}
 			break;
 		case Qt::Key_E:
