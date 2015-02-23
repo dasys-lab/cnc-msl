@@ -118,6 +118,8 @@ namespace msl
 	{
 		unsigned long time = wm->getTime();
 
+
+
 		if (data->odometry.certainty > 0)
 		{
 			shared_ptr<CNPosition> pos = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
