@@ -108,6 +108,7 @@ catkin_package(
    src/HaveBall.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
    src/RawSensorData.cpp
+   src/Robots.cpp
  )
 
 ## Declare a cpp executable

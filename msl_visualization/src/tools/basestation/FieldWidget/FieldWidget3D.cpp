@@ -152,7 +152,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
-	sharedWorldInfoSubscriber = rosNode->subscribe("/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
+	sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
 													(FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
@@ -256,7 +256,7 @@ void FieldWidget3D::update_robot_info(void)
 			team.remove(toBeRemoved);
 			continue;
 		}
-		for (auto x : robot->getMsg()->mergedOpponents)
+		for (auto x : robot->getMsg()->obstacles)
 		{
 			drawOpponent(x.x / 1000, x.y / 1000, 0);
 		}
@@ -276,7 +276,6 @@ void FieldWidget3D::update_robot_info(void)
 			drawTeamRobot(r, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000, 0);
 			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 			{
-				cout << "FieldWidget no ball 1" << endl;
 				initBall(r, renderer);
 			}
 			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)

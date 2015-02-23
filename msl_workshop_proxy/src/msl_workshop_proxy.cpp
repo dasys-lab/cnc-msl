@@ -325,7 +325,7 @@ int main(int argc, char **argv)
 	obstaclesPub = n.advertise<PointCloud>("/obstacles", 1);
 
 	ros::Rate loop_rate(30);
-	ros::Subscriber sub = n.subscribe("WorldModel/WorldModelData", 1, messageCallback);
+	ros::Subscriber sub = n.subscribe("/WorldModel/WorldModelData", 1, messageCallback);
 
 	MultiCastReceive mcr;
 	string addr = "224.16.32.75";

@@ -27,70 +27,100 @@ namespace msl
 	shared_ptr<vector<double> > RawSensorData::getDistanceScan(int index)
 	{
 		auto x = distanceScan.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<bool> RawSensorData::getLightBarrier(int index)
 	{
 		auto x = lightBarrier.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<CNPoint2D> RawSensorData::getOpticalFlow(int index)
 	{
 		auto x = opticalFlow.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<CNPosition> RawSensorData::getOwnPositionMotion(int index)
 	{
 		auto x = ownPositionMotion.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<CNPosition> RawSensorData::getOwnPositionVision(int index)
 	{
 		auto x = ownPositionVision.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityMotion(int index)
 	{
 		auto x = ownVelocityMotion.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityVision(int index)
 	{
 		auto x = ownVelocityVision.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<CNPoint2D> RawSensorData::getBallPosition(int index)
 	{
 		auto x = ballPosition.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<CNVelocity2D> RawSensorData::getBallVelocity(int index)
 	{
 		auto x = ballVelocity.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
 	shared_ptr<int> RawSensorData::getCompass(int index)
 	{
 		auto x = compass.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		return x->getInformation();
 	}
 
@@ -98,7 +128,10 @@ namespace msl
 	{
 		shared_ptr<pair<shared_ptr<CNPoint2D>, double>> ret = make_shared<pair<shared_ptr<CNPoint2D>, double>>();
 		auto x = ballPosition.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		ret->first = x->getInformation();
 		ret->second = x->certainty;
 		return ret;
@@ -108,7 +141,10 @@ namespace msl
 	{
 		shared_ptr<pair<shared_ptr<CNPosition>, double>> ret = make_shared<pair<shared_ptr<CNPosition>, double>>();
 		auto x = ownPositionVision.getLast(index);
-		if(x==nullptr) return nullptr;
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
 		ret->first = x->getInformation();
 		ret->second = x->certainty;
 		return ret;
@@ -118,8 +154,10 @@ namespace msl
 	{
 		unsigned long time = wm->getTime();
 
-
-
+//		if ((time - data->odometry.timestamp) > 1000)
+//		{
+//			return;
+//		}
 		if (data->odometry.certainty > 0)
 		{
 			shared_ptr<CNPosition> pos = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,

@@ -23,7 +23,7 @@ MSLSharedWorldModel::MSLSharedWorldModel(MSLWorldModel* wm) {
 	ownID = sc->getOwnRobotID();
 
 	sharedWolrdModelPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>(
-					"/SharedWorldInfo", 2);
+					"/WorldModel/SharedWorldInfo", 2);
 
 
 

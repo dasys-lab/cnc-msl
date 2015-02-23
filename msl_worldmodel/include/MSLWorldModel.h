@@ -24,6 +24,7 @@
 #include "HaveBall.h"
 #include "Situation.h"
 #include "RawSensorData.h"
+#include "Robots.h"
 
 
 using namespace std;
@@ -62,6 +63,7 @@ namespace msl
 		virtual ~MSLWorldModel();
 
 		RawSensorData rawSensorData;
+		Robots robots;
 
 	private:
 

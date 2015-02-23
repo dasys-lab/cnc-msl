@@ -21,11 +21,11 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), haveBall(this), rawSensorData(this, 10)
+			ringBufferLength(10), haveBall(this), rawSensorData(this, 10), robots(this, 10)
 	{
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
-
+		spinner->start();
 		rawOdomSub = n.subscribe("/RawOdometry", 10, &MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*)this);
 
 		joystickSub = n.subscribe("/Joystick", 10, &MSLWorldModel::onJoystickCommand, (MSLWorldModel*)this);
@@ -33,13 +33,13 @@ namespace msl
 		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &MSLWorldModel::onRefereeBoxInfoBody,
 											(MSLWorldModel*)this);
 
-		wmDataSub = n.subscribe("/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
+		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
-		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/SharedWorldInfo", 10);
+		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
-		spinner->start();
+
 
 	}
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
@@ -87,6 +87,7 @@ namespace msl
 	{
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
+		robots.processWorldModelData(msg);
 	}
 
 	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
@@ -258,7 +259,24 @@ namespace msl
 			msg.odom.motion.translation = ownVel->translation;
 		}
 
-		sharedWorldPub.publish(msg);
+		auto obstacles = robots.getObstacles();
+		{
+			if(obstacles != nullptr)
+			{
+				msg.obstacles.reserve(obstacles->size());
+				for(auto& x : *obstacles)
+				{
+					msl_msgs::Point2dInfo info;
+					info.x = x.x;
+					info.y = x.y;
+					msg.obstacles.push_back(info);
+				}
+			}
+		}
+		if(ownPos != nullptr)
+		{
+			sharedWorldPub.publish(msg);
+		}
 	}
 
 	void MSLWorldModel::transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg)
