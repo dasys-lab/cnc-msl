@@ -143,8 +143,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
         double volt = wm->getKickerVoltage();
-        shared_ptr < CNPosition > ownPos = wm->getOwnPosition(); // actually ownPosition corrected
-        shared_ptr < CNPoint2D > ballPos = wm->getEgoBallPosition();
+        shared_ptr < CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
         if (ownPos == NULL || ballPos == NULL)
         {
             return;

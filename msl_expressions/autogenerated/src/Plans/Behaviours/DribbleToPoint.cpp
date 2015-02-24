@@ -11,9 +11,9 @@ namespace alica
             DomainBehaviour("DribbleToPoint")
     {
         /*PROTECTED REGION ID(con1414752367688) ENABLED START*/ //Add additional options here
-        alloBallPos = wm->getAlloBallPosition();
+        alloBallPos = wm->ball.getAlloBallPosition();
 
-        ownPos = wm->getOwnPosition();
+        ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
         alloTargetPos = CNPoint2D(0, 0);

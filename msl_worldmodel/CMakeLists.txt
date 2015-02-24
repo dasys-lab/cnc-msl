@@ -105,10 +105,12 @@ catkin_package(
    src/container/CNPosition.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
-   src/HaveBall.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
    src/RawSensorData.cpp
    src/Robots.cpp
+   src/Ball.cpp
+   src/Game.cpp
+   src/PathPlanner.cpp
  )
 
 ## Declare a cpp executable
