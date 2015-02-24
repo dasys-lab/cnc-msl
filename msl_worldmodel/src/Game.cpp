@@ -23,8 +23,8 @@ namespace msl
 		spinner->start();
 		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &Game::onRefereeBoxInfoBody, (Game*)this);
 		sc = SystemConfig::getInstance();
-		ownTeamColor = (*this->sc)["Globals"]->get<string>("OwnTeamColour", NULL);
-		ownGoalColor = (*this->sc)["Globals"]->get<string>("OwnGoalColour", NULL);
+		ownTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
+		ownGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
 	}
 
 	Game::~Game()
