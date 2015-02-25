@@ -47,7 +47,6 @@ namespace msl
 
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
-		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
 		MSLSharedWorldModel* getSharedWolrdModel();
 		unsigned long getTime();
 		void sendSharedWorldModelData();

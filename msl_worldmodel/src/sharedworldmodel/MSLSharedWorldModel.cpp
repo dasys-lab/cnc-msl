@@ -7,7 +7,6 @@
 
 #include <ios>
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "MSLWorldModel.h"
 
 using namespace std;
@@ -21,10 +20,6 @@ MSLSharedWorldModel::MSLSharedWorldModel(MSLWorldModel* wm) {
 
 	sc = supplementary::SystemConfig::getInstance();
 	ownID = sc->getOwnRobotID();
-
-	sharedWolrdModelPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>(
-					"/WorldModel/SharedWorldInfo", 2);
-
 
 
 }

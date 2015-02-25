@@ -28,7 +28,6 @@ private:
 	MSLWorldModel* wm;
 	ros::Timer timer;
 	ros::NodeHandle n;
-	ros::Publisher sharedWolrdModelPub;
 
 
 	supplementary::SystemConfig* sc;
