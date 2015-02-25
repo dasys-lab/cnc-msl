@@ -36,7 +36,6 @@ namespace alica
 
         if(egoTarget->length() < 250) {
         	this->success = true;
-        	cout << "bin auf dem Punkt" << endl;
         }
 
 
