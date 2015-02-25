@@ -54,7 +54,7 @@ namespace alica
 
         if(joy->selectedActuator == msl_msgs::JoystickCommand::ALL || joy->selectedActuator == msl_msgs::JoystickCommand::KICKER_ONLY ||
         		joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION) {
-        	if(joy->kickPower > 0 && lastProcessedCmd == joy) {
+        	if(joy->kickPower > 0 && lastProcessedCmd != joy) {
 				kc.senderID = joy->robotId;
 				kc.power = joy->kickPower;
 				kc.extension = joy->shovelIdx;

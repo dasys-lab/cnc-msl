@@ -23,16 +23,22 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
+        auto ballPos = wm->rawSensorData.getBallPosition();
         if(!me.operator bool()) {
+        	return;
+        }
+        if(ballPos == nullptr) {
         	return;
         }
         auto egoTarget = alloTarget.alloToEgo(*me);
 
-        msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 150);
+        msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
 
         if(egoTarget->length() < 250) {
         	this->success = true;
+        	cout << "bin auf dem Punkt" << endl;
         }
+
 
         send(mc);
 
