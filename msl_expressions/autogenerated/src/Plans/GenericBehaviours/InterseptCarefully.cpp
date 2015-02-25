@@ -24,8 +24,9 @@ namespace alica
         /*PROTECTED REGION ID(run1417620641918) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
         auto egoBallPos = wm->ball.getEgoBallPosition();
-        if(me == nullptr || egoBallPos == nullptr) {
-        	return;
+        if (me == nullptr || egoBallPos == nullptr)
+        {
+            return;
         }
 
         MotionControl mc = msl::RobotMovement::interseptCarefully(egoBallPos, egoBallPos, 100);

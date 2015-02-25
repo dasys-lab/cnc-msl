@@ -24,11 +24,13 @@ namespace alica
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
         auto ballPos = wm->rawSensorData.getBallPosition();
-        if(!me.operator bool()) {
-        	return;
+        if (!me.operator bool())
+        {
+            return;
         }
-        if(ballPos == nullptr) {
-        	return;
+        if (ballPos == nullptr)
+        {
+            return;
         }
         auto egoTarget = alloTarget.alloToEgo(*me);
 
@@ -38,7 +40,6 @@ namespace alica
 		cout << "DTP: SET" << endl;
         	this->success = true;
         }
-
 
         send(mc);
 
