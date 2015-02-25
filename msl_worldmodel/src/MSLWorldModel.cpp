@@ -137,9 +137,9 @@ namespace msl
 		if (ball != nullptr)
 		{
 			shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(ball->first->x, ball->first->y);
-			point = point->egoToAllo(*pos);
-			msg.ball.point.x = point->x;
-			msg.ball.point.y = point->y;
+			auto p = point->egoToAllo(*pos);
+			msg.ball.point.x = p->x;
+			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
  		}
 
@@ -175,10 +175,10 @@ namespace msl
 				for(auto& x : *obstacles)
 				{
 					shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(x.x, x.y);
-					point = point->egoToAllo(*pos);
+					auto p = point->egoToAllo(*pos);
 					msl_msgs::Point2dInfo info;
-					info.x = point->x;
-					info.y = point->y;
+					info.x = p->x;
+					info.y = p->y;
 					msg.obstacles.push_back(info);
 				}
 			}
