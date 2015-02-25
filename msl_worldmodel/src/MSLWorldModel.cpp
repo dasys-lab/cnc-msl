@@ -121,9 +121,9 @@ namespace msl
 		if (ball != nullptr)
 		{
 			shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(ball->first->x, ball->first->y);
-			cout << "MSLWorldModel: before egoToAllo" << ball->first->x << " " << ball->first->y << endl;
+			cout << "MSLWorldModel: before egoToAllo " << ball->first->x << " " << ball->first->y << endl;
 			auto p = point->egoToAllo(*pos);
-			cout << "MSLWorldModel: before egoToAllo" << p->x << " " << p->y << endl;
+			cout << "MSLWorldModel: after egoToAllo " << p->x << " " << p->y << endl;
 			msg.ball.point.x = p->x;
 			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
@@ -132,6 +132,7 @@ namespace msl
 		auto ballVel = rawSensorData.getBallVelocity();
 		if (ballVel != nullptr)
 		{
+
 			msg.ball.velocity.vx = ballVel->x;
 			msg.ball.velocity.vy = ballVel->y;
 		}
