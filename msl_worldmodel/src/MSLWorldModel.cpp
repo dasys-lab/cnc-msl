@@ -121,6 +121,7 @@ namespace msl
 		if (ball != nullptr)
 		{
 			shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(ball->first->x, ball->first->y);
+			cout << "MSLWorldModel: before egoToAllo own pos" << pos->x << " " << pos->y << endl;
 			cout << "MSLWorldModel: before egoToAllo " << ball->first->x << " " << ball->first->y << endl;
 			auto p = point->egoToAllo(*pos);
 			cout << "MSLWorldModel: after egoToAllo " << p->x << " " << p->y << endl;

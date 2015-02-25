@@ -48,7 +48,7 @@ namespace msl {
 	shared_ptr<CNPoint2D> CNPoint2D::egoToAllo(CNPosition& me) {
 		shared_ptr<CNPoint2D> allo = make_shared<CNPoint2D>();
 		allo->x = me.x;
-		allo->x = me.y;
+		allo->y = me.y;
 
 		allo->x += cos(me.theta) * x - sin(me.theta) * y;
 		allo->y += sin(me.theta) * x + cos(me.theta) * y;
