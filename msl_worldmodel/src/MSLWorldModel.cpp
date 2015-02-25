@@ -41,25 +41,9 @@ namespace msl
 	}
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{
-		if (msg->robotId == this->ownID)
-		{
-			lock_guard<mutex> lock(joystickMutex);
-			if (joystickCommandData.size() > ringBufferLength)
-			{
-				joystickCommandData.pop_back();
-			}
-			joystickCommandData.push_front(msg);
-		}
+		this->rawSensorData.processJoystickCommand(msg);
 	}
-	msl_msgs::JoystickCommandPtr MSLWorldModel::getJoystickCommandInfo()
-	{
-		lock_guard<mutex> lock(joystickMutex);
-		if (joystickCommandData.size() == 0)
-		{
-			return nullptr;
-		}
-		return joystickCommandData.front();
-	}
+
 	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 	{
 		lock_guard<mutex> lock(rawOdometryMutex);

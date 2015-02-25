@@ -27,97 +27,44 @@ namespace alica
     void Joystick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
-        msl_msgs::JoystickCommandPtr joy = wm->getJoystickCommandInfo();
-        msl_actuator_msgs::MotionControl mc;
-        msl_actuator_msgs::BallHandleCmd bhc;
-        msl_actuator_msgs::KickControl kc;
-
+        auto joy = wm->rawSensorData.getJoystickCommand();
         if(!joy.operator bool()) {
         	return;
         }
 
-        switch (joy->selectedActuator)
-        {
-            case msl_msgs::JoystickCommand::ALL:
-                mc.motion = joy->motion;
-                mc.senderID = joy->robotId;
+        msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::BallHandleCmd bhc;
+        msl_actuator_msgs::KickControl kc;
 
-                bhc.senderID = joy->robotId;
-                bhc.leftMotor = joy->ballHandleLeftMotor;
-                bhc.rightMotor = joy->ballHandleRightMotor;
-
-                kc.senderID = joy->robotId;
-                kc.power = joy->kickPower;
-                kc.extension = joy->shovelIdx;
-                kc.extTime = 1;
-                kc.forceVoltage = false;
-
-                send(kc);
-                send(bhc);
-                send(mc);
-
-                break;
-            case msl_msgs::JoystickCommand::BALL_HANDLE_ONLY:
-                bhc.senderID = joy->robotId;
-                bhc.leftMotor = joy->ballHandleLeftMotor;
-                bhc.rightMotor = joy->ballHandleRightMotor;
-                send(bhc);
-                break;
-            case msl_msgs::JoystickCommand::KICKER_ONLY:
-                //TODO: Check and eventually remove parts from kickControl msgs
-                kc.senderID = joy->robotId;
-                kc.power = joy->kickPower;
-                kc.extension = joy->shovelIdx;
-                kc.extTime = 1;
-                kc.forceVoltage = false;
-                send(kc);
-                break;
-            case msl_msgs::JoystickCommand::MOTION_ONLY:
-                mc.motion = joy->motion;
-                mc.senderID = joy->robotId;
-                send(mc);
-                break;
-            case msl_msgs::JoystickCommand::NO_BALL_HANDLE:
-                kc.senderID = joy->robotId;
-                kc.power = joy->kickPower;
-                kc.extension = joy->shovelIdx;
-                kc.extTime = 1;
-                kc.forceVoltage = false;
-
-                mc.motion = joy->motion;
-                mc.senderID = joy->robotId;
-
-                send(mc);
-                send(kc);
-                break;
-            case msl_msgs::JoystickCommand::NO_KICKER:
-                mc.motion = joy->motion;
-                mc.senderID = joy->robotId;
-
-                bhc.senderID = joy->robotId;
-                bhc.leftMotor = joy->ballHandleLeftMotor;
-                bhc.rightMotor = joy->ballHandleRightMotor;
-
-                send(bhc);
-                send(mc);
-                break;
-            case msl_msgs::JoystickCommand::NO_MOTION:
-                bhc.senderID = joy->robotId;
-                bhc.leftMotor = joy->ballHandleLeftMotor;
-                bhc.rightMotor = joy->ballHandleRightMotor;
-
-                kc.senderID = joy->robotId;
-                kc.power = joy->kickPower;
-                kc.extension = joy->shovelIdx;
-                kc.extTime = 1;
-                kc.forceVoltage = false;
-
-                send(kc);
-                send(bhc);
-                break;
-            case msl_msgs::JoystickCommand::NOTHING:
-                break;
+        if(joy->selectedActuator == msl_msgs::JoystickCommand::ALL || joy->selectedActuator == msl_msgs::JoystickCommand::MOTION_ONLY ||
+        		joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE || joy->selectedActuator == msl_msgs::JoystickCommand::NO_KICKER) {
+        	mc.motion = joy->motion;
+        	mc.senderID = joy->robotId;
+        	send(mc);
         }
+
+
+        if(joy->selectedActuator == msl_msgs::JoystickCommand::ALL || joy->selectedActuator == msl_msgs::JoystickCommand::BALL_HANDLE_ONLY ||
+        		joy->selectedActuator == msl_msgs::JoystickCommand::NO_KICKER || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION) {
+            bhc.senderID = joy->robotId;
+            bhc.leftMotor = joy->ballHandleLeftMotor;
+            bhc.rightMotor = joy->ballHandleRightMotor;
+            send(bhc);
+        }
+
+        if(joy->selectedActuator == msl_msgs::JoystickCommand::ALL || joy->selectedActuator == msl_msgs::JoystickCommand::KICKER_ONLY ||
+        		joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION) {
+        	if(joy->kickPower > 0 && lastProcessedCmd == joy) {
+				kc.senderID = joy->robotId;
+				kc.power = joy->kickPower;
+				kc.extension = joy->shovelIdx;
+				kc.extTime = 1;
+				kc.forceVoltage = false;
+				send(kc);
+        	}
+        }
+
+        lastProcessedCmd = joy;
         /*PROTECTED REGION END*/
     }
     void Joystick::initialiseParameters()

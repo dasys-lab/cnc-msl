@@ -13,6 +13,7 @@
 #include <vector>
 #include "msl_sensor_msgs/BallInfo.h"
 #include "msl_msgs/MotionInfo.h"
+#include "msl_msgs/JoystickCommand.h"
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "container/CNPosition.h"
 #include "container/CNVelocity2D.h"
@@ -42,8 +43,10 @@ namespace msl
 		shared_ptr<pair<shared_ptr<CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
-		shared_ptr<int> getCompass(int index = 0);
+		shared_ptr<int> getCompassOrientation(int index = 0);
+		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
+		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
@@ -56,7 +59,11 @@ namespace msl
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
 		RingBuffer<InformationElement<int>> compass;
+		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		MSLWorldModel* wm;
+
+		unsigned long maxInformationAge;
+		int ownID;
 
 	};
 
