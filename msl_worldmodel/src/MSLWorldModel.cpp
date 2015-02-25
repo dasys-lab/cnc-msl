@@ -129,28 +129,32 @@ namespace msl
 		msl_sensor_msgs::SharedWorldInfo msg;
 		msg.senderID = 9;
 		auto ball = rawSensorData.getBallPositionAndCertaincy();
+		auto pos = rawSensorData.getOwnPositionVision();
+		if(pos == nullptr)
+		{
+			return;
+		}
 		if (ball != nullptr)
 		{
-			auto pos = transformToWorldCoordinates(ball->first->x, ball->first->y);
-			msg.ball.point.x = pos.first;
-			msg.ball.point.y = pos.second;
+			shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(ball->first->x, ball->first->y);
+			point = point->egoToAllo(*pos);
+			msg.ball.point.x = point->x;
+			msg.ball.point.y = point->y;
 			msg.ball.confidence = ball->second;
  		}
 
 		auto ballVel = rawSensorData.getBallVelocity();
 		if (ballVel != nullptr)
 		{
-			auto pos = transformToWorldCoordinates(ballVel->x, ballVel->y);
-			msg.ball.velocity.vx = pos.first;
-			msg.ball.velocity.vy = pos.second;
+			msg.ball.velocity.vx = ballVel->x;
+			msg.ball.velocity.vy = ballVel->y;
 		}
 
 		auto ownPos = rawSensorData.getOwnPositionVisionAndCertaincy();
 		if (ownPos != nullptr)
 		{
-			auto pos = transformToWorldCoordinates(ownPos->first->x, ownPos->first->y);
-			msg.odom.position.x = pos.first;
-			msg.odom.position.y = pos.second;
+			msg.odom.position.x = ownPos->first->x;
+			msg.odom.position.y = ownPos->first->y;
 			msg.odom.position.angle = ownPos->first->theta;
 			msg.odom.certainty = ownPos->second;
 		}
@@ -170,10 +174,11 @@ namespace msl
 				msg.obstacles.reserve(obstacles->size());
 				for(auto& x : *obstacles)
 				{
-					auto pos = transformToWorldCoordinates(x.x, x.y);
+					shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(x.x, x.y);
+					point = point->egoToAllo(*pos);
 					msl_msgs::Point2dInfo info;
-					info.x = pos.first;
-					info.y = pos.second;
+					info.x = point->x;
+					info.y = point->y;
 					msg.obstacles.push_back(info);
 				}
 			}
@@ -191,10 +196,7 @@ namespace msl
 
 	pair<double, double> MSLWorldModel::transformToWorldCoordinates(double x, double y)
 	{
-		pair<double, double> ret;
-		ret.first = y;
-		ret.second = -x;
-		return ret;
+
 	}
 
 } /* namespace msl */

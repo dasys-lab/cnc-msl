@@ -163,6 +163,7 @@ private:
     vtkActor* createDebugPt();
     vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
+    pair<double, double> transform(double x, double y);
 
     vtkPoints* heightPoints;
     vtkPolyData* heightPolyData;
