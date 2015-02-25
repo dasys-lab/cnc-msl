@@ -22,6 +22,7 @@ namespace msl
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this)
 	{
+		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
@@ -130,23 +131,26 @@ namespace msl
 		auto ball = rawSensorData.getBallPositionAndCertaincy();
 		if (ball != nullptr)
 		{
-			msg.ball.point.x = ball->first->x;
-			msg.ball.point.y = ball->first->y;
+			auto pos = transformToWorldCoordinates(ball->first->x, ball->first->y);
+			msg.ball.point.x = pos.first;
+			msg.ball.point.y = pos.second;
 			msg.ball.confidence = ball->second;
  		}
 
 		auto ballVel = rawSensorData.getBallVelocity();
 		if (ballVel != nullptr)
 		{
-			msg.ball.velocity.vx = ballVel->x;
-			msg.ball.velocity.vy = ballVel->y;
+			auto pos = transformToWorldCoordinates(ballVel->x, ballVel->y);
+			msg.ball.velocity.vx = pos.first;
+			msg.ball.velocity.vy = pos.second;
 		}
 
 		auto ownPos = rawSensorData.getOwnPositionVisionAndCertaincy();
 		if (ownPos != nullptr)
 		{
-			msg.odom.position.x = ownPos->first->x;
-			msg.odom.position.y = ownPos->first->y;
+			auto pos = transformToWorldCoordinates(ownPos->first->x, ownPos->first->y);
+			msg.odom.position.x = pos.first;
+			msg.odom.position.y = pos.second;
 			msg.odom.position.angle = ownPos->first->theta;
 			msg.odom.certainty = ownPos->second;
 		}
@@ -166,9 +170,10 @@ namespace msl
 				msg.obstacles.reserve(obstacles->size());
 				for(auto& x : *obstacles)
 				{
+					auto pos = transformToWorldCoordinates(x.x, x.y);
 					msl_msgs::Point2dInfo info;
-					info.x = x.x;
-					info.y = x.y;
+					info.x = pos.first;
+					info.y = pos.second;
 					msg.obstacles.push_back(info);
 				}
 			}
@@ -184,8 +189,12 @@ namespace msl
 		return ringBufferLength;
 	}
 
-	void MSLWorldModel::transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg)
+	pair<double, double> MSLWorldModel::transformToWorldCoordinates(double x, double y)
 	{
+		pair<double, double> ret;
+		ret.first = y;
+		ret.second = -x;
+		return ret;
 	}
 
 } /* namespace msl */

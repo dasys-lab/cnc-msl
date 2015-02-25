@@ -85,7 +85,7 @@ namespace msl
 		ros::AsyncSpinner* spinner;
 
 	protected:
-		void transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg);
+		pair<double, double> transformToWorldCoordinates(double x, double y);
 	};
 
 } /* namespace msl */
