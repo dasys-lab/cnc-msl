@@ -407,8 +407,8 @@ pair<double, double> FieldWidget3D::transform(double x, double y)
 
 void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle)
 {
-	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI));
-	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI));
+	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI) + 90);
+	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI) + 90);
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
