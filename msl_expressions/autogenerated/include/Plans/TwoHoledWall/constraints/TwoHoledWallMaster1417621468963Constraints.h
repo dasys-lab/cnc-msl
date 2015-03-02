@@ -1,5 +1,5 @@
 #ifndef TwoHoledWallMasterCONSTRAINT_H_
-#define TwoHoledWallMasterCONSTRAINT_H_
+#define TwoHoledWallMaster_H_
 #include "engine/BasicConstraint.h"
 #include <memory>
 

@@ -26,7 +26,7 @@ namespace msl
 	public:
 		Ball(MSLWorldModel* wm);
 		virtual ~Ball();
-		bool operator()();
+		bool haveBall();
 		shared_ptr<CNPoint2D> getAlloBallPosition();
 		shared_ptr<CNPoint2D> getEgoBallPosition();
 		shared_ptr<CNPoint2D> getEgoRawBallPosition();

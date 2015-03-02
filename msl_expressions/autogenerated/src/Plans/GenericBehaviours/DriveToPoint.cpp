@@ -36,9 +36,9 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
 
-        if(egoTarget->length() < 250) {
-		cout << "DTP: SET" << endl;
-        	this->success = true;
+        if (egoTarget->length() < 250)
+        {
+            this->success = true;
         }
 
         send(mc);
