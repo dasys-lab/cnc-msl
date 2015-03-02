@@ -258,7 +258,6 @@ void FieldWidget3D::update_robot_info(void)
 		}
 		for (auto x : robot->getMsg()->obstacles)
 		{
-			//TODO
 			auto pos = transform(x.x, x.y);
 			drawOpponent(pos.first / 1000, pos.second / 1000, 0);
 		}
@@ -277,6 +276,7 @@ void FieldWidget3D::update_robot_info(void)
 			r->setBall(nullptr);
 			auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
 			drawTeamRobot(r,  pos.first / 1000,  pos.second / 1000, 0);
+			turnRobot(r, robot->getMsg()->odom.position.angle);
 			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 			{
 				initBall(r, renderer);
@@ -285,7 +285,7 @@ void FieldWidget3D::update_robot_info(void)
 			{
 				auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
 				moveBall(r, robot->getMsg(), pos.first / 1000, pos.second / 1000,
-							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
+							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER / 2);
 			}
 			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 			{
@@ -318,6 +318,7 @@ void FieldWidget3D::update_robot_info(void)
 					auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
 					moveRobot(member, pos.first / 1000, pos.second / 1000,
 								0);
+					turnRobot(member, robot->getMsg()->odom.position.angle);
 					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 					{
 						cout << "FieldWidget no ball 2" << endl;
@@ -402,6 +403,12 @@ pair<double, double> FieldWidget3D::transform(double x, double y)
 	ret.first = y;
 	ret.second = -x;
 	return ret;
+}
+
+void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle)
+{
+	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI));
+	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI));
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
@@ -643,14 +650,14 @@ void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool blac
 void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
 {
 	vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
-	sphereSrc->SetRadius(_BALL_DIAMETER);
+	sphereSrc->SetRadius(_BALL_DIAMETER / 2);
 	vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	sphereMapper->SetInput(sphereSrc->GetOutput());
 	robot->setBall(vtkActor::New());
 	robot->getBall()->SetMapper(sphereMapper);
 	robot->getBall()->GetProperty()->SetRepresentationToSurface();
 	robot->getBall()->GetProperty()->SetColor(255, 0, 0);
-	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER);
+	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER / 2);
 	renderer->AddActor(robot->getBall());
 	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
 	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],

@@ -33,6 +33,7 @@
 #include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
 #include <thread>
 #include <atomic>
+#include <math.h>
 
 #include <QVTKWidget.h>
 
@@ -126,6 +127,7 @@ private:
     list<shared_ptr<RobotInfo>> latestInfo;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
+    void turnRobot(shared_ptr<RobotVisualization> robot, double angle);
     mutex swmMutex;
     list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
 	ros::Subscriber sharedWorldInfoSubscriber;
