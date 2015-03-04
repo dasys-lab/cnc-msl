@@ -29,7 +29,7 @@ namespace alica
     void DribbleToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414752367688) ENABLED START*/ //Add additional options here
-        msl_simulator::sim_robot_command c;
+       /* msl_simulator::sim_robot_command c;
 
         double radius = 0.125;
         double w = 4.1;
@@ -55,7 +55,7 @@ namespace alica
 //  c.veltangent = 0;
 
         cout << "DribbleToPoint: " << endl;
-        this->send(c);
+        this->send(c);*/
 
         /*PROTECTED REGION END*/
     }

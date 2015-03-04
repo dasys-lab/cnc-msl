@@ -28,7 +28,7 @@ namespace alica
         shared_ptr < CNPoint2D > alloBallPos = wm->ball.getAlloBallPosition();
         CNPoint2D egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
-        msl_simulator::sim_robot_command c;
+        /*msl_simulator::sim_robot_command c;
 
         c.velnormal = min(egoBallPos.y * 0.002, 2.0);
         c.veltangent = min(egoBallPos.x * 0.002, 2.0);
@@ -40,7 +40,7 @@ namespace alica
         cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2->x << "," << p2->y << ")"
                 << endl;
 
-        this->send(c);
+        this->send(c);*/
         /*PROTECTED REGION END*/
     }
     void GetBall::initialiseParameters()

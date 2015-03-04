@@ -9,7 +9,7 @@
 #define MSLWORLDMODEL_H_
 
 #include <ros/ros.h>
-#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_msgs/JoystickCommand.h>
 #include <list>
