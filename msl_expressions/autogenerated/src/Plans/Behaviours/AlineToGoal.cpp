@@ -25,9 +25,9 @@ namespace alica
         CNPoint2D alloEnemyGoal = CNPoint2D(-3000, 0);
         CNPoint2D egoEnemyGoal = *alloEnemyGoal.alloToEgo(*ownPos);
 
-      /*  msl_simulator::sim_robot_command c;
+        /*  msl_simulator::sim_robot_command c;
 
-        c.velnormal = 3 * atan2(egoEnemyGoal.y, egoEnemyGoal.x);*/
+         c.velnormal = 3 * atan2(egoEnemyGoal.y, egoEnemyGoal.x);*/
 
         /*PROTECTED REGION END*/
     }
