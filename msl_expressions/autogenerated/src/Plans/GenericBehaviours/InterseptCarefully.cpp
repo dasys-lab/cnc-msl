@@ -29,7 +29,7 @@ namespace alica
             return;
         }
 
-        MotionControl mc = msl::RobotMovement::interseptCarefully(egoBallPos, egoBallPos, 100);
+        MotionControl mc = msl::RobotMovement::interceptCarefully(egoBallPos, egoBallPos, 100);
 
         send(mc);
         /*PROTECTED REGION END*/

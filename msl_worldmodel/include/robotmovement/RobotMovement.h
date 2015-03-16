@@ -21,7 +21,7 @@ class CNPoint2D;
 	public:
 		virtual ~RobotMovement();
 		static MotionControl moveToPointCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
-		static MotionControl interseptCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
+		static MotionControl interceptCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
 		static void readConfigParameters();
 		static double defaultTranslation;
 	};

@@ -240,7 +240,7 @@ namespace alica
 		lastRotError = deltaAngle;
 
 		double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
-		double transBallTo = 1; //max(ballPos->length(),ballVel2.Distance());
+		double transBallTo = ballPos->length(); //max(ballPos->length(),ballVel2.Distance());
 
 		shared_ptr<CNPoint2D> driveTo = ballPos->rotate((-M_PI / 2.0));
 		driveTo = driveTo->normalize() * transBallOrth;
