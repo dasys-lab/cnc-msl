@@ -63,8 +63,15 @@ namespace msl {
 		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
 		double length = this->length();
 
-		norm->x = this->x / length;
-		norm->y = this->y / length;
+		if(length > 0)
+		{
+			norm->x = this->x / length;
+			norm->y = this->y / length;
+		}
+		else
+		{
+			cerr << "CNPoint2D: Trying to normalize 0.0!" << endl;
+		}
 
 		return norm;
 	}
