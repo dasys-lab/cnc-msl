@@ -77,12 +77,29 @@ int main(int argc, char** argv) {
 
 
 		std_msgs::String msg;
-
 		std::stringstream ss;
-		ss << "Test";
+
+		ss << "ADC-Wert: ";
 		msg.data = ss.str();
 
+		int i = adc_light.getNumericValue();
+
+		ROS_INFO("%s%i", msg.data.c_str(), i);
+
+
+
+		if (1 == BH_R_Reset.getNumericValue()) {
+			BH_R_Reset.setValue(low);
+			ss << "LOW ! ! !";
+			msg.data = ss.str();
+		} else {
+			BH_R_Reset.setValue(high);
+			ss << "Highhhh ";
+			msg.data = ss.str();
+		}
 		ROS_INFO("%s", msg.data.c_str());
+
+
 
 		//TOPIC_pub.publish(msg);
 		ros::spinOnce();
