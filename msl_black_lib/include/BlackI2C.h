@@ -45,8 +45,12 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/i2c.h>
+#ifdef __x86_64__
+	#include <linux/i2c.h>
+#endif
+
 #include <linux/i2c-dev.h>
+
 
 
 namespace BlackLib
@@ -102,7 +106,6 @@ namespace BlackLib
      *  @n @n
      *  @code{.cpp}
      *  // Filename: myI2cProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackLib/BlackI2C.h"
@@ -123,7 +126,6 @@ namespace BlackLib
      * You can use "using namespace BlackLib" also. You can get rid of writing "BlackLib::", with using this method.
      * @code{.cpp}
      *  // Filename: myI2cProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackI2C.h"
