@@ -54,6 +54,12 @@ int main(int argc, char** argv) {
 	// ADC
 	BlackADC adc_light(AIN1);
 
+	BlackLib::BlackGPIO   led1(BlackLib::GPIO_51,BlackLib::output, BlackLib::SecureMode);
+	BlackLib::BlackGPIO   led2(BlackLib::GPIO_22,BlackLib::output, BlackLib::FastMode);
+
+	led1.setValue(high);
+	led2.setValue(low);
+
 
 	bool lightbarrier = false;
 	bool lightbarrier_old = false;
@@ -74,6 +80,9 @@ int main(int argc, char** argv) {
 
 			//hbiPub.publish(info);
 		}
+
+		led1.toggleValue();
+		led2.toggleValue();
 
 
 		std_msgs::String msg;
