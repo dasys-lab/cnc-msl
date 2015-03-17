@@ -9,7 +9,7 @@
 #include <sstream>
 
 // ROS
-//#include "ros/ros.h"
+#include "ros/ros.h"
 #include "std_msgs/String.h"
 
 // ROS - Messages
@@ -42,34 +42,12 @@ int main(int argc, char** argv) {
 	std::cout << "Test" << std::endl;
 
 	// Initialisierungen
-//	ros::init(argc, argv, "ActuatorController");
+	ros::init(argc, argv, "ActuatorController");
 
-//	ros::NodeHandle node;
-//	ros::Rate loop_rate(1);		// 1 Hz
+	ros::NodeHandle node;
+	ros::Rate loop_rate(1);		// 1 Hz
 
-//	ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
-
-	std::cout << "LED Flash Start" << std::endl;
-	FILE *LEDHandle = NULL;
-	const char *LEDBrightness="/sys/class/leds/beaglebone:green:usr0/brightness";
-
-	for(int i=0; i<10; i++){
-		if((LEDHandle = fopen(LEDBrightness, "r+")) != NULL){
-			fwrite("1", sizeof(char), 1, LEDHandle);
-	 		fclose(LEDHandle);
-	 	}
-	 	usleep(1000000);
-
-	 	if((LEDHandle = fopen(LEDBrightness, "r+")) != NULL){
-			fwrite("0", sizeof(char), 1, LEDHandle);
-			fclose(LEDHandle);
-		}
-	usleep(1000000);
-	}
-	std::cout << "LED Flash End" << std::endl;
-
-
-
+	// ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
 
 
 	// PINS
@@ -79,8 +57,9 @@ int main(int argc, char** argv) {
 	// ADC
 	BlackADC adc_light(AIN1);
 
-	BlackLib::BlackGPIO   led1(BlackLib::GPIO_51,BlackLib::output, BlackLib::SecureMode);
-	BlackLib::BlackGPIO   led2(BlackLib::GPIO_22,BlackLib::output, BlackLib::FastMode);
+	BlackLib::BlackGPIO   led1(BlackLib::GPIO_51, BlackLib::output, BlackLib::SecureMode);
+	BlackLib::BlackGPIO   led2(BlackLib::GPIO_22, BlackLib::output, BlackLib::FastMode);
+
 
 	led1.setValue(high);
 	led2.setValue(low);
@@ -89,7 +68,7 @@ int main(int argc, char** argv) {
 	bool lightbarrier = false;
 	bool lightbarrier_old = false;
 
-	while(1) {//ros::ok()) {
+	while(ros::ok()) {
 		// loop_rate legt Frequenz fest
 
 
@@ -107,18 +86,14 @@ int main(int argc, char** argv) {
 
 		usleep(1000000);
 
-//		std_msgs::String msg;
-//		std::stringstream ss;
 
-//		ss << "ADC-Wert: ";
-//		msg.data = ss.str();
-
-		//ROS_INFO("%s", msg.data.c_str());
+		ROS_INFO("ADC: %s", adc_light.getValue().c_str());
+		ROS_INFO("ADC: %s", BH_R_Reset.getValue().c_str());
 
 		//TOPIC_pub.publish(msg);
-		//ros::spinOnce();
+		ros::spinOnce();
 
-		//loop_rate.sleep();
+		loop_rate.sleep();
 	}
 
 	return 0;
