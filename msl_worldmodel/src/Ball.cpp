@@ -52,7 +52,7 @@ namespace msl
 		}
 		else
 		{
-			haveBallDistanceDynamic += 10; //TODO: this won't work, this method is called arbitrarily often in each iteration
+			haveBallDistanceDynamic += 2; //TODO: this won't work, this method is called arbitrarily often in each iteration
 			haveBallDistanceDynamic = min(haveBallDistanceDynamic, HAVE_BALL_TOLERANCE_DRIBBLE);
 		}
 		shared_ptr<CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
