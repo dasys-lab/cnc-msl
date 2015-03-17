@@ -220,6 +220,7 @@ namespace alica
 			kc.power = (ushort)(setKickPower(egoTarget->length(), (useLowerHole ? lowerHole.z : higherHole.z)));
 			if (!disableKicking)
 			{
+				cout << "align and shoot: sending kc!" << endl;
 				send(kc);
 			}
 			else
