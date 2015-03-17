@@ -77,6 +77,7 @@ namespace alica
 				string currentSearchString = string("p", i);
 				for (int j = 0; j < lowKickSectionList->size(); j++)
 				{
+					cout << "Align and Shoot: low kick strings " << lowKickSectionList->at(j) << " " << currentSearchString << " " << (lowKickSectionList->at(j) == currentSearchString) << endl;
 					if (lowKickSectionList->at(j) == currentSearchString)
 					{
 						found = true;
@@ -97,6 +98,7 @@ namespace alica
 				double distance = (*this->sc)["Show"]->get<double>(s1.str().c_str(), NULL);
 				double power = (*this->sc)["Show"]->get<double>(s2.str().c_str(), NULL);
 				auto p = make_shared<CNPoint2D>(distance, power);
+				cout << "align and shoot: " << p->x << " " << p->y << endl;
 				lowKickList.push_back(p);
 				i++;
 			}
