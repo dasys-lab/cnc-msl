@@ -46,6 +46,7 @@ namespace msl
 
 	bool Ball::haveBall()
 	{
+		bool ret = true;
 		if (!hadBefore)
 		{
 			haveBallDistanceDynamic = 0;
@@ -58,29 +59,26 @@ namespace msl
 		shared_ptr<CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
-			return false;
+			ret=false;
 		}
 
 		double angle = ballPos->angleTo();
 		double ballDist = ballPos->length();
 
-		double usedKicker = 0;
-		if ((2.0 * M_PI / 3.0 <= angle) && (angle < 4.0 * M_PI / 3.0))
+		double usedKicker = M_PI;
+		if (hadBefore)
 		{
-			if (hadBefore)
+			if (KICKER_DISTANCE + haveBallDistanceDynamic < ballDist)
 			{
-				if (KICKER_DISTANCE + haveBallDistanceDynamic < ballDist)
-				{
-					return false;
-				}
+				ret = false;
 			}
-			else if (KICKER_DISTANCE < ballDist)
-			{
-				return false;
-			}
-			usedKicker = KICKER_ANGLE;
-
 		}
+		else if (KICKER_DISTANCE < ballDist)
+		{
+			ret = false;
+		}
+		usedKicker = KICKER_ANGLE;
+
 		//calc angle tolerance to the ball
 		double tmpTol = angle - usedKicker;
 		//Normalize rotation
@@ -97,10 +95,10 @@ namespace msl
 
 		if (tmpTol > HAVE_BALL_MAX_ANGLE_DELTA)
 		{
-			return false;
+			ret = false;
 		}
-
-		return true;
+		hadBefore = ret;
+		return ret;
 	}
 
 	shared_ptr<CNPoint2D> Ball::getEgoRawBallPosition()
