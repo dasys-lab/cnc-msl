@@ -74,7 +74,7 @@ namespace alica
 			while (true)
 			{
 				bool found = false;
-				string currentSearchString = string("p", i);
+				string currentSearchString = string("p") + std::to_string(i);
 				for (int j = 0; j < lowKickSectionList->size(); j++)
 				{
 					cout << "Align and Shoot: low kick strings " << lowKickSectionList->at(j) << " " << currentSearchString << " " << (lowKickSectionList->at(j) == currentSearchString) << endl;
@@ -107,7 +107,7 @@ namespace alica
 			while (true)
 			{
 				bool found = false;
-				string currentSearchString = string("p", i);
+				string currentSearchString = string("p") + std::to_string(i);
 				for (int j = 0; j < highKickSectionList->size(); j++)
 				{
 					if (highKickSectionList->at(j) == currentSearchString)
