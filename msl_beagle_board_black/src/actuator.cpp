@@ -9,7 +9,7 @@
 #include <sstream>
 
 // ROS
-#include "ros/ros.h"
+//#include "ros/ros.h"
 #include "std_msgs/String.h"
 
 // ROS - Messages
@@ -36,12 +36,12 @@ int main(int argc, char** argv) {
 	std::cout << "Test" << std::endl;
 
 	// Initialisierungen
-	ros::init(argc, argv, "ActuatorController");
+//	ros::init(argc, argv, "ActuatorController");
 
-	ros::NodeHandle node;
-	ros::Rate loop_rate(1);		// 1 Hz
+//	ros::NodeHandle node;
+//	ros::Rate loop_rate(1);		// 1 Hz
 
-	ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
+//	ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
 
 
 
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 	bool lightbarrier = false;
 	bool lightbarrier_old = false;
 
-	while(ros::ok()) {
+	while(1) {//ros::ok()) {
 		// loop_rate legt Frequenz fest
 
 		// ADC
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 
 		int i = adc_light.getNumericValue();
 
-		ROS_INFO("%s%i", msg.data.c_str(), i);
+		//ROS_INFO("%s%i", msg.data.c_str(), i);
 
 
 
@@ -106,14 +106,14 @@ int main(int argc, char** argv) {
 			ss << "Highhhh ";
 			msg.data = ss.str();
 		}
-		ROS_INFO("%s", msg.data.c_str());
+		//ROS_INFO("%s", msg.data.c_str());
 
 
 
 		//TOPIC_pub.publish(msg);
-		ros::spinOnce();
+		//ros::spinOnce();
 
-		loop_rate.sleep();
+		//loop_rate.sleep();
 	}
 
 	return 0;
