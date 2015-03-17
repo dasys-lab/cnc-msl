@@ -33,6 +33,8 @@
 // fuer Tests
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>         // std::chrono::seconds
+#include <stdio.h>		// File Open
+#include <unistd.h>		// File Open
 
 using namespace BlackLib;
 
@@ -46,6 +48,25 @@ int main(int argc, char** argv) {
 //	ros::Rate loop_rate(1);		// 1 Hz
 
 //	ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
+
+	std::cout << "LED Flash Start" << std::endl;
+	FILE *LEDHandle = NULL;
+	const char *LEDBrightness="/sys/class/leds/beaglebone:green:usr0/brightness";
+
+	for(int i=0; i<10; i++){
+		if((LEDHandle = fopen(LEDBrightness, "r+")) != NULL){
+			fwrite("1", sizeof(char), 1, LEDHandle);
+	 		fclose(LEDHandle);
+	 	}
+	 	usleep(1000000);
+
+	 	if((LEDHandle = fopen(LEDBrightness, "r+")) != NULL){
+			fwrite("0", sizeof(char), 1, LEDHandle);
+			fclose(LEDHandle);
+		}
+	usleep(1000000);
+	}
+	std::cout << "LED Flash End" << std::endl;
 
 
 
@@ -71,48 +92,28 @@ int main(int argc, char** argv) {
 	while(1) {//ros::ok()) {
 		// loop_rate legt Frequenz fest
 
-		// ADC
-		if (adc_light.getNumericValue() > LIGHTBARRIER_THRESHOLD) {
-			lightbarrier = true;			// Etwas in Lichtschranke
-		} else {
-			lightbarrier = false;
-		}
-
-		if (lightbarrier != lightbarrier_old) {
-			msl_actuator_msgs::HaveBallInfo info;
-			info.haveBall = lightbarrier;
-
-			//hbiPub.publish(info);
-		}
 
 		led1.toggleValue();
 		led2.toggleValue();
-
-
-		std_msgs::String msg;
-		std::stringstream ss;
-
-		ss << "ADC-Wert: ";
-		msg.data = ss.str();
-
-		int i = adc_light.getNumericValue();
-
-		//ROS_INFO("%s%i", msg.data.c_str(), i);
+		std::cout << "LED1: " << led1.getValue() << std::endl;
+		std::cout << "LED2: " << led2.getValue() << std::endl;
 
 
 
-		if (1 == BH_R_Reset.getNumericValue()) {
-			BH_R_Reset.setValue(low);
-			ss << "LOW ! ! !";
-			msg.data = ss.str();
-		} else {
-			BH_R_Reset.setValue(high);
-			ss << "Highhhh ";
-			msg.data = ss.str();
-		}
+
+
+		BH_R_Reset.toggleValue();
+		std::cout << "BH: " << BH_R_Reset.getValue() << std::endl;
+
+		usleep(1000000);
+
+//		std_msgs::String msg;
+//		std::stringstream ss;
+
+//		ss << "ADC-Wert: ";
+//		msg.data = ss.str();
+
 		//ROS_INFO("%s", msg.data.c_str());
-
-	    std::this_thread::sleep_for (std::chrono::seconds(1));
 
 		//TOPIC_pub.publish(msg);
 		//ros::spinOnce();
