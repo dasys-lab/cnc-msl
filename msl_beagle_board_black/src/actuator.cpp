@@ -30,6 +30,10 @@
 //eigene
 #include "config.h"
 
+// fuer Tests
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>         // std::chrono::seconds
+
 using namespace BlackLib;
 
 int main(int argc, char** argv) {
@@ -108,7 +112,7 @@ int main(int argc, char** argv) {
 		}
 		//ROS_INFO("%s", msg.data.c_str());
 
-
+	    std::this_thread::sleep_for (std::chrono::seconds(1));
 
 		//TOPIC_pub.publish(msg);
 		//ros::spinOnce();
