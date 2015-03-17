@@ -180,7 +180,7 @@ namespace alica
 			egoTarget = alloTarget.alloToEgo(*ownPos);
 		}
 
-		cout << "egoTarget : " << egoTarget->x << " " << egoTarget->y << endl;
+		//cout << "egoTarget : " << egoTarget->x << " " << egoTarget->y << endl;
 
 		double aimAngle = egoTarget->angleTo();
 
@@ -195,7 +195,7 @@ namespace alica
 		bhc.leftMotor = (int8_t)this->wheelSpeed;
 		bhc.rightMotor = (int8_t)this->wheelSpeed;
 
-		cout << "DeltaAngle is : " << deltaAngle << " ball angle : " << ballAngle << " aimAngle : " << aimAngle << endl;
+		//cout << "DeltaAngle is : " << deltaAngle << " ball angle : " << ballAngle << " aimAngle : " << aimAngle << endl;
 
 		send(bhc);
 
@@ -228,8 +228,8 @@ namespace alica
 			}
 			mc.motion.rotation = 0;
 			this->success = true;
-			cout << "Dist: " << egoTarget->length() << "\tPower: " << kc.power << "\tDeviation: "
-					<< sin(deltaAngle) * egoTarget->length() << ",\tVolt: " << volt << endl;
+			/*cout << "Dist: " << egoTarget->length() << "\tPower: " << kc.power << "\tDeviation: "
+					<< sin(deltaAngle) * egoTarget->length() << ",\tVolt: " << volt << endl;*/
 
 		}
 		else
