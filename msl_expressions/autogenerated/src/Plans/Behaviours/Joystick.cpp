@@ -63,7 +63,7 @@ namespace alica
                 || joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE
                 || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION)
         {
-            if (joy->kickPower > 0 && lastProcessedCmd != joy)
+            if (joy->kick && lastProcessedCmd != joy)
             {
                 kc.senderID = joy->robotId;
                 kc.power = joy->kickPower;
