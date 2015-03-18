@@ -202,17 +202,17 @@ namespace alica
 
 		if (fabs(deltaAngle) < this->angleTolerance)
 		{
-			cout << "align and shoot: hit target" << endl;
+			//cout << "align and shoot: hit target" << endl;
 			timesOnTarget++;
 		}
 		else
 		{
-			cout << "align and shoot: miss target" << endl;
+			//cout << "align and shoot: miss target" << endl;
 			timesOnTarget = 0;
 		}
 
 		float voltage = wm->getKickerVoltage();
-		cout << "align and shoot: " << " " << timesOnTarget <<" " <<  TIMES_ON_TARGET << endl;
+	//	cout << "align and shoot: " << " " << timesOnTarget <<" " <<  TIMES_ON_TARGET << endl;
 		if (timesOnTarget > TIMES_ON_TARGET/* && fabs(this->voltage4shoot-voltage) < 1.001*/)
 		{
 			//KICK!
@@ -258,7 +258,7 @@ namespace alica
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = this->shootingSpeed; //driveTo.Distance();
-
+		cout << "Align and shoot: " << "delta angle " << deltaAngle << " mc.motion.rotation " << mc.motion.rotation << " driveto " << driveTo->x << " " << driveTo->y << endl;
 		send(mc);
 		/*PROTECTED REGION END*/
 	}
