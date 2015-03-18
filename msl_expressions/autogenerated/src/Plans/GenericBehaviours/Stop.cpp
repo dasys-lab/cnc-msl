@@ -25,7 +25,7 @@ namespace alica
         mc.motion.angle = 0;
         mc.motion.rotation = 0;
         mc.motion.translation = 0;
-	cout << " Stop HaveBall" << wm->ball.haveBall() << endl;
+//	cout << " Stop HaveBall" << wm->ball.haveBall() << endl;
         send(mc);
 
         /*PROTECTED REGION END*/
