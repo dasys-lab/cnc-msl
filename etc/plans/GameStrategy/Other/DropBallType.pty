@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:PlanType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1426696396136" name="DropBallType" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="">
+  <plans id="1426696601951" name="MISSING_NAME" comment="" activated="true">
+    <plan>SimpleDropBall.pml#1426696586622</plan>
+  </plans>
+</alica:PlanType>

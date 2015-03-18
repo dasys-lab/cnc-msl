@@ -1,68 +1,130 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1413992564408" name="WM16" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans" priority="0.0" minCardinality="0" maxCardinality="2147483647">
-  <states id="1413992564409" name="Init" comment="" entryPoint="1413992564410">
+  <states id="1413992564409" name="Stop" comment="" entryPoint="1413992564410">
     <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
-    <outTransitions>#1413992575757</outTransitions>
+    <inTransitions>#1426692315498</inTransitions>
+    <inTransitions>#1426692322651</inTransitions>
+    <inTransitions>#1426692324690</inTransitions>
+    <inTransitions>#1426692326813</inTransitions>
+    <inTransitions>#1426692328789</inTransitions>
+    <inTransitions>#1426692331032</inTransitions>
+    <outTransitions>#1426691974126</outTransitions>
+    <outTransitions>#1426691976989</outTransitions>
+    <outTransitions>#1426691979458</outTransitions>
+    <outTransitions>#1426692077573</outTransitions>
+    <outTransitions>#1426692164404</outTransitions>
+    <outTransitions>#1426692244795</outTransitions>
   </states>
-  <states id="1413992572149" name="Drive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/GetBall.beh#1414840399972</plans>
-    <inTransitions>#1413992575757</inTransitions>
-    <inTransitions>#1414883776988</inTransitions>
-    <inTransitions>#1415207005689</inTransitions>
-    <inTransitions>#1415207059261</inTransitions>
-    <outTransitions>#1414752349075</outTransitions>
+  <states id="1426691835473" name="Gameplay" comment="">
+    <plans xsi:type="alica:Plan">GameStrategy/Gameplay/Gameplay.pml#1426694853089</plans>
+    <inTransitions>#1426691974126</inTransitions>
+    <inTransitions>#1426692306144</inTransitions>
+    <inTransitions>#1426692308143</inTransitions>
+    <inTransitions>#1426692653093</inTransitions>
+    <outTransitions>#1426692324690</outTransitions>
   </states>
-  <states id="1414752333556" name="Dribble" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleToPoint.beh#1414752423981</plans>
-    <inTransitions>#1414752349075</inTransitions>
-    <outTransitions>#1414883776988</outTransitions>
-    <outTransitions>#1415205265272</outTransitions>
+  <states id="1426691842031" name="OpponentStandard" comment="">
+    <plans xsi:type="alica:Plan">GameStrategy/OppStandards/OppStandards.pml#1426694865227</plans>
+    <inTransitions>#1426691979458</inTransitions>
+    <outTransitions>#1426692308143</outTransitions>
+    <outTransitions>#1426692328789</outTransitions>
   </states>
-  <states id="1415205191506" name="AlineToGoal" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/AlineToGoal.beh#1415205285582</plans>
-    <inTransitions>#1415205265272</inTransitions>
-    <outTransitions>#1415206978594</outTransitions>
-    <outTransitions>#1415207005689</outTransitions>
+  <states id="1426691966433" name="OwnStandard" comment="">
+    <plans xsi:type="alica:Plan">GameStrategy/OwnStandards/OwnStandards.pml#1426694875113</plans>
+    <inTransitions>#1426691976989</inTransitions>
+    <outTransitions>#1426692306144</outTransitions>
+    <outTransitions>#1426692326813</outTransitions>
   </states>
-  <states id="1415206960125" name="GoalKick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/GoalKick.beh#1415205578139</plans>
-    <inTransitions>#1415206978594</inTransitions>
-    <outTransitions>#1415207059261</outTransitions>
+  <states id="1426692070119" name="Joystick" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Joystick.beh#1426695479346</plans>
+    <inTransitions>#1426692077573</inTransitions>
+    <outTransitions>#1426692322651</outTransitions>
   </states>
-  <transitions id="1413992575757" name="" comment="" msg="">
-    <preCondition id="1413992578046" name="" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+  <states id="1426692157956" name="Parking" comment="">
+    <plans xsi:type="alica:Plan">GameStrategy/Other/Parking.pml#1426695119330</plans>
+    <inTransitions>#1426692164404</inTransitions>
+    <outTransitions>#1426692331032</outTransitions>
+  </states>
+  <states id="1426692210342" name="DroppedBall" comment="">
+    <plans xsi:type="alica:Plan">GameStrategy/Other/DroppedBall.pml#1426694906399</plans>
+    <inTransitions>#1426692244795</inTransitions>
+    <outTransitions>#1426692315498</outTransitions>
+    <outTransitions>#1426692653093</outTransitions>
+  </states>
+  <transitions id="1426691974126" name="MISSING_NAME" comment="situation == start" msg="">
+    <preCondition id="1426691976695" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1413992564409</inState>
-    <outState>#1413992572149</outState>
+    <outState>#1426691835473</outState>
   </transitions>
-  <transitions id="1414752349075" name="haveBall" comment="" msg="">
-    <preCondition id="1414752354525" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1413992572149</inState>
-    <outState>#1414752333556</outState>
+  <transitions id="1426691976989" name="MISSING_NAME" comment="situation == Own(KickOff || FreeKick || GoalKick || Throwin || Corner || Penality)" msg="">
+    <preCondition id="1426691979272" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1413992564409</inState>
+    <outState>#1426691966433</outState>
   </transitions>
-  <transitions id="1414883776988" name="lostBall" comment="" msg="">
-    <preCondition id="1414883779788" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1414752333556</inState>
-    <outState>#1413992572149</outState>
+  <transitions id="1426691979458" name="MISSING_NAME" comment="situation == Opp(KickOff || FreeKick || GoalKick || Throwin || Corner || Penality)" msg="">
+    <preCondition id="1426691980585" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1413992564409</inState>
+    <outState>#1426691842031</outState>
   </transitions>
-  <transitions id="1415205265272" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1415205268720" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1414752333556</inState>
-    <outState>#1415205191506</outState>
+  <transitions id="1426692077573" name="MISSING_NAME" comment="situation == joystick" msg="">
+    <preCondition id="1426692078983" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1413992564409</inState>
+    <outState>#1426692070119</outState>
   </transitions>
-  <transitions id="1415206978594" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1415206979578" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1415205191506</inState>
-    <outState>#1415206960125</outState>
+  <transitions id="1426692164404" name="MISSING_NAME" comment="situation == parking" msg="">
+    <preCondition id="1426692165988" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1413992564409</inState>
+    <outState>#1426692157956</outState>
   </transitions>
-  <transitions id="1415207005689" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1415207006891" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1415205191506</inState>
-    <outState>#1413992572149</outState>
+  <transitions id="1426692244795" name="MISSING_NAME" comment="situation == dropBall" msg="">
+    <preCondition id="1426692246279" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1413992564409</inState>
+    <outState>#1426692210342</outState>
   </transitions>
-  <transitions id="1415207059261" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1415207067102" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1415206960125</inState>
-    <outState>#1413992572149</outState>
+  <transitions id="1426692306144" name="MISSING_NAME" comment="anyChildSuccess ||  moreThen10SecondsInStart" msg="">
+    <preCondition id="1426692307991" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426691966433</inState>
+    <outState>#1426691835473</outState>
+  </transitions>
+  <transitions id="1426692308143" name="MISSING_NAME" comment="anyChildSuccess || moreThen10SecondsInStart" msg="">
+    <preCondition id="1426692309848" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426691842031</inState>
+    <outState>#1426691835473</outState>
+  </transitions>
+  <transitions id="1426692315498" name="MISSING_NAME" comment="situation  != DropBall &amp;&amp; situation !=start" msg="">
+    <preCondition id="1426692322491" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426692210342</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692322651" name="MISSING_NAME" comment="situation == !joystick" msg="">
+    <preCondition id="1426692324569" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426692070119</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692324690" name="MISSING_NAME" comment="situation != start" msg="">
+    <preCondition id="1426692326693" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426691835473</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692326813" name="MISSING_NAME" comment="situation == stop" msg="">
+    <preCondition id="1426692328653" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426691966433</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692328789" name="MISSING_NAME" comment="situation == stop" msg="">
+    <preCondition id="1426692330833" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426691842031</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692331032" name="MISSING_NAME" comment="situation != parken " msg="">
+    <preCondition id="1426692332679" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426692157956</inState>
+    <outState>#1413992564409</outState>
+  </transitions>
+  <transitions id="1426692653093" name="MISSING_NAME" comment="anyChildSuccess || moreThen10SecondsInStart" msg="">
+    <preCondition id="1426692655810" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1426692210342</inState>
+    <outState>#1426691835473</outState>
   </transitions>
   <entryPoints id="1413992564410" name="" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../Misc/taskrepository.tsk#1225112227903</task>

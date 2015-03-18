@@ -85,6 +85,8 @@ namespace alica
 
             case 1421854995808:
 
+            case 1426695479346:
+
                 return make_shared<Joystick>();
                 break;
 
