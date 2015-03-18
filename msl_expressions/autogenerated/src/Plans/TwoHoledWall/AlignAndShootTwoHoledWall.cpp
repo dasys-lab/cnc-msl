@@ -77,7 +77,6 @@ namespace alica
 				string currentSearchString = string("p") + std::to_string(i);
 				for (int j = 0; j < lowKickSectionList->size(); j++)
 				{
-					cout << "Align and Shoot: low kick strings " << lowKickSectionList->at(j) << " " << currentSearchString << " " << (lowKickSectionList->at(j) == currentSearchString) << endl;
 					if (lowKickSectionList->at(j) == currentSearchString)
 					{
 						found = true;
@@ -203,14 +202,17 @@ namespace alica
 
 		if (fabs(deltaAngle) < this->angleTolerance)
 		{
+			cout << "align and shoot: hit target" << endl;
 			timesOnTarget++;
 		}
 		else
 		{
+			cout << "align and shoot: miss target" << endl;
 			timesOnTarget = 0;
 		}
 
 		float voltage = wm->getKickerVoltage();
+		cout << "align and shoot: " << " " << timesOnTarget <<" " <<  TIMES_ON_TARGET << endl;
 		if (timesOnTarget > TIMES_ON_TARGET/* && fabs(this->voltage4shoot-voltage) < 1.001*/)
 		{
 			//KICK!
