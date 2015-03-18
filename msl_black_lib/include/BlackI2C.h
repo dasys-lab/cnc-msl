@@ -45,10 +45,7 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#ifdef __x86_64__
-	#include <linux/i2c.h>
-#endif
-
+#include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 
 
