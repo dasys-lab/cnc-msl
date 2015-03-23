@@ -169,29 +169,33 @@ namespace BlackLib
 
             case PWM_P8_13:
 			{
-				searchPath = "/sys/class/pwm/pwmchip4/";
-				searchResult = this->searchDirectory(searchPath,"pwm1");
+				// searchPath = "/sys/class/pwm/pwmchip4/";
+				// searchResult = this->searchDirectory(searchPath,"pwm1");
+				searchResult = "/sys/class/pwm/pwmchip4/pwm1/";
 				break;
 			}
 
 			case PWM_P8_19:
 			{
-				searchPath = "/sys/class/pwm/pwmchip4/";
-				searchResult = this->searchDirectory(searchPath,"pwm0");
+				// searchPath = "/sys/class/pwm/pwmchip4/";
+				// searchResult = this->searchDirectory(searchPath,"pwm0");
+				searchResult = "/sys/class/pwm/pwmchip4/pwm0/";
 				break;
 			}
 
 			case PWM_P9_14:
 			{
-				searchPath = "/sys/class/pwm/pwmchip2/";
-				searchResult = this->searchDirectory(searchPath,"pwm0");
+				// searchPath = "/sys/class/pwm/pwmchip2/";
+				// searchResult = this->searchDirectory(searchPath,"pwm0");
+				searchResult = "/sys/class/pwm/pwmchip2/pwm0/";
 				break;
 			}
 
 			case PWM_P9_16:
 			{
-				searchPath = "/sys/class/pwm/pwmchip2/";
-				searchResult = this->searchDirectory(searchPath,"pwm1");
+				// searchPath = "/sys/class/pwm/pwmchip2/";
+				// searchResult = this->searchDirectory(searchPath,"pwm1");
+				searchResult = "/sys/class/pwm/pwmchip2/pwm1/";
 				break;
 			}
 
