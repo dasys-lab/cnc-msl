@@ -317,7 +317,8 @@ namespace BlackLib
      * This enum is used for setting i2c name.
      */
     enum i2cName            {   I2C_0                   = 0,
-                                I2C_1                   = 1
+                                I2C_1                   = 1,
+								I2C_2					= 2
                             };
 
     /*!
