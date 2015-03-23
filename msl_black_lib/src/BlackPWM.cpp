@@ -44,7 +44,7 @@ namespace BlackLib
 
         this->loadDeviceTree();
 
-        this->pwmTestPath   = "/sys/devices/" + this->getOcpName() + "/" + this->findPwmTestName( this->pwmPinName );
+        this->pwmTestPath   = this->findPwmTestName( this->pwmPinName );
     }
 
 
@@ -96,30 +96,31 @@ namespace BlackLib
         std::string searchResult = SEARCH_DIR_NOT_FOUND;
         switch (pwm)
         {
-            case P8_13:
-            {
-                searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_13);
-                break;
-            }
+        	case P8_13:
+			{
+				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_13);
+				break;
+			}
 
-            case P8_19:
-            {
-                searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_19);
-                break;
-            }
+			case P8_19:
+			{
+				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_19);
+				break;
+			}
 
-            case P9_14:
-            {
-                searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_14);
-                break;
-            }
+			case P9_14:
+			{
+				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_14);
+				break;
+			}
 
-            case P9_16:
-            {
-                searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_16);
-                break;
-            }
+			case P9_16:
+			{
+				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_16);
+				break;
+			}
 
+			// P9_21, P9_22, P9_42 noch nicht in BlackCore cpp fuer PWM bearbeitet
             case P9_21:
             {
                 searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_21);
@@ -166,7 +167,7 @@ namespace BlackLib
 
     std::string BlackCorePWM::getRunFilePath()
     {
-        return (this->pwmTestPath + "/run");
+        return (this->pwmTestPath + "/enable");
     }
 
     std::string BlackCorePWM::getPolarityFilePath()
