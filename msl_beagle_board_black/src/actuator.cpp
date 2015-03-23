@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
 		Servo_PWM.setLoadRatioTime(count%20 , milisecond); // Werte von 1 bis 2 */
 		ROS_INFO("ADC: %s", adc_light.getValue().c_str());
 		ROS_INFO("BH_Reset: %s", BH_R_Reset.getValue().c_str());
-		ROS_INFO("PWM Change: %s", BH_R_Reset.getValue().c_str());
+		ROS_INFO("PWM Change: %s", Servo_PWM.getValue().c_str());
 
 		//TOPIC_pub.publish(msg);
 		ros::spinOnce();
