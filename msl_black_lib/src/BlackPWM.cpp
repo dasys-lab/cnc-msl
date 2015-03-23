@@ -98,25 +98,29 @@ namespace BlackLib
         {
         	case P8_13:
 			{
-				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_13);
+				// searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_13);
+				searchResult = "/sys/class/pwm/pwmchip4/pwm1/";
 				break;
 			}
 
 			case P8_19:
 			{
-				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_19);
+				// searchResult = this->searchDirectoryOcp(BlackCore::PWM_P8_19);
+				searchResult = "/sys/class/pwm/pwmchip4/pwm0/";
 				break;
 			}
 
 			case P9_14:
 			{
-				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_14);
+				// searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_14);
+				searchResult = "/sys/class/pwm/pwmchip2/pwm0/";
 				break;
 			}
 
 			case P9_16:
 			{
-				searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_16);
+				// searchResult = this->searchDirectoryOcp(BlackCore::PWM_P9_16);
+				searchResult = "/sys/class/pwm/pwmchip2/pwm1/";
 				break;
 			}
 
@@ -162,7 +166,7 @@ namespace BlackLib
 
     std::string BlackCorePWM::getDutyFilePath()
     {
-        return (this->pwmTestPath + "/duty");
+        return (this->pwmTestPath + "/duty_cycle");
     }
 
     std::string BlackCorePWM::getRunFilePath()
