@@ -57,15 +57,13 @@ int main(int argc, char** argv) {
 	// ADC
 	BlackADC adc_light(AIN1);
 
-	BlackLib::BlackGPIO   led1(BlackLib::GPIO_51, BlackLib::output, BlackLib::SecureMode);
-	BlackLib::BlackGPIO   led2(BlackLib::GPIO_22, BlackLib::output, BlackLib::FastMode);
 
 	BlackPWM Servo_PWM(P9_14);
 	Servo_PWM.setDutyPercent(100.0);
 	Servo_PWM.setPeriodTime(20, milisecond);
 
-	led1.setValue(high);
-	led2.setValue(low);
+	Servo_PWM.setRunState(run);
+
 
 
 	bool lightbarrier = false;
@@ -75,13 +73,13 @@ int main(int argc, char** argv) {
 		// loop_rate legt Frequenz fest
 			count++;
 
-		led1.toggleValue();
-		led2.toggleValue();
+
 		BH_R_Reset.toggleValue();
 
 		Servo_PWM.setLoadRatioTime(count%20 , milisecond); // Werte von 1 bis 2 */
 		ROS_INFO("ADC: %s", adc_light.getValue().c_str());
-		ROS_INFO("ADC: %s", BH_R_Reset.getValue().c_str());
+		ROS_INFO("BH_Reset: %s", BH_R_Reset.getValue().c_str());
+		ROS_INFO("PWM Change: %s", BH_R_Reset.getValue().c_str());
 
 		//TOPIC_pub.publish(msg);
 		ros::spinOnce();
