@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
 
 
 	// PINS
-	BlackGPIO BH_R_Reset(GPIO_66, output);
+	BlackGPIO BH_R_Reset(GPIO_66, output, FastMode);
 
 
 	// ADC
