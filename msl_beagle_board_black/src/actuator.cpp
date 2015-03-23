@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 	BlackADC adc_light(AIN1);
 
 	// I2C
-	BlackI2C myI2C(I2C_1, 0x22);		// I2C_2 hinzufuegen und aktivieren
+	BlackI2C myI2C(I2C_2, 0x22);		// I2C_2 hinzufuegen und aktivieren
 	myI2C.open(ReadWrite | NonBlock);	// Gyro: 0x69, Accel: 0x53, Magnet: 0x1E, Thermo: 0x77
 
 	// SPI
