@@ -11,7 +11,7 @@
 #include <stdint.h>
 
 // Entscheidungsschwelle fuer Ball (0 bis 65000)
-const uint16_t LIGHTBARRIER_THRESHOLD = 30000;
+const uint16_t LIGHTBARRIER_THRESHOLD = 2500;
 
 
 

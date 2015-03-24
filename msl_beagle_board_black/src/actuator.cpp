@@ -146,38 +146,61 @@ int main(int argc, char** argv) {
 
 
 	bool lightbarrier_old = false;
-	uint16_t adc_test[] = { 30001, 30001, 30001,
-						  29999, 29999, 29999,
-						  30001, 29999, 30001,
-						  29999, 30001, 29999};
+	bool vision_old = false;
+	bool bundle_old = false;
+
 
 	uint16_t count = 0;
+
+
 	// Frequency set with loop_rate()
 	while(ros::ok()) {
 
-		if ( adc_test[count%12] /*adc_light.getNumericValue()*/ > LIGHTBARRIER_THRESHOLD) {
-			// something in lightbarrier
-			if (lightbarrier_old != true) {			// something NEW
-				msl_actuator_msgs::HaveBallInfo msg;
+		if ((adc_light.getNumericValue() > LIGHTBARRIER_THRESHOLD) && (lightbarrier_old != true)) {
+			// something in lightbarrier NEW
+			msl_actuator_msgs::HaveBallInfo msg;
 
-				lightbarrier_old = true;
-				msg.haveBall = true;
+			lightbarrier_old = true;
+			msg.haveBall = true;
 
-				hbiPub.publish(msg);
-				ROS_INFO("HaveBall: True");
-			}
+			hbiPub.publish(msg);
+			ROS_INFO("HaveBall: True");
+		} else if ((adc_light.getNumericValue() < LIGHTBARRIER_THRESHOLD) && (lightbarrier_old != false)) {
+			// something out of lightbarrier NEW
+			msl_actuator_msgs::HaveBallInfo msg;
+
+			lightbarrier_old = false;
+			msg.haveBall = false;
+
+			hbiPub.publish(msg);
+			ROS_INFO("HaveBall: False");
 		} else {
-			// nothing in lightbarrier
-			if (lightbarrier_old != false) {		// nothing NEW
-				msl_actuator_msgs::HaveBallInfo msg;
-
-				lightbarrier_old = false;
-				msg.haveBall = false;
-
-				hbiPub.publish(msg);
-				ROS_INFO("HaveBall: False");
-			}
+			// nothing NEW
 		}
+
+		if ((SW_Vision.getNumericValue() == 1) && (vision_old != true)) {
+			// Vision pressed
+
+		} else if ((SW_Vision.getNumericValue() == 0) && (vision_old != false)) {
+			// Vision released
+		} else {
+			// nothing NEW
+		}
+
+		if ((SW_Bundle.getNumericValue() == 1) && (bundle_old != true)) {
+			// Bundle pressed
+
+		} else if ((SW_Vision.getNumericValue() == 0) && (bundle_old != false)) {
+			// Bundle released
+		} else {
+			// nothing NEW
+		}
+
+		// MotionBurst
+
+		// IMU
+
+
 
 		count++;
 
