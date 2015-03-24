@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
 				lightbarrier_old = true;
 				msg.haveBall = true;
 
-				//hbiPub.publish(msg);
+				hbiPub.publish(msg);
 				ROS_INFO("HaveBall: True");
 			}
 		} else {
@@ -174,7 +174,7 @@ int main(int argc, char** argv) {
 				lightbarrier_old = false;
 				msg.haveBall = false;
 
-				//hbiPub.publish(msg);
+				hbiPub.publish(msg);
 				ROS_INFO("HaveBall: False");
 			}
 		}
