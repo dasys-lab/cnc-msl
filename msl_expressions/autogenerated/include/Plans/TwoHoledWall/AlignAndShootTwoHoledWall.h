@@ -46,6 +46,7 @@ namespace alica
         CNPoint3D higherHole;
         CNPoint3D lowerHole;
         bool usedFixedHole;
+        bool changeHole;
         bool useLowerHoleFixed;
         double shootingSpeed;
         int TIMES_ON_TARGET;

@@ -38,6 +38,8 @@ namespace alica {
 		kc.enabled = true;
 		kc.senderID = ownID;
 		kickControlPub.publish(kc);
+		kickControlPub.publish(kc);
+		kickControlPub.publish(kc);
 	}
 } /* namespace alica */
 

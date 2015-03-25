@@ -1,11 +1,27 @@
 #include <iostream>
 #include "UtilityFunctionCreator.h"
 
+#include  "Plans/GameStrategy/OppStandards/OppStandards1426694865227.h"
+
+#include  "Plans/GameStrategy/Other/Parking1426695119330.h"
+
+#include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
+
 #include  "Plans/WM161413992564408.h"
+
+#include  "Plans/GameStrategy/OppStandards/GenericOppStandard1426697871183.h"
+
+#include  "Plans/GameStrategy/OwnStandards/GenericOwnStandard1426697860439.h"
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
+
+#include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
+
+#include  "Plans/GameStrategy/Other/DroppedBall1426694906399.h"
+
+#include  "Plans/GameStrategy/OwnStandards/OwnStandards1426694875113.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
@@ -27,8 +43,28 @@ namespace alica
         switch (utilityfunctionConfId)
         {
 
+            case 1426694865227:
+                return make_shared<UtilityFunction1426694865227>();
+                break;
+
+            case 1426695119330:
+                return make_shared<UtilityFunction1426695119330>();
+                break;
+
+            case 1426696586622:
+                return make_shared<UtilityFunction1426696586622>();
+                break;
+
             case 1413992564408:
                 return make_shared<UtilityFunction1413992564408>();
+                break;
+
+            case 1426697871183:
+                return make_shared<UtilityFunction1426697871183>();
+                break;
+
+            case 1426697860439:
+                return make_shared<UtilityFunction1426697860439>();
                 break;
 
             case 1417621468963:
@@ -37,6 +73,18 @@ namespace alica
 
             case 1417017436952:
                 return make_shared<UtilityFunction1417017436952>();
+                break;
+
+            case 1426694853089:
+                return make_shared<UtilityFunction1426694853089>();
+                break;
+
+            case 1426694906399:
+                return make_shared<UtilityFunction1426694906399>();
+                break;
+
+            case 1426694875113:
+                return make_shared<UtilityFunction1426694875113>();
                 break;
 
             case 1417620189234:

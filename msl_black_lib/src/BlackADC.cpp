@@ -116,7 +116,8 @@ namespace BlackLib
     {
         this->adcErrors                 = new errorADC( this->getErrorsFromCoreADC() );
         this->ainName                   = adc;
-        this->ainPath                   = this->getHelperPath() + "/AIN" + tostr(this->ainName);
+        // this->ainPath                   = this->getHelperPath() + "/AIN" + tostr(this->ainName);
+        this->ainPath					= "/sys/bus/iio/devices/iio:device0/in_voltage" + tostr(this->ainName) + "_raw";
     }
 
 

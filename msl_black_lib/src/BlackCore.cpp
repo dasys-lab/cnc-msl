@@ -168,28 +168,28 @@ namespace BlackLib
             }
 
             case PWM_P8_13:
-            {
-                searchResult = this->searchDirectory(searchPath,"pwm_test_P8_13.");
-                break;
-            }
+			{
+				searchResult = this->searchDirectory(searchPath,"pwm_test_P8_13.");
+				break;
+			}
 
-            case PWM_P8_19:
-            {
-                searchResult = this->searchDirectory(searchPath,"pwm_test_P8_19.");
-                break;
-            }
+			case PWM_P8_19:
+			{
+				searchResult = this->searchDirectory(searchPath,"pwm_test_P8_19.");
+				break;
+			}
 
-            case PWM_P9_14:
-            {
-                searchResult = this->searchDirectory(searchPath,"pwm_test_P9_14.");
-                break;
-            }
+			case PWM_P9_14:
+			{
+				searchResult = this->searchDirectory(searchPath,"pwm_test_P9_14.");
+				break;
+			}
 
-            case PWM_P9_16:
-            {
-                searchResult = this->searchDirectory(searchPath,"pwm_test_P9_16.");
-                break;
-            }
+			case PWM_P9_16:
+			{
+				searchResult = this->searchDirectory(searchPath,"pwm_test_P9_16.");
+				break;
+			}
 
             case PWM_P9_21:
             {

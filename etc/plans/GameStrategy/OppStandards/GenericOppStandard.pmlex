@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOppStandard.pml#1426697871184"/>
+    <value xPos="141" yPos="282" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426697871183"/>
+    <value width="966" height="718"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426697871185"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426698446747"/>
+    <value xPos="542" yPos="310"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426698467862"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426698470757"/>
+    <value xPos="830" yPos="318"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandard.pml#1426698472708"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
