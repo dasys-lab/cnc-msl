@@ -81,7 +81,7 @@
         <item>
          <widget class="QLineEdit" name="robotIdEdit">
           <property name="inputMask">
-           <string>D0000000000</string>
+           <string/>
           </property>
          </widget>
         </item>
