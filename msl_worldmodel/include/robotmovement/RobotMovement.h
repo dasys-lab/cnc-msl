@@ -24,6 +24,8 @@ class CNPoint2D;
 		static MotionControl interceptCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
 		static void readConfigParameters();
 		static double defaultTranslation;
+		static double defaultRotateP;
+		static double interceptCarfullyRotateP;
 	};
 }
 

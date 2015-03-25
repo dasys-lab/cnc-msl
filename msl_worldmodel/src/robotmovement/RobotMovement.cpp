@@ -1,5 +1,5 @@
 /*
- * RobotMovement.cpp
+ * RobotMovement.cpp *
  *
  *  Created on: 17.12.2014
  *      Author: tobi
@@ -13,6 +13,8 @@
 namespace msl
 {
 	double RobotMovement::defaultTranslation;
+	double RobotMovement::defaultRotateP;
+	double RobotMovement::interceptCarfullyRotateP;
 
 	RobotMovement::~RobotMovement()
 	{
@@ -24,7 +26,7 @@ namespace msl
 	{
 		MotionControl mc;
 		mc.motion.angle = egoTarget->angleTo();
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo();
+		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
 		if (egoTarget->length() > snapDistance)
 		{
 			mc.motion.translation = defaultTranslation;
@@ -42,7 +44,7 @@ namespace msl
 	{
 		MotionControl mc;
 		mc.motion.angle = egoTarget->angleTo();
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo();
+		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
 		if (egoTarget->length() > snapDistance)
 		{
 			mc.motion.translation = min(defaultTranslation, egoTarget->length());
@@ -57,7 +59,8 @@ namespace msl
 	void RobotMovement::readConfigParameters()
 	{
 		defaultTranslation = (*supplementary::SystemConfig::getInstance())["Drive"]->get<double>("Drive",
-																									"DefaultVelocity",
-																									NULL);
+																									"DefaultVelocity",	NULL);
+		defaultRotateP = (*supplementary::SystemConfig::getInstance())["Drive"]->get<double>("Drive", "DefaultRotateP", NULL);
+		interceptCarfullyRotateP = (*supplementary::SystemConfig::getInstance())["Drive"]->get<double>("Drive", "InterceptCarefullyRotateP", NULL);
 	}
 }
