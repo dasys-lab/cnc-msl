@@ -235,8 +235,8 @@ namespace alica
             }
             mc.motion.rotation = 0;
             this->success = true;
-            /*cout << "Dist: " << egoTarget->length() << "\tPower: " << kc.power << "\tDeviation: "
-             << sin(deltaAngle) * egoTarget->length() << ",\tVolt: " << volt << endl;*/
+            cout << "Dist: " << egoTarget->length() << "\tPower: " << kc.power << "\tDeviation: "
+             << sin(deltaAngle) * egoTarget->length() << ",\tVolt: " << volt << endl;
 
         }
         else
