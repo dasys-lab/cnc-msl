@@ -38,7 +38,7 @@ namespace msl_keyboard_joystick
 		setWindowIcon(QIcon(":/images/icon.png"));
 		QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
 
-		QObject::connect(ui.robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
+        QObject::connect(ui.robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
 
 		/*********************
 		 ** Logging
@@ -63,7 +63,7 @@ namespace msl_keyboard_joystick
 		}
 		kick = false;
 		robotId = 0;
-		ui.robotIdEdit->setText(std::to_string(robotId).c_str());
+//		ui.robotIdEdit->setText(std::to_string(robotId).c_str());
 		translation = 0;
 		angle = 0;
 		rotation = 0;
