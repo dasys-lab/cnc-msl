@@ -13,6 +13,7 @@ namespace alica
         /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
         field = MSLFootballField::getInstance();
         timesOnTarget = 0;
+        changeHole = false;
 
         maxVel = 2000;
         pRot = 2.1;
@@ -223,6 +224,7 @@ namespace alica
             if (!disableKicking)
             {
                 cout << "align and shoot: sending kc!" << endl;
+                changeHole = true;
                 send(kc);
             }
             else
@@ -267,10 +269,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
         timesOnTarget = 0;
-        if (!usedFixedHole)
+        if (!usedFixedHole && changeHole)
         {
             useLowerHole = !useLowerHole;
         }
+        changeHole = false;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
