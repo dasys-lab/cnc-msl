@@ -151,11 +151,10 @@ namespace alica
         double volt = wm->getKickerVoltage();
         shared_ptr < CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        if (ownPos == NULL || ballPos == NULL)
+        if (ownPos == nullptr || ballPos == nullptr)
         {
             return;
         }
-
 //		CNVelocity2D ballVel = WM.BallVelocity;
 //		CNPoint2D ballVel2;
 //

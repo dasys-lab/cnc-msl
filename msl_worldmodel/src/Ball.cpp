@@ -59,7 +59,7 @@ namespace msl
 		shared_ptr<CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
-			ret=false;
+			return false;
 		}
 
 		double angle = ballPos->angleTo();
