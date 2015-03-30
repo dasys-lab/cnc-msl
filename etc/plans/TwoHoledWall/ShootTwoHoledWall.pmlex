@@ -44,4 +44,8 @@
     <key href="AlignAndShootTwoHoledWall.beh#1417620730939"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
