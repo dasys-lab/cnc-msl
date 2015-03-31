@@ -5,8 +5,6 @@
  *      Author: Lukas Will
  */
 
-#include <iostream>
-#include <sstream>
 
 // ROS
 #include "ros/ros.h"
@@ -29,14 +27,25 @@
 
 //eigene
 #include "config.h"
+#include "ballhandle.h"
 
 // fuer Tests
-#include <thread>         // std::this_thread::sleep_for
-#include <chrono>         // std::chrono::seconds
-#include <stdio.h>		// File Open
-#include <unistd.h>		// File Open
+//#include <thread>         // std::this_thread::sleep_for
+//#include <chrono>         // std::chrono::seconds
+//#include <stdio.h>		// File Open
+//#include <unistd.h>		// File Open
 
 using namespace BlackLib;
+
+
+//BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
+BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
+BlackPWM		ShovelSelect(P9_14);
+
+timeval			time_now;
+timeval			last_ping;
+timeval			ShovelSelect_lastSet;
+
 
 void pubyy(const msl_actuator_msgs::HaveBallInfo msg) {
 	// BallHandling
@@ -49,30 +58,45 @@ void pubyy(const msl_actuator_msgs::HaveBallInfo msg) {
 	// Nachricht verarbeiten
 }
 
-void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd) {
+void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	// BallHandling
-
-	// Nachricht verarbeiten
+	/*if (msg.enabled) {
+		BH_right.setBallHandling(msg.rightMotor);
+		BH_left.setBallHandling(msg.leftMotor);
+	} else {
+		BH_right.setBallHandling(0);
+		BH_left.setBallHandling(0);
+	}*/
 }
 
-void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd) {
-	// Schussauswahl
-
-	//
+void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
+	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
+	if (msg.passing) {
+		ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
+	} else {
+		ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
+	}
+	ShovelSelect.setRunState(run);
 }
 
-void handleMotionLight(const msl_actuator_msgs::MotionLight) {
-	// LED vom Motionsensor
+void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
+	// LED vom Maussensor ansteuern
 }
+
+
+
+
 
 int main(int argc, char** argv) {
 	std::cout << "Test" << std::endl;
+
+
 
 	// ROS
 		ros::init(argc, argv, "ActuatorController");
 
 		ros::NodeHandle node;
-		ros::Rate loop_rate(1);		// 1 Hz
+		ros::Rate loop_rate(1);		// 20 Hz
 
 		// ros::Publisher TOPIC_pub = node.advertise<std_msgs::String>("TOPIC", 1000);
 
@@ -91,18 +115,20 @@ int main(int argc, char** argv) {
 		ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 		// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
+/*
+	// Initialisierungen
+
+	// BallHandle Init
+		// SET PWM
+
+	// ShovelSelect Init
+		ShovelSelect.setPeriodTime(20000);			// in us - 20ms Periodendauer
+		ShovelSelect.setSpaceRatioTime(1000);		// in us - Werte zwischen 1ms und 2ms
+
 
 
 	// PINS
-		BlackGPIO BH_R_Reset(GPIO_66, output, FastMode);	// P8 07
-		BlackGPIO BH_R_Dir(GPIO_67, output, FastMode);		// P8 08
-		BlackGPIO BH_R_FF2(GPIO_68, input, FastMode);		// P8 10
-		BlackGPIO BH_R_FF1(GPIO_69, input, FastMode);		// P8 09
 
-		BlackGPIO BH_L_Reset(GPIO_45, output, FastMode);	// P8 11
-		BlackGPIO BH_L_Dir(GPIO_44, output, FastMode);		// P8 12
-		BlackGPIO BH_L_FF2(GPIO_46, input, FastMode);		// P8 16
-		BlackGPIO BH_L_FF1(GPIO_47, input, FastMode);		// P8 15
 
 		BlackGPIO i_magnet(GPIO_26, input, FastMode);		// P8 14
 		BlackGPIO i_accel(GPIO_27, input, FastMode);		// P8 17
@@ -116,13 +142,11 @@ int main(int argc, char** argv) {
 		BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P8 07
 		BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P8 07
 
-		BlackGPIO OF_NPD(GPIO_117, output, FastMode);		// P8 07
-		// BlackGPIO OF_RST(GPIO_115, output, FastMode);	// P8 07
-		// BlackGPIO OF_NCS(GPIO_112, output, FastMode);	// P8 07
 
+*/
 
 	// ADC
-		BlackADC adc_light(AIN1);
+		BlackADC lightbarrier(AIN1);
 
 	// I2C
 		BlackI2C myI2C(I2C_2, 0x22);		// I2C_2 hinzufuegen und aktivieren
@@ -132,17 +156,13 @@ int main(int argc, char** argv) {
 		BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
-	// PWM
-		BlackPWM BH_L_PWM(P8_19);
-		BlackPWM BH_R_PWM(P8_13);
-		BlackPWM Servo_PWM(P9_14);
-			Servo_PWM.setPeriodTime(20000);		// 20ms Periodendauer
-			Servo_PWM.setSpaceRatioTime(1000);		// Werte zwischen 1ms und 2ms
 
 
-
-	Servo_PWM.setRunState(run);
-
+// TESTS
+BlackPWM PWM(P8_13);
+PWM.setPeriodTime(5000, microsecond);
+PWM.setSpaceRatioTime(0, microsecond);
+PWM.setRunState(run);
 
 
 	bool lightbarrier_old = false;
@@ -155,29 +175,36 @@ int main(int argc, char** argv) {
 
 	// Frequency set with loop_rate()
 	while(ros::ok()) {
+		gettimeofday(&time_now, NULL);
 
-		if ((adc_light.getNumericValue() > LIGHTBARRIER_THRESHOLD) && (lightbarrier_old != true)) {
+		if (TIMEDIFFMS(time_now, last_ping) > PING_TIMEOUT) {
+			/*BH_right.checkTimeout();
+			BH_left.checkTimeout();*/
+		}
+
+		if ((lightbarrier.getNumericValue() > LIGHTBARRIER_THRESHOLD) /*&& ( alle 10 ms )*/) {
 			// something in lightbarrier NEW
 			msl_actuator_msgs::HaveBallInfo msg;
 
 			lightbarrier_old = true;
 			msg.haveBall = true;
 
-			hbiPub.publish(msg);
-			ROS_INFO("HaveBall: True");
-		} else if ((adc_light.getNumericValue() < LIGHTBARRIER_THRESHOLD) && (lightbarrier_old != false)) {
+			// hbiPub.publish(msg);
+			// ROS_INFO("HaveBall: True");
+		} else if ((lightbarrier.getNumericValue() < LIGHTBARRIER_THRESHOLD) && (lightbarrier_old != false)) {
 			// something out of lightbarrier NEW
 			msl_actuator_msgs::HaveBallInfo msg;
 
 			lightbarrier_old = false;
 			msg.haveBall = false;
 
-			hbiPub.publish(msg);
-			ROS_INFO("HaveBall: False");
+			// hbiPub.publish(msg);
+			// ROS_INFO("HaveBall: False");
 		} else {
 			// nothing NEW
-		}
 
+		}
+/*
 		if ((SW_Vision.getNumericValue() == 1) && (vision_old != true)) {
 			// Vision pressed
 
@@ -195,11 +222,23 @@ int main(int argc, char** argv) {
 		} else {
 			// nothing NEW
 		}
-
+*/
 		// MotionBurst
 
 		// IMU
 
+		PWM.setSpaceRatioTime((count%10)*50, microsecond);
+
+		timeval vorher, nachher;
+
+
+		gettimeofday(&vorher, NULL);
+		PWM.getNumericValue();
+		gettimeofday(&nachher, NULL);
+
+		uint16_t diff = TIMEDIFFUS(vorher, nachher);
+
+		std::cout << diff << std::endl;
 
 
 		count++;
