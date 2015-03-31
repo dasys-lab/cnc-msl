@@ -230,15 +230,16 @@ PWM.setRunState(run);
 		PWM.setSpaceRatioTime((count%10)*50, microsecond);
 
 		timeval vorher, nachher;
-
+		uint16_t value;
 
 		gettimeofday(&vorher, NULL);
-		PWM.getNumericValue();
+		value = PWM.getNumericValue();
 		gettimeofday(&nachher, NULL);
 
-		uint16_t diff = TIMEDIFFUS(vorher, nachher);
+		uint32_t diffus = TIMEDIFFUS(vorher, nachher);
+		uint32_t diffms = TIMEDIFFMS(vorher, nachher);
 
-		std::cout << diff << std::endl;
+		std::cout << value << " - - " << diffms << " - - " << diffus << std::endl;
 
 
 		count++;
