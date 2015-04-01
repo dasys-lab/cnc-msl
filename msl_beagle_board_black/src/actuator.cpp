@@ -236,8 +236,8 @@ PWM.setRunState(run);
 		value = PWM.getNumericValue();
 		gettimeofday(&nachher, NULL);
 
-		uint32_t diffus = static_cast<uint32_t>(vorher.tv_usec) - static_cast<uint32_t>(nachher.tv_usec);
-		uint32_t diffms = TIMEDIFFMS(vorher, nachher);
+		long int diffus = nachher.tv_usec - vorher.tv_usec;
+		long int diffms = TIMEDIFFMS(nachher, vorher);
 
 		std::cout << vorher.tv_usec << " - - " << nachher.tv_usec << std::endl;
 		std::cout << value << " - - " << diffms << " - - " << diffus << std::endl;
