@@ -171,6 +171,8 @@ namespace BlackLib
         this->workMode      = wm;
         this->gpioErrors    = new errorGPIO( this->getErrorsFromCoreGPIO() );
         this->valuePath     = this->getValueFilePath();
+
+        valueFile.open(valuePath.c_str(), std::ios::in);
     }
 
     BlackGPIO::~BlackGPIO()
