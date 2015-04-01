@@ -26,6 +26,7 @@
 #include "Robots.h"
 #include "Ball.h"
 #include "Game.h"
+#include "EventTrigger.h"
 
 
 using namespace std;
@@ -86,6 +87,8 @@ namespace msl
 		mutex joystickMutex;
 		mutex motionBurstMutex;
 		ros::AsyncSpinner* spinner;
+
+		supplementary::EventTrigger visionTrigger;
 
 	protected:
 		pair<double, double> transformToWorldCoordinates(double x, double y);
