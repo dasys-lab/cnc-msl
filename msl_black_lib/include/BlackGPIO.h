@@ -193,7 +193,7 @@ namespace BlackLib
      *  @n @n
      *  @code{.cpp}
      *  // Filename: myGpioProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
+     *  // Author:   Yiit Yce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackLib/BlackGPIO.h"
@@ -210,7 +210,7 @@ namespace BlackLib
      * You can use "using namespace BlackLib" also. You can get rid of writing "BlackLib::", with using this method.
      * @code{.cpp}
      *  // Filename: myGpioProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
+     *  // Author:   Yiit Yce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackLib/BlackGPIO.h"
@@ -234,6 +234,8 @@ namespace BlackLib
             direction       pinDirection;                   /*!< @brief is used to hold the selected GPIO pin direction */
             workingMode     workMode;                       /*!< @brief is used to hold the selected working mode */
             std::string     valuePath;                      /*!< @brief is used to hold the value file path */
+
+            std::ifstream valueFile;
 
             /*! @brief Checks the export state of GPIO pin.
             *
