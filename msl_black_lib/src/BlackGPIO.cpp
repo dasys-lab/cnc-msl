@@ -267,18 +267,18 @@ namespace BlackLib
 
     int         BlackGPIO::getNumericValue()
     {
-        /*if( this->workMode == SecureMode )
+        if( this->workMode == SecureMode )
         {
             if( ! this->isReady())
             {
                 return GPIO_PIN_NOT_READY_INT;
             }
-        }*/
+        }
 
 
-        std::ifstream valueFile(valuePath.c_str(),std::ios::in);
+        std::ifstream valueFile;
 
-        // valueFile.open(valuePath.c_str(),std::ios::in);
+        valueFile.open(valuePath.c_str(),std::ios::in);
         if(valueFile.fail())
         {
             valueFile.close();
