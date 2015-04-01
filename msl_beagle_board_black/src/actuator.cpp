@@ -172,6 +172,7 @@ PWM.setRunState(run);
 
 	uint16_t count = 0;
 
+	BlackGPIO test66(GPIO_66, output, FastMode);
 
 	// Frequency set with loop_rate()
 	while(ros::ok()) {
@@ -227,20 +228,35 @@ PWM.setRunState(run);
 
 		// IMU
 
-		PWM.setSpaceRatioTime((count%10)*50, microsecond);
-
 		timeval vorher, nachher;
 		uint16_t value;
 
-		gettimeofday(&vorher, NULL);
+		bool set, get;
+
+		PWM.setSpaceRatioTime((count%10)*50, microsecond);
 		value = PWM.getNumericValue();
+
+		set = count%2;
+
+		gettimeofday(&vorher, NULL);
+		test66.setValue(static_cast<digitalValue>(set));
 		gettimeofday(&nachher, NULL);
 
-		long int diffus = nachher.tv_usec - vorher.tv_usec;
+		long int diffus = TIMEDIFFUS(nachher, vorher);
 		long int diffms = TIMEDIFFMS(nachher, vorher);
 
-		std::cout << vorher.tv_usec << " - - " << nachher.tv_usec << std::endl;
-		std::cout << value << " - - " << diffms << " - - " << diffus << std::endl;
+		std::cout << "SET: " << set << " - Zeit: " << diffms << " - " << diffus << std::endl;
+
+
+
+		gettimeofday(&vorher, NULL);
+		get = static_cast<bool>(test66.getNumericValue());
+		gettimeofday(&nachher, NULL);
+
+		diffus = TIMEDIFFUS(nachher, vorher);
+		diffms = TIMEDIFFMS(nachher, vorher);
+
+		std::cout << "GET: " << get << " - Zeit: " << diffms << " - " << diffus << std::endl;
 
 
 		count++;
