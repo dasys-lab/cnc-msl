@@ -205,9 +205,6 @@ namespace BlackLib
         this->dutyPath      = this->getDutyFilePath();
         this->runPath       = this->getRunFilePath();
         this->polarityPath  = this->getPolarityFilePath();
-
-        periodValueFile.open(this->periodPath.c_str(),std::ios::in);
-        dutyValueFile.open(this->dutyPath.c_str(),std::ios::in);
     }
 
     BlackPWM::~BlackPWM()
@@ -323,20 +320,19 @@ namespace BlackLib
     {
         int64_t readValue = FILE_COULD_NOT_OPEN_INT;
 
-        // std::ifstream periodValueFile;
+        std::ifstream periodValueFile;
 
-        // periodValueFile.open(this->periodPath.c_str(),std::ios::in);
+        periodValueFile.open(this->periodPath.c_str(),std::ios::in);
         if(periodValueFile.fail())
         {
             periodValueFile.close();
             this->pwmErrors->periodFileError = true;
-            periodValueFile.open(this->periodPath.c_str(),std::ios::in); // neu
         }
         else
         {
             periodValueFile >> readValue;
 
-            // periodValueFile.close();
+            periodValueFile.close();
             this->pwmErrors->periodFileError = false;
         }
         return readValue;
@@ -345,20 +341,19 @@ namespace BlackLib
     inline int64_t    BlackPWM::getNumericDutyValue()
     {
         int64_t readValue = FILE_COULD_NOT_OPEN_INT;
-        // std::ifstream dutyValueFile;
+        std::ifstream dutyValueFile;
 
-        // dutyValueFile.open(this->dutyPath.c_str(),std::ios::in);
+        dutyValueFile.open(this->dutyPath.c_str(),std::ios::in);
         if(dutyValueFile.fail())
         {
-            // dutyValueFile.close();
+            dutyValueFile.close();
             this->pwmErrors->dutyFileError = true;
-            dutyValueFile.open(this->dutyPath.c_str(),std::ios::in);
         }
         else
         {
             dutyValueFile >> readValue;
 
-            // dutyValueFile.close();
+            dutyValueFile.close();
             this->pwmErrors->dutyFileError = false;
         }
         return readValue;

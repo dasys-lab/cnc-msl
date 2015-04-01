@@ -245,9 +245,6 @@ namespace BlackLib
             std::string     runPath;                    /*!< @brief is used to hold the @a run file path */
             std::string     polarityPath;               /*!< @brief is used to hold the @a polarity file path */
 
-            std::ifstream periodValueFile;	// neu
-            std::ifstream dutyValueFile;	// neu
-
 
         public:
             /*!
