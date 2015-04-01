@@ -33,6 +33,7 @@ namespace msl
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
+		motionBurstSub = n.subscribe("/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
@@ -69,6 +70,12 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
+	}
+
+	void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
+	{
+		lock_guard<mutex> lock(motionBurstMutex);
+		rawSensorData.processMotionBurst(msg);
 	}
 
 	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
