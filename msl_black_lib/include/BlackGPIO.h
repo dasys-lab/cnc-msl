@@ -235,8 +235,6 @@ namespace BlackLib
             workingMode     workMode;                       /*!< @brief is used to hold the selected working mode */
             std::string     valuePath;                      /*!< @brief is used to hold the value file path */
 
-            std::ifstream valueFile;
-
             /*! @brief Checks the export state of GPIO pin.
             *
             * This function reads specified file from path, where defined at BlackGPIO::valuePath variable.
