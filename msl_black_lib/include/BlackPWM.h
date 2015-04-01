@@ -188,7 +188,7 @@ namespace BlackLib
      *  @n @n
      *  @code{.cpp}
      *  // Filename: myPwmProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
+     *  // Author:   Yiit Yce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackLib/BlackPWM.h"
@@ -205,7 +205,7 @@ namespace BlackLib
      * You can use "using namespace BlackLib" also. You can get rid of writing "BlackLib::", with using this method.
      * @code{.cpp}
      *  // Filename: myPwmProject.cpp
-     *  // Author:   Yiğit Yüce - ygtyce@gmail.com
+     *  // Author:   Yiit Yce - ygtyce@gmail.com
      *
      *  #include <iostream>
      *  #include "BlackLib/BlackPWM.h"
@@ -244,6 +244,9 @@ namespace BlackLib
             std::string     dutyPath;                   /*!< @brief is used to hold the @a duty file path */
             std::string     runPath;                    /*!< @brief is used to hold the @a run file path */
             std::string     polarityPath;               /*!< @brief is used to hold the @a polarity file path */
+
+            std::ifstream periodValueFile;	// neu
+            std::ifstream dutyValueFile;	// neu
 
 
         public:
