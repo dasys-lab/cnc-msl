@@ -276,24 +276,24 @@ namespace BlackLib
         }*/
 
 
-        // std::ifstream valueFile;
+        std::ifstream valueFile(valuePath.c_str(),std::ios::in);
 
-        valueFile.open(valuePath.c_str(),std::ios::in);
-        /*if(valueFile.fail())
+        // valueFile.open(valuePath.c_str(),std::ios::in);
+        if(valueFile.fail())
         {
             valueFile.close();
             this->gpioErrors->readError = true;
             return FILE_COULD_NOT_OPEN_INT;
         }
         else
-        {*/
+        {
             int readValue;
             valueFile >> readValue;
 
             valueFile.close();
-            //this->gpioErrors->readError = false;
+            this->gpioErrors->readError = false;
             return readValue;
-        //}
+        }
     }
 
     gpioName    BlackGPIO::getName()
