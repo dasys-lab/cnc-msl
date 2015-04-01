@@ -171,8 +171,6 @@ namespace BlackLib
         this->workMode      = wm;
         this->gpioErrors    = new errorGPIO( this->getErrorsFromCoreGPIO() );
         this->valuePath     = this->getValueFilePath();
-
-        valueFile.open(valuePath.c_str(), std::ios::in);
     }
 
     BlackGPIO::~BlackGPIO()
@@ -280,12 +278,11 @@ namespace BlackLib
 
         // std::ifstream valueFile;
 
-        // valueFile.open(valuePath.c_str(),std::ios::in);
+        valueFile.open(valuePath.c_str(),std::ios::in);
         if(valueFile.fail())
         {
             valueFile.close();
             this->gpioErrors->readError = true;
-            valueFile.open(valuePath.c_str(),std::ios::in);
             return FILE_COULD_NOT_OPEN_INT;
         }
         else
@@ -293,7 +290,7 @@ namespace BlackLib
             int readValue;
             valueFile >> readValue;
 
-            // valueFile.close();
+            valueFile.close();
             this->gpioErrors->readError = false;
             return readValue;
         }
