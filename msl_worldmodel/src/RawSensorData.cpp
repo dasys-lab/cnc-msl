@@ -182,23 +182,39 @@ namespace msl
 	{
 		unsigned long time = wm->getTime();
 
-//		if ((time - data->odometry.timestamp) > 1000000000)
-//		{
-//			return;
-//		}
+		if ((time - data->odometry.timestamp) > 1000000000)
+		{
+			return;
+		}
 		if (data->odometry.certainty > 0)
 		{
+			//Vision
 			shared_ptr<CNPosition> pos = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
 																	data->odometry.position.angle);
 			shared_ptr<InformationElement<CNPosition>> odometry = make_shared<InformationElement<CNPosition>>(pos,
 																												time);
 			odometry->certainty = data->odometry.certainty;
 			ownPositionVision.add(odometry);
+
 			shared_ptr<msl_msgs::MotionInfo> vel = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> v = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(vel, time);
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
+
+			//Motion
+			shared_ptr<CNPosition> posMotion = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
+																	data->odometry.position.angle);
+			shared_ptr<InformationElement<CNPosition>> odometryMotion = make_shared<InformationElement<CNPosition>>(posMotion,
+																												time);
+			odometryMotion->certainty = data->odometry.certainty;
+			ownPositionMotion.add(odometryMotion);
+
+			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
+			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
+					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
+			vMotion->certainty = data->odometry.certainty;
+			ownVelocityMotion.add(vMotion);
 		}
 
 		if (data->ball.confidence > 0)

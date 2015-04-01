@@ -47,6 +47,7 @@
   <build_depend>geometry_msgs</build_depend>
   <build_depend>msl_sensor_msgs</build_depend>
   <build_depend>msl_actuator_msgs</build_depend>
+   <build_depend>event_handling</build_depend>
   
   <run_depend>roscpp</run_depend>
   <run_depend>message_runtime</run_depend>
@@ -54,6 +55,7 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>msl_sensor_msgs</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>event_handling</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
