@@ -25,6 +25,11 @@
 #include "BlackPWM.h"
 #include "BlackSPI.h"
 
+// Threads
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 //eigene
 #include "config.h"
 #include "ballhandle.h"
@@ -37,6 +42,9 @@
 
 using namespace BlackLib;
 
+
+std::mutex m;
+std::condition_variable cv;
 
 //BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
 BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
@@ -178,10 +186,7 @@ PWM.setRunState(run);
 	while(ros::ok()) {
 		gettimeofday(&time_now, NULL);
 
-		if (TIMEDIFFMS(time_now, last_ping) > PING_TIMEOUT) {
-			/*BH_right.checkTimeout();
-			BH_left.checkTimeout();*/
-		}
+
 
 		if ((lightbarrier.getNumericValue() > LIGHTBARRIER_THRESHOLD) /*&& ( alle 10 ms )*/) {
 			// something in lightbarrier NEW

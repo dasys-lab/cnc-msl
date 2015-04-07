@@ -20,3 +20,10 @@ OpticalFlow::OpticalFlow(gpioName ncs_P, gpioName npd_P, gpioName rst_P, gpioNam
 	 * BlackLib::BlackGPIO OF_NCS(GPIO_112, output, FastMode);	// P8 07 */
 
 }
+
+OpticalFlow::~OpticalFlow() {
+	delete ncs;
+	delete npd;
+	delete rst;
+	delete led;
+}

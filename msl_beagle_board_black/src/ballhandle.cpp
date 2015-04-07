@@ -20,20 +20,17 @@ using namespace BlackLib;
 		// PWM Frequenz setzen pwm->setPeriodTime(5000, microsecond);
 	}
 
+	BallHandle::~BallHandle() {
+		delete pwm;
+		delete dir;
+		delete reset;
+		delete ff1;
+		delete ff2;
+	}
+
 	void BallHandle::setBallHandling(int8_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
-		if (value == 0) {
-			pwm->setSpaceRatioTime(speed, microsecond);
-			pwm->setRunState(stop);
-			enabled = false;
-		} else {
-			if (!enabled) {
-				pwm->setRunState(run);
-				enabled = true;
-			}
-		}
-
 		if ((value > 0) && (direction == static_cast<digitalValue>(right))) {
 			direction_desired = static_cast<digitalValue>(left);
 		}
@@ -47,32 +44,46 @@ using namespace BlackLib;
 
 	void BallHandle::checkTimeout() {
 		if (enabled) {
-			pwm->setRunState(stop);
-			enabled = false;
+			this->setBallHandling(0);		// Beim naechsten Aufruf von controlBallHandling() wird das BallHandling deaktiviert
 		}
 	}
 
 	void BallHandle::controlBallHandling() {
-		if (direction != direction_desired) {		// Direction Change, Slow Down Speed
-			speed -= BallHandle_PWM_STEP_SIZE;
-			if (speed < 0) {
-				direction = direction_desired;
-				speed = 0;
-				pwm->setSpaceRatioTime(speed, microsecond);
-				dir->setValue(direction);
+		if (speed_desired == 0) {
+			enabled = false;
+
+			if (pwm->getRunValue()) {								// 300us
+				pwm->setRunState(stop);								// ?us
 			}
-		} else {									// Keep Direction, Modify Speed
-			if (speed_desired > speed) {
-				speed += BallHandle_PWM_STEP_SIZE;
-				if (speed > speed_desired)
-					speed = speed_desired;
-			} else {
-				speed -= BallHandle_PWM_STEP_SIZE;
-				if (speed < speed_desired)
-					speed = speed_desired;
-			}
-			pwm->setSpaceRatioTime(speed, microsecond);
+		} else if ((speed_desired != 0) && (!enabled)) {
+			enabled = true;
+			pwm->setRunState(run);
 		}
+
+		if (enabled) {		// Gesamt ca. 900us oder 1500us
+			// BallHandling aktiviert
+
+			if (direction != direction_desired) {		// Direction Change, Slow Down Speed (Gesamt: 900us oder 1500us)
+				speed -= BallHandle_PWM_STEP_SIZE;
+				if (speed < 0) {
+					direction = direction_desired;
+					speed = 0;
+					dir->setValue(direction);					// 550us
+				}
+			} else {									// Keep Direction, Modify Speed
+				if (speed_desired > speed) {
+					speed += BallHandle_PWM_STEP_SIZE;
+					if (speed > speed_desired)
+						speed = speed_desired;
+				} else {
+					speed -= BallHandle_PWM_STEP_SIZE;
+					if (speed < speed_desired)
+						speed = speed_desired;
+				}
+			}
+			pwm->setSpaceRatioTime(speed, microsecond);			// 900us
+		}
+
 	}
 
 	uint8_t BallHandle::getError() {
