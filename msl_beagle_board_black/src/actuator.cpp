@@ -46,28 +46,16 @@ using namespace BlackLib;
 std::mutex m;
 std::condition_variable cv;
 
-BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
-BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
-BlackPWM		ShovelSelect(P9_14);
-uint16_t		LightBarrier;
+//BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
+//BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
+//BlackPWM		ShovelSelect(P9_14);
+//uint16_t		LightBarrier;
 
 timeval			time_now;
 timeval			last_ping;
 timeval			ShovelSelect_lastSet;
 
 
-
-
-void pubyy(const msl_actuator_msgs::HaveBallInfo msg) {
-	// BallHandling
-	if (msg.haveBall == true) {
-		ROS_INFO("Sub ausgeloest: HB-True");
-	} else {
-		ROS_INFO("Sub ausgeloest: HB-False");
-	}
-
-	// Nachricht verarbeiten
-}
 
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	// BallHandling
@@ -116,9 +104,7 @@ int main(int argc, char** argv) {
 		//ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl, this);
 		//ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight, this);
 		//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
-		ros::Subscriber pubySub = node.subscribe<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 25, pubyy);
 
-		ros::Publisher puby = node.advertise<std_msgs::String>("puby", 1000);
 		// ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
 		// ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
 		// ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
