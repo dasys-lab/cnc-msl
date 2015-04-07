@@ -46,13 +46,16 @@ using namespace BlackLib;
 std::mutex m;
 std::condition_variable cv;
 
-//BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
+BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
 BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
 BlackPWM		ShovelSelect(P9_14);
+uint16_t		LightBarrier;
 
 timeval			time_now;
 timeval			last_ping;
 timeval			ShovelSelect_lastSet;
+
+
 
 
 void pubyy(const msl_actuator_msgs::HaveBallInfo msg) {
@@ -165,14 +168,6 @@ int main(int argc, char** argv) {
 
 
 
-
-// TESTS
-BlackPWM PWM(P8_13);
-PWM.setPeriodTime(5000, microsecond);
-PWM.setSpaceRatioTime(0, microsecond);
-PWM.setRunState(run);
-
-
 	bool lightbarrier_old = false;
 	bool vision_old = false;
 	bool bundle_old = false;
@@ -244,13 +239,13 @@ PWM.setRunState(run);
 		set = count%2;
 
 		gettimeofday(&vorher, NULL);
-		test66.setValue(static_cast<digitalValue>(set));
+		bool working = test66.setValue(static_cast<digitalValue>(set));
 		gettimeofday(&nachher, NULL);
 
 		long int diffus = TIMEDIFFUS(nachher, vorher);
 		long int diffms = TIMEDIFFMS(nachher, vorher);
 
-		std::cout << "SET: " << set << " - Zeit: " << diffms << " - " << diffus << std::endl;
+		std::cout << "SET: " << set << " - " << working << std::endl;
 
 
 
