@@ -233,9 +233,6 @@ int main(int argc, char** argv) {
 
 		bool set, get;
 
-		PWM.setSpaceRatioTime((count%10)*50, microsecond);
-		value = PWM.getNumericValue();
-
 		set = count%2;
 
 		gettimeofday(&vorher, NULL);
