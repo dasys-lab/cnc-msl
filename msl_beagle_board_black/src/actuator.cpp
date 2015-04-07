@@ -70,12 +70,12 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
-	if (msg.passing) {
+	/*if (msg.passing) {
 		ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
 	} else {
 		ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
 	}
-	ShovelSelect.setRunState(run);
+	ShovelSelect.setRunState(run);*/
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
