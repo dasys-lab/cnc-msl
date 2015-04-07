@@ -52,7 +52,7 @@ using namespace BlackLib;
 		if (speed_desired == 0) {
 			enabled = false;
 
-			if (pwm->getRunValue()) {								// 300us
+			if (pwm->getRunValue() == "1") {							// 300us
 				pwm->setRunState(stop);								// ?us
 			}
 		} else if ((speed_desired != 0) && (!enabled)) {
