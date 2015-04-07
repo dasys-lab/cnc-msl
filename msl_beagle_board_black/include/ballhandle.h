@@ -44,7 +44,7 @@ class BallHandle {
 
 
 				BallHandle(BlackLib::pwmName pwm_P, BlackLib::gpioName dir_P, BlackLib::gpioName reset_P, BlackLib::gpioName ff1_P, BlackLib::gpioName ff2_P);
-
+				~BallHandle();
 
 
 		void	setBallHandling(int8_t value);

@@ -25,6 +25,11 @@
 #include "BlackPWM.h"
 #include "BlackSPI.h"
 
+// Threads
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 //eigene
 #include "config.h"
 #include "ballhandle.h"
@@ -38,25 +43,19 @@
 using namespace BlackLib;
 
 
+std::mutex m;
+std::condition_variable cv;
+
 //BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
-BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
-BlackPWM		ShovelSelect(P9_14);
+//BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
+//BlackPWM		ShovelSelect(P9_14);
+//uint16_t		LightBarrier;
 
 timeval			time_now;
 timeval			last_ping;
 timeval			ShovelSelect_lastSet;
 
 
-void pubyy(const msl_actuator_msgs::HaveBallInfo msg) {
-	// BallHandling
-	if (msg.haveBall == true) {
-		ROS_INFO("Sub ausgeloest: HB-True");
-	} else {
-		ROS_INFO("Sub ausgeloest: HB-False");
-	}
-
-	// Nachricht verarbeiten
-}
 
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	// BallHandling
@@ -71,12 +70,12 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
-	if (msg.passing) {
+	/*if (msg.passing) {
 		ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
 	} else {
 		ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
 	}
-	ShovelSelect.setRunState(run);
+	ShovelSelect.setRunState(run);*/
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
@@ -105,9 +104,7 @@ int main(int argc, char** argv) {
 		//ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl, this);
 		//ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight, this);
 		//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
-		ros::Subscriber pubySub = node.subscribe<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 25, pubyy);
 
-		ros::Publisher puby = node.advertise<std_msgs::String>("puby", 1000);
 		// ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
 		// ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
 		// ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
@@ -157,14 +154,6 @@ int main(int argc, char** argv) {
 
 
 
-
-// TESTS
-BlackPWM PWM(P8_13);
-PWM.setPeriodTime(5000, microsecond);
-PWM.setSpaceRatioTime(0, microsecond);
-PWM.setRunState(run);
-
-
 	bool lightbarrier_old = false;
 	bool vision_old = false;
 	bool bundle_old = false;
@@ -178,10 +167,7 @@ PWM.setRunState(run);
 	while(ros::ok()) {
 		gettimeofday(&time_now, NULL);
 
-		if (TIMEDIFFMS(time_now, last_ping) > PING_TIMEOUT) {
-			/*BH_right.checkTimeout();
-			BH_left.checkTimeout();*/
-		}
+
 
 		if ((lightbarrier.getNumericValue() > LIGHTBARRIER_THRESHOLD) /*&& ( alle 10 ms )*/) {
 			// something in lightbarrier NEW
@@ -233,19 +219,16 @@ PWM.setRunState(run);
 
 		bool set, get;
 
-		PWM.setSpaceRatioTime((count%10)*50, microsecond);
-		value = PWM.getNumericValue();
-
 		set = count%2;
 
 		gettimeofday(&vorher, NULL);
-		test66.setValue(static_cast<digitalValue>(set));
+		bool working = test66.setValue(static_cast<digitalValue>(set));
 		gettimeofday(&nachher, NULL);
 
 		long int diffus = TIMEDIFFUS(nachher, vorher);
 		long int diffms = TIMEDIFFMS(nachher, vorher);
 
-		std::cout << "SET: " << set << " - Zeit: " << diffms << " - " << diffus << std::endl;
+		std::cout << "SET: " << set << " - " << working << std::endl;
 
 
 
