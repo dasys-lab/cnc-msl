@@ -49,13 +49,13 @@ namespace BlackLib
         this->directionPath     = "/sys/class/gpio/gpio" + tostr(this->pinNumericName) + "/direction";
 
 
-        this->doExport();
+        // this->doExport();
         this->setDirection();
     }
 
     BlackCoreGPIO::~BlackCoreGPIO()
     {
-        this->doUnexport();
+        // this->doUnexport();
         delete this->gpioCoreError;
     }
 
