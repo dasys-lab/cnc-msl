@@ -70,7 +70,7 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
-		visionTrigger.trigger();
+		visionTrigger.run();
 	}
 
 	void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
@@ -189,7 +189,7 @@ namespace msl
 
 	pair<double, double> MSLWorldModel::transformToWorldCoordinates(double x, double y)
 	{
-
+		return pair<double, double>(0.0, 0.0);
 	}
 
 } /* namespace msl */

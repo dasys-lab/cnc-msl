@@ -62,6 +62,7 @@ namespace msl
 		Robots robots;
 		Ball ball;
 		Game game;
+		supplementary::EventTrigger visionTrigger;
 
 	private:
 
@@ -87,8 +88,6 @@ namespace msl
 		mutex joystickMutex;
 		mutex motionBurstMutex;
 		ros::AsyncSpinner* spinner;
-
-		supplementary::EventTrigger visionTrigger;
 
 	protected:
 		pair<double, double> transformToWorldCoordinates(double x, double y);
