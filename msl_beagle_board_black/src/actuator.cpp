@@ -170,9 +170,12 @@ int main(int argc, char** argv) {
 
 	// Frequency set with loop_rate()
 	while(ros::ok()) {
-		gettimeofday(&time_now, NULL);
 
 		timeval vorher, mitte, nachher;
+		gettimeofday(&time_now, NULL);
+
+		gettimeofday(&vorher, NULL);
+
 		gettimeofday(&vorher, NULL);
 
 		std::thread th_controlBHRight(controlBHRight);
@@ -200,24 +203,28 @@ int main(int argc, char** argv) {
 		diffms = TIMEDIFFMS(mitte, vorher);
 		std::cout << "Zeit -mitte: " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(ls, le);
-		diffms = TIMEDIFFMS(ls, le);
+		diffus = TIMEDIFFUS(vorher, time_now);
+		diffms = TIMEDIFFMS(vorher, time_now);
+		std::cout << "Zeit -gettime: " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(le, ls);
+		diffms = TIMEDIFFMS(le, ls);
 		std::cout << "Le : " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(rs, re);
-		diffms = TIMEDIFFMS(rs, re);
+		diffus = TIMEDIFFUS(re, rs);
+		diffms = TIMEDIFFMS(re, rs);
 		std::cout << "Ri : " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(ss, se);
-		diffms = TIMEDIFFMS(ss, se);
+		diffus = TIMEDIFFUS(se, ss);
+		diffms = TIMEDIFFMS(se, ss);
 		std::cout << "Sh : " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(lis, lie);
-		diffms = TIMEDIFFMS(lis, lie);
+		diffus = TIMEDIFFUS(lie, lis);
+		diffms = TIMEDIFFMS(lie, lis);
 		std::cout << "Li : " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(sws, swe);
-		diffms = TIMEDIFFMS(sws, swe);
+		diffus = TIMEDIFFUS(swe, sws);
+		diffms = TIMEDIFFMS(swe, sws);
 		std::cout << "Sw : " << diffms << " - " << diffus << std::endl;
 
 		std::cout << ls.tv_sec << " " << ls.tv_usec << std::endl;
@@ -225,6 +232,7 @@ int main(int argc, char** argv) {
 		std::cout << ss.tv_sec << " " << ss.tv_usec << std::endl;
 		std::cout << lis.tv_sec << " " << lis.tv_usec << std::endl;
 		std::cout << sws.tv_sec << " " << sws.tv_usec << std::endl;
+
 
 
 		// MotionBurst
