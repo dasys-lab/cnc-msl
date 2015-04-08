@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
 
 		// auf beenden der Threads warten
 		{
-			std::unique_lock<std::mutex> lck(c_light.mtx);
+			std::unique_lock<std::mutex> lck(mtx);
 			cv_main.wait(lck, [&] { return !c_bhl.notify & !c_bhr.notify & !c_shovel.notify & !c_light.notify & !c_switches.notify; });
 		}
 
@@ -265,9 +265,9 @@ int main(int argc, char** argv) {
 		diffms = TIMEDIFFMS(mitte, vorher);
 		std::cout << "Zeit -mitte: " << diffms << " - " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(vorher, time_now);
-		diffms = TIMEDIFFMS(vorher, time_now);
-		std::cout << "Zeit -gettime: " << diffms << " - " << diffus << std::endl;
+		diffus = TIMEDIFFUS(nachher, mitte);
+		diffms = TIMEDIFFMS(nachher, mitte);
+		std::cout << "Zeit -mitend: " << diffms << " - " << diffus << std::endl;
 
 		diffus = TIMEDIFFUS(le, ls);
 		diffms = TIMEDIFFMS(le, ls);
