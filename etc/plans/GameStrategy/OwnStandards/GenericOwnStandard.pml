@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1426697860439" name="GenericOwnStandard" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GameStrategy/OwnStandards" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1426697860440" name="Positioning" comment="" entryPoint="1426697860441">
+    <plans xsi:type="alica:Plan">GenericOwnStandardPositioning.pml#1428507630593</plans>
     <outTransitions>#1426698518986</outTransitions>
   </states>
   <states id="1426698509635" name="Execution" comment="">
+    <plans xsi:type="alica:Plan">GenericOwnStandardExecution.pml#1428508782222</plans>
     <inTransitions>#1426698518986</inTransitions>
     <outTransitions>#1426698517666</outTransitions>
   </states>

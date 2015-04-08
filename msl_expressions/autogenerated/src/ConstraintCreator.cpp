@@ -23,6 +23,10 @@
 
 #include  "Plans/GameStrategy/OwnStandards/constraints/OwnStandards1426694875113Constraints.h"
 
+#include  "Plans/GameStrategy/OwnStandards/constraints/GenericOwnStandardPositioning1428507630593Constraints.h"
+
+#include  "Plans/GameStrategy/OwnStandards/constraints/GenericOwnStandardExecution1428508782222Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
 using namespace std;
