@@ -248,10 +248,10 @@ int main(int argc, char** argv) {
 		gettimeofday(&mitte, NULL);
 
 		// auf beenden der Threads warten
-		{
+		/*{
 			std::unique_lock<std::mutex> lck(mtx);
 			cv_main.wait(lck, [&] { return !c_bhl.notify & !c_bhr.notify & !c_shovel.notify & !c_light.notify & !c_switches.notify; });
-		}
+		}*/
 
 
 		gettimeofday(&nachher, NULL);
