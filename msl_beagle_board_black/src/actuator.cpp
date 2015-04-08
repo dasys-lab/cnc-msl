@@ -135,7 +135,11 @@ int main(int argc, char** argv) {
 	shovel.enabled = false;
 
 	// I2C
-	myI2C.open(ReadWrite | NonBlock);			// Gyro: 0x69, Accel: 0x53, Magnet: 0x1E, Thermo: 0x77
+	bool i2c = myI2C.open(ReadWrite | NonBlock);			// Gyro: 0x69, Accel: 0x53, Magnet: 0x1E, Thermo: 0x77
+	bool spi = mySpi.open(ReadWrite);
+
+	std::cout << "SPI: " << spi << std::endl;
+	std::cout << "I2C: " << i2c << std::endl;
 
 	uint16_t count = 0;
 
@@ -151,11 +155,14 @@ int main(int argc, char** argv) {
 		std::thread th_lightbarrier(getLightbarrier);
 		std::thread th_switches(getSwitches);
 
+
+
+
 		// MotionBurst
 
 		// IMU
 
-		timeval vorher, nachher;
+/*		timeval vorher, nachher;
 		uint16_t value;
 
 		bool set, get;
@@ -183,7 +190,7 @@ int main(int argc, char** argv) {
 		std::cout << "GET: " << get << " - Zeit: " << diffms << " - " << diffus << std::endl;
 
 
-		count++;
+		count++;*/
 
 
 		//std_msgs::String msg;
