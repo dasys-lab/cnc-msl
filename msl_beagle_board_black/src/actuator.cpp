@@ -20,6 +20,8 @@ using namespace BlackLib;
 std::mutex mtx_light;
 std::condition_variable cv;
 
+timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
+
 
 
 
@@ -56,14 +58,19 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 
 void controlBHLeft() {
+	gettimeofday(&ls, NULL);
 	BH_left.controlBallHandling();
+	gettimeofday(&le, NULL);
 }
 
 void controlBHRight() {
+	gettimeofday(&rs, NULL);
 	BH_right.controlBallHandling();
+	gettimeofday(&re, NULL);
 }
 
 void contolShovelSelect() {
+	gettimeofday(&ss, NULL);
 	if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
 		shovel.enabled = false;
 		ShovelSelect.setRunState(stop);
@@ -75,9 +82,11 @@ void contolShovelSelect() {
 		}
 		ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
 	}
+	gettimeofday(&se, NULL);
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
+	gettimeofday(&lis, NULL);
 	msl_actuator_msgs::HaveBallInfo msg;
 	uint16_t value = ADC_Light.getNumericValue();
 
@@ -89,9 +98,11 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		// ROS_INFO("HaveBall: False");
 	}
 	hbiPub->publish(msg);
+	gettimeofday(&lie, NULL);
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+	gettimeofday(&sws, NULL);
 	msl_actuator_msgs::VisionRelocTrigger msg;
 	std_msgs::Empty msg_empty;
 	uint8_t bundle, power, vision;
@@ -115,6 +126,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 	if (power == 1) {
 
 	}
+	gettimeofday(&swe, NULL);
 }
 
 
@@ -160,7 +172,7 @@ int main(int argc, char** argv) {
 	while(ros::ok()) {
 		gettimeofday(&time_now, NULL);
 
-		timeval vorher, nachher;
+		timeval vorher, mitte, nachher;
 		gettimeofday(&vorher, NULL);
 
 		std::thread th_controlBHRight(controlBHRight);
@@ -168,6 +180,8 @@ int main(int argc, char** argv) {
 		std::thread th_controlShovel(contolShovelSelect);
 		std::thread th_lightbarrier(getLightbarrier, &hbiPub);
 		std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+
+		gettimeofday(&mitte, NULL);
 
 		th_controlBHLeft.join();
 		th_controlBHRight.join();
@@ -180,8 +194,37 @@ int main(int argc, char** argv) {
 		long int diffus = TIMEDIFFUS(nachher, vorher);
 		long int diffms = TIMEDIFFMS(nachher, vorher);
 
-		std::cout << "Zeit: " << diffms << " - " << diffus << std::endl;
+		std::cout << "Zeit -gesamt: " << diffms << " - " << diffus << std::endl;
 
+		diffus = TIMEDIFFUS(mitte, vorher);
+		diffms = TIMEDIFFMS(mitte, vorher);
+		std::cout << "Zeit -mitte: " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(ls, le);
+		diffms = TIMEDIFFMS(ls, le);
+		std::cout << "Le : " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(rs, re);
+		diffms = TIMEDIFFMS(rs, re);
+		std::cout << "Ri : " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(ss, se);
+		diffms = TIMEDIFFMS(ss, se);
+		std::cout << "Sh : " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(lis, lie);
+		diffms = TIMEDIFFMS(lis, lie);
+		std::cout << "Li : " << diffms << " - " << diffus << std::endl;
+
+		diffus = TIMEDIFFUS(sws, swe);
+		diffms = TIMEDIFFMS(sws, swe);
+		std::cout << "Sw : " << diffms << " - " << diffus << std::endl;
+
+		std::cout << ls.tv_sec << " " << ls.tv_usec << std::endl;
+		std::cout << rs.tv_sec << " " << rs.tv_usec << std::endl;
+		std::cout << ss.tv_sec << " " << ss.tv_usec << std::endl;
+		std::cout << lis.tv_sec << " " << lis.tv_usec << std::endl;
+		std::cout << sws.tv_sec << " " << sws.tv_usec << std::endl;
 
 
 		// MotionBurst
