@@ -129,10 +129,9 @@ int main(int argc, char** argv) {
 	ros::NodeHandle node;
 	ros::Rate loop_rate(1);		// in Hz
 
-	//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl, this);
-	//ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl, this);
-	//ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight, this);
-	//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
+	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
+	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
+	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
 
 	ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
 	ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
@@ -161,12 +160,27 @@ int main(int argc, char** argv) {
 	while(ros::ok()) {
 		gettimeofday(&time_now, NULL);
 
+		timeval vorher, nachher;
+		gettimeofday(&vorher, NULL);
+
 		std::thread th_controlBHRight(controlBHRight);
 		std::thread th_controlBHLeft(controlBHLeft);
 		std::thread th_controlShovel(contolShovelSelect);
 		std::thread th_lightbarrier(getLightbarrier, &hbiPub);
 		std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
 
+		th_controlBHLeft.join();
+		th_controlBHRight.join();
+		th_controlShovel.join();
+		th_lightbarrier.join();
+		th_switches.join();
+
+		gettimeofday(&nachher, NULL);
+
+		long int diffus = TIMEDIFFUS(nachher, vorher);
+		long int diffms = TIMEDIFFMS(nachher, vorher);
+
+		std::cout << "Zeit: " << diffms << " - " << diffus << std::endl;
 
 
 
