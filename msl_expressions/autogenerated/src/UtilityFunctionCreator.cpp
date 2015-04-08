@@ -23,6 +23,10 @@
 
 #include  "Plans/GameStrategy/OwnStandards/OwnStandards1426694875113.h"
 
+#include  "Plans/GameStrategy/OwnStandards/GenericOwnStandardPositioning1428507630593.h"
+
+#include  "Plans/GameStrategy/OwnStandards/GenericOwnStandardExecution1428508782222.h"
+
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
 using namespace std;
@@ -85,6 +89,14 @@ namespace alica
 
             case 1426694875113:
                 return make_shared<UtilityFunction1426694875113>();
+                break;
+
+            case 1428507630593:
+                return make_shared<UtilityFunction1428507630593>();
+                break;
+
+            case 1428508782222:
+                return make_shared<UtilityFunction1428508782222>();
                 break;
 
             case 1417620189234:

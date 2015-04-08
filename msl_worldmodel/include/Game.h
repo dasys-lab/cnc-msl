@@ -36,6 +36,8 @@ namespace msl
 		Situation getLastSituation();
 		int getOppGoal();
 		int getOwnGoal();
+		unsigned long getTimeSinceStart();
+		Situation getSituation();
 
 		string ownTeamColor;
 		string ownGoalColor;
@@ -55,6 +57,8 @@ namespace msl
 		SystemConfig* sc;
 		int ownGoal;
 		int oppGoal;
+		unsigned long timeSinceStart;
+		Situation lastActiveSituation;
 	};
 
 } /* namespace alica */
