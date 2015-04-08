@@ -16,11 +16,12 @@
 
 using namespace BlackLib;
 
-
-std::mutex mtx_light;
-std::condition_variable cv;
+std::mutex					mtx;
+std::condition_variable		cv, cv_main;
 
 timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
+
+bool		th_activ = true;
 
 
 
@@ -58,75 +59,125 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 
 void controlBHLeft() {
-	gettimeofday(&ls, NULL);
-	BH_left.controlBallHandling();
-	gettimeofday(&le, NULL);
+	std::unique_lock<std::mutex> lck(c_bhl.mtx);
+	while(th_activ) {
+		cv.wait(lck, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
+
+		gettimeofday(&ls, NULL);
+		BH_left.controlBallHandling();
+		gettimeofday(&le, NULL);
+
+		c_bhl.notify = false;
+		cv_main.notify_all();
+	}
 }
 
 void controlBHRight() {
-	gettimeofday(&rs, NULL);
-	BH_right.controlBallHandling();
-	gettimeofday(&re, NULL);
+	std::unique_lock<std::mutex> lck(c_bhr.mtx);
+		while(th_activ) {
+			cv.wait(lck, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
+			if (!th_activ)
+				return;
+
+		gettimeofday(&rs, NULL);
+		BH_right.controlBallHandling();
+		gettimeofday(&re, NULL);
+
+		c_bhr.notify = false;
+		cv_main.notify_all();
+	}
 }
 
 void contolShovelSelect() {
-	gettimeofday(&ss, NULL);
-	if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
-		shovel.enabled = false;
-		ShovelSelect.setRunState(stop);
-	}
+	std::unique_lock<std::mutex> lck(c_shovel.mtx);
+	while(th_activ) {
+		cv.wait(lck, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
 
-	if (shovel.enabled) {
-		if (ShovelSelect.getRunValue() == "0") {
-			ShovelSelect.setRunState(run);
+		gettimeofday(&ss, NULL);
+		if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
+			shovel.enabled = false;
+			ShovelSelect.setRunState(stop);
 		}
-		ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
+
+		if (shovel.enabled) {
+			if (ShovelSelect.getRunValue() == "0") {
+				ShovelSelect.setRunState(run);
+			}
+			ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
+		}
+		gettimeofday(&se, NULL);
+
+		c_shovel.notify = false;
+		cv_main.notify_all();
 	}
-	gettimeofday(&se, NULL);
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
-	gettimeofday(&lis, NULL);
-	msl_actuator_msgs::HaveBallInfo msg;
-	uint16_t value = ADC_Light.getNumericValue();
+	std::unique_lock<std::mutex> lck(c_light.mtx);
+	while(th_activ) {
+		cv.wait(lck, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
 
-	if (lightbarrier > LIGHTBARRIER_THRESHOLD) {
-		msg.haveBall = true;
-		// ROS_INFO("HaveBall: True");
-	} else {
-		msg.haveBall = false;
-		// ROS_INFO("HaveBall: False");
+		gettimeofday(&lis, NULL);
+		msl_actuator_msgs::HaveBallInfo msg;
+		uint16_t value = ADC_Light.getNumericValue();
+
+		if (value > LIGHTBARRIER_THRESHOLD) {
+			msg.haveBall = true;
+			// ROS_INFO("HaveBall: True");
+		} else {
+			msg.haveBall = false;
+			// ROS_INFO("HaveBall: False");
+		}
+		hbiPub->publish(msg);
+		gettimeofday(&lie, NULL);
+
+		c_light.notify = false;
+		cv_main.notify_all();
 	}
-	hbiPub->publish(msg);
-	gettimeofday(&lie, NULL);
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	gettimeofday(&sws, NULL);
-	msl_actuator_msgs::VisionRelocTrigger msg;
-	std_msgs::Empty msg_empty;
-	uint8_t bundle, power, vision;
+	std::unique_lock<std::mutex> lck(c_switches.mtx);
+	while(th_activ) {
+		cv.wait(lck, [&] { return c_switches.notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
 
-	bundle = SW_Bundle.getNumericValue();
-	vision = SW_Vision.getNumericValue();
-	power = SW_Power.getNumericValue();
+		gettimeofday(&sws, NULL);
+		msl_actuator_msgs::VisionRelocTrigger msg;
+		std_msgs::Empty msg_empty;
+		uint8_t bundle, power, vision;
 
-	msg.receiverID = 123;	// ???
-	msg.usePose = false;
+		bundle = SW_Bundle.getNumericValue();
+		vision = SW_Vision.getNumericValue();
+		power = SW_Power.getNumericValue();
 
-	if (bundle == 1) {
-		bsPub->publish(msg);
-		brtPub->publish(msg_empty);
+		msg.receiverID = 123;	// ???
+		msg.usePose = false;
+
+		if (bundle == 1) {
+			bsPub->publish(msg);
+			brtPub->publish(msg_empty);
+		}
+
+		if (vision == 1) {
+			vrtPub->publish(msg);
+		}
+
+		if (power == 1) {
+
+		}
+		gettimeofday(&swe, NULL);
+
+		c_switches.notify = false;
+		cv_main.notify_all();
 	}
-
-	if (vision == 1) {
-		vrtPub->publish(msg);
-	}
-
-	if (power == 1) {
-
-	}
-	gettimeofday(&swe, NULL);
 }
 
 
@@ -152,6 +203,12 @@ int main(int argc, char** argv) {
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
+	std::thread th_controlBHRight(controlBHRight);
+	std::thread th_controlBHLeft(controlBHLeft);
+	std::thread th_controlShovel(contolShovelSelect);
+	std::thread th_lightbarrier(getLightbarrier, &hbiPub);
+	std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+
 	// Shovel Init
 	ShovelSelect.setPeriodTime(20000);			// in us - 20ms Periodendauer
 	ShovelSelect.setSpaceRatioTime(1000);		// in us - Werte zwischen 1ms und 2ms
@@ -170,27 +227,32 @@ int main(int argc, char** argv) {
 
 	// Frequency set with loop_rate()
 	while(ros::ok()) {
-
-		timeval vorher, mitte, nachher;
 		gettimeofday(&time_now, NULL);
+		timeval vorher, mitte, nachher;
+
 
 		gettimeofday(&vorher, NULL);
 
 		gettimeofday(&vorher, NULL);
 
-		std::thread th_controlBHRight(controlBHRight);
-		std::thread th_controlBHLeft(controlBHLeft);
-		std::thread th_controlShovel(contolShovelSelect);
-		std::thread th_lightbarrier(getLightbarrier, &hbiPub);
-		std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+		// Thread Notify
+
+		c_bhl.notify = true;
+		c_bhr.notify = true;
+		c_shovel.notify = true;
+		c_light.notify = true;
+		c_switches.notify = true;
+
+		cv.notify_all();
 
 		gettimeofday(&mitte, NULL);
 
-		th_controlBHLeft.join();
-		th_controlBHRight.join();
-		th_controlShovel.join();
-		th_lightbarrier.join();
-		th_switches.join();
+		// auf beenden der Threads warten
+		{
+			std::unique_lock<std::mutex> lck(c_light.mtx);
+			cv_main.wait(lck, [&] { return !c_bhl.notify & !c_bhr.notify & !c_shovel.notify & !c_light.notify & !c_switches.notify; });
+		}
+
 
 		gettimeofday(&nachher, NULL);
 
@@ -278,6 +340,14 @@ int main(int argc, char** argv) {
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+
+	th_activ = false;
+
+	th_controlBHLeft.join();
+	th_controlBHRight.join();
+	th_controlShovel.join();
+	th_lightbarrier.join();
+	th_switches.join();
 
 	return 0;
 }
