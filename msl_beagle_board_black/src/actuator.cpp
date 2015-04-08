@@ -77,22 +77,21 @@ void contolShovelSelect() {
 	}
 }
 
-void getLightbarrier() {
+void getLightbarrier(ros::Publisher *hbiPub) {
 	msl_actuator_msgs::HaveBallInfo msg;
 	uint16_t value = ADC_Light.getNumericValue();
 
-	if (lightbarrier > LIGHTBARRIER_THRESHOLD) {		// something in lightbarrier NEW
+	if (lightbarrier > LIGHTBARRIER_THRESHOLD) {
 		msg.haveBall = true;
-		hbiPub.publish(msg);
 		// ROS_INFO("HaveBall: True");
-	} else {											// something out of lightbarrier NEW
+	} else {
 		msg.haveBall = false;
-		hbiPub.publish(msg);
 		// ROS_INFO("HaveBall: False");
 	}
+	hbiPub->publish(msg);
 }
 
-void getSwitches() {
+void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 	msl_actuator_msgs::VisionRelocTrigger msg;
 	std_msgs::Empty msg_empty;
 	uint8_t bundle, power, vision;
@@ -105,12 +104,12 @@ void getSwitches() {
 	msg.usePose = false;
 
 	if (bundle == 1) {
-		bsPub.publish(msg);
-		brtPub.publish(msg_empty);
+		bsPub->publish(msg);
+		brtPub->publish(msg_empty);
 	}
 
 	if (vision == 1) {
-		vrtPub.publish(msg);
+		vrtPub->publish(msg);
 	}
 
 	if (power == 1) {
@@ -128,6 +127,19 @@ int main(int argc, char** argv) {
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::Rate loop_rate(1);		// in Hz
+
+	ros::NodeHandle node;
+	//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl, this);
+	//ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl, this);
+	//ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight, this);
+	//ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
+
+	ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
+	ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
+	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
+	// ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
+	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
+	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
 	// Shovel Init
 	ShovelSelect.setPeriodTime(20000);			// in us - 20ms Periodendauer
@@ -152,8 +164,8 @@ int main(int argc, char** argv) {
 		std::thread th_controlBHRight(controlBHRight);
 		std::thread th_controlBHLeft(controlBHLeft);
 		std::thread th_controlShovel(contolShovelSelect);
-		std::thread th_lightbarrier(getLightbarrier);
-		std::thread th_switches(getSwitches);
+		std::thread th_lightbarrier(getLightbarrier, &hbiPub);
+		std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
 
 
 
