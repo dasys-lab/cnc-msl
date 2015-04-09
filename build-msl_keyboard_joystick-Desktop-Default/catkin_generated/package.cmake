@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "msl_keyboard_joystick")
+set(msl_keyboard_joystick_MAINTAINER "Michael <Michael@gmail.com>")
+set(msl_keyboard_joystick_DEPRECATED "")
+set(msl_keyboard_joystick_VERSION "0.1.0")
+set(msl_keyboard_joystick_BUILD_DEPENDS "qt_build" "roscpp" "libqt4-dev" "message_generation" "msl_msgs")
+set(msl_keyboard_joystick_RUN_DEPENDS "qt_build" "roscpp" "libqt4-dev" "message_runtime" "msl_msgs")
+set(msl_keyboard_joystick_BUILDTOOL_DEPENDS "catkin")

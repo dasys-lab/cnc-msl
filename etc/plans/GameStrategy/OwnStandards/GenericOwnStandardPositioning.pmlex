@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507664502"/>
+    <value xPos="158" yPos="111" width="215" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507630593"/>
+    <value width="958" height="673"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507664503"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507727863"/>
+    <value xPos="-21" yPos="177"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507808894"/>
+    <value xPos="-30" yPos="398"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507881899"/>
+    <value xPos="151" yPos="273" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardPositioning.pml#1428507884379"/>
+    <value xPos="136" yPos="421" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/StdReceiverPos.beh#1428508056340"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/StdExecuterPos.beh#1428508127438"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/StdStandardDefendPos.beh#1428508259449"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

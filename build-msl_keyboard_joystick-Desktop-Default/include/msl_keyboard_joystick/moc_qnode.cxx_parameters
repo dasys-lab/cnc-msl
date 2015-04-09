@@ -1,0 +1,16 @@
+-I/home/tobi/workspace/robot/devel/include
+-I/opt/ros/indigo/include
+-I/usr/include
+-I/usr/include/qt4
+-I/usr/include/qt4/QtGui
+-I/usr/include/qt4/QtCore
+-I/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default
+-DROS_PACKAGE_NAME="msl_keyboard_joystick"
+-DROSCONSOLE_BACKEND_LOG4CXX
+-DQT_NO_DEBUG
+-DQT_GUI_LIB
+-DQT_CORE_LIB
+-DQT_NO_KEYWORDS
+-o
+/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default/include/msl_keyboard_joystick/moc_qnode.cxx
+/home/tobi/workspace/robot/src/cnc-msl/msl_keyboard_joystick/include/msl_keyboard_joystick/qnode.hpp
