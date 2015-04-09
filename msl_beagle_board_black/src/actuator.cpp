@@ -21,6 +21,8 @@ std::condition_variable		cv;
 
 timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
 
+uint8_t		th_count;
+
 bool		th_activ = true;
 
 
@@ -96,7 +98,7 @@ void controlBHRight() {
 
 void contolShovelSelect() {
 	while(th_activ) {
-		std::cout << "Shovel vor WAIT" << std::endl;
+		std::cout << "S vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_shovel.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
@@ -119,18 +121,18 @@ void contolShovelSelect() {
 
 		c_shovel.notify = false;
 		cv.notify_all();
-		std::cout << "While Shovel Ende" << std::endl;
 	}
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
 	while(th_activ) {
-		std::cout << "L nach WAIT" << std::endl;
+		std::cout << "Li vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_light.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
+		std::cout << "Li nach WAIT" << std::endl;
 		gettimeofday(&lis, NULL);
 		msl_actuator_msgs::HaveBallInfo msg;
 		uint16_t value = ADC_Light.getNumericValue();
@@ -152,11 +154,13 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 	while(th_activ) {
+		std::cout << "Sw vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_switches.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
+		std::cout << "Sw nach WAIT" << std::endl;
 		gettimeofday(&sws, NULL);
 		msl_actuator_msgs::VisionRelocTrigger msg;
 		std_msgs::Empty msg_empty;
@@ -268,12 +272,15 @@ int main(int argc, char** argv) {
 		// auf beenden aller Threads warten
 
 
-		cv.wait(lck, [&]
+		/*cv.wait(lck, [&]
 			{
 				return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify);
-			});
+			});*/
 
-
+		while (!th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify)) {
+			usleep(1000);
+			std::cout << "1" << std::endl;
+		}
 
 		gettimeofday(&nachher, NULL);
 
