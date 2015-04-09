@@ -61,5 +61,7 @@ timeval			last_ping;
 
 CV				c_bhl, c_bhr, c_shovel, c_light, c_switches;
 
+bool			ex = false;
+
 
 #endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_ACTUATOR_H_ */

@@ -9,6 +9,7 @@
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_CONFIG_H_
 
 #include <iostream>
+#include <signal.h>
 #include <sstream>
 #include <stdint.h>
 #include <sys/time.h>

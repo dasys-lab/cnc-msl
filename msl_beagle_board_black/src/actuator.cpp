@@ -145,7 +145,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 	std::unique_lock<std::mutex> lck(c_switches.mtx);
 	while(th_activ) {
-		cv.wait(lck, [&] { return c_switches.notify; }); // protection against spurious wake-ups
+		cv.wait(lck, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -178,6 +178,11 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		c_switches.notify = false;
 		cv_main.notify_all();
 	}
+}
+
+void exit_program(int sig) {
+	ex = true;
+	std::cout << "Programm wird beendet." << std::endl;
 }
 
 
@@ -225,8 +230,9 @@ int main(int argc, char** argv) {
 
 	BlackGPIO test66(GPIO_66, output, FastMode);
 
+	(void) signal(SIGINT, exit_program);
 	// Frequency set with loop_rate()
-	while(ros::ok()) {
+	while(ros::ok() && !ex) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
@@ -247,11 +253,12 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&mitte, NULL);
 
-		// auf beenden der Threads warten
-		/*{
+		// auf beenden aller Threads warten
+		{
 			std::unique_lock<std::mutex> lck(mtx);
-			cv_main.wait(lck, [&] { return !c_bhl.notify & !c_bhr.notify & !c_shovel.notify & !c_light.notify & !c_switches.notify; });
-		}*/
+			cv_main.wait(lck, [&]
+			{ return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify); });
+		}
 
 
 		gettimeofday(&nachher, NULL);
@@ -342,12 +349,16 @@ int main(int argc, char** argv) {
 	}
 
 	th_activ = false;
+	cv.notify_all();
+	cv_main.notify_all();
 
 	th_controlBHLeft.join();
 	th_controlBHRight.join();
 	th_controlShovel.join();
 	th_lightbarrier.join();
 	th_switches.join();
+
+	std::cout << "Programm beendet." << std::endl;
 
 	return 0;
 }

@@ -20,6 +20,7 @@ OpticalFlow::OpticalFlow(gpioName ncs_P, gpioName npd_P, gpioName rst_P, gpioNam
 	x = 0;
 	y = 0;
 	qos = 0;
+	vQos = 0;
 
 	/* BlackLib::BlackGPIO OF_NPD(GPIO_117, output, FastMode);	// P8 07
 	 * BlackLib::BlackGPIO OF_RST(GPIO_115, output, FastMode);	// P8 07
@@ -40,9 +41,9 @@ void OpticalFlow::adns_init(void) {
 	ncs->setValue(high);
 	reset();
 
-	// delay 4ms
+	usleep(4000);
 
-	setConfigurationBits(0x00); // set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
+	setConfigurationBits(0x00);		// set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
 	led->setValue(high);
 }
 
@@ -51,9 +52,9 @@ uint8_t OpticalFlow::read(uint8_t address) {
 
 	spi->transfer(address);
 	if (address == 0x02) {
-		//_delay_us(75);	// wait t_SRAD-MOT
+		usleep(75);					// wait t_SRAD-MOT
 	} else {
-		//_delay_us(50);	// wait t_SRAD
+		usleep(75);					// wait t_SRAD
 	}
 
 	uint8_t ret = spi->transfer(0x00);
@@ -64,16 +65,16 @@ uint8_t OpticalFlow::read(uint8_t address) {
 
 void OpticalFlow::reset(void) {
 	rst->setValue(high);
-	//delay?? 10us
+	// usleep(10);		// Setzen des Pins dauert ca 300us. Wahrscheinlich nicht noetig
 	rst->setValue(low);
-	// delay?? 500us
+	usleep(500);
 }
 
 void OpticalFlow::write(uint8_t address, uint8_t value) {
 	ncs->setValue(low);
 
 	spi->transfer(address | 0x80);
-	// delay 50us
+	usleep(50);
 	spi->transfer(value);
 
 	ncs->setValue(high);
@@ -90,9 +91,10 @@ void OpticalFlow::getFrame(uint8_t *image) {
 	bool isFirstPixel = false;
 
 	write(FRAME_CAPTURE, 0x83);
-	// wait 3 frame periods + 10 us for frame to be captured
-	// _delay_us(1510);	// min frame speed is 2000 frames/second so 1 frame = 500 us.  so 500 x 3 + 10 = 1510
 
+	// wait 3 frame periods + 10 us for frame to be captured
+	// min frame speed is 2000 frames/second so 1 frame = 500 us.  so 500 x 3 + 10 = 1510
+	usleep(1510);
 
 	for(int i=0; i<RESOLUTION;) {
 		for(int j=0; j<RESOLUTION;) {
@@ -108,7 +110,7 @@ void OpticalFlow::getFrame(uint8_t *image) {
 				//*image = regValue;
 				image++;	// next array cell address
 			}
-			// _delay_us(50);
+			usleep(50);
 			j++;
 		}
 		if( isFirstPixel ) {
@@ -124,14 +126,14 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size) {
 	uint8_t	read_arr[size];
 
 	write(FRAME_CAPTURE, 0x83);
+
 	// wait 3 frame periods + 10 us for frame to be captured
 	// min frame speed is 2000 frames/second so 1 frame = 500 us.  so 500 x 3 + 10 = 1510
-
-	// _delay_us(1510);	// wait t_CAPTURE
+	usleep(1510);					// wait t_CAPTURE
 
 	ncs->setValue(low);
 	spi->transfer(PIXEL_BURST);
-	//_delay_us(50);		// wait t_SRAD
+	usleep(50);						// wait t_SRAD
 
 	spi->transfer(write_arr, read_arr, size, 10);	// max. 1536 Pixels
 	for(int i = 0; i < size; i++) {
@@ -152,7 +154,7 @@ void OpticalFlow::getMotionBurst(int8_t *burst) {
 	ncs->setValue(low);
 
 	spi->transfer(MOTION_BURST);
-	// delay 75us
+	usleep(75);
 
 	// read all 7 bytes (Motion, Delta_X, Delta_Y, SQUAL, Shutter_Upper, Shutter_Lower, Maximum Pixels)
 	spi->transfer(write, read, 7);
