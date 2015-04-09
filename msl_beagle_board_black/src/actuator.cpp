@@ -256,7 +256,7 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&vorher, NULL);
 
-
+std::unique_lock<std::mutex> l_main(mtx);
 		// Thread Notify
 
 		c_bhl.notify = true;
@@ -271,16 +271,16 @@ int main(int argc, char** argv) {
 
 		// auf beenden aller Threads warten
 
-		std::unique_lock<std::mutex> l_main(mtx);
+/*
 		cv.wait(l_main, [&]
 			{
 				return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify);
 			});
-
-		/*while (!th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify)) {
+*/
+		while (!th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify)) {
 			usleep(1000);
 			std::cout << "1" << std::endl;
-		}*/
+		}
 
 		gettimeofday(&nachher, NULL);
 
