@@ -29,28 +29,28 @@ struct CV {
 };
 
 
-BlackGPIO i_magnet(GPIO_26, input, FastMode);		// P8 14
-BlackGPIO i_accel(GPIO_27, input, FastMode);		// P8 17
-BlackGPIO i_temp(GPIO_65, input, FastMode);			// P8 18
+BlackGPIO i_magnet(GPIO_45, input, FastMode);		// P8 11
+BlackGPIO i_accel(GPIO_47, input, FastMode);		// P8 15
+BlackGPIO i_temp(GPIO_27, input, FastMode);			// P8 17
 BlackGPIO i_gyro(GPIO_61, input, FastMode);			// P8 26
 
 BlackGPIO LED_Vision(GPIO_48, output, FastMode);	// P9 15
 BlackGPIO LED_Bundle(GPIO_49, output, FastMode);	// P9 23
-BlackGPIO LED_Power(GPIO_20, output, FastMode);		// P9 41		// Oder GPIO_116
+BlackGPIO LED_Power(GPIO_7, output, FastMode);		// P9 42
 
-BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P8 07
-BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P8 07
-BlackGPIO SW_Power(GPIO_31, input, FastMode);		// P8 07
+BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
+BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
+BlackGPIO SW_Power(GPIO_20, input, FastMode);		// P9 41
 
 BlackI2C myI2C(I2C_2, 0x22);
 BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
-BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
-BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
-OpticalFlow		motion(GPIO_67, GPIO_66, GPIO_69, GPIO_68, &mySpi);	/*ncs, npd, rst, led*/
+BallHandle		BH_right(P8_13, GPIO_69, GPIO_68, GPIO_46, GPIO_65);	/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_left(P8_19, GPIO_66, GPIO_67, GPIO_44, GPIO_26);		/* pwm, dir, reset, ff1, ff2 */
+OpticalFlow		motion(112, GPIO_117, 115, GPIO_60, &mySpi);			/* ncs, npd, rst, led */
 
-BlackADC		ADC_Light(AIN1);
+BlackADC		ADC_Light(AIN0);
 
 BlackPWM		ShovelSelect(P9_14);
 Shovel			shovel;

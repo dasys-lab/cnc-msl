@@ -17,7 +17,7 @@
 using namespace BlackLib;
 
 std::mutex					mtx;
-std::condition_variable		cv, cv_main;
+std::condition_variable		cv;
 
 timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
 
@@ -60,45 +60,49 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 void controlBHLeft() {
 	while(th_activ) {
+		std::cout << "L vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_bhl.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
+		std::cout << "L nach WAIT" << std::endl;
 		gettimeofday(&ls, NULL);
 		BH_left.controlBallHandling();
 		gettimeofday(&le, NULL);
 
 		c_bhl.notify = false;
-		cv_main.notify_all();
+		cv.notify_all();
 	}
 }
 
 void controlBHRight() {
 	while(th_activ) {
+		std::cout << "R vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_bhr.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
+		std::cout << "R nach WAIT" << std::endl;
 		gettimeofday(&rs, NULL);
 		BH_right.controlBallHandling();
 		gettimeofday(&re, NULL);
 
 		c_bhr.notify = false;
-		cv_main.notify_all();
+		cv.notify_all();
 	}
 }
 
 void contolShovelSelect() {
-	std::cout << "Hi in Shovel" << std::endl;
 	while(th_activ) {
+		std::cout << "Shovel vor WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_shovel.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
-		std::cout << "While Shovel Start" << std::endl;
 		if (!th_activ)
 			return;
 
+		std::cout << "S nach Wait" << std::endl;
 		gettimeofday(&ss, NULL);
 		if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
 			shovel.enabled = false;
@@ -114,13 +118,14 @@ void contolShovelSelect() {
 		gettimeofday(&se, NULL);
 
 		c_shovel.notify = false;
-		cv_main.notify_all();
+		cv.notify_all();
 		std::cout << "While Shovel Ende" << std::endl;
 	}
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
 	while(th_activ) {
+		std::cout << "L nach WAIT" << std::endl;
 		std::unique_lock<std::mutex> lck(c_light.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
@@ -141,7 +146,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		gettimeofday(&lie, NULL);
 
 		c_light.notify = false;
-		cv_main.notify_all();
+		cv.notify_all();
 	}
 }
 
@@ -179,7 +184,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		gettimeofday(&swe, NULL);
 
 		c_switches.notify = false;
-		cv_main.notify_all();
+		cv.notify_all();
 	}
 }
 
@@ -188,7 +193,7 @@ void exit_program(int sig) {
 	std::cout << "Programm wird beendet." << std::endl;
 	th_activ = false;
 	cv.notify_all();
-	cv_main.notify_all();
+	cv.notify_all();
 }
 
 
@@ -210,7 +215,7 @@ int main(int argc, char** argv) {
 	ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
 	ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
-	// ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
+	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
@@ -247,6 +252,7 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&vorher, NULL);
 
+		std::unique_lock<std::mutex> lck(mtx);
 		// Thread Notify
 
 		c_bhl.notify = true;
@@ -260,11 +266,13 @@ int main(int argc, char** argv) {
 		gettimeofday(&mitte, NULL);
 
 		// auf beenden aller Threads warten
-		{
-			std::unique_lock<std::mutex> lck(mtx);
-			cv_main.wait(lck, [&]
-			{ return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify); });
-		}
+
+
+		cv.wait(lck, [&]
+			{
+				return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify);
+			});
+
 
 
 		gettimeofday(&nachher, NULL);
@@ -353,12 +361,6 @@ int main(int argc, char** argv) {
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-
-	th_controlBHLeft.join();
-	th_controlBHRight.join();
-	th_controlShovel.join();
-	th_lightbarrier.join();
-	th_switches.join();
 
 	std::cout << "Programm beendet." << std::endl;
 
