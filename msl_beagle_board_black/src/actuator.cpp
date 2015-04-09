@@ -59,8 +59,8 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 
 void controlBHLeft() {
-	std::unique_lock<std::mutex> lck(c_bhl.mtx);
 	while(th_activ) {
+		std::unique_lock<std::mutex> lck(c_bhl.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -75,11 +75,11 @@ void controlBHLeft() {
 }
 
 void controlBHRight() {
-	std::unique_lock<std::mutex> lck(c_bhr.mtx);
-		while(th_activ) {
-			cv.wait(lck, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
-			if (!th_activ)
-				return;
+	while(th_activ) {
+		std::unique_lock<std::mutex> lck(c_bhr.mtx);
+		cv.wait(lck, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
 
 		gettimeofday(&rs, NULL);
 		BH_right.controlBallHandling();
@@ -92,10 +92,10 @@ void controlBHRight() {
 
 void contolShovelSelect() {
 	std::cout << "Hi in Shovel" << std::endl;
-	std::unique_lock<std::mutex> lck(c_shovel.mtx);
 	while(th_activ) {
-		std::cout << "While Shovel Start" << std::endl;
+		std::unique_lock<std::mutex> lck(c_shovel.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
+		std::cout << "While Shovel Start" << std::endl;
 		if (!th_activ)
 			return;
 
@@ -120,8 +120,8 @@ void contolShovelSelect() {
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
-	std::unique_lock<std::mutex> lck(c_light.mtx);
 	while(th_activ) {
+		std::unique_lock<std::mutex> lck(c_light.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -146,8 +146,8 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	std::unique_lock<std::mutex> lck(c_switches.mtx);
 	while(th_activ) {
+		std::unique_lock<std::mutex> lck(c_switches.mtx);
 		cv.wait(lck, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
