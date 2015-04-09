@@ -8,52 +8,27 @@
 #ifndef CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_ACTUATOR_H_
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_ACTUATOR_H_
 
-// ROS
-#include "ros/ros.h"
-#include "std_msgs/Empty.h"
-#include "std_msgs/String.h"
-#include "msl_actuator_msgs/BallCatchCmd.h"
-#include "msl_actuator_msgs/BallHandleCmd.h"
-#include "msl_actuator_msgs/ShovelSelectCmd.h"
-#include "msl_actuator_msgs/HaveBallInfo.h"
-#include "msl_actuator_msgs/VisionRelocTrigger.h"
-#include "msl_actuator_msgs/MotionLight.h"
 
-// BlackLibs
-#include "BlackADC.h"
-#include "BlackGPIO.h"
-#include "BlackI2C.h"
-#include "BlackPWM.h"
-#include "BlackSPI.h"
-
-// Threads
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-
-//eigene
 #include "config.h"
 #include "ballhandle.h"
+#include "opticalflow.h"
+
 
 using namespace BlackLib;
 
 
+struct Shovel {
+	bool		enabled;
+	uint16_t	value;
+	timeval		last_ping;
+};
 
-BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
-BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
+struct CV {
+	std::mutex					mtx;
+	std::condition_variable		cv;
+	bool						notify = false;
+};
 
-BlackADC		ADC_Light(AIN1);
-uint16_t		lightbarrier;
-
-BlackPWM		ShovelSelect(P9_14);
-Shovel			shovel;
-
-timeval			time_now;
-timeval			last_ping;
-
-
-
-// PINS
 
 BlackGPIO i_magnet(GPIO_26, input, FastMode);		// P8 14
 BlackGPIO i_accel(GPIO_27, input, FastMode);		// P8 17
@@ -72,6 +47,21 @@ BlackI2C myI2C(I2C_2, 0x22);
 BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
+BallHandle		BH_right(P8_13, GPIO_67, GPIO_66, GPIO_69, GPIO_68);
+BallHandle		BH_left(P8_19, GPIO_44, GPIO_45, GPIO_47, GPIO_46);
+OpticalFlow		motion(GPIO_67, GPIO_66, GPIO_69, GPIO_68, &mySpi);	/*ncs, npd, rst, led*/
+
+BlackADC		ADC_Light(AIN1);
+
+BlackPWM		ShovelSelect(P9_14);
+Shovel			shovel;
+
+timeval			time_now;
+timeval			last_ping;
+
+CV				c_bhl, c_bhr, c_shovel, c_light, c_switches;
+
+bool			ex = false;
 
 
 #endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_ACTUATOR_H_ */
