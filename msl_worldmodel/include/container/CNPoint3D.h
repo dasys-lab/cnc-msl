@@ -25,6 +25,7 @@ namespace msl {
 		CNPoint3D() : CNPoint3D(0,0,0) {}
 
 		double length();
+		string toString();
 		virtual ~CNPoint3D();
 	};
 }
