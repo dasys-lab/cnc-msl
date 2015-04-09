@@ -25,7 +25,6 @@ struct Shovel {
 
 struct CV {
 	std::mutex					mtx;
-	std::condition_variable		cv;
 	bool						notify = false;
 };
 
