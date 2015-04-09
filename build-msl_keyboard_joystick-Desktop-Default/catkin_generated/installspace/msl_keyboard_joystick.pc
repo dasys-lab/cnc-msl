@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: msl_keyboard_joystick
+Description: Description of msl_keyboard_joystick
+Version: 0.1.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 

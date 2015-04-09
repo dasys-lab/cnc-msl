@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508810441"/>
+    <value xPos="124" yPos="110" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508782222"/>
+    <value xPos="-13" width="1104" height="665"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508810442"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508819333"/>
+    <value xPos="-35" yPos="326"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508821680"/>
+    <value xPos="-14" yPos="335"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508844911"/>
+    <value xPos="125" yPos="232" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428508847088"/>
+    <value xPos="91" yPos="409" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/StandardAlignAndShoot.beh#1428509031167"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509108972"/>
+    <value xPos="723" yPos="291"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509131566"/>
+    <value xPos="540" yPos="114" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509247624"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509271725"/>
+    <value xPos="519" yPos="268" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509280543"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandardExecution.pml#1428509286818"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/StandardReceive.beh#1428509534191"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

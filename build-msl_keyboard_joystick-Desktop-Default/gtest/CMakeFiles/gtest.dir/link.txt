@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -std=c++11    -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o  -L/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default/gtest/src -lpthread -Wl,-rpath,/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default/gtest/src 
