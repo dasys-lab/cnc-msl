@@ -91,8 +91,10 @@ void controlBHRight() {
 }
 
 void contolShovelSelect() {
+	std::cout << "Hi in Shovel" << std::endl;
 	std::unique_lock<std::mutex> lck(c_shovel.mtx);
 	while(th_activ) {
+		std::cout << "While Shovel Start" << std::endl;
 		cv.wait(lck, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -113,6 +115,7 @@ void contolShovelSelect() {
 
 		c_shovel.notify = false;
 		cv_main.notify_all();
+		std::cout << "While Shovel Ende" << std::endl;
 	}
 }
 
@@ -129,10 +132,10 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			// ROS_INFO("HaveBall: True");
+			ROS_INFO("HaveBall: True");
 		} else {
 			msg.haveBall = false;
-			// ROS_INFO("HaveBall: False");
+			ROS_INFO("HaveBall: False");
 		}
 		hbiPub->publish(msg);
 		gettimeofday(&lie, NULL);
@@ -183,6 +186,9 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 void exit_program(int sig) {
 	ex = true;
 	std::cout << "Programm wird beendet." << std::endl;
+	th_activ = false;
+	cv.notify_all();
+	cv_main.notify_all();
 }
 
 
@@ -347,10 +353,6 @@ int main(int argc, char** argv) {
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-
-	th_activ = false;
-	cv.notify_all();
-	cv_main.notify_all();
 
 	th_controlBHLeft.join();
 	th_controlBHRight.join();
