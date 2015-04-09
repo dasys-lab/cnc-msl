@@ -7,6 +7,7 @@
 
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include <sstream>
 
 using namespace std;
 
@@ -108,5 +109,13 @@ namespace msl {
 		ret->y += right->y;
 		return ret;
 	}
+
+	string CNPoint2D::toString()
+	{
+		stringstream ss;
+		ss << "CNPoint2D: x: " << this->x << " y: " << this->y << endl;
+		return ss.str();
+	}
 }
+
 

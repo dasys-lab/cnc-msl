@@ -6,6 +6,7 @@
  */
 
 #include "container/CNPosition.h"
+#include <sstream>
 namespace msl {
 
 
@@ -16,6 +17,13 @@ namespace msl {
 	}
 
 	CNPosition::~CNPosition() {
+	}
+
+	string CNPosition::toString()
+	{
+		stringstream ss;
+		ss << "CNPosition: x: " << this->x << " y: " << this->y << " theta: " << this->theta << endl;
+		return ss.str();
 	}
 }
 

@@ -35,6 +35,7 @@ namespace msl {
 		shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& right);
 
 		virtual ~CNPoint2D();
+		string toString();
 	};
 
 	shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& left, const shared_ptr<CNPoint2D>& right);
