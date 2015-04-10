@@ -63,7 +63,7 @@ Shovel			shovel;
 timeval			time_now;
 timeval			last_ping;
 
-CV				threw[5];
+CV				threw[5], cv_main;
 
 bool			ex = false;
 

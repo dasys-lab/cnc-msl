@@ -72,6 +72,7 @@ void controlBHLeft() {
 		gettimeofday(&le, NULL);
 
 		threw[0].notify = false;
+		cv_main.cv.notify_all();
 	}
 }
 
@@ -87,6 +88,7 @@ void controlBHRight() {
 		gettimeofday(&re, NULL);
 
 		threw[1].notify = false;
+		cv_main.cv.notify_all();
 	}
 }
 
@@ -112,6 +114,7 @@ void contolShovelSelect() {
 		gettimeofday(&se, NULL);
 
 		threw[2].notify = false;
+		cv_main.cv.notify_all();
 	}
 }
 
@@ -139,6 +142,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		gettimeofday(&lie, NULL);
 
 		threw[3].notify = false;
+		cv_main.cv.notify_all();
 	}
 }
 
@@ -176,6 +180,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		gettimeofday(&swe, NULL);
 
 		threw[4].notify = false;
+		cv_main.cv.notify_all();
 	}
 }
 
@@ -183,6 +188,7 @@ void exit_program(int sig) {
 	ex = true;
 	std::cout << "Programm wird beendet." << std::endl;
 	th_activ = false;
+	cv_main.cv.notify_all();
 	for (int i=0; i<5; i++)
 		threw[i].cv.notify_all();
 }
@@ -249,10 +255,14 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&mitte, NULL);
 
+		std::unique_lock<std::mutex> l_main(cv_main.mtx);
+		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
+
+
 		// auf beenden aller Threads warten
-		while (!th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify)) {
+		/*while (!th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify)) {
 			usleep(1000);
-		}
+		}*/
 
 		gettimeofday(&nachher, NULL);
 
