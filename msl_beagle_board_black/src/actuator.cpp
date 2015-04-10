@@ -252,7 +252,6 @@ int main(int argc, char** argv) {
 		// auf beenden aller Threads warten
 		while (!th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify)) {
 			usleep(1000);
-			std::cout << "1" << std::endl;
 		}
 
 		gettimeofday(&nachher, NULL);
