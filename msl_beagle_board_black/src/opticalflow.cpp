@@ -47,6 +47,10 @@ void OpticalFlow::adns_init(void) {
 	led->setValue(high);
 }
 
+void OpticalFlow::controlLED(bool enabled) {
+	led->setValue(static_cast<digitalValue>(enabled));
+}
+
 uint8_t OpticalFlow::read(uint8_t address) {
 	ncs->setValue(low);
 

@@ -48,7 +48,7 @@ class BallHandle {
 
 
 		void	setBallHandling(int8_t value);
-		void	checkTimeout();
+		void	setTimeout();
 		void	controlBallHandling();
 
 		uint8_t	getError();

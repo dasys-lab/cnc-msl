@@ -68,6 +68,7 @@ class OpticalFlow {
 					~OpticalFlow();
 
 		void 		adns_init(void);
+		void		controlLED(bool enabled);
 		void 		update_motion_burst(timeval time_now);
 		void 		send_motion_burst(timeval time_now, ros::Publisher *mbcPub);
 

@@ -18,6 +18,9 @@ using namespace BlackLib;
 		ff2 = new BlackGPIO(ff2_P, input, FastMode);
 
 		// PWM Frequenz setzen pwm->setPeriodTime(5000, microsecond);
+
+		dir->setValue(low);
+		reset->setValue(high);
 	}
 
 	BallHandle::~BallHandle() {
@@ -42,7 +45,7 @@ using namespace BlackLib;
 		speed_desired = abs(value) * 10;
 	}
 
-	void BallHandle::checkTimeout() {
+	void BallHandle::setTimeout() {
 		if (enabled) {
 			this->setBallHandling(0);		// Beim naechsten Aufruf von controlBallHandling() wird das BallHandling deaktiviert
 		}

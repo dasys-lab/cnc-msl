@@ -61,9 +61,9 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 
 void controlBHLeft() {
+	std::unique_lock<std::mutex> l_bhl(c_bhl.mtx);
 	while(th_activ) {
 		std::cout << "L vor WAIT" << std::endl;
-		std::unique_lock<std::mutex> l_bhl(c_bhl.mtx);
 		cv.wait(l_bhl, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -74,14 +74,13 @@ void controlBHLeft() {
 		gettimeofday(&le, NULL);
 
 		c_bhl.notify = false;
-		cv.notify_all();
 	}
 }
 
 void controlBHRight() {
+	std::unique_lock<std::mutex> l_bhr(c_bhr.mtx);
 	while(th_activ) {
 		std::cout << "R vor WAIT" << std::endl;
-		std::unique_lock<std::mutex> l_bhr(c_bhr.mtx);
 		cv.wait(l_bhr, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -92,14 +91,13 @@ void controlBHRight() {
 		gettimeofday(&re, NULL);
 
 		c_bhr.notify = false;
-		cv.notify_all();
 	}
 }
 
 void contolShovelSelect() {
+	std::unique_lock<std::mutex> l_shovel(c_shovel.mtx);
 	while(th_activ) {
 		std::cout << "S vor WAIT" << std::endl;
-		std::unique_lock<std::mutex> l_shovel(c_shovel.mtx);
 		cv.wait(l_shovel, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -120,14 +118,13 @@ void contolShovelSelect() {
 		gettimeofday(&se, NULL);
 
 		c_shovel.notify = false;
-		cv.notify_all();
 	}
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
+	std::unique_lock<std::mutex> l_light(c_light.mtx);
 	while(th_activ) {
 		std::cout << "Li vor WAIT" << std::endl;
-		std::unique_lock<std::mutex> l_light(c_light.mtx);
 		cv.wait(l_light, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -148,14 +145,13 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		gettimeofday(&lie, NULL);
 
 		c_light.notify = false;
-		cv.notify_all();
 	}
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+	std::unique_lock<std::mutex> l_switches(c_switches.mtx);
 	while(th_activ) {
 		std::cout << "Sw vor WAIT" << std::endl;
-		std::unique_lock<std::mutex> l_switches(c_switches.mtx);
 		cv.wait(l_switches, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
@@ -188,7 +184,6 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		gettimeofday(&swe, NULL);
 
 		c_switches.notify = false;
-		cv.notify_all();
 	}
 }
 
@@ -251,12 +246,8 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-
 		gettimeofday(&vorher, NULL);
 
-		gettimeofday(&vorher, NULL);
-
-std::unique_lock<std::mutex> l_main(mtx);
 		// Thread Notify
 
 		c_bhl.notify = true;
@@ -270,13 +261,6 @@ std::unique_lock<std::mutex> l_main(mtx);
 		gettimeofday(&mitte, NULL);
 
 		// auf beenden aller Threads warten
-
-/*
-		cv.wait(l_main, [&]
-			{
-				return !th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify);
-			});
-*/
 		while (!th_activ || (!c_bhl.notify && !c_bhr.notify && !c_shovel.notify && !c_light.notify && !c_switches.notify)) {
 			usleep(1000);
 			std::cout << "1" << std::endl;
