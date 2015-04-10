@@ -63,12 +63,10 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 void controlBHLeft() {
 	std::unique_lock<std::mutex> l_bhl(threw[0].mtx);
 	while(th_activ) {
-		std::cout << "L vor WAIT" << std::endl;
 		threw[0].cv.wait(l_bhl, [&] { return !th_activ || threw[0].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std::cout << "L nach WAIT" << std::endl;
 		gettimeofday(&ls, NULL);
 		BH_left.controlBallHandling();
 		gettimeofday(&le, NULL);
@@ -80,12 +78,10 @@ void controlBHLeft() {
 void controlBHRight() {
 	std::unique_lock<std::mutex> l_bhr(threw[1].mtx);
 	while(th_activ) {
-		std::cout << "R vor WAIT" << std::endl;
 		threw[1].cv.wait(l_bhr, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std::cout << "R nach WAIT" << std::endl;
 		gettimeofday(&rs, NULL);
 		BH_right.controlBallHandling();
 		gettimeofday(&re, NULL);
@@ -97,12 +93,10 @@ void controlBHRight() {
 void contolShovelSelect() {
 	std::unique_lock<std::mutex> l_shovel(threw[2].mtx);
 	while(th_activ) {
-		std::cout << "S vor WAIT" << std::endl;
 		threw[2].cv.wait(l_shovel, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std::cout << "S nach Wait" << std::endl;
 		gettimeofday(&ss, NULL);
 		if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
 			shovel.enabled = false;
@@ -124,12 +118,10 @@ void contolShovelSelect() {
 void getLightbarrier(ros::Publisher *hbiPub) {
 	std::unique_lock<std::mutex> l_light(threw[3].mtx);
 	while(th_activ) {
-		std::cout << "Li vor WAIT" << std::endl;
 		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std::cout << "Li nach WAIT" << std::endl;
 		gettimeofday(&lis, NULL);
 		msl_actuator_msgs::HaveBallInfo msg;
 		uint16_t value = ADC_Light.getNumericValue();
@@ -138,10 +130,10 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			ROS_INFO("HaveBall: True");
+			// ROS_INFO("HaveBall: True");
 		} else {
 			msg.haveBall = false;
-			ROS_INFO("HaveBall: False");
+			// ROS_INFO("HaveBall: False");
 		}
 		hbiPub->publish(msg);
 		gettimeofday(&lie, NULL);
@@ -153,12 +145,10 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 	std::unique_lock<std::mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
-		std::cout << "Sw vor WAIT" << std::endl;
 		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std::cout << "Sw nach WAIT" << std::endl;
 		gettimeofday(&sws, NULL);
 		msl_actuator_msgs::VisionRelocTrigger msg;
 		std_msgs::Empty msg_empty;
