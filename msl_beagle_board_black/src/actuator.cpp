@@ -130,10 +130,10 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			//ROS_INFO("HaveBall: True");
+			ROS_INFO("HaveBall: True");
 		} else {
 			msg.haveBall = false;
-			//ROS_INFO("HaveBall: False");
+			ROS_INFO("HaveBall: False");
 		}
 		hbiPub->publish(msg);
 		gettimeofday(&lie, NULL);
