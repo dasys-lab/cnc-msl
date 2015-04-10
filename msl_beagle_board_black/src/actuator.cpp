@@ -17,7 +17,7 @@
 using namespace BlackLib;
 
 std::mutex					mtx;
-std::condition_variable		cv, cv2;
+//std::condition_variable		cv, cv2;
 
 timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
 
@@ -61,10 +61,10 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 
 
 void controlBHLeft() {
-	std::unique_lock<std::mutex> l_bhl(c_bhl.mtx);
+	std::unique_lock<std::mutex> l_bhl(threw[0].mtx);
 	while(th_activ) {
 		std::cout << "L vor WAIT" << std::endl;
-		cv.wait(l_bhl, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
+		threw[0].cv.wait(l_bhl, [&] { return !th_activ || c_bhl.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -73,15 +73,15 @@ void controlBHLeft() {
 		BH_left.controlBallHandling();
 		gettimeofday(&le, NULL);
 
-		c_bhl.notify = false;
+		threw[0].notify = false;
 	}
 }
 
 void controlBHRight() {
-	std::unique_lock<std::mutex> l_bhr(c_bhr.mtx);
+	std::unique_lock<std::mutex> l_bhr(threw[1].mtx);
 	while(th_activ) {
 		std::cout << "R vor WAIT" << std::endl;
-		cv2.wait(l_bhr, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
+		threw[1].cv.wait(l_bhr, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -90,15 +90,15 @@ void controlBHRight() {
 		BH_right.controlBallHandling();
 		gettimeofday(&re, NULL);
 
-		c_bhr.notify = false;
+		threw[1].notify = false;
 	}
 }
 
 void contolShovelSelect() {
-	std::unique_lock<std::mutex> l_shovel(c_shovel.mtx);
+	std::unique_lock<std::mutex> l_shovel(threw[2].mtx);
 	while(th_activ) {
 		std::cout << "S vor WAIT" << std::endl;
-		cv.wait(l_shovel, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
+		threw[2].cv.wait(l_shovel, [&] { return !th_activ || c_shovel.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -117,15 +117,15 @@ void contolShovelSelect() {
 		}
 		gettimeofday(&se, NULL);
 
-		c_shovel.notify = false;
+		threw[2].notify = false;
 	}
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
-	std::unique_lock<std::mutex> l_light(c_light.mtx);
+	std::unique_lock<std::mutex> l_light(threw[3].mtx);
 	while(th_activ) {
 		std::cout << "Li vor WAIT" << std::endl;
-		cv.wait(l_light, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
+		threw[3].cv.wait(l_light, [&] { return !th_activ || c_light.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -144,15 +144,15 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		hbiPub->publish(msg);
 		gettimeofday(&lie, NULL);
 
-		c_light.notify = false;
+		threw[3].notify = false;
 	}
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	std::unique_lock<std::mutex> l_switches(c_switches.mtx);
+	std::unique_lock<std::mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
 		std::cout << "Sw vor WAIT" << std::endl;
-		cv.wait(l_switches, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
+		threw[4].cv.wait(l_switches, [&] { return !th_activ || c_switches.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -183,7 +183,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		}
 		gettimeofday(&swe, NULL);
 
-		c_switches.notify = false;
+		threw[4].notify = false;
 	}
 }
 
@@ -191,8 +191,8 @@ void exit_program(int sig) {
 	ex = true;
 	std::cout << "Programm wird beendet." << std::endl;
 	th_activ = false;
-	cv.notify_all();
-	cv.notify_all();
+	for (int i=0; i<5; i++)
+		threw[i].cv.notify_all();
 }
 
 
@@ -250,14 +250,10 @@ int main(int argc, char** argv) {
 
 		// Thread Notify
 
-		c_bhl.notify = true;
-		c_bhr.notify = true;
-		c_shovel.notify = true;
-		c_light.notify = true;
-		c_switches.notify = true;
-
-		cv.notify_all();
-		cv2.notify_all();
+		for (int i=0; i<5; i++) {
+			threw[i].notify = true;
+			threw[i].cv.notify_all();
+		}
 
 		gettimeofday(&mitte, NULL);
 

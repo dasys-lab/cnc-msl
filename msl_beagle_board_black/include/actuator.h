@@ -25,6 +25,7 @@ struct Shovel {
 
 struct CV {
 	std::mutex					mtx;
+	std::condition_variable		cv;
 	bool						notify = false;
 };
 
@@ -62,7 +63,7 @@ Shovel			shovel;
 timeval			time_now;
 timeval			last_ping;
 
-CV				c_bhl, c_bhr, c_shovel, c_light, c_switches;
+CV				threw[5];
 
 bool			ex = false;
 
