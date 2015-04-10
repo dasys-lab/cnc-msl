@@ -17,7 +17,7 @@
 using namespace BlackLib;
 
 std::mutex					mtx;
-std::condition_variable		cv;
+std::condition_variable		cv, cv2;
 
 timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
 
@@ -81,7 +81,7 @@ void controlBHRight() {
 	std::unique_lock<std::mutex> l_bhr(c_bhr.mtx);
 	while(th_activ) {
 		std::cout << "R vor WAIT" << std::endl;
-		cv.wait(l_bhr, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
+		cv2.wait(l_bhr, [&] { return !th_activ || c_bhr.notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -257,6 +257,7 @@ int main(int argc, char** argv) {
 		c_switches.notify = true;
 
 		cv.notify_all();
+		cv2.notify_all();
 
 		gettimeofday(&mitte, NULL);
 
