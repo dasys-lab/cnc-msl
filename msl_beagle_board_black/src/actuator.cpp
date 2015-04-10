@@ -19,7 +19,7 @@ using namespace BlackLib;
 std::mutex					mtx;
 //std::condition_variable		cv, cv2;
 
-timeval		ls, le, rs, re, ss, se, lis, lie, sws, swe;
+timeval		ls, le, rs, re, ss, se, lis, lim, lie, sws, swe;
 
 uint8_t		th_count;
 
@@ -133,6 +133,8 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		gettimeofday(&lis, NULL);
 		msl_actuator_msgs::HaveBallInfo msg;
 		uint16_t value = ADC_Light.getNumericValue();
+		gettimeofday(&lim, NULL);
+
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
@@ -279,30 +281,21 @@ int main(int argc, char** argv) {
 		std::cout << "Zeit -mitend: " << diffms << " - " << diffus << std::endl;
 
 		diffus = TIMEDIFFUS(le, ls);
-		diffms = TIMEDIFFMS(le, ls);
-		std::cout << "Le : " << diffms << " - " << diffus << std::endl;
+		std::cout << "Le : " << diffus << std::endl;
 
 		diffus = TIMEDIFFUS(re, rs);
-		diffms = TIMEDIFFMS(re, rs);
-		std::cout << "Ri : " << diffms << " - " << diffus << std::endl;
+		std::cout << "Ri : " << diffus << std::endl;
 
 		diffus = TIMEDIFFUS(se, ss);
-		diffms = TIMEDIFFMS(se, ss);
-		std::cout << "Sh : " << diffms << " - " << diffus << std::endl;
+		std::cout << "Sh : " << diffus << std::endl;
 
-		diffus = TIMEDIFFUS(lie, lis);
-		diffms = TIMEDIFFMS(lie, lis);
+		diffus = TIMEDIFFUS(lie, lim);
+		diffms = TIMEDIFFUS(lim, lis);
 		std::cout << "Li : " << diffms << " - " << diffus << std::endl;
 
 		diffus = TIMEDIFFUS(swe, sws);
 		diffms = TIMEDIFFMS(swe, sws);
-		std::cout << "Sw : " << diffms << " - " << diffus << std::endl;
-
-		std::cout << ls.tv_sec << " " << ls.tv_usec << std::endl;
-		std::cout << rs.tv_sec << " " << rs.tv_usec << std::endl;
-		std::cout << ss.tv_sec << " " << ss.tv_usec << std::endl;
-		std::cout << lis.tv_sec << " " << lis.tv_usec << std::endl;
-		std::cout << sws.tv_sec << " " << sws.tv_usec << std::endl;
+		std::cout << "Sw : " << diffus << std::endl;
 
 
 
@@ -310,41 +303,6 @@ int main(int argc, char** argv) {
 
 		// IMU
 
-/*		timeval vorher, nachher;
-		uint16_t value;
-
-		bool set, get;
-
-		set = count%2;
-
-		gettimeofday(&vorher, NULL);
-		bool working = test66.setValue(static_cast<digitalValue>(set));
-		gettimeofday(&nachher, NULL);
-
-		long int diffus = TIMEDIFFUS(nachher, vorher);
-		long int diffms = TIMEDIFFMS(nachher, vorher);
-
-		std::cout << "SET: " << set << " - " << working << std::endl;
-
-
-
-		gettimeofday(&vorher, NULL);
-		get = static_cast<bool>(test66.getNumericValue());
-		gettimeofday(&nachher, NULL);
-
-		diffus = TIMEDIFFUS(nachher, vorher);
-		diffms = TIMEDIFFMS(nachher, vorher);
-
-		std::cout << "GET: " << get << " - Zeit: " << diffms << " - " << diffus << std::endl;
-
-
-		count++;*/
-
-
-		//std_msgs::String msg;
-		//std::stringstream ss;
-		//ss << "hello world " << count;
-		//msg.data = ss.str();
 
 		ros::spinOnce();
 		loop_rate.sleep();
