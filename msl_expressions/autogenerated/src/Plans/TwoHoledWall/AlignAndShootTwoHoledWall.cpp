@@ -11,6 +11,7 @@ namespace alica
             DomainBehaviour("AlignAndShootTwoHoledWall")
     {
         /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
+    	this->setTrigger(&wm->visionTrigger);
         field = MSLFootballField::getInstance();
         timesOnTarget = 0;
         changeHole = false;
