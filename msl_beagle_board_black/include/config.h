@@ -49,8 +49,11 @@
 #define BallHandle_TIMEOUT			1000	// ms
 #define BallHandle_PWM_STEP_SIZE	50
 
-#define OverFlow_UPDATE_TIMEOUT		1		// ms
-#define OverFlow_BURST_TIMEOUT		1		// ms
+#define	IMU_UPDATE_TIMEOUT			10		// ms
+#define IMU_SEND_TIMEOUT			30		// ms
+
+#define OpticalFlow_UPDATE_TIMEOUT	1		// ms
+#define OpticalFlow_BURST_TIMEOUT	1		// ms
 
 #define ShovelSelect_TIMEOUT		1000	// ms
 #define ShovelSelect_PASSING		1000	// PWM ( 1ms / 20ms )

@@ -178,7 +178,7 @@ void OpticalFlow::setConfigurationBits(uint8_t conf) {
 }
 
 void OpticalFlow::update_motion_burst(timeval time_now) {
-	if (TIMEDIFFMS(time_now, last_updated) > OverFlow_UPDATE_TIMEOUT) {
+	if (TIMEDIFFMS(time_now, last_updated) > OpticalFlow_UPDATE_TIMEOUT) {
 		last_updated = time_now;
 
 		getMotionBurst(motionBurst);
@@ -198,7 +198,7 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 	msl_actuator_msgs::MotionBurst msg;
 	uint8_t mData[6];
 
-	if (TIMEDIFFMS(time_now, last_sended) > OverFlow_BURST_TIMEOUT) {
+	if (TIMEDIFFMS(time_now, last_sended) > OpticalFlow_BURST_TIMEOUT) {
 		last_sended = time_now;
 
 		int16_t tqos = 0;

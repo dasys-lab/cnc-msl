@@ -133,10 +133,8 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			ROS_INFO("HaveBall: True");
 		} else {
 			msg.haveBall = false;
-			ROS_INFO("HaveBall: False");
 		}
 		hbiPub->publish(msg);
 		gettimeofday(&lie, NULL);
@@ -228,19 +226,17 @@ int main(int argc, char** argv) {
 	shovel.enabled = false;
 
 	// I2C
-	bool i2c = myI2C.open(ReadWrite | NonBlock);			// Gyro: 0x69, Accel: 0x53, Magnet: 0x1E, Thermo: 0x77
+	bool i2c = myI2C.open(ReadWrite | NonBlock);
 	bool spi = mySpi.open(ReadWrite);
 
 	std::cout << "SPI: " << spi << std::endl;
 	std::cout << "I2C: " << i2c << std::endl;
 
-	uint16_t count = 0;
-
-	BlackGPIO test66(GPIO_66, output, FastMode);
 
 	(void) signal(SIGINT, exit_program);
-	// Frequency set with loop_rate()
 	while(ros::ok() && !ex) {
+		// Frequency: 30Hz - set with loop_rate()
+
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
@@ -255,11 +251,12 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&mitte, NULL);
 
+		// auf beenden aller Threads warten
 		std::unique_lock<std::mutex> l_main(cv_main.mtx);
 		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
 
 
-		// auf beenden aller Threads warten
+
 		/*while (!th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify)) {
 			usleep(1000);
 		}*/
