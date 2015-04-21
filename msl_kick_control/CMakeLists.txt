@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED can_connection system_config roscpp usb_can_proxy)
+find_package(catkin REQUIRED can_connection system_config roscpp usb_can_proxy msl_actuator_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -101,10 +101,7 @@ include_directories(include ${Boost_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
 ## Declare a cpp executable
 add_executable(msl_kick_control src/Kicker.cpp)
 target_link_libraries(msl_kick_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(msl_kick_control_node msl_kick_control_generate_messages_cpp)
+add_dependencies(msl_kick_control msl_actuator_msgs_generate_messages_cpp)
 
 #############
 ## Install ##

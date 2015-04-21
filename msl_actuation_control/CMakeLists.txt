@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config roscpp can_connection)
+find_package(catkin REQUIRED system_config roscpp can_connection msl_actuator_msgs)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -98,7 +98,7 @@ add_executable(msl_actuation_control src/ActuationControl.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_actuation_control system_config can_connection)
+add_dependencies(msl_actuation_control system_config can_connection msl_actuator_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_actuation_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})

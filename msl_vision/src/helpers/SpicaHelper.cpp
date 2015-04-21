@@ -61,14 +61,14 @@ void SpicaHelper::initialize() {
 	visionNode = new ros::NodeHandle();
 	reloc = false;
 
-	VCsub = visionNode->subscribe<msl_sensor_msgs::VisionControl>("CNVision/VisionControl", 1, &SpicaHelper::handleVisionControl);
+	VCsub = visionNode->subscribe<msl_sensor_msgs::VisionControl>("/CNVision/VisionControl", 1, &SpicaHelper::handleVisionControl);
     RelocSub = visionNode->subscribe<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger",
 				1, &SpicaHelper::handleVisionRelocTrigger);
 
-	womopub = visionNode->advertise<WorldModelData>("WorldModel/WorldModelData", 1);
-    statepub = visionNode->advertise<VisionGameState>("CNVision/VisionGameState", 1);
-	LPpub = visionNode->advertise<VisionDebug>("CNVision/VisionDebug", 1);
-	Imagepub = visionNode->advertise<VisionImage>("CNVision/VisionImage", 1);
+	womopub = visionNode->advertise<WorldModelData>("/WorldModel/WorldModelData", 1);
+    statepub = visionNode->advertise<VisionGameState>("/CNVision/VisionGameState", 1);
+	LPpub = visionNode->advertise<VisionDebug>("/CNVision/VisionDebug", 1);
+	Imagepub = visionNode->advertise<VisionImage>("/CNVision/VisionImage", 1);
 
 	wm = new WorldModelData();
 	vdd = new VisionDebug();
