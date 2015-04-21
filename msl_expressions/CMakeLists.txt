@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.3 )
 project(msl_expressions)
 
 ## Use c++ 11x std
