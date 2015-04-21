@@ -336,16 +336,17 @@ IF(NOT ROBOT STREQUAL "mops")
 	DEPENDS DistanceLookup.dat
 	)
 
-	ADD_CUSTOM_COMMAND(
-		OUTPUT RayLookup.dat
-		COMMAND msl_ray_calculator
-#		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
-		DEPENDS msl_ray_calculator
-		COMMENT "Creating RayLookuptable"
-	)
-	ADD_CUSTOM_TARGET(RayLookup ALL
-		DEPENDS RayLookup.dat
-	)
+## This is only required for Tim Schlueter's 3d OmniVision
+#	ADD_CUSTOM_COMMAND(
+#		OUTPUT RayLookup.dat
+#		COMMAND msl_ray_calculator
+##		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+#		DEPENDS msl_ray_calculator
+#		COMMENT "Creating RayLookuptable"
+#	)
+#	ADD_CUSTOM_TARGET(RayLookup ALL
+#		DEPENDS RayLookup.dat
+#	)
 ENDIF(NOT ROBOT STREQUAL "mops")
 
 #############
