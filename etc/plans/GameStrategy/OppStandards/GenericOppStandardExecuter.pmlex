@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109572408"/>
+    <value xPos="196" yPos="93" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109528736"/>
+    <value width="1019" height="741"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109572409"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109634871"/>
+    <value xPos="-150" yPos="367" width="152" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109772867"/>
+    <value xPos="-40" yPos="295"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109804215"/>
+    <value xPos="171" yPos="278" width="192" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109805827"/>
+    <value xPos="219" yPos="464" width="140" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
