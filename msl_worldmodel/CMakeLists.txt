@@ -5,12 +5,15 @@ project(msl_worldmodel)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
-
+## Used for cgal
+#set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Don't override flags")
+#set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED system_config msl_actuator_msgs msl_sensor_msgs event_handling)
+find_package(CGAL REQUIRED COMPONENTS Core)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -95,6 +98,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
  include_directories(include ${catkin_INCLUDE_DIRS})
+ include(${CGAL_USE_FILE})
 
 ## Declare a cpp library
  add_library(msl_worldmodel
@@ -110,7 +114,7 @@ catkin_package(
    src/Robots.cpp
    src/Ball.cpp
    src/Game.cpp
-   src/PathPlanner.cpp
+   src/pathplanner/PathPlanner.cpp
  )
 
 ## Declare a cpp executable

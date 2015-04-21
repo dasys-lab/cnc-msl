@@ -38,7 +38,6 @@ namespace msl
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
 
-
 	}
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{

@@ -7,7 +7,6 @@
 #include "engine/DefaultUtilityFunction.h"
 /*PROTECTED REGION ID(incl1426697860439) ENABLED START*/
 //Add inlcudes here
-
 using namespace msl;
 /*PROTECTED REGION END*/
 using namespace alica;

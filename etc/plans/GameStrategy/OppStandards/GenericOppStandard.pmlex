@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GenericOppStandard.pml#1426697871184"/>
-    <value xPos="141" yPos="282" width="81" height="67"/>
+    <value xPos="141" yPos="282" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandard.pml#1426697871183"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="GenericOppStandard.pml#1426698446747"/>
-    <value xPos="542" yPos="310"/>
+    <value xPos="542" yPos="310" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandard.pml#1426698467862"/>
@@ -26,6 +26,14 @@
   </extensions>
   <extensions>
     <key href="GenericOppStandard.pml#1426698472708"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardPositioning.pml#1429108230432"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandardExecuter.pml#1429109528736"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

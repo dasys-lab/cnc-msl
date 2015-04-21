@@ -5,15 +5,23 @@ using namespace std;
 
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
-#include  "Plans/GenericBehaviours/StandardReceive.h"
-
 #include  "Plans/Behaviours/GoalKick.h"
 
-#include  "Plans/GenericBehaviours/InterceptCarefully.h"
+#include  "Plans/GenericBehaviours/StandardReceive.h"
+
+#include  "Plans/GenericBehaviours/StandardWatcherPositioningDefault.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
+#include  "Plans/GenericBehaviours/InterceptCarefully.h"
+
+#include  "Plans/GenericBehaviours/StandardStdDefendPositioning.h"
+
 #include  "Plans/GenericBehaviours/StdStandardDefendPos.h"
+
+#include  "Plans/GenericBehaviours/Parking.h"
+
+#include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
 
 #include  "Plans/Behaviours/GetBall.h"
 
@@ -56,19 +64,19 @@ namespace alica
                 return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
-            case 1428509534191:
-
-                return make_shared<StandardReceive>();
-                break;
-
             case 1415205578139:
 
                 return make_shared<GoalKick>();
                 break;
 
-            case 1427703234654:
+            case 1428509534191:
 
-                return make_shared<InterceptCarefully>();
+                return make_shared<StandardReceive>();
+                break;
+
+            case 1429109434270:
+
+                return make_shared<StandardWatcherPositioningDefault>();
                 break;
 
             case 1417620583364:
@@ -76,9 +84,29 @@ namespace alica
                 return make_shared<DriveToPoint>();
                 break;
 
+            case 1427703234654:
+
+                return make_shared<InterceptCarefully>();
+                break;
+
+            case 1429110549548:
+
+                return make_shared<StandardStdDefendPositioning>();
+                break;
+
             case 1428508259449:
 
                 return make_shared<StdStandardDefendPos>();
+                break;
+
+            case 1429111645834:
+
+                return make_shared<Parking>();
+                break;
+
+            case 1429109488432:
+
+                return make_shared<StandardBlockerPositioning>();
                 break;
 
             case 1414828313541:
