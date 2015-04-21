@@ -98,7 +98,7 @@ class XVDisplay
 inline
 void XVDisplay::iyu12yuy2 (unsigned char *src, unsigned char *dest, int NumPixels) {
   int i=0,j=0;
-  register int y0, y1, y2, y3, u, v;
+  int y0, y1, y2, y3, u, v;
   while (i < NumPixels*3/2)
     {
       u = src[i++];

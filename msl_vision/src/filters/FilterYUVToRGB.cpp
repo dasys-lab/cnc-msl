@@ -44,10 +44,10 @@ unsigned char * FilterYUVToRGB::process(unsigned char * src, unsigned int images
     unsigned char * tgt = outputBuffer;
 
     for (unsigned int i = 0; i < imagesize; i += 4) {
-      register int u  = src[i];
-      register int y0 = src[i+1];
-      register int v  = src[i+2];
-      register int y1 = src[i+3];
+      int u  = src[i];
+      int y0 = src[i+1];
+      int v  = src[i+2];
+      int y1 = src[i+3];
 
       *(tgt++) = t_r[(y0<<8)|v];
       *(tgt++) = t_g2[(y0<<8)|t_g1[(u<<8)|v]];

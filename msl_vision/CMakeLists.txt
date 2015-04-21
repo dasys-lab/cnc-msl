@@ -3,6 +3,8 @@ project(msl_vision)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE INTERNAL "" FORCE)
 
+## uncomment this to use clang ... currently it's untested
+#set(CMAKE_CXX_COMPILER "clang")
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
@@ -217,12 +219,12 @@ FILE(GLOB lib_msl_vision_SOURCES
 ## Vision 2D
 
 add_library(lib_msl_vision ${lib_msl_vision_SOURCES})
-target_link_libraries(lib_msl_vision pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES} freenect)
+target_link_libraries(lib_msl_vision stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES} freenect)
 set_target_properties(lib_msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(lib_msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 add_executable(msl_vision src/VisionPlayer.cpp)
-target_link_libraries(msl_vision pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
@@ -250,72 +252,72 @@ FILE(GLOB lib_msl_vision_3d_SOURCES
 )
 
 add_library(lib_msl_vision_3d ${lib_msl_vision_3d_SOURCES})
-target_link_libraries(lib_msl_vision_3d pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES})
+target_link_libraries(lib_msl_vision_3d stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES})
 set_target_properties(lib_msl_vision_3d PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(lib_msl_vision_3d msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 add_executable(msl_vision_3d src/VisionPlayer3D.cpp)
-target_link_libraries(msl_vision_3d pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision_3d ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision_3d stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision_3d ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_3d PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(msl_vision_3d msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
 ## Vision Calibration
 
 add_executable(msl_vision_calib src/VisionPlayerCalib.cpp)
-target_link_libraries(msl_vision_calib pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision_calib stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_calib PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Carpet Calculator
 add_executable(msl_carpet_calculator src/helpers/ConfigHelper.cpp src/tools/CarpetCalculator.cpp)
-target_link_libraries(msl_carpet_calculator pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_carpet_calculator pthread stdc++ m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_carpet_calculator PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Carpe Noctem GA
 
 add_executable(msl_cn_ga src/camControl/Tools/ga.cpp)
-target_link_libraries(msl_cn_ga pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_cn_ga pthread m Xv X11 stdc++ Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_cn_ga PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Carpe Noctem CCT
 
 add_executable(msl_cn_cct src/camControl/Tools/cct.cpp)
-target_link_libraries(msl_cn_cct pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_cn_cct pthread m Xv X11 Xext ICE stdc++ SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_cn_cct PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Vision Goalie
 
 add_executable(msl_vision_goalie src/VisionPlayerGoalie.cpp)
-target_link_libraries(msl_vision_goalie pthread Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision_goalie pthread stdc++ Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_goalie PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Vision Goalie 1394
 
 add_executable(msl_vision_goalie_1394 src/VisionPlayerGoalie1394.cpp)
-target_link_libraries(msl_vision_goalie_1394 pthread Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision_goalie_1394 stdc++ pthread Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_goalie_1394 PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Vision Kinect
 
 add_executable(msl_vision_kinect src/VisionPlayerKinect.cpp)
-target_link_libraries(msl_vision_kinect pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_vision_kinect pthread stdc++ m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_vision_kinect PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Camera Model Test
 
 add_executable(camera_model_test src/CameraModelTest.cpp)
-target_link_libraries(camera_model_test pthread m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+target_link_libraries(camera_model_test pthread stdc++ m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS "-DSWITCHLOC  -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Calculator
 
 add_executable(msl_calculator src/helpers/ConfigHelper.cpp src/tools/Calculator.cpp src/tools/distcalc.cpp src/tools/Calculator.cpp)
-target_link_libraries(msl_calculator pthread m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_calculator pthread m X11 Xv Xext ICE stdc++ SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Ray Calculator
 
 add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
-target_link_libraries(msl_ray_calculator pthread m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_ray_calculator pthread m stdc++ X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 

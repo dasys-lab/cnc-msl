@@ -491,8 +491,8 @@ void FilterLinePoints3D::process(unsigned char *&src, unsigned char * const &mas
 
 void FilterLinePoints3D::panno(unsigned char *&src, unsigned char * const &mask, struct ImageSize iSize, struct ImageSize oSize)
 {
-	register uint16_t x;
-	register uint16_t y;
+	uint16_t x;
+	uint16_t y;
 
 	std::vector<double> innerLinePoints;
 	innerLinePoints.clear();

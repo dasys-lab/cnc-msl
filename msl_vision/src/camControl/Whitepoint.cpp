@@ -115,6 +115,6 @@ void Whitepoint::testWhitepoint(unsigned char *scr, camera::ImagingSource::white
 	//V
 	VBrightness=ra->createHistoBrightness(scr, 3, true);
 
-	int zeile[5] = { wp.bu, wp.rv, hell, (int)min((int)(UBrightness+0.5), 255), (int)min((int)(VBrightness+0.5), 255)};
+	int zeile[5] = { (int)wp.bu, (int)wp.rv, hell, (int)min((int)(UBrightness+0.5), 255), (int)min((int)(VBrightness+0.5), 255)};
 	saveCSV("wp.csv", 5, zeile, true, 2);
 }

@@ -122,7 +122,7 @@ Brightness::~Brightness(){
 void Brightness::testHelligkeit(unsigned char *scr, int gain, int shutter){
 	brightness=ra->createHistoBrightness(scr, 2, true);
 	cout<<"Helligkeit: "<<brightness<<endl;
-	int zeile[3] = { gain, shutter, (brightness+0.5)};
+	int zeile[3] = { gain, shutter, (int)(brightness+0.5)};
 	saveCSV("MW.csv", 3, zeile, true, 2);
 }
 
