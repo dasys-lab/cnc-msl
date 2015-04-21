@@ -140,7 +140,7 @@ void FilterYUVExtractSubImages::loadLookupTable(string filename, unsigned char* 
 	    ifs.close();
 	} else {
 		cout << "Couldn't find LookupTable " << filename << endl;
-		ROS_ERROR(string(string("Couldn't find LookupTable "+filename)).c_str());
+		ROS_ERROR("%s", string(string("Couldn't find LookupTable "+filename)).c_str());
         //exit(1);
 	}
        
