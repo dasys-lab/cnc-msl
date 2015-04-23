@@ -37,8 +37,8 @@ namespace alica
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
 */
-        bhc.leftMotor = 15;
-        bhc.rightMotor = 15;
+        bhc.leftMotor = 13;
+        bhc.rightMotor = 13;
 
 
         this->send(bhc);
