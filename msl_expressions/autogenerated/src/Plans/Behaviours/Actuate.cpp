@@ -30,16 +30,16 @@ namespace alica
             cout << "Actuate RODO is empty help" << endl;
             return;
         }
-/*
-        left = rodo->motion.translation * (1.0 / 40.0) * -1;
-        right = rodo->motion.translation * (1.0 / 40.0) * -1;
+
+        left = rodo->motion.translation * (1.0 / 42.0) * -1;
+        right = rodo->motion.translation * (1.0 / 42.0) * -1;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
+/*
+        bhc.leftMotor = 12;
+        bhc.rightMotor = 12;
 */
-        bhc.leftMotor = 13;
-        bhc.rightMotor = 13;
-
 
         this->send(bhc);
         /*PROTECTED REGION END*/
