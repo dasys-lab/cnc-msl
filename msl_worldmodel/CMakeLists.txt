@@ -115,6 +115,7 @@ catkin_package(
    src/Ball.cpp
    src/Game.cpp
    src/pathplanner/PathPlanner.cpp
+   src/pathplanner/SearchNode.cpp
  )
 
 ## Declare a cpp executable

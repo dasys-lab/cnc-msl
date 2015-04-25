@@ -33,12 +33,14 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 //other includes
 #include <memory>
 #include <vector>
-#include "SystemConfig.h"
+#include <algorithm>
 #include <limits>
 #include <math.h>
 
+#include "SystemConfig.h"
+#include "pathplanner/SearchNode.h"
+
 //namespaces
-using namespace supplementary;
 using namespace std;
 
 namespace msl
@@ -52,11 +54,18 @@ namespace msl
 		virtual ~PathPlanner();
 		VoronoiDiagram* generateVoronoiDiagram();
 		void insertPoints(vector<Site_2> points);
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> aStarSearch(Point_2 ownPos);
+		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(Point_2 ownPos, Point_2 goal);
 
 	private:
 		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(Point_2 ownPos);
 		int calcDist(Point_2 ownPos, Point_2 vertexPoint);
+		bool checkGoal(shared_ptr<VoronoiDiagram::Vertex> vertex, Point_2 goal);
+		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesNearPoint(Point_2 point);
+		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
+		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
+						shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
+		vector<shared_ptr<SearchNode>> getNeighboredVertices(shared_ptr<SearchNode> currentNode);
+		bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
 
 	protected:
 		Kernel kernel;
@@ -65,7 +74,7 @@ namespace msl
 		DelaunayAdaptionPolicy delaunayPolicy;
 		VoronoiDiagram voronoi;
 		MSLWorldModel* wm;
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
 	};
 
 } /* namespace alica */
