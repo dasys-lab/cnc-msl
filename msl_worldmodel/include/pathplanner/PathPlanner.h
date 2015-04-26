@@ -36,9 +36,14 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <algorithm>
 #include <limits>
 #include <math.h>
+#include <mutex>
 
 #include "SystemConfig.h"
 #include "pathplanner/SearchNode.h"
+#include "pathplanner/VoronoiNet.h"
+#include "pathplanner/VoronoiStatus.h"
+#include <msl_sensor_msgs/WorldModelData.h>
+
 
 //namespaces
 using namespace std;
@@ -50,31 +55,37 @@ namespace msl
 	class PathPlanner
 	{
 	public:
-		PathPlanner(MSLWorldModel* wm);
+		PathPlanner(MSLWorldModel* wm, int count);
 		virtual ~PathPlanner();
-		VoronoiDiagram* generateVoronoiDiagram();
-		void insertPoints(vector<Site_2> points);
-		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(Point_2 ownPos, Point_2 goal);
-
-	private:
-		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(Point_2 ownPos);
-		int calcDist(Point_2 ownPos, Point_2 vertexPoint);
-		bool checkGoal(shared_ptr<VoronoiDiagram::Vertex> vertex, Point_2 goal);
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesNearPoint(Point_2 point);
-		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
-		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-						shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
-		vector<shared_ptr<SearchNode>> getNeighboredVertices(shared_ptr<SearchNode> currentNode);
-		bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
+		/**
+		 * aStar search on a VoronoiDiagram
+		 * @param voronoi shared_ptr<VoronoiNet>
+		 * @param ownPos Point_2
+		 * @param goal Point_2
+		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
+		 */
+		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal);
+		/**
+		 * processes the WorldModel msg
+		 * @param msg msl_sensor_msgs::WorldModelDataPtr
+		 */
+		void processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg);
+		/**
+		 * gets all saved VoronoiNets
+		 * @return vector<shared_ptr<VoronoiNet>>
+		 */
+		vector<shared_ptr<VoronoiNet>> getVoronoiNets();
+		/**
+		 * gets latest accesable VoronoiNet
+		 * @return shared_ptr<VoronoiNet>
+		 */
+		shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
 	protected:
-		Kernel kernel;
-		DelaunayTriangulation delaunayTriangulation;
-		DelaunayAdaptionTraits delaunayTraits;
-		DelaunayAdaptionPolicy delaunayPolicy;
-		VoronoiDiagram voronoi;
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
+		mutex voronoiMutex;
+		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 	};
 
 } /* namespace alica */

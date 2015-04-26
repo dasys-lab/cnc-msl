@@ -11,33 +11,25 @@
 namespace msl
 {
 
-	PathPlanner::PathPlanner(MSLWorldModel* wm)
+	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) : voronoiDiagrams(10)
 	{
 		this->wm = wm;
-		sc = SystemConfig::getInstance();
+		sc = supplementary::SystemConfig::getInstance();
+
 	}
 
 	PathPlanner::~PathPlanner()
 	{
 	}
 
-	VoronoiDiagram* PathPlanner::generateVoronoiDiagram()
-	{
-		return nullptr;
-	}
-
-	void PathPlanner::insertPoints(vector<Site_2> points)
-	{
-		voronoi.insert(points.begin(), points.end());
-	}
-
 	/**
-	 * a star search
-	 * @param ownPos own position Point_2
-	 * @param goal position of goal Point_2
-	 * @return shared_ptr<vector<shared_ptr<VoronoiDiagram::Point_2>>> path from ownPos to goal
+	 * aStar search on a VoronoiDiagram
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 * @param ownPos Point_2
+	 * @param goal Point_2
+	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(Point_2 ownPos, Point_2 goal)
+	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet>  voronoi, Point_2 ownPos, Point_2 goal)
 	{
 		// return
 		shared_ptr<vector<shared_ptr<Point_2>>> ret = make_shared<vector<shared_ptr<Point_2>>>();
@@ -47,10 +39,10 @@ namespace msl
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 		//get closest Vertex to ownPos => start point for a star serach
-		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = findClosestVertexToOwnPos(ownPos);
+		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = voronoi->findClosestVertexToOwnPos(ownPos);
 
 		// get closest Vertex to goal => goal for a star serach
-		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = findClosestVertexToOwnPos(goal);
+		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = voronoi->findClosestVertexToOwnPos(goal);
 
 		//if ownPos == goal we dont have to plan a route
 		if(ownPos.x() == goal.x() && ownPos.y() == goal.y())
@@ -66,7 +58,7 @@ namespace msl
 
 		while(open->size() != 0)
 		{
-			shared_ptr<SearchNode> currentNode = getMin(open);
+			shared_ptr<SearchNode> currentNode = voronoi->getMin(open);
 
 			if(currentNode->getVertex()->point().x() == closestVertexToGoal->point().x()
 					&& currentNode->getVertex()->point().x() == closestVertexToGoal->point().x())
@@ -83,7 +75,7 @@ namespace msl
 			}
 			closed->push_back(currentNode);
 
-			expandNode(currentNode, open, closed, goal);
+			voronoi->expandNode(currentNode, open, closed, goal);
 		}
 
 		// return nullptr if there is no way to goal
@@ -91,148 +83,38 @@ namespace msl
 	}
 
 	/**
-	 * gets the closest Vertex to a given position
-	 * @param pos position
+	 * processes the WorldModel msg
+	 * @param msg msl_sensor_msgs::WorldModelDataPtr
 	 */
-	shared_ptr<VoronoiDiagram::Vertex> PathPlanner::findClosestVertexToOwnPos(Point_2 pos)
+	void PathPlanner::processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-		shared_ptr<VoronoiDiagram::Vertex> ret = nullptr;
-		VoronoiDiagram::Vertex_iterator iter = voronoi.vertices_begin();
-		int minDist = std::numeric_limits<int>::max();
-		while (iter != voronoi.vertices_end())
-		{
-			if (ret == nullptr)
-			{
-				ret = make_shared<VoronoiDiagram::Vertex>(*iter);
-				iter++;
-			}
-			else
-			{
-				int dist = calcDist(pos, iter->point());
-				if (dist < minDist)
-				{
-					ret = make_shared<VoronoiDiagram::Vertex>(*iter);
-					minDist = dist;
-					iter++;
-				}
-			}
-		}
-		return ret;
-	}
-
-	int PathPlanner::calcDist(Point_2 ownPos, Point_2 vertexPoint)
-	{
-		int ret = sqrt(pow((vertexPoint.x() - ownPos.x()), 2) + pow((vertexPoint.y() - ownPos.y()), 2));
-		return ret;
-	}
-
-	//TODO
-	bool PathPlanner::checkGoal(shared_ptr<VoronoiDiagram::Vertex> vertex, Point_2 goal)
-	{
-		bool ret = false;
-
-		return ret;
-	}
-
-	//TODO find way to get from face to vertices
-	shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex> > > PathPlanner::getVerticesNearPoint(Point_2 point)
-	{
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> ret = make_shared<vector<shared_ptr<VoronoiDiagram::Vertex>>>();
-		auto face = this->voronoi.locate(point);
-		return ret;
+		//TODO implement
 	}
 
 	/**
-	 * gets SearchNode with minimal distance to goal
-	 * @param open shared_ptr<vector<shared_ptr<SearchNode> > > vector with minimal searchnode
+	 * gets all saved VoronoiNets
+	 * @return vector<shared_ptr<VoronoiNet>>
 	 */
-	shared_ptr<SearchNode> PathPlanner::getMin(shared_ptr<vector<shared_ptr<SearchNode> > > open)
+	vector<shared_ptr<VoronoiNet> > PathPlanner::getVoronoiNets()
 	{
-		if (open->size() > 0)
-		{
-			sort(open->begin(), open->end(), SearchNode::compare);
-			return open->at(0);
-		}
-		else
-		{
-			return nullptr;
-		}
-
-	}
-
-	vector<shared_ptr<SearchNode>> PathPlanner::getNeighboredVertices(shared_ptr<SearchNode> currentNode)
-	{
-		vector<VoronoiDiagram::Vertex> neighbors;
-		for (VoronoiDiagram::Edge_iterator it = this->voronoi.edges_begin(); it != this->voronoi.edges_end(); it++)
-		{
-			if (it->source()->point().x() == currentNode->getVertex()->point().x()
-					&& it->source()->point().y() == currentNode->getVertex()->point().y())
-			{
-				if (find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
-				{
-					neighbors.push_back(*it->target());
-				}
-			}
-		}
-		vector<shared_ptr<SearchNode>> ret;
-		for(int i = 0; i < neighbors.size(); i++)
-		{
-			ret.push_back(make_shared<SearchNode>(SearchNode(make_shared<VoronoiDiagram::Vertex>(neighbors.at(i)), 0, nullptr)));
-		}
-		return ret;
+		lock_guard<mutex> lock(this->voronoiMutex);
+		return this->voronoiDiagrams;
 	}
 
 	/**
-	 * expands Nodes given in current node
-	 * @param currentNode shared_ptr<SearchNode>
+	 * gets latest accesable VoronoiNet
+	 * @return shared_ptr<VoronoiNet>
 	 */
-	void PathPlanner::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-								 shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal)
+	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 	{
-		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
-		for(int i = 0; i < neighbors.size(); i++)
+		for(int i = 0; i < this->voronoiDiagrams.size(); i++)
 		{
-			if(contains(closed, neighbors.at(i)))
+			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
 			{
-				continue;
-			}
-			double cost = currentNode->getCost() + calcDist(currentNode->getVertex()->point(), neighbors.at(i)->getVertex()->point());
-			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
-			{
-				continue;
-			}
-			neighbors.at(i)->setPredecessor(currentNode);
-			neighbors.at(i)->setCost(cost);
-			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
-			if(contains(open, neighbors.at(i)))
-			{
-				for(int j = 0; j < open->size(); j++)
-				{
-					if(open->at(i)->getVertex()->point().x() == neighbors.at(i)->getVertex()->point().x()
-							&& open->at(i)->getVertex()->point().y() == neighbors.at(i)->getVertex()->point().y())
-					{
-						open->at(j)->setCost(cost);
-					}
-				}
-			}
-			else
-			{
-				open->push_back(neighbors.at(i));
+				return voronoiDiagrams.at(i);
 			}
 		}
-	}
-
-	bool PathPlanner::contains(shared_ptr<vector<shared_ptr<SearchNode> > > vector, shared_ptr<SearchNode> vertex)
-	{
-		for(int i = 0; i < vector->size(); i++)
-		{
-			if(vector->at(i)->getVertex()->point().x() == vertex->getVertex()->point().x()
-					&& vector->at(i)->getVertex()->point().y() == vertex->getVertex()->point().y())
-			{
-				return true;
-			}
-		}
-		return false;
+		return nullptr;
 	}
 
 } /* namespace alica */

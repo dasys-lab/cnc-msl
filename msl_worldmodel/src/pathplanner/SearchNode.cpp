@@ -30,36 +30,66 @@ namespace msl
 	{
 	}
 
+	/**
+	 * gets the cost
+	 * @return double
+	 */
 	double SearchNode::getCost()
 	{
 		return cost;
 	}
 
+	/**
+	 * sets the cost
+	 * @param cost double
+	 */
 	void SearchNode::setCost(double cost)
 	{
 		this->cost = cost;
 	}
 
-	const shared_ptr<SearchNode> SearchNode::getPredecessor()
+	/**
+	 * gets the predecessor node
+	 * @return shared_ptr<SearchNode>
+	 */
+	shared_ptr<SearchNode> SearchNode::getPredecessor()
 	{
 		return predecessor;
 	}
 
+	/**
+	 * sets the predecessor node
+	 * @param predecessor shared_ptr<SearchNode>
+	 */
 	void SearchNode::setPredecessor(shared_ptr<SearchNode> predecessor)
 	{
 		this->predecessor = predecessor;
 	}
 
+	/**
+	 * gets the vertex
+	 * @return shared_ptr<VoronoiDiagram::Vertex>
+	 */
 	shared_ptr<VoronoiDiagram::Vertex> SearchNode::getVertex()
 	{
 		return vertex;
 	}
 
+	/**
+	 * sets the vertex
+	 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
+	 */
 	void SearchNode::setVertex(shared_ptr<VoronoiDiagram::Vertex> vertex)
 	{
 		this->vertex = vertex;
 	}
 
+	/**
+	 * compares two SearchNodes, true if first has lower cost
+	 * @param first shared_ptr<SearchNode>
+	 * @param second shared_ptr<SearchNode>
+	 * @return bool
+	 */
 	bool SearchNode::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
 	{
 		return (first->cost < second->cost);

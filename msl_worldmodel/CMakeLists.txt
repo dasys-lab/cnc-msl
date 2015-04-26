@@ -116,6 +116,7 @@ catkin_package(
    src/Game.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
+   src/pathplanner/VoronoiNet.cpp
  )
 
 ## Declare a cpp executable

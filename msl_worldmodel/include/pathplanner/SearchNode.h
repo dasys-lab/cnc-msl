@@ -34,12 +34,42 @@ namespace msl
 		SearchNode();
 		SearchNode(shared_ptr<VoronoiDiagram::Vertex> vertex, double cost, shared_ptr<SearchNode> predecessor);
 		virtual ~SearchNode();
+		/**
+		 * gets the cost
+		 * @return double
+		 */
 		double getCost();
+		/**
+		 * sets the cost
+		 * @param cost double
+		 */
 		void setCost(double cost);
-		const shared_ptr<SearchNode> getPredecessor();
+		/**
+		 * gets the predecessor node
+		 * @return shared_ptr<SearchNode>
+		 */
+		shared_ptr<SearchNode> getPredecessor();
+		/**
+		 * sets the predecessor node
+		 * @param predecessor shared_ptr<SearchNode>
+		 */
 		void setPredecessor(shared_ptr<SearchNode> predecessor);
+		/**
+		 * gets the vertex
+		 * @return shared_ptr<VoronoiDiagram::Vertex>
+		 */
 		shared_ptr<VoronoiDiagram::Vertex> getVertex();
+		/**
+		 * sets the vertex
+		 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
+		 */
 		void setVertex(shared_ptr<VoronoiDiagram::Vertex> vertex);
+		/**
+		 * compares two SearchNodes, true if first has lower cost
+		 * @param first shared_ptr<SearchNode>
+		 * @param second shared_ptr<SearchNode>
+		 * @return bool
+		 */
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
 	private:
