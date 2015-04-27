@@ -39,6 +39,7 @@ catkin_package(
   LIBRARIES alica_engine msl_expressions
   CATKIN_DEPENDS alica_engine alica_ros_proxy msl_expressions msl_simulator msl_worldmodel
 #  DEPENDS tinyxml
+  DEPENDS cgal
 )
 
 ###########
@@ -47,7 +48,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
 include(${CGAL_USE_FILE})
 
 ## Declare a cpp library

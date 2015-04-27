@@ -15,6 +15,7 @@ namespace msl
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
 		status = VoronoiStatus::New;
+		this->voronoi = make_shared<VoronoiDiagram>();
 
 	}
 
@@ -166,6 +167,7 @@ namespace msl
 	 */
 	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<CNPoint2D> points)
 	{
+		this->status = VoronoiStatus::Calculating;
 		vector<Site_2> sites;
 		for(int i = 0; i < points.size(); i++)
 		{
