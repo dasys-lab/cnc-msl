@@ -92,7 +92,6 @@ namespace msl
 	 */
 	void PathPlanner::processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-
 		vector<CNPoint2D> points;
 		for(int i = 0; i < msg->obstacles.size(); i++)
 		{
@@ -100,7 +99,7 @@ namespace msl
 			points.push_back(point);
 		}
 		lock_guard<mutex> lock(voronoiMutex);
-		for(int i = 0; voronoiDiagrams.size(); i++)
+		for(int i = 0; i < voronoiDiagrams.size(); i++)
 		{
 			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
 			{
