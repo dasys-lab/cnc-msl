@@ -38,7 +38,7 @@ namespace alica
 
 		//QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
 		// x Werte richtig vertauscht
-		/*if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
+		if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
 				&& (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
 		{
 			x = wm->rawSensorData.getOwnVelocityMotion()->translation
@@ -93,9 +93,9 @@ namespace alica
 			left = (x - y) * (1 / 40.0);
 			right = (x + y) * (1 / 40.0);
 
-		}*/
-		 left = rodo->motion.translation * (1.0 / 40.0) ;
-		  right = rodo->motion.translation * (1.0 / 40.0) ;
+		}
+		// left = rodo->motion.translation * (1.0 / 40.0) ;
+		//right = rodo->motion.translation * (1.0 / 40.0) ;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
