@@ -1,9 +1,10 @@
 using namespace std;
 
+#include "container/CNPoint2D.h"
 #include "Plans/Behaviours/Actuate.h"
 double x;
 double y;
-
+double QualityOfService;
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
 /*PROTECTED REGION END*/
@@ -35,25 +36,30 @@ namespace alica
 			return;
 		}
 
+		//QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
 		// x Werte richtig vertauscht
-		if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
+		/*if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
 				&& (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
 		{
-			x = wm->rawSensorData.getOwnVelocityMotion()->translation *pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+			x = wm->rawSensorData.getOwnVelocityMotion()->translation
+					* pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 		}
 
 		else
 		{
-			x = -wm->rawSensorData.getOwnVelocityMotion()->translation*pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+			x = (-1) * wm->rawSensorData.getOwnVelocityMotion()->translation
+					* pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 		}
 		//y Werte richtig vertauscht
 		if (wm->rawSensorData.getOwnVelocityMotion()->angle <= 0)
 		{
-			y = wm->rawSensorData.getOwnVelocityMotion()->translation*pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+			y = wm->rawSensorData.getOwnVelocityMotion()->translation
+					* pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 		}
 		else
 		{
-			y = -wm->rawSensorData.getOwnVelocityMotion()->translation*pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+			y = -wm->rawSensorData.getOwnVelocityMotion()->translation
+					* pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 		}
 		//Addition der x und y Geschwindigkeitsanteile
 
@@ -62,8 +68,8 @@ namespace alica
 		if ((y >= 0) && (x >= 0))
 		{
 
-			left = (x + y) * (1 / 40.0);
-			right = (x - y) * (1 / 40.0);
+			left = (x + y) ;//* (1 / 40.0);
+			right = (x - y) ;//* (1 / 40.0);
 		}
 		//RoboterD front right
 		if ((y <= 0) && (x >= 0))
@@ -84,12 +90,12 @@ namespace alica
 		//RoboterD behind right
 		if ((y <= 0) && (x <= 0))
 		{
-			left = (x-y)*(1/40.0);
+			left = (x - y) * (1 / 40.0);
 			right = (x + y) * (1 / 40.0);
 
-		}
-		//  left = rodo->motion.translation * (1.0 / 40.0) ;
-		//  right = rodo->motion.translation * (1.0 / 40.0) ;
+		}*/
+		 left = rodo->motion.translation * (1.0 / 40.0) ;
+		  right = rodo->motion.translation * (1.0 / 40.0) ;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
