@@ -68,30 +68,30 @@ namespace alica
 		if ((y >= 0) && (x >= 0))
 		{
 
-			left = (x + y) ;//* (1 / 40.0);
-			right = (x - y) ;//* (1 / 40.0);
+			left = (x + y)*20 ;
+			right = (x - y)*20 ;
 		}
 		//RoboterD front right
 		if ((y <= 0) && (x >= 0))
 		{
 
-			left = (x + y) ;
-			right = (x - y);
+			left = (x + y)*20 ;
+			right = (x - y)*20;
 		}
 
 		//RoboterD behind left
 		if ((y >= 0) && (x <= 0))
 		{
 
-			left = (x - y) * (1 / 40.0);
-			right = (-x - y) * (1 / 40.0);
+			left = (x - y) ;
+			right = (-x - y) ;
 		}
 
 		//RoboterD behind right
 		if ((y <= 0) && (x <= 0))
 		{
-			left = (x - y) * (1 / 40.0);
-			right = (x + y) * (1 / 40.0);
+			left = (x - y) ;
+			right = (x + y) ;
 
 		}
 		// left = rodo->motion.translation * (1.0 / 40.0) ;
