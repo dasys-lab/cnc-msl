@@ -68,15 +68,15 @@ namespace alica
 		if ((y >= 0) && (x >= 0))
 		{
 
-			left = (x + y)*20 ;
-			right = (x - y)*20 ;//x-y
+			left = (x*10 + y)*2 ;
+			right = (x*10 - y)*2 ;//x-y
 		}
 		//RoboterD front right
-		if ((y <= 0) && (x >= 0))
+		if ((y < 0) && (x >= 0))
 		{
 
-			left = (x + y)*20 ;
-			right = (x - y)*20;//x-y
+			left = (x*10 + y)*2 ;
+			right = (x*10 - y)*2;//x-y
 		}
 
 		//RoboterD behind left
