@@ -75,8 +75,8 @@ namespace alica
 		if ((y <= 0) && (x >= 0))
 		{
 
-			left = (x + y) * (1 / 40.0);
-			right = (x - y) * (1 / 40.0);
+			left = (x + y) ;
+			right = (x - y);
 		}
 
 		//RoboterD behind left
