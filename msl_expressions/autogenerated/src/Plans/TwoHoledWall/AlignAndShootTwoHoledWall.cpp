@@ -149,6 +149,7 @@ namespace alica
     void AlignAndShootTwoHoledWall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
+	cout << "AlignAndShootTwoHoledWall: RUN-Method reached! Success is : " << this->success << endl;
         double volt = wm->getKickerVoltage();
         shared_ptr < CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
@@ -268,6 +269,7 @@ namespace alica
     void AlignAndShootTwoHoledWall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
+	cout << "AlignandShootTwoHoledWall: Initing Parameters" << endl;
         timesOnTarget = 0;
         if (!usedFixedHole && changeHole)
         {

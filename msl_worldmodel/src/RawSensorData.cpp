@@ -184,7 +184,6 @@ namespace msl
 
 		if (data->odometry.certainty > 0)
 		{
-			cout << "RSD: we are in IF odo > 0" << endl;
 			//Vision
 			shared_ptr<CNPosition> pos = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
 																	data->odometry.position.angle);
