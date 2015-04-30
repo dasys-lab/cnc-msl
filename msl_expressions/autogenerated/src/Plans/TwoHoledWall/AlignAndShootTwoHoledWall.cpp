@@ -151,7 +151,7 @@ namespace alica
 		MotionControl mc;
 
 		// PD Rotation Controller
-		mc.motion.rotation = deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot;
+		mc.motion.rotation = -(deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot);
 		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
 				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
 
@@ -167,7 +167,7 @@ namespace alica
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-		cout << "AAStoot: DeltaAngle: " << deltaHoleAngle << "\tRotation: " << mc.motion.rotation
+		cout << "AAShoot: DeltaAngle: " << deltaHoleAngle << "\tRotation: " << mc.motion.rotation
 				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
 		send(mc);
