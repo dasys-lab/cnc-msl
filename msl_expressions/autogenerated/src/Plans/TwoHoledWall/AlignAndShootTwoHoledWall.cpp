@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 /*PROTECTED REGION ID(inccpp1417620683982) ENABLED START*/ //Add additional includes here
+#include <math.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -98,10 +99,12 @@ namespace alica
 
 		double egoHoleAngle = egoHole->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
-		double deltaAngle = GeometryCalculator::deltaAngle(egoBallAngle, egoHoleAngle);
+		double deltaHoleAngle = GeometryCalculator::deltaAngle(egoHoleAngle, M_PI);
+		double deltaBallAngle = GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
 
 		// Counter for correct aiming
-		if (fabs(deltaAngle) < this->angleTolerance)
+//		if (fabs(deltaHoleAngle) < this->angleTolerance)
+		if (fabs(deltaBallAngle) < this->angleTolerance && fabs(deltaHoleAngle) < this->angleTolerance)
 		{
 			//cout << "align and shoot: hit target" << endl;
 			timesOnTargetCounter++;
@@ -139,7 +142,7 @@ namespace alica
 
 
 			cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
-					<< sin(deltaAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
+					<< sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
 			this->success = true;
 			return;
 		}
@@ -148,11 +151,11 @@ namespace alica
 		MotionControl mc;
 
 		// PD Rotation Controller
-		mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
+		mc.motion.rotation = deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot;
 		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
 				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
 
-		lastRotError = deltaAngle;
+		lastRotError = deltaHoleAngle;
 
 		// crate the motion orthogonal to the ball
 		shared_ptr<CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
@@ -164,7 +167,7 @@ namespace alica
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-		cout << "AAStoot: DeltaAngle: " << deltaAngle << "\tRotation: " << mc.motion.rotation
+		cout << "AAStoot: DeltaAngle: " << deltaHoleAngle << "\tRotation: " << mc.motion.rotation
 				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
 		send(mc);
