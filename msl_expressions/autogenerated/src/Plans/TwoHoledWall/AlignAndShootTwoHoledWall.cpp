@@ -138,7 +138,7 @@ namespace alica
 			}
 
 
-			cout << "Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
+			cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 					<< sin(deltaAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
 			this->success = true;
 			return;
@@ -164,8 +164,8 @@ namespace alica
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-		cout << "Align and shoot: " << "delta angle " << deltaAngle << " mc.motion.rotation " << mc.motion.rotation
-				<< " driveTo " << driveTo->x << " " << driveTo->y << endl;
+		cout << "AAStoot: DeltaAngle: " << deltaAngle << "\tRotation: " << mc.motion.rotation
+				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
 		send(mc);
 		/*PROTECTED REGION END*/
