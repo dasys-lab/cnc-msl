@@ -39,7 +39,6 @@ namespace alica
 		useLowerHole = true;
 
 		// Kick Stuff
-		shootingSpeed = (*this->sc)["Show"]->get<double>("TwoHoledWall.ShootingSpeed", NULL);
 		voltage4shoot = (*this->sc)["Show"]->get<double>("TwoHoledWall.VoltageForShoot", NULL);
 		disableKicking = (*this->sc)["Show"]->get<bool>("TwoHoledWall.DisableKicking", NULL);
 
@@ -160,7 +159,7 @@ namespace alica
 		driveTo = driveTo * mc.motion.rotation;
 
 		// add the motion towards the ball
-		driveTo = driveTo + egoBallPos;
+		//driveTo = driveTo + egoBallPos;
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());

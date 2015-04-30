@@ -51,7 +51,6 @@ namespace alica
         CNPoint3D higherHole;
         CNPoint3D lowerHole;
 
-        double shootingSpeed;
         int timesOnTargetThreshold;
         int wheelSpeed;
         double voltage4shoot;
