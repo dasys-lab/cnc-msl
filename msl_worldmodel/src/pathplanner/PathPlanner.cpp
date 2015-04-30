@@ -11,10 +11,14 @@
 namespace msl
 {
 
-	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) : voronoiDiagrams(10)
+	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) : voronoiDiagrams(count)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
+		for(int i = 0; i < count; i++)
+		{
+			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
+		}
 
 	}
 
@@ -88,7 +92,32 @@ namespace msl
 	 */
 	void PathPlanner::processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-		//TODO implement
+		vector<CNPoint2D> points;
+		for(int i = 0; i < msg->obstacles.size(); i++)
+		{
+			CNPoint2D point = CNPoint2D(msg->obstacles.at(i).x,msg->obstacles.at(i).y);
+			points.push_back(point);
+		}
+		lock_guard<mutex> lock(voronoiMutex);
+		for(int i = 0; i < voronoiDiagrams.size(); i++)
+		{
+			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
+			{
+				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Old);
+				break;
+			}
+		}
+		for(int i = 0; voronoiDiagrams.size(); i++)
+		{
+			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::New ||
+					voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
+			{
+				voronoiDiagrams.at(i)->generateVoronoiDiagram(points);
+				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Latest);
+				break;
+			}
+		}
+
 	}
 
 	/**

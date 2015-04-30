@@ -89,6 +89,7 @@ catkin_package(
   LIBRARIES msl_worldmodel
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  DEPENDS cgal
 )
 
 ###########
@@ -97,7 +98,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
- include_directories(include ${catkin_INCLUDE_DIRS})
+ include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
  include(${CGAL_USE_FILE})
 
 ## Declare a cpp library

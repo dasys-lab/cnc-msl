@@ -1,8 +1,0 @@
-prefix=/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default/devel
-
-Name: msl_keyboard_joystick
-Description: Description of msl_keyboard_joystick
-Version: 0.1.0
-Cflags: 
-Libs: -L/home/tobi/workspace/robot/src/cnc-msl/build-msl_keyboard_joystick-Desktop-Default/devel/lib 
-Requires: 

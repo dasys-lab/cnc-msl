@@ -182,10 +182,6 @@ namespace msl
 	{
 		unsigned long time = wm->getTime();
 
-		if ((time - data->odometry.timestamp) > 1000000000)
-		{
-			return;
-		}
 		if (data->odometry.certainty > 0)
 		{
 			//Vision

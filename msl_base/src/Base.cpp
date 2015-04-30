@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 	}
 
 	string masterplan = "";
-	string rolesetdir = "";
+	string rolesetdir = ".";
 	string roleset = "";
 
 	for (int i = 1; i < argc; i++)
