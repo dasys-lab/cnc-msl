@@ -127,21 +127,28 @@ namespace msl
 	void VoronoiNet::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
 	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal)
 	{
+		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
 		for(int i = 0; i < neighbors.size(); i++)
 		{
+			// if node is already closed skip it
 			if(contains(closed, neighbors.at(i)))
 			{
 				continue;
 			}
+			//calculate cost with current cost and way to next vertex
 			double cost = currentNode->getCost() + calcDist(currentNode->getVertex()->point(), neighbors.at(i)->getVertex()->point());
+			// if node has still to be expaned but there is a cheaper way skip it
 			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
 			{
 				continue;
 			}
+			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			neighbors.at(i)->setCost(cost);
+			// add heuristic cost
 			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
 				for(int j = 0; j < open->size(); j++)
@@ -155,6 +162,7 @@ namespace msl
 			}
 			else
 			{
+				neighbors.at(i)->setCost(cost);
 				open->push_back(neighbors.at(i));
 			}
 		}
@@ -167,21 +175,29 @@ namespace msl
 	void VoronoiNet::expandNodeCarefully(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
 	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, double robotDiameter, bool haveBall)
 	{
+		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
 		for(int i = 0; i < neighbors.size(); i++)
 		{
+			// if node is already closed skip it
 			if(contains(closed, neighbors.at(i)))
 			{
 				continue;
 			}
+			//calculate cost with current cost and way to next vertex
 			double cost = currentNode->getCost() + calcDist(currentNode->getVertex()->point(), neighbors.at(i)->getVertex()->point());
+			// if node has still to be expaned but there is a cheaper way skip it
 			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
 			{
 				continue;
 			}
+			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			neighbors.at(i)->setCost(cost);
+			// add heuristic cost
+			//TODO haveBall and robotdiameter
 			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
 				for(int j = 0; j < open->size(); j++)
@@ -207,6 +223,7 @@ namespace msl
 	 */
 	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<CNPoint2D> points)
 	{
+		lock_guard<mutex> lock(netMutex);
 		this->status = VoronoiStatus::Calculating;
 		vector<Site_2> sites;
 		for (int i = 0; i < points.size(); i++)
@@ -255,14 +272,51 @@ namespace msl
 		this->status = status;
 	}
 
-	//TODO
-	pair<Site_2, Site_2> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2)
+	/**
+	 * return the sites near an egde defined by 2 points
+	 * @param v1 VoronoiDiagram::Vertex
+	 * @param v2 VoronoiDiagram::Vertex
+	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
+	 */
+	pair<shared_ptr<Point_2>, shared_ptr<Point_2>> VoronoiNet::getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1,
+																					VoronoiDiagram::Vertex v2)
 	{
-		pair<Site_2, Site_2> ret;
-
+		pair<shared_ptr<Site_2>, shared_ptr<Site_2>> ret;
+		ret.first = nullptr;
+		ret.second = nullptr;
+		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
+		{
+			bool foundFirst = false;
+			bool foundSecond = false;
+			VoronoiDiagram::Halfedge_handle begin = fit->halfedge()->opposite();
+			VoronoiDiagram::Halfedge_handle edge = begin;
+			do {
+			    if(edge->source()->point().x() == v1.point().x() &&
+			    		edge->source()->point().y() == v1.point().y())
+			    {
+			    	foundFirst = true;
+			    }
+			    if(edge->source()->point().x() == v2.point().x() &&
+			    		edge->source()->point().y() == v2.point().y())
+			    {
+			    	foundSecond = true;
+			    }
+			    edge = edge->previous();
+			} while (edge != begin);
+			if(ret.first == nullptr)
+			{
+				ret.first = make_shared<Point_2>(fit->dual()->point());
+				continue;
+			}
+			if(ret.second == nullptr && ret.first->x() != fit->dual()->point().x()
+					&& ret.first->y() != fit->dual()->point().y())
+			{
+				ret.second = make_shared<Point_2>(fit->dual()->point());
+				break;
+			}
+		}
 		return ret;
 	}
 
 } /* namespace msl */
-
 

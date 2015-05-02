@@ -72,8 +72,13 @@ namespace msl
 		 * sets the status of the VoronoiDiagram
 		 */
 		void setStatus(VoronoiStatus status);
-
-		pair<Site_2, Site_2> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2);
+		/**
+		 * return the sites near an egde defined by 2 points
+		 * @param v1 VoronoiDiagram::Vertex
+		 * @param v2 VoronoiDiagram::Vertex
+		 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
+		 */
+		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2);
 
 	private:
 		/**
@@ -102,6 +107,7 @@ namespace msl
 		MSLWorldModel* wm;
 		VoronoiStatus status;
 		supplementary::SystemConfig* sc;
+		mutex netMutex;
 
 	};
 
