@@ -211,6 +211,7 @@ namespace msl
 			}
 			else
 			{
+				neighbors.at(i)->setCost(cost);
 				open->push_back(neighbors.at(i));
 			}
 		}
