@@ -60,6 +60,11 @@ namespace msl
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
 							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
 		/**
+		 * expands a SearchNode regarding robotDiameter and haveBall
+		 */
+		void expandNodeCarefully(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
+									shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, double robotDiameter, bool haveBall);
+		/**
 		 * gets the status of the VoronoiDiagram
 		 */
 		VoronoiStatus getStatus();
@@ -67,6 +72,8 @@ namespace msl
 		 * sets the status of the VoronoiDiagram
 		 */
 		void setStatus(VoronoiStatus status);
+
+		pair<Site_2, Site_2> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2);
 
 	private:
 		/**

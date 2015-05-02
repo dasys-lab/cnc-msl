@@ -66,6 +66,14 @@ namespace msl
 		 */
 		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal);
 		/**
+		 * aStar search on a VoronoiDiagram considering robot diameter and ballpossetion
+		 * @param voronoi shared_ptr<VoronoiNet>
+		 * @param ownPos Point_2
+		 * @param goal Point_2
+		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
+		 */
+		shared_ptr<vector<shared_ptr<Point_2>>> CarefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall);
+		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
 		 */
@@ -86,6 +94,7 @@ namespace msl
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
+		double robotDiameter;
 	};
 
 } /* namespace alica */

@@ -161,6 +161,46 @@ namespace msl
 	}
 
 	/**
+	 * expands Nodes given in current node
+	 * @param currentNode shared_ptr<SearchNode>
+	 */
+	void VoronoiNet::expandNodeCarefully(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
+	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, double robotDiameter, bool haveBall)
+	{
+		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
+		for(int i = 0; i < neighbors.size(); i++)
+		{
+			if(contains(closed, neighbors.at(i)))
+			{
+				continue;
+			}
+			double cost = currentNode->getCost() + calcDist(currentNode->getVertex()->point(), neighbors.at(i)->getVertex()->point());
+			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
+			{
+				continue;
+			}
+			neighbors.at(i)->setPredecessor(currentNode);
+			neighbors.at(i)->setCost(cost);
+			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			if(contains(open, neighbors.at(i)))
+			{
+				for(int j = 0; j < open->size(); j++)
+				{
+					if(open->at(i)->getVertex()->point().x() == neighbors.at(i)->getVertex()->point().x()
+					&& open->at(i)->getVertex()->point().y() == neighbors.at(i)->getVertex()->point().y())
+					{
+						open->at(j)->setCost(cost);
+					}
+				}
+			}
+			else
+			{
+				open->push_back(neighbors.at(i));
+			}
+		}
+	}
+
+	/**
 	 * generates a VoronoiDiagram and inserts given points
 	 * @param points vector<CNPoint2D>
 	 * @return shared_ptr<VoronoiDiagram>
@@ -169,9 +209,9 @@ namespace msl
 	{
 		this->status = VoronoiStatus::Calculating;
 		vector<Site_2> sites;
-		for(int i = 0; i < points.size(); i++)
+		for (int i = 0; i < points.size(); i++)
 		{
-			Site_2 site = Site_2(points.at(i).x,points.at(i).y);
+			Site_2 site = Site_2(points.at(i).x, points.at(i).y);
 			sites.push_back(site);
 		}
 		insertPoints(sites);
@@ -215,4 +255,14 @@ namespace msl
 		this->status = status;
 	}
 
+	//TODO
+	pair<Site_2, Site_2> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2)
+	{
+		pair<Site_2, Site_2> ret;
+
+		return ret;
+	}
+
 } /* namespace msl */
+
+
