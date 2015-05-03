@@ -23,6 +23,9 @@ typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
 
 #include <vector>
+#include <sstream>
+#include <iostream>
+
 #include <SystemConfig.h>
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
@@ -78,7 +81,19 @@ namespace msl
 		 * @param v2 VoronoiDiagram::Vertex
 		 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 		 */
-		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1, VoronoiDiagram::Vertex v2);
+		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNextToHalfEdge(shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2);
+		/**
+		 * print the voronoi diagrams sites
+		 */
+		void printSites();
+		/**
+		 * print the voronoi diagrams vertices
+		 */
+		void printVertices();
+		/**
+		 * to string
+		 */
+		string toString();
 
 	private:
 		/**

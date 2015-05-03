@@ -194,8 +194,21 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			neighbors.at(i)->setCost(cost);
+			// only if we have more than one way we could go
+			if(neighbors.size() > 1)
+			{
+				//TODO needs to be tested on robots
+				pair<shared_ptr<Point_2>, shared_ptr<Point_2>> sites = getSitesNextToHalfEdge(currentNode->getVertex(), neighbors.at(i)->getVertex());
+				if(calcDist(*sites.first, *sites.second) < robotDiameter)
+				{
+					cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+				}
+				if(calcDist(*sites.first, *sites.second) < robotDiameter && haveBall)
+				{
+					cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+				}
+			}
 			// add heuristic cost
-			//TODO haveBall and robotdiameter
 			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
@@ -234,6 +247,40 @@ namespace msl
 		}
 		insertPoints(sites);
 		return this->voronoi;
+	}
+
+	void msl::VoronoiNet::printSites()
+	{
+		cout << "Voronoi Diagram Sites: " << endl;
+		for(VoronoiDiagram::Face_iterator it = this->voronoi->faces_begin(); it != this->voronoi->faces_end(); it++ )
+		{
+			cout << it->dual()->point() << endl;
+		}
+	}
+
+	void msl::VoronoiNet::printVertices()
+	{
+		cout << "Voronoi Diagram Vertices: " << endl;
+		for(VoronoiDiagram::Vertex_iterator it = this->voronoi->vertices_begin(); it != this->voronoi->vertices_end(); it++)
+		{
+			cout <<  it->point() << endl;
+		}
+	}
+
+	string msl::VoronoiNet::toString()
+	{
+		stringstream ss;
+		ss << "Voronoi Diagram Vertices: " << endl;
+		for(VoronoiDiagram::Vertex_iterator it = this->voronoi->vertices_begin(); it != this->voronoi->vertices_end(); it++)
+		{
+			ss <<  it->point() << endl;
+		}
+		ss << "Voronoi Diagram Sites: " << endl;
+		for(VoronoiDiagram::Face_iterator it = this->voronoi->faces_begin(); it != this->voronoi->faces_end(); it++ )
+		{
+			ss << it->dual()->point() << endl;
+		}
+		return ss.str();
 	}
 
 	/**
@@ -279,8 +326,8 @@ namespace msl
 	 * @param v2 VoronoiDiagram::Vertex
 	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 	 */
-	pair<shared_ptr<Point_2>, shared_ptr<Point_2>> VoronoiNet::getSitesNExtToHalfEdge(VoronoiDiagram::Vertex v1,
-																					VoronoiDiagram::Vertex v2)
+	pair<shared_ptr<Point_2>, shared_ptr<Point_2>> VoronoiNet::getSitesNextToHalfEdge(shared_ptr<VoronoiDiagram::Vertex> v1,
+																					  shared_ptr<VoronoiDiagram::Vertex> v2)
 	{
 		pair<shared_ptr<Site_2>, shared_ptr<Site_2>> ret;
 		ret.first = nullptr;
@@ -292,13 +339,13 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle begin = fit->halfedge()->opposite();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do {
-			    if(edge->source()->point().x() == v1.point().x() &&
-			    		edge->source()->point().y() == v1.point().y())
+			    if(edge->source()->point().x() == v1->point().x() &&
+			    		edge->source()->point().y() == v1->point().y())
 			    {
 			    	foundFirst = true;
 			    }
-			    if(edge->source()->point().x() == v2.point().x() &&
-			    		edge->source()->point().y() == v2.point().y())
+			    if(edge->source()->point().x() == v2->point().x() &&
+			    		edge->source()->point().y() == v2->point().y())
 			    {
 			    	foundSecond = true;
 			    }
