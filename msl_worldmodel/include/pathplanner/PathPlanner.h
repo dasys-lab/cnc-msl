@@ -43,6 +43,8 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/VoronoiStatus.h"
 #include <msl_sensor_msgs/WorldModelData.h>
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
 
 
 //namespaces
@@ -89,12 +91,18 @@ namespace msl
 		 */
 		shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
+		//TODO
+
+		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
+
+
 	protected:
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
+		CNPoint2D lastPathTarget;
 	};
 
 } /* namespace alica */

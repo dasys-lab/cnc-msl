@@ -208,4 +208,21 @@ namespace msl
 		return nullptr;
 	}
 
+	//TODO
+	shared_ptr<CNPoint2D> PathPlanner::getEgoDirection(CNPoint2D egoTarget, bool stayInField)
+	{
+		lastPathTarget = egoTarget;
+		shared_ptr<VoronoiNet> net = getCurrentVoronoiNet();
+		shared_ptr<CNPoint2D> retPoint = nullptr;
+		shared_ptr<CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
+		if(ownPos != nullptr)
+		{
+			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
+
+		}
+
+		return retPoint;
+
+	}
+
 } /* namespace alica */

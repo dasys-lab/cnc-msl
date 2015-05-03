@@ -123,7 +123,6 @@ namespace msl
 		VoronoiStatus status;
 		supplementary::SystemConfig* sc;
 		mutex netMutex;
-
 	};
 
 } /* namespace msl */
