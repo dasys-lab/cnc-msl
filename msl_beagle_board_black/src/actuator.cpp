@@ -227,7 +227,7 @@ int main(int argc, char** argv) {
 	shovel.enabled = false;
 
 	// I2C
-	bool i2c = myI2C.open(ReadWrite | NonBlock);
+	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 
 	std::cout << "SPI: " << spi << std::endl;
