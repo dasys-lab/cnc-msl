@@ -86,13 +86,13 @@ namespace alica
 		if (kicked)
 		{
 			this->iterationsAfterKick++;
-			if (iterationsAfterKick > 2 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+			if (iterationsAfterKick > 30 && egoBallPos != nullptr && egoBallPos->length() <= 400)
 			{
 				kicked = false;
 				iterationsAfterKick = 0;
 			}
 
-			if (iterationsAfterKick > 2 && (egoBallPos == nullptr || egoBallPos->length() > 400))
+			if (egoBallPos == nullptr || egoBallPos->length() > 400)
 			{
 				this->success = true;
 			}
