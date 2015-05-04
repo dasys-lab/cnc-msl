@@ -383,8 +383,6 @@ void CGraphics::useTexture(int tex_id)
 {
     if (graphicDisabled) return;
     glEnable (GL_TEXTURE_2D);
-    std::cout << "TEX SIZE  " << tex_ids.size() << std::endl;
-    std::cout << "TEX " << tex_id << std::endl;
     glBindTexture(GL_TEXTURE_2D, tex_ids[tex_id]);
 }
 

@@ -26,6 +26,7 @@
 #include "logger.h"
 
 #include "msl_simulator/sim_packet.h"
+#include <ode/ode.h>
 
 #define ROBOT_GRAY 0.4
 #define WHEEL_COUNT 4
@@ -293,7 +294,7 @@ SSLWorld::~SSLWorld()
 }
 void SSLWorld::drawRobot(int team, int countRobot)
 {
-  const int wheeltexid = 37;
+  const int wheeltexid = 11;
   if(team == 1)
     robots[countRobot] = new Robot(p, ball, cfg, -form1->x[countRobot], form1->y[countRobot], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, countRobot + 1, wheeltexid, 1);
   else
@@ -320,6 +321,10 @@ void SSLWorld::drawRobot(int team, int countRobot)
          sur_matrix[i][j] = p->sur_matrix[i][j];
      }
    }
+  for (int i=0;i<p->surfaces.count();i++)
+       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id1)))][*((int*)(dGeomGetData(p->surfaces[i]->id2)))] =
+       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id2)))][*((int*)(dGeomGetData(p->surfaces[i]->id1)))] = i;
+
 
   p->sur_matrix = sur_matrix;
 
@@ -355,6 +360,7 @@ void SSLWorld::drawRobot(int team, int countRobot)
       }
     }
   }
+  glinit();
 }
 QImage* createBlob(char yb, int i, QImage** res)
 {
@@ -567,6 +573,7 @@ void SSLWorld::recvActions()
       else
         drawRobot(team, countOfRobots + ROBOT_COUNT);
 
+      carpeNoctemIds.push_back(packet->senderID);
       countOfRobots++;
     }
     float vx = packet->motion.rotation;

@@ -17,6 +17,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "robot.h"
+#include <iostream>
 
 // ang2 = position angle
 // ang  = rotation angle
@@ -201,7 +202,6 @@ Robot::Robot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal 
     m_rob_id = rob_id;
 
     space = w->space;
-
     chassis = new PCylinder(x,y,z,cfg->robotSettings.RobotRadius,cfg->robotSettings.RobotHeight,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
     chassis->space = space;
     w->addObject(chassis);
@@ -305,6 +305,7 @@ void Robot::drawLabel()
     dReal ty = rx*fz-fx*rz;
     dReal tz = fx*ry-fy*rx;
     w->g->setTransform(pos,rot);
+
     w->g->useTexture((m_rob_id-1) + 11 + 10*((on)?0:1));
     glShadeModel (GL_FLAT);
     glDisable(GL_LIGHTING);

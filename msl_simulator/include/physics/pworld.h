@@ -28,10 +28,10 @@ class PWorld
 {
 private:
     dJointGroupID contactgroup;
-    QVector<PSurface*> surfaces;
     dReal delta_time;
     int objects_count;
 public:
+    QVector<PSurface*> surfaces;
     PWorld(dReal dt,dReal gravity,CGraphics* graphics);
     ~PWorld();
     void setGravity(dReal gravity);
