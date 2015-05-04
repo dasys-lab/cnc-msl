@@ -43,6 +43,8 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/VoronoiStatus.h"
 #include <msl_sensor_msgs/WorldModelData.h>
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
 
 
 //namespaces
@@ -66,6 +68,14 @@ namespace msl
 		 */
 		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal);
 		/**
+		 * aStar search on a VoronoiDiagram considering robot diameter and ballpossetion
+		 * @param voronoi shared_ptr<VoronoiNet>
+		 * @param ownPos Point_2
+		 * @param goal Point_2
+		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
+		 */
+		shared_ptr<vector<shared_ptr<Point_2>>> CarefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall);
+		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
 		 */
@@ -81,11 +91,18 @@ namespace msl
 		 */
 		shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
+		//TODO
+
+		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
+
+
 	protected:
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
+		double robotDiameter;
+		CNPoint2D lastPathTarget;
 	};
 
 } /* namespace alica */

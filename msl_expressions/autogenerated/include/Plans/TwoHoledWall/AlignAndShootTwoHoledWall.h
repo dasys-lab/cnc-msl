@@ -18,6 +18,10 @@ using namespace msl_actuator_msgs;
 /*PROTECTED REGION END*/
 namespace alica
 {
+	enum HoleMode {
+		toggle = 0, lower = 1, upper = 2
+	};
+
     class AlignAndShootTwoHoledWall : public DomainBehaviour
     {
     public:
@@ -29,11 +33,12 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1417620683982) ENABLED START*/ //Add additional protected methods here
-        bool useLowerHole = false; // vorher true
+
 
         MSLFootballField* field;
-        int timesOnTarget = 0;
-
+        int timesOnTargetCounter = 0;
+        HoleMode holeMode;
+        bool useLowerHole;
         double maxVel;
         double pRot;
         double dRot;
@@ -45,19 +50,15 @@ namespace alica
 
         CNPoint3D higherHole;
         CNPoint3D lowerHole;
-        bool usedFixedHole;
-        bool changeHole;
-        bool useLowerHoleFixed;
-        double shootingSpeed;
-        int TIMES_ON_TARGET;
+
+        int timesOnTargetThreshold;
         int wheelSpeed;
         double voltage4shoot;
 
         vector<shared_ptr<CNPoint2D>> highKickList;
         vector<shared_ptr<CNPoint2D>> lowKickList;
 
-        double interPolatePower(double dist, vector<shared_ptr<CNPoint2D>> values);
-        unsigned short setKickPower(double distance, double height);
+        unsigned short setKickPower(double distance);
 
         /*PROTECTED REGION END*/
     private:

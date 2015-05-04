@@ -23,6 +23,9 @@ typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
 
 #include <vector>
+#include <sstream>
+#include <iostream>
+
 #include <SystemConfig.h>
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
@@ -60,6 +63,11 @@ namespace msl
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
 							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
 		/**
+		 * expands a SearchNode regarding robotDiameter and haveBall
+		 */
+		void expandNodeCarefully(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
+									shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, double robotDiameter, bool haveBall);
+		/**
 		 * gets the status of the VoronoiDiagram
 		 */
 		VoronoiStatus getStatus();
@@ -67,6 +75,25 @@ namespace msl
 		 * sets the status of the VoronoiDiagram
 		 */
 		void setStatus(VoronoiStatus status);
+		/**
+		 * return the sites near an egde defined by 2 points
+		 * @param v1 VoronoiDiagram::Vertex
+		 * @param v2 VoronoiDiagram::Vertex
+		 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
+		 */
+		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNextToHalfEdge(shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2);
+		/**
+		 * print the voronoi diagrams sites
+		 */
+		void printSites();
+		/**
+		 * print the voronoi diagrams vertices
+		 */
+		void printVertices();
+		/**
+		 * to string
+		 */
+		string toString();
 
 	private:
 		/**
@@ -95,7 +122,7 @@ namespace msl
 		MSLWorldModel* wm;
 		VoronoiStatus status;
 		supplementary::SystemConfig* sc;
-
+		mutex netMutex;
 	};
 
 } /* namespace msl */
