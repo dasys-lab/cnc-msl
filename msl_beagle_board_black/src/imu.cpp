@@ -26,6 +26,8 @@ void IMU::getAccel() {
 	i2c->writeByte(ADR_ACCEL, ACCEL_OUT_X);
 	uint8_t check = i2c->readBlock(ADR_ACCEL, val, sizeof(val));
 
+	std::cout << "Check: " << check << std::endl;
+
 	accel.x = ((int16_t) val[1] << 8) | val[0];
 	accel.y = ((int16_t) val[3] << 8) | val[2];
 	accel.z = ((int16_t) val[5] << 8) | val[4];
