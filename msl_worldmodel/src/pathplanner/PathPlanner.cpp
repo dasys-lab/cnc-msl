@@ -221,7 +221,7 @@ namespace msl
 		{
 			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
 			shared_ptr<vector<shared_ptr<Point_2>>> path = carefullAStarSearch(this->getCurrentVoronoiNet(),
-					Point_2(this->wm->rawSensorData.getOwnPositionVision()->x, this->wm->rawSensorData.getOwnPositionVision()->y)
+					Point_2(ownPos->x, ownPos->y)
 					, Point_2(alloTarget->x, alloTarget->y), this->wm->ball.haveBall());
 			if(path != nullptr)
 			{
@@ -229,7 +229,7 @@ namespace msl
 			}
 		}
 
-		return retPoint->alloToEgo(*this->wm->rawSensorData.getOwnPositionVision());
+		return retPoint->alloToEgo(*ownPos);
 
 	}
 
