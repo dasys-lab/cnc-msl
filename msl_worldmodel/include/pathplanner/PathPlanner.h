@@ -79,7 +79,7 @@ namespace msl
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
 		 */
-		void processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg);
+		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		/**
 		 * gets all saved VoronoiNets
 		 * @return vector<shared_ptr<VoronoiNet>>
