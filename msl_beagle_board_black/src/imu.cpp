@@ -214,7 +214,7 @@ void IMU::updateData(timeval time_now) {
 		std::cout << "Accel: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
 		std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
 		std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
-		std::cout << "Temp: " << temperature.x << " - " << temperature.y << " - " << temperature.z << std::endl;
+		std::cout << "Temp: " << temperature << std::endl;
 	}
 }
 
