@@ -47,6 +47,8 @@ namespace alica
         double maxRot;
         double angleTolerance;
         bool disableKicking;
+        bool kicked;
+        int iterationsAfterKick;
 
         CNPoint3D higherHole;
         CNPoint3D lowerHole;

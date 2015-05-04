@@ -49,18 +49,22 @@ namespace alica
 		// Load Kicking Power Lookup Lists for lower and higher hole
 		for (string sectionName : *lowKickListSections)
 		{
-			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "distance",
+			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(),
+																"distance",
 																NULL);
-			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "power", NULL);
+			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "power",
+															NULL);
 			auto p = make_shared<CNPoint2D>(distance, power);
 			lowKickList.push_back(p);
 		}
 
 		for (string sectionName : *highKickListSections)
 		{
-			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "distance",
+			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(),
+																"distance",
 																NULL);
-			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "power", NULL);
+			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "power",
+															NULL);
 			auto p = make_shared<CNPoint2D>(distance, power);
 			highKickList.push_back(p);
 		}
@@ -76,6 +80,26 @@ namespace alica
 		/*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
 		shared_ptr<CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
 		shared_ptr<CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
+
+
+		// stupid variant to be sure, that we have shoot!!!
+		if (kicked)
+		{
+			this->iterationsAfterKick++;
+			if (iterationsAfterKick > 6 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+			{
+				kicked = false;
+				iterationsAfterKick = 0;
+			}
+
+			if (iterationsAfterKick > 6 && (egoBallPos == nullptr || egoBallPos->length() > 400))
+			{
+				this->success = true;
+			}
+
+			return;
+		}
+
 		if (ownPos == nullptr || egoBallPos == nullptr)
 		{
 			return;
@@ -130,6 +154,8 @@ namespace alica
 					useLowerHole = !useLowerHole;
 				}
 				send(kc);
+				kicked = true;
+				iterationsAfterKick = 0;
 				voltage = wm->getKickerVoltage();
 			}
 			else
@@ -140,10 +166,9 @@ namespace alica
 				return;
 			}
 
-
 			cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
 					<< sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
-			this->success = true;
+			//this->success = true;
 			return;
 		}
 
@@ -167,8 +192,8 @@ namespace alica
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-		cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << " DeltaBallAngle: " << deltaBallAngle <<"\tRotation: " << mc.motion.rotation
-				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
+		cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << " DeltaBallAngle: " << deltaBallAngle << "\tRotation: "
+				<< mc.motion.rotation << "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
 		send(mc);
 		/*PROTECTED REGION END*/
@@ -178,6 +203,8 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
 		timesOnTargetCounter = 0;
+		kicked = false;
+		iterationsAfterKick = 0;
 		switch (holeMode)
 		{
 			case toggle:
@@ -225,7 +252,9 @@ namespace alica
 		}
 
 		// Interpolate linear
-		return kickList->at(i - 1)->y	+ (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x) * (kickList->at(i)->y - kickList->at(i - 1)->y);
+		return kickList->at(i - 1)->y
+				+ (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x)
+						* (kickList->at(i)->y - kickList->at(i - 1)->y);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
