@@ -167,7 +167,7 @@ namespace alica
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-		cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << " DeltaBallAngle: " << deltaBallAngle <<"\tRotation: " << mc.motion.rotation
+		cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: " << egoBallPos->y <<"\tRotation: " << mc.motion.rotation
 				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
 		send(mc);
