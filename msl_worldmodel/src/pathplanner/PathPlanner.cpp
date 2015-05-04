@@ -199,6 +199,7 @@ namespace msl
 	 */
 	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 	{
+		lock_guard<mutex> lock(this->voronoiMutex);
 		for (int i = 0; i < this->voronoiDiagrams.size(); i++)
 		{
 			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
