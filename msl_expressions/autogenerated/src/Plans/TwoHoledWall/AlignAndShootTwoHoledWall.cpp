@@ -94,6 +94,10 @@ namespace alica
 
 			if (egoBallPos == nullptr || egoBallPos->length() > 400)
 			{
+				if (holeMode == toggle)
+				{
+					useLowerHole = !useLowerHole;
+				}
 				this->success = true;
 			}
 
@@ -149,10 +153,6 @@ namespace alica
 			float voltage;
 			if (!disableKicking)
 			{
-				if (holeMode == toggle)
-				{
-					useLowerHole = !useLowerHole;
-				}
 				send(kc);
 				kicked = true;
 				iterationsAfterKick = 0;
