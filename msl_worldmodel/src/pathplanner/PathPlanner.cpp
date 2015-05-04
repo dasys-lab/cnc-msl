@@ -229,7 +229,7 @@ namespace msl
 			}
 		}
 
-		return retPoint;
+		return retPoint->alloToEgo(*this->wm->rawSensorData.getOwnPositionVision());
 
 	}
 
