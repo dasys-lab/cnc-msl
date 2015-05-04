@@ -30,13 +30,16 @@ namespace msl
 		shared_ptr<CNPoint2D> getAlloBallPosition();
 		shared_ptr<CNPoint2D> getEgoBallPosition();
 		shared_ptr<CNPoint2D> getEgoRawBallPosition();
+		void updateOnWorldModelData();
+	private:
+		shared_ptr<CNPoint2D> lastKnownBallPos;
 		double HAVE_BALL_TOLERANCE_DRIBBLE;
 		double KICKER_DISTANCE;
 		double KICKER_ANGLE;
 		double HAVE_BALL_MAX_ANGLE_DELTA;
-	private:
 		int hasBallIteration;
 		bool hadBefore;
+		bool hasBall;
 		double haveBallDistanceDynamic;
 		MSLWorldModel* wm;
 		SystemConfig* sc;

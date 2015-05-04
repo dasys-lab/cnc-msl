@@ -105,7 +105,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 # )
 
 ## Declare a cpp executable
-add_executable(msl_beagle_board_black src/actuator.cpp src/ballhandle.cpp src/opticalflow.cpp)
+add_executable(msl_beagle_board_black src/actuator.cpp src/ballhandle.cpp src/opticalflow.cpp src/imu.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

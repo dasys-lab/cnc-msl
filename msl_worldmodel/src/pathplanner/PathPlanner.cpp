@@ -153,7 +153,7 @@ namespace msl
 	 * processes the WorldModel msg
 	 * @param msg msl_sensor_msgs::WorldModelDataPtr
 	 */
-	void PathPlanner::processWolrdModelData(msl_sensor_msgs::WorldModelDataPtr msg)
+	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		vector<CNPoint2D> points;
 		for (int i = 0; i < msg->obstacles.size(); i++)

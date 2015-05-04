@@ -233,6 +233,8 @@ namespace msl
 				time);
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
+
+		this->wm->ball.updateOnWorldModelData();
 	}
 
 } /* namespace alica */

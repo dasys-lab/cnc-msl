@@ -16,10 +16,10 @@
 //const uint8_t ADR_THERMO	= 0x77;			// GY-80
 
 
-const uint8_t ADR_ACCEL			= 0x3A;		// LSM9DS0
-const uint8_t ADR_GYRO			= 0xD6;		// LSM9DS0
-const uint8_t ADR_MAGNET		= 0x3A;		// LSM9DS0
-const uint8_t ADR_TEMP			= 0x3A;		// LSM9DS0
+const uint8_t ADR_ACCEL			= 0x1D;		// LSM9DS0
+const uint8_t ADR_GYRO			= 0x6B;		// LSM9DS0
+const uint8_t ADR_MAGNET		= 0x1D;		// LSM9DS0
+const uint8_t ADR_TEMP			= 0x1D;		// LSM9DS0
 
 const uint8_t ACCEL_OUT_X			= 0x28;
 const uint8_t ACCEL_OUT_Y			= 0x2A;

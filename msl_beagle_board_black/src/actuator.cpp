@@ -197,6 +197,7 @@ void exit_program(int sig) {
 int main(int argc, char** argv) {
 	std::cout << "Test" << std::endl;
 
+	IMU lsm9ds0(&myI2C);
 
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
@@ -226,12 +227,11 @@ int main(int argc, char** argv) {
 	shovel.enabled = false;
 
 	// I2C
-	bool i2c = myI2C.open(ReadWrite | NonBlock);
+	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 
 	std::cout << "SPI: " << spi << std::endl;
 	std::cout << "I2C: " << i2c << std::endl;
-
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -240,6 +240,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
+//		ros::Time::now();
 		gettimeofday(&vorher, NULL);
 
 		// Thread Notify
@@ -263,6 +264,11 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&nachher, NULL);
 
+
+		lsm9ds0.updateData(nachher);
+
+
+/*
 		long int diffus = TIMEDIFFUS(nachher, vorher);
 		long int diffms = TIMEDIFFMS(nachher, vorher);
 
@@ -292,7 +298,7 @@ int main(int argc, char** argv) {
 		diffus = TIMEDIFFUS(swe, sws);
 		diffms = TIMEDIFFMS(swe, sws);
 		std::cout << "Sw : " << diffus << std::endl;
-
+*/
 
 
 		// MotionBurst

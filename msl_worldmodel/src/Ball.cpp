@@ -41,64 +41,73 @@ namespace msl
 
 	shared_ptr<CNPoint2D> Ball::getEgoBallPosition()
 	{
-		return this->wm->rawSensorData.getBallPosition();
+		if (this->wm->rawSensorData.getBallPosition() != nullptr)
+			return this->wm->rawSensorData.getBallPosition();
+
+		// In order to be consistent with the haveBall() return value, return the last known ball...
+		if (hasBallIteration > 0)
+		{
+			return lastKnownBallPos;
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
 	bool Ball::haveBall()
 	{
-		bool ret = true;
-		if (!hadBefore)
+		return hasBallIteration > 0;
+	}
+
+	void Ball::updateOnWorldModelData()
+	{
+		if (hasBallIteration > 0)
 		{
-			haveBallDistanceDynamic = 0;
+			haveBallDistanceDynamic = min (haveBallDistanceDynamic + 2, HAVE_BALL_TOLERANCE_DRIBBLE);
 		}
 		else
 		{
-			haveBallDistanceDynamic += 2; //TODO: this won't work, this method is called arbitrarily often in each iteration
-			haveBallDistanceDynamic = min(haveBallDistanceDynamic, HAVE_BALL_TOLERANCE_DRIBBLE);
+			haveBallDistanceDynamic = 0;
 		}
-		shared_ptr<CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+
+		shared_ptr<CNPoint2D> ballPos = this->wm->rawSensorData.getBallPosition();
 		if (ballPos == nullptr)
 		{
-			return false;
+			// TODO predict ball, Endy do it!
+			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			return;
 		}
 
-		double angle = ballPos->angleTo();
-		double ballDist = ballPos->length();
+		lastKnownBallPos = ballPos;
 
-		double usedKicker = M_PI;
-		if (hadBefore)
-		{
-			if (KICKER_DISTANCE + haveBallDistanceDynamic < ballDist)
-			{
-				ret = false;
-			}
-		}
-		else if (KICKER_DISTANCE < ballDist)
-		{
-			ret = false;
-		}
-		usedKicker = KICKER_ANGLE;
 
-		//calc angle tolerance to the ball
-		double tmpTol = angle - usedKicker;
-		//Normalize rotation
-		if (tmpTol < -M_PI)
+		// check distance to ball
+		if (KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length())
 		{
-			tmpTol += 2.0 * M_PI;
-		}
-		else if (tmpTol > M_PI)
-		{
-			tmpTol -= 2.0 * M_PI;
+			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			return;
 		}
 
-		tmpTol = abs(tmpTol);
-
-		if (tmpTol > HAVE_BALL_MAX_ANGLE_DELTA)
+		// turn ball angle by 180°, in order to get a working reference value for the HAVE_BALL_MAX_ANGLE_DELTA parameter
+		double ballAngle = ballPos->angleTo();
+		if (ballAngle < 0)
 		{
-			ret = false;
+			ballAngle += M_PI;
 		}
-		hadBefore = ret;
-		return ret;
+		else
+		{
+			ballAngle -= M_PI;
+		}
+
+		// check angle to ball
+		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+		{
+			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			return;
+		}
+
+		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
 
 	shared_ptr<CNPoint2D> Ball::getEgoRawBallPosition()

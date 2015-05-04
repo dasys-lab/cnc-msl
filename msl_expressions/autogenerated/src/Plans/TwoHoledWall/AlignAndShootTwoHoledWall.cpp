@@ -86,14 +86,18 @@ namespace alica
 		if (kicked)
 		{
 			this->iterationsAfterKick++;
-			if (iterationsAfterKick > 6 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+			if (iterationsAfterKick > 30 && egoBallPos != nullptr && egoBallPos->length() <= 400)
 			{
 				kicked = false;
 				iterationsAfterKick = 0;
 			}
 
-			if (iterationsAfterKick > 6 && (egoBallPos == nullptr || egoBallPos->length() > 400))
+			if (egoBallPos == nullptr || egoBallPos->length() > 400)
 			{
+				if (holeMode == toggle)
+				{
+					useLowerHole = !useLowerHole;
+				}
 				this->success = true;
 			}
 
@@ -149,10 +153,6 @@ namespace alica
 			float voltage;
 			if (!disableKicking)
 			{
-				if (holeMode == toggle)
-				{
-					useLowerHole = !useLowerHole;
-				}
 				send(kc);
 				kicked = true;
 				iterationsAfterKick = 0;
