@@ -74,7 +74,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<Point_2>>> CarefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall);
+		shared_ptr<vector<shared_ptr<Point_2>>> carefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
