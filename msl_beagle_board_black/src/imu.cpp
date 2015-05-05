@@ -98,11 +98,10 @@ void IMU::getAccel() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	i2c->setDeviceAddress(ADR_XM);
-	for(int i=0; i<6; i++) {
-		val[i] = i2c->readByte(ACCEL_OUT_X + i);
-	}
-
-	// i2c->readBlock(ACCEL_OUT_X, val, sizeof(val));
+//	for(int i=0; i<6; i++) {
+//		val[i] = i2c->readByte(ACCEL_OUT_X + i);
+//	}
+	std::cout << i2c->readBlock(ACCEL_OUT_X, val, sizeof(val)) << std::endl;
 
 	accel.x = ((int16_t) val[1] << 8) | val[0];
 	accel.y = ((int16_t) val[3] << 8) | val[2];
@@ -113,7 +112,9 @@ void IMU::getGyro() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	i2c->setDeviceAddress(ADR_G);
-	i2c->readBlock(GYRO_OUT_X, val, sizeof(val));
+	for(int i=0; i<6; i++) {
+		val[i] = i2c->readByte(GYRO_OUT_X + i);
+	}
 
 	gyro.x = ((int16_t) val[1] << 8) | val[0];
 	gyro.y = ((int16_t) val[3] << 8) | val[2];
@@ -150,9 +151,9 @@ void IMU::updateData(timeval time_now) {
 		last_updated = time_now;
 
 		std::cout << "Accel: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
-		std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
-		std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
-		std::cout << "Temp: " << temperature << std::endl;
+		//std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
+		//std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
+		//std::cout << "Temp: " << temperature << std::endl;
 
 
 	}
@@ -173,6 +174,40 @@ void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 		imuPub->publish(msg);*/
 		last_sended = time_now;
 	}
+}
+
+void IMU::testSensor() {
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+	i2c->setDeviceAddress(ADR_XM);
+	for(int i=0; i<6; i++) {
+		val[i] = i2c->readByte(ACCEL_OUT_X + i);
+	}
+
+	accel.x = ((int16_t) val[1] << 8) | val[0];
+	accel.y = ((int16_t) val[3] << 8) | val[2];
+	accel.z = ((int16_t) val[5] << 8) | val[4];
+
+	std::cout << "Accel - Byte: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
+
+
+	i2c->setDeviceAddress(ADR_XM);
+	accel.x = i2c->readWord(ACCEL_OUT_X);
+	accel.x = i2c->readWord(ACCEL_OUT_Y);
+	accel.x = i2c->readWord(ACCEL_OUT_Z);
+
+
+	std::cout << "Accel - Word: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
+
+
+	i2c->setDeviceAddress(ADR_XM);
+	std::cout << "BlockSize: " << i2c->readBlock(ACCEL_OUT_X, val, sizeof(val)) << std::endl;
+
+	accel.x = ((int16_t) val[1] << 8) | val[0];
+	accel.y = ((int16_t) val[3] << 8) | val[2];
+	accel.z = ((int16_t) val[5] << 8) | val[4];
+
+	std::cout << "Accel - Block: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
 }
 
 
