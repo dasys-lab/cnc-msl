@@ -65,7 +65,7 @@ bool IMU::whoami() {
 }
 
 void IMU::setupAccel(uint8_t range) {
-	uint8_t reg, val[2];
+	uint8_t reg;
 
 	i2c->setDeviceAddress(ADR_XM);
 	reg = i2c->readByte(CTRL_REG2_XM);
@@ -75,7 +75,7 @@ void IMU::setupAccel(uint8_t range) {
 }
 
 void IMU::setupGyro(uint8_t scale) {
-	uint8_t reg, val[2];
+	uint8_t reg;
 
 	i2c->setDeviceAddress(ADR_G);
 	reg = i2c->readByte(CTRL_REG4_G);
@@ -85,7 +85,7 @@ void IMU::setupGyro(uint8_t scale) {
 }
 
 void IMU::setupMagnet(uint8_t scale) {
-	uint8_t reg, val[2];
+	uint8_t reg;
 
 	i2c->setDeviceAddress(ADR_XM);
 	reg = i2c->readByte(CTRL_REG6_XM);
@@ -98,7 +98,11 @@ void IMU::getAccel() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	i2c->setDeviceAddress(ADR_XM);
-	i2c->readBlock(ACCEL_OUT_X, val, sizeof(val));
+	for(int i=0; i<6; i++) {
+		val[i] = i2c->readByte(ACCEL_OUT_X + i);
+	}
+
+	// i2c->readBlock(ACCEL_OUT_X, val, sizeof(val));
 
 	accel.x = ((int16_t) val[1] << 8) | val[0];
 	accel.y = ((int16_t) val[3] << 8) | val[2];
