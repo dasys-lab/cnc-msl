@@ -191,7 +191,6 @@ void IMU::testSensor() {
 	std::cout << "Accel - Byte: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
 
 
-	i2c->setDeviceAddress(ADR_XM);
 	accel.x = i2c->readWord(ACCEL_OUT_X);
 	accel.x = i2c->readWord(ACCEL_OUT_Y);
 	accel.x = i2c->readWord(ACCEL_OUT_Z);
@@ -200,14 +199,13 @@ void IMU::testSensor() {
 	std::cout << "Accel - Word: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
 
 
-	i2c->setDeviceAddress(ADR_XM);
 	std::cout << "BlockSize: " << i2c->readBlock(ACCEL_OUT_X, val, sizeof(val)) << std::endl;
 
 	accel.x = ((int16_t) val[1] << 8) | val[0];
 	accel.y = ((int16_t) val[3] << 8) | val[2];
 	accel.z = ((int16_t) val[5] << 8) | val[4];
 
-	std::cout << "Accel - Block: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
+	std::cout << "Accel - Block: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl << std::endl << std::endl;
 }
 
 
