@@ -265,8 +265,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&nachher, NULL);
 
 
-		// lsm9ds0.updateData(nachher);
-		lsm9ds0.readWhoAmI();
+		lsm9ds0.updateData(nachher);
 
 
 /*
