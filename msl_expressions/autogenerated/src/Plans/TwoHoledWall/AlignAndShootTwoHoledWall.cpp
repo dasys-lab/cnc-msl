@@ -26,6 +26,7 @@ namespace alica
 		minRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MinRotation", NULL);
 		maxRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxRotation", NULL);
 		angleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.AngleTolerance", NULL);
+		ballAngleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.BallAngleTolerance", NULL);
 
 		// Hole Stuff
 		lowerHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.X", NULL);
@@ -132,7 +133,7 @@ namespace alica
 
 		// Counter for correct aiming
 //		if (fabs(deltaHoleAngle) < this->angleTolerance)
-		if (fabs(deltaBallAngle) < this->angleTolerance && fabs(deltaHoleAngle) < this->angleTolerance)
+		if (fabs(deltaBallAngle) < this->ballAngleTolerance && fabs(deltaHoleAngle) < this->angleTolerance)
 		{
 			//cout << "align and shoot: hit target" << endl;
 			timesOnTargetCounter++;
