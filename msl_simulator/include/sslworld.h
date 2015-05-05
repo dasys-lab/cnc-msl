@@ -93,8 +93,9 @@ public:
     RobotsFomation* form2;
     PSurface ballwithkicker;
     PSurface wheelswithground;
-    vector<int> carpeNoctemIds;
-    int countOfRobots = 0;
+    map<int, int> carpeNoctemIds;
+    int countOfRobotsTeamYellow = 0;
+    int countOfRobotsTeamBlue = 0;
     void drawRobot(int team, int countRobot);
 public slots:
     void recvActions();

@@ -217,10 +217,10 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
   cfg->robotSettings = cfg->blueSettings;
 
   for (int k = 0; k < ROBOT_COUNT; k++)
-    robots[k] = NULL; //new Robot(p, ball, cfg, -form1->x[k], form1->y[k], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, k + 1, wheeltexid, 1);
+    robots[k] = new Robot(p, ball, cfg, -form1->x[k], form1->y[k], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, k + 1, wheeltexid, 1);
   cfg->robotSettings = cfg->yellowSettings;
   for (int k = 0; k < ROBOT_COUNT; k++)
-    robots[k + ROBOT_COUNT] = NULL; //new Robot(p, ball, cfg, form2->x[k], form2->y[k], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, k + ROBOT_COUNT + 1, wheeltexid, -1); //XXX
+    robots[k + ROBOT_COUNT] = new Robot(p, ball, cfg, form2->x[k], form2->y[k], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, k + ROBOT_COUNT + 1, wheeltexid, -1); //XXX
 
   p->initAllObjects();
 
@@ -285,6 +285,13 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
   timer = new QTime();
   timer->start();
   in_buffer = new char[65536];
+
+  for (int j = 0; j < 2 * ROBOT_COUNT; j++)
+  {
+    ///PARK THEM IN SHITTY NIRVANA
+    robots[j]->setXY(10+j, 10+j);
+  }
+
 }
 
 SSLWorld::~SSLWorld()
@@ -294,73 +301,128 @@ SSLWorld::~SSLWorld()
 }
 void SSLWorld::drawRobot(int team, int countRobot)
 {
-  const int wheeltexid = 11;
-  if(team == 1)
-    robots[countRobot] = new Robot(p, ball, cfg, -form1->x[countRobot], form1->y[countRobot], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, countRobot + 1, wheeltexid, 1);
+  std::cout <<  "TEAM " << team << " count " << countRobot << std::endl;
+  if(countRobot < 6)
+  {
+    switch (countRobot)
+    {
+      case 0:
+        std::cout << "BEWEGE BLUE 0" << std:: endl;
+        robots[countRobot]->setXY(-0.68, 1.03);
+        break;
+      case 1:
+        robots[countRobot]->setXY(-0.73, -1.03);
+        break;
+      case 2:
+        robots[countRobot]->setXY(-1.93, -1.10);
+        break;
+      case 3:
+        robots[countRobot]->setXY(-2.08, 1.07);
+        break;
+      case 4:
+        robots[countRobot]->setXY(-2.92, 0);
+        break;
+      case 5:
+        std::cout << "MSL --> 5 Robots dude" << std:: endl;
+        break;
+      default:
+        break;
+    }
+  }
   else
-    robots[countRobot] = new Robot(p, ball, cfg, form2->x[countRobot], form2->y[countRobot], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, countRobot + 1, wheeltexid, -1);
-
-  int **sur_matrix;
-  int c = p->objects.count();
-  sur_matrix = new int* [c];
-
-  for (int i=0;i<c;i++)
   {
-    sur_matrix[i] = new int [c];
-    for (int j=0;j<c;j++)
+    switch (countRobot)
     {
-        sur_matrix[i][j] = -1;
+      case 6:
+        std::cout << "BEWEGE YELLOW 0" << std:: endl;
+        robots[countRobot]->setXY(+0.68, 1.03);
+        break;
+      case 7:
+        robots[countRobot]->setXY(+2.10, +1.18);
+        break;
+      case 8:
+        robots[countRobot]->setXY(+0.6, -0.6);
+        break;
+      case 9:
+        robots[countRobot]->setXY(+1.68, -0.72);
+        break;
+      case 10:
+        robots[countRobot]->setXY(+2.92, 0);
+        break;
+      case 11:
+        std::cout << "MSL --> 5 Robots dude" << std:: endl;
+        break;
+      default:
+        break;
     }
   }
 
-  for (int i=0;i<c-7;i++)
-   {
-     sur_matrix[i] = new int [c];
-     for (int j=0;j<c-7;j++)
-     {
-         sur_matrix[i][j] = p->sur_matrix[i][j];
-     }
-   }
-  for (int i=0;i<p->surfaces.count();i++)
-       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id1)))][*((int*)(dGeomGetData(p->surfaces[i]->id2)))] =
-       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id2)))][*((int*)(dGeomGetData(p->surfaces[i]->id1)))] = i;
-
-
-  p->sur_matrix = sur_matrix;
-
-  p->createSurface(ray, robots[countRobot]->chassis)->callback = rayCallback;
-  p->createSurface(ray, robots[countRobot]->dummy)->callback = rayCallback;
-
-  for (int k = 0; k < 2 * ROBOT_COUNT; k++)
-  {
-    if (robots[k] == NULL)
-      continue;
-    p->createSurface(robots[k]->chassis, ground);
-    for (int j = 0; j < WALL_COUNT; j++)
-      p->createSurface(robots[k]->chassis, walls[j]);
-
-    p->createSurface(robots[k]->dummy, ball);
-    p->createSurface(robots[k]->kicker->box, ball)->surface = ballwithkicker.surface;
-    for (int j = 0; j < WHEEL_COUNT; j++)
-    {
-      p->createSurface(robots[k]->wheels[j]->cyl, ball);
-      PSurface* w_g = p->createSurface(robots[k]->wheels[j]->cyl, ground);
-      w_g->surface = wheelswithground.surface;
-      w_g->usefdir1 = true;
-      w_g->callback = wheelCallBack;
-    }
-    for (int j = k + 1; j < 2 * ROBOT_COUNT; j++)
-    {
-      if(robots[j] == NULL)
-        continue;
-      if (k != j)
-      {
-        p->createSurface(robots[k]->dummy, robots[j]->dummy); //seams ode doesn't understand cylinder-cylinder contacts, so I used spheres
-        p->createSurface(robots[k]->chassis, robots[j]->kicker->box);
-      }
-    }
-  }
-  glinit();
+  //BROKEN STUFF --> maybe we can use it later
+//  const int wheeltexid = 13;
+//  if(team == 1)
+//    robots[countRobot] = new Robot(p, ball, cfg, -form1->x[countRobot], form1->y[countRobot], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, countRobot + 1, wheeltexid, 1);
+//  else
+//    robots[countRobot] = new Robot(p, ball, cfg, form2->x[countRobot], form2->y[countRobot], ROBOT_START_Z(cfg), ROBOT_GRAY, ROBOT_GRAY, ROBOT_GRAY, countRobot + 1, wheeltexid, -1);
+//
+//  int **sur_matrix;
+//  int c = p->objects.count();
+//  sur_matrix = new int* [c];
+//
+//  for (int i=0;i<c;i++)
+//  {
+//    sur_matrix[i] = new int [c];
+//    for (int j=0;j<c;j++)
+//    {
+//        sur_matrix[i][j] = -1;
+//    }
+//  }
+//
+//  for (int i=0;i<c-7;i++)
+//   {
+//     sur_matrix[i] = new int [c];
+//     for (int j=0;j<c-7;j++)
+//     {
+//         sur_matrix[i][j] = p->sur_matrix[i][j];
+//     }
+//   }
+//  p->sur_matrix = sur_matrix;
+//  for (int i=0;i<p->surfaces.count();i++)
+//       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id1)))][*((int*)(dGeomGetData(p->surfaces[i]->id2)))] =
+//       sur_matrix[(*(int*)(dGeomGetData(p->surfaces[i]->id2)))][*((int*)(dGeomGetData(p->surfaces[i]->id1)))] = i;
+//
+//
+//  p->createSurface(ray, robots[countRobot]->chassis)->callback = rayCallback;
+//  p->createSurface(ray, robots[countRobot]->dummy)->callback = rayCallback;
+//
+//  for (int k = 0; k < 2 * ROBOT_COUNT; k++)
+//  {
+//    if (robots[k] == NULL)
+//      continue;
+//    p->createSurface(robots[k]->chassis, ground);
+//    for (int j = 0; j < WALL_COUNT; j++)
+//      p->createSurface(robots[k]->chassis, walls[j]);
+//
+//    p->createSurface(robots[k]->dummy, ball);
+//    p->createSurface(robots[k]->kicker->box, ball)->surface = ballwithkicker.surface;
+//    for (int j = 0; j < WHEEL_COUNT; j++)
+//    {
+//      p->createSurface(robots[k]->wheels[j]->cyl, ball);
+//      PSurface* w_g = p->createSurface(robots[k]->wheels[j]->cyl, ground);
+//      w_g->surface = wheelswithground.surface;
+//      w_g->usefdir1 = true;
+//      w_g->callback = wheelCallBack;
+//    }
+//    for (int j = k + 1; j < 2 * ROBOT_COUNT; j++)
+//    {
+//      if(robots[j] == NULL)
+//        continue;
+//      if (k != j)
+//      {
+//        p->createSurface(robots[k]->dummy, robots[j]->dummy); //seams ode doesn't understand cylinder-cylinder contacts, so I used spheres
+//        p->createSurface(robots[k]->chassis, robots[j]->kicker->box);
+//      }
+//    }
+//  }
 }
 QImage* createBlob(char yb, int i, QImage** res)
 {
@@ -564,23 +626,33 @@ void SSLWorld::recvActions()
       team = 1;
     else
       team = 0;
-    std::vector<int>::iterator it;
-    it = find (carpeNoctemIds.begin(), carpeNoctemIds.end(), packet->senderID);
-    if(it == carpeNoctemIds.end())
+
+    std::map<int,int>::iterator it;
+    it=carpeNoctemIds.find(packet->senderID);
+    if(it == carpeNoctemIds.end() && countOfRobotsTeamYellow + countOfRobotsTeamYellow < 11)
     {
       if(team == 1)
-        drawRobot(team, countOfRobots);
+      {
+        drawRobot(countOfRobotsTeamYellow, countOfRobotsTeamYellow);
+        carpeNoctemIds.insert(std::make_pair(packet->senderID, countOfRobotsTeamYellow));
+        countOfRobotsTeamYellow++;
+      }
       else
-        drawRobot(team, countOfRobots + ROBOT_COUNT);
-
-      carpeNoctemIds.push_back(packet->senderID);
-      countOfRobots++;
+      {
+        drawRobot(countOfRobotsTeamBlue, countOfRobotsTeamBlue + ROBOT_COUNT);
+        carpeNoctemIds.insert(std::make_pair(packet->senderID, countOfRobotsTeamBlue + ROBOT_COUNT));
+        countOfRobotsTeamBlue++;
+      }
     }
-    float vx = packet->motion.rotation;
-    float vy = packet->motion.translation;
-    float vw = packet->motion.angle;
-    int id = robotIndex(6, team);
-    robots[6]->setSpeed(vx, vy, vw);
+    else
+    {
+      float vx = packet->motion.rotation;
+      float vy = packet->motion.translation;
+      float vw = packet->motion.angle;
+      int id = robotIndex(it->second , team);
+      robots[it->second]->setSpeed(vx, vy, vw);
+    }
+
 
   }
 
