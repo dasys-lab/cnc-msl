@@ -217,6 +217,8 @@ void IMU::updateData(timeval time_now) {
 		std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
 		std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
 		std::cout << "Temp: " << temperature << std::endl;
+
+
 	}
 }
 
@@ -235,4 +237,20 @@ void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 		imuPub->publish(msg);*/
 		last_sended = time_now;
 	}
+}
+
+void IMU::readWhoAmI() {
+	uint8_t val = 0xAA;
+	i2c->writeByte(0x1d, 0x0f);
+	val = i2c->readByte(0x1d);
+
+	std::cout << "Who 0x1d: " << val << std::endl;
+
+	i2c->close();
+	i2c->open(2);		// 2 -> ReadWrite
+
+	std::cout << "Open? - " << i2c->isOpen() << std::endl;
+	std::cout << "Write? - " << i2c->writeByte(0x1d, 0x0f) << std::endl;
+	std::cout << "Read? - " << i2c->readByte(0x1d) << std::endl;
+
 }

@@ -197,8 +197,6 @@ void exit_program(int sig) {
 int main(int argc, char** argv) {
 	std::cout << "Test" << std::endl;
 
-	IMU lsm9ds0(&myI2C);
-
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
@@ -229,6 +227,8 @@ int main(int argc, char** argv) {
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
+
+	IMU lsm9ds0(&myI2C);
 
 	std::cout << "SPI: " << spi << std::endl;
 	std::cout << "I2C: " << i2c << std::endl;
@@ -265,7 +265,8 @@ int main(int argc, char** argv) {
 		gettimeofday(&nachher, NULL);
 
 
-		lsm9ds0.updateData(nachher);
+		// lsm9ds0.updateData(nachher);
+		lsm9ds0.readWhoAmI();
 
 
 /*
