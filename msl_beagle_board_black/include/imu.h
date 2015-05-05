@@ -16,10 +16,11 @@
 //const uint8_t ADR_THERMO	= 0x77;			// GY-80
 
 
-const uint8_t ADR_ACCEL			= 0x1D;		// LSM9DS0
-const uint8_t ADR_GYRO			= 0x6B;		// LSM9DS0
-const uint8_t ADR_MAGNET		= 0x1D;		// LSM9DS0
-const uint8_t ADR_TEMP			= 0x1D;		// LSM9DS0
+const uint8_t ADR_G				= 0x6B;		// LSM9DS0
+const uint8_t ADR_XM			= 0x1D;		// LSM9DS0
+
+const uint8_t WHO_AM_I_G		= 0xD4;
+const uint8_t WHO_AM_I_XM		= 0x49;
 
 const uint8_t ACCEL_OUT_X			= 0x28;
 const uint8_t ACCEL_OUT_Y			= 0x2A;
@@ -91,6 +92,7 @@ class IMU {
 		void		setupAccel(uint8_t range);
 		void		setupGyro(uint8_t scale);
 		void		setupMagnet(uint8_t scale);
+		bool		whoami();
 
 
 
@@ -100,7 +102,6 @@ class IMU {
 		void		init();
 		void		updateData(timeval time_now);
 		void		sendData(timeval time_now, ros::Publisher *imuPub);
-		void		readWhoAmI();
 
 };
 
