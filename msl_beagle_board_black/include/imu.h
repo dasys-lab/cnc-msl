@@ -10,16 +10,12 @@
 
 #include "config.h"
 
-//const uint8_t ADR_GYRO		= 0x69;			// GY-80
-//const uint8_t ADR_ACCEL		= 0x53;			// GY-80
-//const uint8_t ADR_MAGNET	= 0x1E;			// GY-80
-//const uint8_t ADR_THERMO	= 0x77;			// GY-80
 
+const uint8_t ADR_G				= 0x6B;		// LSM9DS0
+const uint8_t ADR_XM			= 0x1D;		// LSM9DS0
 
-const uint8_t ADR_ACCEL			= 0x1D;		// LSM9DS0
-const uint8_t ADR_GYRO			= 0x6B;		// LSM9DS0
-const uint8_t ADR_MAGNET		= 0x1D;		// LSM9DS0
-const uint8_t ADR_TEMP			= 0x1D;		// LSM9DS0
+const uint8_t WHO_AM_I_G		= 0xD4;
+const uint8_t WHO_AM_I_XM		= 0x49;
 
 const uint8_t ACCEL_OUT_X			= 0x28;
 const uint8_t ACCEL_OUT_Y			= 0x2A;
@@ -74,25 +70,14 @@ class IMU {
 			int16_t	x, y, z;
 		} gyro, accel, magnet;
 
-
-		void		getAccel();
-		int16_t		getAccelX();
-		int16_t		getAccelY();
-		int16_t		getAccelZ();
-		void		getGyro();
-		int16_t		getGyroX();
-		int16_t		getGyroY();
-		int16_t		getGyroZ();
-		void		getMagnet();
-		int16_t		getMagnetX();
-		int16_t		getMagnetY();
-		int16_t		getMagnetZ();
-		void		getTemp();
+		bool		whoami();
 		void		setupAccel(uint8_t range);
 		void		setupGyro(uint8_t scale);
 		void		setupMagnet(uint8_t scale);
-
-
+		void		getAccel();
+		void		getGyro();
+		void		getMagnet();
+		void		getTemp();
 
 	public:
 					IMU(BlackLib::BlackI2C *i2c_P);
@@ -100,7 +85,6 @@ class IMU {
 		void		init();
 		void		updateData(timeval time_now);
 		void		sendData(timeval time_now, ros::Publisher *imuPub);
-		void		readWhoAmI();
 
 };
 
