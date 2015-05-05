@@ -45,7 +45,7 @@ namespace alica
         double lastRotError;
         double minRot;
         double maxRot;
-        double angleTolerance;
+        double angleTolerance, ballAngleTolerance;
         bool disableKicking;
         bool kicked;
         int iterationsAfterKick;
