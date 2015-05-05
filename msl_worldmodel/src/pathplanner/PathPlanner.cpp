@@ -11,11 +11,12 @@
 namespace msl
 {
 
-	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) : voronoiDiagrams(count)
+	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) :
+			voronoiDiagrams(count)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
-		for(int i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
 		}
@@ -34,7 +35,7 @@ namespace msl
 	 * @param goal Point_2
 	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet>  voronoi, Point_2 ownPos, Point_2 goal)
+	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal)
 	{
 		// return
 		shared_ptr<vector<shared_ptr<Point_2>>> ret = make_shared<vector<shared_ptr<Point_2>>>();
@@ -95,7 +96,7 @@ namespace msl
 	 * @param haveBall bool
 	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::CarefullAStarSearch(shared_ptr<VoronoiNet>  voronoi, Point_2 ownPos, Point_2 goal, bool haveBall)
+	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::carefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall)
 	{
 		// return
 		shared_ptr<vector<shared_ptr<Point_2>>> ret = make_shared<vector<shared_ptr<Point_2>>>();
@@ -155,24 +156,24 @@ namespace msl
 	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		vector<CNPoint2D> points;
-		for(int i = 0; i < msg->obstacles.size(); i++)
+		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
-			CNPoint2D point = CNPoint2D(msg->obstacles.at(i).x,msg->obstacles.at(i).y);
+			CNPoint2D point = CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y);
 			points.push_back(point);
 		}
 		lock_guard<mutex> lock(voronoiMutex);
-		for(int i = 0; i < voronoiDiagrams.size(); i++)
+		for (int i = 0; i < voronoiDiagrams.size(); i++)
 		{
-			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
+			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
 			{
 				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Old);
 				break;
 			}
 		}
-		for(int i = 0; voronoiDiagrams.size(); i++)
+		for (int i = 0; voronoiDiagrams.size(); i++)
 		{
-			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::New ||
-					voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
+			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::New
+					|| voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
 			{
 				voronoiDiagrams.at(i)->generateVoronoiDiagram(points);
 				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Latest);
@@ -198,9 +199,10 @@ namespace msl
 	 */
 	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 	{
-		for(int i = 0; i < this->voronoiDiagrams.size(); i++)
+		lock_guard<mutex> lock(this->voronoiMutex);
+		for (int i = 0; i < this->voronoiDiagrams.size(); i++)
 		{
-			if(voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
+			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
 			{
 				return voronoiDiagrams.at(i);
 			}
@@ -215,13 +217,19 @@ namespace msl
 		shared_ptr<VoronoiNet> net = getCurrentVoronoiNet();
 		shared_ptr<CNPoint2D> retPoint = nullptr;
 		shared_ptr<CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
-		if(ownPos != nullptr)
+		if (ownPos != nullptr)
 		{
 			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
-
+			shared_ptr<vector<shared_ptr<Point_2>>> path = carefullAStarSearch(this->getCurrentVoronoiNet(),
+					Point_2(ownPos->x, ownPos->y)
+					, Point_2(alloTarget->x, alloTarget->y), this->wm->ball.haveBall());
+			if(path != nullptr)
+			{
+				retPoint = make_shared<CNPoint2D>(path->at(0)->x(), path->at(0)->y());
+			}
 		}
 
-		return retPoint;
+		return retPoint->alloToEgo(*ownPos);
 
 	}
 
