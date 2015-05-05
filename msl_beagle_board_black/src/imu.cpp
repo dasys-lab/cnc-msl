@@ -241,8 +241,7 @@ void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 
 void IMU::readWhoAmI() {
 	uint8_t val = 0xAA;
-	i2c->writeByte(0x1d, 0x0f);
-	val = i2c->readByte(0x1d);
+	val = i2c->readByte(0x0f);
 
 	std::cout << "Who 0x1d: " << val << std::endl;
 
@@ -250,7 +249,6 @@ void IMU::readWhoAmI() {
 	i2c->open(2);		// 2 -> ReadWrite
 
 	std::cout << "Open? - " << i2c->isOpen() << std::endl;
-	std::cout << "Write? - " << i2c->writeByte(0x1d, 0x0f) << std::endl;
-	std::cout << "Read? - " << i2c->readByte(0x1d) << std::endl;
+	std::cout << "Read? - " << i2c->readByte(0x0f) << std::endl;
 
 }
