@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         // LOAD LOOKUPTABLE
         char path[256];
-        strcpy(path, getenv("ES_ROOT"));
+        strcpy(path, getenv("DOMAIN_FOLDER"));
 
         std::ostringstream oss;
         oss << path << "/etc/" << robot->getHostname() << "/LookupTable.txt";
@@ -304,7 +304,7 @@ QString MainWindow::getLookupTablePwd() {
     Robot* robot = getSelectedRobot();
     if (robot) {
         char path[256];
-        strcpy(path, getenv("ES_ROOT"));
+        strcpy(path, getenv("DOMAIN_FOLDER"));
 
         std::ostringstream oss;
         oss << path << "/etc/" << robot->getHostname() << "/LookupTable.txt";
@@ -394,7 +394,7 @@ void MainWindow::processFilter() {
 
 
 
-        if (imgRes->getSender() != -1) {
+        /*if (imgRes->getSender() != -1) {
             ScanLineHelper scanHelper;
             ScanLineHelperBall scanHelperBall;
             DistanceLookupHelper distanceHelper(CC_AREA);
@@ -465,7 +465,7 @@ void MainWindow::processFilter() {
                     filterLinePointsROI.visualizeROIs(image_roi, roiData, CC_AREA, CC_AREA);
                 }
             }
-        }
+        }*/
 
         SystemConfig::resetHostname();
 
