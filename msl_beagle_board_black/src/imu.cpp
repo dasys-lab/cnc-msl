@@ -13,134 +13,55 @@ IMU::IMU(BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
 	temperature = 0;
 
+	//TODO: Wrong WhoAmI
+	if(!this->whoami()) {
+		std::cout << "WARNING: Wrong WhoAmI-response." << std::endl;
+		// Was soll passieren?
+	} else {
+		std::cout << "Fine: WhoAmI" << std::endl;
+	}
+
 	this->init();
+	std::cout << "Fine: Init" << std::endl;
 }
 
 IMU::~IMU() {
 
 }
 
-void IMU::getAccel() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+void IMU::init() {
+	uint8_t val[2];
 
+	// Enable Accel
 	i2c->setDeviceAddress(ADR_XM);
-	i2c->readBlock(ACCEL_OUT_X, val, sizeof(val));
+	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
 
-	accel.x = ((int16_t) val[1] << 8) | val[0];
-	accel.y = ((int16_t) val[3] << 8) | val[2];
-	accel.z = ((int16_t) val[5] << 8) | val[4];
+	// Enable Magnet & Temp
+	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz, & high resolution
+
+	// Enable Gyro
+	i2c->setDeviceAddress(ADR_G);
+	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
+
+	this->setupAccel(ACC_AFS_4G);
+	this->setupGyro(GYR_FS_2000DPS);
+	this->setupMagnet(MAG_MDR_4GAUSS);
 }
 
-int16_t IMU::getAccelX() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, ACCEL_OUT_X);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getAccelY() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, ACCEL_OUT_Y);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getAccelZ() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, ACCEL_OUT_Z);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-void IMU::getGyro() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+bool IMU::whoami() {
+	uint8_t g, xm;
 
 	i2c->setDeviceAddress(ADR_G);
-	i2c->readBlock(GYRO_OUT_X, val, sizeof(val));
-
-	gyro.x = ((int16_t) val[1] << 8) | val[0];
-	gyro.y = ((int16_t) val[3] << 8) | val[2];
-	gyro.z = ((int16_t) val[5] << 8) | val[4];
-}
-
-int16_t IMU::getGyroX() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_G, GYRO_OUT_X);
-	uint8_t check = i2c->readBlock(ADR_G, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getGyroY() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_G, GYRO_OUT_Y);
-	uint8_t check = i2c->readBlock(ADR_G, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getGyroZ() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_G, GYRO_OUT_Z);
-	uint8_t check = i2c->readBlock(ADR_G, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-void IMU::getMagnet() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	g = i2c->readByte(0x0f);
 
 	i2c->setDeviceAddress(ADR_XM);
-	i2c->readBlock(MAGNET_OUT_X, val, sizeof(val));
+	xm = i2c->readByte(0x0f);
 
-	magnet.x = ((int16_t) val[1] << 8) | val[0];
-	magnet.y = ((int16_t) val[3] << 8) | val[2];
-	magnet.z = ((int16_t) val[5] << 8) | val[4];
-}
-
-int16_t IMU::getMagnetX() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, MAGNET_OUT_X);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getMagnetY() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, MAGNET_OUT_Y);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-int16_t IMU::getMagnetZ() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->writeByte(ADR_XM, MAGNET_OUT_Z);
-	uint8_t check = i2c->readBlock(ADR_XM, val, sizeof(val));
-
-	return ((int16_t) val[1] << 8) | val[0];
-}
-
-void IMU::getTemp() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
-	i2c->setDeviceAddress(ADR_XM);
-	i2c->readBlock(TEMP_OUT, val, sizeof(val));
-
-	temperature = ((int16_t) val[1] << 8) | val[0];
+	if((g == WHO_AM_I_G) && (xm == WHO_AM_I_XM)) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void IMU::setupAccel(uint8_t range) {
@@ -173,44 +94,46 @@ void IMU::setupMagnet(uint8_t scale) {
 	i2c->writeByte(CTRL_REG6_XM, reg | scale);
 }
 
-bool IMU::whoami() {
-	uint8_t g, xm;
-
-	i2c->setDeviceAddress(ADR_G);
-	g = i2c->readByte(0x0f);
+void IMU::getAccel() {
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	i2c->setDeviceAddress(ADR_XM);
-	xm = i2c->readByte(0x0f);
+	i2c->readBlock(ACCEL_OUT_X, val, sizeof(val));
 
-	if((g == WHO_AM_I_G) && (xm == WHO_AM_I_XM)) {
-		return true;
-	} else {
-		return false;
-	}
+	accel.x = ((int16_t) val[1] << 8) | val[0];
+	accel.y = ((int16_t) val[3] << 8) | val[2];
+	accel.z = ((int16_t) val[5] << 8) | val[4];
 }
 
-void IMU::init() {
-	uint8_t val[2];
+void IMU::getGyro() {
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	// Enable Accel
-	i2c->setDeviceAddress(ADR_XM);
-	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
-
-	// Enable Magnet & Temp
-	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz, & high resolution
-
-	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
-	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
+	i2c->readBlock(GYRO_OUT_X, val, sizeof(val));
 
-	this->setupAccel(ACC_AFS_4G);
-	this->setupGyro(GYR_FS_2000DPS);
-	this->setupMagnet(MAG_MDR_4GAUSS);
+	gyro.x = ((int16_t) val[1] << 8) | val[0];
+	gyro.y = ((int16_t) val[3] << 8) | val[2];
+	gyro.z = ((int16_t) val[5] << 8) | val[4];
+}
 
-	//TODO: Wrong WhoAmI
-	if(!this->whoami()) {
-		std::cout << "WARNING: Wrong WhoAmI-response." << std::endl;
-	}
+void IMU::getMagnet() {
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+	i2c->setDeviceAddress(ADR_XM);
+	i2c->readBlock(MAGNET_OUT_X, val, sizeof(val));
+
+	magnet.x = ((int16_t) val[1] << 8) | val[0];
+	magnet.y = ((int16_t) val[3] << 8) | val[2];
+	magnet.z = ((int16_t) val[5] << 8) | val[4];
+}
+
+void IMU::getTemp() {
+	uint8_t val[2] = { 0x00, 0x00 };
+
+	i2c->setDeviceAddress(ADR_XM);
+	i2c->readBlock(TEMP_OUT, val, sizeof(val));
+
+	temperature = ((int16_t) val[1] << 8) | val[0];
 }
 
 void IMU::updateData(timeval time_now) {

@@ -64,7 +64,7 @@ BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
 BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
 BlackGPIO SW_Power(GPIO_48, input, FastMode);		// P9 15
 
-BlackI2C myI2C(I2C_2, 0x1d);
+BlackI2C myI2C(I2C_2, ADR_G);
 BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
