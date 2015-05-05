@@ -25,7 +25,7 @@
     <outState>#1417620275486</outState>
   </transitions>
   <transitions id="1417620327753" name="MISSING_NAME" comment="notHaveBall" msg="">
-    <preCondition id="1417620329181" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="false"/>
+    <preCondition id="1417620329181" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1417620225739</inState>
     <outState>#1417620209050</outState>
   </transitions>
