@@ -37,10 +37,6 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/InterseptCarefully.beh#1417620676868"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="AlignAndShootTwoHoledWall.beh#1417620730939"/>
     <value/>
   </extensions>
