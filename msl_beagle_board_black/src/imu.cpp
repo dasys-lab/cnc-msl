@@ -192,8 +192,8 @@ void IMU::testSensor() {
 
 
 	accel.x = i2c->readWord(ACCEL_OUT_X);
-	accel.x = i2c->readWord(ACCEL_OUT_Y);
-	accel.x = i2c->readWord(ACCEL_OUT_Z);
+	accel.y = i2c->readWord(ACCEL_OUT_Y);
+	accel.z = i2c->readWord(ACCEL_OUT_Z);
 
 
 	std::cout << "Accel - Word: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
