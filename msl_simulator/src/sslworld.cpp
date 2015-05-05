@@ -157,11 +157,12 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
   g->setSphereQuality(1);
   g->setViewpoint(0, -(cfg->Field_Width() + cfg->Field_Margin() * 2.0f) / 2.0f, 3, 90, -45, 0);
   p = new PWorld(0.05, 9.81f, g);
-  ball = new PBall(0, 0, 0.5, cfg->BallRadius(), cfg->BallMass(), 1, 0.7, 0);
+  ball = new PBall(0, 0, 0.5, cfg->BallRadius() * 5, cfg->BallMass(), 1, 0.7, 0);
 
-  ground = new PGround(cfg->Field_Rad(), cfg->Field_Length(), cfg->Field_Width(), cfg->Field_Penalty_Rad(),
-                       cfg->Field_Penalty_Line(), cfg->Field_Penalty_Point(), cfg->Field_Line_Width(),
-                       cfg->Field_Defense_Stretch(), cfg->Field_Defense_Rad(), 0);
+  //TODO
+  ground = new PGround(cfg->Field_Rad()*5, cfg->Field_Length()*5, cfg->Field_Width()*5, cfg->Field_Penalty_Rad()*5,
+                       cfg->Field_Penalty_Line()*5, cfg->Field_Penalty_Point()*5, cfg->Field_Line_Width()*5,
+                       cfg->Field_Defense_Stretch()*5, cfg->Field_Defense_Rad()*5, 0);
   ray = new PRay(50);
 
   // Bounding walls
@@ -175,26 +176,28 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
   const double siz_y = 2.0 * pos_y;
   const double siz_z = 0.4;
   const double tone = 1.0;
+  //TODO
+  walls[0] = new PFixedBox(thick  / 2, pos_y * 5, pos_z, siz_x * 5, thick, siz_z * 6, tone, tone, tone);
 
-  walls[0] = new PFixedBox(thick / 2, pos_y, pos_z, siz_x, thick, siz_z, tone, tone, tone);
+  walls[1] = new PFixedBox(-thick / 2, -pos_y * 5, pos_z, siz_x * 5, thick, siz_z * 6, tone, tone, tone);
 
-  walls[1] = new PFixedBox(-thick / 2, -pos_y, pos_z, siz_x, thick, siz_z, tone, tone, tone);
+  walls[2] = new PFixedBox(pos_x * 5, -thick / 2, pos_z, thick, siz_y * 5, siz_z * 6, tone, tone, tone);
 
-  walls[2] = new PFixedBox(pos_x, -thick / 2, pos_z, thick, siz_y, siz_z, tone, tone, tone);
-
-  walls[3] = new PFixedBox(-pos_x, thick / 2, pos_z, thick, siz_y, siz_z, tone, tone, tone);
+  walls[3] = new PFixedBox(-pos_x * 5, thick  / 2, pos_z, thick, siz_y * 5, siz_z * 6, tone, tone, tone);
 
   // Goal walls
 
+  //TODO
   const double gthick = cfg->Goal_Thickness();
-  const double gpos_x = (cfg->Field_Length() + gthick) / 2.0 + cfg->Goal_Depth();
-  const double gpos_y = (cfg->Goal_Width() + gthick) / 2.0;
-  const double gpos_z = cfg->Goal_Height() / 2.0;
-  const double gsiz_x = cfg->Goal_Depth() + gthick;
-  const double gsiz_y = cfg->Goal_Width();
-  const double gsiz_z = cfg->Goal_Height();
-  const double gpos2_x = (cfg->Field_Length() + gsiz_x) / 2.0;
+  const double gpos_x = (cfg->Field_Length() * 5 + gthick) / 2.0 + cfg->Goal_Depth() * 5;
+  const double gpos_y = (cfg->Goal_Width() * 5 + gthick) / 2.0;
+  const double gpos_z = cfg->Goal_Height() * 5 / 2.0;
+  const double gsiz_x = cfg->Goal_Depth() * 5 + gthick;
+  const double gsiz_y = cfg->Goal_Width() * 5;
+  const double gsiz_z = cfg->Goal_Height() * 5;
+  const double gpos2_x = (cfg->Field_Length() * 5 + gsiz_x) / 2.0;
 
+  //TODO
   walls[4] = new PFixedBox(gpos_x, 0.0, gpos_z, gthick, gsiz_y, gsiz_z, tone, tone, tone);
 
   walls[5] = new PFixedBox(gpos2_x, -gpos_y, gpos_z, gsiz_x, gthick, gsiz_z, tone, tone, tone);
@@ -289,7 +292,7 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
   for (int j = 0; j < 2 * ROBOT_COUNT; j++)
   {
     ///PARK THEM IN SHITTY NIRVANA
-    robots[j]->setXY(10+j, 10+j);
+    robots[j]->setXY(20+j, 20+j);
   }
 
 }
