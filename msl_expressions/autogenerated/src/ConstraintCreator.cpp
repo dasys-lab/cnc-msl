@@ -7,8 +7,6 @@
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
-#include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
-
 #include  "Plans/GameStrategy/OppStandards/constraints/GenericOppStandard1426697871183Constraints.h"
 
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
@@ -30,6 +28,8 @@
 #include  "Plans/GameStrategy/OwnStandards/constraints/GenericOwnStandard1426697860439Constraints.h"
 
 #include  "Plans/GameStrategy/OppStandards/constraints/GenericOppStandardPositioning1429108230432Constraints.h"
+
+#include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
 
 #include  "Plans/GameStrategy/Gameplay/constraints/Gameplay1426694853089Constraints.h"
 

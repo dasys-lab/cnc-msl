@@ -7,8 +7,6 @@
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
-#include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
-
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandard1426697871183.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -30,6 +28,8 @@
 #include  "Plans/GameStrategy/OwnStandards/GenericOwnStandard1426697860439.h"
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardPositioning1429108230432.h"
+
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
 #include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
 
@@ -63,10 +63,6 @@ namespace alica
 
             case 1426696586622:
                 return make_shared<UtilityFunction1426696586622>();
-                break;
-
-            case 1430324312981:
-                return make_shared<UtilityFunction1430324312981>();
                 break;
 
             case 1426697871183:
@@ -111,6 +107,10 @@ namespace alica
 
             case 1429108230432:
                 return make_shared<UtilityFunction1429108230432>();
+                break;
+
+            case 1430924951132:
+                return make_shared<UtilityFunction1430924951132>();
                 break;
 
             case 1426694853089:
