@@ -58,31 +58,30 @@ namespace alica
             send(bhc);
         }
 
-    if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
-            || joy->selectedActuator == msl_msgs::JoystickCommand::KICKER_ONLY
-            || joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE
-            || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION)
-    {
-        if (joy->kick && lastProcessedCmd != joy)
+        if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
+                || joy->selectedActuator == msl_msgs::JoystickCommand::KICKER_ONLY
+                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE
+                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION)
         {
-            kc.senderID = joy->robotId;
-            kc.power = joy->kickPower;
-            kc.extension = joy->shovelIdx;
-            kc.extTime = 1;
-            kc.forceVoltage = false;
-
-            send(kc);
-            send(bhc);
-            send(mc);
-
-            lastProcessedCmd = joy;
-            /*PROTECTED REGION END*/
+            if (joy->kick && lastProcessedCmd != joy)
+            {
+                kc.senderID = joy->robotId;
+                kc.power = joy->kickPower;
+                kc.extension = joy->shovelIdx;
+                kc.extTime = 1;
+                kc.forceVoltage = false;
+                send(kc);
+            }
         }
-        void Joystick::initialiseParameters()
-        {
-            /*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
-            /*PROTECTED REGION END*/
-        }
-        /*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
+
+        lastProcessedCmd = joy;
         /*PROTECTED REGION END*/
-    } /* namespace alica */
+    }
+    void Joystick::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1421854975890) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */
