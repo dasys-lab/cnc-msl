@@ -152,7 +152,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
-	sharedWorldInfoSubscriber = rosNode->subscribe("/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
+	sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
 													(FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
@@ -256,9 +256,10 @@ void FieldWidget3D::update_robot_info(void)
 			team.remove(toBeRemoved);
 			continue;
 		}
-		for (auto x : robot->getMsg()->mergedOpponents)
+		for (auto x : robot->getMsg()->obstacles)
 		{
-			drawOpponent(x.x / 1000, x.y / 1000, 0);
+			auto pos = transform(x.x, x.y);
+			drawOpponent(pos.first / 1000, pos.second / 1000, 0);
 		}
 		bool alreadyIn = false;
 		for (auto member : team)
@@ -272,17 +273,21 @@ void FieldWidget3D::update_robot_info(void)
 		{
 			shared_ptr<RobotVisualization> r = make_shared<RobotVisualization>();
 			r->setId(robot->getMsg()->senderID);
-			drawTeamRobot(r, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000, 0);
+			r->setBall(nullptr);
+			auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
+			drawTeamRobot(r,  pos.first / 1000,  pos.second / 1000, 0);
+			turnRobot(r, robot->getMsg()->odom.position.angle);
 			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 			{
 				initBall(r, renderer);
 			}
 			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
 			{
-				moveBall(r, robot->getMsg(), robot->getMsg()->ball.point.x / 1000, robot->getMsg()->ball.point.y / 1000,
-							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
+				auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
+				moveBall(r, robot->getMsg(), pos.first / 1000, pos.second / 1000,
+							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER / 2);
 			}
-			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 			{
 				renderer->RemoveActor(r->getBall());
 				r->setBall(nullptr);
@@ -293,11 +298,12 @@ void FieldWidget3D::update_robot_info(void)
 			}
 			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
 			{
-				moveSharedBall(r, robot->getMsg()->sharedBall.point.x / 1000,
-								robot->getMsg()->sharedBall.point.y / 1000,
+				auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
+				moveSharedBall(r, pos.first / 1000,
+								pos.second / 1000,
 								robot->getMsg()->sharedBall.point.z / 1000);
 			}
-			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
 			{
 				renderer->RemoveActor(r->getSharedBall());
 				r->setSharedBall(nullptr);
@@ -309,19 +315,23 @@ void FieldWidget3D::update_robot_info(void)
 			{
 				if (member->getId() == robot->getMsg()->senderID)
 				{
-					moveRobot(member, robot->getMsg()->odom.position.x / 1000, robot->getMsg()->odom.position.y / 1000,
+					auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
+					moveRobot(member, pos.first / 1000, pos.second / 1000,
 								0);
+					turnRobot(member, robot->getMsg()->odom.position.angle);
 					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 					{
+						cout << "FieldWidget no ball 2" << endl;
 						initBall(member, renderer);
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
 					{
-						moveBall(member, robot->getMsg(), robot->getMsg()->ball.point.x / 1000,
-									robot->getMsg()->ball.point.y / 1000,
+						auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
+						moveBall(member, robot->getMsg(), pos.first / 1000,
+									pos.second / 1000,
 									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 					}
-					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
+					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 					{
 						renderer->RemoveActor(member->getBall());
 						member->setBall(nullptr);
@@ -332,11 +342,12 @@ void FieldWidget3D::update_robot_info(void)
 					}
 					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
 					{
-						moveSharedBall(member, robot->getMsg()->sharedBall.point.x / 1000,
-										robot->getMsg()->sharedBall.point.y / 1000,
+						auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
+						moveSharedBall(member, pos.first / 1000,
+										pos.second / 1000,
 										robot->getMsg()->sharedBall.point.z / 1000);
 					}
-					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
+					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
 					{
 						renderer->RemoveActor(member->getSharedBall());
 						member->setSharedBall(nullptr);
@@ -384,6 +395,20 @@ void FieldWidget3D::obstacles_point_flip_all(bool on_off)
 void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
 {
 	option_draw_debug[Robot_no] = on_off;
+}
+
+pair<double, double> FieldWidget3D::transform(double x, double y)
+{
+	pair<double, double> ret;
+	ret.first = y;
+	ret.second = -x;
+	return ret;
+}
+
+void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle)
+{
+	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI) + 90);
+	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI) + 90);
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
@@ -625,14 +650,14 @@ void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool blac
 void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
 {
 	vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
-	sphereSrc->SetRadius(_BALL_DIAMETER);
+	sphereSrc->SetRadius(_BALL_DIAMETER / 2);
 	vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	sphereMapper->SetInput(sphereSrc->GetOutput());
 	robot->setBall(vtkActor::New());
 	robot->getBall()->SetMapper(sphereMapper);
 	robot->getBall()->GetProperty()->SetRepresentationToSurface();
 	robot->getBall()->GetProperty()->SetColor(255, 0, 0);
-	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER);
+	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER / 2);
 	renderer->AddActor(robot->getBall());
 	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
 	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],
@@ -985,8 +1010,8 @@ void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot,
 {
 	robot->getBall()->SetPosition(x, y, z);
 	robot->getBallVelocity()->SetPoint1(x, y, z);
-	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx, y + info->ball.velocity.vy,
-										z + info->ball.velocity.vz);
+	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx / 1000, y + info->ball.velocity.vy / 1000,
+										z + info->ball.velocity.vz / 1000);
 	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
 	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();

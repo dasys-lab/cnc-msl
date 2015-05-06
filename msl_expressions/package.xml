@@ -50,7 +50,10 @@
   <build_depend>msl_worldmodel</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>msl_simulator</build_depend>
-  
+  <build_depend>system_util</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
+
   <run_depend>msl_simulator</run_depend>
   <run_depend>msl_worldmodel</run_depend>
   <run_depend>roscpp</run_depend>
@@ -58,7 +61,11 @@
   <run_depend>alica_engine</run_depend>
   <run_depend>system_config</run_depend>
   <run_depend>roscpp</run_depend>
-  <build_depend>autodiff</build_depend>
+  <run_depend>autodiff</run_depend>
+  <run_depend>system_util</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

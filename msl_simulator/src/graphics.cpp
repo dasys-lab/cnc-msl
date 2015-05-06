@@ -19,6 +19,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include "graphics.h"
 #include <QImage>
 #include <math.h>
+#include <iostream>
 
 
 // light vector. LIGHTZ is implicitly 1

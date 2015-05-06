@@ -89,6 +89,14 @@ public:
     Robot* robots[ROBOT_COUNT*2];
     QTime *timer;
     int sendGeomCount;
+    RobotsFomation* form1;
+    RobotsFomation* form2;
+    PSurface ballwithkicker;
+    PSurface wheelswithground;
+    map<int, int> carpeNoctemIds;
+    int countOfRobotsTeamYellow = 0;
+    int countOfRobotsTeamBlue = 0;
+    void drawRobot(int team, int countRobot);
 public slots:
     void recvActions();
 signals:
@@ -107,5 +115,5 @@ class RobotsFomation {
 
 dReal fric(dReal f);
 int robotIndex(int robot,int team);
-
+int transformID(int id);
 #endif // SSLWORLD_H

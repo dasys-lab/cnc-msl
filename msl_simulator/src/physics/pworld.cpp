@@ -17,6 +17,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "physics/pworld.h"
+#include <iostream>
 PSurface::PSurface()
 {
   callback = NULL;
@@ -124,7 +125,10 @@ void PWorld::initAllObjects()
     if (sur_matrix!=NULL)
     {
         for (int i=0;i<c;i++)
+        {
+          if(sur_matrix[i]!=NULL)
             delete sur_matrix[i];
+        }
         delete sur_matrix;
         flag = true;
     }    

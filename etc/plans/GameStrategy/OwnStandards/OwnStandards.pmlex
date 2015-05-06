@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="OwnStandards.pml#1426694875114"/>
+    <value xPos="152" yPos="321" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426694875113"/>
+    <value xPos="26" yPos="-15" width="1145" height="788"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426694875115"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696810907"/>
+    <value xPos="385" yPos="128" width="73" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696817258"/>
+    <value xPos="458" yPos="254" width="74" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696823465"/>
+    <value xPos="461" yPos="389" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696855134"/>
+    <value xPos="323" yPos="658" width="69" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696862884"/>
+    <value xPos="312" yPos="15" width="196" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696872622"/>
+    <value xPos="395" yPos="524" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696896987"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696898114"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696899284"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696900543"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696902014"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696903255"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696949478"/>
+    <value xPos="689" yPos="307"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696952905"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696954517"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696956228"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696957920"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696959405"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStandards.pml#1426696961286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnCornerKick/OwnCornerKickType.pty#1426697882552"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKick/OwnFreeKickType.pty#1426698015369"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnGoalKick/OwnGoalKickType.pty#1426698043458"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff/OwnKickOffType.pty#1426698076341"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty/OwnPenaltyType.pty#1426698098722"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnThrowIn/OwnThrowInType.pty#1426698121099"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

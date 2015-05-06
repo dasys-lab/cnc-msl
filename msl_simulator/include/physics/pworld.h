@@ -28,12 +28,10 @@ class PWorld
 {
 private:
     dJointGroupID contactgroup;
-    QVector<PObject*> objects;
-    QVector<PSurface*> surfaces;
     dReal delta_time;
-    int **sur_matrix;
     int objects_count;
 public:
+    QVector<PSurface*> surfaces;
     PWorld(dReal dt,dReal gravity,CGraphics* graphics);
     ~PWorld();
     void setGravity(dReal gravity);
@@ -48,6 +46,8 @@ public:
     dWorldID world;
     dSpaceID space;
     CGraphics* g;
+    int **sur_matrix;
+    QVector<PObject*> objects;
 };
 
 typedef bool PSurfaceCallback(dGeomID o1,dGeomID o2,PSurface* s);

@@ -10,13 +10,12 @@
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/lock_guard.hpp>
-
 #include <list>
-
 #include "ros/ros.h"
 
 #include "msl_simulator/messages_robocup_ssl_wrapper.h"
 #include "msl_simulator/sim_packet.h"
+#include <msl_actuator_msgs/MotionControl.h>
 
 using namespace std;
 
@@ -33,23 +32,25 @@ namespace msl_simulator
 
 		virtual void send(messages_robocup_ssl_wrapperPtr packet);
 
-		virtual void handleSimPacket(sim_packetPtr simPacket);
+		virtual void handleMotionControl(msl_actuator_msgs::MotionControlPtr);
 
 		virtual void startCommunication();
 		virtual void stopCommunication();
 
-		sim_packetPtr getSimPacket();
+		msl_actuator_msgs::MotionControlPtr getSimPacket();
 		bool isQueueEmpty();
+
+		bool isteamyellow = false;
 
 	protected:
 		ros::NodeHandle* rosNode;
 		ros::AsyncSpinner* spinner;
 
-		list<sim_packetPtr> recvQueue;
+		list<msl_actuator_msgs::MotionControlPtr> recvQueue;
 		boost::mutex mutex;
 
-		ros::Publisher messagesRoboCupSSLWrapperPublisher;
-		ros::Subscriber commandSubscriber;
+//		ros::Publisher messagesRoboCupSSLWrapperPublisher;
+		ros::Subscriber motionControl;
 
 		bool isRunning;
 	};

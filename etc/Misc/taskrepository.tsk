@@ -4,4 +4,9 @@
   <tasks id="1402488486725" name="DefendTask" comment="" description=""/>
   <tasks id="1407153522080" name="AttackTask" comment="" description=""/>
   <tasks id="1407153536219" name="MidFieldTask" comment="" description=""/>
+  <tasks id="1428507765874" name="Executer" comment="" description=""/>
+  <tasks id="1428507797481" name="Receiver" comment="" description=""/>
+  <tasks id="1429108494059" name="Watcher" comment="" description=""/>
+  <tasks id="1429109227638" name="Blocker" comment="" description=""/>
+  <tasks id="1429111464037" name="StandardDefend" comment="" description=""/>
 </alica:TaskRepository>

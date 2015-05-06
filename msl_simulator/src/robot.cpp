@@ -17,6 +17,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "robot.h"
+#include <iostream>
 
 // ang2 = position angle
 // ang  = rotation angle
@@ -24,7 +25,7 @@ Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
 {
     id = _id;
     rob = robot;
-    dReal rad = rob->cfg->robotSettings.RobotRadius - rob->cfg->robotSettings.WheelThickness / 2.0;
+    dReal rad = rob->cfg->robotSettings.RobotRadius*3 - rob->cfg->robotSettings.WheelThickness / 2.0;
     ang *= M_PI/180.0f;
     ang2 *= M_PI/180.0f;
     dReal x = rob->m_x;
@@ -32,11 +33,12 @@ Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
     dReal z = rob->m_z;
     dReal centerx = x+rad*cos(ang2);
     dReal centery = y+rad*sin(ang2);
-    dReal centerz = z-rob->cfg->robotSettings.RobotHeight*0.5+rob->cfg->robotSettings.WheelRadius-rob->cfg->robotSettings.BottomHeight;
-    cyl = new PCylinder(centerx,centery,centerz,rob->cfg->robotSettings.WheelRadius,rob->cfg->robotSettings.WheelThickness,rob->cfg->robotSettings.WheelMass,0.9,0.9,0.9,wheeltexid);
+    dReal centerz = z-rob->cfg->robotSettings.RobotHeight*3*0.5+rob->cfg->robotSettings.WheelRadius*3-rob->cfg->robotSettings.BottomHeight*3;
+    cyl = new PCylinder(centerx,centery,centerz,rob->cfg->robotSettings.WheelRadius*3,rob->cfg->robotSettings.WheelThickness*3,rob->cfg->robotSettings.WheelMass,0.9,0.9,0.9,wheeltexid);
     cyl->setRotation(-sin(ang),cos(ang),0,M_PI*0.5);
-    cyl->setBodyRotation(-sin(ang),cos(ang),0,M_PI*0.5,true);       //set local rotation matrix
-    cyl->setBodyPosition(centerx-x,centery-y,centerz-z,true);       //set local position vector
+    cyl->setBodyRotation(-sin(ang),cos(ang),0,M_PI*0.5,true);   //set local rotation matrix
+    //TODO
+    cyl->setBodyPosition(centerx-x,centery-y,centerz + 3*z,true);       //set local position vector
     cyl->space = rob->space;
 
     rob->w->addObject(cyl);
@@ -64,15 +66,16 @@ void Robot::Wheel::step()
 
 Robot::Kicker::Kicker(Robot* robot)
 {
+	//TODO
     rob = robot;
 
     dReal x = rob->m_x;
     dReal y = rob->m_y;
     dReal z = rob->m_z;
-    dReal centerx = x+(rob->cfg->robotSettings.RobotCenterFromKicker+rob->cfg->robotSettings.KickerThickness);
+    dReal centerx = x+(rob->cfg->robotSettings.RobotCenterFromKicker*3+rob->cfg->robotSettings.KickerThickness*3);
     dReal centery = y;
-    dReal centerz = z-(rob->cfg->robotSettings.RobotHeight)*0.5f+rob->cfg->robotSettings.WheelRadius-rob->cfg->robotSettings.BottomHeight+rob->cfg->robotSettings.KickerZ;
-    box = new PBox(centerx,centery,centerz,rob->cfg->robotSettings.KickerThickness,rob->cfg->robotSettings.KickerWidth,rob->cfg->robotSettings.KickerHeight,rob->cfg->robotSettings.KickerMass,0.9,0.9,0.9);
+    dReal centerz = z-(rob->cfg->robotSettings.RobotHeight*3)*0.5f+rob->cfg->robotSettings.WheelRadius*3-rob->cfg->robotSettings.BottomHeight*3+rob->cfg->robotSettings.KickerZ;
+    box = new PBox(centerx,centery,centerz,rob->cfg->robotSettings.KickerThickness,rob->cfg->robotSettings.KickerWidth * 3,rob->cfg->robotSettings.KickerHeight * 3,rob->cfg->robotSettings.KickerMass,0.9,0.9,0.9);
     box->setBodyPosition(centerx-x,centery-y,centerz-z,true);
     box->space = rob->space;
 
@@ -201,8 +204,7 @@ Robot::Robot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal 
     m_rob_id = rob_id;
 
     space = w->space;
-
-    chassis = new PCylinder(x,y,z,cfg->robotSettings.RobotRadius,cfg->robotSettings.RobotHeight,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
+    chassis = new PCylinder(x,y,z,cfg->robotSettings.RobotRadius*3,cfg->robotSettings.RobotHeight*3,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
     chassis->space = space;
     w->addObject(chassis);
 
@@ -305,6 +307,7 @@ void Robot::drawLabel()
     dReal ty = rx*fz-fx*rz;
     dReal tz = fx*ry-fy*rx;
     w->g->setTransform(pos,rot);
+
     w->g->useTexture((m_rob_id-1) + 11 + 10*((on)?0:1));
     glShadeModel (GL_FLAT);
     glDisable(GL_LIGHTING);

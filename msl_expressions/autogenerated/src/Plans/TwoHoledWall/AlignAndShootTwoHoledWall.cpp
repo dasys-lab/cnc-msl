@@ -2,291 +2,260 @@ using namespace std;
 #include "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 /*PROTECTED REGION ID(inccpp1417620683982) ENABLED START*/ //Add additional includes here
+#include <math.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1417620683982) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    AlignAndShootTwoHoledWall::AlignAndShootTwoHoledWall() :
-            DomainBehaviour("AlignAndShootTwoHoledWall")
-    {
-        /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
-        field = MSLFootballField::getInstance();
-        timesOnTarget = 0;
+	/*PROTECTED REGION ID(staticVars1417620683982) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	AlignAndShootTwoHoledWall::AlignAndShootTwoHoledWall() :
+			DomainBehaviour("AlignAndShootTwoHoledWall")
+	{
+		/*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
+		this->setTrigger(&wm->visionTrigger);
+		field = MSLFootballField::getInstance();
+		maxVel = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxSpeed", NULL);
 
-        maxVel = 2000;
-        pRot = 2.1;
-        dRot = 0.0;
-        lastRotError = 0;
-        minRot = 0.1;
-        maxRot = M_PI * 4;
-        angleTolerance = 0.05;
-        disableKicking = false;
+		// Aiming/Rotation Stuff
+		lastRotError = 0;
+		timesOnTargetCounter = 0;
+		timesOnTargetThreshold = (*this->sc)["Show"]->get<int>("TwoHoledWall.TimesOnTarget", NULL);
+		wheelSpeed = (*this->sc)["Show"]->get<int>("TwoHoledWall.WheelSpeed", NULL);
+		pRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.RotationP", NULL);
+		dRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.RotationD", NULL);
+		minRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MinRotation", NULL);
+		maxRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxRotation", NULL);
+		angleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.AngleTolerance", NULL);
+		ballAngleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.BallAngleTolerance", NULL);
 
-        usedFixedHole = false;
-        useLowerHoleFixed = false;
-        shootingSpeed = 300.0;
-        TIMES_ON_TARGET = 1;
-        wheelSpeed = -40;
-        voltage4shoot = 328.0;
-        double x, y, z;
-        (*this->sc)["Drive"]->get<double>("Drive", "DefaultVelocity", NULL);
+		// Hole Stuff
+		lowerHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.X", NULL);
+		lowerHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.Y", NULL);
+		lowerHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.Z", NULL);
 
-        lowerHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall", "LowerHole", "X", NULL);
-        lowerHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.Y", NULL);
-        lowerHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowerHole.Z", NULL);
+		higherHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.X", NULL);
+		higherHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Y", NULL);
+		higherHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Z", NULL);
 
-        higherHole.x = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.X", NULL);
-        higherHole.y = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Y", NULL);
-        higherHole.z = (*this->sc)["Show"]->get<double>("TwoHoledWall.HigherHole.Z", NULL);
+		holeMode = (HoleMode)(*this->sc)["Show"]->get<int>("TwoHoledWall.HoleMode", NULL);
+		useLowerHole = true;
 
-        usedFixedHole = (*this->sc)["Show"]->get<bool>("TwoHoledWall.UseFixedHole", NULL);
-        useLowerHoleFixed = (*this->sc)["Show"]->get<bool>("TwoHoledWall.UseLowerHoleFixed", NULL);
-        shootingSpeed = (*this->sc)["Show"]->get<double>("TwoHoledWall.ShootingSpeed", NULL);
+		// Kick Stuff
+		voltage4shoot = (*this->sc)["Show"]->get<double>("TwoHoledWall.VoltageForShoot", NULL);
+		disableKicking = (*this->sc)["Show"]->get<bool>("TwoHoledWall.DisableKicking", NULL);
 
-        if (usedFixedHole)
-        {
-            useLowerHole = useLowerHoleFixed;
-        }
+		auto lowKickListSections = (*this->sc)["Show"]->getSections("TwoHoledWall", "LowKickList", NULL);
+		auto highKickListSections = (*this->sc)["Show"]->getSections("TwoHoledWall", "HighKickList", NULL);
 
-        TIMES_ON_TARGET = (*this->sc)["Show"]->get<int>("TwoHoledWall.TimesOnTarget", NULL);
-        wheelSpeed = (*this->sc)["Show"]->get<int>("TwoHoledWall.WheelSpeed", NULL);
-        voltage4shoot = (*this->sc)["Show"]->get<double>("TwoHoledWall.VoltageForShoot", NULL);
+		// Load Kicking Power Lookup Lists for lower and higher hole
+		for (string sectionName : *lowKickListSections)
+		{
+			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(),
+																"distance",
+																NULL);
+			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "power",
+															NULL);
+			auto p = make_shared<CNPoint2D>(distance, power);
+			lowKickList.push_back(p);
+		}
 
-        maxVel = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxSpeed", NULL);
-        pRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.RotationP", NULL);
-        dRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.RotationD", NULL);
-        minRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MinRotation", NULL);
-        maxRot = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxRotation", NULL);
-        angleTolerance = (*this->sc)["Show"]->get<double>("TwoHoledWall.AngleTolerance", NULL);
-        disableKicking = (*this->sc)["Show"]->get<bool>("TwoHoledWall.DisableKicking", NULL);
+		for (string sectionName : *highKickListSections)
+		{
+			double distance = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(),
+																"distance",
+																NULL);
+			double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "power",
+															NULL);
+			auto p = make_shared<CNPoint2D>(distance, power);
+			highKickList.push_back(p);
+		}
+		/*PROTECTED REGION END*/
+	}
+	AlignAndShootTwoHoledWall::~AlignAndShootTwoHoledWall()
+	{
+		/*PROTECTED REGION ID(dcon1417620683982) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void AlignAndShootTwoHoledWall::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
+		shared_ptr<CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
+		shared_ptr<CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
 
-        auto lowKickSectinList((*this->sc)["Show"]->getSections("TwoHoledWall", "LowKickList", NULL));
 
-        lowKickList.reserve(lowKickSectinList->size());
+		// stupid variant to be sure, that we have shoot!!!
+		if (kicked)
+		{
+			this->iterationsAfterKick++;
+			if (iterationsAfterKick > 30 && egoBallPos != nullptr && egoBallPos->length() <= 400)
+			{
+				kicked = false;
+				iterationsAfterKick = 0;
+			}
 
-        auto highKickSectinList((*this->sc)["Show"]->getSections("TwoHoledWall", "HighKickList", NULL));
+			if (egoBallPos == nullptr || egoBallPos->length() > 400)
+			{
+				if (holeMode == toggle)
+				{
+					useLowerHole = !useLowerHole;
+				}
+				this->success = true;
+			}
 
-        highKickList.reserve(highKickSectinList->size());
-        try
-        {
-            int i = 1;
-            while (true)
-            {
-                bool found = false;
-                string currentSearchString = string("p", i);
-                for (int j = 0; j < lowKickSectinList->size(); j++)
-                {
-                    if (lowKickSectinList->at(j) == currentSearchString)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    break;
+			return;
+		}
 
-                stringstream s1;
-                s1 << "TwoHoledWall.LowKickList.p" << i << ".distance";
+		if (ownPos == nullptr || egoBallPos == nullptr)
+		{
+			return;
+		}
 
-                stringstream s2;
-                s2 << "TwoHoledWall.LowKickList.p" << i << ".power";
+		// Constant ball handle wheel speed
+		BallHandleCmd bhc;
+		bhc.leftMotor = (int8_t)this->wheelSpeed;
+		bhc.rightMotor = (int8_t)this->wheelSpeed;
+		send(bhc);
 
-                double distance = (*this->sc)["Show"]->get<double>(s1.str().c_str(), NULL);
-                double power = (*this->sc)["Show"]->get<double>(s2.str().c_str(), NULL);
-                auto p = make_shared < CNPoint2D > (distance, power);
-                lowKickList.push_back(p);
-                i++;
-            }
+		// Create ego-centric 2D target...
+		shared_ptr<CNPoint2D> egoHole;
+		CNPoint2D alloHole(higherHole.x, higherHole.y);
+		if (useLowerHole)
+		{
+			alloHole.x = lowerHole.x;
+			alloHole.y = lowerHole.y;
+		}
+		egoHole = alloHole.alloToEgo(*ownPos);
 
-            i = 1;
-            while (true)
-            {
-                bool found = false;
-                string currentSearchString = string("p", i);
-                for (int j = 0; j < highKickSectinList->size(); j++)
-                {
-                    if (highKickSectinList->at(j) == currentSearchString)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                    break;
+		double egoHoleAngle = egoHole->angleTo();
+		double egoBallAngle = egoBallPos->angleTo();
+		double deltaHoleAngle = GeometryCalculator::deltaAngle(egoHoleAngle, M_PI);
+		double deltaBallAngle = GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
 
-                stringstream s1;
-                s1 << "TwoHoledWall.HighKickList.p" << i << ".distance";
+		// Counter for correct aiming
+//		if (fabs(deltaHoleAngle) < this->angleTolerance)
+		if (fabs(deltaBallAngle) < this->ballAngleTolerance && fabs(deltaHoleAngle) < this->angleTolerance)
+		{
+			//cout << "align and shoot: hit target" << endl;
+			timesOnTargetCounter++;
+		}
+		else
+		{
+			//cout << "align and shoot: miss target" << endl;
+			timesOnTargetCounter = 0;
+		}
 
-                stringstream s2;
-                s2 << "TwoHoledWall.HighKickList.p" << i << ".power";
+		// Kick if aiming was correct long enough
+		if (timesOnTargetCounter > timesOnTargetThreshold)
+		{
+			KickControl kc;
+			kc.enabled = true;
+			kc.kicker = egoBallPos->angleTo();
+			kc.power = setKickPower(egoHole->length());
+			float voltage;
+			if (!disableKicking)
+			{
+				send(kc);
+				kicked = true;
+				iterationsAfterKick = 0;
+				voltage = wm->getKickerVoltage();
+			}
+			else
+			{
+				// Send stop message to motion, in order to signal that the robot would shoot now
+				MotionControl empty;
+				send(empty);
+				return;
+			}
 
-                double distance = (*this->sc)["Show"]->get<double>(s1.str().c_str(), NULL);
-                double power = (*this->sc)["Show"]->get<double>(s2.str().c_str(), NULL);
-                auto p = make_shared < CNPoint2D > (distance, power);
-                highKickList.push_back(p);
-                i++;
-            }
-        }
-        catch (exception e)
-        {
-            cerr << "Error loading parameters in Behaviour AlignAndShootTwoHoledWall";
-        }
-        /*PROTECTED REGION END*/
-    }
-    AlignAndShootTwoHoledWall::~AlignAndShootTwoHoledWall()
-    {
-        /*PROTECTED REGION ID(dcon1417620683982) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void AlignAndShootTwoHoledWall::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
-        double volt = wm->getKickerVoltage();
-        shared_ptr < CNPosition > ownPos = wm->getOwnPosition(); // actually ownPosition corrected
-        shared_ptr < CNPoint2D > ballPos = wm->getEgoBallPosition();
-        if (ownPos == NULL || ballPos == NULL)
-        {
-            return;
-        }
+			cout << "AAShoot: Dist: " << egoHole->length() << "\tPower: " << kc.power << "\tDeviation: "
+					<< sin(deltaHoleAngle) * egoHole->length() << ",\tVolt: " << voltage << endl;
+			//this->success = true;
+			return;
+		}
 
-//		CNVelocity2D ballVel = WM.BallVelocity;
-//		CNPoint2D ballVel2;
-//
-//		if (ballVel == null) {
-//			ballVel2 = new CNPoint2D(0, 0);
-//		} else if (ballVel.Length() > 5000) {
-//			Velocity v = ballVel.Normalize()*5000;
-//			ballVel2 = new CNPoint2D(v.Vx,v.Vy);
-//		}
-//		else {
-//			ballVel2 = new CNPoint2D(ballVel.Vx,ballVel.Vy);
-//		}
+		// Create Motion Command for aiming
+		MotionControl mc;
 
-        shared_ptr < CNPoint2D > egoTarget;
+		// PD Rotation Controller
+		mc.motion.rotation = -(deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot);
+		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
 
-        if (useLowerHole)
-        {
-            CNPoint2D alloTarget(lowerHole.x, lowerHole.y);
-            egoTarget = alloTarget.alloToEgo(*ownPos);
-        }
-        else
-        {
-            CNPoint2D alloTarget(higherHole.x, higherHole.y);
-            egoTarget = alloTarget.alloToEgo(*ownPos);
-        }
+		lastRotError = deltaHoleAngle;
 
-        cout << "egoTarget : " << egoTarget->x << " " << egoTarget->y << endl;
+		// crate the motion orthogonal to the ball
+		shared_ptr<CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
+		driveTo = driveTo * mc.motion.rotation;
 
-        double aimAngle = egoTarget->angleTo();
+		// add the motion towards the ball
+		driveTo = driveTo + egoBallPos->normalize() * 10;
 
-        double ballAngle = ballPos->angleTo();
+		mc.motion.angle = driveTo->angleTo();
+		mc.motion.translation = min(this->maxVel, driveTo->length());
 
-        double deltaAngle = GeometryCalculator::deltaAngle(ballAngle, aimAngle);
+		cout << "AAShoot: DeltaHoleAngle: " << deltaHoleAngle << "\tegoBall.X: " << egoBallPos->x << "\tegoBall.Y: " << egoBallPos->y <<"\tRotation: " << mc.motion.rotation
+				<< "\tDriveTo: (" << driveTo->x << ", " << driveTo->y << ")" << endl;
 
-        MotionControl mc;
-        mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
+		send(mc);
+		/*PROTECTED REGION END*/
+	}
 
-        BallHandleCmd bhc;
-        bhc.leftMotor = (int8_t)this->wheelSpeed;
-        bhc.rightMotor = (int8_t)this->wheelSpeed;
+	void AlignAndShootTwoHoledWall::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
+		timesOnTargetCounter = 0;
+		kicked = false;
+		iterationsAfterKick = 0;
+		switch (holeMode)
+		{
+			case toggle:
+				// We toggle in RUN-Methode before kicking.
+				break;
+			case lower:
+				useLowerHole = true;
+				break;
+			case upper:
+				useLowerHole = false;
+				break;
+		}
+		/*PROTECTED REGION END*/
+	}
 
-        cout << "DeltaAngle is : " << deltaAngle << " ball angle : " << ballAngle << " aimAngle : " << aimAngle << endl;
+	/*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
+	unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance)
+	{
+		vector<shared_ptr<CNPoint2D>>* kickList;
+		if (useLowerHole)
+		{
+			kickList = &lowKickList;
+		}
+		else
+		{
+			kickList = &highKickList;
+		}
 
-        send(bhc);
+		int i = 0;
+		while (i < kickList->size() && distance > kickList->at(i)->x)
+		{
+			i++;
+		}
 
-        if (fabs(deltaAngle) < this->angleTolerance)
-        {
-            timesOnTarget++;
-        }
-        else
-        {
-            timesOnTarget = 0;
-        }
+		// Don't interpolate for the first entry in the kick list ...
+		if (i == 0)
+		{
+			return kickList->at(0)->y;
+		}
 
-        float voltage = wm->getKickerVoltage();
-        if (timesOnTarget > TIMES_ON_TARGET/* && fabs(this->voltage4shoot-voltage) < 1.001*/)
-        {
-            //KICK!
-            KickControl kc;
-            kc.enabled = true;
-            kc.kicker = ballPos->angleTo();
-            kc.power = (ushort)(setKickPower(egoTarget->length(), (useLowerHole ? lowerHole.z : higherHole.z)));
-            if (!disableKicking)
-            {
-                send(kc);
-            }
-            else
-            {
-                MotionControl empty;
-                send(empty);
-                return;
-            }
-            mc.motion.rotation = 0;
-            this->success = true;
-            cout << "Dist: " << egoTarget->length() << "\tPower: " << kc.power << "\tDeviation: "
-                    << sin(deltaAngle) * egoTarget->length() << ",\tVolt: " << volt << endl;
+		// Don't interpolate for the last entry in the kick list ...
+		if (i == kickList->size())
+		{
+			return kickList->at(kickList->size() - 1)->y;
+		}
 
-        }
-        else
-        {
-            mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-                    * min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
-        }
-        lastRotError = deltaAngle;
-
-        double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = 1; //max(ballPos->length(),ballVel2.Distance());
-
-        shared_ptr < CNPoint2D > driveTo = ballPos->rotate((-M_PI / 2.0));
-        driveTo = driveTo->normalize() * transBallOrth;
-        driveTo = driveTo + ballPos->normalize() * transBallTo;
-
-        if (driveTo->length() > maxVel)
-        {
-            driveTo = driveTo->normalize() * maxVel;
-        }
-
-        mc.motion.angle = driveTo->angleTo();
-        mc.motion.translation = this->shootingSpeed; //driveTo.Distance();
-
-        send(mc);
-        /*PROTECTED REGION END*/
-    }
-    void AlignAndShootTwoHoledWall::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1417620683982) ENABLED START*/ //Add additional options here
-        timesOnTarget = 0;
-        if (!usedFixedHole)
-        {
-            useLowerHole = !useLowerHole;
-        }
-        /*PROTECTED REGION END*/
-    }
-    /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
-    double AlignAndShootTwoHoledWall::interPolatePower(double dist, vector<shared_ptr<CNPoint2D> > values)
-    {
-        int i = 0;
-        while (i < values.size() && dist > values[i]->x)
-            i++;
-        if (i == 0)
-            return values[0]->y;
-        if (i == values.size())
-            return values[values.size() - 1]->y;
-        return values[i - 1]->y
-                + (dist - values[i - 1]->x) / (values[i]->x - values[i - 1]->x) * (values[i]->y - values[i - 1]->y);
-    }
-
-    unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance, double height)
-    {
-        if (height > 600)
-        {
-            return (unsigned short)interPolatePower(distance, highKickList);
-        }
-        else
-        {
-            return (unsigned short)interPolatePower(distance, lowKickList);
-        }
-    }
+		// Interpolate linear
+		return kickList->at(i - 1)->y
+				+ (distance - kickList->at(i - 1)->x) / (kickList->at(i)->x - kickList->at(i - 1)->x)
+						* (kickList->at(i)->y - kickList->at(i - 1)->y);
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

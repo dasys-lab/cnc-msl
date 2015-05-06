@@ -318,14 +318,14 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "msl_workshop_proxy");
 
 	ros::NodeHandle n;
-	ros::Publisher chatter_pub = n.advertise<msl_sensor_msgs::WorldModelData>("WorldModel/WorldModelData", 1);
+	ros::Publisher chatter_pub = n.advertise<msl_sensor_msgs::WorldModelData>("/WorldModel/WorldModelData", 1);
 
 	ballPub = n.advertise<PointCloud>("/ball", 1);
 	selfPub = n.advertise<PointCloud>("/self", 1);
 	obstaclesPub = n.advertise<PointCloud>("/obstacles", 1);
 
 	ros::Rate loop_rate(30);
-	ros::Subscriber sub = n.subscribe("WorldModel/WorldModelData", 1, messageCallback);
+	ros::Subscriber sub = n.subscribe("/WorldModel/WorldModelData", 1, messageCallback);
 
 	MultiCastReceive mcr;
 	string addr = "224.16.32.75";

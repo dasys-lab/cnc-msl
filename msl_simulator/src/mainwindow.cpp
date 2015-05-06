@@ -216,11 +216,11 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(configwidget->v_YellowTeam.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(restartSimulator()));
 
     //network
-    QObject::connect(configwidget->v_VisionMulticastAddr.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
-    QObject::connect(configwidget->v_VisionMulticastPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
-    QObject::connect(configwidget->v_CommandListenPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectCommandSocket()));
-    QObject::connect(configwidget->v_BlueStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectBlueStatusSocket()));
-    QObject::connect(configwidget->v_YellowStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectYellowStatusSocket()));
+//    QObject::connect(configwidget->v_VisionMulticastAddr.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
+//    QObject::connect(configwidget->v_VisionMulticastPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectVisionSocket()));
+//    QObject::connect(configwidget->v_CommandListenPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectCommandSocket()));
+//    QObject::connect(configwidget->v_BlueStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectBlueStatusSocket()));
+//    QObject::connect(configwidget->v_YellowStatusSendPort.get(), SIGNAL(wasEdited(VarPtr)), this, SLOT(reconnectYellowStatusSocket()));
     timer->start();
 
 
@@ -229,7 +229,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     robotwidget->teamCombo->setCurrentIndex(0);
     robotwidget->robotCombo->setCurrentIndex(0);
-    robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+    if(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)] != NULL)
+    	robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
     robotwidget->id = 0;
     scene = new QGraphicsScene(0,0,800,600);    
 }
@@ -252,18 +253,25 @@ void MainWindow::showHideSimulator(bool v)
 
 void MainWindow::changeCurrentRobot()
 {
-    glwidget->Current_robot=robotwidget->robotCombo->currentIndex();    
-    robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
-    robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
-    robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
+	if(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)] != NULL)
+	{
+		glwidget->Current_robot=robotwidget->robotCombo->currentIndex();
+		robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+		robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
+		robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
+
+	}
 }
 
 void MainWindow::changeCurrentTeam()
 {
-    glwidget->Current_team=robotwidget->teamCombo->currentIndex();
-    robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
-    robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
-    robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
+	if(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)] != NULL)
+	{
+		glwidget->Current_team=robotwidget->teamCombo->currentIndex();
+		robotwidget->setPicture(glwidget->ssl->robots[robotIndex(glwidget->Current_robot,glwidget->Current_team)]->img);
+		robotwidget->id = robotIndex(glwidget->Current_robot, glwidget->Current_team);
+		robotwidget->changeRobotOnOff(robotwidget->id, glwidget->ssl->robots[robotwidget->id]->on);
+	}
 }
 
 void MainWindow::changeGravity()
@@ -283,11 +291,13 @@ QString dRealToStr(dReal a)
     if (a>=0) return QString('+') + s;
     return s;
 }
-
 void MainWindow::update()
 {
     if (glwidget->ssl->g->isGraphicsEnabled()) glwidget->updateGL();
     else glwidget->step();
+
+    if(robotIndex(glwidget->Current_robot,glwidget->Current_team) == NULL)
+    	return;
 
     int R = robotIndex(glwidget->Current_robot,glwidget->Current_team);
 
@@ -328,12 +338,15 @@ void MainWindow::update()
 
 void MainWindow::updateRobotLabel()
 {
-    robotwidget->teamCombo->setCurrentIndex(glwidget->Current_team);
-    robotwidget->robotCombo->setCurrentIndex(glwidget->Current_robot);
-    robotwidget->id = robotIndex(glwidget->Current_robot,glwidget->Current_team);
-    robotwidget->changeRobotOnOff(robotwidget->id,glwidget->ssl->robots[robotwidget->id]->on);
-}
+	if(glwidget->ssl->robots[robotwidget->id] != NULL)
+	{
+		robotwidget->teamCombo->setCurrentIndex(glwidget->Current_team);
+		robotwidget->robotCombo->setCurrentIndex(glwidget->Current_robot);
+		robotwidget->id = robotIndex(glwidget->Current_robot,glwidget->Current_team);
+		robotwidget->changeRobotOnOff(robotwidget->id,glwidget->ssl->robots[robotwidget->id]->on);
 
+	}
+}
 
 void MainWindow::changeBallMass()
 {
@@ -417,6 +430,8 @@ void MainWindow::toggleFullScreen(bool a)
 void MainWindow::setCurrentRobotPosition()
 {
     int i = robotIndex(glwidget->Current_robot,glwidget->Current_team);
+    if( glwidget->ssl->robots[i] == NULL)
+    	return;
     bool ok1=false,ok2=false,ok3=false;
     dReal x = robotwidget->getPoseWidget->x->text().toFloat(&ok1);
     dReal y = robotwidget->getPoseWidget->y->text().toFloat(&ok2);

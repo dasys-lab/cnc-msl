@@ -22,14 +22,24 @@ namespace alica
     void DriveToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
-        auto me = wm->getOwnPosition();
+        auto me = wm->rawSensorData.getOwnPositionVision();
+        auto ballPos = wm->rawSensorData.getBallPosition();
         if (!me.operator bool())
         {
             return;
         }
         auto egoTarget = alloTarget.alloToEgo(*me);
 
-        msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 150);
+        msl_actuator_msgs::MotionControl mc;
+
+        if (ballPos != nullptr)
+        {
+            mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+        }
+        else
+        {
+            mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < CNPoint2D > (0.0, 0.0), 0);
+        }
 
         if (egoTarget->length() < 250)
         {

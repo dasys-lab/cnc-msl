@@ -347,14 +347,20 @@ void GLWidget::paintGL()
     {
         dReal x,y,z;
         int R = robotIndex(Current_robot,Current_team);
-        ssl->robots[R]->getXY(x,y);z = 0.3;
-        ssl->g->setViewpoint(x,y,z,ssl->robots[R]->getDir(),-25,0);
+        if(ssl->robots[R] != NULL)
+        {
+        	ssl->robots[R]->getXY(x,y);z = 0.3;
+        	ssl->g->setViewpoint(x,y,z,ssl->robots[R]->getDir(),-25,0);
+        }
     }
     if (cammode==-1)
     {
         dReal x,y,z;
-        ssl->robots[lockedIndex]->getXY(x,y);z = 0.1;
-        ssl->g->lookAt(x,y,z);
+        if( ssl->robots[lockedIndex] != NULL)
+        {
+			ssl->robots[lockedIndex]->getXY(x,y);z = 0.1;
+			ssl->g->lookAt(x,y,z);
+        }
     }
     if (cammode==-2)
     {
@@ -367,6 +373,8 @@ void GLWidget::paintGL()
     for (int i=0;i<ROBOT_COUNT*2;i++)
     {
         dReal xx,yy;
+        if(ssl->robots[i] == NULL)
+        	continue;
         ssl->robots[i]->getXY(xx,yy);
         if (i>=ROBOT_COUNT) qglColor(Qt::yellow);
         else qglColor(Qt::cyan);

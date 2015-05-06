@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1428507924151" name="StdReceiverPos" comment="" destinationPath="Plans/GenericBehaviours">
+  <configurations id="1428508056340" name="StdReceiverPosDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+</alica:Behaviour>

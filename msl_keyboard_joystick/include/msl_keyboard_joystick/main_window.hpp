@@ -15,6 +15,7 @@
 #include <QtGui/QMainWindow>
 #include "ui_main_window.h"
 #include "qnode.hpp"
+#include <vector>
 
 
 #include "ros/ros.h"
@@ -23,7 +24,7 @@
 /*****************************************************************************
 ** Namespace
 *****************************************************************************/
-
+using namespace std;
 namespace msl_keyboard_joystick {
 
 /*****************************************************************************
@@ -68,7 +69,7 @@ private:
     double angle, translation, rotation;
     unsigned short kickPower;
     char shovelIdx, ballHandleLeftMotor, ballHandleRightMotor, selectedActuator;
-    bool *keyPressed;
+    vector<bool> keyPressed;
     bool kick;
 	void keyPressEvent(QKeyEvent* event); 
     void keyReleaseEvent(QKeyEvent* event);

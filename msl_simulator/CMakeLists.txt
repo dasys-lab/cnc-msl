@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_simulator)
 
+
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
+  msl_sensor_msgs 
+  msl_actuator_msgs
 )
-
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system)
 
@@ -105,8 +108,8 @@ add_message_files(
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_simulator
-  CATKIN_DEPENDS roscpp message_runtime
-#  DEPENDS system_lib
+  CATKIN_DEPENDS roscpp message_runtime 
+ #DEPENDS 
 )
 
 ###########
@@ -234,6 +237,7 @@ file(GLOB msl_simulator_CONFIG_FILES "config/*.ini")
 set_source_files_properties(${msl_simulator_CONFIG_FILES}  PROPERTIES MACOSX_PACKAGE_LOCATION "config")
 
 
+
 ## Declare a cpp executable
 add_executable(msl_simulator     
     ${msl_simulator_SOURCES}
@@ -244,8 +248,8 @@ add_executable(msl_simulator
     ${msl_simulator_RESOURCES};
 )
 
-target_link_libraries(msl_simulator ${libs} ${catkin_LIBRARIES})
-add_dependencies(msl_simulator ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(msl_simulator ${libs} ${catkin_LIBRARIES} )
+add_dependencies(msl_simulator ${PROJECT_NAME}_generate_messages_cpp msl_sensor_msgs msl_actuator_msgs )
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

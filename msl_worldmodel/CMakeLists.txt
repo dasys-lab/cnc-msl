@@ -5,12 +5,15 @@ project(msl_worldmodel)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
-
+## Used for cgal
+set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Don't override flags")
+set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core -frounding-math ${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config msl_simulator)
+find_package(catkin REQUIRED system_config msl_actuator_msgs msl_sensor_msgs event_handling)
+find_package(CGAL REQUIRED COMPONENTS Core)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -86,6 +89,7 @@ catkin_package(
   LIBRARIES msl_worldmodel
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
+  DEPENDS cgal
 )
 
 ###########
@@ -94,7 +98,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
- include_directories(include ${catkin_INCLUDE_DIRS})
+ include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
+ include(${CGAL_USE_FILE})
 
 ## Declare a cpp library
  add_library(msl_worldmodel
@@ -105,8 +110,14 @@ catkin_package(
    src/container/CNPosition.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
-   src/HaveBall.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
+   src/RawSensorData.cpp
+   src/Robots.cpp
+   src/Ball.cpp
+   src/Game.cpp
+   src/pathplanner/PathPlanner.cpp
+   src/pathplanner/SearchNode.cpp
+   src/pathplanner/VoronoiNet.cpp
  )
 
 ## Declare a cpp executable
@@ -114,7 +125,7 @@ catkin_package(
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp geometry_msgs_generate_messages_cpp system_config msl_simulator)
+add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp  msl_actuator_msgs_generate_messages_cpp geometry_msgs_generate_messages_cpp system_config)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_worldmodel

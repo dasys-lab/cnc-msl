@@ -17,12 +17,13 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 */
 
 #include "physics/pcylinder.h"
+#include <iostream>
 
 PCylinder::PCylinder(dReal x,dReal y,dReal z,dReal radius,dReal length,dReal mass,dReal red,dReal green,dReal blue,int texid,bool robot)
           : PObject(x,y,z,red,green,blue,mass)
 {
     m_radius = radius;
-    m_length = length;    
+    m_length = length;
     m_texid = texid;
     m_robot = robot;
 }

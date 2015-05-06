@@ -9,11 +9,10 @@
 #define MSLWORLDMODEL_H_
 
 #include <ros/ros.h>
-#include <msl_simulator/messages_robocup_ssl_wrapper.h>
-#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_msgs/JoystickCommand.h>
-#include <msl_msgs/RefereeBoxInfoBody.h>
+#include <msl_actuator_msgs/MotionBurst.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -22,8 +21,13 @@
 #include "SystemConfig.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
-#include "HaveBall.h"
 #include "Situation.h"
+#include "RawSensorData.h"
+#include "Robots.h"
+#include "Ball.h"
+#include "Game.h"
+#include "pathplanner/PathPlanner.h"
+#include "EventTrigger.h"
 
 
 using namespace std;
@@ -36,36 +40,37 @@ namespace msl
 	{
 	public:
 		static MSLWorldModel* get();
-		HaveBall haveBall;
 
-		shared_ptr<CNPosition> getOwnPosition();
-		shared_ptr<CNPoint2D> getAlloBallPosition();
-		shared_ptr<CNPoint2D> getEgoBallPosition();
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
 
-		void onSimulatorData(msl_simulator::messages_robocup_ssl_wrapperPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
-		void onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg);
-		bool checkSituation(Situation situation);
+		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
-		msl_msgs::JoystickCommandPtr getJoystickCommandInfo();
-		msl_msgs::RefereeBoxInfoBodyPtr getRefereeBoxInfoBody();
 		MSLSharedWorldModel* getSharedWolrdModel();
+		unsigned long getTime();
+		void sendSharedWorldModelData();
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
+		int getRingBufferLength();
+
+		RawSensorData rawSensorData;
+		Robots robots;
+		Ball ball;
+		Game game;
+		PathPlanner pathPlanner;
+		supplementary::EventTrigger visionTrigger;
 
 	private:
 
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
-		Situation currentSituation;
 		MSLSharedWorldModel* sharedWolrdModel;
 
 		ros::NodeHandle n;
@@ -73,23 +78,21 @@ namespace msl
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
 		ros::Subscriber joystickSub;
-		ros::Subscriber refereeBoxInfoBodySub;
+		ros::Subscriber motionBurstSub;
+		ros::Publisher sharedWorldPub;
 
-		list<msl_simulator::messages_robocup_ssl_wrapperPtr> simData;
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
-		list<msl_msgs::RefereeBoxInfoBodyPtr> refereeBoxInfoBodyCommandData;
 		list<msl_sensor_msgs::WorldModelDataPtr> wmData;
 
 		mutex rawOdometryMutex;
 		mutex wmMutex;
 		mutex joystickMutex;
-		mutex refereeMutex;
-		mutex situationChecker;
+		mutex motionBurstMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:
-		void transformToWorldCoordinates(msl_sensor_msgs::WorldModelDataPtr& msg);
+		pair<double, double> transformToWorldCoordinates(double x, double y);
 	};
 
 } /* namespace msl */
