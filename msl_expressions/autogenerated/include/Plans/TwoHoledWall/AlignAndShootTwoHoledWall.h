@@ -15,6 +15,11 @@
 
 using namespace msl;
 using namespace msl_actuator_msgs;
+
+enum HoleMode {
+ toggle = 0, lower = 1, upper = 2
+};
+
 /*PROTECTED REGION END*/
 namespace alica
 {
