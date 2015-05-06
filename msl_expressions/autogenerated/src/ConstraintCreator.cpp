@@ -3,6 +3,8 @@
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"
 
+#include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"

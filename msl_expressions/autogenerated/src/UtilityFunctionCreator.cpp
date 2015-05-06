@@ -3,6 +3,8 @@
 
 #include  "Plans/WM161413992564408.h"
 
+#include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
+
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -29,6 +31,10 @@ namespace alica
 
             case 1413992564408:
                 return make_shared<UtilityFunction1413992564408>();
+                break;
+
+            case 1430324312981:
+                return make_shared<UtilityFunction1430324312981>();
                 break;
 
             case 1417621468963:
