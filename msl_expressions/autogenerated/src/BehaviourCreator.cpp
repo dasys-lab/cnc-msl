@@ -5,6 +5,8 @@ using namespace std;
 
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
+#include  "Plans/Behaviours/AttackOpp.h"
+
 #include  "Plans/Behaviours/GoalKick.h"
 
 #include  "Plans/GenericBehaviours/StandardReceive.h"
@@ -24,8 +26,6 @@ using namespace std;
 #include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
 
 #include  "Plans/Behaviours/GetBall.h"
-
-#include  "Plans/Behaviours/GoalKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
@@ -64,6 +64,11 @@ namespace alica
             case 1417620730939:
 
                 return make_shared<AlignAndShootTwoHoledWall>();
+                break;
+
+            case 1430324680117:
+
+                return make_shared<AttackOpp>();
                 break;
 
             case 1415205578139:
@@ -116,11 +121,6 @@ namespace alica
             case 1414840399972:
 
                 return make_shared<GetBall>();
-                break;
-
-            case 1415205578139:
-
-                return make_shared<GoalKick>();
                 break;
 
             case 1413992626194:

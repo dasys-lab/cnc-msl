@@ -18,10 +18,6 @@ using namespace msl_actuator_msgs;
 /*PROTECTED REGION END*/
 namespace alica
 {
-	enum HoleMode {
-		toggle = 0, lower = 1, upper = 2
-	};
-
     class AlignAndShootTwoHoledWall : public DomainBehaviour
     {
     public:
@@ -33,8 +29,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1417620683982) ENABLED START*/ //Add additional protected methods here
-
-
         MSLFootballField* field;
         int timesOnTargetCounter = 0;
         HoleMode holeMode;
