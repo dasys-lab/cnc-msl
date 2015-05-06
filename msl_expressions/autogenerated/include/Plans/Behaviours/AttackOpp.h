@@ -3,6 +3,9 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1430324527403) ENABLED START*/ //Add additional includes here
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
+using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +20,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1430324527403) ENABLED START*/ //Add additional protected methods here
+        CNPoint2D alloTarget;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1430324527403) ENABLED START*/ //Add additional private methods here
