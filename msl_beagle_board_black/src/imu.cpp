@@ -13,16 +13,14 @@ IMU::IMU(BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
 	temperature = 0;
 
-	//TODO: Wrong WhoAmI
 	if(!this->whoami()) {
+		//TODO: Wrong WhoAmI - Was soll passieren?
 		std::cout << "WARNING: Wrong WhoAmI-response." << std::endl;
-		// Was soll passieren?
 	} else {
 		std::cout << "Fine: WhoAmI" << std::endl;
 	}
 
 	this->init();
-	std::cout << "Fine: Init" << std::endl;
 }
 
 IMU::~IMU() {
@@ -37,15 +35,18 @@ void IMU::init() {
 	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
 
 	// Enable Magnet & Temp
-	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz, & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0x80);			// High Pass Filter - Normal Mode
+	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz & high resolution
+	i2c->writeByte(CTRL_REG7_XM, 0x80);			// high-pass Filter: Normal Mode & Continuous Conversation
 
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
 	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
 
-	this->setupAccel(ACC_AFS_4G);
+	accel.sense = ACC_2G_SENSE;
+	this->setupAccel(ACC_AFS_2G);
+	gyro.sense = GYR_2000DPS_SENSE;
 	this->setupGyro(GYR_FS_2000DPS);
+	magnet.sense = MAG_8GAUSS_SENSE;
 	this->setupMagnet(MAG_MDR_2GAUSS);
 }
 
@@ -68,7 +69,10 @@ bool IMU::whoami() {
 void IMU::setupAccel(uint8_t range) {
 	uint8_t reg;
 
-	i2c->setDeviceAddress(ADR_XM);
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
+
 	reg = i2c->readByte(CTRL_REG2_XM);
 	reg &= ~(0b00111000);
 
@@ -78,7 +82,10 @@ void IMU::setupAccel(uint8_t range) {
 void IMU::setupGyro(uint8_t scale) {
 	uint8_t reg;
 
-	i2c->setDeviceAddress(ADR_G);
+	if (i2c->getDeviceAddress() != ADR_G) {
+		i2c->setDeviceAddress(ADR_G);
+	}
+
 	reg = i2c->readByte(CTRL_REG4_G);
 	reg &= ~(0b00110000);
 
@@ -88,7 +95,10 @@ void IMU::setupGyro(uint8_t scale) {
 void IMU::setupMagnet(uint8_t scale) {
 	uint8_t reg;
 
-	i2c->setDeviceAddress(ADR_XM);
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
+
 	reg = i2c->readByte(CTRL_REG6_XM);
 	reg &= ~(0b01100000);
 
@@ -98,53 +108,61 @@ void IMU::setupMagnet(uint8_t scale) {
 void IMU::getAccel() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	i2c->setDeviceAddress(ADR_XM);
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
 	for(int i=0; i<6; i++) {
 		val[i] = i2c->readByte(ACCEL_OUT_X + i);
 	}
 
-	accel.x = ((int16_t) val[1] << 8) | val[0];
-	accel.y = ((int16_t) val[3] << 8) | val[2];
-	accel.z = ((int16_t) val[5] << 8) | val[4];
+	accel.x = (((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense;
+	accel.y = (((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense;
+	accel.z = (((int16_t) val[5] << 8) | val[4]) * 9.81 * accel.sense;
 }
 
 void IMU::getGyro() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	i2c->setDeviceAddress(ADR_G);
+	if (i2c->getDeviceAddress() != ADR_G) {
+		i2c->setDeviceAddress(ADR_G);
+	}
 	for(int i=0; i<6; i++) {
 		val[i] = i2c->readByte(GYRO_OUT_X + i);
 	}
 
-	gyro.x = ((int16_t) val[1] << 8) | val[0];
-	gyro.y = ((int16_t) val[3] << 8) | val[2];
-	gyro.z = ((int16_t) val[5] << 8) | val[4];
+	gyro.x = (((int16_t) val[1] << 8) | val[0]) * gyro.sense;
+	gyro.y = (((int16_t) val[3] << 8) | val[2]) * gyro.sense;
+	gyro.z = (((int16_t) val[5] << 8) | val[4]) * gyro.sense;
 }
 
 void IMU::getMagnet() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-	i2c->setDeviceAddress(ADR_XM);
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
 	for(int i=0; i<6; i++) {
 		val[i] = i2c->readByte(MAGNET_OUT_X + i);
 	}
 
-	magnet.x = ((int16_t) val[1] << 8) | val[0];
-	magnet.y = ((int16_t) val[3] << 8) | val[2];
-	magnet.z = ((int16_t) val[5] << 8) | val[4];
+	magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
+	magnet.y = (((int16_t) val[3] << 8) | val[2]) * magnet.sense;
+	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;
 }
 
 void IMU::getTemp() {
 	uint8_t val[2] = { 0x00, 0x00 };
 
-	i2c->setDeviceAddress(ADR_XM);
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
 	for(int i=0; i<2; i++) {
 		val[i] = i2c->readByte(TEMP_OUT + i);
 	}
 
 	//TODO Temperature Offset
 	// temperature = 21.0 + (float) dof.temperature/8.;
-	temperature = ((int16_t) val[1] << 8) | val[0];
+	temperature = (((int16_t) val[1] << 8) | val[0]) * TEMP_SENSE + 21;
 }
 
 void IMU::updateData(timeval time_now) {

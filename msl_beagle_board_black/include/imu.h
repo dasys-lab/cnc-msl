@@ -51,11 +51,24 @@ const uint8_t ACC_AFS_16G			= 0x20;
 const uint8_t GYR_FS_245DPS			= 0x00;
 const uint8_t GYR_FS_500DPS			= 0x01;
 const uint8_t GYR_FS_2000DPS		= 0x10;
-const uint8_t GYR_FS_2000DPS2		= 0x11;
 const uint8_t MAG_MDR_2GAUSS		= 0x00;
 const uint8_t MAG_MDR_4GAUSS		= 0x20;
 const uint8_t MAG_MDR_6GAUSS		= 0x40;
 const uint8_t MAG_MDR_8GAUSS		= 0x60;
+
+const float ACC_2G_SENSE			= 0.061;
+const float ACC_4G_SENSE			= 0.122;
+const float ACC_6G_SENSE			= 0.183;
+const float ACC_8G_SENSE			= 0.244;
+const float ACC_16G_SENSE			= 0.732;
+const float GYR_245DPS_SENSE		= 8.75;
+const float GYR_500DPS_SENSE		= 17.5;
+const float GYR_2000DPS_SENSE		= 70;
+const float MAG_2GAUSS_SENSE		= 0.08;
+const float MAG_4GAUSS_SENSE		= 0.16;
+const float MAG_8GAUSS_SENSE		= 0.32;
+const float MAG_12GAUSS_SENSE		= 0.48;
+const float TEMP_SENSE				= 0.125;
 
 
 
@@ -67,7 +80,7 @@ class IMU {
 		int16_t		temperature;
 
 		struct Koordinaten {
-			int16_t	x, y, z;
+			float	x, y, z, sense;
 		} gyro, accel, magnet;
 
 		bool		whoami();
