@@ -124,7 +124,6 @@ namespace msl
 		auto pos = rawSensorData.getOwnPositionVision();
 		if(pos == nullptr)
 		{
-			cout << "WM: pos is nullptr" << endl;
 			return;
 		}
 		if (ball != nullptr)
