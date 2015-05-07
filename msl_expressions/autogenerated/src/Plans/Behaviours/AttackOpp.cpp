@@ -30,9 +30,9 @@ namespace alica
 
         auto obstacles = wm->robots.getObstacles();
 
-        for(auto obstacle : *obstacles)
+        for (auto obstacle : *obstacles)
         {
-        	// TODO: Get closest obstacle to ball
+            // TODO: Get closest obstacle to ball
         }
 
         if (!me.operator bool())
@@ -53,24 +53,22 @@ namespace alica
             mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < msl::CNPoint2D > (0.0, 0.0), 0);
         }
 
-//        if (egoTarget->length() < 250)
-//        {
-//            this->success = true;
-//        }
+        if (egoTarget->length() < 250)
+        {
+            this->success = true;
+        }
 
         // TODO: Prüfen ob Wert korrekt ist
-        auto radius_own = sqrt(pow((me->x - ballPos->x),2) + pow(me->y - ballPos->y,2));
+        auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
         std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
 
         auto radius_distance_ball = 600;
-
-
 
         // TODO: Schnittpunkt berechnen
 
         send(mc);
 
-    	//Add additional options here
+        //Add additional options here
         /*PROTECTED REGION END*/
     }
     void AttackOpp::initialiseParameters()

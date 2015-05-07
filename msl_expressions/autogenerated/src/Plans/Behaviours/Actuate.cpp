@@ -26,7 +26,7 @@ namespace alica
         msl_actuator_msgs::RawOdometryInfoPtr rodo = wm->getRawOdometryInfo();
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-        double x,y;
+        double x, y;
 
         if (rodo == nullptr)
         {

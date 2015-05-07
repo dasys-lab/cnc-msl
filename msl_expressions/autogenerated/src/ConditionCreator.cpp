@@ -6,6 +6,8 @@
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
+#include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
+
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandard1426697871183.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -137,6 +139,12 @@ namespace alica
             case 1426696642635:
 
                 return make_shared<TransitionCondition1426696642635>();
+
+                break;
+
+            case 1430324477939:
+
+                return make_shared<TransitionCondition1430324477939>();
 
                 break;
 
