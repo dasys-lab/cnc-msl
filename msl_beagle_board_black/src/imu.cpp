@@ -42,11 +42,11 @@ void IMU::init() {
 	i2c->setDeviceAddress(ADR_G);
 	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
 
-	accel.sense = ACC_2G_SENSE;
+	accel.sense = ACC_2G_SENSE / 1000;
 	this->setupAccel(ACC_AFS_2G);
-	gyro.sense = GYR_2000DPS_SENSE;
+	gyro.sense = GYR_2000DPS_SENSE / 1000;
 	this->setupGyro(GYR_FS_2000DPS);
-	magnet.sense = MAG_8GAUSS_SENSE;
+	magnet.sense = MAG_8GAUSS_SENSE / 1000;
 	this->setupMagnet(MAG_MDR_2GAUSS);
 }
 
