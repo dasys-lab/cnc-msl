@@ -42,6 +42,7 @@ void IMU::init() {
 	i2c->setDeviceAddress(ADR_G);
 	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
 
+	//TODO Anpassen der Multiplikatoren
 	accel.sense = ACC_2G_SENSE / 1000;
 	this->setupAccel(ACC_AFS_2G);
 	gyro.sense = GYR_2000DPS_SENSE / 1000;

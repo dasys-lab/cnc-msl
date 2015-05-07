@@ -61,7 +61,7 @@
 
 
 // Entscheidungsschwelle fuer Ball (0 bis 65000)
-const uint16_t LIGHTBARRIER_THRESHOLD = 2500;
+const uint16_t LIGHTBARRIER_THRESHOLD = 30000;
 
 
 #endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_CONFIG_H_ */
