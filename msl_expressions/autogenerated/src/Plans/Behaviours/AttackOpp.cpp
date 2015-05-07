@@ -29,6 +29,10 @@ namespace alica
         auto ballPos = wm->rawSensorData.getBallPosition();
 
         auto obstacles = wm->robots.getObstacles();
+	if(me == nullptr || ballPos==nullptr || obstacles ==nullptr) {
+		cerr << "insufficient information for AttackOpp" << endl;
+		return;
+	}
 
         for (auto obstacle : *obstacles)
         {
