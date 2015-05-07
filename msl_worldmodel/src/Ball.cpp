@@ -76,6 +76,7 @@ namespace msl
 		{
 			// TODO predict ball, Endy do it!
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			//cout << "Ball: NullPointer check failed!" << endl;
 			return;
 		}
 
@@ -86,6 +87,7 @@ namespace msl
 		if (KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length())
 		{
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			//cout << "Ball: Distance Tolerance check failed!" << endl;
 			return;
 		}
 
@@ -104,6 +106,7 @@ namespace msl
 		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
 		{
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+			//cout << "Ball: Angle Tolerance check failed!" << endl;
 			return;
 		}
 
