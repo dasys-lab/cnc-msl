@@ -47,6 +47,7 @@ namespace msl
 		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
+		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;

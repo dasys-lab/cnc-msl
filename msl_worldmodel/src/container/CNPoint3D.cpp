@@ -24,5 +24,12 @@ namespace msl {
 
 	CNPoint3D::~CNPoint3D() {
 	}
+
+	string CNPoint3D::toString()
+	{
+		stringstream ss;
+		ss << "CNPoint3D: x: " << this->x << " y: " << this->y << " z: " << this->z << endl;
+		return ss.str();
+	}
 }
 

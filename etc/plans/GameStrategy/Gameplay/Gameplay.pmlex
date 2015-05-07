@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="Gameplay.pml#1426694853090"/>
+    <value xPos="114" yPos="197" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="Gameplay.pml#1426694853089"/>
+    <value width="699" height="518"/>
+  </extensions>
+  <extensions>
+    <key href="Gameplay.pml#1426694853091"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

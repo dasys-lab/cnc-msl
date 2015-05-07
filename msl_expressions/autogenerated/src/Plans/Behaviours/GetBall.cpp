@@ -30,17 +30,17 @@ namespace alica
 
         /*msl_simulator::sim_robot_command c;
 
-        c.velnormal = min(egoBallPos.y * 0.002, 2.0);
-        c.veltangent = min(egoBallPos.x * 0.002, 2.0);
-        c.velangular = 3 * atan2(egoBallPos.y, egoBallPos.x);
+         c.velnormal = min(egoBallPos.y * 0.002, 2.0);
+         c.veltangent = min(egoBallPos.x * 0.002, 2.0);
+         c.velangular = 3 * atan2(egoBallPos.y, egoBallPos.x);
 
-        CNPoint2D p1(0, 1);
-        auto p2 = p1.rotate(3.141 * 0.5);
+         CNPoint2D p1(0, 1);
+         auto p2 = p1.rotate(3.141 * 0.5);
 
-        cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2->x << "," << p2->y << ")"
-                << endl;
+         cout << "GetBall: Point1: (" << p1.x << "," << p1.y << ")" << " Point2: (" << p2->x << "," << p2->y << ")"
+         << endl;
 
-        this->send(c);*/
+         this->send(c);*/
         /*PROTECTED REGION END*/
     }
     void GetBall::initialiseParameters()

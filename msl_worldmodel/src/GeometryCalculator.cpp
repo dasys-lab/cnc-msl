@@ -7,22 +7,29 @@
 
 #include <GeometryCalculator.h>
 
+namespace msl
+{
 
-
-namespace msl {
-
-	double GeometryCalculator::deltaAngle(double angle1, double angle2) {
+	double GeometryCalculator::deltaAngle(double angle1, double angle2)
+	{
 		double ret = angle2 - angle1;
-			if (ret > M_PI)
-				return -M_2_PI + ret;
-			else if (ret < -M_PI)
-				return ret + M_2_PI;
-			else
-				return ret;
+		if (ret > M_PI)
+		{
+			return -2 * M_PI + ret;
+		}
+		else if (ret < -M_PI)
+		{
+			return ret + 2 * M_PI;
+		}
+		else
+		{
+			return ret;
+		}
 
 	}
 
-	GeometryCalculator::GeometryCalculator() {
+	GeometryCalculator::GeometryCalculator()
+	{
 
 	}
 
@@ -41,6 +48,5 @@ namespace msl {
 //
 //		  return ego;
 //		}
-
 
 } /* namespace msl */

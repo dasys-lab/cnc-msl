@@ -20,7 +20,7 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this)
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -33,10 +33,10 @@ namespace msl
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
+		motionBurstSub = n.subscribe("/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
-
 
 	}
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
@@ -69,6 +69,14 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
+		pathPlanner.processWorldModelData(msg);
+		visionTrigger.run();
+	}
+
+	void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
+	{
+		lock_guard<mutex> lock(motionBurstMutex);
+		rawSensorData.processMotionBurst(msg);
 	}
 
 	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
@@ -116,6 +124,7 @@ namespace msl
 		auto pos = rawSensorData.getOwnPositionVision();
 		if(pos == nullptr)
 		{
+			cout << "WM: pos is nullptr" << endl;
 			return;
 		}
 		if (ball != nullptr)
@@ -181,7 +190,7 @@ namespace msl
 
 	pair<double, double> MSLWorldModel::transformToWorldCoordinates(double x, double y)
 	{
-
+		return pair<double, double>(0.0, 0.0);
 	}
 
 } /* namespace msl */

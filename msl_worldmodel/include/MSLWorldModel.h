@@ -12,6 +12,7 @@
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_msgs/JoystickCommand.h>
+#include <msl_actuator_msgs/MotionBurst.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -25,6 +26,8 @@
 #include "Robots.h"
 #include "Ball.h"
 #include "Game.h"
+#include "pathplanner/PathPlanner.h"
+#include "EventTrigger.h"
 
 
 using namespace std;
@@ -44,6 +47,7 @@ namespace msl
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
+		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 
 		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
@@ -59,6 +63,8 @@ namespace msl
 		Robots robots;
 		Ball ball;
 		Game game;
+		PathPlanner pathPlanner;
+		supplementary::EventTrigger visionTrigger;
 
 	private:
 
@@ -72,6 +78,7 @@ namespace msl
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
 		ros::Subscriber joystickSub;
+		ros::Subscriber motionBurstSub;
 		ros::Publisher sharedWorldPub;
 
 		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
@@ -80,7 +87,8 @@ namespace msl
 
 		mutex rawOdometryMutex;
 		mutex wmMutex;
-		mutex joystickMutex;;
+		mutex joystickMutex;
+		mutex motionBurstMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:

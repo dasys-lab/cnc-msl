@@ -9,6 +9,7 @@
 #define CNC_MSL_MSL_WORLDMODEL_SRC_CONTAINER_CNPOSITION_H_
 
 #include "geometry_msgs/Pose2D.h"
+using namespace std;
 
 namespace msl {
 	class CNPosition : public geometry_msgs::Pose2D {
@@ -16,6 +17,7 @@ namespace msl {
 		CNPosition() : CNPosition(0,0,0) {}
 		CNPosition(double x, double y, double theta);
 		virtual ~CNPosition();
+		string toString();
 	};
 
 }

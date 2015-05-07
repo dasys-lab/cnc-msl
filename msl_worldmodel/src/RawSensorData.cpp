@@ -153,6 +153,14 @@ namespace msl
 		return ret;
 	}
 
+	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index) {
+		auto x = joystickCommands.getLast(index);
+		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge) {
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
 	void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
 		if (msg->robotId == this->ownID) {
 			shared_ptr<msl_msgs::JoystickCommand> cmd = make_shared<msl_msgs::JoystickCommand>(*msg);
@@ -162,36 +170,47 @@ namespace msl
 		}
 	}
 
-	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index) {
-		auto x = joystickCommands.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge) {
-			return nullptr;
-		}
-		return x->getInformation();
+	void RawSensorData::processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
+	{
+		shared_ptr<CNPoint2D> opt = make_shared<CNPoint2D>(msg->x, msg->y);
+		shared_ptr<InformationElement<CNPoint2D>> o = make_shared<InformationElement<CNPoint2D>>(opt, wm->getTime());
+		o->certainty = msg->qos;
+		opticalFlow.add(o);
 	}
-
 
 	void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 	{
 		unsigned long time = wm->getTime();
 
-//		if ((time - data->odometry.timestamp) > 1000000000)
-//		{
-//			return;
-//		}
 		if (data->odometry.certainty > 0)
 		{
+			//Vision
 			shared_ptr<CNPosition> pos = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
 																	data->odometry.position.angle);
 			shared_ptr<InformationElement<CNPosition>> odometry = make_shared<InformationElement<CNPosition>>(pos,
 																												time);
 			odometry->certainty = data->odometry.certainty;
 			ownPositionVision.add(odometry);
+
 			shared_ptr<msl_msgs::MotionInfo> vel = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> v = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(vel, time);
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
+
+			//Motion
+			shared_ptr<CNPosition> posMotion = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
+																	data->odometry.position.angle);
+			shared_ptr<InformationElement<CNPosition>> odometryMotion = make_shared<InformationElement<CNPosition>>(posMotion,
+																												time);
+			odometryMotion->certainty = data->odometry.certainty;
+			ownPositionMotion.add(odometryMotion);
+
+			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
+			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
+					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
+			vMotion->certainty = data->odometry.certainty;
+			ownVelocityMotion.add(vMotion);
 		}
 
 		if (data->ball.confidence > 0)
@@ -214,6 +233,10 @@ namespace msl
 				time);
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
+
+		this->wm->ball.updateOnWorldModelData();
 	}
 
 } /* namespace alica */
+
+

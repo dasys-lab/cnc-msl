@@ -28,13 +28,18 @@ namespace alica
         {
             return;
         }
-        if (ballPos == nullptr)
-        {
-            return;
-        }
         auto egoTarget = alloTarget.alloToEgo(*me);
 
-        msl_actuator_msgs::MotionControl mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+        msl_actuator_msgs::MotionControl mc;
+
+        if (ballPos != nullptr)
+        {
+            mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+        }
+        else
+        {
+            mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < CNPoint2D > (0.0, 0.0), 0);
+        }
 
         if (egoTarget->length() < 250)
         {

@@ -37,6 +37,7 @@ namespace msl
 	{
 		lock_guard<mutex> lock(refereeMutex);
 		gameTime = msg->elapsedSeconds;
+
 		if (currentSituation != Situation::Start)
 		{
 			lastSituation = currentSituation;
@@ -50,6 +51,9 @@ namespace msl
 
 		if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start)
 		{
+			if(currentSituation != Situation::Start) {
+				timeSinceStart = wm->getTime();
+			}
 			currentSituation = Situation::Start;
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::stop)
@@ -256,8 +260,15 @@ namespace msl
 				currentSituation = Situation::OppThrowin;
 			}
 		}
+		if((int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::start && (int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::stop) {
+			lastActiveSituation = currentSituation;
+		}
 	}
 
+	//time in nanoseconds
+	unsigned long Game::getTimeSinceStart() {
+		return timeSinceStart;
+	}
 	msl_msgs::RefereeBoxInfoBodyPtr Game::getRefereeBoxInfoBody()
 	{
 		lock_guard<mutex> lock(refereeMutex);

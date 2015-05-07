@@ -7,6 +7,7 @@
 
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include <sstream>
 
 using namespace std;
 
@@ -63,8 +64,15 @@ namespace msl {
 		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
 		double length = this->length();
 
-		norm->x = this->x / length;
-		norm->y = this->y / length;
+		if(length > 0)
+		{
+			norm->x = this->x / length;
+			norm->y = this->y / length;
+		}
+		else
+		{
+			cerr << "CNPoint2D: Trying to normalize 0.0!" << endl;
+		}
 
 		return norm;
 	}
@@ -101,5 +109,13 @@ namespace msl {
 		ret->y += right->y;
 		return ret;
 	}
+
+	string CNPoint2D::toString()
+	{
+		stringstream ss;
+		ss << "CNPoint2D: x: " << this->x << " y: " << this->y << endl;
+		return ss.str();
+	}
 }
+
 
