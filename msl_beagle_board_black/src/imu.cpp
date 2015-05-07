@@ -141,6 +141,8 @@ void IMU::getTemp() {
 		val[i] = i2c->readByte(TEMP_OUT + i);
 	}
 
+	//TODO Temperature Offset
+	// temperature = 21.0 + (float) dof.temperature/8.;
 	temperature = ((int16_t) val[1] << 8) | val[0];
 }
 
