@@ -33,11 +33,11 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
 
         /*if (ballPos != nullptr)
-        {
-            mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
-        }
-        else
-        {*/
+         {
+         mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+         }
+         else
+         {*/
         mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < CNPoint2D > (-1000.0, 0.0), 0);
         //}
 

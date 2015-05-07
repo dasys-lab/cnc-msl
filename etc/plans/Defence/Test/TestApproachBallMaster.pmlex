@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="TestApproachBallMaster.pml#1430324312981"/>
-    <value width="663" height="450"/>
+    <value width="844" height="575"/>
   </extensions>
   <extensions>
     <key href="TestApproachBallMaster.pml#1430324312983"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="TestApproachBallMaster.pml#1430324405240"/>
-    <value xPos="351" yPos="103" width="184" height="86" collapsed="false"/>
+    <value xPos="481" yPos="184" width="184" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestApproachBallMaster.pml#1430324473378"/>
@@ -26,6 +26,10 @@
   </extensions>
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestApproachBallMaster.pml#1431012024235"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

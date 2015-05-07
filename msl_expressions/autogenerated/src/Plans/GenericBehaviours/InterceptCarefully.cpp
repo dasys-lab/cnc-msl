@@ -24,10 +24,10 @@ namespace alica
         /*PROTECTED REGION ID(run1427703218101) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
         auto egoBallPos = wm->ball.getEgoBallPosition();
-	MotionControl mc;
+        MotionControl mc;
         if (me == nullptr || egoBallPos == nullptr)
         {
-	    send(mc);
+            send(mc);
             return;
         }
 
