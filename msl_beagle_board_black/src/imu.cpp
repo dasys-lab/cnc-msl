@@ -38,6 +38,7 @@ void IMU::init() {
 
 	// Enable Magnet & Temp
 	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz, & high resolution
+	i2c->writeByte(CTRL_REG7_XM, 0x80);			// High Pass Filter - Normal Mode
 
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
@@ -45,7 +46,7 @@ void IMU::init() {
 
 	this->setupAccel(ACC_AFS_4G);
 	this->setupGyro(GYR_FS_2000DPS);
-	this->setupMagnet(MAG_MDR_4GAUSS);
+	this->setupMagnet(MAG_MDR_2GAUSS);
 }
 
 bool IMU::whoami() {
