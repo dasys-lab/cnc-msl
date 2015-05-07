@@ -130,7 +130,6 @@ add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp msl_sensor_
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_worldmodel
   ${catkin_LIBRARIES} 
-  system_config
 )
 
 #############
