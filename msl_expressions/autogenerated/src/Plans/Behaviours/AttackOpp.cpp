@@ -62,7 +62,9 @@ namespace alica
         auto radius_own = sqrt(pow((me->x - ballPos->x),2) + pow(me->y - ballPos->y,2));
         std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
 
-        auto radius_ball = 60; // in cm???
+        auto radius_distance_ball = 600;
+
+
 
         // TODO: Schnittpunkt berechnen
 
