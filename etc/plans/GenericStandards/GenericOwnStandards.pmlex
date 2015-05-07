@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430924951133"/>
+    <value xPos="118" yPos="151" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430924951132"/>
+    <value xPos="-214" yPos="-11" width="666" height="461"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925626532"/>
+    <value xPos="10" yPos="189"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925718512"/>
+    <value xPos="117" yPos="1" width="99" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925736746"/>
+    <value xPos="250" width="95" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925743739"/>
+    <value xPos="245" yPos="141" width="104" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925751875"/>
+    <value xPos="239" yPos="338" width="103" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925759928"/>
+    <value xPos="70" yPos="337" width="119" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925774870"/>
+    <value xPos="216" yPos="222" width="123" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925917001"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925918585"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925919866"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925921331"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925922843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925924151"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925945981"/>
+    <value xPos="448" yPos="201"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925960854"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925962882"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925965662"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925967608"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925971330"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1430925973111"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

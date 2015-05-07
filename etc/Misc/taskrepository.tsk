@@ -9,4 +9,8 @@
   <tasks id="1429108494059" name="Watcher" comment="" description=""/>
   <tasks id="1429109227638" name="Blocker" comment="" description=""/>
   <tasks id="1429111464037" name="StandardDefend" comment="" description=""/>
+  <tasks id="1430925028285" name="Executor" comment="" description=""/>
+  <tasks id="1430925085985" name="Receiver" comment="" description=""/>
+  <tasks id="1430925356668" name="Defender" comment="" description=""/>
+  <tasks id="1430925359247" name="Blocker" comment="" description=""/>
 </alica:TaskRepository>

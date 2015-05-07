@@ -28,6 +28,8 @@
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardPositioning1429108230432.h"
 
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
+
 #include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
 
 #include  "Plans/GameStrategy/OwnStandards/OwnStandards1426694875113.h"
@@ -351,6 +353,78 @@ namespace alica
             case 1426698520600:
 
                 return make_shared<TransitionCondition1426698520600>();
+
+                break;
+
+            case 1430925918456:
+
+                return make_shared<TransitionCondition1430925918456>();
+
+                break;
+
+            case 1430925919738:
+
+                return make_shared<TransitionCondition1430925919738>();
+
+                break;
+
+            case 1430925921267:
+
+                return make_shared<TransitionCondition1430925921267>();
+
+                break;
+
+            case 1430925922740:
+
+                return make_shared<TransitionCondition1430925922740>();
+
+                break;
+
+            case 1430925924055:
+
+                return make_shared<TransitionCondition1430925924055>();
+
+                break;
+
+            case 1430925925549:
+
+                return make_shared<TransitionCondition1430925925549>();
+
+                break;
+
+            case 1430925962659:
+
+                return make_shared<TransitionCondition1430925962659>();
+
+                break;
+
+            case 1430925965501:
+
+                return make_shared<TransitionCondition1430925965501>();
+
+                break;
+
+            case 1430925967520:
+
+                return make_shared<TransitionCondition1430925967520>();
+
+                break;
+
+            case 1430925970967:
+
+                return make_shared<TransitionCondition1430925970967>();
+
+                break;
+
+            case 1430925972838:
+
+                return make_shared<TransitionCondition1430925972838>();
+
+                break;
+
+            case 1430925975558:
+
+                return make_shared<TransitionCondition1430925975558>();
 
                 break;
 

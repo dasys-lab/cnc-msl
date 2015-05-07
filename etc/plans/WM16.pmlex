@@ -2,19 +2,37 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="WM16.pml#1413992564409"/>
-    <value xPos="156" yPos="68" width="75" height="65"/>
+    <value xPos="156" yPos="68" width="75" height="65" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564408"/>
-    <value xPos="29" yPos="23" width="930" height="576"/>
+    <value xPos="-9" yPos="2" width="930" height="576"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564410"/>
     <value/>
   </extensions>
   <extensions>
+    <key href="WM16.pml#1413992572149"/>
+    <value xPos="335" yPos="83" width="75" height="65" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WM16.pml#1413992575757"/>
+    <value/>
+  </extensions>
+  <extensions>
     <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="WM16.pml#1414752333556"/>
+    <value xPos="507" yPos="314" width="212" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="WM16.pml#1414752349075"/>
+    <value>
+      <bendpoints xPos="538" yPos="323"/>
+    </value>
   </extensions>
   <extensions>
     <key href="Behaviours/DribbleToPoint.beh#1414752423981"/>

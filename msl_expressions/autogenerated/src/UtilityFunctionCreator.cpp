@@ -29,6 +29,8 @@
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardPositioning1429108230432.h"
 
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
+
 #include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
 
 #include  "Plans/GameStrategy/OwnStandards/OwnStandards1426694875113.h"
@@ -105,6 +107,10 @@ namespace alica
 
             case 1429108230432:
                 return make_shared<UtilityFunction1429108230432>();
+                break;
+
+            case 1430924951132:
+                return make_shared<UtilityFunction1430924951132>();
                 break;
 
             case 1426694853089:
