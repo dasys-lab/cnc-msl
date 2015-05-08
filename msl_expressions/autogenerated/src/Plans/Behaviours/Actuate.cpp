@@ -33,7 +33,7 @@ namespace alica
             cout << "Actuate RODO is empty help" << endl;
             return;
         }
-
+/*
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
@@ -66,15 +66,15 @@ namespace alica
         if ((y >= 0) && (x >= 0))
         {
 
-            left = (x * 15 + y);
-            right = (x * 15 - y); //x-y
+            left = 5+(x * 15 + y);
+            right = 5+(x * 15 - y); //x-y
         }
         //RoboterD front right
         if ((y < 0) && (x >= 0))
         {
 
-            left = (x * 15 + y);
-            right = (x * 15 - y); //x-y
+            left = 5+(x * 15 + y);
+            right = 5+(x * 15 - y); //x-y
         }
 
         //RoboterD behind left
@@ -92,8 +92,34 @@ namespace alica
             right = (x + y);
 
         }
-        // left = rodo->motion.translation * (1.0 / 40.0) ;
-        //right = rodo->motion.translation * (1.0 / 40.0) ;
+        */
+
+       //Mittelwert der Aktuellen 3 Werte
+
+        list<double> container(3);
+        list<double> :: iterator get;
+        double TestForMotion;
+
+        for (int i=0; i<4; i++)
+        {
+        if(i>2)
+        container.pop_front();
+
+		container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
+        }
+
+
+        for(get =container.begin(); get != container.end(); get++)
+        {
+         TestForMotion = TestForMotion+*get;
+        }
+
+
+
+        left = TestForMotion/100; //rodo->motion.translation * (1.0 / 40.0) ;
+         right = TestForMotion/100;//rodo->motion.translation * (1.0 / 40.0) ;
+
+
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
