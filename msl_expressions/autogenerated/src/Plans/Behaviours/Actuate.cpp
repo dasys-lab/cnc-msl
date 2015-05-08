@@ -93,9 +93,13 @@ namespace alica
 
         }
         */
+
+       //Mittelwert der Aktuellen 3 Werte
+
         list<double> container(3);
         list<double> :: iterator get;
         double TestForMotion;
+
         for (int i=0; i<4; i++)
         {
         if(i>2)
@@ -103,6 +107,8 @@ namespace alica
 
 		container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
         }
+
+
         for(get =container.begin(); get != container.end(); get++)
         {
          TestForMotion = TestForMotion+*get;
@@ -110,8 +116,8 @@ namespace alica
 
 
 
-        left = TestForMotion/30; //rodo->motion.translation * (1.0 / 40.0) ;
-         right = TestForMotion/30;//rodo->motion.translation * (1.0 / 40.0) ;
+        left = TestForMotion/100; //rodo->motion.translation * (1.0 / 40.0) ;
+         right = TestForMotion/100;//rodo->motion.translation * (1.0 / 40.0) ;
 
 
 
