@@ -33,7 +33,7 @@ namespace alica
             cout << "Actuate RODO is empty help" << endl;
             return;
         }
-/*
+
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
@@ -92,10 +92,11 @@ namespace alica
             right = (x + y);
 
         }
-        */
+
 
        //Mittelwert der Aktuellen 3 Werte
 
+       /*
         list<double> container(3);
         list<double> :: iterator get;
         double TestForMotion;
@@ -113,11 +114,11 @@ namespace alica
         {
          TestForMotion = TestForMotion+*get;
         }
+*/
 
 
-
-        left = TestForMotion/100; //rodo->motion.translation * (1.0 / 40.0) ;
-        right = TestForMotion/100;//rodo->motion.translation * (1.0 / 40.0) ;
+//        left =  rodo->motion.translation * (1.0 / 40.0) ;
+//        right = rodo->motion.translation * (1.0 / 40.0) ;
 
 
 
