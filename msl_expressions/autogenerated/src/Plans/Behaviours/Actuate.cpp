@@ -36,6 +36,7 @@ namespace alica
 
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
+        /*
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
         {
@@ -92,14 +93,14 @@ namespace alica
             right = (x + y);
 
         }
-
+	*/
 
        //Mittelwert der Aktuellen 3 Werte
 
-       /*
+
         list<double> container(3);
         list<double> :: iterator get;
-        double TestForMotion;
+        double TestForMotion = 0;
 
         for (int i=0; i<4; i++)
         {
@@ -114,13 +115,15 @@ namespace alica
         {
          TestForMotion = TestForMotion+*get;
         }
-*/
+
+
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
 //        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-
+        left=TestForMotion/40;
+        right=TestForMotion/40;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
