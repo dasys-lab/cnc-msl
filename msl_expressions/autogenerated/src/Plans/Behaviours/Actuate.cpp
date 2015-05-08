@@ -66,39 +66,42 @@ namespace alica
         if ((y >= 0) && (x >= 0))
         {
 
-            left = 30;//5+(x * 15 + y);
-            right = 30;//5+(x * 15 - y); //x-y
+            left = 5+(x * 15 + y);
+            right = 5+(x * 15 - y); //x-y
         }
         //RoboterD front right
         if ((y < 0) && (x >= 0))
         {
 
-            left = 30;//5+(x * 15 + y);
-            right = 30;//5+(x * 15 - y); //x-y
+            left = 5+(x * 15 + y);
+            right = 5+(x * 15 - y); //x-y
         }
 
         //RoboterD behind left
         if ((y >= 0) && (x <= 0))
         {
 
-            left = 30;//(x - y);
-            right = 30;//(-x - y);
+            left = (x - y);
+            right = (-x - y);
         }
 
         //RoboterD behind right
         if ((y <= 0) && (x <= 0))
         {
-            left = 30;//(x - y);
-            right = 30;//(x + y);
+            left = (x - y);
+            right = (x + y);
 
         }
         */
-        list<double> container;
+        list<double> container(3);
         list<double> :: iterator get;
         double TestForMotion;
         for (int i=0; i<4; i++)
         {
-        	container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
+        if(i>2)
+        container.pop_front();
+
+		container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
         }
         for(get =container.begin(); get != container.end(); get++)
         {
