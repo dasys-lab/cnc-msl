@@ -33,7 +33,7 @@ namespace alica
             cout << "Actuate RODO is empty help" << endl;
             return;
         }
-
+/*
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
@@ -92,8 +92,9 @@ namespace alica
             right = 30;//(x + y);
 
         }
-        // left = rodo->motion.translation * (1.0 / 40.0) ;
-        //right = rodo->motion.translation * (1.0 / 40.0) ;
+        */
+         left = rodo->motion.translation * (1.0 / 40.0) ;
+         right = rodo->motion.translation * (1.0 / 40.0) ;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
