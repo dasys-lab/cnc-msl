@@ -93,8 +93,24 @@ namespace alica
 
         }
         */
-         left = rodo->motion.translation * (1.0 / 40.0) ;
+        list<double> container;
+        list<double> :: iterator get;
+
+        for (int i=0; i<4; i++)
+        {
+        	container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
+        }
+        for(get =container.begin(); get != container.end(); get++)
+        {
+        	std::cout<< get << std::endl;
+        }
+
+
+
+        left = rodo->motion.translation * (1.0 / 40.0) ;
          right = rodo->motion.translation * (1.0 / 40.0) ;
+
+
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
