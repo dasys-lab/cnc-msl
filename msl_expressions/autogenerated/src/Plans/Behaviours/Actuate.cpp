@@ -117,7 +117,7 @@ namespace alica
 
 
         left = TestForMotion/100; //rodo->motion.translation * (1.0 / 40.0) ;
-         right = TestForMotion/100;//rodo->motion.translation * (1.0 / 40.0) ;
+        right = TestForMotion/100;//rodo->motion.translation * (1.0 / 40.0) ;
 
 
 
