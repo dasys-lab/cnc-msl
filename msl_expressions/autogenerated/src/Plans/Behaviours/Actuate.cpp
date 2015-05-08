@@ -121,8 +121,8 @@ namespace alica
 
 
 
-        //bhc.leftMotor = max(min(left, 60), -60);
-        //bhc.rightMotor = max(min(right, 60), -60);
+        bhc.leftMotor = max(min(left, 60), -60);
+        bhc.rightMotor = max(min(right, 60), -60);
 
         this->send(bhc);
         /*PROTECTED REGION END*/
