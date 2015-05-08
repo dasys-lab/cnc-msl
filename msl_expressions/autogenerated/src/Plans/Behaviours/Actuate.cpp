@@ -95,20 +95,20 @@ namespace alica
         */
         list<double> container;
         list<double> :: iterator get;
-
+        double TestForMotion;
         for (int i=0; i<4; i++)
         {
         	container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
         }
         for(get =container.begin(); get != container.end(); get++)
         {
-        	std::cout<< *get << std::endl;
+         TestForMotion = +get;
         }
 
 
 
-        left = rodo->motion.translation * (1.0 / 40.0) ;
-         right = rodo->motion.translation * (1.0 / 40.0) ;
+        left = TestForMotion/3; //rodo->motion.translation * (1.0 / 40.0) ;
+         right = TestForMotion/3;//rodo->motion.translation * (1.0 / 40.0) ;
 
 
 
