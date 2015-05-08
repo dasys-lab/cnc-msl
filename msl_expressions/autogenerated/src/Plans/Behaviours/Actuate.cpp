@@ -102,7 +102,7 @@ namespace alica
         }
         for(get =container.begin(); get != container.end(); get++)
         {
-        	std::cout<< get << std::endl;
+        	std::cout<< *get << std::endl;
         }
 
 
