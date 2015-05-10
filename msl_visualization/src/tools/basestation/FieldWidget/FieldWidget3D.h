@@ -179,8 +179,8 @@ private:
     bool option_draw_debug[10];
     bool option_draw_obstacles[10];
 
-signals:
-public slots:
+Q_SIGNALS:
+public Q_SLOTS:
     void flip(void);
     void lock(bool);
     void update_robot_info(void);
