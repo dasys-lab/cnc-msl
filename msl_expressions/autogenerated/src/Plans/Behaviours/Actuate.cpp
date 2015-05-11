@@ -100,30 +100,30 @@ namespace alica
 
         list<double> container(3);
         list<double> :: iterator get;
-        double TestForMotion = 0;
+        double ArithmeticAverage = 0;
+        double NewParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-        for (int i=0; i<4; i++)
+        if(container size()==3)
         {
-        if(i>2)
-        container.pop_front();
-
-		container.push_back(wm->rawSensorData.getOwnVelocityMotion()->translation);
+        	container.pop_back();
         }
+
+        container.push_front(NewParamer);
 
 
         for(get =container.begin(); get != container.end(); get++)
         {
-         TestForMotion = TestForMotion+*get;
+        	ArithmeticAverage +=*get;
         }
 
-
+        ArithmeticAverage=ArithmeticAverage/3;
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
 //        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-        left=TestForMotion/40;
-        right=TestForMotion/40;
+        left=ArithmeticAverage/40;
+        right=ArithmeticAverage/40;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
