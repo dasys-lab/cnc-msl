@@ -122,8 +122,8 @@ namespace alica
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
 //        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-        left=ArithmeticAverage/40;
-        right=ArithmeticAverage/40;
+        left=ArithmeticAverage;
+        right=ArithmeticAverage;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
