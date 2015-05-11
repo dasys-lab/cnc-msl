@@ -98,12 +98,12 @@ namespace alica
        //Mittelwert der Aktuellen 3 Werte
 
 
-        list<double> container(3);
+        list<double> container;
         list<double> :: iterator get;
         double ArithmeticAverage = 0;
         double NewParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-        if(container size()==3)
+        if(container.size() == 3)
         {
         	container.pop_back();
         }
