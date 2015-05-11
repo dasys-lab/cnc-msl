@@ -28,6 +28,9 @@ namespace msl
 	{
 	}
 
+	//TODO eigene position in voronoi einfügen
+	//TODO gerade line zu ziel + korridor der breiter wird
+	// anfrage mit start ziel voronoi wenn korridor fehlschlägt a stern
 	/**
 	 * aStar search on a VoronoiDiagram
 	 * @param voronoi shared_ptr<VoronoiNet>
@@ -35,7 +38,7 @@ namespace msl
 	 * @param goal Point_2
 	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal)
+	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 startPos, Point_2 goal)
 	{
 		// return
 		shared_ptr<vector<shared_ptr<Point_2>>> ret = make_shared<vector<shared_ptr<Point_2>>>();
@@ -45,29 +48,24 @@ namespace msl
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 		//get closest Vertex to ownPos => start point for a star serach
-		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = voronoi->findClosestVertexToOwnPos(ownPos);
+		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = voronoi->findClosestVertexToOwnPos(startPos);
 
 		// get closest Vertex to goal => goal for a star serach
 		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = voronoi->findClosestVertexToOwnPos(goal);
 
-		//if ownPos == goal we dont have to plan a route
-		if(ownPos.x() == goal.x() && ownPos.y() == goal.y())
-		{
-			shared_ptr<vector<shared_ptr<Point_2>>> temp = make_shared<vector<shared_ptr<Point_2>>>();
-			temp->push_back(make_shared<Point_2>(goal));
-			return temp;
-		}
-
 		// a star serach
-
+		//TODO alle knoten in der nähe von ownpos einfügen
 		open->push_back(make_shared<SearchNode>(SearchNode(closestVertexToOwnPos, 0, nullptr)));
 
 		while(open->size() != 0)
 		{
+			//TODO einfügen in sortierte liste
 			shared_ptr<SearchNode> currentNode = voronoi->getMin(open);
 
+			//TODO == probieren
+			//TODO ziel alle knoten der zelle mit goal und es gibt korridor zu goal
 			if(currentNode->getVertex()->point().x() == closestVertexToGoal->point().x()
-					&& currentNode->getVertex()->point().x() == closestVertexToGoal->point().x())
+					&& currentNode->getVertex()->point().y() == closestVertexToGoal->point().y())
 			{
 				shared_ptr<SearchNode> temp = currentNode;
 				ret->push_back(make_shared<VoronoiDiagram::Point_2>(currentNode->getVertex()->point()));
@@ -110,14 +108,6 @@ namespace msl
 
 		// get closest Vertex to goal => goal for a star serach
 		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = voronoi->findClosestVertexToOwnPos(goal);
-
-		//if ownPos == goal we dont have to plan a route
-		if(ownPos.x() == goal.x() && ownPos.y() == goal.y())
-		{
-			shared_ptr<vector<shared_ptr<Point_2>>> temp = make_shared<vector<shared_ptr<Point_2>>>();
-			temp->push_back(make_shared<Point_2>(goal));
-			return temp;
-		}
 
 		// a star serach
 
@@ -210,7 +200,9 @@ namespace msl
 		return nullptr;
 	}
 
-	//TODO
+	//TODO wie ersten knoten anfahren
+	//TODO vielleicht sinnvoll aus pfadplaner mgl. pathproxi
+	//TODO verschiedene mgl zum anfahren des ersten punktes
 	shared_ptr<CNPoint2D> PathPlanner::getEgoDirection(CNPoint2D egoTarget, bool stayInField)
 	{
 		lastPathTarget = egoTarget;
@@ -232,5 +224,7 @@ namespace msl
 		return retPoint->alloToEgo(*ownPos);
 
 	}
+
+	//TODO pfad als cnpoint2d zurück
 
 } /* namespace alica */

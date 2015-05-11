@@ -110,6 +110,7 @@ private:
 	vector<msl_sensor_msgs::WorldModelDataPtr> msgs;
 	msl_sensor_msgs::WorldModelDataPtr currentMsg;
 	mutex mtx;
+	int index;
 };
 
 }  // namespace msl_voronoi_viewer

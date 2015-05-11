@@ -10,13 +10,13 @@
 namespace msl
 {
 
+	//TODO  c# vornoinet => initialize artficial obstacles
 	VoronoiNet::VoronoiNet(MSLWorldModel* wm)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
 		status = VoronoiStatus::New;
 		this->voronoi = make_shared<VoronoiDiagram>();
-
 	}
 
 	VoronoiNet::~VoronoiNet()
@@ -120,6 +120,8 @@ namespace msl
 		return ret;
 	}
 
+	//TODO bewertungskriterien
+	//bewerter
 	/**
 	 * expands Nodes given in current node
 	 * @param currentNode shared_ptr<SearchNode>
@@ -145,7 +147,6 @@ namespace msl
 			}
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
-			neighbors.at(i)->setCost(cost);
 			// add heuristic cost
 			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
@@ -157,6 +158,7 @@ namespace msl
 					&& open->at(i)->getVertex()->point().y() == neighbors.at(i)->getVertex()->point().y())
 					{
 						open->at(j)->setCost(cost);
+						break;
 					}
 				}
 			}

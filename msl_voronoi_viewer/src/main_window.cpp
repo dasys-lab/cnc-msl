@@ -66,6 +66,7 @@ namespace msl_voronoi_viewer
 	MainWindow::MainWindow(int argc, char** argv, QWidget *parent) :
 			QMainWindow(parent), qnode(argc, argv)
 	{
+		index = 0;
 		msgs = vector<msl_sensor_msgs::WorldModelDataPtr>(10);
 		for (int i = 0; i < msgs.size(); i++)
 		{
@@ -147,18 +148,41 @@ namespace msl_voronoi_viewer
 
 	void MainWindow::addExamples()
 	{
+		if(index == 0)
+		{
 		this->voronoi->insert(Site_2(100, 100));
 		this->voronoi->insert(Site_2(200, 100));
 		this->voronoi->insert(Site_2(200, 500));
+		}
+		if(index == 1)
+		{
 		this->voronoi->insert(Site_2(100, 900));
 		this->voronoi->insert(Site_2(700, 600));
 		this->voronoi->insert(Site_2(800, 100));
 		this->voronoi->insert(Site_2(900, 100));
+		}
+		if(index == 2)
+		{
 		this->voronoi->insert(Site_2(1000, 100));
 		this->voronoi->insert(Site_2(1100, 500));
 		this->voronoi->insert(Site_2(600, 900));
 		this->voronoi->insert(Site_2(700, 900));
 		this->voronoi->insert(Site_2(800, 1000));
+		}
+		if(index == 3)
+		{
+			for(auto it = this->voronoi->dual().vertices_begin();
+					 it != this->voronoi->dual().vertices_end(); it++)
+			{
+				if(it->point().x() == 1000 && it->point().y() == 100)
+				{
+					cout << "removing" << endl;
+					((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
+					cout << "removing" << endl;
+				}
+			}
+		}
+		index++;
 	}
 
 	void MainWindow::fillVoronoi()
