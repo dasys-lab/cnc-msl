@@ -36,7 +36,10 @@ namespace alica
 
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
-        /*
+
+
+
+
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
         {
@@ -95,9 +98,7 @@ namespace alica
         }
 	*/
 
-       //Mittelwert der Aktuellen 3 Werte
-
-
+       //Mittelwert der Aktuellen 4 Werte
 
 /*
         double arithmeticAverage = 0;
@@ -119,12 +120,13 @@ namespace alica
 
         arithmeticAverage=arithmeticAverage/8;
 
+
+        left=arithmeticAverage;
+        right=arithmeticAverage;
 */
+
         left =  rodo->motion.translation * (1.0 / 40.0) ;
         right = rodo->motion.translation * (1.0 / 40.0) ;
-
-      //  left=arithmeticAverage;
-       // right=arithmeticAverage;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
