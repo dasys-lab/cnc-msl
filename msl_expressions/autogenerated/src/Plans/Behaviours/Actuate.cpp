@@ -71,8 +71,8 @@ namespace alica
         y =  pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
 
-        left = 20*(x - y);
-        right = 20*(x + y);
+        left = 20*x;
+        right = 20* y;
 /*
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
