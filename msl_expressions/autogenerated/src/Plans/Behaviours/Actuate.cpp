@@ -104,7 +104,7 @@ namespace alica
         double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
         list<double> :: iterator parameter;
 
-        if(arithmeticAverageBox.size() == 3)
+        if(arithmeticAverageBox.size() == 4)
         {
         	arithmeticAverageBox.pop_back();
         }
@@ -117,7 +117,7 @@ namespace alica
         	arithmeticAverage +=*parameter;
         }
 
-        arithmeticAverage=arithmeticAverage/6;
+        arithmeticAverage=arithmeticAverage/8;
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
