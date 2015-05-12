@@ -95,6 +95,8 @@ namespace msl
 		 */
 		string toString();
 
+		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
+
 	private:
 		/**
 		 * inserts sites into the VoronoiDiagram

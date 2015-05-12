@@ -368,5 +368,28 @@ namespace msl
 		return ret;
 	}
 
+	shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
+	{
+		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> ret;
+		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+		if(loc.which() == 0)
+		{
+			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
+
+			VoronoiDiagram::Halfedge_handle begin = handle->halfedge()->opposite();
+			VoronoiDiagram::Halfedge_handle edge = begin;
+			do {
+				if(edge->has_source())
+				{
+					ret->push_back(make_shared<VoronoiDiagram::Vertex>(*edge->source()));
+				}
+			    edge = edge->previous();
+			} while (edge != begin);
+		}
+		return ret;
+	}
+
 } /* namespace msl */
+
 
