@@ -40,6 +40,17 @@ namespace alica
 
 
 
+        if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)&&wm->rawSensorData.getOwnVelocityMotion()->angle >=0 )
+        	x =  wm->rawSensorData.getOwnVelocityMotion()->translation
+        	                    * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+        y = wm->rawSensorData.getOwnVelocityMotion()->translation
+                           * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+
+        left = 5+15*(x - y);
+        right = 5+15*(x + y);
+/*
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
         {
@@ -96,7 +107,7 @@ namespace alica
             right = 5+15*(x + y);
 
         }
-
+*/
 
        //Mittelwert der Aktuellen 4 Werte
 
