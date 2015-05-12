@@ -99,7 +99,7 @@ namespace alica
 
 
 
-
+/*
         double arithmeticAverage = 0;
         double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
         list<double> :: iterator parameter;
@@ -119,12 +119,12 @@ namespace alica
 
         arithmeticAverage=arithmeticAverage/8;
 
+*/
+        left =  rodo->motion.translation * (1.0 / 40.0) ;
+        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-//        left =  rodo->motion.translation * (1.0 / 40.0) ;
-//        right = rodo->motion.translation * (1.0 / 40.0) ;
-
-        left=arithmeticAverage;
-        right=arithmeticAverage;
+      //  left=arithmeticAverage;
+       // right=arithmeticAverage;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
