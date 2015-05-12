@@ -117,14 +117,14 @@ namespace alica
         	arithmeticAverage +=*parameter;
         }
 
-        arithmeticAverage=arithmeticAverage/5;
+        arithmeticAverage=arithmeticAverage/3;
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
 //        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-        left=arithmeticAverage;
-        right=arithmeticAverage;
+        left=arithmeticAverage/40;
+        right=arithmeticAverage/40;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
