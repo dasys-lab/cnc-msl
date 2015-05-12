@@ -38,7 +38,7 @@ namespace alica
         // x Werte richtig vertauscht
 
 
-
+      /*
 
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
@@ -96,7 +96,7 @@ namespace alica
             right = (x + y);
 
         }
-	*/
+
 
        //Mittelwert der Aktuellen 4 Werte
 
