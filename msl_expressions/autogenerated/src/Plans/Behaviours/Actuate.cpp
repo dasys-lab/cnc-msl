@@ -98,32 +98,33 @@ namespace alica
        //Mittelwert der Aktuellen 3 Werte
 
 
-        list<double> container;
-        list<double> :: iterator get;
-        double ArithmeticAverage = 0;
-        double NewParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-        if(container.size() == 3)
+
+        double arithmeticAverage = 0;
+        double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
+        list<double> :: iterator parameter;
+
+        if(arithmeticAverageBox.size() == 3)
         {
-        	container.pop_back();
+        	arithmeticAverageBox.pop_back();
         }
 
-        container.push_front(NewParamer);
+        arithmeticAverageBox.push_front(newParamer);
 
 
-        for(get =container.begin(); get != container.end(); get++)
+        for(parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
         {
-        	ArithmeticAverage +=*get;
+        	arithmeticAverage +=*parameter;
         }
 
-        ArithmeticAverage=ArithmeticAverage/3;
+        arithmeticAverage=arithmeticAverage/3;
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
 //        right = rodo->motion.translation * (1.0 / 40.0) ;
 
-        left=ArithmeticAverage;
-        right=ArithmeticAverage;
+        left=arithmeticAverage;
+        right=arithmeticAverage;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);

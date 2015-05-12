@@ -1,8 +1,12 @@
+using namespace std;
 #ifndef Actuate_H_
 #define Actuate_H_
 
 #include "DomainBehaviour.h"
+
 /*PROTECTED REGION ID(inc1417017518918) ENABLED START*/ //Add additional includes here
+#include <iostream>
+#include <list>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,6 +17,7 @@ namespace alica
         virtual ~Actuate();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1417017518918) ENABLED START*/ //Add additional public methods here
+
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
@@ -20,7 +25,11 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1417017518918) ENABLED START*/ //Add additional private methods here
-        /*PROTECTED REGION END*/};
+
+        list<double> arithmeticAverageBox;
+
+        /*PROTECTED REGION END*/
+    };
 } /* namespace alica */
 
 #endif /* Actuate_H_ */
