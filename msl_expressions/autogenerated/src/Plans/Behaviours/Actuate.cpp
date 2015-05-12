@@ -72,7 +72,7 @@ namespace alica
 
 
         left =wm->rawSensorData.getOwnVelocityMotion()->angle ;
-        right =3*wm->rawSensorData.getOwnVelocityMotion()->angle;
+        right =wm->rawSensorData.getOwnVelocityMotion()->angle;
 /*
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
