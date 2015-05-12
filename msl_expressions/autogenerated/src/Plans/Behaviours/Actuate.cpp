@@ -38,18 +38,41 @@ namespace alica
         // x Werte richtig vertauscht
 
 
+        //Mittelwert der Aktuellen 4 Werte
+
+
+         double arithmeticAverage = 0;
+         double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
+         list<double> :: iterator parameter;
+
+         if(arithmeticAverageBox.size() == 4)
+         {
+         	arithmeticAverageBox.pop_back();
+         }
+
+         arithmeticAverageBox.push_front(newParamer);
+
+
+         for(parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+         {
+         	arithmeticAverage +=*parameter;
+         }
+
+         arithmeticAverage=arithmeticAverage/8;
+
+
+         //left=arithmeticAverage;
+         //right=arithmeticAverage;
 
 
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)&&wm->rawSensorData.getOwnVelocityMotion()->angle >=0 )
-        	x =  wm->rawSensorData.getOwnVelocityMotion()->translation
-        	                    * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        	x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        y = wm->rawSensorData.getOwnVelocityMotion()->translation
-                           * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        y =  pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
 
-        left = 5+5*(x - y);
-        right = 5+5*(x + y);
+        left = arithmeticAverage*(5+5*(x - y));
+        right = arithmeticAverage*(5+5*(x + y));
 /*
         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
@@ -109,32 +132,7 @@ namespace alica
         }
 */
 
-       //Mittelwert der Aktuellen 4 Werte
 
-/*
-        double arithmeticAverage = 0;
-        double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
-        list<double> :: iterator parameter;
-
-        if(arithmeticAverageBox.size() == 4)
-        {
-        	arithmeticAverageBox.pop_back();
-        }
-
-        arithmeticAverageBox.push_front(newParamer);
-
-
-        for(parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
-        {
-        	arithmeticAverage +=*parameter;
-        }
-
-        arithmeticAverage=arithmeticAverage/8;
-
-
-        left=arithmeticAverage;
-        right=arithmeticAverage;
-*/
 
        // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
