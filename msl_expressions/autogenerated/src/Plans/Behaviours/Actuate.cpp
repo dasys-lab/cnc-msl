@@ -117,7 +117,7 @@ namespace alica
         	arithmeticAverage +=*parameter;
         }
 
-        arithmeticAverage=arithmeticAverage/3;
+        arithmeticAverage=arithmeticAverage/4;
 
 
 //        left =  rodo->motion.translation * (1.0 / 40.0) ;
