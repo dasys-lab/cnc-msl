@@ -5,6 +5,8 @@ using namespace std;
 
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
+#include  "Plans/Penalty/PenaltyAlignAndShoot.h"
+
 #include  "Plans/Behaviours/AttackOpp.h"
 
 #include  "Plans/Behaviours/GoalKick.h"
@@ -66,6 +68,11 @@ namespace alica
                 return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
+            case 1431531542052:
+
+                return make_shared<PenaltyAlignAndShoot>();
+                break;
+
             case 1430324680117:
 
                 return make_shared<AttackOpp>();
@@ -87,6 +94,8 @@ namespace alica
                 break;
 
             case 1417620583364:
+
+            case 1431527260342:
 
                 return make_shared<DriveToPoint>();
                 break;

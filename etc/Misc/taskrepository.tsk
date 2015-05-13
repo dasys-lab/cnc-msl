@@ -13,4 +13,10 @@
   <tasks id="1430925085985" name="Receiver" comment="" description=""/>
   <tasks id="1430925356668" name="Defender" comment="" description=""/>
   <tasks id="1430925359247" name="Blocker" comment="" description=""/>
+  <tasks id="1431522228653" name="Executer" comment="" description=""/>
+  <tasks id="1431522275287" name="Receiver" comment="" description=""/>
+  <tasks id="1431523409834" name="Blocker" comment="" description=""/>
+  <tasks id="1431523425270" name="Defender" comment="" description=""/>
+  <tasks id="1431523927689" name="Keeper" comment="" description=""/>
+  <tasks id="1431525877073" name="Executer" comment="" description=""/>
 </alica:TaskRepository>

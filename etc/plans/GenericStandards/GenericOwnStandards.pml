@@ -9,6 +9,7 @@
     <outTransitions>#1430925924151</outTransitions>
   </states>
   <states id="1430925718512" name="OwnThrowIn" comment="">
+    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925917001</inTransitions>
     <outTransitions>#1430925960854</outTransitions>
   </states>
@@ -40,6 +41,7 @@
     <inTransitions>#1430925971330</inTransitions>
     <inTransitions>#1430925973111</inTransitions>
   </states>
+  <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444"/>
   <transitions id="1430925917001" name="MISSING_NAME" comment="situation = own throw in" msg="">
     <preCondition id="1430925918456" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430924951133</inState>
@@ -103,5 +105,9 @@
   <entryPoints id="1430925626532" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1430924951133</state>
+  </entryPoints>
+  <entryPoints id="1431523920444" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1431523927689</task>
+    <state>#1431523938514</state>
   </entryPoints>
 </alica:Plan>

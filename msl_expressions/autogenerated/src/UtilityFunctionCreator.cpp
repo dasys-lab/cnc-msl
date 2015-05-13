@@ -1,15 +1,17 @@
 #include <iostream>
 #include "UtilityFunctionCreator.h"
 
-#include  "Plans/GameStrategy/Other/Parking1426695119330.h"
-
 #include  "Plans/GameStrategy/OppStandards/OppStandards1426694865227.h"
+
+#include  "Plans/GameStrategy/Other/Parking1426695119330.h"
 
 #include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandard1426697871183.h"
+
+#include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
@@ -24,6 +26,8 @@
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardExecuter1429109528736.h"
 
 #include  "Plans/WM161413992564408.h"
+
+#include  "Plans/Penalty/OwnPenalty1431525185678.h"
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -55,12 +59,12 @@ namespace alica
         switch (utilityfunctionConfId)
         {
 
-            case 1426695119330:
-                return make_shared<UtilityFunction1426695119330>();
-                break;
-
             case 1426694865227:
                 return make_shared<UtilityFunction1426694865227>();
+                break;
+
+            case 1426695119330:
+                return make_shared<UtilityFunction1426695119330>();
                 break;
 
             case 1426696586622:
@@ -73,6 +77,10 @@ namespace alica
 
             case 1426697871183:
                 return make_shared<UtilityFunction1426697871183>();
+                break;
+
+            case 1431522123418:
+                return make_shared<UtilityFunction1431522123418>();
                 break;
 
             case 1417017436952:
@@ -101,6 +109,10 @@ namespace alica
 
             case 1413992564408:
                 return make_shared<UtilityFunction1413992564408>();
+                break;
+
+            case 1431525185678:
+                return make_shared<UtilityFunction1431525185678>();
                 break;
 
             case 1417621468963:
