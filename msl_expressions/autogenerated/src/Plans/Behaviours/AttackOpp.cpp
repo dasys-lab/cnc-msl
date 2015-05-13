@@ -57,7 +57,7 @@ namespace alica
             static double olddistance = 0.0;
 
             const double Kp = 1;
-            const double Ki = 1;
+            const double Ki = 0.0;
             const double Kd = 1;
 
             //distance ball to robot
