@@ -12,15 +12,17 @@ namespace msl
 {
 
 	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) :
-			voronoiDiagrams(count)
+			voronoiDiagrams(count), artificialObjectNet(wm)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
 		{
 			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
+			this->voronoiDiagrams.at(i)->setVoronoi(make_shared<VoronoiDiagram>((DelaunayTriangulation)this->artificialObjectNet.getVoronoi()->dual()));
 		}
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
+		initializeArtificialObstacles();
 
 	}
 
@@ -38,20 +40,20 @@ namespace msl
 	 * @param goal Point_2
 	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<Point_2>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 startPos, Point_2 goal)
+	shared_ptr<vector<shared_ptr<CNPoint2D>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D startPos, CNPoint2D goal)
 	{
 		// return
-		shared_ptr<vector<shared_ptr<Point_2>>> ret = make_shared<vector<shared_ptr<Point_2>>>();
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> ret = make_shared<vector<shared_ptr<CNPoint2D>>>();
 		// vector with open searchnodes
 		shared_ptr<vector<shared_ptr<SearchNode>>> open = make_shared<vector<shared_ptr<SearchNode>>>();
 		//vector with closed search nodes
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 		//get closest Vertex to ownPos => start point for a star serach
-		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = voronoi->findClosestVertexToOwnPos(startPos);
+		shared_ptr<VoronoiDiagram::Vertex> closestVertexToOwnPos = voronoi->findClosestVertexToOwnPos(Point_2(startPos.x, startPos.y));
 
 		// get closest Vertex to goal => goal for a star serach
-		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = voronoi->findClosestVertexToOwnPos(goal);
+		shared_ptr<VoronoiDiagram::Vertex> closestVertexToGoal = voronoi->findClosestVertexToOwnPos(Point_2(goal.x, goal.y));
 
 		// a star serach
 		//TODO alle knoten in der nähe von ownpos einfügen
@@ -68,10 +70,10 @@ namespace msl
 					&& currentNode->getVertex()->point().y() == closestVertexToGoal->point().y())
 			{
 				shared_ptr<SearchNode> temp = currentNode;
-				ret->push_back(make_shared<VoronoiDiagram::Point_2>(currentNode->getVertex()->point()));
+				ret->push_back(make_shared<CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y()));
 				while(temp->getPredecessor() != nullptr)
 				{
-					ret->push_back(make_shared<VoronoiDiagram::Point_2>(temp->getPredecessor()->getVertex()->point()));
+					ret->push_back(make_shared<CNPoint2D>(temp->getPredecessor()->getVertex()->point().x(), temp->getPredecessor()->getVertex()->point().y()));
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
@@ -79,7 +81,7 @@ namespace msl
 			}
 			closed->push_back(currentNode);
 
-			voronoi->expandNode(currentNode, open, closed, goal);
+			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y));
 		}
 
 		// return nullptr if there is no way to goal
@@ -146,10 +148,10 @@ namespace msl
 	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		vector<CNPoint2D> points;
+		points.push_back(CNPoint2D(wm->rawSensorData.getOwnPositionVision()->x, wm->rawSensorData.getOwnPositionVision()->y));
 		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
-			CNPoint2D point = CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y);
-			points.push_back(point);
+			points.push_back(CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y));
 		}
 		lock_guard<mutex> lock(voronoiMutex);
 		for (int i = 0; i < voronoiDiagrams.size(); i++)
@@ -215,7 +217,7 @@ namespace msl
 			shared_ptr<vector<shared_ptr<Point_2>>> path = carefullAStarSearch(this->getCurrentVoronoiNet(),
 					Point_2(ownPos->x, ownPos->y)
 					, Point_2(alloTarget->x, alloTarget->y), this->wm->ball.haveBall());
-			if(path != nullptr)
+			if (path != nullptr)
 			{
 				retPoint = make_shared<CNPoint2D>(path->at(0)->x(), path->at(0)->y());
 			}
@@ -225,6 +227,47 @@ namespace msl
 
 	}
 
-	//TODO pfad als cnpoint2d zurück
+	void PathPlanner::initializeArtificialObstacles()
+	{
+		MSLFootballField* field = MSLFootballField::getInstance();
+		vector<VoronoiDiagram::Site_2> toInsert;
+		int baseSize = 1000;
+		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
+		{
+			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
+		}
+		int lengthInterval = (int)(baseSize
+				+ ((int)(field->FieldLength + 2000) % baseSize) / (int)((int)(field->FieldLength + 2000) / baseSize));
+		int widthInterval = (int)(baseSize
+				+ ((int)(field->FieldWidth + 2000) % baseSize) / (int)((int)(field->FieldWidth + 2000) / baseSize));
+		int halfFieldLength = (int)field->FieldLength / 2 + 1000;
+		int halfFieldWidth = (int)field->FieldWidth / 2 + 1000;
+
+		//up right
+		toInsert.push_back(VoronoiDiagram::Site_2(halfFieldLength, -halfFieldWidth));
+		//down right
+		toInsert.push_back(VoronoiDiagram::Site_2(-halfFieldLength, -halfFieldWidth));
+		// down left
+		toInsert.push_back(VoronoiDiagram::Site_2(-halfFieldLength, halfFieldWidth));
+		// up left
+		toInsert.push_back(VoronoiDiagram::Site_2(halfFieldLength, halfFieldWidth));
+
+		int x = 0;
+		int y = halfFieldWidth;
+		for (x = -halfFieldLength + lengthInterval; x <= halfFieldLength - lengthInterval; x += lengthInterval)
+		{ // side sides
+			toInsert.push_back(VoronoiDiagram::Site_2(x, y));
+			toInsert.push_back(VoronoiDiagram::Site_2(x, -y));
+		}
+
+		x = halfFieldLength;
+		for (y = -halfFieldWidth + widthInterval; y <= halfFieldWidth - widthInterval; y += widthInterval)
+		{ // goal sides
+			toInsert.push_back(VoronoiDiagram::Site_2(x, y));
+			toInsert.push_back(VoronoiDiagram::Site_2(-x, y));
+		}
+		this->artificialObjectNet.getVoronoi()->insert(toInsert.begin(), toInsert.end());
+	}
 
 } /* namespace alica */
+

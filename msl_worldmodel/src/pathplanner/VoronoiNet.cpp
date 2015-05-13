@@ -390,6 +390,14 @@ namespace msl
 		return ret;
 	}
 
-} /* namespace msl */
+	shared_ptr<VoronoiDiagram> VoronoiNet::getVoronoi()
+	{
+		return voronoi;
+	}
+	void VoronoiNet::setVoronoi(shared_ptr<VoronoiDiagram> voronoi)
+	{
+		this->voronoi = voronoi;
+	}
 
+} /* namespace msl */
 

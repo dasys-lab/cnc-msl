@@ -45,6 +45,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <msl_sensor_msgs/WorldModelData.h>
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "MSLFootballField.h"
 
 
 //namespaces
@@ -66,7 +67,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal);
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal);
 		/**
 		 * aStar search on a VoronoiDiagram considering robot diameter and ballpossetion
 		 * @param voronoi shared_ptr<VoronoiNet>
@@ -95,6 +96,9 @@ namespace msl
 
 		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
 
+	private:
+		void initializeArtificialObstacles();
+
 
 	protected:
 		MSLWorldModel* wm;
@@ -103,6 +107,7 @@ namespace msl
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
 		CNPoint2D lastPathTarget;
+		VoronoiNet artificialObjectNet;
 	};
 
 } /* namespace alica */

@@ -97,11 +97,15 @@ namespace msl
 
 		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
 
-	private:
 		/**
 		 * inserts sites into the VoronoiDiagram
 		 */
 		void insertPoints(vector<Site_2> points);
+
+		shared_ptr<VoronoiDiagram> getVoronoi();
+		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
+
+	private:
 		/**
 		 * calculates distance between two points
 		 */
