@@ -68,6 +68,7 @@ namespace alica
             olddistance = distance;
 
             cout << "movement: " << movement << endl;
+            cout << "distance: " << distance << endl;
             // mc.motion.translation =
         }
         else
