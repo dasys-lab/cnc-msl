@@ -45,13 +45,13 @@ namespace alica
             return;
         }
 
-        auto egoTarget = alloTarget.alloToEgo(*me);
+        //auto egoTarget = alloTarget.alloToEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 
         if (egoBallPos != nullptr)
         {
-            mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0);
+            mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
 
             double summe = 0.0;
             static double olddistance = 0.0;
@@ -73,10 +73,10 @@ namespace alica
         }
         else
         {
-            mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < msl::CNPoint2D > (0.0, 0.0), 0);
+            mc = RobotMovement::moveToPointCarefully(egoBallPos, make_shared < msl::CNPoint2D > (0.0, 0.0), 0);
         }
 
-        if (egoTarget->length() < 250)
+        if (egoBallPos->length() < 250)
         {
             this->success = true;
         }
