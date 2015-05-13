@@ -52,6 +52,23 @@ namespace alica
         if (ballPos != nullptr)
         {
             mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+
+            static double summe = 0.0;
+            static double olddistance = 0.0;
+
+            const double Kp = 1;
+            const double Ki = 1;
+            const double Kd = 1;
+
+            //distance ball to robot
+            double distance = egoTarget->length();
+
+            summe = summe + distance;
+            double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
+            olddistance = distance;
+
+            cout << "movement: " << movement << endl;
+            // mc.motion.translation =
         }
         else
         {
@@ -62,15 +79,15 @@ namespace alica
         {
             this->success = true;
         }
+        /*
+         // TODO: Prüfen ob Wert korrekt ist
+         auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
+         std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
 
-        // TODO: Prüfen ob Wert korrekt ist
-        auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
-        std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
+         auto radius_distance_ball = 600;
 
-        auto radius_distance_ball = 600;
-
-        // TODO: Schnittpunkt berechnen
-
+         // TODO: Schnittpunkt berechnen
+         */
         send(mc);
 
         //Add additional options here
