@@ -26,10 +26,10 @@ namespace alica
 
         auto me = wm->rawSensorData.getOwnPositionVision();
 
-        auto ballPos = wm->rawSensorData.getBallPosition();
+        auto egoBallPos = wm->ball.getEgoBallPosition();
 
         auto obstacles = wm->robots.getObstacles();
-        if (me == nullptr || ballPos == nullptr || obstacles == nullptr)
+        if (me == nullptr || egoBallPos == nullptr || obstacles == nullptr)
         {
             cerr << "insufficient information for AttackOpp" << endl;
             return;
@@ -49,9 +49,9 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-        if (ballPos != nullptr)
+        if (egoBallPos != nullptr)
         {
-            mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
+            mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0);
 
             double summe = 0.0;
             static double olddistance = 0.0;
@@ -61,7 +61,7 @@ namespace alica
             const double Kd = 1;
 
             //distance ball to robot
-            double distance = egoTarget->length();
+            double distance = egoBallPos->length();
 
             summe = summe + distance;
             double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
