@@ -53,7 +53,7 @@ namespace alica
         {
             mc = RobotMovement::moveToPointCarefully(egoTarget, ballPos, 0);
 
-            static double summe = 0.0;
+            double summe = 0.0;
             static double olddistance = 0.0;
 
             const double Kp = 1;
