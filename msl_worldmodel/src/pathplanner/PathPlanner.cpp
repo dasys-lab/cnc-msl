@@ -43,6 +43,41 @@ namespace msl
 	 */
 	shared_ptr<vector<shared_ptr<CNPoint2D>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D startPos, CNPoint2D goal)
 	{
+		bool reachable = true;
+		for(auto it = voronoi->getVoronoi()->sites_begin(); it != voronoi->getVoronoi()->sites_end(); it++)
+		{
+			shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal.x, goal.y));
+			double length = voronoi->calcDist(Point_2(startPos.x, startPos.y), Point_2(goal.x, goal.y));
+			double dx = startPos.x - goal.x;
+			double dy = startPos.y - goal.y;
+			double dist = std::sqrt(dx*dx + dy*dy);
+			dx /= dist;
+			dy /= dist;
+			VoronoiDiagram::Point_2 p1 = Point_2(startPos.x + (this->robotDiameter / 2) * dy,
+												 startPos.y - (this->robotDiameter / 2) * dx);
+			VoronoiDiagram::Point_2 p2 = Point_2(startPos.x - (this->robotDiameter / 2) * dy,
+												 startPos.y + (this->robotDiameter / 2) * dx);
+			VoronoiDiagram::Point_2 p3 = Point_2(goal.x + std::max(this->robotDiameter / 2,length / 4) * dy,
+												 goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
+			VoronoiDiagram::Point_2 p4 = Point_2(goal.x - std::max(this->robotDiameter / 2,length / 4) * dy,
+												 goal.y + std::max(this->robotDiameter / 2,length / 4) * dx);
+			vector<VoronoiDiagram::Point_2> points;
+			points.push_back(p1);
+			points.push_back(p3);
+			points.push_back(p4);
+			points.push_back(p2);
+			if(isInside(points, points.size(), *obstaclePoint))
+			{
+				reachable = false;
+				break;
+			}
+		}
+		if(reachable)
+		{
+			shared_ptr<vector<shared_ptr<CNPoint2D>>> ret = make_shared<vector<shared_ptr<CNPoint2D>>>();
+			ret->push_back(make_shared<CNPoint2D>(goal));
+			return ret;
+		}
 		// return
 		shared_ptr<vector<shared_ptr<CNPoint2D>>> ret = make_shared<vector<shared_ptr<CNPoint2D>>>();
 		// vector with open searchnodes
@@ -59,14 +94,13 @@ namespace msl
 		// a star serach
 		for(int i = 0; i < closestVerticesToOwnPos->size(); i++)
 		{
-			open->push_back(make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
+			insert(open, make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
 									voronoi->calcDist(closestVerticesToOwnPos->at(i)->point(), Point_2(goal.x, goal.y)), nullptr)));
 		}
 
 		while(open->size() != 0)
 		{
-			//TODO einfügen in sortierte liste
-			shared_ptr<SearchNode> currentNode = voronoi->getMin(open);
+			shared_ptr<SearchNode> currentNode = open->at(0);
 
 			if(checkGoalReachable(voronoi, currentNode, closestVerticesToGoal, goal))
 			{
@@ -154,31 +188,6 @@ namespace msl
 		return nullptr;
 	}
 
-	//TODO wie ersten knoten anfahren
-	//TODO vielleicht sinnvoll aus pfadplaner mgl. pathproxi
-	//TODO verschiedene mgl zum anfahren des ersten punktes
-	shared_ptr<CNPoint2D> PathPlanner::getEgoDirection(CNPoint2D egoTarget, bool stayInField)
-	{
-		lastPathTarget = egoTarget;
-		shared_ptr<VoronoiNet> net = getCurrentVoronoiNet();
-		shared_ptr<CNPoint2D> retPoint = nullptr;
-		shared_ptr<CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
-		if (ownPos != nullptr)
-		{
-			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
-			shared_ptr<vector<shared_ptr<CNPoint2D>>> path = aStarSearch(this->getCurrentVoronoiNet(),
-					CNPoint2D(ownPos->x, ownPos->y)
-					, CNPoint2D(alloTarget->x, alloTarget->y));
-			if (path != nullptr)
-			{
-				retPoint = make_shared<CNPoint2D>(path->at(0)->x, path->at(0)->y);
-			}
-		}
-
-		return retPoint->alloToEgo(*ownPos);
-
-	}
-
 	void PathPlanner::initializeArtificialObstacles()
 	{
 		MSLFootballField* field = MSLFootballField::getInstance();
@@ -241,6 +250,21 @@ namespace msl
 		return dribble_rotationWeight;
 	}
 
+	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
+	{
+		vector<shared_ptr<SearchNode> >::iterator it = std::lower_bound( vect->begin(), vect->end(), currentNode, PathPlanner::compare); // find proper position in descending order
+		vect->insert( it, currentNode ); // insert before iterator it
+	}
+
+	bool msl::PathPlanner::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
+	{
+		if(first->getCost() < second->getCost())
+		{
+			return true;
+		}
+		return false;
+	}
+
 	//TODO vielleicht int da 3 mgl besthen
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
 											shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal, CNPoint2D goal)
@@ -280,7 +304,6 @@ namespace msl
 			return isInside(points, points.size(), *obstaclePoint);
 		}
 		return false;
-		//TODO ziel alle knoten der zelle mit goal und es gibt korridor zu goal
 	}
 
 	// Given three colinear points p, q, r, the function checks if
@@ -378,6 +401,31 @@ namespace msl
 
 		// Return true if count is odd, false otherwise
 		return count & 1; // Same as (count%2 == 1)
+	}
+
+	//TODO wie ersten knoten anfahren
+	//TODO vielleicht sinnvoll aus pfadplaner mgl. pathproxi
+	//TODO verschiedene mgl zum anfahren des ersten punktes
+	shared_ptr<CNPoint2D> PathPlanner::getEgoDirection(CNPoint2D egoTarget, bool stayInField)
+	{
+		lastPathTarget = egoTarget;
+		shared_ptr<VoronoiNet> net = getCurrentVoronoiNet();
+		shared_ptr<CNPoint2D> retPoint = nullptr;
+		shared_ptr<CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
+		if (ownPos != nullptr)
+		{
+			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
+			shared_ptr<vector<shared_ptr<CNPoint2D>>> path = aStarSearch(this->getCurrentVoronoiNet(),
+					CNPoint2D(ownPos->x, ownPos->y)
+					, CNPoint2D(alloTarget->x, alloTarget->y));
+			if (path != nullptr)
+			{
+				retPoint = make_shared<CNPoint2D>(path->at(0)->x, path->at(0)->y);
+			}
+		}
+
+		return retPoint->alloToEgo(*ownPos);
+
 	}
 
 } /* namespace alica */

@@ -98,6 +98,8 @@ namespace msl
 		bool doIntersect(VoronoiDiagram::Point_2 p1, VoronoiDiagram::Point_2 q1, VoronoiDiagram::Point_2 p2, VoronoiDiagram::Point_2 q2);
 		int orientation(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
 		bool onSegment(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
+		void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
+		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
 	protected:
 		MSLWorldModel* wm;
