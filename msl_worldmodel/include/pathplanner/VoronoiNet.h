@@ -106,6 +106,8 @@ namespace msl
 
 		shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
 
+		bool isOwnCellEdge(CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+
 	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex

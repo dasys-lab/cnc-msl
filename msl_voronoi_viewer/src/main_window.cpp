@@ -83,6 +83,7 @@ namespace msl_voronoi_viewer
 		QObject::connect(ui.showSitesBtn, SIGNAL(released()), this, SLOT(handleShowSites()));
 		QObject::connect(ui.resetSitesBtn, SIGNAL(released()), this, SLOT(handleReset()));
 		QObject::connect(ui.actionAdd_Examples, SIGNAL(triggered()), this, SLOT(addExamples()));
+		QObject::connect(ui.actionRemove_Examples, SIGNAL(triggered()), this, SLOT(removeExamples()));
 
 		/*********************
 		 ** Logging
@@ -126,6 +127,7 @@ namespace msl_voronoi_viewer
 	{
 		lock_guard<mutex> lock(mtx);
 		msgs.push_back(msg);
+		fillVoronoi();
 	}
 
 	/*
@@ -148,41 +150,37 @@ namespace msl_voronoi_viewer
 
 	void MainWindow::addExamples()
 	{
-		if(index == 0)
-		{
 		this->voronoi->insert(Site_2(100, 100));
 		this->voronoi->insert(Site_2(200, 100));
 		this->voronoi->insert(Site_2(200, 500));
-		}
-		if(index == 1)
-		{
 		this->voronoi->insert(Site_2(100, 900));
 		this->voronoi->insert(Site_2(700, 600));
 		this->voronoi->insert(Site_2(800, 100));
 		this->voronoi->insert(Site_2(900, 100));
-		}
-		if(index == 2)
-		{
 		this->voronoi->insert(Site_2(1000, 100));
 		this->voronoi->insert(Site_2(1100, 500));
 		this->voronoi->insert(Site_2(600, 900));
 		this->voronoi->insert(Site_2(700, 900));
 		this->voronoi->insert(Site_2(800, 1000));
-		}
-		if(index == 3)
+	}
+
+	void MainWindow::removeExamples()
+	{
+		for (auto it = this->voronoi->dual().vertices_begin(); it != this->voronoi->dual().vertices_end(); it++)
 		{
-			for(auto it = this->voronoi->dual().vertices_begin();
-					 it != this->voronoi->dual().vertices_end(); it++)
+			if (it->point().x() == 1000 && it->point().y() == 100)
 			{
-				if(it->point().x() == 1000 && it->point().y() == 100)
-				{
-					cout << "removing" << endl;
-					((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
-					cout << "removing" << endl;
-				}
+				((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
+			}
+			if (it->point().x() == 1100 && it->point().y() == 500)
+			{
+				((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
+			}
+			if (it->point().x() == 100 && it->point().y() == 900)
+			{
+				((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
 			}
 		}
-		index++;
 	}
 
 	void MainWindow::fillVoronoi()
@@ -194,6 +192,7 @@ namespace msl_voronoi_viewer
 		}
 		if (currentMsg != nullptr)
 		{
+			this->voronoi->clear();
 			for (int i = 0; i < currentMsg->obstacles.size(); i++)
 			{
 				Site_2 site = Site_2(currentMsg->obstacles.at(i).x + ui.centralwidget->width() / 2,
@@ -201,20 +200,34 @@ namespace msl_voronoi_viewer
 				voronoi->insert(site);
 			}
 		}
+		update();
 	}
 
 	void MainWindow::handleShowVoronoi()
 	{
+		if (!drawFaces)
+		{
+			drawFaces = true;
+		}
+		else
+		{
+			drawFaces = false;
+		}
 		fillVoronoi();
-		drawFaces = true;
-		update();
+
 	}
 
 	void MainWindow::handleShowSites()
 	{
+		if(!drawSites)
+		{
+			drawSites = true;
+		}
+		else
+		{
+			drawSites = false;
+		}
 		fillVoronoi();
-		drawSites = true;
-		update();
 	}
 
 	void MainWindow::handleReset()
@@ -222,8 +235,7 @@ namespace msl_voronoi_viewer
 		drawSites = false;
 		drawFaces = false;
 		currentMsg = nullptr;
-		voronoi = nullptr;
-		voronoi = make_shared<VoronoiDiagram>();
+		voronoi->clear();
 		update();
 	}
 

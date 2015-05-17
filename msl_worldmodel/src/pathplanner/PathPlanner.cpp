@@ -24,7 +24,7 @@ namespace msl
 		}
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
 		initializeArtificialObstacles();
-		this->pathDeviationWeight = 13000;
+		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
 
 	}
 
@@ -32,8 +32,6 @@ namespace msl
 	{
 	}
 
-	//TODO gerade line zu ziel + korridor der breiter wird
-	// anfrage mit start ziel voronoi wenn korridor fehlschlägt a stern
 	/**
 	 * aStar search on a VoronoiDiagram
 	 * @param voronoi shared_ptr<VoronoiNet>
@@ -54,13 +52,13 @@ namespace msl
 			dx /= dist;
 			dy /= dist;
 			VoronoiDiagram::Point_2 p1 = Point_2(startPos.x + (this->robotDiameter / 2) * dy,
-												 startPos.y - (this->robotDiameter / 2) * dx);
+					startPos.y - (this->robotDiameter / 2) * dx);
 			VoronoiDiagram::Point_2 p2 = Point_2(startPos.x - (this->robotDiameter / 2) * dy,
-												 startPos.y + (this->robotDiameter / 2) * dx);
+					startPos.y + (this->robotDiameter / 2) * dx);
 			VoronoiDiagram::Point_2 p3 = Point_2(goal.x + std::max(this->robotDiameter / 2,length / 4) * dy,
-												 goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
+					goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
 			VoronoiDiagram::Point_2 p4 = Point_2(goal.x - std::max(this->robotDiameter / 2,length / 4) * dy,
-												 goal.y + std::max(this->robotDiameter / 2,length / 4) * dx);
+					goal.y + std::max(this->robotDiameter / 2,length / 4) * dx);
 			vector<VoronoiDiagram::Point_2> points;
 			points.push_back(p1);
 			points.push_back(p3);
@@ -192,7 +190,7 @@ namespace msl
 	{
 		MSLFootballField* field = MSLFootballField::getInstance();
 		vector<VoronoiDiagram::Site_2> toInsert;
-		int baseSize = 1000;
+		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
 		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
 		{
 			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
@@ -252,13 +250,14 @@ namespace msl
 
 	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
 	{
-		vector<shared_ptr<SearchNode> >::iterator it = std::lower_bound( vect->begin(), vect->end(), currentNode, PathPlanner::compare); // find proper position in descending order
-		vect->insert( it, currentNode ); // insert before iterator it
+		vector<shared_ptr<SearchNode> >::iterator it = std::lower_bound(vect->begin(), vect->end(), currentNode,
+																		PathPlanner::compare); // find proper position in descending order
+		vect->insert(it, currentNode); // insert before iterator it
 	}
 
 	bool msl::PathPlanner::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
 	{
-		if(first->getCost() < second->getCost())
+		if (first->getCost() < second->getCost())
 		{
 			return true;
 		}
@@ -289,13 +288,13 @@ namespace msl
 			dx /= dist;
 			dy /= dist;
 			VoronoiDiagram::Point_2 p1 = Point_2(currentNode->getVertex()->point().x() + (this->robotDiameter / 2) * dy,
-												 currentNode->getVertex()->point().y() - (this->robotDiameter / 2) * dx);
+			currentNode->getVertex()->point().y() - (this->robotDiameter / 2) * dx);
 			VoronoiDiagram::Point_2 p2 = Point_2(currentNode->getVertex()->point().x() - (this->robotDiameter / 2) * dy,
-												 currentNode->getVertex()->point().y() + (this->robotDiameter / 2) * dx);
+			currentNode->getVertex()->point().y() + (this->robotDiameter / 2) * dx);
 			VoronoiDiagram::Point_2 p3 = Point_2(goal.x + std::max(this->robotDiameter / 2,length / 4) * dy,
-												 goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
+			goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
 			VoronoiDiagram::Point_2 p4 = Point_2(goal.x - std::max(this->robotDiameter / 2,length / 4) * dy,
-												 goal.y + std::max(this->robotDiameter / 2,length / 4) * dx);
+			goal.y + std::max(this->robotDiameter / 2,length / 4) * dx);
 			vector<VoronoiDiagram::Point_2> points;
 			points.push_back(p1);
 			points.push_back(p3);
@@ -310,7 +309,8 @@ namespace msl
 	// point q lies on line segment 'pr'
 	bool PathPlanner::onSegment(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r)
 	{
-		if (q.x() <= max(p.x(), r.x()) && q.x() >= min(p.x(), r.x()) && q.y()<= max(p.y(), r.y()) && q.y() >= min(p.y(), r.y()))
+		if (q.x() <= max(p.x(), r.x()) && q.x() >= min(p.x(), r.x()) && q.y() <= max(p.y(), r.y())
+				&& q.y() >= min(p.y(), r.y()))
 		{
 			return true;
 		}
@@ -375,8 +375,8 @@ namespace msl
 			return false;
 
 		// Create a point for line segment from p to infinite
-		//TODO => create conf
-		VoronoiDiagram::Point_2 extreme = VoronoiDiagram::Point_2(20000, p.y());
+		VoronoiDiagram::Point_2 extreme = VoronoiDiagram::Point_2(
+				(*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pointAtInfinityX", NULL), p.y());
 
 		// Count intersections of the above line with sides of polygon
 		int count = 0, i = 0;
@@ -401,31 +401,6 @@ namespace msl
 
 		// Return true if count is odd, false otherwise
 		return count & 1; // Same as (count%2 == 1)
-	}
-
-	//TODO wie ersten knoten anfahren
-	//TODO vielleicht sinnvoll aus pfadplaner mgl. pathproxi
-	//TODO verschiedene mgl zum anfahren des ersten punktes
-	shared_ptr<CNPoint2D> PathPlanner::getEgoDirection(CNPoint2D egoTarget, bool stayInField)
-	{
-		lastPathTarget = egoTarget;
-		shared_ptr<VoronoiNet> net = getCurrentVoronoiNet();
-		shared_ptr<CNPoint2D> retPoint = nullptr;
-		shared_ptr<CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
-		if (ownPos != nullptr)
-		{
-			shared_ptr<CNPoint2D> alloTarget = egoTarget.egoToAllo(*ownPos);
-			shared_ptr<vector<shared_ptr<CNPoint2D>>> path = aStarSearch(this->getCurrentVoronoiNet(),
-					CNPoint2D(ownPos->x, ownPos->y)
-					, CNPoint2D(alloTarget->x, alloTarget->y));
-			if (path != nullptr)
-			{
-				retPoint = make_shared<CNPoint2D>(path->at(0)->x, path->at(0)->y);
-			}
-		}
-
-		return retPoint->alloToEgo(*ownPos);
-
 	}
 
 } /* namespace alica */

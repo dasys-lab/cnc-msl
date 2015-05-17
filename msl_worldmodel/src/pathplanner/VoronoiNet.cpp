@@ -225,6 +225,32 @@ namespace msl
 		return ss.str();
 	}
 
+	bool msl::VoronoiNet::isOwnCellEdge(CNPoint2D startPos, shared_ptr<SearchNode> currentNode,
+										shared_ptr<SearchNode> nextNode)
+	{
+		VoronoiDiagram::Locate_result loc = this->voronoi->locate(Point_2(startPos.x, startPos.y));
+		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+		if (loc.which() == 0)
+		{
+			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
+			VoronoiDiagram::Halfedge_handle begin = handle->halfedge()->opposite();
+			VoronoiDiagram::Halfedge_handle edge = begin;
+			do
+			{
+				if((edge->source()->point().x() == currentNode->getVertex()->point().x() && edge->source()->point().y() == currentNode->getVertex()->point().y()
+						&& edge->target()->point().x() == nextNode->getVertex()->point().x() && edge->target()->point().y() == nextNode->getVertex()->point().y())
+						||
+						(edge->source()->point().x() == nextNode->getVertex()->point().x() && edge->source()->point().y() == nextNode->getVertex()->point().y()
+						&& edge->target()->point().x() == currentNode->getVertex()->point().x() && edge->target()->point().y() == currentNode->getVertex()->point().y()))
+				{
+					return true;
+				}
+				edge = edge->previous();
+			} while (edge != begin);
+		}
+		return false;
+	}
+
 	/**
 	 * checks if a SearchNode is part of a vector
 	 * @param vector shared_ptr<vector<shared_ptr<SearchNode> > >
@@ -343,7 +369,7 @@ namespace msl
 	{
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
-		if(loc.which() == 0)
+		if (loc.which() == 0)
 		{
 			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
 			return make_shared<VoronoiDiagram::Site_2>(handle->dual()->point());

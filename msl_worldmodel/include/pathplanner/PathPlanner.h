@@ -107,7 +107,6 @@ namespace msl
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
-		CNPoint2D lastPathTarget;
 		VoronoiNet artificialObjectNet;
 		double pathDeviationWeight;
 		double dribble_rotationWeight;

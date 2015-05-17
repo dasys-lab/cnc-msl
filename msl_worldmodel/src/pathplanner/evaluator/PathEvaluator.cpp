@@ -14,6 +14,7 @@ namespace msl
 	{
 		this->clearSpaceWeight = 0;
 		this->planner = planner;
+		this->sc = SystemConfig::getInstance();
 	}
 
 	PathEvaluator::~PathEvaluator()
