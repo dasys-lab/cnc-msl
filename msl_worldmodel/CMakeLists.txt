@@ -118,6 +118,10 @@ catkin_package(
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp
+   src/pathplanner/PathProxy.cpp
+   src/pathplanner/evaluator/PathEvaluator.cpp
+   src/pathplanner/evaluator/SingleEvaluator.cpp
+   src/pathplanner/evaluator/SinglePrefDirEvaluator.cpp
  )
 
 ## Declare a cpp executable

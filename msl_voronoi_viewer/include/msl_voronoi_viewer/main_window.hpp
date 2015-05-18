@@ -91,6 +91,7 @@ public Q_SLOTS:
     void onVoronoiInfo(msl_sensor_msgs::WorldModelDataPtr msg);
     void updateLoggingView(); // no idea why this can't connect automatically
     void addExamples();
+    void removeExamples();
 
 private:   
 
