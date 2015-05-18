@@ -60,15 +60,15 @@ namespace alica
         //left=arithmeticAverage;
         //right=arithmeticAverage;
 
-        if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
+
+       /* if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
                 && wm->rawSensorData.getOwnVelocityMotion()->angle >= 0)
             x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
         y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        left = wm->rawSensorData.getOwnVelocityMotion()->angle;
-        right = wm->rawSensorData.getOwnVelocityMotion()->angle;
-        /*
+
+        //
          if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
          && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
          {
@@ -129,6 +129,10 @@ namespace alica
 
         // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
+
+        left = wm->rawSensorData.getOwnVelocityMotion()->angle;
+        right = wm->rawSensorData.getOwnVelocityMotion()->angle;
+
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
 
