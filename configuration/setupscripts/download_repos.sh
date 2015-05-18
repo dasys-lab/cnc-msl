@@ -26,19 +26,19 @@ then
   git clone git@github.com:carpe-noctem-cassel/alica.git
 fi
 
-if [ ! -d ~/cnws/src/alica ];
+if [ ! -d ~/cnws/src/alica-plan-designer ];
 then
   msg "Downloading ALICA Plan Designer (Modellingtool)"
   git clone git@github.com:carpe-noctem-cassel/alica-plan-designer.git
 fi
 
-if [ ! -d ~/cnws/src/alica ];
+if [ ! -d ~/cnws/src/supplementary ];
 then
   msg "Downloading Supplementary Stuff (Config, FileSystem-Tools, etc.)"
   git clone git@github.com:carpe-noctem-cassel/supplementary.git
 fi
 
-if [ ! -d ~/cnws/src/alica ];
+if [ ! -d ~/cnws/src/cnc-msl ];
 then
   msg "Downloading Middle Size League Stuff"
   git clone git@github.com:carpe-noctem-cassel/cnc-msl.git

@@ -18,7 +18,7 @@ then
   cmake ..
   make 
   sudo make install
-  cd ..
+  cd ~
   rm -rf vartypes-07.tar.gz
   rm -rf vartypes-0.7
 fi
