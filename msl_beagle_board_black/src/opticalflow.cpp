@@ -21,6 +21,7 @@ OpticalFlow::OpticalFlow(gpioName ncs_P, gpioName npd_P, gpioName rst_P, gpioNam
 	y = 0;
 	qos = 0;
 	vQos = 0;
+	debugOF = 0;
 
 	/* BlackLib::BlackGPIO OF_NPD(GPIO_117, output, FastMode);	// P8 07
 	 * BlackLib::BlackGPIO OF_RST(GPIO_115, output, FastMode);	// P8 07

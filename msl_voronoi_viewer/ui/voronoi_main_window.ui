@@ -91,6 +91,7 @@
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
     <addaction name="actionAdd_Examples"/>
+    <addaction name="actionRemove_Examples"/>
    </widget>
    <addaction name="menu_File"/>
   </widget>
@@ -124,6 +125,11 @@
   <action name="actionAdd_Examples">
    <property name="text">
     <string>Add Examples</string>
+   </property>
+  </action>
+  <action name="actionRemove_Examples">
+   <property name="text">
+    <string>Remove Examples</string>
    </property>
   </action>
  </widget>

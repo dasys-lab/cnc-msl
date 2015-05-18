@@ -55,9 +55,9 @@
 #define OpticalFlow_UPDATE_TIMEOUT	1		// ms
 #define OpticalFlow_BURST_TIMEOUT	1		// ms
 
-#define ShovelSelect_TIMEOUT		1000	// ms
-#define ShovelSelect_PASSING		1000	// PWM ( 1ms / 20ms )
-#define ShovelSelect_NORMAL			2000	// PWM ( 2ms / 20ms )
+#define ShovelSelect_TIMEOUT		250		// ms
+#define ShovelSelect_PASSING		1300	// 1000 - PWM ( 1ms / 20ms )
+#define ShovelSelect_NORMAL			1700	// 2000 - PWM ( 2ms / 20ms )
 
 
 // Entscheidungsschwelle fuer Ball (0 bis 65000)

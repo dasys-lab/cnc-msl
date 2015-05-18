@@ -75,6 +75,7 @@ const float TEMP_SENSE				= 0.125;
 
 class IMU {
 	private:
+		BlackLib::BlackGPIO *i_acc, *i_gyro, *i_mag, *i_temp;
 		BlackLib::BlackI2C *i2c;
 		timeval		last_sended, last_updated;
 		int16_t		temperature;
@@ -93,7 +94,7 @@ class IMU {
 		void		getTemp();
 
 	public:
-					IMU(BlackLib::BlackI2C *i2c_P);
+					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
 					~IMU();
 		void		init();
 		void		updateData(timeval time_now);

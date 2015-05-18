@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430924951132"/>
-    <value xPos="-214" yPos="-11" width="666" height="461"/>
+    <value xPos="-214" yPos="-11" width="953" height="611"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925626532"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925718512"/>
-    <value xPos="117" yPos="1" width="99" height="67"/>
+    <value xPos="117" yPos="1" width="99" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925736746"/>
@@ -87,5 +87,17 @@
   <extensions>
     <key href="GenericOwnStandards.pml#1430925973111"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericExecute.pml#1431522123418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1431523920444"/>
+    <value xPos="-7" yPos="314"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1431523938514"/>
+    <value xPos="182" yPos="485"/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

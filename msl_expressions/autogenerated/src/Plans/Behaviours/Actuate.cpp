@@ -37,105 +37,101 @@ namespace alica
         //QualityOfService= wm->rawSensorData.getOpticalFlow()->qos;
         // x Werte richtig vertauscht
 
-
         //Mittelwert der Aktuellen 4 Werte
 
+        double arithmeticAverage = 0;
+        double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
+        list<double>::iterator parameter;
 
-         double arithmeticAverage = 0;
-         double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
-         list<double> :: iterator parameter;
+        if (arithmeticAverageBox.size() == 4)
+        {
+            arithmeticAverageBox.pop_back();
+        }
 
-         if(arithmeticAverageBox.size() == 4)
+        arithmeticAverageBox.push_front(newParamer);
+
+        for (parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+        {
+            arithmeticAverage += *parameter;
+        }
+
+        arithmeticAverage = arithmeticAverage / 8;
+
+        //left=arithmeticAverage;
+        //right=arithmeticAverage;
+
+
+       /* if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
+                && wm->rawSensorData.getOwnVelocityMotion()->angle >= 0)
+            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+
+        //
+         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
+         && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
          {
-         	arithmeticAverageBox.pop_back();
+         x = wm->rawSensorData.getOwnVelocityMotion()->translation
+         * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
          }
 
-         arithmeticAverageBox.push_front(newParamer);
-
-
-         for(parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+         else
          {
-         	arithmeticAverage +=*parameter;
+         x = (-1) * wm->rawSensorData.getOwnVelocityMotion()->translation
+         * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+         }
+         //y Werte richtig vertauscht
+         if (wm->rawSensorData.getOwnVelocityMotion()->angle <= 0)
+         {
+         y = wm->rawSensorData.getOwnVelocityMotion()->translation
+         * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+         }
+         else
+         {
+         y = -wm->rawSensorData.getOwnVelocityMotion()->translation
+         * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+         }
+         //Addition der x und y Geschwindigkeitsanteile
+
+         //RoboterD: front left
+
+         if ((y >= 0) && (x >= 0))
+         {
+
+         left = 5+15*(x + y);
+         right = 5+15*(x - y); //x-y
+         }
+         //RoboterD front right
+         if ((y < 0) && (x >= 0))
+         {
+
+         left = 5+15*(x + y);
+         right = 5+15*(x - y); //x-y
          }
 
-         arithmeticAverage=arithmeticAverage/8;
+         //RoboterD behind left
+         if ((y >= 0) && (x <= 0))
+         {
 
+         left = 5+15*(x - y);
+         right = 5+15*(-x - y);
+         }
 
-         //left=arithmeticAverage;
-         //right=arithmeticAverage;
+         //RoboterD behind right
+         if ((y <= 0) && (x <= 0))
+         {
+         left = 5+15*(x - y);
+         right = 5+15*(x + y);
 
+         }
+         */
 
-        if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)&&wm->rawSensorData.getOwnVelocityMotion()->angle >=0 )
-        	x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-
-        y =  pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-
-
-        left =wm->rawSensorData.getOwnVelocityMotion()->angle ;
-        right =wm->rawSensorData.getOwnVelocityMotion()->angle;
-/*
-        if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
-                && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
-        {
-            x = wm->rawSensorData.getOwnVelocityMotion()->translation
-                    * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-        }
-
-        else
-        {
-            x = (-1) * wm->rawSensorData.getOwnVelocityMotion()->translation
-                    * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-        }
-        //y Werte richtig vertauscht
-        if (wm->rawSensorData.getOwnVelocityMotion()->angle <= 0)
-        {
-            y = wm->rawSensorData.getOwnVelocityMotion()->translation
-                    * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-        }
-        else
-        {
-            y = -wm->rawSensorData.getOwnVelocityMotion()->translation
-                    * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-        }
-        //Addition der x und y Geschwindigkeitsanteile
-
-        //RoboterD: front left
-
-        if ((y >= 0) && (x >= 0))
-        {
-
-            left = 5+15*(x + y);
-            right = 5+15*(x - y); //x-y
-        }
-        //RoboterD front right
-        if ((y < 0) && (x >= 0))
-        {
-
-            left = 5+15*(x + y);
-            right = 5+15*(x - y); //x-y
-        }
-
-        //RoboterD behind left
-        if ((y >= 0) && (x <= 0))
-        {
-
-            left = 5+15*(x - y);
-            right = 5+15*(-x - y);
-        }
-
-        //RoboterD behind right
-        if ((y <= 0) && (x <= 0))
-        {
-            left = 5+15*(x - y);
-            right = 5+15*(x + y);
-
-        }
-*/
-
-
-
-       // left =  rodo->motion.translation * (1.0 / 40.0) ;
+        // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
+
+        left = wm->rawSensorData.getOwnVelocityMotion()->angle;
+        right = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);

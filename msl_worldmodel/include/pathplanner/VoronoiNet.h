@@ -63,11 +63,6 @@ namespace msl
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
 							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
 		/**
-		 * expands a SearchNode regarding robotDiameter and haveBall
-		 */
-		void expandNodeCarefully(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-									shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, double robotDiameter, bool haveBall);
-		/**
 		 * gets the status of the VoronoiDiagram
 		 */
 		VoronoiStatus getStatus();
@@ -97,15 +92,23 @@ namespace msl
 
 		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
 
-	private:
 		/**
 		 * inserts sites into the VoronoiDiagram
 		 */
 		void insertPoints(vector<Site_2> points);
+
+		shared_ptr<VoronoiDiagram> getVoronoi();
+		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
 		/**
 		 * calculates distance between two points
 		 */
 		int calcDist(Point_2 ownPos, Point_2 vertexPoint);
+
+		shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
+
+		bool isOwnCellEdge(CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+
+	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex
 		 */
