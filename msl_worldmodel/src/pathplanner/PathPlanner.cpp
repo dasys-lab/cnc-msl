@@ -155,10 +155,6 @@ namespace msl
 					|| voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
 			{
 				voronoiDiagrams.at(i)->generateVoronoiDiagram(points);
-				for(auto it = voronoiDiagrams.at(i)->getVoronoi()->sites_begin(); it != voronoiDiagrams.at(i)->getVoronoi()->sites_end(); it++)
-				{
-					cout << "PathPlanner: Site: " << &*it << endl;
-				}
 				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Latest);
 				break;
 			}
