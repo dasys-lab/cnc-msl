@@ -128,13 +128,19 @@ namespace msl
 	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		vector<CNPoint2D> points;
-		points.push_back(
-				CNPoint2D(wm->rawSensorData.getOwnPositionVision()->x, wm->rawSensorData.getOwnPositionVision()->y));
+		if (wm->rawSensorData.getOwnPositionVision() != nullptr)
+		{
+			points.push_back(
+					CNPoint2D(wm->rawSensorData.getOwnPositionVision()->x,
+								wm->rawSensorData.getOwnPositionVision()->y));
+		}
 		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
 			points.push_back(CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y));
 		}
 		lock_guard<mutex> lock(voronoiMutex);
+		//TODO buffer size 10 + einfügen an index
+		// status entfernen
 		for (int i = 0; i < voronoiDiagrams.size(); i++)
 		{
 			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
@@ -149,9 +155,10 @@ namespace msl
 					|| voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
 			{
 				voronoiDiagrams.at(i)->generateVoronoiDiagram(points);
-				voronoiDiagrams.at(i)->getVoronoi()->insert(
-						Site_2(this->wm->rawSensorData.getOwnPositionVision()->x,
-								this->wm->rawSensorData.getOwnPositionVision()->y));
+				for(auto it = voronoiDiagrams.at(i)->getVoronoi()->sites_begin(); it != voronoiDiagrams.at(i)->getVoronoi()->sites_end(); it++)
+				{
+					cout << "PathPlanner: Site: " << &*it << endl;
+				}
 				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Latest);
 				break;
 			}

@@ -49,7 +49,6 @@ namespace msl
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 
-		msl_actuator_msgs::RawOdometryInfoPtr getRawOdometryInfo();
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 		MSLSharedWorldModel* getSharedWolrdModel();
 		unsigned long getTime();
@@ -81,11 +80,9 @@ namespace msl
 		ros::Subscriber motionBurstSub;
 		ros::Publisher sharedWorldPub;
 
-		list<msl_actuator_msgs::RawOdometryInfoPtr> rawOdometryData;
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 		list<msl_sensor_msgs::WorldModelDataPtr> wmData;
 
-		mutex rawOdometryMutex;
 		mutex wmMutex;
 		mutex joystickMutex;
 		mutex motionBurstMutex;

@@ -46,22 +46,7 @@ namespace msl
 
 	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() > ringBufferLength)
-		{
-			rawOdometryData.pop_back();
-		}
-		rawOdometryData.push_front(msg);
-	}
-
-	msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo()
-	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() == 0)
-		{
-			return nullptr;
-		}
-		return rawOdometryData.front();
+		rawSensorData.processRawOdometryInfo(msg);
 	}
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)

@@ -23,7 +23,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417017518918) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
-        msl_actuator_msgs::RawOdometryInfoPtr rodo = wm->getRawOdometryInfo();
+        auto rodo = wm->rawSensorData.getOwnVelocityMotion();
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
         double x, y;

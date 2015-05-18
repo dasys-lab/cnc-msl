@@ -84,9 +84,6 @@ namespace msl
 		 */
 		shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
-		//TODO
-
-		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
 		double getRobotDiameter();
 		double getPathDeviationWeight();
 		double getDribbleAngleTolerance();
