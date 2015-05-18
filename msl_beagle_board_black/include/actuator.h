@@ -51,11 +51,6 @@ struct CV {
 };
 
 
-BlackGPIO i_magnet(GPIO_45, input, FastMode);		// P8 11
-BlackGPIO i_accel(GPIO_47, input, FastMode);		// P8 15
-BlackGPIO i_temp(GPIO_27, input, FastMode);			// P8 17
-BlackGPIO i_gyro(GPIO_61, input, FastMode);			// P8 26
-
 BlackGPIO LED_Vision(GPIO_49, output, FastMode);	// P9 23
 BlackGPIO LED_Bundle(GPIO_20, output, FastMode);	// P9 41
 BlackGPIO LED_Power(GPIO_7, output, FastMode);		// P9 42
@@ -68,9 +63,10 @@ BlackI2C myI2C(I2C_2, ADR_G);
 BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
-BallHandle		BH_right(P8_13, GPIO_69, GPIO_68, GPIO_46, GPIO_65);	/* pwm, dir, reset, ff1, ff2 */
-BallHandle		BH_left(P8_19, GPIO_66, GPIO_67, GPIO_44, GPIO_26);		/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_right(P8_13, GPIO_69, GPIO_68, GPIO_46, GPIO_65);		/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_left(P8_19, GPIO_66, GPIO_67, GPIO_44, GPIO_26);			/* pwm, dir, reset, ff1, ff2 */
 OpticalFlow		adns3080(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &mySpi);	/* ncs, npd, rst, led */
+IMU				lsm9ds0(GPIO_45, GPIO_47, GPIO_27, GPIO_61, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
 
 BlackADC		ADC_light(AIN0);
 
@@ -80,7 +76,7 @@ Shovel			shovel;
 timeval			time_now;
 timeval			last_ping;
 
-CV				threw[5], cv_main;
+CV				threw[6], cv_main;
 
 bool			ex = false;
 

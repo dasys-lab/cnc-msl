@@ -8,10 +8,28 @@
 
 #include "imu.h"
 
+using namespace BlackLib;
 
-IMU::IMU(BlackLib::BlackI2C *i2c_P) {
+IMU::IMU(gpioName acc_P, gpioName gyro_P, gpioName mag_P, gpioName temp_P, BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
+
+	i_acc = new BlackGPIO(acc_P, input, FastMode);
+	i_gyro = new BlackGPIO(gyro_P, input, FastMode);
+	i_mag = new BlackGPIO(mag_P, input, FastMode);
+	i_temp = new BlackGPIO(temp_P, input, FastMode);
+
 	temperature = 0;
+}
+
+IMU::~IMU() {
+	delete i_acc;
+	delete i_gyro;
+	delete i_mag;
+	delete i_temp;
+}
+
+void IMU::init() {
+	uint8_t val[2];
 
 	if(!this->whoami()) {
 		//TODO: Wrong WhoAmI - Was soll passieren?
@@ -19,16 +37,6 @@ IMU::IMU(BlackLib::BlackI2C *i2c_P) {
 	} else {
 		std::cout << "Fine: WhoAmI" << std::endl;
 	}
-
-	this->init();
-}
-
-IMU::~IMU() {
-
-}
-
-void IMU::init() {
-	uint8_t val[2];
 
 	// Enable Accel
 	i2c->setDeviceAddress(ADR_XM);
@@ -161,7 +169,7 @@ void IMU::getTemp() {
 		val[i] = i2c->readByte(TEMP_OUT + i);
 	}
 
-	//TODO Temperature Offset
+	// TODO Temperature Offset
 	// temperature = 21.0 + (float) dof.temperature/8.;
 	temperature = (((int16_t) val[1] << 8) | val[0]) * TEMP_SENSE + 21;
 }

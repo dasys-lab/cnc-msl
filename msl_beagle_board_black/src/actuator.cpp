@@ -184,12 +184,46 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 	}
 }
 
+void getIMU(ros::Publisher *imuPub) {
+	std::unique_lock<std::mutex> l_imu(threw[5].mtx);
+	while(th_activ) {
+		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
+
+		gettimeofday(&sws, NULL);
+
+		// TODO IMU
+		lsm9ds0.sendData(time_now, imuPub);
+
+		threw[5].notify = false;
+		cv_main.cv.notify_all();
+	}
+}
+
+void getOptical(ros::Publisher *mbcPub) {
+	std::unique_lock<std::mutex> l_optical(threw[6].mtx);
+	while(th_activ) {
+		threw[6].cv.wait(l_optical, [&] { return !th_activ || threw[6].notify; }); // protection against spurious wake-ups
+		if (!th_activ)
+			return;
+
+		gettimeofday(&sws, NULL);
+
+		// TODO MotionBurst
+		adns3080.send_motion_burst(time_now, mbcPub);
+
+		threw[6].notify = false;
+		cv_main.cv.notify_all();
+	}
+}
+
 void exit_program(int sig) {
 	ex = true;
 	std::cout << "Programm wird beendet." << std::endl;
 	th_activ = false;
 	cv_main.cv.notify_all();
-	for (int i=0; i<5; i++)
+	for (int i=0; i<6; i++)
 		threw[i].cv.notify_all();
 }
 
@@ -215,11 +249,13 @@ int main(int argc, char** argv) {
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
-	std::thread th_controlBHRight(controlBHRight);
+	/* std::thread th_controlBHRight(controlBHRight);
 	std::thread th_controlBHLeft(controlBHLeft);
 	std::thread th_controlShovel(contolShovelSelect);
 	std::thread th_lightbarrier(getLightbarrier, &hbiPub);
-	std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+	std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub); */
+	//std::thread th_adns3080(getOptical, &mbcPub);
+	//std::thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
 	ShovelSelect.setPeriodTime(20000);			// in us - 20ms Periodendauer
@@ -230,10 +266,79 @@ int main(int argc, char** argv) {
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 
-	IMU lsm9ds0(&myI2C);
+	lsm9ds0.init();
 
 	std::cout << "SPI: " << spi << std::endl;
 	std::cout << "I2C: " << i2c << std::endl;
+
+
+	// TODO Servo Test
+
+	ShovelSelect.setSpaceRatioTime(1300);
+	ShovelSelect.setRunState(run);
+	usleep(500000);
+
+	ShovelSelect.setSpaceRatioTime(1700);
+	usleep(500000);
+
+	ShovelSelect.setSpaceRatioTime(1300);
+	usleep(500000);
+
+	ShovelSelect.setSpaceRatioTime(1700);
+	usleep(500000);
+
+	ShovelSelect.setSpaceRatioTime(1300);
+	usleep(500000);
+
+	ShovelSelect.setRunState(stop);
+
+
+
+	// TODO BallHandle Test
+
+	BH_left.setBallHandling(50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(-50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(-50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(-50);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+	BH_left.setBallHandling(0);
+	BH_left.controlBallHandling();
+	usleep(25000);
+	BH_left.controlBallHandling();
+	usleep(475000);
+
+
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -242,32 +347,25 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
+
+
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);
 
 		// Thread Notify
-
-		for (int i=0; i<5; i++) {
+// TODO wieder einklammern
+		/*for (int i=0; i<5; i++) {
 			threw[i].notify = true;
 			threw[i].cv.notify_all();
 		}
 
-		gettimeofday(&mitte, NULL);
-
 		// auf beenden aller Threads warten
 		std::unique_lock<std::mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
-
-
-
-		/*while (!th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify)) {
-			usleep(1000);
-		}*/
+		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
+		*/
+// TODO ende wieder einklammern ^^
 
 		gettimeofday(&nachher, NULL);
-
-
-		// lsm9ds0.updateData(nachher);
 
 
 /*
@@ -304,8 +402,6 @@ int main(int argc, char** argv) {
 
 
 		// MotionBurst
-
-		// IMU
 
 		ros::spinOnce();
 		loop_rate.sleep();
