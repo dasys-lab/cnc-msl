@@ -40,7 +40,7 @@ using namespace BlackLib;
 
 struct Shovel {
 	bool		enabled;
-	uint16_t	value;
+	uint32_t	value;
 	timeval		last_ping;
 };
 
