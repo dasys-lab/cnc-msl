@@ -322,7 +322,7 @@ int main(int argc, char** argv) {
 
 		//TODO ADNS3080 Test
 		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, mbcPub);
+		adns3080.send_motion_burst(time_now, &mbcPub);
 
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);
