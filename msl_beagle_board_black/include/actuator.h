@@ -63,8 +63,8 @@ BlackI2C myI2C(I2C_2, ADR_G);
 BlackSPI mySpi(SPI0_0, 8, SpiDefault, 200000);
 
 
-BallHandle		BH_right(P8_13, GPIO_69, GPIO_68, GPIO_46, GPIO_65);		/* pwm, dir, reset, ff1, ff2 */
-BallHandle		BH_left(P8_19, GPIO_66, GPIO_67, GPIO_44, GPIO_26);			/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_right(P8_19, GPIO_69, GPIO_68, GPIO_46, GPIO_65);		/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_left(P8_13, GPIO_66, GPIO_67, GPIO_44, GPIO_26);			/* pwm, dir, reset, ff1, ff2 */
 OpticalFlow		adns3080(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &mySpi);	/* ncs, npd, rst, led */
 IMU				lsm9ds0(GPIO_45, GPIO_47, GPIO_27, GPIO_61, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
 

@@ -269,7 +269,7 @@ int main(int argc, char** argv) {
 
 	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
 
-
+	adns3080.getProductId();
 	// TODO BallHandle Test
 
 	BH_left.setBallHandling(10);
