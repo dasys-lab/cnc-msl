@@ -182,7 +182,7 @@ namespace msl
 		vector<Site_2> sites;
 		for (int i = 0; i < points.size(); i++)
 		{
-			Site_2 site = Site_2(points.at(i).x, points.at(i).y);
+			Site_2 site(points.at(i).x, points.at(i).y);
 			sites.push_back(site);
 		}
 		insertPoints(sites);

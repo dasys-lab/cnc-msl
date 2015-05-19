@@ -37,28 +37,28 @@ namespace msl
 
 		// cost due to narrowness
 		double widthc = 0;
-		//	if (path.lastPEdge.MaxRadius > 0)
-		//{
-		// edges with atleast one real obstacle on one side
-		//widthc = path.lastPEdge.MinDistance - path.lastPEdge.MaxRadius;
-
-		// substract robotRadius only, if its not in neighbourhood to robot
-		//if (!path.lastPEdge.OwnCellEdge(robotQData.ID))
-		if(!voronoi->isOwnCellEdge(startPos, currentNode, nextNode))
-		{
-			widthc -= this->planner->getRobotDiameter() / 2;
-		}
-
-		widthc = std::max(0.0, this->clearSpaceWeight / std::max(1.0, widthc));
-		//}
+//		if (path.lastPEdge.MaxRadius > 0)
+//		{
+//			// edges with atleast one real obstacle on one side
+//			widthc = path.lastPEdge.MinDistance - path.lastPEdge.MaxRadius;
+//
+//			// substract robotRadius only, if its not in neighbourhood to robot
+//			//if (!path.lastPEdge.OwnCellEdge(robotQData.ID))
+//			if (!voronoi->isOwnCellEdge(startPos, currentNode, nextNode))
+//			{
+//				widthc -= this->planner->getRobotDiameter() / 2;
+//			}
+//
+//			widthc = std::max(0.0, this->clearSpaceWeight / std::max(1.0, widthc));
+//		}
 
 		// cost due to deviation from last path
-		//double lastAnglec = this->planner->getPathDeviationWeight() * path.lastPEdge.AngleCost;
+//		double lastAnglec = this->planner->getPathDeviationWeight() * path.lastPEdge.AngleCost;
 		return (costsSoFar // costs so far
 		+ voronoi->calcDist(currentNode->getVertex()->point(), nextNode->getVertex()->point()) // cost due to additional length of path
 				+ widthc // cost due to minimal width of the edge
 //				+ lastAnglec, // cost due to deviation to last path
-				+ h); // heuristic cost due to distToTarget
+		+h); // heuristic cost due to distToTarget
 
 	}
 

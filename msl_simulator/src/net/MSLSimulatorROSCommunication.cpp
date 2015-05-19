@@ -10,7 +10,6 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
-#include <msl_actuator_msgs/MotionControl.h>
 #include <string.h>
 
 
@@ -20,6 +19,7 @@ namespace msl_simulator
 	MSLSimulatorROSCommunication::MSLSimulatorROSCommunication()
 	{
 		this->isRunning = false;
+		this->isteamyellow = false;
 		rosNode = new ros::NodeHandle();
 		spinner = new ros::AsyncSpinner(4);
 
@@ -28,6 +28,11 @@ namespace msl_simulator
 //		commandSubscriber = rosNode->subscribe("/MSLSimulator/SimPacket", 10, &MSLSimulatorROSCommunication::handleSimPacket, (MSLSimulatorROSCommunication*)this);
 
 		motionControl = rosNode->subscribe("/MotionControl", 10, &MSLSimulatorROSCommunication::handleMotionControl, (MSLSimulatorROSCommunication*)this);
+
+		ballInfoPublisher = rosNode->advertise<msl_sensor_msgs::BallInfo>(
+		                                "/BallInfo", 10);
+
+		worldModelPublisher = rosNode->advertise<msl_sensor_msgs::SimulatorWorldModelData>("/WorldModel/SimulatorWorldModelData", 10);
 
 	}
 
@@ -44,7 +49,15 @@ namespace msl_simulator
 		delete rosNode;
 
 	}
+	void MSLSimulatorROSCommunication::sendSimWorldData(msl_sensor_msgs::SimulatorWorldModelData simwm)
+	{
+		this->worldModelPublisher.publish(simwm);
+	}
 
+	void MSLSimulatorROSCommunication::sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball)
+	{
+		this->ballInfoPublisher.publish(ball);
+	}
 	void MSLSimulatorROSCommunication::tick()
 	{
 		if (this->isRunning)

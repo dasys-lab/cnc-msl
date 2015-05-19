@@ -126,7 +126,7 @@ namespace msl_voronoi_viewer
 	void MainWindow::onVoronoiInfo(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		lock_guard<mutex> lock(mtx);
-		msgs.push_back(msg);
+		currentMsg = msg;
 		fillVoronoi();
 	}
 
@@ -185,18 +185,13 @@ namespace msl_voronoi_viewer
 
 	void MainWindow::fillVoronoi()
 	{
-		lock_guard<mutex> lock(mtx);
-		if (currentMsg == nullptr)
-		{
-			currentMsg = msgs.at(0);
-		}
 		if (currentMsg != nullptr)
 		{
 			this->voronoi->clear();
 			for (int i = 0; i < currentMsg->obstacles.size(); i++)
 			{
-				Site_2 site = Site_2(currentMsg->obstacles.at(i).x + ui.centralwidget->width() / 2,
-										currentMsg->obstacles.at(i).y + ui.centralwidget->height() / 2);
+				Site_2 site = Site_2(((currentMsg->obstacles.at(i).x + ui.centralwidget->width() / 2) / 10),
+										(currentMsg->obstacles.at(i).y + ui.centralwidget->height() / 2) / 10);
 				voronoi->insert(site);
 			}
 		}

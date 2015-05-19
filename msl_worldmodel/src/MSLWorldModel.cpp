@@ -34,6 +34,9 @@ namespace msl
 								(MSLWorldModel*)this);
 
 		motionBurstSub = n.subscribe("/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
+
+		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,(MSLWorldModel*)this);
+
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
@@ -44,24 +47,19 @@ namespace msl
 		this->rawSensorData.processJoystickCommand(msg);
 	}
 
-	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
+	void MSLWorldModel::onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg)
 	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() > ringBufferLength)
+		if(msg->receiverID == this->ownID)
 		{
-			rawOdometryData.pop_back();
+			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(msg->worldModel);
+			onWorldModelData(wmsim);
+
 		}
-		rawOdometryData.push_front(msg);
 	}
 
-	msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo()
+	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() == 0)
-		{
-			return nullptr;
-		}
-		return rawOdometryData.front();
+		rawSensorData.processRawOdometryInfo(msg);
 	}
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
