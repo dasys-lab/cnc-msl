@@ -108,6 +108,7 @@ catkin_package(
    src/container/CNPoint2D.cpp
    src/container/CNPoint3D.cpp
    src/container/CNPosition.cpp
+   src/container/CNVelocity2D.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp

@@ -212,6 +212,10 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 		msg.qos = tqos;
 		mbcPub->publish(msg);
 
+		std::cout << "X: " << x << std::endl;
+		std::cout << "Y: " << y << std::endl;
+		std::cout << "Q: " << qos << std::endl;
+
 		x = 0;
 		y = 0;
 		qos = 0;
