@@ -24,6 +24,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include <QObject>
 #include <QUdpSocket>
 #include <QList>
+//#include <thread>
 
 
 #include "graphics.h"
@@ -71,6 +72,7 @@ public:
     void step(dReal dt=-1);
     msl_simulator::messages_robocup_ssl_wrapperPtr generatePacket();
     void sendVisionBuffer();
+    void sendWorldModelData();
     ConfigWidget* cfg;
     CGraphics* g;
     PWorld* p;
@@ -94,12 +96,15 @@ public:
     PSurface ballwithkicker;
     PSurface wheelswithground;
     map<int, int> carpeNoctemIds;
-    int countOfRobotsTeamYellow = 0;
-    int countOfRobotsTeamBlue = 0;
+    int countOfRobotsTeamYellow;
+    int countOfRobotsTeamBlue;
     void drawRobot(int team, int countRobot);
-public slots:
+    bool startedThread;
+//TODO
+//    std::thread* simThread;
+public Q_SLOTS:
     void recvActions();
-signals:
+Q_SIGNALS:
     void fpsChanged(int newFPS);
 };
 

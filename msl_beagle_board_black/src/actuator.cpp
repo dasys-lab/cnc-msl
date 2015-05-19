@@ -258,8 +258,8 @@ int main(int argc, char** argv) {
 	//std::thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
-	ShovelSelect.setPeriodTime(20000);			// in us - 20ms Periodendauer
-	ShovelSelect.setSpaceRatioTime(1000);		// in us - Werte zwischen 1ms und 2ms
+	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
+	ShovelSelect.setSpaceRatioTime(1500000);			// in us - Werte zwischen 1ms und 2ms
 	shovel.enabled = false;
 
 	// I2C
@@ -274,20 +274,20 @@ int main(int argc, char** argv) {
 
 	// TODO Servo Test
 
-	ShovelSelect.setSpaceRatioTime(1300);
+	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
 	ShovelSelect.setRunState(run);
 	usleep(500000);
 
-	ShovelSelect.setSpaceRatioTime(1700);
+	ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
 	usleep(500000);
 
-	ShovelSelect.setSpaceRatioTime(1300);
+	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
 	usleep(500000);
 
-	ShovelSelect.setSpaceRatioTime(1700);
+	ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
 	usleep(500000);
 
-	ShovelSelect.setSpaceRatioTime(1300);
+	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
 	usleep(500000);
 
 	ShovelSelect.setRunState(stop);

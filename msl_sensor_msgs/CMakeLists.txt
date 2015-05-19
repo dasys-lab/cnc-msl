@@ -66,6 +66,7 @@ add_message_files(
   VisionGameState.msg
   VisionImage.msg
   WorldModelData.msg
+  SimulatorWorldModelData.msg
 )
 
 ## Generate services in the 'srv' folder
