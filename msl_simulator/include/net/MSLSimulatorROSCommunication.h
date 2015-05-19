@@ -35,6 +35,7 @@ namespace msl_simulator
 
 		virtual void handleMotionControl(msl_actuator_msgs::MotionControlPtr);
 		void sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball);
+		void sendSimWorldData(msl_sensor_msgs::SimulatorWorldModelData simwm);
 
 		virtual void startCommunication();
 		virtual void stopCommunication();
@@ -42,7 +43,7 @@ namespace msl_simulator
 		msl_actuator_msgs::MotionControlPtr getSimPacket();
 		bool isQueueEmpty();
 
-		bool isteamyellow = false;
+		bool isteamyellow;
 
 	protected:
 		ros::NodeHandle* rosNode;

@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();    
-public slots:
+public Q_SLOTS:
     void update();
     void updateRobotLabel();
     void showHideConfig(bool v);

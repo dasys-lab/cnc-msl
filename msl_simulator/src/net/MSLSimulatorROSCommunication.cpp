@@ -19,6 +19,7 @@ namespace msl_simulator
 	MSLSimulatorROSCommunication::MSLSimulatorROSCommunication()
 	{
 		this->isRunning = false;
+		this->isteamyellow = false;
 		rosNode = new ros::NodeHandle();
 		spinner = new ros::AsyncSpinner(4);
 
@@ -48,12 +49,14 @@ namespace msl_simulator
 		delete rosNode;
 
 	}
+	void MSLSimulatorROSCommunication::sendSimWorldData(msl_sensor_msgs::SimulatorWorldModelData simwm)
+	{
+		this->worldModelPublisher.publish(simwm);
+	}
 
 	void MSLSimulatorROSCommunication::sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball)
 	{
-
-
-	  this->ballInfoPublisher.publish(ball);
+		this->ballInfoPublisher.publish(ball);
 	}
 	void MSLSimulatorROSCommunication::tick()
 	{
