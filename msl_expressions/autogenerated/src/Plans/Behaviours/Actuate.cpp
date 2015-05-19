@@ -87,8 +87,8 @@ namespace alica
         	y=-pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
         	x=-pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	left=arithmeticAverage*(y-x)/10;
-        	right=arithmeticAverage*(y+x)/10;
+        	left=arithmeticAverage*(x-y)/10;
+        	right=arithmeticAverage*(x+y)/10;
 
         	//VorneLinks
         if(wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2 && wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI)
@@ -96,7 +96,7 @@ namespace alica
         	 y=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
         	 x=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	 left=arithmeticAverage*(y-x)/10;
+        	 left=arithmeticAverage*(x-y)/10;
         	 right=arithmeticAverage*(y+x)/10;
 
 
