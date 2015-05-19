@@ -13,6 +13,7 @@
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_actuator_msgs/MotionBurst.h>
+#include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -48,6 +49,7 @@ namespace msl
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
+		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 
 		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 		MSLSharedWorldModel* getSharedWolrdModel();
@@ -78,6 +80,7 @@ namespace msl
 		ros::Subscriber wmDataSub;
 		ros::Subscriber joystickSub;
 		ros::Subscriber motionBurstSub;
+		ros::Subscriber simWorldModel;
 		ros::Publisher sharedWorldPub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;

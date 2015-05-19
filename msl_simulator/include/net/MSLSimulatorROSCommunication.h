@@ -16,6 +16,7 @@
 #include "msl_simulator/messages_robocup_ssl_wrapper.h"
 #include "msl_simulator/sim_packet.h"
 #include <msl_actuator_msgs/MotionControl.h>
+#include <msl_sensor_msgs/SimulatorWorldModelData.h>
 
 using namespace std;
 

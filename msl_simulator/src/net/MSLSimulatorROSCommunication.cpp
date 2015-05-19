@@ -10,7 +10,6 @@
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <ros/subscriber.h>
-#include <msl_actuator_msgs/MotionControl.h>
 #include <string.h>
 
 
@@ -30,9 +29,9 @@ namespace msl_simulator
 		motionControl = rosNode->subscribe("/MotionControl", 10, &MSLSimulatorROSCommunication::handleMotionControl, (MSLSimulatorROSCommunication*)this);
 
 		ballInfoPublisher = rosNode->advertise<msl_sensor_msgs::BallInfo>(
-		                                "/msl_sensor_msgs/BallInfo", 10);
+		                                "/BallInfo", 10);
 
-		worldModelPublisher = rosNode->advertise<msl_sensor_msgs::WorldModelData>("/WorldModel/WorldModelData", 1);
+		worldModelPublisher = rosNode->advertise<msl_sensor_msgs::SimulatorWorldModelData>("/WorldModel/SimulatorWorldModelData", 10);
 
 	}
 
