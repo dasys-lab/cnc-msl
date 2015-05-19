@@ -60,7 +60,7 @@ namespace msl {
 	CNPoint2D::~CNPoint2D() {
 	}
 
-	shared_ptr<CNPoint2D> msl::CNPoint2D::normalize() {
+	shared_ptr<CNPoint2D> CNPoint2D::normalize() {
 		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
 		double length = this->length();
 
