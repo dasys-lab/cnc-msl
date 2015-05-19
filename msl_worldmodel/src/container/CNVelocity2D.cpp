@@ -5,7 +5,7 @@
  *      Author: tobi
  */
 
-#include "container/CNPoint2D.h"
+#include "container/CNVelocity2D.h"
 #include "container/CNPosition.h"
 #include <sstream>
 
@@ -13,29 +13,25 @@ using namespace std;
 
 namespace msl {
 
-	CNPoint2D::CNPoint2D(double x, double y) {
+	CNVelocity2D::CNVelocity2D(double x, double y) {
 		this->x = x;
 		this->y = y;
 	}
 
-	double CNPoint2D::length() {
+	double CNVelocity2D::length() {
 		return sqrt(x * x + y * y);
 	}
 
-	shared_ptr<CNPoint2D> CNPoint2D::rotate(double radian) {
+	shared_ptr<CNVelocity2D> CNVelocity2D::rotate(double radian) {
 		return make_shared<CNPoint2D>(this->x * cos(radian) - this->y * sin(radian), this->x * sin(radian) + this->y * cos(radian));
 	}
 
-
-	double CNPoint2D::angleTo() {
+	double CNVelocity2D::angleTo() {
 		return atan2(y, x);
 	}
 
-	shared_ptr<CNPoint2D> CNPoint2D::alloToEgo(CNPosition& me) {
-		shared_ptr<CNPoint2D> ego = make_shared<CNPoint2D>();
-
-		double x = this->x - me.x;
-		double y = this->y - me.y;
+	shared_ptr<CNVelocity2D> CNVelocity2D::alloToEgo(CNPosition& me) {
+		shared_ptr<CNVelocity2D> ego = make_shared<CNVelocity2D>();
 
 		double angle = atan2(y, x) - me.theta;
 		double dist = sqrt(x * x + y * y);
@@ -46,10 +42,8 @@ namespace msl {
 		return ego;
 	}
 
-	shared_ptr<CNPoint2D> CNPoint2D::egoToAllo(CNPosition& me) {
+	shared_ptr<CNVelocity2D> CNVelocity2D::egoToAllo(CNPosition& me) {
 		shared_ptr<CNPoint2D> allo = make_shared<CNPoint2D>();
-		allo->x = me.x;
-		allo->y = me.y;
 
 		allo->x += cos(me.theta) * x - sin(me.theta) * y;
 		allo->y += sin(me.theta) * x + cos(me.theta) * y;
@@ -57,10 +51,10 @@ namespace msl {
 		return allo;
 	}
 
-	CNPoint2D::~CNPoint2D() {
+	CNVelocity2D::~CNVelocity2D() {
 	}
 
-	shared_ptr<CNPoint2D> CNPoint2D::normalize() {
+	shared_ptr<CNVelocity2D> CNVelocity2D::normalize() {
 		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
 		double length = this->length();
 
@@ -71,13 +65,13 @@ namespace msl {
 		}
 		else
 		{
-			cerr << "CNPoint2D: Trying to normalize 0.0!" << endl;
+			cerr << "CNVelocity2D: Trying to normalize 0.0!" << endl;
 		}
 
 		return norm;
 	}
 
-	shared_ptr<CNPoint2D> CNPoint2D::operator*(const double& right) {
+	shared_ptr<CNVelocity2D> CNVelocity2D::operator*(const double& right) {
 		auto ret = make_shared<CNPoint2D>(this->x, this->y);
 		ret->x *= right;
 		ret->y *= right;
@@ -85,7 +79,7 @@ namespace msl {
 	}
 
 
-	shared_ptr<CNPoint2D> operator*(const shared_ptr<CNPoint2D>& left, const double& right)
+	shared_ptr<CNVelocity2D> operator*(const shared_ptr<CNVelocity2D>& left, const double& right)
 	{
 		auto ret = make_shared<CNPoint2D>(left->x, left->y);
 		ret->x *= right;
@@ -94,7 +88,7 @@ namespace msl {
 	}
 
 
-	shared_ptr<CNPoint2D> CNPoint2D::operator+(const shared_ptr<CNPoint2D>& right) {
+	shared_ptr<CNVelocity2D> CNVelocity2D::operator+(const shared_ptr<CNVelocity2D>& right) {
 		auto ret = make_shared<CNPoint2D>(this->x, this->y);
 		ret->x += right->x;
 		ret->y += right->y;
@@ -102,18 +96,18 @@ namespace msl {
 	}
 
 
-	shared_ptr<CNPoint2D> operator+(const shared_ptr<CNPoint2D>& left, const shared_ptr<CNPoint2D>& right)
+	shared_ptr<CNVelocity2D> operator+(const shared_ptr<CNVelocity2D>& left, const shared_ptr<CNVelocity2D>& right)
 	{
-		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		auto ret = make_shared<CNVelocity2D>(left->x, left->y);
 		ret->x += right->x;
 		ret->y += right->y;
 		return ret;
 	}
 
-	string CNPoint2D::toString()
+	string CNVelocity2D::toString()
 	{
 		stringstream ss;
-		ss << "CNPoint2D: x: " << this->x << " y: " << this->y << endl;
+		ss << "CNVelocity2D: x: " << this->x << " y: " << this->y << endl;
 		return ss.str();
 	}
 }
