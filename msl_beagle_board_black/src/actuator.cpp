@@ -272,37 +272,37 @@ int main(int argc, char** argv) {
 	adns3080.getProductId();
 	// TODO BallHandle Test
 
-	BH_left.setBallHandling(10);
+	BH_left.setBallHandling(50);
 	BH_left.controlBallHandling();
 	usleep(50000);
 	BH_left.controlBallHandling();
 	usleep(450000);
 
-	BH_left.setBallHandling(-10);
+	BH_left.setBallHandling(-50);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(10);
+	BH_left.setBallHandling(50);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(-10);
+	BH_left.setBallHandling(-50);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(10);
+	BH_left.setBallHandling(50);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(-10);
+	BH_left.setBallHandling(-50);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
