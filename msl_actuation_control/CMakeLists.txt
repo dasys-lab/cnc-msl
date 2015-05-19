@@ -103,7 +103,7 @@ add_dependencies(msl_actuation_control system_config can_connection msl_actuator
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_actuation_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
 
-#############
+###########
 ## Install ##
 #############
 
