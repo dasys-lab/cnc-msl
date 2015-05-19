@@ -96,7 +96,7 @@ class IMU {
 	public:
 					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
 					~IMU();
-		void		init();
+		bool		init();
 		void		updateData(timeval time_now);
 		void		sendData(timeval time_now, ros::Publisher *imuPub);
 

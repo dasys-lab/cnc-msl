@@ -231,7 +231,7 @@ void exit_program(int sig) {
 
 
 int main(int argc, char** argv) {
-	std::cout << "Test" << std::endl;
+	std::cout << "Test Actuator-Beagle-Board" << std::endl;
 
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
@@ -265,78 +265,51 @@ int main(int argc, char** argv) {
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
+	bool imu = lsm9ds0.init();
 
-	lsm9ds0.init();
-
-	std::cout << "SPI: " << spi << std::endl;
-	std::cout << "I2C: " << i2c << std::endl;
-
-
-	// TODO Servo Test
-
-	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
-	ShovelSelect.setRunState(run);
-	usleep(500000);
-
-	ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
-	usleep(500000);
-
-	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
-	usleep(500000);
-
-	ShovelSelect.setSpaceRatioTime(ShovelSelect_PASSING);
-	usleep(500000);
-
-	ShovelSelect.setSpaceRatioTime(ShovelSelect_NORMAL);
-	usleep(500000);
-
-	ShovelSelect.setRunState(stop);
-
+	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
 
 
 	// TODO BallHandle Test
 
-	BH_left.setBallHandling(50);
+	BH_left.setBallHandling(10);
+	BH_left.controlBallHandling();
+	usleep(50000);
+	BH_left.controlBallHandling();
+	usleep(450000);
+
+	BH_left.setBallHandling(-10);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(-50);
+	BH_left.setBallHandling(10);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(50);
+	BH_left.setBallHandling(-10);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(-50);
+	BH_left.setBallHandling(10);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(50);
+	BH_left.setBallHandling(-10);
 	BH_left.controlBallHandling();
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BH_left.setBallHandling(-50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
 
-	BH_left.setBallHandling(0);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
+
 
 
 
@@ -347,7 +320,9 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-
+		//TODO ADNS3080 Test
+		adns3080.update_motion_burst(time_now);
+		adns3080.send_motion_burst(time_now, mbcPub);
 
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);
