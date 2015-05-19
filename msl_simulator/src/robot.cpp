@@ -25,7 +25,7 @@ Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
 {
     id = _id;
     rob = robot;
-    dReal rad = rob->cfg->robotSettings.RobotRadius*3 - rob->cfg->robotSettings.WheelThickness / 2.0;
+    dReal rad = 0.26 - rob->cfg->robotSettings.WheelThickness / 2.0;
     ang *= M_PI/180.0f;
     ang2 *= M_PI/180.0f;
     dReal x = rob->m_x;
@@ -33,12 +33,12 @@ Robot::Wheel::Wheel(Robot* robot,int _id,dReal ang,dReal ang2,int wheeltexid)
     dReal z = rob->m_z;
     dReal centerx = x+rad*cos(ang2);
     dReal centery = y+rad*sin(ang2);
-    dReal centerz = z-rob->cfg->robotSettings.RobotHeight*3*0.5+rob->cfg->robotSettings.WheelRadius*3-rob->cfg->robotSettings.BottomHeight*3;
+    dReal centerz = z-0.80*0.5+rob->cfg->robotSettings.WheelRadius-rob->cfg->robotSettings.BottomHeight;
     cyl = new PCylinder(centerx,centery,centerz,rob->cfg->robotSettings.WheelRadius*3,rob->cfg->robotSettings.WheelThickness*3,rob->cfg->robotSettings.WheelMass,0.9,0.9,0.9,wheeltexid);
     cyl->setRotation(-sin(ang),cos(ang),0,M_PI*0.5);
     cyl->setBodyRotation(-sin(ang),cos(ang),0,M_PI*0.5,true);   //set local rotation matrix
     //TODO
-    cyl->setBodyPosition(centerx-x,centery-y,centerz + 3*z,true);       //set local position vector
+    cyl->setBodyPosition(centerx-x,centery-y,centerz + 92*z  ,true);       //set local position vector
     cyl->space = rob->space;
 
     rob->w->addObject(cyl);
@@ -74,7 +74,7 @@ Robot::Kicker::Kicker(Robot* robot)
     dReal z = rob->m_z;
     dReal centerx = x+(rob->cfg->robotSettings.RobotCenterFromKicker*3+rob->cfg->robotSettings.KickerThickness*3);
     dReal centery = y;
-    dReal centerz = z-(rob->cfg->robotSettings.RobotHeight*3)*0.5f+rob->cfg->robotSettings.WheelRadius*3-rob->cfg->robotSettings.BottomHeight*3+rob->cfg->robotSettings.KickerZ;
+    dReal centerz = z-(0.80)*0.5f+rob->cfg->robotSettings.WheelRadius*3-rob->cfg->robotSettings.BottomHeight*3+rob->cfg->robotSettings.KickerZ;
     box = new PBox(centerx,centery,centerz,rob->cfg->robotSettings.KickerThickness,rob->cfg->robotSettings.KickerWidth * 3,rob->cfg->robotSettings.KickerHeight * 3,rob->cfg->robotSettings.KickerMass,0.9,0.9,0.9);
     box->setBodyPosition(centerx-x,centery-y,centerz-z,true);
     box->space = rob->space;
@@ -203,12 +203,16 @@ Robot::Robot(PWorld* world,PBall *ball,ConfigWidget* _cfg,dReal x,dReal y,dReal 
     cfg = _cfg;
     m_rob_id = rob_id;
 
+    double robotRadius = 0.26;
+    double robotHeigt = 0.80;
+    double bodymass = 33;
+
     space = w->space;
-    chassis = new PCylinder(x,y,z,cfg->robotSettings.RobotRadius*3,cfg->robotSettings.RobotHeight*3,cfg->robotSettings.BodyMass*0.99f,r,g,b,rob_id,true);
+    chassis = new PCylinder(x,y,z,robotRadius,robotHeigt,bodymass*0.99f,r,g,b,rob_id,true);
     chassis->space = space;
     w->addObject(chassis);
 
-    dummy   = new PBall(x,y,z,cfg->robotSettings.RobotCenterFromKicker,cfg->robotSettings.BodyMass*0.01f,0,0,0);
+    dummy   = new PBall(x,y,z,cfg->robotSettings.RobotCenterFromKicker,bodymass*0.01f,0,0,0);
     dummy->setVisibility(false);
     dummy->space = space;
     w->addObject(dummy);

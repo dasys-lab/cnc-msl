@@ -12,7 +12,7 @@
 #include <boost/thread/lock_guard.hpp>
 #include <list>
 #include "ros/ros.h"
-
+#include <msl_sensor_msgs/BallInfo.h>
 #include "msl_simulator/messages_robocup_ssl_wrapper.h"
 #include "msl_simulator/sim_packet.h"
 #include <msl_actuator_msgs/MotionControl.h>
@@ -33,6 +33,7 @@ namespace msl_simulator
 		virtual void send(messages_robocup_ssl_wrapperPtr packet);
 
 		virtual void handleMotionControl(msl_actuator_msgs::MotionControlPtr);
+		void sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball);
 
 		virtual void startCommunication();
 		virtual void stopCommunication();
@@ -50,6 +51,9 @@ namespace msl_simulator
 		boost::mutex mutex;
 
 //		ros::Publisher messagesRoboCupSSLWrapperPublisher;
+		ros::Publisher ballInfoPublisher;
+		ros::Publisher worldModelPublisher;
+
 		ros::Subscriber motionControl;
 
 		bool isRunning;

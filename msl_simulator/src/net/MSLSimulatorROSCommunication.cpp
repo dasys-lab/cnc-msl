@@ -29,6 +29,11 @@ namespace msl_simulator
 
 		motionControl = rosNode->subscribe("/MotionControl", 10, &MSLSimulatorROSCommunication::handleMotionControl, (MSLSimulatorROSCommunication*)this);
 
+		ballInfoPublisher = rosNode->advertise<msl_sensor_msgs::BallInfo>(
+		                                "/msl_sensor_msgs/BallInfo", 10);
+
+		worldModelPublisher = rosNode->advertise<msl_sensor_msgs::WorldModelData>("/WorldModel/WorldModelData", 1);
+
 	}
 
 	MSLSimulatorROSCommunication::~MSLSimulatorROSCommunication()
@@ -45,6 +50,12 @@ namespace msl_simulator
 
 	}
 
+	void MSLSimulatorROSCommunication::sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball)
+	{
+
+
+	  this->ballInfoPublisher.publish(ball);
+	}
 	void MSLSimulatorROSCommunication::tick()
 	{
 		if (this->isRunning)
