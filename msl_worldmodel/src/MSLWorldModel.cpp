@@ -20,7 +20,7 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10)
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 5)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -46,22 +46,7 @@ namespace msl
 
 	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() > ringBufferLength)
-		{
-			rawOdometryData.pop_back();
-		}
-		rawOdometryData.push_front(msg);
-	}
-
-	msl_actuator_msgs::RawOdometryInfoPtr MSLWorldModel::getRawOdometryInfo()
-	{
-		lock_guard<mutex> lock(rawOdometryMutex);
-		if (rawOdometryData.size() == 0)
-		{
-			return nullptr;
-		}
-		return rawOdometryData.front();
+		rawSensorData.processRawOdometryInfo(msg);
 	}
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
@@ -124,7 +109,6 @@ namespace msl
 		auto pos = rawSensorData.getOwnPositionVision();
 		if(pos == nullptr)
 		{
-			cout << "WM: pos is nullptr" << endl;
 			return;
 		}
 		if (ball != nullptr)

@@ -55,7 +55,7 @@ using namespace BlackLib;
 		if (speed_desired == 0) {
 			enabled = false;
 
-			if (pwm->getRunValue() == "1") {							// 300us
+			if (pwm->getRunValue() == "1") {						// 300us
 				pwm->setRunState(stop);								// ?us
 			}
 		} else if ((speed_desired != 0) && (!enabled)) {
@@ -63,17 +63,17 @@ using namespace BlackLib;
 			pwm->setRunState(run);
 		}
 
-		if (enabled) {		// Gesamt ca. 900us oder 1500us
+		if (enabled) {	// Gesamt ca. 900us oder 1500us
 			// BallHandling aktiviert
 
-			if (direction != direction_desired) {		// Direction Change, Slow Down Speed (Gesamt: 900us oder 1500us)
+			if (direction != direction_desired) {			// Direction Change, Slow Down Speed (Gesamt: 900us oder 1500us)
 				speed -= BallHandle_PWM_STEP_SIZE;
 				if (speed < 0) {
 					direction = direction_desired;
 					speed = 0;
-					dir->setValue(direction);					// 550us
+					dir->setValue(direction);				// 550us
 				}
-			} else {									// Keep Direction, Modify Speed
+			} else {										// Keep Direction, Modify Speed
 				if (speed_desired > speed) {
 					speed += BallHandle_PWM_STEP_SIZE;
 					if (speed > speed_desired)

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3 )
 project(msl_expressions)
-
-## Use c++ 11x std
+ 
+## Use c++ 11x std 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Enable exception handling for segfaults
 set(CMAKE_CXX_FLAGS "-rdynamic -g -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
@@ -19,7 +19,6 @@ find_package(catkin REQUIRED COMPONENTS roscpp system_config fsystem autodiff ev
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
-
 
 ################################################
 ## Declare ROS messages, services and actions ##

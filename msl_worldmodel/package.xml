@@ -45,6 +45,8 @@
   <build_depend>CGAL</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>system_config</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>msl_sensor_msgs</build_depend>
   <build_depend>msl_actuator_msgs</build_depend>
@@ -54,6 +56,8 @@
   <run_depend>CGAL</run_depend>
   <run_depend>message_runtime</run_depend>
   <run_depend>system_config</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>msl_sensor_msgs</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>

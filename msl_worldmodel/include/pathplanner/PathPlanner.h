@@ -45,6 +45,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <msl_sensor_msgs/WorldModelData.h>
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "MSLFootballField.h"
 
 
 //namespaces
@@ -66,15 +67,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<Point_2>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal);
-		/**
-		 * aStar search on a VoronoiDiagram considering robot diameter and ballpossetion
-		 * @param voronoi shared_ptr<VoronoiNet>
-		 * @param ownPos Point_2
-		 * @param goal Point_2
-		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
-		 */
-		shared_ptr<vector<shared_ptr<Point_2>>> carefullAStarSearch(shared_ptr<VoronoiNet> voronoi, Point_2 ownPos, Point_2 goal, bool haveBall);
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
@@ -91,10 +84,19 @@ namespace msl
 		 */
 		shared_ptr<VoronoiNet> getCurrentVoronoiNet();
 
-		//TODO
+		double getRobotDiameter();
+		double getPathDeviationWeight();
+		double getDribbleAngleTolerance();
+		double getDribbleRotationWeight();
 
-		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
-
+	private:
+		void initializeArtificialObstacles();
+		bool isInside(vector<VoronoiDiagram::Point_2> polygon, int n, VoronoiDiagram::Point_2 p);
+		bool doIntersect(VoronoiDiagram::Point_2 p1, VoronoiDiagram::Point_2 q1, VoronoiDiagram::Point_2 p2, VoronoiDiagram::Point_2 q2);
+		int orientation(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
+		bool onSegment(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
+		void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
+		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
 	protected:
 		MSLWorldModel* wm;
@@ -102,7 +104,11 @@ namespace msl
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
-		CNPoint2D lastPathTarget;
+		VoronoiNet artificialObjectNet;
+		double pathDeviationWeight;
+		double dribble_rotationWeight;
+		double dribble_angleTolerance;
+		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal, CNPoint2D goal);
 	};
 
 } /* namespace alica */

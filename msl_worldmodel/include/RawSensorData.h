@@ -19,6 +19,7 @@
 #include "container/CNVelocity2D.h"
 #include "container/CNPoint2D.h"
 #include "msl_sensor_msgs/WorldModelData.h"
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 
 
 using namespace std;
@@ -48,6 +49,7 @@ namespace msl
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
+		void processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;

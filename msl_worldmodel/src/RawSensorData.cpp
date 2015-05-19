@@ -30,7 +30,7 @@ namespace msl
 	shared_ptr<vector<double> > RawSensorData::getDistanceScan(int index)
 	{
 		auto x = distanceScan.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -40,7 +40,7 @@ namespace msl
 	shared_ptr<bool> RawSensorData::getLightBarrier(int index)
 	{
 		auto x = lightBarrier.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -50,7 +50,7 @@ namespace msl
 	shared_ptr<CNPoint2D> RawSensorData::getOpticalFlow(int index)
 	{
 		auto x = opticalFlow.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -60,7 +60,7 @@ namespace msl
 	shared_ptr<CNPosition> RawSensorData::getOwnPositionMotion(int index)
 	{
 		auto x = ownPositionMotion.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -70,7 +70,7 @@ namespace msl
 	shared_ptr<CNPosition> RawSensorData::getOwnPositionVision(int index)
 	{
 		auto x = ownPositionVision.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -80,7 +80,7 @@ namespace msl
 	shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityMotion(int index)
 	{
 		auto x = ownVelocityMotion.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -90,7 +90,7 @@ namespace msl
 	shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityVision(int index)
 	{
 		auto x = ownVelocityVision.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -100,7 +100,7 @@ namespace msl
 	shared_ptr<CNPoint2D> RawSensorData::getBallPosition(int index)
 	{
 		auto x = ballPosition.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -110,7 +110,7 @@ namespace msl
 	shared_ptr<CNVelocity2D> RawSensorData::getBallVelocity(int index)
 	{
 		auto x = ballVelocity.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -120,7 +120,7 @@ namespace msl
 	shared_ptr<int> RawSensorData::getCompassOrientation(int index)
 	{
 		auto x = compass.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -131,7 +131,7 @@ namespace msl
 	{
 		shared_ptr<pair<shared_ptr<CNPoint2D>, double>> ret = make_shared<pair<shared_ptr<CNPoint2D>, double>>();
 		auto x = ballPosition.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -144,7 +144,7 @@ namespace msl
 	{
 		shared_ptr<pair<shared_ptr<CNPosition>, double>> ret = make_shared<pair<shared_ptr<CNPosition>, double>>();
 		auto x = ownPositionVision.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
@@ -153,18 +153,33 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index) {
+	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index)
+	{
 		auto x = joystickCommands.getLast(index);
-		if(x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge) {
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
 			return nullptr;
 		}
 		return x->getInformation();
 	}
 
-	void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg) {
-		if (msg->robotId == this->ownID) {
+	void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
+	{
+		shared_ptr<InformationElement<CNPosition>> motion = make_shared<InformationElement<CNPosition>>(
+				make_shared<CNPosition>(msg->position.x, msg->position.y, msg->position.angle), wm->getTime());
+		ownPositionMotion.add(motion);
+		shared_ptr<InformationElement<msl_msgs::MotionInfo>> vel = make_shared<
+				InformationElement<msl_msgs::MotionInfo>>(make_shared<msl_msgs::MotionInfo>(msg->motion), wm->getTime());
+		ownVelocityMotion.add(vel);
+	}
+
+	void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
+	{
+		if (msg->robotId == this->ownID)
+		{
 			shared_ptr<msl_msgs::JoystickCommand> cmd = make_shared<msl_msgs::JoystickCommand>(*msg);
-			shared_ptr<InformationElement<msl_msgs::JoystickCommand>> jcmd = make_shared<InformationElement<msl_msgs::JoystickCommand>>(cmd, wm->getTime());
+			shared_ptr<InformationElement<msl_msgs::JoystickCommand>> jcmd = make_shared<
+					InformationElement<msl_msgs::JoystickCommand>>(cmd, wm->getTime());
 			jcmd->certainty = 1.0;
 			joystickCommands.add(jcmd);
 		}
@@ -199,10 +214,11 @@ namespace msl
 			ownVelocityVision.add(v);
 
 			//Motion
-			shared_ptr<CNPosition> posMotion = make_shared<CNPosition>(data->odometry.position.x, data->odometry.position.y,
-																	data->odometry.position.angle);
-			shared_ptr<InformationElement<CNPosition>> odometryMotion = make_shared<InformationElement<CNPosition>>(posMotion,
-																												time);
+			shared_ptr<CNPosition> posMotion = make_shared<CNPosition>(data->odometry.position.x,
+																		data->odometry.position.y,
+																		data->odometry.position.angle);
+			shared_ptr<InformationElement<CNPosition>> odometryMotion = make_shared<InformationElement<CNPosition>>(
+					posMotion, time);
 			odometryMotion->certainty = data->odometry.certainty;
 			ownPositionMotion.add(odometryMotion);
 
@@ -238,5 +254,4 @@ namespace msl
 	}
 
 } /* namespace alica */
-
 

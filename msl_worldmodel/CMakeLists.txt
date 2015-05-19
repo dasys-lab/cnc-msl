@@ -118,6 +118,10 @@ catkin_package(
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp
+   src/pathplanner/PathProxy.cpp
+   src/pathplanner/evaluator/PathEvaluator.cpp
+   src/pathplanner/evaluator/SingleEvaluator.cpp
+   src/pathplanner/evaluator/SinglePrefDirEvaluator.cpp
  )
 
 ## Declare a cpp executable
@@ -130,7 +134,6 @@ add_dependencies(msl_worldmodel msl_worldmodel_generate_messages_cpp msl_sensor_
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_worldmodel
   ${catkin_LIBRARIES} 
-  system_config
 )
 
 #############

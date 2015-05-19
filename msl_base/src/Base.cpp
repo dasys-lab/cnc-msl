@@ -58,20 +58,27 @@ namespace msl
 
 } /* namespace msl */
 
+void printUsage()
+{
+	cout << "Usage: ./msl_base -m \"Masterplan\" [-rd \"RoleSetDirectory\"] [-rset \"RoleSet\"]" << endl;
+}
+
 int main(int argc, char** argv)
 {
-	cout << "Initing Ros" << endl;
-	ros::init(argc, argv, "AlicaEngine");
+	if (argc < 2)
+	{
+		printUsage();
+		return 0;
+	}
+
+	cout << "Initialising ROS" << endl;
+
+	ros::init(argc, argv, supplementary::SystemConfig::getInstance()->getHostname()+"_Base");
 
 	//This makes segfaults to exceptions
 	segfaultdebug::init_segfault_exceptions();
 
-	cout << "Starting Base" << endl;
-	if (argc < 2)
-	{
-		cout << "Usage: Base -m [Masterplan] -rd [rolesetdir]" << endl;
-		return 0;
-	}
+	cout << "Parsing command line parameters:" << endl;
 
 	string masterplan = "";
 	string rolesetdir = ".";
@@ -98,16 +105,17 @@ int main(int argc, char** argv)
 	}
 	if (masterplan.size() == 0 || rolesetdir.size() == 0)
 	{
-		cout << "Usage: Base -m [Masterplan] -rd [rolesetdir]" << endl;
+		printUsage();
 		return 0;
 	}
-	cout << "Masterplan is: " << masterplan << endl;
-	cout << "Rolset Directory is: " << rolesetdir << endl;
-	cout << "Rolset is: " << roleset << endl;
+	cout << "\tMasterplan is:       \"" << masterplan << "\"" << endl;
+	cout << "\tRolset Directory is: \"" << rolesetdir << "\"" << endl;
+	cout << "\tRolset is:           \"" << (roleset.empty() ? "Default" : roleset) << "\"" << endl;
 
-	cout << "Constructing Base" << endl;
+	cout << "\nConstructing Base ..." << endl;
 	Base* base = new Base(roleset, masterplan, rolesetdir);
 
+	cout << "\nStarting Base ..." << endl;
 	base->start();
 
 	while (ros::ok())
