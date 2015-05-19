@@ -23,7 +23,7 @@ namespace msl {
 	}
 
 	shared_ptr<CNVelocity2D> CNVelocity2D::rotate(double radian) {
-		return make_shared<CNPoint2D>(this->x * cos(radian) - this->y * sin(radian), this->x * sin(radian) + this->y * cos(radian));
+		return make_shared<CNVelocity2D>(this->x * cos(radian) - this->y * sin(radian), this->x * sin(radian) + this->y * cos(radian));
 	}
 
 	double CNVelocity2D::angleTo() {
@@ -43,7 +43,7 @@ namespace msl {
 	}
 
 	shared_ptr<CNVelocity2D> CNVelocity2D::egoToAllo(CNPosition& me) {
-		shared_ptr<CNPoint2D> allo = make_shared<CNPoint2D>();
+		shared_ptr<CNVelocity2D> allo = make_shared<CNVelocity2D>();
 
 		allo->x += cos(me.theta) * x - sin(me.theta) * y;
 		allo->y += sin(me.theta) * x + cos(me.theta) * y;
@@ -55,7 +55,7 @@ namespace msl {
 	}
 
 	shared_ptr<CNVelocity2D> CNVelocity2D::normalize() {
-		shared_ptr<CNPoint2D> norm = make_shared<CNPoint2D>();
+		shared_ptr<CNVelocity2D> norm = make_shared<CNVelocity2D>();
 		double length = this->length();
 
 		if(length > 0)
@@ -72,7 +72,7 @@ namespace msl {
 	}
 
 	shared_ptr<CNVelocity2D> CNVelocity2D::operator*(const double& right) {
-		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		auto ret = make_shared<CNVelocity2D>(this->x, this->y);
 		ret->x *= right;
 		ret->y *= right;
 		return ret;
@@ -81,7 +81,7 @@ namespace msl {
 
 	shared_ptr<CNVelocity2D> operator*(const shared_ptr<CNVelocity2D>& left, const double& right)
 	{
-		auto ret = make_shared<CNPoint2D>(left->x, left->y);
+		auto ret = make_shared<CNVelocity2D>(left->x, left->y);
 		ret->x *= right;
 		ret->y *= right;
 		return ret;
@@ -89,7 +89,7 @@ namespace msl {
 
 
 	shared_ptr<CNVelocity2D> CNVelocity2D::operator+(const shared_ptr<CNVelocity2D>& right) {
-		auto ret = make_shared<CNPoint2D>(this->x, this->y);
+		auto ret = make_shared<CNVelocity2D>(this->x, this->y);
 		ret->x += right->x;
 		ret->y += right->y;
 		return ret;
