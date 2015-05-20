@@ -63,6 +63,12 @@ private:
     QList<SendingPacket*> sendQueue;
     char packet[200];
     char *in_buffer;    
+
+    void fillBall (msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId);
+    void fillObstacles (msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId);
+    void fillOdometry (msl_sensor_msgs::SimulatorWorldModelData& simwm,  int robotId);
+    msl_msgs::Point3dInfo allo2Ego(double x, double y, double z, Robot* robot);
+    msl_msgs::Velocity3dInfo allo2Ego(double x, double y, Robot* robot);
 public:    
     dReal customDT;
     bool isGLEnabled;
@@ -101,7 +107,7 @@ public:
     void drawRobot(int team, int countRobot);
     bool startedThread;
 //TODO
-//    std::thread* simThread;
+    QTimer *sendWMDataTimer;
 public Q_SLOTS:
     void recvActions();
 Q_SIGNALS:

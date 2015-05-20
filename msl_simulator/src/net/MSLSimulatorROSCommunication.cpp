@@ -83,19 +83,6 @@ namespace msl_simulator
 		msl_actuator_msgs::MotionControlPtr motion = recvQueue.front();
 
 		msl_simulator::sim_packetPtr packet;
-//		msl_simulator::sim_robot_commandPtr robotCommand;
-//
-//		packet->commands.isteamyellow = this->isteamyellow;
-//		packet->commands.timestamp = ros::Time::now();
-//
-//		robotCommand->id = motion->senderID;
-//		robotCommand->veltangent = motion->motion.rotation;
-//		robotCommand->velnormal = motion->motion.translation;
-//		robotCommand->velangular = motion->motion.angle;
-
-
-
-//		packet->commands.robot_commands.push_back(robotCommand);
 
 		recvQueue.pop_front();
 		return motion;
