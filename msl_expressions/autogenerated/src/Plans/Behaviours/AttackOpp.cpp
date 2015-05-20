@@ -46,9 +46,8 @@ namespace alica
 			return;
 		}
 
-		//auto egoTarget = alloTarget.alloToEgo(*me);
-
 		msl_actuator_msgs::MotionControl mc;
+		msl_actuator_msgs::BallHandleCmd bhc;
 
 		mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
 
@@ -72,31 +71,38 @@ namespace alica
 		// translation = 1000 => 1 m/s
 		mc.motion.translation = movement;
 
+		if (egoBallPos->length() < 300)
+		{
+			mc.motion.translation = 0;
 
-	if (egoBallPos->length() < 300)
-	{
-		mc.motion.translation = 0;
-		//this->success = true;
-	}
-	/*
-	 // TODO: Prüfen ob Wert korrekt ist
-	 auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
-	 std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
+			const double left = -40;
+			const double right = -40;
 
-	 auto radius_distance_ball = 600;
+			bhc.leftMotor = max(min(left, 60), -60);
+			bhc.rightMotor = max(min(right, 60), -60);
 
-	 // TODO: Schnittpunkt berechnen
-	 */
-	send (mc);
+			this->send(bhc);
+			//this->success = true;
+		}
+		/*
+		 // TODO: Prüfen ob Wert korrekt ist
+		 auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
+		 std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
+
+		 auto radius_distance_ball = 600;
+
+		 // TODO: Schnittpunkt berechnen
+		 */
+		send(mc);
 
 //Add additional options here
-/*PROTECTED REGION END*/
-}
-void AttackOpp::initialiseParameters()
-{
-	/*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
-	/*PROTECTED REGION END*/
-}
+		/*PROTECTED REGION END*/
+	}
+	void AttackOpp::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
 /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
