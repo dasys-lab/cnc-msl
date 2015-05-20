@@ -62,19 +62,19 @@ namespace alica
         if(wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI && wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2)
 
         	x=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	y=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+        	y=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	left=arithmeticAverage*(x+y);
-        	right=arithmeticAverage*(x-y);
+        	left=arithmeticAverage*(x+y)/10;
+        	right=arithmeticAverage*(x-y)/10;
 
         //HintenRechts
         if(wm->rawSensorData.getOwnVelocityMotion()->angle>0 && wm->rawSensorData.getOwnVelocityMotion()->angle<M_PI/2)
 
         	x=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	y=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+        	y=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	left=arithmeticAverage*(x+y);
-        	right=arithmeticAverage*(x-y);
+        	left=arithmeticAverage*(x+y)/10;
+        	right=arithmeticAverage*(x-y)/10;
 
 
         if(wm->rawSensorData.getOwnVelocityMotion()->angle < 0)
@@ -85,19 +85,19 @@ namespace alica
         if(wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2 && wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI)
 
         	y=-pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	x=-pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+        	x=-pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	left=arithmeticAverage*(y-x);
-        	right=arithmeticAverage*(y+x);
+        	left=arithmeticAverage*(x-y)/10;
+        	right=arithmeticAverage*(x+y)/10;
 
         	//VorneLinks
         if(wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2 && wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI)
 
         	 y=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	 x=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+        	 x=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
 
-        	 left=arithmeticAverage*(y-x);
-        	 right=arithmeticAverage*(y+x);
+        	 left=arithmeticAverage*(x-y)/10;
+        	 right=arithmeticAverage*(y+x)/10;
 
 
 
