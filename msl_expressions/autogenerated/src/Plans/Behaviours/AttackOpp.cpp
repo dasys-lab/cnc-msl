@@ -57,7 +57,7 @@ namespace alica
 
 		const double Kp = 1.2;
 		const double Ki = 0.0;
-		const double Kd = 1;
+		const double Kd = 1.2;
 
 		//distance ball to robot
 		double distance = egoBallPos->length();
@@ -73,9 +73,10 @@ namespace alica
 		mc.motion.translation = movement;
 
 
-	if (egoBallPos->length() < 250)
+	if (egoBallPos->length() < 300)
 	{
-		this->success = true;
+		mc.motion.translation = 0;
+		//this->success = true;
 	}
 	/*
 	 // TODO: Prüfen ob Wert korrekt ist
