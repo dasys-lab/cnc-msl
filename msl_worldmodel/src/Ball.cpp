@@ -55,6 +55,15 @@ namespace msl
 		}
 	}
 
+	shared_ptr<CNVelocity2D> Ball::getEgoBallVelocity()
+	{
+		if (this->wm->rawSensorData.getBallVelocity() != nullptr)
+			return this->wm->rawSensorData.getBallVelocity();
+		return nullptr;
+
+		// TODO: create buffer for ball velocity, like in getEgoBallPosition(), with this hasBallIteration stuff...
+	}
+
 	bool Ball::haveBall()
 	{
 		return hasBallIteration > 0;
