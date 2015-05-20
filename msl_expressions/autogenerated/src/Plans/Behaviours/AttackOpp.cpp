@@ -54,8 +54,8 @@ namespace alica
 		double summe = 0.0;
 		static double olddistance = 0.0;
 
-		const double Kp = 1.2;
-		const double Ki = 0.0;
+		const double Kp = 2.0;
+		const double Ki = 1.0;
 		const double Kd = 1.2;
 
 		//distance ball to robot
@@ -76,13 +76,9 @@ namespace alica
 
 		if (egoBallPos->length() < 300)
 		{
-			mc.motion.translation = 0;
 
-			const double left = -40;
-			const double right = -40;
-
-			bhc.leftMotor = max(min(left, 60), -60);
-			bhc.rightMotor = max(min(right, 60), -60);
+			bhc.leftMotor = -30;
+			bhc.rightMotor = -30;
 
 			this->send(bhc);
 			//this->success = true;
