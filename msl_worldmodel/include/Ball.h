@@ -9,6 +9,8 @@
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
 
 #include "container/CNPoint2D.h"
+#include "container/CNVelocity2D.h"
+
 #include <memory>
 
 #include "SystemConfig.h"
@@ -30,6 +32,7 @@ namespace msl
 		shared_ptr<CNPoint2D> getAlloBallPosition();
 		shared_ptr<CNPoint2D> getEgoBallPosition();
 		shared_ptr<CNPoint2D> getEgoRawBallPosition();
+		shared_ptr<CNVelocity2D> getEgoBallVelocity();
 		void updateOnWorldModelData();
 	private:
 		shared_ptr<CNPoint2D> lastKnownBallPos;

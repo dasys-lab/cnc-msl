@@ -34,7 +34,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925774870"/>
-    <value xPos="216" yPos="222" width="123" height="67"/>
+    <value xPos="216" yPos="222" width="123" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925917001"/>
@@ -99,5 +99,9 @@
   <extensions>
     <key href="GenericOwnStandards.pml#1431523938514"/>
     <value xPos="182" yPos="485"/>
+  </extensions>
+  <extensions>
+    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

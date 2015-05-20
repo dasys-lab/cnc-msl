@@ -30,7 +30,6 @@ class Robot
 {
     PWorld* w;
     PBall* m_ball;
-    dReal m_x,m_y,m_z;
     dReal m_r,m_g,m_b;
     dReal m_dir;
     int m_rob_id;
@@ -39,6 +38,7 @@ class Robot
 public:    
     ConfigWidget* cfg;
     dSpaceID space;
+    dReal m_x,m_y,m_z;
     PCylinder* chassis;
     PBall* dummy;
     dJointID dummy_to_chassis;

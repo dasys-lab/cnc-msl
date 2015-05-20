@@ -315,6 +315,7 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
 		{
 			p->createSurface(robots[k]->wheels[j]->cyl, ball);
 			PSurface* w_g = p->createSurface(robots[k]->wheels[j]->cyl, ground);
+			w_g->surface.bounce = 0;
 			w_g->surface = wheelswithground.surface;
 			w_g->usefdir1 = true;
 			w_g->callback = wheelCallBack;
@@ -339,12 +340,18 @@ SSLWorld::SSLWorld(QGLWidget* parent, ConfigWidget* _cfg, RobotsFomation *form1,
 		robots[j]->setXY(40 + j, 40 + j);
 	}
 
+//	sendWMDataTimer = new QTimer();
+//	sendWMDataTimer->setInterval(33);
+//	QObject::connect(sendWMDataTimer, SIGNAL(timeout()), this, SLOT(sendWorldModelData()));
+//	sendWMDataTimer->start();
+
 }
 
 SSLWorld::~SSLWorld()
 {
 	delete g;
 	delete p;
+	delete sendWMDataTimer;
 //	if (this->simThread != nullptr)
 //	{
 //		this->simThread->join();
@@ -594,7 +601,8 @@ void SSLWorld::step(dReal dt)
 
 	g->finalizeScene();
 
-	sendVisionBuffer();
+//	sendVisionBuffer();
+	sendWorldModelData();
 	framenum++;
 }
 
@@ -619,7 +627,8 @@ void SSLWorld::recvActions()
 
 		std::map<int, int>::iterator it;
 		it = carpeNoctemIds.find(packet->senderID);
-		if (it == carpeNoctemIds.end() && countOfRobotsTeamYellow + countOfRobotsTeamYellow < 11)
+
+		if (it == carpeNoctemIds.end() && countOfRobotsTeamYellow + countOfRobotsTeamBlue < 11)
 		{
 			if (team == 1)
 			{
@@ -636,12 +645,14 @@ void SSLWorld::recvActions()
 		}
 		else
 		{
-			float vx = packet->motion.rotation;
-			float vy = packet->motion.translation;
-			float vw = packet->motion.angle;
+			float vx = cos(packet->motion.angle + M_PI)* (packet->motion.translation/1000);
+			float vy = sin(packet->motion.angle + M_PI)* (packet->motion.translation/1000);
+			float vw = packet->motion.rotation;
 			int id = robotIndex(it->second, team);
-			std::cout << "x " << vx << " y " << vy << " w " << vw << std::endl;
+
 			robots[it->second]->setSpeed(vx, vy, vw);
+
+
 //      robots[it->second]->kicker->kick()
 		}
 	}
@@ -748,20 +759,104 @@ void SSLWorld::recvActions()
 }
 void SSLWorld::sendWorldModelData()
 {
+	std::map<int, int>::iterator idEntry;
+	for (idEntry = carpeNoctemIds.begin(); idEntry != carpeNoctemIds.end(); idEntry++)
+	{
+		msl_sensor_msgs::SimulatorWorldModelData simwm;
+		simwm.receiverID = idEntry->first; // first is cn id, second is simulator id
+
+		this->fillBall(simwm, idEntry->second);
+		this->fillObstacles(simwm, idEntry->second);
+		this->fillOdometry(simwm, idEntry->second);
+		rosCommunicator->sendSimWorldData(simwm);
+	}
+}
+
+void SSLWorld::fillOdometry(msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId)
+{
+	int team = 0;
+	if (rosCommunicator->isteamyellow)
+	{
+		team = 1;
+	}
+	Robot* myRobot = this->robots[robotIndex(robotId, team)];
+
+	msl_sensor_msgs::CorrectedOdometryInfo odo;
+	msl_msgs::PositionInfo posInfo;
+
+	dReal x, y;
+	myRobot->getXY(x, y);
+	posInfo.x = x*1000;
+	posInfo.y = y*1000;
+
+	posInfo.angle = myRobot->getDir() * M_PI / 180.0 + M_PI;
+	posInfo.certainty = 0.9999;
+	odo.position = posInfo;
+	odo.certainty = 0.9999;
+
+	msl_msgs::MotionInfo motionInfo;
+
+	//TODO;
+	motionInfo.angle = 0;
+	motionInfo.rotation = 0;
+	motionInfo.translation = 0;
+
+	odo.motion = motionInfo;
+	simwm.worldModel.odometry = odo;
+
+}
+
+void SSLWorld::fillObstacles(msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId)
+{
+	int team = 0;
+	if (rosCommunicator->isteamyellow)
+	{
+		team = 1;
+	}
+	Robot* myRobot = this->robots[robotIndex(robotId, team)];
+	std::map<int, int>::iterator idEntry;
+	for (idEntry = carpeNoctemIds.begin(); idEntry != carpeNoctemIds.end(); idEntry++)
+	{
+		if (idEntry->second != robotId)
+		{
+			msl_sensor_msgs::ObstacleInfo obstacle;
+			Robot* robot = this->robots[robotIndex(idEntry->second, team)];
+
+			obstacle.diameter = 500.0;
+			msl_msgs::Point3dInfo po = allo2Ego(robot->m_x, robot->m_y, 0, myRobot);
+			obstacle.x = po.x;
+			obstacle.y = po.y;
+			simwm.worldModel.obstacles.push_back(obstacle);
+		}
+
+	}
+
+}
+
+void SSLWorld::fillBall(msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId)
+{
+	int team = 0;
+	if (rosCommunicator->isteamyellow)
+	{
+		team = 1;
+	}
+	Robot* robot = this->robots[robotIndex(robotId, team)];
+
+	// BALL
 	msl_sensor_msgs::BallInfo ballPub;
-	msl_msgs::Point3dInfo pointBall;
 	msl_msgs::Velocity3dInfo velo;
 
 	dReal x;
 	dReal y;
 	dReal z;
 	ball->getBodyPosition(x, y, z);
+	std::cout << "x " << x << " y " << y << " z " << z << std::endl;
+	x = x * 1000;
+	y = y * 1000;
+	z = 0;
+	ballPub.point = allo2Ego(x, y, z, robot);
 
-	pointBall.x = x;
-	pointBall.y = y;
-	pointBall.z = z;
-
-	ballPub.point = pointBall;
+	std::cout << "x2 " << ballPub.point.x << " y2 " << ballPub.point.y << " z2 " << ballPub.point.z << std::endl;
 
 	dReal x2;
 	dReal y2;
@@ -769,17 +864,50 @@ void SSLWorld::sendWorldModelData()
 
 	ball->getBodyDirection(x2, y2, z2);
 
-	velo.vx = x2;
-	velo.vy = y2;
-	velo.vz = z2;
+	x2 = x2 * 1000;
+	y2 = y2 * 1000;
+	z2 = z2 * 1000;
 
-	ballPub.velocity = velo;
+	ballPub.velocity = allo2Ego(x2, y2, robot);
 
-	ballPub.confidence = 99.999999;
+	ballPub.confidence = 0.999999;
 	ballPub.ballType = 1;
+	simwm.worldModel.ball = ballPub;
 
-	rosCommunicator->sendBallInfoPtr(ballPub);
 }
+msl_msgs::Velocity3dInfo SSLWorld::allo2Ego(double x, double y, Robot* robot)
+{
+	msl_msgs::Velocity3dInfo ego;
+	double angle = atan2(y, x) - (robot->getDir() * M_PI / 180.0) + M_PI;
+	double dist = sqrt(x * x + y * y);
+
+	ego.vx = cos(angle) * dist;
+	ego.vy = sin(angle) * dist;
+	ego.vz = 0;
+
+	return ego;
+}
+
+msl_msgs::Point3dInfo SSLWorld::allo2Ego(double x, double y, double z, Robot* robot)
+{
+	double meX, meY;
+	robot->getXY(meX, meY);
+	meX = meX * 1000;
+	meY = meY * 1000;
+	double egoX = x - meX;
+	double egoY = y - meY;
+
+	double angle = atan2(egoY, egoX) - (robot->getDir() * M_PI / 180.0) + M_PI;
+	double dist = sqrt(egoX * egoX + egoY * egoY);
+
+	msl_msgs::Point3dInfo ego;
+	ego.x = cos(angle) * dist;
+	ego.y = sin(angle) * dist;
+	ego.z = z;
+
+	return ego;
+}
+
 dReal normalizeAngle(dReal a)
 {
 	if (a > 180)
