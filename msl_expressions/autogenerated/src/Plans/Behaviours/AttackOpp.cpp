@@ -55,7 +55,7 @@ namespace alica
 		double summe = 0.0;
 		static double olddistance = 0.0;
 
-		const double Kp = 1;
+		const double Kp = 1.2;
 		const double Ki = 0.0;
 		const double Kd = 1;
 
