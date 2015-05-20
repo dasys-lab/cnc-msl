@@ -9,6 +9,8 @@
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
 
 #include "container/CNPoint2D.h"
+#include "container/CNVelocity2D.h"
+
 #include <memory>
 
 #include "SystemConfig.h"
