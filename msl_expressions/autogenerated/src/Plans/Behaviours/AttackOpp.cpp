@@ -70,7 +70,7 @@ namespace alica
 		cout << "distance: " << distance << endl;
 
 		// translation = 1000 => 1 m/s
-		// mc.motion.translation =
+		mc.motion.translation = movement;
 
 
 	if (egoBallPos->length() < 250)
