@@ -9,14 +9,6 @@
     <value yPos="-66" width="801" height="572"/>
   </extensions>
   <extensions>
-    <key href="GenericOppStandards.pml#1432132075124"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GenericOppStandards.pml#1432132127000"/>
-    <value xPos="-18" yPos="38"/>
-  </extensions>
-  <extensions>
     <key href="GenericOppStandards.pml#1432132173301"/>
     <value xPos="73" yPos="368" width="80" height="67"/>
   </extensions>
@@ -38,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132325758"/>
-    <value xPos="83" yPos="280" width="102" height="67"/>
+    <value xPos="83" yPos="280" width="102" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132336430"/>
@@ -101,5 +93,13 @@
   <extensions>
     <key href="GenericDefend.pml#1432133473779"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432209594646"/>
+    <value xPos="704" yPos="337"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432209615271"/>
+    <value xPos="38" yPos="309"/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

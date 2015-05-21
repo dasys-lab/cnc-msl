@@ -24,19 +24,18 @@
     <outTransitions>#1426692324690</outTransitions>
   </states>
   <states id="1426691842031" name="OpponentStandard" comment="">
-    <plans xsi:type="alica:Plan">GameStrategy/OppStandards/OppStandards.pml#1426694865227</plans>
+    <plans xsi:type="alica:Plan">GenericStandards/GenericOppStandards.pml#1432132075122</plans>
     <inTransitions>#1426691979458</inTransitions>
     <outTransitions>#1426692308143</outTransitions>
     <outTransitions>#1426692328789</outTransitions>
   </states>
   <states id="1426691966433" name="OwnStandard" comment="">
-    <plans xsi:type="alica:Plan">GameStrategy/OwnStandards/OwnStandards.pml#1426694875113</plans>
+    <plans xsi:type="alica:Plan">GenericStandards/GenericOwnStandards.pml#1430924951132</plans>
     <inTransitions>#1426691976989</inTransitions>
     <outTransitions>#1426692306144</outTransitions>
     <outTransitions>#1426692326813</outTransitions>
   </states>
   <states id="1426692070119" name="Joystick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Joystick.beh#1426695479346</plans>
     <inTransitions>#1426692077573</inTransitions>
     <outTransitions>#1426692322651</outTransitions>
   </states>

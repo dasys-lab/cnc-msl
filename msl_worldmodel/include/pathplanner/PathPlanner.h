@@ -46,6 +46,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include "MSLFootballField.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 
 
 //namespaces
@@ -55,6 +56,8 @@ namespace msl
 {
 
 	class MSLWorldModel;
+	class VoronoiNet;
+	class PathEvaluator;
 	class PathPlanner
 	{
 	public:
@@ -67,7 +70,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal);
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
@@ -100,11 +103,12 @@ namespace msl
 
 	protected:
 		MSLWorldModel* wm;
+		int currentVoronoiPos;
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
-		VoronoiNet artificialObjectNet;
+		shared_ptr<VoronoiNet> artificialObjectNet;
 		double pathDeviationWeight;
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;

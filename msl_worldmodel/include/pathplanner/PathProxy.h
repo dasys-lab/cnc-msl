@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "container/CNPoint2D.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 #include "MSLWorldModel.h"
 
 namespace msl
@@ -20,7 +21,7 @@ namespace msl
 	public:
 		PathProxy(MSLWorldModel* wm);
 		virtual ~PathProxy();
-		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField);
+		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval);
 
 	private:
 		CNPoint2D lastPathTarget;

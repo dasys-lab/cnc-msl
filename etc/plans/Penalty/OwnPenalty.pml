@@ -36,8 +36,8 @@
     <inState>#1431526769660</inState>
     <outState>#1431531108950</outState>
   </transitions>
-  <entryPoints id="1431525245110" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1431525877073</task>
+  <entryPoints id="1431525245110" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1238601692867</task>
     <state>#1431525245109</state>
   </entryPoints>
   <entryPoints id="1431526909013" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">

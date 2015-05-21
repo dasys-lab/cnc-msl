@@ -39,6 +39,7 @@ namespace msl
 		shared_ptr<CNVelocity2D> getBallVelocity(int index = 0);
 		shared_ptr<bool> getLightBarrier(int index = 0);
 		shared_ptr<CNPoint2D> getOpticalFlow(int index = 0);
+		double getOpticalFlowQoS(int index = 0);
 		shared_ptr<CNPosition> getOwnPositionMotion(int index = 0);
 		shared_ptr<CNPosition> getOwnPositionVision(int index = 0);
 		shared_ptr<pair<shared_ptr<CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
