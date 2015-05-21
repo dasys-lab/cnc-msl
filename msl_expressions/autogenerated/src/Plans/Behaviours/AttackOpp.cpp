@@ -55,8 +55,8 @@ namespace alica
 		static double olddistance = 0.0;
 
 		const double Kp = 2.0;
-		const double Ki = 1.0;
-		const double Kd = 1.2;
+		const double Ki = 0.0;
+		const double Kd = 1.7;
 
 		//distance ball to robot
 		double distance = egoBallPos->length();
@@ -65,11 +65,13 @@ namespace alica
 		double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
 		olddistance = distance;
 
-		cout << "movement: " << movement << endl;
-		cout << "distance: " << distance << endl;
-
 		double ball_speed = wm->ball.getEgoBallVelocity()->length();
 		movement += ball_speed;
+
+		cout << "movement: " << movement << endl;
+		cout << "ball speed: " << ball_speed << endl;
+		cout << "distance: " << distance << endl;
+		cout<< "EgoBallVelocity "<<wm->ball.getEgoBallVelocity()<<endl;
 
 		// translation = 1000 => 1 m/s
 		mc.motion.translation = movement;
