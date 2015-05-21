@@ -57,81 +57,57 @@ namespace alica
 
         arithmeticAverage = arithmeticAverage / 8;
 
+        //Vorsteuerung
+        //VorneRechts
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI
+                && wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2)
+
+            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+        left = arithmeticAverage * (x + y) / 10;
+        right = arithmeticAverage * (x - y) / 10;
+
+        //HintenRechts
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle > 0
+                && wm->rawSensorData.getOwnVelocityMotion()->angle < M_PI / 2)
+
+            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+        left = arithmeticAverage * (x + y) / 10;
+        right = arithmeticAverage * (x - y) / 10;
+
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle < 0)
+        {
+            wm->rawSensorData.getOwnVelocityMotion()->angle = wm->rawSensorData.getOwnVelocityMotion()->angle + M_PI;
+
+            //HintenLinks
+            if (wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2
+                    && wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI)
+
+                y = -pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+            x = -pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+            left = arithmeticAverage * (x - y) / 10;
+            right = arithmeticAverage * (x + y) / 10;
+
+            //VorneLinks
+            if (wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2
+                    && wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI)
+
+                y = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+            x = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+
+            left = arithmeticAverage * (x - y) / 10;
+            right = arithmeticAverage * (y + x) / 10;
+
+        }
         //left=arithmeticAverage;
         //right=arithmeticAverage;
 
-
-       /* if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
-                && wm->rawSensorData.getOwnVelocityMotion()->angle >= 0)
-            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-
-        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-
-
-        //
-         if ((wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI / 2)
-         && (wm->rawSensorData.getOwnVelocityMotion()->angle >= (-1) * M_PI / 2))
-         {
-         x = wm->rawSensorData.getOwnVelocityMotion()->translation
-         * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-         }
-
-         else
-         {
-         x = (-1) * wm->rawSensorData.getOwnVelocityMotion()->translation
-         * pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-         }
-         //y Werte richtig vertauscht
-         if (wm->rawSensorData.getOwnVelocityMotion()->angle <= 0)
-         {
-         y = wm->rawSensorData.getOwnVelocityMotion()->translation
-         * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-         }
-         else
-         {
-         y = -wm->rawSensorData.getOwnVelocityMotion()->translation
-         * pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
-         }
-         //Addition der x und y Geschwindigkeitsanteile
-
-         //RoboterD: front left
-
-         if ((y >= 0) && (x >= 0))
-         {
-
-         left = 5+15*(x + y);
-         right = 5+15*(x - y); //x-y
-         }
-         //RoboterD front right
-         if ((y < 0) && (x >= 0))
-         {
-
-         left = 5+15*(x + y);
-         right = 5+15*(x - y); //x-y
-         }
-
-         //RoboterD behind left
-         if ((y >= 0) && (x <= 0))
-         {
-
-         left = 5+15*(x - y);
-         right = 5+15*(-x - y);
-         }
-
-         //RoboterD behind right
-         if ((y <= 0) && (x <= 0))
-         {
-         left = 5+15*(x - y);
-         right = 5+15*(x + y);
-
-         }
-         */
-
         // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
-
-        left = 10*wm->rawSensorData.getOwnVelocityMotion()->angle;
-        right =10* wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);

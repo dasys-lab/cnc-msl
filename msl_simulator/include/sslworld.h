@@ -24,6 +24,7 @@ Copyright (C) 2011, Parsian Robotic Center (eew.aut.ac.ir/~parsian/grsim)
 #include <QObject>
 #include <QUdpSocket>
 #include <QList>
+//#include <thread>
 
 
 #include "graphics.h"
@@ -62,6 +63,12 @@ private:
     QList<SendingPacket*> sendQueue;
     char packet[200];
     char *in_buffer;    
+
+    void fillBall (msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId);
+    void fillObstacles (msl_sensor_msgs::SimulatorWorldModelData& simwm, int robotId);
+    void fillOdometry (msl_sensor_msgs::SimulatorWorldModelData& simwm,  int robotId);
+    msl_msgs::Point3dInfo allo2Ego(double x, double y, double z, Robot* robot);
+    msl_msgs::Velocity3dInfo allo2Ego(double x, double y, Robot* robot);
 public:    
     dReal customDT;
     bool isGLEnabled;
@@ -71,6 +78,7 @@ public:
     void step(dReal dt=-1);
     msl_simulator::messages_robocup_ssl_wrapperPtr generatePacket();
     void sendVisionBuffer();
+    void sendWorldModelData();
     ConfigWidget* cfg;
     CGraphics* g;
     PWorld* p;
@@ -94,12 +102,15 @@ public:
     PSurface ballwithkicker;
     PSurface wheelswithground;
     map<int, int> carpeNoctemIds;
-    int countOfRobotsTeamYellow = 0;
-    int countOfRobotsTeamBlue = 0;
+    int countOfRobotsTeamYellow;
+    int countOfRobotsTeamBlue;
     void drawRobot(int team, int countRobot);
-public slots:
+    bool startedThread;
+//TODO
+    QTimer *sendWMDataTimer;
+public Q_SLOTS:
     void recvActions();
-signals:
+Q_SIGNALS:
     void fpsChanged(int newFPS);
 };
 

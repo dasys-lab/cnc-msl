@@ -28,16 +28,17 @@ namespace alica
 
         auto egoBallPos = wm->ball.getEgoBallPosition();
 
-        auto obstacles = wm->robots.getObstacles();
-        if (me == nullptr || egoBallPos == nullptr || obstacles == nullptr)
+        //auto obstacles = wm->robots.getObstacles();
+
+        //for (auto obstacle : *obstacles)
+        //{
+        // TODO: Get closest obstacle to ball
+        //}
+
+        if (me == nullptr || egoBallPos == nullptr)
         {
             cerr << "insufficient information for AttackOpp" << endl;
             return;
-        }
-
-        for (auto obstacle : *obstacles)
-        {
-            // TODO: Get closest obstacle to ball
         }
 
         if (!me.operator bool())
@@ -45,40 +46,42 @@ namespace alica
             return;
         }
 
-        //auto egoTarget = alloTarget.alloToEgo(*me);
-
         msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::BallHandleCmd bhc;
 
-        if (egoBallPos != nullptr)
+        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+
+        double summe = 0.0;
+        static double olddistance = 0.0;
+
+        const double Kp = 2.0;
+        const double Ki = 1.0;
+        const double Kd = 1.2;
+
+        //distance ball to robot
+        double distance = egoBallPos->length();
+
+        summe = summe + distance;
+        double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
+        olddistance = distance;
+
+        cout << "movement: " << movement << endl;
+        cout << "distance: " << distance << endl;
+
+        double ball_speed = wm->ball.getEgoBallVelocity()->length();
+        movement += ball_speed;
+
+        // translation = 1000 => 1 m/s
+        mc.motion.translation = movement;
+
+        if (egoBallPos->length() < 300)
         {
-            mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
 
-            double summe = 0.0;
-            static double olddistance = 0.0;
+            bhc.leftMotor = -30;
+            bhc.rightMotor = -30;
 
-            const double Kp = 1;
-            const double Ki = 0.0;
-            const double Kd = 1;
-
-            //distance ball to robot
-            double distance = egoBallPos->length();
-
-            summe = summe + distance;
-            double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
-            olddistance = distance;
-
-            cout << "movement: " << movement << endl;
-            cout << "distance: " << distance << endl;
-            // mc.motion.translation =
-        }
-        else
-        {
-            mc = RobotMovement::moveToPointCarefully(egoBallPos, make_shared < msl::CNPoint2D > (0.0, 0.0), 0);
-        }
-
-        if (egoBallPos->length() < 250)
-        {
-            this->success = true;
+            this->send(bhc);
+            //this->success = true;
         }
         /*
          // TODO: Prüfen ob Wert korrekt ist
@@ -91,7 +94,7 @@ namespace alica
          */
         send(mc);
 
-        //Add additional options here
+//Add additional options here
         /*PROTECTED REGION END*/
     }
     void AttackOpp::initialiseParameters()

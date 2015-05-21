@@ -94,7 +94,8 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 # We could exchange the command with something more ROS-Independent, like calling the binary without rosrun.
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/proxy_gen/ros2udpProxy.cpp
-    COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
+    #COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../../../devel/lib/udp_proxy_generator/udp_proxy_generator ${PROJECT_NAME}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/relayMsgs.conf udp_proxy_generator
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "${PROJECT_NAME}: Generating Code ..."

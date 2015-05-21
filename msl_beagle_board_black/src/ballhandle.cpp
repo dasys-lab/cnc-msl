@@ -18,6 +18,7 @@ using namespace BlackLib;
 		ff2 = new BlackGPIO(ff2_P, input, FastMode);
 
 		// PWM Frequenz setzen pwm->setPeriodTime(5000, microsecond);
+		pwm->setPeriodTime(10000, nanosecond);
 
 		dir->setValue(low);
 		reset->setValue(high);
@@ -42,7 +43,7 @@ using namespace BlackLib;
 			direction_desired = static_cast<BlackLib::digitalValue>(right);
 		}
 
-		speed_desired = abs(value) * 10;
+		speed_desired = abs(value) * 39;
 	}
 
 	void BallHandle::setTimeout() {
@@ -52,6 +53,39 @@ using namespace BlackLib;
 	}
 
 	void BallHandle::controlBallHandling() {
+		if (speed_desired == 0) {
+			enabled = false;
+
+			if (pwm->getRunValue() == "1") {						// 300us
+				pwm->setRunState(stop);								// ?us
+			}
+		} else if ((speed_desired != 0) && (!enabled)) {
+			enabled = true;
+			pwm->setRunState(run);
+		}
+
+		if (enabled) {	// Gesamt ca. 900us oder 1500us
+			// BallHandling active
+
+			if (direction != direction_desired) {
+				// Direction Change 1500us
+				direction = direction_desired;
+				speed = 0;
+				pwm->setSpaceRatioTime(speed, nanosecond);		// 900us
+				dir->setValue(direction);						// 550us
+			}
+
+			if (speed != speed_desired) {
+				// Speed Change 900us
+				speed = speed_desired;
+				pwm->setSpaceRatioTime(speed, nanosecond);		// 900us
+			}
+
+		}
+
+
+
+		/* ALTE FUNKTION
 		if (speed_desired == 0) {
 			enabled = false;
 
@@ -86,6 +120,7 @@ using namespace BlackLib;
 			}
 			pwm->setSpaceRatioTime(speed, microsecond);			// 900us
 		}
+		*/
 
 	}
 

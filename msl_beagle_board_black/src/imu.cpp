@@ -28,16 +28,7 @@ IMU::~IMU() {
 	delete i_temp;
 }
 
-void IMU::init() {
-	uint8_t val[2];
-
-	if(!this->whoami()) {
-		//TODO: Wrong WhoAmI - Was soll passieren?
-		std::cout << "WARNING: Wrong WhoAmI-response." << std::endl;
-	} else {
-		std::cout << "Fine: WhoAmI" << std::endl;
-	}
-
+bool IMU::init() {
 	// Enable Accel
 	i2c->setDeviceAddress(ADR_XM);
 	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
@@ -57,6 +48,12 @@ void IMU::init() {
 	this->setupGyro(GYR_FS_2000DPS);
 	magnet.sense = MAG_8GAUSS_SENSE / 1000;
 	this->setupMagnet(MAG_MDR_2GAUSS);
+
+	if(!this->whoami()) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 bool IMU::whoami() {

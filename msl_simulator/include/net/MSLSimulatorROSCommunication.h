@@ -12,10 +12,11 @@
 #include <boost/thread/lock_guard.hpp>
 #include <list>
 #include "ros/ros.h"
-
+#include <msl_sensor_msgs/BallInfo.h>
 #include "msl_simulator/messages_robocup_ssl_wrapper.h"
 #include "msl_simulator/sim_packet.h"
 #include <msl_actuator_msgs/MotionControl.h>
+#include <msl_sensor_msgs/SimulatorWorldModelData.h>
 
 using namespace std;
 
@@ -33,6 +34,8 @@ namespace msl_simulator
 		virtual void send(messages_robocup_ssl_wrapperPtr packet);
 
 		virtual void handleMotionControl(msl_actuator_msgs::MotionControlPtr);
+		void sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball);
+		void sendSimWorldData(msl_sensor_msgs::SimulatorWorldModelData simwm);
 
 		virtual void startCommunication();
 		virtual void stopCommunication();
@@ -40,7 +43,7 @@ namespace msl_simulator
 		msl_actuator_msgs::MotionControlPtr getSimPacket();
 		bool isQueueEmpty();
 
-		bool isteamyellow = false;
+		bool isteamyellow;
 
 	protected:
 		ros::NodeHandle* rosNode;
@@ -50,6 +53,9 @@ namespace msl_simulator
 		boost::mutex mutex;
 
 //		ros::Publisher messagesRoboCupSSLWrapperPublisher;
+		ros::Publisher ballInfoPublisher;
+		ros::Publisher worldModelPublisher;
+
 		ros::Subscriber motionControl;
 
 		bool isRunning;
