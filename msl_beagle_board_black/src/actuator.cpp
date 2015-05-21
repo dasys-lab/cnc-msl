@@ -236,7 +236,7 @@ int main(int argc, char** argv) {
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
-	ros::Rate loop_rate(30);		// in Hz
+	ros::Rate loop_rate(10);		// in Hz
 
 	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
@@ -307,7 +307,6 @@ int main(int argc, char** argv) {
 	usleep(25000);
 	BH_left.controlBallHandling();
 	usleep(475000);
-
 
 
 
