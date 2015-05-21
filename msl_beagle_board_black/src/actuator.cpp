@@ -334,16 +334,16 @@ int main(int argc, char** argv) {
 		a00.send_motion_burst(time_now, &mbcPub);
 
 		std::cout << "A01: " << std::endl;
-		a00.update_motion_burst(time_now);
-		a00.send_motion_burst(time_now, &mbcPub);
+		a01.update_motion_burst(time_now);
+		a01.send_motion_burst(time_now, &mbcPub);
 
 		std::cout << "A10: " << std::endl;
-		a00.update_motion_burst(time_now);
-		a00.send_motion_burst(time_now, &mbcPub);
+		a10.update_motion_burst(time_now);
+		a10.send_motion_burst(time_now, &mbcPub);
 
 		std::cout << "A11: " << std::endl;
-		a00.update_motion_burst(time_now);
-		a00.send_motion_burst(time_now, &mbcPub);
+		a11.update_motion_burst(time_now);
+		a11.send_motion_burst(time_now, &mbcPub);
 
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);
