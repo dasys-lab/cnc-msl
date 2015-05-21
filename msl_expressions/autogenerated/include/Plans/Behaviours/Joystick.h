@@ -17,7 +17,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1421854975890) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<msl_msgs::JoystickCommand> lastProcessedCmd;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1421854975890) ENABLED START*/ //Add additional private methods here
