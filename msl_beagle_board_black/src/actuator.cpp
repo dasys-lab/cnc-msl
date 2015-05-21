@@ -308,15 +308,6 @@ int main(int argc, char** argv) {
 	BH_left.controlBallHandling();
 	usleep(475000);
 
-	BlackSPI s00(SPI0_0, 8, SpiDefault, 16000000);
-	BlackSPI s01(SPI0_1, 8, SpiDefault, 16000000);
-	BlackSPI s10(SPI1_0, 8, SpiDefault, 16000000);
-	BlackSPI s11(SPI1_1, 8, SpiDefault, 16000000);
-	OpticalFlow		a00(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &s00);	/* ncs, npd, rst, led */
-	OpticalFlow		a01(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &s01);	/* ncs, npd, rst, led */
-	OpticalFlow		a10(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &s10);	/* ncs, npd, rst, led */
-	OpticalFlow		a11(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &s11);	/* ncs, npd, rst, led */
-
 
 
 
@@ -329,21 +320,8 @@ int main(int argc, char** argv) {
 		timeval vorher, mitte, nachher;
 
 		//TODO ADNS3080 Test
-		std::cout << "A00: " << std::endl;
-		a00.update_motion_burst(time_now);
-		a00.send_motion_burst(time_now, &mbcPub);
-
-		std::cout << "A01: " << std::endl;
-		a01.update_motion_burst(time_now);
-		a01.send_motion_burst(time_now, &mbcPub);
-
-		std::cout << "A10: " << std::endl;
-		a10.update_motion_burst(time_now);
-		a10.send_motion_burst(time_now, &mbcPub);
-
-		std::cout << "A11: " << std::endl;
-		a11.update_motion_burst(time_now);
-		a11.send_motion_burst(time_now, &mbcPub);
+		adns3080.update_motion_burst(time_now);
+		adns3080.send_motion_burst(time_now, &mbcPub);
 
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);
