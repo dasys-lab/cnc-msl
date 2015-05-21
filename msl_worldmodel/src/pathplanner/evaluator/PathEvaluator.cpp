@@ -6,7 +6,6 @@
  */
 
 #include <pathplanner/evaluator/PathEvaluator.h>
-#include "pathplanner/PathPlanner.h"
 namespace msl
 {
 
@@ -31,4 +30,12 @@ namespace msl
 		return a * a;
 	}
 
+	double PathEvaluator::eval(double costsSoFar, CNPoint2D startPos,
+									CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi,
+									shared_ptr<vector<shared_ptr<CNPoint2D> > > path)
+	{
+
+	}
+
 } /* namespace msl */
+

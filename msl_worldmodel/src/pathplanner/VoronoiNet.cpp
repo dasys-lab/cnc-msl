@@ -15,7 +15,6 @@ namespace msl
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
-		status = VoronoiStatus::New;
 		this->voronoi = make_shared<VoronoiDiagram>();
 	}
 
@@ -121,13 +120,13 @@ namespace msl
 	}
 
 	//TODO bewertungskriterien
-	//bewerter
+	//bewerter einbinden
 	/**
 	 * expands Nodes given in current node
 	 * @param currentNode shared_ptr<SearchNode>
 	 */
 	void VoronoiNet::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal)
+	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, PathEvaluator* eval)
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
@@ -148,7 +147,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			cost += calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			cost += eval->eval(cost, CNPoint2D(0,0),CNPoint2D(goal.x(),goal.y()),currentNode, neighbors.at(i));//calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
@@ -178,7 +177,6 @@ namespace msl
 	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<CNPoint2D> points)
 	{
 		lock_guard<mutex> lock(netMutex);
-		this->status = VoronoiStatus::Calculating;
 		vector<Site_2> sites;
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -268,24 +266,6 @@ namespace msl
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * gets the status of the VoronoiDiagram
-	 * @return VoronoiStatus
-	 */
-	VoronoiStatus VoronoiNet::getStatus()
-	{
-		return status;
-	}
-
-	/**
-	 * sets the status of the VoronoiDiagram
-	 * @param status VoronoiStatus
-	 */
-	void VoronoiNet::setStatus(VoronoiStatus status)
-	{
-		this->status = status;
 	}
 
 	/**
