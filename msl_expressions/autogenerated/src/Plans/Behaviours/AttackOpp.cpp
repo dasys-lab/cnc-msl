@@ -65,7 +65,14 @@ namespace alica
 		double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
 		olddistance = distance;
 
-		double ball_speed = wm->ball.getEgoBallVelocity()->length();
+		auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+
+		double ball_speed = egoBallVelocity->length();
+
+		if(egoBallVelocity->x < 0) {
+			ball_speed = ball_speed * -1;
+		}
+
 		movement += ball_speed;
 
 		cout << "movement: " << movement << endl;
