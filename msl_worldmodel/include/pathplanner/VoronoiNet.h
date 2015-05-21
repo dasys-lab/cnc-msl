@@ -29,7 +29,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <SystemConfig.h>
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
-#include "pathplanner/VoronoiStatus.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 
 using namespace std;
 
@@ -39,6 +39,7 @@ namespace msl
 	/**
 	 * Class containing a CGAL voronoi diagramm and its status
 	 */
+	class PathEvaluator;
 	class MSLWorldModel;
 	class VoronoiNet
 	{
@@ -61,15 +62,7 @@ namespace msl
 		 * expands a SearchNode
 		 */
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
-		/**
-		 * gets the status of the VoronoiDiagram
-		 */
-		VoronoiStatus getStatus();
-		/**
-		 * sets the status of the VoronoiDiagram
-		 */
-		void setStatus(VoronoiStatus status);
+							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, PathEvaluator* eval);
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 VoronoiDiagram::Vertex
@@ -125,7 +118,6 @@ namespace msl
 		DelaunayAdaptionPolicy delaunayPolicy;
 		shared_ptr<VoronoiDiagram> voronoi;
 		MSLWorldModel* wm;
-		VoronoiStatus status;
 		supplementary::SystemConfig* sc;
 		mutex netMutex;
 	};

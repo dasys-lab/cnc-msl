@@ -12,15 +12,16 @@ namespace msl
 {
 
 	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) :
-			voronoiDiagrams(count), artificialObjectNet(wm)
+			voronoiDiagrams(count)
 	{
 		this->wm = wm;
+		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
 		{
 			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
 			this->voronoiDiagrams.at(i)->setVoronoi(
-					make_shared<VoronoiDiagram>((DelaunayTriangulation)this->artificialObjectNet.getVoronoi()->dual()));
+					make_shared<VoronoiDiagram>((DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
 		}
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
 		initializeArtificialObstacles();
@@ -40,7 +41,7 @@ namespace msl
 	 * @param goal Point_2
 	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 	 */
-	shared_ptr<vector<shared_ptr<CNPoint2D>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D startPos, CNPoint2D goal)
+	shared_ptr<vector<shared_ptr<CNPoint2D>>> PathPlanner::aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval)
 	{
 		bool reachable = true;
 		for(auto it = voronoi->getVoronoi()->sites_begin(); it != voronoi->getVoronoi()->sites_end(); it++)
@@ -115,7 +116,7 @@ namespace msl
 			}
 			closed->push_back(currentNode);
 
-			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y));
+			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y), eval);
 		}
 
 		// return nullptr if there is no way to goal
@@ -140,8 +141,6 @@ namespace msl
 			points.push_back(CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y));
 		}
 		lock_guard<mutex> lock(voronoiMutex);
-		//TODO buffer size 10 + einfügen an index
-		// status entfernen
 
 		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);
 		currentVoronoiPos++;
@@ -211,7 +210,7 @@ namespace msl
 			toInsert.push_back(VoronoiDiagram::Site_2(x, y));
 			toInsert.push_back(VoronoiDiagram::Site_2(-x, y));
 		}
-		this->artificialObjectNet.getVoronoi()->insert(toInsert.begin(), toInsert.end());
+		this->artificialObjectNet->getVoronoi()->insert(toInsert.begin(), toInsert.end());
 	}
 
 	double PathPlanner::getRobotDiameter()
