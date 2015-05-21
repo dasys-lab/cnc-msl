@@ -11,7 +11,7 @@
 #include <tuple>
 
 #include "SystemConfig.h"
-
+#include "container/CNPoint2D.h"
 using namespace std;
 
 namespace msl {
@@ -22,6 +22,7 @@ namespace msl {
 		virtual ~GeometryCalculator(){};
 //		static pair<double, double> allo2Ego(pair<double, double>& p, tuple<double, double, double>& ownPos);
 		static double deltaAngle(double angle1, double angle2);
+		static bool isInsideRectangle(CNPoint2D rectPointA, CNPoint2D rectPointB, CNPoint2D point);
 
 	private:
 		GeometryCalculator();

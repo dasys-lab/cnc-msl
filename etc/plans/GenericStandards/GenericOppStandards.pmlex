@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132075123"/>
+    <value xPos="94" yPos="100" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132075122"/>
+    <value yPos="-66" width="801" height="572"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132173301"/>
+    <value xPos="73" yPos="368" width="80" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132225844"/>
+    <value xPos="144" yPos="14" width="98" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132283325"/>
+    <value xPos="270" yPos="35" width="94" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132299937"/>
+    <value xPos="287" yPos="109" width="103" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132312429"/>
+    <value xPos="289" yPos="179" width="122" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132325758"/>
+    <value xPos="83" yPos="280" width="102" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132336430"/>
+    <value xPos="185" yPos="222" width="118" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132365582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132368065"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132369863"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132371135"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132372448"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132373553"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132398157"/>
+    <value xPos="464" yPos="195"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132429602"/>
+    <value>
+      <bendpoints xPos="471" yPos="-29"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132432185"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132434174"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132436499"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132438388"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432132441185"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericDefend.pml#1432133473779"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432209594646"/>
+    <value xPos="704" yPos="337"/>
+  </extensions>
+  <extensions>
+    <key href="GenericOppStandards.pml#1432209615271"/>
+    <value xPos="38" yPos="309"/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -25,6 +25,7 @@ namespace msl
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
 		initializeArtificialObstacles();
 		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
+		this->currentVoronoiPos = -1;
 
 	}
 
@@ -141,24 +142,9 @@ namespace msl
 		lock_guard<mutex> lock(voronoiMutex);
 		//TODO buffer size 10 + einfügen an index
 		// status entfernen
-		for (int i = 0; i < voronoiDiagrams.size(); i++)
-		{
-			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
-			{
-				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Old);
-				break;
-			}
-		}
-		for (int i = 0; voronoiDiagrams.size(); i++)
-		{
-			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::New
-					|| voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Old)
-			{
-				voronoiDiagrams.at(i)->generateVoronoiDiagram(points);
-				voronoiDiagrams.at(i)->setStatus(VoronoiStatus::Latest);
-				break;
-			}
-		}
+
+		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);
+		currentVoronoiPos++;
 
 	}
 
@@ -179,14 +165,11 @@ namespace msl
 	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 	{
 		lock_guard<mutex> lock(this->voronoiMutex);
-		for (int i = 0; i < this->voronoiDiagrams.size(); i++)
+		if(currentVoronoiPos == -1)
 		{
-			if (voronoiDiagrams.at(i)->getStatus() == VoronoiStatus::Latest)
-			{
-				return voronoiDiagrams.at(i);
-			}
+			return nullptr;
 		}
-		return nullptr;
+		return voronoiDiagrams.at(currentVoronoiPos % 10);
 	}
 
 	void PathPlanner::initializeArtificialObstacles()

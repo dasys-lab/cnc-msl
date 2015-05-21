@@ -48,5 +48,15 @@ namespace msl
 //
 //		  return ego;
 //		}
+	bool GeometryCalculator::isInsideRectangle(CNPoint2D rectPointA, CNPoint2D rectPointB, CNPoint2D point)
+	{
+		double minX = min(rectPointA.x, rectPointB.x);
+		double maxX = max(rectPointA.x, rectPointB.x);
+		double minY = min(rectPointA.y, rectPointB.y);
+		double maxY = max(rectPointA.y, rectPointB.y);
+
+		return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+	}
 
 } /* namespace msl */
+

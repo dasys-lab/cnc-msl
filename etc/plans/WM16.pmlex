@@ -13,26 +13,8 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="WM16.pml#1413992572149"/>
-    <value xPos="335" yPos="83" width="75" height="65" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="WM16.pml#1413992575757"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
-  </extensions>
-  <extensions>
-    <key href="WM16.pml#1414752333556"/>
-    <value xPos="507" yPos="314" width="212" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="WM16.pml#1414752349075"/>
-    <value>
-      <bendpoints xPos="538" yPos="323"/>
-    </value>
   </extensions>
   <extensions>
     <key href="Behaviours/DribbleToPoint.beh#1414752423981"/>
@@ -171,11 +153,27 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="Behaviours/Joystick.beh#1426695479346"/>
+    <key href="GameStrategy/Other/DroppedBall.pml#1426694906399"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="GameStrategy/Other/DroppedBall.pml#1426694906399"/>
+    <key href="GameStrategy/OppStandards/OppStandards.pml#1426694865227"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GameStrategy/OppStandards/OppStandards.pml#1426694865227"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericStandards/GenericOwnStandards.pml#1430924951132"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericStandards/GenericOppStandards.pml#1432132075122"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericStandards/GenericOppStandards.pml#1432132075122"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

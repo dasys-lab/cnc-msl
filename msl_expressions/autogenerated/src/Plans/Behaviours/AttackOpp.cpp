@@ -71,7 +71,7 @@ namespace alica
 		cout << "movement: " << movement << endl;
 		cout << "ball speed: " << ball_speed << endl;
 		cout << "distance: " << distance << endl;
-		cout<< "EgoBallVelocity "<<wm->ball.getEgoBallVelocity()<<endl;
+		cout << "EgoBallVelocity " << wm->ball.getEgoBallVelocity() << endl;
 
 		// translation = 1000 => 1 m/s
 		mc.motion.translation = movement;

@@ -11,6 +11,8 @@
 
 #include  "Plans/GameStrategy/OppStandards/constraints/GenericOppStandard1426697871183Constraints.h"
 
+#include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
@@ -27,15 +29,19 @@
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"
 
+#include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
+
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 
-#include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
-
 #include  "Plans/GameStrategy/OwnStandards/constraints/GenericOwnStandard1426697860439Constraints.h"
+
+#include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/GameStrategy/OppStandards/constraints/GenericOppStandardPositioning1429108230432Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
+
+#include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
 
 #include  "Plans/GameStrategy/Gameplay/constraints/Gameplay1426694853089Constraints.h"
 

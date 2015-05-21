@@ -10,6 +10,8 @@
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandard1426697871183.h"
 
+#include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -26,15 +28,19 @@
 
 #include  "Plans/WM161413992564408.h"
 
+#include  "Plans/GenericStandards/GenericDefend1432133473779.h"
+
 #include  "Plans/Penalty/OwnPenalty1431525185678.h"
 
-#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
-
 #include  "Plans/GameStrategy/OwnStandards/GenericOwnStandard1426697860439.h"
+
+#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardPositioning1429108230432.h"
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
+
+#include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
 
 #include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
 
@@ -218,6 +224,78 @@ namespace alica
 
                 break;
 
+            case 1432132367859:
+
+                return make_shared<TransitionCondition1432132367859>();
+
+                break;
+
+            case 1432132369717:
+
+                return make_shared<TransitionCondition1432132369717>();
+
+                break;
+
+            case 1432132371055:
+
+                return make_shared<TransitionCondition1432132371055>();
+
+                break;
+
+            case 1432132372365:
+
+                return make_shared<TransitionCondition1432132372365>();
+
+                break;
+
+            case 1432132373471:
+
+                return make_shared<TransitionCondition1432132373471>();
+
+                break;
+
+            case 1432132374502:
+
+                return make_shared<TransitionCondition1432132374502>();
+
+                break;
+
+            case 1432132432036:
+
+                return make_shared<TransitionCondition1432132432036>();
+
+                break;
+
+            case 1432132434051:
+
+                return make_shared<TransitionCondition1432132434051>();
+
+                break;
+
+            case 1432132436308:
+
+                return make_shared<TransitionCondition1432132436308>();
+
+                break;
+
+            case 1432132438181:
+
+                return make_shared<TransitionCondition1432132438181>();
+
+                break;
+
+            case 1432132441034:
+
+                return make_shared<TransitionCondition1432132441034>();
+
+                break;
+
+            case 1432132442910:
+
+                return make_shared<TransitionCondition1432132442910>();
+
+                break;
+
             case 1431522783626:
 
                 return make_shared<TransitionCondition1431522783626>();
@@ -386,6 +464,18 @@ namespace alica
 
                 break;
 
+            case 1432134616532:
+
+                return make_shared<TransitionCondition1432134616532>();
+
+                break;
+
+            case 1432134618673:
+
+                return make_shared<TransitionCondition1432134618673>();
+
+                break;
+
             case 1431526664270:
 
                 return make_shared<TransitionCondition1431526664270>();
@@ -401,6 +491,18 @@ namespace alica
             case 1431531118276:
 
                 return make_shared<TransitionCondition1431531118276>();
+
+                break;
+
+            case 1426698518818:
+
+                return make_shared<TransitionCondition1426698518818>();
+
+                break;
+
+            case 1426698520600:
+
+                return make_shared<TransitionCondition1426698520600>();
 
                 break;
 
@@ -449,18 +551,6 @@ namespace alica
             case 1422464875980:
 
                 return make_shared<TransitionCondition1422464875980>();
-
-                break;
-
-            case 1426698518818:
-
-                return make_shared<TransitionCondition1426698518818>();
-
-                break;
-
-            case 1426698520600:
-
-                return make_shared<TransitionCondition1426698520600>();
 
                 break;
 

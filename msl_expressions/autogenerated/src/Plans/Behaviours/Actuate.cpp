@@ -59,59 +59,55 @@ namespace alica
 
         //Vorsteuerung
         //VorneRechts
-        if(wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI && wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2)
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI
+                && wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2)
 
-        	x=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	y=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        	left=arithmeticAverage*(x+y)/10;
-        	right=arithmeticAverage*(x-y)/10;
+        left = arithmeticAverage * (x + y) / 10;
+        right = arithmeticAverage * (x - y) / 10;
 
         //HintenRechts
-        if(wm->rawSensorData.getOwnVelocityMotion()->angle>0 && wm->rawSensorData.getOwnVelocityMotion()->angle<M_PI/2)
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle > 0
+                && wm->rawSensorData.getOwnVelocityMotion()->angle < M_PI / 2)
 
-        	x=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	y=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+            x = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+        y = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        	left=arithmeticAverage*(x+y)/10;
-        	right=arithmeticAverage*(x-y)/10;
+        left = arithmeticAverage * (x + y) / 10;
+        right = arithmeticAverage * (x - y) / 10;
 
-
-        if(wm->rawSensorData.getOwnVelocityMotion()->angle < 0)
+        if (wm->rawSensorData.getOwnVelocityMotion()->angle < 0)
         {
-        	wm->rawSensorData.getOwnVelocityMotion()->angle = wm->rawSensorData.getOwnVelocityMotion()->angle+M_PI;
+            wm->rawSensorData.getOwnVelocityMotion()->angle = wm->rawSensorData.getOwnVelocityMotion()->angle + M_PI;
 
-        //HintenLinks
-        if(wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2 && wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI)
+            //HintenLinks
+            if (wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2
+                    && wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI)
 
-        	y=-pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	x=-pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+                y = -pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+            x = -pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        	left=arithmeticAverage*(x-y)/10;
-        	right=arithmeticAverage*(x+y)/10;
+            left = arithmeticAverage * (x - y) / 10;
+            right = arithmeticAverage * (x + y) / 10;
 
-        	//VorneLinks
-        if(wm->rawSensorData.getOwnVelocityMotion()->angle>=M_PI/2 && wm->rawSensorData.getOwnVelocityMotion()->angle<=M_PI)
+            //VorneLinks
+            if (wm->rawSensorData.getOwnVelocityMotion()->angle >= M_PI / 2
+                    && wm->rawSensorData.getOwnVelocityMotion()->angle <= M_PI)
 
-        	 y=pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
-        	 x=pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle),2);
+                y = pow(cos(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
+            x = pow(sin(wm->rawSensorData.getOwnVelocityMotion()->angle), 2);
 
-        	 left=arithmeticAverage*(x-y)/10;
-        	 right=arithmeticAverage*(y+x)/10;
-
-
+            left = arithmeticAverage * (x - y) / 10;
+            right = arithmeticAverage * (y + x) / 10;
 
         }
         //left=arithmeticAverage;
         //right=arithmeticAverage;
 
-
-
-
         // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
-
-
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);

@@ -100,6 +100,7 @@ namespace msl
 
 	protected:
 		MSLWorldModel* wm;
+		int currentVoronoiPos;
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
