@@ -48,7 +48,8 @@ namespace alica
 		double movement = Kp * qualityOfService + Ki * summe + Kd * (qualityOfService - olddistance);
 		olddistance = qualityOfService;
 
-		cout << "QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "QualityOfService : " << qualityOfService << endl;
 		cout << "olddistance : " << olddistance << endl;
 		cout << "Summe : " << summe << endl;
 
