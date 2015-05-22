@@ -3,7 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
-
+#include <iostream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,20 +42,15 @@ namespace alica
 		const double Kp = 2.0;
 		const double Ki = 0.0;
 		const double Kd = 1.7;
-		double qualityOfService =wm->rawSensorData.getOpticalFlowQoS();
-
-
+		auto qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 
 		summe = summe + qualityOfService;
 		double movement = Kp * qualityOfService + Ki * summe + Kd * (qualityOfService - olddistance);
 		olddistance = qualityOfService;
 
-		left=olddistance;
-		right=olddistance;
-		cout << "QualityOfService: " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "olddistance : "<<olddistance<<endl;
-
-
+		cout << "QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "olddistance : " << olddistance << endl;
+		cout << "Summe : " << summe << endl;
 
 		// left =  rodo->motion.translation * (1.0 / 40.0) ;
 		//right = rodo->motion.translation * (1.0 / 40.0) ;
