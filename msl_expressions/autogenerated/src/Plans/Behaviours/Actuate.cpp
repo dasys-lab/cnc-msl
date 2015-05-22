@@ -35,7 +35,7 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-/*
+
 		double summe = 0.0;
 		static double olddistance = 0.0;
 
@@ -44,9 +44,7 @@ namespace alica
 		const double Kd = 1.7;
 		auto qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 
-		summe = summe + qualityOfService;
-		double movement = Kp * qualityOfService + Ki * summe + Kd * (qualityOfService - olddistance);
-		olddistance = qualityOfService;
+
 
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "QualityOfService : " << qualityOfService << endl;
@@ -55,7 +53,7 @@ namespace alica
 
 		// left =  rodo->motion.translation * (1.0 / 40.0) ;
 		//right = rodo->motion.translation * (1.0 / 40.0) ;
-*/
+
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 
