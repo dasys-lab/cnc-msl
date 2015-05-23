@@ -87,17 +87,17 @@ namespace msl
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 		//get closest Vertices to ownPos => start point for a star serach
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(Point_2(startPos.x, startPos.y));
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(Point_2(startPos.x, startPos.y));
 
 		// get closest Vertex to goal => goal for a star serach
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal = voronoi->getVerticesOfFace(Point_2(goal.x, goal.y));
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal = voronoi->getVerticesOfFace(Point_2(goal.x, goal.y));
 
 		// a star serach
 
 		for(int i = 0; i < closestVerticesToOwnPos->size(); i++)
 		{
-			insert(open, make_shared<SearchNode>(SearchNode(make_shared<CNPoint2D>(closestVerticesToOwnPos->at(i)->point().x(), closestVerticesToOwnPos->at(i)->point().y()),
-									voronoi->calcDist(make_shared<CNPoint2D>(closestVerticesToOwnPos->at(i)->point().x(), closestVerticesToOwnPos->at(i)->point().y()), make_shared<CNPoint2D>(goal.x, goal.y)), nullptr)));
+			insert(open, make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
+									voronoi->calcDist(closestVerticesToOwnPos->at(i), make_shared<CNPoint2D>(goal.x, goal.y)), nullptr)));
 		}
 
 		while(open->size() != 0)
@@ -253,14 +253,18 @@ namespace msl
 
 	//TODO vielleicht int da 3 mgl besthen
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
-											shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal, CNPoint2D goal)
+											shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal, CNPoint2D goal)
 	{
 		bool found = false;
+		cout << "closest to goal: "<< closestVerticesToGoal->size() << endl;
 		for(int i = 0; i < closestVerticesToGoal->size(); i++)
 		{
-			if(currentNode->getVertex()->x == closestVerticesToGoal->at(i)->point().x()
-			&& currentNode->getVertex()->y == closestVerticesToGoal->at(i)->point().y())
+			cout << "if : " << currentNode->getVertex()->x << " "<< currentNode->getVertex()->y
+					<<" " << closestVerticesToGoal->at(i)->x  << " " <<  closestVerticesToGoal->at(i)->y << endl;
+			if(currentNode->getVertex()->x == closestVerticesToGoal->at(i)->x
+			&& currentNode->getVertex()->y == closestVerticesToGoal->at(i)->y)
 			{
+				cout << "found" << endl;
 				found = true;
 				break;
 			}

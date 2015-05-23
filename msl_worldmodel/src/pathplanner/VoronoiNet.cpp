@@ -168,7 +168,7 @@ namespace msl
 			else
 			{
 				neighbors.at(i)->setCost(cost);
-				open->push_back(neighbors.at(i));
+				PathPlanner::insert(open, neighbors.at(i));
 			}
 		}
 	}
@@ -317,9 +317,9 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
+	shared_ptr<vector<shared_ptr<CNPoint2D>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
 	{
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> ret = make_shared<vector<shared_ptr<VoronoiDiagram::Vertex>>>();
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> ret = make_shared<vector<shared_ptr<CNPoint2D>>>();
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 		if(loc.which() == 0)
@@ -331,7 +331,7 @@ namespace msl
 			{
 				if(edge->has_source())
 				{
-					ret->push_back(make_shared<VoronoiDiagram::Vertex>(*edge->source()));
+					ret->push_back(make_shared<CNPoint2D>(edge->source()->point().x(),edge->source()->point().y()));
 				}
 				edge = edge->previous();
 			}while (edge != begin);

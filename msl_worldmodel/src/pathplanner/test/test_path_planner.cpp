@@ -68,6 +68,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
 	EXPECT_TRUE(net != nullptr);
+	cout << "first example" << endl;
 	shared_ptr<vector<shared_ptr<msl::CNPoint2D>>> path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
 	EXPECT_EQ(path->size(), 1);
 	msl_sensor_msgs::ObstacleInfo info;
@@ -76,6 +77,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	msg->obstacles.push_back(info);
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
+	cout << "second example" << endl;
 	path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
 	EXPECT_EQ(path->size(), 1);
 	msl_sensor_msgs::ObstacleInfo info2;
@@ -120,7 +122,9 @@ TEST_F(PathPlannerTest, pathPlanner)
 	msg->obstacles.push_back(info11);
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
+	cout << "third example" << endl;
 	path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
+	cout << path->size() << endl;
 	EXPECT_EQ(path->size(), 1);
 }
 
