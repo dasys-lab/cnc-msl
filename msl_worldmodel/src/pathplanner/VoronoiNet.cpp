@@ -139,6 +139,7 @@ namespace msl
 			// if node is already closed skip it
 			if(contains(closed, neighbors.at(i)))
 			{
+				cout << "in closed" << endl;
 				continue;
 			}
 			//calculate cost with current cost and way to next vertex
@@ -146,6 +147,7 @@ namespace msl
 			// if node has still to be expaned but there is a cheaper way skip it
 			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
 			{
+				cout << "in open but with lower cost" << endl;
 				continue;
 			}
 			//set predecessor and cost
@@ -160,6 +162,7 @@ namespace msl
 					if(open->at(i)->getVertex()->x == neighbors.at(i)->getVertex()->x
 					&& open->at(i)->getVertex()->y == neighbors.at(i)->getVertex()->y)
 					{
+						cout << " new cost "<<endl;
 						open->at(j)->setCost(cost);
 						break;
 					}
@@ -167,6 +170,7 @@ namespace msl
 			}
 			else
 			{
+				cout << " insert " << endl;
 				neighbors.at(i)->setCost(cost);
 				PathPlanner::insert(open, neighbors.at(i));
 			}
@@ -325,7 +329,7 @@ namespace msl
 		if(loc.which() == 0)
 		{
 			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-			VoronoiDiagram::Halfedge_handle begin = handle->halfedge()->opposite();
+			VoronoiDiagram::Halfedge_handle begin = handle->halfedge();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
@@ -333,7 +337,7 @@ namespace msl
 				{
 					ret->push_back(make_shared<CNPoint2D>(edge->source()->point().x(),edge->source()->point().y()));
 				}
-				edge = edge->previous();
+				edge = edge->next();
 			}while (edge != begin);
 		}
 		return ret;

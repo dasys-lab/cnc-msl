@@ -67,7 +67,7 @@ namespace msl
 			points.push_back(p3);
 			points.push_back(p4);
 			points.push_back(p2);
-			if(isInside(points, points.size(), *obstaclePoint))
+			if(obstaclePoint != nullptr && isInside(points, points.size(), *obstaclePoint))
 			{
 				reachable = false;
 				break;
@@ -103,8 +103,10 @@ namespace msl
 		while(open->size() != 0)
 		{
 			shared_ptr<SearchNode> currentNode = open->at(0);
-			open->erase(open->begin());
-
+			for(int i = 0; i < open->size(); i++)
+			{
+				cout << "open at 0 " << 	open->at(i)->getVertex()->toString() << " "<< open->at(i)->getCost() << endl;
+			}
 			if(checkGoalReachable(voronoi, currentNode, closestVerticesToGoal, goal))
 			{
 				shared_ptr<SearchNode> temp = currentNode;
@@ -118,6 +120,7 @@ namespace msl
 				return ret;
 			}
 			closed->push_back(currentNode);
+			open->erase(open->begin());
 			cout << "PathPlanner: " << open->size()<< endl;
 			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y), eval);
 		}
@@ -237,7 +240,7 @@ namespace msl
 
 	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
 	{
-		vector<shared_ptr<SearchNode> >::iterator it = std::lower_bound(vect->begin(), vect->end(), currentNode,
+		vector<shared_ptr<SearchNode> >::iterator it = std::upper_bound(vect->begin(), vect->end(), currentNode,
 																		PathPlanner::compare); // find proper position in descending order
 		vect->insert(it, currentNode); // insert before iterator it
 	}

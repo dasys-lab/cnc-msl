@@ -150,25 +150,36 @@ namespace msl_voronoi_viewer
 
 	void MainWindow::addExamples()
 	{
-		this->voronoi->insert(Site_2(100, 100));
-		this->voronoi->insert(Site_2(200, 100));
-		this->voronoi->insert(Site_2(200, 500));
-		this->voronoi->insert(Site_2(100, 900));
-		this->voronoi->insert(Site_2(700, 600));
-		this->voronoi->insert(Site_2(800, 100));
-		this->voronoi->insert(Site_2(900, 100));
-		this->voronoi->insert(Site_2(1000, 100));
-		this->voronoi->insert(Site_2(1100, 500));
-		this->voronoi->insert(Site_2(600, 900));
-		this->voronoi->insert(Site_2(700, 900));
-		this->voronoi->insert(Site_2(800, 1000));
+		this->voronoi->insert(Site_2(500, 1000));
+		this->voronoi->insert(Site_2(1500, 1000));
+		this->voronoi->insert(Site_2(750, 800));
+		this->voronoi->insert(Site_2(2000, 1000));
+		this->voronoi->insert(Site_2(900, 1000));
+		this->voronoi->insert(Site_2(300, 200));
+		this->voronoi->insert(Site_2(600, 100));
+		this->voronoi->insert(Site_2(300, 300));
+		this->voronoi->insert(Site_2(250, 375));
+		this->voronoi->insert(Site_2(1100, 1250));
+		this->voronoi->insert(Site_2(1000, 1000));
+//		this->voronoi->insert(Site_2(100, 100));
+//		this->voronoi->insert(Site_2(200, 100));
+//		this->voronoi->insert(Site_2(200, 500));
+//		this->voronoi->insert(Site_2(100, 900));
+//		this->voronoi->insert(Site_2(700, 600));
+//		this->voronoi->insert(Site_2(800, 100));
+//		this->voronoi->insert(Site_2(900, 100));
+//		this->voronoi->insert(Site_2(1000, 100));
+//		this->voronoi->insert(Site_2(1100, 500));
+//		this->voronoi->insert(Site_2(600, 900));
+//		this->voronoi->insert(Site_2(700, 900));
+//		this->voronoi->insert(Site_2(800, 1000));
 	}
 
 	void MainWindow::removeExamples()
 	{
 		for (auto it = this->voronoi->dual().vertices_begin(); it != this->voronoi->dual().vertices_end(); it++)
 		{
-			if (it->point().x() == 1000 && it->point().y() == 100)
+			if (it->point().x() == 1000 && it->point().y() == 1000)
 			{
 				((DelaunayTriangulation)this->voronoi->dual()).remove(it->handle());
 			}
