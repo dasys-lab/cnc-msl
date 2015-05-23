@@ -57,7 +57,7 @@ namespace msl
 		/**
 		 * gets the closest vertex to a given point
 		 */
-		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(Point_2 ownPos);
+		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<CNPoint2D> ownPos);
 		/**
 		 * expands a SearchNode
 		 */
@@ -95,7 +95,7 @@ namespace msl
 		/**
 		 * calculates distance between two points
 		 */
-		int calcDist(Point_2 ownPos, Point_2 vertexPoint);
+		int calcDist(shared_ptr<CNPoint2D> ownPos, shared_ptr<CNPoint2D> vertexPoint);
 
 		shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
 

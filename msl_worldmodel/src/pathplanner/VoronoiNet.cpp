@@ -35,7 +35,7 @@ namespace msl
 	 * gets the closest Vertex to a given position
 	 * @param pos position
 	 */
-	shared_ptr<VoronoiDiagram::Vertex> VoronoiNet::findClosestVertexToOwnPos(Point_2 pos)
+	shared_ptr<VoronoiDiagram::Vertex> VoronoiNet::findClosestVertexToOwnPos(shared_ptr<CNPoint2D> pos)
 	{
 		shared_ptr<VoronoiDiagram::Vertex> ret = nullptr;
 		VoronoiDiagram::Vertex_iterator iter = voronoi->vertices_begin();
@@ -49,7 +49,7 @@ namespace msl
 			}
 			else
 			{
-				int dist = calcDist(pos, iter->point());
+				int dist = calcDist(pos, make_shared<CNPoint2D>(iter->point().x(), iter->point().y()));
 				if (dist < minDist)
 				{
 					ret = make_shared<VoronoiDiagram::Vertex>(*iter);
@@ -66,9 +66,9 @@ namespace msl
 	 * @param ownPos Point_2
 	 * @param vertexPoint Point_2
 	 */
-	int VoronoiNet::calcDist(Point_2 ownPos, Point_2 vertexPoint)
+	int VoronoiNet::calcDist(shared_ptr<CNPoint2D> ownPos, shared_ptr<CNPoint2D> vertexPoint)
 	{
-		int ret = sqrt(pow((vertexPoint.x() - ownPos.x()), 2) + pow((vertexPoint.y() - ownPos.y()), 2));
+		int ret = sqrt(pow((vertexPoint->x - ownPos->x), 2) + pow((vertexPoint->y - ownPos->y), 2));
 		return ret;
 	}
 
@@ -100,12 +100,15 @@ namespace msl
 		vector<VoronoiDiagram::Vertex> neighbors;
 		for (VoronoiDiagram::Edge_iterator it = this->voronoi->edges_begin(); it != this->voronoi->edges_end(); it++)
 		{
-			if (it->source()->point().x() == currentNode->getVertex()->point().x()
-					&& it->source()->point().y() == currentNode->getVertex()->point().y())
+			if (it->has_source() && it->source()->point().x() == currentNode->getVertex()->x
+					&& it->source()->point().y() == currentNode->getVertex()->y)
 			{
 				if (find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
 				{
-					neighbors.push_back(*it->target());
+					if((*it).has_target())
+					{
+						neighbors.push_back(*it->target());
+					}
 				}
 			}
 		}
@@ -114,7 +117,7 @@ namespace msl
 		{
 			ret.push_back(
 					make_shared<SearchNode>(
-							SearchNode(make_shared<VoronoiDiagram::Vertex>(neighbors.at(i)), 0, nullptr)));
+							SearchNode(make_shared<CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().x()), 0, nullptr)));
 		}
 		return ret;
 	}
@@ -130,6 +133,7 @@ namespace msl
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
+		cout << "Neigbors: " <<  neighbors.size() << endl;
 		for(int i = 0; i < neighbors.size(); i++)
 		{
 			// if node is already closed skip it
@@ -138,7 +142,7 @@ namespace msl
 				continue;
 			}
 			//calculate cost with current cost and way to next vertex
-			double cost = currentNode->getCost() + calcDist(currentNode->getVertex()->point(), neighbors.at(i)->getVertex()->point());
+			double cost = currentNode->getCost() + calcDist(currentNode->getVertex(), neighbors.at(i)->getVertex());
 			// if node has still to be expaned but there is a cheaper way skip it
 			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
 			{
@@ -153,8 +157,8 @@ namespace msl
 			{
 				for(int j = 0; j < open->size(); j++)
 				{
-					if(open->at(i)->getVertex()->point().x() == neighbors.at(i)->getVertex()->point().x()
-					&& open->at(i)->getVertex()->point().y() == neighbors.at(i)->getVertex()->point().y())
+					if(open->at(i)->getVertex()->x == neighbors.at(i)->getVertex()->x
+					&& open->at(i)->getVertex()->y == neighbors.at(i)->getVertex()->y)
 					{
 						open->at(j)->setCost(cost);
 						break;
@@ -235,11 +239,11 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if((edge->source()->point().x() == currentNode->getVertex()->point().x() && edge->source()->point().y() == currentNode->getVertex()->point().y()
-						&& edge->target()->point().x() == nextNode->getVertex()->point().x() && edge->target()->point().y() == nextNode->getVertex()->point().y())
+				if((edge->source()->point().x() == currentNode->getVertex()->x && edge->source()->point().y() == currentNode->getVertex()->y
+						&& edge->target()->point().x() == nextNode->getVertex()->x && edge->target()->point().y() == nextNode->getVertex()->y)
 						||
-						(edge->source()->point().x() == nextNode->getVertex()->point().x() && edge->source()->point().y() == nextNode->getVertex()->point().y()
-						&& edge->target()->point().x() == currentNode->getVertex()->point().x() && edge->target()->point().y() == currentNode->getVertex()->point().y()))
+						(edge->source()->point().x() == nextNode->getVertex()->x && edge->source()->point().y() == nextNode->getVertex()->y
+						&& edge->target()->point().x() == currentNode->getVertex()->x && edge->target()->point().y() == currentNode->getVertex()->y))
 				{
 					return true;
 				}
@@ -259,8 +263,8 @@ namespace msl
 	{
 		for (int i = 0; i < vector->size(); i++)
 		{
-			if (vector->at(i)->getVertex()->point().x() == vertex->getVertex()->point().x()
-					&& vector->at(i)->getVertex()->point().y() == vertex->getVertex()->point().y())
+			if (vector->at(i)->getVertex()->x == vertex->getVertex()->x
+					&& vector->at(i)->getVertex()->y == vertex->getVertex()->y)
 			{
 				return true;
 			}
@@ -315,13 +319,12 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
 	{
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> ret;
+		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> ret = make_shared<vector<shared_ptr<VoronoiDiagram::Vertex>>>();
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 		if(loc.which() == 0)
 		{
 			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-
 			VoronoiDiagram::Halfedge_handle begin = handle->halfedge()->opposite();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do

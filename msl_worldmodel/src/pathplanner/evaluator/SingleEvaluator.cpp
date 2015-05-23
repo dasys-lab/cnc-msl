@@ -55,7 +55,7 @@ namespace msl
 		// cost due to deviation from last path
 //		double lastAnglec = this->planner->getPathDeviationWeight() * path.lastPEdge.AngleCost;
 		return (costsSoFar // costs so far
-		+ voronoi->calcDist(currentNode->getVertex()->point(), nextNode->getVertex()->point()) // cost due to additional length of path
+		+ voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // cost due to additional length of path
 				+ widthc // cost due to minimal width of the edge
 //				+ lastAnglec, // cost due to deviation to last path
 		+h); // heuristic cost due to distToTarget

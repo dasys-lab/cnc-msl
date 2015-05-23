@@ -21,7 +21,8 @@ namespace msl
 		{
 			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
 			this->voronoiDiagrams.at(i)->setVoronoi(
-					make_shared<VoronoiDiagram>((DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
+					make_shared<VoronoiDiagram>(
+							(DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
 		}
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
 		initializeArtificialObstacles();
@@ -47,7 +48,7 @@ namespace msl
 		for(auto it = voronoi->getVoronoi()->sites_begin(); it != voronoi->getVoronoi()->sites_end(); it++)
 		{
 			shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal.x, goal.y));
-			double length = voronoi->calcDist(Point_2(startPos.x, startPos.y), Point_2(goal.x, goal.y));
+			double length = voronoi->calcDist(make_shared<CNPoint2D>(startPos.x, startPos.y), make_shared<CNPoint2D>(goal.x, goal.y));
 			double dx = startPos.x - goal.x;
 			double dy = startPos.y - goal.y;
 			double dist = std::sqrt(dx*dx + dy*dy);
@@ -92,33 +93,34 @@ namespace msl
 		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal = voronoi->getVerticesOfFace(Point_2(goal.x, goal.y));
 
 		// a star serach
+
 		for(int i = 0; i < closestVerticesToOwnPos->size(); i++)
 		{
-			insert(open, make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
-									voronoi->calcDist(closestVerticesToOwnPos->at(i)->point(), Point_2(goal.x, goal.y)), nullptr)));
+			insert(open, make_shared<SearchNode>(SearchNode(make_shared<CNPoint2D>(closestVerticesToOwnPos->at(i)->point().x(), closestVerticesToOwnPos->at(i)->point().y()),
+									voronoi->calcDist(make_shared<CNPoint2D>(closestVerticesToOwnPos->at(i)->point().x(), closestVerticesToOwnPos->at(i)->point().y()), make_shared<CNPoint2D>(goal.x, goal.y)), nullptr)));
 		}
 
 		while(open->size() != 0)
 		{
 			shared_ptr<SearchNode> currentNode = open->at(0);
+			open->erase(open->begin());
 
 			if(checkGoalReachable(voronoi, currentNode, closestVerticesToGoal, goal))
 			{
 				shared_ptr<SearchNode> temp = currentNode;
-				ret->push_back(make_shared<CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y()));
+				ret->push_back(make_shared<CNPoint2D>(currentNode->getVertex()->x, currentNode->getVertex()->y));
 				while(temp->getPredecessor() != nullptr)
 				{
-					ret->push_back(make_shared<CNPoint2D>(temp->getPredecessor()->getVertex()->point().x(), temp->getPredecessor()->getVertex()->point().y()));
+					ret->push_back(make_shared<CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
 				return ret;
 			}
 			closed->push_back(currentNode);
-
+			cout << "PathPlanner: " << open->size()<< endl;
 			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y), eval);
 		}
-
 		// return nullptr if there is no way to goal
 		return nullptr;
 	}
@@ -164,7 +166,7 @@ namespace msl
 	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
 	{
 		lock_guard<mutex> lock(this->voronoiMutex);
-		if(currentVoronoiPos == -1)
+		if (currentVoronoiPos == -1)
 		{
 			return nullptr;
 		}
@@ -256,8 +258,8 @@ namespace msl
 		bool found = false;
 		for(int i = 0; i < closestVerticesToGoal->size(); i++)
 		{
-			if(currentNode->getVertex()->point().x() == closestVerticesToGoal->at(i)->point().x()
-			&& currentNode->getVertex()->point().y() == closestVerticesToGoal->at(i)->point().y())
+			if(currentNode->getVertex()->x == closestVerticesToGoal->at(i)->point().x()
+			&& currentNode->getVertex()->y == closestVerticesToGoal->at(i)->point().y())
 			{
 				found = true;
 				break;
@@ -266,16 +268,16 @@ namespace msl
 		if(found)
 		{
 			shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal.x, goal.y));
-			double length = voronoi->calcDist(Point_2(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y()), Point_2(goal.x, goal.y));
-			double dx = currentNode->getVertex()->point().x() - goal.x;
-			double dy = currentNode->getVertex()->point().y() - goal.y;
+			double length = voronoi->calcDist(currentNode->getVertex(), make_shared<CNPoint2D>(goal.x, goal.y));
+			double dx = currentNode->getVertex()->x - goal.x;
+			double dy = currentNode->getVertex()->y - goal.y;
 			double dist = std::sqrt(dx*dx + dy*dy);
 			dx /= dist;
 			dy /= dist;
-			VoronoiDiagram::Point_2 p1 = Point_2(currentNode->getVertex()->point().x() + (this->robotDiameter / 2) * dy,
-			currentNode->getVertex()->point().y() - (this->robotDiameter / 2) * dx);
-			VoronoiDiagram::Point_2 p2 = Point_2(currentNode->getVertex()->point().x() - (this->robotDiameter / 2) * dy,
-			currentNode->getVertex()->point().y() + (this->robotDiameter / 2) * dx);
+			VoronoiDiagram::Point_2 p1 = Point_2(currentNode->getVertex()->x + (this->robotDiameter / 2) * dy,
+			currentNode->getVertex()->y - (this->robotDiameter / 2) * dx);
+			VoronoiDiagram::Point_2 p2 = Point_2(currentNode->getVertex()->x - (this->robotDiameter / 2) * dy,
+			currentNode->getVertex()->y + (this->robotDiameter / 2) * dx);
 			VoronoiDiagram::Point_2 p3 = Point_2(goal.x + std::max(this->robotDiameter / 2,length / 4) * dy,
 			goal.y - std::max(this->robotDiameter / 2,length / 4) * dx);
 			VoronoiDiagram::Point_2 p4 = Point_2(goal.x - std::max(this->robotDiameter / 2,length / 4) * dy,

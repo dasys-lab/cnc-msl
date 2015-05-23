@@ -63,6 +63,7 @@
   <run_depend>msl_actuator_msgs</run_depend>
   <run_depend>event_handling</run_depend>
 
+  <test_depend>gtest</test_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
