@@ -92,6 +92,7 @@ namespace msl
 		double getDribbleAngleTolerance();
 		double getDribbleRotationWeight();
 		static void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
+	    shared_ptr<VoronoiNet> getArtificialObjectNet();
 
 	private:
 		void initializeArtificialObstacles();

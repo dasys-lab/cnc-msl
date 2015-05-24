@@ -103,10 +103,6 @@ namespace msl
 		while(open->size() != 0)
 		{
 			shared_ptr<SearchNode> currentNode = open->at(0);
-			for(int i = 0; i < open->size(); i++)
-			{
-				cout << "open at 0 " << 	open->at(i)->getVertex()->toString() << " "<< open->at(i)->getCost() << endl;
-			}
 			if(checkGoalReachable(voronoi, currentNode, closestVerticesToGoal, goal))
 			{
 				shared_ptr<SearchNode> temp = currentNode;
@@ -121,7 +117,6 @@ namespace msl
 			}
 			closed->push_back(currentNode);
 			open->erase(open->begin());
-			cout << "PathPlanner: " << open->size()<< endl;
 			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y), eval);
 		}
 		// return nullptr if there is no way to goal
@@ -259,15 +254,11 @@ namespace msl
 											shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal, CNPoint2D goal)
 	{
 		bool found = false;
-		cout << "closest to goal: "<< closestVerticesToGoal->size() << endl;
 		for(int i = 0; i < closestVerticesToGoal->size(); i++)
 		{
-			cout << "if : " << currentNode->getVertex()->x << " "<< currentNode->getVertex()->y
-					<<" " << closestVerticesToGoal->at(i)->x  << " " <<  closestVerticesToGoal->at(i)->y << endl;
 			if(currentNode->getVertex()->x == closestVerticesToGoal->at(i)->x
 			&& currentNode->getVertex()->y == closestVerticesToGoal->at(i)->y)
 			{
-				cout << "found" << endl;
 				found = true;
 				break;
 			}
@@ -395,6 +386,11 @@ namespace msl
 
 		// Return true if count is odd, false otherwise
 		return count & 1; // Same as (count%2 == 1)
+	}
+
+	shared_ptr<VoronoiNet> PathPlanner::getArtificialObjectNet()
+	{
+		return artificialObjectNet;
 	}
 
 } /* namespace alica */

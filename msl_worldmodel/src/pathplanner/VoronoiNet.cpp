@@ -6,6 +6,7 @@
  */
 
 #include "pathplanner/VoronoiNet.h"
+#include "MSLWorldModel.h"
 
 namespace msl
 {
@@ -111,19 +112,28 @@ namespace msl
 					}
 				}
 			}
+			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->x
+					&& it->target()->point().y() == currentNode->getVertex()->y)
+			{
+				if (find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
+				{
+					if((*it).has_source())
+					{
+						neighbors.push_back(*it->source());
+					}
+				}
+			}
 		}
 		vector<shared_ptr<SearchNode>> ret;
 		for (int i = 0; i < neighbors.size(); i++)
 		{
 			ret.push_back(
 					make_shared<SearchNode>(
-							SearchNode(make_shared<CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().x()), 0, nullptr)));
+							SearchNode(make_shared<CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().y()), 0, nullptr)));
 		}
 		return ret;
 	}
 
-	//TODO bewertungskriterien
-	//bewerter einbinden
 	/**
 	 * expands Nodes given in current node
 	 * @param currentNode shared_ptr<SearchNode>
@@ -133,13 +143,11 @@ namespace msl
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
-		cout << "Neigbors: " <<  neighbors.size() << endl;
 		for(int i = 0; i < neighbors.size(); i++)
 		{
 			// if node is already closed skip it
 			if(contains(closed, neighbors.at(i)))
 			{
-				cout << "in closed" << endl;
 				continue;
 			}
 			//calculate cost with current cost and way to next vertex
@@ -147,7 +155,6 @@ namespace msl
 			// if node has still to be expaned but there is a cheaper way skip it
 			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
 			{
-				cout << "in open but with lower cost" << endl;
 				continue;
 			}
 			//set predecessor and cost
@@ -162,7 +169,6 @@ namespace msl
 					if(open->at(i)->getVertex()->x == neighbors.at(i)->getVertex()->x
 					&& open->at(i)->getVertex()->y == neighbors.at(i)->getVertex()->y)
 					{
-						cout << " new cost "<<endl;
 						open->at(j)->setCost(cost);
 						break;
 					}
@@ -170,7 +176,6 @@ namespace msl
 			}
 			else
 			{
-				cout << " insert " << endl;
 				neighbors.at(i)->setCost(cost);
 				PathPlanner::insert(open, neighbors.at(i));
 			}
@@ -186,12 +191,14 @@ namespace msl
 	{
 		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
+		this->voronoi->clear();
 		for (int i = 0; i < points.size(); i++)
 		{
 			Site_2 site(points.at(i).x, points.at(i).y);
 			sites.push_back(site);
 		}
 		insertPoints(sites);
+		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(), wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
 		return this->voronoi;
 	}
 
