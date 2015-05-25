@@ -96,10 +96,6 @@ namespace msl
 
 	private:
 		void initializeArtificialObstacles();
-		bool isInside(vector<VoronoiDiagram::Point_2> polygon, int n, VoronoiDiagram::Point_2 p);
-		bool doIntersect(VoronoiDiagram::Point_2 p1, VoronoiDiagram::Point_2 q1, VoronoiDiagram::Point_2 p2, VoronoiDiagram::Point_2 q2);
-		int orientation(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
-		bool onSegment(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
 	protected:
@@ -113,6 +109,7 @@ namespace msl
 		double pathDeviationWeight;
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
+		double corridorWidthDivisor;
 		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal, CNPoint2D goal);
 	};
 
