@@ -60,7 +60,6 @@ namespace msl
 	double RawSensorData::getOpticalFlowQoS(int index)
 	{
 		auto x = opticalFlow.getLast(index);
-		cout << "RawSensorData: " << (x == nullptr) << endl;
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return 0;
