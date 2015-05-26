@@ -54,7 +54,7 @@ namespace alica
 		double Abweichung_Alt=0.0;
 		double Stellwert=0.0;
 
-		long int IAnteil = 0;
+
 
 		Abweichung = Sollwert - wm->rawSensorData.getOpticalFlowQoS();
 
@@ -67,14 +67,15 @@ namespace alica
 
 		    Abweichung_Alt = Abweichung;
 
-
+		    Stellwert /= 4;
 /*
-			if (m_Stellwert > 100)
-				m_Stellwert = 100;
-			if (m_Stellwert < 80)
-				m_Stellwert = 80;
+			if (Stellwert > 100)
+				Stellwert = 100;
+			if (Stellwert < 80)
+				Stellwert = 80;
 
 			return Stellwert;
+
 	*/
 
 
@@ -82,8 +83,6 @@ namespace alica
 
 
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS()<< endl;
-		cout << "QualityOfService : " << qualityOfService << endl;
-
 		cout << "Stellwert : " << Stellwert << endl;
 
 		// left =  rodo->motion.translation * (1.0 / 40.0) ;
