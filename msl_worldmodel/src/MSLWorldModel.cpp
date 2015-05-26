@@ -33,7 +33,7 @@ namespace msl
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
-		motionBurstSub = n.subscribe("/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
+		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
 
 		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,(MSLWorldModel*)this);
 
