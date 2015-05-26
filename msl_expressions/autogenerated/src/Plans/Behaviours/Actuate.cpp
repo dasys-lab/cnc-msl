@@ -75,6 +75,7 @@ namespace alica
 				m_Stellwert = 80;
 
 			return Stellwert;
+
 	*/
 
 
