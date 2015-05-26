@@ -41,9 +41,15 @@ namespace alica
 		static double olddistance = 0.0;
 
 		const double Kp = 2.0;
-		const double Ki = 0.0;
+		const double Ki = 0.5;
 		const double Kd = 1.7;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+
+
+
+		summe = summe + qualityOfService;
+		double movement = Kp * qualityOfService + Ki * summe + Kd * (qualityOfService - olddistance);
+		olddistance = qualityOfService;
 
 
 
