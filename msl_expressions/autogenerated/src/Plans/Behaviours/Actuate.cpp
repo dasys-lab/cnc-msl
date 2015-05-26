@@ -43,13 +43,41 @@ namespace alica
 		const double Kp = 2.0;
 		const double Ki = 0.5;
 		const double Kd = 1.7;
+		const double Sollwert=90;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 
 
 
-		summe = summe + qualityOfService;
-		double movement = Kp * qualityOfService + Ki * summe + Kd * (qualityOfService - olddistance);
-		olddistance = qualityOfService;
+
+		double Abweichung=0.0;
+		double Abweichung_Summe=0.0;
+		double Abweichung_Alt=0.0;
+		double Stellwert=0.0;
+
+		long int IAnteil = 0;
+
+		Abweichung = Sollwert - wm->rawSensorData.getOpticalFlowQoS();
+
+			if ((Stellwert < 80)||(Stellwert > 100))
+				Abweichung_Summe += Abweichung;
+
+			Stellwert  = Kp*Abweichung;
+			Stellwert += Ki*Abweichung_Summe;
+			Stellwert += Kd*(Abweichung - Abweichung_Alt);
+
+		    Abweichung_Alt = Abweichung;
+
+
+/*
+			if (m_Stellwert > 100)
+				m_Stellwert = 100;
+			if (m_Stellwert < 80)
+				m_Stellwert = 80;
+
+			return Stellwert;
+	*/
+
+
 
 
 
@@ -61,9 +89,9 @@ namespace alica
 		// left =  rodo->motion.translation * (1.0 / 40.0) ;
 		//right = rodo->motion.translation * (1.0 / 40.0) ;
 
+		left=Stellwert;
+		right=Stellwert;
 
-		left= olddistance;
-		right=olddistance;
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 
