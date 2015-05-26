@@ -26,10 +26,10 @@ namespace msl
 							(DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
 		}
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
-		initializeArtificialObstacles();
 		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor", NULL);
+		initializeArtificialObstacles();
 
 	}
 
@@ -119,7 +119,7 @@ namespace msl
 			}
 			closed->push_back(currentNode);
 			open->erase(open->begin());
-			voronoi->expandNode(currentNode, open, closed, Point_2(goal.x, goal.y), eval);
+			voronoi->expandNode(currentNode, open, closed, startPos, goal, eval);
 		}
 		// return nullptr if there is no way to goal
 		return nullptr;

@@ -62,7 +62,7 @@ namespace msl
 		 * expands a SearchNode
 		 */
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, PathEvaluator* eval);
+							shared_ptr<vector<shared_ptr<SearchNode>>> closed, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 VoronoiDiagram::Vertex

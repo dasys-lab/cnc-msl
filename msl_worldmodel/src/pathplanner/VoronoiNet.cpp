@@ -139,7 +139,7 @@ namespace msl
 	 * @param currentNode shared_ptr<SearchNode>
 	 */
 	void VoronoiNet::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-	shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal, PathEvaluator* eval)
+	shared_ptr<vector<shared_ptr<SearchNode>>> closed, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval)
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
@@ -160,7 +160,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			cost += eval->eval(cost, CNPoint2D(0,0),CNPoint2D(goal.x(),goal.y()),currentNode, neighbors.at(i));//calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i));//calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
