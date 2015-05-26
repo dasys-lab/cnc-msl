@@ -58,7 +58,7 @@ namespace alica
 
 		Abweichung = Sollwert - wm->rawSensorData.getOpticalFlowQoS();
 
-			if ((Stellwert < 70)||(Stellwert > 120))
+			if ((Stellwert < 60)||(Stellwert > 90))
 				Abweichung_Summe += Abweichung;
 
 			Stellwert  = Kp*Abweichung;
