@@ -3,7 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
-#include <iostream>
+#include "RawSensorData.h"
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,11 +43,11 @@ namespace alica
 		const double Kp = 2.0;
 		const double Ki = 0.0;
 		const double Kd = 1.7;
-		auto qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 
 
 
-		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS()<< endl;
 		cout << "QualityOfService : " << qualityOfService << endl;
 		cout << "olddistance : " << olddistance << endl;
 		cout << "Summe : " << summe << endl;
