@@ -618,6 +618,7 @@ void SSLWorld::recvActions()
 //			this->simThread = new std::thread(&SSLWorld::sendWorldModelData(), this);
 //		}
 		msl_actuator_msgs::MotionControlPtr packet = rosCommunicator->getSimPacket();
+		msl_actuator_msgs::KickControlPtr kick = rosCommunicator->getKick();
 		bool teamYellow = rosCommunicator->isteamyellow;
 
 		if (teamYellow)
@@ -651,9 +652,25 @@ void SSLWorld::recvActions()
 			int id = robotIndex(it->second, team);
 
 			robots[it->second]->setSpeed(vx, vy, vw);
+			robots[it->second]->kicker->setRoller(1);
 
+			if(kick->senderID != 0 && kick->senderID == packet->senderID && kick->power > 100)
+			{
+				std::cout << "WILL NUN SCHIESSEN" << std::endl;
+				std::cout << "WILL NUN KICKERTOUCHINGBALL " << 	robots[it->second]->kicker->isTouchingBall() << std::endl;
+				robots[it->second]->kicker->kick(5, 1);
 
-//      robots[it->second]->kicker->kick()
+			}
+			else
+			{
+				std::map<int, int>::iterator itKick;
+				itKick = carpeNoctemIds.find(kick->senderID);
+				if (itKick != carpeNoctemIds.end() && kick->power > 100)
+				{
+					robots[itKick->second]->kicker->kick(0.1, 0.1);
+				}
+
+			}
 		}
 	}
 //OLD STUFF!
@@ -850,13 +867,11 @@ void SSLWorld::fillBall(msl_sensor_msgs::SimulatorWorldModelData& simwm, int rob
 	dReal y;
 	dReal z;
 	ball->getBodyPosition(x, y, z);
-	std::cout << "x " << x << " y " << y << " z " << z << std::endl;
 	x = x * 1000;
 	y = y * 1000;
 	z = 0;
 	ballPub.point = allo2Ego(x, y, z, robot);
 
-	std::cout << "x2 " << ballPub.point.x << " y2 " << ballPub.point.y << " z2 " << ballPub.point.z << std::endl;
 
 	dReal x2;
 	dReal y2;

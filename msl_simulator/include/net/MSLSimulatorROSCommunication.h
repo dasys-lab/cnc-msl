@@ -16,6 +16,7 @@
 #include "msl_simulator/messages_robocup_ssl_wrapper.h"
 #include "msl_simulator/sim_packet.h"
 #include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/KickControl.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 
 using namespace std;
@@ -34,6 +35,7 @@ namespace msl_simulator
 		virtual void send(messages_robocup_ssl_wrapperPtr packet);
 
 		virtual void handleMotionControl(msl_actuator_msgs::MotionControlPtr);
+		void handleKickControl(msl_actuator_msgs::KickControlPtr kick);
 		void sendBallInfoPtr(msl_sensor_msgs::BallInfo& ball);
 		void sendSimWorldData(msl_sensor_msgs::SimulatorWorldModelData simwm);
 
@@ -41,6 +43,7 @@ namespace msl_simulator
 		virtual void stopCommunication();
 
 		msl_actuator_msgs::MotionControlPtr getSimPacket();
+		msl_actuator_msgs::KickControlPtr getKick();
 		bool isQueueEmpty();
 
 		bool isteamyellow;
@@ -50,13 +53,18 @@ namespace msl_simulator
 		ros::AsyncSpinner* spinner;
 
 		list<msl_actuator_msgs::MotionControlPtr> recvQueue;
+		list<msl_actuator_msgs::KickControlPtr> kickQueue;
 		boost::mutex mutex;
+		boost::mutex kickmutex;
 
 //		ros::Publisher messagesRoboCupSSLWrapperPublisher;
 		ros::Publisher ballInfoPublisher;
 		ros::Publisher worldModelPublisher;
 
+
 		ros::Subscriber motionControl;
+		ros::Subscriber kickControl;
+
 
 		bool isRunning;
 	};
