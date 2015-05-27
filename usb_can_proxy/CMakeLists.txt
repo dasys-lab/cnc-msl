@@ -92,6 +92,12 @@ add_dependencies(usb_can_proxy
   usb_can_proxy_generate_messages_cpp
 ) 
 
+add_executable(usb_can_console src/UsbCanConsole.cpp)
+target_link_libraries(usb_can_console ${catkin_LIBRARIES} can_connection)
+set_target_properties(usb_can_console PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC -pthread")
+add_dependencies(usb_can_console can_connection) 
+
+
 #############
 ## Install ##
 #############

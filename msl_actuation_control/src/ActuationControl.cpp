@@ -86,7 +86,7 @@ class ActuationControl {
 
 			ros::NodeHandle node;
 
-			actuatorCanSub = node.subscribe<usb_can_proxy::CanMsg, ActuationControl >("CNUsbCanProxy/BallHandler", 30,&ActuationControl::handleCanActuator,this);
+			actuatorCanSub = node.subscribe<usb_can_proxy::CanMsg, ActuationControl >("/usb_can_proxy/BallHandler", 30,&ActuationControl::handleCanActuator,this);
 			
 			bhcSub = node.subscribe< BallHandleCmd, ActuationControl >("BallHandleControl", 30,&ActuationControl::handleBallHandleControlMessage,this);
 			bccSub = node.subscribe<BallCatchCmd,ActuationControl >("BallCatchControl", 30,&ActuationControl::handleBallCatchControlMessage,this);

@@ -95,16 +95,14 @@ add_library(can_connection
   src/usbcanconnection.cpp
   src/udpcanconnection.cpp
 )
-set_target_properties(can_connection PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC")
+set_target_properties(can_connection PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC -lpthread")
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(usb_can_connection_node usb_can_connection_generate_messages_cpp)
+add_dependencies(can_connection pthread)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(usb_can_connection_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(can_connection  ${catkin_LIBRARIES} pthread)
 
 #############
 ## Install ##
