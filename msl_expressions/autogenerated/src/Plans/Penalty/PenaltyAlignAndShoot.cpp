@@ -102,10 +102,12 @@ namespace alica
         }
         if (aimingLeft)
         {
+		cout << "PenaltyBeh: left!" << endl;
             egoTarget = alloLeftAimPoint.alloToEgo(*ownPos);
         }
         else
         {
+		cout << "PenaltyBeh: right!" << endl;
             egoTarget = alloRightAimPoint.alloToEgo(*ownPos);
         }
         double egoTargetAngle = egoTarget->angleTo();
