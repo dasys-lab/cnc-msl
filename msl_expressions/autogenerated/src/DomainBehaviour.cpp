@@ -28,7 +28,6 @@ namespace alica {
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh) {
-		cout<<"BehaviorON : "<< this->getName()<<endl;
 		bh.enabled = true;
 		bh.senderID = ownID;
 		ballHandlePub.publish(bh);

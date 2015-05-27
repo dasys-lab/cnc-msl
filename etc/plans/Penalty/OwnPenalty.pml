@@ -5,7 +5,7 @@
     <outTransitions>#1431526662401</outTransitions>
   </states>
   <states id="1431526626723" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1431526662401</inTransitions>
     <outTransitions>#1431526790723</outTransitions>
   </states>
@@ -36,7 +36,7 @@
     <inState>#1431526769660</inState>
     <outState>#1431531108950</outState>
   </transitions>
-  <entryPoints id="1431525245110" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1431525245110" name="StandardExecuter" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1238601692867</task>
     <state>#1431525245109</state>
   </entryPoints>

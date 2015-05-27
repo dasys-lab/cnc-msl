@@ -37,7 +37,6 @@ namespace msl
 	{
 		lock_guard<mutex> lock(refereeMutex);
 		gameTime = msg->elapsedSeconds;
-
 		if (currentSituation != Situation::Start)
 		{
 			lastSituation = currentSituation;
