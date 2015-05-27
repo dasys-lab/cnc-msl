@@ -65,3 +65,7 @@ install(PROGRAMS scripts/rqt_msl_refbox
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
+
+# Test stuff
+
+add_executable(SimpleRefereeBoxClientTest src/rqt_msl_refbox/Test.cpp)

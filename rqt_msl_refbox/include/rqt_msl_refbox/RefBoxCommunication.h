@@ -37,7 +37,7 @@ namespace rqt_msl_refbox
 		char data_received[1500];
 		int before_stop_gamePart;
 
-	public slots:
+	public Q_SLOTS:
 		void connectToHost(void);
 		void receiveRefMsg(void);
 
@@ -51,7 +51,7 @@ namespace rqt_msl_refbox
 		void Timer_start_bot_pressed(void);
 		void Timer_stop_bot_pressed(void);
 
-	signals:
+	Q_SIGNALS:
 		void transmitCoach(void);
 		void changeGoalColor(int);
 		void updateGameParam(void);
