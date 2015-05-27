@@ -78,6 +78,8 @@ namespace alica
             lastProcessedCmd = joy;
             /*PROTECTED REGION END*/
         }
+}
+}
         void Joystick::initialiseParameters()
         {
             /*PROTECTED REGION ID(initialiseParameters1421854975890) ENABLED START*/ //Add additional options here
