@@ -106,7 +106,7 @@ void Robot::Kicker::step()
     else if (rolling!=0)
     {
         box->setColor(1,0.7,0);
-        if (true)
+        if (isTouchingBall())
         {
             dReal fx,fy,fz;
             rob->chassis->getBodyDirection(fx,fy,fz);
@@ -171,7 +171,7 @@ void Robot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
     dReal vx,vy,vz;
     rob->chassis->getBodyDirection(dx,dy,dz);dz = 0;
     dReal zf = kickspeedz;
-    if (isTouchingBall())
+    if (true)
     {
         dReal dlen = dx*dx+dy*dy+dz*dz;
         dlen = sqrt(dlen);
