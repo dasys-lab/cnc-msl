@@ -7,10 +7,10 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config)
+find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bridge)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system thread)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -81,8 +81,8 @@ find_package(catkin REQUIRED system_config)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES carpet_calibrator
-  CATKIN_DEPENDS system_config
-#  DEPENDS system_lib
+  CATKIN_DEPENDS system_config 
+  #DEPENDS ${Boost_LIBRARIES} 
 )
 
 ###########
@@ -92,14 +92,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 ## Declare a cpp library
-add_executable(carpet_calibrator
+add_library(carpet_calibrator
    src/CarpetCalibrator.cpp
    src/PictureGrabber.cpp
+   src/CarpetCalibratorNodelet.cpp
 )
-
 
 
 ## Declare a cpp executable
@@ -107,11 +107,12 @@ add_executable(carpet_calibrator
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(carpet_calibrator ${catkin_LIBRARIES})
+add_dependencies(carpet_calibrator ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(carpet_calibrator
   ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
 )
 
 #############

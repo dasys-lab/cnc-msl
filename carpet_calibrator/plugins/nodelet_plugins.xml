@@ -1,0 +1,9 @@
+<library path="lib/libcarpet_calibrator">
+  <class name="carpet_calibrator/CarpetCalibratorNodelet"
+         type="msl_vision::CarpetCalibratorNodelet"
+         base_class_type="nodelet::Nodelet">
+    <description> 
+      CarpetCalibrator bla.
+    </description>
+  </class>
+</library>

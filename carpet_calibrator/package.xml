@@ -41,17 +41,31 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   
-  <build_depend>system_config</build_depend>
-  <run_depend>system_config</run_depend>
   
+    
+  <build_depend>system_config</build_depend>
+  <build_depend>nodelet</build_depend>
+  <build_depend>roslib</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospack</build_depend>  
+  <build_depend>image_transport</build_depend>
+  <build_depend>cv_bridge</build_depend>
 
-
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>system_config</run_depend>
+  <run_depend>nodelet</run_depend>
+  <run_depend>roslib</run_depend>
+  <run_depend>rospack</run_depend>
+  <run_depend>roscpp</run_depend>
+  
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- You can specify that this package is a metapackage here: -->
     <!-- <metapackage/> -->
 
     <!-- Other tools can request additional information be placed here -->
+    <nodelet plugin="${prefix}/plugins/nodelet_plugins.xml" />
 
   </export>
 </package>
