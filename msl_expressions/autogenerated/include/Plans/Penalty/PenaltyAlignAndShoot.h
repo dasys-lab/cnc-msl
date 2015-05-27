@@ -46,8 +46,7 @@ namespace alica
         double kickPower;
         //0 = not alignt, 1 = left, 2 = right
         int lastAlignment;
-        int startTime;
-
+        unsigned long waitBeforeBlindKick;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1431531496053) ENABLED START*/ //Add additional private methods here

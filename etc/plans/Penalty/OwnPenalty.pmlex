@@ -49,19 +49,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnPenalty.pml#1431531108950"/>
-    <value xPos="271" yPos="260" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="OwnPenalty.pml#1431531116597"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="PenaltyAlignAndShoot.beh#1431531542052"/>
     <value/>
   </extensions>
   <extensions>
     <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1432744233327"/>
+    <value xPos="455" yPos="263"/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1432744248119"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
