@@ -15,7 +15,7 @@ namespace msl
 			obstacles(ringBufferLength)
 	{
 		this->wm = wm;
-
+		maxInformationAge = 1000000000;
 	}
 
 	Robots::~Robots()
@@ -43,7 +43,7 @@ namespace msl
 	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Robots::getObstacles(int index)
 	{
 		auto x = obstacles.getLast(index);
-		if (x == nullptr)
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}

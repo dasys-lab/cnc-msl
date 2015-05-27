@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1430924951132" name="GenericOwnStandards" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1430924951132" name="GenericOwnStandards" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="1" maxCardinality="2147483647">
   <states id="1430924951133" name="Dummy" comment="" entryPoint="1430925626532">
     <outTransitions>#1430925917001</outTransitions>
     <outTransitions>#1430925918585</outTransitions>
@@ -107,7 +107,7 @@
     <inState>#1430925759928</inState>
     <outState>#1430925945981</outState>
   </transitions>
-  <entryPoints id="1430925626532" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1430925626532" name="NewEntryPoint" comment="" successRequired="true" minCardinality="1" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1430924951133</state>
   </entryPoints>

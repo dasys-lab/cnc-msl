@@ -60,4 +60,8 @@
     <key href="PenaltyAlignAndShoot.beh#1431531542052"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

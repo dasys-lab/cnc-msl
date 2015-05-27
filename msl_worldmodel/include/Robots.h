@@ -31,6 +31,7 @@ namespace msl
 	private:
 		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 		MSLWorldModel* wm;
+		unsigned long maxInformationAge = 1000000000;
 	};
 
 } /* namespace alica */
