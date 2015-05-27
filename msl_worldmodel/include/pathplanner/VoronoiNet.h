@@ -29,7 +29,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <SystemConfig.h>
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
-#include "pathplanner/VoronoiStatus.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 
 using namespace std;
 
@@ -39,6 +39,7 @@ namespace msl
 	/**
 	 * Class containing a CGAL voronoi diagramm and its status
 	 */
+	class PathEvaluator;
 	class MSLWorldModel;
 	class VoronoiNet
 	{
@@ -56,20 +57,12 @@ namespace msl
 		/**
 		 * gets the closest vertex to a given point
 		 */
-		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(Point_2 ownPos);
+		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<CNPoint2D> ownPos);
 		/**
 		 * expands a SearchNode
 		 */
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, Point_2 goal);
-		/**
-		 * gets the status of the VoronoiDiagram
-		 */
-		VoronoiStatus getStatus();
-		/**
-		 * sets the status of the VoronoiDiagram
-		 */
-		void setStatus(VoronoiStatus status);
+							shared_ptr<vector<shared_ptr<SearchNode>>> closed, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 VoronoiDiagram::Vertex
@@ -90,7 +83,7 @@ namespace msl
 		 */
 		string toString();
 
-		shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
 
 		/**
 		 * inserts sites into the VoronoiDiagram
@@ -102,7 +95,7 @@ namespace msl
 		/**
 		 * calculates distance between two points
 		 */
-		int calcDist(Point_2 ownPos, Point_2 vertexPoint);
+		int calcDist(shared_ptr<CNPoint2D> ownPos, shared_ptr<CNPoint2D> vertexPoint);
 
 		shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
 
@@ -125,7 +118,6 @@ namespace msl
 		DelaunayAdaptionPolicy delaunayPolicy;
 		shared_ptr<VoronoiDiagram> voronoi;
 		MSLWorldModel* wm;
-		VoronoiStatus status;
 		supplementary::SystemConfig* sc;
 		mutex netMutex;
 	};

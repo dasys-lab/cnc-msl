@@ -13,7 +13,7 @@ add_to_bashrc "source ~/cnws/devel/setup.bash"
 
 add_to_bashrc "# The next 2 lines determine the application domain for ALICA (Team-Modelling software)"
 add_to_bashrc "export DOMAIN_FOLDER=\"$HOME/cnws/src/cnc-msl\""
-add_to_bashrc "export DOMAIN_CONFIG_FOLDER=\"$DOMAIN_FOLDER/etc\""
+add_to_bashrc "export DOMAIN_CONFIG_FOLDER=\"$HOME/cnws/src/cnc-msl/etc\""
 
 # Add fancy bash prompt
 

@@ -57,6 +57,17 @@ namespace msl
 		return x->getInformation();
 	}
 
+	double RawSensorData::getOpticalFlowQoS(int index)
+	{
+		auto x = opticalFlow.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return 0;
+		}
+		return x->certainty;
+	}
+
+
 	shared_ptr<CNPosition> RawSensorData::getOwnPositionMotion(int index)
 	{
 		auto x = ownPositionMotion.getLast(index);

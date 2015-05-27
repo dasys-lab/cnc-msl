@@ -42,20 +42,20 @@
     <inState>#1431522763494</inState>
     <outState>#1431524769489</outState>
   </transitions>
-  <entryPoints id="1431522155980" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1431522228653</task>
+  <entryPoints id="1431522155980" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1238601692867</task>
     <state>#1431522155979</state>
   </entryPoints>
-  <entryPoints id="1431522269326" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1431522275287</task>
+  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1238601842183</task>
     <state>#1431522297705</state>
   </entryPoints>
-  <entryPoints id="1431523395534" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1431523409834</task>
+  <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../Misc/taskrepository.tsk#1432209050494</task>
     <state>#1431523482646</state>
   </entryPoints>
-  <entryPoints id="1431523422152" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1431523425270</task>
+  <entryPoints id="1431523422152" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1431524014799</state>
   </entryPoints>
 </alica:Plan>

@@ -14,22 +14,27 @@
     <outTransitions>#1430925960854</outTransitions>
   </states>
   <states id="1430925736746" name="OwnKickOff" comment="">
+    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925918585</inTransitions>
     <outTransitions>#1430925962882</outTransitions>
   </states>
   <states id="1430925743739" name="OwnGoalKick" comment="">
+    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925919866</inTransitions>
     <outTransitions>#1430925965662</outTransitions>
   </states>
   <states id="1430925751875" name="OwnFreeKick" comment="">
+    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925922843</inTransitions>
     <outTransitions>#1430925971330</outTransitions>
   </states>
   <states id="1430925759928" name="OwnCornerKick" comment="">
+    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925924151</inTransitions>
     <outTransitions>#1430925973111</outTransitions>
   </states>
   <states id="1430925774870" name="OwnPenaltyKick" comment="">
+    <plans xsi:type="alica:Plan">../Penalty/OwnPenalty.pml#1431525185678</plans>
     <inTransitions>#1430925921331</inTransitions>
     <outTransitions>#1430925967608</outTransitions>
   </states>
@@ -106,8 +111,8 @@
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1430924951133</state>
   </entryPoints>
-  <entryPoints id="1431523920444" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1431523927689</task>
+  <entryPoints id="1431523920444" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1221754402444</task>
     <state>#1431523938514</state>
   </entryPoints>
 </alica:Plan>

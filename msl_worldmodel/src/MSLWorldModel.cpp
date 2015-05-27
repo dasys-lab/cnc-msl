@@ -20,7 +20,7 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 5)
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -33,7 +33,7 @@ namespace msl
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
-		motionBurstSub = n.subscribe("/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
+		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
 
 		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,(MSLWorldModel*)this);
 

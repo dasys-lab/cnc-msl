@@ -46,6 +46,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include "MSLFootballField.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 
 
 //namespaces
@@ -55,6 +56,8 @@ namespace msl
 {
 
 	class MSLWorldModel;
+	class VoronoiNet;
+	class PathEvaluator;
 	class PathPlanner
 	{
 	public:
@@ -67,7 +70,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal);
+		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
@@ -88,27 +91,26 @@ namespace msl
 		double getPathDeviationWeight();
 		double getDribbleAngleTolerance();
 		double getDribbleRotationWeight();
+		static void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
+	    shared_ptr<VoronoiNet> getArtificialObjectNet();
 
 	private:
 		void initializeArtificialObstacles();
-		bool isInside(vector<VoronoiDiagram::Point_2> polygon, int n, VoronoiDiagram::Point_2 p);
-		bool doIntersect(VoronoiDiagram::Point_2 p1, VoronoiDiagram::Point_2 q1, VoronoiDiagram::Point_2 p2, VoronoiDiagram::Point_2 q2);
-		int orientation(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
-		bool onSegment(VoronoiDiagram::Point_2 p, VoronoiDiagram::Point_2 q, VoronoiDiagram::Point_2 r);
-		void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
 	protected:
 		MSLWorldModel* wm;
+		int currentVoronoiPos;
 		supplementary::SystemConfig* sc;
 		mutex voronoiMutex;
 		vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
 		double robotDiameter;
-		VoronoiNet artificialObjectNet;
+		shared_ptr<VoronoiNet> artificialObjectNet;
 		double pathDeviationWeight;
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
-		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<VoronoiDiagram::Vertex>>> closestVerticesToGoal, CNPoint2D goal);
+		double corridorWidthDivisor;
+		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal, CNPoint2D goal);
 	};
 
 } /* namespace alica */

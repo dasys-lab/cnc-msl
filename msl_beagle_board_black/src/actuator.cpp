@@ -236,7 +236,7 @@ int main(int argc, char** argv) {
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
-	ros::Rate loop_rate(30);		// in Hz
+	ros::Rate loop_rate(1);		// in Hz
 
 	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
@@ -310,8 +310,7 @@ int main(int argc, char** argv) {
 
 
 
-
-
+	uint8_t testy = 0;
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -321,8 +320,14 @@ int main(int argc, char** argv) {
 		timeval vorher, mitte, nachher;
 
 		//TODO ADNS3080 Test
-		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, &mbcPub);
+		//adns3080.update_motion_burst(time_now);
+		//adns3080.send_motion_burst(time_now, &mbcPub);
+
+		testy++;
+		if (testy > 200) {testy = 0;}
+
+		std::cout << testy << std::endl << "Produkt-ID: " << adns3080.getProductId() << std::endl;
+
 
 //		ros::Time::now();
 		gettimeofday(&vorher, NULL);

@@ -46,18 +46,17 @@ namespace alica
 			return;
 		}
 
-		//auto egoTarget = alloTarget.alloToEgo(*me);
-
 		msl_actuator_msgs::MotionControl mc;
+		msl_actuator_msgs::BallHandleCmd bhc;
 
 		mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
 
 		double summe = 0.0;
 		static double olddistance = 0.0;
 
-		const double Kp = 1;
+		const double Kp = 2.0;
 		const double Ki = 0.0;
-		const double Kd = 1;
+		const double Kd = 1.7;
 
 		//distance ball to robot
 		double distance = egoBallPos->length();
@@ -66,36 +65,52 @@ namespace alica
 		double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
 		olddistance = distance;
 
+		auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+
+		double ball_speed = egoBallVelocity->length();
+
+		if(egoBallVelocity->x < 0) {
+			ball_speed = ball_speed * -1;
+		}
+
+		movement += ball_speed;
+
 		cout << "movement: " << movement << endl;
+		cout << "ball speed: " << ball_speed << endl;
 		cout << "distance: " << distance << endl;
+		cout << "EgoBallVelocity " << wm->ball.getEgoBallVelocity() << endl;
 
 		// translation = 1000 => 1 m/s
-		// mc.motion.translation =
+		mc.motion.translation = movement;
 
+		if (egoBallPos->length() < 300)
+		{
 
-	if (egoBallPos->length() < 250)
-	{
-		this->success = true;
-	}
-	/*
-	 // TODO: Prüfen ob Wert korrekt ist
-	 auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
-	 std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
+			bhc.leftMotor = -30;
+			bhc.rightMotor = -30;
 
-	 auto radius_distance_ball = 600;
+			this->send(bhc);
+			//this->success = true;
+		}
+		/*
+		 // TODO: Prüfen ob Wert korrekt ist
+		 auto radius_own = sqrt(pow((me->x - ballPos->x), 2) + pow(me->y - ballPos->y, 2));
+		 std::cout << "Eigener Radius zum Ball: " << radius_own << std::endl;
 
-	 // TODO: Schnittpunkt berechnen
-	 */
-	send (mc);
+		 auto radius_distance_ball = 600;
+
+		 // TODO: Schnittpunkt berechnen
+		 */
+		send(mc);
 
 //Add additional options here
-/*PROTECTED REGION END*/
-}
-void AttackOpp::initialiseParameters()
-{
-	/*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
-	/*PROTECTED REGION END*/
-}
+		/*PROTECTED REGION END*/
+	}
+	void AttackOpp::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
 /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
