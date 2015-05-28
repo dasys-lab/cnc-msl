@@ -11,6 +11,7 @@
 #include "RawSensorData.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "engine/AlicaEngine.h"
+#include "engine/IAlicaClock.h"
 
 namespace msl
 {
@@ -114,9 +115,16 @@ namespace msl
 		return this->sharedWolrdModel;
 	}
 
-	unsigned long MSLWorldModel::getTime()
+	InfoTime MSLWorldModel::getTime()
 	{
-		return (unsigned long)ros::Time::now().sec * (unsigned long)1000000000 + (unsigned long)ros::Time::now().nsec;
+		if (this->alicaEngine != nullptr)
+		{
+			return this->alicaEngine->getIAlicaClock()->now();
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	void MSLWorldModel::sendSharedWorldModelData()

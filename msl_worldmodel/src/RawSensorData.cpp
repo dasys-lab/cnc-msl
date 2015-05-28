@@ -204,7 +204,7 @@ namespace msl
 
 	void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
 	{
-		unsigned long time = wm->getTime();
+		InfoTime time = wm->getTime();
 
 		if (data->odometry.certainty > 0)
 		{

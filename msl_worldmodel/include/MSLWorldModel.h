@@ -29,6 +29,7 @@
 #include "Game.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
+#include "InformationElement.h"
 
 namespace alica {
 	class AlicaEngine;
@@ -38,6 +39,7 @@ using namespace std;
 
 namespace msl
 {
+
 
 	class MSLSharedWorldModel;
 	class MSLWorldModel
@@ -57,7 +59,7 @@ namespace msl
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 
 		MSLSharedWorldModel* getSharedWolrdModel();
-		unsigned long getTime();
+		InfoTime getTime();
 		void sendSharedWorldModelData();
 
 		MSLWorldModel();

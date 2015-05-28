@@ -2,7 +2,7 @@
  * InformationElement.h
  *
  *  Created on: May 13, 2014
- *      Author: sni
+ *      Author: Stefan Niemczyk
  */
 
 #ifndef INFORMATIONELEMENT_H_
@@ -12,8 +12,8 @@
 
 namespace msl
 {
+	typedef signed long long InfoTime;
 
-//* InformationElement
 /**
  * Information element stores one information and provides required meta
  * data. The information can not be changed.
@@ -31,7 +31,7 @@ template<typename T>
      * \param information The information to store.
      * \param timeStamp time when information is received.
      */
-    InformationElement(std::shared_ptr<T> information,unsigned long timeStamp) : information(information), timeStamp(timeStamp)
+    InformationElement(std::shared_ptr<T> information, InfoTime timeStamp) : information(information), timeStamp(timeStamp)
     {
     }
 
@@ -54,7 +54,7 @@ template<typename T>
     {
       return this->information;
     }
-    unsigned long timeStamp; /**< validity time of the information */
+    unsigned long timeStamp; /**< reception time of the information */
     double certainty;
 
   private:
