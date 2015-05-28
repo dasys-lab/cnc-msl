@@ -39,13 +39,23 @@ namespace alica
         //Function for Left
         //Vorsteuerung
         leftx=wm->rawSensorData.getOwnVelocityMotion()->angle;
-        lefty=(leftx*leftx*0.6-leftx*0.95-1.2)*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+
+        lefty=(leftx*leftx*0.6-leftx*0.95-1.2);
+		if(lefty>1)
+			left=1;
+
+        left=lefty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
 
         //Function for Right
 
         rightx=wm->rawSensorData.getOwnVelocityMotion()->angle;
-		righty=(0.6*rightx*rightx+0.95*rightx-1.2)*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+		righty=(0.6*rightx*rightx+0.95*rightx-1.2);
+		if(righty>1)
+			righty=1;
+
+		right=righty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+
 
 
 		//PIDRegler
@@ -97,8 +107,9 @@ namespace alica
 */
 		cout<<" links) X Wert : "<< leftx << "   Y Wert :"<<lefty<<" left :"<<left<<endl;
 		cout<<" rechts) X Wert : "<< rightx << "   Y Wert :"<<righty<< "  right :"<<right<<endl;
-		left=lefty;
-		right=righty;
+
+
+
 
 
 
