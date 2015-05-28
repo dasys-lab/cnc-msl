@@ -42,7 +42,8 @@ namespace alica
 
         lefty=(leftx*leftx*0.6-leftx*0.95-1.2);
 		if(lefty>1)
-			left=1;
+			lefty=1;
+
 
         left=lefty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
