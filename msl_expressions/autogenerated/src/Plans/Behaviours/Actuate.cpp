@@ -62,7 +62,7 @@ namespace alica
 
         Abweichung_Alt = Abweichung;
 
-        Stellwert /= 4;
+      //  Stellwert /= 4;
         /*
          if (Stellwert > 100)
          Stellwert = 100;
@@ -79,8 +79,8 @@ namespace alica
         // left =  rodo->motion.translation * (1.0 / 40.0) ;
         //right = rodo->motion.translation * (1.0 / 40.0) ;
 
-        left = -Stellwert;
-        right = -Stellwert;
+        left = Stellwert;
+        right = Stellwert;
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
