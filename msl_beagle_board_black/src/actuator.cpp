@@ -273,6 +273,7 @@ int main(int argc, char** argv) {
 
 	usleep(50000);
 
+
 	uint8_t testy = 0;
 
 	(void) signal(SIGINT, exit_program);
