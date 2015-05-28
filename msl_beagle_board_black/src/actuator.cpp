@@ -290,7 +290,8 @@ int main(int argc, char** argv) {
 		if (testy > 200) {testy = 0;}
 
 		std::cout << (int) testy << std::endl << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << adns3080.read(0x0a) << "'" << std::endl;
-
+		adns3080.update_motion_burst(time_now);
+		adns3080.send_motion_burst(time_now, &mbcPub);
 
 
 //		ros::Time::now();
