@@ -266,49 +266,12 @@ int main(int argc, char** argv) {
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
+	adns3080.reset();
 
 	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
 
-	std::cout << "Produkt-ID: " << adns3080.getProductId() << std::endl;
-	// TODO BallHandle Test
 
-	BH_left.setBallHandling(50);
-	BH_left.controlBallHandling();
 	usleep(50000);
-	BH_left.controlBallHandling();
-	usleep(450000);
-
-	BH_left.setBallHandling(-50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
-
-	BH_left.setBallHandling(50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
-
-	BH_left.setBallHandling(-50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
-
-	BH_left.setBallHandling(50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
-
-	BH_left.setBallHandling(-50);
-	BH_left.controlBallHandling();
-	usleep(25000);
-	BH_left.controlBallHandling();
-	usleep(475000);
-
-
 
 	uint8_t testy = 0;
 
@@ -326,7 +289,7 @@ int main(int argc, char** argv) {
 		testy++;
 		if (testy > 200) {testy = 0;}
 
-		std::cout << testy << std::endl << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << adns3080.read(0x0a) << "'" << std::endl;
+		std::cout << (int) testy << std::endl << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << adns3080.read(0x0a) << "'" << std::endl;
 
 
 

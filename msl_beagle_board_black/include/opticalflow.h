@@ -51,7 +51,7 @@ class OpticalFlow {
 		timeval		last_updated, last_sended;
 
 
-		void		reset(void);
+
 		void		write(uint8_t address, uint8_t value);
 
 		uint8_t		getConfigurationBits(void);
@@ -63,6 +63,7 @@ class OpticalFlow {
 
 
 	public:
+		void		reset(void);
 		uint8_t		read(uint8_t address);
 
 					OpticalFlow(BlackLib::gpioName ncs_P, BlackLib::gpioName npd_P, BlackLib::gpioName rst_P, BlackLib::gpioName led_P, BlackLib::BlackSPI *spi_P);
