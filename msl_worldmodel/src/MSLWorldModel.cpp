@@ -2,7 +2,7 @@
  * MSLWorldModel.cpp
  *
  *  Created on: 27.10.2014
- *      Author: endy
+ *      Author: Andreas Witsch
  */
 
 #include <GeometryCalculator.h>
@@ -10,6 +10,8 @@
 #include "sharedworldmodel/MSLSharedWorldModel.h"
 #include "RawSensorData.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "engine/AlicaEngine.h"
+
 namespace msl
 {
 
@@ -19,8 +21,21 @@ namespace msl
 		return &instance;
 	}
 
+	bool MSLWorldModel::setEngine(alica::AlicaEngine* ae)
+	{
+		if (this->alicaEngine != nullptr)
+		{
+			this->alicaEngine = ae;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10)
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10), alicaEngine(nullptr)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -75,16 +90,6 @@ namespace msl
 	{
 		lock_guard<mutex> lock(motionBurstMutex);
 		rawSensorData.processMotionBurst(msg);
-	}
-
-	msl_sensor_msgs::WorldModelDataPtr MSLWorldModel::getWorldModelData()
-	{
-		lock_guard<mutex> lock(wmMutex);
-		if (wmData.size() == 0)
-		{
-			return nullptr;
-		}
-		return wmData.front();
 	}
 
 	MSLWorldModel::~MSLWorldModel()
@@ -183,11 +188,6 @@ namespace msl
 	int MSLWorldModel::getRingBufferLength()
 	{
 		return ringBufferLength;
-	}
-
-	pair<double, double> MSLWorldModel::transformToWorldCoordinates(double x, double y)
-	{
-		return pair<double, double>(0.0, 0.0);
 	}
 
 } /* namespace msl */

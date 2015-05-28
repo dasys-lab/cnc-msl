@@ -26,10 +26,13 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include <sstream>
 #include <iostream>
 
-#include <SystemConfig.h>
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+
+namespace supplementary {
+	class SystemConfig;
+}
 
 using namespace std;
 

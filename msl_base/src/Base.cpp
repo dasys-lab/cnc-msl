@@ -2,7 +2,7 @@
  * Base.cpp
  *
  *  Created on: 22.10.2014
- *      Author: endy
+ *      Author: Andreas Witsch
  */
 
 #include <iostream>
@@ -33,6 +33,7 @@ namespace msl
 		ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
 
 		wm = MSLWorldModel::get();
+		wm->setEngine(ae);
 
 		RobotMovement::readConfigParameters();
 

@@ -2,7 +2,7 @@
  * MSLWorldModel.h
  *
  *  Created on: 27.10.2014
- *      Author: endy
+ *      Author: Andreas Witsch
  */
 
 #ifndef MSLWORLDMODEL_H_
@@ -30,6 +30,9 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 
+namespace alica {
+	class AlicaEngine;
+}
 
 using namespace std;
 
@@ -41,9 +44,11 @@ namespace msl
 	{
 	public:
 		static MSLWorldModel* get();
+		bool setEngine(alica::AlicaEngine* ae);
 
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
+
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
@@ -51,7 +56,6 @@ namespace msl
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 
-		msl_sensor_msgs::WorldModelDataPtr getWorldModelData();
 		MSLSharedWorldModel* getSharedWolrdModel();
 		unsigned long getTime();
 		void sendSharedWorldModelData();
@@ -73,6 +77,7 @@ namespace msl
 		int ringBufferLength;
 		double kickerVoltage;
 		MSLSharedWorldModel* sharedWolrdModel;
+		alica::AlicaEngine* alicaEngine;
 
 		ros::NodeHandle n;
 		ros::Subscriber sub;
@@ -84,7 +89,6 @@ namespace msl
 		ros::Publisher sharedWorldPub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
-		list<msl_sensor_msgs::WorldModelDataPtr> wmData;
 
 		mutex wmMutex;
 		mutex joystickMutex;
@@ -92,7 +96,6 @@ namespace msl
 		ros::AsyncSpinner* spinner;
 
 	protected:
-		pair<double, double> transformToWorldCoordinates(double x, double y);
 	};
 
 } /* namespace msl */

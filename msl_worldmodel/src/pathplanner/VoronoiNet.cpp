@@ -7,6 +7,7 @@
 
 #include "pathplanner/VoronoiNet.h"
 #include "MSLWorldModel.h"
+#include <SystemConfig.h>
 
 namespace msl
 {

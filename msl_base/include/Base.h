@@ -2,7 +2,7 @@
  * Base.h
  *
  *  Created on: 22.10.2014
- *      Author: endy
+ *      Author: Andreas Witsch
  */
 
 #ifndef BASE_H_
