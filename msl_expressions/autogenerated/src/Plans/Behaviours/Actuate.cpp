@@ -40,8 +40,8 @@ namespace alica
         double summe = 0.0;
         static double olddistance = 0.0;
 
-        const double Kp = 1.0;
-        const double Ki = 1.0;
+        const double Kp = 0.3;
+        const double Ki = 0.4;
         const double Kd = 1.0;
         const double Sollwert = 90;
         double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
@@ -53,7 +53,7 @@ namespace alica
 
         Abweichung = Sollwert - wm->rawSensorData.getOpticalFlowQoS();
 
-        if ((Stellwert < 60) || (Stellwert > 90))
+        if ((Stellwert < 70) || (Stellwert > 100))
             Abweichung_Summe += Abweichung;
 
         Stellwert = Kp * Abweichung;
