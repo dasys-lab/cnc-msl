@@ -29,14 +29,27 @@ namespace alica
 
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-        double x, y;
+        double leftx, lefty, rightx, righty;
 
         if (rodo == nullptr)
         {
             cout << "Actuate RODO is empty help" << endl;
             return;
         }
+        //Function for Left
+        //Vorsteuerung
+        leftx=wm->rawSensorData.getOwnVelocityMotion()->angle;
+        lefty=(leftx*leftx*0.6-leftx*0.95-1.2)*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
+
+        //Function for Right
+
+        rightx=wm->rawSensorData.getOwnVelocityMotion()->angle;
+		righty=(0.6*rightx*rightx+0.95*rightx-1.2)*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+
+
+		//PIDRegler
+/*
         double summe = 0.0;
         static double olddistance = 0.0;
 
@@ -71,7 +84,7 @@ namespace alica
 
          return Stellwert;
 
-         */
+
 
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
         cout << "Stellwert : " << Stellwert << endl;
@@ -81,6 +94,13 @@ namespace alica
 
         left = -Stellwert;
         right = -Stellwert;
+*/
+		cout<<" links) X Wert : "<< leftx << "   Y Wert :"<<lefty<<" left :"<<left<<endl;
+		cout<<" rechts) X Wert : "<< rightx << "   Y Wert :"<<righty<< "  right :"<<right<<endl;
+		left=lefty;
+		right=righty;
+
+
 
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
