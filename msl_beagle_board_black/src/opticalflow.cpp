@@ -56,8 +56,7 @@ uint8_t OpticalFlow::read(uint8_t address) {
 	// TODO SPI TEST
 
 	ncs->setValue(low);
-	spi->transfer(address);
-	ncs->setValue(high);
+	spi->transfer(address, 100);
 
 	if (address == 0x02) {
 		usleep(75);					// wait t_SRAD-MOT
@@ -65,8 +64,7 @@ uint8_t OpticalFlow::read(uint8_t address) {
 		usleep(75);					// wait t_SRAD
 	}
 
-	ncs->setValue(low);
-	uint8_t ret = spi->transfer(0x00);
+	uint8_t ret = spi->transfer(0x00, 100);
 	ncs->setValue(high);
 
 	return ret;
