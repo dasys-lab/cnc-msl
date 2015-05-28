@@ -51,6 +51,11 @@ namespace alica
 
         mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
 
+        const double rotate_P = 2.0;
+
+		mc.motion.angle = egoBallPos->angleTo();
+		mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+
         double summe = 0.0;
         static double olddistance = 0.0;
 
