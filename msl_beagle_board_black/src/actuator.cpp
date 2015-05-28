@@ -326,7 +326,7 @@ int main(int argc, char** argv) {
 		testy++;
 		if (testy > 200) {testy = 0;}
 
-		std::cout << testy << std::endl << "Produkt-ID: " << adns3080.getProductId() << std::endl;
+		std::cout << testy << std::endl << "Produkt-ID: '" << (int) adns3080.getProductId() << "'" << std::endl;
 
 
 //		ros::Time::now();
