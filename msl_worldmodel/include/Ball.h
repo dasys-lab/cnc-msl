@@ -29,13 +29,13 @@ namespace msl
 		Ball(MSLWorldModel* wm);
 		virtual ~Ball();
 		bool haveBall();
-		shared_ptr<CNPoint2D> getAlloBallPosition();
-		shared_ptr<CNPoint2D> getEgoBallPosition();
-		shared_ptr<CNPoint2D> getEgoRawBallPosition();
-		shared_ptr<CNVelocity2D> getEgoBallVelocity();
+		shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
+		shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> getEgoRawBallPosition();
+		shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
 		void updateOnWorldModelData();
 	private:
-		shared_ptr<CNPoint2D> lastKnownBallPos;
+		shared_ptr<geometry::CNPoint2D> lastKnownBallPos;
 		double HAVE_BALL_TOLERANCE_DRIBBLE;
 		double KICKER_DISTANCE;
 		double KICKER_ANGLE;

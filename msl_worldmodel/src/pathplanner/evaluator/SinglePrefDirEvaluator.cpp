@@ -25,8 +25,8 @@ namespace msl
 	}
 
 	double SinglePrefDirEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
-										shared_ptr<vector<shared_ptr<CNPoint2D> > > path, CNPoint2D startPos,
-										CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
+										shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
+										geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
 		//CALCULATE COST FUNCTION AND HEURISTIC FUNCTION
 

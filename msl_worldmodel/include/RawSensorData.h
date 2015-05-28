@@ -34,15 +34,15 @@ namespace msl
 		RawSensorData(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~RawSensorData();
 		shared_ptr<vector<double>> getDistanceScan(int index = 0);
-		shared_ptr<CNPoint2D> getBallPosition(int index = 0);
-		shared_ptr<pair<shared_ptr<CNPoint2D>, double>> getBallPositionAndCertaincy(int index = 0);
-		shared_ptr<CNVelocity2D> getBallVelocity(int index = 0);
+		shared_ptr<geometry::CNPoint2D> getBallPosition(int index = 0);
+		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getBallPositionAndCertaincy(int index = 0);
+		shared_ptr<geometry::CNVelocity2D> getBallVelocity(int index = 0);
 		shared_ptr<bool> getLightBarrier(int index = 0);
-		shared_ptr<CNPoint2D> getOpticalFlow(int index = 0);
+		shared_ptr<geometry::CNPoint2D> getOpticalFlow(int index = 0);
 		double getOpticalFlowQoS(int index = 0);
-		shared_ptr<CNPosition> getOwnPositionMotion(int index = 0);
-		shared_ptr<CNPosition> getOwnPositionVision(int index = 0);
-		shared_ptr<pair<shared_ptr<CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
+		shared_ptr<geometry::CNPosition> getOwnPositionMotion(int index = 0);
+		shared_ptr<geometry::CNPosition> getOwnPositionVision(int index = 0);
+		shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
 		shared_ptr<int> getCompassOrientation(int index = 0);
@@ -54,12 +54,12 @@ namespace msl
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
-		RingBuffer<InformationElement<CNPoint2D>> ballPosition;
-		RingBuffer<InformationElement<CNVelocity2D>> ballVelocity;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
+		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		RingBuffer<InformationElement<bool>> lightBarrier;
-		RingBuffer<InformationElement<CNPoint2D>> opticalFlow;
-		RingBuffer<InformationElement<CNPosition>> ownPositionMotion;
-		RingBuffer<InformationElement<CNPosition>> ownPositionVision;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> opticalFlow;
+		RingBuffer<InformationElement<geometry::CNPosition>> ownPositionMotion;
+		RingBuffer<InformationElement<geometry::CNPosition>> ownPositionVision;
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
 		RingBuffer<InformationElement<int>> compass;

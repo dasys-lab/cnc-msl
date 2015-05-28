@@ -11,17 +11,20 @@
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
 
+namespace geometry {
+	class CNPoint2D;
+}
+
 using namespace std;
 using namespace msl_actuator_msgs;
 
-
 namespace msl {
-class CNPoint2D;
+
 	class RobotMovement {
 	public:
 		virtual ~RobotMovement();
-		static MotionControl moveToPointCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
-		static MotionControl interceptCarefully(shared_ptr<CNPoint2D> egoTarget, shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance);
+		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;

@@ -19,9 +19,9 @@
 #include <tuple>
 #include <mutex>
 
-#include "SystemConfig.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
+#include <SystemConfig.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
 #include "Situation.h"
 #include "RawSensorData.h"
 #include "Robots.h"

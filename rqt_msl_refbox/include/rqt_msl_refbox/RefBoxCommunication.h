@@ -29,27 +29,21 @@ namespace rqt_msl_refbox
 		quint16 destPort;
 		QString interface;
 
-		/* TCP Socket */
-		QTcpSocket *socket;
-		QUdpSocket *udpSocket;
-		//QSocketNotifier *notifier;
+
+		QTcpSocket *tcpsocket;/**< TCP Socket for point-to-point connection*/
+
+		QUdpSocket *udpSocket;/**< UDP Socket for multi-cast connection */
 
 		char data_received[1500];
 		int before_stop_gamePart;
 
 	public Q_SLOTS:
-		void connectToHost(void);
+		void connectToRefBox(void);
 		void receiveRefMsg(void);
 
 		void SetInterface(void);
 		void SetHostAdd(void);
 		void SetHostPort(int val);
-
-		void update_manual_config(void);
-		void apply_Button_pressed(void);
-
-		void Timer_start_bot_pressed(void);
-		void Timer_stop_bot_pressed(void);
 
 	Q_SIGNALS:
 		void transmitCoach(void);

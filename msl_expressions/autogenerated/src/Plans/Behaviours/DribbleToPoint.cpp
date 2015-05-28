@@ -16,7 +16,7 @@ namespace alica
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = *alloBallPos->alloToEgo(*ownPos);
 
-        alloTargetPos = CNPoint2D(0, 0);
+        alloTargetPos = geometry::CNPoint2D(0, 0);
         egoTargetPos = *alloTargetPos.alloToEgo(*ownPos);
 
         /*PROTECTED REGION END*/

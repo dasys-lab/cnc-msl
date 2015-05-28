@@ -21,8 +21,8 @@ namespace msl
 		// TODO Auto-generated destructor stub
 	}
 
-	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<CNPoint2D> egoTarget,
-														shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance)
+	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+														shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance)
 	{
 		MotionControl mc;
 		mc.motion.angle = egoTarget->angleTo();
@@ -39,8 +39,8 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::interceptCarefully(shared_ptr<CNPoint2D> egoTarget,
-													shared_ptr<CNPoint2D> egoAlignPoint, double snapDistance)
+	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance)
 	{
 		MotionControl mc;
 		mc.motion.angle = egoTarget->angleTo();

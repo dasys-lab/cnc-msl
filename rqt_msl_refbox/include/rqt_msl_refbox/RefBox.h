@@ -44,8 +44,8 @@ namespace rqt_msl_refbox
 
 		bool eventFilter(QObject* watched, QEvent* event);
 
-		QDialog* RBCommQDialog;
-		RefBoxCommunication* RBComm;
+		QDialog* refBoxCommQDialog;
+		RefBoxCommunication* _refBoxCommQDialog;
 
 	};
 

@@ -27,9 +27,9 @@ namespace msl
 	{
 	}
 
-	shared_ptr<CNPoint2D> Ball::getAlloBallPosition()
+	shared_ptr<geometry::CNPoint2D> Ball::getAlloBallPosition()
 	{
-		shared_ptr<CNPoint2D> p;
+		shared_ptr<geometry::CNPoint2D> p;
 		auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
 		if (ownPos.operator bool())
 		{
@@ -39,7 +39,7 @@ namespace msl
 		return p;
 	}
 
-	shared_ptr<CNPoint2D> Ball::getEgoBallPosition()
+	shared_ptr<geometry::CNPoint2D> Ball::getEgoBallPosition()
 	{
 		if (this->wm->rawSensorData.getBallPosition() != nullptr)
 			return this->wm->rawSensorData.getBallPosition();
@@ -55,7 +55,7 @@ namespace msl
 		}
 	}
 
-	shared_ptr<CNVelocity2D> Ball::getEgoBallVelocity()
+	shared_ptr<geometry::CNVelocity2D> Ball::getEgoBallVelocity()
 	{
 		if (this->wm->rawSensorData.getBallVelocity() != nullptr)
 			return this->wm->rawSensorData.getBallVelocity();
@@ -80,7 +80,7 @@ namespace msl
 			haveBallDistanceDynamic = 0;
 		}
 
-		shared_ptr<CNPoint2D> ballPos = this->wm->rawSensorData.getBallPosition();
+		shared_ptr<geometry::CNPoint2D> ballPos = this->wm->rawSensorData.getBallPosition();
 		if (ballPos == nullptr)
 		{
 			// TODO predict ball, Endy do it!
@@ -122,7 +122,7 @@ namespace msl
 		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
 
-	shared_ptr<CNPoint2D> Ball::getEgoRawBallPosition()
+	shared_ptr<geometry::CNPoint2D> Ball::getEgoRawBallPosition()
 	{
 		return this->wm->rawSensorData.getBallPosition();
 	}

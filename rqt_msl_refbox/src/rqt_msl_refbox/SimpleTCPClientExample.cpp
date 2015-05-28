@@ -1,30 +1,3 @@
-/*
- * Test.cpp
- *
- *  Created on: May 27, 2015
- *      Author: Stephan Opfer
- */
-
-#include "Test.h"
-
-namespace rqt_pm_control
-{
-
-	Test::Test()
-	{
-		// TODO Auto-generated constructor stub
-
-	}
-
-	Test::~Test()
-	{
-		// TODO Auto-generated destructor stub
-	}
-
-} /* namespace rqt_pm_control */
-
-/* Client code in C */
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

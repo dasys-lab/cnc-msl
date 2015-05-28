@@ -33,7 +33,7 @@ namespace msl
 	{
 	public:
 		SearchNode();
-		SearchNode(shared_ptr<CNPoint2D> vertex, double cost, shared_ptr<SearchNode> predecessor);
+		SearchNode(shared_ptr<geometry::CNPoint2D> vertex, double cost, shared_ptr<SearchNode> predecessor);
 		virtual ~SearchNode();
 		/**
 		 * gets the cost
@@ -59,12 +59,12 @@ namespace msl
 		 * gets the vertex
 		 * @return shared_ptr<VoronoiDiagram::Vertex>
 		 */
-		shared_ptr<CNPoint2D> getVertex();
+		shared_ptr<geometry::CNPoint2D> getVertex();
 		/**
 		 * sets the vertex
 		 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
 		 */
-		void setVertex(shared_ptr<CNPoint2D> vertex);
+		void setVertex(shared_ptr<geometry::CNPoint2D> vertex);
 		/**
 		 * compares two SearchNodes, true if first has lower cost
 		 * @param first shared_ptr<SearchNode>
@@ -76,7 +76,7 @@ namespace msl
 	private:
 		shared_ptr<SearchNode> predecessor;
 		double cost;
-		shared_ptr<CNPoint2D> vertex;
+		shared_ptr<geometry::CNPoint2D> vertex;
 	};
 
 } /* namespace alicaTests */

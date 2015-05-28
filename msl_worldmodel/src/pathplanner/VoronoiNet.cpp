@@ -36,7 +36,7 @@ namespace msl
 	 * gets the closest Vertex to a given position
 	 * @param pos position
 	 */
-	shared_ptr<VoronoiDiagram::Vertex> VoronoiNet::findClosestVertexToOwnPos(shared_ptr<CNPoint2D> pos)
+	shared_ptr<VoronoiDiagram::Vertex> VoronoiNet::findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> pos)
 	{
 		shared_ptr<VoronoiDiagram::Vertex> ret = nullptr;
 		VoronoiDiagram::Vertex_iterator iter = voronoi->vertices_begin();
@@ -50,7 +50,7 @@ namespace msl
 			}
 			else
 			{
-				int dist = calcDist(pos, make_shared<CNPoint2D>(iter->point().x(), iter->point().y()));
+				int dist = calcDist(pos, make_shared<geometry::CNPoint2D>(iter->point().x(), iter->point().y()));
 				if (dist < minDist)
 				{
 					ret = make_shared<VoronoiDiagram::Vertex>(*iter);
@@ -67,7 +67,7 @@ namespace msl
 	 * @param ownPos Point_2
 	 * @param vertexPoint Point_2
 	 */
-	int VoronoiNet::calcDist(shared_ptr<CNPoint2D> ownPos, shared_ptr<CNPoint2D> vertexPoint)
+	int VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> vertexPoint)
 	{
 		int ret = sqrt(pow((vertexPoint->x - ownPos->x), 2) + pow((vertexPoint->y - ownPos->y), 2));
 		return ret;
@@ -129,7 +129,7 @@ namespace msl
 		{
 			ret.push_back(
 					make_shared<SearchNode>(
-							SearchNode(make_shared<CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().y()), 0, nullptr)));
+							SearchNode(make_shared<geometry::CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().y()), 0, nullptr)));
 		}
 		return ret;
 	}
@@ -139,7 +139,7 @@ namespace msl
 	 * @param currentNode shared_ptr<SearchNode>
 	 */
 	void VoronoiNet::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-	shared_ptr<vector<shared_ptr<SearchNode>>> closed, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval)
+	shared_ptr<vector<shared_ptr<SearchNode>>> closed, geometry::CNPoint2D startPos, geometry::CNPoint2D goal, PathEvaluator* eval)
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
@@ -187,7 +187,7 @@ namespace msl
 	 * @param points vector<CNPoint2D>
 	 * @return shared_ptr<VoronoiDiagram>
 	 */
-	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<CNPoint2D> points)
+	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<geometry::CNPoint2D> points)
 	{
 		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
@@ -238,7 +238,7 @@ namespace msl
 		return ss.str();
 	}
 
-	bool msl::VoronoiNet::isOwnCellEdge(CNPoint2D startPos, shared_ptr<SearchNode> currentNode,
+	bool msl::VoronoiNet::isOwnCellEdge(geometry::CNPoint2D startPos, shared_ptr<SearchNode> currentNode,
 										shared_ptr<SearchNode> nextNode)
 	{
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(Point_2(startPos.x, startPos.y));
@@ -328,9 +328,9 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<CNPoint2D>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
 	{
-		shared_ptr<vector<shared_ptr<CNPoint2D>>> ret = make_shared<vector<shared_ptr<CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 		if(loc.which() == 0)
@@ -342,7 +342,7 @@ namespace msl
 			{
 				if(edge->has_source())
 				{
-					ret->push_back(make_shared<CNPoint2D>(edge->source()->point().x(),edge->source()->point().y()));
+					ret->push_back(make_shared<geometry::CNPoint2D>(edge->source()->point().x(),edge->source()->point().y()));
 				}
 				edge = edge->next();
 			}while (edge != begin);

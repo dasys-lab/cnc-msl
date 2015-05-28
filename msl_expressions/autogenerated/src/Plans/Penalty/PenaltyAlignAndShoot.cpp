@@ -42,8 +42,8 @@ namespace alica
     void PenaltyAlignAndShoot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1431531496053) ENABLED START*/ //Add additional options here
-        shared_ptr < CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
@@ -58,14 +58,14 @@ namespace alica
         send(bhc);
         bool aimingLeft = true;
         // Create ego-centric 2D target...
-        shared_ptr < CNPoint2D > egoTarget;
-        CNPoint2D alloLeftAimPoint(field->FieldLength / 2 + ballDiameter,
+        shared_ptr < geometry::CNPoint2D > egoTarget;
+        geometry::CNPoint2D alloLeftAimPoint(field->FieldLength / 2 + ballDiameter,
                                    goalLineLength / 2 - aimOffset * ballDiameter);
-        CNPoint2D alloRightAimPoint(field->FieldLength / 2 + ballDiameter,
+        geometry::CNPoint2D alloRightAimPoint(field->FieldLength / 2 + ballDiameter,
                                     -goalLineLength / 2 + aimOffset * ballDiameter);
-        CNPoint2D frontLeft(field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
-        CNPoint2D frontRight(field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
-        CNPoint2D back;
+        geometry::CNPoint2D frontLeft(field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
+        geometry::CNPoint2D frontRight(field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
+        geometry::CNPoint2D back;
         if (lastAlignment == 0)
         {
             back.x = field->FieldLength / 2 + robotDiameter / 2;
@@ -85,13 +85,13 @@ namespace alica
         {
             for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
             {
-                if (GeometryCalculator::isInsideRectangle(frontLeft, back, CNPoint2D(it->x, it->y)))
+                if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, geometry::CNPoint2D(it->x, it->y)))
                 {
                     aimingLeft = false;
                     lastAlignment = 2;
                     break;
                 }
-                if (GeometryCalculator::isInsideRectangle(frontRight, back, CNPoint2D(it->x, it->y)))
+                if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back, geometry::CNPoint2D(it->x, it->y)))
                 {
                     aimingLeft = true;
                     lastAlignment = 1;
@@ -112,8 +112,8 @@ namespace alica
         }
         double egoTargetAngle = egoTarget->angleTo();
         double egoBallAngle = egoBallPos->angleTo();
-        double deltaHoleAngle = GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
-        double deltaBallAngle = GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+        double deltaHoleAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
+        double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
         unsigned long timePassed = wm->getTime() - wm->game.getTimeSinceStart();
         cout << "PAAS: " << timePassed << endl;
         // Counter for correct aiming
@@ -136,7 +136,7 @@ namespace alica
                 * min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
         lastRotError = deltaHoleAngle;
         // crate the motion orthogonal to the ball
-        shared_ptr < CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
         driveTo = driveTo * mc.motion.rotation;
 
         // add the motion towards the ball

@@ -3,8 +3,10 @@ project(msl_worldmodel)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
+
 ## Used for cgal
 set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Don't override flags")
 set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core -frounding-math ${CMAKE_CXX_FLAGS}")
@@ -12,7 +14,7 @@ set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core -frounding-math ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config msl_actuator_msgs msl_sensor_msgs event_handling)
+find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling)
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 ## System dependencies are found with CMake's conventions
@@ -87,8 +89,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_worldmodel
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+  CATKIN_DEPENDS cnc_geometry
   DEPENDS cgal
 )
 
@@ -99,17 +100,13 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+message ("<<<< MSLWM: ${catkin_INCLUDE_DIRS}")
  include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
  include(${CGAL_USE_FILE})
 
 ## Declare a cpp library
  add_library(msl_worldmodel
    src/MSLWorldModel.cpp
-   src/GeometryCalculator.cpp
-   src/container/CNPoint2D.cpp
-   src/container/CNPoint3D.cpp
-   src/container/CNPosition.cpp
-   src/container/CNVelocity2D.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp

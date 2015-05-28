@@ -70,7 +70,7 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, CNPoint2D ownPos, CNPoint2D goal, PathEvaluator* eval);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, geometry::CNPoint2D ownPos, geometry::CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
@@ -110,7 +110,7 @@ namespace msl
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
-		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<CNPoint2D>>> closestVerticesToGoal, CNPoint2D goal);
+		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, geometry::CNPoint2D goal);
 	};
 
 } /* namespace alica */

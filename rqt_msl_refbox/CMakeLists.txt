@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(rqt_msl_refbox)
+
+## Use c++ 11x std
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp)
 
@@ -68,4 +72,4 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 # Test stuff
 
-add_executable(SimpleRefereeBoxClientTest src/rqt_msl_refbox/Test.cpp)
+add_executable(SimpleTCPClientExample src/rqt_msl_refbox/SimpleTCPClientExample.cpp)

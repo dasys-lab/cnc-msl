@@ -9,7 +9,7 @@ namespace rqt_msl_refbox
 {
 
 	RefBox::RefBox() :
-			rqt_gui_cpp::Plugin(), widget_(0)
+			rqt_gui_cpp::Plugin(), widget_(0), refBoxCommQDialog(nullptr), _refBoxCommQDialog(nullptr)
 	{
 		setObjectName("RefBox");
 	}
@@ -27,8 +27,8 @@ namespace rqt_msl_refbox
 
 		widget_->installEventFilter(this);
 
-		this->RBCommQDialog = new QDialog(widget_);
-		this->RBComm = new RefBoxCommunication(this->RBCommQDialog);
+		this->refBoxCommQDialog = new QDialog(widget_);
+		this->_refBoxCommQDialog = new RefBoxCommunication(this->refBoxCommQDialog);
 
 	}
 
@@ -42,7 +42,6 @@ namespace rqt_msl_refbox
 			{
 				cout << "R pressed" << endl;
 				this->showRBDialog();
-				return true;
 			}
 		}
 		return true;
@@ -50,14 +49,13 @@ namespace rqt_msl_refbox
 
 	void RefBox::showRBDialog()
 	{
-		RBComm->update_manual_config();
-		RBCommQDialog->show();
+		refBoxCommQDialog->show();
 	}
 
 	void RefBox::shutdownPlugin()
 	{
-		delete RBComm;
-		delete RBCommQDialog;
+		delete _refBoxCommQDialog;
+		delete refBoxCommQDialog;
 	}
 
 	void RefBox::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const

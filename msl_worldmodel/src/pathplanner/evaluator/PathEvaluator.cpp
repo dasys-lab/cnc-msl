@@ -20,7 +20,7 @@ namespace msl
 	{
 	}
 
-	double PathEvaluator::distance(CNPoint2D first, CNPoint2D second)
+	double PathEvaluator::distance(geometry::CNPoint2D first, geometry::CNPoint2D second)
 	{
 		return std::sqrt(std::pow(first.x - second.x, 2) + std::pow(first.y - second.y, 2));
 	}
@@ -30,9 +30,9 @@ namespace msl
 		return a * a;
 	}
 
-	double PathEvaluator::eval(double costsSoFar, CNPoint2D startPos,
-									CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi,
-									shared_ptr<vector<shared_ptr<CNPoint2D> > > path)
+	double PathEvaluator::eval(double costsSoFar, geometry::CNPoint2D startPos,
+							   geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi,
+									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
 	{
 
 	}

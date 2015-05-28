@@ -21,10 +21,10 @@ namespace msl
 	public:
 		PathProxy(MSLWorldModel* wm);
 		virtual ~PathProxy();
-		shared_ptr<CNPoint2D> getEgoDirection(CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval);
+		shared_ptr<geometry::CNPoint2D> getEgoDirection(geometry::CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval);
 
 	private:
-		CNPoint2D lastPathTarget;
+		geometry::CNPoint2D lastPathTarget;
 		MSLWorldModel* wm;
 
 	};

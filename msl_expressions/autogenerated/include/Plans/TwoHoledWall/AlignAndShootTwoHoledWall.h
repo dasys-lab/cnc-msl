@@ -50,15 +50,15 @@ namespace alica
         bool kicked;
         int iterationsAfterKick;
 
-        CNPoint3D higherHole;
-        CNPoint3D lowerHole;
+        geometry::CNPoint3D higherHole;
+        geometry::CNPoint3D lowerHole;
 
         int timesOnTargetThreshold;
         int wheelSpeed;
         double voltage4shoot;
 
-        vector<shared_ptr<CNPoint2D>> highKickList;
-        vector<shared_ptr<CNPoint2D>> lowKickList;
+        vector<shared_ptr<geometry::CNPoint2D>> highKickList;
+        vector<shared_ptr<geometry::CNPoint2D>> lowKickList;
 
         unsigned short setKickPower(double distance);
 

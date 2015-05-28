@@ -54,7 +54,7 @@ namespace alica
                                                                "distance", NULL);
             double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.LowKickList", sectionName.c_str(), "power",
                                                             NULL);
-            auto p = make_shared < CNPoint2D > (distance, power);
+            auto p = make_shared < geometry::CNPoint2D > (distance, power);
             lowKickList.push_back(p);
         }
 
@@ -64,7 +64,7 @@ namespace alica
                                                                "distance", NULL);
             double power = (*this->sc)["Show"]->get<double>("TwoHoledWall.HighKickList", sectionName.c_str(), "power",
                                                             NULL);
-            auto p = make_shared < CNPoint2D > (distance, power);
+            auto p = make_shared < geometry::CNPoint2D > (distance, power);
             highKickList.push_back(p);
         }
         /*PROTECTED REGION END*/
@@ -77,8 +77,8 @@ namespace alica
     void AlignAndShootTwoHoledWall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
-        shared_ptr < CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
         // stupid variant to be sure, that we have shoot!!!
         if (kicked)
@@ -114,8 +114,8 @@ namespace alica
         send(bhc);
 
         // Create ego-centric 2D target...
-        shared_ptr < CNPoint2D > egoHole;
-        CNPoint2D alloHole(higherHole.x, higherHole.y);
+        shared_ptr < geometry::CNPoint2D > egoHole;
+        geometry::CNPoint2D alloHole(higherHole.x, higherHole.y);
         if (useLowerHole)
         {
             alloHole.x = lowerHole.x;
@@ -125,8 +125,8 @@ namespace alica
 
         double egoHoleAngle = egoHole->angleTo();
         double egoBallAngle = egoBallPos->angleTo();
-        double deltaHoleAngle = GeometryCalculator::deltaAngle(egoHoleAngle, M_PI);
-        double deltaBallAngle = GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+        double deltaHoleAngle = geometry::GeometryCalculator::deltaAngle(egoHoleAngle, M_PI);
+        double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
 
         // Counter for correct aiming
 //		if (fabs(deltaHoleAngle) < this->angleTolerance)
@@ -181,7 +181,7 @@ namespace alica
         lastRotError = deltaHoleAngle;
 
         // crate the motion orthogonal to the ball
-        shared_ptr < CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
         driveTo = driveTo * mc.motion.rotation;
 
         // add the motion towards the ball
@@ -220,7 +220,7 @@ namespace alica
     /*PROTECTED REGION ID(methods1417620683982) ENABLED START*/ //Add additional methods here
     unsigned short AlignAndShootTwoHoledWall::setKickPower(double distance)
     {
-        vector < shared_ptr < CNPoint2D >> *kickList;
+        vector < shared_ptr < geometry::CNPoint2D >> *kickList;
         if (useLowerHole)
         {
             kickList = &lowKickList;

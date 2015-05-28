@@ -40,8 +40,8 @@ namespace msl
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
-
 	}
+
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{
 		this->rawSensorData.processJoystickCommand(msg);
@@ -126,7 +126,7 @@ namespace msl
 		}
 		if (ball != nullptr)
 		{
-			shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(ball->first->x, ball->first->y);
+			shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(ball->first->x, ball->first->y);
 			auto p = point->egoToAllo(*pos);
 			msg.ball.point.x = p->x;
 			msg.ball.point.y = p->y;
@@ -165,7 +165,7 @@ namespace msl
 				msg.obstacles.reserve(obstacles->size());
 				for(auto& x : *obstacles)
 				{
-					shared_ptr<CNPoint2D> point = make_shared<CNPoint2D>(x.x, x.y);
+					shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
 					auto p = point->egoToAllo(*pos);
 					msl_msgs::Point2dInfo info;
 					info.x = p->x;

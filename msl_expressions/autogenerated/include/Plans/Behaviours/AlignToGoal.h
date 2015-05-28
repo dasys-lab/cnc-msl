@@ -11,11 +11,11 @@ using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class AlineToGoal : public DomainBehaviour
+    class AlignToGoal : public DomainBehaviour
     {
     public:
-        AlineToGoal();
-        virtual ~AlineToGoal();
+        AlignToGoal();
+        virtual ~AlignToGoal();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1415205272843) ENABLED START*/ //Add additional public methods here
         /*PROTECTED REGION END*/

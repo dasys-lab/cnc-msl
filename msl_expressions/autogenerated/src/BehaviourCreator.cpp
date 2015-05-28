@@ -1,3 +1,4 @@
+
 using namespace std;
 
 #include "BehaviourCreator.h"
@@ -33,7 +34,7 @@ using namespace std;
 
 #include  "Plans/Behaviours/Actuate.h"
 
-#include  "Plans/Behaviours/AlineToGoal.h"
+#include  <Plans/Behaviours/AlignToGoal.h>
 
 #include  "Plans/Behaviours/DriveForward.h"
 
@@ -144,7 +145,7 @@ namespace alica
 
             case 1415205285582:
 
-                return make_shared<AlineToGoal>();
+                return make_shared<AlignToGoal>();
                 break;
 
             case 1417017580650:

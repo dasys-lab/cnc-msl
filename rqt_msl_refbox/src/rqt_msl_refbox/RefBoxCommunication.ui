@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>741</width>
-    <height>310</height>
+    <width>429</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,24 +15,14 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>462</width>
-       <height>16</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QGroupBox" name="groupBox">
+       <property name="locale">
+        <locale language="English" country="UnitedKingdom"/>
+       </property>
        <property name="title">
-        <string>Connect</string>
+        <string>Connection</string>
        </property>
        <layout class="QVBoxLayout">
         <property name="spacing">
@@ -112,16 +102,6 @@
          </layout>
         </item>
         <item>
-         <widget class="QProgressBar" name="progressBar">
-          <property name="value">
-           <number>0</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout">
           <property name="spacing">
            <number>6</number>
@@ -139,30 +119,20 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="Connect_bot">
+           <widget class="QPushButton" name="Connect_btn">
             <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
             </property>
+            <property name="locale">
+             <locale language="English" country="UnitedKingdom"/>
+            </property>
             <property name="text">
-             <string>Disconnect</string>
+             <string>Connect</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>201</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item>
            <layout class="QHBoxLayout">
@@ -203,144 +173,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
-       <property name="title">
-        <string>Manual Config</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <layout class="QGridLayout" name="gridLayout1">
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="cambada_goals_sb"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="mf_goals_sb"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="game_period_cb">
-            <item>
-             <property name="text">
-              <string>Not In Game</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>1st Half</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2nd Half</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Cambada Goals:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>MF Goals:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Game Period:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QLineEdit" name="StartMin">
-              <property name="text">
-               <string>0</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="StartSec">
-              <property name="text">
-               <string>0</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Start Time:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="timmer_start_bot">
-            <property name="text">
-             <string>Timer ReStart</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="apply_Button">
-            <property name="text">
-             <string>Apply Goals &amp; Period</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
       <widget class="QGroupBox" name="groupBox_2">
+       <property name="locale">
+        <locale language="English" country="UnitedKingdom"/>
+       </property>
        <property name="title">
-        <string>Refbox mode</string>
+        <string>RefBox Mode</string>
        </property>
        <layout class="QVBoxLayout">
         <property name="spacing">
@@ -359,22 +197,9 @@
          <number>9</number>
         </property>
         <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>101</width>
-            <height>30</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="RefBox_Bot">
+         <widget class="QRadioButton" name="RefBox_Multicast_XML_btn">
           <property name="text">
-           <string>RefBox</string>
+           <string>XML/Multi</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -382,9 +207,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="NewRefBox_Bot">
+         <widget class="QRadioButton" name="RefBox_TCP_XML_btn">
           <property name="text">
-           <string>New RefBox</string>
+           <string>XML/TCP</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -392,22 +217,9 @@
          </widget>
         </item>
         <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>101</width>
-            <height>30</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="Basestation_Bot">
+         <widget class="QRadioButton" name="RefBox_Local_btn">
           <property name="text">
-           <string>Basestation</string>
+           <string>LOCAL</string>
           </property>
           <property name="checked">
            <bool>false</bool>
@@ -431,19 +243,6 @@
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="spacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>462</width>
-       <height>16</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item>
     <layout class="QHBoxLayout">
@@ -476,7 +275,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="CloseBot">
+      <widget class="QPushButton" name="Close_btn">
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
@@ -505,7 +304,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>CloseBot</sender>
+   <sender>Close_btn</sender>
    <signal>clicked()</signal>
    <receiver>RefBoxCommunication</receiver>
    <slot>close()</slot>

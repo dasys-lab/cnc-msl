@@ -49,7 +49,7 @@ namespace msl
 		/**
 		 * generates a VoronoiDiagram and inserts given points
 		 */
-		shared_ptr<VoronoiDiagram> generateVoronoiDiagram(vector<CNPoint2D> points);
+		shared_ptr<VoronoiDiagram> generateVoronoiDiagram(vector<geometry::CNPoint2D> points);
 		/**
 		 * gets the SearchNode with lowest dist to goal
 		 */
@@ -57,12 +57,12 @@ namespace msl
 		/**
 		 * gets the closest vertex to a given point
 		 */
-		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<CNPoint2D> ownPos);
+		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> ownPos);
 		/**
 		 * expands a SearchNode
 		 */
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, CNPoint2D startPos, CNPoint2D goal, PathEvaluator* eval);
+							shared_ptr<vector<shared_ptr<SearchNode>>> closed, geometry::CNPoint2D startPos, geometry::CNPoint2D goal, PathEvaluator* eval);
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 VoronoiDiagram::Vertex
@@ -83,7 +83,7 @@ namespace msl
 		 */
 		string toString();
 
-		shared_ptr<vector<shared_ptr<CNPoint2D>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
 
 		/**
 		 * inserts sites into the VoronoiDiagram
@@ -95,11 +95,11 @@ namespace msl
 		/**
 		 * calculates distance between two points
 		 */
-		int calcDist(shared_ptr<CNPoint2D> ownPos, shared_ptr<CNPoint2D> vertexPoint);
+		int calcDist(shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> vertexPoint);
 
 		shared_ptr<VoronoiDiagram::Site_2> getSiteOfFace(VoronoiDiagram::Point_2 point);
 
-		bool isOwnCellEdge(CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+		bool isOwnCellEdge(geometry::CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
 
 	private:
 		/**
