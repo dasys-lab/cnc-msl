@@ -62,7 +62,7 @@ namespace alica
 
         Abweichung_Alt = Abweichung;
 
-      //  Stellwert /= 4;
+       Stellwert /= 4;
         /*
          if (Stellwert > 100)
          Stellwert = 100;
