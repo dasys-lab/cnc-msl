@@ -44,7 +44,7 @@ namespace alica
         x=wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         lefty=(x*x*0.6-x*0.95-1.2);
-        feedForwardLeft = max(min(lefty, 1.0), -1.4);
+        feedForwardLeft = max(min(lefty, 1.0), -1.6);
 
 
         left=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
@@ -55,7 +55,7 @@ namespace alica
 
 		righty=(0.6*x*x+0.95*x-1.2);
 
-		feedForwardRight=max(min(righty, 1.0), -1.4);
+		feedForwardRight=max(min(righty, 1.0), -1.6);
 
 		right=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
