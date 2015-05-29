@@ -79,7 +79,7 @@ namespace alica
 
 		 Abweichung_AltLeft = AbweichungLeft;
 
-		 StellwertLeft /= 4;
+		 //StellwertLeft /= 4;
 
 
 
@@ -115,7 +115,7 @@ namespace alica
 
 		 Abweichung_AltRight = AbweichungRight;
 
-		 StellwertRight /= 4;
+		 //StellwertRight /= 4;
 		 /*
 		 if (Stellwert > 100)
 		 Stellwert = 100;
@@ -138,7 +138,7 @@ namespace alica
 
 		cout << "Winkel : " << x << endl;
 		cout<< "Speed : "<<wm->rawSensorData.getOwnVelocityMotion()->translation<<endl;
-//		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "feedForwardRight : " << feedForwardRight << endl;
 		cout<< "KvRight : "<<KvRight<<endl;
 		cout << "feedForwardLeft :" << feedForwardLeft << endl;
