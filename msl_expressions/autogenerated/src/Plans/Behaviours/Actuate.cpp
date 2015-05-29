@@ -55,7 +55,7 @@ namespace alica
 		feedForwardLeft = max(min(lefty, 1.2), -1.4);
 
 		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
-/*
+
 
 		 const double KiLeft = 0.0;
 		 const double KdLeft = 0.0;
