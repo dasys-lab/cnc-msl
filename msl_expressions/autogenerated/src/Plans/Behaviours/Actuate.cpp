@@ -45,7 +45,8 @@ namespace alica
 
         lefty=(x*x*0.6-x*0.95-1.2);
 
-        lefty = max(min(left, 1.2), -1.6);
+       if (lefty>1)
+    	   lefty=1;
 
 
         left=lefty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
@@ -56,7 +57,8 @@ namespace alica
 
 		righty=(0.6*x*x+0.95*x-1.2);
 
-		righty= max(min(right, 1.2), -1.6);
+		if(righty>1)
+			righty=1;
 
 		right=righty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
@@ -109,8 +111,8 @@ namespace alica
         left = -Stellwert;
         right = -Stellwert;
 */
-		cout<<" links) X Wert : "<< leftx << "   Y Wert :"<<lefty<<" left :"<<left<<endl;
-		cout<<" rechts) X Wert : "<< rightx << "   Y Wert :"<<righty<< "  right :"<<right<<endl;
+		cout<<" links) X Wert : "<< x << "   Y Wert :"<<lefty<<" left :"<<left<<endl;
+		cout<<" rechts) X Wert : "<< x << "   Y Wert :"<<righty<< "  right :"<<right<<endl;
 
 
 
