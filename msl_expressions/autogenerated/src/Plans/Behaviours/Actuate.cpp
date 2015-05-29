@@ -44,17 +44,17 @@ namespace alica
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		lefty = 1.2*(x * x * 0.6 - x * 0.95 - 1.2);
-		feedForwardLeft = max(min(lefty, 1.0), -1.5);
+		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
-		KpLeft = feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37;
+		KpLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37)-5;
 
 		//Function for Right
 
 		righty = 1.2*(0.6 * x * x + 0.95 * x - 1.2);
 
-		feedForwardRight = max(min(righty, 1.0), -1.5);
+		feedForwardRight = max(min(righty, 1.2), -1.2);
 
-		KpRight = feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37;
+		KpRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37)-5;
 
 		/*
 		 const double KiLeft = 0.0;
@@ -139,11 +139,9 @@ namespace alica
 //		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "feedForwardLeft : " << feedForwardLeft << endl;
 		cout<< "KpLeft : "<<KpLeft<<endl;
-		cout<<"leftMotor : "<<left<<endl;
-
 		cout << "feedForwardRight :" << feedForwardRight << endl;
-		cout<< "KpRight : "<<KpRight<<endl;
-		cout << "rightMotor : " << right << endl<<endl;
+		cout<< "KpRight : "<<KpRight<<endl<<endl;
+
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
