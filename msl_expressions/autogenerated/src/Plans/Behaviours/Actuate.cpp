@@ -29,7 +29,7 @@ namespace alica
 
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-        double x, lefty, righty;
+        double x, lefty, righty,feedForwardLeft,feedForwardRight;
 
         if (rodo == nullptr)
         {
@@ -44,12 +44,10 @@ namespace alica
         x=wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         lefty=(x*x*0.6-x*0.95-1.2);
-
-       if (lefty>1)
-    	   lefty=1;
+        feedForwardLeft = max(min(lefty, 1.0), -1.4);
 
 
-        left=lefty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+        left=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
 
         //Function for Right
@@ -57,10 +55,9 @@ namespace alica
 
 		righty=(0.6*x*x+0.95*x-1.2);
 
-		if(righty>1)
-			righty=1;
+		feedForwardRight=max(min(righty, 1.0), -1.4);
 
-		right=righty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+		right=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
 
 
@@ -111,8 +108,8 @@ namespace alica
         left = -Stellwert;
         right = -Stellwert;
 */
-		cout<<" links) X Wert : "<< x << "   Y Wert :"<<lefty<<" left :"<<left<<endl;
-		cout<<" rechts) X Wert : "<< x << "   Y Wert :"<<righty<< "  right :"<<right<<endl;
+		cout<<" links) X Wert : "<< x << "feedForwardLeft : "<< feedForwardLeft<<endl;
+		cout<<" rechts) X Wert : "<< x << " feedForwardRight :"<< feedForwardRight <<endl;
 
 
 
