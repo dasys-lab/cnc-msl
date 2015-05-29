@@ -43,14 +43,14 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-		lefty = (x * x * 0.6 - x * 0.95 - 1.2);
+		lefty = 1.2*(x * x * 0.6 - x * 0.95 - 1.2);
 		feedForwardLeft = max(min(lefty, 1.0), -1.5);
 
 		KpLeft = feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37;
 
 		//Function for Right
 
-		righty = (0.6 * x * x + 0.95 * x - 1.2);
+		righty = 1.2*(0.6 * x * x + 0.95 * x - 1.2);
 
 		feedForwardRight = max(min(righty, 1.0), -1.5);
 
