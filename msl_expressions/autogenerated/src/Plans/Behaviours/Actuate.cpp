@@ -78,7 +78,7 @@ namespace alica
 
                 Abweichung_AltLeft = AbweichungLeft;
 
-               StellwertLeft /= 4;
+               //StellwertLeft /= 4;
 
 
 
@@ -121,7 +121,7 @@ namespace alica
 
         Abweichung_AltRight = AbweichungRight;
 
-       StellwertRight /= 4;
+       //StellwertRight /= 4;
         /*
          if (Stellwert > 100)
          Stellwert = 100;
