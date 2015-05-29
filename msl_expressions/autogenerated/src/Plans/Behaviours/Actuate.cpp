@@ -30,6 +30,7 @@ namespace alica
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
         double x, lefty, righty,feedForwardLeft,feedForwardRight;
+        double KpRight,KpLeft;
 
         if (rodo == nullptr)
         {
@@ -40,14 +41,14 @@ namespace alica
         //Vorsteuerung
 
 
-
+        //PIDControllerLeft
         x=wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         lefty=(x*x*0.6-x*0.95-1.2);
-        feedForwardLeft = max(min(lefty, 1.0), -1.6);
+        feedForwardLeft = max(min(lefty, 1.0), -1.3);
 
 
-        left=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+        KpLeft=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/37;
 
 
         //Function for Right
@@ -55,18 +56,20 @@ namespace alica
 
 		righty=(0.6*x*x+0.95*x-1.2);
 
-		feedForwardRight=max(min(righty, 1.0), -1.6);
+		feedForwardRight=max(min(righty, 1.0), -1.3);
 
-		right=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+		KpRight=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
 
 
-		//PIDRegler
-/*
+
+
+		//PIDControllerRight
+		/*
         double summe = 0.0;
         static double olddistance = 0.0;
 
-        const double Kp = 0.3;
+        double KpRight,KpLeft;
         const double Ki = 0.4;
         const double Kd = 1.0;
         const double Sollwert = 90;
