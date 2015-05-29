@@ -29,8 +29,10 @@ namespace alica
 
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-        double x, lefty, righty,feedForwardLeft,feedForwardRight;
-        double KpRight,KpLeft;
+
+
+
+
 
         if (rodo == nullptr)
         {
@@ -38,17 +40,49 @@ namespace alica
             return;
         }
         //Function for Left
-        //Vorsteuerung
-
 
         //PIDControllerLeft
+        double x, lefty, righty,feedForwardLeft,feedForwardRight;
+        double KpRight,KpLeft;
+        double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
         x=wm->rawSensorData.getOwnVelocityMotion()->angle;
+
+
 
         lefty=(x*x*0.6-x*0.95-1.2);
         feedForwardLeft = max(min(lefty, 1.0), -1.3);
 
 
         KpLeft=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/37;
+
+
+
+        		const double KiLeft = 0.4;
+                const double KdLeft = 1.0;
+                const double SollwertLeft = 90;
+
+
+                double AbweichungLeft = 0.0;
+                double Abweichung_SummeLeft = 0.0;
+                double Abweichung_AltLeft = 0.0;
+                double StellwertLeft = 0.0;
+
+                AbweichungLeft = SollwertLeft - wm->rawSensorData.getOpticalFlowQoS();
+
+                if ((StellwertLeft < 70) || (StellwertLeft > 100))
+                    Abweichung_SummeLeft += AbweichungLeft;
+
+                StellwertLeft = KpLeft * AbweichungLeft;
+                StellwertLeft += KiLeft * Abweichung_SummeLeft;
+                StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+
+                Abweichung_AltLeft = AbweichungLeft;
+
+               //StellwertLeft /= 4;
+
+
+
+
 
 
         //Function for Right
@@ -58,40 +92,36 @@ namespace alica
 
 		feedForwardRight=max(min(righty, 1.0), -1.3);
 
-		KpRight=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
+		KpRight=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/37;
 
 
 
 
 
 		//PIDControllerRight
-		/*
-        double summe = 0.0;
-        static double olddistance = 0.0;
 
-        double KpRight,KpLeft;
-        const double Ki = 0.4;
-        const double Kd = 1.0;
-        const double Sollwert = 90;
-        double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+        const double KiRight = 0.4;
+        const double KdRight = 1.0;
+        const double SollwertRight = 90;
 
-        double Abweichung = 0.0;
-        double Abweichung_Summe = 0.0;
-        double Abweichung_Alt = 0.0;
-        double Stellwert = 0.0;
 
-        Abweichung = Sollwert - wm->rawSensorData.getOpticalFlowQoS();
+        double AbweichungRight = 0.0;
+        double Abweichung_SummeRight = 0.0;
+        double Abweichung_AltRight = 0.0;
+        double StellwertRight = 0.0;
 
-        if ((Stellwert < 70) || (Stellwert > 100))
-            Abweichung_Summe += Abweichung;
+        AbweichungRight = SollwertRight - wm->rawSensorData.getOpticalFlowQoS();
 
-        Stellwert = Kp * Abweichung;
-        Stellwert += Ki * Abweichung_Summe;
-        Stellwert += Kd * (Abweichung - Abweichung_Alt);
+        if ((StellwertRight < 70) || (StellwertRight > 100))
+            Abweichung_SummeRight += AbweichungRight;
 
-        Abweichung_Alt = Abweichung;
+        StellwertRight = KpRight * AbweichungRight;
+        StellwertRight += KiRight * Abweichung_SummeRight;
+        StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
 
-       Stellwert /= 4;
+        Abweichung_AltRight = AbweichungRight;
+
+       //Stellwert /= 4;
         /*
          if (Stellwert > 100)
          Stellwert = 100;
@@ -118,12 +148,12 @@ namespace alica
 
 
 
-		left=KpLeft;
-		right=KpRight;
+		left=StellwertLeft;
+		right=StellwertRight;
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
-
         this->send(bhc);
+
         /*PROTECTED REGION END*/
     }
     void Actuate::initialiseParameters()
