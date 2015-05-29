@@ -57,8 +57,8 @@ namespace alica
 
 
 
-        		const double KiLeft = 0.4;
-                const double KdLeft = 1.0;
+        		const double KiLeft = 0.0;
+                const double KdLeft = 0.0;
                 const double SollwertLeft = 90;
 
 
@@ -100,8 +100,8 @@ namespace alica
 
 		//PIDControllerRight
 
-        const double KiRight = 0.4;
-        const double KdRight = 1.0;
+        const double KiRight = 0.0;
+        const double KdRight = 0.0;
         const double SollwertRight = 90;
 
 
