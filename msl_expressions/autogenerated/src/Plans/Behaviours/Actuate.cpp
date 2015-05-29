@@ -142,8 +142,8 @@ namespace alica
 		cout<<"leftMotor : "<<left<<endl;
 
 		cout << "feedForwardRight :" << feedForwardRight << endl;
-		cout<< "KpRight : "<<KpRight<<endl<<endl;
-		cout << "rightMotor : " << right << endl;
+		cout<< "KpRight : "<<KpRight<<endl;
+		cout << "rightMotor : " << right << endl<<endl;
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
