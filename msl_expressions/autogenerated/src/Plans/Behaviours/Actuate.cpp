@@ -135,6 +135,7 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
+		cout<< "Speed : "<<wm->rawSensorData.getOwnVelocityMotion()->translation<<endl;
 //		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "feedForwardLeft : " << feedForwardLeft << endl;
 		cout<< "KpLeft : "<<KpLeft<<endl;
