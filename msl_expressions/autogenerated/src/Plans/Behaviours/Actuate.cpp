@@ -118,7 +118,8 @@ namespace alica
 
 
 
-
+		left=KpLeft;
+		right=KpRight;
         bhc.leftMotor = max(min(left, 60), -60);
         bhc.rightMotor = max(min(right, 60), -60);
 
