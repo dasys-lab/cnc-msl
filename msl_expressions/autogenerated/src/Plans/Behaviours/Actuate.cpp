@@ -141,9 +141,12 @@ namespace alica
         left = -Stellwert;
         right = -Stellwert;
 */
-		cout<<" links) X Wert : "<< x << "feedForwardLeft : "<< feedForwardLeft<<endl;
-		cout<<" rechts) X Wert : "<< x << " feedForwardRight :"<< feedForwardRight <<endl;
+		cout<<"Winkel : "<< x <<endl;
+		cout<<"feedForwardLeft : "<< feedForwardLeft<<endl;
+		cout<<"leftMotor : "<<left<<endl;
 
+		cout<<"feedForwardRight :"<< feedForwardRight <<endl;
+		cout<<"rightMotor : "<<right<<endl;
 
 
 
