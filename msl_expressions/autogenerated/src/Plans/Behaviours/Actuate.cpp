@@ -59,7 +59,7 @@ namespace alica
 
 		 const double KiLeft = 0.0;
 		 const double KdLeft = 0.0;
-		 const double KpLeft = 2.0;
+		 const double KpLeft = 1.5;
 		 const double SollwertLeft = 90;
 
 
