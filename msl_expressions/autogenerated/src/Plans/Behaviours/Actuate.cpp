@@ -29,7 +29,7 @@ namespace alica
 
         int left, right;
         // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-        double leftx, lefty, rightx, righty;
+        double x, lefty, righty;
 
         if (rodo == nullptr)
         {
@@ -38,11 +38,14 @@ namespace alica
         }
         //Function for Left
         //Vorsteuerung
-        leftx=wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-        lefty=(leftx*leftx*0.6-leftx*0.95-1.2);
-		if(lefty>1)
-			lefty=1;
+
+
+        x=wm->rawSensorData.getOwnVelocityMotion()->angle;
+
+        lefty=(x*x*0.6-x*0.95-1.2);
+
+        lefty = max(min(left, 1.2), -1.6);
 
 
         left=lefty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
@@ -50,10 +53,10 @@ namespace alica
 
         //Function for Right
 
-        rightx=wm->rawSensorData.getOwnVelocityMotion()->angle;
-		righty=(0.6*rightx*rightx+0.95*rightx-1.2);
-		if(righty>1)
-			righty=1;
+
+		righty=(0.6*x*x+0.95*x-1.2);
+
+		righty= max(min(right, 1.2), -1.6);
 
 		right=righty*wm->rawSensorData.getOwnVelocityMotion()->translation*1/40;
 
