@@ -50,7 +50,7 @@ namespace alica
 
 
         lefty=(x*x*0.6-x*0.95-1.2);
-        feedForwardLeft = max(min(lefty, 1.0), -1.3);
+        feedForwardLeft = max(min(lefty, 1.0), -1.5);
 
 
         KpLeft=feedForwardLeft*wm->rawSensorData.getOwnVelocityMotion()->translation*1/37;
@@ -78,7 +78,7 @@ namespace alica
 
                 Abweichung_AltLeft = AbweichungLeft;
 
-               //StellwertLeft /= 4;
+               StellwertLeft /= 4;
 
 
 
@@ -90,7 +90,7 @@ namespace alica
 
 		righty=(0.6*x*x+0.95*x-1.2);
 
-		feedForwardRight=max(min(righty, 1.0), -1.3);
+		feedForwardRight=max(min(righty, 1.0), -1.5);
 
 		KpRight=feedForwardRight*wm->rawSensorData.getOwnVelocityMotion()->translation*1/37;
 
@@ -121,7 +121,7 @@ namespace alica
 
         Abweichung_AltRight = AbweichungRight;
 
-       //Stellwert /= 4;
+       StellwertRight /= 4;
         /*
          if (Stellwert > 100)
          Stellwert = 100;
