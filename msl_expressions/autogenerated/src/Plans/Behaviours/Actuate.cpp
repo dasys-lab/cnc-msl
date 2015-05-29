@@ -142,6 +142,7 @@ namespace alica
         right = -Stellwert;
 */
 		cout<<"Winkel : "<< x <<endl;
+		cout<< " QualityOfService : "<<wm->rawSensorData.getOpticalFlowQoS()<<endl;
 		cout<<"feedForwardLeft : "<< feedForwardLeft<<endl;
 		cout<<"leftMotor : "<<left<<endl;
 
