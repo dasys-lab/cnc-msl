@@ -43,7 +43,7 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-		lefty = 1.2*(x * x * 0.6 - x * 0.95 - 1.4);
+		righty = 1.2*(x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.4);
 
 		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
@@ -147,8 +147,8 @@ namespace alica
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left = KvRight;
-		right = KvLeft;
+		left = KvLeft;
+		right = KvRight;
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
