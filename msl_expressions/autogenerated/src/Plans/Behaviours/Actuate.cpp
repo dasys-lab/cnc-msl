@@ -43,14 +43,14 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-		righty = 1.2*(x * x * 0.6 - x * 0.95 - 1.4);
+		righty = 1.0*(x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.6);
 
 		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
 
 		//Function for Right
 
-		lefty = 1.2*(0.6 * x * x + 0.95 * x - 1.4);
+		lefty = 1.0*(0.6 * x * x + 0.95 * x - 1.4);
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.6);
 
@@ -59,7 +59,7 @@ namespace alica
 
 		 const double KiLeft = 0.0;
 		 const double KdLeft = 0.0;
-		 const double KpLeft = 0.01;
+		 const double KpLeft = 0.1;
 		 const double SollwertLeft = 90;
 
 
@@ -96,7 +96,7 @@ namespace alica
 		 const double KiRight = 0.0;
 		 const double KdRight = 0.0;
 		 const double SollwertRight = 90;
-		 const double KpRight = 0.01;
+		 const double KpRight = 0.1;
 
 		 double AbweichungRight = 0.0;
 		 double Abweichung_SummeRight = 0.0;
