@@ -56,7 +56,7 @@ uint8_t OpticalFlow::read(uint8_t address) {
 	// TODO SPI TEST
 
 	ncs->setValue(low);
-	spi->transfer(address, 100);
+	spi->transfer(address);
 	//ncs->setValue(high);
 
 
@@ -67,7 +67,7 @@ uint8_t OpticalFlow::read(uint8_t address) {
 	}*/
 
 	//ncs->setValue(low);
-	uint8_t ret = spi->transfer(0x00, 100);
+	uint8_t ret = spi->transfer(0x00);
 	ncs->setValue(high);
 
 	return ret;
