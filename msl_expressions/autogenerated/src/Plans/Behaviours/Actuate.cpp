@@ -59,7 +59,7 @@ namespace alica
 
 		 const double KiLeft = 0.0;
 		 const double KdLeft = 0.0;
-		 const double KpLeft = 1.0;
+		 const double KpLeft = 0.5;
 		 const double SollwertLeft = 90;
 
 
@@ -95,7 +95,7 @@ namespace alica
 
 		 const double KiRight = 0.0;
 		 const double KdRight = 0.0;
-		 const double KpRight = 1.0;
+		 const double KpRight = 0.5;
 		 const double SollwertRight = 90;
 
 
@@ -147,8 +147,8 @@ namespace alica
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left = KvLeft;
-		right = KvRight;
+		left = StellwertLeft;
+		right = StellwertRight;
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
