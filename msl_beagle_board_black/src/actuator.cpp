@@ -283,14 +283,16 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
+		testy++;
+				if (testy > 200) {testy = 0;}
+
+				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
+
+
 		//TODO ADNS3080 Test
 		adns3080.update_motion_burst(time_now);
 		adns3080.send_motion_burst(time_now, &mbcPub);
 
-		testy++;
-		if (testy > 200) {testy = 0;}
-
-		std::cout << (int) testy << std::endl << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << adns3080.read(0x0a) << "'" << std::endl;
 
 
 //		ros::Time::now();
