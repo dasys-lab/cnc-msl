@@ -16,6 +16,7 @@ namespace alica
     }
     DriveForward::~DriveForward()
     {
+        cout << "EgoBallVelocity " << wm->ball.getEgoBallVelocity() << endl;
         /*PROTECTED REGION ID(dcon1417017564406) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
@@ -24,8 +25,8 @@ namespace alica
         /*PROTECTED REGION ID(run1417017564406) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
         //MOTION:
-        mc.motion.angle = 0.0;
-        mc.motion.rotation = 0;
+        mc.motion.angle =0.0;
+        mc.motion.rotation = M_PI/2;
         mc.motion.translation = 500;
 
         this->send(mc);
