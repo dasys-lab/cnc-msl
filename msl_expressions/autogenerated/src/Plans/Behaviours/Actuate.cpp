@@ -44,22 +44,22 @@ namespace alica
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.2), -1.6);
+		feedForwardRight = max(min(righty, 1.2), -1.2);
 
-		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 80);
+		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
 
 		//Function for Right
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 
-		feedForwardLeft = max(min(lefty, 1.2), -1.6);
+		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
-		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 80);
+		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
 
 
-		 const double KiLeft = 0.0;
+		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.0;
-		 const double KpLeft = 0.3;
+		 const double KpLeft = 0.23;
 		 const double SollwertLeft = 90;
 
 
@@ -85,10 +85,10 @@ namespace alica
 
 		 //PIDControllerRight
 
-		 const double KiRight = 0.0;
+		 const double KiRight = 0.5;
 		 const double KdRight = 0.0;
 		 const double SollwertRight = 90;
-		 const double KpRight = 0.3;
+		 const double KpRight = 0.23;
 
 		 double AbweichungRight = 0.0;
 		 double Abweichung_SummeRight = 0.0;
