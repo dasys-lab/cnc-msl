@@ -46,7 +46,7 @@ namespace alica
 		righty = 1.0*(x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.6);
 
-		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
+		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 40);
 
 		//Function for Right
 
@@ -54,13 +54,13 @@ namespace alica
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.6);
 
-		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
+		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 40);
 
 
 		 const double KiLeft = 0.0;
 		 const double KdLeft = 0.0;
-		 const double KpLeft = 0.1;
-		 const double SollwertLeft = 90;
+		 const double KpLeft = 0.5;
+		 const double SollwertLeft = 0.5;
 
 
 		 double AbweichungLeft = 0.0;
@@ -96,7 +96,7 @@ namespace alica
 		 const double KiRight = 0.0;
 		 const double KdRight = 0.0;
 		 const double SollwertRight = 90;
-		 const double KpRight = 0.1;
+		 const double KpRight = 0.5;
 
 		 double AbweichungRight = 0.0;
 		 double Abweichung_SummeRight = 0.0;
