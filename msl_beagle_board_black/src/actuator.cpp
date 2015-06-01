@@ -287,6 +287,8 @@ int main(int argc, char** argv) {
 				if (testy > 200) {testy = 0;}
 
 				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
+				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
+				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
 
 
 		//TODO ADNS3080 Test
