@@ -267,6 +267,7 @@ int main(int argc, char** argv) {
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
 	adns3080.reset();
+	adns3080.adns_init();
 
 	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
 
