@@ -149,6 +149,9 @@ namespace alica
 		double StellwertRight = 0.0;
 >>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
+		if (StellwertRight < 75)
+					Abweichung_SummeRight += AbweichungRight;
+
 		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
 <<<<<<< HEAD
