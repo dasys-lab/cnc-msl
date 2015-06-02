@@ -26,9 +26,15 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         //MOTION:
 
+<<<<<<< HEAD
         mc.motion.angle =0.0;
    	 mc.motion.rotation = 0.0;
         mc.motion.translation =800.0;
+=======
+        mc.motion.angle =0;
+        mc.motion.rotation = 0;
+        mc.motion.translation =800;
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
 
         this->send(mc);
