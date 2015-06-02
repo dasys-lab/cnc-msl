@@ -64,30 +64,56 @@ namespace alica
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.2);
 
+<<<<<<< HEAD
 
 		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
 
-	
+		
+=======
+		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
 		//Function for Right
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.2);
-		
+		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 35);
 
+<<<<<<< HEAD
+
+
+		 const double KiLeft = 0.5;
+		 const double KdLeft = 0.7;
+		 const double KpLeft = 0.23;
+
+		 const double SollwertLeft = 80;
+
+=======
 		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
 
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
 		const double KpLeft = 0.23;
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
+		const double SollwertLeft = 80;
+
+<<<<<<< HEAD
 		 double AbweichungLeft = 0.0;
 		 double Abweichung_SummeLeft = 0.0;
 		 double Abweichung_AltLeft = 0.0;
 		 double StellwertLeft = 0.0;
 		 AbweichungLeft = -1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+	
+=======
+		double AbweichungLeft = 0.0;
+		double Abweichung_SummeLeft = 0.0;
+		double Abweichung_AltLeft = 0.0;
+		double StellwertLeft = 0.0;
 
+		AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
 		if (StellwertLeft < 75)
 			Abweichung_SummeLeft += AbweichungLeft;
@@ -98,27 +124,43 @@ namespace alica
 
 		Abweichung_AltLeft = AbweichungLeft;
 
+<<<<<<< HEAD
+
+=======
 		//PIDControllerRight
 
-		
+		const double KiRight = 0.5;
+		const double KdRight = 0.7;
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
+
+		const double SollwertRight = 80;
+
+		const double KpRight = 0.23;
+
+<<<<<<< HEAD
 		 const double KiRight = 0.5;
 		 const double KdRight = 0.7;
 		 const double SollwertRight = 80;
 		 const double KpRight = 0.23;
-
+=======
 		double AbweichungRight = 0.0;
 		double Abweichung_SummeRight = 0.0;
 		double Abweichung_AltRight = 0.0;
-		double StellwertRigh=0.0
+		double StellwertRight = 0.0;
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
 		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
-		if(StellwertRight <75(
-			Abweichung_SummeRight +=AbweichungRight;
+<<<<<<< HEAD
+
+		 AbweichungRight = -1*(SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+
+		
+=======
 		StellwertRight = KpRight * AbweichungRight + KvRight;
 		StellwertRight += KiRight * Abweichung_SummeRight;
 		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-
+>>>>>>> b6eb52699472e1d753bdcb4765e9b684435c6c6a
 
 		Abweichung_AltRight = AbweichungRight;
 
