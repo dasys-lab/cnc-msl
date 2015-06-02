@@ -35,9 +35,31 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		//Function for Left
+
+
+
+		double arithmeticAverage = 0.0;
+		        double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		        list<double>::iterator parameter;
+
+		        if (arithmeticAverageBox.size() == 4)
+		        {
+		            arithmeticAverageBox.pop_back();
+		        }
+
+		        arithmeticAverageBox.push_front(newParamer);
+
+		        for (parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+		        {
+		            arithmeticAverage += *parameter;
+		        }
+
+		        arithmeticAverage = arithmeticAverage / 8;
+
 
 		//PIDControllerLeft
+
+
 		double x, lefty, righty, feedForwardLeft, feedForwardRight;
 		double  KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
@@ -46,7 +68,7 @@ namespace alica
 		righty = 1.0*(x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.6);
 
-		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
+		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
 
 		//Function for Right
 
@@ -54,12 +76,12 @@ namespace alica
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.6);
 
-		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 37);
+		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
 
 
-		 const double KiLeft = 0.0;
-		 const double KdLeft = 0.0;
-		 const double KpLeft = 0.1;
+		 const double KiLeft = 0.5;
+		 const double KdLeft = 0.7;
+		 const double KpLeft = 0.23;
 		 const double SollwertLeft = 90;
 
 
@@ -68,7 +90,7 @@ namespace alica
 		 double Abweichung_AltLeft = 0.0;
 		 double StellwertLeft = 0.0;
 
-		 AbweichungLeft = SollwertLeft - wm->rawSensorData.getOpticalFlowQoS();
+		 AbweichungLeft = -1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 
 		 if ((StellwertLeft < 70) || (StellwertLeft > 100))
 		 Abweichung_SummeLeft += AbweichungLeft;
@@ -79,31 +101,21 @@ namespace alica
 
 		 Abweichung_AltLeft = AbweichungLeft;
 
-		 //StellwertLeft /= 4;
-
-
-
-
-
-
-
-
-
 
 
 		 //PIDControllerRight
 
-		 const double KiRight = 0.0;
-		 const double KdRight = 0.0;
+		 const double KiRight = 0.5;
+		 const double KdRight = 0.7;
 		 const double SollwertRight = 90;
-		 const double KpRight = 0.1;
+		 const double KpRight = 0.23;
 
 		 double AbweichungRight = 0.0;
 		 double Abweichung_SummeRight = 0.0;
 		 double Abweichung_AltRight = 0.0;
 		 double StellwertRight = 0.0;
 
-		 AbweichungRight = SollwertRight - wm->rawSensorData.getOpticalFlowQoS();
+		 AbweichungRight = -1*(SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
 		 if ((StellwertRight < 70) || (StellwertRight > 100))
 		 Abweichung_SummeRight += AbweichungRight;
