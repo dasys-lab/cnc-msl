@@ -58,9 +58,9 @@ namespace alica
 
 
 		 const double KiLeft = 0.5;
-		 const double KdLeft = 0.0;
+		 const double KdLeft = 0.7;
 		 const double KpLeft = 0.23;
-		 const double SollwertLeft = 90;
+		 const double SollwertLeft = 80;
 
 
 		 double AbweichungLeft = 0.0;
@@ -70,7 +70,7 @@ namespace alica
 
 		 AbweichungLeft =-1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 
-		 if ((StellwertLeft < 70) || (StellwertLeft > 100))
+		 if (StellwertLeft < 75) 
 		 Abweichung_SummeLeft += AbweichungLeft;
 
 		 StellwertLeft = KpLeft * AbweichungLeft+KvLeft;
@@ -86,8 +86,8 @@ namespace alica
 		 //PIDControllerRight
 
 		 const double KiRight = 0.5;
-		 const double KdRight = 0.0;
-		 const double SollwertRight = 90;
+		 const double KdRight = 0.7;
+		 const double SollwertRight = 80;
 		 const double KpRight = 0.23;
 
 		 double AbweichungRight = 0.0;
@@ -97,7 +97,7 @@ namespace alica
 
 		 AbweichungRight =-1*( SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
-		 if ((StellwertRight < 70) || (StellwertRight > 100))
+		 if (StellwertRight < 75) 
 		 Abweichung_SummeRight += AbweichungRight;
 
 		 StellwertRight = KpRight * AbweichungRight+KvRight;
@@ -138,8 +138,8 @@ namespace alica
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left = 20;//StellwertLeft;
-		right =20;// StellwertRight;
+		left = StellwertLeft;
+		right = StellwertRight;
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
