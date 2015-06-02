@@ -36,43 +36,35 @@ namespace alica
 			return;
 		}
 
-
-
 		double arithmeticAverage = 0.0;
-		        double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		        list<double>::iterator parameter;
+		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		list<double>::iterator parameter;
 
-		        if (arithmeticAverageBox.size() == 4)
-		        {
-		            arithmeticAverageBox.pop_back();
-		        }
+		if (arithmeticAverageBox.size() == 4)
+		{
+			arithmeticAverageBox.pop_back();
+		}
 
-		        arithmeticAverageBox.push_front(newParamer);
+		arithmeticAverageBox.push_front(newParamer);
 
-		        for (parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
-		        {
-		            arithmeticAverage += *parameter;
-		        }
+		for (parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+		{
+			arithmeticAverage += *parameter;
+		}
 
-		        arithmeticAverage = arithmeticAverage / 8;
-
+		arithmeticAverage = arithmeticAverage / 8;
 
 		//PIDControllerLeft
 
-
 		double x, lefty, righty, feedForwardLeft, feedForwardRight;
-		double  KvLeft, KvRight;
+		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.2);
 
-<<<<<<< HEAD
 		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
-=======
-		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
 		//Function for Right
 
@@ -80,83 +72,54 @@ namespace alica
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
-<<<<<<< HEAD
 		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
-=======
-		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
+		const double KiLeft = 0.5;
+		const double KdLeft = 0.7;
+		const double KpLeft = 0.23;
 
-		 const double KiLeft = 0.5;
-		 const double KdLeft = 0.7;
-		 const double KpLeft = 0.23;
-<<<<<<< HEAD
-		 const double SollwertLeft = 90;
-=======
-		 const double SollwertLeft = 80;
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
+		const double SollwertLeft = 80;
 
+		double AbweichungLeft = 0.0;
+		double Abweichung_SummeLeft = 0.0;
+		double Abweichung_AltLeft = 0.0;
+		double StellwertLeft = 0.0;
 
-		 double AbweichungLeft = 0.0;
-		 double Abweichung_SummeLeft = 0.0;
-		 double Abweichung_AltLeft = 0.0;
-		 double StellwertLeft = 0.0;
+		AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 
-<<<<<<< HEAD
-		 AbweichungLeft = -1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
-=======
-		 AbweichungLeft =-1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
+		if (StellwertLeft < 75)
+			Abweichung_SummeLeft += AbweichungLeft;
 
-		 if (StellwertLeft < 75) 
-		 Abweichung_SummeLeft += AbweichungLeft;
+		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 
-		 StellwertLeft = KpLeft * AbweichungLeft+KvLeft;
-		 StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		 StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+		Abweichung_AltLeft = AbweichungLeft;
 
-		 Abweichung_AltLeft = AbweichungLeft;
+		//PIDControllerRight
 
-<<<<<<< HEAD
-=======
-		 //StellwertLeft /= 4;
+		const double KiRight = 0.5;
+		const double KdRight = 0.7;
 
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
+		const double SollwertRight = 80;
 
+		const double KpRight = 0.23;
 
-		 //PIDControllerRight
+		double AbweichungRight = 0.0;
+		double Abweichung_SummeRight = 0.0;
+		double Abweichung_AltRight = 0.0;
+		double StellwertRight = 0.0;
 
-		 const double KiRight = 0.5;
-		 const double KdRight = 0.7;
-<<<<<<< HEAD
-		 const double SollwertRight = 90;
-=======
-		 const double SollwertRight = 80;
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
-		 const double KpRight = 0.23;
+		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
-		 double AbweichungRight = 0.0;
-		 double Abweichung_SummeRight = 0.0;
-		 double Abweichung_AltRight = 0.0;
-		 double StellwertRight = 0.0;
+		StellwertRight = KpRight * AbweichungRight + KvRight;
+		StellwertRight += KiRight * Abweichung_SummeRight;
+		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
 
-<<<<<<< HEAD
-		 AbweichungRight = -1*(SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
-=======
-		 AbweichungRight =-1*( SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
+		Abweichung_AltRight = AbweichungRight;
 
-		 if (StellwertRight < 75) 
-		 Abweichung_SummeRight += AbweichungRight;
-
-		 StellwertRight = KpRight * AbweichungRight+KvRight;
-		 StellwertRight += KiRight * Abweichung_SummeRight;
-		 StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-
-		 Abweichung_AltRight = AbweichungRight;
-
-		 //StellwertRight /= 4;
-		 /*
+		//StellwertRight /= 4;
+		/*
 		 if (Stellwert > 100)
 		 Stellwert = 100;
 		 if (Stellwert < 80)
@@ -177,13 +140,12 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
-		cout<< "Speed : "<<wm->rawSensorData.getOwnVelocityMotion()->translation<<endl;
+		cout << "Speed : " << arithmeticAverage << endl;
 		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
-		cout<< "StellwertRight : "<<StellwertRight<<endl;
+		cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
-		cout<< "StellwertLeft : "<<StellwertLeft<<endl<<endl;
-
+		cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 

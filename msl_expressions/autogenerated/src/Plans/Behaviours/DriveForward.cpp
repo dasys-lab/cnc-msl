@@ -25,16 +25,11 @@ namespace alica
         /*PROTECTED REGION ID(run1417017564406) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
         //MOTION:
-<<<<<<< HEAD
-        mc.motion.angle =M_PI;
-        mc.motion.rotation = 0.0;
-        mc.motion.translation = 500;
-=======
-        mc.motion.angle =0.0;
 
-        mc.motion.rotation = 0.0;
-        mc.motion.translation =800.0;
->>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
+        mc.motion.angle =0;
+        mc.motion.rotation = 0;
+        mc.motion.translation =800;
+
 
         this->send(mc);
 
