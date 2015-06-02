@@ -12,6 +12,12 @@ find_package(catkin REQUIRED system_config roscpp roslib msl_actuator_msgs msl_m
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)
 
+catkin_package(
+# INCLUDE_DIRS include
+# LIBRARIES 
+ CATKIN_DEPENDS system_config roscpp roslib msl_actuator_msgs msl_msgs std_msgs
+ DEPENDS system filesystem regex
+)
 
 include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
@@ -34,4 +40,4 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_actuator_msgs_gencpp)
