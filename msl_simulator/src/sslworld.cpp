@@ -652,14 +652,17 @@ void SSLWorld::recvActions()
 			int id = robotIndex(it->second, team);
 
 			robots[it->second]->setSpeed(vx, vy, vw);
-			robots[it->second]->kicker->setRoller(1);
 
 			if(kick->senderID != 0 && kick->senderID == packet->senderID && kick->power > 100)
 			{
-				std::cout << "WILL NUN SCHIESSEN" << std::endl;
-				std::cout << "WILL NUN KICKERTOUCHINGBALL " << 	robots[it->second]->kicker->isTouchingBall() << std::endl;
-				robots[it->second]->kicker->kick(5, 1);
-
+				if(kick->kicker == 1)
+				{
+					robots[it->second]->kicker->kick(3 + (kick->power / 70), 1);
+				}
+				else
+				{
+					robots[it->second]->kicker->kick(3 + (kick->power / 700), 0);
+				}
 			}
 			else
 			{
@@ -667,7 +670,14 @@ void SSLWorld::recvActions()
 				itKick = carpeNoctemIds.find(kick->senderID);
 				if (itKick != carpeNoctemIds.end() && kick->power > 100)
 				{
-					robots[itKick->second]->kicker->kick(0.1, 0.1);
+					if(kick->kicker == 1)
+					{
+						robots[it->second]->kicker->kick(3 + (kick->power / 700), 1);
+					}
+					else
+					{
+						robots[it->second]->kicker->kick(3 + (kick->power / 700), 0);
+					}
 				}
 
 			}

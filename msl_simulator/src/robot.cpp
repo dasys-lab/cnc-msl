@@ -68,7 +68,6 @@ Robot::Kicker::Kicker(Robot* robot)
 {
 	//TODO
     rob = robot;
-
     dReal x = rob->m_x;
     dReal y = rob->m_y;
     dReal z = rob->m_z;
@@ -106,6 +105,7 @@ void Robot::Kicker::step()
     else if (rolling!=0)
     {
         box->setColor(1,0.7,0);
+        //isTouchingBall()
         if (isTouchingBall())
         {
             dReal fx,fy,fz;
@@ -145,7 +145,15 @@ bool Robot::Kicker::isTouchingBall()
     dReal xx = fabs((kx-bx)*vx + (ky-by)*vy);
     dReal yy = fabs(-(kx-bx)*vy + (ky-by)*vx);
     dReal zz = fabs(kz-bz);
-    return ((xx<rob->cfg->robotSettings.KickerThickness*2.0f+rob->cfg->BallRadius()) && (yy<rob->cfg->robotSettings.KickerWidth*0.5f) && (zz<rob->cfg->robotSettings.KickerHeight*0.5f));
+
+    std::cout << "xxx " << xx <<  std::endl;
+    std::cout << "yyy " << yy << std::endl;
+    std::cout << "zzz " << zz << std::endl;
+//    return ((xx<rob->cfg->robotSettings.KickerThickness*2.0f+rob->cfg->BallRadius()+0.0885f) && (yy<rob->cfg->robotSettings.KickerWidth*0.5f) && (zz<rob->cfg->robotSettings.KickerHeight*0.5f));
+//    0.0315
+//	  0.05
+//    0.1
+    return (xx<0.2f && yy<0.1f && zz<0.1f);
 }
 
 void Robot::Kicker::setRoller(int roller)
@@ -171,6 +179,7 @@ void Robot::Kicker::kick(dReal kickspeedx, dReal kickspeedz)
     dReal vx,vy,vz;
     rob->chassis->getBodyDirection(dx,dy,dz);dz = 0;
     dReal zf = kickspeedz;
+    //isTouchingBall()
     if (true)
     {
         dReal dlen = dx*dx+dy*dy+dz*dz;
