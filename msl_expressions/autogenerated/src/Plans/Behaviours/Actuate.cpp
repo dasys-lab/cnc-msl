@@ -138,8 +138,8 @@ namespace alica
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left = StellwertLeft;
-		right = StellwertRight;
+		left = 20;//StellwertLeft;
+		right =20;// StellwertRight;
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
