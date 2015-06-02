@@ -267,6 +267,7 @@ int main(int argc, char** argv) {
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
 	adns3080.reset();
+	adns3080.adns_init();
 
 	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
 
@@ -286,6 +287,8 @@ int main(int argc, char** argv) {
 		testy++;
 				if (testy > 200) {testy = 0;}
 
+				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
+				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
 				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
 
 

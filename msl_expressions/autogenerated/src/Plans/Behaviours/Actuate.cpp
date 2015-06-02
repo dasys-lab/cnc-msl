@@ -65,24 +65,36 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-		righty = 1.0*(x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.2), -1.6);
+		righty = (x * x * 0.6 - x * 0.95 - 1.4);
+		feedForwardRight = max(min(righty, 1.2), -1.2);
 
+<<<<<<< HEAD
 		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+=======
+		KvRight = (feedForwardRight * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
 		//Function for Right
 
-		lefty = 1.0*(0.6 * x * x + 0.95 * x - 1.4);
+		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 
-		feedForwardLeft = max(min(lefty, 1.2), -1.6);
+		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
+<<<<<<< HEAD
 		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
+=======
+		KvLeft = (feedForwardLeft * wm->rawSensorData.getOwnVelocityMotion()->translation * 1 / 30);
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
 
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
 		 const double KpLeft = 0.23;
+<<<<<<< HEAD
 		 const double SollwertLeft = 90;
+=======
+		 const double SollwertLeft = 80;
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
 
 		 double AbweichungLeft = 0.0;
@@ -90,9 +102,13 @@ namespace alica
 		 double Abweichung_AltLeft = 0.0;
 		 double StellwertLeft = 0.0;
 
+<<<<<<< HEAD
 		 AbweichungLeft = -1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+=======
+		 AbweichungLeft =-1*(SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
-		 if ((StellwertLeft < 70) || (StellwertLeft > 100))
+		 if (StellwertLeft < 75) 
 		 Abweichung_SummeLeft += AbweichungLeft;
 
 		 StellwertLeft = KpLeft * AbweichungLeft+KvLeft;
@@ -101,13 +117,22 @@ namespace alica
 
 		 Abweichung_AltLeft = AbweichungLeft;
 
+<<<<<<< HEAD
+=======
+		 //StellwertLeft /= 4;
+
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
 
 		 //PIDControllerRight
 
 		 const double KiRight = 0.5;
 		 const double KdRight = 0.7;
+<<<<<<< HEAD
 		 const double SollwertRight = 90;
+=======
+		 const double SollwertRight = 80;
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 		 const double KpRight = 0.23;
 
 		 double AbweichungRight = 0.0;
@@ -115,9 +140,13 @@ namespace alica
 		 double Abweichung_AltRight = 0.0;
 		 double StellwertRight = 0.0;
 
+<<<<<<< HEAD
 		 AbweichungRight = -1*(SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+=======
+		 AbweichungRight =-1*( SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+>>>>>>> 015528908e84bbf21316b1d59f05fd1f773ad7e4
 
-		 if ((StellwertRight < 70) || (StellwertRight > 100))
+		 if (StellwertRight < 75) 
 		 Abweichung_SummeRight += AbweichungRight;
 
 		 StellwertRight = KpRight * AbweichungRight+KvRight;
@@ -150,9 +179,9 @@ namespace alica
 		cout << "Winkel : " << x << endl;
 		cout<< "Speed : "<<wm->rawSensorData.getOwnVelocityMotion()->translation<<endl;
 		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "feedForwardRight : " << feedForwardRight << endl;
+		cout << "Kvright : " << KvRight << endl;
 		cout<< "StellwertRight : "<<StellwertRight<<endl;
-		cout << "feedForwardLeft :" << feedForwardLeft << endl;
+		cout << "Kvleft : " << KvLeft << endl;
 		cout<< "StellwertLeft : "<<StellwertLeft<<endl<<endl;
 
 
