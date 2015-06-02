@@ -110,6 +110,9 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
+		if (StellwertRight < 75)
+					Abweichung_SummeRight += AbweichungRight;
+
 		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
 		StellwertRight = KpRight * AbweichungRight + KvRight;
