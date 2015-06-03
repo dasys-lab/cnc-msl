@@ -87,6 +87,10 @@ namespace alica
 		{
 			if (wm->robots.getObstacles(i) != nullptr)
 			{
+				cout << "back: " << back.x << "/" << back.y << ", " <<
+						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
+						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
+
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
 					cout << "PenaltyBeh: " << it->x <<  " " <<  it->y << endl;
@@ -100,7 +104,7 @@ namespace alica
 					{
 						counter-= wm->getRingBufferLength() - i;
 					}
-					cout << "PenaltyBeh: " << counter << endl;
+//					cout << "PenaltyBeh: " << counter << endl;
 				}
 			}
 			else
@@ -112,13 +116,13 @@ namespace alica
 		if (counter <= 0)
 		{
 			lastAlignment = 1;
-			cout << "PenaltyBeh: left!" << endl;
+//			cout << "PenaltyBeh: left!" << endl;
 			egoTarget = alloLeftAimPoint.alloToEgo(*ownPos);
 		}
 		else
 		{
 			lastAlignment = 2;
-			cout << "PenaltyBeh: right!" << endl;
+//			cout << "PenaltyBeh: right!" << endl;
 			egoTarget = alloRightAimPoint.alloToEgo(*ownPos);
 		}
 		double egoTargetAngle = egoTarget->angleTo();
