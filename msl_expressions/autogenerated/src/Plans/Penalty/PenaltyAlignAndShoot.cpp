@@ -89,6 +89,7 @@ namespace alica
 			{
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
+
 					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
@@ -101,7 +102,7 @@ namespace alica
 						counter-= wm->getRingBufferLength() - i;
 						break;
 					}
-
+					cout << "PenaltyBeh: " << counter << endl;
 				}
 			}
 			else
@@ -109,6 +110,7 @@ namespace alica
 				cout << "PenaltyBeh: no obstacles!" << endl;
 			}
 		}
+		cout << "PenaltyBeh: done " << endl;
 		if (counter >= 0)
 		{
 			lastAlignment = 1;
