@@ -89,7 +89,7 @@ namespace alica
 			{
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
-
+					cout << "PenaltyBeh: " << it->x <<  " " <<  it->y << endl;
 					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
