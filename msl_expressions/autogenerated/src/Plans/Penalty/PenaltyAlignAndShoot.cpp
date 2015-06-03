@@ -94,13 +94,11 @@ namespace alica
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
 						counter+= wm->getRingBufferLength() - i;
-						break;
 					}
 					if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
 						counter-= wm->getRingBufferLength() - i;
-						break;
 					}
 					cout << "PenaltyBeh: " << counter << endl;
 				}
