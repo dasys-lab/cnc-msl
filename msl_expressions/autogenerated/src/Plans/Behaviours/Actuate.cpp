@@ -65,14 +65,14 @@ namespace alica
 		if (rotation > 1){
 			righty = (rotation * rotation * 0.6 - rotation * 0.95 - 1.4);
 					feedForwardRight = max(min(righty, 1.2), 1.2);
-					KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+					KvRight = (feedForwardRight * arithmeticAverage * 1 / 25);
 		}
        if (rotation < 1){
     	   lefty = (0.6 * rotation * rotation + 0.95 * rotation - 1.4);
 
     	   		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
-    	   		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
+    	   		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 25);
        }
     	   		else
 
