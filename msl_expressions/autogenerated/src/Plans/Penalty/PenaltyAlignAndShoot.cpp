@@ -90,20 +90,21 @@ namespace alica
 //				cout << "back: " << back.x << "/" << back.y << ", " <<
 //						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
 //						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
-				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision()->toString() << endl;
+//				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision()->toString() << endl;
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
 					// cool: PenaltyBeh: 4252.51 2261.1
-//					cout << "PenaltyBeh: " << it->x <<  " " <<  it->y << endl;
+					if (it->x > 3800 && it->x < 4900)
+						cout << "PenaltyBeh: " << it->x << " " << it->y << endl;
 					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
-						counter+= wm->getRingBufferLength() - i;
+						counter += wm->getRingBufferLength() - i;
 					}
 					if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
-						counter-= wm->getRingBufferLength() - i;
+						counter -= wm->getRingBufferLength() - i;
 					}
 //					cout << "PenaltyBeh: " << counter << endl;
 				}
