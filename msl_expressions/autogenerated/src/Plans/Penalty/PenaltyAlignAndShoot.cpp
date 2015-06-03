@@ -87,18 +87,10 @@ namespace alica
 		{
 			if (wm->robots.getObstacles(i) != nullptr)
 			{
-//				cout << "back: " << back.x << "/" << back.y << ", " <<
-//						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
-//						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
-//				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision()->toString() << endl;
 				for (auto it = wm->robots.getObstacles(i)->begin(); it != wm->robots.getObstacles(i)->end(); it++)
 				{
-					// cool: PenaltyBeh: 4252.51 2261.1
-//					if (it->x > 3800 && it->x < 4900)
-//						cout << "PenaltyBeh: " << it->x << " " << it->y << endl;
 					geometry::CNPoint2D obs(it->x, it->y);
 					shared_ptr<geometry::CNPoint2D> alloObs = obs.egoToAllo(*ownPos);
-					cout << "penaltyBeh: " << alloObs->x <<"/" << alloObs->y << endl;
 					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, *alloObs))
 					{
 						counter += wm->getRingBufferLength() - i;
@@ -107,7 +99,6 @@ namespace alica
 					{
 						counter -= wm->getRingBufferLength() - i;
 					}
-//					cout << "PenaltyBeh: " << counter << endl;
 				}
 			}
 			else
@@ -115,7 +106,6 @@ namespace alica
 				cout << "PenaltyBeh: no obstacles!" << endl;
 			}
 		}
-		cout << "PenaltyBeh: done " << endl;
 		if (counter <= 0)
 		{
 			lastAlignment = 1;
