@@ -109,7 +109,7 @@ namespace alica
 			}
 		}
 		cout << "PenaltyBeh: done " << endl;
-		if (counter >= 0)
+		if (counter <= 0)
 		{
 			lastAlignment = 1;
 			cout << "PenaltyBeh: left!" << endl;
