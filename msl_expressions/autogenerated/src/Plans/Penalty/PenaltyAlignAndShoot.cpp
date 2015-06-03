@@ -87,13 +87,14 @@ namespace alica
 		{
 			if (wm->robots.getObstacles(i) != nullptr)
 			{
-				cout << "back: " << back.x << "/" << back.y << ", " <<
-						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
-						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
-
+//				cout << "back: " << back.x << "/" << back.y << ", " <<
+//						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
+//						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
+				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision() << endl;
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
-					cout << "PenaltyBeh: " << it->x <<  " " <<  it->y << endl;
+					// cool: PenaltyBeh: 4252.51 2261.1
+//					cout << "PenaltyBeh: " << it->x <<  " " <<  it->y << endl;
 					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back,
 																		geometry::CNPoint2D(it->x, it->y)))
 					{
