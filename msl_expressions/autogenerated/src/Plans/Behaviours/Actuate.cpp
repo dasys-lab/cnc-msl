@@ -60,32 +60,23 @@ namespace alica
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
-		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
-
-		if (rotation > 1){
-			righty = (rotation * rotation * 0.6 - rotation * 0.95 - 1.4);
-					feedForwardRight = max(min(righty, 1.2), 1.2);
-					KvRight = (feedForwardRight * arithmeticAverage * 1 / 25);
-		}
-       if (rotation < 1){
-    	   lefty = (0.6 * rotation * rotation + 0.95 * rotation - 1.4);
-
-    	   		feedForwardLeft = max(min(lefty, 1.2), -1.2);
-
-    	   		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 25);
-       }
-    	   		else
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.2);
 
+
+
 		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+
+	
 
 		//Function for Right
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.2);
+		
+
 
 		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
 
@@ -93,7 +84,9 @@ namespace alica
 		const double KdLeft = 0.7;
 		const double KpLeft = 0.23;
 
+
 		const double SollwertLeft = 80;
+
 
 		double AbweichungLeft = 0.0;
 		double Abweichung_SummeLeft = 0.0;
@@ -111,28 +104,29 @@ namespace alica
 
 		Abweichung_AltLeft = AbweichungLeft;
 
+
 		//PIDControllerRight
 
-		const double KiRight = 0.5;
-		const double KdRight = 0.7;
-		const double KpRight = 0.23;
-		const double SollwertRight = 80;
-
-
+		
+		 const double KiRight = 0.5;
+		 const double KdRight = 0.7;
+		 const double SollwertRight = 80;
+		 const double KpRight = 0.23;
 
 		double AbweichungRight = 0.0;
 		double Abweichung_SummeRight = 0.0;
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
 		if (StellwertRight < 75)
 					Abweichung_SummeRight += AbweichungRight;
 
+		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 		StellwertRight = KpRight * AbweichungRight + KvRight;
 		StellwertRight += KiRight * Abweichung_SummeRight;
 		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+
 
 		Abweichung_AltRight = AbweichungRight;
 
