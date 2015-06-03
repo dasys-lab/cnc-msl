@@ -90,7 +90,7 @@ namespace alica
 //				cout << "back: " << back.x << "/" << back.y << ", " <<
 //						"fLeft: "<< frontLeft.x << "/" << frontLeft.y << ", "<<
 //						"fRight: " << frontRight.x << "/" << frontRight.y << endl;
-				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision() << endl;
+				cout << "PenaltyBeh: " << wm->rawSensorData.getOwnPositionVision()->toString() << endl;
 				for (auto it = wm->robots.getObstacles()->begin(); it != wm->robots.getObstacles()->end(); it++)
 				{
 					// cool: PenaltyBeh: 4252.51 2261.1
