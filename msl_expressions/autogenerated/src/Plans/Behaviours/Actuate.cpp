@@ -62,24 +62,12 @@ namespace alica
 		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if (rotation > 1){
-			righty = (rotation * rotation * 0.6 - rotation * 0.95 - 1.4);
-					feedForwardRight = max(min(righty, 1.2), 1.2);
-					KvRight = (feedForwardRight * arithmeticAverage * 1 / 25);
-		}
-       if (rotation < 1){
-    	   lefty = (0.6 * rotation * rotation + 0.95 * rotation - 1.4);
-
-    	   		feedForwardLeft = max(min(lefty, 1.2), -1.2);
-
-    	   		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 25);
-       }
     	   		else
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.2);
 
-		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+		KvRight = (feedForwardRight * arithmeticAverage * 1 / 30);
 
 		//Function for Right
 
@@ -87,11 +75,11 @@ namespace alica
 
 		feedForwardLeft = max(min(lefty, 1.2), -1.2);
 
-		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
+		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 30);
 
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
-		const double KpLeft = 0.23;
+		const double KpLeft = 0.23;//0.1
 
 		const double SollwertLeft = 80;
 
@@ -103,6 +91,7 @@ namespace alica
 		AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 
 		if (StellwertLeft < 75)
+			//if (AbweichungRight < 0)
 			Abweichung_SummeLeft += AbweichungLeft;
 
 		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
@@ -110,12 +99,14 @@ namespace alica
 		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 
 		Abweichung_AltLeft = AbweichungLeft;
+		//if (AbweichungLeft > 0)
+		// StellwertLeft=0;
 
 		//PIDControllerRight
 
 		const double KiRight = 0.5;
 		const double KdRight = 0.7;
-		const double KpRight = 0.23;
+		const double KpRight = 0.23//0.1;
 		const double SollwertRight = 80;
 
 
@@ -128,6 +119,7 @@ namespace alica
 		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 
 		if (StellwertRight < 75)
+			//if (AbweichungRight < 0)
 					Abweichung_SummeRight += AbweichungRight;
 
 		StellwertRight = KpRight * AbweichungRight + KvRight;
@@ -136,7 +128,8 @@ namespace alica
 
 		Abweichung_AltRight = AbweichungRight;
 
-		//StellwertRight /= 4;
+		//if (AbweichungRight > 0)
+		// StellwertRight=0;
 		/*
 		 if (Stellwert > 100)
 		 Stellwert = 100;
