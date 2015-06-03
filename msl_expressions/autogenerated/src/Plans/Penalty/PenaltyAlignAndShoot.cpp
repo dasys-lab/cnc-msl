@@ -94,15 +94,16 @@ namespace alica
 				for (auto it = wm->robots.getObstacles(i)->begin(); it != wm->robots.getObstacles(i)->end(); it++)
 				{
 					// cool: PenaltyBeh: 4252.51 2261.1
-					if (it->x > 3800 && it->x < 4900)
-						cout << "PenaltyBeh: " << it->x << " " << it->y << endl;
-					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back,
-																		geometry::CNPoint2D(it->x, it->y)))
+//					if (it->x > 3800 && it->x < 4900)
+//						cout << "PenaltyBeh: " << it->x << " " << it->y << endl;
+					geometry::CNPoint2D obs(it->x, it->y);
+					shared_ptr<geometry::CNPoint2D> alloObs = obs.egoToAllo(*ownPos);
+					cout << "penaltyBeh: " << alloObs->x <<"/" << alloObs->y << endl;
+					if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, *alloObs))
 					{
 						counter += wm->getRingBufferLength() - i;
 					}
-					if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back,
-																		geometry::CNPoint2D(it->x, it->y)))
+					if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back, *alloObs))
 					{
 						counter -= wm->getRingBufferLength() - i;
 					}
