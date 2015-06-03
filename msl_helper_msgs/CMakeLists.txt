@@ -7,6 +7,7 @@ project(msl_helper_msgs)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  msl_msgs
   message_generation
 )
 

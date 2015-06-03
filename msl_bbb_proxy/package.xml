@@ -4,11 +4,9 @@
   <version>0.0.0</version>
   <description>The msl_bbb_proxy package</description>
 
-  <maintainer email="emmeda@todo.todo">emmeda</maintainer>
+  <maintainer email="opfer@vs.uni-kassel.de">Stephan Opfer</maintainer>
 
   <license>MIT</license>
-
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 
   <buildtool_depend>catkin</buildtool_depend>
       

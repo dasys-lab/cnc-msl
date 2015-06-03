@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config roscpp roslib msl_actuator_msgs msl_msgs std_msgs)
+find_package(catkin REQUIRED system_config roscpp roslib msl_actuator_msgs msl_msgs std_msgs udp_proxy_generator)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)
@@ -25,7 +25,7 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/proxy_gen/ros2udpProxy.cpp
     COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/relayMsgs.conf udp_proxy_generator
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/relayMsgs.conf ${udp_proxy_generator_LIBRARIES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "${PROJECT_NAME}: Generating Code ..."
  )
