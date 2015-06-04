@@ -219,7 +219,7 @@ FILE(GLOB lib_msl_vision_SOURCES
 ## Vision 2D
 
 add_library(lib_msl_vision ${lib_msl_vision_SOURCES})
-target_link_libraries(lib_msl_vision stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES} freenect)
+target_link_libraries(lib_msl_vision stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 ${OpenCV_LIBS} ${catkin_LIBRARIES})
 set_target_properties(lib_msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(lib_msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 

@@ -127,4 +127,4 @@ file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINK
 
 # QT_MOC is needed, to show header files in qtcreator
 add_executable(msl_color_calibrator ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP} ${QT_MOC})
-target_link_libraries(msl_color_calibrator lib_msl_vision ${QT_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_color_calibrator ${QT_LIBRARIES} ${Boost_LIBRARIES} ${catkin_LIBRARIES})

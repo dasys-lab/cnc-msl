@@ -13,7 +13,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>BSD</license>
+  <license>MIT</license>
 
 
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
@@ -33,7 +33,6 @@
   <!-- Examples: -->
   <!-- Use build_depend for packages you need at compile time: -->
   <build_depend>roscpp</build_depend>
-  <!-- <build_depend>msl_actuator_msgs</build_depend> -->
   <build_depend>message_generation</build_depend>
   <build_depend>system_config</build_depend>
   <build_depend>can_connection</build_depend>
@@ -44,19 +43,9 @@
   <!-- Use run_depend for packages you need at runtime: -->
   <run_depend>message_runtime</run_depend>
   <run_depend>roscpp</run_depend>
-  <!-- <run_depend>msl_actuator_msgs</run_depend> -->
   <run_depend>system_config</run_depend>
   <run_depend>can_connection</run_depend>
   
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
-
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
-    <!-- You can specify that this package is a metapackage here: -->
-    <!-- <metapackage/> -->
-
-    <!-- Other tools can request additional information be placed here -->
-
   </export>
 </package>

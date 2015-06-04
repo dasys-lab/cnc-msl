@@ -112,7 +112,7 @@ add_executable(msl_motion
   src/gonzales.cpp
   src/EposGonzales.cpp
 )
-target_link_libraries(msl_motion pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES} can_connection)
+target_link_libraries(msl_motion pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(msl_motion PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror")
 add_dependencies(msl_motion 
   can_connection 
@@ -130,10 +130,10 @@ add_executable(msl_motion_lifetest
   src/gonzales.cpp
   src/epostest.cpp
 )
-target_link_libraries(msl_motion_lifetest pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES} can_connection)
+target_link_libraries(msl_motion_lifetest pthread m ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(msl_motion_lifetest PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror")
 add_dependencies(msl_motion_lifetest 
-  can_connection 
+  ${catkin_LIBRARIES}
   msl_actuator_msgs_generate_messages_cpp
   msl_msgs_generate_messages_cpp
 )
