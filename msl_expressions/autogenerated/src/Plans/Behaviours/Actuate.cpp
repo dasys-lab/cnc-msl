@@ -96,7 +96,7 @@ namespace alica
 			arithmeticAverage += *parameter;
 		}
 
-		arithmeticAverage = arithmeticAverage / 8;
+		arithmeticAverage = arithmeticAverage / 4;
 
 		//PIDControllerLeft
 
@@ -198,7 +198,7 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
-		cout << "Speed : " << arithmeticAverage << endl;
+		cout << "Speed : " << arithmeticAverage <<" <=> "<<wm->rawSensorData.getOwnVelocityMotion()->translation<< endl;
 	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
 	//	cout << "StellwertRight : " << StellwertRight << endl;
