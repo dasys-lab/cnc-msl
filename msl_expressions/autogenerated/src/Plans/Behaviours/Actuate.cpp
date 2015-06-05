@@ -117,7 +117,7 @@ namespace alica
 
 
 
-		KvRight = (feedForwardRight*eFunktion*550);
+		KvRight = (eFunktion*550);
 
 
 	
@@ -130,7 +130,7 @@ namespace alica
 		
 
 
-		KvLeft = (feedForwardLeft * eFunktion*550);
+		KvLeft = ( eFunktion*550);
 
 		/*
 
@@ -206,7 +206,7 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
-		cout << "Speed : " << arithmeticAverage <<" <=> "<<wm->rawSensorData.getOwnVelocityMotion()->translation<< endl;
+		cout << "Speed Approx : " << arithmeticAverage <<" <=> real "<<wm->rawSensorData.getOwnVelocityMotion()->translation<< endl;
 	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
 	//	cout << "StellwertRight : " << StellwertRight << endl;
@@ -215,7 +215,7 @@ namespace alica
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left =KvLeft;// StellwertLeft;
+		left = KvLeft;// StellwertLeft;
 		right =KvRight;// StellwertRight;
 
 
