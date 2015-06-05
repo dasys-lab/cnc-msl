@@ -96,7 +96,7 @@ namespace alica
 
 		//Feedforward
 		//Forward
-		if (cos(x)<=0)
+		if (cos(wm->rawSensorData.getOpticalFlowQoS())<0)
 		{
 			if (arithmeticAverage < 150)
 				eFunktion = 0;
@@ -111,7 +111,7 @@ namespace alica
 		}
 		//Feedforward
 		//Back
-		if (cos(x)>=0)
+		if (cos(wm->rawSensorData.getOpticalFlowQoS())>=0)
 		{
 			righty = (x * x * 0.6 - x * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
