@@ -110,7 +110,7 @@ namespace alica
 
 
 
-		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
+		KvRight = (feedForwardRight * arithmeticAverage * 1 / 50);
 
 	
 
@@ -122,7 +122,7 @@ namespace alica
 		
 
 
-		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
+		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 50);
 
 		/*
 
