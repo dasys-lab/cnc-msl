@@ -105,19 +105,16 @@ namespace alica
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double speed = arithmeticAverage ;
-
-		if(speed<=150)
-		speed=0.0;
-
-		
 		double eFunktion = 0.0184+0.039637*exp(-0.003*speed);
 
+
+
+		if(speed<150)
+		eFunktion=0;
+		
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.0), -1.4);
-
-
-
-		KvRight = (eFunktion*550);
+		KvRight = (eFunktion*speed);
 
 
 	
@@ -125,12 +122,8 @@ namespace alica
 		//Function for Right
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
-
 		feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		
-
-
-		KvLeft = ( eFunktion*550);
+		KvLeft = ( eFunktion*speed);
 
 		/*
 
