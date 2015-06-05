@@ -107,14 +107,14 @@ namespace alica
 		double speed = arithmeticAverage ;
 		double eFunktion = 0.0184+0.039637*exp(-0.003*speed);
 
-
-
+		//Vorsteuerung forward
+/*
 		if(speed<150)
 		eFunktion=0;
 		
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.0), -1.4);
-		KvRight = (eFunktion*speed);
+		KvRight = (feedForwardRight*eFunktion*speed);
 
 
 	
@@ -123,10 +123,20 @@ namespace alica
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 		feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		KvLeft = ( eFunktion*speed);
+		KvLeft = (feedForwardRight*eFunktion*speed);
+*/
+
+
+
+
+
+
+
+
+
 
 		/*
-
+		//Regler
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
 		const double KpLeft = 0.23;
