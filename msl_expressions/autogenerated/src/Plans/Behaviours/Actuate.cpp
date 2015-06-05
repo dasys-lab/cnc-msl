@@ -1,5 +1,6 @@
 using namespace std;
 #include "Plans/Behaviours/Actuate.h"
+#include<iostream>
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
@@ -36,11 +37,54 @@ namespace alica
 			return;
 		}
 
+		double ballQuality,ballQualityPartOne,ballQualityPartTwo,ballQualityPartThree;
+
+		//Ballquality test
+		/*
+				 for (int i=0; i<300;i++)
+				 {
+				 left=-20;
+				 right=-30;
+				 ballQualityPartOne+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+				 for (int i=0; i<300;i++)
+				 {
+				 left=-30;
+				 right=-20;
+				 ballQualityPartTwo+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+
+				 for (int i=0; i<300;i++)
+				 {
+				 left=-20;
+				 right=-20;
+				 ballQualityPartThree+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+				 ballQuality=(ballQualityPartOne+ballQualityPartTwo+ballQualityPartThree)/900;
+
+
+
+				cout<<"BallQualityOne : "<<ballQualityPartOne<<endl;
+				cout<<"BallQuality : "<<ballQuality<<endl;
+				*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
 
-		if (arithmeticAverageBox.size() == 4)
+		if (arithmeticAverageBox.size() == 3)
 		{
 			arithmeticAverageBox.pop_back();
 		}
@@ -52,34 +96,48 @@ namespace alica
 			arithmeticAverage += *parameter;
 		}
 
-		arithmeticAverage = arithmeticAverage / 8;
+		arithmeticAverage = arithmeticAverage / 3;
 
 		//PIDControllerLeft
 
-		double x, lefty, righty, feedForwardLeft, feedForwardRight;
+		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
+		double lefty, righty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
+		double eFunktion = 0.0184+0.039637*exp(-0.003*arithmeticAverage);
 
+		//Vorsteuerung forward
+/*
+		if(arithmeticAverage<150)
+		eFunktion=0;
+		
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.2), -1.2);
+		feedForwardRight = max(min(righty, 1.0), -1.4);
+		KvRight = (feedForwardRight*eFunktion*arithmeticAverage);
 
-
-
-		KvRight = (feedForwardRight * arithmeticAverage * 1 / 35);
 
 	
 
 		//Function for Right
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
+		feedForwardLeft = max(min(lefty, 1.0), -1.2);
+		KvLeft = (feedForwardRight*eFunktion*arithmeticAverage);
+*/
+		KvRight=-arithmeticAverage*(1/10);
+		KvLeft=-arithmeticAverage*(1/10);
 
-		feedForwardLeft = max(min(lefty, 1.2), -1.2);
-		
 
 
-		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
 
+
+
+
+
+
+
+		/*
+		//Regler
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
 		const double KpLeft = 0.23;
@@ -152,17 +210,18 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
-		cout << "Speed : " << arithmeticAverage << endl;
+		cout << "Speed Approx : " << arithmeticAverage <<" <=> real "<<wm->rawSensorData.getOwnVelocityMotion()->translation<< endl;
 		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
-		cout << "StellwertRight : " << StellwertRight << endl;
+	//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
-		cout << "StellwertLeft : " << StellwertLeft << endl << endl;
+	//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 
-//	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
+//	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
+		left = KvLeft;// StellwertLeft;
+		right = KvRight;// StellwertRight;
 
-		left =-20;// StellwertLeft;
-		right =-20;// StellwertRight;
+
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);

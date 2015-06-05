@@ -28,8 +28,8 @@ namespace alica
 
 
         mc.motion.angle =0.0;
-   	 mc.motion.rotation = 0.0;
-        mc.motion.translation =0.0;
+   	mc.motion.rotation = 0.0;
+        mc.motion.translation =200.0;
 
 
         this->send(mc);
