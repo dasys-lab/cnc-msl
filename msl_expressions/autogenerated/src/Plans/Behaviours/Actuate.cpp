@@ -204,7 +204,7 @@ namespace alica
 		//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
 		//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
-		cout << "left " << left << "  right " << right << endl;
+	cout<<endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
