@@ -112,7 +112,7 @@ namespace alica
 
 
 
-		KvRight = (feedForwardRight*eFunktion);
+		KvRight = (feedForwardRight*eFunktion*1000);
 
 
 	
@@ -125,7 +125,7 @@ namespace alica
 		
 
 
-		KvLeft = (feedForwardLeft * eFunktion);
+		KvLeft = (feedForwardLeft * eFunktion*1000);
 
 		/*
 
