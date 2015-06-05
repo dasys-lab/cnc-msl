@@ -124,16 +124,8 @@ namespace alica
 		feedForwardLeft = max(min(lefty, 1.0), -1.2);
 		KvLeft = (feedForwardRight*eFunktion*arithmeticAverage);
 */
-		KvRight=-1*(arithmeticAverage*(1/10));
-		KvLeft=-1*(arithmeticAverage*(1/10));
-
-
-
-
-
-
-
-
+		KvRight=-1*(arithmeticAverage*(1/10)+5);
+		KvLeft=-1*(arithmeticAverage*(1/10)+5);
 
 
 		/*
