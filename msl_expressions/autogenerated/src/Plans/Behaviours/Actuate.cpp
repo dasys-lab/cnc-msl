@@ -124,8 +124,8 @@ namespace alica
 		feedForwardLeft = max(min(lefty, 1.0), -1.2);
 		KvLeft = (feedForwardRight*eFunktion*arithmeticAverage);
 */
-		KvRight=-arithmeticAverage*(1/10);
-		KvLeft=-arithmeticAverage*(1/10);
+		KvRight=-10-arithmeticAverage*1/30;
+		KvLeft=-10-arithmeticAverage*1/30;
 
 
 
@@ -216,7 +216,7 @@ namespace alica
 	//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
 	//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
-
+		cout<<"left "<<left<<"  right "<<right<<endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		left = KvLeft;// StellwertLeft;
 		right = KvRight;// StellwertRight;
