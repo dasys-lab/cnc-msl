@@ -84,7 +84,7 @@ namespace alica
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
 
-		if (arithmeticAverageBox.size() == 4)
+		if (arithmeticAverageBox.size() == 3)
 		{
 			arithmeticAverageBox.pop_back();
 		}
@@ -96,7 +96,7 @@ namespace alica
 			arithmeticAverage += *parameter;
 		}
 
-		arithmeticAverage = arithmeticAverage / 4;
+		arithmeticAverage = arithmeticAverage / 3;
 
 		//PIDControllerLeft
 
@@ -117,7 +117,7 @@ namespace alica
 
 
 
-		KvRight = (feedForwardRight*eFunktion*1000);
+		KvRight = (feedForwardRight*eFunktion*550);
 
 
 	
@@ -130,7 +130,7 @@ namespace alica
 		
 
 
-		KvLeft = (feedForwardLeft * eFunktion*1000);
+		KvLeft = (feedForwardLeft * eFunktion*550);
 
 		/*
 
