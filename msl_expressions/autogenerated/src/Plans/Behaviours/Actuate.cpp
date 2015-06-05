@@ -100,17 +100,20 @@ namespace alica
 
 		//PIDControllerLeft
 
-		double x, lefty, righty, feedForwardLeft, feedForwardRight;
+		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
+		double lefty, righty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		x = wm->rawSensorData.getOwnVelocityMotion()->angle;
+
+		double eFunktion = 0.0184+0.039637*exp(-0.003*arithmeticAverage);
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.2), -1.2);
 
 
 
-		KvRight = (feedForwardRight * arithmeticAverage * 1 / 50);
+		KvRight = (feedForwardRight*eFunktion);
+
 
 	
 
@@ -122,7 +125,7 @@ namespace alica
 		
 
 
-		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 50);
+		KvLeft = (feedForwardLeft * eFunktion);
 
 		/*
 
