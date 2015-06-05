@@ -96,7 +96,7 @@ namespace alica
 
 		//Feedforward
 		//Forward
-		if ((x + M_PI / 2 > 0) && (x + M_PI / 2 < M_PI))
+		if (cos(x)<=0)
 		{
 			if (arithmeticAverage < 150)
 				eFunktion = 0;
@@ -111,7 +111,7 @@ namespace alica
 		}
 		//Feedforward
 		//Back
-		if ((x + M_PI / 2 < 0) && (x + M_PI / 2 > -M_PI))
+		if (cos(x)>=0)
 		{
 			righty = (x * x * 0.6 - x * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
