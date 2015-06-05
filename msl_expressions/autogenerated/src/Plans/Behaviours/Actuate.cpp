@@ -113,7 +113,7 @@ namespace alica
 		double eFunktion = 0.0184+0.039637*exp(-0.003*speed);
 
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.2), -1.4);
+		feedForwardRight = max(min(righty, 1.0), -1.4);
 
 
 
@@ -126,7 +126,7 @@ namespace alica
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 
-		feedForwardLeft = max(min(lefty, 1.2), -1.2);
+		feedForwardLeft = max(min(lefty, 1.0), -1.2);
 		
 
 
