@@ -36,6 +36,47 @@ namespace alica
 			return;
 		}
 
+		double ballQuality,ballQualityPartOne,ballQualityPartTwo,ballQualityPartThree;
+
+		//Ballquality test
+
+				 for (int i=0; i<150;i++)
+				 {
+				 left=-20;
+				 right=-30;
+				 ballQualityPartOne+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+				 for (int i=0; i<150;i++)
+				 {
+				 left=-30;
+				 right=-20;
+				 ballQualityPartTwo+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+
+				 for (int i=0; i<150;i++)
+				 {
+				 left=-20;
+				 right=-20;
+				 ballQualityPartThree+=wm->rawSensorData.getOpticalFlowQoS();
+				 }
+				 ballQuality=(ballQualityPartOne+ballQualityPartTwo+ballQualityPartThree)/450;
+
+				cout<<"BallQuality : "<<ballQuality<<endl;
+
+				 cout<<"BallQuality : "<<ballQuality<<endl;
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
@@ -150,7 +191,7 @@ namespace alica
 		 left = -Stellwert;
 		 right = -Stellwert;
 		 */
-
+/*
 		cout << "Winkel : " << x << endl;
 		cout << "Speed : " << arithmeticAverage << endl;
 		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
@@ -163,6 +204,8 @@ namespace alica
 
 		left =-20;// StellwertLeft;
 		right =-20;// StellwertRight;
+	*/
+
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
