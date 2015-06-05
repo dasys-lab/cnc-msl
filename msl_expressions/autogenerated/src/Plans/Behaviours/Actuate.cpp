@@ -106,10 +106,8 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double speed = wm->rawSensorData.getOwnVelocityMotion()->translation ;
 
-		if(speed<150)
-		{	speed=0;
-		}
-		
+		if(speed<=150)
+		speed=0.0;
 
 		
 		double eFunktion = 0.0184+0.039637*exp(-0.003*speed);
