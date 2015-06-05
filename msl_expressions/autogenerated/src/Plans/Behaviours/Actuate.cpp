@@ -1,5 +1,6 @@
 using namespace std;
 #include "Plans/Behaviours/Actuate.h"
+#include<iostream>
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
@@ -39,32 +40,33 @@ namespace alica
 		double ballQuality,ballQualityPartOne,ballQualityPartTwo,ballQualityPartThree;
 
 		//Ballquality test
-
-				 for (int i=0; i<150;i++)
+		/*
+				 for (int i=0; i<300;i++)
 				 {
 				 left=-20;
 				 right=-30;
 				 ballQualityPartOne+=wm->rawSensorData.getOpticalFlowQoS();
 				 }
-				 for (int i=0; i<150;i++)
+				 for (int i=0; i<300;i++)
 				 {
 				 left=-30;
 				 right=-20;
 				 ballQualityPartTwo+=wm->rawSensorData.getOpticalFlowQoS();
 				 }
 
-				 for (int i=0; i<150;i++)
+				 for (int i=0; i<300;i++)
 				 {
 				 left=-20;
 				 right=-20;
 				 ballQualityPartThree+=wm->rawSensorData.getOpticalFlowQoS();
 				 }
-				 ballQuality=(ballQualityPartOne+ballQualityPartTwo+ballQualityPartThree)/450;
+				 ballQuality=(ballQualityPartOne+ballQualityPartTwo+ballQualityPartThree)/900;
 
+
+
+				cout<<"BallQualityOne : "<<ballQualityPartOne<<endl;
 				cout<<"BallQuality : "<<ballQuality<<endl;
-
-				 cout<<"BallQuality : "<<ballQuality<<endl;
-
+				*/
 
 
 
@@ -76,7 +78,8 @@ namespace alica
 
 
 
-/*
+
+
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
@@ -120,6 +123,8 @@ namespace alica
 
 
 		KvLeft = (feedForwardLeft * arithmeticAverage * 1 / 35);
+
+		/*
 
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
@@ -191,20 +196,20 @@ namespace alica
 		 left = -Stellwert;
 		 right = -Stellwert;
 		 */
-/*
+
 		cout << "Winkel : " << x << endl;
 		cout << "Speed : " << arithmeticAverage << endl;
-		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
-		cout << "StellwertRight : " << StellwertRight << endl;
+	//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
-		cout << "StellwertLeft : " << StellwertLeft << endl << endl;
+	//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<endl;
 
-		left =-20;// StellwertLeft;
-		right =-20;// StellwertRight;
-	*/
+		left =KvLeft;// StellwertLeft;
+		right =KvRight;// StellwertRight;
+
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
