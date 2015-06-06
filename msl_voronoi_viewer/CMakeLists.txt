@@ -5,13 +5,6 @@
 cmake_minimum_required(VERSION 2.8.0)
 project(msl_voronoi_viewer)
 
-## Use c++ 11x std
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-## Used for cgal
-set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Don't override flags")
-set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core -frounding-math ${CMAKE_CXX_FLAGS}")
-
-
 ##############################################################################
 # Catkin
 ##############################################################################
@@ -21,6 +14,10 @@ find_package(catkin REQUIRED COMPONENTS qt_build roscpp message_generation msl_m
 find_package(CGAL REQUIRED COMPONENTS Core)
 include_directories(${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
 include(${CGAL_USE_FILE})
+
+## Use c++ 11x std
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
 # Use this to define what the package will export (e.g. libs, headers).
 # Since the default here is to produce only a binary, we don't worry about
 # exporting anything. 

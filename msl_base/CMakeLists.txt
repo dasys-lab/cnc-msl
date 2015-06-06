@@ -7,10 +7,6 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Enable exception handling for segfaults
 set(CMAKE_CXX_FLAGS "-rdynamic -g -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
 
-## Used for cgal
-set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Don't override flags")
-set(CMAKE_CXX_FLAGS "-lCGAL -lCGAL_Core -frounding-math ${CMAKE_CXX_FLAGS}")
-
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -27,9 +23,6 @@ find_package(catkin REQUIRED COMPONENTS
   msl_worldmodel
 )
 
-find_package(CGAL REQUIRED COMPONENTS Core)
-
-
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -43,7 +36,6 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES
   CATKIN_DEPENDS alica_engine alica_ros_proxy msl_expressions msl_simulator msl_worldmodel
-  DEPENDS cgal
 )
 
 ###########
@@ -53,15 +45,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
-include(${CGAL_USE_FILE})
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp executable
 add_executable(msl_base src/Base.cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(msl_base ${catkin_LIBRARIES} ${CGAL_LIBRARIES})
+target_link_libraries(msl_base ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_base ${catkin_LIBRARIES} ${CGAL_LIBRARIES})
+add_dependencies(msl_base ${catkin_LIBRARIES})
