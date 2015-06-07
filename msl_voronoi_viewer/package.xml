@@ -7,9 +7,9 @@
      msl_voronoi_viewer
 
   </description>
-  <maintainer email="Michael@gmail.com">Michael</maintainer>
-  <author>Michael</author>
-  <license>BSD</license>
+  <maintainer email="todo@jakob.de">Stefan Jakob</maintainer>
+  <author>Stefan Jakob</author>
+  <license>MIT</license>
   <!-- <url type="bugtracker">https://github.com/stonier/qt_ros/issues</url> -->
   <!-- <url type="repository">https://github.com/stonier/qt_ros</url> -->
 
