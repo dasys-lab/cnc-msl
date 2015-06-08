@@ -97,7 +97,7 @@ namespace alica
 
 		};
 
-/*
+
 		 //PIDController
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
@@ -184,8 +184,8 @@ namespace alica
 	cout<<" cos x :" << cos(x)<<endl;
 
 
-		left = KvLeft; // StellwertLeft;
-		right = KvRight; // StellwertRight;
+		left = StellwertLeft; // StellwertLeft;
+		right = StellwertRight; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
