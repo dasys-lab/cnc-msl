@@ -39,34 +39,8 @@ namespace alica
 
 		double ballQuality, ballQualityPartOne, ballQualityPartTwo, ballQualityPartThree;
 
-		//Ballquality test
-		/*
-		 for (int i=0; i<300;i++)
-		 {
-		 left=-20;
-		 right=-30;
-		 ballQualityPartOne+=wm->rawSensorData.getOpticalFlowQoS();
-		 }
-		 for (int i=0; i<300;i++)
-		 {
-		 left=-30;
-		 right=-20;
-		 ballQualityPartTwo+=wm->rawSensorData.getOpticalFlowQoS();
-		 }
+		//TODO Ballquality test
 
-		 for (int i=0; i<300;i++)
-		 {
-		 left=-20;
-		 right=-20;
-		 ballQualityPartThree+=wm->rawSensorData.getOpticalFlowQoS();
-		 }
-		 ballQuality=(ballQualityPartOne+ballQualityPartTwo+ballQualityPartThree)/900;
-
-
-
-		 cout<<"BallQualityOne : "<<ballQualityPartOne<<endl;
-		 cout<<"BallQuality : "<<ballQuality<<endl;
-		 */
 
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
