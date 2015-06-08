@@ -41,7 +41,7 @@ namespace alica
 
 		//TODO Ballquality test
 
-
+		//arithmetic Average for Speed
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
@@ -63,42 +63,46 @@ namespace alica
 		//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
-		double lefty, righty, feedForwardLeft, feedForwardRight;
-		double KvLeft, KvRight;
+		//	double lefty, lefty, feedForwardLeft, feedForwardRight;
+		//double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverage);
 
-		//Feedforward
-		//Forward
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle<0))
-		{
-			if (arithmeticAverage < 150)
-		{		eFunktion = 0;
-}
-			righty = (x * x * 0.6 - x * 0.95 - 1.4);
-			feedForwardRight = max(min(righty, 1.0), -1.4);
-			KvRight = ( eFunktion * arithmeticAverage);
-
-			lefty = (0.6 * x * x + 0.95 * x - 1.4);
-			feedForwardLeft = max(min(lefty, 1.0), -1.2);
-			KvLeft = ( eFunktion * arithmeticAverage);
-		};
-		//Feedforward
-		//Back
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle>=0))
-		{
-			righty = (x * x * 0.6 - x * 0.95 - 1.4);
-			feedForwardRight = max(min(righty, 1.0), -1.4);
-			KvRight = ( eFunktion * arithmeticAverage - 10);
-
-			lefty = (0.6 * x * x + 0.95 * x - 1.4);
-			feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		KvLeft = ( eFunktion * arithmeticAverage - 10);
-
-		};
+		//sideward
 
 		/*
-		 //Regler
+		 //Feedforward
+		 //Forward
+		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0)
+		 {
+		 if (arithmeticAverage < 150)
+		 {		eFunktion = 0;
+		 };
+		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
+		 feedForwardRight = max(min(righty, 1.0), -1.4);
+		 KvRight = (feedForwardRight* eFunktion * arithmeticAverage);
+
+		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
+		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
+		 KvLeft = (feedForwardLeft* eFunktion * arithmeticAverage);
+		 };
+		 //Feedforward
+		 //Back
+		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0)
+		 {
+		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle *wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 -wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
+		 feedForwardRight = max(min(righty, 1.0), -1.4);
+		 KvRight = (feedForwardRight* eFunktion * arithmeticAverage - 10);
+
+		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
+		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
+		 KvLeft = ( feedForwardLeft*eFunktion * arithmeticAverage - 10);
+
+		 };
+		 */
+
+		/*
+		 //PIDController
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
 		 const double KpLeft = 0.23;
@@ -173,17 +177,18 @@ namespace alica
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverage << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-			
+
 	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "Kvright : " << KvRight << endl;
+	//	cout << "Kvright : " << KvRight << endl;
 		//	cout << "StellwertRight : " << StellwertRight << endl;
-		cout << "Kvleft : " << KvLeft << endl;
+	//	cout << "Kvleft : " << KvLeft << endl;
 		//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
-	cout<<endl;
+		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
-	cout<<" cos x :" << cos(x)<<endl;		
-left = KvLeft; // StellwertLeft;
-		right = KvRight; // StellwertRight;
+	//	cout << " cos x :" << cos(x) << endl;
+
+		left = 10; // StellwertLeft;
+		right = -35; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
