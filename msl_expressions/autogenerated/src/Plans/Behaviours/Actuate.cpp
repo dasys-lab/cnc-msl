@@ -81,7 +81,7 @@ namespace alica
 
 			lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
 			feedForwardLeft = max(min(lefty, 1.0), -1.2);
-			KvLeft = (feedForwardRight* eFunktion * arithmeticAverage);
+			KvLeft = (feedForwardLeft* eFunktion * arithmeticAverage);
 		};
 		//Feedforward
 		//Back
@@ -93,12 +93,12 @@ namespace alica
 
 			lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
 			feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		KvLeft = ( feedForwardRight*eFunktion * arithmeticAverage - 10);
+		KvLeft = ( feedForwardLeft*eFunktion * arithmeticAverage - 10);
 
 		};
 
-
-		 //Regler
+/*
+		 //PIDController
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
 		 const double KpLeft = 0.23;
@@ -184,8 +184,8 @@ namespace alica
 	cout<<" cos x :" << cos(x)<<endl;
 
 
-		left = StellwertLeft; // StellwertLeft;
-		right = StellwertRight; // StellwertRight;
+		left = KvLeft; // StellwertLeft;
+		right = KvRight; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
