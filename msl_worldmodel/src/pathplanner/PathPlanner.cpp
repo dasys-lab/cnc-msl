@@ -29,6 +29,7 @@ namespace msl
 		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor", NULL);
+		lastPath = nullptr;
 		initializeArtificialObstacles();
 
 	}
@@ -79,6 +80,7 @@ namespace msl
 		{
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			ret->push_back(make_shared<geometry::CNPoint2D>(goal));
+			lastPath = ret;
 			return ret;
 		}
 		// return
@@ -115,6 +117,7 @@ namespace msl
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
+				lastPath = ret;
 				return ret;
 			}
 			closed->push_back(currentNode);

@@ -110,6 +110,7 @@ namespace msl
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
 		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, geometry::CNPoint2D goal);
 	};
 
