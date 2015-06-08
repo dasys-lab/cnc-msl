@@ -174,7 +174,7 @@ namespace alica
 		cout << "Speed Approx : " << arithmeticAverage << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 			
-	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
 		//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
