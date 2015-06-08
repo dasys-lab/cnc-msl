@@ -75,11 +75,11 @@ namespace alica
 			if (arithmeticAverage < 150)
 		{		eFunktion = 0;
 };
-			righty = (x * x * 0.6 - x * 0.95 - 1.4);
+			righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
 			KvRight = (feedForwardRight* eFunktion * arithmeticAverage);
 
-			lefty = (0.6 * x * x + 0.95 * x - 1.4);
+			lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
 			feedForwardLeft = max(min(lefty, 1.0), -1.2);
 			KvLeft = (feedForwardRight* eFunktion * arithmeticAverage);
 		};
@@ -87,11 +87,11 @@ namespace alica
 		//Back
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0)
 		{
-			righty = (x * x * 0.6 - x * 0.95 - 1.4);
+			righty = (wm->rawSensorData.getOwnVelocityMotion()->angle *wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 -wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
 			KvRight = (feedForwardRight* eFunktion * arithmeticAverage - 10);
 
-			lefty = (0.6 * x * x + 0.95 * x - 1.4);
+			lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
 			feedForwardLeft = max(min(lefty, 1.0), -1.2);
 		KvLeft = ( feedForwardRight*eFunktion * arithmeticAverage - 10);
 
