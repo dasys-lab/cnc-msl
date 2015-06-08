@@ -41,7 +41,7 @@ namespace alica
 
 		//TODO Ballquality test
 
-
+		//arithmetic Average for Speed
 		double arithmeticAverage = 0.0;
 		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameter;
@@ -97,7 +97,7 @@ namespace alica
 
 		};
 
-		/*
+
 		 //Regler
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
@@ -181,9 +181,11 @@ namespace alica
 		//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 	cout<<endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
-	cout<<" cos x :" << cos(x)<<endl;		
-left = KvLeft; // StellwertLeft;
-		right = KvRight; // StellwertRight;
+	cout<<" cos x :" << cos(x)<<endl;
+
+
+		left = StellwertLeft; // StellwertLeft;
+		right = StellwertRight; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
