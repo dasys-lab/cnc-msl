@@ -187,8 +187,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 	//	cout << " cos x :" << cos(x) << endl;
 
-		left = 12; // StellwertLeft;
-		right = -20; // StellwertRight;
+		left = 10; // StellwertLeft;
+		right = -35; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
