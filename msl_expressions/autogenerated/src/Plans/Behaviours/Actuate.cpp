@@ -63,12 +63,20 @@ namespace alica
 		//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
-		//	double lefty, lefty, feedForwardLeft, feedForwardRight;
+		double righty, lefty, feedForwardLeft, feedForwardRight;
 		//double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverage);
 
 		//sideward
+		// righty = (x *x* 0.6 - x * 0.95 - 1.4);
+		//feedForwardRight = max(min(righty, 1.0), -1.4);
+
+		//lefty = (0.6 * x * x + 0.95 * x - 1.4);
+		// feedForwardLeft = max(min(lefty, 1.0), -1.2);
+
+		righty = arithmeticAverage * -x*1/15;
+		lefty =	 arithmeticAverage * x*1/35;
 
 		/*
 		 //Feedforward
@@ -78,12 +86,10 @@ namespace alica
 		 if (arithmeticAverage < 150)
 		 {		eFunktion = 0;
 		 };
-		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
-		 feedForwardRight = max(min(righty, 1.0), -1.4);
+
 		 KvRight = (feedForwardRight* eFunktion * arithmeticAverage);
 
-		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
-		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
+
 		 KvLeft = (feedForwardLeft* eFunktion * arithmeticAverage);
 		 };
 		 //Feedforward
@@ -178,17 +184,17 @@ namespace alica
 		cout << "Speed Approx : " << arithmeticAverage << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
-	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-	//	cout << "Kvright : " << KvRight << endl;
+		//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "lefty : " << lefty << endl;
 		//	cout << "StellwertRight : " << StellwertRight << endl;
-	//	cout << "Kvleft : " << KvLeft << endl;
+			cout << "righty : " << righty << endl;
 		//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
-	//	cout << " cos x :" << cos(x) << endl;
+		//	cout << " cos x :" << cos(x) << endl;
 
-		left = 10; // StellwertLeft;
-		right = -35; // StellwertRight;
+		left = lefty; // StellwertLeft;
+		right = righty; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
