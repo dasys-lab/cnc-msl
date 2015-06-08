@@ -63,11 +63,19 @@ namespace alica
 		//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
-		double lefty, righty, feedForwardLeft, feedForwardRight;
+	//	double lefty, lefty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverage);
 
+		//sideward
+
+
+
+
+
+
+/*
 		//Feedforward
 		//Forward
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0)
@@ -96,8 +104,11 @@ namespace alica
 		KvLeft = ( feedForwardLeft*eFunktion * arithmeticAverage - 10);
 
 		};
+*/
 
 
+
+		/*
 		 //PIDController
 		 const double KiLeft = 0.5;
 		 const double KdLeft = 0.7;
@@ -184,8 +195,8 @@ namespace alica
 	cout<<" cos x :" << cos(x)<<endl;
 
 
-		left = StellwertLeft; // StellwertLeft;
-		right = StellwertRight; // StellwertRight;
+		left = 12; // StellwertLeft;
+		right = -20; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
