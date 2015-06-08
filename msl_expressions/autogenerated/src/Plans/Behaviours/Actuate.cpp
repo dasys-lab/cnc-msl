@@ -74,7 +74,7 @@ namespace alica
 		{
 			if (arithmeticAverage < 150)
 		{		eFunktion = 0;
-}
+};
 			righty = (x * x * 0.6 - x * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
 			KvRight = ( eFunktion * arithmeticAverage);
@@ -89,7 +89,7 @@ namespace alica
 		{
 			righty = (x * x * 0.6 - x * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
-			KvRight = ( eFunktion * arithmeticAverage - 10);
+			KvRight = (-1* eFunktion * arithmeticAverage - 10);
 
 			lefty = (0.6 * x * x + 0.95 * x - 1.4);
 			feedForwardLeft = max(min(lefty, 1.0), -1.2);
