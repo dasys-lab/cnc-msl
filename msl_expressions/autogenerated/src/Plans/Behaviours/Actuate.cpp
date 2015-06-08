@@ -70,7 +70,7 @@ namespace alica
 
 		//Feedforward
 		//Forward
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle>0))
+		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle<0))
 		{
 			if (arithmeticAverage < 150)
 				eFunktion = 0;
@@ -85,7 +85,7 @@ namespace alica
 		}
 		//Feedforward
 		//Back
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle<=0))
+		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle>=0))
 		{
 			righty = (x * x * 0.6 - x * 0.95 - 1.4);
 			feedForwardRight = max(min(righty, 1.0), -1.4);
@@ -173,7 +173,8 @@ namespace alica
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverage << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+			
+	//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "Kvright : " << KvRight << endl;
 		//	cout << "StellwertRight : " << StellwertRight << endl;
 		cout << "Kvleft : " << KvLeft << endl;
