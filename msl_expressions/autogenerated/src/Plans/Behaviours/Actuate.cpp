@@ -85,12 +85,9 @@ namespace alica
 
 		//Feedforward
 		//Forward
-		//	if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-			//{
-		if (arithmeticAverageSpeed < 150)
-		{
-			eFunktion = 0;
-	//	};
+			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+			{
+
 
 		KvRight = (righty * eFunktion * arithmeticAverageSpeed);
 
@@ -98,14 +95,14 @@ namespace alica
 			};
 		//Feedforward
 		//Back
-/*
+
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
 		{
 
 			KvRight = (righty * eFunktion * arithmeticAverageSpeed - 10);
 			KvLeft = (lefty * eFunktion * arithmeticAverageSpeed - 10);
 
-		};*/
+		};
 
 		//PIDControllerLeft
 		const double KiLeft = 1.0;
