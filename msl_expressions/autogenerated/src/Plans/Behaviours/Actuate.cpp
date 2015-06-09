@@ -107,34 +107,49 @@ namespace alica
 
 		};
 
-		//PIDController
+		//PIDControllerLeft
 		const double KiLeft = 0.5;
 		const double KdLeft = 0.7;
 		const double KpLeft = 0.23;
 
-		const double SollwertLeft = 80;
+		const double SollwertLeftForward = 50;
+		const double SollwertLeftBackward = 75;
 
 		double AbweichungLeft = 0.0;
 		double Abweichung_SummeLeft = 0.0;
 		double Abweichung_AltLeft = 0.0;
 		double StellwertLeft = 0.0;
 
-		AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 
-		if (StellwertLeft < 75)
+
+		if ((StellwertLeft < 75)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		{
 			Abweichung_SummeLeft += AbweichungLeft;
-
+		AbweichungLeft = -1 * (SollwertLeftBackward - wm->rawSensorData.getOpticalFlowQoS());
 		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
 		StellwertLeft += KiLeft * Abweichung_SummeLeft;
 		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 
 		Abweichung_AltLeft = AbweichungLeft;
+		};
+
+		if ((StellwertLeft < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		{
+			Abweichung_SummeLeft += AbweichungLeft;
+		AbweichungLeft = -1 * (SollwertLeftBackward - wm->rawSensorData.getOpticalFlowQoS());
+		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+
+		Abweichung_AltLeft = AbweichungLeft;
+		};
 
 		//PIDControllerRight
 
 		const double KiRight = 0.5;
 		const double KdRight = 0.7;
-		const double SollwertRight = 80;
+		const double SollwertRightForward = 50;
+		const double SollwertRightBackward = 75;
 		const double KpRight = 0.23;
 
 		double AbweichungRight = 0.0;
@@ -142,15 +157,29 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		if (StellwertRight < 75)
-			Abweichung_SummeRight += AbweichungRight;
-
-		AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+		if ((StellwertRight < 75)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		{
+		Abweichung_SummeRight += AbweichungRight;
+		AbweichungRight = -1 * (SollwertRightBackward - wm->rawSensorData.getOpticalFlowQoS());
 		StellwertRight = KpRight * AbweichungRight + KvRight;
 		StellwertRight += KiRight * Abweichung_SummeRight;
 		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
 
 		Abweichung_AltRight = AbweichungRight;
+		};
+
+		if ((StellwertRight < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		{
+			Abweichung_SummeRight += AbweichungRight;
+
+
+		AbweichungRight = -1 * (SollwertRightForward - wm->rawSensorData.getOpticalFlowQoS());
+		StellwertRight = KpRight * AbweichungRight + KvRight;
+		StellwertRight += KiRight * Abweichung_SummeRight;
+		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+
+		Abweichung_AltRight = AbweichungRight;
+		};
 
 		//StellwertRight /= 4;
 		/*
