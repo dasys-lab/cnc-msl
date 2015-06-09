@@ -105,7 +105,7 @@ namespace alica
 		};
 
 		//PIDControllerLeft
-		const double KiLeft = 1.0;
+		const double KiLeft = 0.1;
 		const double KdLeft = 0.0;
 		const double KpLeft = 0.1;
 
@@ -117,9 +117,9 @@ namespace alica
 		double Abweichung_AltLeft = 0.0;
 		double StellwertLeft = 0.0;
 		const double SollwertLeftForward = 50;
-		const double SollwertLeftBackward = 85;
+		const double SollwertLeftBackward = 90;
 
-		if ((StellwertLeft < 80)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		if ((StellwertLeft < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
 		{
 
 			Abweichung_SummeLeft += AbweichungLeft;
@@ -145,10 +145,10 @@ namespace alica
 
 		//PIDControllerRight
 
-		const double KiRight = 1.0;
+		const double KiRight = 0.1;
 		const double KdRight = 0.0;
 		const double SollwertRightForward = 50;
-		const double SollwertRightBackward = 85;
+		const double SollwertRightBackward = 90;
 		const double KpRight = 0.1;
 
 		double AbweichungRight = 0.0;
@@ -156,7 +156,7 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		if ((StellwertRight < 80)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		if ((StellwertRight < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
 		{
 		Abweichung_SummeRight += AbweichungRight;
 		AbweichungRight = -1 * (SollwertRightBackward - wm->rawSensorData.getOpticalFlowQoS());

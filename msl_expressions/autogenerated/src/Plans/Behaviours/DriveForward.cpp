@@ -27,9 +27,9 @@ namespace alica
         //MOTION:
 
 
-        mc.motion.angle =M_PI;
-   	mc.motion.rotation = 0.0;
-        mc.motion.translation =1500.0;
+        mc.motion.angle =0.0;
+   	mc.motion.rotation = M_PI/2;
+        mc.motion.translation =0.0;
 
 
         this->send(mc);
