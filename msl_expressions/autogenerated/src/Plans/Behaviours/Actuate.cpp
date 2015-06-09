@@ -67,7 +67,7 @@ namespace alica
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
-
+/*
 		righty = 1.8
 				* (sin(-x - 0.52) - 1 / 9 * sin(3 * (-x + 0.18) - 0.2) + 1 / 25 * sin(5 * (-x + 0.18))
 						- 1 / 49 * sin(7 * (-x + 0.18) - 0.1));
@@ -75,23 +75,23 @@ namespace alica
 		lefty = 1.8
 				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
-
+*/
 		//sideward
-		//righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		//feedForwardRight = max(min(righty, 1.0), -1.6);
+		righty = (x * x * 0.6 - x * 0.95 - 1.4);
+		feedForwardRight = max(min(righty, 1.0), -1.6);
 
-		//lefty = (0.6 * x * x + 0.95 * x - 1.4);
-		//feedForwardLeft = max(min(lefty, 1.0), -1.6);
+		lefty = (0.6 * x * x + 0.95 * x - 1.4);
+		feedForwardLeft = max(min(lefty, 1.0), -1.6);
 
 		//Feedforward
-		//Forward
+			//Forward
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 			{
 
 
-		KvRight = (righty * eFunktion * arithmeticAverageSpeed);
+		KvRight = (feedForwardRight * eFunktion * arithmeticAverageSpeed);
 
-		KvLeft = (lefty * eFunktion * arithmeticAverageSpeed);
+		KvLeft = (feedForwardLeft * eFunktion * arithmeticAverageSpeed);
 			};
 		//Feedforward
 		//Back
@@ -99,8 +99,8 @@ namespace alica
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
 		{
 
-			KvRight = (righty * eFunktion * arithmeticAverageSpeed - 10);
-			KvLeft = (lefty * eFunktion * arithmeticAverageSpeed - 10);
+			KvRight = (feedForwardRight * eFunktion * arithmeticAverageSpeed - 10);
+			KvLeft = (feedForwardLeft * eFunktion * arithmeticAverageSpeed - 10);
 
 		};
 
