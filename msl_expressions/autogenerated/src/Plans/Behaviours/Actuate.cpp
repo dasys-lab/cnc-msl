@@ -163,7 +163,7 @@ namespace alica
 
 
 
-		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+
 		 cout << "Stellwert : " << Stellwert << endl;
 
 		 // left =  rodo->motion.translation * (1.0 / 40.0) ;
@@ -176,7 +176,7 @@ namespace alica
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-
+		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "lefty : " << lefty << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		cout << "StellwertLeft: " << StellwertLeft << endl;
