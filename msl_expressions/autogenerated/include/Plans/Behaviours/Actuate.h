@@ -22,8 +22,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1417017518918) ENABLED START*/ //Add additional private methods here
-        list<double> arithmeticAverageBox;
-
+        list<double> arithmeticAverageBoxSpeed;
+        list<double> arithmeticAverageBoxAngle;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

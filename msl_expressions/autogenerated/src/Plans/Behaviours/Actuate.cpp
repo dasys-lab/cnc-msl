@@ -37,28 +37,36 @@ namespace alica
 			return;
 		}
 
-		double ballQuality, ballQualityPartOne, ballQualityPartTwo, ballQualityPartThree;
 
 		//TODO Ballquality test
 
+
 		//arithmetic Average for Speed
-		double arithmeticAverage = 0.0;
-		double newParamer = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		list<double>::iterator parameter;
 
-		if (arithmeticAverageBox.size() == 3)
+
+		double arithmeticAverageSpeed = 0.0;
+		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		list<double>::iterator parameterSpeed;
+
+		if (arithmeticAverageBoxSpeed.size() == 3)
 		{
-			arithmeticAverageBox.pop_back();
+			arithmeticAverageBoxSpeed.pop_back();
 		}
 
-		arithmeticAverageBox.push_front(newParamer);
+		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		for (parameter = arithmeticAverageBox.begin(); parameter != arithmeticAverageBox.end(); parameter++)
+		for (parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
 		{
-			arithmeticAverage += *parameter;
+			arithmeticAverageSpeed += *parameterSpeed;
 		}
 
-		arithmeticAverage = arithmeticAverage / 3;
+		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
+
+
+
+
+
+
 
 		//PIDControllerLeft
 
@@ -66,7 +74,7 @@ namespace alica
 		double righty, lefty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverage);
+		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 
 		righty = 1.8
 				* (sin(x - 0.54) - 1 / 9 * sin(3 * (x + 0.16) - 0.2) + 1 / 25 * sin(5 * (x + 0.16))
@@ -89,14 +97,14 @@ namespace alica
 		//Forward
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 		{
-			if (arithmeticAverage < 150)
+			if (arithmeticAverageSpeed < 150)
 			{
 				eFunktion = 0;
 			};
 
-			KvRight = (righty * eFunktion * arithmeticAverage);
+			KvRight = (righty * eFunktion * arithmeticAverageSpeed);
 
-			KvLeft = (lefty * eFunktion * arithmeticAverage);
+			KvLeft = (lefty * eFunktion * arithmeticAverageSpeed);
 		};
 		//Feedforward
 		//Back
@@ -105,13 +113,13 @@ namespace alica
 		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle
 		 * 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
 		 feedForwardRight = max(min(righty, 1.0), -1.4);
-		 KvRight = (righty * eFunktion * arithmeticAverage - 10);
+		 KvRight = (righty * eFunktion * arithmeticAverageSpeed - 10);
 
 		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle
 		 * wm->rawSensorData.getOwnVelocityMotion()->angle
 		 + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
 		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		 KvLeft = (lefty * eFunktion * arithmeticAverage - 10);
+		 KvLeft = (lefty * eFunktion * arithmeticAverageSpeed - 10);
 
 		 };
 
@@ -189,7 +197,7 @@ namespace alica
 		 */
 
 		cout << "Winkel : " << x << endl;
-		cout << "Speed Approx : " << arithmeticAverage << " <=> real "
+		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
 		cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
