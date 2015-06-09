@@ -108,9 +108,9 @@ namespace alica
 		};
 
 		//PIDControllerLeft
-		const double KiLeft = 0.5;
-		const double KdLeft = 0.7;
-		const double KpLeft = 0.23;
+		const double KiLeft = 1.0;
+		const double KdLeft = 0.0;
+		const double KpLeft = 0.1;
 
 
 
@@ -148,11 +148,11 @@ namespace alica
 
 		//PIDControllerRight
 
-		const double KiRight = 0.5;
-		const double KdRight = 0.7;
+		const double KiRight = 1.0;
+		const double KdRight = 0.0;
 		const double SollwertRightForward = 50;
 		const double SollwertRightBackward = 75;
-		const double KpRight = 0.23;
+		const double KpRight = 0.1;
 
 		double AbweichungRight = 0.0;
 		double Abweichung_SummeRight = 0.0;
