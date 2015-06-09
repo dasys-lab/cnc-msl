@@ -37,12 +37,9 @@ namespace alica
 			return;
 		}
 
-
 		//TODO Ballquality test
 
-
 		//arithmetic Average for Speed
-
 
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -55,18 +52,13 @@ namespace alica
 
 		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		for (parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
+		for (parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end();
+				parameterSpeed++)
 		{
 			arithmeticAverageSpeed += *parameterSpeed;
 		}
 
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
-
-
-
-
-
-
 
 		//PIDControllerLeft
 
@@ -90,40 +82,32 @@ namespace alica
 		//lefty = (0.6 * x * x + 0.95 * x - 1.4);
 		//feedForwardLeft = max(min(lefty, 1.0), -1.6);
 
-		//righty = arithmeticAverage * -x * 1 / 15;
-		//lefty = arithmeticAverage * x * 1 / 35;
+
 
 		//Feedforward
 		//Forward
-	//	if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-	//	{
-			if (arithmeticAverageSpeed < 150)
-			{
-				eFunktion = 0;
-			};
+		//	if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+		//	{
+		if (arithmeticAverageSpeed < 150)
+		{
+			eFunktion = 0;
+		};
 
-			KvRight = (righty * eFunktion * arithmeticAverageSpeed);
+		KvRight = (righty * eFunktion * arithmeticAverageSpeed);
 
-			KvLeft = (lefty * eFunktion * arithmeticAverageSpeed);
-	//	};
+		KvLeft = (lefty * eFunktion * arithmeticAverageSpeed);
+		//	};
 		//Feedforward
 		//Back
-		/*
-			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
-		 {
-		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle
-		 * 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
-		 feedForwardRight = max(min(righty, 1.0), -1.4);
-		 KvRight = (righty * eFunktion * arithmeticAverageSpeed - 10);
 
-		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle
-		 * wm->rawSensorData.getOwnVelocityMotion()->angle
-		 + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
-		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
+		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
+		 {
+
+		 KvRight = (righty * eFunktion * arithmeticAverageSpeed - 10);
 		 KvLeft = (lefty * eFunktion * arithmeticAverageSpeed - 10);
 
 		 };
-*/
+
 		/*
 		 //PIDController
 		 const double KiLeft = 0.5;
@@ -210,7 +194,7 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left =KvLeft; // StellwertLeft;
+		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
