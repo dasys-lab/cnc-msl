@@ -64,48 +64,57 @@ namespace alica
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 		double righty, lefty, feedForwardLeft, feedForwardRight;
-		//double KvLeft, KvRight;
+		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverage);
 
+
+
+
+		righty=1.8*(sin(x-0.54)-1/9*sin(3*(x+0.16)-0.2)+1/25*sin(5*(x+0.16))-1/49*sin(7*(x+0.16)-0.1));
+		lefty =-1.8*(sin(x+2.58)-1/9*sin(3*(x+3.28)-0.2)+1/25*sin(5*(x+3.28))-1/49*sin(7*(x+3.28)-0.1));
+
+
+
 		//sideward
-		// righty = (x *x* 0.6 - x * 0.95 - 1.4);
-		//feedForwardRight = max(min(righty, 1.0), -1.4);
+		//righty = (x * x * 0.6 - x * 0.95 - 1.4);
+		//feedForwardRight = max(min(righty, 1.0), -1.6);
 
 		//lefty = (0.6 * x * x + 0.95 * x - 1.4);
-		// feedForwardLeft = max(min(lefty, 1.0), -1.2);
+		//feedForwardLeft = max(min(lefty, 1.0), -1.6);
 
-		righty = arithmeticAverage * -x*1/15;
-		lefty =	 arithmeticAverage * x*1/35;
+		//righty = arithmeticAverage * -x * 1 / 15;
+		//lefty = arithmeticAverage * x * 1 / 35;
 
-		/*
-		 //Feedforward
-		 //Forward
-		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0)
-		 {
-		 if (arithmeticAverage < 150)
-		 {		eFunktion = 0;
-		 };
+		//Feedforward
+		//Forward
+		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+		{
+			if (arithmeticAverage < 150)
+			{
+				eFunktion = 0;
+			};
 
-		 KvRight = (feedForwardRight* eFunktion * arithmeticAverage);
+			KvRight = (righty * eFunktion * arithmeticAverage);
 
+			KvLeft = (lefty * eFunktion * arithmeticAverage);
+		};
+		//Feedforward
+		//Back
+		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
+		{
+			righty = (wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle
+					* 0.6 - wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
+			feedForwardRight = max(min(righty, 1.0), -1.4);
+			KvRight = (righty * eFunktion * arithmeticAverage - 10);
 
-		 KvLeft = (feedForwardLeft* eFunktion * arithmeticAverage);
-		 };
-		 //Feedforward
-		 //Back
-		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0)
-		 {
-		 righty = (wm->rawSensorData.getOwnVelocityMotion()->angle *wm->rawSensorData.getOwnVelocityMotion()->angle * 0.6 -wm->rawSensorData.getOwnVelocityMotion()->angle * 0.95 - 1.4);
-		 feedForwardRight = max(min(righty, 1.0), -1.4);
-		 KvRight = (feedForwardRight* eFunktion * arithmeticAverage - 10);
+			lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle
+					* wm->rawSensorData.getOwnVelocityMotion()->angle
+					+ 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
+			feedForwardLeft = max(min(lefty, 1.0), -1.2);
+			KvLeft = (lefty * eFunktion * arithmeticAverage - 10);
 
-		 lefty = (0.6 * wm->rawSensorData.getOwnVelocityMotion()->angle * wm->rawSensorData.getOwnVelocityMotion()->angle + 0.95 * wm->rawSensorData.getOwnVelocityMotion()->angle - 1.4);
-		 feedForwardLeft = max(min(lefty, 1.0), -1.2);
-		 KvLeft = ( feedForwardLeft*eFunktion * arithmeticAverage - 10);
-
-		 };
-		 */
+		};
 
 		/*
 		 //PIDController
@@ -187,14 +196,14 @@ namespace alica
 		//	cout << " QualityOfService : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "lefty : " << lefty << endl;
 		//	cout << "StellwertRight : " << StellwertRight << endl;
-			cout << "righty : " << righty << endl;
+		cout << "righty : " << righty << endl;
 		//	cout << "StellwertLeft : " << StellwertLeft << endl << endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = lefty; // StellwertLeft;
-		right = righty; // StellwertRight;
+		left = KvLeft; // StellwertLeft;
+		right = KvRight; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
