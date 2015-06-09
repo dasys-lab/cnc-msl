@@ -95,8 +95,8 @@ namespace alica
 
 		//Feedforward
 		//Forward
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-		{
+	//	if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+	//	{
 			if (arithmeticAverageSpeed < 150)
 			{
 				eFunktion = 0;
@@ -105,7 +105,7 @@ namespace alica
 			KvRight = (righty * eFunktion * arithmeticAverageSpeed);
 
 			KvLeft = (lefty * eFunktion * arithmeticAverageSpeed);
-		};
+	//	};
 		//Feedforward
 		//Back
 		/*
