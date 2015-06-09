@@ -69,6 +69,7 @@ namespace alica
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 /*
 		righty = 1.8
+
 				* (sin(-x - 0.52) - 1 / 9 * sin(3 * (-x + 0.18) - 0.2) + 1 / 25 * sin(5 * (-x + 0.18))
 						- 1 / 49 * sin(7 * (-x + 0.18) - 0.1));
 		;
@@ -76,22 +77,22 @@ namespace alica
 				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
 
-		//sideward
+		/*	//sideward
 		righty = (x * x * 0.6 - x * 0.95 - 1.4);
 		feedForwardRight = max(min(righty, 1.0), -1.6);
 
 		lefty = (0.6 * x * x + 0.95 * x - 1.4);
 		feedForwardLeft = max(min(lefty, 1.0), -1.6);
-*/
+
 		//Feedforward
 			//Forward
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 			{
 
 
-		KvRight = ( eFunktion * arithmeticAverageSpeed);
+		KvRight = ( righty*eFunktion * arithmeticAverageSpeed);
 
-		KvLeft = ( eFunktion * arithmeticAverageSpeed);
+		KvLeft = ( lefty*eFunktion * arithmeticAverageSpeed);
 			};
 		//Feedforward
 		//Back
@@ -99,8 +100,8 @@ namespace alica
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
 		{
 
-			KvRight = ( eFunktion * arithmeticAverageSpeed - 10);
-			KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
+			KvRight = (righty* eFunktion * arithmeticAverageSpeed - 10);
+			KvLeft = ( lefty*eFunktion * arithmeticAverageSpeed - 10);
 
 		};
 
@@ -201,22 +202,28 @@ namespace alica
 		 right = -Stellwert;
 		 */
 
+
+
+
+
+
+
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "lefty : " << lefty << endl;
 		cout << "KvLeft : " << KvLeft << endl;
-		cout << "StellwertLeft: " << StellwertLeft << endl;
+		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		cout << "righty : " << righty << endl;
 		cout << "KvRight : " << KvRight << endl << endl;
-		cout << "StellwertRight: " << StellwertRight << endl;
+		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = StellwertLeft; // StellwertLeft;
-		right = StellwertRight; // StellwertRight;
+		left = wm->rawSensorData.getOwnVelocityMotion()->rotation*20; // StellwertLeft;
+		right = wm->rawSensorData.getOwnVelocityMotion()->rotation*13; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
