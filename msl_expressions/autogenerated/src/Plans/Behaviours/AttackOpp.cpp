@@ -44,6 +44,7 @@ namespace alica
         auto x = egoBallPos->x;
         auto y = egoBallPos->y;
 
+        cout << "egoBallPos x: " << x << " y: " << y << endl;
 
         if (me == nullptr || egoBallPos == nullptr)
         {
