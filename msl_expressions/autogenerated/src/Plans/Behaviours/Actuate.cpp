@@ -222,8 +222,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = wm->rawSensorData.getOwnVelocityMotion()->rotation*20; // StellwertLeft;
-		right = wm->rawSensorData.getOwnVelocityMotion()->rotation*13; // StellwertRight;
+		left = wm->rawSensorData.getOwnVelocityMotion()->rotation*50; // StellwertLeft;
+		right = wm->rawSensorData.getOwnVelocityMotion()->rotation*50; // StellwertRight;
 
 		bhc.leftMotor = max(min(left, 60), -60);
 		bhc.rightMotor = max(min(right, 60), -60);
