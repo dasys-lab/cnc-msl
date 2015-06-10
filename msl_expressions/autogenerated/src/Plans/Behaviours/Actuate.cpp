@@ -76,27 +76,27 @@ namespace alica
 		lefty = 1.8
 				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
-
-		/*	//sideward
-		righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.0), -1.6);
-
-		lefty = (0.6 * x * x + 0.95 * x - 1.4);
-		feedForwardLeft = max(min(lefty, 1.0), -1.6);
 */
+			//sideward
+		righty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x-0.21*x-1;
+		feedForwardRight = max(min(righty, 1.0), -1.0);
+
+		lefty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x+0.21*x-1;
+		feedForwardLeft = max(min(lefty, 1.0), -1.0);
+/*
 		//Feedforward
 			//Forward
-			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-			{
+//			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+//			{
 
+*/
+		KvRight = (feedForwardRight* eFunktion * arithmeticAverageSpeed);
 
-		KvRight = ( eFunktion * arithmeticAverageSpeed);
-
-		KvLeft = ( eFunktion * arithmeticAverageSpeed);
-			};
+		KvLeft = (feedForwardLeft* eFunktion * arithmeticAverageSpeed);
+//			};
 		//Feedforward
 		//Back
-
+/*
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
 		{
 
@@ -104,7 +104,7 @@ namespace alica
 			KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
 
 		};
-/*
+
 		//PIDControllerLeft
 		const double KiLeft = 0.4;
 		const double KdLeft = 0.5;
@@ -203,7 +203,9 @@ namespace alica
 		 */
 
 
-
+		//nur test danach löschen!!
+	//	KvLeft=-1.5*x*KvLeft;
+	//	KvRight=-2.5*x*KvRight;
 
 
 
@@ -222,6 +224,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
+
+		
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
