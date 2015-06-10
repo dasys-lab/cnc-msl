@@ -116,7 +116,7 @@ namespace msl
 			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->x
 					&& it->target()->point().y() == currentNode->getVertex()->y)
 			{
-				if (find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
+				if (it->has_source() && find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
 				{
 					if((*it).has_source())
 					{
@@ -251,6 +251,7 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
+				//TODO
 				if((edge->source()->point().x() == currentNode->getVertex()->x && edge->source()->point().y() == currentNode->getVertex()->y
 						&& edge->target()->point().x() == nextNode->getVertex()->x && edge->target()->point().y() == nextNode->getVertex()->y)
 						||
