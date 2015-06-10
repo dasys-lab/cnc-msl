@@ -12,7 +12,6 @@
 namespace msl
 {
 
-	//TODO  c# vornoinet => initialize artficial obstacles
 	VoronoiNet::VoronoiNet(MSLWorldModel* wm)
 	{
 		this->wm = wm;
@@ -105,12 +104,9 @@ namespace msl
 			if (it->has_source() && it->source()->point().x() == currentNode->getVertex()->x
 					&& it->source()->point().y() == currentNode->getVertex()->y)
 			{
-				if (find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
+				if (it->has_target() && find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
 				{
-					if((*it).has_target())
-					{
 						neighbors.push_back(*it->target());
-					}
 				}
 			}
 			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->x
@@ -118,10 +114,7 @@ namespace msl
 			{
 				if (it->has_source() && find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
 				{
-					if((*it).has_source())
-					{
 						neighbors.push_back(*it->source());
-					}
 				}
 			}
 		}
@@ -247,16 +240,16 @@ namespace msl
 		if (loc.which() == 0)
 		{
 			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-			VoronoiDiagram::Halfedge_handle begin = handle->halfedge()->opposite();
+			//removed opposite
+			VoronoiDiagram::Halfedge_handle begin = handle->halfedge();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				//TODO
-				if((edge->source()->point().x() == currentNode->getVertex()->x && edge->source()->point().y() == currentNode->getVertex()->y
+				if(edge->has_source() && edge->has_target() && ((edge->source()->point().x() == currentNode->getVertex()->x && edge->source()->point().y() == currentNode->getVertex()->y
 						&& edge->target()->point().x() == nextNode->getVertex()->x && edge->target()->point().y() == nextNode->getVertex()->y)
 						||
 						(edge->source()->point().x() == nextNode->getVertex()->x && edge->source()->point().y() == nextNode->getVertex()->y
-						&& edge->target()->point().x() == currentNode->getVertex()->x && edge->target()->point().y() == currentNode->getVertex()->y))
+						&& edge->target()->point().x() == currentNode->getVertex()->x && edge->target()->point().y() == currentNode->getVertex()->y)))
 				{
 					return true;
 				}
@@ -301,15 +294,16 @@ namespace msl
 		{
 			bool foundFirst = false;
 			bool foundSecond = false;
-			VoronoiDiagram::Halfedge_handle begin = fit->halfedge()->opposite();
+			//removed opposite
+			VoronoiDiagram::Halfedge_handle begin = fit->halfedge();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if (edge->source()->point().x() == v1->point().x() && edge->source()->point().y() == v1->point().y())
+				if (edge->has_source() && edge->source()->point().x() == v1->point().x() && edge->source()->point().y() == v1->point().y())
 				{
 					foundFirst = true;
 				}
-				if (edge->source()->point().x() == v2->point().x() && edge->source()->point().y() == v2->point().y())
+				if (edge->has_source() && edge->source()->point().x() == v2->point().x() && edge->source()->point().y() == v2->point().y())
 				{
 					foundSecond = true;
 				}
