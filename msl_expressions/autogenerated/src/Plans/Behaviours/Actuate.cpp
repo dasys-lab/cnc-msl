@@ -76,23 +76,23 @@ namespace alica
 		lefty = 1.8
 				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
-
-		/*	//sideward
-		righty = (x * x * 0.6 - x * 0.95 - 1.4);
-		feedForwardRight = max(min(righty, 1.0), -1.6);
-
-		lefty = (0.6 * x * x + 0.95 * x - 1.4);
-		feedForwardLeft = max(min(lefty, 1.0), -1.6);
 */
+			//sideward
+		righty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x-0.21*x-1;
+		feedForwardRight = max(min(righty, 1.0), -1.0);
+
+		lefty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x+0.21*x-1;
+		feedForwardLeft = max(min(lefty, 1.0), -1.0);
+/*
 		//Feedforward
 			//Forward
 //			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 //			{
 
+*/
+		KvRight = (feedForwardRight* eFunktion * arithmeticAverageSpeed);
 
-		KvRight = (x* eFunktion * arithmeticAverageSpeed);
-
-		KvLeft = (x* eFunktion * arithmeticAverageSpeed);
+		KvLeft = (feedForwardLeft* eFunktion * arithmeticAverageSpeed);
 //			};
 		//Feedforward
 		//Back
