@@ -35,6 +35,16 @@ namespace alica
         // TODO: Get closest obstacle to ball
         //}
 
+        //TODO
+           // x+ && y+ Ball kommt von vorne rechts
+           // x+ && y- Ball kommt von vorne links
+           // x- && y- Ball kommt von hinten links
+           // x- && y+ Ball kommt von hinten rechts
+
+        auto x = egoBallPos->x;
+        auto y = egoBallPos->y;
+
+
         if (me == nullptr || egoBallPos == nullptr)
         {
             cerr << "insufficient information for AttackOpp" << endl;
