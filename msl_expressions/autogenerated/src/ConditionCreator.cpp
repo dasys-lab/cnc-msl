@@ -12,6 +12,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Example/ExamplePlan1433938652021.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -293,6 +295,18 @@ namespace alica
             case 1432132442910:
 
                 return make_shared<TransitionCondition1432132442910>();
+
+                break;
+
+            case 1433939023616:
+
+                return make_shared<TransitionCondition1433939023616>();
+
+                break;
+
+            case 1433939026572:
+
+                return make_shared<TransitionCondition1433939026572>();
 
                 break;
 

@@ -13,6 +13,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Example/ExamplePlan1433938652021.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -87,6 +89,10 @@ namespace alica
 
             case 1432132075122:
                 return make_shared<UtilityFunction1432132075122>();
+                break;
+
+            case 1433938652021:
+                return make_shared<UtilityFunction1433938652021>();
                 break;
 
             case 1431522123418:
