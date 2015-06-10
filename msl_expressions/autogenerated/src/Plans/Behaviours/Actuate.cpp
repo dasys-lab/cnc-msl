@@ -86,17 +86,17 @@ namespace alica
 */
 		//Feedforward
 			//Forward
-			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-			{
+//			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+//			{
 
 
-		KvRight = ( eFunktion * arithmeticAverageSpeed);
+		KvRight = (x* eFunktion * arithmeticAverageSpeed);
 
-		KvLeft = ( eFunktion * arithmeticAverageSpeed);
-			};
+		KvLeft = (x* eFunktion * arithmeticAverageSpeed);
+//			};
 		//Feedforward
 		//Back
-
+/*
 		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
 		{
 
@@ -104,7 +104,7 @@ namespace alica
 			KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
 
 		};
-/*
+
 		//PIDControllerLeft
 		const double KiLeft = 0.4;
 		const double KdLeft = 0.5;
@@ -203,7 +203,9 @@ namespace alica
 		 */
 
 
-
+		//nur test danach löschen!!
+	//	KvLeft=-1.5*x*KvLeft;
+	//	KvRight=-2.5*x*KvRight;
 
 
 
@@ -222,6 +224,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
+
+		
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
