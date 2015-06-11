@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="StandardAttack.pml#1434046634657"/>
+    <value xPos="103" yPos="83" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434046634656"/>
+    <value xPos="6" yPos="-3" width="619" height="454"/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434046634658"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048406725"/>
+    <value xPos="252" yPos="266" width="69" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048705508"/>
+    <value xPos="303" yPos="87" width="73" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048720937"/>
+    <value>
+      <bendpoints xPos="338" yPos="178"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048722503"/>
+    <value>
+      <bendpoints xPos="337" yPos="123"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048723878"/>
+    <value>
+      <bendpoints xPos="317" yPos="244"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048729645"/>
+    <value>
+      <bendpoints xPos="397" yPos="241"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048731525"/>
+    <value>
+      <bendpoints xPos="294" yPos="262"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434048734889"/>
+    <value>
+      <bendpoints xPos="432" yPos="252"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Dribble.pml#1434049476066"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

@@ -1,5 +1,5 @@
-#ifndef AlineToGoal_H_
-#define AlineToGoal_H_
+#ifndef AlignToGoal_H_
+#define AlignToGoal_H_
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
@@ -28,4 +28,4 @@ namespace alica
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
-#endif /* AlineToGoal_H_ */
+#endif /* AlignToGoal_H_ */

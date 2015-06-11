@@ -1,6 +1,5 @@
-
 using namespace std;
-#include <Plans/Behaviours/AlignToGoal.h>
+#include "Plans/Behaviours/AlignToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1415205272843) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
@@ -9,7 +8,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1415205272843) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     AlignToGoal::AlignToGoal() :
-            DomainBehaviour("AlineToGoal")
+            DomainBehaviour("AlignToGoal")
     {
         /*PROTECTED REGION ID(con1415205272843) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/

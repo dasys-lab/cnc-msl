@@ -36,10 +36,10 @@ namespace alica
         //}
 
         //TODO
-           // x+ && y+ Ball kommt von vorne rechts
-           // x+ && y- Ball kommt von vorne links
-           // x- && y- Ball kommt von hinten links
-           // x- && y+ Ball kommt von hinten rechts
+        // x+ && y+ Ball kommt von vorne rechts
+        // x+ && y- Ball kommt von vorne links
+        // x- && y- Ball kommt von hinten links
+        // x- && y+ Ball kommt von hinten rechts
 
         auto x = egoBallPos->x;
         auto y = egoBallPos->y;
@@ -64,8 +64,8 @@ namespace alica
 
         const double rotate_P = 1.8;
 
-		mc.motion.angle = egoBallPos->angleTo();
-		mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+        mc.motion.angle = egoBallPos->angleTo();
+        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
         double summe = 0.0;
         static double olddistance = 0.0;
