@@ -68,6 +68,8 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 /*
+ *
+ * 	//gescheiterte Funktionen
 		righty = 1.8
 
 				* (sin(-x - 0.52) - 1 / 9 * sin(3 * (-x + 0.18) - 0.2) + 1 / 25 * sin(5 * (-x + 0.18))
@@ -76,13 +78,21 @@ namespace alica
 		lefty = 1.8
 				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
-*/
+
+
 			//sideward
 		righty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x-0.48*x-2;
 		feedForwardRight = max(min(righty, 1.0), -2.0);
 
 		lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
 		feedForwardLeft = max(min(lefty, 1.0), -2.0);
+
+*/
+
+
+
+
+
 /*
 		//Feedforward
 			//Forward
@@ -90,9 +100,9 @@ namespace alica
 //			{
 
 */
-		KvRight = (feedForwardRight* eFunktion * arithmeticAverageSpeed);
+		KvRight = ( eFunktion * arithmeticAverageSpeed);
 
-		KvLeft = (feedForwardLeft* eFunktion * arithmeticAverageSpeed);
+		KvLeft = ( eFunktion * arithmeticAverageSpeed);
 //			};
 		//Feedforward
 		//Back
