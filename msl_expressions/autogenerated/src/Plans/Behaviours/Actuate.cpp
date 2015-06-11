@@ -79,10 +79,10 @@ namespace alica
 */
 			//sideward
 		righty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x-0.48*x-2;
-		feedForwardRight = max(min(righty, 2.0), -1.0);
+		feedForwardRight = max(min(righty, 1.0), -2.0);
 
 		lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
-		feedForwardLeft = max(min(lefty, 2.0), -1.0);
+		feedForwardLeft = max(min(lefty, 1.0), -2.0);
 /*
 		//Feedforward
 			//Forward
