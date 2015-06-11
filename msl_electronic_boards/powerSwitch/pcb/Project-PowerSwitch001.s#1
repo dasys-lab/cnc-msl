@@ -18953,7 +18953,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <instance part="GND11" gate="1" x="223.52" y="127"/>
 <instance part="GND14" gate="1" x="223.52" y="104.14"/>
 <instance part="GND20" gate="1" x="243.84" y="104.14"/>
-<instance part="JP9" gate="A" x="187.96" y="114.3" rot="R270"/>
+<instance part="JP9" gate="A" x="190.5" y="114.3" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -19571,7 +19571,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <pinref part="U$2" gate="G$1" pin="PC7"/>
 </segment>
 <segment>
-<wire x1="185.42" y1="114.3" x2="182.88" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="114.3" x2="182.88" y2="114.3" width="0.1524" layer="91"/>
 <label x="182.88" y="114.3" size="1.27" layer="95" rot="R180" xref="yes"/>
 <pinref part="JP9" gate="A" pin="1"/>
 </segment>
@@ -19616,7 +19616,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <pinref part="U$2" gate="G$1" pin="PB0"/>
 </segment>
 <segment>
-<wire x1="185.42" y1="111.76" x2="182.88" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="187.96" y1="111.76" x2="182.88" y2="111.76" width="0.1524" layer="91"/>
 <label x="182.88" y="111.76" size="1.27" layer="95" rot="R180" xref="yes"/>
 <pinref part="JP9" gate="A" pin="2"/>
 </segment>
