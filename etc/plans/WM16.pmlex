@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564408"/>
-    <value xPos="-9" yPos="2" width="930" height="576"/>
+    <value xPos="-14" yPos="9" width="930" height="576"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1413992564410"/>
@@ -22,10 +22,6 @@
   </extensions>
   <extensions>
     <key href="Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/AlineToGoal.beh#1415205285582"/>
     <value/>
   </extensions>
   <extensions>
@@ -62,7 +58,7 @@
   </extensions>
   <extensions>
     <key href="WM16.pml#1426692070119"/>
-    <value xPos="550" yPos="15" width="70" height="67" collapsed="false"/>
+    <value xPos="562" yPos="12" width="70" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="WM16.pml#1426692077573"/>
@@ -101,7 +97,7 @@
   <extensions>
     <key href="WM16.pml#1426692322651"/>
     <value>
-      <bendpoints xPos="630" yPos="75"/>
+      <bendpoints xPos="642" yPos="72"/>
     </value>
   </extensions>
   <extensions>

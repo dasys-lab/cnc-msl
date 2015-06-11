@@ -13,6 +13,8 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
+#include  "Plans/Example/constraints/ExamplePlan1433938652021Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"

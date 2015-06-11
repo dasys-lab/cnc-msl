@@ -1,4 +1,3 @@
-
 using namespace std;
 
 #include "BehaviourCreator.h"
@@ -20,6 +19,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
+#include  "Plans/Behaviours/AlignToGoal.h"
+
 #include  "Plans/GenericBehaviours/StandardStdDefendPositioning.h"
 
 #include  "Plans/GenericBehaviours/StdStandardDefendPos.h"
@@ -28,13 +29,13 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
 
+#include  "Plans/Example/DriveInSquare.h"
+
 #include  "Plans/Behaviours/GetBall.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Actuate.h"
-
-#include  <Plans/Behaviours/AlignToGoal.h>
 
 #include  "Plans/Behaviours/DriveForward.h"
 
@@ -106,6 +107,11 @@ namespace alica
                 return make_shared<InterceptCarefully>();
                 break;
 
+            case 1415205285582:
+
+                return make_shared<AlignToGoal>();
+                break;
+
             case 1429110549548:
 
                 return make_shared<StandardStdDefendPositioning>();
@@ -126,6 +132,11 @@ namespace alica
                 return make_shared<StandardBlockerPositioning>();
                 break;
 
+            case 1433939634320:
+
+                return make_shared<DriveInSquare>();
+                break;
+
             case 1414828313541:
 
             case 1414840399972:
@@ -141,11 +152,6 @@ namespace alica
             case 1417017552846:
 
                 return make_shared<Actuate>();
-                break;
-
-            case 1415205285582:
-
-                return make_shared<AlignToGoal>();
                 break;
 
             case 1417017580650:

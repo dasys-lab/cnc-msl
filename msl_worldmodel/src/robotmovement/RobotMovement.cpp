@@ -29,7 +29,7 @@ namespace msl
 		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
 		if (egoTarget->length() > snapDistance)
 		{
-			mc.motion.translation = defaultTranslation;
+			mc.motion.translation = std::min(egoTarget->length(), defaultTranslation);
 		}
 		else
 		{

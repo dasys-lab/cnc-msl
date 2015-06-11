@@ -9,12 +9,8 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnPenalty.pml#1431526662401"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="OwnPenalty.pml#1431526626723"/>
-    <value xPos="190" yPos="18" width="159" height="86" collapsed="false"/>
+    <value xPos="271" yPos="10" width="232" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../Behaviours/GetBall.beh#1414840399972"/>
@@ -62,6 +58,24 @@
   </extensions>
   <extensions>
     <key href="OwnPenalty.pml#1432744248119"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1433337664670"/>
+    <value>
+      <bendpoints xPos="567" yPos="156"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1433338496106"/>
+    <value xPos="142" yPos="-1" width="104" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1433338525417"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnPenalty.pml#1433338528647"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

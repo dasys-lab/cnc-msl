@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="ExamplePlan.pml#1433938652021"/>
+    <value xPos="-2" yPos="3" width="882" height="599"/>
+  </extensions>
+  <extensions>
+    <key href="ExamplePlan.pml#1433938652023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ExamplePlan.pml#1433938970029"/>
+    <value xPos="85" yPos="228" width="65" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="ExamplePlan.pml#1433938974495"/>
+    <value xPos="272" yPos="226" width="109" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ExamplePlan.pml#1433939022457"/>
+    <value>
+      <bendpoints xPos="311" yPos="223"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ExamplePlan.pml#1433939023953"/>
+    <value>
+      <bendpoints xPos="333" yPos="376"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DriveInSquare.beh#1433939634320"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

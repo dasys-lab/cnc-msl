@@ -35,6 +35,17 @@ namespace alica
         // TODO: Get closest obstacle to ball
         //}
 
+        //TODO
+           // x+ && y+ Ball kommt von vorne rechts
+           // x+ && y- Ball kommt von vorne links
+           // x- && y- Ball kommt von hinten links
+           // x- && y+ Ball kommt von hinten rechts
+
+        auto x = egoBallPos->x;
+        auto y = egoBallPos->y;
+
+        cout << "egoBallPos x: " << x << " y: " << y << endl;
+
         if (me == nullptr || egoBallPos == nullptr)
         {
             cerr << "insufficient information for AttackOpp" << endl;
@@ -51,7 +62,7 @@ namespace alica
 
         mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
 
-        const double rotate_P = 2.0;
+        const double rotate_P = 1.8;
 
 		mc.motion.angle = egoBallPos->angleTo();
 		mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
@@ -74,17 +85,11 @@ namespace alica
 
         double ball_speed = egoBallVelocity->length();
 
-        if (egoBallVelocity->x < 0)
-        {
-            ball_speed = ball_speed * -1;
-        }
-
         movement += ball_speed;
 
         cout << "movement: " << movement << endl;
         cout << "ball speed: " << ball_speed << endl;
         cout << "distance: " << distance << endl;
-        cout << "EgoBallVelocity " << wm->ball.getEgoBallVelocity() << endl;
 
         // translation = 1000 => 1 m/s
         mc.motion.translation = movement;

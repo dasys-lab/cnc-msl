@@ -12,6 +12,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Example/ExamplePlan1433938652021.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
@@ -296,6 +298,18 @@ namespace alica
 
                 break;
 
+            case 1433939023616:
+
+                return make_shared<TransitionCondition1433939023616>();
+
+                break;
+
+            case 1433939026572:
+
+                return make_shared<TransitionCondition1433939026572>();
+
+                break;
+
             case 1431522783626:
 
                 return make_shared<TransitionCondition1431522783626>();
@@ -476,12 +490,6 @@ namespace alica
 
                 break;
 
-            case 1431526664270:
-
-                return make_shared<TransitionCondition1431526664270>();
-
-                break;
-
             case 1431526792158:
 
                 return make_shared<TransitionCondition1431526792158>();
@@ -491,6 +499,24 @@ namespace alica
             case 1432744250382:
 
                 return make_shared<TransitionCondition1432744250382>();
+
+                break;
+
+            case 1433337666610:
+
+                return make_shared<TransitionCondition1433337666610>();
+
+                break;
+
+            case 1433338526794:
+
+                return make_shared<TransitionCondition1433338526794>();
+
+                break;
+
+            case 1433338530469:
+
+                return make_shared<TransitionCondition1433338530469>();
 
                 break;
 

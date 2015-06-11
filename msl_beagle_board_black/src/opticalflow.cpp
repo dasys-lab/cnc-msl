@@ -53,20 +53,10 @@ void OpticalFlow::controlLED(bool enabled) {
 }
 
 uint8_t OpticalFlow::read(uint8_t address) {
-	// TODO SPI TEST
-
 	ncs->setValue(low);
-	spi->transfer(address, 100);
-	ncs->setValue(high);
+	spi->transfer(address, 75);		// wait t_SRAD
 
-	if (address == 0x02) {
-		usleep(75);					// wait t_SRAD-MOT
-	} else {
-		usleep(75);					// wait t_SRAD
-	}
-
-	ncs->setValue(low);
-	uint8_t ret = spi->transfer(0x00, 100);
+	uint8_t ret = spi->transfer(0x00);
 	ncs->setValue(high);
 
 	return ret;
@@ -74,19 +64,14 @@ uint8_t OpticalFlow::read(uint8_t address) {
 
 void OpticalFlow::reset(void) {
 	rst->setValue(high);
-	// usleep(10);		// Setzen des Pins dauert ca 300us. Wahrscheinlich nicht noetig
 	rst->setValue(low);
 	usleep(500);
 }
 
 void OpticalFlow::write(uint8_t address, uint8_t value) {
-	// TODO SPI TEST
 	ncs->setValue(low);
-	spi->transfer(address | 0x80);
-	ncs->setValue(high);
-	//usleep(50);
+	spi->transfer(address | 0x80, 50);
 
-	ncs->setValue(low);
 	spi->transfer(value);
 	ncs->setValue(high);
 }

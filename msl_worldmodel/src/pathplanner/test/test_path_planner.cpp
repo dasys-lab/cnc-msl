@@ -62,13 +62,13 @@ TEST_F(PathPlannerTest, pathPlanner)
 {
 	shared_ptr<msl::VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
 	EXPECT_TRUE(net == nullptr);
-	msl::CNPoint2D startPoint(0, 0);
-	msl::CNPoint2D goalPoint(1000, 1000);
+	geometry::CNPoint2D startPoint(0, 0);
+	geometry::CNPoint2D goalPoint(1000, 1000);
 	msl_sensor_msgs::WorldModelDataPtr msg = boost::make_shared<msl_sensor_msgs::WorldModelData>();
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
 	EXPECT_TRUE(net != nullptr);
-	shared_ptr<vector<shared_ptr<msl::CNPoint2D>>> path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
 	EXPECT_EQ(path->size(), 1);
 	msl_sensor_msgs::ObstacleInfo info;
 	info.x = -100;
