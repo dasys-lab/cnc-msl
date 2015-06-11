@@ -78,11 +78,11 @@ namespace alica
 						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
 */
 			//sideward
-		righty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x-0.21*x-1;
-		feedForwardRight = max(min(righty, 1.0), -1.0);
+		righty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x-0.48*x-2;
+		feedForwardRight = max(min(righty, 2.0), -1.0);
 
-		lefty = 0.014*x*x*x*x+0.022*x*x*x+0.072*x*x+0.21*x-1;
-		feedForwardLeft = max(min(lefty, 1.0), -1.0);
+		lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
+		feedForwardLeft = max(min(lefty, 2.0), -1.0);
 /*
 		//Feedforward
 			//Forward
