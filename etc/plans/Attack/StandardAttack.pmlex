@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048406725"/>
-    <value xPos="252" yPos="266" width="69" height="67"/>
+    <value xPos="252" yPos="266" width="69" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048705508"/>
@@ -58,6 +58,10 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434049476066"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434116965565"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

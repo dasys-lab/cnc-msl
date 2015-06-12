@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434049476066" name="Dribble" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434049476066" name="Dribble" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+  <conditions xsi:type="alica:RuntimeCondition" id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
     <inTransitions>#1434050622698</inTransitions>
     <inTransitions>#1434050639119</inTransitions>
@@ -126,8 +127,8 @@
     <inState>#1434050502701</inState>
     <outState>#1434050522682</outState>
   </transitions>
-  <entryPoints id="1434049476068" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1225112227903</task>
+  <entryPoints id="1434049476068" name="Attack" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1434049476067</state>
   </entryPoints>
 </alica:Plan>

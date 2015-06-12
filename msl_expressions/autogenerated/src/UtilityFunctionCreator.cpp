@@ -17,6 +17,8 @@
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
+#include  "Plans/Attack/RunFree1434115664325.h"
+
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardExecuter1429109528736.h"
 
 #include  "Plans/WM161413992564408.h"
@@ -52,6 +54,8 @@
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
 #include  "Plans/GameStrategy/OppStandards/GenericOppStandardPositioning1429108230432.h"
+
+#include  "Plans/Attack/Tackle1434116965565.h"
 
 #include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
 
@@ -105,6 +109,10 @@ namespace alica
 
             case 1434045709191:
                 return make_shared<UtilityFunction1434045709191>();
+                break;
+
+            case 1434115664325:
+                return make_shared<UtilityFunction1434115664325>();
                 break;
 
             case 1429109528736:
@@ -177,6 +185,10 @@ namespace alica
 
             case 1429108230432:
                 return make_shared<UtilityFunction1429108230432>();
+                break;
+
+            case 1434116965565:
+                return make_shared<UtilityFunction1434116965565>();
                 break;
 
             case 1432139066765:

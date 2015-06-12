@@ -210,7 +210,6 @@ namespace alica
         //nur test danach löschen!!
         //	KvLeft=-1.5*x*KvLeft;
         //	KvRight=-2.5*x*KvRight;
-
         cout << "Winkel : " << x << endl;
         cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
                 << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
