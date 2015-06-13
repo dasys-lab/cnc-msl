@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="AttackSupportPlan.pml#1434046705216"/>
-    <value xPos="117" yPos="194" width="81" height="67"/>
+    <value xPos="117" yPos="194" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackSupportPlan.pml#1434046705214"/>
@@ -43,5 +43,9 @@
     <value>
       <bendpoints xPos="396" yPos="301"/>
     </value>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1434199852589"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

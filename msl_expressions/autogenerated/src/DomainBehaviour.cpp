@@ -17,6 +17,8 @@ namespace alica
 		ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("/BallHandleControl", 10);
 
 		kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
+
+		shovelSelectPublisher = n.advertise<msl_actuator_msgs::KickControl>("/ShovelSelect", 10);
 	}
 
 	DomainBehaviour::~DomainBehaviour()
@@ -44,6 +46,12 @@ namespace alica
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
+	}
+
+	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
+	{
+		ssc.senderID = ownID;
+		shovelSelectPublisher.publish(ssc);
 	}
 } /* namespace alica */
 

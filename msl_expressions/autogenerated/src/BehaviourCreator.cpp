@@ -25,6 +25,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/StdStandardDefendPos.h"
 
+#include  "Plans/Behaviours/ShovelSelect.h"
+
 #include  "Plans/GenericBehaviours/Parking.h"
 
 #include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
@@ -120,6 +122,11 @@ namespace alica
             case 1428508259449:
 
                 return make_shared<StdStandardDefendPos>();
+                break;
+
+            case 1434199852589:
+
+                return make_shared<ShovelSelect>();
                 break;
 
             case 1429111645834:
