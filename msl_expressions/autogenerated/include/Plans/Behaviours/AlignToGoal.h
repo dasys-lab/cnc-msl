@@ -1,5 +1,5 @@
-#ifndef AlineToGoal_H_
-#define AlineToGoal_H_
+#ifndef AlignToGoal_H_
+#define AlignToGoal_H_
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
@@ -22,10 +22,21 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1415205272843) ENABLED START*/ //Add additional protected methods here
+        double maxVel;
+        double lastRotError;
+        double maxRot;
+        double minRot;
+        shared_ptr<geometry::CNPoint2D> alloAimPoint;
+        double maxYTolerance;
+        double pRot;
+        double dRot;
+        int iter;
+		bool kicked;
+        void kick(shared_ptr<geometry::CNPoint2D> egoAimPoint);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1415205272843) ENABLED START*/ //Add additional private methods here
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
-#endif /* AlineToGoal_H_ */
+#endif /* AlignToGoal_H_ */

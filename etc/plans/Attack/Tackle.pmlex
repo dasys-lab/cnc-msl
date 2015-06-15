@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="Tackle.pml#1434116965566"/>
+    <value xPos="90" yPos="115" width="65" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434117164895"/>
+    <value>
+      <bendpoints xPos="309" yPos="197"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434117163845"/>
+    <value>
+      <bendpoints xPos="313" yPos="163"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434117152274"/>
+    <value xPos="273" yPos="119" width="73" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434116965565"/>
+    <value yPos="-15" width="491" height="393"/>
+  </extensions>
+  <extensions>
+    <key href="Tackle.pml#1434116965567"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

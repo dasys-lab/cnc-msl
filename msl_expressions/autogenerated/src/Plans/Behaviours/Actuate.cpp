@@ -1,6 +1,5 @@
 using namespace std;
 #include "Plans/Behaviours/Actuate.h"
-#include<iostream>
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
@@ -43,146 +42,187 @@ namespace alica
 
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		list<double>::iterator parameterSpeed;
 
-		if (arithmeticAverageBoxSpeed.size() == 3)
+		if (arithmeticAverageBoxSpeed.size() == 2)
 		{
 			arithmeticAverageBoxSpeed.pop_back();
 		}
 
 		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		for (parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end();
-				parameterSpeed++)
+		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+				parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
 		{
 			arithmeticAverageSpeed += *parameterSpeed;
 		}
 
-		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
+		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-		//PIDControllerLeft
+		//Speed Difference for acceleration
+		double eFunktionAcceleration;
+		double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		speedDifference = newSpeed - speedDifferenceNew;
+		speedDifference=(speedDifference)/100;
+
+		if (speedDifference < 1){
+			speedDifference = 1;
+		}
+
+		/////////////////////////////////////////////
+		double arithmeticAverageSpeedDifference = 0.0;
+
+				if (arithmeticAverageBoxSpeedDifference.size() == 6)
+				{
+					arithmeticAverageBoxSpeedDifference.pop_back();
+				}
+
+				arithmeticAverageBoxSpeedDifference.push_front(speedDifference);
+
+				for (list<double>::iterator parameterSpeedDifference = arithmeticAverageBoxSpeedDifference.begin();
+						parameterSpeedDifference != arithmeticAverageBoxSpeedDifference.end(); parameterSpeedDifference++)
+				{
+					arithmeticAverageSpeedDifference =arithmeticAverageSpeedDifference+*parameterSpeedDifference;
+				}
+
+				arithmeticAverageSpeedDifference = arithmeticAverageSpeedDifference / 6;
+
+				if (arithmeticAverageSpeedDifference < 1){
+					arithmeticAverageSpeedDifference = 1;
+				}
+
+
+		/////////////////////////////////////////////
+
+
+	//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 		double righty, lefty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
-/*
-		righty = 1.8
+		/*
+		 *
+		 * 	//gescheiterte Funktionen
+		 righty = 1.8
 
-				* (sin(-x - 0.52) - 1 / 9 * sin(3 * (-x + 0.18) - 0.2) + 1 / 25 * sin(5 * (-x + 0.18))
-						- 1 / 49 * sin(7 * (-x + 0.18) - 0.1));
-		;
-		lefty = 1.8
-				* (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
-						- 1 / 49 * sin(7 * (x + 0.18) - 0.1));
-*/
-			//sideward
-		righty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x-0.48*x-2;
-		feedForwardRight = max(min(righty, 2.0), -1.0);
+		 * (sin(-x - 0.52) - 1 / 9 * sin(3 * (-x + 0.18) - 0.2) + 1 / 25 * sin(5 * (-x + 0.18))
+		 - 1 / 49 * sin(7 * (-x + 0.18) - 0.1));
+		 ;
+		 lefty = 1.8
+		 * (sin(x - 0.52) - 1 / 9 * sin(3 * (x + 0.18) - 0.2) + 1 / 25 * sin(5 * (x + 0.18))
+		 - 1 / 49 * sin(7 * (x + 0.18) - 0.1));
 
-		lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
-		feedForwardLeft = max(min(lefty, 2.0), -1.0);
-/*
-		//Feedforward
-			//Forward
-//			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
-//			{
 
-*/
-		KvRight = (feedForwardRight* eFunktion * arithmeticAverageSpeed);
+		 //sideward
+		 righty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x-0.48*x-2;
+		 feedForwardRight = max(min(righty, 1.0), -2.0);
 
-		KvLeft = (feedForwardLeft* eFunktion * arithmeticAverageSpeed);
+		 lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
+		 feedForwardLeft = max(min(lefty, 1.0), -2.0);
+
+		 */
+
+		/*
+		 //Feedforward
+		 //Forward
+		 //			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+		 //			{
+
+		 */
+		KvRight =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
+
+		KvLeft =-2*(eFunktion * arithmeticAverageSpeed * speedDifference);
 //			};
 		//Feedforward
 		//Back
-/*
-		if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
-		{
-
-			KvRight = ( eFunktion * arithmeticAverageSpeed - 10);
-			KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
-
-		};
-
-		//PIDControllerLeft
-		const double KiLeft = 0.4;
-		const double KdLeft = 0.5;
-		const double KpLeft = 0.23;
-
-
-
-
-		double AbweichungLeft = 0.0;
-		double Abweichung_SummeLeft = 0.0;
-		double Abweichung_AltLeft = 0.0;
-		double StellwertLeft = 0.0;
-		const double SollwertLeftForward = 50;
-		const double SollwertLeftBackward = 90;
-
-		if ((StellwertLeft < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
-		{
-
-			Abweichung_SummeLeft += AbweichungLeft;
-		AbweichungLeft = -1 * (SollwertLeftBackward - wm->rawSensorData.getOpticalFlowQoS());
-		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
-		StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
-
-		Abweichung_AltLeft = AbweichungLeft;
-		};
-
-		if ((StellwertLeft < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
-		{
-
-			Abweichung_SummeLeft += AbweichungLeft;
-		AbweichungLeft = -1 * (SollwertLeftForward - wm->rawSensorData.getOpticalFlowQoS());
-		StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
-		StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
-
-		Abweichung_AltLeft = AbweichungLeft;
-		};
-
-		//PIDControllerRight
-
-		const double KiRight = 0.4;
-		const double KdRight = 0.5;
-		const double SollwertRightForward = 50;
-		const double SollwertRightBackward = 90;
-		const double KpRight = 0.23;
-
-		double AbweichungRight = 0.0;
-		double Abweichung_SummeRight = 0.0;
-		double Abweichung_AltRight = 0.0;
-		double StellwertRight = 0.0;
-
-		if ((StellwertRight < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
-		{
-		Abweichung_SummeRight += AbweichungRight;
-		AbweichungRight = -1 * (SollwertRightBackward - wm->rawSensorData.getOpticalFlowQoS());
-		StellwertRight = KpRight * AbweichungRight + KvRight;
-		StellwertRight += KiRight * Abweichung_SummeRight;
-		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-
-		Abweichung_AltRight = AbweichungRight;
-		};
-
-		if ((StellwertRight < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
-		{
-			Abweichung_SummeRight += AbweichungRight;
-
-
-		AbweichungRight = -1 * (SollwertRightForward - wm->rawSensorData.getOpticalFlowQoS());
-		StellwertRight = KpRight * AbweichungRight + KvRight;
-		StellwertRight += KiRight * Abweichung_SummeRight;
-		StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-
-		Abweichung_AltRight = AbweichungRight;
-		};
-
-		//StellwertRight /= 4;
 		/*
+		 if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0)
+		 {
+
+		 KvRight = ( eFunktion * arithmeticAverageSpeed - 10);
+		 KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
+
+		 };
+
+		 //PIDControllerLeft
+		 const double KiLeft = 0.4;
+		 const double KdLeft = 0.5;
+		 const double KpLeft = 0.23;
+
+
+
+
+		 double AbweichungLeft = 0.0;
+		 double Abweichung_SummeLeft = 0.0;
+		 double Abweichung_AltLeft = 0.0;
+		 double StellwertLeft = 0.0;
+		 const double SollwertLeftForward = 50;
+		 const double SollwertLeftBackward = 90;
+
+		 if ((StellwertLeft < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		 {
+
+		 Abweichung_SummeLeft += AbweichungLeft;
+		 AbweichungLeft = -1 * (SollwertLeftBackward - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		 StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		 StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+
+		 Abweichung_AltLeft = AbweichungLeft;
+		 };
+
+		 if ((StellwertLeft < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		 {
+
+		 Abweichung_SummeLeft += AbweichungLeft;
+		 AbweichungLeft = -1 * (SollwertLeftForward - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		 StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		 StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+
+		 Abweichung_AltLeft = AbweichungLeft;
+		 };
+
+		 //PIDControllerRight
+
+		 const double KiRight = 0.4;
+		 const double KdRight = 0.5;
+		 const double SollwertRightForward = 50;
+		 const double SollwertRightBackward = 90;
+		 const double KpRight = 0.23;
+
+		 double AbweichungRight = 0.0;
+		 double Abweichung_SummeRight = 0.0;
+		 double Abweichung_AltRight = 0.0;
+		 double StellwertRight = 0.0;
+
+		 if ((StellwertRight < 90)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
+		 {
+		 Abweichung_SummeRight += AbweichungRight;
+		 AbweichungRight = -1 * (SollwertRightBackward - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertRight = KpRight * AbweichungRight + KvRight;
+		 StellwertRight += KiRight * Abweichung_SummeRight;
+		 StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+
+		 Abweichung_AltRight = AbweichungRight;
+		 };
+
+		 if ((StellwertRight < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		 {
+		 Abweichung_SummeRight += AbweichungRight;
+
+
+		 AbweichungRight = -1 * (SollwertRightForward - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertRight = KpRight * AbweichungRight + KvRight;
+		 StellwertRight += KiRight * Abweichung_SummeRight;
+		 StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+
+		 Abweichung_AltRight = AbweichungRight;
+		 };
+
+		 //StellwertRight /= 4;
+		 /*
 		 if (Stellwert > 100)
 		 Stellwert = 100;
 		 if (Stellwert < 80)
@@ -202,14 +242,9 @@ namespace alica
 		 right = -Stellwert;
 		 */
 
-
 		//nur test danach löschen!!
-	//	KvLeft=-1.5*x*KvLeft;
-	//	KvRight=-2.5*x*KvRight;
-
-
-
-
+		//	KvLeft=-1.5*x*KvLeft;
+		//	KvRight=-2.5*x*KvRight;
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
@@ -218,26 +253,32 @@ namespace alica
 		cout << "KvLeft : " << KvLeft << endl;
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		cout << "righty : " << righty << endl;
-		cout << "KvRight : " << KvRight << endl << endl;
+		cout << "KvRight : " << KvRight << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
+		cout << "speedDifference : " << speedDifference << endl;
+		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-
-		
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
-		bhc.leftMotor = max(min(left, 60), -60);
-		bhc.rightMotor = max(min(right, 60), -60);
+		bhc.leftMotor = max(min(left, 80), -80);
+		bhc.rightMotor = max(min(right, 80), -80);
 		this->send(bhc);
+
+		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
+
 
 		/*PROTECTED REGION END*/
 	}
 	void Actuate::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1417017518918) ENABLED START*/ //Add additional options here
+		speedDifference = 0.0;
+
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
