@@ -71,7 +71,7 @@ namespace alica
 		/////////////////////////////////////////////
 		double arithmeticAverageSpeedDifference = 0.0;
 
-				if (arithmeticAverageBoxSpeedDifference.size() == 6)
+				if (arithmeticAverageBoxSpeedDifference.size() == 5)
 				{
 					arithmeticAverageBoxSpeedDifference.pop_back();
 				}
@@ -84,7 +84,7 @@ namespace alica
 					arithmeticAverageSpeedDifference =arithmeticAverageSpeedDifference+*parameterSpeedDifference;
 				}
 
-				arithmeticAverageSpeedDifference = arithmeticAverageSpeedDifference / 6;
+				arithmeticAverageSpeedDifference = arithmeticAverageSpeedDifference / 5;
 
 				if (arithmeticAverageSpeedDifference < 1){
 					arithmeticAverageSpeedDifference = 1;
@@ -130,9 +130,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
+		KvRight =-2.5* (eFunktion * arithmeticAverageSpeed * arithmeticAverageSpeedDifference);
 
-		KvLeft =-2*(eFunktion * arithmeticAverageSpeed * speedDifference);
+		KvLeft =-2.5*(eFunktion * arithmeticAverageSpeed * arithmeticAverageSpeedDifference);
 //			};
 		//Feedforward
 		//Back
@@ -265,8 +265,8 @@ namespace alica
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
-		bhc.leftMotor = max(min(left, 80), -80);
-		bhc.rightMotor = max(min(right, 80), -80);
+		bhc.leftMotor = max(min(left, 60), -80);
+		bhc.rightMotor = max(min(right, 60), -80);
 		this->send(bhc);
 
 		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
