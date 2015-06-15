@@ -27,6 +27,7 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
+
 		int left, right;
 		// TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
 
@@ -42,6 +43,9 @@ namespace alica
 
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		//double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
+
+
 
 		if (arithmeticAverageBoxSpeed.size() == 2)
 		{
@@ -144,7 +148,7 @@ namespace alica
 		 KvLeft = ( eFunktion * arithmeticAverageSpeed - 10);
 
 		 };
-
+*/
 		 //PIDControllerLeft
 		 const double KiLeft = 0.4;
 		 const double KdLeft = 0.5;
@@ -262,8 +266,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = KvLeft; // StellwertLeft;
-		right = KvRight; // StellwertRight;
+		left =  StellwertLeft;//KvLeft; //
+		right =  StellwertRight;//KvRight; //
 
 		bhc.leftMotor = max(min(left, 60), -80);
 		bhc.rightMotor = max(min(right, 60), -80);
