@@ -16,7 +16,7 @@ namespace msl
 			distanceScan(ringbufferLength), ballPosition(ringbufferLength), ballVelocity(ringbufferLength), lightBarrier(
 					ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(ringbufferLength), ownPositionVision(
 					ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(ringbufferLength), compass(
-					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength)
+					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(ringbufferLength)
 	{
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -96,7 +96,15 @@ namespace msl
 		}
 		return x->getInformation();
 	}
-
+	shared_ptr<msl_actuator_msgs::MotionControl> RawSensorData::getLastMotionCommand(int index)
+	{
+		auto x = lastMotionCommand.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
 	shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityVision(int index)
 	{
 		auto x = ownVelocityVision.getLast(index);
@@ -218,6 +226,17 @@ namespace msl
 				opt, wm->getTime());
 		o->certainty = msg->qos;
 		opticalFlow.add(o);
+	}
+
+	void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl& cmd)
+	{
+			shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
+			mc->motion.angle = cmd.motion.angle;
+			mc->motion.translation = cmd.motion.translation;
+			mc->motion.rotation = cmd.motion.rotation;
+			shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
+			smc->certainty = 1;
+			lastMotionCommand.add(smc);
 	}
 
 	void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)

@@ -13,6 +13,7 @@
 #include <vector>
 #include "msl_sensor_msgs/BallInfo.h"
 #include "msl_msgs/MotionInfo.h"
+#include "msl_actuator_msgs/MotionControl.h"
 #include "msl_msgs/JoystickCommand.h"
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "container/CNPosition.h"
@@ -45,6 +46,7 @@ namespace msl
 		shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
+		shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
 		shared_ptr<int> getCompassOrientation(int index = 0);
 		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
 		shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
@@ -52,6 +54,7 @@ namespace msl
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
@@ -63,6 +66,7 @@ namespace msl
 		RingBuffer<InformationElement<geometry::CNPosition>> ownPositionVision;
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
+		RingBuffer<InformationElement<msl_actuator_msgs::MotionControl>> lastMotionCommand;
 		RingBuffer<InformationElement<int>> compass;
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;

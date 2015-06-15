@@ -23,7 +23,9 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1417017518918) ENABLED START*/ //Add additional private methods here
         list<double> arithmeticAverageBoxSpeed;
-
+        list<double> arithmeticAverageBoxSpeedDifference;
+        double speedDifferenceNew;
+        double speedDifference;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
