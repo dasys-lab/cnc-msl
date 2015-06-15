@@ -62,7 +62,7 @@ namespace alica
 		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
 			speedDifference =   newParamerSpeedDifference-speedDifference;
 
-//		}
+
 		//speedDifference =-speedDifference / 200;
 		//if (speedDifference < 1)
 		//	speedDifference = 1;
@@ -103,9 +103,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =-2* (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvRight = (eFunktion * arithmeticAverageSpeed*speedDifference);
 
-		KvLeft = -2* (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvLeft =  (eFunktion * arithmeticAverageSpeed*speedDifference);
 //			};
 		//Feedforward
 		//Back
