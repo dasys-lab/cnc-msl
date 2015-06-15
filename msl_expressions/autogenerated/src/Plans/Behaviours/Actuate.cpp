@@ -50,8 +50,8 @@ namespace alica
 
 		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end();
-				parameterSpeed++)
+		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+				parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
 		{
 			arithmeticAverageSpeed += *parameterSpeed;
 		}
@@ -59,10 +59,11 @@ namespace alica
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
 
 		//Speed Difference for acceleration
-		double newSpeed=0.0;
-		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
-			newSpeed =  newParamerSpeedDifference-speedDifference;
 
+		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		speedDifference = newParamerSpeedDifference - speedDifference;
+		double newSpeedDifference = speedDifference;
+		speedDifference=0;
 
 		//speedDifference =-speedDifference / 200;
 		//if (speedDifference < 1)
@@ -104,9 +105,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight = (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvRight = (eFunktion * arithmeticAverageSpeed * speedDifference);
 
-		KvLeft =  (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvLeft = (eFunktion * arithmeticAverageSpeed * speedDifference);
 //			};
 		//Feedforward
 		//Back
@@ -229,7 +230,7 @@ namespace alica
 		cout << "righty : " << righty << endl;
 		cout << "KvRight : " << KvRight << endl << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
-		cout<<"speedDifference : "<<speedDifference<<endl;
+		cout << "speedDifference : " << speedDifference << endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
