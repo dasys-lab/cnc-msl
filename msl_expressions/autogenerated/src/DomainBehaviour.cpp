@@ -27,6 +27,7 @@ namespace alica
 	{
 		mc.senderID = ownID;
 		motionControlPub.publish(mc);
+		wm->rawSensorData.processMotionControlMessage(mc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
