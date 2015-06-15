@@ -42,7 +42,6 @@ namespace alica
 
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		list<double>::iterator parameterSpeed;
 
 		if (arithmeticAverageBoxSpeed.size() == 3)
 		{
@@ -51,7 +50,7 @@ namespace alica
 
 		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		for (parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end();
+		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin(); parameterSpeed != arithmeticAverageBoxSpeed.end();
 				parameterSpeed++)
 		{
 			arithmeticAverageSpeed += *parameterSpeed;
@@ -60,23 +59,10 @@ namespace alica
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
 
 		//Speed Difference for acceleration
-		double speedDifference = 0.0;
 		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		list<double>::iterator parameterSpeedDifference;
+			speedDifference =   newParamerSpeedDifference-speedDifference;
 
-		if (speedDifferenceBox.size() == 1)
-		{
-			speedDifferenceBox.pop_back();
-		}
-
-		speedDifferenceBox.push_front(newParamerSpeedDifference);
-
-		for (parameterSpeedDifference = speedDifferenceBox.begin(); parameterSpeedDifference != speedDifferenceBox.end();
-				parameterSpeedDifference++)
-		{
-			speedDifference = speedDifference - *parameterSpeedDifference;
-
-		}
+//		}
 		//speedDifference =-speedDifference / 200;
 		//if (speedDifference < 1)
 		//	speedDifference = 1;
@@ -259,6 +245,7 @@ namespace alica
 	void Actuate::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1417017518918) ENABLED START*/ //Add additional options here
+		speedDifference = 0.0;
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
