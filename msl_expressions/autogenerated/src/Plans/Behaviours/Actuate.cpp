@@ -71,10 +71,12 @@ namespace alica
 
 		speedDifferenceBox.push_front(newParamerSpeedDifference);
 
-
+		for (parameterSpeedDifference = speedDifferenceBox.begin(); parameterSpeedDifference != speedDifferenceBox.end();
+				parameterSpeedDifference++)
+		{
 			speedDifference = speedDifference - *parameterSpeedDifference;
 
-
+		}
 		speedDifference = speedDifference / 200;
 		if (speedDifference < 1)
 			speedDifference = 1;
