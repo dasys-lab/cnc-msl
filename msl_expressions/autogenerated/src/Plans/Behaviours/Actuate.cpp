@@ -59,12 +59,12 @@ namespace alica
 
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
 
-		//Acceleration
+		//Speed Difference for acceleration
 		double speedDifference = 0.0;
 		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameterSpeedDifference;
 
-		if (speedDifferenceBox.size() == 2)
+		if (speedDifferenceBox.size() == 1)
 		{
 			speedDifferenceBox.pop_back();
 		}
