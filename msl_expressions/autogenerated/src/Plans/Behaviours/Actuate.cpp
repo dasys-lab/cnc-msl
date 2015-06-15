@@ -59,21 +59,42 @@ namespace alica
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
 		//Speed Difference for acceleration
-		double  eFunktionAcceleration;
-		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		speedDifference = newParamerSpeedDifference - speedDifferenceNew;
-
-
-		speedDifference =speedDifference /100;
-		if(speedDifference>1){
-			for(int i=0;i<10;i++)
-				eFunktionAcceleration=speedDifference*exp(-0.1*i);
-		}
+		double eFunktionAcceleration;
+		double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		speedDifference = newSpeed - speedDifferenceNew;
+		speedDifference=(speedDifference)/100;
 
 		if (speedDifference < 1){
 			speedDifference = 1;
-}
-		//PIDControllerLeft
+		}
+
+		/////////////////////////////////////////////
+		double arithmeticAverageSpeedDifference = 0.0;
+
+				if (arithmeticAverageBoxSpeedDifference.size() == 6)
+				{
+					arithmeticAverageBoxSpeedDifference.pop_back();
+				}
+
+				arithmeticAverageBoxSpeedDifference.push_front(speedDifference);
+
+				for (list<double>::iterator parameterSpeedDifference = arithmeticAverageBoxSpeedDifference.begin();
+						parameterSpeedDifference != arithmeticAverageBoxSpeedDifference.end(); parameterSpeedDifference++)
+				{
+					arithmeticAverageSpeedDifference =arithmeticAverageSpeedDifference+*parameterSpeedDifference;
+				}
+
+				arithmeticAverageSpeedDifference = arithmeticAverageSpeedDifference / 6;
+
+				if (arithmeticAverageSpeedDifference < 1){
+					arithmeticAverageSpeedDifference = 1;
+				}
+
+
+		/////////////////////////////////////////////
+
+
+	//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
 		double righty, lefty, feedForwardLeft, feedForwardRight;
@@ -235,7 +256,8 @@ namespace alica
 		cout << "KvRight : " << KvRight << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "speedDifference : " << speedDifference << endl;
-		cout << "speedDifferenceNew : " << speedDifferenceNew << endl;
+		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
