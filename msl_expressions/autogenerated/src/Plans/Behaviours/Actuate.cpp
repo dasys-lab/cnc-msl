@@ -43,7 +43,7 @@ namespace alica
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-		if (arithmeticAverageBoxSpeed.size() == 3)
+		if (arithmeticAverageBoxSpeed.size() == 2)
 		{
 			arithmeticAverageBoxSpeed.pop_back();
 		}
@@ -56,7 +56,7 @@ namespace alica
 			arithmeticAverageSpeed += *parameterSpeed;
 		}
 
-		arithmeticAverageSpeed = arithmeticAverageSpeed / 3;
+		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
 		//Speed Difference for acceleration
 
@@ -64,7 +64,7 @@ namespace alica
 		speedDifference = newParamerSpeedDifference - speedDifferenceNew;
 
 
-		speedDifference =speedDifference / 100;
+		speedDifference =speedDifference /100;
 		if (speedDifference < 1){
 			speedDifference = 1;
 }
@@ -106,7 +106,7 @@ namespace alica
 		 */
 		KvRight =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
 
-		KvLeft =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
+		KvLeft =-2*(eFunktion * arithmeticAverageSpeed * speedDifference);
 //			};
 		//Feedforward
 		//Back
