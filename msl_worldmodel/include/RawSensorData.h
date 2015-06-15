@@ -47,6 +47,7 @@ namespace msl
 		shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
 		shared_ptr<int> getCompassOrientation(int index = 0);
 		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
+		shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
@@ -64,6 +65,7 @@ namespace msl
 		RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
 		RingBuffer<InformationElement<int>> compass;
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
+		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
 		MSLWorldModel* wm;
 
 		unsigned long maxInformationAge;
