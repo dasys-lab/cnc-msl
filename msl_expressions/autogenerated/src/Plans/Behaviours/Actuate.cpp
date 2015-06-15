@@ -64,10 +64,10 @@ namespace alica
 		speedDifference = newParamerSpeedDifference - speedDifferenceNew;
 
 
-		//speedDifference =-speedDifference / 200;
-		if (speedDifference < 1)
+		speedDifference =speedDifference / 100;
+		if (speedDifference < 1){
 			speedDifference = 1;
-
+}
 		//PIDControllerLeft
 
 		double x = wm->rawSensorData.getOwnVelocityMotion()->angle;
@@ -104,9 +104,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight = (eFunktion * arithmeticAverageSpeed * speedDifference);
+		KvRight =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
 
-		KvLeft = (eFunktion * arithmeticAverageSpeed * speedDifference);
+		KvLeft =-2* (eFunktion * arithmeticAverageSpeed * speedDifference);
 //			};
 		//Feedforward
 		//Back
@@ -238,8 +238,8 @@ namespace alica
 		left = KvLeft; // StellwertLeft;
 		right = KvRight; // StellwertRight;
 
-		bhc.leftMotor = max(min(left, 60), -60);
-		bhc.rightMotor = max(min(right, 60), -60);
+		bhc.leftMotor = max(min(left, 80), -80);
+		bhc.rightMotor = max(min(right, 80), -80);
 		this->send(bhc);
 
 		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
