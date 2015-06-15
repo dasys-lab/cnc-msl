@@ -64,7 +64,7 @@ namespace alica
 		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		list<double>::iterator parameterSpeedDifference;
 
-		if (speedDifferenceBox.size() == 0)
+		if (speedDifferenceBox.size() == 1)
 		{
 			speedDifferenceBox.pop_back();
 		}
