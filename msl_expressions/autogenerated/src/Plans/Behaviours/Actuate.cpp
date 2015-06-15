@@ -61,9 +61,8 @@ namespace alica
 		//Speed Difference for acceleration
 
 		double newParamerSpeedDifference = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		speedDifference = newParamerSpeedDifference - speedDifference;
-		double newSpeedDifference = speedDifference;
-		speedDifference=0;
+		speedDifference = newParamerSpeedDifference - speedDifferenceNew;
+
 
 		//speedDifference =-speedDifference / 200;
 		//if (speedDifference < 1)
@@ -228,9 +227,10 @@ namespace alica
 		cout << "KvLeft : " << KvLeft << endl;
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		cout << "righty : " << righty << endl;
-		cout << "KvRight : " << KvRight << endl << endl;
+		cout << "KvRight : " << KvRight << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "speedDifference : " << speedDifference << endl;
+		cout << "speedDifferenceNew : " << speedDifferenceNew << endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
@@ -248,6 +248,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1417017518918) ENABLED START*/ //Add additional options here
 		speedDifference = 0.0;
+		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
