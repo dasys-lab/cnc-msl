@@ -77,9 +77,9 @@ namespace alica
 			speedDifference = speedDifference - *parameterSpeedDifference;
 
 		}
-		speedDifference =- speedDifference / 200;
-		if (speedDifference < 1)
-			speedDifference = 1;
+		//speedDifference =-speedDifference / 200;
+		//if (speedDifference < 1)
+		//	speedDifference = 1;
 
 		//PIDControllerLeft
 
