@@ -242,13 +242,16 @@ namespace alica
 		bhc.rightMotor = max(min(right, 60), -60);
 		this->send(bhc);
 
+		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
+
+
 		/*PROTECTED REGION END*/
 	}
 	void Actuate::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1417017518918) ENABLED START*/ //Add additional options here
 		speedDifference = 0.0;
-		speedDifferenceNew =wm->rawSensorData.getOwnVelocityMotion()->translation;
+
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
