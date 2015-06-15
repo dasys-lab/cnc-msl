@@ -77,9 +77,9 @@ namespace alica
 			speedDifference = speedDifference - *parameterSpeedDifference;
 
 		}
-		speedDifference = speedDifference / 200;
-		//if (speedDifference < 1)
-		//	speedDifference = 1;
+		speedDifference =- speedDifference / 200;
+		if (speedDifference < 1)
+			speedDifference = 1;
 
 		//PIDControllerLeft
 
@@ -117,9 +117,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight = (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvRight =-2* (eFunktion * arithmeticAverageSpeed*speedDifference);
 
-		KvLeft =  (eFunktion * arithmeticAverageSpeed*speedDifference);
+		KvLeft = -2* (eFunktion * arithmeticAverageSpeed*speedDifference);
 //			};
 		//Feedforward
 		//Back
@@ -242,6 +242,7 @@ namespace alica
 		cout << "righty : " << righty << endl;
 		cout << "KvRight : " << KvRight << endl << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
+		cout<<"speedDifference : "<<speedDifference<<endl;
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
