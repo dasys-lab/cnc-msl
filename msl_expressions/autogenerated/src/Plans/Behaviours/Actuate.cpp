@@ -273,15 +273,18 @@ namespace alica
 		cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "lefty : " << funktionLeftLim << endl;
+		// cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		cout << "funktionLeftLim : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
-		cout << "righty : " << funktionRightLim << endl;
+		cout << "funktionRightLim : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
+		cout << "funktionLeft : " << funktionLeft << endl;
+		cout << "funktionLeft : " << funktionLeft << endl;
+
 		//cout << "StellwertRight: " << StellwertRight << endl;
-		cout << "speedDifference : " << speedDifference << endl;
-		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+		//cout << "speedDifference : " << speedDifference << endl;
+	//	cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
 		cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
