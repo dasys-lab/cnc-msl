@@ -134,9 +134,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =0.6*(eFunktion * arithmeticAverageSpeed);
+		KvRight =-1.0*(eFunktion * arithmeticAverageSpeed);
 
-		KvLeft =1.6*(eFunktion * arithmeticAverageSpeed);
+		KvLeft =1.5*(eFunktion * arithmeticAverageSpeed);
 //			};
 		//Feedforward
 		//Back
@@ -161,7 +161,7 @@ namespace alica
 		 double Abweichung_SummeLeft = 0.0;
 		 double Abweichung_AltLeft = 0.0;
 		 double StellwertLeft = 0.0;
-		 const double SollwertLeftForward = 70;
+		 const double SollwertLeftForward = 80;
 		 const double SollwertLeftBackward = 50;
 
 		 if ((StellwertLeft < 50)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>=0))
@@ -176,7 +176,7 @@ namespace alica
 		 Abweichung_AltLeft = AbweichungLeft;
 		 };
 
-		 if ((StellwertLeft < 70)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		 if ((StellwertLeft < 80)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
 		 {
 
 		 Abweichung_SummeLeft += AbweichungLeft;
@@ -192,7 +192,7 @@ namespace alica
 
 		 const double KiRight = 0.4;
 		 const double KdRight = 0.5;
-		 const double SollwertRightForward = 70;
+		 const double SollwertRightForward = 80;
 		 const double SollwertRightBackward = 50;
 		 const double KpRight = 0.23;
 
@@ -212,7 +212,7 @@ namespace alica
 		 Abweichung_AltRight = AbweichungRight;
 		 };
 
-		 if ((StellwertRight < 70)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
+		 if ((StellwertRight < 80)&&(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0))
 		 {
 		 Abweichung_SummeRight += AbweichungRight;
 
