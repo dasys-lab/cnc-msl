@@ -25,10 +25,20 @@ namespace msl {
 		virtual ~RobotMovement();
 		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
+		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance, double ballAngleTolerance);
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;
 		static double interceptCarfullyRotateP;
+
+	private:
+		static double lastRotError;
+		static double lastRotErrorWithBall;
+		static double alignToPointMinRotation;
+		static double alignToPointMaxRotation;
+		static double alignToPointpRot;
+		static double alignMaxVel;
 	};
 }
 
