@@ -143,8 +143,8 @@ namespace alica
 		funktionRight=0.00337*pow(x,8)+0.00154*pow(x,7)-0.0756*pow(x,6)-0.0036*pow(x,5)+0.5517*pow(x,4)-0.0489*pow(x,3)-0.987*pow(x,8)-0.637*x-2.292;
 
 
-		funktionLeftLim = max(min(funktionLeft, 1.0), -3.5);
-		funktionRightLim = max(min(funktionRight,1.0), -3.5);
+		//funktionLeftLim = max(min(funktionLeft, 1.0), -3.5);
+		//funktionRightLim = max(min(funktionRight,1.0), -3.5);
 
 
 
@@ -155,9 +155,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =(eFunktion * arithmeticAverageSpeed*funktionRightLim);
+		KvRight =(eFunktion * arithmeticAverageSpeed*funktionRight);
 
-		KvLeft =(eFunktion * arithmeticAverageSpeed*funktionLeftLim);
+		KvLeft =(eFunktion * arithmeticAverageSpeed*funktionLeft);
 //			};
 		//Feedforward
 		//Back
@@ -274,10 +274,10 @@ namespace alica
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		// cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "funktionLeftLim : " << funktionLeftLim << endl;
+		//cout << "funktionLeftLim : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
-		cout << "funktionRightLim : " << funktionRightLim << endl;
+		//cout << "funktionRightLim : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionLeft : " << funktionLeft << endl;
