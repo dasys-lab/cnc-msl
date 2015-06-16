@@ -134,9 +134,9 @@ namespace alica
 
 
 
-		funktionLeft=(2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2))*(-1.7/M_PI*(atan(x/0.01)+M_PI/2)+3.3/M_PI*(atan(-x/0.01)+M_PI/2));
+		funktionLeft=(-2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2));//*(-1.7/M_PI*(atan(x/0.01)+M_PI/2)+3.3/M_PI*(atan(-x/0.01)+M_PI/2));
 
-		funktionRight=(2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2))*(-1.7/M_PI*(atan(-x/0.01)+M_PI/2)+3.3/M_PI*(atan(x/0.01)+M_PI/2));
+		funktionRight=(-2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2));//*(-1.7/M_PI*(atan(-x/0.01)+M_PI/2)+3.3/M_PI*(atan(x/0.01)+M_PI/2));
 
 
 
