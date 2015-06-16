@@ -137,7 +137,7 @@ namespace alica
 
 		funktionLeft=0.00337*pow(x,8)-0.00154*pow(x,7) -0.0756*pow(x,6) +0.0036*pow(x,5)+0.5517*pow(x,4)+0.0489*pow(x,3)-0.987*pow(x,2)+0.637*x-2.292;
 
-		funktionRight=0.00337*pow(x,8)+0.00154*pow(x,7)-0.0756*pow(x,6)-0.0036*pow(x,5)+0.5517*pow(x,4)-0.0489*pow(x,3)-0.987*pow(x,8)-0.637*x-2.292;
+		funktionRight=0.00337*pow(x,8)+0.00154*pow(x,7)-0.0756*pow(x,6)-0.0036*pow(x,5)+0.5517*pow(x,4)-0.0489*pow(x,3)-0.987*pow(x,2)-0.637*x-2.292;
 
 
 		//funktionLeftLim = max(min(funktionLeft, 1.0), -3.5);
