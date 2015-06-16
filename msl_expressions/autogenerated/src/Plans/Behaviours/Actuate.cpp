@@ -101,9 +101,10 @@ namespace alica
 	//PIDControllerLeft
 
 
-		double righty, lefty, feedForwardLeft, feedForwardRight;
+		double funktionLeftLim,funktionRightLim, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
-		double x=wm->rawSensorData.getOwnVelocityMotion()->angle;
+		double x;
+		double angle= wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		double funktionLeft,funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
@@ -131,6 +132,9 @@ namespace alica
 
 		 */
 
+		x = max(min(angle, 3.14), -3.14);
+
+
 
 
 
@@ -139,7 +143,8 @@ namespace alica
 		funktionRight=0.00337*pow(x,8)+0.00154*pow(x,7)-0.0756*pow(x,6)-0.0036*pow(x,5)+0.5517*pow(x,4)-0.0489*pow(x,3)-0.987*pow(x,8)-0.637*x-2.292;
 
 
-
+		funktionLeftLim = max(min(funktionLeft, 1.0), -3.5);
+		funktionRightLim = max(min(funktionRight,1.0), -3.5);
 
 
 
@@ -269,10 +274,10 @@ namespace alica
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "lefty : " << lefty << endl;
+		cout << "lefty : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
-		cout << "righty : " << righty << endl;
+		cout << "righty : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "speedDifference : " << speedDifference << endl;
