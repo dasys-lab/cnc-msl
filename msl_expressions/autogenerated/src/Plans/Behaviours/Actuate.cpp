@@ -103,8 +103,8 @@ namespace alica
 
 		double righty, lefty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
-		double x=sin(wm->rawSensorData.getOwnVelocityMotion()->angle);
-		double y=-cos(wm->rawSensorData.getOwnVelocityMotion()->angle);
+		double x=wm->rawSensorData.getOwnVelocityMotion()->angle;
+
 		double funktionLeft,funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
@@ -134,9 +134,9 @@ namespace alica
 
 
 
-		funktionLeft=(-2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2));//*(-1.7/M_PI*(atan(x/0.01)+M_PI/2)+3.3/M_PI*(atan(-x/0.01)+M_PI/2));
+		funktionLeft=0.00337*pow(x,8)-0.00154*pow(x,7) -0.0756*pow(x,6) +0.0036*pow(x,5)+0.5517*pow(x,4)+0.0489*pow(x,3)-0.987*pow(x,2)+0.637*x-2.292;
 
-		funktionRight=(-2.5/M_PI*(atan(-y/0.01)+M_PI/2)+1/M_PI*(atan(y/0.01)+M_PI/2));//*(-1.7/M_PI*(atan(-x/0.01)+M_PI/2)+3.3/M_PI*(atan(x/0.01)+M_PI/2));
+		funktionRight=0.00337*pow(x,8)+0.00154*pow(x,7)-0.0756*pow(x,6)-0.0036*pow(x,5)+0.5517*pow(x,4)-0.0489*pow(x,3)-0.987*pow(x,8)-0.637*x-2.292;
 
 
 
