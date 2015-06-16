@@ -152,9 +152,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =(eFunktion *arithmeticAverageSpeed*funktionRight);
+		KvRight =1.2*(eFunktion *arithmeticAverageSpeed*funktionRight);
 
-		KvLeft =(eFunktion * arithmeticAverageSpeed*funktionLeft);
+		KvLeft =1.2*(eFunktion * arithmeticAverageSpeed*funktionLeft);
 //			};
 		//Feedforward
 		//Back
