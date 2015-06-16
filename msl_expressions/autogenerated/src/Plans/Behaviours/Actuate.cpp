@@ -100,11 +100,11 @@ namespace alica
 
 	//PIDControllerLeft
 
-		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
+
 		double righty, lefty, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
-		double x=sin(angle);
-		double y=-cos(angle);
+		double x=sin(wm->rawSensorData.getOwnVelocityMotion()->angle);
+		double y=-cos(wm->rawSensorData.getOwnVelocityMotion()->angle);
 		double funktionLeft,funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
@@ -265,7 +265,7 @@ namespace alica
 		//nur test danach löschen!!
 		//	KvLeft=-1.5*x*KvLeft;
 		//	KvRight=-2.5*x*KvRight;
-		cout << "Winkel : " << angle << endl;
+		cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
