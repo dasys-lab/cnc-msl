@@ -150,7 +150,7 @@ namespace alica
 		 };
 */
 		 //PIDControllerLeft
-		/* const double KiLeft = 0.4;
+		 const double KiLeft = 0.4;
 		 const double KdLeft = 0.5;
 		 const double KpLeft = 0.23;
 
@@ -252,13 +252,13 @@ namespace alica
 		cout << "Winkel : " << x << endl;
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-		// cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		 cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
 		cout << "lefty : " << lefty << endl;
 		cout << "KvLeft : " << KvLeft << endl;
-	//	cout << "StellwertLeft: " << StellwertLeft << endl;
+		cout << "StellwertLeft: " << StellwertLeft << endl;
 		cout << "righty : " << righty << endl;
 		cout << "KvRight : " << KvRight << endl;
-	//	cout << "StellwertRight: " << StellwertRight << endl;
+		cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "speedDifference : " << speedDifference << endl;
 		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
@@ -266,8 +266,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left =  KvLeft; //
-		right = KvRight; //
+		left =StellwertLeft;//  KvLeft; //
+		right =StellwertRight;// KvRight; //
 
 		bhc.leftMotor = max(min(left, 60), -80);
 		bhc.rightMotor = max(min(right, 60), -80);
