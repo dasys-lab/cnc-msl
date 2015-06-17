@@ -51,22 +51,22 @@ namespace alica
 		// TODO: remove later
 		mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
 
-		if (x > old_x && y > old_y)
+		if ((x > old_x && y > old_y) && (x > 0 && y > 0))
 		{
 			// x+ && y+ Ball kommt von vorne links
 			cout << "von vorne links" << endl;
 		}
-		else if (x > old_x && y < old_y)
+		else if ((x > old_x && y < old_y) && (x > 0 && y < 0))
 		{
 			// x+ && y- Ball kommt von vorne rechts
 			cout << "von vorne rechts" << endl;
 		}
-		else if (x < old_x && y < old_y)
+		else if ((x < old_x && y < old_y) && (x < 0 && y < 0))
 		{
 			// x- && y- Ball kommt von hinten rechts
 			cout << "von hinten rechts" << endl;
 		}
-		else if (x < old_x && y > old_y)
+		else if ((x < old_x && y > old_y) && (x > 0 && y > 0))
 		{
 			// x- && y+ Ball kommt von hinten links
 			cout << "von hinten links" << endl;
