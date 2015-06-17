@@ -64,7 +64,7 @@ namespace alica
         old_y = y;
 
 
-        cout << "egoBallPos x: " << x << " y: " << y << endl;
+        //cout << "egoBallPos x: " << x << " y: " << y << endl;
 
         if (me == nullptr || egoBallPos == nullptr)
         {
@@ -107,9 +107,9 @@ namespace alica
 
         movement += ball_speed;
 
-        cout << "movement: " << movement << endl;
-        cout << "ball speed: " << ball_speed << endl;
-        cout << "distance: " << distance << endl;
+        //cout << "movement: " << movement << endl;
+        //cout << "ball speed: " << ball_speed << endl;
+        //cout << "distance: " << distance << endl;
 
         // translation = 1000 => 1 m/s
         mc.motion.translation = movement;
