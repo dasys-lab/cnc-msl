@@ -125,6 +125,7 @@ namespace msl
 			voronoi->expandNode(currentNode, open, closed, startPos, goal, eval);
 		}
 		// return nullptr if there is no way to goal
+		lastPath = nullptr;
 		return nullptr;
 	}
 

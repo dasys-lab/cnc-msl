@@ -64,6 +64,14 @@ void printUsage()
 	cout << "Usage: ./msl_base -m \"Masterplan\" [-rd \"RoleSetDirectory\"] [-rset \"RoleSet\"]" << endl;
 }
 
+string getNodeName(string postFix)
+{
+	string hostName = supplementary::SystemConfig::getInstance()->getHostname();
+	replace(hostName.begin(), hostName.end(), '-', '_');
+
+	return hostName + "_" + postFix;
+}
+
 int main(int argc, char** argv)
 {
 	if (argc < 2)
@@ -74,7 +82,7 @@ int main(int argc, char** argv)
 
 	cout << "Initialising ROS" << endl;
 
-	ros::init(argc, argv, supplementary::SystemConfig::getInstance()->getHostname()+"_Base");
+	ros::init(argc, argv, getNodeName("Base"));
 
 	//This makes segfaults to exceptions
 	segfaultdebug::init_segfault_exceptions();

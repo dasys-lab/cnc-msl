@@ -13,6 +13,8 @@ namespace alica
             DomainBehaviour("AttackOpp")
     {
         /*PROTECTED REGION ID(con1430324527403) ENABLED START*/ //Add additional options here
+    	old_x = 0;
+    	old_y = 0;
         /*PROTECTED REGION END*/
     }
     AttackOpp::~AttackOpp()
@@ -35,15 +37,34 @@ namespace alica
         // TODO: Get closest obstacle to ball
         //}
 
-        //TODO
-           // x+ && y+ Ball kommt von vorne rechts
-           // x+ && y- Ball kommt von vorne links
-           // x- && y- Ball kommt von hinten links
-           // x- && y+ Ball kommt von hinten rechts
-
         auto x = egoBallPos->x;
         auto y = egoBallPos->y;
 
+        if (old_x == 0 && old_y == 0) {
+        	old_x = x;
+        	old_y = y;
+        	return;
+        }
+
+        if (x > old_x && y > old_y) {
+        	// x+ && y+ Ball kommt von vorne rechts
+        	cout << "von vorne rechts" << endl;
+        } else if (x > old_x && y < old_y) {
+        	// x+ && y- Ball kommt von vorne links
+        	cout << "von vorne links" << endl;
+        } else if (x < old_x && y < old_y) {
+        	// x- && y- Ball kommt von hinten links
+        	cout << "von hinten links" << endl;
+        } else if (x < old_x && y > old_y) {
+        	// x- && y+ Ball kommt von hinten rechts
+        	cout << "von hinten rechts" << endl;
+        }
+
+        old_x = x;
+        old_y = y;
+
+
+        cout << "egoBallPos x: " << x << " y: " << y << endl;
 
         if (me == nullptr || egoBallPos == nullptr)
         {
@@ -63,8 +84,8 @@ namespace alica
 
         const double rotate_P = 1.8;
 
-		mc.motion.angle = egoBallPos->angleTo();
-		mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+        mc.motion.angle = egoBallPos->angleTo();
+        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
         double summe = 0.0;
         static double olddistance = 0.0;
