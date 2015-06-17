@@ -55,6 +55,7 @@ namespace msl
 
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
+		sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel*)this);
 		this->sharedWolrdModel = new MSLSharedWorldModel(this);
 	}
 
@@ -191,6 +192,11 @@ namespace msl
 		{
 			sharedWorldPub.publish(msg);
 		}
+	}
+
+	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
+	{
+		robots.processSharedWorldModelData(msg);
 	}
 
 	int MSLWorldModel::getRingBufferLength()
