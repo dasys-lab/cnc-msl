@@ -58,7 +58,7 @@ namespace msl
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 
-		MSLSharedWorldModel* getSharedWolrdModel();
+		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
 
@@ -78,7 +78,7 @@ namespace msl
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
-		MSLSharedWorldModel* sharedWolrdModel;
+		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 
 		ros::NodeHandle n;
