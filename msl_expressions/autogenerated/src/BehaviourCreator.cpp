@@ -27,6 +27,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
+#include  "Plans/GenericStandards/StandardAlignToPoint.h"
+
 #include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
 
 #include  "Plans/Example/DriveInSquare.h"
@@ -125,6 +127,11 @@ namespace alica
             case 1429111645834:
 
                 return make_shared<Parking>();
+                break;
+
+            case 1433950043262:
+
+                return make_shared<StandardAlignToPoint>();
                 break;
 
             case 1429109488432:
