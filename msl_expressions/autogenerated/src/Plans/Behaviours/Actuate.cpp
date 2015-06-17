@@ -152,9 +152,9 @@ namespace alica
 		 //			{
 
 		 */
-		KvRight =1.2*(eFunktion *arithmeticAverageSpeed*funktionRight*arithmeticAverageSpeedDifference);
+		KvRight =1.2*(eFunktion *arithmeticAverageSpeed*funktionRight);//*arithmeticAverageSpeedDifference);
 
-		KvLeft =1.2*(eFunktion * arithmeticAverageSpeed*funktionLeft*arithmeticAverageSpeedDifference);
+		KvLeft =1.2*(eFunktion * arithmeticAverageSpeed*funktionLeft);//*arithmeticAverageSpeedDifference);
 //			};
 		//Feedforward
 		//Back
@@ -265,13 +265,13 @@ namespace alica
 		//cout << "funktionLeftLim : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		cout << "StellwertLeft: " << StellwertLeft << endl;
-		cout << "funktionRightLim : " << funktionRightLim << endl;
+	//	cout << "funktionRightLim : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 
-		//cout << "StellwertRight: " << StellwertRight << endl;
-		//cout << "speedDifference : " << speedDifference << endl;
+		cout << "StellwertRight: " << StellwertRight << endl;
+		cout << "speedDifference : " << speedDifference << endl;
 		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
 		cout << endl;

@@ -59,7 +59,7 @@ namespace msl
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 
-		MSLSharedWorldModel* getSharedWolrdModel();
+		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
 
@@ -79,7 +79,7 @@ namespace msl
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
-		MSLSharedWorldModel* sharedWolrdModel;
+		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 
 		ros::NodeHandle n;

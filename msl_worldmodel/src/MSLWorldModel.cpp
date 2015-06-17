@@ -56,7 +56,7 @@ namespace msl
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
 		sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel*)this);
-		this->sharedWolrdModel = new MSLSharedWorldModel(this);
+		this->sharedWorldModel = new MSLSharedWorldModel(this);
 	}
 
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
@@ -98,7 +98,7 @@ namespace msl
 	{
 		spinner->stop();
 		delete spinner;
-		delete this->sharedWolrdModel;
+		delete this->sharedWorldModel;
 	}
 
 	double MSLWorldModel::getKickerVoltage()
@@ -111,9 +111,9 @@ namespace msl
 		this->kickerVoltage = voltage;
 	}
 
-	MSLSharedWorldModel* MSLWorldModel::getSharedWolrdModel()
+	MSLSharedWorldModel* MSLWorldModel::getSharedWorldModel()
 	{
-		return this->sharedWolrdModel;
+		return this->sharedWorldModel;
 	}
 
 	InfoTime MSLWorldModel::getTime()
