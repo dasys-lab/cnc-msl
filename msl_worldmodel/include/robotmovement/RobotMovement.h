@@ -11,22 +11,34 @@
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
 
-namespace geometry {
+namespace geometry
+{
 	class CNPoint2D;
 }
 
 using namespace std;
 using namespace msl_actuator_msgs;
 
-namespace msl {
+namespace msl
+{
 
-	class RobotMovement {
+	class RobotMovement
+	{
 	public:
 		virtual ~RobotMovement();
-		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
-		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
-		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
-		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance, double ballAngleTolerance);
+		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+		//TODO needs to be tested
+		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
+		//TODO needs to be tested
+		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
+													double ballAngleTolerance);
+
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;

@@ -94,18 +94,11 @@ namespace msl
 
 	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+														shared_ptr<geometry::CNPoint2D> egoBallPos,
 														double angleTolerance, double ballAngleTolerance)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
-		if (egoBallPos == nullptr)
-		{
-			mc.motion.angle = egoTarget->angleTo();
-			mc.motion.rotation = 0;
-			mc.motion.translation = 0;
-			return mc;
-		}
 		double egoTargetAngle = egoTarget->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
 		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
@@ -159,6 +152,6 @@ namespace msl
 		alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot",
 		NULL);
 
-		alignMaxVel = (*sc)["Drive"]->get<double>("Drive.MaxSpeed", NULL);
+		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 	}
 }

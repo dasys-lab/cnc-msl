@@ -8,7 +8,6 @@
 using namespace msl;
 
 /*PROTECTED REGION END*/
-
 namespace alica
 {
     class StandardAlignToPoint : public DomainBehaviour

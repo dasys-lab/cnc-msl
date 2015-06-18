@@ -38,6 +38,7 @@
     <outTransitions>#1434050681521</outTransitions>
   </states>
   <states id="1434050541225" name="TurnOneEighty" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">OneEighty.beh#1434650910857</plans>
     <inTransitions>#1434050647042</inTransitions>
     <inTransitions>#1434050655141</inTransitions>
     <outTransitions>#1434050649347</outTransitions>

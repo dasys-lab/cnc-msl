@@ -12,6 +12,16 @@ namespace alica
 			DomainBehaviour("AlignToGoal")
 	{
 		/*PROTECTED REGION ID(con1415205272843) ENABLED START*/ //Add additional options here
+		maxVel = 2000;
+		maxRot = M_PI * 4;
+		minRot = 0.1;
+		maxYTolerance = 15;
+		pRot = 2.1;
+		dRot = 0.0;
+		iter = 0;
+		kicked = false;
+		field = MSLFootballField::getInstance();
+		lastRotError = 0;
 		/*PROTECTED REGION END*/
 	}
 	AlignToGoal::~AlignToGoal()
@@ -124,6 +134,7 @@ namespace alica
 	void AlignToGoal::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1415205272843) ENABLED START*/ //Add additional options here
+		//TODO needs to be tested
 		maxVel = 2000;
 		maxRot = M_PI * 4;
 		minRot = 0.1;
@@ -132,6 +143,7 @@ namespace alica
 		dRot = 0.0;
 		iter = 0;
 		kicked = false;
+		lastRotError = 0;
 		field = MSLFootballField::getInstance();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos == nullptr)
@@ -244,6 +256,4 @@ namespace alica
 		}
 	}
 /*PROTECTED REGION END*/
-
-}
-/* namespace alica */
+} /* namespace alica */

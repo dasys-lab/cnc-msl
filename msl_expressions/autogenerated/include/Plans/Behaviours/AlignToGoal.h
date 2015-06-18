@@ -32,7 +32,7 @@ namespace alica
         double pRot;
         double dRot;
         int iter;
-		bool kicked;
+        bool kicked;
         double goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle);
         double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
         int mod(int x, int y);
