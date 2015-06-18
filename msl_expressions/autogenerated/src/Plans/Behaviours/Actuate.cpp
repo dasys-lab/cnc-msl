@@ -100,8 +100,8 @@ namespace alica
 			double rotationRight;
 			double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-			rotationLeft=-rotation*9;
-			rotationRight=-rotation*7;
+			rotationLeft=-rotation*38;
+			rotationRight=-rotation*23;
 
 
 
@@ -272,7 +272,7 @@ namespace alica
 		//cout << "StellwertRight: " << StellwertRight << endl;
 			cout << "rotationLeft : " << rotationLeft << endl;
 			cout << "rotationRight : " << rotationRight << endl;
-
+		cout<<" rotation : "<<wm->rawSensorData.getOwnVelocityMotion()->rotation<<endl;
 
 		cout << "speedDifference : " << speedDifference << endl;
 		cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
@@ -281,8 +281,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = rotationRight; //StellwertLeft;//KvLeft; //
-		right = rotationLeft;//StellwertRight;//KvRight; //
+		left = rotationLeft; //StellwertLeft;//KvLeft; //
+		right = rotationRight;//StellwertRight;//KvRight; //
 
 		bhc.leftMotor = max(min(left, 60), -80);
 		bhc.rightMotor = max(min(right, 60), -80);
