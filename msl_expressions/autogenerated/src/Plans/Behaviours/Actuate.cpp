@@ -100,8 +100,8 @@ namespace alica
 			double rotationRight;
 			double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-			rotationLeft=-rotation*38;
-			rotationRight=-rotation*23;
+			rotationLeft=(-rotation*35-10);
+			rotationRight=(-rotation*15-10);
 
 
 
