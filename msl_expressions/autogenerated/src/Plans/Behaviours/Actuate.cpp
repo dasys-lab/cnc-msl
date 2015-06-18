@@ -100,14 +100,16 @@ namespace alica
 			double rotationRight;
 			double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-			rotationLeft=(-rotation*35-10);
-			rotationRight=(-rotation*15-10);
+			rotationLeft=(-35/M_PI*(atan(rotation/0.001)+M_PI/2))-15/M_PI*(atan(-rotation/0.001)+M_PI/2);
+			rotationRight=(-15/M_PI*(atan(rotation/0.001)+M_PI/2))-35/M_PI*(atan(-rotation/0.001)+M_PI/2);
 
+			rotationLeft=rotationLeft-10;
+			rotationRight=rotationRight-10;
 
 
 	//PIDControllerLeft
 
-/*
+
 		double funktionLeftLim,funktionRightLim, feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double x;
@@ -116,8 +118,8 @@ namespace alica
 		double funktionLeft,funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
-		/*
-		 *
+
+		 /*
 		 * 	//gescheiterte Funktionen
 
 		 righty = 1.8
@@ -137,7 +139,7 @@ namespace alica
 		 lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
 		 feedForwardLeft = max(min(lefty, 1.0), -2.0);
 
-
+*/
 
 		x = max(min(angle, 3.14), -3.14);
 
@@ -151,9 +153,9 @@ namespace alica
 		//funktionRightLim = max(min(funktionRight,1.0), -3.5);
 
 
-		KvRight =1.2*(eFunktion *arithmeticAverageSpeed*funktionRight);//*arithmeticAverageSpeedDifference);
+		KvRight =(1.2*eFunktion *arithmeticAverageSpeed*funktionRight*arithmeticAverageSpeedDifference+rotationLeft);
 
-		KvLeft =1.2*(eFunktion * arithmeticAverageSpeed*funktionLeft);//*arithmeticAverageSpeedDifference);
+		KvLeft =(1.2*eFunktion * arithmeticAverageSpeed*funktionLeft*arithmeticAverageSpeedDifference+rotationRight);
 //			};
 		//Feedforward
 		//Back
