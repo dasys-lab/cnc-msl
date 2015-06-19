@@ -5,6 +5,8 @@ using namespace std;
 
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
+#include  "Plans/Attack/Wander.h"
+
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
 #include  "Plans/Behaviours/AttackOpp.h"
@@ -74,6 +76,11 @@ namespace alica
             case 1417620730939:
 
                 return make_shared<AlignAndShootTwoHoledWall>();
+                break;
+
+            case 1434716230628:
+
+                return make_shared<Wander>();
                 break;
 
             case 1431531542052:

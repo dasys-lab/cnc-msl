@@ -3,8 +3,10 @@
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
     <inTransitions>#1434048722503</inTransitions>
     <inTransitions>#1434048731525</inTransitions>
+    <inTransitions>#1434716045767</inTransitions>
     <outTransitions>#1434048720937</outTransitions>
     <outTransitions>#1434048723878</outTransitions>
+    <outTransitions>#1434716047438</outTransitions>
   </states>
   <states id="1434048406725" name="Tackle" comment="">
     <plans xsi:type="alica:Plan">Tackle.pml#1434116965565</plans>
@@ -17,8 +19,17 @@
     <plans xsi:type="alica:Plan">Dribble.pml#1434049476066</plans>
     <inTransitions>#1434048720937</inTransitions>
     <inTransitions>#1434048734889</inTransitions>
+    <inTransitions>#1434716048579</inTransitions>
     <outTransitions>#1434048722503</outTransitions>
     <outTransitions>#1434048729645</outTransitions>
+    <outTransitions>#1434716049424</outTransitions>
+  </states>
+  <states id="1434715893346" name="LostBall" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Wander.beh#1434716230628</plans>
+    <inTransitions>#1434716047438</inTransitions>
+    <inTransitions>#1434716049424</inTransitions>
+    <outTransitions>#1434716045767</outTransitions>
+    <outTransitions>#1434716048579</outTransitions>
   </states>
   <transitions id="1434048720937" name="MISSING_NAME" comment="haveBall" msg="">
     <preCondition id="1434048722207" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -49,6 +60,26 @@
     <preCondition id="1434048737070" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048406725</inState>
     <outState>#1434048705508</outState>
+  </transitions>
+  <transitions id="1434716045767" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1434716047150" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1434715893346</inState>
+    <outState>#1434046634657</outState>
+  </transitions>
+  <transitions id="1434716047438" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1434716048353" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1434046634657</inState>
+    <outState>#1434715893346</outState>
+  </transitions>
+  <transitions id="1434716048579" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1434716049299" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1434715893346</inState>
+    <outState>#1434048705508</outState>
+  </transitions>
+  <transitions id="1434716049424" name="MISSING_NAME" comment="" msg="">
+    <preCondition id="1434716050319" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1434048705508</inState>
+    <outState>#1434715893346</outState>
   </transitions>
   <entryPoints id="1434046634658" name="Attack" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1222613952469</task>

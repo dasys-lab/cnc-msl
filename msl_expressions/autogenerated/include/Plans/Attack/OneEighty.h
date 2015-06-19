@@ -19,14 +19,14 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1434650892176) ENABLED START*/ //Add additional protected methods here
         msl::MSLFootballField* field;
-		double maxVel;
-		double pRot;
-		double dRot;
-		double lastRotError;
-		double minRot;
-		double maxRot;
-		int mod(int x, int y);
-		double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+        double maxVel;
+        double pRot;
+        double dRot;
+        double lastRotError;
+        double minRot;
+        double maxRot;
+        int mod(int x, int y);
+        double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1434650892176) ENABLED START*/ //Add additional private methods here
