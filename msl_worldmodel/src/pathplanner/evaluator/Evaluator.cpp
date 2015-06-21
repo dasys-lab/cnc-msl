@@ -5,12 +5,12 @@
  *      Author: Stefan Jakob
  */
 
-#include <pathplanner/evaluator/SingleEvaluator.h>
+#include <pathplanner/evaluator/Evaluator.h>
 
 namespace msl
 {
 
-	SingleEvaluator::SingleEvaluator(PathPlanner* planner) :
+	Evaluator::Evaluator(PathPlanner* planner) :
 			PathEvaluator(planner)
 	{
 		//# how much the robot values wide corridors compared to short paths
@@ -20,11 +20,11 @@ namespace msl
 																			"normal_clearSpaceWeight", NULL);
 	}
 
-	SingleEvaluator::~SingleEvaluator()
+	Evaluator::~Evaluator()
 	{
 	}
 
-	double SingleEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
+	double Evaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
 									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
 									geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{

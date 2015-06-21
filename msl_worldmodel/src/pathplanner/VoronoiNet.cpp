@@ -106,7 +106,7 @@ namespace msl
 			{
 				if (it->has_target() && find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
 				{
-						neighbors.push_back(*it->target());
+					neighbors.push_back(*it->target());
 				}
 			}
 			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->x
@@ -114,7 +114,7 @@ namespace msl
 			{
 				if (it->has_source() && find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
 				{
-						neighbors.push_back(*it->source());
+					neighbors.push_back(*it->source());
 				}
 			}
 		}
@@ -123,7 +123,10 @@ namespace msl
 		{
 			ret.push_back(
 					make_shared<SearchNode>(
-							SearchNode(make_shared<geometry::CNPoint2D>(neighbors.at(i).point().x(), neighbors.at(i).point().y()), 0, nullptr)));
+							SearchNode(
+									make_shared<geometry::CNPoint2D>(neighbors.at(i).point().x(),
+																		neighbors.at(i).point().y()),
+									0, nullptr)));
 		}
 		return ret;
 	}
@@ -186,13 +189,33 @@ namespace msl
 		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
 		this->voronoi->clear();
+		this->pointRobotKindMapping.clear();
 		for (int i = 0; i < points.size(); i++)
 		{
+			pointRobotKindMapping.insert(
+					pair<shared_ptr<geometry::CNPoint2D>, bool>(
+							make_shared<geometry::CNPoint2D>(points.at(i).x, points.at(i).y), false));
 			Site_2 site(points.at(i).x, points.at(i).y);
 			sites.push_back(site);
 		}
 		insertPoints(sites);
-		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(), wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
+		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		if (ownTeamMatesPositions != nullptr)
+		{
+			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
+			{
+				for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
+				{
+					if ((*iter)->x == it->first->x && (*iter)->y == it->first->y)
+					{
+						it->second = true;
+						break;
+					}
+				}
+			}
+		}
+		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
+								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
 		return this->voronoi;
 	}
 
@@ -245,11 +268,15 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if(edge->has_source() && edge->has_target() && ((edge->source()->point().x() == currentNode->getVertex()->x && edge->source()->point().y() == currentNode->getVertex()->y
-						&& edge->target()->point().x() == nextNode->getVertex()->x && edge->target()->point().y() == nextNode->getVertex()->y)
-						||
-						(edge->source()->point().x() == nextNode->getVertex()->x && edge->source()->point().y() == nextNode->getVertex()->y
-						&& edge->target()->point().x() == currentNode->getVertex()->x && edge->target()->point().y() == currentNode->getVertex()->y)))
+				if (edge->has_source() && edge->has_target()
+						&& ((edge->source()->point().x() == currentNode->getVertex()->x
+								&& edge->source()->point().y() == currentNode->getVertex()->y
+								&& edge->target()->point().x() == nextNode->getVertex()->x
+								&& edge->target()->point().y() == nextNode->getVertex()->y)
+								|| (edge->source()->point().x() == nextNode->getVertex()->x
+										&& edge->source()->point().y() == nextNode->getVertex()->y
+										&& edge->target()->point().x() == currentNode->getVertex()->x
+										&& edge->target()->point().y() == currentNode->getVertex()->y)))
 				{
 					return true;
 				}
@@ -299,11 +326,13 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if (edge->has_source() && edge->source()->point().x() == v1->point().x() && edge->source()->point().y() == v1->point().y())
+				if (edge->has_source() && edge->source()->point().x() == v1->point().x()
+						&& edge->source()->point().y() == v1->point().y())
 				{
 					foundFirst = true;
 				}
-				if (edge->has_source() && edge->source()->point().x() == v2->point().x() && edge->source()->point().y() == v2->point().y())
+				if (edge->has_source() && edge->source()->point().x() == v2->point().x()
+						&& edge->source()->point().y() == v2->point().y())
 				{
 					foundSecond = true;
 				}

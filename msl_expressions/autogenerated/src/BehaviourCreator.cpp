@@ -39,6 +39,8 @@ using namespace std;
 
 #include  "Plans/Attack/OneEighty.h"
 
+#include  "Plans/Attack/Tackle.h"
+
 #include  "Plans/GenericBehaviours/StandardReceive.h"
 
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
@@ -165,6 +167,11 @@ namespace alica
             case 1434650910857:
 
                 return make_shared<OneEighty>();
+                break;
+
+            case 1434807680165:
+
+                return make_shared<Tackle>();
                 break;
 
             case 1428509534191:

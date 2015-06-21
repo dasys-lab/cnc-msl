@@ -19,9 +19,10 @@ namespace msl
 	class PathProxy
 	{
 	public:
-		PathProxy(MSLWorldModel* wm);
+		PathProxy();
 		virtual ~PathProxy();
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(geometry::CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval);
+		static PathProxy* getInstance();
 
 	private:
 		geometry::CNPoint2D lastPathTarget;

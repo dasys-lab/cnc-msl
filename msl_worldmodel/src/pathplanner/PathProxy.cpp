@@ -12,9 +12,9 @@
 namespace msl
 {
 
-	PathProxy::PathProxy(MSLWorldModel* wm)
+	PathProxy::PathProxy()
 	{
-		this->wm = wm;
+		this->wm = MSLWorldModel::get();
 
 	}
 
@@ -22,8 +22,8 @@ namespace msl
 	{
 	}
 
+
 	//TODO wie ersten knoten anfahren
-	//TODO vielleicht sinnvoll aus pfadplaner mgl. pathproxi
 	//TODO verschiedene mgl zum anfahren des ersten punktes
 	shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(geometry::CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval)
 	{
@@ -45,6 +45,12 @@ namespace msl
 
 		return retPoint->alloToEgo(*ownPos);
 
+	}
+
+	PathProxy* PathProxy::getInstance()
+	{
+		static PathProxy instance;
+		return &instance;
 	}
 
 } /* namespace msl */

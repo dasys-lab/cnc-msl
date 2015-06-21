@@ -61,22 +61,22 @@
     <inState>#1434048406725</inState>
     <outState>#1434048705508</outState>
   </transitions>
-  <transitions id="1434716045767" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434716045767" name="MISSING_NAME" comment="found ball" msg="">
     <preCondition id="1434716047150" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434715893346</inState>
     <outState>#1434046634657</outState>
   </transitions>
-  <transitions id="1434716047438" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434716047438" name="MISSING_NAME" comment="doesnt see ball" msg="">
     <preCondition id="1434716048353" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434046634657</inState>
     <outState>#1434715893346</outState>
   </transitions>
-  <transitions id="1434716048579" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434716048579" name="MISSING_NAME" comment="found ball" msg="">
     <preCondition id="1434716049299" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434715893346</inState>
     <outState>#1434048705508</outState>
   </transitions>
-  <transitions id="1434716049424" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434716049424" name="MISSING_NAME" comment="doesnt see ball" msg="">
     <preCondition id="1434716050319" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048705508</inState>
     <outState>#1434715893346</outState>

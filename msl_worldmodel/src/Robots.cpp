@@ -76,6 +76,19 @@ namespace msl
 		return x->getInformation();
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPosition> > > Robots::getPositionsOfTeamMates()
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ret;
+		for(auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
+		{
+			if(wm->getTime() - iter->second->getLast()->timeStamp > maxInformationAge)
+			{
+				ret->push_back(iter->second->getLast()->getInformation());
+			}
+		}
+		return ret;
+	}
+
 }
 /* namespace alica */
 

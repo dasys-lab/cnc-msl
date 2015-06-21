@@ -123,6 +123,10 @@ namespace msl
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
 		mutex netMutex;
+		/**
+		 * true if own robot false otherwise
+		 */
+		map<shared_ptr<geometry::CNPoint2D>, bool> pointRobotKindMapping;
 	};
 
 } /* namespace msl */
