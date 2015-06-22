@@ -189,7 +189,7 @@ namespace alica
 		const double SollwertLeft = 70;
 		//const double SollwertLeftForward = 80;
 
-		if (wm->rawSensorData.getOpticalFlowQoS() < 70)
+		if (wm->rawSensorData.getOpticalFlowQoS() <=70)
 		{
 
 			Abweichung_SummeLeft += AbweichungLeft;
@@ -200,6 +200,9 @@ namespace alica
 
 			Abweichung_AltLeft = AbweichungLeft;
 		};
+
+
+
 /*
 		if ((StellwertLeft < 80) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0))
 		{
@@ -226,7 +229,7 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		if (wm->rawSensorData.getOpticalFlowQoS() < 70)
+		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
 		{
 			Abweichung_SummeRight += AbweichungRight;
 			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
@@ -237,6 +240,11 @@ namespace alica
 			Abweichung_AltRight = AbweichungRight;
 		};
 
+		if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+		{
+			StellwertLeft=KvLeft;
+			StellwertRight=KvRight;
+		};
 
 		//StellwertRight /= 4;
 		/*
