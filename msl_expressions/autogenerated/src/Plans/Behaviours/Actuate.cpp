@@ -186,21 +186,21 @@ namespace alica
 		double Abweichung_SummeLeft = 0.0;
 		double Abweichung_AltLeft = 0.0;
 		double StellwertLeft = 0.0;
-		const double SollwertLeftForward = 80;
-		const double SollwertLeftBackward = 80;
+		const double SollwertLeft = 80;
+		//const double SollwertLeftForward = 80;
 
-		if ((StellwertLeft < 50) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0))
+		if (StellwertLeft < 80)
 		{
 
 			Abweichung_SummeLeft += AbweichungLeft;
-			AbweichungLeft = -1 * (SollwertLeftBackward - wm->rawSensorData.getOpticalFlowQoS());
+			AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
 			StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
 			StellwertLeft += KiLeft * Abweichung_SummeLeft;
 			StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 
 			Abweichung_AltLeft = AbweichungLeft;
 		};
-
+/*
 		if ((StellwertLeft < 80) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0))
 		{
 
@@ -212,13 +212,13 @@ namespace alica
 
 			Abweichung_AltLeft = AbweichungLeft;
 		};
-
+*/
 		//PIDControllerRight
 
 		const double KiRight = 0.4;
 		const double KdRight = 0.5;
-		const double SollwertRightForward = 80;
-		const double SollwertRightBackward = 80;
+
+		const double SollwertRight = 80;
 		const double KpRight = 0.23;
 
 		double AbweichungRight = 0.0;
@@ -226,10 +226,10 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		if ((StellwertRight < 50) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0))
+		if (StellwertRight < 80)
 		{
 			Abweichung_SummeRight += AbweichungRight;
-			AbweichungRight = -1 * (SollwertRightBackward - wm->rawSensorData.getOpticalFlowQoS());
+			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
 			StellwertRight = KpRight * AbweichungRight + KvRight;
 			StellwertRight += KiRight * Abweichung_SummeRight;
 			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
@@ -237,17 +237,6 @@ namespace alica
 			Abweichung_AltRight = AbweichungRight;
 		};
 
-		if ((StellwertRight < 80) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0))
-		{
-			Abweichung_SummeRight += AbweichungRight;
-
-			AbweichungRight = -1 * (SollwertRightForward - wm->rawSensorData.getOpticalFlowQoS());
-			StellwertRight = KpRight * AbweichungRight + KvRight;
-			StellwertRight += KiRight * Abweichung_SummeRight;
-			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-
-			Abweichung_AltRight = AbweichungRight;
-		};
 
 		//StellwertRight /= 4;
 		/*
