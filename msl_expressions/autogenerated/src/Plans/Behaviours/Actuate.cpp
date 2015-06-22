@@ -103,8 +103,18 @@ namespace alica
         rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
                 - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
-        rotationLeft = rotationLeft - 10;
-        rotationRight = rotationRight - 10;
+        if((rotationLeft<-0.3)||(rotationLeft>0.3)){
+
+        	rotationLeft = rotationLeft - 10;
+        };
+
+
+        if((rotationRight<-0.3)||(rotationRight>0.3)){
+
+        	rotationRight = rotationRight - 10;
+        };
+
+
 
         //PIDControllerLeft
 
@@ -170,6 +180,10 @@ namespace alica
 
         KvLeft = (1.2 * eFunktion * arithmeticAverageSpeed * funktionLeft * arithmeticAverageSpeedDifference
                 + rotationRight);
+
+
+
+
 //			};
         //Feedforward
         //Back
