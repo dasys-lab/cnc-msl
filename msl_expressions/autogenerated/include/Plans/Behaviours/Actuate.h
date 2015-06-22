@@ -26,6 +26,8 @@ namespace alica
         list<double> arithmeticAverageBoxSpeedDifference;
         double speedDifferenceNew;
         double speedDifference;
+        double zaeler ;
+        double qualityOfServiceSumme ;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

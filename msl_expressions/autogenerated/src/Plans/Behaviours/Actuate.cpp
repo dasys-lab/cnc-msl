@@ -118,8 +118,7 @@ namespace alica
         double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 
         //Scharfstellung des Sensors Anfang
-        double zaeler =0;
-        double qualityOfServiceSumme = 0;
+
         double teiler;
         qualityOfServiceSumme=qualityOfServiceSumme+wm->rawSensorData.getOpticalFlowQoS();
         zaeler=zaeler+1;
@@ -312,6 +311,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1417017518918) ENABLED START*/ //Add additional options here
         speedDifference = 0.0;
+        double zaeler =0;
+        double qualityOfServiceSumme = 0;
 
         /*PROTECTED REGION END*/
     }
