@@ -190,30 +190,41 @@ namespace msl
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		for (int i = 0; i < points.size(); i++)
-		{
-			pointRobotKindMapping.insert(
-					pair<shared_ptr<geometry::CNPoint2D>, bool>(
-							make_shared<geometry::CNPoint2D>(points.at(i).x, points.at(i).y), false));
-			Site_2 site(points.at(i).x, points.at(i).y);
-			sites.push_back(site);
-		}
-		insertPoints(sites);
 		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		bool alreadyIn = false;
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
-				for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
-				{
-					if ((*iter)->x == it->first->x && (*iter)->y == it->first->y)
-					{
-						it->second = true;
-						break;
-					}
-				}
+				pointRobotKindMapping.insert(
+						pair<shared_ptr<geometry::CNPoint2D>, bool>(
+								make_shared<geometry::CNPoint2D>((*iter)->x, (*iter)->y), true));
+				Site_2 site((*iter)->x, (*iter)->y);
+				sites.push_back(site);
 			}
 		}
+		for (int i = 0; i < points.size(); i++)
+		{
+
+			for (int j = 0; j < sites.size(); j++)
+			{
+				if (sites.at(j).x() == points.at(i).x && sites.at(j).y() == points.at(i).y)
+				{
+					alreadyIn = true;
+					break;
+				}
+			}
+			if (!alreadyIn)
+			{
+				pointRobotKindMapping.insert(
+						pair<shared_ptr<geometry::CNPoint2D>, bool>(
+								make_shared<geometry::CNPoint2D>(points.at(i).x, points.at(i).y), false));
+				Site_2 site(points.at(i).x, points.at(i).y);
+				sites.push_back(site);
+			}
+			alreadyIn = false;
+		}
+		insertPoints(sites);
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
 		return this->voronoi;
@@ -395,6 +406,33 @@ namespace msl
 		}
 		return nullptr;
 	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getTeamMatePositions()
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret;
+		for(auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		{
+			if(iter->second == true)
+			{
+				ret->push_back(iter->first);
+			}
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getObstaclePositions()
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret;
+		for(auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		{
+			if(iter->second == false)
+			{
+				ret->push_back(iter->first);
+			}
+		}
+		return ret;
+	}
+
 }
 /* namespace msl */
 

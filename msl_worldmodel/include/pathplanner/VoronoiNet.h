@@ -104,6 +104,10 @@ namespace msl
 
 		bool isOwnCellEdge(geometry::CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMatePositions();
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
+
 	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex
@@ -113,6 +117,7 @@ namespace msl
 		 * checks if a SearchNode is part of a vector
 		 */
 		bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
+
 
 	protected:
 		Kernel kernel;

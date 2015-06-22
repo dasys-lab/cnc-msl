@@ -33,6 +33,8 @@ namespace msl
 		// HEURISTIC FUNCTION: distance to target
 		double h = distance(*path->at(path->size() - 1), goal);
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > teamMatePositions = voronoi->getTeamMatePositions();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstaclePositions = voronoi->getObstaclePositions();
 		// COST FUNCTION: width and angle
 
 		// cost due to narrowness
