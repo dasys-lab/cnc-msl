@@ -186,8 +186,8 @@ namespace alica
 		double Abweichung_SummeLeft = 0.0;
 		double Abweichung_AltLeft = 0.0;
 		double StellwertLeft = 0.0;
-		const double SollwertLeftForward = 70;
-		const double SollwertLeftBackward = 50;
+		const double SollwertLeftForward = 80;
+		const double SollwertLeftBackward = 80;
 
 		if ((StellwertLeft < 50) && (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) >= 0))
 		{
@@ -217,8 +217,8 @@ namespace alica
 
 		const double KiRight = 0.4;
 		const double KdRight = 0.5;
-		const double SollwertRightForward = 70;
-		const double SollwertRightBackward = 50;
+		const double SollwertRightForward = 80;
+		const double SollwertRightBackward = 80;
 		const double KpRight = 0.23;
 
 		double AbweichungRight = 0.0;
