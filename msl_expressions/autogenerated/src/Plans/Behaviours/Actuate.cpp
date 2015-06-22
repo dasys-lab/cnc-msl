@@ -117,6 +117,22 @@ namespace alica
         double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
         double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 
+        //Scharfstellung des Sensors Anfang
+        double zaeler =0;
+        double qualityOfServiceSumme = 0;
+        double teiler;
+        qualityOfServiceSumme=qualityOfServiceSumme+wm->rawSensorData.getOpticalFlowQoS();
+        zaeler=zaeler+1;
+        teiler=qualityOfServiceSumme/zaeler;
+
+
+
+        //Scharfstellung des Sensors Ende
+
+
+
+
+
         /*
          * 	//gescheiterte Funktionen
 
@@ -254,10 +270,13 @@ namespace alica
         //nur test danach löschen!!
         //	KvLeft=-1.5*x*KvLeft;
         //	KvRight=-2.5*x*KvRight;
-        cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
-        cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-                << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+       // cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
+        //cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+          //      << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+        cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme<< endl;
+        cout << "zaeler  : " << zaeler<< endl;
+        cout << "teiler  : " << teiler<< endl<<endl;
         //cout << "funktionLeftLim : " << funktionLeftLim << endl;
         //cout << "KvLeft : " << KvLeft << endl;
         //cout << "StellwertLeft: " << StellwertLeft << endl;
@@ -267,19 +286,19 @@ namespace alica
         //cout << "funktionRight : " << funktionRight << endl;
 
         //cout << "StellwertRight: " << StellwertRight << endl;
-        cout << "rotationLeft : " << rotationLeft << endl;
-        cout << "rotationRight : " << rotationRight << endl;
-        cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
+       // cout << "rotationLeft : " << rotationLeft << endl;
+       // cout << "rotationRight : " << rotationRight << endl;
+       // cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
 
-        cout << "speedDifference : " << speedDifference << endl;
-        cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+      //  cout << "speedDifference : " << speedDifference << endl;
+      //  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
         cout << endl;
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
         //	cout << " cos x :" << cos(x) << endl;
 
-        left = rotationLeft; //StellwertLeft;//KvLeft; //
-        right = rotationRight; //StellwertRight;//KvRight; //
+        left =0.0;// rotationLeft; //StellwertLeft;//KvLeft; //
+        right =0.0;// rotationRight; //StellwertRight;//KvRight; //
 
         bhc.leftMotor = max(min(left, 60), -80);
         bhc.rightMotor = max(min(right, 60), -80);
