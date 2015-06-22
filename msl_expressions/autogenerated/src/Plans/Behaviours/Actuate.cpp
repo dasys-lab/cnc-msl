@@ -186,10 +186,10 @@ namespace alica
 		double Abweichung_SummeLeft = 0.0;
 		double Abweichung_AltLeft = 0.0;
 		double StellwertLeft = 0.0;
-		const double SollwertLeft = 80;
+		const double SollwertLeft = 70;
 		//const double SollwertLeftForward = 80;
 
-		if (StellwertLeft < 80)
+		if (wm->rawSensorData.getOpticalFlowQoS() < 70)
 		{
 
 			Abweichung_SummeLeft += AbweichungLeft;
@@ -218,7 +218,7 @@ namespace alica
 		const double KiRight = 0.4;
 		const double KdRight = 0.5;
 
-		const double SollwertRight = 80;
+		const double SollwertRight = 70;
 		const double KpRight = 0.23;
 
 		double AbweichungRight = 0.0;
@@ -226,7 +226,7 @@ namespace alica
 		double Abweichung_AltRight = 0.0;
 		double StellwertRight = 0.0;
 
-		if (StellwertRight < 80)
+		if (wm->rawSensorData.getOpticalFlowQoS() < 70)
 		{
 			Abweichung_SummeRight += AbweichungRight;
 			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
