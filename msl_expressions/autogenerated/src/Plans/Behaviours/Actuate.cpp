@@ -281,13 +281,13 @@ namespace alica
         cout << "StellwertLeft: " << StellwertLeft << endl;
         //	cout << "funktionRightLim : " << funktionRightLim << endl;
         cout << "KvRight : " << KvRight << endl;
-        //cout << "funktionLeft : " << funktionLeft << endl;
-        //cout << "funktionRight : " << funktionRight << endl;
+        cout << "funktionLeft : " << funktionLeft << endl;
+        cout << "funktionRight : " << funktionRight << endl;
 
         cout << "StellwertRight: " << StellwertRight << endl;
-       // cout << "rotationLeft : " << rotationLeft << endl;
-       // cout << "rotationRight : " << rotationRight << endl;
-        cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
+        cout << "rotationLeft : " << rotationLeft << endl;
+        cout << "rotationRight : " << rotationRight << endl;
+cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
 
       //  cout << "speedDifference : " << speedDifference << endl;
       //  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
