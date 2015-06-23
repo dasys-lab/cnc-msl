@@ -48,7 +48,7 @@ namespace alica
         }
 
         msl_actuator_msgs::MotionControl mc;
-        // TODO: remove later
+        // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
         cout << "x: " << x << endl;
         cout << "y: " << y << endl;
@@ -56,6 +56,7 @@ namespace alica
         {
             // x+ && y+ Ball kommt von vorne links
             cout << "von vorne links" << endl;
+            // TODO :
         }
         else if ((x > old_x && y < old_y) && (x > 0 && y < 0))
         {
