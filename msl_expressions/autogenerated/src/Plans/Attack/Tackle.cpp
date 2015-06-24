@@ -7,30 +7,30 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-	/*PROTECTED REGION ID(staticVars1434807660243) ENABLED START*/ //initialise static variables here
-	/*PROTECTED REGION END*/
-	Tackle::Tackle() :
-			DomainBehaviour("Tackle")
-	{
-		/*PROTECTED REGION ID(con1434807660243) ENABLED START*/ //Add additional options here
-		maxVel = 4000;
-		ballDist = 330;
-		ballDistTolerance = 90;
-		rotationVel = 2 * M_PI;
-		field = msl::MSLFootballField::getInstance();
-		wiggleDir = 0;
-		errorInt = 0;
-		sc = supplementary::SystemConfig::getInstance();
-		/*PROTECTED REGION END*/
-	}
-	Tackle::~Tackle()
-	{
-		/*PROTECTED REGION ID(dcon1434807660243) ENABLED START*/ //Add additional options here
-		/*PROTECTED REGION END*/
-	}
-	void Tackle::run(void* msg)
-	{
-		/*PROTECTED REGION ID(run1434807660243) ENABLED START*/ //Add additional options here
+    /*PROTECTED REGION ID(staticVars1434807660243) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    Tackle::Tackle() :
+            DomainBehaviour("Tackle")
+    {
+        /*PROTECTED REGION ID(con1434807660243) ENABLED START*/ //Add additional options here
+        maxVel = 4000;
+        ballDist = 330;
+        ballDistTolerance = 90;
+        rotationVel = 2 * M_PI;
+        field = msl::MSLFootballField::getInstance();
+        wiggleDir = 0;
+        errorInt = 0;
+        sc = supplementary::SystemConfig::getInstance();
+        /*PROTECTED REGION END*/
+    }
+    Tackle::~Tackle()
+    {
+        /*PROTECTED REGION ID(dcon1434807660243) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void Tackle::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1434807660243) ENABLED START*/ //Add additional options here
 //		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
 //		shared_ptr<geometry::CNPoint2D> enemyGoalPos;
 //		shared_ptr<geometry::CNPoint2D> ownGoalPos;
@@ -238,24 +238,24 @@ namespace alica
 //		bm.motion.translation = move->length();
 //		//bm.Motion.Angle += 15*Math.PI/180*wiggleDir;
 //		send(bm);
-		/*PROTECTED REGION END*/
-	}
-	void Tackle::initialiseParameters()
-	{
-		/*PROTECTED REGION ID(initialiseParameters1434807660243) ENABLED START*/ //Add additional options here
-		wiggleDir = 0;
-		errorInt = 0;
-		maxVel = 4000;
-		ballDist = 330;
-		ballDistTolerance = 90;
-		rotationVel = 2 * M_PI;
-		/*PROTECTED REGION END*/
-	}
-	/*PROTECTED REGION ID(methods1434807660243) ENABLED START*/ //Add additional methods here
-	bool checkSide(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck)
-	{
-		double cross = pointToCheck->x * lineVector->y - pointToCheck->y * lineVector->x;
-		return (cross < 0);
-	}
+        /*PROTECTED REGION END*/
+    }
+    void Tackle::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1434807660243) ENABLED START*/ //Add additional options here
+        wiggleDir = 0;
+        errorInt = 0;
+        maxVel = 4000;
+        ballDist = 330;
+        ballDistTolerance = 90;
+        rotationVel = 2 * M_PI;
+        /*PROTECTED REGION END*/
+    }
+    /*PROTECTED REGION ID(methods1434807660243) ENABLED START*/ //Add additional methods here
+    bool checkSide(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck)
+    {
+        double cross = pointToCheck->x * lineVector->y - pointToCheck->y * lineVector->x;
+        return (cross < 0);
+    }
 /*PROTECTED REGION END*/
-}/* namespace alica */
+} /* namespace alica */
