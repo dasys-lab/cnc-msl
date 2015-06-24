@@ -18943,8 +18943,8 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <instance part="P+10" gate="1" x="5.08" y="160.02" smashed="yes">
 <attribute name="VALUE" x="0" y="160.02" size="1.778" layer="96"/>
 </instance>
-<instance part="JP6" gate="1" x="121.92" y="109.22" rot="MR270"/>
-<instance part="JP7" gate="1" x="121.92" y="99.06" rot="MR270"/>
+<instance part="JP6" gate="1" x="127" y="109.22" rot="MR270"/>
+<instance part="JP7" gate="1" x="127" y="99.06" rot="MR270"/>
 <instance part="SV4" gate="G$1" x="233.68" y="114.3"/>
 <instance part="P+7" gate="1" x="220.98" y="121.92" smashed="yes">
 <attribute name="VALUE" x="215.9" y="121.92" size="1.778" layer="96"/>
@@ -19173,15 +19173,15 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="TXD" class="0">
 <segment>
-<wire x1="124.46" y1="96.52" x2="127" y2="96.52" width="0.1524" layer="91"/>
-<label x="127" y="96.52" size="1.27" layer="95" xref="yes"/>
+<wire x1="129.54" y1="96.52" x2="132.08" y2="96.52" width="0.1524" layer="91"/>
+<label x="132.08" y="96.52" size="1.27" layer="95" xref="yes"/>
 <pinref part="JP7" gate="1" pin="3"/>
 </segment>
 </net>
 <net name="RXD" class="0">
 <segment>
-<wire x1="124.46" y1="106.68" x2="127" y2="106.68" width="0.1524" layer="91"/>
-<label x="127" y="106.68" size="1.27" layer="95" xref="yes"/>
+<wire x1="129.54" y1="106.68" x2="132.08" y2="106.68" width="0.1524" layer="91"/>
+<label x="132.08" y="106.68" size="1.27" layer="95" xref="yes"/>
 <pinref part="JP6" gate="1" pin="3"/>
 </segment>
 </net>
@@ -19207,8 +19207,8 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="SCK" class="0">
 <segment>
-<label x="127" y="111.76" size="1.27" layer="95" xref="yes"/>
-<wire x1="124.46" y1="111.76" x2="127" y2="111.76" width="0.1524" layer="91"/>
+<label x="132.08" y="111.76" size="1.27" layer="95" xref="yes"/>
+<wire x1="129.54" y1="111.76" x2="132.08" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="JP6" gate="1" pin="1"/>
 </segment>
 <segment>
@@ -19231,8 +19231,8 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="MOSI" class="0">
 <segment>
-<label x="127" y="101.6" size="1.27" layer="95" xref="yes"/>
-<wire x1="124.46" y1="101.6" x2="127" y2="101.6" width="0.1524" layer="91"/>
+<label x="132.08" y="101.6" size="1.27" layer="95" xref="yes"/>
+<wire x1="129.54" y1="101.6" x2="132.08" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="JP7" gate="1" pin="1"/>
 </segment>
 <segment>
@@ -19394,6 +19394,11 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <label x="223.52" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
 <pinref part="SV2" gate="G$1" pin="4"/>
 </segment>
+<segment>
+<wire x1="96.52" y1="111.76" x2="106.68" y2="111.76" width="0.1524" layer="91"/>
+<label x="106.68" y="111.76" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PD7"/>
+</segment>
 </net>
 <net name="SW_MOT" class="0">
 <segment>
@@ -19548,18 +19553,18 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <segment>
 <pinref part="JP6" gate="1" pin="2"/>
 <pinref part="U$2" gate="G$1" pin="(RXD)PD4"/>
-<wire x1="124.46" y1="109.22" x2="116.84" y2="109.22" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="109.22" x2="116.84" y2="104.14" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="104.14" x2="96.52" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="109.22" x2="121.92" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="109.22" x2="121.92" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="104.14" x2="96.52" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$17" class="0">
 <segment>
 <pinref part="JP7" gate="1" pin="2"/>
-<wire x1="124.46" y1="99.06" x2="116.84" y2="99.06" width="0.1524" layer="91"/>
-<wire x1="116.84" y1="99.06" x2="116.84" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="99.06" x2="121.92" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="99.06" x2="121.92" y2="101.6" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="(MOSI_A/TXD)PD3"/>
-<wire x1="116.84" y1="101.6" x2="96.52" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="101.6" x2="96.52" y2="101.6" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SW_KICK" class="0">
