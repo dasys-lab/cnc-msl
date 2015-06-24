@@ -103,6 +103,7 @@ namespace alica
             return;
         }
 
+        mc.motion.translation = 0;
         send(mc);
 
 //Add additional options here
