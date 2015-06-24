@@ -114,5 +114,54 @@ namespace alica
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
+	msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos)
+	{
+
+		msl_actuator_msgs::MotionControl mc;
+		msl_actuator_msgs::BallHandleCmd bhc;
+		mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+
+		const double rotate_P = 1.8;
+
+		mc.motion.angle = egoBallPos->angleTo();
+		mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+
+		double summe = 0.0;
+		static double olddistance = 0.0;
+
+		const double Kp = 2.0;
+		const double Ki = 0.0;
+		const double Kd = 1.7;
+
+		//distance ball to robot
+		double distance = egoBallPos->length();
+
+		summe = summe + distance;
+		double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
+		olddistance = distance;
+
+		auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+
+		double ball_speed = egoBallVelocity->length();
+
+		movement += ball_speed;
+
+		//cout << "movement: " << movement << endl;
+		//cout << "ball speed: " << ball_speed << endl;
+		//cout << "distance: " << distance << endl;
+
+		// translation = 1000 => 1 m/s
+		mc.motion.translation = movement;
+
+		if (egoBallPos->length() < 300)
+		{
+
+			bhc.leftMotor = -30;
+			bhc.rightMotor = -30;
+
+			this->send(bhc);
+			//this->success = true;
+		}
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
