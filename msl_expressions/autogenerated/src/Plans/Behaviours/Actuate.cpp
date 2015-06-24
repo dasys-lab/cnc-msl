@@ -279,13 +279,13 @@ namespace alica
 		cout << "teiler  : " << teiler << endl;
 		//cout << "funktionLeftLim : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
-		cout << "StellwertLeft: " << StellwertLeft << endl;
+	//	cout << "StellwertLeft: " << StellwertLeft << endl;
 		//	cout << "funktionRightLim : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 
-		cout << "StellwertRight: " << StellwertRight << endl;
+	//	cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "rotationLeft : " << rotationLeft << endl;
 		cout << "rotationRight : " << rotationRight << endl;
 		cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
@@ -297,8 +297,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = StellwertLeft; //KvLeft; //
-		right = StellwertRight; //KvRight; //
+		left = KvLeft; //StellwertLeft; //
+		right = KvRight; //StellwertRight; //
 
 		bhc.leftMotor = max(min(left, 60), -80);
 		bhc.rightMotor = max(min(right, 60), -80);
