@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GenericExecute.pml#1431522155979"/>
-    <value xPos="230" yPos="82" width="81" height="67"/>
+    <value xPos="193" yPos="46" width="81" height="67"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522123418"/>
@@ -22,7 +22,7 @@
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522763494"/>
-    <value xPos="394" yPos="45" width="65" height="67"/>
+    <value xPos="394" yPos="45" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522782044"/>
@@ -30,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522912251"/>
-    <value xPos="394" yPos="250" width="66" height="67"/>
+    <value xPos="394" yPos="250" width="66" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522920716"/>
@@ -70,7 +70,7 @@
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1433949667740"/>
-    <value xPos="110" yPos="104" width="65" height="67" collapsed="false"/>
+    <value xPos="83" yPos="159" width="268" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1433949706015"/>
@@ -78,6 +78,26 @@
   </extensions>
   <extensions>
     <key href="StandardAlignToPoint.beh#1433950043262"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAlignToPoint.beh#1435155363994"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -68,6 +68,10 @@ namespace msl
 
 	shared_ptr<geometry::CNPosition> Robots::getTeamMatePosition(int teamMateId, int index)
 	{
+		if(robotPositions.find(teamMateId) == robotPositions.end())
+		{
+			return nullptr;
+		}
 		auto x = robotPositions.at(teamMateId)->getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{

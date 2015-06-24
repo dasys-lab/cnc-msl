@@ -124,6 +124,8 @@ namespace alica
 
             case 1433950043262:
 
+            case 1435155363994:
+
                 return make_shared<StandardAlignToPoint>();
                 break;
 
@@ -190,6 +192,10 @@ namespace alica
                 break;
 
             case 1434199852589:
+
+            case 1435156714286:
+
+            case 1435156811453:
 
                 return make_shared<ShovelSelect>();
                 break;

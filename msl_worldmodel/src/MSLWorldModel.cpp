@@ -131,7 +131,7 @@ namespace msl
 	void MSLWorldModel::sendSharedWorldModelData()
 	{
 		msl_sensor_msgs::SharedWorldInfo msg;
-		msg.senderID = 9;
+		msg.senderID = this->ownID;
 		auto ball = rawSensorData.getBallPositionAndCertaincy();
 		auto pos = rawSensorData.getOwnPositionVision();
 		if(pos == nullptr)
