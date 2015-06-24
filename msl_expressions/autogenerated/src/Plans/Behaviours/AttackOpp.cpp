@@ -58,7 +58,7 @@ namespace alica
             cout << "von vorne links" << endl;
             // TODO : dreh dich nach links und schau zum Ball
         }
-        else if ((x > old_x && y < old_y) && (x > 0 && y < 0))
+        else if ((x > old_x && y < old_y) && (x < 0 && y > 0))
         {
             // x+ && y- Ball kommt von vorne rechts
             cout << "von vorne rechts" << endl;
