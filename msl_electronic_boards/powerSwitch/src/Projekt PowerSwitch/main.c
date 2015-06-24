@@ -5,7 +5,7 @@
  *      Author: timoheumuller
  */
 
-#define F_CPU 20000000UL
+#define F_CPU 16000000UL
 
 #include <stdio.h>
 #include <string.h>
@@ -16,8 +16,29 @@
 #include "port.h"
 #include "global.h"
 
-#define LED_GREEN PD2
-#define LED_RED PD3
+#define LED_GREEN		PB7
+#define LED_AKT			PC0
+#define LED_KICK		PB4
+#define LED_RED			PB3
+
+#define SW_MOT			PB1
+#define SW_AKT			PB0
+#define SW_KICK			PC7
+#define SW_12V			???
+
+#define SPEAKER			PD0
+
+#define ADC_12V			0x08
+#define ADC_EXT			0x09
+#define ADC_24V			0x02
+
+#define ADC_I_AKT		0x0A
+#define ADC_I_KICK		0x05
+#define ADC_I_MOT		0x06
+#define ADC_I_12V		0x03
+#define ADC_I_EXT		0x07
+
+
 #define POWER_ON_INT PD6
 #define POWER_ON_EXT PD7
 #define TASTER PC4
