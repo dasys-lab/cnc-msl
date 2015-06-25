@@ -63,7 +63,7 @@ namespace alica
 		double eFunktionAcceleration;
 		double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
 		speedDifference = newSpeed - speedDifferenceNew;
-		speedDifference = (speedDifference) / 150;
+		speedDifference = (speedDifference) / 300;
 
 		if (speedDifference < 1)
 		{
