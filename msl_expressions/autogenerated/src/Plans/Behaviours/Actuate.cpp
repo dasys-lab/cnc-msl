@@ -98,7 +98,7 @@ namespace alica
 		double rotationRight=0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if ((rotationRight < -0.3) || (rotationRight > 0.3))
+		if ((rotationRight < -0.1) || (rotationRight > 0.1))
 		{
 
 			rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
@@ -106,7 +106,7 @@ namespace alica
 			rotationRight = rotationRight - 10;
 		};
 
-		if ((rotationLeft < -0.3) || (rotationLeft > 0.3))
+		if ((rotationLeft < -0.1) || (rotationLeft > 0.1))
 		{
 
 			rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
@@ -178,8 +178,8 @@ namespace alica
 		//Feedforward
 		//Back
 		//PIDControllerLeft
-		const double KiLeft = 0.4;
-		const double KdLeft = 0.5;
+		const double KiLeft = 0.0;
+		const double KdLeft = 0.1;
 		const double KpLeft = 0.23;
 
 		double AbweichungLeft = 0.0;
@@ -218,8 +218,8 @@ namespace alica
 */
 		//PIDControllerRight
 
-		const double KiRight = 0.4;
-		const double KdRight = 0.5;
+		const double KiRight = 0.0;
+		const double KdRight = 0.1;
 
 		const double SollwertRight = 70;
 		const double KpRight = 0.23;
@@ -274,18 +274,18 @@ namespace alica
 		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
-		cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
-		cout << "zaeler  : " << zaeler << endl;
-		cout << "teiler  : " << teiler << endl;
+	//	cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
+	//	cout << "zaeler  : " << zaeler << endl;
+	//	cout << "teiler  : " << teiler << endl;
 		//cout << "funktionLeftLim : " << funktionLeftLim << endl;
 		cout << "KvLeft : " << KvLeft << endl;
-	//	cout << "StellwertLeft: " << StellwertLeft << endl;
+		cout << "StellwertLeft: " << StellwertLeft << endl;
 		//	cout << "funktionRightLim : " << funktionRightLim << endl;
 		cout << "KvRight : " << KvRight << endl;
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 
-	//	cout << "StellwertRight: " << StellwertRight << endl;
+		cout << "StellwertRight: " << StellwertRight << endl;
 		cout << "rotationLeft : " << rotationLeft << endl;
 		cout << "rotationRight : " << rotationRight << endl;
 		cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
@@ -297,8 +297,8 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
 		//	cout << " cos x :" << cos(x) << endl;
 
-		left = KvLeft; //StellwertLeft; //
-		right = KvRight; //StellwertRight; //
+		left = StellwertLeft; //
+		right = StellwertRight; //
 
 		bhc.leftMotor = max(min(left, 60), -80);
 		bhc.rightMotor = max(min(right, 60), -80);
