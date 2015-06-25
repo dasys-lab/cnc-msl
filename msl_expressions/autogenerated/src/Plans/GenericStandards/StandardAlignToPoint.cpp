@@ -42,7 +42,13 @@ namespace alica
 			EntryPoint* ep = getParentEntryPoint(taskName);
 			if (ep != nullptr)
 			{
-				shared_ptr<vector<int>>ids = this->runningPlan->getParent().lock()->getAssignment()->getRobotsWorking(ep);
+				auto parent = this->runningPlan->getParent().lock();
+				if(parent == nullptr)
+				{
+					cout << "parent null" << endl;
+					return;
+				}
+				shared_ptr<vector<int>>ids = parent->getAssignment()->getRobotsWorking(ep);
 				shared_ptr<geometry::CNPoint2D> receiverPos;
 				int id = ids->at(0);
 				if (id != -1)
