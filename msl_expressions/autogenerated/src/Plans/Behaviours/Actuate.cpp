@@ -98,16 +98,13 @@ namespace alica
 		double rotationRight=0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if ((rotationRight < -0.1) || (rotationRight > 0.1))
+		if ((rotation < -0.1) || (rotation > 0.1))
 		{
 
 			rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 					- 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 			rotationRight = rotationRight - 10;
-		};
 
-		if ((rotationLeft < -0.1) || (rotationLeft > 0.1))
-		{
 
 			rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 					- 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
