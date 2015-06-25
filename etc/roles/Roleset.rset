@@ -4,7 +4,7 @@
     <taskPriorities id="1402500951772" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094138" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142663" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142675" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142675" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369898" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369909" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1222973297047</role>
@@ -13,7 +13,7 @@
     <taskPriorities id="1402500951776" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094139" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142664" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142677" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142677" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369899" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369910" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1222973297049</role>
@@ -22,7 +22,7 @@
     <taskPriorities id="1402500951779" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094140" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142665" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142678" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142678" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369901" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369911" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1222973297051</role>
@@ -40,7 +40,7 @@
     <taskPriorities id="1402500951785" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094142" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142667" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142680" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142680" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369903" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369914" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1222973297054</role>
@@ -49,7 +49,7 @@
     <taskPriorities id="1402500951788" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094143" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142668" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142681" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142681" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369904" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369915" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1222973297056</role>
@@ -58,7 +58,7 @@
     <taskPriorities id="1402500951792" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094144" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142669" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142682" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142682" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369905" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369916" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1301084991775</role>
@@ -67,7 +67,7 @@
     <taskPriorities id="1402500951795" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094145" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142670" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142683" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142683" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369906" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369917" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1301085012645</role>
@@ -76,7 +76,7 @@
     <taskPriorities id="1402500951798" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094146" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142671" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142684" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142684" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369907" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369918" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1309349068496</role>
@@ -85,7 +85,7 @@
     <taskPriorities id="1402500951801" name="" comment="" key="1225112227903" value="0.5"/>
     <taskPriorities id="1432209094148" name="MISSING_NAME" comment="" key="1432209050494" value="0.5"/>
     <taskPriorities id="1432210142672" name="MISSING_NAME" comment="" key="1225115406909" value="0.5"/>
-    <taskPriorities id="1432210142685" name="MISSING_NAME" comment="" key="1221754402444" value="0.5"/>
+    <taskPriorities id="1432210142685" name="MISSING_NAME" comment="" key="1221754402444" value="-1.0"/>
     <taskPriorities id="1432210369908" name="MISSING_NAME" comment="" key="1238601842183" value="0.5"/>
     <taskPriorities id="1432210369919" name="MISSING_NAME" comment="" key="1238601692867" value="0.5"/>
     <role>rolesDefinition.rdefset#1309349121234</role>
