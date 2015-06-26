@@ -5,12 +5,12 @@
  *      Author: Stefan Jakob
  */
 
-#include <pathplanner/evaluator/SingleEvaluator.h>
+#include <pathplanner/evaluator/Evaluator.h>
 
 namespace msl
 {
 
-	SingleEvaluator::SingleEvaluator(PathPlanner* planner) :
+	Evaluator::Evaluator(PathPlanner* planner) :
 			PathEvaluator(planner)
 	{
 		//# how much the robot values wide corridors compared to short paths
@@ -20,11 +20,11 @@ namespace msl
 																			"normal_clearSpaceWeight", NULL);
 	}
 
-	SingleEvaluator::~SingleEvaluator()
+	Evaluator::~Evaluator()
 	{
 	}
 
-	double SingleEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
+	double Evaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
 									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
 									geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
@@ -37,6 +37,7 @@ namespace msl
 
 		// cost due to narrowness
 		double widthc = 0;
+		//TODO fix bugs
 //		if (path.lastPEdge.MaxRadius > 0)
 //		{
 //			// edges with atleast one real obstacle on one side
@@ -53,11 +54,11 @@ namespace msl
 //		}
 
 		// cost due to deviation from last path
-//		double lastAnglec = this->planner->getPathDeviationWeight() * path.lastPEdge.AngleCost;
+		double lastAnglec = this->planner->getPathDeviationWeight() /* * path.lastPEdge.AngleCost*/;
 		return (costsSoFar // costs so far
 		+ voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // cost due to additional length of path
 				+ widthc // cost due to minimal width of the edge
-//				+ lastAnglec, // cost due to deviation to last path
+				+ lastAnglec, // cost due to deviation to last path
 		+h); // heuristic cost due to distToTarget
 
 	}

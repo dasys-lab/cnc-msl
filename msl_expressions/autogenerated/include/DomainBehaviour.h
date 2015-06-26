@@ -8,6 +8,7 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/KickControl.h"
+#include "msl_actuator_msgs/ShovelSelectCmd.h"
 
 namespace alica
 {
@@ -19,6 +20,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_actuator_msgs::MotionControl& mc);
 		void send(msl_actuator_msgs::BallHandleCmd& bh);
 		void send(msl_actuator_msgs::KickControl& kc);
+		void send(msl_actuator_msgs::ShovelSelectCmd& ssc);
 		msl::MSLWorldModel* wm;
 
 	protected:
@@ -31,6 +33,7 @@ class DomainBehaviour : public BasicBehaviour
 		ros::Publisher motionControlPub;
 		ros::Publisher ballHandlePub;
 		ros::Publisher kickControlPub;
+		ros::Publisher shovelSelectPublisher;
 	};
 } /* namespace alica */
 

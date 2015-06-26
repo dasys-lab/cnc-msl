@@ -19529,15 +19529,15 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="RXCAN" class="0">
 <segment>
-<wire x1="96.52" y1="124.46" x2="101.6" y2="124.46" width="0.1524" layer="91"/>
-<label x="101.6" y="124.46" size="1.27" layer="95" xref="yes"/>
+<wire x1="96.52" y1="124.46" x2="99.06" y2="124.46" width="0.1524" layer="91"/>
+<label x="99.06" y="124.46" size="1.27" layer="95" xref="yes"/>
 <pinref part="U$2" gate="G$1" pin="(RXCAN)PC3"/>
 </segment>
 </net>
 <net name="TXCAN" class="0">
 <segment>
-<wire x1="96.52" y1="121.92" x2="101.6" y2="121.92" width="0.1524" layer="91"/>
-<label x="101.6" y="121.92" size="1.27" layer="95" xref="yes"/>
+<wire x1="96.52" y1="121.92" x2="99.06" y2="121.92" width="0.1524" layer="91"/>
+<label x="99.06" y="121.92" size="1.27" layer="95" xref="yes"/>
 <pinref part="U$2" gate="G$1" pin="(TXCAN)PC2"/>
 </segment>
 </net>
@@ -19566,8 +19566,8 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <pinref part="SV4" gate="G$1" pin="8"/>
 </segment>
 <segment>
-<label x="101.6" y="134.62" size="1.27" layer="95" xref="yes"/>
-<wire x1="96.52" y1="134.62" x2="101.6" y2="134.62" width="0.1524" layer="91"/>
+<label x="106.68" y="134.62" size="1.27" layer="95" xref="yes"/>
+<wire x1="96.52" y1="134.62" x2="106.68" y2="134.62" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="PC7"/>
 </segment>
 <segment>
@@ -19637,8 +19637,8 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="SW_1" class="0">
 <segment>
-<label x="101.6" y="119.38" size="1.27" layer="95" xref="yes"/>
-<wire x1="96.52" y1="119.38" x2="101.6" y2="119.38" width="0.1524" layer="91"/>
+<label x="106.68" y="119.38" size="1.27" layer="95" xref="yes"/>
+<wire x1="96.52" y1="119.38" x2="106.68" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="PC1"/>
 </segment>
 <segment>

@@ -57,8 +57,9 @@ namespace msl
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
+		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 
-		MSLSharedWorldModel* getSharedWolrdModel();
+		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
 
@@ -78,7 +79,7 @@ namespace msl
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
-		MSLSharedWorldModel* sharedWolrdModel;
+		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 
 		ros::NodeHandle n;
@@ -88,6 +89,7 @@ namespace msl
 		ros::Subscriber joystickSub;
 		ros::Subscriber motionBurstSub;
 		ros::Subscriber simWorldModel;
+		ros::Subscriber sharedWorldSub;
 		ros::Publisher sharedWorldPub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;

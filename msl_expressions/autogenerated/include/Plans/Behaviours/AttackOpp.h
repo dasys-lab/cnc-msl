@@ -24,6 +24,9 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1430324527403) ENABLED START*/ //Add additional private methods here
+        double old_x;
+        double old_y;
+        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

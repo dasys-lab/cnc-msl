@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="AttackPlay.pml#1434045709193"/>
+    <value xPos="183" yPos="22" width="167" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434046634656"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045868018"/>
+    <value xPos="229" yPos="131" width="189" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="AttackSupportPlan.pml#1434046705214"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045870617"/>
+    <value xPos="249" yPos="245" width="65" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045709191"/>
+    <value width="628" height="493"/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045709194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045719840"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434045723977"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434112519736"/>
+    <value xPos="473" yPos="419"/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434112675755"/>
+    <value xPos="3" yPos="202"/>
+  </extensions>
+  <extensions>
+    <key href="AttackPlay.pml#1434112762535"/>
+    <value xPos="212" yPos="348" width="115" height="103"/>
+  </extensions>
+  <extensions>
+    <key href="RunFree.pml#1434115664325"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

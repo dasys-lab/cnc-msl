@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_worldmodel) 
-
+  
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -115,8 +115,8 @@ catkin_package(
    src/pathplanner/VoronoiNet.cpp
    src/pathplanner/PathProxy.cpp
    src/pathplanner/evaluator/PathEvaluator.cpp
-   src/pathplanner/evaluator/SingleEvaluator.cpp
-   src/pathplanner/evaluator/SinglePrefDirEvaluator.cpp
+   src/pathplanner/evaluator/Evaluator.cpp
+   src/pathplanner/evaluator/PrefDirEvaluator.cpp
  )
 
 ## Declare a cpp executable
