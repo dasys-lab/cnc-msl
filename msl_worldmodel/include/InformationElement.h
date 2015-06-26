@@ -42,7 +42,7 @@ template<typename T>
      */
     virtual ~InformationElement()
     {
-      //
+//
     }
 
     /*!

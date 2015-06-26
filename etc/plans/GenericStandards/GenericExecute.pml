@@ -61,7 +61,7 @@
     <task>../../Misc/taskrepository.tsk#1238601692867</task>
     <state>#1433949667740</state>
   </entryPoints>
-  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1238601842183</task>
     <state>#1431522297705</state>
   </entryPoints>
