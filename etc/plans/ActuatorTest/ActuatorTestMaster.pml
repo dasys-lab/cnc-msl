@@ -14,6 +14,7 @@
   </states>
   <states id="1435321198760" name="Joystick" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Joystick.beh#1426695479346</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Actuate.beh#1417017552846</plans>
     <inTransitions>#1435321213211</inTransitions>
     <outTransitions>#1435321220268</outTransitions>
   </states>
