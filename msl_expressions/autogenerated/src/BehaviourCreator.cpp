@@ -47,6 +47,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
+#include  "Plans/Behaviours/CalibrateQualityOfService.h"
+
 #include  "Plans/Behaviours/ShovelSelect.h"
 
 #include  "Plans/GenericBehaviours/Parking.h"
@@ -189,6 +191,11 @@ namespace alica
             case 1415205285582:
 
                 return make_shared<AlignToGoal>();
+                break;
+
+            case 1435320094002:
+
+                return make_shared<CalibrateQualityOfService>();
                 break;
 
             case 1434199852589:

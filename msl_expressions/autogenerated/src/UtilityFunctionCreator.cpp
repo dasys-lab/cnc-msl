@@ -37,6 +37,8 @@
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
+#include  "Plans/ActuatorTest/CalbrateQualityOfService1433763414976.h"
+
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
 #include  "Plans/GameStrategy/Other/DroppedBall1426694906399.h"
@@ -149,6 +151,10 @@ namespace alica
 
             case 1430324312981:
                 return make_shared<UtilityFunction1430324312981>();
+                break;
+
+            case 1433763414976:
+                return make_shared<UtilityFunction1433763414976>();
                 break;
 
             case 1417017436952:

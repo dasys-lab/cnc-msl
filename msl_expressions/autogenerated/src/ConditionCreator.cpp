@@ -36,6 +36,8 @@
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
+#include  "Plans/ActuatorTest/CalbrateQualityOfService1433763414976.h"
+
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
 #include  "Plans/GameStrategy/Other/DroppedBall1426694906399.h"
@@ -727,6 +729,18 @@ namespace alica
             case 1427721261678:
 
                 return make_shared<TransitionCondition1427721261678>();
+
+                break;
+
+            case 1435321214610:
+
+                return make_shared<TransitionCondition1435321214610>();
+
+                break;
+
+            case 1435321221937:
+
+                return make_shared<TransitionCondition1435321221937>();
 
                 break;
 
