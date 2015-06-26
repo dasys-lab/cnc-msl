@@ -36,4 +36,22 @@
       <bendpoints xPos="436" yPos="292"/>
     </value>
   </extensions>
+  <extensions>
+    <key href="ActuatorTestMaster.pml#1435321198760"/>
+    <value xPos="459" yPos="44" width="70" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/Joystick.beh#1426695479346"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ActuatorTestMaster.pml#1435321213211"/>
+    <value>
+      <bendpoints xPos="439" yPos="75"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ActuatorTestMaster.pml#1435321220268"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
