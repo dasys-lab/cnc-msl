@@ -237,24 +237,9 @@ namespace alica
 
         arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-        //Speed Difference for acceleration
-        double eFunktionAcceleration;
-        double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-        speedDifference = newSpeed - speedDifferenceNew;
-        speedDifference = (speedDifference) / 300;
 
-        if (speedDifference < 1)
-        {
-            speedDifference = 1;
-        }
 
-        ////arithmetic average speed difference
-        double arithmeticAverageSpeedDifference = 0.0;
 
-        if (arithmeticAverageBoxSpeedDifference.size() == 5)
-        {
-            arithmeticAverageBoxSpeedDifference.pop_back();
-        }
 
         arithmeticAverageBoxSpeedDifference.push_front(speedDifference);
 
@@ -456,7 +441,7 @@ namespace alica
         cout << "funktionLeft : " << funktionLeft << endl;
         cout << "funktionRight : " << funktionRight << endl;
 
-        cout << "StellwertRight: " << StellwertRight << endl;
+       // cout << "StellwertRight: " << StellwertRight << endl;
         cout << "rotationLeft : " << rotationLeft << endl;
         cout << "rotationRight : " << rotationRight << endl;
         cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;

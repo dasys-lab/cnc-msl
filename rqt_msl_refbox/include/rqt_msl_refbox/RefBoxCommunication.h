@@ -5,12 +5,11 @@
 #include <QUdpSocket>
 #include <QSocketNotifier>
 
-#include "ui_RefBoxCommunication.h"
 
 namespace rqt_msl_refbox
 {
 
-	class RefBoxCommunication : public QDialog, public Ui::RefBoxCommunication
+	class RefBoxCommunication : public QDialog
 	{
 	Q_OBJECT
 
