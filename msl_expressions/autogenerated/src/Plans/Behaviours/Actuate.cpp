@@ -98,17 +98,17 @@ namespace alica
         double rotationRight = 0.0;
         double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-        if ((rotation < -0.1) || (rotation > 0.1))
+        if ((rotation < -0.15) || (rotation > 0.15))
         {
 
             rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
                     - 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
-            rotationRight = rotationRight - 10;
+            rotationRight = rotationRight - 70;
 
             rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
                     - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
-            rotationLeft = rotationLeft - 10;
+            rotationRight = rotationRight - 70;
         };
 
         //PIDControllerLeft
@@ -176,7 +176,7 @@ namespace alica
         //PIDControllerLeft
         const double KiLeft = 0.0;
         const double KdLeft = 0.1;
-        const double KpLeft = 0.23;
+        const double KpLeft = 0.5;
 
         double AbweichungLeft = 0.0;
         double Abweichung_SummeLeft = 0.0;
@@ -215,7 +215,7 @@ namespace alica
         const double KdRight = 0.1;
 
         const double SollwertRight = 70;
-        const double KpRight = 0.23;
+        const double KpRight = 0.5;
 
         double AbweichungRight = 0.0;
         double Abweichung_SummeRight = 0.0;
@@ -293,8 +293,8 @@ namespace alica
         left = StellwertLeft; //
         right = StellwertRight; //
 
-        bhc.leftMotor = max(min(left, 60), -80);
-        bhc.rightMotor = max(min(right, 60), -80);
+        bhc.leftMotor = max(min(left, 60), -100);
+        bhc.rightMotor = max(min(right, 60), -100);
         this->send(bhc);
 
         speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
