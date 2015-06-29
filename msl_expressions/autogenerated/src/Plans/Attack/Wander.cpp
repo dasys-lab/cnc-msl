@@ -135,8 +135,6 @@ namespace alica
             translation = targetDistance;
         }
 
-        //TODO obstacle avoidence
-        //MotionControl mc = DriveHelper.DriveToPointAndAlignCareObstacles(targetPoint, null, translation, WM);
         MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
         send(mc);
 

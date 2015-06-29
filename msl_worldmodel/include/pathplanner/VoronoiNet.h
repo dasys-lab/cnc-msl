@@ -65,7 +65,7 @@ namespace msl
 		 * expands a SearchNode
 		 */
 		void expandNode(shared_ptr<SearchNode> currentNode,shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, geometry::CNPoint2D startPos, geometry::CNPoint2D goal, PathEvaluator* eval);
+							shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 VoronoiDiagram::Vertex
@@ -92,6 +92,8 @@ namespace msl
 		 * inserts sites into the VoronoiDiagram
 		 */
 		void insertPoints(vector<Site_2> points);
+
+		void insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
 		shared_ptr<VoronoiDiagram> getVoronoi();
 		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);

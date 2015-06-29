@@ -136,7 +136,7 @@ namespace msl
 	 * @param currentNode shared_ptr<SearchNode>
 	 */
 	void VoronoiNet::expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-	shared_ptr<vector<shared_ptr<SearchNode>>> closed, geometry::CNPoint2D startPos, geometry::CNPoint2D goal, PathEvaluator* eval)
+	shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
@@ -295,6 +295,34 @@ namespace msl
 			} while (edge != begin);
 		}
 		return false;
+	}
+
+	void msl::VoronoiNet::insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > points)
+	{
+
+		vector<Site_2> sites;
+		bool alreadyIn = false;
+		for(auto iter = points->begin(); iter != points->end(); iter++)
+		{
+
+			for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
+			{
+				if (it->first->x == (*iter)->x && it->first->y == (*iter)->y)
+				{
+					alreadyIn = true;
+					break;
+				}
+			}
+			if (!alreadyIn)
+			{
+				pointRobotKindMapping.insert(
+						pair<shared_ptr<geometry::CNPoint2D>, bool>(*iter, false));
+				Site_2 site((*iter)->x, (*iter)->y);
+				sites.push_back(site);
+			}
+			alreadyIn = false;
+		}
+		insertPoints(sites);
 	}
 
 	/**
