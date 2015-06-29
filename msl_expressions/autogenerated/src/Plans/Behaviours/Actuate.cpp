@@ -106,11 +106,11 @@ namespace alica
 		 itcounter = 0;
 		 }
 		 */
-		if (haveBall && itcounter++ < 8)
-		{
-			speed = speedNoBall;
-		}
-		else if (haveBall || controlNoMatterWhat || itcounter >= 8)
+//		if (haveBall && itcounter++ < 8)
+//		{
+//			speed = speedNoBall;
+//		}
+		if (true)
 		{
 			// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
