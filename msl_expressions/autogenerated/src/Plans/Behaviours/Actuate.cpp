@@ -36,7 +36,8 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		//
+
+/*		//
 		//Alter Steuerung Anfang
 		bool pullNoMatterWhat = false;
 		bool controlNoMatterWhat = false;
@@ -110,7 +111,7 @@ namespace alica
 //		{
 //			speed = speedNoBall;
 //		}
-		if (true)
+	/*	if (true)
 		{
 			// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
@@ -184,10 +185,10 @@ namespace alica
 		this->send(bhc);
 
 
-
+*/
 
 //Neue Steuerung Anfang
-/*
+
  //arithmetic Average for Speed
 
  double arithmeticAverageSpeed = 0.0;
@@ -227,7 +228,6 @@ namespace alica
  {
  arithmeticAverageBoxSpeedDifference.pop_back();
  }
->>>>>>> b2a1b98501e32346d975e0d1f7538caf98eb8c8b
 
         for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
                 parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
@@ -328,7 +328,7 @@ namespace alica
 
          lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
          feedForwardLeft = max(min(lefty, 1.0), -2.0);
-
+*/
         
 
         x = max(min(angle, 3.14), -3.14);
@@ -436,7 +436,7 @@ namespace alica
 
          left = -Stellwert;
          right = -Stellwert;
-        
+  */      
 
         //nur test danach löschen!!
         //	KvLeft=-1.5*x*KvLeft;
@@ -468,15 +468,14 @@ namespace alica
 //	cout<<"leftMotor : "<<left<<"   rightStellwert: "<<StellwertRight<<
         //	cout << " cos x :" << cos(x) << endl;
 
-        left = StellwertLeft; //
-        right = StellwertRight; //
+        left =KvLeft;// StellwertLeft; //
+        right = KvRight;//StellwertRight; //
 
         bhc.leftMotor = max(min(left, 60), -100);
         bhc.rightMotor = max(min(right, 60), -100);
         this->send(bhc);
 
         speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
-	*/
         /*PROTECTED REGION END*/
     }
     void Actuate::initialiseParameters()
