@@ -19,12 +19,13 @@ namespace msl
 	class PathProxy
 	{
 	public:
-		PathProxy(MSLWorldModel* wm);
+		PathProxy();
 		virtual ~PathProxy();
-		shared_ptr<geometry::CNPoint2D> getEgoDirection(geometry::CNPoint2D egoTarget, bool stayInField, PathEvaluator* eval);
+		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<PathEvaluator> eval, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+		static PathProxy* getInstance();
 
 	private:
-		geometry::CNPoint2D lastPathTarget;
+		shared_ptr<geometry::CNPoint2D> lastPathTarget;
 		MSLWorldModel* wm;
 
 	};

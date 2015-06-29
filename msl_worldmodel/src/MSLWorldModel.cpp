@@ -55,7 +55,8 @@ namespace msl
 
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
-		this->sharedWolrdModel = new MSLSharedWorldModel(this);
+		sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel*)this);
+		this->sharedWorldModel = new MSLSharedWorldModel(this);
 	}
 
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
@@ -97,7 +98,7 @@ namespace msl
 	{
 		spinner->stop();
 		delete spinner;
-		delete this->sharedWolrdModel;
+		delete this->sharedWorldModel;
 	}
 
 	double MSLWorldModel::getKickerVoltage()
@@ -110,9 +111,9 @@ namespace msl
 		this->kickerVoltage = voltage;
 	}
 
-	MSLSharedWorldModel* MSLWorldModel::getSharedWolrdModel()
+	MSLSharedWorldModel* MSLWorldModel::getSharedWorldModel()
 	{
-		return this->sharedWolrdModel;
+		return this->sharedWorldModel;
 	}
 
 	InfoTime MSLWorldModel::getTime()
@@ -130,7 +131,7 @@ namespace msl
 	void MSLWorldModel::sendSharedWorldModelData()
 	{
 		msl_sensor_msgs::SharedWorldInfo msg;
-		msg.senderID = 9;
+		msg.senderID = this->ownID;
 		auto ball = rawSensorData.getBallPositionAndCertaincy();
 		auto pos = rawSensorData.getOwnPositionVision();
 		if(pos == nullptr)
@@ -191,6 +192,11 @@ namespace msl
 		{
 			sharedWorldPub.publish(msg);
 		}
+	}
+
+	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
+	{
+		robots.processSharedWorldModelData(msg);
 	}
 
 	int MSLWorldModel::getRingBufferLength()

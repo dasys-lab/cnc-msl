@@ -23,19 +23,20 @@ namespace msl
 	public:
 		PathEvaluator(PathPlanner* planner);
 		virtual ~PathEvaluator();
-		virtual double eval(double costsSoFar, geometry::CNPoint2D startPos, geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode,
-							shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi = nullptr,
+		virtual double eval(double costsSoFar, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
+							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
+							shared_ptr<VoronoiNet> voronoi = nullptr,
 							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr);
-					protected:
-						double clearSpaceWeight;
-						PathPlanner* planner;
-						static double distance(geometry::CNPoint2D first, geometry::CNPoint2D second);
-						static double square(double a);
-						supplementary::SystemConfig* sc;
 
-					};
+	protected:
+		double clearSpaceWeight;
+		PathPlanner* planner;
+		static double distance(geometry::CNPoint2D first, geometry::CNPoint2D second);
+		static double square(double a);
+		supplementary::SystemConfig* sc;
 
-				}
-				/* namespace msl */
+	};
+
+}/* namespace msl */
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_ */

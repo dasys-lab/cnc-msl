@@ -70,7 +70,9 @@ namespace msl
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, geometry::CNPoint2D ownPos, geometry::CNPoint2D goal, PathEvaluator* eval);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
 		/**
 		 * processes the WorldModel msg
 		 * @param msg msl_sensor_msgs::WorldModelDataPtr
@@ -97,6 +99,9 @@ namespace msl
 	private:
 		void initializeArtificialObstacles();
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
+		bool checkGoalVerticesReached(const shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > >& closestVerticesToGoal, const shared_ptr<SearchNode>& currentNode, bool found);
+		bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+							shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
 
 	protected:
 		MSLWorldModel* wm;
@@ -111,7 +116,7 @@ namespace msl
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
-		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, geometry::CNPoint2D goal);
+		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
 	};
 
 } /* namespace alica */

@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "MSLFootballField.h"
 
 using namespace msl;
 
@@ -32,7 +33,7 @@ namespace alica
         double pRot;
         double dRot;
         int iter;
-		bool kicked;
+        bool kicked;
         double goalLineHitPoint(shared_ptr<geometry::CNPosition> ownPos, double egoAngle);
         double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
         int mod(int x, int y);

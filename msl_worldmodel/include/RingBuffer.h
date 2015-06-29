@@ -48,7 +48,7 @@ template<typename T>
      */
     inline virtual ~RingBuffer()
     {
-      //nothing to do
+      delete ringBuffer;
     }
 
     /*!

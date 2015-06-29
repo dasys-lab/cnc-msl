@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="Tackle.pml#1434116965566"/>
-    <value xPos="90" yPos="115" width="65" height="67"/>
+    <value xPos="90" yPos="115" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Tackle.pml#1434117164895"/>
@@ -26,6 +26,10 @@
   </extensions>
   <extensions>
     <key href="Tackle.pml#1434116965567"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Tackle.beh#1434807680165"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

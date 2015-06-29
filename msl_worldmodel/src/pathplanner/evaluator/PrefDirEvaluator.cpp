@@ -5,11 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#include <pathplanner/evaluator/SinglePrefDirEvaluator.h>
+#include <pathplanner/evaluator/PrefDirEvaluator.h>
 
 namespace msl
 {
-	SinglePrefDirEvaluator::SinglePrefDirEvaluator(PathPlanner* planner) :
+	PrefDirEvaluator::PrefDirEvaluator(PathPlanner* planner) :
 			PathEvaluator(planner)
 	{
 		//#cost function parameters for the dribbling case
@@ -20,11 +20,11 @@ namespace msl
 		;
 	}
 
-	SinglePrefDirEvaluator::~SinglePrefDirEvaluator()
+	PrefDirEvaluator::~PrefDirEvaluator()
 	{
 	}
 
-	double SinglePrefDirEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
+	double PrefDirEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
 										shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
 										geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
@@ -33,6 +33,8 @@ namespace msl
 		// HEURISTIC FUNCTION: distance to target
 		double h = distance(*path->at(path->size() - 1), goal);
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > teamMatePositions = voronoi->getTeamMatePositions();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstaclePositions = voronoi->getObstaclePositions();
 		// COST FUNCTION: width and angle
 
 		// cost due to narrowness

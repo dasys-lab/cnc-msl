@@ -297,7 +297,7 @@ namespace rqt_msl_refbox
 				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
 				return;
 			}
-//
+
 			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg ()));
 //
 //			Status_val->setText("Connected using old protocol");

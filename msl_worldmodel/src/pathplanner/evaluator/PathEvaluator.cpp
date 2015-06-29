@@ -30,11 +30,11 @@ namespace msl
 		return a * a;
 	}
 
-	double PathEvaluator::eval(double costsSoFar, geometry::CNPoint2D startPos,
-							   geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi,
+	double PathEvaluator::eval(double costsSoFar, shared_ptr<geometry::CNPoint2D> startPos,
+							   shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode, shared_ptr<VoronoiNet> voronoi,
 									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
 	{
-
+		return distance(*currentNode->getVertex(), *nextNode->getVertex());
 	}
 
 } /* namespace msl */

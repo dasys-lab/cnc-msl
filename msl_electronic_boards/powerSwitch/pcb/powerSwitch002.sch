@@ -18808,6 +18808,9 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="GND20" library="supply1" deviceset="GND" device=""/>
 <part name="JP9" library="jumper" deviceset="JP1E" device=""/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
+<part name="P+11" library="supply1" deviceset="+5V" device=""/>
+<part name="GND21" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -19787,6 +19790,11 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <instance part="RS232" gate="1" x="243.84" y="134.62" rot="R180"/>
 <instance part="U$1" gate="A" x="53.34" y="162.56"/>
 <instance part="R31" gate="G$1" x="22.86" y="157.48"/>
+<instance part="C1" gate="G$1" x="215.9" y="96.52" rot="MR180"/>
+<instance part="P+11" gate="1" x="215.9" y="104.14" smashed="yes">
+<attribute name="VALUE" x="218.44" y="106.68" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="GND21" gate="1" x="215.9" y="91.44"/>
 </instances>
 <busses>
 </busses>
@@ -19844,6 +19852,10 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <wire x1="134.62" y1="101.6" x2="134.62" y2="99.06" width="0.1524" layer="91"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
 <pinref part="T2" gate="G$1" pin="C"/>
+</segment>
+<segment>
+<pinref part="C1" gate="G$1" pin="2"/>
+<pinref part="P+11" gate="1" pin="+5V"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -19954,6 +19966,10 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <wire x1="134.62" y1="63.5" x2="134.62" y2="60.96" width="0.1524" layer="91"/>
 <pinref part="GND18" gate="1" pin="GND"/>
 <pinref part="KICK" gate="G$1" pin="C"/>
+</segment>
+<segment>
+<pinref part="C1" gate="G$1" pin="1"/>
+<pinref part="GND21" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$1" class="0">
