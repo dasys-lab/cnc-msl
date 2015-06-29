@@ -8,6 +8,7 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
+<<<<<<< HEAD
     /*PROTECTED REGION ID(staticVars1417017518918) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     Actuate::Actuate() :
@@ -50,6 +51,226 @@ namespace alica
         }
 
         arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
+=======
+	/*PROTECTED REGION ID(staticVars1417017518918) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	Actuate::Actuate() :
+			DomainBehaviour("Actuate")
+	{
+		/*PROTECTED REGION ID(con1417017518918) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	Actuate::~Actuate()
+	{
+		/*PROTECTED REGION ID(dcon1417017518918) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void Actuate::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1417017518918) ENABLED START*/ //Add additional options here
+		msl_actuator_msgs::BallHandleCmd bhc;
+		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
+
+		int left, right;
+		// TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
+
+		if (rodo == nullptr)
+		{
+			cout << "Actuate RODO is empty help" << endl;
+			return;
+		}
+		//
+		//Alter Steuerung Anfang
+		bool pullNoMatterWhat = false;
+		bool controlNoMatterWhat = false;
+		bool haveBall = false;
+		int itcounter = 0;
+		double handlerSpeedFactor = 0.0;
+		double speedNoBall = 0.0;
+		double slowTranslation = 0.0;
+		double slowTranslationWheelSpeed = 0.0;
+		double curveRotationFactor = 0.0;
+		double orthoDriveFactor = 0;
+		double maxhundred = 100;
+
+		double MaxPWM = 90;
+
+		double UpPos = 0;
+		double CatchingPos = 100;
+
+		double PassingPos = 28;
+		double NormalPos = 90;
+
+		double PingInterval = 200;
+		double ShovelSelectRepeatInterval = 40;
+		double HaveLightBarrier = 0;
+
+		//speed factor of both wheels dependent on the odometry
+		double SpeedFactor = 1.6;
+
+		//speed of wheels if we dont have the ball
+		double SpeedNoBall = 40;
+		//slow translation of robot, and the speed of the wheels
+		double SlowTranslation = 100;
+
+		double SlowTranslationWheelSpeed = 15;
+		double CurveRotationFactor = 80;
+		double BackwardsSpeed = 52;
+		double OrthoDriveFactor = 0.09;
+
+		double LinearFactor = 1.0;
+		double UseFactor = false;
+
+		SpeedNoBall = 50;
+		SlowTranslation = 200;
+		double SlowRotationLeft = 10;
+		double SlowRotationRight = 10;
+
+		double RotationLeft = -38;
+		double RotationRight = 38;
+
+		BackwardsSpeed = 52;
+
+		double kp = 0.01;
+		double ki = 0.01;
+		double kd = 0.00008;
+		double MinQos = 50;
+		double VelocityFactor = 25;
+		double VelocityDiff = 0;
+		double l = 0, r = 0;
+		double orthoL = 0, orthoR = 0;
+		double speed = 0;
+
+		// do we have the ball, so that controlling make sense
+		/*		haveBall = WorldHelper.HaveBallDribble(WM, WorldHelper.HadBallBefore);
+
+		 if (haveBall && !hadBefore)
+		 {
+		 itcounter = 0;
+		 }
+		 */
+		if (haveBall && itcounter++ < 8)
+		{
+			speed = speedNoBall;
+		}
+		else if (haveBall || controlNoMatterWhat || itcounter >= 8)
+		{
+			// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
+
+			double speedX = cos(wm->rawSensorData.getOwnVelocityMotion()->angle)
+					* wm->rawSensorData.getOwnVelocityMotion()->translation;
+			double speedY = sin(wm->rawSensorData.getOwnVelocityMotion()->angle)
+					* wm->rawSensorData.getOwnVelocityMotion()->translation;
+			//langsam vorwaerts
+			if (speedX > -slowTranslation && speedX < 40)
+			{
+				speed = slowTranslationWheelSpeed;
+			}
+			//langsam rueckwaerts
+			else if (speedX < slowTranslation && speedX >= 40)
+			{
+				speed = -slowTranslationWheelSpeed;
+			}
+			//schnell vor
+			else if (speedX <= -slowTranslation)
+			{
+				double minSpeedOne = handlerSpeedFactor * speedX / 100.0;
+				speed = max(-maxhundred, min(maxhundred, minSpeedOne));
+			}
+			//schnell rueck
+			else
+			{
+				double minSpeedTwo = 3 * handlerSpeedFactor * speedX / 100.0;
+				speed = max(-maxhundred, min(maxhundred, minSpeedTwo));
+			}
+
+			//geschwindigkeitsanteil fuer orthogonal zum ball
+			if (speedY > 0)
+			{
+				//nach rechts fahren
+				orthoR = speedY * orthoDriveFactor;
+				orthoL = -speedY * orthoDriveFactor / 2.0;
+			}
+			else
+			{
+				//nach links fahren
+				orthoR = speedY * orthoDriveFactor / 2.0;
+				orthoL = -speedY * orthoDriveFactor;
+			}
+
+			//geschwindigkeitsanteil fuer rotation
+			double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
+			if (rotation < 0)
+			{
+				l = 0;
+				r = abs(rotation) / M_PI * curveRotationFactor;
+			}
+			else
+			{
+				r = 0;
+				l = abs(rotation) / M_PI * curveRotationFactor;
+			}
+
+		}
+		else if (!haveBall)
+		{
+			// we don't have the ball
+			speed = speedNoBall;
+		}
+
+		double minSpeedThreeLeft = speed + l + orthoL;
+		double minSpeedThreeRight = speed + r + orthoR;
+
+		bhc.leftMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
+		bhc.rightMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
+
+		this->send(bhc);
+
+
+
+
+//Neue Steuerung Anfang
+/*
+ //arithmetic Average for Speed
+
+ double arithmeticAverageSpeed = 0.0;
+ double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+ //double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
+
+ if (arithmeticAverageBoxSpeed.size() == 2)
+ {
+ arithmeticAverageBoxSpeed.pop_back();
+ }
+
+ arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
+
+ for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+ parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
+ {
+ arithmeticAverageSpeed += *parameterSpeed;
+ }
+
+ arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
+
+ //Speed Difference for acceleration
+ double eFunktionAcceleration;
+ double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+ speedDifference = newSpeed - speedDifferenceNew;
+ speedDifference = (speedDifference) / 300;
+
+ if (speedDifference < 1)
+ {
+ speedDifference = 1;
+ }
+
+ ////arithmetic average speed difference
+ double arithmeticAverageSpeedDifference = 0.0;
+
+ if (arithmeticAverageBoxSpeedDifference.size() == 5)
+ {
+ arithmeticAverageBoxSpeedDifference.pop_back();
+ }
+>>>>>>> b2a1b98501e32346d975e0d1f7538caf98eb8c8b
 
         for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
                 parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
@@ -151,7 +372,7 @@ namespace alica
          lefty = 0.021*x*x*x*x +0.065*x*x*x+0.148*x*x+0.48*x-2;;
          feedForwardLeft = max(min(lefty, 1.0), -2.0);
 
-         */
+        
 
         x = max(min(angle, 3.14), -3.14);
 
@@ -209,7 +430,7 @@ namespace alica
 
          Abweichung_AltLeft = AbweichungLeft;
          };
-         */
+        
         //PIDControllerRight
         const double KiRight = 0.0;
         const double KdRight = 0.1;
@@ -258,7 +479,7 @@ namespace alica
 
          left = -Stellwert;
          right = -Stellwert;
-         */
+        
 
         //nur test danach löschen!!
         //	KvLeft=-1.5*x*KvLeft;
@@ -298,7 +519,7 @@ namespace alica
         this->send(bhc);
 
         speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
-
+	*/
         /*PROTECTED REGION END*/
     }
     void Actuate::initialiseParameters()
