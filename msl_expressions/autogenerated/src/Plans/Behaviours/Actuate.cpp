@@ -8,50 +8,7 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-<<<<<<< HEAD
-    /*PROTECTED REGION ID(staticVars1417017518918) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    Actuate::Actuate() :
-            DomainBehaviour("Actuate")
-    {
-        /*PROTECTED REGION ID(con1417017518918) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    Actuate::~Actuate()
-    {
-        /*PROTECTED REGION ID(dcon1417017518918) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void Actuate::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1417017518918) ENABLED START*/ //Add additional options here
-        msl_actuator_msgs::BallHandleCmd bhc;
-        auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-        int left, right;
-        // TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
-
-        if (rodo == nullptr)
-        {
-            cout << "Actuate RODO is empty help" << endl;
-            return;
-        }
-
-        //TODO Ballquality test
-
-        //arithmetic Average for Speed
-
-        double arithmeticAverageSpeed = 0.0;
-        double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-        //double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
-
-        if (arithmeticAverageBoxSpeed.size() == 2)
-        {
-            arithmeticAverageBoxSpeed.pop_back();
-        }
-
-        arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
-=======
 	/*PROTECTED REGION ID(staticVars1417017518918) ENABLED START*/ //initialise static variables here
 	/*PROTECTED REGION END*/
 	Actuate::Actuate() :
