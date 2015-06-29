@@ -23,7 +23,7 @@ namespace msl
 	public:
 		PathEvaluator(PathPlanner* planner);
 		virtual ~PathEvaluator();
-		virtual double eval(double costsSoFar, geometry::CNPoint2D startPos, geometry::CNPoint2D goal,
+		virtual double eval(double costsSoFar, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
 							shared_ptr<VoronoiNet> voronoi = nullptr,
 							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr);

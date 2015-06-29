@@ -58,27 +58,24 @@ namespace alica
         send(bhc);
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget;
-        geometry::CNPoint2D alloLeftAimPoint(field->FieldLength / 2 + ballDiameter,
+        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + ballDiameter,
                                              goalLineLength / 2 - aimOffset * ballDiameter);
-        geometry::CNPoint2D alloRightAimPoint(field->FieldLength / 2 + ballDiameter,
+        shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + ballDiameter,
                                               -goalLineLength / 2 + aimOffset * ballDiameter);
-        geometry::CNPoint2D frontLeft(field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
-        geometry::CNPoint2D frontRight(field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
-        geometry::CNPoint2D back;
+        shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
+        shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
+        shared_ptr < geometry::CNPoint2D > back;
         if (lastAlignment == 0)
         {
-            back.x = field->FieldLength / 2 + robotDiameter / 2;
-            back.y = 0;
+           back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, 0);
         }
         else if (lastAlignment == 1)
         {
-            back.x = field->FieldLength / 2 + robotDiameter / 2;
-            back.y = robotDiameter / 2;
+            back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, robotDiameter / 2);
         }
         else
         {
-            back.x = field->FieldLength / 2 + robotDiameter / 2;
-            back.y = -robotDiameter / 2;
+            back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, -robotDiameter / 2);
         }
 
         int counter = 0;
@@ -91,11 +88,11 @@ namespace alica
                 {
                     geometry::CNPoint2D obs(it->x, it->y);
                     shared_ptr < geometry::CNPoint2D > alloObs = obs.egoToAllo(*ownPos);
-                    if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, *alloObs))
+                    if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, alloObs))
                     {
                         counter += wm->getRingBufferLength() - i;
                     }
-                    if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back, *alloObs))
+                    if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back, alloObs))
                     {
                         counter -= wm->getRingBufferLength() - i;
                     }
@@ -110,13 +107,13 @@ namespace alica
         {
             lastAlignment = 1;
 //			cout << "PenaltyBeh: left!" << endl;
-            egoTarget = alloLeftAimPoint.alloToEgo(*ownPos);
+            egoTarget = alloLeftAimPoint->alloToEgo(*ownPos);
         }
         else
         {
             lastAlignment = 2;
 //			cout << "PenaltyBeh: right!" << endl;
-            egoTarget = alloRightAimPoint.alloToEgo(*ownPos);
+            egoTarget = alloRightAimPoint->alloToEgo(*ownPos);
         }
         double egoTargetAngle = egoTarget->angleTo();
         double egoBallAngle = egoBallPos->angleTo();

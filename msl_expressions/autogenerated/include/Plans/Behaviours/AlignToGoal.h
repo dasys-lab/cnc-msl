@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1415205272843) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include "MSLFootballField.h"
 
 using namespace msl;
 

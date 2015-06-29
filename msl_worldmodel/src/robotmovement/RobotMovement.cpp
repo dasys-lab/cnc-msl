@@ -9,6 +9,8 @@
 #include "container/CNPoint2D.h"
 #include "GeometryCalculator.h"
 #include "MSLWorldModel.h"
+#include "pathplanner/PathProxy.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
 
 #include <SystemConfig.h>
 
@@ -31,38 +33,94 @@ namespace msl
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance)
+														double snapDistance,
+														bool obstacleAvoidance)
 	{
 		MotionControl mc;
-		mc.motion.angle = egoTarget->angleTo();
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
-		if (egoTarget->length() > snapDistance)
+		if (obstacleAvoidance)
 		{
-			mc.motion.translation = std::min(egoTarget->length(), defaultTranslation);
+			MSLWorldModel* wm = MSLWorldModel::get();
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			additionalPoints->push_back(wm->ball.getAlloBallPosition());
+			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
+			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+																									additionalPoints);
+			if(temp == nullptr)
+			{
+				cout << "alloTarget = nullptr" << endl;
+				temp = egoTarget;
+			}
+			mc.motion.angle = temp->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
+			if (temp->length() > snapDistance)
+			{
+				mc.motion.translation = std::min(temp->length(), defaultTranslation);
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
 		}
 		else
 		{
-			mc.motion.translation = 0;
+			mc.motion.angle = egoTarget->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
+			if (egoTarget->length() > snapDistance)
+			{
+				mc.motion.translation = std::min(egoTarget->length(), defaultTranslation);
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
 		}
-
 		return mc;
 	}
 
 	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance)
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+													bool obstacleAvoidance)
 	{
 		MotionControl mc;
-		mc.motion.angle = egoTarget->angleTo();
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
-		if (egoTarget->length() > snapDistance)
+		if (obstacleAvoidance)
 		{
-			mc.motion.translation = min(defaultTranslation, egoTarget->length());
+			MSLWorldModel* wm = MSLWorldModel::get();
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			additionalPoints->push_back(wm->ball.getAlloBallPosition());
+			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
+			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+																									additionalPoints);
+			if(temp == nullptr)
+			{
+				cout << "alloTarget = nullptr" << endl;
+				temp = egoTarget;
+			}
+			mc.motion.angle = temp->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
+			if (egoTarget->length() > snapDistance)
+			{
+				mc.motion.translation = min(defaultTranslation, temp->length());
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
+			return mc;
 		}
 		else
 		{
-			mc.motion.translation = 0;
+			mc.motion.angle = egoTarget->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
+			if (egoTarget->length() > snapDistance)
+			{
+				mc.motion.translation = min(defaultTranslation, egoTarget->length());
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
+			return mc;
 		}
-		return mc;
 	}
 
 	MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
