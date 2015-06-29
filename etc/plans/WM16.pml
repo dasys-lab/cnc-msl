@@ -36,6 +36,7 @@
     <outTransitions>#1426692326813</outTransitions>
   </states>
   <states id="1426692070119" name="Joystick" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Joystick.beh#1421854995808</plans>
     <inTransitions>#1426692077573</inTransitions>
     <outTransitions>#1426692322651</outTransitions>
   </states>
