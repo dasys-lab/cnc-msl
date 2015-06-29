@@ -119,7 +119,7 @@ namespace alica
         double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         double funktionLeft, funktionRight;
-        double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+        double qualityOfService = abs(wm->rawSensorData.getOpticalFlowQoS());
         double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 
         //Scharfstellung des Sensors Anfang
@@ -185,11 +185,11 @@ namespace alica
         const double SollwertLeft = 70;
         //const double SollwertLeftForward = 80;
 
-        if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+        if (abs(wm->rawSensorData.getOpticalFlowQoS()) <= 70)
         {
 
             Abweichung_SummeLeft += AbweichungLeft;
-            AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+            AbweichungLeft = -1 * (SollwertLeft -abs( wm->rawSensorData.getOpticalFlowQoS()));
             StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
             StellwertLeft += KiLeft * Abweichung_SummeLeft;
             StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
@@ -222,10 +222,10 @@ namespace alica
         double Abweichung_AltRight = 0.0;
         double StellwertRight = 0.0;
 
-        if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+        if (abs(wm->rawSensorData.getOpticalFlowQoS()) <= 70)
         {
             Abweichung_SummeRight += AbweichungRight;
-            AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+            AbweichungRight = -1 * (SollwertRight - abs(wm->rawSensorData.getOpticalFlowQoS()));
             StellwertRight = KpRight * AbweichungRight + KvRight;
             StellwertRight += KiRight * Abweichung_SummeRight;
             StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
@@ -233,7 +233,7 @@ namespace alica
             Abweichung_AltRight = AbweichungRight;
         };
 
-        if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+        if (abs(wm->rawSensorData.getOpticalFlowQoS()) > 70)
         {
             StellwertLeft = KvLeft;
             StellwertRight = KvRight;
