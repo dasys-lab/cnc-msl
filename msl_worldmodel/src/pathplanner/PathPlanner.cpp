@@ -300,9 +300,15 @@ namespace msl
 				goal->y + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
-		points.push_back(p2); // was p3
+		points.push_back(p3);
 		points.push_back(p4);
-		points.push_back(p3); // was p2
+		points.push_back(p2);
+//		cout << "start" << endl;
+//		cout << "p1" << p1->toString() << endl;
+//		cout << "p2" << p2->toString() << endl;
+//		cout << "p3" << p3->toString() << endl;
+//		cout << "p4" << p4->toString() << endl;
+//		cout << "end" <<endl;
 		return obstaclePoint != nullptr
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
 	}
