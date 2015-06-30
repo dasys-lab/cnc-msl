@@ -59,6 +59,7 @@ add_message_files(
   RefereeBoxControlBody.msg
   RefereeBoxInfoBody.msg
   RefereeBoxState.msg
+  PathPlanner.msg
 )
 
 ## Generate services in the 'srv' folder

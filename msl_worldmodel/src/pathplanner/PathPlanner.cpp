@@ -53,49 +53,32 @@ namespace msl
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			ret->push_back(goal);
 			lastPath = ret;
+			cout << "goal - startPos)->length() < 250" << endl;
 			return ret;
 		}
-		bool reachable = true;
-		for(auto it = voronoi->getVoronoi()->sites_begin(); it != voronoi->getVoronoi()->sites_end(); it++)
+		else
 		{
-			/*bool rechable = true;
-			shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
-			double length = voronoi->calcDist(startPos, goal);
-			double dx = startPos->x - goal->x;
-			double dy = startPos->y - goal->y;
-			double dist = std::sqrt(dx*dx + dy*dy);
-			dx /= dist;
-			dy /= dist;
-			geometry::CNPoint2D p1(startPos->x + (this->robotDiameter / 2) * dy,
-					startPos->y - (this->robotDiameter / 2) * dx);
-			geometry::CNPoint2D p2(startPos->x - (this->robotDiameter / 2) * dy,
-					startPos->y + (this->robotDiameter / 2) * dx);
-			geometry::CNPoint2D p3(goal->x + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-					goal->y - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
-			geometry::CNPoint2D p4(goal->x - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-					goal->y + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
-			vector<geometry::CNPoint2D> points;
-			points.push_back(p1);
-			points.push_back(p3);
-			points.push_back(p4);
-			points.push_back(p2);*/
-			if(corridorCheck(voronoi, startPos, goal, make_shared<geometry::CNPoint2D>(it->x(), it->y())))
-			//geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint))
-			{
-				reachable = false;
-				break;
-			}
+			cout << "goal - startPos)->length()" << (goal - startPos)->length() << endl;
+		}
+		bool reachable = true;
+		shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
+		//TODO über alle obstacle iterieren
+		if(corridorCheck(voronoi, startPos, goal, make_shared<geometry::CNPoint2D>(obstaclePoint->x(), obstaclePoint->y())))
+		{
+			reachable = false;
 		}
 		if(reachable)
 		{
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			ret->push_back(goal);
 			lastPath = ret;
+			cout << "corridor reachable" << endl;
 			return ret;
 		}
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = aStarSearch(voronoi, startPos, goal, eval);
 		if(ret != nullptr)
 		{
+			lastPath = ret;
 			return ret;
 		}
 		// return nullptr if there is no way to goal
@@ -296,7 +279,8 @@ namespace msl
 	}
 
 	bool msl::PathPlanner::corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-											shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint)
+											shared_ptr<geometry::CNPoint2D> goal,
+											shared_ptr<geometry::CNPoint2D> obstaclePoint)
 	{
 		double length = voronoi->calcDist(currentPos, goal);
 		double dx = currentPos->x - goal->x;
@@ -304,22 +288,23 @@ namespace msl
 		double dist = std::sqrt(dx * dx + dy * dy);
 		dx /= dist;
 		dy /= dist;
-		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(currentPos->x + (this->robotDiameter / 2) * dy,
-																			  currentPos->y - (this->robotDiameter / 2) * dx);
-		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(currentPos->x - (this->robotDiameter / 2) * dy,
-																			  currentPos->y + (this->robotDiameter / 2) * dx);
-		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(goal->x + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-								goal->y - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
-		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(goal->x - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-								goal->y + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
+		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
+				currentPos->x + (this->robotDiameter / 2) * dy, currentPos->y - (this->robotDiameter / 2) * dx);
+		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
+				currentPos->x - (this->robotDiameter / 2) * dy, currentPos->y + (this->robotDiameter / 2) * dx);
+		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
+				goal->x + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
+				goal->y - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
+		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
+				goal->x - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
+				goal->y + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
-		points.push_back(p3);
+		points.push_back(p2); // was p3
 		points.push_back(p4);
-		points.push_back(p2);
+		points.push_back(p3); // was p2
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(
-						points, points.size(), obstaclePoint);
+				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
 	}
 
 	//TODO vielleicht int da 3 mgl besthen
@@ -333,7 +318,7 @@ namespace msl
 		{
 			shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
 			shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(obstacle->x(), obstacle->y());
-			return corridorCheck(voronoi, currentNode->getVertex(), goal, obstaclePoint);
+			return !corridorCheck(voronoi, currentNode->getVertex(), goal, obstaclePoint);
 		}
 		return false;
 	}

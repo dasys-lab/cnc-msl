@@ -64,6 +64,7 @@ MWind::MWind(QMainWindow *parent)
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameTime()));
 	connect(RefBoxWG, SIGNAL(changeGoalColor (int)), this, SLOT(GoalColorChanged(int)));
 	connect(RefBoxWG, SIGNAL(UpdateGameParameter_signal()), this, SLOT(UpdateGameParameters()));
+	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathPoints()));
 
 	// Arranque em auto-formation
 
@@ -120,6 +121,7 @@ MWind::~MWind()
 	disconnect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
 	disconnect(TeamColorCombo, SIGNAL(activated ( int)), this, SLOT(TeamColorChanged(int)));
 	disconnect(GoalColorCombo, SIGNAL(activated ( int)), this, SLOT(GoalColorChanged(int)));
+	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(ShowPathPoints()));
 
 	// Destroy "Gustavo" Threads
 
