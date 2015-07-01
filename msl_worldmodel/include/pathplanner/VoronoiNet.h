@@ -110,6 +110,8 @@ namespace msl
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getSitePositions();
+
 	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex

@@ -53,26 +53,23 @@ namespace msl
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			ret->push_back(goal);
 			lastPath = ret;
-			cout << "goal - startPos)->length() < 250" << endl;
 			return ret;
 		}
-		else
-		{
-			cout << "goal - startPos)->length()" << (goal - startPos)->length() << endl;
-		}
 		bool reachable = true;
-		shared_ptr<VoronoiDiagram::Point_2> obstaclePoint = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
-		//TODO über alle obstacle iterieren
-		if(corridorCheck(voronoi, startPos, goal, make_shared<geometry::CNPoint2D>(obstaclePoint->x(), obstaclePoint->y())))
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = voronoi->getSitePositions();
+		for(int i = 0; i < sites->size(); i++)
 		{
-			reachable = false;
+			if(corridorCheck(voronoi, startPos, goal, sites->at(i)))
+			{
+				reachable = false;
+				break;
+			}
 		}
 		if(reachable)
 		{
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			ret->push_back(goal);
 			lastPath = ret;
-			cout << "corridor reachable" << endl;
 			return ret;
 		}
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = aStarSearch(voronoi, startPos, goal, eval);
@@ -313,8 +310,6 @@ namespace msl
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
 	}
 
-	//TODO vielleicht int da 3 mgl besthen
-	//TODO methode überprüfe ob beliebiger punkt in zelle von knotenpunkt
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
 											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
 	{
