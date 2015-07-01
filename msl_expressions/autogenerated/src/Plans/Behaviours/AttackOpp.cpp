@@ -61,7 +61,7 @@ namespace alica
         {
             cout << "get closer" << endl;
 
-
+            ballGetsCloser(egoBallVelocity,egoBallPos);
 
 
         }
