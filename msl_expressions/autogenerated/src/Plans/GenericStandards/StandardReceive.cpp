@@ -1,5 +1,5 @@
 using namespace std;
-#include "Plans/GenericBehaviours/StandardReceive.h"
+#include "Plans/GenericStandards/StandardReceive.h"
 
 /*PROTECTED REGION ID(inccpp1428509505186) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/

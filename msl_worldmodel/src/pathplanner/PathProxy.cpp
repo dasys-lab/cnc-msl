@@ -8,6 +8,7 @@
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/VoronoiNet.h"
 #include "container/CNPosition.h"
+#include "msl_msgs/PathPlanner.h"
 
 namespace msl
 {
@@ -15,6 +16,7 @@ namespace msl
 	PathProxy::PathProxy()
 	{
 		this->wm = MSLWorldModel::get();
+		pathPub = n.advertise<msl_msgs::PathPlanner>("/PathPlanner", 10);
 
 	}
 
@@ -43,6 +45,8 @@ namespace msl
 			if (path != nullptr)
 			{
 				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+				path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
+				sendPathPlannerMSg(path);
 			}
 		}
 		if(retPoint == nullptr)
@@ -57,6 +61,19 @@ namespace msl
 	{
 		static PathProxy instance;
 		return &instance;
+	}
+
+	void PathProxy::sendPathPlannerMSg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path)
+	{
+		msl_msgs::PathPlanner pathMsg;
+		for(int i = 0; i < path->size(); i++)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = path->at(i)->x;
+			info.y = path->at(i)->y;
+			pathMsg.pathPoints.push_back(info);
+		}
+		pathPub.publish(pathMsg);
 	}
 
 } /* namespace msl */

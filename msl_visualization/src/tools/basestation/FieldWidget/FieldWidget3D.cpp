@@ -149,10 +149,13 @@ vtkStandardNewMacro(MouseInteractorStyle);
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
+	showPath = false;
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
 	sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
+													(FieldWidget3D*)this);
+	pathPlannerSubscriber = rosNode->subscribe("/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg,
 													(FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
@@ -357,6 +360,27 @@ void FieldWidget3D::update_robot_info(void)
 		}
 		alreadyIn = false;
 	}
+	if(showPath)
+	{
+		for(vtkActor* actor : pathLines)
+		{
+			if(actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		pathLines.clear();
+//		createDot(renderer, pathPlannerInfo.front()->pathPoints.at(0).y / 1000, -pathPlannerInfo.front()->pathPoints.at(0).x / 1000,true, 0.5);
+		for(int i = 1; i < pathPlannerInfo.front()->pathPoints.size(); i++)
+		{
+			vtkActor* actor = createDashedLine(pathPlannerInfo.front()->pathPoints.at(i - 1).y / 1000,
+											   -pathPlannerInfo.front()->pathPoints.at(i - 1).x / 1000, 0.01,
+											   pathPlannerInfo.front()->pathPoints.at(i).y / 1000,
+											   -pathPlannerInfo.front()->pathPoints.at(i).x / 1000, 0.01);
+			pathLines.push_back(actor);
+			renderer->AddActor(actor);
+		}
+	}
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
 	{
 		this->GetRenderWindow()->Render();
@@ -409,6 +433,18 @@ void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle
 {
 	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI) + 90);
 	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI) + 90);
+}
+
+void FieldWidget3D::showPathPoints()
+{
+	if(this->showPath == false)
+	{
+		showPath = true;
+	}
+	else
+	{
+		showPath = false;
+	}
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
@@ -773,54 +809,10 @@ void FieldWidget3D::updateGridView()
 
 	heightActor->SetVisibility(1);
 	heightActor->GetProperty()->SetOpacity(0.8);
-
-	// GRID SIZE: 81x57
-
-	//int sizeL = 81;
-	//int sizeW = 57;
-	//double resolution = 0.25;
 	double xx, yy, zz;
 	double minz = 2010.0;
 	double maxz = -2010.0;
 	int i = 0;
-
-	//addtions
-	//GridView grid;
-	//DB_get(0,GRIDVIEW, &grid);
-	/*if(grid.count > 0)
-	 {
-
-	 for(int i=0;i<grid.count;i++)
-	 {
-	 xx=grid.grid[i].pos.x;
-	 yy=grid.grid[i].pos.y;
-	 float realVal = grid.grid[i].val;
-
-	 if(!height3D)
-	 zz = -0.01;
-	 else
-	 zz = realVal;
-	 heightPoints->SetPoint(i, xx,yy,zz);
-
-	 if(i==0)
-	 {
-	 minz = realVal;
-	 maxz = realVal;
-	 }else{
-	 if(realVal < minz)
-	 minz = realVal;
-	 if(realVal > maxz)
-	 maxz = realVal;
-	 }
-	 //cout<<"XX="<<xx<<" YY="<<yy<<" ZZ="<<zz<<" I="<<i<<endl;
-
-	 }
-
-	 }else{
-	 minz = 0.0;
-	 maxz = 0.0;
-	 }
-	 */
 	if (height3D)
 	{
 		for (int j = 0; j < i; j++)
@@ -964,6 +956,20 @@ void FieldWidget3D::lock(bool lock)
 }
 
 //TODO marker to find implemented methods
+
+void FieldWidget3D::onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info)
+{
+	lock_guard<mutex> lock(pathMutex);
+	int i = 0;
+	if (i > ringBufferLength)
+	{
+		pathPlannerInfo.pop_back();
+		i--;
+	}
+	i++;
+	pathPlannerInfo.push_front(info);
+
+}
 
 void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
 {

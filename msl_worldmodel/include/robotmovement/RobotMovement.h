@@ -27,9 +27,9 @@ namespace msl
 	public:
 		virtual ~RobotMovement();
 		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, bool obstacleAvoidance = false);
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, bool obstacleAvoidance = true);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, bool obstacleAvoidance = false);
+												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, bool obstacleAvoidance = true);
 		//TODO needs to be tested
 		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);

@@ -88,6 +88,7 @@
 #include <QVTKInteractor.h>
 
 #include "RobotInfo.h"
+#include "msl_msgs/PathPlanner.h"
 #include <SystemConfig.h>
 #include <vtkArrowSource.h>
 
@@ -118,6 +119,7 @@ public:
 private:
     ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
+    void onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info);
     void moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z);
     void moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void drawOpponent(double x, double y, double z);
@@ -125,12 +127,17 @@ private:
     list<shared_ptr<RobotVisualization>> obstacles;
     list<shared_ptr<RobotVisualization>> team;
     list<shared_ptr<RobotInfo>> latestInfo;
+    bool showPath;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void turnRobot(shared_ptr<RobotVisualization> robot, double angle);
     mutex swmMutex;
-    list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+    mutex pathMutex;
+	list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+    list<boost::shared_ptr<msl_msgs::PathPlanner>> pathPlannerInfo;
+    vector<vtkActor*> pathLines;
 	ros::Subscriber sharedWorldInfoSubscriber;
+	ros::Subscriber pathPlannerSubscriber;
 	ros::NodeHandle* rosNode;
 	int ringBufferLength = 10;
     QWidget* parent;
@@ -183,6 +190,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void flip(void);
     void lock(bool);
+    void showPathPoints(void);
     void update_robot_info(void);
 
     void obstacles_point_flip(unsigned int Robot_no, bool on_off);

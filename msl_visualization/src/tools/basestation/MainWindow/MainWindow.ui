@@ -898,6 +898,7 @@
     <addaction name="menuDebug"/>
     <addaction name="actionTaxi_Follow_Mode"/>
     <addaction name="menuHeight_Map"/>
+    <addaction name="actionShow_PathPlanner_Path"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1134,6 +1135,11 @@
    </property>
    <property name="text">
     <string>Lock Camera</string>
+   </property>
+  </action>
+  <action name="actionShow_PathPlanner_Path">
+   <property name="text">
+    <string>Show PathPlanner Path</string>
    </property>
   </action>
  </widget>

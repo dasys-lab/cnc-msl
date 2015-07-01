@@ -299,10 +299,10 @@ namespace msl
 
 	void msl::VoronoiNet::insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > points)
 	{
-
+		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
 		bool alreadyIn = false;
-		for(auto iter = points->begin(); iter != points->end(); iter++)
+		for (auto iter = points->begin(); iter != points->end(); iter++)
 		{
 
 			for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
@@ -315,8 +315,7 @@ namespace msl
 			}
 			if (!alreadyIn)
 			{
-				pointRobotKindMapping.insert(
-						pair<shared_ptr<geometry::CNPoint2D>, bool>(*iter, false));
+				pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(*iter, false));
 				Site_2 site((*iter)->x, (*iter)->y);
 				sites.push_back(site);
 			}
@@ -437,10 +436,10 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getTeamMatePositions()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret;
-		for(auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			if(iter->second == true)
+			if (iter->second == true)
 			{
 				ret->push_back(iter->first);
 			}
@@ -450,13 +449,23 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getObstaclePositions()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret;
-		for(auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			if(iter->second == false)
+			if (iter->second == false)
 			{
 				ret->push_back(iter->first);
 			}
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getSitePositions()
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		{
+			ret->push_back(iter->first);
 		}
 		return ret;
 	}
