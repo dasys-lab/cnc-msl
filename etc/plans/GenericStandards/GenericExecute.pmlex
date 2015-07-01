@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GenericExecute.pml#1431522155979"/>
-    <value xPos="193" yPos="46" width="81" height="67"/>
+    <value xPos="193" yPos="46" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431522123418"/>
@@ -98,6 +98,10 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardReceive.beh#1428509534191"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
