@@ -239,10 +239,14 @@ namespace alica
 
     	double intersection = xDistance*(yVelocity/xVelocity)+yDistance;
 
+		shared_ptr<geometry::CNPoint2D> interPoint = make_shared<geometry::CNPoint2D>(0, intersection);
+
+        msl_actuator_msgs::MotionControl mc;
+        // TODO : remove later
+        mc = RobotMovement::moveToPointCarefully(interPoint, interPoint, 300);
+
     	cout<<"xVelocity :"<<xVelocity<<endl;
     	cout<<"yVelocity :"<<yVelocity<<endl;
-    	cout<<"xDistance :"<<xDistance<<endl;
-    	cout<<"yDistance :"<<yDistance<<endl;
     	cout<<endl;
     }
 
