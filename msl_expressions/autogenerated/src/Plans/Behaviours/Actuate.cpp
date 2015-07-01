@@ -28,7 +28,7 @@ namespace alica
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
 		int left, right;
-		// TODO x und y wahrscheinlich durch merge verloren gegangen, nochmal anschauen
+
 
 		if (rodo == nullptr)
 		{
@@ -39,161 +39,166 @@ namespace alica
 		//ALte Steuerung
 		//////////////////////////////////////////////////////////////
 		/*		//
-		 //Alter Steuerung Anfang
-		 bool pullNoMatterWhat = false;
-		 bool controlNoMatterWhat = false;
-		 bool haveBall = false;
-		 int itcounter = 0;
-		 double handlerSpeedFactor = 0.0;
-		 double speedNoBall = 0.0;
-		 double slowTranslation = 0.0;
-		 double slowTranslationWheelSpeed = 0.0;
-		 double curveRotationFactor = 0.0;
-		 double orthoDriveFactor = 0;
-		 double maxhundred = 100;
+				//Alter Steuerung Anfang
+				bool pullNoMatterWhat = false;
+				bool controlNoMatterWhat = false;
+				bool haveBall = false;
+				int itcounter = 0;
+				double handlerSpeedFactor = 0.0;
+				double speedNoBall = 0.0;
+				double slowTranslation = 0.0;
+				double slowTranslationWheelSpeed = 0.0;
+				double curveRotationFactor = 0.0;
+				double orthoDriveFactor = 0;
+				double maxhundred = 100;
 
-		 double MaxPWM = 90;
+				double MaxPWM = 90;
 
-		 double UpPos = 0;
-		 double CatchingPos = 100;
+				double UpPos = 0;
+				double CatchingPos = 100;
 
-		 double PassingPos = 28;
-		 double NormalPos = 90;
+				double PassingPos = 28;
+				double NormalPos = 90;
 
-		 double PingInterval = 200;
-		 double ShovelSelectRepeatInterval = 40;
-		 double HaveLightBarrier = 0;
+				double PingInterval = 200;
+				double ShovelSelectRepeatInterval = 40;
+				double HaveLightBarrier = 0;
 
-		 //speed factor of both wheels dependent on the odometry
-		 double SpeedFactor = 1.6;
+				//speed factor of both wheels dependent on the odometry
+				double SpeedFactor = 1.6;
 
-		 //speed of wheels if we dont have the ball
-		 double SpeedNoBall = 40;
-		 //slow translation of robot, and the speed of the wheels
-		 double SlowTranslation = 100;
+				//speed of wheels if we dont have the ball
+				double SpeedNoBall = 40;
+				//slow translation of robot, and the speed of the wheels
+				double SlowTranslation = 100;
 
-		 double SlowTranslationWheelSpeed = 15;
-		 double CurveRotationFactor = 80;
-		 double BackwardsSpeed = 52;
-		 double OrthoDriveFactor = 0.09;
+				double SlowTranslationWheelSpeed = 15;
+				double CurveRotationFactor = 80;
+				double BackwardsSpeed = 52;
+				double OrthoDriveFactor = 0.09;
 
-		 double LinearFactor = 1.0;
-		 double UseFactor = false;
+				double LinearFactor = 1.0;
+				double UseFactor = false;
 
-		 SpeedNoBall = 50;
-		 SlowTranslation = 200;
-		 double SlowRotationLeft = 10;
-		 double SlowRotationRight = 10;
+				SpeedNoBall = 50;
+				SlowTranslation = 200;
+				double SlowRotationLeft = 10;
+				double SlowRotationRight = 10;
 
-		 double RotationLeft = -38;
-		 double RotationRight = 38;
+				double RotationLeft = -38;
+				double RotationRight = 38;
 
-		 BackwardsSpeed = 52;
+				BackwardsSpeed = 52;
 
-		 double kp = 0.01;
-		 double ki = 0.01;
-		 double kd = 0.00008;
-		 double MinQos = 50;
-		 double VelocityFactor = 25;
-		 double VelocityDiff = 0;
-		 double l = 0, r = 0;
-		 double orthoL = 0, orthoR = 0;
-		 double speed = 0;
+				double kp = 0.01;
+				double ki = 0.01;
+				double kd = 0.00008;
+				double MinQos = 50;
+				double VelocityFactor = 25;
+				double VelocityDiff = 0;
+				double l = 0, r = 0;
+				double orthoL = 0, orthoR = 0;
+				double speed = 0;
 
-		 // do we have the ball, so that controlling make sense
-		 /*		haveBall = WorldHelper.HaveBallDribble(WM, WorldHelper.HadBallBefore);
+				// do we have the ball, so that controlling make sense
+				/*		haveBall = WorldHelper.HaveBallDribble(WM, WorldHelper.HadBallBefore);
 
-		 if (haveBall && !hadBefore)
-		 {
-		 itcounter = 0;
-		 }
-		 */
+				 if (haveBall && !hadBefore)
+				 {
+				 itcounter = 0;
+				 }
+				 */
 		//		if (haveBall && itcounter++ < 8)
 		//		{
 		//			speed = speedNoBall;
 		//		}
-		/*	if (true)
-		 {
-		 // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
+			/*	if (true)
+				{
+					// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
-		 double speedX = cos(wm->rawSensorData.getOwnVelocityMotion()->angle)
-		 * wm->rawSensorData.getOwnVelocityMotion()->translation;
-		 double speedY = sin(wm->rawSensorData.getOwnVelocityMotion()->angle)
-		 * wm->rawSensorData.getOwnVelocityMotion()->translation;
-		 //langsam vorwaerts
-		 if (speedX > -slowTranslation && speedX < 40)
-		 {
-		 speed = slowTranslationWheelSpeed;
-		 }
-		 //langsam rueckwaerts
-		 else if (speedX < slowTranslation && speedX >= 40)
-		 {
-		 speed = -slowTranslationWheelSpeed;
-		 }
-		 //schnell vor
-		 else if (speedX <= -slowTranslation)
-		 {
-		 double minSpeedOne = handlerSpeedFactor * speedX / 100.0;
-		 speed = max(-maxhundred, min(maxhundred, minSpeedOne));
-		 }
-		 //schnell rueck
-		 else
-		 {
-		 double minSpeedTwo = 3 * handlerSpeedFactor * speedX / 100.0;
-		 speed = max(-maxhundred, min(maxhundred, minSpeedTwo));
-		 }
+					double speedX = cos(wm->rawSensorData.getOwnVelocityMotion()->angle)
+							* wm->rawSensorData.getOwnVelocityMotion()->translation;
+					double speedY = sin(wm->rawSensorData.getOwnVelocityMotion()->angle)
+							* wm->rawSensorData.getOwnVelocityMotion()->translation;
+					//langsam vorwaerts
+					if (speedX > -slowTranslation && speedX < 40)
+					{
+						speed = slowTranslationWheelSpeed;
+					}
+					//langsam rueckwaerts
+					else if (speedX < slowTranslation && speedX >= 40)
+					{
+						speed = -slowTranslationWheelSpeed;
+					}
+					//schnell vor
+					else if (speedX <= -slowTranslation)
+					{
+						double minSpeedOne = handlerSpeedFactor * speedX / 100.0;
+						speed = max(-maxhundred, min(maxhundred, minSpeedOne));
+					}
+					//schnell rueck
+					else
+					{
+						double minSpeedTwo = 3 * handlerSpeedFactor * speedX / 100.0;
+						speed = max(-maxhundred, min(maxhundred, minSpeedTwo));
+					}
 
-		 //geschwindigkeitsanteil fuer orthogonal zum ball
-		 if (speedY > 0)
-		 {
-		 //nach rechts fahren
-		 orthoR = speedY * orthoDriveFactor;
-		 orthoL = -speedY * orthoDriveFactor / 2.0;
-		 }
-		 else
-		 {
-		 //nach links fahren
-		 orthoR = speedY * orthoDriveFactor / 2.0;
-		 orthoL = -speedY * orthoDriveFactor;
-		 }
+					//geschwindigkeitsanteil fuer orthogonal zum ball
+					if (speedY > 0)
+					{
+						//nach rechts fahren
+						orthoR = speedY * orthoDriveFactor;
+						orthoL = -speedY * orthoDriveFactor / 2.0;
+					}
+					else
+					{
+						//nach links fahren
+						orthoR = speedY * orthoDriveFactor / 2.0;
+						orthoL = -speedY * orthoDriveFactor;
+					}
 
-		 //geschwindigkeitsanteil fuer rotation
-		 double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
-		 if (rotation < 0)
-		 {
-		 l = 0;
-		 r = abs(rotation) / M_PI * curveRotationFactor;
-		 }
-		 else
-		 {
-		 r = 0;
-		 l = abs(rotation) / M_PI * curveRotationFactor;
-		 }
+					//geschwindigkeitsanteil fuer rotation
+					double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
+					if (rotation < 0)
+					{
+						l = 0;
+						r = abs(rotation) / M_PI * curveRotationFactor;
+					}
+					else
+					{
+						r = 0;
+						l = abs(rotation) / M_PI * curveRotationFactor;
+					}
 
-		 }
-		 else if (!haveBall)
-		 {
-		 // we don't have the ball
-		 speed = speedNoBall;
-		 }
+				}
+				else if (!haveBall)
+				{
+					// we don't have the ball
+					speed = speedNoBall;
+				}
 
-		 double minSpeedThreeLeft = speed + l + orthoL;
-		 double minSpeedThreeRight = speed + r + orthoR;
+				double minSpeedThreeLeft = speed + l + orthoL;
+				double minSpeedThreeRight = speed + r + orthoR;
 
-		 bhc.leftMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
-		 bhc.rightMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
+				bhc.leftMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
+				bhc.rightMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
 
-		 this->send(bhc);
+				this->send(bhc);
 
 
-		 */
+		*/
 		//Alte Steuerung Ende
 
-		////////////////////////////////////////////////////////////////////////
+
+
+	////////////////////////////////////////////////////////////////////////
 		//Neue Steuerung Anfang
+
 		//arithmetic Average for Speed
+
 		double arithmeticAverageSpeed = 0.0;
 		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		//double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
 
 		if (arithmeticAverageBoxSpeed.size() == 2)
 		{
@@ -210,9 +215,6 @@ namespace alica
 
 		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-
 		//Speed Difference for acceleration
 		double eFunktionAcceleration;
 		double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -223,8 +225,6 @@ namespace alica
 		{
 			speedDifference = 1;
 		}
-		//  cout << "speedDifference : " << speedDifference << endl;
-
 
 		////arithmetic average speed difference
 		double arithmeticAverageSpeedDifference = 0.0;
@@ -248,11 +248,8 @@ namespace alica
 		{
 			arithmeticAverageSpeedDifference = 1;
 		}
-		//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
-
 
 		/////////////////////////////////////////////
-
 		double rotationLeft = 0.0;
 		double rotationRight = 0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
@@ -270,10 +267,6 @@ namespace alica
 
 			rotationRight = rotationRight - 70;
 		};
-
-		cout << "rotationLeft : " << rotationLeft << endl;
-		cout << "rotationRight : " << rotationRight << endl;
-		cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
 
 		//PIDControllerLeft
 
@@ -293,13 +286,7 @@ namespace alica
 		zaeler = zaeler + 1;
 		teiler = qualityOfServiceSumme / zaeler;
 
-		//	cout << "zaeler  : " << zaeler << endl;
-		//	cout << "teiler  : " << teiler << endl;
-		//	cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
 		//Scharfstellung des Sensors Ende
-
-
-		//Funktion
 
 		x = max(min(angle, 3.14), -3.14);
 
@@ -309,17 +296,11 @@ namespace alica
 		funktionRight = 0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
 				+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292;
 
-		cout << "funktionLeft : " << funktionLeft << endl;
-		cout << "funktionRight : " << funktionRight << endl;
-
 		KvRight = (1.2 * eFunktion * arithmeticAverageSpeed * funktionRight * arithmeticAverageSpeedDifference
 				+ rotationRight);
 
 		KvLeft = (1.2 * eFunktion * arithmeticAverageSpeed * funktionLeft * arithmeticAverageSpeedDifference
 				+ rotationLeft);
-
-		cout << "KvLeft : " << KvLeft << endl;
-		cout << "KvRight : " << KvRight << endl;
 
 		//Neue Steuerung Ende
 
@@ -327,66 +308,83 @@ namespace alica
 		//PD Regler Anfang
 		//PIDControllerLeft
 		/*
-		 const double KiLeft = 0.0;
-		 const double KdLeft = 0.1;
-		 const double KpLeft = 0.23;
+		const double KiLeft = 0.0;
+		const double KdLeft = 0.1;
+		const double KpLeft = 0.23;
 
-		 double AbweichungLeft = 0.0;
-		 double Abweichung_SummeLeft = 0.0;
-		 double Abweichung_AltLeft = 0.0;
-		 double StellwertLeft = 0.0;
-		 const double SollwertLeft = 70;
-		 //const double SollwertLeftForward = 80;
+		double AbweichungLeft = 0.0;
+		double Abweichung_SummeLeft = 0.0;
+		double Abweichung_AltLeft = 0.0;
+		double StellwertLeft = 0.0;
+		const double SollwertLeft = 70;
+		//const double SollwertLeftForward = 80;
 
-		 if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 {
+		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		{
 
-		 Abweichung_SummeLeft += AbweichungLeft;
-		 AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
-		 StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
-		 StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		 StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+			Abweichung_SummeLeft += AbweichungLeft;
+			AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+			StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+			StellwertLeft += KiLeft * Abweichung_SummeLeft;
+			StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 
-		 Abweichung_AltLeft = AbweichungLeft;
-		 };
+			Abweichung_AltLeft = AbweichungLeft;
+		};
 
-		 //PIDControllerRight
+		//PIDControllerRight
 
-		 const double KiRight = 0.0;
-		 const double KdRight = 0.1;
+		const double KiRight = 0.0;
+		const double KdRight = 0.1;
 
-		 const double SollwertRight = 70;
-		 const double KpRight = 0.23;
+		const double SollwertRight = 70;
+		const double KpRight = 0.23;
 
-		 double AbweichungRight = 0.0;
-		 double Abweichung_SummeRight = 0.0;
-		 double Abweichung_AltRight = 0.0;
-		 double StellwertRight = 0.0;
+		double AbweichungRight = 0.0;
+		double Abweichung_SummeRight = 0.0;
+		double Abweichung_AltRight = 0.0;
+		double StellwertRight = 0.0;
 
-		 if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 {
-		 Abweichung_SummeRight += AbweichungRight;
-		 AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
-		 StellwertRight = KpRight * AbweichungRight + KvRight;
-		 StellwertRight += KiRight * Abweichung_SummeRight;
-		 StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		{
+			Abweichung_SummeRight += AbweichungRight;
+			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+			StellwertRight = KpRight * AbweichungRight + KvRight;
+			StellwertRight += KiRight * Abweichung_SummeRight;
+			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
 
-		 Abweichung_AltRight = AbweichungRight;
-		 };
+			Abweichung_AltRight = AbweichungRight;
+		};
 
-		 if (wm->rawSensorData.getOpticalFlowQoS() > 70)
-		 {
-		 StellwertLeft = KvLeft;
-		 StellwertRight = KvRight;
-		 };
+		if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+		{
+			StellwertLeft = KvLeft;
+			StellwertRight = KvRight;
+		};
 
-		cout << "StellwertLeft: " << StellwertLeft << endl;
-		cout << "StellwertRight: " << StellwertRight << endl;
+		//PD Regler Ende
+*/
+		cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
+		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+		//	cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
+		//	cout << "zaeler  : " << zaeler << endl;
+		//	cout << "teiler  : " << teiler << endl;
+		//cout << "funktionLeftLim : " << funktionLeftLim << endl;
+		cout << "KvLeft : " << KvLeft << endl;
+		//cout << "StellwertLeft: " << StellwertLeft << endl;
+		//	cout << "funktionRightLim : " << funktionRightLim << endl;
+		cout << "KvRight : " << KvRight << endl;
+		cout << "funktionLeft : " << funktionLeft << endl;
+		cout << "funktionRight : " << funktionRight << endl;
 
+		//cout << "StellwertRight: " << StellwertRight << endl;
+		cout << "rotationLeft : " << rotationLeft << endl;
+		cout << "rotationRight : " << rotationRight << endl;
+		cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
 
-		 //PD Regler Ende
-		 */
+		//  cout << "speedDifference : " << speedDifference << endl;
+		//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
 		cout << endl;
 
