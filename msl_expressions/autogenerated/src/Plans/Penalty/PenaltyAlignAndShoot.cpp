@@ -58,24 +58,26 @@ namespace alica
         send(bhc);
         // Create ego-centric 2D target...
         shared_ptr < geometry::CNPoint2D > egoTarget;
-        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + ballDiameter,
-                                             goalLineLength / 2 - aimOffset * ballDiameter);
-        shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + ballDiameter,
-                                              -goalLineLength / 2 + aimOffset * ballDiameter);
-        shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
-        shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
+        shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D
+                > (field->FieldLength / 2 + ballDiameter, goalLineLength / 2 - aimOffset * ballDiameter);
+        shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D
+                > (field->FieldLength / 2 + ballDiameter, -goalLineLength / 2 + aimOffset * ballDiameter);
+        shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D
+                > (field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
+        shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D
+                > (field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
         shared_ptr < geometry::CNPoint2D > back;
         if (lastAlignment == 0)
         {
-           back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, 0);
+            back = make_shared < geometry::CNPoint2D > (field->FieldLength / 2 + robotDiameter / 2, 0);
         }
         else if (lastAlignment == 1)
         {
-            back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, robotDiameter / 2);
+            back = make_shared < geometry::CNPoint2D > (field->FieldLength / 2 + robotDiameter / 2, robotDiameter / 2);
         }
         else
         {
-            back = make_shared < geometry::CNPoint2D >(field->FieldLength / 2 + robotDiameter / 2, -robotDiameter / 2);
+            back = make_shared < geometry::CNPoint2D > (field->FieldLength / 2 + robotDiameter / 2, -robotDiameter / 2);
         }
 
         int counter = 0;
