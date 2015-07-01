@@ -68,7 +68,7 @@ namespace alica
                     egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
                     mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0);
                 }
-                if (egoTarget->length() < 250 && fabs(egoBallPos->angleTo()) < (M_PI / 180) * 5)
+                if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
                 {
                     this->success = true;
                 }
@@ -85,7 +85,7 @@ namespace alica
 
             mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0);
 
-            if (egoTarget->length() < 250 && fabs(egoBallPos->angleTo()) < (M_PI / 180) * 5)
+            if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
             {
                 this->success = true;
             }

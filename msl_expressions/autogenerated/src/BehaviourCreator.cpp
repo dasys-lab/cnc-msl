@@ -21,7 +21,11 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
+#include  "Plans/GenericStandards/StandardPass.h"
+
 #include  "Plans/Behaviours/AlignToGoal.h"
+
+#include  "Plans/GenericStandards/StandardActuate.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
@@ -108,9 +112,19 @@ namespace alica
                 return make_shared<DriveToPoint>();
                 break;
 
+            case 1435760175843:
+
+                return make_shared<StandardPass>();
+                break;
+
             case 1415205285582:
 
                 return make_shared<AlignToGoal>();
+                break;
+
+            case 1435766278023:
+
+                return make_shared<StandardActuate>();
                 break;
 
             case 1434199852589:
