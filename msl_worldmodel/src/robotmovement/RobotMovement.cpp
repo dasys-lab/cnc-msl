@@ -33,11 +33,10 @@ namespace msl
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance,
-														bool obstacleAvoidance)
+														double snapDistance)
 	{
 		MotionControl mc;
-		if (obstacleAvoidance)
+		if (egoTarget->length() > 400)
 		{
 			MSLWorldModel* wm = MSLWorldModel::get();
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -78,11 +77,10 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-													bool obstacleAvoidance)
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance)
 	{
 		MotionControl mc;
-		if (obstacleAvoidance)
+		if (egoTarget->length() > 400)
 		{
 			MSLWorldModel* wm = MSLWorldModel::get();
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -150,14 +148,13 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget,
-														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														shared_ptr<geometry::CNPoint2D> egoBallPos,
 														double angleTolerance, double ballAngleTolerance)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		double egoTargetAngle = egoTarget->angleTo();
+		double egoTargetAngle = egoAlignPoint->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
 		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
 		double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
