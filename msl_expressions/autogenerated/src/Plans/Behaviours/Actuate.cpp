@@ -27,17 +27,16 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-		int left, right;
+		double left = 0;
+		double right = 0;
 
 		if (rodo == nullptr)
 		{
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-
-
-
-
+		//newController(left,right);
+		oldController(left,right);
 		/////////////////////////////////
 		//PD Regler Anfang
 		//PIDControllerLeft
@@ -107,8 +106,10 @@ namespace alica
 
 		cout << endl;
 
-		bhc.leftMotor = max(min(left, 60), -100);
-		bhc.rightMotor = max(min(right, 60), -100);
+
+
+		bhc.leftMotor = max(min(left, 60.0), -100.0);
+		bhc.rightMotor = max(min(right, 60.0), -100.0);
 		this->send(bhc);
 
 		speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -126,7 +127,7 @@ namespace alica
 	}
 	/*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
 	//////////OldController Start
-	void Actuate::oldController(double &left, double &right)
+	void Actuate::oldController(double &leftController, double &rightController)
 	{
 
 		bool pullNoMatterWhat = false;
@@ -260,18 +261,26 @@ namespace alica
 		double KvLeft;
 		double KvRight;
 
-		left = KvLeft;
-		right = KvRight;
+
 		KvLeft = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
 		KvRight = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
 
+		cout<<"OldController "<<endl;
+		cout<<"KvRight : "<<KvRight<<endl;
+		cout<<"KvLeft : "<<KvLeft<<endl;
+
+
+		leftController = KvLeft;
+		rightController = KvRight;
 		//////////OldController End
 	}
 
-	void Actuate::newController(double &left, double &right)
+	void Actuate::newController(double &leftController, double &rightController)
 	{
 		///////////////////////////////////////////////////////////////////////
 		//New Controller Start
+
+		cout<<"NewController "<<endl;
 
 		//arithmetic Average for Speed Start
 
@@ -410,8 +419,8 @@ namespace alica
 		cout << "KvRight : " << KvRight << endl;
 
 		//Funktion for drive with differt angles end
-		 left= KvLeft;
-		 right= KvRight;
+		 leftController= KvLeft;
+		 rightController= KvRight;
 
 	}
 
