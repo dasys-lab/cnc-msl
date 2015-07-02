@@ -82,10 +82,10 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNPosition> > > Robots::getPositionsOfTeamMates()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ret;
+		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ret = make_shared<vector<shared_ptr<geometry::CNPosition>>>();
 		for(auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
 		{
-			if(wm->getTime() - iter->second->getLast()->timeStamp > maxInformationAge)
+			if(wm->getTime() - iter->second->getLast()->timeStamp < maxInformationAge)
 			{
 				ret->push_back(iter->second->getLast()->getInformation());
 			}

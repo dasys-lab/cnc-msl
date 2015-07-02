@@ -21,6 +21,12 @@ namespace alica
     void StandardReceive::run(void* msg)
     {
         /*PROTECTED REGION ID(run1428509505186) ENABLED START*/ //Add additional options here
+    	//TODO hack to stop robot in simulator
+    	msl_actuator_msgs::MotionControl mc;
+    	mc.motion.angle = 0;
+    	mc.motion.translation = 0;
+    	mc.motion.rotation = 0;
+    	send(mc);
         /*PROTECTED REGION END*/
     }
     void StandardReceive::initialiseParameters()
