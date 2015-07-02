@@ -35,8 +35,8 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		//newController(left, right);
-		oldController(left,right);
+		newController(left, right);
+		//oldController(left,right);
 
 
 		//PD Regler Anfang
@@ -364,13 +364,13 @@ namespace alica
 		double rotationRight = 0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if ((rotation < -0.2) || (rotation > 0.2))
+		if ((rotation < -0.3) || (rotation > 0.3))
 		{
 
 			rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 					- 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
-			rotationRight = rotationRight - 70;
+			rotationLeft = rotationLeft - 70;
 
 			rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 					- 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
@@ -412,16 +412,16 @@ namespace alica
 
 		x = max(min(angle, 3.14), -3.14);
 
-		funktionLeft = 0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-				+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292;
+		funktionLeft = 1.0*(0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+				+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
 
-		funktionRight = 0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-				+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292;
+		funktionRight = 1.0*(0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+				+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
 
-		KvRight = (1.2 * eFunktion * arithmeticAverageSpeed * funktionRight * arithmeticAverageSpeedDifference
+		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight 
 				+ rotationRight);
 
-		KvLeft = (1.2 * eFunktion * arithmeticAverageSpeed * funktionLeft * arithmeticAverageSpeedDifference
+		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft
 				+ rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
