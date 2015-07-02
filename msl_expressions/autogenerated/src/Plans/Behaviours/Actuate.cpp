@@ -407,7 +407,7 @@ namespace alica
 
 		//Exp Funktion for traction Start
 
-		double funktionLeftLim, funktionRightLim, feedForwardLeft, feedForwardRight;
+		double  feedForwardLeft, feedForwardRight;
 		double KvLeft, KvRight;
 		double x;
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
@@ -419,18 +419,6 @@ namespace alica
 		cout<<"exp Funktion : "<<eFunktion<<endl;
 		//Exp Funktion for traction End
 
-		//Sensor calibration Start
-
-		double teiler;
-		qualityOfServiceSumme = qualityOfServiceSumme + wm->rawSensorData.getOpticalFlowQoS();
-		zaeler = zaeler + 1;
-		teiler = qualityOfServiceSumme / zaeler;
-
-		//	cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
-		//	cout << "zaeler  : " << zaeler << endl;
-		//	cout << "teiler  : " << teiler << endl;
-
-		//Sensor calibration End
 
 		//Funktion for drive with differt angles start
 
@@ -455,6 +443,21 @@ namespace alica
 		//Funktion for drive with differt angles end
 		leftController = KvLeft;
 		rightController = KvRight;
+
+
+		//Sensor calibration Start
+
+		double teiler;
+		qualityOfServiceSumme = qualityOfServiceSumme + wm->rawSensorData.getOpticalFlowQoS();
+		zaeler = zaeler + 1;
+		teiler = qualityOfServiceSumme / zaeler;
+
+		//	cout << "qualityOfServiceSumme  : " << qualityOfServiceSumme << endl;
+		//	cout << "zaeler  : " << zaeler << endl;
+		//	cout << "teiler  : " << teiler << endl;
+
+		//Sensor calibration End
+
 
 	}
 
