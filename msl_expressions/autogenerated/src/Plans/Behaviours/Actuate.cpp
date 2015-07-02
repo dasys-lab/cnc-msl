@@ -27,23 +27,8 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-        if( wm->rawSensorData.getOwnVelocityMotion()->rotation>0)
-{
-
-        double left = -wm->rawSensorData.getOwnVelocityMotion()->rotation*59;
-        double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation*33;
-
-
-}
-
-        if( wm->rawSensorData.getOwnVelocityMotion()->rotation<0)
-{
-
-        double right = wm->rawSensorData.getOwnVelocityMotion()->rotation*59;
-        double left = wm->rawSensorData.getOwnVelocityMotion()->rotation*33;
-}
-
-
+		double left = 0;
+		double right = 0;
 
 		if (rodo == nullptr)
 		{
@@ -53,12 +38,20 @@ namespace alica
 		//newController(left, right);
 		//oldController(left,right);
 
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0)
+		{
 
+			double left = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
+			double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
 
+		}
 
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
+		{
 
-
-
+			double right = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
+			double left = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+		}
 
 		//PD Regler Anfang
 		//PIDControllerLeft
@@ -126,7 +119,6 @@ namespace alica
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << endl;
-		
 
 		bhc.leftMotor = max(min(left, 60.0), -100.0);
 		bhc.rightMotor = max(min(right, 60.0), -100.0);
@@ -158,7 +150,7 @@ namespace alica
 		double speedNoBall = 40;
 		double slowTranslation = 100;
 		double slowTranslationWheelSpeed = 15;
-		double curveRotationFactor =  80;
+		double curveRotationFactor = 80;
 		double orthoDriveFactor = 0.09;
 		double maxhundred = 100;
 
@@ -294,8 +286,6 @@ namespace alica
 
 		KvLeft = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
 		KvRight = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
-
-
 
 		cout << "OldController " << endl;
 		cout << "KvRight : " << KvRight << endl;
@@ -433,17 +423,17 @@ namespace alica
 
 		x = max(min(angle, 3.14), -3.14);
 
-		funktionLeft = 1.0*(0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-				+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
+		funktionLeft = 1.0
+				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
 
-		funktionRight = 1.0*(0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-				+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
+		funktionRight = 1.0
+				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
 
-		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight 
-				+ rotationRight);
+		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft
-				+ rotationLeft);
+		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
