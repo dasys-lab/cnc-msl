@@ -104,8 +104,8 @@ namespace alica
 
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
-
 		cout << endl;
+		
 
 		bhc.leftMotor = max(min(left, 60.0), -100.0);
 		bhc.rightMotor = max(min(right, 60.0), -100.0);
