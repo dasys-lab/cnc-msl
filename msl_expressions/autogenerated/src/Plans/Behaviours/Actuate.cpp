@@ -35,42 +35,8 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		//newController(left, right);
+		newController(left, right);
 		//oldController(left,right);
-
-
-		//arithmetic Average for Speed Start
-
-		double arithmeticAverageSpeed = 0.0;
-		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-		//double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
-
-		if (arithmeticAverageBoxSpeed.size() == 2)
-		{
-			arithmeticAverageBoxSpeed.pop_back();
-		}
-
-		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
-
-		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
-				parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
-		{
-			arithmeticAverageSpeed += *parameterSpeed;
-		}
-
-		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
-
-		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-
-		//arithmetic Average for Speed End
-		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
-
-		left=arithmeticAverageSpeed*eFunktion;
-		right=arithmeticAverageSpeed*eFunktion;
-		cout<<"left : "<<left<<endl;
-		cout<<"right: "<<right<<endl;
-
 
 
 
