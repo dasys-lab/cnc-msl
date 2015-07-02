@@ -27,8 +27,23 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-		double left = 0;
-		double right = 0;
+        if( wm->rawSensorData.getOwnVelocityMotion()->rotation>0)
+{
+
+        double left = -wm->rawSensorData.getOwnVelocityMotion()->rotation*59;
+        double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation*33;
+
+
+}
+
+        if( wm->rawSensorData.getOwnVelocityMotion()->rotation<0)
+{
+
+        double right = wm->rawSensorData.getOwnVelocityMotion()->rotation*59;
+        double left = wm->rawSensorData.getOwnVelocityMotion()->rotation*33;
+}
+
+
 
 		if (rodo == nullptr)
 		{
@@ -39,8 +54,7 @@ namespace alica
 		//oldController(left,right);
 
 
-		cout << "rotationLeft : " << -15 << endl;
-		cout << "rotationRight : " << -20 << endl;
+
 
 
 
