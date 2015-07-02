@@ -31,6 +31,9 @@ namespace alica
         double speedDifference;
         double zaeler;
         double qualityOfServiceSumme;
+
+        void oldController( double &left,double &right);
+        void newController(  double &left,double &right );
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
