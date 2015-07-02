@@ -36,7 +36,7 @@ namespace alica
 			return;
 		}
 		//newController(left, right);
-		//oldController(left,right);
+		oldController(left,right);
 
 
 		//PD Regler Anfang
@@ -133,12 +133,12 @@ namespace alica
 		bool controlNoMatterWhat = false;
 		bool haveBall = false;
 		int itcounter = 0;
-		double handlerSpeedFactor = 0.0;
-		double speedNoBall = 0.0;
-		double slowTranslation = 0.0;
-		double slowTranslationWheelSpeed = 0.0;
-		double curveRotationFactor = 0.0;
-		double orthoDriveFactor = 0;
+		double handlerSpeedFactor = 1.6;
+		double speedNoBall = 40;
+		double slowTranslation = 100;
+		double slowTranslationWheelSpeed = 15;
+		double curveRotationFactor =  80;
+		double orthoDriveFactor = 0.09;
 		double maxhundred = 100;
 
 		double MaxPWM = 90;
