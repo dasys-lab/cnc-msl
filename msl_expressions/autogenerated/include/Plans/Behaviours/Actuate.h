@@ -32,8 +32,8 @@ namespace alica
         double zaeler;
         double qualityOfServiceSumme;
 
-        void oldController( double &left,double &right);
-        void newController(  double &left,double &right );
+        void oldController( double &leftController,double &rightController);
+        void newController(  double &leftController,double &rightController );
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

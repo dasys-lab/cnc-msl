@@ -27,18 +27,18 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-		int left, right;
+		double left = 0;
+		double right = 0;
 
 		if (rodo == nullptr)
 		{
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
+		//newController(left, right);
+		oldController(left,right);
 
 
-
-
-		/////////////////////////////////
 		//PD Regler Anfang
 		//PIDControllerLeft
 		/*
@@ -104,11 +104,11 @@ namespace alica
 
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
-
 		cout << endl;
+		
 
-		bhc.leftMotor = max(min(left, 60), -100);
-		bhc.rightMotor = max(min(right, 60), -100);
+		bhc.leftMotor = max(min(left, 60.0), -100.0);
+		bhc.rightMotor = max(min(right, 60.0), -100.0);
 		this->send(bhc);
 
 		speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -126,19 +126,19 @@ namespace alica
 	}
 	/*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
 	//////////OldController Start
-	void Actuate::oldController(double &left, double &right)
+	void Actuate::oldController(double &leftController, double &rightController)
 	{
 
 		bool pullNoMatterWhat = false;
 		bool controlNoMatterWhat = false;
 		bool haveBall = false;
 		int itcounter = 0;
-		double handlerSpeedFactor = 0.0;
-		double speedNoBall = 0.0;
-		double slowTranslation = 0.0;
-		double slowTranslationWheelSpeed = 0.0;
-		double curveRotationFactor = 0.0;
-		double orthoDriveFactor = 0;
+		double handlerSpeedFactor = 1.6;
+		double speedNoBall = 40;
+		double slowTranslation = 100;
+		double slowTranslationWheelSpeed = 15;
+		double curveRotationFactor =  80;
+		double orthoDriveFactor = 0.09;
 		double maxhundred = 100;
 
 		double MaxPWM = 90;
@@ -189,6 +189,18 @@ namespace alica
 		double orthoL = 0, orthoR = 0;
 		double speed = 0;
 
+		// do we have the ball, so that controlling make sense
+		/*		haveBall = WorldHelper.HaveBallDribble(WM, WorldHelper.HadBallBefore);
+
+		 if (haveBall && !hadBefore)
+		 {
+		 itcounter = 0;
+		 }
+		 */
+		//		if (haveBall && itcounter++ < 8)
+		//		{
+		//			speed = speedNoBall;
+		//		}
 		if (true)
 		{
 			// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
@@ -256,22 +268,29 @@ namespace alica
 
 		double minSpeedThreeLeft = speed + l + orthoL;
 		double minSpeedThreeRight = speed + r + orthoR;
-
 		double KvLeft;
 		double KvRight;
 
-		left = KvLeft;
-		right = KvRight;
 		KvLeft = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
 		KvRight = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
 
+
+
+		cout << "OldController " << endl;
+		cout << "KvRight : " << KvRight << endl;
+		cout << "KvLeft : " << KvLeft << endl;
+
+		leftController = KvLeft;
+		rightController = KvRight;
 		//////////OldController End
 	}
 
-	void Actuate::newController(double &left, double &right)
+	void Actuate::newController(double &leftController, double &rightController)
 	{
 		///////////////////////////////////////////////////////////////////////
 		//New Controller Start
+
+		cout << "NewController " << endl;
 
 		//arithmetic Average for Speed Start
 
@@ -345,7 +364,7 @@ namespace alica
 		double rotationRight = 0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if ((rotation < -0.15) || (rotation > 0.15))
+		if ((rotation < -0.2) || (rotation > 0.2))
 		{
 
 			rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
@@ -410,8 +429,8 @@ namespace alica
 		cout << "KvRight : " << KvRight << endl;
 
 		//Funktion for drive with differt angles end
-		 left= KvLeft;
-		 right= KvRight;
+		leftController = KvLeft;
+		rightController = KvRight;
 
 	}
 
