@@ -45,6 +45,10 @@ namespace alica
 			double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
 			cout<<"left : "<<left;
 			cout<<"right : "<<right;
+
+			bhc.leftMotor = max(min(left, 60.0), -100.0);
+			bhc.rightMotor = max(min(right, 60.0), -100.0);
+			this->send(bhc);
 		}
 
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
@@ -55,6 +59,10 @@ namespace alica
 
 			cout<<"left : "<<left;
 			cout<<"right : "<<right;
+
+			bhc.leftMotor = max(min(left, 60.0), -100.0);
+			bhc.rightMotor = max(min(right, 60.0), -100.0);
+			this->send(bhc);
 		}
 
 		//PD Regler Anfang
@@ -123,11 +131,11 @@ namespace alica
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << endl;
-
+/*
 		bhc.leftMotor = max(min(left, 60.0), -100.0);
 		bhc.rightMotor = max(min(right, 60.0), -100.0);
 		this->send(bhc);
-
+*/
 		speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
 		/*PROTECTED REGION END*/
