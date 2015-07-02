@@ -385,8 +385,8 @@ namespace alica
 
 			double rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
 			double rotationRightight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
-			cout<<"rotation	left : "<<rotationLeft;
-			cout<<"rotation right : "<<rotationRight;
+			cout<<"rotation	left : "<<rotationLeft<<endl;
+			cout<<"rotation right : "<<rotationRight<<endl;
 
 
 		}
@@ -394,11 +394,11 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
 		{
 
-			double right = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			double left = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+			double rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
+			double rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
 
-			cout<<"rotation	left : "<<rotationLeft;
-			cout<<"rotation right : "<<rotationRight;
+			cout<<"rotation	left : "<<rotationLeft<<endl;
+			cout<<"rotation right : "<<rotationRight<<endl;
 
 		}
 
