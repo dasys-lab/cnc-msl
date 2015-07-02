@@ -35,7 +35,7 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		newController(left,right);
+		newController(left, right);
 		//oldController(left,right);
 		/////////////////////////////////
 		//PD Regler Anfang
@@ -105,8 +105,6 @@ namespace alica
 		//cout << "StellwertRight: " << StellwertRight << endl;
 
 		cout << endl;
-
-
 
 		bhc.leftMotor = max(min(left, 60.0), -100.0);
 		bhc.rightMotor = max(min(right, 60.0), -100.0);
@@ -190,6 +188,18 @@ namespace alica
 		double orthoL = 0, orthoR = 0;
 		double speed = 0;
 
+		// do we have the ball, so that controlling make sense
+		/*		haveBall = WorldHelper.HaveBallDribble(WM, WorldHelper.HadBallBefore);
+
+		 if (haveBall && !hadBefore)
+		 {
+		 itcounter = 0;
+		 }
+		 */
+		//		if (haveBall && itcounter++ < 8)
+		//		{
+		//			speed = speedNoBall;
+		//		}
 		if (true)
 		{
 			// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
@@ -257,18 +267,17 @@ namespace alica
 
 		double minSpeedThreeLeft = speed + l + orthoL;
 		double minSpeedThreeRight = speed + r + orthoR;
-
 		double KvLeft;
 		double KvRight;
-
 
 		KvLeft = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
 		KvRight = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
 
-		cout<<"OldController "<<endl;
-		cout<<"KvRight : "<<KvRight<<endl;
-		cout<<"KvLeft : "<<KvLeft<<endl;
 
+
+		cout << "OldController " << endl;
+		cout << "KvRight : " << KvRight << endl;
+		cout << "KvLeft : " << KvLeft << endl;
 
 		leftController = KvLeft;
 		rightController = KvRight;
@@ -280,7 +289,7 @@ namespace alica
 		///////////////////////////////////////////////////////////////////////
 		//New Controller Start
 
-		cout<<"NewController "<<endl;
+		cout << "NewController " << endl;
 
 		//arithmetic Average for Speed Start
 
@@ -354,7 +363,7 @@ namespace alica
 		double rotationRight = 0.0;
 		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
-		if ((rotation < -0.15) || (rotation > 0.15))
+		if ((rotation < -0.2) || (rotation > 0.2))
 		{
 
 			rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
@@ -419,8 +428,8 @@ namespace alica
 		cout << "KvRight : " << KvRight << endl;
 
 		//Funktion for drive with differt angles end
-		 leftController= KvLeft;
-		 rightController= KvRight;
+		leftController = KvLeft;
+		rightController = KvRight;
 
 	}
 
