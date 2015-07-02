@@ -65,9 +65,10 @@ namespace alica
 
 		//arithmetic Average for Speed End
 
-		left=arithmeticAverageSpeed*1/25;
-		right=arithmeticAverageSpeed*1/25;
-
+		left=arithmeticAverageSpeed*1/40;
+		right=arithmeticAverageSpeed*1/40;
+		cout<<"left : "<<left<<endl;
+		cout<<"right: "<<right<<endl;
 
 
 
@@ -139,11 +140,11 @@ namespace alica
 		//cout << "StellwertLeft: " << StellwertLeft << endl;
 		//cout << "StellwertRight: " << StellwertRight << endl;
 		cout << endl;
-/*
+
 		bhc.leftMotor = max(min(left, 60.0), -100.0);
 		bhc.rightMotor = max(min(right, 60.0), -100.0);
 		this->send(bhc);
-*/
+
 		speedDifferenceNew = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
 		/*PROTECTED REGION END*/
