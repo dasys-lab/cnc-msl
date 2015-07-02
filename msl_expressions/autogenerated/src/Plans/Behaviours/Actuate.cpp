@@ -375,7 +375,7 @@ namespace alica
 		 rotationRight = rotationRight - 70;
 		 };*/
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.2)
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
 			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
@@ -385,7 +385,7 @@ namespace alica
 
 		}
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.2)
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
 			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
