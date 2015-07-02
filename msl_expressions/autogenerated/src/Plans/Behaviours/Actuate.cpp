@@ -35,8 +35,15 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		newController(left, right);
+		//newController(left, right);
 		//oldController(left,right);
+
+
+		cout << "rotationLeft : " << -15 << endl;
+		cout << "rotationRight : " << -20 << endl;
+
+
+
 
 
 		//PD Regler Anfang
