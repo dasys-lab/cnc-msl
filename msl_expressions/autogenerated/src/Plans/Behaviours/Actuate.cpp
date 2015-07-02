@@ -43,7 +43,8 @@ namespace alica
 
 			double left = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
 			double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
-
+			cout<<"left : "<<left;
+			cout<<"right : "<<right;
 		}
 
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
@@ -51,6 +52,9 @@ namespace alica
 
 			double right = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
 			double left = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+
+			cout<<"left : "<<left;
+			cout<<"right : "<<right;
 		}
 
 		//PD Regler Anfang
