@@ -38,32 +38,40 @@ namespace alica
 		//newController(left, right);
 		//oldController(left,right);
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0)
+
+		//arithmetic Average for Speed Start
+
+		double arithmeticAverageSpeed = 0.0;
+		double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
+		//double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
+
+		if (arithmeticAverageBoxSpeed.size() == 2)
 		{
-
-			double left = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			double right = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
-			cout<<"left : "<<left;
-			cout<<"right : "<<right;
-
-			bhc.leftMotor = max(min(left, 60.0), -100.0);
-			bhc.rightMotor = max(min(right, 60.0), -100.0);
-			this->send(bhc);
+			arithmeticAverageBoxSpeed.pop_back();
 		}
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
+		arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
+
+		for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+				parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
 		{
-
-			double right = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			double left = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
-
-			cout<<"left : "<<left;
-			cout<<"right : "<<right;
-
-			bhc.leftMotor = max(min(left, 60.0), -100.0);
-			bhc.rightMotor = max(min(right, 60.0), -100.0);
-			this->send(bhc);
+			arithmeticAverageSpeed += *parameterSpeed;
 		}
+
+		arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
+
+		cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+				<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+
+		//arithmetic Average for Speed End
+
+		left=arithmeticAverageSpeed*1/25;
+		right=arithmeticAverageSpeed*1/25;
+
+
+
+
+
 
 		//PD Regler Anfang
 		//PIDControllerLeft
@@ -341,6 +349,8 @@ namespace alica
 
 		//arithmetic Average for Speed End
 
+
+
 		//Speed Difference for acceleration Start
 		double eFunktionAcceleration;
 		double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -383,10 +393,11 @@ namespace alica
 		////arithmetic average speed difference End
 
 		//Rotation Controller Start
+
 		double rotationLeft = 0.0;
 		double rotationRight = 0.0;
-		double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
 
+		/*
 		if ((rotation < -0.3) || (rotation > 0.3))
 		{
 
@@ -399,9 +410,30 @@ namespace alica
 					- 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
 			rotationRight = rotationRight - 70;
-		};
-		cout << "rotationLeft : " << rotationLeft << endl;
-		cout << "rotationRight : " << rotationRight << endl;
+		};*/
+
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0)
+		{
+
+			double rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
+			double rotationRightight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+			cout<<"rotation	left : "<<rotationLeft;
+			cout<<"rotation right : "<<rotationRight;
+
+
+		}
+
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
+		{
+
+			double right = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
+			double left = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+
+			cout<<"rotation	left : "<<rotationLeft;
+			cout<<"rotation right : "<<rotationRight;
+
+		}
+
 
 		//Rotation Controller End
 
