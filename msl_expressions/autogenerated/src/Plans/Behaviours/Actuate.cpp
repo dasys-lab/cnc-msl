@@ -36,8 +36,152 @@ namespace alica
 			return;
 		}
 		//newController(left, right);
-		oldController(left,right);
-		/////////////////////////////////
+		//oldController(left,right);
+		////////////////////////////////////////////////////////////////////////////////////////
+				//
+				//Alter Steuerung Anfang
+				bool pullNoMatterWhat = false;
+				bool controlNoMatterWhat = false;
+				bool haveBall = false;
+				int itcounter = 0;
+				double handlerSpeedFactor = 0.0;
+				double speedNoBall = 0.0;
+				double slowTranslation = 0.0;
+				double slowTranslationWheelSpeed = 0.0;
+				double curveRotationFactor = 0.0;
+				double orthoDriveFactor = 0;
+				double maxhundred = 100;
+
+				double MaxPWM = 90;
+
+				double UpPos = 0;
+				double CatchingPos = 100;
+
+				double PassingPos = 28;
+				double NormalPos = 90;
+
+				double PingInterval = 200;
+				double ShovelSelectRepeatInterval = 40;
+				double HaveLightBarrier = 0;
+
+				//speed factor of both wheels dependent on the odometry
+				double SpeedFactor = 1.6;
+
+				//speed of wheels if we dont have the ball
+				double SpeedNoBall = 40;
+				//slow translation of robot, and the speed of the wheels
+				double SlowTranslation = 100;
+
+				double SlowTranslationWheelSpeed = 15;
+				double CurveRotationFactor = 80;
+				double BackwardsSpeed = 52;
+				double OrthoDriveFactor = 0.09;
+
+				double LinearFactor = 1.0;
+				double UseFactor = false;
+
+				SpeedNoBall = 50;
+				SlowTranslation = 200;
+				double SlowRotationLeft = 10;
+				double SlowRotationRight = 10;
+
+				double RotationLeft = -38;
+				double RotationRight = 38;
+
+				BackwardsSpeed = 52;
+
+				double kp = 0.01;
+				double ki = 0.01;
+				double kd = 0.00008;
+				double MinQos = 50;
+				double VelocityFactor = 25;
+				double VelocityDiff = 0;
+				double l = 0, r = 0;
+				double orthoL = 0, orthoR = 0;
+				double speed = 0;
+
+				if (haveBall && itcounter++ < 8)
+			{
+					speed = speedNoBall;
+				}
+				if (true)
+				{
+					// we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
+
+					double speedX = cos(wm->rawSensorData.getOwnVelocityMotion()->angle)
+							* wm->rawSensorData.getOwnVelocityMotion()->translation;
+					double speedY = sin(wm->rawSensorData.getOwnVelocityMotion()->angle)
+							* wm->rawSensorData.getOwnVelocityMotion()->translation;
+					//langsam vorwaerts
+					if (speedX > -slowTranslation && speedX < 40)
+					{
+						speed = slowTranslationWheelSpeed;
+					}
+					//langsam rueckwaerts
+					else if (speedX < slowTranslation && speedX >= 40)
+					{
+						speed = -slowTranslationWheelSpeed;
+					}
+					//schnell vor
+					else if (speedX <= -slowTranslation)
+					{
+						double minSpeedOne = handlerSpeedFactor * speedX / 100.0;
+						speed = max(-maxhundred, min(maxhundred, minSpeedOne));
+					}
+					//schnell rueck
+					else
+					{
+						double minSpeedTwo = 3 * handlerSpeedFactor * speedX / 100.0;
+						speed = max(-maxhundred, min(maxhundred, minSpeedTwo));
+					}
+
+					//geschwindigkeitsanteil fuer orthogonal zum ball
+					if (speedY > 0)
+					{
+						//nach rechts fahren
+						orthoR = speedY * orthoDriveFactor;
+						orthoL = -speedY * orthoDriveFactor / 2.0;
+					}
+					else
+					{
+						//nach links fahren
+						orthoR = speedY * orthoDriveFactor / 2.0;
+						orthoL = -speedY * orthoDriveFactor;
+					}
+
+					//geschwindigkeitsanteil fuer rotation
+					double rotation = wm->rawSensorData.getOwnVelocityMotion()->rotation;
+					if (rotation < 0)
+					{
+						l = 0;
+						r = abs(rotation) / M_PI * curveRotationFactor;
+					}
+					else
+					{
+						r = 0;
+						l = abs(rotation) / M_PI * curveRotationFactor;
+					}
+
+				}
+				else if (!haveBall)
+				{
+					// we don't have the ball
+					speed = speedNoBall;
+				}
+
+				double minSpeedThreeLeft = speed + l + orthoL;
+				double minSpeedThreeRight = speed + r + orthoR;
+
+				bhc.leftMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeLeft));
+				bhc.rightMotor = -1.0 * max(-maxhundred, min(maxhundred, minSpeedThreeRight));
+
+				this->send(bhc);
+
+
+
+
+
+		//////////////////////////////////////////////////////////////////////////////////////
 		//PD Regler Anfang
 		//PIDControllerLeft
 		/*
