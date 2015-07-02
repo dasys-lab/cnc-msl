@@ -380,18 +380,18 @@ namespace alica
 			rotationRight = rotationRight - 70;
 		};*/
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0)
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.2)
 		{
 
 			double rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			double rotationRightight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+			double rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
 			cout<<"rotation	left : "<<rotationLeft<<endl;
 			cout<<"rotation right : "<<rotationRight<<endl;
 
 
 		}
 
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < 0)
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation <-0.2)
 		{
 
 			double rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
@@ -416,6 +416,7 @@ namespace alica
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
 
+		cout<<"exp Funktion : "<<eFunktion<<endl;
 		//Exp Funktion for traction End
 
 		//Sensor calibration Start
