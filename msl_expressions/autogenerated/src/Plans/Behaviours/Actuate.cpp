@@ -35,7 +35,45 @@ namespace alica
 			cout << "Actuate RODO is empty help" << endl;
 			return;
 		}
-		newController(left, right);
+
+
+		double rotationLeft = 0.0;
+		double rotationRight = 0.0;
+
+
+		 if ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25) || (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25))
+		 {
+
+		 rotationLeft = (-25 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
+		 - 7 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+
+		 rotationLeft = rotationLeft - 10;
+
+		 rotationRight = (-7 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
+		 - 25 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+
+		 rotationRight = rotationRight -10;
+		 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		//newController(left, right);
 		//oldController(left,right);
 
 		//PD Regler Anfang
@@ -367,12 +405,12 @@ namespace alica
 		 rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 		 - 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
-		 rotationLeft = rotationLeft - 70;
+		 rotationLeft = rotationLeft - 10;
 
 		 rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
 		 - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
 
-		 rotationRight = rotationRight - 70;
+		 rotationRight = rotationRight -10;
 		 };*/
 
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
