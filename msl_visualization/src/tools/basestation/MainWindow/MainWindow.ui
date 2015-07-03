@@ -899,6 +899,8 @@
     <addaction name="actionTaxi_Follow_Mode"/>
     <addaction name="menuHeight_Map"/>
     <addaction name="actionShow_PathPlanner_Path"/>
+    <addaction name="actionShow_Voronoi_Diagram"/>
+    <addaction name="actionShow_Corridor_Check"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1140,6 +1142,16 @@
   <action name="actionShow_PathPlanner_Path">
    <property name="text">
     <string>Show PathPlanner Path</string>
+   </property>
+  </action>
+  <action name="actionShow_Voronoi_Diagram">
+   <property name="text">
+    <string>Show Voronoi Diagram</string>
+   </property>
+  </action>
+  <action name="actionShow_Corridor_Check">
+   <property name="text">
+    <string>Show Corridor Check</string>
    </property>
   </action>
  </widget>

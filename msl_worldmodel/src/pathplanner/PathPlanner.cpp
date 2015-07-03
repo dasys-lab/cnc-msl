@@ -31,6 +31,7 @@ namespace msl
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor",
 		NULL);
 		lastPath = nullptr;
+		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
 
 	}
@@ -306,8 +307,24 @@ namespace msl
 //		cout << "p3" << p3->toString() << endl;
 //		cout << "p4" << p4->toString() << endl;
 //		cout << "end" <<endl;
+#ifdef CORRIDOR_DEBUG
+		sendCorridorCheck(points);
+#endif
 		return obstaclePoint != nullptr
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+	}
+
+	void msl::PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D> > points)
+	{
+		msl_msgs::CorridorCheck cc;
+		for(int i = 0; i < points.size(); i++)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = points.at(i)->x;
+			info.y = points.at(i)->y;
+			cc.corridorPoints.push_back(info);
+		}
+		corridorPub.publish(cc);
 	}
 
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,

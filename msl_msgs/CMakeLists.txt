@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_msgs)
+project(msl_msgs)    
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -60,8 +60,10 @@ add_message_files(
   RefereeBoxInfoBody.msg
   RefereeBoxState.msg
   PathPlanner.msg
+  VoronoiNetInfo.msg
+  CorridorCheck.msg
 )
-
+ 
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES

@@ -65,6 +65,8 @@ MWind::MWind(QMainWindow *parent)
 	connect(RefBoxWG, SIGNAL(changeGoalColor (int)), this, SLOT(GoalColorChanged(int)));
 	connect(RefBoxWG, SIGNAL(UpdateGameParameter_signal()), this, SLOT(UpdateGameParameters()));
 	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathPoints()));
+	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheck()));
+	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNet()));
 
 	// Arranque em auto-formation
 
@@ -122,6 +124,8 @@ MWind::~MWind()
 	disconnect(TeamColorCombo, SIGNAL(activated ( int)), this, SLOT(TeamColorChanged(int)));
 	disconnect(GoalColorCombo, SIGNAL(activated ( int)), this, SLOT(GoalColorChanged(int)));
 	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(ShowPathPoints()));
+	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheck()));
+	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNet()));
 
 	// Destroy "Gustavo" Threads
 

@@ -460,6 +460,7 @@ namespace msl
 		return ret;
 	}
 
+	//TODO check perhaps double sites
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getSitePositions()
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();

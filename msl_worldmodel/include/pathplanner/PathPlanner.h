@@ -8,6 +8,8 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
 
+#define CORRIDOR_DEBUG
+
 //includes for CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -31,6 +33,7 @@ typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
 
 //other includes
+#include <ros/ros.h>
 #include <memory>
 #include <vector>
 #include <algorithm>
@@ -43,6 +46,8 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/VoronoiStatus.h"
 #include <msl_sensor_msgs/WorldModelData.h>
+#include "msl_msgs/CorridorCheck.h"
+#include "msl_msgs/Point2dInfo.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include "MSLFootballField.h"
@@ -102,6 +107,7 @@ namespace msl
 		bool checkGoalVerticesReached(const shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > >& closestVerticesToGoal, const shared_ptr<SearchNode>& currentNode, bool found);
 		bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
 							shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+		void sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> points);
 
 	protected:
 		MSLWorldModel* wm;
@@ -115,6 +121,8 @@ namespace msl
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
+		ros::NodeHandle n;
+		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
 		bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
 	};
