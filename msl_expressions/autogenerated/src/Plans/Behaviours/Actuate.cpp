@@ -37,43 +37,29 @@ namespace alica
 		}
 
 
-		double rotationLeft = 0.0;
-		double rotationRight = 0.0;
+//		double rotationLeft = -25.0;
+//		double rotationRight = -15.0;
 
-
+/*
 		 if ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25) || (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25))
 		 {
 
-		 rotationLeft = (-25 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 - 7 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+		 rotationLeft =3* (-25 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
+		 -3*7 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
 
 		 rotationLeft = rotationLeft - 10;
 
-		 rotationRight = (-7 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 - 25 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+		 rotationRight = 3*(-7 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
+		 -3*25 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
 
 		 rotationRight = rotationRight -10;
 		 };
+*/
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		//newController(left, right);
+		newController(left, right);
 		//oldController(left,right);
 
 		//PD Regler Anfang
@@ -416,8 +402,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
+			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 
@@ -426,8 +412,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 59;
-			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 33;
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
+			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
 
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
@@ -445,7 +431,7 @@ namespace alica
 
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		double eFunktion = 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed);
+		double eFunktion =1.1*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
 		cout << "exp Funktion : " << eFunktion << endl;
 		//Exp Funktion for traction End
