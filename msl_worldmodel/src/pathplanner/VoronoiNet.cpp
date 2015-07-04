@@ -212,7 +212,8 @@ namespace msl
 
 			for (int j = 0; j < sites.size(); j++)
 			{
-				if (sites.at(j).x() == points.at(i).x && sites.at(j).y() == points.at(i).y)
+				//TODO check
+				if (abs(sites.at(j).x() - points.at(i).x) < 250 && abs(sites.at(j).y() - points.at(i).y) < 250)
 				{
 					alreadyIn = true;
 					break;
