@@ -134,6 +134,7 @@ private:
     bool showPath;
     bool showVoronoi;
     bool showCorridor;
+    bool showSitePoints;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void turnRobot(shared_ptr<RobotVisualization> robot, double angle);
@@ -148,6 +149,7 @@ private:
     vector<vtkActor*> pathLines;
     vector<vtkActor*> netLines;
     vector<vtkActor*> corridorLines;
+    vector<vtkActor*> sitePoints;
 	ros::Subscriber sharedWorldInfoSubscriber;
 	ros::Subscriber pathPlannerSubscriber;
 	ros::Subscriber voronoiSitesSubscriber;
@@ -173,6 +175,7 @@ private:
 
     vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2);
     vtkSmartPointer<vtkActor> createColoredDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, double r, double g, double b);
+    vtkSmartPointer<vtkActor> createColoredDot(float x, float y, float radius, double r, double g, double b);
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
@@ -208,6 +211,7 @@ public Q_SLOTS:
     void showPathPoints(void);
     void showVoronoiNet(void);
     void showCorridorCheck(void);
+    void showSites(void);
     void update_robot_info(void);
 
     void obstacles_point_flip(unsigned int Robot_no, bool on_off);

@@ -190,16 +190,20 @@ namespace msl
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
+				if((*iter)->first == wm->getOwnId())
+				{
+					continue;
+				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, bool>(
-								make_shared<geometry::CNPoint2D>((*iter)->x, (*iter)->y), true));
-				Site_2 site((*iter)->x, (*iter)->y);
+								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y), true));
+				Site_2 site((*iter)->second->x, (*iter)->second->y);
 				sites.push_back(site);
 			}
 		}

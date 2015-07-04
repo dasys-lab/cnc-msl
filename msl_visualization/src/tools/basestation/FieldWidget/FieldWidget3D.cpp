@@ -152,6 +152,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	showPath = false;
 	showVoronoi = false;
 	showCorridor = false;
+	showSitePoints = false;
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
@@ -422,21 +423,25 @@ void FieldWidget3D::update_robot_info(void)
 		if (corridorCheckInfo.front() != nullptr)
 		{
 			vtkActor* actor = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
-												corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01, 1, 0, 0);
+														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
+														1, 0, 0);
 			vtkActor* actor2 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
-												corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01, 1, 0, 0);
+														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
+														1, 0, 0);
 			vtkActor* actor3 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
-												corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01, 1, 0, 0);
+														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
+														1, 0, 0);
 			vtkActor* actor4 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
-												corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
-												-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01, 1, 0, 0);
+														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
+														1, 0, 0);
 			corridorLines.push_back(actor);
 			corridorLines.push_back(actor2);
 			corridorLines.push_back(actor3);
@@ -445,6 +450,27 @@ void FieldWidget3D::update_robot_info(void)
 			renderer->AddActor(actor2);
 			renderer->AddActor(actor3);
 			renderer->AddActor(actor4);
+		}
+	}
+	if (showSitePoints)
+	{
+		for (vtkActor* actor : sitePoints)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		sitePoints.clear();
+		if (voronoiNetInfo.front() != nullptr)
+		{
+			for (int i = 1; i < voronoiNetInfo.front()->sites.size(); i++)
+			{
+				vtkActor* actor = createColoredDot(voronoiNetInfo.front()->sites.at(i).y / 1000,
+													-voronoiNetInfo.front()->sites.at(i).x / 1000, 0.5, 0, 0, 1);
+				sitePoints.push_back(actor);
+				renderer->AddActor(actor);
+			}
 		}
 	}
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -580,6 +606,36 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDashedLine(float x1, float
 	lineActor->GetProperty()->SetPointSize(1);
 	lineActor->GetProperty()->SetLineWidth(3);
 	return lineActor;
+}
+
+void FieldWidget3D::showSites(void)
+{
+	if (this->showSitePoints == false)
+	{
+		showSitePoints = true;
+	}
+	else
+	{
+		showSitePoints = false;
+	}
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDot(float x, float y, float radius, double r, double g, double b)
+{
+	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
+	dot->SetRadius(radius);
+	dot->SetHeight(0.001);
+	dot->SetResolution(32);
+	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	dotMapper->SetInput(dot->GetOutput());
+
+	vtkActor* coloredDot = vtkActor::New();
+	coloredDot->SetMapper(dotMapper);
+	coloredDot->GetProperty()->SetColor(r, g, b);
+	coloredDot->SetPosition(x, y, 0.01);
+	coloredDot->SetOrientation(90, 0, 0);
+	coloredDot->GetProperty()->SetAmbient(1.0);
+	return coloredDot;
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)

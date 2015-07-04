@@ -901,6 +901,7 @@
     <addaction name="actionShow_PathPlanner_Path"/>
     <addaction name="actionShow_Voronoi_Diagram"/>
     <addaction name="actionShow_Corridor_Check"/>
+    <addaction name="actionShow_Sites"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1152,6 +1153,11 @@
   <action name="actionShow_Corridor_Check">
    <property name="text">
     <string>Show Corridor Check</string>
+   </property>
+  </action>
+  <action name="actionShow_Sites">
+   <property name="text">
+    <string>Show Sites</string>
    </property>
   </action>
  </widget>
