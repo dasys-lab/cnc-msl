@@ -850,7 +850,8 @@ void SSLWorld::fillObstacles(msl_sensor_msgs::SimulatorWorldModelData& simwm, in
 			Robot* robot = this->robots[robotIndex(idEntry->second, team)];
 
 			obstacle.diameter = 500.0;
-			msl_msgs::Point3dInfo po = allo2Ego(robot->m_x, robot->m_y, 0, myRobot);
+			//TODO added * 1000 to fit cnc_msl sizes
+			msl_msgs::Point3dInfo po = allo2Ego(robot->m_x * 1000, robot->m_y * 1000, 0 * 1000, myRobot);
 			obstacle.x = po.x;
 			obstacle.y = po.y;
 			simwm.worldModel.obstacles.push_back(obstacle);
@@ -913,6 +914,7 @@ msl_msgs::Velocity3dInfo SSLWorld::allo2Ego(double x, double y, Robot* robot)
 	return ego;
 }
 
+// TODO check
 msl_msgs::Point3dInfo SSLWorld::allo2Ego(double x, double y, double z, Robot* robot)
 {
 	double meX, meY;
