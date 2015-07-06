@@ -37,33 +37,42 @@ namespace alica
 		}
 
 
-//		double rotationLeft = -25.0;
-//		double rotationRight = -15.0;
 
-/*
-		x = max(min(angle, 3.14), -3.14);
+		double arithmeticAverageSpeed = 0.0;
+				double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-		funktionLeft = 1.0
-				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
+				if (arithmeticAverageBoxSpeed.size() == 2)
+				{
+					arithmeticAverageBoxSpeed.pop_back();
+				}
 
-		funktionRight = 1.0
-				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
+				arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
+				for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+						parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
+				{
+					arithmeticAverageSpeed += *parameterSpeed;
+				}
 
-		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
+				arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
+
+				cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+						<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+
+				left=10;
+				right=-15;
 
 
-		f(x) = 0.0033pow(x + 0.02),8) - 0.00083pow((x + 0.02),7) - 0.074pow((x + 0.02),6) - 0.012pow((x + 0.02),5) + 0.548pow(x + 0.02),4) + 0.158pow((x + 0.02),3) - 1.02pow((x + 0.02),2) + 0.391 (x + 0.02) - 2.09
-*/
+
+
+
+
 
 
 
 
 		//newController(left, right);
-		oldController(left,right);
+		//oldController(left,right);
 
 		//PD Regler Anfang
 		//PIDControllerLeft
