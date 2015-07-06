@@ -41,19 +41,22 @@ namespace alica
 //		double rotationRight = -15.0;
 
 /*
-		 if ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25) || (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25))
-		 {
+		x = max(min(angle, 3.14), -3.14);
 
-		 rotationLeft =3* (-25 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 -3*7 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+		funktionLeft = 1.0
+				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
 
-		 rotationLeft = rotationLeft - 10;
+		funktionRight = 1.0
+				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
 
-		 rotationRight = 3*(-7 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 -3*25 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		 rotationRight = rotationRight -10;
-		 };
+		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
+
+
+		f(x) = 0.0033pow(x + 0.02),8) - 0.00083pow((x + 0.02),7) - 0.074pow((x + 0.02),6) - 0.012pow((x + 0.02),5) + 0.548pow(x + 0.02),4) + 0.158pow((x + 0.02),3) - 1.02pow((x + 0.02),2) + 0.391 (x + 0.02) - 2.09
 */
 
 
@@ -429,9 +432,14 @@ namespace alica
 		double x;
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
+		double constExpFunktion = 1.0;
+		double constPushUpFunktion = -2.0;
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		double eFunktion =1.1*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+
+
+
 
 		cout << "exp Funktion : " << eFunktion << endl;
 		//Exp Funktion for traction End
@@ -440,13 +448,17 @@ namespace alica
 
 		x = max(min(angle, 3.14), -3.14);
 
+
+
+
+
 		funktionLeft = 1.0
 				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
 
 		funktionRight = 1.0
 				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
 
 		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
