@@ -62,8 +62,8 @@ namespace alica
 
 
 
-		newController(left, right);
-		//oldController(left,right);
+		//newController(left, right);
+		oldController(left,right);
 
 		//PD Regler Anfang
 		//PIDControllerLeft
@@ -405,8 +405,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
-			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 
@@ -415,8 +415,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
-			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
@@ -433,7 +433,7 @@ namespace alica
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		double constExpFunktion = 1.0;
-		double constPushUpFunktion = 2.0;
+		double constPushUpFunktion = 2.15;
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
@@ -460,9 +460,9 @@ namespace alica
 				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
 						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
 
-		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
+		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
+		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
