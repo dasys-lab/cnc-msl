@@ -37,29 +37,47 @@ namespace alica
 		}
 
 
-//		double rotationLeft = -25.0;
-//		double rotationRight = -15.0;
 
-/*
-		 if ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25) || (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25))
-		 {
+		double arithmeticAverageSpeed = 0.0;
+				double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
-		 rotationLeft =3* (-25 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 -3*7 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+				if (arithmeticAverageBoxSpeed.size() == 2)
+				{
+					arithmeticAverageBoxSpeed.pop_back();
+				}
 
-		 rotationLeft = rotationLeft - 10;
+				arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
-		 rotationRight = 3*(-7 / M_PI * (atan(wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2))
-		 -3*25 / M_PI * (atan(-wm->rawSensorData.getOwnVelocityMotion()->rotation / 0.001) + M_PI / 2);
+				for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+						parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
+				{
+					arithmeticAverageSpeed += *parameterSpeed;
+				}
 
-		 rotationRight = rotationRight -10;
-		 };
-*/
+				arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
+
+						cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+						<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+
+
+                double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+
+
+				left= eFunktion*arithmeticAverageSpeed*1.0;
+				right=-eFunktion*arithmeticAverageSpeed*3.0;
+
+					cout<<"left :"<<left<<endl;
+					cout<<"right :"<<right<<endl;
 
 
 
 
-		newController(left, right);
+
+
+
+
+
+		//newController(left, right);
 		//oldController(left,right);
 
 		//PD Regler Anfang
@@ -402,8 +420,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
-			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 
@@ -412,8 +430,8 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 50;
-			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 27;
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
@@ -429,9 +447,14 @@ namespace alica
 		double x;
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
+		double constExpFunktion = 1.0;
+		double constPushUpFunktion = 2.15;
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		double eFunktion =1.1*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+
+
+
 
 		cout << "exp Funktion : " << eFunktion << endl;
 		//Exp Funktion for traction End
@@ -440,17 +463,21 @@ namespace alica
 
 		x = max(min(angle, 3.14), -3.14);
 
+
+
+
+
 		funktionLeft = 1.0
 				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
 
 		funktionRight = 1.0
 				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
 
-		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
+		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
+		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
