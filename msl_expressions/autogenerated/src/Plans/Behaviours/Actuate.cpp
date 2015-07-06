@@ -433,7 +433,7 @@ namespace alica
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		double constExpFunktion = 1.0;
-		double constPushUpFunktion = -2.0;
+		double constPushUpFunktion = 2.0;
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
