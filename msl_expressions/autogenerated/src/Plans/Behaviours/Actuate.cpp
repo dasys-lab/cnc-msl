@@ -418,52 +418,12 @@ namespace alica
 		{
 			arithmeticAverageSpeedDifference = 1;
 		}
-		//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+
+
+	//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
 		////arithmetic average speed difference End
 
-		//Rotation Controller Start
-
-		double rotationLeft = 0.0;
-		double rotationRight = 0.0;
-
-		/*
-		 if ((rotation < -0.3) || (rotation > 0.3))
-		 {
-
-		 rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
-		 - 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
-
-		 rotationLeft = rotationLeft - 10;
-
-		 rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
-		 - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
-
-		 rotationRight = rotationRight -10;
-		 };*/
-
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
-		{
-
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
-			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
-			cout << "rotation	left : " << rotationLeft << endl;
-			cout << "rotation right : " << rotationRight << endl;
-
-		}
-
-		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
-		{
-
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
-			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
-
-			cout << "rotation	left : " << rotationLeft << endl;
-			cout << "rotation right : " << rotationRight << endl;
-
-		}
-
-		//Rotation Controller End
 
 		//Exp Funktion for traction Start
 
@@ -495,10 +455,61 @@ namespace alica
 		funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
 		funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
 
+		//Funktion for drive with differt angles end
 
-		KvRight = (0.8 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight+arithmeticAverageSpeed/20);
 
-		KvLeft = (0.8 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft+arithmeticAverageSpeed/20);
+
+		//Rotation Controller Start
+
+		double rotationLeft = 0.0;
+		double rotationRight = 0.0;
+
+		/*
+		 if ((rotation < -0.3) || (rotation > 0.3))
+		 {
+
+		 rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
+		 - 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
+
+		 rotationLeft = rotationLeft - 10;
+
+		 rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
+		 - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
+
+		 rotationRight = rotationRight -10;
+		 };*/
+
+
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
+		{
+
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
+			cout << "rotation	left : " << rotationLeft << endl;
+			cout << "rotation right : " << rotationRight << endl;
+			funktionLeft=0;
+
+		}
+
+		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
+		{
+
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
+			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
+
+			cout << "rotation	left : " << rotationLeft << endl;
+			cout << "rotation right : " << rotationRight << endl;
+
+			funktionRight=0;
+		}
+
+		//Rotation Controller End
+
+
+
+		KvRight = (0.8 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
+
+		KvLeft = (0.8 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
