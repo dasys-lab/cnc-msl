@@ -56,12 +56,18 @@ namespace alica
 
 				arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-				cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+						cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
 						<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
-				left=10;
-				right=-15;
 
+                double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+
+
+				left= eFunktion*arithmeticAverageSpeed*1.0;
+				right=-eFunktion*arithmeticAverageSpeed*3.0;
+
+					cout<<"left :"<<left<<endl;
+					cout<<"right :"<<right<<endl;
 
 
 
