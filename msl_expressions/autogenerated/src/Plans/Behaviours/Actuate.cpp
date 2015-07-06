@@ -441,22 +441,16 @@ namespace alica
 		x = max(min(angle, 3.14), -3.14);
 
 		funktionLeft = 1.0
-				* (0.00337 * pow(x, 8) + 0.00083 * pow(x, 7) - 0.074* pow(x, 6) + 0.012 * pow(x, 5)
-						+ 0.548 * pow(x, 4) - 0.158 * pow(x, 3) - 1.02 * pow(x, 2) - 0.391* x - 2.11);
+				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - 2.292);
 
 		funktionRight = 1.0
-				* (0.00337 * pow(x, 8) - 0.00083 * pow(x, 7) - 0.074* pow(x, 6) - 0.012 * pow(x, 5)
-						+ 0.548 * pow(x, 4) + 0.158 * pow(x, 3) - 1.02 * pow(x, 2) + 0.391* x - 2.11);;
-
-
-
-
+				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - 2.292);
 
 		KvRight = (1.1 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
 		KvLeft = (1.1 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
-
-
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
