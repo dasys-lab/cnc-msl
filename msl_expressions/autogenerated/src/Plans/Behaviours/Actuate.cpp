@@ -483,21 +483,31 @@ namespace alica
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 30-10;
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
 			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 			funktionLeft=0;
 		if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>0){
 			cout<<"rueckwaertsdrehen"<<endl;
-			funktionRight=funktionRight+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*1.5;
+			funktionRight=funktionRight+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+		}
+		if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0){
+
+		rotationLeft=rotationLeft+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*15;
+
 		}
 		}
+
+
+
+
+
 
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 30-10;
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
 			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
 
 			cout << "rotation	left : " << rotationLeft << endl;
@@ -509,9 +519,15 @@ namespace alica
 		                if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>0){
 
 	cout<<"rückwärtsdrehen"<<endl;
-	funktionLeft=funktionLeft+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*1.5;
+	funktionLeft=funktionLeft+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 	
 	}
+                if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0){
+
+                rotationRight=rotationRight+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*15;
+		
+                }
+
 		
 
 		}
