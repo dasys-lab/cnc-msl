@@ -37,6 +37,29 @@ namespace alica
 		}
 
 
+		/*
+		funktionLeft = 1.0
+				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
+
+		funktionRight = 1.0
+				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
+
+
+
+
+		*/
+
+
+
+
+
+
+
+
+
+/*
 
 		double arithmeticAverageSpeed = 0.0;
 				double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -70,7 +93,7 @@ namespace alica
 					cout<<"right :"<<right<<endl;
 
 
-
+*/
 
 
 
@@ -467,13 +490,9 @@ namespace alica
 
 
 
-		funktionLeft = 1.0
-				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
+		funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
+		funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
 
-		funktionRight = 1.0
-				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
 
 		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
