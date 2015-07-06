@@ -86,8 +86,8 @@ namespace alica
                 double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
 
-				left= eFunktion*arithmeticAverageSpeed*1.0;
-				right=-eFunktion*arithmeticAverageSpeed*3.0;
+				left= 15;
+				right=-45;
 
 					cout<<"left :"<<left<<endl;
 					cout<<"right :"<<right<<endl;
@@ -97,70 +97,72 @@ namespace alica
 
 
 
+			
 
 
-
-		//newController(left, right);
+		
+	
+		newController(left, right);
 		//oldController(left,right);
 
 		//PD Regler Anfang
 		//PIDControllerLeft
 		/*
-		 +		const double KiLeft = 0.0;
-		 +		const double KdLeft = 0.1;
-		 +		const double KpLeft = 0.23;
-		 +
-		 +		double AbweichungLeft = 0.0;
-		 +		double Abweichung_SummeLeft = 0.0;
-		 +		double Abweichung_AltLeft = 0.0;
-		 +		double StellwertLeft = 0.0;
-		 +		const double SollwertLeft = 70;
-		 +		//const double SollwertLeftForward = 80;
-		 +
-		 +		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 +		{
-		 +
-		 +			Abweichung_SummeLeft += AbweichungLeft;
-		 +			AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
-		 +			StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
-		 +			StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		 +			StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
-		 +
-		 +			Abweichung_AltLeft = AbweichungLeft;
-		 +		};
-		 +
-		 +		//PIDControllerRight
-		 +
-		 +		const double KiRight = 0.0;
-		 +		const double KdRight = 0.1;
-		 +
-		 +		const double SollwertRight = 70;
-		 +		const double KpRight = 0.23;
-		 +
-		 +		double AbweichungRight = 0.0;
-		 +		double Abweichung_SummeRight = 0.0;
-		 +		double Abweichung_AltRight = 0.0;
-		 +		double StellwertRight = 0.0;
-		 +
-		 +		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 +		{
-		 +			Abweichung_SummeRight += AbweichungRight;
-		 +			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
-		 +			StellwertRight = KpRight * AbweichungRight + KvRight;
-		 +			StellwertRight += KiRight * Abweichung_SummeRight;
-		 +			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
-		 +
-		 +			Abweichung_AltRight = AbweichungRight;
-		 +		};
-		 +
-		 +		if (wm->rawSensorData.getOpticalFlowQoS() > 70)
-		 +		{
-		 +			StellwertLeft = KvLeft;
-		 +			StellwertRight = KvRight;
-		 +		};
-		 +
-		 +		//PD Regler Ende
-		 +*/
+		 		const double KiLeft = 0.0;
+		 		const double KdLeft = 0.1;
+		 		const double KpLeft = 0.23;
+		 
+		 		double AbweichungLeft = 0.0;
+		 		double Abweichung_SummeLeft = 0.0;
+		 		double Abweichung_AltLeft = 0.0;
+		 		double StellwertLeft = 0.0;
+		 		const double SollwertLeft = 70;
+		 		//const double SollwertLeftForward = 80;
+		 
+		 		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		 		{
+		 
+		 			Abweichung_SummeLeft += AbweichungLeft;
+		 			AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
+		 			StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		 			StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		 			StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+		 
+		 			Abweichung_AltLeft = AbweichungLeft;
+		 		};
+		 
+		 		//PIDControllerRight
+		 
+		 		const double KiRight = 0.0;
+		 		const double KdRight = 0.1;
+		 
+		 		const double SollwertRight = 70;
+		 		const double KpRight = 0.23;
+		 
+		 		double AbweichungRight = 0.0;
+		 		double Abweichung_SummeRight = 0.0;
+		 		double Abweichung_AltRight = 0.0;
+		 		double StellwertRight = 0.0;
+		 
+		 		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		 		{
+		 			Abweichung_SummeRight += AbweichungRight;
+		 			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
+		 			StellwertRight = KpRight * AbweichungRight + KvRight;
+		 			StellwertRight += KiRight * Abweichung_SummeRight;
+		 			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+		 
+		 			Abweichung_AltRight = AbweichungRight;
+		 		};
+		 
+		 		if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+		 		{
+		 			StellwertLeft = KvLeft;
+					StellwertRight = KvRight;
+		 		};
+		 
+		 		//PD Regler Ende
+		 	*/
 
 		cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
@@ -471,7 +473,7 @@ namespace alica
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
 		double constExpFunktion = 1.0;
-		double constPushUpFunktion = 2.15;
+		double constPushUpFunktion = 2.5;
 		double funktionLeft, funktionRight;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
@@ -494,13 +496,16 @@ namespace alica
 		funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
 
 
-		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
+		KvRight = (0.8 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight+arithmeticAverageSpeed/20);
 
-		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft);
+		KvLeft = (0.8 * eFunktion * arithmeticAverageSpeed * funktionLeft + rotationLeft+arithmeticAverageSpeed/20);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		cout << "KvRight : " << KvRight << endl;
+		
+
+		
 
 		//Funktion for drive with differt angles end
 		leftController = KvLeft;
