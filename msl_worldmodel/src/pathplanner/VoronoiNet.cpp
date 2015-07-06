@@ -186,32 +186,24 @@ namespace msl
 	 */
 	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<geometry::CNPoint2D> points)
 	{
-//		for(int i = 0; i < points.size();i++)
-//		{
-//			cout << "points: " << points.at(i).toString() << endl;
-//		}
 		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-//		cout << "Voronoinet: points size " << points.size() << endl;
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
-//		cout << "Voronoinet1: sites size " << sites.size() << endl;
 		if (ownPos != nullptr)
 		{
 			sites.push_back(Site_2(ownPos->x, ownPos->y));
 			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), true));
 		}
-//		cout << "Voronoinet2: sites size " << sites.size() << endl;
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
 				if((*iter)->first == wm->getOwnId())
 				{
-//					cout << "continued" << endl;
 					continue;
 				}
 				pointRobotKindMapping.insert(
@@ -221,10 +213,8 @@ namespace msl
 				sites.push_back(site);
 			}
 		}
-//		cout << "Voronoinet3: sites size " << sites.size() << endl;
 		for (int i = 0; i < points.size(); i++)
 		{
-//			cout << "for points" << endl;
 			for (int j = 0; j < sites.size(); j++)
 			{
 				//TODO check
@@ -244,11 +234,6 @@ namespace msl
 			}
 			alreadyIn = false;
 		}
-//		cout << "Voronoinet4: sites size " << sites.size() << endl;
-//		for(int i = 0; i < sites.size();i++)
-//		{
-//			cout << "site " << sites.at(i).x() << " " << sites.at(i).y() << endl;
-//		}
 		insertPoints(sites);
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
@@ -486,7 +471,6 @@ namespace msl
 		return ret;
 	}
 
-	//TODO check perhaps double sites
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getSitePositions()
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();

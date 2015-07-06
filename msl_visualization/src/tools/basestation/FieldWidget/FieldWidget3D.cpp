@@ -266,11 +266,6 @@ void FieldWidget3D::update_robot_info(void)
 			team.remove(toBeRemoved);
 			continue;
 		}
-		for (auto x : robot->getMsg()->obstacles)
-		{
-			auto pos = transform(x.x, x.y);
-			drawOpponent(pos.first / 1000, pos.second / 1000, 0);
-		}
 		bool alreadyIn = false;
 		for (auto member : team)
 		{
@@ -361,6 +356,23 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		alreadyIn = false;
+		for (auto x : robot->getMsg()->obstacles)
+		{
+			auto pos = transform(x.x, x.y);
+			for (auto member : team)
+			{
+				if (abs(member->getBottom()->GetPosition()[0] - pos.first / 1000) < 0.25
+						&& abs(member->getBottom()->GetPosition()[1] - pos.second / 1000) < 0.25)
+				{
+					alreadyIn = true;
+				}
+			}
+			if (!alreadyIn)
+			{
+				drawOpponent(pos.first / 1000, pos.second / 1000, 0);
+			}
+			alreadyIn = false;
+		}
 	}
 	if (showPath)
 	{
@@ -380,7 +392,7 @@ void FieldWidget3D::update_robot_info(void)
 															-pathPlannerInfo.front()->pathPoints.at(i - 1).x / 1000,
 															0.01, pathPlannerInfo.front()->pathPoints.at(i).y / 1000,
 															-pathPlannerInfo.front()->pathPoints.at(i).x / 1000, 0.01,
-															1, 0, 0);
+															1, 1, 1);
 				pathLines.push_back(actor);
 				renderer->AddActor(actor);
 			}
@@ -462,9 +474,9 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		sitePoints.clear();
-		if (voronoiNetInfo.front() != nullptr)
+		if (voronoiNetInfo.front() != nullptr && voronoiNetInfo.front()->sites.size() < numeric_limits<long>::max())
 		{
-			for (int i = 1; i < voronoiNetInfo.front()->sites.size(); i++)
+			for (int i = 0; i < voronoiNetInfo.front()->sites.size(); i++)
 			{
 				vtkActor* actor = createColoredDot(voronoiNetInfo.front()->sites.at(i).y / 1000,
 													-voronoiNetInfo.front()->sites.at(i).x / 1000, 0.5, 0, 0, 1);
