@@ -153,6 +153,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	showVoronoi = false;
 	showCorridor = false;
 	showSitePoints = false;
+	showAllComponents = false;
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
@@ -384,7 +385,7 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		pathLines.clear();
-		if (pathPlannerInfo.front() != nullptr)
+		if (!pathPlannerInfo.empty())
 		{
 			for (int i = 1; i < pathPlannerInfo.front()->pathPoints.size(); i++)
 			{
@@ -408,7 +409,7 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		netLines.clear();
-		if (voronoiNetInfo.front() != nullptr)
+		if (!voronoiNetInfo.empty())
 		{
 			for (int i = 1; i < voronoiNetInfo.front()->linePoints.size(); i += 2)
 			{
@@ -432,7 +433,7 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		corridorLines.clear();
-		if (corridorCheckInfo.front() != nullptr)
+		if (!corridorCheckInfo.empty())
 		{
 			vtkActor* actor = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
 														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
@@ -474,7 +475,7 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		sitePoints.clear();
-		if (voronoiNetInfo.front() != nullptr && voronoiNetInfo.front()->sites.size() < numeric_limits<long>::max())
+		if (!voronoiNetInfo.empty())
 		{
 			for (int i = 0; i < voronoiNetInfo.front()->sites.size(); i++)
 			{
@@ -575,6 +576,39 @@ void FieldWidget3D::showCorridorCheck(void)
 	}
 }
 
+void FieldWidget3D::showSites(void)
+{
+	if (this->showSitePoints == false)
+	{
+		showSitePoints = true;
+	}
+	else
+	{
+		showSitePoints = false;
+	}
+}
+
+
+void FieldWidget3D::showAll(void)
+{
+	if (this->showAllComponents == false)
+	{
+		showAllComponents = true;
+		showCorridor = true;
+		showPath = true;
+		showSitePoints = true;
+		showVoronoi = true;
+	}
+	else
+	{
+		showAllComponents = false;
+		showCorridor = false;
+		showPath = false;
+		showSitePoints = false;
+		showVoronoi = false;
+	}
+}
+
 void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info)
 {
 	lock_guard<mutex> lock(voronoiMutex);
@@ -620,17 +654,6 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDashedLine(float x1, float
 	return lineActor;
 }
 
-void FieldWidget3D::showSites(void)
-{
-	if (this->showSitePoints == false)
-	{
-		showSitePoints = true;
-	}
-	else
-	{
-		showSitePoints = false;
-	}
-}
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDot(float x, float y, float radius, double r, double g, double b)
 {

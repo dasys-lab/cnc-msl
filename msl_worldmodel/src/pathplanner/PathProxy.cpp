@@ -52,6 +52,9 @@ namespace msl
 		this->wm = MSLWorldModel::get();
 		pathPub = n.advertise<msl_msgs::PathPlanner>("/PathPlanner/PathPlanner", 10);
 		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
+		sc = supplementary::SystemConfig::getInstance();
+		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
+		NULL);
 
 	}
 
@@ -82,10 +85,12 @@ namespace msl
 			{
 				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
 				path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
-#ifdef PATHPLANNER_DEBUG
-				sendPathPlannerMsg(path);
-				sendVoronoiNetMsg(net->getSitePositions(),net);
-#endif
+
+				if(pathPlannerDebug)
+				{
+					sendPathPlannerMsg(path);
+					sendVoronoiNetMsg(net->getSitePositions(),net);
+				}
 			}
 		}
 		if(retPoint == nullptr)
@@ -115,10 +120,11 @@ namespace msl
 		pathPub.publish(pathMsg);
 	}
 
-	void PathProxy::sendVoronoiNetMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites, shared_ptr<VoronoiNet> voronoi)
+	void PathProxy::sendVoronoiNetMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites,
+										shared_ptr<VoronoiNet> voronoi)
 	{
 		msl_msgs::VoronoiNetInfo netMsg;
-		for(int i = 0; i < sites->size(); i++)
+		for (int i = 0; i < sites->size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
 			info.x = sites->at(i)->x;
@@ -126,7 +132,7 @@ namespace msl
 			netMsg.sites.push_back(info);
 		}
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > linePoints = calculateCroppedVoronoi(sites, voronoi);
-		for(int i = 0; i < linePoints->size(); i++)
+		for (int i = 0; i < linePoints->size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
 			info.x = linePoints->at(i)->x;
@@ -136,8 +142,8 @@ namespace msl
 		voroniPub.publish(netMsg);
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathProxy::calculateCroppedVoronoi(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites,
-											shared_ptr<VoronoiNet> voronoi)
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathProxy::calculateCroppedVoronoi(
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites, shared_ptr<VoronoiNet> voronoi)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		Iso_rectangle_2 bbox(- msl::MSLFootballField::FieldLength / 2 - 3000, -msl::MSLFootballField::FieldWidth / 2 - 3000,

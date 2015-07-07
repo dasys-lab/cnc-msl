@@ -8,8 +8,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
 
-#define CORRIDOR_DEBUG
-
 //includes for CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -121,6 +119,7 @@ namespace msl
 		double dribble_rotationWeight;
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
+		bool pathPlannerDebug;
 		ros::NodeHandle n;
 		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;

@@ -902,6 +902,7 @@
     <addaction name="actionShow_Voronoi_Diagram"/>
     <addaction name="actionShow_Corridor_Check"/>
     <addaction name="actionShow_Sites"/>
+    <addaction name="actionShow_All_PagthPlanner_Components"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1158,6 +1159,11 @@
   <action name="actionShow_Sites">
    <property name="text">
     <string>Show Sites</string>
+   </property>
+  </action>
+  <action name="actionShow_All_PagthPlanner_Components">
+   <property name="text">
+    <string>Show All PagthPlanner Components</string>
    </property>
   </action>
  </widget>

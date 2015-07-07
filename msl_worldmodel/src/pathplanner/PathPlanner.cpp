@@ -30,6 +30,8 @@ namespace msl
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor",
 		NULL);
+		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
+		NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
@@ -95,7 +97,6 @@ namespace msl
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
-			//TODO obstacles in msg wirklich egozentrisch ?
 			points.push_back(*(geometry::CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y).egoToAllo(*ownPos)));
 		}
 
@@ -297,15 +298,10 @@ namespace msl
 		points.push_back(p3);
 		points.push_back(p4);
 		points.push_back(p2);
-//		cout << "start" << endl;
-//		cout << "p1" << p1->toString() << endl;
-//		cout << "p2" << p2->toString() << endl;
-//		cout << "p3" << p3->toString() << endl;
-//		cout << "p4" << p4->toString() << endl;
-//		cout << "end" <<endl;
-#ifdef CORRIDOR_DEBUG
-		sendCorridorCheck(points);
-#endif
+		if(pathPlannerDebug)
+		{
+			sendCorridorCheck(points);
+		}
 		return obstaclePoint != nullptr
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
 	}

@@ -8,7 +8,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
 
-#define PATHPLANNER_DEBUG
 
 //includes for CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -35,6 +34,7 @@ typedef Kernel::Line_2 Line_2;
 #include "MSLWorldModel.h"
 #include <ros/ros.h>
 #include "VoronoiNet.h"
+#include "SystemConfig.h"
 
 
 namespace msl
@@ -57,6 +57,8 @@ namespace msl
 		ros::NodeHandle n;
 		ros::Publisher pathPub;
 		ros::Publisher voroniPub;
+		supplementary::SystemConfig* sc;
+		bool pathPlannerDebug;
 
 	};
 

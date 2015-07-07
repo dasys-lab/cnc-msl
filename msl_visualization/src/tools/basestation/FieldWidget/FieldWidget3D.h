@@ -135,6 +135,7 @@ private:
     bool showVoronoi;
     bool showCorridor;
     bool showSitePoints;
+    bool showAllComponents;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void turnRobot(shared_ptr<RobotVisualization> robot, double angle);
@@ -212,6 +213,7 @@ public Q_SLOTS:
     void showVoronoiNet(void);
     void showCorridorCheck(void);
     void showSites(void);
+    void showAll(void);
     void update_robot_info(void);
 
     void obstacles_point_flip(unsigned int Robot_no, bool on_off);
