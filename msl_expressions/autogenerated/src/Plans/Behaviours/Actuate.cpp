@@ -471,11 +471,25 @@ namespace alica
 
 		   Y[0]=1; Y[1]=-1.5; Y[2]=-3; Y[3]=-3; Y[4]=-3;Y[5]=-2.8;Y[6]=-2.5;Y[7]=-2.0;Y[8]=-1.9;
 		   Y[9]=1;Y[10]=1;Y[11]=1;Y[12]=1;
-
 		   splines::spline s;
 		   s.set_points(X,Y);    // currently it is required that X is already sorted
-		   double value=s(x);  //
-		   cout<<"value : "<<value<<endl;
+		   double valueone=s(0);  //
+		   cout<<"valueone : "<<valueone<<endl;
+		  
+		   double valuetwo=s(1.57);  //
+                   cout<<"valuetwo : "<<valuetwo<<endl;
+                
+		   double valuetwo=s(3.14);  //
+                   cout<<"valuethree : "<<valuethree<<endl;
+                
+		   double valuefour=s(-3.14);  //
+                   cout<<"value4 : "<<valuefour<<endl;
+                
+		   double valuefive=s(2.5);  //
+                   cout<<"value5 : "<<valuefive<<endl;
+                
+		   
+
 
 
 		   //LeftMotorFunktion interpolation End
