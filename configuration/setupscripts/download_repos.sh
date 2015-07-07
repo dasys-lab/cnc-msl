@@ -19,6 +19,8 @@ msg "Hinweis: Dein SSH Key muss in deinem GITHUB-Account registriert werden und 
 
 msg "GITHUB Repositories werden heruntergeladen, falls noch nicht vorhanden"
 
+## Ordnerstruktur erstellen, falls nicht vorhanden
+mkdir -p ~/cnws/src
 cd ~/cnws/src
 if [ ! -d ~/cnws/src/alica ];
 then
