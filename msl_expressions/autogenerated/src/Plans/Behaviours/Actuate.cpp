@@ -420,7 +420,7 @@ namespace alica
 
 		double valueExpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.valueExpFunktion", NULL);
 		double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
-																					NULL);
+		NULL);
 		double funktionLeft = 0, funktionRight = 0;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
@@ -443,20 +443,20 @@ namespace alica
 		// Load XLeft Lookup Lists FunktionValuesRightX
 		for (string sectionName : *FunktionValuesRightSections)
 		{
-			 XRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
-																		sectionName.c_str(), "XRight", NULL);
+			XRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
+																			sectionName.c_str(), "XRight", NULL);
 
-			 YRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
-																		sectionName.c_str(), "YRight",
-																		NULL);
-
+			YRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
+																			sectionName.c_str(), "YRight",
+																			NULL);
 			rightMotor.set_points(XRight, YRight);
-			//double FunktionValuesRight = rightMotor(x);
+
+
+			//double FunktionValuesRight = rightMotor(x); rightMotor.set_points(XRight, YRight);
 			//funktionRightInterpolation.push_back(FunktionValuesRight);
 		}
-		double FunktionValuesRight = rightMotor(x);
-
-		cout<<"FunktionValuesRight  "<<FunktionValuesRight<<endl;
+		auto p = rightMotor(x);
+		cout<<"funktionRightInterpolation p : "<<p<<endl;
 		//	leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
 		//double funktionLeftInterpolation = leftMotor(x); //
 		//	cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
@@ -468,20 +468,17 @@ namespace alica
 		//vector<double> XRight(13), YRight(13);
 
 		/*splines::spline rightMotor;
-		rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
-		double funktionRightInterpolation = rightMotor(x); //
-		cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
-*/
+		 rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
+		 double funktionRightInterpolation = rightMotor(x); //
+		 cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
+		 */
 		//RightMotorFunktion interpolation End
 
 		//You can replace funktionLeft/Rightinterpolation with funktionLeft/Right
 		//funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
 		//funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
-
 		//Funktion for drive with differt angles end
-
 		//Rotation Controller Start
-
 		double rotationLeft = 0.0;
 		double rotationRight = 0.0;
 
@@ -535,9 +532,9 @@ namespace alica
 
 		//Rotation Controller End
 
-		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRightInterpolation + rotationRight);
+		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * p+ rotationRight);
 
-	//	KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeftInterpolation + rotationLeft);
+		//	KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeftInterpolation + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
