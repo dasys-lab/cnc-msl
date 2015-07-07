@@ -473,20 +473,10 @@ namespace alica
 		   Y[9]=1;Y[10]=1;Y[11]=1;Y[12]=1;
 		   splines::spline s;
 		   s.set_points(X,Y);    // currently it is required that X is already sorted
-		   double valueone=s(0);  //
-		   cout<<"valueone (0) : "<<valueone<<endl;
+		   double value=s(x);  //
+		   cout<<"value (x) : "<<value<<endl;
 
-           double valuetwo=s(1.57);  //
-           cout<<"valuetwo (1.57) : "<<valuetwo<<endl;
-
-           double valuethree=s(3.14);  //
-           cout<<"valuethree (3.14) : "<<valuethree<<endl;
-
-           double valuefour=s(-3.14);  //
-           cout<<"value4 (-3.14)  : "<<valuefour<<endl;
-
-           double valuefive=s(2.5);  //
-           cout<<"value5  (2.5)  : "<<valuefive<<endl;
+          
 
 
 
@@ -586,7 +576,7 @@ namespace alica
 
 		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed + rotationLeft);
+		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed*value + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
