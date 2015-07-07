@@ -451,19 +451,19 @@ namespace alica
 		XLeft[11] = 2.67;
 		XLeft[12] = 3.14;
 
-		YLeft[0] = 1;
-		YLeft[1] = -1.5;
-		YLeft[2] = -3;
-		YLeft[3] = -3;
+		YLeft[0] = 1.2;
+		YLeft[1] = -0.8;
+		YLeft[2] = -2.8;
+		YLeft[3] = -3.5;
 		YLeft[4] = -3;
 		YLeft[5] = -2.8;
 		YLeft[6] = -2.5;
 		YLeft[7] = -2.0;
-		YLeft[8] = -1.9;
+		YLeft[8] = -1.0;
 		YLeft[9] = 1;
 		YLeft[10] = 1;
 		YLeft[11] = 1;
-		YLeft[12] = 1;
+		YLeft[12] = 1.2;
 
 		splines::spline leftMotor;
 		leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
@@ -489,19 +489,19 @@ namespace alica
 		XRight[11] = 2.67;
 		XRight[12] = 3.14;
 
-		YRight[0] = 1;
+		YRight[0] = 1.2;
 		YRight[1] = 1;
 		YRight[2] = 1;
 		YRight[3] = 1;
-		YRight[4] = -1.9;
+		YRight[4] = -1.0;
 		YRight[5] = -2.0;
 		YRight[6] = -2.5;
 		YRight[7] = -2.8;
 		YRight[8] = -3;
-		YRight[9] = -3;
-		YRight[10] = -3;
-		YRight[11] = -1.5;
-		YRight[12] = 1;
+		YRight[9] = -3.5;
+		YRight[10] = -2.8;
+		YRight[11] = -0.8;
+		YRight[12] = 1.2;
 		splines::spline rightMotor;
 		rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
 		double funktionRightInterpolation = rightMotor(x); //
@@ -562,16 +562,16 @@ namespace alica
 			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2 - 5;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
-			funktionLeft = 0;
+			funktionLeftInterpolation = 0;
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
 			{
 				cout << "rueckwaertsdrehen" << endl;
-				funktionRight = funktionRight + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+				funktionRightInterpolation =funktionRightInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 			}
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 			{
-
-				rotationLeft = rotationLeft + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 15;
+				
+				funktionLeftInterpolation = funktionLeftInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*0.5 ;
 
 			}
 		}
@@ -585,19 +585,20 @@ namespace alica
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 
-			funktionRight = 0;
+			funktionRightInterpolation = 0;
 
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
 			{
-
+				
 				cout << "rückwärtsdrehen" << endl;
-				funktionLeft = funktionLeft + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+				funktionLeftInterpolation = funktionLeftInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 
 			}
 			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
 			{
 
-				rotationRight = rotationRight + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 15;
+				
+				funktionRightInterpolation = funktionRightInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
 			}
 
