@@ -475,19 +475,22 @@ namespace alica
 		   s.set_points(X,Y);    // currently it is required that X is already sorted
 		   double valueone=s(0);  //
 		   cout<<"valueone : "<<valueone<<endl;
-		  
-		   double valuetwo=s(1.57);  //
-                   cout<<"valuetwo : "<<valuetwo<<endl;
-                
-		   double valuetwo=s(3.14);  //
-                   cout<<"valuethree : "<<valuethree<<endl;
-                
-		   double valuefour=s(-3.14);  //
-                   cout<<"value4 : "<<valuefour<<endl;
-                
-		   double valuefive=s(2.5);  //
-                   cout<<"value5 : "<<valuefive<<endl;
-                
+
+           double valuetwo=s(1.57);  //
+           cout<<"valuetwo : "<<valuetwo<<endl;
+
+           double valuethree=s(3.14);  //
+           cout<<"valuethree : "<<valuethree<<endl;
+
+           double valuefour=s(-3.14);  //
+           cout<<"value4 : "<<valuefour<<endl;
+
+           double valuefive=s(2.5);  //
+           cout<<"value5 : "<<valuefive<<endl;
+
+
+
+
 		   
 
 
@@ -583,7 +586,7 @@ namespace alica
 
 		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
 
-		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * value + rotationLeft);
+		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
