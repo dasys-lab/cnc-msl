@@ -14,7 +14,10 @@ namespace alica
         Actuate();
         virtual ~Actuate();
         virtual void run(void* msg);
+
         /*PROTECTED REGION ID(pub1417017518918) ENABLED START*/ //Add additional public methods here
+
+
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
@@ -28,6 +31,9 @@ namespace alica
         double speedDifference;
         double zaeler;
         double qualityOfServiceSumme;
+
+        void oldController( double &leftController,double &rightController);
+        void newController(  double &leftController,double &rightController );
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

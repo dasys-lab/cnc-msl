@@ -204,5 +204,9 @@ namespace msl
 		return ringBufferLength;
 	}
 
+	int MSLWorldModel::getOwnId()
+	{
+		return ownID;
+	}
 } /* namespace msl */
 

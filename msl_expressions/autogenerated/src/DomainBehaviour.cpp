@@ -18,7 +18,7 @@ namespace alica
 
 		kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
 
-		shovelSelectPublisher = n.advertise<msl_actuator_msgs::KickControl>("/ShovelSelect", 10);
+		shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("/ShovelSelect", 10);
 	}
 
 	DomainBehaviour::~DomainBehaviour()

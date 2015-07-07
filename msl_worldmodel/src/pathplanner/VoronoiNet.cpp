@@ -190,25 +190,35 @@ namespace msl
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
 		bool alreadyIn = false;
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		if (ownPos != nullptr)
+		{
+			sites.push_back(Site_2(ownPos->x, ownPos->y));
+			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), true));
+		}
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
+				if((*iter)->first == wm->getOwnId())
+				{
+					continue;
+				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, bool>(
-								make_shared<geometry::CNPoint2D>((*iter)->x, (*iter)->y), true));
-				Site_2 site((*iter)->x, (*iter)->y);
+								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y), true));
+				Site_2 site((*iter)->second->x, (*iter)->second->y);
 				sites.push_back(site);
 			}
 		}
 		for (int i = 0; i < points.size(); i++)
 		{
-
 			for (int j = 0; j < sites.size(); j++)
 			{
-				if (sites.at(j).x() == points.at(i).x && sites.at(j).y() == points.at(i).y)
+				//TODO check
+				if (abs(sites.at(j).x() - points.at(i).x) < 250 && abs(sites.at(j).y() - points.at(i).y) < 250)
 				{
 					alreadyIn = true;
 					break;
@@ -307,7 +317,8 @@ namespace msl
 
 			for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
 			{
-				if (it->first->x == (*iter)->x && it->first->y == (*iter)->y)
+				//TODO needs to be checked
+				if (abs(it->first->x - (*iter)->x) < 250 && abs(it->first->y - (*iter)->y) < 250)
 				{
 					alreadyIn = true;
 					break;

@@ -80,14 +80,15 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPosition> > > Robots::getPositionsOfTeamMates()
+	shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> Robots::getPositionsOfTeamMates()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> ret;
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ret = make_shared<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>>();
 		for(auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
 		{
-			if(wm->getTime() - iter->second->getLast()->timeStamp > maxInformationAge)
+			if(wm->getTime() - iter->second->getLast()->timeStamp < maxInformationAge)
 			{
-				ret->push_back(iter->second->getLast()->getInformation());
+				shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> element = make_shared<pair<int, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
+				ret->push_back(element);
 			}
 		}
 		return ret;

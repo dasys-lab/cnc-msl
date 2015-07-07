@@ -1,6 +1,7 @@
 using namespace std;
 #include "Plans/Behaviours/AttackOpp.h"
 
+
 /*PROTECTED REGION ID(inccpp1430324527403) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include <cmath>
@@ -60,11 +61,16 @@ namespace alica
         {
             cout << "get closer" << endl;
 
+            ballGetsCloser(egoBallVelocity,egoBallPos);
+
+
         }
         else
         {
             cout << "roll away" << endl;
         }
+
+
 
         //	if ((x > old_x && y > old_y) && (x < 0 && y < 0))
         //	{
@@ -223,5 +229,26 @@ namespace alica
             //this->success = true;
         }
     }
+
+    void AttackOpp::ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,shared_ptr < geometry::CNPoint2D > egoBallPos)
+    {
+    	const double xVelocity= ballVelocity->x;
+    	const double yVelocity= ballVelocity->y;
+    	const double xDistance = egoBallPos->x;
+    	const double yDistance = egoBallPos->y;
+
+    	double intersection = xDistance*(yVelocity/xVelocity)+yDistance;
+
+		shared_ptr<geometry::CNPoint2D> interPoint = make_shared<geometry::CNPoint2D>(0, intersection);
+
+        msl_actuator_msgs::MotionControl mc;
+        // TODO : remove later
+        mc = RobotMovement::moveToPointCarefully(interPoint, interPoint, 300);
+
+    	cout<<"xVelocity :"<<xVelocity<<endl;
+    	cout<<"yVelocity :"<<yVelocity<<endl;
+    	cout<<endl;
+    }
+
 /*PROTECTED REGION END*/
 } /* namespace alica */

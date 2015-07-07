@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<alica:PlanType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1426698098722" name="OwnPenaltyType" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="">
-  <plans id="1426698112523" name="MISSING_NAME" comment="" activated="true">
-    <plan>../GenericOwnStandard.pml#1426697860439</plan>
-  </plans>
-</alica:PlanType>

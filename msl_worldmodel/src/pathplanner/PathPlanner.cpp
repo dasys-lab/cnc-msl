@@ -30,7 +30,10 @@ namespace msl
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor",
 		NULL);
+		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
+		NULL);
 		lastPath = nullptr;
+		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
 
 	}
@@ -89,18 +92,13 @@ namespace msl
 	 */
 	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
+		lock_guard<mutex> lock(voronoiMutex);
 		vector<geometry::CNPoint2D> points;
-		if (wm->rawSensorData.getOwnPositionVision() != nullptr)
-		{
-			points.push_back(
-					geometry::CNPoint2D(wm->rawSensorData.getOwnPositionVision()->x,
-										wm->rawSensorData.getOwnPositionVision()->y));
-		}
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
-			points.push_back(geometry::CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y));
+			points.push_back(*(geometry::CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y).egoToAllo(*ownPos)));
 		}
-		lock_guard<mutex> lock(voronoiMutex);
 
 		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);
 		currentVoronoiPos++;
@@ -300,14 +298,25 @@ namespace msl
 		points.push_back(p3);
 		points.push_back(p4);
 		points.push_back(p2);
-//		cout << "start" << endl;
-//		cout << "p1" << p1->toString() << endl;
-//		cout << "p2" << p2->toString() << endl;
-//		cout << "p3" << p3->toString() << endl;
-//		cout << "p4" << p4->toString() << endl;
-//		cout << "end" <<endl;
+		if(pathPlannerDebug)
+		{
+			sendCorridorCheck(points);
+		}
 		return obstaclePoint != nullptr
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+	}
+
+	void msl::PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D> > points)
+	{
+		msl_msgs::CorridorCheck cc;
+		for(int i = 0; i < points.size(); i++)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = points.at(i)->x;
+			info.y = points.at(i)->y;
+			cc.corridorPoints.push_back(info);
+		}
+		corridorPub.publish(cc);
 	}
 
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,

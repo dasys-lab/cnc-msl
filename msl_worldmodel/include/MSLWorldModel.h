@@ -66,6 +66,7 @@ namespace msl
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
 		int getRingBufferLength();
+		int getOwnId();
 
 		RawSensorData rawSensorData;
 		Robots robots;

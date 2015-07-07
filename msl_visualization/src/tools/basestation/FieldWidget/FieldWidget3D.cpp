@@ -150,12 +150,20 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
 	showPath = false;
+	showVoronoi = false;
+	showCorridor = false;
+	showSitePoints = false;
+	showAllComponents = false;
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
 	sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
 													(FieldWidget3D*)this);
-	pathPlannerSubscriber = rosNode->subscribe("/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg,
+	pathPlannerSubscriber = rosNode->subscribe("/PathPlanner/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg,
+												(FieldWidget3D*)this);
+	voronoiSitesSubscriber = rosNode->subscribe("/PathPlanner/VoronoiNet", 10, &FieldWidget3D::onVoronoiNetMsg,
+												(FieldWidget3D*)this);
+	corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
 													(FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
@@ -259,11 +267,6 @@ void FieldWidget3D::update_robot_info(void)
 			team.remove(toBeRemoved);
 			continue;
 		}
-		for (auto x : robot->getMsg()->obstacles)
-		{
-			auto pos = transform(x.x, x.y);
-			drawOpponent(pos.first / 1000, pos.second / 1000, 0);
-		}
 		bool alreadyIn = false;
 		for (auto member : team)
 		{
@@ -278,7 +281,7 @@ void FieldWidget3D::update_robot_info(void)
 			r->setId(robot->getMsg()->senderID);
 			r->setBall(nullptr);
 			auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
-			drawTeamRobot(r,  pos.first / 1000,  pos.second / 1000, 0);
+			drawTeamRobot(r, pos.first / 1000, pos.second / 1000, 0);
 			turnRobot(r, robot->getMsg()->odom.position.angle);
 			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 			{
@@ -302,9 +305,7 @@ void FieldWidget3D::update_robot_info(void)
 			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
 			{
 				auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
-				moveSharedBall(r, pos.first / 1000,
-								pos.second / 1000,
-								robot->getMsg()->sharedBall.point.z / 1000);
+				moveSharedBall(r, pos.first / 1000, pos.second / 1000, robot->getMsg()->sharedBall.point.z / 1000);
 			}
 			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
 			{
@@ -319,8 +320,7 @@ void FieldWidget3D::update_robot_info(void)
 				if (member->getId() == robot->getMsg()->senderID)
 				{
 					auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
-					moveRobot(member, pos.first / 1000, pos.second / 1000,
-								0);
+					moveRobot(member, pos.first / 1000, pos.second / 1000, 0);
 					turnRobot(member, robot->getMsg()->odom.position.angle);
 					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
 					{
@@ -330,8 +330,7 @@ void FieldWidget3D::update_robot_info(void)
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
 					{
 						auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
-						moveBall(member, robot->getMsg(), pos.first / 1000,
-									pos.second / 1000,
+						moveBall(member, robot->getMsg(), pos.first / 1000, pos.second / 1000,
 									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
@@ -346,8 +345,7 @@ void FieldWidget3D::update_robot_info(void)
 					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
 					{
 						auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
-						moveSharedBall(member, pos.first / 1000,
-										pos.second / 1000,
+						moveSharedBall(member, pos.first / 1000, pos.second / 1000,
 										robot->getMsg()->sharedBall.point.z / 1000);
 					}
 					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
@@ -359,26 +357,133 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 		alreadyIn = false;
-	}
-	if(showPath)
-	{
-		for(vtkActor* actor : pathLines)
+		for (auto x : robot->getMsg()->obstacles)
 		{
-			if(actor != nullptr)
+			auto pos = transform(x.x, x.y);
+			for (auto member : team)
+			{
+				if (abs(member->getBottom()->GetPosition()[0] - pos.first / 1000) < 0.25
+						&& abs(member->getBottom()->GetPosition()[1] - pos.second / 1000) < 0.25)
+				{
+					alreadyIn = true;
+				}
+			}
+			if (!alreadyIn)
+			{
+				drawOpponent(pos.first / 1000, pos.second / 1000, 0);
+			}
+			alreadyIn = false;
+		}
+	}
+	if (showPath)
+	{
+		for (vtkActor* actor : pathLines)
+		{
+			if (actor != nullptr)
 			{
 				renderer->RemoveActor(actor);
 			}
 		}
 		pathLines.clear();
-//		createDot(renderer, pathPlannerInfo.front()->pathPoints.at(0).y / 1000, -pathPlannerInfo.front()->pathPoints.at(0).x / 1000,true, 0.5);
-		for(int i = 1; i < pathPlannerInfo.front()->pathPoints.size(); i++)
+		if (!pathPlannerInfo.empty())
 		{
-			vtkActor* actor = createDashedLine(pathPlannerInfo.front()->pathPoints.at(i - 1).y / 1000,
-											   -pathPlannerInfo.front()->pathPoints.at(i - 1).x / 1000, 0.01,
-											   pathPlannerInfo.front()->pathPoints.at(i).y / 1000,
-											   -pathPlannerInfo.front()->pathPoints.at(i).x / 1000, 0.01);
-			pathLines.push_back(actor);
+			for (int i = 1; i < pathPlannerInfo.front()->pathPoints.size(); i++)
+			{
+				vtkActor* actor = createColoredDashedLine(pathPlannerInfo.front()->pathPoints.at(i - 1).y / 1000,
+															-pathPlannerInfo.front()->pathPoints.at(i - 1).x / 1000,
+															0.01, pathPlannerInfo.front()->pathPoints.at(i).y / 1000,
+															-pathPlannerInfo.front()->pathPoints.at(i).x / 1000, 0.01,
+															1, 1, 1);
+				pathLines.push_back(actor);
+				renderer->AddActor(actor);
+			}
+		}
+	}
+	if (showVoronoi)
+	{
+		for (vtkActor* actor : netLines)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		netLines.clear();
+		if (!voronoiNetInfo.empty())
+		{
+			for (int i = 1; i < voronoiNetInfo.front()->linePoints.size(); i += 2)
+			{
+				vtkActor* actor = createColoredDashedLine(voronoiNetInfo.front()->linePoints.at(i - 1).y / 1000,
+															-voronoiNetInfo.front()->linePoints.at(i - 1).x / 1000,
+															0.01, voronoiNetInfo.front()->linePoints.at(i).y / 1000,
+															-voronoiNetInfo.front()->linePoints.at(i).x / 1000, 0.01, 0,
+															0, 0);
+				netLines.push_back(actor);
+				renderer->AddActor(actor);
+			}
+		}
+	}
+	if (showCorridor)
+	{
+		for (vtkActor* actor : corridorLines)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		corridorLines.clear();
+		if (!corridorCheckInfo.empty())
+		{
+			vtkActor* actor = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
+														1, 0, 0);
+			vtkActor* actor2 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
+														1, 0, 0);
+			vtkActor* actor3 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
+														1, 0, 0);
+			vtkActor* actor4 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
+														corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
+														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
+														1, 0, 0);
+			corridorLines.push_back(actor);
+			corridorLines.push_back(actor2);
+			corridorLines.push_back(actor3);
+			corridorLines.push_back(actor4);
 			renderer->AddActor(actor);
+			renderer->AddActor(actor2);
+			renderer->AddActor(actor3);
+			renderer->AddActor(actor4);
+		}
+	}
+	if (showSitePoints)
+	{
+		for (vtkActor* actor : sitePoints)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		sitePoints.clear();
+		if (!voronoiNetInfo.empty())
+		{
+			for (int i = 0; i < voronoiNetInfo.front()->sites.size(); i++)
+			{
+				vtkActor* actor = createColoredDot(voronoiNetInfo.front()->sites.at(i).y / 1000,
+													-voronoiNetInfo.front()->sites.at(i).x / 1000, 0.5, 0, 0, 1);
+				sitePoints.push_back(actor);
+				renderer->AddActor(actor);
+			}
 		}
 	}
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -431,13 +536,13 @@ pair<double, double> FieldWidget3D::transform(double x, double y)
 
 void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle)
 {
-	robot->getTop()->SetOrientation(0,0,angle * (180.0 / (double)M_PI) + 90);
-	robot->getBottom()->SetOrientation(0,0, angle * (180.0 / (double)M_PI) + 90);
+	robot->getTop()->SetOrientation(0, 0, angle * (180.0 / (double)M_PI) + 90);
+	robot->getBottom()->SetOrientation(0, 0, angle * (180.0 / (double)M_PI) + 90);
 }
 
 void FieldWidget3D::showPathPoints()
 {
-	if(this->showPath == false)
+	if (this->showPath == false)
 	{
 		showPath = true;
 	}
@@ -445,6 +550,127 @@ void FieldWidget3D::showPathPoints()
 	{
 		showPath = false;
 	}
+}
+
+void FieldWidget3D::showVoronoiNet(void)
+{
+	if (this->showVoronoi == false)
+	{
+		showVoronoi = true;
+	}
+	else
+	{
+		showVoronoi = false;
+	}
+}
+
+void FieldWidget3D::showCorridorCheck(void)
+{
+	if (this->showCorridor == false)
+	{
+		showCorridor = true;
+	}
+	else
+	{
+		showCorridor = false;
+	}
+}
+
+void FieldWidget3D::showSites(void)
+{
+	if (this->showSitePoints == false)
+	{
+		showSitePoints = true;
+	}
+	else
+	{
+		showSitePoints = false;
+	}
+}
+
+
+void FieldWidget3D::showAll(void)
+{
+	if (this->showAllComponents == false)
+	{
+		showAllComponents = true;
+		showCorridor = true;
+		showPath = true;
+		showSitePoints = true;
+		showVoronoi = true;
+	}
+	else
+	{
+		showAllComponents = false;
+		showCorridor = false;
+		showPath = false;
+		showSitePoints = false;
+		showVoronoi = false;
+	}
+}
+
+void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info)
+{
+	lock_guard<mutex> lock(voronoiMutex);
+	int i = 0;
+	if (i > ringBufferLength)
+	{
+		voronoiNetInfo.pop_back();
+		i--;
+	}
+	i++;
+	voronoiNetInfo.push_front(info);
+}
+
+void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info)
+{
+	lock_guard<mutex> lock(corridorMutex);
+	int i = 0;
+	if (i > ringBufferLength)
+	{
+		corridorCheckInfo.pop_back();
+		i--;
+	}
+	i++;
+	corridorCheckInfo.push_front(info);
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDashedLine(float x1, float y1, float z1, float x2, float y2,
+																	float z2, double r, double g, double b)
+{
+	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+	vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	vtkActor* lineActor = vtkActor::New();
+	line->SetPoint1(x1, y1, z1);
+	line->SetPoint2(x2, y2, z2);
+	lineMapper->SetInputConnection(line->GetOutputPort());
+	lineActor->SetMapper(lineMapper);
+	lineActor->GetProperty()->SetLineWidth(3);
+	lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
+	lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
+	lineActor->GetProperty()->SetColor(r, g, b);
+	lineActor->GetProperty()->SetPointSize(1);
+	lineActor->GetProperty()->SetLineWidth(3);
+	return lineActor;
+}
+
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDot(float x, float y, float radius, double r, double g, double b)
+{
+	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
+	dot->SetRadius(radius);
+	dot->SetHeight(0.001);
+	dot->SetResolution(32);
+	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	dotMapper->SetInput(dot->GetOutput());
+
+	vtkActor* coloredDot = vtkActor::New();
+	coloredDot->SetMapper(dotMapper);
+	coloredDot->GetProperty()->SetColor(r, g, b);
+	coloredDot->SetPosition(x, y, 0.01);
+	coloredDot->SetOrientation(90, 0, 0);
+	coloredDot->GetProperty()->SetAmbient(1.0);
+	return coloredDot;
 }
 
 void FieldWidget3D::debug_point_flip_all(bool on_off)
