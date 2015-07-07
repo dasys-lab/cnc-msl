@@ -466,7 +466,7 @@ namespace alica
 		   std::vector<double> X(13), Y(13);
 		   //Angle
 		   X[0]=-3.14; X[1]=-2.67; X[2]=-2.12; X[3]=-1.57;X[4]=-0.942;X[5]=-0.47;
-		   X[6]=0; X[7]=0.47;X[8]=0.942;X[9]=1.57;X[10]=2.12;X[11]=2.67; X[12]=-3.14;
+		   X[6]=0; X[7]=0.47;X[8]=0.942;X[9]=1.57;X[10]=2.12;X[11]=2.67; X[12]=3.14;
 
 
 		   Y[0]=1; Y[1]=-1.5; Y[2]=-3; Y[3]=-3; Y[4]=-3;Y[5]=-2.8;Y[6]=-2.5;Y[7]=-2.0;Y[8]=-1.9;
@@ -474,19 +474,19 @@ namespace alica
 		   splines::spline s;
 		   s.set_points(X,Y);    // currently it is required that X is already sorted
 		   double valueone=s(0);  //
-		   cout<<"valueone : "<<valueone<<endl;
+		   cout<<"valueone (0) : "<<valueone<<endl;
 
            double valuetwo=s(1.57);  //
-           cout<<"valuetwo : "<<valuetwo<<endl;
+           cout<<"valuetwo (1.57) : "<<valuetwo<<endl;
 
            double valuethree=s(3.14);  //
-           cout<<"valuethree : "<<valuethree<<endl;
+           cout<<"valuethree (3.14) : "<<valuethree<<endl;
 
            double valuefour=s(-3.14);  //
-           cout<<"value4 : "<<valuefour<<endl;
+           cout<<"value4 (-3.14)  : "<<valuefour<<endl;
 
            double valuefive=s(2.5);  //
-           cout<<"value5 : "<<valuefive<<endl;
+           cout<<"value5  (2.5)  : "<<valuefive<<endl;
 
 
 
