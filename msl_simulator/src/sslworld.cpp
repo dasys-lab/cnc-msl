@@ -365,7 +365,6 @@ void SSLWorld::drawRobot(int team, int countRobot)
 		switch (countRobot)
 		{
 			case 0:
-				std::cout << "BEWEGE BLUE 0" << std::endl;
 				robots[countRobot]->setXY(-0.68, 1.03);
 				break;
 			case 1:
@@ -392,7 +391,6 @@ void SSLWorld::drawRobot(int team, int countRobot)
 		switch (countRobot)
 		{
 			case 6:
-				std::cout << "BEWEGE YELLOW 0" << std::endl;
 				robots[countRobot]->setXY(+0.68, 1.03);
 				break;
 			case 7:
