@@ -25,6 +25,8 @@
 
 #include  "Plans/Attack/constraints/RunFree1434115664325Constraints.h"
 
+#include  "Plans/Attack/constraints/PassPlay1436268896671Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"

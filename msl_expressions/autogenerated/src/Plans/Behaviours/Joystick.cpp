@@ -55,7 +55,7 @@ namespace alica
             bhc.senderID = joy->robotId;
             bhc.leftMotor = joy->ballHandleLeftMotor;
             bhc.rightMotor = joy->ballHandleRightMotor;
-           // send(bhc);
+            // send(bhc);
         }
 
         if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
@@ -72,7 +72,7 @@ namespace alica
                 kc.forceVoltage = false;
 
                 send(kc);
-               // send(bhc);
+                // send(bhc);
                 send(mc);
 
                 lastProcessedCmd = joy;

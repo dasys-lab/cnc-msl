@@ -25,6 +25,8 @@
 
 #include  "Plans/Attack/RunFree1434115664325.h"
 
+#include  "Plans/Attack/PassPlay1436268896671.h"
+
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
 #include  "Plans/WM161413992564408.h"
@@ -109,6 +111,10 @@ namespace alica
 
             case 1434115664325:
                 return make_shared<UtilityFunction1434115664325>();
+                break;
+
+            case 1436268896671:
+                return make_shared<UtilityFunction1436268896671>();
                 break;
 
             case 1417620189234:

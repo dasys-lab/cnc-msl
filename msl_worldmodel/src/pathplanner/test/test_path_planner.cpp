@@ -62,13 +62,13 @@ TEST_F(PathPlannerTest, pathPlanner)
 {
 	shared_ptr<msl::VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
 	EXPECT_TRUE(net == nullptr);
-	geometry::CNPoint2D startPoint(0, 0);
-	geometry::CNPoint2D goalPoint(1000, 1000);
+	shared_ptr<geometry::CNPoint2D> startPoint = make_shared<geometry::CNPoint2D>(0, 0);
+	shared_ptr<geometry::CNPoint2D> goalPoint = make_shared<geometry::CNPoint2D>(1000, 1000);
 	msl_sensor_msgs::WorldModelDataPtr msg = boost::make_shared<msl_sensor_msgs::WorldModelData>();
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
 	EXPECT_TRUE(net != nullptr);
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = this->wm->pathPlanner.plan(net,startPoint, goalPoint, make_shared<msl::PathEvaluator>(&(this->wm->pathPlanner)));
 	EXPECT_EQ(path->size(), 1);
 	msl_sensor_msgs::ObstacleInfo info;
 	info.x = -100;
@@ -76,7 +76,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	msg->obstacles.push_back(info);
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
-	path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
+	path = this->wm->pathPlanner.plan(net,startPoint, goalPoint, make_shared<msl::PathEvaluator>(&(this->wm->pathPlanner)));
 	EXPECT_EQ(path->size(), 1);
 	msl_sensor_msgs::ObstacleInfo info2;
 	info2.x = 500;
@@ -124,7 +124,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	msg->obstacles.push_back(info12);
 	this->wm->pathPlanner.processWorldModelData(msg);
 	net = this->wm->pathPlanner.getCurrentVoronoiNet();
-	path = this->wm->pathPlanner.aStarSearch(net,startPoint, goalPoint, new msl::PathEvaluator(&(this->wm->pathPlanner)));
+	path = this->wm->pathPlanner.plan(net,startPoint, goalPoint, make_shared<msl::PathEvaluator>(&(this->wm->pathPlanner)));
 	for(int i = 0; i < path->size(); i ++)
 	{
 		cout << path->at(i)->toString() << endl;

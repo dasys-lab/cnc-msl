@@ -11,8 +11,7 @@ namespace alica
             DomainBehaviour("StandardActuate")
     {
         /*PROTECTED REGION ID(con1435766212595) ENABLED START*/ //Add additional options here
-
-    	/*PROTECTED REGION END*/
+        /*PROTECTED REGION END*/
     }
     StandardActuate::~StandardActuate()
     {
@@ -26,7 +25,7 @@ namespace alica
         bhc.leftMotor = -20;
         bhc.rightMotor = -20;
         send(bhc);
-    	/*PROTECTED REGION END*/
+        /*PROTECTED REGION END*/
     }
     void StandardActuate::initialiseParameters()
     {
