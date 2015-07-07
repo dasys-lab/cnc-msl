@@ -26,7 +26,8 @@ namespace alica
         /*PROTECTED REGION ID(prv1430324527403) ENABLED START*/ //Add additional private methods here
         double old_x;
         double old_y;
-        void ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,shared_ptr < geometry::CNPoint2D > egoBallPos);
+        void ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,
+                            shared_ptr<geometry::CNPoint2D> egoBallPos);
         msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos);
         /*PROTECTED REGION END*/};
 } /* namespace alica */

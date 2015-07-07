@@ -34,8 +34,8 @@
     <inState>#1434115852118</inState>
     <outState>#1434115849689</outState>
   </transitions>
-  <entryPoints id="1434115664327" name="OffensiveMidfield" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1434112683820</task>
+  <entryPoints id="1434115664327" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1434115664326</state>
   </entryPoints>
 </alica:Plan>
