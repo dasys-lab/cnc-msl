@@ -452,11 +452,11 @@ namespace alica
 			rightMotor.set_points(XRight, YRight);
 
 
-			//double FunktionValuesRight = rightMotor(x); rightMotor.set_points(XRight, YRight);
+			 //rightMotor.set_points(XRight, YRight);
 			//funktionRightInterpolation.push_back(FunktionValuesRight);
 		}
-		auto p = rightMotor(x);
-		cout<<"funktionRightInterpolation p : "<<p<<endl;
+		 FunktionValuesRight = rightMotor(x);
+		cout<<"FunktionValuesRight : "<<FunktionValuesRight<<endl;
 		//	leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
 		//double funktionLeftInterpolation = leftMotor(x); //
 		//	cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
@@ -532,7 +532,7 @@ namespace alica
 
 		//Rotation Controller End
 
-		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * p+ rotationRight);
+		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed + rotationRight);
 
 		//	KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeftInterpolation + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;

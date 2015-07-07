@@ -31,7 +31,10 @@ namespace alica
         double speedDifference;
         double zaeler;
         double qualityOfServiceSumme;
-        double FunktionValuesRightPush;
+
+        double FunktionValuesRight;
+       // vector<shared_ptr<geometry::CNPoint2D>> lowKickList;
+
 
         void oldController( double &leftController,double &rightController);
         void newController(  double &leftController,double &rightController );
