@@ -65,6 +65,9 @@ namespace alica
 
 
 
+
+
+
 /*
 
 		double arithmeticAverageSpeed = 0.0;
@@ -440,7 +443,7 @@ namespace alica
 
 		double constExpFunktion = 1.0;
 		double constPushUpFunktion = 2.4;
-		double funktionLeft, funktionRight;
+		double funktionLeft=0, funktionRight=0;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
 		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
@@ -456,10 +459,32 @@ namespace alica
 
 
 
+		//LeftMotorFunktion interpolation Start
+			int argc;
+			char** argv;
+
+		   std::vector<double> X(13), Y(13);
+		   //Angle
+		   X[0]=-3.14; X[1]=-2.67; X[2]=-2.12; X[3]=-1.57;X[4]=-0.942;X[5]=-0.47;
+		   X[6]=0; X[7]=0.47;X[8]=0.942;X[9]=1.57;X[10]=2.12;X[11]=2.67; X[12]=-3.14;
 
 
-		funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
-		funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
+		   Y[0]=1; Y[1]=-1.5; Y[2]=-3; Y[3]=-3; Y[4]=-3;Y[5]=-2.8;Y[6]=-2.5;Y[7]=-2.0;Y[8]=-1.9;
+		   Y[9]=1;Y[10]=1;Y[11]=1;Y[12]=1;
+
+		   splines::spline s;
+		   s.set_points(X,Y);    // currently it is required that X is already sorted
+		   double value=s(x);  //
+		   cout<<"value : "<<value<<endl;
+
+
+		   //LeftMotorFunktion interpolation End
+
+
+
+
+		//funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
+		//funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
 
 		//Funktion for drive with differt angles end
 
