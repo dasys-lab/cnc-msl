@@ -31,6 +31,7 @@ namespace alica
         double speedDifference;
         double zaeler;
         double qualityOfServiceSumme;
+        double funktionRightInterpolation;
 
         void oldController( double &leftController,double &rightController);
         void newController(  double &leftController,double &rightController );
