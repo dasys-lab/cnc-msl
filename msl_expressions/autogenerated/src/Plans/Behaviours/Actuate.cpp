@@ -1,9 +1,15 @@
+
 using namespace std;
 #include "Plans/Behaviours/Actuate.h"
 
 /*PROTECTED REGION ID(inccpp1417017518918) ENABLED START*/ //Add additional includes here
 #include "math.h"
 #include "RawSensorData.h"
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
+#include <CubicSplineInterpolation/Spline.h>
+
 
 /*PROTECTED REGION END*/
 namespace alica
