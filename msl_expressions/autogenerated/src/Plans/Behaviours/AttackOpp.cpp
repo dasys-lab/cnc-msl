@@ -60,93 +60,13 @@ namespace alica
         {
             cout << "get closer" << endl;
 
-            ballGetsCloser(egoBallVelocity, egoBallPos);
+            mc = ballGetsCloser(egoBallVelocity, egoBallPos);
 
         }
         else
         {
             cout << "roll away" << endl;
         }
-
-        //	if ((x > old_x && y > old_y) && (x < 0 && y < 0))
-        //	{
-        // x+ && y+ Ball kommt von vorne links
-        //cout << "von vorne links" << endl;
-        // TODO : dreh dich nach links und schau zum Ball
-        /*
-         mc.motion.translation = 0;
-
-         /////////////// PID
-
-         const double Ki = 0;
-         const double Kd = 1;
-
-         const double Sollwert = 0;
-         const double Kp = 0.23;
-
-         double Abweichung = 0.0;
-         double Abweichung_Summe = 0.0;
-         double Abweichung_Alt = 0.0;
-         double Stellwert = 0.0;
-
-         Abweichung_Summe += Abweichung;
-         Abweichung = Sollwert - y;
-         Stellwert = Kp * Abweichung;
-         Stellwert += Ki * Abweichung_Summe;
-         Stellwert += Kd * (Abweichung - Abweichung_Alt);
-
-         Abweichung_Alt = Abweichung;
-
-         mc.motion.angle = M_PI * 1 / 2;
-         mc.motion.translation = Stellwert;
-         */
-        /*
-         double summe = 0.0;
-         static double oldY = 0.0;
-
-         const double Kp = 2.0;
-
-         const double Kd = 1.7;
-
-         //distance ball to robot
-         double distance = egoBallPos->length();
-
-
-         double movement = Kp * y + Kd * (y - oldY);
-         oldY =y;
-         */
-        //auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-        //double ball_speed = egoBallVelocity->length();
-        //movement += ball_speed;
-        //mc = RobotMovement::moveToPointCarefully(me, me, 300);
-//////////////
-        /*
-         }
-         else if ((x > old_x && y < old_y) && (x < 0 && y > 0))
-         {
-         // x+ && y- Ball kommt von vorne rechts
-         cout << "von vorne rechts" << endl;
-         // TODO : dreh dich nach rechts und schau zum Ball
-         mc.motion.translation = 0;
-         }
-         else if ((x < old_x && y < old_y) && (x > 0 && y > 0))
-         {
-         // x- && y- Ball kommt von hinten rechts
-         cout << "von hinten rechts" << endl;
-         // TODO : umdrehen und auf den Ball Schauen
-         mc.motion.translation = 0;
-         }
-         else if ((x < old_x && y > old_y) && (x > 0 && y < 0))
-         {
-         // x- && y+ Ball kommt von hinten links
-         cout << "von hinten links" << endl;
-         // TODO : umdrehen und auf den Ball schauen
-         mc.motion.translation = 0;
-         }
-         else
-         {
-         cout << "else" << endl;
-         } */
 
         old_x = x;
         old_y = y;
@@ -164,7 +84,7 @@ namespace alica
             return;
         }
 
-        mc.motion.translation = 0;
+        //mc.motion.translation = 0;
         send(mc);
 
 //Add additional options here
@@ -226,7 +146,7 @@ namespace alica
         }
     }
 
-    void AttackOpp::ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,
+    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                    shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
         const double xVelocity = ballVelocity->x;
@@ -245,6 +165,8 @@ namespace alica
         cout << "xVelocity :" << xVelocity << endl;
         cout << "yVelocity :" << yVelocity << endl;
         cout << endl;
+
+        return mc;
     }
 
 /*PROTECTED REGION END*/
