@@ -159,7 +159,7 @@ namespace alica
 
         const double yIntersection = (xDistance / xVelocity) * yVelocity + yDistance;
 
-        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
+        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, -yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
