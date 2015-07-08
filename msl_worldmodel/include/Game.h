@@ -13,6 +13,7 @@
 #include <msl_msgs/RefereeBoxInfoBody.h>
 #include <mutex>
 #include "Situation.h"
+#include "GameState.h"
 
 #include "SystemConfig.h"
 
@@ -38,6 +39,10 @@ namespace msl
 		int getOwnGoal();
 		unsigned long getTimeSinceStart();
 		Situation getSituation();
+		GameState getGameState();
+		void setGameState(GameState gameState);
+		void updateGameState();
+		bool isMayScore();
 
 		string ownTeamColor;
 		string ownGoalColor;
@@ -59,6 +64,10 @@ namespace msl
 		int oppGoal;
 		unsigned long timeSinceStart;
 		Situation lastActiveSituation;
+		GameState gameState;
+		int teamMateWithBall;
+		void setMayScore();
+		bool mayScore;
 	};
 
 } /* namespace alica */

@@ -8,6 +8,7 @@
 #include "MSLFootballField.h"
 #include <SystemConfig.h>
 #include "engine/model/EntryPoint.h"
+#include "GameState.h"
 /*PROTECTED REGION END*/
 namespace alica
 {

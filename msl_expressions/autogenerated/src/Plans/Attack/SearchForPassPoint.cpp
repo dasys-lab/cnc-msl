@@ -22,35 +22,35 @@ namespace alica
 	void SearchForPassPoint::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1436269017402) ENABLED START*/ //Add additional options here
-//		if (eps.size() <= 0)
-//		{
-//			cout << "S4PP: All EPs is null" << endl;
-//			return;
-//		}
-//
-//		shared_ptr<geometry::CNPoint2D> alloBall = this->wm->ball.getAlloBallPosition();
-//		if (alloBall == nullptr)
-//		{
-//			cout << "S4PP: Ball is null" << endl;
-//			return;
-//		}
-//
-//		shared_ptr<geometry::CNPosition> alloPos = this->wm->rawSensorData.getOwnPositionVision();
-//		if (alloPos == nullptr)
-//		{
-//			cout << "S4PP: OwnPos is null" << endl;
-//			return;
-//		}
-//
-//		// ensures, that we have the ball and are not in melee with some opp.
-//		if (!true && this.WM.SharedWorldModel.GetGameState() != GameState.Attack)
-//		{
-//			Console.WriteLine("S4PP: Gamestate is not Attack");
-//			return;
-//		}
-//
-//		// the only teammate in the corresponding task/ entrypoint
-//		teamMateIds.clear();
+		if (eps.size() <= 0)
+		{
+			cout << "S4PP: All EPs is null" << endl;
+			return;
+		}
+
+		shared_ptr<geometry::CNPoint2D> alloBall = this->wm->ball.getAlloBallPosition();
+		if (alloBall == nullptr)
+		{
+			cout << "S4PP: Ball is null" << endl;
+			return;
+		}
+
+		shared_ptr<geometry::CNPosition> alloPos = this->wm->rawSensorData.getOwnPositionVision();
+		if (alloPos == nullptr)
+		{
+			cout << "S4PP: OwnPos is null" << endl;
+			return;
+		}
+
+		// ensures, that we have the ball and are not in melee with some opp.
+		if (!true && this->wm->game.getGameState() != msl::GameState::OwnBallPossession)
+		{
+			cout << "S4PP: Gamestate is not Attack" << endl;
+			return;
+		}
+
+		// the only teammate in the corresponding task/ entrypoint
+		teamMateIds.clear();
 //		for(EntryPoint* ep : eps)
 //		{
 //			auto teammates = robotsInEntryPointOfHigherPlan(ep);
