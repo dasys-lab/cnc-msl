@@ -48,15 +48,17 @@ bool SW_AKT = false;
 bool SW_KICK = false;
 bool SW_12V = false;
 
-uint16 ADC_12V = 0;
-uint16 ADC_EXT = 0;
-uint16 ADC_24V = 0;
+bool SPEAKER = false;
 
-uint16 ADC_I_AKT = 0;
-uint16 ADC_I_KICK = 0;
-uint16 ADC_I_MOT = 0;
-uint16 ADC_I_12V = 0;
-uint16 ADC_I_EXT = 0;
+uint16_t ADC_12V = 0;
+uint16_t ADC_EXT = 0;
+uint16_t ADC_24V = 0;
+
+uint16_t ADC_I_AKT = 0;
+uint16_t ADC_I_KICK = 0;
+uint16_t ADC_I_MOT = 0;
+uint16_t ADC_I_12V = 0;
+uint16_t ADC_I_EXT = 0;
 
 
 void initPorts() {
@@ -103,6 +105,10 @@ uint16_t getADC(uint8_t channel) {
 	adc |= (ADCH << 8);
 
 	return adc;
+}
+
+void startSpeaker() {
+	SPEAKER = true;
 }
 
 
@@ -521,5 +527,13 @@ int main() {
 	//	sprintf(buf, "measure: %04d \n", (int) b2);
 	//	uart_puts(buf);
 	return 0;
+}
+
+ISR(TIMER1_OVF_vect) {
+	static uint8_t i = 0;
+
+	if (i >= 2){
+		SPEAKER = false;
+	} else {i++;}
 }
 
