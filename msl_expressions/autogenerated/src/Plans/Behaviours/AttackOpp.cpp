@@ -61,7 +61,7 @@ namespace alica
         {
             cout << "get closer" << endl;
 
-            mc = ballGetsCloser(egoBallVelocity, egoBallPos);
+            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
         }
         else
@@ -147,11 +147,13 @@ namespace alica
         }
     }
 
-    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,
+    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
+															   shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                    shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
-        const double xVelocity = ballVelocity->x;
-        const double yVelocity = ballVelocity->y;
+    	shared_ptr < geometry::CNVelocity2D > egoBallVelocity = ballVelocity->alloToEgo(*robotPosition);
+        const double xVelocity = egoBallVelocity->x;
+        const double yVelocity = egoBallVelocity->y;
         const double xDistance = egoBallPos->x;
         const double yDistance = egoBallPos->y;
 
