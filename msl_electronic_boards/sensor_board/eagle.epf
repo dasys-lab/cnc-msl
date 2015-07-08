@@ -369,10 +369,11 @@ UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/mywirepa
 UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/ownParts.lbr"
 UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/ti-ads8322.lbr"
 UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/to220-custom.lbr"
+UsedLibrary="/media/luk/0C18-CA69/drilegend.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="460 83 1481 794"
+Loc="133 103 1154 814"
 State=2
 Number=0
 

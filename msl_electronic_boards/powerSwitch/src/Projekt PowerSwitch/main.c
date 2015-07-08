@@ -38,6 +38,76 @@
 #define ADC_I_12V		0x03
 #define ADC_I_EXT		0x07
 
+bool LED_GREEN = false;
+bool LED_AKT = false;
+bool LED_KICK = false;
+bool LED_RED = false;
+
+bool SW_MOT = false;
+bool SW_AKT = false;
+bool SW_KICK = false;
+bool SW_12V = false;
+
+uint16 ADC_12V = 0;
+uint16 ADC_EXT = 0;
+uint16 ADC_24V = 0;
+
+uint16 ADC_I_AKT = 0;
+uint16 ADC_I_KICK = 0;
+uint16 ADC_I_MOT = 0;
+uint16 ADC_I_12V = 0;
+uint16 ADC_I_EXT = 0;
+
+
+void initPorts() {
+	DDRB = 0x00;
+	DDRC = 0x00;
+	DDRD = 0x01;
+}
+
+void getLEDS() {
+	LED_GREEN = BIT_CHECK(PINB, LED_GREEN);
+	LED_AKT = BIT_CHECK(PINC, LED_AKT);
+	LED_KICK = BIT_CHECK(PINB, LED_KICK);
+	LED_RED = BIT_CHECK(PINB, LED_RED);
+}
+
+void getSWS() {
+	SW_MOT = BIT_CHECK(PINB, SW_MOT);
+	SW_AKT = BIT_CHECK(PINB, SW_AKT);
+	SW_KICK = BIT_CHECK(PINC, SW_KICK);
+	SW_12V = BIT_CHECK(PIND, SW_12V);
+}
+
+
+void initADC() {
+	ADMUX = 0;
+	ADCSRA = 0;
+	ADCSRB = 0;
+
+
+	ADMUX = 0x40;	// Referenzspannung AVcc mit externem Kondensator an Aref
+	ADCSRA = 0x8F;	// ADC Enabled, Interrupt Enabled, Prescaler: 128
+	ADCSRB = 0x20;	// Aref Enabled, Free Running Mode
+}
+
+void startADC(uint8_t channel) {
+	ADMUX = (ADMUX & 0xE0);
+	ADMUX |= channel;
+
+	ADCSRA |= (1<<ADSC);
+}
+
+uint16_t getADC(uint8_t channel) {
+	uint16_t adc = ADCL;
+	adc |= (ADCH << 8);
+
+	return adc;
+}
+
+
+
+
 
 #define POWER_ON_INT PD6
 #define POWER_ON_EXT PD7
