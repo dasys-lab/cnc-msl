@@ -156,7 +156,7 @@ namespace alica
         const double xDistance = abs(egoBallPos->x);
         const double yPosition = egoBallPos->y;
 
-        const double yIntersection =  yPosition + abs(xDistance / xVelocity) * yVelocity;
+        const double yIntersection =  yPosition + (-(xDistance / xVelocity)) * yVelocity;
 
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
