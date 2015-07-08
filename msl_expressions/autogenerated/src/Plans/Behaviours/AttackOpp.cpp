@@ -50,6 +50,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+        mc.motion.translation = 0;
         cout << "x: " << x << endl;
         cout << "y: " << y << endl;
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
@@ -60,7 +61,7 @@ namespace alica
         {
             cout << "get closer" << endl;
 
-            mc = ballGetsCloser(egoBallVelocity, egoBallPos);
+            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
         }
         else
@@ -146,24 +147,27 @@ namespace alica
         }
     }
 
-    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr<geometry::CNVelocity2D> ballVelocity,
+    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
+															   shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                    shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
         const double xVelocity = ballVelocity->x;
         const double yVelocity = ballVelocity->y;
-        const double xDistance = egoBallPos->x;
-        const double yDistance = egoBallPos->y;
+        const double xDistance = abs(egoBallPos->x);
+        const double yPosition = egoBallPos->y;
 
-        double intersection = xDistance * (yVelocity / xVelocity) + yDistance;
+        const double yIntersection =  yPosition + (-(xDistance / xVelocity)) * yVelocity;
 
-        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, intersection);
+        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
-        mc = RobotMovement::moveToPointCarefully(interPoint, interPoint, 300);
+        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
 
-        cout << "xVelocity :" << xVelocity << endl;
-        cout << "yVelocity :" << yVelocity << endl;
+        cout << "xVelocity:" << xVelocity << endl;
+        cout << "yVelocity:" << yVelocity << endl;
+        cout << "Y-Intersection: " << yIntersection << endl;
+
         cout << endl;
 
         return mc;

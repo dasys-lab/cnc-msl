@@ -40,6 +40,8 @@ namespace msl
 		MSLWorldModel* wm;
 		unsigned long maxInformationAge = 1000000000;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
+		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
+
 	};
 
 } /* namespace alica */
