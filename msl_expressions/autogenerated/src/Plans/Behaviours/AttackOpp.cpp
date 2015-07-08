@@ -163,7 +163,7 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
-        mc = RobotMovement::moveToPointCarefully(interPoint, interPoint, 300);
+        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
 
         cout << "xVelocity:" << xVelocity << endl;
         cout << "yVelocity:" << yVelocity << endl;
