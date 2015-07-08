@@ -157,9 +157,9 @@ namespace alica
         const double xDistance = abs(egoBallPos->x);
         const double yDistance = abs(egoBallPos->y);
 
-        const double intersection = xDistance * (yVelocity / xVelocity) + yDistance;
+        const double yIntersection = (xDistance / xVelocity) * yVelocity + yDistance;
 
-        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, intersection);
+        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
@@ -167,7 +167,7 @@ namespace alica
 
         cout << "xVelocity:" << xVelocity << endl;
         cout << "yVelocity:" << yVelocity << endl;
-        cout << "Intersection: " << intersection << endl;
+        cout << "Intersection: " << yIntersection << endl;
 
         cout << endl;
 
