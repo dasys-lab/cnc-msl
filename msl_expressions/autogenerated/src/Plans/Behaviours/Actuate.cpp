@@ -1,4 +1,3 @@
-
 using namespace std;
 #include "Plans/Behaviours/Actuate.h"
 
@@ -9,7 +8,6 @@ using namespace std;
 #include <cstdlib>
 #include <vector>
 #include <CubicSplineInterpolation/Spline.h>
-
 
 /*PROTECTED REGION END*/
 namespace alica
@@ -42,136 +40,117 @@ namespace alica
 			return;
 		}
 
+		/*
+		 funktionLeft = 1.0
+		 * (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
+		 + 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
+
+		 funktionRight = 1.0
+		 * (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
+		 + 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
+
+
+
+
+		 */
 
 		/*
-		funktionLeft = 1.0
-				* (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
 
-		funktionRight = 1.0
-				* (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-						+ 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
+		 double arithmeticAverageSpeed = 0.0;
+		 double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
 
+		 if (arithmeticAverageBoxSpeed.size() == 2)
+		 {
+		 arithmeticAverageBoxSpeed.pop_back();
+		 }
 
+		 arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
 
+		 for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
+		 parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
+		 {
+		 arithmeticAverageSpeed += *parameterSpeed;
+		 }
 
-		*/
+		 arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-		double arithmeticAverageSpeed = 0.0;
-				double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-
-				if (arithmeticAverageBoxSpeed.size() == 2)
-				{
-					arithmeticAverageBoxSpeed.pop_back();
-				}
-
-				arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
-
-				for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
-						parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
-				{
-					arithmeticAverageSpeed += *parameterSpeed;
-				}
-
-				arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
-
-						cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-						<< wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+		 cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+		 << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
 
-                double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+		 double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
 
-				left= 15;
-				right=-45;
+		 left= 15;
+		 right=-45;
 
-					cout<<"left :"<<left<<endl;
-					cout<<"right :"<<right<<endl;
-
-
-*/
+		 cout<<"left :"<<left<<endl;
+		 cout<<"right :"<<right<<endl;
 
 
+		 */
 
-			
-
-
-		
-	
 		newController(left, right);
 		//oldController(left,right);
 
 		//PD Regler Anfang
 		//PIDControllerLeft
 		/*
-		 		const double KiLeft = 0.0;
-		 		const double KdLeft = 0.1;
-		 		const double KpLeft = 0.23;
+		 const double KiLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
+		 const double KdLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
+		 const double KpLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
 		 
-		 		double AbweichungLeft = 0.0;
-		 		double Abweichung_SummeLeft = 0.0;
-		 		double Abweichung_AltLeft = 0.0;
-		 		double StellwertLeft = 0.0;
-		 		const double SollwertLeft = 70;
-		 		//const double SollwertLeftForward = 80;
+		 double AbweichungLeft = 0.0;
+		 double Abweichung_SummeLeft = 0.0;
+		 double Abweichung_AltLeft = 0.0;
+		 double StellwertLeft = 0.0;
+		 const double setPointLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointLeft", NULL);
+		 //const double SollwertLeftForward = 80;
 		 
-		 		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 		{
+		 if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		 {
 		 
-		 			Abweichung_SummeLeft += AbweichungLeft;
-		 			AbweichungLeft = -1 * (SollwertLeft - wm->rawSensorData.getOpticalFlowQoS());
-		 			StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
-		 			StellwertLeft += KiLeft * Abweichung_SummeLeft;
-		 			StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+		 Abweichung_SummeLeft += AbweichungLeft;
+		 AbweichungLeft = -1 * (setPointLeft - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+		 StellwertLeft += KiLeft * Abweichung_SummeLeft;
+		 StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
 		 
-		 			Abweichung_AltLeft = AbweichungLeft;
-		 		};
+		 Abweichung_AltLeft = AbweichungLeft;
+		 };
 		 
-		 		//PIDControllerRight
+		 //PIDControllerRight
 		 
-		 		const double KiRight = 0.0;
-		 		const double KdRight = 0.1;
+		 const double KiRight = 0.0;
+		 const double KdRight = 0.1;
 		 
-		 		const double SollwertRight = 70;
-		 		const double KpRight = 0.23;
+		 const double setPointRight =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointRight", NULL);
+		 const double KpRight = 0.23;
 		 
-		 		double AbweichungRight = 0.0;
-		 		double Abweichung_SummeRight = 0.0;
-		 		double Abweichung_AltRight = 0.0;
-		 		double StellwertRight = 0.0;
+		 double AbweichungRight = 0.0;
+		 double Abweichung_SummeRight = 0.0;
+		 double Abweichung_AltRight = 0.0;
+		 double StellwertRight = 0.0;
 		 
-		 		if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
-		 		{
-		 			Abweichung_SummeRight += AbweichungRight;
-		 			AbweichungRight = -1 * (SollwertRight - wm->rawSensorData.getOpticalFlowQoS());
-		 			StellwertRight = KpRight * AbweichungRight + KvRight;
-		 			StellwertRight += KiRight * Abweichung_SummeRight;
-		 			StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+		 if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+		 {
+		 Abweichung_SummeRight += AbweichungRight;
+		 AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
+		 StellwertRight = KpRight * AbweichungRight + KvRight;
+		 StellwertRight += KiRight * Abweichung_SummeRight;
+		 StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
 		 
-		 			Abweichung_AltRight = AbweichungRight;
-		 		};
+		 Abweichung_AltRight = AbweichungRight;
+		 };
 		 
-		 		if (wm->rawSensorData.getOpticalFlowQoS() > 70)
-		 		{
-		 			StellwertLeft = KvLeft;
-					StellwertRight = KvRight;
-		 		};
+		 if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+		 {
+		 StellwertLeft = KvLeft;
+		 StellwertRight = KvRight;
+		 };
 		 
-		 		//PD Regler Ende
-		 	*/
+		 //PD Regler Ende
+		 */
 
 		cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
 		cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
@@ -428,11 +407,9 @@ namespace alica
 			arithmeticAverageSpeedDifference = 1;
 		}
 
-
-	//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
+		//  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
 
 		////arithmetic average speed difference End
-
 
 		//Exp Funktion for traction Start
 
@@ -441,14 +418,12 @@ namespace alica
 		double x;
 		double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
-		double constExpFunktion = 1.0;
-		double constPushUpFunktion = 2.4;
-		double funktionLeft=0, funktionRight=0;
+		double valueExpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.valueExpFunktion", NULL);
+		double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
+		NULL);
+		double funktionLeft = 0, funktionRight = 0;
 		double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-		double eFunktion =constExpFunktion*( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
-
-
-
+		double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
 		cout << "exp Funktion : " << eFunktion << endl;
 		//Exp Funktion for traction End
@@ -457,133 +432,187 @@ namespace alica
 
 		x = max(min(angle, 3.14), -3.14);
 
-
-
 		//LeftMotorFunktion interpolation Start
-			int argc;
-			char** argv;
+		//LeftMotorFunktion interpolation Start
 
-		   std::vector<double> X(13), Y(13);
-		   //Angle
-		   X[0]=-3.14; X[1]=-2.67; X[2]=-2.12; X[3]=-1.57;X[4]=-0.942;X[5]=-0.47;
-		   X[6]=0; X[7]=0.47;X[8]=0.942;X[9]=1.57;X[10]=2.12;X[11]=2.67; X[12]=3.14;
+		vector<double> XLeft(13), YLeft(13);
+		//Angle
+		XLeft[0] = -3.14;
+		XLeft[1] = -2.67;
+		XLeft[2] = -2.12;
+		XLeft[3] = -1.57;
+		XLeft[4] = -0.942;
+		XLeft[5] = -0.47;
+		XLeft[6] = 0;
+		XLeft[7] = 0.47;
+		XLeft[8] = 0.942;
+		XLeft[9] = 1.57;
+		XLeft[10] = 2.12;
+		XLeft[11] = 2.67;
+		XLeft[12] = 3.14;
+
+		YLeft[0] = 1.2;
+		YLeft[1] = -0.8;
+		YLeft[2] = -2.8;
+		YLeft[3] = -3.5;
+		YLeft[4] = -3;
+		YLeft[5] = -2.8;
+		YLeft[6] = -2.5;
+		YLeft[7] = -2.0;
+		YLeft[8] = -1.0;
+		YLeft[9] = 1;
+		YLeft[10] = 1;
+		YLeft[11] = 1;
+		YLeft[12] = 1.2;
+
+		splines::spline leftMotor;
+		leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
+		double funktionLeftInterpolation = leftMotor(x); //
+		cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
+
+		//LeftMotorFunktion interpolation End
+		//LeftMotorFunktion interpolation Start
+
+		vector<double> XRight(13), YRight(13);
+		//Angle
+		XRight[0] = -3.14;
+		XRight[1] = -2.67;
+		XRight[2] = -2.12;
+		XRight[3] = -1.57;
+		XRight[4] = -0.942;
+		XRight[5] = -0.47;
+		XRight[6] = 0;
+		XRight[7] = 0.47;
+		XRight[8] = 0.942;
+		XRight[9] = 1.57;
+		XRight[10] = 2.12;
+		XRight[11] = 2.67;
+		XRight[12] = 3.14;
+
+		YRight[0] = 1.2;
+		YRight[1] = 1;
+		YRight[2] = 1;
+		YRight[3] = 1;
+		YRight[4] = -1.0;
+		YRight[5] = -2.0;
+		YRight[6] = -2.5;
+		YRight[7] = -2.8;
+		YRight[8] = -3;
+		YRight[9] = -3.5;
+		YRight[10] = -2.8;
+		YRight[11] = -0.8;
+		YRight[12] = 1.2;
+		splines::spline rightMotor;
+		rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
+		double funktionRightInterpolation = rightMotor(x); //
+		cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
+
+		/*Funktion conf.
+		 vector<double> XRight(13), YRight(13);
+		 splines::spline rightMotor;
+
+		 auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble",
+		 "FunktionValuesRight", NULL);
+
+		 // Load XLeft Lookup Lists FunktionValuesRightX
+		 for (string sectionName : *FunktionValuesRightSections)
+		 {
+		 XRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
+		 sectionName.c_str(), "XRight", NULL);
+
+		 YRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
+		 sectionName.c_str(), "YRight",
+		 NULL);
+		 rightMotor.set_points(XRight, YRight);
 
 
-		   Y[0]=1; Y[1]=-1.5; Y[2]=-3; Y[3]=-3; Y[4]=-3;Y[5]=-2.8;Y[6]=-2.5;Y[7]=-2.0;Y[8]=-1.9;
-		   Y[9]=1;Y[10]=1;Y[11]=1;Y[12]=1;
-		   splines::spline s;
-		   s.set_points(X,Y);    // currently it is required that X is already sorted
-		   double value=s(x);  //
-		   cout<<"value (x) : "<<value<<endl;
+		 //rightMotor.set_points(XRight, YRight);
+		 //funktionRightInterpolation.push_back(FunktionValuesRight);
+		 }
+		 FunktionValuesRight = rightMotor(x);
+		 cout<<"FunktionValuesRight : "<<FunktionValuesRight<<endl;
+		 */
 
-          
-
-
-
-
-		   
-
-
-
-		   //LeftMotorFunktion interpolation End
-
-
-
-
+		//	leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
+		//double funktionLeftInterpolation = leftMotor(x); //
+		//	cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
+		//LeftMotorFunktion interpolation End
+		//RightMotorFunktion interpolation Start
+		//vector<double> XRight(13), YRight(13);
+		/*splines::spline rightMotor;
+		 rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
+		 double funktionRightInterpolation = rightMotor(x); //
+		 cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
+		 */
+		//RightMotorFunktion interpolation End
+		//You can replace funktionLeft/Rightinterpolation with funktionLeft/Right
 		//funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
-		funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
-
+		//funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
 		//Funktion for drive with differt angles end
-
-
-
 		//Rotation Controller Start
+
 
 		double rotationLeft = 0.0;
 		double rotationRight = 0.0;
 
-		/*
-		 if ((rotation < -0.3) || (rotation > 0.3))
-		 {
-
-		 rotationLeft = (-25 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
-		 - 7 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
-
-		 rotationLeft = rotationLeft - 10;
-
-		 rotationRight = (-7 / M_PI * (atan(rotation / 0.001) + M_PI / 2))
-		 - 25 / M_PI * (atan(-rotation / 0.001) + M_PI / 2);
-
-		 rotationRight = rotationRight -10;
-		 };*/
-
-
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
 		{
 
-			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
-			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
+			rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35 - 10;
+			rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2 - 5;
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
-			funktionLeft=0;
-		if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>0){
-			cout<<"rueckwaertsdrehen"<<endl;
-			funktionRight=funktionRight+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+			funktionLeftInterpolation = 0;
+			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
+			{
+				cout << "rueckwaertsdrehen" << endl;
+				funktionRightInterpolation =funktionRightInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+			}
+			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+			{
+				
+				funktionLeftInterpolation = funktionLeftInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*0.5 ;
+
+			}
 		}
-		if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0){
-
-		rotationLeft=rotationLeft+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*15;
-
-		}
-		}
-
-
-
-
-
 
 		if (wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
 		{
 
-			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35-10;
-			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2-5;
+			rotationRight = wm->rawSensorData.getOwnVelocityMotion()->rotation * 35 - 10;
+			rotationLeft = wm->rawSensorData.getOwnVelocityMotion()->rotation * 2 - 5;
 
 			cout << "rotation	left : " << rotationLeft << endl;
 			cout << "rotation right : " << rotationRight << endl;
 
-				 funktionRight=0;
+			funktionRightInterpolation = 0;
 
+			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
+			{
+				
+				cout << "rückwärtsdrehen" << endl;
+				funktionLeftInterpolation = funktionLeftInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 
-		                if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>0){
+			}
+			if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
+			{
 
-	cout<<"rückwärtsdrehen"<<endl;
-	funktionLeft=funktionLeft+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
-	
-	}
-                if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0){
+				
+				funktionRightInterpolation = funktionRightInterpolation + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
-                rotationRight=rotationRight+abs(wm->rawSensorData.getOwnVelocityMotion()->rotation)*15;
-		
-                }
-
-		
+			}
 
 		}
 
 		//Rotation Controller End
 
+		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed*funktionRightInterpolation + rotationRight);
 
-
-		KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRight + rotationRight);
-
-		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed*value + rotationLeft);
+		KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeftInterpolation + rotationLeft);
 		cout << "funktionLeft : " << funktionLeft << endl;
 		cout << "funktionRight : " << funktionRight << endl;
 		cout << "KvLeft : " << KvLeft << endl;
 		cout << "KvRight : " << KvRight << endl;
-		
-
-		
 
 		//Funktion for drive with differt angles end
 		leftController = KvLeft;

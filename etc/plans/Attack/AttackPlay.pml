@@ -23,8 +23,8 @@
     <task>../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1434045870617</state>
   </entryPoints>
-  <entryPoints id="1434112675755" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1434112683820</task>
+  <entryPoints id="1434112675755" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1434112762535</state>
   </entryPoints>
 </alica:Plan>

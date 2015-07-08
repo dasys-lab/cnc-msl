@@ -24,6 +24,8 @@
 
 #include  "Plans/Attack/RunFree1434115664325.h"
 
+#include  "Plans/Attack/PassPlay1436268896671.h"
+
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
 #include  "Plans/WM161413992564408.h"
@@ -477,6 +479,18 @@ namespace alica
             case 1434115873056:
 
                 return make_shared<TransitionCondition1434115873056>();
+
+                break;
+
+            case 1436268944209:
+
+                return make_shared<TransitionCondition1436268944209>();
+
+                break;
+
+            case 1436268945305:
+
+                return make_shared<TransitionCondition1436268945305>();
 
                 break;
 

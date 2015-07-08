@@ -399,6 +399,17 @@ void FieldWidget3D::update_robot_info(void)
 			}
 		}
 	}
+	else
+	{
+		for (vtkActor* actor : pathLines)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		pathLines.clear();
+	}
 	if (showVoronoi)
 	{
 		for (vtkActor* actor : netLines)
@@ -420,6 +431,16 @@ void FieldWidget3D::update_robot_info(void)
 															0, 0);
 				netLines.push_back(actor);
 				renderer->AddActor(actor);
+			}
+		}
+	}
+	else
+	{
+		for (vtkActor* actor : netLines)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
 			}
 		}
 	}
@@ -465,6 +486,17 @@ void FieldWidget3D::update_robot_info(void)
 			renderer->AddActor(actor4);
 		}
 	}
+	else
+	{
+		for (vtkActor* actor : corridorLines)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		corridorLines.clear();
+	}
 	if (showSitePoints)
 	{
 		for (vtkActor* actor : sitePoints)
@@ -485,6 +517,17 @@ void FieldWidget3D::update_robot_info(void)
 				renderer->AddActor(actor);
 			}
 		}
+	}
+	else
+	{
+		for (vtkActor* actor : sitePoints)
+		{
+			if (actor != nullptr)
+			{
+				renderer->RemoveActor(actor);
+			}
+		}
+		sitePoints.clear();
 	}
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
 	{
