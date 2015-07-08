@@ -154,8 +154,8 @@ namespace alica
     	shared_ptr < geometry::CNVelocity2D > egoBallVelocity = ballVelocity->alloToEgo(*robotPosition);
         const double xVelocity = egoBallVelocity->x;
         const double yVelocity = egoBallVelocity->y;
-        const double xDistance = egoBallPos->x;
-        const double yDistance = egoBallPos->y;
+        const double xDistance = abs(egoBallPos->x);
+        const double yDistance = abs(egoBallPos->y);
 
         double intersection = xDistance * (yVelocity / xVelocity) + yDistance;
 
