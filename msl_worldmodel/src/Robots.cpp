@@ -56,13 +56,13 @@ namespace msl
 		if (robotPositions.find(data->senderID) == robotPositions.end())
 		{
 			shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>> buffer= make_shared<RingBuffer<InformationElement<geometry::CNPosition>>>(wm->getRingBufferLength());
-		pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> pair(data->senderID, buffer);
-		robotPositions.insert(pair);
-	}
+			pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> pair(data->senderID, buffer);
+			robotPositions.insert(pair);
+		}
 		shared_ptr<InformationElement<geometry::CNPosition>> info = make_shared<
-				InformationElement<geometry::CNPosition>>(
-						make_shared<geometry::CNPosition>(data->odom.position.x, data->odom.position.y, data->odom.position.angle),
-						wm->getTime());
+		InformationElement<geometry::CNPosition>>(
+				make_shared<geometry::CNPosition>(data->odom.position.x, data->odom.position.y, data->odom.position.angle),
+				wm->getTime());
 		robotPositions.at(data->senderID)->add(info);
 	}
 

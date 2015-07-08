@@ -14,6 +14,11 @@ namespace msl
 	Game::Game(MSLWorldModel* wm)
 	{
 		this->wm = wm;
+		this->gameState = GameState::NobodyInBallPossession;
+		this->lastActiveSituation = Situation::Undefined;
+		this->timeSinceStart = 0;
+		this->mayScore = false;
+		this->teamMateWithBall = 0;
 		ownGoal = 0;
 		oppGoal = 0;
 		gameTime = 0;
@@ -50,7 +55,8 @@ namespace msl
 
 		if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start)
 		{
-			if(currentSituation != Situation::Start) {
+			if (currentSituation != Situation::Start)
+			{
 				timeSinceStart = wm->getTime();
 			}
 			currentSituation = Situation::Start;
@@ -77,7 +83,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::cornerCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnCorner;
 			}
@@ -88,7 +94,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::cornerMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnCorner;
 			}
@@ -103,7 +109,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::freekickCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnFreekick;
 			}
@@ -114,7 +120,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::freekickMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnFreekick;
 			}
@@ -126,7 +132,7 @@ namespace msl
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalCyan)
 		{
 			lock_guard<mutex> lock(goalMutex);
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				ownGoal++;
 			}
@@ -138,7 +144,7 @@ namespace msl
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalMagenta)
 		{
 			lock_guard<mutex> lock(goalMutex);
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				ownGoal++;
 			}
@@ -149,7 +155,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalkickCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnGoalkick;
 			}
@@ -160,7 +166,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalkickMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnGoalkick;
 			}
@@ -179,7 +185,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::kickoffCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnKickoff;
 			}
@@ -190,7 +196,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::kickoffMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnKickoff;
 			}
@@ -205,7 +211,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::penaltyCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnPenalty;
 			}
@@ -216,7 +222,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::penaltyMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnPenalty;
 			}
@@ -239,7 +245,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::throwinCyan)
 		{
-			if(ownTeamColor.compare("cyan"))
+			if (ownTeamColor.compare("cyan"))
 			{
 				currentSituation = Situation::OwnThrowin;
 			}
@@ -250,7 +256,7 @@ namespace msl
 		}
 		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::throwinMagenta)
 		{
-			if(ownTeamColor.compare("magenta"))
+			if (ownTeamColor.compare("magenta"))
 			{
 				currentSituation = Situation::OwnThrowin;
 			}
@@ -259,13 +265,16 @@ namespace msl
 				currentSituation = Situation::OppThrowin;
 			}
 		}
-		if((int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::start && (int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::stop) {
+		if ((int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::start
+				&& (int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::stop)
+		{
 			lastActiveSituation = currentSituation;
 		}
 	}
 
 	//time in nanoseconds
-	unsigned long Game::getTimeSinceStart() {
+	unsigned long Game::getTimeSinceStart()
+	{
 		return timeSinceStart;
 	}
 	msl_msgs::RefereeBoxInfoBodyPtr Game::getRefereeBoxInfoBody()
@@ -304,4 +313,100 @@ namespace msl
 		return ownGoal;
 	}
 
+	GameState Game::getGameState()
+	{
+		return gameState;
+	}
+
+	void Game::setGameState(GameState gameState)
+	{
+		this->gameState = gameState;
+	}
+
+	void Game::updateGameState()
+	{
+		// Find robot closest to ball
+		auto robots = this->wm->robots.getPositionsOfTeamMates();
+		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
+		double minDist = numeric_limits<double>::max();
+		auto sharedBallPosition = wm->ball.getSharedBallPosition();
+		if (sharedBallPosition == nullptr)
+		{
+			return;
+		}
+		bool ballPossession = false;
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
+		{
+			double currDist = shwmData->second->distanceTo(sharedBallPosition);
+			if(closestRobot == nullptr || currDist < minDist)
+			{	closestRobot = shwmData;
+				minDist = currDist;
+			}
+			ballPossession |= *(wm->ball.getTeamMateBallPossession(shwmData->first));
+		}
+
+		if (closestRobot == nullptr)
+		{
+			return;
+		}
+		bool oppBallPossession = *(wm->ball.getOppBallPossession());
+		GameState gs = getGameState();
+
+		if (gs != GameState::Duel && ballPossession && oppBallPossession)
+		{
+			//cout << "State changed: Melee state" << endl;
+			gs = GameState::Duel;
+			this->teamMateWithBall = 0;
+		}
+		else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
+		{
+			//cout << "State changed: Attack state" << endl;
+			gs = GameState::OwnBallPossession;
+			setMayScore();
+		}
+		else if (gs != GameState::OppBallPossession && !ballPossession && oppBallPossession)
+		{
+			//cout << "State changed: Defend state" << endl;
+			gs = GameState::OppBallPossession;
+			this->teamMateWithBall = 0;
+		}
+		else if (gs != GameState::NobodyInBallPossession && !ballPossession && !oppBallPossession)
+		{
+			//cout << "State changed: Conflict state" << endl;
+			gs = GameState::NobodyInBallPossession;
+		}
+
+		setGameState(gs);
+	}
+
+	bool Game::isMayScore()
+	{
+		return mayScore;
+	}
+
+	void Game::setMayScore()
+	{
+		shared_ptr<geometry::CNPosition> capturePos = nullptr;
+		int teamMateWithBallNow = 0;
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.getPositionsOfTeamMates()))
+		{
+			if (*(wm->ball.getTeamMateBallPossession(shwmData->first)))
+			{
+				capturePos = shwmData->second;
+				teamMateWithBallNow = shwmData->first;
+			}
+		}
+
+		if (capturePos == nullptr || capturePos->x < 0)
+			mayScore = false;
+
+		if (capturePos->x > 50 && teamMateWithBall != teamMateWithBallNow)
+		{
+			mayScore = true;
+		}
+
+		teamMateWithBall = teamMateWithBallNow;
+	}
+
 } /* namespace alica */
+
