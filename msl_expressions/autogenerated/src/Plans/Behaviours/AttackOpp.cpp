@@ -50,6 +50,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+        mc.motion.translation = 0;
         cout << "x: " << x << endl;
         cout << "y: " << y << endl;
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
