@@ -281,7 +281,8 @@ namespace msl_keyboard_joystick
 					break;
 				case Qt::Key_R:
 					//Speed (translation) +
-					if (translation < 1000)
+					//TODO: After test for actuate pls turn down to 1000
+					if (translation < 4000)
 					{
 						translation = translation + 100;
 					}

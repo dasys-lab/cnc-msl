@@ -15507,138 +15507,6 @@ Pad definition corrected 2006.05.15, librarian@cadsoft.de</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="infineon">
-<packages>
-<package name="TO220-51">
-<description>&lt;b&gt;TO-218AB/5-1&lt;/b&gt;&lt;p&gt;
-Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
-<wire x1="7.5" y1="-0.1" x2="-7.55" y2="-0.1" width="0.2032" layer="21"/>
-<wire x1="7.45" y1="-2.1" x2="-7.45" y2="-2.1" width="0.2032" layer="21"/>
-<wire x1="-7.45" y1="-2.1" x2="-7.45" y2="-4.8" width="0.2032" layer="21"/>
-<wire x1="7.45" y1="-4.8" x2="7.45" y2="-2.1" width="0.2032" layer="21"/>
-<wire x1="-7.45" y1="-4.8" x2="7.45" y2="-4.8" width="0.2032" layer="51"/>
-<wire x1="-7.55" y1="-0.1" x2="-7.55" y2="-2.1" width="0.2032" layer="21"/>
-<wire x1="7.55" y1="-2.1" x2="7.55" y2="-0.1" width="0.2032" layer="21"/>
-<wire x1="-2" y1="-4.65" x2="-2" y2="-0.2" width="0.1016" layer="21" style="dashdot"/>
-<wire x1="2" y1="-4.7" x2="2" y2="-0.2" width="0.1016" layer="21" style="dashdot"/>
-<pad name="2" x="-2.55" y="-8.2" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="4" x="2.55" y="-8.2" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="1" x="-5.1" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="3" x="0" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="5" x="5.1" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
-<text x="-8.89" y="-7.62" size="1.27" layer="25" rot="R90">&gt;NAME</text>
-<text x="10.16" y="-7.62" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
-<rectangle x1="-3.31" y1="-8.45" x2="-1.76" y2="-4.8" layer="51"/>
-<rectangle x1="1.77" y1="-8.45" x2="3.32" y2="-4.8" layer="51"/>
-</package>
-<package name="TO220-52">
-<description>&lt;b&gt;TO-218AB/5 Option E3146&lt;/b&gt;&lt;p&gt;
-Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
-<wire x1="-7.45" y1="-2.05" x2="-7.45" y2="-4.15" width="0.2032" layer="21"/>
-<wire x1="7.45" y1="-4.15" x2="7.45" y2="-2.05" width="0.2032" layer="21"/>
-<wire x1="7.45" y1="-2.05" x2="5.5" y2="-0.1" width="0.2032" layer="21"/>
-<wire x1="5.5" y1="-0.1" x2="-5.5" y2="-0.1" width="0.2032" layer="21"/>
-<wire x1="-5.5" y1="-0.1" x2="-7.45" y2="-2.05" width="0.2032" layer="21"/>
-<wire x1="-7.44" y1="-5.27" x2="-7.44" y2="-6.7" width="0.2032" layer="21"/>
-<wire x1="-7.44" y1="-6.7" x2="-7.44" y2="-20.38" width="0.2032" layer="21"/>
-<wire x1="-7.44" y1="-20.38" x2="-7.04" y2="-19.98" width="0.1016" layer="21"/>
-<wire x1="7.04" y1="-19.98" x2="7.44" y2="-20.38" width="0.1016" layer="21"/>
-<wire x1="7.44" y1="-20.38" x2="7.44" y2="-6.7" width="0.2032" layer="21"/>
-<wire x1="7.44" y1="-6.7" x2="7.44" y2="-5.27" width="0.2032" layer="21"/>
-<wire x1="-7.44" y1="-20.38" x2="7.44" y2="-20.38" width="0.2032" layer="21"/>
-<wire x1="-7.54" y1="-4.17" x2="-7.54" y2="-5.27" width="0.2032" layer="21"/>
-<wire x1="7.54" y1="-5.27" x2="7.54" y2="-4.17" width="0.2032" layer="21"/>
-<wire x1="-7.44" y1="-6.7" x2="7.44" y2="-6.7" width="0.2032" layer="21"/>
-<wire x1="-7.04" y1="-19.98" x2="7.04" y2="-19.98" width="0.1016" layer="21"/>
-<wire x1="7.04" y1="-19.98" x2="7.04" y2="-7.5" width="0.1016" layer="21"/>
-<wire x1="7.04" y1="-7.5" x2="7.34" y2="-6.8" width="0.1016" layer="21"/>
-<wire x1="7.04" y1="-7.5" x2="-7.04" y2="-7.5" width="0.1016" layer="21"/>
-<wire x1="-7.04" y1="-7.5" x2="-7.34" y2="-6.8" width="0.1016" layer="21"/>
-<wire x1="-7.04" y1="-7.5" x2="-7.04" y2="-19.98" width="0.1016" layer="21"/>
-<circle x="0" y="-2.8" radius="2" width="0" layer="42"/>
-<circle x="0" y="-2.8" radius="2" width="0" layer="41"/>
-<circle x="0" y="-2.8" radius="2.7" width="0" layer="43"/>
-<pad name="2" x="-2.54" y="-27.94" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="4" x="2.54" y="-27.94" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="1" x="-5.08" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="3" x="0" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
-<pad name="5" x="5.08" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
-<text x="-5.08" y="-17.78" size="1.27" layer="25">&gt;NAME</text>
-<text x="-5.08" y="-12.7" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-5.85" y1="-30.5" x2="-4.3" y2="-27.95" layer="51"/>
-<rectangle x1="-5.85" y1="-27.95" x2="-4.3" y2="-20.4" layer="21"/>
-<rectangle x1="-3.31" y1="-27.96" x2="-1.76" y2="-25.41" layer="51"/>
-<rectangle x1="-0.77" y1="-30.5" x2="0.78" y2="-27.95" layer="51"/>
-<rectangle x1="1.77" y1="-27.96" x2="3.32" y2="-25.41" layer="51"/>
-<rectangle x1="4.31" y1="-30.5" x2="5.86" y2="-27.95" layer="51"/>
-<rectangle x1="-3.31" y1="-25.41" x2="-1.76" y2="-20.32" layer="21"/>
-<rectangle x1="-0.77" y1="-27.95" x2="0.78" y2="-20.4" layer="21"/>
-<rectangle x1="1.77" y1="-25.41" x2="3.32" y2="-20.32" layer="21"/>
-<rectangle x1="4.31" y1="-27.95" x2="5.86" y2="-20.4" layer="21"/>
-<hole x="0" y="-4" drill="4.05"/>
-</package>
-</packages>
-<symbols>
-<symbol name="BTS555">
-<wire x1="-5.08" y1="7.62" x2="5.08" y2="7.62" width="0.254" layer="94"/>
-<wire x1="5.08" y1="7.62" x2="5.08" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="5.08" y1="-5.08" x2="-5.08" y2="-5.08" width="0.254" layer="94"/>
-<wire x1="-5.08" y1="-5.08" x2="-5.08" y2="7.62" width="0.254" layer="94"/>
-<text x="-5.08" y="8.89" size="1.778" layer="95">&gt;NAME</text>
-<text x="0" y="-7.62" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="IN" x="-7.62" y="2.54" length="short" direction="in"/>
-<pin name="IS" x="-2.54" y="-7.62" length="short" direction="pas" rot="R90"/>
-<pin name="VBB" x="7.62" y="5.08" length="short" direction="pas" rot="R180"/>
-<pin name="O1" x="7.62" y="0" length="short" direction="pas" rot="R180"/>
-<pin name="O2" x="7.62" y="-2.54" length="short" direction="pas" rot="R180"/>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="BTS555" prefix="IC">
-<description>&lt;b&gt;PROFET® Data Sheet BTS555&lt;/b&gt;&lt;p&gt;
-Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
-<gates>
-<gate name="G$1" symbol="BTS555" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="TO220-51">
-<connects>
-<connect gate="G$1" pin="IN" pad="2"/>
-<connect gate="G$1" pin="IS" pad="4"/>
-<connect gate="G$1" pin="O1" pad="1"/>
-<connect gate="G$1" pin="O2" pad="5"/>
-<connect gate="G$1" pin="VBB" pad="3"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="MF" value="FARNELL" constant="no"/>
-<attribute name="MPN" value="BTS555." constant="no"/>
-<attribute name="OC_FARNELL" value="4109260" constant="no"/>
-<attribute name="OC_NEWARK" value="26H6766" constant="no"/>
-</technology>
-</technologies>
-</device>
-<device name="E3146" package="TO220-52">
-<connects>
-<connect gate="G$1" pin="IN" pad="2"/>
-<connect gate="G$1" pin="IS" pad="4"/>
-<connect gate="G$1" pin="O1" pad="1"/>
-<connect gate="G$1" pin="O2" pad="5"/>
-<connect gate="G$1" pin="VBB" pad="3"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="MF" value="" constant="no"/>
-<attribute name="MPN" value="" constant="no"/>
-<attribute name="OC_FARNELL" value="unknown" constant="no"/>
-<attribute name="OC_NEWARK" value="unknown" constant="no"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="buzzer">
 <packages>
 <package name="F/CM12P">
@@ -18611,6 +18479,178 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="micro-siemens">
+<description>&lt;b&gt;Siemens Microcontroller and Microprocessor Devices&lt;/b&gt;&lt;p&gt;
+www.siemens.de&lt;p&gt;
+Devices included from Alex Bluemel&lt;br&gt;
+8*C535.DEV&lt;br&gt;
+BTS428L2.DEV&lt;br&gt;
+BTS555.DEV&lt;br&gt;
+SA*-C161CS.DEV&lt;br&gt;
+SA*-C165-RF.DEV&lt;br&gt;
+SA*-C165-RM.DEV&lt;br&gt;
+SA*-C167-LM.DEV&lt;br&gt;
+SA*-C167CR-LM.DEV&lt;br&gt;
+SA*-XC167.DEV&lt;br&gt;
+SA*-XC167CI.DEV&lt;br&gt;
+SA*C167-CR-LM.DEV&lt;br&gt;
+SAF-XC2264.DEV&lt;br&gt;
+SAK-TC1100*.DEV&lt;br&gt;
+SAK-TC1130*.DEV&lt;br&gt;
+SAK-TC1762*.DEV&lt;br&gt;
+SAK-TC1796.DEV&lt;br&gt;
+SAK-TC1910*.DEV&lt;br&gt;
+SAK-TC1920*.DEV&lt;br&gt;
+TC-10.DEV&lt;br&gt;
+TC10.DEV&lt;br&gt;
+TC11IB.DEV&lt;br&gt;
+TC191*.DEV&lt;br&gt;
+TC1100.DEV&lt;br&gt;
+TC1130.DEV&lt;br&gt;
+TC1762.DEV&lt;br&gt;
+TC1765.DEV&lt;br&gt;
+TC1775.DEV&lt;br&gt;
+TC1920.DEV&lt;br&gt;
+TDA6060*.DEV&lt;br&gt;
+TLE6361G.DEV&lt;br&gt;
+XC167.DEV&lt;br&gt;
+&lt;br&gt;
+&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
+<packages>
+<package name="TO220-52">
+<description>&lt;b&gt;TO-218AB/5 Option E3146&lt;/b&gt;&lt;p&gt;
+Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
+<wire x1="-7.45" y1="-2.05" x2="-7.45" y2="-4.15" width="0.2032" layer="21"/>
+<wire x1="7.45" y1="-4.15" x2="7.45" y2="-2.05" width="0.2032" layer="21"/>
+<wire x1="7.45" y1="-2.05" x2="5.5" y2="-0.1" width="0.2032" layer="21"/>
+<wire x1="5.5" y1="-0.1" x2="-5.5" y2="-0.1" width="0.2032" layer="21"/>
+<wire x1="-5.5" y1="-0.1" x2="-7.45" y2="-2.05" width="0.2032" layer="21"/>
+<wire x1="-7.44" y1="-5.27" x2="-7.44" y2="-6.7" width="0.2032" layer="21"/>
+<wire x1="-7.44" y1="-6.7" x2="-7.44" y2="-20.38" width="0.2032" layer="21"/>
+<wire x1="-7.44" y1="-20.38" x2="-7.04" y2="-19.98" width="0.1016" layer="21"/>
+<wire x1="7.04" y1="-19.98" x2="7.44" y2="-20.38" width="0.1016" layer="21"/>
+<wire x1="7.44" y1="-20.38" x2="7.44" y2="-6.7" width="0.2032" layer="21"/>
+<wire x1="7.44" y1="-6.7" x2="7.44" y2="-5.27" width="0.2032" layer="21"/>
+<wire x1="-7.44" y1="-20.38" x2="7.44" y2="-20.38" width="0.2032" layer="21"/>
+<wire x1="-7.54" y1="-4.17" x2="-7.54" y2="-5.27" width="0.2032" layer="21"/>
+<wire x1="7.54" y1="-5.27" x2="7.54" y2="-4.17" width="0.2032" layer="21"/>
+<wire x1="-7.44" y1="-6.7" x2="7.44" y2="-6.7" width="0.2032" layer="21"/>
+<wire x1="-7.04" y1="-19.98" x2="7.04" y2="-19.98" width="0.1016" layer="21"/>
+<wire x1="7.04" y1="-19.98" x2="7.04" y2="-7.5" width="0.1016" layer="21"/>
+<wire x1="7.04" y1="-7.5" x2="7.34" y2="-6.8" width="0.1016" layer="21"/>
+<wire x1="7.04" y1="-7.5" x2="-7.04" y2="-7.5" width="0.1016" layer="21"/>
+<wire x1="-7.04" y1="-7.5" x2="-7.34" y2="-6.8" width="0.1016" layer="21"/>
+<wire x1="-7.04" y1="-7.5" x2="-7.04" y2="-19.98" width="0.1016" layer="21"/>
+<circle x="0" y="-2.8" radius="2" width="0" layer="42"/>
+<circle x="0" y="-2.8" radius="2" width="0" layer="41"/>
+<circle x="0" y="-2.8" radius="2.7" width="0" layer="43"/>
+<pad name="2" x="-2.54" y="-27.94" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="4" x="2.54" y="-27.94" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="1" x="-5.08" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="3" x="0" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="5" x="5.08" y="-30.48" drill="1.6" diameter="2.5" rot="R90"/>
+<text x="-5.08" y="-17.78" size="1.27" layer="25">&gt;NAME</text>
+<text x="-5.08" y="-12.7" size="1.27" layer="27">&gt;VALUE</text>
+<text x="-3.81" y="-6.35" size="0.6096" layer="51">P-TO220-5-2</text>
+<text x="-3.81" y="-8.27" size="0.6096" layer="51">SIEMENS TLE4270</text>
+<rectangle x1="-5.85" y1="-30.5" x2="-4.3" y2="-27.95" layer="51"/>
+<rectangle x1="-5.85" y1="-27.95" x2="-4.3" y2="-20.4" layer="21"/>
+<rectangle x1="-3.31" y1="-27.96" x2="-1.76" y2="-25.41" layer="51"/>
+<rectangle x1="-0.77" y1="-30.5" x2="0.78" y2="-27.95" layer="51"/>
+<rectangle x1="1.77" y1="-27.96" x2="3.32" y2="-25.41" layer="51"/>
+<rectangle x1="4.31" y1="-30.5" x2="5.86" y2="-27.95" layer="51"/>
+<rectangle x1="-3.31" y1="-25.41" x2="-1.76" y2="-20.32" layer="21"/>
+<rectangle x1="-0.77" y1="-27.95" x2="0.78" y2="-20.4" layer="21"/>
+<rectangle x1="1.77" y1="-25.41" x2="3.32" y2="-20.32" layer="21"/>
+<rectangle x1="4.31" y1="-27.95" x2="5.86" y2="-20.4" layer="21"/>
+<hole x="0" y="-4" drill="4.05"/>
+</package>
+<package name="TO220-51">
+<description>&lt;b&gt;TO-218AB/5-1&lt;/b&gt;&lt;p&gt;
+Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
+<wire x1="7.5" y1="-0.1" x2="-7.55" y2="-0.1" width="0.2032" layer="21"/>
+<wire x1="7.45" y1="-2.1" x2="-7.45" y2="-2.1" width="0.2032" layer="21"/>
+<wire x1="-7.45" y1="-2.1" x2="-7.45" y2="-4.8" width="0.2032" layer="21"/>
+<wire x1="7.45" y1="-4.8" x2="7.45" y2="-2.1" width="0.2032" layer="21"/>
+<wire x1="-7.45" y1="-4.8" x2="7.45" y2="-4.8" width="0.2032" layer="51"/>
+<wire x1="-7.55" y1="-0.1" x2="-7.55" y2="-2.1" width="0.2032" layer="21"/>
+<wire x1="7.55" y1="-2.1" x2="7.55" y2="-0.1" width="0.2032" layer="21"/>
+<wire x1="-2" y1="-4.65" x2="-2" y2="-0.2" width="0.1016" layer="21" style="dashdot"/>
+<wire x1="2" y1="-4.7" x2="2" y2="-0.2" width="0.1016" layer="21" style="dashdot"/>
+<pad name="2" x="-2.55" y="-8.2" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="4" x="2.55" y="-8.2" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="1" x="-5.1" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="3" x="0" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
+<pad name="5" x="5.1" y="-4.5" drill="1.6" diameter="2.5" rot="R90"/>
+<text x="-3.81" y="-2.54" size="0.6096" layer="51">P-TO220-5-1</text>
+<text x="-3.81" y="-3.27" size="0.6096" layer="51">SIEMENS TLE4270</text>
+<text x="-8.89" y="-7.62" size="1.27" layer="25" rot="R90">&gt;NAME</text>
+<text x="10.16" y="-7.62" size="1.27" layer="27" rot="R90">&gt;VALUE</text>
+<rectangle x1="-3.31" y1="-8.45" x2="-1.76" y2="-4.8" layer="51"/>
+<rectangle x1="1.77" y1="-8.45" x2="3.32" y2="-4.8" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="BTS555">
+<wire x1="-7.62" y1="5.08" x2="7.62" y2="5.08" width="0.254" layer="94"/>
+<wire x1="7.62" y1="5.08" x2="7.62" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-7.62" x2="-7.62" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-7.62" y1="-7.62" x2="-7.62" y2="5.08" width="0.254" layer="94"/>
+<text x="-7.62" y="6.35" size="1.778" layer="95">&gt;NAME</text>
+<text x="-7.62" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="IN" x="-10.16" y="0" length="short" direction="in"/>
+<pin name="IS" x="-10.16" y="-5.08" length="short" direction="pas"/>
+<pin name="VBB" x="10.16" y="2.54" length="short" direction="pas" rot="R180"/>
+<pin name="OUT1" x="10.16" y="-2.54" length="short" direction="pas" rot="R180"/>
+<pin name="OUT2" x="10.16" y="-5.08" length="short" direction="pas" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="BTS555" prefix="IC">
+<description>&lt;b&gt;Smart Highside High Current Power Switch&lt;/b&gt; PROFET®&lt;/b&gt;&lt;p&gt;
+Source: http://www.infineon.com/upload/Document/cmc_upload/documents/011/8726/Datasheet_BTS555.pdf</description>
+<gates>
+<gate name="G$1" symbol="BTS555" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="TO220-51">
+<connects>
+<connect gate="G$1" pin="IN" pad="2"/>
+<connect gate="G$1" pin="IS" pad="4"/>
+<connect gate="G$1" pin="OUT1" pad="1"/>
+<connect gate="G$1" pin="OUT2" pad="5"/>
+<connect gate="G$1" pin="VBB" pad="3"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="MF" value="FARNELL" constant="no"/>
+<attribute name="MPN" value="BTS555." constant="no"/>
+<attribute name="OC_FARNELL" value="4109260" constant="no"/>
+<attribute name="OC_NEWARK" value="26H6766" constant="no"/>
+</technology>
+</technologies>
+</device>
+<device name="E3146" package="TO220-52">
+<connects>
+<connect gate="G$1" pin="IN" pad="2"/>
+<connect gate="G$1" pin="IS" pad="4"/>
+<connect gate="G$1" pin="OUT1" pad="1"/>
+<connect gate="G$1" pin="OUT2" pad="5"/>
+<connect gate="G$1" pin="VBB" pad="3"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="MF" value="" constant="no"/>
+<attribute name="MPN" value="" constant="no"/>
+<attribute name="OC_FARNELL" value="unknown" constant="no"/>
+<attribute name="OC_NEWARK" value="unknown" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -18743,7 +18783,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
 <part name="RS232" library="con-ml" deviceset="ML6" device=""/>
 <part name="FRAME3" library="frames" deviceset="DINA4_L" device=""/>
-<part name="IC4" library="infineon" deviceset="BTS555" device="E3146"/>
+<part name="IC4" library="micro-siemens" deviceset="BTS555" device="E3146"/>
 <part name="IC10" library="BTS443P" deviceset="BTS6133" device=""/>
 <part name="IC11" library="BTS443P" deviceset="BTS6133" device=""/>
 <part name="IC12" library="BTS443P" deviceset="BTS6133" device=""/>
@@ -20388,7 +20428,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <instances>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="FRAME3" gate="G$2" x="162.56" y="0"/>
-<instance part="IC4" gate="G$1" x="76.2" y="38.1"/>
+<instance part="IC4" gate="G$1" x="73.66" y="40.64"/>
 <instance part="IC10" gate="G$1" x="228.6" y="91.44"/>
 <instance part="IC11" gate="G$1" x="78.74" y="157.48"/>
 <instance part="IC12" gate="G$1" x="78.74" y="96.52"/>
@@ -20422,13 +20462,13 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <instance part="R13" gate="G$1" x="215.9" y="71.12" rot="MR90"/>
 <instance part="R14" gate="G$1" x="66.04" y="78.74" rot="MR90"/>
 <instance part="R19" gate="G$1" x="66.04" y="139.7" rot="MR90"/>
-<instance part="R20" gate="G$1" x="73.66" y="17.78" rot="MR90"/>
+<instance part="R20" gate="G$1" x="63.5" y="20.32" rot="MR90"/>
 <instance part="R21" gate="G$1" x="215.9" y="147.32" rot="MR90"/>
 <instance part="GND1" gate="1" x="215.9" y="60.96" rot="MR0"/>
 <instance part="GND3" gate="1" x="215.9" y="137.16" rot="MR0"/>
 <instance part="GND4" gate="1" x="66.04" y="68.58" rot="MR0"/>
 <instance part="GND5" gate="1" x="66.04" y="129.54" rot="MR0"/>
-<instance part="GND31" gate="1" x="73.66" y="7.62" rot="MR0"/>
+<instance part="GND31" gate="1" x="63.5" y="10.16" rot="MR0"/>
 <instance part="GND32" gate="1" x="154.94" y="119.38" rot="MR0"/>
 <instance part="GND35" gate="1" x="38.1" y="144.78" rot="MR0"/>
 <instance part="GND36" gate="1" x="35.56" y="30.48" rot="MR0"/>
@@ -20484,7 +20524,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 <pinref part="GND5" gate="1" pin="GND"/>
 </segment>
 <segment>
-<wire x1="73.66" y1="12.7" x2="73.66" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="15.24" x2="63.5" y2="12.7" width="0.1524" layer="91"/>
 <pinref part="R20" gate="G$1" pin="1"/>
 <pinref part="GND31" gate="1" pin="GND"/>
 </segment>
@@ -20579,14 +20619,14 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="MOTION" class="0">
 <segment>
-<wire x1="83.82" y1="35.56" x2="86.36" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="35.56" x2="86.36" y2="38.1" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="38.1" x2="86.36" y2="38.1" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="38.1" x2="83.82" y2="38.1" width="0.1524" layer="91"/>
-<junction x="86.36" y="38.1"/>
 <label x="88.9" y="38.1" size="1.778" layer="95" xref="yes"/>
-<pinref part="IC4" gate="G$1" pin="O2"/>
-<pinref part="IC4" gate="G$1" pin="O1"/>
+<pinref part="IC4" gate="G$1" pin="OUT1"/>
+<wire x1="83.82" y1="38.1" x2="86.36" y2="38.1" width="0.1524" layer="91"/>
+<junction x="86.36" y="38.1"/>
+<pinref part="IC4" gate="G$1" pin="OUT2"/>
+<wire x1="83.82" y1="35.56" x2="86.36" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SW_12V" class="0">
@@ -20727,7 +20767,7 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="N$46" class="0">
 <segment>
-<wire x1="60.96" y1="40.64" x2="68.58" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="60.96" y1="40.64" x2="63.5" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="IC4" gate="G$1" pin="IN"/>
 <pinref part="R48" gate="G$1" pin="2"/>
 </segment>
@@ -20827,11 +20867,11 @@ Source: http://cache.national.com/ds/LM/LM2574.pdf</description>
 </net>
 <net name="ADC6" class="0">
 <segment>
-<wire x1="73.66" y1="30.48" x2="73.66" y2="27.94" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="27.94" x2="73.66" y2="22.86" width="0.1524" layer="91"/>
-<wire x1="73.66" y1="27.94" x2="71.12" y2="27.94" width="0.1524" layer="91"/>
-<junction x="73.66" y="27.94"/>
-<label x="71.12" y="27.94" size="1.778" layer="95" rot="R180" xref="yes"/>
+<wire x1="63.5" y1="35.56" x2="63.5" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="27.94" x2="63.5" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="27.94" x2="58.42" y2="27.94" width="0.1524" layer="91"/>
+<junction x="63.5" y="27.94"/>
+<label x="58.42" y="27.94" size="1.778" layer="95" rot="R180" xref="yes"/>
 <pinref part="IC4" gate="G$1" pin="IS"/>
 <pinref part="R20" gate="G$1" pin="2"/>
 </segment>
