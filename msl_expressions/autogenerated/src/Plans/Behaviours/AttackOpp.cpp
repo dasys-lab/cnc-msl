@@ -157,7 +157,7 @@ namespace alica
         const double xDistance = abs(egoBallPos->x);
         const double yDistance = abs(egoBallPos->y);
 
-        double intersection = xDistance * (yVelocity / xVelocity) + yDistance;
+        const double intersection = xDistance * (yVelocity / xVelocity) + yDistance;
 
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, intersection);
 
@@ -165,8 +165,10 @@ namespace alica
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(interPoint, interPoint, 300);
 
-        cout << "xVelocity :" << xVelocity << endl;
-        cout << "yVelocity :" << yVelocity << endl;
+        cout << "xVelocity:" << xVelocity << endl;
+        cout << "yVelocity:" << yVelocity << endl;
+        cout << "Intersection: " << intersection << endl;
+
         cout << endl;
 
         return mc;
