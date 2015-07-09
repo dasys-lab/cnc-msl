@@ -94,6 +94,10 @@ namespace alica
     void AttackOpp::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
+        oldDistance = 0.0;
+        kP = 2.0;
+        kI = 0.0;
+        kD = 1.7;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
@@ -110,18 +114,12 @@ namespace alica
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
         double summe = 0.0;
-        static double olddistance = 0.0;
-
-        const double Kp = 2.0;
-        const double Ki = 0.0;
-        const double Kd = 1.7;
-
         //distance ball to robot
         double distance = egoBallPos->length();
 
-        summe = summe + distance;
-        double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
-        olddistance = distance;
+        summe = distance;
+        double movement = kP * distance + kI * summe + kD * (distance - oldDistance);
+        oldDistance = distance;
 
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
 
