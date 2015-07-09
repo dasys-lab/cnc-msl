@@ -32,6 +32,7 @@ namespace msl
 		NULL);
 		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
 		NULL);
+		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "additionalCorridorWidth", NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
@@ -283,16 +284,17 @@ namespace msl
 		double dist = std::sqrt(dx * dx + dy * dy);
 		dx /= dist;
 		dy /= dist;
+		//TODO
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2) * dy, currentPos->y - (this->robotDiameter / 2) * dx);
+				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy, currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2) * dy, currentPos->y + (this->robotDiameter / 2) * dx);
+				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy, currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
-				goal->x + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-				goal->y - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
+				goal->x + std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y - std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
-				goal->x - std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dy,
-				goal->y + std::max(this->robotDiameter / 2, length / this->corridorWidthDivisor) * dx);
+				goal->x - std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y + std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
 		points.push_back(p3);
