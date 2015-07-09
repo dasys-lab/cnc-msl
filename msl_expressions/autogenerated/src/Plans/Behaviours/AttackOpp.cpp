@@ -47,7 +47,7 @@ namespace alica
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
-        if(abs(vectorLength - egoBallPos->length()) < threshold)
+        if(wm->ball.haveBall())
         {
         	isMovingAwayIter = 0;
         	isMovingCloserIter = 0;
