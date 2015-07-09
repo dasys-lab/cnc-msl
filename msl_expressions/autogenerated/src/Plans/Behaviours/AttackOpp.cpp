@@ -13,8 +13,6 @@ namespace alica
             DomainBehaviour("AttackOpp")
     {
         /*PROTECTED REGION ID(con1430324527403) ENABLED START*/ //Add additional options here
-        old_x = 0;
-        old_y = 0;
         /*PROTECTED REGION END*/
     }
     AttackOpp::~AttackOpp()
@@ -30,6 +28,12 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
+        if (me == nullptr || egoBallPos == nullptr)
+        {
+            cerr << "insufficient information for AttackOpp" << endl;
+            return;
+        }
+
         //auto obstacles = wm->robots.getObstacles();
 
         //for (auto obstacle : *obstacles)
@@ -37,22 +41,10 @@ namespace alica
         // TODO: Get closest obstacle to ball
         //}
 
-        auto x = egoBallPos->x;
-        auto y = egoBallPos->y;
-
-        if (old_x == 0 && old_y == 0)
-        {
-            old_x = x;
-            old_y = y;
-            return;
-        }
-
         msl_actuator_msgs::MotionControl mc;
-        // TODO : remove later
-        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
-        mc.motion.translation = 0;
-        cout << "x: " << x << endl;
-        cout << "y: " << y << endl;
+//        // TODO : remove later
+//        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+//        mc.motion.translation = 0;
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
@@ -69,21 +61,9 @@ namespace alica
             cout << "roll away" << endl;
         }
 
-        old_x = x;
-        old_y = y;
 
-        //cout << "egoBallPos x: " << x << " y: " << y << endl;
 
-        if (me == nullptr || egoBallPos == nullptr)
-        {
-            cerr << "insufficient information for AttackOpp" << endl;
-            return;
-        }
 
-        if (!me.operator bool())
-        {
-            return;
-        }
 
         //mc.motion.translation = 0;
         send(mc);
@@ -98,6 +78,7 @@ namespace alica
         kP = 2.0;
         kI = 0.0;
         kD = 1.7;
+        rotate_P = 1.8;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
@@ -106,9 +87,6 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
-        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
-
-        const double rotate_P = 1.8;
 
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
@@ -116,8 +94,8 @@ namespace alica
         double summe = 0.0;
         //distance ball to robot
         double distance = egoBallPos->length();
-
-        summe = distance;
+        //TODO bullshit summe ist an der stelle IMMER 0.0
+        summe = summe + distance;
         double movement = kP * distance + kI * summe + kD * (distance - oldDistance);
         oldDistance = distance;
 
@@ -143,6 +121,7 @@ namespace alica
             this->send(bhc);
             //this->success = true;
         }
+        return mc;
     }
 
     msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
