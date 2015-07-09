@@ -149,12 +149,7 @@ namespace alica
 															   shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                    shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
-        const double xVelocity = ballVelocity->x;
-        const double yVelocity = ballVelocity->y;
-        const double xDistance = abs(egoBallPos->x);
-        const double yPosition = egoBallPos->y;
-
-        const double yIntersection =  yPosition + (-(xDistance / xVelocity)) * yVelocity;
+        double yIntersection =  egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
 
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
@@ -162,8 +157,8 @@ namespace alica
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
 
-        cout << "xVelocity:" << xVelocity << endl;
-        cout << "yVelocity:" << yVelocity << endl;
+        cout << "xVelocity:" << ballVelocity->x << endl;
+        cout << "yVelocity:" << ballVelocity->y << endl;
         cout << "Y-Intersection: " << yIntersection << endl;
 
         cout << endl;

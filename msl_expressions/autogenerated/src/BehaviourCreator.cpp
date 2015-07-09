@@ -43,9 +43,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
-#include  "Plans/Behaviours/ShovelSelect.h"
+#include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Behaviours/ShovelSelect.h"
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
@@ -175,6 +177,16 @@ namespace alica
                 return make_shared<AlignToGoal>();
                 break;
 
+            case 1435159282996:
+
+                return make_shared<SpinSlowly>();
+                break;
+
+            case 1435766278023:
+
+                return make_shared<StandardActuate>();
+                break;
+
             case 1434199852589:
 
             case 1435156714286:
@@ -182,11 +194,6 @@ namespace alica
             case 1435156811453:
 
                 return make_shared<ShovelSelect>();
-                break;
-
-            case 1435766278023:
-
-                return make_shared<StandardActuate>();
                 break;
 
             case 1429111645834:

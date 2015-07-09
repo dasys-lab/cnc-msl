@@ -45,6 +45,8 @@
 
 #include  "Plans/Attack/constraints/AttackSupportPlan1434046705214Constraints.h"
 
+#include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"
+
 #include  "Plans/GameStrategy/Gameplay/constraints/Gameplay1426694853089Constraints.h"
 
 using namespace std;

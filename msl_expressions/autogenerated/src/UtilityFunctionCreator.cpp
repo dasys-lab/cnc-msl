@@ -45,6 +45,8 @@
 
 #include  "Plans/Attack/AttackSupportPlan1434046705214.h"
 
+#include  "Plans/CarpetCalibrator1435159127771.h"
+
 #include  "Plans/GameStrategy/Gameplay/Gameplay1426694853089.h"
 
 using namespace std;
@@ -151,6 +153,10 @@ namespace alica
 
             case 1434046705214:
                 return make_shared<UtilityFunction1434046705214>();
+                break;
+
+            case 1435159127771:
+                return make_shared<UtilityFunction1435159127771>();
                 break;
 
             case 1426694853089:
