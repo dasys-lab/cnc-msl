@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ##############################################################################
 
 # qt_build provides the qt cmake glue, roscpp the comms for a default talker
-find_package(catkin REQUIRED COMPONENTS qt_build roscpp message_generation msl_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs)
 include_directories(${catkin_INCLUDE_DIRS})
 # Use this to define what the package will export (e.g. libs, headers).
 # Since the default here is to produce only a binary, we don't worry about
@@ -26,7 +26,10 @@ catkin_package()
 
 # this comes from qt_build's qt-ros.cmake which is automatically 
 # included via the dependency call in package.xml
-rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the component list here
+#rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the component list here
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(Qt4 4.4.3 REQUIRED QtCore QtGui)
 
 ##############################################################################
 # Sections
@@ -51,6 +54,6 @@ file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINK
 ##############################################################################
 
 add_executable(msl_keyboard_joystick ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(msl_keyboard_joystick ${QT_LIBRARIES} ${catkin_LIBRARIES})
+target_link_libraries(msl_keyboard_joystick Qt4::QtCore Qt4::QtGui ${QT_LIBRARIES} ${catkin_LIBRARIES})
 install(TARGETS msl_keyboard_joystick RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 add_dependencies(msl_keyboard_joystick msl_msgs_generate_messages_cpp)
