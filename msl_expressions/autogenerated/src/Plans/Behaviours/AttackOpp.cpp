@@ -13,8 +13,6 @@ namespace alica
             DomainBehaviour("AttackOpp")
     {
         /*PROTECTED REGION ID(con1430324527403) ENABLED START*/ //Add additional options here
-        old_x = 0;
-        old_y = 0;
         /*PROTECTED REGION END*/
     }
     AttackOpp::~AttackOpp()
@@ -30,6 +28,11 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
+        if (me == nullptr || egoBallPos == nullptr)
+        {
+            return;
+        }
+
         //auto obstacles = wm->robots.getObstacles();
 
         //for (auto obstacle : *obstacles)
@@ -37,55 +40,46 @@ namespace alica
         // TODO: Get closest obstacle to ball
         //}
 
-        auto x = egoBallPos->x;
-        auto y = egoBallPos->y;
-
-        if (old_x == 0 && old_y == 0)
-        {
-            old_x = x;
-            old_y = y;
-            return;
-        }
-
         msl_actuator_msgs::MotionControl mc;
-        // TODO : remove later
-        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
-        mc.motion.translation = 0;
-        cout << "x: " << x << endl;
-        cout << "y: " << y << endl;
+//        // TODO : remove later
+//        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
+//        mc.motion.translation = 0;
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
-
-        if (vectorLength < egoBallPos->length())
+        if(wm->ball.haveBall())
         {
-            cout << "get closer" << endl;
-
-            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
-
+        	isMovingAwayIter = 0;
+        	isMovingCloserIter = 0;
+        }
+        else if (vectorLength < egoBallPos->length())
+        {
+        	isMovingCloserIter++;
+        	isMovingAwayIter = 0;
         }
         else
         {
-            cout << "roll away" << endl;
+        	isMovingAwayIter++;
+        	isMovingCloserIter = 0;
         }
-
-        old_x = x;
-        old_y = y;
-
-        //cout << "egoBallPos x: " << x << " y: " << y << endl;
-
-        if (me == nullptr || egoBallPos == nullptr)
+        if(isMovingCloserIter >= maxIter)
         {
-            cerr << "insufficient information for AttackOpp" << endl;
-            return;
-        }
+        	cout << "get closer" << endl;
+            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
-        if (!me.operator bool())
+        }
+        else if(isMovingAwayIter >= maxIter)
         {
-            return;
+        	cout << "roll away" << endl;
+        	mc = driveToMovingBall(egoBallPos, egoBallVelocity);
         }
+        else
+        {
+        	mc.motion.angle = 0;
+        	mc.motion.translation = 0;
+        	mc.motion.rotation = 0;
 
-        //mc.motion.translation = 0;
+        }
         send(mc);
 
 //Add additional options here
@@ -94,38 +88,35 @@ namespace alica
     void AttackOpp::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1430324527403) ENABLED START*/ //Add additional options here
+        oldDistance = 0.0;
+        kP = 2.0;
+        kI = 0.0;
+        kD = 1.7;
+        rotate_P = 1.8;
+        isMovingCloserIter = 0;
+        isMovingAwayIter = 0;
+        maxIter = 3;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
-    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos)
+    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos, shared_ptr<geometry::CNVelocity2D> egoBallVel)
     {
 
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
-        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
-
-        const double rotate_P = 1.8;
 
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
         double summe = 0.0;
-        static double olddistance = 0.0;
-
-        const double Kp = 2.0;
-        const double Ki = 0.0;
-        const double Kd = 1.7;
-
         //distance ball to robot
         double distance = egoBallPos->length();
-
+        //TODO bullshit summe ist an der stelle IMMER 0.0
         summe = summe + distance;
-        double movement = Kp * distance + Ki * summe + Kd * (distance - olddistance);
-        olddistance = distance;
+        double movement = kP * distance + kI * summe + kD * (distance - oldDistance);
+        oldDistance = distance;
 
-        auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-
-        double ball_speed = egoBallVelocity->length();
+        double ball_speed = egoBallVel->length();
 
         movement += ball_speed;
 
@@ -145,18 +136,14 @@ namespace alica
             this->send(bhc);
             //this->success = true;
         }
+        return mc;
     }
 
     msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
 															   shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                    shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
-        const double xVelocity = ballVelocity->x;
-        const double yVelocity = ballVelocity->y;
-        const double xDistance = abs(egoBallPos->x);
-        const double yPosition = egoBallPos->y;
-
-        const double yIntersection =  yPosition + (-(xDistance / xVelocity)) * yVelocity;
+        double yIntersection =  egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
 
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
@@ -164,8 +151,8 @@ namespace alica
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
 
-        cout << "xVelocity:" << xVelocity << endl;
-        cout << "yVelocity:" << yVelocity << endl;
+        cout << "xVelocity:" << ballVelocity->x << endl;
+        cout << "yVelocity:" << ballVelocity->y << endl;
         cout << "Y-Intersection: " << yIntersection << endl;
 
         cout << endl;

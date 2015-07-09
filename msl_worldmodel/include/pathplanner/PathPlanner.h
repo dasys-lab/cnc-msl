@@ -120,6 +120,7 @@ namespace msl
 		double dribble_angleTolerance;
 		double corridorWidthDivisor;
 		bool pathPlannerDebug;
+		double additionalCorridorWidth;
 		ros::NodeHandle n;
 		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
