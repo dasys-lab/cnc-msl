@@ -96,7 +96,6 @@ namespace alica
         isMovingCloserIter = 0;
         isMovingAwayIter = 0;
         maxIter = 3;
-        threshold = 50;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
