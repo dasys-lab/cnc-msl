@@ -30,7 +30,6 @@ namespace alica
 
         if (me == nullptr || egoBallPos == nullptr)
         {
-            cerr << "insufficient information for AttackOpp" << endl;
             return;
         }
 
@@ -48,24 +47,34 @@ namespace alica
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
-
         if (vectorLength < egoBallPos->length())
         {
-            cout << "get closer" << endl;
-
-            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
-
+        	isMovingCloserIter++;
+        	isMovingAwayIter = 0;
         }
         else
         {
-            cout << "roll away" << endl;
+        	isMovingAwayIter++;
+        	isMovingCloserIter = 0;
         }
+        if(isMovingCloserIter >= maxIter)
+        {
+        	cout << "get closer" << endl;
+            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
+        }
+        else if(isMovingAwayIter >= maxIter)
+        {
+        	cout << "roll away" << endl;
+        	mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+        }
+        else
+        {
+        	mc.motion.angle = 0;
+        	mc.motion.translation = 0;
+        	mc.motion.rotation = 0;
 
-
-
-
-        //mc.motion.translation = 0;
+        }
         send(mc);
 
 //Add additional options here
@@ -79,10 +88,13 @@ namespace alica
         kI = 0.0;
         kD = 1.7;
         rotate_P = 1.8;
+        isMovingCloserIter = 0;
+        isMovingAwayIter = 0;
+        maxIter = 3;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
-    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos)
+    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos, shared_ptr<geometry::CNVelocity2D> egoBallVel)
     {
 
         msl_actuator_msgs::MotionControl mc;
@@ -99,9 +111,7 @@ namespace alica
         double movement = kP * distance + kI * summe + kD * (distance - oldDistance);
         oldDistance = distance;
 
-        auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-
-        double ball_speed = egoBallVelocity->length();
+        double ball_speed = egoBallVel->length();
 
         movement += ball_speed;
 
