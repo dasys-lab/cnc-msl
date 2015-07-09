@@ -25,6 +25,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1430324527403) ENABLED START*/ //Add additional private methods here
         double oldDistance;
+        double threshold;
         double kP;
         double kI;
         double kD;

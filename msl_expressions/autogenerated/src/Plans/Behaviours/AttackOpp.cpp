@@ -47,7 +47,12 @@ namespace alica
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
-        if (vectorLength < egoBallPos->length())
+        if(abs(vectorLength - egoBallPos->length()) < threshold)
+        {
+        	isMovingAwayIter = 0;
+        	isMovingCloserIter = 0;
+        }
+        else if (vectorLength < egoBallPos->length())
         {
         	isMovingCloserIter++;
         	isMovingAwayIter = 0;
@@ -91,6 +96,7 @@ namespace alica
         isMovingCloserIter = 0;
         isMovingAwayIter = 0;
         maxIter = 3;
+        threshold = 50;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
