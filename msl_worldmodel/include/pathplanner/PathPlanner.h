@@ -121,6 +121,7 @@ namespace msl
 		double corridorWidthDivisor;
 		bool pathPlannerDebug;
 		double additionalCorridorWidth;
+		double snapDistance;
 		ros::NodeHandle n;
 		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;

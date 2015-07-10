@@ -32,7 +32,7 @@ namespace alica
         void oldController(double &leftController, double &rightController);
         void newController(double &leftController, double &rightController);
         double FunktionValuesRight;
-       // vector<shared_ptr<geometry::CNPoint2D>> lowKickList;
+        // vector<shared_ptr<geometry::CNPoint2D>> lowKickList;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

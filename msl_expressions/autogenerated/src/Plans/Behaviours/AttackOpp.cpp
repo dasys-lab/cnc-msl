@@ -47,37 +47,37 @@ namespace alica
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
-        if(wm->ball.haveBall())
+        if (wm->ball.haveBall())
         {
-        	isMovingAwayIter = 0;
-        	isMovingCloserIter = 0;
+            isMovingAwayIter = 0;
+            isMovingCloserIter = 0;
         }
         else if (vectorLength < egoBallPos->length())
         {
-        	isMovingCloserIter++;
-        	isMovingAwayIter = 0;
+            isMovingCloserIter++;
+            isMovingAwayIter = 0;
         }
         else
         {
-        	isMovingAwayIter++;
-        	isMovingCloserIter = 0;
+            isMovingAwayIter++;
+            isMovingCloserIter = 0;
         }
-        if(isMovingCloserIter >= maxIter)
+        if (isMovingCloserIter >= maxIter)
         {
-        	cout << "get closer" << endl;
+            cout << "get closer" << endl;
             mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
         }
-        else if(isMovingAwayIter >= maxIter)
+        else if (isMovingAwayIter >= maxIter)
         {
-        	cout << "roll away" << endl;
-        	mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+            cout << "roll away" << endl;
+            mc = driveToMovingBall(egoBallPos, egoBallVelocity);
         }
         else
         {
-        	mc.motion.angle = 0;
-        	mc.motion.translation = 0;
-        	mc.motion.rotation = 0;
+            mc.motion.angle = 0;
+            mc.motion.translation = 0;
+            mc.motion.rotation = 0;
 
         }
         send(mc);
@@ -99,7 +99,8 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
-    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos, shared_ptr<geometry::CNVelocity2D> egoBallVel)
+    msl_actuator_msgs::MotionControl AttackOpp::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                                  shared_ptr<geometry::CNVelocity2D> egoBallVel)
     {
 
         msl_actuator_msgs::MotionControl mc;
@@ -139,11 +140,11 @@ namespace alica
         return mc;
     }
 
-    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
-															   shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                                   shared_ptr<geometry::CNPoint2D> egoBallPos)
+    msl_actuator_msgs::MotionControl AttackOpp::ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
+                                                               shared_ptr<geometry::CNVelocity2D> ballVelocity,
+                                                               shared_ptr<geometry::CNPoint2D> egoBallPos)
     {
-        double yIntersection =  egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
+        double yIntersection = egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
 
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 

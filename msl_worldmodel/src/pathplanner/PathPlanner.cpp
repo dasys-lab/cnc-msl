@@ -32,7 +32,9 @@ namespace msl
 		NULL);
 		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
 		NULL);
-		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "additionalCorridorWidth", NULL);
+		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
+																				"additionalCorridorWidth", NULL);
+		this->snapDistance = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "snapDistance", NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
@@ -41,50 +43,6 @@ namespace msl
 
 	PathPlanner::~PathPlanner()
 	{
-	}
-
-	/**
-	 * aStar search on a VoronoiDiagram
-	 * @param voronoi shared_ptr<VoronoiNet>
-	 * @param ownPos Point_2
-	 * @param goal Point_2
-	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
-	 */
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
-	{
-		if((goal - startPos)->length() < 250)
-		{
-			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			ret->push_back(goal);
-			lastPath = ret;
-			return ret;
-		}
-		bool reachable = true;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = voronoi->getSitePositions();
-		for(int i = 0; i < sites->size(); i++)
-		{
-			if(corridorCheck(voronoi, startPos, goal, sites->at(i)))
-			{
-				reachable = false;
-				break;
-			}
-		}
-		if(reachable)
-		{
-			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			ret->push_back(goal);
-			lastPath = ret;
-			return ret;
-		}
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = aStarSearch(voronoi, startPos, goal, eval);
-		if(ret != nullptr)
-		{
-			lastPath = ret;
-			return ret;
-		}
-		// return nullptr if there is no way to goal
-		lastPath = nullptr;
-		return nullptr;
 	}
 
 	/**
@@ -104,30 +62,6 @@ namespace msl
 		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);
 		currentVoronoiPos++;
 
-	}
-
-	/**
-	 * gets all saved VoronoiNets
-	 * @return vector<shared_ptr<VoronoiNet>>
-	 */
-	vector<shared_ptr<VoronoiNet> > PathPlanner::getVoronoiNets()
-	{
-		lock_guard<mutex> lock(this->voronoiMutex);
-		return this->voronoiDiagrams;
-	}
-
-	/**
-	 * gets latest accesable VoronoiNet
-	 * @return shared_ptr<VoronoiNet>
-	 */
-	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
-	{
-		lock_guard<mutex> lock(this->voronoiMutex);
-		if (currentVoronoiPos == -1)
-		{
-			return nullptr;
-		}
-		return voronoiDiagrams.at(currentVoronoiPos % 10);
 	}
 
 	void PathPlanner::initializeArtificialObstacles()
@@ -172,40 +106,49 @@ namespace msl
 		this->artificialObjectNet->getVoronoi()->insert(toInsert.begin(), toInsert.end());
 	}
 
-	double PathPlanner::getRobotDiameter()
+	/**
+	 * aStar search on a VoronoiDiagram
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 * @param ownPos Point_2
+	 * @param goal Point_2
+	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
+	 */
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
-		return robotDiameter;
-	}
-
-	double PathPlanner::getPathDeviationWeight()
-	{
-		return pathDeviationWeight;
-	}
-
-	double PathPlanner::getDribbleAngleTolerance()
-	{
-		return dribble_angleTolerance;
-	}
-
-	double PathPlanner::getDribbleRotationWeight()
-	{
-		return dribble_rotationWeight;
-	}
-
-	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
-	{
-		vector<shared_ptr<SearchNode> >::iterator it = std::upper_bound(vect->begin(), vect->end(), currentNode,
-																		PathPlanner::compare); // find proper position in descending order
-		vect->insert(it, currentNode); // insert before iterator it
-	}
-
-	bool msl::PathPlanner::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
-	{
-		if (first->getCost() < second->getCost())
+		//TODO think about it if it stays comments and docu
+		if((goal - startPos)->length() < this->snapDistance)
 		{
-			return true;
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			ret->push_back(goal);
+			lastPath = ret;
+			return ret;
 		}
-		return false;
+		bool reachable = true;
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = voronoi->getSitePositions();
+		for(int i = 0; i < sites->size(); i++)
+		{
+			if(corridorCheck(voronoi, startPos, goal, sites->at(i)))
+			{
+				reachable = false;
+				break;
+			}
+		}
+		if(reachable)
+		{
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			ret->push_back(goal);
+			lastPath = ret;
+			return ret;
+		}
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = aStarSearch(voronoi, startPos, goal, eval);
+		if(ret != nullptr)
+		{
+			lastPath = ret;
+			return ret;
+		}
+		// return nullptr if there is no way to goal
+		lastPath = nullptr;
+		return nullptr;
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::PathPlanner::aStarSearch(
@@ -258,6 +201,22 @@ namespace msl
 		return nullptr;
 	}
 
+	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
+	{
+		vector<shared_ptr<SearchNode> >::iterator it = std::upper_bound(vect->begin(), vect->end(), currentNode,
+																		PathPlanner::compare); // find proper position in descending order
+		vect->insert(it, currentNode); // insert before iterator it
+	}
+
+	bool msl::PathPlanner::compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second)
+	{
+		if (first->getCost() < second->getCost())
+		{
+			return true;
+		}
+		return false;
+	}
+
 	bool PathPlanner::checkGoalVerticesReached(
 			const shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > >& closestVerticesToGoal,
 			const shared_ptr<SearchNode>& currentNode, bool found)
@@ -285,21 +244,31 @@ namespace msl
 		dx /= dist;
 		dy /= dist;
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy, currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
+				currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy, currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
+				currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
-				goal->x + std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
-				goal->y - std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
+				goal->x
+						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y
+						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
-				goal->x - std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
-				goal->y + std::max(this->robotDiameter / 2 + this->additionalCorridorWidth, length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
+				goal->x
+						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y
+						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
 		points.push_back(p3);
 		points.push_back(p4);
 		points.push_back(p2);
-		if(pathPlannerDebug)
+		if (pathPlannerDebug)
 		{
 			sendCorridorCheck(points);
 		}
@@ -310,7 +279,7 @@ namespace msl
 	void msl::PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D> > points)
 	{
 		msl_msgs::CorridorCheck cc;
-		for(int i = 0; i < points.size(); i++)
+		for (int i = 0; i < points.size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
 			info.x = points.at(i)->x;
@@ -337,6 +306,50 @@ namespace msl
 	shared_ptr<VoronoiNet> PathPlanner::getArtificialObjectNet()
 	{
 		return artificialObjectNet;
+	}
+
+	/**
+	 * gets all saved VoronoiNets
+	 * @return vector<shared_ptr<VoronoiNet>>
+	 */
+	vector<shared_ptr<VoronoiNet> > PathPlanner::getVoronoiNets()
+	{
+		lock_guard<mutex> lock(this->voronoiMutex);
+		return this->voronoiDiagrams;
+	}
+
+	/**
+	 * gets latest accesable VoronoiNet
+	 * @return shared_ptr<VoronoiNet>
+	 */
+	shared_ptr<VoronoiNet> PathPlanner::getCurrentVoronoiNet()
+	{
+		lock_guard<mutex> lock(this->voronoiMutex);
+		if (currentVoronoiPos == -1)
+		{
+			return nullptr;
+		}
+		return voronoiDiagrams.at(currentVoronoiPos % 10);
+	}
+
+	double PathPlanner::getRobotDiameter()
+	{
+		return robotDiameter;
+	}
+
+	double PathPlanner::getPathDeviationWeight()
+	{
+		return pathDeviationWeight;
+	}
+
+	double PathPlanner::getDribbleAngleTolerance()
+	{
+		return dribble_angleTolerance;
+	}
+
+	double PathPlanner::getDribbleRotationWeight()
+	{
+		return dribble_rotationWeight;
 	}
 
 } /* namespace alica */
