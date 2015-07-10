@@ -284,7 +284,6 @@ namespace msl
 		double dist = std::sqrt(dx * dx + dy * dy);
 		dx /= dist;
 		dy /= dist;
-		//TODO
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
 				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy, currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(

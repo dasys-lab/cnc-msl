@@ -26,12 +26,12 @@ namespace msl
 
 	double PrefDirEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
 										shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
-										geometry::CNPoint2D goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
+										shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
 		//CALCULATE COST FUNCTION AND HEURISTIC FUNCTION
 
 		// HEURISTIC FUNCTION: distance to target
-		double h = distance(*path->at(path->size() - 1), goal);
+		double h = distance(path->at(path->size() - 1), goal);
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > teamMatePositions = voronoi->getTeamMatePositions();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstaclePositions = voronoi->getObstaclePositions();

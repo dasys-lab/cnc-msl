@@ -157,7 +157,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i));//calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);//calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
@@ -190,19 +190,21 @@ namespace msl
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
 			sites.push_back(Site_2(ownPos->x, ownPos->y));
-			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), true));
+			pointRobotKindMapping.insert(
+					pair<shared_ptr<geometry::CNPoint2D>, bool>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
+																true));
 		}
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
-				if((*iter)->first == wm->getOwnId())
+				if ((*iter)->first == wm->getOwnId())
 				{
 					continue;
 				}
@@ -360,10 +362,10 @@ namespace msl
 	 * @param v2 VoronoiDiagram::Vertex
 	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 	 */
-	pair<shared_ptr<Point_2>, shared_ptr<Point_2>> VoronoiNet::getSitesNextToHalfEdge(
-			shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2)
+	pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> VoronoiNet::getSitesNextToHalfEdge(
+			shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2)
 	{
-		pair<shared_ptr<Site_2>, shared_ptr<Site_2>> ret;
+		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> ret;
 		ret.first = nullptr;
 		ret.second = nullptr;
 		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
@@ -375,28 +377,33 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if (edge->has_source() && edge->source()->point().x() == v1->point().x()
-						&& edge->source()->point().y() == v1->point().y())
+				//TODO needs to be tested
+				if (edge->has_source() && abs(edge->source()->point().x() - v1->x) < 50
+						&& abs(edge->source()->point().y() - v1->y) < 50)
 				{
 					foundFirst = true;
 				}
-				if (edge->has_source() && edge->source()->point().x() == v2->point().x()
-						&& edge->source()->point().y() == v2->point().y())
+				if (edge->has_source() && abs(edge->source()->point().x() - v2->x) < 50
+						&& abs(edge->source()->point().y() - v2->y) < 50)
 				{
 					foundSecond = true;
 				}
 				edge = edge->previous();
 			} while (edge != begin);
-			if (ret.first == nullptr)
+			if (foundFirst && foundSecond)
 			{
-				ret.first = make_shared<Point_2>(fit->dual()->point());
-				continue;
-			}
-			if (ret.second == nullptr && ret.first->x() != fit->dual()->point().x()
-					&& ret.first->y() != fit->dual()->point().y())
-			{
-				ret.second = make_shared<Point_2>(fit->dual()->point());
-				break;
+				if (ret.first == nullptr)
+				{
+					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+					continue;
+				}
+				//TODO needs to be tested
+				if (ret.second == nullptr && abs(ret.first->x - fit->dual()->point().x()) > 0.001
+						&& abs(ret.first->y - fit->dual()->point().y()) > 0.001)
+				{
+					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+					break;
+				}
 			}
 		}
 		return ret;
@@ -482,5 +489,5 @@ namespace msl
 	}
 
 }
-/* namespace msl */
+	/* namespace msl */
 

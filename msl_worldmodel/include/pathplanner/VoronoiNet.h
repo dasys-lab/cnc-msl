@@ -72,7 +72,7 @@ namespace msl
 		 * @param v2 VoronoiDiagram::Vertex
 		 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 		 */
-		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNextToHalfEdge(shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2);
+		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> getSitesNextToHalfEdge(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2);
 		/**
 		 * print the voronoi diagrams sites
 		 */
