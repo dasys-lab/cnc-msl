@@ -163,10 +163,10 @@ namespace msl
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 		//get closest Vertices to ownPos => start point for a star serach
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(Point_2(startPos->x, startPos->y));
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(startPos);
 
 		// get closest Vertex to goal => goal for a star serach
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal = voronoi->getVerticesOfFace(Point_2(goal->x, goal->y));
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal = voronoi->getVerticesOfFace(goal);
 
 		// a star serach
 

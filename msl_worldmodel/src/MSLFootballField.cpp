@@ -1,7 +1,8 @@
 #include <MSLFootballField.h>
 #include <iostream>
 
-namespace msl {
+namespace msl
+{
 
 	double MSLFootballField::FieldLength = 11200.0;
 	double MSLFootballField::FieldWidth = 8000.0;
@@ -16,9 +17,10 @@ namespace msl {
 	bool MSLFootballField::GoalInnerAreaExists = false;
 	bool MSLFootballField::CornerCircleExists = false;
 
-	MSLFootballField *  MSLFootballField::instance = NULL;
+	MSLFootballField * MSLFootballField::instance = NULL;
 
-	MSLFootballField::MSLFootballField() {
+	MSLFootballField::MSLFootballField()
+	{
 
 		this->sc = SystemConfig::getInstance();
 
@@ -26,13 +28,16 @@ namespace msl {
 		FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldWidth", NULL);
 		GoalAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaXSize", NULL);
 		GoalAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaYSize", NULL);
-		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "MiddleCircleRadius", NULL);
+		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "MiddleCircleRadius",
+		NULL);
 		GoalInnerAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaXSize", NULL);
 		GoalInnerAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaYSize", NULL);
-		CornerCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "CornerCircleRadius", NULL);
+		CornerCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "CornerCircleRadius",
+		NULL);
 		LineWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "LineWidth", NULL);
 		GoalWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalWidth", NULL);
-		GoalInnerAreaExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "GoalInnerAreaExists", NULL);
+		GoalInnerAreaExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "GoalInnerAreaExists",
+		NULL);
 		CornerCircleExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "CornerCircleExists", NULL);
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
@@ -49,21 +54,44 @@ namespace msl {
 
 	}
 
+	MSLFootballField::~MSLFootballField()
+	{
 
-	MSLFootballField::~MSLFootballField(){
-	
 	}
-	
 
-	MSLFootballField * MSLFootballField::getInstance(){
+	MSLFootballField * MSLFootballField::getInstance()
+	{
 
-		if(instance == NULL){
+		if (instance == NULL)
+		{
 			instance = new MSLFootballField();
 		}
 
 		return instance;
 
 	}
-}
 
+	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance)
+	{
+		return abs(point->x) < FieldLength/2 +tolerance &&
+				abs(point->y) < FieldWidth/2 +tolerance;
+	}
+
+	bool MSLFootballField::isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return p->x - tolerance < -FieldLength / 2.0 + GoalAreaWidth
+				&& abs(p->y) - tolerance < GoalAreaLength / 2.0;
+	}
+
+	bool MSLFootballField::isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return p->x + tolerance > FieldLength / 2.0 - GoalAreaWidth
+				&& abs(p->y) - tolerance < GoalAreaLength / 2.0;
+	}
+
+	bool MSLFootballField::isInsidePenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return isInsideOwnPenalty(p, tolerance) || isInsideEnemyPenalty(p, tolerance);
+	}
+}
 

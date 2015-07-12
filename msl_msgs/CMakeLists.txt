@@ -62,6 +62,7 @@ add_message_files(
   PathPlanner.msg
   VoronoiNetInfo.msg
   CorridorCheck.msg
+  PassMsg.msg
 )
  
 ## Generate services in the 'srv' folder

@@ -42,12 +42,12 @@ namespace alica
         double closerFactor;
         static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                     shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                    vector<shared_ptr<geometry::CNPoint2D>> points);
+									shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
         static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
                                               shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                              vector<shared_ptr<geometry::CNPoint2D>> points);
+											  shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
         static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-                                     double passCorridorWidth, vector<shared_ptr<geometry::CNPoint2D>> points);
+                                     double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
         /*PROTECTED REGION END*/
     private:

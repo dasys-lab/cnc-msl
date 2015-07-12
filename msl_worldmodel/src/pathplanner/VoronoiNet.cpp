@@ -337,6 +337,14 @@ namespace msl
 		insertPoints(sites);
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
+	{
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+		return ret;
+
+	}
+
 	/**
 	 * checks if a SearchNode is part of a vector
 	 * @param vector shared_ptr<vector<shared_ptr<SearchNode> > >
@@ -409,10 +417,11 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+		VoronoiDiagram::Point_2 p(point->x, point->y);
+		VoronoiDiagram::Locate_result loc = this->voronoi->locate(p);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 		if(loc.which() == 0)
 		{

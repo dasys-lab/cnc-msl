@@ -86,7 +86,7 @@ namespace msl
 		 */
 		string toString();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point);
 
 		/**
 		 * inserts sites into the VoronoiDiagram
@@ -111,6 +111,8 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getSitePositions();
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVertices(int teamMateId);
 
 	private:
 		/**
