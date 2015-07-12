@@ -1,5 +1,0 @@
-int32 senderID
-int32 receiverID
-uint32 validFor
-Point2dInfo origin
-Point2dInfo destination
