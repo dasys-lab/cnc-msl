@@ -27,6 +27,7 @@
 #include "Robots.h"
 #include "Ball.h"
 #include "Game.h"
+#include "Kicker.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
@@ -73,6 +74,7 @@ namespace msl
 		Ball ball;
 		Game game;
 		PathPlanner pathPlanner;
+		Kicker kicker;
 		supplementary::EventTrigger visionTrigger;
 
 	private:

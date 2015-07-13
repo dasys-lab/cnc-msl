@@ -124,10 +124,10 @@ namespace msl
 			return ret;
 		}
 		bool reachable = true;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = voronoi->getSitePositions();
+		auto sites = voronoi->getSitePositions();
 		for(int i = 0; i < sites->size(); i++)
 		{
-			if(corridorCheck(voronoi, startPos, goal, sites->at(i)))
+			if(corridorCheck(voronoi, startPos, goal, sites->at(i).first))
 			{
 				reachable = false;
 				break;
@@ -352,5 +352,46 @@ namespace msl
 		return dribble_rotationWeight;
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathPlanner::getArtificialObstacles()
+	{
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > toInsert = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
+		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
+		{
+			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
+		}
+		int lengthInterval = (int)(baseSize
+				+ ((int)(field->FieldLength + 2000) % baseSize) / (int)((int)(field->FieldLength + 2000) / baseSize));
+		int widthInterval = (int)(baseSize
+				+ ((int)(field->FieldWidth + 2000) % baseSize) / (int)((int)(field->FieldWidth + 2000) / baseSize));
+		int halfFieldLength = (int)field->FieldLength / 2 + 1000;
+		int halfFieldWidth = (int)field->FieldWidth / 2 + 1000;
+
+		//up right
+		toInsert->push_back(make_shared<geometry::CNPoint2D>(halfFieldLength, -halfFieldWidth));
+		//down right
+		toInsert->push_back(make_shared<geometry::CNPoint2D>(-halfFieldLength, -halfFieldWidth));
+		// down left
+		toInsert->push_back(make_shared<geometry::CNPoint2D>(-halfFieldLength, halfFieldWidth));
+		// up left
+		toInsert->push_back(make_shared<geometry::CNPoint2D>(halfFieldLength, halfFieldWidth));
+
+		int x = 0;
+		int y = halfFieldWidth;
+		for (x = -halfFieldLength + lengthInterval; x <= halfFieldLength - lengthInterval; x += lengthInterval)
+		{ // side sides
+			toInsert->push_back(make_shared<geometry::CNPoint2D>(x, y));
+			toInsert->push_back(make_shared<geometry::CNPoint2D>(x, -y));
+		}
+
+		x = halfFieldLength;
+		for (y = -halfFieldWidth + widthInterval; y <= halfFieldWidth - widthInterval; y += widthInterval)
+		{ // goal sides
+			toInsert->push_back(make_shared<geometry::CNPoint2D>(x, y));
+			toInsert->push_back(make_shared<geometry::CNPoint2D>(-x, y));
+		}
+		return toInsert;
+	}
 } /* namespace alica */
 

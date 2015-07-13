@@ -107,6 +107,20 @@ namespace alica
 					{
 
 //						// min dist to opponent
+						auto obs = vNet->getOpponentPositions();
+						bool opponentTooClose = false;
+						for(int i = 0; i < obs->size(); i++)
+						{
+							if(obs->at(i).first->distanceTo(passPoint) < minOppDist)
+							{
+								opponentTooClose = true;
+								break;
+							}
+						}
+						if(opponentTooClose)
+						{
+							continue;
+						}
 //						if ((vertices->at(i).tri.p[0].ident == -1 && vertices->at(i).tri.p[0].DistanceTo(passPoint) < minOppDist)
 //								||(vertices->at(i).tri.p[1].ident == -1 && vertices->at(i).tri.p[1].DistanceTo(passPoint) < minOppDist)
 //								||(vertices->at(i).tri.p[2].ident == -1 && vertices->at(i).tri.p[2].DistanceTo(passPoint) < minOppDist))
@@ -250,11 +264,11 @@ namespace alica
 	/*PROTECTED REGION ID(methods1436269017402) ENABLED START*/ //Add additional methods here
 	bool SearchForPassPoint::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
 												shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+												shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		for (int i = 0; i < points->size(); i++)
 		{
-			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
+			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
 			< passCorridorWidth)
 			{
 				return false;
@@ -266,12 +280,12 @@ namespace alica
 	bool SearchForPassPoint::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
 														shared_ptr<geometry::CNPoint2D> passPoint,
 														double passCorridorWidth,
-														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+														shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		for (int i = 0; i < points->size(); i++)
 		{
-			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-			< passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
+			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
+			< passCorridorWidth && ball->distanceTo(points->at(i).first) < ball->distanceTo(passPoint) - 100)
 			{
 				return false;
 			}
@@ -281,7 +295,7 @@ namespace alica
 
 	bool SearchForPassPoint::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
 												shared_ptr<geometry::CNPoint2D> c, double tolerance,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+												shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		shared_ptr<geometry::CNPoint2D> a2b = b - a;
 		shared_ptr<geometry::CNPoint2D> b2c = c - b;
@@ -292,7 +306,7 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> p;
 		for (int i = 0; i < points->size(); i++)
 		{
-			p = points->at(i);
+			p = points->at(i).first;
 			a2p = p - a;
 			b2p = p - b;
 			c2p = p - c;

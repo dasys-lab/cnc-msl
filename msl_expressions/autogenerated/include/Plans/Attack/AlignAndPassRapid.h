@@ -50,14 +50,14 @@ namespace alica
 		msl::MSLFootballField* field;
 		static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
 									shared_ptr<geometry::CNPoint2D> c, double tolerance,
-									shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+									shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
 
 		static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
 								shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-								shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+								shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
 
 		static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-		                                     double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+		                                     double passCorridorWidth, shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
 		double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
 		int mod(int x, int y);
 		/*PROTECTED REGION END*/

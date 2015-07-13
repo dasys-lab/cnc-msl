@@ -138,8 +138,21 @@ namespace alica
 							)
 					{
 
-						//TODO
 						// min dist to opponent
+						auto obs = vNet->getOpponentPositions();
+						bool opponentTooClose = false;
+						for(int i = 0; i < obs->size(); i++)
+						{
+							if(obs->at(i).first->distanceTo(passPoint) < minOppDist)
+							{
+								opponentTooClose = true;
+								break;
+							}
+						}
+						if(opponentTooClose)
+						{
+							continue;
+						}
 //						if ((vNodes[i].tri.p[0].ident == -1 && vNodes[i].tri.p[0].DistanceTo(passPoint) < minOppDist)
 //								|| (vNodes[i].tri.p[1].ident == -1
 //										&& vNodes[i].tri.p[1].DistanceTo(passPoint) < minOppDist)
@@ -268,16 +281,15 @@ namespace alica
 				double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
 				pm.validFor = (uint)(estimatedTimeForReceiverToArrive * 1000.0 + 300.0); // this is sparta!
 
-				//TODO
-//				if (closerFactor < 0.01)
-//				{
-//					km.power = (ushort)KickHelper.GetKickPowerPass(aimPoint->length());
-//				}
-//				else
-//				{
-//					km.power = (ushort)KickHelper.GetPassKickpower(
-//							dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
-//				}
+				if (closerFactor < 0.01)
+				{
+					km.power = (ushort)wm->kicker.getKickPowerPass(aimPoint->length());
+				}
+				else
+				{
+					km.power = (ushort)wm->kicker.getPassKickpower(
+							dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
+				}
 
 				send(km);
 
@@ -442,11 +454,11 @@ namespace alica
 	/*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ //Add additional methods here
 	bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
 												shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+												shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		for (int i = 0; i < points->size(); i++)
 		{
-			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
+			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
 			< passCorridorWidth)
 			{
 				return false;
@@ -458,12 +470,12 @@ namespace alica
 	bool AlignAndPassRapid::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
 														shared_ptr<geometry::CNPoint2D> passPoint,
 														double passCorridorWidth,
-														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+														shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		for (int i = 0; i < points->size(); i++)
 		{
-			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
-			< passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
+			if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
+			< passCorridorWidth && ball->distanceTo(points->at(i).first) < ball->distanceTo(passPoint) - 100)
 			{
 				return false;
 			}
@@ -473,7 +485,7 @@ namespace alica
 
 	bool AlignAndPassRapid::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
 											shared_ptr<geometry::CNPoint2D> c, double tolerance,
-											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
+											shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
 	{
 		shared_ptr<geometry::CNPoint2D> a2b = b - a;
 		shared_ptr<geometry::CNPoint2D> b2c = c - b;
@@ -484,7 +496,7 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> p;
 		for (int i = 0; i < points->size(); i++)
 		{
-			p = points->at(i);
+			p = points->at(i).first;
 			a2p = p - a;
 			b2p = p - b;
 			c2p = p - c;

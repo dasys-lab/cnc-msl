@@ -106,11 +106,13 @@ namespace msl
 
 		bool isOwnCellEdge(geometry::CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMatePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getObstaclePositions();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getSitePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getOpponentPositions();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVertices(int teamMateId);
 
@@ -137,7 +139,7 @@ namespace msl
 		/**
 		 * true if own robot false otherwise
 		 */
-		map<shared_ptr<geometry::CNPoint2D>, bool> pointRobotKindMapping;
+		map<shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
 	};
 
 } /* namespace msl */

@@ -34,25 +34,23 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1434199834892) ENABLED START*/ //Add additional options here
         string tmp;
-        bool success = true;
-        success &= getParameter("passing", tmp);
         try
         {
-            if (success)
+            if (getParameter("passing", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 std::istringstream is(tmp);
                 is >> std::boolalpha >> passing;
+            }
+            else
+            {
+            	cerr << "Parameter does not exist Passing" << endl;
             }
 
         }
         catch (exception& e)
         {
             cerr << "Could not cast the parameter properly" << endl;
-        }
-        if (!success)
-        {
-            cerr << "Parameter does not exist Passing" << endl;
         }
         /*PROTECTED REGION END*/
     }
