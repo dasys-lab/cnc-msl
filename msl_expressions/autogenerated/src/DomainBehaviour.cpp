@@ -53,6 +53,7 @@ namespace alica
 	{
 		ssc.senderID = ownID;
 		shovelSelectPublisher.publish(ssc);
+		this->wm->kicker.lowShovelSelected = ssc.passing;
 	}
 } /* namespace alica */
 

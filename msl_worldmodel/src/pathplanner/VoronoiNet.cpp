@@ -157,7 +157,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i));//calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);//calcDist(neighbors.at(i)->getVertex()->point(), goal);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
@@ -190,25 +190,27 @@ namespace msl
 		vector<Site_2> sites;
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
 			sites.push_back(Site_2(ownPos->x, ownPos->y));
-			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), true));
+			pointRobotKindMapping.insert(
+					pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
+																wm->getOwnId()));
 		}
 		if (ownTeamMatesPositions != nullptr)
 		{
 			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
 			{
-				if((*iter)->first == wm->getOwnId())
+				if ((*iter)->first == wm->getOwnId())
 				{
 					continue;
 				}
 				pointRobotKindMapping.insert(
-						pair<shared_ptr<geometry::CNPoint2D>, bool>(
-								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y), true));
+						pair<shared_ptr<geometry::CNPoint2D>, int>(
+								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y), (*iter)->first));
 				Site_2 site((*iter)->second->x, (*iter)->second->y);
 				sites.push_back(site);
 			}
@@ -227,14 +229,19 @@ namespace msl
 			if (!alreadyIn)
 			{
 				pointRobotKindMapping.insert(
-						pair<shared_ptr<geometry::CNPoint2D>, bool>(
-								make_shared<geometry::CNPoint2D>(points.at(i).x, points.at(i).y), false));
+						pair<shared_ptr<geometry::CNPoint2D>, int>(
+								make_shared<geometry::CNPoint2D>(points.at(i).x, points.at(i).y), -1));
 				Site_2 site(points.at(i).x, points.at(i).y);
 				sites.push_back(site);
 			}
 			alreadyIn = false;
 		}
 		insertPoints(sites);
+		auto artObs = wm->pathPlanner.getArtificialObstacles();
+		for(int i = 0; i < artObs->size(); i++)
+		{
+			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(artObs->at(i),-2));
+		}
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
 		return this->voronoi;
@@ -326,13 +333,21 @@ namespace msl
 			}
 			if (!alreadyIn)
 			{
-				pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, bool>(*iter, false));
+				pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(*iter, -1));
 				Site_2 site((*iter)->x, (*iter)->y);
 				sites.push_back(site);
 			}
 			alreadyIn = false;
 		}
 		insertPoints(sites);
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
+	{
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+		return ret;
+
 	}
 
 	/**
@@ -360,10 +375,10 @@ namespace msl
 	 * @param v2 VoronoiDiagram::Vertex
 	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 	 */
-	pair<shared_ptr<Point_2>, shared_ptr<Point_2>> VoronoiNet::getSitesNextToHalfEdge(
-			shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2)
+	pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> VoronoiNet::getSitesNextToHalfEdge(
+			shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2)
 	{
-		pair<shared_ptr<Site_2>, shared_ptr<Site_2>> ret;
+		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> ret;
 		ret.first = nullptr;
 		ret.second = nullptr;
 		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
@@ -375,37 +390,43 @@ namespace msl
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
-				if (edge->has_source() && edge->source()->point().x() == v1->point().x()
-						&& edge->source()->point().y() == v1->point().y())
+				//TODO needs to be tested
+				if (edge->has_source() && abs(edge->source()->point().x() - v1->x) < 50
+						&& abs(edge->source()->point().y() - v1->y) < 50)
 				{
 					foundFirst = true;
 				}
-				if (edge->has_source() && edge->source()->point().x() == v2->point().x()
-						&& edge->source()->point().y() == v2->point().y())
+				if (edge->has_source() && abs(edge->source()->point().x() - v2->x) < 50
+						&& abs(edge->source()->point().y() - v2->y) < 50)
 				{
 					foundSecond = true;
 				}
 				edge = edge->previous();
 			} while (edge != begin);
-			if (ret.first == nullptr)
+			if (foundFirst && foundSecond)
 			{
-				ret.first = make_shared<Point_2>(fit->dual()->point());
-				continue;
-			}
-			if (ret.second == nullptr && ret.first->x() != fit->dual()->point().x()
-					&& ret.first->y() != fit->dual()->point().y())
-			{
-				ret.second = make_shared<Point_2>(fit->dual()->point());
-				break;
+				if (ret.first == nullptr)
+				{
+					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+					continue;
+				}
+				//TODO needs to be tested
+				if (ret.second == nullptr && abs(ret.first->x - fit->dual()->point().x()) > 0.001
+						&& abs(ret.first->y - fit->dual()->point().y()) > 0.001)
+				{
+					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+					break;
+				}
 			}
 		}
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(VoronoiDiagram::Point_2 point)
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+		VoronoiDiagram::Point_2 p(point->x, point->y);
+		VoronoiDiagram::Locate_result loc = this->voronoi->locate(p);
 		//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 		if(loc.which() == 0)
 		{
@@ -445,42 +466,56 @@ namespace msl
 		return nullptr;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getTeamMatePositions()
+	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getTeamMatePositions()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			if (iter->second == true)
+			if (iter->second > 0)
 			{
-				ret->push_back(iter->first);
+				ret->push_back(*iter);
 			}
 		}
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getObstaclePositions()
+	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getObstaclePositions()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			if (iter->second == false)
+			if (iter->second < 0)
 			{
-				ret->push_back(iter->first);
+				ret->push_back(*iter);
 			}
 		}
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getSitePositions()
+	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getSitePositions()
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			ret->push_back(iter->first);
+			ret->push_back(*iter);
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getOpponentPositions()
+	{
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
+		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
+		{
+			if (iter->second == -1)
+			{
+				ret->push_back(*iter);
+			}
 		}
 		return ret;
 	}
 
 }
-/* namespace msl */
+
+	/* namespace msl */
 

@@ -24,6 +24,7 @@
 #define MSLFootballField_H
 
 #include <SystemConfig.h>
+#include <GeometryCalculator.h>
 
 using namespace supplementary;
 
@@ -127,6 +128,12 @@ namespace msl
 		static double GoalWidth;
 		static bool GoalInnerAreaExists;
 		static bool CornerCircleExists;
+
+		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance);
+		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
+
 
 	private:
 

@@ -32,10 +32,11 @@ namespace alica
         int isMovingCloserIter;
         int isMovingAwayIter;
         int maxIter;
-        msl_actuator_msgs::MotionControl ballGetsCloser(shared_ptr < geometry::CNPosition > robotPosition,
-														shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                            shared_ptr<geometry::CNPoint2D> egoBallPos);
-        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos, shared_ptr<geometry::CNVelocity2D> egoBallVel);
+        msl_actuator_msgs::MotionControl ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
+                                                        shared_ptr<geometry::CNVelocity2D> ballVelocity,
+                                                        shared_ptr<geometry::CNPoint2D> egoBallPos);
+        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                           shared_ptr<geometry::CNVelocity2D> egoBallVel);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -48,8 +48,8 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<PathEvaluator> eval, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static PathProxy* getInstance();
 		void sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path);
-		void sendVoronoiNetMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites, shared_ptr<VoronoiNet> voronoi);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites, shared_ptr<VoronoiNet> voronoi);
+		void sendVoronoiNetMsg(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
 
 	private:
 		shared_ptr<geometry::CNPoint2D> lastPathTarget;

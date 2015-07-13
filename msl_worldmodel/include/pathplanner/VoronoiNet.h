@@ -72,7 +72,7 @@ namespace msl
 		 * @param v2 VoronoiDiagram::Vertex
 		 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 		 */
-		pair<shared_ptr<Point_2>, shared_ptr<Point_2>> getSitesNextToHalfEdge(shared_ptr<VoronoiDiagram::Vertex> v1, shared_ptr<VoronoiDiagram::Vertex> v2);
+		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> getSitesNextToHalfEdge(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2);
 		/**
 		 * print the voronoi diagrams sites
 		 */
@@ -86,7 +86,7 @@ namespace msl
 		 */
 		string toString();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(VoronoiDiagram::Point_2 point);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point);
 
 		/**
 		 * inserts sites into the VoronoiDiagram
@@ -106,11 +106,15 @@ namespace msl
 
 		bool isOwnCellEdge(geometry::CNPoint2D pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMatePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getObstaclePositions();
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getSitePositions();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getOpponentPositions();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVertices(int teamMateId);
 
 	private:
 		/**
@@ -135,7 +139,7 @@ namespace msl
 		/**
 		 * true if own robot false otherwise
 		 */
-		map<shared_ptr<geometry::CNPoint2D>, bool> pointRobotKindMapping;
+		map<shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
 	};
 
 } /* namespace msl */

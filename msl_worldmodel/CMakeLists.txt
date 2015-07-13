@@ -110,6 +110,8 @@ catkin_package(
    src/Robots.cpp
    src/Ball.cpp
    src/Game.cpp
+   src/Kicker.cpp
+   src/KickCurve.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp
