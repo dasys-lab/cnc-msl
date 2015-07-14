@@ -34,7 +34,7 @@
   <!-- Use build_depend for packages you need at compile time: -->
   <build_depend>roscpp</build_depend>
   <build_depend>message_generation</build_depend>
-  <build_depend> msl_sensor_msg</build_depend>
+  <build_depend> msl_sensor_msgs</build_depend>
   <build_depend>msl_actuator_msgs</build_depend>
   
   
@@ -44,7 +44,7 @@
   <!-- Use run_depend for packages you need at runtime: -->
   <run_depend>roscpp</run_depend>
   <run_depend>message_runtime</run_depend>
-  <run_depend> msl_sensor_msg</run_depend>
+  <run_depend> msl_sensor_msgs</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
   
   <!-- Use test_depend for packages you need only for testing: -->
