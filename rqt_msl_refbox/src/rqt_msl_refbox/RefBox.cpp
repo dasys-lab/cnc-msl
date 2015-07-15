@@ -105,6 +105,10 @@ namespace rqt_msl_refbox
 		disconnect(Their_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(TheirPenaltyPressed()));
 		disconnect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 		disconnect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
+		disconnect(rbtn_xmlMulti, SIGNAL(toggled(bool)), gameData, SLOT(onMultiTogled(bool)));
+		disconnect(rbtn_xmlTcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpTogled(bool)));
+
+				connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 		delete gameData;
 	}
 
