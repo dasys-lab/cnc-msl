@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="Dribble.pml#1434049476067"/>
-    <value xPos="299" yPos="266" width="81" height="67"/>
+    <value xPos="299" yPos="266" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434049476066"/>
@@ -126,6 +126,10 @@
   </extensions>
   <extensions>
     <key href="OneEighty.beh#1434650910857"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToAttackPoint.beh#1436855860607"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
