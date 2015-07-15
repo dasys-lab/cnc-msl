@@ -36,4 +36,16 @@
     <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979695093"/>
+    <value xPos="436" yPos="416" width="83" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979719063"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979741738"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
