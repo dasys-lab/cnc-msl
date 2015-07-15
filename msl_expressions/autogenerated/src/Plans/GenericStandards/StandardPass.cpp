@@ -71,6 +71,7 @@ namespace alica
 				kc.kicker = 1;
 				kc.power = wm->kicker.getKickPowerPass(receiverPos->alloToEgo(*ownPos)->length());
 				send(kc);
+				this->success = true;
 			}
 		}
 
