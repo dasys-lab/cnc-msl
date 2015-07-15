@@ -31,7 +31,6 @@ namespace rqt_msl_refbox
 	GameData::~GameData()
 	{
 		// TODO Auto-generated destructor stub
-		delete refBox;
 	}
 
 	void GameData::PlayOnPressed(void)

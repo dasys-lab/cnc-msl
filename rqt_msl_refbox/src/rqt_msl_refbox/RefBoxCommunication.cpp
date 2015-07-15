@@ -43,6 +43,7 @@ namespace rqt_msl_refbox
 		disconnect(Connect_btn, SIGNAL(clicked()), this, SLOT(connectToRefBox()));
 		disconnect(DestHost_val, SIGNAL(editingFinished()), this, SLOT(SetHostAdd()));
 		disconnect(DestPort_val, SIGNAL(valueChanged(int)), this, SLOT(SetHostPort(int)));
+		disconnect(Interface_val, SIGNAL(editingFinished()), this, SLOT(SetInterface()));
 
 		if (tcpsocket != NULL)
 		{

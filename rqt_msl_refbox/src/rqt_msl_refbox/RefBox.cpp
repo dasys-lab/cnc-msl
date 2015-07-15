@@ -93,24 +93,27 @@ namespace rqt_msl_refbox
 		disconnect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
 		disconnect(Dropped_bot, SIGNAL(clicked()), gameData, SLOT(DroppedBallPressed()));
 		disconnect(Parking_bot, SIGNAL(clicked()), gameData, SLOT(ParkingPressed()));
+
 		disconnect(Our_Kick_Off_bot, SIGNAL(clicked()), gameData, SLOT(OurKickOffPressed()));
 		disconnect(Our_Free_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurFreeKickPressed()));
 		disconnect(Our_Goal_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurGoalKickPressed()));
 		disconnect(Our_Throwin_bot, SIGNAL(clicked()), gameData, SLOT(OurThrowinPressed()));
 		disconnect(Our_Corner_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurCornerKickPressed()));
 		disconnect(Our_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(OurPenaltyPressed()));
+
 		disconnect(Their_Kick_Off_bot, SIGNAL(clicked()), gameData, SLOT(TheirKickOffPressed()));
 		disconnect(Their_Free_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirFreeKickPressed()));
 		disconnect(Their_Goal_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirGoalKickPressed()));
 		disconnect(Their_Throwin_bot, SIGNAL(clicked()), gameData, SLOT(TheirThrowinPressed()));
 		disconnect(Their_Corner_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirCornerKickPressed()));
 		disconnect(Their_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(TheirPenaltyPressed()));
+
 		disconnect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 		disconnect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
 		disconnect(rbtn_xmlMulti, SIGNAL(toggled(bool)), gameData, SLOT(onMultiTogled(bool)));
 		disconnect(rbtn_xmlTcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpTogled(bool)));
+		disconnect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
-				connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 		delete gameData;
 	}
 
