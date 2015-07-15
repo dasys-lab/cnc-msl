@@ -527,7 +527,6 @@ namespace msl
 		{
 			VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
 			VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
-			//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
 			if (loc.which() == 0)
 			{
 				VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);

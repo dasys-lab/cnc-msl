@@ -107,6 +107,8 @@ namespace alica
 
             case 1431527260342:
 
+            case 1436961206415:
+
                 return make_shared<DriveToPoint>();
                 break;
 
