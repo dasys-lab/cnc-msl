@@ -9,6 +9,7 @@
   </states>
   <states id="1431522297705" name="Align" comment="" entryPoint="1431522269326">
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1433950043262</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <outTransitions>#1431522920716</outTransitions>
   </states>
   <states id="1431522763494" name="Pass" comment="">
