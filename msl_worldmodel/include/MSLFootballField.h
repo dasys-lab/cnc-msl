@@ -128,12 +128,49 @@ namespace msl
 		static double GoalWidth;
 		static bool GoalInnerAreaExists;
 		static bool CornerCircleExists;
+		static double PenaltySpot;
+		static double Surrounding;
 
 		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance);
 		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static shared_ptr<geometry::CNPoint2D> posCenterMarker(); // see no. 0
 
+		// Corners
+		static shared_ptr<geometry::CNPoint2D> posLeftOwnCorner(); // see no. 1
+		static shared_ptr<geometry::CNPoint2D> posRightOwnCorner(); // see no. 2
+		static shared_ptr<geometry::CNPoint2D> posLeftOppCorner(); // see no. 3
+		static shared_ptr<geometry::CNPoint2D> posRightOppCorner(); // see no. 4
+
+		// Goalposts
+		static shared_ptr<geometry::CNPoint2D> posLeftOwnGoalPost();  // see no. 5
+		static shared_ptr<geometry::CNPoint2D> posRightOwnGoalPost();  // see no. 6
+		static shared_ptr<geometry::CNPoint2D> posLeftOppGoalPost(); // see no. 7
+		static shared_ptr<geometry::CNPoint2D> posRightOppGoalPost(); // see no. 8
+		// Field Points
+		static shared_ptr<geometry::CNPoint2D> posOwnPenaltyMarker(); // see no. 9
+		static shared_ptr<geometry::CNPoint2D> posRightOwnRestartMarker(); // see no. 10
+		static shared_ptr<geometry::CNPoint2D> posLeftOwnRestartMarker(); // see no. 11
+		static shared_ptr<geometry::CNPoint2D> posOppPenaltyMarker(); // see no. 12
+		static shared_ptr<geometry::CNPoint2D> posRightOppRestartMarker(); // see no. 13
+		static shared_ptr<geometry::CNPoint2D> posLeftOppRestartMarker(); // see no. 14
+		static shared_ptr<geometry::CNPoint2D> posOppGoalMid(); // see no. 15
+		static shared_ptr<geometry::CNPoint2D> posOwnGoalMid(); // see no. 16
+		static shared_ptr<geometry::CNPoint2D> posLROppHalf(); // see no. 17
+		static shared_ptr<geometry::CNPoint2D> posULOwnHalf(); // see no. 18
+		static shared_ptr<geometry::CNPoint2D> osLROwnPenaltyArea(); // see no. 19
+		static shared_ptr<geometry::CNPoint2D> posULOwnPenaltyArea(); // see no. 20
+		static shared_ptr<geometry::CNPoint2D> posLROppPenaltyArea(); // see no. 21
+		static shared_ptr<geometry::CNPoint2D> posULOppPenaltyArea(); // see no. 22
+		static shared_ptr<geometry::CNPoint2D> posLROwnGoalArea(); // see no. 23
+		static shared_ptr<geometry::CNPoint2D> posULOwnGoalArea(); // see no. 24
+		static shared_ptr<geometry::CNPoint2D> posLROppGoalArea(); // see no. 25
+		static shared_ptr<geometry::CNPoint2D> posULOppGoalArea();// see no. 26
+		static shared_ptr<geometry::CNPoint2D> posLeftRestartMarker(); // see no. 27
+		static shared_ptr<geometry::CNPoint2D> posRightRestartMarker(); // see no. 28
+		static shared_ptr<geometry::CNPoint2D> posLRSurrounding();// see no. 29
+		static shared_ptr<geometry::CNPoint2D> posULSurrounding(); // see no. 30
 
 	private:
 

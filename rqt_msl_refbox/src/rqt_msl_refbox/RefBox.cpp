@@ -16,6 +16,8 @@ namespace rqt_msl_refbox
 
 	void RefBox::initPlugin(qt_gui_cpp::PluginContext& context)
 	{
+		//used to enable colored buttons
+		QApplication::setStyle(new QPlastiqueStyle);
 		widget_ = new QWidget();
 		setupUi(widget_);
 		if (context.serialNumber() > 1)

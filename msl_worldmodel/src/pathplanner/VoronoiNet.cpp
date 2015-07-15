@@ -210,7 +210,8 @@ namespace msl
 				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, int>(
-								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y), (*iter)->first));
+								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y),
+								(*iter)->first));
 				Site_2 site((*iter)->second->x, (*iter)->second->y);
 				sites.push_back(site);
 			}
@@ -238,9 +239,9 @@ namespace msl
 		}
 		insertPoints(sites);
 		auto artObs = wm->pathPlanner.getArtificialObstacles();
-		for(int i = 0; i < artObs->size(); i++)
+		for (int i = 0; i < artObs->size(); i++)
 		{
-			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(artObs->at(i),-2));
+			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(artObs->at(i), -2));
 		}
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
@@ -345,7 +346,8 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
 	{
 		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = this->getVerticesOfFace(
+				make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
 		return ret;
 
 	}
@@ -468,7 +470,8 @@ namespace msl
 
 	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getTeamMatePositions()
 	{
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
+				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			if (iter->second > 0)
@@ -481,7 +484,8 @@ namespace msl
 
 	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getObstaclePositions()
 	{
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
+				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			if (iter->second < 0)
@@ -494,7 +498,8 @@ namespace msl
 
 	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getSitePositions()
 	{
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
+				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			ret->push_back(*iter);
@@ -504,7 +509,8 @@ namespace msl
 
 	shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > VoronoiNet::getOpponentPositions()
 	{
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
+				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			if (iter->second == -1)
@@ -515,7 +521,21 @@ namespace msl
 		return ret;
 	}
 
+	void VoronoiNet::removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites)
+	{
+		for (int i = 0; i < sites->size(); i++)
+		{
+			VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
+			VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+			//boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+			if (loc.which() == 0)
+			{
+				VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
+				((DelaunayTriangulation)this->voronoi->dual()).remove(handle->dual());
+			}
+		}
+	}
 }
 
-	/* namespace msl */
+/* namespace msl */
 

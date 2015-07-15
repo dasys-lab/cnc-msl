@@ -116,6 +116,8 @@ namespace msl
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVertices(int teamMateId);
 
+		void removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites);
+
 	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex

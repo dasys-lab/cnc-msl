@@ -42,17 +42,16 @@ namespace alica
         double closerFactor;
         static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                     shared_ptr<geometry::CNPoint2D> c, double tolerance,
-									shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
-        static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
-                                              shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-											  shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
-        static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
+                                    shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
+                                shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
+                                shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
                                      double passCorridorWidth, shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
 
-        /*PROTECTED REGION END*/
-    private:
-        /*PROTECTED REGION ID(prv1436269017402) ENABLED START*/ //Add additional private methods here
-        /*PROTECTED REGION END*/};
-} /* namespace alica */
+        /*PROTECTED REGION END*/				private:
+				/*PROTECTED REGION ID(prv1436269017402) ENABLED START*/ //Add additional private methods here
+        /*PROTECTED REGION END*/			};
+		} /* namespace alica */
 
 #endif /* SearchForPassPoint_H_ */
