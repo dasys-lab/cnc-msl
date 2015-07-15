@@ -64,7 +64,7 @@
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431524769489"/>
-    <value xPos="648" yPos="100" width="81" height="67"/>
+    <value xPos="648" yPos="100" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431524869870"/>
@@ -118,6 +118,10 @@
   </extensions>
   <extensions>
     <key href="StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/AttackOpp.beh#1430324680117"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

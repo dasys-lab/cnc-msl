@@ -21,7 +21,7 @@
   </states>
   <states id="1431522912251" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardReceive.beh#1428509534191</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AttackOpp.beh#1430324680117</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
   </states>
@@ -43,7 +43,7 @@
     <inState>#1431522155979</inState>
     <outState>#1431522763494</outState>
   </transitions>
-  <transitions id="1431522920716" name="MISSING_NAME" comment="aligned" msg="">
+  <transitions id="1431522920716" name="MISSING_NAME" comment="aligned &amp;&amp; robot in SpatialDefend" msg="">
     <preCondition id="1431522922124" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1431522297705</inState>
     <outState>#1431522912251</outState>

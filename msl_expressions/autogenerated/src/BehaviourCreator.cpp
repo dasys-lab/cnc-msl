@@ -39,8 +39,6 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
-#include  "Plans/Attack/DribbleToAttackPoint.h"
-
 #include  "Plans/GenericStandards/StandardPass.h"
 
 #include  "Plans/Behaviours/AlignToGoal.h"
@@ -107,8 +105,6 @@ namespace alica
 
             case 1431527260342:
 
-            case 1436961206415:
-
                 return make_shared<DriveToPoint>();
                 break;
 
@@ -169,11 +165,6 @@ namespace alica
             case 1427703234654:
 
                 return make_shared<InterceptCarefully>();
-                break;
-
-            case 1436855860607:
-
-                return make_shared<DribbleToAttackPoint>();
                 break;
 
             case 1435760175843:
