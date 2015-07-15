@@ -41,8 +41,8 @@ namespace msl
 		GoalInnerAreaExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "GoalInnerAreaExists",
 		NULL);
 		CornerCircleExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "CornerCircleExists", NULL);
-		PenaltySpot = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "PenaltySpot", NULL);
-		Surrounding = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "Surrounding", NULL);
+		PenaltySpot = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltySpot", NULL);
+		Surrounding = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "Surrounding", NULL);
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
 		std::cout << "MSLFootballField::FieldWidth = " << FieldWidth << std::endl;

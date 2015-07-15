@@ -93,6 +93,10 @@ namespace msl
 				}
 			}
 		}
+		if(additionalPoints != nullptr)
+		{
+			net->removeSites(additionalPoints);
+		}
 		if(retPoint == nullptr)
 		{
 			return nullptr;
