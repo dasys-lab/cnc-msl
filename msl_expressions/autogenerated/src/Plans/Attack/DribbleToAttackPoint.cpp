@@ -101,8 +101,19 @@ namespace alica
 			}
 			lastClosesOpp = closestOpponent;
 		}
-		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
+		msl_actuator_msgs::MotionControl mc;
+
+		if(egoAlignPoint->angleTo() > 0.05)
+		{
+			 mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
+		}
+		else
+		{
+			mc.motion.angle = 0;
+			mc.motion.rotation = 0;
+			mc.motion.translation = 0;
+		}
 		mc.motion.translation = 0;
 		if (egoTargetPoint->length() < 250)
 		{
