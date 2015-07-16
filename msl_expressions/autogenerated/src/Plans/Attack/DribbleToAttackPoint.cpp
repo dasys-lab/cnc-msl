@@ -83,8 +83,8 @@ namespace alica
 		if (closestOpponent != nullptr)
 		{
 			msl_msgs::Point2dInfo info;
-			info.x = closestOpponent->x;
-			info.y = closestOpponent->y;
+			info.x = closestOpponent->egoToAllo(*ownPos)->x;
+			info.y = closestOpponent->egoToAllo(*ownPos)->y;
 			netMsg.sites.push_back(info);
 
 			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
@@ -95,11 +95,11 @@ namespace alica
 		}
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.1 +
+		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.7 +
 				(egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 		msl_msgs::Point2dInfo info;
-		info.x = egoAlignPoint->x;
-		info.y = egoAlignPoint->y;
+		info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
+		info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
 		netMsg.sites.push_back(info);
 		mc.motion.translation = 0;
 		if (egoTargetPoint->length() < 250)
