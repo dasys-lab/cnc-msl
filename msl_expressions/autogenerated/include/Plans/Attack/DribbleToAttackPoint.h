@@ -27,6 +27,7 @@ namespace alica
         msl::MSLFootballField* field;
         supplementary::SystemConfig* sc;
         int wheelSpeed;
+        shared_ptr<geometry::CNPoint2D> lastClosesOpp;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

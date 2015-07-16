@@ -85,11 +85,15 @@ namespace alica
         	{
 				sign = 1;
         	}
+        	if(lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
+        	{
+        		cout << "changed last closest opp" << endl;
+        	}
+        	lastClosesOpp = closestOpponent;
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
         mc.motion.translation = 0;
-        mc.motion.rotation;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
@@ -104,6 +108,7 @@ namespace alica
         sc = supplementary::SystemConfig::getInstance();
         alloTargetPoint = field->posOppPenaltyMarker();
         wheelSpeed = -75;
+        lastClosesOpp = nullptr;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1436855838589) ENABLED START*/ //Add additional methods here
