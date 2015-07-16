@@ -67,8 +67,8 @@ namespace alica
                     * (1.0 / closestOpponent->length());
             auto weightedTargetVector = egoTargetPoint->normalize() * 1000
                     * (1.0 / egoTargetPoint->length());
-//            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
-            egoAlignPoint = weightedOppVector;
+            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+//            egoAlignPoint = weightedOppVector;
         }
         //left = 1
         //right = -1
@@ -88,7 +88,6 @@ namespace alica
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
         mc.motion.rotation *= sign;
-        mc.motion.rotation *= 2;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
