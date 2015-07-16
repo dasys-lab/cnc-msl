@@ -33,17 +33,7 @@ namespace alica
             return;
         }
 
-        //auto obstacles = wm->robots.getObstacles();
-
-        //for (auto obstacle : *obstacles)
-        //{
-        // TODO: Get closest obstacle to ball
-        //}
-
         msl_actuator_msgs::MotionControl mc;
-//        // TODO : remove later
-//        mc = RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 300);
-//        mc.motion.translation = 0;
         auto egoBallVelocity = wm->ball.getEgoBallVelocity();
         auto vector = egoBallVelocity + egoBallPos;
         double vectorLength = vector->length();
@@ -109,23 +99,13 @@ namespace alica
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
-        double summe = 0.0;
-        //distance ball to robot
         double distance = egoBallPos->length();
-        //TODO bullshit summe ist an der stelle IMMER 0.0
-        summe = summe + distance;
-        double movement = kP * distance + kI * summe + kD * (distance - oldDistance);
+        double movement = kP * distance + kD * (distance - oldDistance);
         oldDistance = distance;
 
         double ball_speed = egoBallVel->length();
 
         movement += ball_speed;
-
-        //cout << "movement: " << movement << endl;
-        //cout << "ball speed: " << ball_speed << endl;
-        //cout << "distance: " << distance << endl;
-
-        // translation = 1000 => 1 m/s
         mc.motion.translation = movement;
 
         if (egoBallPos->length() < 300)
@@ -151,12 +131,6 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
-
-        cout << "xVelocity:" << ballVelocity->x << endl;
-        cout << "yVelocity:" << ballVelocity->y << endl;
-        cout << "Y-Intersection: " << yIntersection << endl;
-
-        cout << endl;
 
         return mc;
     }
