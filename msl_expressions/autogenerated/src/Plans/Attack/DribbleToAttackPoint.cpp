@@ -67,7 +67,7 @@ namespace alica
                     * (1.0 / closestOpponent->length());
             auto weightedTargetVector = egoTargetPoint
                     * (1.0 / egoTargetPoint->length());
-            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+       //     egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 //            egoAlignPoint = weightedOppVector;
         }
         //left = 1
