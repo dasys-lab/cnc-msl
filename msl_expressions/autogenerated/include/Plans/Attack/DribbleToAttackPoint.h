@@ -31,6 +31,7 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> lastClosesOpp;
         ros::Publisher voroniPub;
         ros::NodeHandle n;
+        double lastRotError;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

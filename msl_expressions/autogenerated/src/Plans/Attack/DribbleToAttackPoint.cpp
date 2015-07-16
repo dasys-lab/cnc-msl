@@ -95,7 +95,8 @@ namespace alica
 		}
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.1;
+		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.1 +
+				(egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.5;
 		msl_msgs::Point2dInfo info;
 		info.x = egoAlignPoint->x;
 		info.y = egoAlignPoint->y;
@@ -105,6 +106,7 @@ namespace alica
 		{
 			this->success = true;
 		}
+		lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();
 		voroniPub.publish(netMsg);
 		send(mc);
 		/*PROTECTED REGION END*/
@@ -117,6 +119,7 @@ namespace alica
 		alloTargetPoint = field->posOppPenaltyMarker();
 		wheelSpeed = -75;
 		lastClosesOpp = nullptr;
+		lastRotError = 0;
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1436855838589) ENABLED START*/ //Add additional methods here
