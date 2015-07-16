@@ -96,7 +96,7 @@ namespace alica
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
 		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.1 +
-				(egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.5;
+				(egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 		msl_msgs::Point2dInfo info;
 		info.x = egoAlignPoint->x;
 		info.y = egoAlignPoint->y;
