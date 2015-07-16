@@ -78,14 +78,14 @@ namespace alica
 		//left = 1
 		//right = -1
 		int sign = 0;
+		msl_msgs::VoronoiNetInfo netMsg;
 		if (closestOpponent != nullptr)
 		{
-			msl_msgs::VoronoiNetInfo netMsg;
 			msl_msgs::Point2dInfo info;
 			info.x = closestOpponent->x;
 			info.y = closestOpponent->y;
 			netMsg.sites.push_back(info);
-			voroniPub.publish(netMsg);
+
 			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
 			{
 				cout << "changed last closest opp" << endl;
@@ -95,11 +95,16 @@ namespace alica
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
 		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.1;
+		msl_msgs::Point2dInfo info;
+		info.x = egoAlignPoint->x;
+		info.y = egoAlignPoint->y;
+		netMsg.sites.push_back(info);
 		mc.motion.translation = 0;
 		if (egoTargetPoint->length() < 250)
 		{
 			this->success = true;
 		}
+		voroniPub.publish(netMsg);
 		send(mc);
 		/*PROTECTED REGION END*/
 	}
