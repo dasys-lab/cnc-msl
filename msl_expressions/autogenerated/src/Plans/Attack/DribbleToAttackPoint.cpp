@@ -87,7 +87,7 @@ namespace alica
             auto weightedOppVector = closestOpponent->normalize()->rotate(M_PI) * 1000
                     * (1.0 / closestOpponent->length());
             cout << 22<< endl;
-            auto weightedTargetVector = egoTargetPoint->normalize()->rotate(M_PI) * 1000
+            auto weightedTargetVector = egoTargetPoint->normalize() * 1000
                     * (1.0 / egoTargetPoint->length());
             cout << 23<< endl;
             egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
