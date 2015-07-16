@@ -88,6 +88,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
         mc.motion.rotation *= sign;
+        mc.motion.rotation *= 2;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
