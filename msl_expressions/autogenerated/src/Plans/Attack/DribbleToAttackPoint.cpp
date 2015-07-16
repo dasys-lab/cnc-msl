@@ -103,7 +103,7 @@ namespace alica
 		}
 		msl_actuator_msgs::MotionControl mc;
 
-		if(egoAlignPoint->angleTo() > 0.05)
+		if(egoAlignPoint->angleTo() < 0.05)
 		{
 			 mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
