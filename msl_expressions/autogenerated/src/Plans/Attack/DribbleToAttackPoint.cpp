@@ -83,6 +83,7 @@ namespace alica
 			info.x = closestOpponent->x;
 			info.y = closestOpponent->y;
 			netMsg.sites.push_back(info);
+			voroniPub.publish(netMsg);
 			double angle = egoAlignPoint->angleTo();
 			if (angle > 0)
 			{
