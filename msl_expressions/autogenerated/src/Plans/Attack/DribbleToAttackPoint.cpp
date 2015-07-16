@@ -30,11 +30,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto egoBallPos = wm->ball.getEgoBallPosition();
 //		auto opponents = wm->robots.getObstacles();
         auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
-        if (ownPos == nullptr || egoBallPos == nullptr || vNet == nullptr)
+        if (ownPos == nullptr || vNet == nullptr)
         {
             return;
         }
