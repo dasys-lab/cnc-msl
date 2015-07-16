@@ -22,28 +22,32 @@ namespace alica
     void SpinSlowly::run(void* msg)
     {
         /*PROTECTED REGION ID(run1435159253296) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionMotion();
+
         if (ownPos == nullptr)
         {
             return;
         }
-        alpha = center->alloToEgo(*ownPos)->angleTo();
+
+        if (startAngle == 999)
+        {
+        	startAngle = ownPos->theta;
+        }
+
+        alpha = ownPos->theta;
+
         msl_actuator_msgs::MotionControl mc;
-        //        mc.motion.angle = M_PI / 4;
 
         if (abs(startAngle - alpha) < epsilon && counter > 10)
         {
-            mc.motion.rotation = 0;
+            this->success = true;
         }
         else
         {
             counter++;
             mc.motion.rotation = M_PI / 4;
         }
-        if (startAngle == 999)
-        {
-            startAngle = alpha;
-        }
+
         send(mc);
 
         /*PROTECTED REGION END*/
