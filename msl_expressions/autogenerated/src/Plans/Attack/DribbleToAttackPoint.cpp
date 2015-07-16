@@ -99,12 +99,12 @@ namespace alica
 		250);
 		if (abs(egoAlignPoint->rotate(M_PI)->angleTo()) > M_PI / 2)
 		{
-			mc.motion.rotation = 3 * M_PI;
+			mc.motion.rotation = 2 * M_PI;
 		}
 		else
 		{
 			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * sin(egoAlignPoint->rotate(M_PI)->angleTo())
-					+ (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
+					* 2 + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 		}
 		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
 		msl_msgs::Point2dInfo info;
