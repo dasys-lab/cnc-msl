@@ -31,13 +31,14 @@ namespace alica
 		/*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		auto egoBallPos = wm->ball.getEgoBallPosition();
-		auto opponents = wm->robots.getObstacles();
+//		auto opponents = wm->robots.getObstacles();
+		auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
 		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
-		if (ownPos == nullptr || egoBallPos == nullptr)
+		if (ownPos == nullptr || egoBallPos == nullptr || vNet != nullptr)
 		{
 			return;
 		}
-
+		auto opponents = vNet->getOpponentPositions();
 		// Constant ball handle wheel speed
 		BallHandleCmd bhc;
 		bhc.leftMotor = (int8_t)this->wheelSpeed;
@@ -50,7 +51,8 @@ namespace alica
 		double dist = 0;
 		for (int i = 0; i < opponents->size(); i++)
 		{
-			auto opp = make_shared<geometry::CNPoint2D>(opponents->at(i).x, opponents->at(i).y);
+//			auto opp = make_shared<geometry::CNPoint2D>(opponents->at(i).x, opponents->at(i).y);
+			auto opp = opponents->at(i).first;
 			dist = opp->distanceTo(ownPoint);
 			if (dist < 3000)
 			{
