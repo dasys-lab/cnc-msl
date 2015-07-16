@@ -96,7 +96,7 @@ namespace alica
         field = msl::MSLFootballField::getInstance();
         sc = supplementary::SystemConfig::getInstance();
         alloTargetPoint = field->posOppPenaltyMarker();
-        wheelSpeed = -50;
+        wheelSpeed = -75;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1436855838589) ENABLED START*/ //Add additional methods here
