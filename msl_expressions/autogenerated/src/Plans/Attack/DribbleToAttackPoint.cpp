@@ -59,6 +59,7 @@ namespace alica
         }
         if (closestOpponent == nullptr)
         {
+        	cout << "closesOpp == nullptr!" << endl;
             egoAlignPoint = egoTargetPoint;
         }
         else
@@ -68,14 +69,14 @@ namespace alica
             auto weightedTargetVector = egoTargetPoint
                     * (1.0 / egoTargetPoint->length());
 //           egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
-            egoAlignPoint = weightedOppVector->normalize() * 1000;
+            egoAlignPoint = weightedOppVector * 1000;
         }
         //left = 1
         //right = -1
         int sign = 0;
         if (closestOpponent != nullptr)
         {
-        	double angle = closestOpponent->angleTo();
+        	double angle = egoAlignPoint->angleTo();
         	if(angle > 0 )
         	{
         		sign = -1;
@@ -88,7 +89,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
         mc.motion.translation = 0;
-        mc.motion.rotation *= sign;
+        mc.motion.rotation;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
