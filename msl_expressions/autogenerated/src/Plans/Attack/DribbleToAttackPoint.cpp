@@ -70,7 +70,7 @@ namespace alica
 		}
 		else
 		{
-			auto weightedOppVector = closestOpponent * (1.0 / closestOpponent->length());
+			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length());
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length());
 //           egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 			egoAlignPoint = weightedOppVector * 1000;
@@ -86,15 +86,15 @@ namespace alica
 			info.y = closestOpponent->y;
 			netMsg.sites.push_back(info);
 			voroniPub.publish(netMsg);
-			double angle = egoAlignPoint->angleTo();
-			if (angle > 0)
-			{
-				sign = -1;
-			}
-			else
-			{
-				sign = 1;
-			}
+//			double angle = egoAlignPoint->angleTo();
+//			if (angle > 0)
+//			{
+//				sign = -1;
+//			}
+//			else
+//			{
+//				sign = 1;
+//			}
 			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
 			{
 				cout << "changed last closest opp" << endl;
@@ -103,6 +103,7 @@ namespace alica
 		}
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
 																						250);
+		mc.motion.translation /= 4;
 		if (egoTargetPoint->length() < 250)
 		{
 			this->success = true;
