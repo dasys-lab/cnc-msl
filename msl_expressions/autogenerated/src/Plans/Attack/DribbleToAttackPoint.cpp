@@ -78,11 +78,11 @@ namespace alica
         	double angle = atan2(closestOpponent->y, closestOpponent->x);
         	if(angle > 0 )
         	{
-        		sign = 1;
+        		sign = -1;
         	}
         	else
         	{
-				sign = -1;
+				sign = 1;
         	}
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
