@@ -71,7 +71,8 @@ namespace alica
 		else
 		{
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
-			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length()) * egoTargetPoint->length();
+			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
+					* egoTargetPoint->length();
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
 //			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 			egoAlignPoint = weightedOppVector->normalize() * 1000;
@@ -94,9 +95,17 @@ namespace alica
 			lastClosesOpp = closestOpponent;
 		}
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
-																						250);
-		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * 1.7 +
-				(egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
+
+		250);
+		if (abs(egoAlignPoint->rotate(M_PI)->angleTo()) > M_PI / 2)
+		{
+			mc.motion.rotation = 2 * M_PI;
+		}
+		else
+		{
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * sin(egoAlignPoint->rotate(M_PI)->angleTo())
+					+ (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
+		}
 		msl_msgs::Point2dInfo info;
 		info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
 		info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
