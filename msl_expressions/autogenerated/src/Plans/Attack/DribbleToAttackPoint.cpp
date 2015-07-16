@@ -34,7 +34,7 @@ namespace alica
 //		auto opponents = wm->robots.getObstacles();
 		auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
 		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
-		if (ownPos == nullptr || egoBallPos == nullptr || vNet != nullptr)
+		if (ownPos == nullptr || egoBallPos == nullptr || vNet == nullptr)
 		{
 			return;
 		}
