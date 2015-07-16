@@ -11,7 +11,7 @@
     <outTransitions>#1436960984714</outTransitions>
   </states>
   <states id="1436960962060" name="DribbleToOppPenaltySpot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/DribbleToPoint.beh#1414752423981</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../DribbleToAttackPoint.beh#1436855860607</plans>
     <inTransitions>#1436960984714</inTransitions>
     <outTransitions>#1436960986557</outTransitions>
   </states>

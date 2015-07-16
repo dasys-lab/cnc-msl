@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1436960829485"/>
-    <value width="759" height="495"/>
+    <value xPos="-2" yPos="8" width="759" height="495"/>
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1436960854733"/>
@@ -46,6 +46,10 @@
   </extensions>
   <extensions>
     <key href="../../GenericBehaviours/DriveToPoint.beh#1436961206415"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../DribbleToAttackPoint.beh#1436855860607"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
