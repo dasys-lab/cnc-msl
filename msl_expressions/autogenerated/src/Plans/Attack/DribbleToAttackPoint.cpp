@@ -47,14 +47,12 @@ namespace alica
         double dist = 0;
         for (int i = 0; i < opponents->size(); i++)
         {
-        	cout << 14<< endl;
             auto opp = make_shared < geometry::CNPoint2D > (opponents->at(i).x, opponents->at(i).y);
             dist = opp->distanceTo(ownPoint);
             if (dist < 3000)
             {
                 if (dist < lowestDist)
                 {
-                	cout << 18<< endl;
                     lowestDist = dist;
                     closestOpponent = opp;
                 }
@@ -62,25 +60,21 @@ namespace alica
         }
         if (closestOpponent == nullptr)
         {
-        	cout << 20<< endl;
             egoAlignPoint = egoTargetPoint;
         }
         else
         {
-        	cout << 21<< endl;
             auto weightedOppVector = closestOpponent->normalize()->rotate(M_PI) * 1000
                     * (1.0 / closestOpponent->length());
-            cout << 22<< endl;
             auto weightedTargetVector = egoTargetPoint->normalize() * 1000
                     * (1.0 / egoTargetPoint->length());
-            cout << 23<< endl;
-            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+//            egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+            egoAlignPoint = weightedOppVector;
         }
         //left = 1
         //right = -1
-        cout << 24<< endl;
         int opponentSide = 0;
-        if (closestOpponent->y > ownPos->y)
+        if (closestOpponent != nullptr && closestOpponent->y > ownPos->y)
         {
             opponentSide = 1;
         }
