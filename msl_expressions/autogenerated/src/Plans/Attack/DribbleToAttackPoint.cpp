@@ -29,7 +29,6 @@ namespace alica
         auto egoBallPos = wm->ball.getEgoBallPosition();
         auto opponents = wm->robots.getObstacles();
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
-        cout << 5<< endl;
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
@@ -73,17 +72,22 @@ namespace alica
         }
         //left = 1
         //right = -1
-        int opponentSide = 0;
-        if (closestOpponent != nullptr && closestOpponent->y > ownPos->y)
+        int sign = 0;
+        if (closestOpponent != nullptr)
         {
-            opponentSide = 1;
-        }
-        else
-        {
-            opponentSide = -1;
+        	double angle = atan2(closestOpponent->y, closestOpponent->x);
+        	if(angle > 0 )
+        	{
+        		sign = 1;
+        	}
+        	else
+        	{
+				sign = -1;
+        	}
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
+        mc.motion.rotation *= sign;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
