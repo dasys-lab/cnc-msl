@@ -78,16 +78,16 @@ namespace alica
         	double angle = closestOpponent->angleTo();
         	if(angle > 0 )
         	{
-        		sign = 1;
+        		sign = -1;
         	}
         	else
         	{
-				sign = -1;
+				sign = 1;
         	}
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
-        mc.motion.translation /= 2;
+        mc.motion.translation = 0;
         mc.motion.rotation *= sign;
         if (egoTargetPoint->length() < 250)
         {
