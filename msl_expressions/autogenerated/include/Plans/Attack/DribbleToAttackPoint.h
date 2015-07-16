@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1436855838589) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
 #include "SystemConfig.h"
+#include <ros/ros.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,6 +29,8 @@ namespace alica
         supplementary::SystemConfig* sc;
         int wheelSpeed;
         shared_ptr<geometry::CNPoint2D> lastClosesOpp;
+        ros::Publisher voroniPub;
+        ros::NodeHandle n;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

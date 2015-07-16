@@ -89,7 +89,7 @@ namespace msl
 				if(pathPlannerDebug)
 				{
 					sendPathPlannerMsg(path);
-					sendVoronoiNetMsg(net->getSitePositions(),net);
+					//sendVoronoiNetMsg(net->getSitePositions(),net);
 				}
 			}
 		}
