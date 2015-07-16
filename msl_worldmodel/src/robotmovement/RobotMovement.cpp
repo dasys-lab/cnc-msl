@@ -33,14 +33,13 @@ namespace msl
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance)
+														double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints )
 	{
 		MotionControl mc;
 		if (egoTarget->length() > 400)
 		{
 			MSLWorldModel* wm = MSLWorldModel::get();
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			additionalPoints->push_back(wm->ball.getAlloBallPosition());
 			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
 			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 																									additionalPoints);
@@ -77,14 +76,13 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance)
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
 		MotionControl mc;
 		if (egoTarget->length() > 400)
 		{
 			MSLWorldModel* wm = MSLWorldModel::get();
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			additionalPoints->push_back(wm->ball.getAlloBallPosition());
 			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
 			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 																									additionalPoints);
