@@ -68,25 +68,26 @@ namespace alica
             auto weightedTargetVector = egoTargetPoint
                     * (1.0 / egoTargetPoint->length());
 //           egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
-            egoAlignPoint = weightedOppVector;
+            egoAlignPoint = weightedOppVector->normalize() * 1000;
         }
         //left = 1
         //right = -1
         int sign = 0;
         if (closestOpponent != nullptr)
         {
-        	double angle = atan2(closestOpponent->y, closestOpponent->x);
+        	double angle = closestOpponent->angleTo();
         	if(angle > 0 )
         	{
-        		sign = -1;
+        		sign = 1;
         	}
         	else
         	{
-				sign = 1;
+				sign = -1;
         	}
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
+        mc.motion.translation /= 2;
         mc.motion.rotation *= sign;
         if (egoTargetPoint->length() < 250)
         {
