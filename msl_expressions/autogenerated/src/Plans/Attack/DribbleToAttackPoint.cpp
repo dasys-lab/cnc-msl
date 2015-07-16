@@ -103,7 +103,7 @@ namespace alica
 		}
 		else
 		{
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * sin(egoAlignPoint->rotate(M_PI)->angleTo())
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo()))
 					* 2;// + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 		}
 		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
