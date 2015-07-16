@@ -35,6 +35,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         if (ownPos == nullptr || vNet == nullptr)
         {
+        	cout << "returning" << endl;
             return;
         }
         auto opponents = vNet->getOpponentPositions();
