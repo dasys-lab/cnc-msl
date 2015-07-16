@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
-    <key href="DribbleToPointPlan.pml#1436960854732"/>
-    <value xPos="40" yPos="217" width="193" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="DribbleToPointPlan.pml#1436960829485"/>
     <value xPos="-2" yPos="8" width="759" height="495"/>
   </extensions>
@@ -13,28 +9,8 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="DribbleToPointPlan.pml#1436960880333"/>
-    <value xPos="261" yPos="64" width="81" height="67"/>
-  </extensions>
-  <extensions>
     <key href="DribbleToPointPlan.pml#1436960962060"/>
     <value xPos="422" yPos="190" width="81" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="DribbleToPointPlan.pml#1436960982644"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DribbleToPointPlan.pml#1436960984714"/>
-    <value>
-      <bendpoints xPos="569" yPos="181"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="DribbleToPointPlan.pml#1436960986557"/>
-    <value>
-      <bendpoints xPos="516" yPos="250"/>
-    </value>
   </extensions>
   <extensions>
     <key href="../../Behaviours/DribbleToPoint.beh#1414752423981"/>

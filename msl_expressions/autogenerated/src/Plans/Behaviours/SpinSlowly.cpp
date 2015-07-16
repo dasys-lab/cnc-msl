@@ -31,7 +31,7 @@ namespace alica
 
         if (startAngle == 999)
         {
-        	startAngle = ownPos->theta;
+            startAngle = ownPos->theta;
         }
 
         alpha = ownPos->theta;
