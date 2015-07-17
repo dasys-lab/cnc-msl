@@ -101,17 +101,17 @@ namespace alica
         {
             mc.motion.rotation = 2 * M_PI;
         }
-        else if(egoAlignPoint->rotate(M_PI)->angleTo() < M_PI / 2)
+        else if(egoAlignPoint->rotate(M_PI)->angleTo() < -M_PI / 2)
         {
         	mc.motion.rotation = -2 * M_PI;
         }
         else
         {
-            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
-                    * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo())) * 2; // + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
-            //TODO test
 //            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
-//                    * sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
+//                    * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo())) * 2; // + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
+            //TODO test
+            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
+                    * sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
 //            double clausenValue = 0;
 //            for(double i = 0.0; i < 10; i += 1.0)
 //            {
