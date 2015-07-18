@@ -39,7 +39,6 @@ namespace msl
 		if (egoTarget->length() > 400)
 		{
 			MSLWorldModel* wm = MSLWorldModel::get();
-			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
 			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 																									additionalPoints);

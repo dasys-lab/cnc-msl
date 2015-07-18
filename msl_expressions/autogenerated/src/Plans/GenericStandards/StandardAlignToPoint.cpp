@@ -29,13 +29,13 @@ namespace alica
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
         }
 
+        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
         additionalPoints->push_back(alloBall);
         if (!isReceiver)

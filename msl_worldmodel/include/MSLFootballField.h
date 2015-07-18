@@ -159,7 +159,7 @@ namespace msl
 		static shared_ptr<geometry::CNPoint2D> posOwnGoalMid(); // see no. 16
 		static shared_ptr<geometry::CNPoint2D> posLROppHalf(); // see no. 17
 		static shared_ptr<geometry::CNPoint2D> posULOwnHalf(); // see no. 18
-		static shared_ptr<geometry::CNPoint2D> osLROwnPenaltyArea(); // see no. 19
+		static shared_ptr<geometry::CNPoint2D> posLROwnPenaltyArea(); // see no. 19
 		static shared_ptr<geometry::CNPoint2D> posULOwnPenaltyArea(); // see no. 20
 		static shared_ptr<geometry::CNPoint2D> posLROppPenaltyArea(); // see no. 21
 		static shared_ptr<geometry::CNPoint2D> posULOppPenaltyArea(); // see no. 22

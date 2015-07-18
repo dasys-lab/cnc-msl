@@ -29,6 +29,7 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "container/CNPoint2D.h"
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include "MSLFootballField.h"
 
 namespace supplementary {
 	class SystemConfig;
@@ -95,6 +96,8 @@ namespace msl
 
 		void insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
+		void insertAdditionalPoints(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+
 		shared_ptr<VoronoiDiagram> getVoronoi();
 		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
 		/**
@@ -118,6 +121,22 @@ namespace msl
 
 		void removeSites(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites);
 
+		void removeSites(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites);
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOppPenaltyArea();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOppGoalArea();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOwnPenaltyArea();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOwnGoalArea();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockThreeMeterAroundBall();
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
+
+		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
+
 	private:
 		/**
 		 * gets Vertices connected to SeachNode vertex
@@ -129,6 +148,7 @@ namespace msl
 		bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
 
 
+
 	protected:
 		Kernel kernel;
 		DelaunayTriangulation delaunayTriangulation;
@@ -137,6 +157,7 @@ namespace msl
 		shared_ptr<VoronoiDiagram> voronoi;
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
+		MSLFootballField* field;
 		mutex netMutex;
 		/**
 		 * true if own robot false otherwise

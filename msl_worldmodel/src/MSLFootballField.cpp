@@ -189,7 +189,7 @@ namespace msl
 		return make_shared<geometry::CNPoint2D>(0.0, FieldWidth / 2);
 	}
 
-	shared_ptr<geometry::CNPoint2D> MSLFootballField::osLROwnPenaltyArea()
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLROwnPenaltyArea()
 	{
 		return make_shared<geometry::CNPoint2D>(-FieldLength / 2, -GoalAreaLength / 2);
 	}
