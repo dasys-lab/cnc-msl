@@ -366,6 +366,12 @@ namespace msl
 		}
 	}
 
+	void msl::VoronoiNet::clearVoronoiNet()
+	{
+		this->getVoronoi()->clear();
+		this->pointRobotKindMapping.clear();
+	}
+
 	/**
 	 * checks if a SearchNode is part of a vector
 	 * @param vector shared_ptr<vector<shared_ptr<SearchNode> > >

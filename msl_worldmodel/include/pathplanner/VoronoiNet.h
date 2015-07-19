@@ -98,6 +98,8 @@ namespace msl
 
 		void insertAdditionalPoints(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
 
+		void clearVoronoiNet();
+
 		shared_ptr<VoronoiDiagram> getVoronoi();
 		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
 		/**
