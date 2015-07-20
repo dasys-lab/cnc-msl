@@ -32,6 +32,7 @@ namespace alica
         ros::Publisher voroniPub;
         ros::NodeHandle n;
         double lastRotError;
+        bool ownPenalty;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

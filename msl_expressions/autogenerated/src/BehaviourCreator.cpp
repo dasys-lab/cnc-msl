@@ -173,6 +173,8 @@ namespace alica
 
             case 1436855860607:
 
+            case 1437391438054:
+
                 return make_shared<DribbleToAttackPoint>();
                 break;
 

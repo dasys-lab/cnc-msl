@@ -30,7 +30,6 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-//		auto opponents = wm->robots.getObstacles();
 		auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
 		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
 		if (ownPos == nullptr || vNet == nullptr)
@@ -51,7 +50,6 @@ namespace alica
 		double dist = 0;
 		for (int i = 0; i < opponents->size(); i++)
 		{
-//			auto opp = make_shared<geometry::CNPoint2D>(opponents->at(i).x, opponents->at(i).y);
 			auto opp = opponents->at(i).first;
 			dist = opp->distanceTo(ownPoint);
 			if (dist < 3000)
@@ -139,7 +137,37 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1436855838589) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		sc = supplementary::SystemConfig::getInstance();
-		alloTargetPoint = field->posOppPenaltyMarker();
+		bool success = true;
+		string tmp = "";
+		success &= getParameter("OwnPenalty", tmp);
+		try
+		{
+			if (success)
+			{
+				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+				std::istringstream is(tmp);
+				bool b;
+				is >> std::boolalpha >> b;
+				ownPenalty = b;
+			}
+
+		}
+		catch (exception& e)
+		{
+			cerr << "Could not cast the parameter properly" << endl;
+		}
+		if (!success)
+		{
+			cerr << "Parameter does not exist" << endl;
+		}
+		if (!ownPenalty)
+		{
+			alloTargetPoint = field->posOppPenaltyMarker();
+		}
+		else
+		{
+			alloTargetPoint = field->posOwnPenaltyMarker();
+		}
 		wheelSpeed = -75;
 		lastClosesOpp = nullptr;
 		lastRotError = 0;

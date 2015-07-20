@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="DribbleToPointPlan.pml#1436960829485"/>
-    <value xPos="-2" yPos="8" width="759" height="495"/>
+    <value xPos="-3" yPos="1" width="800" height="495"/>
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1436960854733"/>
@@ -26,6 +26,26 @@
   </extensions>
   <extensions>
     <key href="../DribbleToAttackPoint.beh#1436855860607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437390908773"/>
+    <value xPos="67" yPos="181" width="193" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437390978582"/>
+    <value>
+      <bendpoints xPos="459" yPos="293"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437390979982"/>
+    <value>
+      <bendpoints xPos="462" yPos="244"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../DribbleToAttackPoint.beh#1437391438054"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
