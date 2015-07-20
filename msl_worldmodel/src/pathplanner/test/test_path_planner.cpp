@@ -112,7 +112,105 @@ TEST_F(PathPlannerTest, pathPlanner)
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
+	cout << "Path length: " << path->size() << endl;
+	net->clearVoronoiNet();
+	points->clear();
+
+	net->insertAdditionalPoints(artificialObs);
+	points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+	for (int i = 0; i < 15; i++)
+	{
+		bool alreadyIn = false;
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		for (auto it = points->begin(); it != points->end(); it++)
+		{
+			//TODO needs to be checked
+			if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
+			{
+				alreadyIn = true;
+				break;
+			}
+		}
+		if (!alreadyIn)
+		{
+			points->push_back(point);
+		}
+		else
+		{
+			i--;
+		}
+		alreadyIn = false;
+	}
+	cout << "####################### 15 Obstacles #######################" << endl;
+	t1 = ros::Time::now();
+	cout << "before insert : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
+	net->insertAdditionalPoints(points);
+	t2 = ros::Time::now();
+	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
+	EXPECT_EQ(15 + artObsSize, net->getObstaclePositions()->size());
+	t1 = ros::Time::now();
+	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
+	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
+	t2 = ros::Time::now();
+	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
+	cout << "Path length: " << path->size() << endl;
+	net->clearVoronoiNet();
+	points->clear();
+
+	net->insertAdditionalPoints(artificialObs);
+	points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+	for (int i = 0; i < 20; i++)
+	{
+		bool alreadyIn = false;
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		for (auto it = points->begin(); it != points->end(); it++)
+		{
+			//TODO needs to be checked
+			if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
+			{
+				alreadyIn = true;
+				break;
+			}
+		}
+		if (!alreadyIn)
+		{
+			points->push_back(point);
+		}
+		else
+		{
+			i--;
+		}
+		alreadyIn = false;
+	}
+	cout << "####################### 20 Obstacles #######################" << endl;
+	t1 = ros::Time::now();
+	cout << "before insert : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
+	net->insertAdditionalPoints(points);
+	t2 = ros::Time::now();
+	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
+	EXPECT_EQ(20 + artObsSize, net->getObstaclePositions()->size());
+	t1 = ros::Time::now();
+	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
+	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
+	t2 = ros::Time::now();
+	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -148,14 +246,18 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(25 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -191,14 +293,18 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(50 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -235,14 +341,18 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(100 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -278,14 +388,18 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(250 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -321,14 +435,18 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(500 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
@@ -364,7 +482,9 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	EXPECT_EQ(1000 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
@@ -372,6 +492,9 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after planing : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
+	timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
 	cout << "Path length: " << path->size() << endl;
 	net->clearVoronoiNet();
 	points->clear();
