@@ -49,6 +49,7 @@ namespace msl
 	{
 	public:
 		VoronoiNet(MSLWorldModel* wm);
+		VoronoiNet(shared_ptr<VoronoiNet> net);
 		virtual ~VoronoiNet();
 		/**
 		 * generates a VoronoiDiagram and inserts given points

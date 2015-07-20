@@ -5,7 +5,6 @@
  *      Author: Stefan Jakob
  */
 
-
 #include "SystemConfig.h"
 #include <gtest/gtest.h>
 #include <map>
@@ -42,14 +41,13 @@ protected:
 		sc->setRootPath(path);
 		sc->setConfigPath(path + "/etc");
 		sc->setHostname("nase");
-		this->wm = new msl::MSLWorldModel();
+		this->wm = msl::MSLWorldModel::get();
 
 	}
 
 	virtual void TearDown()
 	{
 		sc->shutdown();
-//		delete this->wm;
 	}
 
 };
@@ -69,12 +67,17 @@ TEST_F(PathPlannerTest, pathPlanner)
 	shared_ptr<geometry::CNPoint2D> startPoint = make_shared<geometry::CNPoint2D>(0, 0);
 	shared_ptr<geometry::CNPoint2D> goalPoint = make_shared<geometry::CNPoint2D>(1000, 1000);
 	net = this->wm->pathPlanner.getArtificialObjectNet();
+	auto artificialObs = this->wm->pathPlanner.getArtificialObstacles();
+	int artObsSize = artificialObs->size();
 	EXPECT_TRUE(net != nullptr);
+	net->clearVoronoiNet();
+	net->insertAdditionalPoints(artificialObs);
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-	for(int i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -100,8 +103,10 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->insertAdditionalPoints(points);
 	ros::Time t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
-	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(10, net->getObstaclePositions()->size());
+	unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+	cout << "Time diff: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff << "ns"
+			<< endl;
+	EXPECT_EQ(10 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -112,10 +117,12 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 25; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 25; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -142,7 +149,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(25, net->getObstaclePositions()->size());
+	EXPECT_EQ(25 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -153,10 +160,12 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 50; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 50; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -183,7 +192,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(50, net->getObstaclePositions()->size());
+	EXPECT_EQ(50 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -194,11 +203,13 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 100; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 100; i++)
 	{
 
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -225,7 +236,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(100, net->getObstaclePositions()->size());
+	EXPECT_EQ(100 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -236,10 +247,12 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 250; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 250; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -266,7 +279,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(250, net->getObstaclePositions()->size());
+	EXPECT_EQ(250 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -277,10 +290,12 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 500; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 500; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -307,7 +322,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(500, net->getObstaclePositions()->size());
+	EXPECT_EQ(500 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
@@ -318,10 +333,12 @@ TEST_F(PathPlannerTest, pathPlanner)
 	net->clearVoronoiNet();
 	points->clear();
 
-	for(int i = 0; i < 1000; i++)
+	net->insertAdditionalPoints(artificialObs);
+	for (int i = 0; i < 1000; i++)
 	{
 		bool alreadyIn = false;
-		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2, rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+		auto point = make_shared<geometry::CNPoint2D>(rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+														rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
 		for (auto it = points->begin(); it != points->end(); it++)
 		{
 			//TODO needs to be checked
@@ -348,7 +365,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	t2 = ros::Time::now();
 	cout << "after insert : " << (t2.sec * 1000000000UL + t2.nsec) << endl;
 	cout << "Time diff: " << (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec) << endl;
-	EXPECT_EQ(1000, net->getObstaclePositions()->size());
+	EXPECT_EQ(1000 + artObsSize, net->getObstaclePositions()->size());
 	t1 = ros::Time::now();
 	cout << "before planing : " << (t1.sec * 1000000000UL + t1.nsec) << endl;
 	path = wm->pathPlanner.plan(net, startPos, goalPos, eval);

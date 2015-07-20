@@ -4,6 +4,6 @@
     <parameters id="1437391471878" name="MISSING_NAME" comment="" key="OwnPenalty" value="0"/>
   </configurations>
   <configurations id="1437391438054" name="DribbleToAttackPointOwnPenaltySpot" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1437391452476" name="MISSING_NAME" comment="" key="OwnPenalty" value="1"/>
+    <parameters id="1437391588176" name="MISSING_NAME" comment="" key="OwnPenalty" value="1"/>
   </configurations>
 </alica:Behaviour>

@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="TestAttackPlan.pml#1436960675874"/>
-    <value xPos="89" yPos="93" width="81" height="67"/>
+    <value xPos="89" yPos="93" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="TestAttackPlan.pml#1436960675873"/>

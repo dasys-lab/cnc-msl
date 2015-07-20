@@ -19,6 +19,20 @@ namespace msl
 		this->voronoi = make_shared<VoronoiDiagram>();
 		field = MSLFootballField::getInstance();
 	}
+	VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
+	{
+		this->wm = net->wm;
+		this->sc = net->sc;
+		this->voronoi = make_shared<VoronoiDiagram>();
+		this->field = net->field;
+		auto opponents = net->getOpponentPositions();
+		vector<geometry::CNPoint2D> points;
+		for(int i = 0; i < opponents->size(); i++)
+		{
+			points.push_back(geometry::CNPoint2D(opponents->at(i).first->x, opponents->at(i).first->y));
+		}
+		this->generateVoronoiDiagram(points);
+	}
 
 	VoronoiNet::~VoronoiNet()
 	{
@@ -371,6 +385,7 @@ namespace msl
 		this->getVoronoi()->clear();
 		this->pointRobotKindMapping.clear();
 	}
+
 
 	/**
 	 * checks if a SearchNode is part of a vector

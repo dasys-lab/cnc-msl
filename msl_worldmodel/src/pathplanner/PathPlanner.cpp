@@ -329,7 +329,8 @@ namespace msl
 		{
 			return nullptr;
 		}
-		return voronoiDiagrams.at(currentVoronoiPos % 10);
+		shared_ptr<VoronoiNet> ret = make_shared<VoronoiNet>(voronoiDiagrams.at(currentVoronoiPos % 10));
+		return ret;
 	}
 
 	double PathPlanner::getRobotDiameter()
