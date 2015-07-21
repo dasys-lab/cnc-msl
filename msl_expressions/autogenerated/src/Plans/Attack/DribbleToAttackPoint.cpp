@@ -72,12 +72,9 @@ namespace alica
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
 					* egoTargetPoint->length();
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
-//			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
-			egoAlignPoint = weightedOppVector->normalize() * 1000;
+			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
+//			egoAlignPoint = weightedOppVector->normalize() * 1000;
 		}
-		//left = 1
-		//right = -1
-		int sign = 0;
 		msl_msgs::VoronoiNetInfo netMsg;
 		if (closestOpponent != nullptr)
 		{
@@ -93,8 +90,7 @@ namespace alica
 			lastClosesOpp = closestOpponent;
 		}
 		msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
-
-		250);
+																						250);
 		if (egoAlignPoint->rotate(M_PI)->angleTo() > M_PI / 2)
 		{
 			mc.motion.rotation = 2 * M_PI;
@@ -108,8 +104,8 @@ namespace alica
 //			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //                    * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo())) * 2; // + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 			//TODO test
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
-					* sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
+//			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
+//					* sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
 			double clausenValue = 0.0;
 			for (int i = 1; i < 10; i++)
 			{
