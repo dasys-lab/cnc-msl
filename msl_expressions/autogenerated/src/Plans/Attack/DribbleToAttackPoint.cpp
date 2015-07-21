@@ -38,11 +38,11 @@ namespace alica
             return;
         }
         auto opponents = vNet->getOpponentPositions();
-        // Constant ball handle wheel speed
-//		BallHandleCmd bhc;
-//		bhc.leftMotor = (int8_t)this->wheelSpeed;
-//		bhc.rightMotor = (int8_t)this->wheelSpeed;
-//		send(bhc);
+     //    Constant ball handle wheel speed
+		BallHandleCmd bhc;
+		bhc.leftMotor = (int8_t)this->wheelSpeed;
+		bhc.rightMotor = (int8_t)this->wheelSpeed;
+		send(bhc);
         auto ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
         egoTargetPoint = alloTargetPoint->alloToEgo(*ownPos);
         shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
