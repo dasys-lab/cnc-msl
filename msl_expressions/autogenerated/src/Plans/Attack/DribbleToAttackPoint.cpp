@@ -122,7 +122,7 @@ namespace alica
 		info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
 		info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
 		netMsg.sites.push_back(info);
-		//mc.motion.translation = 0;
+		mc.motion.translation *= 0.8;
 		if (egoTargetPoint->length() < 250)
 		{
 			this->success = true;
