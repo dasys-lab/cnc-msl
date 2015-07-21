@@ -15,12 +15,12 @@
     <outTransitions>#1437483384370</outTransitions>
   </states>
   <states id="1437483357988" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/AttackOpp.beh#1430324680117</plans>
     <inTransitions>#1437483384370</inTransitions>
     <outTransitions>#1437483382709</outTransitions>
   </states>
   <states id="1437483395818" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/AttackOpp.beh#1430324680117</plans>
     <inTransitions>#1437483410283</inTransitions>
     <outTransitions>#1437483408716</outTransitions>
   </states>

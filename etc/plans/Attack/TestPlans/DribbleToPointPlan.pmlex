@@ -54,7 +54,7 @@
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1437483357988"/>
-    <value xPos="129" yPos="71" width="81" height="67"/>
+    <value xPos="129" yPos="71" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1437483382709"/>
@@ -70,7 +70,7 @@
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1437483395818"/>
-    <value xPos="476" yPos="78" width="73" height="67"/>
+    <value xPos="476" yPos="78" width="73" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleToPointPlan.pml#1437483408716"/>
@@ -83,5 +83,9 @@
     <value>
       <bendpoints xPos="652" yPos="211"/>
     </value>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/AttackOpp.beh#1430324680117"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
