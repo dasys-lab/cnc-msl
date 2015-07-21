@@ -52,4 +52,36 @@
     <key href="../../Behaviours/Actuate.beh#1417017552846"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483357988"/>
+    <value xPos="129" yPos="71" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483382709"/>
+    <value>
+      <bendpoints xPos="275" yPos="206"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483384370"/>
+    <value>
+      <bendpoints xPos="308" yPos="205"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483395818"/>
+    <value xPos="476" yPos="78" width="73" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483408716"/>
+    <value>
+      <bendpoints xPos="625" yPos="214"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleToPointPlan.pml#1437483410283"/>
+    <value>
+      <bendpoints xPos="652" yPos="211"/>
+    </value>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
