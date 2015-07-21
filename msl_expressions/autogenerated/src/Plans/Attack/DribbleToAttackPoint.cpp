@@ -164,7 +164,7 @@ namespace alica
 		{
 			alloTargetPoint = field->posOwnPenaltyMarker();
 		}
-		wheelSpeed = -75;
+		wheelSpeed = -100;
 		lastClosesOpp = nullptr;
 		lastRotError = 0;
 		/*PROTECTED REGION END*/
