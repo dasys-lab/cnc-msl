@@ -33,6 +33,8 @@ namespace alica
         ros::NodeHandle n;
         double lastRotError;
         bool ownPenalty;
+        vector<double> pastRotation;
+        long counter;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

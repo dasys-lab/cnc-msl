@@ -18,6 +18,10 @@ namespace alica
         this->sc = nullptr;
         this->field = nullptr;
         voroniPub = n.advertise < msl_msgs::VoronoiNetInfo > ("/PathPlanner/VoronoiNet", 10);
+        pastRotation.resize(3);
+        lastRotError = 0;
+        ownPenalty = false;
+        counter = -1;
 
         /*PROTECTED REGION END*/
     }
@@ -111,14 +115,20 @@ namespace alica
             {
                 clausenValue += sin(i * egoAlignPoint->rotate(M_PI)->angleTo()) / pow(i, 2);
             }
-            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue) * 4;
+            double sum = 0;
+            for(int i = 0; i < pastRotation.size(); i++)
+            {
+            	sum +=pastRotation.at(i);
+            }
+            mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / 4; // *4
+            counter++;
+            pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
         }
         cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
         msl_msgs::Point2dInfo info;
         info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
         info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
         netMsg.sites.push_back(info);
-//		mc.motion.translation *= 0.8;
         if (egoTargetPoint->length() < 250)
         {
             this->success = true;
@@ -167,6 +177,11 @@ namespace alica
         wheelSpeed = -80;
         lastClosesOpp = nullptr;
         lastRotError = 0;
+        for(int i = 0; i < pastRotation.size(); i++)
+        {
+        	pastRotation.at(i) = 0;
+        }
+        counter = -1;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1436855838589) ENABLED START*/ //Add additional methods here

@@ -99,6 +99,7 @@ namespace msl
 		static void insert(shared_ptr<vector<shared_ptr<SearchNode>>> vect, shared_ptr<SearchNode> currentNode);
 	    shared_ptr<VoronoiNet> getArtificialObjectNet();
 	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialObstacles();
+	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getLastPath();
 
 	private:
 		void initializeArtificialObstacles();

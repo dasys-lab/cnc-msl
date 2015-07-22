@@ -289,6 +289,11 @@ namespace msl
 		corridorPub.publish(cc);
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> msl::PathPlanner::getLastPath()
+	{
+		return lastPath;
+	}
+
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
 											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
 	{

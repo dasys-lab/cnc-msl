@@ -172,7 +172,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);//calcDist(neighbors.at(i)->getVertex()->point(), goal);
+			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
 			{
