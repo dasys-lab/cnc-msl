@@ -77,6 +77,7 @@ namespace msl
 			if (theta != NAN)
 			{
 				ret += pathDeviationWeight * theta;
+				cout << "weight: " << ret << endl;
 			}
 		}
 		if (voronoi != nullptr)
