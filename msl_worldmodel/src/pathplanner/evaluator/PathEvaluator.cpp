@@ -61,6 +61,8 @@ namespace msl
 
 			double cos_angle = (a*c + b*d) / (mag_v1 * mag_v2);
 			double theta = acos(cos_angle);
+
+
 //			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
 //			double dx31 = p->at(0)->x - p->at(1)->x;
 //			double dy21 = nextNode->getVertex()->y - currentNode->getVertex()->y;
