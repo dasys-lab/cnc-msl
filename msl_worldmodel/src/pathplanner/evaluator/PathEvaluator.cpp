@@ -70,10 +70,10 @@ namespace msl
 //			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 //			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 //			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
-//			if (theta > M_PI / 2)
-//			{
-//				theta = M_PI - theta;
-//			}
+			if (theta > M_PI / 2)
+			{
+				theta = M_PI - theta;
+			}
 			if (theta != NAN)
 			{
 				ret += pathDeviationWeight * theta;
