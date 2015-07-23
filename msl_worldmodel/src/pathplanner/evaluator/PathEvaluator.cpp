@@ -25,7 +25,7 @@ namespace msl
 		this->pathLengthWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathLengthWeight",
 		NULL);
 		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight",
-				NULL);
+		NULL);
 	}
 
 	PathEvaluator::~PathEvaluator()
@@ -49,19 +49,20 @@ namespace msl
 	{
 		double ret = pathLengthWeight * distance(currentNode->getVertex(), nextNode->getVertex());
 		auto p = planner->getLastPath();
-		if(currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
+		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
 		{
-			double a = nextNode->getVertex()->x - currentNode->getVertex()->x;
-			double b = nextNode->getVertex()->y - currentNode->getVertex()->y;
+//			double a = nextNode->getVertex()->x - currentNode->getVertex()->x;
+//			double b = nextNode->getVertex()->y - currentNode->getVertex()->y;
+			double a = startPos->x - currentNode->getVertex()->x;
+			double b = startPos->y - currentNode->getVertex()->y;
 			double c = p->at(0)->x - p->at(1)->x;
 			double d = p->at(0)->y - p->at(1)->y;
 
-			double mag_v1 = sqrt(a*a + b*b);
-			double mag_v2 = sqrt(c*c + d*d);
+			double mag_v1 = sqrt(a * a + b * b);
+			double mag_v2 = sqrt(c * c + d * d);
 
-			double cos_angle = (a*c + b*d) / (mag_v1 * mag_v2);
+			double cos_angle = (a * c + b * d) / (mag_v1 * mag_v2);
 			double theta = acos(cos_angle);
-
 
 //			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
 //			double dx31 = p->at(0)->x - p->at(1)->x;

@@ -294,6 +294,11 @@ namespace msl
 		return lastPath;
 	}
 
+	MSLWorldModel* msl::PathPlanner::getWm()
+	{
+		return wm;
+	}
+
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
 											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
 	{

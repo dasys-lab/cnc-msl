@@ -100,6 +100,7 @@ namespace msl
 	    shared_ptr<VoronoiNet> getArtificialObjectNet();
 	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialObstacles();
 	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getLastPath();
+	    MSLWorldModel* getWm();
 
 	private:
 		void initializeArtificialObstacles();
