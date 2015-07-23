@@ -51,17 +51,27 @@ namespace msl
 		auto p = planner->getLastPath();
 		if(currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
 		{
-			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
-			double dx31 = p->at(0)->x - p->at(1)->x;
-			double dy21 = nextNode->getVertex()->y - currentNode->getVertex()->y;
-			double dy31 = p->at(0)->y - p->at(1)->y;
-			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
-			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
-			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
-			if (theta > M_PI / 2)
-			{
-				theta = M_PI - theta;
-			}
+			double a = nextNode->getVertex()->x - currentNode->getVertex()->x;
+			double b = nextNode->getVertex()->y - currentNode->getVertex()->y;
+			double c = p->at(0)->x - p->at(1)->x;
+			double d = p->at(0)->y - p->at(1)->y;
+
+			double mag_v1 = sqrt(a*a + b*b);
+			double mag_v2 = sqrt(c*c + d*d);
+
+			double cos_angle = (a*c + b*d) / (mag_v1 * mag_v2);
+			double theta = acos(cos_angle);
+//			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
+//			double dx31 = p->at(0)->x - p->at(1)->x;
+//			double dy21 = nextNode->getVertex()->y - currentNode->getVertex()->y;
+//			double dy31 = p->at(0)->y - p->at(1)->y;
+//			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
+//			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
+//			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
+//			if (theta > M_PI / 2)
+//			{
+//				theta = M_PI - theta;
+//			}
 			if (theta != NAN)
 			{
 				ret += pathDeviationWeight * theta;
