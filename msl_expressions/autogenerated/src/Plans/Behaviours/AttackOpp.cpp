@@ -69,13 +69,13 @@ namespace alica
 				isMovingAwayIter++;
 				isMovingCloserIter = 0;
 			}
-			if (isMovingCloserIter >= maxIter || egoBallVelocity->length() < 250)
+			if (isMovingCloserIter >= maxIter)
 			{
 				cout << "get closer" << endl;
 				mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
 
 			}
-			else if (isMovingAwayIter >= maxIter)
+			else if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
 			{
 				cout << "roll away" << endl;
 				mc = driveToMovingBall(egoBallPos, egoBallVelocity);
