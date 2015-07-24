@@ -135,11 +135,11 @@ namespace alica
 			auto egoBallPos = wm->ball.getEgoBallPosition();
 			if (egoBallPos != nullptr)
 			{
-				KickControl kc;
-				kc.enabled = true;
-				kc.kicker = egoBallPos->angleTo();
-				kc.power = 2500;
-				send(kc);
+//				KickControl kc;
+//				kc.enabled = true;
+//				kc.kicker = egoBallPos->angleTo();
+//				kc.power = 2500;
+//				send(kc);
 			}
 			this->success = true;
 		}
