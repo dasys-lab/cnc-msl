@@ -51,7 +51,7 @@ namespace alica
 		if (!blocked)
 		{
 			auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-			cout << "ego ball vel: " <<  egoBallVelocity << endl;
+			cout << "ego ball vel: " <<  egoBallVelocity->x << "|" << egoBallVelocity->y << endl;
 			auto vector = egoBallVelocity + egoBallPos;
 			double vectorLength = vector->length();
 			if (wm->ball.haveBall())
