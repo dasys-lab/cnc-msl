@@ -51,7 +51,7 @@ namespace alica
 		if (!blocked)
 		{
 			auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-			cout << "ego ball vel: " <<  egoBallVelocity->x << "|" << egoBallVelocity->y << endl;
+			cout << "ego ball vel: " <<  egoBallVelocity->x << "|" << egoBallVelocity->y  << " " << egoBallVelocity->length()<< endl;
 			auto vector = egoBallVelocity + egoBallPos;
 			double vectorLength = vector->length();
 			if (wm->ball.haveBall())
@@ -69,7 +69,7 @@ namespace alica
 				isMovingAwayIter++;
 				isMovingCloserIter = 0;
 			}
-			if (isMovingCloserIter >= maxIter)
+			if (isMovingCloserIter >= maxIter || egoBallVelocity->length() < 250)
 			{
 				cout << "get closer" << endl;
 				mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
@@ -107,7 +107,7 @@ namespace alica
 		rotate_P = 1.8;
 		isMovingCloserIter = 0;
 		isMovingAwayIter = 0;
-		maxIter = 3;
+		maxIter = 4;
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here
