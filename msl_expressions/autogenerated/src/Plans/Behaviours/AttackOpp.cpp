@@ -59,12 +59,12 @@ namespace alica
 				isMovingAwayIter = 0;
 				isMovingCloserIter = 0;
 			}
-			else if (vectorLength < egoBallPos->length())
+			else if (vectorLength < egoBallPos->length() && egoBallVelocity->length() > 250)
 			{
 				isMovingCloserIter++;
 				isMovingAwayIter = 0;
 			}
-			else
+			else if (vectorLength > egoBallPos->length() && egoBallVelocity->length() > 250)
 			{
 				isMovingAwayIter++;
 				isMovingCloserIter = 0;
