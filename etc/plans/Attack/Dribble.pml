@@ -24,6 +24,7 @@
     <outTransitions>#1434050628706</outTransitions>
   </states>
   <states id="1434050502701" name="AttackAgain" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1434050628706</inTransitions>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>

@@ -20,6 +20,13 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1415205565589) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPoint2D> leftAimPoint;
+        shared_ptr<geometry::CNPoint2D> rightAimPoint;
+        shared_ptr<geometry::CNPoint2D> midAimPoint;
+        shared_ptr<geometry::CNPoint2D> aimPoint;
+        double angleTolerance;
+        double minKickPower;
+        msl::MSLFootballField* field;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

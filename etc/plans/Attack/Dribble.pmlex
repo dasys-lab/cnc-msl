@@ -22,7 +22,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050502701"/>
-    <value xPos="582" yPos="272" width="98" height="67"/>
+    <value xPos="582" yPos="272" width="98" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050522682"/>
@@ -130,6 +130,10 @@
   </extensions>
   <extensions>
     <key href="DribbleToAttackPoint.beh#1436855860607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
