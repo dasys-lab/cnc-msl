@@ -25,6 +25,8 @@ namespace msl
 	double RobotMovement::alignToPointpRot;
 	double RobotMovement::lastRotErrorWithBall = 0;
 	double RobotMovement::alignMaxVel;
+	double RobotMovement::alignToPointRapidMaxRotation = 2 * M_PI;
+	double RobotMovement::lastRotErrorWithBallRapid = 0;
 
 	RobotMovement::~RobotMovement()
 	{
@@ -33,7 +35,8 @@ namespace msl
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints )
+														double snapDistance,
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints )
 	{
 		MotionControl mc;
 		if (egoTarget->length() > 400)
@@ -41,7 +44,7 @@ namespace msl
 			MSLWorldModel* wm = MSLWorldModel::get();
 			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
 			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-																									additionalPoints);
+			additionalPoints);
 			if(temp == nullptr)
 			{
 				cout << "alloTarget = nullptr" << endl;
@@ -75,7 +78,8 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
 		MotionControl mc;
 		if (egoTarget->length() > 400)
@@ -84,7 +88,7 @@ namespace msl
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
 			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-																									additionalPoints);
+			additionalPoints);
 			if(temp == nullptr)
 			{
 				cout << "alloTarget = nullptr" << endl;
@@ -158,7 +162,7 @@ namespace msl
 
 		if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
 		{
-			mc.motion.angle = egoTargetAngle;
+			mc.motion.angle = 0;
 			mc.motion.rotation = 0;
 			mc.motion.translation = 0;
 		}
@@ -184,6 +188,62 @@ namespace msl
 		return mc;
 	}
 
+	MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+															shared_ptr<geometry::CNPoint2D> egoBallPos,
+															double angleTolerance, double ballAngleTolerance)
+	{
+		MotionControl mc;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		double egoTargetAngle = egoAlignPoint->angleTo();
+		double egoBallAngle = egoBallPos->angleTo();
+		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
+		double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+
+		if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
+		{
+			mc.motion.angle = 0;
+			mc.motion.rotation = 0;
+			mc.motion.translation = 0;
+		}
+		else
+		{
+			if (egoAlignPoint->angleTo() > M_PI / 2)
+			{
+				mc.motion.rotation = alignToPointRapidMaxRotation;
+			}
+			else if (egoAlignPoint->angleTo() < -M_PI / 2)
+			{
+				mc.motion.rotation = -alignToPointRapidMaxRotation;
+			}
+			else
+			{
+				double clausenValue = 0.0;
+				for (int i = 1; i < 10; i++)
+				{
+					clausenValue += sin(i * egoAlignPoint->angleTo()) / pow(i, 2);
+				}
+				mc.motion.rotation = egoAlignPoint->angleTo() * abs(clausenValue) * 2;
+
+			}
+//			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
+//					+ (deltaTargetAngle - lastRotError) * alignToPointpRot);
+//			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+//					* min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+
+			lastRotErrorWithBallRapid = deltaTargetAngle;
+
+			// crate the motion orthogonal to the ball
+			shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
+			driveTo = driveTo * mc.motion.rotation;
+
+			// add the motion towards the ball
+			driveTo = driveTo + egoBallPos->normalize() * 10;
+
+			mc.motion.angle = driveTo->angleTo();
+			mc.motion.translation = min(alignMaxVel, driveTo->length());
+		}
+		return mc;
+	}
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
@@ -207,3 +267,4 @@ namespace msl
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 	}
 }
+

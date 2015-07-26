@@ -6,6 +6,7 @@
     <outTransitions>#1434117164895</outTransitions>
   </states>
   <states id="1434117152274" name="GrabBall" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1434117164895</inTransitions>
     <outTransitions>#1434117163845</outTransitions>
   </states>

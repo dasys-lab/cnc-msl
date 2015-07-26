@@ -108,7 +108,7 @@ namespace alica
 //        	sinus regelung
 //			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //                    * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo())) * 2; // + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
-//			wurzel reglung
+//			wurzel regelung
 //        	mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //					* sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
             double clausenValue = 0.0;
@@ -123,7 +123,8 @@ namespace alica
             }
             mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / 4; // *4
             counter++;
-            pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
+            //TODO test
+            pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue) * 2;
         }
         cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
         msl_msgs::Point2dInfo info;
@@ -132,15 +133,6 @@ namespace alica
         netMsg.sites.push_back(info);
         if (egoTargetPoint->length() < 250)
         {
-            auto egoBallPos = wm->ball.getEgoBallPosition();
-            if (egoBallPos != nullptr)
-            {
-//				KickControl kc;
-//				kc.enabled = true;
-//				kc.kicker = egoBallPos->angleTo();
-//				kc.power = 2500;
-//				send(kc);
-            }
             this->success = true;
         }
         lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();

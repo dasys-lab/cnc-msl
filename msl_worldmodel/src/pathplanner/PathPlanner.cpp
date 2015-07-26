@@ -30,10 +30,14 @@ namespace msl
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor",
 		NULL);
+		this->corridorWidthDivisorBall = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisorBall",
+																					NULL);
 		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
 		NULL);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);
+		this->additionalBallCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
+																					"additionalBallCorridorWidth", NULL);
 		this->snapDistance = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "snapDistance", NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
@@ -263,6 +267,49 @@ namespace msl
 				goal->y
 						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
 									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
+		vector<shared_ptr<geometry::CNPoint2D>> points;
+		points.push_back(p1);
+		points.push_back(p3);
+		points.push_back(p4);
+		points.push_back(p2);
+		if (pathPlannerDebug)
+		{
+			sendCorridorCheck(points);
+		}
+		return obstaclePoint != nullptr
+				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+	}
+
+	bool msl::PathPlanner::corridorCheckBall(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+												shared_ptr<geometry::CNPoint2D> goal,
+												shared_ptr<geometry::CNPoint2D> obstaclePoint)
+	{
+		double length = voronoi->calcDist(currentPos, goal);
+		double dx = currentPos->x - goal->x;
+		double dy = currentPos->y - goal->y;
+		double dist = std::sqrt(dx * dx + dy * dy);
+		dx /= dist;
+		dy /= dist;
+		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
+				currentPos->x + (this->robotDiameter / 2) * dy,
+				currentPos->y - (this->robotDiameter / 2) * dx);
+		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
+				currentPos->x - (this->robotDiameter / 2) * dy,
+				currentPos->y + (this->robotDiameter / 2) * dx);
+		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
+				goal->x
+						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
+				goal->y
+						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
+		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
+				goal->x
+						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
+				goal->y
+						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
 		points.push_back(p3);

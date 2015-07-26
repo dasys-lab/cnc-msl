@@ -103,6 +103,8 @@ namespace msl
 	    MSLWorldModel* getWm();
 		bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
 							shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+		bool corridorCheckBall(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+									shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
 
 	private:
 		void initializeArtificialObstacles();
@@ -125,6 +127,8 @@ namespace msl
 		bool pathPlannerDebug;
 		double additionalCorridorWidth;
 		double snapDistance;
+		double additionalBallCorridorWidth;
+		double corridorWidthDivisorBall;
 		ros::NodeHandle n;
 		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;

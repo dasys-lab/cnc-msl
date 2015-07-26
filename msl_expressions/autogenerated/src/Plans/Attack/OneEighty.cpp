@@ -5,6 +5,8 @@ using namespace std;
 #include "SystemConfig.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include "GeometryCalculator.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
+#include "pathplanner/PathProxy.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -60,23 +62,17 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > aimPoint = make_shared < geometry::CNPoint2D
                 > (field->FieldLength / 2.0 - 500, 0);
-        //TODO expand path proxy
-//		shared_ptr<geometry::CNPoint2D> aimPoint = pp.GetEgoDirection(egoGoalMid, WM, true, ballPos.Angle());
+		aimPoint = msl::PathProxy::getInstance()->getEgoDirection(aimPoint, make_shared<msl::PathEvaluator>(&(wm->pathPlanner)));
         shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
         if (aimPoint != nullptr)
         {
-            aimPoint->x = aimPoint->normalize()->x * 10000;
-            aimPoint->y = aimPoint->normalize()->y * 10000;
-            alloAimPoint = aimPoint->alloToEgo(*ownPos);
+            aimPoint = aimPoint->normalize() * 10000;
+            alloAimPoint = aimPoint->egoToAllo(*ownPos);
         }
         aimPoint = nullptr;
         if (alloAimPoint != nullptr)
         {
             aimPoint = alloAimPoint->alloToEgo(*ownPos);
-        }
-        else
-        {
-            initialiseParameters();
         }
 
         if (aimPoint == nullptr)
