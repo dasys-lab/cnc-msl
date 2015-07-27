@@ -94,6 +94,7 @@ namespace alica
             }
             lastClosesOpp = closestOpponent;
         }
+        //TODO raus
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoTargetPoint, egoAlignPoint,
                                                                                        250);
         if (egoAlignPoint->rotate(M_PI)->angleTo() > M_PI / 2)
@@ -132,7 +133,7 @@ namespace alica
         driveTo = driveTo * mc.motion.rotation;
 
         // add the motion towards the ball
-        driveTo = driveTo + egoBallPos->normalize() * 10;
+        driveTo = driveTo + egoTargetPoint->normalize() * mc.motion.translation;
 
         mc.motion.angle = driveTo->angleTo();
         mc.motion.translation = min(this->maxVel, driveTo->length());
