@@ -136,7 +136,8 @@ namespace alica
 		driveTo = driveTo * mc.motion.rotation;
 
 		// add the motion towards the ball
-		driveTo = driveTo + temp->normalize();
+		double maxDribbleSpeed=2000;
+		driveTo = driveTo + temp->normalize()*max(maxDribbleSpeed,temp->length());
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
