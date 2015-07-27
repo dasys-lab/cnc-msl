@@ -124,7 +124,7 @@ namespace alica
             mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / 4; // *4
             counter++;
             //TODO test
-            pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue) * 2;
+            pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
         }
         cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
         msl_msgs::Point2dInfo info;
