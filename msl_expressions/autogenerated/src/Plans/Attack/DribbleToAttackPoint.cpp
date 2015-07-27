@@ -35,6 +35,7 @@ namespace alica
         /*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
         auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+        auto egoBallPos = wm->ball.getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         if (ownPos == nullptr || vNet == nullptr)
         {
@@ -126,6 +127,15 @@ namespace alica
             //TODO test
             pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
         }
+        // crate the motion orthogonal to the ball
+        shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+        driveTo = driveTo * mc.motion.rotation;
+
+        // add the motion towards the ball
+        driveTo = driveTo + egoBallPos->normalize() * 10;
+
+        mc.motion.angle = driveTo->angleTo();
+        mc.motion.translation = min(this->maxVel, driveTo->length());
         cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
         msl_msgs::Point2dInfo info;
         info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
@@ -179,6 +189,7 @@ namespace alica
         wheelSpeed = -80;
         lastClosesOpp = nullptr;
         lastRotError = 0;
+        this->maxVel = 4000;
         for (int i = 0; i < pastRotation.size(); i++)
         {
             pastRotation.at(i) = 0;

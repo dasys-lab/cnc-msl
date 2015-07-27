@@ -35,6 +35,7 @@ namespace alica
         bool ownPenalty;
         vector<double> pastRotation;
         long counter;
+        double maxVel;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
