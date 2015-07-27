@@ -8,7 +8,6 @@
   <states id="1437902693350" name="DribbleToOppPenaltySpot" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../DribbleToAttackPoint.beh#1436855860607</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/Actuate.beh#1417017552846</plans>
     <inTransitions>#1437903090929</inTransitions>
     <inTransitions>#1437903097451</inTransitions>
     <outTransitions>#1437903092957</outTransitions>
@@ -17,7 +16,6 @@
   <states id="1437902704803" name="DribbleToOwnPenaltySpot" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../DribbleToAttackPoint.beh#1437391438054</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/Actuate.beh#1417017552846</plans>
     <inTransitions>#1437903088529</inTransitions>
     <outTransitions>#1437903089522</outTransitions>
     <outTransitions>#1437903097451</outTransitions>
