@@ -77,7 +77,7 @@ namespace alica
 		{
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
-					* egoTargetPoint->length();
+					* egoTargetPoint->length()*0.2;
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
 			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 //			egoAlignPoint = weightedOppVector->normalize() * 1000;
