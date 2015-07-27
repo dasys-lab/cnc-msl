@@ -44,12 +44,12 @@
     <inState>#1437902704803</inState>
     <outState>#1437902649390</outState>
   </transitions>
-  <transitions id="1437903090929" name="MISSING_NAME" comment="lostBall" msg="">
+  <transitions id="1437903090929" name="MISSING_NAME" comment="haveBall" msg="">
     <preCondition id="1437903092576" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1437903060557</inState>
     <outState>#1437902693350</outState>
   </transitions>
-  <transitions id="1437903092957" name="MISSING_NAME" comment="haveBall" msg="">
+  <transitions id="1437903092957" name="MISSING_NAME" comment="lostBall" msg="">
     <preCondition id="1437903093659" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1437902693350</inState>
     <outState>#1437903060557</outState>
