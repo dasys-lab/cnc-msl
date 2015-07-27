@@ -136,9 +136,9 @@ namespace alica
 		driveTo = driveTo * mc.motion.rotation;
 
 		// add the motion towards the ball
-		driveTo = driveTo + temp->normalize() * mc.motion.translation;
+		driveTo = driveTo + temp->normalize();
 
-		mc.motion.angle = temp->angleTo();
+		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
 		msl_msgs::Point2dInfo info;
