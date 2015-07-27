@@ -88,4 +88,8 @@
     <key href="../../Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../Behaviours/Actuate.beh#1417017552846"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
