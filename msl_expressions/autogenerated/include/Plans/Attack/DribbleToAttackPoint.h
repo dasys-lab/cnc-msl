@@ -36,6 +36,7 @@ namespace alica
         vector<double> pastRotation;
         long counter;
         double maxVel;
+        shared_ptr<msl::PathEvaluator> eval;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

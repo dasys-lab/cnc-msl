@@ -15,9 +15,9 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1415205565589) ENABLED START*/ //Add additional options here
         field = nullptr;
-        leftAimPoint = nullptr;
-        midAimPoint = nullptr;
-        rightAimPoint = nullptr;
+        alloLeftAimPoint = nullptr;
+        alloMidAimPoint = nullptr;
+        alloRightAimPoint = nullptr;
         aimPoint = nullptr;
         angleTolerance = 0.05;
         minKickPower = 1500.0;
@@ -59,21 +59,21 @@ namespace alica
                 }
                 if (!leftBlocked
                         && wm->pathPlanner.corridorCheckBall(
-                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), leftAimPoint,
+                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloLeftAimPoint->alloToEgo(*ownPos),
                                 make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)))
                 {
                     leftBlocked = true;
                 }
                 if (!midBlocked
                         && wm->pathPlanner.corridorCheckBall(
-                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), midAimPoint,
+                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloMidAimPoint->alloToEgo(*ownPos),
                                 make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)))
                 {
                     midBlocked = true;
                 }
                 if (!rightBlocked
                         && wm->pathPlanner.corridorCheckBall(
-                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), rightAimPoint,
+                                vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloRightAimPoint->alloToEgo(*ownPos),
                                 make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)))
                 {
                     rightBlocked = true;
@@ -82,19 +82,19 @@ namespace alica
             }
             if (!leftBlocked && aimPoint == nullptr)
             {
-                aimPoint = leftAimPoint;
+                aimPoint = alloLeftAimPoint->alloToEgo(*ownPos);
             }
             if (!midBlocked && aimPoint == nullptr)
             {
-                aimPoint = midAimPoint;
+                aimPoint = alloMidAimPoint->alloToEgo(*ownPos);
             }
             if (!rightBlocked && aimPoint == nullptr)
             {
-                aimPoint = rightAimPoint;
+                aimPoint = alloRightAimPoint->alloToEgo(*ownPos);
             }
             if (leftBlocked && midBlocked && rightBlocked && aimPoint == nullptr)
             {
-                aimPoint = leftAimPoint;
+               this->failure = true;
             }
         }
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(aimPoint, egoBallPos,
@@ -119,10 +119,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
         field = msl::MSLFootballField::getInstance();
-        leftAimPoint = make_shared < geometry::CNPoint2D
+        alloLeftAimPoint = make_shared < geometry::CNPoint2D
                 > (field->FieldLength + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
-        midAimPoint = make_shared < geometry::CNPoint2D > (field->FieldLength + 250, 0);
-        rightAimPoint = make_shared < geometry::CNPoint2D
+        alloMidAimPoint = make_shared < geometry::CNPoint2D > (field->FieldLength + 250, 0);
+        alloRightAimPoint = make_shared < geometry::CNPoint2D
                 > (field->FieldLength + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
         aimPoint = nullptr;
         angleTolerance = 0.05;

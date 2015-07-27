@@ -77,10 +77,9 @@ namespace alica
 		{
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
-					* egoTargetPoint->length()*0.2;
+					* egoTargetPoint->length() / 5.0;
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
 			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
-//			egoAlignPoint = weightedOppVector->normalize() * 1000;
 		}
 		msl_msgs::VoronoiNetInfo netMsg;
 		if (closestOpponent != nullptr)
@@ -97,9 +96,8 @@ namespace alica
 			lastClosesOpp = closestOpponent;
 		}
 		msl_actuator_msgs::MotionControl mc;
-		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>(&wm->pathPlanner);
+
 		shared_ptr<geometry::CNPoint2D> temp = msl::PathProxy::getInstance()->getEgoDirection(egoTargetPoint, eval);
-		//TODO raus
 		if (egoAlignPoint->rotate(M_PI)->angleTo() > M_PI / 2)
 		{
 			mc.motion.rotation = 2 * M_PI;
@@ -136,12 +134,12 @@ namespace alica
 		driveTo = driveTo * mc.motion.rotation;
 
 		// add the motion towards the ball
-		double maxDribbleSpeed=2000;
-		driveTo = driveTo + temp->normalize()*max(maxDribbleSpeed,temp->length());
+		double maxDribbleSpeed = 2000;
+		driveTo = driveTo + temp->normalize() * max(maxDribbleSpeed, temp->length());
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
-		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
+//		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
 		msl_msgs::Point2dInfo info;
 		info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
 		info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
@@ -160,6 +158,7 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1436855838589) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		sc = supplementary::SystemConfig::getInstance();
+		eval = make_shared<msl::PathEvaluator>(&wm->pathPlanner);
 		bool success = true;
 		string tmp = "";
 		success &= getParameter("OwnPenalty", tmp);
