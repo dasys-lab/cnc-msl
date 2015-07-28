@@ -119,7 +119,7 @@ namespace alica
 				msl_actuator_msgs::KickControl kc;
 				kc.enabled = true;
 				kc.kicker = egoBallPos->angleTo();
-				kc.power = min(minKickPower, egoAimPoint->length());
+				kc.power = min(minKickPower, egoAimPoint->rotate(M_PI)->length());
 				send(kc);
 				this->success = true;
 			}
