@@ -85,14 +85,17 @@ namespace alica
 			}
 			if (!leftBlocked && alloAimPoint == nullptr)
 			{
+				cout << "aimig left" << endl;
 				alloAimPoint = alloLeftAimPoint;
 			}
 			if (!midBlocked && alloAimPoint == nullptr)
 			{
+				cout << "aimig mid" << endl;
 				alloAimPoint = alloMidAimPoint;
 			}
 			if (!rightBlocked && alloAimPoint == nullptr)
 			{
+				cout << "aimig right" << endl;
 				alloAimPoint = alloRightAimPoint;
 			}
 			if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
@@ -109,7 +112,6 @@ namespace alica
 
 			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
-				cout << "turning" << endl;
 				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
 				send(mc);
 			}
@@ -131,10 +133,10 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 , field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
-		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength  / 2 , 0);
+				field->FieldLength / 2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength  / 2 + 250 , 0);
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
+				field->FieldLength / 2 + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		alloAimPoint = nullptr;
 		angleTolerance = 0.075;
 		minKickPower = 1500.0;
