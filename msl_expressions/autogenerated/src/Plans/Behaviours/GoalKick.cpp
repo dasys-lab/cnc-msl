@@ -97,7 +97,7 @@ namespace alica
                this->failure = true;
             }
         }
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(aimPoint, egoBallPos,
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(aimPoint, egoBallPos,
                                                                                             this->angleTolerance,
                                                                                             this->angleTolerance);
         if (fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) < this->angleTolerance)
