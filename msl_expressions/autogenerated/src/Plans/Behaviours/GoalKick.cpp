@@ -45,6 +45,7 @@ namespace alica
 		bhc.rightMotor = (int8_t)-30;
 		send(bhc);
 
+		alloAimPoint = nullptr;
 //		if (alloAimPoint == nullptr)
 //		{
 			auto obs = wm->robots.getObstacles();
