@@ -107,10 +107,10 @@ namespace alica
 																							this->angleTolerance,
 																							this->angleTolerance);
 
-			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->rotate(M_PI)->angleTo(), M_PI)) > this->angleTolerance)
+			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
 				cout << "turning" << endl;
-				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->rotate(M_PI)->angleTo(), M_PI)) << endl;
+				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
 				send(mc);
 			}
 			else
@@ -119,7 +119,7 @@ namespace alica
 				msl_actuator_msgs::KickControl kc;
 				kc.enabled = true;
 				kc.kicker = egoBallPos->angleTo();
-				kc.power = min(minKickPower, egoAimPoint->rotate(M_PI)->length());
+				kc.power = min(minKickPower, egoAimPoint->length());
 				send(kc);
 				this->success = true;
 			}
