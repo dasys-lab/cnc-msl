@@ -45,8 +45,8 @@ namespace alica
 		bhc.rightMotor = (int8_t)-30;
 		send(bhc);
 
-		if (alloAimPoint == nullptr)
-		{
+//		if (alloAimPoint == nullptr)
+//		{
 			auto obs = wm->robots.getObstacles();
 			bool leftBlocked = false;
 			bool midBlocked = false;
@@ -57,24 +57,24 @@ namespace alica
 				{
 					break;
 				}
-				if (!leftBlocked
-						&& wm->pathPlanner.corridorCheckBall(
+				if (/*!leftBlocked
+						&& */wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
 								alloLeftAimPoint,
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 				{
 					leftBlocked = true;
 				}
-				if (!midBlocked
-						&& wm->pathPlanner.corridorCheckBall(
+				if (/*!midBlocked
+						&& */wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
 								alloMidAimPoint,
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 				{
 					midBlocked = true;
 				}
-				if (!rightBlocked
-						&& wm->pathPlanner.corridorCheckBall(
+				if (/*!rightBlocked
+						&&*/ wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
 								alloRightAimPoint,
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
@@ -99,7 +99,7 @@ namespace alica
 			{
 				this->failure = true;
 			}
-		}
+//		}
 		if (alloAimPoint != nullptr)
 		{
 			auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
