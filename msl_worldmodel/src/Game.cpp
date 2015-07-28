@@ -115,6 +115,7 @@ namespace msl
 				{
 					timeSinceStart = wm->getTime();
 				}
+				cout << "Situation: Start" << endl;
 				situation = Situation::Start;
 				break;
 			case msl_msgs::RefBoxCommand::STOP:
@@ -323,6 +324,7 @@ namespace msl
 	bool Game::checkSituation(Situation situation)
 	{
 		lock_guard<mutex> lock(situationChecker);
+		cout << "check: " << this->situation << "|" << situation << endl;
 		return this->situation == situation;
 	}
 
