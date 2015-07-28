@@ -126,10 +126,10 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
-		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength + 250, 0);
+				field->FieldLength /2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength  / 2+ 250, 0);
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
+				field->FieldLength / 2+ 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		aimPoint = nullptr;
 		angleTolerance = 0.05;
 		minKickPower = 1500.0;
