@@ -10,11 +10,13 @@
 
 
 #include <ros/ros.h>
-#include <msl_msgs/RefereeBoxInfoBody.h>
+#include <msl_msgs/RefBoxCommand.h>
+#include <MSLEnums.h>
+#include <rqt_robot_control/RobotCommand.h>
 #include <mutex>
-#include "Situation.h"
 #include "GameState.h"
-
+#include "RingBuffer.h"
+#include "InformationElement.h"
 #include "SystemConfig.h"
 
 using namespace supplementary;
@@ -28,13 +30,12 @@ namespace msl
 	class Game
 	{
 	public:
-		Game(MSLWorldModel* wm);
+		Game(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~Game();
-		void onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg);
-		msl_msgs::RefereeBoxInfoBodyPtr getRefereeBoxInfoBody();
+		void onRobotCommand(rqt_robot_control::RobotCommandPtr msg);
+		void onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg);
+		shared_ptr<msl_msgs::RefBoxCommand> getRefBoxCommand(int index);
 		bool checkSituation(Situation situation);
-		Situation getCurrentSituation();
-		Situation getLastSituation();
 		int getOppGoal();
 		int getOwnGoal();
 		unsigned long getTimeSinceStart();
@@ -44,18 +45,18 @@ namespace msl
 		void updateGameState();
 		bool isMayScore();
 
-		string ownTeamColor;
-		string ownGoalColor;
+		Color ownTeamColor;
+		Color ownGoalColor;
 		long gameTime;
 
 	private:
 		MSLWorldModel* wm;
-		Situation currentSituation;
-		Situation lastSituation;
+		Situation situation;
 		ros::NodeHandle n;
 		ros::AsyncSpinner* spinner;
 		ros::Subscriber refereeBoxInfoBodySub;
-		list<msl_msgs::RefereeBoxInfoBodyPtr> refereeBoxInfoBodyCommandData;
+		ros::Subscriber robotCommandSub;
+		RingBuffer<InformationElement<msl_msgs::RefBoxCommand>> refBoxCommand;
 		mutex refereeMutex;
 		mutex situationChecker;
 		mutex goalMutex;
@@ -66,8 +67,8 @@ namespace msl
 		Situation lastActiveSituation;
 		GameState gameState;
 		int teamMateWithBall;
-		void setMayScore();
 		bool mayScore;
+		void setMayScore();
 	};
 
 } /* namespace alica */
