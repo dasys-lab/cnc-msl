@@ -60,7 +60,7 @@ namespace alica
 				if (!leftBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloLeftAimPoint->alloToEgo(*ownPos),
+								alloLeftAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
 				{
 					leftBlocked = true;
@@ -68,7 +68,7 @@ namespace alica
 				if (!midBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloMidAimPoint->alloToEgo(*ownPos),
+								alloMidAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
 				{
 					midBlocked = true;
@@ -76,7 +76,7 @@ namespace alica
 				if (!rightBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloRightAimPoint->alloToEgo(*ownPos),
+								alloRightAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
 								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
 				{
 					rightBlocked = true;
@@ -126,7 +126,7 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength /2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+				field->FieldLength / 2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
 		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength  / 2+ 250, 0);
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
 				field->FieldLength / 2+ 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
