@@ -108,10 +108,12 @@ namespace alica
 
 			if (fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
+				cout << "turning" << endl;
 				send(mc);
 			}
 			else
 			{
+				cout << "kicking" << endl;
 				msl_actuator_msgs::KickControl kc;
 				kc.enabled = true;
 				kc.kicker = egoBallPos->angleTo();
