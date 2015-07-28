@@ -324,7 +324,7 @@ namespace msl
 	bool Game::checkSituation(Situation situation)
 	{
 		lock_guard<mutex> lock(situationChecker);
-		return situation == situation;
+		return this->situation == situation;
 	}
 
 	Situation Game::getSituation()
