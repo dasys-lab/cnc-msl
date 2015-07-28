@@ -211,6 +211,7 @@ namespace msl
 	{
 		if (msg->robotId == this->ownID)
 		{
+			// TODO: is it a problem to take the raw pointer from boost?
 			shared_ptr<msl_msgs::JoystickCommand> cmd = make_shared<msl_msgs::JoystickCommand>(*msg);
 			shared_ptr<InformationElement<msl_msgs::JoystickCommand>> jcmd = make_shared<
 					InformationElement<msl_msgs::JoystickCommand>>(cmd, wm->getTime());
@@ -275,6 +276,8 @@ namespace msl
 			odometryMotion->certainty = data->odometry.certainty;
 			ownPositionMotion.add(odometryMotion);
 
+
+			// TODO: this is the same motion as for vision motion !?
 			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);

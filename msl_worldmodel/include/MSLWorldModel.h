@@ -22,7 +22,7 @@
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
-#include "Situation.h"
+#include <MSLEnums.h>
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "Ball.h"
@@ -106,5 +106,7 @@ namespace msl
 	};
 
 } /* namespace msl */
+
+
 
 #endif /* MSLWORLDMODEL_H_ */

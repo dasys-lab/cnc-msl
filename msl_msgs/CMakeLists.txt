@@ -56,9 +56,8 @@ add_message_files(
   VelocityInfo.msg
   JoystickCommand.msg
   GameStage.msg
-  RefereeBoxControlBody.msg
-  RefereeBoxInfoBody.msg
-  RefereeBoxState.msg
+  RefBoxCommand.msg
+  RefBoxState.msg
   PathPlanner.msg
   VoronoiNetInfo.msg
   CorridorCheck.msg
