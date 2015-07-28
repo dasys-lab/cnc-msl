@@ -70,7 +70,7 @@ namespace alica
 		}
 		if (closestOpponent == nullptr)
 		{
-			cout << "closesOpp == nullptr!" << endl;
+//			cout << "closesOpp == nullptr!" << endl;
 			egoAlignPoint = egoTargetPoint;
 		}
 		else
@@ -89,10 +89,10 @@ namespace alica
 			info.y = closestOpponent->egoToAllo(*ownPos)->y;
 			netMsg.sites.push_back(info);
 
-			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
-			{
-				cout << "changed last closest opp" << endl;
-			}
+//			if (lastClosesOpp != nullptr && (closestOpponent - lastClosesOpp)->length() > 1000)
+//			{
+//				cout << "changed last closest opp" << endl;
+//			}
 			lastClosesOpp = closestOpponent;
 		}
 		msl_actuator_msgs::MotionControl mc;
