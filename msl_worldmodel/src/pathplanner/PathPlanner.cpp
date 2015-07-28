@@ -274,7 +274,7 @@ namespace msl
 		points.push_back(p2);
 		if (pathPlannerDebug)
 		{
-			sendCorridorCheck(points);
+			//sendCorridorCheck(points);
 		}
 		return obstaclePoint != nullptr
 				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
