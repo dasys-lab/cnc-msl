@@ -222,7 +222,7 @@ namespace msl
 				{
 					clausenValue += sin(i * egoAlignPoint->angleTo()) / pow(i, 2);
 				}
-				mc.motion.rotation = egoAlignPoint->angleTo() * abs(clausenValue) * 2;
+				mc.motion.rotation = egoAlignPoint->angleTo() * abs(clausenValue) * 4;
 
 			}
 //			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
