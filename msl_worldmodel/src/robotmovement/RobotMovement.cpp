@@ -153,21 +153,29 @@ namespace msl
 														shared_ptr<geometry::CNPoint2D> egoBallPos,
 														double angleTolerance, double ballAngleTolerance)
 	{
+		cout << "12" << endl;
 		MotionControl mc;
+		cout << "13" << endl;
 		MSLWorldModel* wm = MSLWorldModel::get();
+		cout << "14" << endl;
 		double egoTargetAngle = egoAlignPoint->angleTo();
+		cout << "15" << endl;
 		double egoBallAngle = egoBallPos->angleTo();
+		cout << "16" << endl;
 		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
 		double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
 
+		cout << "17" << endl;
 		if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
 		{
+			cout << "18" << endl;
 			mc.motion.angle = 0;
 			mc.motion.rotation = 0;
 			mc.motion.translation = 0;
 		}
 		else
 		{
+			cout << "19" << endl;
 			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
 					+ (deltaTargetAngle - lastRotError) * alignToPointpRot);
 			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
