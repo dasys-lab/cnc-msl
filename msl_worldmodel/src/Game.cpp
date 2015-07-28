@@ -87,7 +87,6 @@ namespace msl
 
 	}
 
-	//TODO handle all situations
 	void Game::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
 	{
 		// Put the referee box command into the ringbuffer
@@ -297,6 +296,8 @@ namespace msl
 				}
 			}
 				break;
+			default:
+				cerr << "MSLWM-Game: Unknown Referee Box Cmd received!" << endl;
 		}
 
 		gameTime = msg->elapsedSeconds;

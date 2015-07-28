@@ -16,7 +16,8 @@ namespace msl
 			distanceScan(ringbufferLength), ballPosition(ringbufferLength), ballVelocity(ringbufferLength), lightBarrier(
 					ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(ringbufferLength), ownPositionVision(
 					ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(ringbufferLength), compass(
-					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(ringbufferLength)
+					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(
+					ringbufferLength)
 	{
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -211,8 +212,14 @@ namespace msl
 	{
 		if (msg->robotId == this->ownID)
 		{
-			// TODO: is it a problem to take the raw pointer from boost?
-			shared_ptr<msl_msgs::JoystickCommand> cmd = make_shared<msl_msgs::JoystickCommand>(*msg);
+			/*
+			 * In order to convert the boost::shared_ptr to a std::shared_ptr
+			 * we use the conversion suggested in this post:
+			 * http://stackoverflow.com/questions/12314967/cohabitation-of-boostshared-ptr-and-stdshared-ptr
+			 */
+			shared_ptr<msl_msgs::JoystickCommand> cmd = shared_ptr<msl_msgs::JoystickCommand>(
+					msg.get(), [msg](msl_msgs::JoystickCommand*) mutable
+					{	msg.reset();});
 			shared_ptr<InformationElement<msl_msgs::JoystickCommand>> jcmd = make_shared<
 					InformationElement<msl_msgs::JoystickCommand>>(cmd, wm->getTime());
 			jcmd->certainty = 1.0;
@@ -231,13 +238,14 @@ namespace msl
 
 	void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl& cmd)
 	{
-			shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
-			mc->motion.angle = cmd.motion.angle;
-			mc->motion.translation = cmd.motion.translation;
-			mc->motion.rotation = cmd.motion.rotation;
-			shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
-			smc->certainty = 1;
-			lastMotionCommand.add(smc);
+		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
+		mc->motion.angle = cmd.motion.angle;
+		mc->motion.translation = cmd.motion.translation;
+		mc->motion.rotation = cmd.motion.rotation;
+		shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<
+				InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
+		smc->certainty = 1;
+		lastMotionCommand.add(smc);
 	}
 
 	void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
@@ -247,7 +255,9 @@ namespace msl
 		if (data->odometry.certainty > 0)
 		{
 			//full odometry
-			shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> odom = make_shared<msl_sensor_msgs::CorrectedOdometryInfo>(data->odometry);
+			msl_sensor_msgs::CorrectedOdometryInfo test = msl_sensor_msgs::CorrectedOdometryInfo(data->odometry);
+			shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> odom =
+					make_shared<msl_sensor_msgs::CorrectedOdometryInfo>(data->odometry);
 			shared_ptr<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> odo = make_shared<
 					InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(odom, time);
 			odo->certainty = data->odometry.certainty;
@@ -275,7 +285,6 @@ namespace msl
 					InformationElement<geometry::CNPosition>>(posMotion, time);
 			odometryMotion->certainty = data->odometry.certainty;
 			ownPositionMotion.add(odometryMotion);
-
 
 			// TODO: this is the same motion as for vision motion !?
 			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
