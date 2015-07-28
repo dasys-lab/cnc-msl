@@ -90,6 +90,7 @@ namespace msl
 	//TODO handle all situations
 	void Game::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
 	{
+		cout << "onRefBoxCommand" << endl;
 		// Put the referee box command into the ringbuffer
 
 		/*
@@ -100,14 +101,15 @@ namespace msl
 		shared_ptr<msl_msgs::RefBoxCommand> cmd = shared_ptr<msl_msgs::RefBoxCommand>(
 				msg.get(), [msg](msl_msgs::RefBoxCommand*) mutable
 				{	msg.reset();});
+		cout << "onRefBoxCommand2" << endl;
 		shared_ptr<InformationElement<msl_msgs::RefBoxCommand>> refBoxCmd = make_shared<
 				InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime());
 		refBoxCmd->certainty = 1.0;
 		refBoxCommand.add(refBoxCmd);
-
+		cout << "onRefBoxCommand3" << endl;
 		// Set the current refbox situation
 		lock_guard<mutex> lock(refereeMutex);
-
+		cout << "onRefBoxCommand4" << endl;
 		switch (msg->cmd)
 		{
 			case msl_msgs::RefBoxCommand::START:
