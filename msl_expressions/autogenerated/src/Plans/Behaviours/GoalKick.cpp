@@ -60,24 +60,24 @@ namespace alica
 				if (!leftBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloLeftAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
+								alloLeftAimPoint,
+								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 				{
 					leftBlocked = true;
 				}
 				if (!midBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloMidAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
+								alloMidAimPoint,
+								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 				{
 					midBlocked = true;
 				}
 				if (!rightBlocked
 						&& wm->pathPlanner.corridorCheckBall(
 								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloRightAimPoint->alloToEgo(*ownPos)->rotate(M_PI),
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)))
+								alloRightAimPoint,
+								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 				{
 					rightBlocked = true;
 				}
@@ -105,7 +105,8 @@ namespace alica
 			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(aimPoint, egoBallPos,
 																							this->angleTolerance,
 																							this->angleTolerance);
-			if (fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) < this->angleTolerance)
+
+			if (fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
 				send(mc);
 			}
