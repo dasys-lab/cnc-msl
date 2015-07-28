@@ -41,8 +41,8 @@ namespace alica
 		}
 
 		msl_actuator_msgs::BallHandleCmd bhc;
-		bhc.leftMotor = (int8_t)-30;
-		bhc.rightMotor = (int8_t)-30;
+		bhc.leftMotor = (int8_t)-70;
+		bhc.rightMotor = (int8_t)-70;
 		send(bhc);
 
 		alloAimPoint = nullptr;
