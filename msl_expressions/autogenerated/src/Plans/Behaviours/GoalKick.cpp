@@ -110,7 +110,7 @@ namespace alica
 			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->rotate(M_PI)->angleTo(), M_PI)) > this->angleTolerance)
 			{
 				cout << "turning" << endl;
-				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
+				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->rotate(M_PI)->angleTo(), M_PI)) << endl;
 				send(mc);
 			}
 			else
