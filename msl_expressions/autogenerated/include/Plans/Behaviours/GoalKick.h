@@ -23,7 +23,7 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloLeftAimPoint;
         shared_ptr<geometry::CNPoint2D> alloRightAimPoint;
         shared_ptr<geometry::CNPoint2D> alloMidAimPoint;
-        shared_ptr<geometry::CNPoint2D> aimPoint;
+        shared_ptr<geometry::CNPoint2D> alloAimPoint;
         double angleTolerance;
         double minKickPower;
         msl::MSLFootballField* field;

@@ -45,7 +45,7 @@ namespace alica
 		bhc.rightMotor = (int8_t)-30;
 		send(bhc);
 
-		if (aimPoint == nullptr)
+		if (alloAimPoint == nullptr)
 		{
 			auto obs = wm->robots.getObstacles();
 			bool leftBlocked = false;
@@ -83,33 +83,34 @@ namespace alica
 				}
 
 			}
-			if (!leftBlocked && aimPoint == nullptr)
+			if (!leftBlocked && alloAimPoint == nullptr)
 			{
-				aimPoint = alloLeftAimPoint->alloToEgo(*ownPos);
+				alloAimPoint = alloLeftAimPoint;
 			}
-			if (!midBlocked && aimPoint == nullptr)
+			if (!midBlocked && alloAimPoint == nullptr)
 			{
-				aimPoint = alloMidAimPoint->alloToEgo(*ownPos);
+				alloAimPoint = alloMidAimPoint;
 			}
-			if (!rightBlocked && aimPoint == nullptr)
+			if (!rightBlocked && alloAimPoint == nullptr)
 			{
-				aimPoint = alloRightAimPoint->alloToEgo(*ownPos);
+				alloAimPoint = alloRightAimPoint;
 			}
-			if (leftBlocked && midBlocked && rightBlocked && aimPoint == nullptr)
+			if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
 			{
 				this->failure = true;
 			}
 		}
-		if (aimPoint != nullptr)
+		if (alloAimPoint != nullptr)
 		{
-			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(aimPoint, egoBallPos,
+			auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
+			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(alloAimPoint, egoBallPos,
 																							this->angleTolerance,
 																							this->angleTolerance);
 
-			if (fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) > this->angleTolerance)
+			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
 				cout << "turning" << endl;
-				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(aimPoint->angleTo(), M_PI)) << endl;
+				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
 				send(mc);
 			}
 			else
@@ -118,7 +119,7 @@ namespace alica
 				msl_actuator_msgs::KickControl kc;
 				kc.enabled = true;
 				kc.kicker = egoBallPos->angleTo();
-				kc.power = min(minKickPower, aimPoint->length());
+				kc.power = min(minKickPower, egoAimPoint->length());
 				send(kc);
 				this->success = true;
 			}
