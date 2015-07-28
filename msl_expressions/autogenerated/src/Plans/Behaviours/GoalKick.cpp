@@ -103,7 +103,7 @@ namespace alica
 		if (alloAimPoint != nullptr)
 		{
 			auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
-			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(alloAimPoint, egoBallPos,
+			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(egoAimPoint, egoBallPos,
 																							this->angleTolerance,
 																							this->angleTolerance);
 
@@ -136,7 +136,7 @@ namespace alica
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
 				field->FieldLength / 2, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		alloAimPoint = nullptr;
-		angleTolerance = 0.5;
+		angleTolerance = 0.05;
 		minKickPower = 1500.0;
 		/*PROTECTED REGION END*/
 	}
