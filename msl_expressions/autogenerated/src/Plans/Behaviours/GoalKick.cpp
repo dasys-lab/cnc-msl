@@ -103,11 +103,11 @@ namespace alica
 		if (alloAimPoint != nullptr)
 		{
 			auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
-			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(egoAimPoint, egoBallPos,
+			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(egoAimPoint->rotate(M_PI), egoBallPos,
 																							this->angleTolerance,
 																							this->angleTolerance);
 
-			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
+			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->rotate(M_PI)->angleTo(), M_PI)) > this->angleTolerance)
 			{
 				cout << "turning" << endl;
 				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
