@@ -25,7 +25,7 @@ namespace msl
 		situation = Situation::Undefined;
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
-		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &Game::onRefBoxCommand, (Game*)this);
+		refBoxCommandSub = n.subscribe("/RefereeBoxInfoBody", 10, &Game::onRefBoxCommand, (Game*)this);
 		robotCommandSub = n.subscribe("/RobotCommand", 10, &Game::onRobotCommand, (Game*)this);
 
 		// Set own Team Color

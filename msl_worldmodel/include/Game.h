@@ -54,7 +54,7 @@ namespace msl
 		Situation situation;
 		ros::NodeHandle n;
 		ros::AsyncSpinner* spinner;
-		ros::Subscriber refereeBoxInfoBodySub;
+		ros::Subscriber refBoxCommandSub;
 		ros::Subscriber robotCommandSub;
 		RingBuffer<InformationElement<msl_msgs::RefBoxCommand>> refBoxCommand;
 		mutex refereeMutex;
