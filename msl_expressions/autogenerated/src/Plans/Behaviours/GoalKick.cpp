@@ -136,7 +136,7 @@ namespace alica
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
 				field->FieldLength / 2, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		alloAimPoint = nullptr;
-		angleTolerance = 0.05;
+		angleTolerance = 0.075;
 		minKickPower = 1500.0;
 		/*PROTECTED REGION END*/
 	}
