@@ -16,7 +16,6 @@ namespace msl
 	{
 		this->wm = wm;
 		this->gameState = GameState::NobodyInBallPossession;
-		this->lastActiveSituation = Situation::Undefined;
 		this->timeSinceStart = 0;
 		this->mayScore = false;
 		this->teamMateWithBall = 0;

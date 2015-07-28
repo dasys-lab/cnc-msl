@@ -64,7 +64,6 @@ namespace msl
 		int ownGoal;
 		int oppGoal;
 		unsigned long timeSinceStart;
-		Situation lastActiveSituation;
 		GameState gameState;
 		int teamMateWithBall;
 		bool mayScore;
