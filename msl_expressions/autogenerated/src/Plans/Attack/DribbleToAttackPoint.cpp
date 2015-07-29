@@ -19,8 +19,16 @@ namespace alica
 		this->wheelSpeed = -50;
 		this->sc = nullptr;
 		this->field = nullptr;
+		this->maxVel = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxVel", NULL);
+		this->maxOppDist = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxOppDist", NULL);
+		this->oppVectorWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.oppVectorWeight", NULL);
+		this->clausenDepth = (*this->sc)["Dribble"]->get<int>("DribbleToAttackPoint.clausenDepth", NULL);
+		this->clausenPow = (*this->sc)["Dribble"]->get<int>("DribbleToAttackPoint.clausenPow", NULL);
+		this->pastRotationSize = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.pastRotationSize", NULL);
+		this->driveToWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.driveToWeight", NULL);
+		this->maxDribbleSpeed = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxDribbleSpeed", NULL);
 		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
-		pastRotation.resize(3);
+		pastRotation.resize(pastRotationSize);
 		lastRotError = 0;
 		ownPenalty = false;
 		counter = -1;
@@ -59,7 +67,7 @@ namespace alica
 		{
 			auto opp = opponents->at(i).first;
 			dist = opp->distanceTo(ownPoint);
-			if (dist < 3000)
+			if (dist < maxOppDist)
 			{
 				if (dist < lowestDist)
 				{
@@ -70,14 +78,13 @@ namespace alica
 		}
 		if (closestOpponent == nullptr)
 		{
-//			cout << "closesOpp == nullptr!" << endl;
 			egoAlignPoint = egoTargetPoint;
 		}
 		else
 		{
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
-					*  (4000 - closestOpponent->length())/*egoTargetPoint->length() / 5.0*/;
+					*  (this->oppVectorWeight - closestOpponent->length())/*egoTargetPoint->length() / 5.0*/;
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
 			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 		}
@@ -115,26 +122,25 @@ namespace alica
 //        	mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //					* sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
 			double clausenValue = 0.0;
-			for (int i = 1; i < 10; i++)
+			for (int i = 1; i < this->clausenDepth; i++)
 			{
-				clausenValue += sin(i * egoAlignPoint->rotate(M_PI)->angleTo()) / pow(i, 2);
+				clausenValue += sin(i * egoAlignPoint->rotate(M_PI)->angleTo()) / pow(i, this->clausenPow);
 			}
 			double sum = 0;
 			for (int i = 0; i < pastRotation.size(); i++)
 			{
 				sum += pastRotation.at(i);
 			}
-			mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / 4; // *4
+			mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / (this->pastRotationSize + 1); // *4
 			counter++;
-			pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
+			pastRotation.at(counter % this->pastRotationSize) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
 		}
 		// crate the motion orthogonal to the ball
 		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
 		driveTo = driveTo * mc.motion.rotation;
 
 		// add the motion towards the ball
-		double maxDribbleSpeed = 2000;
-		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length()) * 1.25;
+		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length()) * this->driveToWeight;
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
@@ -192,7 +198,6 @@ namespace alica
 		wheelSpeed = -80;
 		lastClosesOpp = nullptr;
 		lastRotError = 0;
-		this->maxVel = 4000;
 		for (int i = 0; i < pastRotation.size(); i++)
 		{
 			pastRotation.at(i) = 0;
