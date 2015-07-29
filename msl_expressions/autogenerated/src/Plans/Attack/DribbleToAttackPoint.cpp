@@ -77,7 +77,7 @@ namespace alica
 		{
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
-					* egoTargetPoint->length() / 5.0;
+					*  (4000 - closestOpponent->length())/*egoTargetPoint->length() / 5.0*/;
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
 			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 		}
@@ -126,7 +126,6 @@ namespace alica
 			}
 			mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / 4; // *4
 			counter++;
-			//TODO test
 			pastRotation.at(counter % 3) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
 		}
 		// crate the motion orthogonal to the ball

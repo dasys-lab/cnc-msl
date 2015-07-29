@@ -46,74 +46,66 @@ namespace alica
 		send(bhc);
 
 		alloAimPoint = nullptr;
-//		if (alloAimPoint == nullptr)
-//		{
-			auto obs = wm->robots.getObstacles();
-			bool leftBlocked = false;
-			bool midBlocked = false;
-			bool rightBlocked = false;
-			for (int i = 0; i < obs->size(); i++)
-			{
-				if (leftBlocked && midBlocked && rightBlocked)
-				{
-					break;
-				}
-				if (/*!leftBlocked
-						&& */wm->pathPlanner.corridorCheckBall(
-								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloLeftAimPoint,
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
-				{
-					leftBlocked = true;
-				}
-				if (/*!midBlocked
-						&& */wm->pathPlanner.corridorCheckBall(
-								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloMidAimPoint,
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
-				{
-					midBlocked = true;
-				}
-				if (/*!rightBlocked
-						&&*/ wm->pathPlanner.corridorCheckBall(
-								vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-								alloRightAimPoint,
-								make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
-				{
-					rightBlocked = true;
-				}
 
-			}
-			if (!leftBlocked && alloAimPoint == nullptr)
+		auto obs = wm->robots.getObstacles();
+		bool leftBlocked = false;
+		bool midBlocked = false;
+		bool rightBlocked = false;
+		for (int i = 0; i < obs->size(); i++)
+		{
+			if (leftBlocked && midBlocked && rightBlocked)
 			{
-				cout << "aimig left" << endl;
-				alloAimPoint = alloLeftAimPoint;
+				break;
 			}
-			if (!midBlocked && alloAimPoint == nullptr)
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloLeftAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 			{
-				cout << "aimig mid" << endl;
-				alloAimPoint = alloMidAimPoint;
+				leftBlocked = true;
 			}
-			if (!rightBlocked && alloAimPoint == nullptr)
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloMidAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 			{
-				cout << "aimig right" << endl;
-				alloAimPoint = alloRightAimPoint;
+				midBlocked = true;
 			}
-			if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloRightAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
 			{
-				this->failure = true;
+				rightBlocked = true;
 			}
-//		}
+
+		}
+		if (!leftBlocked && alloAimPoint == nullptr)
+		{
+			cout << "aimig left" << endl;
+			alloAimPoint = alloLeftAimPoint;
+		}
+		if (!midBlocked && alloAimPoint == nullptr)
+		{
+			cout << "aimig mid" << endl;
+			alloAimPoint = alloMidAimPoint;
+		}
+		if (!rightBlocked && alloAimPoint == nullptr)
+		{
+			cout << "aimig right" << endl;
+			alloAimPoint = alloRightAimPoint;
+		}
+		if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
+		{
+			this->failure = true;
+		}
 		if (alloAimPoint != nullptr)
 		{
 			auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
-			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(egoAimPoint->rotate(M_PI), egoBallPos,
-																							this->angleTolerance,
-																							this->angleTolerance);
+			msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(
+					egoAimPoint->rotate(M_PI), egoBallPos, this->angleTolerance, this->angleTolerance);
 
 			if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
 			{
-				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
+				cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI))
+						<< endl;
 				send(mc);
 			}
 			else
@@ -135,7 +127,7 @@ namespace alica
 		field = msl::MSLFootballField::getInstance();
 		alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
 				field->FieldLength / 2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
-		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength  / 2 + 250 , 0);
+		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + 250, 0);
 		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
 				field->FieldLength / 2 + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		alloAimPoint = nullptr;
