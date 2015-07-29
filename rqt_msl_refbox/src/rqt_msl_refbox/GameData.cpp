@@ -6,7 +6,7 @@
  */
 
 #include "rqt_msl_refbox/GameData.h"
-#include "msl_msgs/RefereeBoxInfoBody.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 
@@ -18,7 +18,7 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>(
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
 				"/RefereeBoxInfoBody", 2);
 		localToggled = false;
 		tcpToggled = false;
