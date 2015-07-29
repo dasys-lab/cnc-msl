@@ -22,7 +22,6 @@ set(rqt_msl_refbox_HDRS
   include/rqt_msl_refbox/GameData.h
 )
 
-
 set(rqt_msl_refbox_UIS
   src/rqt_msl_refbox/RefBox.ui
 )

@@ -1,89 +1,15 @@
-/**
- * @file /src/main_window.cpp
- *
- * @brief Implementation for the qt gui.
- *
- * @date February 2011
- **/
-/*****************************************************************************
- ** Includes
- *****************************************************************************/
+#include <pluginlib/class_list_macros.h>
+#include <ros/master.h>
+#include <rqt_msl_joystick/Joystick.h>
 
-#include <QtGui>
-#include <QMessageBox>
-#include <iostream>
-#include <math.h>
-#include "../include/msl_keyboard_joystick/main_window.hpp"
 using namespace std;
 
-/*****************************************************************************
- ** Namespaces
- *****************************************************************************/
-
-namespace msl_keyboard_joystick
+namespace rqt_msl_joystick
 {
 
 	using namespace Qt;
 
-	/*****************************************************************************
-	 ** Implementation [MainWindow]
-	 *****************************************************************************/
-
-	MainWindow::MainWindow(int argc, char** argv, QWidget *parent) :
-			QMainWindow(parent), qnode(argc, argv)
-	{
-		ui.setupUi(this); // Calling this incidentally connects all ui's triggers to on_...() callbacks in this class.
-		QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt())); // qApp is a global variable for the application
-
-		setWindowIcon(QIcon(":/images/icon.png"));
-		QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
-
-        QObject::connect(ui.robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
-
-		/*********************
-		 ** Logging
-		 **********************/
-		QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(updateLoggingView()));
-		//QObject::connect(&qnode, SIGNAL(keyPressEvent()), this, SLOT(keyPressEvent(QKeyEvent *)));
-
-		/*********************
-		 ** Auto Start
-		 **********************/
-		/*if ( ui.checkbox_remember_settings->isChecked() ) {
-		 on_button_connect_clicked(true);
-		 }*/
-
-		joystickpub = n.advertise<msl_msgs::JoystickCommand>("/Joystick", 1);
-		spinner = new ros::AsyncSpinner(2);
-		spinner->start();
-		keyPressed = vector<bool>(6);
-		for(int i = 0; i < keyPressed.size(); i++)
-		{
-			keyPressed[i] = false;
-		}
-		kick = false;
-		robotId = 0;
-//		ui.robotIdEdit->setText(std::to_string(robotId).c_str());
-		translation = 0;
-		angle = 0;
-		rotation = 0;
-		kickPower = 0;
-		shovelIdx = 0;
-		ballHandleLeftMotor = 0;
-		ballHandleRightMotor = 0;
-		selectedActuator = 0;
-		//ui.robotIdEdit->setVisible(false);
-
-	}
-
-	MainWindow::~MainWindow()
-	{
-		//thios is not correctly deleted
-		delete spinner;
-
-	}
-
-	void MainWindow::sendJoystickMessage()
+	void Joystick::sendJoystickMessage()
 	{
 
 		msl_msgs::JoystickCommand msg;
@@ -191,37 +117,7 @@ namespace msl_keyboard_joystick
 		joystickpub.publish(msg);
 	}
 
-	/*****************************************************************************
-	 ** Implementation [Slots]
-	 *****************************************************************************/
-
-	void MainWindow::showNoMasterMessage()
-	{
-		QMessageBox msgBox;
-		msgBox.setText("Couldn't find the ros master.");
-		msgBox.exec();
-		close();
-	}
-
-	/*
-	 * These triggers whenever the button is clicked, regardless of whether it
-	 * is already checked or not.
-	 */
-
-	/*****************************************************************************
-	 ** Implemenation [Slots][manually connected]
-	 *****************************************************************************/
-
-	/**
-	 * This function is signalled by the underlying model. When the model changes,
-	 * this will drop the cursor down to the last line in the QListview to ensure
-	 * the user can always see the latest log message.
-	 */
-	void MainWindow::updateLoggingView()
-	{
-	}
-
-	void MainWindow::keyPressEvent(QKeyEvent* event)
+	void Joystick::keyPressEvent(QKeyEvent* event)
 	{
 
 		if (!(event->isAutoRepeat()))
@@ -315,7 +211,7 @@ namespace msl_keyboard_joystick
 
 	}
 
-	void MainWindow::keyReleaseEvent(QKeyEvent* event)
+	void Joystick::keyReleaseEvent(QKeyEvent* event)
 	{
 
 		if (!(event->isAutoRepeat()))
@@ -353,7 +249,7 @@ namespace msl_keyboard_joystick
 
 	}
 
-	void MainWindow::onRobotIdEdited()
+	void Joystick::onRobotIdEdited()
 	{
 		this->robotId = ui.robotIdEdit->text().toInt();
 		ui.robotIdEdit->clearFocus();
@@ -361,7 +257,7 @@ namespace msl_keyboard_joystick
 
 	}
 
-	bool MainWindow::checkNumber(QString text)
+	bool Joystick::checkNumber(QString text)
 	{
 		// check if String contains a letter
 
@@ -383,14 +279,83 @@ namespace msl_keyboard_joystick
 
 	}
 
-	/*****************************************************************************
-	 ** Implementation [Menu]
-	 *****************************************************************************/
-
-	void MainWindow::closeEvent(QCloseEvent *event)
+	Joystick::Joystick() : rqt_gui_cpp::Plugin(), widget(0)
 	{
-		QMainWindow::closeEvent(event);
+		setObjectName("Joystick");
+		ui.setupUi(this); // Calling this incidentally connects all ui's triggers to on_...() callbacks in this class.
+		QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt())); // qApp is a global variable for the application
+
+		setWindowIcon(QIcon(":/images/icon.png"));
+		QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
+
+		QObject::connect(ui.robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
+
+		/*********************
+		 ** Logging
+		 **********************/
+		QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(updateLoggingView()));
+		//QObject::connect(&qnode, SIGNAL(keyPressEvent()), this, SLOT(keyPressEvent(QKeyEvent *)));
+
+		/*********************
+		 ** Auto Start
+		 **********************/
+		/*if ( ui.checkbox_remember_settings->isChecked() ) {
+		 on_button_connect_clicked(true);
+		 }*/
+
+		joystickpub = n.advertise < msl_msgs::JoystickCommand > ("/Joystick", 1);
+		spinner = new ros::AsyncSpinner(2);
+		spinner->start();
+		keyPressed = vector<bool>(6);
+		for (int i = 0; i < keyPressed.size(); i++)
+		{
+			keyPressed[i] = false;
+		}
+		kick = false;
+		robotId = 0;
+		//		ui.robotIdEdit->setText(std::to_string(robotId).c_str());
+		translation = 0;
+		angle = 0;
+		rotation = 0;
+		kickPower = 0;
+		shovelIdx = 0;
+		ballHandleLeftMotor = 0;
+		ballHandleRightMotor = 0;
+		selectedActuator = 0;
+		//ui.robotIdEdit->setVisible(false);
+	}
+
+	void Joystick::initPlugin(qt_gui_cpp::PluginContext& context)
+	{
+		//used to enable colored buttons
+		QApplication::setStyle(new QPlastiqueStyle);
+		widget_ = new QWidget();
+		setupUi (widget_);
+		if (context.serialNumber() > 1)
+		{
+			widget_->setWindowTitle(widget_->windowTitle() + " (" + QString::number(context.serialNumber()) + ")");
+		}
+		context.addWidget(widget_);
+
+	}
+
+	void Joystick::shutdownPlugin()
+	{
+		// TODO
+	}
+
+	void Joystick::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
+	{
+
+	}
+
+	void Joystick::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
+									const qt_gui_cpp::Settings& instance_settings)
+	{
+
 	}
 
 } // namespace msl_keyboard_joystick
+
+PLUGINLIB_EXPORT_CLASS(rqt_msl_joystick::Joystick, rqt_gui_cpp::Plugin)
 
