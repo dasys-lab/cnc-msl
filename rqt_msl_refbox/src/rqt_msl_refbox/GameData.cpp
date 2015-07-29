@@ -94,8 +94,8 @@ namespace rqt_msl_refbox
 		{
 			return;
 		}
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::command_joystick;
+		msl_msgs::RefBoxCommand ref;
+		ref.lastCommand = msl_msgs::RefBoxCommand::COMMAND_JOYSTICK;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 		this->refBox->lbl_command->setText("Joystick");
 		this->refBox->RefLog->append("Joystick local");
