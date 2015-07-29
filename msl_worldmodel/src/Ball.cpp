@@ -22,6 +22,7 @@ namespace msl
 		KICKER_ANGLE = M_PI;
 		HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
 		HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
+		ballDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterBall", NULL);
 	}
 
 	Ball::~Ball()
@@ -253,6 +254,13 @@ namespace msl
 		return ret;
 	}
 
+	double Ball::getBallDiameter()
+	{
+		return ballDiameter;
+	}
+
 }
+
+
 /* namespace alica */
 

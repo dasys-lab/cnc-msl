@@ -160,4 +160,16 @@
     <key href="Behaviours/Joystick.beh#1421854995808"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="GameStrategy/Gameplay/Gameplay.pml#1426694853089"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GameStrategy/Gameplay/Gameplay.pml#1426694853089"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Attack/AttackPlay.pml#1434045709191"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

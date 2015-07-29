@@ -35,6 +35,15 @@ namespace alica
         bool ownPenalty;
         vector<double> pastRotation;
         long counter;
+        shared_ptr<msl::PathEvaluator> eval;
+        double maxVel;
+        double maxOppDist;
+        double maxDribbleSpeed;
+        double oppVectorWeight;
+        int clausenDepth;
+        int clausenPow;
+        int pastRotationSize;
+        double driveToWeight;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

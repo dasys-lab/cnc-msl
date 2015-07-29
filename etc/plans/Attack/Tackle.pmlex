@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="Tackle.pml#1434117152274"/>
-    <value xPos="273" yPos="119" width="73" height="67"/>
+    <value xPos="273" yPos="119" width="73" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Tackle.pml#1434116965565"/>
@@ -30,6 +30,10 @@
   </extensions>
   <extensions>
     <key href="Tackle.beh#1434807680165"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

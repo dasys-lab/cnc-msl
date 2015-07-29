@@ -47,7 +47,7 @@ protected:
 	ros::Publisher RefereeBoxInfoBodyPublisher;
 	ros::NodeHandle* rosNode;
 
-public slots:
+public Q_SLOTS:
 	void detailsBotPressed(void);
 
 	void PlayOnPressed(void);
@@ -90,7 +90,7 @@ public slots:
 	
 
 
-signals:
+Q_SIGNALS:
 	void transmitCoach(void);
 	void changeGoalColor (int);
 	void UpdateGameParameter_signal(void);

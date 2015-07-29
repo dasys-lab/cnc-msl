@@ -100,13 +100,16 @@ namespace msl
 	    shared_ptr<VoronoiNet> getArtificialObjectNet();
 	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialObstacles();
 	    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getLastPath();
+	    MSLWorldModel* getWm();
+		bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+							shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+		bool corridorCheckBall(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+									shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
 
 	private:
 		void initializeArtificialObstacles();
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 		bool checkGoalVerticesReached(const shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > >& closestVerticesToGoal, const shared_ptr<SearchNode>& currentNode, bool found);
-		bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-							shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
 		void sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> points);
 
 	protected:
@@ -124,6 +127,8 @@ namespace msl
 		bool pathPlannerDebug;
 		double additionalCorridorWidth;
 		double snapDistance;
+		double additionalBallCorridorWidth;
+		double corridorWidthDivisorBall;
 		ros::NodeHandle n;
 		ros::Publisher corridorPub;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;

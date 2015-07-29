@@ -76,7 +76,6 @@ SET( QT_USE_QTXML       TRUE )
 ## Generate messages in the 'msg' folder
 #add_message_files(
 #    DIRECTORY msg FILES
-#    RefereeBoxControlBody.msg
 #    RefereeBoxInfoBody.msg
 #    RefereeBoxSate.msg
 # )

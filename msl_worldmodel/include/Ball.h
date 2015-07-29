@@ -41,6 +41,7 @@ namespace msl
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getSharedBallPosition();
+		double getBallDiameter();
 
 	private:
 		shared_ptr<geometry::CNPoint2D> lastKnownBallPos;
@@ -62,6 +63,7 @@ namespace msl
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
 		bool robotHasBall(int robotId);
 		bool oppHasBall(msl_sensor_msgs::SharedWorldInfo data);
+		double ballDiameter;
 };
 
 } /* namespace alica */
