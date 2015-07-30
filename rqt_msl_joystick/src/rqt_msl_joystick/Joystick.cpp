@@ -17,8 +17,6 @@ namespace rqt_msl_joystick
 		spinner = new ros::AsyncSpinner(2);
 		spinner->start();
 
-
-
 		keyPressed = vector<bool>(6);
 		for (int i = 0; i < keyPressed.size(); i++)
 		{
@@ -49,7 +47,24 @@ namespace rqt_msl_joystick
 		}
 		context.addWidget(uiWidget);
 
+		// connect the edit fields
 		connect(robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
+		connect(kickPowerEdit, SIGNAL(returnPressed()), this, SLOT(onKickPowerEdited()));
+		connect(translationEdit, SIGNAL(returnPressed()), this, SLOT(onTranslationEdited()));
+		connect(rotationEdit, SIGNAL(returnPressed()), this, SLOT(onRotationEdited()));
+		connect(ballHandleLeftEdit, SIGNAL(returnPressed()), this, SLOT(onBallHandleLeftEdited()));
+		connect(ballHandleRightEdit, SIGNAL(returnPressed()), this, SLOT(onBallHandleRightEdited()));
+
+		// connect the sliders
+		connect(kickPowerSlider, SIGNAL(sliderReleased()), this, SLOT(onKickPowerSlided()));
+		connect(translationSlider, SIGNAL(sliderReleased()), this, SLOT(onTranslationSlided()));
+		connect(rotationSpeedSlider, SIGNAL(sliderReleased()), this, SLOT(onRotationSpeedSlided()));
+		connect(ballHandleRightSlider, SIGNAL(sliderReleased()), this, SLOT(onBallHandleRightSlided()));
+		connect(ballHandleLeftSlider, SIGNAL(sliderReleased()), this, SLOT(onBallHandleLeftSlided()));
+
+		// connect the shovel radio button
+		connect(lowShovelButton, SIGNAL(toggled(bool)), this, SLOT(onLowShovelSelected(bool)));
+		connect(highShovelButton, SIGNAL(toggled(bool)), this, SLOT(onHighShovelSelected(bool)));
 	}
 
 	void Joystick::shutdownPlugin()
@@ -70,21 +85,25 @@ namespace rqt_msl_joystick
 
 	void Joystick::sendJoystickMessage()
 	{
-
 		msl_msgs::JoystickCommand msg;
+		msg.robotId = this->robotId;
 		msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
 		msg.ballHandleRightMotor = this->ballHandleRightMotor;
-		msg.kick = this->kick;
 		msg.kickPower = this->kickPower;
-		msg.robotId = this->robotId;
-		msg.selectedActuator = this->selectedActuator;
 		msg.shovelIdx = this->shovelIdx;
+
+		msg.selectedActuator = this->selectedActuator;
+
+		msg.kick = this->kick;
+		if (this->kick) // only shoot for one message
+		{
+			this->kick = false;
+		}
+
 		msg.motion.translation = this->translation;
 		msg.motion.rotation = this->rotation;
 
-		double motionAngle = 0;
-
-		// add motion
+		// driving direction
 		// 0 == up
 		// 1 == down
 		// 2 == left
@@ -92,90 +111,64 @@ namespace rqt_msl_joystick
 
 		if (keyPressed[0] == true && keyPressed[2] == true)
 		{
-
-			motionAngle = (0.75 * M_PI);
-
+			msg.motion.angle = (0.75 * M_PI);
 		}
 		else if (keyPressed[0] == true && keyPressed[3] == true)
 		{
-
-			motionAngle = (1.25 * M_PI);
-
+			msg.motion.angle = (1.25 * M_PI);
 		}
 		else if (keyPressed[1] == true && keyPressed[2] == true)
 		{
-
-			motionAngle = (0.25 * M_PI);
-
+			msg.motion.angle = (0.25 * M_PI);
 		}
 		else if (keyPressed[1] == true && keyPressed[3] == true)
 		{
-
-			motionAngle = (1.75 * M_PI);
-
+			msg.motion.angle = (1.75 * M_PI);
 		}
 		else if (keyPressed[0] == true)
 		{
-
-			motionAngle = M_PI;
-
+			msg.motion.angle = M_PI;
 		}
 		else if (keyPressed[1] == true)
 		{
-
-			motionAngle = 0;
-
+			msg.motion.angle = 0;
 		}
 		else if (keyPressed[2] == true)
 		{
-
-			motionAngle = (1.5 * M_PI);
-
+			msg.motion.angle = (1.5 * M_PI);
 		}
 		else if (keyPressed[3] == true)
 		{
-
-			motionAngle = (0.5 * M_PI);
-
+			msg.motion.angle = (0.5 * M_PI);
 		}
 		else
 		{
-
-			motionAngle = 0;
 			msg.motion.translation = 0;
 			msg.motion.rotation = 0;
-
 		}
 
-		msg.motion.angle = motionAngle;
-
+		// rotation
 		if (keyPressed[4] == true)
 		{
-
 			msg.motion.rotation = rotation;
-
 		}
 		else if (keyPressed[5] == true)
 		{
-
 			msg.motion.rotation = -rotation;
-
 		}
 		else
 		{
-
 			msg.motion.rotation = 0;
-
 		}
+
 		joyPub.publish(msg);
 	}
 
 	void Joystick::keyPressEvent(QKeyEvent* event)
 	{
-
 		if (!(event->isAutoRepeat()))
 		{
-			std::cout << "P: " << event->key() << std::endl;
+			cout << "Joystick: Key pressed: " << event->key() << endl;
 
 			switch (event->key())
 			{
@@ -200,76 +193,18 @@ namespace rqt_msl_joystick
 				case Qt::Key_Space:
 					kick = true;
 					break;
-				case Qt::Key_Q:
-					//rotation speed +
-					if (rotation < 16 * M_PI)
-					{
-						rotation = rotation + M_PI / 8;
-					}
-					break;
-				case Qt::Key_A:
-					//rotation speed -
-					if (rotation > 0)
-					{
-						rotation = rotation - M_PI / 8;
-					}
-					break;
-				case Qt::Key_W:
-					//kick power +
-					if (kickPower < 3600)
-					{
-						kickPower = kickPower + 25;
-					}
-					break;
-				case Qt::Key_S:
-					//kick power -
-					if (kickPower > 0)
-					{
-						kickPower = kickPower - 25;
-					}
-					break;
-				case Qt::Key_R:
-					//Speed (translation) +
-					//TODO: After test for actuate pls turn down to 1000
-					if (translation < 4000)
-					{
-						translation = translation + 100;
-					}
-					break;
-				case Qt::Key_F:
-					//Speed (translation) -
-					if (translation > 0)
-					{
-						translation = translation - 100;
-					}
-					break;
-				case Qt::Key_E:
-
-					//switch shovel
-
-					if (shovelIdx == 0)
-					{
-						shovelIdx = 1;
-					}
-					else
-					{
-						shovelIdx = 0;
-					}
-					break;
 				default:
 					break;
 			}
 		}
 		sendJoystickMessage();
-
 	}
 
 	void Joystick::keyReleaseEvent(QKeyEvent* event)
 	{
-
 		if (!(event->isAutoRepeat()))
 		{
-			std::cout << "R: " << event->key() << std::endl;
+			cout << "Joystick: Key released: " << event->key() << endl;
 
 			switch (event->key())
 			{
@@ -299,14 +234,101 @@ namespace rqt_msl_joystick
 			}
 		}
 		sendJoystickMessage();
-
 	}
 
 	void Joystick::onRobotIdEdited()
 	{
 		this->robotId = robotIdEdit->text().toInt();
 		robotIdEdit->clearFocus();
-		cout << "We got the Enter-Event!" << endl;
+		this->printControlValues();
+	}
+
+	void Joystick::onKickPowerEdited()
+	{
+		this->kickPower = kickPowerEdit->text().toShort();
+		kickPowerEdit->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onKickPowerSlided()
+	{
+		this->kickPower = (short)kickPowerSlider->value();
+		kickPowerSlider->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onRotationEdited()
+	{
+		this->rotation = rotationEdit->text().toDouble();
+		rotationEdit->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onRotationSpeedSlided()
+	{
+		this->rotation = (double)rotationSpeedSlider->value();
+		rotationSpeedSlider->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onTranslationEdited()
+	{
+		this->translation = translationEdit->text().toDouble();
+		translationEdit->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onTranslationSlided()
+	{
+		this->translation = (double)translationSlider->value();
+		translationSlider->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onLowShovelSelected(bool checked)
+	{
+		if (checked)
+		{
+			this->shovelIdx = 0;
+			this->printControlValues();
+		}
+	}
+
+	void Joystick::onHighShovelSelected(bool checked)
+	{
+		if (checked)
+		{
+			this->shovelIdx = 1;
+			this->printControlValues();
+		}
+	}
+
+	void Joystick::onBallHandleRightEdited()
+	{
+		this->ballHandleRightMotor = ballHandleRightEdit->text().toShort();
+		ballHandleRightEdit->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onBallHandleRightSlided()
+	{
+		this->ballHandleRightMotor = (short) ballHandleRightSlider->value();
+		ballHandleRightSlider->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onBallHandleLeftEdited()
+	{
+		this->ballHandleLeftMotor = ballHandleLeftEdit->text().toShort();
+		ballHandleLeftEdit->clearFocus();
+		this->printControlValues();
+	}
+
+	void Joystick::onBallHandleLeftSlided()
+	{
+		this->ballHandleLeftMotor = (short) ballHandleLeftSlider->value();
+		ballHandleLeftSlider->clearFocus();
+		this->printControlValues();
 	}
 
 	bool Joystick::checkNumber(QString text)
@@ -329,6 +351,30 @@ namespace rqt_msl_joystick
 		//delete cText;
 		return true;
 
+	}
+
+	/**
+	 * Prints the current control values to the console.
+	 */
+	void Joystick::printControlValues()
+	{
+		cout << "--------- Control Values ----------" << endl;
+		cout << "RobotId:\t" << this->robotId << endl;
+		cout << "Translation:\t" << this->translation << endl;
+		cout << "Angle:\t\t" << this->angle << endl;
+		cout << "Rotation:\t" << this->rotation << endl;
+		cout << "KickPower:\t" << this->kickPower << endl;
+		cout << "Kick:\t\t" << (this->kick ? "True" : "False") << endl;
+		cout << "Shovel:\t\t";
+		if (this->shovelIdx > 0)
+		{
+			cout << "High" << endl;
+		}
+		else
+		{
+			cout << "Low" << endl;
+		}
+		cout << "BallHandle Left:" << this->ballHandleLeftMotor << "\t Right: " << this->ballHandleRightMotor << endl;
 	}
 
 } // namespace msl_keyboard_joystick

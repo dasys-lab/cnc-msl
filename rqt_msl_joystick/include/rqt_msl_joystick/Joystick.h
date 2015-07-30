@@ -39,11 +39,26 @@ namespace rqt_msl_joystick
 		void keyPressEvent(QKeyEvent* event);
 		void keyReleaseEvent(QKeyEvent* event);
 		bool checkNumber(QString text);
+		void printControlValues();
 
 		QWidget* uiWidget;
 
 	public Q_SLOTS:
-		void onRobotIdEdited(void);
+		void onRobotIdEdited();
+		void onKickPowerEdited();
+		void onRotationEdited();
+		void onTranslationEdited();
+
+		void onKickPowerSlided();
+		void onTranslationSlided();
+		void onRotationSpeedSlided();
+		void onBallHandleRightSlided();
+		void onBallHandleRightEdited();
+		void onBallHandleLeftSlided();
+		void onBallHandleLeftEdited();
+
+		void onLowShovelSelected(bool checked);
+		void onHighShovelSelected(bool checked);
 
 	private:
 
