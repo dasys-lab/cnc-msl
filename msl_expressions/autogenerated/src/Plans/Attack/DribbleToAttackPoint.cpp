@@ -25,7 +25,8 @@ namespace alica
 		this->clausenDepth = (*this->sc)["Dribble"]->get<int>("DribbleToAttackPoint.clausenDepth", NULL);
 		this->clausenPow = (*this->sc)["Dribble"]->get<int>("DribbleToAttackPoint.clausenPow", NULL);
 		this->pastRotationSize = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.pastRotationSize", NULL);
-		this->driveToWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.driveToWeight", NULL);
+		this->orthoDriveWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.orthoDriveWeight", NULL);
+		this->targetDriveWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.targetDriveWeight", NULL);
 		this->maxDribbleSpeed = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxDribbleSpeed", NULL);
 		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		pastRotation.resize(pastRotationSize);
@@ -137,7 +138,8 @@ namespace alica
 		}
 		// crate the motion orthogonal to the ball
 		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
-		double rotationWeight = mc.motion.rotation * this->driveToWeight;
+		//TODO create 2 parameter
+		double rotationWeight = mc.motion.rotation * this->orthoDriveWeight;
 		driveTo = driveTo * rotationWeight;
 
 		// add the motion towards the ball
