@@ -137,10 +137,10 @@ namespace alica
 		}
 		// crate the motion orthogonal to the ball
 		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
-		driveTo = driveTo * mc.motion.rotation;
+		driveTo = driveTo * mc.motion.rotation * this->driveToWeight;
 
 		// add the motion towards the ball
-		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length()) * this->driveToWeight;
+		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length());
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
