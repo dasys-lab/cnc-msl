@@ -18,11 +18,11 @@ set(rqt_msl_joystick_SRCS
 )
 
 set(rqt_msl_joystick_HDRS
-  src/rqt_msl_joystick/Joystick.h
+  include/rqt_msl_joystick/Joystick.h
 )
 
 set(rqt_msl_joystick_UIS
-  src/rqt_msl_joystick/main_window.ui
+  ui/rqt_msl_joystick/Joystick.ui
 )
 
 set(rqt_msl_joystick_INCLUDE_DIRECTORIES

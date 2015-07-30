@@ -7,6 +7,8 @@
 #include "ros/ros.h"
 #include <ros/macros.h>
 
+#include <stdint.h>
+#include <vector>
 #include <QtGui>
 #include <QWidget>
 #include <QDialog>
@@ -30,19 +32,41 @@ namespace rqt_msl_joystick
 
 		virtual void saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const;
 
-		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings);
+		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
+										const qt_gui_cpp::Settings& instance_settings);
 
-
-		Ui::JoystickWidget uiJoystickWidget;
+		void sendJoystickMessage();
+		void keyPressEvent(QKeyEvent* event);
+		void keyReleaseEvent(QKeyEvent* event);
+		bool checkNumber(QString text);
 
 		QWidget* uiWidget;
 
+	public Q_SLOTS:
+		void onRobotIdEdited(void);
+
 	private:
 
-		bool eventFilter(QObject* watched, QEvent* event);
+		ros::NodeHandle* rosNode;
+		ros::Publisher joyPub;
+		ros::AsyncSpinner* spinner;
+
+		vector<bool> keyPressed;
+
+		// for filling a joystick message
+		short ballHandleLeftMotor;
+		short ballHandleRightMotor;
+		bool kick;
+		short kickPower;
+		int robotId;
+		short selectedActuator;
+		short shovelIdx;
+		double angle;
+		double translation;
+		double rotation;
 
 	};
 
 }
 
-#endif // rqt_msl_refbox__RefBox_H
+#endif // rqt_msl_joystick__Joystick_H
