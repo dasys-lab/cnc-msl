@@ -43,7 +43,8 @@ namespace alica
         int clausenDepth;
         int clausenPow;
         int pastRotationSize;
-        double driveToWeight;
+        double orthoDriveWeight;
+        double targetDriveWeight;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
