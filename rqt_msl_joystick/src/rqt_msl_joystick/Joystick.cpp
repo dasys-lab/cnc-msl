@@ -1,27 +1,86 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
 #include <rqt_msl_joystick/Joystick.h>
-
-using namespace std;
+#include <msl_msgs/JoystickCommand.h>
 
 namespace rqt_msl_joystick
 {
 
-	using namespace Qt;
+	using namespace std;
+
+	Joystick::Joystick() :
+			rqt_gui_cpp::Plugin(), uiWidget(0)
+	{
+		setObjectName("Joystick");
+		rosNode = new ros::NodeHandle();
+		joyPub = rosNode->advertise<msl_msgs::JoystickCommand>("/Joystick", 1);
+		spinner = new ros::AsyncSpinner(2);
+		spinner->start();
+
+
+
+		keyPressed = vector<bool>(6);
+		for (int i = 0; i < keyPressed.size(); i++)
+		{
+			keyPressed[i] = false;
+		}
+
+		this->kick = false;
+		this->robotId = 0;
+		this->translation = 0;
+		this->angle = 0;
+		this->rotation = 0;
+		this->kickPower = 0;
+		this->shovelIdx = 0;
+		this->ballHandleLeftMotor = 0;
+		this->ballHandleRightMotor = 0;
+		this->selectedActuator = 0;
+	}
+
+	void Joystick::initPlugin(qt_gui_cpp::PluginContext& context)
+	{
+		//used to enable colored buttons
+		QApplication::setStyle(new QPlastiqueStyle);
+		uiWidget = new QWidget();
+		setupUi(uiWidget);
+		if (context.serialNumber() > 1)
+		{
+			uiWidget->setWindowTitle(uiWidget->windowTitle() + " (" + QString::number(context.serialNumber()) + ")");
+		}
+		context.addWidget(uiWidget);
+
+		connect(robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
+	}
+
+	void Joystick::shutdownPlugin()
+	{
+		// TODO
+	}
+
+	void Joystick::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
+	{
+
+	}
+
+	void Joystick::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
+									const qt_gui_cpp::Settings& instance_settings)
+	{
+
+	}
 
 	void Joystick::sendJoystickMessage()
 	{
 
 		msl_msgs::JoystickCommand msg;
-		msg.ballHandleLeftMotor = ballHandleLeftMotor;
-		msg.ballHandleRightMotor = ballHandleRightMotor;
-		msg.kick = kick;
-		msg.kickPower = kickPower;
-		msg.robotId = robotId;
-		msg.selectedActuator = selectedActuator;
-		msg.shovelIdx = shovelIdx;
-		msg.motion.translation = translation;
-		msg.motion.rotation = rotation;
+		msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
+		msg.ballHandleRightMotor = this->ballHandleRightMotor;
+		msg.kick = this->kick;
+		msg.kickPower = this->kickPower;
+		msg.robotId = this->robotId;
+		msg.selectedActuator = this->selectedActuator;
+		msg.shovelIdx = this->shovelIdx;
+		msg.motion.translation = this->translation;
+		msg.motion.rotation = this->rotation;
 
 		double motionAngle = 0;
 
@@ -88,11 +147,6 @@ namespace rqt_msl_joystick
 
 		}
 
-		ui.motionValue->setText(std::to_string(motionAngle).c_str());
-		ui.kickPowerValue->setText(std::to_string(kickPower).c_str());
-		ui.translationValue->setText(std::to_string(translation).c_str());
-		ui.shovelValue->setText(std::to_string(shovelIdx).c_str());
-
 		msg.motion.angle = motionAngle;
 
 		if (keyPressed[4] == true)
@@ -113,8 +167,7 @@ namespace rqt_msl_joystick
 			msg.motion.rotation = 0;
 
 		}
-		ui.rotationValue->setText(std::to_string(rotation).c_str());
-		joystickpub.publish(msg);
+		joyPub.publish(msg);
 	}
 
 	void Joystick::keyPressEvent(QKeyEvent* event)
@@ -251,10 +304,9 @@ namespace rqt_msl_joystick
 
 	void Joystick::onRobotIdEdited()
 	{
-		this->robotId = ui.robotIdEdit->text().toInt();
-		ui.robotIdEdit->clearFocus();
+		this->robotId = robotIdEdit->text().toInt();
+		robotIdEdit->clearFocus();
 		cout << "We got the Enter-Event!" << endl;
-
 	}
 
 	bool Joystick::checkNumber(QString text)
@@ -276,82 +328,6 @@ namespace rqt_msl_joystick
 		}
 		//delete cText;
 		return true;
-
-	}
-
-	Joystick::Joystick() : rqt_gui_cpp::Plugin(), widget(0)
-	{
-		setObjectName("Joystick");
-		ui.setupUi(this); // Calling this incidentally connects all ui's triggers to on_...() callbacks in this class.
-		QObject::connect(ui.actionAbout_Qt, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt())); // qApp is a global variable for the application
-
-		setWindowIcon(QIcon(":/images/icon.png"));
-		QObject::connect(&qnode, SIGNAL(rosShutdown()), this, SLOT(close()));
-
-		QObject::connect(ui.robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
-
-		/*********************
-		 ** Logging
-		 **********************/
-		QObject::connect(&qnode, SIGNAL(loggingUpdated()), this, SLOT(updateLoggingView()));
-		//QObject::connect(&qnode, SIGNAL(keyPressEvent()), this, SLOT(keyPressEvent(QKeyEvent *)));
-
-		/*********************
-		 ** Auto Start
-		 **********************/
-		/*if ( ui.checkbox_remember_settings->isChecked() ) {
-		 on_button_connect_clicked(true);
-		 }*/
-
-		joystickpub = n.advertise < msl_msgs::JoystickCommand > ("/Joystick", 1);
-		spinner = new ros::AsyncSpinner(2);
-		spinner->start();
-		keyPressed = vector<bool>(6);
-		for (int i = 0; i < keyPressed.size(); i++)
-		{
-			keyPressed[i] = false;
-		}
-		kick = false;
-		robotId = 0;
-		//		ui.robotIdEdit->setText(std::to_string(robotId).c_str());
-		translation = 0;
-		angle = 0;
-		rotation = 0;
-		kickPower = 0;
-		shovelIdx = 0;
-		ballHandleLeftMotor = 0;
-		ballHandleRightMotor = 0;
-		selectedActuator = 0;
-		//ui.robotIdEdit->setVisible(false);
-	}
-
-	void Joystick::initPlugin(qt_gui_cpp::PluginContext& context)
-	{
-		//used to enable colored buttons
-		QApplication::setStyle(new QPlastiqueStyle);
-		widget_ = new QWidget();
-		setupUi (widget_);
-		if (context.serialNumber() > 1)
-		{
-			widget_->setWindowTitle(widget_->windowTitle() + " (" + QString::number(context.serialNumber()) + ")");
-		}
-		context.addWidget(widget_);
-
-	}
-
-	void Joystick::shutdownPlugin()
-	{
-		// TODO
-	}
-
-	void Joystick::saveSettings(qt_gui_cpp::Settings& plugin_settings, qt_gui_cpp::Settings& instance_settings) const
-	{
-
-	}
-
-	void Joystick::restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
-									const qt_gui_cpp::Settings& instance_settings)
-	{
 
 	}
 
