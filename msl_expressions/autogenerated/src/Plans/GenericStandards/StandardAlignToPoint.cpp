@@ -30,50 +30,65 @@ namespace alica
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
+        // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
         }
 
+        // Create allo ball
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+
+        // Create additional points for path planning
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                 vector<shared_ptr<geometry::CNPoint2D>>>();
+        // add alloBall to path planning
         additionalPoints->push_back(alloBall);
+
+        // robot is executor
         if (!isReceiver)
         {
-
+        	// get entry point of task name to locate robot with task name
             EntryPoint* ep = getParentEntryPoint(taskName);
             if (ep != nullptr)
             {
+            	// get the plan in which the behavior is running
                 auto parent = this->runningPlan->getParent().lock();
                 if (parent == nullptr)
                 {
                     cout << "parent null" << endl;
                     return;
                 }
+                // get robot ids of robots in found entry point
                 shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-                shared_ptr < geometry::CNPoint2D > receiverPos;
+                shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
+                // exactly one robot is receiver
                 int id = ids->at(0);
                 if (id != -1)
                 {
+                	// get receiver position by id
                     auto pos = wm->robots.getTeamMatePosition(id);
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
                 MotionControl mc;
                 shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
+                // if there is a receiver, align to it
                 if (receiverPos != nullptr)
                 {
+                	// calculate target 60cm away from the ball and on a line with the receiver
                     egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
-
+                    // ask the path planner how to get there
                     mc = RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
                                                              additionalPoints);
                 }
                 else
                 {
+                	// if there is no receiver, align to middle
                     egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
                     mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
                                                              additionalPoints);
                 }
+                // if we reach the point and are aligned, the behavior is successful
                 if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
                 {
                     this->success = true;
@@ -81,16 +96,18 @@ namespace alica
                 send(mc);
             }
         }
-        else
+        else // receiver
         {
-
+        	//calculate point on a line with ball and mid on a distance of 2,3m
             shared_ptr < geometry::CNPoint2D > egoTarget =
                     (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
 
             MotionControl mc;
 
+            // ask the path planner how to get there
             mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
 
+            // if we reach the point and are aligned, the behavior is successful
             if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
             {
                 this->success = true;
