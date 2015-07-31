@@ -15,11 +15,15 @@ include(${QT_USE_FILE})
 set(rqt_msl_refbox_SRCS
   src/rqt_msl_refbox/RefBox.cpp
   src/rqt_msl_refbox/GameData.cpp
-)
+  src/rqt_msl_refbox/tinyxml2.cpp
+  src/rqt_msl_refbox/XMLProtocolParser.cpp
+  )
 
 set(rqt_msl_refbox_HDRS
   include/rqt_msl_refbox/RefBox.h
   include/rqt_msl_refbox/GameData.h
+  include/rqt_msl_refbox/tinyxml2.h
+  include/rqt_msl_refbox/XMLProtocolParser.h
 )
 
 
@@ -72,4 +76,4 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 # Test stuff
 
-add_executable(SimpleTCPClientExample src/rqt_msl_refbox/SimpleTCPClientExample.cpp)
+#add_executable(SimpleTCPClientExample src/rqt_msl_refbox/SimpleTCPClientExample.cpp)
