@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="StandardAttack.pml#1434046634657"/>
-    <value xPos="109" yPos="175" width="81" height="67"/>
+    <value xPos="109" yPos="175" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434046634656"/>
@@ -98,6 +98,10 @@
   </extensions>
   <extensions>
     <key href="PassPlay.pml#1436268896671"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

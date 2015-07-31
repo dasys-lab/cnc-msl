@@ -28,47 +28,70 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
-        if (me == nullptr || egoBallPos == nullptr)
+        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+
+        if (me == nullptr || egoBallPos == nullptr || vNet == nullptr)
         {
             return;
         }
 
+        auto obstacles = wm->robots.getObstacles();
+        bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
-        auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-        auto vector = egoBallVelocity + egoBallPos;
-        double vectorLength = vector->length();
-        if (wm->ball.haveBall())
+        for (int i = 0; i < obstacles->size(); i++)
         {
-            isMovingAwayIter = 0;
-            isMovingCloserIter = 0;
+            if (wm->pathPlanner.corridorCheck(
+                    vNet, make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
+                    make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
+            {
+                blocked = true;
+                break;
+            }
         }
-        else if (vectorLength < egoBallPos->length())
+        if (!blocked)
         {
-            isMovingCloserIter++;
-            isMovingAwayIter = 0;
+            auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+            cout << "ego ball vel: " << egoBallVelocity->x << "|" << egoBallVelocity->y << " "
+                    << egoBallVelocity->length() << endl;
+            auto vector = egoBallVelocity + egoBallPos;
+            double vectorLength = vector->length();
+            if (wm->ball.haveBall())
+            {
+                isMovingAwayIter = 0;
+                isMovingCloserIter = 0;
+            }
+            else if (vectorLength < egoBallPos->length() && egoBallVelocity->length() > 250)
+            {
+                isMovingCloserIter++;
+                isMovingAwayIter = 0;
+            }
+            else if (vectorLength > egoBallPos->length() && egoBallVelocity->length() > 250)
+            {
+                isMovingAwayIter++;
+                isMovingCloserIter = 0;
+            }
+            if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
+            {
+                cout << "roll away" << endl;
+                mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+            }
+            else if (isMovingCloserIter >= maxIter)
+            {
+                cout << "get closer" << endl;
+                mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
+
+            }
+            else
+            {
+                mc.motion.angle = 0;
+                mc.motion.translation = 0;
+                mc.motion.rotation = 0;
+
+            }
         }
         else
         {
-            isMovingAwayIter++;
-            isMovingCloserIter = 0;
-        }
-        if (isMovingCloserIter >= maxIter)
-        {
-            cout << "get closer" << endl;
-            mc = ballGetsCloser(me, egoBallVelocity, egoBallPos);
-
-        }
-        else if (isMovingAwayIter >= maxIter)
-        {
-            cout << "roll away" << endl;
-            mc = driveToMovingBall(egoBallPos, egoBallVelocity);
-        }
-        else
-        {
-            mc.motion.angle = 0;
-            mc.motion.translation = 0;
-            mc.motion.rotation = 0;
-
+            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
         }
         send(mc);
 
@@ -85,7 +108,7 @@ namespace alica
         rotate_P = 1.8;
         isMovingCloserIter = 0;
         isMovingAwayIter = 0;
-        maxIter = 3;
+        maxIter = 4;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1430324527403) ENABLED START*/ //Add additional methods here

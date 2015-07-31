@@ -1,12 +1,12 @@
 /*
- * Situation.h
+ * MSLEnums.h
  *
  *  Created on: Jan 28, 2015
  *      Author: Stefan Jakob
  */
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_SITUATION_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_SITUATION_H_
+#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_
+#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_
 
 namespace msl
 {
@@ -30,7 +30,7 @@ namespace msl
 
 		OwnPenalty = 21, OppPenalty = 22,
 
-		DroppedBall = 23, Parking = 76,
+		DropBall = 23, Parking = 76,
 
 		Joystick = 254,
 
@@ -40,6 +40,11 @@ namespace msl
 		RemoteControl = 28, RemoteControlEnd = 29,
 
 	};
+
+	enum Color
+	{
+		UnknownColor = 0, White = 1, Black = 2, Green = 3, Cyan = 4, Magenta = 5, Yellow = 6, Blue = 7
+	};
 }
 
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_SITUATION_H_ */
+#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_ */

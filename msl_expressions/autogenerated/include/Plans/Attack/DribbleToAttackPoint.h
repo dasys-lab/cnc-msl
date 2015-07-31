@@ -33,6 +33,18 @@ namespace alica
         ros::NodeHandle n;
         double lastRotError;
         bool ownPenalty;
+        vector<double> pastRotation;
+        long counter;
+        shared_ptr<msl::PathEvaluator> eval;
+        double maxVel;
+        double maxOppDist;
+        double maxDribbleSpeed;
+        double oppVectorWeight;
+        int clausenDepth;
+        int clausenPow;
+        int pastRotationSize;
+        double orthoDriveWeight;
+        double targetDriveWeight;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

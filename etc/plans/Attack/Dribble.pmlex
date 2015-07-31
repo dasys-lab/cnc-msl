@@ -14,15 +14,15 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050474119"/>
-    <value xPos="101" yPos="526" width="96" height="67"/>
+    <value xPos="101" yPos="526" width="96" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050491040"/>
-    <value xPos="602" yPos="539" width="65" height="67"/>
+    <value xPos="603" yPos="521" width="65" height="67"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050502701"/>
-    <value xPos="582" yPos="272" width="98" height="67"/>
+    <value xPos="582" yPos="272" width="98" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050522682"/>
@@ -30,11 +30,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050541225"/>
-    <value xPos="349" yPos="32" width="113" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050576120"/>
-    <value xPos="110" yPos="47" width="123" height="67"/>
+    <value xPos="202" yPos="39" width="178" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050619363"/>
@@ -65,25 +61,25 @@
   <extensions>
     <key href="Dribble.pml#1434050647042"/>
     <value>
-      <bendpoints xPos="515" yPos="236"/>
+      <bendpoints xPos="402" yPos="224"/>
     </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050649347"/>
     <value>
-      <bendpoints xPos="472" yPos="222"/>
+      <bendpoints xPos="357" yPos="232"/>
     </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050650481"/>
     <value>
-      <bendpoints xPos="663" yPos="219"/>
+      <bendpoints xPos="471" yPos="157"/>
     </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050655141"/>
     <value>
-      <bendpoints xPos="629" yPos="253"/>
+      <bendpoints xPos="460" yPos="265"/>
     </value>
   </extensions>
   <extensions>
@@ -95,18 +91,6 @@
   <extensions>
     <key href="Dribble.pml#1434050674494"/>
     <value/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050677561"/>
-    <value>
-      <bendpoints xPos="411" yPos="210"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050679613"/>
-    <value>
-      <bendpoints xPos="338" yPos="260"/>
-    </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050681521"/>
@@ -130,6 +114,18 @@
   </extensions>
   <extensions>
     <key href="DribbleToAttackPoint.beh#1436855860607"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GetBall.beh#1414840399972"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

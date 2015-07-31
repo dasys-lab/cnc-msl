@@ -33,6 +33,9 @@ namespace msl
 		double robotDiameter;
 		double additionalCorridorWidth;
 		double obstacleDistanceWeight;
+		double pathLengthWeight;
+		double pathAngleWeight;
+		double pathDeviationWeight;
 		PathPlanner* planner;
 		static double distance(shared_ptr<geometry::CNPoint2D> first, shared_ptr<geometry::CNPoint2D> second);
 		static double square(double a);

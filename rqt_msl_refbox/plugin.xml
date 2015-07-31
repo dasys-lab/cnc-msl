@@ -1,7 +1,7 @@
 <library path="lib/librqt_msl_refbox">
   <class name="rqt_msl_refbox/RefBox" type="rqt_msl_refbox::RefBox" base_class_type="rqt_gui_cpp::Plugin">
     <description>
-      A GUI plugin to view a sensor_msgs/Image topic.
+      A GUI plugin to send MSL RefBox Commands.
     </description>
     <qtgui>
       <group>

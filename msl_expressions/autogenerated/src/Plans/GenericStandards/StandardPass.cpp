@@ -34,8 +34,30 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloAlignPoint = make_shared < geometry::CNPoint2D > (0, 0);
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+        //TODO
+        shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
+        EntryPoint* ep = getParentEntryPoint(taskName);
+        if (ep != nullptr)
+        {
+            auto parent = this->runningPlan->getParent().lock();
+            if (parent == nullptr)
+            {
+                cout << "parent null" << endl;
+                return;
+            }
+            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+            int id = ids->at(0);
+            if (id != -1)
+            {
+                auto pos = wm->robots.getTeamMatePosition(id);
+                egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+            }
+        }
+        else
+        {
+            shared_ptr < geometry::CNPoint2D > alloAlignPoint = make_shared < geometry::CNPoint2D > (0, 0);
+            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+        }
 
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
                                                                                        0.075);
@@ -45,34 +67,12 @@ namespace alica
         }
         else
         {
-            EntryPoint* ep = getParentEntryPoint(taskName);
-            shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
-            if (ep != nullptr)
-            {
-                auto parent = this->runningPlan->getParent().lock();
-                if (parent == nullptr)
-                {
-                    cout << "parent null" << endl;
-                    return;
-                }
-                shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-                int id = ids->at(0);
-                if (id != -1)
-                {
-                    auto pos = wm->robots.getTeamMatePosition(id);
-                    receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
-                }
-            }
-
-            if (receiverPos != nullptr)
-            {
-                msl_actuator_msgs::KickControl kc;
-                kc.enabled = true;
-                kc.kicker = 1;
-                kc.power = wm->kicker.getKickPowerPass(receiverPos->alloToEgo(*ownPos)->length());
-                send(kc);
-                this->success = true;
-            }
+            msl_actuator_msgs::KickControl kc;
+            kc.enabled = true;
+            kc.kicker = 1;
+            kc.power = wm->kicker.getKickPowerPass(egoAlignPoint->alloToEgo(*ownPos)->length());
+            send(kc);
+            this->success = true;
         }
 
         /*PROTECTED REGION END*/

@@ -6,7 +6,7 @@
     <outTransitions>#1436960796936</outTransitions>
   </states>
   <states id="1436960747966" name="Start" comment="">
-    <plans xsi:type="alica:Plan">DribbleToPointPlan.pml#1436960829485</plans>
+    <plans xsi:type="alica:Plan">AttackOppGoalPlan.pml#1437902649389</plans>
     <inTransitions>#1436960796936</inTransitions>
     <outTransitions>#1436960798576</outTransitions>
   </states>
@@ -15,7 +15,7 @@
     <inState>#1436960675874</inState>
     <outState>#1436960747966</outState>
   </transitions>
-  <transitions id="1436960798576" name="MISSING_NAME" comment="situation == stop" msg="">
+  <transitions id="1436960798576" name="MISSING_NAME" comment="situation == stop || anyChildSucc" msg="">
     <preCondition id="1436960799378" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1436960747966</inState>
     <outState>#1436960675874</outState>

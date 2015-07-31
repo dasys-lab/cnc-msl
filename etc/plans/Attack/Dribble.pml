@@ -6,24 +6,25 @@
     <inTransitions>#1434050622698</inTransitions>
     <inTransitions>#1434050639119</inTransitions>
     <inTransitions>#1434050649347</inTransitions>
-    <inTransitions>#1434050679613</inTransitions>
     <outTransitions>#1434050619363</outTransitions>
     <outTransitions>#1434050647042</outTransitions>
     <outTransitions>#1434050656332</outTransitions>
     <outTransitions>#1434050674494</outTransitions>
-    <outTransitions>#1434050677561</outTransitions>
   </states>
   <states id="1434050474119" name="AlignToGoal" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AlignToGoal.beh#1415205285582</plans>
     <inTransitions>#1434050619363</inTransitions>
     <outTransitions>#1434050621017</outTransitions>
     <outTransitions>#1434050630827</outTransitions>
   </states>
   <states id="1434050491040" name="Kick" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GoalKick.beh#1415205578139</plans>
     <inTransitions>#1434050621017</inTransitions>
     <outTransitions>#1434050622698</outTransitions>
     <outTransitions>#1434050628706</outTransitions>
   </states>
   <states id="1434050502701" name="AttackAgain" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1434050628706</inTransitions>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>
@@ -44,10 +45,6 @@
     <inTransitions>#1434050655141</inTransitions>
     <outTransitions>#1434050649347</outTransitions>
     <outTransitions>#1434050650481</outTransitions>
-  </states>
-  <states id="1434050576120" name="DriveBackwards" comment="">
-    <inTransitions>#1434050677561</inTransitions>
-    <outTransitions>#1434050679613</outTransitions>
   </states>
   <transitions id="1434050619363" name="MISSING_NAME" comment="" msg="">
     <preCondition id="1434050620829" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -108,16 +105,6 @@
     <preCondition id="1434050677358" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050522682</outState>
-  </transitions>
-  <transitions id="1434050677561" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1434050679354" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434049476067</inState>
-    <outState>#1434050576120</outState>
-  </transitions>
-  <transitions id="1434050679613" name="MISSING_NAME" comment="" msg="">
-    <preCondition id="1434050681289" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434050576120</inState>
-    <outState>#1434049476067</outState>
   </transitions>
   <transitions id="1434050681521" name="MISSING_NAME" comment="" msg="">
     <preCondition id="1434050685640" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
