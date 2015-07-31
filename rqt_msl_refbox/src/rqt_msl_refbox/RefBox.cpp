@@ -1,7 +1,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
 #include <rqt_msl_refbox/GameData.h>
-
+#include <memory.h>
 #include <rqt_msl_refbox/RefBox.h>
 
 namespace rqt_msl_refbox
@@ -59,19 +59,15 @@ namespace rqt_msl_refbox
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
 		widget_->installEventFilter(this);
-//
-//		this->refBoxCommQDialog = new QDialog(widget_);
-//		this->_refBoxCommQDialog = new RefBoxCommunication(this->refBoxCommQDialog);
 
 	}
 
-	//TODO CLEAN UP
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
 	{
 		if(!gameData->isLocalToggled()
 				&& (gameData->isMultiToggled() || gameData->isTcpToggled())
-				&& ledit_ipaddress->text().size() > 5
-				&& ledit_ipaddress->text().count(".") == 3
+//				&& ledit_ipaddress->text().size() > 5
+//				&& ledit_ipaddress->text().count(".") == 3
 				&& spin_port->value() > 0)
 		{
 			btn_connect->setEnabled(true);

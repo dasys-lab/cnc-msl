@@ -8,14 +8,22 @@
 #ifndef CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_XMLPROTOCOLPARSER_H_
 #define CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_XMLPROTOCOLPARSER_H_
 
-namespace rqt_pm_control
-{
+#include "rqt_msl_refbox/GameData.h"
+#include "rqt_msl_refbox/tinyxml2.h"
 
+namespace rqt_msl_refbox
+{
+	class GameData;
 	class XMLProtocolParser
 	{
 	public:
-		XMLProtocolParser();
+		XMLProtocolParser(GameData* gameData);
 		virtual ~XMLProtocolParser();
+		void handle(tinyxml2::XMLElement* element);
+
+
+	private:
+		GameData* gameData;
 	};
 
 } /* namespace rqt_pm_control */

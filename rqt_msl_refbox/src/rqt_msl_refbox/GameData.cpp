@@ -9,7 +9,7 @@
 #include "msl_msgs/RefereeBoxInfoBody.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
-
+#include <iostream>
 
 namespace rqt_msl_refbox
 {
@@ -18,24 +18,39 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>(
-				"/RefereeBoxInfoBody", 2);
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>("/RefereeBoxInfoBody", 2);
+		this->xmlparser = new XMLProtocolParser(this);
 		localToggled = false;
 		tcpToggled = false;
 		multiToggled = false;
 		this->refBox = refBox;
 		time(&timer);
+		this->counter = 0;
+		this->udpsocket = nullptr;
+		this->tcpsocket = nullptr;
 
 	}
 
 	GameData::~GameData()
 	{
-		// TODO Auto-generated destructor stub
+		if(tcpsocket != nullptr)
+		{
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			delete udpsocket;
+		}
+		if(udpsocket != nullptr)
+		{
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			delete tcpsocket;
+		}
+		delete rosNode;
+		delete xmlparser;
+
 	}
 
 	void GameData::PlayOnPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -46,7 +61,7 @@ namespace rqt_msl_refbox
 
 	void GameData::StopPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -57,7 +72,7 @@ namespace rqt_msl_refbox
 
 	void GameData::HaltPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -68,7 +83,7 @@ namespace rqt_msl_refbox
 
 	void GameData::DroppedBallPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -79,7 +94,7 @@ namespace rqt_msl_refbox
 
 	void GameData::ParkingPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -90,7 +105,7 @@ namespace rqt_msl_refbox
 
 	void GameData::JoystickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -101,11 +116,11 @@ namespace rqt_msl_refbox
 		this->refBox->RefLog->append("Joystick local");
 	}
 
-	//================================================ Our States =======================================
+//================================================ Our States =======================================
 
 	void GameData::OurKickOffPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -116,7 +131,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurFreeKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -127,7 +142,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurGoalKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -138,7 +153,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurThrowinPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -149,7 +164,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurCornerKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -160,7 +175,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurPenaltyPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -169,11 +184,11 @@ namespace rqt_msl_refbox
 		this->refBox->RefLog->append("Penalty Magenta local");
 	}
 
-	//================================================ Their States =======================================
+//================================================ Their States =======================================
 
 	void GameData::TheirKickOffPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -184,7 +199,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirFreeKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -195,7 +210,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirGoalKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -206,7 +221,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirThrowinPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -217,7 +232,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirCornerKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -228,7 +243,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirPenaltyPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -272,50 +287,107 @@ namespace rqt_msl_refbox
 
 	void GameData::onConnectPressed(void)
 	{
-		this->refBox->RefLog->append("Try Connect");
-		if(localToggled)
+		if(counter == 1)
 		{
-			this->refBox->RefLog->append("NOW LOCAL MODE IN USE");
+			tcpsocket->close();
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			delete tcpsocket;
+			tcpsocket = nullptr;
+		}
+		if(counter == 2)
+		{
+			udpsocket->close();
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			delete udpsocket;
+			udpsocket = nullptr;
 		}
 
-		if(tcpToggled)
+		if (tcpToggled)
 		{
+
 			tcpsocket = new QTcpSocket();
 
 			this->refBox->RefLog->append("Creating TCP Socket");
 
-			QString destHost = this->refBox->ledit_ipaddress->text();
+//			QString destHost = this->refBox->ledit_ipaddress->text();
+			QString destHost = "141.51.122.174";
 			quint16 destPort = this->refBox->spin_port->value();
-			this->refBox->lbl_statusCon->setText("TRY CONNECT");
+			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
+
 			tcpsocket->connectToHost(destHost, destPort);
 
 			if (!tcpsocket->waitForConnected(1000))
 			{
-				this->refBox->RefLog->append("Creating Socket error");
+				this->refBox->RefLog->append("Creating Socket TCP: error");
 				this->refBox->lbl_statusCon->setText("ERROR 404");
 				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
 				return;
 			}
 
-			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg ()));
-//
-//			Status_val->setText("Connected using old protocol");
-//			Connect_btn->setChecked(1);
-//			Connect_btn->setText("Disconnect");
-//
-//			connected = 1;
-//
-//			Interface_val->setEnabled(0);
-//			DestHost_val->setEnabled(0);
-//			DestPort_val->setEnabled(0);
+			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+
 			this->refBox->lbl_statusCon->setText("CONNECTED");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
+			this->counter = 1;
+		}
+		else if (multiToggled)
+		{
+
+			udpsocket = new QUdpSocket();
+			this->refBox->RefLog->append("Creating UDP Socket");
+
+			QString destHost = this->refBox->ledit_ipaddress->text();
+			quint16 destPort = this->refBox->spin_port->value();
+
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: MILTICAST ");
+
+			QString adressMulti = "230.0.0.1";
+			QHostAddress adress = QHostAddress(adressMulti);
+
+			udpsocket->bind(adress, destPort);
+			udpsocket->joinMulticastGroup(adress);
+
+			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+
+			this->refBox->lbl_statusCon->setText("CONNECTED MULTICAST");
+			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
+			this->counter = 2;
+
+		}
+		else if (localToggled)
+		{
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			this->refBox->lbl_statusCon->setText("LOCAL MODE");
+			this->counter = 0;
 		}
 	}
 	/*==============================  RECEIVE METHODS ==============================*/
 
 	void GameData::receiveRefMsg(void)
 	{
+		QByteArray buffer;
+		qint64 _packetSize = tcpsocket->bytesAvailable();
+		buffer = tcpsocket->read(_packetSize);
+
+		std::cout << buffer.data() << std::endl;
+	}
+	void GameData::receiveRefMsgUdp(void)
+	{
+		QByteArray buffer;
+		buffer.resize(udpsocket->pendingDatagramSize());
+
+		QHostAddress sender;
+		quint16 senderPort;
+
+		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
+
+		tinyxml2::XMLDocument doc;
+
+		doc.Parse(buffer.data());
+		tinyxml2::XMLElement* element = doc.FirstChildElement();
+		xmlparser->handle(element);
 
 	}
 

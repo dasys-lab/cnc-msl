@@ -15,10 +15,13 @@
 #include <time.h>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include "rqt_msl_refbox/tinyxml2.h"
+#include "rqt_msl_refbox/XMLProtocolParser.h"
 
 namespace rqt_msl_refbox
 {
 	class RefBox;
+	class XMLProtocolParser;
 	class GameData : public QObject
 	{
 		Q_OBJECT
@@ -75,6 +78,8 @@ public Q_SLOTS:
 
 		void onConnectPressed(void);
 		void receiveRefMsg(void);
+		void receiveRefMsgUdp(void);
+		void onDisconnectPressed(void);
 	protected:
 			ros::Publisher RefereeBoxInfoBodyPublisher;
 			ros::NodeHandle* rosNode;
@@ -84,6 +89,9 @@ public Q_SLOTS:
 			RefBox* refBox;
 			time_t timer;
 			QTcpSocket* tcpsocket;
+			QUdpSocket* udpsocket;
+			int counter;
+			XMLProtocolParser* xmlparser;
 	};
 
 
