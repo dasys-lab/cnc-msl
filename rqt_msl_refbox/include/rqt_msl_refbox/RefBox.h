@@ -34,24 +34,11 @@ namespace rqt_msl_refbox
 
 		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings);
 
-
 		Ui::RefBoxWidget ui_;
-
 		QWidget* widget_;
-
 	private:
-
 		GameData* gameData;
-
-//		TODO CLEAN UP
-//		void showRBDialog();
-
 		bool eventFilter(QObject* watched, QEvent* event);
-
-//		QDialog* refBoxCommQDialog;
-//		RefBoxCommunication* _refBoxCommQDialog;
-
-
 	};
 
 }

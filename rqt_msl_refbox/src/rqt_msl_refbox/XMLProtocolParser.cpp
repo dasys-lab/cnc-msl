@@ -5,20 +5,34 @@
  *      Author: Stephan Opfer
  */
 
-#include "XMLProtocolParser.h"
+#include "rqt_msl_refbox/XMLProtocolParser.h"
+#include <iostream>
 
-namespace rqt_pm_control
+namespace rqt_msl_refbox
 {
 
-	XMLProtocolParser::XMLProtocolParser()
+	XMLProtocolParser::XMLProtocolParser(GameData* gameData)
 	{
-		// TODO Auto-generated constructor stub
-
+		this->gameData = gameData;
 	}
 
 	XMLProtocolParser::~XMLProtocolParser()
 	{
 		// TODO Auto-generated destructor stub
+	}
+
+	void XMLProtocolParser::handle(tinyxml2::XMLElement* element)
+	{
+		tinyxml2::XMLElement* curChild = element;
+		while (curChild != nullptr)
+		{
+			const char* val = curChild->Value();
+
+			std::cout << "VAL: " << val << std::endl;
+
+			curChild = curChild->FirstChildElement();
+		}
+
 	}
 
 } /* namespace rqt_pm_control */

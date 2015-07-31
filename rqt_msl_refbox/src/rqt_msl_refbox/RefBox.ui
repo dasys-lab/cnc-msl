@@ -8774,6 +8774,12 @@
          <height>25</height>
         </rect>
        </property>
+       <property name="maximum">
+        <number>500000</number>
+       </property>
+       <property name="singleStep">
+        <number>5</number>
+       </property>
       </widget>
      </widget>
     </widget>
