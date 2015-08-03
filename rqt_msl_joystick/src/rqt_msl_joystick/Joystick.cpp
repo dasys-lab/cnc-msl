@@ -114,6 +114,15 @@ namespace rqt_msl_joystick
 			return; // dont send joystick message if no move-key is pressed
 		}
 
+		if (!this->uiWidget->hasFocus())
+		{
+			for (int i = 0; i < keyPressed.size(); i++)
+			{
+				keyPressed[i] = false; // just to be sure, in case of missed key released event
+			}
+			return; // dont send joystick message if joystick window does not have the focus
+		}
+
 		msl_msgs::JoystickCommand msg;
 
 		// robotid
@@ -233,8 +242,6 @@ namespace rqt_msl_joystick
 	{
 		if (!(event->isAutoRepeat()))
 		{
-			cout << "Joystick: Key pressed: " << event->key() << endl;
-
 			switch (event->key())
 			{
 				case Qt::Key_Up:
@@ -268,8 +275,6 @@ namespace rqt_msl_joystick
 	{
 		if (!(event->isAutoRepeat()))
 		{
-			cout << "Joystick: Key released: " << event->key() << endl;
-
 			switch (event->key())
 			{
 				case Qt::Key_Up:

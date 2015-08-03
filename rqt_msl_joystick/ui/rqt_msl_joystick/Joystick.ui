@@ -417,7 +417,7 @@
           <string>0</string>
          </property>
          <property name="maxLength">
-          <number>3</number>
+          <number>4</number>
          </property>
         </widget>
        </item>
@@ -474,7 +474,7 @@
           <string>0</string>
          </property>
          <property name="maxLength">
-          <number>3</number>
+          <number>4</number>
          </property>
         </widget>
        </item>
