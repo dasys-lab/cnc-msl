@@ -18,7 +18,7 @@ namespace rqt_msl_joystick
 		spinner = new ros::AsyncSpinner(2);
 		spinner->start();
 
-		keyPressed = vector<bool>(6);
+		keyPressed = vector<bool>(8);
 		for (int i = 0; i < keyPressed.size(); i++)
 		{
 			keyPressed[i] = false;
@@ -109,7 +109,7 @@ namespace rqt_msl_joystick
 	void Joystick::sendJoystickMessage()
 	{
 		if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]
-				|| keyPressed[6]))
+				|| keyPressed[6] || keyPressed[7]))
 		{
 			return; // dont send joystick message if no move-key is pressed
 		}
@@ -118,7 +118,7 @@ namespace rqt_msl_joystick
 		{
 			for (int i = 0; i < keyPressed.size(); i++)
 			{
-				keyPressed[i] = false; // just to be sure, in case of missed key released event
+				keyPressed[i] = false; // just to be sure, in case of missed key released events
 			}
 			return; // dont send joystick message if joystick window does not have the focus
 		}
@@ -135,7 +135,6 @@ namespace rqt_msl_joystick
 
 		// kicker stuff
 		msg.kickPower = this->kickPower;
-		msg.shovelIdx = this->shovelIdx;
 		if (this->keyPressed[6] == true)
 		{
 			msg.kick = true;
@@ -144,6 +143,12 @@ namespace rqt_msl_joystick
 		else
 		{
 			msg.kick = false;
+		}
+
+		msg.shovelIdx = this->shovelIdx;
+		if (this->keyPressed[7] == true)
+		{
+			this->keyPressed[7] = false;
 		}
 
 		// translation
@@ -361,6 +366,8 @@ namespace rqt_msl_joystick
 		if (checked)
 		{
 			this->shovelIdx = 0;
+			this->keyPressed[7] = true; // signal to send joystick message for changing shovel
+			this->uiWidget->setFocus();
 		}
 	}
 
@@ -369,6 +376,8 @@ namespace rqt_msl_joystick
 		if (checked)
 		{
 			this->shovelIdx = 1;
+			this->keyPressed[7] = true; // signal to send joystick message for changing shovel
+			this->uiWidget->setFocus();
 		}
 	}
 
