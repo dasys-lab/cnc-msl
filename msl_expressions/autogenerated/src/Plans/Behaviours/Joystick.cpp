@@ -7,6 +7,7 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include "MSLWorldModel.h"
 /*PROTECTED REGION END*/
 namespace alica
@@ -39,23 +40,33 @@ namespace alica
 		}
 
 		msl_actuator_msgs::MotionControl mc;
-		mc.senderID = joy->robotId;
 		mc.motion = joy->motion;
 		send(mc);
 
 		if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
 		{
 			msl_actuator_msgs::BallHandleCmd bhc;
-			bhc.senderID = joy->robotId;
 			bhc.leftMotor = joy->ballHandleLeftMotor;
 			bhc.rightMotor = joy->ballHandleRightMotor;
 			send(bhc);
 		}
 
+		msl_actuator_msgs::ShovelSelectCmd ssc;
+
+		// todo check indexes...
+		if (joy->shovelIdx == 0)
+		{
+			ssc.passing = true;
+		}
+		else
+		{
+			ssc.passing = false;
+		}
+		send(ssc);
+
 		if (joy->kick == true)
 		{
 			msl_actuator_msgs::KickControl kc;
-			kc.senderID = joy->robotId;
 			kc.power = joy->kickPower;
 			kc.extension = joy->shovelIdx;
 			kc.extTime = 1;
