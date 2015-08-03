@@ -59,8 +59,6 @@ namespace rqt_msl_joystick
 		void onBallHandleLeftEdited();
 
 		void onKickPowerSlided(int value);
-		void onTranslationSlided(int value);
-		void onRotationSpeedSlided(int value);
 		void onBallHandleRightSlided(int value);
 		void onBallHandleLeftSlided(int value);
 

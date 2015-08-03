@@ -10,7 +10,7 @@ namespace rqt_msl_joystick
 	using namespace std;
 
 	Joystick::Joystick() :
-			rqt_gui_cpp::Plugin(), uiWidget(0)
+			rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0)
 	{
 		setObjectName("Joystick");
 		rosNode = new ros::NodeHandle();
@@ -59,10 +59,6 @@ namespace rqt_msl_joystick
 		context.addWidget(uiWidget);
 
 		// set min and max values of slider according to conf file
-		translationSlider->setMinimum(this->translationMin);
-		translationSlider->setMaximum(this->translationMax);
-		rotationSpeedSlider->setMinimum(this->rotationMin);
-		rotationSpeedSlider->setMaximum(this->rotationMax);
 		kickPowerSlider->setMinimum(this->kickPowerMin);
 		kickPowerSlider->setMaximum(this->kickPowerMax);
 		ballHandleLeftSlider->setMinimum(this->ballHandleMin);
@@ -80,8 +76,6 @@ namespace rqt_msl_joystick
 
 		// connect the sliders
 		connect(kickPowerSlider, SIGNAL(valueChanged(int)), this, SLOT(onKickPowerSlided(int)));
-		connect(translationSlider, SIGNAL(valueChanged(int)), this, SLOT(onTranslationSlided(int)));
-		connect(rotationSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(onRotationSpeedSlided(int)));
 		connect(ballHandleRightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleRightSlided(int)));
 		connect(ballHandleLeftSlider, SIGNAL(valueChanged(int)), this, SLOT(onBallHandleLeftSlided(int)));
 
@@ -311,7 +305,7 @@ namespace rqt_msl_joystick
 	{
 		this->robotId = robotIdEdit->text().toInt();
 		this->robotIdEdit->setText(QString::number(this->robotId));
-		robotIdEdit->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onKickPowerEdited()
@@ -325,14 +319,14 @@ namespace rqt_msl_joystick
 		bool result = this->kickPowerSlider->blockSignals(true);
 		this->kickPowerSlider->setValue(this->kickPower);
 		this->kickPowerSlider->blockSignals(result);
-		kickPowerEdit->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onKickPowerSlided(int value)
 	{
 		this->kickPower = (short)value;
 		this->kickPowerEdit->setText(QString::number(value));
-		kickPowerSlider->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onRotationEdited()
@@ -343,17 +337,7 @@ namespace rqt_msl_joystick
 		if (this->rotation < this->rotationMin)
 			this->rotation = this->rotationMin;
 		this->rotationEdit->setText(QString::number(this->rotation));
-		bool result = this->rotationSpeedSlider->blockSignals(true);
-		this->rotationSpeedSlider->setValue(this->rotation);
-		this->rotationSpeedSlider->blockSignals(result);
-		rotationEdit->clearFocus();
-	}
-
-	void Joystick::onRotationSpeedSlided(int value)
-	{
-		this->rotation = (double)value;
-		this->rotationEdit->setText(QString::number(value));
-		rotationSpeedSlider->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onTranslationEdited()
@@ -364,17 +348,7 @@ namespace rqt_msl_joystick
 		if (this->translation < this->translationMin)
 			this->translation = this->translationMin;
 		this->translationEdit->setText(QString::number(this->translation));
-		bool result = this->translationSlider->blockSignals(true);
-		this->translationSlider->setValue(this->translation);
-		this->translationSlider->blockSignals(result);
-		translationEdit->clearFocus();
-	}
-
-	void Joystick::onTranslationSlided(int value)
-	{
-		this->translation = (double)value;
-		this->translationEdit->setText(QString::number(value));
-		translationSlider->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onLowShovelSelected(bool checked)
@@ -404,14 +378,14 @@ namespace rqt_msl_joystick
 		bool result = this->ballHandleRightSlider->blockSignals(true);
 		this->ballHandleRightSlider->setValue(this->ballHandleRightMotor);
 		this->ballHandleRightSlider->blockSignals(result);
-		ballHandleRightEdit->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onBallHandleRightSlided(int value)
 	{
 		this->ballHandleRightMotor = (short)value;
 		ballHandleRightEdit->setText(QString::number(value));
-		ballHandleRightSlider->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onBallHandleLeftEdited()
@@ -425,14 +399,14 @@ namespace rqt_msl_joystick
 		bool result = this->ballHandleLeftSlider->blockSignals(true);
 		this->ballHandleLeftSlider->setValue(this->ballHandleLeftMotor);
 		this->ballHandleLeftSlider->blockSignals(result);
-		ballHandleLeftEdit->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onBallHandleLeftSlided(int value)
 	{
 		this->ballHandleLeftMotor = (short)value;
 		this->ballHandleLeftEdit->setText(QString::number(value));
-		ballHandleLeftSlider->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onBallHandleCheckBoxToggled(int checkState)
@@ -448,7 +422,7 @@ namespace rqt_msl_joystick
 				this->ballHandleState = false;
 				break;
 		}
-		this->ballHandleStateCheckBox->clearFocus();
+		this->uiWidget->setFocus();
 	}
 
 	/**
