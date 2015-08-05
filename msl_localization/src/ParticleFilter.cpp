@@ -25,7 +25,6 @@
 #include "RandomHelper.h"
 #include "EgoMotionEstimator.h"
 
-#include <CNSensorMsgs/CorrectedOdometryInfo.h>
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
@@ -34,8 +33,8 @@
 #define DISTNONE 20000.0
 #define SIGMA 20
 
-using namespace CNSensorMsgs;
-using namespace CNMessages;
+using namespace msl_sensor_msgs;
+using namespace msl_msgs;
 using namespace std;
 
 ParticleFilter::ParticleFilter(int nParticles_) {
