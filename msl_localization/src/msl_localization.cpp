@@ -20,7 +20,7 @@
  *
  * <description>
  */
-#include "ParticleFilter.h"
+#include "../include/msl_localization.h"
 
 #include "RandomHelper.h"
 #include "EgoMotionEstimator.h"
@@ -37,7 +37,7 @@ using namespace msl_sensor_msgs;
 using namespace msl_msgs;
 using namespace std;
 
-ParticleFilter::ParticleFilter(int nParticles_) {
+msl_localization::msl_localization(int nParticles_) {
 	printf("ParticleFilter Constructor!\n");
 	yellowGoalDirection = -1;
 	nParticles = nParticles_;
@@ -75,12 +75,12 @@ ParticleFilter::ParticleFilter(int nParticles_) {
 }
 
 
-ParticleFilter::~ParticleFilter(){
+msl_localization::~msl_localization(){
 	cleanup();
 }
 
 
-void inline ParticleFilter::normalizeAngle(double &ang)
+void inline msl_localization::normalizeAngle(double &ang)
 {
 	if(ang > M_PI)
 		ang -= 2.0*M_PI;
@@ -89,7 +89,7 @@ void inline ParticleFilter::normalizeAngle(double &ang)
 }
 
 
-void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char* distanceMap){
+void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char* distanceMap){
 	printf("----------------------------------------------------\n");
 
 	tf::StampedTransform transform;
@@ -127,10 +127,10 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 	}
 	printf("MaxParticle After MotionUpdate: %f %f %f\n", particles[maxIndPre].posx, particles[maxIndPre].posy, particles[maxIndPre].heading);
 
-	unsigned char * linePointsInvalidity = (unsigned char *) malloc(linePoints.size());
-	memset((void *) linePointsInvalidity, 0, linePoints.size());
+	unsigned char * linePointsInvalidity = (unsigned char *) malloc(linePoints->linePoints.size());
+	memset((void *) linePointsInvalidity, 0, linePoints->linePoints.size());
 
-	std::vector<LinePoint>::const_iterator first, last = linePoints.end();
+	std::vector<Point2dInfo>::const_iterator first, last = linePoints->linePoints.end();
 	//int invCounter = 0;
 
 	//Move particles according to rawUpdatedPosition
@@ -150,7 +150,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 	unsigned char * LineLookup = distanceMap;
 
 	double t = 0.9999;
-	double h = (linePoints.size())*1.0;
+	double h = (linePoints->linePoints.size())*1.0;
 	double pv = pow((t/(1-t)),(1/h))/(1 + pow((t/(1-t)),(1/h)));
 
 	int IHEIGHT = MapHelper::getInstance()->HEIGHT;
@@ -169,15 +169,15 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 	std::vector<unsigned char> linePointDistances;
 	linePointDistances.clear();
 
-	double * linePointsEgoDistances = (double *) malloc(linePoints.size()*sizeof(double));
-	double * linePointsEgoAngles = (double *) malloc(linePoints.size()*sizeof(double));
+	double * linePointsEgoDistances = (double *) malloc(linePoints->linePoints.size()*sizeof(double));
+	double * linePointsEgoAngles = (double *) malloc(linePoints->linePoints.size()*sizeof(double));
 
 	//Compute Ego LinePoint distance and Angle
-	for(unsigned int i = 0; i < linePoints.size(); i++){
-		double distance = sqrt(linePoints[i].x*linePoints[i].x + linePoints[i].y*linePoints[i].y);
+	for(unsigned int i = 0; i < linePoints->linePoints.size(); i++){
+		double distance = sqrt(linePoints->linePoints[i].x*linePoints->linePoints[i].x + linePoints->linePoints[i].y*linePoints->linePoints[i].y);
 
 		linePointsEgoDistances[i] = distance;
-		linePointsEgoAngles[i] = atan2(linePoints[i].y, linePoints[i].x);
+		linePointsEgoAngles[i] = atan2(linePoints->linePoints[i].y, linePoints->linePoints[i].x);
 
 		//???
 		double compare_distance = (LinePointSigma + (distance - 0.40)*5.0); 
@@ -240,7 +240,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 
 		}*/
 
-		std::vector<LinePoint>::const_iterator first, last = linePoints.end();
+		std::vector<Point2dInfo>::const_iterator first, last = linePoints->linePoints.end();
 		std::vector<unsigned char>::const_iterator firstDist, lastDist = linePointDistances.end();
 
 		//If Particle has not been thrown away
@@ -269,7 +269,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 				int n=0;
 				double distsum = 0;
 
-				for(first = linePoints.begin(), firstDist = linePointDistances.begin(), n=0; first != last; ++first, ++firstDist, ++n) {
+				for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(), n=0; first != last; ++first, ++firstDist, ++n) {
 					if(linePointsInvalidity[invIndex] == 0) {
 						//Irgendwo hier oder bei der Maperstellung is ein Fehler!
 						//Transform LinePoint in coordinate system of current particle
@@ -336,7 +336,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 			validCount = 0;
 			tribotWeight = 0;
 			//Iterate over Linepoints
-			for(first = linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist) {
+			for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist) {
 				if(linePointsInvalidity[invIndex] == 0){
 					//Transform LinePoint in coordinate system of current particle
 					realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
@@ -361,8 +361,8 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 				}
 				invIndex++;
 			}
-			if((linePoints.size())>0 && validCount>0)
-		//	  weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
+			if((linePoints->linePoints.size())>0 && validCount>0)
+		//	  weight = 1.0 - tribotWeight/((linePoints->linePoints.size() - invCounter)*510.0);
 			  weight = 1.0 - (tribotWeight)/((validCount)*510.0);
 			else
 			  weight = 0.1;
@@ -412,7 +412,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 	bool jump = false;
 
 	//After 0 Iterations, Successfull Lokalization for at least 75 linepoints
-	if(reinit || (initCounter >= 0 && maxParticle.weight > LocalizationSuccess && linePoints.size() > 75)){
+	if(reinit || (initCounter >= 0 && maxParticle.weight > LocalizationSuccess && linePoints->linePoints.size() > 75)){
 		bool updateAllowed = true;
 
 		//If Position is within a corner
@@ -566,7 +566,7 @@ void ParticleFilter::iterate(std::vector<LinePoint> & linePoints, unsigned char*
 }
 
 
-void ParticleFilter::sendParticleCloud() {
+void msl_localization::sendParticleCloud() {
 	geometry_msgs::PoseArray msg;
 	msg.header.stamp = ros::Time::now();
 	msg.header.frame_id = "/map";
@@ -588,7 +588,7 @@ void ParticleFilter::sendParticleCloud() {
 }
 
 
-void ParticleFilter::initParticles(){
+void msl_localization::initParticles(){
 	particles = (Particle *) malloc(nParticles*sizeof(Particle));
 
 	RandomHelper::initRandom();
@@ -599,7 +599,7 @@ void ParticleFilter::initParticles(){
 }
 
 
-void ParticleFilter::initParticles(double x, double y, double angle, double maxX, double maxY, double maxAngle) {
+void msl_localization::initParticles(double x, double y, double angle, double maxX, double maxY, double maxAngle) {
 	std::cout << "Moving Particle Cloud to: X:\t" << x << "\ty\t" << y << "\theading\t" << angle << std::endl;
 	maxParticle.posx = x;
 	maxParticle.posy = y;
@@ -644,7 +644,7 @@ void ParticleFilter::initParticles(double x, double y, double angle, double maxX
 }
 
 		
-void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
+void msl_localization::resample(RandomGaussHelper & gaussHelper){
 	int distX = MapHelper::getInstance()->maxXLocation - MapHelper::getInstance()->minXLocation;
 	int distY = MapHelper::getInstance()->maxYLocation - MapHelper::getInstance()->minYLocation;
 	double midX = ((MapHelper::getInstance()->minXLocation-MapHelper::getInstance()->WIDTH/2)+(distX/2))*MapHelper::getInstance()->RESOLUTION;
@@ -768,7 +768,7 @@ void ParticleFilter::resample(RandomGaussHelper & gaussHelper){
 }
 
 
-void ParticleFilter::updateParticles(double deltaX, double deltaY, double deltaH){
+void msl_localization::updateParticles(double deltaX, double deltaY, double deltaH){
 	//Move all Particles by RawOdometry
 	if(!useOdometry) return;
 
@@ -797,25 +797,25 @@ void ParticleFilter::updateParticles(double deltaX, double deltaY, double deltaH
 }
 
 
-void ParticleFilter::cleanup(){
+void msl_localization::cleanup(){
 	if(particles != NULL){
 		free(particles);
 	}
 }
 
-Particle ParticleFilter::getMaxParticle(){
+Particle msl_localization::getMaxParticle(){
 	return maxParticle;
 }
 
-int ParticleFilter::getNumberParticles(){
+int msl_localization::getNumberParticles(){
 	return nParticles;
 }
 
-Particle * ParticleFilter::getParticles(){
+Particle * msl_localization::getParticles(){
 	return particles;
 }
 
-Particle ParticleFilter::getEstimatedPosition(){
+Particle msl_localization::getEstimatedPosition(){
 	Particle wPos;
 	wPos.posx = rawUpdatedPosition.x;
 	wPos.posy = rawUpdatedPosition.y;
@@ -825,13 +825,13 @@ Particle ParticleFilter::getEstimatedPosition(){
 }
 
 
-double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter){
+double msl_localization::calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter){
 	unsigned char * LineLookup = distanceMap;
 
 	double LinePointSigma = 15.0;
 	double offset = 1500;
 	double t = 0.9999;
-	double h = (linePoints.size() - invCounter)*1.0;
+	double h = (linePoints->linePoints.size() - invCounter)*1.0;
 	double pv = pow((t/(1-t)),(1/h))/(1 + pow((t/(1-t)),(1/h)));
 	
 	int IHEIGHT = MapHelper::getInstance()->HEIGHT;
@@ -841,7 +841,7 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 
 	double resolution_1 = MapHelper::getInstance()->WIDTH;
 
-	std::vector<LinePoint>::const_iterator first, last = linePoints.end();
+	std::vector<Point2dInfo>::const_iterator first, last = linePoints->linePoints.end();
 
 	int posLinePoints = 0;
 	int negLinePoints = 0;
@@ -859,7 +859,7 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 
 		int tribotWeight = 0;
 
-		for(first = linePoints.begin(); first != last; ++first){
+		for(first = linePoints->linePoints.begin(); first != last; ++first){
 			double distance = sqrt((first->x)*(first->x) + (first->y)*(first->y));
 		
 			double compare_distance = (LinePointSigma + (distance - 400.0)*0.005); 
@@ -905,7 +905,7 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 				}
 			invIndex++;
 		}
-		negLinePoints = linePoints.size() - invCounter - posLinePoints;
+		negLinePoints = linePoints->linePoints.size() - invCounter - posLinePoints;
 
 		inp = pv;
 		if(posLinePoints > 0)
@@ -916,13 +916,13 @@ double ParticleFilter::calculateWeightForEstimatedPosition(Position pos, std::ve
 			weight = 1.0/(1.0 + pow(1-inp, negLinePoints)*(1-weight)/(weight*pow(inp, negLinePoints)));
 
 		//Endy The Hero
-		//weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
-		if(invCounter==linePoints.size() || linePoints.size()==0) weight=0.1;
+		//weight = 1.0 - tribotWeight/((linePoints->linePoints.size() - invCounter)*510.0);
+		if(invCounter==linePoints->linePoints.size() || linePoints->linePoints.size()==0) weight=0.1;
 	}
 	return weight;
 }
 
-void ParticleFilter::writeCoi()
+void msl_localization::writeCoi()
 {
 	if (coi.certainty != -1 ) {
 		unsigned long long timestamp = ros::Time::now().sec*1000000000ull+ros::Time::now().nsec;
