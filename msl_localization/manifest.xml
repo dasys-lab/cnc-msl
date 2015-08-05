@@ -1,0 +1,18 @@
+<package>
+  <description brief="CNLocalization">
+
+     CNLocalization
+
+  </description>
+  <author>Andreas Witsch</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/CNLocalization</url>
+  <depend package="roscpp"/>
+  <depend package="tf"/>
+  <depend package="nav_msgs"/>
+  <depend package="map_server"/>
+  <depend package="CNSensorMsgs"/>
+</package>
+
+
