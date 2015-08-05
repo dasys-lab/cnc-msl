@@ -201,6 +201,7 @@ namespace msl
 			open->erase(open->begin());
 			voronoi->expandNode(currentNode, open, closed, startPos, goal, eval);
 		}
+		//TODO return path claosest to goal
 		lastPath = nullptr;
 		return nullptr;
 	}

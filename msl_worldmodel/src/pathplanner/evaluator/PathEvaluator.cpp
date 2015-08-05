@@ -48,7 +48,7 @@ namespace msl
 								shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
 	{
 		double ret = pathLengthWeight * distance(currentNode->getVertex(), nextNode->getVertex());
-		cout << "path weight: " << ret << endl;
+//		cout << "path weight: " << ret << endl;
 		auto p = planner->getLastPath();
 		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
 		{
@@ -72,7 +72,7 @@ namespace msl
 				ret += pathDeviationWeight * theta;
 			}
 		}
-		cout << "after path deviation: " << ret << endl;
+//		cout << "after path deviation: " << ret << endl;
 		if (voronoi != nullptr)
 		{
 			pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> obs =
@@ -93,7 +93,7 @@ namespace msl
 				ret += dist;
 			}
 		}
-		cout << "after obstacle distance: " << ret << endl;
+//		cout << "after obstacle distance: " << ret << endl;
 		if (currentNode->getPredecessor() != nullptr)
 		{
 			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
@@ -112,7 +112,7 @@ namespace msl
 				ret += pathAngleWeight * theta;
 			}
 		}
-		cout << "final weight: " << ret << endl;
+//		cout << "final weight: " << ret << endl;
 		return ret;
 	}
 

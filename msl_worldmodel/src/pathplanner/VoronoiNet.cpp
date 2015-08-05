@@ -172,6 +172,7 @@ namespace msl
 			//set predecessor and cost
 			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
+			//TODO -1 für nicht befahrbare kanten
 			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);
 			//if node is already in open change cost else add node
 			if(contains(open, neighbors.at(i)))
