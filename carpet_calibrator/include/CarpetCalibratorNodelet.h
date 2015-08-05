@@ -14,6 +14,7 @@
 #include <boost/thread.hpp>
 #include <pluginlib/class_list_macros.h>
 #include <image_transport/image_transport.h>
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 
 
 using namespace std;
@@ -41,6 +42,12 @@ namespace msl_vision
 	     image_transport::CameraSubscriber sub_camera_;
 		 ros::NodeHandle nh;
 		 boost::shared_ptr<boost::thread> deviceThread_;
+
+		 ros::Subscriber rawOdomSub;
+		 double lastAngle;
+
+		 void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+
 	};
 
 }

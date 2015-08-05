@@ -15,6 +15,8 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+
 #include <cv.h>
 
 //nodelet manager starten:
@@ -30,6 +32,7 @@ namespace msl_vision
 
 	CarpetCalibratorNodelet::CarpetCalibratorNodelet()
 	{
+		lastAngle = 0;
 	}
 
 	CarpetCalibratorNodelet::~CarpetCalibratorNodelet()
@@ -45,7 +48,9 @@ namespace msl_vision
 		cv::Mat image2rgb1(image_msg->height, image_msg->width, CV_8UC1);
 		cv::Mat image2rgb2(image_msg->height, image_msg->width, CV_8UC1);
 		int counter = 0;
+
 		int size = info_msg->height * info_msg->width;
+
 		for(int i = 0; i < (size); i++) {
 			image2rgb.data[i] = image.data[i*3];
 			image2rgb1.data[i] = image.data[i*3+1];
@@ -80,6 +85,8 @@ namespace msl_vision
 
 		int argc = argv.size();
 
+		rawOdomSub = nh.subscribe("/RawOdometry", 10, &CarpetCalibratorNodelet::onRawOdometryInfo, this);
+
 		std::string yaml_filename;
 
 		deviceThread_ = boost::shared_ptr< boost::thread >
@@ -92,6 +99,16 @@ namespace msl_vision
 	void CarpetCalibratorNodelet::run()
 	{
 		cout << " carpet blubb"  << endl;
+	}
+
+	void CarpetCalibratorNodelet::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg) {
+		if(msg.get()->position.angle - lastAngle >= M_PI / 180) {
+			lastAngle = msg.get()->position.angle;
+
+
+		}
+
+
 	}
 
 
