@@ -20,8 +20,8 @@
  *
  * <description>
  */
-#ifndef ParticleFilter_H
-#define ParticleFilter_H
+#ifndef MSLLOCALIZATION_H
+#define MSLLOCALIZATION_H
 
 #include "RandomHelper.h"
 #include "Types.h"
@@ -32,18 +32,19 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
 #include "Rprop.h"
+#include "msl_sensor_msgs/LinePointList.h"
 
 
 #define RAWODOBUFSIZE 100
 
 
-class ParticleFilter {
+class msl_localization {
 
 	public:
-		ParticleFilter(int nParticles_);
-		~ParticleFilter();
+		msl_localization(int nParticles_);
+		~msl_localization();
 
-		void iterate(std::vector<LinePoint> & linePoints, unsigned char* distanceMap);
+		void iterate(msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char* distanceMap);
 		void updateParticles(double deltaX, double deltaY, double deltaH); 
 		Particle getMaxParticle();
 
@@ -52,7 +53,7 @@ class ParticleFilter {
 
 		Particle getEstimatedPosition();
 		
-		static double calculateWeightForEstimatedPosition(Position pos, std::vector<LinePoint> & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter);
+		static double calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter);
 		void writeCoi();
 		
 		void sendParticleCloud();

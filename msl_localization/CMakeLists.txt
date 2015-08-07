@@ -105,13 +105,17 @@ add_executable(msl_localization
 src/CNLocalization.cpp
 src/EgoMotionEstimator.cpp
 src/MapHelper.cpp
-src/ParticleFilter.cpp
+src/msl_localization.cpp
 src/RandomHelper.cpp
 src/RosMsgReceiver.cpp
 src/Rprop.cpp)
 
 ## as an example, message headers may need to be generated before nodes
-add_dependencies (msl_localization ${catkin_LIBRARIES})
+add_dependencies (msl_localization 
+	${catkin_LIBRARIES}   
+	msl_sensor_msgs_generate_messages_cpp  
+	msl_actuator_msgs_generate_messages_cpp 
+)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(msl_localization ${catkin_LIBRARIES})
