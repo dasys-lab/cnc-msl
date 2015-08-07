@@ -14,6 +14,8 @@
 #include "pathplanner/PathPlanner.h"
 #include "pathplanner/VoronoiNet.h"
 #include <SystemConfig.h>
+#include <ros/ros.h>
+#include "msl_msgs/VoronoiNetInfo.h"
 namespace msl
 {
 	class PathPlanner;
@@ -23,7 +25,7 @@ namespace msl
 	public:
 		PathEvaluator(PathPlanner* planner);
 		virtual ~PathEvaluator();
-		virtual double eval(double costsSoFar, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
+		virtual double eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
 							VoronoiNet* voronoi = nullptr,
 							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr);
@@ -37,6 +39,8 @@ namespace msl
 		double pathAngleWeight;
 		double pathDeviationWeight;
 		PathPlanner* planner;
+		ros::Publisher voroniPub;
+		ros::NodeHandle n;
 		static double distance(shared_ptr<geometry::CNPoint2D> first, shared_ptr<geometry::CNPoint2D> second);
 		static double square(double a);
 		supplementary::SystemConfig* sc;

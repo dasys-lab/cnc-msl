@@ -27,7 +27,7 @@ namespace msl
 		this->field = net->field;
 		auto opponents = net->getOpponentPositions();
 		vector<geometry::CNPoint2D> points;
-		for(int i = 0; i < opponents->size(); i++)
+		for (int i = 0; i < opponents->size(); i++)
 		{
 			points.push_back(geometry::CNPoint2D(opponents->at(i).first->x, opponents->at(i).first->y));
 		}
@@ -155,6 +155,7 @@ namespace msl
 	{
 		// get neighbored nodes
 		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
+//		cout << "§§§§§§§§§§§§§§§§§§§§§§§ expanding §§§§§§§§§§§§§§§§" << endl;
 		for(int i = 0; i < neighbors.size(); i++)
 		{
 			// if node is already closed skip it
@@ -162,35 +163,41 @@ namespace msl
 			{
 				continue;
 			}
-			//calculate cost with current cost and way to next vertex
-			double cost = currentNode->getCost() + calcDist(currentNode->getVertex(), neighbors.at(i)->getVertex());
 			// if node has still to be expaned but there is a cheaper way skip it
-			if(contains(open, neighbors.at(i)) && cost >= neighbors.at(i)->getCost())
+			if(contains(open, neighbors.at(i)) /*&& cost >= neighbors.at(i)->getCost()*/)
 			{
 				continue;
+			//calculate cost with current cost and way to next vertex
 			}
 			//set predecessor and cost
-			neighbors.at(i)->setPredecessor(currentNode);
 			// add heuristic cost
-			//TODO -1 für nicht befahrbare kanten
-			cost += eval->eval(cost, startPos, goal, currentNode, neighbors.at(i), this);
-			//if node is already in open change cost else add node
-			if(contains(open, neighbors.at(i)))
+			double cost = eval->eval(startPos, goal, currentNode, neighbors.at(i), this);
+			if(cost > 0)
 			{
-				for(int j = 0; j < open->size(); j++)
-				{
-					if(open->at(i)->getVertex()->x == neighbors.at(i)->getVertex()->x
-					&& open->at(i)->getVertex()->y == neighbors.at(i)->getVertex()->y)
-					{
-						open->at(j)->setCost(cost);
-						break;
-					}
-				}
+				//if node is already in open change cost else add node
+//				if(contains(open, neighbors.at(i)))
+//				{
+//					for(int j = 0; j < open->size(); j++)
+//					{
+//						if(open->at(i)->getVertex()->x == neighbors.at(i)->getVertex()->x
+//						&& open->at(i)->getVertex()->y == neighbors.at(i)->getVertex()->y)
+//						{
+//							open->at(j)->setCost(cost);
+//							break;
+//						}
+//					}
+//				}
+//				else
+//				{
+					neighbors.at(i)->setPredecessor(currentNode);
+					neighbors.at(i)->setCost(cost);
+					PathPlanner::insert(open, neighbors.at(i));
+//					cout << "node " << neighbors.at(i)->getVertex()->toString() << " " << neighbors.at(i)->getCost() << endl;
+//				}
 			}
 			else
 			{
-				neighbors.at(i)->setCost(cost);
-				PathPlanner::insert(open, neighbors.at(i));
+//				cout << "not to expand: " << neighbors.at(i)->getVertex()->toString() << endl;
 			}
 		}
 	}
@@ -237,7 +244,7 @@ namespace msl
 			for (int j = 0; j < sites.size(); j++)
 			{
 				//TODO check
-				if (abs(sites.at(j).x() - points.at(i).x) < 250 && abs(sites.at(j).y() - points.at(i).y) < 250)
+				if (abs(sites.at(j).x() - points.at(i).x) < 10 && abs(sites.at(j).y() - points.at(i).y) < 10)
 				{
 					alreadyIn = true;
 					break;
@@ -341,7 +348,7 @@ namespace msl
 			for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
 			{
 				//TODO needs to be checked
-				if (abs(it->first->x - (*iter)->x) < 250 && abs(it->first->y - (*iter)->y) < 250)
+				if (abs(it->first->x - (*iter)->x) < 10 && abs(it->first->y - (*iter)->y) < 10)
 				{
 					alreadyIn = true;
 					break;
@@ -387,7 +394,6 @@ namespace msl
 		this->pointRobotKindMapping.clear();
 	}
 
-
 	/**
 	 * checks if a SearchNode is part of a vector
 	 * @param vector shared_ptr<vector<shared_ptr<SearchNode> > >
@@ -398,8 +404,8 @@ namespace msl
 	{
 		for (int i = 0; i < vector->size(); i++)
 		{
-			if (vector->at(i)->getVertex()->x == vertex->getVertex()->x
-					&& vector->at(i)->getVertex()->y == vertex->getVertex()->y)
+			if (abs(vector->at(i)->getVertex()->x - vertex->getVertex()->x) < 10.0
+					&& abs(vector->at(i)->getVertex()->y - vertex->getVertex()->y) < 10.0)
 			{
 				return true;
 			}
@@ -429,13 +435,13 @@ namespace msl
 			do
 			{
 				//TODO needs to be tested
-				if (edge->has_source() && abs(edge->source()->point().x() - v1->x) < 50
-						&& abs(edge->source()->point().y() - v1->y) < 50)
+				if (edge->has_source() && abs(edge->source()->point().x() - v1->x) < 10
+						&& abs(edge->source()->point().y() - v1->y) < 10)
 				{
 					foundFirst = true;
 				}
-				if (edge->has_source() && abs(edge->source()->point().x() - v2->x) < 50
-						&& abs(edge->source()->point().y() - v2->y) < 50)
+				if (edge->has_source() && abs(edge->source()->point().x() - v2->x) < 10
+						&& abs(edge->source()->point().y() - v2->y) < 10)
 				{
 					foundSecond = true;
 				}
@@ -453,8 +459,10 @@ namespace msl
 						&& abs(ret.first->y - fit->dual()->point().y()) > 0.001)
 				{
 					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+
 					break;
 				}
+
 			}
 		}
 		return ret;
@@ -469,7 +477,7 @@ namespace msl
 		if(loc.which() == 0)
 		{
 			VoronoiDiagram::Face_handle handle = boost::get<VoronoiDiagram::Face_handle>(loc);
-			VoronoiDiagram::Halfedge_handle begin = handle->halfedge();
+			VoronoiDiagram::Halfedge_handle begin = handle->ccb();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
@@ -732,7 +740,7 @@ namespace msl
 		}
 		int radius = 3000;
 		double perimeter = 2 * M_PI * radius;
-		int pointCount = perimeter / 700 + 0.5;
+		int pointCount = perimeter / 500 + 0.5;
 		double slice = 2 * M_PI / pointCount;
 		for (int i = 0; i < pointCount; i++)
 		{
@@ -816,7 +824,7 @@ namespace msl
 			for (auto it = pointRobotKindMapping.begin(); it != pointRobotKindMapping.end(); it++)
 			{
 				//TODO needs to be checked
-				if (abs(it->first->x - iter->first->x) < 250 && abs(it->first->y - iter->first->y) < 250)
+				if (abs(it->first->x - iter->first->x) < 10 && abs(it->first->y - iter->first->y) < 10)
 				{
 					alreadyIn = true;
 					break;

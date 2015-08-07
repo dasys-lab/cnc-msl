@@ -24,7 +24,7 @@ namespace msl
 	{
 	}
 
-	double Evaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
+	double Evaluator::eval(shared_ptr<VoronoiNet> voronoi,
 									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
 									shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
@@ -55,8 +55,8 @@ namespace msl
 
 		// cost due to deviation from last path
 		double lastAnglec = this->planner->getPathDeviationWeight() /* * path.lastPEdge.AngleCost*/;
-		return (costsSoFar // costs so far
-		+ voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // cost due to additional length of path
+		return (/*costsSoFar // costs so far
+		+ */voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // cost due to additional length of path
 				+ widthc // cost due to minimal width of the edge
 				+ lastAnglec, // cost due to deviation to last path
 		+h); // heuristic cost due to distToTarget

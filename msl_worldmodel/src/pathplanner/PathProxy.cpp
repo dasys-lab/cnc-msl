@@ -70,6 +70,8 @@ namespace msl
 	{
 		lastPathTarget = egoTarget;
 		shared_ptr<VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
+		//TODO remove
+		auto tmp = net->blockThreeMeterAroundBall();
 		if(additionalPoints != nullptr)
 		{
 			net->insertAdditionalPoints(additionalPoints);
@@ -84,10 +86,10 @@ namespace msl
 			if (path != nullptr)
 			{
 				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
-				path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
 
 				if(pathPlannerDebug)
 				{
+					path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
 					sendPathPlannerMsg(path);
 					sendVoronoiNetMsg(net->getSitePositions(),net);
 				}
@@ -97,6 +99,7 @@ namespace msl
 		{
 			net->removeSites(additionalPoints);
 		}
+		net->removeSites(tmp);
 		if(retPoint == nullptr)
 		{
 			return nullptr;

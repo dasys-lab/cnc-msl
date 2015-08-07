@@ -15,6 +15,7 @@ namespace msl
 		this->clearSpaceWeight = 0;
 		this->planner = planner;
 		this->sc = SystemConfig::getInstance();
+		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);
 		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
@@ -42,12 +43,13 @@ namespace msl
 		return a * a;
 	}
 
-	double PathEvaluator::eval(double costsSoFar, shared_ptr<geometry::CNPoint2D> startPos,
-								shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode,
-								shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi,
-								shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
+	//TODO comments
+	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
+								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
+								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
 	{
-		double ret = pathLengthWeight * distance(currentNode->getVertex(), nextNode->getVertex());
+		double ret = currentNode->getCost();
+		ret += pathLengthWeight * distance(currentNode->getVertex(), nextNode->getVertex());
 //		cout << "path weight: " << ret << endl;
 		auto p = planner->getLastPath();
 		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
@@ -77,21 +79,41 @@ namespace msl
 		{
 			pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> obs =
 					voronoi->getSitesNextToHalfEdge(currentNode->getVertex(), nextNode->getVertex());
-			if (obs.first != nullptr && obs.second != nullptr)
-			{
 
-				double dist = obstacleDistanceWeight
-						* ((1.0
-								/ geometry::GeometryCalculator::distancePointToLineSegment(obs.first->x, obs.first->y,
+//			if (obs.first != nullptr)
+//			{
+//				msl_msgs::VoronoiNetInfo netMsg;
+//				msl_msgs::Point2dInfo info;
+//				info.x = obs.first->x;
+//				info.y = obs.first->y;
+//				netMsg.sites.push_back(info);
+//				msl_msgs::Point2dInfo info2;
+//				info2.x = obs.second->x;
+//				info2.y = obs.second->y;
+//				netMsg.sites.push_back(info2);
+//				voroniPub.publish(netMsg);
+
+//				if(this->planner->corridorCheck(voronoi,currentNode->getVertex(), nextNode->getVertex(),obs.first) || this->planner->corridorCheck(voronoi,currentNode->getVertex(), nextNode->getVertex(),obs.second))
+//				{
+//					return -1.0;
+//				}
+				double distFirst = geometry::GeometryCalculator::distancePointToLineSegment(obs.first->x, obs.first->y,
 																							currentNode->getVertex(),
-																							nextNode->getVertex()))
-								+ obstacleDistanceWeight
-										* (1.0
-												/ geometry::GeometryCalculator::distancePointToLineSegment(
-														obs.second->x, obs.second->y, currentNode->getVertex(),
-														nextNode->getVertex())));
+																							nextNode->getVertex());
+//				double distSecond = geometry::GeometryCalculator::distancePointToLineSegment(
+//						obs.second->x, obs.second->y, currentNode->getVertex(), nextNode->getVertex());
+				double dist = obstacleDistanceWeight
+						* ((1.0 / distFirst) + obstacleDistanceWeight * (1.0 / distFirst));
 				ret += dist;
-			}
+
+//				cout << "distance " << distFirst << " " << distFirst << " "
+//						<< this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth() << endl;
+				if ((distFirst + distFirst)
+						< (this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth()))
+				{
+					return -1.0;
+				}
+//			}
 		}
 //		cout << "after obstacle distance: " << ret << endl;
 		if (currentNode->getPredecessor() != nullptr)
