@@ -21,6 +21,7 @@ void RosMsgReceiver::initialize() {
 	Mapsub = node.subscribe<nav_msgs::OccupancyGrid, RosMsgReceiver>("/map", 1, &RosMsgReceiver::handleMapMessage, (this));
 	LaserSub = node.subscribe<sensor_msgs::LaserScan, RosMsgReceiver>("/scan", 1, &RosMsgReceiver::handleScanMessage, (this));
 	Iniposesub = node.subscribe<geometry_msgs::PoseWithCovarianceStamped, RosMsgReceiver>("/initialpose", 1, &RosMsgReceiver::handlePoseMessage, (this));
+	OdometrySub = node.subscribe("/RawOdometry", 10, &RosMsgReceiver::handleOdometryInfoMessage, (this));
 	
 	particlepub = node.advertise<geometry_msgs::PoseArray>("/particlecloud", 1);
 	
@@ -71,3 +72,21 @@ void RosMsgReceiver::sendParticleCloud(geometry_msgs::PoseArray &p) {
 	particlepub.publish(p);
 }
 
+
+void RosMsgReceiver::handleOdometryInfoMessage(msl_actuator_msgs::RawOdometryInfoPtr msg)
+{
+	odometryInfoMsg = msg;
+}
+
+void RosMsgReceiver::handleLinePointListMessage(msl_sensor_msgs::LinePointListPtr msg) {
+	currentLinePoints = msg;
+}
+
+msl_sensor_msgs::LinePointListPtr RosMsgReceiver::getCurrentLinePointList() {
+	return currentLinePoints;
+}
+
+msl_actuator_msgs::RawOdometryInfoPtr RosMsgReceiver::getOdometryInfo()
+{
+	return odometryInfoMsg;
+}
