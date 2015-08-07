@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="OwnKickOff.pml#1438785376160"/>
+    <value xPos="166" yPos="36" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1438785376159"/>
+    <value width="645" height="456"/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1438785376161"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1438785392109"/>
+    <value xPos="138" yPos="234"/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1438785501838"/>
+    <value xPos="146" yPos="229" width="71" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
