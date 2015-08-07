@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1438790362133) ENABLED START*/ //Add additional includes here
+#include "MSLFootballField.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,6 +21,9 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1438790362133) ENABLED START*/ //Add additional private methods here
+        string taskName;
+        shared_ptr<geometry::CNPoint2D> alloTarget;
+        msl::MSLFootballField* field;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
