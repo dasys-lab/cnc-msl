@@ -207,10 +207,32 @@ namespace msl
 			}
 			else
 			{
-				//TODO calc point
+				//TODO test
+				auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
+				auto ownPoint = make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y);
+				auto vertices = voronoi->getVerticesOfFace(ownPoint);
+				shared_ptr<geometry::CNPoint2D> bestVertex = nullptr;
+				for(int i = 0; i < vertices->size(); i++)
+				{
+					if(bestVertex == nullptr)
+					{
+						bestVertex = vertices->at(i);
+					}
+					else
+					{
+						if(vertices->at(i)->distanceTo(ownPoint) > bestVertex->distanceTo(ownPoint))
+						{
+							bestVertex = vertices->at(i);
+						}
+					}
+				}
+				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+				double dist = ownPoint->distanceTo(bestVertex);
+				shared_ptr<geometry::CNPoint2D> retPoint = (bestVertex - ownPoint)->normalize() * (dist / 2);
+				ret->push_back(retPoint);
 				lastClosestNode = nullptr;
-				lastPath = nullptr;
-				return nullptr;
+				lastPath = ret;
+				return ret;
 			}
 		}
 		// return nullptr if there is no way to goal
