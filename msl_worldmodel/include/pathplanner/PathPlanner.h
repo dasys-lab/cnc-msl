@@ -126,6 +126,7 @@ protected:
 	double dribble_angleTolerance;
 	double corridorWidthDivisor;
 	bool pathPlannerDebug;
+	double marginToBlockedArea;
 	double additionalCorridorWidth;
 	shared_ptr<SearchNode> lastClosestNode;
 	double snapDistance;
@@ -133,6 +134,8 @@ protected:
 	double corridorWidthDivisorBall;
 	ros::NodeHandle n;
 	ros::Publisher corridorPub;
+	shared_ptr<geometry::CNPoint2D> lastClosestPointToBlock;
+	shared_ptr<geometry::CNPoint2D> lastTarget;
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
 	bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
 };

@@ -71,7 +71,7 @@ namespace msl
 		lastPathTarget = egoTarget;
 		shared_ptr<VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
 		//TODO remove
-		auto tmp = net->blockThreeMeterAroundBall();
+//		auto tmp = net->blockThreeMeterAroundBall();
 		if(additionalPoints != nullptr)
 		{
 			net->insertAdditionalPoints(additionalPoints);
@@ -99,11 +99,12 @@ namespace msl
 		{
 			net->removeSites(additionalPoints);
 		}
-		net->removeSites(tmp);
+//		net->removeSites(tmp);
 		if(retPoint == nullptr)
 		{
 			return nullptr;
 		}
+//		cout << "pathproxy return " << retPoint->alloToEgo(*ownPos)->toString() << endl;
 		return retPoint->alloToEgo(*ownPos);
 
 	}

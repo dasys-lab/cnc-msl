@@ -18,6 +18,8 @@ namespace msl
 		this->wm = wm;
 		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
 		this->lastClosestNode = nullptr;
+		this->lastClosestPointToBlock = nullptr;
+		this->lastTarget == nullptr;
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
 		{
@@ -42,6 +44,7 @@ namespace msl
 																					"additionalBallCorridorWidth",
 																					NULL);
 		this->snapDistance = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "snapDistance", NULL);
+		this->marginToBlockedArea = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "marginToBlockedArea", NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
@@ -122,6 +125,18 @@ namespace msl
 	 */
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
+		if(lastTarget == nullptr)
+		{
+			lastTarget = goal;
+		}
+		else
+		{
+			if(lastTarget->distanceTo(goal) > 50)
+			{
+				lastTarget = goal;
+				lastClosestPointToBlock = nullptr;
+			}
+		}
 		//TODO think about it if it stays comments and docu
 //		if((goal - startPos)->length() < this->snapDistance)
 //		{
@@ -152,6 +167,51 @@ namespace msl
 		{
 			lastPath = ret;
 			return ret;
+		}
+		else
+		{
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			if(lastClosestNode != nullptr)
+			{
+				shared_ptr<SearchNode> temp = lastClosestNode;
+				ret->push_back(make_shared<geometry::CNPoint2D>(lastClosestNode->getVertex()->x, lastClosestNode->getVertex()->y));
+				while(temp->getPredecessor() != nullptr)
+				{
+					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
+					temp = temp->getPredecessor();
+				}
+				reverse(ret->begin(), ret->end());
+//				cout << "returning" << endl;
+				if(ret->size() == 1 && lastClosestPointToBlock == nullptr)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock == nullptr " << endl;
+					lastClosestPointToBlock = ret->at(0);
+				}
+				if(lastClosestPointToBlock != nullptr && ret->size() == 1 && (*ret->begin())->distanceTo(lastClosestPointToBlock) < this->marginToBlockedArea)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock != nullptr && (*ret->begin())->distanceTo(lastClosestPointToBlock) < 250 " << (*ret->begin())->distanceTo(lastClosestPointToBlock) << endl;
+					ret->clear();
+					ret->push_back(lastClosestPointToBlock);
+					lastPath = ret;
+					lastClosestNode =nullptr;
+					return ret;
+				}
+				if(lastClosestPointToBlock != nullptr && ret->size() == 1 && (*ret->begin())->distanceTo(lastClosestPointToBlock) > this->marginToBlockedArea)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock != nullptr && (*ret->begin())->distanceTo(lastClosestPointToBlock) > 250 " << (*ret->begin())->distanceTo(lastClosestPointToBlock) << endl;
+					lastClosestPointToBlock = ret->at(0);
+				}
+				lastPath = ret;
+				lastClosestNode = nullptr;
+				return ret;
+			}
+			else
+			{
+				//TODO calc point
+				lastClosestNode = nullptr;
+				lastPath = nullptr;
+				return nullptr;
+			}
 		}
 		// return nullptr if there is no way to goal
 		lastPath = nullptr;
@@ -202,14 +262,14 @@ namespace msl
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
-				cout << "$$$$$ returning found path" << endl;
+//				cout << "$$$$$ returning found path" << endl;
 				lastPath = ret;
 				lastClosestNode = nullptr;
 				return ret;
 			}
 			closed->push_back(currentNode);
 			open->erase(open->begin());
-			int openSize =  open->size();
+			int openSize = open->size();
 			voronoi->expandNode(currentNode, open, closed, startPos, goal, eval);
 			if(lastClosestNode == nullptr )
 			{
@@ -222,34 +282,8 @@ namespace msl
 					lastClosestNode = currentNode;
 				}
 			}
-//			if(openSize == open->size())
-//			{
-//				break;
-//			}
 		}
-		cout << "after while" << endl;
-		if(lastClosestNode != nullptr)
-		{
-			shared_ptr<SearchNode> temp = lastClosestNode;
-			ret->push_back(make_shared<geometry::CNPoint2D>(lastClosestNode->getVertex()->x, lastClosestNode->getVertex()->y));
-			while(temp->getPredecessor() != nullptr)
-			{
-				ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
-				temp = temp->getPredecessor();
-			}
-			reverse(ret->begin(), ret->end());
-			cout << "returning" << endl;
-			lastPath = ret;
-			lastClosestNode = nullptr;
-			return ret;
-		}
-		else
-		{
-			//TODO calc point
-			lastClosestNode = nullptr;
-			lastPath = nullptr;
-			return nullptr;
-		}
+		return nullptr;
 	}
 
 	void msl::PathPlanner::insert(shared_ptr<vector<shared_ptr<SearchNode> > > vect, shared_ptr<SearchNode> currentNode)
@@ -269,8 +303,8 @@ namespace msl
 	}
 
 	bool PathPlanner::checkGoalVerticesReached(
-			 shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > closestVerticesToGoal,
-			 shared_ptr<SearchNode> currentNode)
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > closestVerticesToGoal,
+			shared_ptr<SearchNode> currentNode)
 	{
 		bool found = false;
 		for (int i = 0; i < closestVerticesToGoal->size(); i++)
