@@ -24,7 +24,7 @@ namespace msl
 	{
 	}
 
-	double PrefDirEvaluator::eval(double costsSoFar, shared_ptr<VoronoiNet> voronoi,
+	double PrefDirEvaluator::eval(shared_ptr<VoronoiNet> voronoi,
 										shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
 										shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
 	{
@@ -88,8 +88,8 @@ namespace msl
 			h += this->planner->getDribbleRotationWeight() * std::max(0.0, deltaangle * deltaangle - this->planner->getDribbleAngleTolerance());
 		}
 
-		return costsSoFar // cost so far
-		+ voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // length of the path
+		return /*costsSoFar // cost so far
+		+*/ voronoi->calcDist(currentNode->getVertex(), nextNode->getVertex()) // length of the path
 				+ widthc + anglec + lastAnglec + h;
 	}
 

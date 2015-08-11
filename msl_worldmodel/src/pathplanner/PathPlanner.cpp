@@ -17,6 +17,9 @@ namespace msl
 	{
 		this->wm = wm;
 		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
+		this->lastClosestNode = nullptr;
+		this->lastClosestPointToBlock = nullptr;
+		this->lastTarget == nullptr;
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
 		{
@@ -30,15 +33,18 @@ namespace msl
 		this->currentVoronoiPos = -1;
 		this->corridorWidthDivisor = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisor",
 		NULL);
-		this->corridorWidthDivisorBall = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "corridorWidthDivisorBall",
+		this->corridorWidthDivisorBall = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
+																					"corridorWidthDivisorBall",
 																					NULL);
 		this->pathPlannerDebug = (*this->sc)["PathPlanner"]->get<bool>("PathPlanner", "pathPlannerDebug",
 		NULL);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);
 		this->additionalBallCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
-																					"additionalBallCorridorWidth", NULL);
+																					"additionalBallCorridorWidth",
+																					NULL);
 		this->snapDistance = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "snapDistance", NULL);
+		this->marginToBlockedArea = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "marginToBlockedArea", NULL);
 		lastPath = nullptr;
 		corridorPub = n.advertise<msl_msgs::CorridorCheck>("/PathPlanner/CorridorCheck", 10);
 		initializeArtificialObstacles();
@@ -119,14 +125,26 @@ namespace msl
 	 */
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
-		//TODO think about it if it stays comments and docu
-		if((goal - startPos)->length() < this->snapDistance)
+		if(lastTarget == nullptr)
 		{
-			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-			ret->push_back(goal);
-			lastPath = ret;
-			return ret;
+			lastTarget = goal;
 		}
+		else
+		{
+			if(lastTarget->distanceTo(goal) > 50)
+			{
+				lastTarget = goal;
+				lastClosestPointToBlock = nullptr;
+			}
+		}
+		//TODO think about it if it stays comments and docu
+//		if((goal - startPos)->length() < this->snapDistance)
+//		{
+//			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//			ret->push_back(goal);
+//			lastPath = ret;
+//			return ret;
+//		}
 		bool reachable = true;
 		auto sites = voronoi->getSitePositions();
 		for(int i = 0; i < sites->size(); i++)
@@ -150,6 +168,73 @@ namespace msl
 			lastPath = ret;
 			return ret;
 		}
+		else
+		{
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			if(lastClosestNode != nullptr)
+			{
+				shared_ptr<SearchNode> temp = lastClosestNode;
+				ret->push_back(make_shared<geometry::CNPoint2D>(lastClosestNode->getVertex()->x, lastClosestNode->getVertex()->y));
+				while(temp->getPredecessor() != nullptr)
+				{
+					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
+					temp = temp->getPredecessor();
+				}
+				reverse(ret->begin(), ret->end());
+//				cout << "returning" << endl;
+				if(ret->size() == 1 && lastClosestPointToBlock == nullptr)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock == nullptr " << endl;
+					lastClosestPointToBlock = ret->at(0);
+				}
+				if(lastClosestPointToBlock != nullptr && ret->size() == 1 && (*ret->begin())->distanceTo(lastClosestPointToBlock) < this->marginToBlockedArea)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock != nullptr && (*ret->begin())->distanceTo(lastClosestPointToBlock) < 250 " << (*ret->begin())->distanceTo(lastClosestPointToBlock) << endl;
+					ret->clear();
+					ret->push_back(lastClosestPointToBlock);
+					lastPath = ret;
+					lastClosestNode =nullptr;
+					return ret;
+				}
+				if(lastClosestPointToBlock != nullptr && ret->size() == 1 && (*ret->begin())->distanceTo(lastClosestPointToBlock) > this->marginToBlockedArea)
+				{
+//					cout << "ret size = 1 && lastClosestPointToBlock != nullptr && (*ret->begin())->distanceTo(lastClosestPointToBlock) > 250 " << (*ret->begin())->distanceTo(lastClosestPointToBlock) << endl;
+					lastClosestPointToBlock = ret->at(0);
+				}
+				lastPath = ret;
+				lastClosestNode = nullptr;
+				return ret;
+			}
+			else
+			{
+				//TODO test
+				auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
+				auto ownPoint = make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y);
+				auto vertices = voronoi->getVerticesOfFace(ownPoint);
+				shared_ptr<geometry::CNPoint2D> bestVertex = nullptr;
+				for(int i = 0; i < vertices->size(); i++)
+				{
+					if(bestVertex == nullptr)
+					{
+						bestVertex = vertices->at(i);
+					}
+					else
+					{
+						if(vertices->at(i)->distanceTo(ownPoint) > bestVertex->distanceTo(ownPoint))
+						{
+							bestVertex = vertices->at(i);
+						}
+					}
+				}
+				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+				double dist = ownPoint->distanceTo(bestVertex);
+				shared_ptr<geometry::CNPoint2D> retPoint = (bestVertex - ownPoint)->normalize() * (dist / 2);
+				ret->push_back(retPoint);
+				lastClosestNode = nullptr;
+				lastPath = ret;
+				return ret;
+			}
+		}
 		// return nullptr if there is no way to goal
 		lastPath = nullptr;
 		return nullptr;
@@ -169,7 +254,7 @@ namespace msl
 		//get closest Vertices to ownPos => start point for a star serach
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(startPos);
 
-		// get closest Vertex to goal => goal for a star serach
+		// get closest Vertices to goal => goal for a star serach
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal = voronoi->getVerticesOfFace(goal);
 
 		// a star serach
@@ -179,13 +264,19 @@ namespace msl
 			insert(open, make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
 									voronoi->calcDist(closestVerticesToOwnPos->at(i), goal), nullptr)));
 		}
-
+//		cout << "##################################### iteration ##########################" << endl;
 		while(open->size() != 0)
 		{
+//			cout << "%%%%%%%%%%%%%%%%%open%%%%%%%%%%%%%" << endl;
+//			for(int i = 0; i < open->size(); i++)
+//			{
+//				cout << "Node: " << open->at(i)->getVertex()->toString() << " " << open->at(i)->getCost() << endl;
+//			}
 			shared_ptr<SearchNode> currentNode = open->at(0);
 			if(checkGoalReachable(voronoi, currentNode, closestVerticesToGoal, goal))
 			{
 				shared_ptr<SearchNode> temp = currentNode;
+				ret->push_back(goal);
 				ret->push_back(make_shared<geometry::CNPoint2D>(currentNode->getVertex()->x, currentNode->getVertex()->y));
 				while(temp->getPredecessor() != nullptr)
 				{
@@ -193,15 +284,27 @@ namespace msl
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
-				ret->push_back(goal);
+//				cout << "$$$$$ returning found path" << endl;
 				lastPath = ret;
+				lastClosestNode = nullptr;
 				return ret;
 			}
 			closed->push_back(currentNode);
 			open->erase(open->begin());
+			int openSize = open->size();
 			voronoi->expandNode(currentNode, open, closed, startPos, goal, eval);
+			if(lastClosestNode == nullptr )
+			{
+				lastClosestNode = currentNode;
+			}
+			else
+			{
+				if(currentNode->getVertex()->distanceTo(goal) < lastClosestNode->getVertex()->distanceTo(goal))
+				{
+					lastClosestNode = currentNode;
+				}
+			}
 		}
-		lastPath = nullptr;
 		return nullptr;
 	}
 
@@ -222,13 +325,14 @@ namespace msl
 	}
 
 	bool PathPlanner::checkGoalVerticesReached(
-			const shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > >& closestVerticesToGoal,
-			const shared_ptr<SearchNode>& currentNode, bool found)
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > closestVerticesToGoal,
+			shared_ptr<SearchNode> currentNode)
 	{
+		bool found = false;
 		for (int i = 0; i < closestVerticesToGoal->size(); i++)
 		{
-			if (currentNode->getVertex()->x == closestVerticesToGoal->at(i)->x
-					&& currentNode->getVertex()->y == closestVerticesToGoal->at(i)->y)
+			if (abs(currentNode->getVertex()->x - closestVerticesToGoal->at(i)->x) < 10.0
+					&& abs(currentNode->getVertex()->y - closestVerticesToGoal->at(i)->y) < 10.0)
 			{
 				found = true;
 				break;
@@ -291,11 +395,9 @@ namespace msl
 		dx /= dist;
 		dy /= dist;
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2) * dy,
-				currentPos->y - (this->robotDiameter / 2) * dx);
+				currentPos->x + (this->robotDiameter / 2) * dy, currentPos->y - (this->robotDiameter / 2) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2) * dy,
-				currentPos->y + (this->robotDiameter / 2) * dx);
+				currentPos->x - (this->robotDiameter / 2) * dy, currentPos->y + (this->robotDiameter / 2) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
 				goal->x
 						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
@@ -346,11 +448,59 @@ namespace msl
 		return wm;
 	}
 
+	double msl::PathPlanner::getAdditionalCorridorWidth()
+	{
+		return additionalCorridorWidth;
+	}
+
+	bool msl::PathPlanner::corridorCheck(VoronoiNet* voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+											shared_ptr<geometry::CNPoint2D> goal,
+											shared_ptr<geometry::CNPoint2D> obstaclePoint)
+	{
+		double length = voronoi->calcDist(currentPos, goal);
+		double dx = currentPos->x - goal->x;
+		double dy = currentPos->y - goal->y;
+		double dist = std::sqrt(dx * dx + dy * dy);
+		dx /= dist;
+		dy /= dist;
+		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
+				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
+				currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
+				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
+				currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
+				goal->x
+						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y
+						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
+		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
+				goal->x
+						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
+				goal->y
+						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
+		vector<shared_ptr<geometry::CNPoint2D>> points;
+		points.push_back(p1);
+		points.push_back(p3);
+		points.push_back(p4);
+		points.push_back(p2);
+		if (pathPlannerDebug)
+		{
+			sendCorridorCheck(points);
+		}
+		return obstaclePoint != nullptr
+				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+	}
+
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
 											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
 	{
 		bool found = false;
-		found = checkGoalVerticesReached(closestVerticesToGoal, currentNode, found);
+		found = checkGoalVerticesReached(closestVerticesToGoal, currentNode);
 		if(found)
 		{
 			shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
@@ -413,7 +563,8 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathPlanner::getArtificialObstacles()
 	{
 		MSLFootballField* field = MSLFootballField::getInstance();
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > toInsert = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > toInsert = make_shared<
+				vector<shared_ptr<geometry::CNPoint2D>>>();
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
 		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
 		{

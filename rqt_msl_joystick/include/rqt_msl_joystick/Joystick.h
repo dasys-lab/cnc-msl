@@ -1,17 +1,21 @@
 #ifndef rqt_msl_joystick__Joystick_H
 #define rqt_msl_joystick__Joystick_H
+//#define RQT_MSL_JOYSTICK_DEBUG
 
 #include <rqt_gui_cpp/plugin.h>
 #include <ui_Joystick.h>
 
 #include "ros/ros.h"
 #include <ros/macros.h>
+#include <msl_msgs/JoystickCommand.h>
 
 #include <stdint.h>
 #include <vector>
 #include <QtGui>
 #include <QWidget>
 #include <QDialog>
+
+
 
 namespace rqt_msl_joystick
 {
@@ -35,30 +39,32 @@ namespace rqt_msl_joystick
 		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
 										const qt_gui_cpp::Settings& instance_settings);
 
-		void sendJoystickMessage();
+
+		bool eventFilter(QObject* watched, QEvent* event);
 		void keyPressEvent(QKeyEvent* event);
 		void keyReleaseEvent(QKeyEvent* event);
-		bool checkNumber(QString text);
 		void printControlValues();
+		void printJoystickMessage(msl_msgs::JoystickCommand msg);
 
 		QWidget* uiWidget;
 
 	public Q_SLOTS:
+		void sendJoystickMessage();
+
 		void onRobotIdEdited();
 		void onKickPowerEdited();
 		void onRotationEdited();
 		void onTranslationEdited();
-
-		void onKickPowerSlided();
-		void onTranslationSlided();
-		void onRotationSpeedSlided();
-		void onBallHandleRightSlided();
 		void onBallHandleRightEdited();
-		void onBallHandleLeftSlided();
 		void onBallHandleLeftEdited();
+
+		void onKickPowerSlided(int value);
+		void onBallHandleRightSlided(int value);
+		void onBallHandleLeftSlided(int value);
 
 		void onLowShovelSelected(bool checked);
 		void onHighShovelSelected(bool checked);
+		void onBallHandleCheckBoxToggled(int checkState);
 
 	private:
 
@@ -71,15 +77,25 @@ namespace rqt_msl_joystick
 		// for filling a joystick message
 		short ballHandleLeftMotor;
 		short ballHandleRightMotor;
-		bool kick;
 		short kickPower;
 		int robotId;
-		short selectedActuator;
+		bool ballHandleState;
 		short shovelIdx;
-		double angle;
 		double translation;
 		double rotation;
 
+		// min max values from config
+		short ballHandleMin;
+		short ballHandleMax;
+		short kickPowerMin;
+		short kickPowerMax;
+		double translationMin;
+		double translationMax;
+		double rotationMin;
+		double rotationMax;
+
+		QTimer* sendMsgTimer;
+		int sendInterval;
 	};
 
 }

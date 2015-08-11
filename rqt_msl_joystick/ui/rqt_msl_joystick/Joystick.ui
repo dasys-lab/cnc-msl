@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>291</height>
+    <width>417</width>
+    <height>221</height>
    </rect>
   </property>
   <layout class="QHBoxLayout">
@@ -70,25 +70,6 @@
        </property>
        <property name="text">
         <string>RotationSpeed:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="translationLabel">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>28</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>27</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>Translation:</string>
        </property>
       </widget>
      </item>
@@ -192,6 +173,9 @@
        <property name="inputMask">
         <string/>
        </property>
+       <property name="text">
+        <string>-1</string>
+       </property>
        <property name="maxLength">
         <number>5</number>
        </property>
@@ -219,6 +203,12 @@
          <property name="toolTip">
           <string>Enter a KickPower between 101 and 3600.</string>
          </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="maxLength">
+          <number>4</number>
+         </property>
         </widget>
        </item>
        <item>
@@ -240,6 +230,9 @@
          </property>
          <property name="maximum">
           <number>3600</number>
+         </property>
+         <property name="tracking">
+          <bool>false</bool>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -276,14 +269,20 @@
          <property name="toolTip">
           <string>Enter a rotation speed [rad/second] between 0 and 15.</string>
          </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="maxLength">
+          <number>6</number>
+         </property>
         </widget>
        </item>
        <item>
-        <widget class="QSlider" name="rotationSpeedSlider">
+        <widget class="QLabel" name="translationLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>27</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -292,30 +291,11 @@
            <height>27</height>
           </size>
          </property>
-         <property name="maximum">
-          <number>15</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval">
-          <number>1</number>
+         <property name="text">
+          <string>Translation:</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalTranslationLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
        <item>
         <widget class="QLineEdit" name="translationEdit">
          <property name="minimumSize">
@@ -333,36 +313,24 @@
          <property name="toolTip">
           <string>Enter the robots driving speed [mm/sec] between 0 and 4000.</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="translationSlider">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>27</height>
-          </size>
+         <property name="text">
+          <string>0</string>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>27</height>
-          </size>
-         </property>
-         <property name="maximum">
-          <number>4000</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval">
-          <number>500</number>
+         <property name="maxLength">
+          <number>7</number>
          </property>
         </widget>
        </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalTranslationLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
       </layout>
      </item>
      <item>
@@ -402,6 +370,28 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QCheckBox" name="ballHandleStateCheckBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>27</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>27</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string>Use BallHandle:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -420,6 +410,15 @@
            <height>27</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Enter the left BallHandle speed [%] between -100 and 100.</string>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="maxLength">
+          <number>4</number>
+         </property>
         </widget>
        </item>
        <item>
@@ -435,6 +434,9 @@
          </property>
          <property name="maximum">
           <number>100</number>
+         </property>
+         <property name="tracking">
+          <bool>false</bool>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -465,6 +467,15 @@
            <height>27</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Enter the right BallHandle speed [%] between -100 and 100.</string>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="maxLength">
+          <number>4</number>
+         </property>
         </widget>
        </item>
        <item>
@@ -480,6 +491,9 @@
          </property>
          <property name="maximum">
           <number>100</number>
+         </property>
+         <property name="tracking">
+          <bool>false</bool>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

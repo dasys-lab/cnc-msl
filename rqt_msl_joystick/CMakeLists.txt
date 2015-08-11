@@ -5,7 +5,7 @@ project(rqt_msl_joystick)
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
-find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs system_config)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -33,7 +33,7 @@ set(rqt_msl_joystick_INCLUDE_DIRECTORIES
 catkin_package(
   INCLUDE_DIRS ${rqt_msl_joystick_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS rqt_gui rqt_gui_cpp
+  CATKIN_DEPENDS rqt_gui rqt_gui_cpp system_config
 )
 catkin_python_setup()
 
