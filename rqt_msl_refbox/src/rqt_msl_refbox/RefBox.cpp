@@ -59,7 +59,11 @@ namespace rqt_msl_refbox
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
 		widget_->installEventFilter(this);
-
+		this->tbl_widgetCyan->setRowCount(5);
+		this->tbl_widgetCyan->setColumnCount(2);
+		this->tbl_widgetCyan->setItemDelegate(new ItemDelegate);
+		this->tbl_widgetCyan->resizeRowsToContents();
+		this->tbl_widgetCyan->resizeColumnsToContents();
 	}
 
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
@@ -76,11 +80,6 @@ namespace rqt_msl_refbox
 			btn_connect->setEnabled(false);
 		return true;
 	}
-
-//	void RefBox::showRBDialog()
-//	{
-////		refBoxCommQDialog->show();
-//	}
 
 	void RefBox::shutdownPlugin()
 	{

@@ -21,6 +21,7 @@ namespace rqt_msl_refbox
 		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
 				"/RefereeBoxInfoBody", 2);
 		localToggled = false;
+		xmlparser = new XMLProtocolParser(this);
 		tcpToggled = false;
 		multiToggled = false;
 		this->refBox = refBox;
@@ -308,8 +309,8 @@ namespace rqt_msl_refbox
 
 			this->refBox->RefLog->append("Creating TCP Socket");
 
-//			QString destHost = this->refBox->ledit_ipaddress->text();
-			QString destHost = "141.51.122.174";
+			QString destHost = this->refBox->ledit_ipaddress->text();
+//			QString destHost = "141.51.122.182";
 			quint16 destPort = this->refBox->spin_port->value();
 			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
 
@@ -325,7 +326,7 @@ namespace rqt_msl_refbox
 
 			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
 
-			this->refBox->lbl_statusCon->setText("CONNECTED");
+			this->refBox->lbl_statusCon->setText("TCP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 1;
 		}
@@ -348,7 +349,7 @@ namespace rqt_msl_refbox
 
 			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 
-			this->refBox->lbl_statusCon->setText("CONNECTED MULTICAST");
+			this->refBox->lbl_statusCon->setText("MULTICAST");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 2;
 
@@ -357,7 +358,7 @@ namespace rqt_msl_refbox
 		{
 			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
 			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
-			this->refBox->lbl_statusCon->setText("LOCAL MODE");
+			this->refBox->lbl_statusCon->setText("LOCAL");
 			this->counter = 0;
 		}
 	}
@@ -366,10 +367,18 @@ namespace rqt_msl_refbox
 	void GameData::receiveRefMsg(void)
 	{
 		QByteArray buffer;
-		qint64 _packetSize = tcpsocket->bytesAvailable();
-		buffer = tcpsocket->read(_packetSize);
-
-		std::cout << buffer.data() << std::endl;
+		while(tcpsocket->canReadLine())
+		{
+			buffer = buffer + tcpsocket->readLine();
+		}
+		if(buffer.size() > 1)
+		{
+			std::cout << "BUFFER " <<  buffer.data() << std::endl;
+			tinyxml2::XMLDocument doc;
+			doc.Parse(buffer.data());
+			tinyxml2::XMLElement* element = doc.FirstChildElement();
+			xmlparser->handle(element);
+		}
 	}
 	void GameData::receiveRefMsgUdp(void)
 	{

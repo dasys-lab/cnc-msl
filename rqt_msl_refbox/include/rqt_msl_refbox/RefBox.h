@@ -17,6 +17,13 @@ namespace rqt_msl_refbox
 	using namespace std;
 
 	class GameData;
+	class ItemDelegate : public QItemDelegate
+	{
+		virtual QSize sizeHint ( const QStyleOptionViewItem & option, const QModelIndex & index ) const
+		{
+			return QItemDelegate::sizeHint(option, index).expandedTo(QSize(0,10));
+		}
+	};
 	class RefBox : public rqt_gui_cpp::Plugin, public Ui::RefBoxWidget
 	{
 

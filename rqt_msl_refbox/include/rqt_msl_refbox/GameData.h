@@ -25,6 +25,7 @@ namespace rqt_msl_refbox
 	class GameData : public QObject
 	{
 		Q_OBJECT
+	public:
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -49,6 +50,7 @@ namespace rqt_msl_refbox
 		bool isLocalToggled();
 		bool isMultiToggled();
 		bool isTcpToggled();
+		RefBox* refBox;
 public Q_SLOTS:
 		void PlayOnPressed(void);
 		void StopPressed(void);
@@ -86,7 +88,6 @@ public Q_SLOTS:
 			bool localToggled;
 			bool multiToggled;
 			bool tcpToggled;
-			RefBox* refBox;
 			time_t timer;
 			QTcpSocket* tcpsocket;
 			QUdpSocket* udpsocket;
