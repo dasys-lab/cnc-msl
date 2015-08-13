@@ -59,11 +59,30 @@ namespace rqt_msl_refbox
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
 		widget_->installEventFilter(this);
-		this->tbl_widgetCyan->setRowCount(5);
-		this->tbl_widgetCyan->setColumnCount(2);
-		this->tbl_widgetCyan->setItemDelegate(new ItemDelegate);
-		this->tbl_widgetCyan->resizeRowsToContents();
-		this->tbl_widgetCyan->resizeColumnsToContents();
+		this->tbl_info->setRowCount(15);
+		this->tbl_info->setColumnCount(4);
+		this->tbl_info->verticalHeader()->setVisible(false);
+		this->tbl_info->horizontalHeader()->setVisible(false);
+		this->tbl_info->verticalHeader()->setDefaultSectionSize(16);
+		this->tbl_info->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+		QTableWidgetItem* item = new QTableWidgetItem();
+		item->setText("Team");
+		this->tbl_info->setItem(0,0,item);
+
+		QTableWidgetItem* item1 = new QTableWidgetItem();
+		item1->setText("Player");
+		this->tbl_info->setItem(0,1,item1);
+
+		QTableWidgetItem* item2 = new QTableWidgetItem();
+		item2->setText("In Field");
+		this->tbl_info->setItem(0,2,item2);
+
+		QTableWidgetItem* item3 = new QTableWidgetItem();
+		item3->setText("Card");
+		this->tbl_info->setItem(0,3,item3);
+
+
 	}
 
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
