@@ -39,16 +39,42 @@ typedef Kernel::Line_2 Line_2;
 
 namespace msl
 {
-
+	/**
+	 * capsules the path planner invocation
+	 */
 	class PathProxy
 	{
 	public:
 		PathProxy();
 		virtual ~PathProxy();
+		/**
+		 * get ego direction form path planner
+		 * @param egoTarget shared_ptr<geometry::CNPoint2D>
+		 * @param eval shared_ptr<PathEvaluator>
+		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+		 * @return shared_ptr<geometry::CNPoint2D>
+		 */
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<PathEvaluator> eval, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+		/**
+		 * get the path proxy instacne
+		 */
 		static PathProxy* getInstance();
+		/**
+		 * send debug msg with pathplanner path
+		 * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+		 */
 		void sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path);
+		/**
+		 * send debug msg with voroni infos
+		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+		 * @param voronoi shared_ptr<VoronoiNet>
+		 */
 		void sendVoronoiNetMsg(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
+		/**
+		 * calculates cropped voronoi for debug msg
+		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+		 * @param voronoi shared_ptr<VoronoiNet>
+		 */
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
 
 	private:
