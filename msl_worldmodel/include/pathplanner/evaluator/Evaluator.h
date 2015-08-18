@@ -20,6 +20,9 @@ namespace msl
 		virtual ~Evaluator();
 		double eval(shared_ptr<VoronoiNet> voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path,
 					geometry::CNPoint2D startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+
+	private:
+		double clearSpaceWeight;
 };
 
 }
