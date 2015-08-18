@@ -44,23 +44,34 @@ namespace alica
 	void DribbleToAttackPoint::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
+		//get own Pos
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		//get voronoi net
 		auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+		//get ego bal pos
 		auto egoBallPos = wm->ball.getEgoBallPosition();
 		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
-		if (ownPos == nullptr || vNet == nullptr)
+		//check if need information is available
+		if (ownPos == nullptr || vNet == nullptr || egoBallPos == nullptr)
 		{
 			cout << "returning" << endl;
 			return;
 		}
+		//get opponents positions
 		auto opponents = vNet->getOpponentPositions();
-		//    Constant ball handle wheel speed
+
+		//Constant ball handle wheel speed for testing
 		BallHandleCmd bhc;
 		bhc.leftMotor = (int8_t)this->wheelSpeed;
 		bhc.rightMotor = (int8_t)this->wheelSpeed;
 		send(bhc);
+
+		//get point of pos
 		auto ownPoint = make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y);
+		//claculate ego target
 		egoTargetPoint = alloTargetPoint->alloToEgo(*ownPos);
+
+		//find closes opponent in maxOppDist
 		shared_ptr<geometry::CNPoint2D> closestOpponent = nullptr;
 		double lowestDist = numeric_limits<double>::max();
 		double dist = 0;
@@ -77,18 +88,25 @@ namespace alica
 				}
 			}
 		}
+		//if there is no oppen closer than maxOppDist
 		if (closestOpponent == nullptr)
 		{
 			egoAlignPoint = egoTargetPoint;
 		}
+		//if ther is an opponent close enough
 		else
 		{
+			//change to ego coordinates
 			closestOpponent = closestOpponent->alloToEgo(*ownPos);
+			//calculate weighted vector to ego opp
 			auto weightedOppVector = closestOpponent->rotate(M_PI) * (1.0 / closestOpponent->length())
 					*  (this->oppVectorWeight - closestOpponent->length())/*egoTargetPoint->length() / 5.0*/;
+			//calculate weighted vector to target point
 			auto weightedTargetVector = egoTargetPoint * (1.0 / egoTargetPoint->length()) * closestOpponent->length();
+			//calculate align point facing away from opp
 			egoAlignPoint = (weightedOppVector + weightedTargetVector)->normalize() * 1000;
 		}
+		//debug msg
 		msl_msgs::VoronoiNetInfo netMsg;
 		if (closestOpponent != nullptr)
 		{
@@ -103,9 +121,12 @@ namespace alica
 //			}
 			lastClosesOpp = closestOpponent;
 		}
+		//create motion control
 		msl_actuator_msgs::MotionControl mc;
 
+		//get way from path planner
 		shared_ptr<geometry::CNPoint2D> temp = msl::PathProxy::getInstance()->getEgoDirection(egoTargetPoint, eval);
+		//if angle to alignpoint is too high
 		if (egoAlignPoint->rotate(M_PI)->angleTo() > M_PI / 2)
 		{
 			mc.motion.rotation = 2 * M_PI;
@@ -116,24 +137,29 @@ namespace alica
 		}
 		else
 		{
+			//adjustment
 //        	sinus regelung
 //			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //                    * abs(sin(egoAlignPoint->rotate(M_PI)->angleTo())) * 2; // + (egoAlignPoint->rotate(M_PI)->angleTo() - lastRotError) * 0.3;
 //			wurzel regelung
 //        	mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo()
 //					* sqrt(abs(egoAlignPoint->rotate(M_PI)->angleTo())) * 2;
+			//calculate clausen function
 			double clausenValue = 0.0;
 			for (int i = 1; i < this->clausenDepth; i++)
 			{
 				clausenValue += sin(i * egoAlignPoint->rotate(M_PI)->angleTo()) / pow(i, this->clausenPow);
 			}
+			// calculate past rotation average
 			double sum = 0;
 			for (int i = 0; i < pastRotation.size(); i++)
 			{
 				sum += pastRotation.at(i);
 			}
+			//adjust rotation
 			mc.motion.rotation = (sum + egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue)) / (this->pastRotationSize + 1); // *4
 			counter++;
+			//set past rotation
 			pastRotation.at(counter % this->pastRotationSize) = egoAlignPoint->rotate(M_PI)->angleTo() * abs(clausenValue);
 		}
 		// crate the motion orthogonal to the ball
@@ -143,21 +169,25 @@ namespace alica
 		driveTo = driveTo * rotationWeight;
 
 		// add the motion towards the ball
-		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length())/*/(1 + rotationWeight)*/;
+		driveTo = driveTo + temp->normalize() * min(maxDribbleSpeed, temp->length()) /(1 + abs(mc.motion.rotation) * this->targetDriveWeight);
 
 		mc.motion.angle = driveTo->angleTo();
 		mc.motion.translation = min(this->maxVel, driveTo->length());
 //		cout << "Rotation " << mc.motion.rotation << " Angle " << egoAlignPoint->rotate(M_PI)->angleTo() << endl;
+		//debug msg
 		msl_msgs::Point2dInfo info;
 		info.x = egoAlignPoint->egoToAllo(*ownPos)->x;
 		info.y = egoAlignPoint->egoToAllo(*ownPos)->y;
 		netMsg.sites.push_back(info);
+		//check if goal is reached
 		if (egoTargetPoint->length() < 250)
 		{
 			this->success = true;
 		}
+		//save last error
 		lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();
 		voroniPub.publish(netMsg);
+		//send motion control
 		send(mc);
 		/*PROTECTED REGION END*/
 	}

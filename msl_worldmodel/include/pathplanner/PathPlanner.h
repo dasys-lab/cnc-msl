@@ -41,7 +41,6 @@ typedef DelaunayAdaptionTraits::Site_2 Site_2;
 #include "SystemConfig.h"
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/VoronoiNet.h"
-#include "pathplanner/VoronoiStatus.h"
 #include <msl_sensor_msgs/WorldModelData.h>
 #include "msl_msgs/CorridorCheck.h"
 #include "msl_msgs/Point2dInfo.h"

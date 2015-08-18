@@ -197,9 +197,12 @@ namespace msl
 		//get sites
 		for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
 		{
+			//check if source and target exist
+			//if there is no source or target the edge is connected to point at infinity
 			if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x())
 					&& !std::isnan(it->target().y()))
 			{
+				//push back source and target
 				ret->push_back(make_shared<geometry::CNPoint2D>(it->source().x(), it->source().y()));
 				ret->push_back(make_shared<geometry::CNPoint2D>(it->target().x(), it->target().y()));
 			}
