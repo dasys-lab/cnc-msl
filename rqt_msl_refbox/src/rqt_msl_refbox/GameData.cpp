@@ -310,7 +310,6 @@ namespace rqt_msl_refbox
 			this->refBox->RefLog->append("Creating TCP Socket");
 
 			QString destHost = this->refBox->ledit_ipaddress->text();
-//			QString destHost = "141.51.122.182";
 			quint16 destPort = this->refBox->spin_port->value();
 			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
 
@@ -341,7 +340,7 @@ namespace rqt_msl_refbox
 
 			this->refBox->lbl_statusCon->setText("TRY CONNECT: MILTICAST ");
 
-			QString adressMulti = "230.0.0.1";
+			QString adressMulti = destHost;
 			QHostAddress adress = QHostAddress(adressMulti);
 
 			udpsocket->bind(adress, destPort);
@@ -373,7 +372,7 @@ namespace rqt_msl_refbox
 		}
 		if(buffer.size() > 1)
 		{
-			std::cout << "BUFFER " <<  buffer.data() << std::endl;
+//			std::cout << "BUFFER " <<  buffer.data() << std::endl;
 			tinyxml2::XMLDocument doc;
 			doc.Parse(buffer.data());
 			tinyxml2::XMLElement* element = doc.FirstChildElement();
@@ -389,7 +388,7 @@ namespace rqt_msl_refbox
 		quint16 senderPort;
 
 		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
+//		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
 
 		tinyxml2::XMLDocument doc;
 

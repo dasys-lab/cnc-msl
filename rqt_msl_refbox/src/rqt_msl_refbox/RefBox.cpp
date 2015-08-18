@@ -89,8 +89,8 @@ namespace rqt_msl_refbox
 	{
 		if(!gameData->isLocalToggled()
 				&& (gameData->isMultiToggled() || gameData->isTcpToggled())
-//				&& ledit_ipaddress->text().size() > 5
-//				&& ledit_ipaddress->text().count(".") == 3
+				&& ledit_ipaddress->text().size() > 5
+				&& ledit_ipaddress->text().count(".") == 3
 				&& spin_port->value() > 0)
 		{
 			btn_connect->setEnabled(true);

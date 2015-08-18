@@ -8,6 +8,7 @@
 #include "rqt_msl_refbox/XMLProtocolParser.h"
 #include <iostream>
 
+
 namespace rqt_msl_refbox
 {
 
@@ -16,6 +17,8 @@ namespace rqt_msl_refbox
 		this->gameData = gameData;
 		this->cyan =  false;
 		this->magenta =  false;
+		this->goalCyan = 0;
+		this->goalMagenta = 0;
 	}
 
 	XMLProtocolParser::~XMLProtocolParser()
@@ -126,6 +129,10 @@ namespace rqt_msl_refbox
 		else if(str.compare("CardAwarded") == 0)
 		{
 			handleCardAwarded(curChild);
+		}
+		else if(str.compare("Goals") == 0)
+		{
+//			Nothing to, comes with team data
 		}
 		else
 		{
@@ -472,7 +479,17 @@ namespace rqt_msl_refbox
 
 			if(strName.compare("team") == 0)
 			{
-				//TODO NEUER TAB
+				if(strAttr.compare("Cyan") == 0)
+				{
+					this->goalCyan++;
+				}
+				else if(strAttr.compare("Magenta"))
+				{
+					this->goalMagenta++;
+				}
+
+				std::string goal =  std::to_string(goalCyan) + " : " + std::to_string(goalMagenta);
+				this->gameData->refBox->lbl_score->setText(QString::fromStdString(goal));
 			}
 			else if(strName.compare("player") == 0)
 			{
@@ -484,11 +501,11 @@ namespace rqt_msl_refbox
 			}
 			else if(strName.compare("stage") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_stage->setText(QString(valAttr));
 			}
 			else if(strName.compare("time") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_time->setText(QString(valAttr));
 			}
 			attr = attr->Next();
 		}
@@ -523,11 +540,11 @@ namespace rqt_msl_refbox
 			}
 			else if(strName.compare("time") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_time->setText(QString(valAttr));
 			}
 			else if(strName.compare("stage") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_stage->setText(QString(valAttr));
 			}
 			attr = attr->Next();
 		}
