@@ -11,16 +11,15 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 
+using namespace std;
+
 /*PROTECTED REGION END*/
 namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1438790362133) ENABLED START*/ //initialise static variables here
-	double PositionExecutor::fastTranslation;
-	double PositionExecutor::fastRotation;
-
 	/*PROTECTED REGION END*/
 	PositionExecutor::PositionExecutor() :
-			DomainBehaviour("PositionExecutor")
+			DomainBehaviour("PositionExecutor"), catchRadius(100), field(nullptr)
 	{
 		/*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
 		/*PROTECTED REGION END*/
@@ -82,20 +81,18 @@ namespace alica
 				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
 				// ask the path planner how to get there
 
-				MSLWorldModel* wm = MSLWorldModel::get();
-				long time = wm->game.getTimeSinceStart();
+				msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 
 				cout << "TimeSinceStart: " << time << endl;
 				cout << "distance to ball: " << egoTarget->length() << endl;
 
-				// check time
-				if (time > 5000 && egoTarget->length() > 4000)
-				{
-					mc = moveToPointFast(egoTarget, receiverPos->alloToEgo(*ownPos), 0, additionalPoints);
+				if (wm->game.getSituation() == msl::Situation::Start)
+				{ // they already pressed start and we are still positioning, so speed up!
+					mc = msl::RobotMovement::moveToPointFast(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius, additionalPoints);
 				}
 				else
-				{
-					mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
+				{ // still enough time to position...
+					mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius,
 																	additionalPoints);
 				}
 			}
@@ -119,116 +116,55 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1438790362133) ENABLED START*/ //Add additional options here
 		string receiverTaskName;
+		EntryPoint* receiverEp;
 		if (getParameter("receiverTask", receiverTaskName))
 		{
-			EntryPoint* receiverEp = this->getParentEntryPoint(receiverTaskName);
-			if (receiverEp == nullptr)
-			{ // there is no entrypoint with the given receiver task attached
-			  // repair that stuff with getparent and weak pointer ... see run method
-				auto parent = this->runningPlan->getParent().lock();
-				if (parent != nullptr && ((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
-				{ // there is only one other entry point than our own entry point, so it must be the receivers entry point.
-				  // which is my own entry point, so take the other one for the receiver
-					auto activeEp = this->runningPlan->getActiveEntryPoint();
-					auto eps = ((Plan*)parent->getPlan())->getEntryPoints();
+			receiverEp = this->getParentEntryPoint(receiverTaskName);
+		}
 
-					for (auto iterator = eps.begin(); iterator != eps.end(); iterator++)
-					{
-						if (iterator->second != activeEp)
-						{
-							receiverEp = iterator->second;
-						}
-					}
-				}
-				else
+		if (receiverEp == nullptr)
+		{ // there is no entrypoint with the receiver task given by the behaviour parameters
+			auto parent = this->runningPlan->getParent().lock();
+			if (parent != nullptr && ((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
+			{ // there is only one other entry point than our own entry point, so it must be the receivers entry point.
+
+				// which is my own entry point, so take the other one for the receiver
+				auto activeEp = this->runningPlan->getActiveEntryPoint();
+				auto eps = ((Plan*)parent->getPlan())->getEntryPoints();
+
+				for (auto ep : eps)
 				{
-					cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+					if (ep.first != activeEp->getId())
+					{
+						receiverEp = ep.second;
+						break;
+					}
 				}
 			}
 			else
-			{ // we found the entry point of the receiver, so everything is cool
+			{
+				cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+				throw std::runtime_error("PositionExecutor: Could not determine the receivers entry point!");
 			}
 		}
 		else
-		{
-			cerr << "PositionExecutor: Parameter receiverTask does not exists!" << endl;
+		{ // we found the entry point of the receiver, so everything is cool
 		}
 
+		// set some static member variables
 		field = msl::MSLFootballField::getInstance();
-		string tmp;
-		bool success = true;
 		alloTarget = make_shared<geometry::CNPoint2D>(0, 0);
-		success &= getParameter("TaskName", tmp);
-		try
-		{
-			if (success)
-			{
-				taskName = tmp;
-			}
-		}
-		catch (exception& e)
-		{
-			cerr << "Could not cast the parameter properly" << endl;
-		}
-		if (!success)
-		{
-			cerr << "Parameter does not exist" << endl;
-		}
 
 		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
-	MotionControl PositionExecutor::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
-	{
-		MotionControl mc;
-		// from moveToPointCarefully
-		// changed parameter defaultRotateP to fastRotation and defaultTranslation to fastTranslation
-		if (egoTarget->length() > 400)
-		{
-			MSLWorldModel* wm = MSLWorldModel::get();
-			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
-			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-			additionalPoints);
-			if(temp == nullptr)
-			{
-				cout << "alloTarget = nullptr" << endl;
-				temp = egoTarget;
-			}
-			mc.motion.angle = temp->angleTo();
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * fastRotation;
-			if (temp->length() > snapDistance)
-			{
-				mc.motion.translation = std::min(temp->length(), fastTranslation);
-			}
-			else
-			{
-				mc.motion.translation = 0;
-			}
-		}
-		else
-		{
-			mc.motion.angle = egoTarget->angleTo();
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * fastRotation;
-			if (egoTarget->length() > snapDistance)
-			{
-				mc.motion.translation = std::min(egoTarget->length(), fastTranslation);
-			}
-			else
-			{
-				mc.motion.translation = 0;
-			}
-		}
-		return mc;
-	}
+
 
 	void PositionExecutor::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		fastTranslation = (*sc)["DriveFast"]->get<double>("Drive", "Velocity", NULL);
-		fastRotation = (*sc)["DriveFast"]->get<double>("Drive", "Rotation", NULL);
+		catchRadius =  (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -58,4 +58,6 @@
   <tasks id="1307185798142" name="InGamePassReceiver" comment="" description=""/>
   <tasks id="1432209050494" name="Blocker" comment="" description=""/>
   <tasks id="1434112683820" name="OffensiveMidfield" comment="" description=""/>
+  <tasks id="1439997010902" name="ExecuteStandard" comment="" description=""/>
+  <tasks id="1439997023446" name="ReceiveStandard" comment="" description=""/>
 </alica:TaskRepository>

@@ -7,11 +7,11 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionReceiver.beh#1439379352605</plans>
   </states>
   <entryPoints id="1438785376161" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1438785487838</task>
+    <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1438785376160</state>
   </entryPoints>
   <entryPoints id="1438785392109" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1438785462405</task>
+    <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1438785501838</state>
   </entryPoints>
 </alica:Plan>
