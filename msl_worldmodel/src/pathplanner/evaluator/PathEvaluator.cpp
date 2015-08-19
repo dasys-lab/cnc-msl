@@ -12,7 +12,6 @@ namespace msl
 
 	PathEvaluator::PathEvaluator(PathPlanner* planner)
 	{
-		this->clearSpaceWeight = 0;
 		this->planner = planner;
 		this->sc = SystemConfig::getInstance();
 		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
@@ -33,27 +32,25 @@ namespace msl
 	{
 	}
 
-	double PathEvaluator::distance(shared_ptr<geometry::CNPoint2D> first, shared_ptr<geometry::CNPoint2D> second)
-	{
-		return std::sqrt(std::pow(first->x - second->x, 2) + std::pow(first->y - second->y, 2));
-	}
-
-	double PathEvaluator::square(double a)
-	{
-		return a * a;
-	}
-
-	//TODO comments
+	/**
+	 * Calculates the cost for a voronoi vertex
+	 */
 	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
 								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
 	{
+
+		// add the cost of current node to return
 		double ret = currentNode->getCost();
-		ret += pathLengthWeight * distance(currentNode->getVertex(), nextNode->getVertex());
-//		cout << "path weight: " << ret << endl;
+		// add weighted distance to return
+		ret += pathLengthWeight * currentNode->getVertex()->distanceTo(nextNode->getVertex());
 		auto p = planner->getLastPath();
-		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1)
+		auto lastGoal = planner->getLastTarget();
+		//if we are in the first node, there has been a path before und the goal changed
+		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1 && lastGoal != nullptr
+				&& lastGoal->distanceTo(goal) > 250)
 		{
+			//claculate agle between the first edge of the current path and the last path
 			double a = startPos->x - currentNode->getVertex()->x;
 			double b = startPos->y - currentNode->getVertex()->y;
 			double c = p->at(0)->x - p->at(1)->x;
@@ -65,57 +62,44 @@ namespace msl
 			double cos_angle = (a * c + b * d) / (mag_v1 * mag_v2);
 			double theta = acos(cos_angle);
 
+			// if the angle is higher then M_PI / 2 use M_PI - angle
 			if (theta > M_PI / 2)
 			{
 				theta = M_PI - theta;
 			}
+			//if there is a valid angle add weighted angle to return
 			if (theta != NAN)
 			{
 				ret += pathDeviationWeight * theta;
 			}
 		}
-//		cout << "after path deviation: " << ret << endl;
+		/*
+		 * can be null so check it
+		 */
 		if (voronoi != nullptr)
 		{
+			//get sites next to voronoi edge
 			pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> obs =
 					voronoi->getSitesNextToHalfEdge(currentNode->getVertex(), nextNode->getVertex());
 
-//			if (obs.first != nullptr)
-//			{
-//				msl_msgs::VoronoiNetInfo netMsg;
-//				msl_msgs::Point2dInfo info;
-//				info.x = obs.first->x;
-//				info.y = obs.first->y;
-//				netMsg.sites.push_back(info);
-//				msl_msgs::Point2dInfo info2;
-//				info2.x = obs.second->x;
-//				info2.y = obs.second->y;
-//				netMsg.sites.push_back(info2);
-//				voroniPub.publish(netMsg);
-
-//				if(this->planner->corridorCheck(voronoi,currentNode->getVertex(), nextNode->getVertex(),obs.first) || this->planner->corridorCheck(voronoi,currentNode->getVertex(), nextNode->getVertex(),obs.second))
-//				{
-//					return -1.0;
-//				}
-				double distFirst = geometry::GeometryCalculator::distancePointToLineSegment(obs.first->x, obs.first->y,
+			if (obs.first != nullptr)
+			{
+				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
+				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first->x, obs.first->y,
 																							currentNode->getVertex(),
 																							nextNode->getVertex());
-//				double distSecond = geometry::GeometryCalculator::distancePointToLineSegment(
-//						obs.second->x, obs.second->y, currentNode->getVertex(), nextNode->getVertex());
-				double dist = obstacleDistanceWeight
-						* ((1.0 / distFirst) + obstacleDistanceWeight * (1.0 / distFirst));
-				ret += dist;
+				//calcualte weighted dist to both objects
+				ret += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
 
-//				cout << "distance " << distFirst << " " << distFirst << " "
-//						<< this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth() << endl;
-				if ((distFirst + distFirst)
+				//if the distance to the obstacles is too small return -1 to not expand this node
+				if ((distobs * 2)
 						< (this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth()))
 				{
 					return -1.0;
 				}
-//			}
+			}
 		}
-//		cout << "after obstacle distance: " << ret << endl;
+		//if the path is longer then one vertex add cost for the angle
 		if (currentNode->getPredecessor() != nullptr)
 		{
 			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
@@ -125,16 +109,18 @@ namespace msl
 			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
+			// if the angle is higher then M_PI / 2 use M_PI - angle
+
 			if (theta > M_PI / 2)
 			{
 				theta = M_PI - theta;
 			}
+			//if there is a valid angle add weighted angle to return
 			if (theta != NAN)
 			{
 				ret += pathAngleWeight * theta;
 			}
 		}
-//		cout << "final weight: " << ret << endl;
 		return ret;
 	}
 

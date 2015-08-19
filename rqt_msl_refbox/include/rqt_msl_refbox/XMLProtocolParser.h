@@ -10,6 +10,8 @@
 
 #include "rqt_msl_refbox/GameData.h"
 #include "rqt_msl_refbox/tinyxml2.h"
+#include <vector>
+#include <string>
 
 namespace rqt_msl_refbox
 {
@@ -49,6 +51,12 @@ namespace rqt_msl_refbox
 		GameData* gameData;
 		bool cyan;
 		bool magenta;
+		std::vector<std::string> cyanSetup;
+		std::vector<std::string> magentaSetup;
+		bool fillSetup(const char* valAttr);
+		void fillTable(std::string name, std::string inField);
+		int goalCyan;
+		int goalMagenta;
 	};
 
 } /* namespace rqt_pm_control */

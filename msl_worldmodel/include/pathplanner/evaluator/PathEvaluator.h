@@ -16,11 +16,12 @@
 #include <SystemConfig.h>
 #include <ros/ros.h>
 #include "msl_msgs/VoronoiNetInfo.h"
+#include "pathplanner/evaluator/IPathEvaluator.h"
 namespace msl
 {
 	class PathPlanner;
 	class VoronoiNet;
-	class PathEvaluator
+	class PathEvaluator : IPathEvaluator
 	{
 	public:
 		PathEvaluator(PathPlanner* planner);
@@ -28,21 +29,36 @@ namespace msl
 		virtual double eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
 							VoronoiNet* voronoi = nullptr,
-							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr);
+							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = nullptr);
 
 	protected:
-		double clearSpaceWeight;
+		/**
+		 * Diameter of a robot
+		 */
 		double robotDiameter;
+		/**
+		 * additional corridor with for the corridor check to ensure that no obstacle is near the path
+		 */
 		double additionalCorridorWidth;
+		/**
+		 * weigt for inverted distance of obstalces to to voronoi edge
+		 */
 		double obstacleDistanceWeight;
+		/**
+		 * weight for the length of the path
+		 */
 		double pathLengthWeight;
+		/**
+		 * weight for angle between 2 edges
+		 */
 		double pathAngleWeight;
+		/**
+		 * weight for the deviation of path start
+		 */
 		double pathDeviationWeight;
 		PathPlanner* planner;
 		ros::Publisher voroniPub;
 		ros::NodeHandle n;
-		static double distance(shared_ptr<geometry::CNPoint2D> first, shared_ptr<geometry::CNPoint2D> second);
-		static double square(double a);
 		supplementary::SystemConfig* sc;
 
 	};

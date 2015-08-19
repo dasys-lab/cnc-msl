@@ -14,6 +14,9 @@
 namespace msl
 {
 
+	/**
+	 * struct for generating a cropped voronoi from a delaunay
+	 */
 	struct Cropped_voronoi_from_delaunay
 	{
 		std::list<Segment_2> m_cropped_vd;
@@ -62,31 +65,42 @@ namespace msl
 	{
 	}
 
-	//TODO wie ersten knoten anfahren
-	//TODO verschiedene mgl zum anfahren des ersten punktes
+	/**
+	 * get ego direction form path planner
+	 * @param egoTarget shared_ptr<geometry::CNPoint2D>
+	 * @param eval shared_ptr<PathEvaluator>
+	 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+	 * @return shared_ptr<geometry::CNPoint2D>
+	 */
 	shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 																shared_ptr<PathEvaluator> eval,
 																shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
+		//save target
 		lastPathTarget = egoTarget;
 		shared_ptr<VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
 		//TODO remove
 //		auto tmp = net->blockThreeMeterAroundBall();
+		//if there are additional points insert them into the voronoi diagram
 		if(additionalPoints != nullptr)
 		{
 			net->insertAdditionalPoints(additionalPoints);
 		}
 		shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
+		//get own position
 		shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
+			//plan
 			shared_ptr<geometry::CNPoint2D> alloTarget = egoTarget->egoToAllo(*ownPos);
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = this->wm->pathPlanner.plan(net,
 			make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, eval);
 			if (path != nullptr)
 			{
+				//get first point of returned path
 				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
 
+				//send debug msgs
 				if(pathPlannerDebug)
 				{
 					path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
@@ -95,6 +109,7 @@ namespace msl
 				}
 			}
 		}
+		//remove additional points form voronoi
 		if(additionalPoints != nullptr)
 		{
 			net->removeSites(additionalPoints);
@@ -109,12 +124,19 @@ namespace msl
 
 	}
 
+	/**
+	 * get the path proxy instacne
+	 */
 	PathProxy* PathProxy::getInstance()
 	{
 		static PathProxy instance;
 		return &instance;
 	}
 
+	/**
+	 * send debug msg with pathplanner path
+	 * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+	 */
 	void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path)
 	{
 		msl_msgs::PathPlanner pathMsg;
@@ -128,6 +150,11 @@ namespace msl
 		pathPub.publish(pathMsg);
 	}
 
+	/**
+	 * send debug msg with voroni infos
+	 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 */
 	void PathProxy::sendVoronoiNetMsg(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > sites,
 										shared_ptr<VoronoiNet> voronoi)
 	{
@@ -150,20 +177,32 @@ namespace msl
 		voroniPub.publish(netMsg);
 	}
 
+	/**
+	 * calculates cropped voronoi for debug msg
+	 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 */
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathProxy::calculateCroppedVoronoi(
 			shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > sites, shared_ptr<VoronoiNet> voronoi)
 	{
+		//create bounding box around field with additional 3m distance
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		Iso_rectangle_2 bbox(- msl::MSLFootballField::FieldLength / 2 - 3000, -msl::MSLFootballField::FieldWidth / 2 - 3000,
 							 msl::MSLFootballField::FieldLength / 2 + 3000, msl::MSLFootballField::FieldWidth / 2 + 3000);
+		//create cropped voronoi
 		Cropped_voronoi_from_delaunay vor(bbox);
+		//get delaunay
 		DelaunayTriangulation dt = voronoi->getVoronoi()->dual();
 		dt.draw_dual(vor);
+		//get sites
 		for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
 		{
+			//check if source and target exist
+			//if there is no source or target the edge is connected to point at infinity
 			if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x())
 					&& !std::isnan(it->target().y()))
 			{
+				//push back source and target
 				ret->push_back(make_shared<geometry::CNPoint2D>(it->source().x(), it->source().y()));
 				ret->push_back(make_shared<geometry::CNPoint2D>(it->target().x(), it->target().y()));
 			}

@@ -8,6 +8,7 @@
 #include "rqt_msl_refbox/XMLProtocolParser.h"
 #include <iostream>
 
+
 namespace rqt_msl_refbox
 {
 
@@ -16,6 +17,8 @@ namespace rqt_msl_refbox
 		this->gameData = gameData;
 		this->cyan =  false;
 		this->magenta =  false;
+		this->goalCyan = 0;
+		this->goalMagenta = 0;
 	}
 
 	XMLProtocolParser::~XMLProtocolParser()
@@ -127,6 +130,10 @@ namespace rqt_msl_refbox
 		{
 			handleCardAwarded(curChild);
 		}
+		else if(str.compare("Goals") == 0)
+		{
+//			Nothing to, comes with team data
+		}
 		else
 		{
 			std::cerr << "RQTREFBOX: CANNOT PARSE-> " << val << std::endl;
@@ -164,12 +171,14 @@ namespace rqt_msl_refbox
 	{
 		this->gameData->sendStop();
 		this->gameData->refBox->RefLog->append("Game Stop");
+		this->gameData->refBox->lbl_command->setText("Game Stop");
 	}
 
 	void XMLProtocolParser::handleGameStart(tinyxml2::XMLElement* curChild)
 	{
 		this->gameData->sendStart();
 		this->gameData->refBox->RefLog->append("Game Start");
+		this->gameData->refBox->lbl_command->setText("Game Start");
 	}
 
 	void XMLProtocolParser::handleKickOff(tinyxml2::XMLElement* curChild)
@@ -182,11 +191,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanKickOff();
 			this->gameData->refBox->RefLog->append("KickOff Cyan");
+			this->gameData->refBox->lbl_command->setText("KickOff Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaKickOff();
 			this->gameData->refBox->RefLog->append("KickOff Magenta");
+			this->gameData->refBox->lbl_command->setText("KickOff Magenta");
 		}
 	}
 
@@ -194,6 +205,7 @@ namespace rqt_msl_refbox
 	{
 		this->gameData->sendDroppedBall();
 		this->gameData->refBox->RefLog->append("Dropped Ball");
+		this->gameData->refBox->lbl_command->setText("Dropped Ball");
 	}
 
 	void XMLProtocolParser::handleFreeKick(tinyxml2::XMLElement* curChild)
@@ -206,11 +218,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanFreeKick();
 			this->gameData->refBox->RefLog->append("FreeKick Cyan");
+			this->gameData->refBox->lbl_command->setText("FreeKick Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaFreeKick();
 			this->gameData->refBox->RefLog->append("FreeKick Magenta");
+			this->gameData->refBox->lbl_command->setText("FreeKick Magenta");
 		}
 
 	}
@@ -225,11 +239,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanGoalKick();
 			this->gameData->refBox->RefLog->append("GoalKick Cyan");
+			this->gameData->refBox->lbl_command->setText("GoalKick Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaGoalKick();
 			this->gameData->refBox->RefLog->append("GoalKick Magenta");
+			this->gameData->refBox->lbl_command->setText("GoalKick Magenta");
 		}
 	}
 
@@ -243,11 +259,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanThrownin();
 			this->gameData->refBox->RefLog->append("ThrowIn Cyan");
+			this->gameData->refBox->lbl_command->setText("ThrowIn Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaThrownin();
 			this->gameData->refBox->RefLog->append("ThrowIn Magenta");
+			this->gameData->refBox->lbl_command->setText("ThrowIn Magenta");
 		}
 
 	}
@@ -262,11 +280,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanCornerKick();
 			this->gameData->refBox->RefLog->append("CornerKick Cyan");
+			this->gameData->refBox->lbl_command->setText("CornerKick Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaCornerKick();
 			this->gameData->refBox->RefLog->append("CornerKick Magenta");
+			this->gameData->refBox->lbl_command->setText("CornerKick Magenta");
 		}
 
 	}
@@ -281,11 +301,13 @@ namespace rqt_msl_refbox
 		{
 			this->gameData->sendCyanPenalty();
 			this->gameData->refBox->RefLog->append("Penalty Cyan");
+			this->gameData->refBox->lbl_command->setText("Penalty Cyan");
 		}
 		else if (str.compare("Magenta") == 0)
 		{
 			this->gameData->sendMagentaPenalty();
 			this->gameData->refBox->RefLog->append("Penalty Magenta");
+			this->gameData->refBox->lbl_command->setText("Penalty Magenta");
 		}
 	}
 
@@ -293,6 +315,7 @@ namespace rqt_msl_refbox
 	{
 		this->gameData->sendParking();
 		this->gameData->refBox->RefLog->append("Parking");
+		this->gameData->refBox->lbl_command->setText("Parking");
 	}
 
 	void XMLProtocolParser::handleGameInfo(tinyxml2::XMLElement* curChild)
@@ -358,11 +381,11 @@ namespace rqt_msl_refbox
 
 			if(strName.compare("name") == 0)
 			{
-				//TODO NEUER TAB
+				fillSetup(valAttr);
 			}
 			else if(strName.compare("leader") == 0)
 			{
-				//TODO NEUER TAB
+				fillSetup(valAttr);
 			}
 
 			attr = attr->Next();
@@ -372,6 +395,9 @@ namespace rqt_msl_refbox
 	void XMLProtocolParser::handlePlayer(tinyxml2::XMLElement* curChild)
 	{
 		const tinyxml2::XMLAttribute* attr = curChild->FirstAttribute();
+		std::string name = "";
+		std::string inField = "";
+		bool found = false;
 		while(attr != nullptr)
 		{
 			const char* valAttr = attr->Value();
@@ -381,15 +407,18 @@ namespace rqt_msl_refbox
 
 			if(strName.compare("name") == 0)
 			{
-				//TODO NEUER TAB
+				found = fillSetup(valAttr);
+				name = valAttr;
 			}
 			else if(strName.compare("inField") == 0)
 			{
-				//TODO NEUER TAB
+				inField = valAttr;
 			}
 
 			attr = attr->Next();
 		}
+		if(!found)
+			fillTable(name, inField);
 	}
 
 	void XMLProtocolParser::handlePlayerOut(tinyxml2::XMLElement* curChild)
@@ -450,7 +479,17 @@ namespace rqt_msl_refbox
 
 			if(strName.compare("team") == 0)
 			{
-				//TODO NEUER TAB
+				if(strAttr.compare("Cyan") == 0)
+				{
+					this->goalCyan++;
+				}
+				else if(strAttr.compare("Magenta"))
+				{
+					this->goalMagenta++;
+				}
+
+				std::string goal =  std::to_string(goalCyan) + " : " + std::to_string(goalMagenta);
+				this->gameData->refBox->lbl_score->setText(QString::fromStdString(goal));
 			}
 			else if(strName.compare("player") == 0)
 			{
@@ -462,11 +501,11 @@ namespace rqt_msl_refbox
 			}
 			else if(strName.compare("stage") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_stage->setText(QString(valAttr));
 			}
 			else if(strName.compare("time") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_time->setText(QString(valAttr));
 			}
 			attr = attr->Next();
 		}
@@ -501,14 +540,74 @@ namespace rqt_msl_refbox
 			}
 			else if(strName.compare("time") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_time->setText(QString(valAttr));
 			}
 			else if(strName.compare("stage") == 0)
 			{
-				//TODO NEUER TAB
+				this->gameData->refBox->lbl_stage->setText(QString(valAttr));
 			}
 			attr = attr->Next();
 		}
 	}
+	bool XMLProtocolParser::fillSetup(const char* valAttr)
+	{
+		if(cyan && std::find(cyanSetup.begin(), cyanSetup.end(), valAttr) == cyanSetup.end())
+		{
+			cyanSetup.push_back(valAttr);
+			return false;
+		}
+		else if(magenta && std::find(magentaSetup.begin(), magentaSetup.end(), valAttr) == magentaSetup.end())
+		{
+			magentaSetup.push_back(valAttr);
+			return false;
+		}
+		return true;
+	}
+	void XMLProtocolParser::fillTable(std::string name, std::string inField)
+	{
+		int row = this->gameData->refBox->tbl_info->rowCount();
+		std::string team = "";
+		if(cyan)
+			team =  cyanSetup[0];
+		else if (magenta)
+			team = magentaSetup[0];
 
+		for(int i = 0; i < row; i++)
+		{
+			if(this->gameData->refBox->tbl_info->item(i, 0) == nullptr)
+			{
+				QTableWidgetItem* item = new QTableWidgetItem();
+				item->setText(QString::fromStdString(team));
+				this->gameData->refBox->tbl_info->setItem(i,0,item);
+
+				QTableWidgetItem* item1 = new QTableWidgetItem();
+				item1->setText(QString::fromStdString(name));
+				this->gameData->refBox->tbl_info->setItem(i,1,item1);
+
+				QTableWidgetItem* item2 = new QTableWidgetItem();
+				item2->setText(QString::fromStdString(inField));
+				this->gameData->refBox->tbl_info->setItem(i,2,item2);
+
+				QTableWidgetItem* item3 = new QTableWidgetItem();
+				this->gameData->refBox->tbl_info->setItem(i,3,item3);
+
+				if(cyan)
+				{
+					item->setBackground(Qt::cyan);
+					item1->setBackground(Qt::cyan);
+					item2->setBackground(Qt::cyan);
+					item3->setBackground(Qt::cyan);
+				}
+				else
+				{
+					item->setBackground(Qt::magenta);
+					item1->setBackground(Qt::magenta);
+					item2->setBackground(Qt::magenta);
+					item3->setBackground(Qt::magenta);
+				}
+
+				break;
+			}
+		}
+	}
 } /* namespace rqt_pm_control */

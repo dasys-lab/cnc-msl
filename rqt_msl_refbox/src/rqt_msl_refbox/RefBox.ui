@@ -59,7 +59,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -8767,7 +8767,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>63</width>
+         <width>71</width>
          <height>16</height>
         </rect>
        </property>
@@ -8792,7 +8792,7 @@
         <rect>
          <x>180</x>
          <y>0</y>
-         <width>71</width>
+         <width>81</width>
          <height>16</height>
         </rect>
        </property>
@@ -8817,7 +8817,7 @@
         <rect>
          <x>0</x>
          <y>20</y>
-         <width>46</width>
+         <width>61</width>
          <height>16</height>
         </rect>
        </property>
@@ -8905,7 +8905,7 @@
         <rect>
          <x>0</x>
          <y>50</y>
-         <width>51</width>
+         <width>61</width>
          <height>16</height>
         </rect>
        </property>
@@ -8931,7 +8931,7 @@
         <rect>
          <x>100</x>
          <y>120</y>
-         <width>44</width>
+         <width>51</width>
          <height>21</height>
         </rect>
        </property>
@@ -8996,7 +8996,7 @@
       <widget class="QLabel" name="lbl_forStage">
        <property name="geometry">
         <rect>
-         <x>10</x>
+         <x>0</x>
          <y>0</y>
          <width>41</width>
          <height>16</height>
@@ -9009,7 +9009,7 @@
       <widget class="QLabel" name="lbl_stage">
        <property name="geometry">
         <rect>
-         <x>50</x>
+         <x>40</x>
          <y>0</y>
          <width>49</width>
          <height>16</height>
@@ -9022,9 +9022,9 @@
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>110</x>
+         <x>90</x>
          <y>0</y>
-         <width>49</width>
+         <width>31</width>
          <height>16</height>
         </rect>
        </property>
@@ -9035,7 +9035,7 @@
       <widget class="QLabel" name="lbl_time">
        <property name="geometry">
         <rect>
-         <x>140</x>
+         <x>120</x>
          <y>0</y>
          <width>49</width>
          <height>16</height>
@@ -9043,32 +9043,6 @@
        </property>
        <property name="text">
         <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>20</y>
-         <width>71</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Team name:</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>20</y>
-         <width>71</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Team name:</string>
        </property>
       </widget>
       <widget class="QLabel" name="lbl_teamName1">
@@ -9097,23 +9071,39 @@
         <string/>
        </property>
       </widget>
-      <widget class="QTableWidget" name="tbl_widgetCyan">
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>0</y>
+         <width>41</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Score:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_score">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>0</y>
+         <width>54</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="tbl_info">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>40</y>
-         <width>131</width>
-         <height>121</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QTableWidget" name="tbl_widgetMagenta">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>40</y>
-         <width>131</width>
-         <height>121</height>
+         <y>20</y>
+         <width>271</width>
+         <height>151</height>
         </rect>
        </property>
       </widget>
