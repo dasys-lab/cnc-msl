@@ -72,6 +72,7 @@ msl_localization::msl_localization(int nParticles_) {
 	minimizationSteps = 12;
 	mh = MapHelper::getInstance();
 	minimize = mh->gradientAvailable();
+
 }
 
 
@@ -92,24 +93,18 @@ void inline msl_localization::normalizeAngle(double &ang)
 void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char* distanceMap){
 	printf("----------------------------------------------------\n");
 
-	tf::StampedTransform transform;
+
+	msl_actuator_msgs::RawOdometryInfo odomotryInfo;
+
 	if(useOdometry) {
-		try{
-			listener.lookupTransform("/odom", "/base_link",  RosMsgReceiver::getInstance()->getObservationTime(), transform);
-		} catch (tf::TransformException ex) {
-			ROS_ERROR("%s",ex.what());
-			return;
-		}
-	} else {
-		transform.setOrigin(tf::Vector3(0, 0, 0.0));
-		transform.setRotation(tf::createQuaternionFromYaw(0));
+		odomotryInfo = *RosMsgReceiver::getInstance()->getOdometryInfo();
 	}
 	
 	//Compute RawOdo Delta
 	Position updatePos;
-	updatePos.x = transform.getOrigin().getX() - oldTransform.getOrigin().getX();
-	updatePos.y = transform.getOrigin().getY() - oldTransform.getOrigin().getY();
-	updatePos.heading = transform.getRotation().getAngle() - oldTransform.getRotation().getAngle();
+	updatePos.x = odomotryInfo.position.x - oldOdometryInfo.position.x;
+	updatePos.y = odomotryInfo.position.y - oldOdometryInfo.position.y;
+	updatePos.heading = odomotryInfo.position.angle - oldOdometryInfo.position.angle;
 	normalizeAngle(updatePos.heading);
 
 	updateParticles(updatePos.x, updatePos.y, updatePos.heading);
@@ -396,7 +391,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	//Update rawUpdatedPosition;
 	//Position rawPosition = rawOdometryHelper->getPositionData();
 	
-	double rotAngle = rawUpdatedPosition.heading - transform.getRotation().getAngle();
+	double rotAngle = rawUpdatedPosition.heading - odomotryInfo.position.angle;
 	normalizeAngle(rotAngle);
 
 	double deltaX = cos(rotAngle)*updatePos.x - sin(rotAngle)*updatePos.y;
@@ -541,7 +536,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	coi.locType.type = (LocalizationType::ParticleFilter);
 
 	printf("MaxParticle Confidence %f\n", coi.certainty);		
-	oldTransform = transform;
+	oldOdometryInfo = odomotryInfo;
 	writeCoi();
 
 	if(particles[nParticles - 1].weight < 0.5)
@@ -773,7 +768,7 @@ void msl_localization::updateParticles(double deltaX, double deltaY, double delt
 	if(!useOdometry) return;
 
 	double odoAngle = 0;
-	odoAngle = oldTransform.getRotation().getAngle();
+	odoAngle = oldOdometryInfo.position.angle;
 	
 	for(int i = 0; i < nParticles; i++){
 		double rotAngle = particles[i].heading - odoAngle;
@@ -927,36 +922,8 @@ void msl_localization::writeCoi()
 	if (coi.certainty != -1 ) {
 		unsigned long long timestamp = ros::Time::now().sec*1000000000ull+ros::Time::now().nsec;
 		coi.timestamp = (timestamp);
-		double aa = coi.position.angle;
-		double bb = oldTransform.getRotation().getAngle();
-		
-		tf::Transform transform;
-		transform.setOrigin(tf::Vector3(coi.position.x, coi.position.y, 0.0));
-		transform.setRotation(tf::createQuaternionFromYaw(aa));
-		
-		transform = transform*(oldTransform.inverse());
 
-		/*while(aa > M_PI) aa -= 2*M_PI;
-		while(aa < -M_PI) aa += 2*M_PI;
-		while(bb > M_PI) bb -= 2*M_PI;
-		while(bb < -M_PI) bb += 2*M_PI;
-		
-		double a = aa-bb;
-		if(a > M_PI) a = -2*M_PI + a;
-		if(a < -M_PI) a = 2*M_PI + a;
-		
-		
-		
-		double x = cos(a) * oldTransform.getOrigin().getX() - sin(a) * oldTransform.getOrigin().getY();
-		double y = sin(a) * oldTransform.getOrigin().getX() + cos(a) * oldTransform.getOrigin().getY();
-		
-		std::cout << "x " << coi.position.x << "  " << oldTransform.getOrigin().getX() << std::endl;
-		std::cout << "y " << coi.position.y << "  " << oldTransform.getOrigin().getY() << std::endl;
-		std::cout << "a " << coi.position.angle << "  " << oldTransform.getRotation().getAngle() << std::endl;
-		transform.setOrigin(tf::Vector3(coi.position.x - x, coi.position.y - y, 0.0));
-		transform.setOrigin(tf::Vector3(0, 0, 0.0));
-		transform.setRotation(tf::createQuaternionFromYaw(a));*/
-		tfBroadcaster.sendTransform(tf::StampedTransform(transform, RosMsgReceiver::getInstance()->getObservationTime(), "/map", "/odom"));
+		RosMsgReceiver::getInstance()->coipub.publish(coi);
 	}
 	else printf("NewLoc: OOOPS no coi in particlefilter");
 }
