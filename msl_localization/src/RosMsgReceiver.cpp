@@ -24,6 +24,7 @@ void RosMsgReceiver::initialize() {
 	OdometrySub = node.subscribe("/RawOdometry", 10, &RosMsgReceiver::handleOdometryInfoMessage, (this));
 	
 	particlepub = node.advertise<geometry_msgs::PoseArray>("/particlecloud", 1);
+	coipub = node.advertise<msl_sensor_msgs::CorrectedOdometryInfo>("/CorrectedOdometryInfo", 1);
 	
 	//spinner = new ros::AsyncSpinner(1);
 	//spinner->start();

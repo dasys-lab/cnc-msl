@@ -11,6 +11,7 @@
 #include "geometry_msgs/PoseArray.h"
 #include "msl_sensor_msgs/LinePointList.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
+#include "msl_sensor_msgs/CorrectedOdometryInfo.h"
 
 
 class RosMsgReceiver {
@@ -34,6 +35,8 @@ class RosMsgReceiver {
 		void poseProcessed() {pseReceived=false;};
 		bool dirty;
 		
+		ros::Publisher coipub;
+
 	protected:
 		void handleMapMessage(const nav_msgs::OccupancyGrid::ConstPtr& message);
 		void handleScanMessage(const sensor_msgs::LaserScan::ConstPtr& scan);
@@ -47,7 +50,7 @@ class RosMsgReceiver {
 		ros::Subscriber OdometrySub;
 		
 		ros::Publisher particlepub;
-		
+
 		ros::Time observTime;
 		
 		nav_msgs::MapMetaData mapInfo;
