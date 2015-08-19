@@ -93,7 +93,7 @@ namespace alica
         {
             if (wm->robots.getObstacles(i) != nullptr)
             {
-            	// weighted analysis of past and current obstacles
+                // weighted analysis of past and current obstacles
                 for (auto it = wm->robots.getObstacles(i)->begin(); it != wm->robots.getObstacles(i)->end(); it++)
                 {
                     geometry::CNPoint2D obs(it->x, it->y);

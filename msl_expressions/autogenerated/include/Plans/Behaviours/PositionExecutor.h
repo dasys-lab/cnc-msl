@@ -4,6 +4,9 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1438790362133) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
+#include "robotmovement/RobotMovement.h"
+
+using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,10 +24,17 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1438790362133) ENABLED START*/ //Add additional private methods here
-        string taskName;
-        shared_ptr<geometry::CNPoint2D> alloTarget;
-        msl::MSLFootballField* field;
-        /*PROTECTED REGION END*/};
-} /* namespace alica */
+        static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+                                             shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+                                         static void readConfigParameters();
+                                         static double fastTranslation;
+                                         static double fastRotation;
+                                         string taskName;
+                                         shared_ptr<geometry::CNPoint2D> alloTarget;
+                                         msl::MSLFootballField* field;
+                                         /*PROTECTED REGION END*/};
+                                 }
+                                 /* namespace alica */
 
 #endif /* PositionExecutor_H_ */

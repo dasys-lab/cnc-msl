@@ -3,7 +3,9 @@
   <states id="1438785376160" name="PosExec" comment="" entryPoint="1438785376161">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
   </states>
-  <states id="1438785501838" name="PosRecv" comment="" entryPoint="1438785392109"/>
+  <states id="1438785501838" name="PosRecv" comment="" entryPoint="1438785392109">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionReceiver.beh#1439379352605</plans>
+  </states>
   <entryPoints id="1438785376161" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../../../Misc/taskrepository.tsk#1438785487838</task>
     <state>#1438785376160</state>

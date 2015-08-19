@@ -2,15 +2,22 @@ using namespace std;
 #include "Plans/Behaviours/PositionExecutor.h"
 
 /*PROTECTED REGION ID(inccpp1438790362133) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+
+#include "MSLWorldModel.h"
+#include "pathplanner/PathProxy.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
+
 /*PROTECTED REGION END*/
 namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1438790362133) ENABLED START*/ //initialise static variables here
+	double PositionExecutor::fastTranslation;
+	double PositionExecutor::fastRotation;
+
 	/*PROTECTED REGION END*/
 	PositionExecutor::PositionExecutor() :
 			DomainBehaviour("PositionExecutor")
@@ -74,15 +81,30 @@ namespace alica
 				// calculate target 60cm away from the ball and on a line with the receiver
 				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
 				// ask the path planner how to get there
-				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-															additionalPoints);
+
+				MSLWorldModel* wm = MSLWorldModel::get();
+				long time = wm->game.getTimeSinceStart();
+
+				cout << "TimeSinceStart: " << time << endl;
+				cout << "distance to ball: " << egoTarget->length() << endl;
+
+				// check time
+				if (time > 5000 && egoTarget->length() > 4000)
+				{
+					mc = moveToPointFast(egoTarget, receiverPos->alloToEgo(*ownPos), 0, additionalPoints);
+				}
+				else
+				{
+					mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
+																	additionalPoints);
+				}
 			}
 			else
 			{
 				// if there is no receiver, align to middle
 				egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
 				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
-															additionalPoints);
+																additionalPoints);
 			}
 			// if we reach the point and are aligned, the behavior is successful
 			if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
@@ -104,12 +126,19 @@ namespace alica
 			{ // there is no entrypoint with the given receiver task attached
 			  // repair that stuff with getparent and weak pointer ... see run method
 				auto parent = this->runningPlan->getParent().lock();
-				if (parent != nullptr &&((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
+				if (parent != nullptr && ((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
 				{ // there is only one other entry point than our own entry point, so it must be the receivers entry point.
-				  // TODO which is my own entry point, so take the other one for the receiver
-				  //this->runningPlan->getActiveEntryPoint()
+				  // which is my own entry point, so take the other one for the receiver
 					auto activeEp = this->runningPlan->getActiveEntryPoint();
 					auto eps = ((Plan*)parent->getPlan())->getEntryPoints();
+
+					for (auto iterator = eps.begin(); iterator != eps.end(); iterator++)
+					{
+						if (iterator->second != activeEp)
+						{
+							receiverEp = iterator->second;
+						}
+					}
 				}
 				else
 				{
@@ -118,7 +147,6 @@ namespace alica
 			}
 			else
 			{ // we found the entry point of the receiver, so everything is cool
-
 			}
 		}
 		else
@@ -146,8 +174,61 @@ namespace alica
 		{
 			cerr << "Parameter does not exist" << endl;
 		}
+
+		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
-/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
+	/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
+	MotionControl PositionExecutor::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+	{
+		MotionControl mc;
+		// from moveToPointCarefully
+		// changed parameter defaultRotateP to fastRotation and defaultTranslation to fastTranslation
+		if (egoTarget->length() > 400)
+		{
+			MSLWorldModel* wm = MSLWorldModel::get();
+			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
+			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+			additionalPoints);
+			if(temp == nullptr)
+			{
+				cout << "alloTarget = nullptr" << endl;
+				temp = egoTarget;
+			}
+			mc.motion.angle = temp->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * fastRotation;
+			if (temp->length() > snapDistance)
+			{
+				mc.motion.translation = std::min(temp->length(), fastTranslation);
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
+		}
+		else
+		{
+			mc.motion.angle = egoTarget->angleTo();
+			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * fastRotation;
+			if (egoTarget->length() > snapDistance)
+			{
+				mc.motion.translation = std::min(egoTarget->length(), fastTranslation);
+			}
+			else
+			{
+				mc.motion.translation = 0;
+			}
+		}
+		return mc;
+	}
+
+	void PositionExecutor::readConfigParameters()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		fastTranslation = (*sc)["DriveFast"]->get<double>("Drive", "Velocity", NULL);
+		fastRotation = (*sc)["DriveFast"]->get<double>("Drive", "Rotation", NULL);
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

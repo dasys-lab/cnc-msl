@@ -35,6 +35,8 @@
 
 #include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
 
+#include  "Plans/Standards/Own/KickOff/constraints/OwnKickOff1438785376159Constraints.h"
+
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
@@ -44,6 +46,8 @@
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
+
+#include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"
 
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 

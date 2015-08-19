@@ -18,10 +18,14 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785501838"/>
-    <value xPos="146" yPos="229" width="71" height="67"/>
+    <value xPos="146" yPos="229" width="71" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/PositionReceiver.beh#1439379352605"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

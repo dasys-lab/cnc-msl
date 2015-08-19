@@ -62,7 +62,8 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > aimPoint = make_shared < geometry::CNPoint2D
                 > (field->FieldLength / 2.0 - 500, 0);
-		aimPoint = msl::PathProxy::getInstance()->getEgoDirection(aimPoint, make_shared<msl::PathEvaluator>(&(wm->pathPlanner)));
+        aimPoint = msl::PathProxy::getInstance()->getEgoDirection(
+                aimPoint, make_shared < msl::PathEvaluator > (&(wm->pathPlanner)));
         shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
         if (aimPoint != nullptr)
         {

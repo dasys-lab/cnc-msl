@@ -3,9 +3,11 @@ using namespace std;
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
 
+#include  "Plans/Attack/SearchForPassPoint.h"
+
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
-#include  "Plans/Attack/SearchForPassPoint.h"
+#include  "Plans/Behaviours/AlignToRobot.h"
 
 #include  "Plans/Attack/Wander.h"
 
@@ -13,9 +15,13 @@ using namespace std;
 
 #include  "Plans/Behaviours/AttackOpp.h"
 
+#include  "Plans/Behaviours/PositionReceiver.h"
+
 #include  "Plans/Behaviours/GoalKick.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
+
+#include  "Plans/Behaviours/KickOffPassDefault.h"
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
@@ -32,6 +38,8 @@ using namespace std;
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
 #include  "Plans/Attack/AlignAndPassRapid.h"
+
+#include  "Plans/Behaviours/PositionExecutor.h"
 
 #include  "Plans/Attack/OneEighty.h"
 
@@ -73,14 +81,19 @@ namespace alica
         switch (behaviourConfId)
         {
 
+            case 1436269036396:
+
+                return make_shared<SearchForPassPoint>();
+                break;
+
             case 1417620730939:
 
                 return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
-            case 1436269036396:
+            case 1438779292567:
 
-                return make_shared<SearchForPassPoint>();
+                return make_shared<AlignToRobot>();
                 break;
 
             case 1434716230628:
@@ -98,6 +111,11 @@ namespace alica
                 return make_shared<AttackOpp>();
                 break;
 
+            case 1439379352605:
+
+                return make_shared<PositionReceiver>();
+                break;
+
             case 1415205578139:
 
                 return make_shared<GoalKick>();
@@ -110,6 +128,11 @@ namespace alica
             case 1436961206415:
 
                 return make_shared<DriveToPoint>();
+                break;
+
+            case 1438778223495:
+
+                return make_shared<KickOffPassDefault>();
                 break;
 
             case 1433950043262:
@@ -154,6 +177,11 @@ namespace alica
             case 1436269080263:
 
                 return make_shared<AlignAndPassRapid>();
+                break;
+
+            case 1438790487994:
+
+                return make_shared<PositionExecutor>();
                 break;
 
             case 1434650910857:

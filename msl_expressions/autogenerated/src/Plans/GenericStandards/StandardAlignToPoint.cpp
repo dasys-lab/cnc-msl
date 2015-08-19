@@ -48,11 +48,11 @@ namespace alica
         // robot is executor
         if (!isReceiver)
         {
-        	// get entry point of task name to locate robot with task name
+            // get entry point of task name to locate robot with task name
             EntryPoint* ep = getParentEntryPoint(taskName);
             if (ep != nullptr)
             {
-            	// get the plan in which the behavior is running
+                // get the plan in which the behavior is running
                 auto parent = this->runningPlan->getParent().lock();
                 if (parent == nullptr)
                 {
@@ -66,7 +66,7 @@ namespace alica
                 int id = ids->at(0);
                 if (id != -1)
                 {
-                	// get receiver position by id
+                    // get receiver position by id
                     auto pos = wm->robots.getTeamMatePosition(id);
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
@@ -75,7 +75,7 @@ namespace alica
                 // if there is a receiver, align to it
                 if (receiverPos != nullptr)
                 {
-                	// calculate target 60cm away from the ball and on a line with the receiver
+                    // calculate target 60cm away from the ball and on a line with the receiver
                     egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
                     // ask the path planner how to get there
                     mc = RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
@@ -83,7 +83,7 @@ namespace alica
                 }
                 else
                 {
-                	// if there is no receiver, align to middle
+                    // if there is no receiver, align to middle
                     egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
                     mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
                                                              additionalPoints);
@@ -98,7 +98,7 @@ namespace alica
         }
         else // receiver
         {
-        	//calculate point on a line with ball and mid on a distance of 2,3m
+            //calculate point on a line with ball and mid on a distance of 2,3m
             shared_ptr < geometry::CNPoint2D > egoTarget =
                     (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
 
