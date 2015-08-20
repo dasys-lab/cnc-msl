@@ -262,11 +262,11 @@ namespace msl
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		defaultTranslation = (*sc)["Drive"]->get<double>("Drive", "DefaultVelocity", NULL);
-		defaultRotateP = (*sc)["Drive"]->get<double>("Drive", "DefaultRotateP", NULL);
+		defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
+		defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
 		fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
 		fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
-		interceptCarfullyRotateP = (*sc)["Drive"]->get<double>("Drive", "InterceptCarefullyRotateP", NULL);
+		interceptCarfullyRotateP = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
 		alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
 		alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
 		alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot",	NULL);
