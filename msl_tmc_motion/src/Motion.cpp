@@ -8,6 +8,7 @@
 #include "Motion.h"
 #include <thread>
 #include <signal.h>
+#include <SystemConfig.h>
 
 namespace msl_driver
 {
@@ -15,49 +16,32 @@ namespace msl_driver
 	bool Motion::running;
 
 	Motion::Motion(int argc, char** argv)
-
 	{
+		this->motionValue = new MotionSet();
+		this->motionResult = new MotionSet();
 
-		/* RosCS.RosSharp.Init("Motion", args);
-		 node = Node.MainNode;
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		std::string driversPath = (*sc)["Motion"]->get<string>("Motion.DriversPath", NULL);
+		std::string driverName = (*sc)["Motion"]->get<string>("Motion.Driver", NULL);
+		std::string modelsPath = (*sc)["Motion"]->get<string>("Motion.ModelsPath", NULL);
+		std::string traceModelName = (*sc)["Motion"]->get<string>("Motion.TraceModel", NULL);
 
-		 this.motionValue = new MotionSet();
-		 this.motionResult = new MotionSet();
+		this->ownId = sc->getOwnRobotID();
+
+		this->odometryDelay = (*sc)["Motion"]->tryGet<int>(100000,"Motion","OdometryDelay", NULL);
+		// Read slip control parameters
+		this->slipControlEnabled = (*sc)["Motion"]->tryGet<bool>(false, "Motion", "SlipControl", "Enabled", NULL);
+		this->slipControlMinSpeed = (*sc)["Motion"]->tryGet<double>(1250.0, "Motion", "SlipControl", "MinSpeed", NULL);
+		this->slipControlDiffAngle = (*sc)["Motion"]->tryGet<double>((M_PI / 180.0) * 10.0, "Motion", "SlipControl", "DiffAngle", NULL);
+		this->slipControlDiffAngleMinSpeed = (*sc)["Motion"]->tryGet<double>(400.0, "Motion", "SlipControl", "DiffAngleMinSpeed", NULL);
+		this->slipControlOldMaxRot = (*sc)["Motion"]->tryGet<double>(M_PI / 20.0, "Motion", "SlipControl", "OldMaxRot", NULL);
+		this->slipControlNewMinRot = (*sc)["Motion"]->tryGet<double>(M_PI / 2.0, "Motion", "SlipControl", "NewMinRot", NULL);
 
 
-		 Arguments a = new Arguments();
-		 a.SetOption("?group!", "Logical Geminga group string");
-		 a.SetOption("?help", "Command line help");
+		/*
 
-		 try {
-		 a.Consume(args);
-		 } catch (Exception) {
-		 Console.WriteLine(a.ToString());
-		 Environment.Exit(0);
-		 }
 
-		 if (a.OptionIsSet("help")) {
-		 Console.WriteLine(a.ToString());
-		 Environment.Exit(0);
-		 }
 
-		 string driversPath = this.sc["Motion"].GetString("Motion", "DriversPath");
-		 string driverName = this.sc["Motion"].GetString("Motion", "Driver");
-		 string modelsPath = this.sc["Motion"].GetString("Motion", "ModelsPath");
-		 string traceModelName = this.sc["Motion"].GetString("Motion", "TraceModel");
-
-		 this.ownId=SystemConfig.GetOwnRobotID();
-
-		 this.odometryDelay = this.sc["Motion"].TryGetInt(100000,"Motion","OdometryDelay");
-		 // Read slip control parameters
-		 this.slipControlEnabled = this.sc["Motion"].TryGetBool(false, "Motion", "SlipControl", "Enabled");
-		 this.slipControlMinSpeed = this.sc["Motion"].TryGetDouble(1250.0, "Motion", "SlipControl", "MinSpeed");
-		 this.slipControlDiffAngle = this.sc["Motion"].TryGetDouble((Math.PI / 180.0) * 10.0, "Motion", "SlipControl", "DiffAngle");
-		 this.slipControlDiffAngleMinSpeed = this.sc["Motion"].TryGetDouble(400.0, "Motion", "SlipControl", "DiffAngleMinSpeed");
-		 this.slipControlOldMaxRot = this.sc["Motion"].TryGetDouble(Math.PI / 20.0, "Motion", "SlipControl", "OldMaxRot");
-		 this.slipControlNewMinRot = this.sc["Motion"].TryGetDouble(Math.PI / 2.0, "Motion", "SlipControl", "NewMinRot");
-
-		 //			Trace.WriteLine("Motion: slip control {0}", (this.slipControlEnabled ? "enabled" : "disabled"));
 
 		 if (this.slipControlEnabled) {
 		 Trace.WriteLine("Motion: slip control min speed            = {0}", this.slipControlMinSpeed);
@@ -192,6 +176,18 @@ namespace msl_driver
 		// Call the ros signal handler method
 		ros::shutdown();
 	}
+	/**
+	 * This is for handling SIGTERM to terminate
+	 * @param sig
+	 */
+	void Motion::pmSigTermHandler(int sig)
+	{
+		cout << endl << "Motion: Caught SIGTERM! Terminating ..." << endl;
+		running = false;
+
+		// Call the ros signal handler method
+		ros::shutdown();
+	}
 
 } /* namespace msl_driver */
 
@@ -201,6 +197,7 @@ int main(int argc, char** argv)
 	motion->initCommunication(argc, argv);
 	// has to be set after Motion::initCommunication , in order to override the ROS signal handler
 	signal(SIGINT, msl_driver::Motion::pmSigintHandler);
+	signal(SIGTERM, msl_driver::Motion::pmSigTermHandler);
 	motion->start();
 
 	while (motion->isRunning())

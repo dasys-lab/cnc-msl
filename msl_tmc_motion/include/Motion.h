@@ -13,7 +13,9 @@
 #include <ros/ros.h>
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "msl_actuator_msgs/MotionStatInfo.h"
+#include "MotionData.h"
 #include <chrono>
+#include <math.h>
 
 using namespace std;
 
@@ -37,6 +39,7 @@ namespace msl_driver
 		bool isRunning();
 
 		static void pmSigintHandler(int sig);
+		static void pmSigTermHandler(int sig);
 		static bool running;
 
 	private:
@@ -48,6 +51,21 @@ namespace msl_driver
 
 
 		thread* mainThread;
+
+	protected:
+		MotionSet* motionValue = nullptr;
+		MotionSet* motionResult = nullptr;
+		int ownId;
+		int odometryDelay = 0;
+
+
+		double slipControlFactor = 1.0;
+		bool slipControlEnabled = false;
+		double slipControlMinSpeed = 1250.0;
+		double slipControlDiffAngle = ((M_PI / 180.0) * 10.0);
+		double slipControlDiffAngleMinSpeed = 400.0;
+		double slipControlOldMaxRot = (M_PI / 20.0);
+		double slipControlNewMinRot = (M_PI / 2.0);
 	};
 
 } /* namespace msl_driver */
