@@ -55,6 +55,7 @@ namespace rqt_msl_refbox
 		std::vector<std::string> magentaSetup;
 		bool fillSetup(const char* valAttr);
 		void fillTable(std::string name, std::string inField);
+		void fillYellow(std::string team, std::string player, std::string color, std::string number);
 		int goalCyan;
 		int goalMagenta;
 	};
