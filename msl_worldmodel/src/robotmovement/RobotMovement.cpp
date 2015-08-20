@@ -18,6 +18,8 @@ namespace msl
 {
 	double RobotMovement::defaultTranslation;
 	double RobotMovement::defaultRotateP;
+	double RobotMovement::fastTranslation;
+	double RobotMovement::fastRotation;
 	double RobotMovement::interceptCarfullyRotateP;
 	double RobotMovement::lastRotError = 0;
 	double RobotMovement::alignToPointMaxRotation;
@@ -33,9 +35,33 @@ namespace msl
 		// TODO Auto-generated destructor stub
 	}
 
-	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance,
+	MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+	{
+		MotionControl mc;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>(&wm->pathPlanner);
+		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+		additionalPoints);
+		if(temp != nullptr)
+		{
+			egoTarget = temp;
+		}
+
+		mc.motion.angle = egoTarget->angleTo();
+		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * fastRotation;
+		if (egoTarget->length() > snapDistance)
+		{
+			mc.motion.translation = std::min(egoTarget->length(), fastTranslation);
+		}
+		else
+		{
+			mc.motion.translation = 0;
+		}
+		return mc;
+	}
+
+	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints )
 	{
 		MotionControl mc;
@@ -77,8 +103,7 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
 		MotionControl mc;
@@ -122,9 +147,7 @@ namespace msl
 		}
 	}
 
-	MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-													double angleTolerance)
+	MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance)
 	{
 		MotionControl mc;
 		double egoTargetAngle = egoTarget->angleTo();
@@ -139,19 +162,15 @@ namespace msl
 		else
 		{
 			mc.motion.angle = egoTargetAngle;
-			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
-					+ (deltaTargetAngle - lastRotError) * alignToPointpRot);
-			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-					* min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1) * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 			mc.motion.translation = 0;
 			lastRotError = deltaTargetAngle;
 		}
 		return mc;
 	}
 
-	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														shared_ptr<geometry::CNPoint2D> egoBallPos,
-														double angleTolerance, double ballAngleTolerance)
+	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint, shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance, double ballAngleTolerance)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -168,10 +187,8 @@ namespace msl
 		}
 		else
 		{
-			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
-					+ (deltaTargetAngle - lastRotError) * alignToPointpRot);
-			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-					* min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1) * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 
 			lastRotErrorWithBall = deltaTargetAngle;
 
@@ -188,9 +205,7 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-															shared_ptr<geometry::CNPoint2D> egoBallPos,
-															double angleTolerance, double ballAngleTolerance)
+	MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint, shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance, double ballAngleTolerance)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -247,23 +262,14 @@ namespace msl
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		defaultTranslation = (*sc)["Drive"]->get<double>("Drive", "DefaultVelocity",
-		NULL);
-
-		defaultRotateP = (*sc)["Drive"]->get<double>("Drive", "DefaultRotateP",
-		NULL);
-
+		defaultTranslation = (*sc)["Drive"]->get<double>("Drive", "DefaultVelocity", NULL);
+		defaultRotateP = (*sc)["Drive"]->get<double>("Drive", "DefaultRotateP", NULL);
+		fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
+		fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
 		interceptCarfullyRotateP = (*sc)["Drive"]->get<double>("Drive", "InterceptCarefullyRotateP", NULL);
-
-		alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation",
-		NULL);
-
-		alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation",
-		NULL);
-
-		alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot",
-		NULL);
-
+		alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+		alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
+		alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot",	NULL);
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 	}
 }

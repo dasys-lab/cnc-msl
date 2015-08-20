@@ -62,11 +62,11 @@ namespace msl
 	void PathPlanner::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
 		lock_guard<mutex> lock(voronoiMutex);
-		vector<geometry::CNPoint2D> points;
+		vector<shared_ptr<geometry::CNPoint2D>> points;
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		for (int i = 0; i < msg->obstacles.size(); i++)
 		{
-			points.push_back(*(geometry::CNPoint2D(msg->obstacles.at(i).x, msg->obstacles.at(i).y).egoToAllo(*ownPos)));
+			points.push_back(make_shared<geometry::CNPoint2D>(msg->obstacles.at(i).x, msg->obstacles.at(i).y)->egoToAllo(*ownPos));
 		}
 
 		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);

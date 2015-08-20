@@ -26,6 +26,8 @@ namespace msl
 	{
 	public:
 		virtual ~RobotMovement();
+		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
@@ -44,6 +46,8 @@ namespace msl
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;
+		static double fastTranslation;
+		static double fastRotation;
 		static double interceptCarfullyRotateP;
 
 	private:

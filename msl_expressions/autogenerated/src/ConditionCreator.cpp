@@ -34,6 +34,8 @@
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
+#include  "Plans/Standards/Own/KickOff/OwnKickOff1438785376159.h"
+
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
 #include  "Plans/GameStrategy/Other/DroppedBall1426694906399.h"
@@ -43,6 +45,8 @@
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
+
+#include  "Plans/Attack/StandardKickOff1438777024734.h"
 
 #include  "Plans/Penalty/OwnPenalty1431525185678.h"
 

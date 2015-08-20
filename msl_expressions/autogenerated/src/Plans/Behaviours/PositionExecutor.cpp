@@ -2,18 +2,24 @@ using namespace std;
 #include "Plans/Behaviours/PositionExecutor.h"
 
 /*PROTECTED REGION ID(inccpp1438790362133) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+
+#include "MSLWorldModel.h"
+#include "pathplanner/PathProxy.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
+
+using namespace std;
+
 /*PROTECTED REGION END*/
 namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1438790362133) ENABLED START*/ //initialise static variables here
 	/*PROTECTED REGION END*/
 	PositionExecutor::PositionExecutor() :
-			DomainBehaviour("PositionExecutor")
+			DomainBehaviour("PositionExecutor"), catchRadius(100), field(nullptr)
 	{
 		/*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
 		/*PROTECTED REGION END*/
@@ -74,15 +80,28 @@ namespace alica
 				// calculate target 60cm away from the ball and on a line with the receiver
 				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
 				// ask the path planner how to get there
-				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-															additionalPoints);
+
+				msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+
+				cout << "TimeSinceStart: " << time << endl;
+				cout << "distance to ball: " << egoTarget->length() << endl;
+
+				if (wm->game.getSituation() == msl::Situation::Start)
+				{ // they already pressed start and we are still positioning, so speed up!
+					mc = msl::RobotMovement::moveToPointFast(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius, additionalPoints);
+				}
+				else
+				{ // still enough time to position...
+					mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius,
+																	additionalPoints);
+				}
 			}
 			else
 			{
 				// if there is no receiver, align to middle
 				egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
 				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
-															additionalPoints);
+																additionalPoints);
 			}
 			// if we reach the point and are aligned, the behavior is successful
 			if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
@@ -97,57 +116,55 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1438790362133) ENABLED START*/ //Add additional options here
 		string receiverTaskName;
+		EntryPoint* receiverEp;
 		if (getParameter("receiverTask", receiverTaskName))
 		{
-			EntryPoint* receiverEp = this->getParentEntryPoint(receiverTaskName);
-			if (receiverEp == nullptr)
-			{ // there is no entrypoint with the given receiver task attached
-			  // repair that stuff with getparent and weak pointer ... see run method
-				auto parent = this->runningPlan->getParent().lock();
-				if (parent != nullptr &&((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
-				{ // there is only one other entry point than our own entry point, so it must be the receivers entry point.
-				  // TODO which is my own entry point, so take the other one for the receiver
-				  //this->runningPlan->getActiveEntryPoint()
-					auto activeEp = this->runningPlan->getActiveEntryPoint();
-					auto eps = ((Plan*)parent->getPlan())->getEntryPoints();
-				}
-				else
+			receiverEp = this->getParentEntryPoint(receiverTaskName);
+		}
+
+		if (receiverEp == nullptr)
+		{ // there is no entrypoint with the receiver task given by the behaviour parameters
+			auto parent = this->runningPlan->getParent().lock();
+			if (parent != nullptr && ((Plan*)parent->getPlan())->getEntryPoints().size() == 2)
+			{ // there is only one other entry point than our own entry point, so it must be the receivers entry point.
+
+				// which is my own entry point, so take the other one for the receiver
+				auto activeEp = this->runningPlan->getActiveEntryPoint();
+				auto eps = ((Plan*)parent->getPlan())->getEntryPoints();
+
+				for (auto ep : eps)
 				{
-					cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+					if (ep.first != activeEp->getId())
+					{
+						receiverEp = ep.second;
+						break;
+					}
 				}
 			}
 			else
-			{ // we found the entry point of the receiver, so everything is cool
-
+			{
+				cerr << "PositionExecutor: Could not determine the receivers entry point!" << endl;
+				throw std::runtime_error("PositionExecutor: Could not determine the receivers entry point!");
 			}
 		}
 		else
-		{
-			cerr << "PositionExecutor: Parameter receiverTask does not exists!" << endl;
+		{ // we found the entry point of the receiver, so everything is cool
 		}
 
+		// set some static member variables
 		field = msl::MSLFootballField::getInstance();
-		string tmp;
-		bool success = true;
 		alloTarget = make_shared<geometry::CNPoint2D>(0, 0);
-		success &= getParameter("TaskName", tmp);
-		try
-		{
-			if (success)
-			{
-				taskName = tmp;
-			}
-		}
-		catch (exception& e)
-		{
-			cerr << "Could not cast the parameter properly" << endl;
-		}
-		if (!success)
-		{
-			cerr << "Parameter does not exist" << endl;
-		}
+
+		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
-/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
+	/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
+
+
+	void PositionExecutor::readConfigParameters()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		catchRadius =  (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

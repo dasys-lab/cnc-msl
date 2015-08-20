@@ -64,8 +64,8 @@ class msl_localization {
 		int minimizationSteps;
 		bool minimize;
 		RandomGaussHelper* gaussHelper;
-		tf::TransformListener listener;
-		tf::StampedTransform oldTransform;
+
+		msl_actuator_msgs::RawOdometryInfo oldOdometryInfo;
 
 		msl_sensor_msgs::CorrectedOdometryInfo coi;
 

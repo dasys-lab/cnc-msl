@@ -14,7 +14,7 @@
     <outTransitions>#1430925960854</outTransitions>
   </states>
   <states id="1430925736746" name="OwnKickOff" comment="">
-    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Own/KickOff/OwnKickOff.pty#1438785270887</plans>
     <inTransitions>#1430925918585</inTransitions>
     <outTransitions>#1430925962882</outTransitions>
   </states>
