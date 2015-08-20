@@ -515,6 +515,11 @@ namespace rqt_msl_refbox
 	void XMLProtocolParser::handleCardAwarded(tinyxml2::XMLElement* curChild)
 	{
 		const tinyxml2::XMLAttribute* attr = curChild->FirstAttribute();
+		std::string team = "";
+		std::string player = "";
+		std::string color = "";
+		std::string number = "";
+
 		while(attr != nullptr)
 		{
 			const char* valAttr = attr->Value();
@@ -524,19 +529,19 @@ namespace rqt_msl_refbox
 
 			if(strName.compare("team") == 0)
 			{
-				//TODO NEUER TAB
+				team = strAttr;
 			}
 			else if(strName.compare("player") == 0)
 			{
-				//TODO NEUER TAB
+				player = strAttr;
 			}
 			else if(strName.compare("color") == 0)
 			{
-				//TODO NEUER TAB
+				color = strAttr;
 			}
 			else if(strName.compare("number") == 0)
 			{
-				//TODO NEUER TAB
+				number = strAttr;
 			}
 			else if(strName.compare("time") == 0)
 			{
@@ -548,6 +553,7 @@ namespace rqt_msl_refbox
 			}
 			attr = attr->Next();
 		}
+		fillYellow(team, player, color, number);
 	}
 	bool XMLProtocolParser::fillSetup(const char* valAttr)
 	{
@@ -610,4 +616,46 @@ namespace rqt_msl_refbox
 			}
 		}
 	}
-} /* namespace rqt_pm_control */
+	void XMLProtocolParser::fillYellow(std::string team, std::string player, std::string color, std::string number)
+	{
+		int row = this->gameData->refBox->tbl_info->rowCount();
+		std::string teamName = "";
+		if(team.compare("Cyan") == 0)
+		{
+			teamName = cyanSetup[0];
+		}
+		else
+		{
+			teamName = magentaSetup[0];
+		}
+
+
+		for(int i = 0; i < row; i++)
+		{
+			if(this->gameData->refBox->tbl_info->item(i, 1) != nullptr)
+			{
+				if(this->gameData->refBox->tbl_info->item(i, 1)->text().compare(QString::fromStdString(player)) == 0
+						&& this->gameData->refBox->tbl_info->item(i, 0)->text().compare(QString::fromStdString(teamName)) == 0)
+				{
+					if(number.compare("1") == 0 && color.compare("yellow") == 0)
+					{
+						this->gameData->refBox->tbl_info->item(i,3)->setBackground(Qt::yellow);
+						this->gameData->refBox->tbl_info->item(i,3)->setText("first yellow");
+					}
+					else if(number.compare("2")== 0 && color.compare("yellow") == 0)
+					{
+						this->gameData->refBox->tbl_info->item(i,3)->setBackground(Qt::red);
+						this->gameData->refBox->tbl_info->item(i,3)->setText("2 times yellow");
+					}
+					else
+					{
+						this->gameData->refBox->tbl_info->item(i,3)->setBackground(Qt::red);
+					}
+					break;
+				}
+			}
+		}
+
+	}
+	/* namespace rqt_pm_control */
+}
