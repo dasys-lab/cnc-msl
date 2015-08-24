@@ -79,17 +79,34 @@ namespace msl
 		if (voronoi != nullptr)
 		{
 			//get sites next to voronoi edge
-			pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> obs =
+			pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> obs =
 					voronoi->getSitesNextToHalfEdge(currentNode->getVertex(), nextNode->getVertex());
 
-			if (obs.first != nullptr)
+			if (obs.first.first != nullptr && obs.second.first != nullptr)
 			{
+
+				// Both are artificial sites, so dont expand
+				if(obs.first.second == -2 && obs.second.second == -2)
+				{
+					return -1.0;
+				}
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first->x, obs.first->y,
+				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
 																							currentNode->getVertex(),
 																							nextNode->getVertex());
 				//calcualte weighted dist to both objects
-				ret += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
+
+				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
+				if((obs.first.second > 0 && obs.second.second > 0) || (obs.first.second > 0 && obs.second.second != -1) || (obs.second.second > 0 && obs.first.second != -1))
+				{
+					ret += (obstacleDistanceWeight * (1.0 / distobs));
+				}
+				//One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
+				if(obs.first.second == -1 || obs.second.second == -1)
+				{
+					ret += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
+				}
+
 
 				//if the distance to the obstacles is too small return -1 to not expand this node
 				if ((distobs * 2)

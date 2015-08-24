@@ -84,9 +84,9 @@ namespace msl
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 shared_ptr<geometry::CNPoint2D>
 		 * @param v2 shared_ptr<geometry::CNPoint2D>
-		 * @return pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>>
+		 * @return pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>>
 		 */
-		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> getSitesNextToHalfEdge(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2);
+		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2);
 		/**
 		 * print the voronoi diagrams sites
 		 */

@@ -117,6 +117,7 @@ namespace msl
 	 * gets Vertices connected to SeachNode vertex
 	 * @param currentNode shared_ptr<SearchNode>
 	 * @return vector<shared_ptr<SearchNode>>
+	 * TODO: check whether it is possible to iterate through edges by using forward-edge.next and twin-edge.previous!?
 	 */
 	vector<shared_ptr<SearchNode>> VoronoiNet::getNeighboredVertices(shared_ptr<SearchNode> currentNode)
 	{
@@ -485,12 +486,12 @@ namespace msl
 	 * @param v2 VoronoiDiagram::Vertex
 	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 	 */
-	pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> VoronoiNet::getSitesNextToHalfEdge(
+	pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> VoronoiNet::getSitesNextToHalfEdge(
 			shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2)
 	{
-		pair<shared_ptr<geometry::CNPoint2D>, shared_ptr<geometry::CNPoint2D>> ret;
-		ret.first = nullptr;
-		ret.second = nullptr;
+		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> ret;
+		ret.first.first = nullptr;
+		ret.second.first = nullptr;
 		//iterate over faces
 		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
 		{
@@ -507,27 +508,47 @@ namespace msl
 				{
 					foundFirst = true;
 				}
-				if (edge->has_source() && abs(edge->source()->point().x() - v2->x) < 10
-						&& abs(edge->source()->point().y() - v2->y) < 10)
+				if (edge->has_target() && abs(edge->target()->point().x() - v2->x) < 10
+						&& abs(edge->target()->point().y() - v2->y) < 10)
 				{
 					foundSecond = true;
 				}
 				edge = edge->previous();
+				if(foundFirst && foundSecond)
+				{
+					break;
+				}
 			} while (edge != begin);
 			//if both points are found insert them into ret
 			if (foundFirst && foundSecond)
 			{
-				if (ret.first == nullptr)
+				if (ret.first.first == nullptr)
 				{
-					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-					continue;
+					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
+					{
+						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
+						{
+							ret.first = *current;
+							continue;
+						}
+					}
+//					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+//					continue;
 				}
-				if (ret.second == nullptr && abs(ret.first->x - fit->dual()->point().x()) > 0.001
-						&& abs(ret.first->y - fit->dual()->point().y()) > 0.001)
+				if (ret.second.first == nullptr && abs(ret.first.first->x - fit->dual()->point().x()) > 0.001
+						&& abs(ret.first.first->y - fit->dual()->point().y()) > 0.001)
 				{
-					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-
-					break;
+					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
+					{
+						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
+						{
+							ret.second = *current;
+							break;
+						}
+					}
+//					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+//
+//					break;
 				}
 
 			}
@@ -945,6 +966,7 @@ namespace msl
 		//calculate agle between slices of the circle
 		double slice = 2 * M_PI / pointCount;
 		//calculate points to block area
+		cout << pointCount << endl;
 		for (int i = 0; i < pointCount; i++)
 		{
 			//calculate point
