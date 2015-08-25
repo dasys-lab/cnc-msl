@@ -1,5 +1,5 @@
 /*
- * main.cpp
+ * actuator.cpp
  *
  *  Created on: Mar 10, 2015
  *      Author: Lukas Will
@@ -9,17 +9,16 @@
 #include "actuator.h"
 
 // fuer Tests
-//#include <thread>         // std::this_thread::sleep_for
-//#include <chrono>         // std::chrono::seconds
+//#include <thread>         // this_thread::sleep_for
+//#include <chrono>         // chrono::seconds
 //#include <stdio.h>		// File Open
 //#include <unistd.h>		// File Open
 
+using namespace std;
 using namespace BlackLib;
 
-std::mutex					mtx;
-//std::condition_variable		cv, cv2;
-
-timeval		ls, le, rs, re, ss, se, lis, lim, lie, sws, swe;
+mutex					mtx;
+//condition_variable		cv, cv2;
 
 uint8_t		th_count;
 
@@ -29,8 +28,6 @@ bool		th_activ = true;
 
 
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
-	gettimeofday(&last_ping, NULL);
-
 	if (msg.enabled) {
 		BH_right.setBallHandling(msg.rightMotor);
 		BH_left.setBallHandling(msg.leftMotor);
@@ -41,7 +38,6 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 }
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
-	gettimeofday(&last_ping, NULL);
 	shovel.last_ping = last_ping;
 
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
@@ -54,22 +50,19 @@ void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
-	gettimeofday(&last_ping, NULL);
-
 	// LED vom Maussensor ansteuern
+	adns3080.controlLED(msg.enable);
 }
 
 
 void controlBHLeft() {
-	std::unique_lock<std::mutex> l_bhl(threw[0].mtx);
+	unique_lock<mutex> l_bhl(threw[0].mtx);
 	while(th_activ) {
 		threw[0].cv.wait(l_bhl, [&] { return !th_activ || threw[0].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		gettimeofday(&ls, NULL);
 		BH_left.controlBallHandling();
-		gettimeofday(&le, NULL);
 
 		threw[0].notify = false;
 		cv_main.cv.notify_all();
@@ -77,15 +70,13 @@ void controlBHLeft() {
 }
 
 void controlBHRight() {
-	std::unique_lock<std::mutex> l_bhr(threw[1].mtx);
+	unique_lock<mutex> l_bhr(threw[1].mtx);
 	while(th_activ) {
 		threw[1].cv.wait(l_bhr, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		gettimeofday(&rs, NULL);
 		BH_right.controlBallHandling();
-		gettimeofday(&re, NULL);
 
 		threw[1].notify = false;
 		cv_main.cv.notify_all();
@@ -93,13 +84,12 @@ void controlBHRight() {
 }
 
 void contolShovelSelect() {
-	std::unique_lock<std::mutex> l_shovel(threw[2].mtx);
+	unique_lock<mutex> l_shovel(threw[2].mtx);
 	while(th_activ) {
 		threw[2].cv.wait(l_shovel, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		gettimeofday(&ss, NULL);
 		if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
 			shovel.enabled = false;
 			ShovelSelect.setRunState(stop);
@@ -111,7 +101,6 @@ void contolShovelSelect() {
 			}
 			ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
 		}
-		gettimeofday(&se, NULL);
 
 		threw[2].notify = false;
 		cv_main.cv.notify_all();
@@ -119,27 +108,23 @@ void contolShovelSelect() {
 }
 
 void getLightbarrier(ros::Publisher *hbiPub) {
-	std::unique_lock<std::mutex> l_light(threw[3].mtx);
+	unique_lock<mutex> l_light(threw[3].mtx);
 	while(th_activ) {
 		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		gettimeofday(&lis, NULL);
 		msl_actuator_msgs::HaveBallInfo msg;
 		uint16_t value = ADC_light.getNumericValue();
-		gettimeofday(&lim, NULL);
-
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			std::cout << "Ja - " << value << std::endl;
+			cout << "Ja - " << value << endl;
 		} else {
 			msg.haveBall = false;
-			std::cout << "Nein - " << value << std::endl;
+			cout << "Nein - " << value << endl;
 		}
 		hbiPub->publish(msg);
-		gettimeofday(&lie, NULL);
 
 		threw[3].notify = false;
 		cv_main.cv.notify_all();
@@ -147,13 +132,12 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 }
 
 void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	std::unique_lock<std::mutex> l_switches(threw[4].mtx);
+	unique_lock<mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
 		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		gettimeofday(&sws, NULL);
 		msl_actuator_msgs::VisionRelocTrigger msg;
 		std_msgs::Empty msg_empty;
 		uint8_t bundle, power, vision;
@@ -162,7 +146,6 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		vision = SW_Vision.getNumericValue();
 		power = SW_Power.getNumericValue();
 
-		msg.receiverID = 123;	// ???
 		msg.usePose = false;
 
 		if (bundle == 1) {
@@ -177,7 +160,6 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		if (power == 1) {
 
 		}
-		gettimeofday(&swe, NULL);
 
 		threw[4].notify = false;
 		cv_main.cv.notify_all();
@@ -185,13 +167,11 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 }
 
 void getIMU(ros::Publisher *imuPub) {
-	std::unique_lock<std::mutex> l_imu(threw[5].mtx);
+	unique_lock<mutex> l_imu(threw[5].mtx);
 	while(th_activ) {
 		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
-
-		gettimeofday(&sws, NULL);
 
 		// TODO IMU
 		lsm9ds0.sendData(time_now, imuPub);
@@ -202,13 +182,11 @@ void getIMU(ros::Publisher *imuPub) {
 }
 
 void getOptical(ros::Publisher *mbcPub) {
-	std::unique_lock<std::mutex> l_optical(threw[6].mtx);
+	unique_lock<mutex> l_optical(threw[6].mtx);
 	while(th_activ) {
 		threw[6].cv.wait(l_optical, [&] { return !th_activ || threw[6].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
-
-		gettimeofday(&sws, NULL);
 
 		// TODO MotionBurst
 		adns3080.send_motion_burst(time_now, mbcPub);
@@ -220,7 +198,7 @@ void getOptical(ros::Publisher *mbcPub) {
 
 void exit_program(int sig) {
 	ex = true;
-	std::cout << "Programm wird beendet." << std::endl;
+	cout << "Programm wird beendet." << endl;
 	th_activ = false;
 	cv_main.cv.notify_all();
 	for (int i=0; i<6; i++)
@@ -231,7 +209,7 @@ void exit_program(int sig) {
 
 
 int main(int argc, char** argv) {
-	std::cout << "Test Actuator-Beagle-Board" << std::endl;
+	cout << "Test Actuator-Beagle-Board" << endl;
 
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
@@ -249,13 +227,13 @@ int main(int argc, char** argv) {
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
-	/* std::thread th_controlBHRight(controlBHRight);
-	std::thread th_controlBHLeft(controlBHLeft);
-	std::thread th_controlShovel(contolShovelSelect);
-	std::thread th_lightbarrier(getLightbarrier, &hbiPub);
-	std::thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub); */
-	//std::thread th_adns3080(getOptical, &mbcPub);
-	//std::thread th_imu(getIMU, &imuPub);
+	/* thread th_controlBHRight(controlBHRight);
+	thread th_controlBHLeft(controlBHLeft);
+	thread th_controlShovel(contolShovelSelect);
+	thread th_lightbarrier(getLightbarrier, &hbiPub);
+	thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub); */
+	//thread th_adns3080(getOptical, &mbcPub);
+	//thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
 	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
@@ -269,7 +247,7 @@ int main(int argc, char** argv) {
 	adns3080.reset();
 	adns3080.adns_init();
 
-	std::cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << std::endl;
+	cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << endl;
 
 
 	usleep(50000);
@@ -283,14 +261,6 @@ int main(int argc, char** argv) {
 
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
-
-		testy++;
-				if (testy > 200) {testy = 0;}
-
-				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
-				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
-				std::cout << "Produkt-ID: '" << (int) adns3080.getProductId() << "' - '" << (int) adns3080.read(0x0a) << "'" << std::endl;
-
 
 		//TODO ADNS3080 Test
 		adns3080.update_motion_burst(time_now);
@@ -309,45 +279,12 @@ int main(int argc, char** argv) {
 		}
 
 		// auf beenden aller Threads warten
-		std::unique_lock<std::mutex> l_main(cv_main.mtx);
+		unique_lock<mutex> l_main(cv_main.mtx);
 		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
 		*/
 // TODO ende wieder einklammern ^^
 
 		gettimeofday(&nachher, NULL);
-
-
-/*
-		long int diffus = TIMEDIFFUS(nachher, vorher);
-		long int diffms = TIMEDIFFMS(nachher, vorher);
-
-		std::cout << "Zeit -gesamt: " << diffms << " - " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(mitte, vorher);
-		diffms = TIMEDIFFMS(mitte, vorher);
-		std::cout << "Zeit -mitte: " << diffms << " - " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(nachher, mitte);
-		diffms = TIMEDIFFMS(nachher, mitte);
-		std::cout << "Zeit -mitend: " << diffms << " - " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(le, ls);
-		std::cout << "Le : " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(re, rs);
-		std::cout << "Ri : " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(se, ss);
-		std::cout << "Sh : " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(lie, lim);
-		diffms = TIMEDIFFUS(lim, lis);
-		std::cout << "Li : " << diffms << " - " << diffus << std::endl;
-
-		diffus = TIMEDIFFUS(swe, sws);
-		diffms = TIMEDIFFMS(swe, sws);
-		std::cout << "Sw : " << diffus << std::endl;
-*/
 
 
 		// MotionBurst
@@ -356,7 +293,7 @@ int main(int argc, char** argv) {
 		loop_rate.sleep();
 	}
 
-	std::cout << "Programm beendet." << std::endl;
+	cout << "Programm beendet." << endl;
 
 	return 0;
 }
