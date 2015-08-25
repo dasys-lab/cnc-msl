@@ -84,7 +84,6 @@ namespace msl
 
 			if (obs.first.first != nullptr && obs.second.first != nullptr)
 			{
-
 				// Both are artificial sites, so dont expand
 				if(obs.first.second == -2 && obs.second.second == -2)
 				{

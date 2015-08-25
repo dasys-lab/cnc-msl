@@ -513,45 +513,65 @@ namespace msl
 				{
 					foundSecond = true;
 				}
-				edge = edge->previous();
 				if(foundFirst && foundSecond)
 				{
 					break;
 				}
+				edge = edge->previous();
 			} while (edge != begin);
-			//if both points are found insert them into ret
-			if (foundFirst && foundSecond)
+			foundFirst = false;
+			foundSecond = false;
+			//get face next to halfedge => get dual Point in delaunay
+			auto firstSite = edge->face()->dual()->point();
+			//get opposite halfedge => get face next to halfedge => get dual Point in delaunay
+			auto secondSite = edge->opposite()->face()->dual()->point();
+			for (auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
 			{
-				if (ret.first.first == nullptr)
+				if (abs(current->first->x - firstSite.x()) < 0.01
+						&& abs(current->first->y - firstSite.y()) < 0.01)
 				{
-					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
-					{
-						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
-						{
-							ret.first = *current;
-							continue;
-						}
-					}
-//					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-//					continue;
+					ret.first = *current;
+					foundFirst = true;
+					continue;
 				}
-				if (ret.second.first == nullptr && abs(ret.first.first->x - fit->dual()->point().x()) > 0.001
-						&& abs(ret.first.first->y - fit->dual()->point().y()) > 0.001)
+				if (abs(current->first->x - secondSite.x()) < 0.01
+						&& abs(current->first->y - secondSite.y()) < 0.01)
 				{
-					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
-					{
-						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
-						{
-							ret.second = *current;
-							break;
-						}
-					}
-//					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-//
-//					break;
+					ret.second = *current;
+					foundSecond = true;
+					continue;
 				}
-
+				if(foundFirst && foundSecond)
+				{
+					break;
+				}
 			}
+//			//if both points are found insert them into ret
+//			if (foundFirst && foundSecond)
+//			{
+//				if (ret.first.first == nullptr)
+//				{
+
+////					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+////					continue;
+//				}
+//				if (ret.second.first == nullptr && abs(ret.first.first->x - fit->dual()->point().x()) > 0.001
+//						&& abs(ret.first.first->y - fit->dual()->point().y()) > 0.001)
+//				{
+//					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
+//					{
+//						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
+//						{
+//							ret.second = *current;
+//							break;
+//						}
+//					}
+////					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
+////
+////					break;
+//				}
+//
+//			}
 		}
 		return ret;
 	}
