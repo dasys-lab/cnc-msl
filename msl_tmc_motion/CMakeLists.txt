@@ -4,7 +4,7 @@ project(msl_tmc_motion)
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
-find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config) 
+find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config cnc_geometry) 
 
 ###################################
 ## catkin specific configuration ##
@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_tmc_motion
-  CATKIN_DEPENDS msl_actuator_msgs system_config
+  CATKIN_DEPENDS msl_actuator_msgs system_config cnc_geometry
 #  DEPENDS system_lib 
 )
 
@@ -30,7 +30,7 @@ include_directories(
   include 
   ${catkin_INCLUDE_DIRS}
 )
-
-add_executable(${PROJECT_NAME} src/Motion.cpp)
+file(GLOB_RECURSE tmc_src "src/*.cpp")
+add_executable(${PROJECT_NAME} ${tmc_src})
 add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} system_config)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

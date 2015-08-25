@@ -17,8 +17,11 @@ namespace msl_driver
 
 	Motion::Motion(int argc, char** argv)
 	{
+//		node = Node.MainNode;
+
 		this->motionValue = new MotionSet();
 		this->motionResult = new MotionSet();
+
 
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		std::string driversPath = (*sc)["Motion"]->get<string>("Motion.DriversPath", NULL);
@@ -38,59 +41,42 @@ namespace msl_driver
 		this->slipControlNewMinRot = (*sc)["Motion"]->tryGet<double>(M_PI / 2.0, "Motion", "SlipControl", "NewMinRot", NULL);
 
 
-		/*
 
-
-
-
-		 if (this.slipControlEnabled) {
-		 Trace.WriteLine("Motion: slip control min speed            = {0}", this.slipControlMinSpeed);
-		 Trace.WriteLine("Motion: slip control diff angle           = {0}", this.slipControlDiffAngle);
-		 Trace.WriteLine("Motion: slip control diff angle min speed = {0}", this.slipControlDiffAngleMinSpeed);
-		 Trace.WriteLine("Motion: slip control old max rotation     = {0}", this.slipControlOldMaxRot);
-		 Trace.WriteLine("Motion: slip control new min rotation     = {0}", this.slipControlNewMinRot);
+		 if (this->slipControlEnabled)
+		 {
+			 std::cout << "Motion: slip control min speed  " << this->slipControlMinSpeed << std::endl;
+			 std::cout << "Motion: slip control diff angle  " << this->slipControlDiffAngle << std::endl;
+			 std::cout << "Motion: slip control diff angle min speed" << this->slipControlDiffAngleMinSpeed << std::endl;
+			 std::cout << "Motion: slip control old max rotation   " << this->slipControlOldMaxRot << std::endl;
+			 std::cout << "Motion: slip control new min rotation  " << this->slipControlNewMinRot << std::endl;
 		 }
 
 		 // Read acceleration compensation parameters
-		 this.accelCompEnabled = this.sc["Motion"].TryGetBool(false, "Motion", "AccelComp", "Enabled");
-		 this.accelCompMaxAccel = this.sc["Motion"].TryGetDouble(4000.0, "Motion", "AccelComp", "MaxAccel");
-		 this.accelCompMaxAngularAccel = this.sc["Motion"].TryGetDouble(Math.PI / 2.0, "Motion", "AccelComp", "MaxAngularAccel");
+		 this->accelCompEnabled = (*sc)["Motion"]->tryGet<bool>(false, "Motion", "AccelComp", "Enabled", NULL);
+		 this->accelCompMaxAccel = (*sc)["Motion"]->tryGet<double>(4000.0, "Motion", "AccelComp", "MaxAccel", NULL);
+		 this->accelCompMaxAngularAccel = (*sc)["Motion"]->tryGet<double>(M_PI / 2.0, "Motion", "AccelComp", "MaxAngularAccel", NULL);
 
-		 //			Trace.WriteLine("Motion: acceleration compensation {0}", (this.accelCompEnabled ? "enabled" : "disabled"));
-
-		 if (this.accelCompEnabled) {
-		 Trace.WriteLine("Motion: max acceleration         = {0}", this.accelCompMaxAccel);
-		 Trace.WriteLine("Motion: max angular acceleration = {0}", this.accelCompMaxAngularAccel);
+		 if (this->accelCompEnabled)
+		 {
+			 std::cout << "Motion: max acceleration " << this->accelCompMaxAccel << std::endl;
+			 std::cout << "Motion: max angular acceleration " << this->accelCompMaxAngularAccel << std::endl;
 		 }
 
 		 // Initialize the acceleration compensation
-		 this.accelComp = new AccelCompensation(this.accelCompMaxAccel, this.accelCompMaxAngularAccel);
+		 this->accelComp = new AccelCompensation(this->accelCompMaxAccel, this->accelCompMaxAngularAccel);
 
-		 // Load the trace model
-		 try {
-		 this.traceModel = TraceModel.Load(this.sc.LibPath + modelsPath, traceModelName);
-
-		 } catch (Exception e) {
-		 Debug.WriteLine(e.InnerException.Message);
-		 Debug.WriteLine("Motion: error loading trace model {0} from {1}!", driverName, driversPath);
-		 return;
-		 }
+		 this->traceModel = new CircleTrace();
 
 		 // Read required driver parameters
-		 this.driverAlivePeriod = this.sc["Motion"].TryGetInt(250, "Motion", "AlivePeriod");
-		 this.driverOpenAttemptPeriod = this.sc["Motion"].TryGetInt(1000, "Motion", "OpenAttemptPeriod");
+		 this->driverAlivePeriod = (*sc)["Motion"]->tryGet<int>(250, "Motion", "AlivePeriod", NULL);
+		 this->driverOpenAttemptPeriod = (*sc)["Motion"]->tryGet<int>(1000, "Motion", "OpenAttemptPeriod", NULL);
 
-		 //			Trace.WriteLine("Motion: driver alive period        = {0}", this.driverAlivePeriod);
-		 //			Trace.WriteLine("Motion: driver open attempt period = {0}", this.driverOpenAttemptPeriod);
+//		 Old legacy code
+//		 this.RawOdomPub = new Publisher(node, "RawOdometry", RawOdometryInfo.TypeId, 1);
+//		 this.MotionStatPub = new Publisher(node,"MotionStatInfo",MotionStatInfo.TypeId,1);
+		 this->sendRosCompliant = (*sc)["Motion"]->tryGet<bool>(true,"Motion","SendRosCompliant", NULL);
 
-		 this.RawOdomPub = new Publisher(node, "RawOdometry", RawOdometryInfo.TypeId, 1);
-		 this.MotionStatPub = new Publisher(node,"MotionStatInfo",MotionStatInfo.TypeId,1);
-		 this.sendRosCompliant = this.sc["Motion"].TryGetBool(true,"Motion","SendRosCompliant");
-
-		 if(this.sendRosCompliant) {
-		 this.rmc = new RosMsgConnector();
-		 }
-
+		 /*
 		 // Load the controller driver
 		 try {
 		 this.driver = Driver.Load(this.sc.LibPath + driversPath, driverName);
@@ -127,7 +113,9 @@ namespace msl_driver
 
 	Motion::~Motion()
 	{
-		// TODO Auto-generated destructor stub
+		delete motionValue;
+		delete motionResult;
+		delete accelComp;
 	}
 
 	void Motion::initCommunication(int argc, char** argv)

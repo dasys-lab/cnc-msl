@@ -16,6 +16,8 @@
 #include "MotionData.h"
 #include <chrono>
 #include <math.h>
+#include "AccelCompensation.h"
+#include "CircleTrace.h"
 
 using namespace std;
 
@@ -55,17 +57,26 @@ namespace msl_driver
 	protected:
 		MotionSet* motionValue = nullptr;
 		MotionSet* motionResult = nullptr;
-		int ownId;
-		int odometryDelay = 0;
-
+		AccelCompensation* accelComp = nullptr;
+		CircleTrace* traceModel = nullptr;
 
 		double slipControlFactor = 1.0;
-		bool slipControlEnabled = false;
 		double slipControlMinSpeed = 1250.0;
 		double slipControlDiffAngle = ((M_PI / 180.0) * 10.0);
 		double slipControlDiffAngleMinSpeed = 400.0;
 		double slipControlOldMaxRot = (M_PI / 20.0);
 		double slipControlNewMinRot = (M_PI / 2.0);
+		double accelCompMaxAccel = 4000.0;
+		double accelCompMaxAngularAccel = M_PI / 2.0;
+
+		bool accelCompEnabled = false;
+		bool slipControlEnabled = false;
+		bool sendRosCompliant;
+
+		int driverAlivePeriod = 250;
+		int driverOpenAttemptPeriod = 1000;
+		int ownId;
+		int odometryDelay = 0;
 	};
 
 } /* namespace msl_driver */
