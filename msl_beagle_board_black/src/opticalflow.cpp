@@ -194,10 +194,6 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 	msl_actuator_msgs::MotionBurst msg;
 	uint8_t mData[6];
 
-		std::cout << "X: " << x << std::endl;
-		std::cout << "Y: " << y << std::endl;
-		std::cout << "Q: " << qos << std::endl;
-
 	if (TIMEDIFFMS(time_now, last_sended) > OpticalFlow_BURST_TIMEOUT) {
 		last_sended = time_now;
 
