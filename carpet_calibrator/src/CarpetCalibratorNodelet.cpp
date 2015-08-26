@@ -17,6 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 
+
 #include <cv.h>
 
 //nodelet manager starten:
@@ -32,7 +33,8 @@ namespace msl_vision
 
 	CarpetCalibratorNodelet::CarpetCalibratorNodelet()
 	{
-		lastAngle = 0;
+		sc = supplementary::SystemConfig::getInstance();
+		vision = (*sc)["Vision"];
 	}
 
 	CarpetCalibratorNodelet::~CarpetCalibratorNodelet()
@@ -71,6 +73,27 @@ namespace msl_vision
 		cv::waitKey(1);
 		cout << "Image Callback, size: " << image.size.p[1] << endl;
 
+        short mx = vision->get<short>("Vision", "CameraMX", NULL);
+        short my = vision->get<short>("Vision", "CameraMY", NULL);
+		short radius = vision->get<short>("Vision", "CameraRadius", NULL);
+
+		double angle = currAngle + (M_PI / 2);
+
+		double nx = cos(angle);
+		double ny = sin(angle);
+
+		double d = nx*mx+ny*nx;
+
+
+
+
+		/*
+		 * jede iteration gerade mit hessischer normalform erstellen.
+		 * angle + M_PI/2 mit länge 1 ist normalenvektor
+		 * mittelpunkt des bildes liegt immer auf der geraden -> einsetzen und man erhält kleinste distanz d zur geraden
+		 * iterieren über das komplette bild und gucken ob pixel in gerade eingesetzt d+-x entfernt ist
+		 */
+
 
 	}
 
@@ -102,13 +125,13 @@ namespace msl_vision
 	}
 
 	void CarpetCalibratorNodelet::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg) {
-		if(msg.get()->position.angle - lastAngle >= M_PI / 180) {
-			lastAngle = msg.get()->position.angle;
-
-
+		if(lastRawOdom == NULL) {
+			firstAngle = msg.get()->position.angle;
+			lastRawOdom = msg;
 		}
-
-
+		if(lastRawOdom != NULL) {
+			currAngle = msg.get()->position.angle - firstAngle;
+		}
 	}
 
 
