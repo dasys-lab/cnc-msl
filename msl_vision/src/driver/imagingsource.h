@@ -222,7 +222,7 @@ namespace camera
                 dc1394error_t err;
 
                 err = dc1394_feature_set_value(this->dc_camera, feature, value);
-		std::cout << "Feature "<<feature<<"\t"<<value<<std::cout;
+		std::cout << "Feature "<<feature<<"\t"<<value<<std::endl;
                 DC1394_ERR_THROW(err, "unable to set feature value");
             }
 
