@@ -17,6 +17,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <cv.h>
 
+
 //nodelet manager starten:
 //rosrun nodelet nodelet manager __name:=nodelet_manager
 //
@@ -24,7 +25,7 @@
 //rosrun nodelet nodelet load carpet_calibrator/CarpetCalibratorNodelet nodelet_manager __name:=nodelet1
 //
 //starten von camera1394
-//rosrun nodelet nodelet standalone camera1394/driver
+//rosrun nodelet nodelet standalone camera15394/driver
 namespace msl_vision
 {
 
@@ -39,30 +40,39 @@ namespace msl_vision
 	void CarpetCalibratorNodelet::imageCb(const sensor_msgs::ImageConstPtr& image_msg,
 				                             const sensor_msgs::CameraInfoConstPtr& info_msg) {
 		const cv::Mat image = cv_bridge::toCvShare(image_msg)->image;
+
 		YUV422DoublePixel* pColor = (YUV422DoublePixel*) image.data;
-		cv::Mat rgbImage;
-		cv::Mat image2rgb(image_msg->height, image_msg->width, CV_8UC1);
-		cv::Mat image2rgb1(image_msg->height, image_msg->width, CV_8UC1);
-		cv::Mat image2rgb2(image_msg->height, image_msg->width, CV_8UC1);
+
+		cv::Mat image2rgb(image_msg->height, image_msg->width, CV_8UC3);
 		int counter = 0;
 		int size = info_msg->height * info_msg->width;
-		for(int i = 0; i < (size); i++) {
-			image2rgb.data[i] = image.data[i*3];
-			image2rgb1.data[i] = image.data[i*3+1];
-			image2rgb2.data[i] = image.data[i*3+2];
-			/*image2rgb.data[counter++] = pColor[i].y1;
+		for(int i = 0; i < (size)/2; i++) {
+//			image2rgb.data[i] = image.data[i*3];
+//			image2rgb1.data[i] = image.data[i*3+1];
+//			image2rgb2.data[i] = image.data[i*3+2];
+
+			image2rgb.data[counter++] = pColor[i].y1;
 			image2rgb.data[counter++] = pColor[i].v;
 			image2rgb.data[counter++] = pColor[i].u;
 
 			image2rgb.data[counter++] = pColor[i].y2;
 			image2rgb.data[counter++] = pColor[i].v;
-			image2rgb.data[counter++] = pColor[i].u;*/
+			image2rgb.data[counter++] = pColor[i].u;
 		}
 
-		//cv::cvtColor(image2rgb, rgbImage, CV_YUV2BGR); //
-		cv::imshow("lol", image2rgb);
-		cv::imshow("lol1", image2rgb1);
-		cv::imshow("lol2", image2rgb2);
+		cv::Mat rgbImage;
+		cv::cvtColor(image, rgbImage, CV_RGB2BGR);
+		cv::Mat yuvImage;
+		cv::cvtColor(rgbImage, yuvImage, CV_BGR2YUV);
+
+		cv::imshow("Seffen", rgbImage);
+		//vxlib zum anzeigen von yuv
+
+		if(xvDisplay == NULL) {
+			xvDisplay = new XVDisplay(image_msg->width, image_msg->height, XV_UYVY);
+		}
+		xvDisplay->displayFrameYUV((char *) image.data);
+
 		cv::waitKey(1);
 		cout << "Image Callback, size: " << image.size.p[1] << endl;
 

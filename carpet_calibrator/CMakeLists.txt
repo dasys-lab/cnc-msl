@@ -18,6 +18,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
 
+
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
@@ -99,6 +100,7 @@ add_library(carpet_calibrator
    src/CarpetCalibrator.cpp
    src/PictureGrabber.cpp
    src/CarpetCalibratorNodelet.cpp
+   src/XVDisplay.cpp
 )
 
 
@@ -113,6 +115,7 @@ add_dependencies(carpet_calibrator ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(carpet_calibrator
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  Xv
 )
 
 #############
