@@ -28,6 +28,11 @@ namespace msl_vision
 		uint8_t v;
 		uint8_t y2;
 	} YUV422DoublePixel;
+	typedef struct {
+		uint8_t r;
+		uint8_t g;
+		uint8_t b;
+	} RGB888Pixel;
 	class CarpetCalibratorNodelet : public nodelet::Nodelet
 	{
 	public:

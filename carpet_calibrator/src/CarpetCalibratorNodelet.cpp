@@ -45,48 +45,71 @@ namespace msl_vision
 				                             const sensor_msgs::CameraInfoConstPtr& info_msg) {
 		const cv::Mat image = cv_bridge::toCvShare(image_msg)->image;
 		YUV422DoublePixel* pColor = (YUV422DoublePixel*) image.data;
+		RGB888Pixel* rgbColor = (RGB888Pixel*) image.data;
 		cv::Mat rgbImage;
-		cv::Mat image2rgb(image_msg->height, image_msg->width, CV_8UC1);
-		cv::Mat image2rgb1(image_msg->height, image_msg->width, CV_8UC1);
-		cv::Mat image2rgb2(image_msg->height, image_msg->width, CV_8UC1);
+		cv::Mat grayMat;
+		cv::Mat image2rgb(image_msg->height, image_msg->width, CV_8UC3);
 		int counter = 0;
 
 		int size = info_msg->height * info_msg->width;
 
-		for(int i = 0; i < (size); i++) {
-			image2rgb.data[i] = image.data[i*3];
-			image2rgb1.data[i] = image.data[i*3+1];
-			image2rgb2.data[i] = image.data[i*3+2];
-			/*image2rgb.data[counter++] = pColor[i].y1;
+		for(int i = 0; i < (size/2); i++) {
+			image2rgb.data[counter++] = pColor[i].y1;
 			image2rgb.data[counter++] = pColor[i].v;
 			image2rgb.data[counter++] = pColor[i].u;
 
 			image2rgb.data[counter++] = pColor[i].y2;
 			image2rgb.data[counter++] = pColor[i].v;
-			image2rgb.data[counter++] = pColor[i].u;*/
+			image2rgb.data[counter++] = pColor[i].u;
 		}
 
-		//cv::cvtColor(image2rgb, rgbImage, CV_YUV2BGR); //
-		cv::imshow("lol", image2rgb);
-		cv::imshow("lol1", image2rgb1);
-		cv::imshow("lol2", image2rgb2);
+		cv::cvtColor(image, rgbImage, CV_RGB2BGR);
+		cv::cvtColor(image, grayMat, CV_RGB2GRAY);
+
+
+
+		cv::imshow("RGB2BGR", rgbImage);
+		cv::imshow("RGB2GRAY", grayMat);
+
+//		cv::imshow("lol1", image2rgb1);
+//		cv::imshow("lol2", image2rgb2);
 		cv::waitKey(1);
 		cout << "Image Callback, size: " << image.size.p[1] << endl;
 
         short mx = vision->get<short>("Vision", "CameraMX", NULL);
         short my = vision->get<short>("Vision", "CameraMY", NULL);
 		short radius = vision->get<short>("Vision", "CameraRadius", NULL);
+		short area = vision->get<short>("Vision", "ImageArea", NULL);
 
 		double angle = currAngle + (M_PI / 2);
 
 		double nx = cos(angle);
 		double ny = sin(angle);
 
-		double d = nx*mx+ny*nx;
+		double d = nx*mx+ny*my;
+
+		int startIndexX = mx - area/2;
+		int startIndexY = my - area/2;
+
+		//XXX nicht schön, aber macht die Sache einfacher!
+		if(startIndexY % 2 != 0)
+					startIndexY++;
+
+		cv::Mat test(area,area,CV_8UC1);
+
+		for(int i = 0; i < area; i++) {
+			unsigned char * ptr = &(grayMat.data[((startIndexX + i)*info_msg->width + startIndexY)]);
+			for(int j = 0; j < area; j++) {
+				test.data[i*area+j] = *ptr;
+				ptr++;
 
 
 
+			}
 
+		}
+
+		cv::imshow("test", test);
 		/*
 		 * jede iteration gerade mit hessischer normalform erstellen.
 		 * angle + M_PI/2 mit länge 1 ist normalenvektor
