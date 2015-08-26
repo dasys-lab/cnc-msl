@@ -13,8 +13,12 @@
   <!-- Monochrome rectified image -->
   <node pkg="nodelet" type="nodelet" name="camera1394"
         args="standalone camera1394/driver">
-        
-    <param name="video_mode" value="640x480_yuv422" />
-	</node>
+    <!--param name="camera_info_url" value="file:///home/cn/cnws/src/cnc-msldriver/carpet_calibrator/carpetCalibrator.yaml" /-->
+	    <!--param name="camera_info_url" value="$(find carpet_calibrator)/carpetCalibrator.yaml"/-->
+   
+    <rosparam file="$(find carpet_calibrator)/flea.yaml" />
+ <!--param name="video_mode" value="640x480_yuv422" /-->
+ <!--param name="2format7_color_coding" value="yuv422" /-->
+  </node>
 
 </launch>

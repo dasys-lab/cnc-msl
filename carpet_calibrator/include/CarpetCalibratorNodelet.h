@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include <boost/thread.hpp>
 #include <pluginlib/class_list_macros.h>
+#include "XVDisplay.h"
 #include <image_transport/image_transport.h>
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <SystemConfig.h>
@@ -38,6 +39,9 @@ namespace msl_vision
 	     				                             const sensor_msgs::CameraInfoConstPtr& info_msg);
 	     void connectCb();
 	private:
+
+	     XVDisplay * xvDisplay = NULL;
+
 	     boost::shared_ptr<image_transport::ImageTransport> it_;
 	     image_transport::CameraSubscriber sub_camera_;
 		 ros::NodeHandle nh;
