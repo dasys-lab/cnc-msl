@@ -19,7 +19,7 @@ namespace alica
 	/*PROTECTED REGION ID(staticVars1438790362133) ENABLED START*/ //initialise static variables here
 	/*PROTECTED REGION END*/
 	PositionExecutor::PositionExecutor() :
-			DomainBehaviour("PositionExecutor"), catchRadius(100), field(nullptr)
+			DomainBehaviour("PositionExecutor"), fastCatchRadius(200), slowCatchRadius(100), alignTolerance(5), field(nullptr), receiverEp(nullptr)
 	{
 		/*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
 		/*PROTECTED REGION END*/
@@ -51,8 +51,8 @@ namespace alica
 		additionalPoints->push_back(alloBall);
 
 		// get entry point of task name to locate robot with task name
-		EntryPoint* ep = getParentEntryPoint(taskName);
-		if (ep != nullptr)
+
+		if (receiverEp != nullptr)
 		{
 			// get the plan in which the behavior is running
 			auto parent = this->runningPlan->getParent().lock();
@@ -62,7 +62,7 @@ namespace alica
 				return;
 			}
 			// get robot ids of robots in found entry point
-			shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+			shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(receiverEp);
 			shared_ptr<geometry::CNPoint2D> receiverPos = nullptr;
 			// exactly one robot is receiver
 			int id = ids->at(0);
@@ -74,37 +74,30 @@ namespace alica
 			}
 			MotionControl mc;
 			shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
-			// if there is a receiver, align to it
+
 			if (receiverPos != nullptr)
 			{
 				// calculate target 60cm away from the ball and on a line with the receiver
 				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
-				// ask the path planner how to get there
-
-				msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-
-				cout << "TimeSinceStart: " << time << endl;
-				cout << "distance to ball: " << egoTarget->length() << endl;
-
-				if (wm->game.getSituation() == msl::Situation::Start)
-				{ // they already pressed start and we are still positioning, so speed up!
-					mc = msl::RobotMovement::moveToPointFast(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius, additionalPoints);
-				}
-				else
-				{ // still enough time to position...
-					mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), catchRadius,
-																	additionalPoints);
-				}
 			}
 			else
 			{
 				// if there is no receiver, align to middle
-				egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
-				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
-																additionalPoints);
+				egoTarget = (alloBall + alloTarget)->alloToEgo(*ownPos);
 			}
-			// if we reach the point and are aligned, the behavior is successful
-			if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
+
+			msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+			if (wm->game.getSituation() == msl::Situation::Start)
+			{ // they already pressed start and we are still positioning, so speed up!
+				mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
+			}
+			else
+			{ // still enough time to position ...
+				mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+			}
+
+			// if we reached the point and are aligned, the behavior is successful
+			if (mc.motion.translation == 0.0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
 			{
 				this->success = true;
 			}
@@ -116,7 +109,6 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1438790362133) ENABLED START*/ //Add additional options here
 		string receiverTaskName;
-		EntryPoint* receiverEp;
 		if (getParameter("receiverTask", receiverTaskName))
 		{
 			receiverEp = this->getParentEntryPoint(receiverTaskName);
@@ -153,18 +145,18 @@ namespace alica
 
 		// set some static member variables
 		field = msl::MSLFootballField::getInstance();
-		alloTarget = make_shared<geometry::CNPoint2D>(0, 0);
+		alloTarget = make_shared<geometry::CNPoint2D>(-500, 0);
 
 		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
-
-
 	void PositionExecutor::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		catchRadius =  (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+		fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+		slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+		alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

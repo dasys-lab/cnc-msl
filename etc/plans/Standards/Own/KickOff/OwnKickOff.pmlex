@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376159"/>
-    <value width="645" height="456"/>
+    <value xPos="75" yPos="-4" width="741" height="456"/>
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376161"/>
@@ -26,6 +26,18 @@
   </extensions>
   <extensions>
     <key href="../../../Behaviours/PositionReceiver.beh#1439379352605"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1440675376134"/>
+    <value xPos="406" yPos="25" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1440675383814"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
