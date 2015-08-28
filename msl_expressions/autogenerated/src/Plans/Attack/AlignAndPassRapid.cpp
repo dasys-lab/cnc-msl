@@ -443,7 +443,7 @@ namespace alica
             this->minRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MinRotation", NULL);
             this->maxRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MaxRotation", NULL);
             this->accel = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "ReceiverRobotAcceleration", NULL);
-            this->ballRadius = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterBall", NULL) / 2;
+            this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
             lastRotError = 0;
         }
         catch (exception& e)

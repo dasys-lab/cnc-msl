@@ -14,10 +14,10 @@ namespace msl
 	{
 		this->planner = planner;
 		this->sc = SystemConfig::getInstance();
-		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
+		voronoiPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);
-		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
+		this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
 		this->obstacleDistanceWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "obstacleDistanceWeight",
 		NULL);
 		this->pathAngleWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathAngleWeight",
