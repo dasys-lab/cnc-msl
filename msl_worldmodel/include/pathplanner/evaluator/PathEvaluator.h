@@ -57,7 +57,7 @@ namespace msl
 		 */
 		double pathDeviationWeight;
 		PathPlanner* planner;
-		ros::Publisher voroniPub;
+		ros::Publisher voronoiPub;
 		ros::NodeHandle n;
 		supplementary::SystemConfig* sc;
 
