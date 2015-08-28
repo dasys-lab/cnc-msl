@@ -9,81 +9,78 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-	/*PROTECTED REGION ID(staticVars1439379316897) ENABLED START*/ //initialise static variables here
-	/*PROTECTED REGION END*/
-	PositionReceiver::PositionReceiver() :
-			DomainBehaviour("PositionReceiver")
-	{
-		/*PROTECTED REGION ID(con1439379316897) ENABLED START*/ //Add additional options here
-		readConfigParameters();
-		/*PROTECTED REGION END*/
-	}
-	PositionReceiver::~PositionReceiver()
-	{
-		/*PROTECTED REGION ID(dcon1439379316897) ENABLED START*/ //Add additional options here
-		/*PROTECTED REGION END*/
-	}
-	void PositionReceiver::run(void* msg)
-	{
+    /*PROTECTED REGION ID(staticVars1439379316897) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    PositionReceiver::PositionReceiver() :
+            DomainBehaviour("PositionReceiver")
+    {
+        /*PROTECTED REGION ID(con1439379316897) ENABLED START*/ //Add additional options here
+        readConfigParameters();
+        /*PROTECTED REGION END*/
+    }
+    PositionReceiver::~PositionReceiver()
+    {
+        /*PROTECTED REGION ID(dcon1439379316897) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void PositionReceiver::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
+        //TODO  not allowed in enemy half (rules), new conf for rules
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto egoBallPos = wm->ball.getEgoBallPosition();
 
-		/*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
+        if (ownPos == nullptr || egoBallPos == nullptr)
+        {
+            return;
+        }
 
-		//TODO  not allowed in enemy half (rules), new conf for rules
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
-		auto egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
-		if (ownPos == nullptr || egoBallPos == nullptr)
-		{
-			return;
-		}
+        // Create additional points for path planning
+        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+                vector<shared_ptr<geometry::CNPoint2D>>>();
+        // add alloBall to path planning
+        additionalPoints->push_back(alloBall);
 
-		shared_ptr<geometry::CNPoint2D> alloBall = egoBallPos->egoToAllo(*ownPos);
+        //set target point as (0,-2300)
+        shared_ptr < geometry::CNPoint2D > egoTarget = make_shared < geometry::CNPoint2D
+                > (0, -ballDistanceRec)->alloToEgo(*ownPos);
 
-		// Create additional points for path planning
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-		vector<shared_ptr<geometry::CNPoint2D>>>();
-		// add alloBall to path planning
-		additionalPoints->push_back(alloBall);
+        MotionControl mc;
 
+        msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+        if (wm->game.getSituation() == msl::Situation::Start)
+        { // they already pressed start and we are still positioning, so speed up!
+            mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
+        }
+        else
+        { // still enough time to position ...
+            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+        }
 
-		//set target point as (0,-2300)
-		shared_ptr<geometry::CNPoint2D> egoTarget = make_shared<geometry::CNPoint2D>(0,-ballDistanceRec)->alloToEgo(*ownPos);
-
-		MotionControl mc;
-
-		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		if (wm->game.getSituation() == msl::Situation::Start)
-		{ // they already pressed start and we are still positioning, so speed up!
-			mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
-		}
-		else
-		{ // still enough time to position ...
-			mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
-		}
-
-
-		// if we reach the point and are aligned, the behavior is successful
-		if (mc.motion.translation == 0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
-		{
-			this->success = true;
-		}
-		send(mc);
-		/*PROTECTED REGION END*/
-	}
-	void PositionReceiver::initialiseParameters()
-	{
-		/*PROTECTED REGION ID(initialiseParameters1439379316897) ENABLED START*/ //Add additional options here
-		readConfigParameters();
-		/*PROTECTED REGION END*/
-	}
-/*PROTECTED REGION ID(methods1439379316897) ENABLED START*/ //Add additional methods here
-	void PositionReceiver::readConfigParameters()
-	{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
-		slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
-		alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
-		ballDistanceRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
-	}
+        // if we reach the point and are aligned, the behavior is successful
+        if (mc.motion.translation == 0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
+        {
+            this->success = true;
+        }
+        send(mc);
+        /*PROTECTED REGION END*/
+    }
+    void PositionReceiver::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1439379316897) ENABLED START*/ //Add additional options here
+        readConfigParameters();
+        /*PROTECTED REGION END*/
+    }
+    /*PROTECTED REGION ID(methods1439379316897) ENABLED START*/ //Add additional methods here
+    void PositionReceiver::readConfigParameters()
+    {
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
+        slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
+        alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
+        ballDistanceRec = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistRec", NULL);
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */
