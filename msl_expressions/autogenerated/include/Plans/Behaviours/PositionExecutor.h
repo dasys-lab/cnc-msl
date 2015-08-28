@@ -33,6 +33,7 @@ namespace alica
 											double fastCatchRadius;
 											double slowCatchRadius;
 											double alignTolerance;
+											double ballDistanceEx;
 											EntryPoint* receiverEp;
 											shared_ptr<geometry::CNPoint2D> alloTarget;
 											msl::MSLFootballField* field;

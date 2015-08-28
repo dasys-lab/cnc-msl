@@ -19,9 +19,10 @@ namespace alica
 	/*PROTECTED REGION ID(staticVars1438790362133) ENABLED START*/ //initialise static variables here
 	/*PROTECTED REGION END*/
 	PositionExecutor::PositionExecutor() :
-			DomainBehaviour("PositionExecutor"), fastCatchRadius(200), slowCatchRadius(100), alignTolerance(5), field(nullptr), receiverEp(nullptr)
+			DomainBehaviour("PositionExecutor"), field(nullptr), receiverEp(nullptr)
 	{
 		/*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
+		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	PositionExecutor::~PositionExecutor()
@@ -78,7 +79,7 @@ namespace alica
 			if (receiverPos != nullptr)
 			{
 				// calculate target 60cm away from the ball and on a line with the receiver
-				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
+				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * ballDistanceEx))->alloToEgo(*ownPos);
 			}
 			else
 			{
@@ -146,8 +147,6 @@ namespace alica
 		// set some static member variables
 		field = msl::MSLFootballField::getInstance();
 		alloTarget = make_shared<geometry::CNPoint2D>(-500, 0);
-
-		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
@@ -157,6 +156,7 @@ namespace alica
 		fastCatchRadius = (*sc)["Drive"]->get<double>("Drive.Fast.CatchRadius", NULL);
 		slowCatchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
 		alignTolerance = (*sc)["Drive"]->get<double>("Drive.Default.AlignTolerance", NULL);
+		ballDistanceEx = (*sc)["Drive"]->get<double>("Drive.KickOff.BallDistEx", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
