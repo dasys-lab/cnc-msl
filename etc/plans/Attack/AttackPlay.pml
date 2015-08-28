@@ -14,6 +14,7 @@
     <outTransitions>#1436536148908</outTransitions>
   </states>
   <states id="1436536084172" name="ApproachPass" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
     <inTransitions>#1436536098621</inTransitions>
     <inTransitions>#1436536101847</inTransitions>
     <outTransitions>#1436536100248</outTransitions>

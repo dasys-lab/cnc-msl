@@ -19,6 +19,8 @@ namespace alica
 		kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
 
 		shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("/ShovelSelect", 10);
+
+		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("/WorldModel/PassMsg", 10);
 	}
 
 	DomainBehaviour::~DomainBehaviour()
@@ -54,6 +56,12 @@ namespace alica
 		ssc.senderID = ownID;
 		shovelSelectPublisher.publish(ssc);
 		this->wm->kicker.lowShovelSelected = ssc.passing;
+	}
+
+	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm)
+	{
+		pm.senderID = ownID;
+		passMsgPublisher.publish(pm);
 	}
 } /* namespace alica */
 

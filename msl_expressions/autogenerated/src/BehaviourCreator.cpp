@@ -53,6 +53,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
+#include  "Plans/Attack/CatchPass.h"
+
 #include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
@@ -214,6 +216,11 @@ namespace alica
             case 1415205285582:
 
                 return make_shared<AlignToGoal>();
+                break;
+
+            case 1440754543898:
+
+                return make_shared<CatchPass>();
                 break;
 
             case 1435159282996:

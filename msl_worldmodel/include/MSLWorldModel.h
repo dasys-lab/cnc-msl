@@ -14,6 +14,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
+#include <msl_helper_msgs/PassMsg.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -28,6 +29,7 @@
 #include "Ball.h"
 #include "Game.h"
 #include "Kicker.h"
+#include "WhiteBoard.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
@@ -59,6 +61,7 @@ namespace msl
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
+		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
@@ -75,6 +78,7 @@ namespace msl
 		Game game;
 		PathPlanner pathPlanner;
 		Kicker kicker;
+		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 
 	private:
@@ -93,6 +97,7 @@ namespace msl
 		ros::Subscriber motionBurstSub;
 		ros::Subscriber simWorldModel;
 		ros::Subscriber sharedWorldSub;
+		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
