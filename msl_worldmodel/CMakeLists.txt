@@ -47,6 +47,7 @@ catkin_package(
    src/Kicker.cpp
    src/KickCurve.cpp
    src/WhiteBoard.cpp
+   src/Rules.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp

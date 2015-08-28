@@ -155,32 +155,7 @@ namespace msl
 		//check if the goal is reachable directly by checking a corridor between the robot and the goal
 		bool reachable = true;
 		auto sites = voronoi->getSitePositions();
-		int counter = 0;
-		for(auto it = voronoi->getVoronoi()->vertices_begin(); it != voronoi->getVoronoi()->vertices_end(); it++)
-		{
-			if(abs(it->point().x()) < 50 && abs(it->point().y()) < 500)
-			{
-				int c = 0;
-				for(auto iter = voronoi->getVoronoi()->halfedges_begin(); iter != voronoi->getVoronoi()->halfedges_end(); iter++)
-				{
-					if(iter->has_target() && abs(iter->target()->point().x() - it->point().x()) < 0.00001 && abs(iter->target()->point().y() - it->point().y())< 0.00001)
-					{
-						c++;
-					}
-				}
-				cout << "vertex: " << it->point().x() << " | " << it->point().y() << " Halfedges: " << c << endl;
-				for(auto iter = voronoi->getVoronoi()->halfedges_begin(); iter != voronoi->getVoronoi()->halfedges_end(); iter++)
-				{
-					if(iter->has_target() && abs(iter->target()->point().x() - it->point().x()) < 0.00001 && abs(iter->target()->point().y() - it->point().y())< 0.00001)
-					{
-						cout << "neighbor source: " << iter->source()->point().x() << " | " << iter->source()->point().y() << endl;
-					}
-				}
-				counter++;
-				c = 0;
-			}
-		}
-		cout << "degenerated counter:" << counter << endl;
+
 		for(int i = 0; i < sites->size(); i++)
 		{
 			//if there is an obstacle inside the corridor the goal is not reachable

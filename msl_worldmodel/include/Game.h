@@ -18,6 +18,7 @@
 #include "RingBuffer.h"
 #include "InformationElement.h"
 #include "SystemConfig.h"
+#include "Rules.h"
 
 using namespace supplementary;
 
@@ -48,6 +49,8 @@ namespace msl
 		Color ownTeamColor;
 		Color ownGoalColor;
 		long gameTime;
+
+		Rules rules;
 
 	private:
 		MSLWorldModel* wm;

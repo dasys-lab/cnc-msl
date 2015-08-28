@@ -13,17 +13,15 @@ namespace msl
 	Rules::Rules()
 	{
 		sc = SystemConfig::getInstance();
-		double ballRadius = (*this->sc)["Rules"]->get<double>("Rules", "BallRadius", NULL);
-		double robotRadius = (*this->sc)["Rules"]->get<double>("Rules", "RobotRadius", NULL);;
-		double standbyTime = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StandbyTime", NULL);;
-		double stayAwayRadius = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadius", NULL);;
-		double stayAwayRadiusOpp = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadiusOpp", NULL);;
-		double stayAwayRadiusDropBall = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadiusDropBall", NULL);;
-		double pushDistance = (*this->sc)["Rules"]->get<double>("Rules.Standards", "PushDistance", NULL);;
-		double kickDistance = (*this->sc)["Rules"]->get<double>("Rules.Standards", "KickDistance", NULL);;
-		double penaltyTimeForShot = (*this->sc)["Rules"]->get<double>("Rules.Standards", "PenaltyTimeForShot", NULL);;
-
-
+		ballRadius = (*this->sc)["Globals"]->get<double>("Globals.Dimensions.DiameterBall", NULL);
+		robotRadius = (*this->sc)["Rules"]->get<double>("Rules", "MaxRobotRadius", NULL);
+		standbyTime = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StandbyTime", NULL);
+		stayAwayRadius = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadius", NULL);
+		stayAwayRadiusOpp = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadiusOpp", NULL);
+		stayAwayRadiusDropBall = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadiusDropBall", NULL);
+		pushDistance = (*this->sc)["Rules"]->get<double>("Rules.Standards", "PushDistance", NULL);
+		kickDistance = (*this->sc)["Rules"]->get<double>("Rules.Standards", "KickDistance", NULL);
+		penaltyTimeForShot = (*this->sc)["Rules"]->get<double>("Rules.Standards", "PenaltyTimeForShot", NULL);
 	}
 
 	Rules::~Rules()

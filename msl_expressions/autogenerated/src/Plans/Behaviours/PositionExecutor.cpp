@@ -113,6 +113,7 @@ namespace alica
         string receiverTaskName;
         if (getParameter("receiverTask", receiverTaskName))
         {
+            cout << "Parameter found!";
             receiverEp = this->getParentEntryPoint(receiverTaskName);
         }
 
