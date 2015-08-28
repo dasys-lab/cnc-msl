@@ -54,7 +54,7 @@
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536084172"/>
-    <value xPos="423" yPos="192" width="81" height="67"/>
+    <value xPos="423" yPos="192" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536085953"/>
@@ -115,5 +115,9 @@
     <value>
       <bendpoints xPos="535" yPos="466"/>
     </value>
+  </extensions>
+  <extensions>
+    <key href="CatchPass.beh#1440754543898"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

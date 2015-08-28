@@ -294,6 +294,10 @@ namespace alica
                 }
 
                 send(km);
+                if (wm->kicker.lowShovelSelected)
+                {
+                    send(pm);
+                }
 
             }
             if (dstscan != nullptr)

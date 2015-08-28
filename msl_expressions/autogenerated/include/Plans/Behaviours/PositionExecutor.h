@@ -11,33 +11,33 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-	class PositionExecutor : public DomainBehaviour
-	{
-	public:
-		PositionExecutor();
-		virtual ~PositionExecutor();
-		virtual void run(void* msg);
-		/*PROTECTED REGION ID(pub1438790362133) ENABLED START*/ //Add additional public methods here
-		/*PROTECTED REGION END*/
-	protected:
-		virtual void initialiseParameters();
-		/*PROTECTED REGION ID(pro1438790362133) ENABLED START*/ //Add additional protected methods here
-		/*PROTECTED REGION END*/
-	private:
-		/*PROTECTED REGION ID(prv1438790362133) ENABLED START*/ //Add additional private methods here
-		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+    class PositionExecutor : public DomainBehaviour
+    {
+    public:
+        PositionExecutor();
+        virtual ~PositionExecutor();
+        virtual void run(void* msg);
+        /*PROTECTED REGION ID(pub1438790362133) ENABLED START*/ //Add additional public methods here
+        /*PROTECTED REGION END*/
+    protected:
+        virtual void initialiseParameters();
+        /*PROTECTED REGION ID(pro1438790362133) ENABLED START*/ //Add additional protected methods here
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1438790362133) ENABLED START*/ //Add additional private methods here
+        static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+                                             shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 
-											void readConfigParameters();
-											double fastCatchRadius;
-											double slowCatchRadius;
-											double alignTolerance;
-											EntryPoint* receiverEp;
-											shared_ptr<geometry::CNPoint2D> alloTarget;
-											msl::MSLFootballField* field;
-											/*PROTECTED REGION END*/};
-									}
-									/* namespace alica */
+                                         void readConfigParameters();
+                                         double fastCatchRadius;
+                                         double slowCatchRadius;
+                                         double alignTolerance;
+                                         EntryPoint* receiverEp;
+                                         shared_ptr<geometry::CNPoint2D> alloTarget;
+                                         msl::MSLFootballField* field;
+                                         /*PROTECTED REGION END*/};
+                                 }
+                                 /* namespace alica */
 
 #endif /* PositionExecutor_H_ */
