@@ -180,12 +180,12 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	_PENALTY_AREA_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaXSize", NULL) / 1000;
 	_PENALTY_AREA_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaYSize", NULL) / 1000;
 	_CENTER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.MiddleCircleRadius", NULL) / 1000;
-	_BALL_DIAMETER = (*sc)["Globals"]->get<double>("Globals.Dimensions.DiameterBall", NULL) / 1000;
+	_BALL_DIAMETER = (*sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2.0 / 1000;
 	_CORNER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.CornerCircleRadius", NULL) / 1000;
 	_PENALTY_MARK_DISTANCE = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
 	_BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
 	_BLACK_POINT_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
-	_ROBOT_RADIUS = (*sc)["Globals"]->get<double>("Globals.Dimensions.DiameterRobot", NULL) / 1000;
+	_ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
 	renderWindow = vtkRenderWindow::New();
 	renderer = vtkRenderer::New();
