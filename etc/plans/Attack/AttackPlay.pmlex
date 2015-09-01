@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1434045870617"/>
-    <value xPos="151" yPos="281" width="65" height="67"/>
+    <value xPos="158" yPos="306" width="65" height="67"/>
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1434045709191"/>
@@ -58,7 +58,7 @@
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536085953"/>
-    <value xPos="621" yPos="186" width="81" height="67"/>
+    <value xPos="621" yPos="186" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536098621"/>
@@ -86,11 +86,11 @@
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536121614"/>
-    <value xPos="571" yPos="429" width="81" height="67"/>
+    <value xPos="571" yPos="429" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536123918"/>
-    <value xPos="375" yPos="425" width="81" height="67"/>
+    <value xPos="375" yPos="425" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackPlay.pml#1436536148908"/>
@@ -118,6 +118,18 @@
   </extensions>
   <extensions>
     <key href="CatchPass.beh#1440754543898"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1434046634656"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Defence/MidFieldDefense.pml#1441108604411"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -9,6 +9,7 @@
 #include <SystemConfig.h>
 #include "engine/model/EntryPoint.h"
 #include "GameState.h"
+#include "pathplanner/PathProxy.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,6 +41,7 @@ namespace alica
         double distToFieldBorder;
         double minCloserOffset;
         double closerFactor;
+        msl::PathProxy* pathProxy;
         static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                     shared_ptr<geometry::CNPoint2D> c, double tolerance,
                                     shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);

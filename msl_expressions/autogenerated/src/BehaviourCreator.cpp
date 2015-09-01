@@ -85,6 +85,8 @@ namespace alica
 
             case 1436269036396:
 
+            case 1441107270872:
+
                 return make_shared<SearchForPassPoint>();
                 break;
 
@@ -177,6 +179,8 @@ namespace alica
                 break;
 
             case 1436269080263:
+
+            case 1441108023281:
 
                 return make_shared<AlignAndPassRapid>();
                 break;

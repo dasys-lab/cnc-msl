@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1436269017402) ENABLED START*/ //Add additional includes here
 #include <GeometryCalculator.h>
 #include "pathplanner/VoronoiNet.h"
+#include "pathplanner/PathProxy.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,6 +14,7 @@ namespace alica
             DomainBehaviour("SearchForPassPoint")
     {
         /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ //Add additional options here
+    	this->pathProxy = msl::PathProxy::getInstance();
         /*PROTECTED REGION END*/
     }
     SearchForPassPoint::~SearchForPassPoint()
@@ -70,11 +72,12 @@ namespace alica
         shared_ptr < msl::VoronoiNet > vNet = this->wm->pathPlanner.getCurrentVoronoiNet();
         if (vNet == nullptr)
         {
+        	cout << "vnet null "<< endl;
             return;
         }
         try
         {
-
+        	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
             for (int teamMateId : this->teamMateIds)
             {
 
@@ -128,7 +131,7 @@ namespace alica
 //							continue;
 //						}
 
-                        // small angle to turn to pass point
+                        //small angle to turn to pass point
                         if (geometry::GeometryCalculator::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
@@ -159,8 +162,10 @@ namespace alica
                         }
                         else
                         {
+                        	sites->push_back(passPoint);
+                        	pathProxy->sendVoronoiNetMsg(sites, vNet);
                             this->success = true;
-                            return;
+//                            return;
                         }
                     }
                 }
@@ -327,5 +332,5 @@ namespace alica
 		}
 		return true;
 	}
-	/*PROTECTED REGION END*/			
+	/*PROTECTED REGION END*/
 		} /* namespace alica */

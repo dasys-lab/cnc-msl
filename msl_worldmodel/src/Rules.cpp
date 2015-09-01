@@ -13,7 +13,7 @@ namespace msl
 	Rules::Rules()
 	{
 		sc = SystemConfig::getInstance();
-		ballRadius = (*this->sc)["Globals"]->get<double>("Globals.Dimensions.DiameterBall", NULL);
+		ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
 		robotRadius = (*this->sc)["Rules"]->get<double>("Rules", "MaxRobotRadius", NULL);
 		standbyTime = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StandbyTime", NULL);
 		stayAwayRadius = (*this->sc)["Rules"]->get<double>("Rules.Standards", "StayAwayRadius", NULL);
