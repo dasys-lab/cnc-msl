@@ -124,9 +124,13 @@ namespace msl_vision
 			cout << "first odom msg received: " << currAngle << endl;
 		}
 		if(lastRawOdom != NULL) {
+			cout << "1"  << endl;
 			if(abs(currAngle - (msg.get()->position.angle - firstAngle)) > 1) {
+				cout << "2"  << endl;
 				currAngle = msg.get()->position.angle - firstAngle;
+				cout << "3"  << endl;
 				saveCarpetToFile();
+				cout << "4"  << endl;
 				cout << "after 1° : " << currAngle << endl;
 			}
 		}
