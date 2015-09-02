@@ -12,7 +12,8 @@
 #include "msl_sensor_msgs/LinePointList.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "msl_sensor_msgs/CorrectedOdometryInfo.h"
-
+#include "msl_actuator_msgs/VisionRelocTrigger.h"
+#include "SystemConfig.h"
 
 class RosMsgReceiver {
 	public:
@@ -34,6 +35,7 @@ class RosMsgReceiver {
 		bool poseReceived() {return pseReceived;};
 		void poseProcessed() {pseReceived=false;};
 		bool dirty;
+		bool reloc;
 		
 		ros::Publisher coipub;
 
@@ -43,12 +45,16 @@ class RosMsgReceiver {
 		void handlePoseMessage(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& pose);
 		void handleOdometryInfoMessage(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void handleLinePointListMessage(msl_sensor_msgs::LinePointListPtr msg);
+		void handleVisionRelocTriggerMessage(const msl_actuator_msgs::VisionRelocTrigger::ConstPtr& msg);
+
 		static RosMsgReceiver* instance;
 		ros::Subscriber Mapsub;
 		ros::Subscriber LaserSub;
 		ros::Subscriber Iniposesub;
 		ros::Subscriber OdometrySub;
-		
+		ros::Subscriber RelocSub;
+		ros::Subscriber LinePointListSub;
+
 		ros::Publisher particlepub;
 
 		ros::Time observTime;
@@ -61,6 +67,8 @@ class RosMsgReceiver {
 		geometry_msgs::PoseWithCovarianceStamped::ConstPtr poseptr;
 		msl_actuator_msgs::RawOdometryInfoPtr odometryInfoMsg;
 		msl_sensor_msgs::LinePointListPtr currentLinePoints;
+
+
 };
 
 #endif

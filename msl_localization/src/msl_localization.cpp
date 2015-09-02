@@ -37,6 +37,9 @@ using namespace msl_sensor_msgs;
 using namespace msl_msgs;
 using namespace std;
 
+using supplementary::SystemConfig;
+using supplementary::Configuration;
+
 msl_localization::msl_localization(int nParticles_) {
 	printf("ParticleFilter Constructor!\n");
 	yellowGoalDirection = -1;
@@ -73,6 +76,16 @@ msl_localization::msl_localization(int nParticles_) {
 	mh = MapHelper::getInstance();
 	minimize = mh->gradientAvailable();
 
+	// Read start particle from cofiguration file
+
+	auto sc = SystemConfig::getInstance();
+	Configuration *localization = (*sc)["Localization"];
+	startParticle.posx = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"X",NULL);
+	startParticle.posy = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"Y",NULL);
+	startParticle.heading = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"Heading",NULL);
+	startParticle.weight = 1.0;
+
+	resetStartParticle();
 }
 
 
@@ -926,4 +939,8 @@ void msl_localization::writeCoi()
 		RosMsgReceiver::getInstance()->coipub.publish(coi);
 	}
 	else printf("NewLoc: OOOPS no coi in particlefilter");
+}
+
+void msl_localization::resetStartParticle() {
+	particles[0] = startParticle;
 }
