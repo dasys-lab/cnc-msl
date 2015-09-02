@@ -109,7 +109,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 	msl_actuator_msgs::RawOdometryInfo odomotryInfo;
 
-	if(useOdometry) {
+	if(useOdometry && RosMsgReceiver::getInstance()->getOdometryInfo() != nullptr) {
 		odomotryInfo = *RosMsgReceiver::getInstance()->getOdometryInfo();
 	}
 	

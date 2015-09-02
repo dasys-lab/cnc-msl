@@ -26,7 +26,7 @@ void RosMsgReceiver::initialize() {
 	OdometrySub = node.subscribe("/RawOdometry", 10, &RosMsgReceiver::handleOdometryInfoMessage, this);
     RelocSub = node.subscribe("CNActuator/VisionRelocTrigger",
 				1, &RosMsgReceiver::handleVisionRelocTriggerMessage, this);
-    LinePointListSub = node.subscribe("/LinePointList", 1, &RosMsgReceiver::handleLinePointListMessage, this);
+    LinePointListSub = node.subscribe("/CNVision/LinePointList", 1, &RosMsgReceiver::handleLinePointListMessage, this);
 
 	particlepub = node.advertise<geometry_msgs::PoseArray>("/particlecloud", 1);
 	coipub = node.advertise<msl_sensor_msgs::CorrectedOdometryInfo>("/CorrectedOdometryInfo", 1);
@@ -91,6 +91,7 @@ void RosMsgReceiver::handleOdometryInfoMessage(msl_actuator_msgs::RawOdometryInf
 
 void RosMsgReceiver::handleLinePointListMessage(msl_sensor_msgs::LinePointListPtr msg) {
 	currentLinePoints = msg;
+	cout << "Received LinepointList" << endl;
 	dirty=true;
 }
 

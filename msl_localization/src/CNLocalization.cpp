@@ -37,11 +37,6 @@ int main(int argc, char** argv) {
 	}*/
 	if(ros::ok()) mh->initializeMap();
 	
-	while(ros::ok()) {
-		ros::spinOnce();
-		if(rmr->scanReceived()) break;
-	}
-	
 	int iteration=0;
 	while(ros::ok()) {
 		ros::spinOnce();
@@ -58,7 +53,7 @@ int main(int argc, char** argv) {
 
 		auto lpl = rmr->getCurrentLinePointList();
 
-		if(++iteration%20==0) loc->sendParticleCloud();
+		//if(++iteration%20==0) loc->sendParticleCloud();
 		loc->iterate(lpl, mh->getMap());
 		rmr->dirty=false;
 	}
