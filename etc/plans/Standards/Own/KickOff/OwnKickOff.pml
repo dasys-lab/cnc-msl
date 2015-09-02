@@ -10,6 +10,7 @@
   </states>
   <states id="1440675376134" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/StdExecutorGrabBall.beh#1441209089978</plans>
     <inTransitions>#1440675383814</inTransitions>
     <inTransitions>#1440772442289</inTransitions>
     <outTransitions>#1440772545631</outTransitions>

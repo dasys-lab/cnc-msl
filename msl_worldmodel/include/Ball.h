@@ -52,7 +52,7 @@ namespace msl
 		double HAVE_BALL_MAX_ANGLE_DELTA;
 		int hasBallIteration;
 		bool hadBefore;
-		bool hasBall;
+		bool hasBall; /**< True if the local robot has the ball */
 		double haveBallDistanceDynamic;
 		unsigned long maxInformationAge = 1000000000;
 		MSLWorldModel* wm;

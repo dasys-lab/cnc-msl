@@ -25,6 +25,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
+#include  "Plans/Behaviours/StdExecutorGrabBall.h"
+
 #include  "Plans/Example/DriveInSquare.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
@@ -55,9 +57,9 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
-#include  "Plans/Behaviours/SpinSlowly.h"
-
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
@@ -146,6 +148,11 @@ namespace alica
                 return make_shared<StandardAlignToPoint>();
                 break;
 
+            case 1441209089978:
+
+                return make_shared<StdExecutorGrabBall>();
+                break;
+
             case 1433939634320:
 
                 return make_shared<DriveInSquare>();
@@ -227,14 +234,14 @@ namespace alica
                 return make_shared<CatchPass>();
                 break;
 
-            case 1435159282996:
-
-                return make_shared<SpinSlowly>();
-                break;
-
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1435159282996:
+
+                return make_shared<SpinSlowly>();
                 break;
 
             case 1434199852589:

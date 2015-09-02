@@ -14,7 +14,7 @@ namespace alica
             DomainBehaviour("SearchForPassPoint")
     {
         /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ //Add additional options here
-    	this->pathProxy = msl::PathProxy::getInstance();
+        this->pathProxy = msl::PathProxy::getInstance();
         /*PROTECTED REGION END*/
     }
     SearchForPassPoint::~SearchForPassPoint()
@@ -72,12 +72,13 @@ namespace alica
         shared_ptr < msl::VoronoiNet > vNet = this->wm->pathPlanner.getCurrentVoronoiNet();
         if (vNet == nullptr)
         {
-        	cout << "vnet null "<< endl;
+            cout << "vnet null " << endl;
             return;
         }
         try
         {
-        	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<
+                    vector<shared_ptr<geometry::CNPoint2D>>>();
             for (int teamMateId : this->teamMateIds)
             {
 
@@ -88,7 +89,7 @@ namespace alica
                     // make the passpoints closer to the receiver
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
-                            > (teamMatePos->x, teamMatePos->y);
+                    > (teamMatePos->x, teamMatePos->y);
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
@@ -104,9 +105,9 @@ namespace alica
                     passPoint = receiver + rcv2PassPoint->normalize() * factor;
 
                     if (ff->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                    && !ff->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
-                    && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
-                            )
+                    && !ff->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist// max dist to pass point
+                    && alloBall->distanceTo(passPoint) > minPassDist// min dist to pass point
+                    )
                     {
 
 //						// min dist to opponent
@@ -135,7 +136,7 @@ namespace alica
                         if (geometry::GeometryCalculator::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
-                                > maxTurnAngle)
+                        > maxTurnAngle)
                         {
                             continue;
                         }
@@ -144,26 +145,26 @@ namespace alica
                         shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
                         double passLength = ball2PassPoint->length();
                         shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                                > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
+                        > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
                         shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
                         shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
                         if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                                && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
-                                                     vNet->getObstaclePositions()))
+                        && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
+                                vNet->getObstaclePositions()))
                         {
                             continue;
                         }
 
                         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
                         if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
-                                                       vNet->getTeamMatePositions()))
+                                vNet->getTeamMatePositions()))
                         {
                             continue;
                         }
                         else
                         {
-                        	sites->push_back(passPoint);
-                        	pathProxy->sendVoronoiNetMsg(sites, vNet);
+                            sites->push_back(passPoint);
+                            pathProxy->sendVoronoiNetMsg(sites, vNet);
                             this->success = true;
 //                            return;
                         }
@@ -332,5 +333,5 @@ namespace alica
 		}
 		return true;
 	}
-	/*PROTECTED REGION END*/
+	/*PROTECTED REGION END*/			
 		} /* namespace alica */

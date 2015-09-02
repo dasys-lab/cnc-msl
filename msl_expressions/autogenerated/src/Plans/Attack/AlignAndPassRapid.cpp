@@ -109,7 +109,8 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > bestPassVNode = nullptr;
             shared_ptr < geometry::CNPoint2D > bestAoc = nullptr;
             bool found = false;
-            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<
+                    vector<shared_ptr<geometry::CNPoint2D>>>();
             for (int teamMateId : this->teamMateIds)
             {
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVertices(teamMateId);
@@ -227,7 +228,7 @@ namespace alica
                 cout << "AAPR: No valid pass point found! FailureStatus: " << this->failure << endl;
                 return;
             }
-        	sites->push_back(alloAimPoint);
+            sites->push_back(alloAimPoint);
             sites->push_back(bestAoc);
             auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
             this->pathProxy->sendVoronoiNetMsg(sites, vNet);

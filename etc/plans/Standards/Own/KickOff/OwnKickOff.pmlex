@@ -45,13 +45,6 @@
     <value xPos="521" yPos="27" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <value>
-      <bendpoints xPos="431" yPos="117"/>
-      <bendpoints xPos="621" yPos="107"/>
-      <bendpoints xPos="635" yPos="111"/>
-    </value>
-  </extensions>
-  <extensions>
     <key href="OwnKickOff.pml#1440772442289"/>
     <value>
       <bendpoints xPos="601" yPos="87"/>
@@ -64,10 +57,7 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1440772500050"/>
-    <value xPos="604" yPos="221"/>
-  </extensions>
-  <extensions>
-    <value/>
+    <value xPos="604" yPos="221" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1440772545631"/>
@@ -91,6 +81,14 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1440772873418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

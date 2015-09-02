@@ -70,7 +70,7 @@ namespace msl
 	 * @param egoTarget shared_ptr<geometry::CNPoint2D>
 	 * @param eval shared_ptr<PathEvaluator>
 	 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-	 * @return shared_ptr<geometry::CNPoint2D>
+	 * @return std::shared_ptr<geometry::CNPoint2D>
 	 */
 	shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 																shared_ptr<PathEvaluator> eval,
