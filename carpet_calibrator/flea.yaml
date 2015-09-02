@@ -1,0 +1,24 @@
+guid: 00b09d0100ccf9c6
+video_mode: 640x480_yuv422
+frame_id: pointgrey
+camera_info_url: file:///carpetCalibrator.yaml
+bayer_pattern: rggb #gbrg
+auto_exposure: 0
+exposure: 292
+auto_brightness: 0
+brightness: 0
+auo_focus: 0
+auto_gain: 0
+gain: 280
+auto_gamma: 0
+gamma: 2048
+auto_hue: 0
+hue: 2048
+auto_saturation: 0
+auto_sharpness: 0
+auto_shutter: 0
+shutter: 350
+auto_white_balance: 0
+white_balance_BU: 512
+white_balance_RV: 512
+auto_zoom: 0
