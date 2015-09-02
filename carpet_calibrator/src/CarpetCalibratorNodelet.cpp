@@ -69,12 +69,12 @@ namespace msl_vision
 
 
 
-		cv::imshow("RGB2BGR", rgbImage);
-		cv::imshow("RGB2GRAY", grayMat);
+//		cv::imshow("RGB2BGR", rgbImage);
+//		cv::imshow("RGB2GRAY", grayMat);
 
 //		cv::imshow("lol1", image2rgb1);
 //		cv::imshow("lol2", image2rgb2);
-		cv::waitKey(1);
+//		cv::waitKey(1);
 		cout << "Image Callback, size: " << image.size.p[1] << endl;
 
 
@@ -126,11 +126,8 @@ namespace msl_vision
 		if(lastRawOdom != NULL) {
 			cout << "1"  << endl;
 			if(abs(currAngle - (msg.get()->position.angle - firstAngle)) > 1) {
-				cout << "2"  << endl;
 				currAngle = msg.get()->position.angle - firstAngle;
-				cout << "3"  << endl;
 				saveCarpetToFile();
-				cout << "4"  << endl;
 				cout << "after 1° : " << currAngle << endl;
 			}
 		}
