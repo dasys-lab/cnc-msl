@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 	
 	MapHelper* mh = MapHelper::getInstance();
 	
-	msl_localization *pf = new msl_localization(2); //1200
+	msl_localization *loc = new msl_localization(2); //1200
 
 	/*while(ros::ok()) {
 		ros::spinOnce();
@@ -51,10 +51,15 @@ int main(int argc, char** argv) {
 		}
 		if(!ros::ok()) break;
 		
+		if (rmr->reloc) {
+			loc->resetStartParticle();
+			rmr->reloc = false;
+		}
+
 		auto lpl = rmr->getCurrentLinePointList();
 
-		if(++iteration%20==0) pf->sendParticleCloud();
-		pf->iterate(lpl, mh->getMap());
+		if(++iteration%20==0) loc->sendParticleCloud();
+		loc->iterate(lpl, mh->getMap());
 		rmr->dirty=false;
 	}
 	return 0;

@@ -33,7 +33,7 @@
 #include <tf/tf.h>
 #include "Rprop.h"
 #include "msl_sensor_msgs/LinePointList.h"
-
+#include "SystemConfig.h"
 
 #define RAWODOBUFSIZE 100
 
@@ -59,6 +59,8 @@ class msl_localization {
 		void sendParticleCloud();
 		void initParticles(double x, double y, double angle, double maxX, double maxY, double maxAngle);
 
+		void resetStartParticle();
+
 	protected:
 		bool useOdometry;
 		int minimizationSteps;
@@ -77,6 +79,7 @@ class msl_localization {
 
 		Particle * particles;
 		Particle maxParticle;
+		Particle startParticle;
 
 		Position rawUpdatedPosition;
 		unsigned short msgid;

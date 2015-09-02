@@ -99,7 +99,7 @@ void MapHelper::initializeMap() {
 
 
 	//This is the minimum and maximum location to sample particles later on
-	//Originally this was designed for oversized maps of ROS. In RoboCup it might be even to small.
+	//Originally this was designed for oversized maps of ROS. In RoboCup it might be even too small.
 	minXLocation = WIDTH;
 	maxXLocation = 0;
 	minYLocation = HEIGHT;
