@@ -17,6 +17,7 @@
 #include <image_transport/image_transport.h>
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <SystemConfig.h>
+#include <cv.h>
 
 using namespace std;
 
@@ -58,11 +59,16 @@ namespace msl_vision
 		 msl_actuator_msgs::RawOdometryInfoPtr lastRawOdom;
 
 		 ros::Subscriber rawOdomSub;
-		 double firstAngle;
-		 double currAngle;
+		double firstAngle;
+		double currAngle = 0;
+		int height;
+		int width;
+		bool imgReceived = false;
+		cv::Mat rgbImage;
+		cv::Mat grayMat;
 
 		 void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
-
+		 void saveCarpetToFile();
 	};
 
 }
