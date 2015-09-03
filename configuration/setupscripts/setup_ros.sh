@@ -23,8 +23,10 @@ wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 
 msg "ROS Pakete werden installiert und eingerichtet"
 
+rospackages='ros-indigo-desktop-full ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall'
+
 sudo apt-get update
-sudo apt-get -y install ros-indigo-desktop-full ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall
+sudo apt-get -y install $rospackages
 
 set +e
 sudo rosdep init
