@@ -36,7 +36,7 @@ msg "ROS Workspace wird angelegt und eingerichtet"
 
 add_to_bashrc "source /opt/ros/indigo/setup.bash"
 
-. ~/.bashrc
+source /opt/ros/indigo/setup.bash
 
 mkdir -p ~/cnws/src
 cd ~/cnws/src

@@ -14,40 +14,29 @@ then
 fi
 
 msg "Hinweis: Dein SSH Key muss in deinem GITHUB-Account registriert werden und dein GITHUB-Account muss für Carpe-Noctem-Cassel freigegeben werden!"
+# TODO: Ask if already done, when not open github page
 
-## Installiere ROS
 
 msg "GITHUB Repositories werden heruntergeladen, falls noch nicht vorhanden"
+
+
+ghurl='git@github.com:carpe-noctem-cassel/'
+# Repos to clone
+repos='alica alica-plan-designer supplementary cnc-msl'
 
 ## Ordnerstruktur erstellen, falls nicht vorhanden
 mkdir -p ~/cnws/src
 cd ~/cnws/src
-if [ ! -d ~/cnws/src/alica ];
-then
-  msg "Downloading ALICA (Team-Coordination-Engine)"
-  git clone git@github.com:carpe-noctem-cassel/alica.git
-fi
 
-if [ ! -d ~/cnws/src/alica-plan-designer ];
-then
-  msg "Downloading ALICA Plan Designer (Modellingtool)"
-  git clone git@github.com:carpe-noctem-cassel/alica-plan-designer.git
-fi
+for r in $repos
+do
+	if [ ! -d $r ]
+	then
+		msg "Cloning repository $r"
+		git clone $ghurl$r'.git'
+	else
+		msg "$r already exists!"
+	fi
+done
 
-if [ ! -d ~/cnws/src/supplementary ];
-then
-  msg "Downloading Supplementary Stuff (Config, FileSystem-Tools, etc.)"
-  git clone git@github.com:carpe-noctem-cassel/supplementary.git
-fi
-
-if [ ! -d ~/cnws/src/cnc-msl ];
-then
-  msg "Downloading Middle Size League Stuff"
-  git clone git@github.com:carpe-noctem-cassel/cnc-msl.git
-fi
-
-msg "GITHUB Configuration wird eingerichtet, falls noch nicht geschehen"
-
-sudo grep -q -F "default = tracking" ~/.gitconfig || cp ~/cnws/src/cnc-msl/configuration/gitconfig ~/.gitconfig
-vim ~/.gitconfig
 

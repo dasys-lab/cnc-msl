@@ -7,10 +7,10 @@ source ./funcs.sh
 ## System gegebenenfalls updaten
 
 msg "Ubuntu Paketquellen werden aktualisiert"
-sudo apt-get update
+sudo apt-get -y update
 
 msg "Ubuntu Pakete werden bei bedarf geupdatet"
-sudo apt-get upgrade
+sudo apt-get -y upgrade
 
 ## Installiere allgemeine Pakete fuer Entwicklung
 
