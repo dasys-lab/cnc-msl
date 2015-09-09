@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376159"/>
-    <value xPos="-87" yPos="-12" width="908" height="621"/>
+    <value xPos="-87" yPos="-12" width="1074" height="621"/>
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376161"/>
@@ -89,6 +89,14 @@
   </extensions>
   <extensions>
     <key href="../../../Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1441811642575"/>
+    <value xPos="739" yPos="140" width="66" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1441811700499"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
