@@ -262,9 +262,9 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			int validCount = 0;
 			cos_ = cos(particles[i].heading);
 			sin_ = sin(particles[i].heading);
-			Rprop xUpdate(0.02); //4cm
-			Rprop yUpdate(0.02);
-			Rprop angleUpdate(0.05); //0.1 Rad
+			Rprop xUpdate(0.1); //10cm
+			Rprop yUpdate(0.1);
+			Rprop angleUpdate(0.1); //0.1 Rad
 			float csquare = 2.50*2.50, ef, derrddist, distance;
 						
 			//Perform Gradient decent
@@ -288,21 +288,48 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 						int indX = lrint(realx/resolution_1) + IHEIGHT_2;
 						int indY = lrint(-realy/resolution_1) + IWIDTH_2;
 						//if(m==0 && i==0)cout << n << "\t" << first->x << "\t" << first->y << "\t" <<  indX << "\t" << indY << endl;
-						
+
+						//Exception handling for points outside the field
+						double xOutSide=0, yOutSide=0;
+						if(indX < 0) {
+							xOutSide = -indX*resolution_1;
+							indX = 0;
+						} else if(indX>=IHEIGHT) {
+							xOutSide = (indX-IHEIGHT)*resolution_1;
+							indX=IHEIGHT-1;
+						}
+						if(indY < 0) {
+							yOutSide = -indY*resolution_1;
+							indY = 0;
+						}
+						else if (indY>=IWIDTH) {
+							yOutSide = (indY-IWIDTH)*resolution_1;
+							indY=IWIDTH-1;
+						}
+
+						double epsilon=0;
+						if(xOutSide>0 && yOutSide>0) {
+							epsilon = sqrt(xOutSide*xOutSide + yOutSide*yOutSide);
+						}
+
+
+
 						//char approach
 						//dx += mh->xGradient(indX, indY);
 						//dy += mh->yGradient(indX, indY);
 						//dangle += mh->angleGradient(indX, indY, particles[i].heading, first->y, first->x);
-						
+
 						//float approach
-						distance = mh->getDistance(indX, indY);
+						//compute error / gradient:
+						distance = epsilon+mh->getDistance(indX, indY);
 						distsum = abs(distance);
 						ef = csquare + distance * distance;
 				      	derrddist = (2 * csquare * distance) /(ef * ef);
+
 				      	dx += derrddist * mh->fxGradient(indX, indY);
 				      	dy += derrddist * mh->fyGradient(indX, indY);
 				      	dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->y, first->x);
-						
+
 						indX = lrint(-realy/resolution_1) + IHEIGHT_2;
 						indY = lrint(realx/resolution_1) + IWIDTH_2;
 						
@@ -313,13 +340,12 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 						else dist = 255;
 						
 						//Count linepoints within a certain range	
-						if(dist<=555) { 
-							tribotWeight += dist;//pow(dist, 0.75);
-							validCount++;
-						}
+						//if(dist<255) {
+						tribotWeight += dist;//pow(dist, 0.75);
+						validCount++;
+						//}
 					}
 				}
-				
 				
 				weight = 1.0 - (tribotWeight)/((validCount)*510.0);
 				//std::cout << dx << "\t" << dy << "\t" << dangle << std::endl;
@@ -332,18 +358,17 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				lsfs << weight << "\t";
 				lsfs << distsum << "\t";
 				lsfs << endl;
-				particles[i].posx += xUpdate.getdW(dx);
-				particles[i].posy += yUpdate.getdW(dy);
-				//particles[i].heading += angleUpdate.getdW(dangle);
+				particles[i].posx += 1000*xUpdate.getdW(dx);
+				particles[i].posy += 1000*yUpdate.getdW(dy);
+				particles[i].heading += angleUpdate.getdW(dangle);
 				cos_ = cos(particles[i].heading);
 				sin_ = sin(particles[i].heading);
 			}
 			lsfs << endl;
 			lsfs << endl;
-			
 			validCount = 0;
 			tribotWeight = 0;
-			//Iterate over Linepoints
+			//Iterate over Linepoints to evaluate final position
 			for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist) {
 				if(linePointsInvalidity[invIndex] == 0){
 					//Transform LinePoint in coordinate system of current particle
@@ -361,10 +386,10 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 					else dist = 255;
 					
 					//Count linepoints within a certain range	
-					if(dist<=555) { 
-						tribotWeight += dist;//pow(dist, 0.75);
-						validCount++;
-					}
+					//if(dist<=555) {
+					tribotWeight += dist;//pow(dist, 0.75);
+					validCount++;
+					//}
 					//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
 				}
 				invIndex++;

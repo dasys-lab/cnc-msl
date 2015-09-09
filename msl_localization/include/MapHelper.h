@@ -37,7 +37,7 @@ class MapHelper {
 		double fangleGradient(int px, int py, double pangle, double lx, double ly);
 		double fangleGradient(double px, double py, double pangle, double lx, double ly);
 		float* getDistanceMap() {return wallDistanceMap;};
-		float getDistance(int X, int Y) {return wallDistanceMap[id(Y, X, IWIDTH)];};
+		float getDistance(int X, int Y) {return wallDistanceMap[id(X, Y, IWIDTH)];};
 		
 		bool gradientAvailable() {return derivation;};
 		Cox::field_circles_t getCircles();
@@ -58,4 +58,5 @@ class MapHelper {
 		
 		signed char* xSobelMap;
 		signed char* ySobelMap;
+		float __max_x, __max_y, __min_x, __min_y;
 };

@@ -23,7 +23,11 @@ void MapHelper::initializeMap() {
 	//This is making a copy of the list -> shit!
 	auto circles = getCircles();
 	auto lines = getLines();
-	float __max_x, __max_y, __min_x, __min_y;
+	//Note this should be max/min double
+	__max_x = -9999999;
+	__max_y = -9999999;
+	__min_x = 9999999;
+	__min_y = 9999999;
 
 	field_lines_t::const_iterator it = lines.begin();
 	for (; it != lines.end(); ++it) {
@@ -106,26 +110,27 @@ void MapHelper::initializeMap() {
 	maxYLocation = 0;
 
 
-	/*ofstream ofs("Test3.txt");
-	ofstream ofs2("Test2.txt");
+	ofstream ofs("Test3.txt");
+	//ofstream ofs2("Test2.txt");
 	float distance, ef, derrddist, csquare = 0.25 * 0.25;
-	for (int i = 0; i < rmr->getMapInfo()->width * rmr->getMapInfo()->height;
+	for (int i = 0; i < IWIDTH * IHEIGHT;
 			i++) {
-		ofs2 << (int) rmr->getMap()[i] << " ";
+		//ofs2 << (int) rmr->getMap()[i] << " ";
 		//ofs2 << (int)ySobelMap[i] << " ";
 
 		distance = wallDistanceMap[i];
 		ef = csquare + distance * distance;
 		derrddist = (2 * csquare * distance) / (ef * ef);
 
-		ofs << derrddist * fYSobel[i] << " ";
-		if (i % rmr->getMapInfo()->width == rmr->getMapInfo()->width - 1) {
+		//ofs << derrddist * fYSobel[i] << " ";
+		ofs << distance << " ";
+		if (i % (int)IWIDTH == (int)IWIDTH - 1) {
 			ofs << endl;
-			ofs2 << endl;
+			//ofs2 << endl;
 		}
 	}
 	ofs.close();
-	ofs2.close();*/
+	//ofs2.close();
 	cout << "Map Initialization Finished" << endl;
 }
 
@@ -227,7 +232,7 @@ double MapHelper::yGradient(double x, double y) {
 	int indX = lrint(y / RESOLUTION) + IHEIGHT;
 	int indY = lrint(x / RESOLUTION) + IWIDTH;
 
-	return (double) ySobelMap[id(indX, indY, IWIDTH)];
+	return (double) ySobelMap[id(indY, indX, IWIDTH)];
 }
 
 double MapHelper::angleGradient(int px, int py, double pangle, double lx,
