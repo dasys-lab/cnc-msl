@@ -32,5 +32,6 @@ include_directories(
 )
 file(GLOB_RECURSE tmc_src "src/*.cpp")
 add_executable(${PROJECT_NAME} ${tmc_src})
-add_dependencies(${PROJECT_NAME} ${catkin_LIBRARIES})
+message ("<<<< tmc: ${catkin_LIBRARIES}")
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)
