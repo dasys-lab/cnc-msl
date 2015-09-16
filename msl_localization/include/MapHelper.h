@@ -19,9 +19,9 @@ class MapHelper {
 		double RESOLUTION;
 		
 		
-		int inline id(int x, int y, int width) {return x*width+y;}
-		int inline idx(int id, int width) {return id%width;}
-		int inline idy(int id, int width) {return id/width;}
+		int inline id(int x, int y, int width) {return x+y*width;}
+		int inline idx(int id, int width) {return id/width;}
+		int inline idy(int id, int width) {return id%width;}
 		
 		int minXLocation, maxXLocation, minYLocation, maxYLocation;
 		

@@ -50,10 +50,10 @@ void MapHelper::initializeMap() {
 	__max_y += border;
 	RESOLUTION = 10;
 
-	HEIGHT = std::floor((__max_x - __min_x) / RESOLUTION) + 1;
-	WIDTH = std::floor((__max_y - __min_y) / RESOLUTION) + 1;
-	IWIDTH = WIDTH;
+	WIDTH = std::floor((__max_x - __min_x) / RESOLUTION) + 1;
+	HEIGHT = std::floor((__max_y - __min_y) / RESOLUTION) + 1;
 	IHEIGHT = HEIGHT;
+	IWIDTH = WIDTH;
 	const int MAPSIZE = (WIDTH)*(HEIGHT);
 	cout << "Mapwidth: " << WIDTH << endl;
 	cout << "Mapheight: " << HEIGHT << endl;
@@ -123,7 +123,8 @@ void MapHelper::initializeMap() {
 		derrddist = (2 * csquare * distance) / (ef * ef);
 
 		//ofs << derrddist * fYSobel[i] << " ";
-		ofs << distance << " ";
+		//ofs << distance << " ";
+		ofs << derrddist * fXSobel[i] << " ";
 		if (i % (int)IWIDTH == (int)IWIDTH - 1) {
 			ofs << endl;
 			//ofs2 << endl;
@@ -162,9 +163,9 @@ void MapHelper::initializeGradientMap() {
 					xSobelMap[id(x, y, WIDTH)] = 0;
 					ySobelMap[id(x, y, WIDTH)] = 0;
 				} else {
-					ySobelMap[id(x, y, WIDTH)] = (slt + 2 * slc + slb - srt
+					xSobelMap[id(x, y, WIDTH)] = -(slt + 2 * slc + slb - srt
 							- 2 * src - srb) / 8;
-					xSobelMap[id(x, y, WIDTH)] = (slt + 2 * sct + srt - slb
+					ySobelMap[id(x, y, WIDTH)] = -(slt + 2 * sct + srt - slb
 							- 2 * scb - srb) / 8;
 				}
 			}
@@ -192,9 +193,9 @@ void MapHelper::initializeGradientMap() {
 					fXSobel[id(x, y, WIDTH)] = 0;
 					fYSobel[id(x, y, WIDTH)] = 0;
 				} else {
-					fYSobel[id(x, y, WIDTH)] = ((slt + 2 * slc + slb - srt
+					fXSobel[id(x, y, WIDTH)] = -((slt + 2 * slc + slb - srt
 							- 2 * src - srb) / 8.0) / RES;
-					fXSobel[id(x, y, WIDTH)] = ((slt + 2 * sct + srt - slb
+					fYSobel[id(x, y, WIDTH)] = -((slt + 2 * sct + srt - slb
 							- 2 * scb - srb) / 8.0) / RES;
 				}
 			}
