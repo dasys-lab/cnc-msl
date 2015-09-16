@@ -50,6 +50,7 @@ namespace msl
 		double KICKER_DISTANCE;
 		double KICKER_ANGLE;
 		double HAVE_BALL_MAX_ANGLE_DELTA;
+		double BALL_DIAMETER;
 		int hasBallIteration;
 		bool hadBefore;
 		bool hasBall; /**< True if the local robot has the ball */
@@ -63,7 +64,6 @@ namespace msl
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
 		bool robotHasBall(int robotId);
 		bool oppHasBall(msl_sensor_msgs::SharedWorldInfo data);
-		double ballDiameter;
 };
 
 } /* namespace alica */

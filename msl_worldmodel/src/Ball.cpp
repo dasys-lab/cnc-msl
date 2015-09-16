@@ -22,7 +22,7 @@ namespace msl
 		KICKER_ANGLE = M_PI;
 		HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
 		HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
-		ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+		BALL_DIAMETER = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
 	}
 
 	Ball::~Ball()
@@ -66,6 +66,9 @@ namespace msl
 		// TODO: create buffer for ball velocity, like in getEgoBallPosition(), with this hasBallIteration stuff...
 	}
 
+	/**
+	 * @return True, if I had the ball for at least one iteration. False otherwise.
+	 */
 	bool Ball::haveBall()
 	{
 		return hasBallIteration > 0;
@@ -75,10 +78,12 @@ namespace msl
 	{
 		if (hasBallIteration > 0)
 		{
+			// increase the haveBallDistanceDynamic by 2 millimeter to at most HAVE_BALL_TOLERANCE_DRIBBLE
 			haveBallDistanceDynamic = min(haveBallDistanceDynamic + 2, HAVE_BALL_TOLERANCE_DRIBBLE);
 		}
 		else
 		{
+			// reset the haveBalldistanceDynamic to 0
 			haveBallDistanceDynamic = 0;
 		}
 
@@ -86,7 +91,10 @@ namespace msl
 		if (ballPos == nullptr)
 		{
 			// TODO predict ball, Endy do it!
+
+			// if you don't see the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+
 			//cout << "Ball: NullPointer check failed!" << endl;
 			return;
 		}
@@ -96,6 +104,7 @@ namespace msl
 		// check distance to ball
 		if (KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length())
 		{
+			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
 			//cout << "Ball: Distance Tolerance check failed!" << endl;
 			return;
@@ -115,6 +124,7 @@ namespace msl
 		// check angle to ball
 		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
 		{
+			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
 			//cout << "Ball: Angle Tolerance check failed!" << endl;
 			return;
@@ -128,6 +138,7 @@ namespace msl
 		return this->wm->rawSensorData.getBallPosition();
 	}
 
+	// TODO: this is broken, as nobody enters true into the ring buffer
 	bool Ball::robotHasBall(int robotId)
 	{
 		bool ret = false;
@@ -256,7 +267,7 @@ namespace msl
 
 	double Ball::getBallDiameter()
 	{
-		return ballDiameter;
+		return BALL_DIAMETER;
 	}
 
 }

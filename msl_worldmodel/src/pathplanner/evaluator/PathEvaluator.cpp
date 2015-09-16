@@ -93,7 +93,7 @@ namespace msl
 				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
 																							currentNode->getVertex(),
 																							nextNode->getVertex());
-				//calcualte weighted dist to both objects
+				//calculate weighted dist to both objects
 
 				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
 				if((obs.first.second > 0 && obs.second.second > 0) || (obs.first.second > 0 && obs.second.second != -1) || (obs.second.second > 0 && obs.first.second != -1))

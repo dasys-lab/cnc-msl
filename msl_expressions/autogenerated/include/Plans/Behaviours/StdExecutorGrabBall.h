@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1441209011595) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,6 +14,7 @@ namespace alica
         virtual ~StdExecutorGrabBall();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1441209011595) ENABLED START*/ //Add additional public methods here
+        void readConfigParameters();
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
@@ -20,6 +22,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1441209011595) ENABLED START*/ //Add additional private methods here
+        double catchRadius;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
