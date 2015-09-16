@@ -29,8 +29,9 @@ namespace alica
         wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
         aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
         kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         lastAlignment = 0;
-        waitBeforeBlindKick = 29000000000;
+        waitBeforeBlindKick = timeForPenaltyShot - 1000000000;
 
         /*PROTECTED REGION END*/
     }

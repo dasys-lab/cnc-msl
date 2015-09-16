@@ -21,7 +21,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1438778042140) ENABLED START*/ //Add additional private methods here
-        double accel;
+        double timeForPass;
+        double waitBeforeBlindKick;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
