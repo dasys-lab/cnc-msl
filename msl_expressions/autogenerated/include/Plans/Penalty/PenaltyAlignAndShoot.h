@@ -44,6 +44,7 @@ namespace alica
         double wheelSpeed;
         double aimOffset;
         double kickPower;
+        double timeForPenaltyShot;
         //0 = not alignt, 1 = left, 2 = right
         int lastAlignment;
         unsigned long waitBeforeBlindKick;
