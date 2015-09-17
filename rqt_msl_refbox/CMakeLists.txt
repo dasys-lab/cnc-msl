@@ -48,6 +48,7 @@ qt4_wrap_ui(rqt_msl_refbox_UIS_H ${rqt_msl_refbox_UIS})
 include_directories(${rqt_msl_refbox_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${rqt_msl_refbox_SRCS} ${rqt_msl_refbox_MOCS} ${rqt_msl_refbox_UIS_H})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY})
+add_dependencies(${PROJECT_NAME} msl_msgs_generate_messages_cpp)
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
