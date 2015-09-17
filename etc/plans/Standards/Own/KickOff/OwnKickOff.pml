@@ -33,7 +33,7 @@
   <states id="1441811642575" name="Dummy" comment="">
     <inTransitions>#1441811700499</inTransitions>
   </states>
-  <transitions id="1440675383814" name="PosExec2GrabBall" comment="From PosExec 2 GrabBall State: If we reached the executor position." msg="">
+  <transitions id="1440675383814" name="PosExec2GrabBall" comment="From PosExec 2 GrabBall State: If we reached the executor position and start signal was sent." msg="">
     <preCondition id="1440675385644" name="PosExec2GrabBall" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1438785376160</inState>
     <outState>#1440675376134</outState>
