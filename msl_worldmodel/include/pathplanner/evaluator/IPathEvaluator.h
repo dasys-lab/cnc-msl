@@ -25,7 +25,7 @@ namespace msl
 		virtual double eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 									shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
 									VoronoiNet* voronoi = nullptr,
-									shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr) = 0;
+									shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath= nullptr, shared_ptr<geometry::CNPoint2D> lastTarget = nullptr) = 0;
 	};
 
 } /* namespace msl */

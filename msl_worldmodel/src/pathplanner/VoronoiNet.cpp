@@ -189,7 +189,7 @@ namespace msl
 			}
 			//set predecessor and cost
 			// add heuristic cost
-			double cost = eval->eval(startPos, goal, currentNode, neighbors.at(i), this);
+			double cost = eval->eval(startPos, goal, currentNode, neighbors.at(i), this, wm->pathPlanner.getLastPath(), wm->pathPlanner.getLastTarget());
 			if(cost > 0)
 			{
 				//if node is already in open change cost else add node

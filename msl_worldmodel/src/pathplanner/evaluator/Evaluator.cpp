@@ -10,8 +10,8 @@
 namespace msl
 {
 
-	Evaluator::Evaluator(PathPlanner* planner) :
-			PathEvaluator(planner)
+	Evaluator::Evaluator() :
+			PathEvaluator()
 	{
 		//# how much the robot values wide corridors compared to short paths
 		//# 1,000,000 means that 10m detour is worth avoiding a 10cm wide gap
@@ -24,9 +24,10 @@ namespace msl
 	{
 	}
 
-	double Evaluator::eval(shared_ptr<VoronoiNet> voronoi,
-									shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
-									shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
+	double Evaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
+							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
+							VoronoiNet* voronoi,
+							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path, shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
 //		//CALCULATE COST FUNCTION AND HEURISTIC FUNCTION
 //

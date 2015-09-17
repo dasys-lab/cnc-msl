@@ -11,9 +11,8 @@
 namespace msl
 {
 
-	PathEvaluator::PathEvaluator(PathPlanner* planner)
+	PathEvaluator::PathEvaluator()
 	{
-		this->planner = planner;
 		this->sc = SystemConfig::getInstance();
 		voronoiPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
@@ -38,24 +37,22 @@ namespace msl
 	 */
 	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
+								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > lastPath, shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
 
 		// add the cost of current node to return
 		double ret = currentNode->getCost();
 		// add weighted distance to return
 		ret += pathLengthWeight * currentNode->getVertex()->distanceTo(nextNode->getVertex());
-		auto p = planner->getLastPath();
-		auto lastGoal = planner->getLastTarget();
 		//if we are in the first node, there has been a path before und the goal changed
-		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1 && lastGoal != nullptr
-				&& lastGoal->distanceTo(goal) > 250)
+		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr
+				&& lastTarget->distanceTo(goal) > 250)
 		{
 			//claculate agle between the first edge of the current path and the last path
 			double a = startPos->x - currentNode->getVertex()->x;
 			double b = startPos->y - currentNode->getVertex()->y;
-			double c = p->at(0)->x - p->at(1)->x;
-			double d = p->at(0)->y - p->at(1)->y;
+			double c = lastPath->at(0)->x - lastPath->at(1)->x;
+			double d = lastPath->at(0)->y - lastPath->at(1)->y;
 
 			double mag_v1 = sqrt(a * a + b * b);
 			double mag_v2 = sqrt(c * c + d * d);
