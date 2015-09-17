@@ -56,6 +56,7 @@ namespace msl
 		 * weight for the deviation of path start
 		 */
 		double pathDeviationWeight;
+		double robotDiameter;
 		PathPlanner* planner;
 		ros::Publisher voronoiPub;
 		ros::NodeHandle n;

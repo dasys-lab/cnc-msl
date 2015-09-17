@@ -7,6 +7,7 @@
 
 #include <pathplanner/evaluator/PathEvaluator.h>
 #include "GeometryCalculator.h"
+#include "msl_msgs/VoronoiNetInfo.h"
 namespace msl
 {
 
@@ -109,7 +110,7 @@ namespace msl
 
 				//if the distance to the obstacles is too small return -1 to not expand this node
 				if ((distobs * 2)
-						< (this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth()))
+						< (robotDiameter * 2 + additionalCorridorWidth))
 				{
 					return -1.0;
 				}
