@@ -23,15 +23,19 @@
     <outTransitions>#1441811700499</outTransitions>
   </states>
   <states id="1440772454611" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/AttackOpp.beh#1430324680117</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1440772549851</inTransitions>
     <outTransitions>#1440772873418</outTransitions>
+    <outTransitions>#1442496872532</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1440772500050" name="Success" comment="">
     <inTransitions>#1440772873418</inTransitions>
   </states>
   <states id="1441811642575" name="Dummy" comment="">
     <inTransitions>#1441811700499</inTransitions>
+  </states>
+  <states xsi:type="alica:FailureState" id="1442495115442" name="Failure" comment="">
+    <inTransitions>#1442496872532</inTransitions>
   </states>
   <transitions id="1440675383814" name="PosExec2GrabBall" comment="From PosExec 2 GrabBall State: If we reached the executor position and start signal was sent." msg="">
     <preCondition id="1440675385644" name="PosExec2GrabBall" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -48,7 +52,7 @@
     <inState>#1440675376134</inState>
     <outState>#1440772305591</outState>
   </transitions>
-  <transitions id="1440772549851" name="MISSING_NAME" comment="receiver aligned" msg="">
+  <transitions id="1440772549851" name="MISSING_NAME" comment="receiver aligned and executor has shot" msg="">
     <preCondition id="1440772553737" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1438785501838</inState>
     <outState>#1440772454611</outState>
@@ -62,6 +66,11 @@
     <preCondition id="1441811702176" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1440772305591</inState>
     <outState>#1441811642575</outState>
+  </transitions>
+  <transitions id="1442496872532" name="MISSING_NAME" comment="any child failure" msg="">
+    <preCondition id="1442496874047" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1440772454611</inState>
+    <outState>#1442495115442</outState>
   </transitions>
   <entryPoints id="1438785376161" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>

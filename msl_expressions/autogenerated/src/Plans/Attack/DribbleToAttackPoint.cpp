@@ -200,7 +200,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1436855838589) ENABLED START*/ //Add additional options here
         field = msl::MSLFootballField::getInstance();
         sc = supplementary::SystemConfig::getInstance();
-        eval = make_shared < msl::PathEvaluator > ();
+        eval = make_shared<msl::PathEvaluator>();
         bool success = true;
         string tmp = "";
         success &= getParameter("OwnPenalty", tmp);

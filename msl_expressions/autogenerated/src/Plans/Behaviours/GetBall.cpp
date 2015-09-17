@@ -55,6 +55,12 @@ namespace alica
             {
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
+                this->success = true;
+                return;
+            }
+            else if (wm->game.getTimeSinceStart() >= timeForPass)
+            {
+                this->failure = true;
             }
             else if (vectorLength < egoBallPos->length() && egoBallVelocity->length() > 250)
             {
@@ -99,6 +105,8 @@ namespace alica
         isMovingCloserIter = 0;
         isMovingAwayIter = 0;
         maxIter = 4;
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        timeForPass = (*sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1414828300860) ENABLED START*/ //Add additional methods here
