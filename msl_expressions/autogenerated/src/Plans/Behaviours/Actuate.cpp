@@ -432,106 +432,110 @@ namespace alica
 
         x = max(min(angle, 3.14), -3.14);
 
-        //LeftMotorFunktion interpolation Start
-        //LeftMotorFunktion interpolation Start
-
-        vector<double> XLeft(13), YLeft(13);
-        //Angle
-        XLeft[0] = -3.14;
-        XLeft[1] = -2.67;
-        XLeft[2] = -2.12;
-        XLeft[3] = -1.57;
-        XLeft[4] = -0.942;
-        XLeft[5] = -0.47;
-        XLeft[6] = 0;
-        XLeft[7] = 0.47;
-        XLeft[8] = 0.942;
-        XLeft[9] = 1.57;
-        XLeft[10] = 2.12;
-        XLeft[11] = 2.67;
-        XLeft[12] = 3.14;
-
-        YLeft[0] = 1.2;
-        YLeft[1] = -0.8;
-        YLeft[2] = -2.8;
-        YLeft[3] = -3.5;
-        YLeft[4] = -3;
-        YLeft[5] = -2.8;
-        YLeft[6] = -2.5;
-        YLeft[7] = -2.0;
-        YLeft[8] = -1.0;
-        YLeft[9] = 1;
-        YLeft[10] = 1;
-        YLeft[11] = 1;
-        YLeft[12] = 1.2;
-
+//        //LeftMotorFunktion interpolation Start
+//        //LeftMotorFunktion interpolation Start
+//
+//        vector<double> XLeft(13), YLeft(13);
+//        //Angle
+//        XLeft[0] = -3.14;
+//        XLeft[1] = -2.67;
+//        XLeft[2] = -2.12;
+//        XLeft[3] = -1.57;
+//        XLeft[4] = -0.942;
+//        XLeft[5] = -0.47;
+//        XLeft[6] = 0;
+//        XLeft[7] = 0.47;
+//        XLeft[8] = 0.942;
+//        XLeft[9] = 1.57;
+//        XLeft[10] = 2.12;
+//        XLeft[11] = 2.67;
+//        XLeft[12] = 3.14;
+//
+//        YLeft[0] = 1.2;
+//        YLeft[1] = -0.8;
+//        YLeft[2] = -2.8;
+//        YLeft[3] = -3.5;
+//        YLeft[4] = -3;
+//        YLeft[5] = -2.8;
+//        YLeft[6] = -2.5;
+//        YLeft[7] = -2.0;
+//        YLeft[8] = -1.0;
+//        YLeft[9] = 1;
+//        YLeft[10] = 1;
+//        YLeft[11] = 1;
+//        YLeft[12] = 1.2;
+//
         splines::spline leftMotor;
-        leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
+//        leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
         double funktionLeftInterpolation = leftMotor(x); //
-        cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
-
-        //LeftMotorFunktion interpolation End
-        //LeftMotorFunktion interpolation Start
-
-        vector<double> XRight(13), YRight(13);
-        //Angle
-        XRight[0] = -3.14;
-        XRight[1] = -2.67;
-        XRight[2] = -2.12;
-        XRight[3] = -1.57;
-        XRight[4] = -0.942;
-        XRight[5] = -0.47;
-        XRight[6] = 0;
-        XRight[7] = 0.47;
-        XRight[8] = 0.942;
-        XRight[9] = 1.57;
-        XRight[10] = 2.12;
-        XRight[11] = 2.67;
-        XRight[12] = 3.14;
-
-        YRight[0] = 1.2;
-        YRight[1] = 1;
-        YRight[2] = 1;
-        YRight[3] = 1;
-        YRight[4] = -1.0;
-        YRight[5] = -2.0;
-        YRight[6] = -2.5;
-        YRight[7] = -2.8;
-        YRight[8] = -3;
-        YRight[9] = -3.5;
-        YRight[10] = -2.8;
-        YRight[11] = -0.8;
-        YRight[12] = 1.2;
+//        cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
+//
+//        //LeftMotorFunktion interpolation End
+//        //LeftMotorFunktion interpolation Start
+//
+//        vector<double> XRight(13), YRight(13);
+//        //Angle
+//        XRight[0] = -3.14;
+//        XRight[1] = -2.67;
+//        XRight[2] = -2.12;
+//        XRight[3] = -1.57;
+//        XRight[4] = -0.942;
+//        XRight[5] = -0.47;
+//        XRight[6] = 0;
+//        XRight[7] = 0.47;
+//        XRight[8] = 0.942;
+//        XRight[9] = 1.57;
+//        XRight[10] = 2.12;
+//        XRight[11] = 2.67;
+//        XRight[12] = 3.14;
+//
+//        YRight[0] = 1.2;
+//        YRight[1] = 1;
+//        YRight[2] = 1;
+//        YRight[3] = 1;
+//        YRight[4] = -1.0;
+//        YRight[5] = -2.0;
+//        YRight[6] = -2.5;
+//        YRight[7] = -2.8;
+//        YRight[8] = -3;
+//        YRight[9] = -3.5;
+//        YRight[10] = -2.8;
+//        YRight[11] = -0.8;
+//        YRight[12] = 1.2;
         splines::spline rightMotor;
-        rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
+//        rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
         double funktionRightInterpolation = rightMotor(x); //
-        cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
+//        cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
 
-        /*Funktion conf.
+//        Funktion conf.
          vector<double> XRight(13), YRight(13);
-         splines::spline rightMotor;
+//         splines::spline rightMotor;
 
          auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble",
          "FunktionValuesRight", NULL);
 
          // Load XLeft Lookup Lists FunktionValuesRightX
+         int counter = 1;
          for (string sectionName : *FunktionValuesRightSections)
          {
-         XRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
-         sectionName.c_str(), "XRight", NULL);
+			 XRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+			 sectionName.c_str(), "XRight", NULL);
 
-         YRight = (*this->sc)["ActuatorDribble"]->get<vector<double>>("ActuateDribble.FunktionValuesRight",
-         sectionName.c_str(), "YRight",
-         NULL);
-         rightMotor.set_points(XRight, YRight);
+			 YRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+			 sectionName.c_str(), "YRight",
+			 NULL);
+			 rightMotor.set_points(XRight, YRight);
 
+//			this->maxVel = (*this->sc)["Behaviour"]->get<double>("Pass", "MaxSpeed", NULL);
 
-         //rightMotor.set_points(XRight, YRight);
-         //funktionRightInterpolation.push_back(FunktionValuesRight);
+			 //rightMotor.set_points(XRight, YRight);
+			 //funktionRightInterpolation.push_back(FunktionValuesRight);
+			 counter++;
          }
+
          FunktionValuesRight = rightMotor(x);
          cout<<"FunktionValuesRight : "<<FunktionValuesRight<<endl;
-         */
+
 
         //	leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
         //double funktionLeftInterpolation = leftMotor(x); //
