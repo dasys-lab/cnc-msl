@@ -264,7 +264,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			sin_ = sin(particles[i].heading);
 			Rprop xUpdate(0.1); //10cm
 			Rprop yUpdate(0.1);
-			Rprop angleUpdate(0.1); //0.1 Rad
+			Rprop angleUpdate(0.1); //0.01 Rad
 			float csquare = 2.50*2.50, ef, derrddist, distance;
 						
 			//Perform Gradient decent
@@ -329,7 +329,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 				      	dx += derrddist * mh->fxGradient(indX, indY);
 				      	dy += derrddist * mh->fyGradient(indX, indY);
-				      	//dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->y, first->x);
+				      	dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->y, first->x);
 
 						indX = lrint(realx/resolution_1) + IWIDTH_2;
 						indY = lrint(-realy/resolution_1) + IHEIGHT_2;
@@ -352,7 +352,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				//exit(0);
 				
 				weight = 1.0 - (tribotWeight)/((validCount)*510.0);
-				cout << weight << endl;
+				//cout << weight << endl;
 				//std::cout << dx << "\t" << dy << "\t" << dangle << std::endl;
 				lsfs << particles[i].posx <<  "\t";
 				lsfs << particles[i].posy <<  "\t";
@@ -363,15 +363,20 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				lsfs << weight << "\t";
 				lsfs << distsum << "\t";
 				lsfs << endl;
-				particles[i].posx += 1000*xUpdate.getdW(dx);
+				particles[i].posx -= 1000*xUpdate.getdW(dx);
 				//Note Y in the arrays behaves inverse to the coordinate system we are using
-				particles[i].posy -= 1000*yUpdate.getdW(dy);
-				//particles[i].heading += angleUpdate.getdW(dangle);
+				particles[i].posy += 1000*yUpdate.getdW(dy);
+				particles[i].heading -= angleUpdate.getdW(dangle);
+				particles[i].weight = weight;
 				cos_ = cos(particles[i].heading);
 				sin_ = sin(particles[i].heading);
 			}
 			lsfs << endl;
 			lsfs << endl;
+			cout << particles[i].weight <<  "\t";
+			cout << particles[i].heading <<  "\t";
+			cout << particles[i].posx <<  "\t";
+			cout << particles[i].posy <<  endl;
 			validCount = 0;
 			tribotWeight = 0;
 			//Iterate over Linepoints to evaluate final position
@@ -382,9 +387,10 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 					realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
 		
 					//Compute index in distance lookup
-					int indY = lrint(-realy/resolution_1) + IWIDTH_2;
-					int indX = lrint(realx/resolution_1) + IHEIGHT_2;
+					int indX = lrint(realx/resolution_1) + IWIDTH_2;
+					int indY = lrint(-realy/resolution_1) + IHEIGHT_2;
 		
+
 					//Compute "Distance value" [0-254]
 					if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
 						dist = LineLookup[indX + indY*IWIDTH];
@@ -395,7 +401,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 					//if(dist<=555) {
 					tribotWeight += dist;//pow(dist, 0.75);
 					validCount++;
-					//}
+					//Alternative Weight
 					//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
 				}
 				invIndex++;
@@ -413,7 +419,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 		}
 	}
 	lsfs.close();
-	exit(0);
+	//exit(0);
 
 	//Compute Best Particle + Index
 	int maxInd = 1;
@@ -541,7 +547,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	//Update Current Position and Velocity Estimation by Egomotionestimator
 	EgoMotionEstimator * estimator = EgoMotionEstimator::getInstance();
 	mrOld = mr;
-	mr = estimator->trackObject(positionBuffer, timestampBuffer, RAWODOBUFSIZE, integrationIndex, 0.4E07);
+	mr = estimator->trackObject(positionBuffer, timestampBuffer, RAWODOBUFSIZE, integrationIndex, 400E06);
 
 	//If position or velocity jumped or if Velocity is very small -> Use old Velocity Estimation
 	if(reinit || jump || (fabs(sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) - sqrt(mrOld.velocity.vx*mrOld.velocity.vx + mrOld.velocity.vy*mrOld.velocity.vy)) > 400.0 && sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy) < 1.0E-32)) {
@@ -912,17 +918,21 @@ double msl_localization::calculateWeightForEstimatedPosition(Position pos, msl_s
 			unsigned char c = (unsigned char) int_c_dist;
 
 			if(linePointsInvalidity[invIndex] == 0){
+				//Transform LinePoint in coordinate system of current particle
 				realx = pos.x + cos_*(first->x) - sin_*(first->y);
 				realy = pos.y + sin_*(first->x) + cos_*(first->y);
-				
-					int indY = lrint(-realy*resolution_1) + IHEIGHT_2;
-					int indX = lrint(realx*resolution_1) + IWIDTH_2;
+
+
+					//Compute index in distance lookup
+					int indX = lrint(realx/resolution_1) + IWIDTH_2;
+					int indY = lrint(-realy/resolution_1) + IHEIGHT_2;
 		
-					if(indX >= 0 && indX < IHEIGHT && indY >= 0 && indY < IWIDTH){
+
+					//Compute "Distance value" [0-254]
+					if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
 						dist = LineLookup[indX + indY*IWIDTH];
 					}
-					else
-						dist = 255;
+					else dist = 255;
 
 					if(dist >= 254)
 						dist = 254;

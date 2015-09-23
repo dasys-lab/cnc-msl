@@ -30,7 +30,7 @@
 #include <msl_sensor_msgs/VisionImage.h>
 #include <msl_sensor_msgs/VisionGameState.h>
 #include <msl_actuator_msgs/VisionRelocTrigger.h>
-
+#include "LinePoint.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -51,8 +51,9 @@ class SpicaHelper {
 
 		static ros::Publisher womopub;
         static ros::Publisher statepub;
-		static ros::Publisher LPpub;
+		static ros::Publisher debugPub;
 		static ros::Publisher Imagepub;
+		static ros::Publisher linePointsPub;
 
 		static ros::Subscriber VCsub;
 		// subscriber for relocation button
@@ -67,7 +68,8 @@ class SpicaHelper {
 		
 		static ros::NodeHandle* visionNode;
 		static void send();
-		static void sendLinePoints();
+		static void sendDebugMsg();
+		static void sendLinePoints(std::vector<LinePoint> linePoints);
         static void sendGameState();
 		static void streamGreyMJPEG(unsigned char* img, int width, int height);
 

@@ -938,6 +938,9 @@ int main(int argc,char *argv[]){
 			printf("Stage 4: Detect Linepoints\n");
 			//Get LinePoints for Self-Localization
 			image_gray = filterLinePoints.process((unsigned char *) image_gray, area, area, linePoints, distanceHelper, scanHelper);
+			//Send linepointlist here:
+			SpicaHelper::sendLinePoints(linePoints);
+
 
 			printf("Stage 5: Detect ROIs\n");
 			roiData = filterLinePointsROI.process((unsigned char *) image_uv, area, area, linePointsROI, distanceHelper, scanHelperBall);
@@ -1174,7 +1177,7 @@ int main(int argc,char *argv[]){
 					SpicaHelper::vdd->obstacles = SpicaHelper::wm->obstacles;
 					SpicaHelper::vdd->senderID = supplementary::SystemConfig::getOwnRobotID();
 				}
-				SpicaHelper::sendLinePoints();
+				SpicaHelper::sendDebugMsg();
 				fclose(fd);
 
 				FILE * fd2 = fopen("MaxParticle.txt", "w");

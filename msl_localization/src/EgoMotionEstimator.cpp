@@ -55,39 +55,28 @@ void EgoMotionEstimator::cleanup(){
 MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long long * timestampBuf, int length, int lastIndex, double timeBack){
 	int validCounter = 0;
 
-	//printf("EgoMotionEstimator start\n");
-	
 	unsigned long long timediff = 1000000; //TimedifftoOmniCam
+//	if(timediff > 1.0E07){
+//		MovingRobot mr;
+//		mr.position.x = 0.0;
+//		mr.position.y = 0.0;
+//		mr.position.heading = 0.0;
+//		mr.velocity.vx = 0.0;
+//		mr.velocity.vy = 0.0;
+//		mr.velocity.w = 0.0;
+//		return mr;
+//	}
 
-	if(timediff > 1.0E07){
-		MovingRobot mr;
-		mr.position.x = 0.0;
-		mr.position.y = 0.0;
-		mr.position.heading = 0.0;
-		mr.velocity.vx = 0.0;
-		mr.velocity.vy = 0.0;
-		mr.velocity.w = 0.0;
-
-		return mr;
-
-	}	
-	//printf("EgoMotionEstimator after first check\n");
 
 	validCounter = 1;
-
 	int startIndex = lastIndex;
 	int currIndex = lastIndex - 1;
 
 
 	while(1){
 		timediff = timestampBuf[lastIndex] - timestampBuf[currIndex];
-
-		//printf("EgoMotionEstimator first while %d %d %llu\n", lastIndex, currIndex, timediff);
-		//printf("EgoMotionEstimator timelast = %llu timecurr = %llu\n", timestampBuf[lastIndex], timestampBuf[currIndex]);
-
 		if(timediff > timeBack || currIndex == lastIndex)
 			break;
-
 		
 		validCounter++;
 		startIndex = currIndex;
@@ -201,7 +190,7 @@ MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long 
 			unsigned long long timediff = timestampBuf[lastIndex] - timestampBuf[currIndex];
 
 			double si = sin(w*timediff/-1.0E07)/w;
-			double ci = (cos(w*timediff/-1.0E07) - 1.0)/w; 
+			double ci = (cos(w*timediff/-1.0E07) - 1.0)/w;
 
 			sumSi += si;
 			sumCi += ci;

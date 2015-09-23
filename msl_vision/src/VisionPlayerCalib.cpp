@@ -624,7 +624,7 @@ int main(int argc,char *argv[]){
 					SpicaHelper::vdd->obstacles = SpicaHelper::wm->obstacles;
 					SpicaHelper::vdd->senderID = supplementary::SystemConfig::getOwnRobotID();
 				}
-				SpicaHelper::sendLinePoints();
+				SpicaHelper::sendDebugMsg();
 			}
 
 			if(softhdr) {

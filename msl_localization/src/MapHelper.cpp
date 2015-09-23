@@ -63,10 +63,6 @@ void MapHelper::initializeMap() {
 	memset(newMap, 255,	MAPSIZE * sizeof(unsigned char));
 
 	wallDistanceMap = new float[MAPSIZE];
-	for (int i = 0;	i < MAPSIZE; i++) {
-		wallDistanceMap[i] = 500.0;
-	}
-
 
 	for (float y = __min_y; y <= __max_y; y += RESOLUTION) {
 		for (float x = __min_x; x <= __max_x; x += RESOLUTION) {
@@ -110,28 +106,28 @@ void MapHelper::initializeMap() {
 	maxYLocation = 0;
 
 
-	ofstream ofs("Test3.txt");
-	//ofstream ofs2("Test2.txt");
-	float distance, ef, derrddist, csquare = 0.25 * 0.25;
-	for (int i = 0; i < IWIDTH * IHEIGHT;
-			i++) {
-		//ofs2 << (int) rmr->getMap()[i] << " ";
-		//ofs2 << (int)ySobelMap[i] << " ";
-
-		distance = wallDistanceMap[i];
-		ef = csquare + distance * distance;
-		derrddist = (2 * csquare * distance) / (ef * ef);
-
-		//ofs << derrddist * fYSobel[i] << " ";
-		//ofs << distance << " ";
-		ofs << derrddist * fXSobel[i] << " ";
-		if (i % (int)IWIDTH == (int)IWIDTH - 1) {
-			ofs << endl;
-			//ofs2 << endl;
-		}
-	}
-	ofs.close();
-	//ofs2.close();
+//	ofstream ofs("Test3.txt");
+//	//ofstream ofs2("Test2.txt");
+//	float distance, ef, derrddist, csquare = 0.25 * 0.25;
+//	for (int i = 0; i < IWIDTH * IHEIGHT;
+//			i++) {
+//		//ofs2 << (int) rmr->getMap()[i] << " ";
+//		//ofs2 << (int)ySobelMap[i] << " ";
+//
+//		distance = wallDistanceMap[i];
+//		ef = csquare + distance * distance;
+//		derrddist = (2 * csquare * distance) / (ef * ef);
+//
+//		//ofs << derrddist * fYSobel[i] << " ";
+//		//ofs << distance << " ";
+//		ofs << fXSobel[i] << " ";
+//		if (i % (int)IWIDTH == (int)IWIDTH - 1) {
+//			ofs << endl;
+//			//ofs2 << endl;
+//		}
+//	}
+//	ofs.close();
+//	//ofs2.close();
 	cout << "Map Initialization Finished" << endl;
 }
 
@@ -155,7 +151,7 @@ void MapHelper::initializeGradientMap() {
 				sct = newMap[id(x, y - 1, WIDTH)];
 				scc = newMap[id(x, y, WIDTH)];
 				scb = newMap[id(x, y + 1, WIDTH)];
-				srt = newMap[id(x + 1, y + 1, WIDTH)];
+				srt = newMap[id(x + 1, y - 1, WIDTH)];
 				src = newMap[id(x + 1, y, WIDTH)];
 				srb = newMap[id(x + 1, y + 1, WIDTH)];
 
@@ -185,7 +181,7 @@ void MapHelper::initializeGradientMap() {
 				sct = wallDistanceMap[id(x, y - 1, WIDTH)];
 				scc = wallDistanceMap[id(x, y, WIDTH)];
 				scb = wallDistanceMap[id(x, y + 1, WIDTH)];
-				srt = wallDistanceMap[id(x + 1, y + 1, WIDTH)];
+				srt = wallDistanceMap[id(x + 1, y - 1, WIDTH)];
 				src = wallDistanceMap[id(x + 1, y, WIDTH)];
 				srb = wallDistanceMap[id(x + 1, y + 1, WIDTH)];
 

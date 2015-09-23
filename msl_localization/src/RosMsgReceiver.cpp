@@ -32,6 +32,14 @@ void RosMsgReceiver::initialize() {
 	coipub = node.advertise<msl_sensor_msgs::CorrectedOdometryInfo>("/CorrectedOdometryInfo", 1);
 
 
+	odometryInfoMsg = boost::make_shared<msl_actuator_msgs::RawOdometryInfo>();
+	odometryInfoMsg->motion.angle = 0;
+	odometryInfoMsg->motion.rotation = 0;
+	odometryInfoMsg->motion.translation = 0;
+	odometryInfoMsg->position.angle = 0;
+	odometryInfoMsg->position.x = 0;
+	odometryInfoMsg->position.y = 0;
+	odometryInfoMsg->position.certainty = 0;
 	//spinner = new ros::AsyncSpinner(1);
 	//spinner->start();
 }
