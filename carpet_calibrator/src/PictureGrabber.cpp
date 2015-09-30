@@ -6,7 +6,7 @@
  */
 
 #include "PictureGrabber.h"
-#include <SystemConfig.h>
+
 
 
 namespace msl_vision {

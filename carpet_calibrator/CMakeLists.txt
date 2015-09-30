@@ -18,7 +18,6 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
 # catkin_python_setup()
 
-
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
@@ -98,15 +97,17 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 ## Declare a cpp library
 add_library(carpet_calibrator
-   src/CarpetCalibrator.cpp
-   src/PictureGrabber.cpp
    src/CarpetCalibratorNodelet.cpp
-   src/XVDisplay.cpp
+ #  src/XVDisplay.cpp
 )
 
 
 ## Declare a cpp executable
-# add_executable(carpet_calibrator_node src/carpet_calibrator_node.cpp)
+#add_executable(carpet_calibrator_exec
+#   src/CarpetCalibrator.cpp
+#   src/CarpetCalibratorNodelet.cpp
+ #  src/XVDisplay.cpp
+#)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes

@@ -8,10 +8,7 @@
 #ifndef CNC_MSLDRIVER_CARPET_CALIBRATOR_SRC_PICTUREGRABBER_H_
 #define CNC_MSLDRIVER_CARPET_CALIBRATOR_SRC_PICTUREGRABBER_H_
 
-namespace supplementary
-{
-	class SystemConfig;
-}
+#include <SystemConfig.h>
 
 namespace msl_vision
 {
