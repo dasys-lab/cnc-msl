@@ -268,7 +268,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			float csquare = 2.50*2.50, ef, derrddist, distance;
 						
 			//Perform Gradient decent
-			for(int m=0; m<minimizationSteps; m++) {
+			for(int m=0; m<minimizationSteps+30; m++) {
 				dx=0;
 				dy=0;
 				dangle=0;
@@ -279,7 +279,10 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 				for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(), n=0; first != last; ++first, ++firstDist, ++n) {
 					if(linePointsInvalidity[invIndex] == 0) {
-						//Irgendwo hier oder bei der Maperstellung is ein Fehler!
+						//if (/*first != linePoints->linePoints.begin() &&*/ (
+						//		first->y < 600 || first->y > 700 || first->x < 750 || first->x > 800)) continue;
+						//cout << ".";
+
 						//Transform LinePoint in coordinate system of current particle
 						realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
 						realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
@@ -311,6 +314,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 						double epsilon=0;
 						if(xOutSide>0 && yOutSide>0) {
 							epsilon = sqrt(xOutSide*xOutSide + yOutSide*yOutSide);
+							continue;
 						}
 
 
@@ -322,14 +326,14 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 						//float approach
 						//compute error / gradient:
-						distance = epsilon+mh->getDistance(indX, indY);
-						distsum = abs(distance);
+						distance = (epsilon+mh->getDistance(indX, indY))/1000.0;
+						//distsum = abs(distance);
 						ef = csquare + distance * distance;
 				      	derrddist = (2 * csquare * distance) /(ef * ef);
 
 				      	dx += derrddist * mh->fxGradient(indX, indY);
 				      	dy += derrddist * mh->fyGradient(indX, indY);
-				      	dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->y, first->x);
+				      	dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->x, first->y);
 
 						indX = lrint(realx/resolution_1) + IWIDTH_2;
 						indY = lrint(-realy/resolution_1) + IHEIGHT_2;
@@ -347,8 +351,8 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 						//}
 						//cout << distance << "\t" << derrddist * mh->fxGradient(indX, indY) << "\t" << derrddist * mh->fyGradient(indX, indY) << "\t" << indX << "\t"<< indY << "\t"<< realx << "\t" << realy << "\t" << endl;
 					}
-					//break;
 				}
+				//cout << endl;
 				//exit(0);
 				
 				weight = 1.0 - (tribotWeight)/((validCount)*510.0);
@@ -366,7 +370,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				particles[i].posx -= 1000*xUpdate.getdW(dx);
 				//Note Y in the arrays behaves inverse to the coordinate system we are using
 				particles[i].posy += 1000*yUpdate.getdW(dy);
-				particles[i].heading -= angleUpdate.getdW(dangle);
+				particles[i].heading += angleUpdate.getdW(dangle);
 				particles[i].weight = weight;
 				cos_ = cos(particles[i].heading);
 				sin_ = sin(particles[i].heading);
@@ -419,7 +423,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 		}
 	}
 	lsfs.close();
-	//exit(0);
+	exit(0);
 
 	//Compute Best Particle + Index
 	int maxInd = 1;
