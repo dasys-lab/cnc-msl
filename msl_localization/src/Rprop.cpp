@@ -43,6 +43,7 @@ Rprop::~Rprop() {
 }
   
 double Rprop::getdW(double errorGrad) {
+  if(errorGrad == 0) return 0;
   if(errorGrad*oldErrGrad>0) gamma = min(gamma*etap, gammaMax);
   else if(errorGrad*oldErrGrad<0) gamma = max(gamma*etam, gammaMin);
   

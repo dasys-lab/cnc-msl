@@ -200,21 +200,6 @@ void MapHelper::initializeGradientMap() {
 
 }
 
-double MapHelper::xGradient(double x, double y) {
-	// -????? X und Y vertauscht?????
-	int indX = lrint(y / RESOLUTION) + IHEIGHT;
-	int indY = lrint(x / RESOLUTION) + IWIDTH;
-
-	return (double) xSobelMap[id(indX, indY, IWIDTH)];
-}
-
-double MapHelper::xGradient(int indX, int indY) {
-	return (double) xSobelMap[id(indX, indY, IWIDTH)];
-}
-
-double MapHelper::yGradient(int indX, int indY) {
-	return (double) ySobelMap[id(indX, indY, IWIDTH)];
-}
 
 double MapHelper::fxGradient(int indX, int indY) {
 	return (double) fXSobel[id(indX, indY, IWIDTH)];
@@ -222,30 +207,6 @@ double MapHelper::fxGradient(int indX, int indY) {
 
 double MapHelper::fyGradient(int indX, int indY) {
 	return (double) fYSobel[id(indX, indY, IWIDTH)];
-}
-
-double MapHelper::yGradient(double x, double y) {
-	// -????? X und Y vertauscht?????
-	int indX = lrint(y / RESOLUTION) + IHEIGHT;
-	int indY = lrint(x / RESOLUTION) + IWIDTH;
-
-	return (double) ySobelMap[id(indY, indX, IWIDTH)];
-}
-
-double MapHelper::angleGradient(int px, int py, double pangle, double lx,
-		double ly) {
-	double sinangle = sin(pangle);
-	double cosangle = sin(pangle);
-	return (-sinangle * lx - cosangle * ly) * xGradient(px, py)
-			+ (cosangle * lx - sinangle * ly) * yGradient(px, py);
-}
-
-double MapHelper::angleGradient(double px, double py, double pangle, double lx,
-		double ly) {
-	double sinangle = sin(pangle);
-	double cosangle = sin(pangle);
-	return (-sinangle * lx - cosangle * ly) * xGradient(px, py)
-			+ (cosangle * lx - sinangle * ly) * yGradient(px, py);
 }
 
 double MapHelper::fangleGradient(int px, int py, double pangle, double lx,
@@ -256,13 +217,6 @@ double MapHelper::fangleGradient(int px, int py, double pangle, double lx,
 			+ (cosangle * lx - sinangle * ly) * fyGradient(px, py);
 }
 
-double MapHelper::fangleGradient(double px, double py, double pangle, double lx,
-		double ly) {
-	double sinangle = sin(pangle);
-	double cosangle = sin(pangle);
-	return (-sinangle * lx - cosangle * ly) * fxGradient(px, py)
-			+ (cosangle * lx - sinangle * ly) * fyGradient(px, py);
-}
 
 Cox::field_circles_t MapHelper::getCircles() {
 	//fieldcircles

@@ -25,17 +25,9 @@ class MapHelper {
 		
 		int minXLocation, maxXLocation, minYLocation, maxYLocation;
 		
-		double angleGradient(double px, double py, double pangle, double lx, double ly);
-		double angleGradient(int px, int py, double pangle, double lx, double ly);
-		double xGradient(double x, double y);
-		double xGradient(int indX, int indY);
-		double yGradient(double x, double y);
-		double yGradient(int indX, int indY);
-		
 		double fxGradient(int indX, int indY);
 		double fyGradient(int indX, int indY);
 		double fangleGradient(int px, int py, double pangle, double lx, double ly);
-		double fangleGradient(double px, double py, double pangle, double lx, double ly);
 		float* getDistanceMap() {return wallDistanceMap;};
 		float getDistance(int X, int Y) {return wallDistanceMap[id(X, Y, IWIDTH)];};
 		
