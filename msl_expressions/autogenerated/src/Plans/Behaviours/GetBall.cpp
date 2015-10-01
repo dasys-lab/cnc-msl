@@ -146,7 +146,17 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::BallHandleCmd bhc;
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
+
+        if (egoBallPos->length() < 500)
+        {
+
+            bhc.leftMotor = -30;
+            bhc.rightMotor = -30;
+
+            this->send(bhc);
+        }
 
         return mc;
     }
