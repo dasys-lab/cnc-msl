@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 	
 	MapHelper* mh = MapHelper::getInstance();
 	
-	msl_localization *loc = new msl_localization(2); //1200
+	msl_localization *loc = new msl_localization(800); //1200
 
 	/*while(ros::ok()) {
 		ros::spinOnce();

@@ -91,7 +91,11 @@ void MapHelper::initializeMap() {
 			int mapPosX = std::floor((x - __min_x) / RESOLUTION);
 			int mapPosY = std::floor((y - __min_y) / RESOLUTION);
 			//cout << id(mapPosX, mapPosY, WIDTH) << " " << flush;
-			newMap[id(mapPosX, mapPosY, WIDTH)] = min_dist;
+
+			double tribot = 1 - (250*250/(min_dist*min_dist + 250*250));
+			unsigned int tribot_real = (unsigned int) lrint(tribot*255.0);
+
+			newMap[id(mapPosX, mapPosY, WIDTH)] = tribot_real;
 			wallDistanceMap[id(mapPosX, mapPosY, WIDTH)] = min_dist;
 		}
 	}
@@ -100,10 +104,10 @@ void MapHelper::initializeMap() {
 
 	//This is the minimum and maximum location to sample particles later on
 	//Originally this was designed for oversized maps of ROS. In RoboCup it might be even too small.
-	minXLocation = WIDTH;
-	maxXLocation = 0;
-	minYLocation = HEIGHT;
-	maxYLocation = 0;
+	minXLocation = 0;
+	maxXLocation = WIDTH;
+	minYLocation = 0;
+	maxYLocation = HEIGHT;
 
 
 //	ofstream ofs("Test3.txt");
@@ -212,7 +216,7 @@ double MapHelper::fyGradient(int indX, int indY) {
 double MapHelper::fangleGradient(int px, int py, double pangle, double lx,
 		double ly) {
 	double sinangle = sin(pangle);
-	double cosangle = sin(pangle);
+	double cosangle = cos(pangle);
 	return (-sinangle * lx - cosangle * ly) * fxGradient(px, py)
 			+ (cosangle * lx - sinangle * ly) * fyGradient(px, py);
 }

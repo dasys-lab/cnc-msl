@@ -21,6 +21,7 @@
  * <description>
  */
 #include "../include/msl_localization.h"
+#include <FootballField.h>
 
 #include "RandomHelper.h"
 #include "EgoMotionEstimator.h"
@@ -71,8 +72,7 @@ msl_localization::msl_localization(int nParticles_) {
     coi.certainty = (-1);
     gaussHelper = new RandomGaussHelper();
 	useOdometry=true;
-	reinit = true;
-	minimizationSteps = 12;
+	minimizationSteps = 30;//12
 	mh = MapHelper::getInstance();
 	minimize = mh->gradientAvailable();
 
@@ -215,7 +215,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	normalizeAngle(compassHeading);
 	//Compute compassheading end
 	*/
-	ofstream lsfs("ErrorLandscape.txt");
+	//ofstream lsfs("ErrorLandscape.txt");
 
 	for(int i = 0; i < nParticles; i++){
 		//ego2allow of linePoints
@@ -259,20 +259,18 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			float dx=0;
 			float dy=0;
 			float dangle=0;
-			int validCount = 0;
 			cos_ = cos(particles[i].heading);
 			sin_ = sin(particles[i].heading);
-			Rprop xUpdate(0.1); //10cm
-			Rprop yUpdate(0.1);
+			Rprop xUpdate(0.04); //10cm
+			Rprop yUpdate(0.04);
 			Rprop angleUpdate(0.1); //0.01 Rad
 			float csquare = 2.50*2.50, ef, derrddist, distance;
 						
 			//Perform Gradient decent
-			for(int m=0; m<minimizationSteps+30; m++) {
+			for(int m=0; m<minimizationSteps; m++) {
 				dx=0;
 				dy=0;
 				dangle=0;
-				validCount = 0;
 				tribotWeight = 0;
 				int n=0;
 				double distsum = 0;
@@ -347,7 +345,6 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 						//Count linepoints within a certain range	
 						//if(dist<255) {
 						tribotWeight += dist;//pow(dist, 0.75);
-						validCount++;
 						//}
 						//cout << distance << "\t" << derrddist * mh->fxGradient(indX, indY) << "\t" << derrddist * mh->fyGradient(indX, indY) << "\t" << indX << "\t"<< indY << "\t"<< realx << "\t" << realy << "\t" << endl;
 					}
@@ -355,10 +352,14 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				//cout << endl;
 				//exit(0);
 				
-				weight = 1.0 - (tribotWeight)/((validCount)*510.0);
+				if((linePoints->linePoints.size())>0)
+				  //weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
+				  weight = 1.0 - tribotWeight/((linePoints->linePoints.size())*510.0);
+				else
+				  weight = 0.1;
 				//cout << weight << endl;
 				//std::cout << dx << "\t" << dy << "\t" << dangle << std::endl;
-				lsfs << particles[i].posx <<  "\t";
+				/*lsfs << particles[i].posx <<  "\t";
 				lsfs << particles[i].posy <<  "\t";
 				lsfs << particles[i].heading <<  "\t";
 				lsfs << dx << "\t";
@@ -366,7 +367,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				lsfs << dangle << "\t";
 				lsfs << weight << "\t";
 				lsfs << distsum << "\t";
-				lsfs << endl;
+				lsfs << endl;*/
 				particles[i].posx -= 1000*xUpdate.getdW(dx);
 				//Note Y in the arrays behaves inverse to the coordinate system we are using
 				particles[i].posy += 1000*yUpdate.getdW(dy);
@@ -375,13 +376,12 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				cos_ = cos(particles[i].heading);
 				sin_ = sin(particles[i].heading);
 			}
-			lsfs << endl;
-			lsfs << endl;
-			cout << particles[i].weight <<  "\t";
+			//lsfs << endl;
+			//lsfs << endl;
+			/*cout << particles[i].weight <<  "\t";
 			cout << particles[i].heading <<  "\t";
 			cout << particles[i].posx <<  "\t";
-			cout << particles[i].posy <<  endl;
-			validCount = 0;
+			cout << particles[i].posy <<  endl;*/
 			tribotWeight = 0;
 			//Iterate over Linepoints to evaluate final position
 			for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist) {
@@ -404,15 +404,14 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 					//Count linepoints within a certain range	
 					//if(dist<=555) {
 					tribotWeight += dist;//pow(dist, 0.75);
-					validCount++;
 					//Alternative Weight
 					//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
 				}
 				invIndex++;
 			}
-			if((linePoints->linePoints.size())>0 && validCount>0)
-		//	  weight = 1.0 - tribotWeight/((linePoints->linePoints.size() - invCounter)*510.0);
-			  weight = 1.0 - (tribotWeight)/((validCount)*510.0);
+			if((linePoints->linePoints.size())>0)
+			  //weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
+			  weight = 1.0 - tribotWeight/((linePoints->linePoints.size())*510.0);
 			else
 			  weight = 0.1;
 		}
@@ -422,13 +421,13 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			maxWeight = weight;
 		}
 	}
-	lsfs.close();
-	exit(0);
+	//lsfs.close();
+	//exit(0);
 
 	//Compute Best Particle + Index
 	int maxInd = 1;
-	maxWeight = 0;//particles[0].weight;
-	for(int i = 1; i < nParticles; i++){
+	maxWeight = 0;//particles[1].weight;
+	for(int i = 1; i < nParticles; i++){//start from 1
 		if(particles[i].weight > maxWeight){
 			maxInd = i;
 			maxWeight = particles[i].weight;
@@ -462,11 +461,11 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	bool jump = false;
 
 	//After 0 Iterations, Successfull Lokalization for at least 75 linepoints
-	if(reinit || (initCounter >= 0 && maxParticle.weight > LocalizationSuccess && linePoints->linePoints.size() > 75)){
+	if(reinit || (initCounter >= 50 && maxParticle.weight > LocalizationSuccess && linePoints->linePoints.size() > 75)){
 		bool updateAllowed = true;
 
 		//If Position is within a corner
-		/*if(fabs(rawUpdatedPosition.x) > FootballField::FieldLength/2.0 - FootballField::GoalAreaWidth && 
+		if(fabs(rawUpdatedPosition.x) > FootballField::FieldLength/2.0 - FootballField::GoalAreaWidth &&
 				fabs(rawUpdatedPosition.y) > FootballField::GoalAreaLength/2.0){
 
 			double diffX = maxParticle.posx - rawUpdatedPosition.x;
@@ -475,7 +474,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			//No Update if difference between rawUpdatedPosition and maxParticle > 300
 			if(sqrt(diffX*diffX + diffY*diffY) > 300.0)
 				updateAllowed = false;
-		}*/
+		}
 
 		double rawMaxWeight = 0.0;
 		int maxTrackedIndex = nParticles - 1;
@@ -485,7 +484,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			double diffY = particles[i].posy - rawUpdatedPosition.y;
 
 			//Compute Max particleweight within 50mm to rawUpdatesPosition
-			if(sqrt(diffX*diffX + diffY*diffY) < 0.05){
+			if(sqrt(diffX*diffX + diffY*diffY) < 50.0){
 				if(particles[i].weight > rawMaxWeight){
 					rawMaxWeight = particles[i].weight;
 					maxTrackedIndex = i;
@@ -524,7 +523,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				jumpThres = 0.001;
 
 			//Update rawUpdatedPosition only farer away than 300mm if confidence is > estimatedPositionWeight + jumpthres
-			if(dist > 0.3 && maxParticle.weight - estimatedPositionWeight >= jumpThres){
+			if(dist > 300.0 && maxParticle.weight - estimatedPositionWeight >= jumpThres){
 				rawUpdatedPosition.x = maxParticle.posx;
 				rawUpdatedPosition.y = maxParticle.posy;
 				rawUpdatedPosition.heading = maxParticle.heading;
@@ -660,7 +659,7 @@ void msl_localization::initParticles(double x, double y, double angle, double ma
 	rawUpdatedPosition.y = y;
 	rawUpdatedPosition.heading = angle;
 	
-	reinit=true;
+	reinit=false;
 	
 	for(int i = 0; i < RAWODOBUFSIZE; i++){
 		positionBuffer[i] = rawUpdatedPosition;
@@ -693,15 +692,135 @@ void msl_localization::initParticles(double x, double y, double angle, double ma
     coi.certainty = (-1);
 }
 
-		
 void msl_localization::resample(RandomGaussHelper & gaussHelper){
+
+	//cout << nParticles << " " << nResample << " " << nRepParticles << endl;
+	ofstream pts("ParticleSampling.txt");
+	for(int i=0; i< nParticles; i++) {
+		pts << particles[i].posx << " " << particles[i].posy << " " << particles[i].heading <<  " " << particles[i].weight << endl;
+	}
+
+	double maxX = FootballField::FieldLength/2.0 + 500.0;
+	double maxY = FootballField::FieldWidth/2.0 + 500.0;
+	double maxAngle = M_PI;
+
+	Particle repParticles[nParticles];
+	unsigned int nRepParticles = 0;
+
+	double distThreshold = -1.0;
+	//if(UseRepParticles || isGoalie)
+	if(UseRepParticles)
+		distThreshold = 50.0*50.0;
+
+	if(distThreshold < 0.0){
+		//Count and store representative particles (weight > 0.9)
+		for(int i = 0; i < nParticles; i++){
+			if(particles[i].weight > 0.9){ // was 0.9
+				repParticles[nRepParticles] = particles[i];
+				nRepParticles++;
+			}
+		}
+	}
+	else {
+		for(int i = 0; i < nParticles; i++){
+			if(particles[i].weight > 0.8){
+				bool repFound = false;
+				//?????????????????????????????? WTF
+				for(unsigned int j = 0; j < nRepParticles; j++){
+					double distance = (repParticles[j].posx - particles[i].posx)*(repParticles[j].posx - particles[i].posx) +
+								(repParticles[j].posy - particles[i].posy)*(repParticles[j].posy - particles[i].posy);
+
+					if(distance < distThreshold){
+						repFound = true;
+						if(particles[i].weight > repParticles[j].weight){
+							repParticles[j] = particles[i];
+							break;
+						}
+					}
+				}
+				if(!repFound){
+					repParticles[nRepParticles] = particles[i];
+					nRepParticles++;
+				}
+			}
+		}
+	}
+
+	Particle * tmpParticles = (Particle *) malloc(nParticles*sizeof(Particle));
+	memcpy(tmpParticles, particles, nParticles*sizeof(Particle));
+	bool found = (nRepParticles > 0);
+	double * cumWeights = (double *) malloc(nRepParticles*sizeof(double));
+	double sum = 0.0;
+
+	//Compute cumlative weight + normalization factor
+	for(unsigned int i = 0; i < nRepParticles; i++){
+		sum += repParticles[i].weight;
+		cumWeights[i] = sum;
+	}
+	//Normalize Weights
+	for(unsigned int i = 0; i < nRepParticles; i++)	cumWeights[i] /= sum;
+
+	int nResample = 0;
+	printf("Number RepParticles: %d\n", nRepParticles);
+
+	//Mutate Max 400 Particles
+	if(found){
+		nResample = (nParticles*2)/3;
+		if(nResample > 400)
+			nResample = 400;
+	}
+
+	//Resample first 800
+	for(int i = 0; i < nParticles - nResample; i++){
+		particles[i].posx = (RandomHelper::rand01() - 0.5)*2.0*maxX;
+		particles[i].posy = (RandomHelper::rand01() - 0.5)*2.0*maxY;
+		particles[i].heading = (RandomHelper::rand01() - 0.5)*2.0*maxAngle;
+		particles[i].weight = 0.5;
+	}
+
+	//Mutation of last 400
+	for(int i = nParticles - nResample; i < nParticles; i++){
+		double p = RandomHelper::rand01();
+		unsigned int ind = 0;
+
+		while(cumWeights[ind] < p && ind < nRepParticles)
+			ind++;
+
+		double sigma = (-2.0*repParticles[ind].weight + 2);
+		if(sigma < 0.01)
+			sigma = 0.01;
+		particles[i].posx = repParticles[ind].posx + gaussHelper.getRandomGauss()*500.0*sigma;
+		particles[i].posy = repParticles[ind].posy + gaussHelper.getRandomGauss()*500.0*sigma;
+		particles[i].heading = repParticles[ind].heading + gaussHelper.getRandomGauss()*sigma*M_PI/4.0;
+		particles[i].weight = 0.5;
+	}
+
+	//Last two Particles are MaxParticle and rawUpdatesPosition
+	particles[nParticles-1].posx = maxParticle.posx;
+	particles[nParticles-1].posy = maxParticle.posy;
+	particles[nParticles-1].heading = maxParticle.heading;
+	particles[nParticles-1].weight = maxParticle.weight;
+
+	particles[nParticles-2].posx = rawUpdatedPosition.x;
+	particles[nParticles-2].posy = rawUpdatedPosition.y;
+	particles[nParticles-2].heading = rawUpdatedPosition.heading;
+	particles[nParticles-2].weight = maxParticle.weight;
+
+
+
+	free(tmpParticles);
+	free(cumWeights);
+}
+		
+/*void msl_localization::resample(RandomGaussHelper & gaussHelper){
 	int distX = MapHelper::getInstance()->maxXLocation - MapHelper::getInstance()->minXLocation;
 	int distY = MapHelper::getInstance()->maxYLocation - MapHelper::getInstance()->minYLocation;
-	double midX = ((MapHelper::getInstance()->minXLocation-MapHelper::getInstance()->WIDTH/2)+(distX/2))*MapHelper::getInstance()->RESOLUTION;
-	double midY = ((MapHelper::getInstance()->minYLocation-MapHelper::getInstance()->HEIGHT/2)+(distY/2))*MapHelper::getInstance()->RESOLUTION;
+	double midX = 0;//((MapHelper::getInstance()->minXLocation-MapHelper::getInstance()->WIDTH/2)+(distX/2))*MapHelper::getInstance()->RESOLUTION;
+	double midY = 0;//((MapHelper::getInstance()->minYLocation-MapHelper::getInstance()->HEIGHT/2)+(distY/2))*MapHelper::getInstance()->RESOLUTION;
 	double maxX = (distX*MapHelper::getInstance()->RESOLUTION)/2.0;
 	double maxY = (distY*MapHelper::getInstance()->RESOLUTION)/2.0;
 	double maxAngle = M_PI;
+
 
 	Particle repParticles[nParticles];
 	unsigned int nRepParticles = 0;
@@ -765,10 +884,9 @@ void msl_localization::resample(RandomGaussHelper & gaussHelper){
 
 	//Mutate Max 400 Particles
 	if(found){
-		//nResample = (nParticles*2)/3;
-		//if(nResample > 400)
-		//	nResample = 400;
-		nResample = nParticles;
+		nResample = (nParticles*2)/3;
+		if(nResample > 400)
+			nResample = 400;
 	}
 	
 
@@ -813,9 +931,16 @@ void msl_localization::resample(RandomGaussHelper & gaussHelper){
 	particles[nParticles-2].heading = rawUpdatedPosition.heading;
 	particles[nParticles-2].weight = maxParticle.weight;
 	
+	//cout << nParticles << " " << nResample << " " << nRepParticles << endl;
+	//ofstream pts("ParticleSampling.txt");
+	//for(int i=0; i< nParticles; i++) {
+	//	pts << particles[i].posx << " " << particles[i].posy << " " << particles[i].heading <<  " " << particles[i].weight << endl;
+	//}
+	exit(0);
+
 	free(tmpParticles);
 	free(cumWeights);
-}
+}*/
 
 
 void msl_localization::updateParticles(double deltaX, double deltaY, double deltaH){
@@ -843,7 +968,7 @@ void msl_localization::updateParticles(double deltaX, double deltaY, double delt
 	particles[0].heading = rawUpdatedPosition.heading;
 	particles[0].weight = maxParticle.weight;
 
-//	particles[1] = maxParticle;
+	particles[1] = maxParticle;
 }
 
 
