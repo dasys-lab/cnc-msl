@@ -4,28 +4,23 @@
  *  Created on: May 20, 2015
  *      Author: cn
  */
+#include "CarpetCalibratorNodelet.h"
 
 #include <string>
-#include "CarpetCalibratorNodelet.h"
 #include <pluginlib/class_list_macros.h>
-#include <nodelet/nodelet.h>
-#include <boost/thread.hpp>
-#include <signal.h>
-#include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-
 
 
 //nodelet manager starten:
 //rosrun nodelet nodelet manager __name:=nodelet_manager
 //
 //unser nodelet starten
-//rosrun nodelet nodelet load carpet_calibrator/CarpetCalibratorNodelet nodelet_manager __name:=nodelet1
+//rosrun nodelet nodelet load carpet_calibrator/CarpetCalibratorNodelet nodelet_manager __name:=carpet_calibrator
 //
 //starten von camera1394
-//rosrun nodelet nodelet standalone camera1394/driver
+//rosrun nodelet nodelet load camera1394/driver nodelet_manager __name:=camera1394
 namespace msl_vision
 {
 
@@ -33,6 +28,16 @@ namespace msl_vision
 	{
 		sc = supplementary::SystemConfig::getInstance();
 		vision = (*sc)["Vision"];
+
+		mx = vision->get<short>("Vision", "CameraMX", NULL);
+		my = vision->get<short>("Vision", "CameraMY", NULL);
+		radius = vision->get<short>("Vision", "CameraRadius", NULL);
+		area = vision->get<short>("Vision", "ImageArea", NULL);
+
+		segmented = new cv::Mat(area,area,CV_8UC1);
+		for(int i = 0; i< area*area; i++) {
+			segmented->data[i] = 0;
+		}
 	}
 
 	CarpetCalibratorNodelet::~CarpetCalibratorNodelet()
@@ -41,43 +46,46 @@ namespace msl_vision
 
 	void CarpetCalibratorNodelet::imageCb(const sensor_msgs::ImageConstPtr& image_msg,
 				                             const sensor_msgs::CameraInfoConstPtr& info_msg) {
-		const cv::Mat image = cv_bridge::toCvShare(image_msg)->image;
-		YUV422DoublePixel* pColor = (YUV422DoublePixel*) image.data;
-		RGB888Pixel* rgbColor = (RGB888Pixel*) image.data;
-
-		height = info_msg->height;
-		width = info_msg->width;
-
-		cv::Mat image2rgb(image_msg->height, image_msg->width, CV_8UC3);
-		int counter = 0;
-
+		const cv::Mat grayMat = cv_bridge::toCvShare(image_msg)->image;
+		width = image_msg->width;
+		height = image_msg->height;
 		int size = info_msg->height * info_msg->width;
 
+		double angle = currAngle + (M_PI / 2);
 
-		for(int i = 0; i < (size/2); i++) {
-			image2rgb.data[counter++] = pColor[i].y1;
-			image2rgb.data[counter++] = pColor[i].v;
-			image2rgb.data[counter++] = pColor[i].u;
+		double nx = cos(angle);
+		double ny = sin(angle);
 
-			image2rgb.data[counter++] = pColor[i].y2;
-			image2rgb.data[counter++] = pColor[i].v;
-			image2rgb.data[counter++] = pColor[i].u;
+		double d = nx*mx+ny*my;
+
+		int startIndexX = mx - area/2;
+		int startIndexY = my - area/2;
+
+		//XXX nicht schön, aber macht die Sache einfacher!
+		if(startIndexY % 2 != 0)
+					startIndexY++;
+
+		cv::Mat test(area,area,CV_8UC1);
+
+		for(int i = 0; i < area; i++) {
+			unsigned char * ptr = &(grayMat.data[((startIndexX + i)*width + startIndexY)]);
+			for(int j = 0; j < area; j++) {
+				test.data[i*area+j] = *ptr;
+				ptr++;
+
+				if(newAngle) {
+					if (-20 <= nx*(i-area/2)+ny*(j-area/2) && nx*(i-area/2)+ny*(j-area/2) <= 20) {
+						if(0 <= -ny*(i-area/2)+nx*(j-area/2)) {
+							segmented->data[i*area+j] = test.data[i*area+j];
+						}
+					}
+				}
+			}
 		}
-
-		cv::cvtColor(image, rgbImage, CV_RGB2BGR);
-		cv::cvtColor(image, grayMat, CV_RGB2GRAY);
-
-
-
-//		cv::imshow("RGB2BGR", rgbImage);
-//		cv::imshow("RGB2GRAY", grayMat);
-
-//		cv::imshow("lol1", image2rgb1);
-//		cv::imshow("lol2", image2rgb2);
-//		cv::waitKey(1);
-		cout << "Image Callback, size: " << image.size.p[1] << endl;
-
-
+		cv::imshow("RGB2GRAY", grayMat);
+		cv::imshow("test", test);
+		cv::imshow("segmented", *segmented);
+		cv::waitKey(1);
 		/*
 		 * jede iteration gerade mit hessischer normalform erstellen.
 		 * angle + M_PI/2 mit länge 1 ist normalenvektor
@@ -85,11 +93,12 @@ namespace msl_vision
 		 * iterieren über das komplette bild und gucken ob pixel in gerade eingesetzt d+-x entfernt ist
 		 */
 
-		imgReceived = true;
+
 	}
 
 	void CarpetCalibratorNodelet::onInit()
 	{
+
 		NODELET_INFO("CarpetCalibrator: Initialize Nodelet");
 
 		const vector<string> argv = this->getMyArgv();
@@ -100,6 +109,7 @@ namespace msl_vision
 		int argc = argv.size();
 
 		rawOdomSub = nh.subscribe("/RawOdometry", 10, &CarpetCalibratorNodelet::onRawOdometryInfo, this);
+		angleSub = nh.subscribe("/CarpetCalibrator/CarpetAngle", 10, &CarpetCalibratorNodelet::onCarpetCalibratorAngle, this);
 
 		std::string yaml_filename;
 
@@ -112,64 +122,30 @@ namespace msl_vision
 
 	void CarpetCalibratorNodelet::run()
 	{
-		cout << " carpet blubb"  << endl;
+		//cout << " carpet blubb"  << endl;
+	}
+	void CarpetCalibratorNodelet::onCarpetCalibratorAngle(std_msgs::Float64ConstPtr msg) {
+		if(msg->data != currAngle) {
+			currAngle = msg->data;
+			newAngle = true;
+		} else {
+			newAngle = false;
+		}
+
 	}
 
 	void CarpetCalibratorNodelet::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg) {
 		if(lastRawOdom == NULL) {
 			firstAngle = msg.get()->position.angle;
-			currAngle = msg.get()->position.angle - firstAngle;
 			lastRawOdom = msg;
-			saveCarpetToFile();
-			cout << "first odom msg received: " << currAngle << endl;
 		}
 		if(lastRawOdom != NULL) {
-			cout << "1"  << endl;
-			if(abs(currAngle - (msg.get()->position.angle - firstAngle)) > 1) {
-				currAngle = msg.get()->position.angle - firstAngle;
-				saveCarpetToFile();
-				cout << "after 1° : " << currAngle << endl;
-			}
+			currAngle = msg.get()->position.angle - firstAngle;
+			newAngle = true;
+		} else {
+			newAngle = false;
 		}
 	}
-
-	 void CarpetCalibratorNodelet::saveCarpetToFile() {
-		 if(imgReceived) {
-			 short mx = vision->get<short>("Vision", "CameraMX", NULL);
-			 short my = vision->get<short>("Vision", "CameraMY", NULL);
-
-			short radius = vision->get<short>("Vision", "CameraRadius", NULL);
-			short area = vision->get<short>("Vision", "ImageArea", NULL);
-
-			double angle = currAngle + (M_PI / 2);
-
-			double nx = cos(angle);
-			double ny = sin(angle);
-
-			double d = nx*mx+ny*my;
-
-			int startIndexX = mx - area/2;
-			int startIndexY = my - area/2;
-
-			//XXX nicht schön, aber macht die Sache einfacher!
-			if(startIndexY % 2 != 0)
-						startIndexY++;
-
-			cv::Mat test(area,area,CV_8UC1);
-
-			for(int i = 0; i < area; i++) {
-				unsigned char * ptr = &(grayMat.data[((startIndexX + i)*width + startIndexY)]);
-				for(int j = 0; j < area; j++) {
-					test.data[i*area+j] = *ptr;
-					ptr++;
-				}
-
-			}
-
-			cv::imshow("test", test);
-		 }
-
-	 }
 
 
 }
