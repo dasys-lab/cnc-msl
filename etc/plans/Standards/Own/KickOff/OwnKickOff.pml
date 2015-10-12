@@ -18,6 +18,7 @@
   <states id="1440772305591" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/KickOffPassDefault.beh#1438778223495</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1440772545631</inTransitions>
     <outTransitions>#1440772442289</outTransitions>
     <outTransitions>#1441811700499</outTransitions>
