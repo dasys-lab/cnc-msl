@@ -127,7 +127,7 @@ namespace alica
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
-        if (egoBallPos->length() < 500)
+        if (egoBallPos->length() < 1500)
         {
 
             bhc.leftMotor = -30;
