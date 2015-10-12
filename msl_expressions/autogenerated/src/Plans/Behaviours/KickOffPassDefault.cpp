@@ -83,7 +83,8 @@ namespace alica
             }
             else
             {
-                kc.power = wm->kicker.getKickPowerSlowPass(egoAlignPoint->alloToEgo(*ownPos)->length());
+            	//testing
+                kc.power = wm->kicker.getKickPowerSlowPass(egoAlignPoint->alloToEgo(*ownPos)->length()/1000);
             }
 
             send(kc);
