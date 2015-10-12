@@ -51,7 +51,7 @@ namespace alica
             if (id != -1)
             {
                 pos = wm->robots.getTeamMatePosition(id);
-                egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y + 500);
+                egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y + 1000);
             }
         }
         else
