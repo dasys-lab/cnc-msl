@@ -79,7 +79,7 @@ namespace alica
             kc.kicker = 1;
             if (wm->game.getTimeSinceStart() < waitBeforeBlindKick)
             {
-                kc.power = wm->kicker.getKickPowerPass((egoAlignPoint->alloToEgo(*ownPos)->length())/10);
+                kc.power = wm->kicker.getKickPowerPass((egoAlignPoint->alloToEgo(*ownPos)->length())/1000);
             }
             else
             {
