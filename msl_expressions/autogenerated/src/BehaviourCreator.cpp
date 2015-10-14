@@ -5,9 +5,9 @@ using namespace std;
 
 #include  "Plans/Attack/SearchForPassPoint.h"
 
-#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
-
 #include  "Plans/Behaviours/AlignToRobot.h"
+
+#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 #include  "Plans/Attack/Wander.h"
 
@@ -42,6 +42,8 @@ using namespace std;
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
 #include  "Plans/Behaviours/PositionExecutor.h"
+
+#include  "Plans/Behaviours/Pos2Defenders.h"
 
 #include  "Plans/Attack/OneEighty.h"
 
@@ -92,14 +94,14 @@ namespace alica
                 return make_shared<SearchForPassPoint>();
                 break;
 
-            case 1417620730939:
-
-                return make_shared<AlignAndShootTwoHoledWall>();
-                break;
-
             case 1438779292567:
 
                 return make_shared<AlignToRobot>();
+                break;
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
             case 1434716230628:
@@ -195,6 +197,11 @@ namespace alica
             case 1438790487994:
 
                 return make_shared<PositionExecutor>();
+                break;
+
+            case 1444835591397:
+
+                return make_shared<Pos2Defenders>();
                 break;
 
             case 1434650910857:
