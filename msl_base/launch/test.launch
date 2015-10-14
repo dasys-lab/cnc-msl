@@ -1,0 +1,3 @@
+<launch>
+  <node name="msl_base" pkg="msl_base" type="msl_base" args="-m WM16"/>
+</launch>
