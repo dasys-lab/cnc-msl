@@ -320,5 +320,13 @@ namespace msl
 		this->wm->ball.updateOnWorldModelData();
 	}
 
+	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
+	{
+		shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y, coi->position.angle);
+		shared_ptr<InformationElement<geometry::CNPosition>> o = make_shared<InformationElement<geometry::CNPosition>>(
+				opt, wm->getTime());
+		o->certainty = coi->position.certainty;
+		ownPositionVision.add(o);
+	}
 } /* namespace alica */
 

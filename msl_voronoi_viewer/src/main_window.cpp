@@ -284,7 +284,7 @@ namespace msl_voronoi_viewer
 		if (drawSites)
 		{
 			QPainter painter(this);
-			QPen pen(Qt::red, 10, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
+			QPen pen(Qt::red, 25, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
 
 			for (auto it = voronoi->sites_begin(); it != voronoi->sites_end(); it++)
 			{

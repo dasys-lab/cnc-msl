@@ -15,6 +15,7 @@
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_helper_msgs/PassMsg.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -62,6 +63,7 @@ namespace msl
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
@@ -99,12 +101,14 @@ namespace msl
 		ros::Subscriber sharedWorldSub;
 		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
+		ros::Subscriber correctedOdometrySub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
 		mutex wmMutex;
 		mutex joystickMutex;
 		mutex motionBurstMutex;
+		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:
