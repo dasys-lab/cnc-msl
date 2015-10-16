@@ -30,7 +30,7 @@ namespace alica
 		this->keeperPos = wm->robots.getTeamMatePosition(keeperId);
 		int ownId = this->wm->getOwnId();
 		auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
-		auto robotsInOwnEp = this->getRunningPlan()->getAssignment()->getRobotsWorking(ownEp);
+		auto robotsInOwnEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getRobotsWorking(ownEp);
 		auto firstDefPos = alloBallPos + make_shared<geometry::CNPoint2D>(-2000, -300);
 		auto secondDefPos = alloBallPos + make_shared<geometry::CNPoint2D>(-4000, 2300);
 		auto firstDef = wm->robots.getTeamMatePosition((*robotsInOwnEp)[0]);
