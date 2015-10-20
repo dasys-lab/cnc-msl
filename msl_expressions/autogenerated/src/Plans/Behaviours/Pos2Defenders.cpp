@@ -35,6 +35,11 @@ namespace alica
 			alloBallPos = make_shared<geometry::CNPoint2D>(0, 0);
 		}
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+		vector<shared_ptr<geometry::CNPoint2D>>>();
+		// add alloBall to path planning
+		additionalPoints->push_back(alloBallPos);
+
 		this->keeperPos = wm->robots.getTeamMatePosition(keeperId);
 		int ownId = this->wm->getOwnId();
 		auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
