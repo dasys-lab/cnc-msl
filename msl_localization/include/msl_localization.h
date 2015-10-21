@@ -53,7 +53,7 @@ class msl_localization {
 
 		Particle getEstimatedPosition();
 		
-		static double calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter);
+		double calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap);
 		void writeCoi();
 		
 		void sendParticleCloud();
@@ -107,6 +107,8 @@ class msl_localization {
 		int initCounter;
 		tf::TransformBroadcaster tfBroadcaster;
 		MapHelper *mh;
+		int IHEIGHT, IWIDTH, IHEIGHT_2, IWIDTH_2; 
+		double RESOLUTION;
 };
 
 

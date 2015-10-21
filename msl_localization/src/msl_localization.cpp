@@ -34,6 +34,8 @@
 #define DISTNONE 20000.0
 #define SIGMA 20
 
+#define GRADIENTDEBUG 1
+
 using namespace msl_sensor_msgs;
 using namespace msl_msgs;
 using namespace std;
@@ -45,7 +47,12 @@ msl_localization::msl_localization(int nParticles_) {
 	printf("ParticleFilter Constructor!\n");
 	yellowGoalDirection = -1;
 	nParticles = nParticles_;
-	particles = NULL;	
+	particles = NULL;
+
+	IHEIGHT = MapHelper::getInstance()->HEIGHT;
+	IWIDTH  = MapHelper::getInstance()->WIDTH;
+	IHEIGHT_2 = IHEIGHT/2;
+	IWIDTH_2 = IWIDTH/2;	
 
 	
 	rawUpdatedPosition.x = 0.0;
@@ -94,12 +101,13 @@ msl_localization::~msl_localization(){
 }
 
 
-void inline msl_localization::normalizeAngle(double &ang)
-{
-	if(ang > M_PI)
+void inline msl_localization::normalizeAngle(double &ang){
+	while(ang > M_PI) {
 		ang -= 2.0*M_PI;
-	else if(ang < -M_PI)
+	}
+	while(ang < -M_PI) {
 		ang += 2.0*M_PI;
+	}
 }
 
 
@@ -135,9 +143,6 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	}
 	printf("MaxParticle After MotionUpdate: %f %f %f\n", particles[maxIndPre].posx, particles[maxIndPre].posy, particles[maxIndPre].heading);
 
-	unsigned char * linePointsInvalidity = (unsigned char *) malloc(linePoints->linePoints.size());
-	memset((void *) linePointsInvalidity, 0, linePoints->linePoints.size());
-
 	std::vector<Point2dInfo>::const_iterator first, last = linePoints->linePoints.end();
 	//int invCounter = 0;
 
@@ -161,14 +166,9 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	double h = (linePoints->linePoints.size())*1.0;
 	double pv = pow((t/(1-t)),(1/h))/(1 + pow((t/(1-t)),(1/h)));
 
-	int IHEIGHT = MapHelper::getInstance()->HEIGHT;
-	int IWIDTH  = MapHelper::getInstance()->WIDTH;
-	int IHEIGHT_2 = IHEIGHT/2;
-	int IWIDTH_2 = IWIDTH/2;
-	
-	double resolution_1 = MapHelper::getInstance()->RESOLUTION;
-	double FIELDHEIGHT = IHEIGHT*resolution_1;
-	double FIELDWIDTH = IWIDTH*resolution_1;
+	RESOLUTION = MapHelper::getInstance()->RESOLUTION;
+	double FIELDHEIGHT = IHEIGHT*RESOLUTION;
+	double FIELDWIDTH = IWIDTH*RESOLUTION;
 
 	int maxPosLinePoints = 0;
 	int maxNegLinePoints = 0;
@@ -215,14 +215,14 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	normalizeAngle(compassHeading);
 	//Compute compassheading end
 	*/
-#ifdef GRADIENTDEBUG
+#ifdef GRADIENTDEBUGOUTPUT
 	ofstream lsfs("ErrorLandscape.txt");
 #endif
 
 
 	int startParticle = 0;
 #ifdef GRADIENTDEBUG
-	startParticle = (initCounter >= 5) ? nParticles-2:0
+	startParticle = (initCounter >= 5) ? nParticles-2:0;
 #endif
 	for(int i = startParticle; i < nParticles; i++){
 		//ego2allow of linePoints
@@ -230,8 +230,8 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 		int posLinePoints = 0;
 		int negLinePoints = 0;
 
-		double cos_;// = cos(particles[i].heading);
-		double sin_;// = sin(particles[i].heading);
+		double cos_;
+		double sin_;
 		double realx = 0.0;
 		double realy = 0.0;
 
@@ -277,90 +277,88 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 			for(int m=0; m<minimizationSteps; m++) {
 #ifdef GRADIENTDEBUG
-				if(initCounter >= 5) break;
+				if(initCounter <= 5) break;
 #endif
 
 				dx=0;
 				dy=0;
 				dangle=0;
 				tribotWeight = 0;
-				int n=0;
 				double distsum = 0;
 
-				for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(), n=0; first != last; ++first, ++firstDist, ++n) {
-					if(linePointsInvalidity[invIndex] == 0) {
-						//if (/*first != linePoints->linePoints.begin() &&*/ (
-						//		first->y < 600 || first->y > 700 || first->x < 750 || first->x > 800)) continue;
-						//cout << ".";
+				for(first = linePoints->linePoints.begin(); first != last; ++first) {
+					//if (/*first != linePoints->linePoints.begin() &&*/ (
+					//		first->y < 600 || first->y > 700 || first->x < 750 || first->x > 800)) continue;
+					//cout << ".";
 
-						//Transform LinePoint in coordinate system of current particle
-						realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
-						realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
-						//cerr << realx << " " << realy << endl;
-			
-						//Compute index in distance lookup
-						int indX = lrint(realx/resolution_1) + IWIDTH_2;
-						int indY = lrint(-realy/resolution_1) + IHEIGHT_2;
-						//if(m==0 && i==0)cout << n << "\t" << first->x << "\t" << first->y << "\t" <<  indX << "\t" << indY << endl;
+					//Transform LinePoint in coordinate system of current particle
+					realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
+					realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
+					//cerr << realx << " " << realy << endl;
+		
+					//Compute index in distance lookup
+					int indX = lrint(realx/RESOLUTION) + IWIDTH_2;
+					int indY = lrint(-realy/RESOLUTION) + IHEIGHT_2;
+					//if(m==0 && i==0)cout << n << "\t" << first->x << "\t" << first->y << "\t" <<  indX << "\t" << indY << endl;
 
-						//Exception handling for points outside the field
-						double xOutSide=0, yOutSide=0;
-						if(indX < 0) {
-							xOutSide = -indX*resolution_1;
-							indX = 0;
-						} else if(indX>=IWIDTH) {
-							xOutSide = (indX-IWIDTH)*resolution_1;
-							indX=IWIDTH-1;
-						}
-						if(indY < 0) {
-							yOutSide = -indY*resolution_1;
-							indY = 0;
-						}
-						else if (indY>=IHEIGHT) {
-							yOutSide = (indY-IHEIGHT)*resolution_1;
-							indY=IHEIGHT-1;
-						}
-
-						double epsilon=0;
-						if(xOutSide>0 && yOutSide>0) {
-							epsilon = sqrt(xOutSide*xOutSide + yOutSide*yOutSide);
-							continue;
-						}
-
-
-
-						//char approach
-						//dx += mh->xGradient(indX, indY);
-						//dy += mh->yGradient(indX, indY);
-						//dangle += mh->angleGradient(indX, indY, particles[i].heading, first->y, first->x);
-
-						//float approach
-						//compute error / gradient:
-						distance = (epsilon+mh->getDistance(indX, indY))/1000.0;
-						//distsum = abs(distance);
-						ef = csquare + distance * distance;
-				      	derrddist = (2 * csquare * distance) /(ef * ef);
-
-				      	dx += derrddist * mh->fxGradient(indX, indY);
-				      	dy += derrddist * mh->fyGradient(indX, indY);
-				      	dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->x/1000.0, -first->y/1000.0);
-
-						indX = lrint(realx/resolution_1) + IWIDTH_2;
-						indY = lrint(-realy/resolution_1) + IHEIGHT_2;
-						
-						//Compute "Distance value" [0-254]
-						if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
-							dist = LineLookup[indX + indY*IWIDTH];
-						}
-						else dist = 255;
-						
-						//Count linepoints within a certain range	
-						//if(dist<255) {
-						tribotWeight += dist;//pow(dist, 0.75);
-						//}
-						//cout << distance << "\t" << derrddist * mh->fxGradient(indX, indY) << "\t" << derrddist * mh->fyGradient(indX, indY) << "\t" << indX << "\t"<< indY << "\t"<< realx << "\t" << realy << "\t" << endl;
+					//Exception handling for points outside the field
+					double xOutSide=0, yOutSide=0;
+					if(indX < 0) {
+						xOutSide = -indX*RESOLUTION;
+						indX = 0;
+					} else if(indX>=IWIDTH) {
+						xOutSide = (indX-IWIDTH)*RESOLUTION;
+						indX=IWIDTH-1;
 					}
+					if(indY < 0) {
+						yOutSide = -indY*RESOLUTION;
+						indY = 0;
+					}
+					else if (indY>=IHEIGHT) {
+						yOutSide = (indY-IHEIGHT)*RESOLUTION;
+						indY=IHEIGHT-1;
+					}
+
+					double epsilon=0;
+					if(xOutSide>0 && yOutSide>0) {
+						epsilon = sqrt(xOutSide*xOutSide + yOutSide*yOutSide);
+						continue;
+					}
+
+
+
+					//char approach
+					//dx += mh->xGradient(indX, indY);
+					//dy += mh->yGradient(indX, indY);
+					//dangle += mh->angleGradient(indX, indY, particles[i].heading, first->y, first->x);
+
+					//float approach
+					//compute error / gradient:
+					distance = (epsilon+mh->getDistance(indX, indY))/1000.0;
+					//distsum = abs(distance);
+					ef = csquare + distance * distance;
+			      		derrddist = (2 * csquare * distance) /(ef * ef);
+
+			      		dx += derrddist * mh->fxGradient(indX, indY);
+			      		dy += derrddist * mh->fyGradient(indX, indY);
+			      		dangle += derrddist * mh->fangleGradient(indX, indY, particles[i].heading, first->x, first->y);
+	
+					indX = lrint(realx/RESOLUTION) + IWIDTH_2;
+					indY = lrint(-realy/RESOLUTION) + IHEIGHT_2;
+					
+					//Compute "Distance value" [0-254]
+					if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
+						dist = LineLookup[indX + indY*IWIDTH];
+					}
+					else dist = 255;
+					
+					//Count linepoints within a certain range	
+					//if(dist<255) {
+					tribotWeight += dist;//pow(dist, 0.75);
+					//}
+					//cout << distance << "\t" << derrddist * mh->fxGradient(indX, indY) << "\t" << derrddist * mh->fyGradient(indX, indY) << "\t" << indX << "\t"<< indY << "\t"<< realx << "\t" << realy << "\t" << endl;
 				}
+
 				//cout << endl;
 				//exit(0);
 				
@@ -371,7 +369,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				  weight = 0.1;
 				//cout << weight << endl;
 				//std::cout << dx << "\t" << dy << "\t" << dangle << std::endl;
-#ifdef GRADIENTDEBUG
+#ifdef GRADIENTDEBUGOUTPUT
 				if(initCounter >= 5) {
 					lsfs << particles[i].posx <<  "\t";
 					lsfs << particles[i].posy <<  "\t";
@@ -387,12 +385,12 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				particles[i].posx -= 1000*xUpdate.getdW(dx);
 				//Note Y in the arrays behaves inverse to the coordinate system we are using
 				particles[i].posy += 1000*yUpdate.getdW(dy);
-				particles[i].heading += angleUpdate.getdW(dangle);
+				particles[i].heading -= angleUpdate.getdW(dangle);
 				particles[i].weight = weight;
 				cos_ = cos(particles[i].heading);
 				sin_ = sin(particles[i].heading);
 			}
-#ifdef GRADIENTDEBUG
+#ifdef GRADIENTDEBUGOUTPUT
 			lsfs << endl;
 			lsfs << endl;
 #endif
@@ -402,33 +400,29 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 			cout << particles[i].posy <<  endl;*/
 			tribotWeight = 0;
 			//Iterate over Linepoints to evaluate final position
-			for(first = linePoints->linePoints.begin(), firstDist = linePointDistances.begin(); first != last; ++first, ++firstDist) {
-				if(linePointsInvalidity[invIndex] == 0){
-					//Transform LinePoint in coordinate system of current particle
-					realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
-					realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
-		
-					//Compute index in distance lookup
-					int indX = lrint(realx/resolution_1) + IWIDTH_2;
-					int indY = lrint(-realy/resolution_1) + IHEIGHT_2;
-		
+			for(first = linePoints->linePoints.begin(); first != last; ++first) {
+				//Transform LinePoint in coordinate system of current particle
+				realx = particles[i].posx + cos_*(first->x) - sin_*(first->y);
+				realy = particles[i].posy + sin_*(first->x) + cos_*(first->y);
+	
+				//Compute index in distance lookup
+				int indX = lrint(realx/RESOLUTION) + IWIDTH_2;
+				int indY = lrint(-realy/RESOLUTION) + IHEIGHT_2;
+	
 
-					//Compute "Distance value" [0-254]
-					if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
-						dist = LineLookup[indX + indY*IWIDTH];
-					}
-					else dist = 255;
-					
-					//Count linepoints within a certain range	
-					//if(dist<=555) {
-					tribotWeight += dist;//pow(dist, 0.75);
-					//Alternative Weight
-					//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
+				//Compute "Distance value" [0-254]
+				if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
+					dist = LineLookup[indX + indY*IWIDTH];
 				}
-				invIndex++;
+				else dist = 255;
+				
+				//Count linepoints within a certain range	
+				//if(dist<=555) {
+				tribotWeight += dist;//pow(dist, 0.75);
+				//Alternative Weight
+				//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
 			}
 			if((linePoints->linePoints.size())>0)
-			  //weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
 			  weight = 1.0 - tribotWeight/((linePoints->linePoints.size())*510.0);
 			else
 			  weight = 0.1;
@@ -443,9 +437,9 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	//exit(0);
 
 	//Compute Best Particle + Index
-	int maxInd = 1;
+	int maxInd = startParticle+1;
 	maxWeight = 0;//particles[1].weight;
-	for(int i = 1; i < nParticles; i++){//start from 1
+	for(int i = maxInd; i < nParticles; i++){//start from 1
 		if(particles[i].weight > maxWeight){
 			maxInd = i;
 			maxWeight = particles[i].weight;
@@ -492,7 +486,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 		double rawMaxWeight = 0.0;
 		int maxTrackedIndex = nParticles - 1;
 
-		for(int i = 0; i < nParticles; i++){
+		for(int i = startParticle; i < nParticles; i++){
 			double diffX = particles[i].posx - rawUpdatedPosition.x;
 			double diffY = particles[i].posy - rawUpdatedPosition.y;
 
@@ -531,16 +525,6 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 				jump = true;
 			} else {
 				//Update rawUpdatePosition to best particle within 50mm
-
-//				double headingDiff = fabs(maxParticle.heading - rawUpdatedPosition.heading);
-//				if(headingDiff > M_PI){
-//					headingDiff -= 2.0*M_PI;
-//				}
-//
-//				if(fabs(headingDiff) > M_PI/360.0){
-//					rawUpdatedPosition.heading = maxParticle.heading;
-//				}
-
 				rawUpdatedPosition.x = particles[maxTrackedIndex].posx;
 				rawUpdatedPosition.y = particles[maxTrackedIndex].posy;
 				rawUpdatedPosition.heading = particles[maxTrackedIndex].heading;
@@ -587,11 +571,13 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	robotPosition.x = (mr.position.x);
 	robotPosition.y = (mr.position.y);
 	robotPosition.angle = (mr.position.heading);
+	normalizeAngle(robotPosition.angle);
 
 	//Auskommentieren, wenn Delay zu groß! 
 	rawUpdatedPositionNew.x = mr.position.x;
 	rawUpdatedPositionNew.y = mr.position.y;
 	rawUpdatedPositionNew.heading = mr.position.heading;
+	
 	unsigned long long timestamp = ros::Time::now().nsec*1000000000+ros::Time::now().nsec;
 
 	robotVelocity.translation = (sqrt(mr.velocity.vx*mr.velocity.vx + mr.velocity.vy*mr.velocity.vy));
@@ -600,8 +586,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 
 	coi.position = (robotPosition);
 	coi.motion = (robotVelocity);
-	//coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, lineDistHelper, linePointsInvalidity, invCounter));
-	coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, distanceMap, linePointsInvalidity, 0));
+	coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, distanceMap));
 	coi.locType.type = (LocalizationType::ParticleFilter);
 
 	printf("MaxParticle Confidence %f\n", coi.certainty);		
@@ -624,7 +609,6 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	if(initCounter > 10000)
 		initCounter = 10000;
 
-	free(linePointsInvalidity);
 	free(linePointsEgoDistances);
 	free(linePointsEgoAngles);
 }
@@ -885,104 +869,40 @@ Particle msl_localization::getEstimatedPosition(){
 }
 
 
-double msl_localization::calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap, unsigned char * linePointsInvalidity, int invCounter){
-	unsigned char * LineLookup = distanceMap;
+double msl_localization::calculateWeightForEstimatedPosition(Position pos, msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char *distanceMap){
+	double weight = 0.0, dist, realx, realy;
+	double tribotWeight = 0;
 
-	double LinePointSigma = 15.0;
-	double offset = 1500;
-	double t = 0.9999;
-	double h = (linePoints->linePoints.size() - invCounter)*1.0;
-	double pv = pow((t/(1-t)),(1/h))/(1 + pow((t/(1-t)),(1/h)));
-	
-	int IHEIGHT = MapHelper::getInstance()->HEIGHT;
-	int IWIDTH  = MapHelper::getInstance()->WIDTH;
-	int IHEIGHT_2 = IHEIGHT/2;
-	int IWIDTH_2 = IWIDTH/2;
-
-	double resolution_1 = MapHelper::getInstance()->WIDTH;
-
-	std::vector<Point2dInfo>::const_iterator first, last = linePoints->linePoints.end();
-
-	int posLinePoints = 0;
-	int negLinePoints = 0;
 	double cos_ = cos(pos.heading);
 	double sin_ = sin(pos.heading);
-	double realx = 0.0;
-	double realy = 0.0;
+	//Iterate over Linepoints to evaluate final position
+	for(auto first = linePoints->linePoints.begin(); first != linePoints->linePoints.end(); ++first) {
+		//Transform LinePoint in coordinate system of current particle
+		realx = pos.x + cos_*(first->x) - sin_*(first->y);
+		realy = pos.y + sin_*(first->x) + cos_*(first->y);
 
-	double weight = 0.5;
-	unsigned char dist = 0;
-	double inp = 0.0;
-
-	if(weight > 0.1) {
-		int invIndex = 0;
-
-		int tribotWeight = 0;
-
-		for(first = linePoints->linePoints.begin(); first != last; ++first){
-			double distance = sqrt((first->x)*(first->x) + (first->y)*(first->y));
-		
-			double compare_distance = (LinePointSigma + (distance - 400.0)*0.005); 
-			int int_c_dist = lrint(compare_distance);
-			if(int_c_dist < 0)
-				int_c_dist = 0;
-			if(int_c_dist > 255)
-				int_c_dist = 255;
-	
-			unsigned char c = (unsigned char) int_c_dist;
-
-			if(linePointsInvalidity[invIndex] == 0){
-				//Transform LinePoint in coordinate system of current particle
-				realx = pos.x + cos_*(first->x) - sin_*(first->y);
-				realy = pos.y + sin_*(first->x) + cos_*(first->y);
+		//Compute index in distance lookup
+		int indX = lrint(realx/RESOLUTION) + IWIDTH_2;
+		int indY = lrint(-realy/RESOLUTION) + IHEIGHT_2;
 
 
-					//Compute index in distance lookup
-					int indX = lrint(realx/resolution_1) + IWIDTH_2;
-					int indY = lrint(-realy/resolution_1) + IHEIGHT_2;
-		
-
-					//Compute "Distance value" [0-254]
-					if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
-						dist = LineLookup[indX + indY*IWIDTH];
-					}
-					else dist = 255;
-
-					if(dist >= 254)
-						dist = 254;
-
-					double dist_real = dist/255.0;
-					double new_dist_real = sqrt((250.0*250.0)/(1.0 - dist_real) - 250.0*250.0)/10.0;
-
-					new_dist_real = lrint(new_dist_real);
-					if(new_dist_real >= 255.0)
-						new_dist_real = 255.0;
-
-					unsigned char new_dist = (unsigned char) lrint(new_dist_real);
-
-					if(new_dist < c){
-						posLinePoints++;	
-					}
-
-					tribotWeight += dist;
-					//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
-				}
-			invIndex++;
+		//Compute "Distance value" [0-254]
+		if(indX >= 0 && indX < IWIDTH && indY >= 0 && indY < IHEIGHT){
+			dist = distanceMap[indX + indY*IWIDTH];
 		}
-		negLinePoints = linePoints->linePoints.size() - invCounter - posLinePoints;
-
-		inp = pv;
-		if(posLinePoints > 0)
-			weight = 1.0/(1.0 + pow(1-inp, posLinePoints)*(1-weight)/(weight*pow(inp, posLinePoints)));
-
-		inp = 1.0 - pv;
-		if(negLinePoints > 0)
-			weight = 1.0/(1.0 + pow(1-inp, negLinePoints)*(1-weight)/(weight*pow(inp, negLinePoints)));
-
-		//Endy The Hero
-		//weight = 1.0 - tribotWeight/((linePoints->linePoints.size() - invCounter)*510.0);
-		if(invCounter==linePoints->linePoints.size() || linePoints->linePoints.size()==0) weight=0.1;
+		else dist = 255;
+		
+		//Count linepoints within a certain range	
+		//if(dist<=555) {
+		tribotWeight += dist;//pow(dist, 0.75);
+		//Alternative Weight
+		//weight = weight*inp/((1-weight)*(1-inp) + weight*inp);
 	}
+	if((linePoints->linePoints.size())>0)
+	  //weight = 1.0 - tribotWeight/((linePoints.size() - invCounter)*510.0);
+	  weight = 1.0 - tribotWeight/((linePoints->linePoints.size())*510.0);
+	else
+	  weight = 0.1;
 	return weight;
 }
 

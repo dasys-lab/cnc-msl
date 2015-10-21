@@ -218,7 +218,7 @@ double MapHelper::fangleGradient(int px, int py, double pangle, double lx,
 	double sinangle = sin(pangle);
 	double cosangle = cos(pangle);
 	return (-sinangle * lx - cosangle * ly) * fxGradient(px, py)
-			+ (cosangle * lx - sinangle * ly) * fyGradient(px, py);
+			- (cosangle * lx - sinangle * ly) * fyGradient(px, py);
 }
 
 

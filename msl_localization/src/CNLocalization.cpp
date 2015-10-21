@@ -28,14 +28,11 @@ int main(int argc, char** argv) {
 	rmr->initialize();
 	
 	MapHelper* mh = MapHelper::getInstance();
-	
+	if(ros::ok()) mh->initializeMap();
+	//Dont exchange the call order	
 	msl_localization *loc = new msl_localization(800); //1200
 
-	/*while(ros::ok()) {
-		ros::spinOnce();
-		if(rmr->mapReceived()) break;
-	}*/
-	if(ros::ok()) mh->initializeMap();
+
 	
 	int iteration=0;
 	while(ros::ok()) {
