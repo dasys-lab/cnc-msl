@@ -26,12 +26,25 @@ namespace alica
 	void Pos2Defenders::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1444834678756) ENABLED START*/ //Add additional options here
-		shared_ptr<geometry::CNPoint2D> alloBallPos = wm->ball.getAlloBallPosition();
+		shared_ptr<geometry::CNPoint2D> alloBallPos = nullptr;
+		alloBallPos = wm->ball.getAlloBallPosition();
+
+		if (alloBallPos == nullptr)
+		{
+
+			alloBallPos = make_shared<geometry::CNPoint2D>(0, 0);
+		}
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+		vector<shared_ptr<geometry::CNPoint2D>>>();
+		// add alloBall to path planning
+		additionalPoints->push_back(alloBallPos);
+
 		this->keeperPos = wm->robots.getTeamMatePosition(keeperId);
 		int ownId = this->wm->getOwnId();
 		auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
 		auto robotsInOwnEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getRobotsWorking(ownEp);
-		auto firstDefPos = alloBallPos + make_shared<geometry::CNPoint2D>(-2000, -300);
+		auto firstDefPos = alloBallPos + make_shared<geometry::CNPoint2D>(-2500, -600);
 		auto secondDefPos = alloBallPos + make_shared<geometry::CNPoint2D>(-4000, 2300);
 		auto firstDef = wm->robots.getTeamMatePosition((*robotsInOwnEp)[0]);
 		msl_actuator_msgs::MotionControl mc;
@@ -65,14 +78,14 @@ namespace alica
 				if (ownId == (*robotsInOwnEp)[0])
 				{
 
-					mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
-																	alloBallPos->alloToEgo(*secondDef), 0);
+					mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*firstDef),
+																	alloBallPos->alloToEgo(*firstDef), 0);
 
 				}
 				else
 				{
-					mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
-																	alloBallPos->alloToEgo(*firstDef), 0);
+					mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*secondDef),
+																	alloBallPos->alloToEgo(*secondDef), 0);
 				}
 
 			}

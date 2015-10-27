@@ -84,8 +84,8 @@
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1438785501838</state>
   </entryPoints>
-  <entryPoints id="1444834088607" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2">
-    <task>../../../../Misc/taskrepository.tsk#1225112227903</task>
+  <entryPoints id="1444834088607" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2">
+    <task>../../../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1444834163414</state>
   </entryPoints>
 </alica:Plan>
