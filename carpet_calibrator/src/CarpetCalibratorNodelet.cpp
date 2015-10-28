@@ -166,7 +166,7 @@ namespace msl_vision
 
 			if(ofs.is_open()) {
 				for(int i = 0; i < area * area; i++) {
-					ofs << (int)segmented->data[i];
+					ofs << segmented->data[i];
 				}
 				ofs.close();
 				ROS_INFO("saved carpet calibrator image to file.");
