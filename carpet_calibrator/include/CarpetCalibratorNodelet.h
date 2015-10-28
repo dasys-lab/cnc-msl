@@ -16,6 +16,9 @@
 #include <SystemConfig.h>
 #include <cv.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Bool.h>
+#include "FilterLinePointsCalib.h"
+#include "alica_ros_proxy/AlicaEngineInfo.h"
 
 using namespace std;
 
@@ -45,6 +48,8 @@ namespace msl_vision
 		void connectCb();
 	private:
 
+		FilterLinePointsCalib *filterLines;
+
 		cv::Mat *segmented;
 		boost::shared_ptr<image_transport::ImageTransport> it_;
 		image_transport::CameraSubscriber sub_camera_;
@@ -58,10 +63,12 @@ namespace msl_vision
 
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber angleSub;
+		ros::Subscriber alicaEngineInfoSub;
 		double firstAngle;
 		int height;
-		int width;bool imgReceived = false;
+		int width;
 		bool newAngle = false;
+		bool imgSaved = false;
 		double currAngle = 0;
 
 		short mx;
@@ -71,6 +78,7 @@ namespace msl_vision
 
 		void onCarpetCalibratorAngle(std_msgs::Float64ConstPtr msg);
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr msg);
 		void saveCarpetToFile();
 	};
 

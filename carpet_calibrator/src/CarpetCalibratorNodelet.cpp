@@ -38,6 +38,8 @@ namespace msl_vision
 		for(int i = 0; i< area*area; i++) {
 			segmented->data[i] = 0;
 		}
+
+		filterLines = new FilterLinePointsCalib(area);
 	}
 
 	CarpetCalibratorNodelet::~CarpetCalibratorNodelet()
@@ -61,20 +63,23 @@ namespace msl_vision
 		int startIndexX = mx - area/2;
 		int startIndexY = my - area/2;
 
+//		cout << "s-indY, s-indX, area: " << startIndexY << ", " << startIndexX << ", " << area << endl;
+
 		//XXX nicht schön, aber macht die Sache einfacher!
 		if(startIndexY % 2 != 0)
 					startIndexY++;
+
+//		cv::cvtColor(grayMat, grayMat, CV_BGR2RGB); // if needed
 
 		cv::Mat test(area,area,CV_8UC1);
 
 		for(int i = 0; i < area; i++) {
 			unsigned char * ptr = &(grayMat.data[((startIndexX + i)*width + startIndexY)]);
-			for(int j = 0; j < area; j++) {
+			for(int j = 0; j < area; j++, ptr++) {
 				test.data[i*area+j] = *ptr;
-				ptr++;
 
 				if(newAngle) {
-					if (-20 <= nx*(i-area/2)+ny*(j-area/2) && nx*(i-area/2)+ny*(j-area/2) <= 20) {
+					if (-2 <= nx*(i-area/2)+ny*(j-area/2) && nx*(i-area/2)+ny*(j-area/2) <= 2) {
 						if(0 <= -ny*(i-area/2)+nx*(j-area/2)) {
 							segmented->data[i*area+j] = test.data[i*area+j];
 						}
@@ -110,6 +115,7 @@ namespace msl_vision
 
 		rawOdomSub = nh.subscribe("/RawOdometry", 10, &CarpetCalibratorNodelet::onRawOdometryInfo, this);
 		angleSub = nh.subscribe("/CarpetCalibrator/CarpetAngle", 10, &CarpetCalibratorNodelet::onCarpetCalibratorAngle, this);
+		alicaEngineInfoSub = nh.subscribe("/AlicaEngine/AlicaEngineInfo", 10, &CarpetCalibratorNodelet::onAlicaEngineInfo, this);
 
 		std::string yaml_filename;
 
@@ -118,6 +124,7 @@ namespace msl_vision
 
 		image_transport::TransportHints hints("raw", ros::TransportHints(), getNodeHandle());
 		sub_camera_ = it_->subscribeCamera("camera/image_raw",1, &CarpetCalibratorNodelet::imageCb,this,  hints);
+
 	}
 
 	void CarpetCalibratorNodelet::run()
@@ -146,7 +153,29 @@ namespace msl_vision
 			newAngle = false;
 		}
 	}
+	void CarpetCalibratorNodelet::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr msg) {
+		if(msg->currentState.compare("FinishSpin")==0 && !imgSaved){
+			string directory = sc->getConfigPath() + "CarpetCalibImage.raw";
+			string pngDir = sc->getConfigPath() + "CarpetCalibImage.png";
+			ofstream ofs(directory);
 
+			vector<int> compression_params;
+			compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+			compression_params.push_back(9);
+			cv::imwrite(pngDir,*segmented,compression_params);
+
+			if(ofs.is_open()) {
+				for(int i = 0; i < area * area; i++) {
+					ofs << (int)segmented->data[i];
+				}
+				ofs.close();
+				ROS_INFO("saved carpet calibrator image to file.");
+			} else {
+				ROS_ERROR("%s", string(string("Couldn't save carpet calibrator image: " + directory)).c_str());
+			}
+			imgSaved = true;
+		}
+	}
 
 }
 
