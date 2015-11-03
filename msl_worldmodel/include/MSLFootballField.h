@@ -118,10 +118,10 @@ namespace msl
 
 		static double FieldLength;
 		static double FieldWidth;
-		static double GoalAreaWidth;
+		static double PenaltyAreaWidth;
+		static double PenaltyAreaLength;
 		static double GoalAreaLength;
-		static double GoalInnerAreaWidth;
-		static double GoalInnerAreaLength;
+		static double GoalAreaWidth;
 		static double CornerCircleRadius;
 		static double MiddleCircleRadius;
 		static double LineWidth;

@@ -53,16 +53,16 @@ namespace alica
         //drive to both own penaltyarea corners
         targetPointsOwnGoalKick.resize(2);
         targetPointsOwnGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - field->GoalInnerAreaWidth), field->GoalInnerAreaLength / 2);
+                > (-(fieldLength / 2 - field->GoalAreaLength), field->GoalAreaWidth / 2);
         targetPointsOwnGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - field->GoalInnerAreaWidth), -field->GoalInnerAreaLength / 2);
+                > (-(fieldLength / 2 - field->GoalAreaLength), -field->GoalAreaWidth / 2);
 
         //drive to both opp penaltyarea corners
         targetPointsOppGoalKick.resize(2);
         targetPointsOppGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - field->GoalInnerAreaWidth, field->GoalInnerAreaLength / 2);
+                > (fieldLength / 2 - field->GoalAreaLength, field->GoalAreaWidth / 2);
         targetPointsOppGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - field->GoalInnerAreaWidth, -field->GoalInnerAreaLength / 2);
+                > (fieldLength / 2 - field->GoalAreaLength, -field->GoalAreaWidth / 2);
 
         //points on side lines (distToOutline away)
         targetPointsThrowIn.resize(6);
