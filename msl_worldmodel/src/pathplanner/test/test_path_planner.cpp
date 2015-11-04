@@ -62,7 +62,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	shared_ptr<geometry::CNPoint2D> startPos = field->posOwnPenaltyMarker();
 	shared_ptr<geometry::CNPoint2D> goalPos = field->posOppPenaltyMarker();
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = nullptr;
-	shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>(msl::PathEvaluator(&(wm->pathPlanner)));
+	shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>(msl::PathEvaluator());
 	EXPECT_TRUE(net == nullptr);
 	shared_ptr<geometry::CNPoint2D> startPoint = make_shared<geometry::CNPoint2D>(0, 0);
 	shared_ptr<geometry::CNPoint2D> goalPoint = make_shared<geometry::CNPoint2D>(1000, 1000);
