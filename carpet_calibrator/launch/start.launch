@@ -9,7 +9,7 @@
 		<!--param name="camera_info_url" value="$(find carpet_calibrator)/carpetCalibrator.yaml"/-->
    
 		<!--rosparam file="$(find carpet_calibrator)/flea.yaml" /-->
-		<!--param name="video_mode" value="640x480_yuv422" /-->
+		<param name="video_mode" value="640x480_mono8" />
 		<!--param name="2format7_color_coding" value="yuv422" /-->
 	</node>
 </launch>

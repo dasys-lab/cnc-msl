@@ -1,5 +1,5 @@
-guid: 00b09d0100ccf9c6
-video_mode: 640x480_yuv422
+guid: 00b09d01009d78fa
+video_mode: 640x480_mono8
 frame_id: pointgrey
 camera_info_url: file:///carpetCalibrator.yaml
 bayer_pattern: rggb #gbrg
