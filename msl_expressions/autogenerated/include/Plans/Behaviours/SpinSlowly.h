@@ -26,7 +26,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1435159253296) ENABLED START*/ //Add additional private methods here
         double alpha, startAngle;
-        double epsilon = 0.05;
+        double epsilon = 0.03;
         int counter;
         shared_ptr<geometry::CNPoint2D> center;
         /*PROTECTED REGION END*/};

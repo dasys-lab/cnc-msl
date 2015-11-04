@@ -45,7 +45,7 @@ namespace alica
         else
         {
             counter++;
-            mc.motion.rotation = M_PI / 4;
+            mc.motion.rotation = M_PI / 16;
         }
 
         send(mc);
