@@ -21,6 +21,7 @@ namespace alica
     void Pos4Def::run(void* msg)
     {
         /*PROTECTED REGION ID(run1445438142979) ENABLED START*/ //Add additional options here
+    	shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
         /*PROTECTED REGION END*/
     }
     void Pos4Def::initialiseParameters()

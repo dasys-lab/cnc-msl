@@ -20,10 +20,7 @@ using namespace autodiff;
 
 
 
-namespace carpenoctem
-{
-	namespace base
-	{
+namespace msl{
 		// should be in /home/psp/impera/MSLCN/MSLWorldModel/src/Areas.cs
 		enum Areas
 		{
@@ -44,8 +41,13 @@ namespace carpenoctem
 			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,
 																shared_ptr<TVec> upperLeftCorner,
 																vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner,
+																shared_ptr<TVec> upperLeftCorner,
+																vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point);
+			static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> points);
 
 		private:
 			static msl::MSLFootballField* field;
@@ -89,7 +91,6 @@ namespace carpenoctem
 									shared_ptr<geometry::CNPoint2D> *upperLeftCorner);
 		};
 
-	} /* namespace base */
-} /* namespace carpeNoctem */
+} /* namespace msl */
 
 #endif /* MSLCONSTRAINTBUILDER_H_ */
