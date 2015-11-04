@@ -11,13 +11,16 @@
 #define TMC_MOTION_DEBUG // for toggling debug output
 
 #include <ros/ros.h>
-#include "msl_actuator_msgs/RawOdometryInfo.h"
-#include "msl_actuator_msgs/MotionStatInfo.h"
+#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include "msl_actuator_msgs/MotionControl.h"
+#include "msl_msgs/MotionInfo.h"
 #include "MotionData.h"
 #include <chrono>
 #include <math.h>
 #include "AccelCompensation.h"
 #include "CircleTrace.h"
+#include "CNMCTriForce.h"
+#include <mutex>
 
 using namespace std;
 
@@ -37,7 +40,7 @@ namespace msl_driver
 		void initCommunication(int argc, char** argv);
 		void start();
 		void run();
-		void handleMotionControl(msl_actuator_msgs::MotionStatInfoPtr msi);
+		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);
 		bool isRunning();
 
 		static void pmSigintHandler(int sig);
@@ -57,8 +60,11 @@ namespace msl_driver
 	protected:
 		MotionSet* motionValue = nullptr;
 		MotionSet* motionResult = nullptr;
+		MotionSet* motionValueOld = nullptr;
 		AccelCompensation* accelComp = nullptr;
 		CircleTrace* traceModel = nullptr;
+		CNMCTriForce* driver =  nullptr;
+		std::mutex motionValueMutex;
 
 		double slipControlFactor = 1.0;
 		double slipControlMinSpeed = 1250.0;
@@ -72,11 +78,15 @@ namespace msl_driver
 		bool accelCompEnabled = false;
 		bool slipControlEnabled = false;
 		bool sendRosCompliant;
+		bool quit = false;
 
 		int driverAlivePeriod = 250;
 		int driverOpenAttemptPeriod = 1000;
 		int ownId;
 		int odometryDelay = 0;
+
+		void onDriverStatusChange(CNMCTriForce::StatusCode code, string message);
+
 	};
 
 } /* namespace msl_driver */

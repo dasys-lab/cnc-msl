@@ -9,6 +9,7 @@
 #include <thread>
 #include <signal.h>
 #include <SystemConfig.h>
+#include <time.h>
 
 namespace msl_driver
 {
@@ -76,46 +77,72 @@ namespace msl_driver
 //		 this.MotionStatPub = new Publisher(node,"MotionStatInfo",MotionStatInfo.TypeId,1);
 		 this->sendRosCompliant = (*sc)["Motion"]->tryGet<bool>(true,"Motion","SendRosCompliant", NULL);
 
-		 /*
-		 // Load the controller driver
-		 try {
-		 this.driver = Driver.Load(this.sc.LibPath + driversPath, driverName);
-		 this.driver.AlivePeriod = this.driverAlivePeriod;
-		 this.driver.OpenAttemptPeriod = this.driverOpenAttemptPeriod;
-		 this.driver.StatusChange += OnDriverStatusChange;
-		 this.driver.ResultAvailable += OnDriverResultAvailable;
 
-		 } catch (Exception e) {
-		 if(e.InnerException!=null) Debug.WriteLine(e.InnerException.Message);
-		 Debug.WriteLine("Motion: error loading motor driver {0} from {1}!", driverName, driversPath);
-		 return;
-		 }
+		 driver = new CNMCTriForce();
+		 this->driver->alivePeriod =  this->driverAlivePeriod;
+		 this->driver->openAttemptPeriod =  this->driverOpenAttemptPeriod;
 
-
-
-
+		 //TODO
 		 // Initialize the driver
-		 if (!this.driver.Initialize()) {
-		 Close();
-		 }
-		 node.Subscribe("MotionControl",this.OnMotionControl);
-		 //node.Subscribe("cmd_vel",this.OnTwist);
+//		 if (!this.driver.Initialize()) {
+//		 Close();
+//		 }
+//		 node.Subscribe("MotionControl",this.OnMotionControl);
+//		 //node.Subscribe("cmd_vel",this.OnTwist);
+//
+//
+//		 this.monitoringTimer = new System.Threading.Timer(MonitoringCallback, null, 1000, 1000); */
 
-
-		 this.monitoringTimer = new System.Threading.Timer(MonitoringCallback, null, 1000, 1000); */
-
-	}
-
-	void Motion::handleMotionControl(msl_actuator_msgs::MotionStatInfoPtr msi)
-	{
-		// todo: this was formally OnMotionControl in the C# code
 	}
 
 	Motion::~Motion()
 	{
 		delete motionValue;
 		delete motionResult;
+		delete motionValueOld;
 		delete accelComp;
+		delete traceModel;
+		delete driver;
+	}
+
+	void Motion::onDriverStatusChange(CNMCTriForce::StatusCode code, string message)
+	{
+		if(this->quit || ros::ok())
+		{
+			return;
+		}
+	}
+	void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc)
+	{
+//	TODO: OnMotionControl
+		if(this->accelCompEnabled && this->motionValueOld != nullptr)
+		{
+			msl_msgs::MotionInfo* m = new msl_msgs::MotionInfo();
+			m->angle = this->motionValueOld->angle;
+			m->translation = this->motionValueOld->translation;
+			m->rotation = this->motionValueOld->rotation;
+			mc->motion = *(this->accelComp->compensate(&mc->motion, m, (ulong)clock()));
+
+		}
+
+		std::lock_guard<std::mutex>   lck(this->motionValueMutex);
+		{
+			// Create a new driver command
+			this->motionValue->angle = mc->motion.angle;
+			this->motionValue->translation = mc->motion.translation;
+			this->motionValue->rotation = mc->motion.rotation;
+
+
+			// Apply the slip control if enabled
+			if ((this->slipControlEnabled) && (mc->motion.translation > this->slipControlMinSpeed)) {
+
+				this->motionValue->translation *= this->slipControlFactor;
+				this->motionValue->rotation *= this->slipControlFactor;
+
+			}
+//			TODO TEMPLATE
+//			this->driver->request<MotionSet>(this.motionValue);
+		}
 	}
 
 	void Motion::initCommunication(int argc, char** argv)
@@ -125,7 +152,8 @@ namespace msl_driver
 		spinner = new ros::AsyncSpinner(4);
 		handleMotionControlSub = rosNode->subscribe("/MotionControl", 10, &Motion::handleMotionControl, (Motion*)this);
 		rawOdometryInfoPub = rosNode->advertise<msl_actuator_msgs::RawOdometryInfo>("/RawOdometry", 10);
-		motionStatInfoPub = rosNode->advertise<msl_actuator_msgs::MotionStatInfo>("/MotionStatInfo", 10);
+//		TODO
+//		motionStatInfoPub = rosNode->advertise<msl_actuator_msgs::MotionControl>("/MotionStatInfo", 10);
 		spinner->start();
 	}
 
