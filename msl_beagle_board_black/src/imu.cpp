@@ -172,38 +172,24 @@ void IMU::getTemp() {
 }
 
 void IMU::updateData(timeval time_now) {
-	if(TIMEDIFFMS(time_now, last_updated) > IMU_UPDATE_TIMEOUT) {
-		this->getAccel();
-		this->getGyro();
-		this->getMagnet();
-		this->getTemp();
+	this->getAccel();
+	this->getGyro();
+	this->getMagnet();
+	this->getTemp();
 
-		last_updated = time_now;
-
-		std::cout << "Accel: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
-		std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
-		std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
-		std::cout << "Temp: " << temperature << std::endl;
-
-
-	}
+	last_updated = time_now;
 }
 
 void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
-	if(TIMEDIFFMS(time_now, last_sended) > IMU_SEND_TIMEOUT) {
-		// x-, y- und z-Werte von ACCEL, GYRO und MAGNET publishen
-		// Temperatur publishen
-
-		/*msl_actuator_msgs::IMUInfo msg;
-
-		msg.accel = accel;
-		msg.gyro = gyro;
-		msg.magnet = magnet;
-		msg.temperature = temperature;
-
-		imuPub->publish(msg);*/
-		last_sended = time_now;
-	}
+//	msl_actuator_msgs::IMUInfo msg;
+//
+//	msg.accel = accel;
+//	msg.gyro = gyro;
+//	msg.magnet = magnet;
+//	msg.temperature = temperature;
+//
+//	imuPub->publish(msg);
+	last_sended = time_now;
 }
 
 

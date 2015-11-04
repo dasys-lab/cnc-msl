@@ -119,10 +119,8 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			cout << "Ja - " << value << endl;
 		} else {
 			msg.haveBall = false;
-			cout << "Nein - " << value << endl;
 		}
 		hbiPub->publish(msg);
 
@@ -148,6 +146,8 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 
 		msg.usePose = false;
 
+		// TODO: Taster Entprellfunktion
+		// TODO: Senden wenn nicht gedrückt
 		if (bundle == 1) {
 			bsPub->publish(msg);
 			brtPub->publish(msg_empty);
@@ -173,7 +173,7 @@ void getIMU(ros::Publisher *imuPub) {
 		if (!th_activ)
 			return;
 
-		// TODO IMU
+		lsm9ds0.updateData(time_now);
 		lsm9ds0.sendData(time_now, imuPub);
 
 		threw[5].notify = false;
@@ -188,7 +188,7 @@ void getOptical(ros::Publisher *mbcPub) {
 		if (!th_activ)
 			return;
 
-		// TODO MotionBurst
+		adns3080.update_motion_burst(time_now);
 		adns3080.send_motion_burst(time_now, mbcPub);
 
 		threw[6].notify = false;
@@ -198,7 +198,6 @@ void getOptical(ros::Publisher *mbcPub) {
 
 void exit_program(int sig) {
 	ex = true;
-	cout << "Programm wird beendet." << endl;
 	th_activ = false;
 	cv_main.cv.notify_all();
 	for (int i=0; i<6; i++)
@@ -209,12 +208,10 @@ void exit_program(int sig) {
 
 
 int main(int argc, char** argv) {
-	cout << "Test Actuator-Beagle-Board" << endl;
-
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
-	ros::Rate loop_rate(1);		// in Hz
+	ros::Rate loop_rate(30);		// in Hz
 
 	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
@@ -225,14 +222,14 @@ int main(int argc, char** argv) {
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
-	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
+	//ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
-	/* thread th_controlBHRight(controlBHRight);
+	thread th_controlBHRight(controlBHRight);
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
-	thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub); */
-	//thread th_adns3080(getOptical, &mbcPub);
+	thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+	thread th_adns3080(getOptical, &mbcPub);
 	//thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
@@ -247,13 +244,7 @@ int main(int argc, char** argv) {
 	adns3080.reset();
 	adns3080.adns_init();
 
-	cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << endl;
-
-
 	usleep(50000);
-
-
-	uint8_t testy = 0;
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -262,18 +253,11 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-		//TODO ADNS3080 Test
 		adns3080.update_motion_burst(time_now);
 		adns3080.send_motion_burst(time_now, &mbcPub);
 
-
-
-//		ros::Time::now();
-		gettimeofday(&vorher, NULL);
-
 		// Thread Notify
-// TODO wieder einklammern
-		/*for (int i=0; i<5; i++) {
+		for (int i=0; i<6; i++) {
 			threw[i].notify = true;
 			threw[i].cv.notify_all();
 		}
@@ -281,19 +265,12 @@ int main(int argc, char** argv) {
 		// auf beenden aller Threads warten
 		unique_lock<mutex> l_main(cv_main.mtx);
 		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
-		*/
-// TODO ende wieder einklammern ^^
-
-		gettimeofday(&nachher, NULL);
-
 
 		// MotionBurst
 
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-
-	cout << "Programm beendet." << endl;
 
 	return 0;
 }

@@ -799,8 +799,8 @@ namespace msl
 		auto lowRightCorner = field->posLROppGoalArea();
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
 		//get field length and width
-		int penaltyWidth = field->GoalInnerAreaWidth;
-		int penaltyLength = field->GoalInnerAreaLength;
+		int penaltyWidth = field->PenaltyAreaWidth;
+		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
@@ -897,8 +897,8 @@ namespace msl
 		auto lowRightCorner = field->posLROwnGoalArea();
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
 		//get field length and width
-		int penaltyWidth = field->GoalInnerAreaWidth;
-		int penaltyLength = field->GoalInnerAreaLength;
+		int penaltyWidth = field->PenaltyAreaWidth;
+		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));

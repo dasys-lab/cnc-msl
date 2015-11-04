@@ -59,6 +59,8 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
+#include  "Plans/Behaviours/Pos4Def.h"
+
 #include  "Plans/GenericStandards/StandardActuate.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
@@ -239,6 +241,11 @@ namespace alica
             case 1440754543898:
 
                 return make_shared<CatchPass>();
+                break;
+
+            case 1445438204426:
+
+                return make_shared<Pos4Def>();
                 break;
 
             case 1435766278023:
