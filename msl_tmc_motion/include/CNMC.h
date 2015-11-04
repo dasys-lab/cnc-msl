@@ -28,11 +28,11 @@
 namespace msl_driver
 {
 //	template<class T>
-	class CNMCTriForce
+	class CNMC
 	{
 	public:
-		CNMCTriForce();
-		virtual ~CNMCTriForce();
+		CNMC();
+		virtual ~CNMC();
 //		void request(T data);
 		enum StatusCode : uint {
 			Undefined = 0x00000000,

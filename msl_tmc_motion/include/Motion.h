@@ -19,7 +19,7 @@
 #include <math.h>
 #include "AccelCompensation.h"
 #include "CircleTrace.h"
-#include "CNMCTriForce.h"
+#include <CNMC.h>
 #include <mutex>
 
 using namespace std;
@@ -39,7 +39,6 @@ namespace msl_driver
 
 		void initCommunication(int argc, char** argv);
 		void start();
-		void run();
 		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);
 		bool isRunning();
 
@@ -54,16 +53,13 @@ namespace msl_driver
 		ros::Publisher rawOdometryInfoPub;
 		ros::Publisher motionStatInfoPub;
 
-
-		thread* mainThread;
-
 	protected:
 		MotionSet* motionValue = nullptr;
 		MotionSet* motionResult = nullptr;
 		MotionSet* motionValueOld = nullptr;
 		AccelCompensation* accelComp = nullptr;
 		CircleTrace* traceModel = nullptr;
-		CNMCTriForce* driver =  nullptr;
+		CNMC* driver =  nullptr;
 		std::mutex motionValueMutex;
 
 		double slipControlFactor = 1.0;
@@ -77,7 +73,6 @@ namespace msl_driver
 
 		bool accelCompEnabled = false;
 		bool slipControlEnabled = false;
-		bool sendRosCompliant;
 		bool quit = false;
 
 		int driverAlivePeriod = 250;
@@ -85,7 +80,8 @@ namespace msl_driver
 		int ownId;
 		int odometryDelay = 0;
 
-		void onDriverStatusChange(CNMCTriForce::StatusCode code, string message);
+		void notifyDriverStatusChange(CNMC::StatusCode code, string message);
+		void notifyDriverResultAvailable(DriverData data);
 
 	};
 

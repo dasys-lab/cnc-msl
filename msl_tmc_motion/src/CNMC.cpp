@@ -5,31 +5,31 @@
  *      Author: cnpaul
  */
 
-#include "CNMCTriForce.h"
+#include <CNMC.h>
 
 namespace msl_driver
 {
 
-	CNMCTriForce::CNMCTriForce()
+	CNMC::CNMC()
 	{
 		this->mc = nullptr;
 		p = nullptr;
 	}
 
-	CNMCTriForce::~CNMCTriForce()
+	CNMC::~CNMC()
 	{
 		delete mc;
 		delete p;
 	}
 
-	bool CNMCTriForce::connected()
+	bool CNMC::connected()
 	{
 		//TODO PORT OFFEN
 //		return((this->active && this-))
 		return true;
 	}
 
-	void CNMCTriForce::initializeInternal()
+	void CNMC::initializeInternal()
 	{
 		this->sc = supplementary::SystemConfig::getInstance();
 
@@ -67,7 +67,7 @@ namespace msl_driver
 		getMotorConfig();
 	}
 
-	void CNMCTriForce::openInternal()
+	void CNMC::openInternal()
 	{
 		int stopBits = 1;
 		int parity = 00;
@@ -116,7 +116,7 @@ namespace msl_driver
 		sendData(p);
 
 	}
-	void CNMCTriForce::shutdownInternal()
+	void CNMC::shutdownInternal()
 	{
 		if(this->useSerial)
 		{
@@ -127,7 +127,7 @@ namespace msl_driver
 			}
 		}
 	}
-	void CNMCTriForce::executeCheck()
+	void CNMC::executeCheck()
 	{
 		p = new CNMCPacketRequest();
 		p->setData(CNMCPacket::RequestCmd::PathVector);
@@ -146,7 +146,7 @@ namespace msl_driver
 		}
 
 	}
-	void CNMCTriForce::updateMotorState(DriverData request, CNMCPacketRequestResponse* vmcp)
+	void CNMC::updateMotorState(DriverData request, CNMCPacketRequestResponse* vmcp)
 	{
 		int rawMotorValues[3];
 
@@ -195,12 +195,12 @@ namespace msl_driver
 				break;
 		}
 	}
-	void CNMCTriForce::signalResult(DriverData data)
+	void CNMC::signalResult(DriverData data)
 	{
 		//TODO
 		//if(this->re)
 	}
-	void CNMCTriForce::addResult(DriverData data)
+	void CNMC::addResult(DriverData data)
 	{
 		resultMutex.lock();
 		for(int i=0; i < this->results.size(); i++)
@@ -218,7 +218,7 @@ namespace msl_driver
 		signalResult(data);
 		resultMutex.unlock();
 	}
-	void CNMCTriForce::getMotorConfig()
+	void CNMC::getMotorConfig()
 	{
 		this->mc = new MotorConfig();
 		this->mc->resolution = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "EncoderResolution", NULL);
@@ -284,7 +284,7 @@ namespace msl_driver
 		this->mc->vmax = (delta * mc->resolution * 2.0 * mc->maxSpeed) / (60.0 * 1000.0);
 	}
 
-	void CNMCTriForce::sendData(CNMCPacket* packet)
+	void CNMC::sendData(CNMCPacket* packet)
 	{
 		auto bytes = packet->getBytes();
 		if(this->useSerial)
@@ -308,7 +308,7 @@ namespace msl_driver
 		}
 	}
 
-	CNMCPacket CNMCTriForce::readData()
+	CNMCPacket CNMC::readData()
 	{
 	}
 
