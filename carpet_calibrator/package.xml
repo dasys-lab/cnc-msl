@@ -43,9 +43,10 @@
   
   <build_depend>msl_actuator_msgs</build_depend>
   <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>cnc_geometry</run_depend>
+  <build_depend>cnc_geometry</build_depend>
   
-  
-    
+ 
   <build_depend>system_config</build_depend>
   <build_depend>nodelet</build_depend>
   <build_depend>roslib</build_depend>
@@ -53,7 +54,11 @@
   <build_depend>rospack</build_depend>  
   <build_depend>image_transport</build_depend>
   <build_depend>cv_bridge</build_depend>
-
+  <build_depend>std_msgs</build_depend>
+  <build_depend>msl_vision</build_depend>
+   
+  <run_depend>std_msgs</run_depend>
+  <run_depend>msl_vision</run_depend>
   <run_depend>cv_bridge</run_depend>
   <run_depend>image_transport</run_depend>
   <run_depend>system_config</run_depend>

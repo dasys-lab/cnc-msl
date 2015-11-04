@@ -1,20 +1,15 @@
+<?xml version="1.0"?>
 <!-- Launch in the camera namespace containing "image_raw" and "camera_info" -->
 <launch>
-
-
-  <!-- Debayered images -->
-  <node pkg="nodelet" type="nodelet" name="nodelet_manager"
-        args="manager"
-	/>
-  <node pkg="nodelet" type="nodelet" name="nodelet1"
-        args="load carpet_calibrator/CarpetCalibratorNodelet nodelet_manager"
-	 />
-
-  <!-- Monochrome rectified image -->
-  <node pkg="nodelet" type="nodelet" name="camera1394"
-        args="standalone camera1394/driver">
-        
-    <param name="video_mode" value="640x480_yuv422" />
+	<!-- Debayered images -->
+	<node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager"/>
+	<node pkg="nodelet" type="nodelet" name="carpet_calibrator" args="load carpet_calibrator/CarpetCalibratorNodelet nodelet_manager"/>
+	<node pkg="nodelet" type="nodelet" name="camera1394" args="load camera1394/driver nodelet_manager">
+		<!--param name="camera_info_url" value="file:///home/cn/cnws/src/cnc-msldriver/carpet_calibrator/carpetCalibrator.yaml" /-->
+		<!--param name="camera_info_url" value="$(find carpet_calibrator)/carpetCalibrator.yaml"/-->
+   
+		<!--rosparam file="$(find carpet_calibrator)/flea.yaml" /-->
+		<!--param name="video_mode" value="640x480_yuv422" /-->
+		<!--param name="2format7_color_coding" value="yuv422" /-->
 	</node>
-
 </launch>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_localization</name>
+  <version>0.0.0</version>
+  <description>The msl_localization package</description>
+
+  <maintainer email="witsch@vs.uni-kassel.de">Andreas Witsch</maintainer>
+
+  <license>MIT</license>
+
+  <author email="opfer@vs.uni-kassel.de">Stephan Opfer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>system_config</build_depend>
+  <build_depend>msl_vision</build_depend>
+  <build_depend>msl_sensor_msgs</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>msl_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>tf</build_depend>
+  
+  <run_depend>system_config</run_depend>
+  <run_depend>msl_vision</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>msl_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>tf</run_depend>
+
+  <export>
+  </export>
+</package>

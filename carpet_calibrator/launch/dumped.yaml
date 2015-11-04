@@ -1,0 +1,26 @@
+camera:
+  image_raw:
+    compressed: {format: jpeg, jpeg_quality: 80, png_level: 9}
+    compressedDepth: {depth_max: 10.0, depth_quantization: 100.0, png_level: 9}
+    theora: {keyframe_frequency: 64, optimize_for: 1, quality: 31, target_bitrate: 800000}
+camera1394: {auto_brightness: 3, auto_exposure: 2, auto_focus: 5, auto_gain: 2, auto_gamma: 3,
+  auto_hue: 3, auto_iris: 5, auto_pan: 2, auto_saturation: 3, auto_sharpness: 2, auto_shutter: 2,
+  auto_trigger: 0, auto_white_balance: 0, auto_zoom: 5, bayer_method: '', bayer_pattern: gbrg,
+  binning_x: 0, binning_y: 0, brightness: 0.0, camera_info_url: 'file:///carpetCalibrator.yaml',
+  exposure: 312.0, external_trigger: false, focus: 0.0, format7_color_coding: mono8,
+  format7_packet_size: 0, frame_id: pointgrey, frame_rate: 15.0, gain: 339.0, gamma: 512.0,
+  guid: 00b09d0100ccf9c6, hue: 2048.0, iris: 8.0, iso_speed: 400, num_dma_buffers: 4,
+  pan: 196.0, reset_on_open: false, roi_height: 0, roi_width: 0, saturation: 1024.0,
+  sharpness: 900.0, shutter: 703.0, software_trigger: false, time_offset: 0.0, trigger: 0.0,
+  trigger_mode: mode_0, trigger_polarity: active_low, trigger_source: source_0, use_ros_time: false,
+  video_mode: 640x480_yuv422, white_balance_BU: 640.0, white_balance_RV: 576.0, x_offset: 0,
+  y_offset: 0, zoom: 0.0}
+rosdistro: 'indigo
+
+  '
+roslaunch:
+  uris: {host_lab_pc5__37477: 'http://lab-pc5:37477/'}
+rosversion: '1.11.10
+
+  '
+run_id: 2b42d11a-14f1-11e5-a93a-485b3976ef62

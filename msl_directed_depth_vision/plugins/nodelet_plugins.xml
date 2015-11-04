@@ -1,0 +1,10 @@
+<library path="lib/libmsl_directed_depth_vision">
+  <class name="msl_directed_depth_vision/DirectedDepthVisionNodelet"
+         type="msl_vision::DirectedDepthVisionNodelet"
+         base_class_type="nodelet::Nodelet">
+    <description>
+     nodelet for directed depth vision.
+    </description>
+  </class>
+</library>
+

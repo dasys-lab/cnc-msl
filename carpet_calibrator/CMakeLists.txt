@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bridge msl_actuator_msgs)
+find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bridge msl_actuator_msgs msl_vision)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -83,6 +83,7 @@ catkin_package(
 #  LIBRARIES carpet_calibrator
   CATKIN_DEPENDS system_config 
   msl_actuator_msgs
+  msl_vision
   #DEPENDS ${Boost_LIBRARIES} 
 )
 
@@ -97,23 +98,28 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 ## Declare a cpp library
 add_library(carpet_calibrator
-   src/CarpetCalibrator.cpp
-   src/PictureGrabber.cpp
    src/CarpetCalibratorNodelet.cpp
+   src/FilterLinePointsCalib.cpp
+ #  src/XVDisplay.cpp
 )
 
 
 ## Declare a cpp executable
-# add_executable(carpet_calibrator_node src/carpet_calibrator_node.cpp)
+#add_executable(carpet_calibrator_exec
+#   src/CarpetCalibrator.cpp
+#   src/CarpetCalibratorNodelet.cpp
+ #  src/XVDisplay.cpp
+#)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(carpet_calibrator ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_actuator_msgs_generate_messages_cpp )
+add_dependencies(carpet_calibrator ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_actuator_msgs_generate_messages_cpp msl_vision)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(carpet_calibrator
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  Xv
 )
 
 #############

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_vision)
-
+ 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE INTERNAL "" FORCE)
 
 ## uncomment this to use clang ... currently it's untested
@@ -89,7 +89,7 @@ find_package(SSE)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS src src/filters 
+  INCLUDE_DIRS src src/filters src/helpers 
   LIBRARIES lib_msl_vision #lib_msl_vision_3d
   CATKIN_DEPENDS system_config msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs std_msgs freenect
   DEPENDS ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} pthread m Xv X11 Xext ICE SM dc1394 raw1394
