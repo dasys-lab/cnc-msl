@@ -50,6 +50,8 @@
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
+#include  "Plans/Calibration/MotionCalibration1442919721161.h"
+
 #include  "Plans/Attack/StandardKickOff1438777024734.h"
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
@@ -861,6 +863,36 @@ namespace alica
             case 1417620329181:
 
                 return make_shared<TransitionCondition1417620329181>();
+
+                break;
+
+            case 1442919804925:
+
+                return make_shared<TransitionCondition1442919804925>();
+
+                break;
+
+            case 1442921109582:
+
+                return make_shared<TransitionCondition1442921109582>();
+
+                break;
+
+            case 1443003809289:
+
+                return make_shared<TransitionCondition1443003809289>();
+
+                break;
+
+            case 1443003847207:
+
+                return make_shared<TransitionCondition1443003847207>();
+
+                break;
+
+            case 1443522265673:
+
+                return make_shared<TransitionCondition1443522265673>();
 
                 break;
 

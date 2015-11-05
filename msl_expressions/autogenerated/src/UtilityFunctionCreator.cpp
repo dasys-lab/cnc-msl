@@ -51,6 +51,8 @@
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
+#include  "Plans/Calibration/MotionCalibration1442919721161.h"
+
 #include  "Plans/Attack/StandardKickOff1438777024734.h"
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
@@ -185,6 +187,10 @@ namespace alica
 
             case 1417620189234:
                 return make_shared<UtilityFunction1417620189234>();
+                break;
+
+            case 1442919721161:
+                return make_shared<UtilityFunction1442919721161>();
                 break;
 
             case 1438777024734:

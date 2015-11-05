@@ -82,6 +82,7 @@ namespace msl
 		Kicker kicker;
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
+		struct calibData{double calibCoefficient; double length;}calibData;
 
 	private:
 

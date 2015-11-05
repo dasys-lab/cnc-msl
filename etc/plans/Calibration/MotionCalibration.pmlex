@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="MotionCalibration.pml#1442919721162"/>
+    <value xPos="78" yPos="57" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442919721161"/>
+    <value xPos="-22" yPos="-1" width="720" height="435"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442919721163"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442919790374"/>
+    <value xPos="248" yPos="61" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442919801497"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1431527260342"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442921032957"/>
+    <value xPos="308" yPos="232" width="193" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1442921078802"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1442921106318"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/DriveToPoint.beh#1443003717671"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443003793160"/>
+    <value xPos="122" yPos="237" width="158" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443003805912"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443003834928"/>
+    <value xPos="-2" yPos="151" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443003845234"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443522242711"/>
+    <value xPos="463" yPos="177"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1443522261454"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/CalcCalib.beh#1446033354004"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/CalcCalib.beh#1446036332071"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/CalcCalib.beh#1446036372245"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/CalcCalib.beh#1446036391317"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

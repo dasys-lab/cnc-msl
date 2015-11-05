@@ -77,7 +77,7 @@ namespace alica
         {
             cerr << "Parameter does not exist" << endl;
         }
-        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "DefaultVelocity", NULL);
+        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default","Velocity", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1417620568675) ENABLED START*/ //Add additional methods here

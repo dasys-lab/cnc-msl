@@ -51,6 +51,8 @@
 
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
+#include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
