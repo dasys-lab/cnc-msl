@@ -29,68 +29,19 @@ namespace alica
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-    <<<<<<< HEAD
-    shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
-    =======
-
-    // return if necessary information is missing
-    >>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
-    if (ownPos == nullptr || egoBallPos == nullptr)
-    {
-        return;
-    }
-
-    <<<<<<< HEAD
-    if (!isReceiver)
-    {
-
-        EntryPoint* ep = getParentEntryPoint(taskName);
-        if (ep != nullptr)
+        // return if necessary information is missing
+        if (ownPos == nullptr || egoBallPos == nullptr)
         {
-            auto parent = this->runningPlan->getParent().lock();
-            if (parent == nullptr)
-            {
-                cout << "parent null" << endl;
-                return;
-            }
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-            shared_ptr < geometry::CNPoint2D > receiverPos;
-            int id = ids->at(0);
-            if (id != -1)
-            {
-                auto pos = wm->robots.getTeamMatePosition(id);
-                receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
-            }
-            MotionControl mc;
-            shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
-            if (receiverPos != nullptr)
-            {
-                egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
-                mc = RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0);
-            }
-            else
-            {
-                egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
-                mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0);
-            }
-            if (egoTarget->length() < 250 && fabs(egoBallPos->angleTo()) < (M_PI / 180) * 5)
-            {
-                this->success = true;
-            }
-            send(mc);
+            return;
         }
-    }
-    else
-    {
 
-        =======
         // Create allo ball
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
         // Create additional points for path planning
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-        vector<shared_ptr<geometry::CNPoint2D>>>();
+                vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
@@ -128,14 +79,14 @@ namespace alica
                     egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
                     // ask the path planner how to get there
                     mc = RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-                            additionalPoints);
+                                                             additionalPoints);
                 }
                 else
                 {
                     // if there is no receiver, align to middle
                     egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
                     mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
-                            additionalPoints);
+                                                             additionalPoints);
                 }
                 // if we reach the point and are aligned, the behavior is successful
                 if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
@@ -148,23 +99,16 @@ namespace alica
         else // receiver
         {
             //calculate point on a line with ball and mid on a distance of 2,3m
-            >>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
             shared_ptr < geometry::CNPoint2D > egoTarget =
-            (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
+                    (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
 
             MotionControl mc;
 
-            <<<<<<< HEAD
-            mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0);
-
-            if (egoTarget->length() < 250 && fabs(egoBallPos->angleTo()) < (M_PI / 180) * 5)
-            =======
             // ask the path planner how to get there
             mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
 
             // if we reach the point and are aligned, the behavior is successful
             if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
-            >>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
             {
                 this->success = true;
             }
@@ -223,6 +167,6 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1433949970592) ENABLED START*/ //Add additional methods here
-    /*PROTECTED REGION END*/
+/*PROTECTED REGION ID(methods1433949970592) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
 } /* namespace alica */
