@@ -51,11 +51,9 @@
 
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
-<<<<<<< HEAD
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
-=======
+
 #include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
 
 #include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
 
@@ -67,13 +65,9 @@
 
 #include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
 
-<<<<<<< HEAD
-#include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
-=======
 #include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/AttackOppGoalPlan1437902649389Constraints.h"
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
 
 #include  "Plans/Defence/constraints/MidFieldDefense1441108604411Constraints.h"
 

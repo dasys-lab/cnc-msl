@@ -51,11 +51,9 @@
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
-<<<<<<< HEAD
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
-=======
+
 #include  "Plans/Attack/StandardKickOff1438777024734.h"
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
 
@@ -67,13 +65,9 @@
 
 #include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
 
-<<<<<<< HEAD
-#include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
-=======
 #include  "Plans/CarpetCalibrator1435159127771.h"
 
 #include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
 
 #include  "Plans/Defence/MidFieldDefense1441108604411.h"
 
@@ -195,13 +189,12 @@ namespace alica
                 return make_shared<UtilityFunction1417620189234>();
                 break;
 
-<<<<<<< HEAD
             case 1442919721161:
                 return make_shared<UtilityFunction1442919721161>();
-=======
+                break;
+
             case 1438777024734:
                 return make_shared<UtilityFunction1438777024734>();
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
                 break;
 
             case 1432133473779:
@@ -224,17 +217,12 @@ namespace alica
                 return make_shared<UtilityFunction1432139066765>();
                 break;
 
-<<<<<<< HEAD
-            case 1432139066765:
-                return make_shared<UtilityFunction1432139066765>();
-=======
             case 1435159127771:
                 return make_shared<UtilityFunction1435159127771>();
                 break;
 
             case 1437902649389:
                 return make_shared<UtilityFunction1437902649389>();
->>>>>>> a15bdeedf6f216132146f89a91075152d997eee2
                 break;
 
             case 1441108604411:
