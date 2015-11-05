@@ -43,14 +43,14 @@ namespace msl
 		// add the cost of current node to return
 		double ret = currentNode->getCost();
 		// add weighted distance to return
-		ret += pathLengthWeight * currentNode->getVertex()->distanceTo(nextNode->getVertex());
+		ret += pathLengthWeight * distanceTo(nextNode->getVertex(), currentNode->getVertex());
 		//if we are in the first node, there has been a path before und the goal changed
 		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr
 				&& lastTarget->distanceTo(goal) > 250)
 		{
 			//claculate agle between the first edge of the current path and the last path
-			double a = startPos->x - currentNode->getVertex()->x;
-			double b = startPos->y - currentNode->getVertex()->y;
+			double a = startPos->x - currentNode->getVertex()->point().x();
+			double b = startPos->y - currentNode->getVertex()->point().y();
 			double c = lastPath->at(0)->x - lastPath->at(1)->x;
 			double d = lastPath->at(0)->y - lastPath->at(1)->y;
 
@@ -89,8 +89,10 @@ namespace msl
 				}
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
 				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
-																							currentNode->getVertex(),
-																							nextNode->getVertex());
+																						  make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
+																														   currentNode->getVertex()->point().y()),
+																							make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
+																															 nextNode->getVertex()->point().y()));
 				//calculate weighted dist to both objects
 
 				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
@@ -116,10 +118,10 @@ namespace msl
 		//if the path is longer then one vertex add cost for the angle
 		if (currentNode->getPredecessor() != nullptr)
 		{
-			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
-			double dx31 = currentNode->getPredecessor()->getVertex()->x - currentNode->getVertex()->x;
-			double dy21 = nextNode->getVertex()->y - currentNode->getVertex()->y;
-			double dy31 = currentNode->getPredecessor()->getVertex()->y - currentNode->getVertex()->y;
+			double dx21 = nextNode->getVertex()->point().x() - currentNode->getVertex()->point().x();
+			double dx31 = currentNode->getPredecessor()->getVertex()->point().x() - currentNode->getVertex()->point().x();
+			double dy21 = nextNode->getVertex()->point().y() - currentNode->getVertex()->point().y();
+			double dy31 = currentNode->getPredecessor()->getVertex()->point().y() - currentNode->getVertex()->point().y();
 			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
@@ -136,6 +138,11 @@ namespace msl
 			}
 		}
 		return ret;
+	}
+
+	double PathEvaluator::distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
+	{
+		return sqrt(pow(v2->point().x() - v1->point().x(), 2) + pow(v2->point().y() - v1->point().y(), 2));
 	}
 
 } /* namespace msl */

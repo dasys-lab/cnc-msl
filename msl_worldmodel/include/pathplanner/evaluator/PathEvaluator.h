@@ -8,6 +8,19 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_EVALUATOR_PATHEVALUATOR_H_
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Delaunay_triangulation_2<Kernel> DelaunayTriangulation;
+typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DelaunayTriangulation> DelaunayAdaptionTraits;
+typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DelaunayTriangulation> DelaunayAdaptionPolicy;
+typedef CGAL::Voronoi_diagram_2<DelaunayTriangulation, DelaunayAdaptionTraits, DelaunayAdaptionPolicy> VoronoiDiagram;
+typedef VoronoiDiagram::Vertex Vertex;
+
 #include <vector>
 #include <memory>
 #include "container/CNPoint2D.h"
@@ -57,6 +70,8 @@ namespace msl
 		ros::Publisher voronoiPub;
 		ros::NodeHandle n;
 		supplementary::SystemConfig* sc;
+
+		double distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
 
 	};
 

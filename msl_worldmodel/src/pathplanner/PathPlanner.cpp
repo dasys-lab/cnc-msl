@@ -190,10 +190,10 @@ namespace msl
 			{
 				//get the way to reach this node
 				shared_ptr<SearchNode> temp = lastClosestNode;
-				ret->push_back(make_shared<geometry::CNPoint2D>(lastClosestNode->getVertex()->x, lastClosestNode->getVertex()->y));
+				ret->push_back(make_shared<geometry::CNPoint2D>(lastClosestNode->getVertex()->point().x(), lastClosestNode->getVertex()->point().y()));
 				while(temp->getPredecessor() != nullptr)
 				{
-					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
+					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->point().x(), temp->getPredecessor()->getVertex()->point().y()));
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
@@ -227,7 +227,7 @@ namespace msl
 				auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
 				auto ownPoint = make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y);
 				auto vertices = voronoi->getVerticesOfFace(ownPoint);
-				shared_ptr<geometry::CNPoint2D> bestVertex = nullptr;
+				shared_ptr<Vertex> bestVertex = nullptr;
 				//find vertex of robots voronoi fac and which has maximum distance
 				for(int i = 0; i < vertices->size(); i++)
 				{
@@ -237,7 +237,7 @@ namespace msl
 					}
 					else
 					{
-						if(vertices->at(i)->distanceTo(ownPoint) > bestVertex->distanceTo(ownPoint))
+						if(distanceTo(ownPoint, vertices->at(i)) > distanceTo(ownPoint, bestVertex))
 						{
 							bestVertex = vertices->at(i);
 						}
@@ -245,8 +245,8 @@ namespace msl
 				}
 				// drive to this direction because it should be the freest
 				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-				double dist = ownPoint->distanceTo(bestVertex);
-				shared_ptr<geometry::CNPoint2D> retPoint = (bestVertex - ownPoint)->normalize() * (dist / 2);
+				double dist = distanceTo(ownPoint, bestVertex);
+				shared_ptr<geometry::CNPoint2D> retPoint = make_shared<geometry::CNPoint2D>(bestVertex->point().x() - ownPoint->x, bestVertex->point().y() - ownPoint->y)->normalize() * (dist / 2);
 				ret->push_back(retPoint);
 				lastClosestNode = nullptr;
 				lastPath = ret;
@@ -270,10 +270,10 @@ namespace msl
 		shared_ptr<vector<shared_ptr<SearchNode>>> closed = make_shared<vector<shared_ptr<SearchNode>>>();
 
 //get closest Vertices to ownPos => start point for a star serach
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(startPos);
+		shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToOwnPos = voronoi->getVerticesOfFace(startPos);
 
 // get closest Vertices to goal => goal for a star serach
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal = voronoi->getVerticesOfFace(goal);
+		shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal = voronoi->getVerticesOfFace(goal);
 
 // a star serach
 
@@ -281,7 +281,7 @@ namespace msl
 		for(int i = 0; i < closestVerticesToOwnPos->size(); i++)
 		{
 			insert(open, make_shared<SearchNode>(SearchNode(closestVerticesToOwnPos->at(i),
-									voronoi->calcDist(closestVerticesToOwnPos->at(i), goal), nullptr)));
+									voronoi->calcDist(goal, closestVerticesToOwnPos->at(i)), nullptr)));
 		}
 // while there is still a node to expand
 		while(open->size() != 0)
@@ -294,10 +294,10 @@ namespace msl
 				//if the goal is reachable construct the path to the goal
 				shared_ptr<SearchNode> temp = currentNode;
 				ret->push_back(goal);
-				ret->push_back(make_shared<geometry::CNPoint2D>(currentNode->getVertex()->x, currentNode->getVertex()->y));
+				ret->push_back(make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y()));
 				while(temp->getPredecessor() != nullptr)
 				{
-					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->x, temp->getPredecessor()->getVertex()->y));
+					ret->push_back(make_shared<geometry::CNPoint2D>(temp->getPredecessor()->getVertex()->point().x(), temp->getPredecessor()->getVertex()->point().y()));
 					temp = temp->getPredecessor();
 				}
 				reverse(ret->begin(), ret->end());
@@ -318,7 +318,7 @@ namespace msl
 			else
 			{
 				//if the distance of the current node is closer to the goal than the last one set it
-				if(currentNode->getVertex()->distanceTo(goal) < lastClosestNode->getVertex()->distanceTo(goal))
+				if(distanceTo(goal, currentNode->getVertex()) < distanceTo(goal, lastClosestNode->getVertex()))
 				{
 					lastClosestNode = currentNode;
 				}
@@ -353,15 +353,15 @@ namespace msl
 	 * checks if vertices of goal face are reached
 	 */
 	bool PathPlanner::checkGoalVerticesReached(
-			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > closestVerticesToGoal,
+			shared_ptr<vector<shared_ptr<Vertex> > > closestVerticesToGoal,
 			shared_ptr<SearchNode> currentNode)
 	{
 		bool found = false;
 		for (int i = 0; i < closestVerticesToGoal->size(); i++)
 		{
 			//if distance is close we have reached a goal vertex
-			if (abs(currentNode->getVertex()->x - closestVerticesToGoal->at(i)->x) < 10.0
-					&& abs(currentNode->getVertex()->y - closestVerticesToGoal->at(i)->y) < 10.0)
+			if (abs(currentNode->getVertex()->point().x() - closestVerticesToGoal->at(i)->point().x()) < 10.0
+					&& abs(currentNode->getVertex()->point().y() - closestVerticesToGoal->at(i)->point().y()) < 10.0)
 			{
 				found = true;
 				break;
@@ -579,7 +579,7 @@ namespace msl
 	 * check if the goal vertces are reached and if there is a corridor leading to the goal
 	 */
 	bool PathPlanner::checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode,
-											shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
+											shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal)
 	{
 		bool found = false;
 		//we have to reach the goal vertices
@@ -590,7 +590,8 @@ namespace msl
 			shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
 			shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(obstacle->x(), obstacle->y());
 			//check if there is an obstacle on the way to the goal
-			return !corridorCheck(voronoi, currentNode->getVertex(), goal, obstaclePoint);
+			shared_ptr<geometry::CNPoint2D> vertexPoint = make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y());
+			return !corridorCheck(voronoi, vertexPoint, goal, obstaclePoint);
 		}
 		return false;
 	}
@@ -704,6 +705,11 @@ namespace msl
 			toInsert->push_back(make_shared<geometry::CNPoint2D>(-x, y));
 		}
 		return toInsert;
+	}
+
+	double PathPlanner::distanceTo(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<Vertex> v2)
+	{
+		return sqrt(pow(v2->point().x() - v1->x, 2) + pow(v2->point().y() - v1->y, 2));
 	}
 } /* namespace alica */
 

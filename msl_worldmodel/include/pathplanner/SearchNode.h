@@ -19,6 +19,7 @@ typedef CGAL::Delaunay_triangulation_2<Kernel> DelaunayTriangulation;
 typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DelaunayTriangulation> DelaunayAdaptionTraits;
 typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DelaunayTriangulation> DelaunayAdaptionPolicy;
 typedef CGAL::Voronoi_diagram_2<DelaunayTriangulation, DelaunayAdaptionTraits, DelaunayAdaptionPolicy> VoronoiDiagram;
+typedef VoronoiDiagram::Vertex Vertex;
 
 #include <limits.h>
 #include <memory>
@@ -33,7 +34,7 @@ namespace msl
 	{
 	public:
 		SearchNode();
-		SearchNode(shared_ptr<geometry::CNPoint2D> vertex, double cost, shared_ptr<SearchNode> predecessor);
+		SearchNode(shared_ptr<Vertex> vertex, double cost, shared_ptr<SearchNode> predecessor);
 		virtual ~SearchNode();
 		/**
 		 * gets the cost
@@ -59,12 +60,12 @@ namespace msl
 		 * gets the vertex
 		 * @return shared_ptr<VoronoiDiagram::Vertex>
 		 */
-		shared_ptr<geometry::CNPoint2D> getVertex();
+		shared_ptr<Vertex> getVertex();
 		/**
 		 * sets the vertex
 		 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
 		 */
-		void setVertex(shared_ptr<geometry::CNPoint2D> vertex);
+		void setVertex(shared_ptr<Vertex> vertex);
 		/**
 		 * compares two SearchNodes, true if first has lower cost
 		 * @param first shared_ptr<SearchNode>
@@ -76,7 +77,7 @@ namespace msl
 	private:
 		shared_ptr<SearchNode> predecessor;
 		double cost;
-		shared_ptr<geometry::CNPoint2D> vertex;
+		shared_ptr<Vertex> vertex;
 	};
 
 } /* namespace alicaTests */
