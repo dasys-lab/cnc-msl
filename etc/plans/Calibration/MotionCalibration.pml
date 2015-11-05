@@ -9,12 +9,14 @@
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
     <inTransitions>#1442919801497</inTransitions>
     <outTransitions>#1442921106318</outTransitions>
+    <outTransitions>#1446733731468</outTransitions>
   </states>
   <states id="1442921032957" name="MoveToOtherCorner" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1443003717671</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
     <inTransitions>#1442921106318</inTransitions>
     <outTransitions>#1443003805912</outTransitions>
+    <outTransitions>#1446733729802</outTransitions>
   </states>
   <states id="1443003793160" name="MoveToMiddle" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1431527260342</plans>
@@ -26,6 +28,8 @@
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
     <inTransitions>#1443003845234</inTransitions>
+    <inTransitions>#1446733729802</inTransitions>
+    <inTransitions>#1446733731468</inTransitions>
     <outTransitions>#1443522261454</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1443522242711" name="Success" comment="">
@@ -55,6 +59,16 @@
     <preCondition id="1443522265673" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1443003834928</inState>
     <outState>#1443522242711</outState>
+  </transitions>
+  <transitions id="1446733729802" name="MISSING_NAME" comment="situation==stop" msg="">
+    <preCondition id="1446733731395" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1442921032957</inState>
+    <outState>#1443003834928</outState>
+  </transitions>
+  <transitions id="1446733731468" name="MISSING_NAME" comment="situation==stop" msg="">
+    <preCondition id="1446733733995" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1442919790374</inState>
+    <outState>#1443003834928</outState>
   </transitions>
   <entryPoints id="1442919721163" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
