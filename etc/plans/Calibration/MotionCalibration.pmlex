@@ -88,4 +88,12 @@
     <key href="../Behaviours/CalcCalib.beh#1446036391317"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1446733729802"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1446733731468"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
