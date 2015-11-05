@@ -88,6 +88,9 @@
 #include <QVTKInteractor.h>
 
 #include "RobotInfo.h"
+#include "msl_msgs/PathPlanner.h"
+#include "msl_msgs/CorridorCheck.h"
+#include "msl_msgs/VoronoiNetInfo.h"
 #include <SystemConfig.h>
 #include <vtkArrowSource.h>
 
@@ -118,6 +121,9 @@ public:
 private:
     ros::AsyncSpinner* spinner;
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
+    void onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info);
+    void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
+    void onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info);
     void moveBall(shared_ptr<RobotVisualization> robot, boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z);
     void moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void drawOpponent(double x, double y, double z);
@@ -125,12 +131,30 @@ private:
     list<shared_ptr<RobotVisualization>> obstacles;
     list<shared_ptr<RobotVisualization>> team;
     list<shared_ptr<RobotInfo>> latestInfo;
+    bool showPath;
+    bool showVoronoi;
+    bool showCorridor;
+    bool showSitePoints;
+    bool showAllComponents;
     void removeObstacles(vtkRenderer* renderer);
     void moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z);
     void turnRobot(shared_ptr<RobotVisualization> robot, double angle);
     mutex swmMutex;
-    list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+    mutex pathMutex;
+    mutex voronoiMutex;
+    mutex corridorMutex;
+	list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>> savedSharedWorldInfo;
+    list<boost::shared_ptr<msl_msgs::PathPlanner>> pathPlannerInfo;
+    list<boost::shared_ptr<msl_msgs::VoronoiNetInfo>> voronoiNetInfo;
+    list<boost::shared_ptr<msl_msgs::CorridorCheck>> corridorCheckInfo;
+    vector<vtkActor*> pathLines;
+    vector<vtkActor*> netLines;
+    vector<vtkActor*> corridorLines;
+    vector<vtkActor*> sitePoints;
 	ros::Subscriber sharedWorldInfoSubscriber;
+	ros::Subscriber pathPlannerSubscriber;
+	ros::Subscriber voronoiSitesSubscriber;
+	ros::Subscriber corridorCheckSubscriber;
 	ros::NodeHandle* rosNode;
 	int ringBufferLength = 10;
     QWidget* parent;
@@ -151,6 +175,8 @@ private:
 
 
     vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2);
+    vtkSmartPointer<vtkActor> createColoredDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, double r, double g, double b);
+    vtkSmartPointer<vtkActor> createColoredDot(float x, float y, float radius, double r, double g, double b);
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void drawGoals(vtkRenderer* renderer);
@@ -183,6 +209,11 @@ Q_SIGNALS:
 public Q_SLOTS:
     void flip(void);
     void lock(bool);
+    void showPathPoints(void);
+    void showVoronoiNet(void);
+    void showCorridorCheck(void);
+    void showSites(void);
+    void showAll(void);
     void update_robot_info(void);
 
     void obstacles_point_flip(unsigned int Robot_no, bool on_off);

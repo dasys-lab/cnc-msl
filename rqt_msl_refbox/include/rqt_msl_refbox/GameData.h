@@ -15,13 +15,17 @@
 #include <time.h>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include "rqt_msl_refbox/tinyxml2.h"
+#include "rqt_msl_refbox/XMLProtocolParser.h"
 
 namespace rqt_msl_refbox
 {
 	class RefBox;
+	class XMLProtocolParser;
 	class GameData : public QObject
 	{
 		Q_OBJECT
+	public:
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -46,6 +50,7 @@ namespace rqt_msl_refbox
 		bool isLocalToggled();
 		bool isMultiToggled();
 		bool isTcpToggled();
+		RefBox* refBox;
 public Q_SLOTS:
 		void PlayOnPressed(void);
 		void StopPressed(void);
@@ -75,15 +80,19 @@ public Q_SLOTS:
 
 		void onConnectPressed(void);
 		void receiveRefMsg(void);
+		void receiveRefMsgUdp(void);
+		void onDisconnectPressed(void);
 	protected:
 			ros::Publisher RefereeBoxInfoBodyPublisher;
 			ros::NodeHandle* rosNode;
 			bool localToggled;
 			bool multiToggled;
 			bool tcpToggled;
-			RefBox* refBox;
 			time_t timer;
 			QTcpSocket* tcpsocket;
+			QUdpSocket* udpsocket;
+			int counter;
+			XMLProtocolParser* xmlparser;
 	};
 
 

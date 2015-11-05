@@ -11,20 +11,55 @@
 namespace msl
 {
 
-	Game::Game(MSLWorldModel* wm)
+	Game::Game(MSLWorldModel* wm, int ringBufferLength) :
+			refBoxCommand(ringBufferLength)
 	{
 		this->wm = wm;
+		this->gameState = GameState::NobodyInBallPossession;
+		this->timeSinceStart = 0;
+		this->mayScore = false;
+		this->teamMateWithBall = 0;
 		ownGoal = 0;
 		oppGoal = 0;
 		gameTime = 0;
-		lastSituation = Situation::Undefined;
-		currentSituation = Situation::Undefined;
+		situation = Situation::Undefined;
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
-		refereeBoxInfoBodySub = n.subscribe("/RefereeBoxInfoBody", 10, &Game::onRefereeBoxInfoBody, (Game*)this);
+		refBoxCommandSub = n.subscribe("/RefereeBoxInfoBody", 10, &Game::onRefBoxCommand, (Game*)this);
+		robotCommandSub = n.subscribe("/RobotCommand", 10, &Game::onRobotCommand, (Game*)this);
+
+		// Set own Team Color
 		sc = SystemConfig::getInstance();
-		ownTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
-		ownGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
+		string tmpOwnTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
+		if (tmpOwnTeamColor.compare("cyan"))
+		{
+			ownTeamColor = Color::Cyan;
+		}
+		else if (tmpOwnTeamColor.compare("magenta"))
+		{
+			ownTeamColor = Color::Magenta;
+		}
+		else
+		{
+			cerr << "MSL-WM::Game: Own team color is unknown!" << endl;
+			ownTeamColor = Color::UnknownColor;
+		}
+
+		// Set own Goal Color
+		string tmpeOwnGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
+		if (tmpOwnTeamColor.compare("blue"))
+		{
+			ownGoalColor = Color::Blue;
+		}
+		else if (tmpOwnTeamColor.compare("yellow"))
+		{
+			ownGoalColor = Color::Yellow;
+		}
+		else
+		{
+			cerr << "MSL-WM::Game: Own goal color is unknown!" << endl;
+			ownGoalColor = Color::UnknownColor;
+		}
 	}
 
 	Game::~Game()
@@ -32,266 +67,267 @@ namespace msl
 		// TODO Auto-generated destructor stub
 	}
 
-	//TODO handle all situations
-	void Game::onRefereeBoxInfoBody(msl_msgs::RefereeBoxInfoBodyPtr msg)
+	void Game::onRobotCommand(rqt_robot_control::RobotCommandPtr msg)
 	{
+		if (msg->receiverId != 0 && msg->receiverId != wm->getOwnId())
+		{
+			return;
+		}
+
 		lock_guard<mutex> lock(refereeMutex);
-		gameTime = msg->elapsedSeconds;
-		if (currentSituation != Situation::Start)
+		switch (msg->cmd)
 		{
-			lastSituation = currentSituation;
+			case rqt_robot_control::RobotCommand::START:
+				situation = Situation::Start;
+				break;
+			case rqt_robot_control::RobotCommand::STOP:
+				situation = Situation::Stop;
+				break;
 		}
-		if (refereeBoxInfoBodyCommandData.size() > wm->getRingBufferLength())
-		{
-			refereeBoxInfoBodyCommandData.pop_back();
 
-		}
-		refereeBoxInfoBodyCommandData.push_front(msg);
-
-		if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::start)
-		{
-			if(currentSituation != Situation::Start) {
-				timeSinceStart = wm->getTime();
-			}
-			currentSituation = Situation::Start;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::stop)
-		{
-			currentSituation = Situation::Stop;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::command_joystick)
-		{
-			currentSituation = Situation::Joystick;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::cancel)
-		{
-			currentSituation = Situation::Cancel;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::droppedBall)
-		{
-			currentSituation = Situation::DroppedBall;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::endGame)
-		{
-			currentSituation = Situation::EndGame;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::cornerCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnCorner;
-			}
-			else
-			{
-				currentSituation = Situation::OppCorner;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::cornerMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnCorner;
-			}
-			else
-			{
-				currentSituation = Situation::OppCorner;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::firstHalf)
-		{
-			currentSituation = Situation::FirstHalf;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::freekickCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnFreekick;
-			}
-			else
-			{
-				currentSituation = Situation::OppFreekick;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::freekickMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnFreekick;
-			}
-			else
-			{
-				currentSituation = Situation::OppFreekick;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalCyan)
-		{
-			lock_guard<mutex> lock(goalMutex);
-			if(ownTeamColor.compare("cyan"))
-			{
-				ownGoal++;
-			}
-			else
-			{
-				oppGoal++;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalMagenta)
-		{
-			lock_guard<mutex> lock(goalMutex);
-			if(ownTeamColor.compare("magenta"))
-			{
-				ownGoal++;
-			}
-			else
-			{
-				oppGoal++;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalkickCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnGoalkick;
-			}
-			else
-			{
-				currentSituation = Situation::OppGoalkick;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::goalkickMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnGoalkick;
-			}
-			else
-			{
-				currentSituation = Situation::OppGoalkick;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::halftime)
-		{
-			currentSituation = Situation::HalfTime;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::halt)
-		{
-			currentSituation = Situation::Halt;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::kickoffCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnKickoff;
-			}
-			else
-			{
-				currentSituation = Situation::OppKickoff;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::kickoffMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnKickoff;
-			}
-			else
-			{
-				currentSituation = Situation::OppKickoff;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::park)
-		{
-			currentSituation = Situation::Parking;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::penaltyCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnPenalty;
-			}
-			else
-			{
-				currentSituation = Situation::OppPenalty;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::penaltyMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnPenalty;
-			}
-			else
-			{
-				currentSituation = Situation::OppPenalty;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::ready)
-		{
-			currentSituation = Situation::Ready;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::restart)
-		{
-			currentSituation = Situation::Restart;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::secondHalf)
-		{
-			currentSituation = Situation::SecondHalf;
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::throwinCyan)
-		{
-			if(ownTeamColor.compare("cyan"))
-			{
-				currentSituation = Situation::OwnThrowin;
-			}
-			else
-			{
-				currentSituation = Situation::OppThrowin;
-			}
-		}
-		else if ((int)msg->lastCommand == msl_msgs::RefereeBoxInfoBody::throwinMagenta)
-		{
-			if(ownTeamColor.compare("magenta"))
-			{
-				currentSituation = Situation::OwnThrowin;
-			}
-			else
-			{
-				currentSituation = Situation::OppThrowin;
-			}
-		}
-		if((int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::start && (int)msg->lastCommand != msl_msgs::RefereeBoxInfoBody::stop) {
-			lastActiveSituation = currentSituation;
-		}
 	}
 
-	//time in nanoseconds
-	unsigned long Game::getTimeSinceStart() {
+	void Game::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
+	{
+		// Put the referee box command into the ringbuffer
+
+		/*
+		 * In order to convert the boost::shared_ptr to a std::shared_ptr
+		 * we use the conversion suggested in this post:
+		 * http://stackoverflow.com/questions/12314967/cohabitation-of-boostshared-ptr-and-stdshared-ptr
+		 */
+		shared_ptr<msl_msgs::RefBoxCommand> cmd = shared_ptr<msl_msgs::RefBoxCommand>(
+				msg.get(), [msg](msl_msgs::RefBoxCommand*) mutable
+				{	msg.reset();});
+		shared_ptr<InformationElement<msl_msgs::RefBoxCommand>> refBoxCmd = make_shared<
+				InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime());
+		refBoxCmd->certainty = 1.0;
+		refBoxCommand.add(refBoxCmd);
+		// Set the current refbox situation
+		lock_guard<mutex> lock(refereeMutex);
+		switch (msg->cmd)
+		{
+			case msl_msgs::RefBoxCommand::START:
+				if (situation != Situation::Start)
+				{
+					timeSinceStart = wm->getTime();
+				}
+				situation = Situation::Start;
+				break;
+			case msl_msgs::RefBoxCommand::STOP:
+				situation = Situation::Stop;
+				break;
+			case msl_msgs::RefBoxCommand::COMMAND_JOYSTICK:
+				situation = Situation::Joystick;
+				break;
+			case msl_msgs::RefBoxCommand::CANCEL:
+				situation = Situation::Cancel;
+				break;
+			case msl_msgs::RefBoxCommand::DROPBALL:
+				situation = Situation::DropBall;
+				break;
+			case msl_msgs::RefBoxCommand::END_GAME:
+				situation = Situation::EndGame;
+				break;
+			case msl_msgs::RefBoxCommand::FIRST_HALF:
+				situation = Situation::FirstHalf;
+				break;
+			case msl_msgs::RefBoxCommand::HALFTIME:
+				situation = Situation::HalfTime;
+				break;
+			case msl_msgs::RefBoxCommand::SECOND_HALF:
+				situation = Situation::SecondHalf;
+				break;
+			case msl_msgs::RefBoxCommand::HALT:
+				situation = Situation::Halt;
+				break;
+			case msl_msgs::RefBoxCommand::PARK:
+				situation = Situation::Parking;
+				break;
+			case msl_msgs::RefBoxCommand::READY:
+				situation = Situation::Ready;
+				break;
+			case msl_msgs::RefBoxCommand::RESTART:
+				situation = Situation::Restart;
+				break;
+			case msl_msgs::RefBoxCommand::CORNER_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnCorner;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppCorner;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::CORNER_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnCorner;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppCorner;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::FREEKICK_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnFreekick;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppFreekick;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::FREEKICK_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnFreekick;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppFreekick;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::GOALKICK_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnGoalkick;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppGoalkick;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::GOALKICK_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnGoalkick;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppGoalkick;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::KICKOFF_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnKickoff;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppKickoff;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::KICKOFF_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnKickoff;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppKickoff;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::PENALTY_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnPenalty;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppPenalty;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::PENALTY_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnPenalty;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppPenalty;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::THROWIN_CYAN:
+				if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OwnThrowin;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OppThrowin;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::THROWIN_MAGENTA:
+				if (ownTeamColor == Color::Magenta)
+				{
+					situation = Situation::OwnThrowin;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					situation = Situation::OppThrowin;
+				}
+				break;
+			case msl_msgs::RefBoxCommand::GOAL_CYAN:
+			{ // scope for mutex
+				lock_guard<mutex> lock(goalMutex);
+				if (ownTeamColor == Color::Cyan)
+				{
+					ownGoal++;
+				}
+				else if (ownTeamColor == Color::Magenta)
+				{
+					oppGoal++;
+				}
+			}
+				break;
+			case msl_msgs::RefBoxCommand::GOAL_MAGENTA:
+			{ //scope for mutex
+				lock_guard<mutex> lock(goalMutex);
+				if (ownTeamColor == Color::Magenta)
+				{
+					ownGoal++;
+				}
+				else if (ownTeamColor == Color::Cyan)
+				{
+					oppGoal++;
+				}
+			}
+				break;
+			default:
+				cerr << "MSLWM-Game: Unknown Referee Box Cmd received!" << endl;
+		}
+
+		gameTime = msg->elapsedSeconds;
+	}
+
+	unsigned long Game::getTimeSinceStart()
+	{
 		return timeSinceStart;
 	}
-	msl_msgs::RefereeBoxInfoBodyPtr Game::getRefereeBoxInfoBody()
+
+	shared_ptr<msl_msgs::RefBoxCommand> Game::getRefBoxCommand(int index)
 	{
 		lock_guard<mutex> lock(refereeMutex);
-		if (refereeBoxInfoBodyCommandData.size() == 0)
+		auto x = refBoxCommand.getLast(index);
+		if (x == nullptr)
 		{
 			return nullptr;
 		}
-		return refereeBoxInfoBodyCommandData.front();
+		return x->getInformation();
 	}
 
 	bool Game::checkSituation(Situation situation)
 	{
 		lock_guard<mutex> lock(situationChecker);
-		return currentSituation == situation;
+		return this->situation == situation;
 	}
 
-	Situation Game::getCurrentSituation()
+	Situation Game::getSituation()
 	{
-		return currentSituation;
-	}
-
-	Situation Game::getLastSituation()
-	{
-		return lastSituation;
+		return situation;
 	}
 
 	int Game::getOppGoal()
@@ -304,4 +340,100 @@ namespace msl
 		return ownGoal;
 	}
 
+	GameState Game::getGameState()
+	{
+		return gameState;
+	}
+
+	void Game::setGameState(GameState gameState)
+	{
+		this->gameState = gameState;
+	}
+
+	void Game::updateGameState()
+	{
+// Find robot closest to ball
+		auto robots = this->wm->robots.getPositionsOfTeamMates();
+		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
+		double minDist = numeric_limits<double>::max();
+		auto sharedBallPosition = wm->ball.getSharedBallPosition();
+		if (sharedBallPosition == nullptr)
+		{
+			return;
+		}
+		bool ballPossession = false;
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
+		{
+			double currDist = shwmData->second->distanceTo(sharedBallPosition);
+			if(closestRobot == nullptr || currDist < minDist)
+			{	closestRobot = shwmData;
+				minDist = currDist;
+			}
+			ballPossession |= *(wm->ball.getTeamMateBallPossession(shwmData->first));
+		}
+
+		if (closestRobot == nullptr)
+		{
+			return;
+		}
+		bool oppBallPossession = *(wm->ball.getOppBallPossession());
+		GameState gs = getGameState();
+
+		if (gs != GameState::Duel && ballPossession && oppBallPossession)
+		{
+			//cout << "State changed: Melee state" << endl;
+			gs = GameState::Duel;
+			this->teamMateWithBall = 0;
+		}
+		else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
+		{
+			//cout << "State changed: Attack state" << endl;
+			gs = GameState::OwnBallPossession;
+			setMayScore();
+		}
+		else if (gs != GameState::OppBallPossession && !ballPossession && oppBallPossession)
+		{
+			//cout << "State changed: Defend state" << endl;
+			gs = GameState::OppBallPossession;
+			this->teamMateWithBall = 0;
+		}
+		else if (gs != GameState::NobodyInBallPossession && !ballPossession && !oppBallPossession)
+		{
+			//cout << "State changed: Conflict state" << endl;
+			gs = GameState::NobodyInBallPossession;
+		}
+
+		setGameState(gs);
+	}
+
+	bool Game::isMayScore()
+	{
+		return mayScore;
+	}
+
+	void Game::setMayScore()
+	{
+		shared_ptr<geometry::CNPosition> capturePos = nullptr;
+		int teamMateWithBallNow = 0;
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.getPositionsOfTeamMates()))
+		{
+			if (*(wm->ball.getTeamMateBallPossession(shwmData->first)))
+			{
+				capturePos = shwmData->second;
+				teamMateWithBallNow = shwmData->first;
+			}
+		}
+
+		if (capturePos == nullptr || capturePos->x < 0)
+			mayScore = false;
+
+		if (capturePos->x > 50 && teamMateWithBall != teamMateWithBallNow)
+		{
+			mayScore = true;
+		}
+
+		teamMateWithBall = teamMateWithBallNow;
+	}
+
 } /* namespace alica */
+

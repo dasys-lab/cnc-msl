@@ -16,4 +16,8 @@
     <parameters id="1443010455604" name="MISSING_NAME" comment="" key="X" value="-4450"/>
     <parameters id="1443010460044" name="MISSING_NAME" comment="" key="Y" value="2790"/>
   </configurations>
+<configurations id="1436961206415" name="DriveToOwnPenaltySpot" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1436961215161" name="MISSING_NAME" comment="" key="X" value="-2450"/>
+    <parameters id="1436961229100" name="MISSING_NAME" comment="" key="Y" value="0"/>
+  </configurations>
 </alica:Behaviour>

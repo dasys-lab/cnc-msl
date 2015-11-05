@@ -16,7 +16,7 @@
     <outTransitions>#1426692244795</outTransitions>
   </states>
   <states id="1426691835473" name="Gameplay" comment="">
-    <plans xsi:type="alica:Plan">GameStrategy/Gameplay/Gameplay.pml#1426694853089</plans>
+    <plans xsi:type="alica:Plan">Attack/AttackPlay.pml#1434045709191</plans>
     <inTransitions>#1426691974126</inTransitions>
     <inTransitions>#1426692306144</inTransitions>
     <inTransitions>#1426692308143</inTransitions>
@@ -36,6 +36,7 @@
     <outTransitions>#1426692326813</outTransitions>
   </states>
   <states id="1426692070119" name="Joystick" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Joystick.beh#1421854995808</plans>
     <inTransitions>#1426692077573</inTransitions>
     <outTransitions>#1426692322651</outTransitions>
   </states>

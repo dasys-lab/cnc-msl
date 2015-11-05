@@ -170,23 +170,16 @@ void OpticalFlow::setConfigurationBits(uint8_t conf) {
 }
 
 void OpticalFlow::update_motion_burst(timeval time_now) {
-	if (TIMEDIFFMS(time_now, last_updated) > OpticalFlow_UPDATE_TIMEOUT) {
-		last_updated = time_now;
+	last_updated = time_now;
 
-		/*getMotionBurst(motionBurst);
-		x += motionBurst[1];
-		y += motionBurst[2];
-		qos += motionBurst[3];*/
-
-		if( x!=0 || y!=0 )
-		{
-			vQos++;
-		}
-	}
 	getMotionBurst(motionBurst);
 	x += motionBurst[1];
 	y += motionBurst[2];
 	qos += motionBurst[3];
+
+	if( x!=0 || y!=0 ) {
+		vQos++;
+	}
 }
 
 
@@ -194,32 +187,17 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 	msl_actuator_msgs::MotionBurst msg;
 	uint8_t mData[6];
 
-		std::cout << "X: " << x << std::endl;
-		std::cout << "Y: " << y << std::endl;
-		std::cout << "Q: " << qos << std::endl;
+	last_sended = time_now;
 
-	if (TIMEDIFFMS(time_now, last_sended) > OpticalFlow_BURST_TIMEOUT) {
-		last_sended = time_now;
-
-		int16_t tqos = 0;
-		if( vQos != 0 ) {
-			tqos = qos/vQos;
-		}
-
-		msg.x = x;
-		msg.y = y;
-		msg.qos = tqos;
-		mbcPub->publish(msg);
-
-
-
-		x = 0;
-		y = 0;
-		qos = 0;
-		vQos = 0;
-
+	int16_t tqos = 0;
+	if( vQos != 0 ) {
+		tqos = qos/vQos;
 	}
 
+	msg.x = x;
+	msg.y = y;
+	msg.qos = tqos;
+	mbcPub->publish(msg);
 
 	x = 0;
 	y = 0;

@@ -7,6 +7,7 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include "MSLWorldModel.h"
 /*PROTECTED REGION END*/
 namespace alica
@@ -33,52 +34,47 @@ namespace alica
             return;
         }
 
-        msl_actuator_msgs::MotionControl mc;
-        msl_actuator_msgs::BallHandleCmd bhc;
-        msl_actuator_msgs::KickControl kc;
-
-        if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
-                || joy->selectedActuator == msl_msgs::JoystickCommand::MOTION_ONLY
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_KICKER)
+        if (lastProcessedCmd == joy) // only process new commands from WM
         {
-            mc.motion = joy->motion;
-            mc.senderID = joy->robotId;
-            send(mc);
+            return;
         }
 
-        if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
-                || joy->selectedActuator == msl_msgs::JoystickCommand::BALL_HANDLE_ONLY
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_KICKER
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION)
+        msl_actuator_msgs::MotionControl mc;
+        mc.motion = joy->motion;
+        send(mc);
+
+        if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
-            bhc.senderID = joy->robotId;
+            msl_actuator_msgs::BallHandleCmd bhc;
             bhc.leftMotor = joy->ballHandleLeftMotor;
             bhc.rightMotor = joy->ballHandleRightMotor;
             send(bhc);
         }
 
-        if (joy->selectedActuator == msl_msgs::JoystickCommand::ALL
-                || joy->selectedActuator == msl_msgs::JoystickCommand::KICKER_ONLY
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_BALL_HANDLE
-                || joy->selectedActuator == msl_msgs::JoystickCommand::NO_MOTION)
+        msl_actuator_msgs::ShovelSelectCmd ssc;
+
+        // todo check indexes...
+        if (joy->shovelIdx == 0)
         {
-            if (joy->kick && lastProcessedCmd != joy)
-            {
-                kc.senderID = joy->robotId;
-                kc.power = joy->kickPower;
-                kc.extension = joy->shovelIdx;
-                kc.extTime = 1;
-                kc.forceVoltage = false;
-
-                send(kc);
-                send(bhc);
-                send(mc);
-
-                lastProcessedCmd = joy;
-
-            }
+            ssc.passing = true;
         }
+        else
+        {
+            ssc.passing = false;
+        }
+        send(ssc);
+
+        if (joy->kick == true)
+        {
+            msl_actuator_msgs::KickControl kc;
+            kc.power = joy->kickPower;
+            kc.extension = joy->shovelIdx;
+            kc.extTime = 1;
+            kc.forceVoltage = false;
+            send(kc);
+        }
+
+        lastProcessedCmd = joy;
 
         /*PROTECTED REGION END*/
     }

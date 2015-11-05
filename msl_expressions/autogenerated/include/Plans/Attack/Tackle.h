@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1434807660243) ENABLED START*/ //Add additional includes here
 #include <math.h>
+#include "MSLFootballField.h"
 /*PROTECTED REGION END*/
 namespace alica
 {

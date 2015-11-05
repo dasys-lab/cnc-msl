@@ -55,6 +55,7 @@ namespace msl
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
+		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="StandardKickOff.pml#1438777024735"/>
+    <value xPos="162" yPos="102" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="StandardKickOff.pml#1438777024734"/>
+    <value width="827" height="598"/>
+  </extensions>
+  <extensions>
+    <key href="StandardKickOff.pml#1438777024736"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

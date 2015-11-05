@@ -132,6 +132,7 @@ int main(int argc, char** argv)
 		std::chrono::milliseconds dura(500);
 		std::this_thread::sleep_for(dura);
 	}
+	delete base;
 
 	return 0;
 }

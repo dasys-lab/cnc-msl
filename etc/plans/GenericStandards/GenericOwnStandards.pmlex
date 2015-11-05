@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925736746"/>
-    <value xPos="250" width="95" height="67" collapsed="false"/>
+    <value xPos="434" yPos="26" width="164" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925743739"/>
@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925751875"/>
-    <value xPos="239" yPos="338" width="103" height="67"/>
+    <value xPos="239" yPos="338" width="103" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925759928"/>
@@ -102,6 +102,10 @@
   </extensions>
   <extensions>
     <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/KickOff/OwnKickOff.pty#1438785270887"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -150,18 +150,18 @@ namespace msl_voronoi_viewer
 
 	void MainWindow::addExamples()
 	{
-		this->voronoi->insert(Site_2(500, 1000));
-		this->voronoi->insert(Site_2(1500, 1000));
+		this->voronoi->insert(Site_2(500, 700));
+		this->voronoi->insert(Site_2(1500, 600));
 		this->voronoi->insert(Site_2(750, 800));
-		this->voronoi->insert(Site_2(2000, 1000));
-		this->voronoi->insert(Site_2(900, 1000));
+		this->voronoi->insert(Site_2(2000, 500));
+		this->voronoi->insert(Site_2(900, 300));
 		this->voronoi->insert(Site_2(300, 200));
 		this->voronoi->insert(Site_2(600, 100));
-		this->voronoi->insert(Site_2(300, 300));
+		this->voronoi->insert(Site_2(300, 250));
 		this->voronoi->insert(Site_2(250, 375));
-		this->voronoi->insert(Site_2(1100, 1250));
-		this->voronoi->insert(Site_2(1000, 1000));
-//		this->voronoi->insert(Site_2(100, 100));
+		this->voronoi->insert(Site_2(110, 850));
+		this->voronoi->insert(Site_2(720, 190));
+		this->voronoi->insert(Site_2(50, 250));
 //		this->voronoi->insert(Site_2(200, 100));
 //		this->voronoi->insert(Site_2(200, 500));
 //		this->voronoi->insert(Site_2(100, 900));
@@ -284,7 +284,7 @@ namespace msl_voronoi_viewer
 		if (drawSites)
 		{
 			QPainter painter(this);
-			QPen pen(Qt::red, 10, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
+			QPen pen(Qt::red, 25, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
 
 			for (auto it = voronoi->sites_begin(); it != voronoi->sites_end(); it++)
 			{

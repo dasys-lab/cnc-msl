@@ -36,7 +36,8 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this), pathPlanner(this, 10), alicaEngine(nullptr)
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this, 10), pathPlanner(
+					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -49,13 +50,21 @@ namespace msl
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
 								(MSLWorldModel*)this);
 
-		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,(MSLWorldModel*)this);
+		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,
+										(MSLWorldModel*)this);
 
-		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,(MSLWorldModel*)this);
+		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,
+									(MSLWorldModel*)this);
 
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
-		sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo, (MSLWorldModel*)this);
+		sharedWorldSub = n.subscribe("/WorldModel/SharedWorldInfo", 10, &MSLWorldModel::onSharedWorldInfo,
+										(MSLWorldModel*)this);
+
+		passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel*)this);
+
+		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel*)this);
+
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 	}
 
@@ -66,9 +75,10 @@ namespace msl
 
 	void MSLWorldModel::onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg)
 	{
-		if(msg->receiverID == this->ownID)
+		if (msg->receiverID == this->ownID)
 		{
-			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(msg->worldModel);
+			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(
+					msg->worldModel);
 			onWorldModelData(wmsim);
 
 		}
@@ -134,7 +144,7 @@ namespace msl
 		msg.senderID = this->ownID;
 		auto ball = rawSensorData.getBallPositionAndCertaincy();
 		auto pos = rawSensorData.getOwnPositionVision();
-		if(pos == nullptr)
+		if (pos == nullptr)
 		{
 			return;
 		}
@@ -145,7 +155,7 @@ namespace msl
 			msg.ball.point.x = p->x;
 			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
- 		}
+		}
 
 		auto ballVel = rawSensorData.getBallVelocity();
 		if (ballVel != nullptr)
@@ -174,10 +184,10 @@ namespace msl
 
 		auto obstacles = robots.getObstacles();
 		{
-			if(obstacles != nullptr)
+			if (obstacles != nullptr)
 			{
 				msg.obstacles.reserve(obstacles->size());
-				for(auto& x : *obstacles)
+				for (auto& x : *obstacles)
 				{
 					shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
 					auto p = point->egoToAllo(*pos);
@@ -188,7 +198,7 @@ namespace msl
 				}
 			}
 		}
-		if(ownPos != nullptr)
+		if (ownPos != nullptr)
 		{
 			sharedWorldPub.publish(msg);
 		}
@@ -204,5 +214,20 @@ namespace msl
 		return ringBufferLength;
 	}
 
+	void MSLWorldModel::onPassMsg(msl_helper_msgs::PassMsgPtr msg)
+	{
+		whiteBoard.processPassMsg(msg);
+	}
+
+	void MSLWorldModel::onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg)
+	{
+		lock_guard<mutex> lock(correctedOdemetryMutex);
+		rawSensorData.processCorrectedOdometryInfo(msg);
+	}
+
+	int MSLWorldModel::getOwnId()
+	{
+		return ownID;
+	}
 } /* namespace msl */
 

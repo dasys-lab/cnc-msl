@@ -33,13 +33,15 @@ namespace msl
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data);
 		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
 		shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
-		shared_ptr<vector<shared_ptr<geometry::CNPosition>>> getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
 
 	private:
 		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 		MSLWorldModel* wm;
 		unsigned long maxInformationAge = 1000000000;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
+		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
+
 	};
 
 } /* namespace alica */

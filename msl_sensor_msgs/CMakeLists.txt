@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_sensor_msgs)
 
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -57,6 +58,7 @@ add_message_files(
   CovMatrix3D.msg
   DistanceScanInfo.msg
   LocalizationType.msg
+  LinePointList.msg
   ObstacleInfo.msg
   SharedBallInfo.msg
   SharedWorldInfo.msg

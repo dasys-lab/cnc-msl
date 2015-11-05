@@ -10,7 +10,7 @@ project(msl_voronoi_viewer)
 ##############################################################################
 
 # qt_build provides the qt cmake glue, roscpp the comms for a default talker
-find_package(catkin REQUIRED COMPONENTS qt_build roscpp message_generation msl_msgs msl_sensor_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs msl_sensor_msgs)
 find_package(CGAL REQUIRED COMPONENTS Core)
 include_directories(${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
 include(${CGAL_USE_FILE})
@@ -30,7 +30,10 @@ catkin_package()
 
 # this comes from qt_build's qt-ros.cmake which is automatically 
 # included via the dependency call in package.xml
-rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the component list here
+#rosbuild_prepare_qt4(QtCore QtGui) # Add the appropriate components to the component list here
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(Qt4 4.4.3 REQUIRED QtGui)
 
 ##############################################################################
 # Sections
@@ -55,6 +58,6 @@ file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINK
 ##############################################################################
 
 add_executable(msl_voronoi_viewer ${QT_SOURCES} ${QT_RESOURCES_CPP} ${QT_FORMS_HPP} ${QT_MOC_HPP})
-target_link_libraries(msl_voronoi_viewer ${QT_LIBRARIES} ${catkin_LIBRARIES} CGAL)
+target_link_libraries(msl_voronoi_viewer Qt4::QtGui ${QT_LIBRARIES} ${catkin_LIBRARIES} CGAL)
 install(TARGETS msl_voronoi_viewer RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 add_dependencies(msl_voronoi_viewer msl_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp CGAL)

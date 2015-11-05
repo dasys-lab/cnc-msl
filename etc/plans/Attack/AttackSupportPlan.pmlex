@@ -14,11 +14,11 @@
   </extensions>
   <extensions>
     <key href="AttackSupportPlan.pml#1434110211248"/>
-    <value xPos="556" yPos="213" width="108" height="67"/>
+    <value xPos="556" yPos="213" width="108" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackSupportPlan.pml#1434110212759"/>
-    <value xPos="337" yPos="206" width="65" height="67"/>
+    <value xPos="337" yPos="206" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="AttackSupportPlan.pml#1434110241637"/>
@@ -46,6 +46,18 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/ShovelSelect.beh#1434199852589"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CatchPass.beh#1440754543898"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Defence/MidFieldDefense.pml#1441108604411"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434046634656" name="StandardAttack" comment="lostBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1434048722503</inTransitions>
     <inTransitions>#1434048731525</inTransitions>
     <inTransitions>#1434716045767</inTransitions>
@@ -16,7 +17,7 @@
     <outTransitions>#1434048734889</outTransitions>
   </states>
   <states id="1434048705508" name="HaveBall" comment="">
-    <plans xsi:type="alica:Plan">Dribble.pml#1434049476066</plans>
+    <plans xsi:type="alica:Plan">PassPlay.pml#1436268896671</plans>
     <inTransitions>#1434048720937</inTransitions>
     <inTransitions>#1434048734889</inTransitions>
     <inTransitions>#1434716048579</inTransitions>

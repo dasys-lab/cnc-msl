@@ -133,14 +133,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="GameStrategy/OppStandards/OppStandards.pml#1426694865227"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GameStrategy/OwnStandards/OwnStandards.pml#1426694875113"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="GameStrategy/Gameplay/Gameplay.pml#1426694853089"/>
     <value/>
   </extensions>
@@ -153,14 +145,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="GameStrategy/OppStandards/OppStandards.pml#1426694865227"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GameStrategy/OppStandards/OppStandards.pml#1426694865227"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="GenericStandards/GenericOwnStandards.pml#1430924951132"/>
     <value/>
   </extensions>
@@ -170,6 +154,22 @@
   </extensions>
   <extensions>
     <key href="GenericStandards/GenericOppStandards.pml#1432132075122"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/Joystick.beh#1421854995808"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GameStrategy/Gameplay/Gameplay.pml#1426694853089"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GameStrategy/Gameplay/Gameplay.pml#1426694853089"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Attack/AttackPlay.pml#1434045709191"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

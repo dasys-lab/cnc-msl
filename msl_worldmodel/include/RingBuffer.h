@@ -38,7 +38,7 @@ template<typename T>
       this->bufferSize = bufferSize;
       this->identifierCounter = 0;
       this->index = -1;
-      this->ringBuffer = new std::shared_ptr<T>[this->bufferSize];
+      this->ringBuffer = std::unique_ptr<std::shared_ptr<T>[]>(new std::shared_ptr<T>[this->bufferSize]);
     }
 
     /*!
@@ -48,7 +48,7 @@ template<typename T>
      */
     inline virtual ~RingBuffer()
     {
-      //nothing to do
+//      delete ringBuffer;
     }
 
     /*!
@@ -160,7 +160,7 @@ template<typename T>
 
   private:
     mutex mtx_;
-    std::shared_ptr<T>* ringBuffer; /**< Ring buffer of elements */
+    std::unique_ptr<std::shared_ptr<T>[]> ringBuffer; /**< Ring buffer of elements */
     int bufferSize; /**< number of stored elements */
     ulong identifierCounter; /**< Counter of elements added to the ring buffer */
     long index; /**< Current index of the last added element */

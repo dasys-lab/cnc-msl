@@ -11,28 +11,51 @@
 #include <vector>
 #include <memory>
 #include "container/CNPoint2D.h"
-#include "pathplanner/PathPlanner.h"
 #include "pathplanner/VoronoiNet.h"
 #include <SystemConfig.h>
+#include <ros/ros.h>
+#include "msl_msgs/VoronoiNetInfo.h"
+#include "pathplanner/evaluator/IPathEvaluator.h"
 namespace msl
 {
-	class PathPlanner;
 	class VoronoiNet;
-	class PathEvaluator
+	class PathEvaluator : IPathEvaluator
 	{
 	public:
-		PathEvaluator(PathPlanner* planner);
+		PathEvaluator();
 		virtual ~PathEvaluator();
-		virtual double eval(double costsSoFar, geometry::CNPoint2D startPos, geometry::CNPoint2D goal,
+		virtual double eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-							shared_ptr<VoronoiNet> voronoi = nullptr,
-							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path= nullptr);
+							VoronoiNet* voronoi = nullptr,
+							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = nullptr, shared_ptr<geometry::CNPoint2D> lastTarget = nullptr);
 
 	protected:
-		double clearSpaceWeight;
-		PathPlanner* planner;
-		static double distance(geometry::CNPoint2D first, geometry::CNPoint2D second);
-		static double square(double a);
+		/**
+		 * Diameter of a robot
+		 */
+		double robotDiameter;
+		/**
+		 * additional corridor with for the corridor check to ensure that no obstacle is near the path
+		 */
+		double additionalCorridorWidth;
+		/**
+		 * weigt for inverted distance of obstalces to to voronoi edge
+		 */
+		double obstacleDistanceWeight;
+		/**
+		 * weight for the length of the path
+		 */
+		double pathLengthWeight;
+		/**
+		 * weight for angle between 2 edges
+		 */
+		double pathAngleWeight;
+		/**
+		 * weight for the deviation of path start
+		 */
+		double pathDeviationWeight;
+		ros::Publisher voronoiPub;
+		ros::NodeHandle n;
 		supplementary::SystemConfig* sc;
 
 	};

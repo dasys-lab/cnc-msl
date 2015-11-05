@@ -6,10 +6,10 @@
  */
 
 #include "rqt_msl_refbox/GameData.h"
-#include "msl_msgs/RefereeBoxInfoBody.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
-
+#include <iostream>
 
 namespace rqt_msl_refbox
 {
@@ -18,25 +18,39 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>(
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
 				"/RefereeBoxInfoBody", 2);
 		localToggled = false;
+		xmlparser = new XMLProtocolParser(this);
 		tcpToggled = false;
 		multiToggled = false;
 		this->refBox = refBox;
 		time(&timer);
+		this->counter = 0;
+		this->udpsocket = nullptr;
+		this->tcpsocket = nullptr;
 
 	}
 
 	GameData::~GameData()
 	{
-		// TODO Auto-generated destructor stub
-		delete refBox;
+		if(tcpsocket != nullptr)
+		{
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			delete udpsocket;
+		}
+		if(udpsocket != nullptr)
+		{
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			delete tcpsocket;
+		}
+		delete rosNode;
+		delete xmlparser;
 	}
 
 	void GameData::PlayOnPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -47,7 +61,7 @@ namespace rqt_msl_refbox
 
 	void GameData::StopPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -58,7 +72,7 @@ namespace rqt_msl_refbox
 
 	void GameData::HaltPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -69,7 +83,7 @@ namespace rqt_msl_refbox
 
 	void GameData::DroppedBallPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -80,7 +94,7 @@ namespace rqt_msl_refbox
 
 	void GameData::ParkingPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -91,22 +105,22 @@ namespace rqt_msl_refbox
 
 	void GameData::JoystickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::command_joystick;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::COMMAND_JOYSTICK;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 		this->refBox->lbl_command->setText("Joystick");
 		this->refBox->RefLog->append("Joystick local");
 	}
 
-	//================================================ Our States =======================================
+//================================================ Our States =======================================
 
 	void GameData::OurKickOffPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -117,7 +131,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurFreeKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -128,7 +142,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurGoalKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -139,7 +153,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurThrowinPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -150,7 +164,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurCornerKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -161,7 +175,7 @@ namespace rqt_msl_refbox
 
 	void GameData::OurPenaltyPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -170,11 +184,11 @@ namespace rqt_msl_refbox
 		this->refBox->RefLog->append("Penalty Magenta local");
 	}
 
-	//================================================ Their States =======================================
+//================================================ Their States =======================================
 
 	void GameData::TheirKickOffPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -185,7 +199,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirFreeKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -196,7 +210,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirGoalKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -207,7 +221,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirThrowinPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -218,7 +232,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirCornerKickPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -229,7 +243,7 @@ namespace rqt_msl_refbox
 
 	void GameData::TheirPenaltyPressed(void)
 	{
-		if(!localToggled)
+		if (!localToggled)
 		{
 			return;
 		}
@@ -273,50 +287,114 @@ namespace rqt_msl_refbox
 
 	void GameData::onConnectPressed(void)
 	{
-		this->refBox->RefLog->append("Try Connect");
-		if(localToggled)
+		if(counter == 1)
 		{
-			this->refBox->RefLog->append("NOW LOCAL MODE IN USE");
+			tcpsocket->close();
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			delete tcpsocket;
+			tcpsocket = nullptr;
+		}
+		if(counter == 2)
+		{
+			udpsocket->close();
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			delete udpsocket;
+			udpsocket = nullptr;
 		}
 
-		if(tcpToggled)
+		if (tcpToggled)
 		{
+
 			tcpsocket = new QTcpSocket();
 
 			this->refBox->RefLog->append("Creating TCP Socket");
 
 			QString destHost = this->refBox->ledit_ipaddress->text();
 			quint16 destPort = this->refBox->spin_port->value();
-			this->refBox->lbl_statusCon->setText("TRY CONNECT");
+			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
+
 			tcpsocket->connectToHost(destHost, destPort);
 
 			if (!tcpsocket->waitForConnected(1000))
 			{
-				this->refBox->RefLog->append("Creating Socket error");
+				this->refBox->RefLog->append("Creating Socket TCP: error");
 				this->refBox->lbl_statusCon->setText("ERROR 404");
 				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
 				return;
 			}
-//
-			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg ()));
-//
-//			Status_val->setText("Connected using old protocol");
-//			Connect_btn->setChecked(1);
-//			Connect_btn->setText("Disconnect");
-//
-//			connected = 1;
-//
-//			Interface_val->setEnabled(0);
-//			DestHost_val->setEnabled(0);
-//			DestPort_val->setEnabled(0);
-			this->refBox->lbl_statusCon->setText("CONNECTED");
+
+			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+
+			this->refBox->lbl_statusCon->setText("TCP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
+			this->counter = 1;
+		}
+		else if (multiToggled)
+		{
+
+			udpsocket = new QUdpSocket();
+			this->refBox->RefLog->append("Creating UDP Socket");
+
+			QString destHost = this->refBox->ledit_ipaddress->text();
+			quint16 destPort = this->refBox->spin_port->value();
+
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: MILTICAST ");
+
+			QString adressMulti = destHost;
+			QHostAddress adress = QHostAddress(adressMulti);
+
+			udpsocket->bind(adress, destPort);
+			udpsocket->joinMulticastGroup(adress);
+
+			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+
+			this->refBox->lbl_statusCon->setText("MULTICAST");
+			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
+			this->counter = 2;
+
+		}
+		else if (localToggled)
+		{
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			this->refBox->lbl_statusCon->setText("LOCAL");
+			this->counter = 0;
 		}
 	}
 	/*==============================  RECEIVE METHODS ==============================*/
 
 	void GameData::receiveRefMsg(void)
 	{
+		QByteArray buffer;
+		while(tcpsocket->canReadLine())
+		{
+			buffer = buffer + tcpsocket->readLine();
+		}
+		if(buffer.size() > 1)
+		{
+//			std::cout << "BUFFER " <<  buffer.data() << std::endl;
+			tinyxml2::XMLDocument doc;
+			doc.Parse(buffer.data());
+			tinyxml2::XMLElement* element = doc.FirstChildElement();
+			xmlparser->handle(element);
+		}
+	}
+	void GameData::receiveRefMsgUdp(void)
+	{
+		QByteArray buffer;
+		buffer.resize(udpsocket->pendingDatagramSize());
+
+		QHostAddress sender;
+		quint16 senderPort;
+
+		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+//		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
+
+		tinyxml2::XMLDocument doc;
+
+		doc.Parse(buffer.data());
+		tinyxml2::XMLElement* element = doc.FirstChildElement();
+		xmlparser->handle(element);
 
 	}
 
@@ -324,120 +402,120 @@ namespace rqt_msl_refbox
 
 	void GameData::sendCyanPenalty()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanCornerKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::CORNER_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanGoalKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanThrownin()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanFreeKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanKickOff()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffCyan;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaPenalty()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaCornerKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::CORNER_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaGoalKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaThrownin()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaKickOff()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaFreeKick()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickMagenta;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendParking()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::park;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::PARK;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendDroppedBall()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::droppedBall;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::DROPBALL;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendHalt()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::halt;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::HALT;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendStop()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::stop;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::STOP;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendStart()
 	{
-		msl_msgs::RefereeBoxInfoBody ref;
-		ref.lastCommand = msl_msgs::RefereeBoxInfoBody::start;
+		msl_msgs::RefBoxCommand ref;
+		ref.cmd = msl_msgs::RefBoxCommand::START;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 } /* namespace rqt_pm_control */

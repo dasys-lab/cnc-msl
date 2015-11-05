@@ -21,7 +21,7 @@
  */
 
 #include "RefBoxWidget.h"
-#include "msl_msgs/RefereeBoxInfoBody.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 
@@ -34,7 +34,7 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	UpdateTimer = new QTimer();
 	rosNode = new ros::NodeHandle();
 
-	RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefereeBoxInfoBody>(
+	RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
 			"/RefereeBoxInfoBody", 2);
 
 	/* Inicialização das comboboxes (our & their)*/
@@ -114,43 +114,43 @@ void RefBoxWidget::detailsBotPressed(void)
 /*================================================== Game States =====================================*/
 void RefBoxWidget::PlayOnPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::start;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::START;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::StopPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::stop;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::STOP;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::HaltPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::halt;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::HALT;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::DroppedBallPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::droppedBall;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::DROPBALL;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::ParkingPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::park;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::PARK;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::JoystickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::command_joystick;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::COMMAND_JOYSTICK;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 //================================================ Our States =======================================
@@ -158,43 +158,43 @@ void RefBoxWidget::JoystickPressed(void)
 
 void RefBoxWidget::OurKickOffPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurFreeKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurGoalKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurThrowinPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::THROWIN_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurCornerKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::CORNER_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::OurPenaltyPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyMagenta;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::PENALTY_MAGENTA;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
@@ -204,43 +204,43 @@ void RefBoxWidget::OurPenaltyPressed(void)
 
 void RefBoxWidget::TheirKickOffPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::kickoffCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirFreeKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::freekickCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirGoalKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::goalkickCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirThrowinPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::throwinCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::THROWIN_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirCornerKickPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::cornerCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::CORNER_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 
 void RefBoxWidget::TheirPenaltyPressed(void)
 {
-	msl_msgs::RefereeBoxInfoBody ref;
-	ref.lastCommand = msl_msgs::RefereeBoxInfoBody::penaltyCyan;
+	msl_msgs::RefBoxCommand ref;
+	ref.cmd = msl_msgs::RefBoxCommand::PENALTY_CYAN;
 	this->RefereeBoxInfoBodyPublisher.publish(ref);
 }
 

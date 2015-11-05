@@ -1,9 +1,9 @@
 #ifndef DomainBehaviour_H_
 #define DomainBehaviour_H_
 
+#include <MSLEnums.h>
 #include "engine/BasicCondition.h"
 #include <MSLWorldModel.h>
-#include <Situation.h>
 namespace alica
 {
 class DomainCondition : public BasicCondition

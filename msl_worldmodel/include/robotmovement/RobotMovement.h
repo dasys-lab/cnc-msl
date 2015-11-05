@@ -26,22 +26,30 @@ namespace msl
 	{
 	public:
 		virtual ~RobotMovement();
+		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance);
+												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		//TODO needs to be tested
 		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
-		//TODO needs to be tested
-		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
 													double ballAngleTolerance);
+		//TODO needs to be tested
+		static MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
+													double ballAngleTolerance);
+
+		static MotionControl driveRandomly(double translation);
 
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;
+		static double fastTranslation;
+		static double fastRotation;
 		static double interceptCarfullyRotateP;
 
 	private:
@@ -49,6 +57,8 @@ namespace msl
 		static double lastRotErrorWithBall;
 		static double alignToPointMinRotation;
 		static double alignToPointMaxRotation;
+		static double lastRotErrorWithBallRapid;
+		static double alignToPointRapidMaxRotation;
 		static double alignToPointpRot;
 		static double alignMaxVel;
 	};

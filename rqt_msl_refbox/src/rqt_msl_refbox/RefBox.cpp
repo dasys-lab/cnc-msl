@@ -1,7 +1,7 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
 #include <rqt_msl_refbox/GameData.h>
-
+#include <memory.h>
 #include <rqt_msl_refbox/RefBox.h>
 
 namespace rqt_msl_refbox
@@ -16,6 +16,8 @@ namespace rqt_msl_refbox
 
 	void RefBox::initPlugin(qt_gui_cpp::PluginContext& context)
 	{
+		//used to enable colored buttons
+		QApplication::setStyle(new QPlastiqueStyle);
 		widget_ = new QWidget();
 		setupUi(widget_);
 		if (context.serialNumber() > 1)
@@ -57,13 +59,32 @@ namespace rqt_msl_refbox
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
 		widget_->installEventFilter(this);
-//
-//		this->refBoxCommQDialog = new QDialog(widget_);
-//		this->_refBoxCommQDialog = new RefBoxCommunication(this->refBoxCommQDialog);
+		this->tbl_info->setRowCount(15);
+		this->tbl_info->setColumnCount(4);
+		this->tbl_info->verticalHeader()->setVisible(false);
+		this->tbl_info->horizontalHeader()->setVisible(false);
+		this->tbl_info->verticalHeader()->setDefaultSectionSize(16);
+		this->tbl_info->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+
+		QTableWidgetItem* item = new QTableWidgetItem();
+		item->setText("Team");
+		this->tbl_info->setItem(0,0,item);
+
+		QTableWidgetItem* item1 = new QTableWidgetItem();
+		item1->setText("Player");
+		this->tbl_info->setItem(0,1,item1);
+
+		QTableWidgetItem* item2 = new QTableWidgetItem();
+		item2->setText("In Field");
+		this->tbl_info->setItem(0,2,item2);
+
+		QTableWidgetItem* item3 = new QTableWidgetItem();
+		item3->setText("Card");
+		this->tbl_info->setItem(0,3,item3);
+
 
 	}
 
-	//TODO CLEAN UP
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
 	{
 		if(!gameData->isLocalToggled()
@@ -79,11 +100,6 @@ namespace rqt_msl_refbox
 		return true;
 	}
 
-//	void RefBox::showRBDialog()
-//	{
-////		refBoxCommQDialog->show();
-//	}
-
 	void RefBox::shutdownPlugin()
 	{
 		disconnect(Play_On_bot, SIGNAL(clicked()), gameData, SLOT(PlayOnPressed()));
@@ -91,20 +107,27 @@ namespace rqt_msl_refbox
 		disconnect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
 		disconnect(Dropped_bot, SIGNAL(clicked()), gameData, SLOT(DroppedBallPressed()));
 		disconnect(Parking_bot, SIGNAL(clicked()), gameData, SLOT(ParkingPressed()));
+
 		disconnect(Our_Kick_Off_bot, SIGNAL(clicked()), gameData, SLOT(OurKickOffPressed()));
 		disconnect(Our_Free_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurFreeKickPressed()));
 		disconnect(Our_Goal_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurGoalKickPressed()));
 		disconnect(Our_Throwin_bot, SIGNAL(clicked()), gameData, SLOT(OurThrowinPressed()));
 		disconnect(Our_Corner_Kick_bot, SIGNAL(clicked()), gameData, SLOT(OurCornerKickPressed()));
 		disconnect(Our_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(OurPenaltyPressed()));
+
 		disconnect(Their_Kick_Off_bot, SIGNAL(clicked()), gameData, SLOT(TheirKickOffPressed()));
 		disconnect(Their_Free_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirFreeKickPressed()));
 		disconnect(Their_Goal_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirGoalKickPressed()));
 		disconnect(Their_Throwin_bot, SIGNAL(clicked()), gameData, SLOT(TheirThrowinPressed()));
 		disconnect(Their_Corner_Kick_bot, SIGNAL(clicked()), gameData, SLOT(TheirCornerKickPressed()));
 		disconnect(Their_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(TheirPenaltyPressed()));
+
 		disconnect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 		disconnect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
+		disconnect(rbtn_xmlMulti, SIGNAL(toggled(bool)), gameData, SLOT(onMultiTogled(bool)));
+		disconnect(rbtn_xmlTcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpTogled(bool)));
+		disconnect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
+
 		delete gameData;
 	}
 

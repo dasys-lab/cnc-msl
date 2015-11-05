@@ -71,14 +71,14 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *event);
 
 
-public slots:
+public Q_SLOTS:
 	void TeamColorChanged(int team);
 	void GoalColorChanged(int goal);
 
 
 	void UpdateGameTime(void);
     void UpdateGameParameters(void);
-private slots:
+private Q_SLOTS:
 
 };
 

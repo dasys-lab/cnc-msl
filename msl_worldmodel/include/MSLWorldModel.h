@@ -14,6 +14,8 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -22,11 +24,13 @@
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
-#include "Situation.h"
+#include <MSLEnums.h>
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "Ball.h"
 #include "Game.h"
+#include "Kicker.h"
+#include "WhiteBoard.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
@@ -58,6 +62,8 @@ namespace msl
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
+		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
@@ -66,12 +72,15 @@ namespace msl
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
 		int getRingBufferLength();
+		int getOwnId();
 
 		RawSensorData rawSensorData;
 		Robots robots;
 		Ball ball;
 		Game game;
 		PathPlanner pathPlanner;
+		Kicker kicker;
+		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 		struct calibData{double calibCoefficient; double length;}calibData;
 
@@ -91,18 +100,23 @@ namespace msl
 		ros::Subscriber motionBurstSub;
 		ros::Subscriber simWorldModel;
 		ros::Subscriber sharedWorldSub;
+		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
+		ros::Subscriber correctedOdometrySub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
 		mutex wmMutex;
 		mutex joystickMutex;
 		mutex motionBurstMutex;
+		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:
 	};
 
 } /* namespace msl */
+
+
 
 #endif /* MSLWORLDMODEL_H_ */

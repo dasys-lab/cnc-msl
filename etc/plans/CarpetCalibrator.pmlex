@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159127772"/>
+    <value xPos="134" yPos="162" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159127771"/>
+    <value width="1000" height="662"/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159127773"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159146705"/>
+    <value xPos="518" yPos="216" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159170328"/>
+    <value>
+      <bendpoints xPos="519" yPos="158"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1435159186825"/>
+    <value>
+      <bendpoints xPos="468" yPos="371"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/SpinSlowly.beh#1435159282996"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979695093"/>
+    <value xPos="436" yPos="416" width="83" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979719063"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CarpetCalibrator.pml#1436979741738"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
