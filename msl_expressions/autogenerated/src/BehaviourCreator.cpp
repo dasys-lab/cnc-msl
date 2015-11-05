@@ -21,6 +21,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/StdStandardDefendPos.h"
 
+#include  "Plans/Behaviours/CalcCalib.h"
+
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
 #include  "Plans/GenericBehaviours/StandardBlockerPositioning.h"
@@ -109,6 +111,10 @@ namespace alica
 
             case 1431527260342:
 
+            case 1442921078802:
+
+            case 1443003717671:
+
                 return make_shared<DriveToPoint>();
                 break;
 
@@ -120,6 +126,17 @@ namespace alica
             case 1428508259449:
 
                 return make_shared<StdStandardDefendPos>();
+                break;
+
+            case 1446033354004:
+
+            case 1446036332071:
+
+            case 1446036372245:
+
+            case 1446036391317:
+
+                return make_shared<CalcCalib>();
                 break;
 
             case 1433950043262:

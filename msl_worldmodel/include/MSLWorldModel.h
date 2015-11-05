@@ -73,6 +73,7 @@ namespace msl
 		Game game;
 		PathPlanner pathPlanner;
 		supplementary::EventTrigger visionTrigger;
+		struct calibData{double calibCoefficient; double length;}calibData;
 
 	private:
 
