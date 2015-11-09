@@ -40,58 +40,7 @@ namespace alica
             return;
         }
 
-        /*
-         funktionLeft = 1.0
-         * (0.00337 * pow(x, 8) - 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) + 0.0036 * pow(x, 5)
-         + 0.5517 * pow(x, 4) + 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) + 0.637 * x - constPushUpFunktion);
-
-         funktionRight = 1.0
-         * (0.00337 * pow(x, 8) + 0.00154 * pow(x, 7) - 0.0756 * pow(x, 6) - 0.0036 * pow(x, 5)
-         + 0.5517 * pow(x, 4) - 0.0489 * pow(x, 3) - 0.987 * pow(x, 2) - 0.637 * x - constPushUpFunktion);
-
-
-
-
-         */
-
-        /*
-
-         double arithmeticAverageSpeed = 0.0;
-         double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
-
-         if (arithmeticAverageBoxSpeed.size() == 2)
-         {
-         arithmeticAverageBoxSpeed.pop_back();
-         }
-
-         arithmeticAverageBoxSpeed.push_front(newParamerSpeed);
-
-         for (list<double>::iterator parameterSpeed = arithmeticAverageBoxSpeed.begin();
-         parameterSpeed != arithmeticAverageBoxSpeed.end(); parameterSpeed++)
-         {
-         arithmeticAverageSpeed += *parameterSpeed;
-         }
-
-         arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
-
-         cout << "Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-         << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
-
-
-         double eFunktion =( 0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
-
-
-         left= 15;
-         right=-45;
-
-         cout<<"left :"<<left<<endl;
-         cout<<"right :"<<right<<endl;
-
-
-         */
-
         newController(left, right);
-        //oldController(left,right);
 
         //PD Regler Anfang
         //PIDControllerLeft
@@ -174,7 +123,6 @@ namespace alica
         speedDifference = 0.0;
         double zaeler = 0;
         double qualityOfServiceSumme = 0;
-
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1417017518918) ENABLED START*/ //Add additional methods here
@@ -407,9 +355,6 @@ namespace alica
             arithmeticAverageSpeedDifference = 1;
         }
 
-        //  cout << "arithmeticAverageSpeedDifference : " << arithmeticAverageSpeedDifference << endl;
-
-        ////arithmetic average speed difference End
 
         //Exp Funktion for traction Start
 
@@ -427,131 +372,54 @@ namespace alica
 
         cout << "exp Funktion : " << eFunktion << endl;
         //Exp Funktion for traction End
-
         //Funktion for drive with differt angles start
-
         x = max(min(angle, 3.14), -3.14);
-
-//        //LeftMotorFunktion interpolation Start
-//        //LeftMotorFunktion interpolation Start
-//
-//        vector<double> XLeft(13), YLeft(13);
-//        //Angle
-//        XLeft[0] = -3.14;
-//        XLeft[1] = -2.67;
-//        XLeft[2] = -2.12;
-//        XLeft[3] = -1.57;
-//        XLeft[4] = -0.942;
-//        XLeft[5] = -0.47;
-//        XLeft[6] = 0;
-//        XLeft[7] = 0.47;
-//        XLeft[8] = 0.942;
-//        XLeft[9] = 1.57;
-//        XLeft[10] = 2.12;
-//        XLeft[11] = 2.67;
-//        XLeft[12] = 3.14;
-//
-//        YLeft[0] = 1.2;
-//        YLeft[1] = -0.8;
-//        YLeft[2] = -2.8;
-//        YLeft[3] = -3.5;
-//        YLeft[4] = -3;
-//        YLeft[5] = -2.8;
-//        YLeft[6] = -2.5;
-//        YLeft[7] = -2.0;
-//        YLeft[8] = -1.0;
-//        YLeft[9] = 1;
-//        YLeft[10] = 1;
-//        YLeft[11] = 1;
-//        YLeft[12] = 1.2;
-//
-        splines::spline leftMotor;
-//        leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
-        double funktionLeftInterpolation = leftMotor(x); //
-//        cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
-//
-//        //LeftMotorFunktion interpolation End
-//        //LeftMotorFunktion interpolation Start
-//
-//        vector<double> XRight(13), YRight(13);
-//        //Angle
-//        XRight[0] = -3.14;
-//        XRight[1] = -2.67;
-//        XRight[2] = -2.12;
-//        XRight[3] = -1.57;
-//        XRight[4] = -0.942;
-//        XRight[5] = -0.47;
-//        XRight[6] = 0;
-//        XRight[7] = 0.47;
-//        XRight[8] = 0.942;
-//        XRight[9] = 1.57;
-//        XRight[10] = 2.12;
-//        XRight[11] = 2.67;
-//        XRight[12] = 3.14;
-//
-//        YRight[0] = 1.2;
-//        YRight[1] = 1;
-//        YRight[2] = 1;
-//        YRight[3] = 1;
-//        YRight[4] = -1.0;
-//        YRight[5] = -2.0;
-//        YRight[6] = -2.5;
-//        YRight[7] = -2.8;
-//        YRight[8] = -3;
-//        YRight[9] = -3.5;
-//        YRight[10] = -2.8;
-//        YRight[11] = -0.8;
-//        YRight[12] = 1.2;
-        splines::spline rightMotor;
-//        rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
-        double funktionRightInterpolation = rightMotor(x); //
-//        cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
-
-//        Funktion conf.
-        vector<double> XRight(13), YRight(13);
-//         splines::spline rightMotor;
-
-        auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble",
-                                                                                       "FunktionValuesRight", NULL);
-
-        // Load XLeft Lookup Lists FunktionValuesRightX
         int counter = 1;
+
+        splines::spline leftMotor;
+        double funktionLeftInterpolation = leftMotor(x); //
+        vector<double> XLeft(13), YLeft(13);
+		auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble.FunktionValuesLeft", NULL);
+		counter = 1;
+		for (string sectionName : *FunktionValuesLeftSections)
+		{
+		   XLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+																		 sectionName.c_str(), "XLeft", NULL);
+		   YLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+																		 sectionName.c_str(), "YLeft", NULL);
+		   counter++;
+		}
+		leftMotor.set_points(XLeft, YLeft);
+
+        splines::spline rightMotor;
+        double funktionRightInterpolation = rightMotor(x); //
+        vector<double> XRight(13), YRight(13);
+        auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble.FunktionValuesRight", NULL);
+        counter = 1;
         for (string sectionName : *FunktionValuesRightSections)
         {
             XRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
                                                                           sectionName.c_str(), "XRight", NULL);
-
             YRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
                                                                           sectionName.c_str(), "YRight", NULL);
-            rightMotor.set_points(XRight, YRight);
-
-//			this->maxVel = (*this->sc)["Behaviour"]->get<double>("Pass", "MaxSpeed", NULL);
-
-            //rightMotor.set_points(XRight, YRight);
-            //funktionRightInterpolation.push_back(FunktionValuesRight);
             counter++;
         }
+        rightMotor.set_points(XRight, YRight);
+        splines::spline frictionSpline;
+        vector<double> XFric(13), YFric(13);
+        for(int i = 1; i <= 13; i++) {
+        	XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.x" + i, NULL);
+        	YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.y" + i, NULL);
+        }
+
+        frictionSpline.set_points(XFric, YFric);
 
         FunktionValuesRight = rightMotor(x);
-        cout << "FunktionValuesRight : " << FunktionValuesRight << endl;
+        FunktionValuesLeft = leftMotor(x);
+        frictionValue = frictionSpline(x);
 
-        //	leftMotor.set_points(XLeft, YLeft); // currently it is required that X is already sorted
-        //double funktionLeftInterpolation = leftMotor(x); //
-        //	cout << "funktionLeftInterpolation  : " << funktionLeftInterpolation << endl;
-        //LeftMotorFunktion interpolation End
-        //RightMotorFunktion interpolation Start
-        //vector<double> XRight(13), YRight(13);
-        /*splines::spline rightMotor;
-         rightMotor.set_points(XRight, YRight); // currently it is required that X is already sorted
-         double funktionRightInterpolation = rightMotor(x); //
-         cout << "funktionRightInterpolation : " << funktionRightInterpolation << endl;
-         */
-        //RightMotorFunktion interpolation End
-        //You can replace funktionLeft/Rightinterpolation with funktionLeft/Right
-        //funktionLeft = 0.0079*pow(x,6) -0.0155*pow(x,5) -0.12*pow(x,4)+0.05*pow(x,3)+0.79*pow(x,2)+0.99*x-constPushUpFunktion;
-        //funktionRight = 0.0079*pow(x,6) +0.0155*pow(x,5) -0.12*pow(x,4)-0.05*pow(x,3)+0.79*pow(x,2)-0.99*x-constPushUpFunktion;
-        //Funktion for drive with differt angles end
-        //Rotation Controller Start
+        cout << "FunktionValuesRight,FunktionValuesLeft,FrictionValue: " << FunktionValuesRight << " " << FunktionValuesLeft << " " << frictionValue << endl;
+
         double rotationLeft = 0.0;
         double rotationRight = 0.0;
 
