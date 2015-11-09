@@ -23,14 +23,17 @@ namespace alica
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
-            auto posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
+
             auto posVision = this->wm->rawSensorData.getOwnPositionVision(0);
-            auto oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
             auto oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
+        }
+        	auto posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
+            auto oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
+
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((posMotion->x - oldPosMotion->x) * (posMotion->x - oldPosMotion->x)
                             + (posMotion->y - oldPosMotion->y) * (posMotion->y - oldPosMotion->y));
-        }
+
         /*PROTECTED REGION END*/
     }
     void CalcCalib::initialiseParameters()
