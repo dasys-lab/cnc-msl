@@ -62,8 +62,8 @@ namespace alica
             std::cout << "Y: " << deltay << std::endl;
             std::cout << "Länge: " << this->wm->calibData.length << std::endl;
             std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
-            std::cout << "posMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(0)<< std::endl;
-            std::cout << "oldposMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(1)<< std::endl;
+            std::cout << "posMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->x<< std::endl;
+            std::cout << "oldposMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(1)->x<< std::endl;
             std::cout << "" << std::endl;
         }
 
