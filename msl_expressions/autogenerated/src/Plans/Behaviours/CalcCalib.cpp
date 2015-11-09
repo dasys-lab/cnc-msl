@@ -1,6 +1,7 @@
 using namespace std;
 #include "Plans/Behaviours/CalcCalib.h"
-
+double posMotionY;
+double posMotionX;
 /*PROTECTED REGION ID(inccpp1446033324019) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -21,18 +22,23 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-        if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
-        {
-        	auto posVision = this->wm->rawSensorData.getOwnPositionVision(0);
-        	auto oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
-        }
+
+    	if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= posMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= posMotionY)
+    	{
+    		if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
+    		{
+    			auto posVision = this->wm->rawSensorData.getOwnPositionVision(0);
+    			auto oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
+    		}
             auto posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
+            posMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
+            posMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
             auto oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
 
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((posMotion->x - oldPosMotion->x) * (posMotion->x - oldPosMotion->x)
                             + (posMotion->y - oldPosMotion->y) * (posMotion->y - oldPosMotion->y));
-
+    	}
         /*PROTECTED REGION END*/
     }
     void CalcCalib::initialiseParameters()
