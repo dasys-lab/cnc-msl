@@ -38,6 +38,7 @@ namespace alica
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((posMotion->x - oldPosMotion->x) * (posMotion->x - oldPosMotion->x)
                             + (posMotion->y - oldPosMotion->y) * (posMotion->y - oldPosMotion->y));
+            std::cout << "posMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x<< std::endl;
     	}
         /*PROTECTED REGION END*/
     }
@@ -70,6 +71,8 @@ namespace alica
             std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
             std::cout << "posMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->x<< std::endl;
             std::cout << "oldposMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(1)->x<< std::endl;
+            std::cout << "posVision: "<< this->wm->rawSensorData.getOwnPositionVision(0)->x<< std::endl;
+            std::cout << "oldposVision: "<< this->wm->rawSensorData.getOwnPositionVision(1)->x<< std::endl;
             std::cout << "" << std::endl;
         }
 
