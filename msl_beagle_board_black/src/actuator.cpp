@@ -99,7 +99,7 @@ void contolShovelSelect() {
 			if (ShovelSelect.getRunValue() == "0") {
 				ShovelSelect.setRunState(run);
 			}
-			ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
+			ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
 		}
 
 		threw[2].notify = false;
