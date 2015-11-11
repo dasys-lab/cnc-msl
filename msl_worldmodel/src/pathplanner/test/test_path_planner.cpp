@@ -71,9 +71,10 @@ TEST_F(PathPlannerTest, pathPlanner)
 	int artObsSize = artificialObs->size();
 	EXPECT_TRUE(net != nullptr);
 	cout << "####################### 10 Obstacles #######################" << endl;
+	double avgTime= 0;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
@@ -108,94 +109,97 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 10: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 10: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(10 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 10: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+		avgTime += timeDiff;
+//		cout << /*"Time diff plan 10: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << */timeDiff
+//				<< "ns" << endl;
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 2; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 10 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 2; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 10 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 4; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 10 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 6; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 10 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 8; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 10 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 10; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 10 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
 		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 4; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 10 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 6; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 10 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 8; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 10 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 10; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 10 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
+//		toBeDeleted->clear();
 		points->clear();
 
 	}
-	cout << "####################### 15 Obstacles #######################" << endl;
+	cout << "%%%%%%%%% avg Time 10 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 15 Obstacles #######################" << endl;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -230,94 +234,97 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 15: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 15: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(15 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 15: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 3; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 15 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
+		avgTime += timeDiff;
+//		cout << "Time diff plan 15: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 3; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 15 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 6; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 15 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 9; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 15 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 12; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 15 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 15; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 15 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
 		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 6; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 15 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 9; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 15 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 12; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 15 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 15; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 15 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
+//		toBeDeleted->clear();
 		points->clear();
-
+//
 	}
-	cout << "####################### 20 Obstacles #######################" << endl;
+	cout << "%%%%%%%%% avg Time 15 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 20 Obstacles #######################" << endl;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -352,94 +359,97 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 20: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 20: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(20 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 20: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 4; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 20 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
+		avgTime += timeDiff;
+//		cout << "Time diff plan 20: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 4; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 20 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 8; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 20 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 12; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 20 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 16; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 20 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 20; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 20 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
 		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 8; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 20 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 12; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 20 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 16; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 20 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 20; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 20 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
+//		toBeDeleted->clear();
 		points->clear();
-
+//
 	}
-	cout << "####################### 25 Obstacles #######################" << endl;
+	cout << "%%%%%%%%% avg Time 20 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 25 Obstacles #######################" << endl;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -474,94 +484,98 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 25: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 25: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(25 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 25: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 5; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 25 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
+		avgTime += timeDiff;
+//		cout << "Time diff plan 25: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 5; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 25 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 10; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 25 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 15; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 25 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 20; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 25 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 25; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 25 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
 		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 10; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 25 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 15; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 25 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 20; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 25 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 25; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 25 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
+//		toBeDeleted->clear();
 		points->clear();
-
+//
 	}
-	cout << "####################### 50 Obstacles #######################" << endl;
+	cout << "%%%%%%%%% avg Time 25 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+
+//	cout << "####################### 50 Obstacles #######################" << endl;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -596,94 +610,97 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 50: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 50: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(50 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 50: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+		avgTime += timeDiff;
+//		cout << "Time diff plan 50: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 10; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 50 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 10; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 50 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 20; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 50 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 30; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 50 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 40; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 50 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 50; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 50 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
 		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 20; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 50 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 30; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 50 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 40; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 50 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 50; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 50 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
+//		toBeDeleted->clear();
 		points->clear();
-
+//
 	}
-	cout << "####################### 100 Obstacles #######################" << endl;
+	cout << "%%%%%%%%% avg Time 50 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 100 Obstacles #######################" << endl;
 	for (int j = 0; j < 120; j++)
 	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
 		net->clearVoronoiNet();
 		net->insertAdditionalPoints(artificialObs);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -718,455 +735,463 @@ TEST_F(PathPlannerTest, pathPlanner)
 
 		ros::Time t2 = ros::Time::now();
 		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 100: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
+//		cout << "Time diff insert 100: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
 		EXPECT_EQ(100 + artObsSize, net->getObstaclePositions()->size());
 
 		t1 = ros::Time::now();
 		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
 		t2 = ros::Time::now();
 		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 100: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 20; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 100 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 40; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 100 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 60; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 100 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 80; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 100 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 100; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 100 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
-		points->clear();
-
+		avgTime += timeDiff;
+//		cout << "Time diff plan 100: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 20; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 100 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 40; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 100 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 60; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 100 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 80; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 100 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 100; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 100 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		toBeDeleted->clear();
+//		points->clear();
+//
 	}
-	cout << "####################### 250 Obstacles #######################" << endl;
-	for (int j = 0; j < 120; j++)
-	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int i = 0; i < 250; i++)
-		{
-			bool alreadyIn = false;
-			auto point = make_shared<geometry::CNPoint2D>(
-					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
-					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
-			for (auto it = points->begin(); it != points->end(); it++)
-			{
-				//TODO needs to be checked
-				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
-				{
-					alreadyIn = true;
-					break;
-				}
-			}
-			if (!alreadyIn)
-			{
-				points->push_back(point);
-			}
-			else
-			{
-				i--;
-			}
-			alreadyIn = false;
-		}
-
-		ros::Time t1 = ros::Time::now();
-		net->insertAdditionalPoints(points);
-
-		ros::Time t2 = ros::Time::now();
-		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 250: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-		EXPECT_EQ(250 + artObsSize, net->getObstaclePositions()->size());
-
-		t1 = ros::Time::now();
-		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 250: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 50; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 250 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 100; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 250 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 150; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 250 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 200; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 250 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 250; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 250 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
-		points->clear();
-
-	}
-	cout << "####################### 500 Obstacles #######################" << endl;
-	for (int j = 0; j < 120; j++)
-	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int i = 0; i < 500; i++)
-		{
-			bool alreadyIn = false;
-			auto point = make_shared<geometry::CNPoint2D>(
-					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
-					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
-			for (auto it = points->begin(); it != points->end(); it++)
-			{
-				//TODO needs to be checked
-				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
-				{
-					alreadyIn = true;
-					break;
-				}
-			}
-			if (!alreadyIn)
-			{
-				points->push_back(point);
-			}
-			else
-			{
-				i--;
-			}
-			alreadyIn = false;
-		}
-
-		ros::Time t1 = ros::Time::now();
-		net->insertAdditionalPoints(points);
-
-		ros::Time t2 = ros::Time::now();
-		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 500: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-		EXPECT_EQ(500 + artObsSize, net->getObstaclePositions()->size());
-
-		t1 = ros::Time::now();
-		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 500: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 100; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 500 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 200; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 500 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 300; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 500 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 400; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 500 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 500; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 500 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
-		points->clear();
-
-	}
-	cout << "####################### 1000 Obstacles #######################" << endl;
-	for (int j = 0; j < 120; j++)
-	{
-		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
-		cout << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int i = 0; i < 1000; i++)
-		{
-			bool alreadyIn = false;
-			auto point = make_shared<geometry::CNPoint2D>(
-					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
-					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
-			for (auto it = points->begin(); it != points->end(); it++)
-			{
-				//TODO needs to be checked
-				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
-				{
-					alreadyIn = true;
-					break;
-				}
-			}
-			if (!alreadyIn)
-			{
-				points->push_back(point);
-			}
-			else
-			{
-				i--;
-			}
-			alreadyIn = false;
-		}
-
-		ros::Time t1 = ros::Time::now();
-		net->insertAdditionalPoints(points);
-
-		ros::Time t2 = ros::Time::now();
-		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff insert 1000: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		EXPECT_EQ(1000 + artObsSize, net->getObstaclePositions()->size());
-
-		t1 = ros::Time::now();
-		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff plan 1000: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
-				<< "ns" << endl;
-
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		for (int it = 0; it < 200; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 1000 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 400; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 1000 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);;
-		for (int it = 0; it < 600; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 1000 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 800; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 1000 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		net->insertAdditionalPoints(artificialObs);
-		toBeDeleted->clear();
-		net->insertAdditionalPoints(points);
-		for (int it = 0; it < 1000; it++)
-		{
-			toBeDeleted->push_back(points->at(it));
-		}
-		t1 = ros::Time::now();
-		net->removeSites(toBeDeleted);
-		t2 = ros::Time::now();
-		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
-		cout << "Time diff delete 1000 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
-				<< timeDiff << "ns" << endl;
-		net->clearVoronoiNet();
-		toBeDeleted->clear();
-		points->clear();
-
-	}
+	cout << "%%%%%%%%% avg Time 100 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 250 Obstacles #######################" << endl;
+//	for (int j = 0; j < 120; j++)
+//	{
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int i = 0; i < 250; i++)
+//		{
+//			bool alreadyIn = false;
+//			auto point = make_shared<geometry::CNPoint2D>(
+//					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+//					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+//			for (auto it = points->begin(); it != points->end(); it++)
+//			{
+//				//TODO needs to be checked
+//				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
+//				{
+//					alreadyIn = true;
+//					break;
+//				}
+//			}
+//			if (!alreadyIn)
+//			{
+//				points->push_back(point);
+//			}
+//			else
+//			{
+//				i--;
+//			}
+//			alreadyIn = false;
+//		}
+//
+//		ros::Time t1 = ros::Time::now();
+//		net->insertAdditionalPoints(points);
+//
+//		ros::Time t2 = ros::Time::now();
+//		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff insert 250: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//		EXPECT_EQ(250 + artObsSize, net->getObstaclePositions()->size());
+//
+//		t1 = ros::Time::now();
+//		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff plan 250: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 50; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 250 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 100; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 250 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 150; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 250 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 200; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 250 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 250; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 250 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		toBeDeleted->clear();
+//		points->clear();
+//
+//	}
+	cout << "%%%%%%%%% avg Time 250 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 500 Obstacles #######################" << endl;
+//	for (int j = 0; j < 120; j++)
+//	{
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int i = 0; i < 500; i++)
+//		{
+//			bool alreadyIn = false;
+//			auto point = make_shared<geometry::CNPoint2D>(
+//					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+//					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+//			for (auto it = points->begin(); it != points->end(); it++)
+//			{
+//				//TODO needs to be checked
+//				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
+//				{
+//					alreadyIn = true;
+//					break;
+//				}
+//			}
+//			if (!alreadyIn)
+//			{
+//				points->push_back(point);
+//			}
+//			else
+//			{
+//				i--;
+//			}
+//			alreadyIn = false;
+//		}
+//
+//		ros::Time t1 = ros::Time::now();
+//		net->insertAdditionalPoints(points);
+//
+//		ros::Time t2 = ros::Time::now();
+//		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff insert 500: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//		EXPECT_EQ(500 + artObsSize, net->getObstaclePositions()->size());
+//
+//		t1 = ros::Time::now();
+//		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff plan 500: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 100; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 500 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 200; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 500 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 300; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 500 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 400; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 500 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 500; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 500 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		toBeDeleted->clear();
+//		points->clear();
+//
+//	}
+	cout << "%%%%%%%%% avg Time 500 " << avgTime / 120 << " " << avgTime << endl;
+	avgTime = 0;
+//	cout << "####################### 1000 Obstacles #######################" << endl;
+//	for (int j = 0; j < 120; j++)
+//	{
+//		cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& iteration " << j + 1 << " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
+//		cout << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int i = 0; i < 1000; i++)
+//		{
+//			bool alreadyIn = false;
+//			auto point = make_shared<geometry::CNPoint2D>(
+//					rand() % (int)field->FieldLength - (int)field->FieldLength / 2,
+//					rand() % (int)field->FieldWidth - (int)field->FieldWidth / 2);
+//			for (auto it = points->begin(); it != points->end(); it++)
+//			{
+//				//TODO needs to be checked
+//				if (abs((*it)->x - point->x) < 250 && abs((*it)->y - point->y) < 250)
+//				{
+//					alreadyIn = true;
+//					break;
+//				}
+//			}
+//			if (!alreadyIn)
+//			{
+//				points->push_back(point);
+//			}
+//			else
+//			{
+//				i--;
+//			}
+//			alreadyIn = false;
+//		}
+//
+//		ros::Time t1 = ros::Time::now();
+//		net->insertAdditionalPoints(points);
+//
+//		ros::Time t2 = ros::Time::now();
+//		unsigned long timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff insert 1000: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		EXPECT_EQ(1000 + artObsSize, net->getObstaclePositions()->size());
+//
+//		t1 = ros::Time::now();
+//		path = wm->pathPlanner.plan(net, startPos, goalPos, eval);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff plan 1000: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms " << timeDiff
+//				<< "ns" << endl;
+//
+//		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> toBeDeleted = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//		for (int it = 0; it < 200; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 1000 20%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 400; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 1000 40%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);;
+//		for (int it = 0; it < 600; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 1000 60%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 800; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 1000 80%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		net->insertAdditionalPoints(artificialObs);
+//		toBeDeleted->clear();
+//		net->insertAdditionalPoints(points);
+//		for (int it = 0; it < 1000; it++)
+//		{
+//			toBeDeleted->push_back(points->at(it));
+//		}
+//		t1 = ros::Time::now();
+//		net->removeSites(toBeDeleted);
+//		t2 = ros::Time::now();
+//		timeDiff = (t2.sec * 1000000000UL + t2.nsec) - (t1.sec * 1000000000UL + t1.nsec);
+//		cout << "Time diff delete 1000 100%: " << timeDiff / 1000000000UL << "s " << timeDiff / 1000000UL << "ms "
+//				<< timeDiff << "ns" << endl;
+//		net->clearVoronoiNet();
+//		toBeDeleted->clear();
+//		points->clear();
+//
+//	}
+	cout << "%%%%%%%%% avg Time 1000 " << avgTime / 120 << " " << avgTime << endl;
 
 }
 

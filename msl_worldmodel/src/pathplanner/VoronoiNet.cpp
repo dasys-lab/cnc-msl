@@ -578,32 +578,6 @@ namespace msl
 					break;
 				}
 			}
-//			//if both points are found insert them into ret
-//			if (foundFirst && foundSecond)
-//			{
-//				if (ret.first.first == nullptr)
-//				{
-
-////					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-////					continue;
-//				}
-//				if (ret.second.first == nullptr && abs(ret.first.first->x - fit->dual()->point().x()) > 0.001
-//						&& abs(ret.first.first->y - fit->dual()->point().y()) > 0.001)
-//				{
-//					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
-//					{
-//						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
-//						{
-//							ret.second = *current;
-//							break;
-//						}
-//					}
-////					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-////
-////					break;
-//				}
-//
-//			}
 		}
 		return ret;
 	}
