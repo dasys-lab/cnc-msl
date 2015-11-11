@@ -2,6 +2,7 @@
 #define CalcCalib_H_
 
 #include "DomainBehaviour.h"
+
 /*PROTECTED REGION ID(inc1446033324019) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -12,6 +13,14 @@ namespace alica
         CalcCalib();
         virtual ~CalcCalib();
         virtual void run(void* msg);
+        double posMotionY;
+        double posMotionX;
+        double oldPosMotionX;
+        double oldPosMotionY;
+        shared_ptr<geometry::CNPosition> posMotion;
+        shared_ptr<geometry::CNPosition> oldPosMotion;
+        shared_ptr<geometry::CNPosition> posVision;
+        shared_ptr<geometry::CNPosition> oldPosVision;
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
         /*PROTECTED REGION END*/
     protected:
