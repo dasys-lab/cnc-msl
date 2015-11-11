@@ -29,7 +29,7 @@ namespace alica
     			auto posVision = this->wm->rawSensorData.getOwnPositionVision(0);
     			auto oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
     		}
-    		if (this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x <= 30)
+    		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
     		{
     			posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
     			posMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
