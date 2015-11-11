@@ -36,28 +36,41 @@ namespace alica
     			oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
     			oldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
     		}
-    		else if (posMotion == NULL)
+    		else
     		{
-    		    posMotionX = 1;
+    			if (posMotion == NULL)
+    			{
+    			    	posMotionX = 1;
+    			}
+    			posMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+    			oldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
+
     		}
+
 
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
     		{
     			posMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
     			oldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
     		}
-    		else if (posMotion == NULL)
+    		else
     		{
-    			posMotionY = 1;
+    		    if (posMotion == NULL)
+    		    {
+    		        posMotionY = 1;
+    		    }
+    		    posMotionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+    		    oldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
+
     		}
 
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((posMotionX - oldPosMotionX) * (posMotionX - oldPosMotionX)
                             + (posMotionY - oldPosMotionY) * (posMotionY - oldPosMotionY));
-           // std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
-           // std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
-            std::cout << "posVisionX: "<< posVision->x - oldPosVision->x<<endl;
-            std::cout << "posVisionY: "<< posVision->y - oldPosVision->y<<endl;
+            std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
+            std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
+           // std::cout << "posVisionX: "<< posVision->x - oldPosVision->x<<endl;
+            //std::cout << "posVisionY: "<< posVision->y - oldPosVision->y<<endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/
@@ -74,8 +87,9 @@ namespace alica
 
             if (this->wm->calibData.length != 0)
             {
-                this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
-                        / this->wm->calibData.length) + 1;
+                //this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
+                  //      / this->wm->calibData.length) + 1;
+            	this->wm->calibData.calibCoefficient = 1;
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
                 saveToCalibData.open(filename);
