@@ -10,6 +10,6 @@ clean:
 	rm -f start-process-manager
 
 install: start-process-manager
-	cp start-roscore start-udp-proxy /usr/local/bin/
+	cp start-process-manager /usr/local/bin/
 	cp process_manager.conf /etc/init/
 	initctl reload-configuration
