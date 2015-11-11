@@ -33,20 +33,29 @@ namespace alica
     		{
     			posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
     			posMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-    			posMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
     			oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
+    			oldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
     		}
     		else if (posMotion == NULL)
     		{
-    			posMotion->x = 1;
-    			posMotion->y = 1;
+    		    posMotionX = 1;
+    		}
+
+    		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
+    		{
+    			posMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
+    			oldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
+    		}
+    		else if (posMotion == NULL)
+    		{
+    			posMotionY = 1;
     		}
 
             this->wm->calibData.length = this->wm->calibData.length
-                    + sqrt((posMotion->x - oldPosMotion->x) * (posMotion->x - oldPosMotion->x)
-                            + (posMotion->y - oldPosMotion->y) * (posMotion->y - oldPosMotion->y));
-            std::cout << "posMotionX: "<< posMotion->x - oldPosMotion->x<< std::endl;
-            std::cout << "posMotionY: "<< posMotion->y - oldPosMotion->y<< std::endl;
+                    + sqrt((posMotionX - oldPosMotionX) * (posMotionX - oldPosMotionX)
+                            + (posMotionY - oldPosMotionY) * (posMotionY - oldPosMotionY));
+            std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
+            std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/

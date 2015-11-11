@@ -15,6 +15,8 @@ namespace alica
         virtual void run(void* msg);
         double posMotionY;
         double posMotionX;
+        double oldPosMotionX;
+        double oldPosMotionY;
         shared_ptr<geometry::CNPosition> posMotion;
         shared_ptr<geometry::CNPosition> oldPosMotion;
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
