@@ -19,6 +19,8 @@ using namespace BlackLib;
 
 		// PWM Frequenz setzen pwm->setPeriodTime(5000, microsecond);
 		pwm->setPeriodTime(10000, nanosecond);
+		pwm->setSpaceRatioTime(0, nanosecond);
+		pwm->setRunState(run);
 
 		dir->setValue(low);
 		reset->setValue(high);
@@ -47,26 +49,16 @@ using namespace BlackLib;
 	}
 
 	void BallHandle::setTimeout() {
-		if (enabled) {
-			this->setBallHandling(0);		// Beim naechsten Aufruf von controlBallHandling() wird das BallHandling deaktiviert
-		}
+		// Beim naechsten Aufruf von controlBallHandling() wird das BallHandling deaktiviert
+		this->setBallHandling(0);
 	}
 
 	void BallHandle::controlBallHandling() {
 		if (speed_desired == 0) {
-			enabled = false;
-
-			if (pwm->getRunValue() == "1") {						// 300us
-				pwm->setRunState(stop);								// ?us
-			}
-		} else if ((speed_desired != 0) && (!enabled)) {
-			enabled = true;
-			pwm->setRunState(run);
-		}
-
-		if (enabled) {	// Gesamt ca. 900us oder 1500us
-			// BallHandling active
-
+			speed = 0;
+			pwm->setSpaceRatioTime(speed, nanosecond);		// 900us
+		} else {
+			// Gesamt ca. 900us oder 1500us
 			if (direction != direction_desired) {
 				// Direction Change 1500us
 				direction = direction_desired;
@@ -80,10 +72,7 @@ using namespace BlackLib;
 				speed = speed_desired;
 				pwm->setSpaceRatioTime(speed, nanosecond);		// 900us
 			}
-
 		}
-
-
 
 		/* ALTE FUNKTION
 		if (speed_desired == 0) {
