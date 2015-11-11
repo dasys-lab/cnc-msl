@@ -147,7 +147,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		msg.usePose = false;
 
 		// TODO: Taster Entprellfunktion
-		// TODO: Senden wenn nicht gedrückt
+		// TODO: Senden wenn nicht gedrueckt
 		if (bundle == 1) {
 			bsPub->publish(msg);
 			brtPub->publish(msg_empty);
@@ -253,18 +253,15 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, &mbcPub);
-
 		// Thread Notify
-		for (int i=0; i<6; i++) {
+		for (int i=0; i<7; i++) {
 			threw[i].notify = true;
 			threw[i].cv.notify_all();
 		}
 
 		// auf beenden aller Threads warten
 		unique_lock<mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
+		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[6].notify); }); // protection against spurious wake-ups
 
 		// MotionBurst
 
