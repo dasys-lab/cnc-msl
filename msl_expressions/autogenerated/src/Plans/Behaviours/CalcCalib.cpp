@@ -22,55 +22,55 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
 
-    	if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= posMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= posMotionY)
+    	if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= calibPosMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= calibPosMotionY)
     	{
     		if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
     		{
-    			posVision = this->wm->rawSensorData.getOwnPositionVision(0);
-    			oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
+    			calibPosVision = this->wm->rawSensorData.getOwnPositionVision(0);
+    			calibOldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
     		}
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
     		{
-    			posMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
-    			posMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-    			oldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
-    			oldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
+    			calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
+    			calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
+    			calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
+    			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
     		}
     		else
     		{
-    			if (posMotion == NULL)
+    			if (calibPosMotion == NULL)
     			{
-    			    	posMotionX = 1;
+    				calibPosMotionX = 1;
     			}
-    			posMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-    			oldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
+    			calibPosMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+    			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
 
     		}
 
 
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
     		{
-    			posMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
-    			oldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
+    			calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
+    			calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
     		}
     		else
     		{
-    		    if (posMotion == NULL)
+    		    if (calibPosMotion == NULL)
     		    {
-    		        posMotionY = 1;
+    		    	calibPosMotionY = 1;
     		    }
-    		    posMotionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-    		    oldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
+    		    calibPosMotionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+    		    calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
 
     		}
 
             this->wm->calibData.length = this->wm->calibData.length
-                    + sqrt((posMotionX - oldPosMotionX) * (posMotionX - oldPosMotionX)
-                            + (posMotionY - oldPosMotionY) * (posMotionY - oldPosMotionY));
-            std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
-            std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
-           // std::cout << "posVisionX: "<< posVision->x - oldPosVision->x<<endl;
-            //std::cout << "posVisionY: "<< posVision->y - oldPosVision->y<<endl;
+                    + sqrt((calibPosMotionX - calibOldPosMotionX) * (calibPosMotionX - calibOldPosMotionX)
+                            + (calibPosMotionY - calibOldPosMotionY) * (calibPosMotionY - calibOldPosMotionY));
+            std::cout << "posMotionX: "<< calibPosMotionX - calibOldPosMotionX<< std::endl;
+            std::cout << "posMotionY: "<< calibPosMotionY - calibOldPosMotionY<< std::endl;
+           // std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
+            //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/
