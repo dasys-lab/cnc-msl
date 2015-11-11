@@ -12,6 +12,6 @@ sudo su - $USER << EOF
 	export DOMAIN_FOLDER="$WORKSPACE/src/cnc-msl"
 	export DOMAIN_CONFIG_FOLDER="$WORKSPACE/src/cnc-msl/etc"
 
-	rosrun msl_udp_proxy msl_udp_proxy
+	rosrun process_manager process_manager -autostart
 EOF
 
