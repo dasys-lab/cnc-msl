@@ -87,9 +87,9 @@ namespace alica
 
             if (this->wm->calibData.length != 0)
             {
-                //this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
-                  //      / this->wm->calibData.length) + 1;
-            	this->wm->calibData.calibCoefficient = 1;
+                this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
+                        / this->wm->calibData.length) + 1;
+            	//this->wm->calibData.calibCoefficient = 1;
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
                 saveToCalibData.open(filename);
