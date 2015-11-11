@@ -527,10 +527,10 @@ namespace msl
 		ret.first.first = nullptr;
 		ret.second.first = nullptr;
 		//iterate over faces
+		bool foundFirst = false;
+		bool foundSecond = false;
 		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
 		{
-			bool foundFirst = false;
-			bool foundSecond = false;
 			//iterate over halfedges
 			VoronoiDiagram::Halfedge_handle begin = fit->halfedge();
 			VoronoiDiagram::Halfedge_handle edge = begin;
@@ -575,7 +575,7 @@ namespace msl
 				}
 				if (foundFirst && foundSecond)
 				{
-					break;
+					return ret;
 				}
 			}
 		}
