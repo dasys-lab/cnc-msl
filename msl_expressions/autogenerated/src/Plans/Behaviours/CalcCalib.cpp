@@ -26,8 +26,8 @@ namespace alica
     	{
     		if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
     		{
-    			auto posVision = this->wm->rawSensorData.getOwnPositionVision(0);
-    			auto oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
+    			posVision = this->wm->rawSensorData.getOwnPositionVision(0);
+    			oldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
     		}
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
     		{
@@ -54,8 +54,10 @@ namespace alica
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((posMotionX - oldPosMotionX) * (posMotionX - oldPosMotionX)
                             + (posMotionY - oldPosMotionY) * (posMotionY - oldPosMotionY));
-            std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
-            std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
+           // std::cout << "posMotionX: "<< posMotionX - oldPosMotionX<< std::endl;
+           // std::cout << "posMotionY: "<< posMotionY - oldPosMotionY<< std::endl;
+            std::cout << "posVisionX: "<< posVision->x - oldPosVision->x<<endl;
+            std::cout << "posVisionY: "<< posVision->y - oldPosVision->y<<endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/

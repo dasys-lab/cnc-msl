@@ -19,6 +19,8 @@ namespace alica
         double oldPosMotionY;
         shared_ptr<geometry::CNPosition> posMotion;
         shared_ptr<geometry::CNPosition> oldPosMotion;
+        shared_ptr<geometry::CNPosition> posVision;
+        shared_ptr<geometry::CNPosition> oldPosVision;
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
         /*PROTECTED REGION END*/
     protected:
