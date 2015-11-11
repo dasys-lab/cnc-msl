@@ -15,8 +15,8 @@ namespace alica
         virtual void run(void* msg);
         double calibPosMotionY;
         double calibPosMotionX;
-        double calibOldPosMotionX;
-        double calibOldPosMotionY;
+        double calibOldPosMotionX = 0;
+        double calibOldPosMotionY = 0;
         shared_ptr<geometry::CNPosition> calibPosMotion;
         shared_ptr<geometry::CNPosition> calibOldPosMotion;
         shared_ptr<geometry::CNPosition> calibPosVision;
