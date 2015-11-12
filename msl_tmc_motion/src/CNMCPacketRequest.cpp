@@ -16,16 +16,16 @@ namespace msl_driver
 
 	CNMCPacket::CNMCPacket()
 	{
-		this->data = std::make_shared<std::vector<byte> >();
+		this->data = std::make_shared<std::vector<uint8_t> >();
 		this->values = std::make_shared<std::vector<VAROBJECT> >();
 	}
 
 	CNMCPacket::~CNMCPacket()
 	{
 	}
-	std::shared_ptr<std::vector<byte>> CNMCPacket::getBytes()
+	std::shared_ptr<std::vector<uint8_t>> CNMCPacket::getBytes()
 	{
-		std::shared_ptr<std::vector<byte>> dataList = std::make_shared<std::vector<byte>>();
+		std::shared_ptr<std::vector<uint8_t>> dataList = std::make_shared<std::vector<uint8_t>>();
 
 		dataList->push_back(START_HEADER);
 		needQuotes(this->cmdgrp, dataList);
@@ -33,7 +33,7 @@ namespace msl_driver
 
 		for(int i = 0; i < this->data->size(); i++)
 		{
-			byte b = this->data->at(i);
+			uint8_t b = this->data->at(i);
 			dataList->push_back(b);
 		}
 		dataList->push_back(END_HEADER);
@@ -68,7 +68,7 @@ namespace msl_driver
 		o.objectType = VAROBJECT::SIGNEDCHAR;
 		return o;
 	}
-	void CNMCPacket::needQuotes(byte b, std::shared_ptr<std::vector<byte>> list)
+	void CNMCPacket::needQuotes(uint8_t b, std::shared_ptr<std::vector<uint8_t>> list)
 	{
 
 		if(b == START_HEADER || b == END_HEADER || b == QUOTE)
@@ -95,7 +95,7 @@ namespace msl_driver
 		return retVal;
 	}
 
-	static CNMCPacket getInstance(byte raw[], int size)
+	static CNMCPacket getInstance(uint8_t raw[], int size)
 	{
 		if(size < 3)
 		{
@@ -132,7 +132,7 @@ namespace msl_driver
 		}
 	}
 	//TODO --> useless wahrscheinlich?
-	void CNMCPacket::add(byte b)
+	void CNMCPacket::add(uint8_t b)
 	{
 		if((b == QUOTE) || (b == START_HEADER) || (b == END_HEADER))
 		{
@@ -140,48 +140,48 @@ namespace msl_driver
 		}
 		this->data->push_back(b);
 	}
-	//TODO --> bytes[1] --> check ob es überhaupt gesetzt wurde!
-	void CNMCPacket::add(VAROBJECT bytes)
+	//TODO --> uint8_ts[1] --> check ob es überhaupt gesetzt wurde!
+	void CNMCPacket::add(VAROBJECT uint8_ts)
 	{
-		switch (bytes.objectType)
+		switch (uint8_ts.objectType)
 		{
 			case VAROBJECT::INT:
 			{
-				if((bytes.value.dblValue == QUOTE) || (bytes.value.dblValue == START_HEADER) || (bytes.value.dblValue  == END_HEADER))
+				if((uint8_ts.value.dblValue == QUOTE) || (uint8_ts.value.dblValue == START_HEADER) || (uint8_ts.value.dblValue  == END_HEADER))
 				{
 					this->data->push_back(QUOTE);
 				}
-				this->data->push_back((byte)bytes.value.dblValue);
+				this->data->push_back((uint8_t)uint8_ts.value.dblValue);
 			}
 				break;
 			case VAROBJECT::SHORT:
 			{
-				if((bytes.value.shValue == QUOTE) || (bytes.value.shValue == START_HEADER) || (bytes.value.shValue  == END_HEADER))
+				if((uint8_ts.value.shValue == QUOTE) || (uint8_ts.value.shValue == START_HEADER) || (uint8_ts.value.shValue  == END_HEADER))
 				{
 					this->data->push_back(QUOTE);
 				}
-				this->data->push_back((byte)bytes.value.shValue);
+				this->data->push_back((uint8_t)uint8_ts.value.shValue);
 			}
 				break;
 			case VAROBJECT::SIGNEDCHAR:
 			{
-				if((bytes.value.sByte == QUOTE) || (bytes.value.sByte == START_HEADER) || (bytes.value.sByte  == END_HEADER))
+				if((uint8_ts.value.sByte == QUOTE) || (uint8_ts.value.sByte == START_HEADER) || (uint8_ts.value.sByte  == END_HEADER))
 				{
 					this->data->push_back(QUOTE);
 				}
-				this->data->push_back((byte)bytes.value.sByte);
+				this->data->push_back((uint8_t)uint8_ts.value.sByte);
 			}
 				break;
 			case VAROBJECT::UNSIGNEDCHAR:
 			{
 				int a = 0;
-				for(unsigned char uc : bytes.value.ucValue)
+				for(unsigned char uc : uint8_ts.value.ucValue)
 				{
 					if((uc == QUOTE) || (uc == START_HEADER) || (uc == END_HEADER))
 					{
 						this->data->push_back(QUOTE);
 					}
-					this->data->push_back(bytes.value.ucValue[a]);
+					this->data->push_back(uint8_ts.value.ucValue[a]);
 					a++;
 				}
 			}
@@ -192,7 +192,7 @@ namespace msl_driver
 	}
 
 	//**** CONVERT METHODS ****//
-	CNMCPacket::VAROBJECT CNMCPacket::convertByteToShort(byte data[], int start)
+	CNMCPacket::VAROBJECT CNMCPacket::convertByteToShort(uint8_t data[], int start)
 	{
 		short sh = (short)(((unsigned short)(data[start]) << 8 ) + (unsigned char)data[start+1]);
 
@@ -211,7 +211,7 @@ namespace msl_driver
 		o.objectType = VAROBJECT::UNSIGNEDCHAR;
 		return o;
 	}
-	CNMCPacket::VAROBJECT CNMCPacket::convertByteToInt(byte data[], int start)
+	CNMCPacket::VAROBJECT CNMCPacket::convertByteToInt(uint8_t data[], int start)
 	{
 		int i = 0;
 		i = (i << 8) + data[start+3];
@@ -228,7 +228,7 @@ namespace msl_driver
 
 	CNMCPacket::VAROBJECT CNMCPacket::convertIntToByte(int data)
 	{
-		byte* arrayOfByte =  new byte(4);
+		uint8_t* arrayOfByte =  new uint8_t(4);
 
 
 		VAROBJECT o = VAROBJECT();
@@ -247,12 +247,12 @@ namespace msl_driver
 	///############## CNMCPacketConfigure ##############///
 	CNMCPacketConfigure::CNMCPacketConfigure()
 	{
-		this->cmdgrp = (byte)CommandGroup::Configure;
+		this->cmdgrp = (uint8_t)CommandGroup::Configure;
 	}
 	CNMCPacketConfigure::~CNMCPacketConfigure()
 	{
 	}
-	CNMCPacketConfigure::CNMCPacketConfigure(byte raw[])
+	CNMCPacketConfigure::CNMCPacketConfigure(uint8_t raw[])
 	{
 		if((CNMCPacket::CommandGroup)raw[CNMCPacket::CMD_GROUP_POS] != CommandGroup::Configure)
 		{
@@ -263,7 +263,7 @@ namespace msl_driver
 
 		this->values->clear();
 
-		if(((this->cmd & 0xfe) == 0x50) || (this->cmd == (byte)ConfigureCmd::IOPort))
+		if(((this->cmd & 0xfe) == 0x50) || (this->cmd == (uint8_t)ConfigureCmd::IOPort))
 		{
 			VAROBJECT o = VAROBJECT();
 			o.value.shValue = (short) 0 ;
@@ -281,9 +281,9 @@ namespace msl_driver
 
 		this->values->push_back(convertByteToShort(raw, DATA_POS+1));
 	}
-	void CNMCPacketConfigure::setData(ConfigureCmd cmd, byte val)
+	void CNMCPacketConfigure::setData(ConfigureCmd cmd, uint8_t val)
 	{
-		this->cmd = (byte) cmd;
+		this->cmd = (uint8_t) cmd;
 		this->data->clear();
 		this->values->clear();
 
@@ -297,24 +297,24 @@ namespace msl_driver
 	}
 	void CNMCPacketConfigure::setData(ConfigureCmd cmd, short val)
 	{
-		this->cmd = (byte) cmd;
+		this->cmd = (uint8_t) cmd;
 		this->data->clear();
 		this->values->clear();
 		add(convertShortToByte(val));
 
 		VAROBJECT o = VAROBJECT();
-		o.value.shValue = (short) val;
+		o.value.shValue = val;
 		o.objectType = VAROBJECT::SHORT;
 		this->values->push_back(o);
 	}
-	void CNMCPacketConfigure::setData(ConfigureCmd cmd, std::shared_ptr<std::vector<byte>> vals)
+	void CNMCPacketConfigure::setData(ConfigureCmd cmd, std::shared_ptr<std::vector<uint8_t>> vals)
 	{
-		this->cmd = (byte) cmd;
+		this->cmd = (uint8_t) cmd;
 		this->data->clear();
 		this->values->clear();
 		for(int i = 0; i < vals->size(); i++)
 		{
-			byte b = vals->at(i);
+			uint8_t b = vals->at(i);
 			VAROBJECT o = VAROBJECT();
 			o.value.ucValue[0] = (unsigned char) b;
 			o.objectType = VAROBJECT::UNSIGNEDCHAR;
@@ -323,14 +323,14 @@ namespace msl_driver
 
 		}
 	}
-	void CNMCPacketConfigure::setData(ConfigureCmd cmd, std::shared_ptr<std::vector<sbyte>> vals)
+	void CNMCPacketConfigure::setData(ConfigureCmd cmd, std::shared_ptr<std::vector<uint8_t>> vals)
 	{
-		this->cmd = (byte) cmd;
+		this->cmd = (uint8_t) cmd;
 		this->data->clear();
 		this->values->clear();
 		for(int i = 0; i < vals->size(); i++)
 		{
-			byte b = vals->at(i);
+			uint8_t b = vals->at(i);
 			VAROBJECT o = VAROBJECT();
 			o.value.ucValue[0] = (unsigned char) b;
 			o.objectType = VAROBJECT::UNSIGNEDCHAR;
@@ -342,12 +342,12 @@ namespace msl_driver
 	///############## CNMCPacketControl ##############///
 	CNMCPacketControl::CNMCPacketControl()
 	{
-		this->cmdgrp = (byte)CommandGroup::Control;
+		this->cmdgrp = (uint8_t)CommandGroup::Control;
 	}
 	CNMCPacketControl::~CNMCPacketControl()
 	{
 	}
-	CNMCPacketControl::CNMCPacketControl(byte raw[])
+	CNMCPacketControl::CNMCPacketControl(uint8_t raw[])
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::Control) {
 			std::cerr << "No control packet!" << std::endl;
@@ -356,7 +356,7 @@ namespace msl_driver
 		this->cmdgrp = raw[CMD_GROUP_POS];
 		this->cmd = raw[CMD_POS];
 
-		if (this->cmd != (byte)ControlCmd::SetAllRPM) {
+		if (this->cmd != (uint8_t)ControlCmd::SetAllRPM) {
 			std::cerr << "Unsuppported reply (Control): " << std::endl;
 		}
 
@@ -378,7 +378,7 @@ namespace msl_driver
 	}
 	void CNMCPacketControl::setData(ControlCmd cmd, short rpm1, short rpm2, short rpm3)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 
 		this->data->clear();
 
@@ -406,12 +406,12 @@ namespace msl_driver
 	///############## CNMCPacketRequest ##############///
 	CNMCPacketRequest::CNMCPacketRequest()
 	{
-		this->cmdgrp = (byte)CommandGroup::Request;
+		this->cmdgrp = (uint8_t)CommandGroup::Request;
 	}
 	CNMCPacketRequest::~CNMCPacketRequest()
 	{
 	}
-	CNMCPacketRequest::CNMCPacketRequest(byte raw[])
+	CNMCPacketRequest::CNMCPacketRequest(uint8_t raw[])
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::Request)
 		{
@@ -478,12 +478,12 @@ namespace msl_driver
 	}
 	void CNMCPacketRequest::setData(RequestCmd cmd)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 		this->data->clear();
 	}
 	void CNMCPacketRequest::setData(RequestCmd cmd, short val)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 
 		this->data->clear();
 		add(convertShortToByte(val));
@@ -499,7 +499,7 @@ namespace msl_driver
 	///############## CNMCPacketCtrlConfigureResponse ##############///
 	CNMCPacketCtrlConfigureResponse::CNMCPacketCtrlConfigureResponse()
 	{
-		this->cmdgrp = (byte)CommandGroup::CtrlConfigureResponse;
+		this->cmdgrp = (uint8_t)CommandGroup::CtrlConfigureResponse;
 	}
 	CNMCPacketCtrlConfigureResponse::~CNMCPacketCtrlConfigureResponse()
 	{
@@ -508,7 +508,7 @@ namespace msl_driver
 			VAROBJECT giveVarobject(short uc ,VAROBJECT::o_t type);
 			VAROBJECT giveVarobject(signed char uc ,VAROBJECT::o_t type);
 	}
-	CNMCPacketCtrlConfigureResponse::CNMCPacketCtrlConfigureResponse(byte raw[])
+	CNMCPacketCtrlConfigureResponse::CNMCPacketCtrlConfigureResponse(uint8_t raw[])
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::CtrlConfigureResponse)
 		{
@@ -561,13 +561,13 @@ namespace msl_driver
 	///############## CNMCPacketCtrlConfigure ##############///
 	CNMCPacketCtrlConfigure::CNMCPacketCtrlConfigure()
 	{
-		this->cmdgrp = (byte)CommandGroup::CtrlConfigure;
+		this->cmdgrp = (uint8_t)CommandGroup::CtrlConfigure;
 	}
 	CNMCPacketCtrlConfigure::~CNMCPacketCtrlConfigure()
 	{
 
 	}
-	CNMCPacketCtrlConfigure::CNMCPacketCtrlConfigure(byte raw[])
+	CNMCPacketCtrlConfigure::CNMCPacketCtrlConfigure(uint8_t raw[])
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::CtrlConfigure)
 		{
@@ -588,12 +588,12 @@ namespace msl_driver
 	}
 	void CNMCPacketCtrlConfigure::setData(CtrlConfigureCmd cmd)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 		this->data->clear();
 	}
 	void CNMCPacketCtrlConfigure::setData(CtrlConfigureCmd cmd, short val)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 		this->data->clear();
 		add(convertShortToByte(val));
 
@@ -605,7 +605,7 @@ namespace msl_driver
 	}
 	void CNMCPacketCtrlConfigure::setData(CtrlConfigureCmd cmdl, int val)
 	{
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 		this->data->clear();
 		add(convertIntToByte(val));
 
@@ -619,7 +619,7 @@ namespace msl_driver
 	void CNMCPacketCtrlConfigure::setData(CtrlConfigureCmd cmd, std::shared_ptr<std::vector<short>> vals)
 	{
 
-		this->cmd = (byte)cmd;
+		this->cmd = (uint8_t)cmd;
 
 		this->data->clear();
 		for(int i = 0; i < vals->size(); i++)
@@ -635,12 +635,12 @@ namespace msl_driver
 
 	CNMCPacketError::CNMCPacketError()
 	{
-		this->cmdgrp = (byte)CommandGroup::ErrorResponse;
+		this->cmdgrp = (uint8_t)CommandGroup::ErrorResponse;
 	}
 	CNMCPacketError::~CNMCPacketError()
 	{
 	}
-	CNMCPacketError::CNMCPacketError(byte raw[])
+	CNMCPacketError::CNMCPacketError(uint8_t raw[])
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::ErrorResponse)
 		{
@@ -681,13 +681,13 @@ namespace msl_driver
 	///############## CNMCPacketRequestResponse ##############///
 	CNMCPacketRequestResponse::CNMCPacketRequestResponse()
 	{
-		this->cmdgrp = (byte) CommandGroup::RequestResponse;
+		this->cmdgrp = (uint8_t) CommandGroup::RequestResponse;
 	}
 	CNMCPacketRequestResponse::~CNMCPacketRequestResponse()
 	{
 
 	}
-	CNMCPacketRequestResponse::CNMCPacketRequestResponse(byte raw[], int size)
+	CNMCPacketRequestResponse::CNMCPacketRequestResponse(uint8_t raw[], int size)
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::RequestResponse)
 		{
@@ -838,12 +838,12 @@ namespace msl_driver
 	///############## CNMCPacketConfigureResponse ##############///
 	CNMCPacketConfigureResponse::CNMCPacketConfigureResponse()
 	{
-		this->cmdgrp = (byte) CommandGroup::ConfigureResponse;
+		this->cmdgrp = (uint8_t) CommandGroup::ConfigureResponse;
 	}
 	CNMCPacketConfigureResponse::~CNMCPacketConfigureResponse()
 	{
 	}
-	CNMCPacketConfigureResponse::CNMCPacketConfigureResponse(byte raw[], int size)
+	CNMCPacketConfigureResponse::CNMCPacketConfigureResponse(uint8_t raw[], int size)
 	{
 		if ((CommandGroup)raw[CMD_GROUP_POS] != CommandGroup::ConfigureResponse)
 		{

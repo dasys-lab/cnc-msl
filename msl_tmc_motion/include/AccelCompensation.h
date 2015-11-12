@@ -2,7 +2,7 @@
  * AccelCompensation.h
  *
  *  Created on: Aug 24, 2015
- *      Author: cnpaul
+ *      Author: Paul Panin
  */
 
 #ifndef CNC_MSLDRIVER_MSL_TMC_MOTION_SRC_ACCELCOMPENSATION_H_
@@ -12,6 +12,7 @@
 #include <cmath>
 #include <math.h>
 #include <memory>
+#include <chrono>
 
 namespace msl_driver
 {
@@ -21,9 +22,9 @@ namespace msl_driver
 	public:
 		AccelCompensation(double maxAccel, double maxRadAccel);
 		virtual ~AccelCompensation();
-		msl_msgs::MotionInfo* compensate(msl_msgs::MotionInfo* motion, msl_msgs::MotionInfo* motionOld, ulong timestamp);
+		msl_msgs::MotionInfo* compensate(msl_msgs::MotionInfo* motion, msl_msgs::MotionInfo* motionOld);
 	protected:
-		ulong lastTimestamp = 0;
+		std::chrono::steady_clock::time_point lastTimestamp = 0;
 		double maxAccel = 0.0;
 		double maxRadAccel = 0.0;
 	};

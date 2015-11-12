@@ -16,7 +16,7 @@
 
 namespace msl_driver
 {
-	typedef unsigned char byte;
+
 	typedef signed char sbyte;
 
 	class CNMCPacket
@@ -37,7 +37,7 @@ namespace msl_driver
 		    } value;
 		};
 
-		enum CommandGroup : byte
+		enum CommandGroup : uint8_t
 		{
 			Configure			= 0x50,
 			ConfigureResponse		= 0x51,
@@ -48,7 +48,7 @@ namespace msl_driver
 			CtrlConfigureResponse		= 0x57,
 			ErrorResponse			= 0x59
 		};
-		enum ConfigureCmd : byte
+		enum ConfigureCmd : uint8_t
 		{
 			Mode			=	0x10,
 			CycleTime		=	0x11,
@@ -80,7 +80,7 @@ namespace msl_driver
 			ToggleOdoLog		=	0x72,
 			SetLogMode		=	0x73  //sbyte type, sbyte pos
 		};
-		enum ControlCmd : byte
+		enum ControlCmd : uint8_t
 		{
 			SetAllPWM			= 0x10, // X (int)pwm1, (int)pwm2, (int)pwm3, (byte)sreq
 			SetPWM				= 0x11, // X (byte)motor, (int)pwm, (byte)sreq
@@ -91,7 +91,7 @@ namespace msl_driver
 			ResetGently			= 0x41
 		};
 
-		enum RequestCmd : byte
+		enum RequestCmd : uint8_t
 		{
 			MotorRPM			= 0x10, // (s16bit)rpm1, (s16bit)rpm2, (s16bit)rpm3
 			MotorPWM			= 0x11, // (s16bit)pwm1, (s16bit)pwm2, (s16bit)pwm3]
@@ -115,7 +115,7 @@ namespace msl_driver
 
 		};
 
-		enum CtrlConfigureCmd : byte
+		enum CtrlConfigureCmd : uint8_t
 		{
 			PIDKp				= 0x10, //(int)value
 			PIDKi				= 0x11, //(int)value
@@ -148,7 +148,7 @@ namespace msl_driver
 			MaxRotForce			= 0x72
 		};
 
-		enum ErrorCmd:byte
+		enum ErrorCmd:uint8_t
 		{
 			UnknownError			= 0x01, // "Err"
 			UnknownCmd			= 0x02,
@@ -156,19 +156,19 @@ namespace msl_driver
 			OutOfRange			= 0x11, // "Out of Range"
 			CycleOverTime			= 0x20
 		};
-		const byte QUOTE = 0x84;
-		const byte START_HEADER = 0x81;
-		const byte END_HEADER = 0x82;
+		const uint8_t QUOTE = 0x84;
+		const uint8_t START_HEADER = 0x81;
+		const uint8_t END_HEADER = 0x82;
 //		public const byte MAX_COUNTER = 0x80;
 
 		static const int CMD_GROUP_POS;
 		static const int CMD_POS;
 		static const int DATA_POS;
 
-		std::shared_ptr<std::vector<byte>> getBytes();
-		VAROBJECT convertByteToShort(byte data[], int start);
+		std::shared_ptr<std::vector<uint8_t>> getBytes();
+		VAROBJECT convertByteToShort(uint8_t data[], int start);
 		VAROBJECT convertShortToByte(short data);
-		VAROBJECT convertByteToInt(byte data[], int start);
+		VAROBJECT convertByteToInt(uint8_t data[], int start);
 		VAROBJECT convertIntToByte(int data);
 
 		bool isExpectedResponse(CNMCPacket response);
@@ -177,19 +177,19 @@ namespace msl_driver
 		VAROBJECT giveVarobject(short uc ,VAROBJECT::o_t type);
 		VAROBJECT giveVarobject(signed char uc ,VAROBJECT::o_t type);
 
-		void add(byte b);
+		void add(uint8_t b);
 		void add(VAROBJECT bytes);
 
-		static CNMCPacket getInstance(byte raw[], int size);
-		std::shared_ptr<std::vector<byte> > data;
+		static CNMCPacket getInstance(uint8_t raw[], int size);
+		std::shared_ptr<std::vector<uint8_t> > data;
 		std::shared_ptr<std::vector<VAROBJECT> > values;
-		byte cmd = 0x00;
+		uint8_t cmd = 0x00;
 
 	protected:
-		byte cmdgrp = 0x00;
-		byte crc = 0x00;
+		uint8_t cmdgrp = 0x00;
+		uint8_t crc = 0x00;
 
-		void needQuotes(byte b, std::shared_ptr<std::vector<byte>> list);
+		void needQuotes(uint8_t b, std::shared_ptr<std::vector<uint8_t>> list);
 
 	};
 	class CNMCPacketConfigure : public CNMCPacket
@@ -197,10 +197,10 @@ namespace msl_driver
 		public:
 			CNMCPacketConfigure();
 			virtual ~CNMCPacketConfigure();
-			CNMCPacketConfigure(byte raw[]);
-			void setData(ConfigureCmd cmd, byte val);
+			CNMCPacketConfigure(uint8_t raw[]);
+			void setData(ConfigureCmd cmd, uint8_t val);
 			void setData(ConfigureCmd cmd, short val);
-			void setData(ConfigureCmd cmd, std::shared_ptr<std::vector<byte>> vals);
+			void setData(ConfigureCmd cmd, std::shared_ptr<std::vector<uint8_t>> vals);
 			void setData(ConfigureCmd cmd, std::shared_ptr<std::vector<sbyte>> vals);
 
 	};
@@ -209,7 +209,7 @@ namespace msl_driver
 		public:
 			CNMCPacketControl();
 			virtual ~CNMCPacketControl();
-			CNMCPacketControl(byte raw[]);
+			CNMCPacketControl(uint8_t raw[]);
 			void setData(ControlCmd cmd, short rpm1, short rpm2, short rpm3);
 	};
 
@@ -218,7 +218,7 @@ namespace msl_driver
 		public:
 			CNMCPacketRequest();
 			virtual ~CNMCPacketRequest();
-			CNMCPacketRequest(byte raw[]);
+			CNMCPacketRequest(uint8_t raw[]);
 			void setData(RequestCmd cmd);
 			void setData(RequestCmd cmd, short val);
 	};
@@ -227,14 +227,14 @@ namespace msl_driver
 		public:
 			CNMCPacketCtrlConfigureResponse();
 			virtual ~CNMCPacketCtrlConfigureResponse();
-			CNMCPacketCtrlConfigureResponse(byte raw[]);
+			CNMCPacketCtrlConfigureResponse(uint8_t raw[]);
 	};
 	class CNMCPacketCtrlConfigure : public CNMCPacket
 	{
 		public:
 			CNMCPacketCtrlConfigure();
 			virtual ~CNMCPacketCtrlConfigure();
-			CNMCPacketCtrlConfigure(byte raw[]);
+			CNMCPacketCtrlConfigure(uint8_t raw[]);
 			void setData(CtrlConfigureCmd cmd);
 			void setData(CtrlConfigureCmd cmd, short val);
 			void setData(CtrlConfigureCmd cmdl, int val);
@@ -246,7 +246,7 @@ namespace msl_driver
 		public:
 			CNMCPacketError();
 			virtual ~CNMCPacketError();
-			CNMCPacketError(byte raw[]);
+			CNMCPacketError(uint8_t raw[]);
 			std::string toString();
 
 	};
@@ -255,14 +255,14 @@ namespace msl_driver
 		public:
 			CNMCPacketRequestResponse();
 			virtual ~CNMCPacketRequestResponse();
-			CNMCPacketRequestResponse(byte raw[], int size);
+			CNMCPacketRequestResponse(uint8_t raw[], int size);
 	};
 	class CNMCPacketConfigureResponse : public CNMCPacket
 	{
 		public:
 			CNMCPacketConfigureResponse();
 			virtual ~CNMCPacketConfigureResponse();
-			CNMCPacketConfigureResponse(byte raw[], int size);
+			CNMCPacketConfigureResponse(uint8_t raw[], int size);
 	};
 } /* namespace msl_driver */
 

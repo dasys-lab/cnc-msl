@@ -13,18 +13,24 @@
 #include <ros/ros.h>
 #include <msl_actuator_msgs/RawOdometryInfo.h>
 #include "msl_actuator_msgs/MotionControl.h"
+#include "msl_actuator_msgs/MotionStatInfo.h"
 #include "msl_msgs/MotionInfo.h"
 #include "MotionData.h"
 #include <chrono>
-#include <math.h>
+#include <cmath>
 #include "AccelCompensation.h"
 #include "CircleTrace.h"
 #include <CNMC.h>
 #include <mutex>
 
+// serial port stuff
+#include <termios.h>
+#include <fcntl.h>
+
 using namespace std;
 
-namespace std{
+namespace std
+{
 	class thread;
 }
 
@@ -38,20 +44,13 @@ namespace msl_driver
 		virtual ~Motion();
 
 		void initCommunication(int argc, char** argv);
+		void initialize();
+		void open();
 		void start();
-		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);
-		bool isRunning();
+		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);bool isRunning();
 
 		static void pmSigintHandler(int sig);
 		static void pmSigTermHandler(int sig);
-		static bool running;
-
-	private:
-		ros::NodeHandle* rosNode;
-		ros::AsyncSpinner* spinner;
-		ros::Subscriber handleMotionControlSub;
-		ros::Publisher rawOdometryInfoPub;
-		ros::Publisher motionStatInfoPub;
 
 	protected:
 		MotionSet* motionValue = nullptr;
@@ -59,7 +58,7 @@ namespace msl_driver
 		MotionSet* motionValueOld = nullptr;
 		AccelCompensation* accelComp = nullptr;
 		CircleTrace* traceModel = nullptr;
-		CNMC* driver =  nullptr;
+		CNMC* driver = nullptr;
 		std::mutex motionValueMutex;
 
 		double slipControlFactor = 1.0;
@@ -71,18 +70,52 @@ namespace msl_driver
 		double accelCompMaxAccel = 4000.0;
 		double accelCompMaxAngularAccel = M_PI / 2.0;
 
-		bool accelCompEnabled = false;
-		bool slipControlEnabled = false;
-		bool quit = false;
+		bool accelCompEnabled = false;bool slipControlEnabled = false;bool quit = false;
 
 		int driverAlivePeriod = 250;
 		int driverOpenAttemptPeriod = 1000;
 		int ownId;
 		int odometryDelay = 0;
 
-		void notifyDriverStatusChange(CNMC::StatusCode code, string message);
-		void notifyDriverResultAvailable(DriverData data);
+//		void notifyDriverStatusChange(StatusCode code, string message);
+//		void notifyDriverResultAvailable(DriverData data);
 
+	private:
+		// ROS STUFF
+		ros::NodeHandle* rosNode;
+		ros::AsyncSpinner* spinner;
+		ros::Subscriber handleMotionControlSub;
+		ros::Publisher rawOdometryInfoPub;
+		ros::Publisher motionStatInfoPub;
+
+		bool running;
+		thread runThread;
+
+		// SERIAL PORT STUFF
+		struct termios newtio;
+		int port = 0;
+		string device = "";
+		int initReadTimeout = 0; // Initial read timeout (required to read the garbage provided by the VMC after power on
+		int readTimeout = 0; // General read timeout
+		int readTimeoutCount = 0; // Global counter for read timeouts
+		int writeTimeout = 0; // General write timeout
+		int writeTimeoutCount = 0; // Global counter for write timeouts
+
+		supplementary::SystemConfig* sc;
+		MotorConfig mc;
+
+		long minCycleTime; // Minimum cycle time (us)
+		double radius;
+		double maxVelocity;
+		bool logOdometry;
+
+		void run();
+		void getMotorConfig();
+		void sendMotorConfig();
+
+		void sendData(shared_ptr<CNMCPacket> packet);
+		CNMCPacket* readData();
+		void checkSuccess(shared_ptr<CNMCPacket> cmd);
 	};
 
 } /* namespace msl_driver */

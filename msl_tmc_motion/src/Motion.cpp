@@ -23,9 +23,9 @@ namespace msl_driver
 		this->motionValue = new MotionSet();
 		this->motionResult = new MotionSet();
 
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		this->sc = supplementary::SystemConfig::getInstance();
 
-		this->ownId = sc->getOwnRobotID();
+		this->ownId = this->sc->getOwnRobotID();
 
 		this->odometryDelay = (*sc)["Motion"]->tryGet<int>(100000, "Motion", "OdometryDelay", NULL);
 		// Read slip control parameters
@@ -71,25 +71,6 @@ namespace msl_driver
 		// Read required driver parameters
 		this->driverAlivePeriod = (*sc)["Motion"]->tryGet<int>(250, "Motion", "AlivePeriod", NULL);
 		this->driverOpenAttemptPeriod = (*sc)["Motion"]->tryGet<int>(1000, "Motion", "OpenAttemptPeriod", NULL);
-
-		// Set Driver (according to the impera repository, we always used the CNMC-Driver (not the CNMCTriForce-Driver).
-		// TODO: Implement class CNMC-Driver (inherits from class Driver)
-		driver = new CNMC();
-		this->driver->alivePeriod = this->driverAlivePeriod;
-		this->driver->openAttemptPeriod = this->driverOpenAttemptPeriod;
-
-		// Initialize the driver
-		// TODO: Implement Initialize of Class Driver.
-		if (!this.driver.Initialize())
-		{
-			this->quit = true;
-			delete this->driver;
-			if (ros::ok())
-			{
-				ros::shutdown();
-			}
-		}
-
 	}
 
 	Motion::~Motion()
@@ -99,7 +80,6 @@ namespace msl_driver
 		delete motionValueOld;
 		delete accelComp;
 		delete traceModel;
-		delete driver;
 	}
 
 	/**
@@ -116,12 +96,290 @@ namespace msl_driver
 		spinner->start();
 	}
 
+	void Motion::initialize()
+	{
+		this->minCycleTime = (*sc)["Motion"]->tryGet<long>(1, "Motion", "CNMC", "MinCycleTime", NULL) * 1000;
+
+		this->device = (*sc)["Motion"]->get<string>("Motion", "CNMC", "Device", NULL);
+
+		this->initReadTimeout = (*sc)["Motion"]->tryGet<int>(1500, "Motion", "CNMC", "InitReadTimeout", NULL);
+		this->readTimeout = (*sc)["Motion"]->tryGet<int>(250, "Motion", "CNMC", "ReadTimeout", NULL);
+		this->writeTimeout = (*sc)["Motion"]->tryGet<int>(250, "Motion", "CNMC", "WriteTimeout", NULL);
+
+		this->radius = (*sc)["Motion"]->get<double>("Motion", "CNMC", "RobotRadius", NULL);
+		if (this->radius < 10)
+		{
+			std::cerr << "ROBOT RADIUS TOO LOW!!!" << std::endl;
+		}
+
+		this->maxVelocity = (*sc)["Motion"]->get<double>("Motion", "CNMC", "MaxVelocity", NULL);
+		if (this->maxVelocity < 1)
+		{
+			std::cerr << "MAX VELOCITY TOO LOW!!" << std::endl;
+		}
+
+		this->logOdometry = (*sc)["Motion"]->get<bool>("Motion", "CNMC", "LogOdometry", NULL);
+
+		getMotorConfig();
+	}
+
+	void Motion::open()
+	{
+		//### SERIEAL PORT STUFF
+		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+
+		// Read Configuration into newtio
+		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
+		if (tcgetattr(port, &newtio) != 0)
+		{
+			std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+		}
+		if (cfsetispeed(&newtio, (speed_t)B57600) < 0)
+		{
+			std::cerr << "Error " << errno << " from cfsetispeed: " << strerror(errno) << std::endl;
+		}
+		if (cfsetospeed(&newtio, (speed_t)B57600) < 0)
+		{
+			std::cerr << "Error " << errno << " from cfsetospeed: " << strerror(errno) << std::endl;
+		}
+
+		// Setting other Port Stuff
+		newtio.c_cflag &= ~(CSIZE | PARENB | CSTOPB); // Make 8n1
+		newtio.c_cflag |= CS8;
+
+		newtio.c_cflag &= ~CRTSCTS; // no flow control
+		newtio.c_cc[VMIN] = 1; // read doesn't block
+		newtio.c_cc[VTIME] = this->initReadTimeout; // 0.5 seconds read timeout
+		newtio.c_cflag |= CREAD | CLOCAL; // turn on READ & ignore ctrl lines
+
+		/* Make raw */
+		cfmakeraw(&newtio);
+
+		tcflush(port, TCIFLUSH);
+		if (tcsetattr(port, TCSANOW, &newtio) < 0)
+		{
+			std::cerr << "Error " << errno << " from tcsetattr" << std::endl;
+		}
+
+		//### SEND MOTOR CONFIG
+		this->sendMotorConfig();
+
+		//### READ BATTERY VOLTAGE
+		// TODO
+
+		//### READY
+		//this->controllerIsActive = true;
+	}
+
+	void Motion::sendData(shared_ptr<CNMCPacket> packet)
+	{
+		auto bytes = packet->getBytes();
+		::write(this->port, (*bytes).data(), bytes->size());
+	}
+
+	CNMCPacket* Motion::readData()
+	{
+		uint8_t b;
+		bool finished = false;
+		bool quoted = false;
+
+		vector<uint8_t>* data = new vector<uint8_t>();
+
+		::read(this->port, &b, 1);
+		bool wrote = false;
+		while (b != CNMCPacket::START_HEADER)
+		{
+			cout << (char)b;
+			::read(this->port, &b, 1);
+			wrote = true;
+		}
+		if (wrote)
+			cout << endl;
+
+		if (b != CNMCPacket::START_HEADER)
+		{
+			return nullptr;
+		}
+		else
+		{
+			data->push_back(b);
+		}
+
+		while (!finished)
+		{
+			::read(this->port, &b, 1);
+
+			if (b == CNMCPacket::QUOTE)
+			{
+				if (!quoted)
+					quoted = true;
+				else
+				{
+					data->push_back(b);
+					quoted = false;
+				}
+			}
+			else if (b == CNMCPacket::END_HEADER)
+			{
+				if (!quoted)
+				{ //do not add end header to data
+					finished = true;
+				}
+				else
+				{
+					data->push_back(b);
+					quoted = false;
+				}
+			}
+			else
+			{
+				quoted = false;
+				data->push_back(b);
+			}
+		}
+
+		return CNMCPacket::getInstance(data->data(), data->size());
+	}
+
+	void Motion::checkSuccess(shared_ptr<CNMCPacket> cmd)
+	{
+		CNMCPacket result = readData();
+		if (!cmd->isExpectedResponse(result))
+		{
+			// TODO implement toString of CNMCPacket
+			//cerr << "Error setting CNMC " << cmd.toString() << "\n Response was " << result.toString() << endl;
+		}
+	}
+
+	void Motion::sendMotorConfig()
+	{
+		shared_ptr<CNMCPacketConfigure> configPacket;
+
+		//gear ratio
+		configPacket = make_shared<CNMCPacketConfigure>();
+		shared_ptr<vector<uint8_t>> values = make_shared<vector<uint8_t>>();
+		values->push_back(1);
+		values->push_back((uint8_t)this->mc.gearReduction);
+		configPacket->setData(CNMCPacket::ConfigureCmd::GearRatio, values);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//encoder ticks per (half) rotation
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::EncoderTicksPerRot, (short)this->mc.resolution);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//wheel Radius
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::WheelRadius, (short)(this->mc.wheelRadius * 10));
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//Robot Radius
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::RobotRadius, (short)this->radius);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//maxRPM
+		int result = (int) (this->mc.maxSpeed / this->mc.gearReduction);
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::MaxRPM, (short)result);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		shared_ptr<CNMCPacketCtrlConfigure> ctrlPacket;
+		short tmp;
+
+		//PIDKp
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192*fmin(3,fmax(-3,this->mc.pidKd)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKp, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		// TODO
+	}
+
+	void Motion::getMotorConfig()
+	{
+		this->mc.resolution = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "EncoderResolution", NULL);
+		this->mc.maxSpeed = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "MaxMotorSpeed", NULL);
+		this->mc.maxCurrent = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "MaxCurrent", NULL);
+		this->mc.limitedCurrent = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "LimitedCurrent", NULL);
+		this->mc.wheelRadius = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "WheelRadius", NULL);
+		this->mc.gearReduction = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "GearReduction", NULL);
+
+		//Controller values
+		this->mc.pidKp = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "PIDKp", NULL);
+		this->mc.pidB = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "PIDB", NULL);
+		this->mc.pidKi = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "PIDKi", NULL);
+		this->mc.pidKd = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "PIDKd", NULL);
+		this->mc.pidKdi = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "PIDKdi", NULL);
+		this->mc.linFactor = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller", "LinearFactor",
+		NULL);
+		this->mc.smoothFactor = (*sc)["Motion"]->tryGet<double>(1.0, "Motion", "CNMC", "Controller", "SmoothFactor",
+		NULL);
+
+		this->mc.maxErrorInt = (*sc)["Motion"]->tryGet<short>(1000, "Motion", "CNMC", "Controller", "MaxErrorInt",
+		NULL);
+
+		this->mc.rotationErrorWeight = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller",
+																	"RotationErrorWeight", NULL);
+		this->mc.rotationErrorByVeloWeight = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller",
+																			"RotationErrorByVeloWeight", NULL);
+		this->mc.rotationErrorByAccelWeight = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller",
+																			"RotationErrorByAccelWeight", NULL);
+
+		this->mc.deadBand = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "DeadBand", NULL);
+
+		this->mc.failSafeRPMBound = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafeRPMBound",
+		NULL);
+		this->mc.failSafePWMBound = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafePWMBound",
+		NULL);
+		this->mc.failSafeCycles = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafeCycles", NULL);
+
+		this->mc.maxAcceleration = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxAcceleration",
+		NULL);
+		this->mc.maxDecceleration = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxDecceleration",
+		NULL);
+		this->mc.maxRotForce = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxRotForce", NULL);
+
+		this->mc.rotationAccelBound = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller",
+																		"MaxRotationAccel");
+
+		this->mc.currentErrorBound = (*sc)["Motion"]->tryGet<short>(0, "Motion", "CNMC", "Controller",
+																	"CurrentErrorBound", NULL);
+		if (this->mc.currentErrorBound == 0)
+		{
+			this->mc.controlCurrent = false;
+		}
+		else
+		{
+			this->mc.controlCurrent = true;
+			this->mc.currentKp = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "CurrentKp", NULL);
+			this->mc.currentKi = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "CurrentKi", NULL);
+			this->mc.currentKd = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "CurrentKd", NULL);
+		}
+
+		this->mc.denominator = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors",
+															"ThermalMotorConstantDenominator", NULL);
+		this->mc.numerator = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Motors", "ThermalMotorConstantNumerator",
+		NULL);
+
+		int delta = (int)(((2.0 * M_PI * (double)mc.wheelRadius) / (((double)mc.resolution) * (double)mc.gearReduction))
+				* 1000.0);
+
+		this->mc.vmax = (delta * mc.resolution * 2.0 * mc.maxSpeed) / (60.0 * 1000.0);
+	}
+
 	void Motion::start()
 	{
 		if (!Motion::running)
 		{
 			Motion::running = true;
-			this->mainThread = new thread(&Motion::run, this);
+			this->runThread = thread(run, this);
 		}
 	}
 
@@ -134,96 +392,104 @@ namespace msl_driver
 		return running;
 	}
 
-	void Motion::notifyDriverResultAvailable(DriverData* data)
+	void Motion::run()
 	{
-		MotionResult* mr = dynamic_cast<MotionResult>(data);
-		if (mr == nullptr)
-		{
-			return;
-		}
-
-		this.motionValueOld = mr;
-
-		// Send the raw motion values to the vision
-		msl_actuator_msgs::RawOdometryInfo ro;
-
-		this->traceModel->trace(new double[] {mr.angle, mr.translation, mr.rotation});
-
-		ro.position.x = this->traceModel->x;
-		ro.position.y = this->traceModel->y;
-		ro.position.angle = this->traceModel->angle;
-
-		ro.motion.angle = mr.angle;
-		ro.motion.translation = mr.translation;
-		ro.motion.rotation = mr.rotation;
-
-		ro.timestamp = (ulong)(DateTime.UtcNow.Ticks - this.odometryDelay);
-
-		this->rawOdometryInfoPub.publish(ro);
-
-		// Compute the slip control factor if requested
-		if ((this->slipControlEnabled) && (this->rawMotionValuesOld != nullptr))
+		while (running)
 		{
 
-			// Get the diff angle
-			double adiff = mr.angle - this.rawMotionValuesOld[0];
-			bool slip = false;
-
-			// Normalize it
-			if (adiff < -M_PI)
-			{
-				adiff += 2.0 * M_PI;
-			}
-
-			if (adiff > M_PI)
-			{
-				adiff -= 2.0 * M_PI;
-			}
-
-			if ((Math.Abs(adiff) > this.slipControlDiffAngle)
-					&& (Math.Abs(this.rawMotionValuesOld[1]) > this.slipControlDiffAngleMinSpeed))
-			{
-				slip = true;
-			}
-
-			if ((Math.Abs(rawMotionValuesOld[2]) < this.slipControlOldMaxRot)
-					&& (Math.Abs(mr.rotation) > this.slipControlNewMinRot))
-			{
-				slip = true;
-			}
-
-			// Compute the factor using this equation: factor = 1 / (1 + e^(-2 * factor - x)) where x \in { 0.75, 1.2 }
-			if (slip)
-			{
-				this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(2.0 * this.slipControlFactor - 1.20)));
-
-			}
-			else
-			{
-				this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(3.0 * this.slipControlFactor - 0.75)));
-			}
-
 		}
-
-		// Initialize the rawMotionValuesOld cache
-		if (this.rawMotionValuesOld == null)
-		{
-			this.rawMotionValuesOld = new double[3];
-		}
-
-		// Copy the values
-		this.rawMotionValuesOld[0] = mr.angle;
-		this.rawMotionValuesOld[1] = mr.translation;
-		this.rawMotionValuesOld[2] = mr.rotation;
 	}
 
-	void Motion::notifyDriverStatusChange(CNMC::StatusCode code, string message)
-	{
-		if (this->quit || ros::ok())
-		{
-			return;
-		}
-	}
+	/*void Motion::notifyDriverResultAvailable(DriverData* data)
+	 {
+	 MotionResult* mr = dynamic_cast<MotionResult>(data);
+	 if (mr == nullptr)
+	 {
+	 return;
+	 }
+
+	 this.motionValueOld = mr;
+
+	 // Send the raw motion values to the vision
+	 msl_actuator_msgs::RawOdometryInfo ro;
+
+	 this->traceModel->trace(new double[] {mr.angle, mr.translation, mr.rotation});
+
+	 ro.position.x = this->traceModel->x;
+	 ro.position.y = this->traceModel->y;
+	 ro.position.angle = this->traceModel->angle;
+
+	 ro.motion.angle = mr.angle;
+	 ro.motion.translation = mr.translation;
+	 ro.motion.rotation = mr.rotation;
+
+	 ro.timestamp = (ulong)(DateTime.UtcNow.Ticks - this.odometryDelay);
+
+	 this->rawOdometryInfoPub.publish(ro);
+
+	 // Compute the slip control factor if requested
+	 if ((this->slipControlEnabled) && (this->rawMotionValuesOld != nullptr))
+	 {
+
+	 // Get the diff angle
+	 double adiff = mr.angle - this.rawMotionValuesOld[0];
+	 bool slip = false;
+
+	 // Normalize it
+	 if (adiff < -M_PI)
+	 {
+	 adiff += 2.0 * M_PI;
+	 }
+
+	 if (adiff > M_PI)
+	 {
+	 adiff -= 2.0 * M_PI;
+	 }
+
+	 if ((Math.Abs(adiff) > this.slipControlDiffAngle)
+	 && (Math.Abs(this.rawMotionValuesOld[1]) > this.slipControlDiffAngleMinSpeed))
+	 {
+	 slip = true;
+	 }
+
+	 if ((Math.Abs(rawMotionValuesOld[2]) < this.slipControlOldMaxRot)
+	 && (Math.Abs(mr.rotation) > this.slipControlNewMinRot))
+	 {
+	 slip = true;
+	 }
+
+	 // Compute the factor using this equation: factor = 1 / (1 + e^(-2 * factor - x)) where x \in { 0.75, 1.2 }
+	 if (slip)
+	 {
+	 this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(2.0 * this.slipControlFactor - 1.20)));
+
+	 }
+	 else
+	 {
+	 this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(3.0 * this.slipControlFactor - 0.75)));
+	 }
+
+	 }
+
+	 // Initialize the rawMotionValuesOld cache
+	 if (this.rawMotionValuesOld == null)
+	 {
+	 this.rawMotionValuesOld = new double[3];
+	 }
+
+	 // Copy the values
+	 this.rawMotionValuesOld[0] = mr.angle;
+	 this.rawMotionValuesOld[1] = mr.translation;
+	 this.rawMotionValuesOld[2] = mr.rotation;
+	 }*/
+
+	/*void Motion::notifyDriverStatusChange(CNMC::StatusCode code, string message)
+	 {
+	 if (this->quit || ros::ok())
+	 {
+	 return;
+	 }
+	 }*/
 	void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc)
 	{
 		//	TODO: OnMotionControl
@@ -233,12 +499,11 @@ namespace msl_driver
 			m->angle = this->motionValueOld->angle;
 			m->translation = this->motionValueOld->translation;
 			m->rotation = this->motionValueOld->rotation;
-			mc->motion = *(this->accelComp->compensate(&mc->motion, m, (ulong)clock()));
-
+			mc->motion = *(this->accelComp->compensate(&mc->motion, m));
 		}
 
-		std::lock_guard<std::mutex> lck(this->motionValueMutex);
 		{
+			std::lock_guard<std::mutex> lck(this->motionValueMutex);
 			// Create a new driver command
 			this->motionValue->angle = mc->motion.angle;
 			this->motionValue->translation = mc->motion.translation;
@@ -291,6 +556,8 @@ int main(int argc, char** argv)
 	// has to be set after Motion::initCommunication , in order to override the ROS signal handler
 	signal(SIGINT, msl_driver::Motion::pmSigintHandler);
 	signal(SIGTERM, msl_driver::Motion::pmSigTermHandler);
+	motion->initialize();
+	motion->open();
 	motion->start();
 
 	while (motion->isRunning())
