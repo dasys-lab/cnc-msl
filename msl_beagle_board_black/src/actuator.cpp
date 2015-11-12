@@ -39,14 +39,13 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	shovel.last_ping = last_ping;
-
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
 	if (msg.passing) {
 		shovel.value = ShovelSelect_PASSING;
 	} else {
 		shovel.value = ShovelSelect_NORMAL;
 	}
-	shovel.enabled;
+	shovel.enabled = true;
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
@@ -94,7 +93,6 @@ void contolShovelSelect() {
 			shovel.enabled = false;
 			ShovelSelect.setRunState(stop);
 		}
-
 		if (shovel.enabled) {
 			if (ShovelSelect.getRunValue() == "0") {
 				ShovelSelect.setRunState(run);
