@@ -108,6 +108,16 @@
 <text x="58.928" y="45.72" size="1.27" layer="26" rot="MR90">V+</text>
 <text x="63.5" y="77.216" size="1.27" layer="26" rot="MR90">GND</text>
 <text x="55.88" y="77.978" size="1.27" layer="26" rot="MR90">5V</text>
+<dimension x1="4.826" y1="81.534" x2="155.194" y2="81.534" x3="80.01" y3="97.536" textsize="1.778" layer="1"/>
+<dimension x1="4.826" y1="81.534" x2="4.826" y2="4.826" x3="-8.636" y3="43.18" textsize="1.778" layer="1"/>
+<dimension x1="155.194" y1="81.534" x2="155.194" y2="4.826" x3="168.91" y3="43.18" textsize="1.778" layer="1"/>
+<dimension x1="155.194" y1="81.534" x2="155.194" y2="86.36" x3="168.91" y3="83.947" textsize="1.778" layer="1"/>
+<dimension x1="4.826" y1="81.534" x2="4.826" y2="86.36" x3="-12.7" y3="83.947" textsize="1.778" layer="1"/>
+<dimension x1="4.826" y1="81.534" x2="0" y2="81.534" x3="2.413" y3="92.456" textsize="1.778" layer="1"/>
+<dimension x1="160.02" y1="0" x2="134.874" y2="0" x3="147.447" y3="-3.556" textsize="1.778" layer="1"/>
+<dimension x1="160.02" y1="0" x2="109.982" y2="0" x3="135.001" y3="-9.652" textsize="1.778" layer="1"/>
+<dimension x1="160.02" y1="0" x2="139.954" y2="-0.254" x3="150.2703" y3="-22.507565625" textsize="1.778" layer="1"/>
+<dimension x1="160.02" y1="0" x2="119.888" y2="-0.254" x3="140.13571875" y3="-28.839103125" textsize="1.778" layer="1"/>
 </plain>
 <libraries>
 <library name="pinhead">

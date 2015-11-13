@@ -5042,6 +5042,12 @@
 <vertex x="103.505" y="21.59"/>
 <vertex x="92.075" y="21.59"/>
 </polygon>
+<dimension x1="5" y1="95" x2="60" y2="95" x3="32.5" y3="110.236" textsize="1.778" layer="1"/>
+<dimension x1="5" y1="95" x2="5" y2="5" x3="-9.652" y3="50" textsize="1.778" layer="1"/>
+<dimension x1="0" y1="99.822" x2="65.278" y2="99.822" x3="32.639" y3="105.156" textsize="1.778" layer="1"/>
+<dimension x1="60" y1="95" x2="65.278" y2="94.996" x3="62.644003125" y3="101.602959375" textsize="1.778" layer="1"/>
+<dimension x1="60" y1="95" x2="59.944" y2="99.568" x3="69.616321875" y3="97.40223125" textsize="1.778" layer="1"/>
+<dimension x1="60" y1="95" x2="59.944" y2="100.33" x3="75.458953125" y3="97.8277125" textsize="1.778" layer="1"/>
 </plain>
 <libraries>
 <library name="rcl">
@@ -5496,30 +5502,6 @@ Source: http://www.maxim-ic.com/package_drawings/21-0041B.pdf</description>
 <rectangle x1="-2.794" y1="-1.0922" x2="-2.2606" y2="1.0922" layer="51"/>
 <rectangle x1="2.2606" y1="-1.0922" x2="2.794" y2="1.0922" layer="51"/>
 <rectangle x1="-1.35" y1="-1.9" x2="-0.8" y2="1.9" layer="51"/>
-</package>
-<package name="DO41-10">
-<description>&lt;B&gt;DIODE&lt;/B&gt;&lt;p&gt;
-diameter 2.54 mm, horizontal, grid 10.16 mm</description>
-<wire x1="2.032" y1="-1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="2.032" y1="-1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="1.27" x2="2.032" y2="1.27" width="0.1524" layer="21"/>
-<wire x1="-2.032" y1="1.27" x2="-2.032" y2="-1.27" width="0.1524" layer="21"/>
-<wire x1="5.08" y1="0" x2="4.064" y2="0" width="0.762" layer="51"/>
-<wire x1="-5.08" y1="0" x2="-4.064" y2="0" width="0.762" layer="51"/>
-<wire x1="-0.635" y1="0" x2="0" y2="0" width="0.1524" layer="21"/>
-<wire x1="1.016" y1="0.635" x2="1.016" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="1.016" y1="-0.635" x2="0" y2="0" width="0.1524" layer="21"/>
-<wire x1="0" y1="0" x2="1.524" y2="0" width="0.1524" layer="21"/>
-<wire x1="0" y1="0" x2="1.016" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="0" y1="0.635" x2="0" y2="0" width="0.1524" layer="21"/>
-<wire x1="0" y1="0" x2="0" y2="-0.635" width="0.1524" layer="21"/>
-<pad name="A" x="5.08" y="0" drill="1.1176"/>
-<pad name="C" x="-5.08" y="0" drill="1.1176"/>
-<text x="-2.032" y="1.651" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="-2.032" y="-2.794" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
-<rectangle x1="-1.651" y1="-1.27" x2="-1.143" y2="1.27" layer="21"/>
-<rectangle x1="2.032" y1="-0.381" x2="3.937" y2="0.381" layer="21"/>
-<rectangle x1="-3.937" y1="-0.381" x2="-2.032" y2="0.381" layer="21"/>
 </package>
 </packages>
 </library>
@@ -6558,7 +6540,6 @@ Vielen Dank.&lt;p&gt;
 </element>
 <element name="JP9" library="jumper" package="JP1" value="" x="5.08" y="20.828" rot="R90"/>
 <element name="C1" library="rcl" package="C0603" value="100n" x="30.988" y="44.45" rot="R90"/>
-<element name="D2" library="diode" package="DO41-10" value="1N4004" x="4.826" y="-4.572"/>
 </elements>
 <signals>
 <signal name="+5V">
@@ -7831,11 +7812,14 @@ Vielen Dank.&lt;p&gt;
 <wire x1="4.826" y1="44.958" x2="14.986" y2="44.958" width="0.254" layer="16"/>
 </signal>
 <signal name="N$25">
+<contactref element="VR6" pad="3"/>
 <contactref element="JP5" pad="2"/>
 <contactref element="R22" pad="1"/>
 <wire x1="46.67" y1="81.28" x2="46.67" y2="76.642" width="0.254" layer="1"/>
 <wire x1="46.67" y1="76.642" x2="45.466" y2="75.438" width="0.254" layer="1"/>
 <wire x1="45.466" y1="75.438" x2="45.466" y2="68.664" width="0.254" layer="1"/>
+<wire x1="45.466" y1="68.664" x2="44.366" y2="67.564" width="0.254" layer="1"/>
+<wire x1="44.366" y1="67.564" x2="39.624" y2="67.564" width="0.254" layer="1"/>
 <wire x1="39.624" y1="67.564" x2="37.084" y2="65.024" width="0.254" layer="1"/>
 <wire x1="37.084" y1="65.024" x2="27.178" y2="65.024" width="0.254" layer="1"/>
 <wire x1="27.178" y1="65.024" x2="26.924" y2="64.77" width="0.254" layer="1"/>
@@ -7854,9 +7838,6 @@ Vielen Dank.&lt;p&gt;
 <wire x1="25.146" y1="48.514" x2="24.638" y2="48.514" width="0.254" layer="1"/>
 <wire x1="27.432" y1="55.626" x2="27.432" y2="50.8" width="0.254" layer="1"/>
 <wire x1="27.432" y1="50.8" x2="25.146" y2="48.514" width="0.254" layer="1"/>
-<contactref element="D2" pad="C"/>
-<wire x1="39.624" y1="67.564" x2="45.466" y2="68.664" width="0" layer="19" extent="1-1"/>
-<wire x1="-0.254" y1="-4.572" x2="1.524" y2="14.986" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="12VOUT">
 <contactref element="D1" pad="P$3"/>
@@ -8040,11 +8021,6 @@ Vielen Dank.&lt;p&gt;
 <wire x1="13.716" y1="65.278" x2="11.684" y2="63.246" width="0.254" layer="1"/>
 <wire x1="11.684" y1="63.246" x2="9.398" y2="63.246" width="0.254" layer="1"/>
 <wire x1="9.398" y1="63.246" x2="8.89" y2="62.738" width="0.254" layer="1"/>
-</signal>
-<signal name="N$26">
-<contactref element="D2" pad="A"/>
-<contactref element="VR6" pad="3"/>
-<wire x1="9.906" y1="-4.572" x2="44.366" y2="67.564" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>
