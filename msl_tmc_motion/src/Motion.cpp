@@ -120,6 +120,10 @@ namespace msl_driver
 
 		this->logOdometry = (*sc)["Motion"]->get<bool>("Motion", "CNMC", "LogOdometry", NULL);
 
+		// copied that from Mops Motion.conf!
+		this->logTypes = make_shared<vector<string>>(initializer_list<string>{"ERRORINT", "MGOAL", "MOTION"});
+		// TODO create availableLogTypes, maybe we need it, but its unprobable.
+		//this->ava
 		getMotorConfig();
 	}
 
@@ -283,7 +287,7 @@ namespace msl_driver
 		this->checkSuccess(configPacket);
 
 		//maxRPM
-		int result = (int) (this->mc.maxSpeed / this->mc.gearReduction);
+		int result = (int)(this->mc.maxSpeed / this->mc.gearReduction);
 		configPacket = make_shared<CNMCPacketConfigure>();
 		configPacket->setData(CNMCPacket::ConfigureCmd::MaxRPM, (short)result);
 		this->sendData(configPacket);
@@ -294,12 +298,164 @@ namespace msl_driver
 
 		//PIDKp
 		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
-		tmp = (short)std::round(8192*fmin(3,fmax(-3,this->mc.pidKd)));
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.pidKd)));
 		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKp, tmp);
 		this->sendData(ctrlPacket);
 		this->checkSuccess(ctrlPacket);
 
+		//PIDKb
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.pidB)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDb, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//PIDKi
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.pidKi)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKi, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//PIDKd
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.pidKd)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKd, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//PIDKdi
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.pidKdi)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKdi, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//linFactor
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.linFactor)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::LinearFactor, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//smoothFactor
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.smoothFactor)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::SmoothFactor, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//maxErrorInt
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::MaxErrorInt, (short)this->mc.maxErrorInt);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Rotation Error Weight
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.rotationErrorWeight)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::RotationErrorW, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.rotationErrorByVeloWeight)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::RotationErrorVeloW, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(8192 * fmin(3, fmax(-3, this->mc.rotationErrorByAccelWeight)));
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::RotationErrorAccelW, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//DeadBand
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::DeadBand, (short)this->mc.deadBand);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Lower Accel Bound
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::LowerAccelBound, (short)this->mc.accelBoundMin);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Higher Accel Bound
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::HigherAccelBound, (short)this->mc.accelBoundMax);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Max Rotation Acceleration
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		tmp = (short)std::round(64 * this->mc.rotationAccelBound);
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::MaxRotationAccel, tmp);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Fail Safe
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		shared_ptr<vector<short>> vals = make_shared<vector<short>>();
+		vals->push_back((short)this->mc.failSafeRPMBound);
+		vals->push_back((short)this->mc.failSafePWMBound);
+		vals->push_back((short)this->mc.failSafeCycles);
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::FailSafeValues, vals);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//Current Control:
+		if (this->mc.controlCurrent)
+		{
+			ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+			ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::CurrentErrorBound, (short)this->mc.currentErrorBound);
+			this->sendData(ctrlPacket);
+			this->checkSuccess(ctrlPacket);
+
+			ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+			ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::CurrentKp, (short)this->mc.currentKp);
+			this->sendData(ctrlPacket);
+			this->checkSuccess(ctrlPacket);
+
+			ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+			ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::CurrentKi, (short)this->mc.currentKi);
+			this->sendData(ctrlPacket);
+			this->checkSuccess(ctrlPacket);
+
+			ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+			ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::CurrentKd, (short)this->mc.currentKd);
+			this->sendData(ctrlPacket);
+			this->checkSuccess(ctrlPacket);
+		}
+
 		// TODO
+
+		//cycle time
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::CycleTime, (short)5);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//COMMIT
+		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
+		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::Commit);
+		this->sendData(ctrlPacket);
+		this->checkSuccess(ctrlPacket);
+
+		//cycle time
+		configPacket = make_shared<CNMCPacketConfigure>();
+		configPacket->setData(CNMCPacket::ConfigureCmd::Mode, (short)1);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
+
+		//Toggle Logging
+		configPacket = make_shared<CNMCPacketConfigure>();
+		shared_ptr<vector<uint8_t>> valByte =make_shared<vector<uint8_t>> ();
+		valByte->push_back(this->logOdometry?(uint8_t)1:(uint8_t)0);
+		configPacket->setData(CNMCPacket::ConfigureCmd::ToggleOdoLog, valByte);
+		this->sendData(configPacket);
+		this->checkSuccess(configPacket);
 	}
 
 	void Motion::getMotorConfig()

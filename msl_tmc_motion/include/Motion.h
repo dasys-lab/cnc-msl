@@ -108,6 +108,7 @@ namespace msl_driver
 		double radius;
 		double maxVelocity;
 		bool logOdometry;
+		shared_ptr<vector<string>> logTypes;
 
 		void run();
 		void getMotorConfig();

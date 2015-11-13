@@ -48,10 +48,12 @@ namespace msl_driver
 
 		int deadBand;
 
-		double maxAcceleration;
+		/*double maxAcceleration;
 		double maxDecceleration;
-		double maxRotForce;
+		double maxRotForce;*/
 
+		int accelBoundMin;
+		int accelBoundMax;
 		double rotationAccelBound;
 
 		int failSafeRPMBound;
