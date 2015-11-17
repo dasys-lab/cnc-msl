@@ -27,15 +27,15 @@ namespace alica
     		if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
     		{
     			calibPosVision = this->wm->rawSensorData.getOwnPositionVision(0);
-    			//calibOldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
+    			calibOldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
 
     		}
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
     		{
     			calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
     			calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-    			//calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
-    			//calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
+    			calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
+    			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
     		}
     		else
     		{
@@ -44,7 +44,7 @@ namespace alica
     				calibPosMotionX = 1;
     			}
     			calibPosMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-    			//calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
+    			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
 
     		}
 
@@ -52,7 +52,7 @@ namespace alica
     		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
     		{
     			calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
-    			//calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
+    			calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
     		}
     		else
     		{
@@ -61,7 +61,7 @@ namespace alica
     		    	calibPosMotionY = 1;
     		    }
     		    calibPosMotionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-    		    //calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
+    		    calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
 
     		}
 
@@ -75,8 +75,6 @@ namespace alica
            // std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
             std::cout <<""<<endl;
-            calibOldPosMotionX = calibPosMotionX;
-            calibOldPosMotionY = calibPosMotionY;
     	}
         /*PROTECTED REGION END*/
     }
