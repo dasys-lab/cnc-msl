@@ -39,14 +39,13 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	shovel.last_ping = last_ping;
-
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
 	if (msg.passing) {
 		shovel.value = ShovelSelect_PASSING;
 	} else {
 		shovel.value = ShovelSelect_NORMAL;
 	}
-	shovel.enabled;
+	shovel.enabled = true;
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
@@ -94,12 +93,11 @@ void contolShovelSelect() {
 			shovel.enabled = false;
 			ShovelSelect.setRunState(stop);
 		}
-
 		if (shovel.enabled) {
 			if (ShovelSelect.getRunValue() == "0") {
 				ShovelSelect.setRunState(run);
 			}
-			ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
+			ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
 		}
 
 		threw[2].notify = false;
@@ -147,7 +145,7 @@ void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *
 		msg.usePose = false;
 
 		// TODO: Taster Entprellfunktion
-		// TODO: Senden wenn nicht gedrückt
+		// TODO: Senden wenn nicht gedrueckt
 		if (bundle == 1) {
 			bsPub->publish(msg);
 			brtPub->publish(msg_empty);
@@ -253,18 +251,15 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, &mbcPub);
-
 		// Thread Notify
-		for (int i=0; i<6; i++) {
+		for (int i=0; i<7; i++) {
 			threw[i].notify = true;
 			threw[i].cv.notify_all();
 		}
 
 		// auf beenden aller Threads warten
 		unique_lock<mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
+		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[6].notify); }); // protection against spurious wake-ups
 
 		// MotionBurst
 
