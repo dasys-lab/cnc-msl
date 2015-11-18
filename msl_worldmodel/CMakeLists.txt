@@ -4,7 +4,7 @@ project(msl_worldmodel)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine rqt_robot_control)
+find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine rqt_robot_control constraintsolver) 
 find_package(CGAL REQUIRED COMPONENTS Core)
  include(${CGAL_USE_FILE})
 
@@ -24,6 +24,7 @@ catkin_package(
     msl_sensor_msgs 
     event_handling 
     alica_engine
+    constraintsolver
   DEPENDS cgal
   CFG_EXTRAS ${PROJECT_NAME}-extras.cmake
 )
@@ -36,6 +37,7 @@ catkin_package(
 
 ## Declare a cpp library
  add_library(msl_worldmodel
+   src/MSLConstraintBuilder.cpp
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
