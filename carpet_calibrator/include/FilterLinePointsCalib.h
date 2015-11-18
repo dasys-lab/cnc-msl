@@ -44,7 +44,7 @@ class FilterLinePointsCalib : public Filter {
 		FilterLinePointsCalib(int width, int height);
 		~FilterLinePointsCalib();
 		
-		unsigned char * process(unsigned char * src, unsigned int width, unsigned int height, std::vector<LinePoint> & LinePoints, DistanceLookupHelper & distanceHelper, ScanLineHelper & helper, double angle);
+		unsigned char * process(unsigned char * src, unsigned int width, unsigned int height, ScanLineHelper & helper);
 
 	protected:
 

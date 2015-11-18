@@ -99,21 +99,18 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 ## Declare a cpp library
 add_library(carpet_calibrator
    src/CarpetCalibratorNodelet.cpp
-   src/FilterLinePointsCalib.cpp
- #  src/XVDisplay.cpp
 )
 
-
 ## Declare a cpp executable
-#add_executable(carpet_calibrator_exec
-#   src/CarpetCalibrator.cpp
-#   src/CarpetCalibratorNodelet.cpp
- #  src/XVDisplay.cpp
-#)
+add_executable(carpet_calibrator_line_points
+   src/FilterLinePointsCalib.cpp
+   src/FilterLinePointsNode.cpp
+)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(carpet_calibrator ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_actuator_msgs_generate_messages_cpp msl_vision)
+add_dependencies(carpet_calibrator_line_points ${catkin_LIBRARIES} ${Boost_LIBRARIES} msl_actuator_msgs_generate_messages_cpp msl_vision)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(carpet_calibrator
@@ -121,7 +118,11 @@ target_link_libraries(carpet_calibrator
   ${Boost_LIBRARIES}
   Xv
 )
-
+target_link_libraries(carpet_calibrator_line_points
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+  Xv
+)
 #############
 ## Install ##
 #############

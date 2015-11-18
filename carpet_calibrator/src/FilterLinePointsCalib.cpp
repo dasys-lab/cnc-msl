@@ -30,12 +30,14 @@
 using namespace std;
 #define BLOB_UNDEF 100000
 
-FilterLinePointsCalib::FilterLinePointsCalib(int area):Filter(OF_ZERO, area, area){
+FilterLinePointsCalib::FilterLinePointsCalib(int area) :
+		Filter(OF_ZERO, area, area)
+{
 
 	this->sc = SystemConfig::getInstance();
 
-	MX = area/2;
-	MY = area/2;
+	MX = area / 2;
+	MY = area / 2;
 
 	Configuration *loc = (*this->sc)["Localization"];
 
@@ -55,13 +57,14 @@ FilterLinePointsCalib::FilterLinePointsCalib(int area):Filter(OF_ZERO, area, are
 	negRanges[2][1] = vision->get<short>("Vision", "Holder", "NegRange_2_1", NULL);
 
 	short nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
-	
+
 	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();
 
-	for(unsigned int i = 0; i < holders->size(); i++){
+	for (unsigned int i = 0; i < holders->size(); i++)
+	{
 
 		Holder addHolder;
 		addHolder.start = vision->get<double>("Vision", "Holder", (*holders)[i].c_str(), "Start", NULL);
@@ -72,61 +75,65 @@ FilterLinePointsCalib::FilterLinePointsCalib(int area):Filter(OF_ZERO, area, are
 
 	}
 
-	angleValidity = (char *) malloc(360);
-	for(unsigned int j = 0; j < 360; j++){
+	angleValidity = (char *)malloc(360);
+	for (unsigned int j = 0; j < 360; j++)
+	{
 
 		bool validity = true;
 
-		short i = (short) lrint(j/360.0*nLines);
-		if(i >= 360)
+		short i = (short)lrint(j / 360.0 * nLines);
+		if (i >= 360)
 			i = 0;
 
-		if(negRanges[0][0] > nLines/2 && negRanges[0][1] < nLines/2){
+		if (negRanges[0][0] > nLines / 2 && negRanges[0][1] < nLines / 2)
+		{
 
-			if( (i >= negRanges[0][0]) || (i <= negRanges[0][1]) || 
-				(i >= negRanges[1][0] && i <= negRanges[1][1]) ||
-				(i >= negRanges[2][0] && i <= negRanges[2][1]))
+			if ((i >= negRanges[0][0]) || (i <= negRanges[0][1]) || (i >= negRanges[1][0] && i <= negRanges[1][1])
+					|| (i >= negRanges[2][0] && i <= negRanges[2][1]))
 				validity = false;
 
 		}
-		else {
+		else
+		{
 
-			if( (i >= negRanges[0][0] && i <= negRanges[0][1]) || 
-				(i >= negRanges[1][0] && i <= negRanges[1][1]) ||
-				(i >= negRanges[2][0] && i <= negRanges[2][1]))
+			if ((i >= negRanges[0][0] && i <= negRanges[0][1]) || (i >= negRanges[1][0] && i <= negRanges[1][1])
+					|| (i >= negRanges[2][0] && i <= negRanges[2][1]))
 				validity = false;
 
 		}
 
-		double lineAngle = 1.0*j;
+		double lineAngle = 1.0 * j;
 
-		for(unsigned a = 0; a < addHolders.size(); a++){
-			if(addHolders[a].start > 180.0 && addHolders[a].end < 180.0){
+		for (unsigned a = 0; a < addHolders.size(); a++)
+		{
+			if (addHolders[a].start > 180.0 && addHolders[a].end < 180.0)
+			{
 
-				if(lineAngle >= addHolders[a].start || lineAngle <= addHolders[a].end)
+				if (lineAngle >= addHolders[a].start || lineAngle <= addHolders[a].end)
 					validity = false;
 
 			}
-			else {
+			else
+			{
 
-				if(lineAngle >= addHolders[a].start && lineAngle <= addHolders[a].end)
+				if (lineAngle >= addHolders[a].start && lineAngle <= addHolders[a].end)
 					validity = false;
 
 			}
 
 		}
 
-		angleValidity[j] = validity?1:0;
+		angleValidity[j] = validity ? 1 : 0;
 
 	}
-
 
 	init();
 
 }
 
-
-FilterLinePointsCalib::FilterLinePointsCalib(int width, int height):Filter(OF_ZERO, width, height){
+FilterLinePointsCalib::FilterLinePointsCalib(int width, int height) :
+		Filter(OF_ZERO, width, height)
+{
 
 	this->sc = SystemConfig::getInstance();
 
@@ -152,14 +159,14 @@ FilterLinePointsCalib::FilterLinePointsCalib(int width, int height):Filter(OF_ZE
 	negRanges[2][1] = vision->get<short>("Vision", "Holder", "NegRange_2_1", NULL);
 
 	short nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
-	
 
 	shared_ptr<std::vector<std::string> > holdersBPtr = (*vision).getSections("Vision", "Holder", NULL);
 	std::vector<std::string> * holders = holdersBPtr.get();
 
 	addHolders.clear();
 
-	for(unsigned int i = 0; i < holders->size(); i++){
+	for (unsigned int i = 0; i < holders->size(); i++)
+	{
 
 		Holder addHolder;
 		addHolder.start = vision->get<double>("Vision", "Holder", (*holders)[i].c_str(), "Start", NULL);
@@ -170,51 +177,55 @@ FilterLinePointsCalib::FilterLinePointsCalib(int width, int height):Filter(OF_ZE
 
 	}
 
-	angleValidity = (char *) malloc(360);
-	for(unsigned int j = 0; j < 360; j++){
+	angleValidity = (char *)malloc(360);
+	for (unsigned int j = 0; j < 360; j++)
+	{
 
 		bool validity = true;
 
-		short i = (short) lrint(j/360.0*nLines);
-		if(i >= 360)
+		short i = (short)lrint(j / 360.0 * nLines);
+		if (i >= 360)
 			i = 0;
 
-		if(negRanges[0][0] > nLines/2 && negRanges[0][1] < nLines/2){
+		if (negRanges[0][0] > nLines / 2 && negRanges[0][1] < nLines / 2)
+		{
 
-			if( (i >= negRanges[0][0]) || (i <= negRanges[0][1]) || 
-				(i >= negRanges[1][0] && i <= negRanges[1][1]) ||
-				(i >= negRanges[2][0] && i <= negRanges[2][1]))
+			if ((i >= negRanges[0][0]) || (i <= negRanges[0][1]) || (i >= negRanges[1][0] && i <= negRanges[1][1])
+					|| (i >= negRanges[2][0] && i <= negRanges[2][1]))
 				validity = false;
 
 		}
-		else {
+		else
+		{
 
-			if( (i >= negRanges[0][0] && i <= negRanges[0][1]) || 
-				(i >= negRanges[1][0] && i <= negRanges[1][1]) ||
-				(i >= negRanges[2][0] && i <= negRanges[2][1]))
+			if ((i >= negRanges[0][0] && i <= negRanges[0][1]) || (i >= negRanges[1][0] && i <= negRanges[1][1])
+					|| (i >= negRanges[2][0] && i <= negRanges[2][1]))
 				validity = false;
 
 		}
 
-		double lineAngle = 1.0*j;
+		double lineAngle = 1.0 * j;
 
-		for(unsigned a = 0; a < addHolders.size(); a++){
-			if(addHolders[a].start > 180.0 && addHolders[a].end < 180.0){
+		for (unsigned a = 0; a < addHolders.size(); a++)
+		{
+			if (addHolders[a].start > 180.0 && addHolders[a].end < 180.0)
+			{
 
-				if(lineAngle >= addHolders[a].start || lineAngle <= addHolders[a].end)
+				if (lineAngle >= addHolders[a].start || lineAngle <= addHolders[a].end)
 					validity = false;
 
 			}
-			else {
+			else
+			{
 
-				if(lineAngle >= addHolders[a].start && lineAngle <= addHolders[a].end)
+				if (lineAngle >= addHolders[a].start && lineAngle <= addHolders[a].end)
 					validity = false;
 
 			}
 
 		}
 
-		angleValidity[j] = validity?1:0;
+		angleValidity[j] = validity ? 1 : 0;
 
 	}
 
@@ -222,20 +233,18 @@ FilterLinePointsCalib::FilterLinePointsCalib(int width, int height):Filter(OF_ZE
 
 }
 
-
-
-FilterLinePointsCalib::~FilterLinePointsCalib(){
+FilterLinePointsCalib::~FilterLinePointsCalib()
+{
 
 	cleanup();
 
 }
-		
 
-unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int width, unsigned int height, std::vector<LinePoint> & LinePoints, DistanceLookupHelper & distanceHelper, ScanLineHelper & helper, double calibAngle){
+unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int width, unsigned int height,
+												ScanLineHelper & helper)
+{
 
 	unsigned char * tgt = src;
-
-	double * LookupTable = distanceHelper.getLookupTable();
 
 	short * firstInner = helper.getInnerLines();
 	short * nInner = helper.getInnerLinesN();
@@ -250,134 +259,151 @@ unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int
 	int floorBrightness = 240;
 
 /////////////////
-/*
-	int linePointInd[5000];
-	int lpCount=0;
-*/
+	/*
+	 int linePointInd[5000];
+	 int lpCount=0;
+	 */
 /////////////////
-
-	LinePoints.clear();
 	std::vector<short> LinePointsX;
 	LinePointsX.clear();
 	std::vector<short> LinePointsY;
 	LinePointsY.clear();
 
 	//ofstream fs("taggedLinePoints.txt", fstream::app);
-	int aprinted=0;
-	for(short i = 0; i < helper.getNumberLines(); i++){
+	int aprinted = 0;
+	for (short i = 0; i < helper.getNumberLines(); i++)
+	{
 		aprinted = 0;
 		short b = 0;
 		short e = 0;
 
-
-		if(i % 2 == 0){
+		if (i % 2 == 0)
+		{
 
 			short * line = firstInner;
 
 			x = *line++;
 			y = *line++;
 
-			short vb = src[x*width + y];
+			short vb = src[x * width + y];
 
-			for(short j = 1; j < (*nInner); j++){
+			for (short j = 1; j < (*nInner); j++)
+			{
 				x = *line++;
 				y = *line++;
-				int k=i-45;
-				if(k<0) k=k+180;
-				if(k>floor(calibAngle/2.0+1.0) || k<floor(calibAngle/2.0-0.0) || calibAngle==100000) continue;
-				
-				short va = src[x*width + y];
+				int k = i - 45;
+				if (k < 0)
+					k = k + 180;
 
-				if(va > vb + LinePointsJump && va > LinePointsThreshold){
+				short va = src[x * width + y];
+
+				if (va > vb + LinePointsJump && va > LinePointsThreshold)
+				{
 					b = j;
 					e = j;
 				}
 
-				if(va < vb - LinePointsJump && va < floorBrightness){
+				if (va < vb - LinePointsJump && va < floorBrightness)
+				{
 					e = j;
 				}
 
-				if(b > 0 & e-b > MinLineWidth & e-b < MaxLineWidth + 10){
+				if (b > 0 & e - b > MinLineWidth & e - b < MaxLineWidth + 10)
+				{
 
-					short indX = firstInner[((e+b)/2)*2];
-					short indY = firstInner[((e+b)/2)*2 + 1];
+					short indX = firstInner[((e + b) / 2) * 2];
+					short indY = firstInner[((e + b) / 2) * 2 + 1];
 
-					double angle = -atan2(1.0*indY - MY, 1.0*indX - MX);
-					double dist = LookupTable[indX*width + indY];
+					double angle = -atan2(1.0 * indY - MY, 1.0 * indX - MX);
 
-
-
-					if(dist > 100.0 && dist < 7500.0 && (double) (e-b) < (double) (2*MaxLineWidth/(dist/1000.0))){
+					if ((e - b) < 30)
+					{
 
 						//tgt[indX*width + indY] = 0;
 						//linePointInd[lpCount++] = indX*width + indY;
 
-						LinePoint p;
-						p.x = dist*cos(angle);
-						p.y = dist*sin(angle);
 						angle = -angle;
-						if(angle < 0.0)
-							angle += 2.0*M_PI;
+						if (angle < 0.0)
+							angle += 2.0 * M_PI;
 
-						short angleInd = (short) lrint(angle*360.0/(2.0*M_PI));
-						if(angleInd >= 360)
+						short angleInd = (short)lrint(angle * 360.0 / (2.0 * M_PI));
+						if (angleInd >= 360)
 							angleInd = 0;
 						//printf("AngleInd: %d AngleValidity %d\n", angleInd, angleValidity[angleInd]);					
-						if(angleValidity[angleInd]){
-							LinePoints.push_back(p);
+						if (angleValidity[angleInd])
+						{
 							LinePointsX.push_back(indX);
 							LinePointsY.push_back(indY);
 
 							//Transform Coordinate System (0,0)-Image Center
-							double xp = indX-(short)width/(short)2;
-			                                double yp = indY-(short)height/(short)2;
+							double xp = indX - (short)width / (short)2;
+							double yp = indY - (short)height / (short)2;
 
 							//Compute Angle and Distance
-							if(aprinted==0) {
+							if (aprinted == 0)
+							{
 								//fs << atan2(yp, xp) << "\t";
 								angles[i] = atan2(yp, xp);
 							}
-							double imDist = sqrt(xp*xp+yp*yp);
+							double imDist = sqrt(xp * xp + yp * yp);
+							/*if(aprinted < 8) {
+								distanceSum[i][aprinted] = imDist;
+							}*/
 							//fs << imDist << "\t";
 
 							//Sort into vector
-							if(aprinted<8 && imDist>100)	{
+							if (aprinted < 8 && imDist > 100)
+							{
 								int ih = i;
 								//Search next and last valid index
-								int ib = ih-1;
-								if(ib<0) ib+=180;
-								for(int n=0; n<15; n++) {
-									if(distanceCount[ib][aprinted] != 0) break;
+								int ib = ih - 1;
+								if (ib < 0)
+									ib += 180;
+								for (int n = 0; n < 15; n++)
+								{
+									if (distanceCount[ib][aprinted] != 0)
+										break;
 									ib--;
-									if(ib<0) ib+=180;
+									if (ib < 0)
+										ib += 180;
 								}
-								double beforeV = distanceSum[ib][aprinted]/(double)distanceCount[ib][aprinted];
-								if(distanceCount[ib][aprinted]==0) beforeV=0;
+								double beforeV = distanceSum[ib][aprinted] / (double)distanceCount[ib][aprinted];
+								if (distanceCount[ib][aprinted] == 0)
+									beforeV = 0;
 
-                                                                int in = ih+1;
-                                                                if(in>=180) in=0;
-								for(int n=0; n<15; n++) {
-									if(distanceCount[in][aprinted] != 0) break;
-                                                                        in++;
-                                                                        if(in>=180) in=0;
-                                                                }
-								double nextV = distanceSum[in][aprinted]/(double)distanceCount[in][aprinted];
-								if(distanceCount[in][aprinted]==0) nextV=0;
+								int in = ih + 1;
+								if (in >= 180)
+									in = 0;
+								for (int n = 0; n < 15; n++)
+								{
+									if (distanceCount[in][aprinted] != 0)
+										break;
+									in++;
+									if (in >= 180)
+										in = 0;
+								}
+								double nextV = distanceSum[in][aprinted] / (double)distanceCount[in][aprinted];
+								if (distanceCount[in][aprinted] == 0)
+									nextV = 0;
 
 								//Check distance-difference to last/next index
-								if(distanceCount[ib][aprinted] == 0 || abs(imDist-beforeV)<4.0) {
-									if(distanceCount[in][aprinted] == 0 || abs(imDist-nextV)<4.0) {
-										if(aprinted==0 || distanceCount[ih][aprinted-1]==0 || imDist>distanceSum[ih][aprinted-1]/(double)distanceCount[ih][aprinted-1]+2) {
+								if (distanceCount[ib][aprinted] == 0 || abs(imDist - beforeV) < 4.0)
+								{
+									if (distanceCount[in][aprinted] == 0 || abs(imDist - nextV) < 4.0)
+									{
+										if (aprinted == 0 || distanceCount[ih][aprinted - 1] == 0
+												|| imDist
+														> distanceSum[ih][aprinted - 1]
+																/ (double)distanceCount[ih][aprinted - 1] + 2)
+										{
 											distanceCount[ih][aprinted]++;
 											distanceSum[ih][aprinted] += imDist;
 										}
 									}
-								}// else aprinted = 20;
+								} // else aprinted = 20;
 							}
 							aprinted++;
 						}
-						if(OnlyFirstPoint)
-							break;
 					}
 
 					//printf("LinePoint: %d %d %d\n", i, b, e);
@@ -387,84 +413,86 @@ unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int
 					b = 0;
 					e = 0;
 
-
-
 				}
 				vb = va;
-				src[x*width + y] = 255;
+				src[x * width + y] = 255;
 			}
 
-			firstInner = firstInner + maxPoints*2;
+			firstInner = firstInner + maxPoints * 2;
 			nInner++;
-	
 
 		}
 		//if(aprinted!=0) fs << endl;
 
-
 	}
 	//fs.close();
 
-	for(unsigned int i = 0; i < LinePointsX.size(); i++){
-		tgt[LinePointsX[i]*width + LinePointsY[i]] = 0;
+	for (unsigned int i = 0; i < LinePointsX.size(); i++)
+	{
+		tgt[LinePointsX[i] * width + LinePointsY[i]] = 0;
 		ofstream ofs("rawLinePoints.txt", fstream::app);
-		double x = LinePointsX[i]-(short)width/(short)2;
-		double y = LinePointsY[i]-(short)height/(short)2;
-		ofs << atan2(y, x) << " " << sqrt(x*x+y*y) << " " << x << " " << y << endl;
+		double x = LinePointsX[i] - (short)width / (short)2;
+		double y = LinePointsY[i] - (short)height / (short)2;
+		ofs << atan2(y, x) << " " << sqrt(x * x + y * y) << " " << x << " " << y << endl;
 	}
 	ofstream cfs("clearedLP.txt");
-	for(int i = 0; i < distanceSum.size(); i++){
-		cfs << angles[i] << " ";
-		for(int j=0; j<distanceSum[i].size(); j++) {
-			if(distanceCount[i][j]>0) {
-				cfs << distanceSum[i][j] / distanceCount[i][j] << " ";
+	for (int i = 0; i < distanceSum.size(); i++)
+	{
+		int element = (i + 1 + (distanceSum.size() / 2)) % distanceSum.size();
+		if (angles[element] == 0)
+			continue;
+		cfs << angles[element] << " ";
+		for (int j = 0; j < distanceSum[element].size(); j++)
+		{
+			if (distanceSum[element][j] != 0)
+			{
+				cfs << distanceSum[element][j] << " ";
 				//cfs << distanceCount[i][j] << " ";
 			}
-			else cfs << 0 << " ";
+			else
+				break;
+//			else cfs << 0 << " ";
 		}
 		cfs << endl;
 	}
 	cfs.close();
 
-
-	printf("FilterLinePoints - Number of LinePoints: %d\n", (int)LinePoints.size());
+	printf("FilterLinePoints - Number of LinePoints: %d\n", (int)LinePointsX.size());
 
 /////////////
-/*
-	for(int i=0; i<lpCount; i++) {
-		tgt[linePointInd[i]]=0;
-	}
-*/
+	/*
+	 for(int i=0; i<lpCount; i++) {
+	 tgt[linePointInd[i]]=0;
+	 }
+	 */
 /////////////
-
 	return tgt;
 
 }
 
-
-void FilterLinePointsCalib::init(){
+void FilterLinePointsCalib::init()
+{
 	vector<double> tmp;
 	vector<int> tmpint;
-	for(int i = 0; i<8; i++) {
+	for (int i = 0; i < 8; i++)
+	{
 		tmp.push_back(0);
 		tmpint.push_back(0);
 	}
-	for(int i = 0; i < 180; i++){
+	for (int i = 0; i < 180; i++)
+	{
 		distanceSum.push_back(tmp);
-		distanceCount.push_back(tmpint);		
+		distanceCount.push_back(tmpint);
 
-                //int k=i;//-45;
-                //if(k<0) k=k+180;
+		//int k=i;//-45;
+		//if(k<0) k=k+180;
 		//angles.push_back(3.141592*((double)k/180.0));
 		angles.push_back(0);
 	}
 }
 
-
-void FilterLinePointsCalib::cleanup(){
-
+void FilterLinePointsCalib::cleanup()
+{
 
 }
-
-
 

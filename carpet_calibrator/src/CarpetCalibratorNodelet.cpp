@@ -138,7 +138,6 @@ namespace msl_vision
 		} else {
 			newAngle = false;
 		}
-
 	}
 
 	void CarpetCalibratorNodelet::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg) {

@@ -169,7 +169,7 @@ void ScanLineHelper::DrawLine(short * line, short * nPoints, short ax, short ay,
 	short xInc = 1;
 	short yInc = 1;
 
-	printf("ax: %d ay: %d ex: %d ey: %d\n", ax, ay, ex, ey);
+	//printf("ax: %d ay: %d ex: %d ey: %d\n", ax, ay, ex, ey);
 
 	//printf("linePointer: %d\n", line);
 	//printf("nPointer: %d\n", nPoints);
@@ -231,7 +231,7 @@ void ScanLineHelper::DrawLine(short * line, short * nPoints, short ax, short ay,
 
 			}
 			else{
-				printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
 
@@ -249,7 +249,7 @@ void ScanLineHelper::DrawLine(short * line, short * nPoints, short ax, short ay,
 		*nPoints = counter;
 	}
 
-	printf("Size of line: %d\n", (*nPoints));
+	//printf("Size of line: %d\n", (*nPoints));
 
 }
 
@@ -305,7 +305,7 @@ void ScanLineHelper::initCircles( ){
 			currY = indY;
 
 			if(currX < 0 || currX >= scHEIGHT || currY < 0 || currY >= scWIDTH){
-				printf("Circles out of bounds!\n");
+				//printf("Circles out of bounds!\n");
 			}
 
 			*circlePtr++ = currX;
