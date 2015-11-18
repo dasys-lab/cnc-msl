@@ -121,9 +121,12 @@ namespace msl_driver
 		this->logOdometry = (*sc)["Motion"]->get<bool>("Motion", "CNMC", "LogOdometry", NULL);
 
 		// copied that from Mops Motion.conf!
-		this->logTypes = make_shared<vector<string>>(initializer_list<string>{"ERRORINT", "MGOAL", "MOTION"});
-		// TODO create availableLogTypes, maybe we need it, but its unprobable.
-		//this->ava
+		this->logTypes = make_shared<vector<string>>(initializer_list<string> {"ERRORINT", "MGOAL", "MOTION"});
+		this->logTypesAvailable = make_shared<vector<string>>(initializer_list<string> {"RPM", "PWM", "RPMGOAL",
+																						"CURRENT", "MGOAL", "MREQUEST",
+																						"MAXPWM", "ERRORINT", "MOTION",
+																						"MSMOOTH", "RPMSMOOTH"});
+
 		getMotorConfig();
 	}
 
@@ -168,11 +171,8 @@ namespace msl_driver
 		//### SEND MOTOR CONFIG
 		this->sendMotorConfig();
 
-		//### READ BATTERY VOLTAGE
-		// TODO
-
 		//### READY
-		//this->controllerIsActive = true;
+		this->controllerIsActive = true;
 	}
 
 	void Motion::sendData(shared_ptr<CNMCPacket> packet)
@@ -187,8 +187,7 @@ namespace msl_driver
 		bool finished = false;
 		bool quoted = false;
 
-		vector<uint8_t>* data = new vector<uint8_t>();
-
+		vector<uint8_t> data;
 		::read(this->port, &b, 1);
 		bool wrote = false;
 		while (b != CNMCPacket::START_HEADER)
@@ -206,7 +205,7 @@ namespace msl_driver
 		}
 		else
 		{
-			data->push_back(b);
+			data.push_back(b);
 		}
 
 		while (!finished)
@@ -219,7 +218,7 @@ namespace msl_driver
 					quoted = true;
 				else
 				{
-					data->push_back(b);
+					data.push_back(b);
 					quoted = false;
 				}
 			}
@@ -231,18 +230,18 @@ namespace msl_driver
 				}
 				else
 				{
-					data->push_back(b);
+					data.push_back(b);
 					quoted = false;
 				}
 			}
 			else
 			{
 				quoted = false;
-				data->push_back(b);
+				data.push_back(b);
 			}
 		}
 
-		return CNMCPacket::getInstance(data->data(), data->size());
+		return CNMCPacket::getInstance(data.data(), data.size());
 	}
 
 	void Motion::checkSuccess(shared_ptr<CNMCPacket> cmd)
@@ -430,6 +429,25 @@ namespace msl_driver
 		}
 
 		// TODO
+		int8_t logmode = 0x00;
+		for (int i = 0; i < this->logTypesAvailable->size(); i++)
+		{
+			auto iter = std::find(this->logTypes->begin(), this->logTypes->end(), this->logTypesAvailable->at(i));
+			if (iter == this->logTypes->end())
+			{
+				logmode = -1;
+			}
+			else
+			{
+				logmode = (int8_t)std::distance(this->logTypes->begin(), iter);
+			}
+
+			configPacket = make_shared<CNMCPacketConfigure>();
+			configPacket->setData(CNMCPacket::ConfigureCmd::SetLogMode,
+									make_shared<vector<int8_t>>((int8_t)i, logmode));
+			this->sendData(configPacket);
+			this->checkSuccess(configPacket);
+		}
 
 		//cycle time
 		configPacket = make_shared<CNMCPacketConfigure>();
@@ -451,8 +469,8 @@ namespace msl_driver
 
 		//Toggle Logging
 		configPacket = make_shared<CNMCPacketConfigure>();
-		shared_ptr<vector<uint8_t>> valByte =make_shared<vector<uint8_t>> ();
-		valByte->push_back(this->logOdometry?(uint8_t)1:(uint8_t)0);
+		shared_ptr<vector<uint8_t>> valByte = make_shared<vector<uint8_t>>();
+		valByte->push_back(this->logOdometry ? (uint8_t)1 : (uint8_t)0);
 		configPacket->setData(CNMCPacket::ConfigureCmd::ToggleOdoLog, valByte);
 		this->sendData(configPacket);
 		this->checkSuccess(configPacket);
@@ -495,12 +513,6 @@ namespace msl_driver
 		this->mc.failSafePWMBound = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafePWMBound",
 		NULL);
 		this->mc.failSafeCycles = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafeCycles", NULL);
-
-		this->mc.maxAcceleration = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxAcceleration",
-		NULL);
-		this->mc.maxDecceleration = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxDecceleration",
-		NULL);
-		this->mc.maxRotForce = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller", "MaxRotForce", NULL);
 
 		this->mc.rotationAccelBound = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller",
 																		"MaxRotationAccel");
@@ -550,10 +562,68 @@ namespace msl_driver
 
 	void Motion::run()
 	{
+		// Loop until the driver is closed
 		while (running)
 		{
+			//TODO make the times right!
 
+			// 1 Tick = 100ns, 10 Ticks = 1us
+			// remember the time, processing was last triggered
+			this->deltaTime = std::chrono::steady_clock::now() - this->cycleLastTimestamp;
+			this->cycleLastTimestamp += deltaTime;
+
+			MotionSet* request;
+
+			// Get the next request from the queue
+			{
+				std::lock_guard<std::mutex> lck(this->motionValueMutex);
+
+				request = this->motionValue;
+				this->motionValue = nullptr;
+			}
+
+			if (request == null && /*check alive timer*/)
+			{
+				chrono::milliseconds dura(1);
+				this_thread::sleep_for(dura);
+				continue;
+			}
+
+			if (request != nullptr)
+			{// If there is a request, try to process it
+				if (running)
+				{
+					this->executeRequest(request);
+				}
+				delete request;
+			}
+			else if ()// check if alive period is over
+			{// If there is no request, call the ExecuteCheck method
+				if (running)
+				{
+					this->executeCheck();
+				}
+			}
+
+
+			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
+			long sleepTime = (this->minCycleTime - (std::chrono::steady_clock::now() - this->cycleLastTimestamp) / 10) / 1000;
+
+			if (sleepTime > 0)
+			{
+				chrono::milliseconds dura(sleepTime);
+				this_thread::sleep_for(dura);
+			}
+
+			// Compute the new due time
+			long newDueTime = this->alivePeriod - ((std::chrono::steady_clock::now() - this->cycleLastTimestamp) / 10000);
+
+			if (newDueTime <= 0)
+			{
+				newDueTime = 0;
+			}
 		}
+
 	}
 
 	/*void Motion::notifyDriverResultAvailable(DriverData* data)
@@ -648,7 +718,7 @@ namespace msl_driver
 	 }*/
 	void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc)
 	{
-		//	TODO: OnMotionControl
+		//	TODO: look, if motionValueOld is set and deleted somewhere!
 		if (this->accelCompEnabled && this->motionValueOld != nullptr)
 		{
 			msl_msgs::MotionInfo* m = new msl_msgs::MotionInfo();
@@ -661,6 +731,8 @@ namespace msl_driver
 		{
 			std::lock_guard<std::mutex> lck(this->motionValueMutex);
 			// Create a new driver command
+			if (this->motionValue == nullptr)
+				this->motionValue = new MotionSet();
 			this->motionValue->angle = mc->motion.angle;
 			this->motionValue->translation = mc->motion.translation;
 			this->motionValue->rotation = mc->motion.rotation;
@@ -673,8 +745,6 @@ namespace msl_driver
 				this->motionValue->rotation *= this->slipControlFactor;
 
 			}
-			//			TODO TEMPLATE
-			//			this->driver->request<MotionSet>(this.motionValue);
 		}
 	}
 
