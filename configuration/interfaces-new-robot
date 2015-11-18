@@ -9,6 +9,7 @@ auto eth0
 iface eth1 inet static
 address 10.0.0.1
 netmask 255.0.0.0
+post-up route add 225.16.32.40 eth1
 auto eth1
 
 iface can0 inet manual
