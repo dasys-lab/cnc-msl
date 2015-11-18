@@ -8,6 +8,7 @@
 #ifndef CNC_MSLDRIVER_MSL_TMC_MOTION_SRC_CNMCTRIFORCE_H_
 #define CNC_MSLDRIVER_MSL_TMC_MOTION_SRC_CNMCTRIFORCE_H_
 
+#include <CNMCPacket.h>
 #include <SystemConfig.h>
 #include <termios.h>
 #include <stdio.h> // standard input / output functions
@@ -16,7 +17,6 @@
 #include <fcntl.h> // File control definitions
 #include <errno.h> // Error number definitions
 #include <time.h>   // time calls
-#include <CNMCPacketRequest.h>
 #include <DriverData.h>
 #include <MotionData.h>
 #include <math.h>

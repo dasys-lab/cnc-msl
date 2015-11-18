@@ -109,10 +109,13 @@ namespace msl_driver
 		double maxVelocity;
 		bool logOdometry;
 		shared_ptr<vector<string>> logTypes;
+		shared_ptr<vector<string>> logTypesAvailable;
+		bool controllerIsActive = false;
 
 		void run();
 		void getMotorConfig();
 		void sendMotorConfig();
+		void updateMotorState(DriverData request, CNMCPacketRequestResponse* vmcp);
 
 		void sendData(shared_ptr<CNMCPacket> packet);
 		CNMCPacket* readData();
