@@ -8,17 +8,10 @@
 
 #include "actuator.h"
 
-// fuer Tests
-//#include <thread>         // this_thread::sleep_for
-//#include <chrono>         // chrono::seconds
-//#include <stdio.h>		// File Open
-//#include <unistd.h>		// File Open
-
 using namespace std;
 using namespace BlackLib;
 
 mutex					mtx;
-//condition_variable		cv, cv2;
 
 uint8_t		th_count;
 
@@ -127,35 +120,79 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 	}
 }
 
-void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+	int		ownID = sc->getOwnRobotID();
+	enum	button {	bundle = 0,
+						vision = 1,
+						power = 2, };
+	msl_actuator_msgs::VisionRelocTrigger msg_v;
+	process_manager::ProcessCommand msg_pm;
+
 	unique_lock<mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
 		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		msl_actuator_msgs::VisionRelocTrigger msg;
-		std_msgs::Empty msg_empty;
-		uint8_t bundle, power, vision;
+		/* States:	0 - not pressed
+					1 - raising edge
+					2 - pressed
+					3 - falling edge */
+		static uint8_t		state[3] = {0,0,0};
+		bool				msg_send[3] = {false, false, false};
+		uint8_t 			sw_b, sw_v, sw_p;
 
-		bundle = SW_Bundle.getNumericValue();
-		vision = SW_Vision.getNumericValue();
-		power = SW_Power.getNumericValue();
+		sw_b = SW_Bundle.getNumericValue();
+		sw_v = SW_Vision.getNumericValue();
+		sw_p = SW_Power.getNumericValue();
 
-		msg.usePose = false;
-
-		// TODO: Taster Entprellfunktion
-		// TODO: Senden wenn nicht gedrueckt
-		if (bundle == 1) {
-			bsPub->publish(msg);
-			brtPub->publish(msg_empty);
+		// Entprellen 3 Taster
+		for (int i = 0; i <= 2; i++) {
+			if ((state[i] == 0) && (sw_b == 0)) {
+				state[i] = 1;
+			} else if ((state[i] == 1) && (sw_b == 0)) {
+				state[i] = 2;
+				msg_send[i] = true;
+			} else if ((state[i] == 1) && (sw_b == 1)) {
+				state[i] = 0;
+			} else if ((state[i] == 2) && (sw_b == 1)) {
+				state[i] = 3;
+			} else if ((state[i] == 3) && (sw_b == 0)) {
+				state[i] = 2;
+			} else if ((state[i] == 3) && (sw_b == 1)) {
+				state[i] = 0;
+			}
 		}
 
-		if (vision == 1) {
-			vrtPub->publish(msg);
+		if (msg_send[bundle] == true) {
+			static uint8_t bundle_state = 0;
+			msg_send[bundle] = false;
+
+			msg_pm.receiverId = ownID;
+			msg_pm.robotIds = {ownID};
+			msg_pm.processKeys = {2,3,4,5,7};
+			msg_pm.paramSets = {1,0,0,0,3};
+
+			if (bundle_state == 0) {		// Prozesse starten
+				bundle_state = 1;
+				msg_pm.cmd = 0;
+			} else if (bundle_state == 1) {	// Prozesse stoppen
+				bundle_state = 0;
+				msg_pm.cmd = 1;
+			}
+			brtPub->publish(msg_pm);
 		}
 
-		if (power == 1) {
+		if (msg_send[vision] == true) {
+			msg_send[vision] = false;
+
+			msg_v.receiverID = ownID;
+			msg_v.usePose = false;
+			vrtPub->publish(msg_v);
+		}
+
+		if (msg_send[power] == true) {
+			msg_send[power] = false;
 
 		}
 
@@ -215,18 +252,19 @@ int main(int argc, char** argv) {
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
 	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
 
-	ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
-	ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
+	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 10);
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	//ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
+	sc = supplementary::SystemConfig::getInstance();
+
 	thread th_controlBHRight(controlBHRight);
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
-	thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub);
+	thread th_switches(getSwitches, &brtPub, &vrtPub);
 	thread th_adns3080(getOptical, &mbcPub);
 	//thread th_imu(getIMU, &imuPub);
 
