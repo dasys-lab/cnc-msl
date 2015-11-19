@@ -25,6 +25,7 @@
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_actuator_msgs/VisionRelocTrigger.h"
+#include "process_manager/ProcessCommand.h"
 
 // BlackLibs
 #include "BlackADC.h"

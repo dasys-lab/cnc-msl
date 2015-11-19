@@ -17,12 +17,16 @@
   <build_depend>msl_actuator_msgs</build_depend>
   <build_depend>msl_black_lib</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>system_config</build_depend>
+  <build_depend>process_manager</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
   <run_depend>msl_black_lib</run_depend>
   <run_depend>message_runtime</run_depend>
+  <run_depend>system_config</run_depend>
+  <run_depend>process_manager</run_depend>
 
   <export>
 
