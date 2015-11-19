@@ -14,11 +14,6 @@
 #include "opticalflow.h"
 #include "imu.h"
 
-#include <mutex>
-#include <condition_variable>
-
-#include <SystemConfig.h>
-
 /*
 Axis.msg
 
