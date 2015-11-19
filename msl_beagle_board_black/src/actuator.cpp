@@ -121,7 +121,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 }
 
 void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	int		ownID = sc->getOwnRobotID();
+	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
 						power = 2, };
