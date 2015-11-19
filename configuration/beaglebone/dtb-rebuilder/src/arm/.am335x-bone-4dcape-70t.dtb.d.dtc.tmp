@@ -1,0 +1,1 @@
+src/arm/am335x-bone-4dcape-70t.dtb: src/arm/.am335x-bone-4dcape-70t.dtb.dts.tmp src/arm/am33xx-clocks.dtsi src/arm/tps65217.dtsi

@@ -1,0 +1,4 @@
+am335x-nano.o: src/arm/am335x-nano.dts src/arm/am33xx.dtsi \
+ include/dt-bindings/gpio/gpio.h include/dt-bindings/pinctrl/am33xx.h \
+ include/dt-bindings/pinctrl/omap.h src/arm/skeleton.dtsi \
+ src/arm/tps65217.dtsi

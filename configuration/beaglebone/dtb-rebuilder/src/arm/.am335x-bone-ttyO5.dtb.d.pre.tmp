@@ -1,0 +1,6 @@
+am335x-bone-ttyO5.o: src/arm/am335x-bone-ttyO5.dts src/arm/am33xx.dtsi \
+ include/dt-bindings/gpio/gpio.h include/dt-bindings/pinctrl/am33xx.h \
+ include/dt-bindings/pinctrl/omap.h src/arm/skeleton.dtsi \
+ src/arm/am335x-bone-common.dtsi src/arm/am335x-bone-common-pinmux.dtsi \
+ src/arm/am335x-bone-i2c2-cape-eeprom.dtsi src/arm/am335x-bone-ttyO5.dtsi \
+ src/arm/am335x-ttyO5.dtsi
