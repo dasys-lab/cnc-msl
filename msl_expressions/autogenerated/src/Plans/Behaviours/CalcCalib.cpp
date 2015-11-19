@@ -69,11 +69,12 @@ namespace alica
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((calibPosMotionX - calibOldPosMotionX) * (calibPosMotionX - calibOldPosMotionX)
                             + (calibPosMotionY - calibOldPosMotionY) * (calibPosMotionY - calibOldPosMotionY));
-            std::cout << "posMotionX: "<< calibPosMotionX - calibOldPosMotionX<< std::endl;
-            std::cout << "posMotionY: "<< calibPosMotionY - calibOldPosMotionY<< std::endl;
-            std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
-           // std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
+            //std::cout << "posMotionX: "<< calibPosMotionX - calibOldPosMotionX<< std::endl;
+            //std::cout << "posMotionY: "<< calibPosMotionY - calibOldPosMotionY<< std::endl;
+            //std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
+            //std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
+            std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/
