@@ -29,7 +29,7 @@
     <outTransitions>#1432132436499</outTransitions>
   </states>
   <states id="1432132325758" name="OppFreeKick" comment="">
-    <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925</plans>
     <inTransitions>#1432132373553</inTransitions>
     <outTransitions>#1432132441185</outTransitions>
   </states>

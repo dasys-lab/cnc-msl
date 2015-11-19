@@ -355,7 +355,6 @@ namespace alica
             arithmeticAverageSpeedDifference = 1;
         }
 
-
         //Exp Funktion for traction Start
 
         double feedForwardLeft, feedForwardRight;
@@ -379,22 +378,24 @@ namespace alica
         splines::spline leftMotor;
         double funktionLeftInterpolation = leftMotor(x); //
         vector<double> XLeft(13), YLeft(13);
-		auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble.FunktionValuesLeft", NULL);
-		counter = 1;
-		for (string sectionName : *FunktionValuesLeftSections)
-		{
-		   XLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-																		 sectionName.c_str(), "XLeft", NULL);
-		   YLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-																		 sectionName.c_str(), "YLeft", NULL);
-		   counter++;
-		}
-		leftMotor.set_points(XLeft, YLeft);
+        auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
+                "ActuateDribble.FunktionValuesLeft", NULL);
+        counter = 1;
+        for (string sectionName : *FunktionValuesLeftSections)
+        {
+            XLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                         sectionName.c_str(), "XLeft", NULL);
+            YLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                         sectionName.c_str(), "YLeft", NULL);
+            counter++;
+        }
+        leftMotor.set_points(XLeft, YLeft);
 
         splines::spline rightMotor;
         double funktionRightInterpolation = rightMotor(x); //
         vector<double> XRight(13), YRight(13);
-        auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections("ActuateDribble.FunktionValuesRight", NULL);
+        auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections(
+                "ActuateDribble.FunktionValuesRight", NULL);
         counter = 1;
         for (string sectionName : *FunktionValuesRightSections)
         {
@@ -407,9 +408,10 @@ namespace alica
         rightMotor.set_points(XRight, YRight);
         splines::spline frictionSpline;
         vector<double> XFric(13), YFric(13);
-        for(int i = 1; i <= 13; i++) {
-        	XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.x" + i, NULL);
-        	YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.y" + i, NULL);
+        for (int i = 1; i <= 13; i++)
+        {
+            XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.x" + i, NULL);
+            YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.y" + i, NULL);
         }
 
         frictionSpline.set_points(XFric, YFric);
@@ -418,7 +420,8 @@ namespace alica
         FunktionValuesLeft = leftMotor(x);
         frictionValue = frictionSpline(x);
 
-        cout << "FunktionValuesRight,FunktionValuesLeft,FrictionValue: " << FunktionValuesRight << " " << FunktionValuesLeft << " " << frictionValue << endl;
+        cout << "FunktionValuesRight,FunktionValuesLeft,FrictionValue: " << FunktionValuesRight << " "
+                << FunktionValuesLeft << " " << frictionValue << endl;
 
         double rotationLeft = 0.0;
         double rotationRight = 0.0;

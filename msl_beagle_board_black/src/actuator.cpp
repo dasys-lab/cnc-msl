@@ -121,7 +121,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 }
 
 void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
-	int		ownID = sc->getOwnRobotID();
+	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
 						power = 2, };
@@ -176,9 +176,11 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 			if (bundle_state == 0) {		// Prozesse starten
 				bundle_state = 1;
 				msg_pm.cmd = 0;
+				LED_Bundle.setValue(high);	// LED an
 			} else if (bundle_state == 1) {	// Prozesse stoppen
 				bundle_state = 0;
 				msg_pm.cmd = 1;
+				LED_Bundle.setValue(low);	// LED aus
 			}
 			brtPub->publish(msg_pm);
 		}
