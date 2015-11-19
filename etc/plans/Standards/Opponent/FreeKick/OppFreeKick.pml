@@ -8,8 +8,17 @@
   </conditions>
   <states id="1445411471123" name="PosDef" comment="" entryPoint="1445411471124">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <outTransitions>#1447875673956</outTransitions>
   </states>
-  <entryPoints id="1445411471124" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <states xsi:type="alica:SuccessState" id="1447875657650" name="Success" comment="">
+    <inTransitions>#1447875673956</inTransitions>
+  </states>
+  <transitions id="1447875673956" name="MISSING_NAME" comment="any children success" msg="">
+    <preCondition id="1447875675479" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1445411471123</inState>
+    <outState>#1447875657650</outState>
+  </transitions>
+  <entryPoints id="1445411471124" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
     <task>../../../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1445411471123</state>
   </entryPoints>
