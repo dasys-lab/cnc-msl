@@ -19,6 +19,6 @@ then
   make -j4
   sudo make install
   cd ~
-  rm -rf vartypes-07.tar.gz
+  rm -rf vartypes-0.7.tar.gz
   rm -rf vartypes-0.7
 fi
