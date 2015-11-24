@@ -19,9 +19,10 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>("/RefereeBoxInfoBody", 2);
-		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo,
-										(GameData*)this);
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
+				"/RefereeBoxInfoBody", 2);
+		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo, (GameData*)this);
+		aliceClientSubscriber = rosNode->subscribe("/AlicaEngine/AlicaEngineInfo", 2, &GameData::onAlicaEngineInfo, (GameData*)this);
 
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
@@ -54,8 +55,73 @@ namespace rqt_msl_refbox
 	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
 		cout << "Reveived Data" << endl;
+		double tmp = msg->ball.point.x;
+		msg->ball.point.x = -msg->ball.point.y/1000.0;
+		msg->ball.point.y = tmp/1000.0;
+		msg->ball.point.z = msg->ball.point.z/1000.0;
+		tmp = msg->ball.velocity.vx;
+		msg->ball.velocity.vx = msg->ball.velocity.vy/1000.0;
+		msg->ball.velocity.vy = tmp/1000.0;
+		msg->ball.velocity.vz /= 1000.0;
+
+		tmp = msg->odom.position.x;
+		msg->odom.position.x = -msg->odom.position.y/1000.0;
+		msg->odom.position.y = tmp/1000.0;
+		msg->odom.position.angle -= 3.14159265/2.0;
+		msg->odom.motion.angle -= 3.14159265/2.0;
+		msg->odom.motion.translation /= 1000.0;
+
+		tmp = msg->negotiatedBall.point.x;
+		msg->negotiatedBall.point.x = -msg->negotiatedBall.point.y/1000.0;
+		msg->negotiatedBall.point.y = tmp/1000.0;
+		msg->negotiatedBall.point.z = msg->negotiatedBall.point.z/1000.0;
+		tmp = msg->negotiatedBall.velocity.vx;
+		msg->negotiatedBall.velocity.vx = msg->negotiatedBall.velocity.vy/1000.0;
+		msg->negotiatedBall.velocity.vy = tmp/1000.0;
+		msg->negotiatedBall.velocity.vz /= 1000.0;
+
+		tmp = msg->sharedBall.point.x;
+		msg->sharedBall.point.x = -msg->sharedBall.point.y/1000.0;
+		msg->sharedBall.point.y = tmp/1000.0;
+		msg->sharedBall.point.z = msg->sharedBall.point.z/1000.0;
+		tmp = msg->sharedBall.velocity.vx;
+		msg->sharedBall.velocity.vx = msg->sharedBall.velocity.vy/1000.0;
+		msg->sharedBall.velocity.vy = tmp/1000.0;
+		msg->sharedBall.velocity.vz /= 1000.0;
+
+
+		for(int i=0; i<msg->path.size(); i++) {
+			tmp = msg->path.at(i).x;
+			msg->path.at(i).x = msg->path.at(i).y/1000.0;
+			msg->path.at(i).y = tmp/1000.0;
+		}
+
+		for(int i=0; i<msg->mergedOpponents.size(); i++) {
+			tmp = msg->mergedOpponents.at(i).x;
+			msg->mergedOpponents.at(i).x = msg->mergedOpponents.at(i).y/1000.0;
+			msg->mergedOpponents.at(i).y = tmp/1000.0;
+		}
+
+		for(int i=0; i<msg->mergedTeamMembers.size(); i++) {
+			tmp = msg->mergedTeamMembers.at(i).x;
+			msg->mergedTeamMembers.at(i).x = msg->mergedTeamMembers.at(i).y/1000.0;
+			msg->mergedTeamMembers.at(i).y = tmp/1000.0;
+		}
+
+		for(int i=0; i<msg->obstacles.size(); i++) {
+			tmp = msg->obstacles.at(i).x;
+			msg->obstacles.at(i).x = msg->obstacles.at(i).y/1000.0;
+			msg->obstacles.at(i).y = tmp/1000.0;
+		}
+
 		lock_guard<mutex> lock(this->shwmMutex);
 		shwmData[msg->senderID] = msg;
+	}
+
+	void GameData::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei)
+	{
+		lock_guard<mutex> lock(this->aeiMutex);
+		aeiData[aei->senderID] = aei;
 	}
 
 	void GameData::PlayOnPressed(void)
