@@ -22,6 +22,7 @@
 #include "alica_ros_proxy/AlicaEngineInfo.h"
 #include <mutex>
 #include <QTimer>
+#include <chrono>
 
 
 using namespace std;
@@ -108,6 +109,7 @@ namespace rqt_msl_refbox
 			msl_msgs::RefBoxCommand ref;
 			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
 			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
+			map<int, chrono::system_clock::time_point> date;
 			mutex shwmMutex, aeiMutex;
 			ros::Publisher RefereeBoxInfoBodyPublisher;
 			ros::Subscriber shwmSub, aliceClientSubscriber;

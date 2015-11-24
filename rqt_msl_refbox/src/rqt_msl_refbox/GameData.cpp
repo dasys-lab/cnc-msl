@@ -69,6 +69,15 @@ namespace rqt_msl_refbox
 			this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
+	void normalizeAngle(double& ang) {
+		while(ang<=-M_PI) {
+			ang+=2*M_PI;
+		}
+		while (ang>M_PI) {
+			ang-=2*M_PI;
+		}
+	}
+
 	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
 		cout << "Received Data" << endl;
@@ -84,8 +93,10 @@ namespace rqt_msl_refbox
 		tmp = msg->odom.position.x;
 		msg->odom.position.x = -msg->odom.position.y/1000.0;
 		msg->odom.position.y = tmp/1000.0;
-		msg->odom.position.angle -= 3.14159265/2.0;
-		msg->odom.motion.angle -= 3.14159265/2.0;
+		msg->odom.position.angle += M_PI/2.0;
+		normalizeAngle(msg->odom.position.angle);
+		msg->odom.motion.angle += M_PI/2.0;
+		normalizeAngle(msg->odom.motion.angle);
 		msg->odom.motion.translation /= 1000.0;
 
 		tmp = msg->negotiatedBall.point.x;
@@ -132,6 +143,7 @@ namespace rqt_msl_refbox
 		}
 
 		lock_guard<mutex> lock(this->shwmMutex);
+		this->date[msg->senderID] = chrono::system_clock::now();
 		shwmData[msg->senderID] = msg;
 	}
 
@@ -653,19 +665,25 @@ namespace rqt_msl_refbox
 			int sID = 9999999;
 			for (auto robot : this->shwmData)
 			{
+				auto now = chrono::system_clock::now();
+				if(chrono::duration_cast<chrono::milliseconds>(now-date[robot.second->senderID]).count()>1000){
+					continue;
+				}
 				if (sID > robot.second->senderID) {
 					sID = robot.second->senderID;
 					robotForObs = robot.second;
 				}
+
 				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"pose\": ["
-						+ QString::number(robot.second->odom.position.x, 'f', 3) + ","
-						+ QString::number(robot.second->odom.position.y, 'f', 3) + ","
+						+ QString().sprintf("%.3f",robot.second->odom.position.x) + ","
+						+ QString().sprintf("%.3f",robot.second->odom.position.y) + ","
 						+ QString::number(robot.second->odom.position.angle, 'f', 4) + "],"
-						+ "\"targetPos\": [null,null,null]," + "\"velocityAng\": "
-						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + ",\"velocityLin\":["
+						+ "\"targetPos\": [null,null,null]," + "\"velocity\":["
 						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle), 'f', 3)
 						+ ","
 						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle), 'f', 3)
+						+ ","
+						+ QString::number(robot.second->odom.motion.rotation, 'f', 4)
 						+ QString("], \"intention\": \"");
 				auto iter = this->aeiData.find(robot.second->senderID);
 				if (iter != this->aeiData.end())
@@ -679,6 +697,7 @@ namespace rqt_msl_refbox
 				logString += QString("\"batteryLevel\": null, \"ballEngaged\": null },");
 
 			}
+			if(sID == 9999999) return;
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
 			logString += "]";
@@ -688,6 +707,10 @@ namespace rqt_msl_refbox
 			int integratedBalls = 0;
 			for (auto robot : this->shwmData)
 			{
+				auto now = chrono::system_clock::now();
+				if(chrono::duration_cast<chrono::milliseconds>(now-date[robot.second->senderID]).count()>1000){
+					continue;
+				}
 				if (robot.second->ball.confidence != 0)
 				{
 					integratedBalls++;
@@ -700,11 +723,11 @@ namespace rqt_msl_refbox
 									+ QString::number(robot.second->ball.velocity.vz, 'f', 3) + "], \"confidence\": "
 									+ QString::number(robot.second->ball.confidence, 'f', 3) + "},");
 				}
-				if (integratedBalls > 0)
-				{
-					// remove last comma
-					logString.remove(logString.length() - 1, 1);
-				}
+			}
+			if (integratedBalls > 0)
+			{
+				// remove last comma
+				logString.remove(logString.length() - 1, 1);
 			}
 			logString += QString("], ");
 
@@ -719,7 +742,7 @@ namespace rqt_msl_refbox
 							+ QString::number(opponents.x, 'f', 3)
 							+ ","
 							+ QString::number(opponents.y, 'f', 3)
-							+ "], \"velocity\": [],"
+							+ "], \"velocity\": [null, null],"
 							+ "\"confidence\": null },"
 							);
 			}
