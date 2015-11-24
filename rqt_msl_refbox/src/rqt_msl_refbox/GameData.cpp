@@ -42,7 +42,6 @@ namespace rqt_msl_refbox
 		this->sendRefBoxCmdtimer = new QTimer();
 		connect (sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
 		this->sendRefBoxCmdtimer->start(333);
-		XMLbasedProtocol = false;
 	}
 
 	GameData::~GameData()
@@ -453,152 +452,29 @@ namespace rqt_msl_refbox
 	/*==============================  RECEIVE METHODS ==============================*/
 	void GameData::receiveRefMsgTcp(void)
 	{
-		QByteArray buffer;
-		cout << "." << flush;
-		char msg[4096];
-		int size = tcpsocket->read(msg,4096);
-		cout << "1" << flush;
-		if (size > 0)
+		if (!localToggled && xmlToggled)
 		{
-			cout << "2" << flush;
-//			std::cout << "BUFFER " <<  buffer.data() << std::endl;
-			if (!localToggled && xmlToggled)
+			QByteArray buffer;
+			buffer = buffer + this->tcpsocket->readLine();
+			if (buffer.size() > 0)
+			{
 				tinyxml2::XMLDocument doc;
-				doc.Parse(msg);
+				doc.Parse(buffer.data());
 				tinyxml2::XMLElement* element = doc.FirstChildElement();
 				xmlparser->handle(element);
 			}
-			else if (!localToggled && charToggled)
+		}
+		else if (!localToggled && charToggled)
+		{
+			char msg[4096];
+			int size = tcpsocket->read(msg,4096);
+			if (size > 0)
 			{
 				processCharacterBasedProtocol(msg);
 			}
 		}
 	}
 
-	void GameData::processCharacterBasedProtocol(const char * data) {
-		QString Cmd("SsNkKpPfFgGtTcCHaALDd");
-		QString valid_cmd;
-
-		printf("Ref box Message -> %s\n", data);
-		QString Msg(data);
-
-		/* Comandos Internos */
-		if (Msg.contains("W"))
-		{
-			printf("Ref Box connected\n");
-			Msg.remove("W");
-		}
-
-		if (Msg.contains("h"))
-		{
-			this->sendStop();
-			Msg.remove("h");
-		}
-
-		if (Msg.contains('e'))
-		{
-			this->sendStop();
-			Msg.remove("e");
-		}
-
-		if (Msg.contains('1'))
-		{
-			//Start First Half
-			ref.goalsCyan = 0;
-			ref.goalsMagenta = 0;
-			Msg.remove("1");
-		}
-
-		if (Msg.contains('2'))
-		{
-			//Start Second half
-			Msg.remove("2");
-
-		}
-		/*******************************************************Filipe**************/
-		if (Msg.contains('3'))
-		{
-			//Third half
-			Msg.remove("3");
-		}
-
-		if (Msg.contains('4'))
-		{
-			//Fourth half
-			Msg.remove("4");
-		}
-
-		/* Proc msg */
-		valid_cmd.clear();
-		for (int i = 0; i < Msg.length(); i++)
-		{
-			if (Cmd.contains(Msg[i])) //é um comando válido??
-			{
-				//Cmd válido
-				valid_cmd = Msg[i];
-				//printf("last valid cmd-> %c \n", Msg[i]);
-
-				if (valid_cmd == "s")
-					this->sendStart();
-
-				if (valid_cmd == "S")
-					this->sendStop();
-
-				if (valid_cmd == "K")
-					this->sendCyanKickOff();
-
-				if (valid_cmd == "k")
-					this->sendMagentaKickOff();
-
-				if (valid_cmd == "P")
-					this->sendCyanPenalty();
-
-				if (valid_cmd == "p")
-					this->sendMagentaPenalty();
-
-				if (valid_cmd == "F")
-					this->sendCyanFreeKick();
-
-				if (valid_cmd == "f")
-					this->sendMagentaFreeKick();
-
-				if (valid_cmd == "G")
-					this->sendCyanGoalKick();
-
-				if (valid_cmd == "g")
-					this->sendMagentaGoalKick();
-
-				if (valid_cmd == "T")
-					this->sendCyanThrownin();
-
-				if (valid_cmd == "t")
-					this->sendMagentaThrownin();
-
-				if (valid_cmd == "C")
-					this->sendCyanCornerKick();
-
-				if (valid_cmd == "c")
-					this->sendMagentaCornerKick();
-
-				if (valid_cmd == "A")
-					ref.goalsCyan++;
-
-				if (valid_cmd == "a")
-					ref.goalsMagenta++;
-
-				if (valid_cmd == "D")
-					ref.goalsCyan--;
-
-				if (valid_cmd == "d")
-					ref.goalsMagenta--;
-				if (valid_cmd == "N")
-					this->sendDroppedBall();
-
-				if (valid_cmd == "L")
-					this->sendParking();
-			}
-		}
-	}
 	void GameData::receiveRefMsgUdp(void)
 	{
 		QByteArray buffer;
@@ -620,12 +496,136 @@ namespace rqt_msl_refbox
 			}
 			else if (!localToggled && charToggled)
 			{
-				processCharacterBasedProtocol(msg);
-
+				processCharacterBasedProtocol(buffer.data());
 			}
 		}
 
 	}
+
+	void GameData::processCharacterBasedProtocol(const char * data) {
+			QString Cmd("SsNkKpPfFgGtTcCHaALDd");
+			QString valid_cmd;
+
+			printf("Ref box Message -> %s\n", data);
+			QString Msg(data);
+
+			/* Comandos Internos */
+			if (Msg.contains("W"))
+			{
+				printf("Ref Box connected\n");
+				Msg.remove("W");
+			}
+
+			if (Msg.contains("h"))
+			{
+				this->sendStop();
+				Msg.remove("h");
+			}
+
+			if (Msg.contains('e'))
+			{
+				this->sendStop();
+				Msg.remove("e");
+			}
+
+			if (Msg.contains('1'))
+			{
+				//Start First Half
+				ref.goalsCyan = 0;
+				ref.goalsMagenta = 0;
+				Msg.remove("1");
+			}
+
+			if (Msg.contains('2'))
+			{
+				//Start Second half
+				Msg.remove("2");
+
+			}
+			/*******************************************************Filipe**************/
+			if (Msg.contains('3'))
+			{
+				//Third half
+				Msg.remove("3");
+			}
+
+			if (Msg.contains('4'))
+			{
+				//Fourth half
+				Msg.remove("4");
+			}
+
+			/* Proc msg */
+			valid_cmd.clear();
+			for (int i = 0; i < Msg.length(); i++)
+			{
+				if (Cmd.contains(Msg[i])) //é um comando válido??
+				{
+					//Cmd válido
+					valid_cmd = Msg[i];
+					//printf("last valid cmd-> %c \n", Msg[i]);
+
+					if (valid_cmd == "s")
+						this->sendStart();
+
+					if (valid_cmd == "S")
+						this->sendStop();
+
+					if (valid_cmd == "K")
+						this->sendCyanKickOff();
+
+					if (valid_cmd == "k")
+						this->sendMagentaKickOff();
+
+					if (valid_cmd == "P")
+						this->sendCyanPenalty();
+
+					if (valid_cmd == "p")
+						this->sendMagentaPenalty();
+
+					if (valid_cmd == "F")
+						this->sendCyanFreeKick();
+
+					if (valid_cmd == "f")
+						this->sendMagentaFreeKick();
+
+					if (valid_cmd == "G")
+						this->sendCyanGoalKick();
+
+					if (valid_cmd == "g")
+						this->sendMagentaGoalKick();
+
+					if (valid_cmd == "T")
+						this->sendCyanThrownin();
+
+					if (valid_cmd == "t")
+						this->sendMagentaThrownin();
+
+					if (valid_cmd == "C")
+						this->sendCyanCornerKick();
+
+					if (valid_cmd == "c")
+						this->sendMagentaCornerKick();
+
+					if (valid_cmd == "A")
+						ref.goalsCyan++;
+
+					if (valid_cmd == "a")
+						ref.goalsMagenta++;
+
+					if (valid_cmd == "D")
+						ref.goalsCyan--;
+
+					if (valid_cmd == "d")
+						ref.goalsMagenta--;
+					if (valid_cmd == "N")
+						this->sendDroppedBall();
+
+					if (valid_cmd == "L")
+						this->sendParking();
+				}
+			}
+		}
 
 	/*==============================  SEND REFBOX LOG ===========================*/
 
@@ -681,7 +681,7 @@ namespace rqt_msl_refbox
 			}
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
-			logString += "]"
+			logString += "]";
 
 			// balls
 			logString += QString(",\"balls\": [");

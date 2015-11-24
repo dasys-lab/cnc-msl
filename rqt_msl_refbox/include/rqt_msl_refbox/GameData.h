@@ -112,9 +112,6 @@ namespace rqt_msl_refbox
 			ros::Publisher RefereeBoxInfoBodyPublisher;
 			ros::Subscriber shwmSub, aliceClientSubscriber;
 			ros::NodeHandle* rosNode;
-			bool localToggled;
-			bool multiToggled;
-			bool tcpToggled;
 			QTcpSocket* tcpsocket;
 			QUdpSocket* udpsocket;
 			int counter;
