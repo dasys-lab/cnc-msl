@@ -395,10 +395,9 @@ namespace rqt_msl_refbox
 
 			QString destHost = this->refBox->ledit_ipaddress->text();
 			quint16 destPort = this->refBox->spin_port->value();
-			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
 
 			tcpsocket->connectToHost(destHost, destPort);
-
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: TCP ");
 			if (!tcpsocket->waitForConnected(1000))
 			{
 				this->refBox->RefLog->append("Creating Socket TCP: error");
@@ -421,7 +420,7 @@ namespace rqt_msl_refbox
 			QString destHost = this->refBox->ledit_ipaddress->text();
 			quint16 destPort = this->refBox->spin_port->value();
 
-			this->refBox->lbl_statusCon->setText("TRY CONNECT: MILTICAST ");
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: UDP ");
 
 			QString adressMulti = destHost;
 			QHostAddress adress = QHostAddress(adressMulti);
@@ -431,15 +430,15 @@ namespace rqt_msl_refbox
 
 			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 
-			this->refBox->lbl_statusCon->setText("UDP MULTICAST");
+			this->refBox->lbl_statusCon->setText("UDP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 2;
 
 		}
 
 	}
-	/*==============================  RECEIVE METHODS ==============================*/
 
+	/*==============================  RECEIVE METHODS ==============================*/
 	void GameData::receiveRefMsgTcp(void)
 	{
 		QByteArray buffer;
@@ -447,7 +446,7 @@ namespace rqt_msl_refbox
 		{
 			buffer = buffer + tcpsocket->readLine();
 		}
-		if (buffer.size() > 1)
+		if (buffer.size() > 0)
 		{
 			if (!localToggled && xmlToggled)
 			{
@@ -471,9 +470,8 @@ namespace rqt_msl_refbox
 		quint16 senderPort;
 
 		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-//		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
 
-		if (buffer.size() > 1)
+		if (buffer.size() > 0)
 		{
 			if (!localToggled && xmlToggled)
 			{

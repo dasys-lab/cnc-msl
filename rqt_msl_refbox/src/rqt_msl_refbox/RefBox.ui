@@ -8781,7 +8781,7 @@
         <string>IFace</string>
        </property>
       </widget>
-      <widget class="QLineEdit" name="ledtit_interface">
+      <widget class="QLineEdit" name="ledit_interface">
        <property name="geometry">
         <rect>
          <x>40</x>
@@ -8799,6 +8799,9 @@
          <width>116</width>
          <height>20</height>
         </rect>
+       </property>
+       <property name="text">
+        <string>172.16.1.2</string>
        </property>
       </widget>
       <widget class="QCheckBox" name="rbtn_local">
