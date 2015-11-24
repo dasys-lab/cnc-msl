@@ -6,6 +6,7 @@
  */
 
 #include "rqt_msl_refbox/GameData.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include "qstring.h"
@@ -18,34 +19,36 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
-				"/RefereeBoxInfoBody", 2);
-		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo, (GameData*)this);
-		aliceClientSubscriber = rosNode->subscribe("/AlicaEngine/AlicaEngineInfo", 2, &GameData::onAlicaEngineInfo, (GameData*)this);
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>("/RefereeBoxInfoBody", 2);
+		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo,
+										(GameData*)this);
+		aliceClientSubscriber = rosNode->subscribe("/AlicaEngine/AlicaEngineInfo", 2, &GameData::onAlicaEngineInfo,
+													(GameData*)this);
 
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
-		tcpToggled = false;
-		multiToggled = false;
+		this->tcpToggled = false;
+		this->udpToggled = false;
+		this->charToggled = false;
+		this->xmlToggled = false;
 		this->refBox = refBox;
 		this->counter = 0;
 		this->udpsocket = nullptr;
 		this->tcpsocket = nullptr;
 		this->sendRefBoxLogtimer = new QTimer();
-		connect (sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
+		connect(sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
 		this->sendRefBoxLogtimer->start(100);
 
 		this->sendRefBoxCmdtimer = new QTimer();
 		connect (sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
 		this->sendRefBoxCmdtimer->start(333);
-		XMLbasedProtocol = false;
 	}
 
 	GameData::~GameData()
 	{
 		if (tcpsocket != nullptr)
 		{
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 			delete udpsocket;
 		}
 		if (udpsocket != nullptr)
@@ -68,11 +71,11 @@ namespace rqt_msl_refbox
 
 	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
-		cout << "Reveived Data" << endl;
+		cout << "Received Data" << endl;
 		double tmp = msg->ball.point.x;
-		msg->ball.point.x = -msg->ball.point.y/1000.0;
-		msg->ball.point.y = tmp/1000.0;
-		msg->ball.point.z = msg->ball.point.z/1000.0;
+		msg->ball.point.x = -msg->ball.point.y / 1000.0;
+		msg->ball.point.y = tmp / 1000.0;
+		msg->ball.point.z = msg->ball.point.z / 1000.0;
 		tmp = msg->ball.velocity.vx;
 		msg->ball.velocity.vx = msg->ball.velocity.vy/1000.0;
 		msg->ball.velocity.vy = tmp/1000.0;
@@ -342,35 +345,29 @@ namespace rqt_msl_refbox
 		this->refBox->RefLog->append("Penalty Cyan local");
 	}
 
-	void GameData::onLocalTogled(bool checked)
+	void GameData::onLocalToggled(bool checked)
 	{
 		this->localToggled = checked;
 	}
 
-	void GameData::onMultiTogled(bool checked)
+	void GameData::onUdpToggled(bool checked)
 	{
-		this->multiToggled = checked;
-
+		this->udpToggled = checked;
 	}
 
-	void GameData::onTcpTogled(bool checked)
+	void GameData::onTcpToggled(bool checked)
 	{
 		this->tcpToggled = checked;
 	}
 
-	bool GameData::isLocalToggled()
+	void GameData::onXmlToggled(bool checked)
 	{
-		return localToggled;
+		this->xmlToggled = checked;
 	}
 
-	bool GameData::isTcpToggled()
+	void GameData::onCharToggled(bool checked)
 	{
-		return tcpToggled;
-	}
-
-	bool GameData::isMultiToggled()
-	{
-		return multiToggled;
+		this->charToggled = checked;
 	}
 
 	/*==============================  CONNECT METHODS ==============================*/
@@ -380,7 +377,7 @@ namespace rqt_msl_refbox
 		if (counter == 1)
 		{
 			tcpsocket->close();
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 			delete tcpsocket;
 			tcpsocket = nullptr;
 		}
@@ -392,9 +389,15 @@ namespace rqt_msl_refbox
 			udpsocket = nullptr;
 		}
 
-		if (tcpToggled)
+		if (localToggled)
 		{
-
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			this->refBox->lbl_statusCon->setText("LOCAL");
+			this->counter = 0;
+		}
+		else if (tcpToggled)
+		{
 			tcpsocket = new QTcpSocket();
 
 			this->refBox->RefLog->append("Creating TCP Socket");
@@ -404,8 +407,7 @@ namespace rqt_msl_refbox
 			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
 
 			tcpsocket->connectToHost(destHost, destPort);
-			cout << "Trying to connect ..." << endl;
-
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: TCP ");
 			if (!tcpsocket->waitForConnected(1000))
 			{
 				this->refBox->RefLog->append("Creating Socket TCP: error");
@@ -414,14 +416,13 @@ namespace rqt_msl_refbox
 				return;
 			}
 
-			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 
 			this->refBox->lbl_statusCon->setText("TCP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 1;
-			cout << "Connected" << endl;
 		}
-		else if (multiToggled)
+		else if (udpToggled)
 		{
 
 			udpsocket = new QUdpSocket();
@@ -430,7 +431,7 @@ namespace rqt_msl_refbox
 			QString destHost = this->refBox->ledit_ipaddress->text();
 			quint16 destPort = this->refBox->spin_port->value();
 
-			this->refBox->lbl_statusCon->setText("TRY CONNECT: MILTICAST ");
+			this->refBox->lbl_statusCon->setText("TRY CONNECT: UDP ");
 
 			QString adressMulti = destHost;
 			QHostAddress adress = QHostAddress(adressMulti);
@@ -440,165 +441,36 @@ namespace rqt_msl_refbox
 
 			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 
-			this->refBox->lbl_statusCon->setText("MULTICAST");
+			this->refBox->lbl_statusCon->setText("UDP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 2;
 
 		}
-		else if (localToggled)
-		{
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
-			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
-			this->refBox->lbl_statusCon->setText("LOCAL");
-			this->counter = 0;
-		}
-	}
-	/*==============================  RECEIVE METHODS ==============================*/
 
-	void GameData::receiveRefMsg(void)
+	}
+
+	/*==============================  RECEIVE METHODS ==============================*/
+	void GameData::receiveRefMsgTcp(void)
 	{
-		QByteArray buffer;
-		cout << "." << flush;
-		char msg[4096];
-		int size = tcpsocket->read(msg,4096);
-		cout << "1" << flush;
-		if (size > 0)
+		if (!localToggled && xmlToggled)
 		{
-			cout << "2" << flush;
-//			std::cout << "BUFFER " <<  buffer.data() << std::endl;
-			if(XMLbasedProtocol) {
+			QByteArray buffer;
+			buffer = buffer + this->tcpsocket->readLine();
+			if (buffer.size() > 0)
+			{
 				tinyxml2::XMLDocument doc;
-				doc.Parse(msg);
+				doc.Parse(buffer.data());
 				tinyxml2::XMLElement* element = doc.FirstChildElement();
 				xmlparser->handle(element);
-			} else {
-				cout << "3" << flush;
-				processCharacterBasedProtocol(msg);
 			}
 		}
-	}
-
-	void GameData::processCharacterBasedProtocol(const char * data) {
-		QString Cmd("SsNkKpPfFgGtTcCHaALDd");
-		QString valid_cmd;
-
-		printf("Ref box Message -> %s\n", data);
-		QString Msg(data);
-
-		/* Comandos Internos */
-		if (Msg.contains("W"))
+		else if (!localToggled && charToggled)
 		{
-			printf("Ref Box connected\n");
-			Msg.remove("W");
-		}
-
-		if (Msg.contains("h"))
-		{
-			this->sendStop();
-			Msg.remove("h");
-		}
-
-		if (Msg.contains('e'))
-		{
-			this->sendStop();
-			Msg.remove("e");
-		}
-
-		if (Msg.contains('1'))
-		{
-			//Start First Half
-			ref.goalsCyan = 0;
-			ref.goalsMagenta = 0;
-			Msg.remove("1");
-		}
-
-		if (Msg.contains('2'))
-		{
-			//Start Second half
-			Msg.remove("2");
-
-		}
-		/*******************************************************Filipe**************/
-		if (Msg.contains('3'))
-		{
-			//Third half
-			Msg.remove("3");
-		}
-
-		if (Msg.contains('4'))
-		{
-			//Fourth half
-			Msg.remove("4");
-		}
-
-		/* Proc msg */
-		valid_cmd.clear();
-		for (int i = 0; i < Msg.length(); i++)
-		{
-			if (Cmd.contains(Msg[i])) //é um comando válido??
+			char msg[4096];
+			int size = tcpsocket->read(msg,4096);
+			if (size > 0)
 			{
-				//Cmd válido
-				valid_cmd = Msg[i];
-				//printf("last valid cmd-> %c \n", Msg[i]);
-
-				if (valid_cmd == "s")
-					this->sendStart();
-
-				if (valid_cmd == "S")
-					this->sendStop();
-
-				if (valid_cmd == "K")
-					this->sendCyanKickOff();
-
-				if (valid_cmd == "k")
-					this->sendMagentaKickOff();
-
-				if (valid_cmd == "P")
-					this->sendCyanPenalty();
-
-				if (valid_cmd == "p")
-					this->sendMagentaPenalty();
-
-				if (valid_cmd == "F")
-					this->sendCyanFreeKick();
-
-				if (valid_cmd == "f")
-					this->sendMagentaFreeKick();
-
-				if (valid_cmd == "G")
-					this->sendCyanGoalKick();
-
-				if (valid_cmd == "g")
-					this->sendMagentaGoalKick();
-
-				if (valid_cmd == "T")
-					this->sendCyanThrownin();
-
-				if (valid_cmd == "t")
-					this->sendMagentaThrownin();
-
-				if (valid_cmd == "C")
-					this->sendCyanCornerKick();
-
-				if (valid_cmd == "c")
-					this->sendMagentaCornerKick();
-
-				if (valid_cmd == "A")
-					ref.goalsCyan++;
-
-				if (valid_cmd == "a")
-					ref.goalsMagenta++;
-
-				if (valid_cmd == "D")
-					ref.goalsCyan--;
-
-				if (valid_cmd == "d")
-					ref.goalsMagenta--;
-				if (valid_cmd == "N")
-					this->sendDroppedBall();
-
-				if (valid_cmd == "L")
-					this->sendParking();
+				processCharacterBasedProtocol(msg);
 			}
 		}
 	}
@@ -612,15 +484,148 @@ namespace rqt_msl_refbox
 		quint16 senderPort;
 
 		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-//		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
 
-		tinyxml2::XMLDocument doc;
-
-		doc.Parse(buffer.data());
-		tinyxml2::XMLElement* element = doc.FirstChildElement();
-		xmlparser->handle(element);
+		if (buffer.size() > 0)
+		{
+			if (!localToggled && xmlToggled)
+			{
+				tinyxml2::XMLDocument doc;
+				doc.Parse(buffer.data());
+				tinyxml2::XMLElement* element = doc.FirstChildElement();
+				xmlparser->handle(element);
+			}
+			else if (!localToggled && charToggled)
+			{
+				processCharacterBasedProtocol(buffer.data());
+			}
+		}
 
 	}
+
+	void GameData::processCharacterBasedProtocol(const char * data) {
+			QString Cmd("SsNkKpPfFgGtTcCHaALDd");
+			QString valid_cmd;
+
+			printf("Ref box Message -> %s\n", data);
+			QString Msg(data);
+
+			/* Comandos Internos */
+			if (Msg.contains("W"))
+			{
+				printf("Ref Box connected\n");
+				Msg.remove("W");
+			}
+
+			if (Msg.contains("h"))
+			{
+				this->sendStop();
+				Msg.remove("h");
+			}
+
+			if (Msg.contains('e'))
+			{
+				this->sendStop();
+				Msg.remove("e");
+			}
+
+			if (Msg.contains('1'))
+			{
+				//Start First Half
+				ref.goalsCyan = 0;
+				ref.goalsMagenta = 0;
+				Msg.remove("1");
+			}
+
+			if (Msg.contains('2'))
+			{
+				//Start Second half
+				Msg.remove("2");
+
+			}
+			/*******************************************************Filipe**************/
+			if (Msg.contains('3'))
+			{
+				//Third half
+				Msg.remove("3");
+			}
+
+			if (Msg.contains('4'))
+			{
+				//Fourth half
+				Msg.remove("4");
+			}
+
+			/* Proc msg */
+			valid_cmd.clear();
+			for (int i = 0; i < Msg.length(); i++)
+			{
+				if (Cmd.contains(Msg[i])) //é um comando válido??
+				{
+					//Cmd válido
+					valid_cmd = Msg[i];
+					//printf("last valid cmd-> %c \n", Msg[i]);
+
+					if (valid_cmd == "s")
+						this->sendStart();
+
+					if (valid_cmd == "S")
+						this->sendStop();
+
+					if (valid_cmd == "K")
+						this->sendCyanKickOff();
+
+					if (valid_cmd == "k")
+						this->sendMagentaKickOff();
+
+					if (valid_cmd == "P")
+						this->sendCyanPenalty();
+
+					if (valid_cmd == "p")
+						this->sendMagentaPenalty();
+
+					if (valid_cmd == "F")
+						this->sendCyanFreeKick();
+
+					if (valid_cmd == "f")
+						this->sendMagentaFreeKick();
+
+					if (valid_cmd == "G")
+						this->sendCyanGoalKick();
+
+					if (valid_cmd == "g")
+						this->sendMagentaGoalKick();
+
+					if (valid_cmd == "T")
+						this->sendCyanThrownin();
+
+					if (valid_cmd == "t")
+						this->sendMagentaThrownin();
+
+					if (valid_cmd == "C")
+						this->sendCyanCornerKick();
+
+					if (valid_cmd == "c")
+						this->sendMagentaCornerKick();
+
+					if (valid_cmd == "A")
+						ref.goalsCyan++;
+
+					if (valid_cmd == "a")
+						ref.goalsMagenta++;
+
+					if (valid_cmd == "D")
+						ref.goalsCyan--;
+
+					if (valid_cmd == "d")
+						ref.goalsMagenta--;
+					if (valid_cmd == "N")
+						this->sendDroppedBall();
+
+					if (valid_cmd == "L")
+						this->sendParking();
+				}
+			}
+		}
 
 	/*==============================  SEND REFBOX LOG ===========================*/
 
@@ -676,7 +681,7 @@ namespace rqt_msl_refbox
 			}
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
-			logString += QString("]");
+			logString += "]";
 
 			// balls
 			logString += QString(",\"balls\": [");
@@ -702,6 +707,7 @@ namespace rqt_msl_refbox
 				}
 			}
 			logString += QString("], ");
+
 			// obstacles
 			logString += QString("\"obstacles\": [");
 			int integratedObstacles = 0;
