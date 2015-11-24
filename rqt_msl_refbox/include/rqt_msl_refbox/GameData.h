@@ -19,6 +19,7 @@
 #include "rqt_msl_refbox/tinyxml2.h"
 #include "rqt_msl_refbox/XMLProtocolParser.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "alica_ros_proxy/AlicaEngineInfo.h"
 #include <mutex>
 
 
@@ -33,6 +34,7 @@ namespace rqt_msl_refbox
 		Q_OBJECT
 	public:
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
+		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -91,9 +93,10 @@ public Q_SLOTS:
 		void onDisconnectPressed(void);
 	protected:
 			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
-			mutex shwmMutex;
+			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
+			mutex shwmMutex, aeiMutex;
 			ros::Publisher RefereeBoxInfoBodyPublisher;
-			ros::Subscriber shwmSub;
+			ros::Subscriber shwmSub, aliceClientSubscriber;
 			ros::NodeHandle* rosNode;
 			bool localToggled;
 			bool multiToggled;
