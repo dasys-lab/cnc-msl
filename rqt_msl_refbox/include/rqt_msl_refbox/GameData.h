@@ -17,10 +17,12 @@
 #include <QUdpSocket>
 #include "rqt_msl_refbox/tinyxml2.h"
 #include "rqt_msl_refbox/XMLProtocolParser.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "alica_ros_proxy/AlicaEngineInfo.h"
 #include <mutex>
 #include <QTimer>
+
 
 using namespace std;
 
@@ -30,10 +32,11 @@ namespace rqt_msl_refbox
 	class XMLProtocolParser;
 	class GameData : public QObject
 	{
-	Q_OBJECT
+		Q_OBJECT
 	public:
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
+		void processCharacterBasedProtocol(const char * data);
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -97,23 +100,30 @@ namespace rqt_msl_refbox
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
 
+		void sendRefBoxCmd();
+
 		/* refbox log send method */
 		void sendRefBoxLog();
 	protected:
-		map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
-		map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
-		mutex shwmMutex, aeiMutex;
-		ros::Publisher RefereeBoxInfoBodyPublisher;
-		ros::Subscriber shwmSub, aliceClientSubscriber;
-		ros::NodeHandle* rosNode;
-
-		QTcpSocket* tcpsocket;
-		QUdpSocket* udpsocket;
-		int counter;
-		XMLProtocolParser* xmlparser;
-		QTimer* sendRefBoxLogtimer;
+			msl_msgs::RefBoxCommand ref;
+			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
+			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
+			mutex shwmMutex, aeiMutex;
+			ros::Publisher RefereeBoxInfoBodyPublisher;
+			ros::Subscriber shwmSub, aliceClientSubscriber;
+			ros::NodeHandle* rosNode;
+			bool localToggled;
+			bool multiToggled;
+			bool tcpToggled;
+			QTcpSocket* tcpsocket;
+			QUdpSocket* udpsocket;
+			int counter;
+			XMLProtocolParser* xmlparser;
+			QTimer* sendRefBoxLogtimer;
+			QTimer* sendRefBoxCmdtimer;
 
 	};
+
 
 } /* namespace rqt_pm_control */
 
