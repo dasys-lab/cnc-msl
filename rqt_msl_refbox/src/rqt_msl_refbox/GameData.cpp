@@ -20,6 +20,7 @@ namespace rqt_msl_refbox
 
 		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
 				"/RefereeBoxInfoBody", 2);
+		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo, (GameData*)this);
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
 		tcpToggled = false;
@@ -46,6 +47,12 @@ namespace rqt_msl_refbox
 		}
 		delete rosNode;
 		delete xmlparser;
+	}
+
+	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg) {
+		cout << "Reveived Data" << endl;
+		lock_guard<mutex> lock(this->shwmMutex);
+		shwmData[msg->senderID] = msg;
 	}
 
 	void GameData::PlayOnPressed(void)

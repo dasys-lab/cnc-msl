@@ -9,6 +9,7 @@
 #define CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_GAMEDATA_H_
 
 #include "ros/ros.h"
+#include <map>
 #include <QFile>
 #include <QtGui>
 #include <rqt_msl_refbox/RefBox.h>
@@ -17,6 +18,11 @@
 #include <QUdpSocket>
 #include "rqt_msl_refbox/tinyxml2.h"
 #include "rqt_msl_refbox/XMLProtocolParser.h"
+#include "msl_sensor_msgs/SharedWorldInfo.h"
+#include <mutex>
+
+
+using namespace std;
 
 namespace rqt_msl_refbox
 {
@@ -26,6 +32,7 @@ namespace rqt_msl_refbox
 	{
 		Q_OBJECT
 	public:
+		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -83,7 +90,10 @@ public Q_SLOTS:
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
 	protected:
+			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
+			mutex shwmMutex;
 			ros::Publisher RefereeBoxInfoBodyPublisher;
+			ros::Subscriber shwmSub;
 			ros::NodeHandle* rosNode;
 			bool localToggled;
 			bool multiToggled;
@@ -93,6 +103,7 @@ public Q_SLOTS:
 			QUdpSocket* udpsocket;
 			int counter;
 			XMLProtocolParser* xmlparser;
+
 	};
 
 

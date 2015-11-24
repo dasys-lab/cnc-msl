@@ -6,7 +6,7 @@ project(rqt_msl_refbox)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 # Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs)
+find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs)
 
 find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
 

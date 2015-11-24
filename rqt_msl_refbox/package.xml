@@ -11,11 +11,13 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>rqt_gui</build_depend>
+  <build_depend>msl__sensor_msgs</build_depend>
   <build_depend>msl_msgs</build_depend>
   <build_depend>rqt_gui_cpp</build_depend>
   
   <run_depend>rqt_gui</run_depend>
   <run_depend>msl_msgs</run_depend>
+  <run_depend>msl_sensor_msgs</run_depend>
   <run_depend>rqt_gui_cpp</run_depend>
 
   <export>
