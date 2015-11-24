@@ -19,21 +19,24 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
-				"/RefereeBoxInfoBody", 2);
-		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo, (GameData*)this);
-		aliceClientSubscriber = rosNode->subscribe("/AlicaEngine/AlicaEngineInfo", 2, &GameData::onAlicaEngineInfo, (GameData*)this);
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>("/RefereeBoxInfoBody", 2);
+		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo,
+										(GameData*)this);
+		aliceClientSubscriber = rosNode->subscribe("/AlicaEngine/AlicaEngineInfo", 2, &GameData::onAlicaEngineInfo,
+													(GameData*)this);
 
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
-		tcpToggled = false;
-		multiToggled = false;
+		this->tcpToggled = false;
+		this->udpToggled = false;
+		this->charToggled = false;
+		this->xmlToggled = false;
 		this->refBox = refBox;
 		this->counter = 0;
 		this->udpsocket = nullptr;
 		this->tcpsocket = nullptr;
 		this->sendRefBoxLogtimer = new QTimer();
-		connect (sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
+		connect(sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
 		this->sendRefBoxLogtimer->start(100);
 	}
 
@@ -41,7 +44,7 @@ namespace rqt_msl_refbox
 	{
 		if (tcpsocket != nullptr)
 		{
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 			delete udpsocket;
 		}
 		if (udpsocket != nullptr)
@@ -56,64 +59,67 @@ namespace rqt_msl_refbox
 
 	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
-		cout << "Reveived Data" << endl;
+		cout << "Received Data" << endl;
 		double tmp = msg->ball.point.x;
-		msg->ball.point.x = -msg->ball.point.y/1000.0;
-		msg->ball.point.y = tmp/1000.0;
-		msg->ball.point.z = msg->ball.point.z/1000.0;
+		msg->ball.point.x = -msg->ball.point.y / 1000.0;
+		msg->ball.point.y = tmp / 1000.0;
+		msg->ball.point.z = msg->ball.point.z / 1000.0;
 		tmp = msg->ball.velocity.vx;
-		msg->ball.velocity.vx = msg->ball.velocity.vy/1000.0;
-		msg->ball.velocity.vy = tmp/1000.0;
+		msg->ball.velocity.vx = msg->ball.velocity.vy / 1000.0;
+		msg->ball.velocity.vy = tmp / 1000.0;
 		msg->ball.velocity.vz /= 1000.0;
 
 		tmp = msg->odom.position.x;
-		msg->odom.position.x = -msg->odom.position.y/1000.0;
-		msg->odom.position.y = tmp/1000.0;
-		msg->odom.position.angle -= 3.14159265/2.0;
-		msg->odom.motion.angle -= 3.14159265/2.0;
+		msg->odom.position.x = -msg->odom.position.y / 1000.0;
+		msg->odom.position.y = tmp / 1000.0;
+		msg->odom.position.angle -= 3.14159265 / 2.0;
+		msg->odom.motion.angle -= 3.14159265 / 2.0;
 		msg->odom.motion.translation /= 1000.0;
 
 		tmp = msg->negotiatedBall.point.x;
-		msg->negotiatedBall.point.x = -msg->negotiatedBall.point.y/1000.0;
-		msg->negotiatedBall.point.y = tmp/1000.0;
-		msg->negotiatedBall.point.z = msg->negotiatedBall.point.z/1000.0;
+		msg->negotiatedBall.point.x = -msg->negotiatedBall.point.y / 1000.0;
+		msg->negotiatedBall.point.y = tmp / 1000.0;
+		msg->negotiatedBall.point.z = msg->negotiatedBall.point.z / 1000.0;
 		tmp = msg->negotiatedBall.velocity.vx;
-		msg->negotiatedBall.velocity.vx = msg->negotiatedBall.velocity.vy/1000.0;
-		msg->negotiatedBall.velocity.vy = tmp/1000.0;
+		msg->negotiatedBall.velocity.vx = msg->negotiatedBall.velocity.vy / 1000.0;
+		msg->negotiatedBall.velocity.vy = tmp / 1000.0;
 		msg->negotiatedBall.velocity.vz /= 1000.0;
 
 		tmp = msg->sharedBall.point.x;
-		msg->sharedBall.point.x = -msg->sharedBall.point.y/1000.0;
-		msg->sharedBall.point.y = tmp/1000.0;
-		msg->sharedBall.point.z = msg->sharedBall.point.z/1000.0;
+		msg->sharedBall.point.x = -msg->sharedBall.point.y / 1000.0;
+		msg->sharedBall.point.y = tmp / 1000.0;
+		msg->sharedBall.point.z = msg->sharedBall.point.z / 1000.0;
 		tmp = msg->sharedBall.velocity.vx;
-		msg->sharedBall.velocity.vx = msg->sharedBall.velocity.vy/1000.0;
-		msg->sharedBall.velocity.vy = tmp/1000.0;
+		msg->sharedBall.velocity.vx = msg->sharedBall.velocity.vy / 1000.0;
+		msg->sharedBall.velocity.vy = tmp / 1000.0;
 		msg->sharedBall.velocity.vz /= 1000.0;
 
-
-		for(int i=0; i<msg->path.size(); i++) {
+		for (int i = 0; i < msg->path.size(); i++)
+		{
 			tmp = msg->path.at(i).x;
-			msg->path.at(i).x = msg->path.at(i).y/1000.0;
-			msg->path.at(i).y = tmp/1000.0;
+			msg->path.at(i).x = msg->path.at(i).y / 1000.0;
+			msg->path.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->mergedOpponents.size(); i++) {
+		for (int i = 0; i < msg->mergedOpponents.size(); i++)
+		{
 			tmp = msg->mergedOpponents.at(i).x;
-			msg->mergedOpponents.at(i).x = msg->mergedOpponents.at(i).y/1000.0;
-			msg->mergedOpponents.at(i).y = tmp/1000.0;
+			msg->mergedOpponents.at(i).x = msg->mergedOpponents.at(i).y / 1000.0;
+			msg->mergedOpponents.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->mergedTeamMembers.size(); i++) {
+		for (int i = 0; i < msg->mergedTeamMembers.size(); i++)
+		{
 			tmp = msg->mergedTeamMembers.at(i).x;
-			msg->mergedTeamMembers.at(i).x = msg->mergedTeamMembers.at(i).y/1000.0;
-			msg->mergedTeamMembers.at(i).y = tmp/1000.0;
+			msg->mergedTeamMembers.at(i).x = msg->mergedTeamMembers.at(i).y / 1000.0;
+			msg->mergedTeamMembers.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->obstacles.size(); i++) {
+		for (int i = 0; i < msg->obstacles.size(); i++)
+		{
 			tmp = msg->obstacles.at(i).x;
-			msg->obstacles.at(i).x = msg->obstacles.at(i).y/1000.0;
-			msg->obstacles.at(i).y = tmp/1000.0;
+			msg->obstacles.at(i).x = msg->obstacles.at(i).y / 1000.0;
+			msg->obstacles.at(i).y = tmp / 1000.0;
 		}
 
 		lock_guard<mutex> lock(this->shwmMutex);
@@ -330,35 +336,29 @@ namespace rqt_msl_refbox
 		this->refBox->RefLog->append("Penalty Cyan local");
 	}
 
-	void GameData::onLocalTogled(bool checked)
+	void GameData::onLocalToggled(bool checked)
 	{
 		this->localToggled = checked;
 	}
 
-	void GameData::onMultiTogled(bool checked)
+	void GameData::onUdpToggled(bool checked)
 	{
-		this->multiToggled = checked;
-
+		this->udpToggled = checked;
 	}
 
-	void GameData::onTcpTogled(bool checked)
+	void GameData::onTcpToggled(bool checked)
 	{
 		this->tcpToggled = checked;
 	}
 
-	bool GameData::isLocalToggled()
+	void GameData::onXmlToggled(bool checked)
 	{
-		return localToggled;
+		this->xmlToggled = checked;
 	}
 
-	bool GameData::isTcpToggled()
+	void GameData::onCharToggled(bool checked)
 	{
-		return tcpToggled;
-	}
-
-	bool GameData::isMultiToggled()
-	{
-		return multiToggled;
+		this->charToggled = checked;
 	}
 
 	/*==============================  CONNECT METHODS ==============================*/
@@ -368,7 +368,7 @@ namespace rqt_msl_refbox
 		if (counter == 1)
 		{
 			tcpsocket->close();
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 			delete tcpsocket;
 			tcpsocket = nullptr;
 		}
@@ -380,9 +380,15 @@ namespace rqt_msl_refbox
 			udpsocket = nullptr;
 		}
 
-		if (tcpToggled)
+		if (localToggled)
 		{
-
+			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
+			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+			this->refBox->lbl_statusCon->setText("LOCAL");
+			this->counter = 0;
+		}
+		else if (tcpToggled)
+		{
 			tcpsocket = new QTcpSocket();
 
 			this->refBox->RefLog->append("Creating TCP Socket");
@@ -401,15 +407,14 @@ namespace rqt_msl_refbox
 				return;
 			}
 
-			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
+			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 
 			this->refBox->lbl_statusCon->setText("TCP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 1;
 		}
-		else if (multiToggled)
+		else if (udpToggled)
 		{
-
 			udpsocket = new QUdpSocket();
 			this->refBox->RefLog->append("Creating UDP Socket");
 
@@ -426,22 +431,16 @@ namespace rqt_msl_refbox
 
 			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 
-			this->refBox->lbl_statusCon->setText("MULTICAST");
+			this->refBox->lbl_statusCon->setText("UDP MULTICAST");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 2;
 
 		}
-		else if (localToggled)
-		{
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
-			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
-			this->refBox->lbl_statusCon->setText("LOCAL");
-			this->counter = 0;
-		}
+
 	}
 	/*==============================  RECEIVE METHODS ==============================*/
 
-	void GameData::receiveRefMsg(void)
+	void GameData::receiveRefMsgTcp(void)
 	{
 		QByteArray buffer;
 		while (tcpsocket->canReadLine())
@@ -450,11 +449,17 @@ namespace rqt_msl_refbox
 		}
 		if (buffer.size() > 1)
 		{
-//			std::cout << "BUFFER " <<  buffer.data() << std::endl;
-			tinyxml2::XMLDocument doc;
-			doc.Parse(buffer.data());
-			tinyxml2::XMLElement* element = doc.FirstChildElement();
-			xmlparser->handle(element);
+			if (!localToggled && xmlToggled)
+			{
+				tinyxml2::XMLDocument doc;
+				doc.Parse(buffer.data());
+				tinyxml2::XMLElement* element = doc.FirstChildElement();
+				xmlparser->handle(element);
+			}
+			else if (!localToggled && charToggled)
+			{
+
+			}
 		}
 	}
 	void GameData::receiveRefMsgUdp(void)
@@ -468,11 +473,20 @@ namespace rqt_msl_refbox
 		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 //		std::cout << "BUFFER DATA: " <<  buffer.data() << std::endl;
 
-		tinyxml2::XMLDocument doc;
+		if (buffer.size() > 1)
+		{
+			if (!localToggled && xmlToggled)
+			{
+				tinyxml2::XMLDocument doc;
+				doc.Parse(buffer.data());
+				tinyxml2::XMLElement* element = doc.FirstChildElement();
+				xmlparser->handle(element);
+			}
+			else if (!localToggled && charToggled)
+			{
 
-		doc.Parse(buffer.data());
-		tinyxml2::XMLElement* element = doc.FirstChildElement();
-		xmlparser->handle(element);
+			}
+		}
 
 	}
 
@@ -518,7 +532,9 @@ namespace rqt_msl_refbox
 				auto iter = this->aeiData.find(robot.second->senderID);
 				if (iter != this->aeiData.end())
 				{
-					logString += QString(iter->second->currentTask.c_str()) + " - " + QString(iter->second->currentPlan.c_str()) + " - " + QString(iter->second->currentState.c_str()) + "\",";
+					logString += QString(iter->second->currentTask.c_str()) + " - "
+							+ QString(iter->second->currentPlan.c_str()) + " - "
+							+ QString(iter->second->currentState.c_str()) + "\",";
 				}
 				else
 				{
@@ -560,14 +576,11 @@ namespace rqt_msl_refbox
 			int integratedObstacles = 0;
 			for (auto opponents : robotForObs->mergedOpponents)
 			{
-					integratedObstacles++;
-					logString += QString(
-							"{ \"position\": ["
-							+ QString::number(opponents.x, 'f', 3)
-							+ QString::number(opponents.y, 'f', 3)
-							+ "], \"velocity\": [],"
-							+ "\"confidence\": null },"
-							);
+				integratedObstacles++;
+				logString += QString(
+						"{ \"position\": [" + QString::number(opponents.x, 'f', 3)
+								+ QString::number(opponents.y, 'f', 3) + "], \"velocity\": [],"
+								+ "\"confidence\": null },");
 			}
 			if (integratedObstacles > 0)
 			{
@@ -576,9 +589,7 @@ namespace rqt_msl_refbox
 			}
 			logString += QString("], ");
 
-			logString += QString("\"ageMs\": "
-							+ QString::number(50, 10)
-							);
+			logString += QString("\"ageMs\": " + QString::number(50, 10));
 		}
 		else
 		{
@@ -588,10 +599,9 @@ namespace rqt_msl_refbox
 
 		cout << logString.toStdString() << endl;
 
-		if (this->tcpsocket == nullptr
-						|| !this->tcpsocket->isValid()
-						|| this->tcpsocket->state() != QAbstractSocket::ConnectingState)
-					return;
+		if (this->tcpsocket == nullptr || !this->tcpsocket->isValid()
+				|| this->tcpsocket->state() != QAbstractSocket::ConnectingState)
+			return;
 
 		QByteArray tmp;
 		this->tcpsocket->write(tmp.append(logString));

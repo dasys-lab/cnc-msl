@@ -22,7 +22,6 @@
 #include <mutex>
 #include <QTimer>
 
-
 using namespace std;
 
 namespace rqt_msl_refbox
@@ -31,7 +30,7 @@ namespace rqt_msl_refbox
 	class XMLProtocolParser;
 	class GameData : public QObject
 	{
-		Q_OBJECT
+	Q_OBJECT
 	public:
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
@@ -56,11 +55,14 @@ namespace rqt_msl_refbox
 	public:
 		GameData(RefBox* refBox);
 		virtual ~GameData();
-		bool isLocalToggled();
-		bool isMultiToggled();
-		bool isTcpToggled();
 		RefBox* refBox;
-public Q_SLOTS:
+		bool localToggled;
+		bool udpToggled;
+		bool tcpToggled;
+		bool xmlToggled;
+		bool charToggled;
+
+	public Q_SLOTS:
 		void PlayOnPressed(void);
 		void StopPressed(void);
 		void HaltPressed(void);
@@ -83,35 +85,35 @@ public Q_SLOTS:
 		void TheirThrowinPressed(void);
 		void TheirCornerKickPressed(void);
 		void TheirPenaltyPressed(void);
-		void onLocalTogled(bool checked);
-		void onMultiTogled(bool checked);
-		void onTcpTogled(bool checked);
+
+		void onLocalToggled(bool checked);
+		void onUdpToggled(bool checked);
+		void onTcpToggled(bool checked);
+		void onXmlToggled(bool checked);
+		void onCharToggled(bool checked);
 
 		void onConnectPressed(void);
-		void receiveRefMsg(void);
+		void receiveRefMsgTcp(void);
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
 
 		/* refbox log send method */
 		void sendRefBoxLog();
 	protected:
-			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
-			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
-			mutex shwmMutex, aeiMutex;
-			ros::Publisher RefereeBoxInfoBodyPublisher;
-			ros::Subscriber shwmSub, aliceClientSubscriber;
-			ros::NodeHandle* rosNode;
-			bool localToggled;
-			bool multiToggled;
-			bool tcpToggled;
-			QTcpSocket* tcpsocket;
-			QUdpSocket* udpsocket;
-			int counter;
-			XMLProtocolParser* xmlparser;
-			QTimer* sendRefBoxLogtimer;
+		map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
+		map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
+		mutex shwmMutex, aeiMutex;
+		ros::Publisher RefereeBoxInfoBodyPublisher;
+		ros::Subscriber shwmSub, aliceClientSubscriber;
+		ros::NodeHandle* rosNode;
+
+		QTcpSocket* tcpsocket;
+		QUdpSocket* udpsocket;
+		int counter;
+		XMLProtocolParser* xmlparser;
+		QTimer* sendRefBoxLogtimer;
 
 	};
-
 
 } /* namespace rqt_pm_control */
 
