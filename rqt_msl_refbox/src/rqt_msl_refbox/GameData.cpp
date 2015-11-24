@@ -492,12 +492,12 @@ namespace rqt_msl_refbox
 		{
 			// robots
 			logString += QString("\"robots\": [");
-			pair<const int, msl_sensor_msgs::SharedWorldInfoPtr> robotForObsAndBall;
-			robotForObsAndBall.second->senderID = 9999999;
+			msl_sensor_msgs::SharedWorldInfoPtr robotForObs;
+			robotForObs->senderID = 9999999;
 			for (auto robot : this->shwmData)
 			{
-				if (robotForObsAndBall.second->senderID > robot.second->senderID)
-					robotForObsAndBall = robot;
+				if (robotForObs->senderID > robot.second->senderID)
+					robotForObs = robot.second;
 
 				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"position\": ["
 						+ QString::number(robot.second->odom.position.x, 'f', 3) + ","
@@ -541,7 +541,7 @@ namespace rqt_msl_refbox
 			// obstacles
 			logString += QString("\"obstacles\": [");
 			int integratedObstacles = 0;
-			for (auto opponents : robotForObsAndBall.second->mergedOpponents)
+			for (auto opponents : robotForObs->mergedOpponents)
 			{
 					integratedObstacles++;
 					logString += QString(
