@@ -17,6 +17,7 @@
 #include <QUdpSocket>
 #include "rqt_msl_refbox/tinyxml2.h"
 #include "rqt_msl_refbox/XMLProtocolParser.h"
+#include "msl_msgs/RefBoxCommand.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "alica_ros_proxy/AlicaEngineInfo.h"
 #include <mutex>
@@ -35,6 +36,7 @@ namespace rqt_msl_refbox
 	public:
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
+		void processCharacterBasedProtocol(const char * data);
 		void sendCyanCornerKick();
 		void sendCyanThrownin();
 		void sendStart();
@@ -92,9 +94,13 @@ public Q_SLOTS:
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
 
+		void sendRefBoxCmd();
+
 		/* refbox log send method */
 		void sendRefBoxLog();
 	protected:
+			msl_msgs::RefBoxCommand ref;
+			bool XMLbasedProtocol;
 			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
 			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
 			mutex shwmMutex, aeiMutex;
@@ -109,6 +115,7 @@ public Q_SLOTS:
 			int counter;
 			XMLProtocolParser* xmlparser;
 			QTimer* sendRefBoxLogtimer;
+			QTimer* sendRefBoxCmdtimer;
 
 	};
 

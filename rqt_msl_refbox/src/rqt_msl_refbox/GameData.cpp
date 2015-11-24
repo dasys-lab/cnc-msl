@@ -6,7 +6,6 @@
  */
 
 #include "rqt_msl_refbox/GameData.h"
-#include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include "qstring.h"
@@ -35,6 +34,10 @@ namespace rqt_msl_refbox
 		this->sendRefBoxLogtimer = new QTimer();
 		connect (sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
 		this->sendRefBoxLogtimer->start(100);
+
+		this->sendRefBoxCmdtimer = new QTimer();
+		connect (sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
+		this->sendRefBoxCmdtimer->start(333);
 	}
 
 	GameData::~GameData()
@@ -52,6 +55,14 @@ namespace rqt_msl_refbox
 		delete sendRefBoxLogtimer;
 		delete rosNode;
 		delete xmlparser;
+		delete sendRefBoxCmdtimer;
+		delete sendRefBoxLogtimer;
+	}
+
+	void GameData::sendRefBoxCmd()
+	{
+		if(tcpsocket != nullptr || udpsocket != nullptr)
+			this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
@@ -451,12 +462,142 @@ namespace rqt_msl_refbox
 		if (buffer.size() > 1)
 		{
 //			std::cout << "BUFFER " <<  buffer.data() << std::endl;
-			tinyxml2::XMLDocument doc;
-			doc.Parse(buffer.data());
-			tinyxml2::XMLElement* element = doc.FirstChildElement();
-			xmlparser->handle(element);
+			if(XMLbasedProtocol) {
+				tinyxml2::XMLDocument doc;
+				doc.Parse(buffer.data());
+				tinyxml2::XMLElement* element = doc.FirstChildElement();
+				xmlparser->handle(element);
+			} else {
+
+			}
 		}
 	}
+
+	void GameData::processCharacterBasedProtocol(const char * data) {
+		QString Cmd("SsNkKpPfFgGtTcCHaALDd");
+		QString valid_cmd;
+
+		printf("Ref box Message -> %s\n", data);
+		QString Msg(data);
+
+		/* Comandos Internos */
+		if (Msg.contains("W"))
+		{
+			printf("Ref Box connected\n");
+			Msg.remove("W");
+		}
+
+		if (Msg.contains("h"))
+		{
+			this->sendStop();
+			Msg.remove("h");
+		}
+
+		if (Msg.contains('e'))
+		{
+			this->sendStop();
+			Msg.remove("e");
+		}
+
+		if (Msg.contains('1'))
+		{
+			//Start First Half
+			ref.goalsCyan = 0;
+			ref.goalsMagenta = 0;
+			Msg.remove("1");
+		}
+
+		if (Msg.contains('2'))
+		{
+			//Start Second half
+			Msg.remove("2");
+
+		}
+		/*******************************************************Filipe**************/
+		if (Msg.contains('3'))
+		{
+			//Third half
+			Msg.remove("3");
+		}
+
+		if (Msg.contains('4'))
+		{
+			//Fourth half
+			Msg.remove("4");
+		}
+
+		/* Proc msg */
+		valid_cmd.clear();
+		for (int i = 0; i < Msg.length(); i++)
+		{
+			if (Cmd.contains(Msg[i])) //é um comando válido??
+			{
+				//Cmd válido
+				valid_cmd = Msg[i];
+				//printf("last valid cmd-> %c \n", Msg[i]);
+
+				if (valid_cmd == "s")
+					this->sendStart();
+
+				if (valid_cmd == "S")
+					this->sendStop();
+
+				if (valid_cmd == "K")
+					this->sendCyanKickOff();
+
+				if (valid_cmd == "k")
+					this->sendMagentaKickOff();
+
+				if (valid_cmd == "P")
+					this->sendCyanPenalty();
+
+				if (valid_cmd == "p")
+					this->sendMagentaPenalty();
+
+				if (valid_cmd == "F")
+					this->sendCyanFreeKick();
+
+				if (valid_cmd == "f")
+					this->sendMagentaFreeKick();
+
+				if (valid_cmd == "G")
+					this->sendCyanGoalKick();
+
+				if (valid_cmd == "g")
+					this->sendMagentaGoalKick();
+
+				if (valid_cmd == "T")
+					this->sendCyanThrownin();
+
+				if (valid_cmd == "t")
+					this->sendMagentaThrownin();
+
+				if (valid_cmd == "C")
+					this->sendCyanCornerKick();
+
+				if (valid_cmd == "c")
+					this->sendMagentaCornerKick();
+
+				if (valid_cmd == "A")
+					ref.goalsCyan++;
+
+				if (valid_cmd == "a")
+					ref.goalsMagenta++;
+
+				if (valid_cmd == "D")
+					ref.goalsCyan--;
+
+				if (valid_cmd == "d")
+					ref.goalsMagenta--;
+				if (valid_cmd == "N")
+					this->sendDroppedBall();
+
+				if (valid_cmd == "L")
+					this->sendParking();
+			}
+		}
+	}
+
 	void GameData::receiveRefMsgUdp(void)
 	{
 		QByteArray buffer;
@@ -494,26 +635,27 @@ namespace rqt_msl_refbox
 		QString logString = QString("{ \"type\": \"worldstate\",");
 		logString += QString("\"teamName\":\"Carpe Noctem Cassel\",");
 		logString += QString("\"intention\": \"" + teamIntention + "\"");
-
 		if (this->shwmData.size() > 0)
 		{
 			// robots
 			logString += QString(",\"robots\": [");
 			msl_sensor_msgs::SharedWorldInfoPtr robotForObs;
-			robotForObs->senderID = 9999999;
+			int sID = 9999999;
 			for (auto robot : this->shwmData)
 			{
-				if (robotForObs->senderID > robot.second->senderID)
+				if (sID > robot.second->senderID) {
+					sID = robot.second->senderID;
 					robotForObs = robot.second;
-
+				}
 				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"position\": ["
 						+ QString::number(robot.second->odom.position.x, 'f', 3) + ","
 						+ QString::number(robot.second->odom.position.y, 'f', 3) + "]," + "\"orientation\":"
 						+ QString::number(robot.second->odom.position.angle, 'f', 4) + ","
 						+ "\"targetPos\": [null,null,null]," + "\"velocityAng\": "
-						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + "\"velocityLin\":["
-						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle))
-						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle))
+						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + ",\"velocityLin\":["
+						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle), 'f', 3)
+						+ ","
+						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle), 'f', 3)
 						+ QString("], \"intention\": \"");
 				auto iter = this->aeiData.find(robot.second->senderID);
 				if (iter != this->aeiData.end())
@@ -531,7 +673,7 @@ namespace rqt_msl_refbox
 			logString.remove(logString.length() - 1, 1);
 
 			// balls
-			logString += QString("\"balls\": [");
+			logString += QString(",\"balls\": [");
 			int integratedBalls = 0;
 			for (auto robot : this->shwmData)
 			{
@@ -554,7 +696,6 @@ namespace rqt_msl_refbox
 				}
 			}
 			logString += QString("], ");
-
 			// obstacles
 			logString += QString("\"obstacles\": [");
 			int integratedObstacles = 0;
@@ -564,6 +705,7 @@ namespace rqt_msl_refbox
 					logString += QString(
 							"{ \"position\": ["
 							+ QString::number(opponents.x, 'f', 3)
+							+ ","
 							+ QString::number(opponents.y, 'f', 3)
 							+ "], \"velocity\": [],"
 							+ "\"confidence\": null },"
@@ -595,125 +737,109 @@ namespace rqt_msl_refbox
 
 		QByteArray tmp;
 		this->tcpsocket->write(tmp.append(logString));
+		cout << endl << "SENDING" << endl;
 	}
 
 	/*==============================  SEND METHODS ==============================*/
 
 	void GameData::sendCyanPenalty()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanCornerKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::CORNER_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanGoalKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanThrownin()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanFreeKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendCyanKickOff()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaPenalty()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaCornerKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::CORNER_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaGoalKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaThrownin()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaKickOff()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendMagentaFreeKick()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendParking()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::PARK;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendDroppedBall()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::DROPBALL;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendHalt()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::HALT;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendStop()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::STOP;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
 	void GameData::sendStart()
 	{
-		msl_msgs::RefBoxCommand ref;
 		ref.cmd = msl_msgs::RefBoxCommand::START;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
