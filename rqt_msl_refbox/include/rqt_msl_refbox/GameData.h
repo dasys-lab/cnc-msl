@@ -50,6 +50,7 @@ namespace rqt_msl_refbox
 		void sendCyanFreeKick();
 		void sendCyanGoalKick();
 		void sendCyanPenalty();
+		void sendRefBoxLog();
 
 	public:
 		GameData(RefBox* refBox);

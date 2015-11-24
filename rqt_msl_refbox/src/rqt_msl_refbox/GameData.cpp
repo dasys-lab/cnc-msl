@@ -9,6 +9,7 @@
 #include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
+#include "qstring.h"
 #include <iostream>
 
 namespace rqt_msl_refbox
@@ -18,9 +19,10 @@ namespace rqt_msl_refbox
 	{
 		rosNode = new ros::NodeHandle();
 
-		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>(
-				"/RefereeBoxInfoBody", 2);
-		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo, (GameData*)this);
+		RefereeBoxInfoBodyPublisher = rosNode->advertise<msl_msgs::RefBoxCommand>("/RefereeBoxInfoBody", 2);
+		shwmSub = rosNode->subscribe("/WorldModel/SharedWorldInfo", 2, &GameData::onSharedWorldmodelInfo,
+										(GameData*)this);
+
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
 		tcpToggled = false;
@@ -35,12 +37,12 @@ namespace rqt_msl_refbox
 
 	GameData::~GameData()
 	{
-		if(tcpsocket != nullptr)
+		if (tcpsocket != nullptr)
 		{
 			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
 			delete udpsocket;
 		}
-		if(udpsocket != nullptr)
+		if (udpsocket != nullptr)
 		{
 			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 			delete tcpsocket;
@@ -49,7 +51,8 @@ namespace rqt_msl_refbox
 		delete xmlparser;
 	}
 
-	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg) {
+	void GameData::onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
+	{
 		cout << "Reveived Data" << endl;
 		lock_guard<mutex> lock(this->shwmMutex);
 		shwmData[msg->senderID] = msg;
@@ -294,14 +297,14 @@ namespace rqt_msl_refbox
 
 	void GameData::onConnectPressed(void)
 	{
-		if(counter == 1)
+		if (counter == 1)
 		{
 			tcpsocket->close();
 			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsg()));
 			delete tcpsocket;
 			tcpsocket = nullptr;
 		}
-		if(counter == 2)
+		if (counter == 2)
 		{
 			udpsocket->close();
 			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
@@ -373,11 +376,11 @@ namespace rqt_msl_refbox
 	void GameData::receiveRefMsg(void)
 	{
 		QByteArray buffer;
-		while(tcpsocket->canReadLine())
+		while (tcpsocket->canReadLine())
 		{
 			buffer = buffer + tcpsocket->readLine();
 		}
-		if(buffer.size() > 1)
+		if (buffer.size() > 1)
 		{
 //			std::cout << "BUFFER " <<  buffer.data() << std::endl;
 			tinyxml2::XMLDocument doc;
@@ -403,6 +406,110 @@ namespace rqt_msl_refbox
 		tinyxml2::XMLElement* element = doc.FirstChildElement();
 		xmlparser->handle(element);
 
+	}
+
+	/*==============================  SEND REFBOX LOG ===========================*/
+
+	void GameData::sendRefBoxLog()
+	{
+		lock_guard<mutex> lock(this->shwmMutex);
+
+		// mockup
+		QString teamIntention = "Win the game";
+
+		// general information
+		QString logString = QString("{ \"type\": \"worldstate\",");
+		logString += QString("\"teamName\":\"Carpe Noctem Cassel\",");
+		logString += QString("\"intention\": \" " + teamIntention + "\",");
+
+		if (this->shwmData.size() > 0)
+		{
+			// robots
+			logString += QString("\"robots\": [");
+			pair<const int, msl_sensor_msgs::SharedWorldInfoPtr> robotForObsAndBall;
+			robotForObsAndBall.second->senderID = 9999999;
+			for (auto robot : this->shwmData)
+			{
+				if (robotForObsAndBall.second->senderID > robot.second->senderID)
+					robotForObsAndBall = robot;
+
+				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"position\": ["
+						+ QString::number(robot.second->odom.position.x, 'f', 3) + ","
+						+ QString::number(robot.second->odom.position.y, 'f', 3) + "]," + "\"orientation\":"
+						+ QString::number(robot.second->odom.position.angle, 'f', 4) + ","
+						+ "\"targetPos\": [null,null,null]," + "\"velocityAng\": "
+						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + "\"velocityLin\":["
+						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle))
+						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle))
+						+ "]," + "\"intention\": \"null\"," + "\"batteryLevel\": null," + "\"ballEngaged\": null"
+						+ "},";
+			}
+			// remove last comma
+			logString.remove(logString.length() - 1, 1);
+
+			// balls
+			logString += QString("\"balls\": [");
+			int integratedBalls = 0;
+			for (auto robot : this->shwmData)
+			{
+				if (robot.second->ball.confidence != 0)
+				{
+					integratedBalls++;
+					logString += QString(
+							"{ \"position\": [" + QString::number(robot.second->ball.point.x, 'f', 3)
+									+ QString::number(robot.second->ball.point.y, 'f', 3)
+									+ QString::number(robot.second->ball.point.z, 'f', 3) + "], \"velocity\": ["
+									+ QString::number(robot.second->ball.velocity.vx, 'f', 3)
+									+ QString::number(robot.second->ball.velocity.vy, 'f', 3)
+									+ QString::number(robot.second->ball.velocity.vz, 'f', 3) + "], \"confidence\": "
+									+ QString::number(robot.second->ball.confidence, 'f', 3) + "},");
+				}
+				if (integratedBalls > 0)
+				{
+					// remove last comma
+					logString.remove(logString.length() - 1, 1);
+				}
+			}
+			logString += QString("], ");
+
+			// obstacles
+			logString += QString("\"obstacles\": [");
+			int integratedObstacles = 0;
+			for (auto opponents : robotForObsAndBall.second->mergedOpponents)
+			{
+					integratedObstacles++;
+					logString += QString(
+							"{ \"position\": ["
+							+ QString::number(opponents.x, 'f', 3)
+							+ QString::number(opponents.y, 'f', 3)
+							+ "], \"velocity\": [],"
+							+ "\"confidence\": null },"
+							);
+			}
+			if (integratedObstacles > 0)
+			{
+				// remove last comma
+				logString.remove(logString.length() - 1, 1);
+			}
+			logString += QString("], ");
+
+			logString += QString("\"ageMs\": "
+							+ QString::number(50, 10)
+							);
+		}
+		else
+		{
+			logString += QString("\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": null");
+		}
+		logString += "}\0";
+
+		QByteArray tmp;
+		this->tcpsocket->write(tmp.append(logString));
+//
+//		gettimeofday(&tv, NULL);
+//		t1 = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+//
+//		fprintf(stderr, "Worldstate Time: %d %d\n", t1 - time, t1);
 	}
 
 	/*==============================  SEND METHODS ==============================*/
