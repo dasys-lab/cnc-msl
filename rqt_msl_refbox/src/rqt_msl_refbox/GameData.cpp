@@ -38,6 +38,7 @@ namespace rqt_msl_refbox
 		this->sendRefBoxCmdtimer = new QTimer();
 		connect (sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
 		this->sendRefBoxCmdtimer->start(333);
+		XMLbasedProtocol = false;
 	}
 
 	GameData::~GameData()
@@ -403,6 +404,7 @@ namespace rqt_msl_refbox
 			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
 
 			tcpsocket->connectToHost(destHost, destPort);
+			cout << "Trying to connect ..." << endl;
 
 			if (!tcpsocket->waitForConnected(1000))
 			{
@@ -417,6 +419,7 @@ namespace rqt_msl_refbox
 			this->refBox->lbl_statusCon->setText("TCP");
 			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 			this->counter = 1;
+			cout << "Connected" << endl;
 		}
 		else if (multiToggled)
 		{
@@ -455,20 +458,22 @@ namespace rqt_msl_refbox
 	void GameData::receiveRefMsg(void)
 	{
 		QByteArray buffer;
-		while (tcpsocket->canReadLine())
+		cout << "." << flush;
+		char msg[4096];
+		int size = tcpsocket->read(msg,4096);
+		cout << "1" << flush;
+		if (size > 0)
 		{
-			buffer = buffer + tcpsocket->readLine();
-		}
-		if (buffer.size() > 1)
-		{
+			cout << "2" << flush;
 //			std::cout << "BUFFER " <<  buffer.data() << std::endl;
 			if(XMLbasedProtocol) {
 				tinyxml2::XMLDocument doc;
-				doc.Parse(buffer.data());
+				doc.Parse(msg);
 				tinyxml2::XMLElement* element = doc.FirstChildElement();
 				xmlparser->handle(element);
 			} else {
-
+				cout << "3" << flush;
+				processCharacterBasedProtocol(msg);
 			}
 		}
 	}
@@ -633,7 +638,7 @@ namespace rqt_msl_refbox
 
 		// general information
 		QString logString = QString("{ \"type\": \"worldstate\",");
-		logString += QString("\"teamName\":\"Carpe Noctem Cassel\",");
+		logString += QString("\"teamName\":\"CNC\",");
 		logString += QString("\"intention\": \"" + teamIntention + "\"");
 		if (this->shwmData.size() > 0)
 		{
@@ -671,6 +676,7 @@ namespace rqt_msl_refbox
 			}
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
+			logString += "]"
 
 			// balls
 			logString += QString(",\"balls\": [");
@@ -681,11 +687,11 @@ namespace rqt_msl_refbox
 				{
 					integratedBalls++;
 					logString += QString(
-							"{ \"position\": [" + QString::number(robot.second->ball.point.x, 'f', 3)
-									+ QString::number(robot.second->ball.point.y, 'f', 3)
+							"{ \"position\": [" + QString::number(robot.second->ball.point.x, 'f', 3) + ","
+									+ QString::number(robot.second->ball.point.y, 'f', 3) + ","
 									+ QString::number(robot.second->ball.point.z, 'f', 3) + "], \"velocity\": ["
-									+ QString::number(robot.second->ball.velocity.vx, 'f', 3)
-									+ QString::number(robot.second->ball.velocity.vy, 'f', 3)
+									+ QString::number(robot.second->ball.velocity.vx, 'f', 3) + ","
+									+ QString::number(robot.second->ball.velocity.vy, 'f', 3) + ","
 									+ QString::number(robot.second->ball.velocity.vz, 'f', 3) + "], \"confidence\": "
 									+ QString::number(robot.second->ball.confidence, 'f', 3) + "},");
 				}
@@ -732,12 +738,16 @@ namespace rqt_msl_refbox
 
 		if (this->tcpsocket == nullptr
 						|| !this->tcpsocket->isValid()
-						|| this->tcpsocket->state() != QAbstractSocket::ConnectingState)
+						|| this->tcpsocket->state() != QAbstractSocket::ConnectedState)
 					return;
 
 		QByteArray tmp;
-		this->tcpsocket->write(tmp.append(logString));
-		cout << endl << "SENDING" << endl;
+		tmp.append(logString);
+		tmp.append('\0');
+		if(this->tcpsocket->write(tmp) < 0){
+			cout << "Error: " << this->tcpsocket->errorString().toStdString() << endl;
+		}
+		//cout << endl << "SENDING" << endl;
 	}
 
 	/*==============================  SEND METHODS ==============================*/
