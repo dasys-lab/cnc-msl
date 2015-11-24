@@ -29,11 +29,12 @@ namespace rqt_msl_refbox
 		tcpToggled = false;
 		multiToggled = false;
 		this->refBox = refBox;
-		time(&timer);
 		this->counter = 0;
 		this->udpsocket = nullptr;
 		this->tcpsocket = nullptr;
-
+		this->sendRefBoxLogtimer = new QTimer();
+		connect (sendRefBoxLogtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxLog()));
+		this->sendRefBoxLogtimer->start(100);
 	}
 
 	GameData::~GameData()
@@ -48,6 +49,7 @@ namespace rqt_msl_refbox
 			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 			delete tcpsocket;
 		}
+		delete sendRefBoxLogtimer;
 		delete rosNode;
 		delete xmlparser;
 	}
@@ -478,6 +480,11 @@ namespace rqt_msl_refbox
 
 	void GameData::sendRefBoxLog()
 	{
+//		if (this->tcpsocket == nullptr
+//				|| !this->tcpsocket->isValid()
+//				|| this->tcpsocket->state() != QAbstractSocket::ConnectingState)
+//			return;
+
 		lock_guard<mutex> lock(this->shwmMutex);
 
 		// mockup
@@ -486,12 +493,12 @@ namespace rqt_msl_refbox
 		// general information
 		QString logString = QString("{ \"type\": \"worldstate\",");
 		logString += QString("\"teamName\":\"Carpe Noctem Cassel\",");
-		logString += QString("\"intention\": \" " + teamIntention + "\",");
+		logString += QString("\"intention\": \"" + teamIntention + "\"");
 
 		if (this->shwmData.size() > 0)
 		{
 			// robots
-			logString += QString("\"robots\": [");
+			logString += QString(",\"robots\": [");
 			msl_sensor_msgs::SharedWorldInfoPtr robotForObs;
 			robotForObs->senderID = 9999999;
 			for (auto robot : this->shwmData)
@@ -507,8 +514,18 @@ namespace rqt_msl_refbox
 						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + "\"velocityLin\":["
 						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle))
 						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle))
-						+ "]," + "\"intention\": \"null\"," + "\"batteryLevel\": null," + "\"ballEngaged\": null"
-						+ "},";
+						+ QString("], \"intention\": \"");
+				auto iter = this->aeiData.find(robot.second->senderID);
+				if (iter != this->aeiData.end())
+				{
+					logString += QString(iter->second->currentTask.c_str()) + " - " + QString(iter->second->currentPlan.c_str()) + " - " + QString(iter->second->currentState.c_str()) + "\",";
+				}
+				else
+				{
+					logString += QString("\",");
+				}
+				logString += QString("\"batteryLevel\": null, \"ballEngaged\": null },");
+
 			}
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
@@ -565,17 +582,19 @@ namespace rqt_msl_refbox
 		}
 		else
 		{
-			logString += QString("\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": null");
+			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": null");
 		}
 		logString += "}\0";
 
+		cout << logString.toStdString() << endl;
+
+		if (this->tcpsocket == nullptr
+						|| !this->tcpsocket->isValid()
+						|| this->tcpsocket->state() != QAbstractSocket::ConnectingState)
+					return;
+
 		QByteArray tmp;
 		this->tcpsocket->write(tmp.append(logString));
-//
-//		gettimeofday(&tv, NULL);
-//		t1 = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-//
-//		fprintf(stderr, "Worldstate Time: %d %d\n", t1 - time, t1);
 	}
 
 	/*==============================  SEND METHODS ==============================*/

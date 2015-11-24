@@ -13,7 +13,6 @@
 #include <QFile>
 #include <QtGui>
 #include <rqt_msl_refbox/RefBox.h>
-#include <time.h>
 #include <QTcpSocket>
 #include <QUdpSocket>
 #include "rqt_msl_refbox/tinyxml2.h"
@@ -21,6 +20,7 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "alica_ros_proxy/AlicaEngineInfo.h"
 #include <mutex>
+#include <QTimer>
 
 
 using namespace std;
@@ -52,7 +52,6 @@ namespace rqt_msl_refbox
 		void sendCyanFreeKick();
 		void sendCyanGoalKick();
 		void sendCyanPenalty();
-		void sendRefBoxLog();
 
 	public:
 		GameData(RefBox* refBox);
@@ -92,6 +91,9 @@ public Q_SLOTS:
 		void receiveRefMsg(void);
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
+
+		/* refbox log send method */
+		void sendRefBoxLog();
 	protected:
 			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
 			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
@@ -102,11 +104,11 @@ public Q_SLOTS:
 			bool localToggled;
 			bool multiToggled;
 			bool tcpToggled;
-			time_t timer;
 			QTcpSocket* tcpsocket;
 			QUdpSocket* udpsocket;
 			int counter;
 			XMLProtocolParser* xmlparser;
+			QTimer* sendRefBoxLogtimer;
 
 	};
 
