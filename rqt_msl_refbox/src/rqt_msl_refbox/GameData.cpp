@@ -652,10 +652,10 @@ namespace rqt_msl_refbox
 					sID = robot.second->senderID;
 					robotForObs = robot.second;
 				}
-				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"position\": ["
+				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"pose\": ["
 						+ QString::number(robot.second->odom.position.x, 'f', 3) + ","
-						+ QString::number(robot.second->odom.position.y, 'f', 3) + "]," + "\"orientation\":"
-						+ QString::number(robot.second->odom.position.angle, 'f', 4) + ","
+						+ QString::number(robot.second->odom.position.y, 'f', 3) + ","
+						+ QString::number(robot.second->odom.position.angle, 'f', 4) + "],"
 						+ "\"targetPos\": [null,null,null]," + "\"velocityAng\": "
 						+ QString::number(robot.second->odom.motion.rotation, 'f', 4) + ",\"velocityLin\":["
 						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle), 'f', 3)
@@ -676,7 +676,7 @@ namespace rqt_msl_refbox
 			}
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
-			logString += "]"
+			logString += QString("]");
 
 			// balls
 			logString += QString(",\"balls\": [");
