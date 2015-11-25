@@ -14,9 +14,6 @@
 #include "opticalflow.h"
 #include "imu.h"
 
-#include <mutex>
-#include <condition_variable>
-
 /*
 Axis.msg
 
@@ -77,6 +74,8 @@ timeval			time_now;
 timeval			last_ping;
 
 CV				threw[7], cv_main;
+
+supplementary::SystemConfig*	sc;
 
 bool			ex = false;
 

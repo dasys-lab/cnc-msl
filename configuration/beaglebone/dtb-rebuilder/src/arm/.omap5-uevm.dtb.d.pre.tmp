@@ -1,0 +1,7 @@
+omap5-uevm.o: src/arm/omap5-uevm.dts src/arm/omap5.dtsi \
+ include/dt-bindings/gpio/gpio.h \
+ include/dt-bindings/interrupt-controller/arm-gic.h \
+ include/dt-bindings/interrupt-controller/irq.h \
+ include/dt-bindings/pinctrl/omap.h src/arm/skeleton.dtsi \
+ src/arm/omap5-cpu-thermal.dtsi include/dt-bindings/thermal/thermal.h \
+ src/arm/omap5-gpu-thermal.dtsi src/arm/omap5-core-thermal.dtsi

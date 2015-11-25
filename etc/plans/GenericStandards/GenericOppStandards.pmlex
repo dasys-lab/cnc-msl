@@ -30,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132325758"/>
-    <value xPos="83" yPos="280" width="102" height="67" collapsed="false"/>
+    <value xPos="53" yPos="226" width="160" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132336430"/>
@@ -101,5 +101,9 @@
   <extensions>
     <key href="GenericOppStandards.pml#1432209615271"/>
     <value xPos="38" yPos="309"/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

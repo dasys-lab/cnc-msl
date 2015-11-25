@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2013 Nathaniel R. Lewis - http://nathanielrlewis.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ * 
+ * Enable eQEP0 on the Beaglebone Black - incompatible with BB White because
+ * most of the eQEP0 pins on Beaglebone white are not broken out.
+ */
+
+/ {
+	model = "TI AM335x BeagleBone Black";
+	compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+};
+
+&ocp {
+	P9_41_pinmux {
+		status = "disabled";
+	};
+	P9_25_pinmux {
+		status = "disabled";
+	};
+	P9_42_pinmux {
+		status = "disabled";
+	};
+	P9_27_pinmux {
+		status = "disabled";
+	};
+};
+
+&am33xx_pinmux {
+	pinctrl_eqep0: pinctrl_eqep0_pins {
+		pinctrl-single,pins = <
+      0x1A8 (PIN_INPUT_PULLDOWN | MUX_MODE1) /* P9_41 = GPIO3_20 = EQEP0_index, MODE1 */        
+      0x1AC (PIN_INPUT_PULLDOWN | MUX_MODE1) /* P9_25 = GPIO3_21 = EQEP0_strobe, MODE1 */   
+      0x1A0 (PIN_INPUT_PULLDOWN | MUX_MODE1) /* P9_42 = GPIO3_18 = EQEP0A_in, MODE1 */       
+      0x1A4 (PIN_INPUT_PULLDOWN | MUX_MODE1) /* P9_27 = GPIO3_19 = EQEP0B_in, MODE1 */     
+		>;
+	};
+};
+
+&epwmss0 {
+  status = "okay";
+
+  eqep0: eqep@0x48300180 {
+    compatible = "ti,am33xx-eqep";
+    reg = <0x48300180 0x80>;
+    interrupt-parent = <&intc>;
+    interrupts = <79>;
+    ti,hwmods = "eqep0";
+    status = "okay";
+
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_eqep0>;
+    
+    count_mode = <0>;  /* 0 - Quadrature mode, normal 90 phase offset cha & chb.  1 - Direction mode.  cha input = clock, chb input = direction */
+    swap_inputs = <0>; /* Are channel A and channel B swapped? (0 - no, 1 - yes) */
+    invert_qa = <1>;   /* Should we invert the channel A input?  */
+    invert_qb = <1>;   /* Should we invert the channel B input? I invert these because my encoder outputs drive transistors that pull down the pins */
+    invert_qi = <0>;   /* Should we invert the index input? */
+    invert_qs = <0>;   /* Should we invert the strobe input? */
+  };
+};

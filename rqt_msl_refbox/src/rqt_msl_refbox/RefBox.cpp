@@ -51,10 +51,14 @@ namespace rqt_msl_refbox
 
 		connect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 
-		//Connectinformation
+		//Connect Information
 		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
-		connect(rbtn_xmlMulti, SIGNAL(toggled(bool)), gameData, SLOT(onMultiTogled(bool)));
-		connect(rbtn_xmlTcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpTogled(bool)));
+
+		connect(rbtn_xml, SIGNAL(toggled(bool)), gameData, SLOT(onXmlToggled(bool)));
+		connect(rbtn_char, SIGNAL(toggled(bool)), gameData, SLOT(onCharToggled(bool)));
+
+		connect(rbtn_tcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpToggled(bool)));
+		connect(rbtn_udp, SIGNAL(toggled(bool)), gameData, SLOT(onUdpToggled(bool)));
 
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
@@ -87,8 +91,8 @@ namespace rqt_msl_refbox
 
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
 	{
-		if(!gameData->isLocalToggled()
-				&& (gameData->isMultiToggled() || gameData->isTcpToggled())
+		if(!gameData->localToggled
+				&& (gameData->udpToggled || gameData->tcpToggled)
 				&& ledit_ipaddress->text().size() > 5
 				&& ledit_ipaddress->text().count(".") == 3
 				&& spin_port->value() > 0)
@@ -123,9 +127,11 @@ namespace rqt_msl_refbox
 		disconnect(Their_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(TheirPenaltyPressed()));
 
 		disconnect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
-		disconnect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
-		disconnect(rbtn_xmlMulti, SIGNAL(toggled(bool)), gameData, SLOT(onMultiTogled(bool)));
-		disconnect(rbtn_xmlTcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpTogled(bool)));
+		disconnect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalToggled(bool)));
+		disconnect(rbtn_xml, SIGNAL(toggled(bool)), gameData, SLOT(onXmlToggled(bool)));
+		disconnect(rbtn_char, SIGNAL(toggled(bool)), gameData, SLOT(onCharToggled(bool)));
+		disconnect(rbtn_tcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpToggled(bool)));
+		disconnect(rbtn_udp, SIGNAL(toggled(bool)), gameData, SLOT(onUdpToggled(bool)));
 		disconnect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
 		delete gameData;

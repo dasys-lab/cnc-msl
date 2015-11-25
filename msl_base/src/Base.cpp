@@ -15,6 +15,8 @@
 #include "communication/AlicaRosCommunication.h"
 #include "SigFault.h"
 #include "robotmovement/RobotMovement.h"
+#include "SolverType.h"
+#include "CGSolver.h"
 
 using namespace std;
 using namespace msl;
@@ -31,6 +33,7 @@ namespace msl
 		crc = new alica::ConstraintCreator();
 		ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
 		ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
+		ae->addSolver(SolverType::GRADIENTSOLVER,new alica::reasoner::CGSolver(ae));
 
 		wm = MSLWorldModel::get();
 		wm->setEngine(ae);
