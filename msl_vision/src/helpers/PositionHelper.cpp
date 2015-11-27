@@ -121,7 +121,7 @@ Point3D PositionHelper::getBallPositionFromBallMid(double x, double y) {
 Point3D PositionHelper::getPointCam2Point3D(double x, double y, double r, double ball_r) {
 	//sollte klar sein, was das macht ;)
 
-	printf("XYR Ball! %f %f %f\n", x, y, r);
+	//printf("XYR Ball! %f %f %f\n", x, y, r);
 
 	r += 1.0;
 	double * LookupTable = DistanceLookupHelper::getCreatedInstance()->getLookupTable();
@@ -426,7 +426,7 @@ void PositionHelper::goForLine(short ax, short ay, short ex, short ey, double an
 
 			}
 			else{
-				printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
 

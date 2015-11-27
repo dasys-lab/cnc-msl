@@ -224,7 +224,7 @@ void ROIHelperOmniCam::goForLine(short ax, short ay, short ex, short ey, double 
 
 			}
 			else{
-				printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
 

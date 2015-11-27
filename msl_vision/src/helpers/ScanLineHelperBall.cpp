@@ -176,7 +176,7 @@ int ScanLineHelperBall::DrawLine(short * line, short ax, short ay, short ex, sho
 
 	int pointCounter = 0;
 
-	printf(" Scan Line Helper Ball ax: %d ay: %d ex: %d ey: %d\n", ax, ay, ex, ey);
+	//printf(" Scan Line Helper Ball ax: %d ay: %d ex: %d ey: %d\n", ax, ay, ex, ey);
 
 	//printf("linePointer: %d\n", line);
 	//printf("nPointer: %d\n", nPoints);
@@ -238,7 +238,7 @@ int ScanLineHelperBall::DrawLine(short * line, short ax, short ay, short ex, sho
 
 			}
 			else{
-				printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
 
@@ -256,7 +256,7 @@ int ScanLineHelperBall::DrawLine(short * line, short ax, short ay, short ex, sho
 		pointCounter = counter;
 	}
 
-	printf("Size of line: %d\n", pointCounter);
+	//printf("Size of line: %d\n", pointCounter);
 
 	return pointCounter;
 

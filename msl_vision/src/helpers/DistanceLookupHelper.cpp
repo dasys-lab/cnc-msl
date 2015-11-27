@@ -167,7 +167,7 @@ void DistanceLookupHelper::init(char* name){
 		int x = mx;
 		int y = my + i;
 		
-		printf("HLT: %d %d %d %f\n", x, y, i, LookupTable[x*imWidth + y]);
+		//printf("HLT: %d %d %d %f\n", x, y, i, LookupTable[x*imWidth + y]);
 
 		HorizontalLookupTable[i] = LookupTable[x*imWidth + y];
 		
