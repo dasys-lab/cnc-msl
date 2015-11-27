@@ -283,15 +283,15 @@ namespace msl
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
 			shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
 					InformationElement<geometry::CNPosition>>(posMotion, time);
-		    odometryMotion->certainty = data->odometry.certainty;
-	        ownPositionMotion.add(odometryMotion);
+		    //odometryMotion->certainty = data->odometry.certainty;
+	        //ownPositionMotion.add(odometryMotion);
 
 			// TODO: this is the same motion as for vision motion !?
 			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
-			vMotion->certainty = data->odometry.certainty;
-			ownVelocityMotion.add(vMotion);
+			//vMotion->certainty = data->odometry.certainty;
+			//ownVelocityMotion.add(vMotion);
 		}
 
 		if (data->ball.confidence > 0)
