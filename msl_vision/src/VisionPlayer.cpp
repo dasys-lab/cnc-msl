@@ -96,7 +96,8 @@ int main(int argc,char *argv[]){
 				offline = false, fixed_image = false, drawScanLines = false, help = false, drawCircle = false,
 				drawRGB = false, drawSegmented = false, lines = false, log = false, extendedLogging = false, roi = false,
 				drawBall = false, directions = false, drawROI = false, drawRoland=false, localizeDebugFlag = false,
-				softhdr=false, input=false, isGoalie=false, streamMJpeg=false, sendROIImage=false, sendGrayImage=false;
+				softhdr=false, input=false, isGoalie=false, streamMJpeg=false, sendROIImage=false, sendGrayImage=false,
+				localize=true;
 		int fixed_number = 1;
 		XVDisplay * xvDisplay = NULL;
 		XVDisplay * xvDisplay2 = NULL;
@@ -524,10 +525,10 @@ int main(int argc,char *argv[]){
 			if(drawScanLines)
 				image_gray = filterDrawScanLines.process((unsigned char *) image_gray, area, area, scanHelper, true);
 
-			printf("Stage 10: Localization\n");
 			Particle maxParticle;
-			if (localizationBegin++ > 50)
+			if (localize && localizationBegin++ > 50)
 			{
+				printf("Stage 10: Localization\n");
 				if (useParticleFilter) {
 					if(!isGoalie)
 					particleFilter.iterate(linePoints, lineDistHelper, gaussHelper, yellowGoals, blueGoals, cornerPosts);
@@ -568,14 +569,21 @@ int main(int argc,char *argv[]){
 				}
 			}
 
-			printf("Stage 11: Cluster available Balls\n");
-			Point p = ballHelper.getBallFromBlobs(cluster, clusterCount, roiData, ballBlobs, &maxParticle);
+
+			Point p;
+			if(localize) {
+				printf("Stage 11: Compute Ballhypothesis Balls\n");
+				p = ballHelper.getBallFromBlobs(cluster, clusterCount, roiData, &maxParticle);
+				printf("Stage 12: Compute Goal positions\n");
+				goalHelper.getGoalsFromPosition(pos);
+			} else {
+				printf("Stage 11: Send Ballhypothesis\n");
+				p = ballHelper.sendBallHypotesis(cluster, clusterCount, roiData);
+			}
 			if(roiData.size() > 0)
 				curBallROI = roiData[0];
 
 
-			printf("Stage 12: Compute Goal positions\n");
-			goalHelper.getGoalsFromPosition(pos);
 
 			printf("Stage 13: Obstacle avoidance\n");
             if(detectObstacles) filterDistanceProfileNew.process(image_gray_saved, area, area, scanHelper, distanceHelper);

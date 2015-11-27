@@ -131,7 +131,12 @@ void BallHelper::cleanup(){
 }
 
 
-Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData, std::vector<BlobBounds> & potBallBlobs, Particle * maxParticle){
+void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData){
+
+}
+
+
+Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData, Particle * maxParticle){
 	static int noBallCycles = 0;
 	bool ballIntegrated = false;
 
@@ -150,7 +155,6 @@ Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std:
 
 	ObservedPoint ballPos;
 	ROIData ballROI; 
-	//BlobBounds retBlob;
 
 	// Integrate balls from directed camera
 	ObservedPoint * opDirected = SharedMemoryHelper::getInstance()->readDirectedBallPosition();
@@ -216,18 +220,8 @@ Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std:
 				ballPos.valid = false;
 			}
 			else {
-				//cout << cluster[i].y << cluster[i].x << r << endl;
 				p = posHelp->getPointCam2Point3D(cluster[i].y, cluster[i].x, r);
 
-/*			double dist = sqrt(p.x*p.x + p.y*p.y);
-			double rSubValue = 2.0; //dist/3000.0;
-			double newR = r - rSubValue;
-			if(newR < 1.0)
-				newR = 1.0;
-
-			p = posHelp->getPointCam2Point3D(cluster[i].y, cluster[i].x, newR);
-*/
-			//p = posHelp->getPointCam2Point3D(cluster[i].y, cluster[i].x, (cluster[i].sizeSum / cluster[i].balls));
 				if(fabs(p.z-130) < grounddist) {
 					ballPos.x = p.x;
 					ballPos.y = p.y;
@@ -331,26 +325,11 @@ Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std:
 		}
 		if(ballPos.confidence > 0.9) ballPos.confidence = 0.9;
 
-
-		//printf("Endy x: %d; y: %d; z: %d\n", cluster[i].x, cluster[i].y, cluster[i].sizeSum / cluster[i].balls);
-		//cout << "Endy ElmPos x:" << p.x << " y:" << p.y << endl;
-
 		ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
 	
-		//printf("BallTracker - BallHelper - ballPos %f %f %d %d\n", ballPos.x, ballPos.y, ballPos.valid, ballPos.timestamp);
-		//printf("getLastIndex : %d\n", ballBuf.getLastIndex());	
-	
-		//HACK new optic wrong ball dist estimation
-		//if(newOptics) {
-			
-			//ballPos.x = ballPos.x * 1.33; //gradient from test measurment
-			//ballPos.y = ballPos.y * 1.33;		  
-		//}
-		
 		BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
 		ballIntegrated = true;
 		noBallCycles=0;
-		//printf("getLastIndex : %d\n", ballBuf.getLastIndex());
 	}
 	if(!ballIntegrated) noBallCycles++;
 ////////////////////////////////////here old ball helper////////////////////////////////////
