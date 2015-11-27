@@ -512,7 +512,7 @@ int main(int argc,char *argv[]){
 
 			printf("Stage 8: Apply Templatematching\n");
 			imBall = filterTMatch.process(imageSDir, balls, ballCount, image_uv, roiData, maskThresh, area, area, 4, 19, 6, image_roi);
-			printf("Stage 9:\n");
+			printf("Stage 9: Clustering Ball Hypothesis\n");
 			clusterCount = ballClusterHelp.clusterBalls(balls, ballCount, cluster, 200);
 			//ballClusterHelp.clusterStdOut(cluster, clusterCount, mx, my, false);
 
@@ -541,6 +541,7 @@ int main(int argc,char *argv[]){
 					pos.x = wpos.x;
 					pos.y = wpos.y;
 					pos.heading = wpos.heading;
+					printf("VisionPlayer LocalizationType: ParticleFilter: %f %f %f\n", pos.x, pos.y, pos.heading);
 					Particle maxParticle;
 					if(!isGoalie) maxParticle = particleFilter.getMaxParticle();
 					else maxParticle = particleFilterGoalie.getMaxParticle();
@@ -550,7 +551,7 @@ int main(int argc,char *argv[]){
 					pos.x = weightPosErrorMin.x;
 					pos.y = weightPosErrorMin.y;
 					pos.heading = weightPosErrorMin.heading;
-					printf("VisionPlayer Loc ErrorMin: %f: %f %f %f\n",weightPosErrorMin.weight, pos.x, pos.y, pos.heading);
+					printf("VisionPlayer LocalizationType: ErrorMin: %f: %f %f %f\n",weightPosErrorMin.weight, pos.x, pos.y, pos.heading);
 					newLoc->writeCoi();
 
 					maxParticle.posx = pos.x;

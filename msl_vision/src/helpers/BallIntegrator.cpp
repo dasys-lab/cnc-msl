@@ -193,7 +193,7 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 		int listLength = (int) points.size();
 	
 		for (int i = listLength - 1; i >= 0; i--) {
-			printf("i = %d\n", i);
+			//printf("i = %d\n", i);
 			double dist = sqrt((points[i].point.x - p.x)*(points[i].point.x - p.x) + (points[i].point.y - p.y)*(points[i].point.y - p.y));
 
 

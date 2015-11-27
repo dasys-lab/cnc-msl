@@ -245,7 +245,7 @@ int ScanLineHelperDirected::DrawLine(short * line, short ax, short ay, short ex,
 
 			}
 			else{
-				printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+				//printf("out of image!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
 				break;
 			}
 
