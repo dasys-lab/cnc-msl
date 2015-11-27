@@ -84,3 +84,153 @@ void CameraCalibrationHelper::handleCameraSettingsRequest(const msl_sensor_msgs:
         }
     }
 }
+
+void CameraCalibrationHelper::setCameraSettings(camera::ImagingSource* cam) {
+	cout << "CamCalib\tsetSettings" << endl;
+	CameraCalibration::Settings* settings = CameraCalibration::CameraCalibrationHelper::cameraSettings;
+	// BRIGHTNESS
+	if (settings->useBrightness == true) {
+		if (cam->getBrightness() != settings->brightness) {
+			cout << "CamCalib\tchanging brightness\tfrom: ";
+			cout << cam->getBrightness() << " to: ";
+			cout << settings->brightness;
+			cout << endl;
+
+			cam->setBrightness(settings->brightness);
+
+			CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+		}
+	}
+	// EXPOSURE
+	if (cam->getExposure() != settings->exposure) {
+		cout << "CamCalib\tchanging exposure\tfrom: ";
+		cout << cam->getExposure() << " to: ";
+		cout << settings->exposure;
+		cout << endl;
+
+		cam->setExposure(settings->exposure);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// WHITEBALANCE
+	if (settings->autoWhiteBalance == false) {
+		bool setWB = false;
+		camera::ImagingSource::white_balance_t wb = cam->getWhiteBalance();
+		if (wb.bu != settings->whiteBalance1) {
+			cout << "CamCalib\tchanging whiteBalance1 (bu)\tfrom: ";
+			cout << wb.bu << " to: ";
+			cout << settings->whiteBalance1;
+			cout << endl;
+
+			wb.bu = settings->whiteBalance1;
+
+			setWB = true;
+		}
+		if (wb.rv != settings->whiteBalance2) {
+			cout << "CamCalib\tchanging whiteBalance2 (rv)\tfrom: ";
+			cout << wb.rv << " to: ";
+			cout << settings->whiteBalance2;
+			cout << endl;
+
+			wb.rv = settings->whiteBalance2;
+
+			setWB = true;
+		}
+		if (setWB) {
+			cam->setWhiteBalance(wb);
+
+			CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+		}
+	}
+	// HUE
+	if (cam->getHue() != settings->hue) {
+		cout << "CamCalib\tchanging hue\tfrom: ";
+		cout << cam->getHue() << " to: ";
+		cout << settings->hue;
+		cout << endl;
+
+		cam->setHue(settings->hue);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// SATURATION
+	if (cam->getSaturation() != settings->saturation) {
+		cout << "CamCalib\tchanging saturation\tfrom: ";
+		cout << cam->getSaturation() << " to: ";
+		cout << settings->saturation;
+		cout << endl;
+
+		cam->setSaturation(settings->saturation);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// ENABLE GAMMA
+	if (cam->isGamma() != settings->enabledGamma) {
+		cout << "CamCalib\tchanging enabledGamma\tfrom: ";
+		cout << (cam->isGamma() ? "true" : "false") << " to: ";
+		cout << (settings->enabledGamma ? "true" : "false");
+		cout << endl;
+
+		cam->enableGamma(settings->enabledGamma);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// GAMMA
+	if (cam->isGamma() &&
+			cam->getGamma() != settings->gamma) {
+		cout << "CamCalib\tchanging gamma\tfrom: ";
+		cout << cam->getGamma() << " to: ";
+		cout << settings->gamma;
+		cout << endl;
+
+		cam->setGamma(settings->gamma);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// AUTOSHUTTER
+	if (cam->isAutoShutter() != settings->autoShutter) {
+		cout << "CamCalib\tchanging autoShutter\tfrom: ";
+		cout << (cam->isAutoShutter() ? "true" : "false") << " to: ";
+		cout << (settings->autoShutter ? "true" : "false");
+		cout << endl;
+
+		cam->enableAutoShutter(settings->autoShutter);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// SHUTTER
+	if (!cam->isAutoShutter() &&
+			cam->getShutter() != settings->shutter) {
+		cout << "CamCalib\tchanging shutter\tfrom: ";
+		cout << cam->getShutter() << " to: ";
+		cout << settings->shutter;
+		cout << endl;
+
+		cam->setShutter(settings->shutter);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// AUTOGAIN
+	if (cam->isAutoGain() != settings->autoGain) {
+		cout << "CamCalib\tchanging autoGain\tfrom: ";
+		cout << (cam->isAutoGain() ? "true" : "false") << " to: ";
+		cout << (settings->autoGain ? "true" : "false");
+		cout << endl;
+
+		cam->enableAutoGain(settings->autoGain);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+	// GAIN
+	if (!cam->isAutoGain() &&
+			cam->getGain() != settings->gain) {
+		cout << "CamCalib\tchanging gain\tfrom: ";
+		cout << cam->getGain() << " to: ";
+		cout << settings->gain;
+		cout << endl;
+
+		cam->setGain(settings->gain);
+
+		CameraCalibration::CameraCalibrationHelper::settingsAreRequested = true;
+	}
+}

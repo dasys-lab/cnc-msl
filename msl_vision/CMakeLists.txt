@@ -228,6 +228,11 @@ target_link_libraries(msl_vision stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1
 set_target_properties(msl_vision PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 add_dependencies(msl_vision msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
 
+add_executable(msl_vision2 src/VisionPlayer2.cpp)
+target_link_libraries(msl_vision2 stdc++ pthread m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+set_target_properties(msl_vision2 PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+add_dependencies(msl_vision2 msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp msl_msgs_generate_messages_cpp msl_helper_msgs_generate_messages_cpp)
+
 
 ## Vision 3D
 FILE(GLOB lib_msl_vision_3d_SOURCES
@@ -286,15 +291,15 @@ set_target_properties(msl_cn_cct PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-ve
 
 ## Vision Goalie
 
-add_executable(msl_vision_goalie src/VisionPlayerGoalie.cpp)
-target_link_libraries(msl_vision_goalie pthread stdc++ Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(msl_vision_goalie PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+#add_executable(msl_vision_goalie src/VisionPlayerGoalie.cpp)
+#target_link_libraries(msl_vision_goalie pthread stdc++ Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+#set_target_properties(msl_vision_goalie PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Vision Goalie 1394
 
-add_executable(msl_vision_goalie_1394 src/VisionPlayerGoalie1394.cpp)
-target_link_libraries(msl_vision_goalie_1394 stdc++ pthread Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(msl_vision_goalie_1394 PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+#add_executable(msl_vision_goalie_1394 src/VisionPlayerGoalie1394.cpp)
+#target_link_libraries(msl_vision_goalie_1394 stdc++ pthread Xv m X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+#set_target_properties(msl_vision_goalie_1394 PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Vision Kinect
 
@@ -304,9 +309,9 @@ set_target_properties(msl_vision_kinect PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -f
 
 ## Camera Model Test
 
-add_executable(camera_model_test src/CameraModelTest.cpp)
-target_link_libraries(camera_model_test pthread stdc++ m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS "-DSWITCHLOC  -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+#add_executable(camera_model_test src/CameraModelTest.cpp)
+#target_link_libraries(camera_model_test pthread stdc++ m X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+#set_target_properties(camera_model_test PROPERTIES COMPILE_FLAGS "-DSWITCHLOC  -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Calculator
 
@@ -316,9 +321,9 @@ set_target_properties(msl_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize 
 
 ## Ray Calculator
 
-add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
-target_link_libraries(msl_ray_calculator pthread m stdc++ X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+#add_executable(msl_ray_calculator src/tools/RayCalculator.cpp )
+#target_link_libraries(msl_ray_calculator pthread m stdc++ X11 Xv Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+#set_target_properties(msl_ray_calculator PROPERTIES COMPILE_FLAGS "-ftree-vectorize ${SSE_FLAGS} -ffast-math -O5 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 
 SET(ROBOT "$ENV{ROBOT}")

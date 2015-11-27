@@ -4,6 +4,7 @@
 #include "ros/ros.h"
 #include <msl_sensor_msgs/CameraSettings.h>
 #include <msl_sensor_msgs/CameraSettingsRequest.h>
+#include "../driver/imagingsource.h"
 
 namespace CameraCalibration {
     class Settings {
@@ -42,6 +43,7 @@ namespace CameraCalibration {
         static void sendSettings(Settings* settings);
         static void handleCameraSettings(const msl_sensor_msgs::CameraSettings::ConstPtr& msg);
         static void handleCameraSettingsRequest(const msl_sensor_msgs::CameraSettingsRequest::ConstPtr& msg);
+        static void setCameraSettings(camera::ImagingSource* cam);
     };
 }
 
