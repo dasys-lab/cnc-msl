@@ -131,8 +131,8 @@ void BallHelper::cleanup(){
 }
 
 
-void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData){
-
+Point BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData){
+	//TODO implement
 }
 
 

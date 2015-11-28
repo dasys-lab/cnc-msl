@@ -49,7 +49,7 @@ class BallHelper {
 		BallHelper(int area);
 		~BallHelper();
 	
-		void sendBallHypotesis(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData);
+		Point sendBallHypotesis(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData);
 		Point getBallFromBlobs(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData, Particle * maxParticle);
 		void visualizeBall(unsigned char * src, int width, Point ball, int radius);
 		Point getBallPosition();
