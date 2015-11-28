@@ -579,7 +579,8 @@ int main(int argc,char *argv[]){
 				goalHelper.getGoalsFromPosition(pos);
 			} else {
 				printf("Stage 11: Send Ballhypothesis\n");
-				p = ballHelper.sendBallHypotesis(cluster, clusterCount, roiData);
+				//TODO fix => sendBallHypotesis doesnt return a point
+//				p = ballHelper.sendBallHypotesis(cluster, clusterCount, roiData);
 			}
 			if(roiData.size() > 0)
 				curBallROI = roiData[0];
