@@ -30,6 +30,7 @@
 #include <msl_sensor_msgs/VisionImage.h>
 #include <msl_sensor_msgs/VisionGameState.h>
 #include <msl_actuator_msgs/VisionRelocTrigger.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
 #include "LinePoint.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -47,6 +48,7 @@ class SpicaHelper {
 		static msl_sensor_msgs::WorldModelData* wm;
 		static msl_sensor_msgs::VisionDebug* vdd;
 		static msl_sensor_msgs::VisionImage* vi;
+		static msl_sensor_msgs::BallHypothesisList* ballList;
 		static bool reloc;
 
 		static ros::Publisher womopub;

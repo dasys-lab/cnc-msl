@@ -35,6 +35,7 @@ using namespace msl_actuator_msgs;
 WorldModelData* SpicaHelper::wm;
 VisionDebug* SpicaHelper::vdd;
 VisionImage* SpicaHelper::vi;
+BallHypothesisList* SpicaHelper::ballList;
 //LinePointMessagePtr SpicaHelper::lpmp;
 //Point2dInfoPtrListPtr SpicaHelper::linePointList;
 ros::NodeHandle* SpicaHelper::visionNode;
@@ -76,6 +77,7 @@ void SpicaHelper::initialize() {
 	wm = new WorldModelData();
 	vdd = new VisionDebug();
 	vi = new VisionImage();
+	ballList = new BallHypothesisList();
 	//linePointList = lpmp->getLinepoints()->getLps();
 	//comm->start();
 	key = EOF;

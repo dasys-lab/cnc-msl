@@ -331,7 +331,6 @@ int main(int argc,char *argv[]){
 		Position pos;
 		Position relocPos;
 		WeightedPosition weightPosErrorMin;
-		WeightedPosition weightPosParticleFilter;
 		pos.x = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"X",NULL);;
 		pos.y= localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"Y",NULL);;
 		pos.heading = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"Heading",NULL);;
@@ -570,7 +569,6 @@ int main(int argc,char *argv[]){
 				}
 			}
 
-
 			Point p;
 			if(localize) {
 				printf("Stage 11: Compute Ballhypothesis Balls\n");
@@ -579,12 +577,10 @@ int main(int argc,char *argv[]){
 				goalHelper.getGoalsFromPosition(pos);
 			} else {
 				printf("Stage 11: Send Ballhypothesis\n");
-				p = ballHelper.sendBallHypotesis(cluster, clusterCount, roiData);
+				ballHelper.sendBallHypotesis(cluster, clusterCount, roiData);
 			}
 			if(roiData.size() > 0)
 				curBallROI = roiData[0];
-
-
 
 			printf("Stage 13: Obstacle avoidance\n");
             if(detectObstacles) filterDistanceProfileNew.process(image_gray_saved, area, area, scanHelper, distanceHelper);
