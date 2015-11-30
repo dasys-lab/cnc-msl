@@ -22,39 +22,40 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
 
-    	if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= calibPosMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= calibPosMotionY)
-    	{
+    	//if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= calibPosMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= calibPosMotionY)
+    	//{
     		if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
     		{
     			calibPosVision = this->wm->rawSensorData.getOwnPositionVision(0);
     			calibOldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
 
     		}
-    		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
-    		{
-    			calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
+    		//if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
+    		//{
+    			//calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
     			calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-    			calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
+    			//calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
     			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
-    		}
-    		else
+    		//}
+    		/*else
     		{
-    			if (calibPosMotion == NULL)
-    			{
-    				calibPosMotionX = 1;
-    			}
+
+    		    if (calibPosMotion == NULL)
+    		    {
+    		    	calibPosMotionX = 1;
+    		    }
     			calibPosMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
     			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
 
     		}
+			*/
 
-
-    		if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
-    		{
+    		//if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
+    		//{
     			calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
     			calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
-    		}
-    		else
+    		//}
+    		/*else
     		{
     		    if (calibPosMotion == NULL)
     		    {
@@ -64,7 +65,7 @@ namespace alica
     		    calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
 
     		}
-
+			*/
 
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((calibPosMotionX - calibOldPosMotionX) * (calibPosMotionX - calibOldPosMotionX)
@@ -76,7 +77,7 @@ namespace alica
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
             //std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
             std::cout <<""<<endl;
-    	}
+    	//}
         /*PROTECTED REGION END*/
     }
     void CalcCalib::initialiseParameters()
