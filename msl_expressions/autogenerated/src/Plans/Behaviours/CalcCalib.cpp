@@ -35,7 +35,7 @@ namespace alica
     			//calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
     			calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
     			//calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
-    			calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
+    			//calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
     		//}
     		/*else
     		{
@@ -53,7 +53,7 @@ namespace alica
     		//if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
     		//{
     			calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
-    			calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
+    			//calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
     		//}
     		/*else
     		{
@@ -77,6 +77,10 @@ namespace alica
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
             //std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
             std::cout <<""<<endl;
+
+            calibOldPosMotionX = calibPosMotionX;
+            calibOldPosMotionY = calibPosMotionY;
+
     	//}
         /*PROTECTED REGION END*/
     }
