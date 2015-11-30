@@ -367,9 +367,9 @@ namespace alica
                                                                                  NULL);
         double funktionLeft = 0, funktionRight = 0;
         double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-        double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+       // double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
-        cout << "exp Funktion : " << eFunktion << endl;
+       // cout << "exp Funktion : " << eFunktion << endl;
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
         x = max(min(angle, 3.14), -3.14);
@@ -433,17 +433,17 @@ namespace alica
             rotationRight = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 2 - 5;
             cout << "rotation	left : " << rotationLeft << endl;
             cout << "rotation right : " << rotationRight << endl;
-            funktionLeftInterpolation = 0;
+            FunktionValuesLeft = 0;
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
             {
                 cout << "rueckwaertsdrehen" << endl;
-                funktionRightInterpolation = funktionRightInterpolation
+                FunktionValuesRight = FunktionValuesRight
                         + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
             }
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
             {
 
-                funktionLeftInterpolation = funktionLeftInterpolation
+            	FunktionValuesLeft = FunktionValuesLeft
                         + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
             }
@@ -458,20 +458,20 @@ namespace alica
             cout << "rotation	left : " << rotationLeft << endl;
             cout << "rotation right : " << rotationRight << endl;
 
-            funktionRightInterpolation = 0;
+            FunktionValuesRight = 0;
 
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
             {
 
                 cout << "rückwärtsdrehen" << endl;
-                funktionLeftInterpolation = funktionLeftInterpolation
+                FunktionValuesLeft = FunktionValuesLeft
                         + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 
             }
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
             {
 
-                funktionRightInterpolation = funktionRightInterpolation
+            	FunktionValuesRight = FunktionValuesRight
                         + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
             }
@@ -480,9 +480,9 @@ namespace alica
 
         //Rotation Controller End
 
-        KvRight = (0.9 * eFunktion * arithmeticAverageSpeed * funktionRightInterpolation + rotationRight);
+        KvRight = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesRight + rotationRight);
 
-        KvLeft = (0.9 * eFunktion * arithmeticAverageSpeed * funktionLeftInterpolation + rotationLeft);
+        KvLeft = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesLeft + rotationLeft);
         cout << "funktionLeft : " << funktionLeft << endl;
         cout << "funktionRight : " << funktionRight << endl;
         cout << "KvLeft : " << KvLeft << endl;
