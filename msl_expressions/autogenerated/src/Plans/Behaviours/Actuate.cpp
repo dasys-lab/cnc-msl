@@ -376,7 +376,7 @@ namespace alica
         int counter = 1;
 
         splines::spline leftMotor;
-        double funktionLeftInterpolation = leftMotor(x); //
+
         vector<double> XLeft(13), YLeft(13);
         auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesLeft", NULL);
@@ -392,7 +392,7 @@ namespace alica
         leftMotor.set_points(XLeft, YLeft);
 
         splines::spline rightMotor;
-        double funktionRightInterpolation = rightMotor(x); //
+
         vector<double> XRight(13), YRight(13);
         auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesRight", NULL);
