@@ -74,7 +74,7 @@ namespace alica
             //std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
             //std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
-            std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
+            //std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
             std::cout <<""<<endl;
     	}
         /*PROTECTED REGION END*/
