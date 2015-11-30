@@ -234,7 +234,6 @@ void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std:
 	}
 }
 
-
 Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData, Particle * maxParticle){
 	static int noBallCycles = 0;
 	bool ballIntegrated = false;
