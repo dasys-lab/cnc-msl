@@ -31,8 +31,8 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd bhc;
         auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-        double left = 0;
-        double right = 0;
+        double left = 30;
+        double right = 30;
 
         if (rodo == nullptr)
         {
@@ -40,7 +40,9 @@ namespace alica
             return;
         }
 
-        newController(left, right);
+      //  newController(left, right);
+
+	
 
         //PD Regler Anfang
         //PIDControllerLeft
