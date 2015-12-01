@@ -234,7 +234,7 @@ namespace alica
             auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
             this->pathProxy->sendVoronoiNetMsg(sites, vNet);
             //Turn to goal...
-            shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->rawSensorData.getBallVelocity();
+            shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball.getVisionBallVelocity();
             shared_ptr < geometry::CNPoint2D > ballVel2;
             if (ballVel == nullptr)
             {

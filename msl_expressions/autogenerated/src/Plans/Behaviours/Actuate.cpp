@@ -387,16 +387,16 @@ namespace alica
 
         splines::spline leftMotor;
 
-        vector<double> XLeft(13), YLeft(13);
+        vector<double> XLeft, YLeft;
        auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesLeft", NULL);
         counter = 1;
         for (string sectionName : *FunktionValuesLeftSections)
         {
-            XLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                         sectionName.c_str(), "XLeft", NULL);
-            YLeft[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                         sectionName.c_str(), "YLeft", NULL);
+            XLeft.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                         sectionName.c_str(), "XLeft", NULL));
+            YLeft.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                         sectionName.c_str(), "YLeft", NULL));
             counter++;
         }
         leftMotor.set_points(XLeft, YLeft);
@@ -404,16 +404,16 @@ namespace alica
 	cout<<"vor der splines right"<<endl;	
         splines::spline rightMotor;
 
-        vector<double> XRight(13), YRight(13);
+        vector<double> XRight, YRight;
         auto FunktionValuesRightSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesRight", NULL);
         counter = 1;
         for (string sectionName : *FunktionValuesRightSections)
         {
-            XRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                          sectionName.c_str(), "XRight", NULL);
-            YRight[counter] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                          sectionName.c_str(), "YRight", NULL);
+            XRight.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+                                                                          sectionName.c_str(), "XRight", NULL));
+            YRight.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+                                                                          sectionName.c_str(), "YRight", NULL));
             counter++;
         }
 
@@ -428,8 +428,8 @@ namespace alica
         vector<double> XFric(13), YFric(13);
         for (int i = 1; i <= 13; i++)
         {
-            XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.x" + i, NULL);
-            YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.y" + i, NULL);
+            XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.x") + to_string(i)).c_str(), NULL);
+            YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL);
         }
 
 	cout<<"Z: 431 ende der  friction"<<endl;

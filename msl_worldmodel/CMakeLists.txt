@@ -57,6 +57,13 @@ catkin_package(
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
    src/pathplanner/evaluator/PrefDirEvaluator.cpp
+   src/ballTracking/BallIntegrator.cpp  
+   src/ballTracking/BallZTracker.cpp  
+   src/ballTracking/EgoMotionEstimator.cpp  
+   src/ballTracking/ObjectContainer.cpp  
+   src/ballTracking/ObjectTracker.cpp  
+   src/ballTracking/SharedMemoryHelper.cpp  
+   src/ballTracking/TimeHelper.cpp
  )
 
 ## Add cmake target dependencies of the executable/library

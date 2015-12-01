@@ -36,7 +36,7 @@ namespace msl
 	}
 
 	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this), game(this, 10), pathPlanner(
+			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
 					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this)
 	{
 		kickerVoltage = 0;
@@ -48,6 +48,9 @@ namespace msl
 		joystickSub = n.subscribe("/Joystick", 10, &MSLWorldModel::onJoystickCommand, (MSLWorldModel*)this);
 
 		wmDataSub = n.subscribe("/WorldModel/WorldModelData", 10, &MSLWorldModel::onWorldModelData,
+								(MSLWorldModel*)this);
+
+		wmBallListSub = n.subscribe("/CNVision/BallHypothesisList", 10, &MSLWorldModel::onBallHypothesisList,
 								(MSLWorldModel*)this);
 
 		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,
@@ -142,7 +145,7 @@ namespace msl
 	{
 		msl_sensor_msgs::SharedWorldInfo msg;
 		msg.senderID = this->ownID;
-		auto ball = rawSensorData.getBallPositionAndCertaincy();
+		auto ball = this->ball.getVisionBallPositionAndCertaincy();
 		auto pos = rawSensorData.getOwnPositionVision();
 		if (pos == nullptr)
 		{
@@ -157,7 +160,7 @@ namespace msl
 			msg.ball.confidence = ball->second;
 		}
 
-		auto ballVel = rawSensorData.getBallVelocity();
+		auto ballVel = this->ball.getVisionBallVelocity();
 		if (ballVel != nullptr)
 		{
 
@@ -223,6 +226,10 @@ namespace msl
 	{
 		lock_guard<mutex> lock(correctedOdemetryMutex);
 		rawSensorData.processCorrectedOdometryInfo(msg);
+	}
+
+	void MSLWorldModel::onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg) {
+		rawSensorData.processBallHypothesisList(msg);
 	}
 
 	int MSLWorldModel::getOwnId()

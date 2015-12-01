@@ -23,7 +23,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->rawSensorData.getBallPosition();
+        auto ballPos = wm->ball.getEgoBallPosition();
         if (!me.operator bool())
         {
             return;

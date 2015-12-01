@@ -1,2 +1,2 @@
 BallHypothesis[] hypothesis
-uint64 timstamp
+uint64 imageTime
