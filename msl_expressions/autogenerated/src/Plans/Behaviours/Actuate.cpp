@@ -383,12 +383,12 @@ namespace alica
         //Funktion for drive with differt angles start
         x = angle;// max(min(angle, 3.14), -3.14);
         int counter = 1;
-	cout<<"vor den Splines left";
+	cout<<"vor den Splines left"<<endl;
 
         splines::spline leftMotor;
 
         vector<double> XLeft(13), YLeft(13);
-        auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
+       auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesLeft", NULL);
         counter = 1;
         for (string sectionName : *FunktionValuesLeftSections)
@@ -401,7 +401,7 @@ namespace alica
         }
         leftMotor.set_points(XLeft, YLeft);
 
-	cout<<"vor der splines right";	
+	cout<<"vor der splines right"<<endl;	
         splines::spline rightMotor;
 
         vector<double> XRight(13), YRight(13);
@@ -416,7 +416,14 @@ namespace alica
                                                                           sectionName.c_str(), "YRight", NULL);
             counter++;
         }
+
+	cout<<"Z: 420 vor rightMotorset"<<endl;
+
         rightMotor.set_points(XRight, YRight);
+
+	cout<<"Z: 424 ende der splines right"<<endl;
+
+
         splines::spline frictionSpline;
         vector<double> XFric(13), YFric(13);
         for (int i = 1; i <= 13; i++)
@@ -425,6 +432,7 @@ namespace alica
             YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.Friction.y" + i, NULL);
         }
 
+	cout<<"Z: 431 ende der  friction"<<endl;
         frictionSpline.set_points(XFric, YFric);
 
         FunktionValuesRight = rightMotor(x);
