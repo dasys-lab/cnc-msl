@@ -145,6 +145,9 @@ void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std:
 	ballPos.confidence = 0.0;
 	Point3D p;
 
+	SpicaHelper::ballList->hypothesis.clear();
+	SpicaHelper::ballList->imageTime = TimeHelper::getInstance()->getVisionTimeOmniCam();
+
 	printf("Ballhelper: Cluster Count %d\n", clusterCount);
 	for(int i=0; i<clusterCount; i++) {
 		int pos = i;
@@ -228,10 +231,12 @@ void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std:
 			ballPos.egoPosition.z = p.z;
 		}
 		if(ballPos.confidence > 0.9) ballPos.confidence = 0.9;
+		ballPos.errors=(double)cluster[i].err/(double)cluster[i].balls;
 
-		//timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
+		SpicaHelper::ballList->hypothesis.push_back(ballPos);
 
 	}
+	SpicaHelper::sendBallHypothesis();
 }
 
 Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std::vector<ROIData>& roiData, Particle * maxParticle){

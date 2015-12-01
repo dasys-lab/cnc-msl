@@ -588,6 +588,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	coi.motion = (robotVelocity);
 	coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, distanceMap));
 	coi.locType.type = (LocalizationType::ParticleFilter);
+	coi.timestamp = linePoints->imageTime;
 
 	printf("MaxParticle Confidence %f\n", coi.certainty);		
 	oldOdometryInfo = odomotryInfo;

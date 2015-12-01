@@ -94,7 +94,7 @@ int main(int argc,char *argv[]){
 		camera::ImagingSource* cam = NULL;
 		bool sshImage = false, drawObstacles = false, display_frames = true, display_gray = false,
 				offline = false, fixed_image = false, drawScanLines = false, help = false, drawCircle = false,
-				drawRGB = false, drawSegmented = false, lines = false, log = false, extendedLogging = false, roi = false,
+				drawRGB = false, drawSegmented = false, lines = false, log = false, roi = false,
 				drawBall = false, directions = false, drawROI = false, drawRoland=false, localizeDebugFlag = false,
 				softhdr=false, input=false, isGoalie=false, streamMJpeg=false, sendROIImage=false, sendGrayImage=false,
 				localize=true;
@@ -103,10 +103,12 @@ int main(int argc,char *argv[]){
 		XVDisplay * xvDisplay2 = NULL;
 
 		for(int i = 1; i < argc; i++){
+			if(std::string(argv[i]) == "--localize")
+				localize = false;
 			if(std::string(argv[i]) == "--false")
 				display_frames = false;
 			if(std::string(argv[i]) == "--goalie")
-									isGoalie = true;
+				isGoalie = true;
 			if(std::string(argv[i]) == "--gray")
 				display_gray = true;
 			if(std::string(argv[i]) == "--offline")
@@ -149,7 +151,7 @@ int main(int argc,char *argv[]){
 			if(std::string(argv[i]) == "--softHDR")
 				softhdr = true;
 			if(std::string(argv[i]) == "--input")
-									input = true;
+				input = true;
 			if(std::string(argv[i]) == "--drawObstacles")
 				drawObstacles = true;
 			if(std::string(argv[i]) == "--mjpg")
@@ -159,6 +161,7 @@ int main(int argc,char *argv[]){
 		if(help){
 			printf("\nOptions for VisionPlayer:\n\n");
 			printf("--false: hides window\n");
+			printf("--localize: enables localization (transmission of CorrectedOdometryInfo otherwise Linepoints, Obstacles and Ballhypothesis are executed)\n");
 			printf("--gray: displays gray_image with line points and writes localization debug info\n");
 			printf("--offline: offline mode using images in $VISION_LOG\n");
 			printf("--scanLines: draws scan lines, only available with --gray\n");
@@ -454,12 +457,7 @@ int main(int argc,char *argv[]){
 				if(drawRGB)
 					imageRGB = filterYUVToRGB.process(currImage, imageWidth*imageHeight*2);
 
-				if(extendedLogging){
-					visionTimeOmniCamLong = Replayer::getInstance()->replay(imCounter);
-				}
-				else {
-					visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
-				}
+				visionTimeOmniCamLong = supplementary::DateTime::getUtcNowC();
 			}
 			struct timeval tv_before;
 			gettimeofday(&tv_before, NULL);
@@ -497,7 +495,7 @@ int main(int argc,char *argv[]){
 			//Get LinePoints for Self-Localization
 			image_gray = filterLinePoints.process((unsigned char *) image_gray, area, area, linePoints, distanceHelper, scanHelper);
 			//Send linepointlist here:
-			SpicaHelper::sendLinePoints(linePoints);
+			SpicaHelper::sendLinePoints(linePoints, visionTimeOmniCamLong);
 
 
 			printf("Stage 5: Detect ROIs\n");

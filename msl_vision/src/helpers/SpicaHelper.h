@@ -52,6 +52,7 @@ class SpicaHelper {
 		static bool reloc;
 
 		static ros::Publisher womopub;
+		static ros::Publisher ballPub;
         static ros::Publisher statepub;
 		static ros::Publisher debugPub;
 		static ros::Publisher Imagepub;
@@ -70,8 +71,9 @@ class SpicaHelper {
 		
 		static ros::NodeHandle* visionNode;
 		static void send();
+		static void sendBallHypothesis();
 		static void sendDebugMsg();
-		static void sendLinePoints(std::vector<LinePoint> linePoints);
+		static void sendLinePoints(std::vector<LinePoint> linePoints, unsigned long long timestamp);
         static void sendGameState();
 		static void streamGreyMJPEG(unsigned char* img, int width, int height);
 
