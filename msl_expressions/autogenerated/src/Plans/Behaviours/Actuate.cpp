@@ -31,8 +31,8 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd bhc;
         auto rodo = wm->rawSensorData.getOwnVelocityMotion();
 
-        double left = 30;
-        double right = 30;
+        double left = 0.0;
+        double right = 0.0;
 
         if (rodo == nullptr)
         {
@@ -40,7 +40,7 @@ namespace alica
             return;
         }
 
-      //  newController(left, right);
+        newController(left, right);
 
 	
 
@@ -483,8 +483,8 @@ namespace alica
         //Rotation Controller End
 
         KvRight = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesRight + rotationRight);
-
         KvLeft = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesLeft + rotationLeft);
+
         cout << "funktionLeft : " << funktionLeft << endl;
         cout << "funktionRight : " << funktionRight << endl;
         cout << "KvLeft : " << KvLeft << endl;
