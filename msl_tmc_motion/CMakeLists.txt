@@ -30,8 +30,9 @@ include_directories(
   include 
   ${catkin_INCLUDE_DIRS}
 )
-file(GLOB_RECURSE tmc_src "src/*.cpp")
-add_executable(${PROJECT_NAME} ${tmc_src})
-message ("<<<< tmc: ${catkin_LIBRARIES}")
+
+add_executable(${PROJECT_NAME} src/CircleTrace.cpp src/Motion.cpp src/CNMCPacket.cpp)
+
+
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)

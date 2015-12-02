@@ -15,24 +15,24 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_actuator_msgs/MotionStatInfo.h"
 #include "msl_msgs/MotionInfo.h"
+
 #include "MotionData.h"
+#include "CircleTrace.h"
+#include "MotorConfig.h"
+#include "CNMCPacket.h"
+
 #include <chrono>
 #include <cmath>
-#include "AccelCompensation.h"
-#include "CircleTrace.h"
-#include <CNMC.h>
 #include <mutex>
+#include <thread>
+
+#include <SystemConfig.h>
 
 // serial port stuff
 #include <termios.h>
 #include <fcntl.h>
 
 using namespace std;
-
-namespace std
-{
-	class thread;
-}
 
 namespace msl_driver
 {
@@ -52,14 +52,9 @@ namespace msl_driver
 		static void pmSigintHandler(int sig);
 		static void pmSigTermHandler(int sig);
 
-	protected:
-		MotionSet* motionValue = nullptr;
-		MotionSet* motionResult = nullptr;
-		MotionSet* motionValueOld = nullptr;
-		AccelCompensation* accelComp = nullptr;
-		CircleTrace* traceModel = nullptr;
-		CNMC* driver = nullptr;
 		std::mutex motionValueMutex;
+		MotionSet* motionValue = nullptr;
+		CircleTrace* traceModel = nullptr;
 
 		double slipControlFactor = 1.0;
 		double slipControlMinSpeed = 1250.0;
@@ -67,20 +62,14 @@ namespace msl_driver
 		double slipControlDiffAngleMinSpeed = 400.0;
 		double slipControlOldMaxRot = (M_PI / 20.0);
 		double slipControlNewMinRot = (M_PI / 2.0);
-		double accelCompMaxAccel = 4000.0;
-		double accelCompMaxAngularAccel = M_PI / 2.0;
 
-		bool accelCompEnabled = false;bool slipControlEnabled = false;bool quit = false;
+		bool slipControlEnabled = false;bool quit = false;
 
 		int driverAlivePeriod = 250;
 		int driverOpenAttemptPeriod = 1000;
 		int ownId;
 		int odometryDelay = 0;
 
-//		void notifyDriverStatusChange(StatusCode code, string message);
-//		void notifyDriverResultAvailable(DriverData data);
-
-	private:
 		// ROS STUFF
 		ros::NodeHandle* rosNode;
 		ros::AsyncSpinner* spinner;
@@ -88,7 +77,7 @@ namespace msl_driver
 		ros::Publisher rawOdometryInfoPub;
 		ros::Publisher motionStatInfoPub;
 
-		bool running;
+		static bool running;
 		thread runThread;
 
 		// SERIAL PORT STUFF
@@ -104,21 +93,22 @@ namespace msl_driver
 		supplementary::SystemConfig* sc;
 		MotorConfig mc;
 
-		long minCycleTime; // Minimum cycle time (us)
+		long minCycleTime; // Minimum cycle time in milliseconds
+		chrono::steady_clock::time_point cycleLastTimestamp;
+		chrono::steady_clock::time_point deltaTime;
 		double radius;
-		double maxVelocity;
-		bool logOdometry;
+		double maxVelocity;bool logOdometry;
 		shared_ptr<vector<string>> logTypes;
-		shared_ptr<vector<string>> logTypesAvailable;
-		bool controllerIsActive = false;
+		shared_ptr<vector<string>> logTypesAvailable;bool controllerIsActive = false;
 
 		void run();
 		void getMotorConfig();
 		void sendMotorConfig();
 		void updateMotorState(DriverData request, CNMCPacketRequestResponse* vmcp);
+		void executeRequest(MotionSet* ms);
 
 		void sendData(shared_ptr<CNMCPacket> packet);
-		CNMCPacket* readData();
+		unique_ptr<CNMCPacket> readData();
 		void checkSuccess(shared_ptr<CNMCPacket> cmd);
 	};
 

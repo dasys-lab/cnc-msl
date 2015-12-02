@@ -14,14 +14,13 @@
 namespace msl_driver
 {
 
-	bool Motion::running;
+	bool Motion::running = false;
 
 	Motion::Motion(int argc, char** argv) :
 			rosNode(nullptr), spinner(nullptr)
 	{
 
-		this->motionValue = new MotionSet();
-		this->motionResult = new MotionSet();
+		this->motionValue = nullptr;
 
 		this->sc = supplementary::SystemConfig::getInstance();
 
@@ -50,21 +49,6 @@ namespace msl_driver
 			std::cout << "Motion: slip control new min rotation     = " << this->slipControlNewMinRot << std::endl;
 		}
 
-		// Read acceleration compensation parameters
-		this->accelCompEnabled = (*sc)["Motion"]->tryGet<bool>(false, "Motion", "AccelComp", "Enabled", NULL);
-		this->accelCompMaxAccel = (*sc)["Motion"]->tryGet<double>(4000.0, "Motion", "AccelComp", "MaxAccel", NULL);
-		this->accelCompMaxAngularAccel = (*sc)["Motion"]->tryGet<double>(M_PI / 2.0, "Motion", "AccelComp",
-																			"MaxAngularAccel", NULL);
-
-		if (this->accelCompEnabled)
-		{
-			std::cout << "Motion: max acceleration " << this->accelCompMaxAccel << std::endl;
-			std::cout << "Motion: max angular acceleration " << this->accelCompMaxAngularAccel << std::endl;
-		}
-
-		// Initialize the acceleration compensation
-		this->accelComp = new AccelCompensation(this->accelCompMaxAccel, this->accelCompMaxAngularAccel);
-
 		// Set Trace-Model (according to the impera repository, we always used the CircleTrace model)
 		this->traceModel = new CircleTrace();
 
@@ -76,9 +60,6 @@ namespace msl_driver
 	Motion::~Motion()
 	{
 		delete motionValue;
-		delete motionResult;
-		delete motionValueOld;
-		delete accelComp;
 		delete traceModel;
 	}
 
@@ -98,7 +79,7 @@ namespace msl_driver
 
 	void Motion::initialize()
 	{
-		this->minCycleTime = (*sc)["Motion"]->tryGet<long>(1, "Motion", "CNMC", "MinCycleTime", NULL) * 1000;
+		this->minCycleTime = (*sc)["Motion"]->tryGet<long>(1, "Motion", "CNMC", "MinCycleTime", NULL);
 
 		this->device = (*sc)["Motion"]->get<string>("Motion", "CNMC", "Device", NULL);
 
@@ -181,7 +162,7 @@ namespace msl_driver
 		::write(this->port, (*bytes).data(), bytes->size());
 	}
 
-	CNMCPacket* Motion::readData()
+	unique_ptr<CNMCPacket> Motion::readData()
 	{
 		uint8_t b;
 		bool finished = false;
@@ -201,7 +182,7 @@ namespace msl_driver
 
 		if (b != CNMCPacket::START_HEADER)
 		{
-			return nullptr;
+			return move(unique_ptr<CNMCPacket>());
 		}
 		else
 		{
@@ -246,8 +227,8 @@ namespace msl_driver
 
 	void Motion::checkSuccess(shared_ptr<CNMCPacket> cmd)
 	{
-		CNMCPacket result = readData();
-		if (!cmd->isExpectedResponse(result))
+		auto result = readData();
+		if (!cmd->isExpectedResponse(move(result)))
 		{
 			// TODO implement toString of CNMCPacket
 			//cerr << "Error setting CNMC " << cmd.toString() << "\n Response was " << result.toString() << endl;
@@ -428,7 +409,6 @@ namespace msl_driver
 			this->checkSuccess(ctrlPacket);
 		}
 
-		// TODO
 		int8_t logmode = 0x00;
 		for (int i = 0; i < this->logTypesAvailable->size(); i++)
 		{
@@ -547,7 +527,7 @@ namespace msl_driver
 		if (!Motion::running)
 		{
 			Motion::running = true;
-			this->runThread = thread(run, this);
+			this->runThread = std::thread(&Motion::run, this);
 		}
 	}
 
@@ -557,20 +537,19 @@ namespace msl_driver
 	 */
 	bool Motion::isRunning()
 	{
-		return running;
+		return Motion::running;
 	}
 
 	void Motion::run()
 	{
 		// Loop until the driver is closed
-		while (running)
+		while (Motion::running)
 		{
 			//TODO make the times right!
 
 			// 1 Tick = 100ns, 10 Ticks = 1us
 			// remember the time, processing was last triggered
-			this->deltaTime = std::chrono::steady_clock::now() - this->cycleLastTimestamp;
-			this->cycleLastTimestamp += deltaTime;
+			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
 			MotionSet* request;
 
@@ -582,169 +561,70 @@ namespace msl_driver
 				this->motionValue = nullptr;
 			}
 
-			if (request == null && /*check alive timer*/)
+			if (request == nullptr)
 			{
 				chrono::milliseconds dura(1);
 				this_thread::sleep_for(dura);
 				continue;
 			}
 
-			if (request != nullptr)
-			{// If there is a request, try to process it
-				if (running)
-				{
-					this->executeRequest(request);
-				}
-				delete request;
+			// If there is a request, try to process it
+			if (Motion::running)
+			{
+				this->executeRequest(request);
 			}
-			else if ()// check if alive period is over
-			{// If there is no request, call the ExecuteCheck method
-				if (running)
-				{
-					this->executeCheck();
-				}
-			}
-
+			delete request;
 
 			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
-			long sleepTime = (this->minCycleTime - (std::chrono::steady_clock::now() - this->cycleLastTimestamp) / 10) / 1000;
+			long sleepTime = this->minCycleTime
+					- chrono::duration_cast<chrono::milliseconds>(
+							std::chrono::steady_clock::now() - this->cycleLastTimestamp).count();
 
 			if (sleepTime > 0)
 			{
 				chrono::milliseconds dura(sleepTime);
 				this_thread::sleep_for(dura);
 			}
-
-			// Compute the new due time
-			long newDueTime = this->alivePeriod - ((std::chrono::steady_clock::now() - this->cycleLastTimestamp) / 10000);
-
-			if (newDueTime <= 0)
-			{
-				newDueTime = 0;
-			}
 		}
 
 	}
 
-	/*void Motion::notifyDriverResultAvailable(DriverData* data)
-	 {
-	 MotionResult* mr = dynamic_cast<MotionResult>(data);
-	 if (mr == nullptr)
-	 {
-	 return;
-	 }
+	void Motion::executeRequest(MotionSet* ms)
+	{
+		double rot = max(-8 * M_PI, min(8 * M_PI, ms->rotation));
+		double trans = min(abs(ms->translation), this->maxVelocity);
 
-	 this.motionValueOld = mr;
+		if (ms->translation < 0)
+			trans *= -1;
 
-	 // Send the raw motion values to the vision
-	 msl_actuator_msgs::RawOdometryInfo ro;
+		shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
-	 this->traceModel->trace(new double[] {mr.angle, mr.translation, mr.rotation});
+		packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
+					    (short)(cos(ms->angle) * trans),
+						(short)(sin(ms->angle) * trans),
+						(short)(rot * 64));
 
-	 ro.position.x = this->traceModel->x;
-	 ro.position.y = this->traceModel->y;
-	 ro.position.angle = this->traceModel->angle;
+		sendData(packet);
+	}
 
-	 ro.motion.angle = mr.angle;
-	 ro.motion.translation = mr.translation;
-	 ro.motion.rotation = mr.rotation;
-
-	 ro.timestamp = (ulong)(DateTime.UtcNow.Ticks - this.odometryDelay);
-
-	 this->rawOdometryInfoPub.publish(ro);
-
-	 // Compute the slip control factor if requested
-	 if ((this->slipControlEnabled) && (this->rawMotionValuesOld != nullptr))
-	 {
-
-	 // Get the diff angle
-	 double adiff = mr.angle - this.rawMotionValuesOld[0];
-	 bool slip = false;
-
-	 // Normalize it
-	 if (adiff < -M_PI)
-	 {
-	 adiff += 2.0 * M_PI;
-	 }
-
-	 if (adiff > M_PI)
-	 {
-	 adiff -= 2.0 * M_PI;
-	 }
-
-	 if ((Math.Abs(adiff) > this.slipControlDiffAngle)
-	 && (Math.Abs(this.rawMotionValuesOld[1]) > this.slipControlDiffAngleMinSpeed))
-	 {
-	 slip = true;
-	 }
-
-	 if ((Math.Abs(rawMotionValuesOld[2]) < this.slipControlOldMaxRot)
-	 && (Math.Abs(mr.rotation) > this.slipControlNewMinRot))
-	 {
-	 slip = true;
-	 }
-
-	 // Compute the factor using this equation: factor = 1 / (1 + e^(-2 * factor - x)) where x \in { 0.75, 1.2 }
-	 if (slip)
-	 {
-	 this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(2.0 * this.slipControlFactor - 1.20)));
-
-	 }
-	 else
-	 {
-	 this.slipControlFactor = 1.0 / (1.0 + Math.Exp(-(3.0 * this.slipControlFactor - 0.75)));
-	 }
-
-	 }
-
-	 // Initialize the rawMotionValuesOld cache
-	 if (this.rawMotionValuesOld == null)
-	 {
-	 this.rawMotionValuesOld = new double[3];
-	 }
-
-	 // Copy the values
-	 this.rawMotionValuesOld[0] = mr.angle;
-	 this.rawMotionValuesOld[1] = mr.translation;
-	 this.rawMotionValuesOld[2] = mr.rotation;
-	 }*/
-
-	/*void Motion::notifyDriverStatusChange(CNMC::StatusCode code, string message)
-	 {
-	 if (this->quit || ros::ok())
-	 {
-	 return;
-	 }
-	 }*/
 	void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc)
 	{
-		//	TODO: look, if motionValueOld is set and deleted somewhere!
-		if (this->accelCompEnabled && this->motionValueOld != nullptr)
+		std::lock_guard<std::mutex> lck(this->motionValueMutex);
+		// Create a new driver command
+		if (this->motionValue == nullptr)
 		{
-			msl_msgs::MotionInfo* m = new msl_msgs::MotionInfo();
-			m->angle = this->motionValueOld->angle;
-			m->translation = this->motionValueOld->translation;
-			m->rotation = this->motionValueOld->rotation;
-			mc->motion = *(this->accelComp->compensate(&mc->motion, m));
+			this->motionValue = new MotionSet();
 		}
 
+		this->motionValue->angle = mc->motion.angle;
+		this->motionValue->translation = mc->motion.translation;
+		this->motionValue->rotation = mc->motion.rotation;
+
+		// Apply the slip control if enabled
+		if ((this->slipControlEnabled) && (mc->motion.translation > this->slipControlMinSpeed))
 		{
-			std::lock_guard<std::mutex> lck(this->motionValueMutex);
-			// Create a new driver command
-			if (this->motionValue == nullptr)
-				this->motionValue = new MotionSet();
-			this->motionValue->angle = mc->motion.angle;
-			this->motionValue->translation = mc->motion.translation;
-			this->motionValue->rotation = mc->motion.rotation;
-
-			// Apply the slip control if enabled
-			if ((this->slipControlEnabled) && (mc->motion.translation > this->slipControlMinSpeed))
-			{
-
-				this->motionValue->translation *= this->slipControlFactor;
-				this->motionValue->rotation *= this->slipControlFactor;
-
-			}
+			this->motionValue->translation *= this->slipControlFactor;
+			this->motionValue->rotation *= this->slipControlFactor;
 		}
 	}
 
@@ -755,7 +635,7 @@ namespace msl_driver
 	void Motion::pmSigintHandler(int sig)
 	{
 		cout << endl << "Motion: Caught SIGINT! Terminating ..." << endl;
-		running = false;
+		Motion::running = false;
 
 		// Call the ros signal handler method
 		ros::shutdown();
@@ -767,7 +647,7 @@ namespace msl_driver
 	void Motion::pmSigTermHandler(int sig)
 	{
 		cout << endl << "Motion: Caught SIGTERM! Terminating ..." << endl;
-		running = false;
+		Motion::running = false;
 
 		// Call the ros signal handler method
 		ros::shutdown();

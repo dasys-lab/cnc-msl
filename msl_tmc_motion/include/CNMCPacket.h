@@ -136,9 +136,9 @@ namespace msl_driver
 			OutOfRange = 0x11, // "Out of Range"
 			CycleOverTime = 0x20
 		};
-		const uint8_t QUOTE = 0x84;
-		const uint8_t START_HEADER = 0x81;
-		const uint8_t END_HEADER = 0x82;
+		static const uint8_t QUOTE;
+		static const uint8_t START_HEADER;
+		static const uint8_t END_HEADER;
 //		public const byte MAX_COUNTER = 0x80;
 
 		static const int CMD_GROUP_POS;
@@ -147,7 +147,7 @@ namespace msl_driver
 
 		std::shared_ptr<std::vector<uint8_t>> getBytes();
 
-		bool isExpectedResponse(CNMCPacket response);
+		bool isExpectedResponse(std::unique_ptr<CNMCPacket> response);
 
 		void add(uint8_t b);
 		void add(std::vector<uint8_t> bytes);
@@ -155,7 +155,7 @@ namespace msl_driver
 		std::vector<uint8_t> convertShortToByte(short data);
 		std::vector<uint8_t> convertIntToByte(int data);
 
-		static CNMCPacket getInstance(uint8_t raw[], int size);
+		static std::unique_ptr<CNMCPacket> getInstance(uint8_t raw[], int size);
 		std::shared_ptr<std::vector<uint8_t> > data;
 		uint8_t cmd = 0x00;
 
@@ -230,7 +230,7 @@ namespace msl_driver
 		CNMCPacketControl();
 		virtual ~CNMCPacketControl();
 		CNMCPacketControl(uint8_t raw[]);
-		void setData(ControlCmd cmd, short rpm1, short rpm2, short rpm3);
+		void setData(ControlCmd cmd, short x, short y, short rot);
 	};
 
 	class CNMCPacketError : public CNMCPacket
