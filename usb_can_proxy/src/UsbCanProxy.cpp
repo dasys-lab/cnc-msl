@@ -1,6 +1,6 @@
 
 #include "ros/ros.h"
-#include "usb_can_proxy/CanMsg.h"
+#include "msl_actuator_msgs/CanMsg.h"
 //#include "msl_actuator_msgs/RawOdometryInfo.h"
 #include <stdio.h>
 #include <signal.h>
@@ -15,12 +15,13 @@
 #define 	CMD_BUNDLE			0x07
 
 using namespace std;
+using namespace msl_actuator_msgs;
 
 class UsbCanProxy : public CanListener
 {
 
 public:
-	void getCanMsg(const usb_can_proxy::CanMsg::ConstPtr& msg)
+	void getCanMsg(const CanMsg::ConstPtr& msg)
 	{
 		printf("write data to can!\n");
 
@@ -44,9 +45,9 @@ public:
 		us->SetReceiver(this);
 
 		//init ros stuff
-		compass = n.advertise<usb_can_proxy::CanMsg>("usb_can_proxy/Compass", 30);
-		rekick = n.advertise<usb_can_proxy::CanMsg>("usb_can_proxy/Rekick", 30);
-		ballhandler = n.advertise<usb_can_proxy::CanMsg>("usb_can_proxy/BallHandler", 30);
+		compass = n.advertise<CanMsg>("usb_can_proxy/Compass", 30);
+		rekick = n.advertise<CanMsg>("usb_can_proxy/Rekick", 30);
+		ballhandler = n.advertise<CanMsg>("usb_can_proxy/BallHandler", 30);
 		canSub = n.subscribe("usb_can_proxy/CanSub", 30, &UsbCanProxy::getCanMsg,this);//,ros::TransportHints().unreliable().tcpNoDelay());
 		//odomSub = n.subscribe("RawOdometry", 10, &UsbCanProxy::onRawOdometry, this);
 
@@ -121,7 +122,7 @@ protected:
 			{
 				found=1;
 
-				usb_can_proxy::CanMsg cm;
+				CanMsg cm;
 // 				cm.header = 0x0;
 // 				cm.priority = (canid>>16) & 0xFF; //Priority
 // 				cm.sender = (canid>>8) & 0xFF; //Sender
