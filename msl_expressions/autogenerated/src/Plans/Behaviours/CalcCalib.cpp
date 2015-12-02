@@ -70,8 +70,8 @@ namespace alica
             this->wm->calibData.length = this->wm->calibData.length
                     + sqrt((calibPosMotionX - calibOldPosMotionX) * (calibPosMotionX - calibOldPosMotionX)
                             + (calibPosMotionY - calibOldPosMotionY) * (calibPosMotionY - calibOldPosMotionY));
-            std::cout << "posMotionX: "<< calibPosMotionX - calibOldPosMotionX<< std::endl;
-            std::cout << "posMotionY: "<< calibPosMotionY - calibOldPosMotionY<< std::endl;
+            std::cout << "posMotionX: "<< calibPosMotionX<< std::endl;
+            std::cout << "posMotionY: "<< calibPosMotionY<< std::endl;
             //std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
             //std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
             //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
@@ -111,7 +111,7 @@ namespace alica
             std::cout << "X: " << deltax << std::endl;
             std::cout << "Y: " << deltay << std::endl;
             std::cout << "Länge: " << this->wm->calibData.length << std::endl;
-            std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
+            std::cout << "Faktor: " << (sqrt(deltax * deltax + deltay * deltay) / this->wm->calibData.length) + 1 << std::endl;
             std::cout << "posMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->x<< std::endl;
             std::cout << "oldposMotion: "<< this->wm->rawSensorData.getOwnPositionMotion(1)->x<< std::endl;
             std::cout << "posVision: "<< this->wm->rawSensorData.getOwnPositionVision(0)->x<< std::endl;
