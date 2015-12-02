@@ -12,7 +12,7 @@
 #include "msl_actuator_msgs/VisionRelocTrigger.h"
 #include "msl_actuator_msgs/MotionLight.h"
 #include "msl_actuator_msgs/MotionBurst.h"
-#include "usb_can_proxy/CanMsg.h"
+#include "msl_actuator_msgs/CanMsg.h"
 #include "std_msgs/Empty.h"
 #include "Can.h"
 #include "SystemConfig.h"
@@ -61,7 +61,6 @@ int shovelInterval;
 } settings;
 
 using namespace msl_actuator_msgs;
-using namespace usb_can_proxy;
 using namespace supplementary;
 
 class ActuationControl {

@@ -2,7 +2,7 @@
 
 using namespace std;
 using namespace supplementary;
-using namespace msl_sensor_msgs;
+using namespace msl_actuator_msgs;
 
 string msldriver::Kicker::msg2string(vector<uint8_t> data)
 {
