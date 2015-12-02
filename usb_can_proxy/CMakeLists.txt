@@ -46,10 +46,10 @@ find_package(catkin REQUIRED
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
+#add_message_files(
+#  FILES
 #  CanMsg.msg
-)
+#)
 
 ## Generate added messages and services with any dependencies listed here
  generate_messages(
