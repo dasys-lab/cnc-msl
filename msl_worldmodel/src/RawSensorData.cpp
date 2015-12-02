@@ -13,11 +13,11 @@ namespace msl
 {
 
 	RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
-			distanceScan(ringbufferLength), ballPosition(ringbufferLength), ballVelocity(ringbufferLength), lightBarrier(
+			distanceScan(ringbufferLength), lightBarrier(
 					ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(ringbufferLength), ownPositionVision(
 					ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(ringbufferLength), compass(
 					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(
-					ringbufferLength)
+					ringbufferLength), ballHypothesis(ringbufferLength)
 	{
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -116,25 +116,6 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<geometry::CNPoint2D> RawSensorData::getBallPosition(int index)
-	{
-		auto x = ballPosition.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-		{
-			return nullptr;
-		}
-		return x->getInformation();
-	}
-
-	shared_ptr<geometry::CNVelocity2D> RawSensorData::getBallVelocity(int index)
-	{
-		auto x = ballVelocity.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-		{
-			return nullptr;
-		}
-		return x->getInformation();
-	}
 
 	shared_ptr<int> RawSensorData::getCompassOrientation(int index)
 	{
@@ -144,20 +125,6 @@ namespace msl
 			return nullptr;
 		}
 		return x->getInformation();
-	}
-
-	shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> RawSensorData::getBallPositionAndCertaincy(int index)
-	{
-		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<
-				pair<shared_ptr<geometry::CNPoint2D>, double>>();
-		auto x = ballPosition.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-		{
-			return nullptr;
-		}
-		ret->first = x->getInformation();
-		ret->second = x->certainty;
-		return ret;
 	}
 
 	shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> RawSensorData::getOwnPositionVisionAndCertaincy(
@@ -188,6 +155,15 @@ namespace msl
 	shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> RawSensorData::getCorrectedOdometryInfo(int index)
 	{
 		auto x = ownOdometry.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesisList(int index) {
+		auto x = ballHypothesis.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
@@ -283,32 +259,24 @@ namespace msl
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
 			shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
 					InformationElement<geometry::CNPosition>>(posMotion, time);
-		    odometryMotion->certainty = data->odometry.certainty;
-	        ownPositionMotion.add(odometryMotion);
+		    //odometryMotion->certainty = data->odometry.certainty;
+	        //ownPositionMotion.add(odometryMotion);
 
 			// TODO: this is the same motion as for vision motion !?
 			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
-			vMotion->certainty = data->odometry.certainty;
-			ownVelocityMotion.add(vMotion);
+			//vMotion->certainty = data->odometry.certainty;
+			//ownVelocityMotion.add(vMotion);
 		}
 
 		if (data->ball.confidence > 0)
 		{
 			shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-																						data->ball.point.y);
-			shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<
-					InformationElement<geometry::CNPoint2D>>(ballPos, time);
-			ball->certainty = data->ball.confidence;
-			ballPosition.add(ball);
-
+			                                                                           data->ball.point.y);
 			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-																								data->ball.velocity.vy);
-			shared_ptr<InformationElement<geometry::CNVelocity2D>> ballV = make_shared<
-					InformationElement<geometry::CNVelocity2D>>(ballVel, time);
-			ballV->certainty = data->ball.confidence;
-			ballVelocity.add(ballV);
+			                                                                                 data->ball.velocity.vy);
+			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
 		}
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
@@ -316,8 +284,6 @@ namespace msl
 				time);
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
-
-		this->wm->ball.updateOnWorldModelData();
 	}
 
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
@@ -327,6 +293,17 @@ namespace msl
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
 		ownPositionVision.add(o);
+		this->wm->ball.updateOnLocalizationData(coi->timestamp);
+	}
+
+	void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)
+	{
+		shared_ptr<msl_sensor_msgs::BallHypothesisList> nList = make_shared<msl_sensor_msgs::BallHypothesisList>(*list);
+		shared_ptr<InformationElement<msl_sensor_msgs::BallHypothesisList>> o = make_shared<InformationElement<msl_sensor_msgs::BallHypothesisList>>(
+				nList, wm->getTime());
+		o->certainty = 1;
+		ballHypothesis.add(o);
+		this->wm->ball.updateOnBallHypothesisList(list->imageTime);
 	}
 } /* namespace alica */
 

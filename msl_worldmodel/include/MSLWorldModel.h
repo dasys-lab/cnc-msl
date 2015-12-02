@@ -16,6 +16,7 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -57,6 +58,7 @@ namespace msl
 
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+		void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
@@ -96,6 +98,7 @@ namespace msl
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
+		ros::Subscriber wmBallListSub;
 		ros::Subscriber joystickSub;
 		ros::Subscriber motionBurstSub;
 		ros::Subscriber simWorldModel;
