@@ -44,6 +44,7 @@ namespace alica
     void Pos4Def::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1445438142979) ENABLED START*/ //Add additional options here
+    	query->clearDomainVariables();
         query->addVariable(wm->getOwnId(), "x");
         query->addVariable(wm->getOwnId(), "y");
         result.clear();
