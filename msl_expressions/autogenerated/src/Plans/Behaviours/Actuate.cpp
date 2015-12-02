@@ -425,18 +425,24 @@ namespace alica
 
 
         splines::spline frictionSpline;
-        vector<double> XFric(13), YFric(13);
+        vector<double> XFric, YFric;
         for (int i = 1; i <= 13; i++)
         {
-            XFric[i] = (*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.x") + to_string(i)).c_str(), NULL);
-            YFric[i] = (*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL);
+            XFric.push_back((*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.x") + to_string(i)).c_str(), NULL));
+            YFric.push_back((*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
         }
 
 	cout<<"Z: 431 ende der  friction"<<endl;
         frictionSpline.set_points(XFric, YFric);
+	cout<<"Z: 431 ende der  friction 1"<<endl;
+
 
         FunktionValuesRight = rightMotor(x);
+	cout<<"Z: 431 ende der  friction 2"<<endl;
+
         FunktionValuesLeft = leftMotor(x);
+	cout<<"Z: 431 ende der  friction 3"<<endl;
+
         frictionValue = frictionSpline(x);
 
         cout << "FunktionValuesRight,FunktionValuesLeft,FrictionValue: " << FunktionValuesRight << " "
