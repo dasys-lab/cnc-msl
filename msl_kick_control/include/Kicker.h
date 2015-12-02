@@ -13,7 +13,7 @@
 #include "ros/ros.h"
 #include <boost/thread/shared_mutex.hpp>
 
-#include "usb_can_proxy/CanMsg.h"
+#include "msl_sensor_msgs/CanMsg.h"
 #include "msl_actuator_msgs/KickControl.h"
 #include "msl_actuator_msgs/KickTime.h"
 #include "msl_actuator_msgs/KickerStatInfo.h"
@@ -39,7 +39,7 @@ namespace msldriver
 		~Kicker();
 		void setMaxVoltage();
 		void onKickCmd(const msl_actuator_msgs::KickControl ks);
-		void onKickerMsg(const usb_can_proxy::CanMsg message);
+		void onKickerMsg(const msl_sensor_msgs::CanMsg message);
 		string msg2string(vector<uint8_t> data);
 		void setLastBeat();
 		void sendHeartBeat(ros::Time now);

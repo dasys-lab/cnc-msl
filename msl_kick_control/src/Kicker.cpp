@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace supplementary;
+using namespace msl_sensor_msgs;
 
 string msldriver::Kicker::msg2string(vector<uint8_t> data)
 {
@@ -9,7 +10,7 @@ string msldriver::Kicker::msg2string(vector<uint8_t> data)
 	return s;
 }
 
-void msldriver::Kicker::onKickerMsg(const usb_can_proxy::CanMsg message)
+void msldriver::Kicker::onKickerMsg(const CanMsg message)
 {
 	if (message.data.size() == 0)
 		return;
@@ -150,7 +151,7 @@ void msldriver::Kicker::onKickCmd(const msl_actuator_msgs::KickControl ks)
 
 	ROS_DEBUG("Got KickerMessage: kicker: %d power: %d", ks.kicker, ks.power);
 
-	usb_can_proxy::CanMsg cm;
+	CanMsg cm;
 	cm.id = ReKick;
 
 	for (int i = 0; i < 5; i++)
@@ -213,7 +214,7 @@ void msldriver::Kicker::setMaxVoltage()
 {
 	if (settings.maxVoltage > 0)
 	{
-		usb_can_proxy::CanMsg cm;
+		CanMsg cm;
 		cm.id = ReKick;
 		if (settings.maxVoltage > 255)
 		{
@@ -252,8 +253,8 @@ msldriver::Kicker::Kicker() : lastCapacitorsVoltage(0),lastPower (0), lastSupply
 	this->sub = rosNode->subscribe("usb_can_proxy/Rekick", 30, &msldriver::Kicker::onKickerMsg, (msldriver::Kicker*)this);
 	this->kickSub = rosNode->subscribe("KickControl", 30, &msldriver::Kicker::onKickCmd, (msldriver::Kicker*)this);
 	//Change this to other subscribe
-	//this->rekickPub = rosNode->advertise<usb_can_proxy::CanMsg>("CNUsbCanProxy/CanSub", 30);
-	this->rekickPub = rosNode->advertise<usb_can_proxy::CanMsg>("usb_can_proxy/CanSub", 30);
+	//this->rekickPub = rosNode->advertise<CanMsg>("CNUsbCanProxy/CanSub", 30);
+	this->rekickPub = rosNode->advertise<CanMsg>("usb_can_proxy/CanSub", 30);
 	this->kickerTime = rosNode->advertise<msl_actuator_msgs::KickTime>("KickTime", 30);
 	this->kickerStat = rosNode->advertise<msl_actuator_msgs::KickerStatInfo>("KickerStatInfo", 30);
 }
@@ -273,7 +274,7 @@ void msldriver::Kicker::sendHeartBeat(ros::Time now)
 	if ((now.toSec() - this->lastBeat.toSec()) > (this->settings.alivePeriod / 1000))
 	{
 		// check state
-		usb_can_proxy::CanMsg cm2;
+		CanMsg cm2;
 		cm2.id = ReKick;
 		cm2.data.push_back(GetState);
 		this->rekickPub.publish(cm2);
@@ -281,7 +282,7 @@ void msldriver::Kicker::sendHeartBeat(ros::Time now)
 		ros::Duration(0.001).sleep();
 
 		//send heartbeat
-		usb_can_proxy::CanMsg cm;
+		CanMsg cm;
 		cm.id = ReKick;
 		cm.data.push_back(Ping);
 		this->rekickPub.publish(cm);
