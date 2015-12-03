@@ -29,7 +29,7 @@ namespace alica
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
         if (ownPos == nullptr)
         {
-        	return;
+            return;
         }
 
         MotionControl mc;
@@ -39,7 +39,9 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
                     > (result.at(0), result.at(1));
 
-            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos), make_shared < geometry::CNPoint2D > (0, 0)->alloToEgo(*ownPos), 100.0);
+            mc = msl::RobotMovement::moveToPointCarefully(
+                    alloTarget->alloToEgo(*ownPos), make_shared < geometry::CNPoint2D > (0, 0)->alloToEgo(*ownPos),
+                    100.0);
         }
         else
         {
@@ -51,7 +53,7 @@ namespace alica
     void Pos4Def::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1445438142979) ENABLED START*/ //Add additional options here
-    	query->clearDomainVariables();
+        query->clearDomainVariables();
         query->addVariable(wm->getOwnId(), "x");
         query->addVariable(wm->getOwnId(), "y");
         result.clear();
