@@ -361,27 +361,26 @@ namespace alica
         }
 
         //Exp Funktion for traction Start
-        cout << "Z:366 Exp Funktion for traction Start" << endl;
 
         double feedForwardLeft, feedForwardRight;
         double KvLeft, KvRight;
-        double x;
+        double a,t;
         double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         double valueExpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.valueExpFunktion", NULL);
         double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
                                                                                  NULL);
         double funktionLeft = 0, funktionRight = 0;
-        cout << "Z:377 Exp Funktion for traction end" << endl;
+
         //für fehlersuche ausk. double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
         // double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
         // cout << "exp Funktion : " << eFunktion << endl;
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
-        x = angle; // max(min(angle, 3.14), -3.14);
+        a = max(min(angle, 3.14), -3.14);
+        t=wm->rawSensorData.getOwnVelocityMotion()->translation;
         int counter = 1;
-        cout << "vor den Splines left" << endl;
 
         splines::spline leftMotor;
 
@@ -401,7 +400,7 @@ namespace alica
         }
         leftMotor.set_points(XLeft, YLeft);
 
-        cout << "vor der splines right" << endl;
+
         splines::spline rightMotor;
 
         vector<double> XRight, YRight;
@@ -419,11 +418,9 @@ namespace alica
             counter++;
         }
 
-        cout << "Z: 420 vor rightMotorset" << endl;
 
         rightMotor.set_points(XRight, YRight);
 
-        cout << "Z: 424 ende der splines right" << endl;
 
         splines::spline frictionSpline;
         vector<double> XFric, YFric;
@@ -437,20 +434,16 @@ namespace alica
                             (std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
         }
 
-        cout << "Z: 431 ende der  friction" << endl;
+
         frictionSpline.set_points(XFric, YFric);
-        cout << "Z: 431 ende der  friction 1" << endl;
 
-        FunktionValuesRight = rightMotor(x);
-        cout << "Z: 431 ende der  friction 2" << endl;
+        FunktionValuesRight = rightMotor(a);
+        FunktionValuesLeft = leftMotor(a);
+        frictionValue = frictionSpline(t);
 
-        FunktionValuesLeft = leftMotor(x);
-        cout << "Z: 431 ende der  friction 3" << endl;
+        cout << "FunktionValuesRight: "<<FunktionValuesRight<<endl<<"FunktionValuesLeft: "<<FunktionValuesLeft<<endl;
+        cout<<"FrictionValue: " << frictionValue<<endl ;
 
-        frictionValue = frictionSpline(x);
-
-        cout << "FunktionValuesRight,FunktionValuesLeft,FrictionValue: " << FunktionValuesRight << " "
-                << FunktionValuesLeft << " " << frictionValue << endl;
 
         double rotationLeft = 0.0;
         double rotationRight = 0.0;
