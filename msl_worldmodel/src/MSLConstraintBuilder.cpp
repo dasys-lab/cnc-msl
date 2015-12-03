@@ -60,6 +60,24 @@ namespace msl
 //		shared_ptr<TVec> MSLConstraintBuilder::oppGoalMidT;
 //		shared_ptr<TVec> MSLConstraintBuilder::centreMarkT;
 
+
+	shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::spread(double mindist, vector<shared_ptr<TVec>> points) {
+		if (points.size() == 1)
+			return autodiff::LTConstraint::TRUE;
+		shared_ptr<Term> spreadConstraint = autodiff::LTConstraint::TRUE;
+		//TVec[] curPoints = points;
+		for (int i = 0; i < points.size() - 1; i++) {
+			for(int j=i+1; j<points.size();j++) {
+				//TODO
+//				spreadConstraint = spreadConstraint & outsideSphere(points[i],minDist,points[j]);
+			}
+		}
+		return spreadConstraint;
+	}
 	shared_ptr<Term> MSLConstraintBuilder::outsideRectangle(shared_ptr<TVec> lowerRightCorner,
 															shared_ptr<TVec> upperLeftCorner,
 															vector<shared_ptr<TVec>> points)
@@ -89,6 +107,103 @@ namespace msl
 					& TermBuilder::boundedRectangle(points[i], lowerRightCorner, upperLeftCorner,
 														Term::getConstraintSteepness());
 		}
+		return c;
+	}
+
+	shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers) {
+		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+		shared_ptr<Term> c;
+		shared_ptr<TVec> ballT;
+		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
+		if(ball != nullptr) {
+			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
+		}
+		switch(wm->game.getSituation()) {
+			case Situation::Start:
+			case Situation::Restart:
+			case Situation::Ready:
+			case Situation::FirstHalf:
+			case Situation::SecondHalf:
+				c = c & commonRules(fieldPlayers);
+				break;
+			case Situation::OwnCorner:
+			case Situation::OwnFreekick:
+			case Situation::OwnGoalkick:
+			case Situation::OwnThrowin:
+				c = c & ownStdRules (ballT, specialIdx, fieldPlayers);
+				break;
+			case Situation::OwnKickoff:
+				c = c & ownKickOffRules(ballT, specialIdx, fieldPlayers);
+				break;
+			case Situation::OwnPenalty:
+				c = c & ownPenaltyRules (ballT, specialIdx, fieldPlayers);
+				break;
+			case Situation::OppCorner:
+			case Situation::OppFreekick:
+			case Situation::OppGoalkick:
+			case Situation::OppThrowin:
+				c = c & oppStdRules (ballT, fieldPlayers);
+				break;
+			case Situation::OppKickoff:
+				c = c & oppKickOffRules (ballT, fieldPlayers);
+				break;
+			case Situation::OppPenalty:
+				c = c & oppPenaltyRules (fieldPlayers);
+				break;
+			case Situation::DropBall:
+				c = c & dropBallRules (ballT, fieldPlayers);
+				break;
+			case Situation::Stop:
+				// no constraints
+				c = autodiff::LTConstraint::TRUE;
+				break;
+			default:
+				break;
+		}
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::commonRules(vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::dropBallRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyRules(vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::ownKickOffRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::oppKickOffRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::ownStdRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::oppStdRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyAreaDistanceExceptionRule(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
+		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers) {
+		shared_ptr<Term> c;
 		return c;
 	}
 

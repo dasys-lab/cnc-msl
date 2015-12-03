@@ -11,6 +11,8 @@
 #include <AutoDiff.h>
 #include <MSLFootballField.h>
 #include "GeometryCalculator.h"
+#include "MSLWorldModel.h"
+#include "container/CNPoint2D.h"
 
 #include <memory>
 #include <vector>
@@ -38,6 +40,9 @@ namespace msl{
 			static double MIN_CORRIDOR_WIDTH;
 			static double MIN_POSITION_DIST;
 
+			static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> spread(double mindist, vector<shared_ptr<TVec>> points);
+
 			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,
 																shared_ptr<TVec> upperLeftCorner,
 																vector<shared_ptr<TVec>> points);
@@ -48,7 +53,19 @@ namespace msl{
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers);
 
+			static shared_ptr<Term> commonRules(vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> dropBallRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> ownPenaltyRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> oppPenaltyRules(vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> ownKickOffRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> oppKickOffRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> ownStdRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> oppStdRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> ownPenaltyAreaDistanceExceptionRule(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> ownPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> oppPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers);
 		private:
 			static msl::MSLFootballField* field;
 			static shared_ptr<geometry::CNPoint2D> ownRightSurCornerP;
