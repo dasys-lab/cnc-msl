@@ -35,6 +35,7 @@
     <outTransitions>#1434050686620</outTransitions>
   </states>
   <states id="1434050522682" name="ProtectBall" comment="">
+    <plans xsi:type="alica:Plan">ProtectBall.pml#1449151802193</plans>
     <inTransitions>#1434050674494</inTransitions>
     <inTransitions>#1434050686620</inTransitions>
     <outTransitions>#1434050681521</outTransitions>
@@ -46,22 +47,22 @@
     <outTransitions>#1434050649347</outTransitions>
     <outTransitions>#1434050650481</outTransitions>
   </states>
-  <transitions id="1434050619363" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050619363" name="MISSING_NAME" comment="In enemy half &amp;&amp; Goal closer than PreciseShot.MaxDistance &amp;&amp; freeGoalVector exists &amp;&amp; noobstacle in turn radius &amp;&amp; Distance to goal larger than PrecideShot.MinDistance &amp;&amp; AngleToGoal larger than 10degrees" msg="">
     <preCondition id="1434050620829" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050474119</outState>
   </transitions>
-  <transitions id="1434050621017" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050621017" name="MISSING_NAME" comment="Success" msg="">
     <preCondition id="1434050622353" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050474119</inState>
     <outState>#1434050491040</outState>
   </transitions>
-  <transitions id="1434050622698" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050622698" name="MISSING_NAME" comment="Success" msg="">
     <preCondition id="1434050626634" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050491040</inState>
     <outState>#1434049476067</outState>
   </transitions>
-  <transitions id="1434050628706" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050628706" name="MISSING_NAME" comment="Fail" msg="">
     <preCondition id="1434050630537" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050491040</inState>
     <outState>#1434050502701</outState>
@@ -71,47 +72,47 @@
     <inState>#1434050474119</inState>
     <outState>#1434050502701</outState>
   </transitions>
-  <transitions id="1434050639119" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050639119" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1434050643664" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050502701</inState>
     <outState>#1434049476067</outState>
   </transitions>
-  <transitions id="1434050647042" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050647042" name="MISSING_NAME" comment="Success &amp;&amp; Angle to goal &lt; 90 degrees" msg="">
     <preCondition id="1434050649090" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050541225</outState>
   </transitions>
-  <transitions id="1434050649347" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050649347" name="MISSING_NAME" comment="Fail" msg="">
     <preCondition id="1434050650300" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050541225</inState>
     <outState>#1434049476067</outState>
   </transitions>
-  <transitions id="1434050650481" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050650481" name="MISSING_NAME" comment="(Success &amp;&amp; angle to goal > 90 degrees) or Fail" msg="">
     <preCondition id="1434050655008" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050541225</inState>
     <outState>#1434050502701</outState>
   </transitions>
-  <transitions id="1434050655141" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050655141" name="MISSING_NAME" comment="Fail" msg="">
     <preCondition id="1434050656151" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050502701</inState>
     <outState>#1434050541225</outState>
   </transitions>
-  <transitions id="1434050656332" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050656332" name="MISSING_NAME" comment="ownPos.X > fieldLength/2 - goalAreaX - 1300 &amp;&amp; Abs(ownPos.Y) &lt; penaltyArea.Y" msg="">
     <preCondition id="1434050674307" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050502701</outState>
   </transitions>
-  <transitions id="1434050674494" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050674494" name="MISSING_NAME" comment="ProtectBall opponent is in front of us" msg="">
     <preCondition id="1434050677358" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050522682</outState>
   </transitions>
-  <transitions id="1434050681521" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050681521" name="MISSING_NAME" comment="ProtectionDone" msg="">
     <preCondition id="1434050685640" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050522682</inState>
     <outState>#1434050502701</outState>
   </transitions>
-  <transitions id="1434050686620" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434050686620" name="MISSING_NAME" comment="ProtectBall opponent is in front of us" msg="">
     <preCondition id="1434050690800" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050502701</inState>
     <outState>#1434050522682</outState>

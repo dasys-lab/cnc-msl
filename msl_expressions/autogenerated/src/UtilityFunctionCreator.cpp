@@ -7,6 +7,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Attack/ProtectBall1449151802193.h"
+
 #include  "Plans/Example/ExamplePlan1433938652021.h"
 
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
@@ -99,6 +101,10 @@ namespace alica
 
             case 1432132075122:
                 return make_shared<UtilityFunction1432132075122>();
+                break;
+
+            case 1449151802193:
+                return make_shared<UtilityFunction1449151802193>();
                 break;
 
             case 1433938652021:
