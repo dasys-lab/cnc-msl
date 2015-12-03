@@ -44,7 +44,7 @@ namespace alica
 
         //PD Regler Anfang
         //PIDControllerLeft
-        /*
+        
          const double KiLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
          const double KdLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
          const double KpLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
@@ -61,12 +61,14 @@ namespace alica
          
          Abweichung_SummeLeft += AbweichungLeft;
          AbweichungLeft = -1 * (setPointLeft - wm->rawSensorData.getOpticalFlowQoS());
-         StellwertLeft = KpLeft * AbweichungLeft + KvLeft;
+         StellwertLeft = KpLeft * AbweichungLeft +left;
          StellwertLeft += KiLeft * Abweichung_SummeLeft;
          StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
          
          Abweichung_AltLeft = AbweichungLeft;
-         };
+         left=StellwertLeft;
+
+	 };
          
          //PIDControllerRight
          
@@ -85,29 +87,29 @@ namespace alica
          {
          Abweichung_SummeRight += AbweichungRight;
          AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
-         StellwertRight = KpRight * AbweichungRight + KvRight;
+         StellwertRight = KpRight * AbweichungRight + right;
          StellwertRight += KiRight * Abweichung_SummeRight;
          StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
          
          Abweichung_AltRight = AbweichungRight;
-         };
-         
+         right=StellwertRight;
+	
+	 };
+         /*
          if (wm->rawSensorData.getOpticalFlowQoS() > 70)
          {
-         StellwertLeft = KvLeft;
-         StellwertRight = KvRight;
+         StellwertLeft = left;
+         StellwertRight = right;
          };
-         
-         //PD Regler Ende
          */
+         //PD Regler Ende
+        
 
         cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
         cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
-
-        //cout << "StellwertLeft: " << StellwertLeft << endl;
-        //cout << "StellwertRight: " << StellwertRight << endl;
-        cout << endl;
+	cout<<" StellwertLeft: "<< StellwertLeft<<"     StellwertLeft: "<< StellwertLeft<<endl;
+	
 
         bhc.leftMotor = max(min(left, 60.0), -100.0);
         bhc.rightMotor = max(min(right, 60.0), -100.0);
@@ -293,8 +295,7 @@ namespace alica
 
         //arithmetic Average for Speed Start
 
-        cout << "aritAverageSpeed anfang" << endl;
-
+        
         double arithmeticAverageSpeed = 0.0;
         double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
         //double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
@@ -314,12 +315,12 @@ namespace alica
 
         arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-        cout << "Z:319  Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+        cout<<" Speed Approx : " << arithmeticAverageSpeed << " <=> real "
                 << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
         //arithmetic Average for Speed End
 
-        cout << "Z:324 speed diff 4 acceleration" << endl;
+        
         //Speed Difference for acceleration Start
         double eFunktionAcceleration;
         double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -331,13 +332,12 @@ namespace alica
             speedDifference = 1;
         }
 
-        cout << "Z:336 speedDifference : " << speedDifference << endl;
-
+        
         //Speed Difference for acceleration End
 
         ////arithmetic average speed difference Start
 
-        cout << "arithmetic average speed difference Start";
+
         double arithmeticAverageSpeedDifference = 0.0;
 
         if (arithmeticAverageBoxSpeedDifference.size() == 5)
@@ -499,8 +499,8 @@ namespace alica
 
         //Rotation Controller End
 
-        KvRight = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesRight + rotationRight);
-        KvLeft = (0.9 * frictionValue * arithmeticAverageSpeed * FunktionValuesLeft + rotationLeft);
+        KvRight = (0.9 * frictionValue * FunktionValuesRight + rotationRight);
+        KvLeft = (0.9 * frictionValue * FunktionValuesLeft + rotationLeft);
 
         cout << "funktionLeft : " << funktionLeft << endl;
         cout << "funktionRight : " << funktionRight << endl;
