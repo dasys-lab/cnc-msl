@@ -12,6 +12,8 @@
 #include <MSLFootballField.h>
 #include "GeometryCalculator.h"
 #include "MSLWorldModel.h"
+#include "Rules.h"
+#include "MSLFootballField.h"
 #include "container/CNPoint2D.h"
 
 #include <memory>
@@ -41,18 +43,24 @@ namespace msl{
 			static double MIN_POSITION_DIST;
 
 			static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> points);
-			static shared_ptr<Term> spread(double mindist, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> spread(double minDist, vector<shared_ptr<TVec>> points);
 
-			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,
-																shared_ptr<TVec> upperLeftCorner,
-																vector<shared_ptr<TVec>> points);
-			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner,
-																shared_ptr<TVec> upperLeftCorner,
-																vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,	shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
+
+			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideSphere(shared_ptr<TVec> centre, double distance, vector<shared_ptr<TVec>> points);
+
+			static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
+
 			static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> insideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> insideArea(Areas area, vector<shared_ptr<TVec>> points);
+
+
 			static shared_ptr<Term> applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers);
 
 			static shared_ptr<Term> commonRules(vector<shared_ptr<TVec>> fieldPlayers);
@@ -67,6 +75,7 @@ namespace msl{
 			static shared_ptr<Term> ownPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers);
 			static shared_ptr<Term> oppPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers);
 		private:
+			static Rules rules;
 			static msl::MSLFootballField* field;
 			static shared_ptr<geometry::CNPoint2D> ownRightSurCornerP;
 			static shared_ptr<geometry::CNPoint2D> oppLeftSurCornerP;

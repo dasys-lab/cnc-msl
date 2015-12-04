@@ -17,6 +17,22 @@ namespace msl
 	double MSLConstraintBuilder::MIN_CORRIDOR_WIDTH = 700.0;
 	double MSLConstraintBuilder::MIN_POSITION_DIST = 650.0;
 
+	shared_ptr<TVec> MSLConstraintBuilder::ownRightSurCornerT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppLeftSurCornerT;
+	shared_ptr<TVec> MSLConstraintBuilder::ownRightCornerT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppLeftCornerT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppLRHalfT;
+	shared_ptr<TVec> MSLConstraintBuilder::ownULHalfT;
+	shared_ptr<TVec> MSLConstraintBuilder::ownLRGoalAreaT;
+	shared_ptr<TVec> MSLConstraintBuilder::ownULGoalAreaT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppLRGoalAreaT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppULGoalAreaT;
+	shared_ptr<TVec> MSLConstraintBuilder::ownGoalMidT;
+	shared_ptr<TVec> MSLConstraintBuilder::oppGoalMidT;
+	shared_ptr<TVec> MSLConstraintBuilder::centreMarkT;
+
+	Rules MSLConstraintBuilder::rules;
+
 	// INTERN
 	msl::MSLFootballField* MSLConstraintBuilder::field = msl::MSLFootballField::getInstance();
 
@@ -62,21 +78,31 @@ namespace msl
 
 
 	shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> points) {
-		shared_ptr<Term> c;
-		return c;
+		if (points.size() == 1)
+			return autodiff::TermBuilder::constant(0);
+		shared_ptr<Term> spreadUtility = autodiff::TermBuilder::constant(0);
+		vector<shared_ptr<TVec>> curPoints = points;
+		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
+
+		for (int i = 0; i < points.size(); i++) {
+			std::copy_if(std::begin(curPoints), std::end(curPoints), std::back_inserter(curPoints), [&](shared_ptr<TVec> v) {return v != curPoints[0];});
+			for (int j = 0; j < curPoints.size(); j++) {
+				spreadUtility = spreadUtility + alica::ConstraintBuilder::distanceSqr(points[i], curPoints[j] * (1 / (maxFieldDist * maxFieldDist)));
+			}
+		}
+		return spreadUtility;
 	}
-	shared_ptr<Term> MSLConstraintBuilder::spread(double mindist, vector<shared_ptr<TVec>> points) {
+	shared_ptr<Term> MSLConstraintBuilder::spread(double minDist, vector<shared_ptr<TVec>> points) {
 		if (points.size() == 1)
 			return autodiff::LTConstraint::TRUE;
-		shared_ptr<Term> spreadConstraint = autodiff::LTConstraint::TRUE;
-		//TVec[] curPoints = points;
+		shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
 		for (int i = 0; i < points.size() - 1; i++) {
 			for(int j=i+1; j<points.size();j++) {
 				//TODO
-//				spreadConstraint = spreadConstraint & outsideSphere(points[i],minDist,points[j]);
+				c = c & outsideSphere(points[i],minDist,points);
 			}
 		}
-		return spreadConstraint;
+		return c;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::outsideRectangle(shared_ptr<TVec> lowerRightCorner,
 															shared_ptr<TVec> upperLeftCorner,
@@ -93,7 +119,6 @@ namespace msl
 		}
 		return c;
 	}
-
 	shared_ptr<Term> MSLConstraintBuilder::insideRectangle(shared_ptr<TVec> lowerRightCorner,
 															shared_ptr<TVec> upperLeftCorner,
 															vector<shared_ptr<TVec>> points)
@@ -109,7 +134,95 @@ namespace msl
 		}
 		return c;
 	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points) {
+		if (point != nullptr) {
+			shared_ptr<Term> c = TermBuilder::euclidianDistance(point, points[0]) > autodiff::TermBuilder::constant(distance);
+			for (int i = 1; i < points.size(); i++) {
+				c = c & TermBuilder::euclidianDistance(point, points[i]) > autodiff::TermBuilder::constant(distance);
+			}
+			return c;
+		} else {
+			return nullptr;
+		}
+	}
+	shared_ptr<Term> MSLConstraintBuilder::insideSphere(shared_ptr<TVec> centre, double distance, vector<shared_ptr<TVec>> points) {
+		if (centre != nullptr) {
+			shared_ptr<Term> c = TermBuilder::euclidianDistance(centre, points[0]) < autodiff::TermBuilder::constant(distance);
+			for (int i = 1; i < points.size(); i++) {
+				c = c & TermBuilder::euclidianDistance (centre, points[i]) < autodiff::TermBuilder::constant(distance);
+			}
+			return c;
+		} else {
+			return nullptr;
+		}
+	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points) {
+		shared_ptr<TVec> a2b = b - a;
+		shared_ptr<TVec> b2c = c - b;
+		shared_ptr<TVec> c2a = a - c;
 
+		shared_ptr<Term> outsideConstraints = autodiff::LTConstraint::TRUE;
+		shared_ptr<Term> pConsts;
+		shared_ptr<TVec> a2p, b2p, c2p, p;
+		for (int i = 0; i < points.size(); i++) {
+			p = points[i];
+			a2p = p - a;
+			b2p = p - b;
+			c2p = p - c;
+
+			pConsts = ((a2p->getX() * a2b->getY() - a2p->getY() * a2b->getX()) / autodiff::TermBuilder::power(a2p->normSquared(), 0.5)) > autodiff::TermBuilder::constant(tolerance);
+			pConsts = pConsts | ((b2p->getX() * b2c->getY() - b2p->getY() * b2c->getX()) / autodiff::TermBuilder::power(b2p->normSquared(), 0.5)) > autodiff::TermBuilder::constant(tolerance);
+			pConsts = pConsts | ((c2p->getX() * c2a->getY() - c2p->getY() * c2a->getX()) / autodiff::TermBuilder::power(c2p->normSquared(), 0.5)) > autodiff::TermBuilder::constant(tolerance);
+
+			outsideConstraints = outsideConstraints & pConsts;
+		}
+
+		return outsideConstraints;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points) {
+		shared_ptr<TVec> a2b = b - a;
+		shared_ptr<TVec> b2c = c - b;
+		shared_ptr<TVec> c2a = a - c;
+
+		shared_ptr<Term> outsideConstraints = autodiff::LTConstraint::TRUE;
+		shared_ptr<Term> pConsts;
+		shared_ptr<TVec> a2p, b2p, c2p, p;
+		for (int i = 0; i < points.size(); i++) {
+			p = points[i];
+			a2p = p - a;
+			b2p = p - b;
+			c2p = p - c;
+
+			pConsts = ((a2p->getX() * a2b->getY() - a2p->getY() * a2b->getX()) / autodiff::TermBuilder::power(a2p->normSquared(), 0.5)) < autodiff::TermBuilder::constant(-tolerance);
+			pConsts = pConsts | ((b2p->getX() * b2c->getY() - b2p->getY() * b2c->getX()) / autodiff::TermBuilder::power(b2p->normSquared(), 0.5)) < autodiff::TermBuilder::constant(-tolerance);
+			pConsts = pConsts | ((c2p->getX() * c2a->getY() - c2p->getY() * c2a->getX()) / autodiff::TermBuilder::power(c2p->normSquared(), 0.5)) < autodiff::TermBuilder::constant(-tolerance);
+
+			outsideConstraints = outsideConstraints & pConsts;
+		}
+
+		return outsideConstraints;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points) {
+		shared_ptr<TVec> a2b = b - a;
+		shared_ptr<TVec> c2a = a - c;
+
+		shared_ptr<Term> outsideConstraints = autodiff::LTConstraint::TRUE;
+		shared_ptr<Term> pConsts;
+		shared_ptr<TVec> a2p, b2p, c2p, p;
+		for (int i = 0; i < points.size(); i++) {
+			p = points[i];
+			a2p = p - a;
+			b2p = p - b;
+			c2p = p - c;
+
+			pConsts = ((a2p->getX() * a2b->getY() - a2p->getY() * a2b->getX()) / autodiff::TermBuilder::power(a2p->normSquared(), 0.5)) > autodiff::TermBuilder::constant(tolerance);
+			pConsts =  pConsts | ((c2p->getX() * c2a->getY() - c2p->getY() * c2a->getX()) / autodiff::TermBuilder::power(c2p->normSquared(), 0.5)) > autodiff::TermBuilder::constant(tolerance);
+
+			outsideConstraints = outsideConstraints & pConsts;
+		}
+
+		return outsideConstraints;
+	}
 	shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers) {
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 		shared_ptr<Term> c;
@@ -163,32 +276,91 @@ namespace msl
 		return c;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::commonRules(vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread(MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= ownPenaltyAreaRule (fieldPlayers);
+		appliedRules &= oppPenaltyAreaRule (fieldPlayers);
+		appliedRules &= outsideArea (Areas::OwnGoalArea, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OppGoalArea, fieldPlayers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::dropBallRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OwnGoalArea, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OppGoalArea, fieldPlayers);
+		appliedRules &= ownPenaltyAreaRule (fieldPlayers);
+		appliedRules &= oppPenaltyAreaRule (fieldPlayers);
+		if (ballT != nullptr) {
+			appliedRules &= outsideSphere (ballT, rules.getStayAwayRadiusDropBall(), fieldPlayers);
+		}
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread(MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= alica::ConstraintBuilder::equals(fieldPlayers [executerIdx], centreMarkT, ON_LINE_TOL);
+		vector<shared_ptr<TVec>> passivPlayers;
+		std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(passivPlayers), [&](shared_ptr<TVec> v) {return v != fieldPlayers[executerIdx];});
+
+//		TVec[] passivPlayers = Array.FindAll (fieldplayers, val => val != fieldplayers [executerIdx]).ToArray ();
+
+		if (ballT != nullptr) {
+			appliedRules &= alica::ConstraintBuilder::ifThenElse(ballT->getX() > (autodiff::TermBuilder::constant(1000.0)), insideArea(Areas::OwnHalf, passivPlayers), insideArea (Areas::OppHalf, passivPlayers));
+		} else {
+			appliedRules &= insideArea (Areas::OwnHalf, passivPlayers);
+		}
+		appliedRules &= outsideSphere (centreMarkT, rules.getStayAwayRadius(), passivPlayers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyRules(vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = insideArea (Areas::OppHalf, fieldPlayers);
+		appliedRules &= outsideSphere (centreMarkT, rules.getStayAwayRadius(), fieldPlayers);
+		appliedRules &= spread (MIN_POSITION_DIST, fieldPlayers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownKickOffRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OwnGoalArea, fieldPlayers);
+
+		vector<shared_ptr<TVec>> receivers;
+		std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(receivers), [&](shared_ptr<TVec> v) {return v != fieldPlayers[executerIdx];});
+
+		if (ballT != nullptr) {
+			appliedRules &= outsideSphere (ballT,rules.getStayAwayRadius(), receivers);
+		} else {
+			appliedRules &= outsideSphere (centreMarkT, rules.getStayAwayRadius(), receivers);
+		}
+		appliedRules &= ownPenaltyAreaRule (receivers);
+		appliedRules &= insideArea (Areas::OwnHalf, receivers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppKickOffRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OwnGoalArea, fieldPlayers);
+		if (ballT != nullptr) {
+			appliedRules &= outsideSphere (ballT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+		} else {
+			appliedRules &= outsideSphere (centreMarkT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+		}
+		appliedRules &= ownPenaltyAreaRule (fieldPlayers);
+		appliedRules &= insideArea (Areas::OwnHalf, fieldPlayers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownStdRules(shared_ptr<TVec> ballT, int executerIdx, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OwnGoalArea, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OppGoalArea, fieldPlayers);
+		vector<shared_ptr<TVec>> receivers;
+
+		if (executerIdx >= 0) {
+			std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(receivers), [&](shared_ptr<TVec> v) {return v != fieldPlayers[executerIdx];});
+		} else {
+			receivers = fieldPlayers;
+		}
+		if (ballT != nullptr) {
+			appliedRules &= outsideSphere (ballT, rules.getStayAwayRadius(), receivers);
+		}
+		appliedRules &= ownPenaltyAreaRule (receivers);
+		appliedRules &= oppPenaltyAreaRule (receivers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppStdRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
 		shared_ptr<Term> c;
