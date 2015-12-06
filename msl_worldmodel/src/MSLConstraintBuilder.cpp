@@ -17,20 +17,6 @@ namespace msl
 	double MSLConstraintBuilder::MIN_CORRIDOR_WIDTH = 700.0;
 	double MSLConstraintBuilder::MIN_POSITION_DIST = 650.0;
 
-	shared_ptr<TVec> MSLConstraintBuilder::ownRightSurCornerT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppLeftSurCornerT;
-	shared_ptr<TVec> MSLConstraintBuilder::ownRightCornerT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppLeftCornerT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppLRHalfT;
-	shared_ptr<TVec> MSLConstraintBuilder::ownULHalfT;
-	shared_ptr<TVec> MSLConstraintBuilder::ownLRGoalAreaT;
-	shared_ptr<TVec> MSLConstraintBuilder::ownULGoalAreaT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppLRGoalAreaT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppULGoalAreaT;
-	shared_ptr<TVec> MSLConstraintBuilder::ownGoalMidT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppGoalMidT;
-	shared_ptr<TVec> MSLConstraintBuilder::centreMarkT;
-
 	Rules MSLConstraintBuilder::rules;
 
 	// INTERN
@@ -54,27 +40,23 @@ namespace msl
 	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppGoalMidP = field->posOppGoalMid();
 	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::centreMarkP = field->posCenterMarker();
 
-//		shared_ptr<TVec> MSLConstraintBuilder::ownRightSurCornerT;
+//		shared_ptr<TVec> MSLConstraintBuilder::ownRightSurCornerT = make_shared<TVec>(initializer_list<double> {ownRightSurCornerP->x, ownRightSurCornerP->y});
 //		shared_ptr<TVec> MSLConstraintBuilder::oppLeftSurCornerT;
 //		shared_ptr<TVec> MSLConstraintBuilder::ownRightCornerT;
 //		shared_ptr<TVec> MSLConstraintBuilder::oppLeftCornerT;
 //		shared_ptr<TVec> MSLConstraintBuilder::oppLRHalfT;
 //		shared_ptr<TVec> MSLConstraintBuilder::ownULHalfT;
-	shared_ptr<TVec> MSLConstraintBuilder::oppLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {
-			oppLRPenaltyAreaP->x, oppLRPenaltyAreaP->y});
-	shared_ptr<TVec> MSLConstraintBuilder::oppULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {
-			oppULPenaltyAreaP->x, oppULPenaltyAreaP->y});
-	shared_ptr<TVec> MSLConstraintBuilder::ownLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {
-			ownLRPenaltyAreaP->x, ownLRPenaltyAreaP->y});
-	shared_ptr<TVec> MSLConstraintBuilder::ownULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {
-			ownULPenaltyAreaP->x, ownULPenaltyAreaP->x});
+	shared_ptr<TVec> MSLConstraintBuilder::oppLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {oppLRPenaltyAreaP->x, oppLRPenaltyAreaP->y});
+	shared_ptr<TVec> MSLConstraintBuilder::oppULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {oppULPenaltyAreaP->x, oppULPenaltyAreaP->y});
+	shared_ptr<TVec> MSLConstraintBuilder::ownLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {ownLRPenaltyAreaP->x, ownLRPenaltyAreaP->y});
+	shared_ptr<TVec> MSLConstraintBuilder::ownULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {ownULPenaltyAreaP->x, ownULPenaltyAreaP->x});
 //		shared_ptr<TVec> MSLConstraintBuilder::ownLRGoalAreaT;
 //		shared_ptr<TVec> MSLConstraintBuilder::ownULGoalAreaT;
 //		shared_ptr<TVec> MSLConstraintBuilder::oppLRGoalAreaT;
 //		shared_ptr<TVec> MSLConstraintBuilder::oppULGoalAreaT;
 //		shared_ptr<TVec> MSLConstraintBuilder::ownGoalMidT;
 //		shared_ptr<TVec> MSLConstraintBuilder::oppGoalMidT;
-//		shared_ptr<TVec> MSLConstraintBuilder::centreMarkT;
+		shared_ptr<TVec> MSLConstraintBuilder::centreMarkT = make_shared<TVec>(initializer_list<double> {centreMarkP->x, centreMarkP->x});
 
 
 	shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> points) {
@@ -363,20 +345,68 @@ namespace msl
 		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppStdRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
+		appliedRules = outsideArea (Areas::OwnGoalArea, fieldPlayers);
+		appliedRules &= outsideArea (Areas::OppGoalArea, fieldPlayers);
+		appliedRules &= ownPenaltyAreaDistanceExceptionRule (ballT, fieldPlayers);
+		appliedRules &= oppPenaltyAreaRule (fieldPlayers);
+		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyAreaDistanceExceptionRule(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		shared_ptr<Term> ownPenaltyConstrains = autodiff::Term::TRUE;
+		shared_ptr<Term> minDistConstrains = autodiff::Term::TRUE;
+		vector<shared_ptr<TVec>> notInPenaltyPlayers;
+		int index = 0;
+		for (int i = 0; i < fieldPlayers.size(); i++) {
+			index = 0;
+			for (int j = 0; j < fieldPlayers.size(); j++) {
+				if (i != j)
+					notInPenaltyPlayers.push_back(fieldPlayers [j]);
+			}
+			if (notInPenaltyPlayers.size() > 0)
+				ownPenaltyConstrains = ownPenaltyConstrains | outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
+			if (ballT != nullptr) {
+				minDistConstrains = minDistConstrains & alica::ConstraintBuilder::ifThen(outsideArea(Areas::OwnPenaltyArea, fieldPlayers), outsideSphere(ballT, rules.getStayAwayRadiusOpp(), fieldPlayers));
+			}
+		}
+
+		if (ownPenaltyConstrains != autodiff::Term::FALSE)
+			return ownPenaltyConstrains & minDistConstrains;
+		else
+			return minDistConstrains;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		if (fieldPlayers.size() <= 1)
+			return autodiff::Term::TRUE;
+		shared_ptr<Term> ownPenaltyConstrains = autodiff::Term::FALSE;
+		vector<shared_ptr<TVec>> notInPenaltyPlayers;
+		int index = 0;
+		for (int i = 0; i < fieldPlayers.size(); i++) {
+			index = 0;
+			for (int j = 0; j < fieldPlayers.size(); j++) {
+				if (i != j)
+					notInPenaltyPlayers [index++] = fieldPlayers [j];
+			}
+			ownPenaltyConstrains |= outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
+		}
+		return ownPenaltyConstrains;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyAreaRule(vector<shared_ptr<TVec>> fieldPlayers) {
-		shared_ptr<Term> c;
-		return c;
+		if (fieldPlayers.size() <= 1)
+			return autodiff::Term::TRUE;
+		shared_ptr<Term> oppPenaltyConstrains = autodiff::Term::FALSE;
+		vector<shared_ptr<TVec>> notInPenaltyPlayers ;
+		int index = 0;
+		for (int i = 0; i < fieldPlayers.size(); i++) {
+			index = 0;
+			for (int j = 0; j < fieldPlayers.size(); j++) {
+				if (i != j)
+					notInPenaltyPlayers.push_back(fieldPlayers[j]);
+			}
+			if (notInPenaltyPlayers.size() > 0)
+				oppPenaltyConstrains |= outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
+		}
+		return oppPenaltyConstrains;
 	}
 
 	shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, shared_ptr<TVec> point)
