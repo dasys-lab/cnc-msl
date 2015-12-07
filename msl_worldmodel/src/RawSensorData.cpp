@@ -255,7 +255,7 @@ namespace msl
 			ownVelocityVision.add(v);
 
 			//Motion
-			shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
+			/*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
 			shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
 					InformationElement<geometry::CNPosition>>(posMotion, time);
@@ -267,7 +267,7 @@ namespace msl
 			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
 					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
 			vMotion->certainty = data->odometry.certainty;
-			ownVelocityMotion.add(vMotion);
+			ownVelocityMotion.add(vMotion);*/
 		}
 
 		if (data->ball.confidence > 0)
