@@ -80,7 +80,7 @@ namespace msl
 		shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
 		for (int i = 0; i < points.size() - 1; i++) {
 			for(int j=i+1; j<points.size();j++) {
-				c = c & outsideSphere(points[i],minDist,points);
+				c = c & outsideSphere(points[i],minDist,points[j]);
 			}
 		}
 		return c;
@@ -121,6 +121,14 @@ namespace msl
 			for (int i = 1; i < points.size(); i++) {
 				c = c & TermBuilder::euclidianDistance(point, points[i]) > autodiff::TermBuilder::constant(distance);
 			}
+			return c;
+		} else {
+			return nullptr;
+		}
+	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2) {
+		if (point != nullptr) {
+			shared_ptr<Term> c = TermBuilder::euclidianDistance(point, point2) > autodiff::TermBuilder::constant(distance);
 			return c;
 		} else {
 			return nullptr;

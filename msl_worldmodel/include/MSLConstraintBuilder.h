@@ -49,6 +49,7 @@ namespace msl{
 			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2);
 			static shared_ptr<Term> insideSphere(shared_ptr<TVec> centre, double distance, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
