@@ -44,7 +44,7 @@ namespace alica
 
         //PD Regler Anfang
         //PIDControllerLeft
-        
+       /* 
          const double KiLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
          const double KdLeft =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
          const double KpLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
@@ -108,7 +108,7 @@ namespace alica
         cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
         cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
-	cout<<" StellwertLeft: "<< StellwertLeft<<"     StellwertLeft: "<< StellwertLeft<<endl;
+//	cout<<" StellwertLeft: "<< StellwertLeft<<"     StellwertLeft: "<< StellwertLeft<<endl;
 	
 
         bhc.leftMotor = max(min(left, 60.0), -100.0);
