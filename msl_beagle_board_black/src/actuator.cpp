@@ -162,7 +162,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 			if(sw[i] == 1) {
 				newstate[i] = false;
 			} else {
-				newstate[i] = false;
+				newstate[i] = true;
 			}
 		}
 
@@ -295,6 +295,8 @@ int main(int argc, char** argv) {
 	//thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
+	ShovelSelect.setRunState(stop);
+	ShovelSelect.setSpaceRatioTime(0);
 	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
 	ShovelSelect.setSpaceRatioTime(1500000);			// in us - Werte zwischen 1ms und 2ms
 	shovel.enabled = false;
