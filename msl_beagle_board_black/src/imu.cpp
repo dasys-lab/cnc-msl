@@ -149,15 +149,22 @@ void IMU::getMagnet() {
 		i2c->setDeviceAddress(ADR_XM);
 	}
 	for(int i=0; i<6; i++) {
-		val[i] = i2c->readByte(MAGNET_OUT_X + i);
+		val[i] = i2c->readByte(0x80 | (MAGNET_OUT_X + i));
 	}
 
 	/*magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
 	magnet.y = (((int16_t) val[3] << 8) | val[2]) * magnet.sense;
 	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;*/
-	magnet.x = (((int16_t) val[1] << 8) | val[0]) >> 4;
-	magnet.y = (((int16_t) val[3] << 8) | val[2]) >> 4;
-	magnet.z = (((int16_t) val[5] << 8) | val[4]) >> 4;
+	static float _lsm303Mag_Gauss_LSB_XY = 1100.0F;  // Varies with gain
+	static float _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
+
+	magnet.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	//defines "zeroy" by max-min value
+	magnet.x -= 2650;
+	magnet.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	magnet.y -= 1200;
+	magnet.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	magnet.z = (atan2(magnet.y, magnet.x) * 180) / M_PI;
 }
 
 void IMU::getTemp() {
