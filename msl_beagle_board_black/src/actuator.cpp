@@ -7,6 +7,7 @@
 
 
 #include "actuator.h"
+#include "std_msgs/Empty.h"
 
 using namespace std;
 using namespace BlackLib;
@@ -120,7 +121,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 	}
 }
 
-void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub) {
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
@@ -147,7 +148,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 		sw_p = SW_Power.getNumericValue();
 
 		// Entprellen 3 Taster
-		for (int i = 0; i <= 2; i++) {
+		/*for (int i = 0; i <= 2; i++) {
 			if ((state[i] == 0) && (sw_b == 0)) {
 				state[i] = 1;
 			} else if ((state[i] == 1) && (sw_b == 0)) {
@@ -162,9 +163,9 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 			} else if ((state[i] == 3) && (sw_b == 1)) {
 				state[i] = 0;
 			}
-		}
+		}*/
 
-		if (msg_send[bundle] == true) {
+		if (sw_b == 0) {
 			static uint8_t bundle_state = 0;
 			msg_send[bundle] = false;
 
@@ -185,7 +186,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 			brtPub->publish(msg_pm);
 		}
 
-		if (msg_send[vision] == true) {
+		if (sw_v == 0) {
 			msg_send[vision] = false;
 
 			msg_v.receiverID = ownID;
@@ -193,9 +194,10 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 			vrtPub->publish(msg_v);
 		}
 
-		if (msg_send[power] == true) {
+		if (sw_p == 0) {
+			std_msgs::Empty msg;
 			msg_send[power] = false;
-
+			flPub->publish(msg);
 		}
 
 		threw[4].notify = false;
@@ -258,6 +260,7 @@ int main(int argc, char** argv) {
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
+	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
 	//ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
 	sc = supplementary::SystemConfig::getInstance();
@@ -266,7 +269,7 @@ int main(int argc, char** argv) {
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
-	thread th_switches(getSwitches, &brtPub, &vrtPub);
+	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
 	thread th_adns3080(getOptical, &mbcPub);
 	//thread th_imu(getIMU, &imuPub);
 
