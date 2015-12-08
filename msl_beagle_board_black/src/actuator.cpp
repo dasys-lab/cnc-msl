@@ -135,20 +135,6 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		if (!th_activ)
 			return;
 
-		/* States:	0 - not pressed
-					1 - raising edge
-					2 - pressed
-					3 - falling edge */
-		/*
-		static uint8_t		state[3] = {0,0,0};
-		bool				msg_send[3] = {false, false, false};
-		uint8_t 			sw_b, sw_v, sw_p;
-
-		sw_b = SW_Bundle.getNumericValue();
-		sw_v = SW_Vision.getNumericValue();
-		sw_p = SW_Power.getNumericValue();*/
-
-
 		static bool		state[3] = {false, false, false};
 
 		bool newstate[3];
@@ -169,58 +155,53 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		if (newstate[bundle] != state[bundle]) {
 			state[bundle] = newstate[bundle];
 
-			LED_Bundle.toggleValue();
+			if (state[bundle]) {
+				static uint8_t bundle_state = 0;
+
+				msg_pm.receiverId = ownID;
+				msg_pm.robotIds = {ownID};
+				msg_pm.processKeys = {2,3,4,5,7};
+				msg_pm.paramSets = {1,0,0,0,3};
+
+				if (bundle_state == 0) {		// Prozesse starten
+					bundle_state = 1;
+					msg_pm.cmd = 0;
+					LED_Bundle.setValue(high);	// LED an
+				} else if (bundle_state == 1) {	// Prozesse stoppen
+					bundle_state = 0;
+					msg_pm.cmd = 1;
+					LED_Bundle.setValue(low);	// LED aus
+				}
+				brtPub->publish(msg_pm);
+			}
 		}
 
 		if (newstate[vision] != state[vision]) {
 			state[vision] = newstate[vision];
 
-			LED_Vision.toggleValue();
+			if (state[vision]) {
+				msg_v.receiverID = ownID;
+				msg_v.usePose = false;
+				vrtPub->publish(msg_v);
+				LED_Vision.setValue(high);
+			} else {
+				LED_Vision.setValue(low);
+			}
 		}
 
 		if (newstate[power] != state[power]) {
 			state[power] = newstate[power];
 
-			LED_Power.toggleValue();
-		}
-
-
-
-/*		if (sw_b == 0) {
-			static uint8_t bundle_state = 0;
-			msg_send[bundle] = false;
-
-			msg_pm.receiverId = ownID;
-			msg_pm.robotIds = {ownID};
-			msg_pm.processKeys = {2,3,4,5,7};
-			msg_pm.paramSets = {1,0,0,0,3};
-
-			if (bundle_state == 0) {		// Prozesse starten
-				bundle_state = 1;
-				msg_pm.cmd = 0;
-				LED_Bundle.setValue(high);	// LED an
-			} else if (bundle_state == 1) {	// Prozesse stoppen
-				bundle_state = 0;
-				msg_pm.cmd = 1;
-				LED_Bundle.setValue(low);	// LED aus
+			if (state[power]) {
+				std_msgs::Empty msg;
+				msg_send[power] = false;
+				flPub->publish(msg);
+				LED_Power.setValue(high);
+			} else {
+				LED_Power.setValue(low);
 			}
-			brtPub->publish(msg_pm);
 		}
 
-		if (sw_v == 0) {
-			msg_send[vision] = false;
-
-			msg_v.receiverID = ownID;
-			msg_v.usePose = false;
-			vrtPub->publish(msg_v);
-		}
-
-		if (sw_p == 0) {
-			std_msgs::Empty msg;
-			msg_send[power] = false;
-			flPub->publish(msg);
-		}
-*/
 		threw[4].notify = false;
 		cv_main.cv.notify_all();
 	}
