@@ -139,33 +139,54 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 					1 - raising edge
 					2 - pressed
 					3 - falling edge */
+		/*
 		static uint8_t		state[3] = {0,0,0};
 		bool				msg_send[3] = {false, false, false};
 		uint8_t 			sw_b, sw_v, sw_p;
 
 		sw_b = SW_Bundle.getNumericValue();
 		sw_v = SW_Vision.getNumericValue();
-		sw_p = SW_Power.getNumericValue();
+		sw_p = SW_Power.getNumericValue();*/
 
-		// Entprellen 3 Taster
-		/*for (int i = 0; i <= 2; i++) {
-			if ((state[i] == 0) && (sw_b == 0)) {
-				state[i] = 1;
-			} else if ((state[i] == 1) && (sw_b == 0)) {
-				state[i] = 2;
-				msg_send[i] = true;
-			} else if ((state[i] == 1) && (sw_b == 1)) {
-				state[i] = 0;
-			} else if ((state[i] == 2) && (sw_b == 1)) {
-				state[i] = 3;
-			} else if ((state[i] == 3) && (sw_b == 0)) {
-				state[i] = 2;
-			} else if ((state[i] == 3) && (sw_b == 1)) {
-				state[i] = 0;
+
+		static bool		state[3] = {false, false, false};
+
+		bool newstate[3];
+		uint8_t	sw[3] = {1, 1, 1};
+
+		sw[bundle]	= SW_Bundle.getNumericValue();
+		sw[vision]	= SW_Vision.getNumericValue();
+		sw[power]	= SW_Power.getNumericValue();
+
+		for (int i = 0; i <= 2; i++) {
+			if(sw[i] == 1) {
+				newstate[i] = false;
+			} else {
+				newstate[i] = false;
 			}
-		}*/
+		}
 
-		if (sw_b == 0) {
+		if (newstate[bundle] != state[bundle]) {
+			state[bundle] = newstate[bundle];
+
+			LED_Bundle.toggleValue();
+		}
+
+		if (newstate[vision] != state[vision]) {
+			state[vision] = newstate[vision];
+
+			LED_Vision.toggleValue();
+		}
+
+		if (newstate[power] != state[power]) {
+			state[power] = newstate[power];
+
+			LED_Power.toggleValue();
+		}
+
+
+
+/*		if (sw_b == 0) {
 			static uint8_t bundle_state = 0;
 			msg_send[bundle] = false;
 
@@ -199,7 +220,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 			msg_send[power] = false;
 			flPub->publish(msg);
 		}
-
+*/
 		threw[4].notify = false;
 		cv_main.cv.notify_all();
 	}
