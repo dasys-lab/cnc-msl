@@ -7,6 +7,7 @@
 
 
 #include "imu.h"
+#include "msl_actuator_msgs/IMUData.h"
 
 using namespace BlackLib;
 
@@ -181,14 +182,24 @@ void IMU::updateData(timeval time_now) {
 }
 
 void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
-//	msl_actuator_msgs::IMUInfo msg;
-//
-//	msg.accel = accel;
-//	msg.gyro = gyro;
-//	msg.magnet = magnet;
-//	msg.temperature = temperature;
-//
-//	imuPub->publish(msg);
+	msl_actuator_msgs::IMUData msg;
+
+	msg.acceleration.x = accel.x;
+	msg.acceleration.y = accel.y;
+	msg.acceleration.z = accel.z;
+	msg.accelSens = accel.sense;
+	msg.gyro.x = gyro.x;
+	msg.gyro.y = gyro.y;
+	msg.gyro.z = gyro.z;
+	msg.gyroSens = gyro.sense;
+	msg.magnet.x = magnet.x;
+	msg.magnet.y = magnet.y;
+	msg.magnet.z = magnet.z;
+	msg.magnetSens = magnet.sense;
+	msg.temperature = temperature;
+	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
+
+	imuPub->publish(msg);
 	last_sended = time_now;
 }
 
