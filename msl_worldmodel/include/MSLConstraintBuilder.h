@@ -31,6 +31,18 @@ namespace msl{
 			Surrounding, Field, OwnHalf, OwnPenaltyArea, OwnGoalArea, OppHalf, OppPenaltyArea, OppGoalArea
 		};
 
+		class NoSituationFoundException : std::exception {
+			public:
+				Situation situation;
+				NoSituationFoundException(Situation situation) {
+					this->situation= situation;
+				}
+				virtual const char* what() const throw()
+				{
+					return "NoSituationFoundException: " + situation;
+				}
+		};
+
 		class MSLConstraintBuilder
 		{
 		public:
@@ -49,6 +61,7 @@ namespace msl{
 			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2);
 			static shared_ptr<Term> insideSphere(shared_ptr<TVec> centre, double distance, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
@@ -62,6 +75,7 @@ namespace msl{
 
 
 			static shared_ptr<Term> applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers);
+			static shared_ptr<Term> applyRules(Situation situation, int specialIdx, vector<shared_ptr<TVec>> fieldPlayers);
 
 			static shared_ptr<Term> commonRules(vector<shared_ptr<TVec>> fieldPlayers);
 			static shared_ptr<Term> dropBallRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers);

@@ -80,7 +80,7 @@ namespace msl
 		shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
 		for (int i = 0; i < points.size() - 1; i++) {
 			for(int j=i+1; j<points.size();j++) {
-				c = c & outsideSphere(points[i],minDist,points);
+				c = c & outsideSphere(points[i],minDist,points[j]);
 			}
 		}
 		return c;
@@ -121,6 +121,14 @@ namespace msl
 			for (int i = 1; i < points.size(); i++) {
 				c = c & TermBuilder::euclidianDistance(point, points[i]) > autodiff::TermBuilder::constant(distance);
 			}
+			return c;
+		} else {
+			return nullptr;
+		}
+	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2) {
+		if (point != nullptr) {
+			shared_ptr<Term> c = TermBuilder::euclidianDistance(point, point2) > autodiff::TermBuilder::constant(distance);
 			return c;
 		} else {
 			return nullptr;
@@ -204,12 +212,71 @@ namespace msl
 
 		return outsideConstraints;
 	}
+	shared_ptr<Term> MSLConstraintBuilder::applyRules(Situation situation, int specialIdx, vector<shared_ptr<TVec>> fieldPlayers) {
+		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+				shared_ptr<Term> c;
+				shared_ptr<TVec> ballT = nullptr;
+				auto ownPos = wm->rawSensorData.getOwnPositionVision();
+				shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition();
+		//		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
+				if(ball != nullptr && ownPos != nullptr) {
+					ball = ball->egoToAllo(*ownPos);
+					ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
+				}
+				switch(situation) {
+					case Situation::Start:
+					case Situation::Restart:
+					case Situation::Ready:
+					case Situation::FirstHalf:
+					case Situation::SecondHalf:
+						c = commonRules(fieldPlayers);
+						break;
+					case Situation::OwnCorner:
+					case Situation::OwnFreekick:
+					case Situation::OwnGoalkick:
+					case Situation::OwnThrowin:
+						c = ownStdRules (ballT, specialIdx, fieldPlayers);
+						break;
+					case Situation::OwnKickoff:
+						c = ownKickOffRules(ballT, specialIdx, fieldPlayers);
+						break;
+					case Situation::OwnPenalty:
+						c = ownPenaltyRules (ballT, specialIdx, fieldPlayers);
+						break;
+					case Situation::OppCorner:
+					case Situation::OppFreekick:
+					case Situation::OppGoalkick:
+					case Situation::OppThrowin:
+						c = oppStdRules (ballT, fieldPlayers);
+						break;
+					case Situation::OppKickoff:
+						c = oppKickOffRules (ballT, fieldPlayers);
+						break;
+					case Situation::OppPenalty:
+						c = oppPenaltyRules (fieldPlayers);
+						break;
+					case Situation::DropBall:
+						c = dropBallRules (ballT, fieldPlayers);
+						break;
+					case Situation::Stop:
+						// no constraints
+						c = autodiff::LTConstraint::TRUE;
+						break;
+					default:
+						throw new NoSituationFoundException(situation);
+						break;
+				}
+				return c;
+	}
 	shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_ptr<TVec>> fieldPlayers) {
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 		shared_ptr<Term> c;
-		shared_ptr<TVec> ballT;
-		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
-		if(ball != nullptr) {
+		shared_ptr<TVec> ballT = nullptr;
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition();
+//		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
+		if(ball != nullptr && ownPos != nullptr) {
+			ball = ball->egoToAllo(*ownPos);
 			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
 		}
 		switch(wm->game.getSituation()) {
@@ -218,40 +285,41 @@ namespace msl
 			case Situation::Ready:
 			case Situation::FirstHalf:
 			case Situation::SecondHalf:
-				c = c & commonRules(fieldPlayers);
+				c = commonRules(fieldPlayers);
 				break;
 			case Situation::OwnCorner:
 			case Situation::OwnFreekick:
 			case Situation::OwnGoalkick:
 			case Situation::OwnThrowin:
-				c = c & ownStdRules (ballT, specialIdx, fieldPlayers);
+				c = ownStdRules (ballT, specialIdx, fieldPlayers);
 				break;
 			case Situation::OwnKickoff:
-				c = c & ownKickOffRules(ballT, specialIdx, fieldPlayers);
+				c = ownKickOffRules(ballT, specialIdx, fieldPlayers);
 				break;
 			case Situation::OwnPenalty:
-				c = c & ownPenaltyRules (ballT, specialIdx, fieldPlayers);
+				c = ownPenaltyRules (ballT, specialIdx, fieldPlayers);
 				break;
 			case Situation::OppCorner:
 			case Situation::OppFreekick:
 			case Situation::OppGoalkick:
 			case Situation::OppThrowin:
-				c = c & oppStdRules (ballT, fieldPlayers);
+				c = oppStdRules (ballT, fieldPlayers);
 				break;
 			case Situation::OppKickoff:
-				c = c & oppKickOffRules (ballT, fieldPlayers);
+				c = oppKickOffRules (ballT, fieldPlayers);
 				break;
 			case Situation::OppPenalty:
-				c = c & oppPenaltyRules (fieldPlayers);
+				c = oppPenaltyRules (fieldPlayers);
 				break;
 			case Situation::DropBall:
-				c = c & dropBallRules (ballT, fieldPlayers);
+				c = dropBallRules (ballT, fieldPlayers);
 				break;
 			case Situation::Stop:
 				// no constraints
 				c = autodiff::LTConstraint::TRUE;
 				break;
 			default:
+				throw new NoSituationFoundException(wm->game.getSituation());
 				break;
 		}
 		return c;

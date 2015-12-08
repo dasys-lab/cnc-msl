@@ -32,6 +32,7 @@ namespace msl
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data);
 		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
 		shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
 
