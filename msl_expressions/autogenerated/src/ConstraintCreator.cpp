@@ -5,6 +5,8 @@
 
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
 
+#include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
 #include  "Plans/Attack/constraints/ProtectBall1449151802193Constraints.h"
@@ -25,9 +27,9 @@
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"
 
-#include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
-
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
+
+#include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"
 

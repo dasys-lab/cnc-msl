@@ -15,9 +15,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/AttackOpp.h"
 
-#include  "Plans/Behaviours/PositionReceiver.h"
-
 #include  "Plans/Behaviours/GoalKick.h"
+
+#include  "Plans/Behaviours/PositionReceiver.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
@@ -34,6 +34,8 @@ using namespace std;
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Actuate.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/BlockBall.h"
 
 #include  "Plans/Behaviours/Joystick.h"
 
@@ -53,9 +55,13 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
+#include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
+
 #include  "Plans/Attack/DribbleToAttackPoint.h"
 
 #include  "Plans/GenericStandards/StandardPass.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
@@ -64,6 +70,8 @@ using namespace std;
 #include  "Plans/Behaviours/Pos4Def.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
@@ -74,6 +82,8 @@ using namespace std;
 #include  "Plans/Behaviours/GetBall.h"
 
 #include  "Plans/Behaviours/DriveForward.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/KickToDirection.h"
 
 namespace alica
 {
@@ -123,14 +133,14 @@ namespace alica
                 return make_shared<AttackOpp>();
                 break;
 
-            case 1439379352605:
-
-                return make_shared<PositionReceiver>();
-                break;
-
             case 1415205578139:
 
                 return make_shared<GoalKick>();
+                break;
+
+            case 1439379352605:
+
+                return make_shared<PositionReceiver>();
                 break;
 
             case 1417620583364:
@@ -189,6 +199,11 @@ namespace alica
                 return make_shared<Actuate>();
                 break;
 
+            case 1447863463711:
+
+                return make_shared<BlockBall>();
+                break;
+
             case 1421854995808:
 
             case 1426695479346:
@@ -238,6 +253,11 @@ namespace alica
                 return make_shared<InterceptCarefully>();
                 break;
 
+            case 1447863442558:
+
+                return make_shared<DriveToGoal>();
+                break;
+
             case 1436855860607:
 
             case 1437391438054:
@@ -248,6 +268,11 @@ namespace alica
             case 1435760175843:
 
                 return make_shared<StandardPass>();
+                break;
+
+            case 1447863472667:
+
+                return make_shared<WatchBall>();
                 break;
 
             case 1415205285582:
@@ -268,6 +293,11 @@ namespace alica
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1447863503279:
+
+                return make_shared<DriveToBall>();
                 break;
 
             case 1435159282996:
@@ -299,6 +329,11 @@ namespace alica
             case 1417017580650:
 
                 return make_shared<DriveForward>();
+                break;
+
+            case 1447863487000:
+
+                return make_shared<KickToDirection>();
                 break;
 
             default:

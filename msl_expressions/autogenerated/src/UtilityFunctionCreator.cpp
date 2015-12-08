@@ -5,6 +5,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
+
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
 #include  "Plans/Attack/ProtectBall1449151802193.h"
@@ -25,9 +27,9 @@
 
 #include  "Plans/WM161413992564408.h"
 
-#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
-
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+
+#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
 
@@ -99,6 +101,10 @@ namespace alica
                 return make_shared<UtilityFunction1434049476066>();
                 break;
 
+            case 1447254438614:
+                return make_shared<UtilityFunction1447254438614>();
+                break;
+
             case 1432132075122:
                 return make_shared<UtilityFunction1432132075122>();
                 break;
@@ -139,12 +145,12 @@ namespace alica
                 return make_shared<UtilityFunction1413992564408>();
                 break;
 
-            case 1417621468963:
-                return make_shared<UtilityFunction1417621468963>();
-                break;
-
             case 1441106995954:
                 return make_shared<UtilityFunction1441106995954>();
+                break;
+
+            case 1417621468963:
+                return make_shared<UtilityFunction1417621468963>();
                 break;
 
             case 1436960675873:
