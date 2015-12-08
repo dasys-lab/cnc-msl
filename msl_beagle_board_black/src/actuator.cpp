@@ -194,7 +194,6 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 
 			if (state[power]) {
 				std_msgs::Empty msg;
-				msg_send[power] = false;
 				flPub->publish(msg);
 				LED_Power.setValue(high);
 			} else {
