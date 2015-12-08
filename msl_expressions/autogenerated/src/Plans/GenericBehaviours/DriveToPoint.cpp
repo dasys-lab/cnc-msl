@@ -39,7 +39,6 @@ namespace alica
          else
          {*/
         mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
-        mc.motion.translation = 200;
         //}
 
         if (egoTarget->length() < 250)
