@@ -16,6 +16,7 @@
   <build_depend>udp_proxy_generator</build_depend>
   <build_depend>roslib</build_depend>
   <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>process_manager</build_depend>
   <build_depend>msl_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
 
@@ -24,6 +25,7 @@
   <run_depend>message_runtime</run_depend>
   <run_depend>roslib</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>process_manager</run_depend>
   <run_depend>msl_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
 
