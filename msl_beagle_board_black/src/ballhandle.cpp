@@ -47,7 +47,7 @@ using namespace BlackLib;
 
 		// Check that value is in range from -100 to 100
 		if (value > 100) { value = 100; }
-		if (value < 100) { value = -100; }
+		if (value < -100) { value = -100; }
 		speed_desired = abs(value) * period / 100;
 	}
 

@@ -51,6 +51,7 @@ add_message_files(
   BallHandleCmd.msg
   HaveBallInfo.msg
   JoystickControl.msg
+  CanMsg.msg
   JoystickRobotIDs.msg
   KickControl.msg
   KickerStatInfo.msg

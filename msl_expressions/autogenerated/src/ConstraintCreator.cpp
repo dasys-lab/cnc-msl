@@ -9,6 +9,8 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
+#include  "Plans/Attack/constraints/ProtectBall1449151802193Constraints.h"
+
 #include  "Plans/Example/constraints/ExamplePlan1433938652021Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"

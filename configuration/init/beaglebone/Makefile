@@ -1,4 +1,4 @@
-WORKSPACE_USER=ubuntu
+WORKSPACE_USER=cn
 WORKSPACE_PATH=/home/${WORKSPACE_USER}/cnws
 
 all: start-roscore start-bbb-proxy start-beagleboard

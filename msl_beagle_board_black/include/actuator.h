@@ -48,9 +48,9 @@ struct CV {
 };
 
 
-BlackGPIO LED_Vision(GPIO_49, output, FastMode);	// P9 23
+BlackGPIO LED_Power(GPIO_49, output, FastMode);	// P9 23
 BlackGPIO LED_Bundle(GPIO_20, output, FastMode);	// P9 41
-BlackGPIO LED_Power(GPIO_7, output, FastMode);		// P9 42
+BlackGPIO LED_Vision(GPIO_7, output, FastMode);		// P9 42
 
 BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
 BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
