@@ -41,22 +41,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="GoalieBehaviours/DriveToGoalBehaviour.beh#1447856215065"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieBehaviours/BlockBallBehaviour.beh#1447857238343"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieBehaviours/WatchBallBehaviour.beh#1447857515026"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieBehaviours/DriveToBallBehaviour.beh#1447857571436"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
     <value/>
   </extensions>

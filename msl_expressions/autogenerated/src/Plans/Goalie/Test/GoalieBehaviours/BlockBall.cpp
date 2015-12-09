@@ -21,6 +21,7 @@ namespace alica
     void BlockBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863456983) ENABLED START*/ //Add additional options here
+    	//cout << "BlockBall: Inside run" << endl;
         /*PROTECTED REGION END*/
     }
     void BlockBall::initialiseParameters()

@@ -4,6 +4,8 @@
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
+#include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
+
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
 #include  "Plans/Example/ExamplePlan1433938652021.h"
@@ -22,9 +24,9 @@
 
 #include  "Plans/WM161413992564408.h"
 
-#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
-
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+
+#include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
 
@@ -179,6 +181,30 @@ namespace alica
             case 1434050690800:
 
                 return make_shared<TransitionCondition1434050690800>();
+
+                break;
+
+            case 1447255447830:
+
+                return make_shared<TransitionCondition1447255447830>();
+
+                break;
+
+            case 1447256488686:
+
+                return make_shared<TransitionCondition1447256488686>();
+
+                break;
+
+            case 1447256495415:
+
+                return make_shared<TransitionCondition1447256495415>();
+
+                break;
+
+            case 1447259463769:
+
+                return make_shared<TransitionCondition1447259463769>();
 
                 break;
 
@@ -578,6 +604,18 @@ namespace alica
 
                 break;
 
+            case 1441107213887:
+
+                return make_shared<TransitionCondition1441107213887>();
+
+                break;
+
+            case 1441107217606:
+
+                return make_shared<TransitionCondition1441107217606>();
+
+                break;
+
             case 1417621600501:
 
                 return make_shared<TransitionCondition1417621600501>();
@@ -623,18 +661,6 @@ namespace alica
             case 1422464875980:
 
                 return make_shared<TransitionCondition1422464875980>();
-
-                break;
-
-            case 1441107213887:
-
-                return make_shared<TransitionCondition1441107213887>();
-
-                break;
-
-            case 1441107217606:
-
-                return make_shared<TransitionCondition1441107217606>();
 
                 break;
 

@@ -42,8 +42,6 @@ namespace alica
 
         newController(left, right);
 
-	
-
         //PD Regler Anfang
         //PIDControllerLeft
         /*
@@ -295,7 +293,7 @@ namespace alica
 
         //arithmetic Average for Speed Start
 
-	cout<<"aritAverageSpeed anfang"<<endl;	
+        cout << "aritAverageSpeed anfang" << endl;
 
         double arithmeticAverageSpeed = 0.0;
         double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -321,7 +319,7 @@ namespace alica
 
         //arithmetic Average for Speed End
 
-	cout<<"Z:324 speed diff 4 acceleration"<<endl;
+        cout << "Z:324 speed diff 4 acceleration" << endl;
         //Speed Difference for acceleration Start
         double eFunktionAcceleration;
         double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -333,13 +331,13 @@ namespace alica
             speedDifference = 1;
         }
 
-          cout << "Z:336 speedDifference : " << speedDifference << endl;
+        cout << "Z:336 speedDifference : " << speedDifference << endl;
 
         //Speed Difference for acceleration End
 
         ////arithmetic average speed difference Start
 
-	cout<<"arithmetic average speed difference Start";
+        cout << "arithmetic average speed difference Start";
         double arithmeticAverageSpeedDifference = 0.0;
 
         if (arithmeticAverageBoxSpeedDifference.size() == 5)
@@ -363,7 +361,7 @@ namespace alica
         }
 
         //Exp Funktion for traction Start
-	cout<<"Z:366 Exp Funktion for traction Start"<<endl;
+        cout << "Z:366 Exp Funktion for traction Start" << endl;
 
         double feedForwardLeft, feedForwardRight;
         double KvLeft, KvRight;
@@ -374,34 +372,36 @@ namespace alica
         double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
                                                                                  NULL);
         double funktionLeft = 0, funktionRight = 0;
-	cout<<"Z:377 Exp Funktion for traction end"<<endl;
-       //für fehlersuche ausk. double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
-       // double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
+        cout << "Z:377 Exp Funktion for traction end" << endl;
+        //für fehlersuche ausk. double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+        // double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
-       // cout << "exp Funktion : " << eFunktion << endl;
+        // cout << "exp Funktion : " << eFunktion << endl;
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
-        x = angle;// max(min(angle, 3.14), -3.14);
+        x = angle; // max(min(angle, 3.14), -3.14);
         int counter = 1;
-	cout<<"vor den Splines left"<<endl;
+        cout << "vor den Splines left" << endl;
 
         splines::spline leftMotor;
 
         vector<double> XLeft, YLeft;
-       auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
+        auto FunktionValuesLeftSections = (*this->sc)["ActuatorDribble"]->getSections(
                 "ActuateDribble.FunktionValuesLeft", NULL);
         counter = 1;
         for (string sectionName : *FunktionValuesLeftSections)
         {
-            XLeft.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                         sectionName.c_str(), "XLeft", NULL));
-            YLeft.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                         sectionName.c_str(), "YLeft", NULL));
+            XLeft.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                sectionName.c_str(), "XLeft", NULL));
+            YLeft.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
+                                                                sectionName.c_str(), "YLeft", NULL));
             counter++;
         }
         leftMotor.set_points(XLeft, YLeft);
 
-	cout<<"vor der splines right"<<endl;	
+        cout << "vor der splines right" << endl;
         splines::spline rightMotor;
 
         vector<double> XRight, YRight;
@@ -410,38 +410,42 @@ namespace alica
         counter = 1;
         for (string sectionName : *FunktionValuesRightSections)
         {
-            XRight.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                          sectionName.c_str(), "XRight", NULL));
-            YRight.push_back((*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                          sectionName.c_str(), "YRight", NULL));
+            XRight.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+                                                                sectionName.c_str(), "XRight", NULL));
+            YRight.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
+                                                                sectionName.c_str(), "YRight", NULL));
             counter++;
         }
 
-	cout<<"Z: 420 vor rightMotorset"<<endl;
+        cout << "Z: 420 vor rightMotorset" << endl;
 
         rightMotor.set_points(XRight, YRight);
 
-	cout<<"Z: 424 ende der splines right"<<endl;
-
+        cout << "Z: 424 ende der splines right" << endl;
 
         splines::spline frictionSpline;
         vector<double> XFric, YFric;
         for (int i = 1; i <= 13; i++)
         {
-            XFric.push_back((*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.x") + to_string(i)).c_str(), NULL));
-            YFric.push_back((*this->sc)["ActuatorDribble"]->get<double>((std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
+            XFric.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>(
+                            (std::string("ActuateDribble.Friction.x") + to_string(i)).c_str(), NULL));
+            YFric.push_back(
+                    (*this->sc)["ActuatorDribble"]->get<double>(
+                            (std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
         }
 
-	cout<<"Z: 431 ende der  friction"<<endl;
+        cout << "Z: 431 ende der  friction" << endl;
         frictionSpline.set_points(XFric, YFric);
-	cout<<"Z: 431 ende der  friction 1"<<endl;
-
+        cout << "Z: 431 ende der  friction 1" << endl;
 
         FunktionValuesRight = rightMotor(x);
-	cout<<"Z: 431 ende der  friction 2"<<endl;
+        cout << "Z: 431 ende der  friction 2" << endl;
 
         FunktionValuesLeft = leftMotor(x);
-	cout<<"Z: 431 ende der  friction 3"<<endl;
+        cout << "Z: 431 ende der  friction 3" << endl;
 
         frictionValue = frictionSpline(x);
 
@@ -462,14 +466,12 @@ namespace alica
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
             {
                 cout << "rueckwaertsdrehen" << endl;
-                FunktionValuesRight = FunktionValuesRight
-                        + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+                FunktionValuesRight = FunktionValuesRight + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
             }
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
             {
 
-            	FunktionValuesLeft = FunktionValuesLeft
-                        + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
+                FunktionValuesLeft = FunktionValuesLeft + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
             }
         }
@@ -489,14 +491,13 @@ namespace alica
             {
 
                 cout << "rückwärtsdrehen" << endl;
-                FunktionValuesLeft = FunktionValuesLeft
-                        + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
+                FunktionValuesLeft = FunktionValuesLeft + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation);
 
             }
             if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
             {
 
-            	FunktionValuesRight = FunktionValuesRight
+                FunktionValuesRight = FunktionValuesRight
                         + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
             }
