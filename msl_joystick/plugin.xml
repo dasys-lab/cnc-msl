@@ -1,5 +1,5 @@
-<library path="lib/librqt_msl_joystick">
-  <class name="rqt_msl_joystick/Joystick" type="rqt_msl_joystick::Joystick" base_class_type="rqt_gui_cpp::Plugin">
+<library path="lib/libmsl_joystick">
+  <class name="msl_joystick/Joystick" type="msl_joystick::Joystick" base_class_type="rqt_gui_cpp::Plugin">
     <description>
       A GUI plugin to send MSL Joystick Commands.
     </description>

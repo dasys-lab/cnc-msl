@@ -1,6 +1,6 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
-#include <rqt_msl_joystick/Joystick.h>
+#include <msl_joystick/Joystick.h>
 #include <msl_msgs/JoystickCommand.h>
 #include <SystemConfig.h>
 

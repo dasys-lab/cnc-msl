@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(rqt_msl_refbox)
+project(msl_refbox)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+	set(CMAKE_ECLIPSE_VERSION "4.5" CACHE STRING "Eclipse version" FORCE)
+	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
+endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 # Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS rqt_gui rqt_gui_cpp msl_msgs msl_sensor_msgs alica_ros_proxy)
@@ -12,41 +17,41 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
 
 include(${QT_USE_FILE})
 
-set(rqt_msl_refbox_SRCS
-  src/rqt_msl_refbox/RefBox.cpp
-  src/rqt_msl_refbox/GameData.cpp
-  src/rqt_msl_refbox/tinyxml2.cpp
-  src/rqt_msl_refbox/XMLProtocolParser.cpp
+set(msl_refbox_SRCS
+  src/msl_refbox/RefBox.cpp
+  src/msl_refbox/GameData.cpp
+  src/msl_refbox/tinyxml2.cpp
+  src/msl_refbox/XMLProtocolParser.cpp
   )
 
-set(rqt_msl_refbox_HDRS
-  include/rqt_msl_refbox/RefBox.h
-  include/rqt_msl_refbox/GameData.h
-  include/rqt_msl_refbox/tinyxml2.h
-  include/rqt_msl_refbox/XMLProtocolParser.h
+set(msl_refbox_HDRS
+  include/msl_refbox/RefBox.h
+  include/msl_refbox/GameData.h
+  include/msl_refbox/tinyxml2.h
+  include/msl_refbox/XMLProtocolParser.h
 )
 
-set(rqt_msl_refbox_UIS
-  src/rqt_msl_refbox/RefBox.ui
+set(msl_refbox_UIS
+  src/msl_refbox/RefBox.ui
 )
 
-set(rqt_msl_refbox_INCLUDE_DIRECTORIES
+set(msl_refbox_INCLUDE_DIRECTORIES
   include
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 catkin_package(
-  INCLUDE_DIRS ${rqt_msl_refbox_INCLUDE_DIRECTORIES}
+  INCLUDE_DIRS ${msl_refbox_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS rqt_gui rqt_gui_cpp
 )
 catkin_python_setup()
 
-qt4_wrap_cpp(rqt_msl_refbox_MOCS ${rqt_msl_refbox_HDRS})
-qt4_wrap_ui(rqt_msl_refbox_UIS_H ${rqt_msl_refbox_UIS})
+qt4_wrap_cpp(msl_refbox_MOCS ${msl_refbox_HDRS})
+qt4_wrap_ui(msl_refbox_UIS_H ${msl_refbox_UIS})
 
-include_directories(${rqt_msl_refbox_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} ${rqt_msl_refbox_SRCS} ${rqt_msl_refbox_MOCS} ${rqt_msl_refbox_UIS_H})
+include_directories(${msl_refbox_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
+add_library(${PROJECT_NAME} ${msl_refbox_SRCS} ${msl_refbox_MOCS} ${msl_refbox_UIS_H})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY})
 add_dependencies(${PROJECT_NAME} msl_msgs_generate_messages_cpp)
 
@@ -63,10 +68,10 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
-install(PROGRAMS scripts/rqt_msl_refbox
+install(PROGRAMS scripts/msl_refbox
   DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
-install(PROGRAMS scripts/rqt_msl_refbox
+install(PROGRAMS scripts/msl_refbox
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -76,4 +81,4 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 # Test stuff
 
-#add_executable(SimpleTCPClientExample src/rqt_msl_refbox/SimpleTCPClientExample.cpp)
+#add_executable(SimpleTCPClientExample src/msl_refbox/SimpleTCPClientExample.cpp)

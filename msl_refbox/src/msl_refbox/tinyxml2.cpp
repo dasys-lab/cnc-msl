@@ -21,7 +21,7 @@
  distribution.
  */
 
-#include "rqt_msl_refbox/tinyxml2.h"
+#include "msl_refbox/tinyxml2.h"
 
 #include <new>		// yes, this one new style header, is in the Android SDK.#   ifdef ANDROID_NDK
 #   include <stddef.h>

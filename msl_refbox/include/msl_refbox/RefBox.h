@@ -1,8 +1,8 @@
-#ifndef rqt_msl_refbox__RefBox_H
-#define rqt_msl_refbox__RefBox_H
+#ifndef msl_refbox__RefBox_H
+#define msl_refbox__RefBox_H
 
 #include <rqt_gui_cpp/plugin.h>
-#include <rqt_msl_refbox/GameData.h>
+#include <msl_refbox/GameData.h>
 #include <ui_RefBox.h>
 
 #include "ros/ros.h"
@@ -12,7 +12,7 @@
 #include <QWidget>
 #include <QDialog>
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 	using namespace std;
 
@@ -43,4 +43,4 @@ namespace rqt_msl_refbox
 
 }
 
-#endif // rqt_msl_refbox__RefBox_H
+#endif // msl_refbox__RefBox_H

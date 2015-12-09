@@ -5,11 +5,11 @@
  *      Author: Stephan Opfer
  */
 
-#include "rqt_msl_refbox/XMLProtocolParser.h"
+#include "msl_refbox/XMLProtocolParser.h"
 #include <iostream>
 
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 
 	XMLProtocolParser::XMLProtocolParser(GameData* gameData)

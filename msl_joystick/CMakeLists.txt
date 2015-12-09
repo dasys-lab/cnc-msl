@@ -1,9 +1,14 @@
 cmake_minimum_required(VERSION 2.8.0)
 
-project(rqt_msl_joystick)
+project(msl_joystick)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+	set(CMAKE_ECLIPSE_VERSION "4.5" CACHE STRING "Eclipse version" FORCE)
+	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
+endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs system_config)
 
@@ -13,35 +18,35 @@ find_package(Qt4 4.4.3 COMPONENTS QtCore QtGui REQUIRED)
 
 include(${QT_USE_FILE})
 
-set(rqt_msl_joystick_SRCS
-  src/rqt_msl_joystick/Joystick.cpp
+set(msl_joystick_SRCS
+  src/msl_joystick/Joystick.cpp
 )
 
-set(rqt_msl_joystick_HDRS
-  include/rqt_msl_joystick/Joystick.h
+set(msl_joystick_HDRS
+  include/msl_joystick/Joystick.h
 )
 
-set(rqt_msl_joystick_UIS
-  ui/rqt_msl_joystick/Joystick.ui
+set(msl_joystick_UIS
+  ui/msl_joystick/Joystick.ui
 )
 
-set(rqt_msl_joystick_INCLUDE_DIRECTORIES
+set(msl_joystick_INCLUDE_DIRECTORIES
   include
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 catkin_package(
-  INCLUDE_DIRS ${rqt_msl_joystick_INCLUDE_DIRECTORIES}
+  INCLUDE_DIRS ${msl_joystick_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS rqt_gui rqt_gui_cpp system_config
 )
 catkin_python_setup()
 
-qt4_wrap_cpp(rqt_msl_joystick_MOCS ${rqt_msl_joystick_HDRS})
-qt4_wrap_ui(rqt_msl_joystick_UIS_H ${rqt_msl_joystick_UIS})
+qt4_wrap_cpp(msl_joystick_MOCS ${msl_joystick_HDRS})
+qt4_wrap_ui(msl_joystick_UIS_H ${msl_joystick_UIS})
 
-include_directories(${rqt_msl_joystick_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} ${rqt_msl_joystick_SRCS} ${rqt_msl_joystick_MOCS} ${rqt_msl_joystick_UIS_H})
+include_directories(${msl_joystick_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
+add_library(${PROJECT_NAME} ${msl_joystick_SRCS} ${msl_joystick_MOCS} ${msl_joystick_UIS_H})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
 
 find_package(class_loader)
@@ -57,10 +62,10 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
-install(PROGRAMS scripts/rqt_msl_joystick
+install(PROGRAMS scripts/msl_joystick
   DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
-install(PROGRAMS scripts/rqt_msl_joystick
+install(PROGRAMS scripts/msl_joystick
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

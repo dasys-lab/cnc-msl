@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>rqt_msl_joystick</name>
+  <name>msl_joystick</name>
   <version>0.1.0</version>
-  <description>rqt_msl_joystick provides a GUI plugin for sending Joystick Commands.</description>
+  <description>msl_joystick provides a GUI plugin for sending Joystick Commands.</description>
   <maintainer email="Michael@gmail.com">Michael</maintainer>
   <author>Michael Gottesleben</author>
   <license>MIT</license>

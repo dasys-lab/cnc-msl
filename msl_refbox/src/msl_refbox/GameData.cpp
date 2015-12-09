@@ -5,14 +5,14 @@
  *      Author: Stephan Opfer
  */
 
-#include "rqt_msl_refbox/GameData.h"
+#include "msl_refbox/GameData.h"
 #include "msl_msgs/RefBoxCommand.h"
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include "qstring.h"
 #include <iostream>
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 
 	GameData::GameData(RefBox* refBox)

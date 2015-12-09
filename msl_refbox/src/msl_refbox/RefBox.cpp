@@ -1,10 +1,10 @@
 #include <pluginlib/class_list_macros.h>
 #include <ros/master.h>
-#include <rqt_msl_refbox/GameData.h>
+#include <msl_refbox/GameData.h>
 #include <memory.h>
-#include <rqt_msl_refbox/RefBox.h>
+#include <msl_refbox/RefBox.h>
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 
 	RefBox::RefBox() :
@@ -151,4 +151,4 @@ namespace rqt_msl_refbox
 
 }
 
-PLUGINLIB_EXPORT_CLASS(rqt_msl_refbox::RefBox, rqt_gui_cpp::Plugin)
+PLUGINLIB_EXPORT_CLASS(msl_refbox::RefBox, rqt_gui_cpp::Plugin)

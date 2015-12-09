@@ -12,11 +12,11 @@
 #include <map>
 #include <QFile>
 #include <QtGui>
-#include <rqt_msl_refbox/RefBox.h>
+#include <msl_refbox/RefBox.h>
 #include <QTcpSocket>
 #include <QUdpSocket>
-#include "rqt_msl_refbox/tinyxml2.h"
-#include "rqt_msl_refbox/XMLProtocolParser.h"
+#include "msl_refbox/tinyxml2.h"
+#include "msl_refbox/XMLProtocolParser.h"
 #include "msl_msgs/RefBoxCommand.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "alica_ros_proxy/AlicaEngineInfo.h"
@@ -27,7 +27,7 @@
 
 using namespace std;
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 	class RefBox;
 	class XMLProtocolParser;

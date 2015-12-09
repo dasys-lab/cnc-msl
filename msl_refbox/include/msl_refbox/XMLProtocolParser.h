@@ -8,12 +8,12 @@
 #ifndef CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_XMLPROTOCOLPARSER_H_
 #define CNC_MSL_RQT_MSL_REFBOX_SRC_RQT_MSL_REFBOX_XMLPROTOCOLPARSER_H_
 
-#include "rqt_msl_refbox/GameData.h"
-#include "rqt_msl_refbox/tinyxml2.h"
+#include "msl_refbox/GameData.h"
+#include "msl_refbox/tinyxml2.h"
 #include <vector>
 #include <string>
 
-namespace rqt_msl_refbox
+namespace msl_refbox
 {
 	class GameData;
 	class XMLProtocolParser

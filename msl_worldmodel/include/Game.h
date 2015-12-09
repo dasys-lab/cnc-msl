@@ -12,7 +12,7 @@
 #include <ros/ros.h>
 #include <msl_msgs/RefBoxCommand.h>
 #include <MSLEnums.h>
-#include <rqt_robot_control/RobotCommand.h>
+#include <robot_control/RobotCommand.h>
 #include <mutex>
 #include "GameState.h"
 #include "RingBuffer.h"
@@ -33,7 +33,7 @@ namespace msl
 	public:
 		Game(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~Game();
-		void onRobotCommand(rqt_robot_control::RobotCommandPtr msg);
+		void onRobotCommand(robot_control::RobotCommandPtr msg);
 		void onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg);
 		shared_ptr<msl_msgs::RefBoxCommand> getRefBoxCommand(int index);
 		bool checkSituation(Situation situation);
