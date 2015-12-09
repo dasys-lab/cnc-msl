@@ -16,6 +16,7 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
+#include <SystemConfig.h>
 #include <map>
 
 using namespace std;
@@ -35,11 +36,16 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
 		shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
+		double getOpponentProtectDistance();
+		double getOpponentProtectAngle();
 
 	private:
 		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 		MSLWorldModel* wm;
+		supplementary::SystemConfig* sc;
 		unsigned long maxInformationAge = 1000000000;
+		double opponentProtectDistance;
+		double opponentProtectAngle;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
 		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
 

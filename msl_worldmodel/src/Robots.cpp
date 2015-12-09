@@ -15,7 +15,10 @@ namespace msl
 			obstacles(ringBufferLength)
 	{
 		this->wm = wm;
+		this->sc = supplementary::SystemConfig::getInstance();
 		maxInformationAge = 1000000000;
+		this->opponentProtectAngle = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectAngle", NULL);
+		this->opponentProtectDistance = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectDistance", NULL);
 	}
 
 	Robots::~Robots()
@@ -109,6 +112,16 @@ namespace msl
 			ret->push_back(make_shared<geometry::CNPoint2D>(current.x, current.y));
 		}
 		return ret;
+	}
+
+	double Robots::getOpponentProtectDistance()
+	{
+		return this->opponentProtectDistance;
+	}
+
+	double Robots::getOpponentProtectAngle()
+	{
+		return this->opponentProtectAngle;
 	}
 
 }
