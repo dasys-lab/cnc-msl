@@ -13,7 +13,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config roscpp roslib msl_actuator_msgs msl_msgs std_msgs udp_proxy_generator)
+find_package(catkin REQUIRED system_config roscpp roslib msl_actuator_msgs msl_msgs std_msgs udp_proxy_generator process_manager)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system filesystem regex)

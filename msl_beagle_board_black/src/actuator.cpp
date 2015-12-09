@@ -7,6 +7,7 @@
 
 
 #include "actuator.h"
+#include "std_msgs/Empty.h"
 
 using namespace std;
 using namespace BlackLib;
@@ -120,7 +121,7 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 	}
 }
 
-void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub) {
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
@@ -134,68 +135,70 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub) {
 		if (!th_activ)
 			return;
 
-		/* States:	0 - not pressed
-					1 - raising edge
-					2 - pressed
-					3 - falling edge */
-		static uint8_t		state[3] = {0,0,0};
-		bool				msg_send[3] = {false, false, false};
-		uint8_t 			sw_b, sw_v, sw_p;
+		static bool		state[3] = {false, false, false};
 
-		sw_b = SW_Bundle.getNumericValue();
-		sw_v = SW_Vision.getNumericValue();
-		sw_p = SW_Power.getNumericValue();
+		bool newstate[3];
+		uint8_t	sw[3] = {1, 1, 1};
 
-		// Entprellen 3 Taster
+		sw[bundle]	= SW_Bundle.getNumericValue();
+		sw[vision]	= SW_Vision.getNumericValue();
+		sw[power]	= SW_Power.getNumericValue();
+
 		for (int i = 0; i <= 2; i++) {
-			if ((state[i] == 0) && (sw_b == 0)) {
-				state[i] = 1;
-			} else if ((state[i] == 1) && (sw_b == 0)) {
-				state[i] = 2;
-				msg_send[i] = true;
-			} else if ((state[i] == 1) && (sw_b == 1)) {
-				state[i] = 0;
-			} else if ((state[i] == 2) && (sw_b == 1)) {
-				state[i] = 3;
-			} else if ((state[i] == 3) && (sw_b == 0)) {
-				state[i] = 2;
-			} else if ((state[i] == 3) && (sw_b == 1)) {
-				state[i] = 0;
+			if(sw[i] == 1) {
+				newstate[i] = false;
+			} else {
+				newstate[i] = true;
 			}
 		}
 
-		if (msg_send[bundle] == true) {
-			static uint8_t bundle_state = 0;
-			msg_send[bundle] = false;
+		if (newstate[bundle] != state[bundle]) {
+			state[bundle] = newstate[bundle];
 
-			msg_pm.receiverId = ownID;
-			msg_pm.robotIds = {ownID};
-			msg_pm.processKeys = {2,3,4,5,7};
-			msg_pm.paramSets = {1,0,0,0,3};
+			if (state[bundle]) {
+				static uint8_t bundle_state = 0;
 
-			if (bundle_state == 0) {		// Prozesse starten
-				bundle_state = 1;
-				msg_pm.cmd = 0;
-				LED_Bundle.setValue(high);	// LED an
-			} else if (bundle_state == 1) {	// Prozesse stoppen
-				bundle_state = 0;
-				msg_pm.cmd = 1;
-				LED_Bundle.setValue(low);	// LED aus
+				msg_pm.receiverId = ownID;
+				msg_pm.robotIds = {ownID};
+				msg_pm.processKeys = {2,3,4,5,7};
+				msg_pm.paramSets = {1,0,0,0,3};
+
+				if (bundle_state == 0) {		// Prozesse starten
+					bundle_state = 1;
+					msg_pm.cmd = 0;
+					LED_Bundle.setValue(high);	// LED an
+				} else if (bundle_state == 1) {	// Prozesse stoppen
+					bundle_state = 0;
+					msg_pm.cmd = 1;
+					LED_Bundle.setValue(low);	// LED aus
+				}
+				brtPub->publish(msg_pm);
 			}
-			brtPub->publish(msg_pm);
 		}
 
-		if (msg_send[vision] == true) {
-			msg_send[vision] = false;
+		if (newstate[vision] != state[vision]) {
+			state[vision] = newstate[vision];
 
-			msg_v.receiverID = ownID;
-			msg_v.usePose = false;
-			vrtPub->publish(msg_v);
+			if (state[vision]) {
+				msg_v.receiverID = ownID;
+				msg_v.usePose = false;
+				vrtPub->publish(msg_v);
+				LED_Vision.setValue(high);
+			} else {
+				LED_Vision.setValue(low);
+			}
 		}
 
-		if (msg_send[power] == true) {
-			msg_send[power] = false;
+		if (newstate[power] != state[power]) {
+			state[power] = newstate[power];
 
+			if (state[power]) {
+				std_msgs::Empty msg;
+				flPub->publish(msg);
+				LED_Power.setValue(high);
+			} else {
+				LED_Power.setValue(low);
+			}
 		}
 
 		threw[4].notify = false;
@@ -258,6 +261,7 @@ int main(int argc, char** argv) {
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
+	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
 	//ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
 
 	sc = supplementary::SystemConfig::getInstance();
@@ -266,11 +270,13 @@ int main(int argc, char** argv) {
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
-	thread th_switches(getSwitches, &brtPub, &vrtPub);
+	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
 	thread th_adns3080(getOptical, &mbcPub);
 	//thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
+	ShovelSelect.setRunState(stop);
+	ShovelSelect.setSpaceRatioTime(0);
 	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
 	ShovelSelect.setSpaceRatioTime(1500000);			// in us - Werte zwischen 1ms und 2ms
 	shovel.enabled = false;
