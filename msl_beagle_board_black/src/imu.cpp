@@ -35,8 +35,8 @@ bool IMU::init() {
 	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
 
 	// Enable Magnet & Temp
-	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0x80);			// high-pass Filter: Normal Mode & Continuous Conversation
+	i2c->writeByte(CTRL_REG5_XM, 0xF0);			// Magnet Frequecy: 100Hz & high resolution
+	i2c->writeByte(CTRL_REG7_XM, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
 
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
