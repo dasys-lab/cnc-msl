@@ -41,6 +41,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardReceive.h"
 
+#include  "Plans/Dribble/DribbleControl.h"
+
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
 #include  "Plans/Attack/AlignAndPassRapid.h"
@@ -214,6 +216,11 @@ namespace alica
             case 1428509534191:
 
                 return make_shared<StandardReceive>();
+                break;
+
+            case 1449742099555:
+
+                return make_shared<DribbleControl>();
                 break;
 
             case 1414752423981:

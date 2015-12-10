@@ -10,6 +10,7 @@
   <states id="1436268931449" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">AlignAndPassRapid.beh#1436269080263</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1436268942088</inTransitions>
     <outTransitions>#1436268944412</outTransitions>
   </states>

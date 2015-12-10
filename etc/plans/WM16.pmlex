@@ -172,4 +172,8 @@
     <key href="Attack/AttackPlay.pml#1434045709191"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -31,9 +31,10 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         auto egoX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
         auto egoY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
-        shared_ptr <geometry::CNPoint2D> fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+        shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
 
-        mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (egoX - 100, egoY), fieldCenterTarget, 100, 0);
+        mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (egoX - 100, egoY), fieldCenterTarget,
+                                            100, 0);
 
         send(mc);
 
