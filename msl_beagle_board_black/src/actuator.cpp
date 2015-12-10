@@ -8,6 +8,7 @@
 
 #include "actuator.h"
 #include "std_msgs/Empty.h"
+#include "msl_actuator_msgs/IMUData.h"
 
 using namespace std;
 using namespace BlackLib;
@@ -262,7 +263,7 @@ int main(int argc, char** argv) {
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
 	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
-	//ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
+	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 10);
 
 	sc = supplementary::SystemConfig::getInstance();
 
@@ -272,7 +273,7 @@ int main(int argc, char** argv) {
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
 	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
 	thread th_adns3080(getOptical, &mbcPub);
-	//thread th_imu(getIMU, &imuPub);
+	thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
 	ShovelSelect.setRunState(stop);
@@ -289,6 +290,8 @@ int main(int argc, char** argv) {
 	adns3080.adns_init();
 
 	usleep(50000);
+
+        LED_Power.setValue(high);
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -312,6 +315,8 @@ int main(int argc, char** argv) {
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+	LED_Power.setValue(low);
+
 
 	return 0;
 }

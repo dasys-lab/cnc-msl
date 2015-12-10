@@ -300,7 +300,8 @@ namespace alica
 
         //arithmetic Average for Speed Start
 
-        
+        cout << "aritAverageSpeed anfang" << endl;
+
         double arithmeticAverageSpeed = 0.0;
         double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
         //double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
@@ -325,6 +326,7 @@ namespace alica
 
         //arithmetic Average for Speed End
 
+        cout << "Z:324 speed diff 4 acceleration" << endl;
         
         //Speed Difference for acceleration Start
         double eFunktionAcceleration;
@@ -337,12 +339,13 @@ namespace alica
             speedDifference = 1;
         }
 
-        
+        cout << "Z:336 speedDifference : " << speedDifference << endl;
+
         //Speed Difference for acceleration End
 
         ////arithmetic average speed difference Start
 
-
+        cout << "arithmetic average speed difference Start";
         double arithmeticAverageSpeedDifference = 0.0;
 
         if (arithmeticAverageBoxSpeedDifference.size() == 5)
@@ -366,6 +369,7 @@ namespace alica
         }
 
         //Exp Funktion for traction Start
+        cout << "Z:366 Exp Funktion for traction Start" << endl;
 
         double feedForwardLeft, feedForwardRight;
         double KvLeft, KvRight;
@@ -376,13 +380,21 @@ namespace alica
         double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
                                                                                  NULL);
         double funktionLeft = 0, funktionRight = 0;
+        cout << "Z:377 Exp Funktion for traction end" << endl;
+        //für fehlersuche ausk. double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
+        // double eFunktion = valueExpFunktion * (0.0184 + 0.039637 * exp(-0.003 * arithmeticAverageSpeed));
 
-        
+        // cout << "exp Funktion : " << eFunktion << endl;
+        //Exp Funktion for traction End
+        //Funktion for drive with differt angles start
+        double x = angle; // max(min(angle, 3.14), -3.14);
+        int counter = 1;
+        cout << "vor den Splines left" << endl;
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
         a = max(min(angle, 3.14), -3.14);
         t=wm->rawSensorData.getOwnVelocityMotion()->translation;
-        int counter = 1;
+        counter = 1;
 
         splines::spline leftMotor;
 
@@ -402,7 +414,7 @@ namespace alica
         }
         leftMotor.set_points(XLeft, YLeft);
 
-
+        cout << "vor der splines right" << endl;
         splines::spline rightMotor;
 
         vector<double> XRight, YRight;
@@ -420,6 +432,11 @@ namespace alica
             counter++;
         }
 
+        cout << "Z: 420 vor rightMotorset" << endl;
+
+        rightMotor.set_points(XRight, YRight);
+
+        cout << "Z: 424 ende der splines right" << endl;
 
         rightMotor.set_points(XRight, YRight);
 
@@ -436,6 +453,17 @@ namespace alica
                             (std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
         }
 
+//<<<<<<< HEAD
+//        cout << "Z: 431 ende der  friction" << endl;
+//        frictionSpline.set_points(XFric, YFric);
+//        cout << "Z: 431 ende der  friction 1" << endl;
+//
+//        FunktionValuesRight = rightMotor(x);
+//        cout << "Z: 431 ende der  friction 2" << endl;
+//
+//        FunktionValuesLeft = leftMotor(x);
+//        cout << "Z: 431 ende der  friction 3" << endl;
+//=======
 
         frictionSpline.set_points(XFric, YFric);
 

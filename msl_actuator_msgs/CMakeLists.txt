@@ -65,6 +65,7 @@ add_message_files(
   RawOdometryInfo.msg
   ShovelSelectCmd.msg
   VisionRelocTrigger.msg
+  IMUData.msg
 )
 
 ## Generate services in the 'srv' folder
