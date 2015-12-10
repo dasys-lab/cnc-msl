@@ -4,7 +4,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <SystemConfig.h>
 
-namespace rqt_msl_joystick
+namespace msl_joystick
 {
 
 	using namespace std;
@@ -490,5 +490,5 @@ namespace rqt_msl_joystick
 
 } // namespace msl_keyboard_joystick
 
-PLUGINLIB_EXPORT_CLASS(rqt_msl_joystick::Joystick, rqt_gui_cpp::Plugin)
+PLUGINLIB_EXPORT_CLASS(msl_joystick::Joystick, rqt_gui_cpp::Plugin)
 

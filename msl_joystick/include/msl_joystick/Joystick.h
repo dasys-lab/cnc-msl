@@ -1,5 +1,5 @@
-#ifndef rqt_msl_joystick__Joystick_H
-#define rqt_msl_joystick__Joystick_H
+#ifndef msl_joystick__Joystick_H
+#define msl_joystick__Joystick_H
 //#define RQT_MSL_JOYSTICK_DEBUG
 
 #include <rqt_gui_cpp/plugin.h>
@@ -17,7 +17,7 @@
 
 
 
-namespace rqt_msl_joystick
+namespace msl_joystick
 {
 	using namespace std;
 
@@ -100,4 +100,4 @@ namespace rqt_msl_joystick
 
 }
 
-#endif // rqt_msl_joystick__Joystick_H
+#endif // msl_joystick__Joystick_H

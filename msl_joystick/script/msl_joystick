@@ -5,4 +5,4 @@ import sys
 from rqt_gui.main import Main
 
 main = Main()
-sys.exit(main.main(sys.argv, standalone='rqt_msl_joystick/Joystick'))
+sys.exit(main.main(sys.argv, standalone='msl_joystick/Joystick'))
