@@ -3,6 +3,7 @@
   <conditions xsi:type="alica:RuntimeCondition" id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
     <plans xsi:type="alica:BehaviourConfiguration">DribbleToAttackPoint.beh#1436855860607</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050622698</inTransitions>
     <inTransitions>#1434050639119</inTransitions>
     <inTransitions>#1434050649347</inTransitions>
@@ -13,18 +14,21 @@
   </states>
   <states id="1434050474119" name="AlignToGoal" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AlignToGoal.beh#1415205285582</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050619363</inTransitions>
     <outTransitions>#1434050621017</outTransitions>
     <outTransitions>#1434050630827</outTransitions>
   </states>
   <states id="1434050491040" name="Kick" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GoalKick.beh#1415205578139</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050621017</inTransitions>
     <outTransitions>#1434050622698</outTransitions>
     <outTransitions>#1434050628706</outTransitions>
   </states>
   <states id="1434050502701" name="AttackAgain" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050628706</inTransitions>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>
@@ -36,12 +40,14 @@
   </states>
   <states id="1434050522682" name="ProtectBall" comment="">
     <plans xsi:type="alica:Plan">ProtectBall.pml#1449151802193</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050674494</inTransitions>
     <inTransitions>#1434050686620</inTransitions>
     <outTransitions>#1434050681521</outTransitions>
   </states>
   <states id="1434050541225" name="TurnOneEighty" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">OneEighty.beh#1434650910857</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050647042</inTransitions>
     <inTransitions>#1434050655141</inTransitions>
     <outTransitions>#1434050649347</outTransitions>

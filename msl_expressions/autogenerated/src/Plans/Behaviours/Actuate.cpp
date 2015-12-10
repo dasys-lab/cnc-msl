@@ -44,74 +44,69 @@ namespace alica
 
         //PD Regler Anfang
         //PIDControllerLeft
-        
-         const double Ki =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
-         const double Kd =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
-         const double Kp = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
-         
-         double AbweichungLeft = 0.0;
-         double Abweichung_SummeLeft = 0.0;
-         double Abweichung_AltLeft = 0.0;
-         double StellwertLeft = 0.0; 
-       	 double Sollwert;
-	 const double setPointLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointLeft", NULL);
-        
-         
-	if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)<0)
-	{
-	Sollwert=25.0;
-	}
-	
-	if(cos(wm->rawSensorData.getOwnVelocityMotion()->angle)>0)
+
+        const double Ki = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
+        const double Kd = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
+        const double Kp = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
+
+        double AbweichungLeft = 0.0;
+        double Abweichung_SummeLeft = 0.0;
+        double Abweichung_AltLeft = 0.0;
+        double StellwertLeft = 0.0;
+        double Sollwert;
+        const double setPointLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointLeft", NULL);
+
+        if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) < 0)
         {
-        Sollwert=70;
+            Sollwert = 25.0;
         }
 
-	
-         if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)&&(wm->rawSensorData.getOwnVelocityMotion()->translation>500))
+        if (cos(wm->rawSensorData.getOwnVelocityMotion()->angle) > 0)
         {
-         
-         Abweichung_SummeLeft += AbweichungLeft;
-         AbweichungLeft = -1 * (setPointLeft - wm->rawSensorData.getOpticalFlowQoS());
-         StellwertLeft = Kp * AbweichungLeft +left;
-         StellwertLeft += Ki * Abweichung_SummeLeft;
-         StellwertLeft += Kd * (AbweichungLeft - Abweichung_AltLeft);
-         
-         Abweichung_AltLeft = AbweichungLeft;
-         left=StellwertLeft;
+            Sollwert = 70;
+        }
 
-	 };
-         
-         //PIDControllerRight
-         
-       
-         
-         const double setPointRight =(*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointRight", NULL);
-         
-         
-         double AbweichungRight = 0.0;
-         double Abweichung_SummeRight = 0.0;
-         double Abweichung_AltRight = 0.0;
-         double StellwertRight = 0.0;
-         
-         if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)&&(wm->rawSensorData.getOwnVelocityMotion()->translation>500))
-         {
-         Abweichung_SummeRight += AbweichungRight;
-         AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
-         StellwertRight = Kp * AbweichungRight + right;
-         StellwertRight += Ki * Abweichung_SummeRight;
-         StellwertRight += Kd * (AbweichungRight - Abweichung_AltRight);
-         
-         Abweichung_AltRight = AbweichungRight;
-         right=StellwertRight;
-	
-	 };
-         
-   
-         
-         //PD Regler Ende
-        
-	cout<<"left:  "<<left<<"    Righ: "<<right<<endl;
+        if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)
+                && (wm->rawSensorData.getOwnVelocityMotion()->translation > 500))
+        {
+
+            Abweichung_SummeLeft += AbweichungLeft;
+            AbweichungLeft = -1 * (setPointLeft - wm->rawSensorData.getOpticalFlowQoS());
+            StellwertLeft = Kp * AbweichungLeft + left;
+            StellwertLeft += Ki * Abweichung_SummeLeft;
+            StellwertLeft += Kd * (AbweichungLeft - Abweichung_AltLeft);
+
+            Abweichung_AltLeft = AbweichungLeft;
+            left = StellwertLeft;
+
+        };
+
+        //PIDControllerRight
+
+        const double setPointRight = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointRight", NULL);
+
+        double AbweichungRight = 0.0;
+        double Abweichung_SummeRight = 0.0;
+        double Abweichung_AltRight = 0.0;
+        double StellwertRight = 0.0;
+
+        if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)
+                && (wm->rawSensorData.getOwnVelocityMotion()->translation > 500))
+        {
+            Abweichung_SummeRight += AbweichungRight;
+            AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
+            StellwertRight = Kp * AbweichungRight + right;
+            StellwertRight += Ki * Abweichung_SummeRight;
+            StellwertRight += Kd * (AbweichungRight - Abweichung_AltRight);
+
+            Abweichung_AltRight = AbweichungRight;
+            right = StellwertRight;
+
+        };
+
+        //PD Regler Ende
+
+        cout << "left:  " << left << "    Righ: " << right << endl;
         cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
         cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
@@ -321,13 +316,13 @@ namespace alica
 
         arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
-        cout<<" Speed Approx : " << arithmeticAverageSpeed << " <=> real "
+        cout << " Speed Approx : " << arithmeticAverageSpeed << " <=> real "
                 << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
         //arithmetic Average for Speed End
 
         cout << "Z:324 speed diff 4 acceleration" << endl;
-        
+
         //Speed Difference for acceleration Start
         double eFunktionAcceleration;
         double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -373,7 +368,7 @@ namespace alica
 
         double feedForwardLeft, feedForwardRight;
         double KvLeft, KvRight;
-        double a,t;
+        double a, t;
         double angle = wm->rawSensorData.getOwnVelocityMotion()->angle;
 
         double valueExpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.valueExpFunktion", NULL);
@@ -393,7 +388,7 @@ namespace alica
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
         a = max(min(angle, 3.14), -3.14);
-        t=wm->rawSensorData.getOwnVelocityMotion()->translation;
+        t = wm->rawSensorData.getOwnVelocityMotion()->translation;
         counter = 1;
 
         splines::spline leftMotor;
@@ -440,7 +435,6 @@ namespace alica
 
         rightMotor.set_points(XRight, YRight);
 
-
         splines::spline frictionSpline;
         vector<double> XFric, YFric;
         for (int i = 1; i <= 4; i++)
@@ -471,14 +465,17 @@ namespace alica
         FunktionValuesLeft = leftMotor(a);
         frictionValue = frictionSpline(t);
 
-        cout << "FunktionValuesRight: "<<FunktionValuesRight<<endl<<"FunktionValuesLeft: "<<FunktionValuesLeft<<endl;
-        cout<<"FrictionValue: " << frictionValue<<endl ;
-
+        cout << "FunktionValuesRight: " << FunktionValuesRight << endl << "FunktionValuesLeft: " << FunktionValuesLeft
+                << endl;
+        cout << "FrictionValue: " << frictionValue << endl;
 
         double rotationLeft = 0.0;
         double rotationRight = 0.0;
 
-        if (((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)&&(wm->rawSensorData.getOwnVelocityMotion()->translation<700))||((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.8)&&(wm->rawSensorData.getOwnVelocityMotion()->translation>700)))
+        if (((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
+                && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
+                || ((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.8)
+                        && (wm->rawSensorData.getOwnVelocityMotion()->translation > 700)))
         {
 
             rotationLeft = -wm->rawSensorData.getOwnVelocityMotion()->rotation * 35 - 10;
@@ -499,7 +496,10 @@ namespace alica
             }
         }
 
-          if (((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)&&(wm->rawSensorData.getOwnVelocityMotion()->translation<700))||((wm->rawSensorData.getOwnVelocityMotion()->rotation <-0.8)&&(wm->rawSensorData.getOwnVelocityMotion()->translation>700)))
+        if (((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
+                && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
+                || ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.8)
+                        && (wm->rawSensorData.getOwnVelocityMotion()->translation > 700)))
 
         {
 
@@ -533,7 +533,6 @@ namespace alica
         KvRight = (0.9 * frictionValue * FunktionValuesRight + rotationRight);
         KvLeft = (0.9 * frictionValue * FunktionValuesLeft + rotationLeft);
 
-        
         cout << "KvLeft : " << KvLeft << endl;
         cout << "KvRight : " << KvRight << endl;
 

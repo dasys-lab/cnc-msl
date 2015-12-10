@@ -34,6 +34,7 @@ namespace msl
 		Ball(MSLWorldModel* wm, int ringbufferLength);
 		virtual ~Ball();
 		bool haveBall();
+		bool haveBallDribble(bool hadBefore);
 
 		shared_ptr<geometry::CNPoint2D> getVisionBallPosition(int index = 0);
 		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getVisionBallPositionAndCertaincy(int index = 0);
@@ -52,6 +53,8 @@ namespace msl
 		shared_ptr<bool> getOppBallPossession(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getSharedBallPosition();
 		double getBallDiameter();
+		bool simpleHaveBallDribble(bool hadBefore);
+		bool hadBefore;
 
 	private:
 		ObjectContainer ballBuf;
@@ -65,7 +68,6 @@ namespace msl
 		double HAVE_BALL_MAX_ANGLE_DELTA;
 		double BALL_DIAMETER;
 		int hasBallIteration;
-		bool hadBefore;
 		bool hasBall; /**< True if the local robot has the ball */
 		double haveBallDistanceDynamic;
 		unsigned long maxInformationAge = 1000000000;
@@ -79,9 +81,9 @@ namespace msl
 		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		bool robotHasBall(int robotId);
 		bool oppHasBall(msl_sensor_msgs::SharedWorldInfo data);
-
 		Point allo2Ego(Point p, Position pos);
 		Velocity allo2Ego(Velocity vel, Position pos);
+		double haveDistance;
 };
 
 } /* namespace alica */
