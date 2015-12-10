@@ -159,7 +159,6 @@ void IMU::getMagnet() {
 	magnet.y = (((int16_t) val[3] << 8) | val[2]) >> 4;
 	magnet.z = (((int16_t) val[5] << 8) | val[4]) >> 4;
 }
-}
 
 void IMU::getTemp() {
 	uint8_t val[2] = { 0x00, 0x00 };
