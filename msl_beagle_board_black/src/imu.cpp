@@ -152,9 +152,13 @@ void IMU::getMagnet() {
 		val[i] = i2c->readByte(MAGNET_OUT_X + i);
 	}
 
-	magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
+	/*magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
 	magnet.y = (((int16_t) val[3] << 8) | val[2]) * magnet.sense;
-	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;
+	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;*/
+	magnet.x = (((int16_t) val[1] << 8) | val[0]) >> 4;
+	magnet.y = (((int16_t) val[3] << 8) | val[2]) >> 4;
+	magnet.z = (((int16_t) val[5] << 8) | val[4]) >> 4;
+}
 }
 
 void IMU::getTemp() {

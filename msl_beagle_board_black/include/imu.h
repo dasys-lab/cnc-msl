@@ -23,9 +23,9 @@ const uint8_t ACCEL_OUT_Z			= 0x2C;
 const uint8_t GYRO_OUT_X			= 0x28;
 const uint8_t GYRO_OUT_Y			= 0x2A;
 const uint8_t GYRO_OUT_Z			= 0x2C;
-const uint8_t MAGNET_OUT_X			= 0x08;
-const uint8_t MAGNET_OUT_Y			= 0x0A;
-const uint8_t MAGNET_OUT_Z			= 0x0C;
+const uint8_t MAGNET_OUT_X			= 0x03;
+const uint8_t MAGNET_OUT_Y			= 0x05;
+const uint8_t MAGNET_OUT_Z			= 0x07;
 const uint8_t TEMP_OUT				= 0x05;
 
 const uint8_t CTRL_REG0_XM			= 0x1F;
