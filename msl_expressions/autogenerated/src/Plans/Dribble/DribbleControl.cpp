@@ -171,12 +171,12 @@ namespace alica
 	void DribbleControl::readConfigParameters()
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-		handlerSpeedFactor = (*sys)["Actuation"]->get<double>("Dribble.SpeedFactor");
-		speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall");
-		slowTranslation = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslation");
-		slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed");
-		curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor");
-		orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor");
+		handlerSpeedFactor = (*sys)["Actuation"]->get<double>("Dribble.SpeedFactor", NULL);
+		speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+		slowTranslation = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslation", NULL);
+		slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
+		curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);
+		orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
