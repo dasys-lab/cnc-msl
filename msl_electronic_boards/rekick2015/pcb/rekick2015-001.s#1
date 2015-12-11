@@ -20142,8 +20142,12 @@ NS Package M08A</description>
 <part name="R103" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
 <part name="R105" library="rcl" deviceset="R-EU_" device="R0805" value="1k"/>
 <part name="R106" library="rcl" deviceset="R-EU_" device="R0805" value="1"/>
-<part name="D102" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V"/>
-<part name="D103" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V"/>
+<part name="D102" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V">
+<attribute name="FARNELL" value="2069513"/>
+</part>
+<part name="D103" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V">
+<attribute name="FARNELL" value="2069513"/>
+</part>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
 </parts>
@@ -21076,8 +21080,12 @@ NS Package M08A</description>
 <instance part="R103" gate="G$1" x="66.04" y="121.92" rot="R90"/>
 <instance part="R105" gate="G$1" x="111.76" y="144.78"/>
 <instance part="R106" gate="G$1" x="111.76" y="127"/>
-<instance part="D102" gate="G$1" x="119.38" y="139.7" rot="R90"/>
-<instance part="D103" gate="G$1" x="119.38" y="121.92" rot="R90"/>
+<instance part="D102" gate="G$1" x="119.38" y="139.7" rot="R90">
+<attribute name="FARNELL" x="119.38" y="139.7" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
+</instance>
+<instance part="D103" gate="G$1" x="119.38" y="121.92" rot="R90">
+<attribute name="FARNELL" x="119.38" y="121.92" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
+</instance>
 <instance part="GND8" gate="1" x="119.38" y="132.08"/>
 <instance part="GND9" gate="1" x="119.38" y="114.3"/>
 </instances>
