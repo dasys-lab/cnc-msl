@@ -17,6 +17,13 @@ namespace alica
         double calibPosMotionX;
         double calibOldPosMotionX = 0;
         double calibOldPosMotionY = 0;
+        double wayX;
+        double wayY;
+        double correctedWayX;
+        double correctedWayY;
+        double diffX;
+        double diffY;
+
         shared_ptr<geometry::CNPosition> calibPosMotion;
         shared_ptr<geometry::CNPosition> calibOldPosMotion;
         shared_ptr<geometry::CNPosition> calibPosVision;

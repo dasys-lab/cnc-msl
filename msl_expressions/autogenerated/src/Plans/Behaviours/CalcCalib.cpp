@@ -77,6 +77,12 @@ namespace alica
         //std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
         std::cout << "" << endl;
 
+        wayX = calibPosMotionX - calibOldPosMotionX;
+        wayY = calibPosMotionY - calibOldPosMotionY;
+
+        correctedWayX = correctedWayX + wayX/cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+        correctedWayY = correctedWayY + wayX * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
@@ -86,6 +92,10 @@ namespace alica
     void CalcCalib::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
+
+    	diffX = correctedWayX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
+    	diffY = correctedWayY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
             auto deltax = this->wm->rawSensorData.getOwnPositionMotion(0)->x
@@ -107,8 +117,8 @@ namespace alica
             std::cout << "X: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "Y: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
             std::cout << "Differenzen: " << std::endl;
-            std::cout << "X: " << deltax << std::endl;
-            std::cout << "Y: " << deltay << std::endl;
+            std::cout << "X: " << diffX << std::endl;
+            std::cout << "Y: " << diffY << std::endl;
             std::cout << "Länge: " << this->wm->calibData.length << std::endl;
             std::cout << "Faktor: " << (sqrt(deltax * deltax + deltay * deltay) / this->wm->calibData.length) + 1
                     << std::endl;
@@ -116,6 +126,9 @@ namespace alica
             std::cout << "oldposMotion: " << this->wm->rawSensorData.getOwnPositionMotion(1)->x << std::endl;
             std::cout << "posVision: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "oldposVision: " << this->wm->rawSensorData.getOwnPositionVision(1)->x << std::endl;
+            std::cout << "correctedWayX : " << correctedWayX << std::endl;
+            std::cout << "correctedWayY : " << correctedWayY << std::endl;
+
             std::cout << "" << std::endl;
         }
 
