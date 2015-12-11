@@ -1,8 +1,8 @@
 #!/bin/bash
-export workHome="$ES_ROOT"
-updateGlobals="$ES_ROOT/useful-stuff/shell-scripts/./update-globals.sh"
+export workHome="$DOMAIN_FOLDER"
+updateGlobals="$DOMAIN_FOLDER/shell-scripts/./update-globals.sh"
 file="$workHome/etc/Globals.conf"
-switchFile="$workHome/useful-stuff/shell/scripts/SwitchGoalTeamColour.sh"
+switchFile="$workHome/shell/scripts/SwitchGoalTeamColour.sh"
 checkBlue=`grep "OwnGoalColour = blue" $file`
 checkBlueNo=`grep "#OwnGoalColour = blue" $file`
 checkYellow=`grep "OwnGoalColour = yellow" $file`

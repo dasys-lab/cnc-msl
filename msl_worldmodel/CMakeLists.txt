@@ -4,12 +4,17 @@ project(msl_worldmodel)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine rqt_robot_control constraintsolver) 
+find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver) 
 find_package(CGAL REQUIRED COMPONENTS Core)
  include(${CGAL_USE_FILE})
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+	set(CMAKE_ECLIPSE_VERSION "4.5" CACHE STRING "Eclipse version" FORCE)
+	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
+endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")

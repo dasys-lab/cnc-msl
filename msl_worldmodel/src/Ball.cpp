@@ -21,11 +21,13 @@
 
 namespace msl
 {
-	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) : ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30)
+	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
+			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
 		hasBallIteration = 0;
+		haveDistance = 0;
 		this->wm = wm;
 		hasBall = false;
 		sc = SystemConfig::getInstance();
@@ -40,7 +42,6 @@ namespace msl
 	Ball::~Ball()
 	{
 	}
-
 
 	shared_ptr<geometry::CNPoint2D> Ball::getVisionBallPosition(int index)
 	{
@@ -75,7 +76,6 @@ namespace msl
 		ret->second = x->certainty;
 		return ret;
 	}
-
 
 	shared_ptr<geometry::CNPoint2D> Ball::getAlloBallPosition()
 	{
@@ -122,38 +122,41 @@ namespace msl
 		return hasBallIteration > 0;
 	}
 
-	void Ball::updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel, double certainty)
+	void Ball::updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel,
+								double certainty)
 	{
-			InfoTime time = wm->getTime();
+		InfoTime time = wm->getTime();
 
-			shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<
-					InformationElement<geometry::CNPoint2D>>(ballPos, time);
-			ball->certainty = certainty;
-			ballPosition.add(ball);
+		shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<InformationElement<geometry::CNPoint2D>>(
+				ballPos, time);
+		ball->certainty = certainty;
+		ballPosition.add(ball);
 
-
-			shared_ptr<InformationElement<geometry::CNVelocity2D>> ballV = make_shared<
-					InformationElement<geometry::CNVelocity2D>>(ballVel, time);
-			ballV->certainty = certainty;
-			ballVelocity.add(ballV);
-			updateHaveBall();
+		shared_ptr<InformationElement<geometry::CNVelocity2D>> ballV = make_shared<
+				InformationElement<geometry::CNVelocity2D>>(ballVel, time);
+		ballV->certainty = certainty;
+		ballVelocity.add(ballV);
+		updateHaveBall();
 	}
 
 	void Ball::updateOnLocalizationData(unsigned long long imageTime)
 	{
-		if(lastUpdateReceived>0 && lastUpdateReceived == imageTime) {
+		if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
+		{
 			processHypothesis();
 		}
 	}
 
 	void Ball::updateOnBallHypothesisList(unsigned long long imageTime)
 	{
-		if(lastUpdateReceived>0 && lastUpdateReceived == imageTime) {
+		if (lastUpdateReceived > 0 && lastUpdateReceived == imageTime)
+		{
 			processHypothesis();
 		}
 	}
 
-	void Ball::processHypothesis() {
+	void Ball::processHypothesis()
+	{
 		static int noBallCycles = 0;
 		bool ballIntegrated = false;
 
@@ -163,8 +166,10 @@ namespace msl
 		// Integrate balls from directed camera
 		ObservedPoint * opDirected = SharedMemoryHelper::getInstance()->readDirectedBallPosition();
 
-		for(int i = 0; i < 10; i++){
-			if(opDirected[i].valid){
+		for (int i = 0; i < 10; i++)
+		{
+			if (opDirected[i].valid)
+			{
 				BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
 			}
 		}
@@ -172,8 +177,10 @@ namespace msl
 		// Integrate balls from Kinect
 		opDirected = SharedMemoryHelper::getInstance()->readKinectBallPosition();
 
-		for(int i = 0; i < 10; i++){
-			if(opDirected[i].valid){
+		for (int i = 0; i < 10; i++)
+		{
+			if (opDirected[i].valid)
+			{
 				BallIntegrator::getInstance()->integratePoint(opDirected[i], 1000.0);
 			}
 		}
@@ -189,57 +196,71 @@ namespace msl
 		//Its clearly wring that both have the same time but we don't know anything better here! :(
 		TimeHelper::getInstance()->setVisionTimeDirected(ballList->imageTime);
 		TimeHelper::getInstance()->setVisionTimeOmniCam(ballList->imageTime);
-		if(ballList->hypothesis.size()==0)BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
+		if (ballList->hypothesis.size() == 0)
+			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
 		bool inField;
 
-		for(int i=0; i<ballList->hypothesis.size(); i++) {
+		for (int i = 0; i < ballList->hypothesis.size(); i++)
+		{
 			double relFactor = 200;
 			ballPos.x = ballList->hypothesis[i].egoPosition.x;
 			ballPos.y = ballList->hypothesis[i].egoPosition.y;
 			ballPos.z = ballList->hypothesis[i].egoPosition.z;
 
-			if(ownPosition == nullptr){
+			if (ownPosition == nullptr)
+			{
 				inField = true;
 			}
-			else {
+			else
+			{
 				double alloBallPosX = ownPosition->x;
 				double alloBallPosY = ownPosition->y;
 
-				alloBallPosX += cos(ownPosition->theta)*p.x - sin(ownPosition->theta)*p.y;
-				alloBallPosY += sin(ownPosition->theta)*p.x + cos(ownPosition->theta)*p.y;
+				alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
+				alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
 
-				if(fabs(alloBallPosX) < MSLFootballField::FieldLength/2.0 + relFactor &&
-				 fabs(alloBallPosY) < MSLFootballField::FieldWidth/2.0 + relFactor){
+				if (fabs(alloBallPosX) < MSLFootballField::FieldLength / 2.0 + relFactor
+						&& fabs(alloBallPosY) < MSLFootballField::FieldWidth / 2.0 + relFactor)
+				{
 					inField = true;
 				}
 			}
 
-			if(!inField) continue;
-			if(p.z < -300) {
+			if (!inField)
+				continue;
+			if (p.z < -300)
+			{
 				continue;
 			}
 
-			if(p.z > 350) continue;
-			if(p.x*p.x+p.y*p.y>8000*8000) continue;
+			if (p.z > 350)
+				continue;
+			if (p.x * p.x + p.y * p.y > 8000 * 8000)
+				continue;
 			//if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
 
-			ballPos.confidence = 0.3 + (ballList->hypothesis[i].errors*0.1);
-			if(ballList->hypothesis[i].radius>5) ballPos.confidence += 0.2;
-			if(p.x*p.x+p.y*p.y < 1000*1000) ballPos.confidence = 0.8;
-			if(p.z > 350) {
+			ballPos.confidence = 0.3 + (ballList->hypothesis[i].errors * 0.1);
+			if (ballList->hypothesis[i].radius > 5)
+				ballPos.confidence += 0.2;
+			if (p.x * p.x + p.y * p.y < 1000 * 1000)
+				ballPos.confidence = 0.8;
+			if (p.z > 350)
+			{
 				ballPos.confidence *= 0.9;
 
 			}
-			if(ballPos.confidence > 0.9) ballPos.confidence = 0.9;
+			if (ballPos.confidence > 0.9)
+				ballPos.confidence = 0.9;
 
 			ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
 
 			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
 			ballIntegrated = true;
-			noBallCycles=0;
+			noBallCycles = 0;
 		}
-		if(!ballIntegrated) noBallCycles++;
+		if (!ballIntegrated)
+			noBallCycles++;
 
 		BallIntegrator::getInstance()->decreaseDirtyPointCertainty();
 		ObservedPoint op = BallIntegrator::getInstance()->getPoint();
@@ -247,27 +268,32 @@ namespace msl
 
 		ObjectContainer * currBallBuf = BallIntegrator::getInstance()->getContainer();
 
-		if(currBallBuf == NULL){
+		if (currBallBuf == NULL)
+		{
 			currBallBuf = &ballBuf;
 		}
 		currBallBuf->invalidate(400);
 
-		double dist = sqrt( (op.x - mv.point.x)*(op.x - mv.point.x) + (op.y - mv.point.y)*(op.y - mv.point.y) );
-		mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(), currBallBuf->getStartIndex(), currBallBuf->getLastIndex(), 0.3E07);
+		double dist = sqrt((op.x - mv.point.x) * (op.x - mv.point.x) + (op.y - mv.point.y) * (op.y - mv.point.y));
+		mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+														currBallBuf->getStartIndex(), currBallBuf->getLastIndex(),
+														0.3E07);
 		bool noValidPoint = false;
 
-		if(fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
+		if (fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
 			noValidPoint = true;
 
-
-		ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(), currBallBuf->getStartIndex(), currBallBuf->getLastIndex());
+		ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+																currBallBuf->getStartIndex(),
+																currBallBuf->getLastIndex());
 		geometry::CNPoint3D ballPoint;
 		geometry::CNPoint3D ballVelocity;
 		MovingObject mv2 = mv;
 		mv2.point = allo2Ego(mv.point, BallIntegrator::getInstance()->getRefPosition());
 		mv2.velocity = allo2Ego(mv.velocity, BallIntegrator::getInstance()->getRefPosition());
 
-		if(op.valid && !noValidPoint){
+		if (op.valid && !noValidPoint)
+		{
 			ballPoint.x = (mv2.point.x);
 			ballPoint.y = (mv2.point.y);
 			ballPoint.z = (ze.z);
@@ -473,30 +499,143 @@ namespace msl
 		return BALL_DIAMETER;
 	}
 
-	Point Ball::allo2Ego(Point p, Position pos) {
+	Point Ball::allo2Ego(Point p, Position pos)
+	{
 		Point ego;
 		double x = p.x - pos.x;
 		double y = p.y - pos.y;
 		double angle = atan2(y, x) - pos.heading;
-		double dist = sqrt(x*x + y*y);
+		double dist = sqrt(x * x + y * y);
 
-		ego.x = cos(angle)*dist;
-		ego.y = sin(angle)*dist;
+		ego.x = cos(angle) * dist;
+		ego.y = sin(angle) * dist;
 
 		return ego;
 	}
 
-	Velocity Ball::allo2Ego(Velocity vel, Position pos) {
+	//TODO impelement light barrier and use sim
+	bool Ball::simpleHaveBallDribble(bool hadBefore)
+	{
+//		bool lightBarrierRunning = wm.SimpleMonitor.ActuatorRunning;
+//		if (lightBarrierWasRunning && !lightBarrierRunning)
+//		{
+//			SwitchLightBarrier(false);
+//		}
+//		else if (!lightBarrierWasRunning && lightBarrierRunning)
+//		{
+//			//SwitchLightBarrier(true);
+//		}
+//		if (wm.UseSimulator)
+//		{
+//			if (wm.EgoBallPosition != null)
+//			{
+//				return wm.EgoBallPosition.Distance() < 130;
+//			}
+//			return false;
+//		}
+//		if (HAVE_LIGHT_BARRIER == 1)
+//		{
+//			return HaveBall(wm, true);
+//		}
+//		else
+//		{
+		if (!hadBefore)
+		{
+			haveDistance = 0;
+		}
+		else
+		{
+			haveDistance += 2; //TODO: this won't work, this method is called arbitrarily often in each iteration
+			haveDistance = min(haveDistance, HAVE_BALL_TOLERANCE_DRIBBLE);
+		}
+
+		bool ret = true;
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		if (ballPos == nullptr)
+		{
+			return false;
+		}
+
+		double angle = ballPos->angleTo();
+		double ballDist = ballPos->length();
+
+		double usedKicker;
+//			if ((0.0 <= angle) && (angle < 2 * Math.PI / 3))
+//			{ //Kicker 3
+//				if (hadBefore)
+//				{
+//					if (KICKER3_DISTANCE + haveDistance < ballDist)
+//						ret = false;
+//				}
+//				else if (KICKER3_DISTANCE < ballDist)
+//					ret = false;
+//				usedKicker = KICKER3_ANGLE;
+//			}
+//			else if ((0.0 > angle) && (angle > -2 * Math.PI / 3))
+//			{ //Kicker 2
+//				if (hadBefore)
+//				{
+//					if (KICKER2_DISTANCE + haveDistance < ballDist)
+//						ret = false;
+//				}
+//				else if (KICKER2_DISTANCE < ballDist)
+//					ret = false;
+//				usedKicker = KICKER2_ANGLE;
+//
+//			}
+//			else
+//			{ //Kicker 1
+		if (hadBefore)
+		{
+			if (KICKER_DISTANCE + haveDistance < ballDist)
+			{
+				ret = false;
+			}
+		}
+		else if (KICKER_DISTANCE < ballDist)
+		{
+			ret = false;
+		}
+		usedKicker = KICKER_ANGLE;
+
+//			}
+		//calc angle tolerance to the ball
+		double tmpTol = angle - usedKicker;
+		//Normalize rotation
+		if (tmpTol < -M_PI)
+		{
+			tmpTol += 2.0 * M_PI;
+		}
+		else if (tmpTol > M_PI)
+		{
+			tmpTol -= 2.0 * M_PI;
+		}
+		tmpTol = abs(tmpTol);
+
+		if (tmpTol > HAVE_BALL_MAX_ANGLE_DELTA)
+			ret = false;
+
+		return ret;
+//		}
+	}
+
+	Velocity Ball::allo2Ego(Velocity vel, Position pos)
+	{
 		Velocity ego;
-		double angle = atan2(vel.vy,vel.vx) - pos.heading;
-		double length = sqrt(vel.vx*vel.vx + vel.vy*vel.vy);
-		ego.vx = cos(angle)*length;
-		ego.vy = sin(angle)*length;
+		double angle = atan2(vel.vy, vel.vx) - pos.heading;
+		double length = sqrt(vel.vx * vel.vx + vel.vy * vel.vy);
+		ego.vx = cos(angle) * length;
+		ego.vy = sin(angle) * length;
 		return ego;
 	}
 
+	bool Ball::haveBallDribble(bool hadBefore)
+	{
+		bool ret = (simpleHaveBallDribble(hadBefore) && (hadBefore || this->hasBallIteration > 4));
+		this->hadBefore = ret;
+		return ret;
+	}
 }
-
 
 /* namespace alica */
 

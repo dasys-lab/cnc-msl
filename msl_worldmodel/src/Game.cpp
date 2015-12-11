@@ -67,7 +67,7 @@ namespace msl
 		// TODO Auto-generated destructor stub
 	}
 
-	void Game::onRobotCommand(rqt_robot_control::RobotCommandPtr msg)
+	void Game::onRobotCommand(robot_control::RobotCommandPtr msg)
 	{
 		if (msg->receiverId != 0 && msg->receiverId != wm->getOwnId())
 		{
@@ -77,10 +77,10 @@ namespace msl
 		lock_guard<mutex> lock(refereeMutex);
 		switch (msg->cmd)
 		{
-			case rqt_robot_control::RobotCommand::START:
+			case robot_control::RobotCommand::START:
 				situation = Situation::Start;
 				break;
-			case rqt_robot_control::RobotCommand::STOP:
+			case robot_control::RobotCommand::STOP:
 				situation = Situation::Stop;
 				break;
 		}
