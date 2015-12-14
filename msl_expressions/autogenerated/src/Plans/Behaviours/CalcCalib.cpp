@@ -21,50 +21,15 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-        //if(this->wm->rawSensorData.getOwnPositionMotion(0)->x!= calibPosMotionX || this->wm->rawSensorData.getOwnPositionMotion(0)->y!= calibPosMotionY)
-        //{
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
             calibPosVision = this->wm->rawSensorData.getOwnPositionVision(0);
-            calibOldPosVision = this->wm->rawSensorData.getOwnPositionVision(1);
-
         }
-        //if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->x - this->wm->rawSensorData.getOwnPositionMotion(1)->x) <= 30)
-        //{
+
         //calibPosMotion = this->wm->rawSensorData.getOwnPositionMotion(0);
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-        //calibOldPosMotion = this->wm->rawSensorData.getOwnPositionMotion(1);
-        //calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(1)->x;
-        //}
-        /*else
-         {
 
-         if (calibPosMotion == NULL)
-         {
-         calibPosMotionX = 1;
-         }
-         calibPosMotionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-         calibOldPosMotionX = this->wm->rawSensorData.getOwnPositionVision(1)->x;
-
-         }
-         */
-
-        //if (abs(this->wm->rawSensorData.getOwnPositionMotion(0)->y - this->wm->rawSensorData.getOwnPositionMotion(1)->y) <= 30)
-        //{
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
-        //calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(1)->y;
-        //}
-        /*else
-         {
-         if (calibPosMotion == NULL)
-         {
-         calibPosMotionY = 1;
-         }
-         calibPosMotionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-         calibOldPosMotionY = this->wm->rawSensorData.getOwnPositionVision(1)->y;
-
-         }
-         */
 
         this->wm->calibData.length = this->wm->calibData.length
                 + sqrt((calibPosMotionX - calibOldPosMotionX) * (calibPosMotionX - calibOldPosMotionX)
@@ -106,9 +71,9 @@ namespace alica
             auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
-            /*if (this->wm->calibData.length != 0)
+            if (this->wm->calibData.length != 0)
             {
-                this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
+                this->wm->calibData.calibCoefficient *= SIGN(diffX)*(sqrt(deltax * deltax + deltay * deltay)
                         / this->wm->calibData.length) + 1;
                 //this->wm->calibData.calibCoefficient = 1;
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -116,15 +81,12 @@ namespace alica
                 saveToCalibData.open(filename);
                 saveToCalibData << this->wm->calibData.calibCoefficient;
                 saveToCalibData.close();
-            }*/
-            std::cout << "X: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
-            std::cout << "Y: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
+            }
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
             std::cout << "Y: " << diffY << std::endl;
             std::cout << "Länge: " << this->wm->calibData.length << std::endl;
-            std::cout << "Faktor: " << (sqrt(deltax * deltax + deltay * deltay) / this->wm->calibData.length) + 1
-                    << std::endl;
+            std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
             std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->x << std::endl;
             std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->y << std::endl;
             std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
