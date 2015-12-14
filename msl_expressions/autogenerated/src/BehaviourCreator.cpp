@@ -53,6 +53,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/Pos2Defenders.h"
 
+#include  "Plans/GenericBehaviours/CheckGoalKick.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Attack/Tackle.h"
@@ -250,6 +252,11 @@ namespace alica
             case 1444835591397:
 
                 return make_shared<Pos2Defenders>();
+                break;
+
+            case 1449076029919:
+
+                return make_shared<CheckGoalKick>();
                 break;
 
             case 1434650910857:
