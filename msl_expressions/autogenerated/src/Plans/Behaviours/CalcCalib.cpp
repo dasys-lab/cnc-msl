@@ -89,10 +89,11 @@ namespace alica
             {
                 this->wm->calibData.calibCoefficient = 0.85;
             }
-            if (this->wm->calibData.length > 12000)
+
+            if (this->wm->calibData.length != 0)
             {
-            	if (this->wm->calibData.length != 0)
-            	{
+                if (this->wm->calibData.length > 12000)
+                {
             		if(this->wm->calibData.length < 13200)
             		{
             			this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
@@ -103,7 +104,7 @@ namespace alica
             			this->wm->calibData.calibCoefficient *= -(sqrt(deltax * deltax + deltay * deltay)
             					/ this->wm->calibData.length) + 1;
             		}
-            }
+                 }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
@@ -111,6 +112,13 @@ namespace alica
                 saveToCalibData << this->wm->calibData.calibCoefficient;
                 saveToCalibData.close();
             }
+            else
+				{
+            		correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            		correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+				}
+
+
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
             std::cout << "Y: " << diffY << std::endl;
