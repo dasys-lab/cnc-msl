@@ -40,10 +40,10 @@ namespace alica
         //std::cout << "calibPosVisionX: "<< calibPosVision->x - calibOldPosVision->x<<endl;
         //std::cout << "calibPosVisionY: "<< calibPosVision->y - calibOldPosVision->y<<endl;
         //std::cout << "Theta: "<< this->wm->rawSensorData.getOwnPositionMotion(0)->theta<<endl;
-        std::cout << "" << endl;
-        std::cout << "correctedWayX : " << correctedWayX << std::endl;
-        std::cout << "correctedWayY : " << correctedWayY << std::endl;
-        std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
+        //std::cout << "" << endl;
+        //std::cout << "correctedWayX : " << correctedWayX << std::endl;
+        //std::cout << "correctedWayY : " << correctedWayY << std::endl;
+        //std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
         wayX = calibPosMotionX - calibOldPosMotionX;
         wayY = calibPosMotionY - calibOldPosMotionY;
@@ -70,27 +70,26 @@ namespace alica
                     - this->wm->rawSensorData.getOwnPositionVision(0)->x;
             auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
-
             if(this->wm->calibData.calibCoefficient==0)
             {
                 this->wm->calibData.calibCoefficient = 1;
             }
-
-            if (this->wm->calibData.length != 0)
+            if (this->wm->calibData.length > 12000)
             {
-            	if(diffX<0)
+            	if (this->wm->calibData.length != 0)
             	{
-            		this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
-            				/ this->wm->calibData.length) + 1;
-            	}
-            	else
-		        {
-            		this->wm->calibData.calibCoefficient *= -(sqrt(deltax * deltax + deltay * deltay)
-            		         / this->wm->calibData.length) + 1;
-		        }
+            		if(diffX<0)
+            		{
+            			this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
+            					/ this->wm->calibData.length) + 1;
+            		}
+            		else
+            		{
+            			this->wm->calibData.calibCoefficient *= -(sqrt(deltax * deltax + deltay * deltay)
+            					/ this->wm->calibData.length) + 1;
+            		}
+            }
 
-
-                //this->wm->calibData.calibCoefficient = 1;
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
                 saveToCalibData.open(filename);
