@@ -78,7 +78,7 @@ namespace alica
             {
             	if (this->wm->calibData.length != 0)
             	{
-            		if(diffX<0)
+            		if(this->wm->calibData.length < 13200)
             		{
             			this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
             					/ this->wm->calibData.length) + 1;
