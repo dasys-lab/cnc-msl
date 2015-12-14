@@ -16,12 +16,12 @@ namespace alica
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
         double calibPosMotionY;
         double calibPosMotionX;
-        double calibOldPosMotionX = 0;
-        double calibOldPosMotionY = 0;
-        double wayX;
-        double wayY;
+        double calibOldPosMotionX;
+        double calibOldPosMotionY;
         double correctedWayX;
         double correctedWayY;
+        double correctedPosX;
+        double correctedPosY;
         double diffX;
         double diffY;
 
