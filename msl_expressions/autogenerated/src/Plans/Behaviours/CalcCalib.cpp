@@ -71,13 +71,14 @@ namespace alica
             auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
+            if(this->wm->calibData.calibCoefficient==0)
+            {
+                this->wm->calibData.calibCoefficient = 1;
+            }
+
             if (this->wm->calibData.length != 0)
             {
-            	if(this->wm->calibData.calibCoefficient==0)
-            	{
-            	    this->wm->calibData.calibCoefficient = 1;
-            	}
-            	if(diffX>=0)
+            	if(diffX<0)
             	{
             		this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
             				/ this->wm->calibData.length) + 1;
