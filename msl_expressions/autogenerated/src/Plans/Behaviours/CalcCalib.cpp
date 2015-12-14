@@ -106,7 +106,7 @@ namespace alica
             auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
-            if (this->wm->calibData.length != 0)
+            /*if (this->wm->calibData.length != 0)
             {
                 this->wm->calibData.calibCoefficient = (sqrt(deltax * deltax + deltay * deltay)
                         / this->wm->calibData.length) + 1;
@@ -116,7 +116,7 @@ namespace alica
                 saveToCalibData.open(filename);
                 saveToCalibData << this->wm->calibData.calibCoefficient;
                 saveToCalibData.close();
-            }
+            }*/
             std::cout << "X: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "Y: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
             std::cout << "Differenzen: " << std::endl;
