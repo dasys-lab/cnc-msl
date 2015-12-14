@@ -31,6 +31,8 @@ using namespace std;
 
 #include  "Plans/Example/DriveInSquare.h"
 
+#include  "Plans/Behaviours/AlignExecutor.h"
+
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Actuate.h"
@@ -189,6 +191,11 @@ namespace alica
             case 1433939634320:
 
                 return make_shared<DriveInSquare>();
+                break;
+
+            case 1440600507552:
+
+                return make_shared<AlignExecutor>();
                 break;
 
             case 1413992626194:

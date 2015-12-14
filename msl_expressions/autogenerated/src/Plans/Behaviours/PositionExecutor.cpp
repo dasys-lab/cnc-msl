@@ -51,8 +51,9 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        // get entry point of task name to locate robot with task name
-
+	// get entry point of task name to locate robot with task name
+		
+		
         if (receiverEp != nullptr)
         {
             // get the plan in which the behavior is running
