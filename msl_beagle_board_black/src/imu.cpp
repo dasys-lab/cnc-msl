@@ -7,6 +7,7 @@
 
 
 #include "imu.h"
+#include "msl_actuator_msgs/IMUData.h"
 
 using namespace BlackLib;
 
@@ -34,8 +35,8 @@ bool IMU::init() {
 	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
 
 	// Enable Magnet & Temp
-	i2c->writeByte(CTRL_REG5_XM, 0xF4);			// Magnet Frequecy: 100Hz & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0x80);			// high-pass Filter: Normal Mode & Continuous Conversation
+	i2c->writeByte(CTRL_REG5_XM, 0xF0);			// Magnet Frequecy: 100Hz & high resolution
+	i2c->writeByte(CTRL_REG7_XM, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
 
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
@@ -148,12 +149,22 @@ void IMU::getMagnet() {
 		i2c->setDeviceAddress(ADR_XM);
 	}
 	for(int i=0; i<6; i++) {
-		val[i] = i2c->readByte(MAGNET_OUT_X + i);
+		val[i] = i2c->readByte(0x80 | (MAGNET_OUT_X + i));
 	}
 
-	magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
+	/*magnet.x = (((int16_t) val[1] << 8) | val[0]) * magnet.sense;
 	magnet.y = (((int16_t) val[3] << 8) | val[2]) * magnet.sense;
-	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;
+	magnet.z = (((int16_t) val[5] << 8) | val[4]) * magnet.sense;*/
+	static float _lsm303Mag_Gauss_LSB_XY = 1100.0F;  // Varies with gain
+	static float _lsm303Mag_Gauss_LSB_Z  = 980.0F;   // Varies with gain
+
+	magnet.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	//defines "zeroy" by max-min value
+	magnet.x -= 2650;
+	magnet.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	magnet.y -= 1200;
+	magnet.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	magnet.z = (atan2(magnet.y, magnet.x) * 180) / M_PI;
 }
 
 void IMU::getTemp() {
@@ -172,38 +183,34 @@ void IMU::getTemp() {
 }
 
 void IMU::updateData(timeval time_now) {
-	if(TIMEDIFFMS(time_now, last_updated) > IMU_UPDATE_TIMEOUT) {
-		this->getAccel();
-		this->getGyro();
-		this->getMagnet();
-		this->getTemp();
+	this->getAccel();
+	this->getGyro();
+	this->getMagnet();
+	this->getTemp();
 
-		last_updated = time_now;
-
-		std::cout << "Accel: " << accel.x << " - " << accel.y << " - " << accel.z << std::endl;
-		std::cout << "Gyro: " << gyro.x << " - " << gyro.y << " - " << gyro.z << std::endl;
-		std::cout << "Magnet: " << magnet.x << " - " << magnet.y << " - " << magnet.z << std::endl;
-		std::cout << "Temp: " << temperature << std::endl;
-
-
-	}
+	last_updated = time_now;
 }
 
 void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
-	if(TIMEDIFFMS(time_now, last_sended) > IMU_SEND_TIMEOUT) {
-		// x-, y- und z-Werte von ACCEL, GYRO und MAGNET publishen
-		// Temperatur publishen
+	msl_actuator_msgs::IMUData msg;
 
-		/*msl_actuator_msgs::IMUInfo msg;
+	msg.acceleration.x = accel.x;
+	msg.acceleration.y = accel.y;
+	msg.acceleration.z = accel.z;
+	msg.accelSens = accel.sense;
+	msg.gyro.x = gyro.x;
+	msg.gyro.y = gyro.y;
+	msg.gyro.z = gyro.z;
+	msg.gyroSens = gyro.sense;
+	msg.magnet.x = magnet.x;
+	msg.magnet.y = magnet.y;
+	msg.magnet.z = magnet.z;
+	msg.magnetSens = magnet.sense;
+	msg.temperature = temperature;
+	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 
-		msg.accel = accel;
-		msg.gyro = gyro;
-		msg.magnet = magnet;
-		msg.temperature = temperature;
-
-		imuPub->publish(msg);*/
-		last_sended = time_now;
-	}
+	imuPub->publish(msg);
+	last_sended = time_now;
 }
 
 

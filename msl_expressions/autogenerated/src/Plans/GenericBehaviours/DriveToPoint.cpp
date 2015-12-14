@@ -23,7 +23,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->rawSensorData.getBallPosition();
+        auto ballPos = wm->ball.getEgoBallPosition();
         if (!me.operator bool())
         {
             return;
@@ -39,6 +39,7 @@ namespace alica
          else
          {*/
         mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
+        mc.motion.translation = 500;
         //}
 
         if (egoTarget->length() < 250)
@@ -77,7 +78,7 @@ namespace alica
         {
             cerr << "Parameter does not exist" << endl;
         }
-        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "DefaultVelocity", NULL);
+        defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1417620568675) ENABLED START*/ //Add additional methods here

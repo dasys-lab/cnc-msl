@@ -34,7 +34,7 @@ namespace alica
             return;
         }
 
-        //TODO
+        // TODO Pass message
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         EntryPoint* ep = getParentEntryPoint(taskName);
         if (ep != nullptr)

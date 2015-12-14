@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050491040"/>
-    <value xPos="603" yPos="521" width="65" height="67"/>
+    <value xPos="603" yPos="521" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050502701"/>
@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050522682"/>
-    <value xPos="575" yPos="40" width="91" height="67"/>
+    <value xPos="575" yPos="40" width="91" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050541225"/>
@@ -126,6 +126,14 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/GoalKick.beh#1415205578139"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

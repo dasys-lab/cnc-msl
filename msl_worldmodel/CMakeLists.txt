@@ -4,16 +4,21 @@ project(msl_worldmodel)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine rqt_robot_control)
+find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver) 
 find_package(CGAL REQUIRED COMPONENTS Core)
  include(${CGAL_USE_FILE})
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
+	set(CMAKE_ECLIPSE_VERSION "4.5" CACHE STRING "Eclipse version" FORCE)
+	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
+endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
-
+ 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_worldmodel
@@ -24,6 +29,7 @@ catkin_package(
     msl_sensor_msgs 
     event_handling 
     alica_engine
+    constraintsolver
   DEPENDS cgal
   CFG_EXTRAS ${PROJECT_NAME}-extras.cmake
 )
@@ -36,6 +42,7 @@ catkin_package(
 
 ## Declare a cpp library
  add_library(msl_worldmodel
+   src/MSLConstraintBuilder.cpp
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
@@ -46,6 +53,8 @@ catkin_package(
    src/Game.cpp
    src/Kicker.cpp
    src/KickCurve.cpp
+   src/WhiteBoard.cpp
+   src/Rules.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp
@@ -53,6 +62,13 @@ catkin_package(
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
    src/pathplanner/evaluator/PrefDirEvaluator.cpp
+   src/ballTracking/BallIntegrator.cpp  
+   src/ballTracking/BallZTracker.cpp  
+   src/ballTracking/EgoMotionEstimator.cpp  
+   src/ballTracking/ObjectContainer.cpp  
+   src/ballTracking/ObjectTracker.cpp  
+   src/ballTracking/SharedMemoryHelper.cpp  
+   src/ballTracking/TimeHelper.cpp
  )
 
 ## Add cmake target dependencies of the executable/library

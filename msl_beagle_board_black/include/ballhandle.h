@@ -26,8 +26,9 @@ class BallHandle {
 		BlackLib::digitalValue		direction			= static_cast<BlackLib::digitalValue>(right);
 		BlackLib::digitalValue		direction_desired	= static_cast<BlackLib::digitalValue>(right);
 
-		bool		enabled = false;
-		uint16_t	speed = 0, speed_desired = 0;
+		bool			enabled = false;
+		const int16_t	period = 10000;
+		uint16_t		speed = 0, speed_desired = 0;
 
 	public:
 		enum errorList {

@@ -16,7 +16,6 @@
 
 // ROS
 #include "ros/ros.h"
-#include "std_msgs/Empty.h"
 #include "std_msgs/String.h"
 #include "msl_actuator_msgs/BallCatchCmd.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
@@ -25,6 +24,7 @@
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_actuator_msgs/VisionRelocTrigger.h"
+#include "process_manager/ProcessCommand.h"
 
 // BlackLibs
 #include "BlackADC.h"
@@ -38,6 +38,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <SystemConfig.h>
 
 
 

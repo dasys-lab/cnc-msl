@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1436269063295) ENABLED START*/ //Add additional includes here
 #include "msl_helper_msgs/PassMsg.h"
+#include "pathplanner/VoronoiNet.h"
+#include "pathplanner/PathProxy.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -34,6 +36,7 @@ namespace alica
         this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
         this->field = msl::MSLFootballField::getInstance();
+        this->pathProxy = msl::PathProxy::getInstance();
         /*PROTECTED REGION END*/
     }
     AlignAndPassRapid::~AlignAndPassRapid()
@@ -106,11 +109,12 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > bestPassVNode = nullptr;
             shared_ptr < geometry::CNPoint2D > bestAoc = nullptr;
             bool found = false;
-
+            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<
+                    vector<shared_ptr<geometry::CNPoint2D>>>();
             for (int teamMateId : this->teamMateIds)
             {
-
-                shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVertices(teamMateId);
+                shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
+                        teamMateId);
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
@@ -122,7 +126,7 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
-                    if (factor * rcv2PassPointDist < minCloserOffset)
+                    if (factor * rcv2PassPointDist > minCloserOffset)
                     {
                         factor = factor * rcv2PassPointDist;
                     }
@@ -163,7 +167,7 @@ namespace alica
 //							continue;
 //						}
 
-                        // small angle to turn to pass point
+                        //small angle to turn to pass point
                         if (geometry::GeometryCalculator::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
@@ -225,12 +229,13 @@ namespace alica
                 cout << "AAPR: No valid pass point found! FailureStatus: " << this->failure << endl;
                 return;
             }
-
+            sites->push_back(alloAimPoint);
+            sites->push_back(bestAoc);
+            auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+            this->pathProxy->sendVoronoiNetMsg(sites, vNet);
             //Turn to goal...
-            shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->rawSensorData.getBallVelocity();
-            auto dstscan = this->wm->rawSensorData.getDistanceScan();
+            shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball.getVisionBallVelocity();
             shared_ptr < geometry::CNPoint2D > ballVel2;
-
             if (ballVel == nullptr)
             {
                 ballVel2 = make_shared < geometry::CNPoint2D > (0, 0);
@@ -244,45 +249,37 @@ namespace alica
             {
                 ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
             }
-
             shared_ptr < geometry::CNPoint2D > aimPoint = alloAimPoint->alloToEgo(*alloPos);
-
             double aimAngle = aimPoint->angleTo();
             double ballAngle = egoBallPos->angleTo();
-
             double deltaAngle = geometry::GeometryCalculator::deltaAngle(ballAngle, aimAngle);
             if (abs(deltaAngle) < M_PI / 36)
             { // +/-5 degree
               //Kick && PassMsg
                 msl_helper_msgs::PassMsg pm;
                 msl_msgs::Point2dInfo pinf;
-
                 // Distance to aim point * direction of our kicker = actual pass point destination
                 double dist = aimPoint->length();
                 shared_ptr < geometry::CNPoint2D > dest = make_shared < geometry::CNPoint2D > (-dist, 0);
                 dest = dest->egoToAllo(*alloPos);
                 pinf.x = dest->x;
                 pinf.y = dest->y;
-
                 pm.destination = pinf;
                 pinf = msl_msgs::Point2dInfo();
                 pinf.x = alloPos->x;
                 pinf.y = alloPos->y;
                 pm.origin = pinf;
                 pm.receiverID = bestTeamMateId;
-
                 msl_actuator_msgs::KickControl km;
                 km.enabled = true;
                 km.kicker = 1; //(ushort)KickHelper.KickerToUseIndex(egoBallPos->angleTo());
 
                 shared_ptr < geometry::CNPoint2D > goalReceiverVec = dest - make_shared < geometry::CNPoint2D
                         > (bestAoc->x, bestAoc->y);
-
                 double v0 = 0;
                 double distReceiver = goalReceiverVec->length();
                 double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
                 pm.validFor = (uint)(estimatedTimeForReceiverToArrive * 1000.0 + 300.0); // this is sparta!
-
                 if (closerFactor < 0.01)
                 {
                     km.power = (ushort)wm->kicker.getKickPowerPass(aimPoint->length());
@@ -292,52 +289,38 @@ namespace alica
                     km.power = (ushort)wm->kicker.getPassKickpower(
                             dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
                 }
-
                 send(km);
+                if (wm->kicker.lowShovelSelected)
+                {
+                    send(pm);
+                }
 
             }
-            if (dstscan != nullptr)
+            auto dstscan = this->wm->rawSensorData.getDistanceScan();
+            if (dstscan != nullptr && dstscan->size() != 0)
             {
                 double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
                 if (distBeforeBall < 250)
                     this->failure = true;
             }
-
             mc = msl_actuator_msgs::MotionControl();
             mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
-            double sign = 0;
-            if (mc.motion.rotation == 0)
-            {
-                sign = 0;
-            }
-            else if (mc.motion.rotation > 0)
-            {
-                sign = 1;
-            }
-            else
-            {
-                sign = -1;
-            }
+            double sign = geometry::GeometryCalculator::sgn(mc.motion.rotation);
             mc.motion.rotation = sign * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
-
             lastRotError = deltaAngle;
-
             double transBallOrth = egoBallPos->length() * mc.motion.rotation; //may be negative!
             double transBallTo = min(1000.0, ballVel2->length()); //Math.Max(ballPos.Distance(),ballVel2.Distance());
-
             shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
             driveTo = driveTo->normalize() * transBallOrth;
             driveTo = driveTo + egoBallPos->normalize() * transBallTo;
-
             if (driveTo->length() > maxVel)
             {
                 driveTo = driveTo->normalize() * maxVel;
             }
-
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = driveTo->length();
 
-            send(mc);
+            //send(mc);
 
         }
         catch (exception& e)
@@ -427,19 +410,18 @@ namespace alica
             {
                 this->distToFieldBorder = stod(tmp);
             }
-
             this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
             this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
             this->arrivalTimeOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "ArrivalTimeOffset", NULL);
 
             //Align Params
-            this->maxVel = (*this->sc)["Behaviour"]->get<double>("Pass", "MaxSpeed", NULL);
+            this->maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
             this->pRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "RotationP", NULL);
             this->dRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "RotationD", NULL);
             this->minRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MinRotation", NULL);
             this->maxRot = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "MaxRotation", NULL);
             this->accel = (*this->sc)["Dribble"]->get<double>("AlignAndPass", "ReceiverRobotAcceleration", NULL);
-            this->ballRadius = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterBall", NULL) / 2;
+            this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
             lastRotError = 0;
         }
         catch (exception& e)

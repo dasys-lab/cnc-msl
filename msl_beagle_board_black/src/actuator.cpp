@@ -7,18 +7,13 @@
 
 
 #include "actuator.h"
-
-// fuer Tests
-//#include <thread>         // this_thread::sleep_for
-//#include <chrono>         // chrono::seconds
-//#include <stdio.h>		// File Open
-//#include <unistd.h>		// File Open
+#include "std_msgs/Empty.h"
+#include "msl_actuator_msgs/IMUData.h"
 
 using namespace std;
 using namespace BlackLib;
 
 mutex					mtx;
-//condition_variable		cv, cv2;
 
 uint8_t		th_count;
 
@@ -39,14 +34,13 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	shovel.last_ping = last_ping;
-
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
 	if (msg.passing) {
 		shovel.value = ShovelSelect_PASSING;
 	} else {
 		shovel.value = ShovelSelect_NORMAL;
 	}
-	shovel.enabled;
+	shovel.enabled = true;
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
@@ -94,12 +88,11 @@ void contolShovelSelect() {
 			shovel.enabled = false;
 			ShovelSelect.setRunState(stop);
 		}
-
 		if (shovel.enabled) {
 			if (ShovelSelect.getRunValue() == "0") {
 				ShovelSelect.setRunState(run);
 			}
-			ShovelSelect.setSpaceRatioTime(shovel.value, microsecond);
+			ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
 		}
 
 		threw[2].notify = false;
@@ -119,10 +112,8 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
-			cout << "Ja - " << value << endl;
 		} else {
 			msg.haveBall = false;
-			cout << "Nein - " << value << endl;
 		}
 		hbiPub->publish(msg);
 
@@ -131,34 +122,84 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 	}
 }
 
-void getSwitches(ros::Publisher *bsPub, ros::Publisher *brtPub, ros::Publisher *vrtPub) {
+void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub) {
+	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
+	enum	button {	bundle = 0,
+						vision = 1,
+						power = 2, };
+	msl_actuator_msgs::VisionRelocTrigger msg_v;
+	process_manager::ProcessCommand msg_pm;
+
 	unique_lock<mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
 		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		msl_actuator_msgs::VisionRelocTrigger msg;
-		std_msgs::Empty msg_empty;
-		uint8_t bundle, power, vision;
+		static bool		state[3] = {false, false, false};
 
-		bundle = SW_Bundle.getNumericValue();
-		vision = SW_Vision.getNumericValue();
-		power = SW_Power.getNumericValue();
+		bool newstate[3];
+		uint8_t	sw[3] = {1, 1, 1};
 
-		msg.usePose = false;
+		sw[bundle]	= SW_Bundle.getNumericValue();
+		sw[vision]	= SW_Vision.getNumericValue();
+		sw[power]	= SW_Power.getNumericValue();
 
-		if (bundle == 1) {
-			bsPub->publish(msg);
-			brtPub->publish(msg_empty);
+		for (int i = 0; i <= 2; i++) {
+			if(sw[i] == 1) {
+				newstate[i] = false;
+			} else {
+				newstate[i] = true;
+			}
 		}
 
-		if (vision == 1) {
-			vrtPub->publish(msg);
+		if (newstate[bundle] != state[bundle]) {
+			state[bundle] = newstate[bundle];
+
+			if (state[bundle]) {
+				static uint8_t bundle_state = 0;
+
+				msg_pm.receiverId = ownID;
+				msg_pm.robotIds = {ownID};
+				msg_pm.processKeys = {2,3,4,5,7};
+				msg_pm.paramSets = {1,0,0,0,3};
+
+				if (bundle_state == 0) {		// Prozesse starten
+					bundle_state = 1;
+					msg_pm.cmd = 0;
+					LED_Bundle.setValue(high);	// LED an
+				} else if (bundle_state == 1) {	// Prozesse stoppen
+					bundle_state = 0;
+					msg_pm.cmd = 1;
+					LED_Bundle.setValue(low);	// LED aus
+				}
+				brtPub->publish(msg_pm);
+			}
 		}
 
-		if (power == 1) {
+		if (newstate[vision] != state[vision]) {
+			state[vision] = newstate[vision];
 
+			if (state[vision]) {
+				msg_v.receiverID = ownID;
+				msg_v.usePose = false;
+				vrtPub->publish(msg_v);
+				LED_Vision.setValue(high);
+			} else {
+				LED_Vision.setValue(low);
+			}
+		}
+
+		if (newstate[power] != state[power]) {
+			state[power] = newstate[power];
+
+			if (state[power]) {
+				std_msgs::Empty msg;
+				flPub->publish(msg);
+				LED_Power.setValue(high);
+			} else {
+				LED_Power.setValue(low);
+			}
 		}
 
 		threw[4].notify = false;
@@ -173,7 +214,7 @@ void getIMU(ros::Publisher *imuPub) {
 		if (!th_activ)
 			return;
 
-		// TODO IMU
+		lsm9ds0.updateData(time_now);
 		lsm9ds0.sendData(time_now, imuPub);
 
 		threw[5].notify = false;
@@ -188,7 +229,7 @@ void getOptical(ros::Publisher *mbcPub) {
 		if (!th_activ)
 			return;
 
-		// TODO MotionBurst
+		adns3080.update_motion_burst(time_now);
 		adns3080.send_motion_burst(time_now, mbcPub);
 
 		threw[6].notify = false;
@@ -198,7 +239,6 @@ void getOptical(ros::Publisher *mbcPub) {
 
 void exit_program(int sig) {
 	ex = true;
-	cout << "Programm wird beendet." << endl;
 	th_activ = false;
 	cv_main.cv.notify_all();
 	for (int i=0; i<6; i++)
@@ -209,33 +249,35 @@ void exit_program(int sig) {
 
 
 int main(int argc, char** argv) {
-	cout << "Test Actuator-Beagle-Board" << endl;
-
 	// ROS Init
 	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
-	ros::Rate loop_rate(1);		// in Hz
+	ros::Rate loop_rate(30);		// in Hz
 
 	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
 	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
 
-	ros::Publisher bsPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/BundleStatus", 10);
-	ros::Publisher brtPub = node.advertise<std_msgs::Empty>("CNActuator/BundleRestartTrigger", 10);
+	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 10);
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
 	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
-	// ros::Publisher imuPub = node.advertise<YYeigene msg bauenYY>("IMU", 10);
+	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
+	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 10);
 
-	/* thread th_controlBHRight(controlBHRight);
+	sc = supplementary::SystemConfig::getInstance();
+
+	thread th_controlBHRight(controlBHRight);
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &hbiPub);
-	thread th_switches(getSwitches, &bsPub, &brtPub, &vrtPub); */
-	//thread th_adns3080(getOptical, &mbcPub);
-	//thread th_imu(getIMU, &imuPub);
+	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
+	thread th_adns3080(getOptical, &mbcPub);
+	thread th_imu(getIMU, &imuPub);
 
 	// Shovel Init
+	ShovelSelect.setRunState(stop);
+	ShovelSelect.setSpaceRatioTime(0);
 	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
 	ShovelSelect.setSpaceRatioTime(1500000);			// in us - Werte zwischen 1ms und 2ms
 	shovel.enabled = false;
@@ -247,13 +289,9 @@ int main(int argc, char** argv) {
 	adns3080.reset();
 	adns3080.adns_init();
 
-	cout << "SPI: " << spi << ",   I2C: " << i2c << ",   IMU: " << i2c << endl;
-
-
 	usleep(50000);
 
-
-	uint8_t testy = 0;
+        LED_Power.setValue(high);
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
@@ -262,38 +300,23 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 		timeval vorher, mitte, nachher;
 
-		//TODO ADNS3080 Test
-		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, &mbcPub);
-
-
-
-//		ros::Time::now();
-		gettimeofday(&vorher, NULL);
-
 		// Thread Notify
-// TODO wieder einklammern
-		/*for (int i=0; i<5; i++) {
+		for (int i=0; i<7; i++) {
 			threw[i].notify = true;
 			threw[i].cv.notify_all();
 		}
 
 		// auf beenden aller Threads warten
 		unique_lock<mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[5].notify); }); // protection against spurious wake-ups
-		*/
-// TODO ende wieder einklammern ^^
-
-		gettimeofday(&nachher, NULL);
-
+		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[6].notify); }); // protection against spurious wake-ups
 
 		// MotionBurst
 
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+	LED_Power.setValue(low);
 
-	cout << "Programm beendet." << endl;
 
 	return 0;
 }

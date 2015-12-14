@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106724156"/>
+    <value yPos="7" width="812" height="489"/>
+  </extensions>
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106724159"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106914297"/>
+    <value xPos="126" yPos="181" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106916517"/>
+    <value xPos="447" yPos="173" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106953751"/>
+    <value>
+      <bendpoints xPos="438" yPos="294"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="TestPassPointMaster.pml#1441106955404"/>
+    <value>
+      <bendpoints xPos="438" yPos="225"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassPlan.pml#1441106995954"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

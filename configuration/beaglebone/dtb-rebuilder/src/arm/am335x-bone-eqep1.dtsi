@@ -1,0 +1,58 @@
+/*
+ * Copyright (C) 2013 Nathaniel R. Lewis - http://nathanielrlewis.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ * 
+ * Enable eQEP1 on the Beaglebone White and Black
+ */
+
+&ocp {
+	P8_31_pinmux {
+		status = "disabled";
+	};
+	P8_32_pinmux {
+		status = "disabled";
+	};
+	P8_33_pinmux {
+		status = "disabled";
+	};
+	P8_35_pinmux {
+		status = "disabled";
+	};
+};
+
+&am33xx_pinmux {
+	pinctrl_eqep1: pinctrl_eqep1_pins {
+		pinctrl-single,pins = <
+      0x0D8 (PIN_INPUT_PULLDOWN | MUX_MODE2)  /* P8_31 = GPIO0_10 = EQEP1_index, MODE2 */
+      0x0DC (PIN_INPUT_PULLDOWN | MUX_MODE2)  /* P8_32 = GPIO0_11 = EQEP1_strobe, MODE2 */
+      0x0D4 (PIN_INPUT_PULLDOWN | MUX_MODE2)  /* P8_33 = GPIO0_9 = EQEP1B_in, MODE2 */
+      0x0D0 (PIN_INPUT_PULLDOWN | MUX_MODE2)  /* P8_35 = GPIO0_8 = EQEP1A_in, MODE2 */
+		>;
+	};
+};
+
+&epwmss1 {
+  status = "okay";
+
+  eqep1: eqep@0x48302180 {
+    compatible = "ti,am33xx-eqep";
+    reg = <0x48302180 0x80>;
+    interrupt-parent = <&intc>;
+    interrupts = <88>;
+    ti,hwmods = "eqep1";
+    status = "okay";
+
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_eqep1>;
+    
+    count_mode = <0>;  /* 0 - Quadrature mode, normal 90 phase offset cha & chb.  1 - Direction mode.  cha input = clock, chb input = direction */
+    swap_inputs = <0>; /* Are channel A and channel B swapped? (0 - no, 1 - yes) */
+    invert_qa = <1>;   /* Should we invert the channel A input?  */
+    invert_qb = <1>;   /* Should we invert the channel B input? I invert these because my encoder outputs drive transistors that pull down the pins */
+    invert_qi = <0>;   /* Should we invert the index input? */
+    invert_qs = <0>;   /* Should we invert the strobe input? */
+  };
+};

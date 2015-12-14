@@ -20,6 +20,7 @@
 #include "container/CNVelocity2D.h"
 #include "container/CNPoint2D.h"
 #include "msl_sensor_msgs/WorldModelData.h"
+#include "msl_sensor_msgs/BallHypothesisList.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 
 
@@ -35,9 +36,6 @@ namespace msl
 		RawSensorData(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~RawSensorData();
 		shared_ptr<vector<double>> getDistanceScan(int index = 0);
-		shared_ptr<geometry::CNPoint2D> getBallPosition(int index = 0);
-		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getBallPositionAndCertaincy(int index = 0);
-		shared_ptr<geometry::CNVelocity2D> getBallVelocity(int index = 0);
 		shared_ptr<bool> getLightBarrier(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getOpticalFlow(int index = 0);
 		double getOpticalFlowQoS(int index = 0);
@@ -50,16 +48,17 @@ namespace msl
 		shared_ptr<int> getCompassOrientation(int index = 0);
 		shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
 		shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
+		shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
+		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
+		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
-		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
-		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		RingBuffer<InformationElement<bool>> lightBarrier;
 		RingBuffer<InformationElement<geometry::CNPoint2D>> opticalFlow;
 		RingBuffer<InformationElement<geometry::CNPosition>> ownPositionMotion;
@@ -70,6 +69,7 @@ namespace msl
 		RingBuffer<InformationElement<int>> compass;
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
+		RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
 		MSLWorldModel* wm;
 
 		unsigned long maxInformationAge;

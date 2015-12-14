@@ -1,0 +1,288 @@
+# 1 "src/arm/k2hk-evm.dts"
+# 1 "<command-line>"
+# 1 "src/arm/k2hk-evm.dts"
+# 10 "src/arm/k2hk-evm.dts"
+/dts-v1/;
+
+# 1 "src/arm/keystone.dtsi" 1
+# 9 "src/arm/keystone.dtsi"
+# 1 "include/dt-bindings/interrupt-controller/arm-gic.h" 1
+
+
+
+
+
+
+
+# 1 "include/dt-bindings/interrupt-controller/irq.h" 1
+# 9 "include/dt-bindings/interrupt-controller/arm-gic.h" 2
+# 10 "src/arm/keystone.dtsi" 2
+
+# 1 "src/arm/skeleton.dtsi" 1
+
+
+
+
+
+
+/ {
+ #address-cells = <1>;
+ #size-cells = <1>;
+ chosen { };
+ aliases { };
+ memory { device_type = "memory"; reg = <0 0>; };
+};
+# 12 "src/arm/keystone.dtsi" 2
+
+/ {
+ model = "Texas Instruments Keystone 2 SoC";
+ #address-cells = <2>;
+ #size-cells = <2>;
+ interrupt-parent = <&gic>;
+
+ aliases {
+  serial0 = &uart0;
+ };
+
+ memory {
+  reg = <0x00000000 0x80000000 0x00000000 0x40000000>;
+ };
+
+ cpus {
+  #address-cells = <1>;
+  #size-cells = <0>;
+
+  interrupt-parent = <&gic>;
+
+  cpu@0 {
+   compatible = "arm,cortex-a15";
+   device_type = "cpu";
+   reg = <0>;
+  };
+
+  cpu@1 {
+   compatible = "arm,cortex-a15";
+   device_type = "cpu";
+   reg = <1>;
+  };
+
+  cpu@2 {
+   compatible = "arm,cortex-a15";
+   device_type = "cpu";
+   reg = <2>;
+  };
+
+  cpu@3 {
+   compatible = "arm,cortex-a15";
+   device_type = "cpu";
+   reg = <3>;
+  };
+ };
+
+ gic: interrupt-controller {
+  compatible = "arm,cortex-a15-gic";
+  #interrupt-cells = <3>;
+  #size-cells = <0>;
+  #address-cells = <1>;
+  interrupt-controller;
+  reg = <0x0 0x02561000 0x0 0x1000>,
+        <0x0 0x02562000 0x0 0x2000>,
+        <0x0 0x02564000 0x0 0x1000>,
+        <0x0 0x02566000 0x0 0x2000>;
+  interrupts = <1 9 ((((1 << (4)) - 1) << 8) |
+    4)>;
+ };
+
+ timer {
+  compatible = "arm,armv7-timer";
+  interrupts =
+   <1 13
+    ((((1 << (4)) - 1) << 8) | 8)>,
+   <1 14
+    ((((1 << (4)) - 1) << 8) | 8)>,
+   <1 11
+    ((((1 << (4)) - 1) << 8) | 8)>,
+   <1 10
+    ((((1 << (4)) - 1) << 8) | 8)>;
+ };
+
+ pmu {
+  compatible = "arm,cortex-a15-pmu";
+  interrupts = <0 20 1>,
+        <0 21 1>,
+        <0 22 1>,
+        <0 23 1>;
+ };
+
+ soc {
+  #address-cells = <1>;
+  #size-cells = <1>;
+  compatible = "ti,keystone","simple-bus";
+  interrupt-parent = <&gic>;
+  ranges = <0x0 0x0 0x0 0xc0000000>;
+
+  rstctrl: reset-controller {
+   compatible = "ti,keystone-reset";
+   reg = <0x023100e8 4>;
+  };
+
+  /include/ "keystone-clocks.dtsi"
+
+  uart0: serial@02530c00 {
+   compatible = "ns16550a";
+   current-speed = <115200>;
+   reg-shift = <2>;
+   reg-io-width = <4>;
+   reg = <0x02530c00 0x100>;
+   clocks = <&clkuart0>;
+   interrupts = <0 277 1>;
+  };
+
+  uart1: serial@02531000 {
+   compatible = "ns16550a";
+   current-speed = <115200>;
+   reg-shift = <2>;
+   reg-io-width = <4>;
+   reg = <0x02531000 0x100>;
+   clocks = <&clkuart1>;
+   interrupts = <0 280 1>;
+  };
+
+  i2c0: i2c@2530000 {
+   compatible = "ti,davinci-i2c";
+   reg = <0x02530000 0x400>;
+   clock-frequency = <100000>;
+   clocks = <&clki2c>;
+   interrupts = <0 283 1>;
+   #address-cells = <1>;
+   #size-cells = <0>;
+
+   dtt@50 {
+    compatible = "at,24c1024";
+    reg = <0x50>;
+   };
+  };
+
+  i2c1: i2c@2530400 {
+   compatible = "ti,davinci-i2c";
+   reg = <0x02530400 0x400>;
+   clock-frequency = <100000>;
+   clocks = <&clki2c>;
+   interrupts = <0 286 1>;
+  };
+
+  i2c2: i2c@2530800 {
+   compatible = "ti,davinci-i2c";
+   reg = <0x02530800 0x400>;
+   clock-frequency = <100000>;
+   clocks = <&clki2c>;
+   interrupts = <0 289 1>;
+  };
+
+  spi0: spi@21000400 {
+   compatible = "ti,dm6441-spi";
+   reg = <0x21000400 0x200>;
+   num-cs = <4>;
+   ti,davinci-spi-intr-line = <0>;
+   interrupts = <0 292 1>;
+   clocks = <&clkspi>;
+  };
+
+  spi1: spi@21000600 {
+   compatible = "ti,dm6441-spi";
+   reg = <0x21000600 0x200>;
+   num-cs = <4>;
+   ti,davinci-spi-intr-line = <0>;
+   interrupts = <0 296 1>;
+   clocks = <&clkspi>;
+  };
+
+  spi2: spi@21000800 {
+   compatible = "ti,dm6441-spi";
+   reg = <0x21000800 0x200>;
+   num-cs = <4>;
+   ti,davinci-spi-intr-line = <0>;
+   interrupts = <0 300 1>;
+   clocks = <&clkspi>;
+  };
+
+  usb_phy: usb_phy@2620738 {
+   compatible = "ti,keystone-usbphy";
+   #address-cells = <1>;
+   #size-cells = <1>;
+   reg = <0x2620738 32>;
+   status = "disabled";
+  };
+
+  usb: usb@2680000 {
+   compatible = "ti,keystone-dwc3";
+   #address-cells = <1>;
+   #size-cells = <1>;
+   reg = <0x2680000 0x10000>;
+   clocks = <&clkusb>;
+   clock-names = "usb";
+   interrupts = <0 393 1>;
+   ranges;
+   status = "disabled";
+
+   dwc3@2690000 {
+    compatible = "synopsys,dwc3";
+    reg = <0x2690000 0x70000>;
+    interrupts = <0 393 1>;
+    usb-phy = <&usb_phy>, <&usb_phy>;
+   };
+  };
+ };
+};
+# 13 "src/arm/k2hk-evm.dts" 2
+
+/ {
+ compatible = "ti,keystone-evm";
+
+ soc {
+  clock {
+   refclksys: refclksys {
+    #clock-cells = <0>;
+    compatible = "fixed-clock";
+    clock-frequency = <122880000>;
+    clock-output-names = "refclk-sys";
+   };
+
+   refclkpass: refclkpass {
+    #clock-cells = <0>;
+    compatible = "fixed-clock";
+    clock-frequency = <122880000>;
+    clock-output-names = "refclk-pass";
+   };
+
+   refclkarm: refclkarm {
+    #clock-cells = <0>;
+    compatible = "fixed-clock";
+    clock-frequency = <125000000>;
+    clock-output-names = "refclk-arm";
+   };
+
+   refclkddr3a: refclkddr3a {
+    #clock-cells = <0>;
+    compatible = "fixed-clock";
+    clock-frequency = <100000000>;
+    clock-output-names = "refclk-ddr3a";
+   };
+
+   refclkddr3b: refclkddr3b {
+    #clock-cells = <0>;
+    compatible = "fixed-clock";
+    clock-frequency = <100000000>;
+    clock-output-names = "refclk-ddr3b";
+   };
+  };
+ };
+};
+
+&usb_phy {
+ status = "okay";
+};
+
+&usb {
+ status = "okay";
+};

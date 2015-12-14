@@ -30,8 +30,11 @@ namespace alica
                                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 
                                          void readConfigParameters();
-                                         double catchRadius;
-                                         string taskName;
+                                         double fastCatchRadius;
+                                         double slowCatchRadius;
+                                         double alignTolerance;
+                                         double ballDistanceEx;
+                                         EntryPoint* receiverEp;
                                          shared_ptr<geometry::CNPoint2D> alloTarget;
                                          msl::MSLFootballField* field;
                                          /*PROTECTED REGION END*/};

@@ -23,14 +23,15 @@ namespace alica
         maxRot = (*this->sc)["Penalty"]->get<double>("Penalty.MaxRotation", NULL);
         angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
         ballAngleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.BallAngleTolerance", NULL);
-        ballDiameter = (*this->sc)["Globals"]->get<double>("Globals.Dimensions.DiameterBall", NULL);
+        ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
         goalLineLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.GoalWidth", NULL);
-        robotDiameter = (*this->sc)["Globals"]->get<double>("Globals.Dimensions.DiameterRobot", NULL);
+        robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
         wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
         aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
         kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         lastAlignment = 0;
-        waitBeforeBlindKick = 29000000000;
+        waitBeforeBlindKick = timeForPenaltyShot - 1000000000;
 
         /*PROTECTED REGION END*/
     }

@@ -84,13 +84,19 @@ namespace msl
 
 	/**
 	 * calculates distance between two points
-	 * @param ownPos shared_ptr<geometry::CNPoint2D>
+	 * @param pos shared_ptr<geometry::CNPoint2D>
 	 * @param vertexPoint shared_ptr<geometry::CNPoint2D>
 	 * @return double
 	 */
-	double VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> vertexPoint)
+	double VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<Vertex> vertexPoint)
 	{
-		int ret = sqrt(pow((vertexPoint->x - ownPos->x), 2) + pow((vertexPoint->y - ownPos->y), 2));
+		int ret = sqrt(pow((vertexPoint->point().x() - pos->x), 2) + pow((vertexPoint->point().y() - pos->y), 2));
+		return ret;
+	}
+
+	double VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<geometry::CNPoint2D> vertexPoint)
+	{
+		int ret = sqrt(pow((vertexPoint->x - pos->x), 2) + pow((vertexPoint->y - pos->y), 2));
 		return ret;
 	}
 
@@ -113,52 +119,51 @@ namespace msl
 
 	}
 
-	/**
-	 * gets Vertices connected to SeachNode vertex
-	 * @param currentNode shared_ptr<SearchNode>
-	 * @return vector<shared_ptr<SearchNode>>
-	 * TODO: check whether it is possible to iterate through edges by using forward-edge.next and twin-edge.previous!?
-	 */
-	vector<shared_ptr<SearchNode>> VoronoiNet::getNeighboredVertices(shared_ptr<SearchNode> currentNode)
-	{
-		vector<VoronoiDiagram::Vertex> neighbors;
-		//iterate over edges
-		for (VoronoiDiagram::Edge_iterator it = this->voronoi->edges_begin(); it != this->voronoi->edges_end(); it++)
-		{
-			//if there is a scource and ist fits to current node point
-			if (it->has_source() && it->source()->point().x() == currentNode->getVertex()->x
-					&& it->source()->point().y() == currentNode->getVertex()->y)
-			{
-				//if the edge has a traget and its not found already add it
-				if (it->has_target() && find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
-				{
-					neighbors.push_back(*it->target());
-				}
-			}
-			//if there is a target and ist fits to current node point
-			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->x
-					&& it->target()->point().y() == currentNode->getVertex()->y)
-			{
-				//if the edge has a source and its not found already add it
-				if (it->has_source() && find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
-				{
-					neighbors.push_back(*it->source());
-				}
-			}
-		}
-		//convert them to geometry::CNPoint2D
-		vector<shared_ptr<SearchNode>> ret;
-		for (int i = 0; i < neighbors.size(); i++)
-		{
-			ret.push_back(
-					make_shared<SearchNode>(
-							SearchNode(
-									make_shared<geometry::CNPoint2D>(neighbors.at(i).point().x(),
-																		neighbors.at(i).point().y()),
-									0, nullptr)));
-		}
-		return ret;
-	}
+//	/**
+//	 * gets Vertices connected to SeachNode vertex
+//	 * @param currentNode shared_ptr<SearchNode>
+//	 * @return vector<shared_ptr<SearchNode>>
+//	 */
+//	vector<shared_ptr<SearchNode>> VoronoiNet::getNeighboredVertices(shared_ptr<SearchNode> currentNode)
+//	{
+//		vector<VoronoiDiagram::Vertex> neighbors;
+//		//iterate over edges
+//		for (VoronoiDiagram::Edge_iterator it = this->voronoi->edges_begin(); it != this->voronoi->edges_end(); it++)
+//		{
+//			//if there is a scource and ist fits to current node point
+//			if (it->has_source() && it->source()->point().x() == currentNode->getVertex()->point().x()
+//					&& it->source()->point().y() == currentNode->getVertex()->point().y())
+//			{
+//				//if the edge has a traget and its not found already add it
+//				if (it->has_target() && find(neighbors.begin(), neighbors.end(), *it->target()) == neighbors.end())
+//				{
+//					neighbors.push_back(*it->target());
+//				}
+//			}
+//			//if there is a target and ist fits to current node point
+//			if (it->has_target() && it->target()->point().x() == currentNode->getVertex()->point().x()
+//					&& it->target()->point().y() == currentNode->getVertex()->point().y())
+//			{
+//				//if the edge has a source and its not found already add it
+//				if (it->has_source() && find(neighbors.begin(), neighbors.end(), *it->source()) == neighbors.end())
+//				{
+//					neighbors.push_back(*it->source());
+//				}
+//			}
+//		}
+//		//convert them to geometry::CNPoint2D
+//		vector<shared_ptr<SearchNode>> ret;
+//		for (int i = 0; i < neighbors.size(); i++)
+//		{
+//			ret.push_back(
+//					make_shared<SearchNode>(
+//							SearchNode(
+//									make_shared<geometry::CNPoint2D>(neighbors.at(i).point().x(),
+//																		neighbors.at(i).point().y()),
+//									0, nullptr)));
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * expands a SearchNode
@@ -173,7 +178,20 @@ namespace msl
 	shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
 		// get neighbored nodes
-		vector<shared_ptr<SearchNode>> neighbors = getNeighboredVertices(currentNode);
+		vector<shared_ptr<SearchNode>> neighbors;// = getNeighboredVertices(currentNode);
+		VoronoiDiagram::Halfedge_around_vertex_circulator incidentHalfEdge = currentNode->getVertex()->incident_halfedges();
+		VoronoiDiagram::Halfedge_around_vertex_circulator begin = incidentHalfEdge;
+		do
+		{
+			if(incidentHalfEdge->has_source())
+			{
+				neighbors.push_back(make_shared<SearchNode>(
+						SearchNode(
+								make_shared<Vertex>(*(incidentHalfEdge->source())),
+								0, nullptr)));
+			}
+			incidentHalfEdge++;
+		}while(begin != incidentHalfEdge);
 		for(int i = 0; i < neighbors.size(); i++)
 		{
 			// if node is already closed skip it
@@ -189,7 +207,7 @@ namespace msl
 			}
 			//set predecessor and cost
 			// add heuristic cost
-			double cost = eval->eval(startPos, goal, currentNode, neighbors.at(i), this);
+			double cost = eval->eval(startPos, goal, currentNode, neighbors.at(i), this, wm->pathPlanner.getLastPath(), wm->pathPlanner.getLastTarget());
 			if(cost > 0)
 			{
 				//if node is already in open change cost else add node
@@ -364,14 +382,14 @@ namespace msl
 				//finite edge
 				if (edge->has_source() && edge->has_target()
 						/* edge points fit*/
-						&& ((edge->source()->point().x() == currentNode->getVertex()->x
-								&& edge->source()->point().y() == currentNode->getVertex()->y
-								&& edge->target()->point().x() == nextNode->getVertex()->x
-								&& edge->target()->point().y() == nextNode->getVertex()->y)
-								|| (edge->source()->point().x() == nextNode->getVertex()->x
-										&& edge->source()->point().y() == nextNode->getVertex()->y
-										&& edge->target()->point().x() == currentNode->getVertex()->x
-										&& edge->target()->point().y() == currentNode->getVertex()->y)))
+						&& ((edge->source()->point().x() == currentNode->getVertex()->point().x()
+								&& edge->source()->point().y() == currentNode->getVertex()->point().y()
+								&& edge->target()->point().x() == nextNode->getVertex()->point().x()
+								&& edge->target()->point().y() == nextNode->getVertex()->point().y())
+								|| (edge->source()->point().x() == nextNode->getVertex()->point().x()
+										&& edge->source()->point().y() == nextNode->getVertex()->point().y()
+										&& edge->target()->point().x() == currentNode->getVertex()->point().x()
+										&& edge->target()->point().y() == currentNode->getVertex()->point().y())))
 				{
 					//part of own edge
 					return true;
@@ -420,13 +438,29 @@ namespace msl
 	 * @param teamMateId int
 	 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 	 */
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
+	shared_ptr<vector<shared_ptr<Vertex> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
 	{
 		//locate teammate
 		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
 		//get vertices
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = this->getVerticesOfFace(
+		shared_ptr<vector<shared_ptr<Vertex> > > ret = this->getVerticesOfFace(
 				make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+		return ret;
+
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
+	{
+		//locate teammate
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		//get vertices
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		auto vertices = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
+		for (int i = 0; i < vertices->size(); i++)
+		{
+			ret->push_back(
+					make_shared<geometry::CNPoint2D>(vertices->at(i)->point().x(), vertices->at(i)->point().y()));
+		}
 		return ret;
 
 	}
@@ -471,8 +505,8 @@ namespace msl
 	{
 		for (int i = 0; i < vector->size(); i++)
 		{
-			if (abs(vector->at(i)->getVertex()->x - vertex->getVertex()->x) < 10.0
-					&& abs(vector->at(i)->getVertex()->y - vertex->getVertex()->y) < 10.0)
+			if (abs(vector->at(i)->getVertex()->point().x() - vertex->getVertex()->point().x()) < 10.0
+					&& abs(vector->at(i)->getVertex()->point().y() - vertex->getVertex()->point().y()) < 10.0)
 			{
 				return true;
 			}
@@ -487,33 +521,33 @@ namespace msl
 	 * @returnpair<shared_ptr<Point_2>, shared_ptr<Point_2>>
 	 */
 	pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> VoronoiNet::getSitesNextToHalfEdge(
-			shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2)
+			shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
 	{
 		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> ret;
 		ret.first.first = nullptr;
 		ret.second.first = nullptr;
 		//iterate over faces
+		bool foundFirst = false;
+		bool foundSecond = false;
 		for (VoronoiDiagram::Face_iterator fit = this->voronoi->faces_begin(); fit != this->voronoi->faces_end(); ++fit)
 		{
-			bool foundFirst = false;
-			bool foundSecond = false;
 			//iterate over halfedges
 			VoronoiDiagram::Halfedge_handle begin = fit->halfedge();
 			VoronoiDiagram::Halfedge_handle edge = begin;
 			do
 			{
 				//look for fitting halfedge with right source
-				if (edge->has_source() && abs(edge->source()->point().x() - v1->x) < 10
-						&& abs(edge->source()->point().y() - v1->y) < 10)
+				if (edge->has_source() && abs(edge->source()->point().x() - v1->point().x()) < 10
+						&& abs(edge->source()->point().y() - v1->point().y()) < 10)
 				{
 					foundFirst = true;
 				}
-				if (edge->has_target() && abs(edge->target()->point().x() - v2->x) < 10
-						&& abs(edge->target()->point().y() - v2->y) < 10)
+				if (edge->has_target() && abs(edge->target()->point().x() - v2->point().x()) < 10
+						&& abs(edge->target()->point().y() - v2->point().y()) < 10)
 				{
 					foundSecond = true;
 				}
-				if(foundFirst && foundSecond)
+				if (foundFirst && foundSecond)
 				{
 					break;
 				}
@@ -527,51 +561,23 @@ namespace msl
 			auto secondSite = edge->opposite()->face()->dual()->point();
 			for (auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
 			{
-				if (abs(current->first->x - firstSite.x()) < 0.01
-						&& abs(current->first->y - firstSite.y()) < 0.01)
+				if (abs(current->first->x - firstSite.x()) < 0.01 && abs(current->first->y - firstSite.y()) < 0.01)
 				{
 					ret.first = *current;
 					foundFirst = true;
 					continue;
 				}
-				if (abs(current->first->x - secondSite.x()) < 0.01
-						&& abs(current->first->y - secondSite.y()) < 0.01)
+				if (abs(current->first->x - secondSite.x()) < 0.01 && abs(current->first->y - secondSite.y()) < 0.01)
 				{
 					ret.second = *current;
 					foundSecond = true;
 					continue;
 				}
-				if(foundFirst && foundSecond)
+				if (foundFirst && foundSecond)
 				{
-					break;
+					return ret;
 				}
 			}
-//			//if both points are found insert them into ret
-//			if (foundFirst && foundSecond)
-//			{
-//				if (ret.first.first == nullptr)
-//				{
-
-////					ret.first = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-////					continue;
-//				}
-//				if (ret.second.first == nullptr && abs(ret.first.first->x - fit->dual()->point().x()) > 0.001
-//						&& abs(ret.first.first->y - fit->dual()->point().y()) > 0.001)
-//				{
-//					for(auto current = pointRobotKindMapping.begin(); current != pointRobotKindMapping.end(); current++)
-//					{
-//						if(abs(current->first->x - fit->dual()->point().x()) < 0.01 && abs(current->first->y - fit->dual()->point().y()) < 0.01)
-//						{
-//							ret.second = *current;
-//							break;
-//						}
-//					}
-////					ret.second = make_shared<geometry::CNPoint2D>(fit->dual()->point().x(), fit->dual()->point().y());
-////
-////					break;
-//				}
-//
-//			}
 		}
 		return ret;
 	}
@@ -581,9 +587,9 @@ namespace msl
 	 * @param point shared_ptr<geometry::CNPoint2D>
 	 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 	 */
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> VoronoiNet::getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point)
+	shared_ptr<vector<shared_ptr<Vertex>>> VoronoiNet::getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point)
 	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<Vertex>>> ret = make_shared<vector<shared_ptr<Vertex>>>();
 		//locate point
 		VoronoiDiagram::Point_2 p(point->x, point->y);
 		VoronoiDiagram::Locate_result loc = this->voronoi->locate(p);
@@ -599,7 +605,7 @@ namespace msl
 				//if the edge has a sourcesave the vertex
 				if(edge->has_source())
 				{
-					ret->push_back(make_shared<geometry::CNPoint2D>(edge->source()->point().x(),edge->source()->point().y()));
+					ret->push_back(make_shared<VoronoiDiagram::Vertex>(*(edge->source())));
 				}
 				edge = edge->next();
 			}while (edge != begin);
@@ -799,8 +805,8 @@ namespace msl
 		auto lowRightCorner = field->posLROppGoalArea();
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
 		//get field length and width
-		int penaltyWidth = field->GoalInnerAreaWidth;
-		int penaltyLength = field->GoalInnerAreaLength;
+		int penaltyWidth = field->PenaltyAreaWidth;
+		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
@@ -897,8 +903,8 @@ namespace msl
 		auto lowRightCorner = field->posLROwnGoalArea();
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
 		//get field length and width
-		int penaltyWidth = field->GoalInnerAreaWidth;
-		int penaltyLength = field->GoalInnerAreaLength;
+		int penaltyWidth = field->PenaltyAreaWidth;
+		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));

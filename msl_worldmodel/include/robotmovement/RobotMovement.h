@@ -43,6 +43,8 @@ namespace msl
 													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
 													double ballAngleTolerance);
 
+		static MotionControl driveRandomly(double translation);
+
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;

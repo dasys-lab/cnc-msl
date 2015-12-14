@@ -5,6 +5,7 @@
     <plans xsi:type="alica:Plan">StandardAttack.pml#1434046634656</plans>
   </states>
   <states id="1434045868018" name="MidFieldDefense" comment="" entryPoint="1434045719840">
+    <plans xsi:type="alica:Plan">../Defence/MidFieldDefense.pml#1441108604411</plans>
     <inTransitions>#1436536103266</inTransitions>
     <outTransitions>#1436536098621</outTransitions>
   </states>
@@ -14,20 +15,24 @@
     <outTransitions>#1436536148908</outTransitions>
   </states>
   <states id="1436536084172" name="ApproachPass" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
     <inTransitions>#1436536098621</inTransitions>
     <inTransitions>#1436536101847</inTransitions>
     <outTransitions>#1436536100248</outTransitions>
     <outTransitions>#1436536103266</outTransitions>
   </states>
   <states id="1436536085953" name="InterceptPass" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1436536100248</inTransitions>
     <outTransitions>#1436536101847</outTransitions>
   </states>
   <states id="1436536121614" name="InterceptPass" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1436536150744</inTransitions>
     <outTransitions>#1436536151770</outTransitions>
   </states>
   <states id="1436536123918" name="ApproachPass" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">CatchPass.beh#1440754543898</plans>
     <inTransitions>#1436536148908</inTransitions>
     <inTransitions>#1436536151770</inTransitions>
     <outTransitions>#1436536150744</outTransitions>

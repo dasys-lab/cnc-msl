@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $ES_ROOT
+cd $DOMAIN_FOLDER
 echo "# git fetch"
 git fetch
 if [ "echo $?" ]; then

@@ -15,7 +15,10 @@ namespace msl
 			obstacles(ringBufferLength)
 	{
 		this->wm = wm;
+		this->sc = supplementary::SystemConfig::getInstance();
 		maxInformationAge = 1000000000;
+		this->opponentProtectAngle = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectAngle", NULL);
+		this->opponentProtectDistance = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectDistance", NULL);
 	}
 
 	Robots::~Robots()
@@ -94,6 +97,35 @@ namespace msl
 		return ret;
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::Robots::getObstaclePoints(int index)
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		auto x = obstacles.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		msl_sensor_msgs::ObstacleInfo current;
+		for(int i = 0; i < x->getInformation()->size(); i++)
+		{
+			current = x->getInformation()->at(i);
+			ret->push_back(make_shared<geometry::CNPoint2D>(current.x, current.y));
+		}
+		return ret;
+	}
+
+	double Robots::getOpponentProtectDistance()
+	{
+		return this->opponentProtectDistance;
+	}
+
+	double Robots::getOpponentProtectAngle()
+	{
+		return this->opponentProtectAngle;
+	}
+
 }
+
+
 /* namespace alica */
 

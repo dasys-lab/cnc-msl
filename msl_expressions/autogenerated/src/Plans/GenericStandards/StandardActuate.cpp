@@ -22,16 +22,23 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1435766212595) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
-        bhc.leftMotor = -20;
-        bhc.rightMotor = -20;
+
+        bhc.leftMotor = -wheelSpeed;
+        bhc.rightMotor = -wheelSpeed;
         send(bhc);
         /*PROTECTED REGION END*/
     }
     void StandardActuate::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1435766212595) ENABLED START*/ //Add additional options here
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1435766212595) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1435766212595) ENABLED START*/ //Add additional methods here
+    void StandardActuate::readConfigParameters()
+    {
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        wheelSpeed = (*sc)["Actuation"]->get<double>("Dribble.StdExecGrabBallWheelSpeed", NULL);
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

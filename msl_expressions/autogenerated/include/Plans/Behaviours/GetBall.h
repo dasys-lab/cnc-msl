@@ -28,6 +28,7 @@ namespace alica
         int isMovingCloserIter;
         int isMovingAwayIter;
         int maxIter;
+        double timeForPass;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1414828300860) ENABLED START*/ //Add additional private methods here

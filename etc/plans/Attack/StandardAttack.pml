@@ -2,6 +2,7 @@
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434046634656" name="StandardAttack" comment="lostBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434048722503</inTransitions>
     <inTransitions>#1434048731525</inTransitions>
     <inTransitions>#1434716045767</inTransitions>
@@ -37,7 +38,7 @@
     <inState>#1434046634657</inState>
     <outState>#1434048705508</outState>
   </transitions>
-  <transitions id="1434048722503" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1434048722503" name="MISSING_NAME" comment="lostBall" msg="">
     <preCondition id="1434048723635" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048705508</inState>
     <outState>#1434046634657</outState>

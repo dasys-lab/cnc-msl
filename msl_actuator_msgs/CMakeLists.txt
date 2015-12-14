@@ -51,6 +51,7 @@ add_message_files(
   BallHandleCmd.msg
   HaveBallInfo.msg
   JoystickControl.msg
+  CanMsg.msg
   JoystickRobotIDs.msg
   KickControl.msg
   KickerStatInfo.msg
@@ -64,6 +65,7 @@ add_message_files(
   RawOdometryInfo.msg
   ShovelSelectCmd.msg
   VisionRelocTrigger.msg
+  IMUData.msg
 )
 
 ## Generate services in the 'srv' folder

@@ -18,7 +18,7 @@ namespace msl
 
 	}
 
-	SearchNode::SearchNode(shared_ptr<geometry::CNPoint2D> vertex, double cost,
+	SearchNode::SearchNode(shared_ptr<Vertex> vertex, double cost,
 							shared_ptr<SearchNode> predecessor)
 	{
 		this->vertex = vertex;
@@ -70,7 +70,7 @@ namespace msl
 	 * gets the vertex
 	 * @return shared_ptr<VoronoiDiagram::Vertex>
 	 */
-	shared_ptr<geometry::CNPoint2D> SearchNode::getVertex()
+	shared_ptr<Vertex> SearchNode::getVertex()
 	{
 		return vertex;
 	}
@@ -79,7 +79,7 @@ namespace msl
 	 * sets the vertex
 	 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
 	 */
-	void SearchNode::setVertex(shared_ptr<geometry::CNPoint2D> vertex)
+	void SearchNode::setVertex(shared_ptr<Vertex> vertex)
 	{
 		this->vertex = vertex;
 	}

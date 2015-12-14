@@ -7,17 +7,17 @@
 
 #include <pathplanner/evaluator/PathEvaluator.h>
 #include "GeometryCalculator.h"
+#include "msl_msgs/VoronoiNetInfo.h"
 namespace msl
 {
 
-	PathEvaluator::PathEvaluator(PathPlanner* planner)
+	PathEvaluator::PathEvaluator()
 	{
-		this->planner = planner;
 		this->sc = SystemConfig::getInstance();
-		voroniPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
+		voronoiPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);
-		this->robotDiameter = (*this->sc)["Globals"]->get<double>("Globals", "Dimensions", "DiameterRobot", NULL);
+		this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
 		this->obstacleDistanceWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "obstacleDistanceWeight",
 		NULL);
 		this->pathAngleWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathAngleWeight",
@@ -37,24 +37,22 @@ namespace msl
 	 */
 	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path)
+								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > lastPath, shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
 
 		// add the cost of current node to return
 		double ret = currentNode->getCost();
 		// add weighted distance to return
-		ret += pathLengthWeight * currentNode->getVertex()->distanceTo(nextNode->getVertex());
-		auto p = planner->getLastPath();
-		auto lastGoal = planner->getLastTarget();
+		ret += pathLengthWeight * distanceTo(nextNode->getVertex(), currentNode->getVertex());
 		//if we are in the first node, there has been a path before und the goal changed
-		if (currentNode->getPredecessor() == nullptr && p != nullptr && p->size() > 1 && lastGoal != nullptr
-				&& lastGoal->distanceTo(goal) > 250)
+		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr
+				&& lastTarget->distanceTo(goal) > 250)
 		{
 			//claculate agle between the first edge of the current path and the last path
-			double a = startPos->x - currentNode->getVertex()->x;
-			double b = startPos->y - currentNode->getVertex()->y;
-			double c = p->at(0)->x - p->at(1)->x;
-			double d = p->at(0)->y - p->at(1)->y;
+			double a = startPos->x - currentNode->getVertex()->point().x();
+			double b = startPos->y - currentNode->getVertex()->point().y();
+			double c = lastPath->at(0)->x - lastPath->at(1)->x;
+			double d = lastPath->at(0)->y - lastPath->at(1)->y;
 
 			double mag_v1 = sqrt(a * a + b * b);
 			double mag_v2 = sqrt(c * c + d * d);
@@ -91,9 +89,11 @@ namespace msl
 				}
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
 				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
-																							currentNode->getVertex(),
-																							nextNode->getVertex());
-				//calcualte weighted dist to both objects
+																						  make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
+																														   currentNode->getVertex()->point().y()),
+																							make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
+																															 nextNode->getVertex()->point().y()));
+				//calculate weighted dist to both objects
 
 				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
 				if((obs.first.second > 0 && obs.second.second > 0) || (obs.first.second > 0 && obs.second.second != -1) || (obs.second.second > 0 && obs.first.second != -1))
@@ -109,7 +109,7 @@ namespace msl
 
 				//if the distance to the obstacles is too small return -1 to not expand this node
 				if ((distobs * 2)
-						< (this->planner->getRobotDiameter() * 2 + this->planner->getAdditionalCorridorWidth()))
+						< (robotDiameter * 2 + additionalCorridorWidth))
 				{
 					return -1.0;
 				}
@@ -118,10 +118,10 @@ namespace msl
 		//if the path is longer then one vertex add cost for the angle
 		if (currentNode->getPredecessor() != nullptr)
 		{
-			double dx21 = nextNode->getVertex()->x - currentNode->getVertex()->x;
-			double dx31 = currentNode->getPredecessor()->getVertex()->x - currentNode->getVertex()->x;
-			double dy21 = nextNode->getVertex()->y - currentNode->getVertex()->y;
-			double dy31 = currentNode->getPredecessor()->getVertex()->y - currentNode->getVertex()->y;
+			double dx21 = nextNode->getVertex()->point().x() - currentNode->getVertex()->point().x();
+			double dx31 = currentNode->getPredecessor()->getVertex()->point().x() - currentNode->getVertex()->point().x();
+			double dy21 = nextNode->getVertex()->point().y() - currentNode->getVertex()->point().y();
+			double dy31 = currentNode->getPredecessor()->getVertex()->point().y() - currentNode->getVertex()->point().y();
 			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
@@ -138,6 +138,11 @@ namespace msl
 			}
 		}
 		return ret;
+	}
+
+	double PathEvaluator::distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
+	{
+		return sqrt(pow(v2->point().x() - v1->point().x(), 2) + pow(v2->point().y() - v1->point().y(), 2));
 	}
 
 } /* namespace msl */

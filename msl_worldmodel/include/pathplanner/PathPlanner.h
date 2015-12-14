@@ -28,6 +28,7 @@ typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<Delauna
 typedef CGAL::Voronoi_diagram_2<DelaunayTriangulation, DelaunayAdaptionTraits, DelaunayAdaptionPolicy> VoronoiDiagram;
 typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
+typedef VoronoiDiagram::Vertex Vertex;
 
 //other includes
 #include <ros/ros.h>
@@ -160,6 +161,7 @@ namespace msl
 	 */
 	bool corridorCheck(VoronoiNet* voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
 			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+
 	/**
 	 * checks if there is an obstacle inside the corridor
 	 * @param voronoi shared_ptr<VoronoiNet>VoronoiNet*
@@ -183,11 +185,13 @@ private:
 	/**
 	 * checks if vertices of goal face are reached
 	 */
-	bool checkGoalVerticesReached(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > closestVerticesToGoal, shared_ptr<SearchNode> currentNode);
+	bool checkGoalVerticesReached(shared_ptr<vector<shared_ptr<Vertex> > > closestVerticesToGoal, shared_ptr<SearchNode> currentNode);
 	/**
 	 * helping method to debug the corridor check
 	 */
 	void sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D>> points);
+
+	double distanceTo(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<Vertex> v2);
 
 protected:
 	MSLWorldModel* wm;
@@ -216,7 +220,7 @@ protected:
 	/**
 	 * check if the goal vertces are reached and if there is a corridor leading to the goal
 	 */
-	bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
+	bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
 };
 
 }

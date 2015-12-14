@@ -9,8 +9,8 @@
 
 namespace msl
 {
-	PrefDirEvaluator::PrefDirEvaluator(PathPlanner* planner) :
-			PathEvaluator(planner)
+	PrefDirEvaluator::PrefDirEvaluator() :
+			PathEvaluator()
 	{
 		//#cost function parameters for the dribbling case
 		//#(apply to all methods that take a preferred direction argument)
@@ -24,9 +24,10 @@ namespace msl
 	{
 	}
 
-	double PrefDirEvaluator::eval(shared_ptr<VoronoiNet> voronoi,
-										shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path, geometry::CNPoint2D startPos,
-										shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode)
+	double PrefDirEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
+									shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
+									VoronoiNet* voronoi,
+									shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path, shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
 //		//CALCULATE COST FUNCTION AND HEURISTIC FUNCTION
 //

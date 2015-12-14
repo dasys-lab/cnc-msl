@@ -14,6 +14,9 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
 #include <list>
 #include <iostream>
 #include <tuple>
@@ -28,6 +31,7 @@
 #include "Ball.h"
 #include "Game.h"
 #include "Kicker.h"
+#include "WhiteBoard.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
@@ -54,11 +58,14 @@ namespace msl
 
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
+		void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
 		void onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
+		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
@@ -75,7 +82,9 @@ namespace msl
 		Game game;
 		PathPlanner pathPlanner;
 		Kicker kicker;
+		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
+		struct calibData{double calibCoefficient; double length;}calibData;
 
 	private:
 
@@ -89,17 +98,21 @@ namespace msl
 		ros::Subscriber sub;
 		ros::Subscriber rawOdomSub;
 		ros::Subscriber wmDataSub;
+		ros::Subscriber wmBallListSub;
 		ros::Subscriber joystickSub;
 		ros::Subscriber motionBurstSub;
 		ros::Subscriber simWorldModel;
 		ros::Subscriber sharedWorldSub;
+		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
+		ros::Subscriber correctedOdometrySub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
 		mutex wmMutex;
 		mutex joystickMutex;
 		mutex motionBurstMutex;
+		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
 
 	protected:

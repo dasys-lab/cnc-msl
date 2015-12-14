@@ -20,6 +20,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1435766212595) ENABLED START*/ //Add additional private methods here
+        void readConfigParameters();
+        double wheelSpeed;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

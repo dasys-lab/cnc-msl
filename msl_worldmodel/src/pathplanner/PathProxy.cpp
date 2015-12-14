@@ -70,7 +70,7 @@ namespace msl
 	 * @param egoTarget shared_ptr<geometry::CNPoint2D>
 	 * @param eval shared_ptr<PathEvaluator>
 	 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-	 * @return shared_ptr<geometry::CNPoint2D>
+	 * @return std::shared_ptr<geometry::CNPoint2D>
 	 */
 	shared_ptr<geometry::CNPoint2D> PathProxy::getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 																shared_ptr<PathEvaluator> eval,
@@ -178,12 +178,72 @@ namespace msl
 	}
 
 	/**
+	 * send debug msg with voroni infos
+	 * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 */
+	void PathProxy::sendVoronoiNetMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites,
+										shared_ptr<VoronoiNet> voronoi)
+	{
+		msl_msgs::VoronoiNetInfo netMsg;
+		for (int i = 0; i < sites->size(); i++)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = sites->at(i)->x;
+			info.y = sites->at(i)->y;
+			netMsg.sites.push_back(info);
+		}
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > linePoints = calculateCroppedVoronoi(sites, voronoi);
+		for (int i = 0; i < linePoints->size(); i++)
+		{
+			msl_msgs::Point2dInfo info;
+			info.x = linePoints->at(i)->x;
+			info.y = linePoints->at(i)->y;
+			netMsg.linePoints.push_back(info);
+		}
+		voroniPub.publish(netMsg);
+	}
+
+	/**
 	 * calculates cropped voronoi for debug msg
 	 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 	 * @param voronoi shared_ptr<VoronoiNet>
 	 */
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathProxy::calculateCroppedVoronoi(
 			shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > sites, shared_ptr<VoronoiNet> voronoi)
+	{
+		//create bounding box around field with additional 3m distance
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		Iso_rectangle_2 bbox(- msl::MSLFootballField::FieldLength / 2 - 3000, -msl::MSLFootballField::FieldWidth / 2 - 3000,
+							 msl::MSLFootballField::FieldLength / 2 + 3000, msl::MSLFootballField::FieldWidth / 2 + 3000);
+		//create cropped voronoi
+		Cropped_voronoi_from_delaunay vor(bbox);
+		//get delaunay
+		DelaunayTriangulation dt = voronoi->getVoronoi()->dual();
+		dt.draw_dual(vor);
+		//get sites
+		for (auto it = vor.m_cropped_vd.begin(); it != vor.m_cropped_vd.end(); it++)
+		{
+			//check if source and target exist
+			//if there is no source or target the edge is connected to point at infinity
+			if (!std::isnan(it->source().x()) && !std::isnan(it->source().y()) && !std::isnan(it->target().x())
+					&& !std::isnan(it->target().y()))
+			{
+				//push back source and target
+				ret->push_back(make_shared<geometry::CNPoint2D>(it->source().x(), it->source().y()));
+				ret->push_back(make_shared<geometry::CNPoint2D>(it->target().x(), it->target().y()));
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * calculates cropped voronoi for debug msg
+	 * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 */
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathProxy::calculateCroppedVoronoi(
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites, shared_ptr<VoronoiNet> voronoi)
 	{
 		//create bounding box around field with additional 3m distance
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();

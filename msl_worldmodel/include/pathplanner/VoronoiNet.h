@@ -21,6 +21,7 @@ typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<Delauna
 typedef CGAL::Voronoi_diagram_2<DelaunayTriangulation, DelaunayAdaptionTraits, DelaunayAdaptionPolicy> VoronoiDiagram;
 typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
+typedef VoronoiDiagram::Vertex Vertex;
 
 #include <vector>
 #include <sstream>
@@ -86,7 +87,7 @@ namespace msl
 		 * @param v2 shared_ptr<geometry::CNPoint2D>
 		 * @return pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>>
 		 */
-		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<geometry::CNPoint2D> v2);
+		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
 		/**
 		 * print the voronoi diagrams sites
 		 */
@@ -105,7 +106,7 @@ namespace msl
 		 * @param point shared_ptr<geometry::CNPoint2D>
 		 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point);
+		shared_ptr<vector<shared_ptr<Vertex>>> getVerticesOfFace(shared_ptr<geometry::CNPoint2D> point);
 
 		/**
 		 * inserts sites into the VoronoiDiagram
@@ -141,12 +142,13 @@ namespace msl
 		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
 		/**
 		 * calculates distance between two points
-		 * @param ownPos shared_ptr<geometry::CNPoint2D>
+		 * @param pos shared_ptr<geometry::CNPoint2D>
 		 * @param vertexPoint shared_ptr<geometry::CNPoint2D>
 		 * @return double
 		 */
-		double calcDist(shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> vertexPoint);
+		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<Vertex> vertexPoint);
 
+		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<geometry::CNPoint2D> vertexPoint);
 		/**
 		 * find the face in which the point is situated
 		 * @param point VoronoiDiagram::Point_2
@@ -192,8 +194,9 @@ namespace msl
 		 * @param teamMateId int
 		 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeamMateVertices(int teamMateId);
+		shared_ptr<vector<shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getTeamMateVerticesCNPoint2D(int teamMateId);
 		/**
 		 * removes given sites from voronoi net
 		 * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
@@ -258,7 +261,7 @@ namespace msl
 		 * @param currentNode shared_ptr<SearchNode>
 		 * @return vector<shared_ptr<SearchNode>>
 		 */
-		vector<shared_ptr<SearchNode>> getNeighboredVertices(shared_ptr<SearchNode> currentNode);
+		//vector<shared_ptr<SearchNode>> getNeighboredVertices(shared_ptr<SearchNode> currentNode);
 		/**
 		 * checks if a SearchNode is part of a vector
 		 * @param vector shared_ptr<vector<shared_ptr<SearchNode>>>

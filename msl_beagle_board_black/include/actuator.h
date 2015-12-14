@@ -14,9 +14,6 @@
 #include "opticalflow.h"
 #include "imu.h"
 
-#include <mutex>
-#include <condition_variable>
-
 /*
 Axis.msg
 
@@ -51,9 +48,9 @@ struct CV {
 };
 
 
-BlackGPIO LED_Vision(GPIO_49, output, FastMode);	// P9 23
+BlackGPIO LED_Power(GPIO_49, output, FastMode);	// P9 23
 BlackGPIO LED_Bundle(GPIO_20, output, FastMode);	// P9 41
-BlackGPIO LED_Power(GPIO_7, output, FastMode);		// P9 42
+BlackGPIO LED_Vision(GPIO_7, output, FastMode);		// P9 42
 
 BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
 BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
@@ -76,7 +73,9 @@ Shovel			shovel;
 timeval			time_now;
 timeval			last_ping;
 
-CV				threw[6], cv_main;
+CV				threw[7], cv_main;
+
+supplementary::SystemConfig*	sc;
 
 bool			ex = false;
 

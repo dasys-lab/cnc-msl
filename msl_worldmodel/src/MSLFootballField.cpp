@@ -6,10 +6,10 @@ namespace msl
 
 	double MSLFootballField::FieldLength = 11200.0;
 	double MSLFootballField::FieldWidth = 8000.0;
-	double MSLFootballField::GoalAreaWidth = 1200.0;
-	double MSLFootballField::GoalAreaLength = 4000.0;
-	double MSLFootballField::GoalInnerAreaLength = 3000.0;
-	double MSLFootballField::GoalInnerAreaWidth = 700.0;
+	double MSLFootballField::PenaltyAreaWidth = 1200.0;
+	double MSLFootballField::PenaltyAreaLength = 4000.0;
+	double MSLFootballField::GoalAreaWidth = 3000.0;
+	double MSLFootballField::GoalAreaLength = 700.0;
 	double MSLFootballField::CornerCircleRadius = 350.0;
 	double MSLFootballField::MiddleCircleRadius = 1000.0;
 	double MSLFootballField::LineWidth = 75.0;
@@ -28,12 +28,10 @@ namespace msl
 
 		FieldLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldLength", NULL);
 		FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldWidth", NULL);
-		GoalAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaXSize", NULL);
-		GoalAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaYSize", NULL);
-		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "MiddleCircleRadius",
-		NULL);
-		GoalInnerAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaXSize", NULL);
-		GoalInnerAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaYSize", NULL);
+		PenaltyAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaXSize", NULL);
+		PenaltyAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaYSize", NULL);
+		GoalAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaXSize", NULL);
+		GoalAreaWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "GoalAreaYSize", NULL);
 		CornerCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "CornerCircleRadius",
 		NULL);
 		LineWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "LineWidth", NULL);
@@ -46,11 +44,11 @@ namespace msl
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
 		std::cout << "MSLFootballField::FieldWidth = " << FieldWidth << std::endl;
-		std::cout << "MSLFootballField::GoalAreaWidth = " << GoalAreaWidth << std::endl;
-		std::cout << "MSLFootballField::GoalAreaLength = " << GoalAreaLength << std::endl;
+		std::cout << "MSLFootballField::PenaltyAreaLength = " << PenaltyAreaLength << std::endl;
+		std::cout << "MSLFootballField::PenaltyAreaWidth = " << PenaltyAreaWidth << std::endl;
 		std::cout << "MSLFootballField::MiddleCircleRadius = " << MiddleCircleRadius << std::endl;
-		std::cout << "MSLFootballField::GoalInnerAreaWidth = " << GoalInnerAreaWidth << std::endl;
-		std::cout << "MSLFootballField::GoalInnerAreaLength = " << GoalInnerAreaLength << std::endl;
+		std::cout << "MSLFootballField::GoalAreaLength = " << GoalAreaLength << std::endl;
+		std::cout << "MSLFootballField::GoalAreaWidth = " << GoalAreaWidth << std::endl;
 		std::cout << "MSLFootballField::CornerCircleRadius = " << CornerCircleRadius << std::endl;
 		std::cout << "MSLFootballField::LineWidth = " << LineWidth << std::endl;
 		std::cout << "MSLFootballField::GoalInnerAreaExists = " << GoalInnerAreaExists << std::endl;
@@ -82,12 +80,12 @@ namespace msl
 
 	bool MSLFootballField::isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
-		return p->x - tolerance < -FieldLength / 2.0 + GoalAreaWidth && abs(p->y) - tolerance < GoalAreaLength / 2.0;
+		return p->x - tolerance < -FieldLength / 2.0 + PenaltyAreaLength && abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
 	}
 
 	bool MSLFootballField::isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
-		return p->x + tolerance > FieldLength / 2.0 - GoalAreaWidth && abs(p->y) - tolerance < GoalAreaLength / 2.0;
+		return p->x + tolerance > FieldLength / 2.0 - PenaltyAreaLength && abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
 	}
 
 	bool MSLFootballField::isInsidePenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
@@ -189,44 +187,45 @@ namespace msl
 		return make_shared<geometry::CNPoint2D>(0.0, FieldWidth / 2);
 	}
 
+	// TODO calculate penalty stuff with right parameters from globals.conf
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLROwnPenaltyArea()
 	{
-		return make_shared<geometry::CNPoint2D>(-FieldLength / 2, -GoalAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(-FieldLength / 2, -PenaltyAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posULOwnPenaltyArea()
 	{
-		return make_shared<geometry::CNPoint2D>(-FieldLength / 2 + GoalAreaWidth, GoalAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(-FieldLength / 2 + PenaltyAreaLength, PenaltyAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLROppPenaltyArea()
 	{
-		return make_shared<geometry::CNPoint2D>(FieldLength / 2 - GoalAreaWidth, -GoalAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(FieldLength / 2 - PenaltyAreaLength, -PenaltyAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posULOppPenaltyArea()
 	{
-		return make_shared<geometry::CNPoint2D>(FieldLength / 2, GoalAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(FieldLength / 2, PenaltyAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLROwnGoalArea()
 	{
-		return make_shared<geometry::CNPoint2D>(-FieldLength / 2, -GoalInnerAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(-FieldLength / 2, -GoalAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posULOwnGoalArea()
 	{
-		return make_shared<geometry::CNPoint2D>(-FieldLength / 2 + GoalInnerAreaWidth, GoalInnerAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(-FieldLength / 2 + GoalAreaLength, GoalAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLROppGoalArea()
 	{
-		return make_shared<geometry::CNPoint2D>(FieldLength / 2 - GoalInnerAreaWidth, -GoalInnerAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(FieldLength / 2 - GoalAreaLength, -GoalAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posULOppGoalArea()
 	{
-		return make_shared<geometry::CNPoint2D>(FieldLength / 2, GoalInnerAreaLength / 2);
+		return make_shared<geometry::CNPoint2D>(FieldLength / 2, GoalAreaWidth / 2);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posLeftRestartMarker()

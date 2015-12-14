@@ -55,6 +55,12 @@ namespace alica
             {
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
+                this->success = true;
+                return;
+            }
+            else if (wm->game.getTimeSinceStart() >= timeForPass)
+            {
+                this->failure = true;
             }
             else if (vectorLength < egoBallPos->length() && egoBallVelocity->length() > 250)
             {
@@ -99,6 +105,8 @@ namespace alica
         isMovingCloserIter = 0;
         isMovingAwayIter = 0;
         maxIter = 4;
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+        timeForPass = (*sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1414828300860) ENABLED START*/ //Add additional methods here
@@ -119,7 +127,7 @@ namespace alica
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
 
-        if (egoBallPos->length() < 500)
+        if (egoBallPos->length() < 1500)
         {
 
             bhc.leftMotor = -30;
@@ -138,7 +146,17 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::BallHandleCmd bhc;
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
+
+        if (egoBallPos->length() < 500)
+        {
+
+            bhc.leftMotor = -30;
+            bhc.rightMotor = -30;
+
+            this->send(bhc);
+        }
 
         return mc;
     }
