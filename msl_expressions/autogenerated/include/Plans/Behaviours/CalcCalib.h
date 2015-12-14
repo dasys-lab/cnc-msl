@@ -1,6 +1,6 @@
 #ifndef CalcCalib_H_
 #define CalcCalib_H_
-#define SIGN(a) ((a)>0)-((a)<0)
+//#define SIGN(a) ((a)>0)-((a)<0)
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1446033324019) ENABLED START*/ //Add additional includes here
