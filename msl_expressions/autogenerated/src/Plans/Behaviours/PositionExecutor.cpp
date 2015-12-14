@@ -51,37 +51,9 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-		// get entry point of task name to locate robot with task name
-		EntryPoint* ep = getParentEntryPoint(taskName);
-		if (ep != nullptr)
-		{
-			// get the plan in which the behavior is running
-			auto parent = this->runningPlan->getParent().lock();
-			if (parent == nullptr)
-			{
-				cout << "parent null" << endl;
-				return;
-			}
-			// get robot ids of robots in found entry point
-			shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-			shared_ptr<geometry::CNPoint2D> receiverPos = nullptr;
-			// exactly one robot is receiver
-			int id = ids->at(0);
-			if (id != -1)
-			{
-				// get receiver position by id
-				auto pos = wm->robots.getTeamMatePosition(id);
-				receiverPos = make_shared<geometry::CNPoint2D>(pos->x, pos->y);
-			}
-			MotionControl mc;
-			shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
-			// if there is a receiver, align to it
-			if (receiverPos != nullptr)
-			{
-				// calculate target 60cm away from the ball and on a line with the receiver
-				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
-				// ask the path planner how to get there
-
+	// get entry point of task name to locate robot with task name
+		
+		
         if (receiverEp != nullptr)
         {
             // get the plan in which the behavior is running
