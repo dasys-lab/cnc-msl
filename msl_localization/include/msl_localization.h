@@ -29,6 +29,7 @@
 #include "MapHelper.h"
 #include <tf/transform_listener.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_actuator_msgs/IMUData.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
 #include "Rprop.h"
@@ -44,7 +45,7 @@ class msl_localization {
 		msl_localization(int nParticles_);
 		~msl_localization();
 
-		void iterate(msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char* distanceMap);
+		void iterate(msl_sensor_msgs::LinePointListPtr & linePoints, unsigned char* distanceMap, msl_actuator_msgs::IMUDataPtr imu);
 		void updateParticles(double deltaX, double deltaY, double deltaH); 
 		Particle getMaxParticle();
 
@@ -92,7 +93,9 @@ class msl_localization {
 		bool UseBlueGoal;
 		bool UseCornerPosts;
 		
-		int yellowGoalDirection;
+		double yellowGoalDirection;
+		int xShift;
+		int yShift;
 
 		Position positionBuffer[RAWODOBUFSIZE];
 		unsigned long long timestampBuffer[RAWODOBUFSIZE];

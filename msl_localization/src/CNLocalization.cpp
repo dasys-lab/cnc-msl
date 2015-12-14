@@ -50,8 +50,7 @@ int main(int argc, char** argv) {
 
 		auto lpl = rmr->getCurrentLinePointList();
 
-		//if(++iteration%20==0) loc->sendParticleCloud();
-		loc->iterate(lpl, mh->getMap());
+		loc->iterate(lpl, mh->getMap(), rmr->getIMUData());
 		rmr->dirty=false;
 	}
 	return 0;

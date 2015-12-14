@@ -27,6 +27,7 @@ void RosMsgReceiver::initialize() {
     RelocSub = node.subscribe("CNActuator/VisionRelocTrigger",
 				1, &RosMsgReceiver::handleVisionRelocTriggerMessage, this);
     LinePointListSub = node.subscribe("/CNVision/LinePointList", 1, &RosMsgReceiver::handleLinePointListMessage, this);
+    imuDataSub = node.subscribe("/IMUData", 1, &RosMsgReceiver::handleIMUData, this);
 
 	particlepub = node.advertise<geometry_msgs::PoseArray>("/particlecloud", 1);
 	coipub = node.advertise<msl_sensor_msgs::CorrectedOdometryInfo>("/CorrectedOdometryInfo", 1);
@@ -81,6 +82,11 @@ void RosMsgReceiver::handleMapMessage(const nav_msgs::OccupancyGrid::ConstPtr& m
 	}
 }
 
+void RosMsgReceiver::handleIMUData(msl_actuator_msgs::IMUDataPtr msg)
+{
+	this->imuData = msg;
+}
+
 void RosMsgReceiver::handleVisionRelocTriggerMessage(const
 		msl_actuator_msgs::VisionRelocTrigger::ConstPtr& msg) {
 	if(supplementary::SystemConfig::getOwnRobotID() != msg->receiverID) return;
@@ -110,4 +116,8 @@ msl_sensor_msgs::LinePointListPtr RosMsgReceiver::getCurrentLinePointList() {
 msl_actuator_msgs::RawOdometryInfoPtr RosMsgReceiver::getOdometryInfo()
 {
 	return odometryInfoMsg;
+}
+
+msl_actuator_msgs::IMUDataPtr RosMsgReceiver::getIMUData() {
+	return imuData;
 }
