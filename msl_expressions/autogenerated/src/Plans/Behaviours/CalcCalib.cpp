@@ -1,6 +1,7 @@
 using namespace std;
 #include "Plans/Behaviours/CalcCalib.h"
 
+
 /*PROTECTED REGION ID(inccpp1446033324019) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -31,7 +32,6 @@ namespace alica
 
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
 
-        std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
         //std::cout << "posMotionX: " << calibPosMotionX << std::endl;
         //std::cout << "posMotionY: " << calibPosMotionY << std::endl;
         //std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
@@ -43,11 +43,11 @@ namespace alica
         //std::cout << "correctedWayY : " << correctedWayY << std::endl;
         //std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
-        wayX = calibPosMotionX - calibOldPosMotionX;
-        wayY = calibPosMotionY - calibOldPosMotionY;
+        correctedWayX = (calibPosMotionX - calibOldPosMotionX) / cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+        correctedWayY = (calibPosMotionY - calibOldPosMotionY) * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
 
-        correctedWayX = correctedWayX + wayX/cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
-        correctedWayY = correctedWayY + wayX * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+        correctedPosX = correctedPosX + correctedWayX;
+        correctedPosY = correctedPosY + correctedWayY;
 
 
         this->wm->calibData.length = this->wm->calibData.length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
@@ -62,8 +62,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
 
-    	diffX = correctedWayX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
-    	diffY = correctedWayY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+    	diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
+    	diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
@@ -71,14 +71,29 @@ namespace alica
                     - this->wm->rawSensorData.getOwnPositionVision(0)->x;
             auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+
+            string value;
+            string filename = string(sc->getConfigPath())+string(sc->getHostname())+string("/CalibData.txt");
+            ifstream calibData (filename);
+            if (calibData.is_open())
+            {
+            	while (getline (calibData, value))
+            	{
+            		this->wm->calibData.calibCoefficient = std::stod(value);
+            	}
+            	calibData.close();
+            }
+
+
             if(this->wm->calibData.calibCoefficient==0)
             {
-                this->wm->calibData.calibCoefficient = 1;
+                this->wm->calibData.calibCoefficient = 0.85;
             }
-            if (this->wm->calibData.length > 12000)
+
+            if (this->wm->calibData.length != 0)
             {
-            	if (this->wm->calibData.length != 0)
-            	{
+                if (this->wm->calibData.length > 12000)
+                {
             		if(this->wm->calibData.length < 13200)
             		{
             			this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
@@ -89,7 +104,7 @@ namespace alica
             			this->wm->calibData.calibCoefficient *= -(sqrt(deltax * deltax + deltay * deltay)
             					/ this->wm->calibData.length) + 1;
             		}
-            }
+                 }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
@@ -97,17 +112,24 @@ namespace alica
                 saveToCalibData << this->wm->calibData.calibCoefficient;
                 saveToCalibData.close();
             }
+            else
+				{
+            		correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            		correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+				}
+
+
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
             std::cout << "Y: " << diffY << std::endl;
             std::cout << "Länge: " << this->wm->calibData.length << std::endl;
             std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
-            std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->x << std::endl;
+            std::cout << "posMotionX: " << this->wm->rawSensorData.getOwnPositionMotion(0)->x << std::endl;
             std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->y << std::endl;
+            std::cout << "correctedWayX : " << correctedPosX << std::endl;
+            std::cout << "correctedWayY : " << correctedPosY << std::endl;
             std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
-            std::cout << "correctedWayX : " << correctedWayX << std::endl;
-            std::cout << "correctedWayY : " << correctedWayY << std::endl;
             std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
 

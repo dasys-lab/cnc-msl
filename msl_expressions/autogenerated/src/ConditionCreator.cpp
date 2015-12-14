@@ -32,6 +32,8 @@
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
 
+#include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
+
 #include  "Plans/Attack/AttackSupportPlan1434046705214.h"
 
 #include  "Plans/Attack/TestPlans/TestDribblePlan1437902404050.h"
@@ -675,6 +677,18 @@ namespace alica
             case 1436960799378:
 
                 return make_shared<TransitionCondition1436960799378>();
+
+                break;
+
+            case 1449076203800:
+
+                return make_shared<TransitionCondition1449076203800>();
+
+                break;
+
+            case 1449076205925:
+
+                return make_shared<TransitionCondition1449076205925>();
 
                 break;
 
