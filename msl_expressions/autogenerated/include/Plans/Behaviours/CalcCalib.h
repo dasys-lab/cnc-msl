@@ -18,10 +18,10 @@ namespace alica
         double calibPosMotionX;
         double calibOldPosMotionX = 0;
         double calibOldPosMotionY = 0;
-        double wayX;
-        double wayY;
         double correctedWayX;
         double correctedWayY;
+        double correctedPosX;
+        double correctedPosY;
         double diffX;
         double diffY;
 

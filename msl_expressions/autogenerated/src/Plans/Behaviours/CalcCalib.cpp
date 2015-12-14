@@ -31,7 +31,6 @@ namespace alica
 
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
 
-        std::cout << "Faktor: " << this->wm->calibData.calibCoefficient << std::endl;
         //std::cout << "posMotionX: " << calibPosMotionX << std::endl;
         //std::cout << "posMotionY: " << calibPosMotionY << std::endl;
         //std::cout<< "oldPositionX: "<< calibOldPosMotionX<<std::endl;
@@ -43,11 +42,11 @@ namespace alica
         //std::cout << "correctedWayY : " << correctedWayY << std::endl;
         //std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
-        wayX = calibPosMotionX - calibOldPosMotionX;
-        wayY = calibPosMotionY - calibOldPosMotionY;
+        correctedWayX = (calibPosMotionX - calibOldPosMotionX) / cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+        correctedWayY = (calibPosMotionY - calibOldPosMotionY) * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
 
-        correctedWayX = correctedWayX + wayX/cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
-        correctedWayY = correctedWayY + wayX * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
+        correctedPosX = correctedPosX + correctedWayX;
+        correctedPosY = correctedPosY + correctedWayX;
 
 
         this->wm->calibData.length = this->wm->calibData.length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
@@ -62,8 +61,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
 
-    	diffX = correctedWayX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
-    	diffY = correctedWayY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+    	diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
+    	diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
@@ -73,7 +72,7 @@ namespace alica
                     - this->wm->rawSensorData.getOwnPositionVision(0)->y;
             if(this->wm->calibData.calibCoefficient==0)
             {
-                this->wm->calibData.calibCoefficient = 1;
+                this->wm->calibData.calibCoefficient = 0.85;
             }
             if (this->wm->calibData.length > 12000)
             {
@@ -106,8 +105,8 @@ namespace alica
             std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->y << std::endl;
             std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
-            std::cout << "correctedWayX : " << correctedWayX << std::endl;
-            std::cout << "correctedWayY : " << correctedWayY << std::endl;
+            std::cout << "correctedWayX : " << correctedPosX << std::endl;
+            std::cout << "correctedWayY : " << correctedPosY << std::endl;
             std::cout << "theta : " << this->wm->rawSensorData.getOwnPositionVision(0)->theta - this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
 
