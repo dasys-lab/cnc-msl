@@ -25,6 +25,8 @@
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"
 
+#include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
+
 #include  "Plans/Attack/constraints/AttackSupportPlan1434046705214Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestDribblePlan1437902404050Constraints.h"

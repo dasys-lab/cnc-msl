@@ -43,6 +43,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionExecutor.h"
 
+#include  "Plans/GenericBehaviours/CheckGoalKick.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Attack/Tackle.h"
@@ -55,9 +57,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
-#include  "Plans/Behaviours/SpinSlowly.h"
-
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
@@ -191,6 +193,11 @@ namespace alica
                 return make_shared<PositionExecutor>();
                 break;
 
+            case 1449076029919:
+
+                return make_shared<CheckGoalKick>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
@@ -223,14 +230,14 @@ namespace alica
                 return make_shared<AlignToGoal>();
                 break;
 
-            case 1435159282996:
-
-                return make_shared<SpinSlowly>();
-                break;
-
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1435159282996:
+
+                return make_shared<SpinSlowly>();
                 break;
 
             case 1434199852589:

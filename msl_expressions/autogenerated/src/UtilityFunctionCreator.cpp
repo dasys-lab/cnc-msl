@@ -25,6 +25,8 @@
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
 
+#include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
+
 #include  "Plans/Attack/AttackSupportPlan1434046705214.h"
 
 #include  "Plans/Attack/TestPlans/TestDribblePlan1437902404050.h"
@@ -125,6 +127,10 @@ namespace alica
 
             case 1436960675873:
                 return make_shared<UtilityFunction1436960675873>();
+                break;
+
+            case 1449076138236:
+                return make_shared<UtilityFunction1449076138236>();
                 break;
 
             case 1434046705214:

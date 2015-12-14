@@ -160,7 +160,6 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1438790362133) ENABLED START*/ //Add additional methods here
-
     void PositionExecutor::readConfigParameters()
     {
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
