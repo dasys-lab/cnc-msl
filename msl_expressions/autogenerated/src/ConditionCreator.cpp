@@ -64,6 +64,8 @@
 
 #include  "Plans/Penalty/OwnPenalty1431525185678.h"
 
+#include  "Plans/Attack/Duel1450178655416.h"
+
 #include  "Plans/Attack/Tackle1434116965565.h"
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
@@ -356,12 +358,6 @@ namespace alica
 
                 break;
 
-            case 1434048732966:
-
-                return make_shared<TransitionCondition1434048732966>();
-
-                break;
-
             case 1434048737070:
 
                 return make_shared<TransitionCondition1434048737070>();
@@ -389,6 +385,54 @@ namespace alica
             case 1434716050319:
 
                 return make_shared<TransitionCondition1434716050319>();
+
+                break;
+
+            case 1450175866027:
+
+                return make_shared<TransitionCondition1450175866027>();
+
+                break;
+
+            case 1450175867019:
+
+                return make_shared<TransitionCondition1450175867019>();
+
+                break;
+
+            case 1450175873333:
+
+                return make_shared<TransitionCondition1450175873333>();
+
+                break;
+
+            case 1450175876730:
+
+                return make_shared<TransitionCondition1450175876730>();
+
+                break;
+
+            case 1450175926118:
+
+                return make_shared<TransitionCondition1450175926118>();
+
+                break;
+
+            case 1450175931490:
+
+                return make_shared<TransitionCondition1450175931490>();
+
+                break;
+
+            case 1450175967497:
+
+                return make_shared<TransitionCondition1450175967497>();
+
+                break;
+
+            case 1450176060920:
+
+                return make_shared<TransitionCondition1450176060920>();
 
                 break;
 
