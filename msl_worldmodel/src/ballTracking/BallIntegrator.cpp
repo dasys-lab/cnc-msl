@@ -81,7 +81,6 @@ void BallIntegrator::decreaseDirtyPointCertainty() {
 
 	if(maxCertainty >= 0.35 && sumOfCertainties >= 0.35){
 
-		printf("Point calculated\n");
 		currPoint = points[maxIndex].point;
 //		currPoint.confidence = points[maxIndex].point.confidence*(maxCertainty*maxCertainty/sumOfCertainties);
 		currPoint.confidence = points[maxIndex].point.confidence*sqrt(1.0/listLength);
@@ -98,13 +97,8 @@ void BallIntegrator::decreaseDirtyPointCertainty() {
 
 		currContainer = NULL;		
 	}
-
-	printf("Stefans BallPos BallTracker - BallIntegrator - currPoint %f %f %f\n", currPoint.x, currPoint.y, sqrt(currPoint.x*currPoint.x + currPoint.y*currPoint.y));
-	printf("Stefans BallPos BallTracker - BallIntegrator - certainty = %f nHypothesis = %d\n", maxCertainty, points.size());
-
-
-
 }
+
 
 void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 	bool found = false;
@@ -112,15 +106,17 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 	geometry::CNPoint2D egoPoint;
 	egoPoint.x = p_.x;
 	egoPoint.y = p_.y;
-	geometry::CNPosition integrationPos = *msl::MSLWorldModel::get()->rawSensorData.getOwnPositionMotion();
+	auto posPtr = msl::MSLWorldModel::get()->rawSensorData.getOwnPositionVision(); //In a time far far away this was from the motionbuffer!?
+	geometry::CNPosition integrationPos;
+	if(posPtr!=nullptr) {
+		integrationPos = *posPtr;
+	}
 			//RawOdometryHelper::getInstance()->getPositionData(p.timestamp);
 	geometry::CNPoint2D alloPoint = *egoPoint.egoToAllo(integrationPos);
 
 	p.x = alloPoint.x;
 	p.y = alloPoint.y;
-	
 	if (p.valid) {
-		printf("Point valid + size = %d\n", points.size());
 		
 		for (unsigned int i = 0; i < points.size(); i++) {
 
@@ -140,7 +136,6 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 		}
 	
 		if (!found) {
-		printf("Point not found\n");
 			PointHypothesis newPoint;
 			newPoint.certainty = 0.5;
 			newPoint.point = p;
@@ -169,7 +164,6 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 			if ((points[i].certainty < 0.35) ||
 				((maxIndex != i) && (dist < threshold)))
 			{
-				printf("PointRemoval!\n");
 
 				std::vector<PointHypothesis>::iterator itRemove = points.begin() + i;
 				points.erase(itRemove);
