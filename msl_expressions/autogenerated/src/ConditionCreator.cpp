@@ -64,6 +64,8 @@
 
 #include  "Plans/Penalty/OwnPenalty1431525185678.h"
 
+#include  "Plans/Attack/Duel1450178655416.h"
+
 #include  "Plans/Attack/Tackle1434116965565.h"
 
 #include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"

@@ -65,6 +65,8 @@
 
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 
+#include  "Plans/Attack/constraints/Duel1450178655416Constraints.h"
+
 #include  "Plans/Attack/constraints/Tackle1434116965565Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
