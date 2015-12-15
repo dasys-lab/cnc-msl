@@ -598,7 +598,7 @@ void msl_localization::iterate(msl_sensor_msgs::LinePointListPtr & linePoints, u
 	coi.motion = (robotVelocity);
 	coi.certainty = (calculateWeightForEstimatedPosition(rawUpdatedPositionNew, linePoints, distanceMap));
 	coi.locType.type = (LocalizationType::ParticleFilter);
-	coi.timestamp = linePoints->imageTime;
+	coi.imageTime = linePoints->imageTime;
 
 	printf("MaxParticle Confidence %f\n", coi.certainty);		
 	oldOdometryInfo = odomotryInfo;
@@ -920,9 +920,6 @@ double msl_localization::calculateWeightForEstimatedPosition(Position pos, msl_s
 void msl_localization::writeCoi()
 {
 	if (coi.certainty != -1 ) {
-		unsigned long long timestamp = ros::Time::now().sec*1000000000ull+ros::Time::now().nsec;
-		coi.timestamp = (timestamp);
-
 		RosMsgReceiver::getInstance()->coipub.publish(coi);
 	}
 	else printf("NewLoc: OOOPS no coi in particlefilter");

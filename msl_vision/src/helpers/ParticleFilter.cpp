@@ -915,7 +915,7 @@ void ParticleFilter::writeCoi()
 {
 	if (coi.certainty != -1 ) {
 		unsigned long long timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-		coi.timestamp = (timestamp);
+		coi.imageTime = (timestamp);
 		SpicaHelper::wm->odometry = (coi);
 		printf("NewLoc PF im WM\n");
 	}

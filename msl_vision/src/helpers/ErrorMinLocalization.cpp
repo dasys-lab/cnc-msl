@@ -238,7 +238,7 @@ namespace redwolf {
 
 		//printf("Gain NewLoc ErrorMin im WM\n");
 		unsigned long long timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-                coi.timestamp =(timestamp);
+                coi.imageTime =(timestamp);
 		SpicaHelper::wm->odometry = (coi);
 		std::cout<<"ErrorMinLoc im WM"<<std::endl;
 	}
