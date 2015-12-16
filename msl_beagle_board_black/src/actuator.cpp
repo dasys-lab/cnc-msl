@@ -319,6 +319,7 @@ int main(int argc, char** argv) {
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
+	lsm9ds0.setRefAccel();
 	adns3080.reset();
 	adns3080.adns_init();
 

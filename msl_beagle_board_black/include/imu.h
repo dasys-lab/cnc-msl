@@ -53,8 +53,8 @@ const uint8_t GYR_FS_500DPS			= 0x01;
 const uint8_t GYR_FS_2000DPS		= 0x10;
 const uint8_t MAG_MDR_2GAUSS		= 0x00;
 const uint8_t MAG_MDR_4GAUSS		= 0x20;
-const uint8_t MAG_MDR_6GAUSS		= 0x40;
-const uint8_t MAG_MDR_8GAUSS		= 0x60;
+const uint8_t MAG_MDR_8GAUSS		= 0x40;
+const uint8_t MAG_MDR_12GAUSS		= 0x60;
 
 const float ACC_2G_SENSE			= 0.061;
 const float ACC_4G_SENSE			= 0.122;
@@ -82,6 +82,7 @@ class IMU {
 
 		struct Koordinaten {
 			float	x, y, z, sense;
+			float	xr, yr, zr;
 		} gyro, accel, magnet;
 
 		bool		whoami();
@@ -97,6 +98,8 @@ class IMU {
 					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
 					~IMU();
 		bool		init();
+		void		setRefAccel();
+		void		setRefGyro();
 		void		updateData(timeval time_now);
 		void		sendData(timeval time_now, ros::Publisher *imuPub);
 
