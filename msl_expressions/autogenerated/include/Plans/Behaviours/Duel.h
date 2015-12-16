@@ -18,6 +18,10 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1450178699265) ENABLED START*/ //Add additional protected methods here
         double wheelSpeed;
+        double fieldLength;
+        double translation;
+        int direction;
+        bool checkSide(geometry::CNPoint2D lineVector, geometry::CNPoint2D pointToCheck);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450178699265) ENABLED START*/ //Add additional private methods here
