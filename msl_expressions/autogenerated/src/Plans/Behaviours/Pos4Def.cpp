@@ -15,7 +15,7 @@ namespace alica
             DomainBehaviour("Pos4Def")
     {
         /*PROTECTED REGION ID(con1445438142979) ENABLED START*/ //Add additional options here
-        this->query = make_shared < alica::ConstraintQuery > (this->getRunningPlan()->getAlicaEngine());
+        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
         /*PROTECTED REGION END*/
     }
     Pos4Def::~Pos4Def()

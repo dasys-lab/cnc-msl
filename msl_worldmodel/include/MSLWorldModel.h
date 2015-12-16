@@ -52,6 +52,7 @@ namespace msl
 	public:
 		static MSLWorldModel* get();
 		bool setEngine(alica::AlicaEngine* ae);
+		alica::AlicaEngine* getEngine();
 
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
