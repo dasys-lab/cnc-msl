@@ -123,9 +123,10 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 			return;
 
 		msl_actuator_msgs::HaveBallInfo msg;
+		uint16_t value;
 
 		try {
-			uint16_t value = ADC_light.getNumericValue();
+			value = ADC_light.getNumericValue();
 		} catch (exception &e) {
 			cout << "ADC: " << e.what() << endl;
 		}
