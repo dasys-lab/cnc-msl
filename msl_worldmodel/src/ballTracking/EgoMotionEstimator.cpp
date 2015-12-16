@@ -86,8 +86,6 @@ MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long 
 
 	}	
 
-	//printf("EgoMotionEstimator after first check\n");
-
 	validCounter = 1;
 
 	int startIndex = lastIndex;
@@ -97,9 +95,6 @@ MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long 
 	while(1){
 
 		timediff = timestampBuf[lastIndex] - timestampBuf[currIndex];
-
-		//printf("EgoMotionEstimator first while %d %d %llu\n", lastIndex, currIndex, timediff);
-		//printf("EgoMotionEstimator timelast = %llu timecurr = %llu\n", timestampBuf[lastIndex], timestampBuf[currIndex]);
 
 		if(timediff > timeBack || currIndex == lastIndex)
 			break;
@@ -113,10 +108,6 @@ MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long 
 			currIndex += length;
 
 	}
-
-
-	//printf("EgoMotionEstimator after first while\n");
-
 
 	if(validCounter == 1){
 
@@ -198,11 +189,6 @@ MovingRobot EgoMotionEstimator::trackObject(Position * posBuffer, unsigned long 
 	double vy = 0.0;
 	double x = 0.0;
 	double y = 0.0;
-
-
-	//printf("EgoMotionEstimator after rotational velocity\n");
-
-
 
 	if(fabs(w) < 1.0E-03){
 

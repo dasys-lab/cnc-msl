@@ -97,7 +97,7 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
-		pathPlanner.processWorldModelData(msg);
+		//pathPlanner.processWorldModelData(msg);
 		visionTrigger.run();
 	}
 
@@ -203,6 +203,7 @@ namespace msl
 		}
 		if (ownPos != nullptr)
 		{
+			msg.participating = true;
 			sharedWorldPub.publish(msg);
 		}
 	}

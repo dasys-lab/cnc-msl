@@ -14,23 +14,6 @@
 #include "opticalflow.h"
 #include "imu.h"
 
-/*
-Axis.msg
-
-int16_t x;
-int16_t y;
-int16_t z;
-
-
-IMUInfo.msg
-
-Axis	accel;
-Axis	gyro;
-Axis	magnet;
-int16_t temperature;
-
- */
-
 
 using namespace BlackLib;
 

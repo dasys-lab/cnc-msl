@@ -45,7 +45,11 @@ void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 	// LED vom Maussensor ansteuern
-	adns3080.controlLED(msg.enable);
+	try {
+		adns3080.controlLED(msg.enable);
+	} catch (exception &e) {
+		cout << "MotionLight: " << e.what() << endl;
+	}
 }
 
 
@@ -55,8 +59,11 @@ void controlBHLeft() {
 		threw[0].cv.wait(l_bhl, [&] { return !th_activ || threw[0].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
-
-		BH_left.controlBallHandling();
+		try {
+			BH_left.controlBallHandling();
+		} catch (exception &e) {
+			cout << "BallHanlde left: " << e.what() << endl;
+		}
 
 		threw[0].notify = false;
 		cv_main.cv.notify_all();
@@ -69,8 +76,12 @@ void controlBHRight() {
 		threw[1].cv.wait(l_bhr, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
+		try {
+			BH_right.controlBallHandling();
+		} catch (exception &e) {
+			cout << "BallHanlde right: " << e.what() << endl;
+		}
 
-		BH_right.controlBallHandling();
 
 		threw[1].notify = false;
 		cv_main.cv.notify_all();
@@ -84,15 +95,19 @@ void contolShovelSelect() {
 		if (!th_activ)
 			return;
 
-		if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
-			shovel.enabled = false;
-			ShovelSelect.setRunState(stop);
-		}
-		if (shovel.enabled) {
-			if (ShovelSelect.getRunValue() == "0") {
-				ShovelSelect.setRunState(run);
+		try {
+			if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
+				shovel.enabled = false;
+				ShovelSelect.setRunState(stop);
 			}
-			ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
+			if (shovel.enabled) {
+				if (ShovelSelect.getRunValue() == "0") {
+					ShovelSelect.setRunState(run);
+				}
+				ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
+			}
+		} catch (exception &e) {
+			cout << "Shovel: " << e.what() << endl;
 		}
 
 		threw[2].notify = false;
@@ -108,7 +123,13 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 			return;
 
 		msl_actuator_msgs::HaveBallInfo msg;
-		uint16_t value = ADC_light.getNumericValue();
+		uint16_t value;
+
+		try {
+			value = ADC_light.getNumericValue();
+		} catch (exception &e) {
+			cout << "ADC: " << e.what() << endl;
+		}
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
 			msg.haveBall = true;
@@ -141,9 +162,13 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		bool newstate[3];
 		uint8_t	sw[3] = {1, 1, 1};
 
-		sw[bundle]	= SW_Bundle.getNumericValue();
-		sw[vision]	= SW_Vision.getNumericValue();
-		sw[power]	= SW_Power.getNumericValue();
+		try {
+			sw[bundle]	= SW_Bundle.getNumericValue();
+			sw[vision]	= SW_Vision.getNumericValue();
+			sw[power]	= SW_Power.getNumericValue();
+		} catch (exception &e) {
+			cout << "Buttons: " << e.what() << endl;
+		}
 
 		for (int i = 0; i <= 2; i++) {
 			if(sw[i] == 1) {
@@ -214,8 +239,12 @@ void getIMU(ros::Publisher *imuPub) {
 		if (!th_activ)
 			return;
 
-		lsm9ds0.updateData(time_now);
-		lsm9ds0.sendData(time_now, imuPub);
+		try {
+			lsm9ds0.updateData(time_now);
+			lsm9ds0.sendData(time_now, imuPub);
+		} catch (exception &e) {
+			cout << "IMU: " << e.what() << endl;
+		}
 
 		threw[5].notify = false;
 		cv_main.cv.notify_all();
@@ -229,8 +258,12 @@ void getOptical(ros::Publisher *mbcPub) {
 		if (!th_activ)
 			return;
 
-		adns3080.update_motion_burst(time_now);
-		adns3080.send_motion_burst(time_now, mbcPub);
+		try {
+			adns3080.update_motion_burst(time_now);
+			adns3080.send_motion_burst(time_now, mbcPub);
+		} catch (exception &e) {
+			cout << "Optical Flow: " << e.what() << endl;
+		}
 
 		threw[6].notify = false;
 		cv_main.cv.notify_all();

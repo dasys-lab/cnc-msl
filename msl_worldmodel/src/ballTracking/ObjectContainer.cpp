@@ -40,7 +40,6 @@ ObjectContainer::ObjectContainer(int size_){
 	lastValidIndex = 0;
 	points[0].valid = false;
 
-	//printf("+++++++++++++++++++++lastIndex %d %d\n", lastIndex, size*sizeof(ObservedPoint));
 
 	validCounter = 0;
 
@@ -50,11 +49,7 @@ ObjectContainer::ObjectContainer(int size_){
 
 
 ObjectContainer::~ObjectContainer(){
-
-	printf("Destructor of ObjectContainer\n");
-
 	cleanup();
-
 }
 
 
@@ -73,21 +68,12 @@ void ObjectContainer::cleanup(){
 
 
 void ObjectContainer::integratePoint(ObservedPoint p){
-
-	//printf("ObjectContainer integratePoint %d %d %d\n", lastIndex, startIndex, validCounter);
-
-
-
 	if(lastIndex != startIndex || (lastIndex == startIndex && validCounter == 1)){
 		lastIndex++;
 		if(lastIndex >= size)
 			lastIndex -= size;
 	}
-
-	//printf("ObjectContainer integratePoint %d\n", lastIndex);
 	points[lastIndex] = p;
-
-	//printf("p.valid %d - points.valid %d\n", p.valid, points[lastIndex].valid);
 
 	lastValidIndex = -1;
 	validCounter = 0;
@@ -111,24 +97,16 @@ void ObjectContainer::integratePoint(ObservedPoint p){
 			currIndex -= size;
 
 	}
-
-	//printf("ObjectContainer integratePoint %d %d\n", lastValidIndex, validCounter);
-
-
 }
 
 
 void ObjectContainer::invalidate(int ms){
-
-	printf("BallPos ObjectContainer invalidate: %d %d\n", lastValidIndex, validCounter);
-
 	int currIndex = startIndex;
 
 	unsigned long long timeDiff = 0;
 
 	while(currIndex != lastIndex){
 		timeDiff = TimeHelper::getInstance()->getTimeDiffToOmniCam(points[currIndex].timestamp);
-		//printf("BallPos Invalidate %lld\n", timeDiff);
 		if(timeDiff > ms*10000){
 			points[currIndex].valid = false;
 			startIndex = currIndex + 1;
@@ -170,10 +148,6 @@ void ObjectContainer::invalidate(int ms){
 		if(currIndex >= size)
 			currIndex -= size;
 	}
-
-	//printf("ObjectContainer invalidate: %d %d\n", lastValidIndex, validCounter);
-
-
 }
 
 

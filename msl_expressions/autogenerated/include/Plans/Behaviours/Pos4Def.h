@@ -23,7 +23,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1445438142979) ENABLED START*/ //Add additional private methods here
-        /*PROTECTED REGION END*/};
+        /*PROTECTED REGION END*/
+    };
 } /* namespace alica */
 
 #endif /* Pos4Def_H_ */

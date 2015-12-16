@@ -145,6 +145,7 @@ namespace msl
 		{
 			processHypothesis();
 		}
+		lastUpdateReceived = imageTime;
 	}
 
 	void Ball::updateOnBallHypothesisList(unsigned long long imageTime)
@@ -153,6 +154,7 @@ namespace msl
 		{
 			processHypothesis();
 		}
+		lastUpdateReceived = imageTime;
 	}
 
 	void Ball::processHypothesis()
@@ -202,7 +204,7 @@ namespace msl
 		bool inField;
 
 		for (int i = 0; i < ballList->hypothesis.size(); i++)
-		{
+		{	
 			double relFactor = 200;
 			ballPos.x = ballList->hypothesis[i].egoPosition.x;
 			ballPos.y = ballList->hypothesis[i].egoPosition.y;
@@ -253,8 +255,8 @@ namespace msl
 			if (ballPos.confidence > 0.9)
 				ballPos.confidence = 0.9;
 
+			ballPos.valid = true;
 			ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
-
 			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
 			ballIntegrated = true;
 			noBallCycles = 0;

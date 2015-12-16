@@ -4,4 +4,8 @@
     <parameters id="1449743837472" name="MISSING_NAME" comment="" key="ControllNoMatterWhat" value="false"/>
     <parameters id="1449743861039" name="MISSING_NAME" comment="" key="PullNoMatterWhat" value="false"/>
   </configurations>
+  <configurations id="1450175539163" name="DribbleControlNoBall" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1450175578710" name="MISSING_NAME" comment="" key="ControlNoMatterWhat" value="false"/>
+    <parameters id="1450175587826" name="MISSING_NAME" comment="" key="PullNoMatterWhat" value="true"/>
+  </configurations>
 </alica:Behaviour>

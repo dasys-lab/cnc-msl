@@ -293,7 +293,7 @@ namespace msl
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
 		ownPositionVision.add(o);
-		this->wm->ball.updateOnLocalizationData(coi->timestamp);
+		this->wm->ball.updateOnLocalizationData(coi->imageTime);
 	}
 
 	void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)

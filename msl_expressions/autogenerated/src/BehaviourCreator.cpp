@@ -25,6 +25,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/CalcCalib.h"
 
+#include  "Plans/Attack/FetchFromSideLine.h"
+
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
 #include  "Plans/Behaviours/StdExecutorGrabBall.h"
@@ -55,7 +57,11 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/CheckGoalKick.h"
 
+#include  "Plans/Attack/AdvancdeSimplePass.h"
+
 #include  "Plans/Attack/OneEighty.h"
+
+#include  "Plans/Behaviours/Duel.h"
 
 #include  "Plans/Attack/Tackle.h"
 
@@ -178,6 +184,11 @@ namespace alica
                 return make_shared<CalcCalib>();
                 break;
 
+            case 1450175679178:
+
+                return make_shared<FetchFromSideLine>();
+                break;
+
             case 1433950043262:
 
             case 1435155363994:
@@ -229,6 +240,8 @@ namespace alica
 
             case 1449742099555:
 
+            case 1450175539163:
+
                 return make_shared<DribbleControl>();
                 break;
 
@@ -259,9 +272,19 @@ namespace alica
                 return make_shared<CheckGoalKick>();
                 break;
 
+            case 1450176216458:
+
+                return make_shared<AdvancdeSimplePass>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
+                break;
+
+            case 1450178707835:
+
+                return make_shared<Duel>();
                 break;
 
             case 1434807680165:
