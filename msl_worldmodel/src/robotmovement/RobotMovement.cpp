@@ -46,6 +46,7 @@ namespace msl
 		additionalPoints);
 		if(temp != nullptr)
 		{
+			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
 			egoTarget = temp;
 		}
 
@@ -74,7 +75,7 @@ namespace msl
 		additionalPoints);
 		if(temp == nullptr)
 		{
-			cout << "alloTarget = nullptr" << endl;
+			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
 			temp = egoTarget;
 		}
 		MotionControl mc;
@@ -105,7 +106,7 @@ namespace msl
 			additionalPoints);
 			if(temp == nullptr)
 			{
-				cout << "alloTarget = nullptr" << endl;
+				cout << "RobotMovement::interceptCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
 				temp = egoTarget;
 			}
 			mc.motion.angle = temp->angleTo();

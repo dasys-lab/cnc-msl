@@ -52,12 +52,13 @@ namespace msl
 		VoronoiNet(MSLWorldModel* wm);
 		VoronoiNet(shared_ptr<VoronoiNet> net);
 		virtual ~VoronoiNet();
+		bool ownPosAvail;
 		/**
 		 * generates a VoronoiDiagram and inserts given points
 		 * @param points vector<shared_ptr<geometry::CNPoint2D>>
 		 * @return shared_ptr<VoronoiDiagram>
 		 */
-		shared_ptr<VoronoiDiagram> generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points);
+		shared_ptr<VoronoiDiagram> generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points, bool ownPosAvail);
 		/**
 		 * gets the SearchNode with lowest dist to goal
 		 * @param open shared_ptr<vector<shared_ptr<SearchNode>>>

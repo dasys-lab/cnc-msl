@@ -15,9 +15,10 @@ namespace msl
 	VoronoiNet::VoronoiNet(MSLWorldModel* wm)
 	{
 		this->wm = wm;
-		sc = supplementary::SystemConfig::getInstance();
+		this->sc = supplementary::SystemConfig::getInstance();
 		this->voronoi = make_shared<VoronoiDiagram>();
-		field = MSLFootballField::getInstance();
+		this->field = MSLFootballField::getInstance();
+		this->ownPosAvail = false;
 	}
 	VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
 	{
@@ -25,13 +26,14 @@ namespace msl
 		this->sc = net->sc;
 		this->voronoi = make_shared<VoronoiDiagram>();
 		this->field = net->field;
+		this->ownPosAvail =net->ownPosAvail;
 		auto opponents = net->getOpponentPositions();
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		for (int i = 0; i < opponents->size(); i++)
 		{
 			points.push_back(make_shared<geometry::CNPoint2D>(opponents->at(i).first->x, opponents->at(i).first->y));
 		}
-		this->generateVoronoiDiagram(points);
+		this->generateVoronoiDiagram(points, net->ownPosAvail);
 	}
 
 	VoronoiNet::~VoronoiNet()
@@ -239,9 +241,10 @@ namespace msl
 	 * @param points vector<shared_ptr<geometry::CNPoint2D>>
 	 * @return shared_ptr<VoronoiDiagram>
 	 */
-	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points)
+	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points, bool ownPosAvail)
 	{
 		lock_guard<mutex> lock(netMutex);
+		this->ownPosAvail = ownPosAvail;
 		vector<Site_2> sites;
 		//clear data
 		this->voronoi->clear();
