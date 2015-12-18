@@ -51,8 +51,8 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        calibOldPosVision->x = calibPosVision->x;
-        calibOldPosVision->y = calibPosVision->y;
+        //calibOldPosVision->x = calibPosVision->x;
+        //calibOldPosVision->y = calibPosVision->y;
 
         //}
         /*PROTECTED REGION END*/
@@ -91,7 +91,7 @@ namespace alica
             {
                 if (this->wm->calibData.length > 12000) //GonzalesUpdate
                 {
-                    if (this->wm->calibData.length < lengthVision)
+                    if (this->wm->calibData.length < 13200)
                     {
                         this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
                                 / this->wm->calibData.length) + 1; //GonzalesUpdate
