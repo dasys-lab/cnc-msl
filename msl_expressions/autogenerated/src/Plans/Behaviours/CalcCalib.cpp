@@ -40,8 +40,8 @@ namespace alica
         correctedPosX = correctedPosX + correctedWayX;
         correctedPosY = correctedPosY + correctedWayY;
 
-        lengthVision = lengthVision
-        		+ sqrt((calibOldPosVision->x - calibPosVision->x) * (calibOldPosVision->x - calibPosVision->x) + (calibOldPosVision->y - calibPosVision->y) * (calibOldPosVision->y) - calibPosVision->y);
+        //lengthVision = lengthVision
+        //		+ sqrt((calibOldPosVision->x - calibPosVision->x) * (calibOldPosVision->x - calibPosVision->x) + (calibOldPosVision->y - calibPosVision->y) * (calibOldPosVision->y) - calibPosVision->y);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
