@@ -24,9 +24,7 @@ namespace alica
 		//get own Pos
 		cout << "Start run CheckGoalKick <=============================================================" << endl;
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
-		ownPos->x = ownPosition->x;
-		ownPos->y = ownPosition->y;
-
+		ownPos = make_shared<geometry::CNPoint2D>(ownPosition->x, ownPosition->y);
 		//get ego ball pos
 		egoBallPos = wm->ball.getEgoBallPosition();
 
@@ -34,12 +32,11 @@ namespace alica
 		goalPosLeft = field->posLeftOppGoalPost();
 		goalPosRight = field->posRightOppGoalPost();
 		goalPosMiddle = field->posOppGoalMid();
+		cout << "das Glück ist eine Huuuure!!" << endl;
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
 		cout << "toleranceAngle: " << toleranceAngle << endl;
-
-		egoAlignPoint = goalPosMiddle;
 
 		if (checkGoalLine() && checkShootPossibility())
 		{
@@ -63,12 +60,18 @@ namespace alica
 	/*PROTECTED REGION ID(methods1449076008755) ENABLED START*/ //Add additional methods here
 	bool CheckGoalKick::checkGoalLine()
 	{
+//		cout << "egoAlignPoint->rotate(M_PI)->angleTo() = " << (egoAlignPoint->rotate(M_PI)->angleTo()) << endl;
+		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << endl;
+		cout << "goalPosMiddle: " << goalPosMiddle->toString() << endl;
+		egoAlignPoint = goalPosMiddle;
 		// if angle is smaller then 10 degree return true
 		if (egoAlignPoint->rotate(M_PI)->angleTo() < M_PI * toleranceAngle
 				|| egoAlignPoint->rotate(M_PI)->angleTo() > -M_PI * toleranceAngle)
 		{
+			cout << "ChackGoalLine = true" << endl;
 			return true;
 		}
+		cout << "ChackGoalLine = false" << endl;
 		return false;
 	}
 
@@ -77,10 +80,11 @@ namespace alica
 
 		// check if obstacle lays in corridor
 		auto obstacles = wm->robots.getObstacles();
-		shared_ptr<geometry::CNPoint2D> obstaclePoint = nullptr;
+		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(0, 0);
 		bool foundObstacle = false;
 		int obstacleAt = -1;
 
+		cout << "obstacle size = " << obstacles->size() << endl;
 		for (int i = 0; i < obstacles->size(); i++)
 		{
 			obstaclePoint->x = obstacles->at(i).x;
@@ -101,7 +105,7 @@ namespace alica
 		{
 			// check if obstacle is blocking (Own distance -> obstacle and obstacle -> OppGoal)
 			auto obstacle = obstacles->at(obstacleAt);
-			shared_ptr<geometry::CNPoint2D> obstaclePos = nullptr;
+			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared<geometry::CNPoint2D>(0, 0);
 			obstaclePos->x = obstacle.x;
 			obstaclePos->y = obstacle.y;
 
@@ -114,6 +118,10 @@ namespace alica
 					|| obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
 			{
 				return false;
+			}
+			else
+			{
+				return true;
 			}
 		}
 		else
@@ -139,7 +147,7 @@ namespace alica
 		double b = goalPosLeft->distanceTo(goalPosRight);
 		double c = ownPos->distanceTo(goalPosRight);
 
-		return acos((pow(b,2) + pow(c,2) - pow(a,2)) / (2*b*c));
+		return acos((pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b * c));
 	}
 
 /*PROTECTED REGION END*/
