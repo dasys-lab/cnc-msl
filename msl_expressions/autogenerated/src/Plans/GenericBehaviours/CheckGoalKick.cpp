@@ -22,6 +22,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
 		//get own Pos
+		cout << "Start run CheckGoalKick <=============================================================" << endl;
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
 		ownPos->x = ownPosition->x;
 		ownPos->y = ownPosition->y;
@@ -36,6 +37,7 @@ namespace alica
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
+		cout << "toleranceAngle: " << toleranceAngle << endl;
 
 		egoAlignPoint = goalPosMiddle;
 
@@ -47,7 +49,7 @@ namespace alica
 			//angle
 			kc.kicker = egoBallPos->angleTo();
 			kc.power = kickPower;
-			send(kc);
+//			send(kc);
 			this->success = true;
 		}
 
@@ -93,6 +95,8 @@ namespace alica
 			}
 		}
 
+		cout << "found Obstacle = " << foundObstacle << endl;
+
 		if (obstacleAt > -1)
 		{
 			// check if obstacle is blocking (Own distance -> obstacle and obstacle -> OppGoal)
@@ -101,8 +105,13 @@ namespace alica
 			obstaclePos->x = obstacle.x;
 			obstaclePos->y = obstacle.y;
 
+			cout << "ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePos) << endl;
+			cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn) << endl;
+			cout << "obstaclePos <----> GoalPosMiddle = " << obstaclePos->distanceTo(goalPosMiddle) << endl;
+			cout << "if condition 2 = " << (obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal) << endl;
+
 			if (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn
-					&& obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
+					|| obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
 			{
 				return false;
 			}
@@ -111,8 +120,6 @@ namespace alica
 		{
 			return true;
 		}
-
-		return false;
 	}
 
 	void CheckGoalKick::readConfigParameters()
