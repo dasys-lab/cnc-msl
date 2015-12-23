@@ -59,6 +59,7 @@ namespace msl_refbox
 
 		connect(rbtn_tcp, SIGNAL(toggled(bool)), gameData, SLOT(onTcpToggled(bool)));
 		connect(rbtn_udp, SIGNAL(toggled(bool)), gameData, SLOT(onUdpToggled(bool)));
+		connect(chk_reconnect, SIGNAL(toggled(bool)), gameData, SLOT(onReconnectToggled(bool)));
 
 		connect(btn_connect, SIGNAL(clicked()), gameData, SLOT(onConnectPressed()));
 
@@ -85,8 +86,6 @@ namespace msl_refbox
 		QTableWidgetItem* item3 = new QTableWidgetItem();
 		item3->setText("Card");
 		this->tbl_info->setItem(0,3,item3);
-
-
 	}
 
 	bool RefBox::eventFilter(QObject* watched, QEvent* event)
