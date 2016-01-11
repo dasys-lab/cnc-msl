@@ -174,7 +174,7 @@ namespace alica
 		double b = goalPosLeft->distanceTo(goalPosRight);
 		double c = ownPos->distanceTo(goalPosRight);
 
-		return acos((pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b * c));
+		return acos((pow(b, 2) - pow(c, 2) - pow(a, 2)) / (-2 * b * c));
 	}
 
 /*PROTECTED REGION END*/
