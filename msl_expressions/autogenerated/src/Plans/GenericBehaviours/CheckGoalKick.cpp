@@ -171,8 +171,9 @@ namespace alica
 	{
 		// math!!!
 		double a = ownPos->distanceTo(goalPosLeft);
-		double b = goalPosLeft->distanceTo(goalPosRight);
+		double b = goalPosLeft->distanceTo(goalPosMiddle);
 		double c = ownPos->distanceTo(goalPosRight);
+		cout << "a = " << a << "\nb= " << b << "\nc= " << c << endl;
 
 		return acos((pow(b, 2) - pow(c, 2) - pow(a, 2)) / (-2 * b * c));
 	}
