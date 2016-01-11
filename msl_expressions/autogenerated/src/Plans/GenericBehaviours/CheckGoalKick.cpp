@@ -32,11 +32,12 @@ namespace alica
 		goalPosLeft = field->posLeftOppGoalPost();
 		goalPosRight = field->posRightOppGoalPost();
 		goalPosMiddle = field->posOppGoalMid();
-		cout << "das Glück ist eine Huuuure!!" << endl;
+//		cout << "das Glück ist eine Huuuure!!" << endl;
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
-		cout << "toleranceAngle: " << toleranceAngle << endl;
+		cout << "toleranceAngle: " << toleranceAngle << " degree: "
+				<< toleranceAngle * 180 / M_PI << endl;
 
 		if (checkGoalLine() && checkShootPossibility())
 		{
@@ -58,15 +59,35 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1449076008755) ENABLED START*/ //Add additional methods here
+	/*
+	 * @return true if angle to goal is smaller than tolerance angle
+	 */
 	bool CheckGoalKick::checkGoalLine()
 	{
-//		cout << "egoAlignPoint->rotate(M_PI)->angleTo() = " << (egoAlignPoint->rotate(M_PI)->angleTo()) << endl;
-		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << endl;
-		cout << "goalPosMiddle: " << goalPosMiddle->toString() << endl;
+		// for testing!!! <=========================================
+		// TODO remove later
+		return true;
+
+
+//		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << " degree: "
+//				<< ownPos->angleToPoint(goalPosMiddle) * 180 / M_PI << endl;
+//
+//		cout << "goalPosMiddle: " << goalPosMiddle->toString();
 		egoAlignPoint = goalPosMiddle;
-		// if angle is smaller then 10 degree return true
-		if (egoAlignPoint->rotate(M_PI)->angleTo() < M_PI * toleranceAngle
-				|| egoAlignPoint->rotate(M_PI)->angleTo() > -M_PI * toleranceAngle)
+
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto egoTarget = goalPosMiddle->alloToEgo(*ownPos);
+
+//		cout << "egoTarget: " << egoTarget->toString();
+//		cout << "angle to goal: " << egoTarget->angleTo() << " degree: "
+//				<< egoTarget->angleTo() * 180 / M_PI << endl;
+//
+//		cout << "if condition1: " << (egoTarget->angleTo() < M_PI * toleranceAngle) << endl;
+//		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
+
+		// if angle is smaller then tolerance angle return true
+		if (egoTarget->angleTo() < toleranceAngle
+				&& egoTarget->angleTo() > toleranceAngle)
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
@@ -75,9 +96,14 @@ namespace alica
 		return false;
 	}
 
+	/*
+	 * checks if there is an obstacle between robot and goal.
+	 *
+	 * @return true if it is possible to shoot at the enemy goal
+	 */
 	bool CheckGoalKick::checkShootPossibility()
 	{
-
+		cout << "checkShootPossibility() ============================================" << endl;
 		// check if obstacle lays in corridor
 		auto obstacles = wm->robots.getObstacles();
 		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(0, 0);
@@ -135,11 +161,12 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		robotShootDistanceOwn = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceOwn", NULL);
 		robotShootDistanceGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceGoal", NULL);
-//		toleranceAngle = (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleNumerator", NULL)
-//				/ (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleDenominator", NULL);
 		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
 	}
 
+	/*
+	 * @return distance between goalPosMiddle and goalPosLeft
+	 */
 	double CheckGoalKick::calcToleranceAngle()
 	{
 		// math!!!
