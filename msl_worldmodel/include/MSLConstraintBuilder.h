@@ -15,6 +15,7 @@
 #include "Rules.h"
 #include "MSLFootballField.h"
 #include "container/CNPoint2D.h"
+#include "SystemConfig.h"
 
 #include <memory>
 #include <vector>
@@ -46,6 +47,9 @@ namespace msl{
 		class MSLConstraintBuilder
 		{
 		public:
+
+			static supplementary::SystemConfig* sc;
+
 			static double AREA_TOL;
 			static double ON_LINE_TOL;
 			static double BLOCK_PASS_WIDTH_TOL;
@@ -59,6 +63,8 @@ namespace msl{
 
 			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,	shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> outsideCorridor(shared_ptr<TVec> widthHalf, shared_ptr<TVec> length, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> insideCorridor(shared_ptr<TVec> widthHalf, shared_ptr<TVec> length, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2);
@@ -67,6 +73,8 @@ namespace msl{
 			static shared_ptr<Term> outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> insideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points);
+
+			static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>> shell, double tolerance, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>> points);

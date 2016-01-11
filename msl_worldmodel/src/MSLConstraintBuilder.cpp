@@ -17,6 +17,8 @@ namespace msl
 	double MSLConstraintBuilder::MIN_CORRIDOR_WIDTH = 700.0;
 	double MSLConstraintBuilder::MIN_POSITION_DIST = 650.0;
 
+	supplementary::SystemConfig* MSLConstraintBuilder::sc = supplementary::SystemConfig::getInstance();
+
 	Rules MSLConstraintBuilder::rules;
 
 	// INTERN
@@ -89,16 +91,16 @@ namespace msl
 															shared_ptr<TVec> upperLeftCorner,
 															vector<shared_ptr<TVec>> points)
 	{
-		shared_ptr<Term> c = !TermBuilder::boundedRectangle(points[0], lowerRightCorner, upperLeftCorner,
-															Term::getConstraintSteepness());
+		shared_ptr<Term> c = !TermBuilder::boundedRectangle(points[0], lowerRightCorner, upperLeftCorner, Term::getConstraintSteepness());
 
 		for (int i = 1; i < points.size(); ++i)
 		{
-			c = c
-					& !TermBuilder::boundedRectangle(points[i], lowerRightCorner, upperLeftCorner,
-														Term::getConstraintSteepness());
+			c = c & !TermBuilder::boundedRectangle(points[i], lowerRightCorner, upperLeftCorner, Term::getConstraintSteepness());
 		}
 		return c;
+	}
+	shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<TVec> widthHalf, shared_ptr<TVec> length, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> c = !TermBuilder::boundedRectangle(points[0], widthHalf, length-widthHalf, Term::getConstraintSteepness());
 	}
 	shared_ptr<Term> MSLConstraintBuilder::insideRectangle(shared_ptr<TVec> lowerRightCorner,
 															shared_ptr<TVec> upperLeftCorner,
@@ -116,7 +118,7 @@ namespace msl
 		return c;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> points) {
-		if (point != nullptr) {
+		if (point != nullptr && points.size() > 0) {
 			shared_ptr<Term> c = TermBuilder::euclidianDistance(point, points[0]) > autodiff::TermBuilder::constant(distance);
 			for (int i = 1; i < points.size(); i++) {
 				c = c & TermBuilder::euclidianDistance(point, points[i]) > autodiff::TermBuilder::constant(distance);
@@ -191,6 +193,20 @@ namespace msl
 
 		return outsideConstraints;
 	}
+	shared_ptr<Term> MSLConstraintBuilder::insideKonvex(vector<shared_ptr<TVec>> shell, double tolerance, vector<shared_ptr<TVec>> points) {
+		vector<shared_ptr<TVec>> shellVec;
+
+		for(vector<shared_ptr<TVec>>::iterator ity = shell.begin(); ity != shell.end()-1;ity++) {
+				shellVec.push_back(*(ity+1) - *ity);
+
+		}
+		shellVec.push_back(*shell.begin() - *shell.end());
+
+		shared_ptr<Term> outsideConstraints = autodiff::LTConstraint::TRUE;
+		shared_ptr<Term> pConsts;
+
+	}
+
 	shared_ptr<Term> MSLConstraintBuilder::outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>> points) {
 		shared_ptr<TVec> a2b = b - a;
 		shared_ptr<TVec> c2a = a - c;
