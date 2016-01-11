@@ -87,7 +87,7 @@ namespace alica
 
 		// if angle is smaller then tolerance angle return true
 		if (egoTarget->angleTo() > (180 - toleranceAngle)
-				&& egoTarget->angleTo() < (-180 + toleranceAngle))
+				&& egoTarget->angleTo() > (-180 + toleranceAngle))
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
