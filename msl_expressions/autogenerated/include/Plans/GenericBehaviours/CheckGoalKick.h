@@ -34,7 +34,7 @@ namespace alica
         double robotShootDistanceOwn;
         double robotShootDistanceGoal;
         double toleranceAngle;
-        double kickPower;
+        double minKickPower;
         bool checkGoalLine();
         bool checkShootPossibility();
         void readConfigParameters();
