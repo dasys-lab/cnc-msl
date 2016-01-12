@@ -78,7 +78,7 @@ namespace alica
 //		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
 
 		// if angle is smaller then tolerance angle return true
-		if (egoTarget->angleTo() > (M_PI/2 - toleranceAngle) && egoTarget->angleTo() > (-M_PI/2 + toleranceAngle))
+		if (egoTarget->angleTo() > (M_PI / 2 - toleranceAngle) && egoTarget->angleTo() > (-M_PI / 2 + toleranceAngle))
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
@@ -180,20 +180,18 @@ namespace alica
 		cout << "send BallHandleCmd" << endl;
 		cout << "haveBall() = " << wm->ball.haveBall() << endl;
 
-		cout << "shovel selection to: " << endl;
-
+		cout << "shovel selection to: 1" << endl;
+		msl_actuator_msgs::KickControl kc;
+		kc.extension = 1;
 
 		if (wm->ball.haveBall())
 		{
-			msl_actuator_msgs::KickControl kc;
 			kc.enabled = true;
-			kc.extension = 1;
 //			kc.kicker = egoBallPos->angleTo();
 //			kc.power = min(minKickPower, egoAimPoint->length());
 			kc.power = minKickPower;
-			send(kc);
-
 		}
+		send(kc);
 	}
 
 /*PROTECTED REGION END*/
