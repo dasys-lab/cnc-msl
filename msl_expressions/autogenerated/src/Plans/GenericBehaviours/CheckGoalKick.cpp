@@ -180,10 +180,14 @@ namespace alica
 		cout << "send BallHandleCmd" << endl;
 		cout << "haveBall() = " << wm->ball.haveBall() << endl;
 
+		cout << "shovel selection to: " << endl;
+
+
 		if (wm->ball.haveBall())
 		{
 			msl_actuator_msgs::KickControl kc;
 			kc.enabled = true;
+			kc.extension = 1;
 //			kc.kicker = egoBallPos->angleTo();
 //			kc.power = min(minKickPower, egoAimPoint->length());
 			kc.power = minKickPower;
