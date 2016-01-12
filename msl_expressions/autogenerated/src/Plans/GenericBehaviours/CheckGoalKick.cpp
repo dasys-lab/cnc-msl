@@ -41,7 +41,7 @@ namespace alica
 		if (checkGoalLine() && checkShootPossibility())
 		{
 			cout << "kicking" << endl;
-//			kicking();
+			kicking();
 			this->success = true;
 		}
 
