@@ -177,7 +177,7 @@ namespace alica
 		auto egoBallPos = wm->ball.getEgoBallPosition();
 		double distance = egoBallPos->length();
 		cout << "distance: " << distance << endl;
-		if (distance < 300)
+		if (distance < 600)
 		{
 			bhc.rightMotor = (int8_t)-70;
 			bhc.leftMotor = (int8_t)-70;
