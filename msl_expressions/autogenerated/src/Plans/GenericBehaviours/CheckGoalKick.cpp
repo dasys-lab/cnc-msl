@@ -74,8 +74,8 @@ namespace alica
 		cout << "egoTarget: " << egoTarget->toString();
 		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
 
-		cout << "if condition1: " << (egoTarget->angleTo() < M_PI * toleranceAngle) << endl;
-		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
+//		cout << "if condition1: " << (egoTarget->angleTo() < M_PI * toleranceAngle) << endl;
+//		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
 
 		// if angle is smaller then tolerance angle return true
 		if (egoTarget->angleTo() > (M_PI/2 - toleranceAngle) && egoTarget->angleTo() > (-M_PI/2 + toleranceAngle))
@@ -177,6 +177,8 @@ namespace alica
 		bhc.leftMotor = (int8_t)-70;
 		bhc.rightMotor = (int8_t)-70;
 		send(bhc);
+		cout << "send BallHandleCmd" << endl;
+		cout << "haveBall() = " << wm->ball.haveBall() << endl;
 
 		if (wm->ball.haveBall())
 		{
