@@ -176,6 +176,7 @@ namespace alica
 		msl_actuator_msgs::BallHandleCmd bhc;
 		auto egoBallPos = wm->ball.getEgoBallPosition();
 		double distance = egoBallPos->length();
+		cout << "distance: " << distance << endl;
 		if (distance < 300)
 		{
 			bhc.rightMotor = (int8_t)-70;
