@@ -36,18 +36,12 @@ namespace alica
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
-		cout << "toleranceAngle: " << toleranceAngle << " degree: "
-				<< toleranceAngle * 180 / M_PI << endl;
+		cout << "toleranceAngle: " << toleranceAngle << " degree: " << toleranceAngle * 180 / M_PI << endl;
 
 		if (checkGoalLine() && checkShootPossibility())
 		{
 			cout << "kicking" << endl;
-			msl_actuator_msgs::KickControl kc;
-			kc.enabled = true;
-			//angle
-			kc.kicker = egoBallPos->angleTo();
-			kc.power = kickPower;
-//			send(kc);
+//			kicking();
 			this->success = true;
 		}
 
@@ -68,7 +62,6 @@ namespace alica
 		// TODO remove later
 //		return true;
 
-
 //		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << " degree: "
 //				<< ownPos->angleToPoint(goalPosMiddle) * 180 / M_PI << endl;
 //
@@ -79,15 +72,13 @@ namespace alica
 		auto egoTarget = goalPosMiddle->alloToEgo(*ownPos);
 
 		cout << "egoTarget: " << egoTarget->toString();
-		cout << "angle to goal: " << egoTarget->angleTo() << " degree: "
-				<< egoTarget->angleTo() * 180 / M_PI << endl;
+		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
 
 		cout << "if condition1: " << (egoTarget->angleTo() < M_PI * toleranceAngle) << endl;
 		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
 
 		// if angle is smaller then tolerance angle return true
-		if (egoTarget->angleTo() > (180 - toleranceAngle)
-				&& egoTarget->angleTo() > (-180 + toleranceAngle))
+		if (egoTarget->angleTo() > (180 - toleranceAngle) && egoTarget->angleTo() > (-180 + toleranceAngle))
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
@@ -176,6 +167,22 @@ namespace alica
 		cout << "a = " << a << "\nb= " << b << "\nc= " << c << endl;
 
 		return acos((pow(b, 2) - pow(c, 2) - pow(a, 2)) / (-2 * a * c));
+	}
+
+	void CheckGoalKick::kicking()
+	{
+		double minKickPower = 1500.0;
+
+		msl_actuator_msgs::BallHandleCmd bhc;
+		bhc.leftMotor = (int8_t)-70;
+		bhc.rightMotor = (int8_t)-70;
+		send(bhc);
+
+		msl_actuator_msgs::KickControl kc;
+		kc.enabled = true;
+		kc.kicker = egoBallPos->angleTo();
+//		kc.power = min(minKickPower, egoAimPoint->length());
+		send(kc);
 	}
 
 /*PROTECTED REGION END*/

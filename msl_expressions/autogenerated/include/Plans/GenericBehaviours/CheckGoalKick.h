@@ -39,6 +39,7 @@ namespace alica
         bool checkShootPossibility();
         void readConfigParameters();
         double calcToleranceAngle();
+        void kicking();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
