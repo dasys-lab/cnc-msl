@@ -152,7 +152,7 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		robotShootDistanceOwn = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceOwn", NULL);
 		robotShootDistanceGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceGoal", NULL);
-//		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
+		minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
 	}
 
 	/*
@@ -171,7 +171,7 @@ namespace alica
 
 	void CheckGoalKick::kicking()
 	{
-		double minKickPower = 1500.0;
+//		double minKickPower = 1500.0;
 
 		msl_actuator_msgs::BallHandleCmd bhc;
 		bhc.leftMotor = (int8_t)-70;
@@ -188,6 +188,7 @@ namespace alica
 //			kc.power = min(minKickPower, egoAimPoint->length());
 			kc.power = minKickPower;
 			send(kc);
+
 		}
 	}
 
