@@ -24,7 +24,7 @@ namespace alica
 		//get own Pos
 		cout << "Start run CheckGoalKick <=============================================================" << endl;
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
-		ownPos = make_shared<geometry::CNPoint2D>(ownPosition->x, ownPosition->y);
+		ownPos = make_shared < geometry::CNPoint2D > (ownPosition->x, ownPosition->y);
 		//get ego ball pos
 		egoBallPos = wm->ball.getEgoBallPosition();
 
@@ -97,7 +97,7 @@ namespace alica
 		cout << "checkShootPossibility() ============================================" << endl;
 		// check if obstacle lays in corridor
 		auto obstacles = wm->robots.getObstacles();
-		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(0, 0);
+		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared < geometry::CNPoint2D > (0, 0);
 		bool foundObstacle = false;
 		int obstacleAt = -1;
 
@@ -122,7 +122,7 @@ namespace alica
 		{
 			// check if obstacle is blocking (Own distance -> obstacle and obstacle -> OppGoal)
 			auto obstacle = obstacles->at(obstacleAt);
-			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared<geometry::CNPoint2D>(0, 0);
+			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared < geometry::CNPoint2D > (0, 0);
 			obstaclePos->x = obstacle.x;
 			obstaclePos->y = obstacle.y;
 
@@ -152,7 +152,7 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		robotShootDistanceOwn = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceOwn", NULL);
 		robotShootDistanceGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceGoal", NULL);
-		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
+//		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
 	}
 
 	/*
@@ -178,11 +178,15 @@ namespace alica
 		bhc.rightMotor = (int8_t)-70;
 		send(bhc);
 
-		msl_actuator_msgs::KickControl kc;
-		kc.enabled = true;
-		kc.kicker = egoBallPos->angleTo();
-//		kc.power = min(minKickPower, egoAimPoint->length());
-		send(kc);
+		if (wm->ball.haveBall())
+		{
+			msl_actuator_msgs::KickControl kc;
+			kc.enabled = true;
+//			kc.kicker = egoBallPos->angleTo();
+//			kc.power = min(minKickPower, egoAimPoint->length());
+			kc.power = minKickPower;
+			send(kc);
+		}
 	}
 
 /*PROTECTED REGION END*/
