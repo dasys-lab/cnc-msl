@@ -174,8 +174,18 @@ namespace alica
 //		double minKickPower = 1500.0;
 
 		msl_actuator_msgs::BallHandleCmd bhc;
-		bhc.leftMotor = (int8_t)-70;
-		bhc.rightMotor = (int8_t)-70;
+		auto egoBallPos = wm->ball.getEgoBallPosition();
+		double distance = egoBallPos->length();
+		if (distance < 300)
+		{
+			bhc.rightMotor = (int8_t)-70;
+			bhc.leftMotor = (int8_t)-70;
+		}
+		else
+		{
+			bhc.rightMotor = 0;
+			bhc.leftMotor = 0;
+		}
 		send(bhc);
 		cout << "send BallHandleCmd" << endl;
 		cout << "haveBall() = " << wm->ball.haveBall() << endl;
