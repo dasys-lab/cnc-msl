@@ -22,8 +22,8 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionMotion();
-        if (!me.operator bool())
+    	shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        if ( me == nullptr)
         {
             return;
         }
