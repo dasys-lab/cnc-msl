@@ -65,6 +65,7 @@ namespace msl_refbox
 		bool tcpToggled;
 		bool xmlToggled;
 		bool charToggled;
+		bool reconnectToggled;
 
 	public Q_SLOTS:
 		void PlayOnPressed(void);
@@ -95,17 +96,26 @@ namespace msl_refbox
 		void onTcpToggled(bool checked);
 		void onXmlToggled(bool checked);
 		void onCharToggled(bool checked);
+		void onReconnectToggled(bool checked);
 
 		void onConnectPressed(void);
 		void receiveRefMsgTcp(void);
 		void receiveRefMsgUdp(void);
 		void onDisconnectPressed(void);
 
-		void sendRefBoxCmd();
+		void sendRefBoxCmd(void);
+
+		void onTcpDisconnected();
+		void connectNet();
 
 		/* refbox log send method */
 		void sendRefBoxLog();
 	protected:
+			enum ConnectionState {
+				DISCONNECTING, DISCONNECTED, RECONNECTING,
+				TCP_CONNECTED, UDP_CONNECTED,
+			} connectionState;
+
 			msl_msgs::RefBoxCommand ref;
 			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
 			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
@@ -120,7 +130,13 @@ namespace msl_refbox
 			XMLProtocolParser* xmlparser;
 			QTimer* sendRefBoxLogtimer;
 			QTimer* sendRefBoxCmdtimer;
+			QTimer *reconnectTimer;
 
+			QTcpSocket* connectTCP(QString host, qint16 port);
+			QUdpSocket* connectUDP(QString host, qint16 port);
+
+			void disconnectTCP();
+			void disconnectUDP();
 	};
 
 

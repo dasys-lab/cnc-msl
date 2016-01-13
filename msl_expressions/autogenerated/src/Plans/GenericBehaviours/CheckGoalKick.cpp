@@ -24,7 +24,7 @@ namespace alica
 		//get own Pos
 		cout << "Start run CheckGoalKick <=============================================================" << endl;
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
-		ownPos = make_shared<geometry::CNPoint2D>(ownPosition->x, ownPosition->y);
+		ownPos = make_shared < geometry::CNPoint2D > (ownPosition->x, ownPosition->y);
 		//get ego ball pos
 		egoBallPos = wm->ball.getEgoBallPosition();
 
@@ -32,21 +32,16 @@ namespace alica
 		goalPosLeft = field->posLeftOppGoalPost();
 		goalPosRight = field->posRightOppGoalPost();
 		goalPosMiddle = field->posOppGoalMid();
-		cout << "das Glück ist eine Huuuure!!" << endl;
+//		cout << "das Glück ist eine Huuuure!!" << endl;
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
-		cout << "toleranceAngle: " << toleranceAngle << endl;
+		cout << "toleranceAngle: " << toleranceAngle << " degree: " << toleranceAngle * 180 / M_PI << endl;
 
 		if (checkGoalLine() && checkShootPossibility())
 		{
 			cout << "kicking" << endl;
-			msl_actuator_msgs::KickControl kc;
-			kc.enabled = true;
-			//angle
-			kc.kicker = egoBallPos->angleTo();
-			kc.power = kickPower;
-//			send(kc);
+			kicking();
 			this->success = true;
 		}
 
@@ -58,15 +53,32 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1449076008755) ENABLED START*/ //Add additional methods here
+	/*
+	 * @return true if angle to goal is smaller than tolerance angle
+	 */
 	bool CheckGoalKick::checkGoalLine()
 	{
-//		cout << "egoAlignPoint->rotate(M_PI)->angleTo() = " << (egoAlignPoint->rotate(M_PI)->angleTo()) << endl;
-		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << endl;
-		cout << "goalPosMiddle: " << goalPosMiddle->toString() << endl;
+		// for testing!!! <=========================================
+		// TODO remove later
+//		return true;
+
+//		cout << "angle to goal: " << ownPos->angleToPoint(goalPosMiddle) << " degree: "
+//				<< ownPos->angleToPoint(goalPosMiddle) * 180 / M_PI << endl;
+//
+		cout << "goalPosMiddle: " << goalPosMiddle->toString();
 		egoAlignPoint = goalPosMiddle;
-		// if angle is smaller then 10 degree return true
-		if (egoAlignPoint->rotate(M_PI)->angleTo() < M_PI * toleranceAngle
-				|| egoAlignPoint->rotate(M_PI)->angleTo() > -M_PI * toleranceAngle)
+
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto egoTarget = goalPosMiddle->alloToEgo(*ownPos);
+
+		cout << "egoTarget: " << egoTarget->toString();
+		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
+
+//		cout << "if condition1: " << (egoTarget->angleTo() < M_PI * toleranceAngle) << endl;
+//		cout << "if condition2: " << (egoTarget->angleTo() < -M_PI * toleranceAngle) << endl;
+
+		// if angle is smaller then tolerance angle return true
+		if (egoTarget->angleTo() > (M_PI / 2 - toleranceAngle) && egoTarget->angleTo() > (-M_PI / 2 + toleranceAngle))
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
@@ -75,12 +87,17 @@ namespace alica
 		return false;
 	}
 
+	/*
+	 * checks if there is an obstacle between robot and goal.
+	 *
+	 * @return true if it is possible to shoot at the enemy goal
+	 */
 	bool CheckGoalKick::checkShootPossibility()
 	{
-
+		cout << "checkShootPossibility() ============================================" << endl;
 		// check if obstacle lays in corridor
 		auto obstacles = wm->robots.getObstacles();
-		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(0, 0);
+		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared < geometry::CNPoint2D > (0, 0);
 		bool foundObstacle = false;
 		int obstacleAt = -1;
 
@@ -105,7 +122,7 @@ namespace alica
 		{
 			// check if obstacle is blocking (Own distance -> obstacle and obstacle -> OppGoal)
 			auto obstacle = obstacles->at(obstacleAt);
-			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared<geometry::CNPoint2D>(0, 0);
+			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared < geometry::CNPoint2D > (0, 0);
 			obstaclePos->x = obstacle.x;
 			obstaclePos->y = obstacle.y;
 
@@ -135,19 +152,57 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		robotShootDistanceOwn = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceOwn", NULL);
 		robotShootDistanceGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceGoal", NULL);
-//		toleranceAngle = (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleNumerator", NULL)
-//				/ (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleDenominator", NULL);
-		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
+		minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
 	}
 
+	/*
+	 * @return distance between goalPosMiddle and goalPosLeft
+	 */
 	double CheckGoalKick::calcToleranceAngle()
 	{
 		// math!!!
 		double a = ownPos->distanceTo(goalPosLeft);
-		double b = goalPosLeft->distanceTo(goalPosRight);
+		double b = goalPosLeft->distanceTo(goalPosMiddle);
 		double c = ownPos->distanceTo(goalPosRight);
+		cout << "a = " << a << "\nb= " << b << "\nc= " << c << endl;
 
-		return acos((pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b * c));
+		return acos((pow(b, 2) - pow(c, 2) - pow(a, 2)) / (-2 * a * c));
+	}
+
+	void CheckGoalKick::kicking()
+	{
+//		double minKickPower = 1500.0;
+
+		msl_actuator_msgs::BallHandleCmd bhc;
+		auto egoBallPos = wm->ball.getEgoBallPosition();
+		double distance = egoBallPos->length();
+		cout << "distance: " << distance << endl;
+		if (distance < 600)
+		{
+			bhc.rightMotor = (int8_t)-70;
+			bhc.leftMotor = (int8_t)-70;
+		}
+		else
+		{
+			bhc.rightMotor = 0;
+			bhc.leftMotor = 0;
+		}
+		send(bhc);
+		cout << "send BallHandleCmd" << endl;
+		cout << "haveBall() = " << wm->ball.haveBall() << endl;
+
+		cout << "shovel selection to: 1" << endl;
+		msl_actuator_msgs::KickControl kc;
+		kc.extension = 1;
+
+		if (wm->ball.haveBall())
+		{
+			kc.enabled = true;
+//			kc.kicker = egoBallPos->angleTo();
+//			kc.power = min(minKickPower, egoAimPoint->length());
+			kc.power = minKickPower;
+		}
+		send(kc);
 	}
 
 /*PROTECTED REGION END*/
