@@ -89,7 +89,7 @@ namespace msl_vision
 		}
 		//cv::imshow("RGB2GRAY", grayMat);
 		//cv::imshow("test", test);
-		cv::imshow("segmented", *segmented);
+		//cv::imshow("segmented", *segmented);
 		//cv::waitKey(1);
 		/*
 		 * jede iteration gerade mit hessischer normalform erstellen.
