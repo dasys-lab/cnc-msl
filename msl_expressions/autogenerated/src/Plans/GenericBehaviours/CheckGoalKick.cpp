@@ -196,7 +196,7 @@ namespace alica
 		}
 		send(bhc);
 		cout << "send BallHandleCmd" << endl;
-		cout << "haveBall() = " << wm->ball.haveBall() << endl;
+		cerr << "haveBall() = " << wm->ball.haveBall() << endl;
 
 		cout << "shovel selection to: 1" << endl;
 		msl_actuator_msgs::KickControl kc;
