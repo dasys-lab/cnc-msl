@@ -102,7 +102,7 @@ bool IMU::init() {
 
 	// Enable Magnet & Temp
 	i2c->writeByte(CTRL_REG5_XM, 0x90);			// Magnet Frequecy: 100Hz & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
+	i2c->writeByte(CTRL_REG7_XM, 0xa0);	// high pass & filtered data			// high-pass Filter: Normal Mode & Continuous Conversation
 	
 	i2c->writeByte(0x16, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
 	i2c->writeByte(0x17, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
@@ -115,6 +115,8 @@ bool IMU::init() {
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
 	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
+	i2c->writeByte(CTRL_REG2_G, 0x20);			// Test HPF-Mode
+	i2c->writeByte(CTRL_REG5_G, 0x10);			// High-Pass Filter enabled
 
 	//TODO Anpassen der Multiplikatoren
 	accel.sense = ACC_16G_SENSE / 1000;
@@ -227,9 +229,9 @@ void IMU::getAccel() {
 		val[i] = i2c->readByte(ACCEL_OUT_X + i);
 	}
 
-	accel.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense - accel.xr;
-	accel.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense - accel.yr;
-	accel.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense - accel.zr;
+	accel.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense;// - accel.xr;
+	accel.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense;// - accel.yr;
+	accel.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense;// - accel.zr;
 
 //	accel.x = ((((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense);// - accel.xr;
 //	accel.y = ((((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense);// - accel.yr;
@@ -238,7 +240,7 @@ void IMU::getAccel() {
 
 
 void IMU::getGyro() {
-	int8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	if (i2c->getDeviceAddress() != ADR_G) {
 		i2c->setDeviceAddress(ADR_G);
@@ -247,9 +249,9 @@ void IMU::getGyro() {
 		val[i] = i2c->readByte(GYRO_OUT_X + i);
 	}
 
-	gyro.x = ((((int16_t) val[1] << 8) | val[0]) * gyro.sense) - gyro.xr;
-	gyro.y = ((((int16_t) val[3] << 8) | val[2]) * gyro.sense) - gyro.yr;
-	gyro.z = ((((int16_t) val[5] << 8) | val[4]) * gyro.sense) - gyro.zr;
+	gyro.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * gyro.sense;
+	gyro.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * gyro.sense;
+	gyro.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * gyro.sense;
 }
 
 void IMU::getMagnet() {
