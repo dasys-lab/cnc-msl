@@ -196,8 +196,9 @@ namespace alica
 		}
 		send(bhc);
 		cout << "send BallHandleCmd" << endl;
-		cerr << "haveBall() = " << wm->ball.haveBall() << endl;
-
+		system("COLOR F4");
+		cout << "haveBall() = " << wm->ball.haveBall() << endl;
+		system("COLOR FF");
 		cout << "shovel selection to: 1" << endl;
 		msl_actuator_msgs::KickControl kc;
 		kc.extension = 1;
