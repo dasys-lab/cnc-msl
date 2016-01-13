@@ -81,11 +81,11 @@ namespace alica
 		cout << "egoTarget: " << egoTarget->toString();
 		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
 
-		cout << "if condition1: " << (egoTarget->angleTo() < (M_PI / 2 - toleranceAngle)) << endl;
-		cout << "if condition2: " << (egoTarget->angleTo() < (-M_PI / 2 + toleranceAngle)) << endl;
+		cout << "if condition1: " << (egoTarget->angleTo() < (M_PI - toleranceAngle)) << endl;
+		cout << "if condition2: " << (egoTarget->angleTo() < (-M_PI + toleranceAngle)) << endl;
 
 		// if angle is smaller then tolerance angle return true
-		if (egoTarget->angleTo() > (M_PI / 2 - toleranceAngle) && egoTarget->angleTo() > (-M_PI / 2 + toleranceAngle))
+		if (egoTarget->angleTo() > (M_PI - toleranceAngle) && egoTarget->angleTo() > (-M_PI + toleranceAngle))
 		{
 			cout << "ChackGoalLine = true" << endl;
 			return true;
