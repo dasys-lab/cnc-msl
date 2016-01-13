@@ -29,6 +29,72 @@ IMU::~IMU() {
 	delete i_temp;
 }
 
+void IMU::gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
+	i2c->setDeviceAddress(ADR_G);
+	for(int i=0; i<count; i++) {
+		dest[i] = i2c->readByte(startAddress + i);
+	}
+}
+
+void IMU::xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
+	i2c->setDeviceAddress(ADR_XM);
+	for(int i=0; i<count; i++) {
+		dest[i] = i2c->readByte(startAddress + i);
+	}
+}
+
+void IMU::setDataRateGyro(uint8_t datarate, uint8_t bandwidth) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG1_G);
+	reg &= ~(0b11110000);
+
+	i2c->writeByte(CTRL_REG1_G, reg | (datarate << 6) | (bandwidth << 4));
+}
+
+void IMU::setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG2_G);
+	reg &= ~(0b00111111);
+
+	i2c->writeByte(CTRL_REG1_G, reg | (mode << 4) | cutoff);
+
+	if (enable) {
+		reg = i2c->readByte(CTRL_REG5_G);
+		reg &= ~(0b00010000);
+
+		i2c->writeByte(CTRL_REG1_G, reg | 0x10);
+	} else {
+		reg = i2c->readByte(CTRL_REG5_G);
+		reg &= ~(0b00010000);
+
+		i2c->writeByte(CTRL_REG1_G, reg);
+	}
+}
+
+void IMU::setScaleGyro(uint8_t scale) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG4_G);
+	reg &= ~(0b00110000);
+
+	i2c->writeByte(CTRL_REG4_G, reg | scale);
+}
+
+void IMU::enableGyro(bool state) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG1_G);
+	reg &= ~(0b00001111);
+
+	if(state) {
+		i2c->writeByte(CTRL_REG1_G, reg | 0x0F);
+	} else {
+		i2c->writeByte(CTRL_REG1_G, reg | 0x00);
+	}
+}
+
 bool IMU::init() {
 	// Enable Accel
 	i2c->setDeviceAddress(ADR_XM);
