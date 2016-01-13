@@ -12,10 +12,11 @@ namespace alica
 			DomainBehaviour("Duel")
 	{
 		/*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
-		wheelSpeed = -100; // TODO config?
-		translation = 800;
+		wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
+		translation = (*this->sc)["Drive"]->get<double>("Duel.Velocity", NULL);
 		fieldLength = (*this->sc)["Globals"]->get<double>("FootballField.FieldLength", NULL);
 		direction = 0;
+		itCounter = 0;
 		/*PROTECTED REGION END*/
 	}
 	Duel::~Duel()
@@ -29,19 +30,32 @@ namespace alica
 		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
 		shared_ptr<geometry::CNPoint2D> ownPoint = make_shared<geometry::CNPoint2D>(me->x, me->y);
 		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
+		msl_actuator_msgs::MotionControl mc;
 
 		if (me == nullptr || egoBallPos == nullptr)
 		{
 			return;
 		}
 
+
 		msl_actuator_msgs::BallHandleCmd bhc;
-		bhc.leftMotor = wheelSpeed;
-		bhc.rightMotor = wheelSpeed;
-
-
-
+		bhc.leftMotor = -wheelSpeed;
+		bhc.rightMotor = -wheelSpeed;
 		send(bhc);
+
+		//quickly drive toward the ball for a few seconds
+		//TODO improve this
+
+		if(itCounter++ < 8) {
+
+			mc.motion.angle = egoBallPos->angleTo();
+			mc.motion.rotation = 0;
+			mc.motion.translation = 2 * translation;
+			send(mc);
+			return;
+		}
+
+
 
 		shared_ptr<geometry::CNPoint2D> ownGoalPos = make_shared<geometry::CNPoint2D>(-fieldLength / 2, 0.0);
 
@@ -51,9 +65,12 @@ namespace alica
 			{
 				//own goal is close, get the ball away
 
-				if(checkSide(*egoBallPos,*ownGoalPos)) {
+				if (checkSide(*egoBallPos, *ownGoalPos))
+				{
 					direction = -1;
-				} else {
+				}
+				else
+				{
 					direction = 1;
 				}
 			}
@@ -63,17 +80,13 @@ namespace alica
 				//own goal is far away, look for nearby friends
 				shared_ptr<geometry::CNPoint2D> friendly = nullptr;
 
-
 				for (auto pos = wm->robots.getPositionsOfTeamMates()->begin();
 						pos != wm->robots.getPositionsOfTeamMates()->end(); pos++)
 				{
-					//iterator richtig? pos null?
 
 					shared_ptr<geometry::CNPoint2D> friendlyPos = make_shared<geometry::CNPoint2D>(
 							pos->get()->second->x, pos->get()->second->y);
 
-
-					//TODO sind die 2000 notwendig? und in konstante packen
 					if (friendlyPos->distanceTo(ownPoint) < 2000)
 					{
 						if (friendly == nullptr || friendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
@@ -85,47 +98,59 @@ namespace alica
 					if (friendly != nullptr)
 					{
 						//found one, try to get the ball to him
-						if(checkSide(*egoBallPos,*friendly)) {
+						if (checkSide(*egoBallPos, *friendly))
+						{
 							direction = 1;
-						} else {
+						}
+						else
+						{
 							direction = -1;
 						}
 					}
 
-					// test
-					 // !test
 					else if (me != nullptr)
 					{
+
+						bool posFree = true;
+						bool negFree = true;
 						//found none, looking for free space
 
-						// artificial obs ignorieren, kann man das so machen?
-//						auto currentObstacles = wm->robots.getObstacles(0);
-//						auto artificialObs = wm->pathPlanner.getArtificialObstacles();
-//						for (auto it1 = currentObstacles->begin(); it1 != currentObstacles->end(); it1++) {
-//							for(auto it2 = artificialObs->begin(); it2 != artificialObs->end(); it2++) {
-//								//TODO toleranz
-//
-//								geometry::CNPoint2D rectPointA = geometry::CNPoint2D(it2->get()->x + it2->get()->normalize()* )
-//								if(it1->x == it2->get()->x && it1->y == it2->get()->y) {
-//									currentObstacles->erase(it1);
-//								}
-//							}
-//						}
+						for (auto it = wm->robots.getObstaclePoints(0)->begin()->get();
+								it != wm->robots.getObstaclePoints(0)->end()->get(); it++)
+						{
 
+							if(it->distanceTo(egoBallPos) < 2000 && fabs(it->angleTo()) < M_PI/3*2) {
+								if(checkSide(*egoBallPos,*it)) {
+									posFree = false;
+								} else {
+									negFree = false;
+								}
+							}
+							//TODO sind teammitglieder in den obstacles drin?
 
-						//iterate over tracked opponents
-						//for every opp, check if opp is closer than 2m to the ball and angle difference is smaller than 270deg (but why?)
-						//if yes, check if opp is left or right of ball -> set direction over posFree and negFree bool?!
-						//if all occupied, try closest field border (never happens)
+						}
+						if(posFree) {
+							direction = 1;
+						} else if(negFree) {
+							direction = -1;
+						} else {
+							//all occupied
+							if(me == nullptr) {
+								//no idea
+								direction = 1;
+							} else {
+								//TODO distance to field borders
+
+							}
+						}
 					}
 				}
 
 			}
 		}
 
-		msl_actuator_msgs::MotionControl mc;
-		mc.motion.angle = egoBallPos->angleTo() + direction*M_PI;
-		mc.motion.rotation = direction * M_PI/2.0;
+		mc.motion.angle = egoBallPos->angleTo() + direction * M_PI;
+		mc.motion.rotation = direction * M_PI / 2.0;
 		mc.motion.translation = translation;
 
 		send(mc);
@@ -138,6 +163,7 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here
+
 
 	// returns true if pointToCheck is left of lineVector(look along the lineVector)
 	// uses cross product of 2 vectors. 0: colinear, <0: point left of vec, >0: point right of vec

@@ -21,6 +21,7 @@ namespace alica
         double fieldLength;
         double translation;
         int direction;
+        int itCounter;
         bool checkSide(geometry::CNPoint2D lineVector, geometry::CNPoint2D pointToCheck);
         /*PROTECTED REGION END*/
     private:
