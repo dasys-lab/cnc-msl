@@ -208,8 +208,8 @@ namespace alica
 //			kc.kicker = egoBallPos->angleTo();
 //			kc.power = min(minKickPower, egoAimPoint->length());
 			kc.power = minKickPower;
+			send(kc);
 		}
-		send(kc);
 	}
 
 	bool CheckGoalKick::checkGoalKeeper()
