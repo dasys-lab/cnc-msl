@@ -59,6 +59,10 @@ const uint8_t MAG_MFS_4GAUSS		= 0x01;
 const uint8_t MAG_MFS_8GAUSS		= 0x02;
 const uint8_t MAG_MFS_12GAUSS		= 0x03;
 
+const uint8_t MAG_MODE_CONTINUOUS	= 0x00;
+const uint8_t MAG_MODE_SINGLE		= 0x01;
+const uint8_t MAG_MODE_POWERDOWN	= 0x02;
+
 const float MAG_SENSE_2GAUSS		= 0.08;
 const float MAG_SENSE_4GAUSS		= 0.16;
 const float MAG_SENSE_8GAUSS		= 0.32;

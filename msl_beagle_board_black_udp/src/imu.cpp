@@ -121,7 +121,7 @@ void IMU::initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale) {
 
 	// Set CTRL-Reg 7
 	r = i2c->readByte(CTRL_REG7_XM);
-
+	r = (r & ~(0b00000011)) | MAG_MODE_CONTINUOUS;
 	i2c->writeByte(CTRL_REG7_XM, r);
 
 	switch (scale) {
