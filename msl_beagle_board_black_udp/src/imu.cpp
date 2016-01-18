@@ -7,6 +7,7 @@
 
 
 #include "imu.h"
+#include "math.h"
 
 using namespace BlackLib;
 
@@ -249,6 +250,7 @@ void IMU::updateData(timeval time_now) {
 	std::cout << "Z: " << magnet.z << std::endl;
 	std::cout << "Sense: " << magnet.sense << std::endl;
 
+	std::cout << "Winkel: " << atan2((double) magnet.y, (double) magnet.x) << std::endl;
 
 	last_updated = time_now;
 }
