@@ -23,39 +23,23 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-        auto ballPos = wm->ball.getEgoBallPosition();
-        auto me = wm->rawSensorData.getOwnPositionMotion();
+    	msl_actuator_msgs::MotionControl mc;
 
-        msl_actuator_msgs::MotionControl mc;
-        auto ballX = ballPos->x;
-        auto ballY = ballPos->y;
-        auto goalMidX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
-        auto goalMidY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
+    	shared_ptr < geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
+    	shared_ptr < geometry::CNPoint2D > goalMid = MSLFootballField::posOwnGoalMid();
+        shared_ptr < geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
 
-        auto targetX = goalMidX - 100;
-        auto targetY = ballY;
-        shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+        double targetX = goalMid->alloToEgo(*me) -> x - 100;
+        double targetY = egoBallPos -> y;
+        double penaltyLength = MSLFootballField::PenaltyAreaLength;
+        double goalWidth = MSLFootballField::GoalAreaWidth;
 
-        //mc = RobotMovement::alignToPointNoBall(ballPos, ballPos, 3.0);
-        //mc = RobotMovement::alignToPointNoBall(make_shared < geometry::CNPoint2D > (egoX, egoY), ballPos, 3.0);
-        //cout << "WatchBall: Inside run" << endl;
+        // TODO: Set y-borders, armlength away from goal posts and let goalie stop once reached
 
-        //auto penaltyWidth = MSLFootballField::PenaltyAreaWidth;
-        //auto goalLength = MSLFootballField::GoalAreaLength;
-        auto penaltyLength = MSLFootballField::PenaltyAreaLength;
-        auto goalWidth = MSLFootballField::GoalAreaWidth;
+        //cout << "targetX: " << targetX << endl;
+        //cout << "targetY: " << targetY<< endl;
 
-        //cout << "GoalieDefault: GoalAreaWidth=" << goalWidth<< endl;
-        //cout << "GoalieDefault: egoX=" << egoX<< endl;
-        cout << "GoalieDefault: ballY=" << ballY << endl;
-
-        if (std::abs(targetY) + 100 >= goalWidth / 2)
-        {
-            targetY *= (goalWidth / 2 - 150) / std::abs(targetY);
-        }
-
-        mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (targetX, targetY), ballPos, 100);
-
+        mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (targetX, targetY), goalMid, 100, 0);
         send(mc);
 
         /*PROTECTED REGION END*/
