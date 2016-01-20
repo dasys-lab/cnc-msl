@@ -188,8 +188,8 @@ namespace alica
 		cout << "distance: " << distance << endl;
 		if (distance < 600)
 		{
-			bhc.rightMotor = (int8_t)-70;
-			bhc.leftMotor = (int8_t)-70;
+			bhc.rightMotor = (int8_t)+wheelSpeedRight;
+			bhc.leftMotor = (int8_t)+wheelSpeedLeft;
 		}
 		else
 		{
