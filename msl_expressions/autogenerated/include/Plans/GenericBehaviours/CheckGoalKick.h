@@ -38,6 +38,7 @@ namespace alica
 		double robotShootDistanceGoal;
 		double toleranceAngle;
 		double minKickPower;
+		double waitingIter;
 		double wheelSpeedLeft;
 		double wheelSpeedRight;
 		bool checkGoalLine();
