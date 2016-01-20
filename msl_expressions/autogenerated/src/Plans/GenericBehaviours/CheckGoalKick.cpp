@@ -204,7 +204,7 @@ namespace alica
 		msl_actuator_msgs::KickControl kc;
 		kc.extension = 1;
 
-		if (wm->ball.haveBall())
+		if (wm->ball.haveBall() && wm->ball.hasBallIteration > 30)
 		{
 			kc.enabled = true;
 //			kc.kicker = egoBallPos->angleTo();
