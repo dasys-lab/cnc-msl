@@ -217,6 +217,7 @@ void CheckGoalKick::kicking() {
 //			kc.power = min(minKickPower, egoAimPoint->length());
 			kc.power = minKickPower;
 			send(kc);
+			waitingIter = 0;
 		} else {
 			waitingIter++;
 		}
