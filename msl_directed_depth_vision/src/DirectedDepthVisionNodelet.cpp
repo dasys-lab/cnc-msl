@@ -5,203 +5,193 @@
  *      Author: tobi
  */
 
-#include "DirectedDepthVisionNodelet.h"
+#include "msl_directed_depth_vision/DirectedDepthVisionNodelet.h"
 
 //rosrun nodelet nodelet load msl_directed_depth_vision/DirectedDepthVisit /camera/camera_nodelet_manager __name:=directedDepthVision
 
 namespace msl_vision
 {
-	DirectedDepthVisionNodelet::DirectedDepthVisionNodelet()
-	{
-		counter = 0;
-		viewTime = 0;
-		convTime = 0;
-		voxelSize = 5; //in cm
-	}
+	DirectedDepthVisionNodelet::DirectedDepthVisionNodelet() {
+		sc = supplementary::SystemConfig::getInstance();
+		depthVision = (*sc)["DirectedDepthVision"];
 
-	DirectedDepthVisionNodelet::~DirectedDepthVisionNodelet()
-	{
-	}
+		voxelSize = depthVision->get<double>("DepthVision", "ObstacleDetection", "voxelSize", NULL);
+		maxFloorDist = depthVision->get<double>("DepthVision", "ObstacleDetection", "maxFloorDist", NULL);
+		floorPlaneFilename = depthVision->get<string>("DepthVision", "FloorPlaneFile", "filename", NULL);
 
-	void DirectedDepthVisionNodelet::onInit()
-	{
-		nh = getNodeHandle();
-		pclSub = nh.subscribe("/camera/depth/points", 10, &DirectedDepthVisionNodelet::PointCloudCallback,this);
-		irImgSub = nh.subscribe("/camera/ir/image", 10, &DirectedDepthVisionNodelet::IRImageCallback,this);
-
-		filteredPclPub = nh.advertise<sensor_msgs::PointCloud2>("/DirectedDepthVision/SegmentedPCL", 10);
+		vg =  new pcl_filters::FilterVoxelGrid();
 
 		viewer = new pcl::visualization::CloudViewer("DirectedDepth PCL");
-
-		cloud_in = boost::make_shared<pcl::PointCloud<PointTypeIO> >();
+		cloud_in = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB> >();
 		cloud_in->points.resize(640 * 480);
-		cloud_out = boost::make_shared<pcl::PointCloud<PointTypeIO> >();
-		cloud_out->points.resize(640 * 480);
+		cloud_voxel = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB> >();
+		cloud_voxel->points.resize(640 * 480);
+		cloud_temp = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB> >();
+		cloud_temp->points.resize(640 * 480);
+		cloud_cluster = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB> >();
+		cloud_ground = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB> >();
 
-		cloud_xyz = boost::make_shared<pcl::PointCloud<pcl::PointXYZ> >();
-		cloud_xyz->points.resize(640 * 480);
-
-		cloud_with_normals = boost::make_shared<pcl::PointCloud<PointTypeFull> >();
-
-		cloud_f = boost::make_shared<pcl::PointCloud<PointTypeIO> >();
 	}
+	DirectedDepthVisionNodelet::~DirectedDepthVisionNodelet() {
+		delete (viewer);
+	}
+	void DirectedDepthVisionNodelet::onInit() {
+		nh = getNodeHandle();
 
-	void DirectedDepthVisionNodelet::IRImageCallback(sensor_msgs::ImagePtr msg) {
+		std::vector<std::string> argv = getMyArgv();
 
-		irImage = msg;
-
-		int max = -99999999;
-		int min = 999999999;
-		for(int i = 0; i < msg->data.size(); i++) {
-//			cout << ((msg->data[i] << 8) + msg->data[i++])  << " ";
-			int value = ((msg->data[i] << 8) + msg->data[i++]);
-			if(max < value) {
-				max = value;
+		for (int i = 0; i < argv.size(); i++) {
+			if (string(argv[i]) == "-calibrate") {
+				calibrateFloor = true;
 			}
-			if(min > value) {
-				min = value;
+			if (string(argv[i]) == "-debug") {
+				debugDisplay = true;
 			}
-
 		}
-//		cout << "min, max: " << min << " " << max << endl;
+		if(!calibrateFloor) {
+			loadPlane();
+		}
+		pclSub = nh.subscribe("/camera/depth_registered/points", 10, &DirectedDepthVisionNodelet::PointCloudCallback, this);
 	}
-
-	void DirectedDepthVisionNodelet::PointCloudCallback(sensor_msgs::PointCloud2Ptr msg)
-	{
-
-		if(irImage != NULL) {
-
-			pcl::IndicesClustersPtr clusters(new pcl::IndicesClusters), small_clusters(new pcl::IndicesClusters),
-					large_clusters(new pcl::IndicesClusters);
-			pcl::search::KdTree<PointTypeIO>::Ptr search_tree(new pcl::search::KdTree<PointTypeIO>);
-			pcl::console::TicToc tt;
-
-//			pcl::fromROSMsg(*msg, *cloud_xyz)y;
-
-//			msg->fields[3].name ="intensity";
-
-			pcl::fromROSMsg(*msg, *cloud_in);
-
-			int irCounter = 0;
-
-//			cout << "xyz " << cloud_xyz->points.size() << endl;
-
-//				cout << cloud_in->points.size() << " " << cloud_xyz->points.size() << endl;
-			for(int i = 0; i < cloud_in->points.size(); i++) {
-//				cout << i << " ";
-//				cloud_in->points[i].x = cloud_xyz->points[i].x;
-//				cloud_in->points[i].y = cloud_xyz->points[i].y;
-//				cloud_in->points[i].z = cloud_xyz->points[i].z;
-				double intensity = (irImage->data[irCounter] << 8) + irImage->data[irCounter++];
-				cloud_in->points[i].intensity = intensity;
-			}
-
-//			viewer->showCloud(cloud_in);
-
-			// Downsample the cloud using a Voxel Grid class
-//			std::cerr << "Downsampling...\n", tt.tic();
-			pcl::VoxelGrid<PointTypeIO> vg;
-			vg.setInputCloud(cloud_in);
-			vg.setLeafSize(voxelSize / 100, voxelSize / 100, voxelSize / 100);
-			vg.setDownsampleAllData(true);
-			vg.filter(*cloud_out);
-//			std::cerr << ">> Done: " << tt.toc() << " ms, " << cloud_out->points.size() << " points\n";
-
-//			std::cerr << "Computing normals...\n", tt.tic();
-			pcl::copyPointCloud(*cloud_out, *cloud_with_normals);
-			pcl::NormalEstimationOMP<PointTypeIO, PointTypeFull> ne; // multi core / multi thread
-	//		pcl::NormalEstimation<PointTypeIO, PointTypeFull> ne; // single core / single thread
-			ne.setInputCloud(cloud_out);
-			ne.setSearchMethod(search_tree);
-			ne.setRadiusSearch((voxelSize / 100)*2); // neighbour radius for calculating normal
-			ne.compute(*cloud_with_normals);
-//			std::cerr << ">> Done: " << tt.toc() << " ms\n";
-
-//			 Set up a Conditional Euclidean Clustering class
-//			std::cerr << "Segmenting to clusters...\n", tt.tic();
-			pcl::ConditionalEuclideanClustering<PointTypeFull> cec(true);
-			cec.setInputCloud(cloud_with_normals);
-			cec.setConditionFunction(&DirectedDepthVisionNodelet::enforceIntensitySimilarity);
-			cec.setClusterTolerance((voxelSize / 100)*5);
-			cec.setMinClusterSize(cloud_with_normals->points.size() / 1000);
-			cec.setMaxClusterSize(cloud_with_normals->points.size());
-			cec.segment(*clusters);
-			cec.getRemovedClusters(small_clusters, large_clusters);
-//			std::cerr << ">> Done: " << tt.toc() << " ms\n";
-
-			int minInt = 99999999;
-			int maxInt = -9999999;
-			for(int i = 0; i < cloud_out->points.size(); i++) {
-				if(minInt > cloud_out->points[i].intensity) {
-					minInt = cloud_out->points[i].intensity;
-				}
-				if(maxInt < cloud_out->points[i].intensity) {
-					maxInt = cloud_out->points[i].intensity;
-				}
-			}
-			cout << "max - min: " << maxInt - minInt << endl;
-
-			// Using the intensity channel for lazy visualization of the output
-			for (int i = 0; i < small_clusters->size(); ++i) {
-				for (int j = 0; j < (*small_clusters)[i].indices.size(); ++j)
-					cloud_out->points[(*small_clusters)[i].indices[j]].intensity = -2.0;
-			}
-	//		cout << "small cluster size: " << small_clusters->size() << endl;
-			for (int i = 0; i < large_clusters->size(); ++i) {
-				for (int j = 0; j < (*large_clusters)[i].indices.size(); ++j)
-					cloud_out->points[(*large_clusters)[i].indices[j]].intensity = +10.0;
-	//			cout << "large cluster size: " << (*large_clusters)[i].indices.size() << endl;
-			}
-			for (int i = 0; i < clusters->size(); ++i)
-			{
-				int label = rand() % 8;
-				for (int j = 0; j < (*clusters)[i].indices.size(); ++j)
-					cloud_out->points[(*clusters)[i].indices[j]].intensity = label;
-			}
-
-			viewer->showCloud(cloud_out);
+	void DirectedDepthVisionNodelet::PointCloudCallback(sensor_msgs::PointCloud2Ptr msg) {
+		if (calibrateFloor) {
+			calibrateFloor = false;
+			floorCalib.calibrate(msg);
+			loadPlane();
 		}
 
+
+		//downsample cloud_in into voxel grid and store it in cloud_voxel
+		//cerr << "", tt.tic();
+		pcl::fromROSMsg(*msg, *cloud_in);
+
+		vg->processVoxelGridFilter(cloud_in, cloud_voxel, voxelSize, false);
+		//cerr << " >> " <<tt.toc() << "ms" << endl;
+
+		//color the segmented ground green and the rest red
+		int clusterPixel = 0;
+		int planePixel = 0;
+		for(int i = 0; i < cloud_voxel->points.size(); i++) {
+			double cx = cloud_voxel->points[i].x, cy = cloud_voxel->points[i].y, cz = cloud_voxel->points[i].z;
+			double e = (a*cx+b*cy+c*cz+d) / (sqrt(a*a+b*b+c*c));
+
+			if(e > maxFloorDist) {
+				//every voxel cell except ground so the cluster cells
+				clusterPixel++; // size of the cluster cloud
+				cloud_voxel->points[i].r = 255; //
+				cloud_voxel->points[i].g = 0; //
+				cloud_voxel->points[i].b = 0; //
+			} else {
+				//every voxel cell in the ground
+				planePixel++;
+				cloud_voxel->points[i].r = 0; //
+				cloud_voxel->points[i].g = 255; //
+				cloud_voxel->points[i].b = 0; //
+			}
+		}
+
+		//resize the cluster cloud to the exact size
+		cloud_cluster->points.resize(clusterPixel);
+		cloud_ground->points.resize(planePixel);
+
+		//iterate over the voxel cloud and store the clusters segmented from ground to the cluster cloud
+		for(int i = 0, j = 0, k = 0; i < cloud_voxel->points.size(); i++) {
+			double cx = cloud_voxel->points[i].x, cy = cloud_voxel->points[i].y, cz = cloud_voxel->points[i].z;
+			double e = (a*cx+b*cy+c*cz+d) / (sqrt(a*a+b*b+c*c));
+			if(e > maxFloorDist) {
+			//write every voxel cell segented from ground to cluster cloud (white color)
+				cloud_cluster->points[j].r = 255;
+				cloud_cluster->points[j].g = 0;
+				cloud_cluster->points[j].b = 0;
+				cloud_cluster->points[j].x = cloud_voxel->points[i].x;
+				cloud_cluster->points[j].y = cloud_voxel->points[i].y;
+				cloud_cluster->points[j++].z = cloud_voxel->points[i].z;
+			} else {
+				cloud_ground->points[k].r = 0;
+				cloud_ground->points[k].g = 255;
+				cloud_ground->points[k].b = 0;
+				cloud_ground->points[k].x = cloud_voxel->points[i].x;
+				cloud_ground->points[k].y = cloud_voxel->points[i].y;
+				cloud_ground->points[k++].z =cloud_voxel->points[i].z;
+			}
+		}
+
+		cout << "cloud_voxel,cloud_cluster,cloud_ground: " << cloud_voxel->size() << " " << cloud_cluster->size() << " " << cloud_ground->size() << endl;
+		cerr << "Segmenting to clusters...\n", tt.tic();
+		cerr << "relevant points: " << cloud_cluster->points.size() << endl;
+		pcl::IndicesClustersPtr clusters (new pcl::IndicesClusters);
+		pcl::ConditionalEuclideanClustering<pcl::PointXYZRGB> cec(true);
+		cec.setInputCloud(cloud_cluster);
+		cec.setConditionFunction(&DirectedDepthVisionNodelet::customRegionGrowing);
+		cec.setClusterTolerance(0.1);
+		cec.setMinClusterSize(30);
+		cec.setMaxClusterSize(cloud_cluster->points.size() / 2);
+		cec.segment(*clusters);
+		cerr << " >> " << tt.toc() << "ms " << "clusters: " << clusters->size() << endl;
+
+		cerr << "TRACKING CLUSTER...\n", tt.tic();
+		clusterTracker.process(cloud_cluster, clusters);
+		clusterTracker.includeCluster(cloud_voxel, cloud_cluster); // for visualizing
+		cerr << " >> " << tt.toc() << "ms " << endl;
+
+//		viewer->showCloud(cloud_ground, "ground"); //
+		viewer->showCloud(cloud_in, "ground"); //
+		double max = INT_MIN,avg=0,min = INT_MAX, count=1;
+		for(int i = 0; i < cloud_in->size(); i++) {
+			double z = cloud_in->points[i].z;
+			if(z >= max) {
+				max = z;
+			}
+			if(z <= min && z >=0.05) {
+				min = z;
+			}
+			if(z >= 0.05 && z<= 7) {
+				count++;
+			avg+=z;
+			}
+		}
+		avg = avg/count;
+		cout << "max,avg,min: " << max << " " << avg << " " << min << endl;
+//		viewer->showCloud(cloud_cluster, "cluster"); //
+//		viewer->showCloud(cloud_voxel, "voxel cloud"); //
+	}
+	bool DirectedDepthVisionNodelet::loadPlane() {
+		string dir = sc->getConfigPath() + floorPlaneFilename;
+		ifstream ifs(dir);
+		if(ifs.is_open()) {
+			ifs >> a;
+			ifs >> b;
+			ifs >> c;
+			ifs >> d;
+			ROS_INFO("plane loaded: %f*x + %f*y + %f*z + %f = 0", a, b ,c ,d);
+			return true;
+		} else {
+			ROS_ERROR("Couldn't load plane function!");
+			return false;
+		}
 	}
 
-	bool DirectedDepthVisionNodelet::enforceIntensitySimilarity(const PointTypeFull& point_a,
-																const PointTypeFull& point_b, float squared_distance)
-	{
-		if (fabs(point_a.intensity - point_b.intensity) < 5.0f)
-			return (true);
-		else
-			return (false);
+	bool DirectedDepthVisionNodelet::customRegionGrowing(const pcl::PointXYZRGB& point_a, const pcl::PointXYZRGB& point_b, float squared_distance) {
+		if((float)sqrt(squared_distance) < 0.1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	void DirectedDepthVisionNodelet::projectPixelOnCenter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl) {
+//		for(int i = 0; i < pcl->points.size(); i++) {
+//			double x = pcl->points[i].x;
+			double x = 300;
+			double z = 2;
+			double absToMidX = (double)abs(x - (double)width/2);
+			double alpha = (double)(52 / width) * absToMidX;
+			double projDist = asin(alpha*M_PI/180) * z;
+//			cout << "-------------------- " << absToMidX << " " << alpha << endl;
+//			cout << "-------------------- " << projDist << endl;
+
+//		}
 	}
 
-	bool DirectedDepthVisionNodelet::enforceCurvatureOrIntensitySimilarity(const PointTypeFull& point_a,
-																			const PointTypeFull& point_b,
-																			float squared_distance)
-	{
-		Eigen::Map<const Eigen::Vector3f> point_a_normal = point_a.normal, point_b_normal = point_b.normal;
-		if (fabs(point_a.intensity - point_b.intensity) < 5.0f)
-			return (true);
-		if (fabs(point_a_normal.dot(point_b_normal)) < 0.05)
-			return (true);
-		return (false);
-	}
-	bool DirectedDepthVisionNodelet::customRegionGrowing(const PointTypeFull& point_a, const PointTypeFull& point_b,
-															float squared_distance)
-	{
-		Eigen::Map<const Eigen::Vector3f> point_a_normal = point_a.normal, point_b_normal = point_b.normal;
-		if (squared_distance < 10000)
-		{
-			if (fabs(point_a.intensity - point_b.intensity) < 8.0f)
-				return (true);
-			if (fabs(point_a_normal.dot(point_b_normal)) < 0.06)
-				return (true);
-		}
-		else
-		{
-			if (fabs(point_a.intensity - point_b.intensity) < 3.0f)
-				return (true);
-		}
-		return (false);
-	}
 } /* namespace msl_vision */
 
 PLUGINLIB_EXPORT_CLASS(msl_vision::DirectedDepthVisionNodelet, nodelet::Nodelet)

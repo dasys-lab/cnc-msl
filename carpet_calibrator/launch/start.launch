@@ -12,4 +12,6 @@
 		<param name="video_mode" value="640x480_mono8" />
 		<!--param name="2format7_color_coding" value="yuv422" /-->
 	</node>
+
+	<node pkg="msl_base" type="msl_base" name="msl_base" args="-m CarpetCalibrator"/>
 </launch>

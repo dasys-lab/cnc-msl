@@ -154,8 +154,9 @@ namespace msl_vision
 	}
 	void CarpetCalibratorNodelet::onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr msg) {
 		if(msg->currentState.compare("FinishSpin")==0 && !imgSaved){
-			string directory = sc->getConfigPath() + "CarpetCalibImage.raw";
-			string pngDir = sc->getConfigPath() + "CarpetCalibImage.png";
+			string directory = sc->getConfigPath() + sc->getHostname() + "/CarpetCalibImage.raw";
+
+			string pngDir = sc->getConfigPath() + sc->getHostname() + "/CarpetCalibImage.png";
 			ofstream ofs(directory);
 
 			vector<int> compression_params;

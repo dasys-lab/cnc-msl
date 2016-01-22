@@ -1,19 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_directed_depth_vision)
+project(msl_pcl_filters)
 
-## Use c++ 11x std
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-set(MRPT_DONT_USE_DBG_LIBS 1)
- 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED system_config nodelet roscpp pcl_conversions msl_pcl_filters)
- 
+find_package(catkin REQUIRED)
+find_package(PCL 1.7 REQUIRED)
+
 ## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
-find_package(MRPT REQUIRED base maps)
-find_package(PCL 1.7  REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS system)
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -29,10 +25,10 @@ find_package(PCL 1.7  REQUIRED)
 ## * Let MSG_DEP_SET be the set of packages whose message types you use in
 ##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
 ## * In the file package.xml:
+##   * add a build_depend tag for "message_generation"
 ##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependencies might have been
-##     pulled in transitively but can be declared for certainty nonetheless:
-##     * add a build_depend tag for "message_generation"
+##   * If MSG_DEP_SET isn't empty the following dependency has been pulled in
+##     but can be declared for certainty nonetheless:
 ##     * add a run_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
@@ -71,6 +67,26 @@ find_package(PCL 1.7  REQUIRED)
 #   std_msgs  # Or other packages containing msgs
 # )
 
+################################################
+## Declare ROS dynamic reconfigure parameters ##
+################################################
+
+## To declare and build dynamic reconfigure parameters within this
+## package, follow these steps:
+## * In the file package.xml:
+##   * add a build_depend and a run_depend tag for "dynamic_reconfigure"
+## * In this file (CMakeLists.txt):
+##   * add "dynamic_reconfigure" to
+##     find_package(catkin REQUIRED COMPONENTS ...)
+##   * uncomment the "generate_dynamic_reconfigure_options" section below
+##     and list every .cfg file to be processed
+
+## Generate dynamic reconfigure parameters in the 'cfg' folder
+# generate_dynamic_reconfigure_options(
+#   cfg/DynReconf1.cfg
+#   cfg/DynReconf2.cfg
+# )
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -82,69 +98,47 @@ find_package(PCL 1.7  REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES mrpt mrpt-maps mrpt_maps
-  CATKIN_DEPENDS system_config msl_pcl_filters
+  LIBRARIES msl_pcl_filters
+#  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
-
+ 
 ###########
 ## Build ##
 ###########
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${MRPT_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-## Specify additional locations of header files
-## Declare a cpp library
-add_library(msl_directed_depth_vision
-   src/DirectedDepthVisionNodelet.cpp
-   src/FloorCalibrator.cpp
-   src/ClusterTracker.cpp
-   src/Cluster.cpp
+## Declare a C++ library
+add_library(msl_pcl_filters
+  src/FilterVoxelGrid.cpp
 )
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_directed_depth_vision
+## Add cmake target dependencies of the library
+## as an example, code may need to be generated before libraries
+## either from message generation or dynamic reconfigure
+# add_dependencies(msl_pcl_filters ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+## Declare a C++ executable
+# add_executable(msl_pcl_filters_node src/msl_pcl_filters_node.cpp)
+
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(msl_pcl_filters
   ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
   ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARiIES}
-  ${MRPT_LIBS}
-  msl_directed_depth_vision_generate_messages_cpp
-)
-## Specify libraries to link a library or executable target against
-target_link_libraries(msl_directed_depth_vision
-  ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARIES}
-  ${MRPT_LIBS}
 )
 
-## Declare a cpp executable
-add_executable(msl_directed_depth_vision_node
-        src/DirectedDepthVisionNode.cpp
-)
-add_dependencies(msl_directed_depth_vision_node
-  ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARiIES}
-  ${MRPT_LIBS}
-)
 ## Specify libraries to link a library or executable target against
-target_link_libraries(msl_directed_depth_vision_node
+target_link_libraries(msl_pcl_filters
   ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
   ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARIES}
-  ${MRPT_LIBS}
 )
+
 #############
 ## Install ##
 #############
@@ -160,7 +154,7 @@ target_link_libraries(msl_directed_depth_vision_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS msl_directed_depth_vision msl_directed_depth_vision_node
+# install(TARGETS msl_pcl_filters msl_pcl_filters_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -185,7 +179,7 @@ target_link_libraries(msl_directed_depth_vision_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_directed_depth_vision.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_msl_pcl_filters.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

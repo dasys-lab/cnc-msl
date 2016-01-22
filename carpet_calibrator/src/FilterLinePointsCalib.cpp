@@ -430,12 +430,12 @@ unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int
 	for (unsigned int i = 0; i < LinePointsX.size(); i++)
 	{
 		tgt[LinePointsX[i] * width + LinePointsY[i]] = 0;
-		ofstream ofs("rawLinePoints.txt", fstream::app);
+		ofstream ofs(sc->getConfigPath() + sc->getHostname() + "/rawLinePoints.txt", fstream::app);
 		double x = LinePointsX[i] - (short)width / (short)2;
 		double y = LinePointsY[i] - (short)height / (short)2;
 		ofs << atan2(y, x) << " " << sqrt(x * x + y * y) << " " << x << " " << y << endl;
 	}
-	ofstream cfs("clearedLP.txt");
+	ofstream cfs(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
 	for (int i = 0; i < distanceSum.size(); i++)
 	{
 		int element = (i + 1 + (distanceSum.size() / 2)) % distanceSum.size();

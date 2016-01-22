@@ -43,6 +43,7 @@ int main(int argc, char * argv[]){
 	SystemConfig* sc = SystemConfig::getInstance();
         std::string confPath = sc->getConfigPath();
 	Configuration *vision = (*sc)["Vision"];
+	Configuration *carpetCalib = (*sc)["CarpetCalibrator"];
         int dcHEIGHT = vision->get<int>("Vision", "ImageArea", NULL);
         int dcWIDTH = vision->get<int>("Vision", "ImageArea", NULL);
 
@@ -53,17 +54,18 @@ int main(int argc, char * argv[]){
 	stringstream ss(stringstream::in | stringstream::out);
 
 	vector<double> realDist;
-	realDist.push_back(0);
-	realDist.push_back(1000);
-	realDist.push_back(2000);
-	realDist.push_back(3000);
-	realDist.push_back(4000);
-	realDist.push_back(5000);
+
+//    int counter = 0;
+
+
+    for(int i = 0; i < 10; i++) {
+    	realDist.push_back(((*sc)["CarpetCalibrator"])->get<int>("Dist", ("dist"+to_string(i)).c_str() , NULL));
+    }
 
 	for(int i=1; i<20; i++) realDist.push_back(5000+i*1000);
 
 
-	ifstream ifs("clearedLP.txt");
+	ifstream ifs(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
 	while(!ifs.eof()) {
 		tmp.clear();
 		ifs.getline(line, 4096);
@@ -84,7 +86,7 @@ int main(int argc, char * argv[]){
 	for(int i=0; i<8; i++)	cout << distances[44][i] << " ";
 	cout << endl;
 
-	string dbgPath = confPath + "distancelookup.txt";
+	string dbgPath = confPath + sc->getHostname() + "/distancelookup.txt";
 	ofstream ofs(dbgPath.c_str());
 	double *lookup = new double[dcHEIGHT*dcWIDTH];
 	memset(lookup, 0, dcHEIGHT*dcWIDTH*sizeof(double));
@@ -188,14 +190,14 @@ int main(int argc, char * argv[]){
 	cout << maxM << endl;
 
 	std::cout << std::endl << "DistanceLookup2.dat was built" << std::endl;
-        std::string filePath = confPath + "/DistanceLookup2.dat";
+        std::string filePath = confPath + sc->getHostname() + "/DistanceLookup2.dat";
 
         FILE * fd = fopen(filePath.c_str(), "w");
         fwrite(&(LookupTable[0]), sizeof(double), dcWIDTH*dcHEIGHT, fd);
         fwrite(&(LookupTableInt[0][0]), sizeof(int), dcWIDTH*dcHEIGHT*2, fd);
         fclose(fd);
 
-	ofstream ofs2("DistanceLookUp2.txt");
+	ofstream ofs2(sc->getConfigPath() + sc->getHostname() + "/DistanceLookUp2.txt");
         for(int i=0; i<dcWIDTH; i++) {
                 for(int j=0; j<dcHEIGHT; j++) {
                         ofs2 << LookupTable[i][j] << " ";
