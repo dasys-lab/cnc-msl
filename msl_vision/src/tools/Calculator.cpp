@@ -59,6 +59,13 @@ int main(int argc, char * argv[]){
 		return 0;
 	}
 
+	FILE * fd = fopen(filePath.c_str(), "w");
+	if(fd == NULL) {
+		std::cout << "Error creating " << filePath << std::endl;
+		std::cout << "Cannot create File" << std::endl;
+		return 0;
+	}
+
 	int MX;// = atoi((vision->Values["CameraMX"]).c_str());
 	int MY;// = atoi((vision->Values["CameraMY"]).c_str());
 
@@ -147,7 +154,6 @@ int main(int argc, char * argv[]){
 	}
 
 
-	FILE * fd = fopen(filePath.c_str(), "w");
 	fwrite(&(LookupTable[0][0]), sizeof(double), dcWIDTH*dcHEIGHT, fd);
 	fwrite(&(LookupTableInt[0][0][0]), sizeof(int), dcWIDTH*dcHEIGHT*2, fd);
 	fclose(fd);
