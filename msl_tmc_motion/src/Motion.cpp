@@ -11,6 +11,7 @@
 #include <SystemConfig.h>
 #include <time.h>
 
+
 namespace msl_driver
 {
 
@@ -110,52 +111,66 @@ namespace msl_driver
 
 	bool Motion::open()
 	{
-		//### SERIEAL PORT STUFF
-		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-		std::cout << "Serial Port - Device " << this->device << ", port " << this->port << std::endl;
+//		//### SERIEAL PORT STUFF
+//		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+//		std::cout << "Serial Port - Device " << this->device << ", port " << this->port << std::endl;
+//
+//		if (port == -1)
+//		{
+//			std::cerr << "Error " << errno << " from open(..): " << strerror(errno) << std::endl;
+//			return false;
+//		}
+//
+//		// Read Configuration into newtio
+//		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
+//		if (tcgetattr(port, &newtio) != 0)
+//		{
+//			std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+//			return false;
+//		}
+//		if (cfsetispeed(&newtio, (speed_t)B57600) < 0)
+//		{
+//			std::cerr << "Error " << errno << " from cfsetispeed: " << strerror(errno) << std::endl;
+//			return false;
+//		}
+//		if (cfsetospeed(&newtio, (speed_t)B57600) < 0)
+//		{
+//			std::cerr << "Error " << errno << " from cfsetospeed: " << strerror(errno) << std::endl;
+//			return false;
+//		}
+//
+//		// Setting other Port Stuff
+//		newtio.c_cflag &= ~(CSIZE | PARENB | CSTOPB); // Make 8n1
+//		newtio.c_cflag |= CS8;
+//
+//		newtio.c_cflag &= ~CRTSCTS; // no flow control
+//		newtio.c_cc[VMIN] = 1; // read doesn't block
+//		newtio.c_cc[VTIME] = this->initReadTimeout; // 0.5 seconds read timeout
+//		newtio.c_cflag |= CREAD | CLOCAL; // turn on READ & ignore ctrl lines
+//
+//		/* Make raw */
+//		//cfmakeraw(&newtio);
+//
+//		tcflush(port, TCIFLUSH);
+//		if (tcsetattr(port, TCSANOW, &newtio) < 0)
+//		{
+//			std::cerr << "Error " << errno << " from tcsetattr" << std::endl;
+//			return false;
+//		}
 
-		if (port == -1)
+
+		// TODO: make baudrate a parameter
+		this->my_serial = new serial::Serial(this->device, 57600, serial::Timeout::simpleTimeout(this->initReadTimeout));
+
+		cout << "Is the serial port open?";
+		if (!my_serial->isOpen())
 		{
-			std::cerr << "Error " << errno << " from open(..): " << strerror(errno) << std::endl;
+			cerr << "TMC-Motion: Unable to open serial port : " << this->device << " Errno: " << strerror(errno)
+					<< endl;
 			return false;
 		}
 
-		// Read Configuration into newtio
-		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
-		if (tcgetattr(port, &newtio) != 0)
-		{
-			std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
-			return false;
-		}
-		if (cfsetispeed(&newtio, (speed_t)B57600) < 0)
-		{
-			std::cerr << "Error " << errno << " from cfsetispeed: " << strerror(errno) << std::endl;
-			return false;
-		}
-		if (cfsetospeed(&newtio, (speed_t)B57600) < 0)
-		{
-			std::cerr << "Error " << errno << " from cfsetospeed: " << strerror(errno) << std::endl;
-			return false;
-		}
-
-		// Setting other Port Stuff
-		newtio.c_cflag &= ~(CSIZE | PARENB | CSTOPB); // Make 8n1
-		newtio.c_cflag |= CS8;
-
-		newtio.c_cflag &= ~CRTSCTS; // no flow control
-		newtio.c_cc[VMIN] = 1; // read doesn't block
-		newtio.c_cc[VTIME] = this->initReadTimeout; // 0.5 seconds read timeout
-		newtio.c_cflag |= CREAD | CLOCAL; // turn on READ & ignore ctrl lines
-
-		/* Make raw */
-		//cfmakeraw(&newtio);
-
-		tcflush(port, TCIFLUSH);
-		if (tcsetattr(port, TCSANOW, &newtio) < 0)
-		{
-			std::cerr << "Error " << errno << " from tcsetattr" << std::endl;
-			return false;
-		}
+		this->my_serial->setTimeout(serial::Timeout::max(), this->readTimeout, 0, this->writeTimeout, 0);
 
 		//### SEND MOTOR CONFIG
 		this->sendMotorConfig();
@@ -168,52 +183,69 @@ namespace msl_driver
 
 	void Motion::sendData(shared_ptr<CNMCPacket> packet)
 	{
+//		auto bytes = packet->getBytes();
+//		::write(this->port, (*bytes).data(), bytes->size());
+
 		auto bytes = packet->getBytes();
-		::write(this->port, (*bytes).data(), bytes->size());
+		this->my_serial->write((*bytes).data(), bytes->size());
 	}
 
 	unique_ptr<CNMCPacket> Motion::readData()
 	{
-		uint8_t b;
+		uint8_t b[1];
 		bool finished = false;
 		bool quoted = false;
 
-		vector<uint8_t> data;
-		::read(this->port, &b, 1);
-		bool wrote = false;
-		while (b != CNMCPacket::START_HEADER)
-		{
-			cout << (char)b;
-			::read(this->port, &b, 1);
-			wrote = true;
-		}
-		if (wrote)
-			cout << endl;
 
-		if (b != CNMCPacket::START_HEADER)
+		vector<uint8_t> data;
+		size_t count = this->my_serial->read(b, 1);
+//		::read(this->port, &b, 1);
+//		bool wrote = false;
+
+		if (count == 0)
+			return nullptr;
+
+		while (b[0] != CNMCPacket::START_HEADER)
+		{
+		//	cout << (char)b;
+//			::read(this->port, &b, 1);
+			count = this->my_serial->read(b, 1);
+//			wrote = true;
+
+			if (count == 0)
+				return nullptr;
+		}
+//		if (wrote)
+//			cout << endl;
+
+		if (b[0] != CNMCPacket::START_HEADER)
 		{
 			return move(unique_ptr<CNMCPacket>());
 		}
 		else
 		{
-			data.push_back(b);
+			data.push_back(b[0]);
 		}
 
 		while (!finished)
 		{
-			::read(this->port, &b, 1);
+			count = this->my_serial->read(b, 1);
+//			::read(this->port, &b, 1);
 
-			if (b == CNMCPacket::QUOTE)
+			if (count == 0)
+				return nullptr;
+
+			if (b[0] == CNMCPacket::QUOTE)
 			{
 				if (!quoted)
 					quoted = true;
 				else
 				{
-					data.push_back(b);
+					data.push_back(b[0]);
 					quoted = false;
 				}
 			}
-			else if (b == CNMCPacket::END_HEADER)
+			else if (b[0] == CNMCPacket::END_HEADER)
 			{
 				if (!quoted)
 				{ //do not add end header to data
@@ -221,14 +253,14 @@ namespace msl_driver
 				}
 				else
 				{
-					data.push_back(b);
+					data.push_back(b[0]);
 					quoted = false;
 				}
 			}
 			else
 			{
 				quoted = false;
-				data.push_back(b);
+				data.push_back(b[0]);
 			}
 		}
 

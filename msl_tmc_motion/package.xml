@@ -18,6 +18,8 @@
   <build_depend>msl_actuator_msgs</build_depend>
   <build_depend>system_config</build_depend>
   <build_depend>cnc_geometry</build_depend>
+  <build_depend>serial</build_depend>
+  <run_depend>serial</run_depend>
   <run_depend>cnc_geometry</run_depend>
   <run_depend>msl_actuator_msgs</run_depend>
   <run_depend>system_config</run_depend>

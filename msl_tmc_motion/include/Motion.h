@@ -29,8 +29,9 @@
 #include <SystemConfig.h>
 
 // serial port stuff
-#include <termios.h>
+//#include <termios.h>
 #include <fcntl.h>
+#include "serial/serial.h"
 
 using namespace std;
 
@@ -81,14 +82,16 @@ namespace msl_driver
 		thread runThread;
 
 		// SERIAL PORT STUFF
-		struct termios newtio;
-		int port = 0;
+//		struct termios newtio;
+//		int port = 0;
 		string device = "";
 		int initReadTimeout = 0; // Initial read timeout (required to read the garbage provided by the VMC after power on
 		int readTimeout = 0; // General read timeout
 		int readTimeoutCount = 0; // Global counter for read timeouts
 		int writeTimeout = 0; // General write timeout
 		int writeTimeoutCount = 0; // Global counter for write timeouts
+
+		serial::Serial* my_serial;
 
 		supplementary::SystemConfig* sc;
 		MotorConfig mc;

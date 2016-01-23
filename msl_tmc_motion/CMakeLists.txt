@@ -9,7 +9,7 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config cnc_geometry) 
+find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config cnc_geometry serial) 
 
 ###################################
 ## catkin specific configuration ##
@@ -23,7 +23,7 @@ find_package(catkin REQUIRED COMPONENTS msl_actuator_msgs system_config cnc_geom
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_tmc_motion
-  CATKIN_DEPENDS msl_actuator_msgs system_config cnc_geometry
+  CATKIN_DEPENDS msl_actuator_msgs system_config cnc_geometry serial
 #  DEPENDS system_lib 
 )
 
