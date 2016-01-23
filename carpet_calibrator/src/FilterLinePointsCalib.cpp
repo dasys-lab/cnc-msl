@@ -430,32 +430,42 @@ unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int
 	for (unsigned int i = 0; i < LinePointsX.size(); i++)
 	{
 		tgt[LinePointsX[i] * width + LinePointsY[i]] = 0;
-		ofstream ofs(sc->getConfigPath() + sc->getHostname() + "/rawLinePoints.txt", fstream::app);
+		ofstream *ofs;
+		ofs = new ofstream(sc->getConfigPath() + sc->getHostname() + "/rawLinePoints.txt", fstream::app);
+//		ofstream ofs(sc->getConfigPath() + sc->getHostname() + "/rawLinePoints.txt", fstream::app);
+		if(!ofs->is_open()) {
+			ofs = new ofstream(sc->getConfigPath() + "/rawLinePoints.txt", fstream::app);
+		}
 		double x = LinePointsX[i] - (short)width / (short)2;
 		double y = LinePointsY[i] - (short)height / (short)2;
-		ofs << atan2(y, x) << " " << sqrt(x * x + y * y) << " " << x << " " << y << endl;
+		*ofs << atan2(y, x) << " " << sqrt(x * x + y * y) << " " << x << " " << y << endl;
 	}
-	ofstream cfs(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
+	ofstream *cfs;
+	cfs = new ofstream(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
+	if(!cfs->is_open()) {
+		cfs = new ofstream(sc->getConfigPath() + "/clearedLP.txt");
+	}
+
 	for (int i = 0; i < distanceSum.size(); i++)
 	{
 		int element = (i + 1 + (distanceSum.size() / 2)) % distanceSum.size();
 		if (angles[element] == 0)
 			continue;
-		cfs << angles[element] << " ";
+		*cfs << angles[element] << " ";
 		for (int j = 0; j < distanceSum[element].size(); j++)
 		{
 			if (distanceSum[element][j] != 0)
 			{
-				cfs << distanceSum[element][j] << " ";
+				*cfs << distanceSum[element][j] << " ";
 				//cfs << distanceCount[i][j] << " ";
 			}
 			else
 				break;
 //			else cfs << 0 << " ";
 		}
-		cfs << endl;
+		*cfs << endl;
 	}
-	cfs.close();
+	cfs->close();
 
 	printf("FilterLinePoints - Number of LinePoints: %d\n", (int)LinePointsX.size());
 
