@@ -545,6 +545,13 @@ namespace msl_driver
 		NULL);
 		this->mc.failSafeCycles = (*sc)["Motion"]->get<short>("Motion", "CNMC", "Controller", "FailSafeCycles", NULL);
 
+
+		this->mc.accelBoundMin = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller",
+																		"MinimalAccelerationAllowed");
+
+		this->mc.accelBoundMax = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller",
+																		"MaximalAccelerationAllowed");
+
 		this->mc.rotationAccelBound = (*sc)["Motion"]->tryGet<double>(0.0, "Motion", "CNMC", "Controller",
 																		"MaxRotationAccel");
 
