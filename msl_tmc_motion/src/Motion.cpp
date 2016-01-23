@@ -49,9 +49,6 @@ namespace msl_driver
 			std::cout << "Motion: slip control new min rotation     = " << this->slipControlNewMinRot << std::endl;
 		}
 
-		// Set Trace-Model (according to the impera repository, we always used the CircleTrace model)
-		this->traceModel = new CircleTrace();
-
 		// Read required driver parameters
 		this->driverAlivePeriod = (*sc)["Motion"]->tryGet<int>(250, "Motion", "AlivePeriod", NULL);
 		this->driverOpenAttemptPeriod = (*sc)["Motion"]->tryGet<int>(1000, "Motion", "OpenAttemptPeriod", NULL);
@@ -59,8 +56,8 @@ namespace msl_driver
 
 	Motion::~Motion()
 	{
-		delete motionValue;
-		delete traceModel;
+		if (this->motionValue != nullptr)
+			delete motionValue;
 	}
 
 	/**
@@ -111,24 +108,34 @@ namespace msl_driver
 		getMotorConfig();
 	}
 
-	void Motion::open()
+	bool Motion::open()
 	{
 		//### SERIEAL PORT STUFF
 		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
+		std::cout << "Serial Port - Device " << this->device << ", port " << this->port << std::endl;
+
+		if (port == -1)
+		{
+			std::cerr << "Error " << errno << " from open(..): " << strerror(errno) << std::endl;
+			return false;
+		}
 
 		// Read Configuration into newtio
 		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
 		if (tcgetattr(port, &newtio) != 0)
 		{
 			std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+			return false;
 		}
 		if (cfsetispeed(&newtio, (speed_t)B57600) < 0)
 		{
 			std::cerr << "Error " << errno << " from cfsetispeed: " << strerror(errno) << std::endl;
+			return false;
 		}
 		if (cfsetospeed(&newtio, (speed_t)B57600) < 0)
 		{
 			std::cerr << "Error " << errno << " from cfsetospeed: " << strerror(errno) << std::endl;
+			return false;
 		}
 
 		// Setting other Port Stuff
@@ -147,6 +154,7 @@ namespace msl_driver
 		if (tcsetattr(port, TCSANOW, &newtio) < 0)
 		{
 			std::cerr << "Error " << errno << " from tcsetattr" << std::endl;
+			return false;
 		}
 
 		//### SEND MOTOR CONFIG
@@ -154,6 +162,8 @@ namespace msl_driver
 
 		//### READY
 		this->controllerIsActive = true;
+
+		return true;
 	}
 
 	void Motion::sendData(shared_ptr<CNMCPacket> packet)
@@ -662,9 +672,22 @@ int main(int argc, char** argv)
 	// has to be set after Motion::initCommunication , in order to override the ROS signal handler
 	signal(SIGINT, msl_driver::Motion::pmSigintHandler);
 	signal(SIGTERM, msl_driver::Motion::pmSigTermHandler);
+	std::cout << "init" << std::endl;
 	motion->initialize();
-	motion->open();
+	std::cout << "open" << std::endl;
+	bool r = motion->open();
+
+	if (false == r)
+	{
+		delete motion;
+		ros::shutdown();
+
+		return 1;
+	}
+
+	std::cout << "start" << std::endl;
 	motion->start();
+	std::cout << "operating ..." << std::endl;
 
 	while (motion->isRunning())
 	{
