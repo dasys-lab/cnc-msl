@@ -187,7 +187,16 @@ namespace msl_driver
 //		::write(this->port, (*bytes).data(), bytes->size());
 
 		auto bytes = packet->getBytes();
-		this->my_serial->write((*bytes).data(), bytes->size());
+		cout << "TMC-Motion: Sending: ";
+		for (uint8_t byte : (*bytes))
+		{
+			cout << hex << byte << " ";
+		}
+		cout << endl << dec << endl;
+		size_t numBytesWritten = this->my_serial->write((*bytes).data(), bytes->size());
+
+		cout << "TMC-Motion: sendData - numBytesWritten: " << numBytesWritten << endl;
+
 	}
 
 	unique_ptr<CNMCPacket> Motion::readData()
