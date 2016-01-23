@@ -8,7 +8,8 @@
 #include <SystemConfig.h>
 
 #define NSECTORS 360
-#define LUFILENAME "/DistanceLookup.txt"
+#define LUFILENAME "/DistanceLookup.dat"
+#define LUFILENAMETXT "/DistanceLookup.txt"
 
 using namespace std;
 using namespace supplementary;
@@ -199,8 +200,9 @@ int main(int argc, char * argv[]){
 	}
 	cout << maxM << endl;
 
-	std::cout << std::endl << "DistanceLookup.dat was built" << std::endl;
-        std::string filePath = confPath + sc->getHostname() + LUFILENAME;
+        std::string filePath = confPath + sc->getHostname() + "/" + LUFILENAME;
+        std::cout << std::endl << "Building " << filePath << std::endl;
+
 
         FILE * fd = fopen(filePath.c_str(), "w");
 
@@ -213,9 +215,9 @@ int main(int argc, char * argv[]){
         fclose(fd);
 
         ofstream *ofs2;
-        ofs2 = new ofstream(sc->getConfigPath() + sc->getHostname() + LUFILENAME);
+        ofs2 = new ofstream(sc->getConfigPath() + sc->getHostname() + LUFILENAMETXT);
         if(!ofs2->is_open()) {
-        	ofs2 = new ofstream(sc->getConfigPath() + LUFILENAME);
+        	ofs2 = new ofstream(sc->getConfigPath() + LUFILENAMETXT);
         }
 
 

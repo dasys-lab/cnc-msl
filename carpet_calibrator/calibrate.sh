@@ -24,10 +24,8 @@ if [[ $response =~ ^(yes|y|"") ]]; then
 		response=${response,,} # tolower
 		if [[ $response =~ ^(yes|y|"") ]]; then
 			killall eog
-			rosrun carpet_calibrator carpet_calibrator_line_points&
-			sleep 5
-			rosrun msl_vision msl_carpet_calculator&
-			sleep 5
+			rosrun carpet_calibrator carpet_calibrator_line_points
+			rosrun msl_vision msl_carpet_calculator
 		else
 			echo "please try"
 		fi 

@@ -149,7 +149,7 @@ void DistanceLookupHelper::init(char* name){
 	}
 
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-	std::string file_name = std::string(getenv("DOMAIN_CONFIG_FOLDER")) + "/"+ sc->getHostname() + std::string(name);
+	std::string file_name = std::string(getenv("DOMAIN_CONFIG_FOLDER")) + "/"+ sc->getHostname() + "/" + std::string(name);
 
 	FILE * fd = fopen(file_name.c_str(), "r");
 	if(fd != NULL){
