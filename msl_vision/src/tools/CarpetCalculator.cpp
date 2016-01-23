@@ -8,6 +8,7 @@
 #include <SystemConfig.h>
 
 #define NSECTORS 360
+#define LUFILENAME "/DistanceLookup.txt"
 
 using namespace std;
 using namespace supplementary;
@@ -198,13 +199,13 @@ int main(int argc, char * argv[]){
 	}
 	cout << maxM << endl;
 
-	std::cout << std::endl << "DistanceLookup2.dat was built" << std::endl;
-        std::string filePath = confPath + sc->getHostname() + "/DistanceLookup2.dat";
+	std::cout << std::endl << "DistanceLookup.dat was built" << std::endl;
+        std::string filePath = confPath + sc->getHostname() + LUFILENAME;
 
         FILE * fd = fopen(filePath.c_str(), "w");
 
         if(fd == NULL) {
-        	fd = fopen((confPath + "/DistanceLookup2.dat").c_str(), "w");
+        	fd = fopen((confPath + LUFILENAME).c_str(), "w");
         }
 
         fwrite(&(LookupTable[0]), sizeof(double), dcWIDTH*dcHEIGHT, fd);
@@ -212,9 +213,9 @@ int main(int argc, char * argv[]){
         fclose(fd);
 
         ofstream *ofs2;
-        ofs2 = new ofstream(sc->getConfigPath() + sc->getHostname() + "/DistanceLookUp2.txt");
+        ofs2 = new ofstream(sc->getConfigPath() + sc->getHostname() + LUFILENAME);
         if(!ofs2->is_open()) {
-        	ofs2 = new ofstream(sc->getConfigPath() + "/DistanceLookUp2.txt");
+        	ofs2 = new ofstream(sc->getConfigPath() + LUFILENAME);
         }
 
 

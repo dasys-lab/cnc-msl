@@ -29,6 +29,7 @@
 
 using namespace std;
 #define BLOB_UNDEF 100000
+#define MAX_CARPET_LINECOUNT 10
 
 FilterLinePointsCalib::FilterLinePointsCalib(int area) :
 		Filter(OF_ZERO, area, area)
@@ -352,7 +353,7 @@ unsigned char * FilterLinePointsCalib::process(unsigned char * src, unsigned int
 							//fs << imDist << "\t";
 
 							//Sort into vector
-							if (aprinted < 8 && imDist > 100)
+							if (aprinted < MAX_CARPET_LINECOUNT && imDist > 100)
 							{
 								int ih = i;
 								//Search next and last valid index
@@ -484,7 +485,7 @@ void FilterLinePointsCalib::init()
 {
 	vector<double> tmp;
 	vector<int> tmpint;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MAX_CARPET_LINECOUNT; i++)
 	{
 		tmp.push_back(0);
 		tmpint.push_back(0);
