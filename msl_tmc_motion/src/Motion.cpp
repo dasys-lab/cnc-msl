@@ -112,8 +112,13 @@ namespace msl_driver
 	{
 		//### SERIEAL PORT STUFF
 		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-
 		std::cout << "Serial Port - Device " << this->device << ", port " << this->port << std::endl;
+
+		if (port == -1)
+		{
+			std::cerr << "Error " << errno << " from open(..): " << strerror(errno) << std::endl;
+			return false;
+		}
 
 		// Read Configuration into newtio
 		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
