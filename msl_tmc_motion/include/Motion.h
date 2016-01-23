@@ -45,7 +45,7 @@ namespace msl_driver
 
 		void initCommunication(int argc, char** argv);
 		void initialize();
-		void open();
+		bool open();
 		void start();
 		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);bool isRunning();
 
@@ -54,7 +54,7 @@ namespace msl_driver
 
 		std::mutex motionValueMutex;
 		MotionSet* motionValue = nullptr;
-		CircleTrace* traceModel = nullptr;
+//		CircleTrace traceModel;
 
 		double slipControlFactor = 1.0;
 		double slipControlMinSpeed = 1250.0;
