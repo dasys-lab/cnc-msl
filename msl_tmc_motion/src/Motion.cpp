@@ -148,7 +148,7 @@ namespace msl_driver
 		newtio.c_cflag |= CREAD | CLOCAL; // turn on READ & ignore ctrl lines
 
 		/* Make raw */
-		cfmakeraw(&newtio);
+		//cfmakeraw(&newtio);
 
 		tcflush(port, TCIFLUSH);
 		if (tcsetattr(port, TCSANOW, &newtio) < 0)
