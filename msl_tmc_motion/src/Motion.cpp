@@ -190,7 +190,7 @@ namespace msl_driver
 		cout << "TMC-Motion: Sending: ";
 		for (uint8_t byte : (*bytes))
 		{
-			cout << hex << byte << " ";
+			cout << hex << static_cast<int>(byte) << " ";
 		}
 		cout << endl << dec << endl;
 		size_t numBytesWritten = this->my_serial->write((*bytes).data(), bytes->size());
