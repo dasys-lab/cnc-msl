@@ -587,6 +587,7 @@ namespace msl_driver
 		// Loop until the driver is closed
 		while (Motion::running)
 		{
+			cout << "." << flush;
 			//TODO make the times right!
 
 			// 1 Tick = 100ns, 10 Ticks = 1us
@@ -646,6 +647,11 @@ namespace msl_driver
 						(short)(sin(ms->angle) * trans),
 						(short)(rot * 64));
 
+		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
+						<< (short)(cos(ms->angle) * trans) << ", "
+						<< (short)(sin(ms->angle) * trans) << ", "
+						<< (short)(rot * 64) << ")" <<  endl;
+
 		sendData(packet);
 	}
 
@@ -668,6 +674,11 @@ namespace msl_driver
 			this->motionValue->translation *= this->slipControlFactor;
 			this->motionValue->rotation *= this->slipControlFactor;
 		}
+
+		cout << "TMC-Motion: Set Motion Value is (Angle, Trans, Rot): ("
+				<< this->motionValue->angle << ", "
+				<< this->motionValue->translation << ", "
+				<< this->motionValue->rotation << ")" <<  endl;
 	}
 
 	/**
