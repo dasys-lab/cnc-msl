@@ -651,14 +651,19 @@ namespace msl_driver
 
 		shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
+		// (int)angle, (int) velo, (int) rotation
 		packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
-					    (short)(cos(ms->angle) * trans),
-						(short)(sin(ms->angle) * trans),
-						(short)(rot * 64));
+						(short) ms->angle,
+					    (short) trans,
+						(short) rot * 64);
+//		packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
+//					    (short)(cos(ms->angle) * trans),
+//						(short)(sin(ms->angle) * trans),
+//						(short)(rot * 64));
 
 		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
-						<< (short)(cos(ms->angle) * trans) << ", "
-						<< (short)(sin(ms->angle) * trans) << ", "
+						<< (short) ms->angle << ", "
+						<< (short)(trans) << ", "
 						<< (short)(rot * 64) << ")" <<  endl;
 
 		sendData(packet);
