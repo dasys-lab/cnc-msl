@@ -65,11 +65,15 @@ int main(int argc, char * argv[]){
 	for(int i=1; i<20; i++) realDist.push_back(5000+i*1000);
 
 
-	ifstream ifs(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
-	while(!ifs.eof()) {
+	ifstream* ifs;
+	ifs = new ifstream(sc->getConfigPath() + sc->getHostname() + "/clearedLP.txt");
+	if(!ifs->is_open()) {
+		ifs = new ifstream(sc->getConfigPath() + "/clearedLP.txt");
+	}
+	while(!ifs->eof()) {
 		tmp.clear();
-		ifs.getline(line, 4096);
-		if(ifs.eof()) break;
+		ifs->getline(line, 4096);
+		if(ifs->eof()) break;
 
 		ss << line;
 
@@ -87,7 +91,12 @@ int main(int argc, char * argv[]){
 	cout << endl;
 
 	string dbgPath = confPath + sc->getHostname() + "/distancelookup.txt";
-	ofstream ofs(dbgPath.c_str());
+	ofstream* ofs;
+	ofs = new ofstream(dbgPath.c_str());
+	if(!ofs->is_open()) {
+		ofs = new ofstream((confPath + "/distancelookup.txt").c_str());
+	}
+
 	double *lookup = new double[dcHEIGHT*dcWIDTH];
 	memset(lookup, 0, dcHEIGHT*dcWIDTH*sizeof(double));
 
@@ -183,9 +192,9 @@ int main(int argc, char * argv[]){
 				lookup[y*area+x] = d;
 			}*/
 
-			ofs << lookup[y*dcHEIGHT+x] << " ";
+			*ofs << lookup[y*dcHEIGHT+x] << " ";
 		}
-		ofs << endl;
+		*ofs << endl;
 	}
 	cout << maxM << endl;
 
@@ -193,16 +202,27 @@ int main(int argc, char * argv[]){
         std::string filePath = confPath + sc->getHostname() + "/DistanceLookup2.dat";
 
         FILE * fd = fopen(filePath.c_str(), "w");
+
+        if(fd == NULL) {
+        	fd = fopen((confPath + "/DistanceLookup2.dat").c_str(), "w");
+        }
+
         fwrite(&(LookupTable[0]), sizeof(double), dcWIDTH*dcHEIGHT, fd);
         fwrite(&(LookupTableInt[0][0]), sizeof(int), dcWIDTH*dcHEIGHT*2, fd);
         fclose(fd);
 
-	ofstream ofs2(sc->getConfigPath() + sc->getHostname() + "/DistanceLookUp2.txt");
+        ofstream *ofs2;
+        ofs2 = new ofstream(sc->getConfigPath() + sc->getHostname() + "/DistanceLookUp2.txt");
+        if(!ofs2->is_open()) {
+        	ofs2 = new ofstream(sc->getConfigPath() + "/DistanceLookUp2.txt");
+        }
+
+
         for(int i=0; i<dcWIDTH; i++) {
                 for(int j=0; j<dcHEIGHT; j++) {
-                        ofs2 << LookupTable[i][j] << " ";
+                        *ofs2 << LookupTable[i][j] << " ";
                 }
-                ofs2 << endl;
+                *ofs2 << endl;
         }
 
 
