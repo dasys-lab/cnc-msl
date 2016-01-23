@@ -47,7 +47,17 @@ int main(int argc, char * argv[]){
 	std::string confPath = sc->getConfigPath();
 
 	Configuration *vision = (*sc)["Vision"];
-	if(vision==nullptr) return 0;
+	if(vision==nullptr) {
+		std::cout << "Error ... check source" << std::endl;
+		return 0;
+	}
+
+	std::string filePath = confPath + sc->getHostname() + "/DistanceLookup.dat";
+	FILE * fdtest = fopen(filePath.c_str(), "r");
+	if( fdtest != NULL ) {
+		std::cout << "Not Generating new File: File already exists: " << filePath << std::endl;
+		return 0;
+	}
 
 	int MX;// = atoi((vision->Values["CameraMX"]).c_str());
 	int MY;// = atoi((vision->Values["CameraMY"]).c_str());
@@ -136,13 +146,12 @@ int main(int argc, char * argv[]){
 		
 	}
 
-	std::cout << std::endl << "DistanceLookup.dat was built" << std::endl;
-	std::string filePath = confPath + "/DistanceLookup.dat";
 
 	FILE * fd = fopen(filePath.c_str(), "w");
 	fwrite(&(LookupTable[0][0]), sizeof(double), dcWIDTH*dcHEIGHT, fd);
 	fwrite(&(LookupTableInt[0][0][0]), sizeof(int), dcWIDTH*dcHEIGHT*2, fd);
 	fclose(fd);
+	std::cout << std::endl << filePath << " was built" << std::endl;
 	
 	/*ofstream ofs("DistanceLookUp.txt");
 	for(int i=0; i<dcWIDTH; i++) {

@@ -20,6 +20,7 @@
  *
  * <description>
  */
+#include <SystemConfig.h>
 #include "DistanceLookupHelper.h"
 #include <math.h>
 #include <stdlib.h>
@@ -147,7 +148,8 @@ void DistanceLookupHelper::init(char* name){
 		HorizontalLookupTable = (double *) malloc(HLOOKUPSIZE*sizeof(double));
 	}
 
-	std::string file_name = std::string(getenv("DOMAIN_CONFIG_FOLDER")) +"/"+ std::string(name);
+	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+	std::string file_name = std::string(getenv("DOMAIN_CONFIG_FOLDER")) + "/"+ sc->getHostname() + std::string(name);
 
 	FILE * fd = fopen(file_name.c_str(), "r");
 	if(fd != NULL){
