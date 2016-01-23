@@ -7,6 +7,7 @@ response=${response,,}
 if [[ $response =~ ^(yes|y|"") ]]; then
 	
 	roslaunch carpet_calibrator start.launch&
+	sleep 5
 
 	read -r -p "please press start in the basestation confirm with ENTER!"
 	
@@ -24,7 +25,9 @@ if [[ $response =~ ^(yes|y|"") ]]; then
 		if [[ $response =~ ^(yes|y|"") ]]; then
 			killall eog
 			rosrun carpet_calibrator carpet_calibrator_line_points&
+			sleep 5
 			rosrun msl_vision msl_carpet_calculator&
+			sleep 5
 		else
 			echo "please try"
 		fi 
