@@ -19,10 +19,12 @@ namespace alica
         /*PROTECTED REGION ID(pro1450178699265) ENABLED START*/ //Add additional protected methods here
         double wheelSpeed;
         double fieldLength;
+        double fieldWidth;
         double translation;
         int direction;
         int itCounter;
-        bool checkSide(geometry::CNPoint2D lineVector, geometry::CNPoint2D pointToCheck);
+        bool checkSide(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
+        double distanceToFieldBorder(shared_ptr<geometry::CNPoint2D> point, double angle);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450178699265) ENABLED START*/ //Add additional private methods here

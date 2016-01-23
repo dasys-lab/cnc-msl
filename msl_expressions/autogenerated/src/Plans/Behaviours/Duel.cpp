@@ -15,6 +15,7 @@ namespace alica
 		wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
 		translation = (*this->sc)["Drive"]->get<double>("Duel.Velocity", NULL);
 		fieldLength = (*this->sc)["Globals"]->get<double>("FootballField.FieldLength", NULL);
+		fieldWidth = (*this->sc)["Globals"]->get<double>("FootballField.FieldWidth", NULL);
 		direction = 0;
 		itCounter = 0;
 		/*PROTECTED REGION END*/
@@ -37,6 +38,7 @@ namespace alica
 			return;
 		}
 
+		shared_ptr<geometry::CNPoint2D> alloBallPos = egoBallPos->alloToEgo(*me);
 
 		msl_actuator_msgs::BallHandleCmd bhc;
 		bhc.leftMotor = -wheelSpeed;
@@ -46,7 +48,8 @@ namespace alica
 		//quickly drive toward the ball for a few seconds
 		//TODO improve this
 
-		if(itCounter++ < 8) {
+		if (itCounter++ < 8)
+		{
 
 			mc.motion.angle = egoBallPos->angleTo();
 			mc.motion.rotation = 0;
@@ -54,8 +57,6 @@ namespace alica
 			send(mc);
 			return;
 		}
-
-
 
 		shared_ptr<geometry::CNPoint2D> ownGoalPos = make_shared<geometry::CNPoint2D>(-fieldLength / 2, 0.0);
 
@@ -65,7 +66,7 @@ namespace alica
 			{
 				//own goal is close, get the ball away
 
-				if (checkSide(*egoBallPos, *ownGoalPos))
+				if (checkSide(egoBallPos, ownGoalPos))
 				{
 					direction = -1;
 				}
@@ -98,7 +99,7 @@ namespace alica
 					if (friendly != nullptr)
 					{
 						//found one, try to get the ball to him
-						if (checkSide(*egoBallPos, *friendly))
+						if (checkSide(egoBallPos, friendly))
 						{
 							direction = 1;
 						}
@@ -115,31 +116,59 @@ namespace alica
 						bool negFree = true;
 						//found none, looking for free space
 
-						for (auto it = wm->robots.getObstaclePoints(0)->begin()->get();
-								it != wm->robots.getObstaclePoints(0)->end()->get(); it++)
+						//TODO allo oder ego? :(
+
+						//TODO anpassen sobald wir eine liste von gegnern im WM haben
+						for (auto it = wm->robots.getObstaclePoints(0)->begin();
+								it != wm->robots.getObstaclePoints(0)->end(); it++)
 						{
 
-							if(it->distanceTo(egoBallPos) < 2000 && fabs(it->angleTo()) < M_PI/3*2) {
-								if(checkSide(*egoBallPos,*it)) {
+							shared_ptr<geometry::CNPoint2D> obs = make_shared<geometry::CNPoint2D>(it->get()->x,
+																									it->get()->y);
+
+							if (obs->distanceTo(alloBallPos) < 2000 && fabs(obs->angleTo()) < M_PI / 3 * 2)
+							{
+								if (checkSide(alloBallPos, obs))
+								{
 									posFree = false;
-								} else {
+								}
+								else
+								{
 									negFree = false;
 								}
 							}
-							//TODO sind teammitglieder in den obstacles drin?
 
 						}
-						if(posFree) {
+						if (posFree)
+						{
 							direction = 1;
-						} else if(negFree) {
+						}
+						else if (negFree)
+						{
 							direction = -1;
-						} else {
+						}
+						else
+						{
 							//all occupied
-							if(me == nullptr) {
+							if (me == nullptr)
+							{
 								//no idea
 								direction = 1;
-							} else {
-								//TODO distance to field borders
+							}
+							else
+							{
+								shared_ptr<geometry::CNPoint2D> ballOrth1 = make_shared<geometry::CNPoint2D>(
+										egoBallPos->y, -egoBallPos->x);
+								shared_ptr<geometry::CNPoint2D> ballOrth2 = make_shared<geometry::CNPoint2D>(
+																		-egoBallPos->y, egoBallPos->x);
+								ballOrth1 = ballOrth1->egoToAllo(*me);
+								ballOrth2 = ballOrth1->egoToAllo(*me);
+								double distance = distanceToFieldBorder(ownPoint, ballOrth1->angleTo());
+								if(distanceToFieldBorder(ownPoint, ballOrth2->angleTo()) < distance) {
+									direction = 1;
+								} else {
+									direction = -1;
+								}
 
 							}
 						}
@@ -163,14 +192,60 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here
-
-
 	// returns true if pointToCheck is left of lineVector(look along the lineVector)
 	// uses cross product of 2 vectors. 0: colinear, <0: point left of vec, >0: point right of vec
-	bool Duel::checkSide(geometry::CNPoint2D lineVector, geometry::CNPoint2D pointToCheck)
+	bool Duel::checkSide(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck)
 	{
-		double cross = pointToCheck.x * lineVector.y - pointToCheck.y * lineVector.x;
+		double cross = pointToCheck->x * lineVector->y - pointToCheck->y * lineVector->x;
 		return (cross < 0);
+	}
+
+	double Duel::distanceToFieldBorder(shared_ptr<geometry::CNPoint2D> point, double angle)
+	{
+
+		shared_ptr<geometry::CNPoint2D> fieldCorner1 = make_shared<geometry::CNPoint2D>(-fieldLength / 2,
+																						fieldWidth / 2);
+		shared_ptr<geometry::CNPoint2D> fieldCorner2 = make_shared<geometry::CNPoint2D>(fieldLength / 2,
+																						-fieldWidth / 2);
+
+		double distance = 100000;
+		double d;
+
+		double vx = cos(angle);
+		double vy = sin(angle);
+
+		//Vector starts at (pointX,pointY), following it along a distance d gets you to (pointX + d*vx, pointY + d*vy).
+
+		//Hitting left border
+		d = (fieldCorner1->x - point->x) / vx;
+		if (d > 0)
+		{
+			distance = min(distance, d);
+		}
+
+		//Right border
+		d = (fieldCorner1->x - point->x) / vx;
+		if (d > 0)
+		{
+			distance = min(distance, d);
+		}
+
+		//Top border
+		d = (fieldCorner2->y - point->y) / vy;
+		if (d > 0)
+		{
+			distance = min(distance, d);
+		}
+
+		//Bottom border
+		d = (fieldCorner2->y - point->y) / vy;
+		if (d > 0)
+		{
+			distance = min(distance, d);
+		}
+
+		return distance;
+
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
