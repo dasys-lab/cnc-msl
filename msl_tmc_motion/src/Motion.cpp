@@ -668,6 +668,11 @@ namespace msl_driver
 			this->motionValue->translation *= this->slipControlFactor;
 			this->motionValue->rotation *= this->slipControlFactor;
 		}
+
+		cout << "TMC-Motion: Motion Value is (Angle, Trans, Rot): ("
+				<< this->motionValue->angle << ", "
+				<< this->motionValue->translation << ", "
+				<< this->motionValue->rotation << ")" <<  endl;
 	}
 
 	/**
