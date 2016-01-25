@@ -85,8 +85,8 @@ namespace alica
 
             if (length != 0)
             {
-                if (length > 12000) //GonzalesUpdate
-                {
+                //if (length > 12000) //GonzalesUpdate
+                //{
 
                 	if(calibOldPosMotionX < calibPosMotionX)
                 	{
@@ -100,7 +100,7 @@ namespace alica
                 		    / length) + 1;
                     std::cout << "calibSign " << calibSign(calibPosVisionX, calibPosMotionX) << std::endl;
                 	}
-                }
+              //  }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
                 ofstream saveToCalibData;
