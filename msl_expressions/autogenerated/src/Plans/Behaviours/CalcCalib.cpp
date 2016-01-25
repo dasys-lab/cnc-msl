@@ -92,11 +92,13 @@ namespace alica
                 	{
                      calibCoefficient *= calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1; //GonzalesUpdate + lengthSegment
+                     std::cout << "calibSign " << calibSign(calibPosMotionX, calibPosVisionX) << std::endl;
                 	}
                 	else
                 	{
                 	calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(diffX * diffX + diffY * diffY)
                 		    / length) + 1;
+                    std::cout << "calibSign " << calibSign(calibPosVisionX, calibPosMotionX) << std::endl;
                 	}
                 }
 
@@ -117,9 +119,12 @@ namespace alica
             std::cout << "correctedWayY : " << correctedPosY << std::endl;
             std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
-            std::cout << "theta : "
+            std::cout << "Faktor2 : "
                     << calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1 << std::endl;
+            std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
+            std::cout << "posMotionX: " << calibPosMotionX << std::endl;
+
             std::cout<< "lengthSegment: " << lengthSegment <<std::endl;
 
             std::cout << "" << std::endl;
