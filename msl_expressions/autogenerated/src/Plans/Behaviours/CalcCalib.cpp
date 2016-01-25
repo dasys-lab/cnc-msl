@@ -56,8 +56,7 @@ namespace alica
         calibOldPosVisionY = calibPosVisionY;
 
 
-        std::cout << "X: " << calibPosVisionX << std::endl;
-        std::cout << "Y: " << calibPosVisionY << std::endl;
+        std::cout << "X: " << lengthVision << std::endl;
         std::cout << " "  << std::endl;
         //}
         /*PROTECTED REGION END*/
