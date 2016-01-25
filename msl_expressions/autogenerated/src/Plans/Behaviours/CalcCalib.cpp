@@ -1,6 +1,7 @@
 using namespace std;
 #include "Plans/Behaviours/CalcCalib.h"
 
+
 /*PROTECTED REGION ID(inccpp1446033324019) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -41,8 +42,8 @@ namespace alica
         correctedPosX = correctedPosX + correctedWayX;
         correctedPosY = correctedPosY + correctedWayY;
 
-        lengthVision = lengthVision
-        		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
+        //lengthVision = lengthVision
+        //		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
@@ -95,16 +96,9 @@ namespace alica
             {
                 if (this->wm->calibData.length > 12000) //GonzalesUpdate
                 {
-                    if (this->wm->calibData.length < 13200)
-                    {
-                        this->wm->calibData.calibCoefficient *= (sqrt(deltax * deltax + deltay * deltay)
-                                / this->wm->calibData.length) + 1; //GonzalesUpdate
-                    }
-                    else
-                    {
-                        this->wm->calibData.calibCoefficient *= -(sqrt(deltax * deltax + deltay * deltay)
-                                / this->wm->calibData.length) + 1; //GonzalesUpdate
-                    }
+
+                     this->wm->calibData.calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(deltax * deltax + deltay * deltay)
+                            / lengthSegment) + 1; //GonzalesUpdate
                 }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
