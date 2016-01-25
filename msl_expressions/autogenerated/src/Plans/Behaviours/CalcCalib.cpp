@@ -24,7 +24,7 @@ namespace alica
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
             calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-            calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y
+            calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
         }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
