@@ -24,7 +24,7 @@ namespace alica
         double diffX;
         double diffY;
         double lengthVision;
-        double lengthSegment =0;
+        double lengthSegment;
 
         shared_ptr<geometry::CNPosition> calibPosMotion;
         shared_ptr<geometry::CNPosition> calibOldPosMotion;

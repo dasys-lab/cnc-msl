@@ -40,8 +40,8 @@ namespace alica
         correctedPosX = correctedPosX + correctedWayX;
         correctedPosY = correctedPosY + correctedWayY;
 
-        //lengthVision = lengthVision
-        //		+ sqrt((calibOldPosVision->x - calibPosVision->x) * (calibOldPosVision->x - calibPosVision->x) + (calibOldPosVision->y - calibPosVision->y) * (calibOldPosVision->y) - calibPosVision->y);
+        lengthVision = lengthVision
+        		+ sqrt((calibOldPosVision->x - calibPosVision->x) * (calibOldPosVision->x - calibPosVision->x) + (calibOldPosVision->y - calibPosVision->y) * (calibOldPosVision->y) - calibPosVision->y);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
@@ -51,8 +51,8 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        //calibOldPosVision->x = calibPosVision->x;
-        //calibOldPosVision->y = calibPosVision->y;
+        calibOldPosVision->x = calibPosVision->x;
+        calibOldPosVision->y = calibPosVision->y;
 
         //}
         /*PROTECTED REGION END*/
@@ -114,6 +114,8 @@ namespace alica
                 correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
                 correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
             }
+
+            lengthSegment = 0;
 
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
