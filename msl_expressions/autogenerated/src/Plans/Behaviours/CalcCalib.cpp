@@ -63,9 +63,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
 
-
-        if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
-        {
             diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
             diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
@@ -100,7 +97,6 @@ namespace alica
                 saveToCalibData.open(filename);
                 saveToCalibData << calibCoefficient;
                 saveToCalibData.close();
-            }
 
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
