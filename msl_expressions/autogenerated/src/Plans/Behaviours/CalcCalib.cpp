@@ -55,6 +55,10 @@ namespace alica
         calibOldPosVisionX = calibPosVisionX;
         calibOldPosVisionY = calibPosVisionY;
 
+
+        std::cout << "X: " << calibPosVisionX << std::endl;
+        std::cout << "Y: " << calibPosVisionY << std::endl;
+        std::cout << " "  << std::endl;
         //}
         /*PROTECTED REGION END*/
     }
@@ -116,8 +120,6 @@ namespace alica
                 correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
             }
 
-            lengthSegment = 0;
-
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
             std::cout << "Y: " << diffY << std::endl;
@@ -136,6 +138,8 @@ namespace alica
             std::cout<< "lengthSegment: " << lengthSegment <<std::endl;
 
             std::cout << "" << std::endl;
+
+            lengthSegment = 0;
         }
 
         /*PROTECTED REGION END*/
