@@ -24,6 +24,9 @@ namespace alica
         double calibOldPosVisionX;
         double calibOldPosVisionY;
 
+        double calibCoefficient;
+        double length;
+
         double correctedWayX;
         double correctedWayY;
         double correctedPosX;
