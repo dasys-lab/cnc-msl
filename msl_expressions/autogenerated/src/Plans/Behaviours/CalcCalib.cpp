@@ -104,11 +104,8 @@ namespace alica
                 saveToCalibData << this->wm->calibData.calibCoefficient;
                 saveToCalibData.close();
             }
-            else
-            {
-                correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-                correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-            }
+            correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
@@ -130,6 +127,7 @@ namespace alica
             std::cout << "" << std::endl;
 
             lengthSegment = 0;
+
         }
 
         /*PROTECTED REGION END*/
