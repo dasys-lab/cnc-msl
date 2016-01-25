@@ -62,15 +62,12 @@ namespace alica
     void CalcCalib::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
-        diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
-        diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+
 
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
-            auto deltax = this->wm->rawSensorData.getOwnPositionMotion(0)->x
-                    - this->wm->rawSensorData.getOwnPositionVision(0)->x;
-            auto deltay = this->wm->rawSensorData.getOwnPositionMotion(0)->y
-                    - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+            diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
             string value;
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -94,7 +91,7 @@ namespace alica
                 if (length > 12000) //GonzalesUpdate
                 {
 
-                     calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(deltax * deltax + deltay * deltay)
+                     calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1; //GonzalesUpdate + lengthSegment
                 }
 
@@ -104,8 +101,6 @@ namespace alica
                 saveToCalibData << calibCoefficient;
                 saveToCalibData.close();
             }
-            correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-            correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
@@ -126,6 +121,8 @@ namespace alica
             std::cout << "" << std::endl;
 
             lengthSegment = 0;
+            correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
 
         }
 
