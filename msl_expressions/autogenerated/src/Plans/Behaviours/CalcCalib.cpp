@@ -23,7 +23,8 @@ namespace alica
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
-            calibPosVision = this->wm->rawSensorData.getOwnPositionVision(0);
+            calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
+            calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y
         }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
@@ -41,7 +42,7 @@ namespace alica
         correctedPosY = correctedPosY + correctedWayY;
 
         lengthVision = lengthVision
-        		+ sqrt((calibOldPosVision->x - calibPosVision->x) * (calibOldPosVision->x - calibPosVision->x) + (calibOldPosVision->y - calibPosVision->y) * (calibOldPosVision->y) - calibPosVision->y);
+        		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
@@ -51,8 +52,8 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        calibOldPosVision->x = calibPosVision->x;
-        calibOldPosVision->y = calibPosVision->y;
+        calibOldPosVisionX = calibPosVisionX;
+        calibOldPosVisionY = calibPosVisionY;
 
         //}
         /*PROTECTED REGION END*/

@@ -17,6 +17,11 @@ namespace alica
         double calibPosMotionX;
         double calibOldPosMotionX;
         double calibOldPosMotionY;
+        double calibPosVisionY;
+        double calibPosVisionX;
+        double calibOldPosVisionX;
+        double calibOldPosVisionY;
+
         double correctedWayX;
         double correctedWayY;
         double correctedPosX;
@@ -26,10 +31,10 @@ namespace alica
         double lengthVision;
         double lengthSegment;
 
-        shared_ptr<geometry::CNPosition> calibPosMotion;
-        shared_ptr<geometry::CNPosition> calibOldPosMotion;
-        shared_ptr<geometry::CNPosition> calibPosVision;
-        shared_ptr<geometry::CNPosition> calibOldPosVision;
+        //shared_ptr<geometry::CNPosition> calibPosMotion;
+        //shared_ptr<geometry::CNPosition> calibOldPosMotion;
+        //shared_ptr<geometry::CNPosition> calibPosVision;
+        //shared_ptr<geometry::CNPosition> calibOldPosVision;
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
