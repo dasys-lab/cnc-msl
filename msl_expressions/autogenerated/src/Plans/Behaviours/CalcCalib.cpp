@@ -88,8 +88,16 @@ namespace alica
                 if (length > 12000) //GonzalesUpdate
                 {
 
+                	if(calibOldPosMotionX < calibPosMotionX)
+                	{
                      calibCoefficient *= calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1; //GonzalesUpdate + lengthSegment
+                	}
+                	else
+                	{
+                	calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(diffX * diffX + diffY * diffY)
+                		    / length) + 1;
+                	}
                 }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -111,7 +119,7 @@ namespace alica
             std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
             std::cout << "theta : "
                     << calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
-                            / length) + 1;
+                            / length) + 1 << std::endl;
             std::cout<< "lengthSegment: " << lengthSegment <<std::endl;
 
             std::cout << "" << std::endl;
