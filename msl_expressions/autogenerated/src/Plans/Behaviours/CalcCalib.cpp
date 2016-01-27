@@ -124,7 +124,7 @@ namespace alica
             std::cout << "posMotionX: " << calibPosMotionX << std::endl;
 
             std::cout<< "lengthSegment: " << lengthSegment <<std::endl;
-            std::cout<< "lengthVision: " << lengthSegment <<std::endl;
+            std::cout<< "lengthVision: " << lengthVision <<std::endl;
 
             std::cout << "" << std::endl;
 
