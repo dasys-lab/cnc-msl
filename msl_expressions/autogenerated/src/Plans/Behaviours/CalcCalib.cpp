@@ -26,10 +26,7 @@ namespace alica
         {
             calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
             calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-            lengthVision = lengthVision
-            			   + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
-            std::cout<< "lengthVision: " << lengthVision <<std::endl;
-        }
+            }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
@@ -46,6 +43,10 @@ namespace alica
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+
+        lengthVision = lengthVision
+                	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
@@ -88,16 +89,10 @@ namespace alica
             {
                 if (length > 12000) //GonzalesUpdate
                 {
-                	if(calibOldPosMotionX < calibPosMotionX)
-                	{
-                     calibCoefficient *= calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
+
+                   calibCoefficient *= calibSign(length, lengthVision) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1; //GonzalesUpdate + lengthSegment
-                	}
-                	else
-                	{
-                	calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(diffX * diffX + diffY * diffY)
-                		    / length) + 1;
-                	}
+
                 }
 
                 string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
