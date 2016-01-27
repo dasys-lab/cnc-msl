@@ -22,7 +22,6 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-    	static int temp;
 
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {

@@ -34,6 +34,8 @@ namespace alica
         double lengthVision;
         double lengthSegment;
 
+        int temp;
+
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
