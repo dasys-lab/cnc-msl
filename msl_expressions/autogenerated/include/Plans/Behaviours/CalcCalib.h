@@ -34,7 +34,7 @@ namespace alica
         double lengthVision;
         double lengthSegment;
 
-        int temp;
+        int tempyoyo;
 
         /*PROTECTED REGION END*/
     protected:

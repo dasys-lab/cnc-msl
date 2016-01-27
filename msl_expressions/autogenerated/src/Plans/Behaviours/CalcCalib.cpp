@@ -48,18 +48,18 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        std::cout << "temp: " << temp << std::endl;
+        std::cout << "temp: " << tempyoyo << std::endl;
 
-        if(temp == 5)
+        if(tempyoyo == 5)
         {
             calibOldPosVisionX = calibPosVisionX;
             calibOldPosVisionY = calibPosVisionY;
             lengthVision = lengthVision
                             	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
-            temp = 0;
+            tempyoyo = 0;
         }
 
-        temp++;
+        tempyoyo++;
 
 
         //msl_actuator_msgs::MotionControl mc;
