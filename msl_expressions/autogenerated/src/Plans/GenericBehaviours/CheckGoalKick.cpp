@@ -134,10 +134,13 @@ namespace alica
             obstaclePos->x = obstacle.x;
             obstaclePos->y = obstacle.y;
 
+            cout << "obstaclePosX = " << obstaclePos->x << endl;
+            cout << "obstaclePosY = " << obstaclePos->y << endl;
+
             cout << "ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePos) << endl;
-            cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn) << endl;
+            cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePos) > robotShootDistanceOwn) << endl;
             cout << "obstaclePos <----> GoalPosMiddle = " << obstaclePos->distanceTo(goalPosMiddle) << endl;
-            cout << "if condition 2 = " << (obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal) << endl;
+            cout << "if condition 2 = " << (obstaclePos->distanceTo(goalPosMiddle) > robotShootDistanceGoal) << endl;
 
             if (ownPos->distanceTo(obstaclePos) > robotShootDistanceOwn
                     || obstaclePos->distanceTo(goalPosMiddle) > robotShootDistanceGoal)
