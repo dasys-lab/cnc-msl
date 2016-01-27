@@ -48,9 +48,7 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        std::cout << "temp: " << tempyoyo << std::endl;
-
-        if(tempyoyo == 5)
+        if(tempyoyo == 10)
         {
         	lengthVision = lengthVision + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
