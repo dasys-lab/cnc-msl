@@ -41,8 +41,8 @@ namespace alica
         correctedPosX = correctedPosX + correctedWayX;
         correctedPosY = correctedPosY + correctedWayY;
 
-        //lengthVision = lengthVision
-        //		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
+        lengthVision = lengthVision
+        		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
@@ -53,9 +53,9 @@ namespace alica
         calibOldPosVisionX = calibPosVisionX;
         calibOldPosVisionY = calibPosVisionY;
 
-        msl_actuator_msgs::MotionControl mc;
-        mc.motion.translation = 500;
-        send(mc);
+        //msl_actuator_msgs::MotionControl mc;
+        //mc.motion.translation = 500;
+        //send(mc);
 
         //}
         /*PROTECTED REGION END*/
@@ -124,6 +124,7 @@ namespace alica
             std::cout << "posMotionX: " << calibPosMotionX << std::endl;
 
             std::cout<< "lengthSegment: " << lengthSegment <<std::endl;
+            std::cout<< "lengthVision: " << lengthSegment <<std::endl;
 
             std::cout << "" << std::endl;
 
