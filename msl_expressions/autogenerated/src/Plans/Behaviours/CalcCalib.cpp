@@ -27,8 +27,8 @@ namespace alica
             calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
             calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
             lengthVision = lengthVision
-            			   + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
-
+            			   + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+            std::cout<< "lengthVision: " << lengthVision <<std::endl;
         }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
@@ -106,6 +106,8 @@ namespace alica
                 saveToCalibData << calibCoefficient;
                 saveToCalibData.close();
 
+            }
+
             std::cout << "Differenzen: " << std::endl;
             std::cout << "X: " << diffX << std::endl;
             std::cout << "Y: " << diffY << std::endl;
@@ -131,8 +133,6 @@ namespace alica
             lengthSegment = 0;
             correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
             correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
-
-        }
 
         /*PROTECTED REGION END*/
     }
