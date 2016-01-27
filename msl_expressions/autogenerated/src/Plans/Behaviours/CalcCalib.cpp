@@ -90,8 +90,8 @@ namespace alica
                 if (length > 12000) //GonzalesUpdate
                 {
 
-                   calibCoefficient *= calibSign(length, lengthVision) * (sqrt(diffX * diffX + diffY * diffY)
-                            / length) + 1; //GonzalesUpdate + lengthSegment
+                   calibCoefficient *= calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY)
+                            / lengthSegment) + 1; //GonzalesUpdate + lengthSegment
 
                 }
 
