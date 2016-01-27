@@ -45,9 +45,8 @@ namespace alica
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         lengthVision = lengthVision
-                	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+                	 + 0.88 * sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
-        lengthVision *= 0.88;
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
