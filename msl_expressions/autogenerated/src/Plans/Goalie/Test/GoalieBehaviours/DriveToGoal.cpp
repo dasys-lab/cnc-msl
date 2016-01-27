@@ -22,7 +22,15 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
+<<<<<<< HEAD
         cout << "### DriveToGoal ##" << endl;
+=======
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        if (me == nullptr)
+        {
+            return;
+        }
+>>>>>>> 897ba8acbda3dad27447f4ab08472d5168819832
 
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
         msl_actuator_msgs::MotionControl mc;

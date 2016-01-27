@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1446033324019) ENABLED START*/ //Add additional includes here
+#define calibSign(a,b) (a > b ? 1: -1)
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +19,12 @@ namespace alica
         double calibPosMotionX;
         double calibOldPosMotionX;
         double calibOldPosMotionY;
+        double calibPosVisionY;
+        double calibPosVisionX;
+        double calibOldPosVisionX;
+        double calibOldPosVisionY;
+        double calibCoefficient;
+        double length;
         double correctedWayX;
         double correctedWayY;
         double correctedPosX;
@@ -24,12 +32,10 @@ namespace alica
         double diffX;
         double diffY;
         double lengthVision;
-        double lengthSegment =0;
+        double lengthSegment;
 
-        shared_ptr<geometry::CNPosition> calibPosMotion;
-        shared_ptr<geometry::CNPosition> calibOldPosMotion;
-        shared_ptr<geometry::CNPosition> calibPosVision;
-        shared_ptr<geometry::CNPosition> calibOldPosVision;
+        int tempyoyo;
+
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();

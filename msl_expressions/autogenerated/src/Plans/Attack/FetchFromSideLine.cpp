@@ -11,9 +11,9 @@ namespace alica
             DomainBehaviour("FetchFromSideLine")
     {
         /*PROTECTED REGION ID(con1450175655102) ENABLED START*/ //Add additional options here
-		threshold = 400;
-		behindDistance = 300;
-		maxVel = 3000;
+        threshold = 400;
+        behindDistance = 300;
+        maxVel = 3000;
         /*PROTECTED REGION END*/
     }
     FetchFromSideLine::~FetchFromSideLine()
@@ -29,8 +29,7 @@ namespace alica
     void FetchFromSideLine::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1450175655102) ENABLED START*/ //Add additional options here
-
-		field = msl::MSLFootballField::getInstance();
+        field = msl::MSLFootballField::getInstance();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1450175655102) ENABLED START*/ //Add additional methods here
