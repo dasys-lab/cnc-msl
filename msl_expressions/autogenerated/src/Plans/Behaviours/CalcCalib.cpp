@@ -48,7 +48,7 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        if(tempyoyo == 10)
+        if(tempyoyo == 5)
         {
         	static int visionLengthCounter;
         	lengthVision = lengthVision + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
@@ -56,8 +56,6 @@ namespace alica
             calibOldPosVisionX = calibPosVisionX;
             calibOldPosVisionY = calibPosVisionY;
             tempyoyo = 0;
-            visionLengthCounter++;
-            std::cout << "Counter: " << visionLengthCounter <<std::endl;
 
         }
 
