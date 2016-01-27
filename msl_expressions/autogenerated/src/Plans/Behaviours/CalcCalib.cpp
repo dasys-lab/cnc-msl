@@ -52,10 +52,10 @@ namespace alica
 
         if(tempyoyo == 5)
         {
+        	lengthVision = lengthVision + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+
             calibOldPosVisionX = calibPosVisionX;
             calibOldPosVisionY = calibPosVisionY;
-            lengthVision = lengthVision
-                            	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
             tempyoyo = 0;
         }
 
