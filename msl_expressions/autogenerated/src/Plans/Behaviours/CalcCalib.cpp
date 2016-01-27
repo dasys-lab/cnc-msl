@@ -99,6 +99,11 @@ namespace alica
                 calibCoefficient *= calibSign(lengthVision, length)
                         * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1; //GonzalesUpdate + lengthSegment
 
+                if (calibCoefficient < 0.5)
+                {
+                	calibCoefficient = 1;
+                }
+
             }
 
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
