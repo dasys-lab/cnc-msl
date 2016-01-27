@@ -50,11 +50,15 @@ namespace alica
 
         if(tempyoyo == 10)
         {
+        	static int visionLengthCounter;
         	lengthVision = lengthVision + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
             calibOldPosVisionX = calibPosVisionX;
             calibOldPosVisionY = calibPosVisionY;
             tempyoyo = 0;
+            visionLengthCounter++;
+            std::cout << "Counter: " << visionLengthCounter <<std::endl;
+
         }
 
         tempyoyo++;
@@ -93,7 +97,7 @@ namespace alica
 
             if (length != 0)
             {
-                if (length > 12000) //GonzalesUpdate
+                if (length > 12500) //GonzalesUpdate
                 {
 
                    calibCoefficient *= calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY)
