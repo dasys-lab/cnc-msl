@@ -43,6 +43,10 @@ namespace msl
 													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
 													double ballAngleTolerance);
 
+		//TODO needs to be tested
+		static shared_ptr<msl_actuator_msgs::MotionControl> ruleActionForBallGetter();
+
+		//todo needts to be implemented
 		static MotionControl driveRandomly(double translation);
 
 		static void readConfigParameters();

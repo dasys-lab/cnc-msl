@@ -134,18 +134,25 @@ namespace alica
             obstaclePos->x = obstacle.x;
             obstaclePos->y = obstacle.y;
 
-            cout << "ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePos) << endl;
-            cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn) << endl;
-            cout << "obstaclePos <----> GoalPosMiddle = " << obstaclePos->distanceTo(goalPosMiddle) << endl;
-            cout << "if condition 2 = " << (obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal) << endl;
+            auto ownPosV = wm->rawSensorData.getOwnPositionVision();
+            auto obstaclePosAllo = obstaclePos->egoToAllo(*ownPosV);
+            cout << "obstaclePosX = " << obstaclePosAllo->x << endl;
+            cout << "obstaclePosY = " << obstaclePosAllo->y << endl;
 
-            if (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn
-                    || obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
+            cout << "ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePosAllo) << endl;
+            cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePosAllo) > robotShootDistanceOwn) << endl;
+            cout << "obstaclePos <----> GoalPosMiddle = " << obstaclePosAllo->distanceTo(goalPosMiddle) << endl;
+            cout << "if condition 2 = " << (obstaclePosAllo->distanceTo(goalPosMiddle) > robotShootDistanceGoal) << endl;
+
+            if (ownPos->distanceTo(obstaclePosAllo) > robotShootDistanceOwn
+                    || obstaclePosAllo->distanceTo(goalPosMiddle) > robotShootDistanceGoal)
             {
+            	cout << "return true" << endl;
                 return false;
             }
             else
             {
+            	cout << "return true" << endl;
                 return true;
             }
         }
