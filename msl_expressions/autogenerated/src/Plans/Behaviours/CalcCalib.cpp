@@ -22,6 +22,8 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
+    	static int temp;
+
         if (this->wm->rawSensorData.getOwnPositionVision(0) != NULL)
         {
             calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
@@ -44,15 +46,20 @@ namespace alica
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
-        lengthVision = lengthVision
-                	 + 0.88 * sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
-
-
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        calibOldPosVisionX = calibPosVisionX;
-        calibOldPosVisionY = calibPosVisionY;
+        if(temp == 5)
+        {
+            calibOldPosVisionX = calibPosVisionX;
+            calibOldPosVisionY = calibPosVisionY;
+            lengthVision = lengthVision
+                            	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+            temp = 0;
+        }
+
+        temp++;
+
 
         //msl_actuator_msgs::MotionControl mc;
         //mc.motion.translation = 500;
