@@ -93,7 +93,7 @@ namespace alica
 
         if (length != 0)
         {
-            if (length > 12500) //GonzalesUpdate
+            if (calibCounter ==3) //GonzalesUpdate
             {
 
                 calibCoefficient *= calibSign(lengthVision, length)
@@ -133,6 +133,8 @@ namespace alica
         lengthSegment = 0;
         correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
         correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+
+        calibCounter++;
 
         /*PROTECTED REGION END*/
     }

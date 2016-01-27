@@ -35,6 +35,7 @@ namespace alica
         double lengthSegment;
 
         int tempyoyo;
+        int calibCounter;
 
         /*PROTECTED REGION END*/
     protected:
