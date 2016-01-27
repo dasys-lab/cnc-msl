@@ -26,6 +26,9 @@ namespace alica
         {
             calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
             calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+            lengthVision = lengthVision
+            			   + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
+
         }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
@@ -40,9 +43,6 @@ namespace alica
 
         correctedPosX = correctedPosX + correctedWayX;
         correctedPosY = correctedPosY + correctedWayY;
-
-        lengthVision = lengthVision
-        		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
