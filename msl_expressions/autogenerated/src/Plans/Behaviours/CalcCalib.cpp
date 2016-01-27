@@ -29,7 +29,6 @@ namespace alica
         }
 
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
-
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
 
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
@@ -46,15 +45,17 @@ namespace alica
         //		+ sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY) - calibPosVisionY);
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-
-        length = length
-                + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
         calibOldPosVisionX = calibPosVisionX;
         calibOldPosVisionY = calibPosVisionY;
+
+        msl_actuator_msgs::MotionControl mc;
+        mc.motion.translation = 500;
+        send(mc);
 
         //}
         /*PROTECTED REGION END*/
@@ -87,18 +88,15 @@ namespace alica
             {
                 if (length > 12000) //GonzalesUpdate
                 {
-
                 	if(calibOldPosMotionX < calibPosMotionX)
                 	{
                      calibCoefficient *= calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1; //GonzalesUpdate + lengthSegment
-                     std::cout << "calibSign " << calibSign(calibPosMotionX, calibPosVisionX) << std::endl;
                 	}
                 	else
                 	{
                 	calibCoefficient *= calibSign(calibPosVisionX, calibPosMotionX) * (sqrt(diffX * diffX + diffY * diffY)
                 		    / length) + 1;
-                    std::cout << "calibSign " << calibSign(calibPosVisionX, calibPosMotionX) << std::endl;
                 	}
                 }
 
