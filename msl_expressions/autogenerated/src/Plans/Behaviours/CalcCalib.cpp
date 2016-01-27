@@ -31,10 +31,10 @@ namespace alica
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
 
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
-                / cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta
+                /cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta
                         - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
         correctedWayY = (calibPosMotionY - calibOldPosMotionY)
-                * tan(this->wm->rawSensorData.getOwnPositionVision(0)->theta
+                /sin(this->wm->rawSensorData.getOwnPositionVision(0)->theta
                         - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
 
         correctedPosX = correctedPosX + correctedWayX;
