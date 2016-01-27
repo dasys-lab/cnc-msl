@@ -134,6 +134,8 @@ namespace alica
             obstaclePos->x = obstacle.x;
             obstaclePos->y = obstacle.y;
 
+            cout << "obstaclePosX = " << obstaclePos->x << endl;
+            cout << "obstaclePosX = " << obstaclePos->x << endl;
             auto ownPosV = wm->rawSensorData.getOwnPositionVision();
             auto obstaclePosAllo = obstaclePos->egoToAllo(*ownPosV);
             cout << "obstaclePosX = " << obstaclePosAllo->x << endl;
