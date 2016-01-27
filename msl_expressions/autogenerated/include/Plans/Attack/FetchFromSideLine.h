@@ -17,10 +17,10 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1450175655102) ENABLED START*/ //Add additional protected methods here
-		double threshold;
-		double behindDistance;
-		double maxVel;
-		msl::MSLFootballField* field;
+        double threshold;
+        double behindDistance;
+        double maxVel;
+        msl::MSLFootballField* field;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450175655102) ENABLED START*/ //Add additional private methods here

@@ -23,14 +23,14 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-    	msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
-    	shared_ptr < geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
-    	shared_ptr < geometry::CNPoint2D > goalMid = MSLFootballField::posOwnGoalMid();
-        shared_ptr < geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > goalMid = MSLFootballField::posOwnGoalMid();
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
 
-        double targetX = goalMid->alloToEgo(*me) -> x - 100;
-        double targetY = egoBallPos -> y;
+        double targetX = goalMid->alloToEgo(*me)->x - 100;
+        double targetY = egoBallPos->y;
         double penaltyLength = MSLFootballField::PenaltyAreaLength;
         double goalWidth = MSLFootballField::GoalAreaWidth;
 
