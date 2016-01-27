@@ -131,5 +131,6 @@ namespace alica
 		return abs(alloBall->x) > field->FieldLength / 2 - threshold
 				&& abs(alloBall->y) < field->FieldLength / 2 + threshold;
 	}
+
 /*PROTECTED REGION END*/
 } /* namespace alica */

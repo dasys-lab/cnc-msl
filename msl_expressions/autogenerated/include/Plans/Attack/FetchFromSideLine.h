@@ -23,6 +23,7 @@ namespace alica
 		msl::MSLFootballField* field;
 		bool nearSideLine(shared_ptr<geometry::CNPoint2D> alloBall);
 		bool nearXLine(shared_ptr<geometry::CNPoint2D> alloBall);
+
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450175655102) ENABLED START*/ //Add additional private methods here
