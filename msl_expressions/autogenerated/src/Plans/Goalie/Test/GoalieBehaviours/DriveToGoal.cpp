@@ -23,10 +23,6 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
 		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
-		if (me == nullptr)
-		{
-			return;
-		}
 
 		msl_actuator_msgs::MotionControl mc;
 		if (me == nullptr)
