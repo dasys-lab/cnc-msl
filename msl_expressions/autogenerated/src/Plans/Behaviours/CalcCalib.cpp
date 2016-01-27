@@ -47,6 +47,7 @@ namespace alica
         lengthVision = lengthVision
                 	 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX) + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
+        lengthVision *= 0.88;
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
@@ -115,7 +116,7 @@ namespace alica
             std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
             std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
             std::cout << "Faktor2 : "
-                    << calibSign(calibPosMotionX, calibPosVisionX) * (sqrt(diffX * diffX + diffY * diffY)
+                    << calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY)
                             / length) + 1 << std::endl;
             std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
             std::cout << "posMotionX: " << calibPosMotionX << std::endl;
