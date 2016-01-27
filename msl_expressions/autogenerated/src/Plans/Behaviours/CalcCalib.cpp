@@ -48,6 +48,8 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
+        std::cout << "temp: " << temp << std::endl;
+
         if(temp == 5)
         {
             calibOldPosVisionX = calibPosVisionX;
