@@ -27,21 +27,29 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1445438142979) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        if (ownPos == nullptr)
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+
+        if (ownPos == nullptr || ballPos == nullptr)
         {
             return;
         }
+        shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
 
         MotionControl mc;
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result))
         {
             cout << "Pos4Def: FOUND a solution!" << endl;
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
-                    > (result.at(0), result.at(1));
+            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+                       additionalPoints->push_back(alloBall);
+            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D > (result.at(0), result.at(1));
 
-            mc = msl::RobotMovement::moveToPointCarefully(
-                    alloTarget->alloToEgo(*ownPos), make_shared < geometry::CNPoint2D > (0, 0)->alloToEgo(*ownPos),
-                    100.0);
+            cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
+
+            shared_ptr<geometry::CNPoint2D> egoTarget = alloTarget->alloToEgo(*ownPos);
+
+            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos),100.0, additionalPoints);
+
+
         }
         else
         {

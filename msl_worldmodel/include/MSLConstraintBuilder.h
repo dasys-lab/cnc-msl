@@ -59,6 +59,9 @@ namespace msl{
 			static double MIN_POSITION_DIST;
 
 			static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, vector<shared_ptr<TVec>> points);
+
+
 			static shared_ptr<Term> spread(double minDist, vector<shared_ptr<TVec>> points);
 
 			static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner,	shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> points);

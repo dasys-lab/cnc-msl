@@ -76,6 +76,21 @@ namespace msl
 		}
 		return spreadUtility;
 	}
+
+	shared_ptr<Term> MSLConstraintBuilder::approachUtil( shared_ptr<TVec> destination, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
+		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
+
+		for (int i = 0; i < points.size(); i++) {
+			auto value = (1 - (alica::ConstraintBuilder::distanceSqr(destination, points[i])) / (maxFieldDist*maxFieldDist));
+//			cout << "MSLCB: util value "  << value->toString() << endl;
+			util = util + value;
+		}
+
+
+		return util;
+	}
+
 	shared_ptr<Term> MSLConstraintBuilder::spread(double minDist, vector<shared_ptr<TVec>> points) {
 		if (points.size() == 1)
 			return autodiff::LTConstraint::TRUE;
@@ -130,7 +145,8 @@ namespace msl
 	}
 	shared_ptr<Term> MSLConstraintBuilder::outsideSphere(shared_ptr<TVec> point, double distance, shared_ptr<TVec> point2) {
 		if (point != nullptr) {
-			shared_ptr<Term> c = TermBuilder::euclidianDistance(point, point2) > autodiff::TermBuilder::constant(distance);
+			shared_ptr<Term> c = (point - point2)->normSquared() > autodiff::TermBuilder::constant(distance*distance);
+					//TermBuilder::euclidianDistance(point, point2) > autodiff::TermBuilder::constant(distance);
 			return c;
 		} else {
 			return nullptr;
