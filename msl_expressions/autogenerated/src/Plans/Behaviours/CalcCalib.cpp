@@ -63,6 +63,10 @@ namespace alica
 
         tempyoyo++;
 
+        std::cout << "correctedWayX : " << correctedPosX << std::endl;
+        std::cout << "correctedWayY : " << correctedPosY << std::endl;
+        std::cout << "" << std::endl;
+
         //msl_actuator_msgs::MotionControl mc;
         //mc.motion.translation = 500;
         //send(mc);
