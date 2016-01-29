@@ -1,0 +1,555 @@
+   1               		.file	"timer.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 106               	.global	timer_incTimer
+ 108               	timer_incTimer:
+   1:timer.c       **** #include <avr/interrupt.h>
+   2:timer.c       **** #include <avr/io.h>
+   3:timer.c       **** //#include "timer.h"
+   4:timer.c       **** #include "defs.h"
+   5:timer.c       **** 
+   6:timer.c       **** // define the maximum of callback functions (max is 8)
+   7:timer.c       **** #define MAX_CALLBACKS   2
+   8:timer.c       **** 
+   9:timer.c       **** // Prescaler: valid values are: 1, 8, 64, 256, 1024
+  10:timer.c       **** // change this also where the timer is enabled
+  11:timer.c       **** #define PRESCALER	256
+  12:timer.c       **** 
+  13:timer.c       **** #ifndef F_CPU
+  14:timer.c       **** #	error "ERROR: F_CPU not defined"
+  15:timer.c       **** #endif
+  16:timer.c       **** 
+  17:timer.c       **** // The frequency in ms 
+  18:timer.c       **** //#define TIMER_RES	(( PRESCALER * 2 * 256 / F_CPU * 1000 ))
+  19:timer.c       **** #define TIMER_RES	4.096F
+  20:timer.c       **** 
+  21:timer.c       **** typedef struct _TIMER {
+  22:timer.c       **** 	uint8_t cycles;
+  23:timer.c       **** 	uint8_t counter;
+  24:timer.c       **** 	void (*func)(void);
+  25:timer.c       **** } TIMER;
+  26:timer.c       **** 
+  27:timer.c       **** /**
+  28:timer.c       ****  * Here are the notifications saved if a callback function should be
+  29:timer.c       ****  * triggered.
+  30:timer.c       ****  */
+  31:timer.c       **** static volatile uint8_t notify = 0x00;
+  32:timer.c       **** 
+  33:timer.c       **** /**
+  34:timer.c       ****  * Holds all informations of the registered timers
+  35:timer.c       ****  */
+  36:timer.c       **** static volatile TIMER tlist[MAX_CALLBACKS];
+  37:timer.c       **** 
+  38:timer.c       **** /**
+  39:timer.c       ****  * The ticks since startup
+  40:timer.c       ****  */
+  41:timer.c       **** static volatile uint32_t ticks = 0;
+  42:timer.c       **** 
+  43:timer.c       **** 
+  44:timer.c       **** /**
+  45:timer.c       ****  * ISR of Timer 0 is called every TIMER_RES ms.
+  46:timer.c       ****  */
+  47:timer.c       **** /*
+  48:timer.c       **** ISR(TIMER0_OVF_vect) {
+  49:timer.c       **** 
+  50:timer.c       **** 	uint8_t i;
+  51:timer.c       **** 
+  52:timer.c       **** 	ticks++;
+  53:timer.c       **** 
+  54:timer.c       **** 	// set notifies
+  55:timer.c       **** 	for (i = 0; i < MAX_CALLBACKS; i++) {
+  56:timer.c       **** 		if (tlist[i].cycles > 0 && --tlist[i].counter == 0) {
+  57:timer.c       **** 			notify |= (1 << (i+1));
+  58:timer.c       **** 			tlist[i].counter = tlist[i].cycles;
+  59:timer.c       **** 		}
+  60:timer.c       **** 	}
+  61:timer.c       **** }
+  62:timer.c       **** */
+  63:timer.c       **** void timer_incTimer(void) {
+ 110               	.LM0:
+ 111               	.LFBB1:
+ 112               	/* prologue: function */
+ 113               	/* frame size = 0 */
+ 114               	/* stack size = 0 */
+ 115               	.L__stack_usage = 0
+  64:timer.c       **** 	ticks++;
+ 117               	.LM1:
+ 118 0000 8091 0000 		lds r24,ticks
+ 119 0004 9091 0000 		lds r25,ticks+1
+ 120 0008 A091 0000 		lds r26,ticks+2
+ 121 000c B091 0000 		lds r27,ticks+3
+ 122 0010 0196      		adiw r24,1
+ 123 0012 A11D      		adc r26,__zero_reg__
+ 124 0014 B11D      		adc r27,__zero_reg__
+ 125 0016 8093 0000 		sts ticks,r24
+ 126 001a 9093 0000 		sts ticks+1,r25
+ 127 001e A093 0000 		sts ticks+2,r26
+ 128 0022 B093 0000 		sts ticks+3,r27
+ 129 0026 0895      		ret
+ 131               	.Lscope1:
+ 133               	.global	timer_init
+ 135               	timer_init:
+  65:timer.c       **** }
+  66:timer.c       **** 
+  67:timer.c       **** /**
+  68:timer.c       ****  * Initialize the timer.
+  69:timer.c       ****  */
+  70:timer.c       **** void timer_init(void) {
+ 137               	.LM2:
+ 138               	.LFBB2:
+ 139               	/* prologue: function */
+ 140               	/* frame size = 0 */
+ 141               	/* stack size = 0 */
+ 142               	.L__stack_usage = 0
+ 143 0028 0895      		ret
+ 145               	.Lscope2:
+ 147               	.global	timer_trigger_callbacks
+ 149               	timer_trigger_callbacks:
+  71:timer.c       **** 
+  72:timer.c       **** 	/*uint8_t i;
+  73:timer.c       **** 
+  74:timer.c       **** 	for (i = 0; i < MAX_CALLBACKS; i++) {
+  75:timer.c       **** 		tlist[i].func = NULL;
+  76:timer.c       **** 		tlist[i].counter = 0;
+  77:timer.c       **** 		tlist[i].cycles = 0;
+  78:timer.c       **** 	}
+  79:timer.c       **** 
+  80:timer.c       **** 	// Timer 0, 8 bit timer
+  81:timer.c       **** 	// Prescaler 256
+  82:timer.c       **** 	TCCR0 = (1 << CS02);
+  83:timer.c       **** 
+  84:timer.c       **** 	// enable timer overflow on timer 0
+  85:timer.c       **** 	TIMSK |= (1 << TOIE0); // enable overflow interrupt
+  86:timer.c       **** 	*/
+  87:timer.c       **** }
+  88:timer.c       **** 
+  89:timer.c       **** /**
+  90:timer.c       ****  * Calls the outstanding callbackfunctions.
+  91:timer.c       ****  *
+  92:timer.c       ****  * This function has to be called as often as possible.
+  93:timer.c       ****  */
+  94:timer.c       **** void timer_trigger_callbacks(void) {
+ 151               	.LM3:
+ 152               	.LFBB3:
+ 153               	/* prologue: function */
+ 154               	/* frame size = 0 */
+ 155               	/* stack size = 0 */
+ 156               	.L__stack_usage = 0
+  95:timer.c       **** 
+  96:timer.c       **** 	uint8_t i;
+  97:timer.c       **** 	uint8_t sreg;
+  98:timer.c       **** 
+  99:timer.c       **** 	for (i = 0; i < MAX_CALLBACKS; i++) {
+ 100:timer.c       **** 		if (notify & (1 << (i+1)) && tlist[i].func != NULL) {
+ 158               	.LM4:
+ 159 002a 8091 0000 		lds r24,notify
+ 160 002e 81FF      		sbrs r24,1
+ 161 0030 00C0      		rjmp .L4
+ 162 0032 8091 0000 		lds r24,tlist+2
+ 163 0036 9091 0000 		lds r25,tlist+2+1
+ 164 003a 892B      		or r24,r25
+ 165 003c 01F0      		breq .L4
+ 101:timer.c       **** 			tlist[i].func();
+ 167               	.LM5:
+ 168 003e E091 0000 		lds r30,tlist+2
+ 169 0042 F091 0000 		lds r31,tlist+2+1
+ 170 0046 0995      		icall
+ 102:timer.c       **** 			sreg = SREG;
+ 172               	.LM6:
+ 173 0048 9FB7      		in r25,__SREG__
+ 103:timer.c       **** 			cli();
+ 175               	.LM7:
+ 176               	/* #APP */
+ 177               	 ;  103 "timer.c" 1
+ 178 004a F894      		cli
+ 179               	 ;  0 "" 2
+ 104:timer.c       **** 			notify &= ~(1 << (i+1));
+ 181               	.LM8:
+ 182               	/* #NOAPP */
+ 183 004c 8091 0000 		lds r24,notify
+ 184 0050 8D7F      		andi r24,lo8(-3)
+ 185 0052 8093 0000 		sts notify,r24
+ 105:timer.c       **** 			SREG = sreg;
+ 187               	.LM9:
+ 188 0056 9FBF      		out __SREG__,r25
+ 189               	.L4:
+ 100:timer.c       **** 		if (notify & (1 << (i+1)) && tlist[i].func != NULL) {
+ 191               	.LM10:
+ 192 0058 8091 0000 		lds r24,notify
+ 193 005c 82FF      		sbrs r24,2
+ 194 005e 00C0      		rjmp .L3
+ 100:timer.c       **** 		if (notify & (1 << (i+1)) && tlist[i].func != NULL) {
+ 196               	.LM11:
+ 197 0060 8091 0000 		lds r24,tlist+6
+ 198 0064 9091 0000 		lds r25,tlist+6+1
+ 199 0068 892B      		or r24,r25
+ 200 006a 01F0      		breq .L3
+ 101:timer.c       **** 			tlist[i].func();
+ 202               	.LM12:
+ 203 006c E091 0000 		lds r30,tlist+6
+ 204 0070 F091 0000 		lds r31,tlist+6+1
+ 205 0074 0995      		icall
+ 102:timer.c       **** 			sreg = SREG;
+ 207               	.LM13:
+ 208 0076 9FB7      		in r25,__SREG__
+ 103:timer.c       **** 			cli();
+ 210               	.LM14:
+ 211               	/* #APP */
+ 212               	 ;  103 "timer.c" 1
+ 213 0078 F894      		cli
+ 214               	 ;  0 "" 2
+ 104:timer.c       **** 			notify &= ~(1 << (i+1));
+ 216               	.LM15:
+ 217               	/* #NOAPP */
+ 218 007a 8091 0000 		lds r24,notify
+ 219 007e 8B7F      		andi r24,lo8(-5)
+ 220 0080 8093 0000 		sts notify,r24
+ 222               	.LM16:
+ 223 0084 9FBF      		out __SREG__,r25
+ 224               	.L3:
+ 225 0086 0895      		ret
+ 227               	.Lscope3:
+ 228               	.global	__floatunsisf
+ 229               	.global	__ltsf2
+ 230               	.global	__gtsf2
+ 231               	.global	__divsf3
+ 232               	.global	__fixunssfsi
+ 236               	.global	timer_register
+ 238               	timer_register:
+ 106:timer.c       **** 		}
+ 107:timer.c       **** 	}
+ 108:timer.c       **** }
+ 109:timer.c       **** 
+ 110:timer.c       **** /**
+ 111:timer.c       ****  * Register a timer.
+ 112:timer.c       ****  *
+ 113:timer.c       ****  * @param *fptr A function pointer for the callback function
+ 114:timer.c       ****  * @param time_ms The period in which the callback function should be triggered.
+ 115:timer.c       ****  *                The time has to be in range ITERATION_TIME <= x <= 255*ITERATION_TIME
+ 116:timer.c       ****  * @return Yields EXIT_SUCCESS if the function could be registered. Otherwise
+ 117:timer.c       ****  *                EXIT_FAILURE.
+ 118:timer.c       ****  */
+ 119:timer.c       **** uint8_t timer_register(void (*fptr)(void), uint16_t time_ms) {
+ 240               	.LM17:
+ 241               	.LFBB4:
+ 242 0088 CF92      		push r12
+ 243 008a DF92      		push r13
+ 244 008c EF92      		push r14
+ 245 008e FF92      		push r15
+ 246 0090 0F93      		push r16
+ 247 0092 1F93      		push r17
+ 248 0094 CF93      		push r28
+ 249 0096 DF93      		push r29
+ 250               	/* prologue: function */
+ 251               	/* frame size = 0 */
+ 252               	/* stack size = 8 */
+ 253               	.L__stack_usage = 8
+ 254 0098 8C01      		movw r16,r24
+ 120:timer.c       **** 
+ 121:timer.c       **** 	uint8_t i;
+ 122:timer.c       **** 	uint8_t cycles;
+ 123:timer.c       **** 
+ 124:timer.c       **** 	if (time_ms < TIMER_RES || time_ms > 255*TIMER_RES) {
+ 256               	.LM18:
+ 257 009a 80E0      		ldi r24,0
+ 258 009c 90E0      		ldi r25,0
+ 259 009e 0E94 0000 		call __floatunsisf
+ 260 00a2 6B01      		movw r12,r22
+ 261 00a4 7C01      		movw r14,r24
+ 262 00a6 2FE6      		ldi r18,lo8(111)
+ 263 00a8 32E1      		ldi r19,lo8(18)
+ 264 00aa 43E8      		ldi r20,lo8(-125)
+ 265 00ac 50E4      		ldi r21,lo8(64)
+ 266 00ae 0E94 0000 		call __ltsf2
+ 267 00b2 87FD      		sbrc r24,7
+ 268 00b4 00C0      		rjmp .L25
+ 270               	.LM19:
+ 271 00b6 2DE5      		ldi r18,lo8(93)
+ 272 00b8 3FE8      		ldi r19,lo8(-113)
+ 273 00ba 42E8      		ldi r20,lo8(-126)
+ 274 00bc 54E4      		ldi r21,lo8(68)
+ 275 00be C701      		movw r24,r14
+ 276 00c0 B601      		movw r22,r12
+ 277 00c2 0E94 0000 		call __gtsf2
+ 278 00c6 1816      		cp __zero_reg__,r24
+ 279 00c8 04F0      		brlt .L25
+ 125:timer.c       **** 		return EXIT_FAILURE;
+ 126:timer.c       **** 	}
+ 127:timer.c       **** 	cycles = (uint8_t)(time_ms/TIMER_RES);
+ 128:timer.c       **** 
+ 129:timer.c       **** 	for (i = 0; i < MAX_CALLBACKS; i++) {
+ 130:timer.c       **** 		if (tlist[i].func == NULL) {
+ 281               	.LM20:
+ 282 00ca 8091 0000 		lds r24,tlist+2
+ 283 00ce 9091 0000 		lds r25,tlist+2+1
+ 284 00d2 892B      		or r24,r25
+ 285 00d4 01F0      		breq .L24
+ 286 00d6 8091 0000 		lds r24,tlist+6
+ 287 00da 9091 0000 		lds r25,tlist+6+1
+ 288 00de 892B      		or r24,r25
+ 289 00e0 01F4      		brne .L25
+ 290 00e2 C1E0      		ldi r28,lo8(1)
+ 291 00e4 D0E0      		ldi r29,0
+ 292 00e6 00C0      		rjmp .L21
+ 293               	.L24:
+ 294 00e8 C0E0      		ldi r28,0
+ 295 00ea D0E0      		ldi r29,0
+ 296               	.L21:
+ 127:timer.c       **** 	cycles = (uint8_t)(time_ms/TIMER_RES);
+ 298               	.LM21:
+ 299 00ec 2FE6      		ldi r18,lo8(111)
+ 300 00ee 32E1      		ldi r19,lo8(18)
+ 301 00f0 43E8      		ldi r20,lo8(-125)
+ 302 00f2 50E4      		ldi r21,lo8(64)
+ 303 00f4 C701      		movw r24,r14
+ 304 00f6 B601      		movw r22,r12
+ 305 00f8 0E94 0000 		call __divsf3
+ 306 00fc 0E94 0000 		call __fixunssfsi
+ 131:timer.c       **** 			tlist[i].func = fptr;
+ 308               	.LM22:
+ 309 0100 CC0F      		lsl r28
+ 310 0102 DD1F      		rol r29
+ 311 0104 CC0F      		lsl r28
+ 312 0106 DD1F      		rol r29
+ 313 0108 C050      		subi r28,lo8(-(tlist))
+ 314 010a D040      		sbci r29,hi8(-(tlist))
+ 315 010c 1B83      		std Y+3,r17
+ 316 010e 0A83      		std Y+2,r16
+ 132:timer.c       **** 			tlist[i].counter = cycles;
+ 318               	.LM23:
+ 319 0110 6983      		std Y+1,r22
+ 133:timer.c       **** 			tlist[i].cycles = cycles; // this at the end
+ 321               	.LM24:
+ 322 0112 6883      		st Y,r22
+ 134:timer.c       **** 			return EXIT_SUCCESS;
+ 324               	.LM25:
+ 325 0114 80E0      		ldi r24,0
+ 326 0116 00C0      		rjmp .L20
+ 327               	.L25:
+ 125:timer.c       **** 		return EXIT_FAILURE;
+ 329               	.LM26:
+ 330 0118 81E0      		ldi r24,lo8(1)
+ 331               	.L20:
+ 332               	/* epilogue start */
+ 135:timer.c       **** 		}
+ 136:timer.c       **** 	}
+ 137:timer.c       **** 
+ 138:timer.c       **** 	return EXIT_FAILURE;
+ 139:timer.c       **** }
+ 334               	.LM27:
+ 335 011a DF91      		pop r29
+ 336 011c CF91      		pop r28
+ 337 011e 1F91      		pop r17
+ 338 0120 0F91      		pop r16
+ 339 0122 FF90      		pop r15
+ 340 0124 EF90      		pop r14
+ 341 0126 DF90      		pop r13
+ 342 0128 CF90      		pop r12
+ 343 012a 0895      		ret
+ 345               	.Lscope4:
+ 348               	.global	timer_deregister
+ 350               	timer_deregister:
+ 140:timer.c       **** 
+ 141:timer.c       **** /**
+ 142:timer.c       ****  * Remove a timer.
+ 143:timer.c       ****  *
+ 144:timer.c       ****  * @param The function pointer which were registered
+ 145:timer.c       ****  * @return EXIT_SUCCESS or EXIT_FAILURE
+ 146:timer.c       ****  */
+ 147:timer.c       **** uint8_t timer_deregister(void (*fptr)(void)) {
+ 352               	.LM28:
+ 353               	.LFBB5:
+ 354               	/* prologue: function */
+ 355               	/* frame size = 0 */
+ 356               	/* stack size = 0 */
+ 357               	.L__stack_usage = 0
+ 148:timer.c       **** 
+ 149:timer.c       **** 	uint8_t i, sreg;
+ 150:timer.c       **** 
+ 151:timer.c       **** 	for (i = 0; i < MAX_CALLBACKS; i++) {
+ 152:timer.c       **** 		if (tlist[i].func == fptr) {
+ 359               	.LM29:
+ 360 012c 2091 0000 		lds r18,tlist+2
+ 361 0130 3091 0000 		lds r19,tlist+2+1
+ 362 0134 2817      		cp r18,r24
+ 363 0136 3907      		cpc r19,r25
+ 364 0138 01F0      		breq .L29
+ 365 013a 2091 0000 		lds r18,tlist+6
+ 366 013e 3091 0000 		lds r19,tlist+6+1
+ 367 0142 2817      		cp r18,r24
+ 368 0144 3907      		cpc r19,r25
+ 369 0146 01F4      		brne .L30
+ 370 0148 81E0      		ldi r24,lo8(1)
+ 371 014a 90E0      		ldi r25,0
+ 372 014c 00C0      		rjmp .L27
+ 373               	.L29:
+ 374 014e 80E0      		ldi r24,0
+ 375 0150 90E0      		ldi r25,0
+ 376               	.L27:
+ 153:timer.c       **** 			tlist[i].cycles = 0;
+ 378               	.LM30:
+ 379 0152 FC01      		movw r30,r24
+ 380 0154 EE0F      		lsl r30
+ 381 0156 FF1F      		rol r31
+ 382 0158 EE0F      		lsl r30
+ 383 015a FF1F      		rol r31
+ 384 015c E050      		subi r30,lo8(-(tlist))
+ 385 015e F040      		sbci r31,hi8(-(tlist))
+ 386 0160 1082      		st Z,__zero_reg__
+ 154:timer.c       **** 			tlist[i].counter = 0;
+ 388               	.LM31:
+ 389 0162 1182      		std Z+1,__zero_reg__
+ 155:timer.c       **** 			tlist[i].func = NULL;
+ 391               	.LM32:
+ 392 0164 1382      		std Z+3,__zero_reg__
+ 393 0166 1282      		std Z+2,__zero_reg__
+ 156:timer.c       **** 			sreg = SREG;
+ 395               	.LM33:
+ 396 0168 4FB7      		in r20,__SREG__
+ 157:timer.c       **** 			cli();
+ 398               	.LM34:
+ 399               	/* #APP */
+ 400               	 ;  157 "timer.c" 1
+ 401 016a F894      		cli
+ 402               	 ;  0 "" 2
+ 158:timer.c       **** 			notify &= ~(1 << (i+1));
+ 404               	.LM35:
+ 405               	/* #NOAPP */
+ 406 016c 5091 0000 		lds r21,notify
+ 407 0170 9C01      		movw r18,r24
+ 408 0172 2F5F      		subi r18,-1
+ 409 0174 3F4F      		sbci r19,-1
+ 410 0176 81E0      		ldi r24,lo8(1)
+ 411 0178 90E0      		ldi r25,0
+ 412 017a 022E      		mov r0,r18
+ 413 017c 00C0      		rjmp 2f
+ 414               		1:
+ 415 017e 880F      		lsl r24
+ 416               		2:
+ 417 0180 0A94      		dec r0
+ 418 0182 02F4      		brpl 1b
+ 419 0184 8095      		com r24
+ 420 0186 8523      		and r24,r21
+ 421 0188 8093 0000 		sts notify,r24
+ 159:timer.c       **** 			SREG = sreg;
+ 423               	.LM36:
+ 424 018c 4FBF      		out __SREG__,r20
+ 160:timer.c       **** 			return EXIT_SUCCESS;
+ 426               	.LM37:
+ 427 018e 80E0      		ldi r24,0
+ 428 0190 0895      		ret
+ 429               	.L30:
+ 161:timer.c       **** 		}
+ 162:timer.c       **** 	}
+ 163:timer.c       **** 
+ 164:timer.c       **** 	return EXIT_FAILURE;
+ 431               	.LM38:
+ 432 0192 81E0      		ldi r24,lo8(1)
+ 165:timer.c       **** }
+ 434               	.LM39:
+ 435 0194 0895      		ret
+ 440               	.Lscope5:
+ 442               	.global	timer_get_ticks
+ 444               	timer_get_ticks:
+ 166:timer.c       **** 
+ 167:timer.c       **** /**
+ 168:timer.c       ****  * Get the ticks since power on.
+ 169:timer.c       ****  *
+ 170:timer.c       ****  * The timestamp gets incremented each TIMER_RES.
+ 171:timer.c       ****  *
+ 172:timer.c       ****  * @returns The timestamp
+ 173:timer.c       ****  */
+ 174:timer.c       **** uint32_t timer_get_ticks(void) {
+ 446               	.LM40:
+ 447               	.LFBB6:
+ 448               	/* prologue: function */
+ 449               	/* frame size = 0 */
+ 450               	/* stack size = 0 */
+ 451               	.L__stack_usage = 0
+ 175:timer.c       **** 	
+ 176:timer.c       **** 	uint8_t sreg = SREG;
+ 453               	.LM41:
+ 454 0196 2FB7      		in r18,__SREG__
+ 177:timer.c       **** 	uint32_t ret = 0;
+ 178:timer.c       **** 
+ 179:timer.c       **** 	cli();
+ 456               	.LM42:
+ 457               	/* #APP */
+ 458               	 ;  179 "timer.c" 1
+ 459 0198 F894      		cli
+ 460               	 ;  0 "" 2
+ 180:timer.c       **** 	ret = ticks;
+ 462               	.LM43:
+ 463               	/* #NOAPP */
+ 464 019a 6091 0000 		lds r22,ticks
+ 465 019e 7091 0000 		lds r23,ticks+1
+ 466 01a2 8091 0000 		lds r24,ticks+2
+ 467 01a6 9091 0000 		lds r25,ticks+3
+ 181:timer.c       **** 	SREG = sreg;
+ 469               	.LM44:
+ 470 01aa 2FBF      		out __SREG__,r18
+ 182:timer.c       **** 
+ 183:timer.c       **** 	return ret;
+ 184:timer.c       **** }
+ 472               	.LM45:
+ 473 01ac 0895      		ret
+ 479               	.Lscope6:
+ 481               	.global	timer_get_ms
+ 483               	timer_get_ms:
+ 185:timer.c       **** 
+ 186:timer.c       **** /**
+ 187:timer.c       ****  * Get the miliseconds since power on.
+ 188:timer.c       ****  *
+ 189:timer.c       ****  * @returns The time in ms.
+ 190:timer.c       ****  */
+ 191:timer.c       **** uint32_t timer_get_ms(void) {
+ 485               	.LM46:
+ 486               	.LFBB7:
+ 487               	/* prologue: function */
+ 488               	/* frame size = 0 */
+ 489               	/* stack size = 0 */
+ 490               	.L__stack_usage = 0
+ 192:timer.c       **** 
+ 193:timer.c       **** 	return timer_get_ticks();//TIMER_RES ;
+ 492               	.LM47:
+ 493 01ae 0C94 0000 		jmp timer_get_ticks
+ 495               	.Lscope7:
+ 496               		.local	ticks
+ 497               		.comm	ticks,4,1
+ 498               		.local	tlist
+ 499               		.comm	tlist,8,1
+ 500               		.local	notify
+ 501               		.comm	notify,1,1
+ 506               	.Letext0:
+ 507               		.ident	"GCC: (GNU) 4.8.2"
+ 508               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 timer.c
+     /tmp/ccocufTD.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccocufTD.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccocufTD.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccocufTD.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccocufTD.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccocufTD.s:108    .text:0000000000000000 timer_incTimer
+                             .bss:0000000000000000 ticks
+     /tmp/ccocufTD.s:135    .text:0000000000000028 timer_init
+     /tmp/ccocufTD.s:149    .text:000000000000002a timer_trigger_callbacks
+     /tmp/ccocufTD.s:499    .bss:000000000000000c notify
+     /tmp/ccocufTD.s:497    .bss:0000000000000004 tlist
+     /tmp/ccocufTD.s:238    .text:0000000000000088 timer_register
+     /tmp/ccocufTD.s:350    .text:000000000000012c timer_deregister
+     /tmp/ccocufTD.s:444    .text:0000000000000196 timer_get_ticks
+     /tmp/ccocufTD.s:483    .text:00000000000001ae timer_get_ms
+
+UNDEFINED SYMBOLS
+__floatunsisf
+__ltsf2
+__gtsf2
+__divsf3
+__fixunssfsi
+__do_clear_bss
