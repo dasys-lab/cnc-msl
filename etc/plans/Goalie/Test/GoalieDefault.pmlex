@@ -2,11 +2,11 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GoalieDefault.pml#1447254438615"/>
-    <value xPos="19" yPos="104" width="259" height="86" collapsed="false"/>
+    <value xPos="31" yPos="223" width="259" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438614"/>
-    <value xPos="-130" yPos="59" width="896" height="569"/>
+    <value xPos="-130" yPos="60" width="896" height="569"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438616"/>
@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447255061404"/>
-    <value xPos="74" yPos="230" width="267" height="86" collapsed="false"/>
+    <value xPos="161" yPos="217" width="267" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447255446546"/>
@@ -58,6 +58,10 @@
   </extensions>
   <extensions>
     <key href="GoalieBehaviours/DriveToBall.beh#1447863503279"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

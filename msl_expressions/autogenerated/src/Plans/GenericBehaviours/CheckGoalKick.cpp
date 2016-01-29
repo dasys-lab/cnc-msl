@@ -21,11 +21,11 @@ namespace alica
 	void CheckGoalKick::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
+		cout << "Start run CheckGoalKick <=============================================================" << endl;
+
 		//get own Pos
 		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
-		ownPos->x = ownPosition->x;
-		ownPos->y = ownPosition->y;
-
+		ownPos = make_shared<geometry::CNPoint2D>(ownPosition->x, ownPosition->y);
 		//get ego ball pos
 		egoBallPos = wm->ball.getEgoBallPosition();
 
@@ -36,18 +36,13 @@ namespace alica
 
 		readConfigParameters();
 		toleranceAngle = calcToleranceAngle();
-
-		egoAlignPoint = goalPosMiddle;
+//        cout << "toleranceAngle: " << toleranceAngle << " degree: " << toleranceAngle * 180 / M_PI << endl;
 
 		if (checkGoalLine() && checkShootPossibility())
 		{
+			// adding checkGoalKeeper()
 			cout << "kicking" << endl;
-			msl_actuator_msgs::KickControl kc;
-			kc.enabled = true;
-			//angle
-			kc.kicker = egoBallPos->angleTo();
-			kc.power = kickPower;
-			send(kc);
+			kicking();
 			this->success = true;
 		}
 
@@ -56,28 +51,58 @@ namespace alica
 	void CheckGoalKick::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
+		waitingIter = 0;
+		field = msl::MSLFootballField::getInstance();
+		alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
+				field->FieldLength / 2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+		alloMidAimPoint = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + 250, 0);
+		alloRightAimPoint = make_shared<geometry::CNPoint2D>(
+				field->FieldLength / 2 + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1449076008755) ENABLED START*/ //Add additional methods here
+	/*
+	 * @return true if angle to goal is smaller than tolerance angle
+	 */
 	bool CheckGoalKick::checkGoalLine()
 	{
-		// if angle is smaller then 10 degree return true
-		if (egoAlignPoint->rotate(M_PI)->angleTo() < M_PI * toleranceAngle
-				|| egoAlignPoint->rotate(M_PI)->angleTo() > -M_PI * toleranceAngle)
+
+//		cout << "goalPosMiddle: " << goalPosMiddle->toString();
+		egoAlignPoint = goalPosMiddle;
+
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto egoTarget = goalPosMiddle->alloToEgo(*ownPos);
+
+//		cout << "egoTarget: " << egoTarget->toString();
+//		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
+
+//		cout << "if condition1: " << (egoTarget->angleTo() > (M_PI - toleranceAngle)) << endl;
+//		cout << "if condition2: " << (egoTarget->angleTo() > (-M_PI + toleranceAngle)) << endl;
+
+		// if angle is smaller then tolerance angle return true
+		if (egoTarget->angleTo() > (M_PI - toleranceAngle) || egoTarget->angleTo() < (-M_PI + toleranceAngle))
 		{
+			cout << "ChackGoalLine = true" << endl;
 			return true;
 		}
+		cout << "ChackGoalLine = false" << endl;
 		return false;
 	}
 
+	/*
+	 * checks if there is an obstacle between robot and goal.
+	 *
+	 * @return true if it is possible to shoot at the enemy goal
+	 */
 	bool CheckGoalKick::checkShootPossibility()
 	{
-
 		// check if obstacle lays in corridor
 		auto obstacles = wm->robots.getObstacles();
-		shared_ptr<geometry::CNPoint2D> obstaclePoint = nullptr;
+		shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(0, 0);
 		bool foundObstacle = false;
 		int obstacleAt = -1;
+
+		cout << "found " << obstacles->size() << " obstacle" << endl;
 
 		for (int i = 0; i < obstacles->size(); i++)
 		{
@@ -93,26 +118,47 @@ namespace alica
 			}
 		}
 
+//		cout << "found Obstacle = " << foundObstacle << endl;
+
 		if (obstacleAt > -1)
 		{
 			// check if obstacle is blocking (Own distance -> obstacle and obstacle -> OppGoal)
 			auto obstacle = obstacles->at(obstacleAt);
-			shared_ptr<geometry::CNPoint2D> obstaclePos = nullptr;
+			shared_ptr<geometry::CNPoint2D> obstaclePos = make_shared<geometry::CNPoint2D>(0, 0);
 			obstaclePos->x = obstacle.x;
 			obstaclePos->y = obstacle.y;
 
-			if (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn
-					&& obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
+			cout << "obstaclePosX1 = " << obstaclePos->x << endl;
+			cout << "obstaclePosY1 = " << obstaclePos->y << endl;
+//			auto ownPosV = wm->rawSensorData.getOwnPositionVision();
+//			auto obstaclePosAllo = obstaclePos->egoToAllo(*ownPosV);
+//			cout << "obstaclePosX = " << obstaclePosAllo->x << endl;
+//			cout << "obstaclePosY = " << obstaclePosAllo->y << endl;
+
+			cout << "Distance ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePos) << endl;
+//			cout << "if condition 1 = " << (ownPos->distanceTo(obstaclePos) > robotShootDistanceOwn) << endl;
+			cout << "Distance obstaclePos <----> GoalPosMiddle = " << obstaclePos->distanceTo(goalPosMiddle) << endl;
+//			cout << "if condition 2 = " << (obstaclePos->distanceTo(goalPosMiddle) > robotShootDistanceGoal)
+//					<< endl;
+			cout << "Distance ownPos <----> GoalPosMiddle = " << ownPos->distanceTo(goalPosMiddle) << endl;
+
+			if (ownPos->distanceTo(obstaclePos) > robotShootDistanceOwn
+					|| obstaclePos->distanceTo(goalPosMiddle) > robotShootDistanceGoal)
 			{
+				cout << "return false" << endl;
 				return false;
+			}
+			else
+			{
+				cout << "return true" << endl;
+				return true;
 			}
 		}
 		else
 		{
+			cout << "No obstacle found. Ready to shoot!" << endl;
 			return true;
 		}
-
-		return false;
 	}
 
 	void CheckGoalKick::readConfigParameters()
@@ -120,19 +166,147 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		robotShootDistanceOwn = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceOwn", NULL);
 		robotShootDistanceGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.robotShootDistanceGoal", NULL);
-//		toleranceAngle = (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleNumerator", NULL)
-//				/ (*sc)["GoalKick"]->get<double>("GoalKick.Default.toleranceAngleDenominator", NULL);
-		kickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.kickPower", NULL);
+		minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
+		wheelSpeedLeft = (*sc)["GoalKick"]->get<double>("GoalKick.Default.wheelSpeedLeft", NULL);
+		wheelSpeedRight = (*sc)["GoalKick"]->get<double>("GoalKick.Default.wheelSpeedRight", NULL);
 	}
 
+	/*
+	 * @return distance between goalPosMiddle and goalPosLeft
+	 */
 	double CheckGoalKick::calcToleranceAngle()
 	{
 		// math!!!
 		double a = ownPos->distanceTo(goalPosLeft);
-		double b = goalPosLeft->distanceTo(goalPosRight);
+		double b = goalPosLeft->distanceTo(goalPosMiddle);
 		double c = ownPos->distanceTo(goalPosRight);
+		cout << "a = " << a << "\nb= " << b << "\nc= " << c << endl;
 
-		return acos((pow(b,2) + pow(c,2) - pow(a,2)) / (2*b*c));
+		return acos((pow(b, 2) - pow(c, 2) - pow(a, 2)) / (-2 * a * c));
+	}
+
+	void CheckGoalKick::kicking()
+	{
+//		double minKickPower = 1500.0;
+
+		msl_actuator_msgs::BallHandleCmd bhc;
+		auto egoBallPos = wm->ball.getEgoBallPosition();
+		double distance = egoBallPos->length();
+
+//		cout << "distance to Ball: " << distance << endl;
+
+		if (distance < 600)
+		{
+			bhc.rightMotor = (int8_t)+wheelSpeedRight;
+			bhc.leftMotor = (int8_t)+wheelSpeedLeft;
+		}
+		else
+		{
+			bhc.rightMotor = 0;
+			bhc.leftMotor = 0;
+		}
+
+		send(bhc);
+
+//		cout << "send BallHandleCmd" << endl;
+//		cout << "haveBall() = " << wm->ball.haveBall() << endl;
+//		cout << "shovel selection to: 1" << endl;
+
+		msl_actuator_msgs::KickControl kc;
+		kc.extension = 1;
+
+		if (wm->ball.haveBall())
+		{
+			if (waitingIter > 30)
+			{
+				kc.enabled = true;
+//			kc.kicker = egoBallPos->angleTo();
+//			kc.power = min(minKickPower, egoAimPoint->length());
+				kc.power = minKickPower;
+				send(kc);
+				waitingIter = 0;
+			}
+			else
+			{
+				waitingIter++;
+			}
+		}
+	}
+	/**
+	 * currently not used
+	 * TODO if not used remove later
+	 */
+	bool CheckGoalKick::checkGoalKeeper()
+	{
+		// copied and adapt from GoalKick.cpp
+
+//		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+//		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
+		auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+		auto ownPosV = wm->rawSensorData.getOwnPositionVision();
+
+		if (ownPos == nullptr || egoBallPos == nullptr || vNet == nullptr)
+		{
+			return false;
+		}
+
+//		msl_actuator_msgs::BallHandleCmd bhc;
+//		bhc.leftMotor = (int8_t)-70;
+//		bhc.rightMotor = (int8_t)-70;
+//		send(bhc);
+
+		auto alloAimPoint = nullptr;
+
+		auto obs = wm->robots.getObstacles();
+		bool leftBlocked = false;
+		bool midBlocked = false;
+		bool rightBlocked = false;
+		for (int i = 0; i < obs->size(); i++)
+		{
+			if (leftBlocked && midBlocked && rightBlocked)
+			{
+				break;
+			}
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloLeftAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPosV)))
+			{
+				leftBlocked = true;
+			}
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloMidAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPosV)))
+			{
+				midBlocked = true;
+			}
+			if (wm->pathPlanner.corridorCheckBall(
+					vNet, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloRightAimPoint,
+					make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPosV)))
+			{
+				rightBlocked = true;
+			}
+
+		}
+//		if (!leftBlocked && alloAimPoint == nullptr)
+//		{
+//			cout << "aimig left" << endl;
+//			alloAimPoint = alloLeftAimPoint;
+//		}
+//		if (!midBlocked && alloAimPoint == nullptr)
+//		{
+//			cout << "aimig mid" << endl;
+//			alloAimPoint = alloMidAimPoint;
+//		}
+//		if (!rightBlocked && alloAimPoint == nullptr)
+//		{
+//			cout << "aimig right" << endl;
+//			alloAimPoint = alloRightAimPoint;
+//		}
+//		if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
+//		{
+//			this->failure = true;
+//		}
+		return false;
 	}
 
 /*PROTECTED REGION END*/

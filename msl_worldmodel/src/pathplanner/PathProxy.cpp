@@ -79,6 +79,11 @@ namespace msl
 		//save target
 		lastPathTarget = egoTarget;
 		shared_ptr<VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
+		//TODO find better way
+		if(net == nullptr || !net->ownPosAvail)
+		{
+			return nullptr;
+		}
 		//TODO remove
 //		auto tmp = net->blockCircle(make_shared<geometry::CNPoint2D>(0,0), 2000);
 		//if there are additional points insert them into the voronoi diagram

@@ -64,14 +64,20 @@ namespace msl
 		lock_guard<mutex> lock(voronoiMutex);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		for (int i = 0; i < msg->obstacles.size(); i++)
+		if (ownPos != nullptr)
 		{
-			points.push_back(
-					make_shared<geometry::CNPoint2D>(msg->obstacles.at(i).x, msg->obstacles.at(i).y)->egoToAllo(
-							*ownPos));
+			for (int i = 0; i < msg->obstacles.size(); i++)
+			{
+				points.push_back(
+						make_shared<geometry::CNPoint2D>(msg->obstacles.at(i).x, msg->obstacles.at(i).y)->egoToAllo(
+								*ownPos));
+			}
+			voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points,true);
 		}
-
-		voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points);
+		else
+		{
+			voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points,false);
+		}
 		currentVoronoiPos++;
 
 	}
@@ -352,9 +358,8 @@ namespace msl
 	/**
 	 * checks if vertices of goal face are reached
 	 */
-	bool PathPlanner::checkGoalVerticesReached(
-			shared_ptr<vector<shared_ptr<Vertex> > > closestVerticesToGoal,
-			shared_ptr<SearchNode> currentNode)
+	bool PathPlanner::checkGoalVerticesReached(shared_ptr<vector<shared_ptr<Vertex> > > closestVerticesToGoal,
+												shared_ptr<SearchNode> currentNode)
 	{
 		bool found = false;
 		for (int i = 0; i < closestVerticesToGoal->size(); i++)

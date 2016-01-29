@@ -24,7 +24,7 @@ namespace msl
 
 	bool MSLWorldModel::setEngine(alica::AlicaEngine* ae)
 	{
-		if (this->alicaEngine != nullptr)
+		if (this->alicaEngine == nullptr)
 		{
 			this->alicaEngine = ae;
 			return true;
@@ -102,7 +102,7 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
-		//pathPlanner.processWorldModelData(msg);
+		pathPlanner.processWorldModelData(msg);
 		visionTrigger.run();
 	}
 

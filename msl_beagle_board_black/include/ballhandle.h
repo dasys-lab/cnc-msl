@@ -23,12 +23,13 @@ class BallHandle {
 		BlackLib::BlackPWM	*pwm;
 		BlackLib::BlackGPIO	*dir, *reset, *ff1, *ff2;
 
-		BlackLib::digitalValue		direction			= static_cast<BlackLib::digitalValue>(right);
-		BlackLib::digitalValue		direction_desired	= static_cast<BlackLib::digitalValue>(right);
+		BlackLib::digitalValue		direction			= static_cast<BlackLib::digitalValue>(left);
+		BlackLib::digitalValue		direction_desired	= static_cast<BlackLib::digitalValue>(left);
 
 		bool			enabled = false;
 		const int16_t	period = 10000;
 		uint16_t		speed = 0, speed_desired = 0;
+		timeval		last_ping;
 
 	public:
 		enum errorList {
@@ -49,7 +50,7 @@ class BallHandle {
 
 
 		void	setBallHandling(int8_t value);
-		void	setTimeout();
+		void	checkTimeout();
 		void	controlBallHandling();
 
 		uint8_t	getError();

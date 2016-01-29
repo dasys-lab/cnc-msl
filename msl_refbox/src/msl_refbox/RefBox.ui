@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
-    <height>166</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -8761,8 +8761,11 @@
          <pointsize>11</pointsize>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel { background-color : red }</string>
+       </property>
        <property name="text">
-        <string>Not Connected</string>
+        <string>Disconnected</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -8807,8 +8810,8 @@
       <widget class="QCheckBox" name="rbtn_local">
        <property name="geometry">
         <rect>
-         <x>190</x>
-         <y>89</y>
+         <x>170</x>
+         <y>90</y>
          <width>81</width>
          <height>23</height>
         </rect>
@@ -9001,6 +9004,19 @@
          <string>Char</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QCheckBox" name="chk_reconnect">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>110</y>
+         <width>141</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Auto-Reconnect</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tab_4">

@@ -2,8 +2,6 @@
 #define CheckGoalKick_H_
 
 #include "DomainBehaviour.h"
-#include "GeometryCalculator.h"
-#include "math.h"
 /*PROTECTED REGION ID(inc1449076008755) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -30,15 +28,23 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> egoAlignPoint;
 //		shared_ptr<geometry::CNPoint2D> alloTargetPoint;
 //		shared_ptr<geometry::CNPoint2D> egoTargetPoint;
+        shared_ptr<geometry::CNPoint2D> alloLeftAimPoint;
+        shared_ptr<geometry::CNPoint2D> alloRightAimPoint;
+        shared_ptr<geometry::CNPoint2D> alloMidAimPoint;
         msl::MSLFootballField* field;
         double robotShootDistanceOwn;
         double robotShootDistanceGoal;
         double toleranceAngle;
-        double kickPower;
+        double minKickPower;
+        double waitingIter;
+        double wheelSpeedLeft;
+        double wheelSpeedRight;
         bool checkGoalLine();
         bool checkShootPossibility();
         void readConfigParameters();
         double calcToleranceAngle();
+        void kicking();
+        bool checkGoalKeeper();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

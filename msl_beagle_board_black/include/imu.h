@@ -97,6 +97,17 @@ class IMU {
 	public:
 					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
 					~IMU();
+
+
+		void		gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count);
+		void		xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count);
+
+		void		setDataRateGyro(uint8_t datarate, uint8_t bandwidth);
+		void		setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff);
+		void		setScaleGyro(uint8_t scale);
+		void		enableGyro(bool state);
+
+
 		bool		init();
 		void		setRefAccel();
 		void		setRefGyro();

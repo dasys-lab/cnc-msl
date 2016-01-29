@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>msl_official_refbox2015</name>
+  <version>0.1.0</version>
+  <description>
+	A simple wrapper package for starting the new official MSL referee box tools, by usual ROS command-line tools, e.g., 
+	rosrun msl_official_refbox2015 mslrb2015.
+  </description>
+  <maintainer email="opfer@vs.uni-kassel.de">Stephan Opfer</maintainer>
+  <author>Stephan Opfer</author>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+ 
+</package>

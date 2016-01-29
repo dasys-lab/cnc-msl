@@ -29,6 +29,72 @@ IMU::~IMU() {
 	delete i_temp;
 }
 
+void IMU::gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
+	i2c->setDeviceAddress(ADR_G);
+	for(int i=0; i<count; i++) {
+		dest[i] = i2c->readByte(startAddress + i);
+	}
+}
+
+void IMU::xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
+	i2c->setDeviceAddress(ADR_XM);
+	for(int i=0; i<count; i++) {
+		dest[i] = i2c->readByte(startAddress + i);
+	}
+}
+
+void IMU::setDataRateGyro(uint8_t datarate, uint8_t bandwidth) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG1_G);
+	reg &= ~(0b11110000);
+
+	i2c->writeByte(CTRL_REG1_G, reg | (datarate << 6) | (bandwidth << 4));
+}
+
+void IMU::setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG2_G);
+	reg &= ~(0b00111111);
+
+	i2c->writeByte(CTRL_REG1_G, reg | (mode << 4) | cutoff);
+
+	if (enable) {
+		reg = i2c->readByte(CTRL_REG5_G);
+		reg &= ~(0b00010000);
+
+		i2c->writeByte(CTRL_REG1_G, reg | 0x10);
+	} else {
+		reg = i2c->readByte(CTRL_REG5_G);
+		reg &= ~(0b00010000);
+
+		i2c->writeByte(CTRL_REG1_G, reg);
+	}
+}
+
+void IMU::setScaleGyro(uint8_t scale) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG4_G);
+	reg &= ~(0b00110000);
+
+	i2c->writeByte(CTRL_REG4_G, reg | scale);
+}
+
+void IMU::enableGyro(bool state) {
+	i2c->setDeviceAddress(ADR_G);
+
+	uint8_t reg = i2c->readByte(CTRL_REG1_G);
+	reg &= ~(0b00001111);
+
+	if(state) {
+		i2c->writeByte(CTRL_REG1_G, reg | 0x0F);
+	} else {
+		i2c->writeByte(CTRL_REG1_G, reg | 0x00);
+	}
+}
+
 bool IMU::init() {
 	// Enable Accel
 	i2c->setDeviceAddress(ADR_XM);
@@ -36,7 +102,7 @@ bool IMU::init() {
 
 	// Enable Magnet & Temp
 	i2c->writeByte(CTRL_REG5_XM, 0x90);			// Magnet Frequecy: 100Hz & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
+	i2c->writeByte(CTRL_REG7_XM, 0xa0);	// high pass & filtered data			// high-pass Filter: Normal Mode & Continuous Conversation
 	
 	i2c->writeByte(0x16, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
 	i2c->writeByte(0x17, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
@@ -49,6 +115,8 @@ bool IMU::init() {
 	// Enable Gyro
 	i2c->setDeviceAddress(ADR_G);
 	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
+	i2c->writeByte(CTRL_REG2_G, 0x20);			// Test HPF-Mode
+	i2c->writeByte(CTRL_REG5_G, 0x10);			// High-Pass Filter enabled
 
 	//TODO Anpassen der Multiplikatoren
 	accel.sense = ACC_16G_SENSE / 1000;
@@ -129,10 +197,10 @@ void IMU::setRefAccel() {
 	for(int i=0; i<6; i++) {
 		val[i] = i2c->readByte(ACCEL_OUT_X + i);
 	}
-
-	accel.xr = (((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense;
-	accel.yr = (((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense;
-	accel.zr = (((int16_t) val[5] << 8) | val[4]) * 9.81 * accel.sense;
+	
+	accel.xr = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense;
+	accel.yr = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense;
+	accel.zr = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense;
 }
 
 void IMU::setRefGyro() {
@@ -152,7 +220,7 @@ void IMU::setRefGyro() {
 
 
 void IMU::getAccel() {
-	int8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	if (i2c->getDeviceAddress() != ADR_XM) {
 		i2c->setDeviceAddress(ADR_XM);
@@ -161,14 +229,18 @@ void IMU::getAccel() {
 		val[i] = i2c->readByte(ACCEL_OUT_X + i);
 	}
 
-	accel.x = ((((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense) - accel.xr;
-	accel.y = ((((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense) - accel.yr;
-	accel.z = ((((int16_t) val[5] << 8) | val[4]) * 9.81 * accel.sense) - accel.zr;
+	accel.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense;// - accel.xr;
+	accel.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense;// - accel.yr;
+	accel.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense;// - accel.zr;
+
+//	accel.x = ((((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense);// - accel.xr;
+//	accel.y = ((((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense);// - accel.yr;
+//	accel.z = ((((int16_t) val[5] << 8) | val[4]) * 9.81 * accel.sense);// - accel.zr;
 }
 
 
 void IMU::getGyro() {
-	int8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	if (i2c->getDeviceAddress() != ADR_G) {
 		i2c->setDeviceAddress(ADR_G);
@@ -177,13 +249,13 @@ void IMU::getGyro() {
 		val[i] = i2c->readByte(GYRO_OUT_X + i);
 	}
 
-	gyro.x = ((((int16_t) val[1] << 8) | val[0]) * gyro.sense) - gyro.xr;
-	gyro.y = ((((int16_t) val[3] << 8) | val[2]) * gyro.sense) - gyro.yr;
-	gyro.z = ((((int16_t) val[5] << 8) | val[4]) * gyro.sense) - gyro.zr;
+	gyro.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * gyro.sense;
+	gyro.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * gyro.sense;
+	gyro.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * gyro.sense;
 }
 
 void IMU::getMagnet() {
-	int8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 	if (i2c->getDeviceAddress() != ADR_XM) {
 		i2c->setDeviceAddress(ADR_XM);
@@ -197,7 +269,7 @@ void IMU::getMagnet() {
 }
 
 void IMU::getTemp() {
-	int8_t val[2] = { 0x00, 0x00 };
+	uint8_t val[2] = { 0x00, 0x00 };
 
 	if (i2c->getDeviceAddress() != ADR_XM) {
 		i2c->setDeviceAddress(ADR_XM);
@@ -208,7 +280,8 @@ void IMU::getTemp() {
 
 	// TODO Temperature Offset
 	// temperature = 21.0 + (float) dof.temperature/8.;
-	temperature = (((int16_t) val[1] << 8) | val[0]) * TEMP_SENSE + 21;
+	temperature = (((int16_t) val[1] << 12) | val[0] << 4 ) >> 4; // Temperature is a 12-bit signed integer
+	temperature = (temperature-32)/1.8; // fareinheit -> celsiuis 
 }
 
 void IMU::updateData(timeval time_now) {

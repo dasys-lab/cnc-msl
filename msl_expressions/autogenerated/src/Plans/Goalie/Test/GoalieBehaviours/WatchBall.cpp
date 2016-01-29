@@ -23,41 +23,39 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-        auto ballPos = wm->ball.getEgoBallPosition();
-        auto me = wm->rawSensorData.getOwnPositionMotion();
+        cout << "### WatchBall ###" << endl;
 
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > goalMid = MSLFootballField::posOwnGoalMid();
         msl_actuator_msgs::MotionControl mc;
-        auto ballX = ballPos->x;
-        auto ballY = ballPos->y;
-        auto goalMidX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
-        auto goalMidY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
 
-        auto targetX = goalMidX - 100;
-        auto targetY = ballY;
-        shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+        double targetX = MSLFootballField::posOwnGoalMid()->egoToAllo(*me)->x - 100;
+        double targetY = wm->ball.getEgoBallPosition()->y;
 
-        //mc = RobotMovement::alignToPointNoBall(ballPos, ballPos, 3.0);
-        //mc = RobotMovement::alignToPointNoBall(make_shared < geometry::CNPoint2D > (egoX, egoY), ballPos, 3.0);
-        //cout << "WatchBall: Inside run" << endl;
+        cout << " Watching ball" << endl;
+        double leftGoalPost = MSLFootballField::posLeftOwnGoalPost()->alloToEgo(*me)->y;
+        double rightGoalPost = MSLFootballField::posRightOwnGoalPost()->alloToEgo(*me)->y;
 
-        //auto penaltyWidth = MSLFootballField::PenaltyAreaWidth;
-        //auto goalLength = MSLFootballField::GoalAreaLength;
-        auto penaltyLength = MSLFootballField::PenaltyAreaLength;
-        auto goalWidth = MSLFootballField::GoalAreaWidth;
+        // TODO: armlength when extended and balldiameter/2
+        double puffer = 100 + 200;
 
-        //cout << "GoalieDefault: GoalAreaWidth=" << goalWidth<< endl;
-        //cout << "GoalieDefault: egoX=" << egoX<< endl;
-        cout << "GoalieDefault: ballY=" << ballY << endl;
-
-        if (std::abs(targetY) + 100 >= goalWidth / 2)
+        if (targetY < leftGoalPost)
         {
-            targetY *= (goalWidth / 2 - 150) / std::abs(targetY);
+            cout << "  - y: " << targetY << endl;
+            targetY = leftGoalPost + puffer;
+        }
+        else if (targetY > rightGoalPost)
+        {
+            cout << "  - y: " << targetY << endl;
+            targetY = rightGoalPost - puffer;
         }
 
-        mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (targetX, targetY), ballPos, 100);
+        auto egoTarget = make_shared < geometry::CNPoint2D > (targetX, targetY);
+        mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
+        //mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
+        cout << "### WatchBall ###\n" << endl;
 
         send(mc);
-
         /*PROTECTED REGION END*/
     }
     void WatchBall::initialiseParameters()

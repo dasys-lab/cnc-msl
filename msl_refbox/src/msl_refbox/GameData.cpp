@@ -31,6 +31,7 @@ namespace msl_refbox
 		this->udpToggled = false;
 		this->charToggled = false;
 		this->xmlToggled = false;
+		this->reconnectToggled = false;
 		this->refBox = refBox;
 		this->counter = 0;
 		this->udpsocket = nullptr;
@@ -40,8 +41,11 @@ namespace msl_refbox
 		this->sendRefBoxLogtimer->start(100);
 
 		this->sendRefBoxCmdtimer = new QTimer();
-		connect (sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
+		connect(sendRefBoxCmdtimer, SIGNAL(timeout()), this, SLOT(sendRefBoxCmd()));
 		this->sendRefBoxCmdtimer->start(333);
+
+		this->reconnectTimer = new QTimer();
+		connectionState = DISCONNECTED;
 	}
 
 	GameData::~GameData()
@@ -61,20 +65,24 @@ namespace msl_refbox
 		delete xmlparser;
 		delete sendRefBoxCmdtimer;
 		delete sendRefBoxLogtimer;
+
 	}
 
 	void GameData::sendRefBoxCmd()
 	{
-		if(tcpsocket != nullptr || udpsocket != nullptr)
+		if (tcpsocket != nullptr || udpsocket != nullptr)
 			this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
-	void normalizeAngle(double& ang) {
-		while(ang<=-M_PI) {
-			ang+=2*M_PI;
+	void normalizeAngle(double& ang)
+	{
+		while (ang <= -M_PI)
+		{
+			ang += 2 * M_PI;
 		}
-		while (ang>M_PI) {
-			ang-=2*M_PI;
+		while (ang > M_PI)
+		{
+			ang -= 2 * M_PI;
 		}
 	}
 
@@ -86,60 +94,63 @@ namespace msl_refbox
 		msg->ball.point.y = tmp / 1000.0;
 		msg->ball.point.z = msg->ball.point.z / 1000.0;
 		tmp = msg->ball.velocity.vx;
-		msg->ball.velocity.vx = msg->ball.velocity.vy/1000.0;
-		msg->ball.velocity.vy = tmp/1000.0;
+		msg->ball.velocity.vx = msg->ball.velocity.vy / 1000.0;
+		msg->ball.velocity.vy = tmp / 1000.0;
 		msg->ball.velocity.vz /= 1000.0;
 
 		tmp = msg->odom.position.x;
-		msg->odom.position.x = -msg->odom.position.y/1000.0;
-		msg->odom.position.y = tmp/1000.0;
-		msg->odom.position.angle += M_PI/2.0;
+		msg->odom.position.x = -msg->odom.position.y / 1000.0;
+		msg->odom.position.y = tmp / 1000.0;
+		msg->odom.position.angle += M_PI / 2.0;
 		normalizeAngle(msg->odom.position.angle);
-		msg->odom.motion.angle += M_PI/2.0;
+		msg->odom.motion.angle += M_PI / 2.0;
 		normalizeAngle(msg->odom.motion.angle);
 		msg->odom.motion.translation /= 1000.0;
 
 		tmp = msg->negotiatedBall.point.x;
-		msg->negotiatedBall.point.x = -msg->negotiatedBall.point.y/1000.0;
-		msg->negotiatedBall.point.y = tmp/1000.0;
-		msg->negotiatedBall.point.z = msg->negotiatedBall.point.z/1000.0;
+		msg->negotiatedBall.point.x = -msg->negotiatedBall.point.y / 1000.0;
+		msg->negotiatedBall.point.y = tmp / 1000.0;
+		msg->negotiatedBall.point.z = msg->negotiatedBall.point.z / 1000.0;
 		tmp = msg->negotiatedBall.velocity.vx;
-		msg->negotiatedBall.velocity.vx = msg->negotiatedBall.velocity.vy/1000.0;
-		msg->negotiatedBall.velocity.vy = tmp/1000.0;
+		msg->negotiatedBall.velocity.vx = msg->negotiatedBall.velocity.vy / 1000.0;
+		msg->negotiatedBall.velocity.vy = tmp / 1000.0;
 		msg->negotiatedBall.velocity.vz /= 1000.0;
 
 		tmp = msg->sharedBall.point.x;
-		msg->sharedBall.point.x = -msg->sharedBall.point.y/1000.0;
-		msg->sharedBall.point.y = tmp/1000.0;
-		msg->sharedBall.point.z = msg->sharedBall.point.z/1000.0;
+		msg->sharedBall.point.x = -msg->sharedBall.point.y / 1000.0;
+		msg->sharedBall.point.y = tmp / 1000.0;
+		msg->sharedBall.point.z = msg->sharedBall.point.z / 1000.0;
 		tmp = msg->sharedBall.velocity.vx;
-		msg->sharedBall.velocity.vx = msg->sharedBall.velocity.vy/1000.0;
-		msg->sharedBall.velocity.vy = tmp/1000.0;
+		msg->sharedBall.velocity.vx = msg->sharedBall.velocity.vy / 1000.0;
+		msg->sharedBall.velocity.vy = tmp / 1000.0;
 		msg->sharedBall.velocity.vz /= 1000.0;
 
-
-		for(int i=0; i<msg->path.size(); i++) {
+		for (int i = 0; i < msg->path.size(); i++)
+		{
 			tmp = msg->path.at(i).x;
-			msg->path.at(i).x = msg->path.at(i).y/1000.0;
-			msg->path.at(i).y = tmp/1000.0;
+			msg->path.at(i).x = msg->path.at(i).y / 1000.0;
+			msg->path.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->mergedOpponents.size(); i++) {
+		for (int i = 0; i < msg->mergedOpponents.size(); i++)
+		{
 			tmp = msg->mergedOpponents.at(i).x;
-			msg->mergedOpponents.at(i).x = msg->mergedOpponents.at(i).y/1000.0;
-			msg->mergedOpponents.at(i).y = tmp/1000.0;
+			msg->mergedOpponents.at(i).x = msg->mergedOpponents.at(i).y / 1000.0;
+			msg->mergedOpponents.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->mergedTeamMembers.size(); i++) {
+		for (int i = 0; i < msg->mergedTeamMembers.size(); i++)
+		{
 			tmp = msg->mergedTeamMembers.at(i).x;
-			msg->mergedTeamMembers.at(i).x = msg->mergedTeamMembers.at(i).y/1000.0;
-			msg->mergedTeamMembers.at(i).y = tmp/1000.0;
+			msg->mergedTeamMembers.at(i).x = msg->mergedTeamMembers.at(i).y / 1000.0;
+			msg->mergedTeamMembers.at(i).y = tmp / 1000.0;
 		}
 
-		for(int i=0; i<msg->obstacles.size(); i++) {
+		for (int i = 0; i < msg->obstacles.size(); i++)
+		{
 			tmp = msg->obstacles.at(i).x;
-			msg->obstacles.at(i).x = msg->obstacles.at(i).y/1000.0;
-			msg->obstacles.at(i).y = tmp/1000.0;
+			msg->obstacles.at(i).x = msg->obstacles.at(i).y / 1000.0;
+			msg->obstacles.at(i).y = tmp / 1000.0;
 		}
 
 		lock_guard<mutex> lock(this->shwmMutex);
@@ -382,83 +393,155 @@ namespace msl_refbox
 		this->charToggled = checked;
 	}
 
+	void GameData::onReconnectToggled(bool checked)
+	{
+		this->reconnectToggled = checked;
+	}
+
 	/*==============================  CONNECT METHODS ==============================*/
 
 	void GameData::onConnectPressed(void)
 	{
-		if (counter == 1)
+		switch (connectionState)
 		{
-			tcpsocket->close();
-			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
-			delete tcpsocket;
-			tcpsocket = nullptr;
+			case DISCONNECTED: // Button == Connect
+				connectNet();
+				break;
+			case TCP_CONNECTED: // Button == Disconnect
+				disconnectTCP();
+				break;
+			case UDP_CONNECTED: // Button == Disconnect
+				disconnectUDP();
+				break;
+			case RECONNECTING: // Button == Abort
+				connectionState = DISCONNECTED;
+				reconnectTimer->stop();
+				disconnect(reconnectTimer, SIGNAL(timeout()), this, SLOT(connectNet()));
+				this->refBox->btn_connect->setText("Connect");
+				break;
+			default:
+				break;
 		}
-		if (counter == 2)
-		{
-			udpsocket->close();
-			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
-			delete udpsocket;
-			udpsocket = nullptr;
-		}
+	}
+
+	void GameData::connectNet()
+	{
+		const QString host = this->refBox->ledit_ipaddress->text();
+		const quint16 port = this->refBox->spin_port->value();
 
 		if (localToggled)
 		{
 			disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
 			disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 			this->refBox->lbl_statusCon->setText("LOCAL");
-			this->counter = 0;
 		}
 		else if (tcpToggled)
 		{
-			tcpsocket = new QTcpSocket();
+			tcpsocket = connectTCP(host, port);
 
-			this->refBox->RefLog->append("Creating TCP Socket");
-
-			QString destHost = this->refBox->ledit_ipaddress->text();
-			quint16 destPort = this->refBox->spin_port->value();
-			this->refBox->lbl_statusCon->setText("TRY CONNECT TO IP ");
-
-			tcpsocket->connectToHost(destHost, destPort);
-			this->refBox->lbl_statusCon->setText("TRY CONNECT: TCP ");
-			if (!tcpsocket->waitForConnected(1000))
+			if (tcpsocket == nullptr)
 			{
 				this->refBox->RefLog->append("Creating Socket TCP: error");
-				this->refBox->lbl_statusCon->setText("ERROR 404");
+				this->refBox->lbl_statusCon->setText("TCP Connection Error");
 				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
-				return;
 			}
+			else
+			{
+				connectionState = TCP_CONNECTED;
+				this->refBox->btn_connect->setText("Disconnect");
 
-			connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
+				this->refBox->lbl_statusCon->setText("TCP");
+				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
 
-			this->refBox->lbl_statusCon->setText("TCP");
-			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
-			this->counter = 1;
+				connect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
+				connect(tcpsocket, SIGNAL(disconnected()), this, SLOT(onTcpDisconnected()));
+
+				reconnectTimer->stop();
+				disconnect(reconnectTimer, SIGNAL(timeout()), this, SLOT(connectNet()));
+			}
 		}
 		else if (udpToggled)
 		{
+			udpsocket = connectUDP(host, port);
 
-			udpsocket = new QUdpSocket();
-			this->refBox->RefLog->append("Creating UDP Socket");
+			if (udpsocket == nullptr)
+			{
+				this->refBox->RefLog->append("Creating Socket UDP: error");
+				this->refBox->lbl_statusCon->setText("UDP Connection Error");
+				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
+			}
+			else
+			{
+				this->connectionState = UDP_CONNECTED;
+				this->refBox->btn_connect->setText("Disconnect");
 
-			QString destHost = this->refBox->ledit_ipaddress->text();
-			quint16 destPort = this->refBox->spin_port->value();
+				connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
 
-			this->refBox->lbl_statusCon->setText("TRY CONNECT: UDP ");
-
-			QString adressMulti = destHost;
-			QHostAddress adress = QHostAddress(adressMulti);
-
-			udpsocket->bind(adress, destPort);
-			udpsocket->joinMulticastGroup(adress);
-
-			connect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
-
-			this->refBox->lbl_statusCon->setText("UDP");
-			this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
-			this->counter = 2;
-
+				this->refBox->lbl_statusCon->setText("UDP");
+				this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : green}");
+			}
 		}
+	}
 
+	void GameData::disconnectTCP()
+	{
+		connectionState = DISCONNECTING;
+
+		disconnect(tcpsocket, SIGNAL(disconnected()), this, SLOT(onTcpDisconnected()));
+
+		tcpsocket->close();
+		delete tcpsocket;
+		tcpsocket = nullptr;
+
+		connectionState = DISCONNECTED;
+
+		this->refBox->btn_connect->setText("Connect");
+
+		this->refBox->lbl_statusCon->setText("Disconnected");
+		this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
+	}
+
+	void GameData::disconnectUDP()
+	{
+		connectionState = DISCONNECTING;
+
+		udpsocket->close();
+		disconnect(udpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgUdp()));
+		delete udpsocket;
+		udpsocket = nullptr;
+
+		connectionState = DISCONNECTED;
+
+		this->refBox->btn_connect->setText("Connect");
+
+		this->refBox->lbl_statusCon->setText("Disconnected");
+		this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
+	}
+
+	QTcpSocket* GameData::connectTCP(QString host, qint16 port)
+	{
+		QTcpSocket* tcpsocket = new QTcpSocket();
+
+		tcpsocket->connectToHost(host, port);
+
+		if (!tcpsocket->waitForConnected(1000))
+			return nullptr;
+
+		return tcpsocket;
+	}
+
+	QUdpSocket* GameData::connectUDP(QString host, qint16 port)
+	{
+		QUdpSocket* udpsocket = new QUdpSocket();
+		this->refBox->RefLog->append("Creating UDP Socket");
+		this->refBox->lbl_statusCon->setText("TRY CONNECT: UDP ");
+
+		const QHostAddress address = QHostAddress(host);
+
+		udpsocket->bind(address, port);
+		udpsocket->joinMulticastGroup(address);
+
+		return udpsocket;
 	}
 
 	/*==============================  RECEIVE METHODS ==============================*/
@@ -479,7 +562,7 @@ namespace msl_refbox
 		else if (!localToggled && charToggled)
 		{
 			char msg[4096];
-			int size = tcpsocket->read(msg,4096);
+			int size = tcpsocket->read(msg, 4096);
 			if (size > 0)
 			{
 				processCharacterBasedProtocol(msg);
@@ -514,130 +597,132 @@ namespace msl_refbox
 
 	}
 
-	void GameData::processCharacterBasedProtocol(const char * data) {
-			QString Cmd("SsNkKpPfFgGtTcCHaALDd");
-			QString valid_cmd;
+	void GameData::processCharacterBasedProtocol(const char * data)
+	{
 
-			printf("Ref box Message -> %s\n", data);
-			QString Msg(data);
+		QString Cmd("SsNkKpPfFgGtTcCHaALDd");
+		QString valid_cmd;
 
-			/* Comandos Internos */
-			if (Msg.contains("W"))
+		printf("Ref box Message -> %s\n", data);
+		QString Msg(data);
+
+		/* Comandos Internos */
+		if (Msg.contains("W"))
+		{
+			//printf("Ref Box connected\n");
+			Msg.remove("W");
+		}
+
+		if (Msg.contains("h"))
+		{
+			this->sendStop();
+			Msg.remove("h");
+		}
+
+		if (Msg.contains('e'))
+		{
+			this->sendStop();
+			Msg.remove("e");
+		}
+
+		if (Msg.contains('1'))
+		{
+			//Start First Half
+			ref.goalsCyan = 0;
+			ref.goalsMagenta = 0;
+			Msg.remove("1");
+		}
+
+		if (Msg.contains('2'))
+		{
+			//Start Second half
+			Msg.remove("2");
+
+		}
+		/*******************************************************Filipe**************/
+		if (Msg.contains('3'))
+		{
+			//Third half
+			Msg.remove("3");
+		}
+
+		if (Msg.contains('4'))
+		{
+			//Fourth half
+			Msg.remove("4");
+		}
+
+		/* Proc msg */
+		valid_cmd.clear();
+		for (int i = 0; i < Msg.length(); i++)
+		{
+			if (Cmd.contains(Msg[i])) //é um comando válido??
 			{
-				printf("Ref Box connected\n");
-				Msg.remove("W");
-			}
+				//Cmd válido
+				valid_cmd = Msg[i];
+				//printf("last valid cmd-> %c \n", Msg[i]);
 
-			if (Msg.contains("h"))
-			{
-				this->sendStop();
-				Msg.remove("h");
-			}
+				if (valid_cmd == "s")
+					this->sendStart();
 
-			if (Msg.contains('e'))
-			{
-				this->sendStop();
-				Msg.remove("e");
-			}
+				if (valid_cmd == "S")
+					this->sendStop();
 
-			if (Msg.contains('1'))
-			{
-				//Start First Half
-				ref.goalsCyan = 0;
-				ref.goalsMagenta = 0;
-				Msg.remove("1");
-			}
+				if (valid_cmd == "K")
+					this->sendCyanKickOff();
 
-			if (Msg.contains('2'))
-			{
-				//Start Second half
-				Msg.remove("2");
+				if (valid_cmd == "k")
+					this->sendMagentaKickOff();
 
-			}
-			/*******************************************************Filipe**************/
-			if (Msg.contains('3'))
-			{
-				//Third half
-				Msg.remove("3");
-			}
+				if (valid_cmd == "P")
+					this->sendCyanPenalty();
 
-			if (Msg.contains('4'))
-			{
-				//Fourth half
-				Msg.remove("4");
-			}
+				if (valid_cmd == "p")
+					this->sendMagentaPenalty();
 
-			/* Proc msg */
-			valid_cmd.clear();
-			for (int i = 0; i < Msg.length(); i++)
-			{
-				if (Cmd.contains(Msg[i])) //é um comando válido??
-				{
-					//Cmd válido
-					valid_cmd = Msg[i];
-					//printf("last valid cmd-> %c \n", Msg[i]);
+				if (valid_cmd == "F")
+					this->sendCyanFreeKick();
 
-					if (valid_cmd == "s")
-						this->sendStart();
+				if (valid_cmd == "f")
+					this->sendMagentaFreeKick();
 
-					if (valid_cmd == "S")
-						this->sendStop();
+				if (valid_cmd == "G")
+					this->sendCyanGoalKick();
 
-					if (valid_cmd == "K")
-						this->sendCyanKickOff();
+				if (valid_cmd == "g")
+					this->sendMagentaGoalKick();
 
-					if (valid_cmd == "k")
-						this->sendMagentaKickOff();
+				if (valid_cmd == "T")
+					this->sendCyanThrownin();
 
-					if (valid_cmd == "P")
-						this->sendCyanPenalty();
+				if (valid_cmd == "t")
+					this->sendMagentaThrownin();
 
-					if (valid_cmd == "p")
-						this->sendMagentaPenalty();
+				if (valid_cmd == "C")
+					this->sendCyanCornerKick();
 
-					if (valid_cmd == "F")
-						this->sendCyanFreeKick();
+				if (valid_cmd == "c")
+					this->sendMagentaCornerKick();
 
-					if (valid_cmd == "f")
-						this->sendMagentaFreeKick();
+				if (valid_cmd == "A")
+					ref.goalsCyan++;
 
-					if (valid_cmd == "G")
-						this->sendCyanGoalKick();
+				if (valid_cmd == "a")
+					ref.goalsMagenta++;
 
-					if (valid_cmd == "g")
-						this->sendMagentaGoalKick();
+				if (valid_cmd == "D")
+					ref.goalsCyan--;
 
-					if (valid_cmd == "T")
-						this->sendCyanThrownin();
+				if (valid_cmd == "d")
+					ref.goalsMagenta--;
+				if (valid_cmd == "N")
+					this->sendDroppedBall();
 
-					if (valid_cmd == "t")
-						this->sendMagentaThrownin();
-
-					if (valid_cmd == "C")
-						this->sendCyanCornerKick();
-
-					if (valid_cmd == "c")
-						this->sendMagentaCornerKick();
-
-					if (valid_cmd == "A")
-						ref.goalsCyan++;
-
-					if (valid_cmd == "a")
-						ref.goalsMagenta++;
-
-					if (valid_cmd == "D")
-						ref.goalsCyan--;
-
-					if (valid_cmd == "d")
-						ref.goalsMagenta--;
-					if (valid_cmd == "N")
-						this->sendDroppedBall();
-
-					if (valid_cmd == "L")
-						this->sendParking();
-				}
+				if (valid_cmd == "L")
+					this->sendParking();
 			}
 		}
+	}
 
 	/*==============================  SEND REFBOX LOG ===========================*/
 
@@ -666,29 +751,32 @@ namespace msl_refbox
 			for (auto robot : this->shwmData)
 			{
 				auto now = chrono::system_clock::now();
-				if(chrono::duration_cast<chrono::milliseconds>(now-date[robot.second->senderID]).count()>1000){
+				if (chrono::duration_cast<chrono::milliseconds>(now - date[robot.second->senderID]).count() > 1000)
+				{
 					continue;
 				}
-				if (sID > robot.second->senderID) {
+				if (sID > robot.second->senderID)
+				{
 					sID = robot.second->senderID;
 					robotForObs = robot.second;
 				}
 
 				logString += "{\"id\": " + QString::number(robot.second->senderID, 10) + ", \"pose\": ["
-						+ QString().sprintf("%.3f",robot.second->odom.position.x) + ","
-						+ QString().sprintf("%.3f",robot.second->odom.position.y) + ","
+						+ QString().sprintf("%.3f", robot.second->odom.position.x) + ","
+						+ QString().sprintf("%.3f", robot.second->odom.position.y) + ","
 						+ QString::number(robot.second->odom.position.angle, 'f', 4) + "],"
 						+ "\"targetPos\": [null,null,null]," + "\"velocity\":["
-						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle), 'f', 3)
-						+ ","
-						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle), 'f', 3)
-						+ ","
-						+ QString::number(robot.second->odom.motion.rotation, 'f', 4)
+						+ QString::number(robot.second->odom.motion.translation * cos(robot.second->odom.motion.angle),
+											'f', 3) + ","
+						+ QString::number(robot.second->odom.motion.translation * sin(robot.second->odom.motion.angle),
+											'f', 3) + "," + QString::number(robot.second->odom.motion.rotation, 'f', 4)
 						+ QString("], \"intention\": \"");
 				auto iter = this->aeiData.find(robot.second->senderID);
 				if (iter != this->aeiData.end())
 				{
-					logString += QString(iter->second->currentTask.c_str()) + " - " + QString(iter->second->currentPlan.c_str()) + " - " + QString(iter->second->currentState.c_str()) + "\",";
+					logString += QString(iter->second->currentTask.c_str()) + " - "
+							+ QString(iter->second->currentPlan.c_str()) + " - "
+							+ QString(iter->second->currentState.c_str()) + "\",";
 				}
 				else
 				{
@@ -697,7 +785,8 @@ namespace msl_refbox
 				logString += QString("\"batteryLevel\": null, \"ballEngaged\": null },");
 
 			}
-			if(sID == 9999999) return;
+			if (sID == 9999999)
+				return;
 			// remove last comma
 			logString.remove(logString.length() - 1, 1);
 			logString += "]";
@@ -708,7 +797,8 @@ namespace msl_refbox
 			for (auto robot : this->shwmData)
 			{
 				auto now = chrono::system_clock::now();
-				if(chrono::duration_cast<chrono::milliseconds>(now-date[robot.second->senderID]).count()>1000){
+				if (chrono::duration_cast<chrono::milliseconds>(now - date[robot.second->senderID]).count() > 1000)
+				{
 					continue;
 				}
 				if (robot.second->ball.confidence != 0)
@@ -736,15 +826,11 @@ namespace msl_refbox
 			int integratedObstacles = 0;
 			for (auto opponents : robotForObs->mergedOpponents)
 			{
-					integratedObstacles++;
-					logString += QString(
-							"{ \"position\": ["
-							+ QString::number(opponents.x, 'f', 3)
-							+ ","
-							+ QString::number(opponents.y, 'f', 3)
-							+ "], \"velocity\": [null, null],"
-							+ "\"confidence\": null },"
-							);
+				integratedObstacles++;
+				logString += QString(
+						"{ \"position\": [" + QString::number(opponents.x, 'f', 3) + ","
+								+ QString::number(opponents.y, 'f', 3) + "], \"velocity\": [null, null],"
+								+ "\"confidence\": null },");
 			}
 			if (integratedObstacles > 0)
 			{
@@ -753,9 +839,7 @@ namespace msl_refbox
 			}
 			logString += QString("], ");
 
-			logString += QString("\"ageMs\": "
-							+ QString::number(50, 10)
-							);
+			logString += QString("\"ageMs\": " + QString::number(50, 10));
 		}
 		else
 		{
@@ -765,15 +849,15 @@ namespace msl_refbox
 
 		cout << logString.toStdString() << endl;
 
-		if (this->tcpsocket == nullptr
-						|| !this->tcpsocket->isValid()
-						|| this->tcpsocket->state() != QAbstractSocket::ConnectedState)
-					return;
+		if (this->tcpsocket == nullptr || !this->tcpsocket->isValid()
+				|| this->tcpsocket->state() != QAbstractSocket::ConnectedState)
+			return;
 
 		QByteArray tmp;
 		tmp.append(logString);
 		tmp.append('\0');
-		if(this->tcpsocket->write(tmp) < 0){
+		if (this->tcpsocket->write(tmp) < 0)
+		{
 			cout << "Error: " << this->tcpsocket->errorString().toStdString() << endl;
 		}
 		//cout << endl << "SENDING" << endl;
@@ -882,4 +966,31 @@ namespace msl_refbox
 		ref.cmd = msl_msgs::RefBoxCommand::START;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
-} /* namespace rqt_pm_control */
+
+	void GameData::onTcpDisconnected()
+	{
+		disconnect(tcpsocket, SIGNAL(disconnected()), this, SLOT(onTcpDisconnected()));
+		disconnect(tcpsocket, SIGNAL(readyRead()), this, SLOT(receiveRefMsgTcp()));
+
+		this->refBox->RefLog->append("Disconnected from Refreebox");
+		this->refBox->lbl_statusCon->setText("Disconnected");
+		this->refBox->lbl_statusCon->setStyleSheet("QLabel { background-color : red}");
+
+		this->refBox->btn_connect->setText("Connect");
+
+		if (connectionState == DISCONNECTING || connectionState == RECONNECTING)
+			return;
+
+		if (!reconnectToggled)
+			return;
+
+		// Enable Auto reconnecting
+		connectionState = RECONNECTING;
+		this->refBox->lbl_statusCon->setText("Reconnecting...");
+		connect(reconnectTimer, SIGNAL(timeout()), this, SLOT(connectNet()));
+		this->reconnectTimer->start(500);
+
+		this->refBox->btn_connect->setText("Abort");
+	}
+
+} /* namespace msl_refbox */

@@ -49,14 +49,21 @@ using namespace BlackLib;
 		if (value > 100) { value = 100; }
 		if (value < -100) { value = -100; }
 		speed_desired = abs(value) * period / 100;
+
+		gettimeofday(&last_ping, NULL);
 	}
 
-	void BallHandle::setTimeout() {
+	void BallHandle::checkTimeout() {
 		// Deactivates the BallHandling when controlBallHandling() is called next time
-		this->setBallHandling(0);
+		timeval	t;
+		gettimeofday(&t, NULL);
+		if (TIMEDIFFMS(t, last_ping) > BallHandle_TIMEOUT) {
+			this->setBallHandling(0);
+		}
 	}
 
 	void BallHandle::controlBallHandling() {
+		checkTimeout();
 		if (speed_desired == 0) {
 			speed = 0;
 			pwm->setSpaceRatioTime(speed, nanosecond);			// Time for this Operation: 900us
