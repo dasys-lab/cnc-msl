@@ -131,9 +131,10 @@ namespace alica
                 << calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY) / length) + 1 << std::endl;
         std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
         std::cout << "posMotionX: " << calibPosMotionX << std::endl;
-
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVision << std::endl;
+        std::cout << "ThetaVision: " << this->wm->rawSensorData.getOwnPositionVision(0)->theta << std::endl;
+        std::cout << "ThetaMotion: " << this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
 
         std::cout << "" << std::endl;
 
