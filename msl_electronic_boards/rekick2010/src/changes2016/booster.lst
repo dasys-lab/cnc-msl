@@ -1,0 +1,1392 @@
+   1               		.file	"booster.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 108               	.global	booster_send_info
+ 110               	booster_send_info:
+   1:booster.c     **** 
+   2:booster.c     **** #include <avr/io.h>
+   3:booster.c     **** #include <util/delay.h>
+   4:booster.c     **** #include <avr/interrupt.h>
+   5:booster.c     **** #include "defaults.h"
+   6:booster.c     **** #include "global.h"
+   7:booster.c     **** #include "ports.h"
+   8:booster.c     **** #include "messages.h"
+   9:booster.c     **** #include "timer.h"
+  10:booster.c     **** #include "kicker.h"
+  11:booster.c     **** 
+  12:booster.c     **** 
+  13:booster.c     **** #define PING_TIMEOUT			1000  // ms
+  14:booster.c     **** #define MAX_BOOST_TIME			30000 // ms
+  15:booster.c     **** #define MINIMUM_SUPPLY_VOLTAGE	17    // Volt
+  16:booster.c     **** 
+  17:booster.c     **** #define PWM_IS_ENABLED	(TCCR1A & (1 << COM1B1))
+  18:booster.c     **** 
+  19:booster.c     **** uint8_t booster_pwm_lock = 1;
+  20:booster.c     **** uint8_t booster_auto_off = 1;
+  21:booster.c     **** uint32_t pwm_start = 0;
+  22:booster.c     **** uint32_t last_heartbeat = 0; // ms
+  23:booster.c     **** uint8_t manual_mode = false;
+  24:booster.c     **** uint8_t auto_boost = true;
+  25:booster.c     **** uint16_t max_voltage = 330;
+  26:booster.c     **** uint8_t init = 0;
+  27:booster.c     **** uint8_t initMeassure = 0;
+  28:booster.c     **** 
+  29:booster.c     **** struct VOLTAGE_ERROR_STRUCT {
+  30:booster.c     **** 	uint8_t error :1;    //< this locks the booster
+  31:booster.c     **** 	uint8_t warn  :7;    //< this represents the warn levels
+  32:booster.c     **** 	uint32_t last_error; //< time in ms of the last check
+  33:booster.c     **** } voltage_error_t = {0, 0};
+  34:booster.c     **** 
+  35:booster.c     **** 
+  36:booster.c     **** // the info message
+  37:booster.c     **** // 1. byte: CMD_STATE
+  38:booster.c     **** // 2. byte: booster_state
+  39:booster.c     **** // 3. byte: supply voltage HB
+  40:booster.c     **** // 4. byte: supply voltage LB
+  41:booster.c     **** // 5. byte: capacitors voltage
+  42:booster.c     **** //
+  43:booster.c     **** // booster_state:
+  44:booster.c     **** // bit order: 76543210
+  45:booster.c     **** // bit 7: Supply on
+  46:booster.c     **** // bit 6: BoostPWM on
+  47:booster.c     **** // bit 5: release on
+  48:booster.c     **** // bit 4: error_state
+  49:booster.c     **** // bit 3: reserved
+  50:booster.c     **** // bit 2: reserved
+  51:booster.c     **** // bit 1: rotate pos
+  52:booster.c     **** // bit 0: rotate pos
+  53:booster.c     **** 
+  54:booster.c     **** /**
+  55:booster.c     ****  * Structure builds the booster state
+  56:booster.c     ****  *
+  57:booster.c     ****  * 8 bit long
+  58:booster.c     ****  */
+  59:booster.c     **** struct BOOSTER_STATE {
+  60:booster.c     **** 	uint8_t               : 2; //< reserved two bit
+  61:booster.c     **** 	uint8_t error_state   : 1; //< Critical error occured?
+  62:booster.c     **** 	uint8_t release_state : 1; //< release switch state
+  63:booster.c     **** 	uint8_t pwm_state     : 1; //< load PWM state
+  64:booster.c     **** 	uint8_t power_state   : 1; //< booster supply state
+  65:booster.c     **** };
+  66:booster.c     **** 
+  67:booster.c     **** /**
+  68:booster.c     ****  * This structure builds the info message
+  69:booster.c     ****  *
+  70:booster.c     ****  * 4 bytes long
+  71:booster.c     ****  */
+  72:booster.c     **** struct BOOSTER_INFO {
+  73:booster.c     **** 	struct BOOSTER_STATE state;		//< the state of the booster
+  74:booster.c     **** 	uint16_t supply_voltage;		//< the adc value from the supply voltage. Not the real value!
+  75:booster.c     **** 	uint16_t  capacitors_voltage;	//< the voltage of the capacitors (Volt)
+  76:booster.c     **** };
+  77:booster.c     **** 
+  78:booster.c     **** void booster_send_info(void) {
+ 112               	.LM0:
+ 113               	.LFBB1:
+ 114 0000 CF93      		push r28
+ 115 0002 DF93      		push r29
+ 116 0004 00D0      		rcall .
+ 117 0006 00D0      		rcall .
+ 118 0008 1F92      		push __zero_reg__
+ 119 000a CDB7      		in r28,__SP_L__
+ 120 000c DEB7      		in r29,__SP_H__
+ 121               	/* prologue: function */
+ 122               	/* frame size = 5 */
+ 123               	/* stack size = 7 */
+ 124               	.L__stack_usage = 7
+  79:booster.c     **** 
+  80:booster.c     **** 	struct BOOSTER_INFO info;
+  81:booster.c     **** 	
+  82:booster.c     **** 	info.state.power_state = ( (IS_SET(POWER_NORM) && !IS_SET(POWER_INV) ) > 0);
+ 126               	.LM1:
+ 127 000e 999B      		sbis 0x13,1
+ 128 0010 00C0      		rjmp .L5
+ 130               	.LM2:
+ 131 0012 23B3      		in r18,0x13
+ 132 0014 31E0      		ldi r19,lo8(1)
+ 133 0016 2327      		eor r18,r19
+ 134 0018 822F      		mov r24,r18
+ 135 001a 8170      		andi r24,1
+ 136 001c 90E0      		ldi r25,0
+ 137 001e 00C0      		rjmp .L2
+ 138               	.L5:
+ 140               	.LM3:
+ 141 0020 80E0      		ldi r24,0
+ 142 0022 90E0      		ldi r25,0
+ 143               	.L2:
+ 145               	.LM4:
+ 146 0024 21E0      		ldi r18,lo8(1)
+ 147 0026 1816      		cp __zero_reg__,r24
+ 148 0028 1906      		cpc __zero_reg__,r25
+ 149 002a 04F0      		brlt .L3
+ 150 002c 20E0      		ldi r18,0
+ 151               	.L3:
+ 152 002e 8981      		ldd r24,Y+1
+ 153 0030 20FB      		bst r18,0
+ 154 0032 85F9      		bld r24,5
+ 155 0034 8983      		std Y+1,r24
+  83:booster.c     **** 	info.state.pwm_state = ((PWM_IS_ENABLED) > 0);
+ 157               	.LM5:
+ 158 0036 91E0      		ldi r25,lo8(1)
+ 159 0038 0FB4      		in __tmp_reg__,0x2f
+ 160 003a 05FE      		sbrs __tmp_reg__,5
+ 161 003c 90E0      		ldi r25,0
+ 162               	.L4:
+ 163 003e 8981      		ldd r24,Y+1
+ 164 0040 90FB      		bst r25,0
+ 165 0042 84F9      		bld r24,4
+ 166 0044 8983      		std Y+1,r24
+  84:booster.c     **** 	info.state.release_state = (IS_SET(RELEASE) > 0);
+ 168               	.LM6:
+ 169 0046 99B3      		in r25,0x19
+ 170 0048 93FB      		bst r25,3
+ 171 004a 9927      		clr r25
+ 172 004c 90F9      		bld r25,0
+ 173 004e 90FB      		bst r25,0
+ 174 0050 83F9      		bld r24,3
+  85:booster.c     **** 	info.state.error_state = voltage_error_t.error;
+ 176               	.LM7:
+ 177 0052 9091 0000 		lds r25,voltage_error_t
+ 178 0056 90FB      		bst r25,0
+ 179 0058 82F9      		bld r24,2
+ 180 005a 8983      		std Y+1,r24
+  86:booster.c     **** 	
+  87:booster.c     **** 	info.supply_voltage = get_supply_raw_voltage();
+ 182               	.LM8:
+ 183 005c 0E94 0000 		call get_supply_raw_voltage
+ 184 0060 9B83      		std Y+3,r25
+ 185 0062 8A83      		std Y+2,r24
+  88:booster.c     **** 	info.capacitors_voltage = get_capacitors_voltage();
+ 187               	.LM9:
+ 188 0064 0E94 0000 		call get_capacitors_voltage
+ 189 0068 9D83      		std Y+5,r25
+ 190 006a 8C83      		std Y+4,r24
+  89:booster.c     **** 
+  90:booster.c     **** 	can_put_cmd(CMD_STATE, (uint8_t *)&info, 5);
+ 192               	.LM10:
+ 193 006c 45E0      		ldi r20,lo8(5)
+ 194 006e BE01      		movw r22,r28
+ 195 0070 6F5F      		subi r22,-1
+ 196 0072 7F4F      		sbci r23,-1
+ 197 0074 82EF      		ldi r24,lo8(-14)
+ 198 0076 0E94 0000 		call can_put_cmd
+ 199               	/* epilogue start */
+  91:booster.c     **** }
+ 201               	.LM11:
+ 202 007a 0F90      		pop __tmp_reg__
+ 203 007c 0F90      		pop __tmp_reg__
+ 204 007e 0F90      		pop __tmp_reg__
+ 205 0080 0F90      		pop __tmp_reg__
+ 206 0082 0F90      		pop __tmp_reg__
+ 207 0084 DF91      		pop r29
+ 208 0086 CF91      		pop r28
+ 209 0088 0895      		ret
+ 214               	.Lscope1:
+ 216               	.global	booster_pwm_enable
+ 218               	booster_pwm_enable:
+  92:booster.c     **** 
+  93:booster.c     **** void booster_pwm_enable(void) {
+ 220               	.LM12:
+ 221               	.LFBB2:
+ 222               	/* prologue: function */
+ 223               	/* frame size = 0 */
+ 224               	/* stack size = 0 */
+ 225               	.L__stack_usage = 0
+  94:booster.c     **** 
+  95:booster.c     **** 	if (booster_pwm_lock)
+ 227               	.LM13:
+ 228 008a 8091 0000 		lds r24,booster_pwm_lock
+ 229 008e 8111      		cpse r24,__zero_reg__
+ 230 0090 00C0      		rjmp .L7
+ 231               	.LBB12:
+ 232               	.LBB13:
+  96:booster.c     **** 		return;
+  97:booster.c     **** 
+  98:booster.c     **** 	// save timestamp
+  99:booster.c     **** 	pwm_start = timer_get_ms();
+ 234               	.LM14:
+ 235 0092 0E94 0000 		call timer_get_ms
+ 236 0096 6093 0000 		sts pwm_start,r22
+ 237 009a 7093 0000 		sts pwm_start+1,r23
+ 238 009e 8093 0000 		sts pwm_start+2,r24
+ 239 00a2 9093 0000 		sts pwm_start+3,r25
+ 100:booster.c     **** 
+ 101:booster.c     **** 	TCCR1A |= (1 << COM1B1);
+ 241               	.LM15:
+ 242 00a6 8FB5      		in r24,0x2f
+ 243 00a8 8062      		ori r24,lo8(32)
+ 244 00aa 8FBD      		out 0x2f,r24
+ 102:booster.c     **** 	RESET(LED_RED1); // PORT off - LED on
+ 246               	.LM16:
+ 247 00ac AF98      		cbi 0x15,7
+ 248               	.L7:
+ 249 00ae 0895      		ret
+ 250               	.LBE13:
+ 251               	.LBE12:
+ 253               	.Lscope2:
+ 255               	.global	booster_pwm_disable
+ 257               	booster_pwm_disable:
+ 103:booster.c     **** }
+ 104:booster.c     **** 
+ 105:booster.c     **** void booster_pwm_disable(void) {
+ 259               	.LM17:
+ 260               	.LFBB3:
+ 261               	/* prologue: function */
+ 262               	/* frame size = 0 */
+ 263               	/* stack size = 0 */
+ 264               	.L__stack_usage = 0
+ 106:booster.c     **** 
+ 107:booster.c     **** 	// visual that the pwm is off
+ 108:booster.c     **** 	pwm_start = 0;
+ 266               	.LM18:
+ 267 00b0 1092 0000 		sts pwm_start,__zero_reg__
+ 268 00b4 1092 0000 		sts pwm_start+1,__zero_reg__
+ 269 00b8 1092 0000 		sts pwm_start+2,__zero_reg__
+ 270 00bc 1092 0000 		sts pwm_start+3,__zero_reg__
+ 109:booster.c     **** 
+ 110:booster.c     **** 	TCCR1A &= ~(1 << COM1B1);
+ 272               	.LM19:
+ 273 00c0 8FB5      		in r24,0x2f
+ 274 00c2 8F7D      		andi r24,lo8(-33)
+ 275 00c4 8FBD      		out 0x2f,r24
+ 111:booster.c     **** 	// Make sure the output port ist disabled
+ 112:booster.c     **** 	PORTD &= ~(1 << PD4);
+ 277               	.LM20:
+ 278 00c6 9498      		cbi 0x12,4
+ 113:booster.c     **** 	SET(LED_RED1); // PORT on - LED off
+ 280               	.LM21:
+ 281 00c8 AF9A      		sbi 0x15,7
+ 282 00ca 0895      		ret
+ 284               	.Lscope3:
+ 286               	.global	booster_disable
+ 288               	booster_disable:
+ 114:booster.c     **** }
+ 115:booster.c     **** 
+ 116:booster.c     **** // disables power supply, locks the booster and dischages the capacitors
+ 117:booster.c     **** void booster_disable(void) {
+ 290               	.LM22:
+ 291               	.LFBB4:
+ 292               	/* prologue: function */
+ 293               	/* frame size = 0 */
+ 294               	/* stack size = 0 */
+ 295               	.L__stack_usage = 0
+ 118:booster.c     **** 	booster_pwm_lock = 1;
+ 297               	.LM23:
+ 298 00cc 81E0      		ldi r24,lo8(1)
+ 299 00ce 8093 0000 		sts booster_pwm_lock,r24
+ 119:booster.c     **** 	booster_pwm_disable();
+ 301               	.LM24:
+ 302 00d2 0E94 0000 		call booster_pwm_disable
+ 303               	.LBB14:
+ 304               	.LBB15:
+ 306               	.Ltext1:
+   1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/avr/include/util/delay.h **** 
+   6:/usr/lib/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/avr/include/util/delay.h **** 
+   9:/usr/lib/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/avr/include/util/delay.h **** 
+  12:/usr/lib/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/avr/include/util/delay.h **** 
+  17:/usr/lib/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/avr/include/util/delay.h **** 
+  21:/usr/lib/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/avr/include/util/delay.h **** 
+  33:/usr/lib/avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/avr/include/util/delay.h **** 
+  35:/usr/lib/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/avr/include/util/delay.h **** 
+  38:/usr/lib/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/avr/include/util/delay.h **** #endif
+  41:/usr/lib/avr/include/util/delay.h **** 
+  42:/usr/lib/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/avr/include/util/delay.h **** 
+  46:/usr/lib/avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/avr/include/util/delay.h ****     \code
+  49:/usr/lib/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/avr/include/util/delay.h **** 
+  54:/usr/lib/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/avr/include/util/delay.h ****     used.
+  58:/usr/lib/avr/include/util/delay.h **** 
+  59:/usr/lib/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/avr/include/util/delay.h **** 
+  68:/usr/lib/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/avr/include/util/delay.h **** 
+  77:/usr/lib/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/avr/include/util/delay.h **** 
+  81:/usr/lib/avr/include/util/delay.h **** */
+  82:/usr/lib/avr/include/util/delay.h **** 
+  83:/usr/lib/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/avr/include/util/delay.h **** #endif
+  87:/usr/lib/avr/include/util/delay.h **** 
+  88:/usr/lib/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/avr/include/util/delay.h **** #endif
+  93:/usr/lib/avr/include/util/delay.h **** 
+  94:/usr/lib/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/avr/include/util/delay.h **** #endif
+  97:/usr/lib/avr/include/util/delay.h **** 
+  98:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/avr/include/util/delay.h **** #endif
+ 103:/usr/lib/avr/include/util/delay.h **** 
+ 104:/usr/lib/avr/include/util/delay.h **** /**
+ 105:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/avr/include/util/delay.h **** 
+ 107:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/avr/include/util/delay.h **** 
+ 109:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/avr/include/util/delay.h **** 
+ 112:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/avr/include/util/delay.h **** 
+ 114:/usr/lib/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/avr/include/util/delay.h **** 
+ 120:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/avr/include/util/delay.h **** 
+ 125:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/avr/include/util/delay.h **** 
+ 129:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/avr/include/util/delay.h **** 
+ 132:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/avr/include/util/delay.h **** 
+ 140:/usr/lib/avr/include/util/delay.h ****  */
+ 141:/usr/lib/avr/include/util/delay.h **** void
+ 142:/usr/lib/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/avr/include/util/delay.h **** {
+ 144:/usr/lib/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/avr/include/util/delay.h **** 
+ 153:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/avr/include/util/delay.h **** 
+ 156:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/avr/include/util/delay.h **** 
+ 159:/usr/lib/avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/avr/include/util/delay.h **** 
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 308               	.LM25:
+ 309 00d6 8FE1      		ldi r24,lo8(19999)
+ 310 00d8 9EE4      		ldi r25,hi8(19999)
+ 311 00da 0197      		1: sbiw r24,1
+ 312 00dc 01F4      		brne 1b
+ 313 00de 00C0      		rjmp .
+ 314 00e0 0000      		nop
+ 315               	.LBE15:
+ 316               	.LBE14:
+ 318               	.Ltext2:
+ 120:booster.c     **** 	_delay_ms(5);
+ 121:booster.c     **** 	RESET(POWER_NORM);
+ 320               	.LM26:
+ 321 00e2 A998      		cbi 0x15,1
+ 122:booster.c     **** 	RESET(POWER_INV);
+ 323               	.LM27:
+ 324 00e4 A898      		cbi 0x15,0
+ 123:booster.c     **** 	RESET(NOT_DISCHARGE);
+ 326               	.LM28:
+ 327 00e6 C098      		cbi 0x18,0
+ 328 00e8 0895      		ret
+ 330               	.Lscope4:
+ 331               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 332               	.LC0:
+ 333 0000 456E 6162 		.string	"Enable"
+ 333      6C65 00
+ 334               		.text
+ 336               	.global	booster_enable
+ 338               	booster_enable:
+ 124:booster.c     **** }
+ 125:booster.c     **** 
+ 126:booster.c     **** void booster_enable(void) {
+ 340               	.LM29:
+ 341               	.LFBB5:
+ 342               	/* prologue: function */
+ 343               	/* frame size = 0 */
+ 344               	/* stack size = 0 */
+ 345               	.L__stack_usage = 0
+ 127:booster.c     **** 	SET(NOT_DISCHARGE);
+ 347               	.LM30:
+ 348 00ea C09A      		sbi 0x18,0
+ 128:booster.c     **** 	SET(POWER_NORM);
+ 350               	.LM31:
+ 351 00ec A99A      		sbi 0x15,1
+ 129:booster.c     **** 	RESET(POWER_INV);
+ 353               	.LM32:
+ 354 00ee A898      		cbi 0x15,0
+ 130:booster.c     **** 	//_delay_ms(500);
+ 131:booster.c     **** 	if(init == 0) {
+ 356               	.LM33:
+ 357 00f0 8091 0000 		lds r24,init
+ 358 00f4 8111      		cpse r24,__zero_reg__
+ 359 00f6 00C0      		rjmp .L12
+ 360               	.LBB16:
+ 132:booster.c     **** 		init = 1;
+ 362               	.LM34:
+ 363 00f8 81E0      		ldi r24,lo8(1)
+ 364 00fa 8093 0000 		sts init,r24
+ 133:booster.c     **** 		uint8_t sreg = SREG;
+ 366               	.LM35:
+ 367 00fe 2FB7      		in r18,__SREG__
+ 134:booster.c     **** 		cli();
+ 369               	.LM36:
+ 370               	/* #APP */
+ 371               	 ;  134 "booster.c" 1
+ 372 0100 F894      		cli
+ 373               	 ;  0 "" 2
+ 135:booster.c     **** 		pending_us10 = 50000; //500ms * 100
+ 375               	.LM37:
+ 376               	/* #NOAPP */
+ 377 0102 80E5      		ldi r24,lo8(80)
+ 378 0104 93EC      		ldi r25,lo8(-61)
+ 379 0106 9093 0000 		sts pending_us10+1,r25
+ 380 010a 8093 0000 		sts pending_us10,r24
+ 136:booster.c     **** 		SREG=sreg;
+ 382               	.LM38:
+ 383 010e 2FBF      		out __SREG__,r18
+ 384               	.LBE16:
+ 385 0110 0895      		ret
+ 386               	.L12:
+ 137:booster.c     **** 	}
+ 138:booster.c     **** 	else {
+ 139:booster.c     **** 		if( pending_us10 <= 0)
+ 388               	.LM39:
+ 389 0112 8091 0000 		lds r24,pending_us10
+ 390 0116 9091 0000 		lds r25,pending_us10+1
+ 391 011a 892B      		or r24,r25
+ 392 011c 01F4      		brne .L11
+ 140:booster.c     **** 		{
+ 141:booster.c     **** 			init = 0;
+ 394               	.LM40:
+ 395 011e 1092 0000 		sts init,__zero_reg__
+ 142:booster.c     **** 			debug("Enable");
+ 397               	.LM41:
+ 398 0122 80E0      		ldi r24,lo8(.LC0)
+ 399 0124 90E0      		ldi r25,hi8(.LC0)
+ 400 0126 0E94 0000 		call debug
+ 143:booster.c     **** 			booster_pwm_lock = 0;
+ 402               	.LM42:
+ 403 012a 1092 0000 		sts booster_pwm_lock,__zero_reg__
+ 144:booster.c     **** 			booster_pwm_enable();
+ 405               	.LM43:
+ 406 012e 0E94 0000 		call booster_pwm_enable
+ 145:booster.c     **** 			RESET(LED_GREEN1);
+ 408               	.LM44:
+ 409 0132 AE98      		cbi 0x15,6
+ 146:booster.c     **** 			booster_auto_off = 0;
+ 411               	.LM45:
+ 412 0134 1092 0000 		sts booster_auto_off,__zero_reg__
+ 413               	.L11:
+ 414 0138 0895      		ret
+ 419               	.Lscope5:
+ 420               		.section	.rodata.str1.1
+ 421               	.LC1:
+ 422 0007 4361 6E6E 		.string	"Cannot set max voltage"
+ 422      6F74 2073 
+ 422      6574 206D 
+ 422      6178 2076 
+ 422      6F6C 7461 
+ 423               		.text
+ 426               	.global	booster_set_max_voltage
+ 428               	booster_set_max_voltage:
+ 147:booster.c     **** 		}
+ 148:booster.c     **** 	}
+ 149:booster.c     **** }
+ 150:booster.c     **** 
+ 151:booster.c     **** void booster_set_max_voltage(uint16_t voltageIn) {
+ 430               	.LM46:
+ 431               	.LFBB6:
+ 432 013a CF93      		push r28
+ 433 013c DF93      		push r29
+ 434               	/* prologue: function */
+ 435               	/* frame size = 0 */
+ 436               	/* stack size = 2 */
+ 437               	.L__stack_usage = 2
+ 438 013e EC01      		movw r28,r24
+ 152:booster.c     **** /*char stmp[16];
+ 153:booster.c     **** sprintf(stmp,"v2: %uV",voltageIn);
+ 154:booster.c     **** debug(stmp);*/
+ 155:booster.c     **** 	if (voltageIn > 330u) {
+ 440               	.LM47:
+ 441 0140 CB34      		cpi r28,75
+ 442 0142 81E0      		ldi r24,1
+ 443 0144 D807      		cpc r29,r24
+ 444 0146 00F0      		brlo .L15
+ 156:booster.c     **** 		error("Cannot set max voltage");
+ 446               	.LM48:
+ 447 0148 80E0      		ldi r24,lo8(.LC1)
+ 448 014a 90E0      		ldi r25,hi8(.LC1)
+ 449 014c 0E94 0000 		call error
+ 450               	.L15:
+ 157:booster.c     **** 	}
+ 158:booster.c     **** 
+ 159:booster.c     **** 	max_voltage = voltageIn;
+ 452               	.LM49:
+ 453 0150 D093 0000 		sts max_voltage+1,r29
+ 454 0154 C093 0000 		sts max_voltage,r28
+ 455               	/* epilogue start */
+ 160:booster.c     **** }
+ 457               	.LM50:
+ 458 0158 DF91      		pop r29
+ 459 015a CF91      		pop r28
+ 460 015c 0895      		ret
+ 462               	.Lscope6:
+ 464               	.global	booster_can_kick
+ 466               	booster_can_kick:
+ 161:booster.c     **** 
+ 162:booster.c     **** uint8_t booster_can_kick(void) {
+ 468               	.LM51:
+ 469               	.LFBB7:
+ 470               	/* prologue: function */
+ 471               	/* frame size = 0 */
+ 472               	/* stack size = 0 */
+ 473               	.L__stack_usage = 0
+ 163:booster.c     **** 	if ( IS_SET(POWER_NORM) && !IS_SET(POWER_INV) ) {
+ 475               	.LM52:
+ 476 015e 999B      		sbis 0x13,1
+ 477 0160 00C0      		rjmp .L18
+ 479               	.LM53:
+ 480 0162 83B3      		in r24,0x13
+ 481 0164 8095      		com r24
+ 482 0166 8170      		andi r24,lo8(1)
+ 483 0168 0895      		ret
+ 484               	.L18:
+ 164:booster.c     **** 		return 1;
+ 165:booster.c     **** 	}
+ 166:booster.c     **** 	else {
+ 167:booster.c     **** 		return 0;
+ 486               	.LM54:
+ 487 016a 80E0      		ldi r24,0
+ 168:booster.c     **** 	}
+ 169:booster.c     **** }
+ 489               	.LM55:
+ 490 016c 0895      		ret
+ 492               	.Lscope7:
+ 493               		.section	.rodata.str1.1
+ 494               	.LC2:
+ 495 001e 4372 6974 		.string	"Critical error. Booster disabled!"
+ 495      6963 616C 
+ 495      2065 7272 
+ 495      6F72 2E20 
+ 495      426F 6F73 
+ 496               	.global	__ltsf2
+ 497               	.LC3:
+ 498 0040 5375 7070 		.string	"Supply voltage is too low. Booster disabled."
+ 498      6C79 2076 
+ 498      6F6C 7461 
+ 498      6765 2069 
+ 498      7320 746F 
+ 499               	.LC4:
+ 500 006d 5375 7070 		.string	"Supply voltage is too low."
+ 500      6C79 2076 
+ 500      6F6C 7461 
+ 500      6765 2069 
+ 500      7320 746F 
+ 501               	.LC5:
+ 502 0088 5265 656E 		.string	"Reenable booster."
+ 502      6162 6C65 
+ 502      2062 6F6F 
+ 502      7374 6572 
+ 502      2E00 
+ 503               	.LC6:
+ 504 009a 4368 6563 		.string	"Check cable between ReKick and booster!"
+ 504      6B20 6361 
+ 504      626C 6520 
+ 504      6265 7477 
+ 504      6565 6E20 
+ 505               	.LC7:
+ 506 00c2 4368 6172 		.string	"Charging took too long. Lock ReKick!"
+ 506      6769 6E67 
+ 506      2074 6F6F 
+ 506      6B20 746F 
+ 506      6F20 6C6F 
+ 507               	.LC8:
+ 508 00e7 4120 6469 		.string	"A disab"
+ 508      7361 6200 
+ 509               	.LC9:
+ 510 00ef 4120 656E 		.string	"A enab"
+ 510      6162 00
+ 511               		.text
+ 513               	.global	booster_ctrl
+ 515               	booster_ctrl:
+ 170:booster.c     **** 
+ 171:booster.c     **** void booster_ctrl(void) {
+ 517               	.LM56:
+ 518               	.LFBB8:
+ 519 016e CF92      		push r12
+ 520 0170 DF92      		push r13
+ 521 0172 EF92      		push r14
+ 522 0174 FF92      		push r15
+ 523 0176 0F93      		push r16
+ 524 0178 1F93      		push r17
+ 525 017a CF93      		push r28
+ 526 017c DF93      		push r29
+ 527               	/* prologue: function */
+ 528               	/* frame size = 0 */
+ 529               	/* stack size = 8 */
+ 530               	.L__stack_usage = 8
+ 172:booster.c     **** 	
+ 173:booster.c     **** 	uint16_t capacitors = get_capacitors_voltage();
+ 532               	.LM57:
+ 533 017e 0E94 0000 		call get_capacitors_voltage
+ 534 0182 EC01      		movw r28,r24
+ 174:booster.c     **** 	uint32_t time_now = timer_get_ms();
+ 536               	.LM58:
+ 537 0184 0E94 0000 		call timer_get_ms
+ 538 0188 6B01      		movw r12,r22
+ 539 018a 7C01      		movw r14,r24
+ 175:booster.c     **** 	static uint32_t last_msg = 0;
+ 176:booster.c     **** 
+ 177:booster.c     **** 	if (time_now < PING_TIMEOUT) {
+ 541               	.LM59:
+ 542 018c 683E      		cpi r22,-24
+ 543 018e 23E0      		ldi r18,3
+ 544 0190 7207      		cpc r23,r18
+ 545 0192 8105      		cpc r24,__zero_reg__
+ 546 0194 9105      		cpc r25,__zero_reg__
+ 547 0196 00F4      		brsh .+2
+ 548 0198 00C0      		rjmp .L19
+ 178:booster.c     **** 		return;
+ 179:booster.c     **** 	}
+ 180:booster.c     **** 	
+ 181:booster.c     **** 	// lock booster if an error occurret
+ 182:booster.c     **** 	if (voltage_error_t.error) {
+ 550               	.LM60:
+ 551 019a 8091 0000 		lds r24,voltage_error_t
+ 552 019e 80FF      		sbrs r24,0
+ 553 01a0 00C0      		rjmp .L22
+ 554               	.LBB17:
+ 183:booster.c     **** 		booster_disable();
+ 556               	.LM61:
+ 557 01a2 0E94 0000 		call booster_disable
+ 184:booster.c     **** 		uint32_t time_now = timer_get_ms();
+ 559               	.LM62:
+ 560 01a6 0E94 0000 		call timer_get_ms
+ 561 01aa 6B01      		movw r12,r22
+ 562 01ac 7C01      		movw r14,r24
+ 185:booster.c     **** 		if (time_now - last_msg > 1000) {
+ 564               	.LM63:
+ 565 01ae 8091 0000 		lds r24,last_msg.1737
+ 566 01b2 9091 0000 		lds r25,last_msg.1737+1
+ 567 01b6 A091 0000 		lds r26,last_msg.1737+2
+ 568 01ba B091 0000 		lds r27,last_msg.1737+3
+ 569 01be A701      		movw r20,r14
+ 570 01c0 9601      		movw r18,r12
+ 571 01c2 281B      		sub r18,r24
+ 572 01c4 390B      		sbc r19,r25
+ 573 01c6 4A0B      		sbc r20,r26
+ 574 01c8 5B0B      		sbc r21,r27
+ 575 01ca DA01      		movw r26,r20
+ 576 01cc C901      		movw r24,r18
+ 577 01ce 893E      		cpi r24,-23
+ 578 01d0 9340      		sbci r25,3
+ 579 01d2 A105      		cpc r26,__zero_reg__
+ 580 01d4 B105      		cpc r27,__zero_reg__
+ 581 01d6 00F4      		brsh .+2
+ 582 01d8 00C0      		rjmp .L19
+ 186:booster.c     **** 			warning("Critical error. Booster disabled!");
+ 584               	.LM64:
+ 585 01da 80E0      		ldi r24,lo8(.LC2)
+ 586 01dc 90E0      		ldi r25,hi8(.LC2)
+ 587 01de 0E94 0000 		call warning
+ 187:booster.c     **** 			last_msg = time_now;
+ 589               	.LM65:
+ 590 01e2 C092 0000 		sts last_msg.1737,r12
+ 591 01e6 D092 0000 		sts last_msg.1737+1,r13
+ 592 01ea E092 0000 		sts last_msg.1737+2,r14
+ 593 01ee F092 0000 		sts last_msg.1737+3,r15
+ 594 01f2 00C0      		rjmp .L19
+ 595               	.L22:
+ 596               	.LBE17:
+ 188:booster.c     **** 		}
+ 189:booster.c     **** 		return;
+ 190:booster.c     **** 	}
+ 191:booster.c     **** 
+ 192:booster.c     **** 	// check supply voltage
+ 193:booster.c     **** 	if (get_supply_voltage() < MINIMUM_SUPPLY_VOLTAGE) {
+ 598               	.LM66:
+ 599 01f4 0E94 0000 		call get_supply_voltage
+ 600 01f8 20E0      		ldi r18,0
+ 601 01fa 30E0      		ldi r19,0
+ 602 01fc 48E8      		ldi r20,lo8(-120)
+ 603 01fe 51E4      		ldi r21,lo8(65)
+ 604 0200 0E94 0000 		call __ltsf2
+ 605 0204 87FF      		sbrs r24,7
+ 606 0206 00C0      		rjmp .L59
+ 194:booster.c     **** 		// disable booster
+ 195:booster.c     **** 		if (timer_get_ms() - voltage_error_t.last_error < 1000)
+ 608               	.LM67:
+ 609 0208 0E94 0000 		call timer_get_ms
+ 610 020c 0091 0000 		lds r16,voltage_error_t+1
+ 611 0210 1091 0000 		lds r17,voltage_error_t+1+1
+ 612 0214 2091 0000 		lds r18,voltage_error_t+1+2
+ 613 0218 3091 0000 		lds r19,voltage_error_t+1+3
+ 614 021c 601B      		sub r22,r16
+ 615 021e 710B      		sbc r23,r17
+ 616 0220 820B      		sbc r24,r18
+ 617 0222 930B      		sbc r25,r19
+ 618 0224 683E      		cpi r22,-24
+ 619 0226 7340      		sbci r23,3
+ 620 0228 8105      		cpc r24,__zero_reg__
+ 621 022a 9105      		cpc r25,__zero_reg__
+ 622 022c 00F4      		brsh .+2
+ 623 022e 00C0      		rjmp .L19
+ 196:booster.c     **** 			return;
+ 197:booster.c     **** 		booster_pwm_lock = 1;
+ 625               	.LM68:
+ 626 0230 81E0      		ldi r24,lo8(1)
+ 627 0232 8093 0000 		sts booster_pwm_lock,r24
+ 198:booster.c     **** 		booster_pwm_disable();
+ 629               	.LM69:
+ 630 0236 0E94 0000 		call booster_pwm_disable
+ 631               	.LBB18:
+ 632               	.LBB19:
+ 634               	.Ltext3:
+ 636               	.LM70:
+ 637 023a 8FE1      		ldi r24,lo8(19999)
+ 638 023c 9EE4      		ldi r25,hi8(19999)
+ 639 023e 0197      		1: sbiw r24,1
+ 640 0240 01F4      		brne 1b
+ 641 0242 00C0      		rjmp .
+ 642 0244 0000      		nop
+ 643               	.LBE19:
+ 644               	.LBE18:
+ 646               	.Ltext4:
+ 199:booster.c     **** 		_delay_ms(5);
+ 200:booster.c     **** 		RESET(POWER_NORM);
+ 648               	.LM71:
+ 649 0246 A998      		cbi 0x15,1
+ 201:booster.c     **** 		RESET(POWER_INV);
+ 651               	.LM72:
+ 652 0248 A898      		cbi 0x15,0
+ 202:booster.c     **** 		voltage_error_t.warn++;
+ 654               	.LM73:
+ 655 024a 2091 0000 		lds r18,voltage_error_t
+ 656 024e 822F      		mov r24,r18
+ 657 0250 8695      		lsr r24
+ 658 0252 8F5F      		subi r24,lo8(-(1))
+ 659 0254 8F77      		andi r24,lo8(127)
+ 660 0256 982F      		mov r25,r24
+ 661 0258 990F      		lsl r25
+ 662 025a 2170      		andi r18,lo8(1)
+ 663 025c 292B      		or r18,r25
+ 664 025e 2093 0000 		sts voltage_error_t,r18
+ 203:booster.c     **** 
+ 204:booster.c     **** 		if (voltage_error_t.warn >= 5) {
+ 666               	.LM74:
+ 667 0262 90E0      		ldi r25,0
+ 668 0264 0597      		sbiw r24,5
+ 669 0266 04F0      		brlt .L26
+ 205:booster.c     **** 			voltage_error_t.error = 1;
+ 671               	.LM75:
+ 672 0268 2160      		ori r18,lo8(1<<0)
+ 673 026a 2093 0000 		sts voltage_error_t,r18
+ 206:booster.c     **** 			booster_disable();
+ 675               	.LM76:
+ 676 026e 0E94 0000 		call booster_disable
+ 207:booster.c     **** 			warning("Supply voltage is too low. Booster disabled.");
+ 678               	.LM77:
+ 679 0272 80E0      		ldi r24,lo8(.LC3)
+ 680 0274 90E0      		ldi r25,hi8(.LC3)
+ 681 0276 00C0      		rjmp .L60
+ 682               	.L26:
+ 208:booster.c     **** 		}
+ 209:booster.c     **** 		else {
+ 210:booster.c     **** 			warning("Supply voltage is too low.");
+ 684               	.LM78:
+ 685 0278 80E0      		ldi r24,lo8(.LC4)
+ 686 027a 90E0      		ldi r25,hi8(.LC4)
+ 687               	.L60:
+ 688 027c 0E94 0000 		call warning
+ 211:booster.c     **** 		}
+ 212:booster.c     **** 
+ 213:booster.c     **** 		voltage_error_t.last_error = timer_get_ms();
+ 690               	.LM79:
+ 691 0280 0E94 0000 		call timer_get_ms
+ 692 0284 6093 0000 		sts voltage_error_t+1,r22
+ 693 0288 7093 0000 		sts voltage_error_t+1+1,r23
+ 694 028c 8093 0000 		sts voltage_error_t+1+2,r24
+ 695 0290 9093 0000 		sts voltage_error_t+1+3,r25
+ 214:booster.c     **** 		
+ 215:booster.c     **** 		return;
+ 697               	.LM80:
+ 698 0294 00C0      		rjmp .L19
+ 699               	.L59:
+ 216:booster.c     **** 	}
+ 217:booster.c     **** 	else {
+ 218:booster.c     **** 		// check for reenable
+ 219:booster.c     **** 		if (voltage_error_t.warn) {
+ 701               	.LM81:
+ 702 0296 8091 0000 		lds r24,voltage_error_t
+ 703 029a 8E7F      		andi r24,lo8(-2)
+ 704 029c 01F0      		breq .L28
+ 220:booster.c     **** 			if (timer_get_ms() - voltage_error_t.last_error < 5000)
+ 706               	.LM82:
+ 707 029e 0E94 0000 		call timer_get_ms
+ 708 02a2 0091 0000 		lds r16,voltage_error_t+1
+ 709 02a6 1091 0000 		lds r17,voltage_error_t+1+1
+ 710 02aa 2091 0000 		lds r18,voltage_error_t+1+2
+ 711 02ae 3091 0000 		lds r19,voltage_error_t+1+3
+ 712 02b2 601B      		sub r22,r16
+ 713 02b4 710B      		sbc r23,r17
+ 714 02b6 820B      		sbc r24,r18
+ 715 02b8 930B      		sbc r25,r19
+ 716 02ba 6838      		cpi r22,-120
+ 717 02bc 7341      		sbci r23,19
+ 718 02be 8105      		cpc r24,__zero_reg__
+ 719 02c0 9105      		cpc r25,__zero_reg__
+ 720 02c2 00F4      		brsh .+2
+ 721 02c4 00C0      		rjmp .L19
+ 221:booster.c     **** 				return;
+ 222:booster.c     **** 			warning("Reenable booster.");
+ 723               	.LM83:
+ 724 02c6 80E0      		ldi r24,lo8(.LC5)
+ 725 02c8 90E0      		ldi r25,hi8(.LC5)
+ 726 02ca 0E94 0000 		call warning
+ 223:booster.c     **** 			SET(POWER_NORM);
+ 728               	.LM84:
+ 729 02ce A99A      		sbi 0x15,1
+ 224:booster.c     **** 			RESET(POWER_INV);
+ 731               	.LM85:
+ 732 02d0 A898      		cbi 0x15,0
+ 225:booster.c     **** 			booster_pwm_lock = 0;
+ 734               	.LM86:
+ 735 02d2 1092 0000 		sts booster_pwm_lock,__zero_reg__
+ 226:booster.c     **** 			voltage_error_t.warn = 0;
+ 737               	.LM87:
+ 738 02d6 8091 0000 		lds r24,voltage_error_t
+ 739 02da 8170      		andi r24,lo8(1)
+ 740 02dc 8093 0000 		sts voltage_error_t,r24
+ 741               	.L28:
+ 227:booster.c     **** 		}
+ 228:booster.c     **** 	}
+ 229:booster.c     **** 		
+ 230:booster.c     **** 	// check how long the charge takes time
+ 231:booster.c     **** 	if (pwm_start > 0) { // pwm enabled?
+ 743               	.LM88:
+ 744 02e0 8091 0000 		lds r24,pwm_start
+ 745 02e4 9091 0000 		lds r25,pwm_start+1
+ 746 02e8 A091 0000 		lds r26,pwm_start+2
+ 747 02ec B091 0000 		lds r27,pwm_start+3
+ 748 02f0 0097      		sbiw r24,0
+ 749 02f2 A105      		cpc r26,__zero_reg__
+ 750 02f4 B105      		cpc r27,__zero_reg__
+ 751 02f6 01F0      		breq .L29
+ 232:booster.c     **** 		if ((time_now - pwm_start) > MAX_BOOST_TIME) {
+ 753               	.LM89:
+ 754 02f8 A701      		movw r20,r14
+ 755 02fa 9601      		movw r18,r12
+ 756 02fc 281B      		sub r18,r24
+ 757 02fe 390B      		sbc r19,r25
+ 758 0300 4A0B      		sbc r20,r26
+ 759 0302 5B0B      		sbc r21,r27
+ 760 0304 DA01      		movw r26,r20
+ 761 0306 C901      		movw r24,r18
+ 762 0308 8133      		cpi r24,49
+ 763 030a 9547      		sbci r25,117
+ 764 030c A105      		cpc r26,__zero_reg__
+ 765 030e B105      		cpc r27,__zero_reg__
+ 766 0310 00F0      		brlo .L29
+ 767               	.LBB20:
+ 233:booster.c     **** 			uint16_t cv = get_capacitors_voltage();
+ 769               	.LM90:
+ 770 0312 0E94 0000 		call get_capacitors_voltage
+ 234:booster.c     **** 			if (cv < 17) {
+ 772               	.LM91:
+ 773 0316 4197      		sbiw r24,17
+ 774 0318 00F4      		brsh .L30
+ 235:booster.c     **** 				warning("Check cable between ReKick and booster!");
+ 776               	.LM92:
+ 777 031a 80E0      		ldi r24,lo8(.LC6)
+ 778 031c 90E0      		ldi r25,hi8(.LC6)
+ 779 031e 00C0      		rjmp .L61
+ 780               	.L30:
+ 236:booster.c     **** 				voltage_error_t.error = 1;
+ 237:booster.c     **** 			}
+ 238:booster.c     **** 			else {
+ 239:booster.c     **** 				warning("Charging took too long. Lock ReKick!");
+ 782               	.LM93:
+ 783 0320 80E0      		ldi r24,lo8(.LC7)
+ 784 0322 90E0      		ldi r25,hi8(.LC7)
+ 785               	.L61:
+ 786 0324 0E94 0000 		call warning
+ 240:booster.c     **** 				voltage_error_t.error = 1;
+ 788               	.LM94:
+ 789 0328 8091 0000 		lds r24,voltage_error_t
+ 790 032c 8160      		ori r24,lo8(1<<0)
+ 791 032e 8093 0000 		sts voltage_error_t,r24
+ 792 0332 00C0      		rjmp .L19
+ 793               	.L29:
+ 794               	.LBE20:
+ 241:booster.c     **** 			}
+ 242:booster.c     **** 			return;
+ 243:booster.c     **** 		}
+ 244:booster.c     **** 	}
+ 245:booster.c     **** 
+ 246:booster.c     **** 	// disables the booster stage if we did not get a heartbeat from the laptop.
+ 247:booster.c     **** 	if (time_now - last_heartbeat < PING_TIMEOUT || manual_mode) {
+ 796               	.LM95:
+ 797 0334 8091 0000 		lds r24,last_heartbeat
+ 798 0338 9091 0000 		lds r25,last_heartbeat+1
+ 799 033c A091 0000 		lds r26,last_heartbeat+2
+ 800 0340 B091 0000 		lds r27,last_heartbeat+3
+ 801 0344 C81A      		sub r12,r24
+ 802 0346 D90A      		sbc r13,r25
+ 803 0348 EA0A      		sbc r14,r26
+ 804 034a FB0A      		sbc r15,r27
+ 805 034c 8091 0000 		lds r24,booster_auto_off
+ 806 0350 48EE      		ldi r20,-24
+ 807 0352 C416      		cp r12,r20
+ 808 0354 43E0      		ldi r20,3
+ 809 0356 D406      		cpc r13,r20
+ 810 0358 E104      		cpc r14,__zero_reg__
+ 811 035a F104      		cpc r15,__zero_reg__
+ 812 035c 00F0      		brlo .L31
+ 814               	.LM96:
+ 815 035e 9091 0000 		lds r25,manual_mode
+ 816 0362 9923      		tst r25
+ 817 0364 01F4      		brne .+2
+ 818 0366 00C0      		rjmp .L32
+ 819               	.L31:
+ 248:booster.c     **** 		if (booster_auto_off) {
+ 821               	.LM97:
+ 822 0368 8111      		cpse r24,__zero_reg__
+ 249:booster.c     **** 			//wait 0.5sec till dc-dc is loaded (interrupt)
+ 250:booster.c     **** 			//char deb[8];
+ 251:booster.c     **** 			//sprintf(deb, "pen%d\n", pending_ms);
+ 252:booster.c     **** 			//debug(deb);
+ 253:booster.c     **** 			booster_enable();
+ 824               	.LM98:
+ 825 036a 0E94 0000 		call booster_enable
+ 826               	.L33:
+ 254:booster.c     **** 		}
+ 255:booster.c     **** 
+ 256:booster.c     **** 		if (!auto_boost)
+ 828               	.LM99:
+ 829 036e 8091 0000 		lds r24,auto_boost
+ 830 0372 8823      		tst r24
+ 831 0374 01F4      		brne .+2
+ 832 0376 00C0      		rjmp .L19
+ 257:booster.c     **** 			return;
+ 258:booster.c     **** 
+ 259:booster.c     **** 		if (capacitors >= max_voltage && PWM_IS_ENABLED) {
+ 834               	.LM100:
+ 835 0378 8091 0000 		lds r24,max_voltage
+ 836 037c 9091 0000 		lds r25,max_voltage+1
+ 837 0380 C817      		cp r28,r24
+ 838 0382 D907      		cpc r29,r25
+ 839 0384 00F0      		brlo .L34
+ 841               	.LM101:
+ 842 0386 0FB4      		in __tmp_reg__,0x2f
+ 843 0388 05FE      		sbrs __tmp_reg__,5
+ 844 038a 00C0      		rjmp .L34
+ 260:booster.c     **** 
+ 261:booster.c     **** 		/*	if(initMeassure == 0) {
+ 262:booster.c     **** 				initMeassure = 1;
+ 263:booster.c     **** 				uint8_t sreg = SREG;
+ 264:booster.c     **** 				cli();
+ 265:booster.c     **** 				pending_ms = 420;
+ 266:booster.c     **** 				SREG=sreg;
+ 267:booster.c     **** 			}
+ 268:booster.c     **** 			else {
+ 269:booster.c     **** 				if( pending_ms <= 0)
+ 270:booster.c     **** 				{
+ 271:booster.c     **** 					initMeassure = 0;
+ 272:booster.c     **** 					if (manual_mode)
+ 273:booster.c     **** 						debug("A disab");
+ 274:booster.c     **** 					booster_pwm_disable();
+ 275:booster.c     **** 				}
+ 276:booster.c     **** 			}
+ 277:booster.c     **** */
+ 278:booster.c     **** 			if (manual_mode)
+ 846               	.LM102:
+ 847 038c 8091 0000 		lds r24,manual_mode
+ 848 0390 8823      		tst r24
+ 849 0392 01F0      		breq .L35
+ 279:booster.c     **** 				debug("A disab");
+ 851               	.LM103:
+ 852 0394 80E0      		ldi r24,lo8(.LC8)
+ 853 0396 90E0      		ldi r25,hi8(.LC8)
+ 854 0398 0E94 0000 		call debug
+ 855               	.L35:
+ 856               	/* epilogue start */
+ 280:booster.c     **** 			booster_pwm_disable();
+ 281:booster.c     **** 		}
+ 282:booster.c     **** 		else if (capacitors <= max_voltage - 10 &&
+ 283:booster.c     **** 				(booster_pwm_lock == 0) &&
+ 284:booster.c     **** 				!PWM_IS_ENABLED) {
+ 285:booster.c     **** 			if (manual_mode)
+ 286:booster.c     **** 				debug("A enab");
+ 287:booster.c     **** 			booster_pwm_enable();
+ 288:booster.c     **** 
+ 289:booster.c     **** 		}
+ 290:booster.c     **** 	}
+ 291:booster.c     **** 	else {
+ 292:booster.c     **** 		// disable everything
+ 293:booster.c     **** 		if (!booster_auto_off) {
+ 294:booster.c     **** 			booster_disable();
+ 295:booster.c     **** 			SET(LED_GREEN1);
+ 296:booster.c     **** 			booster_auto_off = 1;
+ 297:booster.c     **** 		}
+ 298:booster.c     **** 	}
+ 299:booster.c     **** 
+ 300:booster.c     **** 
+ 301:booster.c     **** }
+ 858               	.LM104:
+ 859 039c DF91      		pop r29
+ 860 039e CF91      		pop r28
+ 861 03a0 1F91      		pop r17
+ 862 03a2 0F91      		pop r16
+ 863 03a4 FF90      		pop r15
+ 864 03a6 EF90      		pop r14
+ 865 03a8 DF90      		pop r13
+ 866 03aa CF90      		pop r12
+ 280:booster.c     **** 			booster_pwm_disable();
+ 868               	.LM105:
+ 869 03ac 0C94 0000 		jmp booster_pwm_disable
+ 870               	.L34:
+ 282:booster.c     **** 		else if (capacitors <= max_voltage - 10 &&
+ 872               	.LM106:
+ 873 03b0 0A97      		sbiw r24,10
+ 874 03b2 8C17      		cp r24,r28
+ 875 03b4 9D07      		cpc r25,r29
+ 876 03b6 00F0      		brlo .L19
+ 282:booster.c     **** 		else if (capacitors <= max_voltage - 10 &&
+ 878               	.LM107:
+ 879 03b8 8091 0000 		lds r24,booster_pwm_lock
+ 880 03bc 8111      		cpse r24,__zero_reg__
+ 881 03be 00C0      		rjmp .L19
+ 283:booster.c     **** 				(booster_pwm_lock == 0) &&
+ 883               	.LM108:
+ 884 03c0 0FB4      		in __tmp_reg__,0x2f
+ 885 03c2 05FC      		sbrc __tmp_reg__,5
+ 886 03c4 00C0      		rjmp .L19
+ 285:booster.c     **** 			if (manual_mode)
+ 888               	.LM109:
+ 889 03c6 8091 0000 		lds r24,manual_mode
+ 890 03ca 8823      		tst r24
+ 891 03cc 01F0      		breq .L36
+ 286:booster.c     **** 				debug("A enab");
+ 893               	.LM110:
+ 894 03ce 80E0      		ldi r24,lo8(.LC9)
+ 895 03d0 90E0      		ldi r25,hi8(.LC9)
+ 896 03d2 0E94 0000 		call debug
+ 897               	.L36:
+ 898               	/* epilogue start */
+ 900               	.LM111:
+ 901 03d6 DF91      		pop r29
+ 902 03d8 CF91      		pop r28
+ 903 03da 1F91      		pop r17
+ 904 03dc 0F91      		pop r16
+ 905 03de FF90      		pop r15
+ 906 03e0 EF90      		pop r14
+ 907 03e2 DF90      		pop r13
+ 908 03e4 CF90      		pop r12
+ 287:booster.c     **** 			booster_pwm_enable();
+ 910               	.LM112:
+ 911 03e6 0C94 0000 		jmp booster_pwm_enable
+ 912               	.L32:
+ 293:booster.c     **** 		if (!booster_auto_off) {
+ 914               	.LM113:
+ 915 03ea 8111      		cpse r24,__zero_reg__
+ 916 03ec 00C0      		rjmp .L19
+ 294:booster.c     **** 			booster_disable();
+ 918               	.LM114:
+ 919 03ee 0E94 0000 		call booster_disable
+ 295:booster.c     **** 			SET(LED_GREEN1);
+ 921               	.LM115:
+ 922 03f2 AE9A      		sbi 0x15,6
+ 296:booster.c     **** 			booster_auto_off = 1;
+ 924               	.LM116:
+ 925 03f4 81E0      		ldi r24,lo8(1)
+ 926 03f6 8093 0000 		sts booster_auto_off,r24
+ 927               	.L19:
+ 928               	/* epilogue start */
+ 930               	.LM117:
+ 931 03fa DF91      		pop r29
+ 932 03fc CF91      		pop r28
+ 933 03fe 1F91      		pop r17
+ 934 0400 0F91      		pop r16
+ 935 0402 FF90      		pop r15
+ 936 0404 EF90      		pop r14
+ 937 0406 DF90      		pop r13
+ 938 0408 CF90      		pop r12
+ 939 040a 0895      		ret
+ 949               	.Lscope8:
+ 951               	.global	booster_init
+ 953               	booster_init:
+ 302:booster.c     **** 
+ 303:booster.c     **** // TODO: booster is disabled by default
+ 304:booster.c     **** void booster_init(void) {
+ 955               	.LM118:
+ 956               	.LFBB9:
+ 957               	/* prologue: function */
+ 958               	/* frame size = 0 */
+ 959               	/* stack size = 0 */
+ 960               	.L__stack_usage = 0
+ 305:booster.c     **** 
+ 306:booster.c     **** 	// set PWM channel as output and disable
+ 307:booster.c     **** 	SET_OUTPUT(PWM_BOOST);
+ 962               	.LM119:
+ 963 040c 8C9A      		sbi 0x11,4
+ 308:booster.c     **** 	RESET(PWM_BOOST);
+ 965               	.LM120:
+ 966 040e 9498      		cbi 0x12,4
+ 309:booster.c     **** 
+ 310:booster.c     **** 	// Init PWM but dont connect the output port => disabled
+ 311:booster.c     **** 	// Phase Correct, TOP is OCR1A, Update OCR1x at TOP, prescaler 8
+ 312:booster.c     **** 	// Clear OC1B on Compare Match when upcounting. Set OC1B on Compare
+ 313:booster.c     **** 	// Match when downcounting.
+ 314:booster.c     **** 	TCCR1A = (1 << WGM11) | (1 << WGM10);
+ 968               	.LM121:
+ 969 0410 83E0      		ldi r24,lo8(3)
+ 970 0412 8FBD      		out 0x2f,r24
+ 315:booster.c     **** 	TCCR1B = (1 << WGM13) | (1 << CS10);
+ 972               	.LM122:
+ 973 0414 81E1      		ldi r24,lo8(17)
+ 974 0416 8EBD      		out 0x2e,r24
+ 316:booster.c     **** 
+ 317:booster.c     **** 	// timing for the pwm
+ 318:booster.c     **** 	OCR1A = 104; // Obergrenze -> 13us Periode	
+ 976               	.LM123:
+ 977 0418 88E6      		ldi r24,lo8(104)
+ 978 041a 90E0      		ldi r25,0
+ 979 041c 9BBD      		out 0x2a+1,r25
+ 980 041e 8ABD      		out 0x2a,r24
+ 319:booster.c     **** 	//OCR1B = 52;
+ 320:booster.c     **** 	OCR1B = 32;
+ 982               	.LM124:
+ 983 0420 80E2      		ldi r24,lo8(32)
+ 984 0422 90E0      		ldi r25,0
+ 985 0424 99BD      		out 0x28+1,r25
+ 986 0426 88BD      		out 0x28,r24
+ 321:booster.c     **** 	//OCR1A = 114;
+ 322:booster.c     **** 	//OCR1B = 33;
+ 323:booster.c     **** 
+ 324:booster.c     **** 	// Status LED red shows red
+ 325:booster.c     **** 	SET_OUTPUT(LED_RED1);
+ 988               	.LM125:
+ 989 0428 A79A      		sbi 0x14,7
+ 326:booster.c     **** 	SET(LED_RED1); // PORT on - LED off
+ 991               	.LM126:
+ 992 042a AF9A      		sbi 0x15,7
+ 327:booster.c     **** 	SET_OUTPUT(LED_GREEN1);
+ 994               	.LM127:
+ 995 042c A69A      		sbi 0x14,6
+ 328:booster.c     **** 	SET(LED_GREEN1); // PORT on - LED off
+ 997               	.LM128:
+ 998 042e AE9A      		sbi 0x15,6
+ 329:booster.c     **** 
+ 330:booster.c     **** 	booster_pwm_disable();
+ 1000               	.LM129:
+ 1001 0430 0E94 0000 		call booster_pwm_disable
+ 1002               	.LBB21:
+ 1003               	.LBB22:
+ 1005               	.Ltext5:
+ 1007               	.LM130:
+ 1008 0434 8FE1      		ldi r24,lo8(19999)
+ 1009 0436 9EE4      		ldi r25,hi8(19999)
+ 1010 0438 0197      		1: sbiw r24,1
+ 1011 043a 01F4      		brne 1b
+ 1012 043c 00C0      		rjmp .
+ 1013 043e 0000      		nop
+ 1014               	.LBE22:
+ 1015               	.LBE21:
+ 1017               	.Ltext6:
+ 331:booster.c     **** 	_delay_ms(5);
+ 332:booster.c     **** 
+ 333:booster.c     **** 	// Booster power is disabled per default
+ 334:booster.c     **** 	SET_OUTPUT(POWER_NORM);
+ 1019               	.LM131:
+ 1020 0440 A19A      		sbi 0x14,1
+ 335:booster.c     **** 	SET_OUTPUT(POWER_INV);
+ 1022               	.LM132:
+ 1023 0442 A09A      		sbi 0x14,0
+ 336:booster.c     **** 	RESET(POWER_NORM);
+ 1025               	.LM133:
+ 1026 0444 A998      		cbi 0x15,1
+ 337:booster.c     **** 	RESET(POWER_INV);
+ 1028               	.LM134:
+ 1029 0446 A898      		cbi 0x15,0
+ 338:booster.c     **** 
+ 339:booster.c     **** 	// disable discharging
+ 340:booster.c     **** 	SET_OUTPUT(NOT_DISCHARGE);
+ 1031               	.LM135:
+ 1032 0448 B89A      		sbi 0x17,0
+ 341:booster.c     **** 	SET(NOT_DISCHARGE);
+ 1034               	.LM136:
+ 1035 044a C09A      		sbi 0x18,0
+ 342:booster.c     **** 
+ 343:booster.c     **** 	// per default the booster is off
+ 344:booster.c     **** 	booster_auto_off = 1;
+ 1037               	.LM137:
+ 1038 044c 81E0      		ldi r24,lo8(1)
+ 1039 044e 8093 0000 		sts booster_auto_off,r24
+ 1040 0452 0895      		ret
+ 1042               	.Lscope9:
+ 1043               		.local	last_msg.1737
+ 1044               		.comm	last_msg.1737,4,1
+ 1045               	.global	voltage_error_t
+ 1046               		.section .bss
+ 1049               	voltage_error_t:
+ 1050 0000 0000 0000 		.zero	5
+ 1050      00
+ 1051               	.global	initMeassure
+ 1054               	initMeassure:
+ 1055 0005 00        		.zero	1
+ 1056               	.global	init
+ 1059               	init:
+ 1060 0006 00        		.zero	1
+ 1061               	.global	max_voltage
+ 1062               		.data
+ 1065               	max_voltage:
+ 1066 0000 4A01      		.word	330
+ 1067               	.global	auto_boost
+ 1070               	auto_boost:
+ 1071 0002 01        		.byte	1
+ 1072               	.global	manual_mode
+ 1073               		.section .bss
+ 1076               	manual_mode:
+ 1077 0007 00        		.zero	1
+ 1078               	.global	last_heartbeat
+ 1081               	last_heartbeat:
+ 1082 0008 0000 0000 		.zero	4
+ 1083               	.global	pwm_start
+ 1086               	pwm_start:
+ 1087 000c 0000 0000 		.zero	4
+ 1088               	.global	booster_auto_off
+ 1089               		.data
+ 1092               	booster_auto_off:
+ 1093 0003 01        		.byte	1
+ 1094               	.global	booster_pwm_lock
+ 1097               	booster_pwm_lock:
+ 1098 0004 01        		.byte	1
+ 1099               		.comm	pending_us10,2,1
+ 1111               		.text
+ 1113               	.Letext0:
+ 1114               		.ident	"GCC: (GNU) 4.8.2"
+ 1115               	.global __do_copy_data
+ 1116               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 booster.c
+     /tmp/ccQNoB1i.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccQNoB1i.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccQNoB1i.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccQNoB1i.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccQNoB1i.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccQNoB1i.s:110    .text:0000000000000000 booster_send_info
+     /tmp/ccQNoB1i.s:1049   .bss:0000000000000000 voltage_error_t
+     /tmp/ccQNoB1i.s:218    .text:000000000000008a booster_pwm_enable
+     /tmp/ccQNoB1i.s:1097   .data:0000000000000004 booster_pwm_lock
+     /tmp/ccQNoB1i.s:1086   .bss:000000000000000c pwm_start
+     /tmp/ccQNoB1i.s:257    .text:00000000000000b0 booster_pwm_disable
+     /tmp/ccQNoB1i.s:288    .text:00000000000000cc booster_disable
+     /tmp/ccQNoB1i.s:338    .text:00000000000000ea booster_enable
+     /tmp/ccQNoB1i.s:1059   .bss:0000000000000006 init
+                            *COM*:0000000000000002 pending_us10
+     /tmp/ccQNoB1i.s:1092   .data:0000000000000003 booster_auto_off
+     /tmp/ccQNoB1i.s:428    .text:000000000000013a booster_set_max_voltage
+     /tmp/ccQNoB1i.s:1065   .data:0000000000000000 max_voltage
+     /tmp/ccQNoB1i.s:466    .text:000000000000015e booster_can_kick
+     /tmp/ccQNoB1i.s:515    .text:000000000000016e booster_ctrl
+                             .bss:0000000000000010 last_msg.1737
+     /tmp/ccQNoB1i.s:1081   .bss:0000000000000008 last_heartbeat
+     /tmp/ccQNoB1i.s:1076   .bss:0000000000000007 manual_mode
+     /tmp/ccQNoB1i.s:1070   .data:0000000000000002 auto_boost
+     /tmp/ccQNoB1i.s:953    .text:000000000000040c booster_init
+     /tmp/ccQNoB1i.s:1054   .bss:0000000000000005 initMeassure
+
+UNDEFINED SYMBOLS
+get_supply_raw_voltage
+get_capacitors_voltage
+can_put_cmd
+timer_get_ms
+debug
+error
+__ltsf2
+warning
+get_supply_voltage
+__do_copy_data
+__do_clear_bss

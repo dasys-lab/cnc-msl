@@ -1,0 +1,1852 @@
+   1               		.file	"mcp2515.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 115               	.global	spi_putc
+ 117               	spi_putc:
+   1:mcp2515.c     **** /* Copyright (c) 2007 Fabian Greif
+   2:mcp2515.c     ****  * All rights reserved.
+   3:mcp2515.c     ****  *
+   4:mcp2515.c     ****  * Redistribution and use in source and binary forms, with or without
+   5:mcp2515.c     ****  * modification, are permitted provided that the following conditions
+   6:mcp2515.c     ****  * are met:
+   7:mcp2515.c     ****  *
+   8:mcp2515.c     ****  * 1. Redistributions of source code must retain the above copyright
+   9:mcp2515.c     ****  *    notice, this list of conditions and the following disclaimer.
+  10:mcp2515.c     ****  * 2. Redistributions in binary form must reproduce the above copyright
+  11:mcp2515.c     ****  *    notice, this list of conditions and the following disclaimer in the
+  12:mcp2515.c     ****  *    documentation and/or other materials provided with the distribution.
+  13:mcp2515.c     ****  *
+  14:mcp2515.c     ****  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
+  15:mcp2515.c     ****  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  16:mcp2515.c     ****  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  17:mcp2515.c     ****  * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+  18:mcp2515.c     ****  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  19:mcp2515.c     ****  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  20:mcp2515.c     ****  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  21:mcp2515.c     ****  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  22:mcp2515.c     ****  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  23:mcp2515.c     ****  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  24:mcp2515.c     ****  * SUCH DAMAGE.
+  25:mcp2515.c     ****  */
+  26:mcp2515.c     **** // ----------------------------------------------------------------------------
+  27:mcp2515.c     **** 
+  28:mcp2515.c     **** 
+  29:mcp2515.c     **** #include <avr/io.h>
+  30:mcp2515.c     **** #include <util/delay.h>
+  31:mcp2515.c     **** #include <avr/pgmspace.h>
+  32:mcp2515.c     **** 
+  33:mcp2515.c     **** #include "mcp2515.h"
+  34:mcp2515.c     **** #include "mcp2515_defs.h"
+  35:mcp2515.c     **** 
+  36:mcp2515.c     **** #include "global.h"
+  37:mcp2515.c     **** #include "defaults.h"
+  38:mcp2515.c     **** 
+  39:mcp2515.c     **** // -------------------------------------------------------------------------
+  40:mcp2515.c     **** // Schreibt/liest ein Byte ueber den Hardware SPI Bus
+  41:mcp2515.c     **** 
+  42:mcp2515.c     **** uint8_t spi_putc( uint8_t data )
+  43:mcp2515.c     **** {
+ 119               	.LM0:
+ 120               	.LFBB1:
+ 121               	/* prologue: function */
+ 122               	/* frame size = 0 */
+ 123               	/* stack size = 0 */
+ 124               	.L__stack_usage = 0
+  44:mcp2515.c     **** 	// put byte in send-buffer
+  45:mcp2515.c     **** 	SPDR = data;
+ 126               	.LM1:
+ 127 0000 8FB9      		out 0xf,r24
+ 128               	.L3:
+  46:mcp2515.c     **** 	
+  47:mcp2515.c     **** 	// wait until byte was send
+  48:mcp2515.c     **** 	while( !( SPSR & (1<<SPIF) ) )
+ 130               	.LM2:
+ 131 0002 779B      		sbis 0xe,7
+ 132 0004 00C0      		rjmp .L3
+  49:mcp2515.c     **** 		;
+  50:mcp2515.c     **** 	
+  51:mcp2515.c     **** 	return SPDR;
+ 134               	.LM3:
+ 135 0006 8FB1      		in r24,0xf
+  52:mcp2515.c     **** }
+ 137               	.LM4:
+ 138 0008 0895      		ret
+ 140               	.Lscope1:
+ 144               	.global	mcp2515_write_register
+ 146               	mcp2515_write_register:
+  53:mcp2515.c     **** 
+  54:mcp2515.c     **** // -------------------------------------------------------------------------
+  55:mcp2515.c     **** void mcp2515_write_register( uint8_t adress, uint8_t data )
+  56:mcp2515.c     **** {
+ 148               	.LM5:
+ 149               	.LFBB2:
+ 150 000a 1F93      		push r17
+ 151 000c CF93      		push r28
+ 152 000e DF93      		push r29
+ 153 0010 1F92      		push __zero_reg__
+ 154 0012 CDB7      		in r28,__SP_L__
+ 155 0014 DEB7      		in r29,__SP_H__
+ 156               	/* prologue: function */
+ 157               	/* frame size = 1 */
+ 158               	/* stack size = 4 */
+ 159               	.L__stack_usage = 4
+ 160 0016 182F      		mov r17,r24
+  57:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 162               	.LM6:
+ 163 0018 C498      		cbi 0x18,4
+  58:mcp2515.c     **** 	
+  59:mcp2515.c     **** 	spi_putc(SPI_WRITE);
+ 165               	.LM7:
+ 166 001a 82E0      		ldi r24,lo8(2)
+ 167 001c 6983      		std Y+1,r22
+ 168 001e 0E94 0000 		call spi_putc
+  60:mcp2515.c     **** 	spi_putc(adress);
+ 170               	.LM8:
+ 171 0022 812F      		mov r24,r17
+ 172 0024 0E94 0000 		call spi_putc
+  61:mcp2515.c     **** 	spi_putc(data);
+ 174               	.LM9:
+ 175 0028 6981      		ldd r22,Y+1
+ 176 002a 862F      		mov r24,r22
+ 177 002c 0E94 0000 		call spi_putc
+  62:mcp2515.c     **** 	
+  63:mcp2515.c     **** 	SET(MCP2515_CS);
+ 179               	.LM10:
+ 180 0030 C49A      		sbi 0x18,4
+ 181               	/* epilogue start */
+  64:mcp2515.c     **** }
+ 183               	.LM11:
+ 184 0032 0F90      		pop __tmp_reg__
+ 185 0034 DF91      		pop r29
+ 186 0036 CF91      		pop r28
+ 187 0038 1F91      		pop r17
+ 188 003a 0895      		ret
+ 190               	.Lscope2:
+ 193               	.global	mcp2515_read_register
+ 195               	mcp2515_read_register:
+  65:mcp2515.c     **** 
+  66:mcp2515.c     **** // -------------------------------------------------------------------------
+  67:mcp2515.c     **** uint8_t mcp2515_read_register(uint8_t adress)
+  68:mcp2515.c     **** {
+ 197               	.LM12:
+ 198               	.LFBB3:
+ 199 003c CF93      		push r28
+ 200               	/* prologue: function */
+ 201               	/* frame size = 0 */
+ 202               	/* stack size = 1 */
+ 203               	.L__stack_usage = 1
+ 204 003e C82F      		mov r28,r24
+  69:mcp2515.c     **** 	uint8_t data;
+  70:mcp2515.c     **** 	
+  71:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 206               	.LM13:
+ 207 0040 C498      		cbi 0x18,4
+  72:mcp2515.c     **** 	
+  73:mcp2515.c     **** 	spi_putc(SPI_READ);
+ 209               	.LM14:
+ 210 0042 83E0      		ldi r24,lo8(3)
+ 211 0044 0E94 0000 		call spi_putc
+  74:mcp2515.c     **** 	spi_putc(adress);
+ 213               	.LM15:
+ 214 0048 8C2F      		mov r24,r28
+ 215 004a 0E94 0000 		call spi_putc
+  75:mcp2515.c     **** 	
+  76:mcp2515.c     **** 	data = spi_putc(0xff);	
+ 217               	.LM16:
+ 218 004e 8FEF      		ldi r24,lo8(-1)
+ 219 0050 0E94 0000 		call spi_putc
+  77:mcp2515.c     **** 	
+  78:mcp2515.c     **** 	SET(MCP2515_CS);
+ 221               	.LM17:
+ 222 0054 C49A      		sbi 0x18,4
+ 223               	/* epilogue start */
+  79:mcp2515.c     **** 	
+  80:mcp2515.c     **** 	return data;
+  81:mcp2515.c     **** }
+ 225               	.LM18:
+ 226 0056 CF91      		pop r28
+ 227 0058 0895      		ret
+ 229               	.Lscope3:
+ 234               	.global	mcp2515_bit_modify
+ 236               	mcp2515_bit_modify:
+  82:mcp2515.c     **** 
+  83:mcp2515.c     **** // -------------------------------------------------------------------------
+  84:mcp2515.c     **** void mcp2515_bit_modify(uint8_t adress, uint8_t mask, uint8_t data)
+  85:mcp2515.c     **** {
+ 238               	.LM19:
+ 239               	.LFBB4:
+ 240 005a 1F93      		push r17
+ 241 005c CF93      		push r28
+ 242 005e DF93      		push r29
+ 243 0060 00D0      		rcall .
+ 244 0062 CDB7      		in r28,__SP_L__
+ 245 0064 DEB7      		in r29,__SP_H__
+ 246               	/* prologue: function */
+ 247               	/* frame size = 2 */
+ 248               	/* stack size = 5 */
+ 249               	.L__stack_usage = 5
+ 250 0066 182F      		mov r17,r24
+  86:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 252               	.LM20:
+ 253 0068 C498      		cbi 0x18,4
+  87:mcp2515.c     **** 	
+  88:mcp2515.c     **** 	spi_putc(SPI_BIT_MODIFY);
+ 255               	.LM21:
+ 256 006a 85E0      		ldi r24,lo8(5)
+ 257 006c 4A83      		std Y+2,r20
+ 258 006e 6983      		std Y+1,r22
+ 259 0070 0E94 0000 		call spi_putc
+  89:mcp2515.c     **** 	spi_putc(adress);
+ 261               	.LM22:
+ 262 0074 812F      		mov r24,r17
+ 263 0076 0E94 0000 		call spi_putc
+  90:mcp2515.c     **** 	spi_putc(mask);
+ 265               	.LM23:
+ 266 007a 6981      		ldd r22,Y+1
+ 267 007c 862F      		mov r24,r22
+ 268 007e 0E94 0000 		call spi_putc
+  91:mcp2515.c     **** 	spi_putc(data);
+ 270               	.LM24:
+ 271 0082 4A81      		ldd r20,Y+2
+ 272 0084 842F      		mov r24,r20
+ 273 0086 0E94 0000 		call spi_putc
+  92:mcp2515.c     **** 	
+  93:mcp2515.c     **** 	SET(MCP2515_CS);
+ 275               	.LM25:
+ 276 008a C49A      		sbi 0x18,4
+ 277               	/* epilogue start */
+  94:mcp2515.c     **** }
+ 279               	.LM26:
+ 280 008c 0F90      		pop __tmp_reg__
+ 281 008e 0F90      		pop __tmp_reg__
+ 282 0090 DF91      		pop r29
+ 283 0092 CF91      		pop r28
+ 284 0094 1F91      		pop r17
+ 285 0096 0895      		ret
+ 287               	.Lscope4:
+ 290               	.global	mcp2515_read_status
+ 292               	mcp2515_read_status:
+  95:mcp2515.c     **** 
+  96:mcp2515.c     **** // ----------------------------------------------------------------------------
+  97:mcp2515.c     **** uint8_t mcp2515_read_status(uint8_t type)
+  98:mcp2515.c     **** {
+ 294               	.LM27:
+ 295               	.LFBB5:
+ 296               	/* prologue: function */
+ 297               	/* frame size = 0 */
+ 298               	/* stack size = 0 */
+ 299               	.L__stack_usage = 0
+  99:mcp2515.c     **** 	uint8_t data;
+ 100:mcp2515.c     **** 	
+ 101:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 301               	.LM28:
+ 302 0098 C498      		cbi 0x18,4
+ 102:mcp2515.c     **** 	
+ 103:mcp2515.c     **** 	spi_putc(type);
+ 304               	.LM29:
+ 305 009a 0E94 0000 		call spi_putc
+ 104:mcp2515.c     **** 	data = spi_putc(0xff);
+ 307               	.LM30:
+ 308 009e 8FEF      		ldi r24,lo8(-1)
+ 309 00a0 0E94 0000 		call spi_putc
+ 105:mcp2515.c     **** 	
+ 106:mcp2515.c     **** 	SET(MCP2515_CS);
+ 311               	.LM31:
+ 312 00a4 C49A      		sbi 0x18,4
+ 107:mcp2515.c     **** 	
+ 108:mcp2515.c     **** 	return data;
+ 109:mcp2515.c     **** }
+ 314               	.LM32:
+ 315 00a6 0895      		ret
+ 317               	.Lscope5:
+ 319               	.global	mcp2515_init
+ 321               	mcp2515_init:
+ 110:mcp2515.c     **** 
+ 111:mcp2515.c     **** // -------------------------------------------------------------------------
+ 112:mcp2515.c     **** bool mcp2515_init(void)
+ 113:mcp2515.c     **** {
+ 323               	.LM33:
+ 324               	.LFBB6:
+ 325               	/* prologue: function */
+ 326               	/* frame size = 0 */
+ 327               	/* stack size = 0 */
+ 328               	.L__stack_usage = 0
+ 114:mcp2515.c     **** 	SET(MCP2515_CS);
+ 330               	.LM34:
+ 331 00a8 C49A      		sbi 0x18,4
+ 115:mcp2515.c     **** 	SET_OUTPUT(MCP2515_CS);
+ 333               	.LM35:
+ 334 00aa BC9A      		sbi 0x17,4
+ 116:mcp2515.c     **** 	
+ 117:mcp2515.c     **** 	RESET(P_SCK);
+ 336               	.LM36:
+ 337 00ac C798      		cbi 0x18,7
+ 118:mcp2515.c     **** 	RESET(P_MOSI);
+ 339               	.LM37:
+ 340 00ae C598      		cbi 0x18,5
+ 119:mcp2515.c     **** 	RESET(P_MISO);
+ 342               	.LM38:
+ 343 00b0 C698      		cbi 0x18,6
+ 120:mcp2515.c     **** 	
+ 121:mcp2515.c     **** 	SET_OUTPUT(P_SCK);
+ 345               	.LM39:
+ 346 00b2 BF9A      		sbi 0x17,7
+ 122:mcp2515.c     **** 	SET_OUTPUT(P_MOSI);
+ 348               	.LM40:
+ 349 00b4 BD9A      		sbi 0x17,5
+ 123:mcp2515.c     **** 	SET_INPUT(P_MISO);
+ 351               	.LM41:
+ 352 00b6 BE98      		cbi 0x17,6
+ 124:mcp2515.c     **** 	
+ 125:mcp2515.c     **** 	SET_INPUT(MCP2515_INT);
+ 354               	.LM42:
+ 355 00b8 BA98      		cbi 0x17,2
+ 126:mcp2515.c     **** 	SET(MCP2515_INT);
+ 357               	.LM43:
+ 358 00ba C29A      		sbi 0x18,2
+ 127:mcp2515.c     **** 	
+ 128:mcp2515.c     **** 	// active SPI master interface
+ 129:mcp2515.c     **** 	SPCR = (1<<SPE)|(1<<MSTR) | (0<<SPR1)|(1<<SPR0);
+ 360               	.LM44:
+ 361 00bc 81E5      		ldi r24,lo8(81)
+ 362 00be 8DB9      		out 0xd,r24
+ 130:mcp2515.c     **** 	SPSR = 0;
+ 364               	.LM45:
+ 365 00c0 1EB8      		out 0xe,__zero_reg__
+ 131:mcp2515.c     **** 	
+ 132:mcp2515.c     **** 	// reset MCP2515 by software reset.
+ 133:mcp2515.c     **** 	// After this he is in configuration mode.
+ 134:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 367               	.LM46:
+ 368 00c2 C498      		cbi 0x18,4
+ 135:mcp2515.c     **** 	spi_putc(SPI_RESET);
+ 370               	.LM47:
+ 371 00c4 80EC      		ldi r24,lo8(-64)
+ 372 00c6 0E94 0000 		call spi_putc
+ 136:mcp2515.c     **** 	SET(MCP2515_CS);
+ 374               	.LM48:
+ 375 00ca C49A      		sbi 0x18,4
+ 376               	.LBB10:
+ 377               	.LBB11:
+ 379               	.Ltext1:
+   1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/avr/include/util/delay.h **** 
+   6:/usr/lib/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/avr/include/util/delay.h **** 
+   9:/usr/lib/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/avr/include/util/delay.h **** 
+  12:/usr/lib/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/avr/include/util/delay.h **** 
+  17:/usr/lib/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/avr/include/util/delay.h **** 
+  21:/usr/lib/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/avr/include/util/delay.h **** 
+  33:/usr/lib/avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/avr/include/util/delay.h **** 
+  35:/usr/lib/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/avr/include/util/delay.h **** 
+  38:/usr/lib/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/avr/include/util/delay.h **** #endif
+  41:/usr/lib/avr/include/util/delay.h **** 
+  42:/usr/lib/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/avr/include/util/delay.h **** 
+  46:/usr/lib/avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/avr/include/util/delay.h ****     \code
+  49:/usr/lib/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/avr/include/util/delay.h **** 
+  54:/usr/lib/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/avr/include/util/delay.h ****     used.
+  58:/usr/lib/avr/include/util/delay.h **** 
+  59:/usr/lib/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/avr/include/util/delay.h **** 
+  68:/usr/lib/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/avr/include/util/delay.h **** 
+  77:/usr/lib/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/avr/include/util/delay.h **** 
+  81:/usr/lib/avr/include/util/delay.h **** */
+  82:/usr/lib/avr/include/util/delay.h **** 
+  83:/usr/lib/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/avr/include/util/delay.h **** #endif
+  87:/usr/lib/avr/include/util/delay.h **** 
+  88:/usr/lib/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/avr/include/util/delay.h **** #endif
+  93:/usr/lib/avr/include/util/delay.h **** 
+  94:/usr/lib/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/avr/include/util/delay.h **** #endif
+  97:/usr/lib/avr/include/util/delay.h **** 
+  98:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/avr/include/util/delay.h **** #endif
+ 103:/usr/lib/avr/include/util/delay.h **** 
+ 104:/usr/lib/avr/include/util/delay.h **** /**
+ 105:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/avr/include/util/delay.h **** 
+ 107:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/avr/include/util/delay.h **** 
+ 109:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/avr/include/util/delay.h **** 
+ 112:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/avr/include/util/delay.h **** 
+ 114:/usr/lib/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/avr/include/util/delay.h **** 
+ 120:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/avr/include/util/delay.h **** 
+ 125:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/avr/include/util/delay.h **** 
+ 129:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/avr/include/util/delay.h **** 
+ 132:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/avr/include/util/delay.h **** 
+ 140:/usr/lib/avr/include/util/delay.h ****  */
+ 141:/usr/lib/avr/include/util/delay.h **** void
+ 142:/usr/lib/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/avr/include/util/delay.h **** {
+ 144:/usr/lib/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/avr/include/util/delay.h **** 
+ 153:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/avr/include/util/delay.h **** 
+ 156:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/avr/include/util/delay.h **** 
+ 159:/usr/lib/avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/avr/include/util/delay.h **** 
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 165:/usr/lib/avr/include/util/delay.h **** 
+ 166:/usr/lib/avr/include/util/delay.h **** #else
+ 167:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 4e3) * __ms;
+ 168:/usr/lib/avr/include/util/delay.h **** 	if (__tmp < 1.0)
+ 169:/usr/lib/avr/include/util/delay.h **** 		__ticks = 1;
+ 170:/usr/lib/avr/include/util/delay.h **** 	else if (__tmp > 65535)
+ 171:/usr/lib/avr/include/util/delay.h **** 	{
+ 172:/usr/lib/avr/include/util/delay.h **** 		//	__ticks = requested delay in 1/10 ms
+ 173:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t) (__ms * 10.0);
+ 174:/usr/lib/avr/include/util/delay.h **** 		while(__ticks)
+ 175:/usr/lib/avr/include/util/delay.h **** 		{
+ 176:/usr/lib/avr/include/util/delay.h **** 			// wait 1/10 ms
+ 177:/usr/lib/avr/include/util/delay.h **** 			_delay_loop_2(((F_CPU) / 4e3) / 10);
+ 178:/usr/lib/avr/include/util/delay.h **** 			__ticks --;
+ 179:/usr/lib/avr/include/util/delay.h **** 		}
+ 180:/usr/lib/avr/include/util/delay.h **** 		return;
+ 181:/usr/lib/avr/include/util/delay.h **** 	}
+ 182:/usr/lib/avr/include/util/delay.h **** 	else
+ 183:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t)__tmp;
+ 184:/usr/lib/avr/include/util/delay.h **** 	_delay_loop_2(__ticks);
+ 185:/usr/lib/avr/include/util/delay.h **** #endif
+ 186:/usr/lib/avr/include/util/delay.h **** }
+ 187:/usr/lib/avr/include/util/delay.h **** 
+ 188:/usr/lib/avr/include/util/delay.h **** /**
+ 189:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 190:/usr/lib/avr/include/util/delay.h **** 
+ 191:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __us microseconds, using _delay_loop_1().
+ 192:/usr/lib/avr/include/util/delay.h **** 
+ 193:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 194:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 195:/usr/lib/avr/include/util/delay.h **** 
+ 196:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 768 us / F_CPU in MHz.
+ 197:/usr/lib/avr/include/util/delay.h **** 
+ 198:/usr/lib/avr/include/util/delay.h ****    If the user requests a delay greater than the maximal possible one,
+ 199:/usr/lib/avr/include/util/delay.h ****    _delay_us() will automatically call _delay_ms() instead.  The user
+ 200:/usr/lib/avr/include/util/delay.h ****    will not be informed about this case.
+ 201:/usr/lib/avr/include/util/delay.h **** 
+ 202:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 203:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 us/ F_CPU in MHz. For
+ 204:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflow results in
+ 205:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0us.
+ 206:/usr/lib/avr/include/util/delay.h ****   
+ 207:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 208:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 209:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 210:/usr/lib/avr/include/util/delay.h **** 
+ 211:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 212:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 213:/usr/lib/avr/include/util/delay.h ****  
+ 214:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_us(double __us) with 
+ 215:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible.
+ 216:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 217:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 218:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 219:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 220:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 221:/usr/lib/avr/include/util/delay.h **** 
+ 222:/usr/lib/avr/include/util/delay.h ****  */
+ 223:/usr/lib/avr/include/util/delay.h **** void
+ 224:/usr/lib/avr/include/util/delay.h **** _delay_us(double __us)
+ 225:/usr/lib/avr/include/util/delay.h **** {
+ 226:/usr/lib/avr/include/util/delay.h **** 	uint8_t __ticks;
+ 227:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 228:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 229:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 230:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 231:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 232:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 233:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e6) * __us;
+ 234:/usr/lib/avr/include/util/delay.h **** 
+ 235:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 236:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 237:/usr/lib/avr/include/util/delay.h **** 
+ 238:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 239:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 240:/usr/lib/avr/include/util/delay.h **** 
+ 241:/usr/lib/avr/include/util/delay.h **** 	#else
+ 242:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 243:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 244:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 245:/usr/lib/avr/include/util/delay.h **** 
+ 246:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 381               	.LM49:
+ 382 00cc 85E3      		ldi r24,lo8(53)
+ 383 00ce 8A95      		1: dec r24
+ 384 00d0 01F4      		brne 1b
+ 385 00d2 0000      		nop
+ 386               	.LBE11:
+ 387               	.LBE10:
+ 389               	.Ltext2:
+ 137:mcp2515.c     **** 	
+ 138:mcp2515.c     **** 	// wait a little bit until the MCP2515 has restarted
+ 139:mcp2515.c     **** 	_delay_us(10);
+ 140:mcp2515.c     **** 	
+ 141:mcp2515.c     **** 	// load CNF1..3 Register
+ 142:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 391               	.LM50:
+ 392 00d4 C498      		cbi 0x18,4
+ 143:mcp2515.c     **** 	spi_putc(SPI_WRITE);
+ 394               	.LM51:
+ 395 00d6 82E0      		ldi r24,lo8(2)
+ 396 00d8 0E94 0000 		call spi_putc
+ 144:mcp2515.c     **** 	spi_putc(CNF3);
+ 398               	.LM52:
+ 399 00dc 88E2      		ldi r24,lo8(40)
+ 400 00de 0E94 0000 		call spi_putc
+ 145:mcp2515.c     **** 	
+ 146:mcp2515.c     **** 	spi_putc((1<<PHSEG21));		// Bitrate 125 kbps at 16 MHz
+ 402               	.LM53:
+ 403 00e2 82E0      		ldi r24,lo8(2)
+ 404 00e4 0E94 0000 		call spi_putc
+ 147:mcp2515.c     **** 	spi_putc((1<<BTLMODE)|(1<<PHSEG11));
+ 406               	.LM54:
+ 407 00e8 80E9      		ldi r24,lo8(-112)
+ 408 00ea 0E94 0000 		call spi_putc
+ 148:mcp2515.c     **** 
+ 149:mcp2515.c     **** 	//ENDY: Hier kann man Bitrate ändern -> einfach ersten 2 Klammren weg
+ 150:mcp2515.c     **** 	spi_putc(0);
+ 410               	.LM55:
+ 411 00ee 80E0      		ldi r24,0
+ 412 00f0 0E94 0000 		call spi_putc
+ 151:mcp2515.c     **** 	
+ 152:mcp2515.c     **** 	// activate interrupts
+ 153:mcp2515.c     **** 	spi_putc((1<<RX1IE)|(1<<RX0IE));
+ 414               	.LM56:
+ 415 00f4 83E0      		ldi r24,lo8(3)
+ 416 00f6 0E94 0000 		call spi_putc
+ 154:mcp2515.c     **** 	SET(MCP2515_CS);
+ 418               	.LM57:
+ 419 00fa C49A      		sbi 0x18,4
+ 155:mcp2515.c     **** 	
+ 156:mcp2515.c     **** 	// test if we could read back the value => is the chip accessible?
+ 157:mcp2515.c     **** 	if (mcp2515_read_register(CNF1) != 0) {
+ 421               	.LM58:
+ 422 00fc 8AE2      		ldi r24,lo8(42)
+ 423 00fe 0E94 0000 		call mcp2515_read_register
+ 424 0102 8111      		cpse r24,__zero_reg__
+ 425 0104 00C0      		rjmp .L11
+ 158:mcp2515.c     **** 		return false;
+ 159:mcp2515.c     **** 	}
+ 160:mcp2515.c     **** 	
+ 161:mcp2515.c     **** 	// deaktivate the RXnBF Pins (High Impedance State)
+ 162:mcp2515.c     **** 	mcp2515_write_register(BFPCTRL, 0);
+ 427               	.LM59:
+ 428 0106 60E0      		ldi r22,0
+ 429 0108 8CE0      		ldi r24,lo8(12)
+ 430 010a 0E94 0000 		call mcp2515_write_register
+ 163:mcp2515.c     **** 	
+ 164:mcp2515.c     **** 	// set TXnRTS as inputs
+ 165:mcp2515.c     **** 	mcp2515_write_register(TXRTSCTRL, 0);
+ 432               	.LM60:
+ 433 010e 60E0      		ldi r22,0
+ 434 0110 8DE0      		ldi r24,lo8(13)
+ 435 0112 0E94 0000 		call mcp2515_write_register
+ 166:mcp2515.c     **** 	
+ 167:mcp2515.c     **** 	// turn off filters => receive any message
+ 168:mcp2515.c     **** 	//mcp2515_write_register(RXB0CTRL, (1<<RXM1)|(1<<RXM0));
+ 169:mcp2515.c     **** 	//mcp2515_write_register(RXB1CTRL, (1<<RXM1)|(1<<RXM0));
+ 170:mcp2515.c     **** 
+ 171:mcp2515.c     **** 	// FILTERING ENABLED
+ 172:mcp2515.c     **** 	// RXM1 && !RXM0: Receive only valid messages with extended identifiers that meet filter criteria
+ 173:mcp2515.c     **** 	// BUKT: Rollover Enable bit -> Data from buffer 0 to buffer1
+ 174:mcp2515.c     **** 	// ONLY FILTER 0 is enabled
+ 175:mcp2515.c     **** 	mcp2515_write_register(RXB0CTRL, (1<<RXM1)|(1<<BUKT));
+ 437               	.LM61:
+ 438 0116 64E4      		ldi r22,lo8(68)
+ 439 0118 80E6      		ldi r24,lo8(96)
+ 440 011a 0E94 0000 		call mcp2515_write_register
+ 176:mcp2515.c     **** 	mcp2515_write_register(RXB1CTRL, (1<<RXM1));
+ 442               	.LM62:
+ 443 011e 60E4      		ldi r22,lo8(64)
+ 444 0120 80E7      		ldi r24,lo8(112)
+ 445 0122 0E94 0000 		call mcp2515_write_register
+ 177:mcp2515.c     **** 	
+ 178:mcp2515.c     **** 	// reset device to normal mode
+ 179:mcp2515.c     **** 	mcp2515_write_register(CANCTRL, 0);
+ 447               	.LM63:
+ 448 0126 60E0      		ldi r22,0
+ 449 0128 8FE0      		ldi r24,lo8(15)
+ 450 012a 0E94 0000 		call mcp2515_write_register
+ 180:mcp2515.c     **** 	
+ 181:mcp2515.c     **** 	return true;
+ 452               	.LM64:
+ 453 012e 81E0      		ldi r24,lo8(1)
+ 454 0130 0895      		ret
+ 455               	.L11:
+ 158:mcp2515.c     **** 		return false;
+ 457               	.LM65:
+ 458 0132 80E0      		ldi r24,0
+ 182:mcp2515.c     **** }
+ 460               	.LM66:
+ 461 0134 0895      		ret
+ 463               	.Lscope6:
+ 465               	.global	mcp2515_check_message
+ 467               	mcp2515_check_message:
+ 183:mcp2515.c     **** 
+ 184:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 185:mcp2515.c     **** // check if there are any new messages waiting
+ 186:mcp2515.c     **** 
+ 187:mcp2515.c     **** uint8_t mcp2515_check_message(void) {
+ 469               	.LM67:
+ 470               	.LFBB7:
+ 471               	/* prologue: function */
+ 472               	/* frame size = 0 */
+ 473               	/* stack size = 0 */
+ 474               	.L__stack_usage = 0
+ 188:mcp2515.c     **** 	return (!IS_SET(MCP2515_INT));
+ 476               	.LM68:
+ 477 0136 86B3      		in r24,0x16
+ 478 0138 82FB      		bst r24,2
+ 479 013a 8827      		clr r24
+ 480 013c 80F9      		bld r24,0
+ 189:mcp2515.c     **** }
+ 482               	.LM69:
+ 483 013e 91E0      		ldi r25,lo8(1)
+ 484 0140 8927      		eor r24,r25
+ 485 0142 0895      		ret
+ 487               	.Lscope7:
+ 489               	.global	mcp2515_check_free_buffer
+ 491               	mcp2515_check_free_buffer:
+ 190:mcp2515.c     **** 
+ 191:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 192:mcp2515.c     **** // check if there is a free buffer to send messages
+ 193:mcp2515.c     **** 
+ 194:mcp2515.c     **** bool mcp2515_check_free_buffer(void)
+ 195:mcp2515.c     **** {
+ 493               	.LM70:
+ 494               	.LFBB8:
+ 495               	/* prologue: function */
+ 496               	/* frame size = 0 */
+ 497               	/* stack size = 0 */
+ 498               	.L__stack_usage = 0
+ 196:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 500               	.LM71:
+ 501 0144 80EA      		ldi r24,lo8(-96)
+ 502 0146 0E94 0000 		call mcp2515_read_status
+ 197:mcp2515.c     **** 	
+ 198:mcp2515.c     **** 	if ((status & 0x54) == 0x54) {
+ 504               	.LM72:
+ 505 014a 982F      		mov r25,r24
+ 506 014c 9475      		andi r25,lo8(84)
+ 507 014e 81E0      		ldi r24,lo8(1)
+ 508 0150 9435      		cpi r25,lo8(84)
+ 509 0152 01F4      		brne .L14
+ 510 0154 80E0      		ldi r24,0
+ 511               	.L14:
+ 199:mcp2515.c     **** 		// all buffers used
+ 200:mcp2515.c     **** 		return false;
+ 201:mcp2515.c     **** 	}
+ 202:mcp2515.c     **** 	
+ 203:mcp2515.c     **** 	return true;
+ 204:mcp2515.c     **** }
+ 513               	.LM73:
+ 514 0156 0895      		ret
+ 516               	.Lscope8:
+ 519               	.global	mcp2515_get_message
+ 521               	mcp2515_get_message:
+ 205:mcp2515.c     **** 
+ 206:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 207:mcp2515.c     **** uint8_t mcp2515_get_message(tCAN *message)
+ 208:mcp2515.c     **** {
+ 523               	.LM74:
+ 524               	.LFBB9:
+ 525 0158 DF92      		push r13
+ 526 015a EF92      		push r14
+ 527 015c FF92      		push r15
+ 528 015e 0F93      		push r16
+ 529 0160 1F93      		push r17
+ 530 0162 CF93      		push r28
+ 531 0164 DF93      		push r29
+ 532 0166 1F92      		push __zero_reg__
+ 533 0168 CDB7      		in r28,__SP_L__
+ 534 016a DEB7      		in r29,__SP_H__
+ 535               	/* prologue: function */
+ 536               	/* frame size = 1 */
+ 537               	/* stack size = 8 */
+ 538               	.L__stack_usage = 8
+ 539 016c 8C01      		movw r16,r24
+ 209:mcp2515.c     **** 	// read status
+ 210:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_RX_STATUS);
+ 541               	.LM75:
+ 542 016e 80EB      		ldi r24,lo8(-80)
+ 543 0170 0E94 0000 		call mcp2515_read_status
+ 544 0174 8983      		std Y+1,r24
+ 211:mcp2515.c     **** 	uint8_t addr;
+ 212:mcp2515.c     **** 	
+ 213:mcp2515.c     **** 	if (bit_is_set(status,6)) {
+ 546               	.LM76:
+ 547 0176 8981      		ldd r24,Y+1
+ 548 0178 86FD      		sbrc r24,6
+ 549 017a 00C0      		rjmp .L22
+ 214:mcp2515.c     **** 		// message in buffer 0
+ 215:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 216:mcp2515.c     **** 	}
+ 217:mcp2515.c     **** 	else if (bit_is_set(status,7)) {
+ 551               	.LM77:
+ 552 017c 8981      		ldd r24,Y+1
+ 553 017e 87FF      		sbrs r24,7
+ 554 0180 00C0      		rjmp .L23
+ 218:mcp2515.c     **** 		// message in buffer 1
+ 219:mcp2515.c     **** 		addr = SPI_READ_RX | 0x04;
+ 556               	.LM78:
+ 557 0182 84E9      		ldi r24,lo8(-108)
+ 558 0184 00C0      		rjmp .L16
+ 559               	.L22:
+ 215:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 561               	.LM79:
+ 562 0186 80E9      		ldi r24,lo8(-112)
+ 563               	.L16:
+ 220:mcp2515.c     **** 	}
+ 221:mcp2515.c     **** 	else {
+ 222:mcp2515.c     **** 		// Error: no message available
+ 223:mcp2515.c     **** 		return 0;
+ 224:mcp2515.c     **** 	}
+ 225:mcp2515.c     **** 
+ 226:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 565               	.LM80:
+ 566 0188 C498      		cbi 0x18,4
+ 227:mcp2515.c     **** 	spi_putc(addr);
+ 568               	.LM81:
+ 569 018a 0E94 0000 		call spi_putc
+ 228:mcp2515.c     **** 	
+ 229:mcp2515.c     **** 	// read id
+ 230:mcp2515.c     **** 	message->id  = (uint16_t) spi_putc(0xff) << 3;
+ 571               	.LM82:
+ 572 018e 8FEF      		ldi r24,lo8(-1)
+ 573 0190 0E94 0000 		call spi_putc
+ 574 0194 98E0      		ldi r25,lo8(8)
+ 575 0196 899F      		mul r24,r25
+ 576 0198 7001      		movw r14,r0
+ 577 019a 1124      		clr __zero_reg__
+ 578 019c F801      		movw r30,r16
+ 579 019e F182      		std Z+1,r15
+ 580 01a0 E082      		st Z,r14
+ 231:mcp2515.c     **** 	message->id |=            spi_putc(0xff) >> 5;
+ 582               	.LM83:
+ 583 01a2 8FEF      		ldi r24,lo8(-1)
+ 584 01a4 0E94 0000 		call spi_putc
+ 585 01a8 8295      		swap r24
+ 586 01aa 8695      		lsr r24
+ 587 01ac 8770      		andi r24,lo8(7)
+ 588 01ae E82A      		or r14,r24
+ 589 01b0 F801      		movw r30,r16
+ 590 01b2 F182      		std Z+1,r15
+ 591 01b4 E082      		st Z,r14
+ 232:mcp2515.c     **** 	
+ 233:mcp2515.c     **** 	spi_putc(0xff);
+ 593               	.LM84:
+ 594 01b6 8FEF      		ldi r24,lo8(-1)
+ 595 01b8 0E94 0000 		call spi_putc
+ 234:mcp2515.c     **** 	spi_putc(0xff);
+ 597               	.LM85:
+ 598 01bc 8FEF      		ldi r24,lo8(-1)
+ 599 01be 0E94 0000 		call spi_putc
+ 235:mcp2515.c     **** 	
+ 236:mcp2515.c     **** 	// read DLC
+ 237:mcp2515.c     **** 	uint8_t length = spi_putc(0xff) & 0x0f;
+ 601               	.LM86:
+ 602 01c2 8FEF      		ldi r24,lo8(-1)
+ 603 01c4 0E94 0000 		call spi_putc
+ 604 01c8 8F70      		andi r24,lo8(15)
+ 605 01ca D82E      		mov r13,r24
+ 238:mcp2515.c     **** 	
+ 239:mcp2515.c     **** 	message->header.length = length;
+ 607               	.LM87:
+ 608 01cc 880F      		lsl r24
+ 609 01ce F801      		movw r30,r16
+ 610 01d0 9281      		ldd r25,Z+2
+ 611 01d2 917E      		andi r25,lo8(-31)
+ 612 01d4 982B      		or r25,r24
+ 613 01d6 9283      		std Z+2,r25
+ 240:mcp2515.c     **** 	message->header.rtr = (bit_is_set(status, 3)) ? 1 : 0;
+ 615               	.LM88:
+ 616 01d8 8981      		ldd r24,Y+1
+ 617 01da 83FB      		bst r24,3
+ 618 01dc 8827      		clr r24
+ 619 01de 80F9      		bld r24,0
+ 620 01e0 80FB      		bst r24,0
+ 621 01e2 90F9      		bld r25,0
+ 622 01e4 9283      		std Z+2,r25
+ 623               	.LBB12:
+ 241:mcp2515.c     **** 	
+ 242:mcp2515.c     **** 	// read data
+ 243:mcp2515.c     **** 	for (uint8_t i=0;i<length;i++) {
+ 625               	.LM89:
+ 626 01e6 E12C      		mov r14,__zero_reg__
+ 627 01e8 F12C      		mov r15,__zero_reg__
+ 628               	.L18:
+ 630               	.LM90:
+ 631 01ea ED14      		cp r14,r13
+ 632 01ec 00F4      		brsh .L25
+ 244:mcp2515.c     **** 		message->data[i] = spi_putc(0xff);
+ 634               	.LM91:
+ 635 01ee 8FEF      		ldi r24,lo8(-1)
+ 636 01f0 0E94 0000 		call spi_putc
+ 637 01f4 F801      		movw r30,r16
+ 638 01f6 EE0D      		add r30,r14
+ 639 01f8 FF1D      		adc r31,r15
+ 640 01fa 8383      		std Z+3,r24
+ 641 01fc FFEF      		ldi r31,-1
+ 642 01fe EF1A      		sub r14,r31
+ 643 0200 FF0A      		sbc r15,r31
+ 644 0202 00C0      		rjmp .L18
+ 645               	.L25:
+ 646               	.LBE12:
+ 245:mcp2515.c     **** 	}
+ 246:mcp2515.c     **** 	SET(MCP2515_CS);
+ 648               	.LM92:
+ 649 0204 C49A      		sbi 0x18,4
+ 247:mcp2515.c     **** 	
+ 248:mcp2515.c     **** 	// clear interrupt flag
+ 249:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 651               	.LM93:
+ 652 0206 8981      		ldd r24,Y+1
+ 250:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
+ 654               	.LM94:
+ 655 0208 40E0      		ldi r20,0
+ 249:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 657               	.LM95:
+ 658 020a 86FF      		sbrs r24,6
+ 659 020c 00C0      		rjmp .L20
+ 661               	.LM96:
+ 662 020e 61E0      		ldi r22,lo8(1)
+ 663 0210 00C0      		rjmp .L24
+ 664               	.L20:
+ 251:mcp2515.c     **** 	}
+ 252:mcp2515.c     **** 	else {
+ 253:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+ 666               	.LM97:
+ 667 0212 62E0      		ldi r22,lo8(2)
+ 668               	.L24:
+ 669 0214 8CE2      		ldi r24,lo8(44)
+ 670 0216 0E94 0000 		call mcp2515_bit_modify
+ 254:mcp2515.c     **** 	}
+ 255:mcp2515.c     **** 	
+ 256:mcp2515.c     **** 	return (status & 0x07) + 1;
+ 672               	.LM98:
+ 673 021a 8981      		ldd r24,Y+1
+ 674 021c 8770      		andi r24,lo8(7)
+ 675 021e 8F5F      		subi r24,lo8(-(1))
+ 676 0220 00C0      		rjmp .L17
+ 677               	.L23:
+ 223:mcp2515.c     **** 		return 0;
+ 679               	.LM99:
+ 680 0222 80E0      		ldi r24,0
+ 681               	.L17:
+ 682               	/* epilogue start */
+ 257:mcp2515.c     **** }
+ 684               	.LM100:
+ 685 0224 0F90      		pop __tmp_reg__
+ 686 0226 DF91      		pop r29
+ 687 0228 CF91      		pop r28
+ 688 022a 1F91      		pop r17
+ 689 022c 0F91      		pop r16
+ 690 022e FF90      		pop r15
+ 691 0230 EF90      		pop r14
+ 692 0232 DF90      		pop r13
+ 693 0234 0895      		ret
+ 700               	.Lscope9:
+ 703               	.global	mcp2515_get_extmessage
+ 705               	mcp2515_get_extmessage:
+ 258:mcp2515.c     **** 
+ 259:mcp2515.c     **** uint8_t mcp2515_get_extmessage(tExtendedCAN *message)
+ 260:mcp2515.c     **** {
+ 707               	.LM101:
+ 708               	.LFBB10:
+ 709 0236 DF92      		push r13
+ 710 0238 EF92      		push r14
+ 711 023a FF92      		push r15
+ 712 023c 0F93      		push r16
+ 713 023e 1F93      		push r17
+ 714 0240 CF93      		push r28
+ 715 0242 DF93      		push r29
+ 716 0244 1F92      		push __zero_reg__
+ 717 0246 CDB7      		in r28,__SP_L__
+ 718 0248 DEB7      		in r29,__SP_H__
+ 719               	/* prologue: function */
+ 720               	/* frame size = 1 */
+ 721               	/* stack size = 8 */
+ 722               	.L__stack_usage = 8
+ 723 024a 8C01      		movw r16,r24
+ 261:mcp2515.c     **** 	// read status
+ 262:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_RX_STATUS);
+ 725               	.LM102:
+ 726 024c 80EB      		ldi r24,lo8(-80)
+ 727 024e 0E94 0000 		call mcp2515_read_status
+ 728 0252 8983      		std Y+1,r24
+ 263:mcp2515.c     **** 	uint8_t addr;
+ 264:mcp2515.c     **** 	
+ 265:mcp2515.c     **** 	if (bit_is_set(status,6)) {
+ 730               	.LM103:
+ 731 0254 8981      		ldd r24,Y+1
+ 732 0256 86FD      		sbrc r24,6
+ 733 0258 00C0      		rjmp .L33
+ 266:mcp2515.c     **** 		// message in buffer 0
+ 267:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 268:mcp2515.c     **** 	}
+ 269:mcp2515.c     **** 	else if (bit_is_set(status,7)) {
+ 735               	.LM104:
+ 736 025a 8981      		ldd r24,Y+1
+ 737 025c 87FF      		sbrs r24,7
+ 738 025e 00C0      		rjmp .L34
+ 270:mcp2515.c     **** 		// message in buffer 1
+ 271:mcp2515.c     **** 		addr = SPI_READ_RX | 0x04;
+ 740               	.LM105:
+ 741 0260 84E9      		ldi r24,lo8(-108)
+ 742 0262 00C0      		rjmp .L27
+ 743               	.L33:
+ 267:mcp2515.c     **** 		addr = SPI_READ_RX;
+ 745               	.LM106:
+ 746 0264 80E9      		ldi r24,lo8(-112)
+ 747               	.L27:
+ 272:mcp2515.c     **** 	}
+ 273:mcp2515.c     **** 	else {
+ 274:mcp2515.c     **** 		// Error: no message available
+ 275:mcp2515.c     **** 		return 0;
+ 276:mcp2515.c     **** 	}
+ 277:mcp2515.c     **** 
+ 278:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 749               	.LM107:
+ 750 0266 C498      		cbi 0x18,4
+ 279:mcp2515.c     **** 	spi_putc(addr);
+ 752               	.LM108:
+ 753 0268 0E94 0000 		call spi_putc
+ 280:mcp2515.c     **** 	
+ 281:mcp2515.c     **** 	// read id
+ 282:mcp2515.c     **** 	message->id[0]  = (char) spi_putc(0xff);
+ 755               	.LM109:
+ 756 026c 8FEF      		ldi r24,lo8(-1)
+ 757 026e 0E94 0000 		call spi_putc
+ 758 0272 F801      		movw r30,r16
+ 759 0274 8083      		st Z,r24
+ 283:mcp2515.c     **** 	message->id[1]  = (char) spi_putc(0xff);
+ 761               	.LM110:
+ 762 0276 8FEF      		ldi r24,lo8(-1)
+ 763 0278 0E94 0000 		call spi_putc
+ 764 027c F801      		movw r30,r16
+ 765 027e 8183      		std Z+1,r24
+ 284:mcp2515.c     **** 	
+ 285:mcp2515.c     **** 	message->id[2] = spi_putc(0xff);
+ 767               	.LM111:
+ 768 0280 8FEF      		ldi r24,lo8(-1)
+ 769 0282 0E94 0000 		call spi_putc
+ 770 0286 F801      		movw r30,r16
+ 771 0288 8283      		std Z+2,r24
+ 286:mcp2515.c     **** 	message->id[3] = spi_putc(0xff);
+ 773               	.LM112:
+ 774 028a 8FEF      		ldi r24,lo8(-1)
+ 775 028c 0E94 0000 		call spi_putc
+ 776 0290 F801      		movw r30,r16
+ 777 0292 8383      		std Z+3,r24
+ 287:mcp2515.c     **** 	
+ 288:mcp2515.c     **** 	// read DLC
+ 289:mcp2515.c     **** 	uint8_t length = spi_putc(0xff) & 0x0f;
+ 779               	.LM113:
+ 780 0294 8FEF      		ldi r24,lo8(-1)
+ 781 0296 0E94 0000 		call spi_putc
+ 782 029a 8F70      		andi r24,lo8(15)
+ 783 029c D82E      		mov r13,r24
+ 290:mcp2515.c     **** 	
+ 291:mcp2515.c     **** 	message->header.length = length;
+ 785               	.LM114:
+ 786 029e 880F      		lsl r24
+ 787 02a0 F801      		movw r30,r16
+ 788 02a2 9481      		ldd r25,Z+4
+ 789 02a4 917E      		andi r25,lo8(-31)
+ 790 02a6 982B      		or r25,r24
+ 791 02a8 9483      		std Z+4,r25
+ 292:mcp2515.c     **** 	message->header.rtr = (bit_is_set(status, 3)) ? 1 : 0;
+ 793               	.LM115:
+ 794 02aa 8981      		ldd r24,Y+1
+ 795 02ac 83FB      		bst r24,3
+ 796 02ae 8827      		clr r24
+ 797 02b0 80F9      		bld r24,0
+ 798 02b2 80FB      		bst r24,0
+ 799 02b4 90F9      		bld r25,0
+ 800 02b6 9483      		std Z+4,r25
+ 801               	.LBB13:
+ 293:mcp2515.c     **** 	
+ 294:mcp2515.c     **** 	// read data
+ 295:mcp2515.c     **** 	for (uint8_t i=0;i<length;i++) {
+ 803               	.LM116:
+ 804 02b8 E12C      		mov r14,__zero_reg__
+ 805 02ba F12C      		mov r15,__zero_reg__
+ 806               	.L29:
+ 808               	.LM117:
+ 809 02bc ED14      		cp r14,r13
+ 810 02be 00F4      		brsh .L36
+ 296:mcp2515.c     **** 		message->data[i] = spi_putc(0xff);
+ 812               	.LM118:
+ 813 02c0 8FEF      		ldi r24,lo8(-1)
+ 814 02c2 0E94 0000 		call spi_putc
+ 815 02c6 F801      		movw r30,r16
+ 816 02c8 EE0D      		add r30,r14
+ 817 02ca FF1D      		adc r31,r15
+ 818 02cc 8583      		std Z+5,r24
+ 819 02ce FFEF      		ldi r31,-1
+ 820 02d0 EF1A      		sub r14,r31
+ 821 02d2 FF0A      		sbc r15,r31
+ 822 02d4 00C0      		rjmp .L29
+ 823               	.L36:
+ 824               	.LBE13:
+ 297:mcp2515.c     **** 	}
+ 298:mcp2515.c     **** 	SET(MCP2515_CS);
+ 826               	.LM119:
+ 827 02d6 C49A      		sbi 0x18,4
+ 299:mcp2515.c     **** 	
+ 300:mcp2515.c     **** 	// clear interrupt flag
+ 301:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 829               	.LM120:
+ 830 02d8 8981      		ldd r24,Y+1
+ 302:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX0IF), 0);
+ 832               	.LM121:
+ 833 02da 40E0      		ldi r20,0
+ 301:mcp2515.c     **** 	if (bit_is_set(status, 6)) {
+ 835               	.LM122:
+ 836 02dc 86FF      		sbrs r24,6
+ 837 02de 00C0      		rjmp .L31
+ 839               	.LM123:
+ 840 02e0 61E0      		ldi r22,lo8(1)
+ 841 02e2 00C0      		rjmp .L35
+ 842               	.L31:
+ 303:mcp2515.c     **** 	}
+ 304:mcp2515.c     **** 	else {
+ 305:mcp2515.c     **** 		mcp2515_bit_modify(CANINTF, (1<<RX1IF), 0);
+ 844               	.LM124:
+ 845 02e4 62E0      		ldi r22,lo8(2)
+ 846               	.L35:
+ 847 02e6 8CE2      		ldi r24,lo8(44)
+ 848 02e8 0E94 0000 		call mcp2515_bit_modify
+ 306:mcp2515.c     **** 	}
+ 307:mcp2515.c     **** 	
+ 308:mcp2515.c     **** 	return (status & 0x07) + 1;
+ 850               	.LM125:
+ 851 02ec 8981      		ldd r24,Y+1
+ 852 02ee 8770      		andi r24,lo8(7)
+ 853 02f0 8F5F      		subi r24,lo8(-(1))
+ 854 02f2 00C0      		rjmp .L28
+ 855               	.L34:
+ 275:mcp2515.c     **** 		return 0;
+ 857               	.LM126:
+ 858 02f4 80E0      		ldi r24,0
+ 859               	.L28:
+ 860               	/* epilogue start */
+ 309:mcp2515.c     **** }
+ 862               	.LM127:
+ 863 02f6 0F90      		pop __tmp_reg__
+ 864 02f8 DF91      		pop r29
+ 865 02fa CF91      		pop r28
+ 866 02fc 1F91      		pop r17
+ 867 02fe 0F91      		pop r16
+ 868 0300 FF90      		pop r15
+ 869 0302 EF90      		pop r14
+ 870 0304 DF90      		pop r13
+ 871 0306 0895      		ret
+ 878               	.Lscope10:
+ 881               	.global	mcp2515_send_message
+ 883               	mcp2515_send_message:
+ 310:mcp2515.c     **** 
+ 311:mcp2515.c     **** // ----------------------------------------------------------------------------
+ 312:mcp2515.c     **** uint8_t mcp2515_send_message(tCAN *message)
+ 313:mcp2515.c     **** {
+ 885               	.LM128:
+ 886               	.LFBB11:
+ 887 0308 CF92      		push r12
+ 888 030a DF92      		push r13
+ 889 030c EF92      		push r14
+ 890 030e FF92      		push r15
+ 891 0310 0F93      		push r16
+ 892 0312 1F93      		push r17
+ 893 0314 CF93      		push r28
+ 894 0316 DF93      		push r29
+ 895 0318 1F92      		push __zero_reg__
+ 896 031a CDB7      		in r28,__SP_L__
+ 897 031c DEB7      		in r29,__SP_H__
+ 898               	/* prologue: function */
+ 899               	/* frame size = 1 */
+ 900               	/* stack size = 9 */
+ 901               	.L__stack_usage = 9
+ 902 031e 8C01      		movw r16,r24
+ 314:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 904               	.LM129:
+ 905 0320 80EA      		ldi r24,lo8(-96)
+ 906 0322 0E94 0000 		call mcp2515_read_status
+ 907 0326 8983      		std Y+1,r24
+ 315:mcp2515.c     **** 	
+ 316:mcp2515.c     **** 	/* Statusbyte:
+ 317:mcp2515.c     **** 	 *
+ 318:mcp2515.c     **** 	 * Bit	Function
+ 319:mcp2515.c     **** 	 *  2	TXB0CNTRL.TXREQ
+ 320:mcp2515.c     **** 	 *  4	TXB1CNTRL.TXREQ
+ 321:mcp2515.c     **** 	 *  6	TXB2CNTRL.TXREQ
+ 322:mcp2515.c     **** 	 */
+ 323:mcp2515.c     **** 	uint8_t address;
+ 324:mcp2515.c     **** 	if (bit_is_clear(status, 2)) {
+ 909               	.LM130:
+ 910 0328 8981      		ldd r24,Y+1
+ 911 032a 82FF      		sbrs r24,2
+ 912 032c 00C0      		rjmp .L45
+ 325:mcp2515.c     **** 		address = 0x00;
+ 326:mcp2515.c     **** 	}
+ 327:mcp2515.c     **** 	else if (bit_is_clear(status, 4)) {
+ 914               	.LM131:
+ 915 032e 8981      		ldd r24,Y+1
+ 916 0330 84FF      		sbrs r24,4
+ 917 0332 00C0      		rjmp .L46
+ 328:mcp2515.c     **** 		address = 0x02;
+ 329:mcp2515.c     **** 	} 
+ 330:mcp2515.c     **** 	else if (bit_is_clear(status, 6)) {
+ 919               	.LM132:
+ 920 0334 8981      		ldd r24,Y+1
+ 921 0336 86FD      		sbrc r24,6
+ 922 0338 00C0      		rjmp .L47
+ 331:mcp2515.c     **** 		address = 0x04;
+ 924               	.LM133:
+ 925 033a 44E0      		ldi r20,lo8(4)
+ 926 033c D42E      		mov r13,r20
+ 927 033e 00C0      		rjmp .L38
+ 928               	.L45:
+ 325:mcp2515.c     **** 		address = 0x00;
+ 930               	.LM134:
+ 931 0340 D12C      		mov r13,__zero_reg__
+ 932 0342 00C0      		rjmp .L38
+ 933               	.L46:
+ 328:mcp2515.c     **** 		address = 0x02;
+ 935               	.LM135:
+ 936 0344 32E0      		ldi r19,lo8(2)
+ 937 0346 D32E      		mov r13,r19
+ 938               	.L38:
+ 332:mcp2515.c     **** 	}
+ 333:mcp2515.c     **** 	else {
+ 334:mcp2515.c     **** 		// all buffer used => could not send message
+ 335:mcp2515.c     **** 		return 0;
+ 336:mcp2515.c     **** 	}
+ 337:mcp2515.c     **** 	
+ 338:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 940               	.LM136:
+ 941 0348 C498      		cbi 0x18,4
+ 339:mcp2515.c     **** 	spi_putc(SPI_WRITE_TX | address);
+ 943               	.LM137:
+ 944 034a 8D2D      		mov r24,r13
+ 945 034c 8064      		ori r24,lo8(64)
+ 946 034e 0E94 0000 		call spi_putc
+ 340:mcp2515.c     **** 	
+ 341:mcp2515.c     **** 	spi_putc(message->id >> 3);
+ 948               	.LM138:
+ 949 0352 F801      		movw r30,r16
+ 950 0354 8081      		ld r24,Z
+ 951 0356 9181      		ldd r25,Z+1
+ 952 0358 23E0      		ldi r18,3
+ 953               		1:
+ 954 035a 9695      		lsr r25
+ 955 035c 8795      		ror r24
+ 956 035e 2A95      		dec r18
+ 957 0360 01F4      		brne 1b
+ 958 0362 0E94 0000 		call spi_putc
+ 342:mcp2515.c     ****     spi_putc(message->id << 5);
+ 960               	.LM139:
+ 961 0366 F801      		movw r30,r16
+ 962 0368 8081      		ld r24,Z
+ 963 036a 8295      		swap r24
+ 964 036c 880F      		lsl r24
+ 965 036e 807E      		andi r24,lo8(-32)
+ 966 0370 0E94 0000 		call spi_putc
+ 343:mcp2515.c     **** 	
+ 344:mcp2515.c     **** 	spi_putc(0);
+ 968               	.LM140:
+ 969 0374 80E0      		ldi r24,0
+ 970 0376 0E94 0000 		call spi_putc
+ 345:mcp2515.c     **** 	spi_putc(0);
+ 972               	.LM141:
+ 973 037a 80E0      		ldi r24,0
+ 974 037c 0E94 0000 		call spi_putc
+ 346:mcp2515.c     **** 	
+ 347:mcp2515.c     **** 	uint8_t length = message->header.length & 0x0f;
+ 976               	.LM142:
+ 977 0380 F801      		movw r30,r16
+ 978 0382 8281      		ldd r24,Z+2
+ 979 0384 C82E      		mov r12,r24
+ 980 0386 C694      		lsr r12
+ 981 0388 FC2D      		mov r31,r12
+ 982 038a FF70      		andi r31,lo8(15)
+ 983 038c CF2E      		mov r12,r31
+ 348:mcp2515.c     **** 	
+ 349:mcp2515.c     **** 	if (message->header.rtr) {
+ 985               	.LM143:
+ 986 038e 80FF      		sbrs r24,0
+ 987 0390 00C0      		rjmp .L40
+ 350:mcp2515.c     **** 		// a rtr-frame has a length, but contains no data
+ 351:mcp2515.c     **** 		spi_putc((1<<RTR) | length);
+ 989               	.LM144:
+ 990 0392 8F2F      		mov r24,r31
+ 991 0394 8064      		ori r24,lo8(64)
+ 992 0396 0E94 0000 		call spi_putc
+ 993 039a 00C0      		rjmp .L41
+ 994               	.L40:
+ 352:mcp2515.c     **** 	}
+ 353:mcp2515.c     **** 	else {
+ 354:mcp2515.c     **** 		// set message length
+ 355:mcp2515.c     **** 		spi_putc(length);
+ 996               	.LM145:
+ 997 039c 8F2F      		mov r24,r31
+ 998 039e 0E94 0000 		call spi_putc
+ 999               	.LBB14:
+ 356:mcp2515.c     **** 		
+ 357:mcp2515.c     **** 		// data
+ 358:mcp2515.c     **** 		for (uint8_t i=0;i<length;i++) {
+ 1001               	.LM146:
+ 1002 03a2 E12C      		mov r14,__zero_reg__
+ 1003 03a4 F12C      		mov r15,__zero_reg__
+ 1004               	.L42:
+ 1006               	.LM147:
+ 1007 03a6 EC14      		cp r14,r12
+ 1008 03a8 00F4      		brsh .L41
+ 1009 03aa F801      		movw r30,r16
+ 1010 03ac EE0D      		add r30,r14
+ 1011 03ae FF1D      		adc r31,r15
+ 359:mcp2515.c     **** 			spi_putc(message->data[i]);
+ 1013               	.LM148:
+ 1014 03b0 8381      		ldd r24,Z+3
+ 1015 03b2 0E94 0000 		call spi_putc
+ 1016 03b6 8FEF      		ldi r24,-1
+ 1017 03b8 E81A      		sub r14,r24
+ 1018 03ba F80A      		sbc r15,r24
+ 1019 03bc 00C0      		rjmp .L42
+ 1020               	.L41:
+ 1021               	.LBE14:
+ 360:mcp2515.c     **** 		}
+ 361:mcp2515.c     **** 	}
+ 362:mcp2515.c     **** 	SET(MCP2515_CS);
+ 1023               	.LM149:
+ 1024 03be C49A      		sbi 0x18,4
+ 1025               	.LBB15:
+ 1026               	.LBB16:
+ 1028               	.Ltext3:
+ 1030               	.LM150:
+ 1031 03c0 95E0      		ldi r25,lo8(5)
+ 1032 03c2 9A95      		1: dec r25
+ 1033 03c4 01F4      		brne 1b
+ 1034 03c6 0000      		nop
+ 1035               	.LBE16:
+ 1036               	.LBE15:
+ 1038               	.Ltext4:
+ 363:mcp2515.c     **** 	
+ 364:mcp2515.c     **** 	_delay_us(1);
+ 365:mcp2515.c     **** 	
+ 366:mcp2515.c     **** 	// send message
+ 367:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 1040               	.LM151:
+ 1041 03c8 C498      		cbi 0x18,4
+ 368:mcp2515.c     **** 	address = (address == 0) ? 1 : address;
+ 1043               	.LM152:
+ 1044 03ca D110      		cpse r13,__zero_reg__
+ 1045 03cc 00C0      		rjmp .L44
+ 1046 03ce DD24      		clr r13
+ 1047 03d0 D394      		inc r13
+ 1048               	.L44:
+ 369:mcp2515.c     **** 	spi_putc(SPI_RTS | address);
+ 1050               	.LM153:
+ 1051 03d2 8D2D      		mov r24,r13
+ 1052 03d4 8068      		ori r24,lo8(-128)
+ 1053 03d6 0E94 0000 		call spi_putc
+ 370:mcp2515.c     **** 	SET(MCP2515_CS);
+ 1055               	.LM154:
+ 1056 03da C49A      		sbi 0x18,4
+ 371:mcp2515.c     **** 	
+ 372:mcp2515.c     **** 	return address;
+ 1058               	.LM155:
+ 1059 03dc 8D2D      		mov r24,r13
+ 1060 03de 00C0      		rjmp .L39
+ 1061               	.L47:
+ 335:mcp2515.c     **** 		return 0;
+ 1063               	.LM156:
+ 1064 03e0 80E0      		ldi r24,0
+ 1065               	.L39:
+ 1066               	/* epilogue start */
+ 373:mcp2515.c     **** }
+ 1068               	.LM157:
+ 1069 03e2 0F90      		pop __tmp_reg__
+ 1070 03e4 DF91      		pop r29
+ 1071 03e6 CF91      		pop r28
+ 1072 03e8 1F91      		pop r17
+ 1073 03ea 0F91      		pop r16
+ 1074 03ec FF90      		pop r15
+ 1075 03ee EF90      		pop r14
+ 1076 03f0 DF90      		pop r13
+ 1077 03f2 CF90      		pop r12
+ 1078 03f4 0895      		ret
+ 1085               	.Lscope11:
+ 1089               	.global	generate_extCAN_ID
+ 1091               	generate_extCAN_ID:
+ 374:mcp2515.c     **** 
+ 375:mcp2515.c     **** /*
+ 376:mcp2515.c     **** uint8_t mcp2515_send_extmessage(tExtendedCAN *message)
+ 377:mcp2515.c     **** {
+ 378:mcp2515.c     **** 	// Verschickt eine Nachricht ueber Puffer 0
+ 379:mcp2515.c     **** 	//  * 2 Datenbytes (0x04, 0xf3)
+ 380:mcp2515.c     **** 	//   * Standard ID: 0x0123
+ 381:mcp2515.c     **** 	//    
+ 382:mcp2515.c     **** 	//uint16_t id = 0x0123;
+ 383:mcp2515.c     **** 
+ 384:mcp2515.c     **** 	// Nachrichten Puffer auf Hoechste Prioritaet einstellen
+ 385:mcp2515.c     **** 	//    (braucht man nicht wenn man nur mit einem Puffer sendet, siehe Text) 
+ 386:mcp2515.c     **** 	mcp2515_bit_modify( TXB0CTRL, (1<<TXP1)|(1<<TXP0), (1<<TXP1)|(1<<TXP0) );
+ 387:mcp2515.c     **** 
+ 388:mcp2515.c     **** 	// ID einstellen
+ 389:mcp2515.c     **** 	mcp2515_write_register(TXB0SIDH, (uint8_t) (message->id[0]));
+ 390:mcp2515.c     **** 	mcp2515_write_register(TXB0SIDL, (uint8_t) (message->id[1]));
+ 391:mcp2515.c     **** 	mcp2515_write_register(TXB0EID8, (uint8_t) (message->id[2]));
+ 392:mcp2515.c     **** 	mcp2515_write_register(TXB0EID0, (uint8_t) (message->id[3]));
+ 393:mcp2515.c     **** 	//
+ 394:mcp2515.c     **** 	//
+ 395:mcp2515.c     **** 	// // Nachrichten Laenge + RTR einstellen
+ 396:mcp2515.c     **** 	mcp2515_write_register(TXB0DLC, 2);
+ 397:mcp2515.c     **** 	//
+ 398:mcp2515.c     **** 	// // Daten
+ 399:mcp2515.c     **** 	mcp2515_write_register(TXB0D0, 0x04);
+ 400:mcp2515.c     **** 	mcp2515_write_register(TXB0D1, 0xf3);
+ 401:mcp2515.c     **** 	//
+ 402:mcp2515.c     **** 	// // CAN Nachricht verschicken
+ 403:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 404:mcp2515.c     **** 	spi_putc(SPI_RTS | 0x01);
+ 405:mcp2515.c     **** 	SET(MCP2515_CS);
+ 406:mcp2515.c     **** 
+ 407:mcp2515.c     **** }*/
+ 408:mcp2515.c     **** 
+ 409:mcp2515.c     **** void generate_extCAN_ID(uint8_t *bytes, char *resultchars) {
+ 1093               	.LM158:
+ 1094               	.LFBB12:
+ 1095               	/* prologue: function */
+ 1096               	/* frame size = 0 */
+ 1097               	/* stack size = 0 */
+ 1098               	.L__stack_usage = 0
+ 1099 03f6 FC01      		movw r30,r24
+ 1100 03f8 DB01      		movw r26,r22
+ 410:mcp2515.c     **** 
+ 411:mcp2515.c     **** 	resultchars[0] = (bytes[0] << 3) | (bytes[1] >> 5);
+ 1102               	.LM159:
+ 1103 03fa 8081      		ld r24,Z
+ 1104 03fc 28E0      		ldi r18,lo8(8)
+ 1105 03fe 829F      		mul r24,r18
+ 1106 0400 C001      		movw r24,r0
+ 1107 0402 1124      		clr __zero_reg__
+ 1108 0404 9181      		ldd r25,Z+1
+ 1109 0406 9295      		swap r25
+ 1110 0408 9695      		lsr r25
+ 1111 040a 9770      		andi r25,lo8(7)
+ 1112 040c 982B      		or r25,r24
+ 1113 040e 9C93      		st X,r25
+ 412:mcp2515.c     **** 	resultchars[1] = (bytes[1] & 0x03) | 0x0C | ((bytes[1] & 0xFC) << 3);
+ 1115               	.LM160:
+ 1116 0410 8181      		ldd r24,Z+1
+ 1117 0412 282F      		mov r18,r24
+ 1118 0414 2370      		andi r18,lo8(3)
+ 1119 0416 2C60      		ori r18,lo8(12)
+ 1120 0418 8C7F      		andi r24,lo8(-4)
+ 1121 041a 38E0      		ldi r19,lo8(8)
+ 1122 041c 839F      		mul r24,r19
+ 1123 041e C001      		movw r24,r0
+ 1124 0420 1124      		clr __zero_reg__
+ 1125 0422 282B      		or r18,r24
+ 1126 0424 1196      		adiw r26,1
+ 1127 0426 2C93      		st X,r18
+ 1128 0428 1197      		sbiw r26,1
+ 413:mcp2515.c     **** 	resultchars[2] = bytes[2];
+ 1130               	.LM161:
+ 1131 042a 8281      		ldd r24,Z+2
+ 1132 042c 1296      		adiw r26,2
+ 1133 042e 8C93      		st X,r24
+ 1134 0430 1297      		sbiw r26,2
+ 414:mcp2515.c     **** 	resultchars[3] = bytes[3];
+ 1136               	.LM162:
+ 1137 0432 8381      		ldd r24,Z+3
+ 1138 0434 1396      		adiw r26,3
+ 1139 0436 8C93      		st X,r24
+ 1140 0438 0895      		ret
+ 1142               	.Lscope12:
+ 1145               	.global	mcp2515_send_extmessage
+ 1147               	mcp2515_send_extmessage:
+ 415:mcp2515.c     **** 
+ 416:mcp2515.c     **** }
+ 417:mcp2515.c     **** 
+ 418:mcp2515.c     **** 
+ 419:mcp2515.c     **** uint8_t mcp2515_send_extmessage(tExtendedCAN *message)
+ 420:mcp2515.c     **** {
+ 1149               	.LM163:
+ 1150               	.LFBB13:
+ 1151 043a CF92      		push r12
+ 1152 043c DF92      		push r13
+ 1153 043e EF92      		push r14
+ 1154 0440 FF92      		push r15
+ 1155 0442 0F93      		push r16
+ 1156 0444 1F93      		push r17
+ 1157 0446 CF93      		push r28
+ 1158 0448 DF93      		push r29
+ 1159 044a 1F92      		push __zero_reg__
+ 1160 044c CDB7      		in r28,__SP_L__
+ 1161 044e DEB7      		in r29,__SP_H__
+ 1162               	/* prologue: function */
+ 1163               	/* frame size = 1 */
+ 1164               	/* stack size = 9 */
+ 1165               	.L__stack_usage = 9
+ 1166 0450 8C01      		movw r16,r24
+ 421:mcp2515.c     **** 	uint8_t status = mcp2515_read_status(SPI_READ_STATUS);
+ 1168               	.LM164:
+ 1169 0452 80EA      		ldi r24,lo8(-96)
+ 1170 0454 0E94 0000 		call mcp2515_read_status
+ 1171 0458 8983      		std Y+1,r24
+ 422:mcp2515.c     **** 	
+ 423:mcp2515.c     **** 	/* Statusbyte:
+ 424:mcp2515.c     **** 	 *
+ 425:mcp2515.c     **** 	 * Bit	Function
+ 426:mcp2515.c     **** 	 *  2	TXB0CNTRL.TXREQ
+ 427:mcp2515.c     **** 	 *  4	TXB1CNTRL.TXREQ
+ 428:mcp2515.c     **** 	 *  6	TXB2CNTRL.TXREQ
+ 429:mcp2515.c     **** 	 */
+ 430:mcp2515.c     **** 	uint8_t address;
+ 431:mcp2515.c     **** 	if (bit_is_clear(status, 2)) {
+ 1173               	.LM165:
+ 1174 045a 8981      		ldd r24,Y+1
+ 1175 045c 82FF      		sbrs r24,2
+ 1176 045e 00C0      		rjmp .L57
+ 432:mcp2515.c     **** 		address = 0x00;
+ 433:mcp2515.c     **** 	}
+ 434:mcp2515.c     **** 	else if (bit_is_clear(status, 4)) {
+ 1178               	.LM166:
+ 1179 0460 8981      		ldd r24,Y+1
+ 1180 0462 84FF      		sbrs r24,4
+ 1181 0464 00C0      		rjmp .L58
+ 435:mcp2515.c     **** 		address = 0x02;
+ 436:mcp2515.c     **** 	} 
+ 437:mcp2515.c     **** 	else if (bit_is_clear(status, 6)) {
+ 1183               	.LM167:
+ 1184 0466 8981      		ldd r24,Y+1
+ 1185 0468 86FD      		sbrc r24,6
+ 1186 046a 00C0      		rjmp .L59
+ 438:mcp2515.c     **** 		address = 0x04;
+ 1188               	.LM168:
+ 1189 046c 64E0      		ldi r22,lo8(4)
+ 1190 046e D62E      		mov r13,r22
+ 1191 0470 00C0      		rjmp .L50
+ 1192               	.L57:
+ 432:mcp2515.c     **** 		address = 0x00;
+ 1194               	.LM169:
+ 1195 0472 D12C      		mov r13,__zero_reg__
+ 1196 0474 00C0      		rjmp .L50
+ 1197               	.L58:
+ 435:mcp2515.c     **** 		address = 0x02;
+ 1199               	.LM170:
+ 1200 0476 52E0      		ldi r21,lo8(2)
+ 1201 0478 D52E      		mov r13,r21
+ 1202               	.L50:
+ 439:mcp2515.c     **** 	}
+ 440:mcp2515.c     **** 	else {
+ 441:mcp2515.c     **** 		// all buffer used => could not send message
+ 442:mcp2515.c     **** 		return 0;
+ 443:mcp2515.c     **** 	}
+ 444:mcp2515.c     **** 
+ 445:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 1204               	.LM171:
+ 1205 047a C498      		cbi 0x18,4
+ 446:mcp2515.c     **** 	spi_putc(SPI_WRITE_TX | address);
+ 1207               	.LM172:
+ 1208 047c 8D2D      		mov r24,r13
+ 1209 047e 8064      		ori r24,lo8(64)
+ 1210 0480 0E94 0000 		call spi_putc
+ 447:mcp2515.c     **** 	
+ 448:mcp2515.c     **** 	spi_putc(message->id[0]);
+ 1212               	.LM173:
+ 1213 0484 F801      		movw r30,r16
+ 1214 0486 8081      		ld r24,Z
+ 1215 0488 0E94 0000 		call spi_putc
+ 449:mcp2515.c     **** 	spi_putc(message->id[1]);
+ 1217               	.LM174:
+ 1218 048c F801      		movw r30,r16
+ 1219 048e 8181      		ldd r24,Z+1
+ 1220 0490 0E94 0000 		call spi_putc
+ 450:mcp2515.c     **** 	
+ 451:mcp2515.c     **** 	spi_putc(message->id[2]);
+ 1222               	.LM175:
+ 1223 0494 F801      		movw r30,r16
+ 1224 0496 8281      		ldd r24,Z+2
+ 1225 0498 0E94 0000 		call spi_putc
+ 452:mcp2515.c     **** 	spi_putc(message->id[3]);
+ 1227               	.LM176:
+ 1228 049c F801      		movw r30,r16
+ 1229 049e 8381      		ldd r24,Z+3
+ 1230 04a0 0E94 0000 		call spi_putc
+ 453:mcp2515.c     **** 	
+ 454:mcp2515.c     **** 	uint8_t length = message->header.length & 0x0f;
+ 1232               	.LM177:
+ 1233 04a4 F801      		movw r30,r16
+ 1234 04a6 8481      		ldd r24,Z+4
+ 1235 04a8 C82E      		mov r12,r24
+ 1236 04aa C694      		lsr r12
+ 1237 04ac FC2D      		mov r31,r12
+ 1238 04ae FF70      		andi r31,lo8(15)
+ 1239 04b0 CF2E      		mov r12,r31
+ 455:mcp2515.c     **** 	
+ 456:mcp2515.c     **** 	if (message->header.rtr) {
+ 1241               	.LM178:
+ 1242 04b2 80FF      		sbrs r24,0
+ 1243 04b4 00C0      		rjmp .L52
+ 457:mcp2515.c     **** 		// a rtr-frame has a length, but contains no data
+ 458:mcp2515.c     **** 		spi_putc((1<<RTR) | length);
+ 1245               	.LM179:
+ 1246 04b6 8F2F      		mov r24,r31
+ 1247 04b8 8064      		ori r24,lo8(64)
+ 1248 04ba 0E94 0000 		call spi_putc
+ 1249 04be 00C0      		rjmp .L53
+ 1250               	.L52:
+ 459:mcp2515.c     **** 	}
+ 460:mcp2515.c     **** 	else {
+ 461:mcp2515.c     **** 		// set message length
+ 462:mcp2515.c     **** 		spi_putc(length);
+ 1252               	.LM180:
+ 1253 04c0 8F2F      		mov r24,r31
+ 1254 04c2 0E94 0000 		call spi_putc
+ 1255               	.LBB17:
+ 463:mcp2515.c     **** 		
+ 464:mcp2515.c     **** 		// data
+ 465:mcp2515.c     **** 		for (uint8_t i=0;i<length;i++) {
+ 1257               	.LM181:
+ 1258 04c6 E12C      		mov r14,__zero_reg__
+ 1259 04c8 F12C      		mov r15,__zero_reg__
+ 1260               	.L54:
+ 1262               	.LM182:
+ 1263 04ca EC14      		cp r14,r12
+ 1264 04cc 00F4      		brsh .L53
+ 1265 04ce F801      		movw r30,r16
+ 1266 04d0 EE0D      		add r30,r14
+ 1267 04d2 FF1D      		adc r31,r15
+ 466:mcp2515.c     **** 			spi_putc(message->data[i]);
+ 1269               	.LM183:
+ 1270 04d4 8581      		ldd r24,Z+5
+ 1271 04d6 0E94 0000 		call spi_putc
+ 1272 04da 8FEF      		ldi r24,-1
+ 1273 04dc E81A      		sub r14,r24
+ 1274 04de F80A      		sbc r15,r24
+ 1275 04e0 00C0      		rjmp .L54
+ 1276               	.L53:
+ 1277               	.LBE17:
+ 467:mcp2515.c     **** 		}
+ 468:mcp2515.c     **** 	}
+ 469:mcp2515.c     **** 	SET(MCP2515_CS);
+ 1279               	.LM184:
+ 1280 04e2 C49A      		sbi 0x18,4
+ 1281               	.LBB18:
+ 1282               	.LBB19:
+ 1284               	.Ltext5:
+ 1286               	.LM185:
+ 1287 04e4 95E0      		ldi r25,lo8(5)
+ 1288 04e6 9A95      		1: dec r25
+ 1289 04e8 01F4      		brne 1b
+ 1290 04ea 0000      		nop
+ 1291               	.LBE19:
+ 1292               	.LBE18:
+ 1294               	.Ltext6:
+ 470:mcp2515.c     **** 	
+ 471:mcp2515.c     **** 	_delay_us(1);
+ 472:mcp2515.c     **** 	
+ 473:mcp2515.c     **** 	// send message
+ 474:mcp2515.c     **** 	RESET(MCP2515_CS);
+ 1296               	.LM186:
+ 1297 04ec C498      		cbi 0x18,4
+ 475:mcp2515.c     **** 	address = (address == 0) ? 1 : address;
+ 1299               	.LM187:
+ 1300 04ee D110      		cpse r13,__zero_reg__
+ 1301 04f0 00C0      		rjmp .L56
+ 1302 04f2 DD24      		clr r13
+ 1303 04f4 D394      		inc r13
+ 1304               	.L56:
+ 476:mcp2515.c     **** 	spi_putc(SPI_RTS | address);
+ 1306               	.LM188:
+ 1307 04f6 8D2D      		mov r24,r13
+ 1308 04f8 8068      		ori r24,lo8(-128)
+ 1309 04fa 0E94 0000 		call spi_putc
+ 477:mcp2515.c     **** 	SET(MCP2515_CS);
+ 1311               	.LM189:
+ 1312 04fe C49A      		sbi 0x18,4
+ 478:mcp2515.c     **** 	
+ 479:mcp2515.c     **** 	return address;
+ 1314               	.LM190:
+ 1315 0500 8D2D      		mov r24,r13
+ 1316 0502 00C0      		rjmp .L51
+ 1317               	.L59:
+ 442:mcp2515.c     **** 		return 0;
+ 1319               	.LM191:
+ 1320 0504 80E0      		ldi r24,0
+ 1321               	.L51:
+ 1322               	/* epilogue start */
+ 480:mcp2515.c     **** }
+ 1324               	.LM192:
+ 1325 0506 0F90      		pop __tmp_reg__
+ 1326 0508 DF91      		pop r29
+ 1327 050a CF91      		pop r28
+ 1328 050c 1F91      		pop r17
+ 1329 050e 0F91      		pop r16
+ 1330 0510 FF90      		pop r15
+ 1331 0512 EF90      		pop r14
+ 1332 0514 DF90      		pop r13
+ 1333 0516 CF90      		pop r12
+ 1334 0518 0895      		ret
+ 1341               	.Lscope13:
+ 1344               	.global	mcp2515_static_filter
+ 1346               	mcp2515_static_filter:
+ 481:mcp2515.c     **** 
+ 482:mcp2515.c     **** void mcp2515_static_filter(PGM_P filter)
+ 483:mcp2515.c     **** {
+ 1348               	.LM193:
+ 1349               	.LFBB14:
+ 1350 051a EF92      		push r14
+ 1351 051c FF92      		push r15
+ 1352 051e 0F93      		push r16
+ 1353 0520 1F93      		push r17
+ 1354 0522 CF93      		push r28
+ 1355 0524 DF93      		push r29
+ 1356               	/* prologue: function */
+ 1357               	/* frame size = 0 */
+ 1358               	/* stack size = 6 */
+ 1359               	.L__stack_usage = 6
+ 1360 0526 EC01      		movw r28,r24
+ 484:mcp2515.c     **** 	mcp2515_bit_modify(CANCTRL, 0xe0, (1<<REQOP2));
+ 1362               	.LM194:
+ 1363 0528 40E8      		ldi r20,lo8(-128)
+ 1364 052a 60EE      		ldi r22,lo8(-32)
+ 1365 052c 8FE0      		ldi r24,lo8(15)
+ 1366 052e 0E94 0000 		call mcp2515_bit_modify
+ 1367 0532 10E0      		ldi r17,0
+ 1368               	.LBB20:
+ 485:mcp2515.c     **** 	
+ 486:mcp2515.c     **** 	uint8_t index = 0;
+ 487:mcp2515.c     **** 	for (uint8_t i=0;i<3;i++)
+ 1370               	.LM195:
+ 1371 0534 F12C      		mov r15,__zero_reg__
+ 1372               	.LBE20:
+ 486:mcp2515.c     **** 	uint8_t index = 0;
+ 1374               	.LM196:
+ 1375 0536 E12C      		mov r14,__zero_reg__
+ 1376               	.L65:
+ 1377               	.LBB23:
+ 488:mcp2515.c     **** 	{
+ 489:mcp2515.c     **** 		RESET(MCP2515_CS);
+ 1379               	.LM197:
+ 1380 0538 C498      		cbi 0x18,4
+ 490:mcp2515.c     **** 		spi_putc(SPI_WRITE);
+ 1382               	.LM198:
+ 1383 053a 82E0      		ldi r24,lo8(2)
+ 1384 053c 0E94 0000 		call spi_putc
+ 491:mcp2515.c     **** 		spi_putc(RXF0SIDH + i*0x10);
+ 1386               	.LM199:
+ 1387 0540 812F      		mov r24,r17
+ 1388 0542 0E94 0000 		call spi_putc
+ 1389               	.LBB21:
+ 492:mcp2515.c     **** 		
+ 493:mcp2515.c     **** 		for (uint8_t j=0;j<12;j++) 
+ 1391               	.LM200:
+ 1392 0546 00E0      		ldi r16,0
+ 1393               	.L63:
+ 494:mcp2515.c     **** 		{
+ 495:mcp2515.c     **** 			if (i == 2 && j >= 0x08)
+ 1395               	.LM201:
+ 1396 0548 82E0      		ldi r24,lo8(2)
+ 1397 054a F812      		cpse r15,r24
+ 1398 054c 00C0      		rjmp .L61
+ 1400               	.LM202:
+ 1401 054e 0830      		cpi r16,lo8(8)
+ 1402 0550 00F4      		brsh .L62
+ 1403               	.L61:
+ 1404               	.LBB22:
+ 496:mcp2515.c     **** 				break;
+ 497:mcp2515.c     **** 			
+ 498:mcp2515.c     **** 			spi_putc(pgm_read_byte(&filter[index]));
+ 1406               	.LM203:
+ 1407 0552 FE01      		movw r30,r28
+ 1408 0554 EE0D      		add r30,r14
+ 1409 0556 F11D      		adc r31,__zero_reg__
+ 1410               	/* #APP */
+ 1411               	 ;  498 "mcp2515.c" 1
+ 1412 0558 8491      		lpm r24, Z
+ 1413               		
+ 1414               	 ;  0 "" 2
+ 1415               	/* #NOAPP */
+ 1416               	.LBE22:
+ 1417 055a 0E94 0000 		call spi_putc
+ 499:mcp2515.c     **** 			index++;
+ 1419               	.LM204:
+ 1420 055e E394      		inc r14
+ 493:mcp2515.c     **** 		for (uint8_t j=0;j<12;j++) 
+ 1422               	.LM205:
+ 1423 0560 0F5F      		subi r16,lo8(-(1))
+ 1424 0562 0C30      		cpi r16,lo8(12)
+ 1425 0564 01F4      		brne .L63
+ 1426               	.L62:
+ 1427               	.LBE21:
+ 500:mcp2515.c     **** 		}
+ 501:mcp2515.c     **** 		
+ 502:mcp2515.c     **** 		SET(MCP2515_CS);
+ 1429               	.LM206:
+ 1430 0566 C49A      		sbi 0x18,4
+ 487:mcp2515.c     **** 	for (uint8_t i=0;i<3;i++)
+ 1432               	.LM207:
+ 1433 0568 F394      		inc r15
+ 1434 056a 105F      		subi r17,lo8(-(16))
+ 1435 056c 1033      		cpi r17,lo8(48)
+ 1436 056e 01F4      		brne .L65
+ 1437               	.LBE23:
+ 503:mcp2515.c     **** 	}
+ 504:mcp2515.c     **** 	
+ 505:mcp2515.c     **** 	mcp2515_bit_modify(CANCTRL, 0xe0, 0);
+ 1439               	.LM208:
+ 1440 0570 40E0      		ldi r20,0
+ 1441 0572 60EE      		ldi r22,lo8(-32)
+ 1442 0574 8FE0      		ldi r24,lo8(15)
+ 1443               	/* epilogue start */
+ 506:mcp2515.c     **** }
+ 1445               	.LM209:
+ 1446 0576 DF91      		pop r29
+ 1447 0578 CF91      		pop r28
+ 1448 057a 1F91      		pop r17
+ 1449 057c 0F91      		pop r16
+ 1450 057e FF90      		pop r15
+ 1451 0580 EF90      		pop r14
+ 505:mcp2515.c     **** 	mcp2515_bit_modify(CANCTRL, 0xe0, 0);
+ 1453               	.LM210:
+ 1454 0582 0C94 0000 		jmp mcp2515_bit_modify
+ 1468               	.Lscope14:
+ 1470               	.Letext0:
+ 1471               		.ident	"GCC: (GNU) 4.8.2"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 mcp2515.c
+     /tmp/ccNErzxf.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccNErzxf.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccNErzxf.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccNErzxf.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccNErzxf.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccNErzxf.s:117    .text:0000000000000000 spi_putc
+     /tmp/ccNErzxf.s:146    .text:000000000000000a mcp2515_write_register
+     /tmp/ccNErzxf.s:195    .text:000000000000003c mcp2515_read_register
+     /tmp/ccNErzxf.s:236    .text:000000000000005a mcp2515_bit_modify
+     /tmp/ccNErzxf.s:292    .text:0000000000000098 mcp2515_read_status
+     /tmp/ccNErzxf.s:321    .text:00000000000000a8 mcp2515_init
+     /tmp/ccNErzxf.s:467    .text:0000000000000136 mcp2515_check_message
+     /tmp/ccNErzxf.s:491    .text:0000000000000144 mcp2515_check_free_buffer
+     /tmp/ccNErzxf.s:521    .text:0000000000000158 mcp2515_get_message
+     /tmp/ccNErzxf.s:705    .text:0000000000000236 mcp2515_get_extmessage
+     /tmp/ccNErzxf.s:883    .text:0000000000000308 mcp2515_send_message
+     /tmp/ccNErzxf.s:1091   .text:00000000000003f6 generate_extCAN_ID
+     /tmp/ccNErzxf.s:1147   .text:000000000000043a mcp2515_send_extmessage
+     /tmp/ccNErzxf.s:1346   .text:000000000000051a mcp2515_static_filter
+
+NO UNDEFINED SYMBOLS

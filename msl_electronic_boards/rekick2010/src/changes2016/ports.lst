@@ -1,0 +1,442 @@
+   1               		.file	"ports.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 102               	.global	toggle_status_led
+ 104               	toggle_status_led:
+   1:ports.c       **** #include <avr/io.h>
+   2:ports.c       **** 
+   3:ports.c       **** // use AVCC as reference
+   4:ports.c       **** #define ADCREF  (1 << REFS0)
+   5:ports.c       **** 
+   6:ports.c       **** void toggle_status_led(void) {
+ 106               	.LM0:
+ 107               	.LFBB1:
+ 108               	/* prologue: function */
+ 109               	/* frame size = 0 */
+ 110               	/* stack size = 0 */
+ 111               	.L__stack_usage = 0
+   7:ports.c       **** 	
+   8:ports.c       **** 	PORTD ^= (1 << PD6);
+ 113               	.LM1:
+ 114 0000 82B3      		in r24,0x12
+ 115 0002 90E4      		ldi r25,lo8(64)
+ 116 0004 8927      		eor r24,r25
+ 117 0006 82BB      		out 0x12,r24
+ 118 0008 0895      		ret
+ 120               	.Lscope1:
+ 122               	.global	read_adc
+ 124               	read_adc:
+   9:ports.c       **** }
+  10:ports.c       **** 
+  11:ports.c       **** uint16_t read_adc(void) {
+ 126               	.LM2:
+ 127               	.LFBB2:
+ 128               	/* prologue: function */
+ 129               	/* frame size = 0 */
+ 130               	/* stack size = 0 */
+ 131               	.L__stack_usage = 0
+ 132               	.L4:
+  12:ports.c       **** 
+  13:ports.c       **** 	uint8_t i;
+  14:ports.c       **** 	uint16_t res = 0;
+  15:ports.c       **** 
+  16:ports.c       **** 	// wait for end of last (test-) conversion
+  17:ports.c       **** 	while (ADCSRA & (1 << ADSC));
+ 134               	.LM3:
+ 135 000a 3699      		sbic 0x6,6
+ 136 000c 00C0      		rjmp .L4
+ 138               	.LM4:
+ 139 000e 47E0      		ldi r20,lo8(7)
+ 140 0010 80E0      		ldi r24,0
+ 141 0012 90E0      		ldi r25,0
+ 142               	.L8:
+  18:ports.c       **** 
+  19:ports.c       **** 	// read channel
+  20:ports.c       **** 	for (i = 0; i < 7; i++) {
+  21:ports.c       **** 		ADCSRA |= (1 << ADSC);
+ 144               	.LM5:
+ 145 0014 369A      		sbi 0x6,6
+ 146               	.L6:
+  22:ports.c       **** 		while (ADCSRA & (1 << ADSC));
+ 148               	.LM6:
+ 149 0016 3699      		sbic 0x6,6
+ 150 0018 00C0      		rjmp .L6
+  23:ports.c       **** 		res += ADCW;
+ 152               	.LM7:
+ 153 001a 24B1      		in r18,0x4
+ 154 001c 35B1      		in r19,0x4+1
+ 155 001e 820F      		add r24,r18
+ 156 0020 931F      		adc r25,r19
+ 157 0022 4150      		subi r20,lo8(-(-1))
+  20:ports.c       **** 	for (i = 0; i < 7; i++) {
+ 159               	.LM8:
+ 160 0024 01F4      		brne .L8
+  24:ports.c       **** 	}
+  25:ports.c       **** 	res /= 7;
+ 162               	.LM9:
+ 163 0026 67E0      		ldi r22,lo8(7)
+ 164 0028 70E0      		ldi r23,0
+ 165 002a 0E94 0000 		call __udivmodhi4
+ 166 002e CB01      		movw r24,r22
+  26:ports.c       **** 
+  27:ports.c       **** 	return res;
+  28:ports.c       **** }
+ 168               	.LM10:
+ 169 0030 0895      		ret
+ 171               	.Lscope2:
+ 174               	.global	select_adc_channel
+ 176               	select_adc_channel:
+  29:ports.c       **** 
+  30:ports.c       **** void select_adc_channel(uint8_t mux) {
+ 178               	.LM11:
+ 179               	.LFBB3:
+ 180               	/* prologue: function */
+ 181               	/* frame size = 0 */
+ 182               	/* stack size = 0 */
+ 183               	.L__stack_usage = 0
+  31:ports.c       **** 
+  32:ports.c       **** 	uint8_t last_channel, new_channel;
+  33:ports.c       **** 
+  34:ports.c       **** 	last_channel = ADMUX;
+ 185               	.LM12:
+ 186 0032 97B1      		in r25,0x7
+  35:ports.c       **** 	new_channel = ADCREF | mux;
+ 188               	.LM13:
+ 189 0034 8064      		ori r24,lo8(64)
+  36:ports.c       **** 
+  37:ports.c       **** 	// change channel
+  38:ports.c       **** 	if (last_channel != new_channel) {
+ 191               	.LM14:
+ 192 0036 9817      		cp r25,r24
+ 193 0038 01F0      		breq .L10
+  39:ports.c       **** 		ADMUX = new_channel;
+ 195               	.LM15:
+ 196 003a 87B9      		out 0x7,r24
+  40:ports.c       **** 		// start a test-conversion, but do not wait
+  41:ports.c       **** 		ADCSRA |= (1 << ADSC);
+ 198               	.LM16:
+ 199 003c 369A      		sbi 0x6,6
+ 200               	.L10:
+ 201 003e 0895      		ret
+ 207               	.Lscope3:
+ 209               	.global	ports_init
+ 211               	ports_init:
+  42:ports.c       **** 	}
+  43:ports.c       **** 
+  44:ports.c       **** 	return;
+  45:ports.c       **** }
+  46:ports.c       **** 
+  47:ports.c       **** void ports_init(void) {
+ 213               	.LM17:
+ 214               	.LFBB4:
+ 215               	/* prologue: function */
+ 216               	/* frame size = 0 */
+ 217               	/* stack size = 0 */
+ 218               	.L__stack_usage = 0
+  48:ports.c       **** 
+  49:ports.c       **** 	// select adc multiplexer channel
+  50:ports.c       **** 	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+ 220               	.LM18:
+ 221 0040 87E8      		ldi r24,lo8(-121)
+ 222 0042 86B9      		out 0x6,r24
+  51:ports.c       **** 	ADMUX = ADCREF;
+ 224               	.LM19:
+ 225 0044 80E4      		ldi r24,lo8(64)
+ 226 0046 87B9      		out 0x7,r24
+  52:ports.c       **** 	select_adc_channel(6);
+ 228               	.LM20:
+ 229 0048 86E0      		ldi r24,lo8(6)
+ 230 004a 0E94 0000 		call select_adc_channel
+  53:ports.c       **** 
+  54:ports.c       **** 	// Set green status led on 
+  55:ports.c       **** 	DDRD |= (1 << DDD6); 
+ 232               	.LM21:
+ 233 004e 8E9A      		sbi 0x11,6
+ 234 0050 0895      		ret
+ 236               	.Lscope4:
+ 237               	.global	__floatunsisf
+ 238               	.global	__mulsf3
+ 239               	.global	__fixunssfsi
+ 241               	.global	get_capacitors_voltage
+ 243               	get_capacitors_voltage:
+  56:ports.c       **** 
+  57:ports.c       **** }
+  58:ports.c       **** 
+  59:ports.c       **** uint16_t get_capacitors_voltage(void) {
+ 245               	.LM22:
+ 246               	.LFBB5:
+ 247               	/* prologue: function */
+ 248               	/* frame size = 0 */
+ 249               	/* stack size = 0 */
+ 250               	.L__stack_usage = 0
+  60:ports.c       **** 	
+  61:ports.c       **** 	select_adc_channel(6);
+ 252               	.LM23:
+ 253 0052 86E0      		ldi r24,lo8(6)
+ 254 0054 0E94 0000 		call select_adc_channel
+  62:ports.c       **** 	uint16_t ret = read_adc();
+ 256               	.LM24:
+ 257 0058 0E94 0000 		call read_adc
+  63:ports.c       **** 
+  64:ports.c       **** 	//nase: uint16_t val = ret *0.4145; 
+  65:ports.c       **** 	//hairy:
+  66:ports.c       **** 	uint16_t val = ret * 0.4290;
+ 259               	.LM25:
+ 260 005c BC01      		movw r22,r24
+ 261 005e 80E0      		ldi r24,0
+ 262 0060 90E0      		ldi r25,0
+ 263 0062 0E94 0000 		call __floatunsisf
+ 264 0066 23EE      		ldi r18,lo8(-29)
+ 265 0068 35EA      		ldi r19,lo8(-91)
+ 266 006a 4BED      		ldi r20,lo8(-37)
+ 267 006c 5EE3      		ldi r21,lo8(62)
+ 268 006e 0E94 0000 		call __mulsf3
+ 269 0072 0E94 0000 		call __fixunssfsi
+  67:ports.c       **** 
+  68:ports.c       **** 	if( val < 50 )
+ 271               	.LM26:
+ 272 0076 6233      		cpi r22,50
+ 273 0078 7105      		cpc r23,__zero_reg__
+ 274 007a 00F4      		brsh .L14
+  69:ports.c       **** 	{
+  70:ports.c       **** 		OCR1B = 5;
+ 276               	.LM27:
+ 277 007c 25E0      		ldi r18,lo8(5)
+ 278 007e 30E0      		ldi r19,0
+ 279 0080 00C0      		rjmp .L23
+ 280               	.L14:
+  71:ports.c       **** 		OCR1A = 104;
+  72:ports.c       **** 	}
+  73:ports.c       **** 	else if( val < 70 )
+ 282               	.LM28:
+ 283 0082 6634      		cpi r22,70
+ 284 0084 7105      		cpc r23,__zero_reg__
+ 285 0086 00F4      		brsh .L16
+  74:ports.c       **** 	{
+  75:ports.c       **** 		OCR1B = 20;
+ 287               	.LM29:
+ 288 0088 24E1      		ldi r18,lo8(20)
+ 289 008a 30E0      		ldi r19,0
+ 290               	.L23:
+ 291 008c 39BD      		out 0x28+1,r19
+ 292 008e 28BD      		out 0x28,r18
+  76:ports.c       **** 		OCR1A = 104;
+ 294               	.LM30:
+ 295 0090 28E6      		ldi r18,lo8(104)
+ 296 0092 30E0      		ldi r19,0
+ 297 0094 00C0      		rjmp .L22
+ 298               	.L16:
+  77:ports.c       **** 	}
+  78:ports.c       **** 	else if( val > 70 && val < 90 )
+ 300               	.LM31:
+ 301 0096 AB01      		movw r20,r22
+ 302 0098 4754      		subi r20,71
+ 303 009a 5109      		sbc r21,__zero_reg__
+ 304 009c 4331      		cpi r20,19
+ 305 009e 5105      		cpc r21,__zero_reg__
+ 306 00a0 00F4      		brsh .L17
+  79:ports.c       **** 	{
+  80:ports.c       **** 		OCR1B = 52;
+ 308               	.LM32:
+ 309 00a2 24E3      		ldi r18,lo8(52)
+ 310 00a4 30E0      		ldi r19,0
+ 311 00a6 00C0      		rjmp .L23
+ 312               	.L17:
+  81:ports.c       **** 		OCR1A = 104;
+  82:ports.c       **** 	}
+  83:ports.c       **** 	else if( val > 90 && val < 120 )
+ 314               	.LM33:
+ 315 00a8 AB01      		movw r20,r22
+ 316 00aa 4B55      		subi r20,91
+ 317 00ac 5109      		sbc r21,__zero_reg__
+ 318 00ae 4D31      		cpi r20,29
+ 319 00b0 5105      		cpc r21,__zero_reg__
+ 320 00b2 00F4      		brsh .L18
+  84:ports.c       **** 	{
+  85:ports.c       **** 		OCR1B = 52;
+ 322               	.LM34:
+ 323 00b4 24E3      		ldi r18,lo8(52)
+ 324 00b6 30E0      		ldi r19,0
+ 325 00b8 39BD      		out 0x28+1,r19
+ 326 00ba 28BD      		out 0x28,r18
+  86:ports.c       **** 		OCR1A = 100;
+ 328               	.LM35:
+ 329 00bc 24E6      		ldi r18,lo8(100)
+ 330 00be 30E0      		ldi r19,0
+ 331 00c0 00C0      		rjmp .L22
+ 332               	.L18:
+  87:ports.c       **** 	}
+  88:ports.c       **** 	else if( val > 120 && val < 160 )
+ 334               	.LM36:
+ 335 00c2 AB01      		movw r20,r22
+ 336 00c4 4957      		subi r20,121
+ 337 00c6 5109      		sbc r21,__zero_reg__
+ 338 00c8 4732      		cpi r20,39
+ 339 00ca 5105      		cpc r21,__zero_reg__
+ 340 00cc 00F4      		brsh .L19
+  89:ports.c       **** 	{
+  90:ports.c       **** 		OCR1B = 52;
+ 342               	.LM37:
+ 343 00ce 24E3      		ldi r18,lo8(52)
+ 344 00d0 30E0      		ldi r19,0
+ 345 00d2 39BD      		out 0x28+1,r19
+ 346 00d4 28BD      		out 0x28,r18
+  91:ports.c       **** 		OCR1A = 96;
+ 348               	.LM38:
+ 349 00d6 20E6      		ldi r18,lo8(96)
+ 350 00d8 30E0      		ldi r19,0
+ 351 00da 00C0      		rjmp .L22
+ 352               	.L19:
+  92:ports.c       **** 	}
+  93:ports.c       **** 	else if( val > 160 && val < 200 )
+ 354               	.LM39:
+ 355 00dc AB01      		movw r20,r22
+ 356 00de 415A      		subi r20,-95
+ 357 00e0 5109      		sbc r21,__zero_reg__
+ 358 00e2 4732      		cpi r20,39
+ 359 00e4 5105      		cpc r21,__zero_reg__
+ 360 00e6 00F4      		brsh .L20
+  94:ports.c       **** 	{
+  95:ports.c       **** 		OCR1B = 52;
+ 362               	.LM40:
+ 363 00e8 24E3      		ldi r18,lo8(52)
+ 364 00ea 30E0      		ldi r19,0
+ 365 00ec 39BD      		out 0x28+1,r19
+ 366 00ee 28BD      		out 0x28,r18
+  96:ports.c       **** 		OCR1A = 92;
+ 368               	.LM41:
+ 369 00f0 2CE5      		ldi r18,lo8(92)
+ 370 00f2 30E0      		ldi r19,0
+ 371 00f4 00C0      		rjmp .L22
+ 372               	.L20:
+  97:ports.c       **** 	}
+  98:ports.c       **** 	else if( val > 200 && val < 240 )
+ 374               	.LM42:
+ 375 00f6 AB01      		movw r20,r22
+ 376 00f8 495C      		subi r20,-55
+ 377 00fa 5109      		sbc r21,__zero_reg__
+ 378 00fc 4732      		cpi r20,39
+ 379 00fe 5105      		cpc r21,__zero_reg__
+ 380 0100 00F4      		brsh .L21
+  99:ports.c       **** 	{
+ 100:ports.c       **** 		OCR1B = 52;
+ 382               	.LM43:
+ 383 0102 24E3      		ldi r18,lo8(52)
+ 384 0104 30E0      		ldi r19,0
+ 385 0106 39BD      		out 0x28+1,r19
+ 386 0108 28BD      		out 0x28,r18
+ 101:ports.c       **** 		OCR1A = 90;
+ 388               	.LM44:
+ 389 010a 2AE5      		ldi r18,lo8(90)
+ 390 010c 30E0      		ldi r19,0
+ 391 010e 00C0      		rjmp .L22
+ 392               	.L21:
+ 102:ports.c       **** 	}
+ 103:ports.c       **** 	else if( val > 240 )
+ 394               	.LM45:
+ 395 0110 613F      		cpi r22,-15
+ 396 0112 7105      		cpc r23,__zero_reg__
+ 397 0114 00F0      		brlo .L15
+ 104:ports.c       **** 	{
+ 105:ports.c       **** 		OCR1B = 52;
+ 399               	.LM46:
+ 400 0116 24E3      		ldi r18,lo8(52)
+ 401 0118 30E0      		ldi r19,0
+ 402 011a 39BD      		out 0x28+1,r19
+ 403 011c 28BD      		out 0x28,r18
+ 106:ports.c       **** 		OCR1A = 88;
+ 405               	.LM47:
+ 406 011e 28E5      		ldi r18,lo8(88)
+ 407 0120 30E0      		ldi r19,0
+ 408               	.L22:
+ 409 0122 3BBD      		out 0x2a+1,r19
+ 410 0124 2ABD      		out 0x2a,r18
+ 411               	.L15:
+ 107:ports.c       **** 	}
+ 108:ports.c       **** 
+ 109:ports.c       **** 	return val;
+ 110:ports.c       **** }
+ 413               	.LM48:
+ 414 0126 CB01      		movw r24,r22
+ 415 0128 0895      		ret
+ 421               	.Lscope5:
+ 423               	.global	get_supply_voltage
+ 425               	get_supply_voltage:
+ 111:ports.c       **** 
+ 112:ports.c       **** float get_supply_voltage(void) {
+ 427               	.LM49:
+ 428               	.LFBB6:
+ 429               	/* prologue: function */
+ 430               	/* frame size = 0 */
+ 431               	/* stack size = 0 */
+ 432               	.L__stack_usage = 0
+ 113:ports.c       **** 	
+ 114:ports.c       **** 	select_adc_channel(1);
+ 434               	.LM50:
+ 435 012a 81E0      		ldi r24,lo8(1)
+ 436 012c 0E94 0000 		call select_adc_channel
+ 115:ports.c       **** 	uint16_t ret = read_adc();
+ 438               	.LM51:
+ 439 0130 0E94 0000 		call read_adc
+ 116:ports.c       **** 
+ 117:ports.c       **** 	return ret * 0.0394629;
+ 441               	.LM52:
+ 442 0134 BC01      		movw r22,r24
+ 443 0136 80E0      		ldi r24,0
+ 444 0138 90E0      		ldi r25,0
+ 445 013a 0E94 0000 		call __floatunsisf
+ 446 013e 2AED      		ldi r18,lo8(-38)
+ 447 0140 33EA      		ldi r19,lo8(-93)
+ 448 0142 41E2      		ldi r20,lo8(33)
+ 449 0144 5DE3      		ldi r21,lo8(61)
+ 450 0146 0E94 0000 		call __mulsf3
+ 118:ports.c       **** }
+ 452               	.LM53:
+ 453 014a 0895      		ret
+ 458               	.Lscope6:
+ 460               	.global	get_supply_raw_voltage
+ 462               	get_supply_raw_voltage:
+ 119:ports.c       **** 
+ 120:ports.c       **** uint16_t get_supply_raw_voltage(void) {
+ 464               	.LM54:
+ 465               	.LFBB7:
+ 466               	/* prologue: function */
+ 467               	/* frame size = 0 */
+ 468               	/* stack size = 0 */
+ 469               	.L__stack_usage = 0
+ 121:ports.c       **** 	
+ 122:ports.c       **** 	select_adc_channel(1);
+ 471               	.LM55:
+ 472 014c 81E0      		ldi r24,lo8(1)
+ 473 014e 0E94 0000 		call select_adc_channel
+ 123:ports.c       **** 	uint16_t ret = read_adc();
+ 475               	.LM56:
+ 476 0152 0C94 0000 		jmp read_adc
+ 478               	.Lscope7:
+ 480               	.Letext0:
+ 481               		.ident	"GCC: (GNU) 4.8.2"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 ports.c
+     /tmp/cccPMUhL.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cccPMUhL.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cccPMUhL.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cccPMUhL.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cccPMUhL.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cccPMUhL.s:104    .text:0000000000000000 toggle_status_led
+     /tmp/cccPMUhL.s:124    .text:000000000000000a read_adc
+     /tmp/cccPMUhL.s:176    .text:0000000000000032 select_adc_channel
+     /tmp/cccPMUhL.s:211    .text:0000000000000040 ports_init
+     /tmp/cccPMUhL.s:243    .text:0000000000000052 get_capacitors_voltage
+     /tmp/cccPMUhL.s:425    .text:000000000000012a get_supply_voltage
+     /tmp/cccPMUhL.s:462    .text:000000000000014c get_supply_raw_voltage
+
+UNDEFINED SYMBOLS
+__udivmodhi4
+__floatunsisf
+__mulsf3
+__fixunssfsi
