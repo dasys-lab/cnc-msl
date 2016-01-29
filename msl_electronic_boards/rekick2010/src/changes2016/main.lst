@@ -1,0 +1,322 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 118               		.section	.text.startup,"ax",@progbits
+ 120               	.global	main
+ 122               	main:
+   1:main.c        **** // rekick
+   2:main.c        **** //
+   3:main.c        **** // Firmware for the rekick controlling device.
+   4:main.c        **** //
+   5:main.c        **** // This device controls the servo for rotating the coil to the three directions
+   6:main.c        **** // and loads the capacitors with use of the boosting device.
+   7:main.c        **** //
+   8:main.c        **** // Author: Kai Buamgart <kb@zkar.de> (c) 2008
+   9:main.c        **** //
+  10:main.c        **** // TODO Software:
+  11:main.c        **** //  * Servo 1 PWM enablen
+  12:main.c        **** //  * Servo 2 PWM enablen
+  13:main.c        **** //  * Rotation
+  14:main.c        **** //  * Schalter Rotor
+  15:main.c        **** //  * Timeout CAN-Messages
+  16:main.c        **** //  * Erste CAN-Messages annehmen aber verwerfen
+  17:main.c        **** //  * CAN-ID behandeln
+  18:main.c        **** //  * ReKick deaktiviert sich selbst, wenn innerhalb einer bestimmten Zeit
+  19:main.c        **** //  * keine Alive-Message von Kicker.exe angenommen wurde
+  20:main.c        **** //  * ReKick kann in einen manuellen oder debug-Modus geschaltet werden, wo
+  21:main.c        **** //  * keine Alive-Messages von einer überliegenden Software benötigt wird.
+  22:main.c        **** //  * Logging. Man könnte den EEPROM zum loggen benutzen.
+  23:main.c        **** //  * Abzuspeichern wäre: Ladezeit nach einem Schuss, Schuss, etc.
+  24:main.c        **** //
+  25:main.c        **** // TODO Hardware:
+  26:main.c        **** //  * P-MOSFET rekick einbauen und testen
+  27:main.c        **** //  * Am Booster Leiterbahnen dicker
+  28:main.c        **** //  * Gegentakt-Schaltung wurde verändert. Dies im Layout aufnehmen.
+  29:main.c        **** 
+  30:main.c        **** #include <avr/interrupt.h>
+  31:main.c        **** #include <avr/pgmspace.h>
+  32:main.c        **** #include <string.h>
+  33:main.c        **** #include <stdio.h>
+  34:main.c        **** 
+  35:main.c        **** #include "defs.h"
+  36:main.c        **** #include "messages.h"
+  37:main.c        **** #include "timer.h"
+  38:main.c        **** #include "booster.h"
+  39:main.c        **** #include "kicker.h"
+  40:main.c        **** #include "ports.h"
+  41:main.c        **** #include "defaults.h"
+  42:main.c        **** #include <avr/io.h>
+  43:main.c        **** #include "global.h"
+  44:main.c        **** #include "ports.h"
+  45:main.c        **** 
+  46:main.c        **** // prototypes
+  47:main.c        **** char *check_hw_reset(unsigned char);
+  48:main.c        **** 
+  49:main.c        **** int main(void) {
+ 124               	.LM0:
+ 125               	.LFBB1:
+ 126 0000 CF93      		push r28
+ 127 0002 DF93      		push r29
+ 128 0004 1F92      		push __zero_reg__
+ 129 0006 CDB7      		in r28,__SP_L__
+ 130 0008 DEB7      		in r29,__SP_H__
+ 131               	/* prologue: function */
+ 132               	/* frame size = 1 */
+ 133               	/* stack size = 3 */
+ 134               	.L__stack_usage = 3
+  50:main.c        **** 
+  51:main.c        **** 	//disable booster power (power off)
+  52:main.c        **** 	SET_OUTPUT(POWER_INV);
+ 136               	.LM1:
+ 137 000a A09A      		sbi 0x14,0
+  53:main.c        **** 	SET_OUTPUT(POWER_NORM);
+ 139               	.LM2:
+ 140 000c A19A      		sbi 0x14,1
+  54:main.c        **** 	RESET(POWER_INV);
+ 142               	.LM3:
+ 143 000e A898      		cbi 0x15,0
+  55:main.c        **** 	RESET(POWER_NORM);
+ 145               	.LM4:
+ 146 0010 A998      		cbi 0x15,1
+  56:main.c        **** 
+  57:main.c        **** 	// save reset-register and reset the value
+  58:main.c        **** 	uint8_t reset_msg[1] = {MCUCSR};
+ 148               	.LM5:
+ 149 0012 84B7      		in r24,0x34
+ 150 0014 8983      		std Y+1,r24
+  59:main.c        **** 	MCUCSR = 0x00;
+ 152               	.LM6:
+ 153 0016 14BE      		out 0x34,__zero_reg__
+  60:main.c        **** 
+  61:main.c        **** 	// turn off watchdog
+  62:main.c        **** 	WDTCR = 0x00;
+ 155               	.LM7:
+ 156 0018 11BC      		out 0x21,__zero_reg__
+  63:main.c        **** 	
+  64:main.c        **** 	// enable interrupts
+  65:main.c        **** 	sei();
+ 158               	.LM8:
+ 159               	/* #APP */
+ 160               	 ;  65 "main.c" 1
+ 161 001a 7894      		sei
+ 162               	 ;  0 "" 2
+  66:main.c        **** 
+  67:main.c        **** 	can_init();
+ 164               	.LM9:
+ 165               	/* #NOAPP */
+ 166 001c 0E94 0000 		call can_init
+  68:main.c        **** 	ports_init();
+ 168               	.LM10:
+ 169 0020 0E94 0000 		call ports_init
+  69:main.c        **** 	kicker_init();
+ 171               	.LM11:
+ 172 0024 0E94 0000 		call kicker_init
+  70:main.c        **** 	timer_init();
+ 174               	.LM12:
+ 175 0028 0E94 0000 		call timer_init
+  71:main.c        **** 	booster_init();
+ 177               	.LM13:
+ 178 002c 0E94 0000 		call booster_init
+ 179               	.L2:
+  72:main.c        **** 
+  73:main.c        **** 	// wait until eth2can is up and running or erase can_buffer
+  74:main.c        **** 	while (timer_get_ms() < 1500) {
+ 181               	.LM14:
+ 182 0030 0E94 0000 		call timer_get_ms
+ 183 0034 6C3D      		cpi r22,-36
+ 184 0036 7540      		sbci r23,5
+ 185 0038 8105      		cpc r24,__zero_reg__
+ 186 003a 9105      		cpc r25,__zero_reg__
+ 187 003c 00F4      		brsh .L6
+  75:main.c        **** 		clear_receive_buffer();
+ 189               	.LM15:
+ 190 003e 0E94 0000 		call clear_receive_buffer
+ 191 0042 00C0      		rjmp .L2
+ 192               	.L6:
+  76:main.c        **** 	}
+  77:main.c        **** 	// send reset message
+  78:main.c        **** 	can_put_cmd(CMD_RESET, reset_msg, 1);
+ 194               	.LM16:
+ 195 0044 41E0      		ldi r20,lo8(1)
+ 196 0046 BE01      		movw r22,r28
+ 197 0048 6F5F      		subi r22,-1
+ 198 004a 7F4F      		sbci r23,-1
+ 199 004c 84EF      		ldi r24,lo8(-12)
+ 200 004e 0E94 0000 		call can_put_cmd
+ 201               	.L4:
+  79:main.c        **** 
+  80:main.c        **** 	//if (timer_register(toggle_status_led, 500) != EXIT_SUCCESS)
+  81:main.c        **** 	//	error("Cannot register timer\n");
+  82:main.c        **** 	
+  83:main.c        **** 	// to initialize we let the rekick rotate the kicker to position #1
+  84:main.c        **** 	//kicker_add_rotate_job(1);
+  85:main.c        **** 	/*char msg[20];
+  86:main.c        **** 	
+  87:main.c        **** 	while(1) {
+  88:main.c        **** 		sprintf(msg, "%lu\n",timer_get_ms());
+  89:main.c        **** 		debug(msg);
+  90:main.c        **** 
+  91:main.c        **** 	}*/
+  92:main.c        **** 
+  93:main.c        **** 	for (;;) {
+  94:main.c        **** 		timer_trigger_callbacks();
+ 203               	.LM17:
+ 204 0052 0E94 0000 		call timer_trigger_callbacks
+  95:main.c        **** 		message_handler();
+ 206               	.LM18:
+ 207 0056 0E94 0000 		call message_handler
+  96:main.c        **** 		kicker_task_handler();
+ 209               	.LM19:
+ 210 005a 0E94 0000 		call kicker_task_handler
+  97:main.c        **** 		booster_ctrl();		
+ 212               	.LM20:
+ 213 005e 0E94 0000 		call booster_ctrl
+ 214 0062 00C0      		rjmp .L4
+ 219               	.Lscope1:
+ 220               		.text
+ 223               	.global	check_hw_reset
+ 225               	check_hw_reset:
+  98:main.c        **** 	}
+  99:main.c        **** 	return 0;
+ 100:main.c        **** }
+ 101:main.c        **** 
+ 102:main.c        **** /**
+ 103:main.c        ****  * Check which reset flag is set
+ 104:main.c        ****  *
+ 105:main.c        ****  * @param mcucsr The register which holds the data.
+ 106:main.c        ****  * @returns      A string with the output.
+ 107:main.c        ****  */
+ 108:main.c        **** char *check_hw_reset(unsigned char mcucsr) {
+ 227               	.LM21:
+ 228               	.LFBB2:
+ 229               	/* prologue: function */
+ 230               	/* frame size = 0 */
+ 231               	/* stack size = 0 */
+ 232               	.L__stack_usage = 0
+ 109:main.c        **** 	if (mcucsr & (1 << PORF))
+ 234               	.LM22:
+ 235 0000 80FD      		sbrc r24,0
+ 236 0002 00C0      		rjmp .L9
+ 110:main.c        **** 		return PSTR("Power On");
+ 111:main.c        **** 	else if (mcucsr & (1 << JTRF))
+ 238               	.LM23:
+ 239 0004 84FD      		sbrc r24,4
+ 240 0006 00C0      		rjmp .L10
+ 112:main.c        **** 		return PSTR("JTAG");
+ 113:main.c        **** 	else if (mcucsr & (1 << WDRF))
+ 242               	.LM24:
+ 243 0008 83FD      		sbrc r24,3
+ 244 000a 00C0      		rjmp .L11
+ 114:main.c        **** 		return PSTR("WATCHDOG");
+ 115:main.c        **** 	else if (mcucsr & (1 << BORF))
+ 246               	.LM25:
+ 247 000c 82FD      		sbrc r24,2
+ 248 000e 00C0      		rjmp .L12
+ 116:main.c        **** 		return PSTR("BROWN OUT");
+ 117:main.c        **** 	else if (mcucsr & (1 << EXTRF))
+ 250               	.LM26:
+ 251 0010 81FF      		sbrs r24,1
+ 252 0012 00C0      		rjmp .L13
+ 118:main.c        **** 		return PSTR("External");
+ 254               	.LM27:
+ 255 0014 80E0      		ldi r24,lo8(__c.2040)
+ 256 0016 90E0      		ldi r25,hi8(__c.2040)
+ 257 0018 0895      		ret
+ 258               	.L9:
+ 110:main.c        **** 		return PSTR("Power On");
+ 260               	.LM28:
+ 261 001a 80E0      		ldi r24,lo8(__c.2032)
+ 262 001c 90E0      		ldi r25,hi8(__c.2032)
+ 263 001e 0895      		ret
+ 264               	.L10:
+ 112:main.c        **** 		return PSTR("JTAG");
+ 266               	.LM29:
+ 267 0020 80E0      		ldi r24,lo8(__c.2034)
+ 268 0022 90E0      		ldi r25,hi8(__c.2034)
+ 269 0024 0895      		ret
+ 270               	.L11:
+ 114:main.c        **** 		return PSTR("WATCHDOG");
+ 272               	.LM30:
+ 273 0026 80E0      		ldi r24,lo8(__c.2036)
+ 274 0028 90E0      		ldi r25,hi8(__c.2036)
+ 275 002a 0895      		ret
+ 276               	.L12:
+ 116:main.c        **** 		return PSTR("BROWN OUT");
+ 278               	.LM31:
+ 279 002c 80E0      		ldi r24,lo8(__c.2038)
+ 280 002e 90E0      		ldi r25,hi8(__c.2038)
+ 281 0030 0895      		ret
+ 282               	.L13:
+ 119:main.c        **** 	else
+ 120:main.c        **** 		return PSTR("UNDEF");
+ 284               	.LM32:
+ 285 0032 80E0      		ldi r24,lo8(__c.2042)
+ 286 0034 90E0      		ldi r25,hi8(__c.2042)
+ 121:main.c        **** }
+ 288               	.LM33:
+ 289 0036 0895      		ret
+ 291               	.Lscope2:
+ 292               		.section	.progmem.data,"a",@progbits
+ 295               	__c.2042:
+ 296 0000 554E 4445 		.string	"UNDEF"
+ 296      4600 
+ 299               	__c.2040:
+ 300 0006 4578 7465 		.string	"External"
+ 300      726E 616C 
+ 300      00
+ 303               	__c.2038:
+ 304 000f 4252 4F57 		.string	"BROWN OUT"
+ 304      4E20 4F55 
+ 304      5400 
+ 307               	__c.2036:
+ 308 0019 5741 5443 		.string	"WATCHDOG"
+ 308      4844 4F47 
+ 308      00
+ 311               	__c.2034:
+ 312 0022 4A54 4147 		.string	"JTAG"
+ 312      00
+ 315               	__c.2032:
+ 316 0027 506F 7765 		.string	"Power On"
+ 316      7220 4F6E 
+ 316      00
+ 317               		.comm	pending_us10,2,1
+ 319               		.text
+ 321               	.Letext0:
+ 322               		.ident	"GCC: (GNU) 4.8.2"
+ 323               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.c
+     /tmp/ccwmtgPf.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccwmtgPf.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccwmtgPf.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccwmtgPf.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccwmtgPf.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccwmtgPf.s:122    .text.startup:0000000000000000 main
+     /tmp/ccwmtgPf.s:225    .text:0000000000000000 check_hw_reset
+     /tmp/ccwmtgPf.s:299    .progmem.data:0000000000000006 __c.2040
+     /tmp/ccwmtgPf.s:315    .progmem.data:0000000000000027 __c.2032
+     /tmp/ccwmtgPf.s:311    .progmem.data:0000000000000022 __c.2034
+     /tmp/ccwmtgPf.s:307    .progmem.data:0000000000000019 __c.2036
+     /tmp/ccwmtgPf.s:303    .progmem.data:000000000000000f __c.2038
+     /tmp/ccwmtgPf.s:295    .progmem.data:0000000000000000 __c.2042
+                            *COM*:0000000000000002 pending_us10
+
+UNDEFINED SYMBOLS
+can_init
+ports_init
+kicker_init
+timer_init
+booster_init
+timer_get_ms
+clear_receive_buffer
+can_put_cmd
+timer_trigger_callbacks
+message_handler
+kicker_task_handler
+booster_ctrl
+__do_clear_bss

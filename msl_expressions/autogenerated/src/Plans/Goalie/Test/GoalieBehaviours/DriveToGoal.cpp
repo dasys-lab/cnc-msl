@@ -22,20 +22,32 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-    	shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
-        if ( me == nullptr)
-        {
-            return;
-        }
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
 
         msl_actuator_msgs::MotionControl mc;
-        auto egoX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
-        auto egoY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
-        shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+        if (me == nullptr)
+        {
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
 
-        mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (egoX - 100, egoY), fieldCenterTarget,
-                                            100, 0);
+            cout << " Stop!" << endl;
+            cout << "### DriveToGoal ###\n" << endl;
+        }
+        else
+        {
 
+            double egoX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
+            double egoY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
+            shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+
+            cout << " Driving to goal" << endl;
+            //mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (egoX - 100, egoY), fieldCenterTarget,
+            //                                  100, 0);
+            mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (egoX - 100, egoY),
+                                                     fieldCenterTarget, 100, 0);
+            cout << "### DriveToGoal ###\n" << endl;
+        }
         send(mc);
 
         /*PROTECTED REGION END*/

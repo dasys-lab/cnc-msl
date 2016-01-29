@@ -1,0 +1,931 @@
+   1               		.file	"uart.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 107               	.global	__vector_13
+ 109               	__vector_13:
+   1:uart.c        **** /*************************************************************************
+   2:uart.c        **** Title:    Interrupt UART library with receive/transmit circular buffers
+   3:uart.c        **** Author:   Peter Fleury <pfleury@gmx.ch>   http://jump.to/fleury
+   4:uart.c        **** File:     $Id: uart.c,v 1.6.2.1 2007/07/01 11:14:38 peter Exp $
+   5:uart.c        **** Software: AVR-GCC 4.1, AVR Libc 1.4.6 or higher
+   6:uart.c        **** Hardware: any AVR with built-in UART, 
+   7:uart.c        **** License:  GNU General Public License 
+   8:uart.c        ****           
+   9:uart.c        **** DESCRIPTION:
+  10:uart.c        ****     An interrupt is generated when the UART has finished transmitting or
+  11:uart.c        ****     receiving a byte. The interrupt handling routines use circular buffers
+  12:uart.c        ****     for buffering received and transmitted data.
+  13:uart.c        ****     
+  14:uart.c        ****     The UART_RX_BUFFER_SIZE and UART_TX_BUFFER_SIZE variables define
+  15:uart.c        ****     the buffer size in bytes. Note that these variables must be a 
+  16:uart.c        ****     power of 2.
+  17:uart.c        ****     
+  18:uart.c        **** USAGE:
+  19:uart.c        ****     Refere to the header file uart.h for a description of the routines. 
+  20:uart.c        ****     See also example test_uart.c.
+  21:uart.c        **** 
+  22:uart.c        **** NOTES:
+  23:uart.c        ****     Based on Atmel Application Note AVR306
+  24:uart.c        ****                     
+  25:uart.c        **** LICENSE:
+  26:uart.c        ****     Copyright (C) 2006 Peter Fleury
+  27:uart.c        **** 
+  28:uart.c        ****     This program is free software; you can redistribute it and/or modify
+  29:uart.c        ****     it under the terms of the GNU General Public License as published by
+  30:uart.c        ****     the Free Software Foundation; either version 2 of the License, or
+  31:uart.c        ****     any later version.
+  32:uart.c        **** 
+  33:uart.c        ****     This program is distributed in the hope that it will be useful,
+  34:uart.c        ****     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  35:uart.c        ****     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  36:uart.c        ****     GNU General Public License for more details.
+  37:uart.c        ****                         
+  38:uart.c        **** *************************************************************************/
+  39:uart.c        **** 
+  40:uart.c        **** /************************************************************************
+  41:uart.c        **** uart_available, uart_flush, uart1_available, and uart1_flush functions
+  42:uart.c        **** were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on 
+  43:uart.c        **** 11 Jan 2009.  The license info for HardwareSerial.h is as follows:
+  44:uart.c        **** 
+  45:uart.c        ****   HardwareSerial.cpp - Hardware serial library for Wiring
+  46:uart.c        ****   Copyright (c) 2006 Nicholas Zambetti.  All right reserved.
+  47:uart.c        **** 
+  48:uart.c        ****   This library is free software; you can redistribute it and/or
+  49:uart.c        ****   modify it under the terms of the GNU Lesser General Public
+  50:uart.c        ****   License as published by the Free Software Foundation; either
+  51:uart.c        ****   version 2.1 of the License, or (at your option) any later version.
+  52:uart.c        **** 
+  53:uart.c        ****   This library is distributed in the hope that it will be useful,
+  54:uart.c        ****   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  55:uart.c        ****   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  56:uart.c        ****   Lesser General Public License for more details.
+  57:uart.c        **** 
+  58:uart.c        ****   You should have received a copy of the GNU Lesser General Public
+  59:uart.c        ****   License along with this library; if not, write to the Free Software
+  60:uart.c        ****   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  61:uart.c        ****   
+  62:uart.c        ****   Modified 23 November 2006 by David A. Mellis
+  63:uart.c        **** ************************************************************************/
+  64:uart.c        **** 
+  65:uart.c        **** /************************************************************************
+  66:uart.c        **** Changelog for modifications made by Tim Sharpe, starting with the current
+  67:uart.c        ****   library version on his Web site as of 05/01/2009. 
+  68:uart.c        **** 
+  69:uart.c        **** Date        Description
+  70:uart.c        **** =========================================================================
+  71:uart.c        **** 05/11/2009  Changed all existing UARTx_RECEIVE_INTERRUPT and UARTx_TRANSMIT_INTERRUPT
+  72:uart.c        ****               macros to use the "_vect" format introduced in AVR-Libc
+  73:uart.c        **** 			  v1.4.0.  Had to split the 3290 and 6490 out of their existing
+  74:uart.c        **** 			  macro due to an inconsistency in the UART0_RECEIVE_INTERRUPT 
+  75:uart.c        **** 			  vector name (seems like a typo: USART_RX_vect for the 3290/6490
+  76:uart.c        **** 			  vice USART0_RX_vect for the others in the macro).
+  77:uart.c        **** 			Verified all existing macro register names against the device
+  78:uart.c        **** 			  header files in AVR-Libc v1.6.6 to catch any inconsistencies.
+  79:uart.c        **** 05/12/2009  Added support for 48P, 88P, 168P, and 328P by adding them to the
+  80:uart.c        ****                existing 48/88/168 macro.
+  81:uart.c        **** 			Added Arduino-style available() and flush() functions for both
+  82:uart.c        **** 			supported UARTs.  Really wanted to keep them out of the library, so
+  83:uart.c        **** 			that it would be as close as possible to Peter Fleury's original
+  84:uart.c        **** 			library, but has scoping issues accessing internal variables from
+  85:uart.c        **** 			another program.  Go C!
+  86:uart.c        **** 05/13/2009  Changed Interrupt Service Routine label from the old "SIGNAL" to
+  87:uart.c        ****                the "ISR" format introduced in AVR-Libc v1.4.0.
+  88:uart.c        **** 
+  89:uart.c        **** ************************************************************************/
+  90:uart.c        **** 
+  91:uart.c        **** #include <avr/io.h>
+  92:uart.c        **** #include <avr/interrupt.h>
+  93:uart.c        **** #include <avr/pgmspace.h>
+  94:uart.c        **** #include "uart.h"
+  95:uart.c        **** 
+  96:uart.c        **** 
+  97:uart.c        **** /*
+  98:uart.c        ****  *  constants and macros
+  99:uart.c        ****  */
+ 100:uart.c        **** 
+ 101:uart.c        **** /* size of RX/TX buffers */
+ 102:uart.c        **** #define UART_RX_BUFFER_MASK ( UART_RX_BUFFER_SIZE - 1)
+ 103:uart.c        **** #define UART_TX_BUFFER_MASK ( UART_TX_BUFFER_SIZE - 1)
+ 104:uart.c        **** 
+ 105:uart.c        **** #if ( UART_RX_BUFFER_SIZE & UART_RX_BUFFER_MASK )
+ 106:uart.c        **** #error RX buffer size is not a power of 2
+ 107:uart.c        **** #endif
+ 108:uart.c        **** #if ( UART_TX_BUFFER_SIZE & UART_TX_BUFFER_MASK )
+ 109:uart.c        **** #error TX buffer size is not a power of 2
+ 110:uart.c        **** #endif
+ 111:uart.c        **** 
+ 112:uart.c        **** #if defined(__AVR_AT90S2313__) \
+ 113:uart.c        ****  || defined(__AVR_AT90S4414__) || defined(__AVR_AT90S4434__) \
+ 114:uart.c        ****  || defined(__AVR_AT90S8515__) || defined(__AVR_AT90S8535__) \
+ 115:uart.c        ****  || defined(__AVR_ATmega103__)
+ 116:uart.c        ****  /* old AVR classic or ATmega103 with one UART */
+ 117:uart.c        ****  #define AT90_UART
+ 118:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   UART_RX_vect
+ 119:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  UART_UDRE_vect
+ 120:uart.c        ****  #define UART0_STATUS   USR
+ 121:uart.c        ****  #define UART0_CONTROL  UCR
+ 122:uart.c        ****  #define UART0_DATA     UDR  
+ 123:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 124:uart.c        **** #elif defined(__AVR_AT90S2333__) || defined(__AVR_AT90S4433__)
+ 125:uart.c        ****  /* old AVR classic with one UART */
+ 126:uart.c        ****  #define AT90_UART
+ 127:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   UART_RX_vect
+ 128:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  UART_UDRE_vect
+ 129:uart.c        ****  #define UART0_STATUS   UCSRA
+ 130:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 131:uart.c        ****  #define UART0_DATA     UDR 
+ 132:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 133:uart.c        **** #elif  defined(__AVR_ATmega8__)  || defined(__AVR_ATmega16__) || defined(__AVR_ATmega32__) \
+ 134:uart.c        ****   || defined(__AVR_ATmega323__)
+ 135:uart.c        ****   /* ATmega with one USART */
+ 136:uart.c        ****  #define ATMEGA_USART
+ 137:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART_RXC_vect
+ 138:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART_UDRE_vect
+ 139:uart.c        ****  #define UART0_STATUS   UCSRA
+ 140:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 141:uart.c        ****  #define UART0_DATA     UDR
+ 142:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 143:uart.c        **** #elif  defined(__AVR_ATmega8515__) || defined(__AVR_ATmega8535__)
+ 144:uart.c        ****   /* ATmega with one USART */
+ 145:uart.c        ****  #define ATMEGA_USART
+ 146:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART_RX_vect
+ 147:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART_UDRE_vect
+ 148:uart.c        ****  #define UART0_STATUS   UCSRA
+ 149:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 150:uart.c        ****  #define UART0_DATA     UDR
+ 151:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 152:uart.c        **** #elif defined(__AVR_ATmega163__) 
+ 153:uart.c        ****   /* ATmega163 with one UART */
+ 154:uart.c        ****  #define ATMEGA_UART
+ 155:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   UART_RX_vect
+ 156:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  UART_UDRE_vect
+ 157:uart.c        ****  #define UART0_STATUS   UCSRA
+ 158:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 159:uart.c        ****  #define UART0_DATA     UDR
+ 160:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 161:uart.c        **** #elif defined(__AVR_ATmega162__) 
+ 162:uart.c        ****  /* ATmega with two USART */
+ 163:uart.c        ****  #define ATMEGA_USART0
+ 164:uart.c        ****  #define ATMEGA_USART1
+ 165:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART0_RXC_vect
+ 166:uart.c        ****  #define UART1_RECEIVE_INTERRUPT   USART1_RXC_vect
+ 167:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 168:uart.c        ****  #define UART1_TRANSMIT_INTERRUPT  USART1_UDRE_vect
+ 169:uart.c        ****  #define UART0_STATUS   UCSR0A
+ 170:uart.c        ****  #define UART0_CONTROL  UCSR0B
+ 171:uart.c        ****  #define UART0_DATA     UDR0
+ 172:uart.c        ****  #define UART0_UDRIE    UDRIE0
+ 173:uart.c        ****  #define UART1_STATUS   UCSR1A
+ 174:uart.c        ****  #define UART1_CONTROL  UCSR1B
+ 175:uart.c        ****  #define UART1_DATA     UDR1
+ 176:uart.c        ****  #define UART1_UDRIE    UDRIE1
+ 177:uart.c        **** #elif defined(__AVR_ATmega64__) || defined(__AVR_ATmega128__) 
+ 178:uart.c        ****  /* ATmega with two USART */
+ 179:uart.c        ****  #define ATMEGA_USART0
+ 180:uart.c        ****  #define ATMEGA_USART1
+ 181:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 182:uart.c        ****  #define UART1_RECEIVE_INTERRUPT   USART1_RX_vect
+ 183:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 184:uart.c        ****  #define UART1_TRANSMIT_INTERRUPT  USART1_UDRE_vect
+ 185:uart.c        ****  #define UART0_STATUS   UCSR0A
+ 186:uart.c        ****  #define UART0_CONTROL  UCSR0B
+ 187:uart.c        ****  #define UART0_DATA     UDR0
+ 188:uart.c        ****  #define UART0_UDRIE    UDRIE0
+ 189:uart.c        ****  #define UART1_STATUS   UCSR1A
+ 190:uart.c        ****  #define UART1_CONTROL  UCSR1B
+ 191:uart.c        ****  #define UART1_DATA     UDR1
+ 192:uart.c        ****  #define UART1_UDRIE    UDRIE1
+ 193:uart.c        **** #elif defined(__AVR_ATmega161__)
+ 194:uart.c        ****  /* ATmega with UART */
+ 195:uart.c        ****  #error "AVR ATmega161 currently not supported by this libaray !"
+ 196:uart.c        **** #elif defined(__AVR_ATmega169__) 
+ 197:uart.c        ****  /* ATmega with one USART */
+ 198:uart.c        ****  #define ATMEGA_USART
+ 199:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 200:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 201:uart.c        ****  #define UART0_STATUS   UCSRA
+ 202:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 203:uart.c        ****  #define UART0_DATA     UDR
+ 204:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 205:uart.c        **** #elif defined(__AVR_ATmega48__) ||defined(__AVR_ATmega88__) || defined(__AVR_ATmega168__) || \
+ 206:uart.c        ****       defined(__AVR_ATmega48P__) ||defined(__AVR_ATmega88P__) || defined(__AVR_ATmega168P__) || \
+ 207:uart.c        ****       defined(__AVR_ATmega328P__) 
+ 208:uart.c        ****  /* TLS-Added 48P/88P/168P/328P */
+ 209:uart.c        ****  /* ATmega with one USART */
+ 210:uart.c        ****  #define ATMEGA_USART0
+ 211:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART_RX_vect
+ 212:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART_UDRE_vect
+ 213:uart.c        ****  #define UART0_STATUS   UCSR0A
+ 214:uart.c        ****  #define UART0_CONTROL  UCSR0B
+ 215:uart.c        ****  #define UART0_DATA     UDR0
+ 216:uart.c        ****  #define UART0_UDRIE    UDRIE0
+ 217:uart.c        **** #elif defined(__AVR_ATtiny2313__)
+ 218:uart.c        ****  #define ATMEGA_USART
+ 219:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART_RX_vect 
+ 220:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART_UDRE_vect
+ 221:uart.c        ****  #define UART0_STATUS   UCSRA
+ 222:uart.c        ****  #define UART0_CONTROL  UCSRB
+ 223:uart.c        ****  #define UART0_DATA     UDR
+ 224:uart.c        ****  #define UART0_UDRIE    UDRIE
+ 225:uart.c        **** #elif defined(__AVR_ATmega329__) ||\
+ 226:uart.c        ****       defined(__AVR_ATmega649__) ||\
+ 227:uart.c        ****       defined(__AVR_ATmega325__) ||defined(__AVR_ATmega3250__) ||\
+ 228:uart.c        ****       defined(__AVR_ATmega645__) ||defined(__AVR_ATmega6450__)
+ 229:uart.c        ****   /* ATmega with one USART */
+ 230:uart.c        ****   #define ATMEGA_USART0
+ 231:uart.c        ****   #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 232:uart.c        ****   #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 233:uart.c        ****   #define UART0_STATUS   UCSR0A
+ 234:uart.c        ****   #define UART0_CONTROL  UCSR0B
+ 235:uart.c        ****   #define UART0_DATA     UDR0
+ 236:uart.c        ****   #define UART0_UDRIE    UDRIE0
+ 237:uart.c        **** #elif defined(__AVR_ATmega3290__) ||\
+ 238:uart.c        ****       defined(__AVR_ATmega6490__)
+ 239:uart.c        ****   /* TLS-Separated these two from the previous group because of inconsistency in the USART_RX */
+ 240:uart.c        ****   /* ATmega with one USART */
+ 241:uart.c        ****   #define ATMEGA_USART0
+ 242:uart.c        ****   #define UART0_RECEIVE_INTERRUPT   USART_RX_vect
+ 243:uart.c        ****   #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 244:uart.c        ****   #define UART0_STATUS   UCSR0A
+ 245:uart.c        ****   #define UART0_CONTROL  UCSR0B
+ 246:uart.c        ****   #define UART0_DATA     UDR0
+ 247:uart.c        ****   #define UART0_UDRIE    UDRIE0
+ 248:uart.c        **** #elif defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega640__)
+ 249:uart.c        **** /* ATmega with two USART */
+ 250:uart.c        ****   #define ATMEGA_USART0
+ 251:uart.c        ****   #define ATMEGA_USART1
+ 252:uart.c        ****   #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 253:uart.c        ****   #define UART1_RECEIVE_INTERRUPT   USART0_UDRE_vect
+ 254:uart.c        ****   #define UART0_TRANSMIT_INTERRUPT  USART1_RX_vect
+ 255:uart.c        ****   #define UART1_TRANSMIT_INTERRUPT  USART1_UDRE_vect
+ 256:uart.c        ****   #define UART0_STATUS   UCSR0A
+ 257:uart.c        ****   #define UART0_CONTROL  UCSR0B
+ 258:uart.c        ****   #define UART0_DATA     UDR0
+ 259:uart.c        ****   #define UART0_UDRIE    UDRIE0
+ 260:uart.c        ****   #define UART1_STATUS   UCSR1A
+ 261:uart.c        ****   #define UART1_CONTROL  UCSR1B
+ 262:uart.c        ****   #define UART1_DATA     UDR1
+ 263:uart.c        ****   #define UART1_UDRIE    UDRIE1  
+ 264:uart.c        **** #elif defined(__AVR_ATmega644__)
+ 265:uart.c        ****  /* ATmega with one USART */
+ 266:uart.c        ****  #define ATMEGA_USART0
+ 267:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 268:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART0_UDRE_vect
+ 269:uart.c        ****  #define UART0_STATUS   UCSR0A
+ 270:uart.c        ****  #define UART0_CONTROL  UCSR0B
+ 271:uart.c        ****  #define UART0_DATA     UDR0
+ 272:uart.c        ****  #define UART0_UDRIE    UDRIE0
+ 273:uart.c        **** #elif defined(__AVR_ATmega164P__) || defined(__AVR_ATmega324P__) || defined(__AVR_ATmega644P__)
+ 274:uart.c        ****  /* ATmega with two USART */
+ 275:uart.c        ****  #define ATMEGA_USART0
+ 276:uart.c        ****  #define ATMEGA_USART1
+ 277:uart.c        ****  #define UART0_RECEIVE_INTERRUPT   USART0_RX_vect
+ 278:uart.c        ****  #define UART1_RECEIVE_INTERRUPT   USART0_UDRE_vect
+ 279:uart.c        ****  #define UART0_TRANSMIT_INTERRUPT  USART1_RX_vect
+ 280:uart.c        ****  #define UART1_TRANSMIT_INTERRUPT  USART1_UDRE_vect
+ 281:uart.c        ****  #define UART0_STATUS   UCSR0A
+ 282:uart.c        ****  #define UART0_CONTROL  UCSR0B
+ 283:uart.c        ****  #define UART0_DATA     UDR0
+ 284:uart.c        ****  #define UART0_UDRIE    UDRIE0
+ 285:uart.c        ****  #define UART1_STATUS   UCSR1A
+ 286:uart.c        ****  #define UART1_CONTROL  UCSR1B
+ 287:uart.c        ****  #define UART1_DATA     UDR1
+ 288:uart.c        ****  #define UART1_UDRIE    UDRIE1
+ 289:uart.c        **** #else
+ 290:uart.c        ****  #error "no UART definition for MCU available"
+ 291:uart.c        **** #endif
+ 292:uart.c        **** 
+ 293:uart.c        **** 
+ 294:uart.c        **** /*
+ 295:uart.c        ****  *  module global variables
+ 296:uart.c        ****  */
+ 297:uart.c        **** static volatile unsigned char UART_TxBuf[UART_TX_BUFFER_SIZE];
+ 298:uart.c        **** static volatile unsigned char UART_RxBuf[UART_RX_BUFFER_SIZE];
+ 299:uart.c        **** static volatile unsigned char UART_TxHead;
+ 300:uart.c        **** static volatile unsigned char UART_TxTail;
+ 301:uart.c        **** static volatile unsigned char UART_RxHead;
+ 302:uart.c        **** static volatile unsigned char UART_RxTail;
+ 303:uart.c        **** static volatile unsigned char UART_LastRxError;
+ 304:uart.c        **** 
+ 305:uart.c        **** #if defined( ATMEGA_USART1 )
+ 306:uart.c        **** static volatile unsigned char UART1_TxBuf[UART_TX_BUFFER_SIZE];
+ 307:uart.c        **** static volatile unsigned char UART1_RxBuf[UART_RX_BUFFER_SIZE];
+ 308:uart.c        **** static volatile unsigned char UART1_TxHead;
+ 309:uart.c        **** static volatile unsigned char UART1_TxTail;
+ 310:uart.c        **** static volatile unsigned char UART1_RxHead;
+ 311:uart.c        **** static volatile unsigned char UART1_RxTail;
+ 312:uart.c        **** static volatile unsigned char UART1_LastRxError;
+ 313:uart.c        **** #endif
+ 314:uart.c        **** 
+ 315:uart.c        **** 
+ 316:uart.c        **** 
+ 317:uart.c        **** ISR(UART0_RECEIVE_INTERRUPT)
+ 318:uart.c        **** /*************************************************************************
+ 319:uart.c        **** Function: UART Receive Complete interrupt
+ 320:uart.c        **** Purpose:  called when the UART has received a character
+ 321:uart.c        **** **************************************************************************/
+ 322:uart.c        **** {
+ 111               	.LM0:
+ 112               	.LFBB1:
+ 113 0000 1F92      		push r1
+ 114 0002 0F92      		push r0
+ 115 0004 0FB6      		in r0,__SREG__
+ 116 0006 0F92      		push r0
+ 117 0008 1124      		clr __zero_reg__
+ 118 000a 2F93      		push r18
+ 119 000c 8F93      		push r24
+ 120 000e 9F93      		push r25
+ 121 0010 EF93      		push r30
+ 122 0012 FF93      		push r31
+ 123               	/* prologue: Signal */
+ 124               	/* frame size = 0 */
+ 125               	/* stack size = 8 */
+ 126               	.L__stack_usage = 8
+ 323:uart.c        ****     unsigned char tmphead;
+ 324:uart.c        ****     unsigned char data;
+ 325:uart.c        ****     unsigned char usr;
+ 326:uart.c        ****     unsigned char lastRxError;
+ 327:uart.c        ****  
+ 328:uart.c        ****  
+ 329:uart.c        ****     /* read UART status register and UART data register */ 
+ 330:uart.c        ****     usr  = UART0_STATUS;
+ 128               	.LM1:
+ 129 0014 8BB1      		in r24,0xb
+ 331:uart.c        ****     data = UART0_DATA;
+ 131               	.LM2:
+ 132 0016 9CB1      		in r25,0xc
+ 332:uart.c        ****     
+ 333:uart.c        ****     /* */
+ 334:uart.c        **** #if defined( AT90_UART )
+ 335:uart.c        ****     lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+ 336:uart.c        **** #elif defined( ATMEGA_USART )
+ 337:uart.c        ****     lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+ 134               	.LM3:
+ 135 0018 8871      		andi r24,lo8(24)
+ 338:uart.c        **** #elif defined( ATMEGA_USART0 )
+ 339:uart.c        ****     lastRxError = (usr & (_BV(FE0)|_BV(DOR0)) );
+ 340:uart.c        **** #elif defined ( ATMEGA_UART )
+ 341:uart.c        ****     lastRxError = (usr & (_BV(FE)|_BV(DOR)) );
+ 342:uart.c        **** #endif
+ 343:uart.c        ****         
+ 344:uart.c        ****     /* calculate buffer index */ 
+ 345:uart.c        ****     tmphead = ( UART_RxHead + 1) & UART_RX_BUFFER_MASK;
+ 137               	.LM4:
+ 138 001a E091 0000 		lds r30,UART_RxHead
+ 139 001e EF5F      		subi r30,lo8(-(1))
+ 140 0020 EF71      		andi r30,lo8(31)
+ 346:uart.c        ****     
+ 347:uart.c        ****     if ( tmphead == UART_RxTail ) {
+ 142               	.LM5:
+ 143 0022 2091 0000 		lds r18,UART_RxTail
+ 144 0026 E217      		cp r30,r18
+ 145 0028 01F0      		breq .L3
+ 348:uart.c        ****         /* error: receive buffer overflow */
+ 349:uart.c        ****         lastRxError = UART_BUFFER_OVERFLOW >> 8;
+ 350:uart.c        ****     }else{
+ 351:uart.c        ****         /* store new index */
+ 352:uart.c        ****         UART_RxHead = tmphead;
+ 147               	.LM6:
+ 148 002a E093 0000 		sts UART_RxHead,r30
+ 353:uart.c        ****         /* store received data in buffer */
+ 354:uart.c        ****         UART_RxBuf[tmphead] = data;
+ 150               	.LM7:
+ 151 002e F0E0      		ldi r31,0
+ 152 0030 E050      		subi r30,lo8(-(UART_RxBuf))
+ 153 0032 F040      		sbci r31,hi8(-(UART_RxBuf))
+ 154 0034 9083      		st Z,r25
+ 155 0036 00C0      		rjmp .L2
+ 156               	.L3:
+ 349:uart.c        ****         lastRxError = UART_BUFFER_OVERFLOW >> 8;
+ 158               	.LM8:
+ 159 0038 82E0      		ldi r24,lo8(2)
+ 160               	.L2:
+ 355:uart.c        ****     }
+ 356:uart.c        ****     UART_LastRxError = lastRxError;   
+ 162               	.LM9:
+ 163 003a 8093 0000 		sts UART_LastRxError,r24
+ 164               	/* epilogue start */
+ 357:uart.c        **** }
+ 166               	.LM10:
+ 167 003e FF91      		pop r31
+ 168 0040 EF91      		pop r30
+ 169 0042 9F91      		pop r25
+ 170 0044 8F91      		pop r24
+ 171 0046 2F91      		pop r18
+ 172 0048 0F90      		pop r0
+ 173 004a 0FBE      		out __SREG__,r0
+ 174 004c 0F90      		pop r0
+ 175 004e 1F90      		pop r1
+ 176 0050 1895      		reti
+ 183               	.Lscope1:
+ 185               	.global	__vector_14
+ 187               	__vector_14:
+ 358:uart.c        **** 
+ 359:uart.c        **** 
+ 360:uart.c        **** ISR(UART0_TRANSMIT_INTERRUPT)
+ 361:uart.c        **** /*************************************************************************
+ 362:uart.c        **** Function: UART Data Register Empty interrupt
+ 363:uart.c        **** Purpose:  called when the UART is ready to transmit the next byte
+ 364:uart.c        **** **************************************************************************/
+ 365:uart.c        **** {
+ 189               	.LM11:
+ 190               	.LFBB2:
+ 191 0052 1F92      		push r1
+ 192 0054 0F92      		push r0
+ 193 0056 0FB6      		in r0,__SREG__
+ 194 0058 0F92      		push r0
+ 195 005a 1124      		clr __zero_reg__
+ 196 005c 8F93      		push r24
+ 197 005e 9F93      		push r25
+ 198 0060 EF93      		push r30
+ 199 0062 FF93      		push r31
+ 200               	/* prologue: Signal */
+ 201               	/* frame size = 0 */
+ 202               	/* stack size = 7 */
+ 203               	.L__stack_usage = 7
+ 366:uart.c        ****     unsigned char tmptail;
+ 367:uart.c        **** 
+ 368:uart.c        ****     
+ 369:uart.c        ****     if ( UART_TxHead != UART_TxTail) {
+ 205               	.LM12:
+ 206 0064 9091 0000 		lds r25,UART_TxHead
+ 207 0068 8091 0000 		lds r24,UART_TxTail
+ 208 006c 9817      		cp r25,r24
+ 209 006e 01F0      		breq .L6
+ 370:uart.c        ****         /* calculate and store new buffer index */
+ 371:uart.c        ****         tmptail = (UART_TxTail + 1) & UART_TX_BUFFER_MASK;
+ 211               	.LM13:
+ 212 0070 E091 0000 		lds r30,UART_TxTail
+ 213 0074 EF5F      		subi r30,lo8(-(1))
+ 214 0076 EF71      		andi r30,lo8(31)
+ 372:uart.c        ****         UART_TxTail = tmptail;
+ 216               	.LM14:
+ 217 0078 E093 0000 		sts UART_TxTail,r30
+ 373:uart.c        ****         /* get one byte from buffer and write it to UART */
+ 374:uart.c        ****         UART0_DATA = UART_TxBuf[tmptail];  /* start transmission */
+ 219               	.LM15:
+ 220 007c F0E0      		ldi r31,0
+ 221 007e E050      		subi r30,lo8(-(UART_TxBuf))
+ 222 0080 F040      		sbci r31,hi8(-(UART_TxBuf))
+ 223 0082 8081      		ld r24,Z
+ 224 0084 8CB9      		out 0xc,r24
+ 225 0086 00C0      		rjmp .L5
+ 226               	.L6:
+ 375:uart.c        ****     }else{
+ 376:uart.c        ****         /* tx buffer empty, disable UDRE interrupt */
+ 377:uart.c        ****         UART0_CONTROL &= ~_BV(UART0_UDRIE);
+ 228               	.LM16:
+ 229 0088 5598      		cbi 0xa,5
+ 230               	.L5:
+ 231               	/* epilogue start */
+ 378:uart.c        ****     }
+ 379:uart.c        **** }
+ 233               	.LM17:
+ 234 008a FF91      		pop r31
+ 235 008c EF91      		pop r30
+ 236 008e 9F91      		pop r25
+ 237 0090 8F91      		pop r24
+ 238 0092 0F90      		pop r0
+ 239 0094 0FBE      		out __SREG__,r0
+ 240 0096 0F90      		pop r0
+ 241 0098 1F90      		pop r1
+ 242 009a 1895      		reti
+ 247               	.Lscope2:
+ 250               	.global	uart_init
+ 252               	uart_init:
+ 380:uart.c        **** 
+ 381:uart.c        **** 
+ 382:uart.c        **** /*************************************************************************
+ 383:uart.c        **** Function: uart_init()
+ 384:uart.c        **** Purpose:  initialize UART and set baudrate
+ 385:uart.c        **** Input:    baudrate using macro UART_BAUD_SELECT()
+ 386:uart.c        **** Returns:  none
+ 387:uart.c        **** **************************************************************************/
+ 388:uart.c        **** void uart_init(unsigned int baudrate)
+ 389:uart.c        **** {
+ 254               	.LM18:
+ 255               	.LFBB3:
+ 256               	/* prologue: function */
+ 257               	/* frame size = 0 */
+ 258               	/* stack size = 0 */
+ 259               	.L__stack_usage = 0
+ 390:uart.c        ****     UART_TxHead = 0;
+ 261               	.LM19:
+ 262 009c 1092 0000 		sts UART_TxHead,__zero_reg__
+ 391:uart.c        ****     UART_TxTail = 0;
+ 264               	.LM20:
+ 265 00a0 1092 0000 		sts UART_TxTail,__zero_reg__
+ 392:uart.c        ****     UART_RxHead = 0;
+ 267               	.LM21:
+ 268 00a4 1092 0000 		sts UART_RxHead,__zero_reg__
+ 393:uart.c        ****     UART_RxTail = 0;
+ 270               	.LM22:
+ 271 00a8 1092 0000 		sts UART_RxTail,__zero_reg__
+ 394:uart.c        ****     
+ 395:uart.c        **** #if defined( AT90_UART )
+ 396:uart.c        ****     /* set baud rate */
+ 397:uart.c        ****     UBRR = (unsigned char)baudrate; 
+ 398:uart.c        **** 
+ 399:uart.c        ****     /* enable UART receiver and transmmitter and receive complete interrupt */
+ 400:uart.c        ****     UART0_CONTROL = _BV(RXCIE)|_BV(RXEN)|_BV(TXEN);
+ 401:uart.c        **** 
+ 402:uart.c        **** #elif defined (ATMEGA_USART)
+ 403:uart.c        ****     /* Set baud rate */
+ 404:uart.c        ****     if ( baudrate & 0x8000 )
+ 273               	.LM23:
+ 274 00ac 97FF      		sbrs r25,7
+ 275 00ae 00C0      		rjmp .L9
+ 405:uart.c        ****     {
+ 406:uart.c        ****     	 UART0_STATUS = (1<<U2X);  //Enable 2x speed 
+ 277               	.LM24:
+ 278 00b0 22E0      		ldi r18,lo8(2)
+ 279 00b2 2BB9      		out 0xb,r18
+ 407:uart.c        ****     	 baudrate &= ~0x8000;
+ 281               	.LM25:
+ 282 00b4 9F77      		andi r25,127
+ 283               	.L9:
+ 408:uart.c        ****     }
+ 409:uart.c        ****     UBRRH = (unsigned char)(baudrate>>8);
+ 285               	.LM26:
+ 286 00b6 90BD      		out 0x20,r25
+ 410:uart.c        ****     UBRRL = (unsigned char) baudrate;
+ 288               	.LM27:
+ 289 00b8 89B9      		out 0x9,r24
+ 411:uart.c        ****    
+ 412:uart.c        ****     /* Enable USART receiver and transmitter and receive complete interrupt */
+ 413:uart.c        ****     UART0_CONTROL = _BV(RXCIE)|(1<<RXEN)|(1<<TXEN);
+ 291               	.LM28:
+ 292 00ba 88E9      		ldi r24,lo8(-104)
+ 293 00bc 8AB9      		out 0xa,r24
+ 414:uart.c        ****     
+ 415:uart.c        ****     /* Set frame format: asynchronous, 8data, no parity, 1stop bit */
+ 416:uart.c        ****     #ifdef URSEL
+ 417:uart.c        ****     UCSRC = (1<<URSEL)|(3<<UCSZ0);
+ 295               	.LM29:
+ 296 00be 86E8      		ldi r24,lo8(-122)
+ 297 00c0 80BD      		out 0x20,r24
+ 298 00c2 0895      		ret
+ 300               	.Lscope3:
+ 302               	.global	uart_getc
+ 304               	uart_getc:
+ 418:uart.c        ****     #else
+ 419:uart.c        ****     UCSRC = (3<<UCSZ0);
+ 420:uart.c        ****     #endif 
+ 421:uart.c        ****     
+ 422:uart.c        **** #elif defined (ATMEGA_USART0 )
+ 423:uart.c        ****     /* Set baud rate */
+ 424:uart.c        ****     if ( baudrate & 0x8000 ) 
+ 425:uart.c        ****     {
+ 426:uart.c        ****    		UART0_STATUS = (1<<U2X0);  //Enable 2x speed 
+ 427:uart.c        ****    		baudrate &= ~0x8000;
+ 428:uart.c        ****    	}
+ 429:uart.c        ****     UBRR0H = (unsigned char)(baudrate>>8);
+ 430:uart.c        ****     UBRR0L = (unsigned char) baudrate;
+ 431:uart.c        **** 
+ 432:uart.c        ****     /* Enable USART receiver and transmitter and receive complete interrupt */
+ 433:uart.c        ****     UART0_CONTROL = _BV(RXCIE0)|(1<<RXEN0)|(1<<TXEN0);
+ 434:uart.c        ****     
+ 435:uart.c        ****     /* Set frame format: asynchronous, 8data, no parity, 1stop bit */
+ 436:uart.c        ****     #ifdef URSEL0
+ 437:uart.c        ****     UCSR0C = (1<<URSEL0)|(3<<UCSZ00);
+ 438:uart.c        ****     #else
+ 439:uart.c        ****     UCSR0C = (3<<UCSZ00);
+ 440:uart.c        ****     #endif 
+ 441:uart.c        **** 
+ 442:uart.c        **** #elif defined ( ATMEGA_UART )
+ 443:uart.c        ****     /* set baud rate */
+ 444:uart.c        ****     if ( baudrate & 0x8000 ) 
+ 445:uart.c        ****     {
+ 446:uart.c        ****     	UART0_STATUS = (1<<U2X);  //Enable 2x speed 
+ 447:uart.c        ****     	baudrate &= ~0x8000;
+ 448:uart.c        ****     }
+ 449:uart.c        ****     UBRRHI = (unsigned char)(baudrate>>8);
+ 450:uart.c        ****     UBRR   = (unsigned char) baudrate;
+ 451:uart.c        **** 
+ 452:uart.c        ****     /* Enable UART receiver and transmitter and receive complete interrupt */
+ 453:uart.c        ****     UART0_CONTROL = _BV(RXCIE)|(1<<RXEN)|(1<<TXEN);
+ 454:uart.c        **** 
+ 455:uart.c        **** #endif
+ 456:uart.c        **** 
+ 457:uart.c        **** }/* uart_init */
+ 458:uart.c        **** 
+ 459:uart.c        **** 
+ 460:uart.c        **** /*************************************************************************
+ 461:uart.c        **** Function: uart_getc()
+ 462:uart.c        **** Purpose:  return byte from ringbuffer  
+ 463:uart.c        **** Returns:  lower byte:  received byte from ringbuffer
+ 464:uart.c        ****           higher byte: last receive error
+ 465:uart.c        **** **************************************************************************/
+ 466:uart.c        **** unsigned int uart_getc(void)
+ 467:uart.c        **** {    
+ 306               	.LM30:
+ 307               	.LFBB4:
+ 308               	/* prologue: function */
+ 309               	/* frame size = 0 */
+ 310               	/* stack size = 0 */
+ 311               	.L__stack_usage = 0
+ 468:uart.c        ****     unsigned char tmptail;
+ 469:uart.c        ****     unsigned char data;
+ 470:uart.c        **** 
+ 471:uart.c        **** 
+ 472:uart.c        ****     if ( UART_RxHead == UART_RxTail ) {
+ 313               	.LM31:
+ 314 00c4 9091 0000 		lds r25,UART_RxHead
+ 315 00c8 8091 0000 		lds r24,UART_RxTail
+ 316 00cc 9817      		cp r25,r24
+ 317 00ce 01F0      		breq .L12
+ 473:uart.c        ****         return UART_NO_DATA;   /* no data available */
+ 474:uart.c        ****     }
+ 475:uart.c        ****     
+ 476:uart.c        ****     /* calculate /store buffer index */
+ 477:uart.c        ****     tmptail = (UART_RxTail + 1) & UART_RX_BUFFER_MASK;
+ 319               	.LM32:
+ 320 00d0 E091 0000 		lds r30,UART_RxTail
+ 321 00d4 EF5F      		subi r30,lo8(-(1))
+ 322 00d6 EF71      		andi r30,lo8(31)
+ 478:uart.c        ****     UART_RxTail = tmptail; 
+ 324               	.LM33:
+ 325 00d8 E093 0000 		sts UART_RxTail,r30
+ 479:uart.c        ****     
+ 480:uart.c        ****     /* get data from receive buffer */
+ 481:uart.c        ****     data = UART_RxBuf[tmptail];
+ 327               	.LM34:
+ 328 00dc F0E0      		ldi r31,0
+ 329 00de E050      		subi r30,lo8(-(UART_RxBuf))
+ 330 00e0 F040      		sbci r31,hi8(-(UART_RxBuf))
+ 331 00e2 2081      		ld r18,Z
+ 482:uart.c        ****     
+ 483:uart.c        ****     return (UART_LastRxError << 8) + data;
+ 333               	.LM35:
+ 334 00e4 8091 0000 		lds r24,UART_LastRxError
+ 335 00e8 90E0      		ldi r25,0
+ 336 00ea 982F      		mov r25,r24
+ 337 00ec 8827      		clr r24
+ 338 00ee 820F      		add r24,r18
+ 339 00f0 911D      		adc r25,__zero_reg__
+ 340 00f2 0895      		ret
+ 341               	.L12:
+ 473:uart.c        ****         return UART_NO_DATA;   /* no data available */
+ 343               	.LM36:
+ 344 00f4 80E0      		ldi r24,0
+ 345 00f6 91E0      		ldi r25,lo8(1)
+ 484:uart.c        **** 
+ 485:uart.c        **** }/* uart_getc */
+ 347               	.LM37:
+ 348 00f8 0895      		ret
+ 354               	.Lscope4:
+ 357               	.global	uart_putc
+ 359               	uart_putc:
+ 486:uart.c        **** 
+ 487:uart.c        **** 
+ 488:uart.c        **** /*************************************************************************
+ 489:uart.c        **** Function: uart_putc()
+ 490:uart.c        **** Purpose:  write byte to ringbuffer for transmitting via UART
+ 491:uart.c        **** Input:    byte to be transmitted
+ 492:uart.c        **** Returns:  none          
+ 493:uart.c        **** **************************************************************************/
+ 494:uart.c        **** void uart_putc(unsigned char data)
+ 495:uart.c        **** {
+ 361               	.LM38:
+ 362               	.LFBB5:
+ 363               	/* prologue: function */
+ 364               	/* frame size = 0 */
+ 365               	/* stack size = 0 */
+ 366               	.L__stack_usage = 0
+ 496:uart.c        ****     unsigned char tmphead;
+ 497:uart.c        **** 
+ 498:uart.c        ****     
+ 499:uart.c        ****     tmphead  = (UART_TxHead + 1) & UART_TX_BUFFER_MASK;
+ 368               	.LM39:
+ 369 00fa 9091 0000 		lds r25,UART_TxHead
+ 370 00fe 9F5F      		subi r25,lo8(-(1))
+ 371 0100 9F71      		andi r25,lo8(31)
+ 372               	.L15:
+ 500:uart.c        ****     
+ 501:uart.c        ****     while ( tmphead == UART_TxTail ){
+ 374               	.LM40:
+ 375 0102 2091 0000 		lds r18,UART_TxTail
+ 376 0106 9217      		cp r25,r18
+ 377 0108 01F0      		breq .L15
+ 502:uart.c        ****         ;/* wait for free space in buffer */
+ 503:uart.c        ****     }
+ 504:uart.c        ****     
+ 505:uart.c        ****     UART_TxBuf[tmphead] = data;
+ 379               	.LM41:
+ 380 010a E92F      		mov r30,r25
+ 381 010c F0E0      		ldi r31,0
+ 382 010e E050      		subi r30,lo8(-(UART_TxBuf))
+ 383 0110 F040      		sbci r31,hi8(-(UART_TxBuf))
+ 384 0112 8083      		st Z,r24
+ 506:uart.c        ****     UART_TxHead = tmphead;
+ 386               	.LM42:
+ 387 0114 9093 0000 		sts UART_TxHead,r25
+ 507:uart.c        **** 
+ 508:uart.c        ****     /* enable UDRE interrupt */
+ 509:uart.c        ****     UART0_CONTROL    |= _BV(UART0_UDRIE);
+ 389               	.LM43:
+ 390 0118 559A      		sbi 0xa,5
+ 391 011a 0895      		ret
+ 396               	.Lscope5:
+ 399               	.global	uart_puts
+ 401               	uart_puts:
+ 510:uart.c        **** 
+ 511:uart.c        **** }/* uart_putc */
+ 512:uart.c        **** 
+ 513:uart.c        **** 
+ 514:uart.c        **** /*************************************************************************
+ 515:uart.c        **** Function: uart_puts()
+ 516:uart.c        **** Purpose:  transmit string to UART
+ 517:uart.c        **** Input:    string to be transmitted
+ 518:uart.c        **** Returns:  none          
+ 519:uart.c        **** **************************************************************************/
+ 520:uart.c        **** void uart_puts(const char *s )
+ 521:uart.c        **** {
+ 403               	.LM44:
+ 404               	.LFBB6:
+ 405 011c CF93      		push r28
+ 406 011e DF93      		push r29
+ 407               	/* prologue: function */
+ 408               	/* frame size = 0 */
+ 409               	/* stack size = 2 */
+ 410               	.L__stack_usage = 2
+ 411 0120 EC01      		movw r28,r24
+ 412               	.L17:
+ 522:uart.c        ****     while (*s) 
+ 414               	.LM45:
+ 415 0122 8991      		ld r24,Y+
+ 416 0124 8823      		tst r24
+ 417 0126 01F0      		breq .L19
+ 523:uart.c        ****       uart_putc(*s++);
+ 419               	.LM46:
+ 420 0128 0E94 0000 		call uart_putc
+ 421 012c 00C0      		rjmp .L17
+ 422               	.L19:
+ 423               	/* epilogue start */
+ 524:uart.c        **** 
+ 525:uart.c        **** }/* uart_puts */
+ 425               	.LM47:
+ 426 012e DF91      		pop r29
+ 427 0130 CF91      		pop r28
+ 428 0132 0895      		ret
+ 430               	.Lscope6:
+ 433               	.global	uart_puts_p
+ 435               	uart_puts_p:
+ 526:uart.c        **** 
+ 527:uart.c        **** 
+ 528:uart.c        **** /*************************************************************************
+ 529:uart.c        **** Function: uart_puts_p()
+ 530:uart.c        **** Purpose:  transmit string from program memory to UART
+ 531:uart.c        **** Input:    program memory string to be transmitted
+ 532:uart.c        **** Returns:  none
+ 533:uart.c        **** **************************************************************************/
+ 534:uart.c        **** void uart_puts_p(const char *progmem_s )
+ 535:uart.c        **** {
+ 437               	.LM48:
+ 438               	.LFBB7:
+ 439 0134 CF93      		push r28
+ 440 0136 DF93      		push r29
+ 441               	/* prologue: function */
+ 442               	/* frame size = 0 */
+ 443               	/* stack size = 2 */
+ 444               	.L__stack_usage = 2
+ 445 0138 FC01      		movw r30,r24
+ 446               	.L21:
+ 447               	.LBB2:
+ 536:uart.c        ****     register char c;
+ 537:uart.c        ****     
+ 538:uart.c        ****     while ( (c = pgm_read_byte(progmem_s++)) ) 
+ 449               	.LM49:
+ 450               	/* #APP */
+ 451               	 ;  538 "uart.c" 1
+ 452 013a 8491      		lpm r24, Z
+ 453               		
+ 454               	 ;  0 "" 2
+ 455               	/* #NOAPP */
+ 456 013c EF01      		movw r28,r30
+ 457 013e 2196      		adiw r28,1
+ 458               	.LBE2:
+ 459 0140 8823      		tst r24
+ 460 0142 01F0      		breq .L23
+ 539:uart.c        ****       uart_putc(c);
+ 462               	.LM50:
+ 463 0144 0E94 0000 		call uart_putc
+ 464 0148 FE01      		movw r30,r28
+ 465 014a 00C0      		rjmp .L21
+ 466               	.L23:
+ 467               	/* epilogue start */
+ 540:uart.c        **** 
+ 541:uart.c        **** }/* uart_puts_p */
+ 469               	.LM51:
+ 470 014c DF91      		pop r29
+ 471 014e CF91      		pop r28
+ 472 0150 0895      		ret
+ 477               	.Lscope7:
+ 479               	.global	uart_available
+ 481               	uart_available:
+ 542:uart.c        **** 
+ 543:uart.c        **** 
+ 544:uart.c        **** 
+ 545:uart.c        **** /*************************************************************************
+ 546:uart.c        **** Function: uart_available()
+ 547:uart.c        **** Purpose:  Determine the number of bytes waiting in the receive buffer
+ 548:uart.c        **** Input:    None
+ 549:uart.c        **** Returns:  Integer number of bytes in the receive buffer
+ 550:uart.c        **** **************************************************************************/
+ 551:uart.c        **** int uart_available(void)
+ 552:uart.c        **** {
+ 483               	.LM52:
+ 484               	.LFBB8:
+ 485               	/* prologue: function */
+ 486               	/* frame size = 0 */
+ 487               	/* stack size = 0 */
+ 488               	.L__stack_usage = 0
+ 553:uart.c        ****         return (UART_RX_BUFFER_MASK + UART_RxHead - UART_RxTail) % UART_RX_BUFFER_MASK;
+ 490               	.LM53:
+ 491 0152 8091 0000 		lds r24,UART_RxHead
+ 492 0156 2091 0000 		lds r18,UART_RxTail
+ 493 015a 90E0      		ldi r25,0
+ 494 015c 4F96      		adiw r24,31
+ 495 015e 821B      		sub r24,r18
+ 496 0160 9109      		sbc r25,__zero_reg__
+ 497 0162 6FE1      		ldi r22,lo8(31)
+ 498 0164 70E0      		ldi r23,0
+ 499 0166 0E94 0000 		call __divmodhi4
+ 554:uart.c        **** }/* uart_available */
+ 501               	.LM54:
+ 502 016a 0895      		ret
+ 504               	.Lscope8:
+ 506               	.global	uart_flush
+ 508               	uart_flush:
+ 555:uart.c        **** 
+ 556:uart.c        **** 
+ 557:uart.c        **** 
+ 558:uart.c        **** /*************************************************************************
+ 559:uart.c        **** Function: uart_flush()
+ 560:uart.c        **** Purpose:  Flush bytes waiting the receive buffer.  Acutally ignores them.
+ 561:uart.c        **** Input:    None
+ 562:uart.c        **** Returns:  None
+ 563:uart.c        **** **************************************************************************/
+ 564:uart.c        **** void uart_flush(void)
+ 565:uart.c        **** {
+ 510               	.LM55:
+ 511               	.LFBB9:
+ 512               	/* prologue: function */
+ 513               	/* frame size = 0 */
+ 514               	/* stack size = 0 */
+ 515               	.L__stack_usage = 0
+ 566:uart.c        ****         UART_RxHead = UART_RxTail;
+ 517               	.LM56:
+ 518 016c 8091 0000 		lds r24,UART_RxTail
+ 519 0170 8093 0000 		sts UART_RxHead,r24
+ 520 0174 0895      		ret
+ 522               	.Lscope9:
+ 523               		.local	UART_LastRxError
+ 524               		.comm	UART_LastRxError,1,1
+ 525               		.local	UART_RxTail
+ 526               		.comm	UART_RxTail,1,1
+ 527               		.local	UART_RxHead
+ 528               		.comm	UART_RxHead,1,1
+ 529               		.local	UART_TxTail
+ 530               		.comm	UART_TxTail,1,1
+ 531               		.local	UART_TxHead
+ 532               		.comm	UART_TxHead,1,1
+ 533               		.local	UART_RxBuf
+ 534               		.comm	UART_RxBuf,32,1
+ 535               		.local	UART_TxBuf
+ 536               		.comm	UART_TxBuf,32,1
+ 545               	.Letext0:
+ 546               		.ident	"GCC: (GNU) 4.8.2"
+ 547               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart.c
+     /tmp/ccafwLPs.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccafwLPs.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccafwLPs.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccafwLPs.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccafwLPs.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccafwLPs.s:109    .text:0000000000000000 __vector_13
+     /tmp/ccafwLPs.s:526    .bss:0000000000000002 UART_RxHead
+     /tmp/ccafwLPs.s:524    .bss:0000000000000001 UART_RxTail
+     /tmp/ccafwLPs.s:532    .bss:0000000000000005 UART_RxBuf
+                             .bss:0000000000000000 UART_LastRxError
+     /tmp/ccafwLPs.s:187    .text:0000000000000052 __vector_14
+     /tmp/ccafwLPs.s:530    .bss:0000000000000004 UART_TxHead
+     /tmp/ccafwLPs.s:528    .bss:0000000000000003 UART_TxTail
+     /tmp/ccafwLPs.s:534    .bss:0000000000000025 UART_TxBuf
+     /tmp/ccafwLPs.s:252    .text:000000000000009c uart_init
+     /tmp/ccafwLPs.s:304    .text:00000000000000c4 uart_getc
+     /tmp/ccafwLPs.s:359    .text:00000000000000fa uart_putc
+     /tmp/ccafwLPs.s:401    .text:000000000000011c uart_puts
+     /tmp/ccafwLPs.s:435    .text:0000000000000134 uart_puts_p
+     /tmp/ccafwLPs.s:481    .text:0000000000000152 uart_available
+     /tmp/ccafwLPs.s:508    .text:000000000000016c uart_flush
+
+UNDEFINED SYMBOLS
+__divmodhi4
+__do_clear_bss
