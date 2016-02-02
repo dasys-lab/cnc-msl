@@ -46,8 +46,11 @@ namespace msl
 		//TODO needs to be tested
 		static shared_ptr<msl_actuator_msgs::MotionControl> ruleActionForBallGetter();
 
-		//todo needts to be implemented
+		//TODO needs to be implemented
 		static MotionControl driveRandomly(double translation);
+
+		//TODO needs to be tested
+		static MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		static void readConfigParameters();
 		static double defaultTranslation;
@@ -65,6 +68,7 @@ namespace msl
 		static double alignToPointRapidMaxRotation;
 		static double alignToPointpRot;
 		static double alignMaxVel;
+		static double maxVelo;
 	};
 }
 

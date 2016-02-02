@@ -130,11 +130,35 @@ namespace msl
 		static bool CornerCircleExists;
 		static double PenaltySpot;
 		static double Surrounding;
+		static double PenaltyAreaMappingTolerance;
 
 		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance);
 		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
+
+		static bool isInsideField(shared_ptr<geometry::CNPoint2D> p);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
+																shared_ptr<geometry::CNPoint2D> alongVec);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		static shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		static shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+		static bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+		static shared_ptr<geometry::CNPoint2D> keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from, shared_ptr<geometry::CNPoint2D> to);
+		static double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle);
+		static double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle, double extendFieldLines);
+
+
 		static shared_ptr<geometry::CNPoint2D> posCenterMarker(); // see no. 0
 
 		// Corners
@@ -179,6 +203,11 @@ namespace msl
 		static MSLFootballField * instance;
 		MSLFootballField();
 		~MSLFootballField();
+
+	protected:
+
+		static double projectVectorOntoX(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double x);
+		static double projectVectorOntoY(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double y);
 
 	};
 

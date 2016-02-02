@@ -10,6 +10,8 @@
 namespace msl
 {
 
+	double Kicker::kickerAngle = M_PI;
+
 	Kicker::Kicker(MSLWorldModel* wm)
 	{
 		this->wm = wm;
@@ -46,46 +48,6 @@ namespace msl
 		kickLowPass = new KickCurve("LowPassCurve");
 
 		return true;
-	}
-
-	double Kicker::kickerToUse(double angle)
-	{
-		//initialise with kicker 1..
-		double retKicker = M_PI;
-		if (kickerCount == 1)
-		{
-			//Console.WriteLine("##++ " + kickerCount );
-			return retKicker;
-		}
-
-		if ((0.0 <= angle) && (angle < TWO_THIRD_PI))
-		{
-			retKicker = M_PI / 3;
-		}
-		else if ((0.0 > angle) && (angle > -TWO_THIRD_PI))
-		{
-			retKicker = - M_PI / 3;
-		}
-		return retKicker;
-	}
-
-	ushort Kicker::kickerToUseIndex(double angle)
-	{
-		//initialise with kicker 1..
-		ushort retKicker = 1;
-		if (kickerCount == 1)
-			return retKicker;
-
-		if ((0.0 <= angle) && (angle < TWO_THIRD_PI))
-		{
-			retKicker = 3;
-		}
-		else if ((0.0 > angle) && (angle > -TWO_THIRD_PI))
-		{
-			retKicker = 2;
-		}
-
-		return retKicker;
 	}
 
 	int Kicker::getKickPowerPass(double dist)
@@ -133,7 +95,7 @@ namespace msl
 		{
 			return false;
 		}
-		double dang = kickerToUse(ballPos->angleTo());
+		double dang = kickerAngle;
 		for (int i = 0; i < obs->size(); i++)
 		{
 			if (make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->length() > 550)

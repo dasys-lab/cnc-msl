@@ -30,6 +30,7 @@ namespace msl
 	double RobotMovement::alignMaxVel;
 	double RobotMovement::alignToPointRapidMaxRotation = 2 * M_PI;
 	double RobotMovement::lastRotErrorWithBallRapid = 0;
+	double RobotMovement::maxVelo;
 
 	RobotMovement::~RobotMovement()
 	{
@@ -281,70 +282,111 @@ namespace msl
 //		if (!field->isInsideField(alloBall, 500))
 //		{ //ball is out, approach it carefully
 //			//Console.WriteLine("CASE B");
-//			dest.X = ownPos.X - alloBall.X;
-//			dest.Y = ownPos.Y - alloBall.Y;
-//			dest = field.MapInsideField(alloBall);
-//			dest = WorldHelper.Allo2Ego(dest, ownPos);
-//			return PlaceRobotCareBall(dest, ballPos, MAX_VELO, WM);
+//			dest->x = ownPos->x - alloBall->x;
+//			dest->y = ownPos->y - alloBall->y;
+//			dest = field->mapInsideField(alloBall);
+//			dest = dest->alloToEgo(*ownPos);
+//			return placeRobotCareBall(dest, ballPos, maxVelo);
 //		}
-//		if (field.InsideOwnPenalty(alloBall, 0))
+//		if (field->isInsideOwnPenalty(alloBall, 0))
 //		{ //handle ball in own penalty
-//			if (!field.InsideOwnKeeperArea(alloBall, 200) && field.InsideOwnPenalty(ownPos.Point, 0))
+//			if (!field->isInsideOwnKeeperArea(alloBall, 200) && field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 //			{ //if we are already in, and ball is in safe distance of keeper area, get it
-//				return null;
+//				return nullptr;
 //			}
 //			if (WorldHelper.TeamMatesInOwnPenalty(WM) > 1)
 //			{ //do not enter penalty if someone besides keeper is already in there
 //				//dest.X = ownPos.X - alloBall.X;
 //				//dest.Y = ownPos.Y - alloBall.Y;
-//				dest = field.MapOutOfOwnPenalty(alloBall);
-//				dest = WorldHelper.Allo2Ego(dest, ownPos);
-//				return PlaceRobotCareBall(dest, ballPos, MAX_VELO, WM);
+//				dest = field->mapOutOfOwnPenalty(alloBall);
+//				dest = dest->alloToEgo(*ownPos);
+//				return placeRobotCareBall(dest, ballPos, maxVelo);
 //			}
-//			if (field.InsideOwnKeeperArea(alloBall, 200))
+//			if (field->isInsideOwnKeeperArea(alloBall, 200))
 //			{ //ball is dangerously close to keeper area, or even within
-//				if (!field.InsideOwnKeeperArea(alloBall, 50))
+//				if (!field->isInsideOwnKeeperArea(alloBall, 50))
 //				{
-//					if ((ownPos.X - alloBall.X) < 150)
+//					if ((ownPos->x - alloBall->x) < 150)
 //					{
 //						return nullptr;
 //					}
 //				}
 //				dest->x = alloBall->x - 200;
-//				if (ownPos.Y < alloBall.Y)
+//				if (ownPos->y < alloBall->y)
 //				{
-//					dest.Y = alloBall.Y - 500;
+//					dest->y = alloBall->y - 500;
 //				}
 //				else
 //				{
-//					dest.Y = alloBall.Y + 500;
+//					dest->y = alloBall->y + 500;
 //				}
-//				dest = field.MapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
-//				dest = WorldHelper.Allo2Ego(dest, ownPos);
-//				return PlaceRobotCareBall(dest, ballPos, MAX_VELO, WM);
+//				dest = field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+//				dest = dest->alloToEgo(*ownPos);
+//				return placeRobotCareBall(dest, ballPos, maxVelo);
 //			}
 //
 //		}
-//		if (field.InsideEnemyPenalty(alloBall, 0))
+//		if (field->isInsideEnemyPenalty(alloBall, 0))
 //		{ //ball is inside enemy penalty area
 //			if (WorldHelper.TeamMatesInEnemyPenalty(WM) > 0)
 //			{ //if there is someone else, do not enter
 //				//dest.X = ownPos.X - alloBall.X;
 //				//dest.Y = ownPos.Y - alloBall.Y;
-//				dest = field.MapOutOfEnemyPenalty(alloBall);
-//				dest = WorldHelper.Allo2Ego(dest, ownPos);
-//				return DriveHelper.PlaceRobot(dest, ballPos, MAX_VELO, WM);
+//				dest = field->mapOutOfEnemyPenalty(alloBall);
+//				dest = dest->alloToEgo(*ownPos);
+//				return DriveHelper.PlaceRobot(dest, ballPos, maxVelo);
 //			}
-//			if (field.InsideEnemyKeeperArea(alloBall, 50))
+//			if (field->isInsideEnemyKeeperArea(alloBall, 50))
 //			{ //ball is inside keeper area
-//				dest = field.MapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
-//				dest = WorldHelper.Allo2Ego(dest, ownPos);
-//				return DriveHelper.PlaceRobot(dest, ballPos, MAX_VELO, WM);
+//				dest = field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+//				dest = dest->alloToEgo(*ownPos);
+//				return DriveHelper.PlaceRobot(dest, ballPos, maxVelo);
 //			}
 //
 //		}
 
 		return nullptr;
+	}
+
+	MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
+													shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
+	{
+//		double rotTol = M_PI / 30.0;
+//		double destTol = 100.0;
+//
+//		if (destinationPoint->length() < destTol)
+//		{
+//			MotionControl rot = DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
+//			rot.motion.translation = 0.0;
+//			if (headingPoint == nullptr)
+//			{
+//				return rot;
+//			}
+//			double angle = headingPoint->angleTo();
+//			MSLWorldModel* wm = MSLWorldModel::get();
+//			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+//			{
+//				return rot;
+//			}
+//			else
+//			{
+//				MotionControl bm;
+//
+//				bm.motion.rotation = 0.0;
+//				bm.motion.translation = 0.0;
+//				bm.motion.angle = 0.0;
+//				return bm;
+//			}
+//		}
+//		else
+//		{
+//			//linear
+//			double trans = min(translation, 1.2 * destinationPoint->length());
+//
+//			MotionControl bm = DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
+//
+//			return bm;
+//		}
 	}
 
 	void RobotMovement::readConfigParameters()
@@ -359,6 +401,7 @@ namespace msl
 		alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
 		alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+		maxVelo = (*sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
 	}
 }
 

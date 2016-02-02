@@ -23,8 +23,6 @@ namespace msl
 		Kicker(MSLWorldModel* wm);
 		virtual ~Kicker();
 		bool init();
-		double kickerToUse(double angle);
-		ushort kickerToUseIndex(double angle);
 		int getKickPowerPass(double dist);
 		int getKickPowerSlowPass(double dist);
 		int getKickerCount();
@@ -39,6 +37,7 @@ namespace msl
 		double getPreciseShotMinDistance();
 		int getShortPassPower();
 		bool lowShovelSelected;
+		static double kickerAngle;
 
 	private:
 		MSLWorldModel* wm;

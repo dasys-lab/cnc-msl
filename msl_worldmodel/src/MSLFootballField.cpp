@@ -18,6 +18,7 @@ namespace msl
 	double MSLFootballField::Surrounding = 1500.0;
 	bool MSLFootballField::GoalInnerAreaExists = false;
 	bool MSLFootballField::CornerCircleExists = false;
+	double MSLFootballField::PenaltyAreaMappingTolerance = 300;
 
 	MSLFootballField * MSLFootballField::instance = NULL;
 
@@ -41,6 +42,7 @@ namespace msl
 		CornerCircleExists = (*this->sc)["Globals"]->get<bool>("Globals", "FootballField", "CornerCircleExists", NULL);
 		PenaltySpot = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltySpot", NULL);
 		Surrounding = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "Surrounding", NULL);
+		PenaltyAreaMappingTolerance = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaMappingTolerance", NULL);
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
 		std::cout << "MSLFootballField::FieldWidth = " << FieldWidth << std::endl;
@@ -80,18 +82,598 @@ namespace msl
 
 	bool MSLFootballField::isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
-		return p->x - tolerance < -FieldLength / 2.0 + PenaltyAreaLength && abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
+		return p->x - tolerance < -FieldLength / 2.0 + PenaltyAreaLength
+				&& abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
 	}
 
 	bool MSLFootballField::isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
-		return p->x + tolerance > FieldLength / 2.0 - PenaltyAreaLength && abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
+		return p->x + tolerance > FieldLength / 2.0 - PenaltyAreaLength
+				&& abs(p->y) - tolerance < PenaltyAreaWidth / 2.0;
 	}
 
 	bool MSLFootballField::isInsidePenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
 		return isInsideOwnPenalty(p, tolerance) || isInsideEnemyPenalty(p, tolerance);
 	}
+
+	/// <summary>Checks whether a given point is inside the field</summary>
+	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> p)
+	{
+		return abs(p->x) < FieldLength / 2 && abs(p->y) < FieldWidth / 2;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double tolerance = PenaltyAreaMappingTolerance;
+		if (!isInsideOwnPenalty(inp, tolerance))
+		{
+			return inp;
+		}
+		//compute vector to closest point on penalty line:
+		double xline = -FieldLength / 2.0 + PenaltyAreaLength + tolerance;
+		double dist = abs(inp->x - xline);
+		double yline = PenaltyAreaWidth / 2.0 + tolerance;
+		if (inp->y > 0)
+		{
+			if (dist > yline - inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, yline);
+			}
+			else
+			{
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+			}
+		}
+		else
+		{
+			if (dist > yline + inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, -yline);
+			}
+			else
+			{
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+			}
+		}
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
+																			shared_ptr<geometry::CNPoint2D> alongVec)
+	{
+		double tolerance = PenaltyAreaMappingTolerance;
+		if (!isInsideOwnPenalty(inp, tolerance))
+		{
+			return inp;
+		}
+		double xline = -FieldLength / 2.0 + PenaltyAreaLength + tolerance;
+		double yline = PenaltyAreaWidth / 2.0 + tolerance;
+		if (alongVec->y == 0.0)
+		{
+			return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+		shared_ptr<geometry::CNPoint2D> cur = make_shared<geometry::CNPoint2D>(inp->x, inp->y);
+		alongVec = alongVec->normalize();
+		double d;
+		double dist = 1000000;
+		//Left Line: (-1,0)
+		if (alongVec->y < 0)
+		{
+			d = (-yline - inp->y) / alongVec->y;
+			cur->x = alongVec->x * d + inp->x;
+			cur->y = -yline;
+			dist = abs(d);
+		}
+		else
+		{
+			//Right Line: (1,0)
+			d = (yline - inp->y) / alongVec->y;
+			dist = abs(d);
+			cur->x = alongVec->x * d + inp->x;
+			cur->y = yline;
+		}
+		if (alongVec->x == 0)
+		{
+			return cur;
+		}
+		//Top Line: (0,1)
+		d = (xline - inp->x) / alongVec->x;
+		if (abs(d) < dist)
+		{
+			cur->x = xline;
+			cur->y = alongVec->y * d + inp->y;
+		}
+		return cur;
+
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		return mapOutOfOwnPenalty(mapOutOfEnemyPenalty(inp));
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double tolerance = PenaltyAreaMappingTolerance;
+		if (!isInsideEnemyPenalty(inp, tolerance))
+		{
+			return inp;
+		}
+		//compute vector to closest point on penalty line:
+		double xline = FieldLength / 2.0 - PenaltyAreaLength - tolerance;
+		double dist = abs(inp->x - xline);
+		double yline = PenaltyAreaWidth / 2.0 + tolerance;
+		if (inp->y > 0)
+		{
+			if (dist > yline - inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+		else
+		{
+			if (dist > yline + inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, -yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp,
+																			shared_ptr<geometry::CNPoint2D> alongVec)
+	{
+		double tolerance = PenaltyAreaMappingTolerance;
+		if (!isInsideEnemyPenalty(inp, tolerance))
+		{
+			return inp;
+		}
+
+		double xline = FieldLength / 2.0 - PenaltyAreaLength - tolerance;
+		double yline = PenaltyAreaWidth / 2.0 + tolerance;
+		if (alongVec->y == 0.0)
+		{
+			return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+		shared_ptr<geometry::CNPoint2D> cur = make_shared<geometry::CNPoint2D>(inp->x, inp->y);
+		alongVec = alongVec->normalize();
+		double d;
+		double dist = 1000000;
+		//Left Line: (-1,0)
+		if (alongVec->y < 0)
+		{
+			d = (-yline - inp->y) / alongVec->y;
+			cur->x = alongVec->x * d + inp->x;
+			cur->y = -yline;
+			dist = abs(d);
+		}
+		else
+		{
+			//Right Line: (1,0)
+			d = (yline - inp->y) / alongVec->y;
+			dist = abs(d);
+			cur->x = alongVec->x * d + inp->x;
+			cur->y = yline;
+		}
+		if (alongVec->x == 0)
+		{
+			return cur;
+		}
+		//Top Line: (0,1)
+		d = (xline - inp->x) / alongVec->x;
+		if (abs(d) < dist)
+		{
+			cur->x = xline;
+			cur->y = alongVec->y * d + inp->y;
+		}
+		return cur;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double tolerance = 150;
+		if (isInsideField(inp))
+		{
+			return inp;
+		}
+		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
+		double xline = FieldLength / 2.0 + tolerance;
+		double yline = FieldWidth / 2.0 + tolerance;
+		if (inp->x < -xline)
+		{
+			ret->x = -xline;
+		}
+		else if (inp->x > xline)
+		{
+			ret->x = xline;
+		}
+		else
+		{
+			ret->x = inp->x;
+		}
+		if (inp->y < -yline)
+		{
+			ret->y = -yline;
+		}
+		else if (inp->y > yline)
+		{
+			ret->y = yline;
+		}
+		else
+		{
+			ret->y = inp->y;
+		}
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,
+																		double tolerance)
+	{
+		if(isInsideField(inp, tolerance))
+		{
+			return inp;
+		}
+		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
+		double xline = FieldLength / 2.0 + tolerance;
+		double yline = FieldWidth / 2.0 + tolerance;
+		if (inp->x < -xline)
+		{
+			ret->x = -xline;
+		}
+		else if (inp->x > xline)
+		{
+			ret->x = xline;
+		}
+		else
+		{
+			ret->x = inp->x;
+		}
+		if (inp->y < -yline)
+		{
+			ret->y = -yline;
+		}
+		else if (inp->y > yline)
+		{
+			ret->y = yline;
+		}
+		else
+		{
+			ret->y = inp->y;
+		}
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp,
+																				double tolerance)
+	{
+		double toleranceCheck = 0;
+		//double tolerance = penaltyAreaMappingTolerance;
+		if (isInsideOwnPenalty(inp, toleranceCheck))
+		{
+			return inp;
+		}
+		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
+		double xline = -FieldLength / 2.0 + PenaltyAreaLength - tolerance;
+		double yline = PenaltyAreaWidth / 2.0 - tolerance;
+		//if (inp.X < -xline) ret.X = -xline;
+		if (inp->x > xline)
+		{
+			ret->x = xline;
+		}
+		else
+		{
+			ret->x = inp->x;
+		}
+		if (inp->y < -yline)
+		{
+			ret->y = -yline;
+		}
+		else if (inp->y > yline)
+		{
+			ret->y = yline;
+		}
+		else
+		{
+			ret->y = inp->y;
+		}
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double toleranceCheck = 0;
+		double tolerance = PenaltyAreaMappingTolerance;
+		if (isInsideOwnPenalty(inp, toleranceCheck))
+		{
+			return inp;
+		}
+		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
+		double xline = -FieldLength / 2.0 + PenaltyAreaLength - tolerance;
+		double yline = PenaltyAreaWidth / 2.0 - tolerance;
+		//if (inp.X < -xline) ret.X = -xline;
+		if (inp->x > xline)
+		{
+			ret->x = xline;
+		}
+		else
+		{
+			ret->x = inp->x;
+		}
+		if (inp->y < -yline)
+		{
+			ret->y = -yline;
+		}
+		else if (inp->y > yline)
+		{
+			ret->y = yline;
+		}
+		else
+		{
+			ret->y = inp->y;
+		}
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,
+																		shared_ptr<geometry::CNPoint2D> alongVec)
+	{
+		double tolerance = 150;
+		if (isInsideField(inp))
+		{
+			return inp;
+		}
+		double xline = FieldLength / 2.0 + tolerance;
+		double yline = FieldWidth / 2.0 + tolerance;
+
+		double d = 0;
+		shared_ptr<geometry::CNPoint2D> cur = make_shared<geometry::CNPoint2D>(inp->x, inp->y);
+		if (cur->x < -xline)
+		{
+			if (alongVec->x != 0.0)
+			{
+				d = alongVec->y / alongVec->x;
+				cur->y = (-xline - cur->x) * d;
+			}
+			else
+			{
+				//ignore bad vector
+			}
+			cur->x = -xline;
+		}
+		else if (cur->x > xline)
+		{
+			if (alongVec->x != 0.0)
+			{
+				d = alongVec->y / alongVec->x;
+				cur->y = (xline - cur->x) * d;
+			}
+			else
+			{
+				//ignore bad vector
+			}
+			cur->x = xline;
+		}
+		if (cur->y < -yline)
+		{
+			if (alongVec->x != 0.0)
+			{
+				d = alongVec->x / alongVec->y;
+				cur->x = (-yline - cur->y) * d;
+			}
+			else
+			{
+				//ignore bad vector
+			}
+			cur->y = -yline;
+		}
+		else if (cur->y > yline)
+		{
+			if (alongVec->x != 0.0)
+			{
+				d = alongVec->x / alongVec->y;
+				cur->x = (yline - cur->y) * d;
+			}
+			else
+			{
+				//ignore bad vector
+			}
+			cur->y = yline;
+		}
+		return cur;
+	}
+
+	bool MSLFootballField::isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return p->x - tolerance < -FieldLength / 2.0 + GoalAreaLength
+				&& abs(p->y) - tolerance < GoalAreaWidth / 2.0;
+	}
+
+	bool MSLFootballField::isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return p->x + tolerance > FieldLength / 2.0 - GoalAreaLength
+				&& abs(p->y) - tolerance < GoalAreaWidth / 2.0;
+	}
+
+	bool MSLFootballField::isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance)
+	{
+		return isInsideOwnKeeperArea(p, tolerance) || isInsideEnemyKeeperArea(p, tolerance);
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double tolerance = 150;
+		if (!isInsideOwnKeeperArea(inp, tolerance))
+		{
+			return inp;
+		}
+		//compute vector to closest point on penalty line:
+		double xline = -FieldLength / 2.0 + GoalAreaLength + tolerance;
+		double dist = abs(inp->x - xline);
+		double yline = GoalAreaWidth / 2.0 + tolerance;
+		if (inp->y > 0)
+		{
+			if (dist > yline - inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+		else
+		{
+			if (dist > yline + inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, -yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+	}
+
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp)
+	{
+		double tolerance = 250;
+		if (!isInsideEnemyKeeperArea(inp, tolerance))
+		{
+			return inp;
+		}
+		//compute vector to closest point on penalty line:
+		double xline = FieldLength / 2.0 - GoalAreaLength - tolerance;
+		double dist = abs(inp->x - xline);
+		double yline = GoalAreaWidth / 2.0 + tolerance;
+		if (inp->y > 0)
+		{
+			if (dist > yline - inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+		else
+		{
+			if (dist > yline + inp->y)
+			{
+				return make_shared<geometry::CNPoint2D>(inp->x, -yline);
+			}
+			else
+				return make_shared<geometry::CNPoint2D>(xline, inp->y);
+		}
+	}
+
+	/// <summary>
+	/// Computes a point outside own penalty on the line from 'from' to 'to', given 'from' is outside
+	/// </summary>
+	shared_ptr<geometry::CNPoint2D> MSLFootballField::keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from,
+																			shared_ptr<geometry::CNPoint2D> to)
+	{
+		double tolerance = 100;
+		if (!isInsideOwnPenalty(to, tolerance))
+		{
+			return to;
+		}
+		if (from->distanceTo(to) < 50)
+		{
+			return mapOutOfOwnPenalty(to);
+		}
+		shared_ptr<geometry::CNPoint2D> vec = to - from;
+		//compute intersection with fron line:
+		double xline = -FieldLength / 2.0 + PenaltyAreaLength + tolerance;
+		double yline = PenaltyAreaWidth / 2.0 + tolerance;
+		double u, y;
+		if (vec->x != 0)
+		{
+			u = (xline - from->x) / vec->x;
+			y = from->y + u * vec->y;
+			if (abs(y) < yline)
+			{
+				return make_shared<geometry::CNPoint2D>(xline, y);
+			}
+			else
+			{
+				if (y > 0)
+				{
+					u = (yline - from->y) / vec->y; //vec.Y cannot be 0
+					return make_shared<geometry::CNPoint2D>(from->x + u * vec->x, yline);
+				}
+				else
+				{
+					u = (yline - from->y) / vec->y;
+					return make_shared<geometry::CNPoint2D>(from->x + u * vec->x, -yline);
+				}
+			}
+		}
+		else
+		{ //vec.X == 0
+			if (from->y > 0)
+			{
+				return make_shared<geometry::CNPoint2D>(to->x, yline);
+			}
+			else
+			{
+				return make_shared<geometry::CNPoint2D>(to->x, -yline);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Computes the distance to the fringe of the field from a point towards a direction given as angle
+	/// </summary>
+
+	double MSLFootballField::distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle)
+	{
+		return distanceToLine(from, angle, 0);
+	}
+
+	double MSLFootballField::distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle, double extendFieldLines)
+	{
+		double distance = 100000;
+		double vx = cos(angle);
+		double vy = sin(angle);
+		double d;
+		double x = FieldLength / 2 + extendFieldLines;
+		double y = FieldWidth / 2 + extendFieldLines;
+		//Left Line: (1,0)
+		d = (y - from->y) / vy;
+		if (d > 0)
+			distance = min(distance, d);
+		//Right Line: (1,0)
+		d = (-y - from->y) / vy;
+		if (d > 0)
+			distance = min(distance, d);
+		//Top Line: (0,1)
+		d = (x - from->x) / vx;
+		if (d > 0)
+			distance = min(distance, d);
+		//Bot Line: (0,1)
+		d = (-x - from->x) / vx;
+		if (d > 0)
+			distance = min(distance, d);
+		return distance;
+
+	}
+
+	double MSLFootballField::projectVectorOntoX(shared_ptr<geometry::CNPoint2D> origin,
+												shared_ptr<geometry::CNPoint2D> dir, double x)
+	{
+		// origin.x + dir.x *t = x =>
+		// t = (x-origin.x)/dir.x;
+		// y= origin.y+dir.y*(x-origin.x)/dir.x;
+		return origin->y + dir->y * (x - origin->x) / dir->x;
+	}
+
+	double MSLFootballField::projectVectorOntoY(shared_ptr<geometry::CNPoint2D> origin,
+												shared_ptr<geometry::CNPoint2D> dir, double y)
+	{
+		// origin.y + dir.y *t = y =>
+		// t = (y-origin.y)/dir.y;
+		// x= origin.x+dir.x*(y-origin.y)/dir.y;
+		return origin->x + dir->x * (y - origin->y) / dir->y;
+	}
+
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::posCenterMarker()
 	{
 		return make_shared<geometry::CNPoint2D>(0, 0);
