@@ -54,6 +54,7 @@ namespace msl
 
 		static MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
+		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();
 		static double defaultTranslation;
 		static double defaultRotateP;
@@ -71,6 +72,8 @@ namespace msl
 		static double alignToPointpRot;
 		static double alignMaxVel;
 		static double maxVelo;
+		static int randomCounter;
+		static shared_ptr<geometry::CNPoint2D> randomTarget;
 	};
 }
 

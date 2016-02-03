@@ -31,6 +31,8 @@ namespace msl
 	double RobotMovement::alignToPointRapidMaxRotation = 2 * M_PI;
 	double RobotMovement::lastRotErrorWithBallRapid = 0;
 	double RobotMovement::maxVelo;
+	int RobotMovement::randomCounter = 0;
+	shared_ptr<geometry::CNPoint2D> RobotMovement::randomTarget = nullptr;
 
 	RobotMovement::~RobotMovement()
 	{
@@ -426,7 +428,8 @@ namespace msl
 		}
 	}
 
-	MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
+	MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint,
+											shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
 		double rotTol = M_PI / 30.0;
 		double destTol = 100.0;
@@ -434,7 +437,7 @@ namespace msl
 		if (destinationPoint->length() < destTol)
 		{
 			// DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
-			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
 			rot.motion.translation = 0.0;
 			if (headingPoint == nullptr)
 			{
@@ -462,10 +465,40 @@ namespace msl
 			//linear
 			double trans = min(translation, 1.2 * destinationPoint->length());
 
-			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
 
 			return bm;
 		}
+	}
+
+	MotionControl RobotMovement::driveRandomly(double translation)
+	{
+		if (randomCounter == 0)
+		{
+			randomTarget = getRandomTarget();
+		}
+
+		shared_ptr<geometry::CNPoint2D> dest = PathProxy::getInstance()->getEgoDirection(
+				randomTarget, make_shared<PathEvaluator>());
+//				pp.GetEgoDirection(randomTarget,wm,false,translation, out translation);
+		if (dest == nullptr)
+		{
+			dest = randomTarget;
+			translation = 100;
+		}
+		MotionControl bm;
+		bm.motion.rotation = 0;
+		bm.motion.translation = translation;
+		bm.motion.angle = atan2(dest->y, dest->x);
+		randomCounter = (randomCounter + 1) % 28;
+		return bm;
+	}
+
+	shared_ptr<geometry::CNPoint2D> RobotMovement::getRandomTarget()
+	{
+		double ang = (rand() - 0.5) * 2 * M_PI;
+		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
+		return dest;
 	}
 
 	void RobotMovement::readConfigParameters()

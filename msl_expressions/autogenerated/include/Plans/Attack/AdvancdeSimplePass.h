@@ -17,6 +17,14 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1450176193656) ENABLED START*/ //Add additional protected methods here
+		double maxVel;
+		double minDistToMate;
+		bool gotMessage;
+		SystemConfig* sc;
+		string teamMateTaskName;
+		EntryPoint* receiver;
+		int itcounter;
+		shared_ptr<geometry::CNPosition> oldMatePos;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450176193656) ENABLED START*/ //Add additional private methods here
