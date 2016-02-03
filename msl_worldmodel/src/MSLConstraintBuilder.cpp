@@ -86,7 +86,25 @@ namespace msl
 //			cout << "MSLCB: util value "  << value->toString() << endl;
 			util = util + value;
 		}
+		return util;
+	}
 
+	shared_ptr<Term> MSLConstraintBuilder::lineUpUtil(shared_ptr<TVec> lineA, shared_ptr<TVec> lineB, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
+		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
+
+		shared_ptr<TVec> ab = lineB - lineA;
+
+//		auto nx = ab->getY();
+//		auto ny = -1 * ab->getX();
+		shared_ptr<TVec> normal = make_shared < TVec > (initializer_list<double> { ab->getY(), -1 * ab->getX()});
+		normal = normal->normalize();
+
+		for(int i = 0; i  < points.size(); i++) {
+			auto dist = normal * (points[i] - lineA);
+
+			util = util + (dist / maxFieldDist);
+		}
 
 		return util;
 	}

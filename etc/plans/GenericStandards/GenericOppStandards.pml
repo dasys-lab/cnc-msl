@@ -8,7 +8,9 @@
     <outTransitions>#1432132372448</outTransitions>
     <outTransitions>#1432132373553</outTransitions>
   </states>
-  <states id="1432132173301" name="KeepGoal" comment="" entryPoint="1432209615271"/>
+  <states id="1432132173301" name="KeepGoal" comment="" entryPoint="1432209615271">
+    <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+  </states>
   <states id="1432132225844" name="OppThrowIn" comment="">
     <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
     <inTransitions>#1432132365582</inTransitions>
@@ -106,7 +108,7 @@
     <inState>#1432132325758</inState>
     <outState>#1432132398157</outState>
   </transitions>
-  <entryPoints id="1432209594646" name="DefaultTask" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1432209594646" name="DefaultTask" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1432132075123</state>
   </entryPoints>

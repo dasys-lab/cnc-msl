@@ -1,9 +1,9 @@
 #ifndef OppFreeKickCONSTRAINT_H_
 #define OppFreeKick_H_
 #include "engine/BasicConstraint.h"
+#include <memory>
 #include "MSLWorldModel.h"
 #include "Rules.h"
-#include <memory>
 
 using namespace std;
 using namespace alica;

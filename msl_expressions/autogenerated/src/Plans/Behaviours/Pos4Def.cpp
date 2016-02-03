@@ -39,16 +39,18 @@ namespace alica
         if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result))
         {
             cout << "Pos4Def: FOUND a solution!" << endl;
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-                       additionalPoints->push_back(alloBall);
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D > (result.at(0), result.at(1));
+            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+                    vector<shared_ptr<geometry::CNPoint2D>>>();
+            additionalPoints->push_back(alloBall);
+            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
+                    > (result.at(0), result.at(1));
 
             cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
 
-            shared_ptr<geometry::CNPoint2D> egoTarget = alloTarget->alloToEgo(*ownPos);
+            shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos),100.0, additionalPoints);
-
+            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 100.0,
+                                                          additionalPoints);
 
         }
         else

@@ -98,7 +98,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1431523938514"/>
-    <value xPos="182" yPos="485"/>
+    <value xPos="175" yPos="461" width="80" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
@@ -106,6 +106,10 @@
   </extensions>
   <extensions>
     <key href="../Standards/Own/KickOff/OwnKickOff.pty#1438785270887"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

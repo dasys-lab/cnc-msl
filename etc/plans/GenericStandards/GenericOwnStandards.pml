@@ -46,7 +46,9 @@
     <inTransitions>#1430925971330</inTransitions>
     <inTransitions>#1430925973111</inTransitions>
   </states>
-  <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444"/>
+  <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444">
+    <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+  </states>
   <transitions id="1430925917001" name="MISSING_NAME" comment="situation = own throw in" msg="">
     <preCondition id="1430925918456" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430924951133</inState>

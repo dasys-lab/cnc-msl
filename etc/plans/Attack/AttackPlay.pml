@@ -5,7 +5,6 @@
     <plans xsi:type="alica:Plan">StandardAttack.pml#1434046634656</plans>
   </states>
   <states id="1434045868018" name="MidFieldDefense" comment="" entryPoint="1434045719840">
-    <plans xsi:type="alica:Plan">../Defence/MidFieldDefense.pml#1441108604411</plans>
     <inTransitions>#1436536103266</inTransitions>
     <outTransitions>#1436536098621</outTransitions>
   </states>
