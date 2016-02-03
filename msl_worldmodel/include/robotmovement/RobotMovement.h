@@ -44,13 +44,15 @@ namespace msl
 													double ballAngleTolerance);
 
 		//TODO needs to be tested
-		static shared_ptr<msl_actuator_msgs::MotionControl> ruleActionForBallGetter();
+		static msl_actuator_msgs::MotionControl ruleActionForBallGetter();
 
 		//TODO needs to be implemented
 		static MotionControl driveRandomly(double translation);
 
 		//TODO needs to be tested
 		static MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+
+		static MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		static void readConfigParameters();
 		static double defaultTranslation;

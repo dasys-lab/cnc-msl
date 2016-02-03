@@ -71,7 +71,7 @@ namespace msl
 
 	shared_ptr<geometry::CNPosition> Robots::getTeamMatePosition(int teamMateId, int index)
 	{
-		if(robotPositions.find(teamMateId) == robotPositions.end())
+		if (robotPositions.find(teamMateId) == robotPositions.end())
 		{
 			return nullptr;
 		}
@@ -83,7 +83,7 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> Robots::getPositionsOfTeamMates()
+	shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> Robots::getPositionsOfTeamMates()
 	{
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ret = make_shared<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>>();
 		for(auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
@@ -124,8 +124,45 @@ namespace msl
 		return this->opponentProtectAngle;
 	}
 
-}
+	int Robots::teamMatesInOwnPenalty()
+	{
+		int count = 0;
+		int myId = wm->getOwnId();
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> teamMatePositions = getPositionsOfTeamMates();
+		for (int i = 0; i < teamMatePositions->size(); i++)
+		{
+			if (teamMatePositions->at(i)->first != myId)
+			{
+				if (field->isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
+				{
+					count++;
+				}
+			}
+		}
+		return count;
+	}
 
+	int Robots::teamMatesInOppPenalty()
+	{
+		int count = 0;
+		int myId = wm->getOwnId();
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> teamMatePositions = getPositionsOfTeamMates();
+		for (int i = 0; i < teamMatePositions->size(); i++)
+		{
+			if (teamMatePositions->at(i)->first != myId)
+			{
+				if (field->isInsideEnemyPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
+				{
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+}
 
 /* namespace alica */
 

@@ -38,16 +38,15 @@ namespace alica
             this->failure = true;
             return;
         }
-        msl_actuator_msgs::MotionControl bm;
-        //TODO
-//		msl_actuator_msgs::MotionControl bm = DriveHelper.RuleActionForBallGetter(WM);
-//
-//		if (bm != nullptr)
-//		{
-//			send(bm);
-//			return;
-//		}
+        msl_actuator_msgs::MotionControl bm = msl::RobotMovement::ruleActionForBallGetter();
 
+		if (bm.senderID == -1)
+		{
+			send(bm);
+			return;
+		}
+
+		msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
         shared_ptr < geometry::CNPoint2D > dest = make_shared<geometry::CNPoint2D>();
         if (nearSideLine (alloBall))
@@ -104,7 +103,7 @@ namespace alica
                                                           additionalPoints);
             //DriveHelper.DriveToPointAndAlignCareBall(WorldHelper.Allo2Ego(dest, ownPos), ballPos, maxVel, WM);
         }
-//		if (bm == nullptr)
+//		if (mc == nullptr)
 //		{
 //			return;
 //		}

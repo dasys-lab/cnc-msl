@@ -80,6 +80,10 @@ namespace msl
 			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
 			temp = egoTarget;
 		}
+		if(egoAlignPoint == nullptr)
+		{
+			egoAlignPoint = egoTarget;
+		}
 		MotionControl mc;
 		mc.motion.angle = temp->angleTo();
 		mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * defaultRotateP;
@@ -262,131 +266,206 @@ namespace msl
 		return mc;
 	}
 
-	shared_ptr<msl_actuator_msgs::MotionControl> RobotMovement::ruleActionForBallGetter()
+	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
-//		MSLWorldModel* wm = MSLWorldModel::get();
-//		MSLFootballField* field = MSLFootballField::getInstance();
-//		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
-//		if (ballPos == nullptr)
-//		{
-//			return nullptr;
-//		}
-//		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); //OwnPositionCorrected;
-//		if (ownPos == nullptr)
-//		{
-//			return nullptr;
-//		}
-//		shared_ptr<geometry::CNPoint2D> alloBall = ballPos->egoToAllo(*ownPos);
-//		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
-//
-//		if (!field->isInsideField(alloBall, 500))
-//		{ //ball is out, approach it carefully
-//			//Console.WriteLine("CASE B");
-//			dest->x = ownPos->x - alloBall->x;
-//			dest->y = ownPos->y - alloBall->y;
-//			dest = field->mapInsideField(alloBall);
-//			dest = dest->alloToEgo(*ownPos);
-//			return placeRobotCareBall(dest, ballPos, maxVelo);
-//		}
-//		if (field->isInsideOwnPenalty(alloBall, 0))
-//		{ //handle ball in own penalty
-//			if (!field->isInsideOwnKeeperArea(alloBall, 200) && field->isInsideOwnPenalty(ownPos->getPoint(), 0))
-//			{ //if we are already in, and ball is in safe distance of keeper area, get it
-//				return nullptr;
-//			}
-//			if (WorldHelper.TeamMatesInOwnPenalty(WM) > 1)
-//			{ //do not enter penalty if someone besides keeper is already in there
-//				//dest.X = ownPos.X - alloBall.X;
-//				//dest.Y = ownPos.Y - alloBall.Y;
-//				dest = field->mapOutOfOwnPenalty(alloBall);
-//				dest = dest->alloToEgo(*ownPos);
-//				return placeRobotCareBall(dest, ballPos, maxVelo);
-//			}
-//			if (field->isInsideOwnKeeperArea(alloBall, 200))
-//			{ //ball is dangerously close to keeper area, or even within
-//				if (!field->isInsideOwnKeeperArea(alloBall, 50))
-//				{
-//					if ((ownPos->x - alloBall->x) < 150)
-//					{
-//						return nullptr;
-//					}
-//				}
-//				dest->x = alloBall->x - 200;
-//				if (ownPos->y < alloBall->y)
-//				{
-//					dest->y = alloBall->y - 500;
-//				}
-//				else
-//				{
-//					dest->y = alloBall->y + 500;
-//				}
-//				dest = field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
-//				dest = dest->alloToEgo(*ownPos);
-//				return placeRobotCareBall(dest, ballPos, maxVelo);
-//			}
-//
-//		}
-//		if (field->isInsideEnemyPenalty(alloBall, 0))
-//		{ //ball is inside enemy penalty area
-//			if (WorldHelper.TeamMatesInEnemyPenalty(WM) > 0)
-//			{ //if there is someone else, do not enter
-//				//dest.X = ownPos.X - alloBall.X;
-//				//dest.Y = ownPos.Y - alloBall.Y;
-//				dest = field->mapOutOfEnemyPenalty(alloBall);
-//				dest = dest->alloToEgo(*ownPos);
-//				return DriveHelper.PlaceRobot(dest, ballPos, maxVelo);
-//			}
-//			if (field->isInsideEnemyKeeperArea(alloBall, 50))
-//			{ //ball is inside keeper area
-//				dest = field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
-//				dest = dest->alloToEgo(*ownPos);
-//				return DriveHelper.PlaceRobot(dest, ballPos, maxVelo);
-//			}
-//
-//		}
+		MSLWorldModel* wm = MSLWorldModel::get();
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		if (ballPos == nullptr)
+		{
+			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); //OwnPositionCorrected;
+		if (ownPos == nullptr)
+		{
+			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+		shared_ptr<geometry::CNPoint2D> alloBall = ballPos->egoToAllo(*ownPos);
+		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
 
-		return nullptr;
+		if (!field->isInsideField(alloBall, 500))
+		{ //ball is out, approach it carefully
+		  //Console.WriteLine("CASE B");
+			dest->x = ownPos->x - alloBall->x;
+			dest->y = ownPos->y - alloBall->y;
+			dest = field->mapInsideField(alloBall);
+			dest = dest->alloToEgo(*ownPos);
+			return placeRobotCareBall(dest, ballPos, maxVelo);
+		}
+		if (field->isInsideOwnPenalty(alloBall, 0))
+		{ //handle ball in own penalty
+			if (!field->isInsideOwnKeeperArea(alloBall, 200) && field->isInsideOwnPenalty(ownPos->getPoint(), 0))
+			{ //if we are already in, and ball is in safe distance of keeper area, get it
+				MotionControl mc;
+				mc.senderID = -1;
+				return mc;
+			}
+			if (wm->robots.teamMatesInOwnPenalty() > 1)
+			{ //do not enter penalty if someone besides keeper is already in there
+			  //dest.X = ownPos.X - alloBall.X;
+			  //dest.Y = ownPos.Y - alloBall.Y;
+				dest = field->mapOutOfOwnPenalty(alloBall);
+				dest = dest->alloToEgo(*ownPos);
+				return placeRobotCareBall(dest, ballPos, maxVelo);
+			}
+			if (field->isInsideOwnKeeperArea(alloBall, 200))
+			{ //ball is dangerously close to keeper area, or even within
+				if (!field->isInsideOwnKeeperArea(alloBall, 50))
+				{
+					if ((ownPos->x - alloBall->x) < 150)
+					{
+						MotionControl mc;
+						mc.senderID = -1;
+						return mc;
+					}
+				}
+				dest->x = alloBall->x - 200;
+				if (ownPos->y < alloBall->y)
+				{
+					dest->y = alloBall->y - 500;
+				}
+				else
+				{
+					dest->y = alloBall->y + 500;
+				}
+				dest = field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = dest->alloToEgo(*ownPos);
+				return placeRobotCareBall(dest, ballPos, maxVelo);
+			}
+
+		}
+		if (field->isInsideEnemyPenalty(alloBall, 0))
+		{ //ball is inside enemy penalty area
+			if (wm->robots.teamMatesInOppPenalty() > 0)
+			{ //if there is someone else, do not enter
+			  //dest.X = ownPos.X - alloBall.X;
+			  //dest.Y = ownPos.Y - alloBall.Y;
+				dest = field->mapOutOfEnemyPenalty(alloBall);
+				dest = dest->alloToEgo(*ownPos);
+				return placeRobot(dest, ballPos, maxVelo);
+			}
+			if (field->isInsideEnemyKeeperArea(alloBall, 50))
+			{ //ball is inside keeper area
+				dest = field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = dest->alloToEgo(*ownPos);
+				return placeRobot(dest, ballPos, maxVelo);
+			}
+
+		}
+		MotionControl mc;
+		mc.senderID = -1;
+		return mc;
 	}
 
 	MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
 													shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
-//		double rotTol = M_PI / 30.0;
-//		double destTol = 100.0;
-//
-//		if (destinationPoint->length() < destTol)
-//		{
-//			MotionControl rot = DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
-//			rot.motion.translation = 0.0;
-//			if (headingPoint == nullptr)
-//			{
-//				return rot;
-//			}
-//			double angle = headingPoint->angleTo();
-//			MSLWorldModel* wm = MSLWorldModel::get();
-//			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
-//			{
-//				return rot;
-//			}
-//			else
-//			{
-//				MotionControl bm;
-//
-//				bm.motion.rotation = 0.0;
-//				bm.motion.translation = 0.0;
-//				bm.motion.angle = 0.0;
-//				return bm;
-//			}
-//		}
-//		else
-//		{
-//			//linear
-//			double trans = min(translation, 1.2 * destinationPoint->length());
-//
-//			MotionControl bm = DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
-//
-//			return bm;
-//		}
+		double rotTol = M_PI / 30.0;
+		double destTol = 100.0;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		if (destinationPoint->length() < destTol)
+		{
+			MotionControl rot;
+			if (wm->ball.getAlloBallPosition() != nullptr)
+			{
+				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+				vector<shared_ptr<geometry::CNPoint2D>>>();
+				additionalPoints->push_back(wm->ball.getAlloBallPosition());
+				//DriveToPointAndAlignCareObstacles
+				rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
+			}
+			else
+			{
+				rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+			}
+			rot.motion.translation = 0.0;
+			if (headingPoint == nullptr)
+			{
+				return rot;
+			}
+			double angle = headingPoint->angleTo();
+			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+			{
+				return rot;
+			}
+			else
+			{
+				MotionControl bm;
+
+				bm.motion.rotation = 0.0;
+				bm.motion.translation = 0.0;
+				bm.motion.angle = 0.0;
+				return bm;
+			}
+		}
+		else
+		{
+			//linear
+			double trans = min(translation, 1.2 * destinationPoint->length());
+
+			MotionControl bm;
+			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
+			if (wm->ball.getAlloBallPosition() != nullptr)
+			{
+				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+				vector<shared_ptr<geometry::CNPoint2D>>>();
+				additionalPoints->push_back(wm->ball.getAlloBallPosition());
+				//DriveToPointAndAlignCareObstacles
+				bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
+			}
+			else
+			{
+				bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+			}
+
+			return bm;
+		}
+	}
+
+	MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
+	{
+		double rotTol = M_PI / 30.0;
+		double destTol = 100.0;
+
+		if (destinationPoint->length() < destTol)
+		{
+			// DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
+			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+			rot.motion.translation = 0.0;
+			if (headingPoint == nullptr)
+			{
+				return rot;
+			}
+			double angle = headingPoint->angleTo();
+			MSLWorldModel* wm = MSLWorldModel::get();
+			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+			{
+				return rot;
+			}
+			else
+			{
+				MotionControl bm;
+
+				bm.motion.rotation = 0.0;
+				bm.motion.translation = 0.0;
+				bm.motion.angle = 0.0;
+				return bm;
+			}
+		}
+		else
+		{
+
+			//linear
+			double trans = min(translation, 1.2 * destinationPoint->length());
+
+			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+
+			return bm;
+		}
 	}
 
 	void RobotMovement::readConfigParameters()

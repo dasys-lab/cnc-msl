@@ -38,6 +38,8 @@ namespace msl
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
 		double getOpponentProtectDistance();
 		double getOpponentProtectAngle();
+		int teamMatesInOwnPenalty();
+		int teamMatesInOppPenalty();
 
 	private:
 		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
