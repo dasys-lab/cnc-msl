@@ -60,7 +60,7 @@ namespace msl{
 
 			static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, vector<shared_ptr<TVec>> points);
-			static shared_ptr<Term> lineUpUtil(shared_ptr<TVec> lineA, shared_ptr<TVec> lineB, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> lineUpUtil(shared_ptr<geometry::CNPoint2D> norm, double d, vector<shared_ptr<TVec>> points);
 
 
 			static shared_ptr<Term> spread(double minDist, vector<shared_ptr<TVec>> points);

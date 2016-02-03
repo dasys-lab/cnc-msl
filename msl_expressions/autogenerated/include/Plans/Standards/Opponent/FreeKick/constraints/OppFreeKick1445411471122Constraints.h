@@ -4,6 +4,7 @@
 #include <memory>
 #include "MSLWorldModel.h"
 #include "Rules.h"
+#include "container/CNPoint2D.h"
 
 using namespace std;
 using namespace alica;
