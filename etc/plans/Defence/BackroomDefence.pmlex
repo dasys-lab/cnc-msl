@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="BackroomDefence.pml#1454507425038"/>
+    <value xPos="91" yPos="110" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="BackroomDefence.pml#1454507425037"/>
+    <value xPos="50" yPos="135" width="781" height="357"/>
+  </extensions>
+  <extensions>
+    <key href="BackroomDefence.pml#1454507425039"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/BackroomDefence.beh#1454507819086"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

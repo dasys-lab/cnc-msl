@@ -40,13 +40,13 @@ namespace alica
         }
         msl_actuator_msgs::MotionControl bm = msl::RobotMovement::ruleActionForBallGetter();
 
-		if (bm.senderID == -1)
-		{
-			send(bm);
-			return;
-		}
+        if (bm.senderID == -1)
+        {
+            send(bm);
+            return;
+        }
 
-		msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
         shared_ptr < geometry::CNPoint2D > dest = make_shared<geometry::CNPoint2D>();
         if (nearSideLine (alloBall))
