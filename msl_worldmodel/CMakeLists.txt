@@ -46,6 +46,9 @@ catkin_package(
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
+   src/robotmovement/SearchArea.cpp
+   src/robotmovement/EgoSearchArea.cpp
+   src/robotmovement/AlloSearchArea.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
    src/RawSensorData.cpp
    src/Robots.cpp
