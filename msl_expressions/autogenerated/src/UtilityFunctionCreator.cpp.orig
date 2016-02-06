@@ -13,8 +13,6 @@
 
 #include  "Plans/Example/ExamplePlan1433938652021.h"
 
-#include  "Plans/Defence/BackroomDefence1454507425037.h"
-
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Attack/StandardAttack1434046634656.h"
@@ -29,7 +27,13 @@
 
 #include  "Plans/WM161413992564408.h"
 
+<<<<<<< HEAD
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+=======
+#include  "Plans/Defence/BackroomDefence1454507425037.h"
+
+#include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -123,10 +127,6 @@ namespace alica
                 return make_shared<UtilityFunction1433938652021>();
                 break;
 
-            case 1454507425037:
-                return make_shared<UtilityFunction1454507425037>();
-                break;
-
             case 1431522123418:
                 return make_shared<UtilityFunction1431522123418>();
                 break;
@@ -155,8 +155,17 @@ namespace alica
                 return make_shared<UtilityFunction1413992564408>();
                 break;
 
+<<<<<<< HEAD
             case 1441106995954:
                 return make_shared<UtilityFunction1441106995954>();
+=======
+            case 1454507425037:
+                return make_shared<UtilityFunction1454507425037>();
+                break;
+
+            case 1432132075122:
+                return make_shared<UtilityFunction1432132075122>();
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
                 break;
 
             case 1417621468963:

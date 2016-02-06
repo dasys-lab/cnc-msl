@@ -65,8 +65,6 @@ using namespace std;
 
 #include  "Plans/Attack/Tackle.h"
 
-#include  "Plans/Behaviours/BackroomDefence.h"
-
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
@@ -79,7 +77,13 @@ using namespace std;
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
+<<<<<<< HEAD
 #include  "Plans/Attack/CatchPass.h"
+=======
+#include  "Plans/Behaviours/BackroomDefence.h"
+
+#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
 
 #include  "Plans/Behaviours/Pos4Def.h"
 
@@ -294,11 +298,6 @@ namespace alica
                 return make_shared<Tackle>();
                 break;
 
-            case 1454507819086:
-
-                return make_shared<BackroomDefence>();
-                break;
-
             case 1427703234654:
 
                 return make_shared<InterceptCarefully>();
@@ -326,7 +325,16 @@ namespace alica
                 return make_shared<WatchBall>();
                 break;
 
+<<<<<<< HEAD
             case 1415205285582:
+=======
+            case 1454507819086:
+
+                return make_shared<BackroomDefence>();
+                break;
+
+            case 1417620730939:
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
 
                 return make_shared<AlignToGoal>();
                 break;
