@@ -589,24 +589,7 @@ namespace msl_driver
 						(short)(sin(ms->angle) * trans),
 						(short)(rot * 64));
 
-		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
-						<< (short)(cos(ms->angle) * trans) << ", "
-						<< (short)(sin(ms->angle) * trans) << ", "
-						<< (short)(rot * 64) << ")" <<  endl;
-
 		sendData(packet);
-
-		short x1 = packet->convertByteToShort(0);
-		short x2 = packet->convertByteToShort(2);
-		short x3 = packet->convertByteToShort(4);
-		double angle = atan2(x2, x1);
-//			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
-		double translation = sqrt(x1*x1 + x2*x2);
-//			mr.rotation = ((double)rawMotorValues[2])/64.0;
-		double rotation = ((double)x3) / 64.0d;
-
-		cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
-
 
 		// reading from motion
 		auto read = readData();
@@ -626,8 +609,6 @@ namespace msl_driver
 			double translation = sqrt(x1*x1 + x2*x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
 			double rotation = ((double)x3) / 64.0d;
-
-			cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
 
 			msl_actuator_msgs::RawOdometryInfo rawOdoInfo;
 
@@ -661,11 +642,6 @@ namespace msl_driver
 			this->motionValue->translation *= this->slipControlFactor;
 			this->motionValue->rotation *= this->slipControlFactor;
 		}
-
-//		cout << "TMC-Motion: Set Motion Value is (Angle, Trans, Rot): ("
-//				<< this->motionValue->angle << ", "
-//				<< this->motionValue->translation << ", "
-//				<< this->motionValue->rotation << ")" <<  endl;
 	}
 
 	/**
@@ -702,9 +678,7 @@ int main(int argc, char** argv)
 	// has to be set after Motion::initCommunication , in order to override the ROS signal handler
 	signal(SIGINT, msl_driver::Motion::pmSigintHandler);
 	signal(SIGTERM, msl_driver::Motion::pmSigTermHandler);
-	std::cout << "init" << std::endl;
 	motion->initialize();
-	std::cout << "open" << std::endl;
 	bool r = motion->open();
 
 	if (false == r)
