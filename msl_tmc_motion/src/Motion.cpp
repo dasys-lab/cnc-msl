@@ -524,17 +524,17 @@ namespace msl_driver
 			MotionSet* request = nullptr;
 			auto read = readData();
 
-			if (read)
-			{
-				cout << "Read from CAN bus: " << hex << static_cast<int>(read->cmd) << " " << hex << static_cast<int>(read->cmdgrp) << endl;
-
-				for (auto b : *read->data)
-				{
-					cout << hex << static_cast<int>(b) << " ";
-				}
-
-				cout << endl;
-			}
+//			if (read)
+//			{
+//				cout << "Read from CAN bus: " << hex << static_cast<int>(read->cmd) << " " << hex << static_cast<int>(read->cmdgrp) << endl;
+//
+//				for (auto b : *read->data)
+//				{
+//					cout << hex << static_cast<int>(b) << " ";
+//				}
+//
+//				cout << endl;
+//			}
 
 			// Get the next request from the queue
 			{
@@ -549,7 +549,6 @@ namespace msl_driver
 //				chrono::milliseconds dura(1);
 //				this_thread::sleep_for(dura);
 //				continue;
-				cout << "empty" << requestOld << endl;
 				if (requestOld != nullptr && Motion::running)
 				{
 					this->executeRequest(requestOld);
