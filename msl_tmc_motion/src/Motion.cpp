@@ -533,7 +533,7 @@ namespace msl_driver
 			{
 				// TODO make time configurable, currently a request is send 250 ms
 				if (requestOld != nullptr && chrono::duration_cast<chrono::milliseconds>(
-						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 250)
+						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 1250)
 				{
 					requestOld = nullptr;
 				}
