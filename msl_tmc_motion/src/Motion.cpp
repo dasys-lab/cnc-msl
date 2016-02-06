@@ -596,6 +596,18 @@ namespace msl_driver
 
 		sendData(packet);
 
+		short x1 = packet->convertByteToShort(0);
+		short x2 = packet->convertByteToShort(2);
+		short x3 = packet->convertByteToShort(4);
+		double angle = atan2(x2, x1);
+//			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
+		double translation = sqrt(x1*x1 + x2*x2);
+//			mr.rotation = ((double)rawMotorValues[2])/64.0;
+		double rotation = ((double)x3) / 64.0d;
+
+		cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
+
+
 		// reading from motion
 		auto read = readData();
 
