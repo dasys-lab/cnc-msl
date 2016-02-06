@@ -11,7 +11,6 @@
 #include <SystemConfig.h>
 #include <time.h>
 
-
 namespace msl_driver
 {
 
@@ -616,9 +615,20 @@ namespace msl_driver
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
 			double translation = sqrt(x1*x1 + x2*x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
-			double rotation = sqrt(x3 / 64.0);
+			double rotation = ((double)x3 / 64.0);
 
 			cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
+
+			msl_actuator_msgs::RawOdometryInfo rawOdoInfo;
+
+			rawOdoInfo.motion.angle = angle;
+			rawOdoInfo.motion.translation = translation;
+			rawOdoInfo.motion.rotation = rotation;
+			ros::Time t = ros::Time::now();
+			uint64_t timestamp = (t.sec * 1000000000UL + t.nsec);
+			rawOdoInfo.timestamp = timestamp;
+
+			this->rawOdometryInfoPub.publish(rawOdoInfo);
 		}
 	}
 
