@@ -129,7 +129,12 @@ namespace msl_driver
 	//**** CONVERT METHODS ****//
 	short CNMCPacket::convertByteToShort(int start)
 	{
-		return (short)(((unsigned short)(this->data->at(start)) << 8 ) + (unsigned char)this->data->at(start+1));
+		short s = 0;
+		s = ((short) this->data->at(start)) << 8;
+		s += (short) this->data->at(start+1);
+//		return (short)(((unsigned short)(this->data->at(start)) << 8 ) + (unsigned char)this->data->at(start+1));
+
+		return s;
 	}
 
 	std::vector<uint8_t> CNMCPacket::convertShortToByte(short data)
