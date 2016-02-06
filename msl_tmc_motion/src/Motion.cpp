@@ -111,54 +111,6 @@ namespace msl_driver
 
 	bool Motion::open()
 	{
-//		//### SERIEAL PORT STUFF
-//		this->port = ::open(this->device.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-//		std::cout << "Serial Port - Device " << this->device << ", port " << this->port << std::endl;
-//
-//		if (port == -1)
-//		{
-//			std::cerr << "Error " << errno << " from open(..): " << strerror(errno) << std::endl;
-//			return false;
-//		}
-//
-//		// Read Configuration into newtio
-//		memset(&newtio, 0, sizeof newtio); // newtio will contain the configuration of port
-//		if (tcgetattr(port, &newtio) != 0)
-//		{
-//			std::cerr << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
-//			return false;
-//		}
-//		if (cfsetispeed(&newtio, (speed_t)B57600) < 0)
-//		{
-//			std::cerr << "Error " << errno << " from cfsetispeed: " << strerror(errno) << std::endl;
-//			return false;
-//		}
-//		if (cfsetospeed(&newtio, (speed_t)B57600) < 0)
-//		{
-//			std::cerr << "Error " << errno << " from cfsetospeed: " << strerror(errno) << std::endl;
-//			return false;
-//		}
-//
-//		// Setting other Port Stuff
-//		newtio.c_cflag &= ~(CSIZE | PARENB | CSTOPB); // Make 8n1
-//		newtio.c_cflag |= CS8;
-//
-//		newtio.c_cflag &= ~CRTSCTS; // no flow control
-//		newtio.c_cc[VMIN] = 1; // read doesn't block
-//		newtio.c_cc[VTIME] = this->initReadTimeout; // 0.5 seconds read timeout
-//		newtio.c_cflag |= CREAD | CLOCAL; // turn on READ & ignore ctrl lines
-//
-//		/* Make raw */
-//		//cfmakeraw(&newtio);
-//
-//		tcflush(port, TCIFLUSH);
-//		if (tcsetattr(port, TCSANOW, &newtio) < 0)
-//		{
-//			std::cerr << "Error " << errno << " from tcsetattr" << std::endl;
-//			return false;
-//		}
-
-
 		// TODO: make baudrate a parameter
 		this->my_serial = new serial::Serial(this->device, 57600, serial::Timeout::simpleTimeout(this->initReadTimeout));
 
@@ -567,7 +519,8 @@ namespace msl_driver
 			// remember the time, processing was last triggered
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
-			MotionSet* request;
+			MotionSet* request = nullptr;
+			MotionSet* requestOld = nullptr;
 			auto read = readData();
 
 			if (read)
@@ -592,17 +545,26 @@ namespace msl_driver
 
 			if (request == nullptr)
 			{
-				chrono::milliseconds dura(1);
-				this_thread::sleep_for(dura);
-				continue;
-			}
-
-			// If there is a request, try to process it
-			if (Motion::running)
+//				chrono::milliseconds dura(1);
+//				this_thread::sleep_for(dura);
+//				continue;
+				if (requestOld != nullptr && Motion::running)
+				{
+					this->executeRequest(requestOld);
+				}
+			} else
 			{
-				this->executeRequest(request);
+				// If there is a request, try to process it
+				if (Motion::running)
+				{
+					this->executeRequest(request);
+				}
+
+				if (requestOld != nullptr)
+					delete requestOld;
+
+				requestOld = request;
 			}
-			delete request;
 
 			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
 			long sleepTime = this->minCycleTime
