@@ -520,7 +520,7 @@ namespace msl_driver
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
 			MotionSet* request = nullptr;
-			auto read = readData();
+//			auto read = readData();
 
 //			if (read)
 //			{
@@ -583,8 +583,6 @@ namespace msl_driver
 			long sleepTime = this->minCycleTime
 					- chrono::duration_cast<chrono::milliseconds>(
 							std::chrono::steady_clock::now() - this->cycleLastTimestamp).count();
-
-			cout << sleepTime << endl;
 
 			if (sleepTime > 0)
 			{
