@@ -26,7 +26,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)
-find_package(VTK REQUIRED)
+find_package(VTK REQUIRED)#
 
 
 # by default only QtCore and QtGui modules are enabled

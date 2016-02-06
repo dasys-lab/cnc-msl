@@ -88,17 +88,33 @@ namespace msl
 		}
 		return util;
 	}
-	/**
-	 *
+
+	/*
+	 * hessennormalform: x * n = d
+	 * @param norm: normal vector from line
+	 * @param d: d value from hessennormalform
+	 * @param points: positions from robots
 	 */
 	shared_ptr<Term> MSLConstraintBuilder::lineUpUtil(shared_ptr<geometry::CNPoint2D> norm, double d, vector<shared_ptr<TVec>> points) {
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
 		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
 
 		for(int i = 0; i  < points.size(); i++) {
-			util = util + (1- ( ((points[i]->getX() * norm->x + points[i]->getY() * norm->y) - d)/ maxFieldDist) );
+			auto value = ((points[i]->getX() * norm->x + points[i]->getY() * norm->y) - d)/ maxFieldDist;
+			util = util + (1- value * value);
 		}
 
+		return util;
+	}
+
+	shared_ptr<Term> MSLConstraintBuilder::lazyUtil(vector<shared_ptr<TVec>> robots, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
+		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
+
+		for(int i = 0; i < points.size(); i++) {
+			auto value = (1- (alica::ConstraintBuilder::distanceSqr(points[i], robots[i])) / (maxFieldDist * maxFieldDist));
+			util = util + value;
+		}
 		return util;
 	}
 
@@ -125,9 +141,36 @@ namespace msl
 		}
 		return c;
 	}
-	shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<TVec> widthHalf, shared_ptr<TVec> length, vector<shared_ptr<TVec>> points) {
-		shared_ptr<Term> c = !TermBuilder::boundedRectangle(points[0], widthHalf, length-widthHalf, Term::getConstraintSteepness());
+	shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
+
+
+
+		return c;
 	}
+
+	shared_ptr<Term> MSLConstraintBuilder::insideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width, vector<shared_ptr<TVec>> points) {
+		shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
+
+		shared_ptr<geometry::CNPoint2D> a2b = b - a;
+		shared_ptr<geometry::CNPoint2D> normal = (a2b->rotate(M_PI/2))->normalize();
+
+		shared_ptr<geometry::CNPoint2D> r1 = a - (normal * width);
+		shared_ptr<geometry::CNPoint2D> r2 = b + (normal * width);
+
+		cout << "MSLCB: r1 x,y: " << r1->x << " " << r1->y << endl;
+		cout << "MSLCB: r2 x,y: " << r2->x << " " << r2->y << endl;
+
+		shared_ptr<TVec> tvec1 = make_shared < TVec > (initializer_list<double> {r1->x, r1->y});
+		shared_ptr<TVec> tvec2 = make_shared < TVec > (initializer_list<double> {r2->x, r2->y});
+
+		for(int i = 0; i < points.size(); i++) {
+//			cout << "MSLCB: " << TermBuilder::boundedRectangle(points[i], tvec1, tvec2 ,Term::getConstraintSteepness())->toString() << endl;
+			c = c & TermBuilder::boundedRectangle(points[i], tvec1, tvec2 ,Term::getConstraintSteepness());
+		}
+		return c;
+	}
+
 	shared_ptr<Term> MSLConstraintBuilder::insideRectangle(shared_ptr<TVec> lowerRightCorner,
 															shared_ptr<TVec> upperLeftCorner,
 															vector<shared_ptr<TVec>> points)
@@ -548,6 +591,7 @@ namespace msl
 
 	shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<TVec>> points)
 	{
+		if(points.size() <= 0) return autodiff::Term::TRUE;
 		shared_ptr<geometry::CNPoint2D> lowerRightCornerP;
 		shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
 		resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
