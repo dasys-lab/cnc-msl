@@ -513,6 +513,7 @@ namespace msl_driver
 	void Motion::run()
 	{
 		MotionSet* requestOld = nullptr;
+		chrono::steady_clock::time_point lastCommandTimestamp;
 
 		// Loop until the driver is closed
 		while (Motion::running)
@@ -544,15 +545,25 @@ namespace msl_driver
 				this->motionValue = nullptr;
 			}
 
+			auto t = chrono::system_clock::to_time_t( chrono::system_clock::now() + (this->cycleLastTimestamp - chrono::steady_clock::now()));
+			cout << t << endl;
+
 			if (request == nullptr)
 			{
 //				chrono::milliseconds dura(1);
 //				this_thread::sleep_for(dura);
 //				continue;
+
+				// TODO make time configurable, currently a request is send 250 ms
+				if (requestOld != nullptr && chrono::duration_cast<chrono::milliseconds>(
+						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 250)
+				{
+					requestOld = nullptr;
+				}
+
 				if (requestOld != nullptr && Motion::running)
 				{
 					this->executeRequest(requestOld);
-					cout << "Sending old cmd" << endl;
 				}
 			}
 			else
@@ -561,12 +572,12 @@ namespace msl_driver
 				if (Motion::running)
 				{
 					this->executeRequest(request);
-					cout << "Sending new cmd" << endl;
 				}
 
 				if (requestOld != nullptr)
 					delete requestOld;
 
+				lastCommandTimestamp = this->cycleLastTimestamp;
 				requestOld = request;
 			}
 
