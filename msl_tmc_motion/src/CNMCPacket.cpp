@@ -130,8 +130,8 @@ namespace msl_driver
 	short CNMCPacket::convertByteToShort(int start)
 	{
 		short s = 0;
-		s = ((short) this->data->at(start)) << 8;
-		s += (short) this->data->at(start+1);
+		s = ((short) this->data->at(start+1)) << 8;
+		s += (short) this->data->at(start);
 //		return (short)(((unsigned short)(this->data->at(start)) << 8 ) + (unsigned char)this->data->at(start+1));
 
 		return s;
