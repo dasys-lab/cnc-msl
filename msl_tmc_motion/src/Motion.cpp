@@ -589,10 +589,10 @@ namespace msl_driver
 						(short)(sin(ms->angle) * trans),
 						(short)(rot * 64));
 
-//		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
-//						<< (short) ms->angle << ", "
-//						<< (short)(trans) << ", "
-//						<< (short)(rot * 64) << ")" <<  endl;
+		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
+						<< (short)(cos(ms->angle) * trans) << ", "
+						<< (short)(sin(ms->angle) * trans) << ", "
+						<< (short)(rot * 64) << ")" <<  endl;
 
 		sendData(packet);
 
