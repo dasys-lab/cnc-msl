@@ -548,12 +548,14 @@ namespace msl_driver
 //				chrono::milliseconds dura(1);
 //				this_thread::sleep_for(dura);
 //				continue;
+				cout << "empty" << endl;
 				if (requestOld != nullptr && Motion::running)
 				{
 					this->executeRequest(requestOld);
 					cout << "Sending old cmd" << endl;
 				}
-			} else
+			}
+			else
 			{
 				// If there is a request, try to process it
 				if (Motion::running)
