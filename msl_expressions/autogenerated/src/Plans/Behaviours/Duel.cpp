@@ -13,11 +13,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
         wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
-        translation = (*this->sc)["Drive"]->get<double>("Duel.Velocity", NULL);
-        fieldLength = (*this->sc)["Globals"]->get<double>("FootballField.FieldLength", NULL);
-        fieldWidth = (*this->sc)["Globals"]->get<double>("FootballField.FieldWidth", NULL);
+        translation = (*this->sc)["Drive"]->get<double>("Drive.Duel.Velocity", NULL);
+        fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
+        fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
         direction = 0;
-        itCounter = 0;
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -51,6 +50,8 @@ namespace alica
         if (itCounter++ < 8)
         {
 
+            cout << "Duel itCounter: " << itCounter << endl;
+
             mc.motion.angle = egoBallPos->angleTo();
             mc.motion.rotation = 0;
             mc.motion.translation = 2 * translation;
@@ -64,6 +65,9 @@ namespace alica
         {
             if (ownGoalPos != nullptr && me->distanceTo(ownGoalPos) < fieldLength / 3)
             {
+
+                cout << "Duel: goal is close" << endl;
+
                 //own goal is close, get the ball away
 
                 if (checkSide(egoBallPos, ownGoalPos))
@@ -78,6 +82,8 @@ namespace alica
             else
             {
 
+                cout << "Duel: Goal far away" << endl;
+
                 //own goal is far away, look for nearby friends
                 shared_ptr < geometry::CNPoint2D > friendly = nullptr;
 
@@ -85,94 +91,100 @@ namespace alica
                         pos != wm->robots.getPositionsOfTeamMates()->end(); pos++)
                 {
 
-                    shared_ptr < geometry::CNPoint2D > friendlyPos = make_shared < geometry::CNPoint2D
-                            > (pos->get()->second->x, pos->get()->second->y);
-
-                    if (friendlyPos->distanceTo(ownPoint) < 2000)
-                    {
-                        if (friendly == nullptr || friendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
-                        {
-                            friendly = friendlyPos;
-                        }
-                    }
-
-                    if (friendly != nullptr)
-                    {
-                        //found one, try to get the ball to him
-                        if (checkSide(egoBallPos, friendly))
-                        {
-                            direction = 1;
-                        }
-                        else
-                        {
-                            direction = -1;
-                        }
-                    }
-
-                    else if (me != nullptr)
+                    if (pos->get() != nullptr)
                     {
 
-                        bool posFree = true;
-                        bool negFree = true;
-                        //found none, looking for free space
+                        cout << "Duel: Positions of TeamMates: X=" << pos->get()->second->x << " Y= "
+                                << pos->get()->second->y << endl;
 
-                        //TODO allo oder ego? :(
+                        shared_ptr < geometry::CNPoint2D > friendlyPos = make_shared < geometry::CNPoint2D
+                                > (pos->get()->second->x, pos->get()->second->y);
 
-                        //TODO anpassen sobald wir eine liste von gegnern im WM haben
-                        for (auto it = wm->robots.getObstaclePoints(0)->begin();
-                                it != wm->robots.getObstaclePoints(0)->end(); it++)
+                        if (friendlyPos->distanceTo(ownPoint) < 2000)
                         {
-
-                            shared_ptr < geometry::CNPoint2D > obs = make_shared < geometry::CNPoint2D
-                                    > (it->get()->x, it->get()->y);
-
-                            if (obs->distanceTo(alloBallPos) < 2000 && fabs(obs->angleTo()) < M_PI / 3 * 2)
+                            if (friendly == nullptr
+                                    || friendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
                             {
-                                if (checkSide(alloBallPos, obs))
-                                {
-                                    posFree = false;
-                                }
-                                else
-                                {
-                                    negFree = false;
-                                }
+                                friendly = friendlyPos;
                             }
+                        }
 
-                        }
-                        if (posFree)
+                        if (friendly != nullptr)
                         {
-                            direction = 1;
-                        }
-                        else if (negFree)
-                        {
-                            direction = -1;
-                        }
-                        else
-                        {
-                            //all occupied
-                            if (me == nullptr)
+                            //found one, try to get the ball to him
+                            if (checkSide(egoBallPos, friendly))
                             {
-                                //no idea
                                 direction = 1;
                             }
                             else
                             {
-                                shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
-                                        > (egoBallPos->y, -egoBallPos->x);
-                                shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
-                                        > (-egoBallPos->y, egoBallPos->x);
-                                ballOrth1 = ballOrth1->egoToAllo(*me);
-                                ballOrth2 = ballOrth1->egoToAllo(*me);
-                                double distance = distanceToFieldBorder(ownPoint, ballOrth1->angleTo());
-                                if (distanceToFieldBorder(ownPoint, ballOrth2->angleTo()) < distance)
+                                direction = -1;
+                            }
+                        }
+
+                        else if (me != nullptr)
+                        {
+
+                            bool posFree = true;
+                            bool negFree = true;
+                            //found none, looking for free space
+
+                            //TODO anpassen sobald wir eine liste von gegnern im WM haben
+                            for (auto it = wm->robots.getObstaclePoints(0)->begin();
+                                    it != wm->robots.getObstaclePoints(0)->end(); it++)
+                            {
+
+                                shared_ptr < geometry::CNPoint2D > obs = make_shared < geometry::CNPoint2D
+                                        > (it->get()->x, it->get()->y);
+
+                                if (obs->distanceTo(alloBallPos) < 2000 && fabs(obs->angleTo()) < M_PI / 3 * 2)
                                 {
+                                    if (checkSide(alloBallPos, obs))
+                                    {
+                                        posFree = false;
+                                    }
+                                    else
+                                    {
+                                        negFree = false;
+                                    }
+                                }
+
+                            }
+                            if (posFree)
+                            {
+                                direction = 1;
+                            }
+                            else if (negFree)
+                            {
+                                direction = -1;
+                            }
+                            else
+                            {
+                                //all occupied
+                                if (me == nullptr)
+                                {
+                                    //no idea
                                     direction = 1;
                                 }
                                 else
                                 {
-                                    direction = -1;
-                                }
+                                    shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
+                                            > (egoBallPos->y, -egoBallPos->x);
+                                    shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
+                                            > (-egoBallPos->y, egoBallPos->x);
+                                    ballOrth1 = ballOrth1->egoToAllo(*me);
+                                    ballOrth2 = ballOrth1->egoToAllo(*me);
+                                    double distance = distanceToFieldBorder(ownPoint, ballOrth1->angleTo());
+                                    if (distanceToFieldBorder(ownPoint, ballOrth2->angleTo()) < distance)
+                                    {
+                                        direction = 1;
+                                    }
+                                    else
+                                    {
+                                        direction = -1;
+                                    }
 
+                                }
                             }
                         }
                     }
@@ -192,6 +204,7 @@ namespace alica
     void Duel::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1450178699265) ENABLED START*/ //Add additional options here
+        itCounter = 0;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here

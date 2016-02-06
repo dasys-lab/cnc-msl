@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="Duel.pml#1450178655417"/>
-    <value xPos="176" yPos="175" width="140" height="86" collapsed="false"/>
+    <value xPos="172" yPos="116" width="140" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Duel.pml#1450178655416"/>
@@ -14,6 +14,18 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/Duel.beh#1450178707835"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1454522099169"/>
+    <value xPos="-40" yPos="261"/>
+  </extensions>
+  <extensions>
+    <key href="Duel.pml#1454522133266"/>
+    <value xPos="154" yPos="325" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

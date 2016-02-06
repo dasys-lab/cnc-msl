@@ -12,8 +12,6 @@
 
 #include  "Plans/Example/ExamplePlan1433938652021.h"
 
-#include  "Plans/Defence/BackroomDefence1454507425037.h"
-
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Attack/StandardAttack1434046634656.h"
@@ -28,7 +26,13 @@
 
 #include  "Plans/WM161413992564408.h"
 
+<<<<<<< HEAD
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+=======
+#include  "Plans/Defence/BackroomDefence1454507425037.h"
+
+#include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
 
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
@@ -810,18 +814,6 @@ namespace alica
 
                 break;
 
-            case 1454663210272:
-
-                return make_shared<TransitionCondition1454663210272>();
-
-                break;
-
-            case 1454663213143:
-
-                return make_shared<TransitionCondition1454663213143>();
-
-                break;
-
             case 1430324477939:
 
                 return make_shared<TransitionCondition1430324477939>();
@@ -1194,7 +1186,23 @@ namespace alica
 
                 break;
 
+<<<<<<< HEAD
             case 1437903090726:
+=======
+            case 1454663210272:
+
+                return make_shared<TransitionCondition1454663210272>();
+
+                break;
+
+            case 1454663213143:
+
+                return make_shared<TransitionCondition1454663213143>();
+
+                break;
+
+            case 1441106955179:
+>>>>>>> 7ef036d74db6a871bc3e59a16f17042b84effc60
 
                 return make_shared<TransitionCondition1437903090726>();
 
