@@ -541,9 +541,10 @@ namespace msl_driver
 				request = this->motionValue;
 				this->motionValue = nullptr;
 			}
+			auto duration = chrono::system_clock::now().time_since_epoch();
+			auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-			auto t = chrono::system_clock::to_time_t( chrono::system_clock::now() + (this->cycleLastTimestamp - chrono::steady_clock::now()));
-			cout << t << endl;
+			cout << millis << endl;
 
 			if (request == nullptr)
 			{
@@ -553,7 +554,7 @@ namespace msl_driver
 
 				// TODO make time configurable, currently a request is send 250 ms
 				if (requestOld != nullptr && chrono::duration_cast<chrono::milliseconds>(
-						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 250)
+						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 2500)
 				{
 					requestOld = nullptr;
 				}
@@ -640,10 +641,10 @@ namespace msl_driver
 			this->motionValue->rotation *= this->slipControlFactor;
 		}
 
-		cout << "TMC-Motion: Set Motion Value is (Angle, Trans, Rot): ("
-				<< this->motionValue->angle << ", "
-				<< this->motionValue->translation << ", "
-				<< this->motionValue->rotation << ")" <<  endl;
+//		cout << "TMC-Motion: Set Motion Value is (Angle, Trans, Rot): ("
+//				<< this->motionValue->angle << ", "
+//				<< this->motionValue->translation << ", "
+//				<< this->motionValue->rotation << ")" <<  endl;
 	}
 
 	/**
