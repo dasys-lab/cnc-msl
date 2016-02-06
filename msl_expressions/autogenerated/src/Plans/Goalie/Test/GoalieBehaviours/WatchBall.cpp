@@ -36,23 +36,40 @@ namespace alica
         double leftGoalPost = MSLFootballField::posLeftOwnGoalPost()->alloToEgo(*me)->y;
         double rightGoalPost = MSLFootballField::posRightOwnGoalPost()->alloToEgo(*me)->y;
 
-        // TODO: armlength when extended and balldiameter/2
-        double puffer = 100 + 200;
+        int centerToArmDist = 445; // 630mm/2 + 140mm = 445mm
+        int ballRadius = 105; // Umfang 68cm => Radius 10.8225cm
+        //int puffer = ballRadius;
+        int puffer = ballRadius + centerToArmDist;
 
-        if (targetY < leftGoalPost)
+        // drive closer to goal if arms have been shot in the previous 4 seconds
+        /*if(!shotInPrevFourSeconds) {
+         puffer += centerToArmDist;
+         }*/
+
+        // ball position is outside of goalposts
+        if (targetY <= leftGoalPost || (targetY > leftGoalPost && targetY <= leftGoalPost + puffer))
         {
             cout << "  - y: " << targetY << endl;
             targetY = leftGoalPost + puffer;
         }
-        else if (targetY > rightGoalPost)
+        else if (targetY >= rightGoalPost || (targetY < rightGoalPost && targetY >= rightGoalPost - puffer))
         {
             cout << "  - y: " << targetY << endl;
             targetY = rightGoalPost - puffer;
         }
+        // ball position is between goalposts
+        /*else if (leftGoalPost + puffer < targetY)
+         {
+         targetY = leftGoalPost - puffer;
+         }
+         else if(rightGoalPost - puffer > targetY)
+         {
+         targetY = rightGoalPost + puffer;
+         }*/
 
         auto egoTarget = make_shared < geometry::CNPoint2D > (targetX, targetY);
         mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
-        //mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
+        //mc = RobotMovement::moveToPointCarefully(egoTarget, goalMid, 100, 0);
         cout << "### WatchBall ###\n" << endl;
 
         send(mc);

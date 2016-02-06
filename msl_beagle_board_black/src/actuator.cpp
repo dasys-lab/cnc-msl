@@ -33,7 +33,7 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 }
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
-	shovel.last_ping = last_ping;
+	gettimeofday(&shovel.last_ping, NULL);
 	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
 	if (msg.passing) {
 		shovel.value = ShovelSelect_PASSING;

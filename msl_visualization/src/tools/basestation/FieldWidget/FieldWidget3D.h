@@ -174,11 +174,12 @@ private:
     double _ROBOT_RADIUS;
 
 
-    vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2);
+    void createLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2);
     vtkSmartPointer<vtkActor> createColoredDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, double r, double g, double b);
     vtkSmartPointer<vtkActor> createColoredDot(float x, float y, float radius, double r, double g, double b);
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
+    void addCircle(vtkRenderer *renderer, float x, float y, float radius);
     void drawGoals(vtkRenderer* renderer);
     void initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);
     void initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer);

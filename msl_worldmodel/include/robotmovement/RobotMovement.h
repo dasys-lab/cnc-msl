@@ -52,7 +52,12 @@ namespace msl
 		//TODO needs to be tested
 		static MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
+		//TODO needs to be tested
 		static MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+
+		//TODO needs to be tested
+		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
+
 
 		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();

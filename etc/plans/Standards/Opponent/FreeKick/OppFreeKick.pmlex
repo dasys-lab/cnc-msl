@@ -2,11 +2,11 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OppFreeKick.pml#1445411471123"/>
-    <value xPos="200" yPos="65" width="167" height="86" collapsed="false"/>
+    <value xPos="261" yPos="30" width="167" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OppFreeKick.pml#1445411471122"/>
-    <value xPos="15" yPos="9" width="585" height="273"/>
+    <value xPos="15" yPos="9" width="942" height="606"/>
   </extensions>
   <extensions>
     <key href="OppFreeKick.pml#1445411471124"/>
@@ -26,6 +26,30 @@
   </extensions>
   <extensions>
     <key href="OppFreeKick.pml#1447875673956"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663032454"/>
+    <value xPos="-11" yPos="321"/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663045348"/>
+    <value xPos="-54" yPos="369"/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663055945"/>
+    <value xPos="277" yPos="218" width="115" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663058990"/>
+    <value xPos="289" yPos="320" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663208360"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppFreeKick.pml#1454663210633"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

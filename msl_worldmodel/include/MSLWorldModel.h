@@ -14,6 +14,7 @@
 #include <msl_msgs/JoystickCommand.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
+#include <gazebo_msgs/ModelStates.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
@@ -64,6 +65,7 @@ namespace msl
 		void onJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
 		void onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg);
+		void onGazeboModelState(gazebo_msgs::ModelStatesPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
@@ -101,7 +103,8 @@ namespace msl
 		ros::Subscriber wmBallListSub;
 		ros::Subscriber joystickSub;
 		ros::Subscriber motionBurstSub;
-		ros::Subscriber simWorldModel;
+		ros::Subscriber simWorldModelSub;
+		ros::Subscriber gazeboWorldModelSub;
 		ros::Subscriber sharedWorldSub;
 		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;

@@ -501,6 +501,68 @@ namespace msl
 		return dest;
 	}
 
+	MotionControl RobotMovement::moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans)
+	{
+		MotionControl mc;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		if (ownPos == nullptr)
+		{
+			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->robots.getObstaclePoints(); //WM.GetTrackedOpponents();
+
+//		fringe.Clear();
+//		for (int i = 0; i < 16; i++)
+//		{
+//			for (int d = 0; d < 8000; d += 2000)
+//			{
+//				shared_ptr<AlloSearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000,
+//																ownPos->getPoint(), ownPos);
+//				if (s->isValid())
+//				{
+//					s->val = EvalPointDynamic(s.midP, alloPassee, ownPos, ops);
+//					fringe.Add(s);
+//				}
+//			}
+//		}
+//
+//		shared_ptr<SearchArea> best = fringe[0];
+//		shared_ptr<SearchArea> cur;
+//
+//		for (int i = 0; i < 100 && fringe.Count > 0; i++)
+//		{
+//
+//			next.Clear();
+//			for (int j = 0; j < beamSize; j++)
+//			{
+//				if (fringe.Count == 0)
+//					break;
+//				cur = fringe.RemoveAt(0);
+//				if (j == 0 && cur.val > best.val)
+//				{
+//					best = cur;
+//				}
+//				next.AddRange(cur.Expand());
+//			}
+//			for (int j = 0; j < next.Count; j++)
+//			{
+//				next[j].val = EvalPointDynamic(next[j].midP, alloPassee, ownPos, ops);
+//				fringe.Add(next[j]);
+//			}
+//
+//		}
+//		shared_ptr<geometry::CNPoint2D> dest = WorldHelper.Allo2Ego(
+//				field->mapOutOfEnemyKeeperArea(field->mapInsideField(best->midP)), ownPos);
+//		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
+//
+//		mc = DriveHelper.PlaceRobotAggressive(dest, align, maxTrans, WM);
+		return mc;
+	}
+
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();

@@ -15,6 +15,19 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1436269017402) ENABLED START*/ //Add additional options here
         this->pathProxy = msl::PathProxy::getInstance();
+        maxPassDist = 0;
+        ratio = 0;
+        minPassDist = 0;
+        closerFactor = 0;
+        ballRadius = 0;
+        minOppDist = 0;
+        distToFieldBorder = 0;
+        sc = nullptr;
+        ff = nullptr;
+        minCloserOffset = 0;
+        passCorridorWidth = 0;
+        freeOppAngle = 0;
+        maxTurnAngle = 0;
         /*PROTECTED REGION END*/
     }
     SearchForPassPoint::~SearchForPassPoint()
