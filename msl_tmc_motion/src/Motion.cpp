@@ -551,6 +551,7 @@ namespace msl_driver
 				if (requestOld != nullptr && Motion::running)
 				{
 					this->executeRequest(requestOld);
+					cout << "Sending old cmd" << endl;
 				}
 			} else
 			{
@@ -558,6 +559,7 @@ namespace msl_driver
 				if (Motion::running)
 				{
 					this->executeRequest(request);
+					cout << "Sending new cmd" << endl;
 				}
 
 				if (requestOld != nullptr)
