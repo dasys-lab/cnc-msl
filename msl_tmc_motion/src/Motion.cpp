@@ -584,6 +584,8 @@ namespace msl_driver
 					- chrono::duration_cast<chrono::milliseconds>(
 							std::chrono::steady_clock::now() - this->cycleLastTimestamp).count();
 
+			cout << sleepTime << endl;
+
 			if (sleepTime > 0)
 			{
 				chrono::milliseconds dura(sleepTime);
