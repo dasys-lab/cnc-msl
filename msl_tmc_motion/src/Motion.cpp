@@ -548,7 +548,7 @@ namespace msl_driver
 //				chrono::milliseconds dura(1);
 //				this_thread::sleep_for(dura);
 //				continue;
-				cout << "empty" << endl;
+				cout << "empty" << requestOld << endl;
 				if (requestOld != nullptr && Motion::running)
 				{
 					this->executeRequest(requestOld);
