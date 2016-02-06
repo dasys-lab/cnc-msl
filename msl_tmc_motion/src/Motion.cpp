@@ -202,75 +202,35 @@ namespace msl_driver
 	unique_ptr<CNMCPacket> Motion::readData()
 	{
 		uint8_t b[1];
-		bool finished = false;
 		bool quoted = false;
-
-
 		vector<uint8_t> data;
-		size_t count = this->my_serial->read(b, 1);
-//		::read(this->port, &b, 1);
-//		bool wrote = false;
 
-		if (count == 0)
-			return nullptr;
+		do {
+			if (this->my_serial->read(b, 1) == 0)
+				return move(unique_ptr<CNMCPacket>());
+		} while (b[0] != CNMCPacket::START_HEADER);
 
-		while (b[0] != CNMCPacket::START_HEADER)
+		data.push_back(b[0]);
+
+		while (true)
 		{
-		//	cout << (char)b;
-//			::read(this->port, &b, 1);
-			count = this->my_serial->read(b, 1);
-//			wrote = true;
+			if (this->my_serial->read(b, 1) == 0)
+				return move(unique_ptr<CNMCPacket>());
 
-			if (count == 0)
-				return nullptr;
-		}
-//		if (wrote)
-//			cout << endl;
+			if (b[0] == CNMCPacket::QUOTE && !quoted)
+			{
+				quoted = true;
+				continue;
+			}
 
-		if (b[0] != CNMCPacket::START_HEADER)
-		{
-			return move(unique_ptr<CNMCPacket>());
-		}
-		else
-		{
+			//do not add end header to data
+			if (b[0] == CNMCPacket::END_HEADER && !quoted)
+			{
+				break;
+			}
+
+			quoted = false;
 			data.push_back(b[0]);
-		}
-
-		while (!finished)
-		{
-			count = this->my_serial->read(b, 1);
-//			::read(this->port, &b, 1);
-
-			if (count == 0)
-				return nullptr;
-
-			if (b[0] == CNMCPacket::QUOTE)
-			{
-				if (!quoted)
-					quoted = true;
-				else
-				{
-					data.push_back(b[0]);
-					quoted = false;
-				}
-			}
-			else if (b[0] == CNMCPacket::END_HEADER)
-			{
-				if (!quoted)
-				{ //do not add end header to data
-					finished = true;
-				}
-				else
-				{
-					data.push_back(b[0]);
-					quoted = false;
-				}
-			}
-			else
-			{
-				quoted = false;
-				data.push_back(b[0]);
-			}
 		}
 
 		return CNMCPacket::getInstance(data.data(), data.size());
