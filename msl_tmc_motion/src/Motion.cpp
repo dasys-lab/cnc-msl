@@ -135,19 +135,16 @@ namespace msl_driver
 
 	void Motion::sendData(shared_ptr<CNMCPacket> packet)
 	{
-//		auto bytes = packet->getBytes();
-//		::write(this->port, (*bytes).data(), bytes->size());
-
 		auto bytes = packet->getBytes();
-		cout << "TMC-Motion: Sending: ";
-		for (uint8_t byte : (*bytes))
-		{
-			cout << hex << static_cast<int>(byte) << " ";
-		}
-		cout << endl << dec << endl;
+//		cout << "TMC-Motion: Sending: ";
+//		for (uint8_t byte : (*bytes))
+//		{
+//			cout << hex << static_cast<int>(byte) << " ";
+//		}
+//		cout << endl << dec << endl;
 		size_t numBytesWritten = this->my_serial->write((*bytes).data(), bytes->size());
 
-		cout << "TMC-Motion: sendData - numBytesWritten: " << numBytesWritten << endl;
+//		cout << "TMC-Motion: sendData - numBytesWritten: " << numBytesWritten << endl;
 
 	}
 
@@ -513,7 +510,7 @@ namespace msl_driver
 	void Motion::run()
 	{
 		MotionSet* requestOld = nullptr;
-		chrono::steady_clock::time_point lastCommandTimestamp;
+		chrono::steady_clock::time_point lastCommandTimestamp = std::chrono::steady_clock::now();
 
 		// Loop until the driver is closed
 		while (Motion::running)
@@ -615,10 +612,10 @@ namespace msl_driver
 						(short)(sin(ms->angle) * trans),
 						(short)(rot * 64));
 
-		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
-						<< (short) ms->angle << ", "
-						<< (short)(trans) << ", "
-						<< (short)(rot * 64) << ")" <<  endl;
+//		cout << "TMC-Motion: Sending Motion Value (x, y, rot): ("
+//						<< (short) ms->angle << ", "
+//						<< (short)(trans) << ", "
+//						<< (short)(rot * 64) << ")" <<  endl;
 
 		sendData(packet);
 	}
