@@ -541,6 +541,15 @@ namespace msl_driver
 				{
 					this->executeRequest(requestOld);
 				}
+				else
+				{
+					rawOdoInfo.motion.angle = 0;
+					rawOdoInfo.motion.translation = 0;
+					rawOdoInfo.motion.rotation = 0;
+					ros::Time t = ros::Time::now();
+					uint64_t timestamp = (t.sec * 1000000000UL + t.nsec);
+					rawOdoInfo.timestamp = timestamp;
+				}
 			}
 			else
 			{
