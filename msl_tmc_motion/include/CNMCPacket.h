@@ -158,9 +158,9 @@ namespace msl_driver
 		static std::unique_ptr<CNMCPacket> getInstance(uint8_t raw[], int size);
 		std::shared_ptr<std::vector<uint8_t> > data;
 		uint8_t cmd = 0x00;
+		uint8_t cmdgrp = 0x00;
 
 	protected:
-		uint8_t cmdgrp = 0x00;
 		uint8_t crc = 0x00;
 
 		void needQuotes(uint8_t b, std::shared_ptr<std::vector<uint8_t>> list);

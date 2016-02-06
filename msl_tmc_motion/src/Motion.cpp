@@ -608,6 +608,19 @@ namespace msl_driver
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
 			MotionSet* request;
+			auto read = readData();
+
+			if (read)
+			{
+				cout << "Read from CAN bus: " << hex << static_cast<int>(read->cmd) << " " << hex << static_cast<int>(read->cmdgrp) << endl;
+
+				for (auto b : *read->data)
+				{
+					cout << hex << static_cast<int>(b) << " ";
+				}
+
+				cout << endl;
+			}
 
 			// Get the next request from the queue
 			{
@@ -630,21 +643,6 @@ namespace msl_driver
 				this->executeRequest(request);
 			}
 			delete request;
-
-
-			auto read = readData();
-
-			if (read)
-			{
-				cout << "Read from CAN bus: " << read->cmd << endl;
-
-				for (auto b : *read->data)
-				{
-					cout << hex << static_cast<int>(b) << " ";
-				}
-
-				cout << endl;
-			}
 
 			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
 			long sleepTime = this->minCycleTime
