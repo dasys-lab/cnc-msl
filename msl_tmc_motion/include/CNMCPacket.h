@@ -20,18 +20,6 @@ namespace msl_driver
 	public:
 		CNMCPacket();
 		virtual ~CNMCPacket();
-		//Horrible shit I know that, but it works -- really? my ass
-//		struct VAROBJECT
-//		{
-//		    enum o_t { UNSIGNEDCHAR, INT, SHORT, SIGNEDCHAR } objectType;
-//		    union
-//		    {
-//		    	unsigned char ucValue[4];
-//		    	double dblValue;
-//		    	signed char sByte;
-//		    	short shValue;
-//		    } value;
-//		};
 
 		enum CommandGroup
 			: uint8_t
@@ -154,6 +142,7 @@ namespace msl_driver
 
 		std::vector<uint8_t> convertShortToByte(short data);
 		std::vector<uint8_t> convertIntToByte(int data);
+		short convertByteToShort(int start);
 
 		static std::unique_ptr<CNMCPacket> getInstance(uint8_t raw[], int size);
 		std::shared_ptr<std::vector<uint8_t> > data;

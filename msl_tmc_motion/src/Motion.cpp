@@ -510,6 +510,8 @@ namespace msl_driver
 	void Motion::run()
 	{
 		MotionSet* requestOld = nullptr;
+		MotionSet* request = nullptr;
+
 		chrono::steady_clock::time_point lastCommandTimestamp = std::chrono::steady_clock::now();
 
 		// Loop until the driver is closed
@@ -519,21 +521,6 @@ namespace msl_driver
 			// remember the time, processing was last triggered
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
-			MotionSet* request = nullptr;
-//			auto read = readData();
-
-//			if (read)
-//			{
-//				cout << "Read from CAN bus: " << hex << static_cast<int>(read->cmd) << " " << hex << static_cast<int>(read->cmdgrp) << endl;
-//
-//				for (auto b : *read->data)
-//				{
-//					cout << hex << static_cast<int>(b) << " ";
-//				}
-//
-//				cout << endl;
-//			}
-
 			// Get the next request from the queue
 			{
 				std::lock_guard<std::mutex> lck(this->motionValueMutex);
@@ -541,20 +528,12 @@ namespace msl_driver
 				request = this->motionValue;
 				this->motionValue = nullptr;
 			}
-			auto duration = chrono::system_clock::now().time_since_epoch();
-			auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-
-			cout << millis << endl;
 
 			if (request == nullptr)
 			{
-//				chrono::milliseconds dura(1);
-//				this_thread::sleep_for(dura);
-//				continue;
-
 				// TODO make time configurable, currently a request is send 250 ms
 				if (requestOld != nullptr && chrono::duration_cast<chrono::milliseconds>(
-						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 2500)
+						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 250)
 				{
 					requestOld = nullptr;
 				}
@@ -619,6 +598,21 @@ namespace msl_driver
 //						<< (short)(rot * 64) << ")" <<  endl;
 
 		sendData(packet);
+
+		// reading from motion
+		auto read = readData();
+
+		// check type
+		if (read->cmd == CNMCPacket::RequestCmd::PathVector && read->cmdgrp == CNMCPacket::CommandGroup::RequestResponse)
+		{
+			auto data = read->getBytes();
+
+			short x = read->convertByteToShort(0);
+			short y = read->convertByteToShort(2);
+			short r = read->convertByteToShort(4);
+
+			cout << "TMC-Motion: Reciving from Motion (x, y, rot): (" << x << "," << y << "," << r << ")" << endl;
+		}
 	}
 
 	void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc)

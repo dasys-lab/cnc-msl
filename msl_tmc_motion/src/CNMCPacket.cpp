@@ -127,17 +127,11 @@ namespace msl_driver
 	}
 
 	//**** CONVERT METHODS ****//
-//	CNMCPacket::VAROBJECT CNMCPacket::convertByteToShort(uint8_t data[], int start)
-//	{
-//		short sh = (short)(((unsigned short)(data[start]) << 8 ) + (unsigned char)data[start+1]);
-//
-//		VAROBJECT o = VAROBJECT();
-//		o.value.shValue = sh;
-//		o.objectType = VAROBJECT::SHORT;
-//
-//		return o;
-//
-//	}
+	short CNMCPacket::convertByteToShort(int start)
+	{
+		return (short)(((unsigned short)(this->data->at(start)) << 8 ) + (unsigned char)this->data->at(start+1));
+	}
+
 	std::vector<uint8_t> CNMCPacket::convertShortToByte(short data)
 	{
 		std::vector<uint8_t> byteVector;
@@ -145,7 +139,8 @@ namespace msl_driver
 		byteVector.push_back((data >> 8) & 0xff);
 		return byteVector;
 	}
-//	CNMCPacket::VAROBJECT CNMCPacket::convertByteToInt(uint8_t data[], int start)
+
+//	int CNMCPacket::convertByteToInt(uint8_t data[], int start)
 //	{
 //		int i = 0;
 //		i = (i << 8) + data[start+3];
@@ -159,7 +154,7 @@ namespace msl_driver
 //		o.objectType = VAROBJECT::INT;
 //		return o;
 //	}
-//
+
 	std::vector<uint8_t> CNMCPacket::convertIntToByte(int data)
 	{
 		std::vector<uint8_t> byteVector;
