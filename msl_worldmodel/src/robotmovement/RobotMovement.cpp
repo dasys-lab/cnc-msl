@@ -520,17 +520,18 @@ namespace msl
 //		{
 //			for (int d = 0; d < 8000; d += 2000)
 //			{
-//				AlloSearchArea s = AlloSearchArea.GetAnArea(i * Math.PI / 8, (i + 1) * Math.PI / 8, d, d + 2000,
-//															new Point2D(ownPos.X, ownPos.Y), ownPos);
-//				if (s.IsValid())
+//				shared_ptr<AlloSearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000,
+//																ownPos->getPoint(), ownPos);
+//				if (s->isValid())
 //				{
-//					s.val = EvalPointDynamic(s.midP, alloPassee, ownPos, ops);
+//					s->val = EvalPointDynamic(s.midP, alloPassee, ownPos, ops);
 //					fringe.Add(s);
 //				}
 //			}
 //		}
-//		SearchArea best = fringe[0];
-//		SearchArea cur;
+//
+//		shared_ptr<SearchArea> best = fringe[0];
+//		shared_ptr<SearchArea> cur;
 //
 //		for (int i = 0; i < 100 && fringe.Count > 0; i++)
 //		{
@@ -554,8 +555,9 @@ namespace msl
 //			}
 //
 //		}
-//		shared_ptr<geometry::CNPoint2D> dest = WorldHelper.Allo2Ego(field->mapOutOfEnemyKeeperArea(field->mapInsideField(best->midP)), ownPos);
-//		shared_ptr<geometry::CNPoint2D> align = WorldHelper.Allo2Ego(alloPassee, ownPos);
+//		shared_ptr<geometry::CNPoint2D> dest = WorldHelper.Allo2Ego(
+//				field->mapOutOfEnemyKeeperArea(field->mapInsideField(best->midP)), ownPos);
+//		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
 //
 //		mc = DriveHelper.PlaceRobotAggressive(dest, align, maxTrans, WM);
 		return mc;
