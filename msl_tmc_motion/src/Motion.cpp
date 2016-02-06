@@ -512,6 +512,8 @@ namespace msl_driver
 
 	void Motion::run()
 	{
+		MotionSet* requestOld = nullptr;
+
 		// Loop until the driver is closed
 		while (Motion::running)
 		{
@@ -520,7 +522,6 @@ namespace msl_driver
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
 
 			MotionSet* request = nullptr;
-			MotionSet* requestOld = nullptr;
 			auto read = readData();
 
 			if (read)
