@@ -20,7 +20,7 @@ namespace msl_driver
 	Motion::Motion(int argc, char** argv) :
 			rosNode(nullptr), spinner(nullptr)
 	{
-
+		this->my_serial = nullptr;
 		this->motionValue = nullptr;
 
 		this->sc = supplementary::SystemConfig::getInstance();
@@ -603,9 +603,6 @@ namespace msl_driver
 		// Loop until the driver is closed
 		while (Motion::running)
 		{
-			cout << "." << flush;
-			//TODO make the times right!
-
 			// 1 Tick = 100ns, 10 Ticks = 1us
 			// remember the time, processing was last triggered
 			this->cycleLastTimestamp = std::chrono::steady_clock::now();
@@ -633,6 +630,21 @@ namespace msl_driver
 				this->executeRequest(request);
 			}
 			delete request;
+
+
+			auto read = readData();
+
+			if (read)
+			{
+				cout << "Read from CAN bus: " << read->cmd << endl;
+
+				for (auto b : *read->data)
+				{
+					cout << hex << static_cast<int>(b) << " ";
+				}
+
+				cout << endl;
+			}
 
 			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
 			long sleepTime = this->minCycleTime

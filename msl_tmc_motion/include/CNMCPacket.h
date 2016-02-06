@@ -71,7 +71,7 @@ namespace msl_driver
 		enum ControlCmd
 			: uint8_t
 			{
-				SetAllPWM = 0x10, // X (int)pwm1, (int)pwm2, (int)pwm3, (byte)sreq
+			SetAllPWM = 0x10, // X (int)pwm1, (int)pwm2, (int)pwm3, (byte)sreq
 			SetPWM = 0x11, // X (byte)motor, (int)pwm, (byte)sreq
 			SetAllRPM = 0x20, // (int)rpm1, (int)rpm2, (int)rpm3, (byte)sreq
 			SetRPM = 0x21, // X (byte)motor, (int)rpm, (byte)sreq
