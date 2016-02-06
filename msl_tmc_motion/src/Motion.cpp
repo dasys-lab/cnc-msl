@@ -573,19 +573,17 @@ namespace msl_driver
 
 	void Motion::executeRequest(MotionSet* ms)
 	{
-		double rot = max(-8 * M_PI, min(8 * M_PI, ms->rotation));
+
+//		trans = Math.Sign(ms.translation)*Math.Min(Math.Abs(ms.translation),this.maxVelocity);
 		double trans = min(abs(ms->translation), this->maxVelocity);
+//		rot = Math.Max(-8*Math.PI, Math.Min(8*Math.PI,ms.rotation));
+		double rot = max(-8 * M_PI, min(8 * M_PI, ms->rotation));
 
 		if (ms->translation < 0)
 			trans *= -1;
 
 		shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
-		// (int)angle, (int) velo, (int) rotation
-//		packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
-//						(short) ms->angle,
-//					    (short) trans,
-//						(short) rot * 64);
 		packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
 					    (short)(cos(ms->angle) * trans),
 						(short)(sin(ms->angle) * trans),
@@ -615,7 +613,7 @@ namespace msl_driver
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
 			double translation = sqrt(x1*x1 + x2*x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
-			double rotation = ((double)x3 / 64.0);
+			double rotation = ((double)x3) / 64.0d;
 
 			cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
 
