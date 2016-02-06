@@ -77,6 +77,7 @@ namespace msl_driver
 		ros::Subscriber handleMotionControlSub;
 		ros::Publisher rawOdometryInfoPub;
 		ros::Publisher motionStatInfoPub;
+		msl_actuator_msgs::RawOdometryInfo rawOdoInfo;
 
 		static bool running;
 		thread runThread;

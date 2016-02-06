@@ -532,7 +532,7 @@ namespace msl_driver
 			{
 				// TODO make time configurable, currently a request is send 250 ms
 				if (requestOld != nullptr && chrono::duration_cast<chrono::milliseconds>(
-						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 1250)
+						std::chrono::steady_clock::now() - lastCommandTimestamp).count() > 250)
 				{
 					requestOld = nullptr;
 				}
@@ -556,6 +556,9 @@ namespace msl_driver
 				lastCommandTimestamp = this->cycleLastTimestamp;
 				requestOld = request;
 			}
+
+			// send raw odometry info
+			this->rawOdometryInfoPub.publish(this->rawOdoInfo);
 
 			// minCycleTime (us), Ticks (tick), cycleLastTimestamp (tick), 1 tick = 100 ns
 			long sleepTime = this->minCycleTime
@@ -610,16 +613,12 @@ namespace msl_driver
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
 			double rotation = ((double)x3) / 64.0d;
 
-			msl_actuator_msgs::RawOdometryInfo rawOdoInfo;
-
 			rawOdoInfo.motion.angle = angle;
 			rawOdoInfo.motion.translation = translation;
 			rawOdoInfo.motion.rotation = rotation;
 			ros::Time t = ros::Time::now();
 			uint64_t timestamp = (t.sec * 1000000000UL + t.nsec);
 			rawOdoInfo.timestamp = timestamp;
-
-			this->rawOdometryInfoPub.publish(rawOdoInfo);
 		}
 	}
 
