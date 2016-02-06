@@ -607,11 +607,18 @@ namespace msl_driver
 		{
 			auto data = read->getBytes();
 
-			short x = read->convertByteToShort(0);
-			short y = read->convertByteToShort(2);
-			short r = read->convertByteToShort(4);
+			short x1 = read->convertByteToShort(0);
+			short x2 = read->convertByteToShort(2);
+			short x3 = read->convertByteToShort(4);
 
-			cout << "TMC-Motion: Reciving from Motion (x, y, rot): (" << x << "," << y << "," << r << ")" << endl;
+//			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
+			double angle = atan2(x2, x1);
+//			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
+			double translation = sqrt(x1*x1 + x2*x2);
+//			mr.rotation = ((double)rawMotorValues[2])/64.0;
+			double rotation = sqrt(x3 / 64.0);
+
+			cout << "TMC-Motion: Reciving from Motion (angle, translation, rot): (" << angle << "," << translation << "," << rotation << ")" << endl;
 		}
 	}
 
