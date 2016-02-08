@@ -55,7 +55,7 @@ namespace alica
 
         if (receiver != nullptr)
         {
-            shared_ptr<vector<int>> robots = make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
+            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver);//make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
 
             if (robots->size() > 0)
             {
