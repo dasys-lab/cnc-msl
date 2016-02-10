@@ -15,6 +15,7 @@ namespace alica
         threshold = 400;
         behindDistance = 300;
         maxVel = 3000;
+        field = nullptr;
         /*PROTECTED REGION END*/
     }
     FetchFromSideLine::~FetchFromSideLine()

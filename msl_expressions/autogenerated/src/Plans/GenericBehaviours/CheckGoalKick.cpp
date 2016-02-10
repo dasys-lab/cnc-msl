@@ -142,8 +142,8 @@ namespace alica
 //					<< endl;
             cout << "Distance ownPos <----> GoalPosMiddle = " << ownPos->distanceTo(goalPosMiddle) << endl;
 
-            if (ownPos->distanceTo(obstaclePos) > robotShootDistanceOwn
-                    || obstaclePos->distanceTo(goalPosMiddle) > robotShootDistanceGoal)
+            if (ownPos->distanceTo(obstaclePos) < robotShootDistanceOwn
+                    || obstaclePos->distanceTo(goalPosMiddle) < robotShootDistanceGoal)
             {
                 cout << "return false" << endl;
                 return false;

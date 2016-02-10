@@ -21,7 +21,10 @@ namespace alica
     void BlockBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863456983) ENABLED START*/ //Add additional options here
-        //cout << "BlockBall: Inside run" << endl;
+        // TODO:
+    	//		send kick message to block incoming ball
+    	//		kick can only be executed if 4seconds have passed from last kick
+    	//		use timestamp of messages
         /*PROTECTED REGION END*/
     }
     void BlockBall::initialiseParameters()

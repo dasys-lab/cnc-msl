@@ -23,7 +23,7 @@ namespace alica
 	void WatchBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-		//cout << "### WatchBall ###" << endl;
+		cout << "### WatchBall ###" << endl;
 
 		me = wm->rawSensorData.getOwnPositionVision();
 		goalMid = MSLFootballField::posOwnGoalMid();
@@ -50,23 +50,19 @@ namespace alica
 			puffer += extendedArmWidth;
 		}
 
-		//cout << "ownY: " << me->y << endl;
-
 		if (targetY <= leftGoalPost || (targetY > leftGoalPost && targetY <= leftGoalPost + puffer))
 		{
-			//cout << "postY: " << MSLFootballField::posLeftOwnGoalPost()->y << endl;
 			targetY = leftGoalPost + puffer;
 		}
 		else if (targetY >= rightGoalPost || (targetY < rightGoalPost && targetY >= rightGoalPost - puffer))
 		{
-			//cout << "postY: " << MSLFootballField::posRightOwnGoalPost()->y << endl;
 			targetY = rightGoalPost - puffer;
 		}
 		// else, ballY is between goalposts and not closer than ballRadius + robot's CenterToArmDistance away from goal posts
 
 		auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
 		mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
-		//cout << "### WatchBall ###\n" << endl;
+		cout << "### WatchBall ###\n" << endl;
 
 		send(mc);
 		/*PROTECTED REGION END*/

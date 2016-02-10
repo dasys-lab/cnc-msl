@@ -13,6 +13,9 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1440754525537) ENABLED START*/ //Add additional options here
 //        this->maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
+        field = nullptr;
+        maxVel = 0;
+        sc = nullptr;
         /*PROTECTED REGION END*/
     }
     CatchPass::~CatchPass()

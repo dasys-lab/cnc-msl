@@ -18,7 +18,7 @@ namespace msl
 	public:
 		AlloSearchArea();
 		virtual ~AlloSearchArea();
-		shared_ptr<AlloSearchArea> getAnArea(double langle, double hangle, double minDist, double maxDist,
+		static shared_ptr<AlloSearchArea> getAnArea(double langle, double hangle, double minDist, double maxDist,
 																	shared_ptr<geometry::CNPoint2D> center,
 																	shared_ptr<geometry::CNPosition> ownPos);
 		shared_ptr<vector<shared_ptr<SearchArea>>> expand();
@@ -27,7 +27,7 @@ namespace msl
 
 	protected:
 		AlloSearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center, shared_ptr<geometry::CNPosition> ownPos);
-		shared_ptr<vector<shared_ptr<AlloSearchArea>>> daList;
+		static shared_ptr<vector<shared_ptr<AlloSearchArea>>> daList;
 	};
 
 } /* namespace msl */

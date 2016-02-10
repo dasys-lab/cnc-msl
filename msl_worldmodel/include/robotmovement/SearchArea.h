@@ -31,7 +31,8 @@ namespace msl
 		double val;
 		shared_ptr<geometry::CNPoint2D> center;
 		shared_ptr<geometry::CNPosition> ownPos;
-		int compareTo(shared_ptr<SearchArea> a);
+		//static int compareTo(shared_ptr<SearchArea> a);
+		static bool compareTo(shared_ptr<SearchArea> a, shared_ptr<SearchArea> b);
 		virtual shared_ptr<vector<shared_ptr<SearchArea>>> expand() = 0;
 		virtual bool isValid() = 0;
 

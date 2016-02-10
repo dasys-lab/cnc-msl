@@ -42,44 +42,44 @@ namespace alica
         {
             return;
         }
-		if (ownPos == nullptr)
-		{
+        if (ownPos == nullptr)
+        {
 
-			mc = msl::RobotMovement::driveRandomly(1000);
-			send(mc);
-			return;
-		}
+            mc = msl::RobotMovement::driveRandomly(1000);
+            send(mc);
+            return;
+        }
 
-		shared_ptr<geometry::CNPoint2D> egoMatePos = nullptr;
-		shared_ptr<geometry::CNPosition> matePos = nullptr;
+        shared_ptr < geometry::CNPoint2D > egoMatePos = nullptr;
+        shared_ptr < geometry::CNPosition > matePos = nullptr;
 
-		if (receiver != nullptr)
-		{
-			shared_ptr<vector<int>> robots = make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
+        if (receiver != nullptr)
+        {
+            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver);//make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
 
-			if(robots->size() > 0)
-			{
-				matePos = wm->robots.getTeamMatePosition(robots->at(0));//SHWM.GetRobotDataByID(rob).PlayerPosition;
-			}
-			if (matePos != nullptr)
-			{
-				egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
-				oldMatePos = matePos;
-			}
-			else
-			{
-				if (oldMatePos != nullptr)
-				{
-					egoMatePos = oldMatePos->getPoint()->alloToEgo(*ownPos);
-				}
-			}
-		}
+            if (robots->size() > 0)
+            {
+                matePos = wm->robots.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+            }
+            if (matePos != nullptr)
+            {
+                egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
+                oldMatePos = matePos;
+            }
+            else
+            {
+                if (oldMatePos != nullptr)
+                {
+                    egoMatePos = oldMatePos->getPoint()->alloToEgo(*ownPos);
+                }
+            }
+        }
 
-		if (egoMatePos != nullptr)
-		{
-			mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
-			send(mc);
-		}
+        if (egoMatePos != nullptr)
+        {
+            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void AdvancdeSimplePass::initialiseParameters()

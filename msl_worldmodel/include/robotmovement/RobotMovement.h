@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
+#include "GeometryCalculator.h"
 
 namespace geometry
 {
@@ -22,13 +23,15 @@ using namespace msl_actuator_msgs;
 namespace msl
 {
 
+	class SearchArea;
 	class RobotMovement
 	{
 	public:
 		virtual ~RobotMovement();
-		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
-		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
@@ -56,6 +59,9 @@ namespace msl
 		static MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
+		static MotionControl placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+
+		//TODO needs to be tested
 		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
@@ -78,7 +84,18 @@ namespace msl
 		static double alignMaxVel;
 		static double maxVelo;
 		static int randomCounter;
+		static int beamSize;
+		static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
+		static shared_ptr<vector<shared_ptr<SearchArea>>> next;
 		static shared_ptr<geometry::CNPoint2D> randomTarget;
+
+	protected:
+		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
+									   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
+		static double assume_enemy_velo;
+		static double assume_ball_velo;
+		static double interceptQuotient;
+		static double robotRadius;
 	};
 }
 

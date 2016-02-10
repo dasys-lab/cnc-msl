@@ -10,6 +10,8 @@
 namespace msl
 {
 
+	shared_ptr<vector<shared_ptr<AlloSearchArea>>> AlloSearchArea::daList = make_shared<vector<shared_ptr<AlloSearchArea>>>(500);
+
 	AlloSearchArea::AlloSearchArea() :
 			SearchArea()
 	{

@@ -56,13 +56,16 @@ namespace msl
 								(MSLWorldModel*)this);
 
 		wmBallListSub = n.subscribe("/CNVision/BallHypothesisList", 10, &MSLWorldModel::onBallHypothesisList,
-								(MSLWorldModel*)this);
+									(MSLWorldModel*)this);
 
 		motionBurstSub = n.subscribe("/CNActuator/MotionBurst", 10, &MSLWorldModel::onMotionBurst,
 										(MSLWorldModel*)this);
 
-		simWorldModel = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,
+		simWorldModelSub = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,
 									(MSLWorldModel*)this);
+
+		gazeboWorldModelSub = n.subscribe("/gazebo/model_states", 10, &MSLWorldModel::onGazeboModelState,
+											(MSLWorldModel*)this);
 
 		sharedWorldPub = n.advertise<msl_sensor_msgs::SharedWorldInfo>("/WorldModel/SharedWorldInfo", 10);
 
@@ -71,7 +74,8 @@ namespace msl
 
 		passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel*)this);
 
-		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo, (MSLWorldModel*)this);
+		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
+											(MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 	}
@@ -88,8 +92,67 @@ namespace msl
 			msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>(
 					msg->worldModel);
 			onWorldModelData(wmsim);
-
 		}
+	}
+
+	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
+	{
+		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
+
+		msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>();
+
+
+		int modelCnt = msg->name.size();
+		//cout << "WM: Gazebo Model Count: " << modelCnt <<  endl;
+		for (int i = 0; i < modelCnt; i++)
+		{
+			// TODO: check coordinate systems
+			if (msg->name[i].find("bot"))
+			{
+
+				if (msg->name[i].compare("bot"+to_string(this->ownID)) != 0)
+				{
+					//cout << "WM: Gazebo Pos" << endl;
+					wmsim->timestamp = now;
+					wmsim->odometry.certainty = 1.0;
+					wmsim->odometry.locType.type = msl_sensor_msgs::LocalizationType::ErrorMin;
+					wmsim->odometry.position.certainty = 1.0;
+					wmsim->odometry.position.angle = atan2(msg->pose[i].orientation.y, msg->pose[i].orientation.x);
+					wmsim->odometry.position.x = msg->pose[i].position.x * 1000.0;
+					wmsim->odometry.position.y = msg->pose[i].position.y * 1000.0;
+					wmsim->odometry.motion.angle = atan2(msg->twist[i].linear.y, msg->twist[i].linear.x);
+					wmsim->odometry.motion.translation = sqrt(
+							msg->twist[i].linear.x * msg->twist[i].linear.x
+									+ msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
+					wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
+				}
+				else
+				{
+					msl_sensor_msgs::ObstacleInfo obsInfo;
+					obsInfo.diameter = 500.0;
+					obsInfo.x = msg->pose[i].position.x * 1000.0;
+					obsInfo.y = msg->pose[i].position.y * 1000.0;
+
+					wmsim->obstacles.push_back(obsInfo);
+				}
+			}
+
+			if (msg->name[i] == "football")
+			{
+				wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
+				wmsim->ball.confidence = 1.0;
+				wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
+				wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
+				wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
+				wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
+				wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
+				wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+			}
+
+			// TODO: fill distance scan
+		}
+
+		onWorldModelData(wmsim);
 	}
 
 	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
@@ -234,7 +297,8 @@ namespace msl
 		rawSensorData.processCorrectedOdometryInfo(msg);
 	}
 
-	void MSLWorldModel::onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg) {
+	void MSLWorldModel::onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg)
+	{
 		rawSensorData.processBallHypothesisList(msg);
 	}
 

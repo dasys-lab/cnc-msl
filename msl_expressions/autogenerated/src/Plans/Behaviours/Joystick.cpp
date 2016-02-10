@@ -29,7 +29,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
         auto joy = wm->rawSensorData.getJoystickCommand();
-        if (!joy.operator bool())
+        if (!joy)
         {
             return;
         }
@@ -39,9 +39,18 @@ namespace alica
             return;
         }
 
-        msl_actuator_msgs::MotionControl mc;
-        mc.motion = joy->motion;
-        send(mc);
+        if (!std::isnan(joy->motion.translation)
+        	&& !std::isnan(joy->motion.rotation)
+        	&& !std::isnan(joy->motion.angle))
+        {
+			msl_actuator_msgs::MotionControl mc;
+			mc.motion = joy->motion;
+			send(mc);
+        }
+//        else
+//        {
+//        	cout << "Joystick: Some Motion Value is NaN!" << endl;
+//        }
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {

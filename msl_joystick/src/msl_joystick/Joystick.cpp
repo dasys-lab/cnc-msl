@@ -3,6 +3,7 @@
 #include <msl_joystick/Joystick.h>
 #include <msl_msgs/JoystickCommand.h>
 #include <SystemConfig.h>
+#include <limits>
 
 namespace msl_joystick
 {
@@ -67,12 +68,12 @@ namespace msl_joystick
 		ballHandleRightSlider->setMaximum(this->ballHandleMax);
 
 		// connect the edit fields
-		connect(robotIdEdit, SIGNAL(returnPressed()), this, SLOT(onRobotIdEdited()));
-		connect(kickPowerEdit, SIGNAL(returnPressed()), this, SLOT(onKickPowerEdited()));
-		connect(translationEdit, SIGNAL(returnPressed()), this, SLOT(onTranslationEdited()));
-		connect(rotationEdit, SIGNAL(returnPressed()), this, SLOT(onRotationEdited()));
-		connect(ballHandleLeftEdit, SIGNAL(returnPressed()), this, SLOT(onBallHandleLeftEdited()));
-		connect(ballHandleRightEdit, SIGNAL(returnPressed()), this, SLOT(onBallHandleRightEdited()));
+		connect(robotIdEdit, SIGNAL(editingFinished()), this, SLOT(onRobotIdEdited()));
+		connect(kickPowerEdit, SIGNAL(editingFinished()), this, SLOT(onKickPowerEdited()));
+		connect(translationEdit, SIGNAL(editingFinished()), this, SLOT(onTranslationEdited()));
+		connect(rotationEdit, SIGNAL(editingFinished()), this, SLOT(onRotationEdited()));
+		connect(ballHandleLeftEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleLeftEdited()));
+		connect(ballHandleRightEdit, SIGNAL(editingFinished()), this, SLOT(onBallHandleRightEdited()));
 
 		// connect the sliders
 		connect(kickPowerSlider, SIGNAL(valueChanged(int)), this, SLOT(onKickPowerSlided(int)));
@@ -111,7 +112,7 @@ namespace msl_joystick
 		if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]
 				|| keyPressed[6] || keyPressed[7]))
 		{
-			return; // dont send joystick message if no move-key is pressed
+			return; // dont send joystick message if no key is pressed
 		}
 
 		if (!this->uiWidget->hasFocus())
@@ -151,66 +152,76 @@ namespace msl_joystick
 			this->keyPressed[7] = false;
 		}
 
-		// translation
-		msg.motion.translation = this->translation;
-
-		// driving direction
-		// 0 == up
-		// 1 == down
-		// 2 == left
-		// 3 == right
-
-		// angle
-		if (keyPressed[0] == true && keyPressed[2] == true)
+		if (!(keyPressed[0] || keyPressed[1] || keyPressed[2] || keyPressed[3] || keyPressed[4] || keyPressed[5]))
 		{
-			msg.motion.angle = (0.75 * M_PI);
-		}
-		else if (keyPressed[0] == true && keyPressed[3] == true)
-		{
-			msg.motion.angle = (1.25 * M_PI);
-		}
-		else if (keyPressed[1] == true && keyPressed[2] == true)
-		{
-			msg.motion.angle = (0.25 * M_PI);
-		}
-		else if (keyPressed[1] == true && keyPressed[3] == true)
-		{
-			msg.motion.angle = (1.75 * M_PI);
-		}
-		else if (keyPressed[0] == true)
-		{
-			msg.motion.angle = M_PI;
-		}
-		else if (keyPressed[1] == true)
-		{
-			msg.motion.angle = 0;
-		}
-		else if (keyPressed[2] == true)
-		{
-			msg.motion.angle = (1.5 * M_PI);
-		}
-		else if (keyPressed[3] == true)
-		{
-			msg.motion.angle = (0.5 * M_PI);
+			// Send NaN to signal Joystick behaviour NOT to send MotionControl commands.
+			msg.motion.translation = std::numeric_limits<double>::quiet_NaN();
+			msg.motion.rotation = std::numeric_limits<double>::quiet_NaN();
+			msg.motion.angle = std::numeric_limits<double>::quiet_NaN();
 		}
 		else
 		{
-			msg.motion.translation = 0;
-			msg.motion.rotation = 0;
-		}
+			// translation
+			msg.motion.translation = this->translation;
 
-		// rotation
-		if (keyPressed[4] == true)
-		{
-			msg.motion.rotation = rotation;
-		}
-		else if (keyPressed[5] == true)
-		{
-			msg.motion.rotation = -rotation;
-		}
-		else
-		{
-			msg.motion.rotation = 0;
+			// driving direction
+			// 0 == up
+			// 1 == down
+			// 2 == left
+			// 3 == right
+
+			// angle
+			if (keyPressed[0] == true && keyPressed[2] == true)
+			{
+				msg.motion.angle = (0.75 * M_PI);
+			}
+			else if (keyPressed[0] == true && keyPressed[3] == true)
+			{
+				msg.motion.angle = (1.25 * M_PI);
+			}
+			else if (keyPressed[1] == true && keyPressed[2] == true)
+			{
+				msg.motion.angle = (0.25 * M_PI);
+			}
+			else if (keyPressed[1] == true && keyPressed[3] == true)
+			{
+				msg.motion.angle = (1.75 * M_PI);
+			}
+			else if (keyPressed[0] == true)
+			{
+				msg.motion.angle = M_PI;
+			}
+			else if (keyPressed[1] == true)
+			{
+				msg.motion.angle = 0;
+			}
+			else if (keyPressed[2] == true)
+			{
+				msg.motion.angle = (1.5 * M_PI);
+			}
+			else if (keyPressed[3] == true)
+			{
+				msg.motion.angle = (0.5 * M_PI);
+			}
+			else
+			{
+				msg.motion.translation = 0;
+				msg.motion.rotation = 0;
+			}
+
+			// rotation
+			if (keyPressed[4] == true)
+			{
+				msg.motion.rotation = rotation;
+			}
+			else if (keyPressed[5] == true)
+			{
+				msg.motion.rotation = -rotation;
+			}
+			else
+			{
+				msg.motion.rotation = 0;
+			}
 		}
 
 #ifdef RQT_MSL_JOYSTICK_DEBUG
