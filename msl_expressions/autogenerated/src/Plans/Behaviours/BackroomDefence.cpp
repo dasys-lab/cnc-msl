@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/BackroomDefence.h"
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,6 +22,16 @@ namespace alica
     void BackroomDefence::run(void* msg)
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
+
+        auto me = wm->rawSensorData.getOwnPositionVision();
+        auto ballPos = wm->ball.getEgoBallPosition();
+        //auto goaliePos = wm->robots.getTeamMatePosition()
+        if (!me.operator bool())
+        {
+            return;
+        }
+        auto egoTarget = alloTarget.alloToEgo(*me);
+
         /*PROTECTED REGION END*/
     }
     void BackroomDefence::initialiseParameters()
