@@ -12,6 +12,8 @@
 #include "MSLWorldModel.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include "robotmovement/SearchArea.h"
+#include "robotmovement/AlloSearchArea.h"
 
 #include <SystemConfig.h>
 
@@ -32,11 +34,17 @@ namespace msl
 	double RobotMovement::lastRotErrorWithBallRapid = 0;
 	double RobotMovement::maxVelo;
 	int RobotMovement::randomCounter = 0;
+	int RobotMovement::beamSize = 3;
 	shared_ptr<geometry::CNPoint2D> RobotMovement::randomTarget = nullptr;
+	shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::fringe = make_shared<vector<shared_ptr<SearchArea>>>();
+	shared_ptr<vector<shared_ptr<SearchArea>>> RobotMovement::next = make_shared<vector<shared_ptr<SearchArea>>>();
+	double RobotMovement::assume_enemy_velo = 4500;
+	double RobotMovement::assume_ball_velo = 5000;
+	double RobotMovement::interceptQuotient = RobotMovement::assume_ball_velo / RobotMovement::assume_enemy_velo;
+	double RobotMovement::robotRadius = 300;
 
 	RobotMovement::~RobotMovement()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
@@ -514,52 +522,61 @@ namespace msl
 		}
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->robots.getObstaclePoints(); //WM.GetTrackedOpponents();
+		fringe->clear();
+		for (int i = 0; i < 16; i++)
+		{
+			for (int d = 0; d < 8000; d += 2000)
+			{
+				shared_ptr<AlloSearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000,
+																			ownPos->getPoint(), ownPos);
+				if (s->isValid())
+				{
 
-//		fringe.Clear();
-//		for (int i = 0; i < 16; i++)
-//		{
-//			for (int d = 0; d < 8000; d += 2000)
-//			{
-//				shared_ptr<AlloSearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000,
-//																ownPos->getPoint(), ownPos);
-//				if (s->isValid())
-//				{
-//					s->val = EvalPointDynamic(s.midP, alloPassee, ownPos, ops);
-//					fringe.Add(s);
-//				}
-//			}
-//		}
-//
-//		shared_ptr<SearchArea> best = fringe[0];
-//		shared_ptr<SearchArea> cur;
-//
-//		for (int i = 0; i < 100 && fringe.Count > 0; i++)
-//		{
-//
-//			next.Clear();
-//			for (int j = 0; j < beamSize; j++)
-//			{
-//				if (fringe.Count == 0)
-//					break;
-//				cur = fringe.RemoveAt(0);
-//				if (j == 0 && cur.val > best.val)
-//				{
-//					best = cur;
-//				}
-//				next.AddRange(cur.Expand());
-//			}
-//			for (int j = 0; j < next.Count; j++)
-//			{
-//				next[j].val = EvalPointDynamic(next[j].midP, alloPassee, ownPos, ops);
-//				fringe.Add(next[j]);
-//			}
-//
-//		}
-//		shared_ptr<geometry::CNPoint2D> dest = WorldHelper.Allo2Ego(
-//				field->mapOutOfEnemyKeeperArea(field->mapInsideField(best->midP)), ownPos);
-//		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
-//
-//		mc = DriveHelper.PlaceRobotAggressive(dest, align, maxTrans, WM);
+					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->robots.getObstaclePoints());
+					fringe->push_back(s);
+				}
+			}
+		}
+		stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
+		shared_ptr<SearchArea> best = fringe->at(0);
+		shared_ptr<SearchArea> cur;
+
+		for (int i = 0; i < 100 && fringe->size() > 0; i++)
+		{
+
+			next->clear();
+			for (int j = 0; j < beamSize; j++)
+			{
+				if (fringe->size() == 0)
+				{
+					break;
+				}
+				cur = fringe->at(0);
+				fringe->erase(fringe->begin());
+				if (j == 0 && cur->val > best->val)
+				{
+					best = cur;
+				}
+				shared_ptr<vector<shared_ptr<SearchArea>>> expanded = cur->expand();
+				for (int i = 0; expanded->size(); i++)
+				{
+					next->push_back(expanded->at(i));
+				}
+			}
+			for (int j = 0; j < next->size(); j++)
+			{
+				next->at(j)->val = evalPointDynamic(next->at(j)->midP, alloPassee, ownPos,
+													wm->robots.getObstaclePoints());
+				fringe->push_back(next->at(j));
+			}
+			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
+		}
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<geometry::CNPoint2D> dest =
+				field->mapOutOfEnemyKeeperArea(field->mapInsideField(best->midP))->alloToEgo(*ownPos);
+		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
+
+		mc = placeRobotAggressive(dest, align, maxTrans);
 		return mc;
 	}
 
@@ -577,5 +594,152 @@ namespace msl
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 		maxVelo = (*sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
 	}
+
+	MotionControl RobotMovement::placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint,
+														shared_ptr<geometry::CNPoint2D> headingPoint,
+														double translation)
+	{
+		double rotTol = M_PI / 30.0;
+		double destTol = 100.0;
+
+		if (destinationPoint->length() < destTol)
+		{
+			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr); //DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
+			rot.motion.translation = 0.0;
+			if (headingPoint == nullptr)
+			{
+				return rot;
+			}
+			double angle = headingPoint->angleTo();
+			MSLWorldModel* wm = MSLWorldModel::get();
+			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+			{
+				return rot;
+			}
+			else
+			{
+				MotionControl bm;
+
+				bm.motion.rotation = 0.0;
+				bm.motion.translation = 0.0;
+				bm.motion.angle = 0.0;
+				return bm;
+			}
+		}
+		else
+		{
+			//linear
+			double trans = min(translation, 1.6 * destinationPoint->length());
+			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr); //DriveHelper.DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, trans, wm);
+			return bm;
+		}
+	}
+
+	double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP,
+											shared_ptr<geometry::CNPoint2D> alloPassee,
+											shared_ptr<geometry::CNPosition> ownPos,
+											shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > opponents)
+	{
+		double ret = 0;
+
+		//distance to point:
+		ret -= ownPos->distanceTo(alloP) / 10.0;
+		MSLFootballField* field = MSLFootballField::getInstance();
+		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(field->FieldLength / 2, 0);
+
+		shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
+		//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
+
+		shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
+				-field->FieldLength / 2.0 - alloPassee->x, field->GoalWidth / 2.0 + 1000 - alloPassee->y);
+		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
+				-field->FieldLength / 2.0 - alloPassee->x, -field->GoalWidth / 2.0 - 1000 - alloPassee->y);
+
+		if (!geometry::GeometryCalculator::leftOf(passee2LeftOwnGoal, passee2p)
+				&& geometry::GeometryCalculator::leftOf(passee2RightOwnGoal, passee2p))
+		{
+			return numeric_limits<double>::min();
+		}
+		if (field->isInsideEnemyPenalty(alloPassee, 800) && field->isInsideEnemyPenalty(alloP, 600))
+		{
+			return numeric_limits<double>::min();
+		}
+
+		ret += passee2p->x / 9.0;
+		if (alloP->x < 0)
+		{
+			ret += alloP->x / 10.0;
+		}
+
+		if (alloP->y * alloPassee->y < 0)
+		{
+			ret += min(0.0, alloP->x);
+		}
+		if (alloP->angleToPoint(oppGoalMid) > M_PI / 3.0)
+		{
+			ret -= alloP->angleToPoint(oppGoalMid) * 250.0;
+		}
+		//distance to passeee:
+
+		//Point2D p2GoalVec = goalPos - p;
+		double dist2Passee = passee2p->length();
+
+		//nice passing distances: 4000..9000:
+		if (dist2Passee < 2000)
+		{
+			return numeric_limits<double>::min();
+		}
+		if (dist2Passee < 4000)
+		{
+			ret -= 4000 - dist2Passee;
+		}
+		else if (dist2Passee > 9000)
+		{
+			ret -= dist2Passee - 9000;
+		}
+
+		//else if (dist2Ball > 5000) ret -= (dist2Ball-5000)*(dist2Ball - 5000);
+
+		double t, v;
+		double ortX, ortY;
+		double catchFactor = 0;
+
+		//double goalFactor = 0;
+
+		for (int i = 0; i < opponents->size(); i++)
+		{
+			//pass corridor
+			t = ((opponents->at(i)->x - alloPassee->x) * passee2p->x + (opponents->at(i)->y - alloPassee->y) * passee2p->y)
+					/ (passee2p->x * passee2p->x + passee2p->y * passee2p->y);
+
+			if (t > 0)
+			{
+				if (t < 1.0)
+				{
+
+					ortX = opponents->at(i)->x - (alloPassee->x + t * (passee2p->x));
+					ortY = opponents->at(i)->y - (alloPassee->y + t * (passee2p->y));
+					v = max(0.0, sqrt(ortX * ortX + ortY * ortY) - robotRadius) / dist2Passee;
+
+					if (v / t * interceptQuotient < 1)
+					{
+
+						double cf = 5000 * (1 - ((v / t) * interceptQuotient));
+						catchFactor = max(catchFactor, cf);
+					}
+				}
+				ortX = opponents->at(i)->x - alloP->x;
+				ortY = opponents->at(i)->y - alloP->y;
+				v = sqrt(ortX * ortX + ortY * ortY);
+				if (v < 2500)
+					ret -= (2500 - v) * 10;
+			}
+		}
+		ret -= catchFactor;
+
+		//ret -= goalFactor;
+		return ret;
+	}
+
 }
 
