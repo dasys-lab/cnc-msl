@@ -39,13 +39,11 @@ namespace alica
             return;
         }
 
-        if (!std::isnan(joy->motion.translation)
-        	&& !std::isnan(joy->motion.rotation)
-        	&& !std::isnan(joy->motion.angle))
+        if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
-			msl_actuator_msgs::MotionControl mc;
-			mc.motion = joy->motion;
-			send(mc);
+            msl_actuator_msgs::MotionControl mc;
+            mc.motion = joy->motion;
+            send(mc);
         }
 //        else
 //        {
