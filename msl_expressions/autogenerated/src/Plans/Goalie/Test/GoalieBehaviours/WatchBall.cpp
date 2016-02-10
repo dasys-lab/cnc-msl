@@ -26,6 +26,10 @@ namespace alica
 		cout << "### WatchBall ###" << endl;
 
 		me = wm->rawSensorData.getOwnPositionVision();
+		if(me == nullptr) {
+			cout << "me is null" << endl;
+			return;
+		}
 		goalMid = MSLFootballField::posOwnGoalMid();
 
 		double targetX = goalMid->egoToAllo(*me)->x - 100;
