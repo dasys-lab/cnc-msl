@@ -22,9 +22,9 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
 
-    	cout << "inside drive to ball" << endl;
-    	//auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
-    	//mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
+    	/*cout << "inside drive to ball" << endl;
+    	auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
+    	mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
         /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()
