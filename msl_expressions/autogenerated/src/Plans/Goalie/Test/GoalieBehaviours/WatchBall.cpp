@@ -25,17 +25,14 @@ namespace alica
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
         cout << "### WatchBall ###" << endl;
 
-<<<<<<< HEAD
-        me = wm->rawSensorData.getOwnPositionVision();
-        goalMid = MSLFootballField::posOwnGoalMid();
-=======
+
 		me = wm->rawSensorData.getOwnPositionVision();
 		if(me == nullptr) {
 			cout << "me is null" << endl;
 			return;
 		}
 		goalMid = MSLFootballField::posOwnGoalMid();
->>>>>>> 454f2d57a4a89be2f1acc523f0c497fba1f73684
+
 
         double targetX = goalMid->egoToAllo(*me)->x - 100;
         double targetY = wm->ball.getEgoBallPosition()->y;
