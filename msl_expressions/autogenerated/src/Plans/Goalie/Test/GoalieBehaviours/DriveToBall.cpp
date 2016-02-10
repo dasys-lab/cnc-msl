@@ -21,9 +21,15 @@ namespace alica
     void DriveToBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
+<<<<<<< HEAD
         /*cout << "inside drive to ball" << endl;
          auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
          mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);*/
+=======
+    	cout << "inside drive to ball" << endl;
+    	//auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
+    	//mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
+>>>>>>> 454f2d57a4a89be2f1acc523f0c497fba1f73684
         /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()

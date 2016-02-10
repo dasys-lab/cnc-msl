@@ -42,14 +42,24 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
 
             cout << " Driving to goal" << endl;
-            //mc = RobotMovement::moveToPointFast(make_shared < geometry::CNPoint2D > (egoX - 100, egoY), fieldCenterTarget,
-            //                                  100, 0);
             mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (egoX - 100, egoY),
                                                      fieldCenterTarget, 100, 0);
             cout << "### DriveToGoal ###\n" << endl;
         }
-        send(mc);
 
+        shared_ptr < geometry::CNPoint2D > goalPos = MSLFootballField::posOwnGoalMid();
+        goalPos->x += 100;
+
+        /*
+         * if goalie's position (+- 1cm)
+         * equals to middle of goal position
+         * + 10cm towards field center
+        */
+        if(me->distanceTo(goalPos) < 100) {
+        	this->success = true;
+        } else {
+        	send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void DriveToGoal::initialiseParameters()
