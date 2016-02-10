@@ -24,6 +24,9 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPosition> me;
+        shared_ptr<geometry::CNPoint2D> goalMid;
+        msl_actuator_msgs::MotionControl mc;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

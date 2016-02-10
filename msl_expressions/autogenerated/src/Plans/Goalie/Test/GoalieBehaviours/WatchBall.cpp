@@ -25,54 +25,55 @@ namespace alica
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
         cout << "### WatchBall ###" << endl;
 
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > goalMid = MSLFootballField::posOwnGoalMid();
-        msl_actuator_msgs::MotionControl mc;
+<<<<<<< HEAD
+        me = wm->rawSensorData.getOwnPositionVision();
+        goalMid = MSLFootballField::posOwnGoalMid();
+=======
+		me = wm->rawSensorData.getOwnPositionVision();
+		if(me == nullptr) {
+			cout << "me is null" << endl;
+			return;
+		}
+		goalMid = MSLFootballField::posOwnGoalMid();
+>>>>>>> 454f2d57a4a89be2f1acc523f0c497fba1f73684
 
-        double targetX = MSLFootballField::posOwnGoalMid()->egoToAllo(*me)->x - 100;
+        double targetX = goalMid->egoToAllo(*me)->x - 100;
         double targetY = wm->ball.getEgoBallPosition()->y;
 
-        cout << " Watching ball" << endl;
         double leftGoalPost = MSLFootballField::posLeftOwnGoalPost()->alloToEgo(*me)->y;
         double rightGoalPost = MSLFootballField::posRightOwnGoalPost()->alloToEgo(*me)->y;
 
-        int centerToArmDist = 445; // 630mm/2 + 140mm = 445mm
-        int ballRadius = 105; // Umfang 68cm => Radius 10.8225cm
-        //int puffer = ballRadius;
-        int puffer = ballRadius + centerToArmDist;
+        int goalieHalfSize = 315; // 630mm/2 + 140mm = 445mm
+        int extendedArmWidth = 140;
+        int ballRadius = (int)wm->ball.getBallDiameter() / 2; // Umfang 68cm => Radius 10.8225cm
+        int puffer = ballRadius + goalieHalfSize;
+        int shotInPrevFourSec = 0;
 
-        // drive closer to goal if arms have been shot in the previous 4 seconds
-        /*if(!shotInPrevFourSeconds) {
-         puffer += centerToArmDist;
-         }*/
+        // TODO:
+        //		call subscriber, which gets a timestamp from last Goalie Kick.
+        //		if >=4sec => shotInFourSec = 0 else shotInFourSec = 1;
 
-        // ball position is outside of goalposts
+        if (shotInPrevFourSec)
+        {
+            // drives 445mm (centerToArmDist) closer to goal because arms have been shot in the previous 4 seconds
+            puffer += extendedArmWidth;
+        }
+
         if (targetY <= leftGoalPost || (targetY > leftGoalPost && targetY <= leftGoalPost + puffer))
         {
-            cout << "  - y: " << targetY << endl;
             targetY = leftGoalPost + puffer;
         }
         else if (targetY >= rightGoalPost || (targetY < rightGoalPost && targetY >= rightGoalPost - puffer))
         {
-            cout << "  - y: " << targetY << endl;
             targetY = rightGoalPost - puffer;
         }
-        // ball position is between goalposts
-        /*else if (leftGoalPost + puffer < targetY)
-         {
-         targetY = leftGoalPost - puffer;
-         }
-         else if(rightGoalPost - puffer > targetY)
-         {
-         targetY = rightGoalPost + puffer;
-         }*/
+        // else, ballY is between goalposts and not closer than ballRadius + robot's CenterToArmDistance away from goal posts
 
         auto egoTarget = make_shared < geometry::CNPoint2D > (targetX, targetY);
         mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
-        //mc = RobotMovement::moveToPointCarefully(egoTarget, goalMid, 100, 0);
         cout << "### WatchBall ###\n" << endl;
 
-        send(mc);
+        send (mc);
         /*PROTECTED REGION END*/
     }
     void WatchBall::initialiseParameters()
