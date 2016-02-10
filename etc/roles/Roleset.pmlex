@@ -58,11 +58,11 @@
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.4"/>
-    <value xPos="119" yPos="901" width="143" height="419" collapsed="false"/>
+    <value xPos="272" yPos="901" width="143" height="419" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.5"/>
-    <value xPos="431" yPos="901" width="173" height="419" collapsed="false"/>
+    <value xPos="584" yPos="901" width="173" height="419" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.6"/>
@@ -74,18 +74,18 @@
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.8"/>
-    <value xPos="614" yPos="901" width="143" height="419" collapsed="false"/>
+    <value xPos="119" yPos="901" width="143" height="419" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.9"/>
-    <value xPos="272" yPos="901" width="149" height="419" collapsed="false"/>
+    <value xPos="425" yPos="901" width="149" height="419" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.10"/>
-    <value xPos="767" yPos="901" width="147" height="419" collapsed="false"/>
+    <value xPos="924" yPos="901" width="147" height="419" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Roleset.graph#//@nodes.11"/>
-    <value xPos="924" yPos="901" width="147" height="419" collapsed="false"/>
+    <value xPos="767" yPos="901" width="147" height="419" collapsed="false"/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
