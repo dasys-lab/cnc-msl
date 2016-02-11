@@ -72,6 +72,9 @@ catkin_package(
    src/ballTracking/ObjectTracker.cpp  
    src/ballTracking/SharedMemoryHelper.cpp  
    src/ballTracking/TimeHelper.cpp
+   src/obstaclehandler/AnnotatedObstacleCluster.cpp
+   src/obstaclehandler/ObHandler.cpp
+   src/obstaclehandler/SimpleCluster.cpp
  )
 
 ## Add cmake target dependencies of the executable/library
