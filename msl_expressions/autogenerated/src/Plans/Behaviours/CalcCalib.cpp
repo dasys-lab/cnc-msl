@@ -27,6 +27,8 @@ namespace alica
             calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
         }
 
+        auto calibRotation = this->wm->rawSensorData.getOwnVelocityMotion(0)->rotation;
+
         calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion(0)->x;
         calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion(0)->y;
 
@@ -67,8 +69,25 @@ namespace alica
 
         tempyoyo++;
 
+        static int minusCounter = 0;
+        static int plusCounter = 0;
+
+        if (calibRotation > 0)
+        {
+
+        	plusCounter++;
+        }
+        else
+        {
+
+        	minusCounter++;
+        }
+
         std::cout << "correctedWayX : " << correctedPosX << std::endl;
         std::cout << "correctedWayY : " << correctedPosY << std::endl;
+        std::cout << "rotation : " << calibRotation << std::endl;
+        std::cout << "plusCounter : " << plusCounter << std::endl;
+        std::cout << "minusCounter : " << minusCounter << std::endl;
         std::cout << "" << std::endl;
 
         //msl_actuator_msgs::MotionControl mc;
