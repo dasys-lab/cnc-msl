@@ -103,7 +103,7 @@ namespace msl
 
 
 		int modelCnt = msg->name.size();
-		cout << "WM: Gazebo Model Count: " << modelCnt <<  endl;
+		//cout << "WM: Gazebo Model Count: " << modelCnt <<  endl;
 		for (int i = 0; i < modelCnt; i++)
 		{
 			// TODO: check coordinate systems
@@ -112,7 +112,7 @@ namespace msl
 
 				if (msg->name[i].compare("bot"+to_string(this->ownID)) != 0)
 				{
-					cout << "WM: Gazebo Pos" << endl;
+					//cout << "WM: Gazebo Pos" << endl;
 					wmsim->timestamp = now;
 					wmsim->odometry.certainty = 1.0;
 					wmsim->odometry.locType.type = msl_sensor_msgs::LocalizationType::ErrorMin;

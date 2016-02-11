@@ -10,7 +10,7 @@
         <statustip>Plugins related to robot tools.</statustip>
       </group>
       <label>MSL Joystick</label>
-      <icon type="theme">image-x-generic</icon>
+      <icon type="file">resources/Joystick-256.png</icon>
       <statustip>A GUI plugin for sending MSL Joystick Commands.</statustip>
     </qtgui>
   </class>
