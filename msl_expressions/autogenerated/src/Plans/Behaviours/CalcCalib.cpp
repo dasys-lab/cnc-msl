@@ -72,7 +72,7 @@ namespace alica
         static int minusCounter = 0;
         static int plusCounter = 0;
 
-        if (calibRotation > 0)
+        if (calibRotation > 0.1 || calibRotation < -0.1)
         {
 
         	plusCounter++;
@@ -83,12 +83,12 @@ namespace alica
         	minusCounter++;
         }
 
-        std::cout << "correctedWayX : " << correctedPosX << std::endl;
-        std::cout << "correctedWayY : " << correctedPosY << std::endl;
-        std::cout << "rotation : " << calibRotation << std::endl;
-        std::cout << "plusCounter : " << plusCounter << std::endl;
-        std::cout << "minusCounter : " << minusCounter << std::endl;
-        std::cout << "" << std::endl;
+       // std::cout << "correctedWayX : " << correctedPosX << std::endl;
+       // std::cout << "correctedWayY : " << correctedPosY << std::endl;
+       // std::cout << "rotation : " << calibRotation << std::endl;
+       // std::cout << "plusCounter : " << plusCounter << std::endl;
+       // std::cout << "minusCounter : " << minusCounter << std::endl;
+       // std::cout << "" << std::endl;
 
         //msl_actuator_msgs::MotionControl mc;
         //mc.motion.translation = 500;
