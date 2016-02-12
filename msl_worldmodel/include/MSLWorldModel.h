@@ -74,8 +74,7 @@ namespace msl
 		InfoTime getTime();
 		void sendSharedWorldModelData();
 
-		MSLWorldModel();
-		virtual ~MSLWorldModel();
+
 		int getRingBufferLength();
 		int getOwnId();
 
@@ -89,6 +88,9 @@ namespace msl
 		supplementary::EventTrigger visionTrigger;
 
 	private:
+
+		MSLWorldModel();
+		virtual ~MSLWorldModel();
 
 		int ownID;
 		int ringBufferLength;
