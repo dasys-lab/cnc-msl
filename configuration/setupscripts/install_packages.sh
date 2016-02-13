@@ -5,15 +5,18 @@ set -e
 source ./funcs.sh
 
 ## System gegebenenfalls updaten
-
-msg "Ubuntu Paketquellen werden aktualisiert"
-#sudo apt-get -y update
-
-msg "Ubuntu Pakete werden bei bedarf geupdatet"
-#sudo apt-get -y upgrade
+if askSure "Paketquellen aktualisieren?"
+then
+	msg "Ubuntu Paketquellen werden aktualisiert"
+	sudo apt-get "${1}" update
+	if askSure "Pakete aktualisieren?"
+	then
+		msg "Ubuntu Pakete werden bei bedarf geupdatet"
+		sudo apt-get "${1}" upgrade
+	fi
+fi
 
 ## Installiere allgemeine Pakete fuer Entwicklung
-
 msg "Allgemeine Pakete zur Entwicklung werden installiert"
 
 packages='git vim gitk meld bison re2c libode-dev gnuplot-qt
@@ -22,5 +25,5 @@ packages='git vim gitk meld bison re2c libode-dev gnuplot-qt
 
 
 echo $packages
-sudo apt-get -y install $packages
+eval sudo apt-get "${1}" install $packages
 
