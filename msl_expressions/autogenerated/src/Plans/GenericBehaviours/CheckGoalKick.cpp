@@ -203,11 +203,14 @@ namespace alica
 		msl_actuator_msgs::KickControl kc;
 		kc.extension = 1;
 		double distGoal = wm->rawSensorData.getOwnPositionVision()->distanceTo(goalPosMiddle);
+		cout << "distance: " << distGoal << endl;
+		cout << "kick power: " << (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100 << endl;
 
 		if (wm->ball.haveBall())
 		{
 			// TODO adapt waiting
 			// robot should shoot as early as possible
+
 			if (waitingIter > 30)
 			{
 				kc.enabled = true;
@@ -221,7 +224,6 @@ namespace alica
 				{
 					kc.power = minKickPower - 50;
 				}
-
 				send(kc);
 				waitingIter = 0;
 			}
@@ -301,12 +303,12 @@ namespace alica
 		}
 		if (!leftBlocked && alloAimPoint == nullptr)
 		{
-			cout << "aimig left" << endl;
+//			cout << "aimig left" << endl;
 			alloAimPoint = alloLeftAimPoint;
 		}
 		if (!midBlocked && alloAimPoint == nullptr)
 		{
-			cout << "aimig mid" << endl;
+//			cout << "aimig mid" << endl;
 			alloAimPoint = alloMidAimPoint;
 		}
 		if (!rightBlocked && alloAimPoint == nullptr)
