@@ -23,6 +23,7 @@ namespace alica
         double translation;
         int direction;
         int itCounter;
+        bool alignPointSet;
         bool checkSide(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
         double distanceToFieldBorder(shared_ptr<geometry::CNPoint2D> point, double angle);
         /*PROTECTED REGION END*/
