@@ -25,7 +25,7 @@ namespace msl_joystick
 		rotationMin = (*sc)["Joystick"]->get<double>("Joystick.rotationMin", NULL);
 		rotationMax = (*sc)["Joystick"]->get<double>("Joystick.rotationMax", NULL);
 		sendInterval = (*sc)["Joystick"]->get<int>("Joystick.sendInterval", NULL);
-		string joystickCmdTopic = (*sc)["Joystick"]->get<int>("Joystick.Topics.joystickCmdTopic", NULL);
+		string joystickCmdTopic = (*sc)["Joystick"]->get<string>("Joystick.Topics.joystickCmdTopic", NULL);
 
 		rosNode = new ros::NodeHandle();
 		joyPub = rosNode->advertise<msl_msgs::JoystickCommand>(joystickCmdTopic, 1);
