@@ -14,16 +14,6 @@ namespace msl_joystick
 			rqt_gui_cpp::Plugin(), uiWidget(0), sendMsgTimer(0)
 	{
 		setObjectName("Joystick");
-		rosNode = new ros::NodeHandle();
-		joyPub = rosNode->advertise<msl_msgs::JoystickCommand>("/Joystick", 1);
-		spinner = new ros::AsyncSpinner(2);
-		spinner->start();
-
-		keyPressed = vector<bool>(8);
-		for (int i = 0; i < keyPressed.size(); i++)
-		{
-			keyPressed[i] = false;
-		}
 
 		auto sc = supplementary::SystemConfig::getInstance();
 		ballHandleMin = (*sc)["Joystick"]->get<short>("Joystick.ballHandleMin", NULL);
@@ -35,6 +25,18 @@ namespace msl_joystick
 		rotationMin = (*sc)["Joystick"]->get<double>("Joystick.rotationMin", NULL);
 		rotationMax = (*sc)["Joystick"]->get<double>("Joystick.rotationMax", NULL);
 		sendInterval = (*sc)["Joystick"]->get<int>("Joystick.sendInterval", NULL);
+		string joystickCmdTopic = (*sc)["Joystick"]->get<string>("Joystick.Topics.joystickCmdTopic", NULL);
+
+		rosNode = new ros::NodeHandle();
+		joyPub = rosNode->advertise<msl_msgs::JoystickCommand>(joystickCmdTopic, 1);
+		spinner = new ros::AsyncSpinner(2);
+		spinner->start();
+
+		keyPressed = vector<bool>(8);
+		for (int i = 0; i < keyPressed.size(); i++)
+		{
+			keyPressed[i] = false;
+		}
 
 		this->robotId = -1;
 		this->translation = translationMin;
