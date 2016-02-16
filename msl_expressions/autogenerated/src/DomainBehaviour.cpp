@@ -12,11 +12,23 @@ namespace alica
 		ros::NodeHandle n;
 		wm = msl::MSLWorldModel::get();
 
-		motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("/MotionControl", 10);
-		ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("/BallHandleControl", 10);
-		kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
-		shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("/ShovelSelectControl", 10);
-		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("/WorldModel/PassMsg", 10);
+		if (wm->timeLastSimMsgReceived > 0)
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
+		}
+		else
+		{
+			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
+			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
+			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
+			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
+		}
+
+		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
+
 	}
 
 	DomainBehaviour::~DomainBehaviour()

@@ -25,7 +25,8 @@
   <build_depend>msl_actuator_msgs</build_depend>
   <build_depend>event_handling</build_depend>
   <build_depend>robot_control</build_depend> 
-  <build_depend>constraintsolver</build_depend> 
+  <build_depend>constraintsolver</build_depend>
+  <build_depend>tf</build_depend>  
 
   <run_depend>roscpp</run_depend>
   <run_depend>cnc_geometry</run_depend>
@@ -41,6 +42,7 @@
   <run_depend>event_handling</run_depend>
   <run_depend>robot_control</run_depend>
   <run_depend>constraintsolver</run_depend>
+  <run_depend>tf</run_depend>
 
   <test_depend>gtest</test_depend>
 
