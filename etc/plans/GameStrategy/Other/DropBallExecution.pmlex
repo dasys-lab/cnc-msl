@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DropBallExecution.pml#1455537039422"/>
+    <value xPos="132" yPos="131" width="145" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallExecution.pml#1455537039421"/>
+    <value width="638" height="411"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallExecution.pml#1455537039423"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DropBallExecution.pml#1455537179349"/>
+    <value xPos="420" yPos="167"/>
+  </extensions>
+  <extensions>
+    <key href="DropBallExecution.pml#1455537182943"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
