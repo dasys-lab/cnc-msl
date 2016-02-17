@@ -183,7 +183,6 @@ namespace msl
 			int sector = (int)(angle/(2*M_PI/60.0)) % 60;
 			if (sector < 0)
 				sector += 60;
-			cout << "WM: sector " << sector << endl;
 			wmsim->distanceScan.sectors[sector] = dist;
 
 			obs.x = cos(angle) * dist;
