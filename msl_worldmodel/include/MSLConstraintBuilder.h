@@ -61,6 +61,7 @@ namespace msl{
 
 			static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, vector<shared_ptr<TVec>> points);
+			static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, shared_ptr<TVec> point);
 			static shared_ptr<Term> lineUpUtil(shared_ptr<geometry::CNPoint2D> norm, double d, vector<shared_ptr<TVec>> points);
 			static shared_ptr<Term> lazyUtil(vector<shared_ptr<TVec>> robots, vector<shared_ptr<TVec>> points);
 
