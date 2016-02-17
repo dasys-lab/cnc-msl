@@ -83,10 +83,14 @@ namespace msl
 
 		for (int i = 0; i < points.size(); i++) {
 			auto value = (1 - (alica::ConstraintBuilder::distanceSqr(destination, points[i])) / (maxFieldDist*maxFieldDist));
-//			cout << "MSLCB: util value "  << value->toString() << endl;
 			util = util + value;
 		}
 		return util;
+	}
+
+	shared_ptr<Term> MSLConstraintBuilder::approachUtil( shared_ptr<TVec> destination, shared_ptr<TVec> point) {
+		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
+		return (1 - (alica::ConstraintBuilder::distanceSqr(destination, point)) / (maxFieldDist*maxFieldDist));
 	}
 
 	/*
@@ -359,8 +363,7 @@ namespace msl
 		shared_ptr<Term> c;
 		shared_ptr<TVec> ballT = nullptr;
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition();
-//		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
+		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getAlloBallPosition();
 		if(ball != nullptr && ownPos != nullptr) {
 			ball = ball->egoToAllo(*ownPos);
 			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
@@ -498,6 +501,7 @@ namespace msl
 		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppStdRules(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>> fieldPlayers) {
+
 		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
 		appliedRules = outsideArea (Areas::OwnGoalArea, fieldPlayers);
 		appliedRules =  appliedRules & outsideArea (Areas::OppGoalArea, fieldPlayers);
