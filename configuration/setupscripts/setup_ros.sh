@@ -32,7 +32,8 @@ wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 
 msg "ROS Pakete werden installiert und eingerichtet"
 
-rospackages=' ros-indigo-desktop ros-indigo-gazebo5-ros-pkgs ros-indigo-gazebo5-ros-control ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall ros-indigo-pcl-conversions'
+rospackages='ros-indigo-desktop ros-indigo-gazebo5-ros-pkgs ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall ros-indigo-pcl-conversions'
+
 
 sudo apt-get update
 eval sudo apt-get "${1}" install $rospackages
