@@ -69,7 +69,7 @@ namespace msl
 		double distanceTo(shared_ptr<AnnotatedObstacleCluster> aoc);
 		double distanceTo(shared_ptr<geometry::CNPosition> pos);
 		double distanceTo (shared_ptr<geometry::CNPoint2D> p);
-		int compareTo (shared_ptr<AnnotatedObstacleCluster> other);
+		static bool compareTo(shared_ptr<AnnotatedObstacleCluster> first, shared_ptr<AnnotatedObstacleCluster> second);
 		bool equals(shared_ptr<AnnotatedObstacleCluster> cl);
 		string toString();
 

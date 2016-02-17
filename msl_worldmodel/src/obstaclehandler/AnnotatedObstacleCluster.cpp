@@ -36,7 +36,6 @@ namespace msl
 
 	AnnotatedObstacleCluster::~AnnotatedObstacleCluster()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	void AnnotatedObstacleCluster::clear()
@@ -198,31 +197,32 @@ namespace msl
 		return sqrt(pow(this->x - p->x, 2) + pow(this->y - p->y, 2));
 	}
 
-	int AnnotatedObstacleCluster::compareTo(shared_ptr<AnnotatedObstacleCluster> other)
+	bool AnnotatedObstacleCluster::compareTo(shared_ptr<AnnotatedObstacleCluster> first, shared_ptr<AnnotatedObstacleCluster> second)
 	{
 		// first: try to sort by x coordinate
-		if (other->x > this->x)
+		if (second->x > first->x)
 		{
-			return 1;
+			return true;
 		}
-		else if (other->x < this->x)
+		else if (second->x < first->x)
 		{
-			return -1;
+			return false;
 		}
 		else
 		{
 			// second: try to sort by y coordinate
-			if (other->y > this->y)
+			if (second->y > first->y)
 			{
-				return 1;
+				return true;
 			}
-			else if (other->y < this->y)
+			else if (second->y < first->y)
 			{
-				return -1;
+				return false;
 			}
 			else
 			{
-//				// third: try to sort by hash code
+				return false;
+				//TODO sort by hash code
 //				if (other->GetHashCode() > this->GetHashCode())
 //				{
 //					return 1;
