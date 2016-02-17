@@ -64,6 +64,7 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> sharedBallPosition;
 		double HAVE_BALL_TOLERANCE_DRIBBLE;
 		double KICKER_DISTANCE;
+		double KICKER_DISTANCE_SIMULATOR;
 		double KICKER_ANGLE;
 		double HAVE_BALL_MAX_ANGLE_DELTA;
 		double BALL_DIAMETER;

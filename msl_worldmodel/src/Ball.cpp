@@ -36,6 +36,7 @@ namespace msl
 		HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
 		HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
 		BALL_DIAMETER = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+		KICKER_DISTANCE_SIMULATOR = 432;
 		lastUpdateReceived = 0;
 	}
 
@@ -81,7 +82,7 @@ namespace msl
 	{
 		shared_ptr<geometry::CNPoint2D> p;
 		auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
-		if (ownPos.operator bool())
+		if (ownPos != nullptr)
 		{
 			p = this->getEgoBallPosition();
 			p = p->egoToAllo(*ownPos);
@@ -326,8 +327,6 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> ballPos = getVisionBallPosition();
 		if (ballPos == nullptr)
 		{
-			// TODO predict ball, Endy do it!
-
 			// if you don't see the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
 
@@ -337,8 +336,9 @@ namespace msl
 
 		lastKnownBallPos = ballPos;
 
+
 		// check distance to ball
-		if (KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length())
+		if ((KICKER_DISTANCE + haveBallDistanceDynamic < ballPos->length() && wm->timeLastSimMsgReceived==0) || (wm->timeLastSimMsgReceived > 0 && KICKER_DISTANCE_SIMULATOR < ballPos->length()))
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
@@ -589,12 +589,12 @@ namespace msl
 //			{ //Kicker 1
 		if (hadBefore)
 		{
-			if (KICKER_DISTANCE + haveDistance < ballDist)
+			if ((KICKER_DISTANCE + haveDistance < ballDist && wm->timeLastSimMsgReceived == 0) || (KICKER_DISTANCE_SIMULATOR + haveDistance < ballPos->length() && wm->timeLastSimMsgReceived > 0))
 			{
 				ret = false;
 			}
 		}
-		else if (KICKER_DISTANCE < ballDist)
+		else if ((KICKER_DISTANCE < ballDist && wm->timeLastSimMsgReceived == 0)  || (KICKER_DISTANCE_SIMULATOR < ballPos->length() && wm->timeLastSimMsgReceived > 0))
 		{
 			ret = false;
 		}

@@ -138,20 +138,26 @@ namespace msl
 				obsInfo.x = msg->pose[i].position.x * 1000.0;
 				obsInfo.y = msg->pose[i].position.y * 1000.0;
 
-				wmsim->obstacles.push_back(obsInfo);
+				//only if obstacle is closer than 6m
+				if(sqrt(obsInfo.x*obsInfo.x + obsInfo.y*obsInfo.y) < 6000) {
+					wmsim->obstacles.push_back(obsInfo);
+				}
 			}
 
 
 			if (msg->name[i] == "football")
 			{
-				wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
-				wmsim->ball.confidence = 1.0;
-				wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
-				wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
-				wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
-				wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
-				wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
-				wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+				//Only if ball is closer than 7m
+				if(sqrt(msg->pose[i].position.x * 1000.0*msg->pose[i].position.x * 1000.0 + msg->pose[i].position.y * 1000.0*msg->pose[i].position.y * 1000.0) < 7000) {
+					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
+					wmsim->ball.confidence = 1.0;
+					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
+					wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
+					wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
+					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
+					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
+					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+				}
 			}
 		}
 
