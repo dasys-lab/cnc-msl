@@ -313,12 +313,13 @@ namespace alica
         }
         if (!rightBlocked && alloAimPoint == nullptr)
         {
-            cout << "aimig right" << endl;
+//            cout << "aimig right" << endl;
             alloAimPoint = alloRightAimPoint;
         }
         if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
         {
-            this->failure = true;
+
+//            this->failure = true;
         }
         if (alloAimPoint != nullptr)
         {
