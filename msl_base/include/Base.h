@@ -25,7 +25,7 @@ namespace msl
 	class Base
 	{
 	public:
-		Base(string roleSetName, string masterPlanName, string roleSetDir);
+		Base(string roleSetName, string masterPlanName, string roleSetDir, bool sim);
 		virtual ~Base();
 
 		void start();
@@ -36,9 +36,6 @@ namespace msl
 		alica::UtilityFunctionCreator* uc;
 		alica::ConstraintCreator* crc;
 		MSLWorldModel* wm;
-
-	protected:
-		//blabla...
 	};
 
 } /* namespace msl */

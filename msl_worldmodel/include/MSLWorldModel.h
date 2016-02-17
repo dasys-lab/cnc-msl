@@ -70,6 +70,7 @@ namespace msl
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 
+
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
@@ -86,6 +87,8 @@ namespace msl
 		Kicker kicker;
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
+		InfoTime timeLastSimMsgReceived;
+
 
 	private:
 
@@ -119,6 +122,9 @@ namespace msl
 		mutex motionBurstMutex;
 		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
+
+
+
 
 	protected:
 	};
