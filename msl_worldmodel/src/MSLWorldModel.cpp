@@ -147,8 +147,6 @@ namespace msl
 
 			if (msg->name[i] == "football")
 			{
-				//Only if ball is closer than 7m
-				if(sqrt(msg->pose[i].position.x * 1000.0*msg->pose[i].position.x * 1000.0 + msg->pose[i].position.y * 1000.0*msg->pose[i].position.y * 1000.0) < 7000) {
 					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
 					wmsim->ball.confidence = 1.0;
 					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
@@ -157,7 +155,6 @@ namespace msl
 					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
 					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
 					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
-				}
 			}
 		}
 
@@ -171,6 +168,13 @@ namespace msl
 
 		wmsim->ball.point.x = cos(angle) * dist;
 		wmsim->ball.point.y = sin(angle) * dist;
+
+		//Only if ball is closer than 7m
+		if(dist > 7000) {
+			wmsim->ball.point.x = 0;
+			wmsim->ball.point.y = 0;
+			wmsim->ball.confidence = 0;
+		}
 
 		for (int i=0; i < 60; i++)
 		{

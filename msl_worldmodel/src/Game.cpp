@@ -356,7 +356,7 @@ namespace msl
 		auto robots = this->wm->robots.getPositionsOfTeamMates();
 		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
 		double minDist = numeric_limits<double>::max();
-		auto sharedBallPosition = wm->ball.getSharedBallPosition();
+		auto sharedBallPosition = wm->ball.getAlloSharedBallPosition();
 		if (sharedBallPosition == nullptr)
 		{
 			return;

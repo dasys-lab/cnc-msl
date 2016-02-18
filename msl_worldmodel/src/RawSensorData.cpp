@@ -277,6 +277,9 @@ namespace msl
 			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
 			                                                                                 data->ball.velocity.vy);
 			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+		} else {
+			wm->ball.updateHaveBall();
+			wm->ball.updateSharedBall();
 		}
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);

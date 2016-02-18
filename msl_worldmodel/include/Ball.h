@@ -17,7 +17,6 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
-
 #include "SystemConfig.h"
 
 using namespace supplementary;
@@ -26,6 +25,16 @@ using namespace std;
 
 namespace msl
 {
+
+
+	class BallVoting
+	{
+	public:
+		shared_ptr<geometry::CNPoint2D> ballPos;
+		double teamConfidence = 0.0;
+		vector<shared_ptr<msl_sensor_msgs::SharedWorldInfo>> supporters;
+	};
+
 
 	class MSLWorldModel;
 	class Ball
@@ -51,17 +60,25 @@ namespace msl
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo data);
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
-		shared_ptr<geometry::CNPoint2D> getSharedBallPosition();
+		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
 		double getBallDiameter();
+
+		void updateSharedBall();
+		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);
 		bool hadBefore;
 
 	private:
+		std::mutex sbMutex;
+		vector<BallVoting> sbvotingList;
+		int sharedBallSupporters;
+		double sharedBallTeamConfidence;
+		shared_ptr<geometry::CNPoint2D> sharedBallPosition;
+
 		ObjectContainer ballBuf;
 		MovingObject mv;
 		unsigned long long lastUpdateReceived;
 		shared_ptr<geometry::CNPoint2D> lastKnownBallPos;
-		shared_ptr<geometry::CNPoint2D> sharedBallPosition;
 		double HAVE_BALL_TOLERANCE_DRIBBLE;
 		double KICKER_DISTANCE;
 		double KICKER_DISTANCE_SIMULATOR;
@@ -86,6 +103,7 @@ namespace msl
 		Velocity allo2Ego(Velocity vel, Position pos);
 		double haveDistance;
 };
+
 
 } /* namespace alica */
 

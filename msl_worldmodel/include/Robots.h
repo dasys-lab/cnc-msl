@@ -40,6 +40,7 @@ namespace msl
 		double getOpponentProtectAngle();
 		int teamMatesInOwnPenalty();
 		int teamMatesInOppPenalty();
+		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
 
 	private:
 		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
@@ -49,7 +50,6 @@ namespace msl
 		double opponentProtectDistance;
 		double opponentProtectAngle;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
-		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
 
 	};
 
