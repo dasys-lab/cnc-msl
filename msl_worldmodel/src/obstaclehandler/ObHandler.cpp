@@ -7,6 +7,8 @@
 
 #include "obstaclehandler/ObHandler.h"
 #include "MSLFootballField.h"
+#include "obstaclehandler/SimpleCluster.h"
+#include "MSLWorldModel.h"
 
 namespace msl
 {
@@ -37,6 +39,7 @@ namespace msl
 
 	void ObHandler::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
+		//TODO save lists in WM
 //		if (vNet.OwnOdometry == null ||
 //					   vNet.OwnOdometry.Position == null ||
 //					   vNet.OwnOdometry.Certainty < (!localizedBefore ? POS_CERTAINTY_TH_CLUSTERING : POS_CERTAINTY_TH_CLUSTERING - POS_CERTAINTY_HYS))
@@ -54,131 +57,130 @@ namespace msl
 //					}
 //					else
 //					{
-//						localizedBefore = true;
-//						// SETUP
-//						//				Console.WriteLine ("OH: Before SetupAnnotatedObstacles");
-//						SetupAnnotatedObstacles (myObstacles, vNet.OwnOdometry, myProperties, teamSHWMData, vNet);
-//						// CLUSTERING
-//						//				Console.WriteLine ("OH: Before ClusterAnnotatedObstacles");
-//						ClusterAnnotatedObstacles (vNet);
-//
-//						// PRUNING
-//						//				ProcessNegSupporter(teamSHWMData, myProperties, vNet.OwnOdometry.Position);
-//
-//						// CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
-//						//				Console.WriteLine ("OH: Before creating Lists");
-//						C5.SortedArray<AnnotatedObstacleCluster> newObsClustersAllo = new C5.SortedArray<AnnotatedObstacleCluster> ();
-//						List<Point2D> newObsEgo = new List<Point2D> ();
-//						List<Point2D> newOppEgo = new List<Point2D> ();
-//						List<Point2D> newOppAllo = new List<Point2D> ();
-//						List<Point2D> newObsWithoutOppKeeperEgo = new List<Point2D> ();
-//						List<Point2D> newTeammatesEgo = new List<Point2D> ();
-//						List<Point2D> newTeammatesAllo = new List<Point2D> ();
-//
-//						Point2D curAlloPoint, curEgoPoint;
-//						for (int i = 0; i < newClusterArray.Count; ++i)
-//						{
-//							newObsClustersAllo.Add (newClusterArray[i]);
-//
-//							curAlloPoint = new Point2D (newClusterArray[i].x, newClusterArray[i].y);
-//							curEgoPoint = WorldHelper.Allo2Ego (curAlloPoint, vNet.OwnOdometry.Position);
-//
-//							if (newClusterArray[i].ident != myProperties.Id)
-//							{
-//								newObsEgo.Add (curEgoPoint);
-//								if (!field.InsideEnemyKeeperArea (curAlloPoint, 0))
-//								{
-//									// egocentric obstacles, which are not inside the enemy keeper area and do not belong to our team
-//									newObsWithoutOppKeeperEgo.Add (curEgoPoint);
-//								}
-//							}
-//
-//							if (newClusterArray[i].ident == -1)
-//							{
-//								// it is not a teammate
-//								if (field.InsideField (curAlloPoint, FIELD_TOL))
-//								{
-//									newOppAllo.Add (curAlloPoint);
-//									// egocentric obstacles, which are inside the field and do not belong to our team
-//									newOppEgo.Add (curEgoPoint);
-//								}
-//							}
-//							else if (newClusterArray[i].ident != myProperties.Id)
-//							{
-//								newTeammatesEgo.Add (curEgoPoint);
-//								newTeammatesAllo.Add (curAlloPoint);
-//							}
-//						}
-//
-//						// change the vNet references to the new lists
-//						vNet.ObsClustersAllo = newObsClustersAllo;
-//						vNet.ObsEgo = newObsEgo;
-//						vNet.OppEgo = newOppEgo;
-//						vNet.OppAllo = newOppAllo;
-//						vNet.TeammatesEgo = newTeammatesEgo;
-//						vNet.TeammatesAllo = newTeammatesAllo;
-//						vNet.ObsWithoutOppKeeperEgo = newObsWithoutOppKeeperEgo;
+		localizedBefore = true;
+		// SETUP
+		setupAnnotatedObstacles(myObstacles, wm->rawSensorData.getCorrectedOdometryInfo());
+		// CLUSTERING
+		clusterAnnotatedObstacles();
+
+		// CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
+		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newObsClustersAllo = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsWithoutOppKeeperEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+
+		shared_ptr<geometry::CNPoint2D> curAlloPoint = nullptr;
+		shared_ptr<geometry::CNPoint2D> curEgoPoint = nullptr;
+		for (int i = 0; i < newClusterArray->size(); ++i)
+		{
+			newObsClustersAllo->push_back(newClusterArray->at(i));
+
+			curAlloPoint = make_shared<geometry::CNPoint2D>(newClusterArray->at(i)->x, newClusterArray->at(i)->y);
+			curEgoPoint = curAlloPoint->alloToEgo(
+					*(make_shared<geometry::CNPosition>(wm->rawSensorData.getCorrectedOdometryInfo()->position.x,
+														wm->rawSensorData.getCorrectedOdometryInfo()->position.y,
+														wm->rawSensorData.getCorrectedOdometryInfo()->position.angle)));
+
+			if (newClusterArray->at(i)->ident != wm->getOwnId())
+			{
+				newObsEgo->push_back(curEgoPoint);
+				if (!field->isInsideEnemyKeeperArea(curAlloPoint, 0))
+				{
+					// egocentric obstacles, which are not inside the enemy keeper area and do not belong to our team
+					newObsWithoutOppKeeperEgo->push_back(curEgoPoint);
+				}
+			}
+
+			if (newClusterArray->at(i)->ident == -1)
+			{
+				// it is not a teammate
+				if (field->isInsideField(curAlloPoint, FIELD_TOL))
+				{
+					newOppAllo->push_back(curAlloPoint);
+					// egocentric obstacles, which are inside the field and do not belong to our team
+					newOppEgo->push_back(curEgoPoint);
+				}
+			}
+			else if (newClusterArray->at(i)->ident != wm->getOwnId())
+			{
+				newTeammatesEgo->push_back(curEgoPoint);
+				newTeammatesAllo->push_back(curAlloPoint);
+			}
+		}
+
+		// change the vNet references to the new lists
+//		vNet.ObsClustersAllo = newObsClustersAllo;
+//		vNet.ObsEgo = newObsEgo;
+//		vNet.OppEgo = newOppEgo;
+//		vNet.OppAllo = newOppAllo;
+//		vNet.TeammatesEgo = newTeammatesEgo;
+//		vNet.TeammatesAllo = newTeammatesAllo;
+//		vNet.ObsWithoutOppKeeperEgo = newObsWithoutOppKeeperEgo;
+//	}
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ObHandler::clusterPoint2D(
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstacles, double varianceThreshold)
 	{
-//		List<Point2D> retList = new List<Point2D>();
-//					List<SimpleCluster> clusterList = new List<SimpleCluster>();
-//					bool mergedCluster = true;
-//
-//					// init cluster objects
-//					for(int i = 0; i < obstacles.Count; ++i)
-//					{
-//		//				Console.WriteLine("1 Point2D: " + obstacles[i].X + " " + obstacles[i].Y);
-//						clusterList.Add(new SimpleCluster(obstacles[i]));
-//					}
-//
-//
-//					while(mergedCluster)
-//					{
-//						// find the two nearest clusters
-//						int fstClusterId = -1;
-//						int sndClusterId = -1;
-//						double minDist = double.MaxValue;
-//						double curDist = 0;
-//						for(int i = 0; i < clusterList.Count; ++i)
-//						{
-//							for(int j = 0; j < i; j++)
-//							{
-//								// check dist
-//								curDist = clusterList[i].DistanceTo(clusterList[j]);
-//								if (curDist < minDist)
-//								{
-//									fstClusterId = i;
-//									sndClusterId = j;
-//									minDist = curDist;
-//								}
-//							}
-//						}
-//
-//						// check if variance after merging is below VARIANCE_THRESHOLD
-//						if (fstClusterId != -1)
-//						{
-//							mergedCluster = clusterList[fstClusterId].CheckAndMerge(clusterList[sndClusterId], varianceThreshold);
-//							if (mergedCluster)
-//							{
-//								clusterList.RemoveAt(sndClusterId);
-//							}
-//						}
-//						else
-//						{
-//							mergedCluster = false;
-//						}
-//					}
-//
-//					for(int i = 0; i < clusterList.Count; ++i)
-//					{
-//						retList.Add(new Point2D(clusterList[i].X, clusterList[i].Y));
-//		//				Console.WriteLine("2 Point2D: " + retList[i].X + " " + retList[i].Y);
-//					}
-//
-//					return retList;
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > retList = make_shared<
+				vector<shared_ptr<geometry::CNPoint2D> > >();
+		shared_ptr<vector<shared_ptr<SimpleCluster>>> clusterList = make_shared<vector<shared_ptr<SimpleCluster> > >();
+		bool mergedCluster = true;
+
+		// init cluster objects
+		for (int i = 0; i < obstacles->size(); ++i)
+		{
+			clusterList->push_back(make_shared<SimpleCluster>(obstacles->at(i)));
+		}
+
+		while (mergedCluster)
+		{
+			// find the two nearest clusters
+			int fstClusterId = -1;
+			int sndClusterId = -1;
+			double minDist = numeric_limits<double>::max();
+			double curDist = 0;
+			for (int i = 0; i < clusterList->size(); ++i)
+			{
+				for (int j = 0; j < i; j++)
+				{
+					// check dist
+					curDist = clusterList->at(i)->distanceTo(clusterList->at(j));
+					if (curDist < minDist)
+					{
+						fstClusterId = i;
+						sndClusterId = j;
+						minDist = curDist;
+					}
+				}
+			}
+
+			// check if variance after merging is below VARIANCE_THRESHOLD
+			if (fstClusterId != -1)
+			{
+				mergedCluster = clusterList->at(fstClusterId)->checkAndMerge(clusterList->at(sndClusterId),
+																				varianceThreshold);
+				if (mergedCluster)
+				{
+					clusterList->erase(clusterList->begin() + sndClusterId);
+				}
+			}
+			else
+			{
+				mergedCluster = false;
+			}
+		}
+
+		for (int i = 0; i < clusterList->size(); ++i)
+		{
+			retList->push_back(make_shared<geometry::CNPoint2D>(clusterList->at(i)->x, clusterList->at(i)->y));
+			//				Console.WriteLine("2 Point2D: " + retList[i].X + " " + retList[i].Y);
+		}
+
+		return retList;
 	}
 
 	void ObHandler::clusterAnnotatedObstacles()
@@ -218,7 +220,7 @@ namespace msl
 			if (fstClusterId != -1)
 			{
 				mergedCluster = clusterArray->at(fstClusterId)->checkAndMerge(clusterArray->at(sndClusterId),
-																			VARIANCE_THRESHOLD);
+																				VARIANCE_THRESHOLD);
 				if (mergedCluster)
 				{
 					clusterArray->erase(clusterArray->begin() + sndClusterId);
@@ -231,7 +233,7 @@ namespace msl
 		}
 
 		newClusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
-		for(int i = 0; i < clusterArray->size(); i++)
+		for (int i = 0; i < clusterArray->size(); i++)
 		{
 			newClusterArray->push_back(clusterArray->at(i));
 		}
@@ -240,7 +242,7 @@ namespace msl
 	}
 
 	void ObHandler::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
-											msl_sensor_msgs::CorrectedOdometryInfo myOdo)
+											shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo)
 	{
 //		clusterArray.Clear();
 //					AnnotatedObstacleCluster obs = null;
