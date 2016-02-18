@@ -35,7 +35,7 @@ namespace msl
 	private:
 		void clusterAnnotatedObstacles();
 		void setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ownObs,
-				                                            msl_sensor_msgs::CorrectedOdometryInfo myOdo);
+				                                            shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo);
 		void processNegSupporter(shared_ptr<geometry::CNPosition> myPosition);
 		bool leftOf(double angle1, double angle2);
 
