@@ -33,6 +33,13 @@ namespace msl
 		crc = new alica::ConstraintCreator();
 		ae->setIAlicaClock(new alicaRosProxy::AlicaROSClock());
 		ae->setCommunicator(new alicaRosProxy::AlicaRosCommunication(ae));
+		if(sim) {
+			cout << "Base Vorher: " << ae->getIAlicaClock()->now() << endl;
+			ae->getIAlicaClock()->sleep(200000);
+			cout << "Base Nachher: " << ae->getIAlicaClock()->now() << endl;
+		}
+
+
 		ae->addSolver(SolverType::GRADIENTSOLVER,new alica::reasoner::CGSolver(ae));
 
 		wm = MSLWorldModel::get();
