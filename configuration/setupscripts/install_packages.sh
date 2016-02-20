@@ -7,10 +7,18 @@ source ./funcs.sh
 ## System gegebenenfalls updaten
 if askSure "System aktualisieren?"
 then
-    msg "Ubuntu Paketquellen werden aktualisiert"
-    sudo apt-get "${1}" update
-    msg "Ubuntu Pakete werden bei bedarf geupdatet"
-    sudo apt-get "${1}" upgrade
+    if [ -z "$1" ]
+    then 
+      msg "Ubuntu Paketquellen werden aktualisiert"
+      sudo apt-get update
+      msg "Ubuntu Pakete werden bei bedarf geupdatet"
+      sudo apt-get upgrade
+    else 
+      msg "Ubuntu Paketquellen werden aktualisiert"
+      sudo apt-get "${1}" update
+      msg "Ubuntu Pakete werden bei bedarf geupdatet"
+      sudo apt-get "${1}" upgrade
+    fi
 fi
 
 ## Installiere allgemeine Pakete fuer Entwicklung
@@ -22,5 +30,10 @@ packages='git vim gitk meld bison re2c libode-dev gnuplot-qt
 
 
 echo $packages
-eval sudo apt-get "${1}" install $packages
+if [ -z "$1" ]
+then
+  eval sudo apt-get install $packages
+else
+  eval sudo apt-get "${1}" install $packages
+fi
 
