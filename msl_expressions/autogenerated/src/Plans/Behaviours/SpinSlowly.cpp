@@ -38,8 +38,8 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-	cout << "angle, epsilon: "  << abs(startAngle - alpha) << ", " << epsilon  << endl;
-	cout << "counter: " << counter << endl;
+        cout << "angle, epsilon: " << abs(startAngle - alpha) << ", " << epsilon << endl;
+        cout << "counter: " << counter << endl;
 
         if (abs(startAngle - alpha) < epsilon && counter > 90)
         {
