@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="Uc.pml#1449760719004"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Uc.pml#1449760719005"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

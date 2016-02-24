@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GrabBall.pml#1456247900360"/>
+    <value xPos="58" yPos="83" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GrabBall.pml#1456247887332"/>
+    <value width="550" height="315"/>
+  </extensions>
+  <extensions>
+    <key href="GrabBall.pml#1456247900361"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/GetBall.beh#1414840399972"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GrabBall.pml#1456247926608"/>
+    <value xPos="324" yPos="144"/>
+  </extensions>
+  <extensions>
+    <key href="GrabBall.pml#1456247929657"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

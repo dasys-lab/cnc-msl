@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="Test1.pml#1449759051425"/>
+    <value xPos="36" yPos="94" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759051426"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759346665"/>
+    <value xPos="291" yPos="115" width="-1" height="-1" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759348834"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="StopThao.beh#1449568265195"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="MoveForward.beh#1449568299716"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759051425"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759346665"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Test1.pml#1449759051426"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

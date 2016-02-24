@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="ThaotestCircle.pml#1449748047381"/>
+    <value xPos="39" yPos="188" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <value xPos="49" yPos="87" width="818" height="513" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="ThaotestCircle.pml#1449748047382"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="ThaotestCircle.pml#1449748627592"/>
+    <value xPos="265" yPos="171" width="-1" height="-1" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="ThaotestCircle.pml#1449748639847"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="Circle.beh#1449748675885"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="StopCricle.beh#1449749240222"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>
