@@ -85,6 +85,7 @@ namespace msl
 		double KICKER_ANGLE;
 		double HAVE_BALL_MAX_ANGLE_DELTA;
 		double BALL_DIAMETER;
+		double LOCALIZATION_SUCCESS_CONFIDENCE;
 		int hasBallIteration;
 		bool hasBall; /**< True if the local robot has the ball */
 		double haveBallDistanceDynamic;

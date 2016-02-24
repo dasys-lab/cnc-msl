@@ -54,11 +54,14 @@ namespace alica
          * if goalie's position (+- 1cm)
          * equals to middle of goal position
          * + 10cm towards field center
-        */
-        if(me->distanceTo(goalPos) < 100) {
-        	this->success = true;
-        } else {
-        	send(mc);
+         */
+        if (me->distanceTo(goalPos) < 100)
+        {
+            this->success = true;
+        }
+        else
+        {
+            send(mc);
         }
         /*PROTECTED REGION END*/
     }

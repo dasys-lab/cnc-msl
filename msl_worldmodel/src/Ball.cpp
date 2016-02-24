@@ -36,9 +36,12 @@ namespace msl
 		HAVE_BALL_TOLERANCE_DRIBBLE = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallToleranceDribble", NULL);
 		HAVE_BALL_MAX_ANGLE_DELTA = (*this->sc)["Dribble"]->get<double>("Dribble", "HaveBallMaxAngleDelta", NULL);
 		BALL_DIAMETER = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
+																						NULL);
 		KICKER_DISTANCE_SIMULATOR = 432;
 		lastUpdateReceived = 0;
 		sharedBallSupporters = 0;
+		sharedBallTeamConfidence = 0.0;
 	}
 
 	Ball::~Ball()
@@ -187,7 +190,7 @@ namespace msl
 			}
 
 			auto shwmdata = pair.second->getLast()->getInformation();
-			if(shwmdata == nullptr || shwmdata->ball.confidence < 0.1 || shwmdata->odom.certainty<0.8)
+			if(shwmdata == nullptr || shwmdata->ball.confidence < 0.1 || shwmdata->odom.certainty < LOCALIZATION_SUCCESS_CONFIDENCE)
 			{
 				continue;
 			}
@@ -656,31 +659,41 @@ namespace msl
 			}
 
 			if (!inField)
+			{
 				continue;
+			}
 			if (p.z < -300)
 			{
 				continue;
 			}
 
 			if (p.z > 350)
+			{
 				continue;
+			}
 			if (p.x * p.x + p.y * p.y > 8000 * 8000)
+			{
 				continue;
+			}
 			//if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
 
 			ballPos.confidence = 0.3 + (ballList->hypothesis[i].errors * 0.1);
 			if (ballList->hypothesis[i].radius > 5)
+			{
 				ballPos.confidence += 0.2;
+			}
 			if (p.x * p.x + p.y * p.y < 1000 * 1000)
+			{
 				ballPos.confidence = 0.8;
+			}
 			if (p.z > 350)
 			{
 				ballPos.confidence *= 0.9;
-
 			}
 			if (ballPos.confidence > 0.9)
+			{
 				ballPos.confidence = 0.9;
-
+			}
 			ballPos.valid = true;
 			ballPos.timestamp = TimeHelper::getInstance()->getVisionTimeOmniCam();
 			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
@@ -709,8 +722,9 @@ namespace msl
 		bool noValidPoint = false;
 
 		if (fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
+		{
 			noValidPoint = true;
-
+		}
 		ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
 																currBallBuf->getStartIndex(),
 																currBallBuf->getLastIndex());
