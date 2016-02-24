@@ -85,7 +85,9 @@ namespace msl
 		if (ownPos != nullptr)
 		{
 			p = this->getEgoBallPosition();
-			p = p->egoToAllo(*ownPos);
+			if(p != nullptr) {
+				p = p->egoToAllo(*ownPos);
+			}
 		}
 		return p;
 	}
