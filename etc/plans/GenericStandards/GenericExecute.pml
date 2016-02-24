@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="2147483647">
   <states id="1431522155979" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
     <inTransitions>#1433949706015</inTransitions>
     <inTransitions>#1435761866545</inTransitions>
     <outTransitions>#1431522782044</outTransitions>
@@ -22,21 +23,26 @@
   </states>
   <states id="1431522912251" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AttackOpp.beh#1430324680117</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1431522995646" name="Success" comment="">
     <inTransitions>#1431523011459</inTransitions>
   </states>
-  <states id="1431523482646" name="Block" comment="" entryPoint="1431523395534"/>
-  <states id="1431524014799" name="Defend" comment="" entryPoint="1431523422152"/>
+  <states id="1431523482646" name="Block" comment="" entryPoint="1431523395534">
+    <plans xsi:type="alica:BehaviourConfiguration">StandardShieldBall.beh#1455888715611</plans>
+  </states>
+  <states id="1431524014799" name="Defend" comment="" entryPoint="1431523422152">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/BackroomDefence.beh#1454507819086</plans>
+  </states>
   <states id="1431524769489" name="SpatialDefend" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1431524869870</inTransitions>
   </states>
   <states id="1433949667740" name="Align" comment="" entryPoint="1431522155980">
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1433949706015</outTransitions>
   </states>
   <transitions id="1431522782044" name="MISSING_NAME" comment="grab ball success" msg="">
@@ -49,7 +55,7 @@
     <inState>#1431522297705</inState>
     <outState>#1431522912251</outState>
   </transitions>
-  <transitions id="1431523011459" name="MISSING_NAME" comment="success" msg="">
+  <transitions id="1431523011459" name="MISSING_NAME" comment="haveball" msg="">
     <preCondition id="1431523013533" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1431522912251</inState>
     <outState>#1431522995646</outState>

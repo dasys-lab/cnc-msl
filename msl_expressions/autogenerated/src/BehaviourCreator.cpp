@@ -41,11 +41,11 @@ using namespace std;
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
+#include  "Plans/Attack/DribbleToAttackPoint.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
 
 #include  "Plans/GenericStandards/StandardPass.h"
-
-#include  "Plans/Attack/DribbleToAttackPoint.h"
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
@@ -53,13 +53,13 @@ using namespace std;
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
-#include  "Plans/GenericBehaviours/Parking.h"
+#include  "/Parking.h"
 
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
-#include  "Plans/Behaviours/AlignToRobot.h"
+#include  "/AlignToRobot.h"
 
 #include  "Plans/Attack/Wander.h"
 
@@ -93,15 +93,19 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
-#include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
-
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 #include  "Plans/Behaviours/GetBall.h"
 
+#include  "Plans/GenericStandards/StandardAlignAndGrab.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/KickToDirection.h"
+
+#include  "Plans/GenericStandards/StandardShieldBall.h"
 
 namespace alica
 {
@@ -232,6 +236,13 @@ namespace alica
                 return make_shared<DriveToGoal>();
                 break;
 
+            case 1436855860607:
+
+            case 1437391438054:
+
+                return make_shared<DribbleToAttackPoint>();
+                break;
+
             case 1447863472667:
 
                 return make_shared<WatchBall>();
@@ -240,13 +251,6 @@ namespace alica
             case 1435760175843:
 
                 return make_shared<StandardPass>();
-                break;
-
-            case 1436855860607:
-
-            case 1437391438054:
-
-                return make_shared<DribbleToAttackPoint>();
                 break;
 
             case 1415205285582:
@@ -258,8 +262,6 @@ namespace alica
 
                 return make_shared<Pos4Def>();
                 break;
-
-            case 1434199852589:
 
             case 1435156714286:
 
@@ -376,14 +378,14 @@ namespace alica
                 return make_shared<SpinSlowly>();
                 break;
 
-            case 1447863503279:
-
-                return make_shared<DriveToBall>();
-                break;
-
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1447863503279:
+
+                return make_shared<DriveToBall>();
                 break;
 
             case 1455537879822:
@@ -398,9 +400,19 @@ namespace alica
                 return make_shared<GetBall>();
                 break;
 
+            case 1455888617961:
+
+                return make_shared<StandardAlignAndGrab>();
+                break;
+
             case 1447863487000:
 
                 return make_shared<KickToDirection>();
+                break;
+
+            case 1455888715611:
+
+                return make_shared<StandardShieldBall>();
                 break;
 
             default:

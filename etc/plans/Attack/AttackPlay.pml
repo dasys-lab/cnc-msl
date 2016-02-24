@@ -8,7 +8,9 @@
     <inTransitions>#1436536103266</inTransitions>
     <outTransitions>#1436536098621</outTransitions>
   </states>
-  <states id="1434045870617" name="Defend" comment="" entryPoint="1434045723977"/>
+  <states id="1434045870617" name="Defend" comment="" entryPoint="1434045723977">
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/BackroomDefence.beh#1454507819086</plans>
+  </states>
   <states id="1434112762535" name="Release" comment="" entryPoint="1434112675755">
     <inTransitions>#1436536160346</inTransitions>
     <outTransitions>#1436536148908</outTransitions>

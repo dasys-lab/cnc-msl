@@ -36,6 +36,7 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
+#include "obstaclehandler/ObHandler.h"
 
 namespace alica {
 	class AlicaEngine;
@@ -88,6 +89,7 @@ namespace msl
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
+		ObHandler obstacleHandler;
 
 
 	private:

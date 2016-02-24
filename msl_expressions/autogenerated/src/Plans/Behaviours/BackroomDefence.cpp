@@ -24,12 +24,12 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto alloBallPos = wm->ball.getAlloBallPosition();
         auto goaliePos = wm->robots.getTeamMatePosition(1, 0);
         auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 
-        if (!me || !ballPos)
+        if (!me || !alloBallPos)
         {
             return;
         }
@@ -44,23 +44,13 @@ namespace alica
             goalPos = field->posOwnGoalMid();
         }
 
-        double robotX = 0.25 * field->FieldLength;
-        double goalX = goalPos->x;
-        double goalY = goalPos->y;
-        double ballX = ballPos->x;
-        double ballY = ballPos->y;
+        auto goaltoball = alloBallPos - goalPos;
+        auto disDefender = goaltoball->normalize()
+                * (((double)msl::MSLFootballField::PenaltyAreaLength + 300.0) / goaltoball->normalize()->y);
+        auto target = goalPos + disDefender;
 
-        double factor = (robotX - goalX) / (ballX - goalX);
-        double robotY = goalY + factor * (ballY - goalY);
-
-        auto intersectPos = make_shared < geometry::CNPoint2D > (robotX, robotY);
-        MotionControl mc = msl::RobotMovement::moveToPointFast(intersectPos->alloToEgo(*me), ballPos, 100, nullptr);
-
-        if (me->distanceTo(intersectPos) < DESTINATION_DISTANCE)
-        {
-            // robot is too close to intersection point, move away from it
-            mc.motion.translation *= -1;
-        }
+        MotionControl mc = msl::RobotMovement::moveToPointFast(target->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100,
+                                                               nullptr);
 
         send(mc);
 

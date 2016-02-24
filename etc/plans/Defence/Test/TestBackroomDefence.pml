@@ -10,12 +10,12 @@
     <inTransitions>#1455127639286</inTransitions>
     <outTransitions>#1455127609026</outTransitions>
   </states>
-  <transitions id="1455127609026" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1455127609026" name="MISSING_NAME" comment="situation == stop" msg="">
     <preCondition id="1455127612198" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1455127584801</inState>
     <outState>#1455127495971</outState>
   </transitions>
-  <transitions id="1455127639286" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1455127639286" name="MISSING_NAME" comment="Situation == start" msg="">
     <preCondition id="1455127641457" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1455127495971</inState>
     <outState>#1455127584801</outState>

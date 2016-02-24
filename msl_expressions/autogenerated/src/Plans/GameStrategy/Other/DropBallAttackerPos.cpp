@@ -25,28 +25,29 @@ namespace alica
     void DropBallAttackerPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537841488) ENABLED START*/ //Add additional options here
+        auto alloBallPos = wm->ball.getAlloBallPosition();
+        if (alloBallPos == nullptr)
+        {
+            alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
+        }
 
-    	auto alloBallPos = wm->ball.getAlloBallPosition();
-    	if(alloBallPos ==nullptr) {
-    		alloBallPos = make_shared<geometry::CNPoint2D>(0,0);
-    	}
+        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        if (ownPos == nullptr)
+        {
+            cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
+            return;
+        }
 
-    	auto ownPos = wm->rawSensorData.getOwnPositionVision();
-    	if(ownPos==nullptr) {
-    		cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
-    		return;
-    	}
+        auto alloTarget = msl::MSLFootballField::posOwnGoalMid() - alloBallPos;
+        alloTarget = alloTarget->normalize() * 1250;
+        alloTarget = alloBallPos + alloTarget;
 
-    	auto alloTarget = msl::MSLFootballField::posOwnGoalMid()-alloBallPos;
-    	alloTarget = alloTarget->normalize()*1250;
-    	alloTarget = alloBallPos + alloTarget;
+        auto egoTarget = alloTarget->alloToEgo(*ownPos);
+        auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
 
-    	auto egoTarget = alloTarget->alloToEgo(*ownPos);
-    	auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
-
-    	msl_actuator_msgs::MotionControl mc;
-    	mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
-    	send(mc);
+        msl_actuator_msgs::MotionControl mc;
+        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
+        send(mc);
 
         /*PROTECTED REGION END*/
     }
