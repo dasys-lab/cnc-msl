@@ -53,13 +53,13 @@ using namespace std;
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
-#include  "Plans/GenericBehaviours/Parking.h"
+#include  "/Parking.h"
 
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
-#include  "Plans/Behaviours/AlignToRobot.h"
+#include  "/AlignToRobot.h"
 
 #include  "Plans/Attack/Wander.h"
 
@@ -262,8 +262,6 @@ namespace alica
 
                 return make_shared<Pos4Def>();
                 break;
-
-            case 1434199852589:
 
             case 1435156714286:
 

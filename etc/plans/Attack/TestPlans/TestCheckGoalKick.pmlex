@@ -56,4 +56,8 @@
     <key href="../../Behaviours/Joystick.beh#1421854995808"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

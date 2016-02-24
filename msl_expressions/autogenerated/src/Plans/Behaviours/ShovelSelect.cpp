@@ -31,10 +31,13 @@ namespace alica
         ssc.passing = this->passing;
         send(ssc);
         auto lb = wm->rawSensorData.getLightBarrier();
-        if (lb && *lb) {
-        	std::cout << "Hab den Ball :)" << std::endl;
-        } else {
-        	std::cout << "Nicht :(" << std::endl;
+        if (lb && *lb)
+        {
+            std::cout << "Hab den Ball :)" << std::endl;
+        }
+        else
+        {
+            std::cout << "Nicht :(" << std::endl;
         }
         /*PROTECTED REGION END*/
     }

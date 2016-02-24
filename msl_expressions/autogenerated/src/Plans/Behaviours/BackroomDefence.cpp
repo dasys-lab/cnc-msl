@@ -49,7 +49,8 @@ namespace alica
                 * (((double)msl::MSLFootballField::PenaltyAreaLength + 300.0) / goaltoball->normalize()->y);
         auto target = goalPos + disDefender;
 
-        MotionControl mc = msl::RobotMovement::moveToPointFast(target->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100, nullptr);
+        MotionControl mc = msl::RobotMovement::moveToPointFast(target->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100,
+                                                               nullptr);
 
         send(mc);
 

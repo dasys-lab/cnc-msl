@@ -20,20 +20,20 @@ namespace alica
         bool haveBall;
         int haveBallCounter;
 
-		EntryPoint* receiver;
-		double tol;
-		double minTol;
-		double trans;
-		string planName = "";
-		string teamMateTaskName = "";
+        EntryPoint* receiver;
+        double tol;
+        double minTol;
+        double trans;
+        string planName = "";
+        string teamMateTaskName = "";
 
-		shared_ptr<geometry::CNPosition> oldMatePos;
-		int delayKickCounter;
-		double maxTranslation;
+        shared_ptr<geometry::CNPosition> oldMatePos;
+        int delayKickCounter;
+        double maxTranslation;
 
-		double angleIntErr;
-		double oldAngleErr;
-		msl::InfoTime startTime;
+        double angleIntErr;
+        double oldAngleErr;
+        msl::InfoTime startTime;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1455888574532) ENABLED START*/ //Add additional private methods here
