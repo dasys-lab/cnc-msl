@@ -60,4 +60,6 @@
   <tasks id="1434112683820" name="OffensiveMidfield" comment="" description=""/>
   <tasks id="1439997010902" name="ExecuteStandard" comment="" description=""/>
   <tasks id="1439997023446" name="ReceiveStandard" comment="" description=""/>
+  <tasks id="1449755298054" name="MISSING_NAME" comment="" description=""/>
+  <tasks id="1449758454657" name="DefaultTask" comment="" description="Defender"/>
 </alica:TaskRepository>

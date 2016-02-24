@@ -34,6 +34,7 @@ namespace alica
         mc = msl::RobotMovement::interceptCarefully(egoBallPos, egoBallPos, 100);
 
         send(mc);
+
         /*PROTECTED REGION END*/
     }
     void InterceptCarefully::initialiseParameters()

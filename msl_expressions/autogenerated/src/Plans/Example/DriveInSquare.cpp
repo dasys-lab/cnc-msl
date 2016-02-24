@@ -27,7 +27,9 @@ namespace alica
         {
             return;
         }
-        geometry::CNPoint2D alloTarget;
+        geometry::CNPoint2D alloTarget; // alloTarget= the points that robot has to reach.
+
+        //  (*ownPos).x; ownPos->x smart Pointer
 
         if (count % 4 == 0)
         {
@@ -36,18 +38,18 @@ namespace alica
         }
         else if (count % 4 == 1)
         {
-            alloTarget.x = 2000;
+            alloTarget.x = -2000;
             alloTarget.y = 0;
         }
         else if (count % 4 == 2)
         {
-            alloTarget.x = 2000;
-            alloTarget.y = 2000;
+            alloTarget.x = -2000;
+            alloTarget.y = -2000;
         }
         else
         {
             alloTarget.x = 0;
-            alloTarget.y = 2000;
+            alloTarget.y = -2000;
         }
 
         auto egoTarget = alloTarget.alloToEgo(*ownPos);

@@ -45,14 +45,21 @@ namespace alica
         //PD Regler Anfang
         //PIDControllerLeft
 
+        <<<<<<< Updated upstream
         const double Ki = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
         const double Kd = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
         const double Kp = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
+        =======
+        const double KiLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KiLeft", NULL);
+        const double KdLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KdLeft", NULL);
+        const double KpLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.KpLeft", NULL);
+        >>>>>>> Stashed changes
 
         double AbweichungLeft = 0.0;
         double Abweichung_SummeLeft = 0.0;
         double Abweichung_AltLeft = 0.0;
         double StellwertLeft = 0.0;
+        <<<<<<< Updated upstream
         double Sollwert;
         const double setPointLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointLeft", NULL);
 
@@ -68,13 +75,25 @@ namespace alica
 
         if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)
                 && (wm->rawSensorData.getOwnVelocityMotion()->translation > 500))
+        =======
+        const double setPointLeft = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointLeft", NULL);
+        //const double SollwertLeftForward = 80;
+
+        if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
+        >>>>>>> Stashed changes
         {
 
             Abweichung_SummeLeft += AbweichungLeft;
             AbweichungLeft = -1 * (setPointLeft - wm->rawSensorData.getOpticalFlowQoS());
+            <<<<<<< Updated upstream
             StellwertLeft = Kp * AbweichungLeft + left;
             StellwertLeft += Ki * Abweichung_SummeLeft;
             StellwertLeft += Kd * (AbweichungLeft - Abweichung_AltLeft);
+            =======
+            StellwertLeft = KpLeft * AbweichungLeft + left;
+            StellwertLeft += KiLeft * Abweichung_SummeLeft;
+            StellwertLeft += KdLeft * (AbweichungLeft - Abweichung_AltLeft);
+            >>>>>>> Stashed changes
 
             Abweichung_AltLeft = AbweichungLeft;
             left = StellwertLeft;
@@ -83,26 +102,45 @@ namespace alica
 
         //PIDControllerRight
 
+        <<<<<<< Updated upstream
         const double setPointRight = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointRight", NULL);
+        =======
+        const double KiRight = 0.0;
+        const double KdRight = 0.1;
+
+        const double setPointRight = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.setPointRight", NULL);
+        const double KpRight = 0.23;
+        >>>>>>> Stashed changes
 
         double AbweichungRight = 0.0;
         double Abweichung_SummeRight = 0.0;
         double Abweichung_AltRight = 0.0;
         double StellwertRight = 0.0;
 
-        if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)
-                && (wm->rawSensorData.getOwnVelocityMotion()->translation > 500))
+    <<<<<<< Updated upstream
+    if ((wm->rawSensorData.getOpticalFlowQoS() <= Sollwert)
+            && (wm->rawSensorData.getOwnVelocityMotion()->translation > 500))
+    {
+        Abweichung_SummeRight += AbweichungRight;
+        AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
+        StellwertRight = Kp * AbweichungRight + right;
+        StellwertRight += Ki * Abweichung_SummeRight;
+        StellwertRight += Kd * (AbweichungRight - Abweichung_AltRight);
+        =======
+        if (wm->rawSensorData.getOpticalFlowQoS() <= 70)
         {
             Abweichung_SummeRight += AbweichungRight;
             AbweichungRight = -1 * (setPointRight - wm->rawSensorData.getOpticalFlowQoS());
-            StellwertRight = Kp * AbweichungRight + right;
-            StellwertRight += Ki * Abweichung_SummeRight;
-            StellwertRight += Kd * (AbweichungRight - Abweichung_AltRight);
+            StellwertRight = KpRight * AbweichungRight + right;
+            StellwertRight += KiRight * Abweichung_SummeRight;
+            StellwertRight += KdRight * (AbweichungRight - Abweichung_AltRight);
+            >>>>>>> Stashed changes
 
             Abweichung_AltRight = AbweichungRight;
             right = StellwertRight;
 
         };
+        <<<<<<< Updated upstream
 
         //PD Regler Ende
 
@@ -110,6 +148,20 @@ namespace alica
         cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
         cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
         cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
+        =======
+        /*
+         if (wm->rawSensorData.getOpticalFlowQoS() > 70)
+         {
+         StellwertLeft = left;
+         StellwertRight = right;
+         };
+         */
+        //PD Regler Ende
+        cout << "Winkel : " << wm->rawSensorData.getOwnVelocityMotion()->angle << endl;
+        cout << "QualityOfService WM : " << wm->rawSensorData.getOpticalFlowQoS() << endl;
+        cout << " rotation : " << wm->rawSensorData.getOwnVelocityMotion()->rotation << endl;
+        cout << " StellwertLeft: " << StellwertLeft << "     StellwertLeft: " << StellwertLeft << endl;
+        >>>>>>> Stashed changes
 
         bhc.leftMotor = max(min(left, 60.0), -100.0);
         bhc.rightMotor = max(min(right, 60.0), -100.0);
@@ -209,9 +261,9 @@ namespace alica
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
             double speedX = cos(wm->rawSensorData.getOwnVelocityMotion()->angle)
-                    * wm->rawSensorData.getOwnVelocityMotion()->translation;
+            * wm->rawSensorData.getOwnVelocityMotion()->translation;
             double speedY = sin(wm->rawSensorData.getOwnVelocityMotion()->angle)
-                    * wm->rawSensorData.getOwnVelocityMotion()->translation;
+            * wm->rawSensorData.getOwnVelocityMotion()->translation;
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
             {
@@ -295,8 +347,11 @@ namespace alica
 
         //arithmetic Average for Speed Start
 
+        <<<<<<< Updated upstream
         cout << "aritAverageSpeed anfang" << endl;
 
+        =======
+        >>>>>>> Stashed changes
         double arithmeticAverageSpeed = 0.0;
         double newParamerSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
         //double wtf = wm->rawSensorData.getLastMotionCommand()->motion;
@@ -317,12 +372,15 @@ namespace alica
         arithmeticAverageSpeed = arithmeticAverageSpeed / 2;
 
         cout << " Speed Approx : " << arithmeticAverageSpeed << " <=> real "
-                << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
+        << wm->rawSensorData.getOwnVelocityMotion()->translation << endl;
 
         //arithmetic Average for Speed End
 
+        <<<<<<< Updated upstream
         cout << "Z:324 speed diff 4 acceleration" << endl;
 
+        =======
+        >>>>>>> Stashed changes
         //Speed Difference for acceleration Start
         double eFunktionAcceleration;
         double newSpeed = wm->rawSensorData.getOwnVelocityMotion()->translation;
@@ -334,13 +392,19 @@ namespace alica
             speedDifference = 1;
         }
 
+        <<<<<<< Updated upstream
         cout << "Z:336 speedDifference : " << speedDifference << endl;
 
+        =======
+        >>>>>>> Stashed changes
         //Speed Difference for acceleration End
 
         ////arithmetic average speed difference Start
 
+        <<<<<<< Updated upstream
         cout << "arithmetic average speed difference Start";
+        =======
+        >>>>>>> Stashed changes
         double arithmeticAverageSpeedDifference = 0.0;
 
         if (arithmeticAverageBoxSpeedDifference.size() == 5)
@@ -373,7 +437,7 @@ namespace alica
 
         double valueExpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.valueExpFunktion", NULL);
         double constPushUpFunktion = (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.constPushUpFunktion",
-                                                                                 NULL);
+                NULL);
         double funktionLeft = 0, funktionRight = 0;
         cout << "Z:377 Exp Funktion for traction end" << endl;
         //für fehlersuche ausk. double qualityOfService = wm->rawSensorData.getOpticalFlowQoS();
@@ -382,7 +446,12 @@ namespace alica
         // cout << "exp Funktion : " << eFunktion << endl;
         //Exp Funktion for traction End
         //Funktion for drive with differt angles start
-        double x = angle; // max(min(angle, 3.14), -3.14);
+        <<<<<<< Updated upstream
+        double x = angle;// max(min(angle, 3.14), -3.14);
+        =======
+        a = max(min(angle, 3.14), -3.14);
+        t = wm->rawSensorData.getOwnVelocityMotion()->translation;
+        >>>>>>> Stashed changes
         int counter = 1;
         cout << "vor den Splines left" << endl;
         //Exp Funktion for traction End
@@ -401,15 +470,18 @@ namespace alica
         {
             XLeft.push_back(
                     (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                sectionName.c_str(), "XLeft", NULL));
+                            sectionName.c_str(), "XLeft", NULL));
             YLeft.push_back(
                     (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesLeft",
-                                                                sectionName.c_str(), "YLeft", NULL));
+                            sectionName.c_str(), "YLeft", NULL));
             counter++;
         }
         leftMotor.set_points(XLeft, YLeft);
 
+        <<<<<<< Updated upstream
         cout << "vor der splines right" << endl;
+        =======
+        >>>>>>> Stashed changes
         splines::spline rightMotor;
 
         vector<double> XRight, YRight;
@@ -420,13 +492,14 @@ namespace alica
         {
             XRight.push_back(
                     (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                sectionName.c_str(), "XRight", NULL));
+                            sectionName.c_str(), "XRight", NULL));
             YRight.push_back(
                     (*this->sc)["ActuatorDribble"]->get<double>("ActuateDribble.FunktionValuesRight",
-                                                                sectionName.c_str(), "YRight", NULL));
+                            sectionName.c_str(), "YRight", NULL));
             counter++;
         }
 
+        <<<<<<< Updated upstream
         cout << "Z: 420 vor rightMotorset" << endl;
 
         rightMotor.set_points(XRight, YRight);
@@ -435,6 +508,10 @@ namespace alica
 
         rightMotor.set_points(XRight, YRight);
 
+        =======
+        rightMotor.set_points(XRight, YRight);
+
+        >>>>>>> Stashed changes
         splines::spline frictionSpline;
         vector<double> XFric, YFric;
         for (int i = 1; i <= 4; i++)
@@ -447,6 +524,7 @@ namespace alica
                             (std::string("ActuateDribble.Friction.y") + to_string(i)).c_str(), NULL));
         }
 
+        <<<<<<< Updated upstream
 //<<<<<<< HEAD
 //        cout << "Z: 431 ende der  friction" << endl;
 //        frictionSpline.set_points(XFric, YFric);
@@ -459,6 +537,8 @@ namespace alica
 //        cout << "Z: 431 ende der  friction 3" << endl;
 //=======
 
+        =======
+        >>>>>>> Stashed changes
         frictionSpline.set_points(XFric, YFric);
 
         FunktionValuesRight = rightMotor(a);
@@ -466,14 +546,14 @@ namespace alica
         frictionValue = frictionSpline(t);
 
         cout << "FunktionValuesRight: " << FunktionValuesRight << endl << "FunktionValuesLeft: " << FunktionValuesLeft
-                << endl;
+        << endl;
         cout << "FrictionValue: " << frictionValue << endl;
 
         double rotationLeft = 0.0;
         double rotationRight = 0.0;
 
         if (((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.25)
-                && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
+                        && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
                 || ((wm->rawSensorData.getOwnVelocityMotion()->rotation > 0.8)
                         && (wm->rawSensorData.getOwnVelocityMotion()->translation > 700)))
         {
@@ -497,7 +577,7 @@ namespace alica
         }
 
         if (((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.25)
-                && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
+                        && (wm->rawSensorData.getOwnVelocityMotion()->translation < 700))
                 || ((wm->rawSensorData.getOwnVelocityMotion()->rotation < -0.8)
                         && (wm->rawSensorData.getOwnVelocityMotion()->translation > 700)))
 
@@ -522,7 +602,7 @@ namespace alica
             {
 
                 FunktionValuesRight = FunktionValuesRight
-                        + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
+                + abs(wm->rawSensorData.getOwnVelocityMotion()->rotation) * 0.5;
 
             }
 
@@ -555,5 +635,5 @@ namespace alica
 
     }
 
-/*PROTECTED REGION END*/
+    /*PROTECTED REGION END*/
 } /* namespace alica */

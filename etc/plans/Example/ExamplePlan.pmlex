@@ -10,7 +10,7 @@
   </extensions>
   <extensions>
     <key href="ExamplePlan.pml#1433938970029"/>
-    <value xPos="85" yPos="228" width="65" height="67"/>
+    <value xPos="85" yPos="228" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ExamplePlan.pml#1433938974495"/>
@@ -30,6 +30,14 @@
   </extensions>
   <extensions>
     <key href="DriveInSquare.beh#1433939634320"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="NewStopbeh.beh#1449767995479"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

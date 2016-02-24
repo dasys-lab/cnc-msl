@@ -129,7 +129,9 @@ namespace msl
 			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
 			if (egoTarget->length() > snapDistance)
 			{
-				mc.motion.translation = min(defaultTranslation, temp->length());
+				mc.motion.translation = min(defaultTranslation, temp->length());  /* why here we don have std,
+
+			The difference between interceptCarefully and  moveToPointCarefully only is std:: b4 min() */
 			}
 			else
 			{

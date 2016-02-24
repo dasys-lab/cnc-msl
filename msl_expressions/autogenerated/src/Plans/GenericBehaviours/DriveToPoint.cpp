@@ -58,7 +58,8 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1417620568675) ENABLED START*/ //Add additional options here
         string tmp;
         bool success = true;
-        success &= getParameter("X", tmp);
+        success &= getParameter("X", tmp); // x &= y;   equivalent to x = x & y;
+
         try
         {
             if (success)

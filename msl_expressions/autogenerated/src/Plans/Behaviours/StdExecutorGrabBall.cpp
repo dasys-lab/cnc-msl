@@ -31,23 +31,64 @@ namespace alica
         {
             this->success = false;
         }
+        geometry::CNPoint2D alloTarget; // alloTarget= the points that robot has to reach.
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
 
         // return if necessary information is missing
         if (egoBallPos == nullptr)
         {
-            return;
+
+            //  (*ownPos).x; ownPos->x smart Pointer
+
+            if (count % 4 == 0)
+            {
+                alloTarget.x = 3000;
+                alloTarget.y = -3000;
+            }
+            else if (count % 4 == 1)
+            {
+                alloTarget.x = -3000;
+                alloTarget.y = 3000;
+            }
+            else if (count % 4 == 2)
+            {
+                alloTarget.x = 3000;
+                alloTarget.y = 3000;
+            }
+            else
+            {
+                alloTarget.x = 3000;
+                alloTarget.y = -3000;
+            }
+
+            auto egoTarget = alloTarget.alloToEgo(*ownPos);
+
+            MotionControl mc;
+            mc = RobotMovement::moveToPointCarefully(egoTarget, make_shared < geometry::CNPoint2D > (-1000.0, 0.0), 0);
+
+            if (egoTarget->length() < 250)
+            {
+                count++;
+            }
+
+            send(mc);
+
+            //return;
+
         }
+        else
+        {
+            MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, catchRadius, nullptr);
 
-        MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, catchRadius, nullptr);
-
-        send(mc);
-        /*PROTECTED REGION END*/
-    }
+            send(mc);
+            /*PROTECTED REGION END*/
+        }
     void StdExecutorGrabBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1441209011595) ENABLED START*/ //Add additional options here
+        count=0;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1441209011595) ENABLED START*/ //Add additional methods here
@@ -56,5 +97,5 @@ namespace alica
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         catchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
     }
-/*PROTECTED REGION END*/
+    /*PROTECTED REGION END*/
 } /* namespace alica */

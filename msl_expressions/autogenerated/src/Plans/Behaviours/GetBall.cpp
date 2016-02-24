@@ -49,7 +49,7 @@ namespace alica
         if (!blocked)
         {
             auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-            auto vector = egoBallVelocity + egoBallPos;
+            auto vector = egoBallVelocity + egoBallPos; // + vector
             double vectorLength = vector->length();
             if (wm->ball.haveBall())
             {

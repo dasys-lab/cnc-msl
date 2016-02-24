@@ -3,7 +3,13 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1441209011595) ENABLED START*/ //Add additional includes here
+#include "msl_actuator_msgs/MotionControl.h"
+#include "container/CNPoint2D.h"
+#include "container/CNPosition.h"
 #include "robotmovement/RobotMovement.h"
+
+using namespace msl;
+using namespace msl_actuator_msgs;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -23,6 +29,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1441209011595) ENABLED START*/ //Add additional private methods here
         double catchRadius;
+        int count;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
