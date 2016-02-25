@@ -6,6 +6,7 @@
  */
 
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
+#include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 #include <sstream>
 
 namespace msl
@@ -120,7 +121,7 @@ namespace msl
 		}
 	}
 
-	bool AnnotatedObstacleCluster::checkAndMerge(shared_ptr<AnnotatedObstacleCluster> cluster, double varianceThreshold)
+	bool AnnotatedObstacleCluster::checkAndMerge(AnnotatedObstacleCluster* cluster, double varianceThreshold)
 	{
 		// variables as if both clusters are merged
 		double tmpNumObs = (double)this->numObs + cluster->numObs;
@@ -182,7 +183,7 @@ namespace msl
 		this->subFromSquareSum(obs);
 	}
 
-	double AnnotatedObstacleCluster::distanceTo(shared_ptr<AnnotatedObstacleCluster> aoc)
+	double AnnotatedObstacleCluster::distanceTo(AnnotatedObstacleCluster* aoc)
 	{
 		return sqrt(pow(this->x - aoc->x, 2) + pow(this->y - aoc->y, 2));
 	}
@@ -197,7 +198,7 @@ namespace msl
 		return sqrt(pow(this->x - p->x, 2) + pow(this->y - p->y, 2));
 	}
 
-	bool AnnotatedObstacleCluster::compareTo(shared_ptr<AnnotatedObstacleCluster> first, shared_ptr<AnnotatedObstacleCluster> second)
+	bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster* first, AnnotatedObstacleCluster* second)
 	{
 		// first: try to sort by x coordinate
 		if (second->x > first->x)
@@ -292,6 +293,17 @@ namespace msl
 	{
 		this->linearSumX -= aoc->x;
 		this->linearSumY -= aoc->y;
+	}
+
+	AnnotatedObstacleCluster* AnnotatedObstacleCluster::getNew(AnnotatedObstacleClusterPool* aocp)
+	{
+		if (aocp->curIndex >= aocp->maxCount)
+		{
+			cerr << "max PA count reached!" << endl;
+		}
+		AnnotatedObstacleCluster* ret = aocp->daAOCs[aocp->curIndex++];
+		ret->clear();
+		return ret;
 	}
 
 	void AnnotatedObstacleCluster::subFromSquareSum(shared_ptr<AnnotatedObstacleCluster> aoc)
