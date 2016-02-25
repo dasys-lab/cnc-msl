@@ -16,6 +16,7 @@
 
 // ROS
 #include "ros/ros.h"
+#include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "msl_actuator_msgs/BallCatchCmd.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
