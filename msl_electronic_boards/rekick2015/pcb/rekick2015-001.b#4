@@ -2372,26 +2372,14 @@ design rules under a new name.</description>
 <element name="R101" library="rcl" package="0207/15" value="1M" x="-113.538" y="-159.004">
 <attribute name="FARNELL" value="2396016" x="-113.538" y="-159.004" size="1.778" layer="27" display="off"/>
 </element>
-<element name="R102" library="rcl" package="0207/15" value="470k" x="-113.538" y="-163.322">
-<attribute name="FARNELL" value="" x="-113.538" y="-163.322" size="1.778" layer="27" display="off"/>
-</element>
-<element name="D101" library="diode" package="SOD57Z10" value="270V" x="-115.062" y="-168.656">
-<attribute name="FARNELL" value="9398597" x="-115.062" y="-168.656" size="1.778" layer="27" display="off"/>
-</element>
-<element name="R104" library="rcl" package="R0805" value="20k" x="-120.142" y="-173.736"/>
 <element name="R103" library="rcl" package="R0805" value="10k" x="-120.142" y="-177.8"/>
 <element name="R105" library="rcl" package="R0805" value="1k" x="-120.142" y="-181.864"/>
-<element name="R106" library="rcl" package="R0805" value="1" x="-120.142" y="-185.928"/>
 <element name="D102" library="diode" package="SOD323-W" value="3.9V" x="-119.888" y="-191.77">
 <attribute name="FARNELL" value="2069513" x="-119.888" y="-191.77" size="1.778" layer="27" display="off"/>
-</element>
-<element name="D103" library="diode" package="SOD323-W" value="3.9V" x="-119.888" y="-195.58">
-<attribute name="FARNELL" value="2069513" x="-119.888" y="-195.58" size="1.778" layer="27" display="off"/>
 </element>
 <element name="R2" library="resistor-power" package="HS50" value="47" x="-86.106" y="-213.614"/>
 <element name="R3" library="resistor-power" package="HS50" value="47" x="-86.106" y="-243.84"/>
 <element name="Q2" library="transistor-power" package="D2PACK" value="SiHB24N65E" x="-128.27" y="-247.904"/>
-<element name="C14" library="rcl" package="C0603" value="100p" x="-141.732" y="-261.366"/>
 <element name="C15" library="rcl" package="C0603" value="100p" x="-141.732" y="-264.922"/>
 <element name="IC3" library="linear" package="SO08" value="LM393D" x="-138.938" y="-273.05"/>
 <element name="R5" library="rcl" package="0207/15" value="470k" x="-134.62" y="-296.164">
@@ -2506,7 +2494,6 @@ design rules under a new name.</description>
 <contactref element="SV1" pad="6"/>
 <contactref element="U1" pad="11"/>
 <contactref element="D102" pad="A"/>
-<contactref element="D103" pad="A"/>
 <contactref element="R4" pad="1"/>
 <contactref element="R8" pad="1"/>
 <contactref element="U2" pad="6"/>
@@ -2539,8 +2526,7 @@ design rules under a new name.</description>
 <wire x1="-140.882" y1="-419.608" x2="-142.174" y2="-416.052" width="0" layer="19" extent="1-1"/>
 <wire x1="-142.174" y1="-325.882" x2="-142.174" y2="-362.458" width="0" layer="19" extent="1-1"/>
 <wire x1="-142.174" y1="-300.482" x2="-142.174" y2="-325.882" width="0" layer="19" extent="1-1"/>
-<wire x1="-118.438" y1="-195.58" x2="-142.174" y2="-300.482" width="0" layer="19" extent="1-1"/>
-<wire x1="-118.438" y1="-191.77" x2="-118.438" y2="-195.58" width="0" layer="19" extent="1-1"/>
+<wire x1="-118.438" y1="-191.77" x2="-142.174" y2="-300.482" width="0" layer="19" extent="1-1"/>
 <wire x1="-61.595" y1="-95.885" x2="-118.438" y2="-191.77" width="0" layer="19" extent="1-1"/>
 <wire x1="-47.498" y1="-95.504" x2="-61.595" y2="-95.885" width="0" layer="19" extent="1-1"/>
 <wire x1="-44.958" y1="-95.504" x2="-47.498" y2="-95.504" width="0" layer="19" extent="1-1"/>
@@ -2798,13 +2784,6 @@ design rules under a new name.</description>
 <wire x1="-119.761" y1="-154.492" x2="-121.092" y2="-181.864" width="0" layer="19" extent="1-1"/>
 <wire x1="-118.491" y1="-154.492" x2="-119.761" y2="-154.492" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="N$14">
-<contactref element="IC1" pad="7"/>
-<contactref element="IC1" pad="6"/>
-<contactref element="R106" pad="1"/>
-<wire x1="-118.491" y1="-149.292" x2="-121.092" y2="-185.928" width="0" layer="19" extent="1-1"/>
-<wire x1="-117.221" y1="-149.292" x2="-118.491" y2="-149.292" width="0" layer="19" extent="1-1"/>
-</signal>
 <signal name="N$15">
 <contactref element="IC1" pad="3"/>
 <contactref element="R101" pad="1"/>
@@ -2814,53 +2793,28 @@ design rules under a new name.</description>
 <wire x1="-121.158" y1="-159.004" x2="-119.192" y2="-177.8" width="0" layer="19" extent="1-1"/>
 <wire x1="-117.221" y1="-154.492" x2="-121.158" y2="-159.004" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="N$21">
-<contactref element="IC1" pad="5"/>
-<contactref element="D101" pad="A"/>
-<contactref element="R104" pad="2"/>
-<contactref element="C14" pad="1"/>
-<wire x1="-119.192" y1="-173.736" x2="-142.582" y2="-261.366" width="0" layer="19" extent="1-1"/>
-<wire x1="-109.982" y1="-168.656" x2="-119.192" y2="-173.736" width="0" layer="19" extent="1-1"/>
-<wire x1="-115.951" y1="-149.292" x2="-109.982" y2="-168.656" width="0" layer="19" extent="1-1"/>
-</signal>
 <signal name="CAP_330V">
-<contactref element="R102" pad="2"/>
 <contactref element="R101" pad="2"/>
 <contactref element="R2" pad="1"/>
 <contactref element="R5" pad="2"/>
 <wire x1="-117.576" y1="-213.614" x2="-127" y2="-296.164" width="0" layer="19" extent="1-1"/>
-<wire x1="-105.918" y1="-163.322" x2="-117.576" y2="-213.614" width="0" layer="19" extent="1-1"/>
-<wire x1="-105.918" y1="-159.004" x2="-105.918" y2="-163.322" width="0" layer="19" extent="1-1"/>
-</signal>
-<signal name="N$22">
-<contactref element="R102" pad="1"/>
-<contactref element="D101" pad="C"/>
-<wire x1="-121.158" y1="-163.322" x2="-120.142" y2="-168.656" width="0" layer="19" extent="1-1"/>
+<wire x1="-105.918" y1="-159.004" x2="-117.576" y2="-213.614" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="ZU-ADC-GROB">
 <contactref element="R105" pad="2"/>
 <contactref element="D102" pad="C"/>
 <wire x1="-119.192" y1="-181.864" x2="-121.338" y2="-191.77" width="0" layer="19" extent="1-1"/>
 </signal>
-<signal name="ZU-ADC-FEIN">
-<contactref element="R106" pad="2"/>
-<contactref element="D103" pad="C"/>
-<wire x1="-119.192" y1="-185.928" x2="-121.338" y2="-195.58" width="0" layer="19" extent="1-1"/>
-</signal>
 <signal name="CAP_GND">
-<contactref element="R104" pad="1"/>
 <contactref element="R103" pad="1"/>
 <contactref element="Q2" pad="3"/>
 <contactref element="C15" pad="2"/>
-<contactref element="C14" pad="2"/>
 <contactref element="R6" pad="1"/>
 <contactref element="C16" pad="2"/>
 <wire x1="-135.294" y1="-285.496" x2="-142.174" y2="-279.908" width="0" layer="19" extent="1-1"/>
 <wire x1="-140.882" y1="-264.922" x2="-142.174" y2="-279.908" width="0" layer="19" extent="1-1"/>
-<wire x1="-140.882" y1="-261.366" x2="-140.882" y2="-264.922" width="0" layer="19" extent="1-1"/>
-<wire x1="-125.73" y1="-256.794" x2="-140.882" y2="-261.366" width="0" layer="19" extent="1-1"/>
+<wire x1="-125.73" y1="-256.794" x2="-140.882" y2="-264.922" width="0" layer="19" extent="1-1"/>
 <wire x1="-121.092" y1="-177.8" x2="-125.73" y2="-256.794" width="0" layer="19" extent="1-1"/>
-<wire x1="-121.092" y1="-173.736" x2="-121.092" y2="-177.8" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$23">
 <contactref element="R3" pad="1"/>
