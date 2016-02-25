@@ -9,6 +9,7 @@
 #include "MSLFootballField.h"
 #include "obstaclehandler/SimpleCluster.h"
 #include "MSLWorldModel.h"
+#include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 
 namespace msl
 {
@@ -30,10 +31,10 @@ namespace msl
 																		"obstacleMapOutTolerance", NULL);
 		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
 		NULL);
-		localizedBefore = false;
 		field = MSLFootballField::getInstance();
 		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> clusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
 		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newClusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
+		pool = new AnnotatedObstacleClusterPool();
 	}
 
 	ObHandler::~ObHandler()
@@ -43,31 +44,13 @@ namespace msl
 	void ObHandler::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
 		//TODO save lists in WM
-//		if (vNet.OwnOdometry == null ||
-//					   vNet.OwnOdometry.Position == null ||
-//					   vNet.OwnOdometry.Certainty < (!localizedBefore ? POS_CERTAINTY_TH_CLUSTERING : POS_CERTAINTY_TH_CLUSTERING - POS_CERTAINTY_HYS))
-//					{
-//						#if OHDEBUG
-//						Console.WriteLine ("OH: " + myProperties.Name + ": myPos == null");
-//						#endif
-//						vNet.ObsClustersAllo = null;
-//						vNet.ObsEgo = ClusterPoint2D (myObstacles, VARIANCE_THRESHOLD);
-//						vNet.OppEgo = new List<Point2D> (vNet.ObsEgo);
-//						vNet.OppAllo = null;
-//						vNet.TeammatesEgo = null;
-//						vNet.ObsWithoutOppKeeperEgo = new List<Point2D> (vNet.ObsEgo);
-//						localizedBefore = false;
-//					}
-//					else
-//					{
-		localizedBefore = true;
 		// SETUP
 		setupAnnotatedObstacles(myObstacles, wm->rawSensorData.getCorrectedOdometryInfo());
 		// CLUSTERING
 		clusterAnnotatedObstacles();
 
 		// CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
-		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newObsClustersAllo = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
+		shared_ptr<vector<AnnotatedObstacleCluster*>> newObsClustersAllo = make_shared<vector<AnnotatedObstacleCluster*>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -235,7 +218,7 @@ namespace msl
 			}
 		}
 
-		newClusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
+		newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		for (int i = 0; i < clusterArray->size(); i++)
 		{
 			newClusterArray->push_back(clusterArray->at(i));
@@ -247,114 +230,116 @@ namespace msl
 	void ObHandler::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
 											shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo)
 	{
-//		clusterArray->clear();
-//		shared_ptr<AnnotatedObstacleCluster> obs = nullptr;
-//		int velX = 0;
-//		int velY = 0;
-//		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots.sharedWolrdModelData)
-//		{
-//			/* Ignore every robot, which:
-//			 * - is unlocalised
-//			 * - messages are old
-//			 * - I am (the obstacles from the WM are newer)*/
-//			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = curRobot.second->getLast()->getInformation();
-//			shared_ptr<geometry::CNPosition> curPlayerPosition = make_shared<geometry::CNPosition>(currentRobot->odom.position.x, currentRobot->odom.position.y, currentRobot->odom.position.angle);
-//			if(!curRobot.positionReceived
-//			|| curPlayerPosition == null
-//			|| curRobot.properties.Id == myProperties.Id
-//			|| curRobot.timeLastOpponentsReceived + 250*10000 < DateTime.UtcNow.Ticks
-//			)
-//			{
-//				continue;
-//			}
-//
-//			// add all obstacles seen by curRobot
-//			vector<msl_msgs::Point2dInfo> curOppList = currentRobot->obstacles;
-//			if (curOppList.size() > 0) // != nullptr
-//			{
-//				for(int i = 0; i < curOppList.size(); ++i)
-//				{
-//					// Nobody knows the positions of obstacles arround me better than I do!
-//					if(distance(curOppList.at(i), myOdo->position) < TERRITORY_RADIUS)
-//					{
-//						continue;
-//					}
-//
-//					if (MSLFootballField::getInstance()->isInsideField(make_shared<geometry::CNPoint2D>(curOppList.at(i).x, curOppList.at(i).y), OBSTACLE_MAP_OUT_TOLERANCE))
-//					{
-//						obs = vNet.GetCluster();
-//						obs->init((int) (curOppList.at(i).x + 0.5), (int) (curOppList.at(i).y + 0.5), // pos
-//						DFLT_OB_RADIUS,
-//						-1, curRobot.first);
-//						clusterArray->push_back(obs);
-//					}
-//				}
-//			}
-//
-//			// TODO: something to identify the other robot, when he is close to me
-//
-//			/* add the curRobot itself as an obstacle, to identify teammates */
-//
-//			// Convert ego motion angle to allo motion angle
-//			double alloMotionAngle = currentRobot->odom.position.angle + currentRobot->odom.motion.angle;
-//			if (alloMotionAngle > M_PI)
-//			{
-//				alloMotionAngle -= 2*M_PI;
-//			}
-//			else if (alloMotionAngle < -M_PI)
-//			{
-//				alloMotionAngle += 2 * M_PI;
-//			}
-//
-//			// Calc x and y the velocity
-//			velX = (int) (cos(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
-//			velY = (int) (sin(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
-//
-//			// predict the position along the translation
-//			double seconds = (double) (DateTime.UtcNow.Ticks - currentRobot->timeLastPositionEvent) / 10000000.0;
-//
-//			obs = vNet.GetCluster();
-//			obs->init((int) (curPlayerPosition->x + seconds * velX + 0.5), (int) (curPlayerPosition->y + seconds * velY + 0.5),// pos
-//			DFLT_ROB_RADIUS,
-//			velX, velY,// velocity
-//			curRobot.first,
-//			curRobot.first);
-//			clusterArray->push_back(obs);
-//		}
-//
-//		/* add my own obstacles from the worldmodel (they are egocentric :-( ) */
-//		shared_ptr<geometry::CNPoint2D> curPoint = make_shared<geometry::CNPoint2D>();
-//		for (int i = 0; i < ownObs->size(); ++i)
-//		{
-//			shared_ptr<geometry::CNPosition> me = make_shared<geometry::CNPosition>(myOdo->position.x, myOdo->position.y, myOdo->position.angle);
-//			curPoint = ownObs->at(i)->egoToAllo(*me);
-//			if (MSLFootballField::getInstance()->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
-//			{
-//				obs = vNet.GetCluster();
-//				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, -1, wm->getOwnId());
-//				clusterArray->push_back(obs);
-//			}
-//		}
-//
-//		/* add my own position: */
-//
-//		// Convert ego motion angle to allo motion angle
-//		double alloMotAngle = myOdo->position.angle + myOdo->motion.angle;
-//		if (alloMotAngle > M_PI)
-//		{
-//			alloMotAngle -= 2 * M_PI;
-//		}
-//		else if (alloMotAngle < -M_PI)
-//		{
-//			alloMotAngle += 2 * M_PI;
-//		}
-//
-//		velX = (int)round(myOdo->motion.translation * cos(alloMotAngle));
-//		velY = (int)round(myOdo->motion.translation * sin(alloMotAngle));
-//		obs = vNet.GetCluster();
-//		obs->init((int)(myOdo->position.x + 0.5), (int)(myOdo->position.y + 0.5), myOdo->position.angle, DFLT_ROB_RADIUS,
-//					velX, velY, myOdo->motion.rotation, myOdo->position.certainty, wm->getOwnId(), wm->getOwnId());
-//		clusterArray->push_back(obs);
+		clusterArray->clear();
+		AnnotatedObstacleCluster* obs = nullptr;
+		int velX = 0;
+		int velY = 0;
+		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots.sharedWolrdModelData)
+		{
+			/* Ignore every robot, which:
+			 * - is unlocalised
+			 * - messages are old (25 ms)
+			 * - I am (the obstacles from the WM are newer)*/
+			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = curRobot.second->getLast()->getInformation();
+			shared_ptr<geometry::CNPosition> curPlayerPosition = make_shared<geometry::CNPosition>(currentRobot->odom.position.x, currentRobot->odom.position.y, currentRobot->odom.position.angle);
+			if(currentRobot == nullptr || currentRobot->odom.certainty < 0.8
+			|| currentRobot->senderID == wm->getOwnId()
+			|| curRobot.second->getLast()->timeStamp + 250000000 < wm->getTime()
+			)
+			{
+				continue;
+			}
+
+			// add all obstacles seen by curRobot
+			vector<msl_msgs::Point2dInfo> curOppList = currentRobot->obstacles;
+			if (curOppList.size() > 0)// != nullptr
+			{
+				for(int i = 0; i < curOppList.size(); ++i)
+				{
+					// Nobody knows the positions of obstacles arround me better than I do!
+					if(distance(curOppList.at(i), myOdo->position) < TERRITORY_RADIUS)
+					{
+						continue;
+					}
+
+					if (MSLFootballField::getInstance()->isInsideField(make_shared<geometry::CNPoint2D>(curOppList.at(i).x, curOppList.at(i).y), OBSTACLE_MAP_OUT_TOLERANCE))
+					{
+						obs = AnnotatedObstacleCluster::getNew(this->pool);
+						obs->init((int) (curOppList.at(i).x + 0.5), (int) (curOppList.at(i).y + 0.5), // pos
+						DFLT_OB_RADIUS,
+						-1, curRobot.first);
+						clusterArray->push_back(obs);
+					}
+				}
+			}
+
+			// TODO: something to identify the other robot, when he is close to me
+
+			/* add the curRobot itself as an obstacle, to identify teammates */
+
+			// Convert ego motion angle to allo motion angle
+			double alloMotionAngle = currentRobot->odom.position.angle + currentRobot->odom.motion.angle;
+			if (alloMotionAngle > M_PI)
+			{
+				alloMotionAngle -= 2*M_PI;
+			}
+			else if (alloMotionAngle < -M_PI)
+			{
+				alloMotionAngle += 2 * M_PI;
+			}
+
+			// Calc x and y the velocity
+			velX = (int) (cos(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
+			velY = (int) (sin(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
+
+			// predict the position along the translation
+			double seconds = (double) (wm->getTime() - curRobot.second->getLast()->timeStamp) / 10000000.0;
+
+			obs = AnnotatedObstacleCluster::getNew(this->pool);
+			obs->init((int) (curPlayerPosition->x + seconds * velX + 0.5), (int) (curPlayerPosition->y + seconds * velY + 0.5),// pos
+			DFLT_ROB_RADIUS,
+			velX, velY,// velocity
+			curRobot.first,
+			curRobot.first);
+			clusterArray->push_back(obs);
+		}
+
+		/* add my own obstacles from the worldmodel (they are egocentric :-( ) */
+		shared_ptr<geometry::CNPoint2D> curPoint = make_shared<geometry::CNPoint2D>();
+		for (int i = 0; i < ownObs->size(); ++i)
+		{
+			shared_ptr<geometry::CNPosition> me = make_shared<geometry::CNPosition>(myOdo->position.x,
+																					myOdo->position.y,
+																					myOdo->position.angle);
+			curPoint = ownObs->at(i)->egoToAllo(*me);
+			if (MSLFootballField::getInstance()->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
+			{
+				obs = AnnotatedObstacleCluster::getNew(this->pool);
+				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, -1, wm->getOwnId());
+				clusterArray->push_back(obs);
+			}
+		}
+
+		/* add my own position: */
+
+		// Convert ego motion angle to allo motion angle
+		double alloMotAngle = myOdo->position.angle + myOdo->motion.angle;
+		if (alloMotAngle > M_PI)
+		{
+			alloMotAngle -= 2 * M_PI;
+		}
+		else if (alloMotAngle < -M_PI)
+		{
+			alloMotAngle += 2 * M_PI;
+		}
+
+		velX = (int)round(myOdo->motion.translation * cos(alloMotAngle));
+		velY = (int)round(myOdo->motion.translation * sin(alloMotAngle));
+		obs = AnnotatedObstacleCluster::getNew(this->pool);
+		obs->init((int)(myOdo->position.x + 0.5), (int)(myOdo->position.y + 0.5), myOdo->position.angle,
+					DFLT_ROB_RADIUS, velX, velY, myOdo->motion.rotation, myOdo->position.certainty, wm->getOwnId(),
+					wm->getOwnId());
+		clusterArray->push_back(obs);
 	}
 
 	void ObHandler::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
@@ -381,7 +366,7 @@ namespace msl
 			 * - myself
 			 */
 			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = curRobot.second->getLast()->getInformation();
-			if (currentRobot != nullptr || currentRobot->odom.certainty < 0.8
+			if (currentRobot == nullptr || currentRobot->odom.certainty < 0.8
 			|| currentRobot->senderID == wm->getOwnId())
 			{
 				//				 	cout << "Skip" << endl;
