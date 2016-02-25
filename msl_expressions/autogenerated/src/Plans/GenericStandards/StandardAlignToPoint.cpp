@@ -63,11 +63,10 @@ namespace alica
                 shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
                 shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
                 // exactly one robot is receiver
-                int id = ids->at(0);
-                if (id != -1)
+                if (ids->size() > 0 && ids->at(0) != -1)
                 {
                     // get receiver position by id
-                    auto pos = wm->robots.getTeamMatePosition(id);
+                    auto pos = wm->robots.getTeamMatePosition(ids->at(0));
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
                 MotionControl mc;
@@ -83,9 +82,9 @@ namespace alica
                 }
                 else
                 {
-                    // if there is no receiver, align to middle
+                    // if there is no receiver, align to middle looking towards the ball
                     egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
-                    mc = RobotMovement::moveToPointCarefully(egoTarget, alloTarget->alloToEgo(*ownPos), 0,
+                    mc = RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 0,
                                                              additionalPoints);
                 }
                 // if we reach the point and are aligned, the behavior is successful

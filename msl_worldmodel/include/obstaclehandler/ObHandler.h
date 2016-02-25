@@ -14,6 +14,8 @@
 #include "MSLFootballField.h"
 #include "msl_sensor_msgs/CorrectedOdometryInfo.h"
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
+#include "msl_msgs/Point2dInfo.h"
+#include "msl_msgs/PositionInfo.h"
 
 namespace msl
 {
@@ -50,11 +52,13 @@ namespace msl
 		double DFLT_OB_RADIUS;
 		double DFLT_ROB_RADIUS;
 		double OBSTACLE_MAP_OUT_TOLERANCE;
+		double LOCALIZATION_SUCCESS_CONFIDENCE;
 		bool localizedBefore;
 		MSLFootballField* field;
 		MSLWorldModel* wm;
 		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> clusterArray;
 		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newClusterArray;
+		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 	};
 
 } /* namespace msl */

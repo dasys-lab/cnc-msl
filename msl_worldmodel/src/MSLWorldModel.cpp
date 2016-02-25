@@ -212,6 +212,19 @@ namespace msl
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
+		if(game.ownGoalColor == Color::Yellow) {
+			msg->odometry.position.x = -msg->odometry.position.x;
+			msg->odometry.position.y = -msg->odometry.position.y;
+			msg->odometry.position.angle += M_PI;
+			while(msg->odometry.position.angle > M_PI) {
+				msg->odometry.position.angle -= 2*M_PI;
+			}
+			msg->odometry.motion.angle += M_PI;
+			while(msg->odometry.motion.angle > M_PI) {
+				msg->odometry.motion.angle -= 2*M_PI;
+			}
+		}
+
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
