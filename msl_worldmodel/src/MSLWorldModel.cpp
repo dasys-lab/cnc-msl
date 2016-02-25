@@ -77,6 +77,8 @@ namespace msl
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
+		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
+										(MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
@@ -368,6 +370,11 @@ namespace msl
 	int MSLWorldModel::getOwnId()
 	{
 		return ownID;
+	}
+
+	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::Bool msg)
+	{
+		rawSensorData.processLightBarrier(msg);
 	}
 } /* namespace msl */
 

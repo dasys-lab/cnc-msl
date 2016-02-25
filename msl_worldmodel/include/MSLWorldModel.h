@@ -70,6 +70,7 @@ namespace msl
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
+		void onLightBarrierInfo(std_msgs::Bool msg);
 
 
 		MSLSharedWorldModel* getSharedWorldModel();
@@ -116,6 +117,7 @@ namespace msl
 		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
 		ros::Subscriber correctedOdometrySub;
+		ros::Subscriber lightBarrierSub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
