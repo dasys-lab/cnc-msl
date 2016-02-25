@@ -372,7 +372,7 @@ namespace msl
 		return ownID;
 	}
 
-	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::Bool msg)
+	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
 	{
 		rawSensorData.processLightBarrier(msg);
 	}

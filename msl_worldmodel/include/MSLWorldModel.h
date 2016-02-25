@@ -70,7 +70,7 @@ namespace msl
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
-		void onLightBarrierInfo(std_msgs::Bool msg);
+		void onLightBarrierInfo(std_msgs::BoolPtr msg);
 
 
 		MSLSharedWorldModel* getSharedWorldModel();
