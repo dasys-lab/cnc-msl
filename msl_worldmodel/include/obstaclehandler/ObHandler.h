@@ -53,11 +53,11 @@ namespace msl
 		double DFLT_ROB_RADIUS;
 		double OBSTACLE_MAP_OUT_TOLERANCE;
 		double LOCALIZATION_SUCCESS_CONFIDENCE;
-		bool localizedBefore;
 		MSLFootballField* field;
 		MSLWorldModel* wm;
-		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> clusterArray;
-		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newClusterArray;
+		AnnotatedObstacleClusterPool* pool;
+		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
+		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
 		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 	};
 

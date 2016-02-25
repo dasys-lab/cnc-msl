@@ -1,0 +1,2384 @@
+   1               		.file	"kicker.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 125               	.global	__vector_4
+ 127               	__vector_4:
+   1:kicker.c      **** #include <stdio.h>
+   2:kicker.c      **** #include <stdlib.h>
+   3:kicker.c      **** #include <string.h>
+   4:kicker.c      **** #include <avr/interrupt.h>
+   5:kicker.c      **** #include <avr/io.h>
+   6:kicker.c      **** #include <util/delay.h>
+   7:kicker.c      **** 
+   8:kicker.c      **** #include "global.h"
+   9:kicker.c      **** #include "defaults.h"
+  10:kicker.c      **** #include "booster.h"
+  11:kicker.c      **** #include "messages.h"
+  12:kicker.c      **** #include "uart.h"
+  13:kicker.c      **** #include "timer.h"
+  14:kicker.c      **** #include "ports.h"
+  15:kicker.c      **** #include "kicker.h"
+  16:kicker.c      **** 
+  17:kicker.c      **** // Kick without rotating the servo
+  18:kicker.c      **** // uncomment this to decativate servo
+  19:kicker.c      **** // warning: this may harm the hardware. fix the servo in a kick-position
+  20:kicker.c      **** //#define DEACTIVATE_SERVO
+  21:kicker.c      **** #define MAX(x,y) ((x)>(y)?(x):(y))
+  22:kicker.c      **** #define MIN(x,y) ((x)<(y)?(x):(y))
+  23:kicker.c      **** 
+  24:kicker.c      **** #ifdef DEACTIVATE_SERVO
+  25:kicker.c      **** #	warning This FW is configured to deactivate the servo.
+  26:kicker.c      **** #endif
+  27:kicker.c      **** 
+  28:kicker.c      **** // Use this if we have a hardware interlock with an solenoid
+  29:kicker.c      **** #define USE_SOLENOID_INTERLOCK
+  30:kicker.c      **** 
+  31:kicker.c      **** // allow a variance from a forced voltage (in Volt)
+  32:kicker.c      **** #define EPSILON_FORCED_VOLTAGE	0
+  33:kicker.c      **** 
+  34:kicker.c      **** // time in which the kick task expires
+  35:kicker.c      **** #define KICK_TASK_EXPIRE	2000
+  36:kicker.c      **** 
+  37:kicker.c      **** #define TIME_BETWEEN_TWO_SHOTS	200 // ms
+  38:kicker.c      **** 
+  39:kicker.c      **** // the logic state for the signal to lock/unlock the solenoid is defined here
+  40:kicker.c      **** #define UNLOCK_ROTOR		SET(ROTOR_INTERLOCK)
+  41:kicker.c      **** #define LOCK_ROTOR			RESET(ROTOR_INTERLOCK)
+  42:kicker.c      **** #define IS_ROTOR_LOCKED		(! IS_SET(ROTOR_CHECKLOCK))
+  43:kicker.c      **** 
+  44:kicker.c      **** int16_t lastServoValue = -1;
+  45:kicker.c      **** uint8_t MOVE_OFFSET = 20;
+  46:kicker.c      **** 
+  47:kicker.c      **** 
+  48:kicker.c      **** struct KICK_STRUCT {
+  49:kicker.c      **** 	uint32_t timestamp;
+  50:kicker.c      **** 	uint32_t last_kick;
+  51:kicker.c      **** 	uint8_t  release_time;
+  52:kicker.c      **** 	uint8_t  at_voltage;
+  53:kicker.c      **** } kick_job = {0, 0, 0, 0};
+  54:kicker.c      **** 
+  55:kicker.c      **** #define ROTJOB_START 0
+  56:kicker.c      **** #define ROTJOB_ROT 1
+  57:kicker.c      **** #define ROTJOB_END 2
+  58:kicker.c      **** #define ROTJOB_WIG_IN_LEFT 3
+  59:kicker.c      **** #define ROTJOB_WIG_IN_RIGHT 4
+  60:kicker.c      **** 
+  61:kicker.c      **** struct ROTATE_STRUCT {
+  62:kicker.c      **** 	uint32_t timestamp;
+  63:kicker.c      **** 	uint32_t last_rotate;
+  64:kicker.c      **** 	uint8_t pos;
+  65:kicker.c      **** 	int8_t dir;
+  66:kicker.c      **** 	uint8_t state;
+  67:kicker.c      **** } rotate_job = {0, 0, 0, 0, 0};
+  68:kicker.c      **** 
+  69:kicker.c      **** 
+  70:kicker.c      **** // initialization without a usable number
+  71:kicker.c      **** //uint16_t servo_pos[3] = {150, 210, 90}; // PWM
+  72:kicker.c      **** uint8_t actual_pos = 1;		///< the target position of the rotor
+  73:kicker.c      **** 
+  74:kicker.c      **** uint32_t rotorLockTime = 0;
+  75:kicker.c      **** uint8_t rotorLocked    = 0;
+  76:kicker.c      **** uint8_t rotorWasLocked = 0;
+  77:kicker.c      **** 
+  78:kicker.c      **** //wiggle out
+  79:kicker.c      **** uint32_t wiggle_time = 0;
+  80:kicker.c      **** int8_t wiggle_dir = 0;
+  81:kicker.c      **** 
+  82:kicker.c      **** 
+  83:kicker.c      **** //wiggle in
+  84:kicker.c      **** uint8_t wigInCounter = 0;
+  85:kicker.c      **** uint16_t rotItCounter = 0;
+  86:kicker.c      **** 
+  87:kicker.c      **** uint8_t curServoPos = 1;
+  88:kicker.c      **** 
+  89:kicker.c      **** //FIVE(5) PARAMS ARE ROBOT SPECIFIC!
+  90:kicker.c      **** //   servo_pos: kicker1 kicker2 kicker3
+  91:kicker.c      **** //uint16_t servo_pos[3] = {153, 200, 102}; // PWM zwerg
+  92:kicker.c      **** //uint16_t servo_pos[3] = {140, 186, 92}; // PWM fransen (deadband 2)
+  93:kicker.c      **** //uint16_t servo_pos[3] = {147, 205, 94}; // PWM fransen (deadband 1)
+  94:kicker.c      **** //uint16_t servo_pos[3] = {155, 216, 102}; // PWM bart
+  95:kicker.c      **** uint16_t servo_pos[3] = {143, 204, 91}; // PWM scotti
+  96:kicker.c      **** //uint16_t servo_pos[3] = {150, 197, 101}; // PWM muecke
+  97:kicker.c      **** //uint16_t servo_pos[3] = {157, 219, 94}; // PWM TODO
+  98:kicker.c      **** 
+  99:kicker.c      **** //#define SERVO_MAX_POS 220
+ 100:kicker.c      **** //#define SERVO_MIN_POS 94
+ 101:kicker.c      **** //#define SERVO_MAX_POS 218 //BART
+ 102:kicker.c      **** //#define SERVO_MIN_POS 94
+ 103:kicker.c      **** //#define SERVO_MAX_POS 201 //MUECKE
+ 104:kicker.c      **** //#define SERVO_MIN_POS 98
+ 105:kicker.c      **** //#define SERVO_MAX_POS 191 //FRANSEN
+ 106:kicker.c      **** //#define SERVO_MIN_POS 89
+ 107:kicker.c      **** //#define SERVO_MAX_POS 201 //ZWERG
+ 108:kicker.c      **** //#define SERVO_MIN_POS 100
+ 109:kicker.c      **** #define SERVO_MAX_POS 210 //SCOTTI
+ 110:kicker.c      **** #define SERVO_MIN_POS 80
+ 111:kicker.c      **** 
+ 112:kicker.c      **** //END ROBOT SPECIFIC PARAMS
+ 113:kicker.c      **** 
+ 114:kicker.c      **** volatile uint16_t rotation_pending_ms = 1;
+ 115:kicker.c      **** volatile uint16_t target_val = 0;
+ 116:kicker.c      **** uint8_t target_pos = 1;
+ 117:kicker.c      **** 
+ 118:kicker.c      **** 
+ 119:kicker.c      **** // called every 10us
+ 120:kicker.c      **** ISR(TIMER2_COMP_vect) {
+ 129               	.LM0:
+ 130               	.LFBB1:
+ 131 0000 1F92      		push r1
+ 132 0002 0F92      		push r0
+ 133 0004 0FB6      		in r0,__SREG__
+ 134 0006 0F92      		push r0
+ 135 0008 1124      		clr __zero_reg__
+ 136 000a 2F93      		push r18
+ 137 000c 3F93      		push r19
+ 138 000e 8F93      		push r24
+ 139 0010 9F93      		push r25
+ 140               	/* prologue: Signal */
+ 141               	/* frame size = 0 */
+ 142               	/* stack size = 7 */
+ 143               	.L__stack_usage = 7
+ 121:kicker.c      **** 	static uint16_t count = 0;
+ 122:kicker.c      **** 	static uint8_t uscnt = 0;
+ 123:kicker.c      **** 	if (count > target_val)
+ 145               	.LM1:
+ 146 0012 8091 0000 		lds r24,target_val
+ 147 0016 9091 0000 		lds r25,target_val+1
+ 148 001a 2091 0000 		lds r18,count.2160
+ 149 001e 3091 0000 		lds r19,count.2160+1
+ 150 0022 8217      		cp r24,r18
+ 151 0024 9307      		cpc r25,r19
+ 152 0026 00F4      		brsh .L2
+ 124:kicker.c      **** 		PORTD &= ~(1 << PD7);
+ 154               	.LM2:
+ 155 0028 9798      		cbi 0x12,7
+ 156 002a 00C0      		rjmp .L3
+ 157               	.L2:
+ 125:kicker.c      **** 	else
+ 126:kicker.c      **** 		PORTD |= (1 << PD7);
+ 159               	.LM3:
+ 160 002c 979A      		sbi 0x12,7
+ 161               	.L3:
+ 127:kicker.c      **** 
+ 128:kicker.c      **** 	if (count < 2000 + target_val)
+ 163               	.LM4:
+ 164 002e 8091 0000 		lds r24,count.2160
+ 165 0032 9091 0000 		lds r25,count.2160+1
+ 166 0036 2091 0000 		lds r18,target_val
+ 167 003a 3091 0000 		lds r19,target_val+1
+ 168 003e 2053      		subi r18,48
+ 169 0040 384F      		sbci r19,-8
+ 170 0042 8217      		cp r24,r18
+ 171 0044 9307      		cpc r25,r19
+ 172 0046 00F4      		brsh .L4
+ 129:kicker.c      **** 		count++;
+ 174               	.LM5:
+ 175 0048 0196      		adiw r24,1
+ 176 004a 9093 0000 		sts count.2160+1,r25
+ 177 004e 8093 0000 		sts count.2160,r24
+ 178 0052 00C0      		rjmp .L5
+ 179               	.L4:
+ 130:kicker.c      **** 	else
+ 131:kicker.c      **** 		count = 0;
+ 181               	.LM6:
+ 182 0054 1092 0000 		sts count.2160+1,__zero_reg__
+ 183 0058 1092 0000 		sts count.2160,__zero_reg__
+ 184               	.L5:
+ 132:kicker.c      **** 
+ 133:kicker.c      **** 	if (rotation_pending_ms > 0 && ++uscnt > 100) {
+ 186               	.LM7:
+ 187 005c 8091 0000 		lds r24,rotation_pending_ms
+ 188 0060 9091 0000 		lds r25,rotation_pending_ms+1
+ 189 0064 892B      		or r24,r25
+ 190 0066 01F0      		breq .L1
+ 192               	.LM8:
+ 193 0068 8091 0000 		lds r24,uscnt.2161
+ 194 006c 8F5F      		subi r24,lo8(-(1))
+ 195 006e 8093 0000 		sts uscnt.2161,r24
+ 196 0072 8536      		cpi r24,lo8(101)
+ 197 0074 00F0      		brlo .L1
+ 134:kicker.c      **** 		uscnt = 0;
+ 199               	.LM9:
+ 200 0076 1092 0000 		sts uscnt.2161,__zero_reg__
+ 135:kicker.c      **** 		rotation_pending_ms--;
+ 202               	.LM10:
+ 203 007a 8091 0000 		lds r24,rotation_pending_ms
+ 204 007e 9091 0000 		lds r25,rotation_pending_ms+1
+ 205 0082 0197      		sbiw r24,1
+ 206 0084 9093 0000 		sts rotation_pending_ms+1,r25
+ 207 0088 8093 0000 		sts rotation_pending_ms,r24
+ 208               	.L1:
+ 209               	/* epilogue start */
+ 136:kicker.c      **** 	}
+ 137:kicker.c      **** }
+ 211               	.LM11:
+ 212 008c 9F91      		pop r25
+ 213 008e 8F91      		pop r24
+ 214 0090 3F91      		pop r19
+ 215 0092 2F91      		pop r18
+ 216 0094 0F90      		pop r0
+ 217 0096 0FBE      		out __SREG__,r0
+ 218 0098 0F90      		pop r0
+ 219 009a 1F90      		pop r1
+ 220 009c 1895      		reti
+ 226               	.Lscope1:
+ 228               	.global	kicker_init
+ 230               	kicker_init:
+ 138:kicker.c      **** 
+ 139:kicker.c      **** void kicker_init(void) {
+ 232               	.LM12:
+ 233               	.LFBB2:
+ 234 009e 7F92      		push r7
+ 235 00a0 8F92      		push r8
+ 236 00a2 9F92      		push r9
+ 237 00a4 AF92      		push r10
+ 238 00a6 BF92      		push r11
+ 239 00a8 CF92      		push r12
+ 240 00aa DF92      		push r13
+ 241 00ac EF92      		push r14
+ 242 00ae FF92      		push r15
+ 243 00b0 0F93      		push r16
+ 244 00b2 1F93      		push r17
+ 245 00b4 CF93      		push r28
+ 246 00b6 DF93      		push r29
+ 247               	/* prologue: function */
+ 248               	/* frame size = 0 */
+ 249               	/* stack size = 13 */
+ 250               	.L__stack_usage = 13
+ 140:kicker.c      **** 
+ 141:kicker.c      ****         uint32_t i;
+ 142:kicker.c      **** 	target_val = servo_pos[0];
+ 252               	.LM13:
+ 253 00b8 8091 0000 		lds r24,servo_pos
+ 254 00bc 9091 0000 		lds r25,servo_pos+1
+ 255 00c0 9093 0000 		sts target_val+1,r25
+ 256 00c4 8093 0000 		sts target_val,r24
+ 143:kicker.c      **** 
+ 144:kicker.c      **** 	// configure the port to release the kicker
+ 145:kicker.c      **** 	SET_OUTPUT(RELEASE);
+ 258               	.LM14:
+ 259 00c8 D39A      		sbi 0x1a,3
+ 146:kicker.c      **** 	RESET(RELEASE);
+ 261               	.LM15:
+ 262 00ca DB98      		cbi 0x1b,3
+ 147:kicker.c      **** 
+ 148:kicker.c      **** 	// even if we don't use the interlock, we unlock it to have a safe state
+ 149:kicker.c      **** 	SET_OUTPUT(ROTOR_INTERLOCK);
+ 264               	.LM16:
+ 265 00cc D59A      		sbi 0x1a,5
+ 150:kicker.c      **** 	UNLOCK_ROTOR;
+ 267               	.LM17:
+ 268 00ce DD9A      		sbi 0x1b,5
+ 151:kicker.c      **** 
+ 152:kicker.c      **** 	SET_INPUT(ROTOR_CHECKLOCK);
+ 270               	.LM18:
+ 271 00d0 D298      		cbi 0x1a,2
+ 153:kicker.c      **** 
+ 154:kicker.c      **** #ifdef SERIAL_SERVO
+ 155:kicker.c      **** 	uart_init(UART_BAUD_SELECT(UART_BAUD_RATE, F_CPU));
+ 156:kicker.c      **** #else
+ 157:kicker.c      **** 	// Init PWM
+ 158:kicker.c      **** 	TIMSK |= (1 << OCIE2);
+ 273               	.LM19:
+ 274 00d2 89B7      		in r24,0x39
+ 275 00d4 8068      		ori r24,lo8(-128)
+ 276 00d6 89BF      		out 0x39,r24
+ 159:kicker.c      **** 	TCCR2 |= (1 << WGM21) | (1 << CS20);
+ 278               	.LM20:
+ 279 00d8 85B5      		in r24,0x25
+ 280 00da 8960      		ori r24,lo8(9)
+ 281 00dc 85BD      		out 0x25,r24
+ 160:kicker.c      **** 	OCR2 = F_CPU/100000;
+ 283               	.LM21:
+ 284 00de 80EA      		ldi r24,lo8(-96)
+ 285 00e0 83BD      		out 0x23,r24
+ 161:kicker.c      **** 
+ 162:kicker.c      **** 	// Datadirection output Port D Pin 7
+ 163:kicker.c      **** 	DDRD |= (1 << DDD7);
+ 287               	.LM22:
+ 288 00e2 8F9A      		sbi 0x11,7
+ 164:kicker.c      **** 	//PORTD &= ~(1 << PD7);
+ 165:kicker.c      **** 
+ 166:kicker.c      **** 	wiggle_dir = -1;
+ 290               	.LM23:
+ 291 00e4 8FEF      		ldi r24,lo8(-1)
+ 292 00e6 8093 0000 		sts wiggle_dir,r24
+ 167:kicker.c      ****         for (i=0; i < 600; i++) {
+ 294               	.LM24:
+ 295 00ea C12C      		mov r12,__zero_reg__
+ 296 00ec D12C      		mov r13,__zero_reg__
+ 297 00ee 7601      		movw r14,r12
+ 168:kicker.c      **** 		
+ 169:kicker.c      **** 		if (IS_ROTOR_LOCKED) {
+ 170:kicker.c      **** 			if (wiggle_dir>0) target_val=SERVO_MAX_POS;
+ 171:kicker.c      **** 			if (wiggle_dir<0) target_val=SERVO_MIN_POS;
+ 299               	.LM25:
+ 300 00f0 C0E5      		ldi r28,lo8(80)
+ 301 00f2 D0E0      		ldi r29,0
+ 170:kicker.c      **** 			if (wiggle_dir>0) target_val=SERVO_MAX_POS;
+ 303               	.LM26:
+ 304 00f4 02ED      		ldi r16,lo8(-46)
+ 305 00f6 10E0      		ldi r17,0
+ 172:kicker.c      **** 			if (i%80 == 0) {
+ 307               	.LM27:
+ 308 00f8 90E5      		ldi r25,lo8(80)
+ 309 00fa 892E      		mov r8,r25
+ 310 00fc 912C      		mov r9,__zero_reg__
+ 311 00fe A12C      		mov r10,__zero_reg__
+ 312 0100 B12C      		mov r11,__zero_reg__
+ 313               	.L17:
+ 169:kicker.c      **** 		if (IS_ROTOR_LOCKED) {
+ 315               	.LM28:
+ 316 0102 CA9B      		sbis 0x19,2
+ 317 0104 00C0      		rjmp .L11
+ 318               	.L16:
+ 173:kicker.c      **** 				wiggle_dir *=-1;
+ 174:kicker.c      **** 				//i=0;
+ 175:kicker.c      **** 			}
+ 176:kicker.c      **** 		}
+ 177:kicker.c      **** 		else {
+ 178:kicker.c      **** 			break;
+ 179:kicker.c      **** 		}
+ 180:kicker.c      **** 	       _delay_ms(1);
+ 181:kicker.c      **** 	}
+ 182:kicker.c      **** 	target_val=servo_pos[0];		
+ 320               	.LM29:
+ 321 0106 8091 0000 		lds r24,servo_pos
+ 322 010a 9091 0000 		lds r25,servo_pos+1
+ 323 010e 9093 0000 		sts target_val+1,r25
+ 324 0112 8093 0000 		sts target_val,r24
+ 325 0116 80E0      		ldi r24,0
+ 326 0118 90E0      		ldi r25,0
+ 327 011a 00C0      		rjmp .L12
+ 328               	.L11:
+ 170:kicker.c      **** 			if (wiggle_dir>0) target_val=SERVO_MAX_POS;
+ 330               	.LM30:
+ 331 011c 7090 0000 		lds r7,wiggle_dir
+ 332 0120 1714      		cp __zero_reg__,r7
+ 333 0122 04F4      		brge .L13
+ 170:kicker.c      **** 			if (wiggle_dir>0) target_val=SERVO_MAX_POS;
+ 335               	.LM31:
+ 336 0124 1093 0000 		sts target_val+1,r17
+ 337 0128 0093 0000 		sts target_val,r16
+ 338 012c 00C0      		rjmp .L14
+ 339               	.L13:
+ 171:kicker.c      **** 			if (wiggle_dir<0) target_val=SERVO_MIN_POS;
+ 341               	.LM32:
+ 342 012e 7720      		tst r7
+ 343 0130 01F0      		breq .L14
+ 171:kicker.c      **** 			if (wiggle_dir<0) target_val=SERVO_MIN_POS;
+ 345               	.LM33:
+ 346 0132 D093 0000 		sts target_val+1,r29
+ 347 0136 C093 0000 		sts target_val,r28
+ 348               	.L14:
+ 172:kicker.c      **** 			if (i%80 == 0) {
+ 350               	.LM34:
+ 351 013a C701      		movw r24,r14
+ 352 013c B601      		movw r22,r12
+ 353 013e A501      		movw r20,r10
+ 354 0140 9401      		movw r18,r8
+ 355 0142 0E94 0000 		call __udivmodsi4
+ 356 0146 672B      		or r22,r23
+ 357 0148 682B      		or r22,r24
+ 358 014a 692B      		or r22,r25
+ 359 014c 01F4      		brne .L15
+ 173:kicker.c      **** 				wiggle_dir *=-1;
+ 361               	.LM35:
+ 362 014e 7194      		neg r7
+ 363 0150 7092 0000 		sts wiggle_dir,r7
+ 364               	.L15:
+ 365               	.LBB14:
+ 366               	.LBB15:
+ 368               	.Ltext1:
+   1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/avr/include/util/delay.h **** 
+   6:/usr/lib/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/avr/include/util/delay.h **** 
+   9:/usr/lib/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/avr/include/util/delay.h **** 
+  12:/usr/lib/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/avr/include/util/delay.h **** 
+  17:/usr/lib/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/avr/include/util/delay.h **** 
+  21:/usr/lib/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/avr/include/util/delay.h **** 
+  33:/usr/lib/avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/avr/include/util/delay.h **** 
+  35:/usr/lib/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/avr/include/util/delay.h **** 
+  38:/usr/lib/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/avr/include/util/delay.h **** #endif
+  41:/usr/lib/avr/include/util/delay.h **** 
+  42:/usr/lib/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/avr/include/util/delay.h **** 
+  46:/usr/lib/avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/avr/include/util/delay.h ****     \code
+  49:/usr/lib/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/avr/include/util/delay.h **** 
+  54:/usr/lib/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/avr/include/util/delay.h ****     used.
+  58:/usr/lib/avr/include/util/delay.h **** 
+  59:/usr/lib/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/avr/include/util/delay.h **** 
+  68:/usr/lib/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/avr/include/util/delay.h **** 
+  77:/usr/lib/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/avr/include/util/delay.h **** 
+  81:/usr/lib/avr/include/util/delay.h **** */
+  82:/usr/lib/avr/include/util/delay.h **** 
+  83:/usr/lib/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/avr/include/util/delay.h **** #endif
+  87:/usr/lib/avr/include/util/delay.h **** 
+  88:/usr/lib/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/avr/include/util/delay.h **** #endif
+  93:/usr/lib/avr/include/util/delay.h **** 
+  94:/usr/lib/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/avr/include/util/delay.h **** #endif
+  97:/usr/lib/avr/include/util/delay.h **** 
+  98:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/avr/include/util/delay.h **** #endif
+ 103:/usr/lib/avr/include/util/delay.h **** 
+ 104:/usr/lib/avr/include/util/delay.h **** /**
+ 105:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/avr/include/util/delay.h **** 
+ 107:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/avr/include/util/delay.h **** 
+ 109:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/avr/include/util/delay.h **** 
+ 112:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/avr/include/util/delay.h **** 
+ 114:/usr/lib/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/avr/include/util/delay.h **** 
+ 120:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/avr/include/util/delay.h **** 
+ 125:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/avr/include/util/delay.h **** 
+ 129:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/avr/include/util/delay.h **** 
+ 132:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/avr/include/util/delay.h **** 
+ 140:/usr/lib/avr/include/util/delay.h ****  */
+ 141:/usr/lib/avr/include/util/delay.h **** void
+ 142:/usr/lib/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/avr/include/util/delay.h **** {
+ 144:/usr/lib/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/avr/include/util/delay.h **** 
+ 153:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/avr/include/util/delay.h **** 
+ 156:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/avr/include/util/delay.h **** 
+ 159:/usr/lib/avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/avr/include/util/delay.h **** 
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 370               	.LM36:
+ 371 0154 8FE9      		ldi r24,lo8(3999)
+ 372 0156 9FE0      		ldi r25,hi8(3999)
+ 373 0158 0197      		1: sbiw r24,1
+ 374 015a 01F4      		brne 1b
+ 375 015c 00C0      		rjmp .
+ 376 015e 0000      		nop
+ 377               	.LBE15:
+ 378               	.LBE14:
+ 380               	.Ltext2:
+ 167:kicker.c      ****         for (i=0; i < 600; i++) {
+ 382               	.LM37:
+ 383 0160 9FEF      		ldi r25,-1
+ 384 0162 C91A      		sub r12,r25
+ 385 0164 D90A      		sbc r13,r25
+ 386 0166 E90A      		sbc r14,r25
+ 387 0168 F90A      		sbc r15,r25
+ 388 016a E8E5      		ldi r30,88
+ 389 016c CE16      		cp r12,r30
+ 390 016e E2E0      		ldi r30,2
+ 391 0170 DE06      		cpc r13,r30
+ 392 0172 E104      		cpc r14,__zero_reg__
+ 393 0174 F104      		cpc r15,__zero_reg__
+ 394 0176 01F4      		brne .L17
+ 395 0178 00C0      		rjmp .L16
+ 396               	.L12:
+ 397               	.LBB16:
+ 398               	.LBB17:
+ 400               	.Ltext3:
+ 402               	.LM38:
+ 403 017a EFE9      		ldi r30,lo8(3999)
+ 404 017c FFE0      		ldi r31,hi8(3999)
+ 405 017e 3197      		1: sbiw r30,1
+ 406 0180 01F4      		brne 1b
+ 407 0182 00C0      		rjmp .
+ 408 0184 0000      		nop
+ 409 0186 0196      		adiw r24,1
+ 410               	.LBE17:
+ 411               	.LBE16:
+ 413               	.Ltext4:
+ 183:kicker.c      **** 	for (i=0; i< 340; i++) {
+ 415               	.LM39:
+ 416 0188 8435      		cpi r24,84
+ 417 018a F1E0      		ldi r31,1
+ 418 018c 9F07      		cpc r25,r31
+ 419 018e 01F4      		brne .L12
+ 184:kicker.c      **** 	       _delay_ms(1);	
+ 185:kicker.c      **** 	}
+ 186:kicker.c      **** 	LOCK_ROTOR;
+ 421               	.LM40:
+ 422 0190 DD98      		cbi 0x1b,5
+ 187:kicker.c      **** 	for(i=0; i < 400; i++) {
+ 424               	.LM41:
+ 425 0192 C12C      		mov r12,__zero_reg__
+ 426 0194 D12C      		mov r13,__zero_reg__
+ 427 0196 7601      		movw r14,r12
+ 188:kicker.c      **** 		if (IS_ROTOR_LOCKED) break;
+ 189:kicker.c      **** 		if (wiggle_dir>0) target_val=MIN(SERVO_MAX_POS,servo_pos[0]+6);
+ 190:kicker.c      **** 		if (wiggle_dir<0) target_val=MAX(SERVO_MIN_POS,servo_pos[0]-6);
+ 191:kicker.c      **** 		if (i%80==0) wiggle_dir*=-1;	
+ 429               	.LM42:
+ 430 0198 80E5      		ldi r24,lo8(80)
+ 431 019a 882E      		mov r8,r24
+ 432 019c 912C      		mov r9,__zero_reg__
+ 433 019e A12C      		mov r10,__zero_reg__
+ 434 01a0 B12C      		mov r11,__zero_reg__
+ 435               	.L26:
+ 188:kicker.c      **** 		if (IS_ROTOR_LOCKED) break;
+ 437               	.LM43:
+ 438 01a2 CA99      		sbic 0x19,2
+ 439 01a4 00C0      		rjmp .L19
+ 440               	.L25:
+ 192:kicker.c      **** 		_delay_ms(1);
+ 193:kicker.c      **** 	}
+ 194:kicker.c      **** 	wiggle_dir = 0;
+ 442               	.LM44:
+ 443 01a6 1092 0000 		sts wiggle_dir,__zero_reg__
+ 195:kicker.c      **** 	target_val=servo_pos[0];		
+ 445               	.LM45:
+ 446 01aa 8091 0000 		lds r24,servo_pos
+ 447 01ae 9091 0000 		lds r25,servo_pos+1
+ 448 01b2 9093 0000 		sts target_val+1,r25
+ 449 01b6 8093 0000 		sts target_val,r24
+ 196:kicker.c      **** 
+ 197:kicker.c      **** 	rotate_job.timestamp = 0;
+ 451               	.LM46:
+ 452 01ba 1092 0000 		sts rotate_job,__zero_reg__
+ 453 01be 1092 0000 		sts rotate_job+1,__zero_reg__
+ 454 01c2 1092 0000 		sts rotate_job+2,__zero_reg__
+ 455 01c6 1092 0000 		sts rotate_job+3,__zero_reg__
+ 456               	/* epilogue start */
+ 198:kicker.c      **** 
+ 199:kicker.c      **** #endif
+ 200:kicker.c      **** }
+ 458               	.LM47:
+ 459 01ca DF91      		pop r29
+ 460 01cc CF91      		pop r28
+ 461 01ce 1F91      		pop r17
+ 462 01d0 0F91      		pop r16
+ 463 01d2 FF90      		pop r15
+ 464 01d4 EF90      		pop r14
+ 465 01d6 DF90      		pop r13
+ 466 01d8 CF90      		pop r12
+ 467 01da BF90      		pop r11
+ 468 01dc AF90      		pop r10
+ 469 01de 9F90      		pop r9
+ 470 01e0 8F90      		pop r8
+ 471 01e2 7F90      		pop r7
+ 472 01e4 0895      		ret
+ 473               	.L19:
+ 189:kicker.c      **** 		if (wiggle_dir>0) target_val=MIN(SERVO_MAX_POS,servo_pos[0]+6);
+ 475               	.LM48:
+ 476 01e6 C091 0000 		lds r28,wiggle_dir
+ 477 01ea 1C16      		cp __zero_reg__,r28
+ 478 01ec 04F4      		brge .L20
+ 189:kicker.c      **** 		if (wiggle_dir>0) target_val=MIN(SERVO_MAX_POS,servo_pos[0]+6);
+ 480               	.LM49:
+ 481 01ee 8091 0000 		lds r24,servo_pos
+ 482 01f2 9091 0000 		lds r25,servo_pos+1
+ 483 01f6 0696      		adiw r24,6
+ 484 01f8 833D      		cpi r24,-45
+ 485 01fa 9105      		cpc r25,__zero_reg__
+ 486 01fc 00F0      		brlo .L23
+ 487 01fe 82ED      		ldi r24,lo8(-46)
+ 488 0200 90E0      		ldi r25,0
+ 489 0202 00C0      		rjmp .L23
+ 490               	.L20:
+ 190:kicker.c      **** 		if (wiggle_dir<0) target_val=MAX(SERVO_MIN_POS,servo_pos[0]-6);
+ 492               	.LM50:
+ 493 0204 CC23      		tst r28
+ 494 0206 01F0      		breq .L22
+ 190:kicker.c      **** 		if (wiggle_dir<0) target_val=MAX(SERVO_MIN_POS,servo_pos[0]-6);
+ 496               	.LM51:
+ 497 0208 8091 0000 		lds r24,servo_pos
+ 498 020c 9091 0000 		lds r25,servo_pos+1
+ 499 0210 0697      		sbiw r24,6
+ 500 0212 8035      		cpi r24,80
+ 501 0214 9105      		cpc r25,__zero_reg__
+ 502 0216 00F4      		brsh .L23
+ 503 0218 80E5      		ldi r24,lo8(80)
+ 504 021a 90E0      		ldi r25,0
+ 505               	.L23:
+ 506 021c 9093 0000 		sts target_val+1,r25
+ 507 0220 8093 0000 		sts target_val,r24
+ 508               	.L22:
+ 191:kicker.c      **** 		if (i%80==0) wiggle_dir*=-1;	
+ 510               	.LM52:
+ 511 0224 C701      		movw r24,r14
+ 512 0226 B601      		movw r22,r12
+ 513 0228 A501      		movw r20,r10
+ 514 022a 9401      		movw r18,r8
+ 515 022c 0E94 0000 		call __udivmodsi4
+ 516 0230 672B      		or r22,r23
+ 517 0232 682B      		or r22,r24
+ 518 0234 692B      		or r22,r25
+ 519 0236 01F4      		brne .L24
+ 191:kicker.c      **** 		if (i%80==0) wiggle_dir*=-1;	
+ 521               	.LM53:
+ 522 0238 C195      		neg r28
+ 523 023a C093 0000 		sts wiggle_dir,r28
+ 524               	.L24:
+ 525               	.LBB18:
+ 526               	.LBB19:
+ 528               	.Ltext5:
+ 530               	.LM54:
+ 531 023e 8FE9      		ldi r24,lo8(3999)
+ 532 0240 9FE0      		ldi r25,hi8(3999)
+ 533 0242 0197      		1: sbiw r24,1
+ 534 0244 01F4      		brne 1b
+ 535 0246 00C0      		rjmp .
+ 536 0248 0000      		nop
+ 537               	.LBE19:
+ 538               	.LBE18:
+ 540               	.Ltext6:
+ 187:kicker.c      **** 	for(i=0; i < 400; i++) {
+ 542               	.LM55:
+ 543 024a 9FEF      		ldi r25,-1
+ 544 024c C91A      		sub r12,r25
+ 545 024e D90A      		sbc r13,r25
+ 546 0250 E90A      		sbc r14,r25
+ 547 0252 F90A      		sbc r15,r25
+ 548 0254 E0E9      		ldi r30,-112
+ 549 0256 CE16      		cp r12,r30
+ 550 0258 E1E0      		ldi r30,1
+ 551 025a DE06      		cpc r13,r30
+ 552 025c E104      		cpc r14,__zero_reg__
+ 553 025e F104      		cpc r15,__zero_reg__
+ 554 0260 01F0      		breq .+2
+ 555 0262 00C0      		rjmp .L26
+ 556 0264 00C0      		rjmp .L25
+ 558               	.Lscope2:
+ 561               	.global	kicker_rotate_servo
+ 563               	kicker_rotate_servo:
+ 201:kicker.c      **** 
+ 202:kicker.c      **** #ifdef SERIAL_SERVO
+ 203:kicker.c      **** int8_t query_servo(char *query, uint8_t *reply) {
+ 204:kicker.c      **** 	
+ 205:kicker.c      **** 	uint8_t i = 0;
+ 206:kicker.c      **** 	uint32_t ts = timer_get_ms();
+ 207:kicker.c      **** 	int c;
+ 208:kicker.c      **** 
+ 209:kicker.c      **** 	// send data
+ 210:kicker.c      **** 	if (query == NULL) {
+ 211:kicker.c      **** 		error("NULL value");
+ 212:kicker.c      **** 		reply = NULL;
+ 213:kicker.c      **** 		return -1;
+ 214:kicker.c      **** 	}
+ 215:kicker.c      **** 	uart_puts(query);
+ 216:kicker.c      **** 	
+ 217:kicker.c      **** 	// receive data
+ 218:kicker.c      **** 	do {
+ 219:kicker.c      **** 
+ 220:kicker.c      **** 		if ((timer_get_ms() - ts) > UART_TIMEOUT) {
+ 221:kicker.c      **** 			warning("UART Timeout");
+ 222:kicker.c      **** 			return -1;
+ 223:kicker.c      **** 		}
+ 224:kicker.c      **** 
+ 225:kicker.c      **** 		c = uart_getc();
+ 226:kicker.c      **** 
+ 227:kicker.c      **** 		if (c == UART_NO_DATA) {
+ 228:kicker.c      **** 			continue;
+ 229:kicker.c      **** 		}
+ 230:kicker.c      **** 		else if (c == UART_BUFFER_OVERFLOW) {
+ 231:kicker.c      **** 			warning("UART buffer overflow");
+ 232:kicker.c      **** 			return -1;
+ 233:kicker.c      **** 		}
+ 234:kicker.c      **** 		else if (c == UART_OVERRUN_ERROR) {
+ 235:kicker.c      **** 			warning("UART overrun error");
+ 236:kicker.c      **** 			return -1;
+ 237:kicker.c      **** 		}
+ 238:kicker.c      **** 		else if (c == UART_FRAME_ERROR) {
+ 239:kicker.c      **** 			warning("UART frame error");
+ 240:kicker.c      **** 			return -1;
+ 241:kicker.c      **** 		}
+ 242:kicker.c      **** 
+ 243:kicker.c      **** 		reply[i++] = (uint8_t) c;
+ 244:kicker.c      **** 
+ 245:kicker.c      **** 		if (i >= BUFFER_LENGTH) {
+ 246:kicker.c      **** 			error("UART reply is too long");
+ 247:kicker.c      **** 			return -1;
+ 248:kicker.c      **** 		}
+ 249:kicker.c      **** 
+ 250:kicker.c      **** 	} while (c != '\n');
+ 251:kicker.c      **** 
+ 252:kicker.c      **** 	return i;
+ 253:kicker.c      **** }
+ 254:kicker.c      **** #endif
+ 255:kicker.c      **** 
+ 256:kicker.c      **** void kicker_rotate_servo(uint8_t num) {
+ 565               	.LM56:
+ 566               	.LFBB3:
+ 567               	/* prologue: function */
+ 568               	/* frame size = 0 */
+ 569               	/* stack size = 0 */
+ 570               	.L__stack_usage = 0
+ 257:kicker.c      **** 
+ 258:kicker.c      **** 	//uint8_t sreg;
+ 259:kicker.c      **** 
+ 260:kicker.c      **** 	// sanity checks
+ 261:kicker.c      **** 	if (num < 1 || num > 3)
+ 572               	.LM57:
+ 573 0266 9FEF      		ldi r25,lo8(-1)
+ 574 0268 980F      		add r25,r24
+ 575 026a 9330      		cpi r25,lo8(3)
+ 576 026c 00F4      		brsh .L40
+ 577               	.LBB22:
+ 578               	.LBB23:
+ 262:kicker.c      **** 		return;
+ 263:kicker.c      **** 
+ 264:kicker.c      **** 	// if the servo is deactivated, we do not unlock the rotor
+ 265:kicker.c      **** 	// and do not send data
+ 266:kicker.c      **** #ifndef DEACTIVATE_SERVO
+ 267:kicker.c      **** #  ifdef USE_SOLENOID_INTERLOCK
+ 268:kicker.c      **** 	// more checks
+ 269:kicker.c      **** 	/*if (IS_ROTOR_LOCKED) {
+ 270:kicker.c      **** 		error("ROTOR is still locked");
+ 271:kicker.c      **** 		return;
+ 272:kicker.c      **** 	}*/
+ 273:kicker.c      **** #  endif
+ 274:kicker.c      **** 	// set PWM
+ 275:kicker.c      **** 	target_val = servo_pos[num-1];
+ 580               	.LM58:
+ 581 026e E82F      		mov r30,r24
+ 582 0270 F0E0      		ldi r31,0
+ 583 0272 EE0F      		lsl r30
+ 584 0274 FF1F      		rol r31
+ 585 0276 E050      		subi r30,lo8(-(servo_pos-2))
+ 586 0278 F040      		sbci r31,hi8(-(servo_pos-2))
+ 587 027a 2081      		ld r18,Z
+ 588 027c 3181      		ldd r19,Z+1
+ 589 027e 3093 0000 		sts target_val+1,r19
+ 590 0282 2093 0000 		sts target_val,r18
+ 276:kicker.c      **** 		
+ 277:kicker.c      **** #endif
+ 278:kicker.c      **** 
+ 279:kicker.c      **** 	target_pos = num;
+ 592               	.LM59:
+ 593 0286 8093 0000 		sts target_pos,r24
+ 594               	.L40:
+ 595 028a 0895      		ret
+ 596               	.LBE23:
+ 597               	.LBE22:
+ 599               	.Lscope3:
+ 602               	.global	kicker_rotate_servo_to
+ 604               	kicker_rotate_servo_to:
+ 280:kicker.c      **** 
+ 281:kicker.c      **** 	return;
+ 282:kicker.c      **** }
+ 283:kicker.c      **** void kicker_rotate_servo_to(uint16_t pos) {
+ 606               	.LM60:
+ 607               	.LFBB4:
+ 608               	/* prologue: function */
+ 609               	/* frame size = 0 */
+ 610               	/* stack size = 0 */
+ 611               	.L__stack_usage = 0
+ 284:kicker.c      **** 	// set PWM
+ 285:kicker.c      **** 	target_val = pos;
+ 613               	.LM61:
+ 614 028c 9093 0000 		sts target_val+1,r25
+ 615 0290 8093 0000 		sts target_val,r24
+ 616 0294 0895      		ret
+ 618               	.Lscope4:
+ 622               	.global	kicker_rotate_servo_pos
+ 624               	kicker_rotate_servo_pos:
+ 286:kicker.c      **** 	return;
+ 287:kicker.c      **** }
+ 288:kicker.c      **** 
+ 289:kicker.c      **** 
+ 290:kicker.c      **** void kicker_rotate_servo_pos(uint8_t num, uint16_t pos) {
+ 626               	.LM62:
+ 627               	.LFBB5:
+ 628               	/* prologue: function */
+ 629               	/* frame size = 0 */
+ 630               	/* stack size = 0 */
+ 631               	.L__stack_usage = 0
+ 291:kicker.c      **** 
+ 292:kicker.c      **** 	uint8_t sreg;
+ 293:kicker.c      **** 
+ 294:kicker.c      **** 	// sanity checks
+ 295:kicker.c      **** 	if (num < 1 || num > 3)
+ 633               	.LM63:
+ 634 0296 9FEF      		ldi r25,lo8(-1)
+ 635 0298 980F      		add r25,r24
+ 636 029a 9330      		cpi r25,lo8(3)
+ 637 029c 00F4      		brsh .L43
+ 296:kicker.c      **** 		return;
+ 297:kicker.c      **** 
+ 298:kicker.c      **** 	// if the servo is deactivated, we do not unlock the rotor
+ 299:kicker.c      **** 	// and do not send data
+ 300:kicker.c      **** #ifndef DEACTIVATE_SERVO
+ 301:kicker.c      **** #  ifdef USE_SOLENOID_INTERLOCK
+ 302:kicker.c      **** 	// more checks
+ 303:kicker.c      **** #  endif
+ 304:kicker.c      **** 	// set PWM
+ 305:kicker.c      **** 	target_val = pos;
+ 639               	.LM64:
+ 640 029e 7093 0000 		sts target_val+1,r23
+ 641 02a2 6093 0000 		sts target_val,r22
+ 306:kicker.c      **** 	sreg = SREG;
+ 643               	.LM65:
+ 644 02a6 4FB7      		in r20,__SREG__
+ 307:kicker.c      **** 	cli();
+ 646               	.LM66:
+ 647               	/* #APP */
+ 648               	 ;  307 "kicker.c" 1
+ 649 02a8 F894      		cli
+ 650               	 ;  0 "" 2
+ 308:kicker.c      **** 	rotation_pending_ms = 580; // modify this depending of the distance
+ 652               	.LM67:
+ 653               	/* #NOAPP */
+ 654 02aa 24E4      		ldi r18,lo8(68)
+ 655 02ac 32E0      		ldi r19,lo8(2)
+ 656 02ae 3093 0000 		sts rotation_pending_ms+1,r19
+ 657 02b2 2093 0000 		sts rotation_pending_ms,r18
+ 309:kicker.c      **** 	// smaller value if rotation way is short
+ 310:kicker.c      **** 	if (num == 1 || actual_pos == 1)
+ 659               	.LM68:
+ 660 02b6 8130      		cpi r24,lo8(1)
+ 661 02b8 01F0      		breq .L45
+ 663               	.LM69:
+ 664 02ba 8091 0000 		lds r24,actual_pos
+ 665 02be 8130      		cpi r24,lo8(1)
+ 666 02c0 01F4      		brne .L46
+ 667               	.L45:
+ 311:kicker.c      **** 		rotation_pending_ms = 220;
+ 669               	.LM70:
+ 670 02c2 8CED      		ldi r24,lo8(-36)
+ 671 02c4 90E0      		ldi r25,0
+ 672 02c6 9093 0000 		sts rotation_pending_ms+1,r25
+ 673 02ca 8093 0000 		sts rotation_pending_ms,r24
+ 674               	.L46:
+ 312:kicker.c      **** 	SREG = sreg;
+ 676               	.LM71:
+ 677 02ce 4FBF      		out __SREG__,r20
+ 678               	.L43:
+ 679 02d0 0895      		ret
+ 684               	.Lscope5:
+ 686               	.global	kicker_toggle_interlock
+ 688               	kicker_toggle_interlock:
+ 313:kicker.c      **** 		
+ 314:kicker.c      **** #endif
+ 315:kicker.c      **** 
+ 316:kicker.c      **** 	return;
+ 317:kicker.c      **** }
+ 318:kicker.c      **** 
+ 319:kicker.c      **** 
+ 320:kicker.c      **** void kicker_toggle_interlock(void) {
+ 690               	.LM72:
+ 691               	.LFBB6:
+ 692               	/* prologue: function */
+ 693               	/* frame size = 0 */
+ 694               	/* stack size = 0 */
+ 695               	.L__stack_usage = 0
+ 321:kicker.c      **** 
+ 322:kicker.c      **** #ifdef USE_SOLENOID_INTERLOCK
+ 323:kicker.c      **** 	static char lock = 1;
+ 324:kicker.c      **** 
+ 325:kicker.c      **** 	if (lock) {
+ 697               	.LM73:
+ 698 02d2 8091 0000 		lds r24,lock.2189
+ 699 02d6 8823      		tst r24
+ 700 02d8 01F0      		breq .L51
+ 326:kicker.c      **** 		UNLOCK_ROTOR;
+ 702               	.LM74:
+ 703 02da DD9A      		sbi 0x1b,5
+ 327:kicker.c      **** 		lock = 0;
+ 705               	.LM75:
+ 706 02dc 1092 0000 		sts lock.2189,__zero_reg__
+ 707 02e0 0895      		ret
+ 708               	.L51:
+ 328:kicker.c      **** 	}
+ 329:kicker.c      **** 	else {
+ 330:kicker.c      **** 		LOCK_ROTOR;
+ 710               	.LM76:
+ 711 02e2 DD98      		cbi 0x1b,5
+ 331:kicker.c      **** 		lock = 1;
+ 713               	.LM77:
+ 714 02e4 81E0      		ldi r24,lo8(1)
+ 715 02e6 8093 0000 		sts lock.2189,r24
+ 716 02ea 0895      		ret
+ 721               	.Lscope6:
+ 723               	.global	kicker_get_pos
+ 725               	kicker_get_pos:
+ 332:kicker.c      **** 	}
+ 333:kicker.c      **** #endif
+ 334:kicker.c      **** }
+ 335:kicker.c      **** 
+ 336:kicker.c      **** #ifdef SERIAL_SERVO
+ 337:kicker.c      **** /**
+ 338:kicker.c      ****  * Query the servo for the actual position.
+ 339:kicker.c      ****  *
+ 340:kicker.c      ****  * @return -1 if an error occured
+ 341:kicker.c      ****  */
+ 342:kicker.c      **** int16_t servo_get_pos(void) {
+ 343:kicker.c      **** 
+ 344:kicker.c      **** 	int16_t ret = -1;
+ 345:kicker.c      **** 	uint8_t reply[BUFFER_LENGTH];
+ 346:kicker.c      **** 
+ 347:kicker.c      **** 	int8_t len = query_servo("g\n", reply);
+ 348:kicker.c      **** 
+ 349:kicker.c      **** 	if (len == 4 && reply[0] == 'v' && reply[3] == '\n') {
+ 350:kicker.c      **** 		ret = (reply[1] << 8) + reply[2];
+ 351:kicker.c      **** 	}
+ 352:kicker.c      **** 
+ 353:kicker.c      **** 	return ret;
+ 354:kicker.c      **** }
+ 355:kicker.c      **** #endif
+ 356:kicker.c      **** 
+ 357:kicker.c      **** uint8_t kicker_get_pos(void) {
+ 727               	.LM78:
+ 728               	.LFBB7:
+ 729               	/* prologue: function */
+ 730               	/* frame size = 0 */
+ 731               	/* stack size = 0 */
+ 732               	.L__stack_usage = 0
+ 358:kicker.c      **** 
+ 359:kicker.c      **** 	return actual_pos;
+ 360:kicker.c      **** }
+ 734               	.LM79:
+ 735 02ec 8091 0000 		lds r24,actual_pos
+ 736 02f0 0895      		ret
+ 738               	.Lscope7:
+ 740               	.global	kicker_rotate_handler
+ 742               	kicker_rotate_handler:
+ 361:kicker.c      **** 
+ 362:kicker.c      **** void kicker_rotate_handler(void) {
+ 744               	.LM80:
+ 745               	.LFBB8:
+ 746 02f2 CF92      		push r12
+ 747 02f4 DF92      		push r13
+ 748 02f6 EF92      		push r14
+ 749 02f8 FF92      		push r15
+ 750 02fa CF93      		push r28
+ 751               	/* prologue: function */
+ 752               	/* frame size = 0 */
+ 753               	/* stack size = 5 */
+ 754               	.L__stack_usage = 5
+ 363:kicker.c      **** 
+ 364:kicker.c      **** 	// wait some time after last kick
+ 365:kicker.c      **** 	if ((timer_get_ms() - kick_job.last_kick) < 1000)
+ 756               	.LM81:
+ 757 02fc 0E94 0000 		call timer_get_ms
+ 758 0300 C090 0000 		lds r12,kick_job+4
+ 759 0304 D090 0000 		lds r13,kick_job+4+1
+ 760 0308 E090 0000 		lds r14,kick_job+4+2
+ 761 030c F090 0000 		lds r15,kick_job+4+3
+ 762 0310 6C19      		sub r22,r12
+ 763 0312 7D09      		sbc r23,r13
+ 764 0314 8E09      		sbc r24,r14
+ 765 0316 9F09      		sbc r25,r15
+ 766 0318 683E      		cpi r22,-24
+ 767 031a 7340      		sbci r23,3
+ 768 031c 8105      		cpc r24,__zero_reg__
+ 769 031e 9105      		cpc r25,__zero_reg__
+ 770 0320 00F4      		brsh .+2
+ 771 0322 00C0      		rjmp .L54
+ 366:kicker.c      **** 		return;
+ 367:kicker.c      **** 
+ 368:kicker.c      **** //	if (target_pos == rotate_job.pos)
+ 369:kicker.c      **** //		return;
+ 370:kicker.c      **** 
+ 371:kicker.c      **** 	// check i(servo_pos[num-1] < servo_pos[curServoPos])f a job is to do
+ 372:kicker.c      **** 	if (rotate_job.timestamp > 0) {
+ 773               	.LM82:
+ 774 0324 8091 0000 		lds r24,rotate_job
+ 775 0328 9091 0000 		lds r25,rotate_job+1
+ 776 032c A091 0000 		lds r26,rotate_job+2
+ 777 0330 B091 0000 		lds r27,rotate_job+3
+ 778 0334 892B      		or r24,r25
+ 779 0336 8A2B      		or r24,r26
+ 780 0338 8B2B      		or r24,r27
+ 781 033a 01F4      		brne .+2
+ 782 033c 00C0      		rjmp .L54
+ 373:kicker.c      **** 
+ 374:kicker.c      **** 		// first unlock the rotor.
+ 375:kicker.c      **** 		// if the servo is deactivated, we do not unlock the rotor
+ 376:kicker.c      **** #ifndef DEACTIVATE_SERVO
+ 377:kicker.c      **** #ifdef USE_SOLENOID_INTERLOCK
+ 378:kicker.c      **** 		if (rotate_job.state==ROTJOB_START) {
+ 784               	.LM83:
+ 785 033e C091 0000 		lds r28,rotate_job+10
+ 786 0342 C111      		cpse r28,__zero_reg__
+ 787 0344 00C0      		rjmp .L58
+ 379:kicker.c      **** //warning("start");
+ 380:kicker.c      **** 			UNLOCK_ROTOR;
+ 789               	.LM84:
+ 790 0346 DD9A      		sbi 0x1b,5
+ 381:kicker.c      **** 			rotate_job.state = ROTJOB_ROT;
+ 792               	.LM85:
+ 793 0348 81E0      		ldi r24,lo8(1)
+ 794 034a 8093 0000 		sts rotate_job+10,r24
+ 382:kicker.c      **** 			wiggle_time = timer_get_ms();
+ 796               	.LM86:
+ 797 034e 0E94 0000 		call timer_get_ms
+ 798 0352 6093 0000 		sts wiggle_time,r22
+ 799 0356 7093 0000 		sts wiggle_time+1,r23
+ 800 035a 8093 0000 		sts wiggle_time+2,r24
+ 801 035e 9093 0000 		sts wiggle_time+3,r25
+ 383:kicker.c      **** 			wiggle_dir = 0;
+ 803               	.LM87:
+ 804 0362 1092 0000 		sts wiggle_dir,__zero_reg__
+ 384:kicker.c      **** 			rotItCounter = 0;
+ 806               	.LM88:
+ 807 0366 1092 0000 		sts rotItCounter+1,__zero_reg__
+ 808 036a 1092 0000 		sts rotItCounter,__zero_reg__
+ 385:kicker.c      **** 
+ 386:kicker.c      **** 
+ 387:kicker.c      **** //warning("unlock");
+ 388:kicker.c      **** 			return;
+ 810               	.LM89:
+ 811 036e 00C0      		rjmp .L54
+ 812               	.L58:
+ 389:kicker.c      **** 		}
+ 390:kicker.c      **** 		//_delay_ms(10);
+ 391:kicker.c      **** #endif
+ 392:kicker.c      **** #endif
+ 393:kicker.c      **** 		// even if the servo is deactivated, let us drop in. we need this!
+ 394:kicker.c      **** 		if (! IS_ROTOR_LOCKED && rotate_job.state==ROTJOB_ROT) {
+ 814               	.LM90:
+ 815 0370 CA9B      		sbis 0x19,2
+ 816 0372 00C0      		rjmp .L59
+ 818               	.LM91:
+ 819 0374 C130      		cpi r28,lo8(1)
+ 820 0376 01F0      		breq .+2
+ 821 0378 00C0      		rjmp .L61
+ 395:kicker.c      **** 			kicker_rotate_servo_pos(rotate_job.pos,servo_pos[rotate_job.pos-1]+2*rotate_job.dir);
+ 823               	.LM92:
+ 824 037a 8091 0000 		lds r24,rotate_job+8
+ 825 037e 6091 0000 		lds r22,rotate_job+9
+ 826 0382 660F      		lsl r22
+ 827 0384 770B      		sbc r23,r23
+ 828 0386 E82F      		mov r30,r24
+ 829 0388 F0E0      		ldi r31,0
+ 830 038a EE0F      		lsl r30
+ 831 038c FF1F      		rol r31
+ 832 038e E050      		subi r30,lo8(-(servo_pos-2))
+ 833 0390 F040      		sbci r31,hi8(-(servo_pos-2))
+ 834 0392 2081      		ld r18,Z
+ 835 0394 3181      		ldd r19,Z+1
+ 836 0396 620F      		add r22,r18
+ 837 0398 731F      		adc r23,r19
+ 838 039a 0E94 0000 		call kicker_rotate_servo_pos
+ 839 039e 00C0      		rjmp .L89
+ 840               	.L59:
+ 396:kicker.c      **** 			rotate_job.state = ROTJOB_END;
+ 397:kicker.c      **** //warning("rot");
+ 398:kicker.c      **** 			return;
+ 399:kicker.c      **** 		}
+ 400:kicker.c      **** 		if (rotate_job.state == ROTJOB_ROT) { //Lock is still in
+ 842               	.LM93:
+ 843 03a0 C130      		cpi r28,lo8(1)
+ 844 03a2 01F0      		breq .+2
+ 845 03a4 00C0      		rjmp .L61
+ 401:kicker.c      **** 			if(wiggle_time + 100 < timer_get_ms()) {
+ 847               	.LM94:
+ 848 03a6 C090 0000 		lds r12,wiggle_time
+ 849 03aa D090 0000 		lds r13,wiggle_time+1
+ 850 03ae E090 0000 		lds r14,wiggle_time+2
+ 851 03b2 F090 0000 		lds r15,wiggle_time+3
+ 852 03b6 34E6      		ldi r19,100
+ 853 03b8 C30E      		add r12,r19
+ 854 03ba D11C      		adc r13,__zero_reg__
+ 855 03bc E11C      		adc r14,__zero_reg__
+ 856 03be F11C      		adc r15,__zero_reg__
+ 857 03c0 0E94 0000 		call timer_get_ms
+ 858 03c4 C616      		cp r12,r22
+ 859 03c6 D706      		cpc r13,r23
+ 860 03c8 E806      		cpc r14,r24
+ 861 03ca F906      		cpc r15,r25
+ 862 03cc 00F4      		brsh .L63
+ 402:kicker.c      **** 				if(wiggle_dir == 0) { 
+ 864               	.LM95:
+ 865 03ce 8091 0000 		lds r24,wiggle_dir
+ 866 03d2 8111      		cpse r24,__zero_reg__
+ 867 03d4 00C0      		rjmp .L64
+ 403:kicker.c      **** 					wiggle_dir = 1;				
+ 869               	.LM96:
+ 870 03d6 C093 0000 		sts wiggle_dir,r28
+ 871 03da 00C0      		rjmp .L65
+ 872               	.L64:
+ 404:kicker.c      **** 				}
+ 405:kicker.c      **** 				else {
+ 406:kicker.c      **** 					wiggle_dir *=-1;
+ 874               	.LM97:
+ 875 03dc 8195      		neg r24
+ 876 03de 8093 0000 		sts wiggle_dir,r24
+ 877               	.L65:
+ 407:kicker.c      **** 				}
+ 408:kicker.c      **** 				wiggle_time = timer_get_ms();		
+ 879               	.LM98:
+ 880 03e2 0E94 0000 		call timer_get_ms
+ 881 03e6 6093 0000 		sts wiggle_time,r22
+ 882 03ea 7093 0000 		sts wiggle_time+1,r23
+ 883 03ee 8093 0000 		sts wiggle_time+2,r24
+ 884 03f2 9093 0000 		sts wiggle_time+3,r25
+ 885               	.L63:
+ 409:kicker.c      **** 			}
+ 410:kicker.c      **** 			if (wiggle_dir != 0) {
+ 887               	.LM99:
+ 888 03f6 2091 0000 		lds r18,wiggle_dir
+ 889 03fa 2223      		tst r18
+ 890 03fc 01F0      		breq .L61
+ 411:kicker.c      **** 				kicker_rotate_servo_to(MAX(SERVO_MIN_POS,MIN(SERVO_MAX_POS,(servo_pos[curServoPos-1] + 5*wiggle
+ 892               	.LM100:
+ 893 03fe E091 0000 		lds r30,curServoPos
+ 894 0402 F0E0      		ldi r31,0
+ 895 0404 EE0F      		lsl r30
+ 896 0406 FF1F      		rol r31
+ 897 0408 E050      		subi r30,lo8(-(servo_pos-2))
+ 898 040a F040      		sbci r31,hi8(-(servo_pos-2))
+ 899 040c 8081      		ld r24,Z
+ 900 040e 9181      		ldd r25,Z+1
+ 901 0410 35E0      		ldi r19,lo8(5)
+ 902 0412 2302      		muls r18,r19
+ 903 0414 800D      		add r24,r0
+ 904 0416 911D      		adc r25,r1
+ 905 0418 1124      		clr __zero_reg__
+ 906 041a 8035      		cpi r24,80
+ 907 041c 9105      		cpc r25,__zero_reg__
+ 908 041e 00F0      		brlo .L80
+ 910               	.LM101:
+ 911 0420 833D      		cpi r24,-45
+ 912 0422 9105      		cpc r25,__zero_reg__
+ 913 0424 00F0      		brlo .L66
+ 914 0426 82ED      		ldi r24,lo8(-46)
+ 915 0428 90E0      		ldi r25,0
+ 916 042a 00C0      		rjmp .L66
+ 917               	.L80:
+ 919               	.LM102:
+ 920 042c 80E5      		ldi r24,lo8(80)
+ 921 042e 90E0      		ldi r25,0
+ 922               	.L66:
+ 923               	.LBB24:
+ 924               	.LBB25:
+ 285:kicker.c      **** 	target_val = pos;
+ 926               	.LM103:
+ 927 0430 9093 0000 		sts target_val+1,r25
+ 928 0434 8093 0000 		sts target_val,r24
+ 929               	.L61:
+ 930 0438 8091 0000 		lds r24,rotate_job+10
+ 931               	.LBE25:
+ 932               	.LBE24:
+ 412:kicker.c      **** 			}
+ 413:kicker.c      **** 
+ 414:kicker.c      **** 			//UNLOCK_ROTOR;
+ 415:kicker.c      **** 		}
+ 416:kicker.c      **** 		if (IS_ROTOR_LOCKED && rotate_job.state==ROTJOB_END) {
+ 934               	.LM104:
+ 935 043c CA99      		sbic 0x19,2
+ 936 043e 00C0      		rjmp .L68
+ 938               	.LM105:
+ 939 0440 8230      		cpi r24,lo8(2)
+ 940 0442 01F4      		brne .L68
+ 417:kicker.c      **** 			curServoPos = rotate_job.pos;
+ 942               	.LM106:
+ 943 0444 8091 0000 		lds r24,rotate_job+8
+ 944 0448 8093 0000 		sts curServoPos,r24
+ 418:kicker.c      **** 			kicker_rotate_servo(rotate_job.pos);			
+ 946               	.LM107:
+ 947 044c 0E94 0000 		call kicker_rotate_servo
+ 419:kicker.c      **** 			rotate_job.timestamp = 0;
+ 949               	.LM108:
+ 950 0450 1092 0000 		sts rotate_job,__zero_reg__
+ 951 0454 1092 0000 		sts rotate_job+1,__zero_reg__
+ 952 0458 1092 0000 		sts rotate_job+2,__zero_reg__
+ 953 045c 1092 0000 		sts rotate_job+3,__zero_reg__
+ 420:kicker.c      **** //warning("fin");			
+ 421:kicker.c      **** 			return;
+ 955               	.LM109:
+ 956 0460 00C0      		rjmp .L54
+ 957               	.L68:
+ 422:kicker.c      **** 		}
+ 423:kicker.c      **** 		/*else if(rotate_job.state==ROTJOB_END && rotation_pending_ms==0) {
+ 424:kicker.c      **** 			kicker_rotate_servo(rotate_job.pos);
+ 425:kicker.c      **** 			curServoPos = rotate_job.pos;
+ 426:kicker.c      **** 			//rotate_job.timestamp = 0;
+ 427:kicker.c      **** 		}*/
+ 428:kicker.c      **** 		if (rotate_job.state==ROTJOB_END && (++rotItCounter >= 2000)) {
+ 959               	.LM110:
+ 960 0462 8230      		cpi r24,lo8(2)
+ 961 0464 01F4      		brne .L70
+ 963               	.LM111:
+ 964 0466 8091 0000 		lds r24,rotItCounter
+ 965 046a 9091 0000 		lds r25,rotItCounter+1
+ 966 046e 0196      		adiw r24,1
+ 967 0470 9093 0000 		sts rotItCounter+1,r25
+ 968 0474 8093 0000 		sts rotItCounter,r24
+ 969 0478 803D      		cpi r24,-48
+ 970 047a 9740      		sbci r25,7
+ 971 047c 00F0      		brlo .L70
+ 429:kicker.c      **** 			rotItCounter = 0;
+ 973               	.LM112:
+ 974 047e 1092 0000 		sts rotItCounter+1,__zero_reg__
+ 975 0482 1092 0000 		sts rotItCounter,__zero_reg__
+ 430:kicker.c      **** 			rotate_job.state = ROTJOB_WIG_IN_LEFT;
+ 977               	.LM113:
+ 978 0486 83E0      		ldi r24,lo8(3)
+ 979 0488 8093 0000 		sts rotate_job+10,r24
+ 980               	.L70:
+ 981 048c 8091 0000 		lds r24,rotate_job+10
+ 431:kicker.c      **** //warning("left");
+ 432:kicker.c      **** 		}
+ 433:kicker.c      **** 		if(IS_ROTOR_LOCKED && (rotate_job.state==ROTJOB_WIG_IN_LEFT || rotate_job.state==ROTJOB_WIG_IN_RI
+ 983               	.LM114:
+ 984 0490 CA99      		sbic 0x19,2
+ 985 0492 00C0      		rjmp .L72
+ 987               	.LM115:
+ 988 0494 9DEF      		ldi r25,lo8(-3)
+ 989 0496 980F      		add r25,r24
+ 990 0498 9230      		cpi r25,lo8(2)
+ 991 049a 00F4      		brsh .L72
+ 434:kicker.c      **** //warning("fin2");
+ 435:kicker.c      **** 			kicker_rotate_servo(rotate_job.pos);
+ 993               	.LM116:
+ 994 049c 8091 0000 		lds r24,rotate_job+8
+ 995 04a0 0E94 0000 		call kicker_rotate_servo
+ 996               	.L89:
+ 436:kicker.c      **** 			rotate_job.state = ROTJOB_END;			
+ 998               	.LM117:
+ 999 04a4 82E0      		ldi r24,lo8(2)
+ 1000 04a6 8093 0000 		sts rotate_job+10,r24
+ 437:kicker.c      **** 			return;	
+ 1002               	.LM118:
+ 1003 04aa 00C0      		rjmp .L54
+ 1004               	.L72:
+ 438:kicker.c      **** 		}
+ 439:kicker.c      **** 		if(rotate_job.state==ROTJOB_WIG_IN_LEFT) {
+ 1006               	.LM119:
+ 1007 04ac 8330      		cpi r24,lo8(3)
+ 1008 04ae 01F4      		brne .L74
+ 440:kicker.c      **** 			kicker_rotate_servo_to(MAX(SERVO_MIN_POS,MIN(SERVO_MAX_POS,(servo_pos[rotate_job.pos-1] + 6))));
+ 1010               	.LM120:
+ 1011 04b0 E091 0000 		lds r30,rotate_job+8
+ 1012 04b4 F0E0      		ldi r31,0
+ 1013 04b6 EE0F      		lsl r30
+ 1014 04b8 FF1F      		rol r31
+ 1015 04ba E050      		subi r30,lo8(-(servo_pos-2))
+ 1016 04bc F040      		sbci r31,hi8(-(servo_pos-2))
+ 1017 04be 8081      		ld r24,Z
+ 1018 04c0 9181      		ldd r25,Z+1
+ 1019 04c2 0696      		adiw r24,6
+ 1020 04c4 8035      		cpi r24,80
+ 1021 04c6 9105      		cpc r25,__zero_reg__
+ 1022 04c8 00F0      		brlo .L81
+ 1024               	.LM121:
+ 1025 04ca 833D      		cpi r24,-45
+ 1026 04cc 9105      		cpc r25,__zero_reg__
+ 1027 04ce 00F0      		brlo .L75
+ 1028 04d0 82ED      		ldi r24,lo8(-46)
+ 1029 04d2 90E0      		ldi r25,0
+ 1030 04d4 00C0      		rjmp .L75
+ 1031               	.L81:
+ 1033               	.LM122:
+ 1034 04d6 80E5      		ldi r24,lo8(80)
+ 1035 04d8 90E0      		ldi r25,0
+ 1036               	.L75:
+ 1037               	.LBB26:
+ 1038               	.LBB27:
+ 285:kicker.c      **** 	target_val = pos;
+ 1040               	.LM123:
+ 1041 04da 9093 0000 		sts target_val+1,r25
+ 1042 04de 8093 0000 		sts target_val,r24
+ 1043               	.LBE27:
+ 1044               	.LBE26:
+ 441:kicker.c      **** 			if (++wigInCounter >= 100) {
+ 1046               	.LM124:
+ 1047 04e2 8091 0000 		lds r24,wigInCounter
+ 1048 04e6 8F5F      		subi r24,lo8(-(1))
+ 1049 04e8 8093 0000 		sts wigInCounter,r24
+ 1050 04ec 8436      		cpi r24,lo8(100)
+ 1051 04ee 00F0      		brlo .L74
+ 442:kicker.c      **** 				rotate_job.state=ROTJOB_WIG_IN_RIGHT;
+ 1053               	.LM125:
+ 1054 04f0 84E0      		ldi r24,lo8(4)
+ 1055 04f2 8093 0000 		sts rotate_job+10,r24
+ 443:kicker.c      **** //warning("right");
+ 444:kicker.c      **** 				wigInCounter = 0;
+ 1057               	.LM126:
+ 1058 04f6 1092 0000 		sts wigInCounter,__zero_reg__
+ 1059               	.L74:
+ 445:kicker.c      **** 			}
+ 446:kicker.c      **** 		}
+ 447:kicker.c      **** 		if(rotate_job.state==ROTJOB_WIG_IN_RIGHT) {
+ 1061               	.LM127:
+ 1062 04fa 8091 0000 		lds r24,rotate_job+10
+ 1063 04fe 8430      		cpi r24,lo8(4)
+ 1064 0500 01F4      		brne .L54
+ 448:kicker.c      **** 			kicker_rotate_servo_to(MAX(SERVO_MIN_POS,MIN(SERVO_MAX_POS,(servo_pos[rotate_job.pos-1] - 6))));
+ 1066               	.LM128:
+ 1067 0502 E091 0000 		lds r30,rotate_job+8
+ 1068 0506 F0E0      		ldi r31,0
+ 1069 0508 EE0F      		lsl r30
+ 1070 050a FF1F      		rol r31
+ 1071 050c E050      		subi r30,lo8(-(servo_pos-2))
+ 1072 050e F040      		sbci r31,hi8(-(servo_pos-2))
+ 1073 0510 8081      		ld r24,Z
+ 1074 0512 9181      		ldd r25,Z+1
+ 1075 0514 0697      		sbiw r24,6
+ 1076 0516 8035      		cpi r24,80
+ 1077 0518 9105      		cpc r25,__zero_reg__
+ 1078 051a 00F0      		brlo .L82
+ 1080               	.LM129:
+ 1081 051c 833D      		cpi r24,-45
+ 1082 051e 9105      		cpc r25,__zero_reg__
+ 1083 0520 00F0      		brlo .L78
+ 1084 0522 82ED      		ldi r24,lo8(-46)
+ 1085 0524 90E0      		ldi r25,0
+ 1086 0526 00C0      		rjmp .L78
+ 1087               	.L82:
+ 1089               	.LM130:
+ 1090 0528 80E5      		ldi r24,lo8(80)
+ 1091 052a 90E0      		ldi r25,0
+ 1092               	.L78:
+ 1093               	.LBB28:
+ 1094               	.LBB29:
+ 285:kicker.c      **** 	target_val = pos;
+ 1096               	.LM131:
+ 1097 052c 9093 0000 		sts target_val+1,r25
+ 1098 0530 8093 0000 		sts target_val,r24
+ 1099               	.LBE29:
+ 1100               	.LBE28:
+ 449:kicker.c      **** 			if (++wigInCounter >= 100) {
+ 1102               	.LM132:
+ 1103 0534 8091 0000 		lds r24,wigInCounter
+ 1104 0538 8F5F      		subi r24,lo8(-(1))
+ 1105 053a 8093 0000 		sts wigInCounter,r24
+ 1106 053e 8436      		cpi r24,lo8(100)
+ 1107 0540 00F0      		brlo .L54
+ 450:kicker.c      **** 				rotate_job.state=ROTJOB_WIG_IN_LEFT;
+ 1109               	.LM133:
+ 1110 0542 83E0      		ldi r24,lo8(3)
+ 1111 0544 8093 0000 		sts rotate_job+10,r24
+ 451:kicker.c      **** //warning("left");
+ 452:kicker.c      **** 				wigInCounter = 0;
+ 1113               	.LM134:
+ 1114 0548 1092 0000 		sts wigInCounter,__zero_reg__
+ 1115               	.L54:
+ 1116               	/* epilogue start */
+ 453:kicker.c      **** 			}
+ 454:kicker.c      **** 		}
+ 455:kicker.c      **** 		
+ 456:kicker.c      **** 
+ 457:kicker.c      **** 	}
+ 458:kicker.c      **** }
+ 1118               	.LM135:
+ 1119 054c CF91      		pop r28
+ 1120 054e FF90      		pop r15
+ 1121 0550 EF90      		pop r14
+ 1122 0552 DF90      		pop r13
+ 1123 0554 CF90      		pop r12
+ 1124 0556 0895      		ret
+ 1126               	.Lscope8:
+ 1129               	.global	kicker_add_rotate_job
+ 1131               	kicker_add_rotate_job:
+ 459:kicker.c      **** 
+ 460:kicker.c      **** /**
+ 461:kicker.c      ****  * Make a rotation-job from the request.
+ 462:kicker.c      ****  *
+ 463:kicker.c      ****  * The execution is done by the appropriate handler.
+ 464:kicker.c      ****  *
+ 465:kicker.c      ****  * @param num The kicker position. (1-3)
+ 466:kicker.c      ****  */
+ 467:kicker.c      **** void kicker_add_rotate_job(uint8_t num) {
+ 1133               	.LM136:
+ 1134               	.LFBB9:
+ 1135 0558 CF93      		push r28
+ 1136               	/* prologue: function */
+ 1137               	/* frame size = 0 */
+ 1138               	/* stack size = 1 */
+ 1139               	.L__stack_usage = 1
+ 1140 055a C82F      		mov r28,r24
+ 468:kicker.c      **** #ifdef DEACTIVATE_SERVO
+ 469:kicker.c      **** 	return;
+ 470:kicker.c      **** #endif
+ 471:kicker.c      **** 	if(rotate_job.timestamp != 0 || curServoPos == num) return;
+ 1142               	.LM137:
+ 1143 055c 4091 0000 		lds r20,rotate_job
+ 1144 0560 5091 0000 		lds r21,rotate_job+1
+ 1145 0564 6091 0000 		lds r22,rotate_job+2
+ 1146 0568 7091 0000 		lds r23,rotate_job+3
+ 1147 056c 452B      		or r20,r21
+ 1148 056e 462B      		or r20,r22
+ 1149 0570 472B      		or r20,r23
+ 1150 0572 01F4      		brne .L90
+ 1152               	.LM138:
+ 1153 0574 8091 0000 		lds r24,curServoPos
+ 1154 0578 8C17      		cp r24,r28
+ 1155 057a 01F0      		breq .L90
+ 472:kicker.c      **** 	//if(curServoPos == num) return;
+ 473:kicker.c      **** 	rotate_job.timestamp = timer_get_ms();
+ 1157               	.LM139:
+ 1158 057c 0E94 0000 		call timer_get_ms
+ 1159 0580 6093 0000 		sts rotate_job,r22
+ 1160 0584 7093 0000 		sts rotate_job+1,r23
+ 1161 0588 8093 0000 		sts rotate_job+2,r24
+ 1162 058c 9093 0000 		sts rotate_job+3,r25
+ 474:kicker.c      **** 	rotate_job.pos = num;
+ 1164               	.LM140:
+ 1165 0590 C093 0000 		sts rotate_job+8,r28
+ 475:kicker.c      **** 	if (servo_pos[num-1] < servo_pos[curServoPos-1]) {
+ 1167               	.LM141:
+ 1168 0594 EC2F      		mov r30,r28
+ 1169 0596 F0E0      		ldi r31,0
+ 1170 0598 EE0F      		lsl r30
+ 1171 059a FF1F      		rol r31
+ 1172 059c E050      		subi r30,lo8(-(servo_pos-2))
+ 1173 059e F040      		sbci r31,hi8(-(servo_pos-2))
+ 1174 05a0 2081      		ld r18,Z
+ 1175 05a2 3181      		ldd r19,Z+1
+ 1176 05a4 E091 0000 		lds r30,curServoPos
+ 1177 05a8 F0E0      		ldi r31,0
+ 1178 05aa EE0F      		lsl r30
+ 1179 05ac FF1F      		rol r31
+ 1180 05ae E050      		subi r30,lo8(-(servo_pos-2))
+ 1181 05b0 F040      		sbci r31,hi8(-(servo_pos-2))
+ 1182 05b2 8081      		ld r24,Z
+ 1183 05b4 9181      		ldd r25,Z+1
+ 1184 05b6 2817      		cp r18,r24
+ 1185 05b8 3907      		cpc r19,r25
+ 1186 05ba 00F4      		brsh .L92
+ 476:kicker.c      **** 		rotate_job.dir = -1;	
+ 1188               	.LM142:
+ 1189 05bc 8FEF      		ldi r24,lo8(-1)
+ 1190 05be 00C0      		rjmp .L95
+ 1191               	.L92:
+ 477:kicker.c      **** 	}
+ 478:kicker.c      **** 	else if(servo_pos[num-1] > servo_pos[curServoPos-1]) {
+ 1193               	.LM143:
+ 1194 05c0 8217      		cp r24,r18
+ 1195 05c2 9307      		cpc r25,r19
+ 1196 05c4 00F4      		brsh .L94
+ 479:kicker.c      **** 		rotate_job.dir = 1;	
+ 1198               	.LM144:
+ 1199 05c6 81E0      		ldi r24,lo8(1)
+ 1200               	.L95:
+ 1201 05c8 8093 0000 		sts rotate_job+9,r24
+ 1202 05cc 00C0      		rjmp .L93
+ 1203               	.L94:
+ 480:kicker.c      **** 	}
+ 481:kicker.c      **** 	else rotate_job.dir = 0;
+ 1205               	.LM145:
+ 1206 05ce 1092 0000 		sts rotate_job+9,__zero_reg__
+ 1207               	.L93:
+ 482:kicker.c      **** 	rotate_job.state = ROTJOB_START;
+ 1209               	.LM146:
+ 1210 05d2 1092 0000 		sts rotate_job+10,__zero_reg__
+ 1211               	.L90:
+ 1212               	/* epilogue start */
+ 483:kicker.c      **** }
+ 1214               	.LM147:
+ 1215 05d6 CF91      		pop r28
+ 1216 05d8 0895      		ret
+ 1218               	.Lscope9:
+ 1219               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 1220               	.LC0:
+ 1221 0000 4361 6E6E 		.string	"Cannot set value"
+ 1221      6F74 2073 
+ 1221      6574 2076 
+ 1221      616C 7565 
+ 1221      00
+ 1222               		.text
+ 1226               	.global	kicker_set_servo_pos
+ 1228               	kicker_set_servo_pos:
+ 484:kicker.c      **** 
+ 485:kicker.c      **** /**
+ 486:kicker.c      ****  * Update the angle position to the appropiate kicker position
+ 487:kicker.c      ****  *
+ 488:kicker.c      ****  * @param num The kicker number
+ 489:kicker.c      ****  * @param val The va#define ROTJOB_START 0
+ 490:kicker.c      **** lue of the position
+ 491:kicker.c      ****  */
+ 492:kicker.c      **** void kicker_set_servo_pos(uint8_t num, uint16_t val) {
+ 1230               	.LM148:
+ 1231               	.LFBB10:
+ 1232               	/* prologue: function */
+ 1233               	/* frame size = 0 */
+ 1234               	/* stack size = 0 */
+ 1235               	.L__stack_usage = 0
+ 493:kicker.c      **** 	
+ 494:kicker.c      **** 	// sanity checks
+ 495:kicker.c      **** 	if (num < 1 || num > 3) {
+ 1237               	.LM149:
+ 1238 05da 9FEF      		ldi r25,lo8(-1)
+ 1239 05dc 980F      		add r25,r24
+ 1240 05de 9330      		cpi r25,lo8(3)
+ 1241 05e0 00F4      		brsh .L96
+ 496:kicker.c      **** 		return;
+ 497:kicker.c      **** 	}
+ 498:kicker.c      **** #ifdef SERIAL_SERVO
+ 499:kicker.c      **** 	if (val < 50 || val > 1000) {
+ 500:kicker.c      **** #else
+ 501:kicker.c      **** 	if (val < 50 || val > 250) {
+ 1243               	.LM150:
+ 1244 05e2 9B01      		movw r18,r22
+ 1245 05e4 2253      		subi r18,50
+ 1246 05e6 3109      		sbc r19,__zero_reg__
+ 1247 05e8 293C      		cpi r18,-55
+ 1248 05ea 3105      		cpc r19,__zero_reg__
+ 1249 05ec 00F0      		brlo .L99
+ 502:kicker.c      **** #endif
+ 503:kicker.c      **** 		error("Cannot set value");
+ 1251               	.LM151:
+ 1252 05ee 80E0      		ldi r24,lo8(.LC0)
+ 1253 05f0 90E0      		ldi r25,hi8(.LC0)
+ 1254 05f2 0C94 0000 		jmp error
+ 1255               	.L99:
+ 504:kicker.c      **** 		return;
+ 505:kicker.c      **** 	}
+ 506:kicker.c      **** 
+ 507:kicker.c      **** 	servo_pos[num-1] = val;
+ 1257               	.LM152:
+ 1258 05f6 E82F      		mov r30,r24
+ 1259 05f8 F0E0      		ldi r31,0
+ 1260 05fa EE0F      		lsl r30
+ 1261 05fc FF1F      		rol r31
+ 1262 05fe E050      		subi r30,lo8(-(servo_pos-2))
+ 1263 0600 F040      		sbci r31,hi8(-(servo_pos-2))
+ 1264 0602 7183      		std Z+1,r23
+ 1265 0604 6083      		st Z,r22
+ 508:kicker.c      **** 	//char tmp[10];
+ 509:kicker.c      **** 	//sprintf(tmp, "val: %d", val);
+ 510:kicker.c      **** 	//debug(tmp);
+ 511:kicker.c      **** 	
+ 512:kicker.c      **** 	// update position in a safe way
+ 513:kicker.c      **** 	if (actual_pos == num || target_pos == num)
+ 1267               	.LM153:
+ 1268 0606 9091 0000 		lds r25,actual_pos
+ 1269 060a 9817      		cp r25,r24
+ 1270 060c 01F0      		breq .L100
+ 1272               	.LM154:
+ 1273 060e 9091 0000 		lds r25,target_pos
+ 1274 0612 9813      		cpse r25,r24
+ 1275 0614 00C0      		rjmp .L96
+ 1276               	.L100:
+ 514:kicker.c      **** 		kicker_add_rotate_job(num);
+ 1278               	.LM155:
+ 1279 0616 0C94 0000 		jmp kicker_add_rotate_job
+ 1280               	.L96:
+ 1281 061a 0895      		ret
+ 1283               	.Lscope10:
+ 1286               	.global	kicker_add_kick_job
+ 1288               	kicker_add_kick_job:
+ 515:kicker.c      **** 
+ 516:kicker.c      **** 	return;
+ 517:kicker.c      **** }
+ 518:kicker.c      **** 
+ 519:kicker.c      **** 
+ 520:kicker.c      **** 
+ 521:kicker.c      **** 
+ 522:kicker.c      **** 
+ 523:kicker.c      **** // save the message
+ 524:kicker.c      **** // the kick is done by kicker_task_handler
+ 525:kicker.c      **** void kicker_add_kick_job(uint8_t ms) {
+ 1290               	.LM156:
+ 1291               	.LFBB11:
+ 1292 061c CF93      		push r28
+ 1293               	/* prologue: function */
+ 1294               	/* frame size = 0 */
+ 1295               	/* stack size = 1 */
+ 1296               	.L__stack_usage = 1
+ 1297 061e C82F      		mov r28,r24
+ 526:kicker.c      **** 	kick_job.timestamp = timer_get_ms();
+ 1299               	.LM157:
+ 1300 0620 0E94 0000 		call timer_get_ms
+ 1301 0624 6093 0000 		sts kick_job,r22
+ 1302 0628 7093 0000 		sts kick_job+1,r23
+ 1303 062c 8093 0000 		sts kick_job+2,r24
+ 1304 0630 9093 0000 		sts kick_job+3,r25
+ 527:kicker.c      **** 	kick_job.release_time = ms;
+ 1306               	.LM158:
+ 1307 0634 C093 0000 		sts kick_job+8,r28
+ 1308               	/* epilogue start */
+ 528:kicker.c      **** 
+ 529:kicker.c      **** 	return;
+ 530:kicker.c      **** }
+ 1310               	.LM159:
+ 1311 0638 CF91      		pop r28
+ 1312 063a 0895      		ret
+ 1314               	.Lscope11:
+ 1315               		.section	.rodata.str1.1
+ 1316               	.LC1:
+ 1317 0011 4361 6E6E 		.string	"Cannot reach this voltage"
+ 1317      6F74 2072 
+ 1317      6561 6368 
+ 1317      2074 6869 
+ 1317      7320 766F 
+ 1318               		.text
+ 1322               	.global	kicker_add_kick_job_forced
+ 1324               	kicker_add_kick_job_forced:
+ 531:kicker.c      **** 
+ 532:kicker.c      **** // save the message
+ 533:kicker.c      **** // the kick is done by kicker_task_handler
+ 534:kicker.c      **** void kicker_add_kick_job_forced(uint8_t ms, uint8_t forceVoltage) {
+ 1326               	.LM160:
+ 1327               	.LFBB12:
+ 1328 063c CF93      		push r28
+ 1329 063e DF93      		push r29
+ 1330               	/* prologue: function */
+ 1331               	/* frame size = 0 */
+ 1332               	/* stack size = 2 */
+ 1333               	.L__stack_usage = 2
+ 1334 0640 D82F      		mov r29,r24
+ 1335 0642 C62F      		mov r28,r22
+ 535:kicker.c      **** 	if (forceVoltage > max_voltage || forceVoltage < max_voltage - 10) {
+ 1337               	.LM161:
+ 1338 0644 2091 0000 		lds r18,max_voltage
+ 1339 0648 2617      		cp r18,r22
+ 1340 064a 00F0      		brlo .L104
+ 1342               	.LM162:
+ 1343 064c 462F      		mov r20,r22
+ 1344 064e 50E0      		ldi r21,0
+ 1345 0650 30E0      		ldi r19,0
+ 1346 0652 2A50      		subi r18,10
+ 1347 0654 3109      		sbc r19,__zero_reg__
+ 1348 0656 4217      		cp r20,r18
+ 1349 0658 5307      		cpc r21,r19
+ 1350 065a 04F4      		brge .L105
+ 1351               	.L104:
+ 536:kicker.c      **** 		warning("Cannot reach this voltage");
+ 1353               	.LM163:
+ 1354 065c 80E0      		ldi r24,lo8(.LC1)
+ 1355 065e 90E0      		ldi r25,hi8(.LC1)
+ 1356               	/* epilogue start */
+ 537:kicker.c      **** 		return;
+ 538:kicker.c      **** 	}
+ 539:kicker.c      **** 
+ 540:kicker.c      **** 	kick_job.timestamp = timer_get_ms();
+ 541:kicker.c      **** 	kick_job.release_time = ms;
+ 542:kicker.c      **** 	kick_job.at_voltage = forceVoltage;
+ 543:kicker.c      **** 
+ 544:kicker.c      **** 	return;
+ 545:kicker.c      **** }
+ 1358               	.LM164:
+ 1359 0660 DF91      		pop r29
+ 1360 0662 CF91      		pop r28
+ 536:kicker.c      **** 		warning("Cannot reach this voltage");
+ 1362               	.LM165:
+ 1363 0664 0C94 0000 		jmp warning
+ 1364               	.L105:
+ 540:kicker.c      **** 	kick_job.timestamp = timer_get_ms();
+ 1366               	.LM166:
+ 1367 0668 0E94 0000 		call timer_get_ms
+ 1368 066c 6093 0000 		sts kick_job,r22
+ 1369 0670 7093 0000 		sts kick_job+1,r23
+ 1370 0674 8093 0000 		sts kick_job+2,r24
+ 1371 0678 9093 0000 		sts kick_job+3,r25
+ 541:kicker.c      **** 	kick_job.release_time = ms;
+ 1373               	.LM167:
+ 1374 067c D093 0000 		sts kick_job+8,r29
+ 542:kicker.c      **** 	kick_job.at_voltage = forceVoltage;
+ 1376               	.LM168:
+ 1377 0680 C093 0000 		sts kick_job+9,r28
+ 1378               	/* epilogue start */
+ 1380               	.LM169:
+ 1381 0684 DF91      		pop r29
+ 1382 0686 CF91      		pop r28
+ 1383 0688 0895      		ret
+ 1385               	.Lscope12:
+ 1386               		.section	.rodata.str1.1
+ 1387               	.LC2:
+ 1388 002b 4B69 636B 		.string	"Kick job expired."
+ 1388      206A 6F62 
+ 1388      2065 7870 
+ 1388      6972 6564 
+ 1388      2E00 
+ 1389               	.LC3:
+ 1390 003d 4361 6E6E 		.string	"Cannot kick. Booster state is disabled."
+ 1390      6F74 206B 
+ 1390      6963 6B2E 
+ 1390      2042 6F6F 
+ 1390      7374 6572 
+ 1391               	.LC4:
+ 1392 0065 4B69 636B 		.string	"Kicktime: %u ms %u"
+ 1392      7469 6D65 
+ 1392      3A20 2575 
+ 1392      206D 7320 
+ 1392      2575 00
+ 1393               		.text
+ 1395               	.global	kicker_kick_handler
+ 1397               	kicker_kick_handler:
+ 546:kicker.c      **** 
+ 547:kicker.c      **** // handle the kick job
+ 548:kicker.c      **** // _not_ thread safe
+ 549:kicker.c      **** void kicker_kick_handler(void) {
+ 1399               	.LM170:
+ 1400               	.LFBB13:
+ 1401 068a CF92      		push r12
+ 1402 068c DF92      		push r13
+ 1403 068e EF92      		push r14
+ 1404 0690 FF92      		push r15
+ 1405 0692 0F93      		push r16
+ 1406 0694 1F93      		push r17
+ 1407 0696 CF93      		push r28
+ 1408 0698 DF93      		push r29
+ 1409 069a CDB7      		in r28,__SP_L__
+ 1410 069c DEB7      		in r29,__SP_H__
+ 1411 069e 6E97      		sbiw r28,30
+ 1412 06a0 0FB6      		in __tmp_reg__,__SREG__
+ 1413 06a2 F894      		cli
+ 1414 06a4 DEBF      		out __SP_H__,r29
+ 1415 06a6 0FBE      		out __SREG__,__tmp_reg__
+ 1416 06a8 CDBF      		out __SP_L__,r28
+ 1417               	/* prologue: function */
+ 1418               	/* frame size = 30 */
+ 1419               	/* stack size = 38 */
+ 1420               	.L__stack_usage = 38
+ 550:kicker.c      **** 	uint8_t sreg;
+ 551:kicker.c      **** 	//uint8_t i;
+ 552:kicker.c      **** 	uint32_t time_now = timer_get_ms();
+ 1422               	.LM171:
+ 1423 06aa 0E94 0000 		call timer_get_ms
+ 1424 06ae 6B01      		movw r12,r22
+ 1425 06b0 7C01      		movw r14,r24
+ 553:kicker.c      **** 
+ 554:kicker.c      **** 	// no job to do if timestamp is 0
+ 555:kicker.c      **** 	if (kick_job.timestamp == 0)
+ 1427               	.LM172:
+ 1428 06b2 8091 0000 		lds r24,kick_job
+ 1429 06b6 9091 0000 		lds r25,kick_job+1
+ 1430 06ba A091 0000 		lds r26,kick_job+2
+ 1431 06be B091 0000 		lds r27,kick_job+3
+ 1432 06c2 892B      		or r24,r25
+ 1433 06c4 8A2B      		or r24,r26
+ 1434 06c6 8B2B      		or r24,r27
+ 1435 06c8 01F4      		brne .+2
+ 1436 06ca 00C0      		rjmp .L106
+ 556:kicker.c      **** 		return;
+ 557:kicker.c      **** 
+ 558:kicker.c      **** 	// time between shots
+ 559:kicker.c      **** 	if (time_now - kick_job.last_kick < TIME_BETWEEN_TWO_SHOTS) {
+ 1438               	.LM173:
+ 1439 06cc 8091 0000 		lds r24,kick_job+4
+ 1440 06d0 9091 0000 		lds r25,kick_job+4+1
+ 1441 06d4 A091 0000 		lds r26,kick_job+4+2
+ 1442 06d8 B091 0000 		lds r27,kick_job+4+3
+ 1443 06dc A701      		movw r20,r14
+ 1444 06de 9601      		movw r18,r12
+ 1445 06e0 281B      		sub r18,r24
+ 1446 06e2 390B      		sbc r19,r25
+ 1447 06e4 4A0B      		sbc r20,r26
+ 1448 06e6 5B0B      		sbc r21,r27
+ 1449 06e8 283C      		cpi r18,-56
+ 1450 06ea 3105      		cpc r19,__zero_reg__
+ 1451 06ec 4105      		cpc r20,__zero_reg__
+ 1452 06ee 5105      		cpc r21,__zero_reg__
+ 1453 06f0 00F0      		brlo .L125
+ 560:kicker.c      **** 		// invalidate data
+ 561:kicker.c      **** 		kick_job.timestamp = 0;
+ 562:kicker.c      **** 		return;
+ 563:kicker.c      **** 	}
+ 564:kicker.c      **** 
+ 565:kicker.c      **** 	// handle forced_voltage
+ 566:kicker.c      **** 	if (kick_job.at_voltage > 0) {
+ 1455               	.LM174:
+ 1456 06f2 1091 0000 		lds r17,kick_job+9
+ 1457 06f6 1123      		tst r17
+ 1458 06f8 01F0      		breq .L110
+ 1459               	.LBB30:
+ 567:kicker.c      **** 		int16_t delta = (((int16_t) kick_job.at_voltage) - ((int16_t)get_capacitors_voltage()));
+ 1461               	.LM175:
+ 1462 06fa 0E94 0000 		call get_capacitors_voltage
+ 1463 06fe 212F      		mov r18,r17
+ 1464 0700 30E0      		ldi r19,0
+ 568:kicker.c      **** 		if (abs(delta) > EPSILON_FORCED_VOLTAGE)
+ 1466               	.LM176:
+ 1467 0702 2817      		cp r18,r24
+ 1468 0704 3907      		cpc r19,r25
+ 1469 0706 01F0      		breq .+2
+ 1470 0708 00C0      		rjmp .L106
+ 569:kicker.c      **** 			return;
+ 570:kicker.c      **** 		kick_job.at_voltage = 0;
+ 1472               	.LM177:
+ 1473 070a 1092 0000 		sts kick_job+9,__zero_reg__
+ 1474               	.L110:
+ 1475               	.LBE30:
+ 571:kicker.c      **** 	}
+ 572:kicker.c      **** 
+ 573:kicker.c      **** 	// the job expires after some milliseconds
+ 574:kicker.c      **** 	if (time_now - kick_job.timestamp > KICK_TASK_EXPIRE) {
+ 1477               	.LM178:
+ 1478 070e 8091 0000 		lds r24,kick_job
+ 1479 0712 9091 0000 		lds r25,kick_job+1
+ 1480 0716 A091 0000 		lds r26,kick_job+2
+ 1481 071a B091 0000 		lds r27,kick_job+3
+ 1482 071e C81A      		sub r12,r24
+ 1483 0720 D90A      		sbc r13,r25
+ 1484 0722 EA0A      		sbc r14,r26
+ 1485 0724 FB0A      		sbc r15,r27
+ 1486 0726 31ED      		ldi r19,-47
+ 1487 0728 C316      		cp r12,r19
+ 1488 072a 37E0      		ldi r19,7
+ 1489 072c D306      		cpc r13,r19
+ 1490 072e E104      		cpc r14,__zero_reg__
+ 1491 0730 F104      		cpc r15,__zero_reg__
+ 1492 0732 00F0      		brlo .L112
+ 575:kicker.c      **** 		warning("Kick job expired.");
+ 1494               	.LM179:
+ 1495 0734 80E0      		ldi r24,lo8(.LC2)
+ 1496 0736 90E0      		ldi r25,hi8(.LC2)
+ 1497 0738 0E94 0000 		call warning
+ 1498               	.L125:
+ 576:kicker.c      **** 		kick_job.timestamp = 0;
+ 1500               	.LM180:
+ 1501 073c 1092 0000 		sts kick_job,__zero_reg__
+ 1502 0740 1092 0000 		sts kick_job+1,__zero_reg__
+ 1503 0744 1092 0000 		sts kick_job+2,__zero_reg__
+ 1504 0748 1092 0000 		sts kick_job+3,__zero_reg__
+ 577:kicker.c      **** 		return;
+ 1506               	.LM181:
+ 1507 074c 00C0      		rjmp .L106
+ 1508               	.L112:
+ 578:kicker.c      **** 	}
+ 579:kicker.c      **** 
+ 580:kicker.c      **** 	// check if the booster is enabled
+ 581:kicker.c      **** 	if (!booster_can_kick()) {
+ 1510               	.LM182:
+ 1511 074e 0E94 0000 		call booster_can_kick
+ 1512 0752 8111      		cpse r24,__zero_reg__
+ 1513 0754 00C0      		rjmp .L113
+ 582:kicker.c      **** 		debug("Cannot kick. Booster state is disabled.");
+ 1515               	.LM183:
+ 1516 0756 80E0      		ldi r24,lo8(.LC3)
+ 1517 0758 90E0      		ldi r25,hi8(.LC3)
+ 1518 075a 0E94 0000 		call debug
+ 583:kicker.c      **** 		return;
+ 1520               	.LM184:
+ 1521 075e 00C0      		rjmp .L106
+ 1522               	.L113:
+ 584:kicker.c      **** 	}
+ 585:kicker.c      **** 	
+ 586:kicker.c      **** 	// check if we are inside the kicker position
+ 587:kicker.c      **** 	if (actual_pos != target_pos) {
+ 1524               	.LM185:
+ 1525 0760 9091 0000 		lds r25,actual_pos
+ 1526 0764 8091 0000 		lds r24,target_pos
+ 1527 0768 9813      		cpse r25,r24
+ 1528 076a 00C0      		rjmp .L106
+ 588:kicker.c      **** 		//debug("Kicker is not aligned");
+ 589:kicker.c      **** 		return;
+ 590:kicker.c      **** 	}
+ 591:kicker.c      **** 	if (rotate_job.timestamp != 0) {
+ 1530               	.LM186:
+ 1531 076c 8091 0000 		lds r24,rotate_job
+ 1532 0770 9091 0000 		lds r25,rotate_job+1
+ 1533 0774 A091 0000 		lds r26,rotate_job+2
+ 1534 0778 B091 0000 		lds r27,rotate_job+3
+ 1535 077c 892B      		or r24,r25
+ 1536 077e 8A2B      		or r24,r26
+ 1537 0780 8B2B      		or r24,r27
+ 1538 0782 01F0      		breq .+2
+ 1539 0784 00C0      		rjmp .L106
+ 592:kicker.c      **** 		return;
+ 593:kicker.c      **** 	}
+ 594:kicker.c      **** 	
+ 595:kicker.c      **** 	// dont kick if not locked
+ 596:kicker.c      **** #ifdef USE_SOLENOID_INTERLOCK
+ 597:kicker.c      **** 	if(!IS_ROTOR_LOCKED) {
+ 1541               	.LM187:
+ 1542 0786 CA99      		sbic 0x19,2
+ 1543 0788 00C0      		rjmp .L106
+ 598:kicker.c      **** 		return;
+ 599:kicker.c      **** 	}
+ 600:kicker.c      **** #endif
+ 601:kicker.c      **** /*	//activate for safer shooting
+ 602:kicker.c      **** 	if(rotorLocked!=1) { //hendrik
+ 603:kicker.c      **** 		return;
+ 604:kicker.c      **** 	}
+ 605:kicker.c      **** */		
+ 606:kicker.c      **** 	booster_pwm_disable();
+ 1545               	.LM188:
+ 1546 078a 0E94 0000 		call booster_pwm_disable
+ 607:kicker.c      **** 	SET(RELEASE);
+ 1548               	.LM189:
+ 1549 078e DB9A      		sbi 0x1b,3
+ 608:kicker.c      **** sreg = SREG;
+ 1551               	.LM190:
+ 1552 0790 2FB7      		in r18,__SREG__
+ 609:kicker.c      **** cli();
+ 1554               	.LM191:
+ 1555               	/* #APP */
+ 1556               	 ;  609 "kicker.c" 1
+ 1557 0792 F894      		cli
+ 1558               	 ;  0 "" 2
+ 610:kicker.c      **** 	rotation_pending_ms = kick_job.release_time;
+ 1560               	.LM192:
+ 1561               	/* #NOAPP */
+ 1562 0794 8091 0000 		lds r24,kick_job+8
+ 1563 0798 90E0      		ldi r25,0
+ 1564 079a 9093 0000 		sts rotation_pending_ms+1,r25
+ 1565 079e 8093 0000 		sts rotation_pending_ms,r24
+ 611:kicker.c      **** SREG=sreg;
+ 1567               	.LM193:
+ 1568 07a2 2FBF      		out __SREG__,r18
+ 1569               	.L115:
+ 612:kicker.c      **** 	for(;;) {
+ 613:kicker.c      **** //sreg = SREG;
+ 614:kicker.c      **** //cli();
+ 615:kicker.c      **** 		if(rotation_pending_ms == 0) break;
+ 1571               	.LM194:
+ 1572 07a4 8091 0000 		lds r24,rotation_pending_ms
+ 1573 07a8 9091 0000 		lds r25,rotation_pending_ms+1
+ 1574 07ac 892B      		or r24,r25
+ 1575 07ae 01F4      		brne .L115
+ 616:kicker.c      **** //SREG=sreg;
+ 617:kicker.c      **** 
+ 618:kicker.c      **** 	}
+ 619:kicker.c      **** /*
+ 620:kicker.c      **** 	for (i = 0; i < kick_job.release_time; i++) {
+ 621:kicker.c      **** 		_delay_ms(1);
+ 622:kicker.c      **** 	}
+ 623:kicker.c      **** */	
+ 624:kicker.c      **** 	RESET(RELEASE);
+ 1577               	.LM195:
+ 1578 07b0 DB98      		cbi 0x1b,3
+ 625:kicker.c      **** 	if (auto_boost)
+ 1580               	.LM196:
+ 1581 07b2 8091 0000 		lds r24,auto_boost
+ 1582 07b6 8111      		cpse r24,__zero_reg__
+ 626:kicker.c      **** 		booster_pwm_enable();
+ 1584               	.LM197:
+ 1585 07b8 0E94 0000 		call booster_pwm_enable
+ 1586               	.L116:
+ 627:kicker.c      **** 
+ 628:kicker.c      **** 	// debug time between kicker message and release
+ 629:kicker.c      **** 	char out[30];
+ 630:kicker.c      **** 	uint32_t delta = timer_get_ms() - kick_job.timestamp;
+ 1588               	.LM198:
+ 1589 07bc 0E94 0000 		call timer_get_ms
+ 1590 07c0 C090 0000 		lds r12,kick_job
+ 1591 07c4 D090 0000 		lds r13,kick_job+1
+ 1592 07c8 E090 0000 		lds r14,kick_job+2
+ 1593 07cc F090 0000 		lds r15,kick_job+3
+ 1594 07d0 6C19      		sub r22,r12
+ 1595 07d2 7D09      		sbc r23,r13
+ 1596 07d4 8E09      		sbc r24,r14
+ 1597 07d6 9F09      		sbc r25,r15
+ 631:kicker.c      **** 	if (delta > 65000)
+ 1599               	.LM199:
+ 1600 07d8 693E      		cpi r22,-23
+ 1601 07da 4DEF      		ldi r20,-3
+ 1602 07dc 7407      		cpc r23,r20
+ 1603 07de 8105      		cpc r24,__zero_reg__
+ 1604 07e0 9105      		cpc r25,__zero_reg__
+ 1605 07e2 00F0      		brlo .L117
+ 632:kicker.c      **** 		delta = 0;
+ 1607               	.LM200:
+ 1608 07e4 60E0      		ldi r22,0
+ 1609 07e6 70E0      		ldi r23,0
+ 1610 07e8 CB01      		movw r24,r22
+ 1611               	.L117:
+ 633:kicker.c      **** 	sprintf(out, "Kicktime: %u ms %u", (uint16_t)delta);
+ 1613               	.LM201:
+ 1614 07ea 7F93      		push r23
+ 1615 07ec 6F93      		push r22
+ 1616 07ee 80E0      		ldi r24,lo8(.LC4)
+ 1617 07f0 90E0      		ldi r25,hi8(.LC4)
+ 1618 07f2 9F93      		push r25
+ 1619 07f4 8F93      		push r24
+ 1620 07f6 8E01      		movw r16,r28
+ 1621 07f8 0F5F      		subi r16,-1
+ 1622 07fa 1F4F      		sbci r17,-1
+ 1623 07fc 1F93      		push r17
+ 1624 07fe 0F93      		push r16
+ 1625 0800 0E94 0000 		call sprintf
+ 634:kicker.c      **** 	debug(out);
+ 1627               	.LM202:
+ 1628 0804 C801      		movw r24,r16
+ 1629 0806 0E94 0000 		call debug
+ 635:kicker.c      **** 
+ 636:kicker.c      **** 	// everything fine
+ 637:kicker.c      **** 	kick_job.timestamp = 0;
+ 1631               	.LM203:
+ 1632 080a 1092 0000 		sts kick_job,__zero_reg__
+ 1633 080e 1092 0000 		sts kick_job+1,__zero_reg__
+ 1634 0812 1092 0000 		sts kick_job+2,__zero_reg__
+ 1635 0816 1092 0000 		sts kick_job+3,__zero_reg__
+ 638:kicker.c      **** 	kick_job.last_kick = timer_get_ms();
+ 1637               	.LM204:
+ 1638 081a 0E94 0000 		call timer_get_ms
+ 1639 081e 6093 0000 		sts kick_job+4,r22
+ 1640 0822 7093 0000 		sts kick_job+4+1,r23
+ 1641 0826 8093 0000 		sts kick_job+4+2,r24
+ 1642 082a 9093 0000 		sts kick_job+4+3,r25
+ 639:kicker.c      **** 
+ 640:kicker.c      **** 	return;
+ 1644               	.LM205:
+ 1645 082e 0F90      		pop __tmp_reg__
+ 1646 0830 0F90      		pop __tmp_reg__
+ 1647 0832 0F90      		pop __tmp_reg__
+ 1648 0834 0F90      		pop __tmp_reg__
+ 1649 0836 0F90      		pop __tmp_reg__
+ 1650 0838 0F90      		pop __tmp_reg__
+ 1651               	.L106:
+ 1652               	/* epilogue start */
+ 641:kicker.c      **** }
+ 1654               	.LM206:
+ 1655 083a 6E96      		adiw r28,30
+ 1656 083c 0FB6      		in __tmp_reg__,__SREG__
+ 1657 083e F894      		cli
+ 1658 0840 DEBF      		out __SP_H__,r29
+ 1659 0842 0FBE      		out __SREG__,__tmp_reg__
+ 1660 0844 CDBF      		out __SP_L__,r28
+ 1661 0846 DF91      		pop r29
+ 1662 0848 CF91      		pop r28
+ 1663 084a 1F91      		pop r17
+ 1664 084c 0F91      		pop r16
+ 1665 084e FF90      		pop r15
+ 1666 0850 EF90      		pop r14
+ 1667 0852 DF90      		pop r13
+ 1668 0854 CF90      		pop r12
+ 1669 0856 0895      		ret
+ 1677               	.Lscope13:
+ 1679               	.global	kicker_interlock_handler
+ 1681               	kicker_interlock_handler:
+ 642:kicker.c      **** 
+ 643:kicker.c      **** #ifdef SERIAL_SERVO
+ 644:kicker.c      **** void kicker_set_servo(bool status)
+ 645:kicker.c      **** {
+ 646:kicker.c      **** 	if( status )
+ 647:kicker.c      **** 	{
+ 648:kicker.c      **** 		// send data to the servo
+ 649:kicker.c      **** 		uart_putc('o');
+ 650:kicker.c      **** 		uart_putc('n');
+ 651:kicker.c      **** 		uart_putc('\n');
+ 652:kicker.c      **** 	}
+ 653:kicker.c      **** 	else
+ 654:kicker.c      **** 	{
+ 655:kicker.c      **** 		// send data to the servo
+ 656:kicker.c      **** 		uart_putc('o');
+ 657:kicker.c      **** 		uart_putc('f');
+ 658:kicker.c      **** 		uart_putc('f');
+ 659:kicker.c      **** 		uart_putc('\n');
+ 660:kicker.c      **** 	}
+ 661:kicker.c      **** }
+ 662:kicker.c      **** #endif
+ 663:kicker.c      **** 
+ 664:kicker.c      **** 
+ 665:kicker.c      **** 
+ 666:kicker.c      **** #ifdef USE_SOLENOID_INTERLOCK
+ 667:kicker.c      **** /**
+ 668:kicker.c      ****  * Interock the rotor
+ 669:kicker.c      ****  */
+ 670:kicker.c      **** //Sketch
+ 671:kicker.c      **** void kicker_interlock_handler(void) {
+ 1683               	.LM207:
+ 1684               	.LFBB14:
+ 1685               	/* prologue: function */
+ 1686               	/* frame size = 0 */
+ 1687               	/* stack size = 0 */
+ 1688               	.L__stack_usage = 0
+ 672:kicker.c      **** 
+ 673:kicker.c      **** 	uint8_t sreg;
+ 674:kicker.c      **** 	// lock the rotor
+ 675:kicker.c      **** 	sreg = SREG;
+ 1690               	.LM208:
+ 1691 0858 2FB7      		in r18,__SREG__
+ 676:kicker.c      **** 	cli();
+ 1693               	.LM209:
+ 1694               	/* #APP */
+ 1695               	 ;  676 "kicker.c" 1
+ 1696 085a F894      		cli
+ 1697               	 ;  0 "" 2
+ 677:kicker.c      **** 	if (rotation_pending_ms == 0 && (rotate_job.state==ROTJOB_END || rotate_job.state==ROTJOB_WIG_IN_L
+ 1699               	.LM210:
+ 1700               	/* #NOAPP */
+ 1701 085c 8091 0000 		lds r24,rotation_pending_ms
+ 1702 0860 9091 0000 		lds r25,rotation_pending_ms+1
+ 1703 0864 892B      		or r24,r25
+ 1704 0866 01F4      		brne .L127
+ 1706               	.LM211:
+ 1707 0868 8091 0000 		lds r24,rotate_job+10
+ 1708 086c 8250      		subi r24,lo8(-(-2))
+ 1709 086e 8330      		cpi r24,lo8(3)
+ 1710 0870 00F4      		brsh .L127
+ 678:kicker.c      **** 		LOCK_ROTOR;
+ 1712               	.LM212:
+ 1713 0872 DD98      		cbi 0x1b,5
+ 679:kicker.c      **** 		actual_pos = target_pos;
+ 1715               	.LM213:
+ 1716 0874 8091 0000 		lds r24,target_pos
+ 1717 0878 8093 0000 		sts actual_pos,r24
+ 1718               	.L127:
+ 680:kicker.c      **** 	} else {
+ 681:kicker.c      **** 		//UNLOCK_ROTOR;	
+ 682:kicker.c      **** 	}
+ 683:kicker.c      **** 	SREG = sreg;
+ 1720               	.LM214:
+ 1721 087c 2FBF      		out __SREG__,r18
+ 1722 087e 0895      		ret
+ 1727               	.Lscope14:
+ 1729               	.global	kicker_task_handler
+ 1731               	kicker_task_handler:
+ 684:kicker.c      **** /* //activate for safer shooting
+ 685:kicker.c      **** 	if (IS_ROTOR_LOCKED) {
+ 686:kicker.c      **** 		if (rotorWasLocked) {
+ 687:kicker.c      **** 			if (timer_get_ms()-rotorLockTime >= 50) {
+ 688:kicker.c      **** 				rotorLocked = 1;
+ 689:kicker.c      **** 			}
+ 690:kicker.c      **** 		} else {
+ 691:kicker.c      **** 			rotorLockTime = timer_get_ms();
+ 692:kicker.c      **** 			rotorWasLocked = 1;
+ 693:kicker.c      **** 		}
+ 694:kicker.c      **** 	} else {
+ 695:kicker.c      **** 		rotorLocked = 0;
+ 696:kicker.c      **** 		rotorWasLocked = 0;
+ 697:kicker.c      **** 	}
+ 698:kicker.c      **** */
+ 699:kicker.c      **** 	
+ 700:kicker.c      **** }
+ 701:kicker.c      **** #endif
+ 702:kicker.c      **** 
+ 703:kicker.c      **** void kicker_task_handler(void) {
+ 1733               	.LM215:
+ 1734               	.LFBB15:
+ 1735               	/* prologue: function */
+ 1736               	/* frame size = 0 */
+ 1737               	/* stack size = 0 */
+ 1738               	.L__stack_usage = 0
+ 704:kicker.c      **** 	kicker_rotate_handler();
+ 1740               	.LM216:
+ 1741 0880 0E94 0000 		call kicker_rotate_handler
+ 705:kicker.c      **** #ifdef USE_SOLENOID_INTERLOCK
+ 706:kicker.c      **** 	kicker_interlock_handler();
+ 1743               	.LM217:
+ 1744 0884 0E94 0000 		call kicker_interlock_handler
+ 707:kicker.c      **** #endif
+ 708:kicker.c      **** 	kicker_kick_handler();
+ 1746               	.LM218:
+ 1747 0888 0C94 0000 		jmp kicker_kick_handler
+ 1749               	.Lscope15:
+ 1750               		.data
+ 1753               	lock.2189:
+ 1754 0000 01        		.byte	1
+ 1755               		.local	uscnt.2161
+ 1756               		.comm	uscnt.2161,1,1
+ 1757               		.local	count.2160
+ 1758               		.comm	count.2160,2,1
+ 1759               	.global	target_pos
+ 1762               	target_pos:
+ 1763 0001 01        		.byte	1
+ 1764               	.global	target_val
+ 1765               		.section .bss
+ 1768               	target_val:
+ 1769 0000 0000      		.zero	2
+ 1770               	.global	rotation_pending_ms
+ 1771               		.data
+ 1774               	rotation_pending_ms:
+ 1775 0002 0100      		.word	1
+ 1776               	.global	servo_pos
+ 1779               	servo_pos:
+ 1780 0004 8F00      		.word	143
+ 1781 0006 CC00      		.word	204
+ 1782 0008 5B00      		.word	91
+ 1783               	.global	curServoPos
+ 1786               	curServoPos:
+ 1787 000a 01        		.byte	1
+ 1788               	.global	rotItCounter
+ 1789               		.section .bss
+ 1792               	rotItCounter:
+ 1793 0002 0000      		.zero	2
+ 1794               	.global	wigInCounter
+ 1797               	wigInCounter:
+ 1798 0004 00        		.zero	1
+ 1799               	.global	wiggle_dir
+ 1802               	wiggle_dir:
+ 1803 0005 00        		.zero	1
+ 1804               	.global	wiggle_time
+ 1807               	wiggle_time:
+ 1808 0006 0000 0000 		.zero	4
+ 1809               	.global	rotorWasLocked
+ 1812               	rotorWasLocked:
+ 1813 000a 00        		.zero	1
+ 1814               	.global	rotorLocked
+ 1817               	rotorLocked:
+ 1818 000b 00        		.zero	1
+ 1819               	.global	rotorLockTime
+ 1822               	rotorLockTime:
+ 1823 000c 0000 0000 		.zero	4
+ 1824               	.global	actual_pos
+ 1825               		.data
+ 1828               	actual_pos:
+ 1829 000b 01        		.byte	1
+ 1830               	.global	rotate_job
+ 1831               		.section .bss
+ 1834               	rotate_job:
+ 1835 0010 0000 0000 		.zero	11
+ 1835      0000 0000 
+ 1835      0000 00
+ 1836               	.global	kick_job
+ 1839               	kick_job:
+ 1840 001b 0000 0000 		.zero	10
+ 1840      0000 0000 
+ 1840      0000 
+ 1841               	.global	MOVE_OFFSET
+ 1842               		.data
+ 1845               	MOVE_OFFSET:
+ 1846 000c 14        		.byte	20
+ 1847               	.global	lastServoValue
+ 1850               	lastServoValue:
+ 1851 000d FFFF      		.word	-1
+ 1869               		.text
+ 1871               	.Letext0:
+ 1872               		.ident	"GCC: (GNU) 4.8.2"
+ 1873               	.global __do_copy_data
+ 1874               	.global __do_clear_bss
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 kicker.c
+     /tmp/ccHqeahZ.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccHqeahZ.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccHqeahZ.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccHqeahZ.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccHqeahZ.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccHqeahZ.s:127    .text:0000000000000000 __vector_4
+     /tmp/ccHqeahZ.s:1768   .bss:0000000000000000 target_val
+     /tmp/ccHqeahZ.s:1756   .bss:0000000000000026 count.2160
+     /tmp/ccHqeahZ.s:1774   .data:0000000000000002 rotation_pending_ms
+                             .bss:0000000000000025 uscnt.2161
+     /tmp/ccHqeahZ.s:230    .text:000000000000009e kicker_init
+     /tmp/ccHqeahZ.s:1779   .data:0000000000000004 servo_pos
+     /tmp/ccHqeahZ.s:1802   .bss:0000000000000005 wiggle_dir
+     /tmp/ccHqeahZ.s:1834   .bss:0000000000000010 rotate_job
+     /tmp/ccHqeahZ.s:563    .text:0000000000000266 kicker_rotate_servo
+     /tmp/ccHqeahZ.s:1762   .data:0000000000000001 target_pos
+     /tmp/ccHqeahZ.s:604    .text:000000000000028c kicker_rotate_servo_to
+     /tmp/ccHqeahZ.s:624    .text:0000000000000296 kicker_rotate_servo_pos
+     /tmp/ccHqeahZ.s:1828   .data:000000000000000b actual_pos
+     /tmp/ccHqeahZ.s:688    .text:00000000000002d2 kicker_toggle_interlock
+     /tmp/ccHqeahZ.s:1753   .data:0000000000000000 lock.2189
+     /tmp/ccHqeahZ.s:725    .text:00000000000002ec kicker_get_pos
+     /tmp/ccHqeahZ.s:742    .text:00000000000002f2 kicker_rotate_handler
+     /tmp/ccHqeahZ.s:1839   .bss:000000000000001b kick_job
+     /tmp/ccHqeahZ.s:1807   .bss:0000000000000006 wiggle_time
+     /tmp/ccHqeahZ.s:1792   .bss:0000000000000002 rotItCounter
+     /tmp/ccHqeahZ.s:1786   .data:000000000000000a curServoPos
+     /tmp/ccHqeahZ.s:1797   .bss:0000000000000004 wigInCounter
+     /tmp/ccHqeahZ.s:1131   .text:0000000000000558 kicker_add_rotate_job
+     /tmp/ccHqeahZ.s:1228   .text:00000000000005da kicker_set_servo_pos
+     /tmp/ccHqeahZ.s:1288   .text:000000000000061c kicker_add_kick_job
+     /tmp/ccHqeahZ.s:1324   .text:000000000000063c kicker_add_kick_job_forced
+     /tmp/ccHqeahZ.s:1397   .text:000000000000068a kicker_kick_handler
+     /tmp/ccHqeahZ.s:1681   .text:0000000000000858 kicker_interlock_handler
+     /tmp/ccHqeahZ.s:1731   .text:0000000000000880 kicker_task_handler
+     /tmp/ccHqeahZ.s:1812   .bss:000000000000000a rotorWasLocked
+     /tmp/ccHqeahZ.s:1817   .bss:000000000000000b rotorLocked
+     /tmp/ccHqeahZ.s:1822   .bss:000000000000000c rotorLockTime
+     /tmp/ccHqeahZ.s:1845   .data:000000000000000c MOVE_OFFSET
+     /tmp/ccHqeahZ.s:1850   .data:000000000000000d lastServoValue
+
+UNDEFINED SYMBOLS
+__udivmodsi4
+timer_get_ms
+error
+max_voltage
+warning
+get_capacitors_voltage
+booster_can_kick
+debug
+booster_pwm_disable
+auto_boost
+booster_pwm_enable
+sprintf
+__do_copy_data
+__do_clear_bss

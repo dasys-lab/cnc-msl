@@ -17,6 +17,7 @@ using namespace std;
 namespace msl
 {
 
+	class AnnotatedObstacleClusterPool;
 	class AnnotatedObstacleCluster
 	{
 	public:
@@ -64,13 +65,14 @@ namespace msl
 					int ident, int supId);
 		double getVariance();
 		void add(shared_ptr<AnnotatedObstacleCluster> obs);
-		bool checkAndMerge(shared_ptr<AnnotatedObstacleCluster> cluster, double varianceThreshold);
+		bool checkAndMerge(AnnotatedObstacleCluster* cluster, double varianceThreshold);
 		void remove(shared_ptr<AnnotatedObstacleCluster> obs);
-		double distanceTo(shared_ptr<AnnotatedObstacleCluster> aoc);
+		double distanceTo(AnnotatedObstacleCluster* aoc);
 		double distanceTo(shared_ptr<geometry::CNPosition> pos);
 		double distanceTo (shared_ptr<geometry::CNPoint2D> p);
-		static bool compareTo(shared_ptr<AnnotatedObstacleCluster> first, shared_ptr<AnnotatedObstacleCluster> second);
+		static bool compareTo(AnnotatedObstacleCluster* first, AnnotatedObstacleCluster* second);
 		bool equals(shared_ptr<AnnotatedObstacleCluster> cl);
+		static AnnotatedObstacleCluster* getNew(AnnotatedObstacleClusterPool* aocp);
 		string toString();
 
 	protected:
