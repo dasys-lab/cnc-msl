@@ -27,6 +27,7 @@
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <MSLEnums.h>
+#include <obstaclehandler/Obstacles.h>
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "Ball.h"
@@ -36,7 +37,6 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
-#include "obstaclehandler/ObHandler.h"
 
 namespace alica {
 	class AlicaEngine;
@@ -90,7 +90,7 @@ namespace msl
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-		ObHandler obstacleHandler;
+		Obstacles obstacleHandler;
 
 
 	private:

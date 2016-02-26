@@ -66,7 +66,7 @@ namespace alica
                 if (ids->size() > 0 && ids->at(0) != -1)
                 {
                     // get receiver position by id
-                    auto pos = wm->robots.getTeamMatePosition(ids->at(0));
+                    auto pos = wm->robots.teammates.getTeamMatePosition(ids->at(0));
                     receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
                 MotionControl mc;

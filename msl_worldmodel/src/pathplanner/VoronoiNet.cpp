@@ -250,7 +250,7 @@ namespace msl
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
 		// get teammate positions
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.teammates.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		//get ownPos
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
@@ -444,7 +444,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<Vertex> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
 	{
 		//locate teammate
-		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
 		//get vertices
 		shared_ptr<vector<shared_ptr<Vertex> > > ret = this->getVerticesOfFace(
 				make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
@@ -455,7 +455,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
 	{
 		//locate teammate
-		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
 		//get vertices
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		auto vertices = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));

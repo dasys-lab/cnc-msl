@@ -314,7 +314,7 @@ namespace msl
 				mc.senderID = -1;
 				return mc;
 			}
-			if (wm->robots.teamMatesInOwnPenalty() > 1)
+			if (wm->robots.teammates.teamMatesInOwnPenalty() > 1)
 			{ //do not enter penalty if someone besides keeper is already in there
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
@@ -350,7 +350,7 @@ namespace msl
 		}
 		if (field->isInsideEnemyPenalty(alloBall, 0))
 		{ //ball is inside enemy penalty area
-			if (wm->robots.teamMatesInOppPenalty() > 0)
+			if (wm->robots.teammates.teamMatesInOppPenalty() > 0)
 			{ //if there is someone else, do not enter
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;

@@ -1,11 +1,11 @@
 /*
- * ObHandler.cpp
+ * Obstacles.cpp
  *
  *  Created on: Feb 11, 2016
  *      Author: Stefan Jakob
  */
 
-#include "obstaclehandler/ObHandler.h"
+#include <obstaclehandler/Obstacles.h>
 #include "MSLFootballField.h"
 #include "obstaclehandler/SimpleCluster.h"
 #include "MSLWorldModel.h"
@@ -14,7 +14,7 @@
 namespace msl
 {
 
-	ObHandler::ObHandler(MSLWorldModel* wm, int ringbufferLength)
+	Obstacles::Obstacles(MSLWorldModel* wm, int ringbufferLength)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
@@ -37,11 +37,11 @@ namespace msl
 		pool = new AnnotatedObstacleClusterPool();
 	}
 
-	ObHandler::~ObHandler()
+	Obstacles::~Obstacles()
 	{
 	}
 
-	void ObHandler::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
+	void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
 		//TODO save lists in WM
 		// SETUP
@@ -108,7 +108,7 @@ namespace msl
 //	}
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ObHandler::clusterPoint2D(
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::clusterPoint2D(
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstacles, double varianceThreshold)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > retList = make_shared<
@@ -169,7 +169,7 @@ namespace msl
 		return retList;
 	}
 
-	void ObHandler::clusterAnnotatedObstacles()
+	void Obstacles::clusterAnnotatedObstacles()
 	{
 		bool mergedCluster = true;
 
@@ -227,7 +227,7 @@ namespace msl
 		clusterArray->clear();
 	}
 
-	void ObHandler::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
+	void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
 											shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo)
 	{
 		clusterArray->clear();
@@ -342,7 +342,7 @@ namespace msl
 		clusterArray->push_back(obs);
 	}
 
-	void ObHandler::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
+	void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
 	{
 		double curAngle = 0.0;
 		double curAngle2 = 0.0;
@@ -516,7 +516,7 @@ namespace msl
 		}
 	}
 
-	bool ObHandler::leftOf(double angle1, double angle2)
+	bool Obstacles::leftOf(double angle1, double angle2)
 	{
 		if ((angle1 > 0.0 && angle2 > 0.0) || (angle1 < 0.0 && angle2 < 0.0))
 		{
@@ -545,7 +545,7 @@ namespace msl
 		return false;
 	}
 
-	double ObHandler::distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos)
+	double Obstacles::distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos)
 	{
 		double dx = (point.x - pos.x);
 		double dy = (point.y - pos.y);

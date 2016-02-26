@@ -100,10 +100,10 @@ namespace alica
             vector<int> teamMateIDs = vector<int> {8, 9, 10, 11};
             for (int id : teamMateIDs)
             {
-                if (wm->robots.getTeamMatePosition(id, 0) != nullptr && id != ownID)
+                if (wm->robots.teammates.getTeamMatePosition(id, 0) != nullptr && id != ownID)
                 {
                     shared_ptr < geometry::CNPoint2D > validPosition = make_shared < geometry::CNPoint2D
-                            > (wm->robots.getTeamMatePosition(id, 0)->x, wm->robots.getTeamMatePosition(id, 0)->y);
+                            > (wm->robots.teammates.getTeamMatePosition(id, 0)->x, wm->robots.teammates.getTeamMatePosition(id, 0)->y);
                     teamMatePositions->push_back(validPosition);
                 }
             }
