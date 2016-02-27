@@ -16,6 +16,7 @@
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
 #include "msl_msgs/Point2dInfo.h"
 #include "msl_msgs/PositionInfo.h"
+#include "MSLEnums.h"
 
 namespace msl
 {

@@ -38,7 +38,8 @@
 #include "EventTrigger.h"
 #include "InformationElement.h"
 
-namespace alica {
+namespace alica
+{
 	class AlicaEngine;
 }
 
@@ -47,18 +48,15 @@ using namespace std;
 namespace msl
 {
 
-
 	class MSLSharedWorldModel;
 	class MSLWorldModel
 	{
 	public:
-		static MSLWorldModel* get();
-		bool setEngine(alica::AlicaEngine* ae);
+		static MSLWorldModel* get();bool setEngine(alica::AlicaEngine* ae);
 		alica::AlicaEngine* getEngine();
 
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
-
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
@@ -72,11 +70,9 @@ namespace msl
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 		void onLightBarrierInfo(std_msgs::BoolPtr msg);
 
-
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
-
 
 		int getRingBufferLength();
 		int getOwnId();
@@ -91,7 +87,6 @@ namespace msl
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
 		Obstacles obstacleHandler;
-
 
 	private:
 
@@ -127,14 +122,10 @@ namespace msl
 		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
 
-
-
-
 	protected:
+
 	};
 
 } /* namespace msl */
-
-
 
 #endif /* MSLWORLDMODEL_H_ */

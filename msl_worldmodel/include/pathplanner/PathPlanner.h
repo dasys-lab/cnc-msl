@@ -49,6 +49,7 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include "container/CNPosition.h"
 #include "MSLFootballField.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include "MSLEnums.h"
 
 //namespaces
 using namespace std;
@@ -218,7 +219,7 @@ protected:
 	shared_ptr<geometry::CNPoint2D> lastTarget;
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath;
 	/**
-	 * check if the goal vertces are reached and if there is a corridor leading to the goal
+	 * check if the goal vertices are reached and if there is a corridor leading to the goal
 	 */
 	bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal, shared_ptr<geometry::CNPoint2D> goal);
 };

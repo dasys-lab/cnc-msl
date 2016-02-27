@@ -8,6 +8,10 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_OPPONENTS_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_OPPONENTS_H_
 
+#include <SystemConfig.h>
+
+using namespace std;
+
 namespace msl
 {
 
@@ -17,9 +21,15 @@ namespace msl
 	public:
 		Opponents(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~Opponents();
+		double getOpponentProtectDistance();
+		double getOpponentProtectAngle();
+
 	private:
 		MSLWorldModel* wm;
+		supplementary::SystemConfig* sc;
 		int ringBufferLength;
+		double opponentProtectDistance;
+		double opponentProtectAngle;
 	};
 
 

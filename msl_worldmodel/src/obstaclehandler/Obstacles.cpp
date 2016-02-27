@@ -54,7 +54,6 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsWithoutOppKeeperEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
@@ -70,17 +69,7 @@ namespace msl
 														wm->rawSensorData.getCorrectedOdometryInfo()->position.y,
 														wm->rawSensorData.getCorrectedOdometryInfo()->position.angle)));
 
-			if (newClusterArray->at(i)->ident != wm->getOwnId())
-			{
-				newObsEgo->push_back(curEgoPoint);
-				if (!field->isInsideEnemyKeeperArea(curAlloPoint, 0))
-				{
-					// egocentric obstacles, which are not inside the enemy keeper area and do not belong to our team
-					newObsWithoutOppKeeperEgo->push_back(curEgoPoint);
-				}
-			}
-
-			if (newClusterArray->at(i)->ident == -1)
+			if (newClusterArray->at(i)->ident == EntityType::Opponent)
 			{
 				// it is not a teammate
 				if (field->isInsideField(curAlloPoint, FIELD_TOL))
@@ -104,8 +93,6 @@ namespace msl
 //		vNet.OppAllo = newOppAllo;
 //		vNet.TeammatesEgo = newTeammatesEgo;
 //		vNet.TeammatesAllo = newTeammatesAllo;
-//		vNet.ObsWithoutOppKeeperEgo = newObsWithoutOppKeeperEgo;
-//	}
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::clusterPoint2D(
@@ -125,8 +112,8 @@ namespace msl
 		while (mergedCluster)
 		{
 			// find the two nearest clusters
-			int fstClusterId = -1;
-			int sndClusterId = -1;
+			int fstClusterId = EntityType::Opponent;
+			int sndClusterId = EntityType::Opponent;
 			double minDist = numeric_limits<double>::max();
 			double curDist = 0;
 			for (int i = 0; i < clusterList->size(); ++i)
@@ -145,7 +132,7 @@ namespace msl
 			}
 
 			// check if variance after merging is below VARIANCE_THRESHOLD
-			if (fstClusterId != -1)
+			if (fstClusterId != EntityType::Opponent)
 			{
 				mergedCluster = clusterList->at(fstClusterId)->checkAndMerge(clusterList->at(sndClusterId),
 																				varianceThreshold);
@@ -176,15 +163,15 @@ namespace msl
 		while (mergedCluster)
 		{
 			// find the two nearest mergeable clusters
-			int fstClusterId = -1;
-			int sndClusterId = -1;
+			int fstClusterId = EntityType::Opponent;
+			int sndClusterId = EntityType::Opponent;
 			double minDist = numeric_limits<double>::max();
 			double curDist = 0;
 			for (int i = 0; i < clusterArray->size(); ++i)
 			{
 				for (int j = 0; j < i; ++j)
 				{
-					if ((clusterArray->at(i)->ident == -1 || clusterArray->at(j)->ident == -1)
+					if ((clusterArray->at(i)->ident == EntityType::Opponent || clusterArray->at(j)->ident == EntityType::Opponent)
 							&& std::find(clusterArray->at(i)->supporter->begin(), clusterArray->at(i)->supporter->end(),
 											clusterArray->at(j)->ident) == clusterArray->at(i)->supporter->end()
 							&& std::find(clusterArray->at(j)->supporter->begin(), clusterArray->at(j)->supporter->end(),
@@ -203,7 +190,7 @@ namespace msl
 			}
 
 			// check if variance after merging is below VARIANCE_THRESHOLD
-			if (fstClusterId != -1)
+			if (fstClusterId != EntityType::Opponent)
 			{
 				mergedCluster = clusterArray->at(fstClusterId)->checkAndMerge(clusterArray->at(sndClusterId),
 																				VARIANCE_THRESHOLD);
@@ -267,7 +254,7 @@ namespace msl
 						obs = AnnotatedObstacleCluster::getNew(this->pool);
 						obs->init((int) (curOppList.at(i).x + 0.5), (int) (curOppList.at(i).y + 0.5), // pos
 						DFLT_OB_RADIUS,
-						-1, curRobot.first);
+						EntityType::Opponent, curRobot.first);
 						clusterArray->push_back(obs);
 					}
 				}
@@ -315,7 +302,7 @@ namespace msl
 			if (MSLFootballField::getInstance()->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
 			{
 				obs = AnnotatedObstacleCluster::getNew(this->pool);
-				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, -1, wm->getOwnId());
+				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent, wm->getOwnId());
 				clusterArray->push_back(obs);
 			}
 		}

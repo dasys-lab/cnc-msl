@@ -45,6 +45,11 @@ namespace msl
 	{
 		UnknownColor = 0, White = 1, Black = 2, Green = 3, Cyan = 4, Magenta = 5, Yellow = 6, Blue = 7
 	};
+
+	enum EntityType
+	{
+		Opponent = -1, ArtificialObstacle = -2, Obstacle = -3
+	};
 }
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_MSLENUMS_H_ */

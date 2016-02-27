@@ -30,4 +30,11 @@ namespace msl
 		}
 	}
 
+	void msl::AnnotatedObstacleClusterPool::reset()
+	{
+		this->curIndex = 0;
+	}
+
 } /* namespace msl */
+
+
