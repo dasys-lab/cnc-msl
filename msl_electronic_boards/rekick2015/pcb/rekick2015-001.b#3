@@ -1223,6 +1223,26 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 <rectangle x1="-1.0668" y1="-0.6985" x2="-0.4168" y2="0.7015" layer="51"/>
 <rectangle x1="-0.1999" y1="-0.5001" x2="0.1999" y2="0.5001" layer="35"/>
 </package>
+<package name="EB20D">
+<description>&lt;b&gt;ELECTROLYTIC CAPACITOR&lt;/b&gt;&lt;p&gt;
+grid 10.16 mm, diameter 20 mm</description>
+<wire x1="-2.54" y1="0" x2="-1.5748" y2="0" width="0.254" layer="21"/>
+<wire x1="-1.5748" y1="0" x2="-1.5748" y2="2.54" width="0.254" layer="21"/>
+<wire x1="-1.5748" y1="2.54" x2="-0.4318" y2="2.54" width="0.254" layer="21"/>
+<wire x1="-0.4318" y1="2.54" x2="-0.4318" y2="-2.54" width="0.254" layer="21"/>
+<wire x1="-0.4318" y1="-2.54" x2="-1.5748" y2="-2.54" width="0.254" layer="21"/>
+<wire x1="-1.5748" y1="-2.54" x2="-1.5748" y2="0" width="0.254" layer="21"/>
+<wire x1="0.635" y1="0" x2="2.54" y2="0" width="0.254" layer="21"/>
+<wire x1="-2.794" y1="2.54" x2="-2.794" y2="1.27" width="0.254" layer="21"/>
+<wire x1="-2.159" y1="1.905" x2="-3.429" y2="1.905" width="0.254" layer="21"/>
+<circle x="0" y="0" radius="10.16" width="0.1524" layer="21"/>
+<circle x="0" y="0" radius="7.62" width="0.1524" layer="21"/>
+<pad name="+" x="-5.08" y="0" drill="2.0066" diameter="4.5974"/>
+<pad name="-" x="5.08" y="0" drill="2.0066" diameter="4.5974" shape="octagon"/>
+<text x="7.8994" y="7.366" size="1.778" layer="25" ratio="10">&gt;NAME</text>
+<text x="-5.0546" y="-5.08" size="1.778" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="0.3302" y1="-2.54" x2="1.6002" y2="2.54" layer="21"/>
+</package>
 <package name="E5-10,5">
 <description>&lt;b&gt;ELECTROLYTIC CAPACITOR&lt;/b&gt;&lt;p&gt;
 grid 5.08 mm, diameter 10.5 mm</description>
@@ -2599,6 +2619,11 @@ design rules under a new name.</description>
 <element name="R_LINE" library="rcl" package="R0805" value="10k" x="-180.086" y="-674.37"/>
 <element name="L7" library="EagleLibrary_Wuerth_Elektronik_eiSos_rev15h" package="WE-LLCR_ETD39" value="" x="-204.724" y="-652.018"/>
 <element name="IC1" library="linear" package="SO08" value="LM1458D" x="-232.664" y="-673.608"/>
+<element name="D11" library="diode" package="SMA-DO214AC" value="STTH1R06A" x="-233.172" y="-680.72"/>
+<element name="D8" library="diode" package="SMA-DO214AC" value="STTH1R06A" x="-233.172" y="-687.578"/>
+<element name="D9" library="diode" package="SMA-DO214AC" value="STTH1R06A" x="-233.172" y="-694.436"/>
+<element name="D10" library="diode" package="SMA-DO214AC" value="STTH1R06A" x="-233.172" y="-701.294"/>
+<element name="C25" library="rcl" package="EB20D" value="2200µ" x="-231.648" y="-709.93"/>
 </elements>
 <signals>
 <signal name="N$2">
@@ -2947,8 +2972,14 @@ design rules under a new name.</description>
 <contactref element="R101" pad="2"/>
 <contactref element="R2" pad="1"/>
 <contactref element="R5" pad="2"/>
+<contactref element="D9" pad="K"/>
+<contactref element="D8" pad="K"/>
+<contactref element="C25" pad="+"/>
+<wire x1="-231.122" y1="-694.436" x2="-236.728" y2="-709.93" width="0" layer="19" extent="1-1"/>
+<wire x1="-231.122" y1="-687.578" x2="-231.122" y2="-694.436" width="0" layer="19" extent="1-1"/>
+<wire x1="-165.862" y1="-643.128" x2="-231.122" y2="-687.578" width="0" layer="19" extent="1-1"/>
+<wire x1="-117.576" y1="-213.614" x2="-165.862" y2="-643.128" width="0" layer="19" extent="1-1"/>
 <wire x1="-105.918" y1="-159.004" x2="-117.576" y2="-213.614" width="0" layer="19" extent="1-1"/>
-<wire x1="-165.862" y1="-643.128" x2="-117.576" y2="-213.614" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$23">
 <contactref element="R3" pad="1"/>
@@ -3180,6 +3211,9 @@ design rules under a new name.</description>
 <contactref element="OK2" pad="2"/>
 <contactref element="R11" pad="1"/>
 <contactref element="C14" pad="2"/>
+<contactref element="D10" pad="A"/>
+<contactref element="D11" pad="A"/>
+<contactref element="C25" pad="-"/>
 <wire x1="-135.294" y1="-285.496" x2="-142.174" y2="-300.482" width="0" layer="19" extent="1-1"/>
 <wire x1="-142.174" y1="-279.908" x2="-135.294" y2="-285.496" width="0" layer="19" extent="1-1"/>
 <wire x1="-140.882" y1="-264.922" x2="-142.174" y2="-279.908" width="0" layer="19" extent="1-1"/>
@@ -3190,6 +3224,9 @@ design rules under a new name.</description>
 <wire x1="-178.181" y1="-638.5814" x2="-166.37" y2="-620.522" width="0" layer="19" extent="1-1"/>
 <wire x1="-181.036" y1="-653.542" x2="-178.181" y2="-638.5814" width="0" layer="19" extent="1-1"/>
 <wire x1="-179.744" y1="-659.13" x2="-181.036" y2="-653.542" width="0" layer="19" extent="1-1"/>
+<wire x1="-235.222" y1="-680.72" x2="-179.744" y2="-659.13" width="0" layer="19" extent="1-1"/>
+<wire x1="-235.222" y1="-701.294" x2="-235.222" y2="-680.72" width="0" layer="19" extent="1-1"/>
+<wire x1="-226.568" y1="-709.93" x2="-235.222" y2="-701.294" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CAP_+12V">
 <contactref element="U$4" pad="6"/>
@@ -3229,6 +3266,20 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$30">
 <contactref element="F1" pad="P$2"/>
+</signal>
+<signal name="N$34">
+<contactref element="L7" pad="2"/>
+<contactref element="D8" pad="A"/>
+<contactref element="D10" pad="K"/>
+<wire x1="-235.222" y1="-687.578" x2="-231.122" y2="-701.294" width="0" layer="19" extent="1-1"/>
+<wire x1="-222.724" y1="-640.418" x2="-235.222" y2="-687.578" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$36">
+<contactref element="D9" pad="A"/>
+<contactref element="L7" pad="4"/>
+<contactref element="D11" pad="K"/>
+<wire x1="-231.122" y1="-680.72" x2="-235.222" y2="-694.436" width="0" layer="19" extent="1-1"/>
+<wire x1="-222.724" y1="-652.018" x2="-231.122" y2="-680.72" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>

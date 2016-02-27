@@ -21444,8 +21444,8 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="SUPPLY1" library="supply2" deviceset="GND1" device=""/>
-<part name="C9" library="rcl" deviceset="CPOL-EU" device="E5-10.5" value="560µ"/>
-<part name="C10" library="rcl" deviceset="CPOL-EU" device="E5-10.5" value="560µ"/>
+<part name="C9" library="rcl" deviceset="CPOL-EU" device="E5-10.5" value="2200µ"/>
+<part name="C10" library="rcl" deviceset="CPOL-EU" device="E5-10.5" value="2200µ"/>
 <part name="SUPPLY3" library="supply2" deviceset="GND1" device=""/>
 <part name="FRAME5" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="IC1" library="linear" deviceset="LM393" device="D"/>
@@ -21520,6 +21520,10 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <part name="R_ISEN_B" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="C_ISEN_B" library="rcl" deviceset="C-EU" device="C0603"/>
 <part name="SUPPLY7" library="supply2" deviceset="GND1" device=""/>
+<part name="L3" library="rcl" deviceset="L-EU" device="TJ9-U2" value="20µ"/>
+<part name="L4" library="rcl" deviceset="L-EU" device="TJ9-U2" value="179n"/>
+<part name="C13" library="rcl" deviceset="C-EU" device="C0603" value="5µ"/>
+<part name="SUPPLY8" library="supply2" deviceset="GND1" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -22180,9 +22184,9 @@ body 3.9 mm/JEDEC MS-012AC</description>
 </plain>
 <instances>
 <instance part="FRAME4" gate="G$1" x="0" y="0"/>
-<instance part="SUPPLY1" gate="G$1" x="226.06" y="111.76"/>
-<instance part="C9" gate="G$1" x="226.06" y="121.92"/>
-<instance part="C10" gate="G$1" x="220.98" y="121.92"/>
+<instance part="SUPPLY1" gate="G$1" x="220.98" y="134.62"/>
+<instance part="C9" gate="G$1" x="220.98" y="144.78"/>
+<instance part="C10" gate="G$1" x="215.9" y="144.78"/>
 <instance part="SUPPLY3" gate="G$1" x="210.82" y="83.82"/>
 <instance part="Q3" gate="G$1" x="208.28" y="116.84"/>
 <instance part="Q4" gate="G$1" x="208.28" y="96.52"/>
@@ -22210,6 +22214,10 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <instance part="R_ISEN_B" gate="G$1" x="111.76" y="58.42" rot="R90"/>
 <instance part="C_ISEN_B" gate="G$1" x="116.84" y="60.96"/>
 <instance part="SUPPLY7" gate="G$1" x="111.76" y="48.26"/>
+<instance part="L3" gate="G$1" x="223.52" y="99.06"/>
+<instance part="L4" gate="G$1" x="231.14" y="78.74"/>
+<instance part="C13" gate="G$1" x="231.14" y="66.04"/>
+<instance part="SUPPLY8" gate="G$1" x="231.14" y="55.88"/>
 </instances>
 <busses>
 </busses>
@@ -22232,10 +22240,10 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <segment>
 <pinref part="C10" gate="G$1" pin="-"/>
 <pinref part="C9" gate="G$1" pin="-"/>
-<wire x1="220.98" y1="116.84" x2="226.06" y2="116.84" width="0.1524" layer="91"/>
-<junction x="226.06" y="116.84"/>
+<wire x1="215.9" y1="139.7" x2="220.98" y2="139.7" width="0.1524" layer="91"/>
+<junction x="220.98" y="139.7"/>
 <pinref part="SUPPLY1" gate="G$1" pin="GND1"/>
-<wire x1="226.06" y1="116.84" x2="226.06" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="220.98" y1="139.7" x2="220.98" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="SUPPLY4" gate="G$1" pin="GND1"/>
@@ -22277,21 +22285,26 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <junction x="111.76" y="50.8"/>
 <pinref part="SUPPLY7" gate="G$1" pin="GND1"/>
 </segment>
+<segment>
+<pinref part="SUPPLY8" gate="G$1" pin="GND1"/>
+<pinref part="C13" gate="G$1" pin="2"/>
+<wire x1="231.14" y1="58.42" x2="231.14" y2="60.96" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="BOOSTER_24V" class="0">
 <segment>
-<wire x1="228.6" y1="127" x2="226.06" y2="127" width="0.1524" layer="91"/>
-<wire x1="226.06" y1="127" x2="220.98" y2="127" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="127" x2="210.82" y2="127" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="149.86" x2="220.98" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="220.98" y1="149.86" x2="215.9" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="215.9" y1="149.86" x2="210.82" y2="149.86" width="0.1524" layer="91"/>
 <pinref part="C10" gate="G$1" pin="+"/>
-<wire x1="220.98" y1="127" x2="220.98" y2="124.46" width="0.1524" layer="91"/>
-<junction x="220.98" y="127"/>
-<label x="228.6" y="127" size="1.27" layer="95" xref="yes"/>
+<wire x1="215.9" y1="149.86" x2="215.9" y2="147.32" width="0.1524" layer="91"/>
+<junction x="215.9" y="149.86"/>
+<label x="223.52" y="149.86" size="1.27" layer="95" xref="yes"/>
 <pinref part="Q3" gate="G$1" pin="D"/>
-<wire x1="210.82" y1="121.92" x2="210.82" y2="127" width="0.1524" layer="91"/>
+<wire x1="210.82" y1="121.92" x2="210.82" y2="149.86" width="0.1524" layer="91"/>
 <pinref part="C9" gate="G$1" pin="+"/>
-<wire x1="226.06" y1="124.46" x2="226.06" y2="127" width="0.1524" layer="91"/>
-<junction x="226.06" y="127"/>
+<wire x1="220.98" y1="147.32" x2="220.98" y2="149.86" width="0.1524" layer="91"/>
+<junction x="220.98" y="149.86"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -22308,7 +22321,7 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <pinref part="U$3" gate="L6599" pin="LVG"/>
 </segment>
 </net>
-<net name="N$26" class="0">
+<net name="TRAFO1" class="0">
 <segment>
 <pinref part="Q3" gate="G$1" pin="S"/>
 <pinref part="Q4" gate="G$1" pin="D"/>
@@ -22321,6 +22334,13 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <wire x1="190.5" y1="109.22" x2="210.82" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="111.76" x2="190.5" y2="109.22" width="0.1524" layer="91"/>
 <junction x="190.5" y="109.22"/>
+<wire x1="210.82" y1="109.22" x2="223.52" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="109.22" x2="236.22" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="109.22" x2="236.22" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="109.22" x2="223.52" y2="104.14" width="0.1524" layer="91"/>
+<junction x="223.52" y="109.22"/>
+<pinref part="L3" gate="G$1" pin="1"/>
+<label x="236.22" y="104.14" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -22353,7 +22373,7 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <wire x1="147.32" y1="109.22" x2="142.24" y2="109.22" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$12" class="0">
+<net name="SEK-FEEDBACK" class="0">
 <segment>
 <wire x1="104.14" y1="99.06" x2="104.14" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="RF_MAX" gate="G$1" pin="1"/>
@@ -22367,6 +22387,8 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <wire x1="106.68" y1="99.06" x2="147.32" y2="99.06" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="93.98" x2="106.68" y2="99.06" width="0.1524" layer="91"/>
 <junction x="106.68" y="99.06"/>
+<wire x1="101.6" y1="86.36" x2="88.9" y2="86.36" width="0.1524" layer="91"/>
+<label x="88.9" y="86.36" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$19" class="0">
@@ -22457,6 +22479,35 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <pinref part="C_ISEN_A" gate="G$1" pin="2"/>
 <wire x1="78.74" y1="66.04" x2="76.2" y2="66.04" width="0.1524" layer="91"/>
 <label x="76.2" y="66.04" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="C13" gate="G$1" pin="1"/>
+<pinref part="L4" gate="G$1" pin="2"/>
+<wire x1="231.14" y1="68.58" x2="231.14" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="71.12" x2="231.14" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="71.12" x2="228.6" y2="71.12" width="0.1524" layer="91"/>
+<junction x="231.14" y="71.12"/>
+<label x="228.6" y="71.12" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="1.25V-BIS-6V" class="0">
+<segment>
+<pinref part="U$3" gate="L6599" pin="LINE"/>
+<wire x1="147.32" y1="88.9" x2="144.78" y2="88.9" width="0.1524" layer="91"/>
+<label x="144.78" y="88.9" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="TRAFO2" class="0">
+<segment>
+<pinref part="L3" gate="G$1" pin="2"/>
+<wire x1="223.52" y1="93.98" x2="223.52" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="88.9" x2="231.14" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="231.14" y1="88.9" x2="236.22" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="88.9" x2="236.22" y2="93.98" width="0.1524" layer="91"/>
+<label x="236.22" y="93.98" size="1.778" layer="95" xref="yes"/>
+<junction x="231.14" y="88.9"/>
+<wire x1="231.14" y1="88.9" x2="231.14" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="L4" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
