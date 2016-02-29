@@ -87,7 +87,8 @@ namespace msl_driver
 
 		bool controllerIsActive = false;
 
-		void checkSuccess(string name, string command, bool display);
+		bool writeAndCheck(string name);
+		bool checkSuccess(string name, string command, bool display);
 		string readResult(string command);
 	};
 

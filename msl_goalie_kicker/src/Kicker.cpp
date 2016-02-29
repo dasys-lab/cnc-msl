@@ -30,8 +30,8 @@ namespace msl_driver
 		string driverName = (*sc)["Kicker"]->get<string>("Kicker", "Driver", NULL);
 		cout << driverName << endl;
 		// Read required driver parameters
-		this->driverAlivePeriod = (*sc)["Kicker"]->tryGet<int>(250, "Kicker", "Alive Period", NULL);
-		this->driverOpenAttemptPeriod = (*sc)["Kicker"]->tryGet<int>(1000, "Kicker", "Open Attempt Period", NULL);
+		this->driverAlivePeriod = (*sc)["Kicker"]->get<int>("Kicker", "Alive Period", NULL);
+		this->driverOpenAttemptPeriod = (*sc)["Kicker"]->get<int>("Kicker", "Open Attempt Period", NULL);
 
 		cout << "Kicker: driver alive period        = " << this->driverAlivePeriod << endl;
 		cout << "Kicker: driver open attempt period = " << this->driverOpenAttemptPeriod << endl;
@@ -39,8 +39,6 @@ namespace msl_driver
 
 	Kicker::~Kicker()
 	{
-//		if (this->motionValue != nullptr)
-//			delete motionValue;
 	}
 
 	/**
@@ -57,26 +55,24 @@ namespace msl_driver
 
 	void Kicker::initialize()
 	{
-//		this->minCycleTime = (*sc)["Kicker"]->tryGet<long>(100000, "Kicker", "Kicker2", "MinCycleTime", NULL);
-		this->device = (*sc)["Kicker"]->tryGet<string>("Kicker", "Kicker2", "Device", NULL);
+		this->device = (*sc)["Kicker"]->get<string>("Kicker", "Kicker2", "Device", NULL);
 
 		this->pulseWidthLeft = (*sc)["Kicker"]->get<long>("Kicker", "Kicker2", "Pulse Width Left", NULL);
 		this->pulseWidthMiddle = (*sc)["Kicker"]->get<long>("Kicker", "Kicker2", "Pulse Width Middle", NULL);
 		this->pulseWidthRight = (*sc)["Kicker"]->get<long>("Kicker", "Kicker2", "Pulse Width Right", NULL);
 
-		this->extensionMaxTime = (*sc)["Kicker"]->tryGet<long>(1000, "Kicker", "Kicker2", "Extension Max Out Time",
+		this->extensionMaxTime = (*sc)["Kicker"]->get<long>("Kicker", "Kicker2", "Extension Max Out Time",
 		NULL);
-		this->extensionMinSleep = (*sc)["Kicker"]->tryGet<long>(4000, "Kicker", "Kicker2", "Extension Min Sleep Time",
+		this->extensionMinSleep = (*sc)["Kicker"]->get<long>("Kicker", "Kicker2", "Extension Min Sleep Time",
 		NULL);
 
 		// Read the timeout values
-		this->initReadTimeout = (*sc)["Kicker"]->tryGet<int>(1000, "Kicker", "Init Read Timeout", NULL);
-		this->readTimeout = (*sc)["Kicker"]->tryGet<int>(3000, "Kicker", "Read Timeout", NULL);
-		this->writeTimeout = (*sc)["Kicker"]->tryGet<int>(3000, "Kicker", "Write Timeout", NULL);
+		this->initReadTimeout = (*sc)["Kicker"]->get<int>("Kicker", "Init Read Timeout", NULL);
+		this->readTimeout = (*sc)["Kicker"]->get<int>("Kicker", "Read Timeout", NULL);
+		this->writeTimeout = (*sc)["Kicker"]->get<int>("Kicker", "Write Timeout", NULL);
 
 		// Output read values
 		cout << "Kicker2: device            = " << this->device << endl;
-//		cout << "Kicker2: min cycle time    = " << this->minCycleTime << " us" << endl;
 		cout << "Kicker2: init read timeout = " << this->initReadTimeout << " ms" << endl;
 		cout << "Kicker2: read timeout      = " << this->readTimeout << " ms" << endl;
 		cout << "Kicker2: write timeout     = " << this->writeTimeout << " ms" << endl;
@@ -88,7 +84,6 @@ namespace msl_driver
 		this->my_serial = new serial::Serial(this->device, 57600,
 												serial::Timeout::simpleTimeout(this->initReadTimeout));
 
-		cout << "Is the serial port open?";
 		if (!my_serial->isOpen())
 		{
 			cerr << "Kicker: Unable to open serial port : " << this->device << " Errno: " << strerror(errno) << endl;
@@ -103,7 +98,7 @@ namespace msl_driver
 		return true;
 	}
 
-	void Kicker::checkSuccess(string name, string command, bool display)
+	bool Kicker::checkSuccess(string name, string command, bool display)
 	{
 		if (display)
 		{
@@ -111,9 +106,14 @@ namespace msl_driver
 		}
 
 		// Read the answer from the TMC
-		string result = readResult(command);
+		string result = readResult(command + "\n");
 
-		cout << "Kicker Result: " << result << endl;
+		cout << "Kicker Result: " << result;
+	
+		if(result != "OK\n")
+			return false;
+
+		return true;
 	}
 
 	string Kicker::readResult(string command)
@@ -137,35 +137,28 @@ namespace msl_driver
 
 	void Kicker::start()
 	{
-		// TODO HIER GEHTS WEITER, AB IN NE METHODE ODER SO
-//		string maxOut = String.Format("SET Ext Max Out {0}", this.extensionMaxTime);
-//		string minSleep = String.Format("SET Ext Min Sleep {0}", this.extensionMinSleep);
-//
-//		WriteLineKicker(maxOut);
-//		CheckSuccess("Extension Max Time", maxOut);
-//
-//		WriteLineKicker(minSleep);
-//		CheckSuccess("Extension Min Sleep Time", minSleep);
-//
-//
-//		string pwl = String.Format("SET Pulse Width Left {0}", this.pulseWidthLeft);
-//		string pwm = String.Format("SET Pulse Width Middle {0}", this.pulseWidthMiddle);
-//		string pwr = String.Format("SET Pulse Width Right {0}", this.pulseWidthRight);
-//
-//		WriteLineKicker(pwl);
-//		CheckSuccess("pulse width left", pwl);
-//
-//		WriteLineKicker(pwm);
-//		CheckSuccess("pulse width middle", pwm);
-//
-//		WriteLineKicker(pwr);
-//		CheckSuccess("pulse width right", pwr);
+		bool result = true;
+		result &= this->writeAndCheck("SET Ext Max Out " + to_string(this->extensionMaxTime));
+		result &= this->writeAndCheck("SET Ext Min Sleep " + to_string(this->extensionMinSleep));
+		
+		result &= this->writeAndCheck("SET Pulse Width Left " + to_string(this->pulseWidthLeft));
+		result &= this->writeAndCheck("SET Pulse Width Middle " + to_string(this->pulseWidthMiddle)); 
+		result &= this->writeAndCheck("SET Pulse Width Right " + to_string(this->pulseWidthRight));
 
-		if (!Kicker::running)
+		if (result == false)
+		{
+			Kicker::running = false;
+		} 
+		else if (!Kicker::running)
 		{
 			Kicker::running = true;
-//			this->runThread = std::thread(&Kicker::run, this);
 		}
+	}
+
+	bool Kicker::writeAndCheck(string cmd)
+	{	
+		this->my_serial->write(cmd + "\n");
+                return this->checkSuccess(cmd, cmd, true);
 	}
 
 	/**
@@ -179,7 +172,9 @@ namespace msl_driver
 
 	void Kicker::handleKickControl(msl_actuator_msgs::KickControlPtr ks)
 	{
+		std::cout << "Received Mesg" << std::endl;
 		if (Kicker::running == false){
+			std::cout << "Running is false" << std::endl;
 			return;
 		}
 
@@ -203,13 +198,11 @@ namespace msl_driver
 			}
 		}
 
-		my_serial->write(kick);
-		checkSuccess("kick", kick, false);
+		writeAndCheck(kick);
 
 		if (extension != "")
 		{
-			my_serial->write(extension);
-			checkSuccess("extension", extension, false);
+			writeAndCheck(extension);
 		}
 	}
 
