@@ -116,7 +116,7 @@ namespace msl
 		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
 
 		for(int i = 0; i < points.size(); i++) {
-			auto value = (1- (alica::ConstraintBuilder::distanceSqr(points[i], robots[i])) / (maxFieldDist * maxFieldDist));
+			auto value = 1- (alica::ConstraintBuilder::distanceSqr(points[i], robots[i]) / (maxFieldDist * maxFieldDist));
 			util = util + value;
 		}
 		return util;

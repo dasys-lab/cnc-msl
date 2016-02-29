@@ -47,17 +47,21 @@ namespace msl
 
 		// Set own Goal Color
 		string tmpeOwnGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
-		if (tmpOwnTeamColor.compare("blue"))
+		cout << tmpeOwnGoalColor << endl;
+		if (tmpeOwnGoalColor.find("b") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Blue;
+			cout << "OwnGoal is Blue" << endl;
 		}
-		else if (tmpOwnTeamColor.compare("yellow"))
+		else if (tmpeOwnGoalColor.find("y") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Yellow;
+			cout << "OwnGoal is Yellow" << endl;
 		}
 		else
 		{
 			cerr << "MSL-WM::Game: Own goal color is unknown!" << endl;
+			exit(0);
 			ownGoalColor = Color::UnknownColor;
 		}
 	}
@@ -353,10 +357,10 @@ namespace msl
 	void Game::updateGameState()
 	{
 // Find robot closest to ball
-		auto robots = this->wm->robots.getPositionsOfTeamMates();
+		auto robots = this->wm->robots.teammates.getPositionsOfTeamMates();
 		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
 		double minDist = numeric_limits<double>::max();
-		auto sharedBallPosition = wm->ball.getSharedBallPosition();
+		auto sharedBallPosition = wm->ball.getAlloSharedBallPosition();
 		if (sharedBallPosition == nullptr)
 		{
 			return;
@@ -415,7 +419,7 @@ namespace msl
 	{
 		shared_ptr<geometry::CNPosition> capturePos = nullptr;
 		int teamMateWithBallNow = 0;
-		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.getPositionsOfTeamMates()))
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.teammates.getPositionsOfTeamMates()))
 		{
 			if (*(wm->ball.getTeamMateBallPossession(shwmData->first)))
 			{

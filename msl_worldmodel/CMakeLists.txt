@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_worldmodel) 
-  
+   
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -56,6 +56,8 @@ catkin_package(
    src/Game.cpp
    src/Kicker.cpp
    src/KickCurve.cpp
+   src/Opponents.cpp
+   src/Teammates.cpp
    src/WhiteBoard.cpp
    src/Rules.cpp
    src/pathplanner/PathPlanner.cpp
@@ -73,8 +75,9 @@ catkin_package(
    src/ballTracking/SharedMemoryHelper.cpp  
    src/ballTracking/TimeHelper.cpp
    src/obstaclehandler/AnnotatedObstacleCluster.cpp
-   src/obstaclehandler/ObHandler.cpp
+   src/obstaclehandler/Obstacles.cpp
    src/obstaclehandler/SimpleCluster.cpp
+   src/obstaclehandler/AnnotatedObstacleClusterPool.cpp
  )
 
 ## Add cmake target dependencies of the executable/library

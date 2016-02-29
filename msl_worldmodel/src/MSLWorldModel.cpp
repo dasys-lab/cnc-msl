@@ -43,7 +43,7 @@ namespace msl
 
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
-					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this)
+					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacleHandler(this, 10)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -77,6 +77,8 @@ namespace msl
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
+		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
+										(MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
@@ -147,8 +149,6 @@ namespace msl
 
 			if (msg->name[i] == "football")
 			{
-				//Only if ball is closer than 7m
-				if(sqrt(msg->pose[i].position.x * 1000.0*msg->pose[i].position.x * 1000.0 + msg->pose[i].position.y * 1000.0*msg->pose[i].position.y * 1000.0) < 7000) {
 					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
 					wmsim->ball.confidence = 1.0;
 					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
@@ -157,7 +157,6 @@ namespace msl
 					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
 					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
 					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
-				}
 			}
 		}
 
@@ -171,6 +170,13 @@ namespace msl
 
 		wmsim->ball.point.x = cos(angle) * dist;
 		wmsim->ball.point.y = sin(angle) * dist;
+
+		//Only if ball is closer than 7m
+		if(dist > 7000) {
+			wmsim->ball.point.x = 0;
+			wmsim->ball.point.y = 0;
+			wmsim->ball.confidence = 0;
+		}
 
 		for (int i=0; i < 60; i++)
 		{
@@ -208,6 +214,19 @@ namespace msl
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
+		if(game.ownGoalColor == Color::Yellow) {
+			msg->odometry.position.x = -msg->odometry.position.x;
+			msg->odometry.position.y = -msg->odometry.position.y;
+			msg->odometry.position.angle += M_PI;
+			while(msg->odometry.position.angle > M_PI) {
+				msg->odometry.position.angle -= 2*M_PI;
+			}
+			msg->odometry.motion.angle += M_PI;
+			while(msg->odometry.motion.angle > M_PI) {
+				msg->odometry.motion.angle -= 2*M_PI;
+			}
+		}
+
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		robots.processWorldModelData(msg);
@@ -351,6 +370,11 @@ namespace msl
 	int MSLWorldModel::getOwnId()
 	{
 		return ownID;
+	}
+
+	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
+	{
+		rawSensorData.processLightBarrier(msg);
 	}
 } /* namespace msl */
 

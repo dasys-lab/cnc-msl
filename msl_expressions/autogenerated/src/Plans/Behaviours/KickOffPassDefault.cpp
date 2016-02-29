@@ -50,7 +50,7 @@ namespace alica
             id = ids->at(0);
             if (id != -1)
             {
-                pos = wm->robots.getTeamMatePosition(id);
+                pos = wm->robots.teammates.getTeamMatePosition(id);
 
                 //TODO soll etwas in gegnerhälfte schießen
                 egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
