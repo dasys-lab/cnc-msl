@@ -38,7 +38,7 @@ namespace msl_refbox
 		QWidget* widget_;
 	private:
 		GameData* gameData;
-		bool eventFilter(QObject* watched, QEvent* event);
+//		bool eventFilter(QObject* watched, QEvent* event);
 	};
 
 }
