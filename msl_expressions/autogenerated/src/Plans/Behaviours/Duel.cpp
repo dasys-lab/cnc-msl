@@ -102,8 +102,10 @@ namespace alica
             {
                 if (wm->robots.teammates.getTeamMatePosition(id, 0) != nullptr && id != ownID)
                 {
-                    shared_ptr < geometry::CNPoint2D > validPosition = make_shared < geometry::CNPoint2D
-                            > (wm->robots.teammates.getTeamMatePosition(id, 0)->x, wm->robots.teammates.getTeamMatePosition(id, 0)->y);
+                    shared_ptr < geometry::CNPoint2D > validPosition =
+                            make_shared < geometry::CNPoint2D
+                                    > (wm->robots.teammates.getTeamMatePosition(id, 0)->x, wm->robots.teammates.getTeamMatePosition(
+                                            id, 0)->y);
                     teamMatePositions->push_back(validPosition);
                 }
             }
