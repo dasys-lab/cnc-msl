@@ -145,6 +145,20 @@ namespace camera
                        DC1394_FEATURE_MODE_MANUAL); 
     }
 
+    void ImagingSource::setManualSettingModesGoalie() {
+	enableFeature(DC1394_FEATURE_HUE, true);
+	setFeatureMode(DC1394_FEATURE_HUE,
+                       DC1394_FEATURE_MODE_MANUAL);
+	enableFeature(DC1394_FEATURE_SHUTTER, true);
+	setFeatureMode(DC1394_FEATURE_SHUTTER,
+                       DC1394_FEATURE_MODE_MANUAL); 
+	enableFeature(DC1394_FEATURE_GAMMA, true);
+        setFeatureMode(DC1394_FEATURE_GAMMA,
+                       DC1394_FEATURE_MODE_MANUAL);
+	enableFeature(DC1394_FEATURE_EXPOSURE, true);
+        setFeatureMode(DC1394_FEATURE_EXPOSURE,
+                       DC1394_FEATURE_MODE_MANUAL);
+    }
 
     void ImagingSource::setManualSettingModes() {
         //setFeatureMode(DC1394_FEATURE_HUE,
