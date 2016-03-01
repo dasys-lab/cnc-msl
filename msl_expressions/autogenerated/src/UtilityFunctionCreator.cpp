@@ -17,6 +17,8 @@
 
 #include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
 
+#include  "Plans/Robotcheck/Robotcheck1456756058055.h"
+
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
@@ -135,6 +137,10 @@ namespace alica
 
             case 1432139066765:
                 return make_shared<UtilityFunction1432139066765>();
+                break;
+
+            case 1456756058055:
+                return make_shared<UtilityFunction1456756058055>();
                 break;
 
             case 1447254438614:

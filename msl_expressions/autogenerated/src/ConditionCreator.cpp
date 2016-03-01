@@ -16,6 +16,8 @@
 
 #include  "Plans/GenericStandards/DummyMasterPlan1432139066765.h"
 
+#include  "Plans/Robotcheck/Robotcheck1456756058055.h"
+
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
