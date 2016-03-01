@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="Robotcheck.pml#1456756058056"/>
+    <value xPos="118" yPos="87" width="180" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456756058055"/>
+    <value width="809" height="574"/>
+  </extensions>
+  <extensions>
+    <key href="Robotcheck.pml#1456756058057"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotTest.beh#1456756164754"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
