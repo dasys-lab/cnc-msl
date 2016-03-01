@@ -80,6 +80,7 @@ namespace camera
             void printCameraModell();
 
             void opAutoWhiteBalance();
+		void setManualSettingModesGoalie();
         void setManualSettingModes();
     void disableAutoWhiteBalance();
             struct white_balance_t {

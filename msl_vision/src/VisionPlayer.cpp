@@ -217,6 +217,7 @@ int main(int argc,char *argv[]){
 			cam->setVideoMode(DC1394_VIDEO_MODE_640x480_YUV422);
 			cam->init();
 			std::cout << "Cam init" << std::endl;
+			cam->setManualSettingModesGoalie();
 			if(vision->tryGet<bool>(false, "Vision", "Camera1394Settings", "SetManSettingsMode", NULL)) {
 				cam->setManualSettingModes();
 			}
@@ -228,6 +229,7 @@ int main(int argc,char *argv[]){
 			if (vision->get<bool>("Vision", "Camera1394Settings", "AutoGain", NULL)) {
 
 				cam->enableAutoGain(true);
+				std::cout << "A tänchen: Autogain is true!!!!" << std::endl;
 			} else {
 				cam->enableAutoGain(false);
 				cam->setGain(vision->get<int>("Vision", "Camera1394Settings", "Gain", NULL));
