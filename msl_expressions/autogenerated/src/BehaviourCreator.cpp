@@ -93,6 +93,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
+#include  "Plans/Robotcheck/RobotTest.h"
+
 #include  "Plans/Attack/Tackle.h"
 
 #include  "Plans/Example/DriveInSquare.h"
@@ -374,6 +376,11 @@ namespace alica
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
+                break;
+
+            case 1456756164754:
+
+                return make_shared<RobotTest>();
                 break;
 
             case 1434807680165:

@@ -33,4 +33,26 @@ namespace msl
 		return this->opponentProtectAngle;
 	}
 
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsAlloClustered()
+	{
+		return opponentsAlloClustered;
+	}
+
+	void Opponents::setOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsAlloClustered)
+	{
+		this->opponentsAlloClustered = opponentsAlloClustered;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsEgoClustered()
+	{
+		return opponentsEgoClustered;
+	}
+
+	void Opponents::setOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsEgoClustered)
+	{
+		this->opponentsEgoClustered = opponentsEgoClustered;
+	}
+
 } /* namespace msl */
+
+

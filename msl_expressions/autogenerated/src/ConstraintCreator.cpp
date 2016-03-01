@@ -17,6 +17,8 @@
 
 #include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
 
+#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
+
 #include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"

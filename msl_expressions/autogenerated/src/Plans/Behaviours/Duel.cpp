@@ -102,8 +102,10 @@ namespace alica
             {
                 if (wm->robots.teammates.getTeamMatePosition(id, 0) != nullptr && id != ownID)
                 {
-                    shared_ptr < geometry::CNPoint2D > validPosition = make_shared < geometry::CNPoint2D
-                            > (wm->robots.teammates.getTeamMatePosition(id, 0)->x, wm->robots.teammates.getTeamMatePosition(id, 0)->y);
+                    shared_ptr < geometry::CNPoint2D > validPosition =
+                            make_shared < geometry::CNPoint2D
+                                    > (wm->robots.teammates.getTeamMatePosition(id, 0)->x, wm->robots.teammates.getTeamMatePosition(
+                                            id, 0)->y);
                     teamMatePositions->push_back(validPosition);
                 }
             }
@@ -156,7 +158,7 @@ namespace alica
 
                 //TODO schleife fixen
 
-                for (auto it = wm->robots.getObstaclePoints(0)->begin(); it != wm->robots.getObstaclePoints(0)->end();
+                for (auto it = wm->obstacles.getObstaclePoints(0)->begin(); it != wm->obstacles.getObstaclePoints(0)->end();
                         it++)
                 {
                     //TODO friendly darf nicht obstacle sein

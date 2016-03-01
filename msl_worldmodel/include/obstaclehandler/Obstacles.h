@@ -17,6 +17,10 @@
 #include "msl_msgs/Point2dInfo.h"
 #include "msl_msgs/PositionInfo.h"
 #include "MSLEnums.h"
+#include "RingBuffer.h"
+#include "InformationElement.h"
+#include "msl_sensor_msgs/WorldModelData.h"
+#include "msl_sensor_msgs/ObstacleInfo.h"
 
 namespace msl
 {
@@ -32,8 +36,11 @@ namespace msl
 		/// A <see cref="List"/> of ego centric obstacles. (usual from the worldmodel).
 		/// </param>
 		void handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> myObstacles);
-
+		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> clusterPoint2D (shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstacles, double varianceThreshold);
+		shared_ptr<vector<AnnotatedObstacleCluster*>> getObstaclesClustersAllo();
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
 
 	private:
 		void clusterAnnotatedObstacles();
@@ -41,6 +48,8 @@ namespace msl
 				                                            shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo);
 		void processNegSupporter(shared_ptr<geometry::CNPosition> myPosition);
 		bool leftOf(double angle1, double angle2);
+
+		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 
 		supplementary::SystemConfig* sc;
 		double DENSITY;
@@ -60,6 +69,9 @@ namespace msl
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
 		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
+		shared_ptr<vector<AnnotatedObstacleCluster*>> obstaclesClustersAllo;
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstaclesEgoClustered;
+		unsigned long maxInformationAge = 1000000000;
 	};
 
 } /* namespace msl */
