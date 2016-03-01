@@ -86,7 +86,7 @@ namespace msl
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-		Obstacles obstacleHandler;
+		Obstacles obstacles;
 
 	private:
 

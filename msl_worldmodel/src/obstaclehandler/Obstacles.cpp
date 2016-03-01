@@ -14,7 +14,7 @@
 namespace msl
 {
 
-	Obstacles::Obstacles(MSLWorldModel* wm, int ringbufferLength)
+	Obstacles::Obstacles(MSLWorldModel* wm, int ringbufferLength) : obstacles(ringbufferLength)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
@@ -87,12 +87,12 @@ namespace msl
 		}
 
 		// change the vNet references to the new lists
-//		vNet.ObsClustersAllo = newObsClustersAllo;
-//		vNet.ObsEgo = newObsEgo;
-//		vNet.OppEgo = newOppEgo;
-//		vNet.OppAllo = newOppAllo;
-//		vNet.TeammatesEgo = newTeammatesEgo;
-//		vNet.TeammatesAllo = newTeammatesAllo;
+		this->obstaclesClustersAllo = newObsClustersAllo;
+		this->obstaclesEgoClustered = newObsEgo;
+		wm->robots.opponents.setOpponentsEgoClustered(newOppEgo);
+		wm->robots.opponents.setOpponentsAlloClustered(newOppAllo);
+		wm->robots.teammates.setTeammatesEgoClustered(newTeammatesEgo);
+		wm->robots.teammates.setTeammatesAlloClustered(newTeammatesAllo);
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::clusterPoint2D(
@@ -532,12 +532,63 @@ namespace msl
 		return false;
 	}
 
+	shared_ptr<vector<AnnotatedObstacleCluster*>> Obstacles::getObstaclesClustersAllo()
+	{
+		return obstaclesClustersAllo;
+	}
+
 	double Obstacles::distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos)
 	{
 		double dx = (point.x - pos.x);
 		double dy = (point.y - pos.y);
 
 		return sqrt(dx * dx + dy * dy);
+	}
+
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getObstaclePoints(int index)
+	{
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		auto x = obstacles.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		msl_sensor_msgs::ObstacleInfo current;
+		for(int i = 0; i < x->getInformation()->size(); i++)
+		{
+			current = x->getInformation()->at(i);
+			ret->push_back(make_shared<geometry::CNPoint2D>(current.x, current.y));
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Obstacles::getObstacles(int index)
+	{
+		auto x = obstacles.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	void Obstacles::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
+	{
+		unsigned long time = wm->getTime();
+//		if ((time - data->odometry.timestamp) > 1000)
+//		{
+//			return;
+//		}
+
+		if (data->obstacles.size() > 0)
+		{
+			shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = make_shared<vector<msl_sensor_msgs::ObstacleInfo>>(
+					data->obstacles);
+			shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs,
+					time);
+			obstacles.add(o);
+		}
 	}
 
 } /* namespace msl */

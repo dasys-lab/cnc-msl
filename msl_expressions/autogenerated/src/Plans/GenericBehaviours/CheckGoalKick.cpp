@@ -252,7 +252,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
 
         double angleTolerance = 0.075;
-        auto obs = wm->robots.getObstacles();
+        auto obs = wm->obstacles.getObstacles();
 //		auto obs = getObstacles();
         bool leftBlocked = false;
         bool midBlocked = false;
@@ -352,7 +352,7 @@ namespace alica
         auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
         auto ownPosV = wm->rawSensorData.getOwnPositionVision();
 
-        auto obstacles = wm->robots.getObstacles();
+        auto obstacles = wm->obstacles.getObstacles();
         shared_ptr < vector < geometry::CNPoint2D >> foundObs = make_shared<vector<geometry::CNPoint2D>>();
 
         if (obstacles == nullptr || obstacles->size() == 0)

@@ -32,11 +32,7 @@ namespace msl
 	public:
 		Robots(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~Robots();
-		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data);
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
-
 		map<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWolrdModelData;
 		Teammates teammates;
 		Opponents opponents;
@@ -44,7 +40,7 @@ namespace msl
 		//TODO implement getRobots => teammates + opponents
 
 	private:
-		RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
+
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
 		unsigned long maxInformationAge = 1000000000;
