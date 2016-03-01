@@ -20,6 +20,7 @@ namespace msl
 	public:
 		AnnotatedObstacleClusterPool();
 		virtual ~AnnotatedObstacleClusterPool();
+		void reset();
 		int curIndex;
 		const static int maxCount;
 		vector<AnnotatedObstacleCluster*> daAOCs;

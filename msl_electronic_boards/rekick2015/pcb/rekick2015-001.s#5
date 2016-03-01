@@ -20430,29 +20430,16 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <part name="R101" library="rcl" deviceset="R-EU_" device="0207/15" value="1M">
 <attribute name="FARNELL" value="2396016"/>
 </part>
-<part name="R102" library="rcl" deviceset="R-EU_" device="0207/15" value="470k">
-<attribute name="FARNELL" value=""/>
-</part>
-<part name="D101" library="diode" deviceset="ZENER-DIODE" device="SOD57-10" value="270V">
-<attribute name="FARNELL" value="9398597"/>
-</part>
-<part name="R104" library="rcl" deviceset="R-EU_" device="R0805" value="20k"/>
 <part name="R103" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
 <part name="R105" library="rcl" deviceset="R-EU_" device="R0805" value="1k"/>
-<part name="R106" library="rcl" deviceset="R-EU_" device="R0805" value="1"/>
 <part name="D102" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V">
 <attribute name="FARNELL" value="2069513"/>
 </part>
-<part name="D103" library="diode" deviceset="DIODE-" device="SOD323-W" value="3.9V">
-<attribute name="FARNELL" value="2069513"/>
-</part>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
-<part name="GND9" library="supply1" deviceset="GND" device=""/>
 <part name="FRAME6" library="frames" deviceset="A4L-LOC" device=""/>
 <part name="R2" library="resistor-power" deviceset="R" device="HS50" value="47"/>
 <part name="R3" library="resistor-power" deviceset="R" device="HS50" value="47"/>
 <part name="Q2" library="transistor-power" deviceset="IRG4BC15UD-" device="S" value="SiHB24N65E"/>
-<part name="C14" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="IC3" library="linear" deviceset="LM393" device="D"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="0207/15" value="470k">
@@ -21692,29 +21679,15 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <instances>
 <instance part="FRAME5" gate="G$1" x="0" y="0"/>
 <instance part="IC1" gate="A" x="88.9" y="144.78"/>
-<instance part="IC1" gate="B" x="88.9" y="127"/>
 <instance part="R101" gate="G$1" x="66.04" y="154.94" rot="R90">
 <attribute name="FARNELL" x="66.04" y="154.94" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
 </instance>
-<instance part="R102" gate="G$1" x="43.18" y="154.94" rot="R90">
-<attribute name="FARNELL" x="43.18" y="154.94" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
-</instance>
-<instance part="D101" gate="G$1" x="43.18" y="139.7" rot="R90">
-<attribute name="FARNELL" x="43.18" y="139.7" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
-</instance>
-<instance part="R104" gate="G$1" x="43.18" y="121.92" rot="R90"/>
 <instance part="R103" gate="G$1" x="66.04" y="121.92" rot="R90"/>
 <instance part="R105" gate="G$1" x="111.76" y="144.78"/>
-<instance part="R106" gate="G$1" x="111.76" y="127"/>
 <instance part="D102" gate="G$1" x="119.38" y="139.7" rot="R90">
 <attribute name="FARNELL" x="119.38" y="139.7" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
 </instance>
-<instance part="D103" gate="G$1" x="119.38" y="121.92" rot="R90">
-<attribute name="FARNELL" x="119.38" y="121.92" size="1.778" layer="96" rot="R90" align="top-left" display="name"/>
-</instance>
 <instance part="GND8" gate="1" x="119.38" y="132.08"/>
-<instance part="GND9" gate="1" x="119.38" y="114.3"/>
-<instance part="C14" gate="G$1" x="48.26" y="121.92"/>
 <instance part="C15" gate="G$1" x="71.12" y="121.92"/>
 </instances>
 <busses>
@@ -21722,34 +21695,22 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <nets>
 <net name="CAP_330V" class="0">
 <segment>
-<wire x1="25.4" y1="165.1" x2="43.18" y2="165.1" width="0.1524" layer="91"/>
 <label x="25.4" y="165.1" size="1.778" layer="95" rot="R180" xref="yes"/>
-<pinref part="R102" gate="G$1" pin="2"/>
-<wire x1="43.18" y1="165.1" x2="66.04" y2="165.1" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="160.02" x2="43.18" y2="165.1" width="0.1524" layer="91"/>
-<junction x="43.18" y="165.1"/>
+<wire x1="25.4" y1="165.1" x2="66.04" y2="165.1" width="0.1524" layer="91"/>
 <pinref part="R101" gate="G$1" pin="2"/>
 <wire x1="66.04" y1="165.1" x2="66.04" y2="160.02" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CAP_GND" class="0">
 <segment>
-<wire x1="27.94" y1="111.76" x2="43.18" y2="111.76" width="0.1524" layer="91"/>
+<wire x1="27.94" y1="111.76" x2="66.04" y2="111.76" width="0.1524" layer="91"/>
 <label x="27.94" y="111.76" size="1.778" layer="95" rot="R180" xref="yes"/>
-<pinref part="R104" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="111.76" x2="48.26" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="48.26" y1="111.76" x2="66.04" y2="111.76" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="116.84" x2="43.18" y2="111.76" width="0.1524" layer="91"/>
-<junction x="43.18" y="111.76"/>
 <pinref part="R103" gate="G$1" pin="1"/>
 <wire x1="66.04" y1="116.84" x2="66.04" y2="111.76" width="0.1524" layer="91"/>
 <pinref part="C15" gate="G$1" pin="2"/>
 <wire x1="71.12" y1="116.84" x2="71.12" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="111.76" x2="66.04" y2="111.76" width="0.1524" layer="91"/>
 <junction x="66.04" y="111.76"/>
-<pinref part="C14" gate="G$1" pin="2"/>
-<wire x1="48.26" y1="116.84" x2="48.26" y2="111.76" width="0.1524" layer="91"/>
-<junction x="48.26" y="111.76"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -21764,20 +21725,6 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <wire x1="101.6" y1="144.78" x2="106.68" y2="144.78" width="0.1524" layer="91"/>
 <junction x="101.6" y="144.78"/>
 <pinref part="R105" gate="G$1" pin="1"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="IC1" gate="B" pin="OUT"/>
-<wire x1="96.52" y1="127" x2="101.6" y2="127" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="127" x2="101.6" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="116.84" x2="78.74" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="116.84" x2="78.74" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="IC1" gate="B" pin="-IN"/>
-<wire x1="78.74" y1="124.46" x2="81.28" y2="124.46" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="127" x2="106.68" y2="127" width="0.1524" layer="91"/>
-<junction x="101.6" y="127"/>
-<pinref part="R106" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -21795,28 +21742,6 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <junction x="71.12" y="147.32"/>
 </segment>
 </net>
-<net name="N$21" class="0">
-<segment>
-<pinref part="IC1" gate="B" pin="+IN"/>
-<wire x1="81.28" y1="129.54" x2="48.26" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="D101" gate="G$1" pin="A"/>
-<wire x1="48.26" y1="129.54" x2="43.18" y2="129.54" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="137.16" x2="43.18" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="R104" gate="G$1" pin="2"/>
-<wire x1="43.18" y1="129.54" x2="43.18" y2="127" width="0.1524" layer="91"/>
-<junction x="43.18" y="129.54"/>
-<pinref part="C14" gate="G$1" pin="1"/>
-<wire x1="48.26" y1="124.46" x2="48.26" y2="129.54" width="0.1524" layer="91"/>
-<junction x="48.26" y="129.54"/>
-</segment>
-</net>
-<net name="N$22" class="0">
-<segment>
-<pinref part="R102" gate="G$1" pin="1"/>
-<pinref part="D101" gate="G$1" pin="C"/>
-<wire x1="43.18" y1="149.86" x2="43.18" y2="142.24" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="ZU-ADC-GROB" class="0">
 <segment>
 <pinref part="R105" gate="G$1" pin="2"/>
@@ -21828,27 +21753,11 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <label x="124.46" y="144.78" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="ZU-ADC-FEIN" class="0">
-<segment>
-<pinref part="R106" gate="G$1" pin="2"/>
-<wire x1="116.84" y1="127" x2="119.38" y2="127" width="0.1524" layer="91"/>
-<pinref part="D103" gate="G$1" pin="C"/>
-<wire x1="119.38" y1="127" x2="124.46" y2="127" width="0.1524" layer="91"/>
-<wire x1="119.38" y1="124.46" x2="119.38" y2="127" width="0.1524" layer="91"/>
-<junction x="119.38" y="127"/>
-<label x="124.46" y="127" size="1.778" layer="95" xref="yes"/>
-</segment>
-</net>
 <net name="GND" class="0">
 <segment>
 <pinref part="D102" gate="G$1" pin="A"/>
 <wire x1="119.38" y1="137.16" x2="119.38" y2="134.62" width="0.1524" layer="91"/>
 <pinref part="GND8" gate="1" pin="GND"/>
-</segment>
-<segment>
-<pinref part="D103" gate="G$1" pin="A"/>
-<wire x1="119.38" y1="119.38" x2="119.38" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="GND9" gate="1" pin="GND"/>
 </segment>
 </net>
 </nets>
@@ -22013,8 +21922,8 @@ body 3.9 mm/JEDEC MS-012AC</description>
 <net name="ZU-TREIBER-AUS" class="0">
 <segment>
 <pinref part="IC3" gate="A" pin="OUT"/>
-<wire x1="106.68" y1="149.86" x2="111.76" y2="149.86" width="0.1524" layer="91"/>
-<label x="111.76" y="149.86" size="1.778" layer="95" xref="yes"/>
+<wire x1="106.68" y1="149.86" x2="114.3" y2="149.86" width="0.1524" layer="91"/>
+<label x="114.3" y="149.86" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>

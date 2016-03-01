@@ -56,6 +56,8 @@ catkin_package(
    src/Game.cpp
    src/Kicker.cpp
    src/KickCurve.cpp
+   src/Opponents.cpp
+   src/Teammates.cpp
    src/WhiteBoard.cpp
    src/Rules.cpp
    src/pathplanner/PathPlanner.cpp
@@ -73,7 +75,7 @@ catkin_package(
    src/ballTracking/SharedMemoryHelper.cpp  
    src/ballTracking/TimeHelper.cpp
    src/obstaclehandler/AnnotatedObstacleCluster.cpp
-   src/obstaclehandler/ObHandler.cpp
+   src/obstaclehandler/Obstacles.cpp
    src/obstaclehandler/SimpleCluster.cpp
    src/obstaclehandler/AnnotatedObstacleClusterPool.cpp
  )

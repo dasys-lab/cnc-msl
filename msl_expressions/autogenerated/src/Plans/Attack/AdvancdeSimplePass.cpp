@@ -59,7 +59,7 @@ namespace alica
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
             if (matePos != nullptr)
             {

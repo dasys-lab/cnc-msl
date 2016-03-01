@@ -357,7 +357,7 @@ namespace msl
 	void Game::updateGameState()
 	{
 // Find robot closest to ball
-		auto robots = this->wm->robots.getPositionsOfTeamMates();
+		auto robots = this->wm->robots.teammates.getPositionsOfTeamMates();
 		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
 		double minDist = numeric_limits<double>::max();
 		auto sharedBallPosition = wm->ball.getAlloSharedBallPosition();
@@ -419,7 +419,7 @@ namespace msl
 	{
 		shared_ptr<geometry::CNPosition> capturePos = nullptr;
 		int teamMateWithBallNow = 0;
-		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.getPositionsOfTeamMates()))
+		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.teammates.getPositionsOfTeamMates()))
 		{
 			if (*(wm->ball.getTeamMateBallPossession(shwmData->first)))
 			{

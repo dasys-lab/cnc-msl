@@ -16,6 +16,7 @@ UsedLibrary="/home/luk/eagle/lbr/LM2594.lbr"
 UsedLibrary="/home/luk/eagle/lbr/LM2675M-12.lbr"
 UsedLibrary="/home/luk/eagle/lbr/LM2675M-3.3.lbr"
 UsedLibrary="/home/luk/eagle/lbr/LM2940CS.lbr"
+UsedLibrary="/home/luk/eagle/lbr/MC14025BDG.lbr"
 UsedLibrary="/home/luk/eagle/lbr/Microchip-MCP2551-I_SN.lbr"
 UsedLibrary="/home/luk/eagle/lbr/PSMN0R9.lbr"
 UsedLibrary="/home/luk/eagle/lbr/SN74LVCH16T245DGGR.lbr"
@@ -326,11 +327,12 @@ UsedLibrary="/home/luk/eagle-5.6.0/lbr/xicor.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/zetex.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/zilog.lbr"
+UsedLibrary="/home/luk/eagle/lbr/Si8261.lbr"
 
 [Win_1]
 Type="Control Panel"
 Loc="251 118 1484 641"
-State=0
+State=2
 Number=0
 
 [Desktop]

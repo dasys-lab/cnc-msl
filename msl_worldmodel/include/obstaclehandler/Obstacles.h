@@ -1,5 +1,5 @@
 /*
- * ObHandler.h
+ * Obstacles.h
  *
  *  Created on: Feb 11, 2016
  *      Author: Stefan Jakob
@@ -16,15 +16,16 @@
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
 #include "msl_msgs/Point2dInfo.h"
 #include "msl_msgs/PositionInfo.h"
+#include "MSLEnums.h"
 
 namespace msl
 {
 	class MSLWorldModel;
-	class ObHandler
+	class Obstacles
 	{
 	public:
-		ObHandler(MSLWorldModel* wm, int ringbufferLength);
-		virtual ~ObHandler();
+		Obstacles(MSLWorldModel* wm, int ringbufferLength);
+		virtual ~Obstacles();
 		/// <summary> Merges all obstacles into lists which are requiered by
 		/// different Modules (path planner, standard situation behaviours, delaunay generator etc.) </summary>
 		/// <param name="myObstacles">

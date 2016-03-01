@@ -69,7 +69,7 @@ namespace alica
 
             for (int rob : *robots)
             {
-                matePos = wm->robots.getTeamMatePosition(rob);
+                matePos = wm->robots.teammates.getTeamMatePosition(rob);
                 break;
             }
             if (matePos != nullptr)

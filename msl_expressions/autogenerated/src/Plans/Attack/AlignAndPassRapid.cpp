@@ -115,7 +115,7 @@ namespace alica
             {
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
                         teamMateId);
-                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
 

@@ -247,10 +247,9 @@ namespace msl
 		this->ownPosAvail = ownPosAvail;
 		vector<Site_2> sites;
 		//clear data
-		this->voronoi->clear();
-		this->pointRobotKindMapping.clear();
+		this->clearVoronoiNet();
 		// get teammate positions
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.getPositionsOfTeamMates();
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.teammates.getPositionsOfTeamMates();
 		bool alreadyIn = false;
 		//get ownPos
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
@@ -297,7 +296,7 @@ namespace msl
 			{
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, int>(
-								make_shared<geometry::CNPoint2D>(points.at(i)->x, points.at(i)->y), -1));
+								make_shared<geometry::CNPoint2D>(points.at(i)->x, points.at(i)->y), EntityType::Opponent));
 				Site_2 site(points.at(i)->x, points.at(i)->y);
 				sites.push_back(site);
 			}
@@ -309,7 +308,7 @@ namespace msl
 		auto artObs = wm->pathPlanner.getArtificialObstacles();
 		for (int i = 0; i < artObs->size(); i++)
 		{
-			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(artObs->at(i), -2));
+			pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(artObs->at(i), EntityType::ArtificialObstacle));
 		}
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
@@ -427,7 +426,7 @@ namespace msl
 			//insert
 			if (!alreadyIn)
 			{
-				pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(*iter, -1));
+				pointRobotKindMapping.insert(pair<shared_ptr<geometry::CNPoint2D>, int>(*iter, EntityType::ArtificialObstacle));
 				Site_2 site((*iter)->x, (*iter)->y);
 				sites.push_back(site);
 			}
@@ -444,7 +443,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<Vertex> > > msl::VoronoiNet::getTeamMateVertices(int teamMateId)
 	{
 		//locate teammate
-		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
 		//get vertices
 		shared_ptr<vector<shared_ptr<Vertex> > > ret = this->getVerticesOfFace(
 				make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
@@ -455,7 +454,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
 	{
 		//locate teammate
-		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
 		//get vertices
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		auto vertices = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
@@ -494,7 +493,7 @@ namespace msl
 	 */
 	void msl::VoronoiNet::clearVoronoiNet()
 	{
-		this->getVoronoi()->clear();
+		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
 	}
 
@@ -715,7 +714,7 @@ namespace msl
 				vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
-			if (iter->second == -1)
+			if (iter->second == EntityType::Opponent)
 			{
 				ret->push_back(*iter);
 			}
@@ -755,17 +754,17 @@ namespace msl
 
 		//get cornerpoints of opp penalty area
 		auto upLeftCorner = field->posULOppPenaltyArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, -2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, EntityType::ArtificialObstacle));
 		auto lowRightCorner = field->posLROppPenaltyArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, -2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, EntityType::ArtificialObstacle));
 		//get field length and width
 		int penaltyWidth = field->GoalAreaWidth;
 		int penaltyLength = field->GoalAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, -2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, EntityType::ArtificialObstacle));
 		auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, -2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, EntityType::ArtificialObstacle));
 		//calculate point count to block space in width
 		int pointCount = penaltyWidth / 500;
 		double rest = penaltyWidth % 500;
@@ -775,8 +774,8 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x + i * pointDist, lowRightCorner->y);
 			auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x + i * pointDist, lowLeftCorner->y);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, EntityType::ArtificialObstacle));
 		}
 		//calculate point count to block space in length
 		pointCount = penaltyLength / 500;
@@ -786,7 +785,7 @@ namespace msl
 		for(int i = 1; i < pointCount; i++)
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x, lowRightCorner->y + i * pointDist);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -804,17 +803,17 @@ namespace msl
 
 		//get cornerpoints of opp goal area
 		auto upLeftCorner = field->posULOppGoalArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, EntityType::ArtificialObstacle));
 		auto lowRightCorner = field->posLROppGoalArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, EntityType::ArtificialObstacle));
 		//get field length and width
 		int penaltyWidth = field->PenaltyAreaWidth;
 		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, EntityType::ArtificialObstacle));
 		auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, EntityType::ArtificialObstacle));
 		//calculate point count to block space in width
 		int pointCount = penaltyWidth / 500;
 		double rest = penaltyWidth % 500;
@@ -824,8 +823,8 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x + i * pointDist, lowRightCorner->y);
 			auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x + i * pointDist, lowLeftCorner->y);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, EntityType::ArtificialObstacle));
 		}
 		//calculate point count to block space in length
 		pointCount = penaltyLength / 500;
@@ -835,7 +834,7 @@ namespace msl
 		for(int i = 1; i < pointCount; i++)
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x, lowRightCorner->y + i * pointDist);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -853,17 +852,17 @@ namespace msl
 
 		//get cornerpoints of own penalty area
 		auto upLeftCorner = field->posULOwnPenaltyArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, EntityType::ArtificialObstacle));
 		auto lowRightCorner = field->posLROwnPenaltyArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, EntityType::ArtificialObstacle));
 		//get field length and width
 		int penaltyWidth = field->GoalAreaWidth;
 		int penaltyLength = field->GoalAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, EntityType::ArtificialObstacle));
 		auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, EntityType::ArtificialObstacle));
 		//calculate point count to block space in width
 		int pointCount = penaltyWidth / 500;
 		double rest = penaltyWidth % 500;
@@ -873,8 +872,8 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x - i * pointDist, lowRightCorner->y);
 			auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x - i * pointDist, lowLeftCorner->y);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, EntityType::ArtificialObstacle));
 		}
 		//calculate point count to block space in length
 		pointCount = penaltyLength / 500;
@@ -884,7 +883,7 @@ namespace msl
 		for(int i = 1; i < pointCount; i++)
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y + i * pointDist);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -902,17 +901,17 @@ namespace msl
 
 		//get cornerpoints of own goal area
 		auto upLeftCorner = field->posULOwnGoalArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, EntityType::ArtificialObstacle));
 		auto lowRightCorner = field->posLROwnGoalArea();
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, EntityType::ArtificialObstacle));
 		//get field length and width
 		int penaltyWidth = field->PenaltyAreaWidth;
 		int penaltyLength = field->PenaltyAreaLength;
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, EntityType::ArtificialObstacle));
 		auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, EntityType::ArtificialObstacle));
 		//calculate point count to block space in width
 		int pointCount = penaltyWidth / 500;
 		double rest = penaltyWidth % 500;
@@ -922,8 +921,8 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x - i * pointDist, lowRightCorner->y);
 			auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x - i * pointDist, lowLeftCorner->y);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, EntityType::ArtificialObstacle));
 		}
 		//calculate point count to block space in length
 		pointCount = penaltyLength / 500;
@@ -933,7 +932,7 @@ namespace msl
 		for(int i = 1; i < pointCount; i++)
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(upRightCorner->x, lowRightCorner->y + i * pointDist);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -970,7 +969,7 @@ namespace msl
 			int newX = (int)(alloBall->x + radius * cos(angle));
 			int newY = (int)(alloBall->y + radius * sin(angle));
 			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>
-							(newX, newY), -2));
+							(newX, newY), EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -1003,7 +1002,7 @@ namespace msl
 			int newX = (int)(centerPoint->x + radius * cos(angle));
 			int newY = (int)(centerPoint->y + radius * sin(angle));
 			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>
-							(newX, newY), -2));
+							(newX, newY), EntityType::ArtificialObstacle));
 		}
 		//insert them into the voronoi diagram
 		insertAdditionalPoints(ret);
@@ -1022,13 +1021,13 @@ namespace msl
 		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > ret = make_shared<
 		vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>();
 
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, 2));
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upLeftCorner, EntityType::ArtificialObstacle));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowRightCorner, EntityType::ArtificialObstacle));
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(upRightCorner, EntityType::ArtificialObstacle));
 		auto lowLeftCorner = make_shared<geometry::CNPoint2D>(lowRightCorner->x, upLeftCorner->y);
-		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, 2));
+		ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(lowLeftCorner, EntityType::ArtificialObstacle));
 		int width = upLeftCorner->distanceTo(lowLeftCorner);
 		int length = upLeftCorner->distanceTo(upRightCorner);
 		//calculate point count to block space in width
@@ -1040,8 +1039,8 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowRightCorner->x - i * pointDist, lowRightCorner->y);
 			auto temp2 = make_shared<geometry::CNPoint2D>(lowLeftCorner->x - i * pointDist, lowLeftCorner->y);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, EntityType::ArtificialObstacle));
 		}
 		//calculate point count to block space in length
 		pointCount = length / 500;
@@ -1052,8 +1051,7 @@ namespace msl
 		{
 			auto temp = make_shared<geometry::CNPoint2D>(lowLeftCorner->x, upLeftCorner->y + i * pointDist);
 			auto temp2 = make_shared<geometry::CNPoint2D>(upLeftCorner->x, upRightCorner->y - i * pointDist);
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, -2));
-			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp2, -2));
+			ret->push_back(pair<shared_ptr<geometry::CNPoint2D>, int>(temp, EntityType::ArtificialObstacle));
 		}
 		insertAdditionalPoints(ret);
 		return ret;
