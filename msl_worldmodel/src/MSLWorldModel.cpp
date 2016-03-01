@@ -43,7 +43,7 @@ namespace msl
 
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
-					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacleHandler(this, 10)
+					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -229,7 +229,7 @@ namespace msl
 
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
-		robots.processWorldModelData(msg);
+		obstacles.processWorldModelData(msg);
 		pathPlanner.processWorldModelData(msg);
 		visionTrigger.run();
 	}
@@ -318,12 +318,12 @@ namespace msl
 			msg.odom.motion.translation = ownVel->translation;
 		}
 
-		auto obstacles = robots.getObstacles();
+		auto obs = obstacles.getObstacles();
 		{
-			if (obstacles != nullptr)
+			if (obs != nullptr)
 			{
-				msg.obstacles.reserve(obstacles->size());
-				for (auto& x : *obstacles)
+				msg.obstacles.reserve(obs->size());
+				for (auto& x : *obs)
 				{
 					shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
 					auto p = point->egoToAllo(*pos);

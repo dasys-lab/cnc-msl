@@ -12,7 +12,7 @@ namespace msl
 {
 
 	Robots::Robots(MSLWorldModel* wm, int ringBufferLength) :
-			obstacles(ringBufferLength), opponents(wm, ringBufferLength), teammates(wm, ringBufferLength)
+			opponents(wm, ringBufferLength), teammates(wm, ringBufferLength)
 	{
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
@@ -25,33 +25,6 @@ namespace msl
 		// TODO Auto-generated destructor stub
 	}
 
-	void Robots::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data)
-	{
-		unsigned long time = wm->getTime();
-//		if ((time - data->odometry.timestamp) > 1000)
-//		{
-//			return;
-//		}
-
-		if (data->obstacles.size() > 0)
-		{
-			shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = make_shared<vector<msl_sensor_msgs::ObstacleInfo>>(
-					data->obstacles);
-			shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs,
-					time);
-			obstacles.add(o);
-		}
-	}
-
-	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Robots::getObstacles(int index)
-	{
-		auto x = obstacles.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-		{
-			return nullptr;
-		}
-		return x->getInformation();
-	}
 
 	void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
 	{
@@ -78,22 +51,6 @@ namespace msl
 		sharedWolrdModelData.at(data->senderID)->add(infosh);
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > msl::Robots::getObstaclePoints(int index)
-	{
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		auto x = obstacles.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-		{
-			return nullptr;
-		}
-		msl_sensor_msgs::ObstacleInfo current;
-		for(int i = 0; i < x->getInformation()->size(); i++)
-		{
-			current = x->getInformation()->at(i);
-			ret->push_back(make_shared<geometry::CNPoint2D>(current.x, current.y));
-		}
-		return ret;
-	}
 
 }
 

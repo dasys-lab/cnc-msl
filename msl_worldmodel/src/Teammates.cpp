@@ -87,4 +87,26 @@ namespace msl
 		return ret;
 	}
 
-} /* namespace msl */
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesAlloClustered()
+	{
+		return teammatesAlloClustered;
+	}
+
+	void msl::Teammates::setTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered)
+	{
+		this->teammatesAlloClustered = teammatesAlloClustered;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesEgoClustered()
+	{
+		return teammatesEgoClustered;
+	}
+
+	void Teammates::setTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered)
+	{
+		this->teammatesEgoClustered = teammatesEgoClustered;
+	}
+
+}
+/* namespace msl */
+

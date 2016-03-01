@@ -26,7 +26,7 @@ namespace msl_refbox
 		}
 		context.addWidget(widget_);
 
-		this->btn_connect->setEnabled(false);
+//		this->btn_connect->setEnabled(false);
 		connect(Play_On_bot, SIGNAL(clicked()), gameData, SLOT(PlayOnPressed()));
 		connect(Stop_bot, SIGNAL(clicked()), gameData, SLOT(StopPressed()));
 		connect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
@@ -52,7 +52,7 @@ namespace msl_refbox
 		connect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 
 		//Connect Information
-		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
+		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalToggled(bool)));
 
 		connect(rbtn_xml, SIGNAL(toggled(bool)), gameData, SLOT(onXmlToggled(bool)));
 		connect(rbtn_char, SIGNAL(toggled(bool)), gameData, SLOT(onCharToggled(bool)));
@@ -88,20 +88,20 @@ namespace msl_refbox
 		this->tbl_info->setItem(0,3,item3);
 	}
 
-	bool RefBox::eventFilter(QObject* watched, QEvent* event)
-	{
-		if(!gameData->localToggled
-				&& (gameData->udpToggled || gameData->tcpToggled)
-				&& ledit_ipaddress->text().size() > 5
-				&& ledit_ipaddress->text().count(".") == 3
-				&& spin_port->value() > 0)
-		{
-			btn_connect->setEnabled(true);
-		}
-		else
-			btn_connect->setEnabled(false);
-		return true;
-	}
+//	bool RefBox::eventFilter(QObject* watched, QEvent* event)
+//	{
+//		if(!gameData->localToggled
+//				&& (gameData->udpToggled || gameData->tcpToggled)
+//				&& ledit_ipaddress->text().size() > 5
+//				&& ledit_ipaddress->text().count(".") == 3
+//				&& spin_port->value() > 0)
+//		{
+//			btn_connect->setEnabled(true);
+//		}
+//		else
+//			btn_connect->setEnabled(false);
+//		return true;
+//	}
 
 	void RefBox::shutdownPlugin()
 	{
