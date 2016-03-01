@@ -25,10 +25,24 @@ namespace alica
         bool driveBack;
         bool rotateForward;
         bool rotateBack;
+        bool kicker;
+        bool actuatorForward;
+        bool actuatorBack;
+        bool lightBarrier;
+        bool opticalFlow;
+        bool imu;
+        bool shovelSelect;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here
         bool translationRotationRobot(int movement, bool trans, int duration);
+        bool kickerRobot(int power);
+        bool actuatorRobot(int duration, int power);
+        bool lightBarrierRobot();
+        bool opticalFlowRobot();
+        bool imuRobot();
+        bool shovelSelectRobot();
+        void printGlasses();
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */
