@@ -19165,8 +19165,8 @@ Based on the following sources:
 <part name="D4" library="diode" deviceset="MBR0520LT" device=""/>
 <part name="R_ISEN_B" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="C_ISEN_B" library="rcl" deviceset="C-EU" device="C0603"/>
-<part name="L3" library="rcl" deviceset="L-EU" device="TJ9-U2" value="20µ"/>
-<part name="L4" library="rcl" deviceset="L-EU" device="TJ9-U2" value="820n"/>
+<part name="L3" library="rcl" deviceset="L-EU" device="LAL03" value="20µ"/>
+<part name="L4" library="rcl" deviceset="L-EU" device="LAL03" value="820n"/>
 <part name="C13" library="rcl" deviceset="C-EU" device="C1206" value="2.2µ"/>
 <part name="SUPPLY8" library="supply2" deviceset="GND1" device=""/>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>

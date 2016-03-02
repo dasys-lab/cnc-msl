@@ -19510,6 +19510,9 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <part name="X2" library="con-ptr500" deviceset="AK500/2-H" device=""/>
 <part name="RJ_1" library="ownParts" deviceset="RJ10" device=""/>
 <part name="GND28" library="supply1" deviceset="GND" device=""/>
+<part name="C26" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
+<part name="C27" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
+<part name="C28" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
 </parts>
 <sheets>
 <sheet>
@@ -20107,6 +20110,9 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <instance part="+3V1" gate="G$1" x="53.34" y="63.5"/>
 <instance part="RJ_1" gate="G$1" x="195.58" y="152.4"/>
 <instance part="GND28" gate="1" x="185.42" y="154.94" rot="R270"/>
+<instance part="C26" gate="G$1" x="68.58" y="88.9"/>
+<instance part="C27" gate="G$1" x="73.66" y="88.9"/>
+<instance part="C28" gate="G$1" x="76.2" y="142.24"/>
 </instances>
 <busses>
 <bus name="CAN_RX,CAN_TX,CAN_H,CAN_L">
@@ -20204,6 +20210,14 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <wire x1="78.74" y1="83.82" x2="76.2" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="76.2" y1="83.82" x2="76.2" y2="91.44" width="0.1524" layer="91"/>
 <junction x="76.2" y="91.44"/>
+<pinref part="C27" gate="G$1" pin="1"/>
+<wire x1="73.66" y1="91.44" x2="76.2" y2="91.44" width="0.1524" layer="91"/>
+<pinref part="C27" gate="G$1" pin="2"/>
+<wire x1="73.66" y1="83.82" x2="76.2" y2="83.82" width="0.1524" layer="91"/>
+<junction x="76.2" y="83.82"/>
+<pinref part="C26" gate="G$1" pin="2"/>
+<wire x1="68.58" y1="83.82" x2="73.66" y2="83.82" width="0.1524" layer="91"/>
+<junction x="73.66" y="83.82"/>
 </segment>
 <segment>
 <pinref part="JP2" gate="A" pin="4"/>
@@ -20227,6 +20241,10 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <wire x1="99.06" y1="134.62" x2="96.52" y2="134.62" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="134.62" x2="96.52" y2="127" width="0.1524" layer="91"/>
 <junction x="96.52" y="127"/>
+<pinref part="C28" gate="G$1" pin="2"/>
+<wire x1="76.2" y1="137.16" x2="76.2" y2="127" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="127" x2="93.98" y2="127" width="0.1524" layer="91"/>
+<junction x="93.98" y="127"/>
 </segment>
 <segment>
 <pinref part="GND7" gate="1" pin="GND"/>
@@ -20253,12 +20271,20 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <wire x1="91.44" y1="152.4" x2="91.44" y2="147.32" width="0.1524" layer="91"/>
 <pinref part="U$1" gate="A" pin="VDD"/>
 <wire x1="91.44" y1="147.32" x2="99.06" y2="147.32" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="147.32" x2="76.2" y2="147.32" width="0.1524" layer="91"/>
+<junction x="91.44" y="147.32"/>
+<pinref part="C28" gate="G$1" pin="1"/>
+<wire x1="76.2" y1="147.32" x2="76.2" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U1" gate="A" pin="VCCB"/>
 <wire x1="78.74" y1="88.9" x2="71.12" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="88.9" x2="71.12" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="88.9" x2="71.12" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="P+6" gate="1" pin="+5V"/>
+<pinref part="C26" gate="G$1" pin="1"/>
+<wire x1="71.12" y1="91.44" x2="71.12" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="91.44" x2="68.58" y2="91.44" width="0.1524" layer="91"/>
+<junction x="71.12" y="91.44"/>
 </segment>
 </net>
 <net name="CAN_RX" class="0">
@@ -20277,6 +20303,7 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <segment>
 <wire x1="193.04" y1="149.86" x2="180.34" y2="149.86" width="0.1524" layer="91"/>
 <label x="180.34" y="149.86" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="RJ_1" gate="G$1" pin="P$2"/>
 </segment>
 </net>
 <net name="CAN_H" class="0">
@@ -20288,6 +20315,7 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <segment>
 <wire x1="193.04" y1="152.4" x2="180.34" y2="152.4" width="0.1524" layer="91"/>
 <label x="180.34" y="152.4" size="1.27" layer="95" rot="R180" xref="yes"/>
+<pinref part="RJ_1" gate="G$1" pin="P$3"/>
 </segment>
 </net>
 <net name="CAN_TX" class="0">

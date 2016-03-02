@@ -19263,6 +19263,54 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="ownParts">
+<packages>
+<package name="RJ10">
+<wire x1="-5.6" y1="-10.3" x2="5.6" y2="-10.3" width="0.127" layer="21"/>
+<wire x1="5.6" y1="-10.3" x2="5.6" y2="10.3" width="0.127" layer="21"/>
+<wire x1="5.6" y1="10.3" x2="-5.6" y2="10.3" width="0.127" layer="21"/>
+<wire x1="-5.6" y1="10.3" x2="-5.6" y2="-10.3" width="0.127" layer="21"/>
+<circle x="-3.81" y="0.2" radius="1.6" width="0.127" layer="21"/>
+<circle x="3.81" y="0.2" radius="1.6" width="0.127" layer="21"/>
+<pad name="P$1" x="-1.905" y="6.55" drill="0.9"/>
+<pad name="P$2" x="-0.9525" y="9.09" drill="0.9"/>
+<pad name="P$3" x="0.9525" y="6.55" drill="0.9"/>
+<pad name="P$4" x="1.905" y="9.09" drill="0.9"/>
+<hole x="-3.81" y="0.2" drill="2.8"/>
+<hole x="3.81" y="0.2" drill="2.8"/>
+</package>
+</packages>
+<symbols>
+<symbol name="RJ10">
+<text x="-5.08" y="5.08" size="1.27" layer="94">&gt;NAME</text>
+<text x="-5.08" y="-7.62" size="1.27" layer="94">&gt;VALUE</text>
+<pin name="P$1" x="-2.54" y="-5.08" length="middle"/>
+<pin name="P$2" x="-2.54" y="-2.54" length="middle"/>
+<pin name="P$3" x="-2.54" y="0" length="middle"/>
+<pin name="P$4" x="-2.54" y="2.54" length="middle"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="RJ10" prefix="RJ_10">
+<gates>
+<gate name="G$1" symbol="RJ10" x="0" y="1.016"/>
+</gates>
+<devices>
+<device name="" package="RJ10">
+<connects>
+<connect gate="G$1" pin="P$1" pad="P$1"/>
+<connect gate="G$1" pin="P$2" pad="P$2"/>
+<connect gate="G$1" pin="P$3" pad="P$3"/>
+<connect gate="G$1" pin="P$4" pad="P$4"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -19460,6 +19508,8 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <part name="R19" library="rcl" deviceset="R-EU_" device="R0805" value="47k"/>
 <part name="X1" library="con-ptr500" deviceset="AK500/2-H" device=""/>
 <part name="X2" library="con-ptr500" deviceset="AK500/2-H" device=""/>
+<part name="RJ_1" library="ownParts" deviceset="RJ10" device=""/>
+<part name="GND28" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -20055,6 +20105,8 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <instance part="+3V2" gate="G$1" x="76.2" y="99.06"/>
 <instance part="P+6" gate="1" x="71.12" y="99.06"/>
 <instance part="+3V1" gate="G$1" x="53.34" y="63.5"/>
+<instance part="RJ_1" gate="G$1" x="195.58" y="152.4"/>
+<instance part="GND28" gate="1" x="185.42" y="154.94" rot="R270"/>
 </instances>
 <busses>
 <bus name="CAN_RX,CAN_TX,CAN_H,CAN_L">
@@ -20182,6 +20234,11 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <pinref part="U1" gate="A" pin="GND"/>
 <wire x1="73.66" y1="55.88" x2="78.74" y2="55.88" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="GND28" gate="1" pin="GND"/>
+<pinref part="RJ_1" gate="G$1" pin="P$4"/>
+<wire x1="187.96" y1="154.94" x2="193.04" y2="154.94" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="N$4" class="0">
 <segment>
@@ -20217,12 +20274,20 @@ Es handelt sich hierbei um AK500 in horizontaler Ausführung.</description>
 <wire x1="134.62" y1="139.7" x2="149.86" y2="139.7" width="0.1524" layer="91"/>
 <label x="137.16" y="139.7" size="1.778" layer="95"/>
 </segment>
+<segment>
+<wire x1="193.04" y1="149.86" x2="180.34" y2="149.86" width="0.1524" layer="91"/>
+<label x="180.34" y="149.86" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
 </net>
 <net name="CAN_H" class="0">
 <segment>
 <pinref part="U$1" gate="A" pin="CANH"/>
 <wire x1="134.62" y1="137.16" x2="149.86" y2="137.16" width="0.1524" layer="91"/>
 <label x="137.16" y="137.16" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="193.04" y1="152.4" x2="180.34" y2="152.4" width="0.1524" layer="91"/>
+<label x="180.34" y="152.4" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="CAN_TX" class="0">

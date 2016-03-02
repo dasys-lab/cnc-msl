@@ -22044,10 +22044,10 @@ Block, Siemens and generic&lt;p&gt;
 <instance part="GND24" gate="1" x="40.64" y="81.28"/>
 <instance part="IC3" gate="A" x="60.96" y="99.06"/>
 <instance part="IC3" gate="B" x="60.96" y="71.12"/>
-<instance part="IC3" gate="C" x="76.2" y="50.8"/>
-<instance part="IC3" gate="D" x="76.2" y="38.1"/>
-<instance part="IC3" gate="E" x="76.2" y="25.4"/>
-<instance part="IC3" gate="F" x="76.2" y="12.7"/>
+<instance part="IC3" gate="C" x="241.3" y="68.58"/>
+<instance part="IC3" gate="D" x="241.3" y="55.88"/>
+<instance part="IC3" gate="E" x="241.3" y="43.18"/>
+<instance part="IC3" gate="F" x="241.3" y="30.48"/>
 <instance part="IC3" gate="P" x="17.78" y="157.48"/>
 </instances>
 <busses>
