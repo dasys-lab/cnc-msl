@@ -16,5 +16,5 @@ msl_msgs/Point2dInfo[] mergedTeamMembers
 msl_msgs/Point2dInfo[] obstacles
 
 #bool ballIsFree
-#bool ballInPossession
+bool ballInPossession
 

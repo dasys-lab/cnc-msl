@@ -28,6 +28,7 @@ namespace msl
 		hadBefore = false;
 		hasBallIteration = 0;
 		haveDistance = 0;
+		selfInBallPossesion = false;
 		this->wm = wm;
 		hasBall = false;
 		sc = SystemConfig::getInstance();
@@ -218,7 +219,36 @@ namespace msl
 		ballVelocity.add(ballV);
 		updateSharedBall();
 		updateHaveBall();
+		updateBallPossession();
 	}
+
+
+	void Ball::updateBallPossession()
+	{
+		if(this->haveBall()) {
+			if(ballPickupPosition == nullptr && getAlloBallPosition() != nullptr) {
+				ballPickupPosition = getAlloBallPosition();
+			}
+		} else {
+			ballPickupPosition.reset();
+		}
+
+		if(!this->selfInBallPossesion) {
+			if(!this->haveBall()) return;
+		}
+
+		auto myEgoBall = this->getEgoBallPosition();
+		if(myEgoBall == nullptr) {
+			this->selfInBallPossesion = false;
+		} else if(myEgoBall->length() < 450 /*in c# before: 400 changed for simulator*/
+				|| (this->selfInBallPossesion && myEgoBall->length() < 600)) {
+			this->selfInBallPossesion = true;
+		}
+		else {
+			this->selfInBallPossesion=false;
+		}
+	}
+
 
 
 	void Ball::updateSharedBall() {
@@ -370,28 +400,17 @@ namespace msl
 		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
 
-	// TODO: this is broken, as nobody enters true into the ring buffer
 	bool Ball::robotHasBall(int robotId)
 	{
-		bool ret = false;
-		shared_ptr<geometry::CNPoint2D> ballPos = getEgoBallPosition();
-		if (ballPos == nullptr)
-		{
-			ret = false;
+
+		auto shwmData = wm->robots.getSHWMData(robotId);
+		if(shwmData == nullptr) {
+			return false;
 		}
-		shared_ptr<bool> hadBall = getTeamMateBallPossession(robotId, 1);
-		if (hadBall != nullptr && *hadBall == true)
-		{
-			ret = ballPos->length() < 600;
-		}
-		else
-		{
-			ret = ballPos->length() < 400;
-		}
-		return ret;
+		return shwmData->ballInPossession;
 	}
 
-	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo data)
+	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data)
 	{
 		if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
 		{
@@ -419,9 +438,8 @@ namespace msl
 			pair<int, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
 			ballPossession.insert(pair);
 		}
-		bool ret = robotHasBall(data.senderID);
 		shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(
-				make_shared<bool>(ret),
+				make_shared<bool>(data.ballInPossession),
 				wm->getTime());
 		ballPossession.at(data.senderID)->add(in);
 		bool r = oppHasBall(data);
@@ -430,6 +448,7 @@ namespace msl
 				wm->getTime());
 		oppBallPossession.add(inf);
 	}
+
 
 	shared_ptr<bool> Ball::getTeamMateBallPossession(int teamMateId, int index)
 	{

@@ -61,7 +61,7 @@ namespace msl
 		void updateOnLocalizationData(unsigned long long imageTime);
 		void processHypothesis();
 		void updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel, double certainty);
-		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo data);
+		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data);
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
@@ -71,6 +71,7 @@ namespace msl
 		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);
 		bool hadBefore;
+		bool closeToTheBall() {return selfInBallPossesion;};
 
 	private:
 		std::mutex sbMutex;
@@ -107,6 +108,10 @@ namespace msl
 		Point allo2Ego(Point p, Position pos);
 		Velocity allo2Ego(Velocity vel, Position pos);
 		double haveDistance;
+
+		bool selfInBallPossesion;
+		shared_ptr<geometry::CNPoint2D> ballPickupPosition;
+		void updateBallPossession();
 };
 
 
