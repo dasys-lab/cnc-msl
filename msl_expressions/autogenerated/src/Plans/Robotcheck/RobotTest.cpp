@@ -128,23 +128,36 @@ namespace alica
 			imu = imuRobot();
 			if (!imu)
 			{
-				shovelSelect = true;
+				shovelSelectLow = true;
 			}
 		}
 
 		// shovel select ==============================================================
 
-		if (shovelSelect)
+		if (shovelSelectLow)
 		{
-			cout << "testing shovelSelect" << endl;
-			shovelSelect = shovelSelectRobot();
+			cout << "testing shovelSelectLow" << endl;
+			shovelSelectLow = shovelSelectRobot(true, 3000);
+			if (!shovelSelectLow)
+			{
+				shovelSelectHigh = true;
+			}
+		}
+
+		if (shovelSelectHigh)
+		{
+			cout << "testing shovelSelectHigh" << endl;
+			shovelSelectHigh = shovelSelectRobot(true, 3000);
+
 		}
 
 		if (!driveForward && !driveBack && !rotateBack && !rotateForward && !kicker && !actuatorForward && !actuatorBack
-				&& !opticalFlow && !imu && !shovelSelect)
+				&& !opticalFlow && !imu && !shovelSelectLow && !shovelSelectHigh)
 		{
 			cout << "finished testing" << endl;
-			cout << "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!" << endl;
+			cout
+					<< "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!"
+					<< endl;
 			cout << "Have fun bitches i'm out!\n" << endl;
 			printGlasses();
 			this->success = true;
@@ -165,7 +178,8 @@ namespace alica
 		actuatorBack = false;
 		opticalFlow = false;
 		imu = false;
-		shovelSelect = false;
+		shovelSelectLow = false;
+		shovelSelectHigh = false;
 
 		/*PROTECTED REGION END*/
 	}
@@ -254,31 +268,32 @@ namespace alica
 
 	bool RobotTest::lightBarrierRobot()
 	{
-		auto lbi = wm->rawSensorData.getLightBarrier(0);
-//		if (lbi != nullptr)
-//		{
-//			auto static lb_old = *(lbi->information);
-//			auto lb_new = *(lbi->information);
-//
-//			if (lb_old != lb_new)
-//			{
-//				lb_old = lb_new;
-//				cout << "light barrier = " << lb_old << endl;
-//				move++;
-//			}
-//
-//			if (move > 5)
-//			{
-//				move = 0;
-//				cout << "light barrier is working!" << endl;
-//				return false;
-//			}
-//		}
-//		else
-//		{
-//			cerr << "no data from light barrier!" << endl;
-//			return false;
-//		}
+		auto lbi = wm->rawSensorData.getLightBarrier();
+
+		if (lbi != nullptr)
+		{
+			auto static lb_old = *lbi;
+			auto lb_new = *lbi;
+
+			if (lb_old != lb_new)
+			{
+				lb_old = lb_new;
+				cout << "light barrier = " << lb_old << endl;
+				move++;
+			}
+
+			if (move > 5)
+			{
+				move = 0;
+				cout << "light barrier is working!" << endl;
+				return false;
+			}
+		}
+		else
+		{
+			cerr << "no data from light barrier!" << endl;
+			return false;
+		}
 		return false;
 	}
 
@@ -286,7 +301,7 @@ namespace alica
 	{
 		// for testing
 		return false;
-		auto of = wm->rawSensorData.getOpticalFlow(0);
+		auto of = wm->rawSensorData.getOpticalFlow();
 		if (of != nullptr)
 		{
 			return false;
@@ -305,21 +320,31 @@ namespace alica
 		return false;
 	}
 
-	bool RobotTest::shovelSelectRobot()
+	bool RobotTest::shovelSelectRobot(bool pass, int duration)
 	{
-
-		return false;
+		msl_actuator_msgs::ShovelSelectCmd sc;
+		if (move < (30 * duration) / 1000)
+		{
+			sc.passing = pass;
+			send(sc);
+		}
+		else
+		{
+			move = 0;
+			return false;
+		}
+		move++;
+		return true;
 	}
 
 	void RobotTest::printGlasses()
 	{
-		cout << "   IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n " <<
-				"IIII              IIIIIII   III   IIIIIIIIIIIII   IIIIII   III   IIIIIIIIIIIII\n" <<
-				"                     IIIIIII   III   IIIIIIIIII      IIIIII   III   IIIIIIII\n" <<
-				"                        IIIIIII   III   IIII            IIIIII   III   III\n" <<
-				"                          IIIIIIIIIIIIIII                IIIIIIIIIIIIIII\n" << endl;
+		cout << "   IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n "
+				<< "IIII              IIIIIII   III   IIIIIIIIIIIII   IIIIII   III   IIIIIIIIIIIII\n"
+				<< "                     IIIIIII   III   IIIIIIIIII      IIIIII   III   IIIIIIII\n"
+				<< "                        IIIIIII   III   IIII            IIIIII   III   III\n"
+				<< "                          IIIIIIIIIIIIIII                IIIIIIIIIIIIIII\n" << endl;
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
-
 
