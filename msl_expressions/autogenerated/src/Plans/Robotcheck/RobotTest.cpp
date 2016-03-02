@@ -246,11 +246,10 @@ bool RobotTest::lightBarrierRobot() {
 //	}
 
 	if (lbi) {
-		auto static lb_old = *lbi;
-		auto lb_new = *lbi;
+		bool static lb_old = *lbi;
 
-		if (lb_old != lb_new) {
-			lb_old = lb_new;
+		if (lb_old != *lbi) {
+			lb_old = *lbi;
 			cout << "light barrier = " << lb_old << endl;
 			move++;
 		}
@@ -269,7 +268,7 @@ bool RobotTest::lightBarrierRobot() {
 		std::cout << "NullPtr :(" << std::endl;
 //		return false;
 	}
-	return true;
+	return false;
 }
 
 bool RobotTest::opticalFlowRobot() {
