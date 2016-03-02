@@ -34,7 +34,6 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
 #include "std_msgs/String.h"
-#include "msl_actuator_msgs/BallCatchCmd.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/HaveBallInfo.h"
 #include "msl_actuator_msgs/IMUData.h"

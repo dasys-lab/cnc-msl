@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Standards/Opponent/TeamWatchBall.h"
 
 /*PROTECTED REGION ID(inccpp1457015532224) ENABLED START*/ //Add additional includes here
+#include <Rules.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -116,7 +117,7 @@ namespace alica
         if (wm->ball.getVisionBallPositionAndCertaincy()->second < 0.4)
             ballPos = nullptr;
 
-        if (ballPos != nullptr && ballPos->length() > (wm->game.rules.stayAwayRadius + 750))
+        if (ballPos != nullptr && ballPos->length() > (msl::Rules::getInstance()->getStayAwayRadius() + 750))
             ballPos = nullptr;
 
         itcounter = 0;

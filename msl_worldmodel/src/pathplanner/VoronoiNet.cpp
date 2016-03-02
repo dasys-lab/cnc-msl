@@ -249,9 +249,7 @@ namespace msl
 		//clear data
 		this->clearVoronoiNet();
 		// get teammate positions
-		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.teammates.getPositionsOfTeamMates();
-		bool alreadyIn = false;
-		//get ownPos
+//		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.teammates.getPositionsOfTeamMates();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
@@ -261,47 +259,75 @@ namespace msl
 					pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
 																wm->getOwnId()));
 		}
-		//if there are teammates add the positions
-		if (ownTeamMatesPositions != nullptr)
+		auto alloClusteredObs = wm->obstacles.getAlloObstacles();
+		if(alloClusteredObs != nullptr)
 		{
-			//check if the position is already in if not insert
-			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
+			for (auto iter = alloClusteredObs->begin(); iter != alloClusteredObs->end(); iter++)
 			{
-				if ((*iter)->first == wm->getOwnId())
+				if ((*iter)->id == wm->getOwnId())
 				{
 					continue;
 				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, int>(
-								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y),
-								(*iter)->first));
-				Site_2 site((*iter)->second->x, (*iter)->second->y);
+								make_shared<geometry::CNPoint2D>((*iter)->x, (*iter)->y),
+								(*iter)->id));
+				Site_2 site((*iter)->x, (*iter)->y);
 				sites.push_back(site);
 			}
 		}
-		//obstacle points
-		for (int i = 0; i < points.size(); i++)
-		{
-			//check if the point is already in
-			for (int j = 0; j < sites.size(); j++)
-			{
-				if (abs(sites.at(j).x() - points.at(i)->x) < 10 && abs(sites.at(j).y() - points.at(i)->y) < 10)
-				{
-					alreadyIn = true;
-					break;
-				}
-			}
-			//add if not in
-			if (!alreadyIn)
-			{
-				pointRobotKindMapping.insert(
-						pair<shared_ptr<geometry::CNPoint2D>, int>(
-								make_shared<geometry::CNPoint2D>(points.at(i)->x, points.at(i)->y), EntityType::Opponent));
-				Site_2 site(points.at(i)->x, points.at(i)->y);
-				sites.push_back(site);
-			}
-			alreadyIn = false;
-		}
+//		bool alreadyIn = false;
+//		//get ownPos
+//		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+//		if (ownPos != nullptr)
+//		{
+//			//add own pos to voronoi
+//			sites.push_back(Site_2(ownPos->x, ownPos->y));
+//			pointRobotKindMapping.insert(
+//					pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
+//																wm->getOwnId()));
+//		}
+//		//if there are teammates add the positions
+//		if (ownTeamMatesPositions != nullptr)
+//		{
+//			//check if the position is already in if not insert
+//			for (auto iter = ownTeamMatesPositions->begin(); iter != ownTeamMatesPositions->end(); iter++)
+//			{
+//				if ((*iter)->first == wm->getOwnId())
+//				{
+//					continue;
+//				}
+//				pointRobotKindMapping.insert(
+//						pair<shared_ptr<geometry::CNPoint2D>, int>(
+//								make_shared<geometry::CNPoint2D>((*iter)->second->x, (*iter)->second->y),
+//								(*iter)->first));
+//				Site_2 site((*iter)->second->x, (*iter)->second->y);
+//				sites.push_back(site);
+//			}
+//		}
+//		//obstacle points
+//		for (int i = 0; i < points.size(); i++)
+//		{
+//			//check if the point is already in
+//			for (int j = 0; j < sites.size(); j++)
+//			{
+//				if (abs(sites.at(j).x() - points.at(i)->x) < 10 && abs(sites.at(j).y() - points.at(i)->y) < 10)
+//				{
+//					alreadyIn = true;
+//					break;
+//				}
+//			}
+//			//add if not in
+//			if (!alreadyIn)
+//			{
+//				pointRobotKindMapping.insert(
+//						pair<shared_ptr<geometry::CNPoint2D>, int>(
+//								make_shared<geometry::CNPoint2D>(points.at(i)->x, points.at(i)->y), EntityType::Opponent));
+//				Site_2 site(points.at(i)->x, points.at(i)->y);
+//				sites.push_back(site);
+//			}
+//			alreadyIn = false;
+//		}
 		//insert points into site
 		insertPoints(sites);
 		//insert artificial obstacles

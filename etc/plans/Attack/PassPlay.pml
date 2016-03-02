@@ -4,6 +4,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">SearchForPassPoint.beh#1436269036396</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:Plan">Dribble.pml#1434049476066</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1436268944412</inTransitions>
     <outTransitions>#1436268942088</outTransitions>
   </states>

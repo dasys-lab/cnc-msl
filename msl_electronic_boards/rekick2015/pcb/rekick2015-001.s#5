@@ -19587,6 +19587,8 @@ Updated by  Dan Xu 2014-07-07&lt;br&gt;
 <part name="H3" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="H4" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="GND35" library="supply1" deviceset="GND" device=""/>
+<part name="CAP_330V" library="mywirepad" deviceset="WIREPAD" device="SMD5-5"/>
+<part name="CAP_0V" library="mywirepad" deviceset="WIREPAD" device="SMD5-5"/>
 </parts>
 <sheets>
 <sheet>
@@ -20536,6 +20538,8 @@ Updated by  Dan Xu 2014-07-07&lt;br&gt;
 <instance part="C35" gate="G$1" x="157.48" y="147.32"/>
 <instance part="R31" gate="G$1" x="144.78" y="152.4" rot="R90"/>
 <instance part="GND34" gate="1" x="144.78" y="142.24" rot="MR0"/>
+<instance part="CAP_330V" gate="G$1" x="254" y="116.84" rot="R180"/>
+<instance part="CAP_0V" gate="G$1" x="254" y="101.6" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -20887,9 +20891,10 @@ Updated by  Dan Xu 2014-07-07&lt;br&gt;
 <wire x1="223.52" y1="116.84" x2="223.52" y2="111.76" width="0.1524" layer="91"/>
 <junction x="213.36" y="116.84"/>
 <pinref part="C25" gate="G$1" pin="+"/>
-<wire x1="223.52" y1="116.84" x2="228.6" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="116.84" x2="251.46" y2="116.84" width="0.1524" layer="91"/>
 <junction x="223.52" y="116.84"/>
-<label x="228.6" y="116.84" size="1.778" layer="95" xref="yes"/>
+<pinref part="CAP_330V" gate="G$1" pin="P"/>
+<label x="223.52" y="114.3" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="CAP_0V" class="0">
@@ -20904,9 +20909,10 @@ Updated by  Dan Xu 2014-07-07&lt;br&gt;
 <wire x1="213.36" y1="101.6" x2="223.52" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="223.52" y1="101.6" x2="223.52" y2="104.14" width="0.1524" layer="91"/>
 <junction x="213.36" y="101.6"/>
-<wire x1="228.6" y1="101.6" x2="223.52" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="251.46" y1="101.6" x2="223.52" y2="101.6" width="0.1524" layer="91"/>
 <junction x="223.52" y="101.6"/>
-<label x="228.6" y="101.6" size="1.778" layer="95" xref="yes"/>
+<pinref part="CAP_0V" gate="G$1" pin="P"/>
+<label x="223.52" y="99.06" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$54" class="0">

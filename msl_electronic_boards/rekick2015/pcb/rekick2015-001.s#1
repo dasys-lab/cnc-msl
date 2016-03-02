@@ -19488,8 +19488,8 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 </part>
 <part name="R105" library="rcl" deviceset="R-EU_" device="R0805" value="750"/>
 <part name="FRAME6" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="R2" library="resistor-power" deviceset="R" device="HS25" value="47"/>
-<part name="R3" library="resistor-power" deviceset="R" device="HS25" value="47"/>
+<part name="R2" library="resistor-power" deviceset="R" device="HS25" value="100"/>
+<part name="R3" library="resistor-power" deviceset="R" device="HS25" value="100"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="R6" library="rcl" deviceset="R-EU_" device="R0805" value="12k, 1%"/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="R0805" value="10k, 1%"/>
