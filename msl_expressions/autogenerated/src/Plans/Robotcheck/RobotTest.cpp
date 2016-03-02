@@ -180,6 +180,7 @@ namespace alica
 		imu = false;
 		shovelSelectLow = false;
 		shovelSelectHigh = false;
+		lightBarrier = false;
 
 		/*PROTECTED REGION END*/
 	}
