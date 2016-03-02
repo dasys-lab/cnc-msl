@@ -93,7 +93,7 @@ namespace msl
 		MSLWorldModel* wm;
 		SystemConfig* sc;
 		map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
-		shared_ptr<RingBuffer<InformationElement<bool>>> oppBallPossession;
+		RingBuffer<InformationElement<bool>> oppBallPossession;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
 		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;

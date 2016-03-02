@@ -66,7 +66,7 @@ namespace alica
         }
 
         // the only teammate in the corresponding task/ entrypoint
-        teamMateIds.clear();
+        this->teamMateIds.clear();
         for (EntryPoint* ep : eps)
         {
             auto teammates = robotsInEntryPointOfHigherPlan(ep);
@@ -76,7 +76,7 @@ namespace alica
                 break;
             }
         }
-        if (teamMateIds.size() <= 0)
+        if (this->teamMateIds.size() <= 0)
         {
             cout << "S4PP: Somethine Strange is going on with RobotIDs and Entrypoints" << endl;
             return;
@@ -282,7 +282,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "S4PP: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

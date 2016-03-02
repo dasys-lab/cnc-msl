@@ -83,15 +83,15 @@
     <task>../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1434045709193</state>
   </entryPoints>
-  <entryPoints id="1434045719840" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1434045719840" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1225115536468</task>
     <state>#1434045868018</state>
   </entryPoints>
-  <entryPoints id="1434045723977" name="Defend" comment="" successRequired="false" minCardinality="1" maxCardinality="2147483647">
+  <entryPoints id="1434045723977" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1434045870617</state>
   </entryPoints>
-  <entryPoints id="1434112675755" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1434112675755" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1434112762535</state>
   </entryPoints>

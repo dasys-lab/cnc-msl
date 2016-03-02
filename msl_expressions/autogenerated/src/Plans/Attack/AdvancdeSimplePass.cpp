@@ -102,7 +102,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "ASP: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

@@ -222,7 +222,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "D2AP: Parameter does not exist" << endl;
         }
         if (!ownPenalty)
         {

@@ -430,7 +430,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "AAPR: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }
