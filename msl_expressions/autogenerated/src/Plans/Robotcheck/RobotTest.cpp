@@ -71,8 +71,10 @@ void RobotTest::run(void* msg) {
 	// light barrier ==============================================================
 
 	if (lightBarrier) {
+		cout << "light barrier  anfang= " << lightBarrier << endl;
 		cout << "testing light barrier" << endl;
 		lightBarrier = lightBarrierRobot();
+		cout << "light barrier after method= " << lightBarrier << endl;
 		if (!lightBarrier) {
 			opticalFlow = true;
 		}
@@ -143,7 +145,7 @@ void RobotTest::initialiseParameters() {
 	/*PROTECTED REGION ID(initialiseParameters1456756113767) ENABLED START*/ //Add additional options here
 	move = 0;
 
-	driveForward = true;
+	driveForward = false;
 	driveBack = false;
 	rotateBack = false;
 	rotateForward = false;
@@ -154,7 +156,7 @@ void RobotTest::initialiseParameters() {
 	imu = false;
 	shovelSelectLow = false;
 	shovelSelectHigh = false;
-	lightBarrier = false;
+	lightBarrier = true;
 
 	/*PROTECTED REGION END*/
 }
@@ -247,27 +249,30 @@ bool RobotTest::lightBarrierRobot() {
 
 	if (lbi) {
 		bool static lb_old = *lbi;
-
+		cout << "light barrier 1 = " << lightBarrier << endl;
 		if (lb_old != *lbi) {
 			lb_old = *lbi;
 			cout << "light barrier = " << lb_old << endl;
 			move++;
 		}
-
+		cout << "light barrier 2 = " << lightBarrier << endl;
 		if (move > 5) {
 			move = 0;
 			cout << "light barrier is working!" << endl;
 			return false;
 		}
+		cout << "light barrier = 3 " << lightBarrier << endl;
 		if (*lbi) {
 			std::cout << "Hab den Ball :)" << std::endl;
 		} else {
 			std::cout << "Hab ihn nicht. :(" << std::endl;
 		}
+		cout << "light barrier = 4 " << lightBarrier << endl;
 	} else {
 		std::cout << "NullPtr :(" << std::endl;
 		return false;
 	}
+	cout << "light barrier 5 = " << lightBarrier << endl;
 	return true;
 }
 
