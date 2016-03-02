@@ -30,10 +30,10 @@ namespace msl
 		int teamMatesInOppPenalty();
 		shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered();
-		void setTeammatesAlloClustered( shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered();
-		void setTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered(int index = 0);
+		void processTeammatesAlloClustered( shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);
+		void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
 
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
 
@@ -41,8 +41,8 @@ namespace msl
 		MSLWorldModel* wm;
 		int ringBufferLength;
 		unsigned long maxInformationAge = 1000000000;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesEgoClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesAlloClustered;
 
 	};
 

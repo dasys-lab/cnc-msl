@@ -14,7 +14,7 @@
 namespace msl
 {
 
-	Obstacles::Obstacles(MSLWorldModel* wm, int ringbufferLength) : obstacles(ringbufferLength)
+	Obstacles::Obstacles(MSLWorldModel* wm, int ringbufferLength) : obstacles(ringbufferLength), obstaclesAlloClustered(ringbufferLength), obstaclesEgoClustered(ringbufferLength)
 	{
 		this->wm = wm;
 		sc = supplementary::SystemConfig::getInstance();
@@ -32,8 +32,8 @@ namespace msl
 		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
 		NULL);
 		field = MSLFootballField::getInstance();
-		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> clusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
-		shared_ptr<vector<shared_ptr<AnnotatedObstacleCluster>>> newClusterArray = make_shared<vector<shared_ptr<AnnotatedObstacleCluster>>>();
+		clusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
+		newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		pool = new AnnotatedObstacleClusterPool();
 	}
 
@@ -48,10 +48,8 @@ namespace msl
 		setupAnnotatedObstacles(myObstacles, wm->rawSensorData.getCorrectedOdometryInfo());
 		// CLUSTERING
 		clusterAnnotatedObstacles();
-
 		// CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
-		shared_ptr<vector<AnnotatedObstacleCluster*>> newObsClustersAllo = make_shared<vector<AnnotatedObstacleCluster*>>();
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newObsEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> newObsClustersAllo = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newOppAllo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> newTeammatesEgo = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -61,7 +59,21 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> curEgoPoint = nullptr;
 		for (int i = 0; i < newClusterArray->size(); ++i)
 		{
-			newObsClustersAllo->push_back(newClusterArray->at(i));
+
+			shared_ptr<geometry::CNRobot> clusterInfo = make_shared<geometry::CNRobot>();
+			auto current = newClusterArray->at(i);
+			clusterInfo->id = current->ident;
+			clusterInfo->radius = current->radius;
+			clusterInfo->x = current->x;
+			clusterInfo->y = current->y;
+			clusterInfo->theta = current->angle;
+			clusterInfo->velocityX = current->velX;
+			clusterInfo->velocityY = current->velY;
+			clusterInfo->opposer = current->opposer;
+			clusterInfo->supporter = current->supporter;
+			clusterInfo->certainty = current->certainty;
+			clusterInfo->rotation = current->rotation;
+			newObsClustersAllo->push_back(clusterInfo);
 
 			curAlloPoint = make_shared<geometry::CNPoint2D>(newClusterArray->at(i)->x, newClusterArray->at(i)->y);
 			curEgoPoint = curAlloPoint->alloToEgo(
@@ -85,14 +97,17 @@ namespace msl
 				newTeammatesAllo->push_back(curAlloPoint);
 			}
 		}
-
 		// change the vNet references to the new lists
-		this->obstaclesClustersAllo = newObsClustersAllo;
-		this->obstaclesEgoClustered = newObsEgo;
-		wm->robots.opponents.setOpponentsEgoClustered(newOppEgo);
-		wm->robots.opponents.setOpponentsAlloClustered(newOppAllo);
-		wm->robots.teammates.setTeammatesEgoClustered(newTeammatesEgo);
-		wm->robots.teammates.setTeammatesAlloClustered(newTeammatesAllo);
+		shared_ptr<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> o = make_shared<InformationElement<vector<shared_ptr<geometry::CNRobot>>>>(
+				newObsClustersAllo, wm->getTime());
+		o->certainty = 1;
+
+		this->obstaclesAlloClustered.add(o);
+		wm->robots.opponents.processOpponentsEgoClustered(newOppEgo);
+		wm->robots.opponents.processOpponentsAlloClustered(newOppAllo);
+		wm->robots.teammates.processTeammatesEgoClustered(newTeammatesEgo);
+		wm->robots.teammates.processTeammatesAlloClustered(newTeammatesAllo);
+		pool->reset();
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::clusterPoint2D(
@@ -159,26 +174,25 @@ namespace msl
 	void Obstacles::clusterAnnotatedObstacles()
 	{
 		bool mergedCluster = true;
-
 		while (mergedCluster)
 		{
 			// find the two nearest mergeable clusters
-			int fstClusterId = EntityType::Opponent;
-			int sndClusterId = EntityType::Opponent;
+			int fstClusterId = -1;
+			int sndClusterId = -1;
 			double minDist = numeric_limits<double>::max();
 			double curDist = 0;
-			for (int i = 0; i < clusterArray->size(); ++i)
+			for (int i = 0; i < this->clusterArray->size(); ++i)
 			{
 				for (int j = 0; j < i; ++j)
 				{
-					if ((clusterArray->at(i)->ident == EntityType::Opponent || clusterArray->at(j)->ident == EntityType::Opponent)
-							&& std::find(clusterArray->at(i)->supporter->begin(), clusterArray->at(i)->supporter->end(),
-											clusterArray->at(j)->ident) == clusterArray->at(i)->supporter->end()
-							&& std::find(clusterArray->at(j)->supporter->begin(), clusterArray->at(j)->supporter->end(),
-											clusterArray->at(i)->ident) == clusterArray->at(j)->supporter->end())
+					if ((this->clusterArray->at(i)->ident == EntityType::Opponent || this->clusterArray->at(j)->ident == EntityType::Opponent)
+							&& std::find(this->clusterArray->at(i)->supporter->begin(), this->clusterArray->at(i)->supporter->end(),
+										 this->clusterArray->at(j)->ident) == this->clusterArray->at(i)->supporter->end()
+							&& std::find(this->clusterArray->at(j)->supporter->begin(), this->clusterArray->at(j)->supporter->end(),
+										 this->clusterArray->at(i)->ident) == this->clusterArray->at(j)->supporter->end())
 					{
 						// mergeable, check dist
-						curDist = clusterArray->at(i)->distanceTo(clusterArray->at(j));
+						curDist = this->clusterArray->at(i)->distanceTo(this->clusterArray->at(j));
 						if (curDist < minDist)
 						{
 							fstClusterId = i;
@@ -188,15 +202,14 @@ namespace msl
 					}
 				}
 			}
-
 			// check if variance after merging is below VARIANCE_THRESHOLD
-			if (fstClusterId != EntityType::Opponent)
+			if (fstClusterId != -1)
 			{
-				mergedCluster = clusterArray->at(fstClusterId)->checkAndMerge(clusterArray->at(sndClusterId),
+				mergedCluster = this->clusterArray->at(fstClusterId)->checkAndMerge(this->clusterArray->at(sndClusterId),
 																				VARIANCE_THRESHOLD);
 				if (mergedCluster)
 				{
-					clusterArray->erase(clusterArray->begin() + sndClusterId);
+					this->clusterArray->erase(this->clusterArray->begin() + sndClusterId);
 				}
 			}
 			else
@@ -204,14 +217,13 @@ namespace msl
 				mergedCluster = false;
 			}
 		}
-
-		newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
-		for (int i = 0; i < clusterArray->size(); i++)
+		this->newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
+		for (int i = 0; i < this->clusterArray->size(); i++)
 		{
-			newClusterArray->push_back(clusterArray->at(i));
+			this->newClusterArray->push_back(this->clusterArray->at(i));
 		}
-		std::sort(newClusterArray->begin(), newClusterArray->end(), AnnotatedObstacleCluster::compareTo);
-		clusterArray->clear();
+		std::sort(this->newClusterArray->begin(), this->newClusterArray->end(), AnnotatedObstacleCluster::compareTo);
+		this->clusterArray->clear();
 	}
 
 	void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
@@ -236,7 +248,6 @@ namespace msl
 			{
 				continue;
 			}
-
 			// add all obstacles seen by curRobot
 			vector<msl_msgs::Point2dInfo> curOppList = currentRobot->obstacles;
 			if (curOppList.size() > 0)// != nullptr
@@ -532,9 +543,81 @@ namespace msl
 		return false;
 	}
 
-	shared_ptr<vector<AnnotatedObstacleCluster*>> Obstacles::getObstaclesClustersAllo()
+	shared_ptr<vector<shared_ptr<geometry::CNRobot>>> Obstacles::getAlloObstacles(int index)
 	{
-		return obstaclesClustersAllo;
+		auto x = this->obstaclesAlloClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > Obstacles::getEgoObstacles(int index)
+	{
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		if(ownPos == nullptr)
+		{
+			return nullptr;
+		}
+		auto x = this->obstaclesAlloClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		shared_ptr<vector<shared_ptr<geometry::CNRobot> > > ret = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
+		for(int i = 0; i < this->obstaclesAlloClustered.getLast(index)->getInformation()->size(); i++)
+		{
+			shared_ptr<geometry::CNRobot> current = this->obstaclesAlloClustered.getLast(index)->getInformation()->at(i);
+			double x = current->x - ownPos->x;
+			double y = current->y - ownPos->y;
+
+			double angle = atan2(y, x) - ownPos->theta;
+			double dist = sqrt(x * x + y * y);
+
+			current->x = cos(angle) * dist;
+			current->y = sin(angle) * dist;
+			ret->push_back(current);
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getAlloObstaclePoints(int index)
+	{
+		auto x = this->obstaclesAlloClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		for(int i = 0; i < this->obstaclesAlloClustered.getLast(index)->getInformation()->size(); i++)
+		{
+			shared_ptr<geometry::CNRobot> current = this->obstaclesAlloClustered.getLast(index)->getInformation()->at(i);
+			ret->push_back(make_shared<geometry::CNPoint2D>(current->x, current->y));
+		}
+		return ret;
+	}
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getEgoObstaclePoints(int index)
+	{
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		if(ownPos == nullptr)
+		{
+			return nullptr;
+		}
+		auto x = this->obstaclesAlloClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		for(int i = 0; i < this->obstaclesAlloClustered.getLast(index)->getInformation()->size(); i++)
+		{
+			auto current = this->obstaclesAlloClustered.getLast(index)->getInformation()->at(i);
+			ret->push_back(make_shared<geometry::CNPoint2D>(current->x, current->y)->alloToEgo(*ownPos));
+		}
+		return ret;
+
 	}
 
 	double Obstacles::distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos)
@@ -588,6 +671,10 @@ namespace msl
 			shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs,
 					time);
 			obstacles.add(o);
+			if(this->getObstaclePoints() != nullptr)
+			{
+				handleObstacles(this->getObstaclePoints());
+			}
 		}
 	}
 
