@@ -5,6 +5,8 @@ using namespace std;
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
+
+#include <iostream>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,6 +30,22 @@ namespace alica
         msl_actuator_msgs::ShovelSelectCmd ssc = msl_actuator_msgs::ShovelSelectCmd();
         ssc.passing = this->passing;
         send(ssc);
+        /*        auto lb = wm->rawSensorData.getLightBarrier();
+         if (lb)
+         {
+         if(*lb)
+         {
+         std::cout << "Hab den Ball :)" << std::endl;
+         }
+         else
+         {
+         std::cout << "Hab ihn nicht. :(" << std::endl;
+         }
+         }
+         else
+         {
+         std::cout << "NullPtr :(" << std::endl;
+         }*/
         /*PROTECTED REGION END*/
     }
     void ShovelSelect::initialiseParameters()

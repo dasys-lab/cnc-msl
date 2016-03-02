@@ -131,6 +131,8 @@ namespace msl
 		static double PenaltySpot;
 		static double Surrounding;
 		static double PenaltyAreaMappingTolerance;
+		static double MaxDistance;
+		static double MaxDistanceSqr;
 
 		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance);
 		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);

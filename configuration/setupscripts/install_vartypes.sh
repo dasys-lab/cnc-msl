@@ -22,3 +22,4 @@ then
   rm -rf vartypes-0.7.tar.gz
   rm -rf vartypes-0.7
 fi
+

@@ -8,25 +8,40 @@ source ./funcs.sh
 
 msg "ROS Repository wird eingerichtet"
 
-ROS_REPO_FILE="/etc/apt/sources.list.d/ros-latest.list"
+# Distributionsversion auslesen
+codename=`lsb_release -cs`
 
-if [ -f $ROS_REPO_FILE ]; 
-then
-# FIXME: dont know how to use $ROS_REPO_FILE in the sudo sh -c command
-  sudo grep -q -F "deb http://packages.ros.org/ros/ubuntu trusty main" $ROS_REPO_FILE || sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" >> /etc/apt/sources.list.d/ros-latest.list'
-else
- sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" >> /etc/apt/sources.list.d/ros-latest.list'
-fi
+# Linux Mint korrektur
+case "${codename}" in
+    qiana | rebecca | rafaela | rosa)
+        codename=trusty
+        ;;
+    sarha)
+        codename=xenial
+        ;;
+esac
+    
+
+
+add_to "deb http://packages.ros.org/ros/ubuntu ${codename} main" "/etc/apt/sources.list.d/ros-latest.list" "as_root"
+add_to "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable ${codename} main" "/etc/apt/sources.list.d/gazebo-stable.list" "as_root"
 
 wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 
 
 msg "ROS Pakete werden installiert und eingerichtet"
 
-rospackages='ros-indigo-desktop ros-indigo-gazebo5 ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall ros-indigo-pcl-conversions'
+rospackages='ros-indigo-desktop ros-indigo-gazebo5-ros-pkgs ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall ros-indigo-pcl-conversions'
+
 
 sudo apt-get update
-sudo apt-get -y install $rospackages
+if [ -z "$1" ]
+then 
+   eval sudo apt-get install $rospackages
+else
+   eval sudo apt-get "${1}" install $rospackages
+fi
 
 set +e
 sudo rosdep init
@@ -36,7 +51,7 @@ set -e
 
 msg "ROS Workspace wird angelegt und eingerichtet"
 
-add_to_bashrc "source /opt/ros/indigo/setup.bash"
+add_to "source /opt/ros/indigo/setup.bash" ~/.bashrc
 
 source /opt/ros/indigo/setup.bash
 
@@ -46,3 +61,4 @@ if [ ! -f ~/cnws/src/CMakeLists.txt ];
 then
   catkin_init_workspace
 fi
+

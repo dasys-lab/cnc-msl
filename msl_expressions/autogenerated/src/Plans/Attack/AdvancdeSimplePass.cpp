@@ -55,11 +55,11 @@ namespace alica
 
         if (receiver != nullptr)
         {
-            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver);//make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
+            shared_ptr<vector<int>> robots = robotsInEntryPoint(receiver); //make_shared<vector<int>>(); // = robotsInEntryPoint(receiver); // please fix this compile error, greatings Stopfer
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
             if (matePos != nullptr)
             {

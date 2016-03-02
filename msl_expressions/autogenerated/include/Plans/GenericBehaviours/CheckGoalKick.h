@@ -32,8 +32,14 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloRightAimPoint;
         shared_ptr<geometry::CNPoint2D> alloMidAimPoint;
         msl::MSLFootballField* field;
-        double robotShootDistanceOwn;
-        double robotShootDistanceGoal;
+        double minObsDistGoal;
+        double minOwnDistGoal;
+        double closeGoalDist;
+        double farGoalDist;
+        double obsDistGoal;
+        double ownDistGoal;
+        double ownDistObs;
+        double keeperDistGoal;
         double toleranceAngle;
         double minKickPower;
         double waitingIter;
@@ -45,6 +51,7 @@ namespace alica
         double calcToleranceAngle();
         void kicking();
         bool checkGoalKeeper();
+        shared_ptr<vector<geometry::CNPoint2D>> getObstacles();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

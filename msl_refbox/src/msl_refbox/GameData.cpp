@@ -27,7 +27,7 @@ namespace msl_refbox
 
 		localToggled = false;
 		xmlparser = new XMLProtocolParser(this);
-		this->tcpToggled = false;
+		this->tcpToggled = true;
 		this->udpToggled = false;
 		this->charToggled = false;
 		this->xmlToggled = false;
@@ -70,7 +70,7 @@ namespace msl_refbox
 
 	void GameData::sendRefBoxCmd()
 	{
-		if (tcpsocket != nullptr || udpsocket != nullptr)
+		if (this->localToggled == false && (tcpsocket != nullptr || udpsocket != nullptr))
 			this->RefereeBoxInfoBodyPublisher.publish(ref);
 	}
 
@@ -370,6 +370,11 @@ namespace msl_refbox
 
 	void GameData::onLocalToggled(bool checked)
 	{
+	        if (checked)
+	            this->refBox->btn_connect->setEnabled(false);
+	        else
+	            this->refBox->btn_connect->setEnabled(true);
+
 		this->localToggled = checked;
 	}
 
@@ -847,7 +852,7 @@ namespace msl_refbox
 		}
 		logString += "}\0";
 
-		cout << logString.toStdString() << endl;
+//		cout << logString.toStdString() << endl;
 
 		if (this->tcpsocket == nullptr || !this->tcpsocket->isValid()
 				|| this->tcpsocket->state() != QAbstractSocket::ConnectedState)

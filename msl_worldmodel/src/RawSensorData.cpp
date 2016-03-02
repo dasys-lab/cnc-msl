@@ -212,6 +212,15 @@ namespace msl
 		opticalFlow.add(o);
 	}
 
+	void RawSensorData::processLightBarrier(std_msgs::BoolPtr msg)
+	{
+		shared_ptr<bool> lb = make_shared<bool>(msg->data);
+		shared_ptr<InformationElement<bool>> l = make_shared<InformationElement<bool>>(
+				lb, wm->getTime());
+		l->certainty = 1.0;
+		lightBarrier.add(l);
+	}
+
 	void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl& cmd)
 	{
 		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
@@ -277,6 +286,9 @@ namespace msl
 			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
 			                                                                                 data->ball.velocity.vy);
 			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+		} else {
+			wm->ball.updateHaveBall();
+			wm->ball.updateSharedBall();
 		}
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);

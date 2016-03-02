@@ -12,6 +12,7 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "engine/AlicaEngine.h"
 #include "engine/IAlicaClock.h"
+#include "tf/tf.h"
 
 namespace msl
 {
@@ -42,7 +43,7 @@ namespace msl
 
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
-					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this)
+					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -62,7 +63,7 @@ namespace msl
 										(MSLWorldModel*)this);
 
 		simWorldModelSub = n.subscribe("/WorldModel/SimulatorWorldModelData", 10, &MSLWorldModel::onSimWorldModel,
-									(MSLWorldModel*)this);
+										(MSLWorldModel*)this);
 
 		gazeboWorldModelSub = n.subscribe("/gazebo/model_states", 10, &MSLWorldModel::onGazeboModelState,
 											(MSLWorldModel*)this);
@@ -76,8 +77,11 @@ namespace msl
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
+		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
+										(MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
+		this->timeLastSimMsgReceived = 0;
 	}
 
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
@@ -99,58 +103,106 @@ namespace msl
 	{
 		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
-		msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>();
+		this->timeLastSimMsgReceived = now;
 
+		msl_sensor_msgs::WorldModelDataPtr wmsim = boost::make_shared<msl_sensor_msgs::WorldModelData>();
 
 		int modelCnt = msg->name.size();
 		//cout << "WM: Gazebo Model Count: " << modelCnt <<  endl;
 		for (int i = 0; i < modelCnt; i++)
 		{
-			// TODO: check coordinate systems
-			if (msg->name[i].find("bot"))
+			if (msg->name[i].compare(supplementary::SystemConfig::getHostname()) == 0)
 			{
+				wmsim->timestamp = now;
+				wmsim->odometry.certainty = 1.0;
+				wmsim->odometry.locType.type = msl_sensor_msgs::LocalizationType::ErrorMin;
+				wmsim->odometry.position.certainty = 1.0;
 
-				if (msg->name[i].compare("bot"+to_string(this->ownID)) != 0)
-				{
-					//cout << "WM: Gazebo Pos" << endl;
-					wmsim->timestamp = now;
-					wmsim->odometry.certainty = 1.0;
-					wmsim->odometry.locType.type = msl_sensor_msgs::LocalizationType::ErrorMin;
-					wmsim->odometry.position.certainty = 1.0;
-					wmsim->odometry.position.angle = atan2(msg->pose[i].orientation.y, msg->pose[i].orientation.x);
-					wmsim->odometry.position.x = msg->pose[i].position.x * 1000.0;
-					wmsim->odometry.position.y = msg->pose[i].position.y * 1000.0;
-					wmsim->odometry.motion.angle = atan2(msg->twist[i].linear.y, msg->twist[i].linear.x);
-					wmsim->odometry.motion.translation = sqrt(
-							msg->twist[i].linear.x * msg->twist[i].linear.x
-									+ msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
-					wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
-				}
-				else
-				{
-					msl_sensor_msgs::ObstacleInfo obsInfo;
-					obsInfo.diameter = 500.0;
-					obsInfo.x = msg->pose[i].position.x * 1000.0;
-					obsInfo.y = msg->pose[i].position.y * 1000.0;
+				tf::Quaternion q(msg->pose[i].orientation.x, msg->pose[i].orientation.y, msg->pose[i].orientation.z,
+									msg->pose[i].orientation.w);
+				tf::Matrix3x3 m(q);
+				double roll, pitch, yaw;
+				m.getRPY(roll, pitch, yaw);
 
+				wmsim->odometry.position.angle = yaw + M_PI;
+				wmsim->odometry.position.x = msg->pose[i].position.x * 1000.0;
+				wmsim->odometry.position.y = msg->pose[i].position.y * 1000.0;
+				wmsim->odometry.motion.angle = atan2(msg->twist[i].linear.y, msg->twist[i].linear.x);
+				wmsim->odometry.motion.translation = sqrt(
+						msg->twist[i].linear.x * msg->twist[i].linear.x
+								+ msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
+				wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
+			}
+			else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0 && msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0 && msg->name[i].compare("football") != 0)
+			{
+				msl_sensor_msgs::ObstacleInfo obsInfo;
+				obsInfo.diameter = 500.0;
+				obsInfo.x = msg->pose[i].position.x * 1000.0;
+				obsInfo.y = msg->pose[i].position.y * 1000.0;
+
+				//only if obstacle is closer than 6m
+				if(sqrt(obsInfo.x*obsInfo.x + obsInfo.y*obsInfo.y) < 6000) {
 					wmsim->obstacles.push_back(obsInfo);
 				}
 			}
 
+
 			if (msg->name[i] == "football")
 			{
-				wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
-				wmsim->ball.confidence = 1.0;
-				wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
-				wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
-				wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
-				wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
-				wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
-				wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
+					wmsim->ball.confidence = 1.0;
+					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
+					wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
+					wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
+					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
+					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
+					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
 			}
-
-			// TODO: fill distance scan
 		}
+
+		// allo to ego for ball and obstacles
+
+		double x = wmsim->ball.point.x - wmsim->odometry.position.x;
+		double y = wmsim->ball.point.y - wmsim->odometry.position.y;
+
+		double angle = atan2(y, x) - wmsim->odometry.position.angle;
+		double dist = sqrt(x * x + y * y);
+
+		wmsim->ball.point.x = cos(angle) * dist;
+		wmsim->ball.point.y = sin(angle) * dist;
+
+		//Only if ball is closer than 7m
+		if(dist > 7000) {
+			wmsim->ball.point.x = 0;
+			wmsim->ball.point.y = 0;
+			wmsim->ball.confidence = 0;
+		}
+
+		for (int i=0; i < 60; i++)
+		{
+			wmsim->distanceScan.sectors.push_back(20000);
+		}
+
+
+		for (auto& obs : wmsim->obstacles)
+		{
+			double x = obs.x - wmsim->odometry.position.x;
+			double y = obs.y - wmsim->odometry.position.y;
+
+			double angle = atan2(y, x) - wmsim->odometry.position.angle;
+			double dist = sqrt(x * x + y * y);
+
+			int sector = (int)(angle/(2*M_PI/60.0)) % 60;
+			if (sector < 0)
+				sector += 60;
+			wmsim->distanceScan.sectors[sector] = dist;
+
+			obs.x = cos(angle) * dist;
+			obs.y = sin(angle) * dist;
+
+
+		}
+
 
 		onWorldModelData(wmsim);
 	}
@@ -162,9 +214,22 @@ namespace msl
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
+		if(game.ownGoalColor == Color::Yellow) {
+			msg->odometry.position.x = -msg->odometry.position.x;
+			msg->odometry.position.y = -msg->odometry.position.y;
+			msg->odometry.position.angle += M_PI;
+			while(msg->odometry.position.angle > M_PI) {
+				msg->odometry.position.angle -= 2*M_PI;
+			}
+			msg->odometry.motion.angle += M_PI;
+			while(msg->odometry.motion.angle > M_PI) {
+				msg->odometry.motion.angle -= 2*M_PI;
+			}
+		}
+
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
-		robots.processWorldModelData(msg);
+		obstacles.processWorldModelData(msg);
 		pathPlanner.processWorldModelData(msg);
 		visionTrigger.run();
 	}
@@ -253,12 +318,12 @@ namespace msl
 			msg.odom.motion.translation = ownVel->translation;
 		}
 
-		auto obstacles = robots.getObstacles();
+		auto obs = obstacles.getObstacles();
 		{
-			if (obstacles != nullptr)
+			if (obs != nullptr)
 			{
-				msg.obstacles.reserve(obstacles->size());
-				for (auto& x : *obstacles)
+				msg.obstacles.reserve(obs->size());
+				for (auto& x : *obs)
 				{
 					shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(x.x, x.y);
 					auto p = point->egoToAllo(*pos);
@@ -306,5 +371,11 @@ namespace msl
 	{
 		return ownID;
 	}
+
+	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
+	{
+		rawSensorData.processLightBarrier(msg);
+	}
 } /* namespace msl */
+
 
