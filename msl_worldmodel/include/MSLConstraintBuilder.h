@@ -82,6 +82,7 @@ namespace msl{
 			static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>>& points);
 
 			static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>>& shell, double tolerance, vector<shared_ptr<TVec>>& points);
+			static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>>& points);
 
 			static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>>& points);

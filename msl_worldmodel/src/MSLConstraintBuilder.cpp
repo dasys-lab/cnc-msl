@@ -77,6 +77,59 @@ namespace msl
 		return spreadUtility;
 	}
 
+	shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>>& players)
+		{
+			msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+			shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+
+			if (ownPos == nullptr)
+				return autodiff::Term::FALSE;
+
+			// all players have to be in sight radius
+			shared_ptr<Term> c = insideSphere (point, detectionRadius, players);
+
+			for (int i = 0; i < players.size(); ++i) {
+
+				shared_ptr<TVec> p2p = players[i] - point;
+//				shared_ptr<Term> rel = (GH.DFLT_OB_RADIUS / autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
+
+				// consider opponents
+//				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
+//				if (opps != null && opps.Count > 0) {
+//					foreach (TrackedOpponent opp in opps) {
+//						TVec oppT = new TVec (opp.Pos.X, opp.Pos.Y);
+//						TVec p2opp = oppT - point;
+//
+//						TVec oppDistance = CB.InCoordsOf (p2opp, p2p);
+//						c &= CB.IfThen (((oppDistance.X > 0) & (oppDistance.X < 1)), rel < ((new Abs (oppDistance.Y) - ((GH.DFLT_OB_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / oppDistance.X));
+//					}
+//				}
+
+				// consider teammates
+//				List<Point2D> mates = wm.GetTeammateListAlloClustered();
+//
+//				if (mates != null && mates.Count > 0) {
+//					foreach (Point2D mate in mates) {
+//						TVec mateT = new TVec (mate.X, mate.Y);
+//						TVec p2mate = mateT - point;
+//
+//						TVec mateDistance = CB.InCoordsOf (p2mate, p2p);
+//						c &= CB.IfThen (((mateDistance.X > 0) & (mateDistance.X < 1)), rel < ((new Abs (mateDistance.Y) - ((GH.DFLT_ROBOT_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / mateDistance.X));
+//					}
+//				}
+
+				// consider myself
+//				if (considerOwnPos) {
+//					TVec ownPosT = new TVec (ownPos.X, ownPos.Y);
+//					TVec p2ownPos = ownPosT - point;
+//
+//					TVec myPosDistance = CB.InCoordsOf (p2ownPos, p2p);
+//					c &= CB.IfThen (((myPosDistance.X > 0) & (myPosDistance.X < 1)), rel < ((new Abs (myPosDistance.Y) - ((GH.DFLT_ROBOT_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / myPosDistance.X));
+//				}
+			}
+			return c;
+		}
+
 	shared_ptr<Term> MSLConstraintBuilder::approachUtil( shared_ptr<TVec> destination, vector<shared_ptr<TVec>>& points) {
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
 		double maxFieldDist = std::sqrt(MSLFootballField::FieldLength * MSLFootballField::FieldLength + MSLFootballField::FieldWidth * MSLFootballField::FieldWidth);
