@@ -41,6 +41,7 @@ namespace msl
 		shared_ptr<vector<AnnotatedObstacleCluster*>> getObstaclesClustersAllo();
 		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
 
 	private:
 		void clusterAnnotatedObstacles();

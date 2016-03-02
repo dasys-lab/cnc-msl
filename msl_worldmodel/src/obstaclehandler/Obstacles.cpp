@@ -563,6 +563,28 @@ namespace msl
 		return ret;
 	}
 
+
+
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getAlloObstaclePoints(int index)
+	{
+		auto ownpos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+		auto x = obstacles.getLast(index);
+		if (ownpos==nullptr || x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		msl_sensor_msgs::ObstacleInfo current;
+		for(int i = 0; i < x->getInformation()->size(); i++)
+		{
+			current = x->getInformation()->at(i);
+			ret->push_back(make_shared<geometry::CNPoint2D>(current.x, current.y)->egoToAllo(*ownpos));
+		}
+		return ret;
+	}
+
+
+
 	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Obstacles::getObstacles(int index)
 	{
 		auto x = obstacles.getLast(index);
