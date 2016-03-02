@@ -110,7 +110,7 @@ void RobotTest::run(void* msg) {
 
 	if (shovelSelectHigh) {
 		cout << "testing shovelSelectHigh" << endl;
-		shovelSelectHigh = shovelSelectRobot(true, 3000);
+		shovelSelectHigh = shovelSelectRobot(false, 3000);
 		if (!shovelSelectHigh) {
 			kicker = true;
 		}
@@ -119,7 +119,7 @@ void RobotTest::run(void* msg) {
 	// testing kicker ================================================================
 
 	if (kicker) {
-		cout << "kicking = 200" << endl;
+		cout << "kicking = 300" << endl;
 		kicker = kickerRobot(300);
 //		if (!kicker) {
 //			actuatorForward = true;
@@ -266,9 +266,9 @@ bool RobotTest::lightBarrierRobot() {
 		}
 	} else {
 		std::cout << "NullPtr :(" << std::endl;
-//		return false;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 bool RobotTest::opticalFlowRobot() {
