@@ -37,22 +37,6 @@
     </value>
   </extensions>
   <extensions>
-    <key href="TestCheckGoalKick.pml#1453918051237"/>
-    <value xPos="217" yPos="59" width="70" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="TestCheckGoalKick.pml#1453918060467"/>
-    <value>
-      <bendpoints xPos="278" yPos="207"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="TestCheckGoalKick.pml#1453918062691"/>
-    <value>
-      <bendpoints xPos="350" yPos="253"/>
-    </value>
-  </extensions>
-  <extensions>
     <key href="../../Behaviours/Joystick.beh#1421854995808"/>
     <value/>
   </extensions>

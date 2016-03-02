@@ -25,7 +25,7 @@ namespace alica
 	class PriorityList : public USummand
 	{
 	public:
-		PriorityList(double weight, string name, long id, shared_ptr<vector<long>> relevantEntryPointIds);
+		PriorityList(double weight, string name, long id, vector<long> relevantEntryPointIds);
 		virtual ~PriorityList();
 
 		virtual UtilityInterval eval(IAssignment* ass);
@@ -35,15 +35,7 @@ namespace alica
 	protected:
 		shared_ptr<vector<double>> w;
 		shared_ptr<vector<int>> c;
-		shared_ptr<vector<long>> relevantEntryPointIds;
 		double norm;
-		double weight;
-		string name;
-		long id;
-
-
-
-
 	};
 
 } /* namespace alica */

@@ -11,7 +11,7 @@
 namespace alica
 {
 
-	PriorityList::PriorityList(double weight, string name, long id, shared_ptr<vector<long>> relevantEntryPointIds)
+	PriorityList::PriorityList(double weight, string name, long id, vector<long> relevantEntryPointIds)
 	{
 		this->weight = weight;
 		this->name = name;
@@ -21,17 +21,16 @@ namespace alica
 		this->w = make_shared<vector<double>>();
 		this->c = make_shared<vector<int>>();
 		double j = 1;
-		for (int i=0; i< this->relevantEntryPointIds->size(); i++)
+		for (int i=0; i< this->relevantEntryPointIds.size(); i++)
 		{
 			this->w->push_back(1/j);
-//			this->w->at(i) = 1/j;
 			j*=2.0;
 			//j++;
-			norm+= this->w->at(i);
-			c->push_back(0);
+			this->norm+= this->w->at(i);
+			this->c->push_back(0);
 			for(int k=0; k<i; k++) {
-				if(this->relevantEntryPointIds->at(i) == this->relevantEntryPointIds->at(k)) {
-					c->at(i)++;
+				if(this->relevantEntryPointIds.at(i) == this->relevantEntryPointIds.at(k)) {
+					this->c->at(i)++;
 				}
 			}
 
@@ -76,7 +75,7 @@ namespace alica
 	{
 		string retString = this->name + ": ";
 		retString += string("W: ") + to_string(this->weight) + string(" EntryPoints: ");
-		for(long epId : *this->relevantEntryPointIds)
+		for(long epId : this->relevantEntryPointIds)
 		{
 			retString += to_string(epId) + string(" ");
 		}

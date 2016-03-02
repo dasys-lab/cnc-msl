@@ -85,7 +85,7 @@ namespace msl
 		}
 		//DistanceScan ds = wm.DistanceScan;
 		//if (ds == null) return false;
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles.getObstacles();
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles.getEgoVisionObstacles();
 		if (obs == nullptr)
 		{
 			return false;

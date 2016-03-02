@@ -35,6 +35,8 @@
 
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
 
+#include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"

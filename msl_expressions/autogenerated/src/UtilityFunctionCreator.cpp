@@ -35,6 +35,8 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
+
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
@@ -179,6 +181,10 @@ namespace alica
 
             case 1441106995954:
                 return make_shared<UtilityFunction1441106995954>();
+                break;
+
+            case 1457434329037:
+                return make_shared<UtilityFunction1457434329037>();
                 break;
 
             case 1417621468963:

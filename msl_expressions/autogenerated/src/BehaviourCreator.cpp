@@ -61,6 +61,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Behaviours/CheckPassMsg.h"
+
 #include  "Plans/Behaviours/AlignToRobot.h"
 
 #include  "Plans/Attack/Wander.h"
@@ -296,6 +298,11 @@ namespace alica
             case 1455537979559:
 
                 return make_shared<CoverSpace>();
+                break;
+
+            case 1457441499013:
+
+                return make_shared<CheckPassMsg>();
                 break;
 
             case 1438779292567:

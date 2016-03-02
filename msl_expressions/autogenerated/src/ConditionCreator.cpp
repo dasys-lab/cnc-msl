@@ -34,6 +34,8 @@
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
 
+#include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
+
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
@@ -680,6 +682,18 @@ namespace alica
 
                 break;
 
+            case 1457434475372:
+
+                return make_shared<TransitionCondition1457434475372>();
+
+                break;
+
+            case 1457434476549:
+
+                return make_shared<TransitionCondition1457434476549>();
+
+                break;
+
             case 1417621600501:
 
                 return make_shared<TransitionCondition1417621600501>();
@@ -761,18 +775,6 @@ namespace alica
             case 1449076205925:
 
                 return make_shared<TransitionCondition1449076205925>();
-
-                break;
-
-            case 1453918062457:
-
-                return make_shared<TransitionCondition1453918062457>();
-
-                break;
-
-            case 1453918066476:
-
-                return make_shared<TransitionCondition1453918066476>();
 
                 break;
 
@@ -953,12 +955,6 @@ namespace alica
             case 1441811702176:
 
                 return make_shared<TransitionCondition1441811702176>();
-
-                break;
-
-            case 1442496874047:
-
-                return make_shared<TransitionCondition1442496874047>();
 
                 break;
 
