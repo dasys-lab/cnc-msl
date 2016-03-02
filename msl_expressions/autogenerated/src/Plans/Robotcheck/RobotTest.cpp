@@ -71,8 +71,10 @@ void RobotTest::run(void* msg) {
 	// light barrier ==============================================================
 
 	if (lightBarrier) {
+		cout << "light barrier  anfang= " << lightBarrier << endl;
 		cout << "testing light barrier" << endl;
 		lightBarrier = lightBarrierRobot();
+		cout << "light barrier after method= " << lightBarrier << endl;
 		if (!lightBarrier) {
 			opticalFlow = true;
 		}
@@ -110,9 +112,8 @@ void RobotTest::run(void* msg) {
 
 	if (shovelSelectHigh) {
 		cout << "testing shovelSelectHigh" << endl;
-		shovelSelectHigh = shovelSelectRobot(true, 3000);
-		if (!shovelSelectHigh)
-		{
+		shovelSelectHigh = shovelSelectRobot(false, 3000);
+		if (!shovelSelectHigh) {
 			kicker = true;
 		}
 	}
@@ -120,7 +121,7 @@ void RobotTest::run(void* msg) {
 	// testing kicker ================================================================
 
 	if (kicker) {
-		cout << "kicking = 200" << endl;
+		cout << "kicking = 300" << endl;
 		kicker = kickerRobot(300);
 //		if (!kicker) {
 //			actuatorForward = true;
@@ -129,7 +130,7 @@ void RobotTest::run(void* msg) {
 
 	if (!driveForward && !driveBack && !rotateBack && !rotateForward && !kicker
 			&& !actuatorForward && !actuatorBack && !opticalFlow && !imu
-			&& !shovelSelectLow && !shovelSelectHigh) {
+			&& !shovelSelectLow && !shovelSelectHigh && !lightBarrier) {
 		cout << "finished testing" << endl;
 		cout
 				<< "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!"
@@ -144,7 +145,7 @@ void RobotTest::initialiseParameters() {
 	/*PROTECTED REGION ID(initialiseParameters1456756113767) ENABLED START*/ //Add additional options here
 	move = 0;
 
-	driveForward = true;
+	driveForward = false;
 	driveBack = false;
 	rotateBack = false;
 	rotateForward = false;
@@ -155,7 +156,7 @@ void RobotTest::initialiseParameters() {
 	imu = false;
 	shovelSelectLow = false;
 	shovelSelectHigh = false;
-	lightBarrier = false;
+	lightBarrier = true;
 
 	/*PROTECTED REGION END*/
 }
@@ -226,26 +227,53 @@ bool RobotTest::actuatorRobot(int duration, int power) {
 bool RobotTest::lightBarrierRobot() {
 	auto lbi = wm->rawSensorData.getLightBarrier();
 
-	if (lbi != nullptr) {
-		auto static lb_old = *lbi;
-		auto lb_new = *lbi;
+//	if (lbi != nullptr) {
+//		auto static lb_old = *lbi;
+//		auto lb_new = *lbi;
+//
+//		if (lb_old != lb_new) {
+//			lb_old = lb_new;
+//			cout << "light barrier = " << lb_old << endl;
+//			move++;
+//		}
+//
+//		if (move > 5) {
+//			move = 0;
+//			cout << "light barrier is working!" << endl;
+//			return false;
+//		}
+//	} else {
+//		cerr << "no data from light barrier!" << endl;
+//		return false;
+//	}
 
-		if (lb_old != lb_new) {
-			lb_old = lb_new;
+	if (lbi) {
+		bool static lb_old = *lbi;
+		cout << "light barrier 1 = " << lightBarrier << endl;
+		if (lb_old != *lbi) {
+			lb_old = *lbi;
 			cout << "light barrier = " << lb_old << endl;
 			move++;
 		}
-
+		cout << "light barrier 2 = " << lightBarrier << endl;
 		if (move > 5) {
 			move = 0;
 			cout << "light barrier is working!" << endl;
 			return false;
 		}
+		cout << "light barrier = 3 " << lightBarrier << endl;
+		if (*lbi) {
+			std::cout << "Hab den Ball :)" << std::endl;
+		} else {
+			std::cout << "Hab ihn nicht. :(" << std::endl;
+		}
+		cout << "light barrier = 4 " << lightBarrier << endl;
 	} else {
-		cerr << "no data from light barrier!" << endl;
+		std::cout << "NullPtr :(" << std::endl;
 		return false;
 	}
-	return false;
+	cout << "light barrier 5 = " << lightBarrier << endl;
+	return true;
 }
 
 bool RobotTest::opticalFlowRobot() {
