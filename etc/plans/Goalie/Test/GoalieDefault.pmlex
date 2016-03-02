@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GoalieDefault.pml#1447254438615"/>
-    <value xPos="31" yPos="223" width="259" height="110" collapsed="false"/>
+    <value xPos="31" yPos="223" width="259" height="110"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438614"/>
