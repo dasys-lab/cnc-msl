@@ -111,8 +111,7 @@ void RobotTest::run(void* msg) {
 	if (shovelSelectHigh) {
 		cout << "testing shovelSelectHigh" << endl;
 		shovelSelectHigh = shovelSelectRobot(true, 3000);
-		if (!shovelSelectHigh)
-		{
+		if (!shovelSelectHigh) {
 			kicker = true;
 		}
 	}
@@ -226,7 +225,27 @@ bool RobotTest::actuatorRobot(int duration, int power) {
 bool RobotTest::lightBarrierRobot() {
 	auto lbi = wm->rawSensorData.getLightBarrier();
 
-	if (lbi != nullptr) {
+//	if (lbi != nullptr) {
+//		auto static lb_old = *lbi;
+//		auto lb_new = *lbi;
+//
+//		if (lb_old != lb_new) {
+//			lb_old = lb_new;
+//			cout << "light barrier = " << lb_old << endl;
+//			move++;
+//		}
+//
+//		if (move > 5) {
+//			move = 0;
+//			cout << "light barrier is working!" << endl;
+//			return false;
+//		}
+//	} else {
+//		cerr << "no data from light barrier!" << endl;
+//		return false;
+//	}
+
+	if (lbi) {
 		auto static lb_old = *lbi;
 		auto lb_new = *lbi;
 
@@ -241,11 +260,16 @@ bool RobotTest::lightBarrierRobot() {
 			cout << "light barrier is working!" << endl;
 			return false;
 		}
+		if (*lbi) {
+			std::cout << "Hab den Ball :)" << std::endl;
+		} else {
+			std::cout << "Hab ihn nicht. :(" << std::endl;
+		}
 	} else {
-		cerr << "no data from light barrier!" << endl;
-		return false;
+		std::cout << "NullPtr :(" << std::endl;
+//		return false;
 	}
-	return false;
+	return true;
 }
 
 bool RobotTest::opticalFlowRobot() {
