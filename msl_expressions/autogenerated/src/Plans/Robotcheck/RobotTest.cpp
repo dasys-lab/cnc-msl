@@ -130,7 +130,7 @@ void RobotTest::run(void* msg) {
 
 	if (!driveForward && !driveBack && !rotateBack && !rotateForward && !kicker
 			&& !actuatorForward && !actuatorBack && !opticalFlow && !imu
-			&& !shovelSelectLow && !shovelSelectHigh) {
+			&& !shovelSelectLow && !shovelSelectHigh && !lightBarrier) {
 		cout << "finished testing" << endl;
 		cout
 				<< "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!"
