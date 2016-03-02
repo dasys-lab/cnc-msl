@@ -31,7 +31,9 @@ namespace alica
         bool lightBarrier;
         bool opticalFlow;
         bool imu;
-        bool shovelSelect;
+        bool shovelSelectLow;
+        bool shovelSelectHigh;
+        double kickPower;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here
@@ -41,7 +43,7 @@ namespace alica
         bool lightBarrierRobot();
         bool opticalFlowRobot();
         bool imuRobot();
-        bool shovelSelectRobot();
+        bool shovelSelectRobot(bool pass, int duration);
         void printGlasses();
 
         /*PROTECTED REGION END*/};

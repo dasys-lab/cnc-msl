@@ -21,6 +21,7 @@
 #include "InformationElement.h"
 #include "msl_sensor_msgs/WorldModelData.h"
 #include "msl_sensor_msgs/ObstacleInfo.h"
+#include "container/CNRobot.h"
 
 namespace msl
 {
@@ -38,10 +39,14 @@ namespace msl
 		void handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> myObstacles);
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> clusterPoint2D (shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstacles, double varianceThreshold);
-		shared_ptr<vector<AnnotatedObstacleCluster*>> getObstaclesClustersAllo();
+		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getEgoObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoObstaclePoints(int index = 0);
+		//TODO change to raw
 		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
+		double getObstacleRadius();
 
 	private:
 		void clusterAnnotatedObstacles();
@@ -70,8 +75,8 @@ namespace msl
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
 		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
-		shared_ptr<vector<AnnotatedObstacleCluster*>> obstaclesClustersAllo;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstaclesEgoClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
 		unsigned long maxInformationAge = 1000000000;
 	};
 

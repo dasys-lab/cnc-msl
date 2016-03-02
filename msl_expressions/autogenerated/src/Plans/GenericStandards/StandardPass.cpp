@@ -96,7 +96,7 @@ namespace alica
         }
         if (!success)
         {
-            //cerr << "StandardPass: Parameter does not exist" << endl;
+            cerr << "StandardPass: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

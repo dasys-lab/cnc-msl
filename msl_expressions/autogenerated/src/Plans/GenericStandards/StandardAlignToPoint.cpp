@@ -162,7 +162,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "SA2P: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

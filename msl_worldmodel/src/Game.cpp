@@ -380,7 +380,7 @@ namespace msl
 		{
 			return;
 		}
-		bool oppBallPossession = *(wm->ball.getOppBallPossession());
+		bool oppBallPossession = *wm->ball.getOppBallPossession();
 		GameState gs = getGameState();
 
 		if (gs != GameState::Duel && ballPossession && oppBallPossession)

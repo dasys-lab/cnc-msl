@@ -38,25 +38,30 @@ namespace msl_refbox
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
 		void processCharacterBasedProtocol(const char * data);
-		void sendCyanCornerKick();
-		void sendCyanThrownin();
-		void sendStart();
-		void sendStop();
-		void sendHalt();
-		void sendDroppedBall();
-		void sendParking();
-		void sendMagentaKickOff();
-		void sendMagentaFreeKick();
-		void sendMagentaGoalKick();
-		void sendMagentaThrownin();
-		void sendMagentaCornerKick();
-		void sendMagentaPenalty();
-		void sendCyanKickOff();
-		void sendCyanFreeKick();
-		void sendCyanGoalKick();
-		void sendCyanPenalty();
+
+		void sendCyanCornerKick(bool local);
+		void sendCyanThrowin(bool local);
+		void sendStart(bool local);
+		void sendStop(bool local);
+		void sendHalt(bool local);
+		void sendDroppedBall(bool local);
+		void sendParking(bool local);
+		void sendMagentaKickOff(bool local);
+		void sendMagentaFreeKick(bool local);
+		void sendMagentaGoalKick(bool local);
+		void sendMagentaThrownin(bool local);
+		void sendMagentaCornerKick(bool local);
+		void sendMagentaPenalty(bool local);
+		void sendCyanKickOff(bool local);
+		void sendCyanFreeKick(bool local);
+		void sendCyanGoalKick(bool local);
+		void sendCyanPenalty(bool local);
 
 	public:
+                enum Side {
+                        ALL, CYAN, MAGENTA
+                };
+
 		GameData(RefBox* refBox);
 		virtual ~GameData();
 		RefBox* refBox;
@@ -110,6 +115,11 @@ namespace msl_refbox
 
 		/* refbox log send method */
 		void sendRefBoxLog();
+                void log(std::string method, bool local, Side side);
+                void updateGoals();
+                void setGoals(Side, int value);
+                int getGoals(Side);
+
 	protected:
 			enum ConnectionState {
 				DISCONNECTING, DISCONNECTED, RECONNECTING,
@@ -131,12 +141,17 @@ namespace msl_refbox
 			QTimer* sendRefBoxLogtimer;
 			QTimer* sendRefBoxCmdtimer;
 			QTimer *reconnectTimer;
+		        std::stringstream logStream;
+                        QByteArray buffer;
+                        int goalsMagenta;
+                        int goalsCyan;
 
 			QTcpSocket* connectTCP(QString host, qint16 port);
 			QUdpSocket* connectUDP(QString host, qint16 port);
 
 			void disconnectTCP();
 			void disconnectUDP();
+			void parseXML(const QByteArray& data);
 	};
 
 

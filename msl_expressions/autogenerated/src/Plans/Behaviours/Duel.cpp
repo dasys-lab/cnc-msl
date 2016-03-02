@@ -158,8 +158,8 @@ namespace alica
 
                 //TODO schleife fixen
 
-                for (auto it = wm->obstacles.getObstaclePoints(0)->begin(); it != wm->obstacles.getObstaclePoints(0)->end();
-                        it++)
+                for (auto it = wm->obstacles.getObstaclePoints(0)->begin();
+                        it != wm->obstacles.getObstaclePoints(0)->end(); it++)
                 {
                     //TODO friendly darf nicht obstacle sein
 

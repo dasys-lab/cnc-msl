@@ -17,8 +17,6 @@ namespace msl_refbox
 		this->gameData = gameData;
 		this->cyan =  false;
 		this->magenta =  false;
-		this->goalCyan = 0;
-		this->goalMagenta = 0;
 	}
 
 	XMLProtocolParser::~XMLProtocolParser()
@@ -100,6 +98,8 @@ namespace msl_refbox
 		}
 		else if(str.compare("GameInfo") == 0)
 		{
+		        this->gameData->setGoals(GameData::Side::CYAN , 0);
+                        this->gameData->setGoals(GameData::Side::MAGENTA , 0);
 			handleGameInfo(curChild);
 		}
 		else if (str.compare("TeamData") == 0)
@@ -132,8 +132,16 @@ namespace msl_refbox
 		}
 		else if(str.compare("Goals") == 0)
 		{
-//			Nothing to, comes with team data
+		        handleGoals(curChild);
 		}
+                else if(str.compare("Cards") == 0)
+                {
+//                      Nothing to, comes with team data
+                }
+                else if(str.compare("PlayersOut") == 0)
+                {
+//                      Currently ignored
+                }
 		else
 		{
 			std::cerr << "RQTREFBOX: CANNOT PARSE-> " << val << std::endl;
@@ -169,16 +177,12 @@ namespace msl_refbox
 	}
 	void XMLProtocolParser::handleGameStop(tinyxml2::XMLElement* curChild)
 	{
-		this->gameData->sendStop();
-		this->gameData->refBox->RefLog->append("Game Stop");
-		this->gameData->refBox->lbl_command->setText("Game Stop");
+		this->gameData->sendStop(false);
 	}
 
 	void XMLProtocolParser::handleGameStart(tinyxml2::XMLElement* curChild)
 	{
-		this->gameData->sendStart();
-		this->gameData->refBox->RefLog->append("Game Start");
-		this->gameData->refBox->lbl_command->setText("Game Start");
+		this->gameData->sendStart(false);
 	}
 
 	void XMLProtocolParser::handleKickOff(tinyxml2::XMLElement* curChild)
@@ -189,23 +193,17 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanKickOff();
-			this->gameData->refBox->RefLog->append("KickOff Cyan");
-			this->gameData->refBox->lbl_command->setText("KickOff Cyan");
+			this->gameData->sendCyanKickOff(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaKickOff();
-			this->gameData->refBox->RefLog->append("KickOff Magenta");
-			this->gameData->refBox->lbl_command->setText("KickOff Magenta");
+			this->gameData->sendMagentaKickOff(false);
 		}
 	}
 
 	void XMLProtocolParser::handleDroppedBall(tinyxml2::XMLElement* curChild)
 	{
-		this->gameData->sendDroppedBall();
-		this->gameData->refBox->RefLog->append("Dropped Ball");
-		this->gameData->refBox->lbl_command->setText("Dropped Ball");
+		this->gameData->sendDroppedBall(false);
 	}
 
 	void XMLProtocolParser::handleFreeKick(tinyxml2::XMLElement* curChild)
@@ -216,15 +214,11 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanFreeKick();
-			this->gameData->refBox->RefLog->append("FreeKick Cyan");
-			this->gameData->refBox->lbl_command->setText("FreeKick Cyan");
+			this->gameData->sendCyanFreeKick(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaFreeKick();
-			this->gameData->refBox->RefLog->append("FreeKick Magenta");
-			this->gameData->refBox->lbl_command->setText("FreeKick Magenta");
+			this->gameData->sendMagentaFreeKick(false);
 		}
 
 	}
@@ -237,15 +231,11 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanGoalKick();
-			this->gameData->refBox->RefLog->append("GoalKick Cyan");
-			this->gameData->refBox->lbl_command->setText("GoalKick Cyan");
+			this->gameData->sendCyanGoalKick(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaGoalKick();
-			this->gameData->refBox->RefLog->append("GoalKick Magenta");
-			this->gameData->refBox->lbl_command->setText("GoalKick Magenta");
+			this->gameData->sendMagentaGoalKick(false);
 		}
 	}
 
@@ -257,15 +247,11 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanThrownin();
-			this->gameData->refBox->RefLog->append("ThrowIn Cyan");
-			this->gameData->refBox->lbl_command->setText("ThrowIn Cyan");
+			this->gameData->sendCyanThrowin(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaThrownin();
-			this->gameData->refBox->RefLog->append("ThrowIn Magenta");
-			this->gameData->refBox->lbl_command->setText("ThrowIn Magenta");
+			this->gameData->sendMagentaThrownin(false);
 		}
 
 	}
@@ -278,15 +264,11 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanCornerKick();
-			this->gameData->refBox->RefLog->append("CornerKick Cyan");
-			this->gameData->refBox->lbl_command->setText("CornerKick Cyan");
+			this->gameData->sendCyanCornerKick(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaCornerKick();
-			this->gameData->refBox->RefLog->append("CornerKick Magenta");
-			this->gameData->refBox->lbl_command->setText("CornerKick Magenta");
+			this->gameData->sendMagentaCornerKick(false);
 		}
 
 	}
@@ -299,23 +281,17 @@ namespace msl_refbox
 
 		if(str.compare("Cyan") == 0)
 		{
-			this->gameData->sendCyanPenalty();
-			this->gameData->refBox->RefLog->append("Penalty Cyan");
-			this->gameData->refBox->lbl_command->setText("Penalty Cyan");
+			this->gameData->sendCyanPenalty(false);
 		}
 		else if (str.compare("Magenta") == 0)
 		{
-			this->gameData->sendMagentaPenalty();
-			this->gameData->refBox->RefLog->append("Penalty Magenta");
-			this->gameData->refBox->lbl_command->setText("Penalty Magenta");
+			this->gameData->sendMagentaPenalty(false);
 		}
 	}
 
 	void XMLProtocolParser::handleParking(tinyxml2::XMLElement* curChild)
 	{
-		this->gameData->sendParking();
-		this->gameData->refBox->RefLog->append("Parking");
-		this->gameData->refBox->lbl_command->setText("Parking");
+		this->gameData->sendParking(false);
 	}
 
 	void XMLProtocolParser::handleGameInfo(tinyxml2::XMLElement* curChild)
@@ -368,6 +344,38 @@ namespace msl_refbox
 		}
 
 	}
+
+	void XMLProtocolParser::handleGoals(tinyxml2::XMLElement* curChild)
+        {
+                const tinyxml2::XMLAttribute* attr = curChild->FirstAttribute();
+                GameData::Side side = GameData::Side::ALL;
+
+                while(attr != nullptr)
+                {
+                        const char* valAttr = attr->Value();
+                        const char* valName = attr->Name();
+                        std::string strAttr(valAttr);
+                        std::string strName(valName);
+
+                        if(strName.compare("team") == 0)
+                        {
+                                if(strAttr.compare("Cyan") == 0)
+                                {
+                                        side = GameData::Side::CYAN;
+                                }
+                                else if(strAttr.compare("Magenta") == 0)
+                                {
+                                        side = GameData::Side::MAGENTA;
+                                }
+                        }
+                        attr = attr->Next();
+                }
+
+                if (side != GameData::Side::ALL)
+                {
+                        this->gameData->setGoals(side, this->gameData->getGoals(side) + 1);
+                }
+        }
 
 	void XMLProtocolParser::handleSetup(tinyxml2::XMLElement* curChild)
 	{
@@ -424,6 +432,9 @@ namespace msl_refbox
 	void XMLProtocolParser::handlePlayerOut(tinyxml2::XMLElement* curChild)
 	{
 		const tinyxml2::XMLAttribute* attr = curChild->FirstAttribute();
+                GameData::Side side;
+                std::string reason;
+
 		while(attr != nullptr)
 		{
 			const char* valAttr = attr->Value();
@@ -433,20 +444,32 @@ namespace msl_refbox
 
 			if(strName.compare("team") == 0)
 			{
-				//TODO NEUER TAB
+                                  if(strAttr.compare("Cyan") == 0)
+                                  {
+                                          side = GameData::Side::CYAN;
+                                  }
+                                  else if(strAttr.compare("Magenta") == 0)
+                                  {
+                                          side = GameData::Side::MAGENTA;
+                                  }
 			}
 			else if(strName.compare("reason") == 0)
 			{
-				//TODO NEUER TAB
+			          reason = strAttr;
 			}
 
-			attr = attr->Next();
+	                attr = attr->Next();
 		}
+
+                this->gameData->log("Player out " + reason, false, side);
 	}
 
 	void XMLProtocolParser::handlePlayerIn(tinyxml2::XMLElement* curChild)
 	{
 		const tinyxml2::XMLAttribute* attr = curChild->FirstAttribute();
+                GameData::Side side;
+                std::string reason;
+
 		while(attr != nullptr)
 		{
 			const char* valAttr = attr->Value();
@@ -454,17 +477,26 @@ namespace msl_refbox
 			std::string strAttr(valAttr);
 			std::string strName(valName);
 
-			if(strName.compare("team") == 0)
-			{
-				//TODO NEUER TAB
-			}
-			else if(strName.compare("reason") == 0)
-			{
-				//TODO NEUER TAB
-			}
+                        if(strName.compare("team") == 0)
+                        {
+                                  if(strAttr.compare("Cyan") == 0)
+                                  {
+                                          side = GameData::Side::CYAN;
+                                  }
+                                  else if(strAttr.compare("Magenta") == 0)
+                                  {
+                                          side = GameData::Side::MAGENTA;
+                                  }
+                        }
+                        else if(strName.compare("reason") == 0)
+                        {
+                                  reason = strAttr;
+                        }
 
 			attr = attr->Next();
 		}
+
+                this->gameData->log("Player in " + reason, false, side);
 	}
 
 	void XMLProtocolParser::handleGoalAwarded(tinyxml2::XMLElement* curChild)
@@ -481,15 +513,14 @@ namespace msl_refbox
 			{
 				if(strAttr.compare("Cyan") == 0)
 				{
-					this->goalCyan++;
+					this->gameData->setGoals(GameData::Side::CYAN, this->gameData->getGoals(GameData::Side::CYAN) + 1);
+					this->gameData->log("Goal", false, GameData::Side::CYAN);
 				}
-				else if(strAttr.compare("Magenta"))
+				else if(strAttr.compare("Magenta") == 0)
 				{
-					this->goalMagenta++;
+                                        this->gameData->setGoals(GameData::Side::MAGENTA, this->gameData->getGoals(GameData::Side::MAGENTA) + 1);
+                                        this->gameData->log("Goal", false, GameData::Side::MAGENTA);
 				}
-
-				std::string goal =  std::to_string(goalCyan) + " : " + std::to_string(goalMagenta);
-				this->gameData->refBox->lbl_score->setText(QString::fromStdString(goal));
 			}
 			else if(strName.compare("player") == 0)
 			{
@@ -620,15 +651,26 @@ namespace msl_refbox
 	{
 		int row = this->gameData->refBox->tbl_info->rowCount();
 		std::string teamName = "";
+		GameData::Side side;
 		if(team.compare("Cyan") == 0)
 		{
 			teamName = cyanSetup[0];
+			side = GameData::Side::CYAN;
 		}
 		else
 		{
 			teamName = magentaSetup[0];
+			side = GameData::Side::MAGENTA;
 		}
 
+		if (color == "yellow")
+		{
+                        this->gameData->log("Yellow Card (" + number + ") for " + player, false, side);
+		}
+		else
+		{
+                        this->gameData->log("Red Card for " + player, false, side);
+		}
 
 		for(int i = 0; i < row; i++)
 		{

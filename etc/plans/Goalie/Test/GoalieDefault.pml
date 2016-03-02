@@ -21,7 +21,7 @@
     <inTransitions>#1447256487026</inTransitions>
     <outTransitions>#1447256488872</outTransitions>
   </states>
-  <transitions id="1447255446546" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1447255446546" name="MISSING_NAME" comment="Goalie position calibrated succesfully" msg="">
     <preCondition id="1447255447830" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1447254438615</inState>
     <outState>#1447255061404</outState>

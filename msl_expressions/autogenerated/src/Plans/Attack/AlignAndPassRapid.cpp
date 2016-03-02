@@ -320,7 +320,7 @@ namespace alica
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = driveTo->length();
 
-            //send(mc);
+            send(mc);
 
         }
         catch (exception& e)
@@ -430,7 +430,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "AAPR: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }
