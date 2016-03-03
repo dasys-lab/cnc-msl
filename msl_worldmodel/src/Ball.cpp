@@ -22,7 +22,7 @@
 namespace msl
 {
 	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
-			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30)
+			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30), oppBallPossession(ringbufferLength)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
@@ -377,7 +377,7 @@ namespace msl
 		shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(
 				make_shared<bool>(r),
 				wm->getTime());
-		oppBallPossession->add(inf);
+		oppBallPossession.add(inf);
 	}
 
 	shared_ptr<bool> Ball::getTeamMateBallPossession(int teamMateId, int index)
@@ -396,7 +396,7 @@ namespace msl
 
 	shared_ptr<bool> msl::Ball::getOppBallPossession(int index)
 	{
-		auto x = oppBallPossession->getLast(index);
+		auto x = oppBallPossession.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
@@ -418,16 +418,15 @@ namespace msl
 		{
 			oppDist = 0;
 		}
-		//TODO GetOpponentListEgoClustered()
-		auto ops = data.obstacles;
+		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
 		double minDist = 100000;
-		if (ops.size() == 0)
+		if (ops->size() == 0)
 		{
 			return minDist;
 		}
-		for (int i = 0; i < ops.size(); ++i)
+		for (int i = 0; i < ops->size(); ++i)
 		{
-			geometry::CNPoint2D obstacle(ops.at(i).x, ops.at(i).y);
+			geometry::CNPoint2D obstacle(ops->at(i)->x, ops->at(i)->y);
 			minDist = min(obstacle.distanceTo(ballPos), minDist);
 		}
 		return minDist;
@@ -526,6 +525,16 @@ namespace msl
 			ret = false;
 
 		return ret;
+	}
+
+	double Ball::getBallConfidenceVision(int index)
+	{
+		auto x = ballPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return 0;
+		}
+		return x->certainty;
 	}
 
 	Velocity Ball::allo2Ego(Velocity vel, Position pos)

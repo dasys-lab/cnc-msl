@@ -31,6 +31,7 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include "pathplanner/SearchNode.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "MSLFootballField.h"
+#include "MSLEnums.h"
 
 namespace supplementary {
 	class SystemConfig;

@@ -144,7 +144,7 @@ namespace alica
         bool success = true;
         try
         {
-            success &= getParameter("ControllNoMatterWhat", tmp);
+            success &= getParameter("ControlNoMatterWhat", tmp);
             if (success)
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
@@ -163,7 +163,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "DC: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

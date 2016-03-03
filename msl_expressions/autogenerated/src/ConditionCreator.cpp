@@ -12,9 +12,9 @@
 
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
-#include  "Plans/Example/GrabBall1456247887332.h"
-
 #include  "Plans/Attack/AttackPlay1434045709191.h"
+
+#include  "Plans/Example/GrabBall1456247887332.h"
 
 #include  "Plans/Attack/TestPlans/TestPassPointMaster1441106724156.h"
 
@@ -81,6 +81,8 @@
 #include  "Plans/GameStrategy/Other/DropBallExecution1455537039421.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
+
+#include  "Plans/Robotcheck/Robotcheck1456756058055.h"
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
@@ -330,12 +332,6 @@ namespace alica
 
                 break;
 
-            case 1456247931188:
-
-                return make_shared<TransitionCondition1456247931188>();
-
-                break;
-
             case 1434112519736:
 
                 return make_shared<RunTimeCondition1434112519736>();
@@ -387,6 +383,12 @@ namespace alica
             case 1436536161660:
 
                 return make_shared<TransitionCondition1436536161660>();
+
+                break;
+
+            case 1456247931188:
+
+                return make_shared<TransitionCondition1456247931188>();
 
                 break;
 
@@ -1143,6 +1145,24 @@ namespace alica
             case 1417620329181:
 
                 return make_shared<TransitionCondition1417620329181>();
+
+                break;
+
+            case 1456841218640:
+
+                return make_shared<TransitionCondition1456841218640>();
+
+                break;
+
+            case 1456841244750:
+
+                return make_shared<TransitionCondition1456841244750>();
+
+                break;
+
+            case 1456841276132:
+
+                return make_shared<TransitionCondition1456841276132>();
 
                 break;
 

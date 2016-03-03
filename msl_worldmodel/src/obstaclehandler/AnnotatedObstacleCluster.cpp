@@ -6,7 +6,9 @@
  */
 
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
+#include "obstaclehandler/AnnotatedObstacleClusterPool.h"
 #include <sstream>
+#include "MSLEnums.h"
 
 namespace msl
 {
@@ -120,20 +122,18 @@ namespace msl
 		}
 	}
 
-	bool AnnotatedObstacleCluster::checkAndMerge(shared_ptr<AnnotatedObstacleCluster> cluster, double varianceThreshold)
+	bool AnnotatedObstacleCluster::checkAndMerge(AnnotatedObstacleCluster* cluster, double varianceThreshold)
 	{
 		// variables as if both clusters are merged
 		double tmpNumObs = (double)this->numObs + cluster->numObs;
 		int tmplinearSumX = this->linearSumX + cluster->linearSumX;
 		int tmplinearSumY = this->linearSumY + cluster->linearSumY;
 		int tmpSquareSum = this->squareSum + cluster->squareSum;
-
 		// calculate variance
 		double avgX = tmplinearSumX / tmpNumObs;
 		double avgY = tmplinearSumY / tmpNumObs;
 		double tmpVariance = (tmpSquareSum + tmpNumObs * ((avgX * avgX) + (avgY * avgY))
 				- 2 * ((avgX * tmplinearSumX) + (avgY * tmplinearSumY))) / tmpNumObs;
-
 		if (tmpVariance > varianceThreshold)
 		{
 			// two cluster which break the VARIANCE_THRESHOLD -> the complete clustering is finished
@@ -146,14 +146,14 @@ namespace msl
 			this->linearSumX = tmplinearSumX;
 			this->linearSumY = tmplinearSumY;
 			this->squareSum = tmpSquareSum;
-
 			this->x = (int)avgX;
 			this->y = (int)avgY;
-			for (int i = 0; i < supporter->size(); i++)
+			int range = cluster->supporter->size();
+			for (int i = 0; i < range; i++)
 			{
 				this->supporter->push_back(cluster->supporter->at(i));
 			}
-			if (cluster->ident != -1)
+			if (cluster->ident != EntityType::Opponent)
 			{
 				// update this.ident with ident of other cluster
 				this->ident = cluster->ident;
@@ -182,7 +182,7 @@ namespace msl
 		this->subFromSquareSum(obs);
 	}
 
-	double AnnotatedObstacleCluster::distanceTo(shared_ptr<AnnotatedObstacleCluster> aoc)
+	double AnnotatedObstacleCluster::distanceTo(AnnotatedObstacleCluster* aoc)
 	{
 		return sqrt(pow(this->x - aoc->x, 2) + pow(this->y - aoc->y, 2));
 	}
@@ -197,7 +197,7 @@ namespace msl
 		return sqrt(pow(this->x - p->x, 2) + pow(this->y - p->y, 2));
 	}
 
-	bool AnnotatedObstacleCluster::compareTo(shared_ptr<AnnotatedObstacleCluster> first, shared_ptr<AnnotatedObstacleCluster> second)
+	bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster* first, AnnotatedObstacleCluster* second)
 	{
 		// first: try to sort by x coordinate
 		if (second->x > first->x)
@@ -292,6 +292,18 @@ namespace msl
 	{
 		this->linearSumX -= aoc->x;
 		this->linearSumY -= aoc->y;
+	}
+
+	//TODO Seg fault
+	AnnotatedObstacleCluster* AnnotatedObstacleCluster::getNew(AnnotatedObstacleClusterPool* aocp)
+	{
+		if (aocp->curIndex >= aocp->maxCount)
+		{
+			cerr << "max AOC count reached!" << endl;
+		}
+		AnnotatedObstacleCluster* ret = aocp->daAOCs[aocp->curIndex++];
+		ret->clear();
+		return ret;
 	}
 
 	void AnnotatedObstacleCluster::subFromSquareSum(shared_ptr<AnnotatedObstacleCluster> aoc)

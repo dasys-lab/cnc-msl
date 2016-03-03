@@ -69,6 +69,7 @@ namespace alica
 	{
 		pm.senderID = ownID;
 		passMsgPublisher.publish(pm);
+		passMsgPublisher.publish(pm);
 	}
 } /* namespace alica */
 

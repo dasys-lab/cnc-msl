@@ -27,6 +27,7 @@
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <MSLEnums.h>
+#include <obstaclehandler/Obstacles.h>
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "Ball.h"
@@ -36,9 +37,9 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
-#include "obstaclehandler/ObHandler.h"
 
-namespace alica {
+namespace alica
+{
 	class AlicaEngine;
 }
 
@@ -47,18 +48,15 @@ using namespace std;
 namespace msl
 {
 
-
 	class MSLSharedWorldModel;
 	class MSLWorldModel
 	{
 	public:
-		static MSLWorldModel* get();
-		bool setEngine(alica::AlicaEngine* ae);
+		static MSLWorldModel* get();bool setEngine(alica::AlicaEngine* ae);
 		alica::AlicaEngine* getEngine();
 
 		double getKickerVoltage();
 		void setKickerVoltage(double voltage);
-
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
@@ -70,12 +68,11 @@ namespace msl
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
-
+		void onLightBarrierInfo(std_msgs::BoolPtr msg);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
-
 
 		int getRingBufferLength();
 		int getOwnId();
@@ -89,8 +86,7 @@ namespace msl
 		WhiteBoard whiteBoard;
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-		ObHandler obstacleHandler;
-
+		Obstacles obstacles;
 
 	private:
 
@@ -116,6 +112,7 @@ namespace msl
 		ros::Subscriber passMsgSub;
 		ros::Publisher sharedWorldPub;
 		ros::Subscriber correctedOdometrySub;
+		ros::Subscriber lightBarrierSub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 
@@ -125,14 +122,10 @@ namespace msl
 		mutex correctedOdemetryMutex;
 		ros::AsyncSpinner* spinner;
 
-
-
-
 	protected:
+
 	};
 
 } /* namespace msl */
-
-
 
 #endif /* MSLWORLDMODEL_H_ */

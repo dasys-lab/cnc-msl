@@ -115,7 +115,7 @@ namespace alica
             {
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
                         teamMateId);
-                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.getTeamMatePosition(teamMateId);
+                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
 
@@ -320,7 +320,7 @@ namespace alica
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = driveTo->length();
 
-            //send(mc);
+            send(mc);
 
         }
         catch (exception& e)
@@ -430,7 +430,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "AAPR: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

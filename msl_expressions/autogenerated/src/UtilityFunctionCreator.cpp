@@ -13,9 +13,9 @@
 
 #include  "Plans/Attack/StandardAttack1434046634656.h"
 
-#include  "Plans/Example/GrabBall1456247887332.h"
-
 #include  "Plans/Attack/AttackPlay1434045709191.h"
+
+#include  "Plans/Example/GrabBall1456247887332.h"
 
 #include  "Plans/Attack/TestPlans/TestPassPointMaster1441106724156.h"
 
@@ -83,6 +83,8 @@
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
+#include  "Plans/Robotcheck/Robotcheck1456756058055.h"
+
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
@@ -141,12 +143,12 @@ namespace alica
                 return make_shared<UtilityFunction1434046634656>();
                 break;
 
-            case 1456247887332:
-                return make_shared<UtilityFunction1456247887332>();
-                break;
-
             case 1434045709191:
                 return make_shared<UtilityFunction1434045709191>();
+                break;
+
+            case 1456247887332:
+                return make_shared<UtilityFunction1456247887332>();
                 break;
 
             case 1441106724156:
@@ -279,6 +281,10 @@ namespace alica
 
             case 1417620189234:
                 return make_shared<UtilityFunction1417620189234>();
+                break;
+
+            case 1456756058055:
+                return make_shared<UtilityFunction1456756058055>();
                 break;
 
             case 1442919721161:

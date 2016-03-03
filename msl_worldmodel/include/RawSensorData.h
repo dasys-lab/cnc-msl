@@ -23,6 +23,7 @@
 #include "msl_sensor_msgs/WorldModelData.h"
 #include "msl_sensor_msgs/BallHypothesisList.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
+#include "std_msgs/Bool.h"
 
 
 using namespace std;
@@ -53,7 +54,7 @@ namespace msl
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
 		void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
-		void processLightBarrier(msl_actuator_msgs::HaveBallInfoPtr msg);
+		void processLightBarrier(std_msgs::BoolPtr msg);
 		void processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);

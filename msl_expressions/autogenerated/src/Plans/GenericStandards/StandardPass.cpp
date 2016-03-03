@@ -49,7 +49,7 @@ namespace alica
             int id = ids->at(0);
             if (id != -1)
             {
-                auto pos = wm->robots.getTeamMatePosition(id);
+                auto pos = wm->robots.teammates.getTeamMatePosition(id);
                 egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
         }
@@ -96,7 +96,7 @@ namespace alica
         }
         if (!success)
         {
-            //cerr << "StandardPass: Parameter does not exist" << endl;
+            cerr << "StandardPass: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

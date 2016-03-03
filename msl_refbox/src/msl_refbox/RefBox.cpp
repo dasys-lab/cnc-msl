@@ -12,6 +12,7 @@ namespace msl_refbox
 	{
 		setObjectName("RefBox");
 		gameData = new GameData(this);
+		this->debug = false;
 	}
 
 	void RefBox::initPlugin(qt_gui_cpp::PluginContext& context)
@@ -26,7 +27,7 @@ namespace msl_refbox
 		}
 		context.addWidget(widget_);
 
-		this->btn_connect->setEnabled(false);
+//		this->btn_connect->setEnabled(false);
 		connect(Play_On_bot, SIGNAL(clicked()), gameData, SLOT(PlayOnPressed()));
 		connect(Stop_bot, SIGNAL(clicked()), gameData, SLOT(StopPressed()));
 		connect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
@@ -51,8 +52,11 @@ namespace msl_refbox
 
 		connect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 
+		// debug
+                connect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
+
 		//Connect Information
-		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalTogled(bool)));
+		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalToggled(bool)));
 
 		connect(rbtn_xml, SIGNAL(toggled(bool)), gameData, SLOT(onXmlToggled(bool)));
 		connect(rbtn_char, SIGNAL(toggled(bool)), gameData, SLOT(onCharToggled(bool)));
@@ -88,23 +92,25 @@ namespace msl_refbox
 		this->tbl_info->setItem(0,3,item3);
 	}
 
-	bool RefBox::eventFilter(QObject* watched, QEvent* event)
-	{
-		if(!gameData->localToggled
-				&& (gameData->udpToggled || gameData->tcpToggled)
-				&& ledit_ipaddress->text().size() > 5
-				&& ledit_ipaddress->text().count(".") == 3
-				&& spin_port->value() > 0)
-		{
-			btn_connect->setEnabled(true);
-		}
-		else
-			btn_connect->setEnabled(false);
-		return true;
-	}
+//	bool RefBox::eventFilter(QObject* watched, QEvent* event)
+//	{
+//		if(!gameData->localToggled
+//				&& (gameData->udpToggled || gameData->tcpToggled)
+//				&& ledit_ipaddress->text().size() > 5
+//				&& ledit_ipaddress->text().count(".") == 3
+//				&& spin_port->value() > 0)
+//		{
+//			btn_connect->setEnabled(true);
+//		}
+//		else
+//			btn_connect->setEnabled(false);
+//		return true;
+//	}
 
 	void RefBox::shutdownPlugin()
 	{
+	        disconnect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
+
 		disconnect(Play_On_bot, SIGNAL(clicked()), gameData, SLOT(PlayOnPressed()));
 		disconnect(Stop_bot, SIGNAL(clicked()), gameData, SLOT(StopPressed()));
 		disconnect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
@@ -146,6 +152,24 @@ namespace msl_refbox
 									const qt_gui_cpp::Settings& instance_settings)
 	{
 
+	}
+
+	void RefBox::onDebugToggled(bool checked)
+	{
+	        this->debug = checked;
+
+	        if (checked)
+	                std::cout << "Debug mode enabled" << std::endl;
+	        else
+                        std::cout << "Debug mode disabled" << std::endl;
+	}
+
+	void RefBox::debugLog(std::string msg)
+	{
+	        if(false == this->debug)
+	                return;
+
+	        std::cout << msg << std::endl;
 	}
 
 }

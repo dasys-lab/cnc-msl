@@ -46,6 +46,7 @@ namespace msl_refbox
 		void handlePlayerIn(tinyxml2::XMLElement* curChild);
 		void handleGoalAwarded(tinyxml2::XMLElement* curChild);
 		void handleCardAwarded(tinyxml2::XMLElement* curChild);
+		void handleGoals(tinyxml2::XMLElement* curChild);
 
 	private:
 		GameData* gameData;
@@ -56,8 +57,6 @@ namespace msl_refbox
 		bool fillSetup(const char* valAttr);
 		void fillTable(std::string name, std::string inField);
 		void fillYellow(std::string team, std::string player, std::string color, std::string number);
-		int goalCyan;
-		int goalMagenta;
 	};
 
 } /* namespace rqt_pm_control */

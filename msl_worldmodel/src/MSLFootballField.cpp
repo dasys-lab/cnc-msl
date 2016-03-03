@@ -19,7 +19,8 @@ namespace msl
 	bool MSLFootballField::GoalInnerAreaExists = false;
 	bool MSLFootballField::CornerCircleExists = false;
 	double MSLFootballField::PenaltyAreaMappingTolerance = 300;
-
+	double MSLFootballField::MaxDistanceSqr = 12000*12000+18000*18000;
+	double MSLFootballField::MaxDistance = sqrt(12000*12000+18000*18000);
 	MSLFootballField * MSLFootballField::instance = NULL;
 
 	MSLFootballField::MSLFootballField()
@@ -43,6 +44,9 @@ namespace msl
 		PenaltySpot = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltySpot", NULL);
 		Surrounding = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "Surrounding", NULL);
 		PenaltyAreaMappingTolerance = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaMappingTolerance", NULL);
+
+		MaxDistanceSqr = FieldLength*FieldLength + FieldWidth*FieldWidth;
+		MaxDistance = sqrt(MaxDistanceSqr);
 
 		std::cout << "MSLFootballField::FieldLength = " << FieldLength << std::endl;
 		std::cout << "MSLFootballField::FieldWidth = " << FieldWidth << std::endl;

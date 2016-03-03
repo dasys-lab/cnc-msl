@@ -13,9 +13,9 @@
 
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
 
-#include  "Plans/Example/constraints/GrabBall1456247887332Constraints.h"
-
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
+
+#include  "Plans/Example/constraints/GrabBall1456247887332Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestPassPointMaster1441106724156Constraints.h"
 
@@ -83,6 +83,8 @@
 
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 
+#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
+
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
@@ -117,6 +119,10 @@ namespace alica
     {
         switch (constraintConfId)
         {
+
+            case 1434112519736:
+                return make_shared<Constraint1434112519736>();
+                break;
 
             case 1445442215438:
                 return make_shared<Constraint1445442215438>();

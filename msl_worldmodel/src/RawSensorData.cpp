@@ -212,9 +212,9 @@ namespace msl
 		opticalFlow.add(o);
 	}
 
-	void RawSensorData::processLightBarrier(msl_actuator_msgs::HaveBallInfoPtr msg)
+	void RawSensorData::processLightBarrier(std_msgs::BoolPtr msg)
 	{
-		shared_ptr<bool> lb = make_shared<bool>(msg->haveBall);
+		shared_ptr<bool> lb = make_shared<bool>(msg->data);
 		shared_ptr<InformationElement<bool>> l = make_shared<InformationElement<bool>>(
 				lb, wm->getTime());
 		l->certainty = 1.0;

@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 2.8.3 )
 project(msl_expressions)
-                                
+                                  
 ## Use c++ 11x std  
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
@@ -25,7 +25,7 @@ find_package(catkin REQUIRED COMPONENTS
     system_util
     msl_sensor_msgs 
     msl_actuator_msgs
-    
+     
 )
 
 catkin_package(

@@ -316,7 +316,7 @@ namespace msl
 				mc.senderID = -1;
 				return mc;
 			}
-			if (wm->robots.teamMatesInOwnPenalty() > 1)
+			if (wm->robots.teammates.teamMatesInOwnPenalty() > 1)
 			{ //do not enter penalty if someone besides keeper is already in there
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
@@ -352,7 +352,7 @@ namespace msl
 		}
 		if (field->isInsideEnemyPenalty(alloBall, 0))
 		{ //ball is inside enemy penalty area
-			if (wm->robots.teamMatesInOppPenalty() > 0)
+			if (wm->robots.teammates.teamMatesInOppPenalty() > 0)
 			{ //if there is someone else, do not enter
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
@@ -523,7 +523,7 @@ namespace msl
 			return mc;
 		}
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->robots.getObstaclePoints(); //WM.GetTrackedOpponents();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles.getObstaclePoints(); //WM.GetTrackedOpponents();
 		fringe->clear();
 		for (int i = 0; i < 16; i++)
 		{
@@ -534,7 +534,7 @@ namespace msl
 				if (s->isValid())
 				{
 
-					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->robots.getObstaclePoints());
+					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles.getObstaclePoints());
 					fringe->push_back(s);
 				}
 			}
@@ -568,7 +568,7 @@ namespace msl
 			for (int j = 0; j < next->size(); j++)
 			{
 				next->at(j)->val = evalPointDynamic(next->at(j)->midP, alloPassee, ownPos,
-													wm->robots.getObstaclePoints());
+													wm->obstacles.getObstaclePoints());
 				fringe->push_back(next->at(j));
 			}
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);

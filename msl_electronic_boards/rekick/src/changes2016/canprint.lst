@@ -1,0 +1,991 @@
+   1               		.file	"canprint.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.global __do_copy_data
+   8               		.global __do_clear_bss
+  10               		.text
+  11               	.Ltext0:
+  91               	.global	can_send_message
+  93               	can_send_message:
+   1:canprint.c    **** #include <string.h>
+   2:canprint.c    **** #include <util/delay.h>
+   3:canprint.c    **** #include <avr/pgmspace.h>
+   4:canprint.c    **** #include "mcp2515.h"
+   5:canprint.c    **** #include "timer.h"
+   6:canprint.c    **** #include "canprint.h"
+   7:canprint.c    **** 
+   8:canprint.c    **** #define SEND_TIMEOUT	100
+   9:canprint.c    **** #define CAN_BUFFER_LENGTH	30 // max 255
+  10:canprint.c    **** #define SEND_DELAY	10	//ms
+  11:canprint.c    **** 
+  12:canprint.c    **** tExtendedCAN can_buffer[30];
+  13:canprint.c    **** uint8_t can_buffer_head = 0;
+  14:canprint.c    **** uint8_t can_buffer_tail = 0;
+  15:canprint.c    **** 
+  16:canprint.c    **** void can_send_handler(void) {
+  17:canprint.c    **** 
+  18:canprint.c    **** 	static uint32_t last_send = 0; // ms
+  19:canprint.c    **** 
+  20:canprint.c    **** 	if (can_buffer_head == can_buffer_tail)
+  21:canprint.c    **** 		return;
+  22:canprint.c    **** 
+  23:canprint.c    **** 	if (timer_get_ms() - last_send < SEND_DELAY)
+  24:canprint.c    **** 		return;
+  25:canprint.c    **** 
+  26:canprint.c    **** 
+  27:canprint.c    **** 	if (mcp2515_send_extmessage(&can_buffer[can_buffer_tail]) != 0) {
+  28:canprint.c    **** 		if (++can_buffer_tail == CAN_BUFFER_LENGTH)
+  29:canprint.c    **** 			can_buffer_tail = 0;
+  30:canprint.c    **** 		last_send = timer_get_ms();
+  31:canprint.c    **** 	}
+  32:canprint.c    **** 
+  33:canprint.c    **** }
+  34:canprint.c    **** 
+  35:canprint.c    **** void can_send_message(tExtendedCAN *msg) {
+  95               	.LM0:
+  96               	.LFBB1:
+  97               	/* prologue: frame size=0 */
+  98               	/* prologue end (size=0) */
+  36:canprint.c    **** 
+  37:canprint.c    **** 	// copy data
+  38:canprint.c    **** 	memcpy(&can_buffer[can_buffer_head], msg, sizeof(tExtendedCAN));
+ 100               	.LM1:
+ 101 0000 3091 0000 		lds r19,can_buffer_head
+ 102 0004 2DE0      		ldi r18,lo8(13)
+ 103 0006 329F      		mul r19,r18
+ 104 0008 F001      		movw r30,r0
+ 105 000a 1124      		clr r1
+ 106 000c E050      		subi r30,lo8(-(can_buffer))
+ 107 000e F040      		sbci r31,hi8(-(can_buffer))
+ 108 0010 DC01      		movw r26,r24
+ 109 0012 8DE0      		ldi r24,lo8(13)
+ 110               	.L2:
+ 112               	.LM2:
+ 113 0014 0D90      		ld r0,X+
+ 114 0016 0192      		st Z+,r0
+ 115 0018 8150      		subi r24,lo8(-(-1))
+ 116 001a 01F4      		brne .L2
+  39:canprint.c    **** 
+  40:canprint.c    **** 	if (++can_buffer_head == CAN_BUFFER_LENGTH)
+ 118               	.LM3:
+ 119 001c 8091 0000 		lds r24,can_buffer_head
+ 120 0020 8F5F      		subi r24,lo8(-(1))
+ 121 0022 8093 0000 		sts can_buffer_head,r24
+ 122 0026 8E31      		cpi r24,lo8(30)
+ 123 0028 01F4      		brne .L3
+  41:canprint.c    **** 		can_buffer_head = 0;
+ 125               	.LM4:
+ 126 002a 1092 0000 		sts can_buffer_head,__zero_reg__
+ 127               	.L3:
+  42:canprint.c    **** 
+  43:canprint.c    **** 	// check for buffer overflow.
+  44:canprint.c    **** 	if (can_buffer_head == can_buffer_tail) {
+ 129               	.LM5:
+ 130 002e 9091 0000 		lds r25,can_buffer_head
+ 131 0032 8091 0000 		lds r24,can_buffer_tail
+ 132 0036 9817      		cp r25,r24
+ 133 0038 01F4      		brne .L8
+  45:canprint.c    **** 		// overwrite existing data
+  46:canprint.c    **** 		if (++can_buffer_tail == CAN_BUFFER_LENGTH)
+ 135               	.LM6:
+ 136 003a 892F      		mov r24,r25
+ 137 003c 8F5F      		subi r24,lo8(-(1))
+ 138 003e 8093 0000 		sts can_buffer_tail,r24
+ 139 0042 8E31      		cpi r24,lo8(30)
+ 140 0044 01F4      		brne .L8
+  47:canprint.c    **** 			can_buffer_tail = 0;
+ 142               	.LM7:
+ 143 0046 1092 0000 		sts can_buffer_tail,__zero_reg__
+ 144               	.L8:
+ 145 004a 0895      		ret
+ 146               	/* epilogue: frame size=0 */
+ 147               	/* epilogue: noreturn */
+ 148               	/* epilogue end (size=0) */
+ 149               	/* function can_send_message size 39 (39) */
+ 151               	.Lscope1:
+ 156               	.global	can_put_cmd
+ 158               	can_put_cmd:
+  48:canprint.c    **** 	}
+  49:canprint.c    **** 
+  50:canprint.c    **** }
+  51:canprint.c    **** 
+  52:canprint.c    **** // Filter und Masken-Tabelle anlegen
+  53:canprint.c    **** // 
+  54:canprint.c    **** // Beide Masken auf Null setzten => alle Nachrichten empfangen
+  55:canprint.c    **** // filter 00000060
+  56:canprint.c    **** // maske  0000FFFF
+  57:canprint.c    **** // -----------------
+  58:canprint.c    **** // id     XXXX0060 <-- so muss die id aussehen, dass wir es annehmen
+  59:canprint.c    **** //
+  60:canprint.c    **** prog_char can_filter[] = {
+  61:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0x00000060),	// Filter 0
+  62:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0),	// Filter 1
+  63:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0),	// Filter 2
+  64:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0),	// Filter 3
+  65:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0),	// Filter 4
+  66:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0),	// Filter 5
+  67:canprint.c    **** 	
+  68:canprint.c    **** 	// maske0 -> buffer RXB0
+  69:canprint.c    **** 	// maske1 -> buffer RXB1
+  70:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0x0000FFFF),	// Maske 0
+  71:canprint.c    **** 	MCP2515_FILTER_EXTENDED(0x0000FFFF),	// Maske 1
+  72:canprint.c    **** };
+  73:canprint.c    **** 
+  74:canprint.c    **** 
+  75:canprint.c    **** void can_init(void) {
+  76:canprint.c    **** 
+  77:canprint.c    **** 	mcp2515_init();
+  78:canprint.c    **** 
+  79:canprint.c    **** 	mcp2515_static_filter(can_filter);
+  80:canprint.c    **** 	mcp2515_bit_modify(CANCTRL, (1<<REQOP2) | (1<<REQOP1) | (1<<REQOP0), 0);
+  81:canprint.c    **** }
+  82:canprint.c    **** 
+  83:canprint.c    **** void can_test(void) {
+  84:canprint.c    **** 
+  85:canprint.c    **** 	tExtendedCAN message;
+  86:canprint.c    **** 	uint8_t i;
+  87:canprint.c    **** 	
+  88:canprint.c    **** 	// 0x00, priority, sender, receiver
+  89:canprint.c    **** 	uint8_t id[4] = {0x00, PRIORITY_NORM, REKICK_ID, ETH2CAN_ID};
+  90:canprint.c    **** 
+  91:canprint.c    **** 	message.header.length = 1;
+  92:canprint.c    **** 
+  93:canprint.c    **** 	for (i = 0; i < 20; i++) {
+  94:canprint.c    **** 		
+  95:canprint.c    **** 		id[3] = i;
+  96:canprint.c    **** 		generate_extCAN_ID(id, message.id);
+  97:canprint.c    **** 		message.data[0] = i;
+  98:canprint.c    **** 		message.header.rtr = 0;
+  99:canprint.c    **** 
+ 100:canprint.c    **** 		while(mcp2515_send_extmessage(&message) == 0);
+ 101:canprint.c    **** 	}
+ 102:canprint.c    **** 
+ 103:canprint.c    **** 	return;
+ 104:canprint.c    **** }
+ 105:canprint.c    **** 
+ 106:canprint.c    **** void can_put_cmd(uint8_t cmd, uint8_t* str, uint8_t len) {
+ 160               	.LM8:
+ 161               	.LFBB2:
+ 162               	/* prologue: frame size=17 */
+ 163 004c CF92      		push r12
+ 164 004e DF92      		push r13
+ 165 0050 EF92      		push r14
+ 166 0052 FF92      		push r15
+ 167 0054 0F93      		push r16
+ 168 0056 1F93      		push r17
+ 169 0058 CF93      		push r28
+ 170 005a DF93      		push r29
+ 171 005c CDB7      		in r28,__SP_L__
+ 172 005e DEB7      		in r29,__SP_H__
+ 173 0060 6197      		sbiw r28,17
+ 174 0062 0FB6      		in __tmp_reg__,__SREG__
+ 175 0064 F894      		cli
+ 176 0066 DEBF      		out __SP_H__,r29
+ 177 0068 0FBE      		out __SREG__,__tmp_reg__
+ 178 006a CDBF      		out __SP_L__,r28
+ 179               	/* prologue end (size=16) */
+ 180 006c 082F      		mov r16,r24
+ 181 006e 7B01      		movw r14,r22
+ 182 0070 142F      		mov r17,r20
+ 107:canprint.c    **** 
+ 108:canprint.c    **** 	tExtendedCAN message;
+ 109:canprint.c    **** //	uint8_t send_ticks = 0;
+ 110:canprint.c    **** 
+ 111:canprint.c    **** 	// 0x00, priority, sender, receiver
+ 112:canprint.c    **** 	uint8_t id[4] = {0x00, PRIORITY_NORM, REKICK_ID, ETH2CAN_ID};
+ 184               	.LM9:
+ 185 0072 1982      		std Y+1,__zero_reg__
+ 186 0074 80E4      		ldi r24,lo8(64)
+ 187 0076 8A83      		std Y+2,r24
+ 188 0078 80E6      		ldi r24,lo8(96)
+ 189 007a 8B83      		std Y+3,r24
+ 190 007c 1C82      		std Y+4,__zero_reg__
+ 113:canprint.c    **** 	generate_extCAN_ID(id, message.id);
+ 192               	.LM10:
+ 193 007e 85E0      		ldi r24,lo8(5)
+ 194 0080 C82E      		mov r12,r24
+ 195 0082 D12C      		mov r13,__zero_reg__
+ 196 0084 CC0E      		add r12,r28
+ 197 0086 DD1E      		adc r13,r29
+ 198 0088 B601      		movw r22,r12
+ 199 008a CE01      		movw r24,r28
+ 200 008c 0196      		adiw r24,1
+ 201 008e 0E94 0000 		call generate_extCAN_ID
+ 114:canprint.c    **** 	message.header.rtr = 0;
+ 203               	.LM11:
+ 204 0092 8985      		ldd r24,Y+9
+ 205 0094 8E7F      		andi r24,lo8(-2)
+ 206 0096 8987      		std Y+9,r24
+ 207 0098 1830      		cpi r17,lo8(8)
+ 208 009a 00F0      		brlo .L12
+ 210               	.LM12:
+ 211 009c 17E0      		ldi r17,lo8(7)
+ 212               	.L12:
+ 115:canprint.c    **** 
+ 116:canprint.c    **** 	// packet length is limited to 8 chars but one char
+ 117:canprint.c    **** 	// is already used for the cmd.
+ 118:canprint.c    **** 	if (len > 7)
+ 119:canprint.c    **** 		len = 7;
+ 120:canprint.c    **** 
+ 121:canprint.c    **** 	message.data[0] = cmd;
+ 214               	.LM13:
+ 215 009e 0A87      		std Y+10,r16
+ 122:canprint.c    **** 	memcpy(message.data+1, str, len);
+ 217               	.LM14:
+ 218 00a0 412F      		mov r20,r17
+ 219 00a2 5527      		clr r21
+ 220 00a4 B701      		movw r22,r14
+ 221 00a6 CE01      		movw r24,r28
+ 222 00a8 0B96      		adiw r24,11
+ 223 00aa 0E94 0000 		call memcpy
+ 123:canprint.c    **** 	message.header.length = len+1;
+ 225               	.LM15:
+ 226 00ae 1F5F      		subi r17,lo8(-(1))
+ 227 00b0 1F70      		andi r17,lo8(15)
+ 228 00b2 110F      		lsl r17
+ 229 00b4 8985      		ldd r24,Y+9
+ 230 00b6 817E      		andi r24,lo8(-31)
+ 231 00b8 812B      		or r24,r17
+ 232 00ba 8987      		std Y+9,r24
+ 124:canprint.c    **** 
+ 125:canprint.c    **** 	// send to buffer
+ 126:canprint.c    **** 	can_send_message(&message);
+ 234               	.LM16:
+ 235 00bc C601      		movw r24,r12
+ 236 00be 0E94 0000 		call can_send_message
+ 237               	/* epilogue: frame size=17 */
+ 238 00c2 6196      		adiw r28,17
+ 239 00c4 0FB6      		in __tmp_reg__,__SREG__
+ 240 00c6 F894      		cli
+ 241 00c8 DEBF      		out __SP_H__,r29
+ 242 00ca 0FBE      		out __SREG__,__tmp_reg__
+ 243 00cc CDBF      		out __SP_L__,r28
+ 244 00ce DF91      		pop r29
+ 245 00d0 CF91      		pop r28
+ 246 00d2 1F91      		pop r17
+ 247 00d4 0F91      		pop r16
+ 248 00d6 FF90      		pop r15
+ 249 00d8 EF90      		pop r14
+ 250 00da DF90      		pop r13
+ 251 00dc CF90      		pop r12
+ 252 00de 0895      		ret
+ 253               	/* epilogue end (size=15) */
+ 254               	/* function can_put_cmd size 74 (43) */
+ 260               	.Lscope2:
+ 264               	.global	split_message
+ 266               	split_message:
+ 127:canprint.c    **** 
+ 128:canprint.c    **** //	while (mcp2515_send_extmessage(&message) == 0) {
+ 129:canprint.c    **** //		if ((timer_get_ticks() - send_ticks) > SEND_TIMEOUT)
+ 130:canprint.c    **** //			return;
+ 131:canprint.c    **** //	}
+ 132:canprint.c    **** 
+ 133:canprint.c    **** 	return;
+ 134:canprint.c    **** }
+ 135:canprint.c    **** 
+ 136:canprint.c    **** // split the message into more messages
+ 137:canprint.c    **** void split_message(uint8_t cmd, char *str) {
+ 268               	.LM17:
+ 269               	.LFBB3:
+ 270               	/* prologue: frame size=0 */
+ 271 00e0 CF92      		push r12
+ 272 00e2 DF92      		push r13
+ 273 00e4 EF92      		push r14
+ 274 00e6 FF92      		push r15
+ 275 00e8 0F93      		push r16
+ 276 00ea 1F93      		push r17
+ 277 00ec CF93      		push r28
+ 278 00ee DF93      		push r29
+ 279               	/* prologue end (size=8) */
+ 280 00f0 C82E      		mov r12,r24
+ 281 00f2 EB01      		movw r28,r22
+ 138:canprint.c    **** 
+ 139:canprint.c    **** 	uint8_t len = strlen(str);
+ 283               	.LM18:
+ 284 00f4 FB01      		movw r30,r22
+ 285 00f6 0190      		ld __tmp_reg__,Z+
+ 286 00f8 0020      		tst __tmp_reg__
+ 287 00fa 01F4      		brne .-6
+ 288 00fc 3197      		sbiw r30,1
+ 289 00fe E61B      		sub r30,r22
+ 290 0100 F70B      		sbc r31,r23
+ 291 0102 DE2E      		mov r13,r30
+ 292 0104 1E2F      		mov r17,r30
+ 293 0106 00E0      		ldi r16,lo8(0)
+ 140:canprint.c    **** 	uint8_t i;
+ 141:canprint.c    **** 
+ 142:canprint.c    **** 	for (i = 0; i < len;) {
+ 143:canprint.c    **** 		if (len-i > 7) {
+ 295               	.LM19:
+ 296 0108 EE2E      		mov r14,r30
+ 297 010a FF24      		clr r15
+ 298 010c 00C0      		rjmp .L16
+ 299               	.L17:
+ 301               	.LM20:
+ 302 010e 802F      		mov r24,r16
+ 303 0110 9927      		clr r25
+ 304 0112 9701      		movw r18,r14
+ 305 0114 281B      		sub r18,r24
+ 306 0116 390B      		sbc r19,r25
+ 307 0118 BE01      		movw r22,r28
+ 308 011a 680F      		add r22,r24
+ 309 011c 791F      		adc r23,r25
+ 310 011e 2830      		cpi r18,8
+ 311 0120 3105      		cpc r19,__zero_reg__
+ 312 0122 04F0      		brlt .L18
+ 144:canprint.c    **** 			can_put_cmd(cmd, ((uint8_t*)str) + i, 7);
+ 314               	.LM21:
+ 315 0124 47E0      		ldi r20,lo8(7)
+ 316 0126 00C0      		rjmp .L23
+ 317               	.L18:
+ 145:canprint.c    **** 			//_delay_ms(10); // this is for the bug in the eth2can
+ 146:canprint.c    **** 		}
+ 147:canprint.c    **** 		else {
+ 148:canprint.c    **** 			can_put_cmd(cmd, ((uint8_t*)str) + i, len-i);
+ 319               	.LM22:
+ 320 0128 412F      		mov r20,r17
+ 321               	.L23:
+ 322 012a 8C2D      		mov r24,r12
+ 323 012c 0E94 0000 		call can_put_cmd
+ 149:canprint.c    **** 		}
+ 150:canprint.c    **** 
+ 151:canprint.c    **** 		i += 7;
+ 325               	.LM23:
+ 326 0130 095F      		subi r16,lo8(-(7))
+ 327 0132 1750      		subi r17,lo8(-(-7))
+ 328               	.L16:
+ 330               	.LM24:
+ 331 0134 0D15      		cp r16,r13
+ 332 0136 00F0      		brlo .L17
+ 333               	/* epilogue: frame size=0 */
+ 334 0138 DF91      		pop r29
+ 335 013a CF91      		pop r28
+ 336 013c 1F91      		pop r17
+ 337 013e 0F91      		pop r16
+ 338 0140 FF90      		pop r15
+ 339 0142 EF90      		pop r14
+ 340 0144 DF90      		pop r13
+ 341 0146 CF90      		pop r12
+ 342 0148 0895      		ret
+ 343               	/* epilogue end (size=9) */
+ 344               	/* function split_message size 53 (36) */
+ 350               	.Lscope3:
+ 353               	.global	error
+ 355               	error:
+ 152:canprint.c    **** 	}
+ 153:canprint.c    **** 
+ 154:canprint.c    **** 	return;
+ 155:canprint.c    **** }
+ 156:canprint.c    **** 
+ 157:canprint.c    **** void debug(char *str) {
+ 158:canprint.c    **** 
+ 159:canprint.c    **** 	uint8_t len = strlen(str);
+ 160:canprint.c    **** 
+ 161:canprint.c    **** 	if (str[len-1] != '\n') {
+ 162:canprint.c    **** 		char newstr[len+2];
+ 163:canprint.c    **** 		memcpy(newstr, str, len);
+ 164:canprint.c    **** 		newstr[len] = '\n';
+ 165:canprint.c    **** 		newstr[len+1] = 0x00;
+ 166:canprint.c    **** 		split_message(CMD_MSG, newstr);
+ 167:canprint.c    **** 	}
+ 168:canprint.c    **** 	else {
+ 169:canprint.c    **** 		split_message(CMD_MSG, str);
+ 170:canprint.c    **** 	}
+ 171:canprint.c    **** 
+ 172:canprint.c    **** 	return;
+ 173:canprint.c    **** }
+ 174:canprint.c    **** 
+ 175:canprint.c    **** void warning(char *str) {
+ 176:canprint.c    **** 
+ 177:canprint.c    **** 	uint8_t len = strlen(str);
+ 178:canprint.c    **** 
+ 179:canprint.c    **** 	if (str[len-1] != '\n') {
+ 180:canprint.c    **** 		char newstr[len+2];
+ 181:canprint.c    **** 		memcpy(newstr, str, len);
+ 182:canprint.c    **** 		newstr[len] = '\n';
+ 183:canprint.c    **** 		newstr[len+1] = 0x00;
+ 184:canprint.c    **** 		split_message(CMD_WARNING, newstr);
+ 185:canprint.c    **** 	}
+ 186:canprint.c    **** 	else {
+ 187:canprint.c    **** 		split_message(CMD_WARNING, str);
+ 188:canprint.c    **** 	}
+ 189:canprint.c    **** 
+ 190:canprint.c    **** 	return;
+ 191:canprint.c    **** }
+ 192:canprint.c    **** 
+ 193:canprint.c    **** void error(char *str) {
+ 357               	.LM25:
+ 358               	.LFBB4:
+ 359               	/* prologue: frame size=0 */
+ 360 014a CF92      		push r12
+ 361 014c DF92      		push r13
+ 362 014e EF92      		push r14
+ 363 0150 FF92      		push r15
+ 364 0152 0F93      		push r16
+ 365 0154 1F93      		push r17
+ 366 0156 CF93      		push r28
+ 367 0158 DF93      		push r29
+ 368 015a CDB7      		in r28,__SP_L__
+ 369 015c DEB7      		in r29,__SP_H__
+ 370               	/* prologue end (size=10) */
+ 371 015e DC01      		movw r26,r24
+ 372 0160 CDB6      		in r12,__SP_L__
+ 373 0162 DEB6      		in r13,__SP_H__
+ 194:canprint.c    **** 
+ 195:canprint.c    **** 	uint8_t len = strlen(str);
+ 375               	.LM26:
+ 376 0164 FC01      		movw r30,r24
+ 377 0166 0190      		ld __tmp_reg__,Z+
+ 378 0168 0020      		tst __tmp_reg__
+ 379 016a 01F4      		brne .-6
+ 380 016c 3197      		sbiw r30,1
+ 381 016e E81B      		sub r30,r24
+ 196:canprint.c    **** 
+ 197:canprint.c    **** 	if (str[len-1] != '\n') {
+ 383               	.LM27:
+ 384 0170 EE2E      		mov r14,r30
+ 385 0172 FF24      		clr r15
+ 386 0174 F701      		movw r30,r14
+ 387 0176 E80F      		add r30,r24
+ 388 0178 F91F      		adc r31,r25
+ 389 017a 3197      		sbiw r30,1
+ 390 017c 8081      		ld r24,Z
+ 391 017e 8A30      		cpi r24,lo8(10)
+ 392 0180 01F0      		breq .L25
+ 393               	.LBB2:
+ 198:canprint.c    **** 		char newstr[len+2];
+ 395               	.LM28:
+ 396 0182 C701      		movw r24,r14
+ 397 0184 0296      		adiw r24,2
+ 398 0186 2DB7      		in r18,__SP_L__
+ 399 0188 3EB7      		in r19,__SP_H__
+ 400 018a 281B      		sub r18,r24
+ 401 018c 390B      		sbc r19,r25
+ 402 018e 0FB6      		in __tmp_reg__,__SREG__
+ 403 0190 F894      		cli
+ 404 0192 3EBF      		out __SP_H__,r19
+ 405 0194 0FBE      		out __SREG__,__tmp_reg__
+ 406 0196 2DBF      		out __SP_L__,r18
+ 407 0198 0DB7      		in r16,__SP_L__
+ 408 019a 1EB7      		in r17,__SP_H__
+ 409 019c 0F5F      		subi r16,lo8(-(1))
+ 410 019e 1F4F      		sbci r17,hi8(-(1))
+ 199:canprint.c    **** 		memcpy(newstr, str, len);
+ 412               	.LM29:
+ 413 01a0 A701      		movw r20,r14
+ 414 01a2 BD01      		movw r22,r26
+ 415 01a4 C801      		movw r24,r16
+ 416 01a6 0E94 0000 		call memcpy
+ 200:canprint.c    **** 		newstr[len] = '\n';
+ 418               	.LM30:
+ 419 01aa F801      		movw r30,r16
+ 420 01ac EE0D      		add r30,r14
+ 421 01ae FF1D      		adc r31,r15
+ 422 01b0 8AE0      		ldi r24,lo8(10)
+ 423 01b2 8083      		st Z,r24
+ 201:canprint.c    **** 		newstr[len+1] = 0x00;
+ 425               	.LM31:
+ 426 01b4 1182      		std Z+1,__zero_reg__
+ 202:canprint.c    **** 		split_message(CMD_ERROR, newstr);
+ 428               	.LM32:
+ 429 01b6 B801      		movw r22,r16
+ 430 01b8 81E2      		ldi r24,lo8(33)
+ 431 01ba 0E94 0000 		call split_message
+ 432 01be 0FB6      		in __tmp_reg__,__SREG__
+ 433 01c0 F894      		cli
+ 434 01c2 DEBE      		out __SP_H__,r13
+ 435 01c4 0FBE      		out __SREG__,__tmp_reg__
+ 436 01c6 CDBE      		out __SP_L__,r12
+ 437 01c8 00C0      		rjmp .L29
+ 438               	.L25:
+ 439               	.LBE2:
+ 203:canprint.c    **** 	}
+ 204:canprint.c    **** 	else {
+ 205:canprint.c    **** 		split_message(CMD_ERROR, str);
+ 441               	.LM33:
+ 442 01ca BD01      		movw r22,r26
+ 443 01cc 81E2      		ldi r24,lo8(33)
+ 444 01ce 0E94 0000 		call split_message
+ 445               	.L29:
+ 206:canprint.c    **** 	}
+ 207:canprint.c    **** 
+ 208:canprint.c    **** 	return;
+ 209:canprint.c    **** }
+ 447               	.LM34:
+ 448 01d2 0FB6      		in __tmp_reg__,__SREG__
+ 449 01d4 F894      		cli
+ 450 01d6 DEBE      		out __SP_H__,r13
+ 451 01d8 0FBE      		out __SREG__,__tmp_reg__
+ 452 01da CDBE      		out __SP_L__,r12
+ 453               	/* epilogue: frame size=0 */
+ 454 01dc DF91      		pop r29
+ 455 01de CF91      		pop r28
+ 456 01e0 1F91      		pop r17
+ 457 01e2 0F91      		pop r16
+ 458 01e4 FF90      		pop r15
+ 459 01e6 EF90      		pop r14
+ 460 01e8 DF90      		pop r13
+ 461 01ea CF90      		pop r12
+ 462 01ec 0895      		ret
+ 463               	/* epilogue end (size=9) */
+ 464               	/* function error size 82 (63) */
+ 469               	.Lscope4:
+ 472               	.global	warning
+ 474               	warning:
+ 476               	.LM35:
+ 477               	.LFBB5:
+ 478               	/* prologue: frame size=0 */
+ 479 01ee CF92      		push r12
+ 480 01f0 DF92      		push r13
+ 481 01f2 EF92      		push r14
+ 482 01f4 FF92      		push r15
+ 483 01f6 0F93      		push r16
+ 484 01f8 1F93      		push r17
+ 485 01fa CF93      		push r28
+ 486 01fc DF93      		push r29
+ 487 01fe CDB7      		in r28,__SP_L__
+ 488 0200 DEB7      		in r29,__SP_H__
+ 489               	/* prologue end (size=10) */
+ 490 0202 DC01      		movw r26,r24
+ 491 0204 CDB6      		in r12,__SP_L__
+ 492 0206 DEB6      		in r13,__SP_H__
+ 494               	.LM36:
+ 495 0208 FC01      		movw r30,r24
+ 496 020a 0190      		ld __tmp_reg__,Z+
+ 497 020c 0020      		tst __tmp_reg__
+ 498 020e 01F4      		brne .-6
+ 499 0210 3197      		sbiw r30,1
+ 500 0212 E81B      		sub r30,r24
+ 502               	.LM37:
+ 503 0214 EE2E      		mov r14,r30
+ 504 0216 FF24      		clr r15
+ 505 0218 F701      		movw r30,r14
+ 506 021a E80F      		add r30,r24
+ 507 021c F91F      		adc r31,r25
+ 508 021e 3197      		sbiw r30,1
+ 509 0220 8081      		ld r24,Z
+ 510 0222 8A30      		cpi r24,lo8(10)
+ 511 0224 01F0      		breq .L31
+ 512               	.LBB3:
+ 514               	.LM38:
+ 515 0226 C701      		movw r24,r14
+ 516 0228 0296      		adiw r24,2
+ 517 022a 2DB7      		in r18,__SP_L__
+ 518 022c 3EB7      		in r19,__SP_H__
+ 519 022e 281B      		sub r18,r24
+ 520 0230 390B      		sbc r19,r25
+ 521 0232 0FB6      		in __tmp_reg__,__SREG__
+ 522 0234 F894      		cli
+ 523 0236 3EBF      		out __SP_H__,r19
+ 524 0238 0FBE      		out __SREG__,__tmp_reg__
+ 525 023a 2DBF      		out __SP_L__,r18
+ 526 023c 0DB7      		in r16,__SP_L__
+ 527 023e 1EB7      		in r17,__SP_H__
+ 528 0240 0F5F      		subi r16,lo8(-(1))
+ 529 0242 1F4F      		sbci r17,hi8(-(1))
+ 531               	.LM39:
+ 532 0244 A701      		movw r20,r14
+ 533 0246 BD01      		movw r22,r26
+ 534 0248 C801      		movw r24,r16
+ 535 024a 0E94 0000 		call memcpy
+ 537               	.LM40:
+ 538 024e F801      		movw r30,r16
+ 539 0250 EE0D      		add r30,r14
+ 540 0252 FF1D      		adc r31,r15
+ 541 0254 8AE0      		ldi r24,lo8(10)
+ 542 0256 8083      		st Z,r24
+ 544               	.LM41:
+ 545 0258 1182      		std Z+1,__zero_reg__
+ 547               	.LM42:
+ 548 025a B801      		movw r22,r16
+ 549 025c 82E2      		ldi r24,lo8(34)
+ 550 025e 0E94 0000 		call split_message
+ 551 0262 0FB6      		in __tmp_reg__,__SREG__
+ 552 0264 F894      		cli
+ 553 0266 DEBE      		out __SP_H__,r13
+ 554 0268 0FBE      		out __SREG__,__tmp_reg__
+ 555 026a CDBE      		out __SP_L__,r12
+ 556 026c 00C0      		rjmp .L35
+ 557               	.L31:
+ 558               	.LBE3:
+ 560               	.LM43:
+ 561 026e BD01      		movw r22,r26
+ 562 0270 82E2      		ldi r24,lo8(34)
+ 563 0272 0E94 0000 		call split_message
+ 564               	.L35:
+ 566               	.LM44:
+ 567 0276 0FB6      		in __tmp_reg__,__SREG__
+ 568 0278 F894      		cli
+ 569 027a DEBE      		out __SP_H__,r13
+ 570 027c 0FBE      		out __SREG__,__tmp_reg__
+ 571 027e CDBE      		out __SP_L__,r12
+ 572               	/* epilogue: frame size=0 */
+ 573 0280 DF91      		pop r29
+ 574 0282 CF91      		pop r28
+ 575 0284 1F91      		pop r17
+ 576 0286 0F91      		pop r16
+ 577 0288 FF90      		pop r15
+ 578 028a EF90      		pop r14
+ 579 028c DF90      		pop r13
+ 580 028e CF90      		pop r12
+ 581 0290 0895      		ret
+ 582               	/* epilogue end (size=9) */
+ 583               	/* function warning size 82 (63) */
+ 588               	.Lscope5:
+ 591               	.global	debug
+ 593               	debug:
+ 595               	.LM45:
+ 596               	.LFBB6:
+ 597               	/* prologue: frame size=0 */
+ 598 0292 CF92      		push r12
+ 599 0294 DF92      		push r13
+ 600 0296 EF92      		push r14
+ 601 0298 FF92      		push r15
+ 602 029a 0F93      		push r16
+ 603 029c 1F93      		push r17
+ 604 029e CF93      		push r28
+ 605 02a0 DF93      		push r29
+ 606 02a2 CDB7      		in r28,__SP_L__
+ 607 02a4 DEB7      		in r29,__SP_H__
+ 608               	/* prologue end (size=10) */
+ 609 02a6 DC01      		movw r26,r24
+ 610 02a8 CDB6      		in r12,__SP_L__
+ 611 02aa DEB6      		in r13,__SP_H__
+ 613               	.LM46:
+ 614 02ac FC01      		movw r30,r24
+ 615 02ae 0190      		ld __tmp_reg__,Z+
+ 616 02b0 0020      		tst __tmp_reg__
+ 617 02b2 01F4      		brne .-6
+ 618 02b4 3197      		sbiw r30,1
+ 619 02b6 E81B      		sub r30,r24
+ 621               	.LM47:
+ 622 02b8 EE2E      		mov r14,r30
+ 623 02ba FF24      		clr r15
+ 624 02bc F701      		movw r30,r14
+ 625 02be E80F      		add r30,r24
+ 626 02c0 F91F      		adc r31,r25
+ 627 02c2 3197      		sbiw r30,1
+ 628 02c4 8081      		ld r24,Z
+ 629 02c6 8A30      		cpi r24,lo8(10)
+ 630 02c8 01F0      		breq .L37
+ 631               	.LBB4:
+ 633               	.LM48:
+ 634 02ca C701      		movw r24,r14
+ 635 02cc 0296      		adiw r24,2
+ 636 02ce 2DB7      		in r18,__SP_L__
+ 637 02d0 3EB7      		in r19,__SP_H__
+ 638 02d2 281B      		sub r18,r24
+ 639 02d4 390B      		sbc r19,r25
+ 640 02d6 0FB6      		in __tmp_reg__,__SREG__
+ 641 02d8 F894      		cli
+ 642 02da 3EBF      		out __SP_H__,r19
+ 643 02dc 0FBE      		out __SREG__,__tmp_reg__
+ 644 02de 2DBF      		out __SP_L__,r18
+ 645 02e0 0DB7      		in r16,__SP_L__
+ 646 02e2 1EB7      		in r17,__SP_H__
+ 647 02e4 0F5F      		subi r16,lo8(-(1))
+ 648 02e6 1F4F      		sbci r17,hi8(-(1))
+ 650               	.LM49:
+ 651 02e8 A701      		movw r20,r14
+ 652 02ea BD01      		movw r22,r26
+ 653 02ec C801      		movw r24,r16
+ 654 02ee 0E94 0000 		call memcpy
+ 656               	.LM50:
+ 657 02f2 F801      		movw r30,r16
+ 658 02f4 EE0D      		add r30,r14
+ 659 02f6 FF1D      		adc r31,r15
+ 660 02f8 8AE0      		ldi r24,lo8(10)
+ 661 02fa 8083      		st Z,r24
+ 663               	.LM51:
+ 664 02fc 1182      		std Z+1,__zero_reg__
+ 666               	.LM52:
+ 667 02fe B801      		movw r22,r16
+ 668 0300 8EE3      		ldi r24,lo8(62)
+ 669 0302 0E94 0000 		call split_message
+ 670 0306 0FB6      		in __tmp_reg__,__SREG__
+ 671 0308 F894      		cli
+ 672 030a DEBE      		out __SP_H__,r13
+ 673 030c 0FBE      		out __SREG__,__tmp_reg__
+ 674 030e CDBE      		out __SP_L__,r12
+ 675 0310 00C0      		rjmp .L41
+ 676               	.L37:
+ 677               	.LBE4:
+ 679               	.LM53:
+ 680 0312 BD01      		movw r22,r26
+ 681 0314 8EE3      		ldi r24,lo8(62)
+ 682 0316 0E94 0000 		call split_message
+ 683               	.L41:
+ 685               	.LM54:
+ 686 031a 0FB6      		in __tmp_reg__,__SREG__
+ 687 031c F894      		cli
+ 688 031e DEBE      		out __SP_H__,r13
+ 689 0320 0FBE      		out __SREG__,__tmp_reg__
+ 690 0322 CDBE      		out __SP_L__,r12
+ 691               	/* epilogue: frame size=0 */
+ 692 0324 DF91      		pop r29
+ 693 0326 CF91      		pop r28
+ 694 0328 1F91      		pop r17
+ 695 032a 0F91      		pop r16
+ 696 032c FF90      		pop r15
+ 697 032e EF90      		pop r14
+ 698 0330 DF90      		pop r13
+ 699 0332 CF90      		pop r12
+ 700 0334 0895      		ret
+ 701               	/* epilogue end (size=9) */
+ 702               	/* function debug size 82 (63) */
+ 707               	.Lscope6:
+ 709               	.global	can_test
+ 711               	can_test:
+ 713               	.LM55:
+ 714               	.LFBB7:
+ 715               	/* prologue: frame size=17 */
+ 716 0336 CF92      		push r12
+ 717 0338 DF92      		push r13
+ 718 033a EF92      		push r14
+ 719 033c FF92      		push r15
+ 720 033e 0F93      		push r16
+ 721 0340 1F93      		push r17
+ 722 0342 CF93      		push r28
+ 723 0344 DF93      		push r29
+ 724 0346 CDB7      		in r28,__SP_L__
+ 725 0348 DEB7      		in r29,__SP_H__
+ 726 034a 6197      		sbiw r28,17
+ 727 034c 0FB6      		in __tmp_reg__,__SREG__
+ 728 034e F894      		cli
+ 729 0350 DEBF      		out __SP_H__,r29
+ 730 0352 0FBE      		out __SREG__,__tmp_reg__
+ 731 0354 CDBF      		out __SP_L__,r28
+ 732               	/* prologue end (size=16) */
+ 734               	.LM56:
+ 735 0356 1982      		std Y+1,__zero_reg__
+ 736 0358 80E4      		ldi r24,lo8(64)
+ 737 035a 8A83      		std Y+2,r24
+ 738 035c 80E6      		ldi r24,lo8(96)
+ 739 035e 8B83      		std Y+3,r24
+ 740 0360 1C82      		std Y+4,__zero_reg__
+ 742               	.LM57:
+ 743 0362 8985      		ldd r24,Y+9
+ 744 0364 817E      		andi r24,lo8(-31)
+ 745 0366 8260      		ori r24,lo8(2)
+ 746 0368 8987      		std Y+9,r24
+ 747 036a 00E0      		ldi r16,lo8(0)
+ 748 036c 10E0      		ldi r17,hi8(0)
+ 750               	.LM58:
+ 751 036e 95E0      		ldi r25,lo8(5)
+ 752 0370 E92E      		mov r14,r25
+ 753 0372 F12C      		mov r15,__zero_reg__
+ 754 0374 EC0E      		add r14,r28
+ 755 0376 FD1E      		adc r15,r29
+ 756 0378 6E01      		movw r12,r28
+ 757 037a 0894      		sec
+ 758 037c C11C      		adc r12,__zero_reg__
+ 759 037e D11C      		adc r13,__zero_reg__
+ 760               	.L43:
+ 762               	.LM59:
+ 763 0380 0C83      		std Y+4,r16
+ 765               	.LM60:
+ 766 0382 B701      		movw r22,r14
+ 767 0384 C601      		movw r24,r12
+ 768 0386 0E94 0000 		call generate_extCAN_ID
+ 770               	.LM61:
+ 771 038a 0A87      		std Y+10,r16
+ 773               	.LM62:
+ 774 038c 8985      		ldd r24,Y+9
+ 775 038e 8E7F      		andi r24,lo8(-2)
+ 776 0390 8987      		std Y+9,r24
+ 777               	.L44:
+ 779               	.LM63:
+ 780 0392 C701      		movw r24,r14
+ 781 0394 0E94 0000 		call mcp2515_send_extmessage
+ 782 0398 8823      		tst r24
+ 783 039a 01F0      		breq .L44
+ 784 039c 0F5F      		subi r16,lo8(-(1))
+ 785 039e 1F4F      		sbci r17,hi8(-(1))
+ 787               	.LM64:
+ 788 03a0 0431      		cpi r16,20
+ 789 03a2 1105      		cpc r17,__zero_reg__
+ 790 03a4 01F4      		brne .L43
+ 791               	/* epilogue: frame size=17 */
+ 792 03a6 6196      		adiw r28,17
+ 793 03a8 0FB6      		in __tmp_reg__,__SREG__
+ 794 03aa F894      		cli
+ 795 03ac DEBF      		out __SP_H__,r29
+ 796 03ae 0FBE      		out __SREG__,__tmp_reg__
+ 797 03b0 CDBF      		out __SP_L__,r28
+ 798 03b2 DF91      		pop r29
+ 799 03b4 CF91      		pop r28
+ 800 03b6 1F91      		pop r17
+ 801 03b8 0F91      		pop r16
+ 802 03ba FF90      		pop r15
+ 803 03bc EF90      		pop r14
+ 804 03be DF90      		pop r13
+ 805 03c0 CF90      		pop r12
+ 806 03c2 0895      		ret
+ 807               	/* epilogue end (size=15) */
+ 808               	/* function can_test size 71 (40) */
+ 814               	.Lscope7:
+ 816               	.global	can_init
+ 818               	can_init:
+ 820               	.LM65:
+ 821               	.LFBB8:
+ 822               	/* prologue: frame size=0 */
+ 823               	/* prologue end (size=0) */
+ 825               	.LM66:
+ 826 03c4 0E94 0000 		call mcp2515_init
+ 828               	.LM67:
+ 829 03c8 80E0      		ldi r24,lo8(can_filter)
+ 830 03ca 90E0      		ldi r25,hi8(can_filter)
+ 831 03cc 0E94 0000 		call mcp2515_static_filter
+ 833               	.LM68:
+ 834 03d0 40E0      		ldi r20,lo8(0)
+ 835 03d2 60EE      		ldi r22,lo8(-32)
+ 836 03d4 8FE0      		ldi r24,lo8(15)
+ 837 03d6 0E94 0000 		call mcp2515_bit_modify
+ 838               	/* epilogue: frame size=0 */
+ 839 03da 0895      		ret
+ 840               	/* epilogue end (size=1) */
+ 841               	/* function can_init size 12 (11) */
+ 843               	.Lscope8:
+ 845               	.global	can_send_handler
+ 847               	can_send_handler:
+ 849               	.LM69:
+ 850               	.LFBB9:
+ 851               	/* prologue: frame size=0 */
+ 852               	/* prologue end (size=0) */
+ 854               	.LM70:
+ 855 03dc 9091 0000 		lds r25,can_buffer_head
+ 856 03e0 8091 0000 		lds r24,can_buffer_tail
+ 857 03e4 9817      		cp r25,r24
+ 858 03e6 01F0      		breq .L61
+ 860               	.LM71:
+ 861 03e8 0E94 0000 		call timer_get_ms
+ 862 03ec 2091 0000 		lds r18,last_send.1760
+ 863 03f0 3091 0000 		lds r19,(last_send.1760)+1
+ 864 03f4 4091 0000 		lds r20,(last_send.1760)+2
+ 865 03f8 5091 0000 		lds r21,(last_send.1760)+3
+ 866 03fc 621B      		sub r22,r18
+ 867 03fe 730B      		sbc r23,r19
+ 868 0400 840B      		sbc r24,r20
+ 869 0402 950B      		sbc r25,r21
+ 870 0404 6A30      		cpi r22,lo8(10)
+ 871 0406 7105      		cpc r23,__zero_reg__
+ 872 0408 8105      		cpc r24,__zero_reg__
+ 873 040a 9105      		cpc r25,__zero_reg__
+ 874 040c 00F0      		brlo .L61
+ 876               	.LM72:
+ 877 040e 8091 0000 		lds r24,can_buffer_tail
+ 878 0412 2DE0      		ldi r18,lo8(13)
+ 879 0414 829F      		mul r24,r18
+ 880 0416 C001      		movw r24,r0
+ 881 0418 1124      		clr r1
+ 882 041a 8050      		subi r24,lo8(-(can_buffer))
+ 883 041c 9040      		sbci r25,hi8(-(can_buffer))
+ 884 041e 0E94 0000 		call mcp2515_send_extmessage
+ 885 0422 8823      		tst r24
+ 886 0424 01F0      		breq .L61
+ 888               	.LM73:
+ 889 0426 8091 0000 		lds r24,can_buffer_tail
+ 890 042a 8F5F      		subi r24,lo8(-(1))
+ 891 042c 8093 0000 		sts can_buffer_tail,r24
+ 892 0430 8E31      		cpi r24,lo8(30)
+ 893 0432 01F4      		brne .L59
+ 895               	.LM74:
+ 896 0434 1092 0000 		sts can_buffer_tail,__zero_reg__
+ 897               	.L59:
+ 899               	.LM75:
+ 900 0438 0E94 0000 		call timer_get_ms
+ 901 043c 6093 0000 		sts last_send.1760,r22
+ 902 0440 7093 0000 		sts (last_send.1760)+1,r23
+ 903 0444 8093 0000 		sts (last_send.1760)+2,r24
+ 904 0448 9093 0000 		sts (last_send.1760)+3,r25
+ 905               	.L61:
+ 906 044c 0895      		ret
+ 907               	/* epilogue: frame size=0 */
+ 908               	/* epilogue: noreturn */
+ 909               	/* epilogue end (size=0) */
+ 910               	/* function can_send_handler size 57 (57) */
+ 915               	.Lscope9:
+ 916               	.global	can_buffer_head
+ 917               	.global	can_buffer_head
+ 918               		.section .bss
+ 921               	can_buffer_head:
+ 922 0000 00        		.skip 1,0
+ 923               	.global	can_buffer_tail
+ 924               	.global	can_buffer_tail
+ 927               	can_buffer_tail:
+ 928 0001 00        		.skip 1,0
+ 929               	.global	can_filter
+ 930               		.section	.progmem.data,"a",@progbits
+ 933               	can_filter:
+ 934 0000 00        		.byte	0
+ 935 0001 08        		.byte	8
+ 936 0002 00        		.byte	0
+ 937 0003 60        		.byte	96
+ 938 0004 00        		.byte	0
+ 939 0005 08        		.byte	8
+ 940 0006 00        		.byte	0
+ 941 0007 00        		.byte	0
+ 942 0008 00        		.byte	0
+ 943 0009 08        		.byte	8
+ 944 000a 00        		.byte	0
+ 945 000b 00        		.byte	0
+ 946 000c 00        		.byte	0
+ 947 000d 08        		.byte	8
+ 948 000e 00        		.byte	0
+ 949 000f 00        		.byte	0
+ 950 0010 00        		.byte	0
+ 951 0011 08        		.byte	8
+ 952 0012 00        		.byte	0
+ 953 0013 00        		.byte	0
+ 954 0014 00        		.byte	0
+ 955 0015 08        		.byte	8
+ 956 0016 00        		.byte	0
+ 957 0017 00        		.byte	0
+ 958 0018 00        		.byte	0
+ 959 0019 08        		.byte	8
+ 960 001a FF        		.byte	-1
+ 961 001b FF        		.byte	-1
+ 962 001c 00        		.byte	0
+ 963 001d 08        		.byte	8
+ 964 001e FF        		.byte	-1
+ 965 001f FF        		.byte	-1
+ 966               		.lcomm last_send.1760,4
+ 967               		.comm can_buffer,390,1
+ 973               		.text
+ 975               	.Letext0:
+ 976               	/* File "canprint.c": code  552 = 0x0228 ( 415), prologues  70, epilogues  67 */
+DEFINED SYMBOLS
+                            *ABS*:00000000 canprint.c
+     /tmp/ccmvpR0k.s:2      *ABS*:0000003f __SREG__
+     /tmp/ccmvpR0k.s:3      *ABS*:0000003e __SP_H__
+     /tmp/ccmvpR0k.s:4      *ABS*:0000003d __SP_L__
+     /tmp/ccmvpR0k.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccmvpR0k.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccmvpR0k.s:93     .text:00000000 can_send_message
+     /tmp/ccmvpR0k.s:921    .bss:00000000 can_buffer_head
+                            *COM*:00000186 can_buffer
+     /tmp/ccmvpR0k.s:927    .bss:00000001 can_buffer_tail
+     /tmp/ccmvpR0k.s:158    .text:0000004c can_put_cmd
+     /tmp/ccmvpR0k.s:266    .text:000000e0 split_message
+     /tmp/ccmvpR0k.s:355    .text:0000014a error
+     /tmp/ccmvpR0k.s:474    .text:000001ee warning
+     /tmp/ccmvpR0k.s:593    .text:00000292 debug
+     /tmp/ccmvpR0k.s:711    .text:00000336 can_test
+     /tmp/ccmvpR0k.s:818    .text:000003c4 can_init
+     /tmp/ccmvpR0k.s:933    .progmem.data:00000000 can_filter
+     /tmp/ccmvpR0k.s:847    .text:000003dc can_send_handler
+                             .bss:00000002 last_send.1760
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+generate_extCAN_ID
+memcpy
+mcp2515_send_extmessage
+mcp2515_init
+mcp2515_static_filter
+mcp2515_bit_modify
+timer_get_ms

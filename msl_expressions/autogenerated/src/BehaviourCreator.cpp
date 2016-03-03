@@ -7,6 +7,8 @@ using namespace std;
 
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
+#include  "Plans/Behaviours/MoveToPointDynamic.h"
+
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
 #include  "Plans/Behaviours/AttackOpp.h"
@@ -107,6 +109,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/Robotcheck/RobotTest.h"
+
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 #include  "Plans/Behaviours/GetBall.h"
@@ -147,6 +151,11 @@ namespace alica
             case 1417620730939:
 
                 return make_shared<AlignAndShootTwoHoledWall>();
+                break;
+
+            case 1456997097907:
+
+                return make_shared<MoveToPointDynamic>();
                 break;
 
             case 1431531542052:
@@ -425,6 +434,11 @@ namespace alica
             case 1435159282996:
 
                 return make_shared<SpinSlowly>();
+                break;
+
+            case 1456756164754:
+
+                return make_shared<RobotTest>();
                 break;
 
             case 1455537879822:

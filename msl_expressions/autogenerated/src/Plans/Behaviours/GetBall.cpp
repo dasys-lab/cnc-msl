@@ -30,7 +30,7 @@ namespace alica
         {
             return;
         }
-        auto obstacles = wm->robots.getObstacles();
+        auto obstacles = wm->obstacles.getObstacles();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         if (obstacles != nullptr)

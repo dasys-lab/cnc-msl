@@ -115,14 +115,14 @@ void contolShovelSelect() {
 	}
 }
 
-void getLightbarrier(ros::Publisher *hbiPub) {
+void getLightbarrier(ros::Publisher *lbiPub) {
 	unique_lock<mutex> l_light(threw[3].mtx);
 	while(th_activ) {
 		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		msl_actuator_msgs::HaveBallInfo msg;
+		std_msgs::Bool msg;
 		uint16_t value;
 
 		try {
@@ -132,11 +132,11 @@ void getLightbarrier(ros::Publisher *hbiPub) {
 		}
 
 		if (value > LIGHTBARRIER_THRESHOLD) {
-			msg.haveBall = true;
+			msg.data = true;
 		} else {
-			msg.haveBall = false;
+			msg.data = false;
 		}
-		hbiPub->publish(msg);
+		lbiPub->publish(msg);
 
 		threw[3].notify = false;
 		cv_main.cv.notify_all();
@@ -294,7 +294,7 @@ int main(int argc, char** argv) {
 	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 10);
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
-	ros::Publisher hbiPub = node.advertise<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 10);
+	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 10);
 	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
 	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 10);
 
@@ -303,7 +303,7 @@ int main(int argc, char** argv) {
 	thread th_controlBHRight(controlBHRight);
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
-	thread th_lightbarrier(getLightbarrier, &hbiPub);
+	thread th_lightbarrier(getLightbarrier, &lbiPub);
 	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
 	thread th_adns3080(getOptical, &mbcPub);
 	thread th_imu(getIMU, &imuPub);

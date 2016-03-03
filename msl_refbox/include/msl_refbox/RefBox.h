@@ -34,11 +34,18 @@ namespace msl_refbox
 
 		virtual void restoreSettings(const qt_gui_cpp::Settings& plugin_settings, const qt_gui_cpp::Settings& instance_settings);
 
+		void debugLog(std::string msg);
+
 		Ui::RefBoxWidget ui_;
 		QWidget* widget_;
+
+	public Q_SLOTS:
+                void onDebugToggled(bool);
+
 	private:
 		GameData* gameData;
-		bool eventFilter(QObject* watched, QEvent* event);
+		bool debug;
+//		bool eventFilter(QObject* watched, QEvent* event);
 	};
 
 }

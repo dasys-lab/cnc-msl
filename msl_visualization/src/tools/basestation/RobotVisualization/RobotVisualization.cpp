@@ -28,6 +28,16 @@ void RobotVisualization::setBottom(vtkSmartPointer<vtkActor> bottom)
 	this->bottom = bottom;
 }
 
+void RobotVisualization::setNameActor(vtkSmartPointer<vtkActor> nameActor)
+{
+	this->nameActor = nameActor;
+}
+
+vtkSmartPointer<vtkActor> RobotVisualization::getNameActor()
+{
+	return this->nameActor;
+}
+
 vtkSmartPointer<vtkActor> RobotVisualization::getTop()
 {
 	return top;

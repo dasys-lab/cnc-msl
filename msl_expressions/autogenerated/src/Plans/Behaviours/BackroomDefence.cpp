@@ -25,7 +25,7 @@ namespace alica
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData.getOwnPositionVision();
         auto alloBallPos = wm->ball.getAlloBallPosition();
-        auto goaliePos = wm->robots.getTeamMatePosition(1, 0);
+        auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
         auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 

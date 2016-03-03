@@ -132,4 +132,12 @@
     <key href="../Behaviours/BackroomDefence.beh#1454507819086"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Dribble/DribbleControl.beh#1450175539163"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/MoveToPointDynamic.beh#1456997097907"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
