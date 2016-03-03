@@ -416,7 +416,7 @@ namespace msl
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getAlloBallPosition();
 		if(ball != nullptr && ownPos != nullptr) {
-			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
+			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->y});
 		}
 		switch(wm->game.getSituation()) {
 			case Situation::Start:
