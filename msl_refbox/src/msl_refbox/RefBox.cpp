@@ -12,6 +12,7 @@ namespace msl_refbox
 	{
 		setObjectName("RefBox");
 		gameData = new GameData(this);
+		this->debug = false;
 	}
 
 	void RefBox::initPlugin(qt_gui_cpp::PluginContext& context)
@@ -50,6 +51,9 @@ namespace msl_refbox
 		connect(Their_Penalty_bot, SIGNAL(clicked()), gameData, SLOT(TheirPenaltyPressed()));
 
 		connect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
+
+		// debug
+                connect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
 
 		//Connect Information
 		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalToggled(bool)));
@@ -105,6 +109,8 @@ namespace msl_refbox
 
 	void RefBox::shutdownPlugin()
 	{
+	        disconnect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
+
 		disconnect(Play_On_bot, SIGNAL(clicked()), gameData, SLOT(PlayOnPressed()));
 		disconnect(Stop_bot, SIGNAL(clicked()), gameData, SLOT(StopPressed()));
 		disconnect(Halt_bot, SIGNAL(clicked()), gameData, SLOT(HaltPressed()));
@@ -146,6 +152,24 @@ namespace msl_refbox
 									const qt_gui_cpp::Settings& instance_settings)
 	{
 
+	}
+
+	void RefBox::onDebugToggled(bool checked)
+	{
+	        this->debug = checked;
+
+	        if (checked)
+	                std::cout << "Debug mode enabled" << std::endl;
+	        else
+                        std::cout << "Debug mode disabled" << std::endl;
+	}
+
+	void RefBox::debugLog(std::string msg)
+	{
+	        if(false == this->debug)
+	                return;
+
+	        std::cout << msg << std::endl;
 	}
 
 }

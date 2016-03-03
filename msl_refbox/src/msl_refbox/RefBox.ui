@@ -9002,17 +9002,30 @@
       <widget class="QCheckBox" name="chk_reconnect">
        <property name="geometry">
         <rect>
-         <x>154</x>
+         <x>100</x>
          <y>3</y>
          <width>141</width>
          <height>23</height>
         </rect>
        </property>
        <property name="text">
-        <string>Auto-Reconnect</string>
+        <string>Auto Reconnect</string>
        </property>
        <property name="checked">
         <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="chk_debug">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>3</y>
+         <width>97</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Debug</string>
        </property>
       </widget>
      </widget>
@@ -9129,7 +9142,7 @@
          <property name="maximumSize">
           <size>
            <width>200000</width>
-           <height>100</height>
+           <height>100000</height>
           </size>
          </property>
          <attribute name="horizontalHeaderDefaultSectionSize">
@@ -9160,7 +9173,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>100</height>
+           <height>100000</height>
           </size>
          </property>
          <property name="undoRedoEnabled">

@@ -553,8 +553,7 @@ namespace msl_refbox
 
 	void GameData::processCharacterBasedProtocol(const char * data)
 	{
-
-		QString Cmd("SsNkKpPfFgGtTcCHaALDdoOiI");
+		QString Cmd("SsNkKpPfFgGtTcCHaALDdoOiIyYrR");
 		QString valid_cmd;
 
 		QString Msg(data);
@@ -565,6 +564,12 @@ namespace msl_refbox
 
                   return;
                 }
+
+                this->refBox->debugLog(Msg.toStdString());
+
+                // TODO this is a workaround to remove unnecassary characters send by the new refbox!!
+                if (Msg.size() > 1)
+                        Msg.remove(1, Msg.size() - 1);
 
 		/* Comandos Internos */
 		if (Msg.contains("W"))
@@ -612,12 +617,14 @@ namespace msl_refbox
 		{
 			//Third half
 			Msg.remove("3");
+                        this->log("Begin third half", false, GameData::Side::ALL);
 		}
 
 		if (Msg.contains('4'))
 		{
 			//Fourth half
 			Msg.remove("4");
+                        this->log("Begin fourth half", false, GameData::Side::ALL);
 		}
 
 		/* Proc msg */
@@ -717,6 +724,18 @@ namespace msl_refbox
 
                                 if (valid_cmd == "i")
                                         this->log("Player in", false, Side::MAGENTA);
+
+                                if (valid_cmd == "Y")
+                                        this->log("Yellow Card", false, Side::CYAN);
+
+                                if (valid_cmd == "y")
+                                        this->log("Yellow Card", false, Side::MAGENTA);
+
+                                if (valid_cmd == "R")
+                                        this->log("Red Card", false, Side::CYAN);
+
+                                if (valid_cmd == "r")
+                                        this->log("Red Card", false, Side::MAGENTA);
 			}
 		}
 	}
