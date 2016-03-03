@@ -23,14 +23,25 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1417017564406) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::BallHandleCmd bhc;
         //MOTION:
-
-        mc.motion.angle = -2.67;
-        mc.motion.rotation = 0.0;
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        mc.motion.angle = 0;
+        mc.motion.rotation = 0;
         mc.motion.translation = 1000.0;
 
         this->send(mc);
 
+        if (egoBallPos->length() < 150)
+        {
+
+            bhc.leftMotor = -30;
+            bhc.rightMotor = -30;
+
+            this->send(bhc);
+
+            //    return mc;
+        }
         /*PROTECTED REGION END*/
     }
     void DriveForward::initialiseParameters()

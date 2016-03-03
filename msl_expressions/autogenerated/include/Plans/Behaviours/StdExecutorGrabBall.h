@@ -20,6 +20,17 @@ namespace alica
         virtual ~StdExecutorGrabBall();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1441209011595) ENABLED START*/ //Add additional public methods here
+        shared_ptr<geometry::CNPosition> ownPos;
+
+        double oldDistance;
+        double kP;
+        double kD;
+        double rotate_P;
+        int isMovingCloserIter;
+        int isMovingAwayIter;
+        int maxIter;
+        double timeForPass;
+
         void readConfigParameters();
         /*PROTECTED REGION END*/
     protected:
@@ -30,6 +41,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1441209011595) ENABLED START*/ //Add additional private methods here
         double catchRadius;
         int count;
+        int iteration;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
