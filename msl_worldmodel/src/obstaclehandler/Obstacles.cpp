@@ -44,8 +44,16 @@ namespace msl
 	void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
 		//TODO save lists in WM
+
+		auto myOdo = wm->rawSensorData.getCorrectedOdometryInfo();
+		if (!myOdo)
+		{
+			// The check is necessary, because in the simulator you can get obstacles without an correctedOdometryInfo().
+			return;
+		}
+
 		// SETUP
-		setupAnnotatedObstacles(myObstacles, wm->rawSensorData.getCorrectedOdometryInfo());
+		setupAnnotatedObstacles(myObstacles, myOdo);
 		// CLUSTERING
 		clusterAnnotatedObstacles();
 		// CREATE DATASTRUCTURES FOR WM, DELAUNAY-GENERATOR, ETC.
