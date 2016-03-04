@@ -238,9 +238,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	Update_timer->start(50);
 }
 
-/**
- Actualiza a informação dos objectos
- */
+
 void FieldWidget3D::update_robot_info(void)
 {
 	lock_guard<mutex> lock(swmMutex);
@@ -301,6 +299,8 @@ void FieldWidget3D::update_robot_info(void)
 			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 			{
 				renderer->RemoveActor(r->getBall());
+				renderer->RemoveActor(r->getBallVelocityActor());
+				r->setBallVelocity(nullptr);
 				r->setBall(nullptr);
 			}
 			if (r->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
@@ -340,7 +340,10 @@ void FieldWidget3D::update_robot_info(void)
 					}
 					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
 					{
+
 						renderer->RemoveActor(member->getBall());
+						renderer->RemoveActor(member->getBallVelocityActor());
+						member->setBallVelocity(nullptr);
 						member->setBall(nullptr);
 					}
 					if (member->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
@@ -1305,6 +1308,9 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
 	i++;
 	savedSharedWorldInfo.push_front(info);
 	bool alreadyIn = false;
+
+//	cout << "FieldWidget3D: BallVel X: " << info->ball.velocity.vx << ", Y: " << info->ball.velocity.vy << endl;
+
 	for (auto element : latestInfo)
 	{
 		if (element->getId() == info->senderID)
@@ -1338,20 +1344,18 @@ void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot,
 {
 	robot->getBall()->SetPosition(x, y, z);
 	robot->getBallVelocity()->SetPoint1(x, y, z);
-	robot->getBallVelocity()->SetPoint2(x + info->ball.velocity.vx / 1000, y + info->ball.velocity.vy / 1000,
+	auto ballVelTrans = transform(info->ball.velocity.vx, info->ball.velocity.vy);
+	robot->getBallVelocity()->SetPoint2(x + ballVelTrans.first / 1000, y + ballVelTrans.second / 1000,
 										z + info->ball.velocity.vz / 1000);
-	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
-	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
-	velocity->SetMapper(velocityMapper);
-	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
-	velocity->GetProperty()->SetColor(1, 0, 0);
-	velocity->GetProperty()->SetDiffuse(0.4);
-	velocity->GetProperty()->SetAmbient(0.8);
-	renderer->RemoveActor(robot->getBallVelocityActor());
-	robot->setBallVelocityActor(velocity);
-	renderer->AddActor(velocity);
-
+//	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+//	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
+//	vtkSmartPointer<vtkActor> velocity = robot->getBallVelocityActor();
+//	velocity->SetMapper(velocityMapper);
+//	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
+//	velocity->GetProperty()->SetColor(1, 0, 0);
+//	velocity->GetProperty()->SetDiffuse(0.4);
+//	velocity->GetProperty()->SetAmbient(0.8);
+//	renderer->AddActor(velocity);
 }
 
 void FieldWidget3D::drawOpponent(double x, double y, double z)
@@ -1486,7 +1490,7 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	// Name Actor
 	// Create text
 	vtkSmartPointer<vtkVectorText> textSource = vtkSmartPointer<vtkVectorText>::New();
-	textSource->SetText(robot->getName().c_str());
+	textSource->SetText((robot->getName()).c_str());
 	textSource->Update();
 
 	// Create a mapper and actor
@@ -1500,6 +1504,7 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	nameActor->GetProperty()->SetAmbient(0.8);
 	nameActor->SetPosition(x, y, z + 1);
 	nameActor->SetScale(0.5);
+
 	renderer->AddActor(nameActor);
 	nameActor->SetCamera( renderer->GetActiveCamera() );
 
@@ -1523,7 +1528,8 @@ void FieldWidget3D::moveSharedBall(shared_ptr<RobotVisualization> robot, double 
 
 void FieldWidget3D::initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
 {
-	// Create a circle
+
+	//TODO: replace this with a vtkSphereSource
 	vtkSmartPointer<vtkRegularPolygonSource> polygonSource = vtkSmartPointer<vtkRegularPolygonSource>::New();
 
 	//polygonSource->GeneratePolygonOff();
@@ -1536,7 +1542,7 @@ void FieldWidget3D::initSharedBall(shared_ptr<RobotVisualization> robot, vtkRend
 	mapper->SetInputConnection(polygonSource->GetOutputPort());
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
-	actor->GetProperty()->SetColor(0.3, 0.3, 0.5);
+	actor->GetProperty()->SetColor(0, 0, 0.5);
 	actor->GetProperty()->SetDiffuse(0.4);
 	actor->GetProperty()->SetAmbient(0.8);
 	robot->setSharedBall(actor);

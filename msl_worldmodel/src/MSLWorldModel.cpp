@@ -133,7 +133,9 @@ namespace msl
 								+ msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
 				wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
 			}
-			else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0 && msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0 && msg->name[i].compare("football") != 0)
+			else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0
+					&& msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0
+					&& msg->name[i].compare("football") != 0)
 			{
 				msl_sensor_msgs::ObstacleInfo obsInfo;
 				obsInfo.diameter = 500.0;
@@ -141,22 +143,22 @@ namespace msl
 				obsInfo.y = msg->pose[i].position.y * 1000.0;
 
 				//only if obstacle is closer than 6m
-				if(sqrt(obsInfo.x*obsInfo.x + obsInfo.y*obsInfo.y) < 6000) {
+				if (sqrt(obsInfo.x * obsInfo.x + obsInfo.y * obsInfo.y) < 6000)
+				{
 					wmsim->obstacles.push_back(obsInfo);
 				}
 			}
 
-
 			if (msg->name[i] == "football")
 			{
-					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
-					wmsim->ball.confidence = 1.0;
-					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
-					wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
-					wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
-					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
-					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
-					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+				wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
+				wmsim->ball.confidence = 1.0;
+				wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
+				wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
+				wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
+				wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
+				wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
+				wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
 			}
 		}
 
@@ -172,17 +174,17 @@ namespace msl
 		wmsim->ball.point.y = sin(angle) * dist;
 
 		//Only if ball is closer than 7m
-		if(dist > 7000) {
+		if (dist > 7000)
+		{
 			wmsim->ball.point.x = 0;
 			wmsim->ball.point.y = 0;
 			wmsim->ball.confidence = 0;
 		}
 
-		for (int i=0; i < 60; i++)
+		for (int i = 0; i < 60; i++)
 		{
 			wmsim->distanceScan.sectors.push_back(20000);
 		}
-
 
 		for (auto& obs : wmsim->obstacles)
 		{
@@ -192,7 +194,7 @@ namespace msl
 			double angle = atan2(y, x) - wmsim->odometry.position.angle;
 			double dist = sqrt(x * x + y * y);
 
-			int sector = (int)(angle/(2*M_PI/60.0)) % 60;
+			int sector = (int)(angle / (2 * M_PI / 60.0)) % 60;
 			if (sector < 0)
 				sector += 60;
 			wmsim->distanceScan.sectors[sector] = dist;
@@ -200,9 +202,7 @@ namespace msl
 			obs.x = cos(angle) * dist;
 			obs.y = sin(angle) * dist;
 
-
 		}
-
 
 		onWorldModelData(wmsim);
 	}
@@ -214,16 +214,19 @@ namespace msl
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-		if(game.ownGoalColor == Color::Yellow) {
+		if (game.ownGoalColor == Color::Yellow)
+		{
 			msg->odometry.position.x = -msg->odometry.position.x;
 			msg->odometry.position.y = -msg->odometry.position.y;
 			msg->odometry.position.angle += M_PI;
-			while(msg->odometry.position.angle > M_PI) {
-				msg->odometry.position.angle -= 2*M_PI;
+			while (msg->odometry.position.angle > M_PI)
+			{
+				msg->odometry.position.angle -= 2 * M_PI;
 			}
 			msg->odometry.motion.angle += M_PI;
-			while(msg->odometry.motion.angle > M_PI) {
-				msg->odometry.motion.angle -= 2*M_PI;
+			while (msg->odometry.motion.angle > M_PI)
+			{
+				msg->odometry.motion.angle -= 2 * M_PI;
 			}
 		}
 
@@ -377,5 +380,4 @@ namespace msl
 		rawSensorData.processLightBarrier(msg);
 	}
 } /* namespace msl */
-
 
