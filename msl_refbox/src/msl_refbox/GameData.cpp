@@ -866,7 +866,7 @@ namespace msl_refbox
 		}
 		else
 		{
-			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": 50");
+			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"ageMs\": 50");
 		}
 		logString += "}\0";
 
