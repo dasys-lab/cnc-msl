@@ -18,7 +18,7 @@
     <inState>#1457015277575</inState>
     <outState>#1457015292860</outState>
   </transitions>
-  <transitions id="1457015478636" name="MISSING_NAME" comment="BallMoved || BallMovedMessage || 10Secs since start" msg="">
+  <transitions id="1457015478636" name="MISSING_NAME" comment="WatchBallMessage || 10Secs since start" msg="">
     <preCondition id="1457015479684" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1457015292860</inState>
     <outState>#1457015318562</outState>

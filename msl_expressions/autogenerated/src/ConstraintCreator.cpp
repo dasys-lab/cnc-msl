@@ -112,6 +112,10 @@ namespace alica
         switch (constraintConfId)
         {
 
+            case 1434112519736:
+                return make_shared<Constraint1434112519736>();
+                break;
+
             case 1445442215438:
                 return make_shared<Constraint1445442215438>();
                 break;

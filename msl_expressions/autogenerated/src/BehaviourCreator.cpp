@@ -3,9 +3,11 @@ using namespace std;
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
 
+#include  "Plans/Attack/SearchForPassPoint.h"
+
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
-#include  "Plans/Attack/SearchForPassPoint.h"
+#include  "Plans/Behaviours/MoveToPointDynamic.h"
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
@@ -127,16 +129,21 @@ namespace alica
         switch (behaviourConfId)
         {
 
-            case 1417620730939:
-
-                return make_shared<AlignAndShootTwoHoledWall>();
-                break;
-
             case 1436269036396:
 
             case 1441107270872:
 
                 return make_shared<SearchForPassPoint>();
+                break;
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledWall>();
+                break;
+
+            case 1456997097907:
+
+                return make_shared<MoveToPointDynamic>();
                 break;
 
             case 1431531542052:
