@@ -106,12 +106,12 @@
     <inState>#1426691835473</inState>
     <outState>#1413992564409</outState>
   </transitions>
-  <transitions id="1426692326813" name="MISSING_NAME" comment="situation == stop" msg="">
+  <transitions id="1426692326813" name="MISSING_NAME" comment="situation != standard own situation || stop" msg="">
     <preCondition id="1426692328653" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426691966433</inState>
     <outState>#1413992564409</outState>
   </transitions>
-  <transitions id="1426692328789" name="MISSING_NAME" comment="situation == stop" msg="">
+  <transitions id="1426692328789" name="MISSING_NAME" comment="situation != opp standard situation || start" msg="">
     <preCondition id="1426692330833" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426691842031</inState>
     <outState>#1413992564409</outState>
