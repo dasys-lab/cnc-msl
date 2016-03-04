@@ -97,6 +97,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/Robotcheck/RobotTest.h"
+
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 #include  "Plans/Behaviours/GetBall.h"
@@ -388,6 +390,11 @@ namespace alica
             case 1435159282996:
 
                 return make_shared<SpinSlowly>();
+                break;
+
+            case 1456756164754:
+
+                return make_shared<RobotTest>();
                 break;
 
             case 1455537879822:

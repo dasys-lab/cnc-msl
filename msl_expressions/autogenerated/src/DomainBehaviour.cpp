@@ -70,6 +70,7 @@ namespace alica
 	{
 		pm.senderID = ownID;
 		passMsgPublisher.publish(pm);
+		passMsgPublisher.publish(pm);
 	}
 
 	void alica::DomainBehaviour::send(msl_helper_msgs::WatchBallMsg& wb)

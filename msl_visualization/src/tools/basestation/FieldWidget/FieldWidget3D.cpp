@@ -22,6 +22,7 @@
 
 #include "FieldWidget3D.h"
 #include <vtkLineWidget.h>
+#include <vtkFollower.h>
 #include <vtkDiskSource.h>
 #include <vtkArcSource.h>
 
@@ -258,6 +259,7 @@ void FieldWidget3D::update_robot_info(void)
 				{
 					renderer->RemoveActor(r->getTop());
 					renderer->RemoveActor(r->getBottom());
+					renderer->RemoveActor(r->getNameActor());
 					renderer->RemoveActor(r->getBall());
 					renderer->RemoveActor(r->getBallVelocityActor());
 					renderer->RemoveActor(r->getSharedBall());
@@ -281,6 +283,7 @@ void FieldWidget3D::update_robot_info(void)
 		{
 			shared_ptr<RobotVisualization> r = make_shared<RobotVisualization>();
 			r->setId(robot->getMsg()->senderID);
+			r->setName(to_string(robot->getMsg()->senderID));
 			r->setBall(nullptr);
 			auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
 			drawTeamRobot(r, pos.first / 1000, pos.second / 1000, 0);
@@ -781,7 +784,7 @@ void FieldWidget3D::addArc(vtkRenderer *renderer, float x, float y, float radius
 	vtkSmartPointer<vtkArcSource> arcSource = vtkSmartPointer<vtkArcSource>::New();
 	arcSource->SetResolution(100);
 	arcSource->NegativeOff();
-	arcSource->SetCenter(x,y,0);
+	arcSource->SetCenter(x, y, 0);
 	arcSource->SetPoint1(x + radius * cos(startDeg * M_PI / 180), y + radius * sin(startDeg * M_PI / 180), 0);
 	arcSource->SetPoint2(x + radius * cos(endDeg * M_PI / 180), y + radius * sin(endDeg * M_PI / 180), 0);
 
@@ -1453,6 +1456,9 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	ug->SetPoints(points);
 	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
 
+	vtkSmartPointer<vtkDataSetMapper> teamTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+	teamTopMapper->SetInput(ug);
+
 	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
 	cubeSrc->SetXLength(0.52);
 	cubeSrc->SetYLength(0.52);
@@ -1460,9 +1466,6 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 
 	vtkSmartPointer<vtkPolyDataMapper> teamBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 	teamBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
-
-	vtkSmartPointer<vtkDataSetMapper> teamTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-	teamTopMapper->SetInput(ug);
 
 	vtkSmartPointer<vtkActor> teamBottom = vtkSmartPointer<vtkActor>::New();
 	teamBottom->SetMapper(teamBottomMapper);
@@ -1480,8 +1483,29 @@ void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x
 	teamTop->GetProperty()->SetAmbient(0.8);
 	renderer->AddActor(teamTop);
 
+	// Name Actor
+	// Create text
+	vtkSmartPointer<vtkVectorText> textSource = vtkSmartPointer<vtkVectorText>::New();
+	textSource->SetText(robot->getName().c_str());
+	textSource->Update();
+
+	// Create a mapper and actor
+	vtkSmartPointer<vtkPolyDataMapper> nameMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+	nameMapper->SetInputConnection(textSource->GetOutputPort());
+
+	vtkSmartPointer<vtkFollower> nameActor = vtkSmartPointer<vtkFollower>::New();
+	nameActor->SetMapper(nameMapper);
+	nameActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
+	nameActor->GetProperty()->SetDiffuse(0.4);
+	nameActor->GetProperty()->SetAmbient(0.8);
+	nameActor->SetPosition(x, y, z + 1);
+	nameActor->SetScale(0.5);
+	renderer->AddActor(nameActor);
+	nameActor->SetCamera( renderer->GetActiveCamera() );
+
 	robot->setTop(teamTop);
 	robot->setBottom(teamBottom);
+	robot->setNameActor(nameActor);
 	team.push_front(robot);
 }
 
@@ -1489,6 +1513,7 @@ void FieldWidget3D::moveRobot(shared_ptr<RobotVisualization> robot, double x, do
 {
 	robot->getTop()->SetPosition(x, y, z + 0.4);
 	robot->getBottom()->SetPosition(x, y, z + 0.2);
+	robot->getNameActor()->SetPosition(x, y, z + 1);
 }
 
 void FieldWidget3D::moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z)

@@ -15,9 +15,9 @@
 
 #include  "Plans/Example/constraints/ExamplePlan1433938652021Constraints.h"
 
-#include  "Plans/Standards/Opponent/FreeKick/constraints/StopRobots1457015643757Constraints.h"
-
 #include  "Plans/Defence/constraints/BackroomDefence1454507425037Constraints.h"
+
+#include  "Plans/Standards/Opponent/FreeKick/constraints/StopRobots1457015643757Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
@@ -66,6 +66,8 @@
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
 
 #include  "Plans/Attack/constraints/PassPlay1436268896671Constraints.h"
+
+#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
 
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
 

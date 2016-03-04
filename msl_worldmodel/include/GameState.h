@@ -13,6 +13,7 @@ namespace msl
 	enum GameState
 	{
 		Duel, OwnBallPossession, OppBallPossession, NobodyInBallPossession
+		//former:  Melee, Attack, Defend, Conflict
 	};
 }
 

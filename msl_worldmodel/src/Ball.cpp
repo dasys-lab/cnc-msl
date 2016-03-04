@@ -578,6 +578,16 @@ namespace msl
 		return ret;
 	}
 
+	double Ball::getBallConfidenceVision(int index)
+	{
+		auto x = ballPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return 0;
+		}
+		return x->certainty;
+	}
+
 	Velocity Ball::allo2Ego(Velocity vel, Position pos)
 	{
 		Velocity ego;

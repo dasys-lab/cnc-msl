@@ -151,6 +151,7 @@ namespace msl_refbox
 
 			void disconnectTCP();
 			void disconnectUDP();
+			void parseXML(const QByteArray& data);
 	};
 
 

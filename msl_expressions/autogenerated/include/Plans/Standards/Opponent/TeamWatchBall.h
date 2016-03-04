@@ -14,13 +14,13 @@ namespace alica
         virtual ~TeamWatchBall();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1457015532224) ENABLED START*/ //Add additional public methods here
-		int maxSend;
-		double moveDistance;
-		shared_ptr<geometry::CNPoint2D> ballPos;
+        int maxSend;
+        double moveDistance;
+        shared_ptr<geometry::CNPoint2D> ballPos;
 
-		int ballMovedOccurrences;
-		int maxBallMovedOccurrences;
-		int itcounter;
+        int ballMovedOccurrences;
+        int maxBallMovedOccurrences;
+        int itcounter;
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();

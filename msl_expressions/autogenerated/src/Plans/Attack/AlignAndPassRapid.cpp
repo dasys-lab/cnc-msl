@@ -320,7 +320,7 @@ namespace alica
             mc.motion.angle = driveTo->angleTo();
             mc.motion.translation = driveTo->length();
 
-            //send(mc);
+            send(mc);
 
         }
         catch (exception& e)
