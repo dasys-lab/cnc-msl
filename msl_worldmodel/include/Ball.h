@@ -52,6 +52,9 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
 		shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
 		shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
+		bool ballMovedSiginficantly();
+
+
 		void updateHaveBall();
 		void updateOnBallHypothesisList(unsigned long long imageTime);
 		void updateOnLocalizationData(unsigned long long imageTime);

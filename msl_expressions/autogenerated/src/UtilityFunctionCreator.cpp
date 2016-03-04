@@ -15,6 +15,8 @@
 
 #include  "Plans/Example/ExamplePlan1433938652021.h"
 
+#include  "Plans/Standards/Opponent/FreeKick/StopRobots1457015643757.h"
+
 #include  "Plans/Defence/BackroomDefence1454507425037.h"
 
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
@@ -36,6 +38,8 @@
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
+
+#include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
@@ -62,8 +66,6 @@
 #include  "Plans/GameStrategy/Other/DroppedBall1426694906399.h"
 
 #include  "Plans/Attack/PassPlay1436268896671.h"
-
-#include  "Plans/Robotcheck/Robotcheck1456756058055.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
 
@@ -135,6 +137,10 @@ namespace alica
                 return make_shared<UtilityFunction1433938652021>();
                 break;
 
+            case 1457015643757:
+                return make_shared<UtilityFunction1457015643757>();
+                break;
+
             case 1454507425037:
                 return make_shared<UtilityFunction1454507425037>();
                 break;
@@ -177,6 +183,10 @@ namespace alica
 
             case 1436960675873:
                 return make_shared<UtilityFunction1436960675873>();
+                break;
+
+            case 1457015277573:
+                return make_shared<UtilityFunction1457015277573>();
                 break;
 
             case 1449076138236:
@@ -229,10 +239,6 @@ namespace alica
 
             case 1436268896671:
                 return make_shared<UtilityFunction1436268896671>();
-                break;
-
-            case 1456756058055:
-                return make_shared<UtilityFunction1456756058055>();
                 break;
 
             case 1417620189234:

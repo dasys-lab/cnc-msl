@@ -97,11 +97,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
-#include  "Plans/Robotcheck/RobotTest.h"
-
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 #include  "Plans/Behaviours/GetBall.h"
+
+#include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
 
@@ -390,11 +390,6 @@ namespace alica
                 return make_shared<SpinSlowly>();
                 break;
 
-            case 1456756164754:
-
-                return make_shared<RobotTest>();
-                break;
-
             case 1455537879822:
 
                 return make_shared<DropBallAttackerPos>();
@@ -405,6 +400,11 @@ namespace alica
             case 1414840399972:
 
                 return make_shared<GetBall>();
+                break;
+
+            case 1457015565562:
+
+                return make_shared<TeamWatchBall>();
                 break;
 
             case 1455888617961:
