@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="StopRobots.pml#1457015643758"/>
+    <value xPos="146" yPos="67" width="65" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="StopRobots.pml#1457015643757"/>
+    <value width="549" height="329"/>
+  </extensions>
+  <extensions>
+    <key href="StopRobots.pml#1457015643759"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

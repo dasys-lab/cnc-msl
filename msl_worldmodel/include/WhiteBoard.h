@@ -14,6 +14,7 @@
 #include "InformationElement.h"
 #include <memory>
 #include "msl_helper_msgs/PassMsg.h"
+#include "msl_helper_msgs/WatchBallMsg.h"
 namespace msl
 {
 
@@ -24,12 +25,15 @@ namespace msl
 		WhiteBoard(MSLWorldModel* wm);
 		virtual ~WhiteBoard();
 		void processPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void processWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
 		shared_ptr<msl_helper_msgs::PassMsg> getPassMsg(int index = 0);
+		shared_ptr<msl_helper_msgs::WatchBallMsg> getWatchBallMsg(int index = 0);
 
 	private:
 		MSLWorldModel* wm;
 		unsigned long maxInformationAge = 1000000000;
-		shared_ptr<RingBuffer<InformationElement<msl_helper_msgs::PassMsg>>> passMsgs;
+		RingBuffer<InformationElement<msl_helper_msgs::PassMsg>> passMsgs;
+		RingBuffer<InformationElement<msl_helper_msgs::WatchBallMsg>> watchBallMsgs;
 	};
 
 } /* namespace msl */

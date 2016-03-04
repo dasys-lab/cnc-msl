@@ -590,7 +590,7 @@ namespace msl
 			index = 0;
 			for (int j = 0; j < fieldPlayers.size(); j++) {
 				if (i != j)
-					notInPenaltyPlayers [index++] = fieldPlayers [j];
+					notInPenaltyPlayers.push_back(fieldPlayers[j]);
 			}
 			ownPenaltyConstrains = ownPenaltyConstrains | outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
 		}

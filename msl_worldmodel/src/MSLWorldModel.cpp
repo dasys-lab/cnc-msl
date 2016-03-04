@@ -74,6 +74,7 @@ namespace msl
 										(MSLWorldModel*)this);
 
 		passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel*)this);
+		watchBallMsgSub = n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg, (MSLWorldModel*)this);
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
@@ -357,6 +358,10 @@ namespace msl
 	void MSLWorldModel::onPassMsg(msl_helper_msgs::PassMsgPtr msg)
 	{
 		whiteBoard.processPassMsg(msg);
+	}
+
+	void MSLWorldModel::onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg) {
+		whiteBoard.processWatchBallMsg(msg);
 	}
 
 	void MSLWorldModel::onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg)

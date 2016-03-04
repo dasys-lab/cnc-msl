@@ -470,8 +470,12 @@ namespace msl_refbox
 		{
 			char msg[4096];
 			int size = tcpsocket->read(msg, 4096);
+
+			this->refBox->debugLog("Number of received characters by tcp: " + std::to_string(size));
 			if (size > 0)
 			{
+                                if (size < 4096)
+                                      msg[size] = '\0';
 				processCharacterBasedProtocol(msg);
 			}
 		}
@@ -573,10 +577,6 @@ namespace msl_refbox
                 }
 
                 this->refBox->debugLog(Msg.toStdString());
-
-                // TODO this is a workaround to remove unnecassary characters send by the new refbox!!
-                if (Msg.size() > 1)
-                        Msg.remove(1, Msg.size() - 1);
 
 		/* Comandos Internos */
 		if (Msg.contains("W"))
@@ -866,7 +866,7 @@ namespace msl_refbox
 		}
 		else
 		{
-			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": null");
+			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"ageMs\": 50");
 		}
 		logString += "}\0";
 
