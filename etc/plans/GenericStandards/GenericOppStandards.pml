@@ -12,17 +12,17 @@
     <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
   </states>
   <states id="1432132225844" name="OppThrowIn" comment="">
-    <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925</plans>
     <inTransitions>#1432132365582</inTransitions>
     <outTransitions>#1432132429602</outTransitions>
   </states>
   <states id="1432132283325" name="OppKickOff" comment="">
-    <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925</plans>
     <inTransitions>#1432132368065</inTransitions>
     <outTransitions>#1432132432185</outTransitions>
   </states>
   <states id="1432132299937" name="OppGoalKick" comment="">
-    <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925</plans>
     <inTransitions>#1432132369863</inTransitions>
     <outTransitions>#1432132434174</outTransitions>
   </states>
@@ -36,7 +36,7 @@
     <outTransitions>#1432132441185</outTransitions>
   </states>
   <states id="1432132336430" name="OppCornerKick" comment="">
-    <plans xsi:type="alica:Plan">GenericDefend.pml#1432133473779</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925</plans>
     <inTransitions>#1432132372448</inTransitions>
     <outTransitions>#1432132438388</outTransitions>
   </states>

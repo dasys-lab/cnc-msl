@@ -21,7 +21,6 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
-
         //get own Pos
         auto ownPosition = wm->rawSensorData.getOwnPositionVision();
         ownPos = make_shared < geometry::CNPoint2D > (ownPosition->x, ownPosition->y);
@@ -57,7 +56,7 @@ namespace alica
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
-    	cout << "Start run CheckGoalKick <=============================================================" << endl;
+        cout << "Start run CheckGoalKick <=============================================================" << endl;
 
         waitingIter = 0;
 
@@ -218,12 +217,12 @@ namespace alica
                 kc.enabled = true;
                 if (distGoal > 5500)
                 {
-                	cout_kickpower = (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100;
+                    cout_kickpower = (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100;
                     kc.power = (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100;
                 }
                 else
                 {
-                	cout_kickpower = minKickPower - 50;
+                    cout_kickpower = minKickPower - 50;
                     kc.power = minKickPower - 50;
                 }
                 cout_kicking = true;
@@ -260,7 +259,7 @@ namespace alica
         bool rightBlocked = false;
         if (obs == nullptr || obs->size() == 0)
         {
-        	cout << "no obstacles found" << endl;
+            cout << "no obstacles found" << endl;
             return true;
         }
 

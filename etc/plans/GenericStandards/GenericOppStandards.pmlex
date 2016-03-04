@@ -2,39 +2,39 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GenericOppStandards.pml#1432132075123"/>
-    <value xPos="94" yPos="100" width="81" height="67"/>
+    <value xPos="75" yPos="270" width="81" height="68"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132075122"/>
-    <value yPos="-66" width="801" height="572"/>
+    <value yPos="-66" width="801" height="760"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132173301"/>
-    <value xPos="73" yPos="368" width="80" height="67"/>
+    <value xPos="174" yPos="550" width="157" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132225844"/>
-    <value xPos="144" yPos="14" width="98" height="67" collapsed="false"/>
+    <value xPos="110" width="168" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132283325"/>
-    <value xPos="270" yPos="35" width="94" height="67"/>
+    <value xPos="252" yPos="72" width="168" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132299937"/>
-    <value xPos="287" yPos="109" width="103" height="67"/>
+    <value xPos="261" yPos="163" width="168" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132312429"/>
-    <value xPos="289" yPos="179" width="122" height="67"/>
+    <value xPos="258" yPos="265" width="126" height="68"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132325758"/>
-    <value xPos="53" yPos="226" width="160" height="86" collapsed="false"/>
+    <value xPos="264" yPos="493" width="160" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132336430"/>
-    <value xPos="185" yPos="222" width="118" height="67"/>
+    <value xPos="258" yPos="346" width="168" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132365582"/>
@@ -67,7 +67,7 @@
   <extensions>
     <key href="GenericOppStandards.pml#1432132429602"/>
     <value>
-      <bendpoints xPos="471" yPos="-29"/>
+      <bendpoints xPos="486"/>
     </value>
   </extensions>
   <extensions>
@@ -112,6 +112,10 @@
   </extensions>
   <extensions>
     <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericDefend.pml#1432133473779"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
