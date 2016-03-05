@@ -16,7 +16,7 @@
     <outTransitions>#1426692244795</outTransitions>
   </states>
   <states id="1426691835473" name="Gameplay" comment="">
-    <plans xsi:type="alica:Plan">Attack/AttackPlay.pml#1434045709191</plans>
+    <plans xsi:type="alica:Plan">GameStrategy/Gameplay/GamePlay.pml#1457173546734</plans>
     <inTransitions>#1426691974126</inTransitions>
     <inTransitions>#1426692306144</inTransitions>
     <inTransitions>#1426692308143</inTransitions>
