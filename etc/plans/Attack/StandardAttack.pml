@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434046634656" name="StandardAttack" comment="lostBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434046634656" name="StandardAttack" comment="lostBall" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="1" maxCardinality="1">
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
@@ -143,7 +143,7 @@
     <inState>#1450175617600</inState>
     <outState>#1434048705508</outState>
   </transitions>
-  <entryPoints id="1434046634658" name="Attack" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1434046634658" name="Attack" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1434046634657</state>
   </entryPoints>

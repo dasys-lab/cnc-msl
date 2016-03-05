@@ -102,6 +102,9 @@ namespace msl
 
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 	{
+		if (this->timeLastSimMsgReceived == 0)
+			cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
+
 		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
 		this->timeLastSimMsgReceived = now;
