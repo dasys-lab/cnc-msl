@@ -25,6 +25,7 @@ UsedLibrary="/home/luk/eagle/lbr/TI-TXB0108PWR.lbr"
 UsedLibrary="/home/luk/eagle/lbr/TYCO.lbr"
 UsedLibrary="/home/luk/eagle/lbr/TYCO2.lbr"
 UsedLibrary="/home/luk/eagle/lbr/atmega16m1-32m1-64m1.lbr"
+UsedLibrary="/home/luk/eagle/lbr/dsei30-12a.lbr"
 UsedLibrary="/home/luk/eagle/lbr/is471f.lbr"
 UsedLibrary="/home/luk/eagle/lbr/jst_eh.lbr"
 UsedLibrary="/home/luk/eagle/lbr/jst_eph.lbr"
@@ -329,21 +330,14 @@ UsedLibrary="/home/luk/eagle-5.6.0/lbr/xicor.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/xilinx-xcv.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/zetex.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/zilog.lbr"
-UsedLibrary="/home/luk/eagle/lbr/dsei30-12a.lbr"
 
 [Win_1]
-Type="Control Panel"
-Loc="271 137 1504 660"
-State=0
-Number=0
-
-[Win_2]
 Type="Board Editor"
-Loc="348 14 947 413"
-State=1
+Loc="0 0 599 399"
+State=0
 Number=2
 File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.brd"
-View="-62.5235 -217.591 -35.7807 -187.448"
+View="-68.9716 -249.045 172.004 110.09"
 WireWidths=" 0 0.254 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
@@ -383,13 +377,13 @@ AddLevel=2
 PadsSameType=0
 Layer=16
 
-[Win_3]
+[Win_2]
 Type="Schematic Editor"
-Loc="1918 52 2517 423"
+Loc="2426 14 3025 413"
 State=1
 Number=1
 File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.sch"
-View="-5.73116 -4.10556 265.873 182.968"
+View="99.4156 118.948 208.567 194.129"
 WireWidths=" 0 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064 0.1524"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
@@ -428,8 +422,14 @@ ArcDirection=0
 AddLevel=2
 PadsSameType=0
 Layer=91
-Views=" 4: 41.4781 18.3149 313.082 205.388 5: -45.6024 23.6915 226.002 210.765 7: -8.814 -58.8494 317.111 165.638"
-Sheet="1"
+Views=" 5: 99.4156 118.948 208.567 194.129"
+Sheet="5"
+
+[Win_3]
+Type="Control Panel"
+Loc="261 127 1494 650"
+State=2
+Number=0
 
 [Desktop]
 Screen="3520 1200"
