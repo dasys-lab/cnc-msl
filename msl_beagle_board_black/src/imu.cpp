@@ -7,7 +7,6 @@
 
 
 #include "imu.h"
-#include "msl_actuator_msgs/IMUData.h"
 
 using namespace BlackLib;
 
