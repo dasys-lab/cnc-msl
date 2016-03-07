@@ -7,11 +7,11 @@
 
 #ifndef CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_BALLHANDLE_H_
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_BALLHANDLE_H_
+#define TIMEDIFFMS(n,o) (((n).tv_sec-(o).tv_sec)*1000+((n).tv_usec-(o).tv_usec)/1000)
+#define BallHandle_TIMEOUT 1000
 
-#include <stdint.h>
-#include <chrono>
+#include <sys/time.h>
 
-#include "config.h"
 #include "BlackDef.h"
 #include "BlackGPIO.h"
 #include "BlackPWM.h"
@@ -23,13 +23,13 @@ class BallHandle {
 		BlackLib::BlackPWM	*pwm;
 		BlackLib::BlackGPIO	*dir, *reset, *ff1, *ff2;
 
-		BlackLib::digitalValue		direction			= static_cast<BlackLib::digitalValue>(left);
-		BlackLib::digitalValue		direction_desired	= static_cast<BlackLib::digitalValue>(left);
+		BlackLib::digitalValue	direction			= static_cast<BlackLib::digitalValue>(left);
+		BlackLib::digitalValue	direction_desired	= static_cast<BlackLib::digitalValue>(left);
 
 		bool			enabled = false;
-		const int16_t	period = 10000;
-		uint16_t		speed = 0, speed_desired = 0;
-		timeval		last_ping;
+		const int		period = 10000;
+		int				speed = 0, speed_desired = 0;
+		timeval			last_ping;
 
 	public:
 		enum errorList {
@@ -53,7 +53,7 @@ class BallHandle {
 		void	checkTimeout();
 		void	controlBallHandling();
 
-		uint8_t	getError();
+		int		getError();
 };
 
 

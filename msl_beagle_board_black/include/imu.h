@@ -8,7 +8,7 @@
 #ifndef CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_IMU_H_
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_IMU_H_
 
-#include "config.h"
+#include "includes.h"
 
 
 const uint8_t ADR_G				= 0x6B;		// LSM9DS0
@@ -113,7 +113,6 @@ class IMU {
 		void		setRefGyro();
 		void		updateData(timeval time_now);
 		void		sendData(timeval time_now, ros::Publisher *imuPub);
-
 };
 
 

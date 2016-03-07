@@ -34,7 +34,7 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
+        shared_ptr < geometry::CNPoint2D > egoAlignPoint = make_shared < geometry::CNPoint2D > (0, 0);
         EntryPoint* ep = getParentEntryPoint(taskName);
         shared_ptr < geometry::CNPosition > pos = nullptr;
         int id = -1;
@@ -89,6 +89,16 @@ namespace alica
             }
 
             send(kc);
+
+            msl_helper_msgs::PassMsg pm;
+            pm.validFor = 2000000000;
+            pm.destination.x = egoAlignPoint->x;
+            pm.destination.y = egoAlignPoint->y;
+            pm.origin.x = ownPos->x;
+            pm.origin.y = ownPos->y;
+            pm.receiverID = id;
+            send(pm);
+
             this->success = true;
         }
         /*PROTECTED REGION END*/
