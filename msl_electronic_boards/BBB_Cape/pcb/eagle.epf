@@ -25,6 +25,7 @@ UsedLibrary="/home/luk/eagle/lbr/TI-TXB0108PWR.lbr"
 UsedLibrary="/home/luk/eagle/lbr/TYCO.lbr"
 UsedLibrary="/home/luk/eagle/lbr/TYCO2.lbr"
 UsedLibrary="/home/luk/eagle/lbr/atmega16m1-32m1-64m1.lbr"
+UsedLibrary="/home/luk/eagle/lbr/dsei30-12a.lbr"
 UsedLibrary="/home/luk/eagle/lbr/is471f.lbr"
 UsedLibrary="/home/luk/eagle/lbr/jst_eh.lbr"
 UsedLibrary="/home/luk/eagle/lbr/jst_eph.lbr"
@@ -335,8 +336,8 @@ Type="Board Editor"
 Loc="0 0 599 399"
 State=0
 Number=2
-File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2010/pcb/rekickNewGeneration007.brd"
-View="-5.28 -6.44293 165.28 104.126"
+File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.brd"
+View="-68.9716 -249.045 172.004 110.09"
 WireWidths=" 0 0.254 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
@@ -378,11 +379,11 @@ Layer=16
 
 [Win_2]
 Type="Schematic Editor"
-Loc="308 14 907 413"
+Loc="2426 14 3025 413"
 State=1
 Number=1
-File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2010/pcb/rekickNewGeneration007.sch"
-View="45.5365 28.8759 237.706 158.788"
+File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.sch"
+View="99.4156 118.948 208.567 194.129"
 WireWidths=" 0 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064 0.1524"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
@@ -421,12 +422,12 @@ ArcDirection=0
 AddLevel=2
 PadsSameType=0
 Layer=91
-Views=" 1: 36.7125 57.3325 196.853 165.592 2: 45.5365 28.8759 237.706 158.788"
-Sheet="2"
+Views=" 5: 99.4156 118.948 208.567 194.129"
+Sheet="5"
 
 [Win_3]
 Type="Control Panel"
-Loc="281 147 1514 670"
+Loc="261 127 1494 650"
 State=2
 Number=0
 

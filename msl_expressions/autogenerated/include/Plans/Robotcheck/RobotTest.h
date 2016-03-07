@@ -33,6 +33,7 @@ namespace alica
         bool imu;
         bool shovelSelectLow;
         bool shovelSelectHigh;
+        double kickPower;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here

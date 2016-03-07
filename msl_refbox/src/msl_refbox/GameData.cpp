@@ -454,41 +454,76 @@ namespace msl_refbox
 	/*==============================  RECEIVE METHODS ==============================*/
 	void GameData::receiveRefMsgTcp(void)
 	{
-		if (!localToggled && xmlToggled)
+		if (xmlToggled)
 		{
 			buffer.append(this->tcpsocket->readLine());
 			int index = buffer.indexOf('\n');
 
 			if (index > 0)
 			{
-				tinyxml2::XMLDocument doc;
-				doc.Parse(buffer.left(index));
-				tinyxml2::XMLElement* element = doc.FirstChildElement();
-
-
-		                if (element == nullptr)
-		                {
-		                        std::cerr << "Received bad refbox message: " << buffer.constData() << std::endl;
-		                }
-		                else
-		                {
-		                        xmlparser->handle(element);
-		                }
-
+			        this->parseXML(buffer.left(index));
                                 buffer.remove(0, index+1);
                                 this->updateGoals();
 			}
 		}
-		else if (!localToggled && charToggled)
+		else if (charToggled)
 		{
 			char msg[4096];
 			int size = tcpsocket->read(msg, 4096);
+
+			this->refBox->debugLog("Number of received characters by tcp: " + std::to_string(size));
 			if (size > 0)
 			{
+                                if (size < 4096)
+                                      msg[size] = '\0';
 				processCharacterBasedProtocol(msg);
 			}
 		}
 	}
+
+        void GameData::receiveRefMsgUdp(void)
+        {
+                QByteArray buffer;
+                buffer.resize(udpsocket->pendingDatagramSize());
+
+                QHostAddress sender;
+                quint16 senderPort;
+
+                udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+
+                if (buffer.size() > 0)
+                {
+                        if (xmlToggled)
+                        {
+                                this->parseXML(buffer);
+                        }
+                        else if (charToggled)
+                        {
+                                processCharacterBasedProtocol(buffer.data());
+                        }
+                }
+
+        }
+
+        void GameData::parseXML(const QByteArray& data)
+        {
+                if (this->localToggled)
+                        return;
+
+                tinyxml2::XMLDocument doc;
+                doc.Parse(data);
+                tinyxml2::XMLElement* element = doc.FirstChildElement();
+
+
+                if (element == nullptr)
+                {
+                        std::cerr << "Received bad refbox message: " << buffer.constData() << std::endl;
+                }
+                else
+                {
+                        xmlparser->handle(element);
+                }
+        }
 
         void GameData::updateGoals()
         {
@@ -524,35 +559,11 @@ namespace msl_refbox
                 return -1;
         }
 
-	void GameData::receiveRefMsgUdp(void)
-	{
-		QByteArray buffer;
-		buffer.resize(udpsocket->pendingDatagramSize());
-
-		QHostAddress sender;
-		quint16 senderPort;
-
-		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
-
-		if (buffer.size() > 0)
-		{
-			if (!localToggled && xmlToggled)
-			{
-				tinyxml2::XMLDocument doc;
-				doc.Parse(buffer.data());
-				tinyxml2::XMLElement* element = doc.FirstChildElement();
-				xmlparser->handle(element);
-			}
-			else if (!localToggled && charToggled)
-			{
-				processCharacterBasedProtocol(buffer.data());
-			}
-		}
-
-	}
-
 	void GameData::processCharacterBasedProtocol(const char * data)
 	{
+                 if (this->localToggled)
+	                return;
+
 		QString Cmd("SsNkKpPfFgGtTcCHaALDdoOiIyYrR");
 		QString valid_cmd;
 
@@ -566,10 +577,6 @@ namespace msl_refbox
                 }
 
                 this->refBox->debugLog(Msg.toStdString());
-
-                // TODO this is a workaround to remove unnecassary characters send by the new refbox!!
-                if (Msg.size() > 1)
-                        Msg.remove(1, Msg.size() - 1);
 
 		/* Comandos Internos */
 		if (Msg.contains("W"))
@@ -859,7 +866,7 @@ namespace msl_refbox
 		}
 		else
 		{
-			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"agesMs\": null");
+			logString += QString(",\"robots\": [], \"balls\": [], \"obstacles\": [], \"ageMs\": 50");
 		}
 		logString += "}\0";
 

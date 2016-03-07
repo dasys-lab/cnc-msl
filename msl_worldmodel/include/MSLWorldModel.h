@@ -16,6 +16,7 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
 #include <list>
@@ -67,6 +68,7 @@ namespace msl
 		void onGazeboModelState(gazebo_msgs::ModelStatesPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 		void onLightBarrierInfo(std_msgs::BoolPtr msg);
 
@@ -110,6 +112,7 @@ namespace msl
 		ros::Subscriber gazeboWorldModelSub;
 		ros::Subscriber sharedWorldSub;
 		ros::Subscriber passMsgSub;
+		ros::Subscriber watchBallMsgSub;
 		ros::Publisher sharedWorldPub;
 		ros::Subscriber correctedOdometrySub;
 		ros::Subscriber lightBarrierSub;

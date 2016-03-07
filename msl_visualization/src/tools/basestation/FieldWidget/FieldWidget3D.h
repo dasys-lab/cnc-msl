@@ -147,10 +147,10 @@ private:
     list<boost::shared_ptr<msl_msgs::PathPlanner>> pathPlannerInfo;
     list<boost::shared_ptr<msl_msgs::VoronoiNetInfo>> voronoiNetInfo;
     list<boost::shared_ptr<msl_msgs::CorridorCheck>> corridorCheckInfo;
-    vector<vtkActor*> pathLines;
-    vector<vtkActor*> netLines;
-    vector<vtkActor*> corridorLines;
-    vector<vtkActor*> sitePoints;
+    vector<vtkSmartPointer<vtkActor>> pathLines;
+    vector<vtkSmartPointer<vtkActor>> netLines;
+    vector<vtkSmartPointer<vtkActor>> corridorLines;
+    vector<vtkSmartPointer<vtkActor>> sitePoints;
 	ros::Subscriber sharedWorldInfoSubscriber;
 	ros::Subscriber pathPlannerSubscriber;
 	ros::Subscriber voronoiSitesSubscriber;
@@ -177,6 +177,7 @@ private:
     void createLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2);
     vtkSmartPointer<vtkActor> createColoredDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, double r, double g, double b);
     vtkSmartPointer<vtkActor> createColoredDot(float x, float y, float radius, double r, double g, double b);
+    void updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2);
     void addArc(vtkRenderer* renderer, float x, float y, float radius, float startDeg, float endDeg);
     void drawField(vtkRenderer* renderer);
     void addCircle(vtkRenderer *renderer, float x, float y, float radius);
@@ -187,10 +188,10 @@ private:
     void updateGridView();
     void deleteGridView();
 
-    vtkActor* createText(QString text);
-    vtkActor* createObstacle();
-    vtkActor* createDebugPt();
-    vtkActor* createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
+    vtkSmartPointer<vtkActor> createText(QString text);
+    vtkSmartPointer<vtkActor> createObstacle();
+    vtkSmartPointer<vtkActor> createDebugPt();
+    vtkSmartPointer<vtkActor> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2);
     void createDot(vtkRenderer* renderer, float x, float y, bool black, float radius=0.05);
     pair<double, double> transform(double x, double y);
 

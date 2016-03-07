@@ -48,10 +48,14 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getVisionBallPosition(int index = 0);
 		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getVisionBallPositionAndCertaincy(int index = 0);
 		shared_ptr<geometry::CNVelocity2D> getVisionBallVelocity(int index = 0);
+		double getBallConfidenceVision(int index = 0);
 
 		shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
 		shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
 		shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
+		bool ballMovedSiginficantly();
+
+
 		void updateHaveBall();
 		void updateOnBallHypothesisList(unsigned long long imageTime);
 		void updateOnLocalizationData(unsigned long long imageTime);

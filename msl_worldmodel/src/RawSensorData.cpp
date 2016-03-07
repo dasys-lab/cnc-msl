@@ -285,6 +285,8 @@ namespace msl
 			                                                                           data->ball.point.y);
 			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
 			                                                                                 data->ball.velocity.vy);
+
+			//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
 			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
 		} else {
 			wm->ball.updateHaveBall();

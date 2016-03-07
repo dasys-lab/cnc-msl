@@ -36,9 +36,9 @@ namespace alica
         double minOwnDistGoal;
         double closeGoalDist;
         double farGoalDist;
-        double obsDistGoal;
-        double ownDistGoal;
-        double ownDistObs;
+//        double obsDistGoal;
+//        double ownDistGoal;
+        double minOwnDistObs;
         double keeperDistGoal;
         double toleranceAngle;
         double minKickPower;
@@ -51,6 +51,10 @@ namespace alica
         double calcToleranceAngle();
         void kicking();
         bool checkGoalKeeper();
+
+        // testing variables for console output
+        double cout_kickpower;
+        bool cout_kicking;
         shared_ptr<vector<geometry::CNPoint2D>> getObstacles();
         /*PROTECTED REGION END*/};
 } /* namespace alica */

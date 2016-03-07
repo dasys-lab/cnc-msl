@@ -278,7 +278,7 @@ namespace alica
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            cerr << "S4PP: Could not cast the parameter properly" << endl;
         }
         if (!success)
         {

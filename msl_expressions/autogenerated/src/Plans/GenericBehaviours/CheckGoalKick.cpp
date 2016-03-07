@@ -21,8 +21,6 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
-        cout << "Start run CheckGoalKick <=============================================================" << endl;
-
         //get own Pos
         auto ownPosition = wm->rawSensorData.getOwnPositionVision();
         ownPos = make_shared < geometry::CNPoint2D > (ownPosition->x, ownPosition->y);
@@ -30,23 +28,36 @@ namespace alica
         //get ego ball pos
         egoBallPos = wm->ball.getEgoBallPosition();
 
-        readConfigParameters();
         toleranceAngle = calcToleranceAngle();
 //        cout << "toleranceAngle: " << toleranceAngle << " degree: " << toleranceAngle * 180 / M_PI << endl;
 
         if (checkGoalLine() && checkGoalKeeper() && checkShootPossibility())
         {
             // adding checkGoalKeeper()
-            cout << "kicking" << endl;
+//            cout << "kicking" << endl;
             kicking();
-            this->success = true;
+//            this->success = true;
         }
+
+        // console output
+        cout << "==========================================================================" << endl;
+        cout << "tolerance angle: " << toleranceAngle << endl;
+        cout << "1 = true | 0 = false" << endl;
+        cout << "check line to goal: " << checkGoalLine() << endl;
+        cout << "check goal keeper: " << checkGoalKeeper() << endl;
+        cout << "check shoot possibility: " << checkShootPossibility() << endl;
+        cout << "kick power: " << cout_kickpower << endl;
+        cout << "kicking = " << cout_kicking << endl;
+        cout << "own distance to goal: " << ownPos->distanceTo(goalPosMiddle) << endl;
+        cout << "minimum distance to obstacle: " << minOwnDistObs << endl;
 
         /*PROTECTED REGION END*/
     }
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
+        cout << "Start run CheckGoalKick <=============================================================" << endl;
+
         waitingIter = 0;
 
         field = msl::MSLFootballField::getInstance();
@@ -60,6 +71,12 @@ namespace alica
         goalPosLeft = field->posLeftOppGoalPost();
         goalPosRight = field->posRightOppGoalPost();
         goalPosMiddle = field->posOppGoalMid();
+
+        readConfigParameters();
+
+        // cout variables
+        cout_kickpower = 0;
+        cout_kicking = false;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1449076008755) ENABLED START*/ //Add additional methods here
@@ -68,26 +85,16 @@ namespace alica
      */
     bool CheckGoalKick::checkGoalLine()
     {
-
-//		cout << "goalPosMiddle: " << goalPosMiddle->toString();
         egoAlignPoint = goalPosMiddle;
 
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
         auto egoTarget = goalPosMiddle->alloToEgo(*ownPos);
 
-//		cout << "egoTarget: " << egoTarget->toString();
-//		cout << "angle to goal: " << egoTarget->angleTo() << " degree: " << egoTarget->angleTo() * 180 / M_PI << endl;
-
-//		cout << "if condition1: " << (egoTarget->angleTo() > (M_PI - toleranceAngle)) << endl;
-//		cout << "if condition2: " << (egoTarget->angleTo() > (-M_PI + toleranceAngle)) << endl;
-
         // if angle is smaller then tolerance angle return true
         if (egoTarget->angleTo() > (M_PI - toleranceAngle) || egoTarget->angleTo() < (-M_PI + toleranceAngle))
         {
-            cout << "ChackGoalLine = true" << endl;
             return true;
         }
-        cout << "ChackGoalLine = false" << endl;
         return false;
     }
 
@@ -100,19 +107,16 @@ namespace alica
     {
         auto obstacles = getObstacles();
 
-//		cout << "Distance ownPos <----> obstaclePos = " << ownPos->distanceTo(obstaclePos) << endl;
-//		cout << "Distance ownPos <----> GoalPosMiddle = " << ownPos->distanceTo(goalPosMiddle) << endl;
         // new min distance to obstacle depends on distance to goal
         double distGoal = wm->rawSensorData.getOwnPositionVision()->distanceTo(goalPosMiddle);
-//		cout << "ownDistGoal: " << distGoal << endl;
 
         if (distGoal < farGoalDist)
         {
-            ownDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + closeGoalDist;
+            minOwnDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + closeGoalDist;
         }
         else
         {
-            ownDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + farGoalDist;
+            minOwnDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + farGoalDist;
         }
 
         if (obstacles != nullptr)
@@ -123,13 +127,9 @@ namespace alica
             {
                 shared_ptr < geometry::CNPoint2D > obstaclePos = make_shared < geometry::CNPoint2D > (0, 0);
                 obstaclePos->x = obstacles->at(i).x;
-//				cout << "obstaclePos->x = " << obstaclePos->x << endl;
                 obstaclePos->y = obstacles->at(i).y;
-//				cout << "obstaclePos->y = " << obstaclePos->y << endl;
-//				cout << "Distance obstaclePos <----> GoalPosMiddle = " << obstaclePos->distanceTo(goalPosMiddle)
-//						<< endl;
 
-                if (ownPos->distanceTo(obstaclePos) < ownDistObs
+                if (ownPos->distanceTo(obstaclePos) < minOwnDistObs
                         || obstaclePos->distanceTo(goalPosMiddle) < minObsDistGoal)
                 {
                     corridorFree = false;
@@ -137,13 +137,10 @@ namespace alica
             }
 
             return corridorFree;
-
-//            cout << "obstaclePosX1 = " << obstaclePos->x << endl;
-//            cout << "obstaclePosY1 = " << obstaclePos->y << endl;
         }
         else
         {
-            cout << "No obstacle found. Ready to shoot!" << endl;
+//            cout << "No obstacle found. Ready to shoot!" << endl;
             return true;
         }
     }
@@ -158,7 +155,10 @@ namespace alica
         wheelSpeedRight = (*sc)["GoalKick"]->get<double>("GoalKick.Default.wheelSpeedRight", NULL);
         keeperDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.keeperDistGoal", NULL);
 
+        // is necessary to calculate the minimum distance to obstacle so that it is possible to shoot a goal
+        // close to goal --> distance to robot is higher
         closeGoalDist = (*sc)["GoalKick"]->get<double>("GoalKick.OwnDistObs.closeGoalDist", NULL);
+        // far from goal --> distance to robot can be smaller
         farGoalDist = (*sc)["GoalKick"]->get<double>("GoalKick.OwnDistObs.farGoalDist", NULL);
 
     }
@@ -203,10 +203,11 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.extension = 1;
         double distGoal = wm->rawSensorData.getOwnPositionVision()->distanceTo(goalPosMiddle);
-        cout << "distance: " << distGoal << endl;
-        cout << "kick power: " << (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100 << endl;
 
         if (wm->ball.haveBall())
+        // for testing
+        //TODO remove
+//        if (true)
         {
             // TODO adapt waiting
             // robot should shoot as early as possible
@@ -214,16 +215,17 @@ namespace alica
             if (waitingIter > 30)
             {
                 kc.enabled = true;
-                // TODO adapt kick power
-//				kc.power = minKickPower;
                 if (distGoal > 5500)
                 {
+                    cout_kickpower = (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100;
                     kc.power = (distGoal / 1000 - minOwnDistGoal / 1000) * 100 + 1100;
                 }
                 else
                 {
+                    cout_kickpower = minKickPower - 50;
                     kc.power = minKickPower - 50;
                 }
+                cout_kicking = true;
                 send(kc);
                 waitingIter = 0;
             }
@@ -240,7 +242,6 @@ namespace alica
     bool CheckGoalKick::checkGoalKeeper()
     {
         // copied and adapt from GoalKick.cpp
-        cout << "entered checlGoalKeeper()" << endl;
         auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
         auto ownPosV = wm->rawSensorData.getOwnPositionVision();
 
@@ -253,13 +254,12 @@ namespace alica
 
         double angleTolerance = 0.075;
         auto obs = wm->obstacles.getObstacles();
-//		auto obs = getObstacles();
         bool leftBlocked = false;
         bool midBlocked = false;
         bool rightBlocked = false;
         if (obs == nullptr || obs->size() == 0)
         {
-            cout << "no obstacle found!" << endl;
+            cout << "no obstacles found" << endl;
             return true;
         }
 
@@ -269,7 +269,6 @@ namespace alica
             obstaclePoint->x = obs->at(i).x;
             obstaclePoint->y = obs->at(i).y;
             double obsDist = obstaclePoint->alloToEgo(*ownPosV)->distanceTo(goalPosMiddle);
-//			cout << "CheckGoalKeeper: obsDist = " << obsDist << endl;
             if (leftBlocked && midBlocked && rightBlocked)
             {
                 break;
@@ -327,8 +326,8 @@ namespace alica
 
             if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > angleTolerance)
             {
-                cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI))
-                        << endl;
+//                cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI))
+//                        << endl;
                 return false;
             }
             else
@@ -337,7 +336,7 @@ namespace alica
             }
         }
 
-        cout << "CheckGoalKeeper: return false" << endl;
+//        cout << "CheckGoalKeeper: return false" << endl;
         return false;
     }
 
@@ -359,7 +358,7 @@ namespace alica
         {
             return NULL;
         }
-        cout << "found " << obstacles->size() << " obstacle" << endl;
+//        cout << "found " << obstacles->size() << " obstacle" << endl;
 
         for (int i = 0; i < obstacles->size(); i++)
         {

@@ -12,6 +12,7 @@
 #include <vtkActor.h>
 #include <string>
 #include <vtkLineSource.h>
+#include <vtkTextActor.h>
 #include <vtkRegularPolygonSource.h>
 
 
@@ -24,6 +25,8 @@ public:
 	void setBottom(vtkSmartPointer<vtkActor> bottom);
 	vtkSmartPointer<vtkActor> getTop();
 	void setTop(vtkSmartPointer<vtkActor> top);
+	void setNameActor(vtkSmartPointer<vtkActor> nameActor);
+	vtkSmartPointer<vtkActor> getNameActor();
 	int getId();
 	void setId(int id);
 	std::string getName();
@@ -45,6 +48,7 @@ private:
 	int senderId = 0;
 	vtkSmartPointer<vtkActor> top = nullptr;
 	vtkSmartPointer<vtkActor> bottom = nullptr;
+	vtkSmartPointer<vtkActor> nameActor = nullptr;
     vtkActor* ball = nullptr;
     vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
 	vtkSmartPointer<vtkActor> ballVelocityActor = nullptr;

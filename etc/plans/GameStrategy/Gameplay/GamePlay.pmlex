@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GamePlay.pml#1457173565462"/>
+    <value xPos="233" yPos="44" width="88" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173546734"/>
+    <value width="742" height="459"/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173565463"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173576569"/>
+    <value xPos="236" yPos="237" width="65" height="68" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173602825"/>
+    <value>
+      <bendpoints xPos="343" yPos="223"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173604378"/>
+    <value>
+      <bendpoints xPos="460" yPos="216"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GamePlayAttackType.pty#1457173624653"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DefendPlay.pml#1457173681216"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173833589"/>
+    <value xPos="-34" yPos="232"/>
+  </extensions>
+  <extensions>
+    <key href="GamePlay.pml#1457173842758"/>
+    <value xPos="176" yPos="384" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

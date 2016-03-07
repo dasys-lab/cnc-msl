@@ -26,8 +26,9 @@ namespace alica
 			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
 			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
 		}
-
 		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
+		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
+
 
 	}
 
@@ -69,6 +70,13 @@ namespace alica
 	{
 		pm.senderID = ownID;
 		passMsgPublisher.publish(pm);
+		passMsgPublisher.publish(pm);
+	}
+
+	void alica::DomainBehaviour::send(msl_helper_msgs::WatchBallMsg& wb)
+	{
+		wb.senderID = ownID;
+		watchBallMsgPublisher.publish(wb);
 	}
 } /* namespace alica */
 
