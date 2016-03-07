@@ -145,6 +145,7 @@ namespace msl
 	void PathProxy::sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path)
 	{
 		msl_msgs::PathPlanner pathMsg;
+                pathMsg.senderId = this->wm->getOwnId();
 		for(int i = 0; i < path->size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
@@ -164,6 +165,7 @@ namespace msl
 										shared_ptr<VoronoiNet> voronoi)
 	{
 		msl_msgs::VoronoiNetInfo netMsg;
+		netMsg.senderId = this->wm->getOwnId();
 		for (int i = 0; i < sites->size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
@@ -191,6 +193,7 @@ namespace msl
 										shared_ptr<VoronoiNet> voronoi)
 	{
 		msl_msgs::VoronoiNetInfo netMsg;
+                netMsg.senderId = this->wm->getOwnId();
 		for (int i = 0; i < sites->size(); i++)
 		{
 			msl_msgs::Point2dInfo info;

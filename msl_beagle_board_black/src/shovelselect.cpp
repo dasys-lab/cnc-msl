@@ -34,16 +34,18 @@ using namespace BlackLib;
 		return false;
 	}
 
-	bool ShovelSelect::setShovel(bool passing) {
-		if (passing != statePassing) {
-			passing = statePassing;
-			enabled = true;
+	bool ShovelSelect::setShovel(bool passing, timeval time_now) {
+		bool check = checkTimeout(time_now);
+		if (!check) {
 			if (passing) {
 				pwm->setSpaceRatioTime(passPWM, nanosecond);
 			} else {
 				pwm->setSpaceRatioTime(kickPWM, nanosecond);
 			}
-			pwm->setRunState(run);
+			if (!enabled) {
+				pwm->setRunState(run);
+				enabled = true;
+			}
 
 			return true;
 		}
