@@ -47,8 +47,7 @@ public:
 	vtkSmartPointer<vtkActor> getSharedBall();
 	void setSharedBall(vtkSmartPointer<vtkActor> sharedBall);
 
-	void hide(vtkRenderer *renderer);
-	void show(vtkRenderer *renderer);
+	void remove(vtkRenderer *renderer);
         void init(vtkRenderer *renderer);
 	void updatePosition(vtkRenderer *renderer);
         void updateBall(vtkRenderer *renderer);
@@ -68,6 +67,7 @@ private:
 private:
 	RobotInfo* robot;
         FieldWidget3D* field;
+        bool visible;
 
 	std::string name = "";
 	int id = 0;

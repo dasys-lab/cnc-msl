@@ -103,11 +103,12 @@ RobotVisualization::RobotVisualization(RobotInfo* robot, FieldWidget3D* field) :
 {
 	id = 0;
 	senderId = 0;
+	visible = false;
 }
 
 RobotVisualization::~RobotVisualization()
 {
-	// TODO Auto-generated destructor stub
+	// nothing to do here
 }
 
 vtkSmartPointer<vtkActor> RobotVisualization::getBottom()
@@ -209,8 +210,10 @@ void RobotVisualization::setSharedBall(vtkSmartPointer<vtkActor> sharedBall)
 	this->sharedBall = sharedBall;
 }
 
-void RobotVisualization::hide(vtkRenderer *renderer)
+void RobotVisualization::remove(vtkRenderer *renderer)
 {
+        this->visible = false;
+
         renderer->RemoveActor(this->top);
         renderer->RemoveActor(this->bottom);
         renderer->RemoveActor(this->nameActor);
@@ -219,21 +222,45 @@ void RobotVisualization::hide(vtkRenderer *renderer)
         renderer->RemoveActor(this->sharedBall);
 
         this->ballVelocity = nullptr;
-//        this->top = nullptr;
-//        this->bottom = nullptr;
-//        this->nameActor = nullptr;
-//        this->ball = nullptr;
-//        this->ballVelocityActor = nullptr;
-//        this->sharedBall = nullptr;
-}
 
-void RobotVisualization::show(vtkRenderer *renderer)
-{
-  // TODO
+        for (vtkSmartPointer<vtkActor> actor : pathLines)
+        {
+                if (actor != nullptr)
+                {
+                        renderer->RemoveActor(actor);
+                }
+        }
+        pathLines.clear();
+
+        for (vtkSmartPointer<vtkActor> actor : corridorLines)
+        {
+                if (actor != nullptr)
+                {
+                        renderer->RemoveActor(actor);
+                }
+       }
+       corridorLines.clear();for (vtkSmartPointer<vtkActor> actor : this->netLines)
+       {
+                if (actor != nullptr)
+                {
+                        renderer->RemoveActor(actor);
+                }
+        }
+        netLines.clear();
+
+        for (vtkSmartPointer<vtkActor> actor : sitePoints)
+        {
+                if (actor != nullptr)
+                {
+                        renderer->RemoveActor(actor);
+                }
+        }
 }
 
 void RobotVisualization::init(vtkRenderer *renderer)
 {
+        this->visible = true;
+
         this->setId(robot->getSharedWorldInfo()->senderID);
         this->setName(std::to_string(robot->getSharedWorldInfo()->senderID));
         this->setBall(nullptr);
@@ -326,7 +353,7 @@ void RobotVisualization::init(vtkRenderer *renderer)
 
 void RobotVisualization::updatePosition(vtkRenderer *renderer)
 {
-        if (this->top == nullptr)
+        if (false == visible)
           this->init(renderer);
 
         auto pos = FieldWidget3D::transform(robot->getSharedWorldInfo()->odom.position.x, robot->getSharedWorldInfo()->odom.position.y);
@@ -337,7 +364,7 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
 
 void RobotVisualization::updateBall(vtkRenderer *renderer)
 {
-        if (this->top == nullptr)
+        if (false == visible)
           this->init(renderer);
 
         if (this->ball == nullptr && robot->getSharedWorldInfo()->ball.confidence > 0)
@@ -394,7 +421,7 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 {
-        if (this->top == nullptr)
+        if (false == visible)
           this->init(renderer);
 
         // Draw shared ball
@@ -585,7 +612,7 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
                                                                                       -ppi->pathPoints.at(i - 1).x / 1000,
                                                                                       0.01, ppi->pathPoints.at(i).y / 1000,
                                                                                       -ppi->pathPoints.at(i).x / 1000, 0.01,
-                                                                                      Color::map["path"]);
+                                                                                      Color::getColor(this->robot->getId()));
                 pathLines.push_back(actor);
                 renderer->AddActor(actor);
         }

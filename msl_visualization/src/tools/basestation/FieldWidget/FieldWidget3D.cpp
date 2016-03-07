@@ -168,7 +168,7 @@ void FieldWidget3D::createLine(vtkRenderer *renderer, float x1, float y1, float 
         planeMapper->SetInput(planeSrc->GetOutput());
         vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
         lineActor->SetMapper(planeMapper);
-        lineActor->GetProperty()->SetColor(1, 1, 1);
+        lineActor->GetProperty()->SetColor(color[0], color[1], color[2]);
         lineActor->SetPosition(x1, y1, 0);
         lineActor->GetProperty()->SetAmbient(1);
         lineActor->GetProperty()->SetDiffuse(0);
@@ -200,7 +200,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, fl
         lineActor->GetProperty()->SetLineWidth(3);
         lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
         lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
-        lineActor->GetProperty()->SetColor(color[0], color[1], color[1]);
+        lineActor->GetProperty()->SetColor(color[0], color[1], color[2]);
         lineActor->GetProperty()->SetPointSize(1);
         lineActor->GetProperty()->SetLineWidth(3);
 
@@ -218,7 +218,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radiu
 
         vtkSmartPointer<vtkActor> coloredDot = vtkSmartPointer<vtkActor>::New();
         coloredDot->SetMapper(dotMapper);
-        coloredDot->GetProperty()->SetColor(color[0], color[1], color[1]);
+        coloredDot->GetProperty()->SetColor(color[0], color[1], color[2]);
         coloredDot->SetPosition(x, y, 0.01);
         coloredDot->SetOrientation(90, 0, 0);
         coloredDot->GetProperty()->SetAmbient(1.0);
@@ -327,7 +327,7 @@ void FieldWidget3D::update_robot_info(void)
 	{
 		if (robot->isTimeout())
 		{
-		        robot->getVisualization()->hide(this->renderer);
+		        robot->getVisualization()->remove(this->renderer);
                         continue;
 		}
 
