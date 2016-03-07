@@ -190,7 +190,10 @@ namespace alica
         }
         //save last error
         lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();
-        voroniPub.publish(netMsg);
+
+        // TODO von Taker: Am Arsch, richtige nachricht verwenden, dann klappts auch mit der Anzeige!!!!
+//        voroniPub.publish(netMsg);
+
         //send motion control
         send(mc);
         /*PROTECTED REGION END*/

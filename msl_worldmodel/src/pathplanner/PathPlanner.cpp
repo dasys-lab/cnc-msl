@@ -488,6 +488,7 @@ namespace msl
 	void msl::PathPlanner::sendCorridorCheck(vector<shared_ptr<geometry::CNPoint2D> > points)
 	{
 		msl_msgs::CorridorCheck cc;
+                cc.senderId = this->wm->getOwnId();
 		for (int i = 0; i < points.size(); i++)
 		{
 			msl_msgs::Point2dInfo info;
