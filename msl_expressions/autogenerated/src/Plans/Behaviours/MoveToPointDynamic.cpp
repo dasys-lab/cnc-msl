@@ -36,7 +36,7 @@ namespace alica
         {
             return;
         }
-        if (lastResult + 300000000 < wm->getTime())
+        if (result.size() == 0 || lastResult + 300000000 < wm->getTime())
         {
             bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
             lastResult = wm->getTime();
@@ -75,8 +75,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1456997073100) ENABLED START*/ //Add additional options here
         query->clearStaticVariables();
-        query->addVariable(wm->getOwnId(), "x");
-        query->addVariable(wm->getOwnId(), "y");
+        query->addVariable(getVariablesByName("X"));
+        query->addVariable(getVariablesByName("Y"));
         result.clear();
         bool success = true;
         string tmp = "";
