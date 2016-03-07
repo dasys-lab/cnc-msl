@@ -110,6 +110,10 @@ namespace msl
 		pool->reset();
 	}
 
+	double Obstacles::getObstacleRadius() {
+		return this->DFLT_OB_RADIUS;
+	}
+
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::clusterPoint2D(
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > obstacles, double varianceThreshold)
 	{

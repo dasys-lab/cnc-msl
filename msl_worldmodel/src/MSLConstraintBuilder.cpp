@@ -87,36 +87,36 @@ namespace msl
 
 			// all players have to be in sight radius
 			shared_ptr<Term> c = insideSphere (point, detectionRadius, players);
-
 			for (int i = 0; i < players.size(); ++i) {
-
 				shared_ptr<TVec> p2p = players[i] - point;
-//				shared_ptr<Term> rel = (GH.DFLT_OB_RADIUS / autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
+				shared_ptr<Term> rel = (wm->obstacles.getObstacleRadius() / autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
 
 				// consider opponents
+				auto opps = wm->robots.opponents.getOpponentsAlloClustered();
 //				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
-//				if (opps != null && opps.Count > 0) {
-//					foreach (TrackedOpponent opp in opps) {
-//						TVec oppT = new TVec (opp.Pos.X, opp.Pos.Y);
-//						TVec p2opp = oppT - point;
-//
-//						TVec oppDistance = CB.InCoordsOf (p2opp, p2p);
-//						c &= CB.IfThen (((oppDistance.X > 0) & (oppDistance.X < 1)), rel < ((new Abs (oppDistance.Y) - ((GH.DFLT_OB_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / oppDistance.X));
-//					}
-//				}
+
+				if (opps != nullptr && opps->size() > 0) {
+					for(auto opp : *opps) {
+						shared_ptr<TVec> oppT = make_shared<TVec>(initializer_list<double> {opp->x, opp->y});
+						shared_ptr<TVec> p2opp = oppT - point;
+
+						shared_ptr<TVec> oppDistance = alica::ConstraintBuilder::inCoordsOf(p2opp, p2p);
+						c = c & alica::ConstraintBuilder::ifThen(((oppDistance->getX() > autodiff::TermBuilder::constant(0)) & (oppDistance->getX() < autodiff::TermBuilder::constant(1))),
+																 rel < ((make_shared<Abs>(oppDistance->getY()) - ((wm->obstacles.getObstacleRadius() + 50.0) / autodiff::TermBuilder::power(p2p->normSquared(), 0.5))) / oppDistance->getX()));
+					}
+				}
 
 				// consider teammates
-//				List<Point2D> mates = wm.GetTeammateListAlloClustered();
-//
-//				if (mates != null && mates.Count > 0) {
-//					foreach (Point2D mate in mates) {
-//						TVec mateT = new TVec (mate.X, mate.Y);
-//						TVec p2mate = mateT - point;
-//
-//						TVec mateDistance = CB.InCoordsOf (p2mate, p2p);
-//						c &= CB.IfThen (((mateDistance.X > 0) & (mateDistance.X < 1)), rel < ((new Abs (mateDistance.Y) - ((GH.DFLT_ROBOT_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / mateDistance.X));
-//					}
-//				}
+				auto mates = wm->robots.teammates.getTeammatesAlloClustered();
+				if (mates != nullptr && mates->size() > 0) {
+					foreach (Point2D mate in mates) {
+						TVec mateT = new TVec (mate.X, mate.Y);
+						TVec p2mate = mateT - point;
+
+						TVec mateDistance = CB.InCoordsOf (p2mate, p2p);
+						c &= CB.IfThen (((mateDistance.X > 0) & (mateDistance.X < 1)), rel < ((new Abs (mateDistance.Y) - ((GH.DFLT_ROBOT_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / mateDistance.X));
+					}
+				}
 
 				// consider myself
 //				if (considerOwnPos) {
