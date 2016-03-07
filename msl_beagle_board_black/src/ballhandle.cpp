@@ -82,8 +82,8 @@ using namespace BlackLib;
 		}
 	}
 
-	uint8_t BallHandle::getError() {
-		uint8_t ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
+	int BallHandle::getError() {
+		int ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
 
 		return ff;
 	}
