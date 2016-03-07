@@ -21,10 +21,6 @@
  */
 
 #include "FieldWidget3D.h"
-#include <vtkLineWidget.h>
-#include <vtkFollower.h>
-#include <vtkDiskSource.h>
-#include <vtkArcSource.h>
 
 //#include "ConfigXML.h"
 
@@ -149,6 +145,92 @@ private:
 // define the previous class as a new vtk standard
 vtkStandardNewMacro(MouseInteractorStyle);
 
+
+//################################################################################################
+//########################################## Static ##############################################
+//################################################################################################
+
+pair<double, double> FieldWidget3D::transform(double x, double y)
+{
+        pair<double, double> ret;
+        ret.first = y;
+        ret.second = -x;
+        return ret;
+}
+
+void FieldWidget3D::createLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2, std::array<double,3> color)
+{
+        vtkSmartPointer<vtkPlaneSource> planeSrc = vtkSmartPointer<vtkPlaneSource>::New();
+        planeSrc->SetOrigin(0, 0, 0);
+        planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
+        planeSrc->SetPoint2(0, abs(y2 - y1), 0);
+        vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        planeMapper->SetInput(planeSrc->GetOutput());
+        vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
+        lineActor->SetMapper(planeMapper);
+        lineActor->GetProperty()->SetColor(1, 1, 1);
+        lineActor->SetPosition(x1, y1, 0);
+        lineActor->GetProperty()->SetAmbient(1);
+        lineActor->GetProperty()->SetDiffuse(0);
+        lineActor->GetProperty()->SetSpecular(0);
+
+        renderer->AddActor(lineActor);
+}
+
+void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2)
+{
+        vtkSmartPointer<vtkMapper> lineMapper = actor->GetMapper();
+
+        vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+        line->SetPoint1(x1, y1, z1);
+        line->SetPoint2(x2, y2, z2);
+
+        lineMapper->SetInputConnection(line->GetOutputPort());
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, std::array<double,3> color)
+{
+        vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+        vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+        line->SetPoint1(x1, y1, z1);
+        line->SetPoint2(x2, y2, z2);
+        lineMapper->SetInputConnection(line->GetOutputPort());
+        lineActor->SetMapper(lineMapper);
+        lineActor->GetProperty()->SetLineWidth(3);
+        lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
+        lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
+        lineActor->GetProperty()->SetColor(color[0], color[1], color[1]);
+        lineActor->GetProperty()->SetPointSize(1);
+        lineActor->GetProperty()->SetLineWidth(3);
+
+        return lineActor;
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radius, std::array<double,3> color)
+{
+        vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
+        dot->SetRadius(radius);
+        dot->SetHeight(0.001);
+        dot->SetResolution(32);
+        vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        dotMapper->SetInput(dot->GetOutput());
+
+        vtkSmartPointer<vtkActor> coloredDot = vtkSmartPointer<vtkActor>::New();
+        coloredDot->SetMapper(dotMapper);
+        coloredDot->GetProperty()->SetColor(color[0], color[1], color[1]);
+        coloredDot->SetPosition(x, y, 0.01);
+        coloredDot->SetOrientation(90, 0, 0);
+        coloredDot->GetProperty()->SetAmbient(1.0);
+        return coloredDot;
+}
+
+
+
+//################################################################################################
+//########################################## Stuff ###############################################
+//################################################################################################
+
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
@@ -159,7 +241,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	showAllComponents = false;
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
-	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
+//	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
 	sharedWorldInfoSubscriber = rosNode->subscribe("/WorldModel/SharedWorldInfo", 10, &FieldWidget3D::onSharedWorldInfo,
 													(FieldWidget3D*)this);
 	pathPlannerSubscriber = rosNode->subscribe("/PathPlanner/PathPlanner", 10, &FieldWidget3D::onPathPlannerMsg,
@@ -196,8 +278,6 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 
 	renderWindow->AddRenderer(renderer);
 	this->SetRenderWindow(renderWindow);
-
-	//TODO drawing methods
 
 	drawField(renderer);
 	drawGoals(renderer);
@@ -242,320 +322,24 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 void FieldWidget3D::update_robot_info(void)
 {
 	lock_guard<mutex> lock(swmMutex);
-	removeObstacles(renderer);
-	for (auto robot : latestInfo)
-	{
 
-		auto tmp = ros::Time::now();
-		unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
-		if ((now - robot->getTimeStamp()) > 2000000000)
+	for (auto robot : robots)
+	{
+		if (robot->isTimeout())
 		{
-			shared_ptr<RobotVisualization> toBeRemoved;
-			for (auto r : team)
-			{
-				if (r->getId() == robot->getId())
-				{
-					renderer->RemoveActor(r->getTop());
-					renderer->RemoveActor(r->getBottom());
-					renderer->RemoveActor(r->getNameActor());
-					renderer->RemoveActor(r->getBall());
-					renderer->RemoveActor(r->getBallVelocityActor());
-					renderer->RemoveActor(r->getSharedBall());
-					r->setBallVelocity(nullptr);
-					toBeRemoved = r;
-					break;
-				}
-			}
-			team.remove(toBeRemoved);
-			continue;
+		        robot->getVisualization()->hide(this->renderer);
+                        continue;
 		}
-		bool alreadyIn = false;
-		for (auto member : team)
-		{
-			if (member->getId() == robot->getMsg()->senderID)
-			{
-				alreadyIn = true;
-			}
-		}
-		if (!alreadyIn)
-		{
-			shared_ptr<RobotVisualization> r = make_shared<RobotVisualization>();
-			r->setId(robot->getMsg()->senderID);
-			r->setName(to_string(robot->getMsg()->senderID));
-			r->setBall(nullptr);
-			auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
-			drawTeamRobot(r, pos.first / 1000, pos.second / 1000, 0);
-			turnRobot(r, robot->getMsg()->odom.position.angle);
-			if (r->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
-			{
-				initBall(r, renderer);
-			}
-			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
-			{
-				auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
-				moveBall(r, robot->getMsg(), pos.first / 1000, pos.second / 1000,
-							robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER / 2);
-			}
-			else if (r->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
-			{
-				renderer->RemoveActor(r->getBall());
-				renderer->RemoveActor(r->getBallVelocityActor());
-				r->setBallVelocity(nullptr);
-				r->setBall(nullptr);
-			}
-			if (r->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
-			{
-				initSharedBall(r, renderer);
-			}
-			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
-			{
-				auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
-				moveSharedBall(r, pos.first / 1000, pos.second / 1000, robot->getMsg()->sharedBall.point.z / 1000);
-			}
-			else if (r->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
-			{
-				renderer->RemoveActor(r->getSharedBall());
-				r->setSharedBall(nullptr);
-			}
-		}
-		else
-		{
-			for (auto member : team)
-			{
-				if (member->getId() == robot->getMsg()->senderID)
-				{
-					auto pos = transform(robot->getMsg()->odom.position.x, robot->getMsg()->odom.position.y);
-					moveRobot(member, pos.first / 1000, pos.second / 1000, 0);
-					turnRobot(member, robot->getMsg()->odom.position.angle);
-					if (member->getBall() == nullptr && robot->getMsg()->ball.confidence > 0)
-					{
-						cout << "FieldWidget no ball 2" << endl;
-						initBall(member, renderer);
-					}
-					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence > 0)
-					{
-						auto pos = transform(robot->getMsg()->ball.point.x, robot->getMsg()->ball.point.y);
-						moveBall(member, robot->getMsg(), pos.first / 1000, pos.second / 1000,
-									robot->getMsg()->ball.point.z / 1000 + _BALL_DIAMETER);
-					}
-					else if (member->getBall() != nullptr && robot->getMsg()->ball.confidence == 0)
-					{
 
-						renderer->RemoveActor(member->getBall());
-						renderer->RemoveActor(member->getBallVelocityActor());
-						member->setBallVelocity(nullptr);
-						member->setBall(nullptr);
-					}
-					if (member->getSharedBall() == nullptr && robot->getMsg()->sharedBall.confidence > 0)
-					{
-						initSharedBall(member, renderer);
-					}
-					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence > 0)
-					{
-						auto pos = transform(robot->getMsg()->sharedBall.point.x, robot->getMsg()->sharedBall.point.y);
-						moveSharedBall(member, pos.first / 1000, pos.second / 1000,
-										robot->getMsg()->sharedBall.point.z / 1000);
-					}
-					else if (member->getSharedBall() != nullptr && robot->getMsg()->sharedBall.confidence == 0)
-					{
-						renderer->RemoveActor(member->getSharedBall());
-						member->setSharedBall(nullptr);
-					}
-				}
-			}
-		}
-		alreadyIn = false;
-		for (auto x : robot->getMsg()->obstacles)
-		{
-			auto pos = transform(x.x, x.y);
-			for (auto member : team)
-			{
-				if (abs(member->getBottom()->GetPosition()[0] - pos.first / 1000) < 0.25
-						&& abs(member->getBottom()->GetPosition()[1] - pos.second / 1000) < 0.25)
-				{
-					alreadyIn = true;
-				}
-			}
-			if (!alreadyIn)
-			{
-				drawOpponent(pos.first / 1000, pos.second / 1000, 0);
-			}
-			alreadyIn = false;
-		}
+		robot->getVisualization()->updatePosition(this->renderer);
+                robot->getVisualization()->updateBall(this->renderer);
+                robot->getVisualization()->updateSharedBall(this->renderer);
+                robot->getVisualization()->updateOpponents(this->renderer);
+                robot->getVisualization()->updatePathPlannerDebug(this->renderer, this->showPath);
+                robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridor);
+                robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoi, this->showSitePoints);
 	}
-	if (showPath)
-	{
-		for (vtkSmartPointer<vtkActor> actor : pathLines)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-		pathLines.clear();
-		if (!pathPlannerInfo.empty())
-		{
-			for (int i = 1; i < pathPlannerInfo.front()->pathPoints.size(); i++)
-			{
-			        vtkSmartPointer<vtkActor> actor = createColoredDashedLine(pathPlannerInfo.front()->pathPoints.at(i - 1).y / 1000,
-															-pathPlannerInfo.front()->pathPoints.at(i - 1).x / 1000,
-															0.01, pathPlannerInfo.front()->pathPoints.at(i).y / 1000,
-															-pathPlannerInfo.front()->pathPoints.at(i).x / 1000, 0.01,
-															1, 1, 1);
-				pathLines.push_back(actor);
-				renderer->AddActor(actor);
-			}
-		}
-	}
-	else
-	{
-		for (vtkSmartPointer<vtkActor> actor : pathLines)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-		pathLines.clear();
-	}
-	if (this->showVoronoi)
-	{
-	        int used = 0;
-	        vtkSmartPointer<vtkActor> actor;
-		if (!this->voronoiNetInfo.empty() && this->voronoiNetInfo.front()->linePoints.size() > 0)
-		{
-			for (int i = 1; i < this->voronoiNetInfo.front()->linePoints.size(); i += 2)
-			{
-                                double x1 = voronoiNetInfo.front()->linePoints.at(i - 1).y / 1000;
-                                double y1 = -voronoiNetInfo.front()->linePoints.at(i - 1).x / 1000;
-                                double x2 = voronoiNetInfo.front()->linePoints.at(i).y / 1000;
-                                double y2 =-voronoiNetInfo.front()->linePoints.at(i).x / 1000;
 
-                                if (used >= this->netLines.size())
-                                {
-                                        actor = createColoredDashedLine(x1, y1, 0.01, x2, y2, 0.01, 0, 0, 0);
-                                        this->netLines.push_back(actor);
-                                        this->renderer->AddActor(actor);
-                                }
-                                else
-                                {
-                                        this->updateLine(this->netLines.at(used), x1, y1, 0.01, x2, y2, 0.01);
-                                }
-                                ++used;
-			}
-
-	                if (used < this->netLines.size())
-	                {
-	                        for (int i=used; i < this->netLines.size(); ++i)
-	                        {
-	                                actor = this->netLines.at(i);
-	                                if (actor != nullptr)
-	                                {
-	                                  this->renderer->RemoveActor(actor);
-	                                }
-	                        }
-
-	                        this->netLines.erase(this->netLines.begin() + used, this->netLines.end());
-	                }
-		}
-	}
-	else
-	{
-		for (vtkSmartPointer<vtkActor> actor : netLines)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-                netLines.clear();
-	}
-	if (showCorridor)
-	{
-		for (vtkSmartPointer<vtkActor> actor : corridorLines)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-		corridorLines.clear();
-		if (!corridorCheckInfo.empty())
-		{
-		        vtkSmartPointer<vtkActor> actor = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
-														corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
-														1, 0, 0);
-		        vtkSmartPointer<vtkActor> actor2 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(1).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(1).x / 1000, 0.01,
-														corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
-														1, 0, 0);
-		        vtkSmartPointer<vtkActor> actor3 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(2).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(2).x / 1000, 0.01,
-														corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
-														1, 0, 0);
-		        vtkSmartPointer<vtkActor> actor4 = createColoredDashedLine(corridorCheckInfo.front()->corridorPoints.at(3).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(3).x / 1000, 0.01,
-														corridorCheckInfo.front()->corridorPoints.at(0).y / 1000,
-														-corridorCheckInfo.front()->corridorPoints.at(0).x / 1000, 0.01,
-														1, 0, 0);
-			corridorLines.push_back(actor);
-			corridorLines.push_back(actor2);
-			corridorLines.push_back(actor3);
-			corridorLines.push_back(actor4);
-			renderer->AddActor(actor);
-			renderer->AddActor(actor2);
-			renderer->AddActor(actor3);
-			renderer->AddActor(actor4);
-		}
-	}
-	else
-	{
-		for (vtkSmartPointer<vtkActor> actor : corridorLines)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-		corridorLines.clear();
-	}
-	if (showSitePoints)
-	{
-		if (!voronoiNetInfo.empty() && voronoiNetInfo.front()->sites.size() > 0)
-		{
-	                for (vtkSmartPointer<vtkActor> actor : sitePoints)
-	                {
-	                        if (actor != nullptr)
-	                        {
-	                                renderer->RemoveActor(actor);
-	                        }
-	                }
-	                sitePoints.clear();
-
-			for (int i = 0; i < voronoiNetInfo.front()->sites.size(); i++)
-			{
-			        vtkSmartPointer<vtkActor> actor = createColoredDot(voronoiNetInfo.front()->sites.at(i).y / 1000,
-													-voronoiNetInfo.front()->sites.at(i).x / 1000, 0.5, 0, 0, 1);
-				sitePoints.push_back(actor);
-				renderer->AddActor(actor);
-			}
-		}
-	}
-	else
-	{
-		for (vtkSmartPointer<vtkActor> actor : sitePoints)
-		{
-			if (actor != nullptr)
-			{
-				renderer->RemoveActor(actor);
-			}
-		}
-		sitePoints.clear();
-	}
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
 	{
 		this->GetRenderWindow()->Render();
@@ -594,20 +378,6 @@ void FieldWidget3D::obstacles_point_flip_all(bool on_off)
 void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
 {
 	option_draw_debug[Robot_no] = on_off;
-}
-
-pair<double, double> FieldWidget3D::transform(double x, double y)
-{
-	pair<double, double> ret;
-	ret.first = y;
-	ret.second = -x;
-	return ret;
-}
-
-void FieldWidget3D::turnRobot(shared_ptr<RobotVisualization> robot, double angle)
-{
-	robot->getTop()->SetOrientation(0, 0, angle * (180.0 / (double)M_PI) + 90);
-	robot->getBottom()->SetOrientation(0, 0, angle * (180.0 / (double)M_PI) + 90);
 }
 
 void FieldWidget3D::showPathPoints()
@@ -678,92 +448,8 @@ void FieldWidget3D::showAll(void)
 	}
 }
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDashedLine(float x1, float y1, float z1, float x2, float y2,
-																	float z2, double r, double g, double b)
-{
-	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
-	vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
-	line->SetPoint1(x1, y1, z1);
-	line->SetPoint2(x2, y2, z2);
-	lineMapper->SetInputConnection(line->GetOutputPort());
-	lineActor->SetMapper(lineMapper);
-	lineActor->GetProperty()->SetLineWidth(3);
-	lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
-	lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
-	lineActor->GetProperty()->SetColor(r, g, b);
-	lineActor->GetProperty()->SetPointSize(1);
-	lineActor->GetProperty()->SetLineWidth(3);
-
-	return lineActor;
-}
-
-void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2)
-{
-        vtkSmartPointer<vtkMapper> lineMapper = actor->GetMapper();
-
-        vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
-        line->SetPoint1(x1, y1, z1);
-        line->SetPoint2(x2, y2, z2);
-
-        lineMapper->SetInputConnection(line->GetOutputPort());
-}
-
-vtkSmartPointer<vtkActor> FieldWidget3D::createColoredDot(float x, float y, float radius, double r, double g, double b)
-{
-	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
-	dot->SetRadius(radius);
-	dot->SetHeight(0.001);
-	dot->SetResolution(32);
-	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	dotMapper->SetInput(dot->GetOutput());
-
-	vtkSmartPointer<vtkActor> coloredDot = vtkSmartPointer<vtkActor>::New();
-	coloredDot->SetMapper(dotMapper);
-	coloredDot->GetProperty()->SetColor(r, g, b);
-	coloredDot->SetPosition(x, y, 0.01);
-	coloredDot->SetOrientation(90, 0, 0);
-	coloredDot->GetProperty()->SetAmbient(1.0);
-	return coloredDot;
-}
-
 void FieldWidget3D::debug_point_flip_all(bool on_off)
 {
-}
-
-vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2)
-{
-	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
-	vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
-	line->SetPoint1(x1, y1, z1);
-	line->SetPoint2(x2, y2, z2);
-	lineMapper->SetInputConnection(line->GetOutputPort());
-	lineActor->SetMapper(lineMapper);
-	lineActor->GetProperty()->SetLineWidth(3);
-	lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
-	lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
-	lineActor->GetProperty()->SetPointSize(1);
-	lineActor->GetProperty()->SetLineWidth(3);
-	return lineActor;
-}
-
-void FieldWidget3D::createLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2)
-{
-	vtkSmartPointer<vtkPlaneSource> planeSrc = vtkSmartPointer<vtkPlaneSource>::New();
-	planeSrc->SetOrigin(0, 0, 0);
-	planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
-	planeSrc->SetPoint2(0, abs(y2 - y1), 0);
-	vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	planeMapper->SetInput(planeSrc->GetOutput());
-	vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
-	lineActor->SetMapper(planeMapper);
-	lineActor->GetProperty()->SetColor(1, 1, 1);
-	lineActor->SetPosition(x1, y1, 0);
-	lineActor->GetProperty()->SetAmbient(1);
-	lineActor->GetProperty()->SetDiffuse(0);
-	lineActor->GetProperty()->SetSpecular(0);
-	renderer->AddActor(lineActor);
 }
 
 void FieldWidget3D::addCircle(vtkRenderer *renderer, float x, float y, float radius)
@@ -800,25 +486,12 @@ void FieldWidget3D::addArc(vtkRenderer *renderer, float x, float y, float radius
 	mapper->SetInputConnection(arcSource->GetOutputPort());
 
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-	//actor->SetPosition(x, y, 0);
 	actor->GetProperty()->SetColor(1, 1, 1);
 	actor->GetProperty()->SetAmbient(1);
 	actor->GetProperty()->SetDiffuse(0);
 	actor->GetProperty()->SetSpecular(0);
 	actor->SetMapper(mapper);
 	renderer->AddActor(actor);
-
-//	float x1, y1, x2, y2;
-//	x2 = x + radius * cos(startDeg * M_PI / 180);
-//	y2 = y + radius * sin(startDeg * M_PI / 180);
-//	for (int i = startDeg + 10; i <= endDeg; i += 10)
-//	{
-//		x1 = x + radius * cos(i * M_PI / 180);
-//		y1 = y + radius * sin(i * M_PI / 180);
-//		createLine(renderer,x1, y1, 0, x2, y2, 0);
-//		x2 = x1;
-//		y2 = y1;
-//	}
 }
 
 void FieldWidget3D::drawGoals(vtkRenderer* renderer)
@@ -976,72 +649,51 @@ void FieldWidget3D::drawField(vtkRenderer* renderer)
 	addCircle(renderer, 0, 0, _CENTER_CIRCLE_RADIUS);
 
 	// Black Dots
-	createDot(renderer, _FIELD_WIDTH / 4, 0, true, lineOffSet);
-	createDot(renderer, -_FIELD_WIDTH / 4, 0, true, lineOffSet);
+	auto dot = createDot(_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
+	renderer->AddActor(dot);
+	dot = createDot(-_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
 
-	createDot(renderer, _FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, true, lineOffSet);
-	createDot(renderer, -_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, true, lineOffSet);
-	createDot(renderer, 0, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, false);
+	dot = createDot(_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = createDot(-_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = createDot(0, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet);
+        renderer->AddActor(dot);
 
-	createDot(renderer, _FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, true, lineOffSet);
-	createDot(renderer, -_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, true, lineOffSet);
-	createDot(renderer, 0, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, false, lineOffSet);
+	dot = createDot(_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = createDot(-_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = createDot(0, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet);
+        renderer->AddActor(dot);
 
-	createDot(renderer, 0, 0, false, lineOffSet);
+	dot = createDot(0, 0, lineOffSet);
+        renderer->AddActor(dot);
 }
 
-void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool black, float radius)
-{
-	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
-	dot->SetRadius(radius);
-	dot->SetHeight(0.001);
-	dot->SetResolution(32);
-	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	dotMapper->SetInput(dot->GetOutput());
-
-	vtkSmartPointer<vtkActor> blackDot1 = vtkSmartPointer<vtkActor>::New();
-	blackDot1->SetMapper(dotMapper);
-
-	if (black)
-		blackDot1->GetProperty()->SetColor(0, 0, 0);
-	else
-		blackDot1->GetProperty()->SetColor(1, 1, 1);
-
-	blackDot1->SetPosition(x, y, 0.01);
-	blackDot1->SetOrientation(90, 0, 0);
-	blackDot1->GetProperty()->SetAmbient(1.0);
-	renderer->AddActor(blackDot1);
-}
-
-void FieldWidget3D::initBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
-{
-	vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
-	sphereSrc->SetRadius(_BALL_DIAMETER / 2);
-	vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	sphereMapper->SetInput(sphereSrc->GetOutput());
-	robot->setBall(vtkActor::New());
-	robot->getBall()->SetMapper(sphereMapper);
-	robot->getBall()->GetProperty()->SetRepresentationToSurface();
-	robot->getBall()->GetProperty()->SetColor(255, 0, 0);
-	robot->getBall()->SetPosition(1000, 1000, _BALL_DIAMETER / 2);
-	renderer->AddActor(robot->getBall());
-	vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
-	line->SetPoint1(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],
-					robot->getBall()->GetPosition()[2]);
-	line->SetPoint2(robot->getBall()->GetPosition()[0], robot->getBall()->GetPosition()[1],
-					robot->getBall()->GetPosition()[2]);
-	robot->setBallVelocity(line);
-	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	velocityMapper->SetInput(line->GetOutput());
-	vtkSmartPointer<vtkActor> velocity = vtkSmartPointer<vtkActor>::New();
-	velocity->SetMapper(velocityMapper);
-	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
-	velocity->GetProperty()->SetColor(1, 0, 0);
-	velocity->GetProperty()->SetDiffuse(0.4);
-	velocity->GetProperty()->SetAmbient(0.8);
-	robot->setBallVelocityActor(velocity);
-	renderer->AddActor(velocity);
-}
+//void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool black, float radius)
+//{
+//	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
+//	dot->SetRadius(radius);
+//	dot->SetHeight(0.001);
+//	dot->SetResolution(32);
+//	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+//	dotMapper->SetInput(dot->GetOutput());
+//
+//	vtkSmartPointer<vtkActor> blackDot1 = vtkSmartPointer<vtkActor>::New();
+//	blackDot1->SetMapper(dotMapper);
+//
+//	if (black)
+//		blackDot1->GetProperty()->SetColor(0, 0, 0);
+//	else
+//		blackDot1->GetProperty()->SetColor(1, 1, 1);
+//
+//	blackDot1->SetPosition(x, y, 0.01);
+//	blackDot1->SetOrientation(90, 0, 0);
+//	blackDot1->GetProperty()->SetAmbient(1.0);
+//	renderer->AddActor(blackDot1);
+//}
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 {
@@ -1280,226 +932,31 @@ void FieldWidget3D::setTop(bool top)
 	}
 }
 
+list<shared_ptr<RobotInfo>>* FieldWidget3D::getRobots()
+{
+        return &this->robots;
+}
+
 void FieldWidget3D::lock(bool lock)
 {
 	this->lockCam = lock;
 }
 
-//TODO marker to find implemented methods
-
-list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> > FieldWidget3D::getSavedSharedWorldInfo()
+std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
 {
-	return savedSharedWorldInfo;
-}
+        for (auto element : robots)
+        {
+                if (element->getId() == id)
+                {
+                        return element;
+                }
+        }
 
-void FieldWidget3D::moveBall(shared_ptr<RobotVisualization> robot,
-								boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info, double x, double y, double z)
-{
-	robot->getBall()->SetPosition(x, y, z);
-	robot->getBallVelocity()->SetPoint1(x, y, z);
-	auto ballVelTrans = transform(info->ball.velocity.vx, info->ball.velocity.vy);
-	robot->getBallVelocity()->SetPoint2(x + ballVelTrans.first / 1000, y + ballVelTrans.second / 1000,
-										z + info->ball.velocity.vz / 1000);
-//	vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-//	velocityMapper->SetInput(robot->getBallVelocity()->GetOutput());
-//	vtkSmartPointer<vtkActor> velocity = robot->getBallVelocityActor();
-//	velocity->SetMapper(velocityMapper);
-//	velocity->GetProperty()->SetLineWidth(_LINE_THICKNESS / 2);
-//	velocity->GetProperty()->SetColor(1, 0, 0);
-//	velocity->GetProperty()->SetDiffuse(0.4);
-//	velocity->GetProperty()->SetAmbient(0.8);
-//	renderer->AddActor(velocity);
-}
+        shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>(this);
+        robotInfo->setId(id);
+        robots.push_back(robotInfo);
 
-void FieldWidget3D::drawOpponent(double x, double y, double z)
-{
-
-	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-
-	float p0[3] = {0.26, 0.26, 0};
-	float p1[3] = {-0.26, 0.26, 0};
-	float p2[3] = {-0.26, -0.26, 0};
-	float p3[3] = {0.26, -0.26, 0};
-	float p4[3] = {0.0, 0.0, 0.4};
-
-	points->InsertNextPoint(p0);
-	points->InsertNextPoint(p1);
-	points->InsertNextPoint(p2);
-	points->InsertNextPoint(p3);
-	points->InsertNextPoint(p4);
-
-	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
-	pyramid->GetPointIds()->SetId(0, 0);
-	pyramid->GetPointIds()->SetId(1, 1);
-	pyramid->GetPointIds()->SetId(2, 2);
-	pyramid->GetPointIds()->SetId(3, 3);
-	pyramid->GetPointIds()->SetId(4, 4);
-
-	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	cells->InsertNextCell(pyramid);
-
-	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	ug->SetPoints(points);
-	ug->InsertNextCell(pyramid->GetCellType(), pyramid->GetPointIds());
-
-	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-	cubeSrc->SetXLength(0.52);
-	cubeSrc->SetYLength(0.52);
-	cubeSrc->SetZLength(0.4);
-
-	vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
-
-	vtkSmartPointer<vtkDataSetMapper> obstacleTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-	obstacleTopMapper->SetInput(ug);
-
-	vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
-	obstacleBottom->SetMapper(obstacleBottomMapper);
-	obstacleBottom->SetPosition(x, y, z + 0.2);
-	obstacleBottom->GetProperty()->SetColor(0, 0, 0);
-	obstacleBottom->GetProperty()->SetDiffuse(0.4);
-	obstacleBottom->GetProperty()->SetAmbient(0.8);
-	renderer->AddActor(obstacleBottom);
-
-	vtkSmartPointer<vtkActor> obstacleTop = vtkSmartPointer<vtkActor>::New();
-	obstacleTop->SetMapper(obstacleTopMapper);
-	obstacleTop->SetPosition(x, y, z + 0.4);
-	obstacleTop->GetProperty()->SetColor(0, 0, 0);
-	obstacleTop->GetProperty()->SetDiffuse(0.4);
-	obstacleTop->GetProperty()->SetAmbient(0.8);
-	renderer->AddActor(obstacleTop);
-	shared_ptr<RobotVisualization> robot = make_shared<RobotVisualization>();
-	robot->setTop(obstacleTop);
-	robot->setBottom(obstacleBottom);
-	obstacles.push_front(robot);
-}
-
-void FieldWidget3D::removeObstacles(vtkRenderer* renderer)
-{
-	for (shared_ptr<RobotVisualization> actor : obstacles)
-	{
-		renderer->RemoveActor(actor->getTop());
-		renderer->RemoveActor(actor->getBottom());
-	}
-	obstacles.clear();
-}
-
-void FieldWidget3D::drawTeamRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z)
-{
-	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-
-	float p0[3] = {0.26, 0, 0};
-	float p1[3] = {-0.26, 0.26, 0};
-	float p2[3] = {-0.26, -0.26, 0};
-	float p3[3] = {0.0, 0.0, 0.4};
-
-	points->InsertNextPoint(p0);
-	points->InsertNextPoint(p1);
-	points->InsertNextPoint(p2);
-	points->InsertNextPoint(p3);
-
-	vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
-//	vtkSmartPointer<vtkPyramid> pyramid = vtkSmartPointer<vtkPyramid>::New();
-	tetra->GetPointIds()->SetId(0, 0);
-	tetra->GetPointIds()->SetId(1, 1);
-	tetra->GetPointIds()->SetId(2, 2);
-	tetra->GetPointIds()->SetId(3, 3);
-//	pyramid->GetPointIds()->SetId(4, 4);
-
-	vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
-	cells->InsertNextCell(tetra);
-
-	vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	ug->SetPoints(points);
-	ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
-
-	vtkSmartPointer<vtkDataSetMapper> teamTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-	teamTopMapper->SetInput(ug);
-
-	vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-	cubeSrc->SetXLength(0.52);
-	cubeSrc->SetYLength(0.52);
-	cubeSrc->SetZLength(0.4);
-
-	vtkSmartPointer<vtkPolyDataMapper> teamBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	teamBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
-
-	vtkSmartPointer<vtkActor> teamBottom = vtkSmartPointer<vtkActor>::New();
-	teamBottom->SetMapper(teamBottomMapper);
-	teamBottom->SetPosition(x, y, z + 0.2);
-	teamBottom->GetProperty()->SetColor(1, 1, 1);
-	teamBottom->GetProperty()->SetDiffuse(0.4);
-	teamBottom->GetProperty()->SetAmbient(0.8);
-	renderer->AddActor(teamBottom);
-
-	vtkSmartPointer<vtkActor> teamTop = vtkSmartPointer<vtkActor>::New();
-	teamTop->SetMapper(teamTopMapper);
-	teamTop->SetPosition(x, y, z + 0.4);
-	teamTop->GetProperty()->SetColor(150.0 / 255.0, 150.0 / 255.0, 150.0 / 255.0);
-	teamTop->GetProperty()->SetDiffuse(0.4);
-	teamTop->GetProperty()->SetAmbient(0.8);
-	renderer->AddActor(teamTop);
-
-	// Name Actor
-	// Create text
-	vtkSmartPointer<vtkVectorText> textSource = vtkSmartPointer<vtkVectorText>::New();
-	textSource->SetText((robot->getName()).c_str());
-	textSource->Update();
-
-	// Create a mapper and actor
-	vtkSmartPointer<vtkPolyDataMapper> nameMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	nameMapper->SetInputConnection(textSource->GetOutputPort());
-
-	vtkSmartPointer<vtkFollower> nameActor = vtkSmartPointer<vtkFollower>::New();
-	nameActor->SetMapper(nameMapper);
-	nameActor->GetProperty()->SetColor(1.0, 0.0, 0.0);
-	nameActor->GetProperty()->SetDiffuse(0.4);
-	nameActor->GetProperty()->SetAmbient(0.8);
-	nameActor->SetPosition(x, y, z + 1);
-	nameActor->SetScale(0.5);
-
-	renderer->AddActor(nameActor);
-	nameActor->SetCamera( renderer->GetActiveCamera() );
-
-	robot->setTop(teamTop);
-	robot->setBottom(teamBottom);
-	robot->setNameActor(nameActor);
-	team.push_front(robot);
-}
-
-void FieldWidget3D::moveRobot(shared_ptr<RobotVisualization> robot, double x, double y, double z)
-{
-	robot->getTop()->SetPosition(x, y, z + 0.4);
-	robot->getBottom()->SetPosition(x, y, z + 0.2);
-	robot->getNameActor()->SetPosition(x, y, z + 1);
-}
-
-void FieldWidget3D::moveSharedBall(shared_ptr<RobotVisualization> robot, double x, double y, double z)
-{
-	robot->getSharedBall()->SetPosition(x, y, z + 0.01);
-}
-
-void FieldWidget3D::initSharedBall(shared_ptr<RobotVisualization> robot, vtkRenderer* renderer)
-{
-
-	//TODO: replace this with a vtkSphereSource
-	vtkSmartPointer<vtkRegularPolygonSource> polygonSource = vtkSmartPointer<vtkRegularPolygonSource>::New();
-
-	//polygonSource->GeneratePolygonOff();
-	polygonSource->SetNumberOfSides(50);
-	polygonSource->SetRadius(_BALL_DIAMETER * 1.5);
-	polygonSource->Update();
-
-	// Visualize
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputConnection(polygonSource->GetOutputPort());
-	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-	actor->SetMapper(mapper);
-	actor->GetProperty()->SetColor(0, 0, 0.5);
-	actor->GetProperty()->SetDiffuse(0.4);
-	actor->GetProperty()->SetAmbient(0.8);
-	robot->setSharedBall(actor);
-	renderer->AddActor(actor);
+        return robotInfo;
 }
 
 //################################################################################################
@@ -1509,69 +966,36 @@ void FieldWidget3D::initSharedBall(shared_ptr<RobotVisualization> robot, vtkRend
 void FieldWidget3D::onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info)
 {
         lock_guard<mutex> lock(pathMutex);
-        int i = this->pathPlannerInfo.size();
-        if (i > ringBufferLength)
-        {
-                pathPlannerInfo.pop_back();
-        }
-        pathPlannerInfo.push_front(info);
+
+        auto robot = this->getRobotById(info->senderId);
+        robot->setPathPlannerInfo(info);
+        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
 {
         lock_guard<mutex> lock(swmMutex);
-        int i = this->savedSharedWorldInfo.size();
-        if (i > ringBufferLength)
-        {
-                savedSharedWorldInfo.pop_back();
-        }
-        savedSharedWorldInfo.push_front(info);
-        bool alreadyIn = false;
 
-//      cout << "FieldWidget3D: BallVel X: " << info->ball.velocity.vx << ", Y: " << info->ball.velocity.vy << endl;
-
-        for (auto element : latestInfo)
-        {
-                if (element->getId() == info->senderID)
-                {
-                        element->setMsg(info);
-                        auto tmp = ros::Time::now();
-                        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
-                        element->setTimeStamp(now);
-                        alreadyIn = true;
-                }
-        }
-        if (!alreadyIn)
-        {
-                shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>();
-                robotInfo->setId(info->senderID);
-                robotInfo->setMsg(info);
-                auto tmp = ros::Time::now();
-                unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
-                robotInfo->setTimeStamp(now);
-                latestInfo.push_back(robotInfo);
-        }
+        auto robot = this->getRobotById(info->senderID);
+        robot->setSharedWorldInfo(info);
+        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info)
 {
         lock_guard<mutex> lock(voronoiMutex);
-        int i = this->voronoiNetInfo.size();
-        if (i > ringBufferLength)
-        {
-                voronoiNetInfo.pop_back();
-        }
-        voronoiNetInfo.push_front(info);
+
+        auto robot = this->getRobotById(info->senderId);
+        robot->setVoronoiNetInfo(info);
+        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info)
 {
         lock_guard<mutex> lock(corridorMutex);
-        int i = this->corridorCheckInfo.size();
-        if (i > ringBufferLength)
-        {
-                corridorCheckInfo.pop_back();
-        }
-        corridorCheckInfo.push_front(info);
+
+        auto robot = this->getRobotById(info->senderId);
+        robot->setCorridorCheckInfo(info);
+        robot->updateTimeStamp();
 }
 
