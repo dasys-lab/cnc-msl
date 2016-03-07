@@ -32,7 +32,7 @@ class ShovelSelect {
 				~ShovelSelect();
 
 		bool	checkTimeout(timeval time);
-		bool	setShovel(bool passing);
+		bool	setShovel(bool passing, timeval time_now);
 		bool	setKick(int kick);
 		bool	setPass(int pass);
 		bool	setPing(timeval time);

@@ -32,7 +32,7 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
 	shovel.setPing(time_now);
 	try {
-		shovel.setShovel(msg.passing);
+		shovel.setShovel(msg.passing, time_now);
 	} catch (exception &e) {
 		cout << "ShovelSelect: " << e.what() << endl;
 	}
