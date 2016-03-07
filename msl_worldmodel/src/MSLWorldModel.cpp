@@ -298,6 +298,9 @@ namespace msl
 			msg.ball.point.x = p->x;
 			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
+			msg.ballInPossession = this->ball.closeToTheBall();
+		} else {
+			msg.ballInPossession = false;
 		}
 
 		auto ballVel = this->ball.getVisionBallVelocity();
@@ -351,6 +354,7 @@ namespace msl
 	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
 		robots.processSharedWorldModelData(msg);
+		game.updateGameState();
 	}
 
 	int MSLWorldModel::getRingBufferLength()
