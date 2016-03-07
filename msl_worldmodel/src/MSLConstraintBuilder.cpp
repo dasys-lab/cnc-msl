@@ -109,12 +109,13 @@ namespace msl
 				// consider teammates
 				auto mates = wm->robots.teammates.getTeammatesAlloClustered();
 				if (mates != nullptr && mates->size() > 0) {
-					foreach (Point2D mate in mates) {
-						TVec mateT = new TVec (mate.X, mate.Y);
-						TVec p2mate = mateT - point;
+					for(auto mate : *mates) {
+						shared_ptr<TVec> mateT = make_shared<TVec>(initializer_list<double> {mate->x, mate->y});
+						shared_ptr<TVec> p2mate = mateT - point;
 
-						TVec mateDistance = CB.InCoordsOf (p2mate, p2p);
-						c &= CB.IfThen (((mateDistance.X > 0) & (mateDistance.X < 1)), rel < ((new Abs (mateDistance.Y) - ((GH.DFLT_ROBOT_RADIUS + 50.0) / TermBuilder.Power (p2p.NormSquared, 0.5))) / mateDistance.X));
+						shared_ptr<TVec> mateDistance = alica::ConstraintBuilder::inCoordsOf(p2mate, p2p);
+						c = c &  alica::ConstraintBuilder::ifThen(((mateDistance->getX() > autodiff::TermBuilder::constant(0)) & (mateDistance->getX() < autodiff::TermBuilder::constant(1))),
+																  rel < ((make_shared<Abs>(mateDistance->getY()) - ((wm->obstacles.getObstacleRadius() + 50.0) / autodiff::TermBuilder::power(p2p->normSquared(), 0.5))) / mateDistance->getX()));
 					}
 				}
 
