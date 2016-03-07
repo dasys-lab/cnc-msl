@@ -393,7 +393,6 @@ namespace msl
 		if(oppposs!=nullptr) {
 			oppBallPossession = *oppposs;
 		}
-		cout << ballPossession << oppBallPossession << endl;
 
 		GameState gs = getGameState();
 
