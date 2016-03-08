@@ -64,21 +64,16 @@ using namespace BlackLib;
 
 	void BallHandle::controlBallHandling() {
 		checkTimeout();
-		if (speed_desired == 0) {
+		if (direction != direction_desired && speed_desired != 0) {
+			direction = direction_desired;
 			speed = 0;
-			pwm->setSpaceRatioTime(speed, nanosecond);			// Time for this Operation: 900us
-		} else {
-			if (direction != direction_desired) {
-				direction = direction_desired;
-				speed = 0;
-				pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-				dir->setValue(direction);						// Time for this Operation: 550us
-			}
+			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
+			dir->setValue(direction);						// Time for this Operation: 550us
+		}
 
-			if (speed != speed_desired) {
-				speed = speed_desired;
-				pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-			}
+		if (speed != speed_desired) {
+			speed = speed_desired;
+			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
 		}
 	}
 

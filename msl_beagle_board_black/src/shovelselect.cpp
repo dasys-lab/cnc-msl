@@ -17,6 +17,7 @@ using namespace BlackLib;
 		pwm->setRunState(stop);
 
 		enabled = false;
+		init = false;
 	}
 
 	ShovelSelect::~ShovelSelect() {
@@ -35,7 +36,13 @@ using namespace BlackLib;
 	}
 
 	bool ShovelSelect::setShovel(bool passing, timeval time_now) {
+		if (statePassing == passing && init) {
+			return false;
+		}
+
+		init = true;
 		ping = time_now;
+		statePassing = passing;
 		if (passing) {
 			pwm->setSpaceRatioTime(passPWM, nanosecond);
 		} else {
