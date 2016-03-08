@@ -35,22 +35,18 @@ using namespace BlackLib;
 	}
 
 	bool ShovelSelect::setShovel(bool passing, timeval time_now) {
-		bool check = checkTimeout(time_now);
-		if (!check) {
-			if (passing) {
-				pwm->setSpaceRatioTime(passPWM, nanosecond);
-			} else {
-				pwm->setSpaceRatioTime(kickPWM, nanosecond);
-			}
-			if (!enabled) {
-				pwm->setRunState(run);
-				enabled = true;
-			}
-
-			return true;
+		ping = time_now;
+		if (passing) {
+			pwm->setSpaceRatioTime(passPWM, nanosecond);
+		} else {
+			pwm->setSpaceRatioTime(kickPWM, nanosecond);
+		}
+		if (!enabled) {
+			pwm->setRunState(run);
+			enabled = true;
 		}
 
-		return false;
+		return true;
 	}
 
 	bool ShovelSelect::setKick(int kick) {

@@ -14,10 +14,10 @@ using namespace std;
 
 // ROS
 #include "ros/ros.h"
+#include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "msl_actuator_msgs/BallCatchCmd.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
-#include "msl_actuator_msgs/HaveBallInfo.h"
 #include "msl_actuator_msgs/MotionLight.h"
 #include "msl_actuator_msgs/MotionBurst.h"
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
@@ -42,7 +42,7 @@ void handleMB(const msl_actuator_msgs::MotionBurst msg) {
 	mb = true;
 }
 
-void handleHBI(const msl_actuator_msgs::HaveBallInfo msg) {
+void handleHBI(const std_msgs::Bool msg) {
 	hbi = true;
 }
 
@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 	ros::Subscriber brtSub = node.subscribe<process_manager::ProcessCommand>("ProcessCommand", 25, handlePC);
 	ros::Subscriber vrtSub = node.subscribe<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 25, handleVRT);
 	ros::Subscriber mbcSub = node.subscribe<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 25, handleMB);
-	ros::Subscriber hbiSub = node.subscribe<msl_actuator_msgs::HaveBallInfo>("HaveBallInfo", 25, handleHBI);
+	ros::Subscriber hbiSub = node.subscribe<std_msgs::Bool>("LightBarrierInfo", 25, handleHBI);
 	ros::Subscriber imuSub = node.subscribe<msl_actuator_msgs::IMUData>("/IMUData", 25, handleIMU);
 
 	ros::Publisher sscPub = node.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
 	msl_actuator_msgs::BallHandleCmd msg_ballhandle;
 	msl_actuator_msgs::MotionLight msg_motionlight;
 
+	usleep(1000000);
 
 	cout << "ShovelSelect: Low Kick (Passing)" << endl;
 	msg_shovelselect.passing = true;
