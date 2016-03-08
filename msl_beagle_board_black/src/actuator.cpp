@@ -61,7 +61,7 @@ void controlBHLeft() {
 		}
 
 		threw[0].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -80,7 +80,7 @@ void controlBHRight() {
 
 
 		threw[1].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -103,7 +103,7 @@ void contolShovelSelect() {
 		}
 
 		threw[2].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -127,7 +127,7 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 		}
 
 		threw[3].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -216,7 +216,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		}
 
 		threw[4].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -235,7 +235,7 @@ void getIMU(ros::Publisher *imuPub) {
 		}
 
 		threw[5].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -254,15 +254,15 @@ void getOptical(ros::Publisher *mbcPub) {
 		}
 
 		threw[6].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
 void exit_program(int sig) {
 	ex = true;
 	th_activ = false;
-	cv_main.cv.notify_all();
-	for (int i=0; i<6; i++)
+//	cv_main.cv.notify_all();
+	for (int i=0; i<7; i++)
 		threw[i].cv.notify_all();
 }
 
