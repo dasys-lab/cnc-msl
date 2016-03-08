@@ -43,6 +43,8 @@
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
+#include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
+
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
 #include  "Plans/Attack/TestPlans/DuelTestMaster1454506180437.h"
@@ -195,6 +197,10 @@ namespace alica
 
             case 1417017436952:
                 return make_shared<UtilityFunction1417017436952>();
+                break;
+
+            case 1457434329037:
+                return make_shared<UtilityFunction1457434329037>();
                 break;
 
             case 1457015277573:

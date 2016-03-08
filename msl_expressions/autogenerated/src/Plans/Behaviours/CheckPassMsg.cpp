@@ -11,7 +11,7 @@ namespace alica
             DomainBehaviour("CheckPassMsg")
     {
         /*PROTECTED REGION ID(con1457441479350) ENABLED START*/ //Add additional options here#
-    	receivedMsg = false;
+        receivedMsg = false;
         /*PROTECTED REGION END*/
     }
     CheckPassMsg::~CheckPassMsg()

@@ -42,6 +42,8 @@
 
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
+#include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
+
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
 #include  "Plans/Attack/TestPlans/DuelTestMaster1454506180437.h"
@@ -581,6 +583,18 @@ namespace alica
             case 1435321221937:
 
                 return make_shared<TransitionCondition1435321221937>();
+
+                break;
+
+            case 1457434475372:
+
+                return make_shared<TransitionCondition1457434475372>();
+
+                break;
+
+            case 1457434476549:
+
+                return make_shared<TransitionCondition1457434476549>();
 
                 break;
 

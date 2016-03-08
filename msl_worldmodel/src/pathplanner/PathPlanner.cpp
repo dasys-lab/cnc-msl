@@ -66,12 +66,12 @@ namespace msl
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
-			for (int i = 0; i < msg->obstacles.size(); i++)
-			{
-				points.push_back(
-						make_shared<geometry::CNPoint2D>(msg->obstacles.at(i).x, msg->obstacles.at(i).y)->egoToAllo(
-								*ownPos));
-			}
+//			for (int i = 0; i < msg->obstacles.size(); i++)
+//			{
+//				points.push_back(
+//						make_shared<geometry::CNPoint2D>(msg->obstacles.at(i).x, msg->obstacles.at(i).y)->egoToAllo(
+//								*ownPos));
+//			}
 			voronoiDiagrams.at((currentVoronoiPos + 1) % 10)->generateVoronoiDiagram(points,true);
 		}
 		else
@@ -87,6 +87,7 @@ namespace msl
 	 */
 	void PathPlanner::initializeArtificialObstacles()
 	{
+		//TODO before 2 Meters now field->surrounding * 2
 		MSLFootballField* field = MSLFootballField::getInstance();
 		vector<VoronoiDiagram::Site_2> toInsert;
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
@@ -95,11 +96,11 @@ namespace msl
 			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
 		}
 		int lengthInterval = (int)(baseSize
-				+ ((int)(field->FieldLength + 2000) % baseSize) / (int)((int)(field->FieldLength + 2000) / baseSize));
+				+ ((int)(field->FieldLength + field->Surrounding * 2) % baseSize) / (int)((int)(field->FieldLength + field->Surrounding * 2) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(field->FieldWidth + 2000) % baseSize) / (int)((int)(field->FieldWidth + 2000) / baseSize));
-		int halfFieldLength = (int)field->FieldLength / 2 + 1000;
-		int halfFieldWidth = (int)field->FieldWidth / 2 + 1000;
+				+ ((int)(field->FieldWidth + field->Surrounding * 2) % baseSize) / (int)((int)(field->FieldWidth + field->Surrounding * 2) / baseSize));
+		int halfFieldLength = (int)field->FieldLength / 2 + field->Surrounding;
+		int halfFieldWidth = (int)field->FieldWidth / 2 + field->Surrounding;
 
 		//up right
 		toInsert.push_back(VoronoiDiagram::Site_2(halfFieldLength, -halfFieldWidth));
@@ -150,20 +151,19 @@ namespace msl
 				lastClosestPointToBlock = nullptr;
 			}
 		}
-		//TODO think about it if it stays comments and docu
-//		if((goal - startPos)->length() < this->snapDistance)
-//		{
-//			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-//			ret->push_back(goal);
-//			lastPath = ret;
-//			return ret;
-//		}
 		//check if the goal is reachable directly by checking a corridor between the robot and the goal
 		bool reachable = true;
 		auto sites = voronoi->getSitePositions();
 
 		for(int i = 0; i < sites->size(); i++)
 		{
+			if(!MSLFootballField::isInsideField(startPos, MSLFootballField::Surrounding))
+			{
+				if(sites->at(i).second == EntityType::ArtificialObstacle)
+				{
+					continue;
+				}
+			}
 			//if there is an obstacle inside the corridor the goal is not reachable
 			if(corridorCheck(voronoi, startPos, goal, sites->at(i).first))
 			{
