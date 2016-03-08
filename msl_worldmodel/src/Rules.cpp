@@ -9,6 +9,11 @@
 
 namespace msl
 {
+	Rules* Rules::getInstance()
+	{
+		static Rules instance;
+		return &instance;
+	}
 
 	Rules::Rules()
 	{
