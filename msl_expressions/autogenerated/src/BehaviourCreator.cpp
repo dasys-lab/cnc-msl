@@ -81,6 +81,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
+#include  "Plans/Behaviours/CheckPassMsg.h"
+
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
@@ -344,6 +346,11 @@ namespace alica
             case 1414840399972:
 
                 return make_shared<GetBall>();
+                break;
+
+            case 1457441499013:
+
+                return make_shared<CheckPassMsg>();
                 break;
 
             case 1427703234654:

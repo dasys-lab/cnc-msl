@@ -100,14 +100,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnKickOff.pml#1442495115442"/>
-    <value xPos="903" yPos="341"/>
-  </extensions>
-  <extensions>
-    <key href="OwnKickOff.pml#1442496872532"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="OwnKickOff.pml#1444834088607"/>
     <value xPos="164" yPos="408"/>
   </extensions>
@@ -117,6 +109,10 @@
   </extensions>
   <extensions>
     <key href="../../../Behaviours/Pos2Defenders.beh#1444835591397"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/CheckPassMsg.beh#1457441499013"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
