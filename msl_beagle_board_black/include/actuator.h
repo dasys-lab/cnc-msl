@@ -48,7 +48,7 @@ ShovelSelect	shovel(P9_14);
 timeval			time_now;
 timeval			last_ping;
 
-CV				threw[7], cv_main;
+CV				threw[7];
 
 supplementary::SystemConfig*	sc;
 

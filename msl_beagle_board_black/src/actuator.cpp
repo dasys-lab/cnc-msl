@@ -30,7 +30,6 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 }
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
-	shovel.setPing(time_now);
 	try {
 		shovel.setShovel(msg.passing, time_now);
 	} catch (exception &e) {
@@ -62,7 +61,7 @@ void controlBHLeft() {
 		}
 
 		threw[0].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -81,7 +80,7 @@ void controlBHRight() {
 
 
 		threw[1].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -104,7 +103,7 @@ void contolShovelSelect() {
 		}
 
 		threw[2].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -128,7 +127,7 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 		}
 
 		threw[3].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -217,7 +216,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		}
 
 		threw[4].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -236,7 +235,7 @@ void getIMU(ros::Publisher *imuPub) {
 		}
 
 		threw[5].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -255,15 +254,15 @@ void getOptical(ros::Publisher *mbcPub) {
 		}
 
 		threw[6].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
 void exit_program(int sig) {
 	ex = true;
 	th_activ = false;
-	cv_main.cv.notify_all();
-	for (int i=0; i<6; i++)
+//	cv_main.cv.notify_all();
+	for (int i=0; i<7; i++)
 		threw[i].cv.notify_all();
 }
 
@@ -276,16 +275,16 @@ int main(int argc, char** argv) {
 	ros::NodeHandle node;
 	ros::Rate loop_rate(30);		// in Hz
 
-	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
-	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
-	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
+	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 1, handleShovelSelectControl);
+	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 1, handleMotionLight);
+	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 1, handleBallHandleControl);
 
-	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 10);
-	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
-	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
-	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 10);
-	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
-	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 10);
+	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 1);
+	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 1);
+	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 1);
+	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 1);
+	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 1);
+	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 1);
 
 	sc = supplementary::SystemConfig::getInstance();
 
@@ -294,8 +293,8 @@ int main(int argc, char** argv) {
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &lbiPub);
 	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
-	//thread th_adns3080(getOptical, &mbcPub);
-	//thread th_imu(getIMU, &imuPub);
+	thread th_adns3080(getOptical, &mbcPub);
+	thread th_imu(getIMU, &imuPub);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
@@ -307,21 +306,25 @@ int main(int argc, char** argv) {
 
 	usleep(50000);
 
-        LED_Power.setValue(high);
+    LED_Power.setValue(high);
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<7; i++) {
-			threw[i].notify = true;
+		for (int i=0; i<7; i++) { // TODO remove magic number
+			if (threw[i].notify) {
+				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
+			} else {
+				threw[i].notify = true;
+			}
 			threw[i].cv.notify_all();
 		}
 
 		// auf beenden aller Threads warten
-		unique_lock<mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
+		//unique_lock<mutex> l_main(cv_main.mtx);
+		//cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
 
 		// OpticalFlow und IMU werden nicht ausgefuehrt
 

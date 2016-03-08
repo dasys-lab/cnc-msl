@@ -608,10 +608,11 @@ void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show
         // Draw new
         for (int i = 1; i < ppi->pathPoints.size(); i++)
         {
-                vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDashedLine(ppi->pathPoints.at(i - 1).y / 1000,
+                vtkSmartPointer<vtkActor> actor = FieldWidget3D::createLine(ppi->pathPoints.at(i - 1).y / 1000,
                                                                                       -ppi->pathPoints.at(i - 1).x / 1000,
                                                                                       0.01, ppi->pathPoints.at(i).y / 1000,
                                                                                       -ppi->pathPoints.at(i).x / 1000, 0.01,
+                                                                                      3,
                                                                                       Color::getColor(this->robot->getId()));
                 pathLines.push_back(actor);
                 renderer->AddActor(actor);
@@ -659,21 +660,25 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
                                                                                                 -cc->corridorPoints.at(0).x / 1000, 0.01,
                                                                                                 cc->corridorPoints.at(1).y / 1000,
                                                                                                 -cc->corridorPoints.at(1).x / 1000, 0.01,
+                                                                                                3, this->getDashedPattern(),
                                                                                                 Color::getColor(this->robot->getId()));
         vtkSmartPointer<vtkActor> actor2 = FieldWidget3D::createDashedLine(cc->corridorPoints.at(1).y / 1000,
                                                                                                 -cc->corridorPoints.at(1).x / 1000, 0.01,
                                                                                                 cc->corridorPoints.at(2).y / 1000,
                                                                                                 -cc->corridorPoints.at(2).x / 1000, 0.01,
+                                                                                                3, this->getDashedPattern(),
                                                                                                 Color::getColor(this->robot->getId()));
         vtkSmartPointer<vtkActor> actor3 = FieldWidget3D::createDashedLine(cc->corridorPoints.at(2).y / 1000,
                                                                                                 -cc->corridorPoints.at(2).x / 1000, 0.01,
                                                                                                 cc->corridorPoints.at(3).y / 1000,
                                                                                                 -cc->corridorPoints.at(3).x / 1000, 0.01,
+                                                                                                3, this->getDashedPattern(),
                                                                                                 Color::getColor(this->robot->getId()));
         vtkSmartPointer<vtkActor> actor4 = FieldWidget3D::createDashedLine(cc->corridorPoints.at(3).y / 1000,
                                                                                                 -cc->corridorPoints.at(3).x / 1000, 0.01,
                                                                                                 cc->corridorPoints.at(0).y / 1000,
                                                                                                 -cc->corridorPoints.at(0).x / 1000, 0.01,
+                                                                                                3, this->getDashedPattern(),
                                                                                                 Color::getColor(this->robot->getId()));
         corridorLines.push_back(actor);
         corridorLines.push_back(actor2);
@@ -751,7 +756,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
                         if (used >= this->netLines.size())
                         {
-                                actor = FieldWidget3D::createDashedLine(x1, y1, 0.01, x2, y2, 0.01, Color::getColor(this->robot->getId()));
+                                actor = FieldWidget3D::createDashedLine(x1, y1, 0.01, x2, y2, 0.01, 3, this->getDashedPattern(), Color::getColor(this->robot->getId()));
                                 this->netLines.push_back(actor);
                                 renderer->AddActor(actor);
                         }
@@ -792,9 +797,16 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
                 for (int i = 0; i < vni->sites.size(); i++)
                 {
                         vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(vni->sites.at(i).y / 1000,
-                                                                                                -vni->sites.at(i).x / 1000, 0.5, Color::getColor(this->robot->getId()));
+                                                                                  -vni->sites.at(i).x / 1000,
+                                                                                   0.3,
+                                                                                   Color::getColor(this->robot->getId()));
                         sitePoints.push_back(actor);
                         renderer->AddActor(actor);
                 }
         }
+}
+
+int RobotVisualization::getDashedPattern()
+{
+        return 0x66 << this->robot->getId();
 }

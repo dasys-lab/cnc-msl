@@ -37,6 +37,7 @@ namespace alica
         // TODO Pass message
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         EntryPoint* ep = getParentEntryPoint(taskName);
+        int id = -1;
         if (ep != nullptr)
         {
             auto parent = this->runningPlan->getParent().lock();
@@ -72,6 +73,16 @@ namespace alica
             kc.kicker = 1;
             kc.power = wm->kicker.getKickPowerPass(egoAlignPoint->alloToEgo(*ownPos)->length());
             send(kc);
+
+            msl_helper_msgs::PassMsg pm;
+            pm.validFor = 2000000000;
+            pm.destination.x = egoAlignPoint->x;
+            pm.destination.y = egoAlignPoint->y;
+            pm.origin.x = ownPos->x;
+            pm.origin.y = ownPos->y;
+            pm.receiverID = id;
+            send(pm);
+
             this->success = true;
         }
 

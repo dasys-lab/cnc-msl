@@ -12,7 +12,6 @@
 #include <MSLFootballField.h>
 #include "GeometryCalculator.h"
 #include "MSLWorldModel.h"
-#include "Rules.h"
 #include "MSLFootballField.h"
 #include "container/CNPoint2D.h"
 #include "SystemConfig.h"
@@ -43,6 +42,8 @@ namespace msl{
 					return "NoSituationFoundException: " + situation;
 				}
 		};
+
+		class Rules;
 
 		class MSLConstraintBuilder
 		{
@@ -105,7 +106,7 @@ namespace msl{
 			static shared_ptr<Term> ownPenaltyAreaRule(vector<shared_ptr<TVec>>& fieldPlayers);
 			static shared_ptr<Term> oppPenaltyAreaRule(vector<shared_ptr<TVec>>& fieldPlayers);
 		private:
-			static Rules rules;
+			static Rules* rules;
 			static msl::MSLFootballField* field;
 			static shared_ptr<geometry::CNPoint2D> ownRightSurCornerP;
 			static shared_ptr<geometry::CNPoint2D> oppLeftSurCornerP;

@@ -6,6 +6,7 @@
  */
 
 #include "MSLConstraintBuilder.h"
+#include "Rules.h"
 
 namespace msl
 {
@@ -19,7 +20,7 @@ namespace msl
 
 	supplementary::SystemConfig* MSLConstraintBuilder::sc = supplementary::SystemConfig::getInstance();
 
-	Rules MSLConstraintBuilder::rules;
+	Rules* MSLConstraintBuilder::rules = Rules::getInstance();
 
 	// INTERN
 	msl::MSLFootballField* MSLConstraintBuilder::field = msl::MSLFootballField::getInstance();
@@ -480,7 +481,7 @@ namespace msl
 		appliedRules = appliedRules & ownPenaltyAreaRule (fieldPlayers);
 		appliedRules = appliedRules & oppPenaltyAreaRule (fieldPlayers);
 		if (ballT != nullptr) {
-			appliedRules =  appliedRules & outsideSphere (ballT, rules.getStayAwayRadiusDropBall(), fieldPlayers);
+			appliedRules =  appliedRules & outsideSphere (ballT, rules->getStayAwayRadiusDropBall(), fieldPlayers);
 		}
 		return appliedRules;
 	}
@@ -497,12 +498,12 @@ namespace msl
 		} else {
 			appliedRules = appliedRules &  insideArea (Areas::OwnHalf, passivPlayers);
 		}
-		appliedRules = appliedRules &  outsideSphere (centreMarkT, rules.getStayAwayRadius(), passivPlayers);
+		appliedRules = appliedRules &  outsideSphere (centreMarkT, rules->getStayAwayRadius(), passivPlayers);
 		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyRules(vector<shared_ptr<TVec>>& fieldPlayers) {
 		shared_ptr<Term> appliedRules = insideArea (Areas::OppHalf, fieldPlayers);
-		appliedRules = appliedRules & outsideSphere (centreMarkT, rules.getStayAwayRadius(), fieldPlayers);
+		appliedRules = appliedRules & outsideSphere (centreMarkT, rules->getStayAwayRadius(), fieldPlayers);
 		appliedRules = appliedRules & spread (MIN_POSITION_DIST, fieldPlayers);
 		return appliedRules;
 	}
@@ -514,9 +515,9 @@ namespace msl
 		std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(receivers), [&](shared_ptr<TVec> v) {return v != fieldPlayers[executerIdx];});
 
 		if (ballT != nullptr) {
-			appliedRules  =appliedRules &  outsideSphere (ballT,rules.getStayAwayRadius(), receivers);
+			appliedRules  =appliedRules &  outsideSphere (ballT,rules->getStayAwayRadius(), receivers);
 		} else {
-			appliedRules =appliedRules &  outsideSphere (centreMarkT, rules.getStayAwayRadius(), receivers);
+			appliedRules =appliedRules &  outsideSphere (centreMarkT, rules->getStayAwayRadius(), receivers);
 		}
 		appliedRules = appliedRules & ownPenaltyAreaRule (receivers);
 		appliedRules = appliedRules & insideArea (Areas::OwnHalf, receivers);
@@ -526,9 +527,9 @@ namespace msl
 		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
 		appliedRules = appliedRules & outsideArea (Areas::OwnGoalArea, fieldPlayers);
 		if (ballT != nullptr) {
-			appliedRules = appliedRules & outsideSphere (ballT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+			appliedRules = appliedRules & outsideSphere (ballT, rules->getStayAwayRadiusOpp(), fieldPlayers);
 		} else {
-			appliedRules = appliedRules & outsideSphere (centreMarkT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+			appliedRules = appliedRules & outsideSphere (centreMarkT, rules->getStayAwayRadiusOpp(), fieldPlayers);
 		}
 		appliedRules = appliedRules & ownPenaltyAreaRule (fieldPlayers);
 		appliedRules = appliedRules & insideArea (Areas::OwnHalf, fieldPlayers);
@@ -546,7 +547,7 @@ namespace msl
 			receivers = fieldPlayers;
 		}
 		if (ballT != nullptr) {
-			appliedRules =  appliedRules & outsideSphere (ballT, rules.getStayAwayRadius(), receivers);
+			appliedRules =  appliedRules & outsideSphere (ballT, rules->getStayAwayRadius(), receivers);
 		}
 		appliedRules =  appliedRules & ownPenaltyAreaRule (receivers);
 		appliedRules =  appliedRules & oppPenaltyAreaRule (receivers);
@@ -573,7 +574,7 @@ namespace msl
 			if (notInPenaltyPlayers.size() > 0)
 				ownPenaltyConstrains = ownPenaltyConstrains | outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
 			if (ballT != nullptr) {
-				minDistConstrains = minDistConstrains & alica::ConstraintBuilder::ifThen(outsideArea(Areas::OwnPenaltyArea, fieldPlayers.at(i)), outsideSphere(ballT, rules.getStayAwayRadiusOpp(), fieldPlayers.at(i)));
+				minDistConstrains = minDistConstrains & alica::ConstraintBuilder::ifThen(outsideArea(Areas::OwnPenaltyArea, fieldPlayers.at(i)), outsideSphere(ballT, rules->getStayAwayRadiusOpp(), fieldPlayers.at(i)));
 			}
 		}
 

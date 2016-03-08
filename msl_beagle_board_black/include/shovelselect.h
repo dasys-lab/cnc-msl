@@ -20,8 +20,7 @@ class ShovelSelect {
 		BlackLib::BlackPWM	*pwm;
 		const int	period = 20000000;
 
-		bool		enabled = false;
-		bool		statePassing = true;
+		bool		enabled, init, statePassing;
 		int			kickPWM = 1600000, passPWM = 1300000;
 		int			timeout;
 		timeval		ping;

@@ -37,6 +37,7 @@ UsedLibrary="/home/luk/eagle/lbr/st-microelectronics-2.lbr"
 UsedLibrary="/home/luk/eagle/lbr/traco-tm.lbr"
 UsedLibrary="/home/luk/eagle/lbr/traco.lbr"
 UsedLibrary="/home/luk/eagle-7.2.0/lbr/con-ptr500.lbr"
+UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/1_USER.lbr"
 UsedLibrary="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/lbr/ownParts.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/19inch.lbr"
 UsedLibrary="/home/luk/eagle-5.6.0/lbr/40xx.lbr"
@@ -333,8 +334,8 @@ UsedLibrary="/home/luk/eagle-5.6.0/lbr/zilog.lbr"
 
 [Win_1]
 Type="Board Editor"
-Loc="0 0 599 399"
-State=0
+Loc="65 24 664 423"
+State=2
 Number=2
 File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.brd"
 View="-68.9716 -249.045 172.004 110.09"
@@ -379,11 +380,11 @@ Layer=16
 
 [Win_2]
 Type="Schematic Editor"
-Loc="2426 14 3025 413"
+Loc="2426 24 3025 423"
 State=1
 Number=1
 File="/home/luk/dev/cnc-ws/src/cnc-msl/msl_electronic_boards/rekick2015/pcb/rekick2015-001.sch"
-View="99.4156 118.948 208.567 194.129"
+View="16.8051 -80.6831 342.73 143.805"
 WireWidths=" 0 0.3048 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0.4064 0.1524"
 PadDiameters=" 0.254 0.3048 0.4064 0.6096 0.8128 1.016 1.27 1.4224 1.6764 1.778 1.9304 2.1844 2.54 3.81 6.4516 0"
 PadDrills=" 0.5 0.6 0.7 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6 2 2.2 2.8 3.2 0.8"
@@ -422,8 +423,8 @@ ArcDirection=0
 AddLevel=2
 PadsSameType=0
 Layer=91
-Views=" 5: 99.4156 118.948 208.567 194.129"
-Sheet="5"
+Views=" 1: 99.4156 118.948 208.567 194.129 5: -18.6369 24.2106 252.967 211.285 6: 16.8051 -80.6831 342.73 143.805"
+Sheet="6"
 
 [Win_3]
 Type="Control Panel"
