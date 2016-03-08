@@ -51,6 +51,7 @@ namespace alica
         double calcToleranceAngle();
         void kicking();
         bool checkGoalKeeper();
+        bool hitsGoal(double posX, double posY, double alloAngle);
 
         // testing variables for console output
         double cout_kickpower;
