@@ -293,8 +293,8 @@ int main(int argc, char** argv) {
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &lbiPub);
 	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
-	//thread th_adns3080(getOptical, &mbcPub);
-	//thread th_imu(getIMU, &imuPub);
+	thread th_adns3080(getOptical, &mbcPub);
+	thread th_imu(getIMU, &imuPub);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
