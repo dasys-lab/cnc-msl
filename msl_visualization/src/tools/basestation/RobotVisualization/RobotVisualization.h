@@ -63,6 +63,7 @@ private:
         void turn(double angle);
         void drawOpponent(vtkRenderer *renderer, double x, double y, double z);
         std::array<double,3>& getColor();
+        int getDashedPattern();
 
 private:
 	RobotInfo* robot;

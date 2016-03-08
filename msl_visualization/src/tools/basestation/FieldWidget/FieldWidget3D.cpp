@@ -158,23 +158,21 @@ pair<double, double> FieldWidget3D::transform(double x, double y)
         return ret;
 }
 
-void FieldWidget3D::createLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2, std::array<double,3> color)
+vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double,3> color)
 {
-        vtkSmartPointer<vtkPlaneSource> planeSrc = vtkSmartPointer<vtkPlaneSource>::New();
-        planeSrc->SetOrigin(0, 0, 0);
-        planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
-        planeSrc->SetPoint2(0, abs(y2 - y1), 0);
-        vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        planeMapper->SetInput(planeSrc->GetOutput());
-        vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
-        lineActor->SetMapper(planeMapper);
+        vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+        vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+        line->SetPoint1(x1, y1, z1);
+        line->SetPoint2(x2, y2, z2);
+        lineMapper->SetInputConnection(line->GetOutputPort());
+        lineActor->SetMapper(lineMapper);
+        lineActor->GetProperty()->SetLineWidth(width);
         lineActor->GetProperty()->SetColor(color[0], color[1], color[2]);
-        lineActor->SetPosition(x1, y1, 0);
-        lineActor->GetProperty()->SetAmbient(1);
-        lineActor->GetProperty()->SetDiffuse(0);
-        lineActor->GetProperty()->SetSpecular(0);
+        lineActor->GetProperty()->SetPointSize(1);
+        lineActor->GetProperty()->SetLineWidth(3);
 
-        renderer->AddActor(lineActor);
+        return lineActor;
 }
 
 void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2)
@@ -188,7 +186,7 @@ void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float 
         lineMapper->SetInputConnection(line->GetOutputPort());
 }
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, std::array<double,3> color)
+vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, float width, int pattern, std::array<double,3> color)
 {
         vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
         vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -197,8 +195,8 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, fl
         line->SetPoint2(x2, y2, z2);
         lineMapper->SetInputConnection(line->GetOutputPort());
         lineActor->SetMapper(lineMapper);
-        lineActor->GetProperty()->SetLineWidth(3);
-        lineActor->GetProperty()->SetLineStipplePattern(0xf0f0);
+        lineActor->GetProperty()->SetLineWidth(width);
+        lineActor->GetProperty()->SetLineStipplePattern(pattern);
         lineActor->GetProperty()->SetLineStippleRepeatFactor(1);
         lineActor->GetProperty()->SetColor(color[0], color[1], color[2]);
         lineActor->GetProperty()->SetPointSize(1);
@@ -223,6 +221,65 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radiu
         coloredDot->SetOrientation(90, 0, 0);
         coloredDot->GetProperty()->SetAmbient(1.0);
         return coloredDot;
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::addCircle(float x, float y, float outerRadius, float innerRadius)
+{
+        vtkSmartPointer<vtkDiskSource> diskSource = vtkSmartPointer<vtkDiskSource>::New();
+        diskSource->SetCircumferentialResolution(100);
+        diskSource->SetOuterRadius(outerRadius);
+        diskSource->SetInnerRadius(innerRadius);
+
+        // Create a mapper and actor.
+        vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputConnection(diskSource->GetOutputPort());
+
+        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        actor->SetPosition(x, y, 0);
+        actor->GetProperty()->SetColor(1, 1, 1);
+        actor->GetProperty()->SetAmbient(1);
+        actor->GetProperty()->SetDiffuse(0);
+        actor->GetProperty()->SetSpecular(0);
+
+        return actor;
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::addArc(float x, float y, float radius, float startDeg, float endDeg)
+{
+        vtkSmartPointer<vtkArcSource> arcSource = vtkSmartPointer<vtkArcSource>::New();
+        arcSource->SetResolution(100);
+        arcSource->NegativeOff();
+        arcSource->SetCenter(x, y, 0);
+        arcSource->SetPoint1(x + radius * cos(startDeg * M_PI / 180), y + radius * sin(startDeg * M_PI / 180), 0);
+        arcSource->SetPoint2(x + radius * cos(endDeg * M_PI / 180), y + radius * sin(endDeg * M_PI / 180), 0);
+
+        vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputConnection(arcSource->GetOutputPort());
+
+        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+        actor->GetProperty()->SetColor(1, 1, 1);
+        actor->GetProperty()->SetAmbient(1);
+        actor->GetProperty()->SetDiffuse(0);
+        actor->GetProperty()->SetSpecular(0);
+        actor->SetMapper(mapper);
+
+        return actor;
+}
+
+vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
+{
+        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+        vtkSmartPointer<vtkVectorText> txt = vtkSmartPointer<vtkVectorText>::New();
+        txt->SetText(text.toStdString().c_str());
+        vtkSmartPointer<vtkPolyDataMapper> txtRobotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        txtRobotMapper->SetInput(txt->GetOutput());
+        actor->SetMapper(txtRobotMapper);
+        actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
+        actor->GetProperty()->SetAmbient(1.0);
+        actor->SetOrientation(0, 0, 90);
+
+        return actor;
 }
 
 
@@ -315,7 +372,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	lockCam = false;
 	top = false;
 
-	Update_timer->start(50);
+	Update_timer->start(33);
 }
 
 
@@ -452,48 +509,6 @@ void FieldWidget3D::debug_point_flip_all(bool on_off)
 {
 }
 
-void FieldWidget3D::addCircle(vtkRenderer *renderer, float x, float y, float radius)
-{
-	vtkSmartPointer<vtkDiskSource> diskSource = vtkSmartPointer<vtkDiskSource>::New();
-	diskSource->SetCircumferentialResolution(100);
-	diskSource->SetOuterRadius(radius + _LINE_THICKNESS / 2);
-	diskSource->SetInnerRadius(radius - _LINE_THICKNESS / 2);
-
-	// Create a mapper and actor.
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputConnection(diskSource->GetOutputPort());
-
-	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-	actor->SetMapper(mapper);
-	actor->SetPosition(x, y, 0);
-	actor->GetProperty()->SetColor(1, 1, 1);
-	actor->GetProperty()->SetAmbient(1);
-	actor->GetProperty()->SetDiffuse(0);
-	actor->GetProperty()->SetSpecular(0);
-	renderer->AddActor(actor);
-}
-
-void FieldWidget3D::addArc(vtkRenderer *renderer, float x, float y, float radius, float startDeg, float endDeg)
-{
-	vtkSmartPointer<vtkArcSource> arcSource = vtkSmartPointer<vtkArcSource>::New();
-	arcSource->SetResolution(100);
-	arcSource->NegativeOff();
-	arcSource->SetCenter(x, y, 0);
-	arcSource->SetPoint1(x + radius * cos(startDeg * M_PI / 180), y + radius * sin(startDeg * M_PI / 180), 0);
-	arcSource->SetPoint2(x + radius * cos(endDeg * M_PI / 180), y + radius * sin(endDeg * M_PI / 180), 0);
-
-	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputConnection(arcSource->GetOutputPort());
-
-	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-	actor->GetProperty()->SetColor(1, 1, 1);
-	actor->GetProperty()->SetAmbient(1);
-	actor->GetProperty()->SetDiffuse(0);
-	actor->GetProperty()->SetSpecular(0);
-	actor->SetMapper(mapper);
-	renderer->AddActor(actor);
-}
-
 void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 {
 	double post = 0.125;
@@ -585,128 +600,126 @@ void FieldWidget3D::drawField(vtkRenderer* renderer)
 
 	// Draw Field
 	// middle line
-	createLine(renderer, -_FIELD_WIDTH / 2, -lineOffSet, 0.0, _FIELD_WIDTH / 2, +lineOffSet, 0.0);
+	drawFieldLine(renderer, -_FIELD_WIDTH / 2, -lineOffSet, 0.0, _FIELD_WIDTH / 2, +lineOffSet, 0.0);
+
 	// left side line
-	createLine(renderer, (-_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
+	drawFieldLine(renderer, (-_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
 				(-_FIELD_WIDTH / 2) + lineOffSet, _FIELD_LENGTH / 2 + lineOffSet, 0.0);
+
 	// right side line
-	createLine(renderer, (_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
+	drawFieldLine(renderer, (_FIELD_WIDTH / 2) - lineOffSet, -_FIELD_LENGTH / 2 - lineOffSet, 0.0,
 				(_FIELD_WIDTH / 2) + lineOffSet, _FIELD_LENGTH / 2 + lineOffSet, 0.0);
+
 	// enemy goal line
-	createLine(renderer, -_FIELD_WIDTH / 2, (_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
+	drawFieldLine(renderer, -_FIELD_WIDTH / 2, (_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
 				(_FIELD_LENGTH / 2) + lineOffSet, 0.0);
+
 	// own goal line
-	createLine(renderer, -_FIELD_WIDTH / 2, (-_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
+	drawFieldLine(renderer, -_FIELD_WIDTH / 2, (-_FIELD_LENGTH / 2) - lineOffSet, 0.0, _FIELD_WIDTH / 2,
 				(-_FIELD_LENGTH / 2) + lineOffSet, 0.0);
+
 
 	// Goal Areas (1. own, 2. opponent)
 	// long goal area line
-	createLine(renderer, -_GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH - lineOffSet, 0.0,
 				_GOAL_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+
 	// left short goal area line
-	createLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+	drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
 				-_GOAL_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+
 	// right short goal area line
-	createLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, _GOAL_AREA_WIDTH / 2 + lineOffSet,
+	drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0, _GOAL_AREA_WIDTH / 2 + lineOffSet,
 				-_FIELD_LENGTH / 2 + _GOAL_AREA_LENGTH + lineOffSet, 0.0);
 
 	// long goal area line
-	createLine(renderer, -_GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
 				_GOAL_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH + lineOffSet, 0.0);
+
 	// left short goal area line
-	createLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, -_GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
 				-_GOAL_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
+
 	// right short goal area line
-	createLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, _GOAL_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _GOAL_AREA_LENGTH - lineOffSet, 0.0,
 				_GOAL_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
 	// Penalty Areas (1. opponent, 2. own)
-	createLine(renderer, -_PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
 				_PENALTY_AREA_WIDTH / 2, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-	createLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+	drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
 				-_PENALTY_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-	createLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
+	drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, -_FIELD_LENGTH / 2, 0.0,
 				_PENALTY_AREA_WIDTH / 2 + lineOffSet, -_FIELD_LENGTH / 2 + _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-	createLine(renderer, -_PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
+	drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet, 0.0,
 				_PENALTY_AREA_WIDTH / 2, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH + lineOffSet, 0.0);
 
-	createLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet,
+	drawFieldLine(renderer, -_PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet,
 				0.0, -_PENALTY_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
-	createLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet,
+	drawFieldLine(renderer, _PENALTY_AREA_WIDTH / 2 - lineOffSet, _FIELD_LENGTH / 2 - _PENALTY_AREA_LENGTH - lineOffSet,
 				0.0, _PENALTY_AREA_WIDTH / 2 + lineOffSet, _FIELD_LENGTH / 2, 0.0);
 
 	// Corner Arcs
-	addArc(renderer, -_FIELD_WIDTH / 2, -_FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 0, 90);
-	addArc(renderer, -_FIELD_WIDTH / 2, _FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 0, 270);
-	addArc(renderer, _FIELD_WIDTH / 2, -_FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 180, 90);
-	addArc(renderer, _FIELD_WIDTH / 2, _FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 180, 270);
+	auto arc = FieldWidget3D::addArc(-_FIELD_WIDTH / 2, -_FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 0, 90);
+        renderer->AddActor(arc);
+	arc = FieldWidget3D::addArc(-_FIELD_WIDTH / 2, _FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 0, 270);
+        renderer->AddActor(arc);
+	arc = FieldWidget3D::addArc(_FIELD_WIDTH / 2, -_FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 180, 90);
+        renderer->AddActor(arc);
+	arc = FieldWidget3D::addArc(_FIELD_WIDTH / 2, _FIELD_LENGTH / 2, _CORNER_CIRCLE_RADIUS, 180, 270);
+        renderer->AddActor(arc);
 
 	// Center Circle
-	addCircle(renderer, 0, 0, _CENTER_CIRCLE_RADIUS);
+        float outerRadius = _CENTER_CIRCLE_RADIUS + _LINE_THICKNESS / 2;
+        float innerRadius = _CENTER_CIRCLE_RADIUS - _LINE_THICKNESS / 2;
+	auto circle = FieldWidget3D::addCircle(0, 0, outerRadius, innerRadius);
+	renderer->AddActor(circle);
 
 	// Black Dots
-	auto dot = createDot(_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
+	auto dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
 	renderer->AddActor(dot);
-	dot = createDot(-_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
+	dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, 0, lineOffSet, {0.0,0.0,0.0});
         renderer->AddActor(dot);
 
-	dot = createDot(_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+	dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
         renderer->AddActor(dot);
-	dot = createDot(-_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+	dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
         renderer->AddActor(dot);
-	dot = createDot(0, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet);
-        renderer->AddActor(dot);
-
-	dot = createDot(_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
-        renderer->AddActor(dot);
-	dot = createDot(-_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
-        renderer->AddActor(dot);
-	dot = createDot(0, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet);
+	dot = FieldWidget3D::createDot(0, _FIELD_LENGTH / 2 - _PENALTY_MARK_DISTANCE, lineOffSet);
         renderer->AddActor(dot);
 
-	dot = createDot(0, 0, lineOffSet);
+	dot = FieldWidget3D::createDot(_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = FieldWidget3D::createDot(-_FIELD_WIDTH / 4, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet, {0.0,0.0,0.0});
+        renderer->AddActor(dot);
+	dot = FieldWidget3D::createDot(0, -_FIELD_LENGTH / 2 + _PENALTY_MARK_DISTANCE, lineOffSet);
+        renderer->AddActor(dot);
+
+	dot = FieldWidget3D::createDot(0, 0, lineOffSet);
         renderer->AddActor(dot);
 }
 
-//void FieldWidget3D::createDot(vtkRenderer* renderer, float x, float y, bool black, float radius)
-//{
-//	vtkSmartPointer<vtkCylinderSource> dot = vtkSmartPointer<vtkCylinderSource>::New();
-//	dot->SetRadius(radius);
-//	dot->SetHeight(0.001);
-//	dot->SetResolution(32);
-//	vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-//	dotMapper->SetInput(dot->GetOutput());
-//
-//	vtkSmartPointer<vtkActor> blackDot1 = vtkSmartPointer<vtkActor>::New();
-//	blackDot1->SetMapper(dotMapper);
-//
-//	if (black)
-//		blackDot1->GetProperty()->SetColor(0, 0, 0);
-//	else
-//		blackDot1->GetProperty()->SetColor(1, 1, 1);
-//
-//	blackDot1->SetPosition(x, y, 0.01);
-//	blackDot1->SetOrientation(90, 0, 0);
-//	blackDot1->GetProperty()->SetAmbient(1.0);
-//	renderer->AddActor(blackDot1);
-//}
-
-vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
+void FieldWidget3D::drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2)
 {
-        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-	vtkSmartPointer<vtkVectorText> txt = vtkSmartPointer<vtkVectorText>::New();
-	txt->SetText(text.toStdString().c_str());
-	vtkSmartPointer<vtkPolyDataMapper> txtRobotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	txtRobotMapper->SetInput(txt->GetOutput());
-	actor->SetMapper(txtRobotMapper);
-	actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
-	actor->GetProperty()->SetAmbient(1.0);
-	actor->SetOrientation(0, 0, 90);
-	return actor;
+          vtkSmartPointer<vtkPlaneSource> planeSrc = vtkSmartPointer<vtkPlaneSource>::New();
+          planeSrc->SetOrigin(0, 0, 0);
+          planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
+          planeSrc->SetPoint2(0, abs(y2 - y1), 0);
+          vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+          planeMapper->SetInput(planeSrc->GetOutput());
+          vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
+          lineActor->SetMapper(planeMapper);
+          lineActor->GetProperty()->SetColor(1, 1, 1);
+          lineActor->SetPosition(x1, y1, 0);
+          lineActor->GetProperty()->SetAmbient(1);
+          lineActor->GetProperty()->SetDiffuse(0);
+          lineActor->GetProperty()->SetSpecular(0);
+
+          renderer->AddActor(lineActor);
 }
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createObstacle()
