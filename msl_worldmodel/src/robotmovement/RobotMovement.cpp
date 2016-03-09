@@ -521,7 +521,7 @@ namespace msl
 			return mc;
 		}
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles.getObstaclePoints(); //WM.GetTrackedOpponents();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles.getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
 		fringe->clear();
 		for (int i = 0; i < 16; i++)
 		{
@@ -532,7 +532,7 @@ namespace msl
 				if (s->isValid())
 				{
 
-					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles.getObstaclePoints());
+					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles.getEgoVisionObstaclePoints());
 					fringe->push_back(s);
 				}
 			}
@@ -566,7 +566,7 @@ namespace msl
 			for (int j = 0; j < next->size(); j++)
 			{
 				next->at(j)->val = evalPointDynamic(next->at(j)->midP, alloPassee, ownPos,
-													wm->obstacles.getObstaclePoints());
+													wm->obstacles.getEgoVisionObstaclePoints());
 				fringe->push_back(next->at(j));
 			}
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);

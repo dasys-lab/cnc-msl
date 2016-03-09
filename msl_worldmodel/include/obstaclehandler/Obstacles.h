@@ -44,8 +44,8 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoObstaclePoints(int index = 0);
 		//TODO change to raw
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getEgoVisionObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoVisionObstaclePoints(int index = 0);
 		double getObstacleRadius();
 
 	private:

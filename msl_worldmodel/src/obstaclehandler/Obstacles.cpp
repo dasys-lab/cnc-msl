@@ -644,7 +644,7 @@ namespace msl
 	}
 
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getObstaclePoints(int index)
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getEgoVisionObstaclePoints(int index)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		auto x = obstacles.getLast(index);
@@ -661,7 +661,7 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Obstacles::getObstacles(int index)
+	shared_ptr<vector<msl_sensor_msgs::ObstacleInfo> > Obstacles::getEgoVisionObstacles(int index)
 	{
 		auto x = obstacles.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -686,9 +686,9 @@ namespace msl
 			shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs,
 					time);
 			obstacles.add(o);
-			if(this->getObstaclePoints() != nullptr)
+			if(this->getEgoVisionObstaclePoints() != nullptr)
 			{
-				handleObstacles(this->getObstaclePoints());
+				handleObstacles(this->getEgoVisionObstaclePoints());
 			}
 		}
 	}
