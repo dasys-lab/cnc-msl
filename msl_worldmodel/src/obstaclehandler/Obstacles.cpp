@@ -89,6 +89,9 @@ namespace msl
 														wm->rawSensorData.getCorrectedOdometryInfo()->position.y,
 														wm->rawSensorData.getCorrectedOdometryInfo()->position.angle)));
 
+			if (newClusterArray->at(i)->ident != wm->getOwnId()) {
+
+			}
 			if (newClusterArray->at(i)->ident == EntityType::Opponent)
 			{
 				// it is not a teammate
