@@ -28,6 +28,11 @@ namespace alica
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = wm->ball.getEgoBallPosition();
+
+        std::cout << "OwnPos:     " << ownPos << std::endl;
+        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
+        std::cout << "HaveBall: " << (wm->ball.haveBall()) << std::endl;
+
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
