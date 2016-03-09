@@ -6,6 +6,7 @@
  */
 
 #include "shovelselect.h"
+#include <SystemConfig.h>
 
 using namespace BlackLib;
 
@@ -15,6 +16,11 @@ using namespace BlackLib;
 		pwm->setPeriodTime(period, nanosecond);
 		pwm->setSpaceRatioTime(0, nanosecond);
 		pwm->setRunState(stop);
+
+		auto sc = supplementary::SystemConfig::getInstance();
+		this->kickPWM = (*sc)["bbb"]->get<int>("BBB.shovelKick", NULL);
+		this->passPWM = (*sc)["bbb"]->get<int>("BBB.shovelPass", NULL);
+		this->timeout = (*sc)["bbb"]->get<int>("BBB.timeout", NULL);
 
 		enabled = false;
 		init = false;
