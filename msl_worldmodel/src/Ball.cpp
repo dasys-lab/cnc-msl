@@ -373,7 +373,7 @@ namespace msl
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
-			//cout << "Ball: Distance Tolerance check failed!" << endl;
+			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
 			return;
 		}
 

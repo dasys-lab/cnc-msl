@@ -31,7 +31,7 @@ namespace alica
 
         std::cout << "OwnPos:     " << ownPos << std::endl;
         std::cout << "EgoBallPos: " << egoBallPos << std::endl;
-        std::cout << "HaveBall: " << (wm->ball.haveBall()) << std::endl;
+        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
 
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
