@@ -7,16 +7,13 @@
 
 
 #include "actuator.h"
-#include "std_msgs/Empty.h"
-#include "msl_actuator_msgs/IMUData.h"
+
 
 using namespace std;
 using namespace BlackLib;
 
-mutex					mtx;
-
+mutex		mtx;
 uint8_t		th_count;
-
 bool		th_activ = true;
 
 
@@ -33,14 +30,11 @@ void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 }
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
-	gettimeofday(&shovel.last_ping, NULL);
-	// Schussauswahl (ggf Wert fuer Servoposition mit uebergeben lassen)
-	if (msg.passing) {
-		shovel.value = ShovelSelect_PASSING;
-	} else {
-		shovel.value = ShovelSelect_NORMAL;
+	try {
+		shovel.setShovel(msg.passing, time_now);
+	} catch (exception &e) {
+		cout << "ShovelSelect: " << e.what() << endl;
 	}
-	shovel.enabled = true;
 }
 
 void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
@@ -59,6 +53,7 @@ void controlBHLeft() {
 		threw[0].cv.wait(l_bhl, [&] { return !th_activ || threw[0].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
+
 		try {
 			BH_left.controlBallHandling();
 		} catch (exception &e) {
@@ -66,7 +61,7 @@ void controlBHLeft() {
 		}
 
 		threw[0].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -76,6 +71,7 @@ void controlBHRight() {
 		threw[1].cv.wait(l_bhr, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
+
 		try {
 			BH_right.controlBallHandling();
 		} catch (exception &e) {
@@ -84,7 +80,7 @@ void controlBHRight() {
 
 
 		threw[1].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -96,50 +92,37 @@ void contolShovelSelect() {
 			return;
 
 		try {
-			if ((TIMEDIFFMS(time_now, shovel.last_ping) > ShovelSelect_TIMEOUT) && shovel.enabled) {
-				shovel.enabled = false;
-				ShovelSelect.setRunState(stop);
-			}
-			if (shovel.enabled) {
-				if (ShovelSelect.getRunValue() == "0") {
-					ShovelSelect.setRunState(run);
-				}
-				ShovelSelect.setSpaceRatioTime(shovel.value, nanosecond);
-			}
+			shovel.checkTimeout(time_now);
 		} catch (exception &e) {
 			cout << "Shovel: " << e.what() << endl;
 		}
 
 		threw[2].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
 void getLightbarrier(ros::Publisher *lbiPub) {
+	std_msgs::Bool msg;
+
+	// LightBarrier Init
+		lightbarrier.setTreshold((*sc)["bbb"]->get<int>("BBB.lightbarrierThreshold",NULL));
+
 	unique_lock<mutex> l_light(threw[3].mtx);
 	while(th_activ) {
 		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
-		std_msgs::Bool msg;
-		uint16_t value;
-
 		try {
-			value = ADC_light.getNumericValue();
+			msg.data = lightbarrier.checkLightBarrier();
+			lbiPub->publish(msg);
 		} catch (exception &e) {
 			cout << "ADC: " << e.what() << endl;
 		}
 
-		if (value > LIGHTBARRIER_THRESHOLD) {
-			msg.data = true;
-		} else {
-			msg.data = false;
-		}
-		lbiPub->publish(msg);
-
 		threw[3].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -228,7 +211,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		}
 
 		threw[4].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -247,7 +230,7 @@ void getIMU(ros::Publisher *imuPub) {
 		}
 
 		threw[5].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
@@ -266,15 +249,15 @@ void getOptical(ros::Publisher *mbcPub) {
 		}
 
 		threw[6].notify = false;
-		cv_main.cv.notify_all();
+//		cv_main.cv.notify_all();
 	}
 }
 
 void exit_program(int sig) {
 	ex = true;
 	th_activ = false;
-	cv_main.cv.notify_all();
-	for (int i=0; i<6; i++)
+//	cv_main.cv.notify_all();
+	for (int i=0; i<7; i++)
 		threw[i].cv.notify_all();
 }
 
@@ -287,16 +270,16 @@ int main(int argc, char** argv) {
 	ros::NodeHandle node;
 	ros::Rate loop_rate(30);		// in Hz
 
-	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 25, handleShovelSelectControl);
-	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 25, handleMotionLight);
-	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 25, handleBallHandleControl);
+	ros::Subscriber sscSub = node.subscribe<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 1, handleShovelSelectControl);
+	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 1, handleMotionLight);
+	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 1, handleBallHandleControl);
 
-	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 10);
-	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 10);
-	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 10);
-	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 10);
-	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 10);
-	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 10);
+	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 1);
+	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 1);
+	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 1);
+	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 1);
+	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 1);
+	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 1);
 
 	sc = supplementary::SystemConfig::getInstance();
 
@@ -308,43 +291,37 @@ int main(int argc, char** argv) {
 	thread th_adns3080(getOptical, &mbcPub);
 	thread th_imu(getIMU, &imuPub);
 
-	// Shovel Init
-	ShovelSelect.setRunState(stop);
-	ShovelSelect.setSpaceRatioTime(0);
-	ShovelSelect.setPeriodTime(ShovelSelect_PERIOD);	// in us - 20ms Periodendauer
-	ShovelSelect.setSpaceRatioTime(1500000);			// in us - Werte zwischen 1ms und 2ms
-	shovel.enabled = false;
-
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
-	bool imu = lsm9ds0.init();
+	/* bool imu = lsm9ds0.init();
 	lsm9ds0.setRefAccel();
 	adns3080.reset();
-	adns3080.adns_init();
+	adns3080.adns_init(); */
 
 	usleep(50000);
 
-        LED_Power.setValue(high);
+    LED_Power.setValue(high);
 
 	(void) signal(SIGINT, exit_program);
 	while(ros::ok() && !ex) {
-		// Frequency: 30Hz - set with loop_rate()
-
 		gettimeofday(&time_now, NULL);
-		timeval vorher, mitte, nachher;
 
 		// Thread Notify
-		for (int i=0; i<7; i++) {
-			threw[i].notify = true;
+		for (int i=0; i<7; i++) { // TODO remove magic number
+			if (threw[i].notify) {
+				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
+			} else {
+				threw[i].notify = true;
+			}
 			threw[i].cv.notify_all();
 		}
 
 		// auf beenden aller Threads warten
-		unique_lock<mutex> l_main(cv_main.mtx);
-		cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify && !threw[6].notify); }); // protection against spurious wake-ups
+		//unique_lock<mutex> l_main(cv_main.mtx);
+		//cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
 
-		// MotionBurst
+		// OpticalFlow und IMU werden nicht ausgefuehrt
 
 		ros::spinOnce();
 		loop_rate.sleep();

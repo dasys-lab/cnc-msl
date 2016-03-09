@@ -8,6 +8,7 @@
 #include <pathplanner/evaluator/PathEvaluator.h>
 #include "GeometryCalculator.h"
 #include "msl_msgs/VoronoiNetInfo.h"
+#include "MSLEnums.h"
 namespace msl
 {
 
@@ -37,7 +38,8 @@ namespace msl
 	 */
 	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
 								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > lastPath, shared_ptr<geometry::CNPoint2D> lastTarget)
+								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > lastPath,
+								shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
 
 		// add the cost of current node to return
@@ -45,8 +47,8 @@ namespace msl
 		// add weighted distance to return
 		ret += pathLengthWeight * distanceTo(nextNode->getVertex(), currentNode->getVertex());
 		//if we are in the first node, there has been a path before und the goal changed
-		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr
-				&& lastTarget->distanceTo(goal) > 250)
+		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1
+				&& lastTarget != nullptr && lastTarget->distanceTo(goal) > 250)
 		{
 			//claculate agle between the first edge of the current path and the last path
 			double a = startPos->x - currentNode->getVertex()->point().x();
@@ -83,33 +85,36 @@ namespace msl
 			if (obs.first.first != nullptr && obs.second.first != nullptr)
 			{
 				// Both are artificial sites, so dont expand
-				if(obs.first.second == -2 && obs.second.second == -2)
+				if (obs.first.second == EntityType::ArtificialObstacle
+						&& obs.second.second == EntityType::ArtificialObstacle && MSLFootballField::isInsideField(startPos, MSLFootballField::Surrounding))
 				{
 					return -1.0;
 				}
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
-																						  make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
-																														   currentNode->getVertex()->point().y()),
-																							make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
-																															 nextNode->getVertex()->point().y()));
+				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(
+						obs.first.first->x,
+						obs.first.first->y,
+						make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
+															currentNode->getVertex()->point().y()),
+						make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
+															nextNode->getVertex()->point().y()));
 				//calculate weighted dist to both objects
 
 				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
-				if((obs.first.second > 0 && obs.second.second > 0) || (obs.first.second > 0 && obs.second.second != -1) || (obs.second.second > 0 && obs.first.second != -1))
+				if ((obs.first.second > 0 && obs.second.second > 0)
+						|| (obs.first.second > 0 && obs.second.second != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
+						|| (obs.second.second > 0 && obs.first.second != EntityType::ArtificialObstacle))
 				{
 					ret += (obstacleDistanceWeight * (1.0 / distobs));
 				}
 				//One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
-				if(obs.first.second == -1 || obs.second.second == -1)
+				if (obs.first.second == -1 || obs.second.second == -1)
 				{
 					ret += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
 				}
 
-
 				//if the distance to the obstacles is too small return -1 to not expand this node
-				if ((distobs * 2)
-						< (robotDiameter * 2 + additionalCorridorWidth))
+				if ((distobs * 2) < (robotDiameter * 2 + additionalCorridorWidth) && MSLFootballField::isInsideField(startPos))
 				{
 					return -1.0;
 				}
@@ -119,9 +124,11 @@ namespace msl
 		if (currentNode->getPredecessor() != nullptr)
 		{
 			double dx21 = nextNode->getVertex()->point().x() - currentNode->getVertex()->point().x();
-			double dx31 = currentNode->getPredecessor()->getVertex()->point().x() - currentNode->getVertex()->point().x();
+			double dx31 = currentNode->getPredecessor()->getVertex()->point().x()
+					- currentNode->getVertex()->point().x();
 			double dy21 = nextNode->getVertex()->point().y() - currentNode->getVertex()->point().y();
-			double dy31 = currentNode->getPredecessor()->getVertex()->point().y() - currentNode->getVertex()->point().y();
+			double dy31 = currentNode->getPredecessor()->getVertex()->point().y()
+					- currentNode->getVertex()->point().y();
 			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));

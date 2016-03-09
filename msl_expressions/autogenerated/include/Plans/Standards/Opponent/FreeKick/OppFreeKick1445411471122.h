@@ -7,6 +7,8 @@
 #include "engine/DefaultUtilityFunction.h"
 /*PROTECTED REGION ID(incl1445411471122) ENABLED START*/
 //Add inlcudes here
+#include "PriorityList.h"
+#include "engine/model/Plan.h"
 /*PROTECTED REGION END*/
 using namespace alica;
 

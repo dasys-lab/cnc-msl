@@ -48,16 +48,20 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getVisionBallPosition(int index = 0);
 		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getVisionBallPositionAndCertaincy(int index = 0);
 		shared_ptr<geometry::CNVelocity2D> getVisionBallVelocity(int index = 0);
+		double getBallConfidenceVision(int index = 0);
 
 		shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
 		shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
 		shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
+		bool ballMovedSiginficantly();
+
+
 		void updateHaveBall();
 		void updateOnBallHypothesisList(unsigned long long imageTime);
 		void updateOnLocalizationData(unsigned long long imageTime);
 		void processHypothesis();
 		void updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel, double certainty);
-		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo data);
+		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data);
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
@@ -67,6 +71,7 @@ namespace msl
 		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);
 		bool hadBefore;
+		bool closeToTheBall() {return selfInBallPossesion;};
 
 	private:
 		std::mutex sbMutex;
@@ -93,7 +98,7 @@ namespace msl
 		MSLWorldModel* wm;
 		SystemConfig* sc;
 		map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
-		shared_ptr<RingBuffer<InformationElement<bool>>> oppBallPossession;
+		RingBuffer<InformationElement<bool>> oppBallPossession;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
 		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
@@ -103,6 +108,10 @@ namespace msl
 		Point allo2Ego(Point p, Position pos);
 		Velocity allo2Ego(Velocity vel, Position pos);
 		double haveDistance;
+
+		bool selfInBallPossesion;
+		shared_ptr<geometry::CNPoint2D> ballPickupPosition;
+		void updateBallPossession();
 };
 
 

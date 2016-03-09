@@ -17,6 +17,8 @@
 
 #include  "Plans/Defence/constraints/BackroomDefence1454507425037Constraints.h"
 
+#include  "Plans/Standards/Opponent/FreeKick/constraints/StopRobots1457015643757Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
 #include  "Plans/Attack/constraints/StandardAttack1434046634656Constraints.h"
@@ -33,9 +35,13 @@
 
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
 
+#include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"
+
+#include  "Plans/Standards/Opponent/constraints/OppStandardExecution1457015277573Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
 
@@ -43,13 +49,11 @@
 
 #include  "Plans/Attack/TestPlans/constraints/TestDribblePlan1437902404050Constraints.h"
 
-#include  "Plans/GameStrategy/Gameplay/constraints/Gameplay1426694853089Constraints.h"
-
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
-#include  "Plans/Standards/Opponent/FreeKick/constraints/OppFreeKick1445411471122Constraints.h"
-
 #include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
+
+#include  "Plans/Standards/Opponent/FreeKick/constraints/OppFreeKick1445411471122Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/DuelTestMaster1454506180437Constraints.h"
 
@@ -58,6 +62,8 @@
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DropBallExecution1455537039421Constraints.h"
+
+#include  "Plans/GameStrategy/Gameplay/constraints/GamePlay1457173546734Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
 
@@ -85,6 +91,8 @@
 
 #include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"
 
+#include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
+
 #include  "Plans/Attack/TestPlans/constraints/AttackOppGoalPlan1437902649389Constraints.h"
 
 #include  "Plans/Defence/Test/constraints/TestBackroomDefence1455127495970Constraints.h"
@@ -108,8 +116,16 @@ namespace alica
         switch (constraintConfId)
         {
 
+            case 1434112519736:
+                return make_shared<Constraint1434112519736>();
+                break;
+
             case 1445442215438:
                 return make_shared<Constraint1445442215438>();
+                break;
+
+            case 1457173948942:
+                return make_shared<Constraint1457173948942>();
                 break;
 
             default:

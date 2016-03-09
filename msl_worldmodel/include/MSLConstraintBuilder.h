@@ -12,7 +12,6 @@
 #include <MSLFootballField.h>
 #include "GeometryCalculator.h"
 #include "MSLWorldModel.h"
-#include "Rules.h"
 #include "MSLFootballField.h"
 #include "container/CNPoint2D.h"
 #include "SystemConfig.h"
@@ -43,6 +42,8 @@ namespace msl{
 					return "NoSituationFoundException: " + situation;
 				}
 		};
+
+		class Rules;
 
 		class MSLConstraintBuilder
 		{
@@ -82,6 +83,7 @@ namespace msl{
 			static shared_ptr<Term> outsideCakePiece(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>>& points);
 
 			static shared_ptr<Term> insideKonvex(vector<shared_ptr<TVec>>& shell, double tolerance, vector<shared_ptr<TVec>>& points);
+			static shared_ptr<Term> see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>>& points);
 
 			static shared_ptr<Term> outsideArea(Areas area, shared_ptr<TVec> point);
 			static shared_ptr<Term> outsideArea(Areas area, vector<shared_ptr<TVec>>& points);
@@ -104,7 +106,7 @@ namespace msl{
 			static shared_ptr<Term> ownPenaltyAreaRule(vector<shared_ptr<TVec>>& fieldPlayers);
 			static shared_ptr<Term> oppPenaltyAreaRule(vector<shared_ptr<TVec>>& fieldPlayers);
 		private:
-			static Rules rules;
+			static Rules* rules;
 			static msl::MSLFootballField* field;
 			static shared_ptr<geometry::CNPoint2D> ownRightSurCornerP;
 			static shared_ptr<geometry::CNPoint2D> oppLeftSurCornerP;

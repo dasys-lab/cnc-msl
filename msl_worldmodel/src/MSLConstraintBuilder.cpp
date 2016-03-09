@@ -6,6 +6,7 @@
  */
 
 #include "MSLConstraintBuilder.h"
+#include "Rules.h"
 
 namespace msl
 {
@@ -19,7 +20,7 @@ namespace msl
 
 	supplementary::SystemConfig* MSLConstraintBuilder::sc = supplementary::SystemConfig::getInstance();
 
-	Rules MSLConstraintBuilder::rules;
+	Rules* MSLConstraintBuilder::rules = Rules::getInstance();
 
 	// INTERN
 	msl::MSLFootballField* MSLConstraintBuilder::field = msl::MSLFootballField::getInstance();
@@ -76,6 +77,61 @@ namespace msl
 		}
 		return spreadUtility;
 	}
+
+	shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>>& players)
+		{
+			msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+			shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+
+			if (ownPos == nullptr)
+				return autodiff::Term::FALSE;
+
+			// all players have to be in sight radius
+			shared_ptr<Term> c = insideSphere (point, detectionRadius, players);
+			for (int i = 0; i < players.size(); ++i) {
+				shared_ptr<TVec> p2p = players.at(i) - point;
+				shared_ptr<Term> rel = (wm->obstacles.getObstacleRadius() / autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
+
+				// consider opponents
+				auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+//				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
+
+				if (opps != nullptr && opps->size() > 0) {
+					for(auto opp : *opps) {
+						shared_ptr<TVec> oppT = make_shared<TVec>(initializer_list<double> {opp->x, opp->y});
+						shared_ptr<TVec> p2opp = oppT - point;
+
+						shared_ptr<TVec> oppDistance = alica::ConstraintBuilder::inCoordsOf(p2opp, p2p);
+						c = c & alica::ConstraintBuilder::ifThen(((oppDistance->getX() > autodiff::TermBuilder::constant(0)) & (oppDistance->getX() < autodiff::TermBuilder::constant(1))),
+																 rel < ((make_shared<Abs>(oppDistance->getY()) - ((wm->obstacles.getObstacleRadius() + 50.0) / autodiff::TermBuilder::power(p2p->normSquared(), 0.5))) / oppDistance->getX()));
+					}
+				}
+
+				// consider teammates
+				auto mates = wm->robots.teammates.getTeammatesAlloClustered();
+				if (mates != nullptr && mates->size() > 0) {
+					for(auto mate : *mates) {
+						shared_ptr<TVec> mateT = make_shared<TVec>(initializer_list<double> {mate->x, mate->y});
+						shared_ptr<TVec> p2mate = mateT - point;
+
+						shared_ptr<TVec> mateDistance = alica::ConstraintBuilder::inCoordsOf(p2mate, p2p);
+						c = c &  alica::ConstraintBuilder::ifThen(((mateDistance->getX() > autodiff::TermBuilder::constant(0)) & (mateDistance->getX() < autodiff::TermBuilder::constant(1))),
+																  rel < ((make_shared<Abs>(mateDistance->getY()) - ((wm->obstacles.getObstacleRadius() + 50.0) / autodiff::TermBuilder::power(p2p->normSquared(), 0.5))) / mateDistance->getX()));
+					}
+				}
+
+				// consider myself
+				if (considerownPos) {
+					shared_ptr<TVec> ownPosT = make_shared<TVec>(initializer_list<double> {ownPos->x, ownPos->y});
+					shared_ptr<TVec> p2ownPos = ownPosT - point;
+
+					shared_ptr<TVec> myPosDistance = alica::ConstraintBuilder::inCoordsOf(p2ownPos, p2p);
+					c = c &  alica::ConstraintBuilder::ifThen(((myPosDistance->getX() > autodiff::TermBuilder::constant(0)) & (myPosDistance->getX() < autodiff::TermBuilder::constant(1))),
+															  rel < ((make_shared<Abs>(myPosDistance->getY()) - ((wm->obstacles.getObstacleRadius() + 50.0) / autodiff::TermBuilder::power(p2p->normSquared(), 0.5))) / myPosDistance->getX()));
+				}
+			}
+			return c;
+		}
 
 	shared_ptr<Term> MSLConstraintBuilder::approachUtil( shared_ptr<TVec> destination, vector<shared_ptr<TVec>>& points) {
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
@@ -363,7 +419,7 @@ namespace msl
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getAlloBallPosition();
 		if(ball != nullptr && ownPos != nullptr) {
-			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->x});
+			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->y});
 		}
 		switch(wm->game.getSituation()) {
 			case Situation::Start:
@@ -425,7 +481,7 @@ namespace msl
 		appliedRules = appliedRules & ownPenaltyAreaRule (fieldPlayers);
 		appliedRules = appliedRules & oppPenaltyAreaRule (fieldPlayers);
 		if (ballT != nullptr) {
-			appliedRules =  appliedRules & outsideSphere (ballT, rules.getStayAwayRadiusDropBall(), fieldPlayers);
+			appliedRules =  appliedRules & outsideSphere (ballT, rules->getStayAwayRadiusDropBall(), fieldPlayers);
 		}
 		return appliedRules;
 	}
@@ -442,12 +498,12 @@ namespace msl
 		} else {
 			appliedRules = appliedRules &  insideArea (Areas::OwnHalf, passivPlayers);
 		}
-		appliedRules = appliedRules &  outsideSphere (centreMarkT, rules.getStayAwayRadius(), passivPlayers);
+		appliedRules = appliedRules &  outsideSphere (centreMarkT, rules->getStayAwayRadius(), passivPlayers);
 		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::oppPenaltyRules(vector<shared_ptr<TVec>>& fieldPlayers) {
 		shared_ptr<Term> appliedRules = insideArea (Areas::OppHalf, fieldPlayers);
-		appliedRules = appliedRules & outsideSphere (centreMarkT, rules.getStayAwayRadius(), fieldPlayers);
+		appliedRules = appliedRules & outsideSphere (centreMarkT, rules->getStayAwayRadius(), fieldPlayers);
 		appliedRules = appliedRules & spread (MIN_POSITION_DIST, fieldPlayers);
 		return appliedRules;
 	}
@@ -459,9 +515,9 @@ namespace msl
 		std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(receivers), [&](shared_ptr<TVec> v) {return v != fieldPlayers[executerIdx];});
 
 		if (ballT != nullptr) {
-			appliedRules  =appliedRules &  outsideSphere (ballT,rules.getStayAwayRadius(), receivers);
+			appliedRules  =appliedRules &  outsideSphere (ballT,rules->getStayAwayRadius(), receivers);
 		} else {
-			appliedRules =appliedRules &  outsideSphere (centreMarkT, rules.getStayAwayRadius(), receivers);
+			appliedRules =appliedRules &  outsideSphere (centreMarkT, rules->getStayAwayRadius(), receivers);
 		}
 		appliedRules = appliedRules & ownPenaltyAreaRule (receivers);
 		appliedRules = appliedRules & insideArea (Areas::OwnHalf, receivers);
@@ -471,9 +527,9 @@ namespace msl
 		shared_ptr<Term> appliedRules = spread (MIN_POSITION_DIST, fieldPlayers);
 		appliedRules = appliedRules & outsideArea (Areas::OwnGoalArea, fieldPlayers);
 		if (ballT != nullptr) {
-			appliedRules = appliedRules & outsideSphere (ballT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+			appliedRules = appliedRules & outsideSphere (ballT, rules->getStayAwayRadiusOpp(), fieldPlayers);
 		} else {
-			appliedRules = appliedRules & outsideSphere (centreMarkT, rules.getStayAwayRadiusOpp(), fieldPlayers);
+			appliedRules = appliedRules & outsideSphere (centreMarkT, rules->getStayAwayRadiusOpp(), fieldPlayers);
 		}
 		appliedRules = appliedRules & ownPenaltyAreaRule (fieldPlayers);
 		appliedRules = appliedRules & insideArea (Areas::OwnHalf, fieldPlayers);
@@ -491,7 +547,7 @@ namespace msl
 			receivers = fieldPlayers;
 		}
 		if (ballT != nullptr) {
-			appliedRules =  appliedRules & outsideSphere (ballT, rules.getStayAwayRadius(), receivers);
+			appliedRules =  appliedRules & outsideSphere (ballT, rules->getStayAwayRadius(), receivers);
 		}
 		appliedRules =  appliedRules & ownPenaltyAreaRule (receivers);
 		appliedRules =  appliedRules & oppPenaltyAreaRule (receivers);
@@ -518,7 +574,7 @@ namespace msl
 			if (notInPenaltyPlayers.size() > 0)
 				ownPenaltyConstrains = ownPenaltyConstrains | outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
 			if (ballT != nullptr) {
-				minDistConstrains = minDistConstrains & alica::ConstraintBuilder::ifThen(outsideArea(Areas::OwnPenaltyArea, fieldPlayers.at(i)), outsideSphere(ballT, rules.getStayAwayRadiusOpp(), fieldPlayers.at(i)));
+				minDistConstrains = minDistConstrains & alica::ConstraintBuilder::ifThen(outsideArea(Areas::OwnPenaltyArea, fieldPlayers.at(i)), outsideSphere(ballT, rules->getStayAwayRadiusOpp(), fieldPlayers.at(i)));
 			}
 		}
 
@@ -537,7 +593,7 @@ namespace msl
 			index = 0;
 			for (int j = 0; j < fieldPlayers.size(); j++) {
 				if (i != j)
-					notInPenaltyPlayers [index++] = fieldPlayers [j];
+					notInPenaltyPlayers.push_back(fieldPlayers[j]);
 			}
 			ownPenaltyConstrains = ownPenaltyConstrains | outsideArea (Areas::OwnPenaltyArea, notInPenaltyPlayers);
 		}

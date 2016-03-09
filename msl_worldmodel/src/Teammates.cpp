@@ -11,7 +11,8 @@
 namespace msl
 {
 
-	Teammates::Teammates(MSLWorldModel* wm, int ringBufferLength)
+	Teammates::Teammates(MSLWorldModel* wm, int ringBufferLength) :
+			teammatesEgoClustered(ringBufferLength), teammatesAlloClustered(ringBufferLength)
 	{
 		this->wm = wm;
 		this->ringBufferLength = ringBufferLength;
@@ -87,26 +88,44 @@ namespace msl
 		return ret;
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesAlloClustered()
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesAlloClustered(int index)
 	{
-		return teammatesAlloClustered;
+		auto x = teammatesAlloClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
 	}
 
-	void msl::Teammates::setTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered)
+	void msl::Teammates::processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered)
 	{
-		this->teammatesAlloClustered = teammatesAlloClustered;
+		shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o = make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(
+		teammatesAlloClustered, wm->getTime());
+		o->certainty = 1;
+
+		this->teammatesAlloClustered.add(o);
 	}
 
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesEgoClustered()
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesEgoClustered(int index)
 	{
-		return teammatesEgoClustered;
+		auto x = teammatesEgoClustered.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
 	}
 
-	void Teammates::setTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered)
+	void Teammates::processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered)
 	{
-		this->teammatesEgoClustered = teammatesEgoClustered;
+		shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o = make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(
+				teammatesEgoClustered, wm->getTime());
+		o->certainty = 1;
+
+		this->teammatesEgoClustered.add(o);
 	}
 
 }
-/* namespace msl */
+	/* namespace msl */
 

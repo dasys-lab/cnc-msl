@@ -3,9 +3,11 @@ using namespace std;
 #include "BehaviourCreator.h"
 #include "engine/BasicBehaviour.h"
 
+#include  "Plans/Attack/SearchForPassPoint.h"
+
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
-#include  "Plans/Attack/SearchForPassPoint.h"
+#include  "Plans/Behaviours/MoveToPointDynamic.h"
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
@@ -59,6 +61,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Behaviours/CheckPassMsg.h"
+
 #include  "Plans/Behaviours/AlignToRobot.h"
 
 #include  "Plans/Attack/Wander.h"
@@ -103,6 +107,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
+#include  "Plans/Standards/Opponent/TeamWatchBall.h"
+
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/KickToDirection.h"
@@ -125,16 +131,21 @@ namespace alica
         switch (behaviourConfId)
         {
 
-            case 1417620730939:
-
-                return make_shared<AlignAndShootTwoHoledWall>();
-                break;
-
             case 1436269036396:
 
             case 1441107270872:
 
                 return make_shared<SearchForPassPoint>();
+                break;
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledWall>();
+                break;
+
+            case 1456997097907:
+
+                return make_shared<MoveToPointDynamic>();
                 break;
 
             case 1431531542052:
@@ -289,6 +300,11 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
+            case 1457441499013:
+
+                return make_shared<CheckPassMsg>();
+                break;
+
             case 1438779292567:
 
                 return make_shared<AlignToRobot>();
@@ -405,6 +421,11 @@ namespace alica
             case 1414840399972:
 
                 return make_shared<GetBall>();
+                break;
+
+            case 1457015565562:
+
+                return make_shared<TeamWatchBall>();
                 break;
 
             case 1455888617961:

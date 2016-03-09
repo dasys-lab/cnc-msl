@@ -112,7 +112,14 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 # )
 
 ## Declare a cpp executable
-add_executable(msl_beagle_board_black src/actuator.cpp src/ballhandle.cpp src/opticalflow.cpp src/imu.cpp)
+add_executable(msl_beagle_board_black 
+	src/actuator.cpp
+	src/ballhandle.cpp
+	src/imu.cpp
+	src/lightbarrier.cpp
+	src/opticalflow.cpp
+	src/shovelselect.cpp
+)
 add_executable(debug src/debug.cpp)
 
 ## Add cmake target dependencies of the executable/library

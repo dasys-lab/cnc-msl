@@ -22,12 +22,13 @@
 namespace msl
 {
 	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
-			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30)
+			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30), oppBallPossession(ringbufferLength)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
 		hasBallIteration = 0;
 		haveDistance = 0;
+		selfInBallPossesion = false;
 		this->wm = wm;
 		hasBall = false;
 		sc = SystemConfig::getInstance();
@@ -151,6 +152,57 @@ namespace msl
 		return hasBallIteration > 0;
 	}
 
+	bool Ball::ballMovedSiginficantly()
+	{
+		static const int BALLBUFSIZE = 10;
+		vector<double> ballVelAngles;
+		vector<double> ballVelValues;
+		bool ballMoved = true;
+
+		for(int i = 0; i < BALLBUFSIZE; i++)
+		{
+			auto vel = this->getVisionBallVelocity();
+			if(vel == nullptr)
+			{
+				ballMoved = false;
+				break;
+			}
+
+			ballVelAngles.push_back(atan2(vel->y, vel->x));
+			ballVelValues.push_back(sqrt(vel->x*vel->x + vel->y*vel->y));
+			if(ballVelValues.at(ballVelValues.size()-1) < 600.0)
+			{
+				ballMoved = false;
+			}
+		}
+
+		if(ballMoved)
+		{
+			for(int i = 0; i < ballVelAngles.size() - 1; i++)
+			{
+				for(int j = i+1; j < ballVelAngles.size(); j++)
+				{
+					double diffAngle = ballVelAngles[i] - ballVelAngles[j];
+					if(diffAngle < -M_PI)
+						diffAngle += 2.0*M_PI;
+
+					if(diffAngle > M_PI)
+						diffAngle -= 2.0*M_PI;
+
+					if(abs(diffAngle) > M_PI/4.0)
+						ballMoved = false;
+				}
+			}
+		}
+
+		if(ballMoved)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	void Ball::updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel,
 								double certainty)
 	{
@@ -167,7 +219,36 @@ namespace msl
 		ballVelocity.add(ballV);
 		updateSharedBall();
 		updateHaveBall();
+		updateBallPossession();
 	}
+
+
+	void Ball::updateBallPossession()
+	{
+		if(this->haveBall()) {
+			if(ballPickupPosition == nullptr && getAlloBallPosition() != nullptr) {
+				ballPickupPosition = getAlloBallPosition();
+			}
+		} else {
+			ballPickupPosition.reset();
+		}
+
+		if(!this->selfInBallPossesion) {
+			if(!this->haveBall()) return;
+		}
+
+		auto myEgoBall = this->getEgoBallPosition();
+		if(myEgoBall == nullptr) {
+			this->selfInBallPossesion = false;
+		} else if(myEgoBall->length() < 450 /*in c# before: 400 changed for simulator*/
+				|| (this->selfInBallPossesion && myEgoBall->length() < 600)) {
+			this->selfInBallPossesion = true;
+		}
+		else {
+			this->selfInBallPossesion=false;
+		}
+	}
+
 
 
 	void Ball::updateSharedBall() {
@@ -292,7 +373,7 @@ namespace msl
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
-			//cout << "Ball: Distance Tolerance check failed!" << endl;
+//			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
 			return;
 		}
 
@@ -319,28 +400,17 @@ namespace msl
 		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
 
-	// TODO: this is broken, as nobody enters true into the ring buffer
 	bool Ball::robotHasBall(int robotId)
 	{
-		bool ret = false;
-		shared_ptr<geometry::CNPoint2D> ballPos = getEgoBallPosition();
-		if (ballPos == nullptr)
-		{
-			ret = false;
+
+		auto shwmData = wm->robots.getSHWMData(robotId);
+		if(shwmData == nullptr) {
+			return false;
 		}
-		shared_ptr<bool> hadBall = getTeamMateBallPossession(robotId, 1);
-		if (hadBall != nullptr && *hadBall == true)
-		{
-			ret = ballPos->length() < 600;
-		}
-		else
-		{
-			ret = ballPos->length() < 400;
-		}
-		return ret;
+		return shwmData->ballInPossession;
 	}
 
-	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo data)
+	void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data)
 	{
 		if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
 		{
@@ -368,17 +438,17 @@ namespace msl
 			pair<int, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
 			ballPossession.insert(pair);
 		}
-		bool ret = robotHasBall(data.senderID);
 		shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(
-				make_shared<bool>(ret),
+				make_shared<bool>(data.ballInPossession),
 				wm->getTime());
 		ballPossession.at(data.senderID)->add(in);
 		bool r = oppHasBall(data);
 		shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(
 				make_shared<bool>(r),
 				wm->getTime());
-		oppBallPossession->add(inf);
+		oppBallPossession.add(inf);
 	}
+
 
 	shared_ptr<bool> Ball::getTeamMateBallPossession(int teamMateId, int index)
 	{
@@ -396,7 +466,7 @@ namespace msl
 
 	shared_ptr<bool> msl::Ball::getOppBallPossession(int index)
 	{
-		auto x = oppBallPossession->getLast(index);
+		auto x = oppBallPossession.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
@@ -418,16 +488,15 @@ namespace msl
 		{
 			oppDist = 0;
 		}
-		//TODO GetOpponentListEgoClustered()
-		auto ops = data.obstacles;
+		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
 		double minDist = 100000;
-		if (ops.size() == 0)
+		if (ops->size() == 0)
 		{
 			return minDist;
 		}
-		for (int i = 0; i < ops.size(); ++i)
+		for (int i = 0; i < ops->size(); ++i)
 		{
-			geometry::CNPoint2D obstacle(ops.at(i).x, ops.at(i).y);
+			geometry::CNPoint2D obstacle(ops->at(i)->x, ops->at(i)->y);
 			minDist = min(obstacle.distanceTo(ballPos), minDist);
 		}
 		return minDist;
@@ -526,6 +595,16 @@ namespace msl
 			ret = false;
 
 		return ret;
+	}
+
+	double Ball::getBallConfidenceVision(int index)
+	{
+		auto x = ballPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return 0;
+		}
+		return x->certainty;
 	}
 
 	Velocity Ball::allo2Ego(Velocity vel, Position pos)

@@ -77,7 +77,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "Parameter does not exist" << endl;
+            cerr << "D2P: Parameter does not exist" << endl;
         }
         defaultTranslation = (*this->sc)["Drive"]->get<double>("Drive", "Default", "Velocity", NULL);
         /*PROTECTED REGION END*/

@@ -139,10 +139,10 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1434650892176) ENABLED START*/ //Add additional options here
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         this->maxVel = (*this->sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        this->pRot = (*this->sc)["Dribble"]->get<double>("Dribble", "OneEighty", "RotationP", NULL);
-        this->dRot = (*this->sc)["Dribble"]->get<double>("Dribble", "OneEighty", "RotationD", NULL);
-        this->minRot = (*this->sc)["Dribble"]->get<double>("Dribble", "OneEighty", "MinRotation", NULL);
-        this->maxRot = (*this->sc)["Dribble"]->get<double>("Dribble", "OneEighty", "MaxRotation", NULL);
+        this->pRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "RotationP", NULL);
+        this->dRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "RotationD", NULL);
+        this->minRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MinRotation", NULL);
+        this->maxRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MaxRotation", NULL);
         this->field = msl::MSLFootballField::getInstance();
         this->lastRotError = 0;
         /*PROTECTED REGION END*/
