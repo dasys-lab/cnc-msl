@@ -85,11 +85,6 @@ void controlBHRight() {
 }
 
 void contolShovelSelect() {
-	// Shovel Init
-		shovel.setKick((*sc)["bbb"]->get<int>("BBB.shovelKick",NULL));
-		shovel.setPass((*sc)["bbb"]->get<int>("BBB.shovelPass",NULL));
-		shovel.setTimeout((*sc)["bbb"]->get<int>("BBB.timeout",NULL));
-
 	unique_lock<mutex> l_shovel(threw[2].mtx);
 	while(th_activ) {
 		threw[2].cv.wait(l_shovel, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
