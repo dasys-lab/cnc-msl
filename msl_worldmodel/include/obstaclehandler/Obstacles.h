@@ -40,6 +40,7 @@ namespace msl
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> clusterPoint2D (shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstacles, double varianceThreshold);
 		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstaclesWithMe(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getEgoObstacles(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoObstaclePoints(int index = 0);
@@ -77,6 +78,7 @@ namespace msl
 		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
 		unsigned long maxInformationAge = 1000000000;
 	};
 
