@@ -37,10 +37,10 @@ namespace alica
         if (obstacles != nullptr && obstacles->size() != 0)
         {
 
-			for (auto obs : *obstacles)
-			{
-				std::cout << obs->x << ", " << obs->y << std::endl;
-			}
+            for (auto obs : *obstacles)
+            {
+                std::cout << obs->x << ", " << obs->y << std::endl;
+            }
         }
 
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
