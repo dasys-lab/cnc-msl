@@ -28,6 +28,21 @@ namespace alica
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = wm->ball.getEgoBallPosition();
+
+//        std::cout << "OwnPos:     " << ownPos << std::endl;
+//        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
+//        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
+
+        auto obstacles = wm->obstacles.getAlloObstaclePoints();
+        if (obstacles != nullptr && obstacles->size() != 0)
+        {
+
+            for (auto obs : *obstacles)
+            {
+                std::cout << obs->x << ", " << obs->y << std::endl;
+            }
+        }
+
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
@@ -35,22 +50,30 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > hitPoint = computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
-        if (hitPoint && checkGoalKeeper(hitPoint) && checkShootPossibility(hitPoint))
+        cout << "==========================================================================" << endl;
+        if (hitPoint)
+            cout << "hits the goal: " << hitPoint->x << ", " << hitPoint->y << ", " << hitPoint->z << endl;
+        else
+            cout << "hits the goal: false" << endl;
+
+        if (false == hitPoint)
+            return;
+
+        bool checkGoalKeeperResult = checkGoalKeeper(hitPoint);
+        bool checkShootPossiblilityResult = checkShootPossibility(hitPoint);
+
+        if (hitPoint && checkGoalKeeperResult && checkShootPossiblilityResult)
         {
             kicking (hitPoint);
         }
 
-        // console output
-        cout << "==========================================================================" << endl;
-        cout << "hits the goal: " << (hitPoint ? "true" : "false") << endl;
-        if (hitPoint)
-        {
-            cout << "check goal keeper: " << (checkGoalKeeper(hitPoint) ? "true" : "false") << endl;
-            cout << "check shoot possibility: " << (checkShootPossibility(hitPoint) ? "true" : "false") << endl;
-            cout << "kick power: " << cout_kickpower << endl;
-            cout << "kicking = " << cout_kicking << endl;
-            cout << "minimum distance to obstacle: " << minOwnDistObs << endl;
-        }
+        cout << "check goal keeper: " << (checkGoalKeeperResult ? "true" : "false") << endl;
+        cout << "check shoot possibility: " << (checkShootPossiblilityResult ? "true" : "false") << endl;
+        cout << "kick power: " << cout_kickpower << endl;
+        cout << "kicking = " << cout_kicking << endl;
+
+        cout_kicking = false;
+        cout_kickpower = 0;
 
         /*PROTECTED REGION END*/
     }
@@ -164,6 +187,7 @@ namespace alica
 
             if (abs(obs->alloToEgo(*ownPos)->y) < minOppYDist)
             {
+                std::cout << "Position of evil obstacle " << obs->x << ", " << obs->y << std::endl;
                 return false;
             }
         }

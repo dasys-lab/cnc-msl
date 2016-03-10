@@ -47,7 +47,7 @@ namespace alica
 
         alloAimPoint = nullptr;
 
-        auto obs = wm->obstacles.getObstacles();
+        auto obs = wm->obstacles.getEgoVisionObstacles();
         bool leftBlocked = false;
         bool midBlocked = false;
         bool rightBlocked = false;

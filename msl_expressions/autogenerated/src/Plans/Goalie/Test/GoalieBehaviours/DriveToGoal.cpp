@@ -6,70 +6,76 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1447863424939) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    DriveToGoal::DriveToGoal() :
-            DomainBehaviour("DriveToGoal")
-    {
-        /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    DriveToGoal::~DriveToGoal()
-    {
-        /*PROTECTED REGION ID(dcon1447863424939) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void DriveToGoal::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+	/*PROTECTED REGION ID(staticVars1447863424939) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	DriveToGoal::DriveToGoal() :
+			DomainBehaviour("DriveToGoal")
+	{
+		/*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	DriveToGoal::~DriveToGoal()
+	{
+		/*PROTECTED REGION ID(dcon1447863424939) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void DriveToGoal::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
+		cout << "### DriveToGoal ###\n" << endl;
+		shared_ptr<geometry::CNPosition> me;
+		double alloTargetX, alloTargetY;
 
-        msl_actuator_msgs::MotionControl mc;
-        if (me == nullptr)
-        {
-            mc.motion.angle = 0;
-            mc.motion.rotation = 0;
-            mc.motion.translation = 0;
+		me = wm->rawSensorData.getOwnPositionVision();
 
-            cout << " Stop!" << endl;
-            cout << "### DriveToGoal ###\n" << endl;
-        }
-        else
-        {
+		if (me == nullptr)
+		{
+			mc.motion.angle = 0;
+			mc.motion.rotation = 0;
+			mc.motion.translation = 0;
 
-            double egoX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
-            double egoY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
-            shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+			cout << " Stop!" << endl;
+			cout << "### DriveToGoal ###\n" << endl;
+		}
+		else
+		{
+			if (SIMULATING < 0)
+			{
+				alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
+				alloTargetY = MSLFootballField::posOwnGoalMid()->y;
+			}
+			else
+			{
+				alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
+				alloTargetY = MSLFootballField::posOppGoalMid()->y;
 
-            cout << " Driving to goal" << endl;
-            mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (egoX - 100, egoY),
-                                                     fieldCenterTarget, 100, 0);
-            cout << "### DriveToGoal ###\n" << endl;
-        }
+			}
 
-        shared_ptr < geometry::CNPoint2D > goalPos = MSLFootballField::posOwnGoalMid();
-        goalPos->x += 100;
+			alloTarget = make_shared<geometry::CNPoint2D>(alloTargetX, alloTargetY);
+			alloFieldCenterAlignPoint = MSLFootballField::posCenterMarker();
 
-        /*
-         * if goalie's position (+- 1cm)
-         * equals to middle of goal position
-         * + 10cm towards field center
-         */
-        if (me->distanceTo(goalPos) < 100)
-        {
-            this->success = true;
-        }
-        else
-        {
-            send(mc);
-        }
-        /*PROTECTED REGION END*/
-    }
-    void DriveToGoal::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1447863424939) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
+			cout << " Driving to goal" << endl;
+			mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+														alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+
+			if (me->distanceTo(alloTarget) <= 100)
+			{
+				this->success = true;
+			}
+			else
+			{
+				cout << "DIstance left: " << me->distanceTo(alloTarget) << endl;
+				send(mc);
+			}
+			cout << "### DriveToGoal ###\n" << endl;
+		}
+		/*PROTECTED REGION END*/
+	}
+	void DriveToGoal::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1447863424939) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
 /*PROTECTED REGION ID(methods1447863424939) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
