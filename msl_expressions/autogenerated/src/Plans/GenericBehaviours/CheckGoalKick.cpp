@@ -231,6 +231,7 @@ namespace alica
         {
             if (opp->distanceTo(hitPoint) < keeperDistGoal)
             {
+            	std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
                 return false;
             }
         }

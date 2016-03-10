@@ -582,6 +582,7 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > Obstacles::getEgoObstacles(int index)
 	{
+		// TODO save ego obstacles
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
@@ -619,15 +620,12 @@ namespace msl
 			return nullptr;
 		}
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		cout << "Allo Obs:" << endl;
  		for (int i = 0; i < this->obstaclesAlloClustered.getLast(index)->getInformation()->size(); i++)
 		{
 			shared_ptr<geometry::CNRobot> current = this->obstaclesAlloClustered.getLast(index)->getInformation()->at(
 					i);
 			ret->push_back(make_shared<geometry::CNPoint2D>(current->x, current->y));
-			cout << current->x << " : " << current->y<< endl;
 		}
- 		cout << "Allo Obs end" << endl;
 		return ret;
 	}
 
