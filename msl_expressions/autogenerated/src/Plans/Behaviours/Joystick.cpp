@@ -39,7 +39,7 @@ namespace alica
             return;
         }
 
-        cout << "Joystick-Beh: " << *joy << endl;
+        //cout << "Joystick-Beh: " << *joy << endl;
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
             msl_actuator_msgs::MotionControl mc;
