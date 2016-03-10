@@ -1,0 +1,8 @@
+proxy_gen/
+DistanceLookup.dat
+log/temp/
+
+#ignoring temp files from vim
+*~
+*.swp
+*.swo
