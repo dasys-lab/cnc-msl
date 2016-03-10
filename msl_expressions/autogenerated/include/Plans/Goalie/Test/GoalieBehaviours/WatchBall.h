@@ -21,13 +21,25 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
+        int currentIndex = 0;
+        static const int RING_BUFFER_SIZE = 90;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPosition> me;
-        shared_ptr<geometry::CNPoint2D> goalMid;
+        shared_ptr<geometry::CNPoint2D> alloGoalMid;
+        shared_ptr<geometry::CNPoint2D> alloFieldCenter;
+        shared_ptr<geometry::CNPoint2D> alloBall;
         msl_actuator_msgs::MotionControl mc;
-        /*PROTECTED REGION END*/};
+        shared_ptr<geometry::CNPoint2D> oldEgoAlignPoint;
+        // ringBuffer for ball impact calculation
+        void createCSV(bool movingTowardsGoal);
+        int modRingBuffer(int k);
+        int ballMovesTowardsGoal(int nrOfPos);
+        shared_ptr<geometry::CNPoint2D> calcGoalImpact(shared_ptr<geometry::CNPoint2D> ballPosBuffer[], int nPoints,int puffer);
+        shared_ptr<geometry::CNPoint2D> ballPosBuffer[RING_BUFFER_SIZE]; // frequency is 30 Hz, so 2 full iterations
+		/*PROTECTED REGION END*/
+	};
 } /* namespace alica */
 
 #endif /* WatchBall_H_ */
