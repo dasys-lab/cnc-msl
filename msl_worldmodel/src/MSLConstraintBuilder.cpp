@@ -94,6 +94,7 @@ namespace msl
 
 				// consider opponents
 				auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+
 //				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
 
 				if (opps != nullptr && opps->size() > 0) {

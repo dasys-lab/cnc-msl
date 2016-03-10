@@ -92,10 +92,10 @@ namespace alica
 
         for (int i = 0; i < wm->getRingBufferLength(); i++)
         {
-            if (wm->obstacles.getObstacles(i) != nullptr)
+            if (wm->obstacles.getEgoVisionObstacles(i) != nullptr)
             {
                 // weighted analysis of past and current obstacles
-                for (auto it = wm->obstacles.getObstacles(i)->begin(); it != wm->obstacles.getObstacles(i)->end(); it++)
+                for (auto it = wm->obstacles.getEgoVisionObstacles(i)->begin(); it != wm->obstacles.getEgoVisionObstacles(i)->end(); it++)
                 {
                     geometry::CNPoint2D obs(it->x, it->y);
                     shared_ptr < geometry::CNPoint2D > alloObs = obs.egoToAllo(*ownPos);

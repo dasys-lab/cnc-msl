@@ -37,10 +37,10 @@ namespace alica
         if (obstacles != nullptr && obstacles->size() != 0)
         {
 
-			for (auto obs : *obstacles)
-			{
-				std::cout << obs->x << ", " << obs->y << std::endl;
-			}
+            for (auto obs : *obstacles)
+            {
+                std::cout << obs->x << ", " << obs->y << std::endl;
+            }
         }
 
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
@@ -52,12 +52,12 @@ namespace alica
 
         cout << "==========================================================================" << endl;
         if (hitPoint)
-        	cout << "hits the goal: " << hitPoint->x << ", " << hitPoint->y << ", " << hitPoint->z << endl;
+            cout << "hits the goal: " << hitPoint->x << ", " << hitPoint->y << ", " << hitPoint->z << endl;
         else
-        	cout << "hits the goal: false" << endl;
+            cout << "hits the goal: false" << endl;
 
         if (false == hitPoint)
-        	return;
+            return;
 
         bool checkGoalKeeperResult = checkGoalKeeper(hitPoint);
         bool checkShootPossiblilityResult = checkShootPossibility(hitPoint);
@@ -67,13 +67,13 @@ namespace alica
             kicking (hitPoint);
         }
 
-		cout << "check goal keeper: " << (checkGoalKeeperResult ? "true" : "false") << endl;
-		cout << "check shoot possibility: " << (checkShootPossiblilityResult ? "true" : "false") << endl;
-		cout << "kick power: " << cout_kickpower << endl;
-		cout << "kicking = " << cout_kicking << endl;
+        cout << "check goal keeper: " << (checkGoalKeeperResult ? "true" : "false") << endl;
+        cout << "check shoot possibility: " << (checkShootPossiblilityResult ? "true" : "false") << endl;
+        cout << "kick power: " << cout_kickpower << endl;
+        cout << "kicking = " << cout_kicking << endl;
 
-		cout_kicking = false;
-		cout_kickpower = 0;
+        cout_kicking = false;
+        cout_kickpower = 0;
 
         /*PROTECTED REGION END*/
     }
@@ -187,7 +187,7 @@ namespace alica
 
             if (abs(obs->alloToEgo(*ownPos)->y) < minOppYDist)
             {
-            	std::cout << "Position of evil obstacle " << obs->x << ", " << obs->y  << std::endl;
+                std::cout << "Position of evil obstacle " << obs->x << ", " << obs->y << std::endl;
                 return false;
             }
         }
