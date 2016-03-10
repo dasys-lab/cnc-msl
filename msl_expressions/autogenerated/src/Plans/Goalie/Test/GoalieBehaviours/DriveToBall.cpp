@@ -41,6 +41,7 @@ namespace alica
 		} else {
 			send(mc);
 		}
+		cout << "### DriveToBall ###" << endl;
 		/*PROTECTED REGION END*/
 	}
 	void DriveToBall::initialiseParameters()
