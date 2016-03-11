@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="StandardAttack.pml#1434046634657"/>
-    <value xPos="79" yPos="174" width="206" height="110" collapsed="false"/>
+    <value xPos="83" yPos="260" width="207" height="113" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434046634656"/>
@@ -14,28 +14,26 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048406725"/>
-    <value xPos="427" yPos="307" width="102" height="86" collapsed="false"/>
+    <value xPos="326" yPos="510" width="104" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048705508"/>
-    <value xPos="443" yPos="87" width="119" height="103" collapsed="false"/>
+    <value xPos="588" yPos="290" width="122" height="103" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048720937"/>
-    <value>
-      <bendpoints xPos="348" yPos="175"/>
-    </value>
+    <value/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048722503"/>
     <value>
-      <bendpoints xPos="380" yPos="237"/>
+      <bendpoints xPos="449" yPos="378"/>
     </value>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434048723878"/>
     <value>
-      <bendpoints xPos="381" yPos="282"/>
+      <bendpoints xPos="289" yPos="503"/>
     </value>
   </extensions>
   <extensions>
@@ -45,7 +43,7 @@
   <extensions>
     <key href="StandardAttack.pml#1434048734889"/>
     <value>
-      <bendpoints xPos="597" yPos="317"/>
+      <bendpoints xPos="547" yPos="473"/>
     </value>
   </extensions>
   <extensions>
@@ -58,31 +56,21 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434715893346"/>
-    <value xPos="160" yPos="5" width="163" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="StandardAttack.pml#1434716045767"/>
-    <value>
-      <bendpoints xPos="221" yPos="171"/>
-    </value>
+    <value xPos="311" yPos="13" width="168" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434716047438"/>
-    <value>
-      <bendpoints xPos="269" yPos="184"/>
-    </value>
+    <value/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434716048579"/>
     <value>
-      <bendpoints xPos="445" yPos="86"/>
+      <bendpoints xPos="625" yPos="172"/>
     </value>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1434716049424"/>
-    <value>
-      <bendpoints xPos="411" yPos="135"/>
-    </value>
+    <value/>
   </extensions>
   <extensions>
     <key href="Wander.beh#1434716230628"/>
@@ -106,39 +94,25 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1450175617600"/>
-    <value xPos="50" yPos="343" width="240" height="110" collapsed="false"/>
+    <value xPos="300" yPos="367" width="250" height="113" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="FetchFromSideLine.beh#1450175679178"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="StandardAttack.pml#1450175754555"/>
-    <value xPos="278" yPos="343" width="206" height="110" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="StandardAttack.pml#1450175864724"/>
-    <value>
-      <bendpoints xPos="186" yPos="331"/>
-    </value>
+    <value/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1450175866364"/>
     <value>
-      <bendpoints xPos="237" yPos="330"/>
+      <bendpoints xPos="380" yPos="427"/>
     </value>
   </extensions>
   <extensions>
-    <key href="StandardAttack.pml#1450175867291"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="StandardAttack.pml#1450175873713"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="StandardAttack.pml#1450175887984"/>
-    <value xPos="489" yPos="1" width="253" height="86" collapsed="false"/>
+    <value xPos="289" yPos="175" width="265" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1450175921044"/>
@@ -149,15 +123,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="StandardAttack.pml#1450175965980"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="StandardAttack.pml#1450176058283"/>
     <value/>
   </extensions>
   <extensions>
     <key href="AdvancdeSimplePass.beh#1450176216458"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAttack.pml#1457687426425"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/Duel.beh#1450178707835"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
