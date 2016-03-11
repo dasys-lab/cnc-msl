@@ -31,12 +31,6 @@
     </value>
   </extensions>
   <extensions>
-    <key href="StandardAttack.pml#1434048723878"/>
-    <value>
-      <bendpoints xPos="289" yPos="503"/>
-    </value>
-  </extensions>
-  <extensions>
     <key href="StandardAttack.pml#1434048729645"/>
     <value/>
   </extensions>
@@ -94,7 +88,7 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1450175617600"/>
-    <value xPos="300" yPos="367" width="250" height="113" collapsed="false"/>
+    <value xPos="61" yPos="49" width="250" height="113" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="FetchFromSideLine.beh#1450175679178"/>
@@ -107,7 +101,7 @@
   <extensions>
     <key href="StandardAttack.pml#1450175866364"/>
     <value>
-      <bendpoints xPos="380" yPos="427"/>
+      <bendpoints xPos="168" yPos="226"/>
     </value>
   </extensions>
   <extensions>
@@ -120,10 +114,6 @@
   </extensions>
   <extensions>
     <key href="StandardAttack.pml#1450175926476"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="StandardAttack.pml#1450176058283"/>
     <value/>
   </extensions>
   <extensions>

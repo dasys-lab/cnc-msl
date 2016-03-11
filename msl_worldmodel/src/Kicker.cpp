@@ -12,7 +12,7 @@ namespace msl
 
 	double Kicker::kickerAngle = M_PI;
 
-	Kicker::Kicker(MSLWorldModel* wm)
+	Kicker::Kicker(MSLWorldModel* wm) : kickControlMsgs(10)
 	{
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
@@ -257,6 +257,25 @@ namespace msl
 		{
 			return z;
 		}
+	}
+
+	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km) {
+		shared_ptr<msl_actuator_msgs::KickControl> cmd = shared_ptr<msl_actuator_msgs::KickControl>();
+
+		*cmd = km;
+		shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd = make_shared<
+				InformationElement<msl_actuator_msgs::KickControl>>(cmd, wm->getTime());
+		jcmd->certainty = 1.0;
+		kickControlMsgs.add(jcmd);
+	}
+
+	shared_ptr<msl_actuator_msgs::KickControl> Kicker::getKickConstrolMsg(int index) {
+		auto x = kickControlMsgs.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > 1000000000)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
 	}
 
 } /* namespace msl */

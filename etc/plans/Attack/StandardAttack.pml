@@ -8,13 +8,11 @@
     <inTransitions>#1450175921044</inTransitions>
     <inTransitions>#1457687426425</inTransitions>
     <outTransitions>#1434048720937</outTransitions>
-    <outTransitions>#1434048723878</outTransitions>
     <outTransitions>#1434716047438</outTransitions>
     <outTransitions>#1450175864724</outTransitions>
   </states>
   <states id="1434048406725" name="Duel" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Duel.beh#1450178707835</plans>
-    <inTransitions>#1434048723878</inTransitions>
     <inTransitions>#1434048729645</inTransitions>
     <outTransitions>#1434048734889</outTransitions>
     <outTransitions>#1457687426425</outTransitions>
@@ -24,7 +22,6 @@
     <inTransitions>#1434048720937</inTransitions>
     <inTransitions>#1434048734889</inTransitions>
     <inTransitions>#1434716048579</inTransitions>
-    <inTransitions>#1450176058283</inTransitions>
     <outTransitions>#1434048722503</outTransitions>
     <outTransitions>#1434048729645</outTransitions>
     <outTransitions>#1434716049424</outTransitions>
@@ -41,7 +38,6 @@
     <plans xsi:type="alica:BehaviourConfiguration">FetchFromSideLine.beh#1450175679178</plans>
     <inTransitions>#1450175864724</inTransitions>
     <outTransitions>#1450175866364</outTransitions>
-    <outTransitions>#1450176058283</outTransitions>
   </states>
   <states id="1450175887984" name="AdvanceAfterPass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">AdvancdeSimplePass.beh#1450176216458</plans>
@@ -57,11 +53,6 @@
     <preCondition id="1434048723635" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048705508</inState>
     <outState>#1434046634657</outState>
-  </transitions>
-  <transitions id="1434048723878" name="MISSING_NAME" comment="!haveBall &amp;&amp; enemy has ball" msg="">
-    <preCondition id="1434048729350" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434046634657</inState>
-    <outState>#1434048406725</outState>
   </transitions>
   <transitions id="1434048729645" name="MISSING_NAME" comment="haveBall &amp;&amp; enemy close" msg="">
     <preCondition id="1434048731181" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -83,7 +74,7 @@
     <inState>#1434715893346</inState>
     <outState>#1434048705508</outState>
   </transitions>
-  <transitions id="1434716049424" name="MISSING_NAME" comment="doesnt see ball || the opponent in ball possesion" msg="">
+  <transitions id="1434716049424" name="MISSING_NAME" comment="(doesnt see ball || the opponent in ball possesion) &amp;&amp; wm->whiteBoard.getPassMsg() != nullptr" msg="">
     <preCondition id="1434716050319" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048705508</inState>
     <outState>#1434715893346</outState>
@@ -108,12 +99,7 @@
     <inState>#1434048705508</inState>
     <outState>#1450175887984</outState>
   </transitions>
-  <transitions id="1450176058283" name="MISSING_NAME" comment="HaveBallDribble(false)" msg="">
-    <preCondition id="1450176060920" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1450175617600</inState>
-    <outState>#1434048705508</outState>
-  </transitions>
-  <transitions id="1457687426425" name="MISSING_NAME" comment="ballpos == nullptr" msg="">
+  <transitions id="1457687426425" name="MISSING_NAME" comment="ballpos == nullptr " msg="">
     <preCondition id="1457687428316" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434048406725</inState>
     <outState>#1434046634657</outState>
