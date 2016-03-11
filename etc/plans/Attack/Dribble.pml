@@ -18,13 +18,12 @@
     <outTransitions>#1434050630827</outTransitions>
   </states>
   <states id="1434050491040" name="Kick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GoalKick.beh#1415205578139</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
     <inTransitions>#1434050621017</inTransitions>
     <outTransitions>#1434050622698</outTransitions>
     <outTransitions>#1434050628706</outTransitions>
   </states>
   <states id="1434050502701" name="AttackAgain" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <inTransitions>#1434050628706</inTransitions>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>
@@ -35,7 +34,6 @@
     <outTransitions>#1434050686620</outTransitions>
   </states>
   <states id="1434050522682" name="ProtectBall" comment="">
-    <plans xsi:type="alica:Plan">ProtectBall.pml#1449151802193</plans>
     <inTransitions>#1434050674494</inTransitions>
     <inTransitions>#1434050686620</inTransitions>
     <outTransitions>#1434050681521</outTransitions>
