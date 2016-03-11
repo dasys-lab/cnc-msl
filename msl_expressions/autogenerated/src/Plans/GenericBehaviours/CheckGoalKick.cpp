@@ -15,6 +15,7 @@ namespace alica
             DomainBehaviour("CheckGoalKick")
     {
         /*PROTECTED REGION ID(con1449076008755) ENABLED START*/ //Add additional options here
+
         /*PROTECTED REGION END*/
     }
     CheckGoalKick::~CheckGoalKick()
@@ -43,12 +44,14 @@ namespace alica
 //            }
 //        }
 
+        this->wm->prediction.monitoring();
+
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
         }
-
         shared_ptr < geometry::CNPoint2D > hitPoint = computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
+
 
         cout << "==========================================================================" << endl;
         if (hitPoint)
