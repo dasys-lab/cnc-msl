@@ -25,6 +25,8 @@
 
 #include  "Plans/Standards/Opponent/FreeKick/OppFreeKick1445411471122.h"
 
+#include  "Plans/TestPlans/KickCurveTuning/KickCurveTuning1457698586746.h"
+
 #include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
 
 #include  "Plans/GameStrategy/Gameplay/GamePlay1457173546734.h"
@@ -163,6 +165,10 @@ namespace alica
 
             case 1445411471122:
                 return make_shared<UtilityFunction1445411471122>();
+                break;
+
+            case 1457698586746:
+                return make_shared<UtilityFunction1457698586746>();
                 break;
 
             case 1417017436952:

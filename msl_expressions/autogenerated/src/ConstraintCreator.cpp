@@ -25,6 +25,8 @@
 
 #include  "Plans/Standards/Opponent/FreeKick/constraints/OppFreeKick1445411471122Constraints.h"
 
+#include  "Plans/TestPlans/KickCurveTuning/constraints/KickCurveTuning1457698586746Constraints.h"
+
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
 
 #include  "Plans/GameStrategy/Gameplay/constraints/GamePlay1457173546734Constraints.h"

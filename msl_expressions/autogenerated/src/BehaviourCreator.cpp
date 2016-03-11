@@ -63,6 +63,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/DriveForward.h"
 
+#include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
+
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
 #include  "Plans/Behaviours/CheckPassMsg.h"
@@ -309,6 +311,11 @@ namespace alica
             case 1417017580650:
 
                 return make_shared<DriveForward>();
+                break;
+
+            case 1457698689219:
+
+                return make_shared<LaserBallTracking>();
                 break;
 
             case 1455537928849:
