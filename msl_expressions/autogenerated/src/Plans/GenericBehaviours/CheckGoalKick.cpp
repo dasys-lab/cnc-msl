@@ -104,7 +104,8 @@ namespace alica
         minOwnDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minOwnDistGoal", NULL);
         minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
         keeperDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.keeperDistGoal", NULL);
-        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory", NULL);
+        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory",
+                                                                     NULL);
         // is necessary to calculate the minimum distance to obstacle so that it is possible to shoot a goal
         // close to goal --> distance to robot is higher
         closeGoalDist = (*sc)["GoalKick"]->get<double>("GoalKick.OwnDistObs.closeGoalDist", NULL);
@@ -234,23 +235,23 @@ namespace alica
         {
             if (opp->distanceTo(hitPoint) < keeperDistGoal)
             {
-            	std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
+                std::cout << "Position of evil goalkeeper " << opp->x << ", " << opp->y << std::endl;
 //            	double deltaAngleGoalie2HitPoint = opp->angleToPoint(hitPoint);
 //            	double stuff = tan(deltaAngleGoalie2HitPoint) * opp->distanceTo(ownPos);
-            	auto egoGoalKeeper = opp->alloToEgo(*this->ownPos);
+                auto egoGoalKeeper = opp->alloToEgo(*this->ownPos);
 
-            	// goalkeeper on same level as attacker, handled by checkShootPossibility
-            	if (egoGoalKeeper->x == 0)
-            		continue;
+                // goalkeeper on same level as attacker, handled by checkShootPossibility
+                if (egoGoalKeeper->x == 0)
+                    continue;
 
-            	double keeperDisBallTrajectory = abs(egoGoalKeeper->y / egoGoalKeeper->x) * egoGoalKeeper->length();
+                double keeperDisBallTrajectory = abs(egoGoalKeeper->y / egoGoalKeeper->x) * egoGoalKeeper->length();
 
-            	std::cout << "keeperDisBallTrajectory " << keeperDisBallTrajectory << std::endl;
+                std::cout << "keeperDisBallTrajectory " << keeperDisBallTrajectory << std::endl;
 
-            	if (keeperDisBallTrajectory < minKeeperDistBallTrajectory)
-            	{
-            		return false;
-            	}
+                if (keeperDisBallTrajectory < minKeeperDistBallTrajectory)
+                {
+                    return false;
+                }
             }
         }
         return true;

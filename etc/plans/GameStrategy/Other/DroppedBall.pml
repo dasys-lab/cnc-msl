@@ -7,6 +7,9 @@
   <states xsi:type="alica:SuccessState" id="1426696458333" name="NewSuccessState" comment="">
     <inTransitions>#1426696476530</inTransitions>
   </states>
+  <states id="1457689449670" name="Keeper" comment="" entryPoint="1457689420982">
+    <plans xsi:type="alica:Plan">../../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+  </states>
   <transitions id="1426696476530" name="MISSING_NAME" comment="anychildsuccess" msg="">
     <preCondition id="1426696478377" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426694906400</inState>
@@ -15,5 +18,9 @@
   <entryPoints id="1426694906401" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
     <task>../../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1426694906400</state>
+  </entryPoints>
+  <entryPoints id="1457689420982" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../../Misc/taskrepository.tsk#1221754402444</task>
+    <state>#1457689449670</state>
   </entryPoints>
 </alica:Plan>

@@ -259,4 +259,16 @@ namespace msl
 		}
 	}
 
+	// Dont use it - its under development.
+	double Kicker::getKickPowerExperimental(double dist, double height)
+	{
+		double g = 9.81;
+		double initialShootAngle = 30*180/M_PI; // 30° initialShootAngle
+		double initialVelocity = sqrt((g*dist*dist)/(2*cos(initialShootAngle)*cos(initialShootAngle)*(dist*tan(initialShootAngle)-height)));
+
+		// TODO: create function, which fits between initialVelocity and kickPower
+
+		return initialVelocity;
+	}
+
 } /* namespace msl */
