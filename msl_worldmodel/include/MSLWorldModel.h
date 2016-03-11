@@ -38,6 +38,7 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
+#include "Prediction.h"
 
 namespace alica
 {
@@ -89,6 +90,7 @@ namespace msl
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
 		Obstacles obstacles;
+		Prediction prediction;
 
 	private:
 
