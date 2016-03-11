@@ -259,6 +259,7 @@ namespace msl
 		}
 	}
 
+<<<<<<< HEAD
 	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km) {
 		shared_ptr<msl_actuator_msgs::KickControl> cmd = shared_ptr<msl_actuator_msgs::KickControl>();
 
@@ -276,6 +277,18 @@ namespace msl
 			return nullptr;
 		}
 		return x->getInformation();
+=======
+	// Dont use it - its under development.
+	double Kicker::getKickPowerExperimental(double dist, double height)
+	{
+		double g = 9.81;
+		double initialShootAngle = 30*180/M_PI; // 30° initialShootAngle
+		double initialVelocity = sqrt((g*dist*dist)/(2*cos(initialShootAngle)*cos(initialShootAngle)*(dist*tan(initialShootAngle)-height)));
+
+		// TODO: create function, which fits between initialVelocity and kickPower
+
+		return initialVelocity;
+>>>>>>> 75048b945cd243d25324596fabacc57372c4d173
 	}
 
 } /* namespace msl */

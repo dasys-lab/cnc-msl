@@ -19,7 +19,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
  
-catkin_package(
+catkin_package( 
   INCLUDE_DIRS include
   LIBRARIES msl_worldmodel
   CATKIN_DEPENDS 
@@ -60,6 +60,7 @@ catkin_package(
    src/Teammates.cpp
    src/WhiteBoard.cpp
    src/Rules.cpp
+   src/Prediction.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp

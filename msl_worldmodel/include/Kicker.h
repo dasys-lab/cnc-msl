@@ -39,6 +39,7 @@ namespace msl
 		double getPreciseShotMaxTolerance();
 		double getPreciseShotMinDistance();
 		int getShortPassPower();
+		double getKickPowerExperimental(double dist, double height);
 		bool lowShovelSelected;
 		static double kickerAngle;
 

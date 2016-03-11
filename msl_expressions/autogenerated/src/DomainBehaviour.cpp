@@ -39,6 +39,7 @@ namespace alica
 	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
 	{
 		mc.senderID = ownID;
+		mc.timestamp = wm->getTime();
 		motionControlPub.publish(mc);
 		wm->rawSensorData.processMotionControlMessage(mc);
 	}
