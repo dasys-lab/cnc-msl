@@ -328,7 +328,7 @@ namespace msl
 			msg.odom.motion.translation = ownVel->translation;
 		}
 
-		auto obs = obstacles.getObstacles();
+		auto obs = obstacles.getEgoVisionObstacles();
 		{
 			if (obs != nullptr)
 			{

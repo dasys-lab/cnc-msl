@@ -30,6 +30,7 @@ namespace alica
         double farGoalDist;
         double minOwnDistObs;
         double keeperDistGoal;
+        double minKeeperDistBallTrajectory;
         double minKickPower;
 
         // testing variables for console output

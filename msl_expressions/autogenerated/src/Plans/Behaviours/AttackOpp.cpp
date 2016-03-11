@@ -35,7 +35,7 @@ namespace alica
             return;
         }
 
-        auto obstacles = wm->obstacles.getObstacles();
+        auto obstacles = wm->obstacles.getEgoVisionObstacles();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         for (int i = 0; i < obstacles->size(); i++)

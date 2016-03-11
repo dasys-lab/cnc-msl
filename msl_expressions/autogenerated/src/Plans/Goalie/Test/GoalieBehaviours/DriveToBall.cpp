@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 /*PROTECTED REGION ID(inccpp1447863493623) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,10 +22,33 @@ namespace alica
     void DriveToBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
-        /*cout << "inside drive to ball" << endl;
-         auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
-         mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
-         /*PROTECTED REGION END*/
+        cout << "### DriveToBall ###" << endl;
+        me = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoTarget = wm->ball.getEgoBallPosition();
+        goalMid = MSLFootballField::posOwnGoalMid();
+        mc = RobotMovement::moveToPointFast(egoTarget, egoTarget, 100, 0);
+
+        if (egoTarget == nullptr)
+        {
+            cout << "egoTarget null!" << endl;
+            return;
+        }
+        else if (me == nullptr)
+        {
+            cout << "me null!" << endl;
+            return;
+        }
+        double distance = me->distanceTo(egoTarget);
+        if (distance < 100)
+        {
+            this->success = true;
+        }
+        else
+        {
+            send (mc);
+        }
+        cout << "### DriveToBall ###" << endl;
+        /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()
     {
