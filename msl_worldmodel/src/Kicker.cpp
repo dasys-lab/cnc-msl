@@ -259,8 +259,8 @@ namespace msl
 		}
 	}
 
-<<<<<<< HEAD
-	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km) {
+	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km)
+	{
 		shared_ptr<msl_actuator_msgs::KickControl> cmd = shared_ptr<msl_actuator_msgs::KickControl>();
 
 		*cmd = km;
@@ -277,7 +277,8 @@ namespace msl
 			return nullptr;
 		}
 		return x->getInformation();
-=======
+	}
+
 	// Dont use it - its under development.
 	double Kicker::getKickPowerExperimental(double dist, double height)
 	{
@@ -288,7 +289,6 @@ namespace msl
 		// TODO: create function, which fits between initialVelocity and kickPower
 
 		return initialVelocity;
->>>>>>> 75048b945cd243d25324596fabacc57372c4d173
 	}
 
 } /* namespace msl */
