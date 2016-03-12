@@ -53,9 +53,9 @@ void onLaserMsgs (sensor_msgs::LaserScanPtr msg)
 		double shortestDist = 10000;
 		for (int i = 180; i < msg->ranges.size()-180; i++)
 		{
-			if (referenceScan->ranges[i] - msg->ranges[i] > 0.40)
+			if (referenceScan->ranges[i] - msg->ranges[i] > 0.40 && msg->ranges[i] > 0.30)
 			{
-				//cout << "Sector " << i << ": " << referenceScan->ranges[i] << ", " << msg->ranges[i] << (iMatched ? " continues" : "")<< endl;
+//				cout << "Sector " << i << ": " << referenceScan->ranges[i] << ", " << msg->ranges[i] << (iMatched ? " continues" : "")<< endl;
 				iMatched = true;
 
 				if (shortestDist > msg->ranges[i])
@@ -81,8 +81,8 @@ void onLaserMsgs (sensor_msgs::LaserScanPtr msg)
 			angle = M_PI - angle;
 			sign = -1;
 		}
-		double x = cos(angle) * shortestDist+0.12 * sign;
-		double y = sin(angle) * shortestDist+0.12;
+		double x = 4.14 - (cos(angle) * (shortestDist+0.12) * sign);
+		double y = (sin(angle) * (shortestDist+0.12)) + (0.12-0.065);
 
 		cout << x << "\t" << y << endl;
 	}
