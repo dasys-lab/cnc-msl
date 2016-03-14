@@ -172,7 +172,7 @@ void OpticalFlow::setConfigurationBits(uint8_t conf) {
 void OpticalFlow::update_motion_burst(timeval time_now) {
 	last_updated = time_now;
 
-	getMotionBurst(motionBurst);
+//	getMotionBurst(motionBurst);
 	x += motionBurst[1];
 	y += motionBurst[2];
 	qos += motionBurst[3];

@@ -284,10 +284,10 @@ void IMU::getTemp() {
 }
 
 void IMU::updateData(timeval time_now) {
-	this->getAccel();
-	this->getGyro();
-	this->getMagnet();
-	this->getTemp();
+//	this->getAccel();
+//	this->getGyro();
+//	this->getMagnet();
+//	this->getTemp();
 
 	last_updated = time_now;
 }
