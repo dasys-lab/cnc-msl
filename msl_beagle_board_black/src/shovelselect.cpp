@@ -13,8 +13,8 @@ using namespace BlackLib;
 	ShovelSelect::ShovelSelect(pwmName pwm_P) {
 		pwm = new BlackPWM(pwm_P);
 
-		pwm->setPeriodTime(period, nanosecond);
-		pwm->setSpaceRatioTime(0, nanosecond);
+		pwm->setPeriodTime(period, microsecond);
+		pwm->setSpaceRatioTime(0, microsecond);
 		pwm->setRunState(stop);
 
 		auto sc = supplementary::SystemConfig::getInstance();
@@ -32,7 +32,7 @@ using namespace BlackLib;
 
 	bool ShovelSelect::checkTimeout(timeval time) {
 		if ((TIMEDIFFMS(time, ping) > timeout) && enabled) {
-//			pwm->setRunState(stop);
+			pwm->setRunState(stop);
 			enabled = false;
 
 			return true;
@@ -50,47 +50,15 @@ using namespace BlackLib;
 		ping = time_now;
 		statePassing = passing;
 		if (passing) {
-//			pwm->setSpaceRatioTime(passPWM, microsecond);
+			pwm->setSpaceRatioTime(passPWM, microsecond);
 		} else {
-//			pwm->setSpaceRatioTime(kickPWM, microsecond);
+			pwm->setSpaceRatioTime(kickPWM, microsecond);
 		}
 		if (!enabled) {
-//			pwm->setRunState(run);
+			pwm->setRunState(run);
 			enabled = true;
 		}
 
 		return true;
-	}
-
-	bool ShovelSelect::setKick(int kick) {
-		if ((kick > 1000) && (kick < 2000)) {
-			kickPWM = kick;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	bool ShovelSelect::setPass(int pass) {
-		if ((pass > 1000) && (pass < 2000)) {
-			passPWM = pass;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	bool ShovelSelect::setPing(timeval time) {
-		ping = time;
-		return true;
-	}
-
-	bool ShovelSelect::setTimeout(int time) {
-		if (time > 0) {
-			timeout = time;
-			return true;
-		} else {
-			return false;
-		}
 	}
 
