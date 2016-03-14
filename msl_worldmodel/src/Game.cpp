@@ -454,7 +454,9 @@ namespace msl
 			mayScore = true;
 		}
 
-		teamMateWithBall = teamMateWithBallNow;
+		if(teamMateWithBallNow != 0) {
+			teamMateWithBall = teamMateWithBallNow;
+		}
 	}
 
 } /* namespace alica */
