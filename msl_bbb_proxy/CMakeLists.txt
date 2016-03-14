@@ -30,8 +30,8 @@ include_directories(${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 # Triggers the udp_proxy_generator to create the serialization source
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/proxy_gen/ros2udpProxy.cpp
-    COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
-    #COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../../../devel/lib/udp_proxy_generator/udp_proxy_generator ${PROJECT_NAME}
+    #COMMAND rosrun udp_proxy_generator udp_proxy_generator ${PROJECT_NAME}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/../../../devel/lib/udp_proxy_generator/udp_proxy_generator ${PROJECT_NAME}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/relayMsgs.conf ${udp_proxy_generator_LIBRARIES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "${PROJECT_NAME}: Generating Code ..."

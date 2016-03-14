@@ -20,11 +20,11 @@ using namespace BlackLib;
 	}
 
 	bool LightBarrier::checkLightBarrier() {
-		if (adc->getNumericValue() > threshold) {
-			return true;
-		} else {
+//		if (adc->getNumericValue() > threshold) {
+//			return true;
+//		} else {
 			return false;
-		}
+//		}
 	}
 
 	bool LightBarrier::setTreshold(int th) {

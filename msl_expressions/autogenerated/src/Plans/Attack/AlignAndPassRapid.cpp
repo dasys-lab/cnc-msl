@@ -118,7 +118,6 @@ namespace alica
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
-
                     // make the passpoints closer to the receiver
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
@@ -192,11 +191,12 @@ namespace alica
                             continue;
                         }
 
+                        cout << "." << flush;
                         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
                         if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
                                                        vNet->getTeamMatePositions()))
                         {
-
+                        	cout << "X" << flush;
                             continue;
                         }
                         else
@@ -225,8 +225,8 @@ namespace alica
 
             if (!found)
             { // No Pass point found, so return everything
-                this->failure = true;
-                cout << "AAPR: No valid pass point found! FailureStatus: " << this->failure << endl;
+                this->success = true;
+                cout << "AAPR: No valid pass point found! SuccessStatus: " << this->success << endl;
                 return;
             }
             sites->push_back(alloAimPoint);

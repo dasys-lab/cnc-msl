@@ -112,7 +112,7 @@ class IMU {
 		void		setRefAccel();
 		void		setRefGyro();
 		void		updateData(timeval time_now);
-		void		sendData(timeval time_now, ros::Publisher *imuPub);
+		void		sendData(timeval time_now/*, ros::Publisher *imuPub*/);
 };
 
 

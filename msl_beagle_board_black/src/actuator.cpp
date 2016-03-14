@@ -18,7 +18,7 @@ bool		th_activ = true;
 
 
 
-
+/*
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	if (msg.enabled) {
 		BH_right.setBallHandling(msg.rightMotor);
@@ -45,7 +45,7 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 		cout << "MotionLight: " << e.what() << endl;
 	}
 }
-
+*/
 
 void controlBHLeft() {
 	unique_lock<mutex> l_bhl(threw[0].mtx);
@@ -102,7 +102,7 @@ void contolShovelSelect() {
 	}
 }
 
-void getLightbarrier(ros::Publisher *lbiPub) {
+void getLightbarrier(/*ros::Publisher *lbiPub*/) {
 	std_msgs::Bool msg;
 
 	// LightBarrier Init
@@ -116,7 +116,7 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 
 		try {
 			msg.data = lightbarrier.checkLightBarrier();
-			lbiPub->publish(msg);
+//			lbiPub->publish(msg);
 		} catch (exception &e) {
 			cout << "ADC: " << e.what() << endl;
 		}
@@ -126,7 +126,7 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 	}
 }
 
-void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub) {
+void getSwitches(/*ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher *flPub*/) {
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
@@ -181,7 +181,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 					msg_pm.cmd = 1;
 					LED_Bundle.setValue(low);	// LED aus
 				}
-				brtPub->publish(msg_pm);
+//				brtPub->publish(msg_pm);
 			}
 		}
 
@@ -191,7 +191,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 			if (state[vision]) {
 				msg_v.receiverID = ownID;
 				msg_v.usePose = false;
-				vrtPub->publish(msg_v);
+//				vrtPub->publish(msg_v);
 				LED_Vision.setValue(high);
 			} else {
 				LED_Vision.setValue(low);
@@ -203,7 +203,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 
 			if (state[power]) {
 				std_msgs::Empty msg;
-				flPub->publish(msg);
+//				flPub->publish(msg);
 				LED_Power.setValue(high);
 			} else {
 				LED_Power.setValue(low);
@@ -215,7 +215,7 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 	}
 }
 
-void getIMU(ros::Publisher *imuPub) {
+void getIMU(/*ros::Publisher *imuPub*/) {
 	unique_lock<mutex> l_imu(threw[5].mtx);
 	while(th_activ) {
 		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
@@ -224,7 +224,7 @@ void getIMU(ros::Publisher *imuPub) {
 
 		try {
 			lsm9ds0.updateData(time_now);
-			lsm9ds0.sendData(time_now, imuPub);
+			lsm9ds0.sendData(time_now/*, imuPub*/);
 		} catch (exception &e) {
 			cout << "IMU: " << e.what() << endl;
 		}
@@ -234,7 +234,7 @@ void getIMU(ros::Publisher *imuPub) {
 	}
 }
 
-void getOptical(ros::Publisher *mbcPub) {
+void getOptical(/*ros::Publisher *mbcPub*/) {
 	unique_lock<mutex> l_optical(threw[6].mtx);
 	while(th_activ) {
 		threw[6].cv.wait(l_optical, [&] { return !th_activ || threw[6].notify; }); // protection against spurious wake-ups
@@ -243,7 +243,7 @@ void getOptical(ros::Publisher *mbcPub) {
 
 		try {
 			adns3080.update_motion_burst(time_now);
-			adns3080.send_motion_burst(time_now, mbcPub);
+			adns3080.send_motion_burst(time_now/*, mbcPub*/);
 		} catch (exception &e) {
 			cout << "Optical Flow: " << e.what() << endl;
 		}
@@ -266,7 +266,7 @@ void exit_program(int sig) {
 
 int main(int argc, char** argv) {
 	// ROS Init
-	ros::init(argc, argv, "ActuatorController");
+/*	ros::init(argc, argv, "ActuatorController");
 	ros::NodeHandle node;
 	ros::Rate loop_rate(30);		// in Hz
 
@@ -280,16 +280,16 @@ int main(int argc, char** argv) {
 	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 1);
 	ros::Publisher flPub = node.advertise<std_msgs::Empty>("/FrontLeftButton", 1);
 	ros::Publisher imuPub = node.advertise<msl_actuator_msgs::IMUData>("/IMUData", 1);
-
+*/
 	sc = supplementary::SystemConfig::getInstance();
 
 	thread th_controlBHRight(controlBHRight);
 	thread th_controlBHLeft(controlBHLeft);
 	thread th_controlShovel(contolShovelSelect);
-	thread th_lightbarrier(getLightbarrier, &lbiPub);
-	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
-	thread th_adns3080(getOptical, &mbcPub);
-	thread th_imu(getIMU, &imuPub);
+	thread th_lightbarrier(getLightbarrier/*, &lbiPub*/);
+	thread th_switches(getSwitches/*, &brtPub, &vrtPub, &flPub*/);
+	thread th_adns3080(getOptical/*, &mbcPub*/);
+	thread th_imu(getIMU/*, &imuPub*/);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
@@ -304,8 +304,13 @@ int main(int argc, char** argv) {
     LED_Power.setValue(high);
 
 	(void) signal(SIGINT, exit_program);
-	while(ros::ok() && !ex) {
+	while(/*ros::ok() && */!ex) {
 		gettimeofday(&time_now, NULL);
+
+		BH_left.setBallHandling(20);
+		BH_right.setBallHandling(20);
+		shovel.setShovel(true, time_now);
+		shovel.setShovel(false, time_now);
 
 		// Thread Notify
 		for (int i=0; i<7; i++) { // TODO remove magic number
@@ -317,14 +322,14 @@ int main(int argc, char** argv) {
 			threw[i].cv.notify_all();
 		}
 
-		// auf beenden aller Threads warten
-		//unique_lock<mutex> l_main(cv_main.mtx);
-		//cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
+		timeval time_check;
+		gettimeofday(&time_check, NULL);
+		while(TIMEDIFFMS(time_check, time_now) > 30) {
+			gettimeofday(&time_check, NULL);
+		}
 
-		// OpticalFlow und IMU werden nicht ausgefuehrt
-
-		ros::spinOnce();
-		loop_rate.sleep();
+/*		ros::spinOnce();
+		loop_rate.sleep();*/
 	}
 	LED_Power.setValue(low);
 
