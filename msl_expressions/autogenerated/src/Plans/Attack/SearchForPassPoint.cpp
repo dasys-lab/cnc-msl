@@ -200,6 +200,7 @@ namespace alica
         sc = supplementary::SystemConfig::getInstance();
         this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
         this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
+        this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
         string tmp;
         string tmp2;
         bool success = true;
@@ -274,7 +275,6 @@ namespace alica
                     }
                 }
             }
-
         }
         catch (exception& e)
         {
