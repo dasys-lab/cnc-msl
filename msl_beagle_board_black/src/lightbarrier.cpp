@@ -7,12 +7,15 @@
 
 
 #include "lightbarrier.h"
+#include <SystemConfig.h>
 
 using namespace BlackLib;
 
 	LightBarrier::LightBarrier(adcName adc_P) {
 		adc = new BlackADC(adc_P);
-		threshold = 500;
+
+		auto sc = supplementary::SystemConfig::getInstance();
+		this->threshold = (*sc)["bbb"]->get<int>("BBB.lightbarrierThreshold", NULL);
 	}
 
 	LightBarrier::~LightBarrier() {
@@ -20,11 +23,11 @@ using namespace BlackLib;
 	}
 
 	bool LightBarrier::checkLightBarrier() {
-//		if (adc->getNumericValue() > threshold) {
-//			return true;
-//		} else {
+		if (adc->getNumericValue() > threshold) {
+			return true;
+		} else {
 			return false;
-//		}
+		}
 	}
 
 	bool LightBarrier::setTreshold(int th) {

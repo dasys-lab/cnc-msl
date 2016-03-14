@@ -243,11 +243,11 @@ namespace msl
 		heightTolerance = heightTolerance/1000.0;
 
 		double g = 9.81;
-		double vSample = 8;
+		double vSample = 6.5;
 		double vOptimal = 0;
 		double heightErr = 100000.0;
 
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 143; i++)
 		{
 			double initialShootAngle = 2.676119513 * vSample + 12.70950743;
 			initialShootAngle *=  M_PI / 180;

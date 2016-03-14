@@ -73,11 +73,13 @@ namespace alica
         cout << "check shoot possibility: " << (checkShootPossiblilityResult ? "true" : "false") << endl;
         cout << "kick power obs: " << cout_kickpower_obs << endl;
         cout << "kick power: " << cout_kickpower << endl;
+        cout << "dist2Hit: " << cout_dist << endl;
         cout << "kicking = " << cout_kicking << endl;
 
         cout_kicking = false;
         cout_kickpower = 0;
         cout_kickpower_obs = 0;
+        cout_dist = 0;
 
         /*PROTECTED REGION END*/
     }
@@ -215,14 +217,22 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
         double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
-
+	double power = 0;
         cout_dist = dist2HitPoint;
 
         kc.enabled = true;
         this->cout_kicking = true;
 
-        double power = this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 500.0, 100.0);
-        this->cout_kickpower = power;
+        if (dist2HitPoint < 4500)
+	{
+		power = this->minKickPower;
+	} 
+	else
+	{
+		power = this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 500.0, 100.0);
+	}	
+        
+	this->cout_kickpower = power;
         kc.power = power;
 
 //        if (dist2HitPoint > 5500)
