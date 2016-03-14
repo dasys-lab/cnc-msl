@@ -200,7 +200,8 @@ namespace alica
     void CheckGoalKick::kicking(shared_ptr<geometry::CNPoint2D> hitPoint)
     {
         msl_actuator_msgs::KickControl kc;
-        double dist2HitPoint = ownPos->distanceTo(hitPoint);
+        auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
+        double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
 
         kc.enabled = true;
         this->cout_kicking = true;
