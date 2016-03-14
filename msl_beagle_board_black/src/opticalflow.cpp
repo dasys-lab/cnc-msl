@@ -183,7 +183,7 @@ void OpticalFlow::update_motion_burst(timeval time_now) {
 }
 
 
-void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
+void OpticalFlow::send_motion_burst(timeval time_now/*, ros::Publisher *mbcPub*/) {
 	msl_actuator_msgs::MotionBurst msg;
 	uint8_t mData[6];
 
@@ -197,7 +197,7 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 	msg.x = x;
 	msg.y = y;
 	msg.qos = tqos;
-	mbcPub->publish(msg);
+//	mbcPub->publish(msg);
 
 	x = 0;
 	y = 0;
