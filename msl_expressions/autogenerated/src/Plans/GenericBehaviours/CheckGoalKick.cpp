@@ -61,20 +61,23 @@ namespace alica
             return;
 
         bool checkGoalKeeperResult = checkGoalKeeper(hitPoint);
-        bool checkShootPossiblilityResult = checkShootPossibility(hitPoint);
+        double kickPowerObs = 0;
+        bool checkShootPossiblilityResult = checkShootPossibility(hitPoint, kickPowerObs);
 
         if (hitPoint && checkGoalKeeperResult && checkShootPossiblilityResult)
         {
-            kicking (hitPoint);
+            kicking (hitPoint, kickPowerObs);
         }
 
         cout << "check goal keeper: " << (checkGoalKeeperResult ? "true" : "false") << endl;
         cout << "check shoot possibility: " << (checkShootPossiblilityResult ? "true" : "false") << endl;
+        cout << "kick power obs: " << cout_kickpower_obs << endl;
         cout << "kick power: " << cout_kickpower << endl;
         cout << "kicking = " << cout_kicking << endl;
 
         cout_kicking = false;
         cout_kickpower = 0;
+        cout_kickpower_obs = 0;
 
         /*PROTECTED REGION END*/
     }
@@ -154,7 +157,7 @@ namespace alica
      *
      * @return true if it is possible to shoot at the enemy goal
      */
-    bool CheckGoalKick::checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint)
+    bool CheckGoalKick::checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint, double& kickPower)
     {
         auto obstacles = wm->obstacles.getAlloObstaclePoints();
         if (obstacles == nullptr || obstacles->size() == 0)
@@ -162,18 +165,8 @@ namespace alica
             return true;
         }
 
-        // new min distance to obstacle depends on distance to goal
-        double distGoal = ownPos->distanceTo(hitPoint);
-
-        // TODO magic number manipulation
-        if (distGoal < farGoalDist)
-        {
-            minOwnDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + closeGoalDist;
-        }
-        else
-        {
-            minOwnDistObs = -0.2 * (distGoal / 1000 - minOwnDistGoal / 1000) + farGoalDist;
-        }
+        double closestObsDist = 1000000;
+        shared_ptr<geometry::CNPoint2D> closestObs;
 
         for (auto obs : *obstacles)
         {
@@ -182,19 +175,39 @@ namespace alica
                 continue; // obs is behind us
             }
 
-            if (obs->distanceTo(ownPos) > minOwnDistObs)
+            if (abs(obs->alloToEgo(*ownPos)->y) > minOppYDist)
             {
-                continue; // obs is far away
+                continue;
             }
 
-            if (abs(obs->alloToEgo(*ownPos)->y) < minOppYDist)
+            if (obs->distanceTo(ownPos) < closestObsDist)
             {
-                std::cout << "Position of evil obstacle " << obs->x << ", " << obs->y << std::endl;
-                return false;
+            	closestObs = obs;
+            	closestObsDist = obs->distanceTo(ownPos);
             }
         }
 
-        return true;
+        if (!closestObs)
+        {
+        	kickPower = -2;
+        	return true;
+        }
+
+        auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
+        double dist2Obs = alloBallPos->distanceTo(closestObs);
+        cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
+        kickPower = this->wm->kicker.getKickPowerForLobShot(dist2Obs, 1000.0);
+
+        cout_kickpower_obs = kickPower;
+
+        if (kickPower == -1)
+        {
+        	return false;
+        }
+        else
+        {
+        	return true;
+        }
     }
 
     void CheckGoalKick::kicking(shared_ptr<geometry::CNPoint2D> hitPoint)
