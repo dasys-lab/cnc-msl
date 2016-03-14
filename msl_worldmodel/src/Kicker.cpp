@@ -226,6 +226,60 @@ namespace msl
 		return temp * 1000.0;
 	}
 
+	/**
+	 * This method is primarily for kicking a lob shot over a robot. So it will return kick powers between 1200 and 2800.
+	 *
+	 * If it returns -1 the tolerance in height is not matched.
+	 *
+	 * @param dist is the distance in mm
+	 * @param height is the height of the center of the ball in mm
+	 * @param heightTolerance is the tolerance for the height in mm (30.0mm is the minimum tolerance)
+	 */
+	double Kicker::getKickPowerForLobShot(double dist, double height, double heightTolerance )
+	{
+		// scale to meter :)
+		dist = dist/1000.0;
+		height = (height-120)/1000.0;
+		heightTolerance = heightTolerance/1000.0;
+
+		double g = 9.81;
+		double vSample = 8;
+		double vOptimal = 0;
+		double heightErr = 100000.0;
+
+		for (int i = 0; i < 100; i++)
+		{
+			double initialShootAngle = 2.676119513 * vSample + 12.70950743;
+			initialShootAngle *=  M_PI / 180;
+			double y = dist * tan(initialShootAngle)
+					- (g * dist * dist) / (2 * vSample * vSample * cos(initialShootAngle) * cos(initialShootAngle));
+			double curHeightErr = abs(height - y);
+			if (curHeightErr < heightErr)
+			{
+				heightErr = curHeightErr;
+				vOptimal = vSample;
+			}
+			else
+			{
+				break;
+			}
+
+			vSample += 0.035; // 100 steps until 11,5m/s
+		}
+
+		if(heightErr > heightTolerance)
+			return -1;
+
+		// function to map v0 to kickPower
+		double f2 = 350.0;
+		double f3 = 11.5;
+		double f4 = 850.0;
+
+		double kickPower = (-log(1 - (vOptimal/f3)) * f2) + f4;
+
+		return kickPower;
+	}
+
 	double Kicker::getPreciseShotMaxDistance()
 	{
 		return preciseShotMaxDistance;
@@ -279,16 +333,6 @@ namespace msl
 		return x->getInformation();
 	}
 
-	// Dont use it - its under development.
-	double Kicker::getKickPowerExperimental(double dist, double height)
-	{
-		double g = 9.81;
-		double initialShootAngle = 30*180/M_PI; // 30° initialShootAngle
-		double initialVelocity = sqrt((g*dist*dist)/(2*cos(initialShootAngle)*cos(initialShootAngle)*(dist*tan(initialShootAngle)-height)));
 
-		// TODO: create function, which fits between initialVelocity and kickPower
-
-		return initialVelocity;
-	}
 
 } /* namespace msl */

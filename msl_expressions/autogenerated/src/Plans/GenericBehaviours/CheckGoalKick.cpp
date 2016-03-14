@@ -205,17 +205,24 @@ namespace alica
         double dist2HitPoint = ownPos->distanceTo(hitPoint);
 
         kc.enabled = true;
-        if (dist2HitPoint > 5500)
-        {
-            cout_kickpower = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
-            kc.power = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
-        }
-        else
-        {
-            cout_kickpower = minKickPower;
-            kc.power = minKickPower;
-        }
-        cout_kicking = true;
+        this->cout_kicking = true;
+
+        double power = this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 500.0, 100.0);
+        this->cout_kickpower = power;
+        kc.power = power;
+
+//        if (dist2HitPoint > 5500)
+//        {
+//            cout_kickpower = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
+//            kc.power = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
+//        }
+//        else
+//        {
+//            cout_kickpower = minKickPower;
+//            kc.power = minKickPower;
+//        }
+
+
         send(kc);
     }
 
