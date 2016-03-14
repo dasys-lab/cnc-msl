@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1457955744730" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1457955764912" name="MISSING_NAME" comment="" scope="1431523395534">
       <sorts>x</sorts>
@@ -93,11 +93,11 @@
     <task>../../Misc/taskrepository.tsk#1238601842183</task>
     <state>#1431522297705</state>
   </entryPoints>
-  <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1432209050494</task>
     <state>#1431523482646</state>
   </entryPoints>
-  <entryPoints id="1431523422152" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1431523422152" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1431524014799</state>
   </entryPoints>
