@@ -35,6 +35,8 @@ namespace alica
 
         // testing variables for console output
         double cout_kickpower;
+        double cout_dist;
+        double cout_bestHeight;
         bool cout_kicking;
 
         bool checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint);

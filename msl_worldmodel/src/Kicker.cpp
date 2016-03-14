@@ -268,7 +268,10 @@ namespace msl
 		}
 
 		if(heightErr > heightTolerance)
+		{
+			cout << "Kicker: HeightErr: " << heightErr << endl;
 			return -1;
+		}
 
 		// function to map v0 to kickPower
 		double f2 = 350.0;

@@ -203,6 +203,8 @@ namespace alica
         auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
         double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
 
+        cout_dist = dist2HitPoint;
+
         kc.enabled = true;
         this->cout_kicking = true;
 
