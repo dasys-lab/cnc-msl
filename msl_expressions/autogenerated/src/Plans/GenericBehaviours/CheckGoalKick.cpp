@@ -200,20 +200,30 @@ namespace alica
     void CheckGoalKick::kicking(shared_ptr<geometry::CNPoint2D> hitPoint)
     {
         msl_actuator_msgs::KickControl kc;
-        double dist2HitPoint = ownPos->distanceTo(hitPoint);
+        auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
+        double dist2HitPoint = alloBallPos->distanceTo(hitPoint);
+
+        cout_dist = dist2HitPoint;
 
         kc.enabled = true;
-        if (dist2HitPoint > 5500)
-        {
-            cout_kickpower = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
-            kc.power = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
-        }
-        else
-        {
-            cout_kickpower = minKickPower;
-            kc.power = minKickPower;
-        }
-        cout_kicking = true;
+        this->cout_kicking = true;
+
+        double power = this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 500.0, 100.0);
+        this->cout_kickpower = power;
+        kc.power = power;
+
+//        if (dist2HitPoint > 5500)
+//        {
+//            cout_kickpower = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
+//            kc.power = (dist2HitPoint / 1000 - minOwnDistGoal / 1000) * 100 + minKickPower;
+//        }
+//        else
+//        {
+//            cout_kickpower = minKickPower;
+//            kc.power = minKickPower;
+//        }
+
+
         send(kc);
     }
 

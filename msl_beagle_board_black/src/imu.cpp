@@ -284,15 +284,15 @@ void IMU::getTemp() {
 }
 
 void IMU::updateData(timeval time_now) {
-//	this->getAccel();
-//	this->getGyro();
-//	this->getMagnet();
-//	this->getTemp();
+	this->getAccel();
+	this->getGyro();
+	this->getMagnet();
+	this->getTemp();
 
 	last_updated = time_now;
 }
 
-void IMU::sendData(timeval time_now/*, ros::Publisher *imuPub*/){
+void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 	msl_actuator_msgs::IMUData msg;
 
 	msg.acceleration.x = accel.x;
