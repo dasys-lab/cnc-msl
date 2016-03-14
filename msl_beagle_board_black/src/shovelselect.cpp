@@ -32,7 +32,7 @@ using namespace BlackLib;
 
 	bool ShovelSelect::checkTimeout(timeval time) {
 		if ((TIMEDIFFMS(time, ping) > timeout) && enabled) {
-			pwm->setRunState(stop);
+//			pwm->setRunState(stop);
 			enabled = false;
 
 			return true;
@@ -50,12 +50,12 @@ using namespace BlackLib;
 		ping = time_now;
 		statePassing = passing;
 		if (passing) {
-			pwm->setSpaceRatioTime(passPWM, nanosecond);
+//			pwm->setSpaceRatioTime(passPWM, nanosecond);
 		} else {
-			pwm->setSpaceRatioTime(kickPWM, nanosecond);
+//			pwm->setSpaceRatioTime(kickPWM, nanosecond);
 		}
 		if (!enabled) {
-			pwm->setRunState(run);
+//			pwm->setRunState(run);
 			enabled = true;
 		}
 

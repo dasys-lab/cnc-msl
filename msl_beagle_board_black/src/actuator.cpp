@@ -146,9 +146,9 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		uint8_t	sw[3] = {1, 1, 1};
 
 		try {
-			sw[bundle]	= SW_Bundle.getNumericValue();
-			sw[vision]	= SW_Vision.getNumericValue();
-			sw[power]	= SW_Power.getNumericValue();
+//			sw[bundle]	= SW_Bundle.getNumericValue();
+//			sw[vision]	= SW_Vision.getNumericValue();
+//			sw[power]	= SW_Power.getNumericValue();
 		} catch (exception &e) {
 			cout << "Buttons: " << e.what() << endl;
 		}
