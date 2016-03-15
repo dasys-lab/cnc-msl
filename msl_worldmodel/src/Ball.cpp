@@ -68,6 +68,9 @@ namespace msl
 		}
 		return x->getInformation();
 	}
+	shared_ptr<geometry::CNPoint2D> Ball::getBallPickupPosition()  {
+		return this->ballPickupPosition;
+	}
 
 	shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getVisionBallPositionAndCertaincy(int index)
 	{

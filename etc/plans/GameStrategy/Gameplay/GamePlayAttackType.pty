@@ -3,7 +3,7 @@
   <plans id="1457173652226" name="MISSING_NAME" comment="" activated="true">
     <plan>../../Attack/AttackPlay.pml#1434045709191</plan>
   </plans>
-  <plans id="1457685921124" name="MISSING_NAME" comment="" activated="false">
+  <plans id="1457685921124" name="MISSING_NAME" comment="" activated="true">
     <plan>../../Attack/StandardAttack.pml#1434046634656</plan>
   </plans>
 </alica:PlanType>

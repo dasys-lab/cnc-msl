@@ -95,13 +95,13 @@
   <extensions>
     <key href="Dribble.pml#1434050681521"/>
     <value>
-      <bendpoints xPos="735" yPos="236"/>
+      <bendpoints xPos="696" yPos="240"/>
     </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050686620"/>
     <value>
-      <bendpoints xPos="780" yPos="232"/>
+      <bendpoints xPos="737" yPos="235"/>
     </value>
   </extensions>
   <extensions>
@@ -142,6 +142,34 @@
   </extensions>
   <extensions>
     <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.beh#1457706612268"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleEmergencyKick.beh#1457706826895"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleEmergencyKick.beh#1457706895442"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleAttackConservative.beh#1457967385543"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

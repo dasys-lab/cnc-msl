@@ -49,6 +49,9 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoVisionObstaclePoints(int index = 0);
 		double getObstacleRadius();
 
+		shared_ptr<geometry::CNPoint2D> getBiggestFreeGoalAreaMidPoint();
+		double  getDistanceToObstacle(shared_ptr<geometry::CNPoint2D> target);
+
 	private:
 		void clusterAnnotatedObstacles();
 		void setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ownObs,
