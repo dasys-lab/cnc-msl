@@ -22,7 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
   system_config
   roscpp
   message_generation
-  msl_msgs)
+  msl_msgs
+  msl_helper_msgs)
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)

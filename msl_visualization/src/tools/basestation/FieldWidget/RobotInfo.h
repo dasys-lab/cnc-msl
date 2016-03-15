@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <msl_sensor_msgs/SharedWorldInfo.h>
+#include <msl_helper_msgs/DebugMsg.h>
 #include <msl_msgs/CorridorCheck.h>
 #include <msl_msgs/PathPlanner.h>
 #include <msl_msgs/VoronoiNetInfo.h>
@@ -54,6 +55,7 @@ private:
         boost::shared_ptr<msl_msgs::PathPlanner> pathPlannerInfo = nullptr;
         boost::shared_ptr<msl_msgs::VoronoiNetInfo> voronoiNetInfo = nullptr;
         boost::shared_ptr<msl_msgs::CorridorCheck> corridorCheckInfo = nullptr;
+        boost::shared_ptr<msl_helper_msgs::DebugMsg> corridorCheckInfo = nullptr;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_ */
