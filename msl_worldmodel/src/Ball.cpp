@@ -492,6 +492,9 @@ namespace msl
 			return false;
 		}
 		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
+		if(ops == nullptr) {
+			return false;
+		}
 		double minDist = 100000;
 		if (ops->size() > 0)
 		{
