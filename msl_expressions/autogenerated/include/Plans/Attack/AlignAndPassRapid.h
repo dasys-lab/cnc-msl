@@ -57,7 +57,7 @@ namespace alica
 
                                 static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
                                 shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
                                 static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
 		                                     double passCorridorWidth, shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
