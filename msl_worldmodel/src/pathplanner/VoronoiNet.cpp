@@ -688,7 +688,7 @@ namespace msl
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			//teammates have positive ids
-			if (iter->second > 0 && iter->second != ownID)
+			if (iter->second > 0 && iter->second != SystemConfig::getOwnRobotID())
 			{
 				ret->push_back(*iter);
 			}
