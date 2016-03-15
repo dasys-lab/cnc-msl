@@ -363,7 +363,7 @@ void RobotVisualization::init(vtkRenderer *renderer)
         this->pass = line;
         this->passActor = lineActor;
         this->passActor->SetVisibility(false);
-        this->passPointActor = FieldWidget3D::createDot(0, 0, 2, c);
+        this->passPointActor = FieldWidget3D::createDot(0, 0, 0.22, c);
         this->passPointActor->SetVisibility(false);
 
         renderer->AddActor(this->passActor);
@@ -896,7 +896,7 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer)
         auto dest = this->field->transformToGuiCoords(passMsg->destination.x, passMsg->destination.y);
 
         this->pass->SetPoint1(origin.first, origin.second, 0.01);
-        this->pass->SetPoint1(dest.first, dest.second, 0.01);
+        this->pass->SetPoint2(dest.first, dest.second, 0.01);
 
         this->passPointActor->SetPosition(dest.first, dest.second, 0.01);
 }
