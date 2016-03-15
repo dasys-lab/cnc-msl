@@ -5,6 +5,7 @@ using namespace std;
 #include "msl_helper_msgs/PassMsg.h"
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/PathProxy.h"
+#define DBM_DEBUG 1
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -109,8 +110,10 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > bestPassVNode = nullptr;
             shared_ptr < geometry::CNPoint2D > bestAoc = nullptr;
             bool found = false;
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
+
+			#ifdef BEH_DEBUG
+            msl_helper_msgs::DebugMsg dbm;
+            #endif
             for (int teamMateId : this->teamMateIds)
             {
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
@@ -118,6 +121,13 @@ namespace alica
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
+					#ifdef DBM_DEBUG
+                	msl_helper_msgs::DebugPoint dbp;
+                	dbp.point.x = passPoint.x;
+                	dbp.point.y = passPoint.y;
+                	dbm.points.push_back(dbp);
+					#endif
+
                     // make the passpoints closer to the receiver
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
@@ -155,6 +165,11 @@ namespace alica
                         }
                         if (opponentTooClose)
                         {
+							#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.2*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.2*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.2*255.0;
+							#endif
                             continue;
                         }
 //						if ((vNodes[i].tri.p[0].ident == -1 && vNodes[i].tri.p[0].DistanceTo(passPoint) < minOppDist)
@@ -172,7 +187,11 @@ namespace alica
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
                                 > maxTurnAngle)
                         {
-
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.4*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.4*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.4*255.0;
+							#endif
                             continue;
                         }
 
@@ -187,16 +206,23 @@ namespace alica
                                 && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
                                                      vNet->getObstaclePositions()))
                         {
-
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.6*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.6*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.6*255.0;
+							#endif
                             continue;
                         }
 
-                        cout << "." << flush;
                         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
                         if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
                                                        vNet->getTeamMatePositions()))
                         {
-                        	cout << "X" << flush;
+							#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.8*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.8*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.8*255.0;
+							#endif
                             continue;
                         }
                         else
@@ -222,6 +248,9 @@ namespace alica
                     }
                 }
             }
+			#ifdef DBM_DEBUG
+            send(dbm);
+			#endif
 
             if (!found)
             { // No Pass point found, so return everything
@@ -229,10 +258,6 @@ namespace alica
                 cout << "AAPR: No valid pass point found! SuccessStatus: " << this->success << endl;
                 return;
             }
-            sites->push_back(alloAimPoint);
-            sites->push_back(bestAoc);
-            auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
-            this->pathProxy->sendVoronoiNetMsg(sites, vNet);
             //Turn to goal...
             shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball.getVisionBallVelocity();
             shared_ptr < geometry::CNPoint2D > ballVel2;

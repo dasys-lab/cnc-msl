@@ -11,6 +11,7 @@
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_helper_msgs/PassMsg.h"
 #include "msl_helper_msgs/WatchBallMsg.h"
+#include "msl_helper_msgs/DebugMsg.h"
 
 namespace alica
 {
@@ -25,6 +26,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_actuator_msgs::ShovelSelectCmd& ssc);
 		void send(msl_helper_msgs::PassMsg& pm);
 		void send(msl_helper_msgs::WatchBallMsg& wb);
+		void send(msl_helper_msgs::DebugMsg& dbm);
 		msl::MSLWorldModel* wm;
 
 	protected:
@@ -40,6 +42,7 @@ class DomainBehaviour : public BasicBehaviour
 		ros::Publisher shovelSelectPublisher;
 		ros::Publisher passMsgPublisher;
 		ros::Publisher watchBallMsgPublisher;
+		ros::Publisher debugMsgPublisher;
 	};
 } /* namespace alica */
 

@@ -5,6 +5,7 @@ using namespace std;
 #include <GeometryCalculator.h>
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/PathProxy.h"
+#define DBM_DEBUG 1
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -90,8 +91,9 @@ namespace alica
         }
         try
         {
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> sites = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
+        	#ifdef BEH_DEBUG
+            msl_helper_msgs::DebugMsg dbm;
+            #endif
             for (int teamMateId : this->teamMateIds)
             {
 
@@ -101,6 +103,13 @@ namespace alica
                 {
                     // make the passpoints closer to the receiver
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
+					#ifdef DBM_DEBUG
+                	msl_helper_msgs::DebugPoint dbp;
+                	dbp.point.x = passPoint.x;
+                	dbp.point.y = passPoint.y;
+                	dbm.points.push_back(dbp);
+					#endif
+
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
                     > (teamMatePos->x, teamMatePos->y);
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
@@ -136,6 +145,11 @@ namespace alica
                         }
                         if (opponentTooClose)
                         {
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.2*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.2*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.2*255.0;
+							#endif
                             continue;
                         }
 //						if ((vertices->at(i).tri.p[0].ident == -1 && vertices->at(i).tri.p[0].DistanceTo(passPoint) < minOppDist)
@@ -151,6 +165,11 @@ namespace alica
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
                         > maxTurnAngle)
                         {
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.4*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.4*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.4*255.0;
+							#endif
                             continue;
                         }
 
@@ -165,6 +184,11 @@ namespace alica
                         && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
                                 vNet->getObstaclePositions()))
                         {
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.6*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.6*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.6*255.0;
+							#endif
                             continue;
                         }
 
@@ -172,18 +196,23 @@ namespace alica
                         if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
                                 vNet->getTeamMatePositions()))
                         {
+                        	#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 0.8*255.0;
+                        	dbm.points.at(dbm.points.size()-1).green = 0.8*255.0;
+                        	dbm.points.at(dbm.points.size()-1).blue = 0.8*255.0;
+							#endif
                             continue;
                         }
                         else
                         {
-                            sites->push_back(passPoint);
-                            pathProxy->sendVoronoiNetMsg(sites, vNet);
                             this->success = true;
-//                            return;
                         }
                     }
                 }
             }
+            #ifdef DBM_DEBUG
+            send(dbm);
+			#endif
         }
         catch (exception& e)
         {
