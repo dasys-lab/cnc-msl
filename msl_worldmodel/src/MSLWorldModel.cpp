@@ -100,6 +100,10 @@ namespace msl
 		}
 	}
 
+	bool MSLWorldModel::isUsingSimulator() {
+		return this->timeLastSimMsgReceived > 10;
+	}
+
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 	{
 		if (this->timeLastSimMsgReceived == 0)

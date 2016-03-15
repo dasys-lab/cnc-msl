@@ -342,6 +342,11 @@ namespace alica
                     km.power = (ushort)wm->kicker.getPassKickpower(
                             dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
                 }
+                if(wm->isUsingSimulator())
+                {
+                	km.power = km.power * 1.5;
+                }
+
                 send(km);
                 if (wm->kicker.lowShovelSelected)
                 {
