@@ -363,6 +363,7 @@ namespace msl
 	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
 		robots.processSharedWorldModelData(msg);
+		ball.processSharedWorldModelData(*msg);
 		game.updateGameState();
 	}
 
