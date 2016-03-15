@@ -36,7 +36,6 @@ namespace alica
         // testing variables for console output
         double cout_distBall2HitPoint;
 
-
         void readConfigParameters();
         double getKickPower(shared_ptr<geometry::CNPoint2D> hitPoint);
         void kick(double kickpower);

@@ -67,6 +67,8 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
 		double getBallDiameter();
 
+		shared_ptr<geometry::CNPoint2D> getBallPickupPosition();
+
 		void updateSharedBall();
 		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);

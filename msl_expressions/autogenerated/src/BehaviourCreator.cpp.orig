@@ -57,6 +57,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
+#include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
+
 #include  "Plans/GenericStandards/StandardPass.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
@@ -64,6 +66,8 @@ using namespace std;
 #include  "Plans/Attack/FetchFromSideLine.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
+
+#include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
@@ -108,6 +112,8 @@ using namespace std;
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/Behaviours/CalcCalib.h"
+
+#include  "Plans/Defence/ReleaseMid.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
@@ -296,6 +302,11 @@ namespace alica
                 return make_shared<StandardAlignToPassPos>();
                 break;
 
+            case 1457698689219:
+
+                return make_shared<LaserBallTracking>();
+                break;
+
             case 1435760175843:
 
                 return make_shared<StandardPass>();
@@ -316,6 +327,11 @@ namespace alica
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1458034300406:
+
+                return make_shared<OneGernericInGameBlocker>();
                 break;
 
             case 1433950043262:
@@ -411,6 +427,8 @@ namespace alica
 
             case 1456997097907:
 
+            case 1458033795798:
+
                 return make_shared<MoveToPointDynamic>();
                 break;
 
@@ -438,6 +456,11 @@ namespace alica
             case 1446036391317:
 
                 return make_shared<CalcCalib>();
+                break;
+
+            case 1458033497042:
+
+                return make_shared<ReleaseMid>();
                 break;
 
             case 1414752423981:
