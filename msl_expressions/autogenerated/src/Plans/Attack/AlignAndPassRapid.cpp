@@ -112,6 +112,7 @@ namespace alica
             bool found = false;
 
 			#ifdef BEH_DEBUG
+            int best_point = -1;
             msl_helper_msgs::DebugMsg dbm;
             #endif
             for (int teamMateId : this->teamMateIds)
@@ -228,6 +229,13 @@ namespace alica
                         else
                         {
                             found = true;
+
+							#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 255;
+                        	dbm.points.at(dbm.points.size()-1).green = 255;
+                        	dbm.points.at(dbm.points.size()-1).blue = 255;
+							#endif
+
                             //this.SuccessStatus = true;
                             //Here we have to pick the best one...
                             currPassUtility = 0;
@@ -238,6 +246,9 @@ namespace alica
 
                             if (currPassUtility > bestPassUtility)
                             {
+                            	#ifdef DBM_DEBUG
+                            	best_point = dbm.points.size()-1;
+								#endif
                                 alloAimPoint = passPoint;
                                 bestPassUtility = currPassUtility;
                                 bestAoc = make_shared < geometry::CNPoint2D > (teamMatePos->x, teamMatePos->y);
@@ -249,6 +260,8 @@ namespace alica
                 }
             }
 			#ifdef DBM_DEBUG
+			dbm.points.at(best_point).red = 0;
+			dbm.points.at(best_point).green = 0;
             send(dbm);
 			#endif
 

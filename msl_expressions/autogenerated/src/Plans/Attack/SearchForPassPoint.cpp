@@ -205,6 +205,11 @@ namespace alica
                         }
                         else
                         {
+							#ifdef DBM_DEBUG
+                        	dbm.points.at(dbm.points.size()-1).red = 255;
+                        	dbm.points.at(dbm.points.size()-1).green = 255;
+                        	dbm.points.at(dbm.points.size()-1).blue = 255;
+							#endif
                             this->success = true;
                         }
                     }
