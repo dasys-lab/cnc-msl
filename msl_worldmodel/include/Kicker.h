@@ -35,11 +35,11 @@ namespace msl
 		double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
 		double getPassKickpower(double dist, double arrivalTime);
 		double getPassVelocity(double kickpower);
+		double getKickPowerForLobShot(double dist, double height, double heightTolerance = 30.0);
 		double getPreciseShotMaxDistance();
 		double getPreciseShotMaxTolerance();
 		double getPreciseShotMinDistance();
 		int getShortPassPower();
-		double getKickPowerExperimental(double dist, double height);
 		bool lowShovelSelected;
 		static double kickerAngle;
 

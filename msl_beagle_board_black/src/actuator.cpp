@@ -17,8 +17,6 @@ uint8_t		th_count;
 bool		th_activ = true;
 
 
-
-
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	if (msg.enabled) {
 		BH_right.setBallHandling(msg.rightMotor);
@@ -46,7 +44,6 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 	}
 }
 
-
 void controlBHLeft() {
 	unique_lock<mutex> l_bhl(threw[0].mtx);
 	while(th_activ) {
@@ -61,7 +58,6 @@ void controlBHLeft() {
 		}
 
 		threw[0].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
@@ -78,9 +74,7 @@ void controlBHRight() {
 			cout << "BallHanlde right: " << e.what() << endl;
 		}
 
-
 		threw[1].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
@@ -98,16 +92,11 @@ void contolShovelSelect() {
 		}
 
 		threw[2].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
 void getLightbarrier(ros::Publisher *lbiPub) {
 	std_msgs::Bool msg;
-
-	// LightBarrier Init
-		lightbarrier.setTreshold((*sc)["bbb"]->get<int>("BBB.lightbarrierThreshold",NULL));
-
 	unique_lock<mutex> l_light(threw[3].mtx);
 	while(th_activ) {
 		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
@@ -122,7 +111,6 @@ void getLightbarrier(ros::Publisher *lbiPub) {
 		}
 
 		threw[3].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
@@ -211,7 +199,6 @@ void getSwitches(ros::Publisher *brtPub, ros::Publisher *vrtPub, ros::Publisher 
 		}
 
 		threw[4].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
@@ -230,7 +217,6 @@ void getIMU(ros::Publisher *imuPub) {
 		}
 
 		threw[5].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
@@ -249,14 +235,12 @@ void getOptical(ros::Publisher *mbcPub) {
 		}
 
 		threw[6].notify = false;
-//		cv_main.cv.notify_all();
 	}
 }
 
 void exit_program(int sig) {
 	ex = true;
 	th_activ = false;
-//	cv_main.cv.notify_all();
 	for (int i=0; i<7; i++)
 		threw[i].cv.notify_all();
 }
@@ -288,8 +272,8 @@ int main(int argc, char** argv) {
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier, &lbiPub);
 	thread th_switches(getSwitches, &brtPub, &vrtPub, &flPub);
-	thread th_adns3080(getOptical, &mbcPub);
-	thread th_imu(getIMU, &imuPub);
+//	thread th_adns3080(getOptical, &mbcPub);
+//	thread th_imu(getIMU, &imuPub);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
@@ -308,7 +292,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<7; i++) { // TODO remove magic number
+		for (int i=0; i<5; i++) { // TODO remove magic number
 			if (threw[i].notify) {
 				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
 			} else {
@@ -316,12 +300,6 @@ int main(int argc, char** argv) {
 			}
 			threw[i].cv.notify_all();
 		}
-
-		// auf beenden aller Threads warten
-		//unique_lock<mutex> l_main(cv_main.mtx);
-		//cv_main.cv.wait(l_main, [&] { return !th_activ || (!threw[0].notify && !threw[1].notify && !threw[2].notify && !threw[3].notify && !threw[4].notify); }); // protection against spurious wake-ups
-
-		// OpticalFlow und IMU werden nicht ausgefuehrt
 
 		ros::spinOnce();
 		loop_rate.sleep();

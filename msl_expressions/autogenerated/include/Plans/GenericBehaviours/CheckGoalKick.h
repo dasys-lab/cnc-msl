@@ -34,13 +34,14 @@ namespace alica
         double minKickPower;
 
         // testing variables for console output
-        double cout_kickpower;
-        bool cout_kicking;
+        double cout_distBall2HitPoint;
 
-        bool checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint);
+
         void readConfigParameters();
-        void kicking(shared_ptr<geometry::CNPoint2D> hitPoint);
+        double getKickPower(shared_ptr<geometry::CNPoint2D> hitPoint);
+        void kick(double kickpower);
         bool checkGoalKeeper(shared_ptr<geometry::CNPoint2D> hitPoint);
+        bool checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint, double& kickPower);
         shared_ptr<geometry::CNPoint2D> computeHitPoint(double posX, double posY, double alloAngle);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
