@@ -280,23 +280,41 @@ namespace msl
 			ownVelocityMotion.add(vMotion);*/
 		}
 
-		if (data->ball.confidence > 0)
-		{
-			shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-			                                                                           data->ball.point.y);
-			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-			                                                                                 data->ball.velocity.vy);
+		shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
+																				   data->ball.point.y);
+		shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
+																						 data->ball.velocity.vy);
 
-			//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
-			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
-		} else {
-			wm->ball.updateHaveBall();
-			wm->ball.updateSharedBall();
-		}
+		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
+		if (data->ball.confidence < 0.00000001)
+		        this->wm->ball.updateBallPos(nullptr, nullptr, data->ball.confidence);
+		else
+	                this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
-		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist,
-				time);
+
+		// TODO This is a Taker workaround, should be removed when real error was found
+		int count = 0;
+		while (dist.use_count() == 0)
+		{
+		        if (count > 5)
+		              return;
+		        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+		        ++count;
+		}
+
+		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist, time);
+
+                // TODO This is a Taker workaround, should be removed when real error was found
+		count = 0;
+		while (dist.use_count() == 1)
+                {
+                        if (count > 5)
+                              return;
+                        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+                        ++count;
+                }
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
 		wm->getVisionDataEventTrigger()->run();

@@ -4,6 +4,10 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1449076008755) ENABLED START*/ //Add additional includes here
 #include <GeometryCalculator.h>
 #include <math.h>
+#include "engine/RunningPlan.h"
+#include "engine/AlicaEngine.h"
+#include <msl_helper_msgs/DebugMsg.h>
+#include <msl_helper_msgs/DebugPoint.h>
 
 #include <Rules.h>
 /*PROTECTED REGION END*/
@@ -25,6 +29,13 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
+        // check if it is ok to score a goal
+        cout << "==========================================================================" << endl;
+        if (false == this->wm->game.isMayScore())
+        {
+            cout << "may score: false" << endl;
+            return;
+        }
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = wm->ball.getEgoBallPosition();
@@ -33,15 +44,20 @@ namespace alica
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
 //        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
 
-//        auto obstacles = wm->obstacles.getAlloObstaclePoints();
-//        if (obstacles != nullptr && obstacles->size() != 0)
-//        {
-//
-//            for (auto obs : *obstacles)
-//            {
-//                std::cout << obs->x << ", " << obs->y << std::endl;
-//            }
-//        }
+
+        if (this->usePrediction)
+        { // use predicted own position
+                auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
+
+                if (pred != nullptr)
+                {
+                        auto predPos = pred->first;
+                        // move ego ball based on predicted own position
+                        this->egoBallPos = this->egoBallPos + (predPos - ownPos);
+                        this->egoBallPos = this->egoBallPos->rotate(geometry::deltaAngle(ownPos->theta, predPos->theta));
+                        this->ownPos = predPos;
+                }
+        }
 
         this->wm->prediction.monitoring();
 
@@ -49,9 +65,11 @@ namespace alica
         {
             return;
         }
-        shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
-        cout << "==========================================================================" << endl;
+
+
+        shared_ptr<geometry::CNPoint2D> hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
+
         if (false == hitPoint)
         {
             cout << "hits the goal: false" << endl;
@@ -61,6 +79,25 @@ namespace alica
         {
             cout << "hits the goal: x: " << hitPoint->x << ", y: " << hitPoint->y << endl;
         }
+
+        // Sending debug message for visualization
+        msl_helper_msgs::DebugMsg debugMsg;
+        debugMsg.topic = "CheckGoalKick";
+        debugMsg.senderID = this->getOwnId();
+        debugMsg.validFor = 2000000000;
+
+        msl_helper_msgs::DebugPoint point;
+
+        point.radius = 0.12;
+        point.point.x = hitPoint->x;
+        point.point.y = hitPoint->y;
+        point.red = 255;
+        point.green = 0;
+        point.blue = 255;
+
+        debugMsg.points.push_back(point);
+        this->send(debugMsg);
+        // ---------------------------------------
 
         if (!this->checkGoalKeeper(hitPoint))
         { // we hit the goal keeper
@@ -87,6 +124,15 @@ namespace alica
         double kickPowerGoal = this->getKickPower(hitPoint);
         cout << "dist ball to hit point: " << cout_distBall2HitPoint << endl;
         cout << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs << endl;
+
+        // no closest obstacle, FIRE
+        if (kickPowerObs == -2)
+        {
+            cout << "kick power: " << kickPowerGoal << endl;
+            kick(kickPowerGoal);
+            return;
+        }
+
         if (kickPowerGoal < kickPowerObs)
         {
             cout << "goal power < obs power" << endl;
@@ -103,7 +149,6 @@ namespace alica
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
-        cout << "Start run CheckGoalKick <=============================================================" << endl;
         field = msl::MSLFootballField::getInstance();
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
@@ -120,8 +165,11 @@ namespace alica
         minOwnDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minOwnDistGoal", NULL);
         minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
         keeperDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.keeperDistGoal", NULL);
-        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory",
-                                                                     NULL);
+        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory", NULL);
+
+        usePrediction = (*sc)["GoalKick"]->get<bool>("GoalKick.Prediction.use", NULL);
+        predictionTime = (*sc)["GoalKick"]->get<int>("GoalKick.Prediction.time", NULL);
+
         // is necessary to calculate the minimum distance to obstacle so that it is possible to shoot a goal
         // close to goal --> distance to robot is higher
         closeGoalDist = (*sc)["GoalKick"]->get<double>("GoalKick.OwnDistObs.closeGoalDist", NULL);
@@ -138,7 +186,7 @@ namespace alica
         double xDist2OppGoalline = this->field->FieldLength / 2 - posX;
 
         // normalize the position angle
-        alloAngle = geometry::GeometryCalculator::normalizeAngle(alloAngle);
+        alloAngle = geometry::normalizeAngle(alloAngle);
 
         // get the kicker angle from position angle (+/- M_PI)
         if (alloAngle < 0)
@@ -157,8 +205,9 @@ namespace alica
         }
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
-        // TODO reduce goalPost->y by (ball radius + safety margin)
-        if (abs(yHitGoalline) < this->field->posLeftOppGoalPost()->y)
+        // reduce goalPost->y by (ball radius + safety margin)
+        if (abs(yHitGoalline)
+                < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
             return make_shared < geometry::CNPoint2D > (this->field->FieldLength / 2, yHitGoalline);
@@ -177,6 +226,7 @@ namespace alica
         auto obstacles = wm->obstacles.getAlloObstaclePoints();
         if (obstacles == nullptr || obstacles->size() == 0)
         {
+            kickPower = -2;
             return true;
         }
 
@@ -243,7 +293,6 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.power = kickpower;
-
         send(kc);
     }
 

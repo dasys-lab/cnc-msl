@@ -30,10 +30,12 @@ namespace msl
 	{
 	public:
 		virtual ~RobotMovement();
+
+		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, shared_ptr<geometry::CNPoint2D> goalMid);
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
-											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
+		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
@@ -71,6 +73,8 @@ namespace msl
 		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);
 		static shared_ptr<geometry::CNPoint2D> dribbleNeedToTurn(shared_ptr<geometry::CNPosition> own, shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNPoint2D> pathPlanningPoint);
 		static msl_actuator_msgs::MotionControl nearGoalArea(msl_actuator_msgs::MotionControl bm);
+		static void reset();
+		static void updateLastTurnTime();
 
 		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();
@@ -79,7 +83,7 @@ namespace msl
 		static double fastTranslation;
 		static double fastRotation;
 		static double interceptCarfullyRotateP;
-
+		static double maxVel;
 
 	private:
 		static double lastRotError;

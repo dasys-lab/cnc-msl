@@ -179,7 +179,7 @@ void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float 
         lineMapper->SetInputConnection(line->GetOutputPort());
 }
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, float width, int pattern, std::array<double,3> color)
+std::shared_ptr<Line> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, float width, int pattern, std::array<double,3> color)
 {
         vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
         vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -195,7 +195,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, fl
         lineActor->GetProperty()->SetPointSize(1);
         lineActor->GetProperty()->SetLineWidth(3);
 
-        return lineActor;
+        return std::make_shared<Line>(lineActor, line);
 }
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radius, std::array<double,3> color)
@@ -284,12 +284,12 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
-	showPath = false;
+	showPath = true;
 	showVoronoiNet = false;
 	showCorridorCheck = false;
 	showSitePoints = false;
 	showPathPlannerAll = false;
-	showDebugPoints = false; // TODO
+	showDebugPoints = false;
 
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
@@ -302,9 +302,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 												(FieldWidget3D*)this);
 	corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
 													(FieldWidget3D*)this);
-        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,
-                                                                                                        (FieldWidget3D*)this);
-	spinner = new ros::AsyncSpinner(1);
+        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,  (FieldWidget3D*)this);
+        passMsgSubscriber = rosNode->subscribe("/WorldModel/PassMsg", 10, &FieldWidget3D::onPassMsg,  (FieldWidget3D*)this);
+
+        spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	Update_timer = new QTimer();
@@ -400,6 +401,7 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridorCheck);
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
                 robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
+                robot->getVisualization()->updatePassMsg(this->renderer);
 	}
 
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -1020,6 +1022,8 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         robotInfo->setId(id);
         robots.push_back(robotInfo);
 
+        robotInfo->getVisualization()->init(this->renderer, id);
+
         return robotInfo;
 }
 
@@ -1068,6 +1072,15 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
         lock_guard<mutex> lock(debugMutex);
 
         auto robot = this->getRobotById(info->senderID);
-        robot->setDebugMsg(info);
+        robot->addDebugMsg(info);
+        robot->updateTimeStamp();
+}
+
+void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
+{
+        lock_guard<mutex> lock(debugMutex);
+
+        auto robot = this->getRobotById(info->senderID);
+        robot->setPassMsg(info);
         robot->updateTimeStamp();
 }

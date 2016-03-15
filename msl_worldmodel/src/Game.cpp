@@ -358,7 +358,7 @@ namespace msl
 	{
 // Find robot closest to ball
 		auto robots = this->wm->robots.teammates.getPositionsOfTeamMates();
-		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
+		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot;
 		double minDist = numeric_limits<double>::max();
 		auto sharedBallPosition = wm->ball.getAlloSharedBallPosition();
 		if (sharedBallPosition == nullptr)

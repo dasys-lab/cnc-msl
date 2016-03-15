@@ -65,28 +65,21 @@ namespace msl
 	public:
 		PathPlanner(MSLWorldModel* wm, int count);
 		virtual ~PathPlanner();
+
 		/**
-		 * aStar search on a VoronoiDiagram
+		 * method for path planning
 		 * @param voronoi shared_ptr<VoronoiNet>
-		 * @param startPos Point_2
+		 * @param ownPos Point_2
 		 * @param goal Point_2
 		 * @return shared_ptr<vector<shared_ptr<Point_2>>>
 		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
-	/**
-	 * method for path planning
-	 * @param voronoi shared_ptr<VoronoiNet>
-	 * @param ownPos Point_2
-	 * @param goal Point_2
-	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
-	 */
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> ownPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> eval);
 
 	/**
 	 * processes the WorldModel msg
 	 * @param msg msl_sensor_msgs::WorldModelDataPtr
 	 */
-	void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg);
+	void prepareVoronoiDiagram();
 	/**
 	 * gets all saved VoronoiNets
 	 * @return vector<shared_ptr<VoronoiNet>>
@@ -129,7 +122,7 @@ namespace msl
 	/**
 	 * gets artificial obstacles as goemtry::CNPonit2D
 	 */
-	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialObstacles();
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getArtificialFieldSurroundingObs();
 	/**
 	 * gets last returned path
 	 */
@@ -138,10 +131,22 @@ namespace msl
 	 * gets last planning target
 	 */
 	shared_ptr<geometry::CNPoint2D> getLastTarget();
+
+	bool contains(shared_ptr<vector<shared_ptr<SearchNode> > > vector, VoronoiDiagram::Halfedge_around_vertex_circulator edge);
+
+	bool isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circulator incidentHalfEdge, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<VoronoiNet> voronoi);
 	/**
-	 * gets wm pointer
+	 * expands a SearchNode
+	 * @param currentNode shared_ptr<SearchNode>
+	 * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
+	 * @param closed shared_ptr<vector<shared_ptr<SearchNode>>>
+	 * @param startPos shared_ptr<geometry::CNPoint2D>
+	 * @param goal shared_ptr<geometry::CNPoint2D>
+	 * @param eval shared_ptr<PathEvaluator>
 	 */
-	MSLWorldModel* getWm();
+	void expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
+			shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> eval, shared_ptr<VoronoiNet> voronoi);
+
 	/**
 	 * checks if there is an obstacle inside the corridor
 	 * @param voronoi shared_ptr<VoronoiNet>
@@ -194,8 +199,18 @@ private:
 
 	double distanceTo(shared_ptr<geometry::CNPoint2D> v1, shared_ptr<Vertex> v2);
 
+	/**
+	 * aStar search on a VoronoiDiagram
+	 * @param voronoi shared_ptr<VoronoiNet>
+	 * @param startPos Point_2
+	 * @param goal Point_2
+	 * @return shared_ptr<vector<shared_ptr<Point_2>>>
+	 */
+	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> aStarSearch(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> pathEvaluator);
+
 protected:
 	MSLWorldModel* wm;
+	MSLFootballField* field;
 	int currentVoronoiPos;
 	supplementary::SystemConfig* sc;
 	mutex voronoiMutex;
@@ -205,6 +220,7 @@ protected:
 	double pathDeviationWeight;
 	double dribble_rotationWeight;
 	double dribble_angleTolerance;
+	double minEdgeWidth;
 	double corridorWidthDivisor;
 	bool pathPlannerDebug;
 	double marginToBlockedArea;
@@ -213,6 +229,7 @@ protected:
 	double snapDistance;
 	double additionalBallCorridorWidth;
 	double corridorWidthDivisorBall;
+
 	ros::NodeHandle n;
 	ros::Publisher corridorPub;
 	shared_ptr<geometry::CNPoint2D> lastClosestPointToBlock;

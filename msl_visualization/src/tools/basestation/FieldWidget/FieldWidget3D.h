@@ -92,9 +92,10 @@
 #include <QVTKInteractor.h>
 
 #include "RobotInfo.h"
-#include "msl_msgs/PathPlanner.h"
-#include "msl_msgs/CorridorCheck.h"
-#include "msl_msgs/VoronoiNetInfo.h"
+#include <msl_msgs/PathPlanner.h>
+#include <msl_msgs/CorridorCheck.h>
+#include <msl_msgs/VoronoiNetInfo.h>
+#include <msl_helper_msgs/PassMsg.h>
 #include <SystemConfig.h>
 #include <vtkArrowSource.h>
 
@@ -102,13 +103,24 @@
 
 class MWind;
 
+struct Line {
+        Line(vtkSmartPointer<vtkActor> actor, vtkSmartPointer<vtkLineSource> source)
+        {
+          this->actor = actor;
+          this->source = source;
+        }
+
+       vtkSmartPointer<vtkActor> actor;
+       vtkSmartPointer<vtkLineSource> source;
+};
+
 class FieldWidget3D : public QVTKWidget
 {
     Q_OBJECT
 public:
     static vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double,3> color = {1.0,1.0,1.0});
     static void updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2);
-    static vtkSmartPointer<vtkActor> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern, std::array<double,3> color = {1.0,1.0,1.0});
+    static std::shared_ptr<Line> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern, std::array<double,3> color = {1.0,1.0,1.0});
     static vtkSmartPointer<vtkActor> createDot(float x, float y, float radius, std::array<double,3> color = {1.0,1.0,1.0});
     static vtkSmartPointer<vtkActor> addArc(float x, float y, float radius, float startDeg, float endDeg);
     static vtkSmartPointer<vtkActor> addCircle(float x, float y, float outerRadius, float innerRadius);
@@ -154,6 +166,7 @@ public:
     mutex voronoiMutex;
     mutex corridorMutex;
     mutex debugMutex;
+    mutex passMutex;
 
 
 private:
@@ -162,6 +175,7 @@ private:
     void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
     void onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info);
     void onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info);
+    void onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info);
 
     void drawField(vtkRenderer* renderer);
     void drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2);
@@ -183,6 +197,7 @@ private:
     ros::Subscriber voronoiSitesSubscriber;
     ros::Subscriber corridorCheckSubscriber;
     ros::Subscriber debugMsgSubscriber;
+    ros::Subscriber passMsgSubscriber;
 
     // own data structure
     list<shared_ptr<RobotInfo>> robots;

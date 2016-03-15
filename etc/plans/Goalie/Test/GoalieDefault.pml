@@ -9,37 +9,44 @@
     <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/WatchBall.beh#1447863472667</plans>
     <inTransitions>#1447255446546</inTransitions>
     <inTransitions>#1447256488872</inTransitions>
+    <inTransitions>#1457943655376</inTransitions>
     <outTransitions>#1447259462162</outTransitions>
   </states>
   <states id="1447256447585" name="DriveToBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/DriveToBall.beh#1447863503279</plans>
     <inTransitions>#1447259462162</inTransitions>
     <outTransitions>#1447256487026</outTransitions>
+    <outTransitions>#1457943655376</outTransitions>
   </states>
   <states id="1447256481745" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/KickToDirection.beh#1447863487000</plans>
     <inTransitions>#1447256487026</inTransitions>
     <outTransitions>#1447256488872</outTransitions>
   </states>
-  <transitions id="1447255446546" name="MISSING_NAME" comment="Goalie position calibrated succesfully" msg="">
+  <transitions id="1447255446546" name="MISSING_NAME" comment="situation == WatchBall" msg="">
     <preCondition id="1447255447830" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1447254438615</inState>
     <outState>#1447255061404</outState>
   </transitions>
-  <transitions id="1447256487026" name="MISSING_NAME" comment="Ball is reached and in front of the kickplate" msg="">
+  <transitions id="1447256487026" name="MISSING_NAME" comment="situation == ReachedBall &amp;&amp; BallInsideGoalArea &amp;&amp; BallNotMoving" msg="">
     <preCondition id="1447256488686" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1447256447585</inState>
     <outState>#1447256481745</outState>
   </transitions>
-  <transitions id="1447256488872" name="MISSING_NAME" comment="Ball has been played" msg="">
+  <transitions id="1447256488872" name="MISSING_NAME" comment="situation == BallMoving || BallOutsideGoalArea" msg="">
     <preCondition id="1447256495415" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1447256481745</inState>
     <outState>#1447255061404</outState>
   </transitions>
-  <transitions id="1447259462162" name="MISSING_NAME" comment="Ball may have been blocked and is now resting inside of goal area" msg="">
+  <transitions id="1447259462162" name="MISSING_NAME" comment="situation == BallInsideGoalArea &amp;&amp; BallNotMoving" msg="">
     <preCondition id="1447259463769" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1447255061404</inState>
     <outState>#1447256447585</outState>
+  </transitions>
+  <transitions id="1457943655376" name="MISSING_NAME" comment="situation == BallMoving || BallOutSideGoalArea" msg="">
+    <preCondition id="1457943658078" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1447256447585</inState>
+    <outState>#1447255061404</outState>
   </transitions>
   <entryPoints id="1447254438616" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1221754402444</task>

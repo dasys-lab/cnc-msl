@@ -22,7 +22,7 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        cout << "### DriveToGoal ###\n" << endl;
+        cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
 
@@ -64,7 +64,7 @@ namespace alica
             }
             else
             {
-                cout << "DIstance left: " << me->distanceTo(alloTarget) << endl;
+                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
                 send (mc);
             }
             cout << "### DriveToGoal ###\n" << endl;

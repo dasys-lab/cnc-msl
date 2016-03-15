@@ -53,6 +53,10 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
 		shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
 		shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
+		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition(int index = 0);
+		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getAlloSharedBallPositionAndCertaincy(int index=0);
+		shared_ptr<geometry::CNPoint2D> getAlloBallGuessPosition(int index = 0);
+		int getSharedBallSupporter();
 		bool ballMovedSiginficantly();
 
 
@@ -64,12 +68,12 @@ namespace msl
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data);
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
-		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
 		double getBallDiameter();
 
 		shared_ptr<geometry::CNPoint2D> getBallPickupPosition();
 
 		void updateSharedBall();
+		void updateBallGuess();
 		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);
 		bool hadBefore;
@@ -79,8 +83,6 @@ namespace msl
 		std::mutex sbMutex;
 		vector<BallVoting> sbvotingList;
 		int sharedBallSupporters;
-		double sharedBallTeamConfidence;
-		shared_ptr<geometry::CNPoint2D> sharedBallPosition;
 
 		ObjectContainer ballBuf;
 		MovingObject mv;
@@ -103,6 +105,8 @@ namespace msl
 		RingBuffer<InformationElement<bool>> oppBallPossession;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> ballGuessPosition;
 		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
 		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		bool robotHasBall(int robotId);

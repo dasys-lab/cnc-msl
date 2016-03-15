@@ -35,7 +35,7 @@ namespace msl
 		for (int i=0; i<opps->size(); i++) {
 			temp = opps->at(i)->length();
 			if (temp < dist) {
-				double dang = geometry::deltaAngle(opps->at(i)->angleTo(),angle);
+				double dang = geometry::deltaAngle(angle, opps->at(i)->angleTo());
 				if (abs(dang) < M_PI/2.0) {
 					if(sin(dang)*temp < width + 300) { //300 = robotradius
 						dist = temp;

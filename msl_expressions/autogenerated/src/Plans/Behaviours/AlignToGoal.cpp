@@ -34,7 +34,6 @@ namespace alica
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
         shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity();
-        shared_ptr < geometry::CNPoint2D > ballVel2 = nullptr;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < vector<double> > dstscan = wm->rawSensorData.getDistanceScan();
 
@@ -45,17 +44,17 @@ namespace alica
         }
         if (ballVel == nullptr)
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (0, 0);
+            ballVel = make_shared < geometry::CNVelocity2D > (0, 0);
         }
         else if (ballVel->length() > 5000)
         {
-            shared_ptr < geometry::CNVelocity2D > v = ballVel->normalize() * 5000;
-            ballVel2 = make_shared < geometry::CNPoint2D > (v->x, v->y);
+            ballVel = ballVel->normalize() * 5000;
         }
         else
         {
-            ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
+            ballVel = ballVel->clone();
         }
+
         shared_ptr < geometry::CNPoint2D > aimPoint;
         if (alloAimPoint != nullptr)
         {
@@ -68,47 +67,35 @@ namespace alica
             {
                 alloAimPoint = aimPoint->egoToAllo(*ownPos);
             }
-
         }
 
         if (aimPoint == nullptr)
         {
             this->failure = true;
+            cout << "AlignToGoal: no aimPoint" << endl;
             return;
         }
 
         double aimAngle = aimPoint->angleTo();
-        double ballAngle = M_PI;
+        double ballAngle = wm->kicker.kickerAngle;
 
-        double deltaAngle = geometry::GeometryCalculator::deltaAngle(ballAngle, aimAngle);
+        double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballAngle, 200, dstscan);
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
+                cout << "AlignToGoal: failure!" << endl;
                 this->failure = true;
             }
         }
-        mc = msl_actuator_msgs::MotionControl();
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
-        double hitPoint = goalLineHitPoint(ownPos, ballAngle);
-        double sign = 0;
-        if (mc.motion.rotation == 0)
-        {
-            sign = 0;
-        }
-        else if (mc.motion.rotation > 0)
-        {
-            sign = 1;
-        }
-        else
-        {
-            sign = -1;
-        }
+        double sign = mc.motion.rotation < 0 ? -1 : 1;
+
         mc.motion.rotation = sign * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
         lastRotError = deltaAngle;
         double transBallOrth = ballPos->length() * mc.motion.rotation; //may be negative!
-        double transBallTo = max(ballPos->length(), ballVel2->length()); //Math.Min(1000,ballVel2.Distance());//
+        double transBallTo = max(ballPos->length(), ballVel->length()); //Math.Min(1000,ballVel2.Distance());//
         if (abs(deltaAngle) < 12.0 * M_PI / 180.0)
         {
             transBallTo = max(500.0, transBallTo);

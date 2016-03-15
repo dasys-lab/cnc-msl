@@ -102,10 +102,9 @@ namespace alica
             msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(
                     egoAimPoint->rotate(M_PI), egoBallPos, this->angleTolerance, this->angleTolerance);
 
-            if (fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
+            if (fabs(geometry::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
             {
-                cout << "angle: " << fabs(geometry::GeometryCalculator::deltaAngle(egoAimPoint->angleTo(), M_PI))
-                        << endl;
+                cout << "angle: " << fabs(geometry::deltaAngle(egoAimPoint->angleTo(), M_PI)) << endl;
                 send(mc);
             }
             else

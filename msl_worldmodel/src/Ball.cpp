@@ -22,7 +22,9 @@
 namespace msl
 {
 	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
-			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30), oppBallPossession(ringbufferLength)
+			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30),
+			oppBallPossession(ringbufferLength), sharedBallPosition(ringbufferLength),
+			ballGuessPosition(ringbufferLength)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
@@ -42,7 +44,6 @@ namespace msl
 		KICKER_DISTANCE_SIMULATOR = 432;
 		lastUpdateReceived = 0;
 		sharedBallSupporters = 0;
-		sharedBallTeamConfidence = 0.0;
 	}
 
 	Ball::~Ball()
@@ -82,7 +83,11 @@ namespace msl
 		{
 			return nullptr;
 		}
-		ret->first = x->getInformation();
+                ret->first = x->getInformation();
+
+                if (ret->first == nullptr)
+                        return nullptr;
+
 		ret->second = x->certainty;
 		return ret;
 	}
@@ -104,6 +109,7 @@ namespace msl
 	shared_ptr<geometry::CNPoint2D> Ball::getEgoBallPosition()
 	{
 		auto rawBall = getVisionBallPositionAndCertaincy();
+		auto lsb = getAlloSharedBallPosition();
 		if (rawBall == nullptr) {
 			// In order to be consistent with the haveBall() return value, return the last known ball...
 			if (hasBallIteration > 0)
@@ -112,28 +118,33 @@ namespace msl
 			}
 
 			auto pos = wm->rawSensorData.getOwnPositionVision();
-			if(sharedBallPosition != nullptr && pos != nullptr) {
-				return sharedBallPosition->alloToEgo(*pos);
+			if(lsb != nullptr && pos != nullptr) {
+				return lsb->alloToEgo(*pos);
 			}
 
 			//Here we could use ball guess
+			auto guess = getAlloBallGuessPosition();
+			if(guess!= nullptr) {
+				return guess->alloToEgo(*pos);
+			}
 			return nullptr;
 		} else {
 			//If we have sharedball AND rawball:
-			if(sharedBallPosition != nullptr) {
+			if(lsb != nullptr) {
 				//Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates -> Always use rawball!
 				auto pos = wm->rawSensorData.getOwnPositionVision();
 				if(rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55) || pos == nullptr) {
-					return rawBall->first->clone();
+
+				  return rawBall->first->clone();
 				}
 
 				//if rawball and sharedball are close to each other: Use rawball
-				if(rawBall->first->egoToAllo(*pos)->distanceTo(sharedBallPosition) < 1500) {
+				if(rawBall->first->egoToAllo(*pos)->distanceTo(lsb) < 1500) {
 					return rawBall->first->clone();
 				}
 
 				//otherwise use shared ball
-				return sharedBallPosition->alloToEgo(*pos);
+				return lsb->alloToEgo(*pos);
 			}
 
 			//if only rawball: use rawball
@@ -224,6 +235,44 @@ namespace msl
 		updateSharedBall();
 		updateHaveBall();
 		updateBallPossession();
+		updateBallGuess();
+	}
+
+	void Ball::updateBallGuess()
+	{
+		shared_ptr<geometry::CNPoint2D> nguess;
+		double guessConf = 0;
+		auto sb = getAlloSharedBallPositionAndCertaincy();
+		InfoTime time = wm->getTime();
+
+		//If we have a shared ball -> use sb
+		if(sb != nullptr && sb->first != nullptr && sb->second > 0.0)
+		{
+			guessConf = 1;
+			nguess = sb->first->clone();
+		}
+		else
+		{
+			//Generate guess -> confidence decaying linearly with time!
+			auto x = ballGuessPosition.getLast();
+			if (x != nullptr)
+			{
+				//1s
+				if(x->getInformation()!=nullptr && wm->getTime() < x->timeStamp + 1000000000) {
+					guessConf = (double)((1000000000 + x->timeStamp) - wm->getTime()) / 1000000000.0;
+					time = x->timeStamp;
+					nguess = x->getInformation()->clone();
+				} else {
+					guessConf = 0;
+				}
+			}
+		}
+
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> bgi = make_shared<InformationElement<geometry::CNPoint2D>>(
+				nguess, time);
+		bgi->certainty = guessConf;
+		ballGuessPosition.add(bgi);
 	}
 
 
@@ -271,6 +320,13 @@ namespace msl
 			{
 				continue;
 			}
+
+			// no shared world model from this robot
+			if (pair.second->getLast() == nullptr)
+			{
+			        continue;
+			}
+
 			//Use nothing older than 300ms
 			if(wm->getTime() - pair.second->getLast()->timeStamp > 300000000) {
 				continue;
@@ -330,17 +386,26 @@ namespace msl
 			}
 		}
 
-		sharedBallPosition = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+		auto sb = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 		if(bestVoting != nullptr)
 		{
-			sharedBallPosition = bestVoting->ballPos;
+			sb = bestVoting->ballPos;
 			sharedBallSupporters = bestVoting->supporters.size();
-			sharedBallTeamConfidence = bestVoting->teamConfidence;
 		} else {
-			sharedBallPosition.reset();
+			sb.reset();
 			sharedBallSupporters = 0;
-			sharedBallTeamConfidence = 0;
 		}
+		InfoTime time = wm->getTime();
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> sbi = make_shared<InformationElement<geometry::CNPoint2D>>(
+				sb, time);
+		sbi->certainty = bestVoting==nullptr ? 0.0 : bestVoting->teamConfidence;
+		sharedBallPosition.add(sbi);
+	}
+
+	int Ball::getSharedBallSupporter()
+	{
+		return sharedBallSupporters;
 	}
 
 
@@ -478,9 +543,38 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition()
+	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition(int index)
 	{
-		return this->sharedBallPosition;
+		auto x = sharedBallPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+	shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getAlloSharedBallPositionAndCertaincy(int index)
+	{
+		shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<
+				pair<shared_ptr<geometry::CNPoint2D>, double>>();
+		auto x = sharedBallPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		ret->first = x->getInformation();
+		ret->second = x->certainty;
+		return ret;
+	}
+
+	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloBallGuessPosition(int index)
+	{
+		auto x = ballGuessPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
 	}
 
 	bool Ball::oppHasBall()
@@ -492,6 +586,9 @@ namespace msl
 			return false;
 		}
 		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
+		if(ops == nullptr) {
+			return false;
+		}
 		double minDist = 100000;
 		if (ops->size() > 0)
 		{

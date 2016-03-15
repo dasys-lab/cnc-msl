@@ -19,7 +19,7 @@ namespace alica
         distToCorner = 2500;
         distToOutLine = 4000;
         firstTargetSet = false;
-        EPSILON_RADIUS = 300.0;
+        EPSILON_RADIUS = 1000.0;
         SLOW_DOWN_DISTANCE = 1200.0;
         maxTranslation = 4000.0;
         translation = 0.0;
@@ -87,6 +87,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData.getOwnPositionVision();
+        if (ownPosition == nullptr)
+            return;
         msl::Situation situation = wm->game.getSituation();
         if (!firstTargetSet)
         {
@@ -99,28 +101,28 @@ namespace alica
         {
             if (situation == msl::Situation::OwnCorner)
             {
-                currentTargetPoint = targetPointsOwnCorner[rand() % 2];
+                currentTargetPoint = targetPointsOwnCorner[rand() % targetPointsOwnCorner.size()];
             }
             else if (situation == msl::Situation::OppCorner)
             {
-                currentTargetPoint = targetPointsOppCorner[rand() % 2];
+                currentTargetPoint = targetPointsOppCorner[rand() % targetPointsOppCorner.size()];
             }
             else if (situation == msl::Situation::OwnGoalkick)
             {
-                currentTargetPoint = targetPointsOwnGoalKick[rand() % 2];
+                currentTargetPoint = targetPointsOwnGoalKick[rand() % targetPointsOwnGoalKick.size()];
             }
             else if (situation == msl::Situation::OppGoalkick)
             {
-                currentTargetPoint = targetPointsOppGoalKick[rand() % 2];
+                currentTargetPoint = targetPointsOppGoalKick[rand() % targetPointsOppGoalKick.size()];
             }
 
             else if (situation == msl::Situation::OwnThrowin || situation == msl::Situation::OppThrowin)
             {
-                currentTargetPoint = targetPointsThrowIn[rand() % 7];
+                currentTargetPoint = targetPointsThrowIn[rand() % targetPointsThrowIn.size()];
             }
             else
             {
-                currentTargetPoint = targetPoints[rand() % 6];
+                currentTargetPoint = targetPoints[rand() % targetPoints.size()];
             }
         }
 
@@ -151,28 +153,28 @@ namespace alica
     {
         if (situation == msl::Situation::OwnCorner)
         {
-            currentTargetPoint = targetPointsOwnCorner[rand() % 2];
+            currentTargetPoint = targetPointsOwnCorner[rand() % targetPointsOwnCorner.size()];
         }
         else if (situation == msl::Situation::OppCorner)
         {
-            currentTargetPoint = targetPointsOppCorner[rand() % 2];
+            currentTargetPoint = targetPointsOppCorner[rand() % targetPointsOppCorner.size()];
         }
         else if (situation == msl::Situation::OwnGoalkick)
         {
-            currentTargetPoint = targetPointsOwnGoalKick[rand() % 2];
+            currentTargetPoint = targetPointsOwnGoalKick[rand() % targetPointsOwnGoalKick.size()];
         }
         else if (situation == msl::Situation::OppGoalkick)
         {
-            currentTargetPoint = targetPointsOppGoalKick[rand() % 2];
+            currentTargetPoint = targetPointsOppGoalKick[rand() % targetPointsOppGoalKick.size()];
         }
 
         else if (situation == msl::Situation::OwnThrowin || situation == msl::Situation::OppThrowin)
         {
-            currentTargetPoint = targetPointsThrowIn[rand() % 7];
+            currentTargetPoint = targetPointsThrowIn[rand() % targetPointsThrowIn.size()];
         }
         else
         {
-            currentTargetPoint = targetPoints[rand() % 6];
+            currentTargetPoint = targetPoints[rand() % targetPoints.size()];
         }
     }
 /*PROTECTED REGION END*/

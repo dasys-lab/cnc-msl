@@ -102,12 +102,12 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > alloObs = obs.egoToAllo(*ownPos);
 
                     // if obstacle is inside rectangle, increase counter by inverse age (10 = newest, 1 = oldest)
-                    if (geometry::GeometryCalculator::isInsideRectangle(frontLeft, back, alloObs))
+                    if (geometry::isInsideRectangle(frontLeft, back, alloObs))
                     {
                         counter += wm->getRingBufferLength() - i;
                     }
                     // if obstacle is inside rectangle, decrease counter by inverse age (10 = newest, 1 = oldest)
-                    if (geometry::GeometryCalculator::isInsideRectangle(frontRight, back, alloObs))
+                    if (geometry::isInsideRectangle(frontRight, back, alloObs))
                     {
                         counter -= wm->getRingBufferLength() - i;
                     }
@@ -135,8 +135,8 @@ namespace alica
         // calculate angle difference between robot and target and ball and target
         double egoTargetAngle = egoTarget->angleTo();
         double egoBallAngle = egoBallPos->angleTo();
-        double deltaHoleAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
-        double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+        double deltaHoleAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+        double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
         // calculate passed time
         unsigned long timePassed = wm->getTime() - wm->game.getTimeSinceStart();
         // if too much time has passed or the robot is aligned, we shoot

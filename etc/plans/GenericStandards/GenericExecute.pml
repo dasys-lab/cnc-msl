@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="4">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431522123418" name="GenericExecute" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.075" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="2" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1457955744730" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1457955764912" name="MISSING_NAME" comment="" scope="1431523395534">
       <sorts>x</sorts>
@@ -85,12 +85,12 @@
     <inState>#1431522763494</inState>
     <outState>#1431522155979</outState>
   </transitions>
-  <entryPoints id="1431522155980" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601692867</task>
+  <entryPoints id="1431522155980" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1433949667740</state>
   </entryPoints>
-  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601842183</task>
+  <entryPoints id="1431522269326" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1431522297705</state>
   </entryPoints>
   <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">

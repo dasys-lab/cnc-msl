@@ -3590,7 +3590,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Play On</string>
+              <string>Start</string>
              </property>
              <property name="flat">
               <bool>false</bool>
