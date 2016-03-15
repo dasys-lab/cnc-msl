@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <msl_sensor_msgs/SharedWorldInfo.h>
+#include <msl_helper_msgs/DebugMsg.h>
 #include <msl_msgs/CorridorCheck.h>
 #include <msl_msgs/PathPlanner.h>
 #include <msl_msgs/VoronoiNetInfo.h>
@@ -29,6 +30,7 @@ public:
 	virtual ~RobotInfo();
 	int getId() const;
 	void setId(int id);
+
 	std::shared_ptr<RobotVisualization> getVisualization();
 	const boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> getSharedWorldInfo() const;
 	void setSharedWorldInfo(const boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> msg);
@@ -37,16 +39,21 @@ public:
         const boost::shared_ptr<msl_msgs::PathPlanner>& getPathPlannerInfo() const;
         void setPathPlannerInfo(const boost::shared_ptr<msl_msgs::PathPlanner>& pathPlannerInfo);
         const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& getVoronoiNetInfo() const;
-        void setVoronoiNetInfo(const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& voronoiNetInfo);
+        void setVoronoiNetInfo(const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& debugMsg);
+        const boost::shared_ptr<msl_helper_msgs::DebugMsg>& getDebugMsg() const;
+        void setDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg);
+
 	unsigned long getTimeStamp();
-	void setTimeStamp(unsigned long timeStamp);
 	void updateTimeStamp();
+	unsigned long getDebugMsgTimeStamp();
 
 	bool isTimeout();
+        bool isTimeout(long timeStamp);
 
 private:
-	int id = 0;
-	unsigned long timeStamp = 0;
+	int id;
+	unsigned long timeStamp;
+	unsigned long debugMsgTimeStamp;
 	std::shared_ptr<RobotVisualization> visualization;
 	FieldWidget3D* field;
 
@@ -54,6 +61,7 @@ private:
         boost::shared_ptr<msl_msgs::PathPlanner> pathPlannerInfo = nullptr;
         boost::shared_ptr<msl_msgs::VoronoiNetInfo> voronoiNetInfo = nullptr;
         boost::shared_ptr<msl_msgs::CorridorCheck> corridorCheckInfo = nullptr;
+        boost::shared_ptr<msl_helper_msgs::DebugMsg> debugMsg = nullptr;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_FIELDWIDGET_ROBOTINFO_H_ */

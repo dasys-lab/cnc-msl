@@ -52,4 +52,6 @@ namespace msl
 		return (int)round((kickCurvePower[i - 1] + da / dd * dp) * min(1.0, pow(velocityReduction, velocity / 1000.0)));
 	}
 
+
+
 } /* namespace msl */

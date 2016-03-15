@@ -150,7 +150,6 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> curEgoPoint = nullptr;
 		for (int i = 0; i < newClusterArray->size(); ++i)
 		{
-
 			shared_ptr<geometry::CNRobot> clusterInfo = make_shared<geometry::CNRobot>();
 			auto current = newClusterArray->at(i);
 			clusterInfo->id = current->ident;

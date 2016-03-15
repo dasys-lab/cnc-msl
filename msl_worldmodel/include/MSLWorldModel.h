@@ -83,6 +83,8 @@ namespace msl
 		int getOwnId();
 		supplementary::ITrigger* getVisionDataEventTrigger();
 
+		bool isUsingSimulator();
+
 		RawSensorData rawSensorData;
 		Robots robots;
 		Ball ball;

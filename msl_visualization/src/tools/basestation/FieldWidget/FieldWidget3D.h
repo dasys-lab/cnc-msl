@@ -100,11 +100,12 @@
 
 #define OBSTACLE_HEIGHT 0.2
 
+class MWind;
+
 class FieldWidget3D : public QVTKWidget
 {
     Q_OBJECT
 public:
-    static pair<double, double> transform(double x, double y);
     static vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double,3> color = {1.0,1.0,1.0});
     static void updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2);
     static vtkSmartPointer<vtkActor> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern, std::array<double,3> color = {1.0,1.0,1.0});
@@ -115,7 +116,9 @@ public:
 
 public:
     explicit FieldWidget3D(QWidget *parent = 0);
+    pair<double, double> transformToGuiCoords(double x, double y);
 
+    MWind* mainWindow;
     vtkRenderWindow *renderWindow = nullptr;
     vtkRenderer *renderer = nullptr;
     vtkCamera* camera = nullptr;
@@ -150,6 +153,7 @@ public:
     mutex pathMutex;
     mutex voronoiMutex;
     mutex corridorMutex;
+    mutex debugMutex;
 
 
 private:
@@ -157,6 +161,7 @@ private:
     void onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info);
     void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
     void onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info);
+    void onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info);
 
     void drawField(vtkRenderer* renderer);
     void drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2);
@@ -177,14 +182,20 @@ private:
     ros::Subscriber pathPlannerSubscriber;
     ros::Subscriber voronoiSitesSubscriber;
     ros::Subscriber corridorCheckSubscriber;
+    ros::Subscriber debugMsgSubscriber;
 
     // own data structure
     list<shared_ptr<RobotInfo>> robots;
+
+    // debug stuff
+    bool showDebugPoints;
+
+    // path planner stuff
     bool showPath;
-    bool showVoronoi;
-    bool showCorridor;
+    bool showVoronoiNet;
+    bool showCorridorCheck;
     bool showSitePoints;
-    bool showAllComponents;
+    bool showPathPlannerAll;
 
     // ui stuff
     QWidget* parent;
@@ -205,47 +216,54 @@ Q_SIGNALS:
 public Q_SLOTS:
     void flip(void);
     void lock(bool);
-    void showPathPoints(void);
-    void showVoronoiNet(void);
-    void showCorridorCheck(void);
-    void showSites(void);
-    void showAll(void);
     void update_robot_info(void);
 
-    void obstacles_point_flip(unsigned int Robot_no, bool on_off);
-    void obstacles_point_flip_r0 (bool on_off)
-        {obstacles_point_flip (0, on_off);}
-    void obstacles_point_flip_r1 (bool on_off)
-        {obstacles_point_flip (1, on_off);}
-    void obstacles_point_flip_r2 (bool on_off)
-        {obstacles_point_flip (2, on_off);}
-    void obstacles_point_flip_r3 (bool on_off)
-        {obstacles_point_flip (3, on_off);}
-    void obstacles_point_flip_r4 (bool on_off)
-        {obstacles_point_flip (4, on_off);}
-    void obstacles_point_flip_r5 (bool on_off)
-        {obstacles_point_flip (5, on_off);}
-    void obstacles_point_flip_r6 (bool on_off)
-        {obstacles_point_flip (6, on_off);}
-    void obstacles_point_flip_all (bool on_off);
+    // Debug
+    void showDebugPointsToggle(void);
+
+    // PAth Planner
+    void showPathToggle(void);
+    void showVoronoiNetToggle(void);
+    void showCorridorCheckToggle(void);
+    void showSitePointsToggle(void);
+    void showPathPlannerAllToggle(void);
+    void updatePathPlannerAll(void);
+
+
+//    void obstacles_point_flip(unsigned int Robot_no, bool on_off);
+//    void obstacles_point_flip_r0 (bool on_off)
+//        {obstacles_point_flip (0, on_off);}
+//    void obstacles_point_flip_r1 (bool on_off)
+//        {obstacles_point_flip (1, on_off);}
+//    void obstacles_point_flip_r2 (bool on_off)
+//        {obstacles_point_flip (2, on_off);}
+//    void obstacles_point_flip_r3 (bool on_off)
+//        {obstacles_point_flip (3, on_off);}
+//    void obstacles_point_flip_r4 (bool on_off)
+//        {obstacles_point_flip (4, on_off);}
+//    void obstacles_point_flip_r5 (bool on_off)
+//        {obstacles_point_flip (5, on_off);}
+//    void obstacles_point_flip_r6 (bool on_off)
+//        {obstacles_point_flip (6, on_off);}
+//    void obstacles_point_flip_all (bool on_off);
 
     //Debug Points
-    void debug_point_flip (unsigned int Robot_no, bool on_off);
-    void debug_point_flip_r0 (bool on_off)
-        {debug_point_flip (0, on_off);}
-    void debug_point_flip_r1 (bool on_off)
-        {debug_point_flip (1, on_off);}
-    void debug_point_flip_r2 (bool on_off)
-        {debug_point_flip (2, on_off);}
-    void debug_point_flip_r3 (bool on_off)
-        {debug_point_flip (3, on_off);}
-    void debug_point_flip_r4 (bool on_off)
-        {debug_point_flip (4, on_off);}
-    void debug_point_flip_r5 (bool on_off)
-        {debug_point_flip (5, on_off);}
-    void debug_point_flip_r6 (bool on_off)
-        {debug_point_flip (6, on_off);}
-    void debug_point_flip_all (bool on_off);
+//    void debug_point_flip (unsigned int Robot_no, bool on_off);
+//    void debug_point_flip_r0 (bool on_off)
+//        {debug_point_flip (0, on_off);}
+//    void debug_point_flip_r1 (bool on_off)
+//        {debug_point_flip (1, on_off);}
+//    void debug_point_flip_r2 (bool on_off)
+//        {debug_point_flip (2, on_off);}
+//    void debug_point_flip_r3 (bool on_off)
+//        {debug_point_flip (3, on_off);}
+//    void debug_point_flip_r4 (bool on_off)
+//        {debug_point_flip (4, on_off);}
+//    void debug_point_flip_r5 (bool on_off)
+//        {debug_point_flip (5, on_off);}
+//    void debug_point_flip_r6 (bool on_off)
+//        {debug_point_flip (6, on_off);}
+//    void debug_point_flip_all (bool on_off);
 
     // Heightmap
     void setHeightMapVisible(bool v){

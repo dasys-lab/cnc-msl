@@ -57,6 +57,7 @@ public:
         void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
         void updateCorridorDebug(vtkRenderer *renderer, bool show);
         void updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints);
+        void updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints);
 
 private:
         void move(double x, double y, double z);
@@ -85,8 +86,7 @@ private:
         std::vector<vtkSmartPointer<vtkActor>> netLines;
         std::vector<vtkSmartPointer<vtkActor>> corridorLines;
         std::vector<vtkSmartPointer<vtkActor>> sitePoints;
-
-
+        std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 };
 
 #endif /* CNC_MSL_MSL_VISUALIZATION_SRC_TOOLS_BASESTATION_ROBOTVISUALIZATION_H_ */

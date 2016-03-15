@@ -890,6 +890,17 @@
      <addaction name="action3D"/>
      <addaction name="actionColor"/>
     </widget>
+    <widget class="QMenu" name="menuPathPlanner">
+     <property name="title">
+      <string>PathPlanner</string>
+     </property>
+     <addaction name="actionShow_All_PathPlanner_Components"/>
+     <addaction name="separator"/>
+     <addaction name="actionShow_PathPlanner_Path"/>
+     <addaction name="actionShow_Voronoi_Diagram"/>
+     <addaction name="actionShow_Corridor_Check"/>
+     <addaction name="actionShow_Sites"/>
+    </widget>
     <addaction name="actionTop_View"/>
     <addaction name="actionLock"/>
     <addaction name="actionFlip"/>
@@ -898,11 +909,7 @@
     <addaction name="menuDebug"/>
     <addaction name="actionTaxi_Follow_Mode"/>
     <addaction name="menuHeight_Map"/>
-    <addaction name="actionShow_PathPlanner_Path"/>
-    <addaction name="actionShow_Voronoi_Diagram"/>
-    <addaction name="actionShow_Corridor_Check"/>
-    <addaction name="actionShow_Sites"/>
-    <addaction name="actionShow_All_PagthPlanner_Components"/>
+    <addaction name="menuPathPlanner"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1142,28 +1149,48 @@
    </property>
   </action>
   <action name="actionShow_PathPlanner_Path">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show PathPlanner Path</string>
+    <string>Show Path</string>
    </property>
   </action>
   <action name="actionShow_Voronoi_Diagram">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Voronoi Diagram</string>
    </property>
   </action>
   <action name="actionShow_Corridor_Check">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Corridor Check</string>
    </property>
   </action>
   <action name="actionShow_Sites">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Sites</string>
    </property>
   </action>
-  <action name="actionShow_All_PagthPlanner_Components">
+  <action name="actionShow_All_PathPlanner_Components">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show All PagthPlanner Components</string>
+    <string>Show All</string>
+   </property>
+  </action>
+  <action name="actionTut">
+   <property name="text">
+    <string>tut</string>
    </property>
   </action>
  </widget>
