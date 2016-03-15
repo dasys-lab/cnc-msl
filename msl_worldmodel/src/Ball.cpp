@@ -490,16 +490,14 @@ namespace msl
 		}
 		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
 		double minDist = 100000;
-		if (ops->size() == 0)
+		if (ops->size() > 0)
 		{
-			return minDist;
+			for (int i = 0; i < ops->size(); ++i)
+			{
+				geometry::CNPoint2D obstacle(ops->at(i)->x, ops->at(i)->y);
+				minDist = min(obstacle.distanceTo(ballPos), minDist);
+			}
 		}
-		for (int i = 0; i < ops->size(); ++i)
-		{
-			geometry::CNPoint2D obstacle(ops->at(i)->x, ops->at(i)->y);
-			minDist = min(obstacle.distanceTo(ballPos), minDist);
-		}
-		return minDist;
 
 		auto before = getOppBallPossession(1);
 		if (before!=nullptr && *before)
