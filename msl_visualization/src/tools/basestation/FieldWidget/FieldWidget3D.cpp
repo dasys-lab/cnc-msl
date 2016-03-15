@@ -302,9 +302,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 												(FieldWidget3D*)this);
 	corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
 													(FieldWidget3D*)this);
-        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,
-                                                                                                        (FieldWidget3D*)this);
-	spinner = new ros::AsyncSpinner(1);
+        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,  (FieldWidget3D*)this);
+        passMsgSubscriber = rosNode->subscribe("/WorldModel/PassMsg", 10, &FieldWidget3D::onPassMsg,  (FieldWidget3D*)this);
+
+        spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	Update_timer = new QTimer();
@@ -400,6 +401,7 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridorCheck);
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
                 robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
+                robot->getVisualization()->updatePassMsg(this->renderer);
 	}
 
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -1069,5 +1071,14 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
 
         auto robot = this->getRobotById(info->senderID);
         robot->setDebugMsg(info);
+        robot->updateTimeStamp();
+}
+
+void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
+{
+        lock_guard<mutex> lock(debugMutex);
+
+        auto robot = this->getRobotById(info->senderID);
+        robot->setPassMsg(info);
         robot->updateTimeStamp();
 }

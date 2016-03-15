@@ -83,10 +83,23 @@ const boost::shared_ptr<msl_helper_msgs::DebugMsg>& RobotInfo::getDebugMsg() con
 
 void RobotInfo::setDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg = nullptr)
 {
-  this->debugMsg = debugMsg;
+        this->debugMsg = debugMsg;
 
-  auto tmp = ros::Time::now();
-  this->debugMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        auto tmp = ros::Time::now();
+        this->debugMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+}
+
+const boost::shared_ptr<msl_helper_msgs::PassMsg>& RobotInfo::getPassMsg() const
+{
+        return passMsg;
+}
+
+void RobotInfo::setPassMsg(const boost::shared_ptr<msl_helper_msgs::PassMsg>& passMsg)
+{
+          this->passMsg = passMsg;
+
+          auto tmp = ros::Time::now();
+          this->passMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
 unsigned long RobotInfo::getTimeStamp()
@@ -100,11 +113,6 @@ void RobotInfo::updateTimeStamp()
         this->timeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
-unsigned long RobotInfo::getDebugMsgTimeStamp()
-{
-  return debugMsgTimeStamp;
-}
-
 bool RobotInfo::isTimeout()
 {
         auto tmp = ros::Time::now();
@@ -113,12 +121,25 @@ bool RobotInfo::isTimeout()
         return (now - this->timeStamp) > 2000000000;
 }
 
-bool RobotInfo::isTimeout(long timeStamp)
+bool RobotInfo::isDebugMsgTimeout()
 {
+        if (false == this->debugMsg)
+                return true;
+
         auto tmp = ros::Time::now();
         unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
-        return (now - timeStamp) > 2000000000;
+        return (now - this->debugMsgTimeStamp) > 2000000000;
 }
 
+bool RobotInfo::isPassMsgTimeout()
+{
+        if (false == this->passMsg)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->passMsgTimeStamp) > this->passMsg->validFor;
+}
 

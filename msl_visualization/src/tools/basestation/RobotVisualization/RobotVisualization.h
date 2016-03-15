@@ -58,6 +58,7 @@ public:
         void updateCorridorDebug(vtkRenderer *renderer, bool show);
         void updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints);
         void updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints);
+        void updatePassMsg(vtkRenderer *renderer);
 
 private:
         void move(double x, double y, double z);
@@ -81,6 +82,9 @@ private:
         vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
 	vtkSmartPointer<vtkActor> ballVelocityActor = nullptr;
 	vtkSmartPointer<vtkActor> sharedBall = nullptr;
+        vtkSmartPointer<vtkLineSource> pass = nullptr;
+        vtkSmartPointer<vtkActor> passActor = nullptr;
+        vtkSmartPointer<vtkActor> passPointActor = nullptr;
 	std::list<std::shared_ptr<RobotVisualization>> obstacles;
         std::vector<vtkSmartPointer<vtkActor>> pathLines;
         std::vector<vtkSmartPointer<vtkActor>> netLines;

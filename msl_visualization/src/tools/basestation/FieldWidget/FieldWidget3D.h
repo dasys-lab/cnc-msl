@@ -92,9 +92,10 @@
 #include <QVTKInteractor.h>
 
 #include "RobotInfo.h"
-#include "msl_msgs/PathPlanner.h"
-#include "msl_msgs/CorridorCheck.h"
-#include "msl_msgs/VoronoiNetInfo.h"
+#include <msl_msgs/PathPlanner.h>
+#include <msl_msgs/CorridorCheck.h>
+#include <msl_msgs/VoronoiNetInfo.h>
+#include <msl_helper_msgs/PassMsg.h>
 #include <SystemConfig.h>
 #include <vtkArrowSource.h>
 
@@ -154,6 +155,7 @@ public:
     mutex voronoiMutex;
     mutex corridorMutex;
     mutex debugMutex;
+    mutex passMutex;
 
 
 private:
@@ -162,6 +164,7 @@ private:
     void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
     void onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info);
     void onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info);
+    void onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info);
 
     void drawField(vtkRenderer* renderer);
     void drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2);
@@ -183,6 +186,7 @@ private:
     ros::Subscriber voronoiSitesSubscriber;
     ros::Subscriber corridorCheckSubscriber;
     ros::Subscriber debugMsgSubscriber;
+    ros::Subscriber passMsgSubscriber;
 
     // own data structure
     list<shared_ptr<RobotInfo>> robots;

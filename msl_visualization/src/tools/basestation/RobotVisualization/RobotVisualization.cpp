@@ -347,6 +347,27 @@ void RobotVisualization::init(vtkRenderer *renderer)
         this->top = teamTop;
         this->bottom = teamBottom;
         this->nameActor = nameActor;
+
+        // pass msg
+        vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
+        vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+        line->SetPoint1(0, 0, 0);
+        line->SetPoint2(0, 0, 0);
+        lineMapper->SetInputConnection(line->GetOutputPort());
+        lineActor->SetMapper(lineMapper);
+        lineActor->GetProperty()->SetLineWidth(3);
+        lineActor->GetProperty()->SetColor(c[0], c[1], c[2]);
+        lineActor->GetProperty()->SetPointSize(1);
+
+        this->pass = line;
+        this->passActor = lineActor;
+        this->passActor->SetVisibility(false);
+        this->passPointActor = FieldWidget3D::createDot(0, 0, 2, c);
+        this->passPointActor->SetVisibility(false);
+
+        renderer->AddActor(this->passActor);
+        renderer->AddActor(this->passPointActor);
 }
 
 void RobotVisualization::updatePosition(vtkRenderer *renderer)
@@ -810,14 +831,13 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
 void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints)
 {
-
         // Check last message
         boost::shared_ptr<msl_helper_msgs::DebugMsg> debugMsg;
-        unsigned long long timeStamp;
+        bool timeout = false;
         {
                 lock_guard<mutex> lock(this->field->debugMutex);
                 debugMsg = this->robot->getDebugMsg();
-                timeStamp = this->robot->getDebugMsgTimeStamp();
+                timeout = this->robot->isDebugMsgTimeout();
         }
 
         // Remove old objects if show path is disabled
@@ -831,7 +851,7 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
         debugPoints.clear();
 
         // Return if nothing should be drawn
-        if (false == showDebugPoints || false == debugMsg || this->robot->isTimeout(timeStamp) )
+        if (false == showDebugPoints || false == debugMsg || timeout)
         {
                 return;
         }
@@ -848,6 +868,37 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
                 sitePoints.push_back(actor);
                 renderer->AddActor(actor);
         }
+}
+
+void RobotVisualization::updatePassMsg(vtkRenderer *renderer)
+{
+        // Check last message
+        boost::shared_ptr<msl_helper_msgs::PassMsg> passMsg;
+        bool timeout = false;
+        {
+                lock_guard<mutex> lock(this->field->passMutex);
+                passMsg = this->robot->getPassMsg();
+                timeout = this->robot->isPassMsgTimeout();
+        }
+
+        // Return if nothing should be drawn
+        if (false == passMsg || timeout)
+        {
+                this->passActor->SetVisibility(false);
+                this->passPointActor->SetVisibility(false);
+                return;
+        }
+
+        // Draw debug points
+        this->passActor->SetVisibility(true);
+        this->passPointActor->SetVisibility(true);
+        auto origin = this->field->transformToGuiCoords(passMsg->origin.x, passMsg->origin.y);
+        auto dest = this->field->transformToGuiCoords(passMsg->destination.x, passMsg->destination.y);
+
+        this->pass->SetPoint1(origin.first, origin.second, 0.01);
+        this->pass->SetPoint1(dest.first, dest.second, 0.01);
+
+        this->passPointActor->SetPosition(dest.first, dest.second, 0.01);
 }
 
 int RobotVisualization::getDashedPattern()
