@@ -442,7 +442,7 @@ namespace msl
 				make_shared<bool>(data.ballInPossession),
 				wm->getTime());
 		ballPossession.at(data.senderID)->add(in);
-		bool r = oppHasBall(data);
+		bool r = oppHasBall();
 		shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(
 				make_shared<bool>(r),
 				wm->getTime());
@@ -479,14 +479,13 @@ namespace msl
 		return this->sharedBallPosition;
 	}
 
-	bool Ball::oppHasBall(msl_sensor_msgs::SharedWorldInfo data)
+	bool Ball::oppHasBall()
 	{
 		bool ret = false;
-		double oppDist = 0;
 		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
-			oppDist = 0;
+			return false;
 		}
 		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
 		double minDist = 100000;
@@ -499,14 +498,14 @@ namespace msl
 			}
 		}
 
-		auto before = getOppBallPossession(1);
+		auto before = getOppBallPossession(0);
 		if (before!=nullptr && *before)
 		{
-			ret = (oppDist <= 900);
+			ret = (minDist <= 900);
 		}
 		else
 		{
-			ret = (oppDist <= 700);
+			ret = (minDist <= 700);
 		}
 		return ret;
 	}
