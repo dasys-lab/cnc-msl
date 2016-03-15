@@ -48,6 +48,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   DebugMsg.msg
+  DebugPoint.msg
   Edge.msg
   FunctionSummand.msg
   PassMsg.msg
