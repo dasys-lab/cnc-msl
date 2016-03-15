@@ -21,6 +21,7 @@
  */
 
 #include "FieldWidget3D.h"
+#include "MainWindow.h"
 
 //#include "ConfigXML.h"
 
@@ -149,14 +150,6 @@ vtkStandardNewMacro(MouseInteractorStyle);
 //################################################################################################
 //########################################## Static ##############################################
 //################################################################################################
-
-pair<double, double> FieldWidget3D::transform(double x, double y)
-{
-        pair<double, double> ret;
-        ret.first = y;
-        ret.second = -x;
-        return ret;
-}
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double,3> color)
 {
@@ -292,11 +285,11 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
 	showPath = false;
-	showVoronoi = false;
-	showCorridor = false;
+	showVoronoiNet = false;
+	showCorridorCheck = false;
 	showSitePoints = false;
-	showAllComponents = false;
-	showDebug = true; // TODO
+	showPathPlannerAll = false;
+	showDebugPoints = false; // TODO
 
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
@@ -379,6 +372,13 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	Update_timer->start(33);
 }
 
+pair<double, double> FieldWidget3D::transformToGuiCoords(double x, double y)
+{
+        pair<double, double> ret;
+        ret.first = y / 1000;
+        ret.second = -x / 1000;
+        return ret;
+}
 
 void FieldWidget3D::update_robot_info(void)
 {
@@ -397,9 +397,9 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateSharedBall(this->renderer);
                 robot->getVisualization()->updateOpponents(this->renderer);
                 robot->getVisualization()->updatePathPlannerDebug(this->renderer, this->showPath);
-                robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridor);
-                robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoi, this->showSitePoints);
-                robot->getVisualization()->updateDebug(this->renderer, this->showDebug);
+                robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridorCheck);
+                robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
+                robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
 	}
 
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -428,21 +428,35 @@ void FieldWidget3D::flip(void)
 	}
 }
 
-void FieldWidget3D::obstacles_point_flip(unsigned int Robot_no, bool on_off)
+//void FieldWidget3D::obstacles_point_flip(unsigned int Robot_no, bool on_off)
+//{
+//	option_draw_obstacles[Robot_no] = on_off;
+//}
+//
+//void FieldWidget3D::obstacles_point_flip_all(bool on_off)
+//{
+//}
+//
+//void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
+//{
+//	option_draw_debug[Robot_no] = on_off;
+//}
+
+void FieldWidget3D::showDebugPointsToggle()
 {
-	option_draw_obstacles[Robot_no] = on_off;
+        if (this->showDebugPoints == false)
+        {
+                showDebugPoints = true;
+        }
+        else
+        {
+                showDebugPoints = false;
+        }
+
+        this->updatePathPlannerAll();
 }
 
-void FieldWidget3D::obstacles_point_flip_all(bool on_off)
-{
-}
-
-void FieldWidget3D::debug_point_flip(unsigned int Robot_no, bool on_off)
-{
-	option_draw_debug[Robot_no] = on_off;
-}
-
-void FieldWidget3D::showPathPoints()
+void FieldWidget3D::showPathToggle()
 {
 	if (this->showPath == false)
 	{
@@ -452,33 +466,39 @@ void FieldWidget3D::showPathPoints()
 	{
 		showPath = false;
 	}
+
+        this->updatePathPlannerAll();
 }
 
-void FieldWidget3D::showVoronoiNet(void)
+void FieldWidget3D::showVoronoiNetToggle(void)
 {
-	if (this->showVoronoi == false)
+	if (this->showVoronoiNet == false)
 	{
-		showVoronoi = true;
+		showVoronoiNet = true;
 	}
 	else
 	{
-		showVoronoi = false;
+		showVoronoiNet = false;
 	}
+
+        this->updatePathPlannerAll();
 }
 
-void FieldWidget3D::showCorridorCheck(void)
+void FieldWidget3D::showCorridorCheckToggle(void)
 {
-	if (this->showCorridor == false)
+	if (this->showCorridorCheck == false)
 	{
-		showCorridor = true;
+		showCorridorCheck = true;
 	}
 	else
 	{
-		showCorridor = false;
+		showCorridorCheck = false;
 	}
+
+        this->updatePathPlannerAll();
 }
 
-void FieldWidget3D::showSites(void)
+void FieldWidget3D::showSitePointsToggle(void)
 {
 	if (this->showSitePoints == false)
 	{
@@ -488,31 +508,57 @@ void FieldWidget3D::showSites(void)
 	{
 		showSitePoints = false;
 	}
+
+        this->updatePathPlannerAll();
 }
 
-void FieldWidget3D::showAll(void)
+void FieldWidget3D::updatePathPlannerAll(void)
 {
-	if (this->showAllComponents == false)
+        if (showPathPlannerAll && showCorridorCheck && showPath && showSitePoints && showVoronoiNet)
+        {
+                this->mainWindow->actionShow_All_PathPlanner_Components->setChecked(true);
+        }
+        else
+        {
+                this->mainWindow->actionShow_All_PathPlanner_Components->setChecked(false);
+        }
+}
+
+void FieldWidget3D::showPathPlannerAllToggle(void)
+{
+	if (this->showPathPlannerAll == false)
 	{
-		showAllComponents = true;
-		showCorridor = true;
+		showPathPlannerAll = true;
+		showCorridorCheck = true;
 		showPath = true;
 		showSitePoints = true;
-		showVoronoi = true;
+		showVoronoiNet = true;
+
+		this->mainWindow->actionShow_All_PathPlanner_Components->setChecked(true);
+                this->mainWindow->actionShow_Corridor_Check->setChecked(true);
+                this->mainWindow->actionShow_PathPlanner_Path->setChecked(true);
+                this->mainWindow->actionShow_Sites->setChecked(true);
+                this->mainWindow->actionShow_Voronoi_Diagram->setChecked(true);
 	}
 	else
 	{
-		showAllComponents = false;
-		showCorridor = false;
+		showPathPlannerAll = false;
+		showCorridorCheck = false;
 		showPath = false;
 		showSitePoints = false;
-		showVoronoi = false;
+		showVoronoiNet = false;
+
+                this->mainWindow->actionShow_All_PathPlanner_Components->setChecked(false);
+                this->mainWindow->actionShow_Corridor_Check->setChecked(false);
+                this->mainWindow->actionShow_PathPlanner_Path->setChecked(false);
+                this->mainWindow->actionShow_Sites->setChecked(false);
+                this->mainWindow->actionShow_Voronoi_Diagram->setChecked(false);
 	}
 }
 
-void FieldWidget3D::debug_point_flip_all(bool on_off)
-{
-}
+//void FieldWidget3D::debug_point_flip_all(bool on_off)
+//{
+//}
 
 void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 {
