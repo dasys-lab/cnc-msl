@@ -43,6 +43,87 @@ namespace msl
 	{
 	}
 
+	double  Obstacles::getDistanceToObstacle(shared_ptr<geometry::CNPoint2D> target) {
+		auto distScan = wm->rawSensorData.getDistanceScan();
+
+		if (distScan != nullptr) {
+			int startSector = 0;
+			double sectorWidth = 2 * M_PI / distScan->size();
+			double angleToTarget = target->angleTo();
+
+			// Adjust angle to target
+			if (angleToTarget < 0) {
+				angleToTarget += 2.0 * M_PI;
+			}
+//				if (angleToTarget >= 2.0 * Math.PI) {
+//					angleToTarget -= 2.0 * Math.PI;
+//				}
+
+			// Get the number of the sector we start in
+			startSector = (((int)floor((angleToTarget / sectorWidth)) % (int)distScan->size()));
+
+			if ((startSector < 0) || (startSector >= distScan->size())) {
+//				printf("ERROR: wrong startSector in GetDistanceToObstacle(Point2d)! ({0}, {1}, {2}", startSector, angleToTarget, sectorWidth);
+				cout << "ERROR: wrong startSector in GetDistanceToObstacle(Point2d)! (" << startSector << " " << angleToTarget << "  " << sectorWidth << " )" << endl;
+			}
+
+			return distScan->at(startSector);
+		}
+
+		return 0.0;
+	}
+
+	shared_ptr<geometry::CNPoint2D> Obstacles::getBiggestFreeGoalAreaMidPoint() {
+		auto leftPost = field->posLeftOppGoalPost();
+		auto rightPost = field->posRightOppGoalPost();
+		auto goalMid = field->posOppGoalMid();
+
+		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		if( ownPos == nullptr )
+			return nullptr;
+
+
+		shared_ptr<geometry::CNPoint2D> tmpPoint = make_shared<geometry::CNPoint2D>(leftPost->x, leftPost->y);
+
+		double dist = 100.0;
+		int right=0,left=0;
+		int i=0;
+		int iter = (int)floor((abs(leftPost->y)+abs(rightPost->y))/dist);
+		while( i <= iter  )
+		{
+			i++;
+			auto egoTmp = tmpPoint->alloToEgo(*ownPos);
+			double tmpDouble = getDistanceToObstacle(egoTmp);
+			//Console.WriteLine(tmpDouble + " " + tmpPoint.Y);
+			if( (tmpDouble-100.0) > egoTmp->length() || tmpDouble > 18000.0 )
+			{
+				if( tmpPoint->y < 0 )
+				{
+					right++;
+				}
+				else
+				{
+					left++;
+				}
+			}
+			tmpPoint->y -= dist;
+		}
+		//Console.WriteLine("wurst left : " + left + " right : " + right);
+		if( abs( right - left ) < 5 )
+		{
+			return nullptr;
+		}
+		else if( right > left)
+		{	rightPost->y += 500.0;
+			return rightPost->alloToEgo(*ownPos);
+		}
+		else
+		{
+			leftPost->y -= 500.0;
+			return leftPost->alloToEgo(*ownPos);
+		}
+	}
+
 	void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
 

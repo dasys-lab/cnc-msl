@@ -31,6 +31,8 @@ namespace msl
 		void processOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsAlloClustered);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getOpponentsEgoClustered(int index = 0);
 		void processOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsEgoClustered);
+		shared_ptr<geometry::CNPoint2D> getClosestToBall(double& distToOpp);
+		shared_ptr<geometry::CNPoint2D> getInCorridor(double angle, double width);
 
 	private:
 		MSLWorldModel* wm;

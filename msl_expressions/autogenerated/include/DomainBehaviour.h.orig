@@ -11,8 +11,11 @@
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_helper_msgs/PassMsg.h"
 #include "msl_helper_msgs/WatchBallMsg.h"
+<<<<<<< HEAD
 #include "pathplanner/PathProxy.h"
+=======
 #include "msl_helper_msgs/DebugMsg.h"
+>>>>>>> b3ad5d1b24a920cdf3dbefd245921a9f46e4643a
 
 namespace alica
 {

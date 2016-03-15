@@ -12,7 +12,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
  
 ## Enable exception handling for segfaults
 set(CMAKE_CXX_FLAGS "-rdynamic -g -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
-
+ 
 
 
 ## Find catkin macros and libraries

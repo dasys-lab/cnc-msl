@@ -24,6 +24,46 @@ namespace msl
 	{
 	}
 
+
+	shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double width) {
+		auto opps = wm->robots.opponents.getOpponentsEgoClustered();
+			//wm.GetCurrentOpponentListMerged();
+		if (opps == nullptr) return nullptr;
+		shared_ptr<geometry::CNPoint2D> closest;
+		double dist = std::numeric_limits<double>::max();
+		double temp;
+		for (int i=0; i<opps->size(); i++) {
+			temp = opps->at(i)->length();
+			if (temp < dist) {
+				double dang = geometry::deltaAngle(opps->at(i)->angleTo(),angle);
+				if (abs(dang) < M_PI/2.0) {
+					if(sin(dang)*temp < width + 300) { //300 = robotradius
+						dist = temp;
+						closest = opps->at(i);
+					}
+				}
+			}
+		}
+		return closest;
+	}
+	shared_ptr<geometry::CNPoint2D> Opponents::getClosestToBall(double& distance) {
+		distance = std::numeric_limits<double>::max();
+		auto obs = getOpponentsEgoClustered();
+			//wm.GetCurrentOpponentListMerged();
+		if (obs==nullptr) return nullptr;
+		auto ball = wm->ball.getEgoBallPosition();
+		if (ball==nullptr) return nullptr;
+		double temp;
+		shared_ptr<geometry::CNPoint2D> res;
+		for (int i=0; i< obs->size(); i++) {
+			temp = obs->at(i)->distanceTo(ball);
+			if (temp < distance) {
+				distance = temp;
+				res = obs->at(i);
+			}
+		}
+		return res;
+	}
 	double Opponents::getOpponentProtectDistance()
 	{
 		return this->opponentProtectDistance;

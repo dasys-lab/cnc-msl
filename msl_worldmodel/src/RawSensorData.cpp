@@ -299,6 +299,7 @@ namespace msl
 				time);
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
+		wm->getVisionDataEventTrigger()->run();
 	}
 
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)

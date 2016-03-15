@@ -23,6 +23,8 @@
 #include <iostream>
 #include <tuple>
 #include <mutex>
+#include <ITrigger.h>
+#include "EventTrigger.h"
 
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
@@ -79,6 +81,7 @@ namespace msl
 
 		int getRingBufferLength();
 		int getOwnId();
+		supplementary::ITrigger* getVisionDataEventTrigger();
 
 		bool isUsingSimulator();
 
@@ -98,6 +101,8 @@ namespace msl
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
+
+		supplementary::ITrigger* visionDataEventTrigger;
 
 		int ownID;
 		int ringBufferLength;

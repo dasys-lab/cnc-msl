@@ -91,27 +91,30 @@ namespace alica
         }
 
         auto matePoses = wm->robots.teammates.getTeammatesAlloClustered();
-		if(matePoses == nullptr)
-		{
-			cout << "matePoses == nullptr" << endl;
+        if (matePoses == nullptr)
+        {
+            cout << "matePoses == nullptr" << endl;
             return;
-		}
-        for(auto i=matePoses->begin(); i!=matePoses->end(); i++) {
-        	if((*i)->distanceTo(alloPos) < 100) {
-        		matePoses->erase(i);
-        		break;
-        	}
+        }
+        for (auto i = matePoses->begin(); i != matePoses->end(); i++)
+        {
+            if ((*i)->distanceTo(alloPos) < 100)
+            {
+                matePoses->erase(i);
+                break;
+            }
         }
 
         try
         {
-        	#ifdef BEH_DEBUG
+#ifdef BEH_DEBUG
             msl_helper_msgs::DebugMsg dbm;
-            #endif
+#endif
             for (int teamMateId : this->teamMateIds)
             {
 
-                shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(teamMateId);
+                shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
+                        teamMateId);
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
@@ -119,7 +122,7 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
 
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
-                    > (teamMatePos->x, teamMatePos->y);
+                            > (teamMatePos->x, teamMatePos->y);
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
@@ -134,16 +137,16 @@ namespace alica
                     factor = max(factor, 0.0);
                     passPoint = receiver + rcv2PassPoint->normalize() * factor;
 
-					#ifdef DBM_DEBUG
-                	msl_helper_msgs::DebugPoint dbp;
-                	dbp.point.x = passPoint->x;
-                	dbp.point.y = passPoint->y;
-                	dbm.points.push_back(dbp);
-					#endif
+#ifdef DBM_DEBUG
+                    msl_helper_msgs::DebugPoint dbp;
+                    dbp.point.x = passPoint->x;
+                    dbp.point.y = passPoint->y;
+                    dbm.points.push_back(dbp);
+#endif
                     if (ff->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                    && !ff->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist// max dist to pass point
-                    && alloBall->distanceTo(passPoint) > minPassDist// min dist to pass point
-                    )
+                    && !ff->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
+                    && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
+                            )
                     {
 
 //						// min dist to opponent
@@ -159,11 +162,11 @@ namespace alica
                         }
                         if (opponentTooClose)
                         {
-                        	#ifdef DBM_DEBUG
-                        	dbm.points.at(dbm.points.size()-1).red = 0.2*255.0;
-                        	dbm.points.at(dbm.points.size()-1).green = 0.2*255.0;
-                        	dbm.points.at(dbm.points.size()-1).blue = 0.2*255.0;
-							#endif
+#ifdef DBM_DEBUG
+                            dbm.points.at(dbm.points.size() - 1).red = 0.2 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).green = 0.2 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).blue = 0.2 * 255.0;
+#endif
                             continue;
                         }
 //						if ((vertices->at(i).tri.p[0].ident == -1 && vertices->at(i).tri.p[0].DistanceTo(passPoint) < minOppDist)
@@ -177,13 +180,13 @@ namespace alica
                         if (geometry::GeometryCalculator::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
-                        > maxTurnAngle)
+                                > maxTurnAngle)
                         {
-                        	#ifdef DBM_DEBUG
-                        	dbm.points.at(dbm.points.size()-1).red = 0.0*255.0;
-                        	dbm.points.at(dbm.points.size()-1).green = 0.4*255.0;
-                        	dbm.points.at(dbm.points.size()-1).blue = 0.0*255.0;
-							#endif
+#ifdef DBM_DEBUG
+                            dbm.points.at(dbm.points.size() - 1).red = 0.0 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).green = 0.4 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).blue = 0.0 * 255.0;
+#endif
                             continue;
                         }
 
@@ -191,47 +194,46 @@ namespace alica
                         shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
                         double passLength = ball2PassPoint->length();
                         shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                        > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
+                                > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
                         shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
                         shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
                         if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                        && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
-                                vNet->getObstaclePositions()))
+                                && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
+                                                     vNet->getObstaclePositions()))
                         {
-                        	#ifdef DBM_DEBUG
-                        	dbm.points.at(dbm.points.size()-1).red = 0.6*255.0;
-                        	dbm.points.at(dbm.points.size()-1).green = 0.0*255.0;
-                        	dbm.points.at(dbm.points.size()-1).blue = 0.0*255.0;
-							#endif
+#ifdef DBM_DEBUG
+                            dbm.points.at(dbm.points.size() - 1).red = 0.6 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).green = 0.0 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).blue = 0.0 * 255.0;
+#endif
                             continue;
                         }
 
                         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-                        if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
-                               matePoses))
+                        if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
                         {
-                        	#ifdef DBM_DEBUG
-                        	dbm.points.at(dbm.points.size()-1).red = 0.0*255.0;
-                        	dbm.points.at(dbm.points.size()-1).green = 0.0*255.0;
-                        	dbm.points.at(dbm.points.size()-1).blue = 0.8*255.0;
-							#endif
+#ifdef DBM_DEBUG
+                            dbm.points.at(dbm.points.size() - 1).red = 0.0 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).green = 0.0 * 255.0;
+                            dbm.points.at(dbm.points.size() - 1).blue = 0.8 * 255.0;
+#endif
                             continue;
                         }
                         else
                         {
-							#ifdef DBM_DEBUG
-                        	dbm.points.at(dbm.points.size()-1).red = 255;
-                        	dbm.points.at(dbm.points.size()-1).green = 255;
-                        	dbm.points.at(dbm.points.size()-1).blue = 255;
-							#endif
+#ifdef DBM_DEBUG
+                            dbm.points.at(dbm.points.size() - 1).red = 255;
+                            dbm.points.at(dbm.points.size() - 1).green = 255;
+                            dbm.points.at(dbm.points.size() - 1).blue = 255;
+#endif
                             this->success = true;
                         }
                     }
                 }
             }
-            #ifdef DBM_DEBUG
-            send(dbm);
-			#endif
+#ifdef DBM_DEBUG
+            send (dbm);
+#endif
         }
         catch (exception& e)
         {

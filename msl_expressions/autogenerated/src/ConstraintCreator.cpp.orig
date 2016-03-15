@@ -45,6 +45,8 @@
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
+#include  "Plans/Defence/constraints/ReleaseOwnHalf1458033644590Constraints.h"
+
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DroppedBall1426694906399Constraints.h"
@@ -83,7 +85,13 @@
 
 #include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
 
+#include  "Plans/Defence/constraints/MidfieldDefense1458033329973Constraints.h"
+
+#include  "Plans/TestPlans/KickCurveTuning/constraints/KickCurveTuning1457698586746Constraints.h"
+
 #include  "Plans/Standards/Own/PassIntoPath/constraints/PassIntoPath1457530916296Constraints.h"
+
+#include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestDribblePlan1437902404050Constraints.h"
 
@@ -126,12 +134,24 @@ namespace alica
                 return make_shared<Constraint1445442215438>();
                 break;
 
+            case 1458033759784:
+                return make_shared<Constraint1458033759784>();
+                break;
+
             case 1457173948942:
                 return make_shared<Constraint1457173948942>();
                 break;
 
+            case 1457955744730:
+                return make_shared<Constraint1457955744730>();
+                break;
+
             case 1457531039142:
                 return make_shared<Constraint1457531039142>();
+                break;
+
+            case 1458033723845:
+                return make_shared<Constraint1458033723845>();
                 break;
 
             default:
