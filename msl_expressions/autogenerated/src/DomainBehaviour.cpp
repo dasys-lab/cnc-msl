@@ -28,7 +28,7 @@ namespace alica
 		}
 		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
 		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
-		debugMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/DebugMsg", 10);
+		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
 
 	}

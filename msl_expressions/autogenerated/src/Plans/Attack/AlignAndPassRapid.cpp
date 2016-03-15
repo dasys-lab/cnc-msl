@@ -102,6 +102,20 @@ namespace alica
             cout << "AAPR: VNet is null!" << endl;
             return;
         }
+
+		auto matePoses = wm->robots.teammates.getTeammatesAlloClustered();
+		if(matePoses == nullptr)
+		{
+			cout << "matePoses == nullptr" << endl;
+            return;
+		}
+        for(auto i=matePoses->begin(); i!=matePoses->end(); i++) {
+        	if((*i)->distanceTo(alloPos) < 100) {
+        		matePoses->erase(i);
+        		break;
+        	}
+        }
+
         try
         {
             double bestPassUtility = numeric_limits<double>::min();
@@ -130,12 +144,6 @@ namespace alica
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
 
-                    #ifdef DBM_DEBUG
-                    msl_helper_msgs::DebugPoint dbp;
-                    dbp.point.x = passPoint->x;
-                    dbp.point.y = passPoint->y;
-                    dbm.points.push_back(dbp);
-                    #endif
 
                     if (factor * rcv2PassPointDist > minCloserOffset)
                     {
@@ -148,6 +156,12 @@ namespace alica
                     factor = max(factor, 0.0);
                     passPoint = receiver + rcv2PassPoint->normalize() * factor;
 
+                    #ifdef DBM_DEBUG
+                    msl_helper_msgs::DebugPoint dbp;
+                    dbp.point.x = passPoint->x;
+                    dbp.point.y = passPoint->y;
+                    dbm.points.push_back(dbp);
+                    #endif
                     if (field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
                     && !field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
                     && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
@@ -218,7 +232,7 @@ namespace alica
 
                         // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
                         if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4,
-                                                       vNet->getTeamMatePositions()))
+                                                       matePoses))
                         {
 							#ifdef DBM_DEBUG
                         	dbm.points.at(dbm.points.size()-1).red = 0.8*255.0;
@@ -492,12 +506,12 @@ namespace alica
     bool AlignAndPassRapid::outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
                                                       shared_ptr<geometry::CNPoint2D> passPoint,
                                                       double passCorridorWidth,
-                                                      shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
+                                                      shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
-            < passCorridorWidth && ball->distanceTo(points->at(i).first) < ball->distanceTo(passPoint) - 100)
+            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
+            < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
             {
                 return false;
             }
