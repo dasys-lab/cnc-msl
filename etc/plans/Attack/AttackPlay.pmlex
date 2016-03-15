@@ -140,4 +140,8 @@
     <key href="../Behaviours/MoveToPointDynamic.beh#1456997097907"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Defence/MidfieldDefense.pml#1458033329973"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
