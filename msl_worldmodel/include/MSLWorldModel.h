@@ -80,6 +80,8 @@ namespace msl
 		int getRingBufferLength();
 		int getOwnId();
 
+		bool isUsingSimulator();
+
 		RawSensorData rawSensorData;
 		Robots robots;
 		Ball ball;

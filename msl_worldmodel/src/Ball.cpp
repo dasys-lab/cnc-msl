@@ -501,7 +501,8 @@ namespace msl
 		}
 		return minDist;
 
-		if (getOppBallPossession(1))
+		auto before = getOppBallPossession(1);
+		if (before!=nullptr && *before)
 		{
 			ret = (oppDist <= 900);
 		}
