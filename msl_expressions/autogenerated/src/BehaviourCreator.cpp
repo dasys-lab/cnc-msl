@@ -25,6 +25,8 @@ using namespace std;
 
 #include  "Plans/Example/DriveInSquare.h"
 
+#include  "Plans/Attack/DribbleEmergencyKick.h"
+
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Actuate.h"
@@ -43,6 +45,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/Duel.h"
 
+#include  "Plans/Defence/ReleaseMid.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
@@ -58,6 +62,8 @@ using namespace std;
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
+
+#include  "Plans/Attack/ProtectBall.h"
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
@@ -89,6 +95,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardReceive.h"
 
+#include  "Plans/Attack/DribbleAttackConservative.h"
+
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
 #include  "Plans/Attack/AdvancdeSimplePass.h"
@@ -97,9 +105,11 @@ using namespace std;
 
 #include  "Plans/Attack/Tackle.h"
 
-#include  "Plans/GenericBehaviours/InterceptCarefully.h"
+#include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
+
+#include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
 #include  "Plans/Attack/CatchPass.h"
 
@@ -155,6 +165,8 @@ namespace alica
 
             case 1456997097907:
 
+            case 1458033795798:
+
                 return make_shared<MoveToPointDynamic>();
                 break;
 
@@ -208,6 +220,13 @@ namespace alica
                 return make_shared<DriveInSquare>();
                 break;
 
+            case 1457706826895:
+
+            case 1457706895442:
+
+                return make_shared<DribbleEmergencyKick>();
+                break;
+
             case 1413992626194:
 
                 return make_shared<Stop>();
@@ -259,6 +278,11 @@ namespace alica
                 return make_shared<Duel>();
                 break;
 
+            case 1458033497042:
+
+                return make_shared<ReleaseMid>();
+                break;
+
             case 1447863442558:
 
                 return make_shared<DriveToGoal>();
@@ -301,6 +325,11 @@ namespace alica
             case 1435156811453:
 
                 return make_shared<ShovelSelect>();
+                break;
+
+            case 1457706612268:
+
+                return make_shared<ProtectBall>();
                 break;
 
             case 1429111645834:
@@ -386,6 +415,11 @@ namespace alica
                 return make_shared<StandardReceive>();
                 break;
 
+            case 1457967385543:
+
+                return make_shared<DribbleAttackConservative>();
+                break;
+
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
@@ -406,14 +440,19 @@ namespace alica
                 return make_shared<Tackle>();
                 break;
 
-            case 1427703234654:
+            case 1458034300406:
 
-                return make_shared<InterceptCarefully>();
+                return make_shared<OneGernericInGameBlocker>();
                 break;
 
             case 1454507819086:
 
                 return make_shared<BackroomDefence>();
+                break;
+
+            case 1427703234654:
+
+                return make_shared<InterceptCarefully>();
                 break;
 
             case 1440754543898:
