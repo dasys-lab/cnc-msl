@@ -296,6 +296,8 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	showCorridor = false;
 	showSitePoints = false;
 	showAllComponents = false;
+	showDebug = true; // TODO
+
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
 //	savedSharedWorldInfo = list<boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo>>(ringBufferLength);
@@ -307,6 +309,8 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 												(FieldWidget3D*)this);
 	corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
 													(FieldWidget3D*)this);
+        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,
+                                                                                                        (FieldWidget3D*)this);
 	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
@@ -395,6 +399,7 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updatePathPlannerDebug(this->renderer, this->showPath);
                 robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridor);
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoi, this->showSitePoints);
+                robot->getVisualization()->updateDebug(this->renderer, this->showDebug);
 	}
 
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -1012,3 +1017,11 @@ void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck
         robot->updateTimeStamp();
 }
 
+void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info)
+{
+        lock_guard<mutex> lock(debugMutex);
+
+        auto robot = this->getRobotById(info->senderID);
+        robot->setDebugMsg(info);
+        robot->updateTimeStamp();
+}

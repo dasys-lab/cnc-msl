@@ -806,6 +806,49 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         }
 }
 
+
+void RobotVisualization::updateDebug(vtkRenderer *renderer, bool showDebug)
+{
+
+        // Check last message
+        boost::shared_ptr<msl_helper_msgs::DebugMsg> debugMsg;
+        unsigned long long timeStamp;
+        {
+                lock_guard<mutex> lock(this->field->debugMutex);
+                debugMsg = this->robot->getDebugMsg();
+                timeStamp = this->robot->getDebugMsgTimeStamp();
+        }
+
+        // Remove old objects if show path is disabled
+        for (vtkSmartPointer<vtkActor> actor : this->debugPoints)
+        {
+                if (actor != nullptr)
+                {
+                        renderer->RemoveActor(actor);
+                }
+        }
+        debugPoints.clear();
+
+        // Return if nothing should be drawn
+        if (false == showDebug || false == debugMsg || this->robot->isTimeout(timeStamp) )
+        {
+                return;
+        }
+
+        // Draw debug points
+        for (int i = 0; i < debugMsg->points.size(); i++)
+        {
+                auto point = debugMsg->points.at(i);
+                std::array<double,3> color = {point.red / 255.0, point.green / 255.0, point.blue / 255.0};
+                vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.point.y / 1000,
+                                                                          -point.point.x / 1000,
+                                                                           0.3,
+                                                                           color);
+                sitePoints.push_back(actor);
+                renderer->AddActor(actor);
+        }
+}
+
 int RobotVisualization::getDashedPattern()
 {
         return 0x66 << this->robot->getId();

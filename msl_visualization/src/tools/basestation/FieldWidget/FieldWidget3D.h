@@ -150,6 +150,7 @@ public:
     mutex pathMutex;
     mutex voronoiMutex;
     mutex corridorMutex;
+    mutex debugMutex;
 
 
 private:
@@ -157,6 +158,7 @@ private:
     void onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info);
     void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
     void onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info);
+    void onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info);
 
     void drawField(vtkRenderer* renderer);
     void drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2);
@@ -177,6 +179,7 @@ private:
     ros::Subscriber pathPlannerSubscriber;
     ros::Subscriber voronoiSitesSubscriber;
     ros::Subscriber corridorCheckSubscriber;
+    ros::Subscriber debugMsgSubscriber;
 
     // own data structure
     list<shared_ptr<RobotInfo>> robots;
@@ -185,6 +188,7 @@ private:
     bool showCorridor;
     bool showSitePoints;
     bool showAllComponents;
+    bool showDebug;
 
     // ui stuff
     QWidget* parent;

@@ -76,14 +76,22 @@ void RobotInfo::setVoronoiNetInfo(const boost::shared_ptr<msl_msgs::VoronoiNetIn
   this->voronoiNetInfo = voronoiNetInfo;
 }
 
+const boost::shared_ptr<msl_helper_msgs::DebugMsg>& RobotInfo::getDebugMsg() const
+{
+        return debugMsg;
+}
+
+void RobotInfo::setDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg = nullptr)
+{
+  this->debugMsg = debugMsg;
+
+  auto tmp = ros::Time::now();
+  this->debugMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+}
+
 unsigned long RobotInfo::getTimeStamp()
 {
 	return timeStamp;
-}
-
-void RobotInfo::setTimeStamp(unsigned long timeStamp)
-{
-	this->timeStamp = timeStamp;
 }
 
 void RobotInfo::updateTimeStamp()
@@ -92,12 +100,25 @@ void RobotInfo::updateTimeStamp()
         this->timeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
+unsigned long RobotInfo::getDebugMsgTimeStamp()
+{
+  return debugMsgTimeStamp;
+}
+
 bool RobotInfo::isTimeout()
 {
         auto tmp = ros::Time::now();
         unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->timeStamp) > 2000000000;
+}
+
+bool RobotInfo::isTimeout(long timeStamp)
+{
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - timeStamp) > 2000000000;
 }
 
 

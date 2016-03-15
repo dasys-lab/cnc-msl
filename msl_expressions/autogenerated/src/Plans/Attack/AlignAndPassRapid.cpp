@@ -111,7 +111,7 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > bestAoc = nullptr;
             bool found = false;
 
-			#ifdef BEH_DEBUG
+            #ifdef DBM_DEBUG
             int best_point = -1;
             msl_helper_msgs::DebugMsg dbm;
             #endif
@@ -122,13 +122,6 @@ namespace alica
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
                 for (int i = 0; i < vertices->size(); i++)
                 {
-					#ifdef DBM_DEBUG
-                	msl_helper_msgs::DebugPoint dbp;
-                	dbp.point.x = passPoint.x;
-                	dbp.point.y = passPoint.y;
-                	dbm.points.push_back(dbp);
-					#endif
-
                     // make the passpoints closer to the receiver
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
                     shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
@@ -136,6 +129,14 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
+
+                    #ifdef DBM_DEBUG
+                    msl_helper_msgs::DebugPoint dbp;
+                    dbp.point.x = passPoint->x;
+                    dbp.point.y = passPoint->y;
+                    dbm.points.push_back(dbp);
+                    #endif
+
                     if (factor * rcv2PassPointDist > minCloserOffset)
                     {
                         factor = factor * rcv2PassPointDist;

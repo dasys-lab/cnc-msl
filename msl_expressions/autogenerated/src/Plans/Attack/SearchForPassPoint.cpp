@@ -105,8 +105,8 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
 					#ifdef DBM_DEBUG
                 	msl_helper_msgs::DebugPoint dbp;
-                	dbp.point.x = passPoint.x;
-                	dbp.point.y = passPoint.y;
+                	dbp.point.x = passPoint->x;
+                	dbp.point.y = passPoint->y;
                 	dbm.points.push_back(dbp);
 					#endif
 

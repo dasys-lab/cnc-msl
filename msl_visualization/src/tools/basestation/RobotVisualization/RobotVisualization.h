@@ -57,6 +57,7 @@ public:
         void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
         void updateCorridorDebug(vtkRenderer *renderer, bool show);
         void updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints);
+        void updateDebug(vtkRenderer *renderer, bool showDebug);
 
 private:
         void move(double x, double y, double z);
@@ -85,6 +86,7 @@ private:
         std::vector<vtkSmartPointer<vtkActor>> netLines;
         std::vector<vtkSmartPointer<vtkActor>> corridorLines;
         std::vector<vtkSmartPointer<vtkActor>> sitePoints;
+        std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 
 
 };
