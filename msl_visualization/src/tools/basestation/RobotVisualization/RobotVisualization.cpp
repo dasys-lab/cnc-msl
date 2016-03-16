@@ -505,6 +505,7 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
 
         for (auto x : robot->getSharedWorldInfo()->obstacles)
         {
+                bool found = false;
                 auto pos = this->field->transformToGuiCoords(x.x, x.y);
                 for (auto member : *this->field->getRobots())
                 {

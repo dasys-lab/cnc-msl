@@ -271,6 +271,13 @@ namespace msl
 			{
 				continue;
 			}
+
+			// no shared world model from this robot
+			if (pair.second->getLast() == nullptr)
+			{
+			        continue;
+			}
+
 			//Use nothing older than 300ms
 			if(wm->getTime() - pair.second->getLast()->timeStamp > 300000000) {
 				continue;
