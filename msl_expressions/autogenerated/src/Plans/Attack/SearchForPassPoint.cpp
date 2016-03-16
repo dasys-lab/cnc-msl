@@ -59,18 +59,18 @@ namespace alica
             return;
         }
 
-        // ensures, that we have the ball and are not in melee with some opp.
-        if (!true && this->wm->game.getGameState() != msl::GameState::OwnBallPossession)
-        {
-            cout << "S4PP: Gamestate is not Attack" << endl;
-            return;
-        }
-
         // the only teammate in the corresponding task/ entrypoint
         this->teamMateIds.clear();
         for (EntryPoint* ep : eps)
         {
             auto teammates = robotsInEntryPointOfHigherPlan(ep);
+
+            if (teammates == nullptr)
+            {
+              cout << "S4PP: No Teammate for entry point " << ep->toString() << endl;
+              return;
+            }
+
             for (int mateId : *teammates)
             {
                 this->teamMateIds.push_back(mateId);
@@ -79,7 +79,7 @@ namespace alica
         }
         if (this->teamMateIds.size() <= 0)
         {
-            cout << "S4PP: Somethine Strange is going on with RobotIDs and Entrypoints" << endl;
+            cout << "S4PP: Something Strange is going on with RobotIDs and Entrypoints" << endl;
             return;
         }
 

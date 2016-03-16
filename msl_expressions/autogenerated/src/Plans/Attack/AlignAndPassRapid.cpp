@@ -83,6 +83,13 @@ namespace alica
         for (EntryPoint* ep : eps)
         {
             auto teammates = robotsInEntryPointOfHigherPlan(ep);
+
+            if (teammates == nullptr)
+            {
+              cout << "S4PP: No Teammate for entry point " << ep->toString() << endl;
+              return;
+            }
+
             for (int mateId : *teammates)
             {
                 this->teamMateIds.push_back(mateId);
