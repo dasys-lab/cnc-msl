@@ -3,6 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1458132872550) ENABLED START*/ //Add additional includes here
+#include "DateTime.h"
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,9 +19,14 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1458132872550) ENABLED START*/ //Add additional protected methods here
+        void trueInitialize();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458132872550) ENABLED START*/ //Add additional private methods here
+        msl::MSLFootballField* field;
+        shared_ptr<geometry::CNPoint2D> currentTarget;
+        shared_ptr<vector<double>> attackPosY;
+
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
