@@ -179,7 +179,7 @@ void FieldWidget3D::updateLine(vtkSmartPointer<vtkActor> actor, float x1, float 
         lineMapper->SetInputConnection(line->GetOutputPort());
 }
 
-vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, float width, int pattern, std::array<double,3> color)
+std::shared_ptr<Line> FieldWidget3D::createDashedLine(float x1, float y1, float z1, float x2, float y2,float z2, float width, int pattern, std::array<double,3> color)
 {
         vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
         vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -195,7 +195,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDashedLine(float x1, float y1, fl
         lineActor->GetProperty()->SetPointSize(1);
         lineActor->GetProperty()->SetLineWidth(3);
 
-        return lineActor;
+        return std::make_shared<Line>(lineActor, line);
 }
 
 vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radius, std::array<double,3> color)

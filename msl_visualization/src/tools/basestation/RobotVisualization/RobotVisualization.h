@@ -10,16 +10,13 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
-#include <string>
 #include <vtkLineSource.h>
-#include <vtkTextActor.h>
-#include <vtkRegularPolygonSource.h>
-#include <map>
+#include <string>
 #include <memory>
-#include <list>
 
 class RobotInfo;
 class FieldWidget3D;
+class Line;
 
 class RobotVisualization
 {
@@ -85,8 +82,11 @@ private:
         vtkSmartPointer<vtkActor> passPointActor = nullptr;
 	std::vector<vtkSmartPointer<vtkActor>> obstacles;
         std::vector<vtkSmartPointer<vtkActor>> pathLines;
-        std::vector<vtkSmartPointer<vtkActor>> netLines;
-        std::vector<vtkSmartPointer<vtkActor>> corridorLines;
+        std::vector<std::shared_ptr<Line>> netLines;
+        std::shared_ptr<Line> corridorLine1;
+        std::shared_ptr<Line> corridorLine2;
+        std::shared_ptr<Line> corridorLine3;
+        std::shared_ptr<Line> corridorLine4;
         std::vector<vtkSmartPointer<vtkActor>> sitePoints;
         std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 };
