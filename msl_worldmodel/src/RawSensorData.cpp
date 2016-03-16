@@ -227,6 +227,7 @@ namespace msl
 		mc->motion.angle = cmd.motion.angle;
 		mc->motion.translation = cmd.motion.translation;
 		mc->motion.rotation = cmd.motion.rotation;
+		mc->timestamp = cmd.timestamp;
 		shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<
 				InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
 		smc->certainty = 1;
@@ -298,6 +299,7 @@ namespace msl
 				time);
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
+		wm->getVisionDataEventTrigger()->run();
 	}
 
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)

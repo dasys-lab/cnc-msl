@@ -79,7 +79,7 @@ namespace msl_joystick
 		short ballHandleRightMotor;
 		short kickPower;
 		int robotId;
-		bool ballHandleState;
+		bool useBallHandle;
 		short shovelIdx;
 		double translation;
 		double rotation;

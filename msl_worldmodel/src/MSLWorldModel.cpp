@@ -49,6 +49,8 @@ namespace msl
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
+
+		visionDataEventTrigger = new supplementary::EventTrigger();
 		rawOdomSub = n.subscribe("/RawOdometry", 10, &MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*)this);
 
 		joystickSub = n.subscribe("/Joystick", 10, &MSLWorldModel::onJoystickCommand, (MSLWorldModel*)this);
@@ -84,6 +86,9 @@ namespace msl
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
 	}
+	supplementary::ITrigger* MSLWorldModel::getVisionDataEventTrigger() {
+		return this->visionDataEventTrigger;
+	}
 
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{
@@ -98,6 +103,10 @@ namespace msl
 					msg->worldModel);
 			onWorldModelData(wmsim);
 		}
+	}
+
+	bool MSLWorldModel::isUsingSimulator() {
+		return this->timeLastSimMsgReceived > 10;
 	}
 
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
@@ -354,6 +363,7 @@ namespace msl
 	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
 		robots.processSharedWorldModelData(msg);
+		ball.processSharedWorldModelData(*msg);
 		game.updateGameState();
 	}
 

@@ -30,6 +30,7 @@ MWind::MWind(QMainWindow *parent)
 	setupUi(parent);
 
 	//FieldW->updateField();
+	FieldW->mainWindow = this;
 
 	/* Pintar as letras dos group em branco */
 	QColor color = QColor::fromRgb(255, 255, 255, 255);
@@ -64,13 +65,16 @@ MWind::MWind(QMainWindow *parent)
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameTime()));
 	connect(RefBoxWG, SIGNAL(changeGoalColor (int)), this, SLOT(GoalColorChanged(int)));
 	connect(RefBoxWG, SIGNAL(UpdateGameParameter_signal()), this, SLOT(UpdateGameParameters()));
-	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathPoints()));
-	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheck()));
-	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNet()));
-	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSites()));
-	connect(actionShow_All_PagthPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showAll()));
 
-	// Arranque em auto-formation
+	// Debug
+	connect(actionDebug_All_On_Off, SIGNAL(triggered()), FieldW, SLOT(showDebugPointsToggle()));
+
+	// Path planner
+	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
+	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
+	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
+	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
+	connect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 
 	/* instalar o filtro de eventos */
 	parent->installEventFilter(this);
@@ -84,34 +88,33 @@ MWind::MWind(QMainWindow *parent)
 	GTime.setHMS(0, 0, 0);
 	Game_time_clock->setText(GTime.toString("mm:ss"));
 
-	/* Inicializar o Logo */
-
 	/* Formation */
-	QFile file("../config/formation.conf");
-	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		int nFormations = 0;
-		QTextStream in(&file);
-
-		while (!in.atEnd())
-		{
-			QString line = in.readLine();
-			if (line.contains("FORMATIONDT"))
-			{
-				line.remove("FORMATIONDT");
-				line = line.trimmed();
-			}
-			else if (line.contains("FORMATION"))
-			{
-				line.remove("FORMATION");
-			}
-		}
-
-	}
-	else
-	{
-		printf("Error Opening the Formation File\n");
-	}
+	// no fomration file
+//	QFile file("../config/formation.conf");
+//	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+//	{
+//		int nFormations = 0;
+//		QTextStream in(&file);
+//
+//		while (!in.atEnd())
+//		{
+//			QString line = in.readLine();
+//			if (line.contains("FORMATIONDT"))
+//			{
+//				line.remove("FORMATIONDT");
+//				line = line.trimmed();
+//			}
+//			else if (line.contains("FORMATION"))
+//			{
+//				line.remove("FORMATION");
+//			}
+//		}
+//
+//	}
+//	else
+//	{
+//		printf("Error Opening the Formation File\n");
+//	}
 
 	connect(actionVisible, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMapVisible(bool)));
 	connect(action3D, SIGNAL(toggled(bool)), FieldW, SLOT(setHeightMap3D(bool)));
@@ -125,10 +128,11 @@ MWind::~MWind()
 	disconnect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
 	disconnect(TeamColorCombo, SIGNAL(activated ( int)), this, SLOT(TeamColorChanged(int)));
 	disconnect(GoalColorCombo, SIGNAL(activated ( int)), this, SLOT(GoalColorChanged(int)));
-	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(ShowPathPoints()));
-	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheck()));
-	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNet()));
-	disconnect(actionShow_All_PagthPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showAll()));
+	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
+	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
+	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
+	disconnect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
+	disconnect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 	// Destroy "Gustavo" Threads
 
 	//Delete
@@ -192,20 +196,32 @@ bool MWind::eventFilter(QObject *obj, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 
 		if (keyEvent->key() == Qt::Key_F1)
+                {
+                }
 
-			if (keyEvent->key() == Qt::Key_F2)
+                if (keyEvent->key() == Qt::Key_F2)
+                {
+                }
 
-				if (keyEvent->key() == Qt::Key_F3)
+                if (keyEvent->key() == Qt::Key_F3)
+                {
+                }
 
-					if (keyEvent->key() == Qt::Key_F4)
+                if (keyEvent->key() == Qt::Key_F4)
+                {
+                }
 
-						if (keyEvent->key() == Qt::Key_F5)
+                if (keyEvent->key() == Qt::Key_F5)
+                {
+                }
 
-							if (keyEvent->key() == Qt::Key_F6)
+                if (keyEvent->key() == Qt::Key_F6)
+                {
+                }
 
-								if (keyEvent->key() == Qt::Key_Escape)
-								{
-								}
+                if (keyEvent->key() == Qt::Key_Escape)
+                {
+                }
 
 		if (keyEvent->key() == Qt::Key_F12)
 		{

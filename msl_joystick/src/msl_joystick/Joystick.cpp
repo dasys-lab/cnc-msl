@@ -45,7 +45,7 @@ namespace msl_joystick
 		this->shovelIdx = 0;
 		this->ballHandleLeftMotor = 0;
 		this->ballHandleRightMotor = 0;
-		this->ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+		this->useBallHandle = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
 	}
 
 	void Joystick::initPlugin(qt_gui_cpp::PluginContext& context)
@@ -134,7 +134,10 @@ namespace msl_joystick
 		// ballHandle stuff
 		msg.ballHandleLeftMotor = this->ballHandleLeftMotor;
 		msg.ballHandleRightMotor = this->ballHandleRightMotor;
-		msg.ballHandleState = this->ballHandleState;
+		if (this->useBallHandle)
+		{
+			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
+		}
 
 		// kicker stuff
 		msg.kickPower = this->kickPower;
@@ -441,12 +444,12 @@ namespace msl_joystick
 		switch (checkState)
 		{
 			case Qt::CheckState::Checked:
-				this->ballHandleState = true;
+				this->useBallHandle = true;
 				break;
 			case Qt::CheckState::Unchecked:
 			case Qt::CheckState::PartiallyChecked:
 			default:
-				this->ballHandleState = false;
+				this->useBallHandle = false;
 				break;
 		}
 		this->uiWidget->setFocus();
@@ -471,7 +474,7 @@ namespace msl_joystick
 		{
 			cout << "Low" << endl;
 		}
-		cout << "BallHandle State:\t" << (this->ballHandleState ? "On" : "Off") << endl;
+		cout << "BallHandle State:\t" << (this->useBallHandle ? "On" : "Off") << endl;
 		cout << "BallHandle Left:\t" << this->ballHandleLeftMotor << "\t Right: " << this->ballHandleRightMotor << endl;
 	}
 

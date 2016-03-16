@@ -11,6 +11,8 @@
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
 #include "GeometryCalculator.h"
+#include "DateTime.h"
+#include "SystemConfig.h"
 
 namespace geometry
 {
@@ -65,6 +67,11 @@ namespace msl
 		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
+		static msl_actuator_msgs::MotionControl driveRandomly(int translation);
+		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);
+		static shared_ptr<geometry::CNPoint2D> dribbleNeedToTurn(shared_ptr<geometry::CNPosition> own, shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNPoint2D> pathPlanningPoint);
+		static msl_actuator_msgs::MotionControl nearGoalArea(msl_actuator_msgs::MotionControl bm);
+
 		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();
 		static double defaultTranslation;
@@ -72,6 +79,7 @@ namespace msl
 		static double fastTranslation;
 		static double fastRotation;
 		static double interceptCarfullyRotateP;
+
 
 	private:
 		static double lastRotError;
@@ -88,6 +96,23 @@ namespace msl
 		static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
 		static shared_ptr<vector<shared_ptr<SearchArea>>> next;
 		static shared_ptr<geometry::CNPoint2D> randomTarget;
+
+		static double lastRotErr;
+		static double curRot;
+		static double curTrans;
+		static double pRot;
+		static double dRot;
+		static double rotAccStep;
+		static double maxRot;
+		static double angleDeadBand;
+		static double transControlIntegral;
+		static double transControlIntegralMax;
+		static double iTrans;
+		static double pTrans;
+		static double transAccStep;
+		static double transDecStep;
+
+		static double lastTurnTime;
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,

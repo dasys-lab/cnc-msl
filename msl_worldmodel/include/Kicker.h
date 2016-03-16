@@ -11,6 +11,9 @@
 #include "GeometryCalculator.h"
 #include "SystemConfig.h"
 #include "KickCurve.h"
+#include "msl_actuator_msgs/KickControl.h"
+#include "RingBuffer.h"
+#include "InformationElement.h"
 
 using namespace std;
 namespace msl
@@ -32,12 +35,16 @@ namespace msl
 		double minFree(double angle, double width, shared_ptr<vector<double>> dstscan);
 		double getPassKickpower(double dist, double arrivalTime);
 		double getPassVelocity(double kickpower);
+		double getKickPowerForLobShot(double dist, double height, double heightTolerance = 30.0);
 		double getPreciseShotMaxDistance();
 		double getPreciseShotMaxTolerance();
 		double getPreciseShotMinDistance();
 		int getShortPassPower();
 		bool lowShovelSelected;
 		static double kickerAngle;
+
+		void processKickConstrolMsg(msl_actuator_msgs::KickControl& km);
+		shared_ptr<msl_actuator_msgs::KickControl> getKickConstrolMsg(int index = 0);
 
 	private:
 		MSLWorldModel* wm;
@@ -59,6 +66,8 @@ namespace msl
 		KickCurve* kickHighPass;
 		KickCurve* kickLowPass;
 		vector<shared_ptr<geometry::CNPoint2D>> validGoalPoints ;
+
+		RingBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
 		int mod(int x, int y);
 	};
 

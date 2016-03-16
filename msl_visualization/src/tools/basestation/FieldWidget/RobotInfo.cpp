@@ -54,6 +54,9 @@ const boost::shared_ptr<msl_msgs::CorridorCheck>& RobotInfo::getCorridorCheckInf
 void RobotInfo::setCorridorCheckInfo(const boost::shared_ptr<msl_msgs::CorridorCheck>& corridorCheckInfo = nullptr)
 {
         this->corridorCheckInfo = corridorCheckInfo;
+
+        auto tmp = ros::Time::now();
+        this->corridorCheckMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
 const boost::shared_ptr<msl_msgs::PathPlanner>& RobotInfo::getPathPlannerInfo() const
@@ -64,6 +67,9 @@ const boost::shared_ptr<msl_msgs::PathPlanner>& RobotInfo::getPathPlannerInfo() 
 void RobotInfo::setPathPlannerInfo(const boost::shared_ptr<msl_msgs::PathPlanner>& pathPlannerInfo = nullptr)
 {
         this->pathPlannerInfo = pathPlannerInfo;
+
+        auto tmp = ros::Time::now();
+        this->pathPlannerMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
 const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& RobotInfo::getVoronoiNetInfo() const
@@ -73,17 +79,41 @@ const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& RobotInfo::getVoronoiNetInfo(
 
 void RobotInfo::setVoronoiNetInfo(const boost::shared_ptr<msl_msgs::VoronoiNetInfo>& voronoiNetInfo = nullptr)
 {
-  this->voronoiNetInfo = voronoiNetInfo;
+        this->voronoiNetInfo = voronoiNetInfo;
+
+        auto tmp = ros::Time::now();
+        this->voronoiNetMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+}
+
+const boost::shared_ptr<msl_helper_msgs::DebugMsg>& RobotInfo::getDebugMsg() const
+{
+        return debugMsg;
+}
+
+void RobotInfo::setDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg = nullptr)
+{
+        this->debugMsg = debugMsg;
+
+        auto tmp = ros::Time::now();
+        this->debugMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+}
+
+const boost::shared_ptr<msl_helper_msgs::PassMsg>& RobotInfo::getPassMsg() const
+{
+        return passMsg;
+}
+
+void RobotInfo::setPassMsg(const boost::shared_ptr<msl_helper_msgs::PassMsg>& passMsg)
+{
+          this->passMsg = passMsg;
+
+          auto tmp = ros::Time::now();
+          this->passMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
 unsigned long RobotInfo::getTimeStamp()
 {
 	return timeStamp;
-}
-
-void RobotInfo::setTimeStamp(unsigned long timeStamp)
-{
-	this->timeStamp = timeStamp;
 }
 
 void RobotInfo::updateTimeStamp()
@@ -100,4 +130,58 @@ bool RobotInfo::isTimeout()
         return (now - this->timeStamp) > 2000000000;
 }
 
+bool RobotInfo::isPathPlannerMsgTimeout()
+{
+        if (false == this->pathPlannerInfo)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->pathPlannerMsgTimeStamp) > 2000000000;
+}
+
+bool RobotInfo::isVoronoiNetMsgTimeout()
+{
+        if (false == this->voronoiNetInfo)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->voronoiNetMsgTimeStamp) > 2000000000;
+}
+
+bool RobotInfo::isCorridorCheckMsgTimeout()
+{
+        if (false == this->corridorCheckInfo)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->corridorCheckMsgTimeStamp) > 2000000000;
+}
+
+bool RobotInfo::isDebugMsgTimeout()
+{
+        if (false == this->debugMsg)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->debugMsgTimeStamp) > 2000000000;
+}
+
+bool RobotInfo::isPassMsgTimeout()
+{
+        if (false == this->passMsg)
+                return true;
+
+        auto tmp = ros::Time::now();
+        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+        return (now - this->passMsgTimeStamp) > this->passMsg->validFor;
+}
 

@@ -13,6 +13,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/AttackOpp.h"
 
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
+
 #include  "Plans/Behaviours/PositionReceiver.h"
 
 #include  "Plans/Behaviours/GoalKick.h"
@@ -22,6 +24,8 @@ using namespace std;
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
 #include  "Plans/Example/DriveInSquare.h"
+
+#include  "Plans/Attack/DribbleEmergencyKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
@@ -41,23 +45,31 @@ using namespace std;
 
 #include  "Plans/Behaviours/Duel.h"
 
+#include  "Plans/Defence/ReleaseMid.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
 
-#include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
-
 #include  "Plans/GenericStandards/StandardPass.h"
+
+#include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
 #include  "Plans/Behaviours/Pos4Def.h"
 
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
+
 #include  "Plans/Behaviours/ShovelSelect.h"
+
+#include  "Plans/Attack/ProtectBall.h"
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
 #include  "Plans/Behaviours/DriveForward.h"
+
+#include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
@@ -79,7 +91,11 @@ using namespace std;
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/BlockBall.h"
 
+#include  "Plans/Standards/Own/PassIntoPath/ReceivePassIntoPathGeneric.h"
+
 #include  "Plans/GenericStandards/StandardReceive.h"
+
+#include  "Plans/Attack/DribbleAttackConservative.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
@@ -89,9 +105,11 @@ using namespace std;
 
 #include  "Plans/Attack/Tackle.h"
 
-#include  "Plans/GenericBehaviours/InterceptCarefully.h"
+#include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
+
+#include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
 #include  "Plans/Attack/CatchPass.h"
 
@@ -104,6 +122,8 @@ using namespace std;
 #include  "Plans/Robotcheck/RobotTest.h"
 
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/PassKickIntoPath.h"
 
 #include  "Plans/Behaviours/GetBall.h"
 
@@ -145,6 +165,8 @@ namespace alica
 
             case 1456997097907:
 
+            case 1458033795798:
+
                 return make_shared<MoveToPointDynamic>();
                 break;
 
@@ -156,6 +178,11 @@ namespace alica
             case 1430324680117:
 
                 return make_shared<AttackOpp>();
+                break;
+
+            case 1457532300654:
+
+                return make_shared<StandardAlignToPassPos>();
                 break;
 
             case 1439379352605:
@@ -191,6 +218,13 @@ namespace alica
             case 1433939634320:
 
                 return make_shared<DriveInSquare>();
+                break;
+
+            case 1457706826895:
+
+            case 1457706895442:
+
+                return make_shared<DribbleEmergencyKick>();
                 break;
 
             case 1413992626194:
@@ -244,6 +278,11 @@ namespace alica
                 return make_shared<Duel>();
                 break;
 
+            case 1458033497042:
+
+                return make_shared<ReleaseMid>();
+                break;
+
             case 1447863442558:
 
                 return make_shared<DriveToGoal>();
@@ -256,14 +295,14 @@ namespace alica
                 return make_shared<DribbleToAttackPoint>();
                 break;
 
-            case 1447863472667:
-
-                return make_shared<WatchBall>();
-                break;
-
             case 1435760175843:
 
                 return make_shared<StandardPass>();
+                break;
+
+            case 1447863472667:
+
+                return make_shared<WatchBall>();
                 break;
 
             case 1415205285582:
@@ -276,11 +315,21 @@ namespace alica
                 return make_shared<Pos4Def>();
                 break;
 
+            case 1457531639350:
+
+                return make_shared<StandardAlignToGeneric>();
+                break;
+
             case 1435156714286:
 
             case 1435156811453:
 
                 return make_shared<ShovelSelect>();
+                break;
+
+            case 1457706612268:
+
+                return make_shared<ProtectBall>();
                 break;
 
             case 1429111645834:
@@ -291,6 +340,11 @@ namespace alica
             case 1417017580650:
 
                 return make_shared<DriveForward>();
+                break;
+
+            case 1457698689219:
+
+                return make_shared<LaserBallTracking>();
                 break;
 
             case 1455537928849:
@@ -351,9 +405,19 @@ namespace alica
                 return make_shared<BlockBall>();
                 break;
 
+            case 1457531594373:
+
+                return make_shared<ReceivePassIntoPathGeneric>();
+                break;
+
             case 1428509534191:
 
                 return make_shared<StandardReceive>();
+                break;
+
+            case 1457967385543:
+
+                return make_shared<DribbleAttackConservative>();
                 break;
 
             case 1414752423981:
@@ -376,14 +440,19 @@ namespace alica
                 return make_shared<Tackle>();
                 break;
 
-            case 1427703234654:
+            case 1458034300406:
 
-                return make_shared<InterceptCarefully>();
+                return make_shared<OneGernericInGameBlocker>();
                 break;
 
             case 1454507819086:
 
                 return make_shared<BackroomDefence>();
+                break;
+
+            case 1427703234654:
+
+                return make_shared<InterceptCarefully>();
                 break;
 
             case 1440754543898:
@@ -414,6 +483,11 @@ namespace alica
             case 1455537879822:
 
                 return make_shared<DropBallAttackerPos>();
+                break;
+
+            case 1457531685581:
+
+                return make_shared<PassKickIntoPath>();
                 break;
 
             case 1414828313541:

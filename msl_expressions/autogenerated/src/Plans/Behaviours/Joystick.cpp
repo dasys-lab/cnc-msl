@@ -39,6 +39,7 @@ namespace alica
             return;
         }
 
+        //cout << "Joystick-Beh: " << *joy << endl;
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
         {
             msl_actuator_msgs::MotionControl mc;
@@ -60,7 +61,6 @@ namespace alica
 
         msl_actuator_msgs::ShovelSelectCmd ssc;
 
-        // todo check indexes...
         if (joy->shovelIdx == 0)
         {
             ssc.passing = true;

@@ -23,6 +23,8 @@
 #include <iostream>
 #include <tuple>
 #include <mutex>
+#include <ITrigger.h>
+#include "EventTrigger.h"
 
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
@@ -38,6 +40,7 @@
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
+#include "Prediction.h"
 
 namespace alica
 {
@@ -78,6 +81,9 @@ namespace msl
 
 		int getRingBufferLength();
 		int getOwnId();
+		supplementary::ITrigger* getVisionDataEventTrigger();
+
+		bool isUsingSimulator();
 
 		RawSensorData rawSensorData;
 		Robots robots;
@@ -89,11 +95,14 @@ namespace msl
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
 		Obstacles obstacles;
+		Prediction prediction;
 
 	private:
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
+
+		supplementary::ITrigger* visionDataEventTrigger;
 
 		int ownID;
 		int ringBufferLength;

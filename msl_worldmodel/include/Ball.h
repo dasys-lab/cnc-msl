@@ -67,6 +67,8 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
 		double getBallDiameter();
 
+		shared_ptr<geometry::CNPoint2D> getBallPickupPosition();
+
 		void updateSharedBall();
 		double calculateSharedBallMassVector(bool withGoalie);
 		bool simpleHaveBallDribble(bool hadBefore);
@@ -104,7 +106,7 @@ namespace msl
 		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
 		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		bool robotHasBall(int robotId);
-		bool oppHasBall(msl_sensor_msgs::SharedWorldInfo data);
+		bool oppHasBall();
 		Point allo2Ego(Point p, Position pos);
 		Velocity allo2Ego(Velocity vel, Position pos);
 		double haveDistance;

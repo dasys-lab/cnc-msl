@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1457531678043" name="PassKickIntoPath" comment="" destinationPath="Plans/Standards/Own/PassIntoPath">
+  <configurations id="1457531685581" name="PassKickIntoPathDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <vars id="1457532845340" name="X" comment="" Type=""/>
+    <vars id="1457532847811" name="Y" comment="" Type=""/>
+  </configurations>
+</alica:Behaviour>

@@ -28,6 +28,7 @@ namespace alica
 		}
 		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
 		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
+		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
 
 	}
@@ -39,6 +40,7 @@ namespace alica
 	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
 	{
 		mc.senderID = ownID;
+		mc.timestamp = wm->getTime();
 		motionControlPub.publish(mc);
 		wm->rawSensorData.processMotionControlMessage(mc);
 	}
@@ -77,6 +79,12 @@ namespace alica
 	{
 		wb.senderID = ownID;
 		watchBallMsgPublisher.publish(wb);
+	}
+
+	void alica::DomainBehaviour::send(msl_helper_msgs::DebugMsg& dbm)
+	{
+		dbm.senderID = ownID;
+		debugMsgPublisher.publish(dbm);
 	}
 } /* namespace alica */
 

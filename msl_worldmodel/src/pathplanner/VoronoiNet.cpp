@@ -250,24 +250,24 @@ namespace msl
 		this->clearVoronoiNet();
 		// get teammate positions
 //		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> ownTeamMatesPositions = wm->robots.teammates.getPositionsOfTeamMates();
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
-		if (ownPos != nullptr)
-		{
-			//add own pos to voronoi
-			sites.push_back(Site_2(ownPos->x, ownPos->y));
-			pointRobotKindMapping.insert(
-					pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
-																wm->getOwnId()));
-		}
-		auto alloClusteredObs = wm->obstacles.getAlloObstacles();
+//		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+//		if (ownPos != nullptr)
+//		{
+//			//add own pos to voronoi
+//			sites.push_back(Site_2(ownPos->x, ownPos->y));
+//			pointRobotKindMapping.insert(
+//					pair<shared_ptr<geometry::CNPoint2D>, int>(make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y),
+//																wm->getOwnId()));
+//		}
+		auto alloClusteredObs = wm->obstacles.getAlloObstaclesWithMe();
 		if(alloClusteredObs != nullptr)
 		{
 			for (auto iter = alloClusteredObs->begin(); iter != alloClusteredObs->end(); iter++)
 			{
-				if ((*iter)->id == wm->getOwnId())
-				{
-					continue;
-				}
+//				if ((*iter)->id == wm->getOwnId())
+//				{
+//					continue;
+//				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, int>(
 								make_shared<geometry::CNPoint2D>((*iter)->x, (*iter)->y),
@@ -688,7 +688,7 @@ namespace msl
 		for (auto iter = pointRobotKindMapping.begin(); iter != pointRobotKindMapping.end(); iter++)
 		{
 			//teammates have positive ids
-			if (iter->second > 0)
+			if (iter->second > 0 && iter->second != SystemConfig::getOwnRobotID())
 			{
 				ret->push_back(*iter);
 			}
