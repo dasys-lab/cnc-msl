@@ -481,6 +481,10 @@ namespace msl
 	{
 		//locate teammate
 		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+
+		if (teamMatePos == nullptr)
+		        return nullptr;
+
 		//get vertices
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		auto vertices = this->getVerticesOfFace(make_shared<geometry::CNPoint2D>(teamMatePos->x, teamMatePos->y));
