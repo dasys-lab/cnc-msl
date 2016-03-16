@@ -98,8 +98,17 @@ namespace alica
         else // receiver
         {
             //calculate point on a line with ball and mid on a distance of 2,3m
-            shared_ptr < geometry::CNPoint2D > egoTarget =
-                    (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
+        	if(oldBallPos==nullptr) oldBallPos = alloBall;
+
+        	if(oldAlloTarget==nullptr || oldBallPos->distanceTo(alloBall) > 1000) {
+        		oldBallPos = alloBall;
+        		oldAlloTarget = (alloBall + ((alloBall - alloTarget)->normalize() * -2300));
+        		if(oldAlloTarget->x > -800 && oldAlloTarget->x < 1000) {
+        			auto shiftPt = make_shared<geometry::CNPoint2D>(1000.0, 0.0);
+        			oldAlloTarget = (alloBall + ((alloBall - alloTarget + shiftPt)->normalize() * -2300));
+        		}
+        	}
+            shared_ptr < geometry::CNPoint2D > egoTarget = oldAlloTarget->alloToEgo(*ownPos);
 
             MotionControl mc;
 
@@ -123,6 +132,8 @@ namespace alica
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
+        oldBallPos.reset();
+        oldAlloTarget.reset();
         success &= getParameter("X", tmp);
         try
         {
