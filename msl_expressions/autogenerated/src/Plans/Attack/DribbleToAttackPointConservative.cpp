@@ -70,7 +70,8 @@ namespace alica
 //		}
 
         //if i drive in to the enemy goal area
-        //bm = DriveHelper.NearGoalArea(WM,bm);
+        bm = msl::RobotMovement::nearGoalArea(bm);
+//        bm = DriveHelper.NearGoalArea(WM,bm);
 
         if (tmpMC != nullptr)
         {

@@ -27,12 +27,11 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
-
-    	//if you have the ball after 1 second after shooting fail
-
-    	if(startKickTime != -1 && (wm->getTime() - startKickTime) >= 1000000000 && wm->ball.haveBall()) {
-    		this->failure = true;
-    	}
+        //if you have the ball after 1 second after shooting fail
+        if (startKickTime != -1 && (wm->getTime() - startKickTime) >= 1000000000 && wm->ball.haveBall())
+        {
+            this->failure = true;
+        }
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = wm->ball.getEgoBallPosition();
@@ -99,8 +98,8 @@ namespace alica
         if (kickPowerObs < 0)
         {
             cout << "kick power: " << kickPowerGoal << endl;
-        	kick(kickPowerGoal);
-        	return;
+            kick(kickPowerGoal);
+            return;
         }
 
         if (kickPowerGoal < kickPowerObs)
@@ -261,8 +260,9 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.power = kickpower;
-        if(startKickTime == -1) {
-        	startKickTime = wm->getTime();
+        if (startKickTime == -1)
+        {
+            startKickTime = wm->getTime();
         }
         send(kc);
     }

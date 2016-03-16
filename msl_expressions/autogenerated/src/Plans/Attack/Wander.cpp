@@ -174,7 +174,7 @@ namespace alica
         }
         else
         {
-            currentTargetPoint = targetPoints[rand() % 6];
+            currentTargetPoint = targetPoints[rand() % targetPoints.size()];
         }
     }
 /*PROTECTED REGION END*/

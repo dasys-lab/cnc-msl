@@ -35,7 +35,6 @@ namespace alica
 
         long startKickTime;
 
-
         // testing variables for console output
         double cout_distBall2HitPoint;
 

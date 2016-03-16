@@ -89,28 +89,18 @@ namespace msl
 			return bm;
 		}
 
-		auto ballPos = wm->ball.getEgoBallPosition();
-		if (ballPos == nullptr)
-		{
-			return bm;
-		}
-		if (field->isInsideEnemyKeeperArea(ownPos->getPoint(), 150))
-		{
-			bm.motion.angle = 0;
-			bm.motion.rotation = 0;
-			bm.motion.translation = 0;
-			return bm;
-		}
-
 		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(
 				bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
 		dir = dir * 0.2;
 		dir = dir->egoToAllo(*ownPos);
-		if (field->isInsideEnemyKeeperArea(dir, 150))
+		if (field->isInsideEnemyKeeperArea(dir, 150) && field->isInsideEnemyKeeperArea(ownPos->getPoint(), 500))
 		{
-			bm.motion.angle = 0;
-			bm.motion.rotation = 0;
-			bm.motion.translation = 0;
+			cout << "RobotMovement: insideEnemyKeeperArea " << endl;
+			dir->x = min(dir->x, 0.0);
+			dir = dir->alloToEgo(*ownPos);
+
+			bm.motion.angle = dir->angleTo();
+			bm.motion.translation = sqrt(dir->x*dir->x + dir->y*dir->y);
 			return bm;
 		}
 		return bm;
