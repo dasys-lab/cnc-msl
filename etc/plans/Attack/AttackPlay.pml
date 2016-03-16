@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434045709191" name="AttackPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="2" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434045709191" name="AttackPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="1.0E-7" destinationPath="Plans/Attack" priority="0.0" minCardinality="2" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1434112519736" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin">
     <vars>#1457002241973</vars>
     <vars>#1457002247256</vars>
@@ -112,7 +112,7 @@
     <task>../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1434045870617</state>
   </entryPoints>
-  <entryPoints id="1434112675755" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="2147483647">
+  <entryPoints id="1434112675755" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1434112762535</state>
   </entryPoints>
