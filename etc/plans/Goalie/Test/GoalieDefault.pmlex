@@ -2,11 +2,11 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GoalieDefault.pml#1447254438615"/>
-    <value xPos="31" yPos="223" width="259" height="110"/>
+    <value xPos="31" yPos="223" width="259" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438614"/>
-    <value xPos="-130" yPos="60" width="896" height="569"/>
+    <value xPos="-42" yPos="31" width="896" height="569"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438616"/>
@@ -38,7 +38,9 @@
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447259462162"/>
-    <value/>
+    <value>
+      <bendpoints xPos="403" yPos="229"/>
+    </value>
   </extensions>
   <extensions>
     <key href="GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
@@ -63,5 +65,11 @@
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalieDefault.pml#1457943655376"/>
+    <value>
+      <bendpoints xPos="424" yPos="263"/>
+    </value>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

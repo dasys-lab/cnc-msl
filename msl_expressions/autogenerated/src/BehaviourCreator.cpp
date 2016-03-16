@@ -21,6 +21,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
+#include  "Plans/Attack/DribbleToAttackPointConservative.h"
+
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
 #include  "Plans/Example/DriveInSquare.h"
@@ -206,6 +208,11 @@ namespace alica
             case 1436961206415:
 
                 return make_shared<DriveToPoint>();
+                break;
+
+            case 1458132905432:
+
+                return make_shared<DribbleToAttackPointConservative>();
                 break;
 
             case 1433950043262:

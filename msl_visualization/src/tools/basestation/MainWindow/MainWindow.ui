@@ -897,8 +897,8 @@
      <addaction name="actionShow_All_PathPlanner_Components"/>
      <addaction name="separator"/>
      <addaction name="actionShow_PathPlanner_Path"/>
-     <addaction name="actionShow_Voronoi_Diagram"/>
      <addaction name="actionShow_Corridor_Check"/>
+     <addaction name="actionShow_Voronoi_Diagram"/>
      <addaction name="actionShow_Sites"/>
     </widget>
     <addaction name="actionTop_View"/>
