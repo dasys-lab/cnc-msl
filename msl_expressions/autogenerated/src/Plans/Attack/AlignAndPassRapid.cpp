@@ -136,6 +136,10 @@ namespace alica
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
                         teamMateId);
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+
+                if(vertices == nullptr || teamMatePos == nullptr)
+                        continue;
+
                 for (int i = 0; i < vertices->size(); i++)
                 {
                     // make the passpoints closer to the receiver
