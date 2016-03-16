@@ -465,10 +465,11 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
 
 void RobotVisualization::updateBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->ball.confidence <= 0)
+        if (robot->getSharedWorldInfo()->ball.confidence <= 0.0001)
         {
                 this->ball->SetVisibility(false);
                 this->ballVelocityActor->SetVisibility(false);
+                return;
         }
 
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.point.x, robot->getSharedWorldInfo()->ball.point.y);
@@ -486,7 +487,7 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->sharedBall.confidence <= 0)
+        if (robot->getSharedWorldInfo()->sharedBall.confidence <= 0.0001)
         {
                 this->sharedBall->SetVisibility(false);
                 return;
@@ -499,7 +500,7 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateOpponents(vtkRenderer *renderer)
 {
-        bool alreadyIn = false;
+        bool found = false;
         int obstacleCount = 0;
 
         for (auto x : robot->getSharedWorldInfo()->obstacles)
@@ -514,24 +515,24 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                         if (abs(mb->GetPosition()[0] - pos.first) < 0.25
                                         && abs(mb->GetPosition()[1] - pos.second) < 0.25)
                         {
-                                alreadyIn = true;
+                                found = true;
+                                break;
                         }
                 }
 
-                if (!alreadyIn)
+                if (found)
+                        continue;
+
+                if (obstacleCount < this->obstacles.size())
                 {
-                        if (obstacleCount < this->obstacles.size())
-                        {
-                                this->obstacles.at(obstacleCount)->SetPosition(pos.first, pos.second, 0);
-                                this->obstacles.at(obstacleCount)->SetVisibility(true);
-                        }
-                        else
-                        {
-                                drawOpponent(renderer, pos.first, pos.second, 0);
-                        }
-                        obstacleCount++;
+                        this->obstacles.at(obstacleCount)->SetPosition(pos.first, pos.second, 0);
+                        this->obstacles.at(obstacleCount)->SetVisibility(true);
                 }
-                alreadyIn = false;
+                else
+                {
+                        drawOpponent(renderer, pos.first, pos.second, 0);
+                }
+                obstacleCount++;
         }
 
         if (obstacleCount < this->obstacles.size())

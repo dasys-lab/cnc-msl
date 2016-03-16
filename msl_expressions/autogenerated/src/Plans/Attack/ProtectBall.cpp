@@ -72,7 +72,7 @@ namespace alica
             ballVel2 = make_shared < geometry::CNPoint2D > (ballVel->x, ballVel->y);
         }
 
-        shared_ptr < geometry::CNPoint2D > aimPoint = nullptr;
+        shared_ptr < geometry::CNPoint2D > aimPoint;
         if (alloAimPoint != nullptr)
         {
             aimPoint = alloAimPoint->alloToEgo(*ownPos);
@@ -127,7 +127,7 @@ namespace alica
         mc.motion.translation = driveTo->length();
 
         send(mc);
-//		HHelper.UpdateLastTurnTime(); // TODO ??
+        msl::RobotMovement::updateLastTurnTime();
         /*PROTECTED REGION END*/
     }
     void ProtectBall::initialiseParameters()
@@ -145,10 +145,7 @@ namespace alica
 
             shared_ptr < geometry::CNPoint2D > egoGoalPoint = make_shared < geometry::CNPoint2D > (1000.0, 0);
 
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
-            additionalPoints->push_back(ballPos);
-            shared_ptr < geometry::CNPoint2D > aimPoint = pp->getEgoDirection(egoGoalPoint, eval, additionalPoints);
+            shared_ptr < geometry::CNPoint2D > aimPoint = pp->getEgoDirection(egoGoalPoint, eval);
 
             if (abs(aimPoint->angleTo()) > M_PI / 2.0)
             {
@@ -158,7 +155,7 @@ namespace alica
 
             if (aimPoint != nullptr)
             {
-                alloAimPoint = aimPoint->egoToAllo(*ownPos)->normalize() * 10000;
+                alloAimPoint = (aimPoint->normalize() * 10000)->egoToAllo(*ownPos);
             }
         }
         lastRotError = 0;

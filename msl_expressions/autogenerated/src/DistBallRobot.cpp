@@ -33,24 +33,25 @@ namespace msl
 		validAngle = false;
 
 		sb = wm->ball.getAlloBallPosition();
+                auto opps = wm->robots.opponents.getOpponentsAlloClustered();
 
-		if(sb!=nullptr) {
-			auto opps = wm->robots.opponents.getOpponentsAlloClustered();
-			closestOpp.reset();
-			double minDist=msl::MSLFootballField::FieldLength*2;
-			for(auto& opp : *opps) {
-				double d = sb->distanceTo(opp);
-				if(d<700 && d<minDist) {
-					minDist = d;
-					closestOpp = opp->clone();
-				}
-			}
+		if (sb == nullptr || opps == nullptr)
+		        return;
 
-			if(closestOpp!=nullptr) {
-				validAngle = true;
-				angleBallOpp = atan2(closestOpp->y-sb->y, closestOpp->x-sb->x);
-			}
-		}
+                closestOpp.reset();
+                double minDist=msl::MSLFootballField::FieldLength*2;
+                for(auto& opp : *opps) {
+                        double d = sb->distanceTo(opp);
+                        if(d<700 && d<minDist) {
+                                minDist = d;
+                                closestOpp = opp->clone();
+                        }
+                }
+
+                if(closestOpp!=nullptr) {
+                        validAngle = true;
+                        angleBallOpp = atan2(closestOpp->y-sb->y, closestOpp->x-sb->x);
+                }
 	}
 
 	alica::UtilityInterval DistBallRobot::eval(alica::IAssignment* ass)
