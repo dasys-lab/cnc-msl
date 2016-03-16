@@ -289,7 +289,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	showCorridorCheck = false;
 	showSitePoints = false;
 	showPathPlannerAll = false;
-	showDebugPoints = false; // TODO
+	showDebugPoints = false;
 
 	this->parent = parent;
 	rosNode = new ros::NodeHandle();
@@ -1021,6 +1021,8 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>(this);
         robotInfo->setId(id);
         robots.push_back(robotInfo);
+
+        robotInfo->getVisualization()->init(this->renderer, id);
 
         return robotInfo;
 }

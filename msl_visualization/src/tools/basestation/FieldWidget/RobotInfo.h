@@ -50,12 +50,18 @@ public:
 	void updateTimeStamp();
 
 	bool isTimeout();
+        bool isPathPlannerMsgTimeout();
+        bool isVoronoiNetMsgTimeout();
+        bool isCorridorCheckMsgTimeout();
         bool isDebugMsgTimeout();
         bool isPassMsgTimeout();
 
 private:
 	int id;
 	unsigned long timeStamp;
+        unsigned long pathPlannerMsgTimeStamp;
+        unsigned long voronoiNetMsgTimeStamp;
+        unsigned long corridorCheckMsgTimeStamp;
 	unsigned long debugMsgTimeStamp;
         unsigned long passMsgTimeStamp;
 	std::shared_ptr<RobotVisualization> visualization;
