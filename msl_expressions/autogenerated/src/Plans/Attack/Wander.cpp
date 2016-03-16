@@ -87,7 +87,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData.getOwnPositionVision();
-        if(ownPosition == nullptr) return;
+        if (ownPosition == nullptr)
+            return;
         msl::Situation situation = wm->game.getSituation();
         if (!firstTargetSet)
         {
