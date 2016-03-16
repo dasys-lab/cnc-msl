@@ -21,7 +21,7 @@ namespace msl
 Prediction::Prediction()
 {
   auto sc = supplementary::SystemConfig::getInstance();
-  this->maxRotationAccel = (*sc)["Motion"]->get<double>("Motion.MotionControl.MaxRotation", NULL);
+  this->maxRotationAccel = (*sc)["Motion"]->tryGet<double>(15.0, "Motion.MotionControl.MaxRotation", NULL);
   this->magicNumber = 1000000000.0;
   debugAngle.open ("/tmp/angle.txt");
   debugAnglePosition.open ("/tmp/anglePos.txt");
