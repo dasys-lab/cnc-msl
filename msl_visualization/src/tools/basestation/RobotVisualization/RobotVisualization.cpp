@@ -235,23 +235,17 @@ void RobotVisualization::remove(vtkRenderer *renderer)
         }
         pathLines.clear();
 
-        for (vtkSmartPointer<vtkActor> actor : corridorLines)
-        {
-                if (actor != nullptr)
-                {
-                        renderer->RemoveActor(actor);
-                }
-       }
-       corridorLines.clear();
+        // path planner corridor check
+        this->corridorLine1->actor->SetVisibility(false);
+        this->corridorLine2->actor->SetVisibility(false);
+        this->corridorLine3->actor->SetVisibility(false);
+        this->corridorLine4->actor->SetVisibility(false);
 
-       for (vtkSmartPointer<vtkActor> actor : this->netLines)
-       {
-                if (actor != nullptr)
-                {
-                        renderer->RemoveActor(actor);
-                }
+        // voronoi net
+        for (int i=0; i < this->netLines.size(); ++i)
+        {
+                this->netLines.at(i)->actor->SetVisibility(false);
         }
-        netLines.clear();
 
         for (vtkSmartPointer<vtkActor> actor : sitePoints)
         {
@@ -279,6 +273,8 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 
 void RobotVisualization::init(vtkRenderer *renderer, int id)
 {
+        auto color = Color::getColor(this->robot->getId());
+
         this->setId(id);
         this->setName(std::to_string(id));
         this->setBall(nullptr);
@@ -412,6 +408,22 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         renderer->AddActor(actor);
         this->sharedBall->SetVisibility(false);
 
+        // corridor
+        this->corridorLine1 = FieldWidget3D::createDashedLine(0, 0, 0.01, 0, 0, 0.01, 3, this->getDashedPattern(), color);
+        this->corridorLine2 = FieldWidget3D::createDashedLine(0, 0, 0.01, 0, 0, 0.01, 3, this->getDashedPattern(), color);
+        this->corridorLine3 = FieldWidget3D::createDashedLine(0, 0, 0.01, 0, 0, 0.01, 3, this->getDashedPattern(), color);
+        this->corridorLine4 = FieldWidget3D::createDashedLine(0, 0, 0.01, 0, 0, 0.01, 3, this->getDashedPattern(), color);
+
+        this->corridorLine1->actor->SetVisibility(false);
+        this->corridorLine2->actor->SetVisibility(false);
+        this->corridorLine3->actor->SetVisibility(false);
+        this->corridorLine4->actor->SetVisibility(false);
+
+        renderer->AddActor(this->corridorLine1->actor);
+        renderer->AddActor(this->corridorLine2->actor);
+        renderer->AddActor(this->corridorLine3->actor);
+        renderer->AddActor(this->corridorLine4->actor);
+
         // pass msg
         vtkSmartPointer<vtkLineSource> line = vtkSmartPointer<vtkLineSource>::New();
         vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -453,10 +465,11 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
 
 void RobotVisualization::updateBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->ball.confidence <= 0)
+        if (robot->getSharedWorldInfo()->ball.confidence <= 0.0001)
         {
                 this->ball->SetVisibility(false);
                 this->ballVelocityActor->SetVisibility(false);
+                return;
         }
 
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.point.x, robot->getSharedWorldInfo()->ball.point.y);
@@ -474,7 +487,7 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->sharedBall.confidence <= 0)
+        if (robot->getSharedWorldInfo()->sharedBall.confidence <= 0.0001)
         {
                 this->sharedBall->SetVisibility(false);
                 return;
@@ -487,7 +500,7 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateOpponents(vtkRenderer *renderer)
 {
-        bool alreadyIn = false;
+        bool found = false;
         int obstacleCount = 0;
 
         for (auto x : robot->getSharedWorldInfo()->obstacles)
@@ -502,24 +515,24 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                         if (abs(mb->GetPosition()[0] - pos.first) < 0.25
                                         && abs(mb->GetPosition()[1] - pos.second) < 0.25)
                         {
-                                alreadyIn = true;
+                                found = true;
+                                break;
                         }
                 }
 
-                if (!alreadyIn)
+                if (found)
+                        continue;
+
+                if (obstacleCount < this->obstacles.size())
                 {
-                        if (obstacleCount < this->obstacles.size())
-                        {
-                                this->obstacles.at(obstacleCount)->SetPosition(pos.first, pos.second, 0);
-                                this->obstacles.at(obstacleCount)->SetVisibility(true);
-                        }
-                        else
-                        {
-                                drawOpponent(renderer, pos.first, pos.second, 0);
-                        }
-                        obstacleCount++;
+                        this->obstacles.at(obstacleCount)->SetPosition(pos.first, pos.second, 0);
+                        this->obstacles.at(obstacleCount)->SetVisibility(true);
                 }
-                alreadyIn = false;
+                else
+                {
+                        drawOpponent(renderer, pos.first, pos.second, 0);
+                }
+                obstacleCount++;
         }
 
         if (obstacleCount < this->obstacles.size())
@@ -607,18 +620,14 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
                         return;
         }
 
-        // Remove old stuff
-        for (vtkSmartPointer<vtkActor> actor : corridorLines)
-        {
-                if (actor != nullptr)
-                {
-                        renderer->RemoveActor(actor);
-                }
-        }
-        corridorLines.clear();
-
         if (false == show || timeout)
+        {
+          this->corridorLine1->actor->SetVisibility(false);
+          this->corridorLine2->actor->SetVisibility(false);
+          this->corridorLine3->actor->SetVisibility(false);
+          this->corridorLine4->actor->SetVisibility(false);
           return;
+        }
 
         pair<double, double> point0 = this->field->transformToGuiCoords(cc->corridorPoints.at(0).x, cc->corridorPoints.at(0).y);
         pair<double, double> point1 = this->field->transformToGuiCoords(cc->corridorPoints.at(1).x, cc->corridorPoints.at(1).y);
@@ -626,41 +635,26 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
         pair<double, double> point3 = this->field->transformToGuiCoords(cc->corridorPoints.at(3).x, cc->corridorPoints.at(3).y);
 
         // Draw new
-        vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDashedLine(point0.first, point0.second, 0.01,
-                                                                          point1.first, point1.second, 0.01,
-                                                                          3, this->getDashedPattern(),
-                                                                          Color::getColor(this->robot->getId()));
-        vtkSmartPointer<vtkActor> actor2 = FieldWidget3D::createDashedLine(point1.first, point1.second, 0.01,
-                                                                           point2.first, point2.second, 0.01,
-                                                                           3, this->getDashedPattern(),
-                                                                           Color::getColor(this->robot->getId()));
-        vtkSmartPointer<vtkActor> actor3 = FieldWidget3D::createDashedLine(point2.first, point2.second, 0.01,
-                                                                           point3.first, point3.second, 0.01,
-                                                                           3, this->getDashedPattern(),
-                                                                           Color::getColor(this->robot->getId()));
-        vtkSmartPointer<vtkActor> actor4 = FieldWidget3D::createDashedLine(point3.first, point3.second, 0.01,
-                                                                           point0.first, point0.second, 0.01,
-                                                                           3, this->getDashedPattern(),
-                                                                           Color::getColor(this->robot->getId()));
+        this->corridorLine1->source->SetPoint1(point0.first, point0.second, 0.01);
+        this->corridorLine1->source->SetPoint2(point1.first, point1.second, 0.01);
 
-        corridorLines.push_back(actor);
-        corridorLines.push_back(actor2);
-        corridorLines.push_back(actor3);
-        corridorLines.push_back(actor4);
-        renderer->AddActor(actor);
-        renderer->AddActor(actor2);
-        renderer->AddActor(actor3);
-        renderer->AddActor(actor4);
+        this->corridorLine2->source->SetPoint1(point1.first, point1.second, 0.01);
+        this->corridorLine2->source->SetPoint2(point2.first, point2.second, 0.01);
+
+        this->corridorLine3->source->SetPoint1(point2.first, point2.second, 0.01);
+        this->corridorLine3->source->SetPoint2(point3.first, point3.second, 0.01);
+
+        this->corridorLine4->source->SetPoint1(point3.first, point3.second, 0.01);
+        this->corridorLine4->source->SetPoint2(point0.first, point0.second, 0.01);
+
+        this->corridorLine1->actor->SetVisibility(true);
+        this->corridorLine2->actor->SetVisibility(true);
+        this->corridorLine3->actor->SetVisibility(true);
+        this->corridorLine4->actor->SetVisibility(true);
 }
 
 void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints)
 {
-
-        if(false == showVoronoi && false == showSitePoints)
-        {
-                return;
-        }
-
         // Check last message
         boost::shared_ptr<msl_msgs::VoronoiNetInfo> vni;
         bool timeout = false;
@@ -685,14 +679,10 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
         if (false == showVoronoi || timeout)
         {
-                for (vtkSmartPointer<vtkActor> actor : netLines)
+                for (int i=0; i < this->netLines.size(); ++i)
                 {
-                        if (actor != nullptr)
-                        {
-                                renderer->RemoveActor(actor);
-                        }
+                        this->netLines.at(i)->actor->SetVisibility(false);
                 }
-                netLines.clear();
         }
 
         if ((false == showVoronoi && false == showSitePoints) || timeout)
@@ -700,6 +690,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
         int used = 0;
         vtkSmartPointer<vtkActor> actor;
+        auto color = Color::getColor(this->robot->getId());
 
         // Draw voronoi net
         if(showVoronoi)
@@ -711,15 +702,19 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
                         if (used >= this->netLines.size())
                         {
-                                actor = FieldWidget3D::createDashedLine(point1.first, point1.second, 0.01,
-                                                                        point2.first, point2.second, 0.01,
-                                                                        3, this->getDashedPattern(), Color::getColor(this->robot->getId()));
-                                this->netLines.push_back(actor);
-                                renderer->AddActor(actor);
+                                auto line = FieldWidget3D::createDashedLine(point1.first, point1.second, 0.01,
+                                                                            point2.first, point2.second, 0.01,
+                                                                            3, this->getDashedPattern(), color);
+
+                                renderer->AddActor(line->actor);
+                                this->netLines.push_back(line);
                         }
                         else
                         {
-                                FieldWidget3D::updateLine(this->netLines.at(used), point1.first, point1.second, 0.01, point2.first, point2.second, 0.01);
+                                auto line = this->netLines.at(used);
+                                line->actor->SetVisibility(true);
+                                line->source->SetPoint1(point1.first, point1.second, 0.01);
+                                line->source->SetPoint2(point2.first, point2.second, 0.01);
                         }
                         ++used;
                 }
@@ -728,14 +723,8 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
                 {
                         for (int i=used; i < this->netLines.size(); ++i)
                         {
-                                actor = this->netLines.at(i);
-                                if (actor != nullptr)
-                                {
-                                  renderer->RemoveActor(actor);
-                                }
+                                this->netLines.at(i)->actor->SetVisibility(false);
                         }
-
-                        this->netLines.erase(this->netLines.begin() + used, this->netLines.end());
                 }
         }
 

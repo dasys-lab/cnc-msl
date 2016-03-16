@@ -30,6 +30,7 @@
   <states id="1434050502701" name="AttackAgain" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleToAttackPointConservative.beh#1458132905432</plans>
     <inTransitions>#1434050628706</inTransitions>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>

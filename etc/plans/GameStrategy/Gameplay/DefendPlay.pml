@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1457173681216" name="DefendPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GameStrategy/Gameplay" priority="0.0" minCardinality="1" maxCardinality="4">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1457173681216" name="DefendPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="1.0E-7" destinationPath="Plans/GameStrategy/Gameplay" priority="0.0" minCardinality="1" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1457173948942" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1457338144387" name="MISSING_NAME" comment="" scope="1457173768386">
       <sorts>x</sorts>

@@ -49,8 +49,9 @@ namespace alica
         if (!blocked)
         {
             auto egoBallVelocity = wm->ball.getEgoBallVelocity();
-            if(egoBallVelocity == nullptr) {
-            	egoBallVelocity = make_shared<geometry::CNVelocity2D>();
+            if (egoBallVelocity == nullptr)
+            {
+                egoBallVelocity = make_shared<geometry::CNVelocity2D>();
             }
             auto vector = egoBallVelocity + egoBallPos;
             double vectorLength = vector->length();

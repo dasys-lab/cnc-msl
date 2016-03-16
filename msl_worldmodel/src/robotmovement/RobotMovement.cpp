@@ -60,6 +60,7 @@ namespace msl
     double RobotMovement::rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotationAcceleration", NULL);
     double RobotMovement::maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotation", NULL);
     double RobotMovement::angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "angleDeadBand", NULL)/180*M_PI;
+    double RobotMovement::maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxVelocity", NULL);
 
 	RobotMovement::~RobotMovement()
 	{
@@ -109,10 +110,7 @@ namespace msl
 			randomTarget = make_shared<geometry::CNPoint2D>(cos(ang)*5000,sin(ang)*5000);
 		}
 
-		  shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-							vector<shared_ptr<geometry::CNPoint2D>>>();
-		  additionalPoints->push_back(randomTarget);
-		auto dest = pp->getEgoDirection(randomTarget,eval,  additionalPoints);
+		auto dest = pp->getEgoDirection(randomTarget,eval);
 
 		if (dest == nullptr)
 		{
@@ -127,31 +125,46 @@ namespace msl
 		return bm;
 	}
 
+	void RobotMovement::reset() {
+		iTrans = 0;
+		lastRotErr = 0;
+		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
+		if(wm->rawSensorData.getLastMotionCommand() != nullptr) {
+			curRot = wm->rawSensorData.getLastMotionCommand()->motion.rotation;
+			curTrans = wm->rawSensorData.getLastMotionCommand()->motion.translation;
+
+		} else {
+			curRot = 0;
+			curTrans = 0;
+		}
+	}
+
 	shared_ptr<msl_actuator_msgs::MotionControl> RobotMovement::dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D>& ppp) {
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		ppp = make_shared<geometry::CNPoint2D>();
 
 		auto ballPos = wm->ball.getEgoBallPosition();
 
 		if(ballPos == nullptr) return nullptr;
 		if(ballPos->length() > 1000) return nullptr;
-		//Console.WriteLine("Dribble Ego Target: {0}",egoTarget);
-		//Console.WriteLine("Dribble Allo Target: {0}",WorldHelper.Ego2Allo(egoTarget,wm.OwnPositionCorrected));
-		double pathPlanningMaxTrans = (*(supplementary::SystemConfig::getInstance()))["Dribble"]->get<double>("DribbleToAttackPoint.maxVel", NULL);;
+		cout << "RobotMovement: dribble ego target: " << egoTarget->toString() << endl;
+		cout << "RobotMovement: dribble allo target: " << egoTarget->egoToAllo(*wm->rawSensorData.getOwnPositionVision())->toString() << endl;
+		double pathPlanningMaxTrans = maxVel;
+		double frontAngle = wm->kicker.kickerAngle;
 
-		//Console.WriteLine("B4 Planning {0}",pathPlanningMaxTrans);
-
+//		cout << "RobotMovement: pathPlanningMaxTrans " << pathPlanningMaxTrans << endl;
 		shared_ptr<msl::PathEvaluator> eval  = make_shared<msl::PathEvaluator>();
 		msl::PathProxy* pp = msl::PathProxy::getInstance();
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-		additionalPoints->push_back(ballPos);
 
-		auto target = pp->getEgoDirection(egoTarget,eval, additionalPoints);
+		auto target = pp->getEgoDirection(egoTarget,eval);
 
 		ppp = target;
 		if (target == nullptr) return nullptr;
 
-		double angleErr = geometry::deltaAngle(ballPos->angleTo(),target->angleTo()); //the current error
+
+		double angleErr = geometry::deltaAngle(frontAngle,target->angleTo()); //the current error
+
+
+		cout << "RobotMovement: angleErr " << angleErr << endl;
 		/*if(Math.Abs(angleErr)>0.8) {
 			double minAngle=300;
 			double ang=0;
@@ -176,18 +189,20 @@ namespace msl
 		}*/
 
 		double rotPointDist = max(200.0,min(350.0,ballPos->length())); //the point around which we rotate
-		double distToOpp;
+		double distToOpp = NAN;
 		auto opp = wm->robots.opponents.getClosestToBall(distToOpp);
 		if (distToOpp < 800) {
 			rotPointDist = 50;
 		}
-		//calc rotation:
+
+		cout << "RobotMovement: rotPointDist " << rotPointDist << endl;
 
 		msl_actuator_msgs::MotionControl bm;
 
-
-
 		bm.motion.rotation = pRot*angleErr + dRot*(angleErr-lastRotErr); //Rotation PD
+
+		cout << "RobotMovement: rotation " << bm.motion.rotation << endl;
+
 		if (bm.motion.rotation > curRot) { //limit rotation acceleration
 			bm.motion.rotation = min(bm.motion.rotation,curRot+rotAccStep);
 		} else {
@@ -212,11 +227,11 @@ namespace msl
 		maxCurTrans -= pTrans*transErr + transControlIntegral;
 		maxCurTrans = max(0.0,maxCurTrans);
 
-//Console.WriteLine("PathVel: {0} MaxV: {1}",pathPlanningMaxTrans,maxCurTrans);
+
+		cout << "RobotMovement: pathvel " << pathPlanningMaxTrans << " maxVel " << maxCurTrans << endl;
 		//maxCurTrans *= Math.Min(1,(Math.PI/180*30)/Math.Abs(angleErr*angleErr));
 
 		double transTowards = sqrt(maxCurTrans*maxCurTrans - transOrt*transOrt);
-
 		if (std::isnan(transTowards) || transTowards < 50) transTowards = 50;
 
 
@@ -226,22 +241,25 @@ namespace msl
 		else transTowards = max(transTowards,curTrans-transDecStep);
 		curTrans = transTowards;
 
-		//works only for kicker1!
-		//bm.Motion.Angle = Math.Atan2(transOrt,-transTowards);//+frontAngle;
 
 		/**/
 		auto dir = ballPos->normalize();
-		shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, dir->x);
+		shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
 		dir = dir*transTowards + ort*transOrt;
 		bm.motion.angle = dir->angleTo();
 		/**/
 		bm.motion.translation = sqrt(transTowards*transTowards+transOrt*transOrt);
 
+//		cout << "RobotMovement: " << bm.motion.translation << " " << bm.motion << endl;
+
 		return make_shared<msl_actuator_msgs::MotionControl>(bm);
 
 
 	}
-	double RobotMovement:: lastTurnTime = 0;
+	double RobotMovement:: lastTurnTime = -1;
+	void RobotMovement::updateLastTurnTime() {
+		lastTurnTime = supplementary::DateTime::getUtcNow().getTicks();
+	}
 	shared_ptr<geometry::CNPoint2D> RobotMovement::dribbleNeedToTurn(shared_ptr<geometry::CNPosition> ownPos, shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNPoint2D> pathPlanningPoint) {
 		if (lastTurnTime > 0 && (supplementary::DateTime::getUtcNow().getTicks() - lastTurnTime) < 1000*10000) return nullptr;
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();

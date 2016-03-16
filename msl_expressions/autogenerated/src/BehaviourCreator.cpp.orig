@@ -67,6 +67,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardActuate.h"
 
+#include  "Plans/Attack/DribbleToAttackPointConservative.h"
+
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
@@ -327,6 +329,11 @@ namespace alica
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
+                break;
+
+            case 1458132905432:
+
+                return make_shared<DribbleToAttackPointConservative>();
                 break;
 
             case 1458034300406:
