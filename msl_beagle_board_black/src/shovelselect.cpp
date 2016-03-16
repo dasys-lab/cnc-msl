@@ -13,7 +13,7 @@ using namespace BlackLib;
 	ShovelSelect::ShovelSelect(pwmName pwm_P) {
 		pwm = new BlackPWM(pwm_P);
 
-		pwm->setPeriodTime(period, microsecond);
+		pwm->setPeriodTime(period, nanosecond);
 		pwm->setSpaceRatioTime(0, microsecond);
 		pwm->setRunState(stop);
 
