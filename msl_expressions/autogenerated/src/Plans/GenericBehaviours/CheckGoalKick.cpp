@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1449076008755) ENABLED START*/ //Add additional includes here
 #include <GeometryCalculator.h>
 #include <math.h>
+#include "engine/RunningPlan.h"
+#include "engine/AlicaEngine.h"
 
 #include <Rules.h>
 /*PROTECTED REGION END*/
@@ -25,6 +27,12 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
+
+    	//if you have the ball after 1 second after shooting fail
+
+    	if(startKickTime != -1 && (wm->getTime() - startKickTime) >= 1000000000 && wm->ball.haveBall()) {
+    		this->failure = true;
+    	}
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
         egoBallPos = wm->ball.getEgoBallPosition();
@@ -87,6 +95,14 @@ namespace alica
         double kickPowerGoal = this->getKickPower(hitPoint);
         cout << "dist ball to hit point: " << cout_distBall2HitPoint << endl;
         cout << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs << endl;
+
+        if (kickPowerObs < 0)
+        {
+            cout << "kick power: " << kickPowerGoal << endl;
+        	kick(kickPowerGoal);
+        	return;
+        }
+
         if (kickPowerGoal < kickPowerObs)
         {
             cout << "goal power < obs power" << endl;
@@ -104,6 +120,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
         cout << "Start run CheckGoalKick <=============================================================" << endl;
+
+        startKickTime = -1;
         field = msl::MSLFootballField::getInstance();
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
@@ -243,7 +261,9 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.power = kickpower;
-
+        if(startKickTime == -1) {
+        	startKickTime = wm->getTime();
+        }
         send(kc);
     }
 

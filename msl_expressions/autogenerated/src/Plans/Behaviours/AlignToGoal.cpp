@@ -74,18 +74,20 @@ namespace alica
         if (aimPoint == nullptr)
         {
             this->failure = true;
+            cout << "AlignToGoal: no aimPoint" << endl;
             return;
         }
 
         double aimAngle = aimPoint->angleTo();
-        double ballAngle = M_PI;
+        double ballAngle = wm->kicker.kickerAngle;
 
-        double deltaAngle = geometry::GeometryCalculator::deltaAngle(ballAngle, aimAngle);
+        double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballAngle, 200, dstscan);
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
+                cout << "AlignToGoal: failure!" << endl;
                 this->failure = true;
             }
         }

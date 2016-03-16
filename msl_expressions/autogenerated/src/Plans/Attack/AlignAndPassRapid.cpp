@@ -86,8 +86,8 @@ namespace alica
 
             if (teammates == nullptr)
             {
-              cout << "S4PP: No Teammate for entry point " << ep->toString() << endl;
-              return;
+                cout << "S4PP: No Teammate for entry point " << ep->toString() << endl;
+                return;
             }
 
             for (int mateId : *teammates)
