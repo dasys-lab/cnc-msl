@@ -10,16 +10,13 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
-#include <string>
 #include <vtkLineSource.h>
-#include <vtkTextActor.h>
-#include <vtkRegularPolygonSource.h>
-#include <map>
+#include <string>
 #include <memory>
-#include <list>
 
 class RobotInfo;
 class FieldWidget3D;
+class Line;
 
 class RobotVisualization
 {
@@ -48,7 +45,7 @@ public:
 	void setSharedBall(vtkSmartPointer<vtkActor> sharedBall);
 
 	void remove(vtkRenderer *renderer);
-        void init(vtkRenderer *renderer);
+        void init(vtkRenderer *renderer, int id);
 	void updatePosition(vtkRenderer *renderer);
         void updateBall(vtkRenderer *renderer);
         void updateSharedBall(vtkRenderer *renderer);
@@ -61,8 +58,6 @@ public:
         void updatePassMsg(vtkRenderer *renderer);
 
 private:
-        void move(double x, double y, double z);
-        void turn(double angle);
         void drawOpponent(vtkRenderer *renderer, double x, double y, double z);
         std::array<double,3>& getColor();
         int getDashedPattern();
@@ -78,17 +73,20 @@ private:
 	vtkSmartPointer<vtkActor> top = nullptr;
 	vtkSmartPointer<vtkActor> bottom = nullptr;
 	vtkSmartPointer<vtkActor> nameActor = nullptr;
-        vtkActor* ball = nullptr;
+	vtkSmartPointer<vtkActor> ball = nullptr;
         vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
 	vtkSmartPointer<vtkActor> ballVelocityActor = nullptr;
 	vtkSmartPointer<vtkActor> sharedBall = nullptr;
         vtkSmartPointer<vtkLineSource> pass = nullptr;
         vtkSmartPointer<vtkActor> passActor = nullptr;
         vtkSmartPointer<vtkActor> passPointActor = nullptr;
-	std::list<std::shared_ptr<RobotVisualization>> obstacles;
+	std::vector<vtkSmartPointer<vtkActor>> obstacles;
         std::vector<vtkSmartPointer<vtkActor>> pathLines;
-        std::vector<vtkSmartPointer<vtkActor>> netLines;
-        std::vector<vtkSmartPointer<vtkActor>> corridorLines;
+        std::vector<std::shared_ptr<Line>> netLines;
+        std::shared_ptr<Line> corridorLine1;
+        std::shared_ptr<Line> corridorLine2;
+        std::shared_ptr<Line> corridorLine3;
+        std::shared_ptr<Line> corridorLine4;
         std::vector<vtkSmartPointer<vtkActor>> sitePoints;
         std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 };
