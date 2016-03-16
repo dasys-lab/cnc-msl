@@ -41,7 +41,7 @@ namespace alica
 	{
 		mc.senderID = ownID;
 		mc.timestamp = wm->getTime();
-		motionControlPub.publish(mc);
+		//motionControlPub.publish(mc);
 		wm->rawSensorData.processMotionControlMessage(mc);
 	}
 
