@@ -100,6 +100,11 @@ namespace alica
 	{
 		ballPosBuffer[ballIndex] = alloBall;
 		auto alloTrgt = calcGoalImpactY(TARGET_BUFFER_SIZE);
+		if (alloTrgt != nullptr && alloBall != nullptr)
+		{
+			cout << "calcY  : " << alloTrgt->y << endl;
+			cout << "actualY: " << alloBall->y << endl;
+		}
 		auto prevTarget = targetPosBuffer[modRingBuffer(targetIndex - 1, TARGET_BUFFER_SIZE)];
 
 		if (alloTrgt == nullptr)
