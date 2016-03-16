@@ -104,7 +104,7 @@ namespace alica
         		oldBallPos = alloBall;
         		oldAlloTarget = (alloBall + ((alloBall - alloTarget)->normalize() * -2300));
         		if(oldAlloTarget->x > -800 && oldAlloTarget->x < 1000) {
-        			auto shiftPt = make_shared<geometry::CNPoint2D>(1000.0, 0.0);
+        			auto shiftPt = make_shared<geometry::CNPoint2D>(-1000.0, 0.0);
         			oldAlloTarget = (alloBall + ((alloBall - alloTarget + shiftPt)->normalize() * -2300));
         		}
         	}
