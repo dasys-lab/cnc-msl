@@ -654,12 +654,6 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
 
 void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints)
 {
-
-        if(false == showVoronoi && false == showSitePoints)
-        {
-                return;
-        }
-
         // Check last message
         boost::shared_ptr<msl_msgs::VoronoiNetInfo> vni;
         bool timeout = false;
