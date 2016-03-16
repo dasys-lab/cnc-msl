@@ -71,6 +71,8 @@ namespace msl
 		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);
 		static shared_ptr<geometry::CNPoint2D> dribbleNeedToTurn(shared_ptr<geometry::CNPosition> own, shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNPoint2D> pathPlanningPoint);
 		static msl_actuator_msgs::MotionControl nearGoalArea(msl_actuator_msgs::MotionControl bm);
+		static void reset();
+		static void updateLastTurnTime();
 
 		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();
@@ -79,7 +81,7 @@ namespace msl
 		static double fastTranslation;
 		static double fastRotation;
 		static double interceptCarfullyRotateP;
-
+		static double maxVel;
 
 	private:
 		static double lastRotError;
