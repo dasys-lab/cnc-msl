@@ -32,7 +32,7 @@ namespace msl
 		virtual ~RobotMovement();
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints, bool noPathPlaner = false);
 											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,

@@ -155,11 +155,7 @@ namespace msl
 				obsInfo.x = msg->pose[i].position.x * 1000.0;
 				obsInfo.y = msg->pose[i].position.y * 1000.0;
 
-				//only if obstacle is closer than 6m
-				if (sqrt(obsInfo.x * obsInfo.x + obsInfo.y * obsInfo.y) < 6000)
-				{
-					wmsim->obstacles.push_back(obsInfo);
-				}
+				wmsim->obstacles.push_back(obsInfo);
 			}
 
 			if (msg->name[i] == "football")
@@ -199,13 +195,24 @@ namespace msl
 			wmsim->distanceScan.sectors.push_back(20000);
 		}
 
-		for (auto& obs : wmsim->obstacles)
+
+		for (int i = 0; i < wmsim->obstacles.size(); ++i)
 		{
+		        auto& obs = wmsim->obstacles.at(i);
+
 			double x = obs.x - wmsim->odometry.position.x;
 			double y = obs.y - wmsim->odometry.position.y;
+                        double dist = sqrt(x * x + y * y);
+
+	                //only if obstacle is closer than 6m
+			if (dist > 6000)
+                        {
+                                wmsim->obstacles.erase(wmsim->obstacles.begin() + i);
+                                i--;
+                                continue;
+                        }
 
 			double angle = atan2(y, x) - wmsim->odometry.position.angle;
-			double dist = sqrt(x * x + y * y);
 
 			int sector = (int)(angle / (2 * M_PI / 60.0)) % 60;
 			if (sector < 0)
@@ -214,7 +221,6 @@ namespace msl
 
 			obs.x = cos(angle) * dist;
 			obs.y = sin(angle) * dist;
-
 		}
 
 		onWorldModelData(wmsim);

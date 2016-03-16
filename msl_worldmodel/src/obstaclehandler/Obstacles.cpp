@@ -341,11 +341,15 @@ namespace msl
 		int velY = 0;
 		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots.sharedWolrdModelData)
 		{
+		        auto information = curRobot.second->getLast();
+		        if (information == nullptr)
+		                continue;
+
 			/* Ignore every robot, which:
 			 * - is unlocalised
 			 * - messages are old (25 ms)
 			 * - I am (the obstacles from the WM are newer)*/
-			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = curRobot.second->getLast()->getInformation();
+			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = information->getInformation();
 			shared_ptr<geometry::CNPosition> curPlayerPosition = make_shared<geometry::CNPosition>(currentRobot->odom.position.x, currentRobot->odom.position.y, currentRobot->odom.position.angle);
 			if(currentRobot == nullptr || currentRobot->odom.certainty < 0.8
 			|| currentRobot->senderID == wm->getOwnId()
