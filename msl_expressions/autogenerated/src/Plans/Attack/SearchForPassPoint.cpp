@@ -117,8 +117,8 @@ namespace alica
                         teamMateId);
                 shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
 
-                if(vertices == nullptr || teamMatePos == nullptr)
-                        continue;
+                if (vertices == nullptr || teamMatePos == nullptr)
+                    continue;
 
                 for (int i = 0; i < vertices->size(); i++)
                 {
