@@ -14,18 +14,12 @@
   </extensions>
   <extensions>
     <key href="DuelTestMaster.pml#1454506213756"/>
-    <value xPos="329" yPos="206" width="65" height="67" collapsed="false"/>
+    <value xPos="279" yPos="195" width="90" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DuelTestMaster.pml#1454506223310"/>
     <value>
-      <bendpoints xPos="380" yPos="243"/>
-    </value>
-  </extensions>
-  <extensions>
-    <key href="DuelTestMaster.pml#1454506234662"/>
-    <value>
-      <bendpoints xPos="364" yPos="327"/>
+      <bendpoints xPos="347" yPos="252"/>
     </value>
   </extensions>
   <extensions>
@@ -34,6 +28,26 @@
   </extensions>
   <extensions>
     <key href="../Duel.pml#1450178655416"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125263117"/>
+    <value xPos="471" yPos="208" width="65" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125292658"/>
+    <value>
+      <bendpoints xPos="534" yPos="247"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458125318498"/>
+    <value>
+      <bendpoints xPos="457" yPos="375"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DuelTestMaster.pml#1458135841024"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
