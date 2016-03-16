@@ -42,7 +42,7 @@ namespace alica
         shared_ptr<geometry::CNPosition> me;
         void moveInsideGoal(shared_ptr<geometry::CNPoint2D> alloBall, shared_ptr<geometry::CNPosition> me);
         string fitTargetY(double targetY);
-        void setMC(string targetPos);
+        void sendMC(string targetPos);
         int modRingBuffer(int k, int bufferSize);
         shared_ptr<geometry::CNPoint2D> calcGoalImpactY(int nPoints);
         shared_ptr<geometry::CNPoint2D> alloGoalLeft;
