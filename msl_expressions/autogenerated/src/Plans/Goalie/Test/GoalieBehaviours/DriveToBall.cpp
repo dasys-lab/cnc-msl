@@ -24,13 +24,18 @@ namespace alica
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
         cout << "### DriveToBall ###" << endl;
         me = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoTarget = wm->ball.getEgoBallPosition();
-        goalMid = MSLFootballField::posOwnGoalMid();
-        mc = RobotMovement::moveToPointFast(egoTarget, egoTarget, 100, 0);
+        alloFieldCenter = MSLFootballField::posCenterMarker();
+        shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
 
-        if (egoTarget == nullptr)
+        int goalieHalfSize;
+        if (SIMULATING > 0)
+            goalieHalfSize = 410; // goalie size in simulator
+        else if (SIMULATING < 0)
+            goalieHalfSize = 315; // 630mm/2 + 140mm = 445mm
+
+        if (alloBall == nullptr)
         {
-            cout << "egoTarget null!" << endl;
+            cout << "alloTarget null!" << endl;
             return;
         }
         else if (me == nullptr)
@@ -38,16 +43,20 @@ namespace alica
             cout << "me null!" << endl;
             return;
         }
-        double distance = me->distanceTo(egoTarget);
-        if (distance < 100)
-        {
-            this->success = true;
-        }
-        else
-        {
-            send (mc);
-        }
-        cout << "### DriveToBall ###" << endl;
+
+        alloTarget = alloBall;
+        shared_ptr < geometry::CNPoint2D > alloAlignPoint = MSLFootballField::posCenterMarker();
+
+        //egoAlignPoint = make_shared<geometry::CNPoint2D>(-me->x, me->y);
+        cout << "ownPosition : " << me->toString();
+        cout << "alignPoint  : " << alloAlignPoint->egoToAllo(*me)->toString();
+        cout << "targetPoint : " << alloTarget->toString();
+        cout << "ballPosition: " << alloBall->toString();
+
+        mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me), alloAlignPoint->alloToEgo(*me), 100);
+        send (mc);
+
+        cout << "### DriveToBall ###\n" << endl;
         /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()

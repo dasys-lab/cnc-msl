@@ -21,7 +21,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863424939) ENABLED START*/ //Add additional protected methods here
-        static const int SIMULATING = -1; // simulating 1, real life -1
+        static const int SIMULATING = 1; // simulating 1, real life -1
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863424939) ENABLED START*/ //Add additional private methods here
