@@ -172,4 +172,8 @@
     <key href="GameStrategy/Gameplay/GamePlay.pml#1457173546734"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="GenericStandards/GenericOppStandards.pml#1432132075122"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
