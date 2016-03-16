@@ -5,6 +5,8 @@
 /*PROTECTED REGION ID(inc1447863466691) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
+#include <gsl/gsl_math.h>
+#include <string>
 
 using namespace msl;
 /*PROTECTED REGION END*/
@@ -21,21 +23,33 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
-        static const int SIMULATING = -1; // simulating 1, real life -1
-        static const int RING_BUFFER_SIZE = 90;
-        static const int nPoints = 10;
-        int currentIndex = 0;
+        static const int SIMULATING = 1; // simulating 1, real life -1
+        static const int BALL_BUFFER_SIZE = 10;
+        static const int TARGET_BUFFER_SIZE = 3;
+        static const int GOALIE_SIZE = 900;
+        static const string LEFT;
+        static const string MID;
+        static const string RIGHT;
+        shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLFootballField::posCenterMarker();
+        shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
+        bool writeLog = false;
+        int ballIndex = 0;
+        int targetIndex = 0;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
         msl_actuator_msgs::MotionControl mc;
-        int modRingBuffer(int k);
-        bool calcGoalImpactY(shared_ptr<geometry::CNPoint2D> &alloTarget, int nPoints, int puffer);
-        shared_ptr<geometry::CNPoint2D> oldAlloAlignPoint;
-        shared_ptr<geometry::CNPoint2D> oldAlloTarget;
-        shared_ptr<geometry::CNPoint2D> ballPosBuffer[RING_BUFFER_SIZE]; // frequency is 30 Hz, so 2 full iterations
+        shared_ptr<geometry::CNPosition> me;
+        void moveInsideGoal(shared_ptr<geometry::CNPoint2D> alloBall, shared_ptr<geometry::CNPosition> me);
+        string fitTargetY(double targetY);
+        void setMC(string targetPos);
+        int modRingBuffer(int k, int bufferSize);
+        shared_ptr<geometry::CNPoint2D> calcGoalImpactY(int nPoints);
+        shared_ptr<geometry::CNPoint2D> alloGoalLeft;
+        shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
-        shared_ptr<geometry::CNPoint2D> alloFieldCenter;
+        shared_ptr<geometry::CNPoint2D> ballPosBuffer[BALL_BUFFER_SIZE];
+        shared_ptr<geometry::CNPoint2D> targetPosBuffer[TARGET_BUFFER_SIZE];
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -5,10 +5,28 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include <cmath>
 #include <vector>
+#include <string>
 /*PROTECTED REGION END*/
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1447863466691) ENABLED START*/ //initialise static variables here
+    const string WatchBall::LEFT = "LEFT";
+    const string WatchBall::MID = "MID";
+    const string WatchBall::RIGHT = "RIGHT";
+    /*
+     *
+     *			 _______________________________
+     *			|								|
+     *			| <---------- 2000mm ---------> |
+     *			|   ._.		   ._.		  ._.	|
+     *			| \/   \/	 \/   \/    \/   \/ |
+     *	 _______| |__0__| _ _|__1__|_ _ |__2__| |__________
+     *
+     *			  \__ __/
+     *				 V
+     *			140+630+140
+     *			   910mm
+     */
     /*PROTECTED REGION END*/
     WatchBall::WatchBall() :
             DomainBehaviour("WatchBall")
@@ -24,74 +42,54 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-        cout << "### WatchBall ###" << endl;
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        //cout << "### WatchBall ###" << endl;
+        me = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
-        ;
-        shared_ptr < geometry::CNVelocity2D > egoBallVel;
 
-        alloFieldCenter = MSLFootballField::posCenterMarker();
+        if (me == nullptr)
+        {
+            cout << "me is null" << endl;
+            return;
+        }
 
         if (SIMULATING > 0)
             alloGoalMid = MSLFootballField::posOppGoalMid();
         else
             alloGoalMid = MSLFootballField::posOwnGoalMid();
 
-        if (me == nullptr || alloGoalMid == nullptr)
-        {
-            cout << "me: " << me->toString() << ", goalMid: " << alloGoalMid->toString() << endl;
-            return;
-        }
+        alloGoalLeft = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, alloGoalMid->y + GOALIE_SIZE / 2 * SIMULATING);
+        alloGoalRight = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, alloGoalMid->y - GOALIE_SIZE / 2 * SIMULATING);
 
-        if (oldAlloTarget == nullptr)
-            oldAlloTarget = alloGoalMid;
-
-        if (oldAlloAlignPoint == nullptr)
-            oldAlloAlignPoint = alloBall;
+        if (targetPosBuffer[targetIndex] == nullptr)
+            targetPosBuffer[targetIndex] = alloGoalMid;
 
         if (alloBall == nullptr)
         {
             cout << "Goalie can't see ball! Moving to OldTarget (init with GoalMid)" << endl;
-            mc = RobotMovement::moveToPointFast(oldAlloTarget->alloToEgo(*me), alloFieldCenter->alloToEgo(*me), 100, 0);
-            send (mc);
+            setMC(fitTargetY((double)targetPosBuffer[targetIndex]->y));
+            /*mc = RobotMovement::moveToPointFast(targetPosBuffer[targetIndex]->alloToEgo(*me),
+             alloAlignPt->alloToEgo(*me), 100, 0);
+             send(mc);*/
+            return;
         }
-        else
+        else if (me != nullptr)
         {
-            egoBallVel = wm->ball.getEgoBallVelocity();
-            int goalieHalfSize = 315; // 630mm/2 + 140mm = 445mm
-            //int extendedArmWidth = 140;
-            int ballRadius = (int)wm->ball.getBallDiameter() / 2; // Umfang 68cm => Radius 10.8225cm
-
-            //int puffer = ballRadius + goalieHalfSize + extendedArmWidth;
-            int puffer = ballRadius + goalieHalfSize;
-
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0);
-            bool success = calcGoalImpactY(alloTarget, nPoints, puffer);
-            shared_ptr < geometry::CNPoint2D > alloAlignPoint = alloBall;
-
-            // fill buffer
-            ballPosBuffer[currentIndex] = alloBall;
-            shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getAlloBallPosition();
-
-            if (success == true && egoBallVel != nullptr && abs(egoBallVel->x) > 100 && abs(egoBallVel->y) > 100)
+            if (abs(alloBall->x) > abs(alloGoalMid->x) + 50)
             {
-                if (alloAlignPoint->distanceTo(me) < 1000)
-                    alloAlignPoint = oldAlloAlignPoint;
-                else
-                    oldAlloAlignPoint = alloAlignPoint;
+                cout << "Ball is behind goal line" << endl;
+                setMC (MID);
+                /*mc = RobotMovement::moveToPointFast(alloGoalMid->alloToEgo(*me), alloFieldCntr->alloToEgo(*me), 100, 0);
+                 send(mc);*/
+                return;
             }
             else
-            {
-                alloTarget->y = oldAlloTarget->y;
-            }
-
-            alloTarget->x = alloGoalMid->x + (100 * SIMULATING);
-            oldAlloTarget = alloTarget;
-            mc = RobotMovement::moveToPointFast(alloTarget->alloToEgo(*me), alloAlignPoint->alloToEgo(*me), 100, 0);
-            send (mc);
-            cout << "### WatchBall ###\n" << endl;
+                moveInsideGoal(alloBall, me);
         }
-        currentIndex = (currentIndex + 1) % RING_BUFFER_SIZE;
+        ballIndex = modRingBuffer(ballIndex + 1, BALL_BUFFER_SIZE);
+        targetIndex = modRingBuffer(targetIndex + 1, TARGET_BUFFER_SIZE);
+        //cout << "### WatchBall ###\n" << endl;
         /*PROTECTED REGION END*/
     }
     void WatchBall::initialiseParameters()
@@ -100,19 +98,51 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here
-    bool WatchBall::calcGoalImpactY(shared_ptr<geometry::CNPoint2D> &alloTarget, int nPoints, int puffer)
+    void WatchBall::moveInsideGoal(shared_ptr<geometry::CNPoint2D> alloBall, shared_ptr<geometry::CNPosition> me)
     {
+        ballPosBuffer[ballIndex] = alloBall;
+        auto alloTrgt = calcGoalImpactY(TARGET_BUFFER_SIZE);
+        auto prevTarget = targetPosBuffer[modRingBuffer(targetIndex - 1, TARGET_BUFFER_SIZE)];
 
+        if (alloTrgt == nullptr)
+        {
+            cout << "alloTarget NULL" << endl;
+            if (prevTarget != nullptr)
+                alloTrgt = prevTarget;
+            else
+                cout << "prevTarget NULL" << endl;
+            alloTrgt = alloGoalMid;
+        }
+        string targetPos = fitTargetY(alloTrgt->y);
+
+        //cout << "currentBall: " << ballPosBuffer[ballIndex]->toString() << endl;
+        //cout << "actualTarget: " << alloTrgt->toString();
+        cout << "normal" << endl;
+        setMC(targetPos);
+        /*mc = RobotMovement::moveToPointFast(alloTrgt->alloToEgo(*me), alloAlignPt->alloToEgo(*me), 100, 0);
+         send(mc);*/
+    }
+
+    shared_ptr<geometry::CNPoint2D> WatchBall::calcGoalImpactY(int nPoints)
+    {
         double _slope, _yInt;
         double sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
 
-        for (int i = modRingBuffer(currentIndex - nPoints); i < modRingBuffer(currentIndex); i = modRingBuffer(i + 1))
+        int prePrevIndex = modRingBuffer(targetIndex - 2, TARGET_BUFFER_SIZE);
+        int prevIndex = modRingBuffer(targetIndex - 1, TARGET_BUFFER_SIZE);
+
+        auto prePrevTarget = targetPosBuffer[prePrevIndex];
+        auto prevTarget = targetPosBuffer[prevIndex];
+        auto currentTarget = prevTarget;
+
+        for (int i = modRingBuffer(ballIndex - nPoints, BALL_BUFFER_SIZE);
+                i < modRingBuffer(ballIndex, BALL_BUFFER_SIZE); i = modRingBuffer(i + 1, BALL_BUFFER_SIZE))
         {
             if (ballPosBuffer[i] == nullptr)
             {
                 // need more points to
                 cout << "calcGoal failed! [ballPosBuffer]" << endl;
-                return false;
+                //return prevTarget;
             }
             sumX += ballPosBuffer[i]->x;
             sumY += ballPosBuffer[i]->y;
@@ -128,59 +158,86 @@ namespace alica
         if (std::fabs(denominator) < 1e-3)
         {
             // Fail: it seems a vertical line
-            cout << "calcGoal failed! [vertical Line]" << endl;
-            return false;
+            //cout << "calcGoal failed! [vertical Line ]" << endl;
+            return prevTarget;
         }
 
         _slope = (sumXY - sumX * yMean) / denominator;
         _yInt = yMean - _slope * xMean;
+        double calcTargetY = _slope * alloGoalMid->x + _yInt;
 
-        double targetY = _slope * alloGoalMid->x + _yInt;
-
-        double leftGoalPostY = MSLFootballField::posLeftOwnGoalPost()->y;
-        double rightGoalPostY = MSLFootballField::posRightOwnGoalPost()->y;
-
-        if (targetY < rightGoalPostY + puffer)
+        if (prevTarget != nullptr && prePrevTarget != nullptr)
         {
-            // calculated ballPos is close to or right side, outside of right GoalPost
-            targetY = rightGoalPostY + puffer;
-            //cout << "RightGoalPostY: " << targetY << endl;
+            int factor = 1.3;
+            double meanY = (prePrevTarget->y + prevTarget->y * factor + calcTargetY) / 3;
+            string targetPos = fitTargetY(meanY);
+            if (targetPos == LEFT)
+                currentTarget->y = alloGoalLeft->y;
+            else if (targetPos == RIGHT)
+                currentTarget->y = alloGoalRight->y;
+            else
+                currentTarget->y = alloGoalMid->y;
         }
-        else if (targetY > leftGoalPostY - puffer)
-        {
-            // calculated ballPos is close to or left side, outside of left GoalPost
-            targetY = leftGoalPostY - puffer;
-            //cout << "LeftGoalPostY: " << targetY << endl;
-        }
-
-        /*if (targetY <= (rightGoalPostY - 2*puffer) || (targetY > rightGoalPostY && targetY <= rightGoalPostY + puffer))
-         {
-         targetY = rightGoalPostY + puffer;
-         }
-         else if (targetY >= (leftGoalPostY + 2*puffer) || (targetY < leftGoalPostY && targetY >= leftGoalPostY - puffer))
-         {
-         targetY = leftGoalPostY - puffer;
-         }
-         // else, ballY is between goalposts and not closer than ballRadius + robot's CenterToArmDistance away from goal posts
-
-         /*if (targetY < -1000)
-         {
-         targetY = -1000 + puffer;
-         }
-         else if (targetY > 1000)
-         {
-         targetY = 1000 - puffer;
-         }*/
-
-        alloTarget->y = targetY;
-
-        cout << "calcGoal successfull!" << endl;
-        return true;
+        targetPosBuffer[targetIndex] = make_shared < geometry::CNPoint2D > (alloGoalMid->x, calcTargetY);
+        //cout << "calcTargetY: " << calcTargetY << endl;
+        //cout << "BallPos: " << ballPosBuffer[ballIndex]->toString();
+        return currentTarget;
     }
 
-    int WatchBall::modRingBuffer(int k)
+    string WatchBall::fitTargetY(double targetY)
     {
-        return ((k %= RING_BUFFER_SIZE) < 0) ? k + RING_BUFFER_SIZE : k;
+        int buffer = 225;
+        //cout << "leftCond : " << targetY * SIMULATING << ">" << alloGoalLeft->y - buffer << endl;
+        //cout << "rightCond: " << targetY * SIMULATING << "<" << alloGoalRight->y + buffer << endl;
+        //cout << "before fitTargetY: " << targetY << endl;
+
+        if (targetY * SIMULATING > alloGoalLeft->y - buffer)
+        {
+            //targetY = alloGoalLeft->y;
+            cout << "left" << endl;
+            return LEFT;
+        }
+        else if (targetY * SIMULATING < alloGoalRight->y + buffer)
+        {
+            //targetY = alloGoalRight->y;
+            cout << "right" << endl;
+            return RIGHT;
+        }
+        else
+        {
+            //targetY = alloGoalMid->y;
+            cout << "mid" << endl;
+            return MID;
+        }
+        //cout << "after fitTargetY: " << targetY << "\n" << endl;
+    }
+
+    void WatchBall::setMC(string targetPos)
+    {
+        shared_ptr < geometry::CNPoint2D > egoALignPoint = alloAlignPt->alloToEgo(*me);
+        cout << "TARGET: ";
+        if (targetPos == LEFT)
+        {
+            mc = RobotMovement::moveToPointFast(alloGoalLeft->alloToEgo(*me), egoALignPoint, 100, 0);
+            cout << alloGoalLeft->toString();
+        }
+        else if (targetPos == RIGHT)
+        {
+            mc = RobotMovement::moveToPointFast(alloGoalRight->alloToEgo(*me), egoALignPoint, 100, 0);
+            cout << alloGoalRight->toString();
+        }
+        else
+        {
+            mc = RobotMovement::moveToPointFast(alloGoalMid->alloToEgo(*me), egoALignPoint, 100, 0);
+            cout << alloGoalMid->toString();
+        }
+        send (mc);
+    }
+
+    int WatchBall::modRingBuffer(int k, int bufferSize)
+#include <string>
+    {
+        return ((k %= bufferSize) < 0) ? k + bufferSize : k;
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

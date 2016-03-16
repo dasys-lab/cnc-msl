@@ -21,6 +21,11 @@ namespace alica
     void KickToDirection::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863478260) ENABLED START*/ //Add additional options here
+        cout << "### KickToDirection ###" << endl;
+
+        // todo: kick ball away
+
+        cout << "### KickToDirection ###\n" << endl;
         /*PROTECTED REGION END*/
     }
     void KickToDirection::initialiseParameters()
