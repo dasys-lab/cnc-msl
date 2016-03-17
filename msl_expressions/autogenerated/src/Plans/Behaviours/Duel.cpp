@@ -143,8 +143,9 @@ namespace alica
             if (closestObstacle != nullptr)
             {
                 //TODO coolen punkt berechnen, funzt nicht wenn ein friendly im weg steht
+                // TAKER oder funzt auch nicht wenn friendly null ist!!!
                 cout << "Duel: closestObs " << closestObstacle->toString();
-                cout << "Duel: friendly " << friendly->toString();
+//                cout << "Duel: friendly " << friendly->toString(); <--- by taker
                 egoTarget = (ownPoint + closestObstacle->rotate(M_PI)->normalize() * 300)->alloToEgo(*ownPos);
             }
             else
