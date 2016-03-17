@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1458033644590" name="ReleaseOwnHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1458033644590" name="ReleaseOwnHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Defence" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <conditions xsi:type="alica:RuntimeCondition" id="1458033759784" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <vars>#1458033962376</vars>
     <vars>#1458033968280</vars>
