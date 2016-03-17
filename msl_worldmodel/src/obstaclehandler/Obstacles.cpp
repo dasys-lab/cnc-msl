@@ -135,7 +135,6 @@ namespace msl
 		}
 
 		// SETUP
-		cout << "Obstacles: myObs size " << myObstacles->size() << endl;
 		setupAnnotatedObstacles(myObstacles, myOdo);
 		// CLUSTERING
 		clusterAnnotatedObstacles();
