@@ -135,6 +135,7 @@ namespace msl
 		}
 
 		// SETUP
+		cout << "Obstacles: myObs size " << myObstacles->size() << endl;
 		setupAnnotatedObstacles(myObstacles, myOdo);
 		// CLUSTERING
 		clusterAnnotatedObstacles();
@@ -286,15 +287,10 @@ namespace msl
 			{
 				for (int j = 0; j < i; ++j)
 				{
-					if ((this->clusterArray->at(i)->ident == EntityType::Opponent
-							|| this->clusterArray->at(j)->ident == EntityType::Opponent)
-							&& std::find(this->clusterArray->at(i)->supporter->begin(),
-											this->clusterArray->at(i)->supporter->end(),
-											this->clusterArray->at(j)->ident)
+					if ((this->clusterArray->at(i)->ident == EntityType::Opponent || this->clusterArray->at(j)->ident == EntityType::Opponent)
+							&& std::find(this->clusterArray->at(i)->supporter->begin(),this->clusterArray->at(i)->supporter->end(),this->clusterArray->at(j)->ident)
 									== this->clusterArray->at(i)->supporter->end()
-							&& std::find(this->clusterArray->at(j)->supporter->begin(),
-											this->clusterArray->at(j)->supporter->end(),
-											this->clusterArray->at(i)->ident)
+							&& std::find(this->clusterArray->at(j)->supporter->begin(),this->clusterArray->at(j)->supporter->end(),	this->clusterArray->at(i)->ident)
 									== this->clusterArray->at(j)->supporter->end())
 					{
 						// mergeable, check dist
@@ -401,7 +397,7 @@ namespace msl
 			velY = (int) (sin(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
 
 			// predict the position along the translation
-			double seconds = (double) (wm->getTime() - curRobot.second->getLast()->timeStamp) / 10000000.0;
+			double seconds = (double) (wm->getTime() - curRobot.second->getLast()->timeStamp) / 1000000000.0;
 
 			obs = AnnotatedObstacleCluster::getNew(this->pool);
 			obs->init((int) (curPlayerPosition->x + seconds * velX + 0.5), (int) (curPlayerPosition->y + seconds * velY + 0.5),// pos
@@ -429,6 +425,7 @@ namespace msl
 			}
 		}
 
+
 		/* add my own position: */
 
 		// Convert ego motion angle to allo motion angle
@@ -449,6 +446,10 @@ namespace msl
 					DFLT_ROB_RADIUS, velX, velY, myOdo->motion.rotation, myOdo->position.certainty, wm->getOwnId(),
 					wm->getOwnId());
 		clusterArray->push_back(obs);
+
+
+
+		std::sort(this->clusterArray->begin(), this->clusterArray->end(), AnnotatedObstacleCluster::compareTo);
 	}
 
 	void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
@@ -788,8 +789,8 @@ namespace msl
 //			return;
 //		}
 
-		if (data->obstacles.size() > 0)
-		{
+//		if (data->obstacles.size() > 0)
+//		{
 			shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = make_shared<vector<msl_sensor_msgs::ObstacleInfo>>(
 					data->obstacles);
 			shared_ptr<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> o = make_shared<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>>(obs,
@@ -799,7 +800,7 @@ namespace msl
 			{
 				handleObstacles(this->getEgoVisionObstaclePoints());
 			}
-		}
+//		}
 	}
 
 } /* namespace msl */

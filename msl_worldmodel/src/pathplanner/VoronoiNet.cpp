@@ -243,6 +243,7 @@ namespace msl
 	 */
 	shared_ptr<VoronoiDiagram> VoronoiNet::generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points, bool ownPosAvail)
 	{
+
 		lock_guard<mutex> lock(netMutex);
 		this->ownPosAvail = ownPosAvail;
 		vector<Site_2> sites;
@@ -266,7 +267,7 @@ namespace msl
 			{
 //				if ((*iter)->id == wm->getOwnId())
 //				{
-//					continue;
+//					cout << "Pathplanner: own id found!!!" << endl;
 //				}
 				pointRobotKindMapping.insert(
 						pair<shared_ptr<geometry::CNPoint2D>, int>(
@@ -338,6 +339,7 @@ namespace msl
 		}
 		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
 								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
+//		cout << "VoronoiNet: obstWithMe " << alloClusteredObs->size() << " : sites " << sites.size() << " : artObs " << artObs->size() << endl;
 		return this->voronoi;
 	}
 
