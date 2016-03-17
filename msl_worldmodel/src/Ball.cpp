@@ -22,7 +22,7 @@
 namespace msl
 {
 	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
-			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30), oppBallPossession(ringbufferLength)
+			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30), oppBallPossession(ringbufferLength), sharedBallPosition(ringbufferLength)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
@@ -42,7 +42,6 @@ namespace msl
 		KICKER_DISTANCE_SIMULATOR = 432;
 		lastUpdateReceived = 0;
 		sharedBallSupporters = 0;
-		sharedBallTeamConfidence = 0.0;
 	}
 
 	Ball::~Ball()
@@ -104,6 +103,7 @@ namespace msl
 	shared_ptr<geometry::CNPoint2D> Ball::getEgoBallPosition()
 	{
 		auto rawBall = getVisionBallPositionAndCertaincy();
+		auto lsb = getAlloSharedBallPosition();
 		if (rawBall == nullptr) {
 			// In order to be consistent with the haveBall() return value, return the last known ball...
 			if (hasBallIteration > 0)
@@ -112,15 +112,15 @@ namespace msl
 			}
 
 			auto pos = wm->rawSensorData.getOwnPositionVision();
-			if(sharedBallPosition != nullptr && pos != nullptr) {
-				return sharedBallPosition->alloToEgo(*pos);
+			if(lsb != nullptr && pos != nullptr) {
+				return lsb->alloToEgo(*pos);
 			}
 
 			//Here we could use ball guess
 			return nullptr;
 		} else {
 			//If we have sharedball AND rawball:
-			if(sharedBallPosition != nullptr) {
+			if(lsb != nullptr) {
 				//Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates -> Always use rawball!
 				auto pos = wm->rawSensorData.getOwnPositionVision();
 				if(rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55) || pos == nullptr) {
@@ -128,12 +128,12 @@ namespace msl
 				}
 
 				//if rawball and sharedball are close to each other: Use rawball
-				if(rawBall->first->egoToAllo(*pos)->distanceTo(sharedBallPosition) < 1500) {
+				if(rawBall->first->egoToAllo(*pos)->distanceTo(lsb) < 1500) {
 					return rawBall->first->clone();
 				}
 
 				//otherwise use shared ball
-				return sharedBallPosition->alloToEgo(*pos);
+				return lsb->alloToEgo(*pos);
 			}
 
 			//if only rawball: use rawball
@@ -337,17 +337,21 @@ namespace msl
 			}
 		}
 
-		sharedBallPosition = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+		auto sb = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 		if(bestVoting != nullptr)
 		{
-			sharedBallPosition = bestVoting->ballPos;
+			sb = bestVoting->ballPos;
 			sharedBallSupporters = bestVoting->supporters.size();
-			sharedBallTeamConfidence = bestVoting->teamConfidence;
 		} else {
-			sharedBallPosition.reset();
+			sb.reset();
 			sharedBallSupporters = 0;
-			sharedBallTeamConfidence = 0;
 		}
+		InfoTime time = wm->getTime();
+
+		shared_ptr<InformationElement<geometry::CNPoint2D>> sbi = make_shared<InformationElement<geometry::CNPoint2D>>(
+				sb, time);
+		sbi->certainty = bestVoting==nullptr ? 0.0 : bestVoting->teamConfidence;
+		sharedBallPosition.add(sbi);
 	}
 
 
@@ -485,9 +489,14 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition()
+	shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition(int index)
 	{
-		return this->sharedBallPosition;
+		auto x = sharedBallPosition.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
 	}
 
 	bool Ball::oppHasBall()

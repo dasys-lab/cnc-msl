@@ -64,7 +64,7 @@ namespace msl
 		void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo& data);
 		shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
 		shared_ptr<bool> getOppBallPossession(int index = 0);
-		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition();
+		shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition(int index = 0);
 		double getBallDiameter();
 
 		shared_ptr<geometry::CNPoint2D> getBallPickupPosition();
@@ -79,8 +79,6 @@ namespace msl
 		std::mutex sbMutex;
 		vector<BallVoting> sbvotingList;
 		int sharedBallSupporters;
-		double sharedBallTeamConfidence;
-		shared_ptr<geometry::CNPoint2D> sharedBallPosition;
 
 		ObjectContainer ballBuf;
 		MovingObject mv;
@@ -103,6 +101,7 @@ namespace msl
 		RingBuffer<InformationElement<bool>> oppBallPossession;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
+		RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
 		RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
 		RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
 		bool robotHasBall(int robotId);
