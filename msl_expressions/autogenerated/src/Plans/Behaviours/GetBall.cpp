@@ -86,9 +86,9 @@ namespace alica
             }
             else
             {
-                mc.motion.angle = 0;
-                mc.motion.translation = 0;
-                mc.motion.rotation = 0;
+//                mc.motion.angle = 0;
+//                mc.motion.translation = 0;
+//                mc.motion.rotation = 0;
 
             }
         }

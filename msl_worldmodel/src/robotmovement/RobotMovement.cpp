@@ -89,18 +89,24 @@ namespace msl
 			return bm;
 		}
 
-		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(
-				bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
+		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
 		dir = dir * 0.2;
+//		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
 		if (field->isInsideEnemyKeeperArea(dir, 150) && field->isInsideEnemyKeeperArea(ownPos->getPoint(), 500))
 		{
-			cout << "RobotMovement: insideEnemyKeeperArea " << endl;
+
+			dir = dir-ownPos;
+//			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
 			dir->x = min(dir->x, 0.0);
-			dir = dir->alloToEgo(*ownPos);
+//			cout << "RobotMovement: allo cut " << dir->x << " " << dir->y << endl;
+			dir = (dir + ownPos)->alloToEgo(*ownPos);
+
+//			cout << "RobotMovement: ego final " << dir->x << " " << dir->y << endl;
 
 			bm.motion.angle = dir->angleTo();
-			bm.motion.translation = sqrt(dir->x*dir->x + dir->y*dir->y);
+			bm.motion.translation = dir->length();
+//			cout << "RobotMovement: insideEnemyArea \t" << bm.motion.angle << "\t" << bm.motion.translation << "\t" << bm.motion.rotation << endl;
 			return bm;
 		}
 		return bm;
@@ -162,9 +168,9 @@ namespace msl
 			return nullptr;
 		if (ballPos->length() > 1000)
 			return nullptr;
-		cout << "RobotMovement: dribble ego target: " << egoTarget->toString() << endl;
-		cout << "RobotMovement: dribble allo target: "
-				<< egoTarget->egoToAllo(*wm->rawSensorData.getOwnPositionVision())->toString() << endl;
+//		cout << "RobotMovement: dribble ego target: " << egoTarget->toString() << endl;
+//		cout << "RobotMovement: dribble allo target: "
+//				<< egoTarget->egoToAllo(*wm->rawSensorData.getOwnPositionVision())->toString() << endl;
 		double pathPlanningMaxTrans = maxVel;
 		double frontAngle = wm->kicker.kickerAngle;
 
@@ -180,7 +186,7 @@ namespace msl
 
 		double angleErr = geometry::deltaAngle(frontAngle, target->angleTo()); //the current error
 
-		cout << "RobotMovement: angleErr " << angleErr << endl;
+//		cout << "RobotMovement: angleErr " << angleErr << endl;
 		/*if(Math.Abs(angleErr)>0.8) {
 		 double minAngle=300;
 		 double ang=0;
