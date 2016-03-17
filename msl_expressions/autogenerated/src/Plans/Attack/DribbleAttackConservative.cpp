@@ -27,7 +27,7 @@ namespace alica
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         //CorrectedOdometryData odom = WM.OdometryData;
         auto ballPos = wm->ball.getEgoBallPosition();
-        auto dstscan = wm->rawSensorData.getDistanceScan();
+//        auto dstscan = wm->rawSensorData.getDistanceScan();
 
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
 
