@@ -33,7 +33,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity()->clone();
+        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < vector<double> > dstscan = wm->rawSensorData.getDistanceScan();
 
@@ -49,6 +49,10 @@ namespace alica
         else if (ballVel->length() > 5000)
         {
             ballVel = ballVel->normalize() * 5000;
+        }
+        else
+        {
+            ballVel = ballVel->clone();
         }
 
         shared_ptr < geometry::CNPoint2D > aimPoint;

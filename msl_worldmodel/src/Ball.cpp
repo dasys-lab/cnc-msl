@@ -83,7 +83,11 @@ namespace msl
 		{
 			return nullptr;
 		}
-		ret->first = x->getInformation();
+                ret->first = x->getInformation();
+
+                if (ret->first == nullptr)
+                        return nullptr;
+
 		ret->second = x->certainty;
 		return ret;
 	}
@@ -130,7 +134,8 @@ namespace msl
 				//Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates -> Always use rawball!
 				auto pos = wm->rawSensorData.getOwnPositionVision();
 				if(rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55) || pos == nullptr) {
-					return rawBall->first->clone();
+
+				  return rawBall->first->clone();
 				}
 
 				//if rawball and sharedball are close to each other: Use rawball

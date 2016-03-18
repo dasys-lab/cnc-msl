@@ -318,7 +318,7 @@ namespace msl
 
 	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km)
 	{
-		shared_ptr<msl_actuator_msgs::KickControl> cmd = shared_ptr<msl_actuator_msgs::KickControl>();
+		shared_ptr<msl_actuator_msgs::KickControl> cmd = make_shared<msl_actuator_msgs::KickControl>();
 
 		*cmd = km;
 		shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd = make_shared<
