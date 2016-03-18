@@ -318,6 +318,24 @@ namespace msl
 			msg.ballInPossession = false;
 		}
 
+		auto sb = this->ball.getAlloSharedBallPositionAndCertaincy();
+		if(sb!=nullptr && sb->first != nullptr && this->ball.getSharedBallSupporter() > 1)
+		{
+			msg.sharedBall.point.x = sb->first->x;
+			msg.sharedBall.point.y = sb->first->y;
+			msg.sharedBall.confidence = sb->second;
+			msg.sharedBall.evidence = this->ball.getSharedBallSupporter();
+		} else if (sb == nullptr || sb->first == nullptr) {
+			//if sb == nullptr send ballguess
+			auto guess = this->ball.getAlloBallGuessPosition();
+			if(guess != nullptr) {
+				msg.sharedBall.point.x = guess->x;
+				msg.sharedBall.point.y = guess->y;
+				msg.sharedBall.confidence = 0.1;
+				msg.sharedBall.evidence = 1;
+			}
+		}
+
 		auto ballVel = this->ball.getVisionBallVelocity();
 		if (ballVel != nullptr)
 		{

@@ -280,19 +280,13 @@ namespace msl
 			ownVelocityMotion.add(vMotion);*/
 		}
 
-		if (data->ball.confidence > 0)
-		{
-			shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-			                                                                           data->ball.point.y);
-			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-			                                                                                 data->ball.velocity.vy);
+		shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
+																				   data->ball.point.y);
+		shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
+																						 data->ball.velocity.vy);
 
-			//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
-			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
-		} else {
-			wm->ball.updateHaveBall();
-			wm->ball.updateSharedBall();
-		}
+		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
+		this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
 
