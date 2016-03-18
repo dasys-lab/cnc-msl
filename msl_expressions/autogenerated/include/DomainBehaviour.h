@@ -35,6 +35,7 @@ class DomainBehaviour : public BasicBehaviour
 
 	private:
 
+		double __maxTranslation;
 		int ownID;
 		ros::Publisher simlatorPub;
 		ros::Publisher motionControlPub;

@@ -61,6 +61,7 @@ namespace alica
                 isMovingCloserIter = 0;
                 this->success = true;
                 mc=driveToMovingBall(egoBallPos, egoBallVelocity);
+                mc.motion.translation = 500;
                 send(mc);
                 return;
             }
@@ -131,15 +132,6 @@ namespace alica
         mc.motion.translation = movement;
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
-
-        if (egoBallPos->length() < 1500)
-        {
-
-            bhc.leftMotor = -30;
-            bhc.rightMotor = -30;
-
-            this->send(bhc);
-        }
         return mc;
     }
 
@@ -153,16 +145,6 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
-
-        if (egoBallPos->length() < 500)
-        {
-
-            bhc.leftMotor = -30;
-            bhc.rightMotor = -30;
-
-            this->send(bhc);
-        }
-
         return mc;
     }
 /*PROTECTED REGION END*/
