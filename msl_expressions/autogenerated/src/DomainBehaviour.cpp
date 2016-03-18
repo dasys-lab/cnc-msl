@@ -60,6 +60,7 @@ namespace alica
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
+                wm->kicker.processKickConstrolMsg(kc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)

@@ -6,6 +6,8 @@ using namespace std;
 #include <math.h>
 #include "engine/RunningPlan.h"
 #include "engine/AlicaEngine.h"
+#include <msl_helper_msgs/DebugMsg.h>
+#include <msl_helper_msgs/DebugPoint.h>
 
 #include <Rules.h>
 /*PROTECTED REGION END*/
@@ -69,6 +71,25 @@ namespace alica
             cout << "hits the goal: x: " << hitPoint->x << ", y: " << hitPoint->y << endl;
         }
 
+        // Sending debug message for visualization
+        msl_helper_msgs::DebugMsg debugMsg;
+        debugMsg.topic = "CheckGoalKick";
+        debugMsg.senderID = this->getOwnId();
+        debugMsg.validFor = 2000000000;
+
+        msl_helper_msgs::DebugPoint point;
+
+        point.radius = 0.12;
+        point.point.x = hitPoint->x;
+        point.point.y = hitPoint->y;
+        point.red = 255;
+        point.green = 0;
+        point.blue = 255;
+
+        debugMsg.points.push_back(point);
+        this->send(debugMsg);
+        // ---------------------------------------
+
         if (!this->checkGoalKeeper(hitPoint))
         { // we hit the goal keeper
             cout << "check goal keeper: false" << endl;
@@ -95,7 +116,8 @@ namespace alica
         cout << "dist ball to hit point: " << cout_distBall2HitPoint << endl;
         cout << "goal power: " << kickPowerGoal << " obs power: " << kickPowerObs << endl;
 
-        if (kickPowerObs < 0)
+        // no closest obstacle, FIRE
+        if (kickPowerObs == -2)
         {
             cout << "kick power: " << kickPowerGoal << endl;
             kick(kickPowerGoal);

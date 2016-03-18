@@ -4,8 +4,8 @@
     <vars id="1458034318907" name="X" comment="" Type=""/>
     <vars id="1458034324013" name="Y" comment="" Type=""/>
     <parameters id="1458034369962" name="MISSING_NAME" comment="" key="AvoidBall" value="true"/>
-    <parameters id="1458034387814" name="MISSING_NAME" comment="" key="FailTimeTreshold" value="10"/>
     <parameters id="1458034402236" name="MISSING_NAME" comment="" key="TeamMatePlanName" value="AttackPlay"/>
     <parameters id="1458034413698" name="MISSING_NAME" comment="" key="TeamMateTaskName" value="Attack"/>
+    <parameters id="1458308545586" name="MISSING_NAME" comment="" key="FailTimeTresholdMS" value="100"/>
   </configurations>
 </alica:Behaviour>

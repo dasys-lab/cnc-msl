@@ -398,14 +398,13 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
 
         vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper->SetInputConnection(polygonSource->GetOutputPort());
-        vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-        actor->SetMapper(mapper);
-        actor->GetProperty()->SetColor(0, 0, 0.5);
-        actor->GetProperty()->SetDiffuse(0.4);
-        actor->GetProperty()->SetAmbient(0.8);
+        this->sharedBall = vtkSmartPointer<vtkActor>::New();
+        this->sharedBall->SetMapper(mapper);
+        this->sharedBall->GetProperty()->SetColor(0, 0, 0.5);
+        this->sharedBall->GetProperty()->SetDiffuse(0.4);
+        this->sharedBall->GetProperty()->SetAmbient(0.8);
 
-        this->sharedBall = actor;
-        renderer->AddActor(actor);
+        renderer->AddActor(this->sharedBall);
         this->sharedBall->SetVisibility(false);
 
         // corridor
@@ -474,7 +473,7 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
 
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.point.x, robot->getSharedWorldInfo()->ball.point.y);
 
-        this->ball->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->ball.point.z / 1000);
+        this->ball->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->ball.point.z / 1000 + 0.01);
         this->ballVelocity->SetPoint1(pos.first, pos.second, robot->getSharedWorldInfo()->ball.point.z / 1000);
         auto ballVelTrans = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->ball.velocity.vx, robot->getSharedWorldInfo()->ball.velocity.vy);
         this->ballVelocity->SetPoint2(pos.first + ballVelTrans.first, pos.second + ballVelTrans.second,
@@ -494,7 +493,7 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
         }
 
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->sharedBall.point.x, robot->getSharedWorldInfo()->sharedBall.point.y);
-        this->sharedBall->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->sharedBall.point.z / 1000 + 0.01);
+        this->sharedBall->SetPosition(pos.first, pos.second, robot->getSharedWorldInfo()->sharedBall.point.z / 1000);
         this->sharedBall->SetVisibility(true);
 }
 
