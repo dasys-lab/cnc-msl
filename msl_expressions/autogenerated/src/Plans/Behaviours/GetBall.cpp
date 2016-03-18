@@ -60,6 +60,8 @@ namespace alica
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
                 this->success = true;
+                mc=driveToMovingBall(egoBallPos, egoBallVelocity);
+                send(mc);
                 return;
             }
             else if (wm->game.getTimeSinceStart() >= timeForPass)
@@ -76,7 +78,7 @@ namespace alica
                 isMovingAwayIter++;
                 isMovingCloserIter = 0;
             }
-            if (isMovingAwayIter >= maxIter || egoBallVelocity->length() < 250)
+            if (isMovingAwayIter >= maxIter || egoBallVelocity->length() <= 250)
             {
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
             }
@@ -86,10 +88,7 @@ namespace alica
             }
             else
             {
-//                mc.motion.angle = 0;
-//                mc.motion.translation = 0;
-//                mc.motion.rotation = 0;
-
+            	mc = driveToMovingBall(egoBallPos, egoBallVelocity);
             }
         }
         else
