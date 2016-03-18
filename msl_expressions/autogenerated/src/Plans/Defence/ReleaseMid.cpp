@@ -52,10 +52,13 @@ namespace alica
 
 		// the only teammate in the corresponding task/ entrypoint
 		auto teammates = robotsInEntryPointOfHigherPlan(ep);
-		for (int mateId : *teammates)
+		if (teammates)
 		{
-			this->teamMateId = mateId;
-			break;
+                        for (int mateId : *teammates)
+                        {
+                                this->teamMateId = mateId;
+                                break;
+                        }
 		}
 
 		// determine the best reference point
