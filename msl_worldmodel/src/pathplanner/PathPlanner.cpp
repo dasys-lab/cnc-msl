@@ -138,7 +138,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathPlanner::plan(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval)
 	{
 		//if there was no target before save if
-		// else if there was a traget before it has to be difffenrent to be saved
+		// else if there was a target before it has to be different to be saved
 		if(lastTarget == nullptr)
 		{
 			lastTarget = goal;
@@ -157,13 +157,14 @@ namespace msl
 
 		for(int i = 0; i < sites->size(); i++)
 		{
-			if(!MSLFootballField::isInsideField(startPos, MSLFootballField::Surrounding))
+			if(sites->at(i).second == EntityType::ArtificialObstacle)
 			{
-				if(sites->at(i).second == EntityType::ArtificialObstacle)
-				{
-					continue;
-				}
+				continue;
 			}
+
+			if (sites->at(i).second == wm->getOwnId())
+				continue;
+
 			//if there is an obstacle inside the corridor the goal is not reachable
 			if(corridorCheck(voronoi, startPos, goal, sites->at(i).first))
 			{
@@ -179,7 +180,7 @@ namespace msl
 			lastPath = ret;
 			return ret;
 		}
-		//there is no direct way so wo have to search a way to the goal
+		//there is no direct way so we have to search a way to the goal
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = aStarSearch(voronoi, startPos, goal, eval);
 		//if there is a path save it and return it
 		if(ret != nullptr)
@@ -388,12 +389,11 @@ namespace msl
 											shared_ptr<geometry::CNPoint2D> obstaclePoint)
 	{
 		//calculate length x and y offset
-		double length = voronoi->calcDist(currentPos, goal);
+		double length = currentPos->distanceTo(goal);
 		double dx = currentPos->x - goal->x;
 		double dy = currentPos->y - goal->y;
-		double dist = std::sqrt(dx * dx + dy * dy);
-		dx /= dist;
-		dy /= dist;
+		dx /= length;
+		dy /= length;
 		//calculate corridor corner points
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
 				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
@@ -427,7 +427,7 @@ namespace msl
 		}
 		//return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
 	}
 
 	/**
@@ -443,10 +443,10 @@ namespace msl
 												shared_ptr<geometry::CNPoint2D> obstaclePoint)
 	{
 		//calculate length x and y offset
-		double length = voronoi->calcDist(currentPos, goal);
+		double length = currentPos->distanceTo(goal);
 		double dx = currentPos->x - goal->x;
 		double dy = currentPos->y - goal->y;
-		double dist = std::sqrt(dx * dx + dy * dy);
+		double dist = length;
 		dx /= dist;
 		dy /= dist;
 		//calculate corridor corner points
@@ -480,7 +480,7 @@ namespace msl
 		}
 		//return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
 	}
 	/**
 	 * helping method to debug the corridor check
@@ -533,10 +533,10 @@ namespace msl
 											shared_ptr<geometry::CNPoint2D> obstaclePoint)
 	{
 		//calculate length x and y offset
-		double length = voronoi->calcDist(currentPos, goal);
+		double length = currentPos->distanceTo(goal);
 		double dx = currentPos->x - goal->x;
 		double dy = currentPos->y - goal->y;
-		double dist = std::sqrt(dx * dx + dy * dy);
+		double dist = length;
 		dx /= dist;
 		dy /= dist;
 		//calculate corridor corner points
@@ -572,7 +572,7 @@ namespace msl
 		}
 		// return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, points.size(), obstaclePoint);
+				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
 	}
 	/**
 	 * gets last planning target

@@ -149,8 +149,6 @@ namespace msl
 		 * @return double
 		 */
 		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<Vertex> vertexPoint);
-
-		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<geometry::CNPoint2D> vertexPoint);
 		/**
 		 * find the face in which the point is situated
 		 * @param point VoronoiDiagram::Point_2

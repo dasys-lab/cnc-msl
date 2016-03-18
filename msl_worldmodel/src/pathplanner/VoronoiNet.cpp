@@ -72,7 +72,7 @@ namespace msl
 			else
 			{
 				//change if current vertex is closer
-				int dist = calcDist(pos, make_shared<geometry::CNPoint2D>(iter->point().x(), iter->point().y()));
+				int dist = pos->distanceTo(make_shared<geometry::CNPoint2D>(iter->point().x(), iter->point().y()));
 				if (dist < minDist)
 				{
 					ret = make_shared<VoronoiDiagram::Vertex>(*iter);
@@ -93,12 +93,6 @@ namespace msl
 	double VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<Vertex> vertexPoint)
 	{
 		int ret = sqrt(pow((vertexPoint->point().x() - pos->x), 2) + pow((vertexPoint->point().y() - pos->y), 2));
-		return ret;
-	}
-
-	double VoronoiNet::calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<geometry::CNPoint2D> vertexPoint)
-	{
-		int ret = sqrt(pow((vertexPoint->x - pos->x), 2) + pow((vertexPoint->y - pos->y), 2));
 		return ret;
 	}
 
