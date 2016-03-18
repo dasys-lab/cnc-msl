@@ -91,13 +91,12 @@ namespace msl
 					return -1.0;
 				}
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
+				auto cur = make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y());
+				auto next = make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),nextNode->getVertex()->point().y());
 				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(
 						obs.first.first->x,
 						obs.first.first->y,
-						make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
-															currentNode->getVertex()->point().y()),
-						make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
-															nextNode->getVertex()->point().y()));
+						cur, next);
 				//calculate weighted dist to both objects
 
 				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)

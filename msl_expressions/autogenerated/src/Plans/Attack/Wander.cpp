@@ -19,7 +19,7 @@ namespace alica
         distToCorner = 2500;
         distToOutLine = 4000;
         firstTargetSet = false;
-        EPSILON_RADIUS = 300.0;
+        EPSILON_RADIUS = 1000.0;
         SLOW_DOWN_DISTANCE = 1200.0;
         maxTranslation = 4000.0;
         translation = 0.0;
