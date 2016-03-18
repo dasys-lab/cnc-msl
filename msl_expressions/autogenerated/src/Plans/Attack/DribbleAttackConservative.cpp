@@ -33,6 +33,7 @@ namespace alica
 
         if (ownPos == nullptr)
         {
+            std::cout << "Own pos is null" << std::endl;
             return;
         }
 
@@ -70,6 +71,7 @@ namespace alica
         //if i drive into the enemy goal area
         bm = msl::RobotMovement::nearGoalArea(bm);
 
+        std::cout << "MC: " << bm.timestamp << std::endl;
         send(bm);
 
         /*PROTECTED REGION END*/

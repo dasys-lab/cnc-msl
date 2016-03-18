@@ -286,7 +286,11 @@ namespace msl
 																						 data->ball.velocity.vy);
 
 		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
-		this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+		if (data->ball.confidence < 0.00000001)
+		        this->wm->ball.updateBallPos(nullptr, nullptr, data->ball.confidence);
+		else
+	                this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
 
