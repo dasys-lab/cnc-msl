@@ -109,6 +109,7 @@ namespace alica
         {
 #ifdef BEH_DEBUG
             msl_helper_msgs::DebugMsg dbm;
+            dbm.topic = "Pass";
 #endif
             for (int teamMateId : this->teamMateIds)
             {
@@ -145,6 +146,7 @@ namespace alica
                     msl_helper_msgs::DebugPoint dbp;
                     dbp.point.x = passPoint->x;
                     dbp.point.y = passPoint->y;
+                    dbp.radius = 0.3;
                     dbm.points.push_back(dbp);
 #endif
                     if (ff->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre

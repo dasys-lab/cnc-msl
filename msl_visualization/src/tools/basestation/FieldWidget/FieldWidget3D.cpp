@@ -284,7 +284,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
-	showPath = false;
+	showPath = true;
 	showVoronoiNet = false;
 	showCorridorCheck = false;
 	showSitePoints = false;
@@ -1072,7 +1072,7 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
         lock_guard<mutex> lock(debugMutex);
 
         auto robot = this->getRobotById(info->senderID);
-        robot->setDebugMsg(info);
+        robot->addDebugMsg(info);
         robot->updateTimeStamp();
 }
 

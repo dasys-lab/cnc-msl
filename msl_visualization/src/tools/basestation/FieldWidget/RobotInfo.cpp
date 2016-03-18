@@ -85,18 +85,37 @@ void RobotInfo::setVoronoiNetInfo(const boost::shared_ptr<msl_msgs::VoronoiNetIn
         this->voronoiNetMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
-const boost::shared_ptr<msl_helper_msgs::DebugMsg>& RobotInfo::getDebugMsg() const
+void RobotInfo::addDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg = nullptr)
 {
-        return debugMsg;
-}
-
-void RobotInfo::setDebugMsg(const boost::shared_ptr<msl_helper_msgs::DebugMsg>& debugMsg = nullptr)
-{
-        this->debugMsg = debugMsg;
-
         auto tmp = ros::Time::now();
-        this->debugMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        DebugMsg msg(debugMsg, (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec);
+        this->debugMsg[debugMsg->topic] = msg;
 }
+
+const int RobotInfo::getDebugMsgs(std::vector<boost::shared_ptr<msl_helper_msgs::DebugMsg>>& result)
+{
+        int counter = 0;
+
+        for (auto it = this->debugMsg.begin(); it != this->debugMsg.end();  )
+        {
+                auto tmp = ros::Time::now();
+                unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+
+                if ((now - it->second.timeStamp) > 2000000000)
+                {
+                        this->debugMsg.erase(it++);
+                        continue;
+                }
+
+                ++counter;
+                result.push_back(it->second.msg);
+
+                ++it;
+        }
+
+        return counter;
+}
+
 
 const boost::shared_ptr<msl_helper_msgs::PassMsg>& RobotInfo::getPassMsg() const
 {
@@ -105,10 +124,10 @@ const boost::shared_ptr<msl_helper_msgs::PassMsg>& RobotInfo::getPassMsg() const
 
 void RobotInfo::setPassMsg(const boost::shared_ptr<msl_helper_msgs::PassMsg>& passMsg)
 {
-          this->passMsg = passMsg;
+        this->passMsg = passMsg;
 
-          auto tmp = ros::Time::now();
-          this->passMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        auto tmp = ros::Time::now();
+        this->passMsgTimeStamp = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 }
 
 unsigned long RobotInfo::getTimeStamp()
@@ -161,17 +180,6 @@ bool RobotInfo::isCorridorCheckMsgTimeout()
         unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->corridorCheckMsgTimeStamp) > 2000000000;
-}
-
-bool RobotInfo::isDebugMsgTimeout()
-{
-        if (false == this->debugMsg)
-                return true;
-
-        auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
-
-        return (now - this->debugMsgTimeStamp) > 2000000000;
 }
 
 bool RobotInfo::isPassMsgTimeout()

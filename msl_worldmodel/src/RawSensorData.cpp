@@ -295,8 +295,28 @@ namespace msl
 		}
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
-		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist,
-				time);
+
+		// TODO This is a Taker workaround, should be removed when real error was found
+		int count = 0;
+		while (dist.use_count() == 0)
+		{
+		        if (count > 5)
+		              return;
+		        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+		        ++count;
+		}
+
+		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist, time);
+
+                // TODO This is a Taker workaround, should be removed when real error was found
+		count = 0;
+		while (dist.use_count() == 1)
+                {
+                        if (count > 5)
+                              return;
+                        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+                        ++count;
+                }
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
 		wm->getVisionDataEventTrigger()->run();

@@ -757,12 +757,11 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints)
 {
         // Check last message
-        boost::shared_ptr<msl_helper_msgs::DebugMsg> debugMsg;
-        bool timeout = false;
+        vector<boost::shared_ptr<msl_helper_msgs::DebugMsg>> msgs;
+        int count;
         {
                 lock_guard<mutex> lock(this->field->debugMutex);
-                debugMsg = this->robot->getDebugMsg();
-                timeout = this->robot->isDebugMsgTimeout();
+                count = this->robot->getDebugMsgs(msgs);
         }
 
         // Remove old objects if show path is disabled
@@ -776,21 +775,24 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
         debugPoints.clear();
 
         // Return if nothing should be drawn
-        if (false == showDebugPoints || false == debugMsg || timeout)
+        if (false == showDebugPoints || count == 0)
         {
                 return;
         }
 
         // Draw debug points
-        for (int i = 0; i < debugMsg->points.size(); i++)
+        for (auto debugMsg : msgs)
         {
-                auto pointDbg = debugMsg->points.at(i);
-                std::array<double,3> color = {pointDbg.red / 255.0, pointDbg.green / 255.0, pointDbg.blue / 255.0};
-                pair<double, double> point = this->field->transformToGuiCoords(pointDbg.point.x, pointDbg.point.y);
+                for (int i = 0; i < debugMsg->points.size(); i++)
+                {
+                        auto pointDbg = debugMsg->points.at(i);
+                        std::array<double,3> color = {pointDbg.red / 255.0, pointDbg.green / 255.0, pointDbg.blue / 255.0};
+                        pair<double, double> point = this->field->transformToGuiCoords(pointDbg.point.x, pointDbg.point.y);
 
-                vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, 0.3, color);
-                debugPoints.push_back(actor);
-                renderer->AddActor(actor);
+                        vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, pointDbg.radius, color);
+                        debugPoints.push_back(actor);
+                        renderer->AddActor(actor);
+                }
         }
 }
 
