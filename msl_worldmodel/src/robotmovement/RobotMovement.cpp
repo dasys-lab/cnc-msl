@@ -672,45 +672,14 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		if (destinationPoint->length() < destTol)
 		{
-			MotionControl rot;
-			if (wm->ball.getAlloBallPosition() != nullptr)
-			{
-				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-				vector<shared_ptr<geometry::CNPoint2D>>>();
-				additionalPoints->push_back(wm->ball.getAlloBallPosition());
-				//DriveToPointAndAlignCareObstacles
-				rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
-			}
-			else
-			{
-				rot = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
-			}
-			rot.motion.translation = 0.0;
-			if (headingPoint == nullptr)
-			{
-				return rot;
-			}
-			double angle = headingPoint->angleTo();
-			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
-			{
-				return rot;
-			}
-			else
-			{
-				MotionControl bm;
-
-				bm.motion.rotation = 0.0;
-				bm.motion.translation = 0.0;
-				bm.motion.angle = 0.0;
-				return bm;
-			}
+			return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
 		}
 		else
 		{
 			//linear
 			double trans = min(translation, 1.2 * destinationPoint->length());
 
-			MotionControl bm;
+			MotionControl mc;
 			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
 			if (wm->ball.getAlloBallPosition() != nullptr)
 			{
@@ -718,14 +687,14 @@ namespace msl
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 				additionalPoints->push_back(wm->ball.getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
-				bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
+				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
 			}
 			else
 			{
-				bm = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
+				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
 			}
 
-			return bm;
+			return mc;
 		}
 	}
 
@@ -897,27 +866,7 @@ namespace msl
 
 		if (destinationPoint->length() < destTol)
 		{
-			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr); //DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
-			rot.motion.translation = 0.0;
-			if (headingPoint == nullptr)
-			{
-				return rot;
-			}
-			double angle = headingPoint->angleTo();
-			MSLWorldModel* wm = MSLWorldModel::get();
-			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
-			{
-				return rot;
-			}
-			else
-			{
-				MotionControl bm;
-
-				bm.motion.rotation = 0.0;
-				bm.motion.translation = 0.0;
-				bm.motion.angle = 0.0;
-				return bm;
-			}
+                        return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
 		}
 		else
 		{
@@ -1034,6 +983,5 @@ namespace msl
 		//ret -= goalFactor;
 		return ret;
 	}
-
 }
 
