@@ -116,7 +116,7 @@ namespace alica
                                         friendlyPos + friendlyOrth2->normalize() * (robotRadius + 75));
                                 trianglePoints->push_back(ownPoint);
 
-                                if (geometry::GeometryCalculator::isInsidePolygon(*trianglePoints, 3, obstacle))
+                                if (geometry::GeometryCalculator::isInsidePolygon(*trianglePoints, obstacle))
                                 {
                                     friendlyBlocked = true;
                                 }
