@@ -73,9 +73,9 @@ namespace msl_driver
 				// The radius is given by ((2 * Pi * r) / (2 * Pi)) * t
 				radius = abs(translation / rotation);
 				// Get the projection of the radius
-				xTemp = abs(sin(rotation) * radius) * geometry::GeometryCalculator::sgn(translation);
+				xTemp = abs(sin(rotation) * radius) * geometry::sgn(translation);
 				// The axis are rotated 90°!a
-				yTemp = (radius - (cos(rotation)) * radius) * geometry::GeometryCalculator::sgn(rotation);
+				yTemp = (radius - (cos(rotation)) * radius) * geometry::sgn(rotation);
 			}
 			else
 			{
