@@ -13,10 +13,9 @@ namespace alica
         /*PROTECTED REGION ID(con1458132872550) ENABLED START*/ //Add additional options here
         field = msl::MSLFootballField::getInstance();
         currentTarget = make_shared<geometry::CNPoint2D>();
-        attackPosY = make_shared<vector<double>>();
-        attackPosY->push_back(field->FieldWidth / 3.0 - 700);
-        attackPosY->push_back(0);
-        attackPosY->push_back(-field->FieldWidth / 3.0 + 700);
+        attackPosY.push_back(field->FieldWidth / 3.0 - 700);
+        attackPosY.push_back(0);
+        attackPosY.push_back(-field->FieldWidth / 3.0 + 700);
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointConservative::~DribbleToAttackPointConservative()
@@ -90,7 +89,7 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1458132872550) ENABLED START*/ //Add additional methods here
-    void DribbleToAttackPointConservative::trueInitialize()
+    void DribbleToAttackPointConservative::trueInitialize() // so true and so evil
     {
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
         if (ownPos == nullptr)
@@ -99,7 +98,7 @@ namespace alica
 //		int index = (int)Math.Round(rand.NextDouble()*2.0);
 
         srand(supplementary::DateTime::getUtcNowC());
-        int index = (rand() % 3) + 1;
+        int index = (rand() % attackPosY.size());
 
         if (ownPos->x < field->FieldLength / 6.0)
         {
@@ -111,10 +110,11 @@ namespace alica
         {
             currentTarget = make_shared < geometry::CNPoint2D > (field->FieldLength / 4.0 - 1500, 0);
         }
-        currentTarget->y = attackPosY->at(index);
+        currentTarget->y = attackPosY.at(index);
         if (currentTarget->alloToEgo(*ownPos)->length() < 1500)
         {
-            currentTarget->y = attackPosY->at((index + 1) % attackPosY->size());
+            index = (index + 1) % attackPosY.size(); // select next point in vector
+            currentTarget->y = attackPosY.at(index);
         }
     }
 /*PROTECTED REGION END*/

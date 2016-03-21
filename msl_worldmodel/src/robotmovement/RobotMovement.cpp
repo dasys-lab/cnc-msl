@@ -218,13 +218,13 @@ namespace msl
 			rotPointDist = 50;
 		}
 
-		cout << "RobotMovement: rotPointDist " << rotPointDist << endl;
+//		cout << "RobotMovement: rotPointDist " << rotPointDist << endl;
 
 		msl_actuator_msgs::MotionControl bm;
 
 		bm.motion.rotation = pRot * angleErr + dRot * (angleErr - lastRotErr); //Rotation PD
 
-		cout << "RobotMovement: rotation " << bm.motion.rotation << endl;
+//		cout << "RobotMovement: rotation " << bm.motion.rotation << endl;
 
 		if (bm.motion.rotation > curRot)
 		{ //limit rotation acceleration
@@ -256,7 +256,7 @@ namespace msl
 		maxCurTrans -= pTrans * transErr + transControlIntegral;
 		maxCurTrans = max(0.0, maxCurTrans);
 
-		cout << "RobotMovement: pathvel " << pathPlanningMaxTrans << " maxVel " << maxCurTrans << endl;
+//		cout << "RobotMovement: pathvel " << pathPlanningMaxTrans << " maxVel " << maxCurTrans << endl;
 		//maxCurTrans *= Math.Min(1,(Math.PI/180*30)/Math.Abs(angleErr*angleErr));
 
 		double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);

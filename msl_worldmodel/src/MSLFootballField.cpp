@@ -67,16 +67,10 @@ namespace msl
 
 	}
 
-	MSLFootballField * MSLFootballField::getInstance()
+	MSLFootballField* MSLFootballField::getInstance()
 	{
-
-		if (instance == NULL)
-		{
-			instance = new MSLFootballField();
-		}
-
-		return instance;
-
+		static MSLFootballField instance;
+		return &instance;
 	}
 
 	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance)
