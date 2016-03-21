@@ -25,14 +25,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="DroppedBall.pml#1457689420982"/>
-    <value xPos="-28" yPos="333"/>
-  </extensions>
-  <extensions>
-    <key href="DroppedBall.pml#1457689449670"/>
-    <value xPos="229" yPos="365" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="../../Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>

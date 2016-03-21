@@ -11,27 +11,37 @@
   <states id="1430925718512" name="OwnThrowIn" comment="">
     <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925917001</inTransitions>
+    <inTransitions>#1458555879137</inTransitions>
     <outTransitions>#1430925960854</outTransitions>
+    <outTransitions>#1458555221149</outTransitions>
   </states>
   <states id="1430925736746" name="OwnKickOff" comment="">
     <plans xsi:type="alica:PlanType">../Standards/Own/KickOff/OwnKickOff.pty#1438785270887</plans>
     <inTransitions>#1430925918585</inTransitions>
+    <inTransitions>#1458555896457</inTransitions>
     <outTransitions>#1430925962882</outTransitions>
+    <outTransitions>#1458555218949</outTransitions>
   </states>
   <states id="1430925743739" name="OwnGoalKick" comment="">
     <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925919866</inTransitions>
+    <inTransitions>#1458555853125</inTransitions>
     <outTransitions>#1430925965662</outTransitions>
+    <outTransitions>#1458555214716</outTransitions>
   </states>
   <states id="1430925751875" name="OwnFreeKick" comment="">
     <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925922843</inTransitions>
+    <inTransitions>#1458555819730</inTransitions>
     <outTransitions>#1430925971330</outTransitions>
+    <outTransitions>#1458555205351</outTransitions>
   </states>
   <states id="1430925759928" name="OwnCornerKick" comment="">
     <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
     <inTransitions>#1430925924151</inTransitions>
+    <inTransitions>#1458555788972</inTransitions>
     <outTransitions>#1430925973111</outTransitions>
+    <outTransitions>#1458555207649</outTransitions>
   </states>
   <states id="1430925774870" name="OwnPenaltyKick" comment="">
     <plans xsi:type="alica:Plan">../Penalty/OwnPenalty.pml#1431525185678</plans>
@@ -48,6 +58,19 @@
   </states>
   <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444">
     <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+  </states>
+  <states id="1458555183582" name="Wander" comment="">
+    <plans xsi:type="alica:Plan">../GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
+    <inTransitions>#1458555205351</inTransitions>
+    <inTransitions>#1458555207649</inTransitions>
+    <inTransitions>#1458555214716</inTransitions>
+    <inTransitions>#1458555218949</inTransitions>
+    <inTransitions>#1458555221149</inTransitions>
+    <outTransitions>#1458555788972</outTransitions>
+    <outTransitions>#1458555819730</outTransitions>
+    <outTransitions>#1458555853125</outTransitions>
+    <outTransitions>#1458555879137</outTransitions>
+    <outTransitions>#1458555896457</outTransitions>
   </states>
   <transitions id="1430925917001" name="MISSING_NAME" comment="situation = own throw in" msg="">
     <preCondition id="1430925918456" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -108,6 +131,56 @@
     <preCondition id="1430925975558" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925759928</inState>
     <outState>#1430925945981</outState>
+  </transitions>
+  <transitions id="1458555205351" name="MISSING_NAME" comment="EgoBallPosition==nullptr;" msg="">
+    <preCondition id="1458555207377" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1430925751875</inState>
+    <outState>#1458555183582</outState>
+  </transitions>
+  <transitions id="1458555207649" name="MISSING_NAME" comment="EgoBallPosition==nullptr;" msg="">
+    <preCondition id="1458555210443" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1430925759928</inState>
+    <outState>#1458555183582</outState>
+  </transitions>
+  <transitions id="1458555214716" name="MISSING_NAME" comment="EgoBall=nullptr" msg="">
+    <preCondition id="1458555218469" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1430925743739</inState>
+    <outState>#1458555183582</outState>
+  </transitions>
+  <transitions id="1458555218949" name="MISSING_NAME" comment="EgoBallPosition==nullptr;" msg="">
+    <preCondition id="1458555220837" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1430925736746</inState>
+    <outState>#1458555183582</outState>
+  </transitions>
+  <transitions id="1458555221149" name="MISSING_NAME" comment="EgoBallPosition==nullptr;" msg="">
+    <preCondition id="1458555223252" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1430925718512</inState>
+    <outState>#1458555183582</outState>
+  </transitions>
+  <transitions id="1458555788972" name="MISSING_NAME" comment="EgoBallPosition!=nullptr &amp;&amp; Situation=OwnCorner;" msg="">
+    <preCondition id="1458555791025" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1458555183582</inState>
+    <outState>#1430925759928</outState>
+  </transitions>
+  <transitions id="1458555819730" name="MISSING_NAME" comment="EgoBallPosition!=nullptr &amp;&amp; Situation=OwnFreeKick;" msg="">
+    <preCondition id="1458555821886" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1458555183582</inState>
+    <outState>#1430925751875</outState>
+  </transitions>
+  <transitions id="1458555853125" name="MISSING_NAME" comment="EgoBallPosition!=nullptr &amp;&amp; Situation=OwnGoalK;" msg="">
+    <preCondition id="1458555856023" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1458555183582</inState>
+    <outState>#1430925743739</outState>
+  </transitions>
+  <transitions id="1458555879137" name="MISSING_NAME" comment="EgoBallPosition!=nullptr &amp;&amp; Situation=OwnThrowin;" msg="">
+    <preCondition id="1458555881015" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1458555183582</inState>
+    <outState>#1430925718512</outState>
+  </transitions>
+  <transitions id="1458555896457" name="MISSING_NAME" comment="EgoBallPosition!=nullptr &amp;&amp; Situation=OwnKickOff;" msg="">
+    <preCondition id="1458555898277" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1458555183582</inState>
+    <outState>#1430925736746</outState>
   </transitions>
   <entryPoints id="1430925626532" name="NewEntryPoint" comment="" successRequired="true" minCardinality="1" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
