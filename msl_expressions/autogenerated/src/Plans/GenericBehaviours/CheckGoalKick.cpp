@@ -29,10 +29,10 @@ namespace alica
     void CheckGoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
-        //if you have the ball after 1 second after shooting fail
-        if (startKickTime != -1 && (wm->getTime() - startKickTime) >= 1000000000 && wm->ball.haveBall())
+        // check if it is ok to score a goal
+        if (false == this->wm->game.isMayScore())
         {
-            this->failure = true;
+            return;
         }
         // get sensor data from WM and check validity
         ownPos = wm->rawSensorData.getOwnPositionVision();
@@ -41,16 +41,6 @@ namespace alica
 //        std::cout << "OwnPos:     " << ownPos << std::endl;
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
 //        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
-
-//        auto obstacles = wm->obstacles.getAlloObstaclePoints();
-//        if (obstacles != nullptr && obstacles->size() != 0)
-//        {
-//
-//            for (auto obs : *obstacles)
-//            {
-//                std::cout << obs->x << ", " << obs->y << std::endl;
-//            }
-//        }
 
         this->wm->prediction.monitoring();
 
@@ -140,9 +130,6 @@ namespace alica
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
-        cout << "Start run CheckGoalKick <=============================================================" << endl;
-
-        startKickTime = -1;
         field = msl::MSLFootballField::getInstance();
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
@@ -196,7 +183,7 @@ namespace alica
         }
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
-        // TODO reduce goalPost->y by (ball radius + safety margin)
+        // reduce goalPost->y by (ball radius + safety margin)
         if (abs(yHitGoalline) < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
@@ -283,10 +270,6 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.power = kickpower;
-        if (startKickTime == -1)
-        {
-            startKickTime = wm->getTime();
-        }
         send(kc);
     }
 

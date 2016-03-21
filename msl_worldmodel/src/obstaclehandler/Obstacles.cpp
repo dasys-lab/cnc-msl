@@ -284,16 +284,16 @@ namespace msl
 			double curDist = 0;
 			for (int i = 0; i < this->clusterArray->size(); ++i)
 			{
+			        auto ith = this->clusterArray->at(i);
 				for (int j = 0; j < i; ++j)
 				{
-					if ((this->clusterArray->at(i)->ident == EntityType::Opponent || this->clusterArray->at(j)->ident == EntityType::Opponent)
-							&& std::find(this->clusterArray->at(i)->supporter->begin(),this->clusterArray->at(i)->supporter->end(),this->clusterArray->at(j)->ident)
-									== this->clusterArray->at(i)->supporter->end()
-							&& std::find(this->clusterArray->at(j)->supporter->begin(),this->clusterArray->at(j)->supporter->end(),	this->clusterArray->at(i)->ident)
-									== this->clusterArray->at(j)->supporter->end())
+				        auto jth = this->clusterArray->at(j);
+					if ((ith->ident == EntityType::Opponent || jth->ident == EntityType::Opponent)
+                                                  && std::find(ith->supporter->begin(), ith->supporter->end(), jth->ident) == ith->supporter->end()
+                                                  && std::find(jth->supporter->begin(), jth->supporter->end(), ith->ident) == jth->supporter->end())
 					{
 						// mergeable, check dist
-						curDist = this->clusterArray->at(i)->distanceTo(this->clusterArray->at(j));
+						curDist = ith->distanceTo(jth);
 						if (curDist < minDist)
 						{
 							fstClusterId = i;
