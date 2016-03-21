@@ -28,10 +28,13 @@ namespace msl
 		bool validAngle;
 		double angleBallOpp;
 		double velAngle;
+		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teammates;
 
 		virtual void cacheEvalData();
+
 		virtual alica::UtilityInterval eval(alica::IAssignment* ass);
 		string toString();
+		shared_ptr<geometry::CNPosition> getPositionOfTeammate(int robotId);
 	};
 
 } /* namespace msl */

@@ -85,12 +85,12 @@
     <inState>#1431522763494</inState>
     <outState>#1431522155979</outState>
   </transitions>
-  <entryPoints id="1431522155980" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601692867</task>
+  <entryPoints id="1431522155980" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1433949667740</state>
   </entryPoints>
-  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601842183</task>
+  <entryPoints id="1431522269326" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1431522297705</state>
   </entryPoints>
   <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">

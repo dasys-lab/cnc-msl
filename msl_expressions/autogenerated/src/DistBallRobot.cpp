@@ -52,6 +52,8 @@ namespace msl
                         validAngle = true;
                         angleBallOpp = atan2(closestOpp->y-sb->y, closestOpp->x-sb->x);
                 }
+
+                this->teammates = wm->robots.teammates.getPositionsOfTeamMates();
 	}
 
 	alica::UtilityInterval DistBallRobot::eval(alica::IAssignment* ass)
@@ -80,7 +82,7 @@ namespace msl
 		{
 			for (int& robot : *relevantRobots)
 			{
-				curPosition = wm->robots.teammates.getTeamMatePosition(robot);
+				curPosition = this->getPositionOfTeammate(robot);
 				if (curPosition == nullptr) continue; // This player was not 'positionReceived'
 
 				// SET UI.MIN
@@ -111,7 +113,7 @@ namespace msl
 		if(relevantEntryPoints.at(0)->getMaxCardinality() > numAssignedRobots && ass->getNumUnAssignedRobots() > 0) {
 			for(int i=0; i<ass->getNumUnAssignedRobots(); ++i) {
 				//curPosition = this.playerPositions.GetValue(ass.UnAssignedRobots[i]);
-				curPosition = wm->robots.teammates.getTeamMatePosition(ass->getUnassignedRobots().at(i));
+				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobots().at(i));
 				if (curPosition == nullptr) continue;
 				ui.setMax(max(ui.getMax(), 1-curPosition->distanceTo(sb) / msl::MSLFootballField::MaxDistance));
 			}
@@ -120,5 +122,20 @@ namespace msl
 		ui.setMax(max(0.0,ui.getMax()));
 		return ui;
 	}
+
+
+        shared_ptr<geometry::CNPosition> DistBallRobot::getPositionOfTeammate(int robotId)
+        {
+                if (this->teammates == nullptr)
+                        return nullptr;
+
+                for (auto robot : *this->teammates)
+                {
+                        if (robot->first == robotId)
+                                  return robot->second;
+                }
+
+                return nullptr;
+        }
 
 } /* namespace msl */

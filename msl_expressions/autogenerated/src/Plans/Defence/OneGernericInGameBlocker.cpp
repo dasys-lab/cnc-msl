@@ -147,7 +147,7 @@ void OneGernericInGameBlocker::run(void* msg)
 void OneGernericInGameBlocker::initialiseParameters()
 {
   /*PROTECTED REGION ID(initialiseParameters1458034268108) ENABLED START*/ //Add additional options here
-  this->lastResultFound = 0;
+  this->lastResultFound = wm->getTime();
   query->clearStaticVariables();
   query->addVariable(getVariablesByName("X"));
   query->addVariable(getVariablesByName("Y"));

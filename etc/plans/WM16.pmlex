@@ -176,4 +176,8 @@
     <key href="GenericStandards/GenericOppStandards.pml#1432132075122"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="GenericStandards/GenericOwnStandards.pml#1430924951132"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

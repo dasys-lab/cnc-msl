@@ -116,8 +116,8 @@
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1457530916297</state>
   </entryPoints>
-  <entryPoints id="1457530953060" name="StandardReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1238601842183</task>
+  <entryPoints id="1457530953060" name="ReceiveStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1457531111752</state>
   </entryPoints>
   <entryPoints id="1457531047960" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">

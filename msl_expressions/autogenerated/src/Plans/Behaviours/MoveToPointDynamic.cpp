@@ -82,7 +82,7 @@ namespace alica
         string tmp = "";
         try
         {
-            success &= getParameter("DistToFieldBorder", tmp);
+            success &= getParameter("AvoidBall", tmp);
             if (success)
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
@@ -95,7 +95,7 @@ namespace alica
         }
         if (!success)
         {
-            cerr << "M2PD: Parameter does not exist" << endl;
+            cerr << "M2PD: Parameter 'AvoidBall' does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }
