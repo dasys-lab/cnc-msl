@@ -212,7 +212,7 @@ namespace alica
 //						}
 
                         //small angle to turn to pass point
-                        if (geometry::GeometryCalculator::absDeltaAngle(
+                        if (geometry::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
                                 > maxTurnAngle)
@@ -318,7 +318,7 @@ namespace alica
             shared_ptr < geometry::CNPoint2D > aimPoint = alloAimPoint->alloToEgo(*alloPos);
             double aimAngle = aimPoint->angleTo();
             double ballAngle = egoBallPos->angleTo();
-            double deltaAngle = geometry::GeometryCalculator::deltaAngle(ballAngle, aimAngle);
+            double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
             if (abs(deltaAngle) < M_PI / 36)
             { // +/-5 degree
               //Kick && PassMsg
@@ -372,7 +372,7 @@ namespace alica
             }
             mc = msl_actuator_msgs::MotionControl();
             mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
-            double sign = geometry::GeometryCalculator::sgn(mc.motion.rotation);
+            double sign = geometry::sgn(mc.motion.rotation);
             mc.motion.rotation = sign * min(this->maxRot, max(abs(mc.motion.rotation), this->minRot));
             lastRotError = deltaAngle;
             double transBallOrth = egoBallPos->length() * mc.motion.rotation; //may be negative!
@@ -508,7 +508,7 @@ namespace alica
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
             < passCorridorWidth)
             {
                 return false;
@@ -524,7 +524,7 @@ namespace alica
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
             < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
             {
                 return false;

@@ -91,7 +91,7 @@ namespace alica
         double aimAngle = aimPoint->angleTo();
         double ballAngle = ballPos->angleTo();
 
-        double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
+        double deltaAngle = geometry::deltaAngle(aimAngle,ballAngle);
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
             this->success = true;

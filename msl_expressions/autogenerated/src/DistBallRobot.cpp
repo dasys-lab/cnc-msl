@@ -92,7 +92,7 @@ namespace msl
 				} else {
 					//if an opp is near ball
 					double curAngleToBall = atan2(sb->y-curPosition->y, sb->x-curPosition->x);
-					double scale = geometry::deltaAngle(angleBallOpp,curAngleToBall);
+					double scale = geometry::deltaAngle(curAngleToBall, angleBallOpp);
 					//todo old version differs from the current version as is differently normalized
 					/*double scale = abs(angleBallOpp-curAngleToBall);
 					//Normalize

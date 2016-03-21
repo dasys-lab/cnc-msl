@@ -100,7 +100,7 @@ namespace msl
 		{
 			if (make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->length() > 550)
 				continue;
-			if (abs(geometry::GeometryCalculator::deltaAngle(make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->angleTo(), dang)) < 15.0 * M_PI / 180.0)
+			if (abs(geometry::deltaAngle(make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->angleTo(), dang)) < 15.0 * M_PI / 180.0)
 			{
 				return false;
 			}

@@ -177,7 +177,7 @@ namespace alica
         double xDist2OppGoalline = this->field->FieldLength / 2 - posX;
 
         // normalize the position angle
-        alloAngle = geometry::GeometryCalculator::normalizeAngle(alloAngle);
+        alloAngle = geometry::normalizeAngle(alloAngle);
 
         // get the kicker angle from position angle (+/- M_PI)
         if (alloAngle < 0)
@@ -216,6 +216,7 @@ namespace alica
         auto obstacles = wm->obstacles.getAlloObstaclePoints();
         if (obstacles == nullptr || obstacles->size() == 0)
         {
+            kickPower = -2;
             return true;
         }
 

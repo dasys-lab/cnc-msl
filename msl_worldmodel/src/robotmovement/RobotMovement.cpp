@@ -184,7 +184,7 @@ namespace msl
 		if (target == nullptr)
 			return nullptr;
 
-		double angleErr = geometry::deltaAngle(frontAngle, target->angleTo()); //the current error
+		double angleErr = geometry::deltaAngle(target->angleTo(), frontAngle); //the current error
 
 //		cout << "RobotMovement: angleErr " << angleErr << endl;
 		/*if(Math.Abs(angleErr)>0.8) {
@@ -306,7 +306,7 @@ namespace msl
 		 minInFrontDist = Math.Max(minInFrontDist,Math.Min(2000,od.Motion.Translation+800));
 		 }*/
 		if (ballPos != nullptr && pathPlanningPoint != nullptr
-				&& abs(geometry::deltaAngle(pathPlanningPoint->angleTo(), ballPos->angleTo())) > M_PI * 4.65 / 6.0)
+				&& abs(geometry::deltaAngle(ballPos->angleTo(), pathPlanningPoint->angleTo())) > M_PI * 4.65 / 6.0)
 		{
 			lastTurnTime = supplementary::DateTime::getUtcNow().getTicks();
 
@@ -452,7 +452,7 @@ namespace msl
 	{
 		MotionControl mc;
 		double egoTargetAngle = egoTarget->angleTo();
-		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
+		double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
 		if (fabs(egoTargetAngle) < angleTolerance)
 		{
 			mc.motion.angle = egoTargetAngle;
@@ -481,8 +481,8 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double egoTargetAngle = egoAlignPoint->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
-		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
-		double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+		double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+		double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
 
 		if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
 		{
@@ -520,8 +520,8 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double egoTargetAngle = egoAlignPoint->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
-		double deltaTargetAngle = geometry::GeometryCalculator::deltaAngle(egoTargetAngle, M_PI);
-		double deltaBallAngle = geometry::GeometryCalculator::deltaAngle(egoBallAngle, M_PI);
+		double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+		double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
 
 		if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
 		{
@@ -897,8 +897,8 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
 				-field->FieldLength / 2.0 - alloPassee->x, -field->GoalWidth / 2.0 - 1000 - alloPassee->y);
 
-		if (!geometry::GeometryCalculator::leftOf(passee2LeftOwnGoal, passee2p)
-				&& geometry::GeometryCalculator::leftOf(passee2RightOwnGoal, passee2p))
+		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p)
+				&& geometry::leftOf(passee2RightOwnGoal, passee2p))
 		{
 			return numeric_limits<double>::min();
 		}

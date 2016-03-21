@@ -103,7 +103,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(egoBallPos->angleTo(), egoMatePos->angleTo());
+        double dangle = geometry::deltaAngle(egoMatePos->angleTo(), egoBallPos->angleTo());
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
         double fac = -cross / cross;

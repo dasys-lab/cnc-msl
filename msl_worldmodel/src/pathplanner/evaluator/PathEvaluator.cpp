@@ -93,7 +93,7 @@ namespace msl
 				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
 				auto cur = make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(), currentNode->getVertex()->point().y());
 				auto next = make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),nextNode->getVertex()->point().y());
-				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(
+				double distobs = geometry::distancePointToLineSegment(
 						obs.first.first->x,
 						obs.first.first->y,
 						cur, next);

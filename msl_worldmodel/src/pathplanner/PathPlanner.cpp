@@ -427,7 +427,7 @@ namespace msl
 		}
 		//return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
+				&& geometry::isInsidePolygon(points, obstaclePoint);
 	}
 
 	/**
@@ -480,7 +480,7 @@ namespace msl
 		}
 		//return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
+				&& geometry::isInsidePolygon(points, obstaclePoint);
 	}
 	/**
 	 * helping method to debug the corridor check
@@ -572,7 +572,7 @@ namespace msl
 		}
 		// return result
 		return obstaclePoint != nullptr
-				&& geometry::GeometryCalculator::isInsidePolygon(points, obstaclePoint);
+				&& geometry::isInsidePolygon(points, obstaclePoint);
 	}
 	/**
 	 * gets last planning target
