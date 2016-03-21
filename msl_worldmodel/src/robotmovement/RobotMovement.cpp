@@ -184,7 +184,8 @@ namespace msl
 		if (target == nullptr)
 			return nullptr;
 
-		double angleErr = geometry::deltaAngle(target->angleTo(), frontAngle); //the current error
+		double angleErr = target->rotate(frontAngle)->angleTo();
+//		double angleErr = geometry::deltaAngle(frontAngle, target->angleTo()); //the current error
 
 //		cout << "RobotMovement: angleErr " << angleErr << endl;
 		/*if(Math.Abs(angleErr)>0.8) {
@@ -211,7 +212,7 @@ namespace msl
 		 }*/
 
 		double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
-		double distToOpp = NAN;
+		double distToOpp;
 		auto opp = wm->robots.opponents.getClosestToBall(distToOpp);
 		if (distToOpp < 800)
 		{
@@ -222,7 +223,7 @@ namespace msl
 
 		msl_actuator_msgs::MotionControl bm;
 
-		bm.motion.rotation = pRot * angleErr + dRot * (angleErr - lastRotErr); //Rotation PD
+		bm.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr); //Rotation PD
 
 //		cout << "RobotMovement: rotation " << bm.motion.rotation << endl;
 
@@ -235,10 +236,10 @@ namespace msl
 			bm.motion.rotation = max(bm.motion.rotation, curRot - rotAccStep);
 		}
 
-		lastRotErr = angleErr;
-
 		bm.motion.rotation = min(abs(bm.motion.rotation), maxRot) * (bm.motion.rotation > 0 ? 1 : -1); //clamp rotation
 		curRot = bm.motion.rotation;
+
+                lastRotErr = angleErr;
 
 		double transOrt = bm.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 		double maxCurTrans = pathPlanningMaxTrans;

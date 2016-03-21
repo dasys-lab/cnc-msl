@@ -197,7 +197,7 @@ namespace alica
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
         // TODO reduce goalPost->y by (ball radius + safety margin)
-        if (abs(yHitGoalline) < this->field->posLeftOppGoalPost()->y)
+        if (abs(yHitGoalline) < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
             return make_shared < geometry::CNPoint2D > (this->field->FieldLength / 2, yHitGoalline);

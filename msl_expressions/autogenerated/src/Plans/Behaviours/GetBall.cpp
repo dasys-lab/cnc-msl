@@ -30,7 +30,7 @@ namespace alica
         {
             return;
         }
-        auto obstacles = wm->obstacles.getEgoVisionObstacles();
+        auto obstacles = wm->obstacles.getAlloObstaclePoints();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         if (obstacles != nullptr)
@@ -39,9 +39,8 @@ namespace alica
             {
                 if (wm->pathPlanner.corridorCheck(
                         vNet, make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
-                        make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
+                        obstacles->at(i)))
                 {
-                  std::cout << "Obstacle within corridor" << std::endl;
                     blocked = true;
                     break;
                 }
@@ -80,6 +79,7 @@ namespace alica
                 isMovingAwayIter++;
                 isMovingCloserIter = 0;
             }
+
             if (isMovingAwayIter >= maxIter || egoBallVelocity->length() <= 250)
             {
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
