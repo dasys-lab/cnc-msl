@@ -41,6 +41,7 @@ namespace alica
                         vNet, make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
                         make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
                 {
+                  std::cout << "Obstacle within corridor" << std::endl;
                     blocked = true;
                     break;
                 }

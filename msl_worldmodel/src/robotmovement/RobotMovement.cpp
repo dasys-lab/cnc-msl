@@ -369,11 +369,10 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-														double snapDistance,
-														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints )
+                                                          shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                          double snapDistance,
+                                                          shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
-
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
 		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
