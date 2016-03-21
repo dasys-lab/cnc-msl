@@ -90,12 +90,11 @@ namespace msl
 		}
 
 		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
-		dir = dir * 0.2;
+
 //		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
 		if (field->isInsideEnemyKeeperArea(dir, 150) && field->isInsideEnemyKeeperArea(ownPos->getPoint(), 500))
 		{
-
 			dir = dir-ownPos;
 //			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
 			dir->x = min(dir->x, 0.0);
@@ -107,7 +106,6 @@ namespace msl
 			bm.motion.angle = dir->angleTo();
 			bm.motion.translation = dir->length();
 //			cout << "RobotMovement: insideEnemyArea \t" << bm.motion.angle << "\t" << bm.motion.translation << "\t" << bm.motion.rotation << endl;
-			return bm;
 		}
 		return bm;
 	}

@@ -13,14 +13,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="Duel.pml#1454522099169"/>
-    <value xPos="-40" yPos="261"/>
-  </extensions>
-  <extensions>
-    <key href="Duel.pml#1454522133266"/>
-    <value xPos="154" yPos="325" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>

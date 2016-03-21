@@ -48,7 +48,7 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
 
-        if (!wm->ball.haveBall())
+        if (!wm->ball.haveBall() || (wm->ball.haveBall() && wm->ball.getOppBallPossession()))
         {
             mc.motion.translation = 2 * translation;
             mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 1.8;
@@ -123,7 +123,7 @@ namespace alica
 
 //								if (friendlyPos->distanceTo(ownPoint) < 2000 && !friendlyBlocked)
 //								cout << "Duel: distance to friendlyPos: " << friendlyPos->distanceTo(ownPoint) << endl;
-                                if (friendlyPos->distanceTo(ownPoint) < 5000)
+                                if (friendlyPos->distanceTo(ownPoint) < 2000)
                                 {
                                     if (friendly == nullptr
                                             || friendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
@@ -231,7 +231,6 @@ namespace alica
 //			{
 //				cout << "Goal left!" << endl;
 //				// goal is on the left side of a vector between me and the ball, so i turn right
-//				egoTarget = make_shared<geometry::CNPoint2D>(0, -fieldWidth / 2);
 //				egoAlignPoint = make_shared<geometry::CNPoint2D>(ownPoint->x, -fieldWidth / 2);
 //
 //			}
