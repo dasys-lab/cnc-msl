@@ -40,4 +40,36 @@
     <key href="TeamWatchBall.beh#1457015565562"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555969546"/>
+    <value xPos="167" yPos="265"/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555971683"/>
+    <value xPos="421" yPos="260"/>
+  </extensions>
+  <extensions>
+    <key href="../../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555987772"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555989921"/>
+    <value>
+      <bendpoints xPos="511" yPos="276"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555991449"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OppStandardExecution.pml#1458555993363"/>
+    <value>
+      <bendpoints xPos="761" yPos="283"/>
+    </value>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

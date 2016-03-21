@@ -112,4 +112,74 @@
     <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="GenericExecute.pml#1431522123418"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555183582"/>
+    <value xPos="571" yPos="409" width="146" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555205351"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555207649"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555214716"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555218949"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555221149"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555788972"/>
+    <value>
+      <bendpoints xPos="276" yPos="468"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555819730"/>
+    <value>
+      <bendpoints xPos="375" yPos="413"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555853125"/>
+    <value>
+      <bendpoints xPos="346" yPos="355"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555879137"/>
+    <value>
+      <bendpoints xPos="332" yPos="258"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GenericOwnStandards.pml#1458555896457"/>
+    <value>
+      <bendpoints xPos="489" yPos="279"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

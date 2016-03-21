@@ -60,7 +60,7 @@ namespace alica
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
                 this->success = true;
-                mc=driveToMovingBall(egoBallPos, egoBallVelocity);
+                mc = driveToMovingBall(egoBallPos, egoBallVelocity);
                 mc.motion.translation = 500;
                 send(mc);
                 return;
@@ -89,7 +89,7 @@ namespace alica
             }
             else
             {
-            	mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+                mc = driveToMovingBall(egoBallPos, egoBallVelocity);
             }
         }
         else
