@@ -449,8 +449,10 @@ namespace msl
 													double angleTolerance)
 	{
 		MotionControl mc;
+
+		//What is the sense of an ego target if translation is 0 anyways?
 		double egoTargetAngle = egoTarget->angleTo();
-		double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+		double deltaTargetAngle = geometry::deltaAngle(egoAlignPoint->angleTo(), M_PI);
 		if (fabs(egoTargetAngle) < angleTolerance)
 		{
 			mc.motion.angle = egoTargetAngle;
