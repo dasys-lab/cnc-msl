@@ -134,6 +134,8 @@ namespace msl
 		double avgY = tmplinearSumY / tmpNumObs;
 		double tmpVariance = (tmpSquareSum + tmpNumObs * ((avgX * avgX) + (avgY * avgY))
 				- 2 * ((avgX * tmplinearSumX) + (avgY * tmplinearSumY))) / tmpNumObs;
+
+
 		if (tmpVariance > varianceThreshold)
 		{
 			// two cluster which break the VARIANCE_THRESHOLD -> the complete clustering is finished

@@ -78,7 +78,6 @@ namespace msl
 		AnnotatedObstacleClusterPool* pool;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
-		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;

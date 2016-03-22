@@ -134,12 +134,13 @@ namespace msl
 		static double MaxDistance;
 		static double MaxDistanceSqr;
 
-		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance);
+		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance = 0);
+                static bool isInsideField(double x, double y, double tolerance = 0);
+
 		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		static bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
 
-		static bool isInsideField(shared_ptr<geometry::CNPoint2D> p);
 		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
 																shared_ptr<geometry::CNPoint2D> alongVec);

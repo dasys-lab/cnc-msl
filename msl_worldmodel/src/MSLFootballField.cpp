@@ -73,10 +73,16 @@ namespace msl
 		return &instance;
 	}
 
+        /// <summary>Checks whether a given point is inside the field</summary>
 	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance)
 	{
 		return abs(point->x) < FieldLength / 2 + tolerance && abs(point->y) < FieldWidth / 2 + tolerance;
 	}
+
+        bool MSLFootballField::isInsideField(double x, double y, double tolerance)
+        {
+                return abs(x) < FieldLength / 2 + tolerance && abs(y) < FieldWidth / 2 + tolerance;
+        }
 
 	bool MSLFootballField::isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
@@ -93,12 +99,6 @@ namespace msl
 	bool MSLFootballField::isInsidePenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
 		return isInsideOwnPenalty(p, tolerance) || isInsideEnemyPenalty(p, tolerance);
-	}
-
-	/// <summary>Checks whether a given point is inside the field</summary>
-	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> p)
-	{
-		return abs(p->x) < FieldLength / 2 && abs(p->y) < FieldWidth / 2;
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp)

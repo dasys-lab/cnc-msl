@@ -30,7 +30,7 @@ namespace msl
 		DFLT_OB_RADIUS = (*sc)["PathPlanner"]->get<double>("PathPlanner", "obstacleRadius", NULL);
 		DFLT_ROB_RADIUS = (*sc)["PathPlanner"]->get<double>("PathPlanner", "teammateRadius", NULL);
 		OBSTACLE_MAP_OUT_TOLERANCE = (*sc)["PathPlanner"]->get<double>("PathPlanner", "ObHandler",
-																		"obstacleMapOutTolerance", NULL);
+							"obstacleMapOutTolerance", NULL);
 		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
 		NULL);
 		field = MSLFootballField::getInstance();
@@ -63,7 +63,6 @@ namespace msl
 			startSector = (((int)floor((angleToTarget / sectorWidth)) % (int)distScan->size()));
 
 			if ((startSector < 0) || (startSector >= distScan->size())) {
-//				printf("ERROR: wrong startSector in GetDistanceToObstacle(Point2d)! ({0}, {1}, {2}", startSector, angleToTarget, sectorWidth);
 				cout << "ERROR: wrong startSector in GetDistanceToObstacle(Point2d)! (" << startSector << " " << angleToTarget << "  " << sectorWidth << " )" << endl;
 			}
 
@@ -304,106 +303,99 @@ namespace msl
 				}
 			}
 			// check if variance after merging is below VARIANCE_THRESHOLD
-			if (fstClusterId != -1)
+			if (fstClusterId == -1)
 			{
-				mergedCluster = this->clusterArray->at(fstClusterId)->checkAndMerge(
-						this->clusterArray->at(sndClusterId), VARIANCE_THRESHOLD);
-				if (mergedCluster)
-				{
-					this->clusterArray->erase(this->clusterArray->begin() + sndClusterId);
-				}
+                          mergedCluster = false;
+			        break;
 			}
-			else
-			{
-				mergedCluster = false;
-			}
+
+                        mergedCluster = this->clusterArray->at(fstClusterId)->checkAndMerge(
+                                              this->clusterArray->at(sndClusterId), VARIANCE_THRESHOLD);
+                        if (mergedCluster)
+                        {
+                                this->clusterArray->erase(this->clusterArray->begin() + sndClusterId);
+                        }
 		}
-		this->newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
+
+		this->newClusterArray->clear();
+		this->newClusterArray->reserve(this->clusterArray->size());
 		for (int i = 0; i < this->clusterArray->size(); i++)
 		{
 			this->newClusterArray->push_back(this->clusterArray->at(i));
 		}
+
 		std::sort(this->newClusterArray->begin(), this->newClusterArray->end(), AnnotatedObstacleCluster::compareTo);
 		this->clusterArray->clear();
 	}
 
-	void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ownObs,
-											shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo)
+	void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ownObs,
+							shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo)
 	{
 		clusterArray->clear();
 		AnnotatedObstacleCluster* obs = nullptr;
 		int velX = 0;
 		int velY = 0;
-		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots.sharedWolrdModelData)
+		for (auto swmd : wm->robots.sharedWolrdModelData)
 		{
-		        auto information = curRobot.second->getLast();
+		        auto information = swmd.second->getLast();
 		        if (information == nullptr)
+		        {
 		                continue;
+		        }
 
-			/* Ignore every robot, which:
-			 * - is unlocalised
-			 * - messages are old (25 ms)
-			 * - I am (the obstacles from the WM are newer)*/
-			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = information->getInformation();
-			shared_ptr<geometry::CNPosition> curPlayerPosition = make_shared<geometry::CNPosition>(currentRobot->odom.position.x, currentRobot->odom.position.y, currentRobot->odom.position.angle);
-			if(currentRobot == nullptr || currentRobot->odom.certainty < 0.8
-			|| currentRobot->senderID == wm->getOwnId()
-			|| curRobot.second->getLast()->timeStamp + 250000000 < wm->getTime()
-			)
+			auto currentRobot = information->getInformation();
+			auto codo = currentRobot->odom;
+
+                        /* Ignore every robot, which:
+                         * - is unlocalised
+                         * - messages are old (25 ms)
+                         * - I am (the obstacles from the WM are newer)*/
+			if (currentRobot == nullptr
+			        || codo.certainty < 0.8
+                                || currentRobot->senderID == wm->getOwnId()
+                                || swmd.second->getLast()->timeStamp + 250000000 < wm->getTime())
 			{
 				continue;
 			}
+
 			// add all obstacles seen by curRobot
-			vector<msl_msgs::Point2dInfo> curOppList = currentRobot->obstacles;
-			if (curOppList.size() > 0)// != nullptr
-			{
-				for(int i = 0; i < curOppList.size(); ++i)
-				{
-					// Nobody knows the positions of obstacles arround me better than I do!
-					if(distance(curOppList.at(i), myOdo->position) < TERRITORY_RADIUS)
-					{
-						continue;
-					}
+			vector<msl_msgs::Point2dInfo>& curOppList = currentRobot->obstacles;
+                        for(auto ob : curOppList)
+                        {
+                                // Nobody knows the positions of obstacles around me better than I do!
+                                if(geometry::distance(ob.x, ob.y, myOdo->position.x, myOdo->position.y) < TERRITORY_RADIUS)
+                                {
+                                        continue;
+                                }
 
-					if (MSLFootballField::getInstance()->isInsideField(make_shared<geometry::CNPoint2D>(curOppList.at(i).x, curOppList.at(i).y), OBSTACLE_MAP_OUT_TOLERANCE))
-					{
-						obs = AnnotatedObstacleCluster::getNew(this->pool);
-						obs->init((int) (curOppList.at(i).x + 0.5), (int) (curOppList.at(i).y + 0.5), // pos
-						DFLT_OB_RADIUS,
-						EntityType::Opponent, curRobot.first);
-						clusterArray->push_back(obs);
-					}
-				}
-			}
-
-			// TODO: something to identify the other robot, when he is close to me
+                                if (MSLFootballField::getInstance()->isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
+                                {
+                                        obs = AnnotatedObstacleCluster::getNew(this->pool);
+                                        obs->init(round(ob.x), round(ob.y), // pos
+                                                  DFLT_OB_RADIUS,
+                                                  EntityType::Opponent, swmd.first);
+                                        clusterArray->push_back(obs);
+                                }
+                        }
 
 			/* add the curRobot itself as an obstacle, to identify teammates */
 
 			// Convert ego motion angle to allo motion angle
-			double alloMotionAngle = currentRobot->odom.position.angle + currentRobot->odom.motion.angle;
-			if (alloMotionAngle > M_PI)
-			{
-				alloMotionAngle -= 2 * M_PI;
-			}
-			else if (alloMotionAngle < -M_PI)
-			{
-				alloMotionAngle += 2 * M_PI;
-			}
+			double alloMotionAngle = geometry::normalizeAngle(codo.position.angle + codo.motion.angle);
 
 			// Calc x and y the velocity
-			velX = (int) (cos(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
-			velY = (int) (sin(alloMotionAngle) * currentRobot->odom.motion.translation + 0.5);
+			velX = (int) (cos(alloMotionAngle) * codo.motion.translation + 0.5);
+			velY = (int) (sin(alloMotionAngle) * codo.motion.translation + 0.5);
 
 			// predict the position along the translation
-			double seconds = (double) (wm->getTime() - curRobot.second->getLast()->timeStamp) / 1000000000.0;
+			double seconds = (double) (wm->getTime() - swmd.second->getLast()->timeStamp) / 1000000000.0;
 
 			obs = AnnotatedObstacleCluster::getNew(this->pool);
-			obs->init((int) (curPlayerPosition->x + seconds * velX + 0.5), (int) (curPlayerPosition->y + seconds * velY + 0.5),// pos
-			DFLT_ROB_RADIUS,
-			velX, velY,// velocity
-			curRobot.first,
-			curRobot.first);
+			obs->init(round(codo.position.x + seconds * velX), round(codo.position.y + seconds * velY),// pos
+                                          DFLT_ROB_RADIUS,
+                                          velX, velY,// velocity
+                                          swmd.first,
+                                          swmd.first);
 			clusterArray->push_back(obs);
 		}
 
@@ -428,15 +420,7 @@ namespace msl
 		/* add my own position: */
 
 		// Convert ego motion angle to allo motion angle
-		double alloMotAngle = myOdo->position.angle + myOdo->motion.angle;
-		if (alloMotAngle > M_PI)
-		{
-			alloMotAngle -= 2 * M_PI;
-		}
-		else if (alloMotAngle < -M_PI)
-		{
-			alloMotAngle += 2 * M_PI;
-		}
+		double alloMotAngle = geometry::normalizeAngle(myOdo->position.angle + myOdo->motion.angle);
 
 		velX = (int)round(myOdo->motion.translation * cos(alloMotAngle));
 		velY = (int)round(myOdo->motion.translation * sin(alloMotAngle));
@@ -475,8 +459,9 @@ namespace msl
 			 * - myself
 			 */
 			shared_ptr<msl_sensor_msgs::SharedWorldInfo> currentRobot = curRobot.second->getLast()->getInformation();
-			if (currentRobot == nullptr || currentRobot->odom.certainty < 0.8
-			|| currentRobot->senderID == wm->getOwnId())
+			if (currentRobot == nullptr
+			    || currentRobot->odom.certainty < 0.8
+			    || currentRobot->senderID == wm->getOwnId())
 			{
 				//				 	cout << "Skip" << endl;
 				continue;
@@ -511,24 +496,8 @@ namespace msl
 				dangle = abs(asin(DENSITY / curDist));
 
 				// normalize angles
-				left = curAngle + dangle;
-				if (left < -M_PI)
-				{
-					left += 2.0 * M_PI;
-				}
-				else if (left > M_PI)
-				{
-					left -= 2.0 * M_PI;
-				}
-				right = curAngle - dangle;
-				if (right < -M_PI)
-				{
-					right += 2.0 * M_PI;
-				}
-				else if (left > M_PI)
-				{
-					right -= 2.0 * M_PI;
-				}
+				left = geometry::normalizeAngle(curAngle + dangle);
+				right = geometry::normalizeAngle(curAngle - dangle);
 //
 //									cout << "Cluster Angels: \n\tleft: " << (left * 180) / M_PI
 //									                  << "\n\tmiddle: " << (curAngle * 180) / M_PI
@@ -554,24 +523,8 @@ namespace msl
 							dangle2 = abs(asin(DENSITY / curDist2));
 
 							// normalize angles
-							left2 = curAngle2 + dangle2;
-							if (left2 < -M_PI)
-							{
-								left2 += 2.0 * M_PI;
-							}
-							else if (left2 > M_PI)
-							{
-								left2 -= 2.0 * M_PI;
-							}
-							right2 = curAngle2 - dangle2;
-							if (right2 < -M_PI)
-							{
-								right2 += 2.0 * M_PI;
-							}
-							else if (right2 > M_PI)
-							{
-								right2 -= 2.0 * M_PI;
-							}
+							left2 = geometry::normalizeAngle(curAngle2 + dangle2);
+							right2 = geometry::normalizeAngle(curAngle2 - dangle2);
 //
 //														cout << "Own Obstacle Angels: \n\tleft: " << (left2 * 180) / M_PI
 //														                  << "\n\tmiddle: " << (curAngle2 * 180) / M_PI
@@ -743,14 +696,6 @@ namespace msl
 			return nullptr;
 		}
 		return x->getInformation();
-	}
-
-	double Obstacles::distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos)
-	{
-		double dx = (point.x - pos.x);
-		double dy = (point.y - pos.y);
-
-		return sqrt(dx * dx + dy * dy);
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getEgoVisionObstaclePoints(int index)
