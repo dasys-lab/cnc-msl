@@ -6,85 +6,85 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1450178699265) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    Duel::Duel() :
-            DomainBehaviour("Duel")
-    {
-        /*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
-        wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
-        translation = (*this->sc)["Drive"]->get<double>("Drive.Duel.Velocity", NULL);
-        fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
-        fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
-        robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-        /*PROTECTED REGION END*/
-    }
-    Duel::~Duel()
-    {
-        /*PROTECTED REGION ID(dcon1450178699265) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void Duel::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1450178699265) ENABLED START*/ //Add additional options here
-        // enter plan when !haveBall && enemy haveBall || haveBall && enemy close
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = make_shared < geometry::CNPoint2D > (fieldLength / 2, 0);
-        msl_actuator_msgs::MotionControl mc;
-        msl_actuator_msgs::BallHandleCmd bhc;
+	/*PROTECTED REGION ID(staticVars1450178699265) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	Duel::Duel() :
+			DomainBehaviour("Duel")
+	{
+		/*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
+		wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
+		translation = (*this->sc)["Drive"]->get<double>("Drive.Duel.Velocity", NULL);
+		fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
+		fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
+		robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
+		/*PROTECTED REGION END*/
+	}
+	Duel::~Duel()
+	{
+		/*PROTECTED REGION ID(dcon1450178699265) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void Duel::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1450178699265) ENABLED START*/ //Add additional options here
+		// enter plan when !haveBall && enemy haveBall || haveBall && enemy close
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball.getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
+		shared_ptr<geometry::CNPoint2D> egoAlignPoint = make_shared<geometry::CNPoint2D>(fieldLength / 2, 0);
+		shared_ptr<geometry::CNPoint2D> oppGoal = make_shared<geometry::CNPoint2D>(fieldLength / 2, 0);
+		msl_actuator_msgs::MotionControl mc;
+		msl_actuator_msgs::BallHandleCmd bhc;
 
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> teamMatePositions = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
-        shared_ptr < geometry::CNPoint2D > friendly = nullptr;
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teamMatePositions = make_shared<
+		vector<shared_ptr<geometry::CNPoint2D>>>();
+		shared_ptr<geometry::CNPoint2D> closestFriendly = nullptr;
 
-        double getAwayDistance = 2000;
+		if (ownPos == nullptr || egoBallPos == nullptr)
+		{
+			return;
+		}
 
-        if (ownPos == nullptr || egoBallPos == nullptr)
-        {
-            cout << "Duel: ownPos null or ballPos null" << endl;
-            return;
-        }
-        shared_ptr < geometry::CNPoint2D > ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
+		shared_ptr<geometry::CNPoint2D> ownPoint = make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y);
 
-        if (!wm->ball.haveBall() || (wm->ball.haveBall() && wm->ball.getOppBallPossession()))
-        {
-            mc.motion.translation = 2 * translation;
-            mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 1.8;
-            mc.motion.angle = egoBallPos->angleTo();
+		// push enemy robot and try to take the ball
+		if (!wm->ball.haveBall() || (wm->ball.haveBall() && wm->game.getGameState() == msl::GameState::OppBallPossession))
+		{
+			mc.motion.translation = 2 * translation;
+			mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 1.8;
+			mc.motion.angle = egoBallPos->angleTo();
 
-            bhc.leftMotor = -wheelSpeed;
-            bhc.rightMotor = -wheelSpeed;
+			bhc.leftMotor = -wheelSpeed;
+			bhc.rightMotor = -wheelSpeed;
 
-            send(bhc);
-            send(mc);
+			send(bhc);
+			send(mc);
 
-        }
-        else
-        {
-//          shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> mostRecentObs = wm->obstacles.getAlloObstaclePoints();
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> mostRecentObs =
-                    wm->robots.opponents.getOpponentsAlloClustered();
-            shared_ptr < geometry::CNPoint2D > closestObstacle = nullptr;
+		}
+		else
+		{
+			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> mostRecentOpps =
+			wm->robots.opponents.getOpponentsAlloClustered();
+			shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
 
-            if (mostRecentObs != nullptr)
-            {
-                for (auto obstacle : *mostRecentObs)
-                {
-                    if (obstacle)
-                    {
+			if (mostRecentOpps != nullptr)
+			{
+				for (auto opp : *mostRecentOpps)
+				{
+					if (opp)
+					{
 
-                        if ((closestObstacle == nullptr
-                                || obstacle->distanceTo(ownPoint) < closestObstacle->distanceTo(ownPoint))
-                                && obstacle->distanceTo(ownPoint) > 2000)
-                        {
-                            closestObstacle = obstacle;
-                        }
+						//find closest opponent in 2m radius
+						if ((closestOpponent == nullptr
+										|| opp->distanceTo(ownPoint) < closestOpponent->distanceTo(ownPoint))
+								&& opp->distanceTo(ownPoint) < 2000)
+						{
+							closestOpponent = opp;
+						}
 
-                        teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
+						teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
 
-                        //fyi
+						//info
 //						for (auto posit : *teamMatePositions)
 //						{
 //							if (posit)
@@ -94,131 +94,148 @@ namespace alica
 //						}
 //						cout << "Duel : ownPos " << ownPos->toString() << endl;
 
-                        for (int i = 0; i < teamMatePositions->size(); i++)
-                        {
-                            auto pos = teamMatePositions->at(i);
-                            if (pos)
-                            {
-                                shared_ptr < geometry::CNPoint2D > friendlyPos = make_shared < geometry::CNPoint2D
-                                        > (pos->x, pos->y);
+						for (int i = 0; i < teamMatePositions->size(); i++)
+						{
+							auto pos = teamMatePositions->at(i);
+							if (pos)
+							{
+								shared_ptr < geometry::CNPoint2D > friendlyPos = make_shared < geometry::CNPoint2D
+								> (pos->x, pos->y);
 
-                                shared_ptr < geometry::CNPoint2D > friendlyOrth1 = make_shared < geometry::CNPoint2D
-                                        > (friendlyPos->y, -friendlyPos->x);
-                                shared_ptr < geometry::CNPoint2D > friendlyOrth2 = make_shared < geometry::CNPoint2D
-                                        > (-friendlyPos->y, friendlyPos->x);
+								shared_ptr < geometry::CNPoint2D > friendlyOrth1 = make_shared < geometry::CNPoint2D
+								> (friendlyPos->y, -friendlyPos->x);
+								shared_ptr < geometry::CNPoint2D > friendlyOrth2 = make_shared < geometry::CNPoint2D
+								> (-friendlyPos->y, friendlyPos->x);
 
-                                shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> trianglePoints = make_shared<
-                                        vector<shared_ptr<geometry::CNPoint2D>>>();
+								shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> trianglePoints = make_shared<
+								vector<shared_ptr<geometry::CNPoint2D>>>();
 
-                                trianglePoints->push_back(
-                                        friendlyPos + friendlyOrth1->normalize() * (robotRadius + 75));
-                                trianglePoints->push_back(
-                                        friendlyPos + friendlyOrth2->normalize() * (robotRadius + 75));
-                                trianglePoints->push_back(ownPoint);
+								trianglePoints->push_back(
+										friendlyPos + friendlyOrth1->normalize() * (robotRadius + 75));
+								trianglePoints->push_back(
+										friendlyPos + friendlyOrth2->normalize() * (robotRadius + 75));
+								trianglePoints->push_back(ownPoint);
 
-                                if (geometry::isInsidePolygon(*trianglePoints, obstacle))
-                                {
-                                    friendlyBlocked = true;
-                                }
+								if (geometry::isInsidePolygon(*trianglePoints, opp))
+								{
+									//check if opponent stands between me and my teammate
+									friendlyBlocked = true;
+								}
 
 //								if (friendlyPos->distanceTo(ownPoint) < 2000 && !friendlyBlocked)
 //								cout << "Duel: distance to friendlyPos: " << friendlyPos->distanceTo(ownPoint) << endl;
-                                if (friendlyPos->distanceTo(ownPoint) < 2000)
-                                {
-                                    if (friendly == nullptr
-                                            || friendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
-                                    {
-                                        friendly = friendlyPos;
-                                    }
-                                }
-                            }
 
-                        }
-                    }
+								// find closest team member in 2m radius
+								if (friendlyPos->distanceTo(ownPoint) < 2000)
+								{
+									if (closestFriendly == nullptr
+											|| closestFriendly->distanceTo(ownPoint) < friendlyPos->distanceTo(ownPoint))
+									{
+										closestFriendly = friendlyPos;
+									}
+								}
+							}
 
-                }
+						}
+					}
 
-            }
+				}
 
-            if (closestObstacle != nullptr)
-            {
-                //TODO coolen punkt berechnen, funzt nicht wenn ein friendly im weg steht
-                // TAKER oder funzt auch nicht wenn friendly null ist!!!
-                cout << "Duel: closestObs " << closestObstacle->toString();
-//                cout << "Duel: friendly " << friendly->toString(); <--- by taker
-                egoTarget = (ownPoint + closestObstacle->rotate(M_PI)->normalize() * 300)->alloToEgo(*ownPos);
-            }
-            else
-            {
-                //TODO coolen punkt berechnen
-                shared_ptr < geometry::CNPoint2D > center = make_shared < geometry::CNPoint2D > (0, 0);
-                egoTarget = center->alloToEgo(*ownPos);
+			}
 
-            }
-            if (friendly != nullptr && !friendlyBlocked)
-            {
-                cout << "Duel: Found friendly that is not blocked!" << endl;
-                cout << "Duel: Position of Friendly: " << friendly->toString() << endl;
-                egoAlignPoint = friendly->alloToEgo(*ownPos);
-            }
-            else if (friendly != nullptr && friendlyBlocked)
-            {
-                cout << "Duel: Found friendly but unfortunately blocked!" << endl;
-                cout << "Duel: Position of Friendly: " << friendly->toString() << endl;
-                egoAlignPoint = egoTarget;
-            }
-            else
-            {
-                cout << "Duel: Found nobody" << endl;
-                if (ownPos == nullptr)
-                {
-                    //no idea
-                    cout << "Duel: no idea" << endl;
-                    egoAlignPoint = egoBallPos->rotate(M_PI / 2);
-                }
-                else
-                {
-                    //try closest field border
 
-                    //TODO testen
-                    cout << "Duel: try closest field border" << endl;
+			if (closestOpponent != nullptr)
+			{
+				//TODO cooleren punkt berechnen? funzt nicht wenn ein friendly im weg steht
 
-                    shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
-                            > (egoBallPos->y, -egoBallPos->x);
-                    shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
-                            > (-egoBallPos->y, egoBallPos->x);
-                    ballOrth1 = ballOrth1->egoToAllo(*ownPos);
-                    ballOrth2 = ballOrth1->egoToAllo(*ownPos);
-                    double distance = msl::MSLFootballField::distanceToLine(ownPoint, ballOrth1->angleTo());
-                    if (msl::MSLFootballField::distanceToLine(ownPoint, ballOrth2->angleTo()) < distance)
-                    {
-                        egoAlignPoint = egoBallPos->rotate(M_PI / 2);
-                    }
-                    else
-                    {
-                        egoAlignPoint = egoBallPos->rotate(-M_PI / 2);
-                    }
+				// move away from opponent
+				cout << "Duel: Moving away from Opponent!" << endl;
+//                egoTarget = (ownPoint + closestOpponent->rotate(M_PI)->normalize() * 300)->alloToEgo(*ownPos);
 
-                }
+				//TODO what if there are 2 opps on a line with our robot??
+				egoTarget = (ownPoint +((ownPoint - closestOpponent)->normalize() * 300))->alloToEgo(*ownPos);
+			}
+			else
+			{
 
-                egoAlignPoint = egoTarget;
-            }
+				//TODO hysteresis??
 
-//			if (closestObstacle != nullptr && closestObstacle->alloToEgo(*ownPos)->length() > getAwayDistance)
-            if (egoTarget->length() < 50)
-            {
-                cout << "Duel: Distance to closest opp: " << closestObstacle->alloToEgo(*ownPos)->length() << endl;
-                cout << "Duel success!" << endl;
-                this->success = true;
-                return;
-            }
+				this->success = true;
+				return;
+
+
+
+				//TODO coolen punkt berechnen
+//				cout << "Duel: Moving to center!" << endl;
+//				shared_ptr < geometry::CNPoint2D > center = make_shared < geometry::CNPoint2D > (0, 0);
+//				egoTarget = center->alloToEgo(*ownPos);
+
+			}
+			if (closestFriendly != nullptr && !friendlyBlocked)
+			{
+				cout << "Duel: Found friendly that is not blocked!" << endl;
+				egoAlignPoint = closestFriendly->alloToEgo(*ownPos);
+			}
+			else if (closestFriendly != nullptr && friendlyBlocked)
+			{
+				cout << "Duel: Found friendly but unfortunately blocked!" << endl;
+				egoAlignPoint = oppGoal;
+			}
+			else
+			{
+				cout << "Duel: Found nobody" << endl;
+				if (ownPos == nullptr)
+				{
+					//no idea
+					cout << "Duel: no idea" << endl;
+					egoAlignPoint = oppGoal;
+				}
+				else
+				{
+					//try closest field border
+
+					//TODO testen
+					cout << "Duel: try closest field border" << endl;
+
+					shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
+					> (egoBallPos->y, -egoBallPos->x);
+					shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
+					> (-egoBallPos->y, egoBallPos->x);
+					ballOrth1 = ballOrth1->egoToAllo(*ownPos);
+					ballOrth2 = ballOrth1->egoToAllo(*ownPos);
+					double distance = msl::MSLFootballField::distanceToLine(ownPoint, ballOrth1->angleTo());
+					if (msl::MSLFootballField::distanceToLine(ownPoint, ballOrth2->angleTo()) < distance)
+					{
+						egoAlignPoint = make_shared<geometry::CNPoint2D>(0,1);
+					}
+					else
+					{
+						egoAlignPoint = make_shared<geometry::CNPoint2D>(0,-1);
+					}
+				}
+			}
+
+			// success if goal reached (if goal is center)
+			if (egoTarget->length() < 100)
+			{
+				cout << "Duel: Distance to closest opp: " << closestOpponent->alloToEgo(*ownPos)->length() << endl;
+				cout << "Duel success!" << endl;
+				this->success = true;
+				return;
+			}
 
 //            cout << "Duel: Moving away!" << endl;
-            //TODO moveToPointFast??
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 25);
-            send(mc);
+			//TODO moveToPointFast??
+			mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
+			send(mc);
+		}
 
-        }
+
+		// too much time has passed
+		if(wm->getTime() - entryTime > 9000000000) {
+			cout << "Duel: time over " << endl;
+			this->success = true;
+		}
 
 //		shared_ptr<geometry::CNPoint2D> ownGoalPos = make_shared<geometry::CNPoint2D>(-fieldLength / 2, 0.0);
 //		shared_ptr<geometry::CNPoint2D> goalPosEgo = ownGoalPos->alloToEgo(*me);
@@ -244,23 +261,24 @@ namespace alica
 //			}
 //		}
 
-        /*PROTECTED REGION END*/
-    }
-    void Duel::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1450178699265) ENABLED START*/ //Add additional options here
-        direction = 0;
-        friendlyBlocked = false;
-        /*PROTECTED REGION END*/
-    }
-    /*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here
+		/*PROTECTED REGION END*/
+	}
+	void Duel::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1450178699265) ENABLED START*/ //Add additional options here
+		direction = 0;
+		friendlyBlocked = false;
+		entryTime = wm->getTime();
+		/*PROTECTED REGION END*/
+	}
+	/*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here
 // returns true if pointToCheck is left of lineVector(look along the lineVector)
 // uses cross product of 2 vectors. 0: colinear, <0: point left of vec, >0: point right of vec
-    bool Duel::pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck)
-    {
-        double cross = pointToCheck->x * lineVector->y - pointToCheck->y * lineVector->x;
-        return (cross < 0);
-    }
+	bool Duel::pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck)
+	{
+		double cross = pointToCheck->x * lineVector->y - pointToCheck->y * lineVector->x;
+		return (cross < 0);
+	}
 
 /*PROTECTED REGION END*/
 } /* namespace alica */
