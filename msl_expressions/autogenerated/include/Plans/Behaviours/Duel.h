@@ -23,7 +23,6 @@ namespace alica
         double translation;
         double robotRadius;
         int direction;
-        int counter;
         unsigned long entryTime;
         bool friendlyBlocked;
         bool pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
