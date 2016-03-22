@@ -66,6 +66,10 @@ namespace alica
 		}
 		else
 		{
+			bhc.leftMotor = 0;
+			bhc.rightMotor = 0;
+			send(bhc);
+
 			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> mostRecentOpps =
 			wm->robots.opponents.getOpponentsAlloClustered();
 			shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
@@ -82,7 +86,12 @@ namespace alica
 										|| opp->distanceTo(ownPoint) < closestOpponent->distanceTo(ownPoint))
 								&& opp->distanceTo(ownPoint) < 2000)
 						{
+							// possible testing quick fix, will remove later
+							if(counter % 100 == 0) {
+
 							closestOpponent = opp;
+							}
+							counter++;
 						}
 
 						teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
@@ -284,6 +293,7 @@ namespace alica
 		direction = 0;
 		friendlyBlocked = false;
 		entryTime = wm->getTime();
+		counter = 0;
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1450178699265) ENABLED START*/ //Add additional methods here
