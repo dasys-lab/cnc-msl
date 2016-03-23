@@ -28,7 +28,6 @@ namespace alica
         auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 
-
         if (!me || !alloBallPos)
         {
             return;
@@ -44,22 +43,21 @@ namespace alica
             goalPos = field->posOwnGoalMid();
         }
 
+        auto goaltoball = alloBallPos - goalPos;
+        auto defenderRange = (goaltoball->normalize()) * 4300;
 
-       auto goaltoball = alloBallPos - goalPos;
-       auto defenderRange = (goaltoball->normalize())*4300;
+        /*
+         if (alloBallPos->y <= 0)
+         {
 
-/*
-       if (alloBallPos->y <= 0)
-       {
+         }
+         else
+         {
 
-       }
-       else
-       {
-
-       }
-*/
-        MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100,
-                                                               nullptr);
+         }
+         */
+        MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
+                                                               alloBallPos->alloToEgo(*me), 100, nullptr);
 
         send(mc);
 

@@ -30,10 +30,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
         // check if it is ok to score a goal
-    	 cout << "==========================================================================" << endl;
+        cout << "==========================================================================" << endl;
         if (false == this->wm->game.isMayScore())
         {
-        	cout << "may score: false" << endl;
+            cout << "may score: false" << endl;
             return;
         }
         // get sensor data from WM and check validity
@@ -51,7 +51,6 @@ namespace alica
             return;
         }
         shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
-
 
         if (false == hitPoint)
         {
@@ -186,7 +185,8 @@ namespace alica
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
         // reduce goalPost->y by (ball radius + safety margin)
-        if (abs(yHitGoalline) < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
+        if (abs(yHitGoalline)
+                < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
             return make_shared < geometry::CNPoint2D > (this->field->FieldLength / 2, yHitGoalline);
