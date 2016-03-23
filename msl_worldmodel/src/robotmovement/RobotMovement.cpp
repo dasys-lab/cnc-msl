@@ -60,7 +60,7 @@ namespace msl
 																											NULL) / M_PI;
 	double RobotMovement::transControlIntegralMax =
 			(*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "maxTransIntegral",
-																					NULL);
+			NULL);
 	double RobotMovement::pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
 																										"pRot", NULL);
 	double RobotMovement::dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
@@ -89,13 +89,14 @@ namespace msl
 			return bm;
 		}
 
-		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
+		shared_ptr<geometry::CNPoint2D> dir = make_shared<geometry::CNPoint2D>(
+				bm.motion.translation * cos(bm.motion.angle), bm.motion.translation * sin(bm.motion.angle));
 
 //		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
 		if (field->isInsideEnemyKeeperArea(dir, 150) && field->isInsideEnemyKeeperArea(ownPos->getPoint(), 500))
 		{
-			dir = dir-ownPos;
+			dir = dir - ownPos;
 //			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
 			dir->x = min(dir->x, 0.0);
 //			cout << "RobotMovement: allo cut " << dir->x << " " << dir->y << endl;
@@ -237,7 +238,7 @@ namespace msl
 		bm.motion.rotation = min(abs(bm.motion.rotation), maxRot) * (bm.motion.rotation > 0 ? 1 : -1); //clamp rotation
 		curRot = bm.motion.rotation;
 
-                lastRotErr = angleErr;
+		lastRotErr = angleErr;
 
 		double transOrt = bm.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 		double maxCurTrans = pathPlanningMaxTrans;
@@ -345,13 +346,17 @@ namespace msl
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-		additionalPoints);
-		if(temp != nullptr && !noPathPlaner)
+
+		if(!noPathPlaner)
 		{
-			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
-			egoTarget = temp;
+			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+			additionalPoints);
+			if(temp != nullptr)
+			{
+				cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
+				egoTarget = temp;
+			}
 		}
 
 		mc.motion.angle = egoTarget->angleTo();
@@ -368,9 +373,9 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-                                                          shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-                                                          double snapDistance,
-                                                          shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+														double snapDistance,
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
@@ -866,7 +871,7 @@ namespace msl
 
 		if (destinationPoint->length() < destTol)
 		{
-                        return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
+			return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
 		}
 		else
 		{
@@ -897,8 +902,7 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
 				-field->FieldLength / 2.0 - alloPassee->x, -field->GoalWidth / 2.0 - 1000 - alloPassee->y);
 
-		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p)
-				&& geometry::leftOf(passee2RightOwnGoal, passee2p))
+		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
 		{
 			return numeric_limits<double>::min();
 		}
