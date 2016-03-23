@@ -38,7 +38,7 @@ namespace alica
 		msl_actuator_msgs::MotionControl mc;
 		msl_actuator_msgs::BallHandleCmd bhc;
 
-		vector<bool> hadClosestOpp(10, false);
+		vector<bool> hadClosestOpp(10, true);
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teamMatePositions = make_shared<
 		vector<shared_ptr<geometry::CNPoint2D>>>();
@@ -96,7 +96,7 @@ namespace alica
 
 						teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
 
-						//						cout << "Duel : ownPos " << ownPos->toString() << endl;
+						//cout << "Duel : ownPos " << ownPos->toString() << endl;
 
 						// try to find closest team member that isn't blocked for aligning
 						for (int i = 0; i < teamMatePositions->size(); i++)
@@ -128,8 +128,8 @@ namespace alica
 									friendlyBlocked = true;
 								}
 
-								//								if (friendlyPos->distanceTo(ownPoint) < 2000 && !friendlyBlocked)
-								//								cout << "Duel: distance to friendlyPos: " << friendlyPos->distanceTo(ownPoint) << endl;
+								//if (friendlyPos->distanceTo(ownPoint) < 2000 && !friendlyBlocked)
+								//cout << "Duel: distance to friendlyPos: " << friendlyPos->distanceTo(ownPoint) << endl;
 
 								// find closest team member in 2m radius
 								if (friendlyPos->distanceTo(ownPoint) < 2000)
@@ -153,6 +153,8 @@ namespace alica
 			if (closestOpponent != nullptr)
 			{
 				hadClosestOpp.at(itcounter++ % 10) = true;
+				itcounter++;
+
 				//TODO cooleren punkt berechnen? funzt nicht wenn ein friendly im weg steht
 
 				if (pointLeftOfVec(egoBallPos, closestOpponent->alloToEgo(*ownPos)))
@@ -177,7 +179,8 @@ namespace alica
 			else
 			{
 
-				hadClosestOpp.at(itcounter++) = false;
+				hadClosestOpp.at(itcounter % 10) = false;
+				itcounter++;
 
 				//TODO hysteresis of last closest opps because sensor info might be faulty??
 
