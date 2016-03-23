@@ -157,7 +157,7 @@ unsigned char * FilterDistanceProfileNew::process(unsigned char * src, unsigned 
 	if(addThreshold > 10.0)
 		addThreshold = 10.0;
 
-	threshold += addThreshold + obsThreshOffset;
+	threshold += addThreshold;
 	threshold_ = threshold;
 
 	//printf("FilterGrayToSeg: threshold = %f\n", threshold);
@@ -251,7 +251,7 @@ unsigned char * FilterDistanceProfileNew::process(unsigned char * src, unsigned 
 		if(luminanceAdd < -5)
 			luminanceAdd = -5;
 
-		unsigned char threshold_ind_new = (unsigned char) ((short) threshold_ind + luminanceAdd);
+		unsigned char threshold_ind_new = (unsigned char) (max((short) threshold_ind + luminanceAdd + obsThreshOffset, 0));
 
 
 
