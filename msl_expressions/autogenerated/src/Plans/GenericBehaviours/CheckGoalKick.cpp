@@ -30,8 +30,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
         // check if it is ok to score a goal
+    	 cout << "==========================================================================" << endl;
         if (false == this->wm->game.isMayScore())
         {
+        	cout << "may score: false" << endl;
             return;
         }
         // get sensor data from WM and check validity
@@ -50,7 +52,7 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
-        cout << "==========================================================================" << endl;
+
         if (false == hitPoint)
         {
             cout << "hits the goal: false" << endl;
