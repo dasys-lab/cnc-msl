@@ -160,7 +160,7 @@ namespace alica
 
             if (aimPoint != nullptr)
             {
-                alloAimPoint = (aimPoint->normalize() * 10000)->egoToAllo(*ownPos);
+                alloAimPoint = (aimPoint->normalize()->rotate(M_PI) * 10000)->egoToAllo(*ownPos);
             }
         }
         lastRotError = 0;
