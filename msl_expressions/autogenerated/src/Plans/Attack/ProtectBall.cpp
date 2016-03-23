@@ -85,14 +85,14 @@ namespace alica
         if (aimPoint == nullptr)
         {
             //this->failure = true;
-        	this->success = true;
+            this->success = true;
             return;
         }
 
         double aimAngle = aimPoint->angleTo();
         double ballAngle = ballPos->angleTo();
 
-        double deltaAngle = geometry::deltaAngle(aimAngle,ballAngle);
+        double deltaAngle = geometry::deltaAngle(aimAngle, ballAngle);
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
             this->success = true;
@@ -103,7 +103,7 @@ namespace alica
             double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 600)
                 //this->failure = true;
-            	this->success = true;
+                this->success = true;
         }
 
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

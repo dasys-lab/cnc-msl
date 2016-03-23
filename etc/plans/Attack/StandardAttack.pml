@@ -3,6 +3,7 @@
   <states id="1434046634657" name="GetBall" comment="" entryPoint="1434046634658">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1434048722503</inTransitions>
     <inTransitions>#1450175866364</inTransitions>
     <inTransitions>#1450175921044</inTransitions>

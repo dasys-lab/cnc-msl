@@ -66,7 +66,7 @@ namespace alica
         }
         else
         {
-        	cout << "no solution found!!!" << endl;
+            cout << "no solution found!!!" << endl;
             return;
         }
         send(mc);
