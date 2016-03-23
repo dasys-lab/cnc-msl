@@ -183,7 +183,7 @@ namespace alica
 					if(obs!=nullptr) {
 						for (int i = 0; i < obs->size(); i++)
 						{
-							if (obs->at(i).first != nullptr && obs->at(i).first->distanceTo(passPoint) < minOppDist)
+							if (obs->at(i) != nullptr && obs->at(i)->distanceTo(passPoint) < minOppDist)
 							{
 								opponentTooClose = true;
 								break;
@@ -495,12 +495,11 @@ namespace alica
     /*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ //Add additional methods here
     bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
                                              shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                             shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
+                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
-            < passCorridorWidth)
+            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint) < passCorridorWidth)
             {
                 return false;
             }
@@ -526,7 +525,7 @@ namespace alica
 
     bool AlignAndPassRapid::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                            shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
+                                            shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
     {
         shared_ptr<geometry::CNPoint2D> a2b = b - a;
         shared_ptr<geometry::CNPoint2D> b2c = c - b;
@@ -537,7 +536,7 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> p;
         for (int i = 0; i < points->size(); i++)
         {
-            p = points->at(i).first;
+            p = points->at(i);
             a2p = p - a;
             b2p = p - b;
             c2p = p - c;
