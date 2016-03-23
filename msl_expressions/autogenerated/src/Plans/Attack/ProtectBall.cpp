@@ -92,7 +92,7 @@ namespace alica
         double aimAngle = aimPoint->angleTo();
         double ballAngle = ballPos->angleTo();
         
-	double deltaAngle = geometry::deltaAngle(aimAngle, ballAngle);
+        double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         cout << "ProtectBall: angle:\t\t\t\t\t " << deltaAngle << endl;
         cout << "ProtectBall: aimPoint X: " << aimPoint->x << " Y: " << aimPoint->y << endl;
 
@@ -160,7 +160,7 @@ namespace alica
 
             if (aimPoint != nullptr)
             {
-                alloAimPoint = (aimPoint->normalize()->rotate(M_PI) * 10000)->egoToAllo(*ownPos);
+                alloAimPoint = (aimPoint->normalize() * 10000)->egoToAllo(*ownPos);
             }
         }
         lastRotError = 0;
