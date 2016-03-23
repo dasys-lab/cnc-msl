@@ -66,7 +66,7 @@ namespace msl
 	{
 		lock_guard<mutex> lock(voronoiMutex);
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		currentVoronoiPos = (currentVoronoiPos + 1) % 10;
+		currentVoronoiPos = (currentVoronoiPos + 1) % voronoiDiagrams.size();
 		if (ownPos != nullptr)
 		{
 			voronoiDiagrams.at(currentVoronoiPos)->generateVoronoiDiagram(true);
