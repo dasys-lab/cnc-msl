@@ -26,6 +26,8 @@ namespace alica
         int itcounter;
         unsigned long entryTime;
         bool friendlyBlocked;
+        shared_ptr<geometry::CNPoint2D> usedBallPos;
+        vector<bool> hadClosestOpp;
         bool pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
         /*PROTECTED REGION END*/
     private:
