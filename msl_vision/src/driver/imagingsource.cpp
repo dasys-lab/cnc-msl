@@ -161,21 +161,30 @@ namespace camera
     }
 
     void ImagingSource::setManualSettingModes() {
-        //setFeatureMode(DC1394_FEATURE_HUE,
-        //               DC1394_FEATURE_MODE_MANUAL);
-        //               DC1394_FEATURE_MODE_MANUAL);
         enableFeature(DC1394_FEATURE_SATURATION, true);
-	setFeatureMode(DC1394_FEATURE_SATURATION,
-                       DC1394_FEATURE_MODE_MANUAL);   
-	enableFeature(DC1394_FEATURE_BRIGHTNESS, true);
-	        setFeatureMode(DC1394_FEATURE_BRIGHTNESS,
+        setFeatureMode(DC1394_FEATURE_SATURATION,
                        DC1394_FEATURE_MODE_MANUAL);
-	//setFeatureMode(DC1394_FEATURE_SHUTTER,
-        //               DC1394_FEATURE_MODE_MANUAL); 
-	//setFeatureMode(DC1394_FEATURE_GAMMA,
-        //               DC1394_FEATURE_MODE_MANUAL);
-	//setFeatureMode(DC1394_FEATURE_EXPOSURE,
-        //               DC1394_FEATURE_MODE_MANUAL);
+	enableFeature(DC1394_FEATURE_HUE, true);
+        setFeatureMode(DC1394_FEATURE_HUE,
+                       DC1394_FEATURE_MODE_MANUAL);
+        enableFeature(DC1394_FEATURE_SHUTTER, true);
+        setFeatureMode(DC1394_FEATURE_SHUTTER,
+                       DC1394_FEATURE_MODE_MANUAL);
+        enableFeature(DC1394_FEATURE_GAMMA, true);
+        setFeatureMode(DC1394_FEATURE_GAMMA,
+                       DC1394_FEATURE_MODE_MANUAL);
+        enableFeature(DC1394_FEATURE_EXPOSURE, true);
+        setFeatureMode(DC1394_FEATURE_EXPOSURE,
+                       DC1394_FEATURE_MODE_MANUAL);
+ 	enableFeature(DC1394_FEATURE_GAIN, true);
+        setFeatureMode(DC1394_FEATURE_GAIN,
+                       DC1394_FEATURE_MODE_MANUAL);
+ 	enableFeature(DC1394_FEATURE_BRIGHTNESS, true);
+        setFeatureMode(DC1394_FEATURE_BRIGHTNESS,
+                       DC1394_FEATURE_MODE_MANUAL);
+
+
+
     }
 
     void ImagingSource::setWhiteBalance(const white_balance_t wb)
