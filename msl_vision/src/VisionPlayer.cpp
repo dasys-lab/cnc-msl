@@ -217,7 +217,7 @@ int main(int argc,char *argv[]){
 			cam->setVideoMode(DC1394_VIDEO_MODE_640x480_YUV422);
 			cam->init();
 			std::cout << "Cam init" << std::endl;
-			if(!isGoalie) cam->setManualSettingModesGoalie();
+			if(isGoalie) cam->setManualSettingModesGoalie();
 			if(vision->tryGet<bool>(false, "Vision", "Camera1394Settings", "SetManSettingsMode", NULL)) {
 				cam->setManualSettingModes();
 			}
