@@ -7,7 +7,6 @@ using namespace std;
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1454507752863) ENABLED START*/ //initialise static variables here
-    double static DESTINATION_DISTANCE = 300;
     /*PROTECTED REGION END*/
     BackroomDefence::BackroomDefence() :
             DomainBehaviour("BackroomDefence")
@@ -29,6 +28,7 @@ namespace alica
         auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 
+
         if (!me || !alloBallPos)
         {
             return;
@@ -44,12 +44,21 @@ namespace alica
             goalPos = field->posOwnGoalMid();
         }
 
-        auto goaltoball = alloBallPos - goalPos;
-        auto disDefender = goaltoball->normalize()
-                * (((double)msl::MSLFootballField::PenaltyAreaLength + 300.0) / goaltoball->normalize()->y);
-        auto target = goalPos + disDefender;
 
-        MotionControl mc = msl::RobotMovement::moveToPointFast(target->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100,
+       auto goaltoball = alloBallPos - goalPos;
+       auto defenderRange = (goaltoball->normalize())*4300;
+
+/*
+       if (alloBallPos->y <= 0)
+       {
+
+       }
+       else
+       {
+
+       }
+*/
+        MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me), alloBallPos->alloToEgo(*me), 100,
                                                                nullptr);
 
         send(mc);

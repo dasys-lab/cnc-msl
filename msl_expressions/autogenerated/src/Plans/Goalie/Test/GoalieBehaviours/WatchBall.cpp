@@ -167,7 +167,7 @@ namespace alica
 
         if (prevTarget != nullptr && prePrevTarget != nullptr)
         {
-            int factor = 1.3;
+            int factor = 1;
             double meanY = (prePrevTarget->y + prevTarget->y * factor + calcTargetY) / 3;
             string targetPos = fitTargetY(meanY);
             if (targetPos == LEFT)
@@ -178,8 +178,8 @@ namespace alica
                 currentTarget->y = alloGoalMid->y;
         }
         targetPosBuffer[targetIndex] = make_shared < geometry::CNPoint2D > (alloGoalMid->x, calcTargetY);
-        //cout << "calcTargetY: " << calcTargetY << endl;
-        //cout << "BallPos: " << ballPosBuffer[ballIndex]->toString();
+        cout << "calcTargetY: " << calcTargetY << endl;
+        cout << "BallPosY   : " << ballPosBuffer[ballIndex]->y;
         return currentTarget;
     }
 
@@ -214,21 +214,21 @@ namespace alica
     void WatchBall::sendMC(string targetPos)
     {
         shared_ptr < geometry::CNPoint2D > egoALignPoint = alloAlignPt->alloToEgo(*me);
-        cout << "TARGET: ";
+        //cout << "TARGET: ";
         if (targetPos == LEFT)
         {
             mc = RobotMovement::moveToPointFast(alloGoalLeft->alloToEgo(*me), egoALignPoint, 100, 0, true);
-            cout << alloGoalLeft->y << " left" << endl;
+            //cout << alloGoalLeft->y << " left" << endl;
         }
         else if (targetPos == RIGHT)
         {
             mc = RobotMovement::moveToPointFast(alloGoalRight->alloToEgo(*me), egoALignPoint, 100, 0, true);
-            cout << alloGoalRight->y << " right" << endl;
+            //cout << alloGoalRight->y << " right" << endl;
         }
         else
         {
             mc = RobotMovement::moveToPointFast(alloGoalMid->alloToEgo(*me), egoALignPoint, 100, 0, true);
-            cout << alloGoalMid->y << " mid" << endl;
+            //cout << alloGoalMid->y << " mid" << endl;
         }
         send (mc);
     }
