@@ -151,13 +151,13 @@ unsigned char * FilterDistanceProfileNew::process(unsigned char * src, unsigned 
 			
 	double threshold = ((double)sum)/((double)(4*frame*frame));
 
-	double addThreshold = threshold - 0.0 + obsThreshOffset;
+	double addThreshold = threshold;
 	if(addThreshold < 3.0)
 		addThreshold = 3.0;
 	if(addThreshold > 10.0)
 		addThreshold = 10.0;
 
-	threshold += addThreshold;
+	threshold += addThreshold + obsThreshOffset;
 	threshold_ = threshold;
 
 	//printf("FilterGrayToSeg: threshold = %f\n", threshold);
