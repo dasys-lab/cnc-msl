@@ -93,6 +93,7 @@ namespace alica
         double ballAngle = ballPos->angleTo();
 
         double deltaAngle = geometry::deltaAngle(aimAngle,ballAngle);
+        cout << "ProtectBall: " << deltaAngle << endl;
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
             this->success = true;
