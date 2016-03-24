@@ -35,15 +35,15 @@ namespace alica
 
 		predictByRawOdo = false;
 
-		prot = (*this->sc)["Drive"]->get<double>("Intercept.RotationP");
-		pirot = (*this->sc)["Drive"]->get<double>("Intercept.RotationI");
-		pdrot = (*this->sc)["Drive"]->get<double>("Intercept.RotationD");
+		prot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationP", NULL);
+		pirot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationI", NULL);
+		pdrot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationD", NULL);
 
-		pdist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceP");
-		pidist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceI");
-		pddist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceD");
+		pdist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceP", NULL);
+		pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
+		pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
-		maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
+		maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
         /*PROTECTED REGION END*/
     }
@@ -99,7 +99,7 @@ namespace alica
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
 
-		shared_ptr<geometry::CNPosition> predPos;
+		shared_ptr<geometry::CNPosition> predPos = make_shared<geometry::CNPosition>(ballPos->x, ballPos->y, ballPos->angleTo());
 
 //		if (predictByRawOdo) {
 //			WM.Predictor.PredictBallRobotSystem(odRaw.Motion,ballPos,ballVel,ownPos,160,out predBall,out predPos);
@@ -219,11 +219,11 @@ namespace alica
 		else {
 			mc.motion.angle = pathPlanningPoint->angleTo();
 		}
-//		if(fastIntercept) {
-//			mc.Motion.Translation = Math.Min(curMaxTrans,vel.Distance());
-//		}
-//		else mc.Motion.Translation = trans;
-		mc.motion.translation = trans;
+		if(true) {
+			mc.motion.translation = min(maxVel,vel->length());
+		} else {
+			mc.motion.translation = trans;
+		}
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());
 		double angleGoal = msl::Kicker::kickerAngle;
@@ -235,7 +235,6 @@ namespace alica
 		rotIntErr += rotErr;
 		rotIntErr = max(-2*M_PI,min(2*M_PI,rotIntErr));
 		lastRotErr = rotErr;
-
 
 		controlRot = max(-4*M_PI,min(4*M_PI,controlRot));
 		// this is nice stuff but only when we are not approaching the opponent
@@ -268,6 +267,7 @@ namespace alica
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
+
     bool  Intercept::interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel, double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo) {
     	t = 0;
 		interceptVelo = nullptr;
