@@ -66,7 +66,7 @@ namespace alica
 //		CorrectedOdometryData od  = WM.OdometryData;
 //		OdometryData odRaw = WM.RawOdometryData;
 
-
+		cout << "intercept: test1" << endl;
 		msl_actuator_msgs::MotionControl mc;
 		if (ownPos == nullptr) {
 			mc = msl::RobotMovement::driveRandomly(500);
@@ -74,6 +74,7 @@ namespace alica
 			cout << "Intercept return 1" << endl;
 			return;
 		}
+		cout << "intercept: test2" << endl;
 		if (ballPos == nullptr) {
 			cout << "Intercept return 2" << endl;
 			return;
@@ -82,12 +83,14 @@ namespace alica
 		if (ballVel == nullptr) {
 			ballVel = make_shared<geometry::CNVelocity2D>(0,0);
 		}
+		cout << "intercept: test3" << endl;
 
 
-
+		cout << "intercept: test4" << endl;
 		if (ballVel->length() > 7000) {
 			ballVel = ballVel->normalize()*7000;
 		}
+		cout << "intercept: test5" << endl;
 		auto alloBall = ballPos->egoToAllo(*ownPos);
 		if (!field->isInsideField(alloBall)) {
 			auto egoTarget=field->mapInsideField(alloBall)->alloToEgo(*ownPos);
@@ -168,7 +171,6 @@ namespace alica
 		double skalar = -predBall->x*ballVel->x-predBall->y*ballVel->y;
 		skalar /= predBall->length()*ballVel->length();
 		double ang = acos(skalar);
-		cout << "Intercept before comment testing." << endl;
 ///TESTING:
 //		double cosBallVel = ballPos.X*ballVel.Vx+ballPos.Y*ballVel.Vy / (ballPos.Distance()*ballVel.Length());
 //		// cos(180 +-60) = 0.5
