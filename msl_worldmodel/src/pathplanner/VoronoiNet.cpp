@@ -44,12 +44,16 @@ namespace msl
 			this->artificialObstacles->push_back(obs);
 		}
 
-		this->generateVoronoiDiagram(this->ownPosAvail);
                 this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
                 for (auto obs : *net->getAdditionalObstacles())
                 {
                         this->additionalObstacles->push_back(obs);
                 }
+
+
+
+                // this must be last!!!!!!
+                this->generateVoronoiDiagram(this->ownPosAvail);
 	}
 
 	VoronoiNet::~VoronoiNet()
@@ -137,19 +141,17 @@ namespace msl
 
 		//insert allo obstacles (including me) into voronoi diagram
 		vector<Site_2> sites;
-		this->alloClusteredObsWithMe = wm->obstacles.getAlloObstaclesWithMe();
-		if (alloClusteredObsWithMe != nullptr)
+                this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
+		auto alloObs = wm->obstacles.getAlloObstaclesWithMe();
+		if (alloObs != nullptr)
 		{
-			for (auto cluster : *alloClusteredObsWithMe)
+			for (auto cluster : *alloObs)
 			{
 				Site_2 site(cluster->x, cluster->y);
 				pointRobotKindMapping[site] = cluster->id;
 				sites.push_back(site);
+				this->alloClusteredObsWithMe->push_back(cluster);
 			}
-		}
-		else
-		{
-		        this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
 		}
 		this->voronoi->insert(sites.begin(), sites.end());
 
@@ -533,6 +535,14 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > VoronoiNet::getAlloClusteredObsWithMe()
 	{
+//	        auto obs = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
+//
+//	        for (auto ob : *this->alloClusteredObsWithMe)
+//	        {
+//	                obs->push_back(ob);
+//	        }
+//
+//		return obs;
 		return this->alloClusteredObsWithMe;
 	}
 

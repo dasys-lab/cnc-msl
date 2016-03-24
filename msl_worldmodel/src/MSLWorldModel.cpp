@@ -43,7 +43,8 @@ namespace msl
 
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
-					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10)
+					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10), monitoring(
+					this), maySendMessages(true)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -76,7 +77,8 @@ namespace msl
 										(MSLWorldModel*)this);
 
 		passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel*)this);
-		watchBallMsgSub = n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg, (MSLWorldModel*)this);
+		watchBallMsgSub = n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg,
+										(MSLWorldModel*)this);
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
@@ -86,7 +88,8 @@ namespace msl
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
 	}
-	supplementary::ITrigger* MSLWorldModel::getVisionDataEventTrigger() {
+	supplementary::ITrigger* MSLWorldModel::getVisionDataEventTrigger()
+	{
 		return this->visionDataEventTrigger;
 	}
 
@@ -105,7 +108,8 @@ namespace msl
 		}
 	}
 
-	bool MSLWorldModel::isUsingSimulator() {
+	bool MSLWorldModel::isUsingSimulator()
+	{
 		return this->timeLastSimMsgReceived > 10;
 	}
 
@@ -195,22 +199,21 @@ namespace msl
 			wmsim->distanceScan.sectors.push_back(20000);
 		}
 
-
 		for (int i = 0; i < wmsim->obstacles.size(); ++i)
 		{
-		        auto& obs = wmsim->obstacles.at(i);
+			auto& obs = wmsim->obstacles.at(i);
 
 			double x = obs.x - wmsim->odometry.position.x;
 			double y = obs.y - wmsim->odometry.position.y;
-                        double dist = sqrt(x * x + y * y);
+			double dist = sqrt(x * x + y * y);
 
-	                //only if obstacle is closer than 6m
+			//only if obstacle is closer than 6m
 			if (dist > 6000)
-                        {
-                                wmsim->obstacles.erase(wmsim->obstacles.begin() + i);
-                                i--;
-                                continue;
-                        }
+			{
+				wmsim->obstacles.erase(wmsim->obstacles.begin() + i);
+				i--;
+				continue;
+			}
 
 			double angle = atan2(y, x) - wmsim->odometry.position.angle;
 
@@ -296,8 +299,22 @@ namespace msl
 		}
 	}
 
+	bool MSLWorldModel::isMaySendMessages() const
+	{
+		return this->maySendMessages;
+	}
+
+	void MSLWorldModel::setMaySendMessages(bool maySendMessages)
+	{
+		this->maySendMessages = maySendMessages;
+	}
+
 	void MSLWorldModel::sendSharedWorldModelData()
 	{
+		if (!this->maySendMessages)
+		{
+			return;
+		}
 		msl_sensor_msgs::SharedWorldInfo msg;
 		msg.senderID = this->ownID;
 		auto ball = this->ball.getVisionBallPositionAndCertaincy();
@@ -314,21 +331,26 @@ namespace msl
 			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
 			msg.ballInPossession = this->ball.closeToTheBall();
-		} else {
+		}
+		else
+		{
 			msg.ballInPossession = false;
 		}
 
 		auto sb = this->ball.getAlloSharedBallPositionAndCertaincy();
-		if(sb!=nullptr && sb->first != nullptr && this->ball.getSharedBallSupporter() > 1)
+		if (sb != nullptr && sb->first != nullptr && this->ball.getSharedBallSupporter() > 1)
 		{
 			msg.sharedBall.point.x = sb->first->x;
 			msg.sharedBall.point.y = sb->first->y;
 			msg.sharedBall.confidence = sb->second;
 			msg.sharedBall.evidence = this->ball.getSharedBallSupporter();
-		} else if (sb == nullptr || sb->first == nullptr) {
+		}
+		else if (sb == nullptr || sb->first == nullptr)
+		{
 			//if sb == nullptr send ballguess
 			auto guess = this->ball.getAlloBallGuessPosition();
-			if(guess != nullptr) {
+			if (guess != nullptr)
+			{
 				msg.sharedBall.point.x = guess->x;
 				msg.sharedBall.point.y = guess->y;
 				msg.sharedBall.confidence = 0.1;
@@ -401,7 +423,8 @@ namespace msl
 		whiteBoard.processPassMsg(msg);
 	}
 
-	void MSLWorldModel::onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg) {
+	void MSLWorldModel::onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg)
+	{
 		whiteBoard.processWatchBallMsg(msg);
 	}
 
