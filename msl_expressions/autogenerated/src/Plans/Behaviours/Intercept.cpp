@@ -97,8 +97,7 @@ namespace alica
 			return;
 		}
 
-		mc = msl::RobotMovement::nearGoalArea(mc);
-
+		cout << "Intercept: after 3 returns!" << endl;
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
 
@@ -169,6 +168,7 @@ namespace alica
 		double skalar = -predBall->x*ballVel->x-predBall->y*ballVel->y;
 		skalar /= predBall->length()*ballVel->length();
 		double ang = acos(skalar);
+		cout << "Intercept before comment testing." << endl;
 ///TESTING:
 //		double cosBallVel = ballPos.X*ballVel.Vx+ballPos.Y*ballVel.Vy / (ballPos.Distance()*ballVel.Length());
 //		// cos(180 +-60) = 0.5
@@ -251,7 +251,7 @@ namespace alica
 		}
 		mc.motion.rotation = controlRot;
 		cout << "Intercept return 4" << endl;
-mc = msl::RobotMovement::nearGoalArea(mc);
+		mc = msl::RobotMovement::nearGoalArea(mc);
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
 			this->success = true;
