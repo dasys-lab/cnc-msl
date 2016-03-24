@@ -70,9 +70,11 @@ namespace alica
 		if (ownPos == nullptr) {
 			mc = msl::RobotMovement::driveRandomly(500);
 			send(mc);
+			cout << "Intercept return 1" << endl;
 			return;
 		}
 		if (ballPos == nullptr) {
+			cout << "Intercept return 2" << endl;
 			return;
 		}
 
@@ -90,7 +92,7 @@ namespace alica
 			auto egoTarget=field->mapInsideField(alloBall)->alloToEgo(*ownPos);
 			mc = msl::RobotMovement::placeRobotCareBall(egoTarget,ballPos,maxVel);
 			send(mc);
-
+			cout << "Intercept return 3" << endl;
 			return;
 		}
 
@@ -247,7 +249,7 @@ namespace alica
 			}
 		}
 		mc.motion.rotation = controlRot;
-
+		cout << "Intercept return 4" << endl;
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
 			this->success = true;
