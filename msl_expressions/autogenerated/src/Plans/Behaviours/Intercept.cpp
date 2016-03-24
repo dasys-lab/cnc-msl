@@ -55,6 +55,7 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
+		cout << "Intercept: start of run" << endl;
 		bool fastIntercept = false;
 		auto ballVel = wm->ball.getVisionBallVelocity();
 		double smoothingLength=1.0;
