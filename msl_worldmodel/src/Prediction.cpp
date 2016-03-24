@@ -41,7 +41,7 @@ void Prediction::monitoring()
 
   if(ownPos && odo)
   {
-    // plot '/tmp/angle.txt' u 1:2 w l, '/tmp/angle.txt' u 1:3 w l, '/tmp/angle.txt' u ($1 - 150000000):3 w l
+    // plot '/tmp/angle.txt' u 1:2 w l, '/tmp/angle.txt' u 1:3 w l, '/tmp/angle.txt' u ($1 + 150000000):3 w l
     double angle = wm->prediction.angle(150);
 
     double alloAngle = ownPos->theta;
@@ -52,8 +52,8 @@ void Prediction::monitoring()
 
       debugAngle << wm->getTime() << " " << alloAngle << " " << angle << std::endl << std::flush;
 
-      //  plot '/tmp/anglePos.txt' u 1:2 w l, '/tmp/anglePos.txt' u 1:6 w l, '/tmp/anglePos.txt' u ($1 - 150000000):6 w l
-      //
+      //  plot '/tmp/anglePos.txt' u 1:2 w l, '/tmp/anglePos.txt' u 1:6 w l, '/tmp/anglePos.txt' u ($1 + 150000000):6 w l
+      //  plot '/tmp/anglePos.txt' u 1:3 w l, '/tmp/anglePos.txt' u 1:7 w l, '/tmp/anglePos.txt' u ($1 + 150000000):7 w l
       auto anglePos = wm->prediction.angleAndPosition(150);
 
       if (anglePos)
