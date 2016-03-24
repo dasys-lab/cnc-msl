@@ -44,12 +44,16 @@ namespace msl
 			this->artificialObstacles->push_back(obs);
 		}
 
-		this->generateVoronoiDiagram(this->ownPosAvail);
                 this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
                 for (auto obs : *net->getAdditionalObstacles())
                 {
                         this->additionalObstacles->push_back(obs);
                 }
+
+
+
+                // this must be last!!!!!!
+                this->generateVoronoiDiagram(this->ownPosAvail);
 	}
 
 	VoronoiNet::~VoronoiNet()
