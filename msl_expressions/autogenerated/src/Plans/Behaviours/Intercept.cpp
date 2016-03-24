@@ -99,7 +99,7 @@ namespace alica
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
 
-		shared_ptr<geometry::CNPosition> predPos;
+		shared_ptr<geometry::CNPosition> predPos = ownPos;
 
 //		if (predictByRawOdo) {
 //			WM.Predictor.PredictBallRobotSystem(odRaw.Motion,ballPos,ballVel,ownPos,160,out predBall,out predPos);
@@ -205,8 +205,6 @@ namespace alica
 		if (field->isInsideField(alloBall,-150) && !field->isInsideField(alloDest)) {
 			pathPlanningPoint = field->mapInsideField((alloDest,alloBall-ownPos))->alloToEgo(*ownPos);
 		}
-		vector<double> empty;
-//		double[] empty = new double[0];
 
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
 		pathPlanningPoint=pp->getEgoDirection(pathPlanningPoint,eval);
@@ -223,7 +221,7 @@ namespace alica
 //			mc.Motion.Translation = Math.Min(curMaxTrans,vel.Distance());
 //		}
 //		else mc.Motion.Translation = trans;
-		mc.motion.translation = trans;
+		mc.motion.translation = min(maxVel,vel->length());
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());
 		double angleGoal = msl::Kicker::kickerAngle;
