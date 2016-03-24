@@ -33,6 +33,9 @@ namespace alica
         double minKeeperDistBallTrajectory;
         double minKickPower;
 
+        bool usePrediction;
+        int predictionTime;
+
         // testing variables for console output
         double cout_distBall2HitPoint;
 

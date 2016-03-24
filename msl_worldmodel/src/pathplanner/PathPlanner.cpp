@@ -12,8 +12,7 @@
 namespace msl
 {
 
-	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) :
-			voronoiDiagrams(count)
+	PathPlanner::PathPlanner(MSLWorldModel* wm, int count)
 	{
 		this->wm = wm;
 		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
@@ -23,12 +22,15 @@ namespace msl
 		this->lastTarget == nullptr;
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
+		this->voronoiDiagrams.reserve(10);
 		{
-			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
+		        auto voi = make_shared<VoronoiNet>(wm);
 			// TODO maybe VoronoiNet::generateVoronoiDiagram can spare inserting these art. obstacles again, if we maintain them properly
-			this->voronoiDiagrams.at(i)->setVoronoi(
+			voi->setVoronoi(
 					make_shared<VoronoiDiagram>(
 							(DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
+
+                        this->voronoiDiagrams.push_back(voi);
 		}
 		this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
 		this->minEdgeWidth = (*sc)["PathPlanner"]->get<double>("PathPlanner", "minEdgeWidth", NULL);
@@ -142,7 +144,9 @@ namespace msl
 		//check if the goal is reachable directly by checking a corridor between the robot and the goal
 		bool reachable = true;
 
-		for(auto cluster : *voronoi->getAlloClusteredObsWithMe())
+		auto vec = voronoi->getAlloClusteredObsWithMe();
+
+		for(auto cluster : *vec)
 		{
 			if(cluster->id == wm->getOwnId())
 			{
@@ -159,7 +163,8 @@ namespace msl
 
 		if (reachable)
 		{
-			for(auto obs : *voronoi->getArtificialObstacles())
+		        auto vec = voronoi->getArtificialObstacles();
+			for(auto obs : *vec)
 			{
 				//if there is an obstacle inside the corridor the goal is not reachable
 				if(corridorCheck(voronoi, startPos, goal, obs))
@@ -169,6 +174,20 @@ namespace msl
 				}
 			}
 		}
+
+                if (reachable)
+                {
+                        auto vec = voronoi->getAdditionalObstacles();
+                        for(auto obs : *vec)
+                        {
+                                //if there is an obstacle inside the corridor the goal is not reachable
+                                if(corridorCheck(voronoi, startPos, goal, obs))
+                                {
+                                        reachable = false;
+                                        break;
+                                }
+                        }
+                }
 
 		//if the corridor is free the robot can drive towards the goal
 		if(reachable)

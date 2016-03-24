@@ -1037,7 +1037,7 @@ void FieldWidget3D::onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> in
 
         auto robot = this->getRobotById(info->senderId);
         robot->setPathPlannerInfo(info);
-        robot->updateTimeStamp();
+//        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info)
@@ -1055,7 +1055,7 @@ void FieldWidget3D::onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> 
 
         auto robot = this->getRobotById(info->senderId);
         robot->setVoronoiNetInfo(info);
-        robot->updateTimeStamp();
+//        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck> info)
@@ -1064,7 +1064,7 @@ void FieldWidget3D::onCorridorCheckMsg(boost::shared_ptr<msl_msgs::CorridorCheck
 
         auto robot = this->getRobotById(info->senderId);
         robot->setCorridorCheckInfo(info);
-        robot->updateTimeStamp();
+//        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info)
@@ -1073,7 +1073,7 @@ void FieldWidget3D::onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info
 
         auto robot = this->getRobotById(info->senderID);
         robot->addDebugMsg(info);
-        robot->updateTimeStamp();
+//        robot->updateTimeStamp();
 }
 
 void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
@@ -1082,5 +1082,5 @@ void FieldWidget3D::onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info)
 
         auto robot = this->getRobotById(info->senderID);
         robot->setPassMsg(info);
-        robot->updateTimeStamp();
+//        robot->updateTimeStamp();
 }

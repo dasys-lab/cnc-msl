@@ -41,6 +41,7 @@
 #include "EventTrigger.h"
 #include "InformationElement.h"
 #include "Prediction.h"
+#include "Monitoring.h"
 
 namespace alica
 {
@@ -75,6 +76,9 @@ namespace msl
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 		void onLightBarrierInfo(std_msgs::BoolPtr msg);
 
+		bool isMaySendMessages() const;
+		void setMaySendMessages(bool maySendMessages);
+
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
 		void sendSharedWorldModelData();
@@ -85,6 +89,7 @@ namespace msl
 
 		bool isUsingSimulator();
 
+		Monitoring monitoring;
 		RawSensorData rawSensorData;
 		Robots robots;
 		Ball ball;
@@ -92,10 +97,11 @@ namespace msl
 		PathPlanner pathPlanner;
 		Kicker kicker;
 		WhiteBoard whiteBoard;
-		supplementary::EventTrigger visionTrigger;
-		InfoTime timeLastSimMsgReceived;
 		Obstacles obstacles;
 		Prediction prediction;
+
+		supplementary::EventTrigger visionTrigger;
+		InfoTime timeLastSimMsgReceived;
 
 	private:
 
@@ -107,6 +113,7 @@ namespace msl
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
+		bool maySendMessages;
 		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 

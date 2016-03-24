@@ -21,6 +21,7 @@ namespace msl
 		this->ownPosAvail = false;
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
 		this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
+                this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
 	}
 
 	VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
@@ -43,7 +44,16 @@ namespace msl
 			this->artificialObstacles->push_back(obs);
 		}
 
-		this->generateVoronoiDiagram(this->ownPosAvail);
+                this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
+                for (auto obs : *net->getAdditionalObstacles())
+                {
+                        this->additionalObstacles->push_back(obs);
+                }
+
+
+
+                // this must be last!!!!!!
+                this->generateVoronoiDiagram(this->ownPosAvail);
 	}
 
 	VoronoiNet::~VoronoiNet()
@@ -131,14 +141,16 @@ namespace msl
 
 		//insert allo obstacles (including me) into voronoi diagram
 		vector<Site_2> sites;
-		this->alloClusteredObsWithMe = wm->obstacles.getAlloObstaclesWithMe();
-		if (alloClusteredObsWithMe != nullptr)
+                this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
+		auto alloObs = wm->obstacles.getAlloObstaclesWithMe();
+		if (alloObs != nullptr)
 		{
-			for (auto cluster : *alloClusteredObsWithMe)
+			for (auto cluster : *alloObs)
 			{
 				Site_2 site(cluster->x, cluster->y);
 				pointRobotKindMapping[site] = cluster->id;
 				sites.push_back(site);
+				this->alloClusteredObsWithMe->push_back(cluster);
 			}
 		}
 		this->voronoi->insert(sites.begin(), sites.end());
@@ -214,6 +226,11 @@ namespace msl
 			Site_2 site(point->x, point->y);
 			this->pointRobotKindMapping[site] = type;
 			sites.push_back(site);
+
+			if (type == EntityType::Opponent)
+			        this->additionalObstacles->push_back(point);
+			else if (type == EntityType::ArtificialObstacle)
+			        this->artificialObstacles->push_back(point);
 		}
 		this->voronoi->insert(sites.begin(), sites.end());
 	}
@@ -282,8 +299,9 @@ namespace msl
 	{
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		this->alloClusteredObsWithMe->clear();
-		this->artificialObstacles->clear();
+                this->alloClusteredObsWithMe->clear();
+                this->artificialObstacles->clear();
+                this->additionalObstacles->clear();
 	}
 
 
@@ -498,16 +516,32 @@ namespace msl
 	{
 		for (int i = 0; i < sites->size(); i++)
 		{
+			cout << "VoronoiNet remove site" << endl;
 			//locate point
 			VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
+			cout <<"VoronoiNet 1" << endl;
 			VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+			cout <<"VoronoiNet 2" << endl;
 			//if location is face
 			if (VoronoiDiagram::Face_handle* handle = boost::get<VoronoiDiagram::Face_handle>(&loc))
 			{
 				//delete it from delaunay graph
-				((DelaunayTriangulation)this->voronoi->dual()).remove((*handle)->dual());
+				cout <<"VoronoiNet 3" << endl;
+				auto dt = (DelaunayTriangulation)this->voronoi->dual();
+
+				cout <<"VoronoiNet 3.1" << endl;
+				auto hd = (*handle)->dual();
+
+				cout <<"VoronoiNet 3.2" << endl;
+
+				cout <<"VoronoiNet " << sites->at(i)->x << " "<< sites->at(i)->y << endl;
+				cout << "VoronoiNet " << point.x() << " " << point.y() << endl;
+				(dt).remove(hd);
+				cout <<"VoronoiNet 4" << endl;
 			}
+			cout <<"VoronoiNet 5" << endl;
 		}
+		cout <<"VoronoiNet 6" << endl;
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getArtificialObstacles()
@@ -517,8 +551,21 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > VoronoiNet::getAlloClusteredObsWithMe()
 	{
+//	        auto obs = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
+//
+//	        for (auto ob : *this->alloClusteredObsWithMe)
+//	        {
+//	                obs->push_back(ob);
+//	        }
+//
+//		return obs;
 		return this->alloClusteredObsWithMe;
 	}
+
+        shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getAdditionalObstacles()
+        {
+                return this->artificialObstacles;
+        }
 
 	/**
 	 * block opponent penalty area
