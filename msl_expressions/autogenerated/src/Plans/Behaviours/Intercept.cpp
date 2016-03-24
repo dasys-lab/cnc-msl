@@ -94,7 +94,7 @@ namespace alica
 			return;
 		}
 
-		mc = msl::RobotMovement::nearGoalArea(mc);
+
 
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
@@ -247,6 +247,8 @@ namespace alica
 			}
 		}
 		mc.motion.rotation = controlRot;
+
+		mc = msl::RobotMovement::nearGoalArea(mc);
 
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
