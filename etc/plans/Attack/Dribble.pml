@@ -92,7 +92,7 @@
     <inState>#1434049476067</inState>
     <outState>#1434050522682</outState>
   </transitions>
-  <transitions id="1434050681521" name="MISSING_NAME" comment="IsTimeOut(1500,rp.StateStartTime)) (should be replaced by no obstacles in front) " msg="">
+  <transitions id="1434050681521" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1434050685640" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050522682</inState>
     <outState>#1434050502701</outState>

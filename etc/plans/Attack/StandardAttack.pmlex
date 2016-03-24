@@ -128,4 +128,8 @@
     <key href="../Behaviours/Duel.beh#1450178707835"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

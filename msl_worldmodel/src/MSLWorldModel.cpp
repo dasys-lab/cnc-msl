@@ -252,7 +252,7 @@ namespace msl
 		lock_guard<mutex> lock(wmMutex);
 		rawSensorData.processWorldModelData(msg);
 		obstacles.processWorldModelData(msg);
-		pathPlanner.processWorldModelData(msg);
+		pathPlanner.prepareVoronoiDiagram();
 		visionTrigger.run();
 	}
 

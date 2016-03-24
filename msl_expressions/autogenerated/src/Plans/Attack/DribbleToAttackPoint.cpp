@@ -77,7 +77,7 @@ namespace alica
         double dist = 0;
         for (int i = 0; i < opponents->size(); i++)
         {
-            auto opp = opponents->at(i).first;
+            auto opp = opponents->at(i);
             dist = opp->distanceTo(ownPoint);
             if (dist < maxOppDist)
             {
