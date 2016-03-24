@@ -700,7 +700,7 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		if (destinationPoint->length() < destTol)
 		{
-			cout << "RobotMovement: playeRobotCareBall return 1" << endl;
+
 			return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
 		}
 		else
@@ -716,13 +716,15 @@ namespace msl
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 				additionalPoints->push_back(wm->ball.getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
+				cout << "RobotMovement: playeRobotCareBall 1" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
 			}
 			else
 			{
+				cout << "RobotMovement: playeRobotCareBall 2" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
 			}
-
+			cout << "RobotMovement: placeRobotCareBall return." << endl;
 			return mc;
 		}
 	}
