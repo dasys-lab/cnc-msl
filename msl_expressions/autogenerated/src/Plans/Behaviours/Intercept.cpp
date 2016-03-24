@@ -55,7 +55,6 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
-		cout << "Intercept: start of run" << endl;
 		bool fastIntercept = false;
 		auto ballVel = wm->ball.getVisionBallVelocity();
 		double smoothingLength=1.0;
@@ -66,16 +65,13 @@ namespace alica
 //		CorrectedOdometryData od  = WM.OdometryData;
 //		OdometryData odRaw = WM.RawOdometryData;
 
-
 		msl_actuator_msgs::MotionControl mc;
 		if (ownPos == nullptr) {
 			mc = msl::RobotMovement::driveRandomly(500);
 			send(mc);
-			cout << "Intercept return 1" << endl;
 			return;
 		}
 		if (ballPos == nullptr) {
-			cout << "Intercept return 2" << endl;
 			return;
 		}
 
@@ -84,20 +80,19 @@ namespace alica
 		}
 
 
-
 		if (ballVel->length() > 7000) {
 			ballVel = ballVel->normalize()*7000;
 		}
 		auto alloBall = ballPos->egoToAllo(*ownPos);
 		if (!field->isInsideField(alloBall)) {
 			auto egoTarget=field->mapInsideField(alloBall)->alloToEgo(*ownPos);
+			cout << "Intercept return 3 begin" << endl;
 			mc = msl::RobotMovement::placeRobotCareBall(egoTarget,ballPos,maxVel);
+			cout << "Intercept return 3 end" << endl;
 			send(mc);
-			cout << "Intercept return 3" << endl;
 			return;
 		}
 
-		cout << "Intercept: after 3 returns!" << endl;
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
 
@@ -168,7 +163,6 @@ namespace alica
 		double skalar = -predBall->x*ballVel->x-predBall->y*ballVel->y;
 		skalar /= predBall->length()*ballVel->length();
 		double ang = acos(skalar);
-		cout << "Intercept before comment testing." << endl;
 ///TESTING:
 //		double cosBallVel = ballPos.X*ballVel.Vx+ballPos.Y*ballVel.Vy / (ballPos.Distance()*ballVel.Length());
 //		// cos(180 +-60) = 0.5
@@ -250,7 +244,6 @@ namespace alica
 			}
 		}
 		mc.motion.rotation = controlRot;
-		cout << "Intercept return 4" << endl;
 		mc = msl::RobotMovement::nearGoalArea(mc);
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
