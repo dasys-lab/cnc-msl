@@ -403,7 +403,6 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 		additionalPoints);
 
-		cout << "Robotmovement: after ego direction" << endl;
 		if(temp == nullptr)
 		{
 			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
@@ -424,7 +423,7 @@ namespace msl
 		{
 			mc.motion.translation = 0;
 		}
-		cout << "RobotMovement: befor return" << endl;
+
 		return mc;
 	}
 
