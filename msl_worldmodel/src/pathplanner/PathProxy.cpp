@@ -122,6 +122,9 @@ namespace msl
 			net->removeSites(additionalPoints);
 		}
 
+		cout << "PathProxy: after remove sites" << endl;
+
+
 		if(retPoint == nullptr)
 		{
 			return nullptr;

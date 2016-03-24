@@ -516,6 +516,7 @@ namespace msl
 	{
 		for (int i = 0; i < sites->size(); i++)
 		{
+			cout << "VoronoiNet remove site" << endl;
 			//locate point
 			VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
 			VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
