@@ -533,6 +533,9 @@ namespace msl
 				auto hd = (*handle)->dual();
 
 				cout <<"VoronoiNet 3.2" << endl;
+
+				cout <<"VoronoiNet " << sites->at(i)->x << " "<< sites->at(i)->y << endl;
+				cout << "VoronoiNet " << point.x() << " " << point.y() << endl;
 				(dt).remove(hd);
 				cout <<"VoronoiNet 4" << endl;
 			}
