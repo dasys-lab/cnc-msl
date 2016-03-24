@@ -144,7 +144,9 @@ namespace msl
 		//check if the goal is reachable directly by checking a corridor between the robot and the goal
 		bool reachable = true;
 
-		for(auto cluster : *voronoi->getAlloClusteredObsWithMe())
+		auto vec = voronoi->getAlloClusteredObsWithMe();
+
+		for(auto cluster : *vec)
 		{
 			if(cluster->id == wm->getOwnId())
 			{
@@ -161,7 +163,8 @@ namespace msl
 
 		if (reachable)
 		{
-			for(auto obs : *voronoi->getArtificialObstacles())
+		        auto vec = voronoi->getArtificialObstacles();
+			for(auto obs : *vec)
 			{
 				//if there is an obstacle inside the corridor the goal is not reachable
 				if(corridorCheck(voronoi, startPos, goal, obs))
@@ -174,7 +177,8 @@ namespace msl
 
                 if (reachable)
                 {
-                        for(auto obs : *voronoi->getAdditionalObstacles())
+                        auto vec = voronoi->getAdditionalObstacles();
+                        for(auto obs : *vec)
                         {
                                 //if there is an obstacle inside the corridor the goal is not reachable
                                 if(corridorCheck(voronoi, startPos, goal, obs))
