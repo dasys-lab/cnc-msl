@@ -250,6 +250,7 @@ namespace alica
 		}
 		mc.motion.rotation = controlRot;
 		cout << "Intercept return 4" << endl;
+mc = msl::RobotMovement::nearGoalArea(mc);
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
 			this->success = true;
