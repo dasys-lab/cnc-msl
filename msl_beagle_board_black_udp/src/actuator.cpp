@@ -152,7 +152,7 @@ uint8_t* buffer = NULL;
 		uint32_t serial_size = ros::serialization::serializationLength(message);
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
-		*((uint32_t*)buffer) = 554624761u;
+		*((uint32_t*)buffer) = 3108117629u;
 		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
