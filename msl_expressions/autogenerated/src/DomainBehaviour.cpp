@@ -39,6 +39,8 @@ namespace alica
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
 	{
+
+        this->wm->prediction.monitoring();
 		mc.senderID = ownID;
 		mc.timestamp = wm->getTime();
 		mc.motion.translation = min(__maxTranslation, mc.motion.translation);

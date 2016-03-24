@@ -59,8 +59,6 @@ namespace alica
                 }
         }
 
-        this->wm->prediction.monitoring();
-
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
