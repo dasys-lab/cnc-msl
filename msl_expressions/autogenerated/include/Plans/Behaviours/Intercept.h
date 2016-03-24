@@ -49,6 +49,7 @@ namespace alica
 
 
         bool  interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel, double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo);
+        void predictBallRobotSystem(msl_actuator_msgs::MotionControl mc, shared_ptr<geometry::CNPoint2D> ballPose, shared_ptr<geometry::CNPoint2D> ballVel, shared_ptr<geometry::CNPosition> ownPos,int ms, shared_ptr<geometry::CNPoint2D>& predBall, shared_ptr<geometry::CNPoint2D>& predPos);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458757170147) ENABLED START*/ //Add additional private methods here

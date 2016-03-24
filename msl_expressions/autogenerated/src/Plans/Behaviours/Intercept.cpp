@@ -35,15 +35,15 @@ namespace alica
 
 		predictByRawOdo = false;
 
-		prot = (*this->sc)["Drive"]->get<double>("Drive.Intercept.RotationP", NULL);
-		pirot = (*this->sc)["Drive"]->get<double>("Drive.Intercept.RotationI", NULL);
-		pdrot = (*this->sc)["Drive"]->get<double>("Drive.Intercept.RotationD", NULL);
+		prot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationP", NULL);
+		pirot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationI", NULL);
+		pdrot = (*sc)["Drive"]->get<double>("Drive.Intercept.RotationD", NULL);
 
-		pdist = (*this->sc)["Drive"]->get<double>("Drive.Intercept.DistanceP", NULL);
-		pidist = (*this->sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
-		pddist = (*this->sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
+		pdist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceP", NULL);
+		pidist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceI", NULL);
+		pddist = (*sc)["Drive"]->get<double>("Drive.Intercept.DistanceD", NULL);
 
-		maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
+		maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
         /*PROTECTED REGION END*/
     }
