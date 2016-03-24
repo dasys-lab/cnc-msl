@@ -44,12 +44,28 @@ namespace alica
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
 //        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
 
+
+        if (this->usePrediction)
+        { // use predicted own position
+                auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
+
+                if (pred == nullptr)
+                {
+                        auto predPos = pred->first;
+                        this->egoBallPos = this->egoBallPos + (predPos - ownPos); // move ego ball based on predicted own position
+                        this->ownPos = predPos;
+                }
+        }
+
         this->wm->prediction.monitoring();
 
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
         }
+
+
+
         shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
         if (false == hitPoint)
@@ -147,8 +163,11 @@ namespace alica
         minOwnDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minOwnDistGoal", NULL);
         minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
         keeperDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.keeperDistGoal", NULL);
-        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory",
-                                                                     NULL);
+        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory", NULL);
+
+        usePrediction = (*sc)["GoalKick"]->get<bool>("GoalKick.Prediction.use", NULL);
+        predictionTime = (*sc)["GoalKick"]->get<int>("GoalKick.Prediction.time", NULL);
+
         // is necessary to calculate the minimum distance to obstacle so that it is possible to shoot a goal
         // close to goal --> distance to robot is higher
         closeGoalDist = (*sc)["GoalKick"]->get<double>("GoalKick.OwnDistObs.closeGoalDist", NULL);
