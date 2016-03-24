@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450175655102) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,7 +17,6 @@ namespace alica
         threshold = 400;
         behindDistance = 300;
         maxVel = 3000;
-        field = nullptr;
         /*PROTECTED REGION END*/
     }
     FetchFromSideLine::~FetchFromSideLine()
@@ -26,17 +27,17 @@ namespace alica
     void FetchFromSideLine::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450175655102) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); //OwnPositionCorrected;
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
         if (ownPos == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
         if (ballPos == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             return;
         }
         msl_actuator_msgs::MotionControl bm = msl::RobotMovement::ruleActionForBallGetter();
@@ -56,7 +57,7 @@ namespace alica
             {
                 if (ownPos->y < alloBall->y - behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x;
                 dest->y = alloBall->y - behindDistance;
@@ -65,7 +66,7 @@ namespace alica
             {
                 if (ownPos->y > alloBall->y + behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x;
                 dest->y = alloBall->y + behindDistance;
@@ -83,7 +84,7 @@ namespace alica
             {
                 if (ownPos->x < alloBall->x - behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x - behindDistance;
                 dest->y = alloBall->y;
@@ -92,7 +93,7 @@ namespace alica
             {
                 if (ownPos->x > alloBall->x + behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x + behindDistance;
                 dest->y = alloBall->y;
@@ -114,7 +115,6 @@ namespace alica
     void FetchFromSideLine::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1450175655102) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
         /*PROTECTED REGION END*/
@@ -122,14 +122,14 @@ namespace alica
     /*PROTECTED REGION ID(methods1450175655102) ENABLED START*/ //Add additional methods here
     bool FetchFromSideLine::nearSideLine(shared_ptr<geometry::CNPoint2D> alloBall)
     {
-        return abs(alloBall->y) > field->FieldWidth / 2 - threshold
-                && abs(alloBall->y) < field->FieldWidth / 2 + threshold;
+        return abs(alloBall->y) > wm->field->getFieldWidth() / 2 - threshold
+                && abs(alloBall->y) < wm->field->getFieldWidth() / 2 + threshold;
     }
 
     bool FetchFromSideLine::nearXLine(shared_ptr<geometry::CNPoint2D> alloBall)
     {
-        return abs(alloBall->x) > field->FieldLength / 2 - threshold
-                && abs(alloBall->y) < field->FieldLength / 2 + threshold;
+        return abs(alloBall->x) > wm->field->getFieldLength() / 2 - threshold
+                && abs(alloBall->y) < wm->field->getFieldLength() / 2 + threshold;
     }
 
 /*PROTECTED REGION END*/

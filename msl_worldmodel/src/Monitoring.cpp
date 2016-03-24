@@ -6,9 +6,10 @@
  */
 
 #include "Monitoring.h"
+#include <thread>
 #include "MSLWorldModel.h"
 #include <engine/AlicaEngine.h>
-#include <thread>
+#include "RawSensorData.h"
 
 namespace msl
 {
@@ -53,7 +54,7 @@ namespace msl
 
 	void Monitoring::monitorMotion()
 	{
-		if (this->isUsingSimulator || wm->rawSensorData.getOwnPositionMotion())
+		if (this->isUsingSimulator || wm->rawSensorData->getOwnPositionMotion())
 		{
 			this->setMaySendMessages(true);
 		}

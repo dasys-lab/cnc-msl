@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/SpinSlowly.h"
 
 /*PROTECTED REGION ID(inccpp1435159253296) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,7 +23,7 @@ namespace alica
     void SpinSlowly::run(void* msg)
     {
         /*PROTECTED REGION ID(run1435159253296) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionMotion();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionMotion();
 
         if (ownPos == nullptr)
         {
@@ -43,7 +44,7 @@ namespace alica
 
         if (abs(startAngle - alpha) < epsilon && counter > 90)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         else
         {

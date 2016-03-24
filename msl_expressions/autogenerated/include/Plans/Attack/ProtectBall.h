@@ -32,7 +32,6 @@ namespace alica
         msl::PathProxy* pp;
         shared_ptr<msl::PathEvaluator> eval;
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
-        msl::MSLFootballField* field;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457706592232) ENABLED START*/ //Add additional private methods here

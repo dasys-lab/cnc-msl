@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1456756113767) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,7 +23,7 @@ namespace alica
     void RobotTest::run(void* msg)
     {
         /*PROTECTED REGION ID(run1456756113767) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
+        auto me = wm->rawSensorData->getOwnPositionVision();
 
         // testing motion ================================================================
 
@@ -231,15 +232,16 @@ namespace alica
 
         if (finished())
         {
-        	if (repeat)
-        	{
-        		cout << "restart test..." << endl;
-        		initialiseParameters();
-        	}else
-        	{
-        		cout << "finished testing" << endl;
-        		this->success = true;
-        	}
+            if (repeat)
+            {
+                cout << "restart test..." << endl;
+                initialiseParameters();
+            }
+            else
+            {
+                cout << "finished testing" << endl;
+                this->setSuccess(true);
+            }
 
         }
         /*PROTECTED REGION END*/
@@ -353,26 +355,18 @@ namespace alica
 
     bool RobotTest::lightBarrierRobot()
     {
-        auto lbi = wm->rawSensorData.getLightBarrier();
+        auto lbi = wm->rawSensorData->getLightBarrier();
 
-        if (lbi)
+        bool static lb_old = lbi;
+        if (lb_old != lbi)
         {
-            bool static lb_old = *lbi;
-            if (lb_old != *lbi)
-            {
-                lb_old = *lbi;
-                cout << "toggle light barrier!" << endl;
-                move++;
-            }
-            if (move > 5)
-            {
-                move = 0;
-                return false;
-            }
+            lb_old = lbi;
+            cout << "toggle light barrier!" << endl;
+            move++;
         }
-        else
+        if (move > 5)
         {
-            std::cout << "light barrier = nullPtr " << std::endl;
+            move = 0;
             return false;
         }
         return true;
@@ -380,7 +374,7 @@ namespace alica
 
     bool RobotTest::opticalFlowRobot()
     {
-        auto of = wm->rawSensorData.getOpticalFlow();
+        auto of = wm->rawSensorData->getOpticalFlow();
         if (of != nullptr)
         {
             cout << "receive data from optical flow!" << endl;

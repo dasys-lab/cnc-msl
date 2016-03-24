@@ -19,8 +19,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1458757170147) ENABLED START*/ //Add additional protected methods here
-        msl::MSLFootballField* field;
-
         double maxVel = 2500;
 
         bool useZmachine;

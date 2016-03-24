@@ -8,6 +8,10 @@
 #include "pathplanner/VoronoiNet.h"
 #include "MSLWorldModel.h"
 #include <SystemConfig.h>
+#include "obstaclehandler/Obstacles.h"
+#include "pathplanner/PathPlanner.h"
+#include "Robots.h"
+#include "Ball.h"
 
 namespace msl
 {
@@ -17,7 +21,6 @@ namespace msl
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
 		this->voronoi = make_shared<VoronoiDiagram>();
-		this->field = MSLFootballField::getInstance();
 		this->ownPosAvail = false;
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
 		this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
@@ -29,7 +32,6 @@ namespace msl
 		this->wm = net->wm;
 		this->sc = net->sc;
 		this->voronoi = make_shared<VoronoiDiagram>();
-		this->field = net->field;
 		this->ownPosAvail = net->ownPosAvail;
 
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
@@ -142,7 +144,7 @@ namespace msl
 		//insert allo obstacles (including me) into voronoi diagram
 		vector<Site_2> sites;
                 this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
-		auto alloObs = wm->obstacles.getAlloObstaclesWithMe();
+		auto alloObs = wm->obstacles->getAlloObstaclesWithMe();
 		if (alloObs != nullptr)
 		{
 			for (auto cluster : *alloObs)
@@ -156,15 +158,15 @@ namespace msl
 		this->voronoi->insert(sites.begin(), sites.end());
 
 		//insert artificial obstacles
-		this->artificialObstacles = wm->pathPlanner.getArtificialFieldSurroundingObs();
-		auto iter = wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin();
+		this->artificialObstacles = wm->pathPlanner->getArtificialFieldSurroundingObs();
+		auto iter = wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_begin();
 		do
 		{
 			pointRobotKindMapping[*iter] = EntityType::ArtificialObstacle;
-		} while (++iter != wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
+		} while (++iter != wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_end());
 
-		this->voronoi->insert(wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_begin(),
-								wm->pathPlanner.getArtificialObjectNet()->getVoronoi()->sites_end());
+		this->voronoi->insert(wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_begin(),
+								wm->pathPlanner->getArtificialObjectNet()->getVoronoi()->sites_end());
 
 //		cout << "VoronoiNet: obstWithMe " << alloClusteredObs->size() << " : sites " << sites.size() << " : artObs " << artObs->size() << endl;
 	}
@@ -225,7 +227,7 @@ namespace msl
 		for(auto point = points->begin(); point != points->end();)
 		{
 
-		   if(!this->field->isInsideField(*point))
+		   if(!wm->field->isInsideField(*point))
 		   {
 		      point = points->erase(point);
 		   }
@@ -281,7 +283,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getTeamMateVerticesCNPoint2D(int teamMateId)
 	{
 		//locate teammate
-		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+		shared_ptr<geometry::CNPosition> teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
 
 		if (teamMatePos == nullptr)
 			return nullptr;
@@ -579,13 +581,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of opp penalty area
-		auto upLeftCorner = field->posULOppPenaltyArea();
+		auto upLeftCorner = wm->field->posULOppPenaltyArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROppPenaltyArea();
+		auto lowRightCorner = wm->field->posLROppPenaltyArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->GoalAreaWidth;
-		int penaltyLength = field->GoalAreaLength;
+		int penaltyWidth = wm->field->getGoalAreaWidth();
+		int penaltyLength = wm->field->getGoalAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -626,13 +628,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of opp goal area
-		auto upLeftCorner = field->posULOppGoalArea();
+		auto upLeftCorner = wm->field->posULOppGoalArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROppGoalArea();
+		auto lowRightCorner = wm->field->posLROppGoalArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->PenaltyAreaWidth;
-		int penaltyLength = field->PenaltyAreaLength;
+		int penaltyWidth = wm->field->getPenaltyAreaWidth();
+		int penaltyLength = wm->field->getPenaltyAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -673,13 +675,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of own penalty area
-		auto upLeftCorner = field->posULOwnPenaltyArea();
+		auto upLeftCorner = wm->field->posULOwnPenaltyArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROwnPenaltyArea();
+		auto lowRightCorner = wm->field->posLROwnPenaltyArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->GoalAreaWidth;
-		int penaltyLength = field->GoalAreaLength;
+		int penaltyWidth = wm->field->getGoalAreaWidth();
+		int penaltyLength = wm->field->getGoalAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -720,13 +722,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of own goal area
-		auto upLeftCorner = field->posULOwnGoalArea();
+		auto upLeftCorner = wm->field->posULOwnGoalArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROwnGoalArea();
+		auto lowRightCorner = wm->field->posLROwnGoalArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->PenaltyAreaWidth;
-		int penaltyLength = field->PenaltyAreaLength;
+		int penaltyWidth = wm->field->getPenaltyAreaWidth();
+		int penaltyLength = wm->field->getPenaltyAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -766,7 +768,7 @@ namespace msl
 	{
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 		//get ball pos
-		auto alloBall = wm->ball.getAlloBallPosition();
+		auto alloBall = wm->ball->getAlloBallPosition();
 		if(alloBall == nullptr)
 		{
 			return;

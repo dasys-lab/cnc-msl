@@ -6,3 +6,5 @@ log/temp/
 *~
 *.swp
 *.swo
+*.b#*
+*.s#*

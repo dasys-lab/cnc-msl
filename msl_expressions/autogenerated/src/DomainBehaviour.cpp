@@ -1,5 +1,8 @@
 #include "DomainBehaviour.h"
 
+#include <RawSensorData.h>
+#include <Kicker.h>
+
 namespace alica
 {
 	msl::MSLWorldModel* wm;
@@ -44,7 +47,7 @@ namespace alica
 		mc.timestamp = wm->getTime();
 		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
 		motionControlPub.publish(mc);
-		wm->rawSensorData.processMotionControlMessage(mc);
+		wm->rawSensorData->processMotionControlMessage(mc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
@@ -61,14 +64,14 @@ namespace alica
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
-                wm->kicker.processKickConstrolMsg(kc);
+                wm->kicker->processKickConstrolMsg(kc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
 	{
 		ssc.senderID = ownID;
 		shovelSelectPublisher.publish(ssc);
-		this->wm->kicker.lowShovelSelected = ssc.passing;
+		this->wm->kicker->lowShovelSelected = ssc.passing;
 	}
 
 	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)

@@ -7,6 +7,9 @@
 
 #include "Opponents.h"
 #include "MSLWorldModel.h"
+#include "Robots.h"
+#include "GeometryCalculator.h"
+#include "Ball.h"
 
 namespace msl
 {
@@ -16,8 +19,8 @@ namespace msl
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
 		this->ringBufferLength = ringBufferLength;
-		this->opponentProtectAngle = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectAngle", NULL);
-		this->opponentProtectDistance = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectDistance", NULL);
+		this->opponentProtectAngle = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectAngle", NULL);
+		this->opponentProtectDistance = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectDistance", NULL);
 	}
 
 	Opponents::~Opponents()
@@ -26,7 +29,7 @@ namespace msl
 
 
 	shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double width) {
-		auto opps = wm->robots.opponents.getOpponentsEgoClustered();
+		auto opps = wm->robots->opponents.getOpponentsEgoClustered();
 			//wm.GetCurrentOpponentListMerged();
 		if (opps == nullptr) return nullptr;
 		shared_ptr<geometry::CNPoint2D> closest;
@@ -51,7 +54,7 @@ namespace msl
 		auto obs = getOpponentsEgoClustered();
 			//wm.GetCurrentOpponentListMerged();
 		if (obs==nullptr) return nullptr;
-		auto ball = wm->ball.getEgoBallPosition();
+		auto ball = wm->ball->getEgoBallPosition();
 		if (ball==nullptr) return nullptr;
 		double temp;
 		shared_ptr<geometry::CNPoint2D> res;

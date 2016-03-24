@@ -7,7 +7,7 @@ if [[ $1 == "--help" ]]; then
 	echo "Usage: allrobots.sh [option]"
 	echo ""
 	echo "Options:"
-	echo "--help       prints this text"
+	echo "--help      prints this text"
 	echo "--pullmake  invokes 'mr up' and 'catkin_make' on all remote shells"
 	echo "--clear     kills all screens"
 	echo "--setup     installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
@@ -39,7 +39,7 @@ if [[ $1 == "--setup" ]]; then
 	fi
 	for robot in "${onlineRobots[@]}"
         do
-                gnome-terminal --title "$robot" -e "bash -c \"ssh-copy-id $robot\""
+                gnome-terminal --title "$robot" -e "bash -c \"ssh-copy-id cn@$robot\""
         done
 	exit
 fi
@@ -75,9 +75,8 @@ do
 	screen -S "$robot" -X stuff "clear^M"
 
 	if [[ $1 == "--pullmake" ]]; then
-		screen -S "$robot" -X stuff "mr up^M"
 		screen -S "$robot" -X stuff "cd cnws^M"
-		screen -S "$robot" -X stuff "catkin_make^M"
+		screen -S "$robot" -X stuff "if [[ \$(mr up | tee /dev/tty | grep failed | wc -l) = 0 ]]; then catkin_make; fi^M"
 	fi
 done
 

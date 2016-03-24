@@ -1,0 +1,2 @@
+float64 calibCoefficientX
+float64 calibCoefficientY

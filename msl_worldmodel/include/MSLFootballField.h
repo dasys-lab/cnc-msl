@@ -26,8 +26,6 @@
 #include <SystemConfig.h>
 #include <GeometryCalculator.h>
 
-using namespace supplementary;
-
 //                   T  H  E    E  N  E  M  Y  `  S    S  I  D  E
 //
 //30---------------------------------------------------------------------------+
@@ -109,108 +107,127 @@ using namespace supplementary;
 
 namespace msl
 {
+	class MSLWorldModel;
 	class MSLFootballField
 	{
 
 	public:
 
-		static MSLFootballField * getInstance();
+		MSLFootballField(MSLWorldModel* wm);
+		virtual ~MSLFootballField();
+//		static MSLFootballField * getInstance();
 
-		static double FieldLength;
-		static double FieldWidth;
-		static double PenaltyAreaWidth;
-		static double PenaltyAreaLength;
-		static double GoalAreaLength;
-		static double GoalAreaWidth;
-		static double CornerCircleRadius;
-		static double MiddleCircleRadius;
-		static double LineWidth;
-		static double GoalWidth;
-		static bool GoalInnerAreaExists;
-		static bool CornerCircleExists;
-		static double PenaltySpot;
-		static double Surrounding;
-		static double PenaltyAreaMappingTolerance;
-		static double MaxDistance;
-		static double MaxDistanceSqr;
+		bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance = 0);
+        bool isInsideField(double x, double y, double tolerance = 0);
 
-		static bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance = 0);
-                static bool isInsideField(double x, double y, double tolerance = 0);
+		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
 
-		static bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		static bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		static bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
-
-		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
+		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
 																shared_ptr<geometry::CNPoint2D> alongVec);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
-		static shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
-		static shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		static bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		static bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		static bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
-		static shared_ptr<geometry::CNPoint2D> keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from, shared_ptr<geometry::CNPoint2D> to);
-		static double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle);
-		static double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle, double extendFieldLines);
+		shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+		bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from, shared_ptr<geometry::CNPoint2D> to);
+		double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle);
+		double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle, double extendFieldLines);
 
 
-		static shared_ptr<geometry::CNPoint2D> posCenterMarker(); // see no. 0
+		shared_ptr<geometry::CNPoint2D> posCenterMarker(); // see no. 0
 
 		// Corners
-		static shared_ptr<geometry::CNPoint2D> posLeftOwnCorner(); // see no. 1
-		static shared_ptr<geometry::CNPoint2D> posRightOwnCorner(); // see no. 2
-		static shared_ptr<geometry::CNPoint2D> posLeftOppCorner(); // see no. 3
-		static shared_ptr<geometry::CNPoint2D> posRightOppCorner(); // see no. 4
+		shared_ptr<geometry::CNPoint2D> posLeftOwnCorner(); // see no. 1
+		shared_ptr<geometry::CNPoint2D> posRightOwnCorner(); // see no. 2
+		shared_ptr<geometry::CNPoint2D> posLeftOppCorner(); // see no. 3
+		shared_ptr<geometry::CNPoint2D> posRightOppCorner(); // see no. 4
 
 		// Goalposts
-		static shared_ptr<geometry::CNPoint2D> posLeftOwnGoalPost();  // see no. 5
-		static shared_ptr<geometry::CNPoint2D> posRightOwnGoalPost();  // see no. 6
-		static shared_ptr<geometry::CNPoint2D> posLeftOppGoalPost(); // see no. 7
-		static shared_ptr<geometry::CNPoint2D> posRightOppGoalPost(); // see no. 8
+		shared_ptr<geometry::CNPoint2D> posLeftOwnGoalPost();  // see no. 5
+		shared_ptr<geometry::CNPoint2D> posRightOwnGoalPost();  // see no. 6
+		shared_ptr<geometry::CNPoint2D> posLeftOppGoalPost(); // see no. 7
+		shared_ptr<geometry::CNPoint2D> posRightOppGoalPost(); // see no. 8
 		// Field Points
-		static shared_ptr<geometry::CNPoint2D> posOwnPenaltyMarker(); // see no. 9
-		static shared_ptr<geometry::CNPoint2D> posRightOwnRestartMarker(); // see no. 10
-		static shared_ptr<geometry::CNPoint2D> posLeftOwnRestartMarker(); // see no. 11
-		static shared_ptr<geometry::CNPoint2D> posOppPenaltyMarker(); // see no. 12
-		static shared_ptr<geometry::CNPoint2D> posRightOppRestartMarker(); // see no. 13
-		static shared_ptr<geometry::CNPoint2D> posLeftOppRestartMarker(); // see no. 14
-		static shared_ptr<geometry::CNPoint2D> posOppGoalMid(); // see no. 15
-		static shared_ptr<geometry::CNPoint2D> posOwnGoalMid(); // see no. 16
-		static shared_ptr<geometry::CNPoint2D> posLROppHalf(); // see no. 17
-		static shared_ptr<geometry::CNPoint2D> posULOwnHalf(); // see no. 18
-		static shared_ptr<geometry::CNPoint2D> posLROwnPenaltyArea(); // see no. 19
-		static shared_ptr<geometry::CNPoint2D> posULOwnPenaltyArea(); // see no. 20
-		static shared_ptr<geometry::CNPoint2D> posLROppPenaltyArea(); // see no. 21
-		static shared_ptr<geometry::CNPoint2D> posULOppPenaltyArea(); // see no. 22
-		static shared_ptr<geometry::CNPoint2D> posLROwnGoalArea(); // see no. 23
-		static shared_ptr<geometry::CNPoint2D> posULOwnGoalArea(); // see no. 24
-		static shared_ptr<geometry::CNPoint2D> posLROppGoalArea(); // see no. 25
-		static shared_ptr<geometry::CNPoint2D> posULOppGoalArea();// see no. 26
-		static shared_ptr<geometry::CNPoint2D> posLeftRestartMarker(); // see no. 27
-		static shared_ptr<geometry::CNPoint2D> posRightRestartMarker(); // see no. 28
-		static shared_ptr<geometry::CNPoint2D> posLRSurrounding();// see no. 29
-		static shared_ptr<geometry::CNPoint2D> posULSurrounding(); // see no. 30
+		shared_ptr<geometry::CNPoint2D> posOwnPenaltyMarker(); // see no. 9
+		shared_ptr<geometry::CNPoint2D> posRightOwnRestartMarker(); // see no. 10
+		shared_ptr<geometry::CNPoint2D> posLeftOwnRestartMarker(); // see no. 11
+		shared_ptr<geometry::CNPoint2D> posOppPenaltyMarker(); // see no. 12
+		shared_ptr<geometry::CNPoint2D> posRightOppRestartMarker(); // see no. 13
+		shared_ptr<geometry::CNPoint2D> posLeftOppRestartMarker(); // see no. 14
+		shared_ptr<geometry::CNPoint2D> posOppGoalMid(); // see no. 15
+		shared_ptr<geometry::CNPoint2D> posOwnGoalMid(); // see no. 16
+		shared_ptr<geometry::CNPoint2D> posLROppHalf(); // see no. 17
+		shared_ptr<geometry::CNPoint2D> posULOwnHalf(); // see no. 18
+		shared_ptr<geometry::CNPoint2D> posLROwnPenaltyArea(); // see no. 19
+		shared_ptr<geometry::CNPoint2D> posULOwnPenaltyArea(); // see no. 20
+		shared_ptr<geometry::CNPoint2D> posLROppPenaltyArea(); // see no. 21
+		shared_ptr<geometry::CNPoint2D> posULOppPenaltyArea(); // see no. 22
+		shared_ptr<geometry::CNPoint2D> posLROwnGoalArea(); // see no. 23
+		shared_ptr<geometry::CNPoint2D> posULOwnGoalArea(); // see no. 24
+		shared_ptr<geometry::CNPoint2D> posLROppGoalArea(); // see no. 25
+		shared_ptr<geometry::CNPoint2D> posULOppGoalArea();// see no. 26
+		shared_ptr<geometry::CNPoint2D> posLeftRestartMarker(); // see no. 27
+		shared_ptr<geometry::CNPoint2D> posRightRestartMarker(); // see no. 28
+		shared_ptr<geometry::CNPoint2D> posLRSurrounding();// see no. 29
+		shared_ptr<geometry::CNPoint2D> posULSurrounding(); // see no. 30
+		bool cornerCircleExists();
+		double getCornerCircleRadius();
+		double getFieldLength();
+		double getFieldWidth();
+		double getGoalAreaLength();
+		double getGoalAreaWidth();
+		bool isGoalInnerAreaExists();
+		double getGoalWidth();
+		double getLineWidth();
+		double getMaxDistance();
+		double getMaxDistanceSqr();
+		double getMiddleCircleRadius();
+		double getPenaltyAreaLength();
+		double getPenaltyAreaMappingTolerance();
+		double getPenaltyAreaWidth();
+		double getPenaltySpot();
+		double getSurrounding();
+		string getCurrentField();
 
 	private:
 
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
+		MSLWorldModel* wm;
 
-		static MSLFootballField * instance;
-		MSLFootballField();
-		~MSLFootballField();
+		double FieldLength;
+		double FieldWidth;
+		double PenaltyAreaWidth;
+		double PenaltyAreaLength;
+		bool GoalInnerAreaExists;
+		double GoalAreaLength;
+		double GoalAreaWidth;
+		bool CornerCircleExists;
+		double CornerCircleRadius;
+		double MiddleCircleRadius;
+		double LineWidth;
+		double GoalWidth;
+		double PenaltySpot;
+		double Surrounding;
+		double PenaltyAreaMappingTolerance;
+		double MaxDistance;
+		double MaxDistanceSqr;
+		string CurrentField;
 
 	protected:
 
-		static double projectVectorOntoX(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double x);
-		static double projectVectorOntoY(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double y);
+		double projectVectorOntoX(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double x);
+		double projectVectorOntoY(shared_ptr<geometry::CNPoint2D> origin, shared_ptr<geometry::CNPoint2D> dir, double y);
 
 	};
 

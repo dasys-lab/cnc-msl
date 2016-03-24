@@ -7,6 +7,9 @@ using namespace std;
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,7 +21,6 @@ namespace alica
         /*PROTECTED REGION ID(con1436855838589) ENABLED START*/ //Add additional options here
         this->wheelSpeed = -50;
         this->sc = nullptr;
-        this->field = nullptr;
         this->maxVel = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxVel", NULL);
         this->maxOppDist = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxOppDist", NULL);
         this->oppVectorWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.oppVectorWeight", NULL);
@@ -45,11 +47,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
         //get own Pos
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         //get voronoi net
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+        auto vNet = wm->pathPlanner->getCurrentVoronoiNet();
         //get ego bal pos
-        auto egoBallPos = wm->ball.getEgoBallPosition();
+        auto egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         //check if need information is available
         if (ownPos == nullptr || vNet == nullptr || egoBallPos == nullptr)
@@ -61,7 +63,7 @@ namespace alica
         auto opponents = vNet->getOpponentPositions();
 
         //Constant ball handle wheel speed for testing
-        BallHandleCmd bhc;
+        msl_actuator_msgs::BallHandleCmd bhc;
         bhc.leftMotor = (int8_t)this->wheelSpeed;
         bhc.rightMotor = (int8_t)this->wheelSpeed;
         send(bhc);
@@ -186,7 +188,7 @@ namespace alica
         //check if goal is reached
         if (egoTargetPoint->length() < 250)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         //save last error
         lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();
@@ -201,7 +203,6 @@ namespace alica
     void DribbleToAttackPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1436855838589) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         sc = supplementary::SystemConfig::getInstance();
         eval = make_shared<msl::PathEvaluator>();
         bool success = true;
@@ -229,11 +230,11 @@ namespace alica
         }
         if (!ownPenalty)
         {
-            alloTargetPoint = field->posOppPenaltyMarker();
+            alloTargetPoint = wm->field->posOppPenaltyMarker();
         }
         else
         {
-            alloTargetPoint = field->posOwnPenaltyMarker();
+            alloTargetPoint = wm->field->posOwnPenaltyMarker();
         }
         wheelSpeed = -80;
         lastClosesOpp = nullptr;

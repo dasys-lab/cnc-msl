@@ -11,7 +11,10 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 
-using namespace std;
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <Game.h>
 
 /*PROTECTED REGION END*/
 namespace alica
@@ -33,8 +36,8 @@ namespace alica
     void PositionExecutor::run(void* msg)
     {
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -70,10 +73,10 @@ namespace alica
             if (id != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots.teammates.getTeamMatePosition(id);
+                auto pos = wm->robots->teammates.getTeamMatePosition(id);
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
             if (receiverPos != nullptr)
@@ -88,7 +91,7 @@ namespace alica
             }
 
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-            if (wm->game.getSituation() == msl::Situation::Start)
+            if (wm->game->getSituation() == msl::Situation::Start)
             { // they already pressed start and we are still positioning, so speed up!
                 mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
             }
@@ -101,7 +104,7 @@ namespace alica
             if (mc.motion.translation == 0.0
                     && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             send(mc);
         }
@@ -146,7 +149,6 @@ namespace alica
         }
 
         // set some static member variables
-        field = msl::MSLFootballField::getInstance();
         alloTarget = make_shared < geometry::CNPoint2D > (-500, 0);
         /*PROTECTED REGION END*/
     }

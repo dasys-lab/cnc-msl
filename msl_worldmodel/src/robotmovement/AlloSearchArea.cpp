@@ -6,6 +6,7 @@
  */
 
 #include "robotmovement/AlloSearchArea.h"
+#include "MSLWorldModel.h"
 
 namespace msl
 {
@@ -77,15 +78,16 @@ namespace msl
 
 	bool AlloSearchArea::isValid()
 	{
-		if (!field->isInsideField(this->midP, -500))
+		MSLWorldModel* wm = MSLWorldModel::get();
+		if (!wm->field->isInsideField(this->midP, -500))
 		{
 			return false;
 		}
-		if (field->isInsideOwnPenalty(this->midP, 100))
+		if (wm->field->isInsideOwnPenalty(this->midP, 100))
 		{
 			return false;
 		}
-		if (field->isInsideEnemyKeeperArea(this->midP, 100))
+		if (wm->field->isInsideEnemyKeeperArea(this->midP, 100))
 		{
 			return false;
 		}

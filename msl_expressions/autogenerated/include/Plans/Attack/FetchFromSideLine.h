@@ -20,7 +20,6 @@ namespace alica
         double threshold;
         double behindDistance;
         double maxVel;
-        msl::MSLFootballField* field;
         bool nearSideLine(shared_ptr<geometry::CNPoint2D> alloBall);
         bool nearXLine(shared_ptr<geometry::CNPoint2D> alloBall);
 

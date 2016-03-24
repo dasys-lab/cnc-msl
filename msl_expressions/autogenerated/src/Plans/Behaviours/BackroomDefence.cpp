@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,10 +24,9 @@ namespace alica
     void BackroomDefence::run(void* msg)
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
-        auto alloBallPos = wm->ball.getAlloBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto alloBallPos = wm->ball->getAlloBallPosition();
         //auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
-        auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 
         if (!me || !alloBallPos)
@@ -40,16 +41,14 @@ namespace alica
          else
          {*/
         // assume goalie is in the middle of the goal
-        goalPos = field->posOwnGoalMid();
+        goalPos = wm->field->posOwnGoalMid();
         //}
 
         auto goaltoball = alloBallPos - goalPos;
         auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
-        if (defenderRange->x
-                < -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength + 100)
+        if (defenderRange->x < -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100)
         {
-            defenderRange->x = -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength
-                    + 100;
+            defenderRange->x = -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100;
         }
 
         /*
@@ -62,8 +61,9 @@ namespace alica
 
          }
          */
-        MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
-                                                               alloBallPos->alloToEgo(*me), 100, nullptr);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
+                                                                                  alloBallPos->alloToEgo(*me), 100,
+                                                                                  nullptr);
 
         send(mc);
 

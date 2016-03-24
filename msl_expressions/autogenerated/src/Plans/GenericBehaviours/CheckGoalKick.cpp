@@ -8,8 +8,14 @@ using namespace std;
 #include "engine/AlicaEngine.h"
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/DebugPoint.h>
-
+#include <Game.h>
 #include <Rules.h>
+#include <RawSensorData.h>
+#include <Prediction.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <Kicker.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,14 +37,14 @@ namespace alica
         /*PROTECTED REGION ID(run1449076008755) ENABLED START*/ //Add additional options here
         // check if it is ok to score a goal
         cout << "==========================================================================" << endl;
-        if (false == this->wm->game.isMayScore())
+        if (false == this->wm->game->isMayScore())
         {
             cout << "may score: false" << endl;
             return;
         }
         // get sensor data from WM and check validity
-        ownPos = wm->rawSensorData.getOwnPositionVision();
-        egoBallPos = wm->ball.getEgoBallPosition();
+        ownPos = wm->rawSensorData->getOwnPositionVision();
+        egoBallPos = wm->ball->getEgoBallPosition();
 
 //        std::cout << "OwnPos:     " << ownPos << std::endl;
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
@@ -46,7 +52,7 @@ namespace alica
 
         if (this->usePrediction)
         { // use predicted own position
-            auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
+            auto pred = this->wm->prediction->angleAndPosition(this->predictionTime);
 
             if (pred != nullptr)
             {
@@ -58,7 +64,7 @@ namespace alica
             }
         }
 
-        if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
+        if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball->haveBall())
         {
             return;
         }
@@ -144,7 +150,6 @@ namespace alica
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
         minOppYDist = rules->getBallRadius() + rules->getRobotRadius();
@@ -179,7 +184,7 @@ namespace alica
      */
     shared_ptr<geometry::CNPoint2D> CheckGoalKick::computeHitPoint(double posX, double posY, double alloAngle)
     {
-        double xDist2OppGoalline = this->field->FieldLength / 2 - posX;
+        double xDist2OppGoalline = wm->field->getFieldLength() / 2 - posX;
 
         // normalize the position angle
         alloAngle = geometry::normalizeAngle(alloAngle);
@@ -202,11 +207,10 @@ namespace alica
 
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
         // reduce goalPost->y by (ball radius + safety margin)
-        if (abs(yHitGoalline)
-                < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
+        if (abs(yHitGoalline) < (wm->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
-            return make_shared < geometry::CNPoint2D > (this->field->FieldLength / 2, yHitGoalline);
+            return make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, yHitGoalline);
         }
 
         return shared_ptr<geometry::CNPoint2D>();
@@ -219,7 +223,7 @@ namespace alica
      */
     bool CheckGoalKick::checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint, double& kickPower)
     {
-        auto obstacles = wm->obstacles.getAlloObstaclePoints();
+        auto obstacles = wm->obstacles->getAlloObstaclePoints();
         if (obstacles == nullptr || obstacles->size() == 0)
         {
             kickPower = -2;
@@ -257,7 +261,7 @@ namespace alica
         auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
         double dist2Obs = alloBallPos->distanceTo(closestObs);
         cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
-        kickPower = this->wm->kicker.getKickPowerForLobShot(dist2Obs, 1100.0);
+        kickPower = this->wm->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
         {
             return false;
@@ -280,7 +284,7 @@ namespace alica
         }
         else
         {
-            return this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+            return this->wm->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
         }
     }
 
@@ -298,7 +302,7 @@ namespace alica
      */
     bool CheckGoalKick::checkGoalKeeper(shared_ptr<geometry::CNPoint2D> hitPoint)
     {
-        auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+        auto opps = wm->robots->opponents.getOpponentsAlloClustered();
         if (opps == nullptr || opps->size() == 0)
         {
             return true;

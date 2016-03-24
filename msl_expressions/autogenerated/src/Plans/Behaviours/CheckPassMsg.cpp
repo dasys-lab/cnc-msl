@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/CheckPassMsg.h"
 
 /*PROTECTED REGION ID(inccpp1457441479350) ENABLED START*/ //Add additional includes here
+#include <WhiteBoard.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,13 +23,13 @@ namespace alica
     void CheckPassMsg::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457441479350) ENABLED START*/ //Add additional options here
-        auto passMsg = wm->whiteBoard.getPassMsg();
+        auto passMsg = wm->whiteBoard->getPassMsg();
 
         if (!receivedMsg && passMsg != nullptr)
         {
             receivedMsg = true;
 
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/

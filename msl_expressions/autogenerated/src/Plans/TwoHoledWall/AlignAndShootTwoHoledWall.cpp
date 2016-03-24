@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417620683982) ENABLED START*/ //Add additional includes here
 #include <math.h>
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,7 +15,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
         this->setTrigger(&wm->visionTrigger);
-        field = MSLFootballField::getInstance();
         maxVel = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxSpeed", NULL);
 
         // Aiming/Rotation Stuff
@@ -77,8 +78,8 @@ namespace alica
     void AlignAndShootTwoHoledWall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // stupid variant to be sure, that we have shoot!!!
         if (kicked)
@@ -96,7 +97,7 @@ namespace alica
                 {
                     useLowerHole = !useLowerHole;
                 }
-                this->success = true;
+                this->setSuccess(true);
             }
 
             return;

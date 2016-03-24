@@ -4,7 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1455537841488) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
-
+#include <Ball.h>
+#include <RawSensorData.h>
 using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
@@ -25,20 +26,20 @@ namespace alica
     void DropBallAttackerPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537841488) ENABLED START*/ //Add additional options here
-        auto alloBallPos = wm->ball.getAlloBallPosition();
+        auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
             alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
         }
 
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
             return;
         }
 
-        auto alloTarget = msl::MSLFootballField::posOwnGoalMid() - alloBallPos;
+        auto alloTarget = wm->field->posOwnGoalMid() - alloBallPos;
         alloTarget = alloTarget->normalize() * 1250;
         alloTarget = alloBallPos + alloTarget;
 

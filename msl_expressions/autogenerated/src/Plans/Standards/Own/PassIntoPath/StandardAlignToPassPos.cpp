@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1457532279657) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,8 +30,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1457532279657) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getAlloBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getAlloBallPosition();
         if (ownPos == nullptr || ballPos == nullptr)
             return;
 
@@ -43,7 +45,7 @@ namespace alica
             pm.origin.y = ownPos->y;
             pm.destination.x = passGoal->x;
             pm.destination.y = passGoal->y;
-            pm.validFor = 5000000000;
+            pm.validFor = 5000000000ul;
 
             //Reduce Communication
             if (iterationCount++ % 3 == 0)
@@ -52,7 +54,7 @@ namespace alica
             }
         }
 
-        auto egoBall = wm->ball.getEgoBallPosition();
+        auto egoBall = wm->ball->getEgoBallPosition();
         if (result.size() > 0)
         {
             auto driveTo = p->alloToEgo(*ownPos);

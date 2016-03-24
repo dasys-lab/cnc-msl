@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/DribbleEmergencyKick.h"
 
 /*PROTECTED REGION ID(inccpp1457706800035) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -30,8 +32,8 @@ namespace alica
     void DribbleEmergencyKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706800035) ENABLED START*/ //Add additional options here
-        ballPos = wm->ball.getAlloBallPosition();
-        if (ballPos == nullptr || wm->ball.getBallPickupPosition() == nullptr)
+        ballPos = wm->ball->getAlloBallPosition();
+        if (ballPos == nullptr || wm->ball->getBallPickupPosition() == nullptr)
         {
             haveKicked = false;
             return;
@@ -39,7 +41,7 @@ namespace alica
 
         //Console.WriteLine("PickUp Pos: ( "+WM.BallPickupPosition.X + " , " + WM.BallPickupPosition.Y+" )");
 
-        if (!safeKick && wm->ball.getBallPickupPosition()->distanceTo(ballPos) < 2800)
+        if (!safeKick && wm->ball->getBallPickupPosition()->distanceTo(ballPos) < 2800)
         {
             return;
         }
@@ -47,7 +49,7 @@ namespace alica
         msl_actuator_msgs::KickControl km;
         km.enabled = true;
 
-        km.power = (ushort)(390.0 + 0.6 * wm->rawSensorData.getCorrectedOdometryInfo()->motion.translation / 100.0);
+        km.power = (ushort)(390.0 + 0.6 * wm->rawSensorData->getCorrectedOdometryInfo()->motion.translation / 100.0);
 
         /*List<Point2D> opps = WM.GetOpponentListEgoClustered();
          //If there is an opponent in front of us -> dont do it
@@ -59,7 +61,7 @@ namespace alica
          }
          }*/
 
-        this->success = true;
+        this->setSuccess(true);
 
         if (!haveKicked)
             send(km);

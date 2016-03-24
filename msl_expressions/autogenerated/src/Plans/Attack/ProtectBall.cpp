@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/ProtectBall.h"
 
 /*PROTECTED REGION ID(inccpp1457706592232) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -12,7 +14,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1457706592232) ENABLED START*/ //Add additional options here
         sc = supplementary::SystemConfig::getInstance();
-        field = msl::MSLFootballField::getInstance();
         pp = msl::PathProxy::getInstance();
         eval = make_shared<msl::PathEvaluator>();
 
@@ -41,11 +42,11 @@ namespace alica
     void ProtectBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706592232) ENABLED START*/ //Add additional options here
-        auto ballPos = wm->ball.getEgoBallPosition();
-        auto ballVel = wm->ball.getEgoBallVelocity();
+        auto ballPos = wm->ball->getEgoBallPosition();
+        auto ballVel = wm->ball->getEgoBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData.getDistanceScan();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
 
         msl_actuator_msgs::MotionControl mc;
         if (ownPos == nullptr)
@@ -84,8 +85,7 @@ namespace alica
 
         if (aimPoint == nullptr)
         {
-            //this->failure = true;
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
 
@@ -98,15 +98,14 @@ namespace alica
 
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
 
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 600)
-                //this->failure = true;
-                this->success = true;
+                this->setSuccess(true);
         }
 
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
@@ -138,8 +137,8 @@ namespace alica
     void ProtectBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1457706592232) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || ballPos == nullptr)
         {

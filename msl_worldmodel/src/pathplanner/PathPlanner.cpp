@@ -8,6 +8,8 @@
 #include <pathplanner/PathPlanner.h>
 #include "MSLWorldModel.h"
 #include "GeometryCalculator.h"
+#include "RawSensorData.h"
+#include "Ball.h"
 
 namespace msl
 {
@@ -16,7 +18,6 @@ namespace msl
 	{
 		this->wm = wm;
 		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
-		this->field = MSLFootballField::getInstance();
 		this->lastClosestNode = nullptr;
 		this->lastClosestPointToBlock = nullptr;
 		this->lastTarget == nullptr;
@@ -32,7 +33,7 @@ namespace msl
 
                         this->voronoiDiagrams.push_back(voi);
 		}
-		this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
+		this->robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
 		this->minEdgeWidth = (*sc)["PathPlanner"]->get<double>("PathPlanner", "minEdgeWidth", NULL);
 		this->pathDeviationWeight = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "pathDeviationWeight", NULL);
 		this->currentVoronoiPos = -1;
@@ -67,7 +68,7 @@ namespace msl
 	void PathPlanner::prepareVoronoiDiagram()
 	{
 		lock_guard<mutex> lock(voronoiMutex);
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		currentVoronoiPos = (currentVoronoiPos + 1) % voronoiDiagrams.size();
 		if (ownPos != nullptr)
 		{
@@ -85,21 +86,20 @@ namespace msl
 	void PathPlanner::initializeArtificialObstacles()
 	{
 		//TODO before 2 Meters now field->surrounding * 2
-		MSLFootballField* field = MSLFootballField::getInstance();
 		vector<VoronoiDiagram::Site_2> toInsert;
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
-		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
+		if (wm->field->getFieldLength() / baseSize > 20 || wm->field->getFieldWidth() / baseSize > 20)
 		{
-			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
+			baseSize = (int)max(wm->field->getFieldLength() / 20, wm->field->getFieldWidth() / 20);
 		}
 		int lengthInterval = (int)(baseSize
-				+ ((int)(field->FieldLength + field->Surrounding * 2) % baseSize)
-						/ (int)((int)(field->FieldLength + field->Surrounding * 2) / baseSize));
+				+ ((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) % baseSize)
+						/ (int)((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(field->FieldWidth + field->Surrounding * 2) % baseSize)
-						/ (int)((int)(field->FieldWidth + field->Surrounding * 2) / baseSize));
-		int halfFieldLength = (int)field->FieldLength / 2 + field->Surrounding;
-		int halfFieldWidth = (int)field->FieldWidth / 2 + field->Surrounding;
+				+ ((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) % baseSize)
+						/ (int)((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) / baseSize));
+		int halfFieldLength = (int)wm->field->getFieldLength() / 2 + wm->field->getSurrounding();
+		int halfFieldWidth = (int)wm->field->getFieldWidth() / 2 + wm->field->getSurrounding();
 
 		//up right
 		toInsert.push_back(VoronoiDiagram::Site_2(halfFieldLength, -halfFieldWidth));
@@ -156,7 +156,7 @@ namespace msl
 
 			//if there is an obstacle inside the corridor the goal is not reachable
 			auto point = cluster->getPoint();
-			if(corridorCheck(voronoi, startPos, goal, point))
+			if(corridorCheck(startPos, goal, point, this->robotRadius))
 			{
 				reachable = false;
 				break;
@@ -184,7 +184,7 @@ namespace msl
 			for(auto obs : *vec)
 			{
 				//if there is an obstacle inside the corridor the goal is not reachable
-				if(corridorCheck(voronoi, startPos, goal, obs))
+				if(corridorCheck(startPos, goal, obs))
 				{
 					reachable = false;
 					break;
@@ -198,7 +198,7 @@ namespace msl
 				for(auto obs : *vec)
 				{
 						//if there is an obstacle inside the corridor the goal is not reachable
-						if(corridorCheck(voronoi, startPos, goal, obs))
+						if(corridorCheck(startPos, goal, obs))
 						{
 								reachable = false;
 								break;
@@ -339,7 +339,7 @@ namespace msl
 			if (voronoi->getTypeOfSite(incidentHalfEdge->up()->point()) == EntityType::ArtificialObstacle
 					&& voronoi->getTypeOfSite(incidentHalfEdge->down()->point()) == EntityType::ArtificialObstacle)
 			{
-				return !this->field->isInsideField(startPos);
+				return !wm->field->isInsideField(startPos);
 			}
 
 			double distToEdge = geometry::distancePointToLineSegment(incidentHalfEdge->up()->point().x(),
@@ -465,7 +465,7 @@ namespace msl
 	{
 		auto g2opp = obstaclePoint-goal;
 		double angle2BallOppLine = abs(geometry::deltaAngle(currentPos->angleTo(),g2opp->angleTo()));
-		cout << "PathPlanner: angle2BallOppLine: \t" << angle2BallOppLine << endl;
+		//cout << "PathPlanner: angle2BallOppLine: \t" << angle2BallOppLine << endl;
 		if (angle2BallOppLine > M_PI/2.0 && angle2BallOppLine < M_PI * 2.0/3.0)
 		{
 			return true;
@@ -481,9 +481,9 @@ namespace msl
 	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
 	 * @return bool true if inside corridor false otherwise
 	 */
-	bool PathPlanner::corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+	bool PathPlanner::corridorCheck(shared_ptr<geometry::CNPoint2D> currentPos,
 											shared_ptr<geometry::CNPoint2D> goal,
-											shared_ptr<geometry::CNPoint2D> obstaclePoint)
+											shared_ptr<geometry::CNPoint2D> obstaclePoint, double obstacleRadius)
 	{
 		//calculate length x and y offset
 		double length = currentPos->distanceTo(goal);
@@ -493,24 +493,24 @@ namespace msl
 		dy /= length;
 		//calculate corridor corner points
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
-				currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+				currentPos->x + (this->robotRadius + this->additionalCorridorWidth) * dy,
+				currentPos->y - (this->robotRadius + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
-				currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
+				currentPos->x - (this->robotRadius + this->additionalCorridorWidth) * dy,
+				currentPos->y + (this->robotRadius + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+						+ std::max(this->robotRadius + this->additionalCorridorWidth,
 									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
 				goal->y
-						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+						- std::max(this->robotRadius + this->additionalCorridorWidth,
 									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+						- std::max(this->robotRadius + this->additionalCorridorWidth,
 									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
 				goal->y
-						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
+						+ std::max(this->robotRadius + this->additionalCorridorWidth,
 									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
@@ -522,8 +522,14 @@ namespace msl
 		{
 			sendCorridorCheck(points);
 		}
+
+//		cout << "----------------------" << endl;
+		return obstaclePoint != nullptr && (geometry::distancePointToLine(p2, p4, obstaclePoint) < this->robotRadius
+				&& geometry::distancePointToLine(p4, p3, obstaclePoint) < 0.0
+				&& geometry::distancePointToLine(p3, p1, obstaclePoint) < this->robotRadius
+				&& geometry::distancePointToLine(p1, p2, obstaclePoint) < 0.0);
 		//return result
-		return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
+		//return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
 	}
 
 	/**
@@ -534,9 +540,9 @@ namespace msl
 	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
 	 * @return bool true if inside corridor false otherwise
 	 */
-	bool PathPlanner::corridorCheckBall(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+	bool PathPlanner::corridorCheckBall(shared_ptr<geometry::CNPoint2D> currentPos,
 												shared_ptr<geometry::CNPoint2D> goal,
-												shared_ptr<geometry::CNPoint2D> obstaclePoint)
+												shared_ptr<geometry::CNPoint2D> obstaclePoint,double obstacleRadius)
 	{
 		//calculate length x and y offset
 		double length = currentPos->distanceTo(goal);
@@ -547,22 +553,22 @@ namespace msl
 		dy /= dist;
 		//calculate corridor corner points
 		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2) * dy, currentPos->y - (this->robotDiameter / 2) * dx);
+				currentPos->x + (this->robotRadius) * dy, currentPos->y - (this->robotRadius) * dx);
 		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2) * dy, currentPos->y + (this->robotDiameter / 2) * dx);
+				currentPos->x - (this->robotRadius) * dy, currentPos->y + (this->robotRadius) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						+ std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
 				goal->y
-						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						- std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						- std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
 				goal->y
-						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						+ std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
@@ -574,8 +580,12 @@ namespace msl
 		{
 			sendCorridorCheck(points);
 		}
+		return obstaclePoint != nullptr && (geometry::distancePointToLine(p2, p4, obstaclePoint) < this->robotRadius
+						&& geometry::distancePointToLine(p4, p3, obstaclePoint) < this->robotRadius
+						&& geometry::distancePointToLine(p3, p1, obstaclePoint) < this->robotRadius
+						&& geometry::distancePointToLine(p1, p2, obstaclePoint) < this->robotRadius);
 		//return result
-		return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
+		//return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
 	}
 	/**
 	 * helping method to debug the corridor check
@@ -609,59 +619,7 @@ namespace msl
 		return additionalCorridorWidth;
 	}
 
-	/**
-	 * checks if there is an obstacle inside the corridor
-	 * @param voronoi VoronoiNet*
-	 * @param currentPos shared_ptr<geometry::CNPoint2D>
-	 * @param goal shared_ptr<geometry::CNPoint2D>
-	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
-	 * @return bool true if inside corridor false otherwise
-	 */
-	bool PathPlanner::corridorCheck(VoronoiNet* voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-											shared_ptr<geometry::CNPoint2D> goal,
-											shared_ptr<geometry::CNPoint2D> obstaclePoint)
-	{
-		//calculate length x and y offset
-		double length = currentPos->distanceTo(goal);
-		double dx = currentPos->x - goal->x;
-		double dy = currentPos->y - goal->y;
-		double dist = length;
-		dx /= dist;
-		dy /= dist;
-		//calculate corridor corner points
-		shared_ptr<geometry::CNPoint2D> p1 = make_shared<geometry::CNPoint2D>(
-				currentPos->x + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
-				currentPos->y - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
-		shared_ptr<geometry::CNPoint2D> p2 = make_shared<geometry::CNPoint2D>(
-				currentPos->x - (this->robotDiameter / 2 + this->additionalCorridorWidth) * dy,
-				currentPos->y + (this->robotDiameter / 2 + this->additionalCorridorWidth) * dx);
-		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
-				goal->x
-						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
-									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
-				goal->y
-						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
-									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
-		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
-				goal->x
-						- std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
-									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dy,
-				goal->y
-						+ std::max(this->robotDiameter / 2 + this->additionalCorridorWidth,
-									length / this->corridorWidthDivisor + this->additionalCorridorWidth) * dx);
-		vector<shared_ptr<geometry::CNPoint2D>> points;
-		points.push_back(p1);
-		points.push_back(p3);
-		points.push_back(p4);
-		points.push_back(p2);
-		//send debug msg
-		if (pathPlannerDebug)
-		{
-			sendCorridorCheck(points);
-		}
-		// return result
-		return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
-	}
+
 	/**
 	 * gets last planning target
 	 */
@@ -669,6 +627,11 @@ namespace msl
 	{
 		return lastTarget;
 	}
+
+	double PathPlanner::getRobotRadius() {
+		return this->robotRadius;
+	}
+
 	/**
 	 * check if the goal vertices are reached and if there is a corridor leading to the goal
 	 */
@@ -680,10 +643,12 @@ namespace msl
 		{
 			//if the goal vertices are reached
 			shared_ptr<VoronoiDiagram::Point_2> obstacle = voronoi->getSiteOfFace(Point_2(goal->x, goal->y));
+			if (voronoi->getTypeOfSite(*obstacle) == this->wm->getOwnId())
+				return true;
 			shared_ptr<geometry::CNPoint2D> obstaclePoint = make_shared<geometry::CNPoint2D>(obstacle->x(), obstacle->y());
 			//check if there is an obstacle on the way to the goal
 			shared_ptr<geometry::CNPoint2D> vertexPoint = currentNode->getPoint();
-			return !corridorCheck(voronoi, vertexPoint, goal, obstaclePoint);
+			return !corridorCheck(vertexPoint, goal, obstaclePoint, this->robotRadius);
 		}
 		return false;
 	}
@@ -722,14 +687,6 @@ namespace msl
 	}
 
 	/**
-	 * gets robot diameter
-	 */
-	double PathPlanner::getRobotDiameter()
-	{
-		return robotDiameter;
-	}
-
-	/**
 	 * gets pathDeviationWeight
 	 */
 	double PathPlanner::getPathDeviationWeight()
@@ -758,20 +715,19 @@ namespace msl
 	 */
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > PathPlanner::getArtificialFieldSurroundingObs()
 	{
-		MSLFootballField* field = MSLFootballField::getInstance();
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > toInsert = make_shared<
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
-		if (field->FieldLength / baseSize > 20 || field->FieldWidth / baseSize > 20)
+		if (wm->field->getFieldLength() / baseSize > 20 || wm->field->getFieldWidth() / baseSize > 20)
 		{
-			baseSize = (int)max(field->FieldLength / 20, field->FieldWidth / 20);
+			baseSize = (int)max(wm->field->getFieldLength() / 20, wm->field->getFieldWidth() / 20);
 		}
 		int lengthInterval = (int)(baseSize
-				+ ((int)(field->FieldLength + 2000) % baseSize) / (int)((int)(field->FieldLength + 2000) / baseSize));
+				+ ((int)(wm->field->getFieldLength() + 2000) % baseSize) / (int)((int)(wm->field->getFieldLength() + 2000) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(field->FieldWidth + 2000) % baseSize) / (int)((int)(field->FieldWidth + 2000) / baseSize));
-		int halfFieldLength = (int)field->FieldLength / 2 + 1000;
-		int halfFieldWidth = (int)field->FieldWidth / 2 + 1000;
+				+ ((int)(wm->field->getFieldWidth() + 2000) % baseSize) / (int)((int)(wm->field->getFieldWidth() + 2000) / baseSize));
+		int halfFieldLength = (int)wm->field->getFieldLength() / 2 + 1000;
+		int halfFieldWidth = (int)wm->field->getFieldWidth() / 2 + 1000;
 
 		//up right
 		toInsert->push_back(make_shared<geometry::CNPoint2D>(halfFieldLength, -halfFieldWidth));

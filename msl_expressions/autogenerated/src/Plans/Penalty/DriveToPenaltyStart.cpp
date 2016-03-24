@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1459609457478) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,14 +24,14 @@ namespace alica
     void DriveToPenaltyStart::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getEgoBallPosition();
         if (me == nullptr)
         {
             return;
         }
         auto egoTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0)->alloToEgo(*me);
-        auto egoAlignPoint = msl::MSLFootballField::posOppGoalMid()->alloToEgo(*me);
+        auto egoAlignPoint = wm->field->posOppGoalMid()->alloToEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 
@@ -37,7 +39,7 @@ namespace alica
 
         if (egoTarget->length() < 250)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
 
         send(mc);

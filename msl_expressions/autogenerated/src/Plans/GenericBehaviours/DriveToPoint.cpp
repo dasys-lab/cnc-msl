@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417620568675) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,8 +24,8 @@ namespace alica
     void DriveToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getEgoBallPosition();
         if (!me.operator bool())
         {
             return;
@@ -46,7 +48,7 @@ namespace alica
         if (egoTarget->length() < 250)
         {
             cout << "DriveToPoint: Success" << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         send(mc);

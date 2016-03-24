@@ -18,7 +18,7 @@
     <inTransitions>#1435761866545</inTransitions>
     <outTransitions>#1431522782044</outTransitions>
   </states>
-  <states id="1431522297705" name="Align" comment="" entryPoint="1431522269326">
+  <states id="1431522297705" name="AlignReceiver" comment="" entryPoint="1431522269326">
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1433950043262</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <outTransitions>#1431522920716</outTransitions>
@@ -50,7 +50,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1431524869870</inTransitions>
   </states>
-  <states id="1433949667740" name="Align" comment="" entryPoint="1431522155980">
+  <states id="1433949667740" name="AlignExecutor" comment="" entryPoint="1431522155980">
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1435155363994</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1433949706015</outTransitions>

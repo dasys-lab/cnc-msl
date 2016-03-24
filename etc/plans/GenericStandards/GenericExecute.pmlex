@@ -56,7 +56,7 @@
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431523482646"/>
-    <value xPos="399" yPos="437" width="81" height="67"/>
+    <value xPos="399" yPos="437" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericExecute.pml#1431524014799"/>
@@ -150,14 +150,6 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/Intercept.beh#1458757193843"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../Dribble/DribbleControl.beh#1449742099555"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../Dribble/DribbleControl.beh#1450175539163"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

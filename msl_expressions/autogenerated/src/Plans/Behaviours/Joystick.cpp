@@ -9,6 +9,7 @@ using namespace std;
 #include <msl_actuator_msgs/KickControl.h>
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include "MSLWorldModel.h"
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +29,7 @@ namespace alica
     void Joystick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1421854975890) ENABLED START*/ //Add additional options here
-        auto joy = wm->rawSensorData.getJoystickCommand();
+        auto joy = wm->rawSensorData->getJoystickCommand();
         if (!joy)
         {
             msl_actuator_msgs::MotionControl mc;
@@ -59,7 +60,7 @@ namespace alica
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
-        //cout << "Joy Ball handle on" << endl;
+            //cout << "Joy Ball handle on" << endl;
             msl_actuator_msgs::BallHandleCmd bhc;
             bhc.leftMotor = joy->ballHandleLeftMotor;
             bhc.rightMotor = joy->ballHandleRightMotor;

@@ -7,6 +7,12 @@
 
 #include <Kicker.h>
 #include "MSLWorldModel.h"
+#include "Game.h"
+#include "msl_sensor_msgs/ObstacleInfo.h"
+#include "obstaclehandler/Obstacles.h"
+#include "Ball.h"
+#include "RawSensorData.h"
+
 namespace msl
 {
 
@@ -79,19 +85,19 @@ namespace msl
 
 	bool Kicker::mayShoot()
 	{
-		if (!wm->game.isMayScore())
+		if (!wm->game->isMayScore())
 		{
 			return false;
 		}
 		//DistanceScan ds = wm.DistanceScan;
 		//if (ds == null) return false;
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles.getEgoVisionObstacles();
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles->getEgoVisionObstacles();
 		if (obs == nullptr)
 		{
 			return false;
 		}
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
-		if (ballPos == nullptr || !wm->ball.haveBall())
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
+		if (ballPos == nullptr || !wm->ball->haveBall())
 		{
 			return false;
 		}
@@ -110,15 +116,14 @@ namespace msl
 
 	shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
 	{
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		auto dstscan = wm->rawSensorData.getDistanceScan();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
+		auto dstscan = wm->rawSensorData->getDistanceScan();
 		if (ownPos == nullptr || dstscan == nullptr)
 		{
 			return nullptr;
 		}
 		validGoalPoints.clear();
-		MSLFootballField* field = MSLFootballField::getInstance();
-		double x = field->FieldLength / 2;
+		double x = wm->field->getFieldLength() / 2;
 		double y = -1000 + preciseShotMaxTolerance;
 		shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
 		double samplePoints = 4;

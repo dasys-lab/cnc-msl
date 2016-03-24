@@ -6,6 +6,9 @@ using namespace std;
 #include "MSLWorldModel.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,8 +30,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
         //TODO  not allowed in enemy half (rules), new conf for rules
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto egoBallPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
@@ -47,10 +50,10 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoTarget = make_shared < geometry::CNPoint2D
                 > (0, -ballDistanceRec)->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-        if (wm->game.getSituation() == msl::Situation::Start)
+        if (wm->game->getSituation() == msl::Situation::Start)
         { // they already pressed start and we are still positioning, so speed up!
             mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
         }
@@ -62,7 +65,7 @@ namespace alica
         // if we reach the point and are aligned, the behavior is successful
         if (mc.motion.translation == 0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         send(mc);
         /*PROTECTED REGION END*/

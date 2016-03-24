@@ -94,7 +94,7 @@ namespace msl
 	/**
 	 * gets robot diameter
 	 */
-	double getRobotDiameter();
+	double getRobotRadius();
 	/**
 	 * gets pathDeviationWeight
 	 */
@@ -159,18 +159,8 @@ namespace msl
 	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
 	 * @return bool true if inside corridor false otherwise
 	 */
-	bool corridorCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
-	/**
-	 * checks if there is an obstacle inside the corridor
-	 * @param voronoi VoronoiNet*
-	 * @param currentPos shared_ptr<geometry::CNPoint2D>
-	 * @param goal shared_ptr<geometry::CNPoint2D>
-	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
-	 * @return bool true if inside corridor false otherwise
-	 */
-	bool corridorCheck(VoronoiNet* voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+	bool corridorCheck(shared_ptr<geometry::CNPoint2D> currentPos,
+			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint, double obstacleRadius = 0.0);
 
 	/**
 	 * checks if there is an obstacle inside the corridor
@@ -180,8 +170,8 @@ namespace msl
 	 * @param obstaclePoint shared_ptr<geometry::CNPoint2D>
 	 * @return bool true if inside corridor false otherwise
 	 */
-	bool corridorCheckBall(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
-			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint);
+	bool corridorCheckBall(shared_ptr<geometry::CNPoint2D> currentPos,
+			shared_ptr<geometry::CNPoint2D> goal, shared_ptr<geometry::CNPoint2D> obstaclePoint, double obstacleRadius = 0.0);
 
 private:
 	/**
@@ -214,12 +204,11 @@ private:
 
 protected:
 	MSLWorldModel* wm;
-	MSLFootballField* field;
 	int currentVoronoiPos;
 	supplementary::SystemConfig* sc;
 	mutex voronoiMutex;
 	vector<shared_ptr<VoronoiNet>> voronoiDiagrams;
-	double robotDiameter;
+	double robotRadius;
 	shared_ptr<VoronoiNet> artificialObjectNet;
 	double pathDeviationWeight;
 	double dribble_rotationWeight;

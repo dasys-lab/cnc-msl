@@ -3,6 +3,9 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450176193656) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <Robots.h>
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,7 +18,7 @@ namespace alica
         maxVel = 2000;
         minDistToMate = 2000;
         gotMessage = false;
-        sc = supplementary::SystemConfig::getInstance();
+        this->sc = supplementary::SystemConfig::getInstance();
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;
@@ -36,8 +39,8 @@ namespace alica
             return; //give the ball a few milliseconds to leave the kicker
         }
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); //Corrected;
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //Corrected;
         if (ballPos == nullptr)
         {
             return;
@@ -59,7 +62,7 @@ namespace alica
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots->teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
             if (matePos != nullptr)
             {

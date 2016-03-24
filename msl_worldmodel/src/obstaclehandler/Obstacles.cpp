@@ -9,7 +9,9 @@
 #include "MSLFootballField.h"
 #include "obstaclehandler/SimpleCluster.h"
 #include "MSLWorldModel.h"
+#include "RawSensorData.h"
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
+#include "Robots.h"
 
 namespace msl
 {
@@ -33,7 +35,6 @@ namespace msl
 							"obstacleMapOutTolerance", NULL);
 		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
 		NULL);
-		field = MSLFootballField::getInstance();
 		clusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		pool = new AnnotatedObstacleClusterPool();
@@ -44,7 +45,7 @@ namespace msl
 	}
 
 	double  Obstacles::getDistanceToObstacle(shared_ptr<geometry::CNPoint2D> target) {
-		auto distScan = wm->rawSensorData.getDistanceScan();
+		auto distScan = wm->rawSensorData->getDistanceScan();
 
 		if (distScan != nullptr) {
 			int startSector = 0;
@@ -73,11 +74,11 @@ namespace msl
 	}
 
 	shared_ptr<geometry::CNPoint2D> Obstacles::getBiggestFreeGoalAreaMidPoint() {
-		auto leftPost = field->posLeftOppGoalPost();
-		auto rightPost = field->posRightOppGoalPost();
-		auto goalMid = field->posOppGoalMid();
+		auto leftPost = wm->field->posLeftOppGoalPost();
+		auto rightPost = wm->field->posRightOppGoalPost();
+		auto goalMid = wm->field->posOppGoalMid();
 
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if( ownPos == nullptr )
 			return nullptr;
 
@@ -126,7 +127,7 @@ namespace msl
 	void Obstacles::handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > myObstacles)
 	{
 
-		auto myOdo = wm->rawSensorData.getCorrectedOdometryInfo();
+		auto myOdo = wm->rawSensorData->getCorrectedOdometryInfo();
 		if (!myOdo)
 		{
 			// The check is necessary, because in the simulator you can get obstacles without an correctedOdometryInfo().
@@ -170,14 +171,14 @@ namespace msl
 
 			curAlloPoint = make_shared<geometry::CNPoint2D>(newClusterArray->at(i)->x, newClusterArray->at(i)->y);
 			curEgoPoint = curAlloPoint->alloToEgo(
-					*(make_shared<geometry::CNPosition>(wm->rawSensorData.getCorrectedOdometryInfo()->position.x,
-														wm->rawSensorData.getCorrectedOdometryInfo()->position.y,
-														wm->rawSensorData.getCorrectedOdometryInfo()->position.angle)));
+					*(make_shared<geometry::CNPosition>(wm->rawSensorData->getCorrectedOdometryInfo()->position.x,
+														wm->rawSensorData->getCorrectedOdometryInfo()->position.y,
+														wm->rawSensorData->getCorrectedOdometryInfo()->position.angle)));
 
 			if (newClusterArray->at(i)->ident == EntityType::Opponent)
 			{
 				// it is not a teammate
-				if (field->isInsideField(curAlloPoint, FIELD_TOL))
+				if (wm->field->isInsideField(curAlloPoint, FIELD_TOL))
 				{
 					newOppAllo->push_back(curAlloPoint);
 					// egocentric obstacles, which are inside the field and do not belong to our team
@@ -199,10 +200,10 @@ namespace msl
 		o->certainty = 1;
 		this->obstaclesAlloClustered.add(o);
 		this->obstaclesAlloClusteredWithMe.add(owm);
-		wm->robots.opponents.processOpponentsEgoClustered(newOppEgo);
-		wm->robots.opponents.processOpponentsAlloClustered(newOppAllo);
-		wm->robots.teammates.processTeammatesEgoClustered(newTeammatesEgo);
-		wm->robots.teammates.processTeammatesAlloClustered(newTeammatesAllo);
+		wm->robots->opponents.processOpponentsEgoClustered(newOppEgo);
+		wm->robots->opponents.processOpponentsAlloClustered(newOppAllo);
+		wm->robots->teammates.processTeammatesEgoClustered(newTeammatesEgo);
+		wm->robots->teammates.processTeammatesAlloClustered(newTeammatesAllo);
 		pool->reset();
 	}
 
@@ -335,7 +336,7 @@ namespace msl
 		AnnotatedObstacleCluster* obs = nullptr;
 		int velX = 0;
 		int velY = 0;
-		for (auto swmd : wm->robots.sharedWolrdModelData)
+		for (auto swmd : wm->robots->sharedWolrdModelData)
 		{
 		        auto information = swmd.second->getLast();
 		        if (information == nullptr)
@@ -368,7 +369,7 @@ namespace msl
                                         continue;
                                 }
 
-                                if (MSLFootballField::getInstance()->isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
+                                if (wm->field->isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
                                 {
                                         obs = AnnotatedObstacleCluster::getNew(this->pool);
                                         obs->init(round(ob.x), round(ob.y), // pos
@@ -407,7 +408,7 @@ namespace msl
 																					myOdo->position.y,
 																					myOdo->position.angle);
 			curPoint = ownObs->at(i)->egoToAllo(*me);
-			if (MSLFootballField::getInstance()->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
+			if (wm->field->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
 			{
 				obs = AnnotatedObstacleCluster::getNew(this->pool);
 				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent,
@@ -451,7 +452,7 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> curPoint2 = make_shared<geometry::CNPoint2D>();
 		bool sightIsBlocked;
 
-		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots.sharedWolrdModelData)
+		for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> > curRobot : wm->robots->sharedWolrdModelData)
 		{
 			//cout << "Robot: " << curRobot.first << endl;
 			/* Ignore every robot, which is:
@@ -620,7 +621,7 @@ namespace msl
 	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > Obstacles::getEgoObstacles(int index)
 	{
 		// TODO save ego obstacles
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			return nullptr;
@@ -668,7 +669,7 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > Obstacles::getEgoObstaclePoints(int index)
 	{
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			return nullptr;

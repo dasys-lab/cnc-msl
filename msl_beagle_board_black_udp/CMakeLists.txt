@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   msl_black_lib
   system_config
   process_manager
+  cnc_geometry
 )
 
 
@@ -119,6 +120,7 @@ add_executable(msl_beagle_board_black_udp
 	src/lightbarrier.cpp
 	src/opticalflow.cpp
 	src/shovelselect.cpp
+	src/sensor.cpp
 )
 add_executable(debug_udp src/debug.cpp)
 

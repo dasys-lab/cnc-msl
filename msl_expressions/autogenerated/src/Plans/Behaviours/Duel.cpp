@@ -3,6 +3,10 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450178699265) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -14,8 +18,8 @@ namespace alica
         /*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
         wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
         translation = (*this->sc)["Behaviour"]->get<double>("Duel.Velocity", NULL);
-        fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
-        fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
+        fieldLength = wm->field->getFieldLength();
+        fieldWidth = wm->field->getFieldWidth();
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
         radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);
         ;
@@ -23,6 +27,7 @@ namespace alica
         ;
         duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);
         ;
+        freeTime = 0;
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -34,13 +39,13 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1450178699265) ENABLED START*/ //Add additional options here
         // enter plan when !haveBall && enemy haveBall || haveBall && enemy close
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = make_shared < geometry::CNPoint2D
                 > (fieldLength / 2, 0)->alloToEgo(*ownPos);
 //		shared_ptr<geometry::CNPoint2D> oppGoal = make_shared<geometry::CNPoint2D>(fieldLength / 2, 0);
-        shared_ptr < geometry::CNPoint2D > oppGoal = msl::MSLFootballField::posOppGoalMid();
+        shared_ptr < geometry::CNPoint2D > oppGoal = wm->field->posOppGoalMid();
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 
@@ -52,6 +57,38 @@ namespace alica
         {
             return;
         }
+
+        //Check for Success
+        auto obs = wm->obstacles->getEgoVisionObstaclePoints();
+        if (obs != nullptr)
+        {
+            double distance = numeric_limits<double>::max();
+            double temp;
+            for (int i = 0; i < obs->size(); i++)
+            {
+                temp = obs->at(i)->distanceTo(egoBallPos);
+                if (temp < distance && obs->at(i)->x < -300 && temp < 550)
+                {
+                    distance = temp;
+                }
+            }
+            if (distance > 800) // && isTimeOut(1500000000, rp->getStateStartTime(), rp);
+            {
+                if (freeTime == 0)
+                {
+                    freeTime = wm->getTime();
+                }
+                if (wm->getTime() - freeTime > 330000000ul)
+                {
+                    this->setSuccess(true);
+                }
+            }
+            else
+            {
+                freeTime = 0;
+            }
+        }
+        //end successcheck
 
         shared_ptr < geometry::CNPoint2D > ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
 
@@ -70,9 +107,9 @@ namespace alica
 //            send(mc);
 //
 //        }
-		bhc.leftMotor = -wheelSpeed;
-		bhc.rightMotor = -wheelSpeed;
-		send(bhc);
+        bhc.leftMotor = -wheelSpeed;
+        bhc.rightMotor = -wheelSpeed;
+        send(bhc);
 
         if (wm->getTime() - entryTime < 000000)
         {
@@ -85,7 +122,7 @@ namespace alica
         else
         {
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> mostRecentOpps =
-                    wm->robots.opponents.getOpponentsAlloClustered();
+                    wm->robots->opponents.getOpponentsAlloClustered();
             shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
 
             if (mostRecentOpps != nullptr)
@@ -103,7 +140,7 @@ namespace alica
                             closestOpponent = opp;
                         }
 
-                        teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
+                        teamMatePositions = wm->robots->teammates.getTeammatesAlloClustered();
 
                         // try to find closest team member that isn't blocked for aligning
                         for (int i = 0; i < teamMatePositions->size(); i++)
@@ -161,7 +198,8 @@ namespace alica
 
                 //TODO cooleren punkt berechnen?
                 //move away from opponent
-                egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
+                egoTarget = (closestOpponent->alloToEgo(*ownPos)->normalize()->rotate(M_PI)) * 2500;
+                //egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
 
             }
             else
@@ -189,8 +227,8 @@ namespace alica
 
                 if (counter <= 0)
                 {
-                    cout << "Duel: Success, far away from opponent" << endl;
-                    this->success = true;
+                    //cout << "Duel: Success, far away from opponent" << endl;
+                    //this->success = true;
                     return;
                 }
 
@@ -230,10 +268,8 @@ namespace alica
                     ballOrth1 = ballOrth1->egoToAllo(*ownPos);
                     ballOrth2 = ballOrth2->egoToAllo(*ownPos);
 
-                    double distance = msl::MSLFootballField::distanceToLine(ownPoint,
-                                                                            ballOrth1->egoToAllo(*ownPos)->angleTo());
-                    if (msl::MSLFootballField::distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo())
-                            < distance)
+                    double distance = wm->field->distanceToLine(ownPoint, ballOrth1->egoToAllo(*ownPos)->angleTo());
+                    if (wm->field->distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo()) < distance)
                     {
                         //top line
                         egoAlignPoint = make_shared < geometry::CNPoint2D
@@ -253,7 +289,8 @@ namespace alica
                 egoTarget = (make_shared < geometry::CNPoint2D > (0, 0))->alloToEgo(*ownPos);
             }
 
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
+            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 100);
+            //mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
             send(mc);
         }
 
@@ -261,7 +298,7 @@ namespace alica
         if (wm->getTime() - entryTime > duelMaxTime)
         {
             cout << "Duel: time over " << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/
@@ -269,6 +306,7 @@ namespace alica
     void Duel::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1450178699265) ENABLED START*/ //Add additional options here
+        freeTime = 0;
         direction = 0;
         friendlyBlocked = false;
         entryTime = wm->getTime();

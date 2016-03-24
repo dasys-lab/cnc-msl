@@ -6,6 +6,9 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -35,8 +38,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1458034268108) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || ballPos == nullptr)
         {
             mc.motion.angle = 0;
@@ -65,7 +68,7 @@ namespace alica
         // determine the best reference point
         if (this->teamMateId != 0)
         { // take the teammate as reference point
-            attackerPos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+            attackerPos = wm->robots->teammates.getTeamMatePosition(teamMateId);
         }
 
         if (attackerPos == nullptr)
@@ -86,7 +89,7 @@ namespace alica
         {
             if (wm->getTime() - lastResultFound > failTimeThreshold)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             mc.motion.angle = 0;
             mc.motion.translation = 0;
@@ -106,7 +109,7 @@ namespace alica
         if (relativeGoalPos->x < -250 && // block only targets which are in driving direction of attacker
                 ownRelativePos->length() > relativeGoalPos->length() + 1000) // i'm more than 1 meter away from the blocking position, i failed, better set status to success
         {
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
 

@@ -47,6 +47,7 @@ catkin_package(
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
+   src/robotmovement/MovementQuery.cpp
    src/robotmovement/SearchArea.cpp
    src/robotmovement/EgoSearchArea.cpp
    src/robotmovement/AlloSearchArea.cpp
@@ -63,6 +64,7 @@ catkin_package(
    src/Monitoring.cpp
    src/Rules.cpp
    src/Prediction.cpp
+   src/LightBarrier.cpp
    src/CubicSplineInterpolation/Spline.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
@@ -70,7 +72,6 @@ catkin_package(
    src/pathplanner/PathProxy.cpp
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
-   src/pathplanner/evaluator/PrefDirEvaluator.cpp
    src/ballTracking/BallIntegrator.cpp  
    src/ballTracking/BallZTracker.cpp  
    src/ballTracking/EgoMotionEstimator.cpp  

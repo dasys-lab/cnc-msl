@@ -7,6 +7,7 @@
 
 #include <DistXContour.h>
 #include "MSLWorldModel.h"
+#include <Ball.h>
 
 namespace alica
 {
@@ -32,7 +33,7 @@ namespace alica
 
 	void DistXContour::cacheEvalData()
 	{
-		auto alloBall = msl::MSLWorldModel::get()->ball.getAlloBallPosition();
+		auto alloBall = msl::MSLWorldModel::get()->ball->getAlloBallPosition();
 		if(alloBall != nullptr){
 			this->alloBall = alloBall;
 		} else {
