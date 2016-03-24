@@ -97,9 +97,7 @@ namespace msl
 		//plan
 		shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
 		auto alloTarget = egoTarget->egoToAllo(*ownPos);
-		cout << "PathProxy: before plan" << endl;
 		auto path = this->wm->pathPlanner.plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
-		cout << "PathProxy: after plan" << endl;
 		if (path != nullptr && path->size() > 0)
 		{
 			//get first point of returned path
