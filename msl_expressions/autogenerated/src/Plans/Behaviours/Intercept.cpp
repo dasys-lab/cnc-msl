@@ -8,7 +8,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1458757170147) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     Intercept::Intercept() :
-            DomainBehaviour("Intercept")
+            DomainBehaviour("Intercept"), useZmachine(false)
     {
         /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
     	field = msl::MSLFootballField::getInstance();
@@ -35,13 +35,13 @@ namespace alica
 
 		predictByRawOdo = false;
 
-		prot = (*this->sc)["Drive"]->get<double>("Intercept.RotationP");
-		pirot = (*this->sc)["Drive"]->get<double>("Intercept.RotationI");
-		pdrot = (*this->sc)["Drive"]->get<double>("Intercept.RotationD");
+		prot = (*this->sc)["Drive"]->get<double>("Intercept.RotationP", NULL);
+		pirot = (*this->sc)["Drive"]->get<double>("Intercept.RotationI", NULL);
+		pdrot = (*this->sc)["Drive"]->get<double>("Intercept.RotationD", NULL);
 
-		pdist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceP");
-		pidist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceI");
-		pddist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceD");
+		pdist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceP", NULL);
+		pidist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceI", NULL);
+		pddist = (*this->sc)["Drive"]->get<double>("Intercept.DistanceD", NULL);
 
 		maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
