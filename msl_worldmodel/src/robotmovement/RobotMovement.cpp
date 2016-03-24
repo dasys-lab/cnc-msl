@@ -698,6 +698,7 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		if (destinationPoint->length() < destTol)
 		{
+			cout << "RobotMovement: playeRobotCareBall return 1" << endl;
 			return alignToPointNoBall(destinationPoint, headingPoint, rotTol);
 		}
 		else
