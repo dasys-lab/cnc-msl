@@ -65,7 +65,6 @@ namespace alica
 //		CorrectedOdometryData od  = WM.OdometryData;
 //		OdometryData odRaw = WM.RawOdometryData;
 
-
 		msl_actuator_msgs::MotionControl mc;
 		if (ownPos == nullptr) {
 			mc = msl::RobotMovement::driveRandomly(500);
@@ -81,20 +80,18 @@ namespace alica
 		}
 
 
-
 		if (ballVel->length() > 7000) {
 			ballVel = ballVel->normalize()*7000;
 		}
 		auto alloBall = ballPos->egoToAllo(*ownPos);
 		if (!field->isInsideField(alloBall)) {
 			auto egoTarget=field->mapInsideField(alloBall)->alloToEgo(*ownPos);
+			cout << "Intercept return 3 begin" << endl;
 			mc = msl::RobotMovement::placeRobotCareBall(egoTarget,ballPos,maxVel);
+			cout << "Intercept return 3 end" << endl;
 			send(mc);
-
 			return;
 		}
-
-		mc = msl::RobotMovement::nearGoalArea(mc);
 
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
@@ -247,7 +244,7 @@ namespace alica
 			}
 		}
 		mc.motion.rotation = controlRot;
-
+		mc = msl::RobotMovement::nearGoalArea(mc);
 		send(mc);
 		if(wm->ball.haveBallDribble(false)) {
 			this->success = true;

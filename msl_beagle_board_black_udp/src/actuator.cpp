@@ -152,7 +152,7 @@ uint8_t* buffer = NULL;
 		uint32_t serial_size = ros::serialization::serializationLength(message);
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
-		*((uint32_t*)buffer) = 554624761u;
+		*((uint32_t*)buffer) = 3108117629u;
 		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
@@ -316,51 +316,51 @@ void handleUdpPacket(const boost::system::error_code& error,   std::size_t bytes
 
 				handleMotionLight(m2056271736);
 				break; }
-//				case 554624761ul: {
+				case 554624761ul: {
 //				process_manager::ProcessCommand m554624761;
 //				ros::serialization::Serializer<process_manager::ProcessCommand>::read(stream, m554624761);
 //				pub554624761.publish<process_manager::ProcessCommand>(m554624761);
-//				break; }
-//				case 2772566283ul: {
+				break; }
+				case 2772566283ul: {
 //				msl_actuator_msgs::VisionRelocTrigger m2772566283;
 //				ros::serialization::Serializer<msl_actuator_msgs::VisionRelocTrigger>::read(stream, m2772566283);
 //				pub2772566283.publish<msl_actuator_msgs::VisionRelocTrigger>(m2772566283);
-//				break; }
-//				case 1028144660ul: {
+				break; }
+				case 1028144660ul: {
 //				msl_actuator_msgs::MotionBurst m1028144660;
 //				ros::serialization::Serializer<msl_actuator_msgs::MotionBurst>::read(stream, m1028144660);
 //				pub1028144660.publish<msl_actuator_msgs::MotionBurst>(m1028144660);
-//				break; }
-//				case 2802967882ul: {
+				break; }
+				case 2802967882ul: {
 //				std_msgs::Bool m2802967882;
 //				ros::serialization::Serializer<std_msgs::Bool>::read(stream, m2802967882);
 //				pub2802967882.publish<std_msgs::Bool>(m2802967882);
-//				break; }
-//				case 1267609526ul: {
+				break; }
+				case 1267609526ul: {
 //				msl_actuator_msgs::CanMsg m1267609526;
 //				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m1267609526);
 //				pub1267609526.publish<msl_actuator_msgs::CanMsg>(m1267609526);
-//				break; }
-//				case 217678336ul: {
+				break; }
+				case 217678336ul: {
 //				msl_actuator_msgs::CanMsg m217678336;
 //				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m217678336);
 //				pub217678336.publish<msl_actuator_msgs::CanMsg>(m217678336);
-//				break; }
-//				case 418700403ul: {
+				break; }
+				case 418700403ul: {
 //				msl_actuator_msgs::CanMsg m418700403;
 //				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m418700403);
 //				pub418700403.publish<msl_actuator_msgs::CanMsg>(m418700403);
-//				break; }
-//				case 3391245383ul: {
+				break; }
+				case 3391245383ul: {
 //				msl_actuator_msgs::CanMsg m3391245383;
 //				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m3391245383);
 //				pub3391245383.publish<msl_actuator_msgs::CanMsg>(m3391245383);
-//				break; }
-//				case 3455796956ul: {
+				break; }
+				case 3455796956ul: {
 //				msl_actuator_msgs::IMUData m3455796956;
 //				ros::serialization::Serializer<msl_actuator_msgs::IMUData>::read(stream, m3455796956);
 //				pub3455796956.publish<msl_actuator_msgs::IMUData>(m3455796956);
-//				break; }
+				break; }
 
 				default:
 					std::cerr << "Cannot find Matching topic:" << id << std::endl;

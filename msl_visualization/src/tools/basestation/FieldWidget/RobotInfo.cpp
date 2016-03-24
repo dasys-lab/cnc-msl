@@ -144,7 +144,7 @@ void RobotInfo::updateTimeStamp()
 bool RobotInfo::isTimeout()
 {
         auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        unsigned long long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->timeStamp) > 2000000000;
 }
@@ -155,7 +155,7 @@ bool RobotInfo::isPathPlannerMsgTimeout()
                 return true;
 
         auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        unsigned long long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->pathPlannerMsgTimeStamp) > 2000000000;
 }
@@ -166,7 +166,7 @@ bool RobotInfo::isVoronoiNetMsgTimeout()
                 return true;
 
         auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        unsigned long long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->voronoiNetMsgTimeStamp) > 2000000000;
 }
@@ -177,7 +177,7 @@ bool RobotInfo::isCorridorCheckMsgTimeout()
                 return true;
 
         auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        unsigned long long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->corridorCheckMsgTimeStamp) > 2000000000;
 }
@@ -188,7 +188,7 @@ bool RobotInfo::isPassMsgTimeout()
                 return true;
 
         auto tmp = ros::Time::now();
-        unsigned long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
+        unsigned long long now = (unsigned long)tmp.sec * (unsigned long)1000000000 + (unsigned long)tmp.nsec;
 
         return (now - this->passMsgTimeStamp) > this->passMsg->validFor;
 }
