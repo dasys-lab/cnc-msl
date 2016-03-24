@@ -340,23 +340,44 @@ namespace msl
 
 	}
 
-	MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints, bool noPathPlaner)
+	MotionControl RobotMovement::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget,
+											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance,
+											shared_ptr<geometry::CNPoint2D> goalMid)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
+		auto egoTarget = alloTarget->alloToEgo(*me);
 
-		if(!noPathPlaner)
+		mc.motion.angle = egoTarget->angleTo();
+		mc.motion.rotation = alloAlignPoint->alloToEgo(*me)->rotate(M_PI)->angleTo() * fastRotation;
+
+		if (egoTarget->length() > snapDistance)
 		{
-			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-			additionalPoints);
-			if(temp != nullptr)
-			{
-				cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
-				egoTarget = temp;
-			}
+			//cout << "TRANSLATION: " << 3 * abs(egoTarget->y);
+			mc.motion.translation = std::min(alignMaxVel, 3 * abs(egoTarget->y));
+		}
+		else
+		{
+			mc.motion.translation = 0;
+			//cout << "arrived" << endl;
+		}
+		return mc;
+	}
+
+	MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+	{
+		MotionControl mc;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+		additionalPoints);
+		if(temp != nullptr)
+		{
+			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
+			egoTarget = temp;
 		}
 
 		mc.motion.angle = egoTarget->angleTo();
