@@ -89,15 +89,18 @@ namespace msl
 		}
 
 		//if there are additional points insert them into the voronoi diagram
+		cout << "PathProxy: before ins add ppoints" << endl;
 		if(additionalPoints != nullptr)
 		{
 			net->insertAdditionalPoints(additionalPoints, EntityType::Obstacle);
 		}
+		cout << "PathProxy: after ins add ppoints" << endl;
 
 		//plan
 		shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
 		auto alloTarget = egoTarget->egoToAllo(*ownPos);
 		auto path = this->wm->pathPlanner.plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
+		cout << "PathProxy: before send methods" << endl;
 		if (path != nullptr && path->size() > 0)
 		{
 			//get first point of returned path
@@ -111,6 +114,7 @@ namespace msl
 				sendVoronoiNetMsg(net);
 			}
 		}
+		cout << "PathProxy: after send methods" << endl;
 
 		//remove additional points from voronoi diagram
 		if(additionalPoints != nullptr)
