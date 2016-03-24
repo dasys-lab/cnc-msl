@@ -527,7 +527,13 @@ namespace msl
 			{
 				//delete it from delaunay graph
 				cout <<"VoronoiNet 3" << endl;
-				((DelaunayTriangulation)this->voronoi->dual()).remove((*handle)->dual());
+				auto dt = (DelaunayTriangulation)this->voronoi->dual();
+
+				cout <<"VoronoiNet 3.1" << endl;
+				auto hd = (*handle)->dual();
+
+				cout <<"VoronoiNet 3.2" << endl;
+				(dt).remove(hd);
 				cout <<"VoronoiNet 4" << endl;
 			}
 			cout <<"VoronoiNet 5" << endl;
