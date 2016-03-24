@@ -173,6 +173,8 @@ namespace msl
 		// DATA for constructing this voronoi net
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getArtificialObstacles();
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getAdditionalObstacles();
+
 		/**
 		 * return vertices teammates voronoi face
 		 * @param teamMateId int
@@ -269,7 +271,8 @@ namespace msl
 
 		// DATA for constructing this voronoi net
 		shared_ptr<vector<shared_ptr<geometry::CNRobot> > > alloClusteredObsWithMe;
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > artificialObstacles;
+                shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > artificialObstacles;
+                shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > additionalObstacles;
 	};
 
 } /* namespace msl */

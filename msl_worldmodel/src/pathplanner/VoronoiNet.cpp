@@ -21,6 +21,7 @@ namespace msl
 		this->ownPosAvail = false;
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
 		this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
+                this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
 	}
 
 	VoronoiNet::VoronoiNet(shared_ptr<VoronoiNet> net)
@@ -44,6 +45,11 @@ namespace msl
 		}
 
 		this->generateVoronoiDiagram(this->ownPosAvail);
+                this->additionalObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
+                for (auto obs : *net->getAdditionalObstacles())
+                {
+                        this->additionalObstacles->push_back(obs);
+                }
 	}
 
 	VoronoiNet::~VoronoiNet()
@@ -143,7 +149,7 @@ namespace msl
 		}
 		else
 		{
-		        this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNPosition>>>();
+		        this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot>>>();
 		}
 		this->voronoi->insert(sites.begin(), sites.end());
 
@@ -218,6 +224,11 @@ namespace msl
 			Site_2 site(point->x, point->y);
 			this->pointRobotKindMapping[site] = type;
 			sites.push_back(site);
+
+			if (type == EntityType::Opponent)
+			        this->additionalObstacles->push_back(point);
+			else if (type == EntityType::ArtificialObstacle)
+			        this->artificialObstacles->push_back(point);
 		}
 		this->voronoi->insert(sites.begin(), sites.end());
 	}
@@ -288,6 +299,7 @@ namespace msl
 		this->pointRobotKindMapping.clear();
                 this->alloClusteredObsWithMe->clear();
                 this->artificialObstacles->clear();
+                this->additionalObstacles->clear();
 	}
 
 
@@ -523,6 +535,11 @@ namespace msl
 	{
 		return this->alloClusteredObsWithMe;
 	}
+
+        shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getAdditionalObstacles()
+        {
+                return this->artificialObstacles;
+        }
 
 	/**
 	 * block opponent penalty area

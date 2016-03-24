@@ -172,6 +172,19 @@ namespace msl
 			}
 		}
 
+                if (reachable)
+                {
+                        for(auto obs : *voronoi->getAdditionalObstacles())
+                        {
+                                //if there is an obstacle inside the corridor the goal is not reachable
+                                if(corridorCheck(voronoi, startPos, goal, obs))
+                                {
+                                        reachable = false;
+                                        break;
+                                }
+                        }
+                }
+
 		//if the corridor is free the robot can drive towards the goal
 		if(reachable)
 		{
