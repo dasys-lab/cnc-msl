@@ -79,7 +79,7 @@ namespace alica
         double aimAngle = aimPoint->angleTo();
         double ballAngle = wm->kicker.kickerAngle;
 
-        double deltaAngle = -geometry::deltaAngle(aimAngle,ballAngle);
+        double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballAngle, 200, dstscan);

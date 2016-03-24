@@ -67,7 +67,7 @@ TEST_F(PathPlannerTest, pathPlanner)
 	shared_ptr<geometry::CNPoint2D> startPoint = make_shared<geometry::CNPoint2D>(0, 0);
 	shared_ptr<geometry::CNPoint2D> goalPoint = make_shared<geometry::CNPoint2D>(1000, 1000);
 	net = this->wm->pathPlanner.getArtificialObjectNet();
-	auto artificialObs = this->wm->pathPlanner.getArtificialObstacles();
+	auto artificialObs = this->wm->pathPlanner.getArtificialFieldSurroundingObs();
 	int artObsSize = artificialObs->size();
 	EXPECT_TRUE(net != nullptr);
 	cout << "####################### 10 Obstacles #######################" << endl;

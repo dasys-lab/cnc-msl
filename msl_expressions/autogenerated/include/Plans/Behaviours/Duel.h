@@ -22,9 +22,12 @@ namespace alica
         double fieldWidth;
         double translation;
         double robotRadius;
+        double radiusToCheckOpp;
+        double radiusToCheckOwn;
         int direction;
         int itcounter;
         unsigned long entryTime;
+        unsigned long timeToStayInDuel;
         bool friendlyBlocked;
         shared_ptr<geometry::CNPoint2D> usedBallPos;
         vector<bool> hadClosestOpp;

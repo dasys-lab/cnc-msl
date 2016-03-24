@@ -8,7 +8,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_PATHPROXY_H_
 
-
 //includes for CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -36,11 +35,10 @@ typedef Kernel::Line_2 Line_2;
 #include "VoronoiNet.h"
 #include "SystemConfig.h"
 
-
 namespace msl
 {
 	/**
-	 * capsules the path planner invocation
+	 * Interface for invoking the path planner
 	 */
 	class PathProxy
 	{
@@ -54,7 +52,10 @@ namespace msl
 		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 * @return shared_ptr<geometry::CNPoint2D>
 		 */
-		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<PathEvaluator> eval, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
+														shared_ptr<IPathEvaluator> pathEvaluator,
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints= nullptr);
+
 		/**
 		 * get the path proxy instacne
 		 */
@@ -64,33 +65,21 @@ namespace msl
 		 * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
 		void sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path);
+
 		/**
 		 * send debug msg with voroni infos
 		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 * @param voronoi shared_ptr<VoronoiNet>
 		 */
-		void sendVoronoiNetMsg(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
-		/**
-		 * send debug msg with voroni infos
-		 * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-		 * @param voronoi shared_ptr<VoronoiNet>
-		 */
-		void sendVoronoiNetMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites,
-											shared_ptr<VoronoiNet> voronoi);
-		/**
-		 * calculates cropped voronoi for debug msg
-		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
-		 * @param voronoi shared_ptr<VoronoiNet>
-		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> sites, shared_ptr<VoronoiNet> voronoi);
+		void sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi);
 
 		/**
 		 * calculates cropped voronoi for debug msg
-		 * @param sites shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 * @param voronoi shared_ptr<VoronoiNet>
 		 */
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(
-				shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > sites, shared_ptr<VoronoiNet> voronoi);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi);
+
 	private:
 		shared_ptr<geometry::CNPoint2D> lastPathTarget;
 		MSLWorldModel* wm;

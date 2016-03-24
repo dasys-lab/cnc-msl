@@ -32,15 +32,19 @@ typedef VoronoiDiagram::Vertex Vertex;
 namespace msl
 {
 	class VoronoiNet;
-	class PathEvaluator : IPathEvaluator
+	class PathEvaluator : public IPathEvaluator
 	{
 	public:
 		PathEvaluator();
 		virtual ~PathEvaluator();
-		virtual double eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
-							shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-							VoronoiNet* voronoi = nullptr,
-							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path = nullptr, shared_ptr<geometry::CNPoint2D> lastTarget = nullptr);
+		virtual pair<double, double> eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode,
+													shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi);
+
+		virtual pair<double, double> evalInitial(shared_ptr<geometry::CNPoint2D> startPos,
+													shared_ptr<geometry::CNPoint2D> goal,
+													shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi,
+													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath, shared_ptr<geometry::CNPoint2D> lastTarget);
+
 
 	protected:
 		/**
@@ -52,7 +56,7 @@ namespace msl
 		 */
 		double additionalCorridorWidth;
 		/**
-		 * weigt for inverted distance of obstalces to to voronoi edge
+		 * weight for inverted distance of obstacles to to voronoi edge
 		 */
 		double obstacleDistanceWeight;
 		/**
@@ -71,7 +75,7 @@ namespace msl
 		ros::NodeHandle n;
 		supplementary::SystemConfig* sc;
 
-		double distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
+//		double distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
 
 	};
 
