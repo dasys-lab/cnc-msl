@@ -22,7 +22,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
-        static const int SIMULATING = -1; // simulating 1, real life -1
+        static const int SIMULATING = 1; // simulating 1, real life -1
         static const int BALL_BUFFER_SIZE = 10;
         static const int TARGET_BUFFER_SIZE = 3;
         static const int GOALIE_SIZE = 900;
