@@ -52,7 +52,9 @@ namespace alica
                 if (pred != nullptr)
                 {
                         auto predPos = pred->first;
-                        this->egoBallPos = this->egoBallPos + (predPos - ownPos); // move ego ball based on predicted own position
+                        // move ego ball based on predicted own position
+                        this->egoBallPos = this->egoBallPos + (predPos - ownPos);
+                        this->egoBallPos = this->egoBallPos->rotate(geometry::deltaAngle(ownPos->theta, predPos->theta));
                         this->ownPos = predPos;
                 }
         }
