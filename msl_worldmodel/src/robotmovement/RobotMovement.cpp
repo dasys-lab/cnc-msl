@@ -402,6 +402,7 @@ namespace msl
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
 		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 		additionalPoints);
+
 		cout << "Robotmovement: after ego direction" << endl;
 		if(temp == nullptr)
 		{

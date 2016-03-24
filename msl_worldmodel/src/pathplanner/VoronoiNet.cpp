@@ -221,17 +221,44 @@ namespace msl
 	{
 		lock_guard<mutex> lock(netMutex);
 		vector<Site_2> sites;
-		for (auto point : *points)
-		{
-			Site_2 site(point->x, point->y);
-			this->pointRobotKindMapping[site] = type;
-			sites.push_back(site);
 
-			if (type == EntityType::Opponent)
-			        this->additionalObstacles->push_back(point);
-			else if (type == EntityType::ArtificialObstacle)
-			        this->artificialObstacles->push_back(point);
+		for(auto point = points->begin(); point != points->end();)
+		{
+
+		   if(!this->field->isInsideField(*point))
+		   {
+		      point = points->erase(point);
+		   }
+		   else
+		   {
+				Site_2 site((*point)->x, (*point)->y);
+				this->pointRobotKindMapping[site] = type;
+				sites.push_back(site);
+
+				if (type == EntityType::Opponent)
+						this->additionalObstacles->push_back(*point);
+				else if (type == EntityType::ArtificialObstacle)
+						this->artificialObstacles->push_back(*point);
+
+		      ++point;
+		   }
 		}
+//		for (auto point : *points)
+//		{
+//			if(!this->field->isInsideField(point)) {
+//
+//			} else {
+//
+//				Site_2 site(point->x, point->y);
+//				this->pointRobotKindMapping[site] = type;
+//				sites.push_back(site);
+//
+//				if (type == EntityType::Opponent)
+//						this->additionalObstacles->push_back(point);
+//				else if (type == EntityType::ArtificialObstacle)
+//						this->artificialObstacles->push_back(point);
+//			}
+//		}
 		this->voronoi->insert(sites.begin(), sites.end());
 	}
 
