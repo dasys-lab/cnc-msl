@@ -49,7 +49,7 @@ namespace alica
         { // use predicted own position
                 auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
 
-                if (pred == nullptr)
+                if (pred != nullptr)
                 {
                         auto predPos = pred->first;
                         this->egoBallPos = this->egoBallPos + (predPos - ownPos); // move ego ball based on predicted own position
@@ -66,7 +66,7 @@ namespace alica
 
 
 
-        shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
+        shared_ptr<geometry::CNPoint2D> hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
         if (false == hitPoint)
         {
