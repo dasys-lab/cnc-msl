@@ -258,7 +258,7 @@ int main(int argc, char** argv) {
 	ros::Subscriber mlcSub = node.subscribe<msl_actuator_msgs::MotionLight>("CNActuator/MotionLight", 1, handleMotionLight);
 	ros::Subscriber bhcSub = node.subscribe<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 1, handleBallHandleControl);
 
-	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/ProcessCommand", 1);
+	ros::Publisher brtPub = node.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 1);
 	ros::Publisher vrtPub = node.advertise<msl_actuator_msgs::VisionRelocTrigger>("CNActuator/VisionRelocTrigger", 1);
 	ros::Publisher mbcPub = node.advertise<msl_actuator_msgs::MotionBurst>("CNActuator/MotionBurst", 1);
 	ros::Publisher lbiPub = node.advertise<std_msgs::Bool>("/LightBarrierInfo", 1);
