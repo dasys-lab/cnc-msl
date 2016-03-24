@@ -46,7 +46,7 @@ namespace alica
 
 
        auto goaltoball = alloBallPos - goalPos;
-       auto defenderRange = (goaltoball->normalize())*4300;
+       auto defenderRange = goalPos+(goaltoball->normalize())*4300;
 
 /*
        if (alloBallPos->y <= 0)
