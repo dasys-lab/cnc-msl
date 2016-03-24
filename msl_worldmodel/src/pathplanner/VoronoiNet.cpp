@@ -516,16 +516,32 @@ namespace msl
 	{
 		for (int i = 0; i < sites->size(); i++)
 		{
+			cout << "VoronoiNet remove site" << endl;
 			//locate point
 			VoronoiDiagram::Point_2 point(sites->at(i)->x, sites->at(i)->y);
+			cout <<"VoronoiNet 1" << endl;
 			VoronoiDiagram::Locate_result loc = this->voronoi->locate(point);
+			cout <<"VoronoiNet 2" << endl;
 			//if location is face
 			if (VoronoiDiagram::Face_handle* handle = boost::get<VoronoiDiagram::Face_handle>(&loc))
 			{
 				//delete it from delaunay graph
-				((DelaunayTriangulation)this->voronoi->dual()).remove((*handle)->dual());
+				cout <<"VoronoiNet 3" << endl;
+				auto dt = (DelaunayTriangulation)this->voronoi->dual();
+
+				cout <<"VoronoiNet 3.1" << endl;
+				auto hd = (*handle)->dual();
+
+				cout <<"VoronoiNet 3.2" << endl;
+
+				cout <<"VoronoiNet " << sites->at(i)->x << " "<< sites->at(i)->y << endl;
+				cout << "VoronoiNet " << point.x() << " " << point.y() << endl;
+				(dt).remove(hd);
+				cout <<"VoronoiNet 4" << endl;
 			}
+			cout <<"VoronoiNet 5" << endl;
 		}
+		cout <<"VoronoiNet 6" << endl;
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getArtificialObstacles()
