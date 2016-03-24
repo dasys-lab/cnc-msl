@@ -12,8 +12,7 @@
 namespace msl
 {
 
-	PathPlanner::PathPlanner(MSLWorldModel* wm, int count) :
-			voronoiDiagrams(count)
+	PathPlanner::PathPlanner(MSLWorldModel* wm, int count)
 	{
 		this->wm = wm;
 		this->artificialObjectNet = make_shared<VoronoiNet>(wm);
@@ -23,12 +22,15 @@ namespace msl
 		this->lastTarget == nullptr;
 		sc = supplementary::SystemConfig::getInstance();
 		for (int i = 0; i < count; i++)
+		this->voronoiDiagrams.reserve(10);
 		{
-			this->voronoiDiagrams.at(i) = make_shared<VoronoiNet>(wm);
+		        auto voi = make_shared<VoronoiNet>(wm);
 			// TODO maybe VoronoiNet::generateVoronoiDiagram can spare inserting these art. obstacles again, if we maintain them properly
-			this->voronoiDiagrams.at(i)->setVoronoi(
+			voi->setVoronoi(
 					make_shared<VoronoiDiagram>(
 							(DelaunayTriangulation)this->artificialObjectNet->getVoronoi()->dual()));
+
+                        this->voronoiDiagrams.push_back(voi);
 		}
 		this->robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
 		this->minEdgeWidth = (*sc)["PathPlanner"]->get<double>("PathPlanner", "minEdgeWidth", NULL);

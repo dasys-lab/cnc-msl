@@ -8,7 +8,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1458757170147) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     Intercept::Intercept() :
-            DomainBehaviour("Intercept")
+            DomainBehaviour("Intercept"), useZmachine(false)
     {
         /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
     	field = msl::MSLFootballField::getInstance();
@@ -99,7 +99,7 @@ namespace alica
 
 		shared_ptr<geometry::CNPoint2D> predBall = ballPos;
 
-		shared_ptr<geometry::CNPosition> predPos = make_shared<geometry::CNPosition>(ballPos->x, ballPos->y, ballPos->angleTo());
+		shared_ptr<geometry::CNPosition> predPos;
 
 //		if (predictByRawOdo) {
 //			WM.Predictor.PredictBallRobotSystem(odRaw.Motion,ballPos,ballVel,ownPos,160,out predBall,out predPos);
@@ -219,11 +219,11 @@ namespace alica
 		else {
 			mc.motion.angle = pathPlanningPoint->angleTo();
 		}
-		if(true) {
-			mc.motion.translation = min(maxVel,vel->length());
-		} else {
-			mc.motion.translation = trans;
-		}
+//		if(fastIntercept) {
+//			mc.Motion.Translation = Math.Min(curMaxTrans,vel.Distance());
+//		}
+//		else mc.Motion.Translation = trans;
+		mc.motion.translation = trans;
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());
 		double angleGoal = msl::Kicker::kickerAngle;
@@ -235,6 +235,7 @@ namespace alica
 		rotIntErr += rotErr;
 		rotIntErr = max(-2*M_PI,min(2*M_PI,rotIntErr));
 		lastRotErr = rotErr;
+
 
 		controlRot = max(-4*M_PI,min(4*M_PI,controlRot));
 		// this is nice stuff but only when we are not approaching the opponent
@@ -267,7 +268,6 @@ namespace alica
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
-
     bool  Intercept::interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel, double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo) {
     	t = 0;
 		interceptVelo = nullptr;

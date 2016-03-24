@@ -141,6 +141,10 @@ namespace msl
 				sites.push_back(site);
 			}
 		}
+		else
+		{
+		        this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNPosition>>>();
+		}
 		this->voronoi->insert(sites.begin(), sites.end());
 
 		//insert artificial obstacles
@@ -282,8 +286,8 @@ namespace msl
 	{
 		this->voronoi->clear();
 		this->pointRobotKindMapping.clear();
-		this->alloClusteredObsWithMe->clear();
-		this->artificialObstacles->clear();
+                this->alloClusteredObsWithMe->clear();
+                this->artificialObstacles->clear();
 	}
 
 
