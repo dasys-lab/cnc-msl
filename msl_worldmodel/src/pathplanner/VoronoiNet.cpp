@@ -535,20 +535,12 @@ namespace msl
 
 	shared_ptr<vector<shared_ptr<geometry::CNRobot> > > VoronoiNet::getAlloClusteredObsWithMe()
 	{
-//	        auto obs = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
-//
-//	        for (auto ob : *this->alloClusteredObsWithMe)
-//	        {
-//	                obs->push_back(ob);
-//	        }
-//
-//		return obs;
 		return this->alloClusteredObsWithMe;
 	}
 
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > VoronoiNet::getAdditionalObstacles()
         {
-                return this->artificialObstacles;
+                return this->additionalObstacles;
         }
 
 	/**
