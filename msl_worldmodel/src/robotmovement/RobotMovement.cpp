@@ -719,15 +719,15 @@ namespace msl
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 				additionalPoints->push_back(wm->ball.getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
-				cout << "RobotMovement: playeRobotCareBall 1" << endl;
+				//cout << "RobotMovement: playeRobotCareBall 1" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
 			}
 			else
 			{
-				cout << "RobotMovement: playeRobotCareBall 2" << endl;
+				//cout << "RobotMovement: playeRobotCareBall 2" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
 			}
-			cout << "RobotMovement: placeRobotCareBall return." << endl;
+			//cout << "RobotMovement: placeRobotCareBall return." << endl;
 			return mc;
 		}
 	}
