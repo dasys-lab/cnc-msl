@@ -90,9 +90,9 @@ namespace alica
         if (!field->isInsideField(alloBall))
         {
             auto egoTarget = field->mapInsideField(alloBall)->alloToEgo(*ownPos);
-            cout << "Intercept return 3 begin" << endl;
+            //cout << "Intercept return 3 begin" << endl;
             mc = msl::RobotMovement::placeRobotCareBall(egoTarget, ballPos, maxVel);
-            cout << "Intercept return 3 end" << endl;
+            //cout << "Intercept return 3 end" << endl;
             send(mc);
             return;
         }
