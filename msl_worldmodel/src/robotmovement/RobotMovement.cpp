@@ -376,8 +376,11 @@ namespace msl
 		additionalPoints);
 		if(temp != nullptr)
 		{
-			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
 			egoTarget = temp;
+		}
+		else
+		{
+			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
 		}
 
 		mc.motion.angle = egoTarget->angleTo();
