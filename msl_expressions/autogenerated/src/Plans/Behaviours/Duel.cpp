@@ -17,9 +17,12 @@ namespace alica
         fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
         fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-        radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);;
-        radiusToCheckOwn = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOwn", NULL);;
-        duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);;
+        radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);
+        ;
+        radiusToCheckOwn = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOwn", NULL);
+        ;
+        duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);
+        ;
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -148,7 +151,6 @@ namespace alica
                 //move away from opponent
                 egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
 
-
             }
             else
             {
@@ -210,9 +212,9 @@ namespace alica
                     cout << "Duel: try closest field border" << endl;
 
                     shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
-                    > (egoBallPos->y, -egoBallPos->x);
+                            > (egoBallPos->y, -egoBallPos->x);
                     shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
-                    > (-egoBallPos->y, egoBallPos->x);
+                            > (-egoBallPos->y, egoBallPos->x);
                     ballOrth1 = ballOrth1->egoToAllo(*ownPos);
                     ballOrth2 = ballOrth2->egoToAllo(*ownPos);
 
