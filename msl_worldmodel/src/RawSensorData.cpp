@@ -264,6 +264,7 @@ namespace msl
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
 
+
 			//Motion
 			/*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
@@ -280,10 +281,10 @@ namespace msl
 			ownVelocityMotion.add(vMotion);*/
 		}
 
-		shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-																				   data->ball.point.y);
-		shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-																						 data->ball.velocity.vy);
+		shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x,
+																				   data->ball.point.y,data->ball.point.z);
+		shared_ptr<geometry::CNPoint3D> ballVel = make_shared<geometry::CNPoint3D>(data->ball.velocity.vx,
+																						 data->ball.velocity.vy, data->ball.velocity.vz);
 
 		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
 		if (data->ball.confidence < 0.00000001)
