@@ -12,6 +12,7 @@ namespace alica
             DomainBehaviour("DriveToGoal")
     {
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
+    	simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
         /*PROTECTED REGION END*/
     }
     DriveToGoal::~DriveToGoal()
@@ -39,7 +40,7 @@ namespace alica
         }
         else
         {
-            if (SIMULATING < 0)
+            if (simulating < 0)
             {
                 alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
                 alloTargetY = MSLFootballField::posOwnGoalMid()->y;
