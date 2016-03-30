@@ -236,7 +236,7 @@ namespace msl
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-		if (game.ownGoalColor == Color::Yellow)
+		if (game.ownGoalColor != Color::Yellow)
 		{
 			msg->odometry.position.x = -msg->odometry.position.x;
 			msg->odometry.position.y = -msg->odometry.position.y;
