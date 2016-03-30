@@ -33,6 +33,9 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(con1447863466691) ENABLED START*/ //Add additional options here
 		simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
+		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
+		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
+		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
 		/*PROTECTED REGION END*/
 	}
 	WatchBall::~WatchBall()
@@ -61,9 +64,9 @@ namespace alica
 		alloGoalMid = MSLFootballField::getInstance()->posOwnGoalMid();
 
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(
-				alloGoalMid->x, MSLFootballField::getInstance()->posLeftOwnGoalPost()->y - GOALIE_SIZE / 2);
+				alloGoalMid->x, MSLFootballField::getInstance()->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(
-				alloGoalMid->x, MSLFootballField::getInstance()->posRightOwnGoalPost()->y + GOALIE_SIZE / 2);
+				alloGoalMid->x, MSLFootballField::getInstance()->posRightOwnGoalPost()->y + goalieSize / 2);
 
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
@@ -90,7 +93,7 @@ namespace alica
 	void WatchBall::watchBall()
 	{
 		std::vector<shared_ptr<geometry::CNPoint2D>> ballPositions;
-		for (int i = 0; i < BALL_BUFFER_SIZE; i++)
+		for (int i = 0; i < nrOfPositions; i++)
 		{
 			auto currentBall = wm->ball.getVisionBallPosition(i);
 			if (currentBall)
@@ -233,7 +236,7 @@ namespace alica
 		//cout << "#####" << endl;
 		double _slope, _yInt;
 		double sumXY = 0, sumX2 = 0, sumX2Y2 = 0;
-		shared_ptr<geometry::CNPoint2D> avgBall = make_shared<geometry::CNPoint2D>(0.0,0.0);
+		shared_ptr<geometry::CNPoint2D> avgBall = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 		int nPoints = 0;
 
 		/*for (int i = modRingBuffer(ballIndex - nPoints, BALL_BUFFER_SIZE);
@@ -299,11 +302,11 @@ namespace alica
 		double nomi = 0;
 
 		double calcTargetY;
-		double variance = (sumX2Y2
-				+ nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
+		double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		cout << "[WatchBall] Variance: " << variance << endl;
-		if (nPoints > 1 && variance > 2000)
+		// maxVariance = 2000
+		if (nPoints > 1 && variance > maxVariance)
 		{
 			for (int i = 0; i < nPoints; i++)
 			{
