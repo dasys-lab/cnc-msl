@@ -408,7 +408,7 @@ Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std:
 		//if(p.z > 350 && p.x*p.x+p.y*p.y>750*750) {
 		//	continue;
 		//}
-		if(p.x*p.x+p.y*p.y>8000*8000) continue;
+		if(p.x*p.x+p.y*p.y>9000*9000) continue;
 		if(isGoalie && p.x*p.x+p.y*p.y>5500*5500) continue;
 
 		ballPos.confidence = 0.3 + (((double)cluster[i].err/(double)cluster[i].balls)*0.1);
