@@ -71,6 +71,13 @@ namespace alica
 		this->wm->kicker.lowShovelSelected = ssc.passing;
 	}
 
+	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)
+	{
+		pm.senderID = senderID;
+		passMsgPublisher.publish(pm);
+		passMsgPublisher.publish(pm);
+	}
+
 	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm)
 	{
 		pm.senderID = ownID;
