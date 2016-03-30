@@ -132,4 +132,12 @@
     <key href="../Behaviours/Intercept.beh#1458757193843"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Behaviours/GoalieExtension.beh#1459249287791"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Behaviours/DefendGoal.beh#1459249336699"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

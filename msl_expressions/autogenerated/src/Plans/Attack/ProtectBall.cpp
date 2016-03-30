@@ -91,7 +91,7 @@ namespace alica
 
         double aimAngle = aimPoint->angleTo();
         double ballAngle = ballPos->angleTo();
-        
+
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         cout << "ProtectBall: angle:\t\t\t\t\t " << deltaAngle << endl;
         cout << "ProtectBall: aimPoint X: " << aimPoint->x << " Y: " << aimPoint->y << endl;

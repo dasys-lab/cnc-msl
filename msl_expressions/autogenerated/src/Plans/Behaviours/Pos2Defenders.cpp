@@ -61,13 +61,15 @@ namespace alica
                 {
 
                     mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
-                                                                  alloBallPos->alloToEgo(*firstDef), 0);
+                                                                  alloBallPos->alloToEgo(*firstDef), 0,
+                                                                  additionalPoints);
 
                 }
                 else
                 {
                     mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
-                                                                  alloBallPos->alloToEgo(*secondDef), 0);
+                                                                  alloBallPos->alloToEgo(*secondDef), 0,
+                                                                  additionalPoints);
                 }
 
             }

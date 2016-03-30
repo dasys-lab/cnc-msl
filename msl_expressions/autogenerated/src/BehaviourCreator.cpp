@@ -105,7 +105,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
+#include  "Plans/Behaviours/GoalieExtension.h"
+
 #include  "Plans/Attack/OneEighty.h"
+
+#include  "Plans/Behaviours/DefendGoal.h"
 
 #include  "Plans/Behaviours/MoveToPointDynamic.h"
 
@@ -434,9 +438,19 @@ namespace alica
                 return make_shared<KickOffPassDefault>();
                 break;
 
+            case 1459249287791:
+
+                return make_shared<GoalieExtension>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
+                break;
+
+            case 1459249336699:
+
+                return make_shared<DefendGoal>();
                 break;
 
             case 1456997097907:

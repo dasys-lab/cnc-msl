@@ -376,8 +376,11 @@ namespace msl
 		additionalPoints);
 		if(temp != nullptr)
 		{
-			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
 			egoTarget = temp;
+		}
+		else
+		{
+			cout << "RobotMovement::moveToPointFast::getEgoDirection == nullptr => ownPos not available" << endl;
 		}
 
 		mc.motion.angle = egoTarget->angleTo();
@@ -403,7 +406,6 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
 		additionalPoints);
 
-		cout << "Robotmovement: after ego direction" << endl;
 		if(temp == nullptr)
 		{
 			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
@@ -424,7 +426,7 @@ namespace msl
 		{
 			mc.motion.translation = 0;
 		}
-		cout << "RobotMovement: befor return" << endl;
+
 		return mc;
 	}
 
@@ -717,15 +719,15 @@ namespace msl
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 				additionalPoints->push_back(wm->ball.getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
-				cout << "RobotMovement: playeRobotCareBall 1" << endl;
+				//cout << "RobotMovement: playeRobotCareBall 1" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
 			}
 			else
 			{
-				cout << "RobotMovement: playeRobotCareBall 2" << endl;
+				//cout << "RobotMovement: playeRobotCareBall 2" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , nullptr);
 			}
-			cout << "RobotMovement: placeRobotCareBall return." << endl;
+			//cout << "RobotMovement: placeRobotCareBall return." << endl;
 			return mc;
 		}
 	}

@@ -44,31 +44,26 @@ namespace alica
 //        std::cout << "EgoBallPos: " << egoBallPos << std::endl;
 //        std::cout << "HaveBall: " << (wm->ball.haveBall() ? "true" : "false") << std::endl;
 
-
         if (this->usePrediction)
         { // use predicted own position
-                auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
+            auto pred = this->wm->prediction.angleAndPosition(this->predictionTime);
 
-                if (pred != nullptr)
-                {
-                        auto predPos = pred->first;
-                        // move ego ball based on predicted own position
-                        this->egoBallPos = this->egoBallPos + (predPos - ownPos);
-                        this->egoBallPos = this->egoBallPos->rotate(geometry::deltaAngle(ownPos->theta, predPos->theta));
-                        this->ownPos = predPos;
-                }
+            if (pred != nullptr)
+            {
+                auto predPos = pred->first;
+                // move ego ball based on predicted own position
+                this->egoBallPos = this->egoBallPos + (predPos - ownPos);
+                this->egoBallPos = this->egoBallPos->rotate(geometry::deltaAngle(ownPos->theta, predPos->theta));
+                this->ownPos = predPos;
+            }
         }
-
-        this->wm->prediction.monitoring();
 
         if (ownPos == nullptr || egoBallPos == nullptr || !wm->ball.haveBall())
         {
             return;
         }
 
-
-
-        shared_ptr<geometry::CNPoint2D> hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
+        shared_ptr < geometry::CNPoint2D > hitPoint = this->computeHitPoint(ownPos->x, ownPos->y, ownPos->theta);
 
         if (false == hitPoint)
         {
@@ -165,7 +160,8 @@ namespace alica
         minOwnDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minOwnDistGoal", NULL);
         minKickPower = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKickPower", NULL);
         keeperDistGoal = (*sc)["GoalKick"]->get<double>("GoalKick.Default.keeperDistGoal", NULL);
-        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory", NULL);
+        minKeeperDistBallTrajectory = (*sc)["GoalKick"]->get<double>("GoalKick.Default.minKeeperDistBallTrajectory",
+                                                                     NULL);
 
         usePrediction = (*sc)["GoalKick"]->get<bool>("GoalKick.Prediction.use", NULL);
         predictionTime = (*sc)["GoalKick"]->get<int>("GoalKick.Prediction.time", NULL);
