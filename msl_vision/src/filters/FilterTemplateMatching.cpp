@@ -338,6 +338,7 @@ unsigned char * FilterTemplateMatching::process(unsigned char * src, int* &ballb
 			else {
 				minBallSize = minRad;
 			}
+			if(minBallSize>2) minBallSize--;
 
 			//for(int i=minRad; i<=maxRad; i+= (i<19)?1:2) {
 			for(int i=minBallSize; i<=maxRad; i++) {
