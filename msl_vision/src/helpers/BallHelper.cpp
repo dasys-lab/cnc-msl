@@ -199,7 +199,7 @@ void BallHelper::sendBallHypotesis(ballCluster * cluster, int clusterCount, std:
 			continue;
 
 		cout << "BallHypothesis: Z-Pos " << p.z << " X: " << p.x << " Y: " << p.y << " FL: " << FootballField::FieldLength << " FW: " << FootballField::FieldWidth << endl;
-		double relFactor = 200;
+		double relFactor = 300;
 		if(fabs(p.x) > FootballField::FieldLength + relFactor ||
 			fabs(p.y) > FootballField::FieldWidth + relFactor) {
 			continue;
@@ -335,7 +335,7 @@ Point BallHelper::getBallFromBlobs(ballCluster * cluster, int clusterCount, std:
 		}
 
 		cout << "Ballintegrator BallHypothesis: Z-Pos " << p.z << " X: " << p.x << " Y: " << p.y << " FL: " << FootballField::FieldLength << " FW: " << FootballField::FieldWidth << endl;
-		double relFactor = 200;
+		double relFactor = 300;
 		if(fabs(p.x) > FootballField::FieldLength + relFactor || 
 			fabs(p.y) > FootballField::FieldWidth + relFactor) {
 			continue;
