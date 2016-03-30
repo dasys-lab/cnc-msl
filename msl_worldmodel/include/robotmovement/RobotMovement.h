@@ -31,7 +31,7 @@ namespace msl
 	public:
 		virtual ~RobotMovement();
 
-		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, shared_ptr<geometry::CNPoint2D> goalMid);
+		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance);
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
