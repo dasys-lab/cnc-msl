@@ -21,19 +21,19 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457531616421) ENABLED START*/ //Add additional private methods here
-		shared_ptr<ConstraintQuery> query;
+        shared_ptr<ConstraintQuery> query;
         vector<double> result;
         double maxVel;
         int iterationCount;
 
         double tol;
-		double trans;
+        double trans;
 
-		bool haveBall = false;
+        bool haveBall = false;
 
-		int delayKickCounter;
-		double maxTranslation;
-		double xOffSet;
+        int delayKickCounter;
+        double maxTranslation;
+        double xOffSet;
 
         /*PROTECTED REGION END*/};
 } /* namespace alica */

@@ -21,7 +21,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457532279657) ENABLED START*/ //Add additional private methods here
-		shared_ptr<ConstraintQuery> query;
+        shared_ptr<ConstraintQuery> query;
         vector<double> result;
         double maxVel;
         int iterationCount;
