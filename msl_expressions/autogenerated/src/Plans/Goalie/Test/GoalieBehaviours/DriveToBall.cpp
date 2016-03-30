@@ -17,7 +17,7 @@ namespace alica
     DriveToBall::~DriveToBall()
     {
         /*PROTECTED REGION ID(dcon1447863493623) ENABLED START*/ //Add additional options here
-    	simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
+        simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
         /*PROTECTED REGION END*/
     }
     void DriveToBall::run(void* msg)

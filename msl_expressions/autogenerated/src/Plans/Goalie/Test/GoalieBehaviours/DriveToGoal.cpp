@@ -12,7 +12,7 @@ namespace alica
             DomainBehaviour("DriveToGoal")
     {
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
-    	simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
+        simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
         /*PROTECTED REGION END*/
     }
     DriveToGoal::~DriveToGoal()

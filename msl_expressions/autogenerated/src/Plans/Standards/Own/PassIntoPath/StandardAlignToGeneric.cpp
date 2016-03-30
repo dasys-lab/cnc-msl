@@ -11,8 +11,8 @@ namespace alica
             DomainBehaviour("StandardAlignToGeneric")
     {
         /*PROTECTED REGION ID(con1457531616421) ENABLED START*/ //Add additional options here
-    	tol = M_PI/40; //45
-    	trans = 100.0;
+        tol = M_PI / 40; //45
+        trans = 100.0;
 //    				field = FootballField.GetInstance();
 //			this.maxTranslation = this.sc["Team"].TryGetDouble(3000.0, "Team.StandardSituationSpeed");
 //			this.tol = this.sc["Behaviour"].GetDouble("StandardAlign.AlignTolerance");
@@ -22,154 +22,152 @@ namespace alica
     StandardAlignToGeneric::~StandardAlignToGeneric()
     {
         /*PROTECTED REGION ID(dcon1457531616421) ENABLED START*/ //Add additional options here
-		query = make_shared < ConstraintQuery > (wm->getEngine());
+        query = make_shared < ConstraintQuery > (wm->getEngine());
 
-    	supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+        supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         maxVel = (*sys)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
         /*PROTECTED REGION END*/
     }
     void StandardAlignToGeneric::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457531616421) ENABLED START*/ //Add additional options here
+        /*		Point2D ballPos = WM.RawBallPosition;
 
-    		/*		Point2D ballPos = WM.RawBallPosition;
+         Position ownPos = WM.OwnPositionCorrected;
 
-			Position ownPos = WM.OwnPositionCorrected;
+         if(ballPos == null || ownPos == null) {
+         DriveHelper.DriveRandomly(500,WM);
+         return;
+         }
+         if (delayKickCounter == 0)
+         {
+         KickControl km = new KickControl();
+         km.Enabled = true;
+         km.Kicker = (ushort)KickHelper.KickerToUseIndex(ballPos.Angle());
+         km.Power = 0;
+         Send(km);
+         delayKickCounter = 9;
+         }
+         else
+         {
+         delayKickCounter--;
+         }
 
-			if(ballPos == null || ownPos == null) {
-				DriveHelper.DriveRandomly(500,WM);
-				return;
-			}
-			if (delayKickCounter == 0)
-			{
-				KickControl km = new KickControl();
-				km.Enabled = true;
-				km.Kicker = (ushort)KickHelper.KickerToUseIndex(ballPos.Angle());
-				km.Power = 0;
-				Send(km);
-				delayKickCounter = 9;
-			}
-			else
-			{
-				delayKickCounter--;
-			}
+         //////////////////////////////////////////
+         // If ball is far away: Move close to Ball
+         //////////////////////////////////////////
+         MotionControl bm = null;
+         if (ballPos.Distance() > 900) {
+         bm = DriveHelper.StandardMoveToPosition(ballPos,ballPos,WM);
+         Send(bm);
+         return;
 
-			//////////////////////////////////////////
-			// If ball is far away: Move close to Ball
-			//////////////////////////////////////////
-			MotionControl bm = null;
-			if (ballPos.Distance() > 900) {
-				bm = DriveHelper.StandardMoveToPosition(ballPos,ballPos,WM);
-				Send(bm);
-				return;
+         }
+         haveBall  = WorldHelper.HaveBallDribble(WM,haveBall);
+         if(ballPos.Distance() > 450) { //!haveBall) {
+         bm = DriveHelper.DriveToPointAlignNoAvoidance(ballPos,ballPos,Math.Min(600,ballPos.Distance()/1.66),true,WM);
+         Send(bm);
+         return;
+         }
+         /////////////////////////////////////////
+         // End of Move close Ball
+         /////////////////////////////////////////
 
-			}
-			haveBall  = WorldHelper.HaveBallDribble(WM,haveBall);
-			if(ballPos.Distance() > 450) { //!haveBall) {
-				bm = DriveHelper.DriveToPointAlignNoAvoidance(ballPos,ballPos,Math.Min(600,ballPos.Distance()/1.66),true,WM);
-				Send(bm);
-				return;
-			}
-			/////////////////////////////////////////
-			// End of Move close Ball
-			/////////////////////////////////////////
-
-			bm = new MotionControl();
-			double radian = ballPos.Distance();
-
+         bm = new MotionControl();
+         double radian = ballPos.Distance();
 
 
-			double rot = this.trans/radian;
+
+         double rot = this.trans/radian;
 
 
-			bool solved=true;
+         bool solved=true;
 
-			solved = query.GetSolution(this.RunningPlan,out result);
-
-
-			Point2D target = new Point2D();
-			//Console.WriteLine(solved + " X:" +result[0] + "Y:" + result[1]);
-			if(true || solved)
-			{
-				target = WorldHelper.Allo2Ego(new Point2D(result[0], result[1]), ownPos);
-
-				PassMsg pm = new PassMsg();
-				pm.Origin.X = ownPos.X;
-				pm.Origin.Y = ownPos.Y;
-				pm.Destination.X = result[0];
-				pm.Destination.Y = result[1];
-				pm.ValidFor = 5000; //100msec
-
-				//Reduce Communication
-				if(iterationCount++%3==0) {
-					Speak(pm, -1);
-				}
-			}
-			else
-			{
-				//Emergency kick
-				Point2D alloBall = WorldHelper.Ego2Allo(ballPos, ownPos);
-
-				Point2D pointTowardsUs = null;
-				if (alloBall.X > -field.FieldLength/3) {
-					pointTowardsUs = new Point2D(alloBall.X-1000.0, alloBall.Y);
-				}
-				else {
-					pointTowardsUs = new Point2D(alloBall.X, alloBall.Y+Math.Sign(alloBall.Y-ownPos.Y)*1000);
-				}
-				target = WorldHelper.Allo2Ego(pointTowardsUs, ownPos);
-			}
-
-			double cross = target.X * ballPos.Y - target.Y * ballPos.X;
-			double fac = -Math.Sign(cross);
-			Point2D direction = null;
-			double dangle = DeltaAngle(KickHelper.KickerToUse(ballPos.Angle()),target.Angle());
-
-			if (Math.Abs(dangle) < 12.0*Math.PI/180.0)  {
-				direction = ballPos.Rotate(-fac*Math.PI/2.0).Normalize()*this.trans*0.66;
-			}
-			else {
-				direction = ballPos.Rotate(-fac*Math.PI/2.0).Normalize()*this.trans;
-			}
-
-			double balldangle = DeltaAngle(KickHelper.KickerToUse(ballPos.Angle()),ballPos.Angle());
-			if (ballPos.Distance() > 350 && Math.Abs(dangle) > 35.0*Math.PI/180.0) {
-				bm.Motion.Angle = direction.Angle();
-				bm.Motion.Translation = direction.Distance()*1.6;
-				bm.Motion.Rotation = fac*rot*1.6;
-				Send(bm);
-				return;
-			}
-
-			if(!haveBall) {
-				if(Math.Abs(balldangle) > 20.0*Math.PI/180.0) {
-					bm.Motion.Rotation = Math.Sign(balldangle)*0.8;
-					bm.Motion.Angle = 0;
-					bm.Motion.Translation = 0;
-					Send(bm);
-					return;
-				} else {
-					bm.Motion.Rotation = balldangle*0.5;
-					bm.Motion.Angle = ballPos.Angle();
-					bm.Motion.Translation = ballPos.Distance();
-					Send(bm);
-					return;
-				}
-			}
-			bm.Motion.Angle = direction.Angle();
-			bm.Motion.Translation = direction.Distance();
-			bm.Motion.Rotation = fac*rot;
+         solved = query.GetSolution(this.RunningPlan,out result);
 
 
-			if( Math.Abs(dangle) < this.tol && haveBall)
-			{
-				bm.Motion.Rotation = 0.0;
-				bm.Motion.Translation = 0.0;
-				this.SuccessStatus = true;
-			}
+         Point2D target = new Point2D();
+         //Console.WriteLine(solved + " X:" +result[0] + "Y:" + result[1]);
+         if(true || solved)
+         {
+         target = WorldHelper.Allo2Ego(new Point2D(result[0], result[1]), ownPos);
 
-			Send(bm);*/
+         PassMsg pm = new PassMsg();
+         pm.Origin.X = ownPos.X;
+         pm.Origin.Y = ownPos.Y;
+         pm.Destination.X = result[0];
+         pm.Destination.Y = result[1];
+         pm.ValidFor = 5000; //100msec
 
+         //Reduce Communication
+         if(iterationCount++%3==0) {
+         Speak(pm, -1);
+         }
+         }
+         else
+         {
+         //Emergency kick
+         Point2D alloBall = WorldHelper.Ego2Allo(ballPos, ownPos);
+
+         Point2D pointTowardsUs = null;
+         if (alloBall.X > -field.FieldLength/3) {
+         pointTowardsUs = new Point2D(alloBall.X-1000.0, alloBall.Y);
+         }
+         else {
+         pointTowardsUs = new Point2D(alloBall.X, alloBall.Y+Math.Sign(alloBall.Y-ownPos.Y)*1000);
+         }
+         target = WorldHelper.Allo2Ego(pointTowardsUs, ownPos);
+         }
+
+         double cross = target.X * ballPos.Y - target.Y * ballPos.X;
+         double fac = -Math.Sign(cross);
+         Point2D direction = null;
+         double dangle = DeltaAngle(KickHelper.KickerToUse(ballPos.Angle()),target.Angle());
+
+         if (Math.Abs(dangle) < 12.0*Math.PI/180.0)  {
+         direction = ballPos.Rotate(-fac*Math.PI/2.0).Normalize()*this.trans*0.66;
+         }
+         else {
+         direction = ballPos.Rotate(-fac*Math.PI/2.0).Normalize()*this.trans;
+         }
+
+         double balldangle = DeltaAngle(KickHelper.KickerToUse(ballPos.Angle()),ballPos.Angle());
+         if (ballPos.Distance() > 350 && Math.Abs(dangle) > 35.0*Math.PI/180.0) {
+         bm.Motion.Angle = direction.Angle();
+         bm.Motion.Translation = direction.Distance()*1.6;
+         bm.Motion.Rotation = fac*rot*1.6;
+         Send(bm);
+         return;
+         }
+
+         if(!haveBall) {
+         if(Math.Abs(balldangle) > 20.0*Math.PI/180.0) {
+         bm.Motion.Rotation = Math.Sign(balldangle)*0.8;
+         bm.Motion.Angle = 0;
+         bm.Motion.Translation = 0;
+         Send(bm);
+         return;
+         } else {
+         bm.Motion.Rotation = balldangle*0.5;
+         bm.Motion.Angle = ballPos.Angle();
+         bm.Motion.Translation = ballPos.Distance();
+         Send(bm);
+         return;
+         }
+         }
+         bm.Motion.Angle = direction.Angle();
+         bm.Motion.Translation = direction.Distance();
+         bm.Motion.Rotation = fac*rot;
+
+
+         if( Math.Abs(dangle) < this.tol && haveBall)
+         {
+         bm.Motion.Rotation = 0.0;
+         bm.Motion.Translation = 0.0;
+         this.SuccessStatus = true;
+         }
+
+         Send(bm);*/
 
 //		msl_actuator_msgs::MotionControl mc;
 //		auto ownPos = wm->rawSensorData.getOwnPositionVision();
@@ -207,8 +205,8 @@ namespace alica
     void StandardAlignToGeneric::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1457531616421) ENABLED START*/ //Add additional options here
-		iterationCount=0;
-		query->clearStaticVariables();
+        iterationCount = 0;
+        query->clearStaticVariables();
         query->addVariable(getVariablesByName("X"));
         query->addVariable(getVariablesByName("Y"));
         result.clear();
