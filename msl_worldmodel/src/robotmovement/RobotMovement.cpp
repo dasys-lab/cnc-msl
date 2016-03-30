@@ -355,13 +355,14 @@ namespace msl
 		if (egoTarget->length() > snapDistance)
 		{
 			//cout << "TRANSLATION: " << 3 * abs(egoTarget->y);
-			mc.motion.translation = std::min(alignMaxVel, 3 * abs(egoTarget->y));
+			mc.motion.translation = std::min(alignMaxVel, 1.5 * abs(egoTarget->y));
 		}
 		else
 		{
 			mc.motion.translation = 0;
 			//cout << "arrived" << endl;
 		}
+		cout << "CalcY: " << alloTarget->y << endl;
 		return mc;
 	}
 
