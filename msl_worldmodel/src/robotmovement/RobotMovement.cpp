@@ -110,6 +110,37 @@ namespace msl
 		}
 		return bm;
 	}
+
+
+	msl_actuator_msgs::MotionControl RobotMovement::driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
+                                                         double translation, bool alignSlow) {
+		msl_actuator_msgs::MotionControl bm = driveToPointNoAvoidance(destination, translation);
+
+		//if we dont need to align
+		if( alignPoint == nullptr)
+		{
+//				Console.WriteLine("MC: angle" + bm.Motion.Angle + " trans" + bm.Motion.Translation);
+			return bm;
+		}
+		else
+		{
+			// Align (with compensation if necessary)
+			msl_actuator_msgs::MotionControl tmp = alignToPointNoBall(alignPoint,alignPoint,0);
+			bm.motion.rotation = tmp.motion.rotation;
+			return bm;
+
+		}
+	}
+	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation) {
+		//motion message
+		MotionControl bm;
+		// Angle
+		bm.motion.angle = egoDest->angleTo();
+		// Translation
+		bm.motion.translation = translation;
+
+		return bm;
+	}
 	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(int translation)
 	{
 		msl::PathProxy* pp = msl::PathProxy::getInstance();
