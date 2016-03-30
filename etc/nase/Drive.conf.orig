@@ -1,0 +1,60 @@
+[Drive]
+	[Default]
+		Velocity = 2000
+		RotateP = 2
+		CatchRadius = 150
+		# in degree
+		AlignTolerance = 5
+	[!Default]
+
+	[Fast]
+		Velocity = 3000
+		RotateP = 3
+		CatchRadius = 200
+	[!Fast]
+
+	[Carefully]
+		Velocity = 1000
+		RotateP = 2
+		CatchRadius = 100
+	[!Carefully]
+	
+	[KickOff]
+		BallDistEx = 600
+		BallDistRec = 2300
+	[!KickOff]
+	
+	[Duel]
+		Velocity = 800
+	[!Duel]
+<<<<<<< HEAD
+
+=======
+	
+>>>>>>> 9d29267c9dd7ec1c381cd579c31bbe53232026a6
+	[Intercept]
+		DistanceIntegralFactor = 0.2
+		RotationP = 1.2
+		RotationI = 0.0
+		RotationD = 3.0
+                DistanceP = 1.2
+                DistanceI = 0.2
+                DistanceD = 0.6
+	[!Intercept]
+<<<<<<< HEAD
+
+
+	AlignToPointMinRotation = 0.0
+	AlignToPointMaxRotation = 3.1
+	AlignToPointpRot = 0.0;
+
+	MaxSpeed = 4000
+=======
+	
+	AlignToPointMinRotation = 0.0
+	AlignToPointMaxRotation = 3.1
+	AlignToPointpRot = 0.0;
+	MaxSpeed = 4000
+	AverageRotation = 3.1415
+>>>>>>> 9d29267c9dd7ec1c381cd579c31bbe53232026a6
+[!Drive]

@@ -5,8 +5,8 @@
     <outTransitions>#1447255446546</outTransitions>
   </states>
   <states id="1447255061404" name="WatchBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/BlockBall.beh#1447863463711</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/WatchBall.beh#1447863472667</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/DefendGoal.beh#1459249336699</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/GoalieExtension.beh#1459249287791</plans>
     <inTransitions>#1447255446546</inTransitions>
     <inTransitions>#1447256488872</inTransitions>
     <inTransitions>#1457943655376</inTransitions>
