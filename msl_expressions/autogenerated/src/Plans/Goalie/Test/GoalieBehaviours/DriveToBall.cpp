@@ -17,6 +17,7 @@ namespace alica
     DriveToBall::~DriveToBall()
     {
         /*PROTECTED REGION ID(dcon1447863493623) ENABLED START*/ //Add additional options here
+    	simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
         /*PROTECTED REGION END*/
     }
     void DriveToBall::run(void* msg)
@@ -28,9 +29,9 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
 
         int goalieHalfSize;
-        if (SIMULATING > 0)
+        if (simulating > 0)
             goalieHalfSize = 410; // goalie size in simulator
-        else if (SIMULATING < 0)
+        else if (simulating < 0)
             goalieHalfSize = 315; // 630mm/2 + 140mm = 445mm
 
         if (alloBall == nullptr)
