@@ -108,7 +108,7 @@ namespace alica
 
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
-        double fac = -(cross>0 ? 1 : -1);
+        double fac = (cross>0 ? 1 : -1);
         if (fabs(dangle) < 12.0 * M_PI / 180.0)
         {
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans * 0.66;
