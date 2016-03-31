@@ -104,11 +104,11 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
+        double dangle = -geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
 
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
-        double fac = (cross>0 ? 1 : -1);
+        double fac = -(cross>0 ? 1 : -1);
         if (fabs(dangle) < 12.0 * M_PI / 180.0)
         {
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans * 0.66;
@@ -119,16 +119,16 @@ namespace alica
         }
 
         double balldangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoBallPos->angleTo());
-        //if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
-        //{
-//            mc.motion.angle = direction->angleTo();
-//            mc.motion.translation = direction->length() * 1.6;
-//            mc.motion.rotation = fac * rot * 1.6;
-//            send(mc);
-          //  return;
-        //}
+        if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
+        {
+            mc.motion.angle = direction->angleTo();
+            mc.motion.translation = direction->length() * 1.6;
+            mc.motion.rotation = fac * rot * 1.6;
+            send(mc);
+            return;
+        }
 
-        /*if (!haveBall)
+        if (!haveBall)
         {
             if (fabs(balldangle) > 20.0 * M_PI / 180.0)
             {
@@ -146,7 +146,7 @@ namespace alica
                 send(mc);
                 return;
             }
-        }*/
+        }
 
         angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
