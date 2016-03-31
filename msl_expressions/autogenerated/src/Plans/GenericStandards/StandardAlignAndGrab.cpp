@@ -151,7 +151,7 @@ namespace alica
         angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
-        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
+        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.01 * angleIntErr + 2 * (dangle - oldAngleErr)));
         oldAngleErr = dangle;
         if (haveBall)
         {
@@ -159,8 +159,9 @@ namespace alica
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
             if (runningTimeMS > 9000)
             {
+            	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 75.0;
                 this->success = true;
             }
             else if (haveBallCounter > 6
@@ -169,8 +170,9 @@ namespace alica
                                     < this->minTol
                                             + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))))
             {
+            	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 75.0;
                 this->success = true;
             }
         }
