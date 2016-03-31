@@ -52,7 +52,7 @@ namespace alica
 	void WatchBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-		cout << "####### WatchBall #######" << endl;
+//		cout << "####### WatchBall #######" << endl;
 
 		ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos == nullptr)
@@ -169,7 +169,7 @@ namespace alica
 		double calcTargetY;
 		double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
-		cout << "[WatchBall] Variance: " << variance << endl;
+//		cout << "[WatchBall] Variance: " << variance << endl;
 		if (nPoints > 1 && variance > maxVariance)
 		{
 			for (int i = 0; i < nPoints; i++)
@@ -189,7 +189,7 @@ namespace alica
 			_yInt = avgBall->y - _slope * avgBall->x;
 
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
+//			cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
