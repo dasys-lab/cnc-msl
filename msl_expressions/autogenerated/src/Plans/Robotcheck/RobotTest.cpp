@@ -83,7 +83,7 @@ namespace alica
 
 		if (actuatorPushLeft && !finActuatorPushLeft)
 		{
-			out = outPut("actuator -> pushing left", out);
+			out = outPut("actuator -> pushing right", out);
 			setParms(false);
 			actuatorPushLeft = true;
 			actuatorPushLeft = actuatorRobot(3000, 30, true);
@@ -97,7 +97,7 @@ namespace alica
 
 		if (actuatorPushRight && !finActuatorPushRight)
 		{
-			out = outPut("actuator -> pushing right", out);
+			out = outPut("actuator -> pushing left", out);
 			setParms(false);
 			actuatorPushRight = true;
 			actuatorPushRight = actuatorRobot(3000, 30, false);
@@ -111,7 +111,7 @@ namespace alica
 
 		if (actuatorPullLeft && !finActuatorPullLeft)
 		{
-			out = outPut("actuator -> pulling left", out);
+			out = outPut("actuator -> pulling right", out);
 			setParms(false);
 			actuatorPullLeft = true;
 			actuatorPullLeft = actuatorRobot(3000, -30, true);
@@ -125,7 +125,7 @@ namespace alica
 
 		if (actuatorPullRight && !finActuatorPullRight)
 		{
-			out = outPut("actuator -> pulling right", out);
+			out = outPut("actuator -> pulling left", out);
 			setParms(false);
 			actuatorPullRight = true;
 			actuatorPullRight = actuatorRobot(3000, -30, false);
