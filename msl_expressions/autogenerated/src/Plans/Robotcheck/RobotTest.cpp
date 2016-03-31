@@ -83,10 +83,10 @@ namespace alica
 
 		if (actuatorPushLeft && !finActuatorPushLeft)
 		{
-			out = outPut("actuator -> pushing right", out);
+			out = outPut("actuator -> pushing left", out);
 			setParms(false);
 			actuatorPushLeft = true;
-			actuatorPushLeft = actuatorRobot(3000, 30, true);
+			actuatorPushLeft = actuatorRobot(3000, 30, false);
 			if (!actuatorPushLeft)
 			{
 				out = true;
@@ -97,10 +97,10 @@ namespace alica
 
 		if (actuatorPushRight && !finActuatorPushRight)
 		{
-			out = outPut("actuator -> pushing left", out);
+			out = outPut("actuator -> pushing right", out);
 			setParms(false);
 			actuatorPushRight = true;
-			actuatorPushRight = actuatorRobot(3000, 30, false);
+			actuatorPushRight = actuatorRobot(3000, 30, true);
 			if (!actuatorPushRight)
 			{
 				out = true;
@@ -111,10 +111,10 @@ namespace alica
 
 		if (actuatorPullLeft && !finActuatorPullLeft)
 		{
-			out = outPut("actuator -> pulling right", out);
+			out = outPut("actuator -> pulling left", out);
 			setParms(false);
 			actuatorPullLeft = true;
-			actuatorPullLeft = actuatorRobot(3000, -30, true);
+			actuatorPullLeft = actuatorRobot(3000, -30, false);
 			if (!actuatorPullLeft)
 			{
 				out = true;
@@ -125,10 +125,10 @@ namespace alica
 
 		if (actuatorPullRight && !finActuatorPullRight)
 		{
-			out = outPut("actuator -> pulling left", out);
+			out = outPut("actuator -> pulling right", out);
 			setParms(false);
 			actuatorPullRight = true;
-			actuatorPullRight = actuatorRobot(3000, -30, false);
+			actuatorPullRight = actuatorRobot(3000, -30, true);
 			if (!actuatorPullRight)
 			{
 				out = true;
@@ -313,7 +313,7 @@ namespace alica
 		return true;
 	}
 
-	bool RobotTest::actuatorRobot(int duration, int power, bool left)
+	bool RobotTest::actuatorRobot(int duration, int power, bool right)
 	{
 		msl_actuator_msgs::BallHandleCmd bhc;
 		if (move < (30 * duration) / 1000)

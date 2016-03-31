@@ -61,7 +61,7 @@ namespace alica
 		/*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here
 		bool translationRotationRobot(int movement, bool trans, int duration);
 		bool kickerRobot(int power);
-		bool actuatorRobot(int duration, int power, bool left);
+		bool actuatorRobot(int duration, int power, bool right);
 		bool lightBarrierRobot();
 		bool opticalFlowRobot();
 		bool imuRobot();
