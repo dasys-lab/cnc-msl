@@ -145,7 +145,7 @@ namespace msl
 	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index)
 	{
 		auto x = joystickCommands.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > 250000000)
 		{
 			return nullptr;
 		}
