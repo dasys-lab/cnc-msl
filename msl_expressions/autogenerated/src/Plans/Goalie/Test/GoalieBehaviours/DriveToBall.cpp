@@ -23,7 +23,9 @@ namespace alica
     void DriveToBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
-        cout << "### DriveToBall ###" << endl;
+    	// TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
+
+        /*cout << "### DriveToBall ###" << endl;
         me = wm->rawSensorData.getOwnPositionVision();
         alloFieldCenter = MSLFootballField::posCenterMarker();
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
@@ -57,7 +59,7 @@ namespace alica
         mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me), alloAlignPoint->alloToEgo(*me), 100);
         send (mc);
 
-        cout << "### DriveToBall ###\n" << endl;
+        cout << "### DriveToBall ###\n" << endl;*/
         /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()

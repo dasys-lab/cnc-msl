@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GoalieDefault.pml#1447254438615"/>
-    <value xPos="31" yPos="223" width="259" height="110" collapsed="false"/>
+    <value xPos="59" yPos="179" width="259" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447254438614"/>
@@ -14,33 +14,11 @@
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447255061404"/>
-    <value xPos="161" yPos="217" width="267" height="110" collapsed="false"/>
+    <value xPos="361" yPos="178" width="267" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalieDefault.pml#1447255446546"/>
     <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1447256447585"/>
-    <value xPos="467" yPos="61" width="253" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1447256481745"/>
-    <value xPos="358" yPos="221" width="65" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1447256487026"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1447256488872"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1447259462162"/>
-    <value>
-      <bendpoints xPos="403" yPos="229"/>
-    </value>
   </extensions>
   <extensions>
     <key href="GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
@@ -65,12 +43,6 @@
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
-  </extensions>
-  <extensions>
-    <key href="GoalieDefault.pml#1457943655376"/>
-    <value>
-      <bendpoints xPos="424" yPos="263"/>
-    </value>
   </extensions>
   <extensions>
     <key href="../../Behaviours/DefendGoal.beh#1459249336699"/>

@@ -89,16 +89,16 @@ namespace alica
         if (egoMatePos == nullptr)
         {
             /*shared_ptr < geometry::CNPoint2D > pointTowardsUs = nullptr;
-            if (alloBall->x > -msl::MSLFootballField::FieldLength / 3)
-            {
-                pointTowardsUs = make_shared < geometry::CNPoint2D > (alloBall->x - 1000.0, alloBall->y);
-            }
-            else
-            {
-                pointTowardsUs = make_shared < geometry::CNPoint2D
-                        > (alloBall->x, alloBall->y + (alloBall->y - ownPos->y > 0 ? 1 : -1) * 1000);
-            }*/
-            egoMatePos = make_shared<geometry::CNPoint2D>(0,0);//pointTowardsUs->alloToEgo(*ownPos);
+             if (alloBall->x > -msl::MSLFootballField::FieldLength / 3)
+             {
+             pointTowardsUs = make_shared < geometry::CNPoint2D > (alloBall->x - 1000.0, alloBall->y);
+             }
+             else
+             {
+             pointTowardsUs = make_shared < geometry::CNPoint2D
+             > (alloBall->x, alloBall->y + (alloBall->y - ownPos->y > 0 ? 1 : -1) * 1000);
+             }*/
+            egoMatePos = make_shared < geometry::CNPoint2D > (0, 0); //pointTowardsUs->alloToEgo(*ownPos);
         }
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;

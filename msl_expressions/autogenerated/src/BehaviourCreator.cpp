@@ -13,15 +13,17 @@ using namespace std;
 
 #include  "Plans/Behaviours/AttackOpp.h"
 
+#include  "Plans/Behaviours/GoalKick.h"
+
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 #include  "Plans/Behaviours/PositionReceiver.h"
 
-#include  "Plans/Behaviours/GoalKick.h"
-
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
 #include  "Plans/Attack/DribbleToAttackPointConservative.h"
+
+#include  "Plans/Standards/Own/Corner/BouncePassShoot.h"
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
@@ -83,6 +85,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/DefendGoal.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+
 #include  "Plans/Behaviours/Intercept.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
@@ -119,11 +123,13 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/InterceptCarefully.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
+
 #include  "Plans/Attack/CatchPass.h"
 
-#include  "Plans/GenericStandards/StandardActuate.h"
-
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
+
+#include  "Plans/GenericStandards/StandardActuate.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
@@ -135,7 +141,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
+#include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
+
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
+
+#include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
 
@@ -188,6 +198,11 @@ namespace alica
                 return make_shared<AttackOpp>();
                 break;
 
+            case 1415205578139:
+
+                return make_shared<GoalKick>();
+                break;
+
             case 1457532300654:
 
                 return make_shared<StandardAlignToPassPos>();
@@ -196,11 +211,6 @@ namespace alica
             case 1439379352605:
 
                 return make_shared<PositionReceiver>();
-                break;
-
-            case 1415205578139:
-
-                return make_shared<GoalKick>();
                 break;
 
             case 1417620583364:
@@ -219,6 +229,11 @@ namespace alica
             case 1458132905432:
 
                 return make_shared<DribbleToAttackPointConservative>();
+                break;
+
+            case 1459357188003:
+
+                return make_shared<BouncePassShoot>();
                 break;
 
             case 1433950043262:
@@ -387,6 +402,13 @@ namespace alica
                 return make_shared<DefendGoal>();
                 break;
 
+            case 1459355025721:
+
+            case 1459356753335:
+
+                return make_shared<BounceShotAlignWall>();
+                break;
+
             case 1458757193843:
 
                 return make_shared<Intercept>();
@@ -483,19 +505,26 @@ namespace alica
                 return make_shared<InterceptCarefully>();
                 break;
 
+            case 1459354990329:
+
+            case 1459357015987:
+
+                return make_shared<BounceShotAlignPasser>();
+                break;
+
             case 1440754543898:
 
                 return make_shared<CatchPass>();
                 break;
 
-            case 1435766278023:
-
-                return make_shared<StandardActuate>();
-                break;
-
             case 1447863503279:
 
                 return make_shared<DriveToBall>();
+                break;
+
+            case 1435766278023:
+
+                return make_shared<StandardActuate>();
                 break;
 
             case 1435159282996:
@@ -525,9 +554,21 @@ namespace alica
                 return make_shared<GetBall>();
                 break;
 
+            case 1459357089325:
+
+                return make_shared<BouncePassFinishAlign>();
+                break;
+
             case 1457015565562:
 
                 return make_shared<TeamWatchBall>();
+                break;
+
+            case 1459355071258:
+
+            case 1459356685875:
+
+                return make_shared<StandardDefendPos>();
                 break;
 
             case 1455888617961:
