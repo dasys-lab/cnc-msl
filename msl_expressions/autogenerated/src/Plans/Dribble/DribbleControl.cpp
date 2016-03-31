@@ -43,7 +43,7 @@ namespace alica
         }
 
         // get some data and make some checks
-        auto od = wm->rawSensorData.getCorrectedOdometryInfo();
+        auto motion = wm->rawSensorData.getOwnVelocityMotion();
         shared_ptr < geometry::CNPoint2D > ball = wm->ball.getEgoBallPosition();
 
         double l = 0;
@@ -51,7 +51,7 @@ namespace alica
         double orthoL = 0;
         double orthoR = 0;
         double speed = 0;
-        if (od == nullptr)
+        if (motion == nullptr)
         {
             return;
         }
@@ -74,8 +74,8 @@ namespace alica
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
-            double speedX = cos(od->motion.angle) * od->motion.translation;
-            double speedY = sin(od->motion.angle) * od->motion.translation;
+            double speedX = cos(motion->angle) * motion->translation;
+            double speedY = sin(motion->angle) * motion->translation;
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
             {
@@ -112,7 +112,7 @@ namespace alica
             }
 
             //geschwindigkeitsanteil fuer rotation
-            double rotation = od->motion.rotation;
+            double rotation = motion->rotation;
             if (rotation < 0)
             {
                 l = 0;
