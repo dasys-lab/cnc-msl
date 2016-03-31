@@ -56,8 +56,6 @@ namespace alica
             return;
         }
 
-        bool hadBefore = wm->ball.hadBefore;
-
         // do we have the ball, so that controlling make sense
         haveBall = wm->ball.haveBall();
 
@@ -134,12 +132,15 @@ namespace alica
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
+        hadBefore = haveBall;
+
         send(bhc);
         /*PROTECTED REGION END*/
     }
     void DribbleControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449742071382) ENABLED START*/ //Add additional options here
+    	this->hadBefore = false;
         string tmp;
         bool success = true;
         try
