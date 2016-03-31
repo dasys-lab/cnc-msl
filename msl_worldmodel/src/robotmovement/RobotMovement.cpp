@@ -372,7 +372,7 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget,
-											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance)
+											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, double transFactor)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -385,7 +385,7 @@ namespace msl
 		if (egoTarget->length() > snapDistance)
 		{
 			//cout << "TRANSLATION: " << 3 * abs(egoTarget->y);
-			mc.motion.translation = std::min(alignMaxVel, 2.5 * abs(egoTarget->y));
+			mc.motion.translation = std::min(alignMaxVel, transFactor * abs(egoTarget->y));
 		}
 		else
 		{
