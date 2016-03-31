@@ -215,6 +215,7 @@ namespace alica
                         //Console.WriteLine("ghgh timeBallToGoal2 " + timeBallToGoal2 + "sec");
                         double timeToDstPoint = dstPointEgo->length() / 800;
                         //double timeToDstPoint = dstPointEgo.Distance() / 1000;
+                        cout <<"GoalieExtension: timeToDstPoint < TimeBallToGoal2  | " << timeToDstPoint << " < " << timeBallToGoal2 << " ball dist " << ballPos->length() <<  endl;
                         if (timeToDstPoint > timeBallToGoal2 && ballPos->length() < 5000)
                         {
                             if (dstPointEgo->angleTo() < 0)

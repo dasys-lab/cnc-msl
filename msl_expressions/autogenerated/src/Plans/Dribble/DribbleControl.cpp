@@ -66,7 +66,7 @@ namespace alica
             itcounter = 0;
         }
 
-        if (haveBall && itcounter++ < 8)
+        if (!haveBall && itcounter++ < 8)
         {
             speed = speedNoBall;
         }
