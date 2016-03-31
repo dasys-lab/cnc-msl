@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376159"/>
-    <value xPos="-115" yPos="16" width="1074" height="621"/>
+    <value xPos="-118" yPos="32" width="1074" height="621"/>
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1438785376161"/>
@@ -129,6 +129,10 @@
   </extensions>
   <extensions>
     <key href="../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1459456566595"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

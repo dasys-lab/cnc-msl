@@ -10,8 +10,8 @@
   </states>
   <states id="1440675376134" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1455888617961</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1459456566595</plans>
     <inTransitions>#1440675383814</inTransitions>
     <inTransitions>#1440772442289</inTransitions>
     <outTransitions>#1440772545631</outTransitions>
@@ -49,7 +49,7 @@
     <inState>#1440772305591</inState>
     <outState>#1440675376134</outState>
   </transitions>
-  <transitions id="1440772545631" name="MISSING_NAME" comment="grabbed ball" msg="">
+  <transitions id="1440772545631" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1440772549250" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1440675376134</inState>
     <outState>#1440772305591</outState>
