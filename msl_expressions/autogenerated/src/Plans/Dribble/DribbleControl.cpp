@@ -43,7 +43,7 @@ namespace alica
         }
 
         // get some data and make some checks
-        auto od = wm->rawSensorData.getCorrectedOdometryInfo();
+        auto motion = wm->rawSensorData.getOwnVelocityMotion();
         shared_ptr < geometry::CNPoint2D > ball = wm->ball.getEgoBallPosition();
 
         double l = 0;
@@ -51,7 +51,7 @@ namespace alica
         double orthoL = 0;
         double orthoR = 0;
         double speed = 0;
-        if (od == nullptr)
+        if (motion == nullptr)
         {
             return;
         }
@@ -59,11 +59,11 @@ namespace alica
         // do we have the ball, so that controlling make sense
         haveBall = wm->ball.haveBall();
 
-        if (haveBall && !hadBefore)
-        {
-		cout << "DribbleControl: Reset Counter" << endl;
-            itcounter = 0;
-        }
+//        if (haveBall && !hadBefore)
+  //      {
+//		cout << "DribbleControl: Reset Counter" << endl;
+  //          itcounter = 0;
+        //}
 
         if (haveBall && itcounter++ < 8)
         {
@@ -74,8 +74,13 @@ namespace alica
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
-            double speedX = cos(od->motion.angle) * od->motion.translation;
-            double speedY = sin(od->motion.angle) * od->motion.translation;
+
+            double speedX = cos(motion->angle) * motion->translation;
+            double speedY = sin(motion->angle) * motion->translation;
+	cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
+//	cout << "DribbleControl: speedX:\t" << speedX << endl;
+//	cout << "DribbleControl: speedY:\t" << speedY << endl;
+
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
             {
@@ -112,7 +117,7 @@ namespace alica
             }
 
             //geschwindigkeitsanteil fuer rotation
-            double rotation = od->motion.rotation;
+            double rotation = motion->rotation;
             if (rotation < 0)
             {
                 l = 0;
@@ -132,12 +137,17 @@ namespace alica
         }
 
 	
-	cout << "DribbleControl: Left: speed: " << speed << " l: " << l << " orthoL: " << orthoL << endl;
-	cout << "DribbleControl: Right: speed: " << speed << " r: " << r << " orthoR: " << orthoR << endl;
+	cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
+	cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
         hadBefore = haveBall;
+	if (!hadBefore)
+	{
+		cout << "DribbleControl: Reset Counter" << endl;
+		itcounter = 0;
+	}
 
         send(bhc);
         /*PROTECTED REGION END*/
