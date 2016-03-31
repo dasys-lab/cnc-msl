@@ -60,24 +60,23 @@ namespace alica
         haveBall = wm->ball.haveBall();
 
 //        if (haveBall && !hadBefore)
-  //      {
+        //      {
 //		cout << "DribbleControl: Reset Counter" << endl;
-  //          itcounter = 0;
+        //          itcounter = 0;
         //}
 
         if (haveBall && itcounter++ < 8)
         {
-		cout << "DribbleControl: less than 8 iterations have ball" << endl;
+            cout << "DribbleControl: less than 8 iterations have ball" << endl;
             speed = speedNoBall;
         }
         else if (haveBall || controlNoMatterWhat || itcounter >= 8)
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
-
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
-	cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
+            cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
 //	cout << "DribbleControl: speedX:\t" << speedX << endl;
 //	cout << "DribbleControl: speedY:\t" << speedY << endl;
 
@@ -136,18 +135,17 @@ namespace alica
             speed = speedNoBall;
         }
 
-	
-	cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
-	cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
+        cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
+        cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
         hadBefore = haveBall;
-	if (!hadBefore)
-	{
-		cout << "DribbleControl: Reset Counter" << endl;
-		itcounter = 0;
-	}
+        if (!hadBefore)
+        {
+            cout << "DribbleControl: Reset Counter" << endl;
+            itcounter = 0;
+        }
 
         send(bhc);
         /*PROTECTED REGION END*/
@@ -155,7 +153,7 @@ namespace alica
     void DribbleControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449742071382) ENABLED START*/ //Add additional options here
-    	this->hadBefore = false;
+        this->hadBefore = false;
         string tmp;
         bool success = true;
         try

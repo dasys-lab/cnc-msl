@@ -37,7 +37,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         shared_ptr<geometry::CNPosition> ownPos;
         msl::MSLFootballField* field;
-        msl::RingBuffer<geometry::CNPoint2D> ballPositions;
+        msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double fitTargetY(double targetY);
         void watchBall();
         double calcGoalImpactY();
