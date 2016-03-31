@@ -146,7 +146,7 @@ namespace alica
             {
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
-                mc.motion.translation = egoBallPos->length();
+                mc.motion.translation = egoBallPos->length()*1.5;
                 cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else" << endl;
                 send(mc);
                 return;
