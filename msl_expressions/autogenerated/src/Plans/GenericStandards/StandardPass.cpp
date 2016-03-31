@@ -62,8 +62,8 @@ namespace alica
 
         /*msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
                                                                                        0.075);*/
-//        msl_actuator_msgs::MotionControl mc;
-//		send(mc);
+        msl_actuator_msgs::MotionControl mc;
+		send(mc);
 		msl_actuator_msgs::KickControl kc;
 		kc.enabled = true;
 		kc.kicker = 1;

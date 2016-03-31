@@ -43,6 +43,7 @@ namespace alica
         if (egoBallPos->length() > 900)
         {
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            cout << "SAAG: egoBallPos->length() > 900" << endl;
             send(mc);
             return;
         }
@@ -58,6 +59,7 @@ namespace alica
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
+            cout << "SAAG: egoBallPos->length() > 450" << endl;
             send(mc);
             return;
         }
@@ -124,6 +126,7 @@ namespace alica
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
             mc.motion.rotation = fac * rot * 1.6;
+            cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0" << endl;
             send(mc);
             return;
         }
@@ -135,6 +138,7 @@ namespace alica
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
                 mc.motion.angle = M_PI;
                 mc.motion.translation = 100;
+                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0" << endl;
                 send(mc);
                 return;
             }
@@ -143,6 +147,7 @@ namespace alica
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length();
+                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else" << endl;
                 send(mc);
                 return;
             }
@@ -162,6 +167,7 @@ namespace alica
             	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
+                cout << "SAAG: haveBall" << endl;
                 this->success = true;
             }
             else if (haveBallCounter > 6
@@ -173,9 +179,11 @@ namespace alica
             	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
+                cout << "SAAG: haveBall esle if" << endl;
                 this->success = true;
             }
         }
+        cout << "SAAG: last" << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
