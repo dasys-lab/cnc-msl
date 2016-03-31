@@ -53,7 +53,12 @@ namespace alica
                 pos = wm->robots.teammates.getTeamMatePosition(id);
 
                 //TODO soll etwas in gegnerhälfte schießen
-                egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                if(pos!=nullptr) {
+                	egoAlignPoint = pos->getPoint()->alloToEgo(*ownPos);
+                } else {
+                	shared_ptr < geometry::CNPoint2D > alloAlignPoint = make_shared < geometry::CNPoint2D > (0, 0);
+					egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+                }
             }
         }
         else
@@ -81,19 +86,25 @@ namespace alica
             kc.kicker = 1;
             if (wm->game.getTimeSinceStart() < waitBeforeBlindKick)
             {
-                kc.power = wm->kicker.getPassKickpower(egoAlignPoint->alloToEgo(*ownPos)->length(), 1);
+                kc.power = wm->kicker.getPassKickpower(egoAlignPoint->length(), 1);
             }
             else
             {
-                kc.power = wm->kicker.getKickPowerSlowPass(egoAlignPoint->alloToEgo(*ownPos)->length());
+                kc.power = wm->kicker.getKickPowerSlowPass(egoAlignPoint->length());
             }
 
             send(kc);
 
             msl_helper_msgs::PassMsg pm;
             pm.validFor = 2000000000;
-            pm.destination.x = egoAlignPoint->x;
-            pm.destination.y = egoAlignPoint->y;
+
+            auto dest = make_shared<geometry::CNPoint2D>(-1,0);
+            dest = dest * egoAlignPoint->length();
+            dest = dest->egoToAllo(*ownPos);
+
+			pm.destination.x = dest->x;
+			pm.destination.y = dest->y;
+
             pm.origin.x = ownPos->x;
             pm.origin.y = ownPos->y;
             pm.receiverID = id;
@@ -109,6 +120,24 @@ namespace alica
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         timeForPass = (*sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         waitBeforeBlindKick = timeForPass - 1000000000;
+        string tmp;
+                bool success = true;
+                try
+                {
+                    success &= getParameter("TaskName", tmp);
+                    if (success)
+                    {
+                        taskName = tmp;
+                    }
+                }
+                catch (exception& e)
+                {
+                    cerr << "Could not cast the parameter properly" << endl;
+                }
+                if (!success)
+                {
+                    cerr << "StandardPass: Parameter does not exist" << endl;
+                }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1438778042140) ENABLED START*/ //Add additional methods here
