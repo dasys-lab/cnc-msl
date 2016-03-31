@@ -104,7 +104,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
+        double dangle = -geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
 
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
@@ -133,8 +133,8 @@ namespace alica
             if (fabs(balldangle) > 20.0 * M_PI / 180.0)
             {
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
-                mc.motion.angle = 0;
-                mc.motion.translation = 0;
+                mc.motion.angle = M_PI;
+                mc.motion.translation = 100;
                 send(mc);
                 return;
             }
@@ -151,7 +151,7 @@ namespace alica
         angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
-        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
+        mc.motion.rotation = fac * rot * (1 * fabs(dangle + 0.01 * angleIntErr + 2 * (dangle - oldAngleErr)));
         oldAngleErr = dangle;
         if (haveBall)
         {
@@ -159,8 +159,9 @@ namespace alica
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
             if (runningTimeMS > 9000)
             {
+            	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 100.0;
                 this->success = true;
             }
             else if (haveBallCounter > 6
@@ -169,8 +170,9 @@ namespace alica
                                     < this->minTol
                                             + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))))
             {
+            	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 100.0;
                 this->success = true;
             }
         }
