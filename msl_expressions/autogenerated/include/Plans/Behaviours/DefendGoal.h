@@ -27,7 +27,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1459249294699) ENABLED START*/ //Add additional private methods here#
         shared_ptr<geometry::CNPoint2D> applyBoundaries4Pos(shared_ptr<geometry::CNPoint2D> dest, double postOffset);
         double getSpeed(shared_ptr<geometry::CNPoint2D> dest);
-        msl_actuator_msgs::MotionControl applyBoundaries4Heading(MotionControl mc,
+        msl_actuator_msgs::MotionControl applyBoundaries4Heading(msl_actuator_msgs::MotionControl mc,
                                                                  shared_ptr<geometry::CNPosition> ownPos,
                                                                  shared_ptr<geometry::CNPoint2D> ballPos,
                                                                  double ownPosAngleMin);
