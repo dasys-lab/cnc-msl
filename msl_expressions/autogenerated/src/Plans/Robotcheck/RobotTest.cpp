@@ -81,30 +81,59 @@ namespace alica
 
 		// testing actuator ==============================================================
 
-		if (actuatorForward && !finActuatorForward)
+		if (actuatorPushLeft && !finActuatorPushLeft)
 		{
-			out = outPut("actuatorForward", out);
+			out = outPut("actuator -> pushing left", out);
 			setParms(false);
-			actuatorForward = true;
-			actuatorForward = actuatorRobot(3000, 30);
-			if (!actuatorForward)
+			actuatorPushLeft = true;
+			actuatorPushLeft = actuatorRobot(3000, 30, true);
+			if (!actuatorPushLeft)
 			{
 				out = true;
 				readConfigParms();
-				finActuatorForward = true;
+				finActuatorPushLeft = true;
 			}
 		}
-		if (actuatorBack && !finActuatorBack)
+
+		if (actuatorPushRight && !finActuatorPushRight)
 		{
-			out = outPut("actuatorBack", out);
+			out = outPut("actuator -> pushing right", out);
 			setParms(false);
-			actuatorBack = true;
-			actuatorBack = actuatorRobot(3000, -30);
-			if (!actuatorBack)
+			actuatorPushRight = true;
+			actuatorPushRight = actuatorRobot(3000, 30, false);
+			if (!actuatorPushRight)
 			{
 				out = true;
 				readConfigParms();
-				finActuatorBack = true;
+				finActuatorPushRight = true;
+			}
+		}
+
+		if (actuatorPullLeft && !finActuatorPullLeft)
+		{
+			out = outPut("actuator -> pulling left", out);
+			setParms(false);
+			actuatorPullLeft = true;
+			actuatorPullLeft = actuatorRobot(3000, -30, true);
+			if (!actuatorPullLeft)
+			{
+				out = true;
+				readConfigParms();
+				finActuatorPullLeft = true;
+			}
+		}
+
+		if (actuatorPullRight && !finActuatorPullRight)
+		{
+			out = outPut("actuator -> pulling right", out);
+			setParms(false);
+			actuatorPullRight = true;
+			actuatorPullRight = actuatorRobot(3000, -30, false);
+			if (!actuatorPullRight)
+			{
+				out = true;
+				readConfigParms();
+				finActuatorPullRight = true;
 			}
 		}
 
@@ -142,7 +171,7 @@ namespace alica
 
 		// IMU ========================================================================
 
-		if (imu && !finOpticalFlow)
+		if (imu && !finImu)
 		{
 			out = outPut("imu", out);
 			setParms(false);
@@ -217,8 +246,8 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1456756113767) ENABLED START*/ //Add additional options here
 		move = 0;
 		out = true;
-			setFinParmsFalse();
-			readConfigParms();
+		setFinParmsFalse();
+		readConfigParms();
 
 		cout << "\nstart testing ..." << endl;
 		if (!startAll)
@@ -284,15 +313,21 @@ namespace alica
 		return true;
 	}
 
-	bool RobotTest::actuatorRobot(int duration, int power)
+	bool RobotTest::actuatorRobot(int duration, int power, bool left)
 	{
 		msl_actuator_msgs::BallHandleCmd bhc;
 		if (move < (30 * duration) / 1000)
 		{
 			if (power < 100 && power > -100)
 			{
-				bhc.leftMotor = power;
-				bhc.rightMotor = power;
+				if (left)
+				{
+					bhc.leftMotor = power;
+				}
+				else
+				{
+					bhc.rightMotor = power;
+				}
 			}
 			else
 			{
@@ -396,8 +431,10 @@ namespace alica
 		rotateForward = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.rotateForward", NULL);
 		rotateBack = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.rotateBack", NULL);
 		kicker = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.kicker", NULL);
-		actuatorForward = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorForward", NULL);
-		actuatorBack = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorBack", NULL);
+		actuatorPushRight = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPushRight", NULL);
+		actuatorPushLeft = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPushLeft", NULL);
+		actuatorPullRight = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPullRight", NULL);
+		actuatorPullLeft = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPullLeft", NULL);
 		lightBarrier = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.lightBarrier", NULL);
 		opticalFlow = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.opticalFlow", NULL);
 		imu = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.imu", NULL);
@@ -419,8 +456,10 @@ namespace alica
 		rotateBack = b;
 		rotateForward = b;
 		kicker = b;
-		actuatorForward = b;
-		actuatorBack = b;
+		actuatorPushRight = b;
+		actuatorPushLeft = b;
+		actuatorPullRight = b;
+		actuatorPullLeft = b;
 		opticalFlow = b;
 		imu = b;
 		shovelSelectLow = b;
@@ -435,8 +474,10 @@ namespace alica
 		finRotateForward = false;
 		finRotateBack = false;
 		finKicker = false;
-		finActuatorForward = false;
-		finActuatorBack = false;
+		finActuatorPushLeft = false;
+		finActuatorPushRight = false;
+		finActuatorPullLeft = false;
+		finActuatorPullRight = false;
 		finLightBarrier = false;
 		finOpticalFlow = false;
 		finImu = false;
@@ -455,10 +496,49 @@ namespace alica
 
 	bool RobotTest::finished()
 	{
+//		controllOutput();
 		return (finDriveForward == driveForward && finDriveBack == driveBack && finRotateForward == rotateForward
-				&& finRotateBack == rotateBack && finKicker == kicker && finActuatorForward == actuatorForward
-				&& finActuatorBack == actuatorBack && finLightBarrier == lightBarrier && finOpticalFlow == opticalFlow
+				&& finRotateBack == rotateBack && finKicker == kicker
+				&& finActuatorPushLeft == actuatorPushLeft
+				&& finActuatorPushRight == actuatorPushRight
+				&& finActuatorPullLeft == actuatorPullLeft
+				&& finActuatorPullRight == actuatorPullRight
+				&& finLightBarrier == lightBarrier && finOpticalFlow == opticalFlow
 				&& finImu == imu && finShovelSelectLow == shovelSelectLow && finShovelSelectHigh == shovelSelectHigh);
+	}
+
+	void RobotTest::controllOutput()
+	{
+				cout << driveForward
+					<< driveBack
+					<< rotateForward
+					<< rotateBack
+					<< actuatorPushLeft
+					<< actuatorPushRight
+					<< actuatorPullLeft
+					<< actuatorPullRight
+					<< kicker
+					<< lightBarrier
+					<< opticalFlow
+					<< imu
+					<< shovelSelectLow
+					<< shovelSelectHigh
+					<< " | "
+					<< finDriveForward
+					<< finDriveBack
+					<< finRotateForward
+					<< finRotateBack
+					<< finActuatorPushLeft
+					<< finActuatorPushRight
+					<< finActuatorPullLeft
+					<< finActuatorPullRight
+					<< finLightBarrier
+					<< finOpticalFlow
+					<< finImu
+					<< finShovelSelectLow
+					<< finShovelSelectHigh
+					<< finKicker << endl;
+
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

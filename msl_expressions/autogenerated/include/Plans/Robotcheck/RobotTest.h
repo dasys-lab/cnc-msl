@@ -26,8 +26,12 @@ namespace alica
 		bool rotateForward;
 		bool rotateBack;
 		bool kicker;
-		bool actuatorForward;
-		bool actuatorBack;
+		// forward = push
+		// back = pull
+		bool actuatorPushRight;
+		bool actuatorPushLeft;
+		bool actuatorPullRight;
+		bool actuatorPullLeft;
 		bool lightBarrier;
 		bool opticalFlow;
 		bool imu;
@@ -40,9 +44,11 @@ namespace alica
 		bool finDriveBack;
 		bool finRotateForward;
 		bool finRotateBack;
+		bool finActuatorPushLeft;
+		bool finActuatorPushRight;
+		bool finActuatorPullLeft;
+		bool finActuatorPullRight;
 		bool finKicker;
-		bool finActuatorForward;
-		bool finActuatorBack;
 		bool finLightBarrier;
 		bool finOpticalFlow;
 		bool finImu;
@@ -55,7 +61,7 @@ namespace alica
 		/*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here
 		bool translationRotationRobot(int movement, bool trans, int duration);
 		bool kickerRobot(int power);
-		bool actuatorRobot(int duration, int power);
+		bool actuatorRobot(int duration, int power, bool left);
 		bool lightBarrierRobot();
 		bool opticalFlowRobot();
 		bool imuRobot();
@@ -67,6 +73,7 @@ namespace alica
 		void setFinParmsFalse();
 		bool outPut(string s, bool t);
 		bool finished();
+		void controllOutput();
 		/*PROTECTED REGION END*/};
 } /* namespace alica */
 
