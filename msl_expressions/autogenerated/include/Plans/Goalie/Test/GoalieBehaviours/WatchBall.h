@@ -25,7 +25,6 @@ namespace alica
 //        static const int SIMULATING = 1; // simulating 1, real life -1
         static const int BALL_BUFFER_SIZE = 10;
         static const int TARGET_BUFFER_SIZE = 3;
-        static const int GOALIE_SIZE = 665;
         static const int SNAP_DIST = 100;
         static const int NR_OF_POSITIONS = 5;
         static const string LEFT;
@@ -37,6 +36,10 @@ namespace alica
         int simulating;
         int ballIndex = 0;
         int targetIndex = 0;
+
+        int maxVariance;
+        int goalieSize;
+        int nrOfPositions;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
