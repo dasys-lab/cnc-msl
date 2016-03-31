@@ -123,7 +123,7 @@ namespace alica
         }
 
         double balldangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoBallPos->angleTo());
-        if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
+        /*if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
         {
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
@@ -131,7 +131,7 @@ namespace alica
             cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0" << endl;
             send(mc);
             return;
-        }
+        }*/
 
         if (!haveBall)
         {
