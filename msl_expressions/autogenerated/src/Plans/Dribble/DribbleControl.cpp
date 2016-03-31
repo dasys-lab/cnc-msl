@@ -30,13 +30,13 @@ namespace alica
             bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speedNoBall));
             bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speedNoBall));
 
-            //If we are klose to the ball give more speed
-            shared_ptr < geometry::CNPoint2D > b = wm->ball.getEgoBallPosition();
-            if (b != nullptr && b->length() < 400)
-            {
-                bhc.leftMotor = max(bhc.leftMotor, (int8_t) - 80);
-                bhc.rightMotor = max(bhc.rightMotor, (int8_t) - 80);
-            }
+            //If we are close to the ball give more speed
+//            shared_ptr < geometry::CNPoint2D > b = wm->ball.getEgoBallPosition();
+//            if (b != nullptr && b->length() < 400)
+//            {
+//                bhc.leftMotor = max(bhc.leftMotor, (int8_t) - 80);
+//                bhc.rightMotor = max(bhc.rightMotor, (int8_t) - 80);
+//            }
 
             send(bhc);
             return;
@@ -66,7 +66,7 @@ namespace alica
             itcounter = 0;
         }
 
-        if (!haveBall && itcounter++ < 8)
+        if (haveBall && itcounter++ < 8)
         {
             speed = speedNoBall;
         }
