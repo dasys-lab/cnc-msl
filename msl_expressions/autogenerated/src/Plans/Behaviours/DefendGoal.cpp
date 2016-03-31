@@ -2,7 +2,18 @@ using namespace std;
 #include "Plans/Behaviours/DefendGoal.h"
 
 /*PROTECTED REGION ID(inccpp1459249294699) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include <Ball.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <MSLFootballField.h>
+#include <MSLWorldModel.h>
+#include <robotmovement/RobotMovement.h>
+#include <RawSensorData.h>
+#include <exception>
+#include <iostream>
+#include <memory>
+#include <string>
 /*PROTECTED REGION END*/
 namespace alica
 {

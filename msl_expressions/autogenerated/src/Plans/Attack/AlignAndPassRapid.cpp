@@ -344,6 +344,8 @@ namespace alica
             double v0 = 0;
             double distReceiver = goalReceiverVec->length();
             double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
+	    //considering network delay and reaction time 1s?:
+	    estimatedTimeForReceiverToArrive += 1.0;
             pm.validFor = (uint)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
             {
