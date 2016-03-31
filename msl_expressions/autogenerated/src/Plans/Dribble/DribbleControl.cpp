@@ -70,12 +70,15 @@ namespace alica
 		cout << "DribbleControl: less than 8 iterations have ball" << endl;
             speed = speedNoBall;
         }
-        else if (haveBall || controlNoMatterWhat || itcounter >= 8)
+        else if (true || haveBall || controlNoMatterWhat || itcounter >= 8)
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
             double speedX = cos(od->motion.angle) * od->motion.translation;
             double speedY = sin(od->motion.angle) * od->motion.translation;
+	cout << "DribbleControl: angle:\t" << od->motion.angle << "trans:\t" << od->motion.translation << endl;
+//	cout << "DribbleControl: speedX:\t" << speedX << endl;
+//	cout << "DribbleControl: speedY:\t" << speedY << endl;
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
             {
@@ -132,8 +135,8 @@ namespace alica
         }
 
 	
-	cout << "DribbleControl: Left: speed: " << speed << " l: " << l << " orthoL: " << orthoL << endl;
-	cout << "DribbleControl: Right: speed: " << speed << " r: " << r << " orthoR: " << orthoR << endl;
+	cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
+	cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
