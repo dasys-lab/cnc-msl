@@ -138,6 +138,7 @@ namespace alica
         }
 
         auto ballV3D = wm->ball.getBallVel3D();
+        cout << "GoalieExtenion: ballV3D " << (ballV3D == nullptr ? "nullptr" : "!nptr") << endl;
         if (ballV3D != nullptr && ballPos != nullptr)
         {
 
