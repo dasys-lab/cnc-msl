@@ -5,7 +5,6 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include <cmath>
 #include <vector>
-#include <string>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -109,22 +108,18 @@ namespace alica
 		double sumXY = 0, sumX2 = 0, sumX2Y2 = 0;
 		shared_ptr<geometry::CNPoint2D> avgBall = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 		int nPoints = 0;
-
 		for (int i = 0; i < ballPositions.getSize(); i++)
 		{
 			auto currentBall = ballPositions.getLast(i);
-
 			shared_ptr<geometry::CNPoint2D> ppprevBall;
 			shared_ptr<geometry::CNPoint2D> pprevBall;
 			shared_ptr<geometry::CNPoint2D> prevBall;
-
 			if (i > 2)
 			{
 				ppprevBall = ballPositions.getLast(i - 3);
 				pprevBall = ballPositions.getLast(i - 2);
 				prevBall = ballPositions.getLast(i - 1);
 			}
-
 			if (prevBall != nullptr && pprevBall != nullptr && ppprevBall != nullptr)
 			{
 				// check if function is continual
@@ -132,7 +127,6 @@ namespace alica
 				double diffpp = pprevBall->y - prevBall->y;
 				double diffp = prevBall->y - currentBall->y;
 				int buffer = 100;
-
 				if (diffppp >= diffpp)
 				{
 					if (!(diffpp >= diffp || diffpp + buffer >= diffp || diffpp - buffer >= diffp))
@@ -150,55 +144,81 @@ namespace alica
 					}
 				}
 			}
-//			cout << "[WatchBall] currentBall: " << currentBall->toString() << endl;
-
+			//			cout << "[WatchBall] currentBall: " << currentBall->toString() << endl;
 			avgBall->x += currentBall->x;
 			avgBall->y += currentBall->y;
-
 			sumXY = sumXY + (currentBall->y * currentBall->x);
 			sumX2 = sumX2 + (currentBall->x * currentBall->x);
 			sumX2Y2 = sumX2Y2 + (currentBall->x * currentBall->x + currentBall->y * currentBall->y);
-
 			nPoints = nPoints + 1;
 		}
-
 		double sumX = avgBall->x;
 		double sumY = avgBall->y;
 		avgBall = avgBall / nPoints;
 		double denom = 0;
 		double nomi = 0;
-
 		double calcTargetY;
 		double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
-		cout << "[WatchBall] Variance: " << variance << endl;
+		//cout << "[WatchBall] Variance: " << variance << endl;
 		if (nPoints > 1 && variance > maxVariance)
 		{
+			cout << "[WatchBall] LinearRegression Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions.getLast(i);
 				nomi = nomi + ((curBall->x - avgBall->x) * (curBall->y - avgBall->y));
 				denom = denom + ((curBall->x - avgBall->x) * (curBall->x - avgBall->x));
 			}
-
 			if (denom < 1e-3)
 			{
 				cout << "[WatchBall] prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
-
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
-
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
+			//cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
-			cout << "[WatchBall] noRegression ball y is " << ballPositions.getLast(0)->y << endl;
-			calcTargetY = ballPositions.getLast(0)->y;
-		}
+			auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+			double minDistBallObs = 20000;
+			for (auto currentObs : *obstacles)
+			{
+				//cout << "[WatchBall] " << currentObs->toString();
+				// todo: add also checking: if opponent in ball posession
 
+				double currentDistBallObs = currentObs->distanceTo(ballPositions.getLast(0));
+				if (currentObs->distanceTo(ownPos) < ballPositions.getLast(0)->distanceTo(ownPos)
+						|| currentDistBallObs > 1000)
+				{
+					continue;
+				}
+				if (currentDistBallObs < minDistBallObs)
+				{
+					closestObstacle = currentObs;
+					minDistBallObs = currentDistBallObs;
+				}
+			}
+
+			if (closestObstacle != nullptr)
+			{
+				//cout << "[WatchBall] closestObstacle is close to Ball and Goalie: " << closestObstacle->toString();
+				cout << "[WatchBall] Obstacle Variance: " << variance << endl;
+				_slope = (closestObstacle->y - ballPositions.getLast(0)->y)
+						/ (closestObstacle->x - ballPositions.getLast(0)->x);
+				_yInt = ballPositions.getLast(0)->y - _slope * ballPositions.getLast(0)->x;
+				calcTargetY = _slope * alloGoalMid->x + _yInt;
+			}
+			else
+			{
+				//cout << "[WatchBall] noRegression ball y is " << ballPositions.getLast(0)->y << endl;
+				cout << "[WatchBall] BallY Variance: " << variance << endl;
+				calcTargetY = ballPositions.getLast(0)->y;
+			}
+		}
 		return calcTargetY;
 	}
 
