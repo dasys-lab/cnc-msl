@@ -4,6 +4,6 @@
     <parameters id="1459358910704" name="MISSING_NAME" comment="" key="AlignSpeed" value="100"/>
     <parameters id="1459358933100" name="MISSING_NAME" comment="" key="AlignTolerance" value="0.07"/>
     <parameters id="1459358946849" name="MISSING_NAME" comment="" key="planName" value="CornerExecBounceShot"/>
-    <parameters id="1459358994273" name="MISSING_NAME" comment="" key="teamMateTaskName" value="StandardReceiver"/>
+    <parameters id="1459358994273" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
   </configurations>
 </alica:Behaviour>

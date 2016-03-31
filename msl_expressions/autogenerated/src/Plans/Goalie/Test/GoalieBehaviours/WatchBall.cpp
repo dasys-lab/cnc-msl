@@ -33,7 +33,7 @@ namespace alica
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
         nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
         transFactor = (*this->sc)["Behaviour"]->get<int>("Goalie.TransFactor", NULL);
-
+        ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
         this->field = MSLFootballField::getInstance();
         alloGoalMid = field->posOwnGoalMid();
         alloGoalLeft = make_shared < geometry::CNPoint2D
@@ -45,6 +45,7 @@ namespace alica
     WatchBall::~WatchBall()
     {
         /*PROTECTED REGION ID(dcon1447863466691) ENABLED START*/ //Add additional options here
+        delete ballPositions;
         /*PROTECTED REGION END*/
     }
     void WatchBall::run(void* msg)
@@ -67,7 +68,7 @@ namespace alica
             return;
         }
 
-        this->ballPositions.add(alloBall);
+        this->ballPositions->add(alloBall);
         watchBall();
 
         /*PROTECTED REGION END*/
@@ -82,7 +83,7 @@ namespace alica
     void WatchBall::watchBall()
     {
         shared_ptr < geometry::CNPoint2D > alloTarget;
-        if (ballPositions.getSize() > 0)
+        if (ballPositions->getSize() > 0)
         {
             double targetY = calcGoalImpactY();
             targetY = fitTargetY(targetY);
@@ -104,17 +105,17 @@ namespace alica
         double sumXY = 0, sumX2 = 0, sumX2Y2 = 0;
         shared_ptr < geometry::CNPoint2D > avgBall = make_shared < geometry::CNPoint2D > (0.0, 0.0);
         int nPoints = 0;
-        for (int i = 0; i < ballPositions.getSize(); i++)
+        for (int i = 0; i < ballPositions->getSize(); i++)
         {
-            auto currentBall = ballPositions.getLast(i);
+            auto currentBall = ballPositions->getLast(i);
             shared_ptr < geometry::CNPoint2D > ppprevBall;
             shared_ptr < geometry::CNPoint2D > pprevBall;
             shared_ptr < geometry::CNPoint2D > prevBall;
             if (i > 2)
             {
-                ppprevBall = ballPositions.getLast(i - 3);
-                pprevBall = ballPositions.getLast(i - 2);
-                prevBall = ballPositions.getLast(i - 1);
+                ppprevBall = ballPositions->getLast(i - 3);
+                pprevBall = ballPositions->getLast(i - 2);
+                prevBall = ballPositions->getLast(i - 1);
             }
             if (prevBall != nullptr && pprevBall != nullptr && ppprevBall != nullptr)
             {
@@ -162,7 +163,7 @@ namespace alica
             cout << "[WatchBall] LinearRegression Variance: " << variance << endl;
             for (int i = 0; i < nPoints; i++)
             {
-                auto curBall = ballPositions.getLast(i);
+                auto curBall = ballPositions->getLast(i);
                 nomi = nomi + ((curBall->x - avgBall->x) * (curBall->y - avgBall->y));
                 denom = denom + ((curBall->x - avgBall->x) * (curBall->x - avgBall->x));
             }
@@ -186,8 +187,8 @@ namespace alica
                 //cout << "[WatchBall] " << currentObs->toString();
                 // todo: add also checking: if opponent in ball posession
 
-                double currentDistBallObs = currentObs->distanceTo(ballPositions.getLast(0));
-                if (currentObs->distanceTo(ownPos) < ballPositions.getLast(0)->distanceTo(ownPos)
+                double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
+                if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
                         || currentDistBallObs > 1000)
                 {
                     continue;
@@ -203,16 +204,16 @@ namespace alica
             {
                 //cout << "[WatchBall] closestObstacle is close to Ball and Goalie: " << closestObstacle->toString();
                 cout << "[WatchBall] Obstacle Variance: " << variance << endl;
-                _slope = (closestObstacle->y - ballPositions.getLast(0)->y)
-                        / (closestObstacle->x - ballPositions.getLast(0)->x);
-                _yInt = ballPositions.getLast(0)->y - _slope * ballPositions.getLast(0)->x;
+                _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
+                        / (closestObstacle->x - ballPositions->getLast(0)->x);
+                _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
                 calcTargetY = _slope * alloGoalMid->x + _yInt;
             }
             else
             {
                 //cout << "[WatchBall] noRegression ball y is " << ballPositions.getLast(0)->y << endl;
                 cout << "[WatchBall] BallY Variance: " << variance << endl;
-                calcTargetY = ballPositions.getLast(0)->y;
+                calcTargetY = ballPositions->getLast(0)->y;
             }
         }
         return calcTargetY;

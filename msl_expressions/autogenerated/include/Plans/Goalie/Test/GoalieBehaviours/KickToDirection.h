@@ -6,22 +6,22 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-	class KickToDirection : public DomainBehaviour
-	{
-	public:
-		KickToDirection();
-		virtual ~KickToDirection();
-		virtual void run(void* msg);
-		/*PROTECTED REGION ID(pub1447863478260) ENABLED START*/ //Add additional public methods here
-		/*PROTECTED REGION END*/
-	protected:
-		virtual void initialiseParameters();
-		/*PROTECTED REGION ID(pro1447863478260) ENABLED START*/ //Add additional protected methods here
-		/*PROTECTED REGION END*/
-	private:
-		/*PROTECTED REGION ID(prv1447863478260) ENABLED START*/ //Add additional private methods here
-		// TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
-		/*PROTECTED REGION END*/};
+    class KickToDirection : public DomainBehaviour
+    {
+    public:
+        KickToDirection();
+        virtual ~KickToDirection();
+        virtual void run(void* msg);
+        /*PROTECTED REGION ID(pub1447863478260) ENABLED START*/ //Add additional public methods here
+        /*PROTECTED REGION END*/
+    protected:
+        virtual void initialiseParameters();
+        /*PROTECTED REGION ID(pro1447863478260) ENABLED START*/ //Add additional protected methods here
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1447863478260) ENABLED START*/ //Add additional private methods here
+        // TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* KickToDirection_H_ */

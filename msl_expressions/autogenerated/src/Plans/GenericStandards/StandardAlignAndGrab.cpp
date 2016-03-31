@@ -35,11 +35,15 @@ namespace alica
         {
             return;
         }
-
+        if (receiver == nullptr)
+        {
+            receiver = getHigherEntryPoint(planName, teamMateTaskName);
+        }
         MotionControl mc;
         if (egoBallPos->length() > 900)
         {
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            cout << "SAAG: egoBallPos->length() > 900" << endl;
             send(mc);
             return;
         }
@@ -54,6 +58,7 @@ namespace alica
         {
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
+            cout << "SAAG: egoBallPos->length() > 450" << endl;
             send(mc);
             return;
         }
@@ -98,15 +103,16 @@ namespace alica
              pointTowardsUs = make_shared < geometry::CNPoint2D
              > (alloBall->x, alloBall->y + (alloBall->y - ownPos->y > 0 ? 1 : -1) * 1000);
              }*/
-            egoMatePos = make_shared < geometry::CNPoint2D > (0, 0); //pointTowardsUs->alloToEgo(*ownPos);
+            egoMatePos = make_shared < geometry::CNPoint2D > (0, 0)->alloToEgo(*ownPos); //pointTowardsUs->alloToEgo(*ownPos);
+            cout << "Standardalign: NEEEEEEEEEIN" << endl;
         }
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(egoMatePos->angleTo(), egoBallPos->angleTo());
+        double dangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
-        double fac = -cross / cross;
+        double fac = -cross / abs(cross);
         if (fabs(dangle) < 12.0 * M_PI / 180.0)
         {
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans * 0.66;
@@ -116,15 +122,16 @@ namespace alica
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans;
         }
 
-        double balldangle = geometry::deltaAngle(egoBallPos->angleTo(), egoBallPos->angleTo());
-        if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
-        {
-            mc.motion.angle = direction->angleTo();
-            mc.motion.translation = direction->length() * 1.6;
-            mc.motion.rotation = fac * rot * 1.6;
-            send(mc);
-            return;
-        }
+        double balldangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoBallPos->angleTo());
+        /*if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
+         {
+         mc.motion.angle = direction->angleTo();
+         mc.motion.translation = direction->length() * 1.6;
+         mc.motion.rotation = fac * rot * 1.6;
+         cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0" << endl;
+         send(mc);
+         return;
+         }*/
 
         if (!haveBall)
         {
@@ -133,6 +140,7 @@ namespace alica
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
                 mc.motion.angle = 0;
                 mc.motion.translation = 0;
+                cout << "SAAG: !haveBall if" << endl;
                 send(mc);
                 return;
             }
@@ -141,6 +149,7 @@ namespace alica
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length();
+                cout << "SAAG: !haveBall else" << endl;
                 send(mc);
                 return;
             }
@@ -172,6 +181,7 @@ namespace alica
                 this->success = true;
             }
         }
+        cout << "SAAG: last" << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
@@ -203,7 +213,9 @@ namespace alica
 
         receiver = getHigherEntryPoint(planName, teamMateTaskName);
         if (receiver == nullptr)
+        {
             cerr << "StdAlign: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+        }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ //Add additional methods here
