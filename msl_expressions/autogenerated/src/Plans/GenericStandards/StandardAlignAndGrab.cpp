@@ -35,9 +35,9 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
-        if(receiver == nullptr)
+        if (receiver == nullptr)
         {
-        	receiver = getHigherEntryPoint(planName, teamMateTaskName);
+            receiver = getHigherEntryPoint(planName, teamMateTaskName);
         }
         MotionControl mc;
         if (egoBallPos->length() > 900)
@@ -73,8 +73,9 @@ namespace alica
         {
             auto robots = robotsInEntryPointOfHigherPlan(receiver);
 
-            if(robots != nullptr && robots->size() > 0) {
-            	matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0));
+            if (robots != nullptr && robots->size() > 0)
+            {
+                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0));
             }
             if (matePos != nullptr)
             {
@@ -108,9 +109,8 @@ namespace alica
 
         double dangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
 
-
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
-        double fac = -(cross>0 ? 1 : -1);
+        double fac = -(cross > 0 ? 1 : -1);
         if (fabs(dangle) < 12.0 * M_PI / 180.0)
         {
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans * 0.66;
@@ -146,7 +146,7 @@ namespace alica
             {
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
-                mc.motion.translation = egoBallPos->length()*1.5;
+                mc.motion.translation = egoBallPos->length() * 1.5;
                 cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else" << endl;
                 send(mc);
                 return;
@@ -164,7 +164,7 @@ namespace alica
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
             if (runningTimeMS > 9000)
             {
-            	mc.motion.angle = M_PI;
+                mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
                 cout << "SAAG: haveBall" << endl;
@@ -176,7 +176,7 @@ namespace alica
                                     < this->minTol
                                             + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))))
             {
-            	mc.motion.angle = M_PI;
+                mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
                 cout << "SAAG: haveBall esle if" << endl;
