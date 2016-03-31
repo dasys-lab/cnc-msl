@@ -40,20 +40,23 @@ namespace alica
         }
         else
         {
-            if (simulating < 0)
-            {
-                alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
-                alloTargetY = MSLFootballField::posOwnGoalMid()->y;
-            }
-            else
-            {
-                alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
-                alloTargetY = MSLFootballField::posOppGoalMid()->y;
+            /*if (simulating < 0)
+             {
+             alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
+             alloTargetY = MSLFootballField::posOwnGoalMid()->y;
+             }
+             else
+             {
+             alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
+             alloTargetY = MSLFootballField::posOppGoalMid()->y;
 
-            }
+             }*/
+
+            alloTargetX = MSLFootballField::getInstance()->posOwnGoalMid()->x - 100;
+            alloTargetY = MSLFootballField::getInstance()->posOwnGoalMid()->y;
 
             alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
-            alloFieldCenterAlignPoint = MSLFootballField::posCenterMarker();
+            alloFieldCenterAlignPoint = MSLFootballField::getInstance()->posCenterMarker();
 
             cout << " Driving to goal" << endl;
             mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),

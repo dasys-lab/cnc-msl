@@ -46,7 +46,7 @@ namespace alica
         double fitTargetY(double targetY);
         void watchBall();
         int modRingBuffer(int k, int bufferSize);
-        shared_ptr<geometry::CNPoint2D> calcGoalImpactY(std::vector<shared_ptr<geometry::CNPoint2D>> ballPositions);
+        shared_ptr<geometry::CNPoint2D> calcGoalImpactY(std::vector<shared_ptr<geometry::CNPoint2D>>& ballPositions);
         shared_ptr<geometry::CNPoint2D> alloGoalLeft;
         shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;

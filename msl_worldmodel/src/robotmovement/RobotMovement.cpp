@@ -372,8 +372,7 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget,
-											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance,
-											shared_ptr<geometry::CNPoint2D> goalMid)
+											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -393,7 +392,6 @@ namespace msl
 			mc.motion.translation = 0;
 			//cout << "arrived" << endl;
 		}
-		cout << "CalcY: " << alloTarget->y << endl;
 		return mc;
 	}
 
@@ -429,9 +427,9 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-                                                                      shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-                                                                      double snapDistance,
-                                                                      shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+														double snapDistance,
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
