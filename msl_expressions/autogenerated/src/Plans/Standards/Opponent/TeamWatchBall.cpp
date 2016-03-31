@@ -69,8 +69,10 @@ namespace alica
                 posV = nullptr;
             if (posV != nullptr)
                 posV = posV - ballPos;
-        } else {
-        	this->initialiseParameters();
+        }
+        else
+        {
+            this->initialiseParameters();
         }
         if ((posV != nullptr && posV->length() > this->moveDistance))
         {
@@ -81,7 +83,8 @@ namespace alica
             ballMovedOccurrences = 0;
         }
         //if((WM.EgoBallPosition.Distance() < 4000 &&WorldHelper.BallMoved(WM)) || (ballMovedOccurrences >= maxBallMovedOccurrences))
-        if ((egoBall->length() < 6000 && wm->ball.ballMovedSiginficantly()) || (ballMovedOccurrences >= maxBallMovedOccurrences))
+        if ((egoBall->length() < 6000 && wm->ball.ballMovedSiginficantly())
+                || (ballMovedOccurrences >= maxBallMovedOccurrences))
         {
             //send messages to other whiteboards
             msl_helper_msgs::WatchBallMsg msg;

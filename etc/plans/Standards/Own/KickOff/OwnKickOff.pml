@@ -25,7 +25,6 @@
     <outTransitions>#1441811700499</outTransitions>
   </states>
   <states id="1440772454611" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/GetBall.beh#1414840399972</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/CheckPassMsg.beh#1457441499013</plans>
     <inTransitions>#1440772549851</inTransitions>
     <outTransitions>#1440772873418</outTransitions>
