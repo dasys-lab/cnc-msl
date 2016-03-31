@@ -35,11 +35,13 @@ namespace alica
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions",
 		NULL);
+		transFactor = (*this->sc)["Behaviour"]->get<int>("Goalie.TransFactor",
+		NULL);
 
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
-																	field->posLeftOwnGoalPost()->y - goalieSize / 2);
+														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 															field->posRightOwnGoalPost()->y + goalieSize / 2);
 		/*PROTECTED REGION END*/
@@ -65,7 +67,7 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
-			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST);
+			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
 			send(mc);
 			return;
 		}
@@ -97,7 +99,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST);
+		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST, transFactor);
 		send(mc);
 	}
 
