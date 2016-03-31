@@ -11,7 +11,7 @@
   <states id="1440675376134" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1455888617961</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1440675383814</inTransitions>
     <inTransitions>#1440772442289</inTransitions>
     <outTransitions>#1440772545631</outTransitions>
