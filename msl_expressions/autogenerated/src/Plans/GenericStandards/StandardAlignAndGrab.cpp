@@ -88,7 +88,7 @@ namespace alica
         //because no enemy will wait on that side of the standard and directly get the ball
         if (egoMatePos == nullptr)
         {
-            shared_ptr < geometry::CNPoint2D > pointTowardsUs = nullptr;
+            /*shared_ptr < geometry::CNPoint2D > pointTowardsUs = nullptr;
             if (alloBall->x > -msl::MSLFootballField::FieldLength / 3)
             {
                 pointTowardsUs = make_shared < geometry::CNPoint2D > (alloBall->x - 1000.0, alloBall->y);
@@ -97,8 +97,8 @@ namespace alica
             {
                 pointTowardsUs = make_shared < geometry::CNPoint2D
                         > (alloBall->x, alloBall->y + (alloBall->y - ownPos->y > 0 ? 1 : -1) * 1000);
-            }
-            egoMatePos = pointTowardsUs->alloToEgo(*ownPos);
+            }*/
+            egoMatePos = make_shared<geometry::CNPoint2D>(0,0);//pointTowardsUs->alloToEgo(*ownPos);
         }
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;

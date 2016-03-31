@@ -24,6 +24,7 @@ namespace alica
         bool pullNoMatterWhat = false;
         bool controlNoMatterWhat = false;
         bool haveBall = false;
+        bool hadBefore = false;
         int itcounter = 0;
         double handlerSpeedFactor = 0.0;
         double speedNoBall = 0.0;

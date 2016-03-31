@@ -53,8 +53,7 @@ namespace alica
 	void WatchBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-		cout << "####### WatchBall #######" << endl;
-
+//		cout << "####### WatchBall #######" << endl;
 		ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
