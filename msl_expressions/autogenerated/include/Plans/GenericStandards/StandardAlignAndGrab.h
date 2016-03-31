@@ -27,7 +27,7 @@ namespace alica
         string planName = "";
         string teamMateTaskName = "";
 
-        shared_ptr<geometry::CNPosition> oldMatePos;
+        shared_ptr<geometry::CNPoint2D> oldMatePos;
         int delayKickCounter;
         double maxTranslation;
 
