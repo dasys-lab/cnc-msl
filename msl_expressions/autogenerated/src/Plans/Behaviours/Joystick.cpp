@@ -46,10 +46,12 @@ namespace alica
             mc.motion = joy->motion;
             send(mc);
         }
-//        else
-//        {
-//        	cout << "Joystick: Some Motion Value is NaN!" << endl;
-//        }
+        else
+        {
+        	msl_actuator_msgs::MotionControl mc;
+			send(mc);
+        	//cout << "Joystick: Some Motion Value is NaN!" << endl;
+        }
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
