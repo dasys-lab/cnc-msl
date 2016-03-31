@@ -123,4 +123,8 @@
     <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

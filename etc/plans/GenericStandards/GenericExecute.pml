@@ -11,9 +11,9 @@
     </quantifiers>
   </conditions>
   <states id="1431522155979" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1433949706015</inTransitions>
     <inTransitions>#1435761866545</inTransitions>
     <outTransitions>#1431522782044</outTransitions>
@@ -26,7 +26,7 @@
   <states id="1431522763494" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardPass.beh#1435760175843</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1431522782044</inTransitions>
     <outTransitions>#1431524869870</outTransitions>
     <outTransitions>#1435761866545</outTransitions>
