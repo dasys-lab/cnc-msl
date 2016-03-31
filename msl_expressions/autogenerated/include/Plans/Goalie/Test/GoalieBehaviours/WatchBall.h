@@ -30,6 +30,7 @@ namespace alica
         int maxVariance;
         int goalieSize;
         int nrOfPositions;
+        double transFactor;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here

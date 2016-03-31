@@ -35,11 +35,13 @@ namespace alica
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions",
 		NULL);
+		transFactor = (*this->sc)["Behaviour"]->get<int>("Goalie.TransFactor",
+		NULL);
 
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
-																	field->posLeftOwnGoalPost()->y - goalieSize / 2);
+														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 															field->posRightOwnGoalPost()->y + goalieSize / 2);
 		/*PROTECTED REGION END*/
@@ -52,7 +54,7 @@ namespace alica
 	void WatchBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-		cout << "####### WatchBall #######" << endl;
+//		cout << "####### WatchBall #######" << endl;
 
 		ownPos = wm->rawSensorData.getOwnPositionVision();
 		if (ownPos == nullptr)
@@ -65,7 +67,7 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
-			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST);
+			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
 			send(mc);
 			return;
 		}
@@ -97,7 +99,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST);
+		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST, transFactor);
 		send(mc);
 	}
 
@@ -169,7 +171,7 @@ namespace alica
 		double calcTargetY;
 		double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
-		cout << "[WatchBall] Variance: " << variance << endl;
+//		cout << "[WatchBall] Variance: " << variance << endl;
 		if (nPoints > 1 && variance > maxVariance)
 		{
 			for (int i = 0; i < nPoints; i++)
@@ -189,7 +191,7 @@ namespace alica
 			_yInt = avgBall->y - _slope * avgBall->x;
 
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
+//			cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
