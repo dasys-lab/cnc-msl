@@ -119,22 +119,22 @@ namespace alica
         }
 
         double balldangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoBallPos->angleTo());
-        if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
-        {
+        //if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
+        //{
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
             mc.motion.rotation = fac * rot * 1.6;
             send(mc);
-            return;
-        }
+          //  return;
+        //}
 
-        if (!haveBall)
+        /*if (!haveBall)
         {
             if (fabs(balldangle) > 20.0 * M_PI / 180.0)
             {
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
-                mc.motion.angle = 0;
-                mc.motion.translation = 0;
+                mc.motion.angle = M_PI;
+                mc.motion.translation = 100;
                 send(mc);
                 return;
             }
@@ -146,13 +146,13 @@ namespace alica
                 send(mc);
                 return;
             }
-        }
+        }*/
 
-        angleIntErr += dangle;
-        mc.motion.angle = direction->angleTo();
-        mc.motion.translation = direction->length();
-        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.01 * angleIntErr + 2 * (dangle - oldAngleErr)));
-        oldAngleErr = dangle;
+//        angleIntErr += dangle;
+//        mc.motion.angle = direction->angleTo();
+//        mc.motion.translation = direction->length();
+//        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.01 * angleIntErr + 2 * (dangle - oldAngleErr)));
+//        oldAngleErr = dangle;
         if (haveBall)
         {
             haveBallCounter++;
@@ -161,7 +161,7 @@ namespace alica
             {
             	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 75.0;
+                mc.motion.translation = 100.0;
                 this->success = true;
             }
             else if (haveBallCounter > 6
@@ -172,7 +172,7 @@ namespace alica
             {
             	mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 75.0;
+                mc.motion.translation = 100.0;
                 this->success = true;
             }
         }
