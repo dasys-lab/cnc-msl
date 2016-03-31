@@ -56,18 +56,18 @@ namespace alica
             return;
         }
 
-        bool hadBefore = wm->ball.hadBefore;
-
         // do we have the ball, so that controlling make sense
         haveBall = wm->ball.haveBall();
 
         if (haveBall && !hadBefore)
         {
+		cout << "DribbleControl: Reset Counter" << endl;
             itcounter = 0;
         }
 
         if (haveBall && itcounter++ < 8)
         {
+		cout << "DribbleControl: less than 8 iterations have ball" << endl;
             speed = speedNoBall;
         }
         else if (haveBall || controlNoMatterWhat || itcounter >= 8)
@@ -131,8 +131,13 @@ namespace alica
             speed = speedNoBall;
         }
 
+	
+	cout << "DribbleControl: Left: speed: " << speed << " l: " << l << " orthoL: " << orthoL << endl;
+	cout << "DribbleControl: Right: speed: " << speed << " r: " << r << " orthoR: " << orthoR << endl;
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
+
+        hadBefore = haveBall;
 
         send(bhc);
         /*PROTECTED REGION END*/
@@ -140,6 +145,7 @@ namespace alica
     void DribbleControl::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449742071382) ENABLED START*/ //Add additional options here
+    	this->hadBefore = false;
         string tmp;
         bool success = true;
         try
