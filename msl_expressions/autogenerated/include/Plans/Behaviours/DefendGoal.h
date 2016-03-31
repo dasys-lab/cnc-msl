@@ -18,16 +18,19 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1459249294699) ENABLED START*/ //Add additional protected methods here
-		double postOffset;
-		double fieldOffset;
-		double ownPosAngleMin;
+        double postOffset;
+        double fieldOffset;
+        double ownPosAngleMin;
 
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1459249294699) ENABLED START*/ //Add additional private methods here#
-		shared_ptr<geometry::CNPoint2D> applyBoundaries4Pos(shared_ptr<geometry::CNPoint2D> dest, double postOffset);
-		double getSpeed(shared_ptr<geometry::CNPoint2D> dest);
-		msl_actuator_msgs::MotionControl applyBoundaries4Heading(MotionControl mc, shared_ptr<geometry::CNPosition> ownPos, shared_ptr<geometry::CNPoint2D> ballPos, double ownPosAngleMin);
+        shared_ptr<geometry::CNPoint2D> applyBoundaries4Pos(shared_ptr<geometry::CNPoint2D> dest, double postOffset);
+        double getSpeed(shared_ptr<geometry::CNPoint2D> dest);
+        msl_actuator_msgs::MotionControl applyBoundaries4Heading(MotionControl mc,
+                                                                 shared_ptr<geometry::CNPosition> ownPos,
+                                                                 shared_ptr<geometry::CNPoint2D> ballPos,
+                                                                 double ownPosAngleMin);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

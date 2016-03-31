@@ -340,41 +340,41 @@ namespace alica
 
 //		cout << "[WatchBall] ballPosX      : " << ballPositions.at(0)->x << endl;
 //		cout << "[WatchBall] ballPosY      : " << ballPositions.at(0)->y << endl;
-		//cout << "#####" << endl;
-		//cout << "#####" << endl;
-		return make_shared<geometry::CNPoint2D>(alloGoalMid->x, calcTargetY);
-	}
+        //cout << "#####" << endl;
+        //cout << "#####" << endl;
+        return make_shared < geometry::CNPoint2D > (alloGoalMid->x, calcTargetY);
+    }
 
-	double WatchBall::fitTargetY(double targetY)
-	{
-		//cout << "leftCond : " << targetY * SIMULATING << ">" << alloGoalLeft->y + GOALIE_SIZE / 1.8 << endl;
-		//cout << "rightCond: " << targetY * SIMULATING << "<" << alloGoalRight->y - GOALIE_SIZE / 1.8 << endl;
-		//cout << "before fitTargetY: " << targetY << endl;
+    double WatchBall::fitTargetY(double targetY)
+    {
+        //cout << "leftCond : " << targetY * SIMULATING << ">" << alloGoalLeft->y + GOALIE_SIZE / 1.8 << endl;
+        //cout << "rightCond: " << targetY * SIMULATING << "<" << alloGoalRight->y - GOALIE_SIZE / 1.8 << endl;
+        //cout << "before fitTargetY: " << targetY << endl;
 
-		if (targetY > alloGoalLeft->y)
-		{
-			//targetY = alloGoalLeft->y;
-			//cout << "left" << endl;
-			return alloGoalLeft->y;
-		}
-		else if (targetY < alloGoalRight->y)
-		{
-			//targetY = alloGoalRight->y;
-			//cout << "right" << endl;
-			return alloGoalRight->y;
-		}
-		else
-		{
-			//targetY = alloGoalMid->y;
-			//cout << "mid" << endl;
-			return targetY;
-		}
-		//cout << "after fitTargetY: " << targetY << "\n" << endl;
-	}
+        if (targetY > alloGoalLeft->y)
+        {
+            //targetY = alloGoalLeft->y;
+            //cout << "left" << endl;
+            return alloGoalLeft->y;
+        }
+        else if (targetY < alloGoalRight->y)
+        {
+            //targetY = alloGoalRight->y;
+            //cout << "right" << endl;
+            return alloGoalRight->y;
+        }
+        else
+        {
+            //targetY = alloGoalMid->y;
+            //cout << "mid" << endl;
+            return targetY;
+        }
+        //cout << "after fitTargetY: " << targetY << "\n" << endl;
+    }
 
-	int WatchBall::modRingBuffer(int k, int bufferSize)
-	{
-		return ((k %= bufferSize) < 0) ? k + bufferSize : k;
-	}
+    int WatchBall::modRingBuffer(int k, int bufferSize)
+    {
+        return ((k %= bufferSize) < 0) ? k + bufferSize : k;
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */
