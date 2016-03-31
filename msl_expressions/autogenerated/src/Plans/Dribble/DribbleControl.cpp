@@ -63,11 +63,13 @@ namespace alica
 
         if (haveBall && !hadBefore)
         {
+		cout << "DribbleControl: Reset Counter" << endl;
             itcounter = 0;
         }
 
         if (haveBall && itcounter++ < 8)
         {
+		cout << "DribbleControl: less than 8 iterations have ball" << endl;
             speed = speedNoBall;
         }
         else if (haveBall || controlNoMatterWhat || itcounter >= 8)
@@ -131,6 +133,9 @@ namespace alica
             speed = speedNoBall;
         }
 
+	
+	cout << "DribbleControl: Left: speed: " << speed << " l: " << l << " orthoL: " << orthoL << endl;
+	cout << "DribbleControl: Right: speed: " << speed << " r: " << r << " orthoR: " << orthoR << endl;
         bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
