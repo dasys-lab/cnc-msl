@@ -59,11 +59,11 @@ namespace alica
         // do we have the ball, so that controlling make sense
         haveBall = wm->ball.haveBall();
 
-        if (haveBall && !hadBefore)
-        {
-		cout << "DribbleControl: Reset Counter" << endl;
-            itcounter = 0;
-        }
+//        if (haveBall && !hadBefore)
+  //      {
+//		cout << "DribbleControl: Reset Counter" << endl;
+  //          itcounter = 0;
+        //}
 
         if (haveBall && itcounter++ < 8)
         {
@@ -138,6 +138,11 @@ namespace alica
         bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
 
         hadBefore = haveBall;
+	if (!hadBefore)
+	{
+		cout << "DribbleControl: Reset Counter" << endl;
+		itcounter = 0;
+	}
 
         send(bhc);
         /*PROTECTED REGION END*/
