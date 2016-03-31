@@ -26,13 +26,22 @@ namespace alica
 	 */
 	/*PROTECTED REGION END*/
 	WatchBall::WatchBall() :
-			DomainBehaviour("WatchBall")
+			DomainBehaviour("WatchBall"), ballPositions(10)
 	{
 		/*PROTECTED REGION ID(con1447863466691) ENABLED START*/ //Add additional options here
 		simulating = (*this->sc)["Behaviour"]->get<int>("Goalie.Simulating", NULL);
-		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
+		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance",
+		NULL);
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
-		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
+		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions",
+		NULL);
+
+		this->field = MSLFootballField::getInstance();
+		alloGoalMid = field->posOwnGoalMid();
+		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+																	field->posLeftOwnGoalPost()->y - goalieSize / 2);
+		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+															field->posRightOwnGoalPost()->y + goalieSize / 2);
 		/*PROTECTED REGION END*/
 	}
 	WatchBall::~WatchBall()
@@ -43,34 +52,27 @@ namespace alica
 	void WatchBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-		cout << "### WatchBall ###" << endl;
-		me = wm->rawSensorData.getOwnPositionVision();
-		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
+		cout << "####### WatchBall #######" << endl;
 
-		if (me == nullptr)
+		ownPos = wm->rawSensorData.getOwnPositionVision();
+		if (ownPos == nullptr)
 		{
-			cout << "me is null" << endl;
+			cout << "[WatchBall]: ownPos is null" << endl;
 			return;
 		}
 
-		alloGoalMid = MSLFootballField::getInstance()->posOwnGoalMid();
-		alloGoalLeft = make_shared<geometry::CNPoint2D>(
-				alloGoalMid->x, MSLFootballField::getInstance()->posLeftOwnGoalPost()->y - goalieSize / 2);
-		alloGoalRight = make_shared<geometry::CNPoint2D>(
-				alloGoalMid->x, MSLFootballField::getInstance()->posRightOwnGoalPost()->y + goalieSize / 2);
-
+		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
-			cout << "Goalie can't see ball! Moving to GoalMid" << endl;
+			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
 			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST);
 			send(mc);
 			return;
 		}
-		else
-		{
-			watchBall();
-		}
-		//cout << "### WatchBall ###\n" << endl;
+
+		this->ballPositions.add(alloBall);
+		watchBall();
+
 		/*PROTECTED REGION END*/
 	}
 	void WatchBall::initialiseParameters()
@@ -82,20 +84,12 @@ namespace alica
 	/*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here
 	void WatchBall::watchBall()
 	{
-		std::vector<shared_ptr<geometry::CNPoint2D>> ballPositions;
-		for (int i = 0; i < nrOfPositions; i++)
-		{
-			auto currentBall = wm->ball.getVisionBallPosition(i);
-			if (currentBall)
-			{
-				ballPositions.push_back(currentBall->egoToAllo(*me));
-			}
-		}
-
 		shared_ptr<geometry::CNPoint2D> alloTarget;
-		if (ballPositions.size() > 0)
+		if (ballPositions.getSize() > 0)
 		{
-			alloTarget = calcGoalImpactY(ballPositions);
+			double targetY = calcGoalImpactY();
+			targetY = fitTargetY(targetY);
+			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x, targetY);
 			prevTarget = alloTarget;
 		}
 		else
@@ -107,17 +101,16 @@ namespace alica
 		send(mc);
 	}
 
-	shared_ptr<geometry::CNPoint2D> WatchBall::calcGoalImpactY(
-			std::vector<shared_ptr<geometry::CNPoint2D>>& ballPositions)
+	double WatchBall::calcGoalImpactY()
 	{
 		double _slope, _yInt;
 		double sumXY = 0, sumX2 = 0, sumX2Y2 = 0;
 		shared_ptr<geometry::CNPoint2D> avgBall = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 		int nPoints = 0;
 
-		for (int i = 0; i < ballPositions.size(); i++)
+		for (int i = 0; i < ballPositions.getSize(); i++)
 		{
-			auto currentBall = ballPositions.at(i);
+			auto currentBall = ballPositions.getLast(i);
 
 			shared_ptr<geometry::CNPoint2D> ppprevBall;
 			shared_ptr<geometry::CNPoint2D> pprevBall;
@@ -125,9 +118,9 @@ namespace alica
 
 			if (i > 2)
 			{
-				ppprevBall = ballPositions.at(i - 3);
-				pprevBall = ballPositions.at(i - 2);
-				prevBall = ballPositions.at(i - 1);
+				ppprevBall = ballPositions.getLast(i - 3);
+				pprevBall = ballPositions.getLast(i - 2);
+				prevBall = ballPositions.getLast(i - 1);
 			}
 
 			if (prevBall != nullptr && pprevBall != nullptr && ppprevBall != nullptr)
@@ -181,7 +174,7 @@ namespace alica
 		{
 			for (int i = 0; i < nPoints; i++)
 			{
-				auto curBall = ballPositions.at(i);
+				auto curBall = ballPositions.getLast(i);
 				nomi = nomi + ((curBall->x - avgBall->x) * (curBall->y - avgBall->y));
 				denom = denom + ((curBall->x - avgBall->x) * (curBall->x - avgBall->x));
 			}
@@ -189,7 +182,7 @@ namespace alica
 			if (denom < 1e-3)
 			{
 				cout << "[WatchBall] prevTarget, cause no hitPoint " << endl;
-				return prevTarget;
+				return prevTarget->y;
 			}
 
 			_slope = nomi / denom;
@@ -200,14 +193,11 @@ namespace alica
 		}
 		else
 		{
-			cout << "[WatchBall] noRegression ball y is " << ballPositions.at(0)->y << endl;
-			calcTargetY = ballPositions.at(0)->y;
+			cout << "[WatchBall] noRegression ball y is " << ballPositions.getLast(0)->y << endl;
+			calcTargetY = ballPositions.getLast(0)->y;
 		}
 
-		calcTargetY = fitTargetY(calcTargetY);
-//		cout << "[WatchBall] ballPosX      : " << ballPositions.at(0)->x << endl;
-//		cout << "[WatchBall] ballPosY      : " << ballPositions.at(0)->y << endl;
-		return make_shared<geometry::CNPoint2D>(alloGoalMid->x, calcTargetY);
+		return calcTargetY;
 	}
 
 	double WatchBall::fitTargetY(double targetY)
@@ -225,11 +215,6 @@ namespace alica
 		{
 			return targetY;
 		}
-	}
-
-	int WatchBall::modRingBuffer(int k, int bufferSize)
-	{
-		return ((k %= bufferSize) < 0) ? k + bufferSize : k;
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

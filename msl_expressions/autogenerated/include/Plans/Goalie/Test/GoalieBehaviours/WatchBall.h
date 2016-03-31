@@ -6,6 +6,7 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include <string>
+#include <RingBuffer.h>
 
 using namespace msl;
 /*PROTECTED REGION END*/
@@ -33,11 +34,12 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr<geometry::CNPosition> me;
+        shared_ptr<geometry::CNPosition> ownPos;
+        msl::MSLFootballField* field;
+        msl::RingBuffer<geometry::CNPoint2D> ballPositions;
         double fitTargetY(double targetY);
         void watchBall();
-        int modRingBuffer(int k, int bufferSize);
-        shared_ptr<geometry::CNPoint2D> calcGoalImpactY(std::vector<shared_ptr<geometry::CNPoint2D>>& ballPositions);
+        double calcGoalImpactY();
         shared_ptr<geometry::CNPoint2D> alloGoalLeft;
         shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
