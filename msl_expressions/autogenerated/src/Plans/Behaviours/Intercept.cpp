@@ -118,6 +118,7 @@ namespace alica
 
         if (gs == msl::GameState::OppBallPossession)
         {
+        	//TODO if we set this to 0 it works in the simulator
             vel = make_shared < geometry::CNPoint2D > (0, 0);
         }
         else

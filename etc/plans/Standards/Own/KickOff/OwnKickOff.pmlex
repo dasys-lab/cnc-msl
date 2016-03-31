@@ -135,4 +135,8 @@
     <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1459456566595"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

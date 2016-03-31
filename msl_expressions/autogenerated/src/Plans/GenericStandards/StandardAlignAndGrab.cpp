@@ -156,7 +156,7 @@ namespace alica
         angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
-        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.01 * angleIntErr + 2 * (dangle - oldAngleErr)));
+        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
         oldAngleErr = dangle;
         if (haveBall)
         {
