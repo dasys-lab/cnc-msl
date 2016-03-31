@@ -115,4 +115,12 @@
     <key href="../../../Behaviours/CheckPassMsg.beh#1457441499013"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1455888617961"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

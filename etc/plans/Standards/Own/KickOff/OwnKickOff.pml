@@ -10,21 +10,22 @@
   </states>
   <states id="1440675376134" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/StdExecutorGrabBall.beh#1441209089978</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1455888617961</plans>
     <inTransitions>#1440675383814</inTransitions>
     <inTransitions>#1440772442289</inTransitions>
     <outTransitions>#1440772545631</outTransitions>
   </states>
   <states id="1440772305591" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/KickOffPassDefault.beh#1438778223495</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardPass.beh#1435760175843</plans>
     <inTransitions>#1440772545631</inTransitions>
     <outTransitions>#1440772442289</outTransitions>
     <outTransitions>#1441811700499</outTransitions>
   </states>
   <states id="1440772454611" name="Receive" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/GetBall.beh#1414840399972</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/CheckPassMsg.beh#1457441499013</plans>
     <inTransitions>#1440772549851</inTransitions>
     <outTransitions>#1440772873418</outTransitions>
