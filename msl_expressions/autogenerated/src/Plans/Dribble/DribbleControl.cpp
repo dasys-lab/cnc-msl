@@ -70,7 +70,7 @@ namespace alica
 		cout << "DribbleControl: less than 8 iterations have ball" << endl;
             speed = speedNoBall;
         }
-        else if (true || haveBall || controlNoMatterWhat || itcounter >= 8)
+        else if (haveBall || controlNoMatterWhat || itcounter >= 8)
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
 
