@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1449742071382) ENABLED START*/ //Add additional includes here
+#include "CubicSplineInterpolation/Spline.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -32,6 +33,7 @@ namespace alica
         double slowTranslationWheelSpeed = 0.0;
         double curveRotationFactor = 0.0;
         double orthoDriveFactor = 0;
+        splines::spline forwardSpeedSpline;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

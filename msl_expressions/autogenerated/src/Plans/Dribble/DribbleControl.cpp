@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Dribble/DribbleControl.h"
 
 /*PROTECTED REGION ID(inccpp1449742071382) ENABLED START*/ //Add additional includes here
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -93,7 +94,8 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-                speed = max(-100.0, min(100.0, handlerSpeedFactor * speedX / 100.0));
+            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)));
+                //speed = max(-100.0, min(100.0, handlerSpeedFactor * speedX / 100.0));
             }
             //schnell rueck
             else
@@ -191,6 +193,21 @@ namespace alica
         slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
         curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);
         orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor", NULL);
+
+
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+
+		shared_ptr<vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+		vector<double> robotSpeed(speedsSections->size());
+		vector<double> actuatorSpeed(speedsSections->size());
+		int i = 0;
+		for (string subsection : *speedsSections)
+		{
+			robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed", NULL);
+			actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
+			i++;
+		}
+		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, true);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */
