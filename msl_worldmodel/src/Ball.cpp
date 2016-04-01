@@ -176,7 +176,7 @@ namespace msl
 
 		for(int i = 0; i < BALLBUFSIZE; i++)
 		{
-			auto vel = this->getVisionBallVelocity();
+			auto vel = this->getVisionBallVelocity(i);
 			if(vel == nullptr)
 			{
 				ballMoved = false;
