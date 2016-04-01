@@ -63,6 +63,7 @@ namespace alica
                 posV = posV + b2->clone();
                 posV = posV / 2.0;
             }
+
             if (wm->ball.getVisionBallPositionAndCertaincy()->second < 0.5)
                 posV = nullptr;
             if (ballPos != nullptr && ballPos->length() > 4000)
