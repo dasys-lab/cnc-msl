@@ -276,6 +276,15 @@ namespace msl
 			return nullptr;
 		}
 	}
+
+	shared_ptr<Term> MSLConstraintBuilder::insideSphere(shared_ptr<TVec> centre, double distance, shared_ptr<TVec> point) {
+		if (centre != nullptr) {
+			return TermBuilder::euclidianDistance(centre, point) < autodiff::TermBuilder::constant(distance);
+		} else {
+			return nullptr;
+		}
+	}
+
 	shared_ptr<Term> MSLConstraintBuilder::outsideTriangle(shared_ptr<TVec> a, shared_ptr<TVec> b, shared_ptr<TVec> c, double tolerance, vector<shared_ptr<TVec>>& points) {
 		shared_ptr<TVec> a2b = b - a;
 		shared_ptr<TVec> b2c = c - b;
@@ -560,6 +569,7 @@ namespace msl
 		appliedRules =  appliedRules & outsideArea (Areas::OppGoalArea, fieldPlayers);
 		appliedRules =  appliedRules & ownPenaltyAreaDistanceExceptionRule (ballT, fieldPlayers);
 		appliedRules =  appliedRules & oppPenaltyAreaRule (fieldPlayers);
+		appliedRules =  appliedRules & spread(1000.0, fieldPlayers);
 		return appliedRules;
 	}
 	shared_ptr<Term> MSLConstraintBuilder::ownPenaltyAreaDistanceExceptionRule(shared_ptr<TVec> ballT, vector<shared_ptr<TVec>>& fieldPlayers) {
