@@ -37,6 +37,7 @@ ScanLineHelper::ScanLineHelper() : sc() {
 	iRadius = vision->get<short>("Vision", "ScanLinesInnerRadius", NULL);
 	oRadius = vision->get<short>("Vision", "ScanLinesOuterRadius", NULL);
 	nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
+	frontScanlineDistance = vision->get<short>("Vision", "FrontScanlineDistance", NULL);
 
 	int imWidth = vision->get<int>("Vision", "ImageArea", NULL);
 	int imHeight = vision->get<int>("Vision", "ImageArea", NULL);
@@ -70,6 +71,7 @@ ScanLineHelper::ScanLineHelper(int imWidth, int imHeight) : sc() {
 	iRadius = vision->get<short>("Vision", "ScanLinesInnerRadius", NULL);
 	oRadius = vision->get<short>("Vision", "ScanLinesOuterRadius", NULL);
 	nLines = vision->get<short>("Vision", "NumberScanLines", NULL);
+	frontScanlineDistance = vision->get<short>("Vision", "FrontScanlineDistance", NULL);
 
 	printf("ScanLineHelper MX: %d\n", mx);
 	printf("ScanLineHelper MY: %d\n", my);
@@ -128,9 +130,14 @@ void ScanLineHelper::init( ){
 
 
 		if(i % 2 == 0){
-			
-			ax = (short) (cos(angle)*iRadius + mx);
-			ay = (short) (sin(angle)*iRadius + my);
+			if(fabs(angle) < 4*M_PI/5 || fabs(angle) > 6*M_PI/5) {
+				ax = (short) (cos(angle)*iRadius + mx);
+				ay = (short) (sin(angle)*iRadius + my);
+			} else {
+				double helpRadius = -frontScanlineDistance / cos(angle);
+				ax = (short) (cos(angle)*helpRadius + mx);
+				ay = (short) (sin(angle)*helpRadius + my);
+			}
 
 			ex = (short) (cos(angle)*(double) oRadius + (double) mx);
 			ey = (short) (sin(angle)*(double) oRadius + (double) my);

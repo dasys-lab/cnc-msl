@@ -64,6 +64,7 @@ class ScanLineHelper{
 		short my;
 		short iRadius;
 		short oRadius;
+		short frontScanlineDistance;
 		short nLines;
 		short maxPoints;
 
