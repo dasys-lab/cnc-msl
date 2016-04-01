@@ -70,21 +70,18 @@ namespace alica
 //            send(mc);
 //
 //        }
+		bhc.leftMotor = -wheelSpeed;
+		bhc.rightMotor = -wheelSpeed;
+		send(bhc);
 
-        if (wm->getTime() - entryTime < 250000000)
+        if (wm->getTime() - entryTime < 000000)
         {
             mc.motion.translation = translation;
             mc.motion.rotation = 0;
             mc.motion.angle = egoBallPos->angleTo();
 
-            bhc.leftMotor = -wheelSpeed;
-            bhc.rightMotor = -wheelSpeed;
-
-            send(bhc);
             send(mc);
-
         }
-
         else
         {
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> mostRecentOpps =
