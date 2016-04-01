@@ -158,7 +158,7 @@ namespace alica
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		if (nPoints > 1 && variance > maxVariance)
 		{
-			//cout << "[WatchBall] LinearRegression Variance: " << variance << endl;
+			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions->getLast(i);
@@ -167,13 +167,13 @@ namespace alica
 			}
 			if (denom < 1e-3)
 			{
-				//cout << "[WatchBall] prevTarget, cause no hitPoint " << endl;
+				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			//cout << "[WatchBall] calcTargetY   : " << calcTargetY << endl;
+			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
@@ -183,7 +183,6 @@ namespace alica
 			for (auto currentObs : *obstacles)
 			{
 				//cout << "[WatchBall] " << currentObs->toString();
-				// todo: add also checking: if opponent in ball posession
 
 				double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
 				if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
@@ -200,7 +199,7 @@ namespace alica
 
 			if (closestObstacle != nullptr)
 			{
-				//cout << "[WatchBall] Obstacle Variance: " << variance << endl;
+				cout << "[WatchBall] Obstacle Variance: " << variance << endl;
 				_slope = (closestObstacle->y - ballPositions->getLast(0)->y)
 						/ (closestObstacle->x - ballPositions->getLast(0)->x);
 				_yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
@@ -208,7 +207,7 @@ namespace alica
 			}
 			else
 			{
-				//cout << "[WatchBall] BallY Variance: " << variance << endl;
+				cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
 			}
 		}
