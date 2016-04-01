@@ -484,24 +484,32 @@ namespace msl
 		}
 
 		// turn ball angle by 180°, in order to get a working reference value for the HAVE_BALL_MAX_ANGLE_DELTA parameter
-		double ballAngle = ballPos->angleTo();
-		if (ballAngle < 0)
-		{
-			ballAngle += M_PI;
-		}
-		else
-		{
-			ballAngle -= M_PI;
-		}
-
-		// check angle to ball
-		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+		if (fabs(ballPos->y) > 100)
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
 			//cout << "Ball: Angle Tolerance check failed!" << endl;
 			return;
 		}
+
+//		double ballAngle = ballPos->angleTo();
+//		if (ballAngle < 0)
+//		{
+//			ballAngle += M_PI;
+//		}
+//		else
+//		{
+//			ballAngle -= M_PI;
+//		}
+//
+//		// check angle to ball
+//		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+//		{
+//			// if you lost the ball, further pretend that you have it for at most 2 iterations
+//			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+//			//cout << "Ball: Angle Tolerance check failed!" << endl;
+//			return;
+//		}
 
 		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
