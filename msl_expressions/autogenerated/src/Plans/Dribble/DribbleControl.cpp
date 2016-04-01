@@ -105,14 +105,14 @@ namespace alica
             if (speedY > 0)
             {
                 //nach rechts fahren
-                orthoR = speedY * orthoDriveFactor;
-                orthoL = -speedY * orthoDriveFactor / 2.0;
+                //orthoR = speedY * orthoDriveFactor;
+                //orthoL = -speedY * orthoDriveFactor / 2.0;
             }
             else
             {
                 //nach links fahren
-                orthoR = speedY * orthoDriveFactor / 2.0;
-                orthoL = -speedY * orthoDriveFactor;
+                //orthoR = speedY * orthoDriveFactor / 2.0;
+                //orthoL = -speedY * orthoDriveFactor;
             }
 
             //geschwindigkeitsanteil fuer rotation
