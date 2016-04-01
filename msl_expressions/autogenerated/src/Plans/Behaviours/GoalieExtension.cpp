@@ -110,6 +110,10 @@ namespace alica
 			DomainBehaviour("GoalieExtension")
 	{
 		/*PROTECTED REGION ID(con1459249216387) ENABLED START*/ //Add additional options here
+		useExt1 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt1", NULL);
+		useExt2 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt2", NULL);
+		useExt3 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt3", NULL);
+		useKicker = (*this->sc)["Behaviour"]->get<int>("Goalie.UseKicker", NULL);
 		field = msl::MSLFootballField::getInstance();
 		ballGoalProjection = new ExperimentalRingbuffer(20);
 		ballVelocity = new ExperimentalRingbuffer(10);
@@ -136,7 +140,7 @@ namespace alica
 
 		//kick
 		msl_actuator_msgs::KickControl km;
-		if (ballPos != nullptr && ballPos->length() < 420 && (abs(ballPos->angleTo()) - M_PI) < 0.52)
+		if (useKicker > 0 && ballPos != nullptr && ballPos->length() < 420 && (abs(ballPos->angleTo()) - M_PI) < 0.52)
 		{
 			km.enabled = true;
 			km.kicker = 1;
@@ -251,34 +255,35 @@ namespace alica
 						//		<< timeBallToGoal2 << " ball dist " << ballPos->length() << endl;
 						if (timeToDstPoint > timeBallToGoal2 && ballPos->length() < 5000)
 						{
-							if (dstPointEgo->angleTo() < 0)
+							if (useExt3 > 0 && dstPointEgo->angleTo() < 0)
 							{
 								km.extension = 3;
 //								Node.MainNode.RosInfo("FIRE EXT 3");
-								cout << "[GoalieExtension] Fire Ext 3!" << endl;
+								cout << "[GoalieExtension] Ext3!" << endl;
 							}
-							else
+							else if (useExt2 > 0)
 							{
 								km.extension = 2;
 //								Node.MainNode.RosInfo("FIRE EXT 2");
-								cout << "[GoalieExtension] Fire Ext 2!" << endl;
+								cout << "[GoalieExtension] Ext2!" << endl;
 							}
-							km.extTime = 1000;
-							send(km);
+							if (useExt3 > 0 || useExt2 > 0)
+							{
+								km.extTime = 1000;
+								send(km);
+							}
 						}
-						else
+						else if (useExt1 > 0 && timeBallToGoal2 < 1.0 && abs(dstPointEgo->y - ownPos->y) < 400
+								&& ballInAirTimestamp + 3000 > now)
 						{
 							//cout << "[GoalieExtension] abs(dstPointEgo->y - ownPos->y) < 400 | " << abs(dstPointEgo->y - ownPos->y) << " < " << 400 << endl;
 							//cout << "                  ballInAirTimestamp + 3000 > now | " << ballInAirTimestamp + 3000 << " > " << now << endl;
-							if (timeBallToGoal2 < 1.0 && abs(dstPointEgo->y - ownPos->y) < 400
-									&& ballInAirTimestamp + 3000 > now)
-							{
-								km.extension = 1;
-								km.extTime = 1000;
-								send(km);
-//								Node.MainNode.RosInfo("FIRE EdXT 1");
-								cout << "[GoalieExtension] Fire Ext 1" << endl;
-							}
+
+							km.extension = 1;
+							km.extTime = 1000;
+							send(km);
+							//Node.MainNode.RosInfo("FIRE EXT 1");
+							cout << "[GoalieExtension] Ext1!" << endl;
 						}
 
 					}

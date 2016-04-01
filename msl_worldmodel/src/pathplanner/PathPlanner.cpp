@@ -803,5 +803,7 @@ namespace msl
 	{
 		return sqrt(pow(v2->point().x() - v1->x, 2) + pow(v2->point().y() - v1->y, 2));
 	}
+
 } /* namespace alica */
+
 

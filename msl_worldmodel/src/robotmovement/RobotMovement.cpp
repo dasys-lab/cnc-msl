@@ -111,13 +111,14 @@ namespace msl
 		return bm;
 	}
 
-
-	msl_actuator_msgs::MotionControl RobotMovement::driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
-                                                         double translation, bool alignSlow) {
+	msl_actuator_msgs::MotionControl RobotMovement::driveToPointAlignNoAvoidance(
+			shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint, double translation,
+			bool alignSlow)
+	{
 		msl_actuator_msgs::MotionControl bm = driveToPointNoAvoidance(destination, translation);
 
 		//if we dont need to align
-		if( alignPoint == nullptr)
+		if (alignPoint == nullptr)
 		{
 //				Console.WriteLine("MC: angle" + bm.Motion.Angle + " trans" + bm.Motion.Translation);
 			return bm;
@@ -125,13 +126,15 @@ namespace msl
 		else
 		{
 			// Align (with compensation if necessary)
-			msl_actuator_msgs::MotionControl tmp = alignToPointNoBall(alignPoint,alignPoint,0);
+			msl_actuator_msgs::MotionControl tmp = alignToPointNoBall(alignPoint, alignPoint, 0);
 			bm.motion.rotation = tmp.motion.rotation;
 			return bm;
 
 		}
 	}
-	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation) {
+	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest,
+																			double translation)
+	{
 		//motion message
 		MotionControl bm;
 		// Angle
@@ -372,16 +375,23 @@ namespace msl
 	}
 
 	MotionControl RobotMovement::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget,
-											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, double transFactor)
+											shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance,
+											double transFactor)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		auto egoTarget = alloTarget->alloToEgo(*me);
 
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloAlignPoint->alloToEgo(*me)->rotate(M_PI)->angleTo() * fastRotation;
 
+		if (alloBall != nullptr && alloBall->x > 500)
+		{
+			//cout << "[RobotMoveMent] Ball in opp side, goalie moves with half translation" << endl;
+			transFactor = transFactor / 2;
+		}
 		if (egoTarget->length() > snapDistance)
 		{
 			//cout << "TRANSLATION: " << 3 * abs(egoTarget->y);
