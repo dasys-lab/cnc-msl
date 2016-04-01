@@ -271,7 +271,7 @@ void msldriver::Kicker::setLastBeat()
 
 void msldriver::Kicker::sendHeartBeat(ros::Time now)
 {
-	if ((now.toSec() - this->lastBeat.toSec()) > (this->settings.alivePeriod / 1000))
+	if ((now.toSec() - this->lastBeat.toSec()) > ((double)this->settings.alivePeriod / 1000.0))
 	{
 		// check state
 		CanMsg cm2;
@@ -286,6 +286,7 @@ void msldriver::Kicker::sendHeartBeat(ros::Time now)
 		cm.id = ReKick;
 		cm.data.push_back(Ping);
 		this->rekickPub.publish(cm);
+		setLastBeat();
 	}
 }
 
