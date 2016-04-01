@@ -280,7 +280,7 @@ namespace alica
         }
         else
         {
-            return this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 500.0, 100.0);
+            return this->wm->kicker.getKickPowerForLobShot(dist2HitPoint, 200.0, 100.0);
         }
     }
 
