@@ -20,6 +20,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1449742071382) ENABLED START*/ //Add additional private methods here
+	double handlerSpeedSummand = 0;
         void readConfigParameters();
         bool pullNoMatterWhat = false;
         bool controlNoMatterWhat = false;
