@@ -145,7 +145,8 @@ namespace msl
 		bool reachable = true;
 
 		auto vec = voronoi->getAlloClusteredObsWithMe();
-
+		double shortestDist = 100000000.0;
+		shared_ptr<geometry::CNPoint2D> closestOpp;
 		for(auto cluster : *vec)
 		{
 			if(cluster->id == wm->getOwnId())
@@ -154,11 +155,27 @@ namespace msl
 			}
 
 			//if there is an obstacle inside the corridor the goal is not reachable
-			if(corridorCheck(voronoi, startPos, goal, cluster->getPoint()))
+			auto point = cluster->getPoint();
+			if(corridorCheck(voronoi, startPos, goal, point))
 			{
 				reachable = false;
 				break;
 			}
+
+			double tmpDist = goal->distanceTo(point);
+			if (tmpDist < shortestDist)
+			{
+				closestOpp = point;
+				shortestDist = tmpDist;
+			}
+		}
+
+
+		// this helps to avoid obstacles which are very close to the goal, but behind it -
+		// in such cases the corridor check say, you can drive directly to the goal, although an opponent robots corner can reach into the corridor...
+		if (closestOpp && shortestDist < 400 && closeOppToBallCheck(voronoi, startPos, goal, closestOpp))
+		{
+			reachable = false;
 		}
 
 		if (reachable)
@@ -175,19 +192,19 @@ namespace msl
 			}
 		}
 
-                if (reachable)
-                {
-                        auto vec = voronoi->getAdditionalObstacles();
-                        for(auto obs : *vec)
-                        {
-                                //if there is an obstacle inside the corridor the goal is not reachable
-                                if(corridorCheck(voronoi, startPos, goal, obs))
-                                {
-                                        reachable = false;
-                                        break;
-                                }
-                        }
-                }
+		if (reachable)
+		{
+				auto vec = voronoi->getAdditionalObstacles();
+				for(auto obs : *vec)
+				{
+						//if there is an obstacle inside the corridor the goal is not reachable
+						if(corridorCheck(voronoi, startPos, goal, obs))
+						{
+								reachable = false;
+								break;
+						}
+				}
+		}
 
 		//if the corridor is free the robot can drive towards the goal
 		if(reachable)
@@ -438,6 +455,20 @@ namespace msl
 			{
 				return true;
 			}
+		}
+		return false;
+	}
+
+	bool PathPlanner::closeOppToBallCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+												shared_ptr<geometry::CNPoint2D> goal,
+												shared_ptr<geometry::CNPoint2D> obstaclePoint)
+	{
+		auto g2opp = obstaclePoint-goal;
+		double angle2BallOppLine = abs(geometry::deltaAngle(currentPos->angleTo(),g2opp->angleTo()));
+		cout << "PathPlanner: angle2BallOppLine: \t" << angle2BallOppLine << endl;
+		if (angle2BallOppLine > M_PI/2.0 && angle2BallOppLine < M_PI * 2.0/3.0)
+		{
+			return true;
 		}
 		return false;
 	}
