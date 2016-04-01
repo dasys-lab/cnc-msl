@@ -154,7 +154,7 @@ namespace alica
                 shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                 double rcv2PassPointDist = rcv2PassPoint->length();
                 double factor = closerFactor;
-                if (factor * rcv2PassPointDist > minCloserOffset)
+                if (factor * rcv2PassPointDist < minCloserOffset)
                 {
                     factor = factor * rcv2PassPointDist;
                 }
