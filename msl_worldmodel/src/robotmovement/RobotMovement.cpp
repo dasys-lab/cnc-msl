@@ -381,12 +381,13 @@ namespace msl
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		auto egoTarget = alloTarget->alloToEgo(*me);
 
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloAlignPoint->alloToEgo(*me)->rotate(M_PI)->angleTo() * fastRotation;
 
-		if (wm->ball.getAlloBallPosition()->x > 500)
+		if (alloBall != nullptr && alloBall->x > 500)
 		{
 			//cout << "[RobotMoveMent] Ball in opp side, goalie moves with half translation" << endl;
 			transFactor = transFactor / 2;
