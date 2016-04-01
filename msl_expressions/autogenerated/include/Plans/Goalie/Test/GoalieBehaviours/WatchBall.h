@@ -26,7 +26,6 @@ namespace alica
         static const int SNAP_DIST = 100;
         shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLFootballField::posCenterMarker();
         shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
-        int simulating;
         int maxVariance;
         int goalieSize;
         int nrOfPositions;
