@@ -8,7 +8,6 @@ INCLUDE_DIRECTORIES(
 	FieldWidget
 	FullInfoWindow
 	FullWindow
-	LogWidget
 	MainWindow
 	RefBoxWidget
 	RobotInfoWidget
@@ -23,7 +22,6 @@ SET( BASESTATION_SRCS
 	FieldWidget/FieldWidget3D.cpp
 	FullInfoWindow/FullInfoWindow.cpp
 	FullWindow/FullWindow.cpp
-	LogWidget/LogWidget.cpp
 	MainWindow/MainWindow.cpp
 	RefBoxWidget/RefBoxDialog.cpp
 	RefBoxWidget/RefBoxWidget.cpp
@@ -41,7 +39,6 @@ SET( BASESTATION_MOC_HDRS
 	FieldWidget/FieldWidget3D.h
 	FullInfoWindow/FullInfoWindow.h
 	FullWindow/FullWindow.h
-	LogWidget/LogWidget.h
 	MainWindow/MainWindow.h
 	RefBoxWidget/RefBoxDialog.h
 	RefBoxWidget/RefBoxWidget.h
@@ -56,7 +53,6 @@ SET( BASESTATION_MOC_HDRS
 SET( BASESTATION_UIS
 	FullInfoWindow/FullInfoWindow_WG.ui
 	FullWindow/FullWindow.ui
-	LogWidget/LogWidget.ui
 	MainWindow/MainWindow.ui
 	RefBoxWidget/RefBoxDialog.ui
 	RefBoxWidget/RefBoxWG.ui

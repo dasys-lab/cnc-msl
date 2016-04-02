@@ -65,13 +65,11 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 
 	connect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 	
-	connect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
 
 	UpdateTimer->start(50);
 
-	RefLog->clear();
 
 
 
@@ -96,11 +94,9 @@ RefBoxWidget::~RefBoxWidget()
 	disconnect(Their_Throwin_bot, SIGNAL(clicked()), this, SLOT(TheirThrowinPressed()));
 	disconnect(Their_Corner_Kick_bot, SIGNAL(clicked()), this, SLOT(TheirCornerKickPressed()));
 	disconnect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
-	disconnect(LogW, SIGNAL(SetLogViewMode_signal(bool)), this, SLOT(SetLogViewMode_slot(bool)));
 	disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
 	disconnect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
 
-	if( this->LogW!= NULL ) delete this->LogW; this->LogW = NULL;
 
 	delete RBDialog;
 	delete UpdateTimer;
