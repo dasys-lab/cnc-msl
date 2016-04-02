@@ -15,6 +15,8 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
+#include  "Plans/Standards/Own/Corner/constraints/CornerPosBounceShot1459361999064Constraints.h"
+
 #include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/DuelTestMaster1454506180437Constraints.h"
@@ -45,6 +47,8 @@
 
 #include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
+#include  "Plans/Standards/Own/Corner/constraints/CornerBounceShot1459361887233Constraints.h"
+
 #include  "Plans/Defence/constraints/ReleaseOwnHalf1458033644590Constraints.h"
 
 #include  "Plans/Penalty/constraints/OwnPenalty1431525185678Constraints.h"
@@ -60,6 +64,8 @@
 #include  "Plans/Attack/constraints/ProtectBall1449151802193Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
+
+#include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
 
 #include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
 

@@ -20,6 +20,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863478260) ENABLED START*/ //Add additional private methods here
+        // TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -26,139 +26,221 @@ namespace alica
 
         // testing motion ================================================================
 
-        if (driveForward)
+        if (driveForward && !finDriveForward)
         {
+            out = outPut("driveForward", out);
+            setParms(false);
+            driveForward = true;
             driveForward = translationRotationRobot(-300, true, 3000);
             if (!driveForward)
             {
-                cout << "testing drive back ..." << endl;
-                driveBack = true;
+                readConfigParms();
+                finDriveForward = true;
+                out = true;
             }
         }
-        if (driveBack)
+        if (driveBack && !finDriveBack)
         {
+            out = outPut("driveBack", out);
+            setParms(false);
+            driveBack = true;
             driveBack = translationRotationRobot(300, true, 3000);
             if (!driveBack)
             {
-                cout << "testing rotate right ..." << endl;
-                rotateForward = true;
+                out = true;
+                readConfigParms();
+                finDriveBack = true;
             }
         }
-        if (rotateForward)
+        if (rotateForward && !finRotateForward)
         {
+            out = outPut("rotateForward", out);
+            setParms(false);
+            rotateForward = true;
             rotateForward = translationRotationRobot(-2, false, 3000);
             if (!rotateForward)
             {
-                cout << "testing rotate left ..." << endl;
-                rotateBack = true;
+                out = true;
+                readConfigParms();
+                finRotateForward = true;
             }
         }
-        if (rotateBack)
+        if (rotateBack && !finRotateBack)
         {
+            out = outPut("rotateBack", out);
+            setParms(false);
+            rotateBack = true;
             rotateBack = translationRotationRobot(2, false, 3000);
             if (!rotateBack)
             {
-                cout << "testing rotate actuator forward ..." << endl;
-                actuatorForward = true;
+                out = true;
+                readConfigParms();
+                finRotateBack = true;
             }
         }
 
         // testing actuator ==============================================================
 
-        if (actuatorForward)
+        if (actuatorPushLeft && !finActuatorPushLeft)
         {
-            actuatorForward = actuatorRobot(3000, 30);
-            if (!actuatorForward)
+            out = outPut("actuator -> pushing left", out);
+            setParms(false);
+            actuatorPushLeft = true;
+            actuatorPushLeft = actuatorRobot(3000, 30, false);
+            if (!actuatorPushLeft)
             {
-                cout << "testing rotate actuator back ..." << endl;
-                actuatorBack = true;
+                out = true;
+                readConfigParms();
+                finActuatorPushLeft = true;
             }
         }
-        if (actuatorBack)
+
+        if (actuatorPushRight && !finActuatorPushRight)
         {
-            actuatorBack = actuatorRobot(3000, -30);
-            if (!actuatorBack)
+            out = outPut("actuator -> pushing right", out);
+            setParms(false);
+            actuatorPushRight = true;
+            actuatorPushRight = actuatorRobot(3000, 30, true);
+            if (!actuatorPushRight)
             {
-                cout << "testing light barrier ..." << endl;
-                lightBarrier = true;
+                out = true;
+                readConfigParms();
+                finActuatorPushRight = true;
+            }
+        }
+
+        if (actuatorPullLeft && !finActuatorPullLeft)
+        {
+            out = outPut("actuator -> pulling left", out);
+            setParms(false);
+            actuatorPullLeft = true;
+            actuatorPullLeft = actuatorRobot(3000, -30, false);
+            if (!actuatorPullLeft)
+            {
+                out = true;
+                readConfigParms();
+                finActuatorPullLeft = true;
+            }
+        }
+
+        if (actuatorPullRight && !finActuatorPullRight)
+        {
+            out = outPut("actuator -> pulling right", out);
+            setParms(false);
+            actuatorPullRight = true;
+            actuatorPullRight = actuatorRobot(3000, -30, true);
+            if (!actuatorPullRight)
+            {
+                out = true;
+                readConfigParms();
+                finActuatorPullRight = true;
             }
         }
 
         // light barrier ==============================================================
 
-        if (lightBarrier)
+        if (lightBarrier && !finLightBarrier)
         {
+            out = outPut("lightBarrier", out);
+            setParms(false);
+            lightBarrier = true;
             lightBarrier = lightBarrierRobot();
             if (!lightBarrier)
             {
-                cout << "testing optical flow ..." << endl;
-                opticalFlow = true;
+                out = true;
+                readConfigParms();
+                finLightBarrier = true;
             }
         }
 
         // optical flow ===============================================================
 
-        if (opticalFlow)
+        if (opticalFlow && !finOpticalFlow)
         {
+            out = outPut("opticalFlow", out);
+            setParms(false);
+            opticalFlow = true;
             opticalFlow = opticalFlowRobot();
             if (!opticalFlow)
             {
-                cout << "testing IMU ..." << endl;
-                imu = true;
+                out = true;
+                readConfigParms();
+                finOpticalFlow = true;
             }
         }
 
         // IMU ========================================================================
 
-        if (imu)
+        if (imu && !finImu)
         {
+            out = outPut("imu", out);
+            setParms(false);
+            imu = true;
             imu = imuRobot();
             if (!imu)
             {
-                cout << "testing shovelSelectLow ..." << endl;
-                shovelSelectLow = true;
+                out = true;
+                readConfigParms();
+                finImu = true;
             }
         }
 
         // shovel select ==============================================================
 
-        if (shovelSelectLow)
+        if (shovelSelectLow && !finShovelSelectLow)
         {
+            out = outPut("shovelSelectLow", out);
+            setParms(false);
+            shovelSelectLow = true;
             shovelSelectLow = shovelSelectRobot(true, 3000);
             if (!shovelSelectLow)
             {
-                cout << "testing shovelSelectHigh ..." << endl;
-                shovelSelectHigh = true;
+                out = true;
+                readConfigParms();
+                finShovelSelectLow = true;
             }
         }
 
-        if (shovelSelectHigh)
+        if (shovelSelectHigh && !finShovelSelectHigh)
         {
+            out = outPut("shovelSelectHigh", out);
+            setParms(false);
+            shovelSelectHigh = true;
             shovelSelectHigh = shovelSelectRobot(false, 3000);
             if (!shovelSelectHigh)
             {
-                cout << "kicking = " << kickPower << endl;
-                kicker = true;
+                out = true;
+                readConfigParms();
+                finShovelSelectHigh = true;
             }
         }
 
         // testing kicker ================================================================
 
-        if (kicker)
+        if (kicker && !finKicker)
         {
+            out = outPut("kicker", out);
             kicker = kickerRobot(kickPower);
+            if (!kicker)
+            {
+                readConfigParms();
+                finKicker = true;
+                out = true;
+            }
         }
 
-        if (!driveForward && !driveBack && !rotateBack && !rotateForward && !kicker && !actuatorForward && !actuatorBack
-                && !opticalFlow && !imu && !shovelSelectLow && !shovelSelectHigh && !lightBarrier)
+        if (finished())
         {
-            cout << "finished testing" << endl;
-//		cout
-//				<< "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!"
-//				<< endl;
-            cout << "Have fun bitches i'm out!\n" << endl;
-//		printGlasses();
-            this->success = true;
+        	if (repeat)
+        	{
+        		cout << "restart test..." << endl;
+        		initialiseParameters();
+        	}else
+        	{
+        		cout << "finished testing" << endl;
+        		this->success = true;
+        	}
+
         }
         /*PROTECTED REGION END*/
     }
@@ -166,31 +248,17 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1456756113767) ENABLED START*/ //Add additional options here
         move = 0;
+        out = true;
+        setFinParmsFalse();
+        readConfigParms();
 
-        driveForward = true;
-        driveBack = false;
-        rotateBack = false;
-        rotateForward = false;
-        kicker = false;
-        actuatorForward = false;
-        actuatorBack = false;
-        opticalFlow = false;
-        imu = false;
-        shovelSelectLow = false;
-        shovelSelectHigh = false;
-        lightBarrier = false;
-
-        kickPower = 300;
-
-        if (driveForward)
+        cout << "\nstart testing ..." << endl;
+        if (!startAll)
         {
-            cout << "\nstart testing motion" << endl;
-            cout << "testing drive forward ..." << endl;
-        }
-        else
-        {
-            cout << "\nstart testing ... \n"
-                    "test is manually configured!" << endl;
+
+            cout << "test is manually configured!\n"
+                    "starting the first test!" << endl;
+
         }
 
         /*PROTECTED REGION END*/
@@ -248,15 +316,21 @@ namespace alica
         return true;
     }
 
-    bool RobotTest::actuatorRobot(int duration, int power)
+    bool RobotTest::actuatorRobot(int duration, int power, bool right)
     {
         msl_actuator_msgs::BallHandleCmd bhc;
         if (move < (30 * duration) / 1000)
         {
             if (power < 100 && power > -100)
             {
-                bhc.leftMotor = power;
-                bhc.rightMotor = power;
+                if (right)
+                {
+                    bhc.leftMotor = power;
+                }
+                else
+                {
+                    bhc.rightMotor = power;
+                }
             }
             else
             {
@@ -343,14 +417,107 @@ namespace alica
         return true;
     }
 
-    void RobotTest::printGlasses()
+//	bool RobotTest::readConfig(string parm)
+//	{
+//
+//		string s = ("Robotcheck.Default." + parm);
+//		char* p = s.c_str();
+//		cout << "s = " << s << endl;
+//		return (*sc)["Robotcheck"]->get<bool>(s, NULL);
+//
+//	}
+
+    void RobotTest::readConfigParms()
     {
-        cout << "   IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n "
-                << "IIII              IIIIIII   III   IIIIIIIIIIIII   IIIIII   III   IIIIIIIIIIIII\n"
-                << "                     IIIIIII   III   IIIIIIIIII      IIIIII   III   IIIIIIII\n"
-                << "                        IIIIIII   III   IIII            IIIIII   III   III\n"
-                << "                          IIIIIIIIIIIIIII                IIIIIIIIIIIIIII\n" << endl;
+        driveForward = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.driveForward", NULL);
+        driveBack = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.driveBack", NULL);
+        rotateForward = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.rotateForward", NULL);
+        rotateBack = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.rotateBack", NULL);
+        kicker = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.kicker", NULL);
+        actuatorPushRight = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPushRight", NULL);
+        actuatorPushLeft = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPushLeft", NULL);
+        actuatorPullRight = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPullRight", NULL);
+        actuatorPullLeft = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.actuatorPullLeft", NULL);
+        lightBarrier = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.lightBarrier", NULL);
+        opticalFlow = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.opticalFlow", NULL);
+        imu = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.imu", NULL);
+        shovelSelectLow = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.shovelSelectLow", NULL);
+        shovelSelectHigh = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.shovelSelectHigh", NULL);
+        kickPower = (*sc)["Robotcheck"]->get<double>("Robotcheck.Default.kickPower", NULL);
+        startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.startAll", NULL);
+        repeat = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.repeat", NULL);
+
+        if (startAll)
+        {
+            setParms(true);
+        }
     }
 
+    void RobotTest::setParms(bool b)
+    {
+        driveForward = b;
+        driveBack = b;
+        rotateBack = b;
+        rotateForward = b;
+        kicker = b;
+        actuatorPushRight = b;
+        actuatorPushLeft = b;
+        actuatorPullRight = b;
+        actuatorPullLeft = b;
+        opticalFlow = b;
+        imu = b;
+        shovelSelectLow = b;
+        shovelSelectHigh = b;
+        lightBarrier = b;
+    }
+
+    void RobotTest::setFinParmsFalse()
+    {
+        finDriveForward = false;
+        finDriveBack = false;
+        finRotateForward = false;
+        finRotateBack = false;
+        finKicker = false;
+        finActuatorPushLeft = false;
+        finActuatorPushRight = false;
+        finActuatorPullLeft = false;
+        finActuatorPullRight = false;
+        finLightBarrier = false;
+        finOpticalFlow = false;
+        finImu = false;
+        finShovelSelectLow = false;
+        finShovelSelectHigh = false;
+    }
+
+    bool RobotTest::outPut(string s, bool t)
+    {
+        if (t)
+        {
+            cout << "testing: " << s << endl;
+        }
+        return false;
+    }
+
+    bool RobotTest::finished()
+    {
+//		controllOutput();
+        return (finDriveForward == driveForward && finDriveBack == driveBack && finRotateForward == rotateForward
+                && finRotateBack == rotateBack && finKicker == kicker && finActuatorPushLeft == actuatorPushLeft
+                && finActuatorPushRight == actuatorPushRight && finActuatorPullLeft == actuatorPullLeft
+                && finActuatorPullRight == actuatorPullRight && finLightBarrier == lightBarrier
+                && finOpticalFlow == opticalFlow && finImu == imu && finShovelSelectLow == shovelSelectLow
+                && finShovelSelectHigh == shovelSelectHigh);
+    }
+
+    void RobotTest::controllOutput()
+    {
+        cout << driveForward << driveBack << rotateForward << rotateBack << actuatorPushLeft << actuatorPushRight
+                << actuatorPullLeft << actuatorPullRight << kicker << lightBarrier << opticalFlow << imu
+                << shovelSelectLow << shovelSelectHigh << " | " << finDriveForward << finDriveBack << finRotateForward
+                << finRotateBack << finActuatorPushLeft << finActuatorPushRight << finActuatorPullLeft
+                << finActuatorPullRight << finLightBarrier << finOpticalFlow << finImu << finShovelSelectLow
+                << finShovelSelectHigh << finKicker << endl;
+
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

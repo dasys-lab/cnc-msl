@@ -28,18 +28,25 @@ namespace alica
         /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
-
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
         }
+        shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
+
+        if (receiver == nullptr)
+        {
+            receiver = getHigherEntryPoint(planName, teamMateTaskName);
+        }
+
 
         MotionControl mc;
         if (egoBallPos->length() > 900)
         {
+        	// Drive close to the ball, until dist < 900
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            cout << "SAAG: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
         }
@@ -52,8 +59,11 @@ namespace alica
 
         if (egoBallPos->length() > 450)
         {
+        	// Drive closer to the ball, but don't rotate
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
+            cout << "SAAG: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
         }
@@ -67,46 +77,32 @@ namespace alica
         {
             auto robots = robotsInEntryPointOfHigherPlan(receiver);
 
-            for (int rob : *robots)
+            if (robots != nullptr && robots->size() > 0)
             {
-                matePos = wm->robots.teammates.getTeamMatePosition(rob);
-                break;
+                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0));
             }
             if (matePos != nullptr)
             {
-                egoMatePos = make_shared < geometry::CNPoint2D > (matePos->x, matePos->y);
-                egoMatePos = egoMatePos->alloToEgo(*ownPos);
-                oldMatePos = matePos;
+                egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
+                oldMatePos = egoMatePos->clone();
             }
             else if (oldMatePos != nullptr)
             {
-                egoMatePos = oldMatePos->getPoint();
+                egoMatePos = oldMatePos->clone();
             }
         }
 
-        // if we dont have a receiver pass towards our own goal line,
-        //because no enemy will wait on that side of the standard and directly get the ball
         if (egoMatePos == nullptr)
         {
-            shared_ptr < geometry::CNPoint2D > pointTowardsUs = nullptr;
-            if (alloBall->x > -msl::MSLFootballField::FieldLength / 3)
-            {
-                pointTowardsUs = make_shared < geometry::CNPoint2D > (alloBall->x - 1000.0, alloBall->y);
-            }
-            else
-            {
-                pointTowardsUs = make_shared < geometry::CNPoint2D
-                        > (alloBall->x, alloBall->y + (alloBall->y - ownPos->y > 0 ? 1 : -1) * 1000);
-            }
-            egoMatePos = pointTowardsUs->alloToEgo(*ownPos);
+            egoMatePos = make_shared < geometry::CNPoint2D > (0, 0)->alloToEgo(*ownPos);
         }
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(egoMatePos->angleTo(), egoBallPos->angleTo());
+        double dangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoMatePos->angleTo());
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
-        double fac = -cross / cross;
+        double fac = -(cross > 0 ? 1 : -1);
         if (fabs(dangle) < 12.0 * M_PI / 180.0)
         {
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans * 0.66;
@@ -116,12 +112,13 @@ namespace alica
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans;
         }
 
-        double balldangle = geometry::deltaAngle(egoBallPos->angleTo(), egoBallPos->angleTo());
+        double balldangle = geometry::deltaAngle(wm->kicker.kickerAngle, egoBallPos->angleTo());
         if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
         {
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
             mc.motion.rotation = fac * rot * 1.6;
+            cout << "SAAG: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
         }
@@ -131,8 +128,9 @@ namespace alica
             if (fabs(balldangle) > 20.0 * M_PI / 180.0)
             {
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
-                mc.motion.angle = 0;
-                mc.motion.translation = 0;
+                mc.motion.angle = M_PI;
+                mc.motion.translation = 100;
+                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
                 send(mc);
                 return;
             }
@@ -140,7 +138,8 @@ namespace alica
             {
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
-                mc.motion.translation = egoBallPos->length();
+                mc.motion.translation = egoBallPos->length() * 1.5;
+                cout << "SAAG: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
                 send(mc);
                 return;
             }
@@ -149,7 +148,7 @@ namespace alica
         angleIntErr += dangle;
         mc.motion.angle = direction->angleTo();
         mc.motion.translation = direction->length();
-        mc.motion.rotation = fac * rot * (2 * fabs(dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
+        mc.motion.rotation = fac * rot * (2 * fabs(0.8*dangle + 0.1 * angleIntErr + 2 * (dangle - oldAngleErr)));
         oldAngleErr = dangle;
         if (haveBall)
         {
@@ -157,8 +156,10 @@ namespace alica
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
             if (runningTimeMS > 9000)
             {
+                mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 100.0;
+//                cout << "SAAG: haveBall" << endl;
                 this->success = true;
             }
             else if (haveBallCounter > 6
@@ -167,11 +168,14 @@ namespace alica
                                     < this->minTol
                                             + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))))
             {
+                mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
-                mc.motion.translation = 0.0;
+                mc.motion.translation = 100.0;
+//                cout << "SAAG: haveBall esle if" << endl;
                 this->success = true;
             }
         }
+        cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;
         send(mc);
         /*PROTECTED REGION END*/
     }
@@ -203,7 +207,9 @@ namespace alica
 
         receiver = getHigherEntryPoint(planName, teamMateTaskName);
         if (receiver == nullptr)
+        {
             cerr << "StdAlign: Receiver==null, because planName, teamMateTaskName does not match" << endl;
+        }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1455888574532) ENABLED START*/ //Add additional methods here

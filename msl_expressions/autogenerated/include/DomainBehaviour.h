@@ -26,6 +26,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_actuator_msgs::KickControl& kc);
 		void send(msl_actuator_msgs::ShovelSelectCmd& ssc);
 		void send(msl_helper_msgs::PassMsg& pm);
+		void send(msl_helper_msgs::PassMsg& pm, int senderID);
 		void send(msl_helper_msgs::WatchBallMsg& wb);
 		void send(msl_helper_msgs::DebugMsg& dbm);
 		msl::MSLWorldModel* wm;

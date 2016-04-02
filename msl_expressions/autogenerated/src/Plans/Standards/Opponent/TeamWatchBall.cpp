@@ -51,10 +51,10 @@ namespace alica
         if (ballPos != nullptr)
         {
             auto b1 = wm->ball.getVisionBallPosition(0);
-            if (b1 != nullptr)
+            if (b1 != nullptr && b1->length() < 6300)
                 posV = b1->clone();
             auto b2 = wm->ball.getVisionBallPosition(1);
-            if (posV == nullptr && b2 != nullptr)
+            if (posV == nullptr && b2 != nullptr && b2->length() < 6300)
             {
                 posV = b2->clone();
             }
@@ -63,12 +63,17 @@ namespace alica
                 posV = posV + b2->clone();
                 posV = posV / 2.0;
             }
+
             if (wm->ball.getVisionBallPositionAndCertaincy()->second < 0.5)
                 posV = nullptr;
             if (ballPos != nullptr && ballPos->length() > 4000)
                 posV = nullptr;
             if (posV != nullptr)
                 posV = posV - ballPos;
+        }
+        else
+        {
+            this->initialiseParameters();
         }
         if ((posV != nullptr && posV->length() > this->moveDistance))
         {
@@ -79,7 +84,8 @@ namespace alica
             ballMovedOccurrences = 0;
         }
         //if((WM.EgoBallPosition.Distance() < 4000 &&WorldHelper.BallMoved(WM)) || (ballMovedOccurrences >= maxBallMovedOccurrences))
-        if (wm->ball.ballMovedSiginficantly() || (ballMovedOccurrences >= maxBallMovedOccurrences))
+        if ((egoBall->length() < 6000 && wm->ball.ballMovedSiginficantly())
+                || (ballMovedOccurrences >= maxBallMovedOccurrences))
         {
             //send messages to other whiteboards
             msl_helper_msgs::WatchBallMsg msg;
@@ -101,14 +107,14 @@ namespace alica
         ballPos = nullptr;
         ballMovedOccurrences = 0;
         auto b1 = wm->ball.getVisionBallPosition(0);
-        if (b1 != nullptr)
+        if (b1 != nullptr && b1->length() < 6300)
             ballPos = b1->clone();
         auto b2 = wm->ball.getVisionBallPosition(1);
-        if (ballPos == nullptr && b2 != nullptr)
+        if (ballPos == nullptr && b2 != nullptr && b2->length() < 6300)
         {
             ballPos = b2->clone();
         }
-        else if (b2 != nullptr)
+        else if (b2 != nullptr && b2->length() < 6300)
         {
             ballPos = ballPos + b2;
             ballPos = ballPos / 2.0;

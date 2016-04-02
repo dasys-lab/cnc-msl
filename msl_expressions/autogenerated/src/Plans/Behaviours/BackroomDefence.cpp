@@ -34,23 +34,25 @@ namespace alica
         }
 
         /*if (goaliePos)
-        {
-            goalPos = goaliePos->getPoint();
-        }
-        else
-        {*/
-            // assume goalie is in the middle of the goal
+         {
+         goalPos = goaliePos->getPoint();
+         }
+         else
+         {*/
+        // assume goalie is in the middle of the goal
         goalPos = field->posOwnGoalMid();
         //}
 
+        auto goaltoball = alloBallPos - goalPos;
+        auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
+        if (defenderRange->x
+                < -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength + 100)
+        {
+            defenderRange->x = -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength
+                    + 100;
+        }
 
-       auto goaltoball = alloBallPos - goalPos;
-       auto defenderRange = goalPos+(goaltoball->normalize())*min(4300.0,goaltoball->length()-1750.0);
-       if(defenderRange->x < -(msl::MSLFootballField::FieldLength/2)+msl::MSLFootballField::PenaltyAreaLength+100) {
-    	   defenderRange->x =-(msl::MSLFootballField::FieldLength/2)+msl::MSLFootballField::PenaltyAreaLength+100;
-       }
-
-       /*
+        /*
          if (alloBallPos->y <= 0)
          {
 

@@ -24,7 +24,7 @@ namespace msl
 	Ball::Ball(MSLWorldModel* wm, int ringbufferLength) :
 			ballPosition(ringbufferLength), ballVelocity(ringbufferLength), ballBuf(30),
 			oppBallPossession(ringbufferLength), sharedBallPosition(ringbufferLength),
-			ballGuessPosition(ringbufferLength)
+			ballGuessPosition(ringbufferLength), ballVel3D	(ringbufferLength), ballPoint3D(ringbufferLength)
 	{
 		haveBallDistanceDynamic = 0;
 		hadBefore = false;
@@ -118,6 +118,10 @@ namespace msl
 			}
 
 			auto pos = wm->rawSensorData.getOwnPositionVision();
+			if(pos==nullptr) {
+				return nullptr;
+			}
+
 			if(lsb != nullptr && pos != nullptr) {
 				return lsb->alloToEgo(*pos);
 			}
@@ -176,7 +180,7 @@ namespace msl
 
 		for(int i = 0; i < BALLBUFSIZE; i++)
 		{
-			auto vel = this->getVisionBallVelocity();
+			auto vel = this->getVisionBallVelocity(i);
 			if(vel == nullptr)
 			{
 				ballMoved = false;
@@ -218,18 +222,40 @@ namespace msl
 		return false;
 	}
 
-	void Ball::updateBallPos(shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNVelocity2D> ballVel,
+	void Ball::updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel,
 								double certainty)
 	{
 		InfoTime time = wm->getTime();
+		shared_ptr<geometry::CNPoint2D> ball2d;
+		if(ballPos!=nullptr) {
+			ball2d = make_shared<geometry::CNPoint2D>(ballPos->x, ballPos->y);
+		}
 
 		shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<InformationElement<geometry::CNPoint2D>>(
-				ballPos, time);
+				ball2d, time);
 		ball->certainty = certainty;
 		ballPosition.add(ball);
 
+		shared_ptr<InformationElement<geometry::CNPoint3D>> ball3D = make_shared<InformationElement<geometry::CNPoint3D>>(
+				ballPos, time);
+				ball->certainty = certainty;
+				ballPoint3D.add(ball3D);
+
+
+		shared_ptr<geometry::CNVelocity2D> vel2d;
+		if(ballVel!=nullptr) {
+			vel2d = make_shared<geometry::CNVelocity2D>(ballVel->x, ballVel->y);
+		}
 		shared_ptr<InformationElement<geometry::CNVelocity2D>> ballV = make_shared<
-				InformationElement<geometry::CNVelocity2D>>(ballVel, time);
+				InformationElement<geometry::CNVelocity2D>>(vel2d, time);
+
+		shared_ptr<InformationElement<geometry::CNPoint3D>> ballVelInfo3D = make_shared<InformationElement<geometry::CNPoint3D>>(
+						ballVel, time);
+				ball->certainty = certainty;
+				ballVel3D.add(ballVelInfo3D);
+
+
+
 		ballV->certainty = certainty;
 		ballVelocity.add(ballV);
 		updateSharedBall();
@@ -237,7 +263,22 @@ namespace msl
 		updateBallPossession();
 		updateBallGuess();
 	}
-
+	shared_ptr<geometry::CNPoint3D> Ball::getBallPoint3D(int index) {
+		auto x = ballPoint3D.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+	shared_ptr<geometry::CNPoint3D> Ball::getBallVel3D(int index) {
+		auto x = ballVel3D.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
 	void Ball::updateBallGuess()
 	{
 		shared_ptr<geometry::CNPoint2D> nguess;
@@ -447,24 +488,32 @@ namespace msl
 		}
 
 		// turn ball angle by 180°, in order to get a working reference value for the HAVE_BALL_MAX_ANGLE_DELTA parameter
-		double ballAngle = ballPos->angleTo();
-		if (ballAngle < 0)
-		{
-			ballAngle += M_PI;
-		}
-		else
-		{
-			ballAngle -= M_PI;
-		}
-
-		// check angle to ball
-		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+		if (fabs(ballPos->y) > 100)
 		{
 			// if you lost the ball, further pretend that you have it for at most 2 iterations
 			hasBallIteration = max(min(--hasBallIteration, 2), 0);
 			//cout << "Ball: Angle Tolerance check failed!" << endl;
 			return;
 		}
+
+//		double ballAngle = ballPos->angleTo();
+//		if (ballAngle < 0)
+//		{
+//			ballAngle += M_PI;
+//		}
+//		else
+//		{
+//			ballAngle -= M_PI;
+//		}
+//
+//		// check angle to ball
+//		if (abs(ballAngle) > HAVE_BALL_MAX_ANGLE_DELTA)
+//		{
+//			// if you lost the ball, further pretend that you have it for at most 2 iterations
+//			hasBallIteration = max(min(--hasBallIteration, 2), 0);
+//			//cout << "Ball: Angle Tolerance check failed!" << endl;
+//			return;
+//		}
 
 		hasBallIteration = max(min(++hasBallIteration, 2), 0);
 	}
@@ -923,8 +972,8 @@ namespace msl
 			ballVelocity.y = (mv2.velocity.vy);
 			ballVelocity.z = (ze.vz);
 
-			auto pos = make_shared<geometry::CNPoint2D>(ballPoint.x, ballPoint.y);
-			auto vel = make_shared<geometry::CNVelocity2D>(ballVelocity.x, ballVelocity.y);
+			auto pos = make_shared<geometry::CNPoint3D>(ballPoint.x, ballPoint.y, ballPoint.z);
+			auto vel = make_shared<geometry::CNPoint3D>(ballVelocity.x, ballVelocity.y, ballVelocity.z);
 			this->updateBallPos(pos, vel, op.confidence);
 			//Here you can do something for the z-coordinate, e.g. create a point3d
 		}

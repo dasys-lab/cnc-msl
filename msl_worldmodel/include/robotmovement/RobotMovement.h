@@ -31,7 +31,7 @@ namespace msl
 	public:
 		virtual ~RobotMovement();
 
-		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, shared_ptr<geometry::CNPoint2D> goalMid);
+		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, double transFactor);
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
@@ -68,6 +68,11 @@ namespace msl
 		//TODO needs to be tested
 		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
+
+		static MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
+	                                                         double translation, bool alignSlow);
+		static MotionControl driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation);
+//		static MotionControl align(MotionControl bm, shared_ptr<geometry::CNPoint2D> alignPoint, double rotTol, bool slow);
 
 		static msl_actuator_msgs::MotionControl driveRandomly(int translation);
 		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);

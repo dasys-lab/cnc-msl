@@ -17,9 +17,12 @@ namespace alica
         fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
         fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-        radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);;
-        radiusToCheckOwn = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOwn", NULL);;
-        duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);;
+        radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);
+        ;
+        radiusToCheckOwn = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOwn", NULL);
+        ;
+        duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);
+        ;
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -53,19 +56,31 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
 
         // push enemy robot and try to take the ball
-        if (!wm->ball.haveBall()
-                || (wm->ball.haveBall() && wm->game.getGameState() == msl::GameState::OppBallPossession))
+//        if (!wm->ball.haveBall()
+//                || (wm->ball.haveBall() && wm->game.getGameState() == msl::GameState::OppBallPossession))
+//        {
+//            mc.motion.translation = translation;
+//            mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 1.8;
+//            mc.motion.angle = egoBallPos->angleTo();
+//
+//            bhc.leftMotor = -wheelSpeed;
+//            bhc.rightMotor = -wheelSpeed;
+//
+//            send(bhc);
+//            send(mc);
+//
+//        }
+		bhc.leftMotor = -wheelSpeed;
+		bhc.rightMotor = -wheelSpeed;
+		send(bhc);
+
+        if (wm->getTime() - entryTime < 000000)
         {
             mc.motion.translation = translation;
-            mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 1.8;
+            mc.motion.rotation = 0;
             mc.motion.angle = egoBallPos->angleTo();
 
-            bhc.leftMotor = -wheelSpeed;
-            bhc.rightMotor = -wheelSpeed;
-
-            send(bhc);
             send(mc);
-
         }
         else
         {
@@ -148,7 +163,6 @@ namespace alica
                 //move away from opponent
                 egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
 
-
             }
             else
             {
@@ -210,9 +224,9 @@ namespace alica
                     cout << "Duel: try closest field border" << endl;
 
                     shared_ptr < geometry::CNPoint2D > ballOrth1 = make_shared < geometry::CNPoint2D
-                    > (egoBallPos->y, -egoBallPos->x);
+                            > (egoBallPos->y, -egoBallPos->x);
                     shared_ptr < geometry::CNPoint2D > ballOrth2 = make_shared < geometry::CNPoint2D
-                    > (-egoBallPos->y, egoBallPos->x);
+                            > (-egoBallPos->y, egoBallPos->x);
                     ballOrth1 = ballOrth1->egoToAllo(*ownPos);
                     ballOrth2 = ballOrth2->egoToAllo(*ownPos);
 

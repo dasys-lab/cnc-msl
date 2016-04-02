@@ -36,7 +36,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
 
         MotionControl mc;
-        if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result))
+        if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
             cout << "Pos4Def: FOUND a solution!" << endl;
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
@@ -55,7 +55,8 @@ namespace alica
         }
         else
         {
-            cout << "Pos4Def: Did not find a solution!" << endl;
+
+            cout << "Pos4Def: Did not get a filled result vector!" << endl;
         }
         send(mc);
         /*PROTECTED REGION END*/

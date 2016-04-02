@@ -21,10 +21,7 @@ namespace alica
     void BlockBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863456983) ENABLED START*/ //Add additional options here
-        // TODO:
-        //		send kick message to block incoming ball
-        //		kick can only be executed if 4seconds have passed from last kick
-        //		use timestamp of messages
+        // TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
         /*PROTECTED REGION END*/
     }
     void BlockBall::initialiseParameters()

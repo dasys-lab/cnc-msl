@@ -51,7 +51,7 @@ namespace alica
             if (id != -1)
             {
                 auto pos = wm->robots.teammates.getTeamMatePosition(id);
-                egoAlignPoint = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                egoAlignPoint = pos->getPoint()->alloToEgo(*ownPos);
             }
         }
         else
@@ -60,31 +60,30 @@ namespace alica
             egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         }
 
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
-                                                                                       0.075);
-        if (egoAlignPoint->angleTo() > 0.005)
-        {
-            send(mc);
-        }
-        else
-        {
-            msl_actuator_msgs::KickControl kc;
-            kc.enabled = true;
-            kc.kicker = 1;
-            kc.power = wm->kicker.getKickPowerPass(egoAlignPoint->alloToEgo(*ownPos)->length());
-            send(kc);
+        /*msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
+         0.075);*/
+        msl_actuator_msgs::MotionControl mc;
+        send(mc);
+        msl_actuator_msgs::KickControl kc;
+        kc.enabled = true;
+        kc.kicker = 1;
+        kc.power = 560;//wm->kicker.getKickPowerPass(egoAlignPoint->length());
+        send(kc);
 
-            msl_helper_msgs::PassMsg pm;
-            pm.validFor = 2000000000;
-            pm.destination.x = egoAlignPoint->x;
-            pm.destination.y = egoAlignPoint->y;
-            pm.origin.x = ownPos->x;
-            pm.origin.y = ownPos->y;
-            pm.receiverID = id;
-            send(pm);
+        msl_helper_msgs::PassMsg pm;
+        pm.validFor = 2000000000;
+        auto dest = make_shared < geometry::CNPoint2D > (-1, 0);
+        dest = dest * egoAlignPoint->length();
+        dest = dest->egoToAllo(*ownPos);
 
-            this->success = true;
-        }
+        pm.destination.x = dest->x;
+        pm.destination.y = dest->y;
+        pm.origin.x = ownPos->x;
+        pm.origin.y = ownPos->y;
+        pm.receiverID = id;
+        send(pm);
+
+        this->success = true;
 
         /*PROTECTED REGION END*/
     }

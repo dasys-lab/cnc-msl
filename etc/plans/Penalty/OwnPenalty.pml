@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1431525185678" name="OwnPenalty" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Penalty" priority="0.0" minCardinality="1" maxCardinality="2147483647">
   <states id="1431525245109" name="DriveToMiddle" comment="" entryPoint="1431525245110">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1431527260342</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DriveToPenaltyStart.beh#1459609537461</plans>
     <outTransitions>#1433338525417</outTransitions>
   </states>
   <states id="1431526626723" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1433337664670</inTransitions>
     <inTransitions>#1433338528647</inTransitions>
     <outTransitions>#1431526790723</outTransitions>
   </states>
   <states id="1431526769660" name="AlignAndShoot" comment="have ball">
     <plans xsi:type="alica:BehaviourConfiguration">PenaltyAlignAndShoot.beh#1431531542052</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1431526790723</inTransitions>
     <outTransitions>#1432744248119</outTransitions>
     <outTransitions>#1433337664670</outTransitions>
@@ -24,6 +27,7 @@
   </states>
   <states id="1433338496106" name="WaitForStart" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1433338525417</inTransitions>
     <outTransitions>#1433338528647</outTransitions>
   </states>

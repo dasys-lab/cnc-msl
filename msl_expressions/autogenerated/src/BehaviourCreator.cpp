@@ -13,7 +13,11 @@ using namespace std;
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
+#include  "Plans/Penalty/DriveToPenaltyStart.h"
+
 #include  "Plans/GenericBehaviours/Parking.h"
+
+#include  "Plans/Standards/Own/Corner/BouncePassShoot.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
@@ -33,6 +37,8 @@ using namespace std;
 
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
+
 #include  "Plans/GenericStandards/StandardShieldBall.h"
 
 #include  "Plans/Attack/ProtectBall.h"
@@ -47,6 +53,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
@@ -54,6 +62,8 @@ using namespace std;
 #include  "Plans/Behaviours/PositionReceiver.h"
 
 #include  "Plans/Behaviours/Pos2Defenders.h"
+
+#include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
@@ -105,7 +115,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
+#include  "Plans/Behaviours/GoalieExtension.h"
+
 #include  "Plans/Attack/OneEighty.h"
+
+#include  "Plans/Behaviours/DefendGoal.h"
 
 #include  "Plans/Behaviours/MoveToPointDynamic.h"
 
@@ -116,6 +130,8 @@ using namespace std;
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/Behaviours/CalcCalib.h"
+
+#include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/Defence/ReleaseMid.h"
 
@@ -162,6 +178,8 @@ namespace alica
 
             case 1455888617961:
 
+            case 1459456566595:
+
                 return make_shared<StandardAlignAndGrab>();
                 break;
 
@@ -180,9 +198,19 @@ namespace alica
                 return make_shared<PenaltyAlignAndShoot>();
                 break;
 
+            case 1459609537461:
+
+                return make_shared<DriveToPenaltyStart>();
+                break;
+
             case 1429111645834:
 
                 return make_shared<Parking>();
+                break;
+
+            case 1459357188003:
+
+                return make_shared<BouncePassShoot>();
                 break;
 
             case 1417620583364:
@@ -242,6 +270,13 @@ namespace alica
                 return make_shared<AdvancdeSimplePass>();
                 break;
 
+            case 1459354990329:
+
+            case 1459357015987:
+
+                return make_shared<BounceShotAlignPasser>();
+                break;
+
             case 1455888715611:
 
                 return make_shared<StandardShieldBall>();
@@ -279,6 +314,13 @@ namespace alica
                 return make_shared<SpinSlowly>();
                 break;
 
+            case 1459355025721:
+
+            case 1459356753335:
+
+                return make_shared<BounceShotAlignWall>();
+                break;
+
             case 1436269080263:
 
             case 1441108023281:
@@ -299,6 +341,11 @@ namespace alica
             case 1444835591397:
 
                 return make_shared<Pos2Defenders>();
+                break;
+
+            case 1459357089325:
+
+                return make_shared<BouncePassFinishAlign>();
                 break;
 
             case 1457532300654:
@@ -434,9 +481,19 @@ namespace alica
                 return make_shared<KickOffPassDefault>();
                 break;
 
+            case 1459249287791:
+
+                return make_shared<GoalieExtension>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
+                break;
+
+            case 1459249336699:
+
+                return make_shared<DefendGoal>();
                 break;
 
             case 1456997097907:
@@ -470,6 +527,13 @@ namespace alica
             case 1446036391317:
 
                 return make_shared<CalcCalib>();
+                break;
+
+            case 1459355071258:
+
+            case 1459356685875:
+
+                return make_shared<StandardDefendPos>();
                 break;
 
             case 1458033497042:
