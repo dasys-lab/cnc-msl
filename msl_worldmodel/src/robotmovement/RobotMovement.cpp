@@ -380,9 +380,19 @@ namespace msl
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
+		MSLFootballField* field = MSLFootballField::getInstance();
 		shared_ptr<geometry::CNPosition> me = wm->rawSensorData.getOwnPositionVision();
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		auto egoTarget = alloTarget->alloToEgo(*me);
+
+		if (alloTarget->y > field->posLeftOwnGoalPost()->y - 500)
+		{
+			egoTarget->y = field->posLeftOwnGoalPost()->y - 500;
+		}
+		else if(alloTarget->y < field->posRightOwnGoalPost()->y + 500)
+		{
+			egoTarget->y = field->posRightOwnGoalPost()->y + 500;
+		}
 
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloAlignPoint->alloToEgo(*me)->rotate(M_PI)->angleTo() * fastRotation;
@@ -392,26 +402,16 @@ namespace msl
 			cout << "[RobotMoveMent] Ball in opp side, goalie moves with half translation" << endl;
 			transFactor = transFactor / 2;
 		}
+
 		if (egoTarget->length() > snapDistance)
 		{
-			if (egoTarget->length() < 300)
-			{
-				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y) * (2.0 / 3.0 * transFactor));
-			}
-			else if (egoTarget->length() < 200)
-			{
-				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y));
-			}
-			else
-			{
-				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y) * transFactor);
-			}
+			mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y) * transFactor);
 			cout << "[RobotMovement] TRANSLATION: " << mc.motion.translation << endl;
 		}
 		else
 		{
 			mc.motion.translation = 0;
-			cout << "[RobotMovement] arrived!" << endl;
+			cout << "[RobotMovement] arrived at target!" << endl;
 		}
 
 		cout << "[RobotMovement] TARGET_Y: " << abs(egoTarget->y) << endl;

@@ -36,9 +36,9 @@ namespace alica
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
-		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80,
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
-		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
+		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80,
 															field->posRightOwnGoalPost()->y + goalieSize / 2);
 		/*PROTECTED REGION END*/
 	}
@@ -96,7 +96,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString() << endl;
+		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
 		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
 		send(mc);
 	}
