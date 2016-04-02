@@ -147,6 +147,10 @@ namespace msl
 	void expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
 			shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<IPathEvaluator> eval, shared_ptr<VoronoiNet> voronoi);
 
+	bool closeOppToBallCheck(shared_ptr<VoronoiNet> voronoi, shared_ptr<geometry::CNPoint2D> currentPos,
+													shared_ptr<geometry::CNPoint2D> goal,
+													shared_ptr<geometry::CNPoint2D> obstaclePoint);
+
 	/**
 	 * checks if there is an obstacle inside the corridor
 	 * @param voronoi shared_ptr<VoronoiNet>

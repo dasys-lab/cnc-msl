@@ -23,12 +23,12 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
-        static const int SNAP_DIST = 100;
         shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLFootballField::posCenterMarker();
         shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
         int maxVariance;
         int goalieSize;
         int nrOfPositions;
+        int snapDistance;
         double transFactor;
         /*PROTECTED REGION END*/
     private:

@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Dribble/DribbleControl.h"
 
 /*PROTECTED REGION ID(inccpp1449742071382) ENABLED START*/ //Add additional includes here
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -77,8 +78,8 @@ namespace alica
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
             cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
-//	cout << "DribbleControl: speedX:\t" << speedX << endl;
-//	cout << "DribbleControl: speedY:\t" << speedY << endl;
+	cout << "DribbleControl: speedX:\t" << speedX << endl;
+	cout << "DribbleControl: speedY:\t" << speedY << endl;
 
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
@@ -93,7 +94,9 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-                speed = max(-100.0, min(100.0, handlerSpeedFactor * speedX / 100.0));
+		//0.5 is for correct rounding
+            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)+0.5));
+                //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
             }
             //schnell rueck
             else
@@ -187,10 +190,27 @@ namespace alica
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         handlerSpeedFactor = (*sys)["Actuation"]->get<double>("Dribble.SpeedFactor", NULL);
         speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+        handlerSpeedSummand = (*sys)["Actuation"]->get<double>("Dribble.SpeedSummand", NULL);
         slowTranslation = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslation", NULL);
         slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
         curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);
         orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor", NULL);
+
+
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+
+		shared_ptr<vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+		vector<double> robotSpeed(speedsSections->size());
+		vector<double> actuatorSpeed(speedsSections->size());
+		int i = 0;
+		for (string subsection : *speedsSections)
+		{
+			robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed", NULL);
+			actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
+			cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+			i++;
+		}
+		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

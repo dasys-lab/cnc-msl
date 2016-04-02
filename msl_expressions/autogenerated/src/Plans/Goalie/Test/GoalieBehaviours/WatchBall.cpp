@@ -31,7 +31,8 @@ namespace alica
 		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-		transFactor = (*this->sc)["Behaviour"]->get<int>("Goalie.TransFactor", NULL);
+		transFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.TransFactor", NULL);
+		snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
@@ -59,10 +60,11 @@ namespace alica
 		}
 
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
+		// > abs(alloGoalMid->x) + 50
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
-			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
-			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
+			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
+			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, snapDistance, transFactor);
 			send(mc);
 			return;
 		}
@@ -94,7 +96,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST, transFactor);
+		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
 		send(mc);
 	}
 
@@ -158,7 +160,7 @@ namespace alica
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		if (nPoints > 1 && variance > maxVariance)
 		{
-			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
+			//cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions->getLast(i);
@@ -167,7 +169,7 @@ namespace alica
 			}
 			if (denom < 1e-3)
 			{
-				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
+				//cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
 			_slope = nomi / denom;
@@ -177,6 +179,7 @@ namespace alica
 		}
 		else
 		{
+			// TODO: use this as soon as Goalie Vision detects Obstacles better!
 			auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;

@@ -114,6 +114,8 @@ namespace alica
 		useExt2 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt2", NULL);
 		useExt3 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt3", NULL);
 		useKicker = (*this->sc)["Behaviour"]->get<int>("Goalie.UseKicker", NULL);
+		KICKER_WAIT_TIME = 40000000000;
+		lastKickerTime = wm->getTime();
 		field = msl::MSLFootballField::getInstance();
 		ballGoalProjection = new ExperimentalRingbuffer(20);
 		ballVelocity = new ExperimentalRingbuffer(10);
@@ -140,14 +142,22 @@ namespace alica
 
 		//kick
 		msl_actuator_msgs::KickControl km;
-		if (useKicker > 0 && ballPos != nullptr && ballPos->length() < 420 && (abs(ballPos->angleTo()) - M_PI) < 0.52)
+		long currentTime = wm->getTime();
+		if (currentTime - lastKickerTime >= KICKER_WAIT_TIME)
 		{
-			km.enabled = true;
-			km.kicker = 1;
-			km.power = 100;
-			send(km);
-//			Node.MainNode.RosInfo("Kick it");
-			cout << "[GoalieExtension] KICK!" << endl;
+			//cout << "[GoalieExtension] can kick..." << endl;
+			if (useKicker > 0 && ballPos != nullptr && ballPos->length() < 420
+					&& (abs(ballPos->angleTo()) - M_PI) < 0.52)
+			{
+
+				km.enabled = true;
+				km.kicker = 1;
+				km.power = 100;
+				send(km);
+				lastKickerTime = wm->getTime();
+				//			Node.MainNode.RosInfo("Kick it");
+				cout << "[GoalieExtension] KICK!" << endl;
+			}
 		}
 		if (wm->rawSensorData.getLastMotionCommand() == nullptr)
 			return;
@@ -257,15 +267,17 @@ namespace alica
 						{
 							if (useExt3 > 0 && dstPointEgo->angleTo() < 0)
 							{
-								km.extension = 3;
+								// Extension1 and Extension3 is switched on goalies hardware
+								//km.extension = 3;
+								km.extension = 1;
 //								Node.MainNode.RosInfo("FIRE EXT 3");
-								cout << "[GoalieExtension] Ext3!" << endl;
+								//cout << "[GoalieExtension] Ext3!" << endl;
 							}
 							else if (useExt2 > 0)
 							{
 								km.extension = 2;
 //								Node.MainNode.RosInfo("FIRE EXT 2");
-								cout << "[GoalieExtension] Ext2!" << endl;
+								//cout << "[GoalieExtension] Ext2!" << endl;
 							}
 							if (useExt3 > 0 || useExt2 > 0)
 							{
@@ -279,11 +291,13 @@ namespace alica
 							//cout << "[GoalieExtension] abs(dstPointEgo->y - ownPos->y) < 400 | " << abs(dstPointEgo->y - ownPos->y) << " < " << 400 << endl;
 							//cout << "                  ballInAirTimestamp + 3000 > now | " << ballInAirTimestamp + 3000 << " > " << now << endl;
 
-							km.extension = 1;
+							// Extension1 and Extension3 is switched on goalies hardware
+							//km.extension = 1;
+							km.extension = 3;
 							km.extTime = 1000;
 							send(km);
 							//Node.MainNode.RosInfo("FIRE EXT 1");
-							cout << "[GoalieExtension] Ext1!" << endl;
+							//cout << "[GoalieExtension] Ext1!" << endl;
 						}
 
 					}
