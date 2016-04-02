@@ -95,6 +95,12 @@ namespace alica
 				l = abs(rotation) / M_PI * curveRotationFactor;
 			}
 
+			//ignor rotation error
+			if(fabs(rotation) < 0.04) {
+				l = 0;
+				r = 0;
+			}
+
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
             {
