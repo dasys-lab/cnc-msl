@@ -88,7 +88,7 @@ namespace alica
 		{
 			double targetY = calcGoalImpactY();
 			targetY = fitTargetY(targetY);
-			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x, targetY);
+			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80, targetY);
 			prevTarget = alloTarget;
 		}
 		else
@@ -96,7 +96,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		cout << "[WatchBall] :" << wm->ball.getAlloBallPosition()->toString() << endl;
+		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString() << endl;
 		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
 		send(mc);
 	}
@@ -223,14 +223,17 @@ namespace alica
 
 		if (targetY > alloGoalLeft->y)
 		{
+			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
 			return alloGoalLeft->y;
 		}
 		else if (targetY < alloGoalRight->y)
 		{
+			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
 			return alloGoalRight->y;
 		}
 		else
 		{
+			cout << "[WatchBall] fitTarget else: " << targetY << endl;
 			return targetY;
 		}
 	}
