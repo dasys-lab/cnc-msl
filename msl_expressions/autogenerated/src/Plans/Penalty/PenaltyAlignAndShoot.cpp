@@ -90,7 +90,7 @@ namespace alica
 
 		int counter = 0;
 
-		auto alloOpps = wm->robots.opponents.getOpponentsAlloClustered();
+		auto alloOpps = wm->obstacles.getAlloObstaclePoints();
 
 		if (alloOpps)
 		{
