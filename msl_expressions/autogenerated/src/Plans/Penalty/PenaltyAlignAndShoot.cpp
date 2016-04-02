@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Penalty/PenaltyAlignAndShoot.h"
 
 /*PROTECTED REGION ID(inccpp1431531496053) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -148,21 +149,21 @@ namespace alica
 
 		}
 		// Create Motion Command for aiming
-		MotionControl mc;
+		MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoTarget, egoBallPos,this->angleTolerance, this->angleTolerance);
 		// PD Rotation Controller
-		mc.motion.rotation = -(deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot);
-		// check rotation direction and force rotation between maxRot and minRot
-		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
-		lastRotError = deltaHoleAngle;
-		// crate the motion orthogonal to the ball
-		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
-		driveTo = driveTo * mc.motion.rotation;
-
-		// add the motion towards the ball
-		driveTo = driveTo + egoBallPos->normalize() * 10;
-		mc.motion.angle = driveTo->angleTo();
-		mc.motion.translation = min(this->maxVel, driveTo->length());
+//		mc.motion.rotation = -(deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot);
+//		// check rotation direction and force rotation between maxRot and minRot
+//		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+//				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
+//		lastRotError = deltaHoleAngle;
+//		// crate the motion orthogonal to the ball
+//		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
+//		driveTo = driveTo * mc.motion.rotation;
+//
+//		// add the motion towards the ball
+//		driveTo = driveTo + egoBallPos->normalize() * 10;
+//		mc.motion.angle = driveTo->angleTo();
+//		mc.motion.translation = min(this->maxVel, driveTo->length());
 		send(mc);
 		/*PROTECTED REGION END*/
 	}
