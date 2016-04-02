@@ -59,7 +59,8 @@ namespace alica
 		}
 
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
-		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
+		// > abs(alloGoalMid->x) + 50
+		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x))
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
 			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
@@ -158,7 +159,7 @@ namespace alica
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		if (nPoints > 1 && variance > maxVariance)
 		{
-			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
+			//cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions->getLast(i);
@@ -167,17 +168,18 @@ namespace alica
 			}
 			if (denom < 1e-3)
 			{
-				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
+				//cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			//cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
-			auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			// TODO: use this as soon as Goalie Vision detects Obstacles better!
+			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;
 			for (auto currentObs : *obstacles)
@@ -206,10 +208,10 @@ namespace alica
 				calcTargetY = _slope * alloGoalMid->x + _yInt;
 			}
 			else
-			{
-				cout << "[WatchBall] BallY Variance: " << variance << endl;
+			{*/
+				//cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
-			}
+			//}
 		}
 		return calcTargetY;
 	}
