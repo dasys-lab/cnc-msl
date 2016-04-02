@@ -73,7 +73,7 @@ namespace alica
         		if(freeTime==0) {
         			freeTime = wm->getTime();
         		}
-        		if(wm->getTime() - freeTime > 750000000) {
+        		if(wm->getTime() - freeTime > 1250000000) {
         			this->success = true;
         		}
         	} else {
