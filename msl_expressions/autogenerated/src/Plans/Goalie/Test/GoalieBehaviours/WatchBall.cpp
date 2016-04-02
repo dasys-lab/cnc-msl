@@ -60,7 +60,7 @@ namespace alica
 
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		// > abs(alloGoalMid->x) + 50
-		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x))
+		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
 			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
@@ -179,7 +179,7 @@ namespace alica
 		else
 		{
 			// TODO: use this as soon as Goalie Vision detects Obstacles better!
-			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;
 			for (auto currentObs : *obstacles)
@@ -208,10 +208,10 @@ namespace alica
 				calcTargetY = _slope * alloGoalMid->x + _yInt;
 			}
 			else
-			{*/
+			{
 				cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
-			//}
+			}
 		}
 		return calcTargetY;
 	}
