@@ -14,7 +14,6 @@
   </states>
   <states id="1431526769660" name="AlignAndShoot" comment="have ball">
     <plans xsi:type="alica:BehaviourConfiguration">PenaltyAlignAndShoot.beh#1431531542052</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1431526790723</inTransitions>
     <outTransitions>#1432744248119</outTransitions>
