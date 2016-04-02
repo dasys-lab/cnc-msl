@@ -143,10 +143,19 @@ namespace msl
 		bool shortcutBlocked = false;
 		for (int i = path->size() - 2; i >= 0; i--)
 		{
-			for (int j = 0; j < net->getObstaclePositions()->size(); j++)
+			for (auto current : *net->getAlloClusteredObsWithMe())
+			{
+				if(current->id == wm->getOwnId())
+				{
+					continue;
+				}
+				shortcutBlocked = shortcutBlocked
+						|| wm->pathPlanner.corridorCheck(net, ownPos->getPoint(), path->at(i), current->getPoint());
+			}
+			for (auto current : *net->getAdditionalObstacles())
 			{
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner.corridorCheck(net, ownPos->getPoint(), path->at(i), net->getObstaclePositions()->at(j));
+						|| wm->pathPlanner.corridorCheck(net, ownPos->getPoint(), path->at(i), current);
 			}
 			if (!shortcutBlocked)
 			{
