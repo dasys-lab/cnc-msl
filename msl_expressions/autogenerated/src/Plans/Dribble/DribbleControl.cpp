@@ -95,7 +95,7 @@ namespace alica
             else if (speedX <= -slowTranslation)
             {
             	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)));
-                //speed = max(-100.0, min(100.0, handlerSpeedFactor * speedX / 100.0));
+                //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
             }
             //schnell rueck
             else
@@ -189,6 +189,7 @@ namespace alica
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         handlerSpeedFactor = (*sys)["Actuation"]->get<double>("Dribble.SpeedFactor", NULL);
         speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+        handlerSpeedSummand = (*sys)["Actuation"]->get<double>("Dribble.SpeedSummand", NULL);
         slowTranslation = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslation", NULL);
         slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
         curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);

@@ -96,6 +96,51 @@ namespace alica
             send(mc);
             return;
         }
+        // exception for driving around opponent
+//        auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+//		vector<shared_ptr<TVec>> blockPositions;
+//		vector<shared_ptr<TVec>> blockOpponents;
+//		if (opps != nullptr)
+//		{
+//			for (auto opp : *opps)
+//			{
+//				opp = msl::MSLFootballField::mapOutOfOwnPenalty(opp, ballPose - opp);
+////				double oDist = opp->distanceTo(ballPose);
+////				if (oDist < dist)
+////				{
+////					nearestOpp = opp;
+////					oDist = dist;
+////				}
+//
+//				//add blocking position
+//				shared_ptr<geometry::CNPoint2D> blockingPos = opp + (ballPose - opp)->normalize() * 700;
+//
+//				//only add if opp is in close to midline && further away from ball than 1100 (that makes no sense in oppenent standards, because we already use apply rules)
+//				if (blockingPos->x >  msl::MSLFootballField::FieldLength / 6.0 // ignore obs more than 3 meter in oppenent half
+//						|| ballPose->distanceTo(blockingPos) < 4500 // ignore obs that are too close to the ball to be blocked
+//						)
+//				{
+//					continue;
+//				}
+//
+//				bool toClose = false;
+//				for (auto opp2 : *opps)
+//				{
+//					if (blockingPos->distanceTo(opp2) < 500)
+//					{
+//						toClose = true;
+//						break;
+//					}
+//				}
+//				if (toClose){
+//					continue;
+//				}
+//
+//				cout << "OppFreeKick-Const:" << opp->toString() << endl;
+//				blockPositions.push_back(make_shared<TVec>(initializer_list<double> {blockingPos->x, blockingPos->y}));
+//				blockOpponents.push_back(make_shared<TVec>(initializer_list<double> {opp->x, opp->y}));
+//			}
+//		}
 
         shared_ptr < geometry::CNPoint2D > predBall = ballPos;
 
@@ -209,23 +254,30 @@ namespace alica
         }
 
         shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
-        pathPlanningPoint = pp->getEgoDirection(pathPlanningPoint, eval);
+        auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval);
 
 //			if(ballPos.Distance() < 300) trans = Math.Max(trans,Math.Max(500,ballPos.Distance()*2.0));
 //
-        if (pathPlanningPoint == nullptr)
+        if (pathPlanningResult == nullptr)
         {
             mc.motion.angle = vel->angleTo();
         }
         else
         {
-            mc.motion.angle = pathPlanningPoint->angleTo();
+            mc.motion.angle = pathPlanningResult->angleTo();
         }
 //		if(fastIntercept) {
 //			mc.Motion.Translation = Math.Min(curMaxTrans,vel.Distance());
 //		}
 //		else mc.Motion.Translation = trans;
-        mc.motion.translation = min(maxVel, vel->length());
+        if (pathPlanningResult->distanceTo(pathPlanningPoint) > 10.0)
+        {
+            mc.motion.translation = min(maxVel, max(pathPlanningResult->length(), vel->length()));
+        }
+        else
+        {
+        	mc.motion.translation = min(maxVel, vel->length());
+        }
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());
         double angleGoal = msl::Kicker::kickerAngle;
@@ -240,7 +292,7 @@ namespace alica
 
         controlRot = max(-4 * M_PI, min(4 * M_PI, controlRot));
         // this is nice stuff but only when we are not approaching the opponent
-        cout << "Intercept: PredBallDist " << predBall->length() << endl;
+        //cout << "Intercept: PredBallDist " << predBall->length() << endl;
         if (predBall->length() < 700
                 && (gs == msl::GameState::OwnBallPossession || gs == msl::GameState::NobodyInBallPossession))
         {
@@ -254,6 +306,7 @@ namespace alica
         }
         mc.motion.rotation = controlRot;
         mc = msl::RobotMovement::nearGoalArea(mc);
+        cout << "Intercept: Translation " << mc.motion.translation << endl;
         send(mc);
         if (wm->ball.haveBallDribble(false))
         {
