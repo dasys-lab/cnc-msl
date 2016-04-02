@@ -385,13 +385,13 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball.getAlloBallPosition();
 		auto egoTarget = alloTarget->alloToEgo(*me);
 
-		if (alloTarget->y > field->posLeftOwnGoalPost() - 500)
+		if (alloTarget->y > field->posLeftOwnGoalPost()->y - 500)
 		{
-			egoTarget->y = field->posLeftOwnGoalPost() - 500;
+			egoTarget->y = field->posLeftOwnGoalPost()->y - 500;
 		}
-		else if(alloTarget->y < field->posRightOwnGoalPost() + 500)
+		else if(alloTarget->y < field->posRightOwnGoalPost()->y + 500)
 		{
-			egoTarget->y = field->posRightOwnGoalPost() + 500;
+			egoTarget->y = field->posRightOwnGoalPost()->y + 500;
 		}
 
 		mc.motion.angle = egoTarget->angleTo();
