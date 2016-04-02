@@ -23,6 +23,7 @@ namespace alica
         ;
         duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);
         ;
+        freeTime = 0;
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -48,10 +49,38 @@ namespace alica
                 vector<shared_ptr<geometry::CNPoint2D>>>();
         shared_ptr < geometry::CNPoint2D > closestFriendly = nullptr;
 
-        if (ownPos == nullptr || egoBallPos == nullptr)
+		if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
         }
+
+
+        //Check for Success
+		auto obs = wm->obstacles.getEgoVisionObstaclePoints();
+		if(obs != nullptr) {
+			double distance = numeric_limits<double>::max();
+			double temp;
+			for (int i = 0; i < obs->size(); i++)
+			{
+				temp = obs->at(i)->distanceTo(egoBallPos);
+				if (temp < distance && obs->at(i)->x < -300 && temp < 550)
+				{
+					distance = temp;
+				}
+			}
+        	if(distance > 800)// && isTimeOut(1500000000, rp->getStateStartTime(), rp);
+        	{
+        		if(freeTime==0) {
+        			freeTime = wm->getTime();
+        		}
+        		if(wm->getTime() - freeTime > 750000000) {
+        			this->success = true;
+        		}
+        	} else {
+        		freeTime = 0;
+        	}
+		}
+		//end successcheck
 
         shared_ptr < geometry::CNPoint2D > ownPoint = make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y);
 
@@ -189,8 +218,8 @@ namespace alica
 
                 if (counter <= 0)
                 {
-                    cout << "Duel: Success, far away from opponent" << endl;
-                    this->success = true;
+                    //cout << "Duel: Success, far away from opponent" << endl;
+                    //this->success = true;
                     return;
                 }
 
@@ -269,6 +298,7 @@ namespace alica
     void Duel::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1450178699265) ENABLED START*/ //Add additional options here
+    	freeTime = 0;
         direction = 0;
         friendlyBlocked = false;
         entryTime = wm->getTime();
