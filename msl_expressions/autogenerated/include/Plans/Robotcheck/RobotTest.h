@@ -55,7 +55,9 @@ namespace alica
         bool finShovelSelectLow;
         bool finShovelSelectHigh;
 
+        bool repeat;
         bool out;
+
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456756113767) ENABLED START*/ //Add additional private methods here

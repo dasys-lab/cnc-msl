@@ -63,6 +63,7 @@ catkin_package(
    src/Monitoring.cpp
    src/Rules.cpp
    src/Prediction.cpp
+   src/CubicSplineInterpolation/Spline.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp
