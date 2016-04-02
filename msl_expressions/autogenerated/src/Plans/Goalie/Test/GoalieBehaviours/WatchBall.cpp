@@ -62,7 +62,7 @@ namespace alica
 		// > abs(alloGoalMid->x) + 50
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x))
 		{
-			cout << "[WatchBall]: Goalie can't see ball! Moving to GoalMid" << endl;
+			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
 			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
 			send(mc);
 			return;
@@ -174,7 +174,7 @@ namespace alica
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			//cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
@@ -209,7 +209,7 @@ namespace alica
 			}
 			else
 			{*/
-				//cout << "[WatchBall] BallY Variance: " << variance << endl;
+				cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
 			//}
 		}
