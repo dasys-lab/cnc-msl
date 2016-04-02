@@ -94,7 +94,8 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)));
+		//0.5 is for correct rounding
+            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)+0.5));
                 //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
             }
             //schnell rueck
