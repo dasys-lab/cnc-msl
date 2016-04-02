@@ -132,12 +132,13 @@ namespace alica
 		}
 		// calculate angle difference between robot and target and ball and target
 		double egoTargetAngle = egoTarget->angleTo();
-		double deltaHoleAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+		double deltaHoleAngle = geometry::deltaAngle(wm->kicker.kickerAngle, egoTargetAngle);
 		// calculate passed time
 		unsigned long timePassed = wm->getTime() - wm->game.getTimeSinceStart();
 		// if too much time has passed or the robot is aligned, we shoot
 		if (timePassed >= waitBeforeBlindKick || fabs(deltaHoleAngle) < this->angleTolerance)
 		{
+			cout << "PenaltyBeh: Success!" << endl;
 			KickControl kc;
 			kc.enabled = true;
 			kc.kicker = egoBallPos->angleTo();
