@@ -94,7 +94,8 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)));
+		//0.5 is for correct rounding
+            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)+0.5));
                 //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
             }
             //schnell rueck
@@ -206,6 +207,7 @@ namespace alica
 		{
 			robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed", NULL);
 			actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
+			cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
 			i++;
 		}
 		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, true);

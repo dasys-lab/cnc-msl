@@ -323,7 +323,7 @@ namespace alica
         {
             if (power < 100 && power > -100)
             {
-                if (left)
+                if (right)
                 {
                     bhc.leftMotor = power;
                 }
