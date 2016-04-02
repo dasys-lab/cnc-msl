@@ -7,9 +7,10 @@ if [[ $1 == "--help" ]]; then
 	echo "Usage: allrobots.sh [option]"
 	echo ""
 	echo "Options:"
-	echo "--help	prints this text"
-	echo "--clear	kills all screens"
-	echo "--setup	installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
+	echo "--help       prints this text"
+	echo "--pullmake  invokes 'mr up' and 'catkin_make' on all remote shells"
+	echo "--clear     kills all screens"
+	echo "--setup     installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
 	exit
 fi
 
@@ -72,6 +73,12 @@ do
 	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" != \"$robot\" ]]; then ssh cn@$robot; fi^M"
 	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" == \"$HOSTNAME\" ]]; then exit; fi^M"
 	screen -S "$robot" -X stuff "clear^M"
+
+	if [[ $1 == "--pullmake" ]]; then
+		screen -S "$robot" -X stuff "mr up^M"
+		screen -S "$robot" -X stuff "cd cnws^M"
+		screen -S "$robot" -X stuff "catkin_make^M"
+	fi
 done
 
 # command input loop
