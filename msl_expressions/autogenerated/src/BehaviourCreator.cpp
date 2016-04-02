@@ -13,6 +13,8 @@ using namespace std;
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
+#include  "Plans/Penalty/DriveToPenaltyStart.h"
+
 #include  "Plans/GenericBehaviours/Parking.h"
 
 #include  "Plans/Standards/Own/Corner/BouncePassShoot.h"
@@ -194,6 +196,11 @@ namespace alica
             case 1431531542052:
 
                 return make_shared<PenaltyAlignAndShoot>();
+                break;
+
+            case 1459609537461:
+
+                return make_shared<DriveToPenaltyStart>();
                 break;
 
             case 1429111645834:
