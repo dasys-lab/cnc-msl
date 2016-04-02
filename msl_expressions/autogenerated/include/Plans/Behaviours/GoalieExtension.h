@@ -47,6 +47,8 @@ namespace alica
 	protected:
 		virtual void initialiseParameters();
 		/*PROTECTED REGION ID(pro1459249216387) ENABLED START*/ //Add additional protected methods here
+		long KICKER_WAIT_TIME;
+		long lastKickerTime;
 		int useExt1, useExt2, useExt3, useKicker;
 		msl_actuator_msgs::KickControl km;
 		msl::MSLFootballField* field;
