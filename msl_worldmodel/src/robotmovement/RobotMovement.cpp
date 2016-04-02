@@ -389,7 +389,7 @@ namespace msl
 
 		if (alloBall != nullptr && alloBall->x > 500)
 		{
-			//cout << "[RobotMoveMent] Ball in opp side, goalie moves with half translation" << endl;
+			cout << "[RobotMoveMent] Ball in opp side, goalie moves with half translation" << endl;
 			transFactor = transFactor / 2;
 		}
 		if (egoTarget->length() > snapDistance)
