@@ -14,19 +14,11 @@ namespace alica
 		/*PROTECTED REGION ID(con1431531496053) ENABLED START*/ //Add additional options here
 		field = msl::MSLFootballField::getInstance();
 		maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
-
 		// Aiming/Rotation Stuff
-		lastRotError = 0;
-		//timesOnTargetThreshold = (*this->sc)["Show"]->get<int>("TwoHoledWall.TimesOnTarget", NULL);
-		pRot = (*this->sc)["Penalty"]->get<double>("Penalty.RotationP", NULL);
-		dRot = (*this->sc)["Penalty"]->get<double>("Penalty.RotationD", NULL);
-		minRot = (*this->sc)["Penalty"]->get<double>("Penalty.MinRotation", NULL);
-		maxRot = (*this->sc)["Penalty"]->get<double>("Penalty.MaxRotation", NULL);
 		angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
-		ballAngleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.BallAngleTolerance", NULL);
 		ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
 		goalLineLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.GoalWidth", NULL);
-		robotDiameter = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2;
+		robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
 		wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
 		aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
 		kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
@@ -68,9 +60,9 @@ namespace alica
 
 		// Create points for rectangle check
 		shared_ptr<geometry::CNPoint2D> frontLeft = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 - robotDiameter / 2, goalLineLength / 2);
+				field->FieldLength / 2 - robotRadius, goalLineLength / 2);
 		shared_ptr<geometry::CNPoint2D> frontRight = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 - robotDiameter / 2, -goalLineLength / 2);
+				field->FieldLength / 2 - robotRadius, -goalLineLength / 2);
 
 		// Create back point according to last alignment
 		shared_ptr<geometry::CNPoint2D> back = nullptr;
@@ -78,24 +70,25 @@ namespace alica
 		// Hysteresis
 		if (lastAlignment == 0) // not aligned before (default)
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotDiameter / 2, 0);
+			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, 0);
 		}
 		else if (lastAlignment == 1) // last alignment left
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotDiameter / 2, robotDiameter / 2);
+			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, robotRadius);
 		}
 		else // last alignment right
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotDiameter / 2, -robotDiameter / 2);
+			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, -robotRadius);
 		}
 
 		int counter = 0;
 
-		auto alloOpps = wm->obstacles.getAlloObstaclePoints();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > alloOpps = nullptr;
 
-		if (alloOpps)
+		for (int i = 0; i < wm->getRingBufferLength(); i++)
 		{
-			for (int i = 0; i < wm->getRingBufferLength(); i++)
+			alloOpps = wm->obstacles.getAlloObstaclePoints(i);
+			if (alloOpps != nullptr)
 			{
 				// weighted analysis of past and current obstacles
 				for (auto alloObs : *alloOpps)
@@ -112,11 +105,12 @@ namespace alica
 					}
 				}
 			}
+			else
+			{
+				cout << "PenaltyBeh: no obstacles!" << endl;
+			}
 		}
-		else
-		{
-			cout << "PenaltyBeh: no obstacles!" << endl;
-		}
+
 		// if counter <= 0, there are obstacles on the right side, so we aim left
 		if (counter <= 0)
 		{
@@ -149,27 +143,15 @@ namespace alica
 
 		}
 		// Create Motion Command for aiming
-		MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoTarget, egoBallPos,this->angleTolerance, this->angleTolerance);
-		// PD Rotation Controller
-//		mc.motion.rotation = -(deltaHoleAngle * pRot + (deltaHoleAngle - lastRotError) * dRot);
-//		// check rotation direction and force rotation between maxRot and minRot
-//		mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
-//				* min(this->maxRot, max(fabs(mc.motion.rotation), this->minRot));
-//		lastRotError = deltaHoleAngle;
-//		// crate the motion orthogonal to the ball
-//		shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
-//		driveTo = driveTo * mc.motion.rotation;
-//
-//		// add the motion towards the ball
-//		driveTo = driveTo + egoBallPos->normalize() * 10;
-//		mc.motion.angle = driveTo->angleTo();
-//		mc.motion.translation = min(this->maxVel, driveTo->length());
+		MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance,
+																	this->angleTolerance);
 		send(mc);
 		/*PROTECTED REGION END*/
 	}
 	void PenaltyAlignAndShoot::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1431531496053) ENABLED START*/ //Add additional options here
+		lastAlignment = 0;
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1431531496053) ENABLED START*/ //Add additional methods here
