@@ -523,7 +523,7 @@ namespace msl
 			sendCorridorCheck(points);
 		}
 
-		cout << "----------------------" << endl;
+//		cout << "----------------------" << endl;
 		return obstaclePoint != nullptr && (geometry::distancePointToLine(p2, p4, obstaclePoint) < this->robotRadius
 				&& geometry::distancePointToLine(p4, p3, obstaclePoint) < this->robotRadius
 				&& geometry::distancePointToLine(p3, p1, obstaclePoint) < this->robotRadius
