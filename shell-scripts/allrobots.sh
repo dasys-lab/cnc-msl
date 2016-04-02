@@ -3,13 +3,13 @@ robots=(mops myo nase savvy hairy)
 
 # help?
 if [[ $1 == "--help" ]]; then
-	echo "Launches separate terminals for each robot, connects via SSH and lets you execute commands simultanously"
+	echo "Launches separate terminals for each robot, connects via SSH and lets you execute commands simultanously."
 	echo "Usage: allrobots.sh [option]"
 	echo ""
 	echo "Options:"
-	echo "--help	Prints this text"
-	echo "--clean	Kills all screens"
-	echo "--setup	Installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
+	echo "--help	prints this text"
+	echo "--clear	kills all screens"
+	echo "--setup	installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
 	exit
 fi
 
@@ -43,7 +43,7 @@ if [[ $1 == "--setup" ]]; then
 	exit
 fi
 
-if [[ $1 == "--clean" ]]; then
+if [[ $1 == "--clear" ]]; then
 	killall screen
 	exit
 fi
@@ -68,13 +68,15 @@ do
 		:
 	done
 
-	screen -S "$robot" -X stuff "# connecting to $robot...^M"
-	screen -S "$robot" -X stuff "ssh cn@$robot^M"
+	screen -S "$robot" -X stuff "##########################^M# connecting to $robot...^M##########################^M^M"
+	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" != \"$robot\" ]]; then ssh cn@$robot; fi^M"
+	screen -S "$robot" -X stuff "if [[ \"\\\$HOSTNAME\" == \"$HOSTNAME\" ]]; then exit; fi^M"
+	screen -S "$robot" -X stuff "clear^M"
 done
 
 # command input loop
 echo ""
-echo "Every command you enter will be executed on ALL robots. "
+echo "Every command you enter will be executed on ALL remote shells. "
 echo "Type exit to close all terminals."
 cmd="hello"
 while [ "$cmd" != "exit" ]
@@ -88,8 +90,5 @@ done
 
 # exit screens
 if [[ "$cmd" == "exit" ]]; then
-	for robot in "${onlineRobots[@]}"
-	do
-        	screen -S "$robot" -X stuff "exit^M;exit^M"
-	done
+	killall screen
 fi
