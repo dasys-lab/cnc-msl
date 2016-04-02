@@ -31,7 +31,8 @@ namespace alica
 		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-		transFactor = (*this->sc)["Behaviour"]->get<int>("Goalie.TransFactor", NULL);
+		transFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.TransFactor", NULL);
+		snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
@@ -63,7 +64,7 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, SNAP_DIST, transFactor);
+			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, snapDistance, transFactor);
 			send(mc);
 			return;
 		}
@@ -95,7 +96,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, SNAP_DIST, transFactor);
+		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
 		send(mc);
 	}
 
