@@ -231,13 +231,16 @@ namespace alica
 
         if (finished())
         {
-            cout << "finished testing" << endl;
-//		cout
-//				<< "This robot check behavior was presented by very fast and often working Michael Gottesleben and Lukas Will!"
-//				<< endl;
-//			cout << "Have fun bitches i'm out!\n" << endl;
-//		printGlasses();
-            this->success = true;
+        	if (repeat)
+        	{
+        		cout << "restart test..." << endl;
+        		initialiseParameters();
+        	}else
+        	{
+        		cout << "finished testing" << endl;
+        		this->success = true;
+        	}
+
         }
         /*PROTECTED REGION END*/
     }
@@ -441,7 +444,8 @@ namespace alica
         shovelSelectLow = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.shovelSelectLow", NULL);
         shovelSelectHigh = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Default.shovelSelectHigh", NULL);
         kickPower = (*sc)["Robotcheck"]->get<double>("Robotcheck.Default.kickPower", NULL);
-        startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.All.all", NULL);
+        startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.startAll", NULL);
+        repeat = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.repeat", NULL);
 
         if (startAll)
         {

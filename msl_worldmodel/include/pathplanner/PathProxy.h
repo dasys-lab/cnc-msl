@@ -89,6 +89,8 @@ namespace msl
 		supplementary::SystemConfig* sc;
 		bool pathPlannerDebug;
 
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> applyShortcut(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path, shared_ptr<geometry::CNPosition> ownPos, shared_ptr<VoronoiNet> net);
+
 	};
 
 } /* namespace msl */
