@@ -78,8 +78,8 @@ namespace alica
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
             cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
-//	cout << "DribbleControl: speedX:\t" << speedX << endl;
-//	cout << "DribbleControl: speedY:\t" << speedY << endl;
+	cout << "DribbleControl: speedX:\t" << speedX << endl;
+	cout << "DribbleControl: speedY:\t" << speedY << endl;
 
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
@@ -209,7 +209,7 @@ namespace alica
 			actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
 			i++;
 		}
-		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, true);
+		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */
