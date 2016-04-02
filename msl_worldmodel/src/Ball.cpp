@@ -118,6 +118,10 @@ namespace msl
 			}
 
 			auto pos = wm->rawSensorData.getOwnPositionVision();
+			if(pos==nullptr) {
+				return nullptr;
+			}
+
 			if(lsb != nullptr && pos != nullptr) {
 				return lsb->alloToEgo(*pos);
 			}

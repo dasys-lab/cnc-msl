@@ -31,7 +31,7 @@ namespace alica
             return;
         }
 
-        mc = msl::RobotMovement::interceptCarefully(egoBallPos, egoBallPos, 100);
+        mc = msl::RobotMovement::interceptCarefully(egoBallPos, egoBallPos, 100, nullptr);
 
         send(mc);
         /*PROTECTED REGION END*/
