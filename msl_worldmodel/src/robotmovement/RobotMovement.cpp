@@ -394,14 +394,27 @@ namespace msl
 		}
 		if (egoTarget->length() > snapDistance)
 		{
-			//cout << "TRANSLATION: " << 3 * abs(egoTarget->y);
-			mc.motion.translation = std::min(alignMaxVel, transFactor * abs(egoTarget->y));
+			if (egoTarget->length() < 300)
+			{
+				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y) * (2.0 / 3.0 * transFactor));
+			}
+			else if (egoTarget->length() < 200)
+			{
+				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y));
+			}
+			else
+			{
+				mc.motion.translation = std::min(alignMaxVel, abs(egoTarget->y) * transFactor);
+			}
+			cout << "[RobotMovement] TRANSLATION: " << mc.motion.translation << endl;
 		}
 		else
 		{
 			mc.motion.translation = 0;
-			//cout << "arrived" << endl;
+			cout << "[RobotMovement] arrived!" << endl;
 		}
+
+		cout << "[RobotMovement] TARGET_Y: " << abs(egoTarget->y) << endl;
 		return mc;
 	}
 
