@@ -27,6 +27,7 @@ namespace alica
         int direction;
         int itcounter;
         unsigned long entryTime;
+        signed long long freeTime;
         unsigned long duelMaxTime;
         bool friendlyBlocked;
         vector<bool> hadClosestOpp;
