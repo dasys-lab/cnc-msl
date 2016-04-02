@@ -88,7 +88,7 @@ namespace alica
 		{
 			double targetY = calcGoalImpactY();
 			targetY = fitTargetY(targetY);
-			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x, targetY);
+			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80, targetY);
 			prevTarget = alloTarget;
 		}
 		else
@@ -96,6 +96,7 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
+		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString() << endl;
 		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
 		send(mc);
 	}
@@ -175,12 +176,12 @@ namespace alica
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			//cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
 			// TODO: use this as soon as Goalie Vision detects Obstacles better!
-			auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;
 			for (auto currentObs : *obstacles)
@@ -202,17 +203,17 @@ namespace alica
 
 			if (closestObstacle != nullptr)
 			{
-				cout << "[WatchBall] Obstacle Variance: " << variance << endl;
+				//cout << "[WatchBall] Obstacle Variance: " << variance << endl;
 				_slope = (closestObstacle->y - ballPositions->getLast(0)->y)
 						/ (closestObstacle->x - ballPositions->getLast(0)->x);
 				_yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
 				calcTargetY = _slope * alloGoalMid->x + _yInt;
 			}
 			else
-			{
-				cout << "[WatchBall] BallY Variance: " << variance << endl;
+			{*/
+				//cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
-			}
+			//}
 		}
 		return calcTargetY;
 	}
@@ -222,14 +223,17 @@ namespace alica
 
 		if (targetY > alloGoalLeft->y)
 		{
+			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
 			return alloGoalLeft->y;
 		}
 		else if (targetY < alloGoalRight->y)
 		{
+			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
 			return alloGoalRight->y;
 		}
 		else
 		{
+			cout << "[WatchBall] fitTarget else: " << targetY << endl;
 			return targetY;
 		}
 	}

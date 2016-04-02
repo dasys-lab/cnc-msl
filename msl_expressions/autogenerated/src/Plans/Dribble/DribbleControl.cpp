@@ -78,8 +78,22 @@ namespace alica
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
             cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
-	cout << "DribbleControl: speedX:\t" << speedX << endl;
-	cout << "DribbleControl: speedY:\t" << speedY << endl;
+            cout << "DribbleControl: speedX:\t" << speedX << endl;
+            cout << "DribbleControl: speedY:\t" << speedY << endl;
+
+
+            //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
+            double rotation = motion->rotation;
+			if (rotation < 0)
+			{
+				l = 0;
+				r = abs(rotation) / M_PI * curveRotationFactor;
+			}
+			else
+			{
+				r = 0;
+				l = abs(rotation) / M_PI * curveRotationFactor;
+			}
 
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
@@ -94,9 +108,13 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-		//0.5 is for correct rounding
+            	//0.5 is for correct rounding
             	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)+0.5));
                 //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
+            	if(rotation > -1.0 && rotation < 1.0 && speedX <= -800){
+            		l = 0;
+            		r = 0;
+            	}
             }
             //schnell rueck
             else
@@ -117,20 +135,6 @@ namespace alica
                 orthoR = speedY * orthoDriveFactor / 2.0;
                 orthoL = -speedY * orthoDriveFactor;
             }
-
-            //geschwindigkeitsanteil fuer rotation
-            double rotation = motion->rotation;
-            if (rotation < 0)
-            {
-                l = 0;
-                r = abs(rotation) / M_PI * curveRotationFactor;
-            }
-            else
-            {
-                r = 0;
-                l = abs(rotation) / M_PI * curveRotationFactor;
-            }
-
         }
         else if (!haveBall)
         {
