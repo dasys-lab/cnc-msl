@@ -101,7 +101,6 @@ namespace alica
 
 		//cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
 		moveGoalie(alloTarget, egoBall);
-		send(mc);
 	}
 
 	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall)
