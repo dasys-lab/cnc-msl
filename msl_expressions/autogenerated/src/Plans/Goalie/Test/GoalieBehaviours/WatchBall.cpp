@@ -37,7 +37,8 @@ namespace alica
 		fastRotation = fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
-		alloGoalMid = field->posOwnGoalMid();
+		auto tempMid = alloGoalMid = field->posOwnGoalMid();
+		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x + 800, tempMid->y);
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
@@ -105,7 +106,7 @@ namespace alica
 
 	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall)
 	{
-		alloTarget->x = -msl::MSLFootballField::FieldLength/2;
+		//alloTarget->x = -msl::MSLFootballField::FieldLength/2;
 		auto egoTarget = alloTarget->alloToEgo(*ownPos);
 		cout << alloTarget->toString() << endl;
 		cout << egoTarget->toString() << endl;
