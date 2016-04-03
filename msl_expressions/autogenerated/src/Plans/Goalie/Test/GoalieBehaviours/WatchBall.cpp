@@ -38,9 +38,9 @@ namespace alica
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
-		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80,
+		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
-		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80,
+		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 															field->posRightOwnGoalPost()->y + goalieSize / 2);
 		prevTargetDist = 0;
 		/*PROTECTED REGION END*/
@@ -67,12 +67,12 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-			moveGoalie(prevTarget);
+			moveGoalie(prevTarget, alloBall->alloToEgo(*ownPos));
 			return;
 		}
 
 		this->ballPositions->add(alloBall);
-		observeBall();
+		observeBall(alloBall->alloToEgo(*ownPos));
 
 		/*PROTECTED REGION END*/
 	}
@@ -83,14 +83,14 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here
-	void WatchBall::observeBall()
+	void WatchBall::observeBall(shared_ptr<geometry::CNPoint2D> egoBall)
 	{
 		shared_ptr<geometry::CNPoint2D> alloTarget;
 		if (ballPositions->getSize() > 0)
 		{
 			double targetY = calcGoalImpactY();
 			targetY = fitTargetY(targetY);
-			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80, targetY);
+			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x, targetY);
 			prevTarget = alloTarget;
 		}
 		else
@@ -99,13 +99,13 @@ namespace alica
 		}
 
 		//cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
-		moveGoalie(alloTarget);
+		moveGoalie(alloTarget, egoBall);
 		send(mc);
 	}
 
-	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget)
+	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall)
 	{
-		auto egoBall = wm->ball.getEgoBallPosition();
+		alloTarget->x = alloGoalMid->x;
 		auto egoTarget = alloTarget->alloToEgo(*ownPos);
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;

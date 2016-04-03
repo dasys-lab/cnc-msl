@@ -42,9 +42,9 @@ namespace alica
         msl::MSLFootballField* field;
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double fitTargetY(double targetY);
-        void observeBall();
+        void observeBall(shared_ptr<geometry::CNPoint2D> egoBall);
         double calcGoalImpactY();
-        void moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget);
+        void moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall);
         shared_ptr<geometry::CNPoint2D> alloGoalLeft;
         shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
