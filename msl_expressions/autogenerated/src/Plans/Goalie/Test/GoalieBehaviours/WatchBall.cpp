@@ -67,7 +67,7 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-			moveGoalie(prevTarget, alloBall->alloToEgo(*ownPos));
+			moveGoalie(prevTarget, nullptr);
 			return;
 		}
 
@@ -105,12 +105,14 @@ namespace alica
 
 	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall)
 	{
-		alloTarget->x = alloGoalMid->x;
+		alloTarget->x = -msl::MSLFootballField::FieldLength/2;
 		auto egoTarget = alloTarget->alloToEgo(*ownPos);
+		cout << alloTarget->toString() << endl;
+		cout << egoTarget->toString() << endl;
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
 
-		if (egoBall->egoToAllo(*ownPos) != nullptr && egoBall->egoToAllo(*ownPos)->x > 1000)
+		if (egoBall!=nullptr && egoBall->egoToAllo(*ownPos) != nullptr && egoBall->egoToAllo(*ownPos)->x > 1000)
 		{
 			cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
 			pFactor = pFactor / 2;
