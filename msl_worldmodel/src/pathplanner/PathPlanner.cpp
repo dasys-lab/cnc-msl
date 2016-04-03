@@ -525,9 +525,9 @@ namespace msl
 
 //		cout << "----------------------" << endl;
 		return obstaclePoint != nullptr && (geometry::distancePointToLine(p2, p4, obstaclePoint) < this->robotRadius
-				&& geometry::distancePointToLine(p4, p3, obstaclePoint) < this->robotRadius
+				&& geometry::distancePointToLine(p4, p3, obstaclePoint) < 0.0
 				&& geometry::distancePointToLine(p3, p1, obstaclePoint) < this->robotRadius
-				&& geometry::distancePointToLine(p1, p2, obstaclePoint) < this->robotRadius);
+				&& geometry::distancePointToLine(p1, p2, obstaclePoint) < 0.0);
 		//return result
 		//return obstaclePoint != nullptr && geometry::isInsidePolygon(points, obstaclePoint);
 	}
