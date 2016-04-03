@@ -38,7 +38,7 @@ namespace alica
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		auto tempMid = alloGoalMid = field->posOwnGoalMid();
-		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x + 80, tempMid->y);
+		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
@@ -218,7 +218,7 @@ namespace alica
 		else
 		{
 			// TODO: use this as soon as Goalie Vision detects Obstacles better!
-			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;
 			for (auto currentObs : *obstacles)
@@ -247,10 +247,10 @@ namespace alica
 				calcTargetY = _slope * alloGoalMid->x + _yInt;
 			}
 			else
-			{*/
+			{
 				cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
-			//}
+			}
 		}
 		return calcTargetY;
 	}
