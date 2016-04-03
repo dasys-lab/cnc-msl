@@ -73,7 +73,7 @@ namespace alica
         		if(freeTime==0) {
         			freeTime = wm->getTime();
         		}
-        		if(wm->getTime() - freeTime > 750000000) {
+        		if(wm->getTime() - freeTime > 330000000ul) {
         			this->success = true;
         		}
         	} else {
@@ -190,7 +190,8 @@ namespace alica
 
                 //TODO cooleren punkt berechnen?
                 //move away from opponent
-                egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
+                egoTarget = (closestOpponent->alloToEgo(*ownPos)->normalize()->rotate(M_PI)) * 2500;
+                //egoTarget = (closestOpponent->alloToEgo(*ownPos) + oppGoal->alloToEgo(*ownPos))->normalize() * 2000;
 
             }
             else
@@ -282,7 +283,8 @@ namespace alica
                 egoTarget = (make_shared < geometry::CNPoint2D > (0, 0))->alloToEgo(*ownPos);
             }
 
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
+            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 100);
+            //mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
             send(mc);
         }
 

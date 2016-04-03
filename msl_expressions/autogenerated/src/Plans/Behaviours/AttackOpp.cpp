@@ -28,9 +28,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
 
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
-
-        if (me == nullptr || egoBallPos == nullptr || vNet == nullptr)
+        if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
@@ -41,7 +39,7 @@ namespace alica
         for (int i = 0; i < obstacles->size(); i++)
         {
             if (wm->pathPlanner.corridorCheck(
-                    vNet, make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
+                    make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
                     make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
             {
                 blocked = true;

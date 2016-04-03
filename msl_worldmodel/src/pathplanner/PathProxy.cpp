@@ -150,12 +150,12 @@ namespace msl
 					continue;
 				}
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner.corridorCheck(net, ownPos->getPoint(), path->at(i), current->getPoint());
+						|| wm->pathPlanner.corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner.getRobotRadius());
 			}
 			for (auto current : *net->getAdditionalObstacles())
 			{
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner.corridorCheck(net, ownPos->getPoint(), path->at(i), current);
+						|| wm->pathPlanner.corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner.getRobotRadius());
 			}
 			if (!shortcutBlocked)
 			{

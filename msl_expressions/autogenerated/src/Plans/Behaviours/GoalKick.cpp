@@ -33,9 +33,8 @@ namespace alica
         /*PROTECTED REGION ID(run1415205565589) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
 
-        if (ownPos == nullptr || egoBallPos == nullptr || vNet == nullptr)
+        if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;
         }
@@ -58,19 +57,19 @@ namespace alica
                 break;
             }
             if (wm->pathPlanner.corridorCheckBall(
-                    vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloLeftAimPoint,
+                    make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloLeftAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
                 leftBlocked = true;
             }
             if (wm->pathPlanner.corridorCheckBall(
-                    vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloMidAimPoint,
+                    make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloMidAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
                 midBlocked = true;
             }
             if (wm->pathPlanner.corridorCheckBall(
-                    vNet, make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloRightAimPoint,
+                    make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloRightAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
                 rightBlocked = true;

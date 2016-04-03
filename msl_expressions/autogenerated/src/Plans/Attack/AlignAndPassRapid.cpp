@@ -346,7 +346,7 @@ namespace alica
             double estimatedTimeForReceiverToArrive = (sqrt(2 * accel * distReceiver + v0 * v0) - v0) / accel;
             //considering network delay and reaction time 1s?:
             estimatedTimeForReceiverToArrive += 1.0;
-            pm.validFor = (uint)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
+            pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
             {
                 km.power = (ushort)wm->kicker.getKickPowerPass(aimPoint->length());
