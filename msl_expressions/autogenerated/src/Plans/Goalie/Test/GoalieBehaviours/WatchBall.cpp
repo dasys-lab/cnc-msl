@@ -38,7 +38,7 @@ namespace alica
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		auto tempMid = alloGoalMid = field->posOwnGoalMid();
-		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x + 80, tempMid->y);
+		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
@@ -101,15 +101,14 @@ namespace alica
 
 		//cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
 		moveGoalie(alloTarget, egoBall);
-		send(mc);
 	}
 
 	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall)
 	{
 		//alloTarget->x = -msl::MSLFootballField::FieldLength/2;
 		auto egoTarget = alloTarget->alloToEgo(*ownPos);
-		cout << alloTarget->toString() << endl;
-		cout << egoTarget->toString() << endl;
+		//cout << egoTarget->toString() << endl;
+		cout << "wb: alloTargetY: " << alloTarget->y << endl;
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
 
@@ -125,8 +124,8 @@ namespace alica
 			mc.motion.translation = std::min(
 					alignMaxVel, (egoTarget->length() * pFactor) + ((egoTarget->length() - prevTargetDist) * dFactor));
 			//cout << "[WatchBall] targetDistance: " << egoTarget->length() << endl;
-			cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl;
-			cout << endl;
+			//cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl;
+			//cout << endl;
 		}
 		else
 		{
@@ -198,7 +197,7 @@ namespace alica
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		if (nPoints > 1 && variance > maxVariance)
 		{
-			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
+			//cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions->getLast(i);
@@ -207,18 +206,18 @@ namespace alica
 			}
 			if (denom < 1e-3)
 			{
-				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
+				//cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			//cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
 			// TODO: use this as soon as Goalie Vision detects Obstacles better!
-			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
+			auto obstacles = wm->obstacles.getAlloObstaclePoints();
 			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 			double minDistBallObs = 20000;
 			for (auto currentObs : *obstacles)
@@ -247,10 +246,10 @@ namespace alica
 				calcTargetY = _slope * alloGoalMid->x + _yInt;
 			}
 			else
-			{*/
-				cout << "[WatchBall] BallY Variance: " << variance << endl;
+			{
+				//cout << "[WatchBall] BallY Variance: " << variance << endl;
 				calcTargetY = ballPositions->getLast(0)->y;
-			//}
+			}
 		}
 		return calcTargetY;
 	}
