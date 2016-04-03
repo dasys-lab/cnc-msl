@@ -39,7 +39,7 @@ if [[ $1 == "--setup" ]]; then
 	fi
 	for robot in "${onlineRobots[@]}"
         do
-                gnome-terminal --title "$robot" -e "bash -c \"ssh-copy-id $robot\""
+                gnome-terminal --title "$robot" -e "bash -c \"ssh-copy-id cn@$robot\""
         done
 	exit
 fi

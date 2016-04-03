@@ -25,8 +25,7 @@ namespace alica
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
-        if (me == nullptr || egoBallPos == nullptr || vNet == nullptr)
+        if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
@@ -37,7 +36,7 @@ namespace alica
         {
             for (int i = 0; i < obstacles->size(); i++)
             {
-                if (wm->pathPlanner.corridorCheck(vNet, make_shared < geometry::CNPoint2D > (me->x, me->y),
+                if (wm->pathPlanner.corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
                                                   egoBallPos->egoToAllo(*me), obstacles->at(i)))
                 {
                     blocked = true;

@@ -306,7 +306,7 @@ namespace alica
         }
         mc.motion.rotation = controlRot;
         mc = msl::RobotMovement::nearGoalArea(mc);
-        cout << "Intercept: Translation " << mc.motion.translation << endl;
+        //cout << "Intercept: Translation " << mc.motion.translation << endl;
         send(mc);
         if (wm->ball.haveBallDribble(false))
         {
