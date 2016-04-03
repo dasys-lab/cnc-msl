@@ -145,7 +145,7 @@ namespace alica
 		long currentTime = wm->getTime();
 		if (currentTime - lastKickerTime >= KICKER_WAIT_TIME)
 		{
-			cout << "[GoalieExtension] can kick..." << endl;
+			//cout << "[GoalieExtension] can kick..." << endl;
 			if (useKicker > 0 && ballPos != nullptr && ballPos->length() < 420
 					&& (abs(ballPos->angleTo()) - M_PI) < 0.52)
 			{
@@ -156,7 +156,7 @@ namespace alica
 				send(km);
 				lastKickerTime = wm->getTime();
 				//			Node.MainNode.RosInfo("Kick it");
-				cout << "[GoalieExtension] KICK!" << endl;
+				//cout << "[GoalieExtension] KICK!" << endl;
 			}
 		}
 		if (wm->rawSensorData.getLastMotionCommand() == nullptr)
@@ -271,13 +271,13 @@ namespace alica
 								//km.extension = 3;
 								km.extension = 1;
 //								Node.MainNode.RosInfo("FIRE EXT 3");
-								cout << "[GoalieExtension] Ext1!" << endl;
+								//cout << "[GoalieExtension] Ext1!" << endl;
 							}
 							else if (useExt2 > 0)
 							{
 								km.extension = 2;
 //								Node.MainNode.RosInfo("FIRE EXT 2");
-								cout << "[GoalieExtension] Ext2!" << endl;
+								//cout << "[GoalieExtension] Ext2!" << endl;
 							}
 							if (useExt3 > 0 || useExt2 > 0)
 							{
@@ -297,7 +297,7 @@ namespace alica
 							km.extTime = 1000;
 							send(km);
 							//Node.MainNode.RosInfo("FIRE EXT 1");
-							cout << "[GoalieExtension] Ext3 (Top)" << endl;
+							//cout << "[GoalieExtension] Ext3 (Top)" << endl;
 						}
 
 					}

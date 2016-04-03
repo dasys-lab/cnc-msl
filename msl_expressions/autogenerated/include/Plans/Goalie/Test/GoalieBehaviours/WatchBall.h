@@ -29,7 +29,11 @@ namespace alica
         int goalieSize;
         int nrOfPositions;
         int snapDistance;
-        double transFactor;
+        double fastRotation;
+        double alignMaxVel;
+        double pFactor;
+        double dFactor;
+        double prevTargetDist;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
@@ -38,8 +42,9 @@ namespace alica
         msl::MSLFootballField* field;
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double fitTargetY(double targetY);
-        void watchBall();
+        void observeBall();
         double calcGoalImpactY();
+        void moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget);
         shared_ptr<geometry::CNPoint2D> alloGoalLeft;
         shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;

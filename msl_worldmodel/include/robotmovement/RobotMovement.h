@@ -31,11 +31,10 @@ namespace msl
 	public:
 		virtual ~RobotMovement();
 
-		static MotionControl moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> alloAlignPoint, double snapDistance, double transFactor);
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
-		static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
+											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);

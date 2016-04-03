@@ -2,7 +2,6 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
 
 /*PROTECTED REGION ID(inccpp1447863466691) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
 #include <cmath>
 #include <vector>
 /*PROTECTED REGION END*/
@@ -31,8 +30,11 @@ namespace alica
 		maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
 		goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
 		nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-		transFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.TransFactor", NULL);
+		pFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.pFactor", NULL);
+		dFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.dFactor", NULL);
 		snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
+		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+		fastRotation = fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
 		this->field = MSLFootballField::getInstance();
 		alloGoalMid = field->posOwnGoalMid();
@@ -40,6 +42,7 @@ namespace alica
 														field->posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 80,
 															field->posRightOwnGoalPost()->y + goalieSize / 2);
+		prevTargetDist = 0;
 		/*PROTECTED REGION END*/
 	}
 	WatchBall::~WatchBall()
@@ -64,13 +67,12 @@ namespace alica
 		if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
 		{
 			cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
-			mc = RobotMovement::moveGoalie(prevTarget, alloFieldCntr, snapDistance, transFactor);
-			send(mc);
+			moveGoalie(prevTarget);
 			return;
 		}
 
 		this->ballPositions->add(alloBall);
-		watchBall();
+		observeBall();
 
 		/*PROTECTED REGION END*/
 	}
@@ -81,7 +83,7 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here
-	void WatchBall::watchBall()
+	void WatchBall::observeBall()
 	{
 		shared_ptr<geometry::CNPoint2D> alloTarget;
 		if (ballPositions->getSize() > 0)
@@ -96,8 +98,40 @@ namespace alica
 			alloTarget = prevTarget;
 		}
 
-		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
-		mc = RobotMovement::moveGoalie(alloTarget, alloFieldCntr, snapDistance, transFactor);
+		//cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
+		moveGoalie(alloTarget);
+		send(mc);
+	}
+
+	void WatchBall::moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget)
+	{
+		auto egoBall = wm->ball.getEgoBallPosition();
+		auto egoTarget = alloTarget->alloToEgo(*ownPos);
+		mc.motion.angle = egoTarget->angleTo();
+		mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
+
+		if (egoBall->egoToAllo(*ownPos) != nullptr && egoBall->egoToAllo(*ownPos)->x > 1000)
+		{
+			cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
+			pFactor = pFactor / 2;
+		}
+
+		// + (neuDist - altDist) * dfactor
+		if (egoTarget->length() > snapDistance)
+		{
+			mc.motion.translation = std::min(
+					alignMaxVel, (egoTarget->length() * pFactor) + ((egoTarget->length() - prevTargetDist) * dFactor));
+			//cout << "[WatchBall] targetDistance: " << egoTarget->length() << endl;
+			cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl;
+			cout << endl;
+		}
+		else
+		{
+			mc.motion.translation = 0;
+			//cout << "[WatchBall] arrived at target!" << endl;
+		}
+
+		prevTargetDist = egoTarget->length();
 		send(mc);
 	}
 
@@ -161,7 +195,7 @@ namespace alica
 				- 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
 		if (nPoints > 1 && variance > maxVariance)
 		{
-			//cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
+			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
 			for (int i = 0; i < nPoints; i++)
 			{
 				auto curBall = ballPositions->getLast(i);
@@ -170,49 +204,49 @@ namespace alica
 			}
 			if (denom < 1e-3)
 			{
-				//cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
+				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
 				return prevTarget->y;
 			}
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			//cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
 		}
 		else
 		{
 			// TODO: use this as soon as Goalie Vision detects Obstacles better!
 			/*auto obstacles = wm->obstacles.getAlloObstaclePoints();
-			shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
-			double minDistBallObs = 20000;
-			for (auto currentObs : *obstacles)
-			{
-				//cout << "[WatchBall] " << currentObs->toString();
+			 shared_ptr<geometry::CNPoint2D> closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+			 double minDistBallObs = 20000;
+			 for (auto currentObs : *obstacles)
+			 {
+			 //cout << "[WatchBall] " << currentObs->toString();
 
-				double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
-				if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
-						|| currentDistBallObs > 1000)
-				{
-					continue;
-				}
-				if (currentDistBallObs < minDistBallObs)
-				{
-					closestObstacle = currentObs;
-					minDistBallObs = currentDistBallObs;
-				}
-			}
+			 double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
+			 if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
+			 || currentDistBallObs > 1000)
+			 {
+			 continue;
+			 }
+			 if (currentDistBallObs < minDistBallObs)
+			 {
+			 closestObstacle = currentObs;
+			 minDistBallObs = currentDistBallObs;
+			 }
+			 }
 
-			if (closestObstacle != nullptr)
-			{
-				//cout << "[WatchBall] Obstacle Variance: " << variance << endl;
-				_slope = (closestObstacle->y - ballPositions->getLast(0)->y)
-						/ (closestObstacle->x - ballPositions->getLast(0)->x);
-				_yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
-				calcTargetY = _slope * alloGoalMid->x + _yInt;
-			}
-			else
-			{*/
-				//cout << "[WatchBall] BallY Variance: " << variance << endl;
-				calcTargetY = ballPositions->getLast(0)->y;
+			 if (closestObstacle != nullptr)
+			 {
+			 //cout << "[WatchBall] Obstacle Variance: " << variance << endl;
+			 _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
+			 / (closestObstacle->x - ballPositions->getLast(0)->x);
+			 _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
+			 calcTargetY = _slope * alloGoalMid->x + _yInt;
+			 }
+			 else
+			 {*/
+			cout << "[WatchBall] BallY Variance: " << variance << endl;
+			calcTargetY = ballPositions->getLast(0)->y;
 			//}
 		}
 		return calcTargetY;
@@ -223,17 +257,17 @@ namespace alica
 
 		if (targetY > alloGoalLeft->y)
 		{
-			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
+			//cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
 			return alloGoalLeft->y;
 		}
 		else if (targetY < alloGoalRight->y)
 		{
-			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
+			//cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
 			return alloGoalRight->y;
 		}
 		else
 		{
-			cout << "[WatchBall] fitTarget else: " << targetY << endl;
+			//cout << "[WatchBall] fitTarget else: " << targetY << endl;
 			return targetY;
 		}
 	}
