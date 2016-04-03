@@ -99,7 +99,7 @@ namespace alica
             send(kc);
 
             msl_helper_msgs::PassMsg pm;
-            pm.validFor = 2000000000;
+            pm.validFor = 2000000000ul;
 
             auto dest = make_shared < geometry::CNPoint2D > (-1, 0);
             dest = dest * egoAlignPoint->length();

@@ -43,7 +43,7 @@ namespace alica
             pm.origin.y = ownPos->y;
             pm.destination.x = passGoal->x;
             pm.destination.y = passGoal->y;
-            pm.validFor = 5000000000;
+            pm.validFor = 5000000000ul;
 
             //Reduce Communication
             if (iterationCount++ % 3 == 0)
