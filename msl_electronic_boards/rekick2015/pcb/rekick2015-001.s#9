@@ -20495,8 +20495,8 @@ grid 5.6 mm</description>
 <part name="IC4" library="linear" deviceset="*1458" device="D" technology="LM"/>
 <part name="GND29" library="supply1" deviceset="GND" device=""/>
 <part name="GND30" library="supply1" deviceset="GND" device=""/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="R0805" value="2,7k"/>
-<part name="R21" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
+<part name="R5" library="rcl" deviceset="R-EU_" device="R0805" value="3k, 1%"/>
+<part name="R21" library="rcl" deviceset="R-EU_" device="R0805" value="10k, 1%"/>
 <part name="S1" library="switch-omron" deviceset="10-XX" device=""/>
 <part name="P+23" library="supply1" deviceset="+5V" device=""/>
 <part name="R22" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
