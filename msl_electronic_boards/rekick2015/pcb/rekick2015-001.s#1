@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -19571,7 +19571,7 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <part name="C10" library="rcl" deviceset="CPOL-EU" device="E7.5-18" value="2200µ/50V"/>
 <part name="SUPPLY3" library="supply2" deviceset="GND1" device=""/>
 <part name="FRAME5" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="R101" library="rcl" deviceset="R-EU_" device="0207/10" value="1M, 1%">
+<part name="R101" library="rcl" deviceset="R-EU_" device="R2512" value="1M, 1%">
 <attribute name="FARNELL" value="2396016"/>
 </part>
 <part name="R105" library="rcl" deviceset="R-EU_" device="R0805" value="750"/>
@@ -19783,6 +19783,12 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <part name="VR2" library="1_USER" deviceset="TL431" device="_SOT23"/>
 <part name="VR3" library="1_USER" deviceset="TL431" device="_SOT23"/>
 <part name="VR4" library="1_USER" deviceset="TL431" device="_SOT23"/>
+<part name="R33" library="rcl" deviceset="R-EU_" device="R2512" value="1M"/>
+<part name="R34" library="rcl" deviceset="R-EU_" device="R2512" value="1M"/>
+<part name="R35" library="rcl" deviceset="R-EU_" device="R2512" value="1M"/>
+<part name="R36" library="rcl" deviceset="R-EU_" device="R0805" value="50k"/>
+<part name="R37" library="rcl" deviceset="R-EU_" device="R0805" value="17k"/>
+<part name="R38" library="rcl" deviceset="R-EU_" device="R0805" value="7.68k"/>
 </parts>
 <sheets>
 <sheet>
@@ -21525,6 +21531,12 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <instance part="VR2" gate="G$1" x="58.42" y="12.7" rot="R90"/>
 <instance part="VR3" gate="G$1" x="76.2" y="12.7" rot="R90"/>
 <instance part="VR4" gate="G$1" x="93.98" y="12.7" rot="R90"/>
+<instance part="R33" gate="G$1" x="30.48" y="43.18" rot="R90"/>
+<instance part="R34" gate="G$1" x="50.8" y="43.18" rot="R90"/>
+<instance part="R35" gate="G$1" x="68.58" y="43.18" rot="R90"/>
+<instance part="R36" gate="G$1" x="30.48" y="12.7" rot="R90"/>
+<instance part="R37" gate="G$1" x="50.8" y="12.7" rot="R90"/>
+<instance part="R38" gate="G$1" x="68.58" y="12.7" rot="R90"/>
 </instances>
 <busses>
 </busses>
