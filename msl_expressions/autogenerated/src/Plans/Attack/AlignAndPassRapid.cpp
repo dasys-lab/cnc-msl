@@ -36,7 +36,6 @@ namespace alica
         this->accel = 2000;
         this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
-        this->field = msl::MSLFootballField::getInstance();
         this->pathProxy = msl::PathProxy::getInstance();
         /*PROTECTED REGION END*/
     }
@@ -171,8 +170,8 @@ namespace alica
                 dbp.radius = 0.3;
                 dbm.points.push_back(dbp);
 #endif
-                if (field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                && !field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
+                if (wm->field.isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
+                && !wm->field.isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
                 && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
                         )
                 {
@@ -265,9 +264,9 @@ namespace alica
                         //Here we have to pick the best one...
                         currPassUtility = 0;
 
-                        currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / field->FieldWidth;
+                        currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field.getFieldWidth();
 
-                        currPassUtility += (field->FieldLength / 2.0 + passPoint->x) / field->FieldLength;
+                        currPassUtility += (wm->field.getFieldLength() / 2.0 + passPoint->x) / wm->field.getFieldLength();
 
                         if (currPassUtility > bestPassUtility)
                         {

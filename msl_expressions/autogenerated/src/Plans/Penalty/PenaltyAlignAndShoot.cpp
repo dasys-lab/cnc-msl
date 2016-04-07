@@ -12,7 +12,6 @@ namespace alica
 			DomainBehaviour("PenaltyAlignAndShoot")
 	{
 		/*PROTECTED REGION ID(con1431531496053) ENABLED START*/ //Add additional options here
-		field = msl::MSLFootballField::getInstance();
 		maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
 		// Aiming/Rotation Stuff
 		angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
@@ -54,15 +53,15 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
 		// Create target point next to left/right opp goal post
 		shared_ptr<geometry::CNPoint2D> alloLeftAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 + ballDiameter, goalLineLength / 2 - aimOffset * ballDiameter);
+				wm->field.getFieldLength() / 2 + ballDiameter, goalLineLength / 2 - aimOffset * ballDiameter);
 		shared_ptr<geometry::CNPoint2D> alloRightAimPoint = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 + ballDiameter, -goalLineLength / 2 + aimOffset * ballDiameter);
+				wm->field.getFieldLength() / 2 + ballDiameter, -goalLineLength / 2 + aimOffset * ballDiameter);
 
 		// Create points for rectangle check
 		shared_ptr<geometry::CNPoint2D> frontLeft = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 - robotRadius, goalLineLength / 2);
+				wm->field.getFieldLength() / 2 - robotRadius, goalLineLength / 2);
 		shared_ptr<geometry::CNPoint2D> frontRight = make_shared<geometry::CNPoint2D>(
-				field->FieldLength / 2 - robotRadius, -goalLineLength / 2);
+				wm->field.getFieldLength() / 2 - robotRadius, -goalLineLength / 2);
 
 		// Create back point according to last alignment
 		shared_ptr<geometry::CNPoint2D> back = nullptr;
@@ -70,15 +69,15 @@ namespace alica
 		// Hysteresis
 		if (lastAlignment == 0) // not aligned before (default)
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, 0);
+			back = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2 + robotRadius, 0);
 		}
 		else if (lastAlignment == 1) // last alignment left
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, robotRadius);
+			back = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2 + robotRadius, robotRadius);
 		}
 		else // last alignment right
 		{
-			back = make_shared<geometry::CNPoint2D>(field->FieldLength / 2 + robotRadius, -robotRadius);
+			back = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2 + robotRadius, -robotRadius);
 		}
 
 		int counter = 0;

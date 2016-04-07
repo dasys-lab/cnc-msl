@@ -116,7 +116,6 @@ namespace alica
 		useKicker = (*this->sc)["Behaviour"]->get<int>("Goalie.UseKicker", NULL);
 		KICKER_WAIT_TIME = 40000000000;
 		lastKickerTime = wm->getTime();
-		field = msl::MSLFootballField::getInstance();
 		ballGoalProjection = new ExperimentalRingbuffer(20);
 		ballVelocity = new ExperimentalRingbuffer(10);
 		ballInAirTimestamp = 0;
@@ -215,18 +214,18 @@ namespace alica
 																									ballV3DAllo->y,
 																									ballV3DAllo->z);
 
-				double x = -field->FieldLength / 2 + 100;
+				double x = -wm->field.getFieldLength() / 2 + 100;
 				double timeBallToGoal = (x - ballPosAllo->x) / ballVelo3DAllo->x;
 				//Console.WriteLine("ghgh timeBallToGoal " + timeBallToGoal);
 				if (timeBallToGoal > 0)
 				{
 					double y = ballPosAllo->y + ballVelo3DAllo->y * timeBallToGoal;
-					if (abs(y) < field->GoalWidth / 2 + 2000)
+					if (abs(y) < wm->field.getGoalWidth() / 2 + 2000)
 					{
-						if (y > field->GoalWidth / 2)
-							y = field->GoalWidth / 2;
-						if (y < -field->GoalWidth / 2)
-							y = -field->GoalWidth / 2;
+						if (y > wm->field.getGoalWidth() / 2)
+							y = wm->field.getGoalWidth() / 2;
+						if (y < -wm->field.getGoalWidth() / 2)
+							y = -wm->field.getGoalWidth() / 2;
 						auto dstPoint = make_shared<geometry::CNPoint2D>(x, y);
 						auto dstPointEgo = dstPoint->alloToEgo(*ownPos);
 
@@ -257,7 +256,7 @@ namespace alica
 						//cout << "[GoalieExtension] break4" << endl;
 						auto ballVeloBuf = ballVelocity->getAvgPoint((int)(ballPos->length() - 2000) / 2000);
 						double veloBuf = sqrt(ballVeloBuf->x * ballVeloBuf->x + ballVeloBuf->y * ballVeloBuf->y);
-						double timeBallToGoal2 = ballPosAllo->distanceTo(field->posOwnGoalMid()) / veloBuf;
+						double timeBallToGoal2 = ballPosAllo->distanceTo(wm->field.posOwnGoalMid()) / veloBuf;
 						//Console.WriteLine("ghgh timeBallToGoal2 " + timeBallToGoal2 + "sec");
 						double timeToDstPoint = dstPointEgo->length() / 800;
 						//double timeToDstPoint = dstPointEgo.Distance() / 1000;

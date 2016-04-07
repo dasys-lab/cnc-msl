@@ -38,7 +38,7 @@ namespace alica
             return;
         }
 
-        auto alloTarget = msl::MSLFootballField::posOwnGoalMid() - alloBallPos;
+        auto alloTarget = wm->field.posOwnGoalMid() - alloBallPos;
         alloTarget = alloTarget->normalize() * 1250;
         alloTarget = alloBallPos + alloTarget;
 

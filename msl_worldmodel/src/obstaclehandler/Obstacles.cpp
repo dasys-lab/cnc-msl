@@ -33,7 +33,6 @@ namespace msl
 							"obstacleMapOutTolerance", NULL);
 		LOCALIZATION_SUCCESS_CONFIDENCE = (*sc)["Localization"]->get<double>("Localization", "LocalizationSuccess",
 		NULL);
-		field = MSLFootballField::getInstance();
 		clusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		newClusterArray = make_shared<vector<AnnotatedObstacleCluster*>>();
 		pool = new AnnotatedObstacleClusterPool();
@@ -73,9 +72,9 @@ namespace msl
 	}
 
 	shared_ptr<geometry::CNPoint2D> Obstacles::getBiggestFreeGoalAreaMidPoint() {
-		auto leftPost = field->posLeftOppGoalPost();
-		auto rightPost = field->posRightOppGoalPost();
-		auto goalMid = field->posOppGoalMid();
+		auto leftPost = wm->field.posLeftOppGoalPost();
+		auto rightPost = wm->field.posRightOppGoalPost();
+		auto goalMid = wm->field.posOppGoalMid();
 
 		auto ownPos = wm->rawSensorData.getOwnPositionVision();
 		if( ownPos == nullptr )
@@ -177,7 +176,7 @@ namespace msl
 			if (newClusterArray->at(i)->ident == EntityType::Opponent)
 			{
 				// it is not a teammate
-				if (field->isInsideField(curAlloPoint, FIELD_TOL))
+				if (wm->field.isInsideField(curAlloPoint, FIELD_TOL))
 				{
 					newOppAllo->push_back(curAlloPoint);
 					// egocentric obstacles, which are inside the field and do not belong to our team
@@ -368,7 +367,7 @@ namespace msl
                                         continue;
                                 }
 
-                                if (MSLFootballField::getInstance()->isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
+                                if (wm->field.isInsideField(ob.x, ob.y, OBSTACLE_MAP_OUT_TOLERANCE))
                                 {
                                         obs = AnnotatedObstacleCluster::getNew(this->pool);
                                         obs->init(round(ob.x), round(ob.y), // pos
@@ -407,7 +406,7 @@ namespace msl
 																					myOdo->position.y,
 																					myOdo->position.angle);
 			curPoint = ownObs->at(i)->egoToAllo(*me);
-			if (MSLFootballField::getInstance()->isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
+			if (wm->field.isInsideField(curPoint, OBSTACLE_MAP_OUT_TOLERANCE))
 			{
 				obs = AnnotatedObstacleCluster::getNew(this->pool);
 				obs->init((int)(curPoint->x + 0.5), (int)(curPoint->y + 0.5), DFLT_OB_RADIUS, EntityType::Opponent,

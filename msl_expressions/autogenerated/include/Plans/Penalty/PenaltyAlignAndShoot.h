@@ -30,7 +30,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1431531496053) ENABLED START*/ //Add additional protected methods here
-        msl::MSLFootballField* field;
         double maxVel;
         double angleTolerance;
         double ballDiameter;

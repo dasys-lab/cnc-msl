@@ -23,7 +23,6 @@ namespace alica
         double ballDist;
         double ballDistTolerance;
         double rotationVel;
-        msl::MSLFootballField* field;
         shared_ptr<geometry::CNPoint2D> alloEnemyGoal;
         shared_ptr<geometry::CNPoint2D> alloOwnGoal;
         int wiggleDir;

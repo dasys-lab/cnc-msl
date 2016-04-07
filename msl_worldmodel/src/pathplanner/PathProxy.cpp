@@ -239,8 +239,8 @@ namespace msl
 	{
 		//create bounding box around field with additional 3m distance
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-	Iso_rectangle_2 bbox(- msl::MSLFootballField::FieldLength / 2 - 3000, -msl::MSLFootballField::FieldWidth / 2 - 3000,
-	msl::MSLFootballField::FieldLength / 2 + 3000, msl::MSLFootballField::FieldWidth / 2 + 3000);
+	Iso_rectangle_2 bbox(-wm->field.getFieldLength() / 2 - 3000, -wm->field.getFieldWidth() / 2 - 3000,
+						 wm->field.getFieldLength() / 2 + 3000, wm->field.getFieldWidth() / 2 + 3000);
 	//create cropped voronoi
 	Cropped_voronoi_from_delaunay vor(bbox);
 	//get delaunay

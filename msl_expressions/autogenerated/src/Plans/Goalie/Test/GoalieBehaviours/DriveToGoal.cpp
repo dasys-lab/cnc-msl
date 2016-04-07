@@ -51,11 +51,11 @@ namespace alica
 
 			 }*/
 
-			alloTargetX = MSLFootballField::getInstance()->posOwnGoalMid()->x - 100;
-			alloTargetY = MSLFootballField::getInstance()->posOwnGoalMid()->y;
+			alloTargetX = wm->field.posOwnGoalMid()->x - 100;
+			alloTargetY = wm->field.posOwnGoalMid()->y;
 
 			alloTarget = make_shared<geometry::CNPoint2D>(alloTargetX, alloTargetY);
-			alloFieldCenterAlignPoint = MSLFootballField::getInstance()->posCenterMarker();
+			alloFieldCenterAlignPoint = wm->field.posCenterMarker();
 
 			cout << " Driving to goal" << endl;
 			mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),

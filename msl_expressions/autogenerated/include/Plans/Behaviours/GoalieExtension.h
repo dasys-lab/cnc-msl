@@ -51,7 +51,6 @@ namespace alica
 		long lastKickerTime;
 		int useExt1, useExt2, useExt3, useKicker;
 		msl_actuator_msgs::KickControl km;
-		msl::MSLFootballField* field;
 		ExperimentalRingbuffer* ballGoalProjection;
 		ExperimentalRingbuffer* ballVelocity;
 		long ballInAirTimestamp;

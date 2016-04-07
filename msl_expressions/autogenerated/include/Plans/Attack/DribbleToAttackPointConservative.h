@@ -23,7 +23,6 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458132872550) ENABLED START*/ //Add additional private methods here
-        msl::MSLFootballField* field;
         shared_ptr<geometry::CNPoint2D> currentTarget;
         vector<double> attackPosY;
 

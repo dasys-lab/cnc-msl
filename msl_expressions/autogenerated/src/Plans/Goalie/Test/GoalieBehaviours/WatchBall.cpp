@@ -36,13 +36,12 @@ namespace alica
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 		fastRotation = fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
 		ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-		this->field = MSLFootballField::getInstance();
-		auto tempMid = alloGoalMid = field->posOwnGoalMid();
+		auto tempMid = alloGoalMid = wm->field.posOwnGoalMid();
 		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
-														field->posLeftOwnGoalPost()->y - goalieSize / 2);
+														wm->field.posLeftOwnGoalPost()->y - goalieSize / 2);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
-															field->posRightOwnGoalPost()->y + goalieSize / 2);
+														 wm->field.posRightOwnGoalPost()->y + goalieSize / 2);
 		prevTargetDist = 0;
 		/*PROTECTED REGION END*/
 	}
@@ -80,7 +79,7 @@ namespace alica
 	void WatchBall::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1447863466691) ENABLED START*/ //Add additional options here
-		prevTarget = MSLFootballField::getInstance()->posOwnGoalMid();
+		prevTarget = wm->field.posOwnGoalMid();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here

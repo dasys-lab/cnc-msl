@@ -23,7 +23,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLFootballField::posCenterMarker();
+        shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field.posCenterMarker();
         shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
         int maxVariance;
         int goalieSize;
@@ -39,7 +39,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
         msl_actuator_msgs::MotionControl mc;
         shared_ptr<geometry::CNPosition> ownPos;
-        msl::MSLFootballField* field;
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double fitTargetY(double targetY);
         void observeBall(shared_ptr<geometry::CNPoint2D> egoBall);

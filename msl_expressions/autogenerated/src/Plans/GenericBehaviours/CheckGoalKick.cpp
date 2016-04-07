@@ -144,7 +144,6 @@ namespace alica
     void CheckGoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1449076008755) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
         minOppYDist = rules->getBallRadius() + rules->getRobotRadius();
@@ -179,7 +178,7 @@ namespace alica
      */
     shared_ptr<geometry::CNPoint2D> CheckGoalKick::computeHitPoint(double posX, double posY, double alloAngle)
     {
-        double xDist2OppGoalline = this->field->FieldLength / 2 - posX;
+        double xDist2OppGoalline = wm->field.getFieldLength() / 2 - posX;
 
         // normalize the position angle
         alloAngle = geometry::normalizeAngle(alloAngle);
@@ -203,10 +202,10 @@ namespace alica
         double yHitGoalline = posY + xDist2OppGoalline * tan(alloAngle);
         // reduce goalPost->y by (ball radius + safety margin)
         if (abs(yHitGoalline)
-                < (this->field->posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
+                < (wm->field.posLeftOppGoalPost()->y - msl::Rules::getInstance()->getBallRadius() - 78))
         {
             // you will hit the goal
-            return make_shared < geometry::CNPoint2D > (this->field->FieldLength / 2, yHitGoalline);
+            return make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2, yHitGoalline);
         }
 
         return shared_ptr<geometry::CNPoint2D>();

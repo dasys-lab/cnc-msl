@@ -93,21 +93,15 @@ int main(int argc, char** argv)
 		printUsage();
 		return 0;
 	}
-
 	cout << "Initialising ROS" << endl;
-
 	ros::init(argc, argv, getNodeName("Base"));
-
 	//This makes segfaults to exceptions
 	segfaultdebug::init_segfault_exceptions();
-
 	cout << "Parsing command line parameters:" << endl;
-
 	string masterplan = "";
 	string rolesetdir = ".";
 	string roleset = "";
 	bool sim = false;
-
 	for (int i = 1; i < argc; i++)
 	{
 		if (string(argv[i]) == "-m" || string(argv[i]) == "-masterplan")

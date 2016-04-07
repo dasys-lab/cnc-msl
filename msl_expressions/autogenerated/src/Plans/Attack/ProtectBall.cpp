@@ -12,7 +12,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1457706592232) ENABLED START*/ //Add additional options here
         sc = supplementary::SystemConfig::getInstance();
-        field = msl::MSLFootballField::getInstance();
         pp = msl::PathProxy::getInstance();
         eval = make_shared<msl::PathEvaluator>();
 

@@ -13,7 +13,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1417620683982) ENABLED START*/ //Add additional options here
         this->setTrigger(&wm->visionTrigger);
-        field = MSLFootballField::getInstance();
         maxVel = (*this->sc)["Show"]->get<double>("TwoHoledWall.MaxSpeed", NULL);
 
         // Aiming/Rotation Stuff

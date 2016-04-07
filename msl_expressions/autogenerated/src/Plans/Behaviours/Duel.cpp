@@ -41,7 +41,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = make_shared < geometry::CNPoint2D
                 > (fieldLength / 2, 0)->alloToEgo(*ownPos);
 //		shared_ptr<geometry::CNPoint2D> oppGoal = make_shared<geometry::CNPoint2D>(fieldLength / 2, 0);
-        shared_ptr < geometry::CNPoint2D > oppGoal = msl::MSLFootballField::posOppGoalMid();
+        shared_ptr < geometry::CNPoint2D > oppGoal = wm->field.posOppGoalMid();
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 
@@ -260,9 +260,9 @@ namespace alica
                     ballOrth1 = ballOrth1->egoToAllo(*ownPos);
                     ballOrth2 = ballOrth2->egoToAllo(*ownPos);
 
-                    double distance = msl::MSLFootballField::distanceToLine(ownPoint,
+                    double distance = wm->field.distanceToLine(ownPoint,
                                                                             ballOrth1->egoToAllo(*ownPos)->angleTo());
-                    if (msl::MSLFootballField::distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo())
+                    if (wm->field.distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo())
                             < distance)
                     {
                         //top line

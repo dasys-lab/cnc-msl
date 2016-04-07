@@ -17,7 +17,6 @@ namespace alica
         ballDist = 330;
         ballDistTolerance = 90;
         rotationVel = 2 * M_PI;
-        field = msl::MSLFootballField::getInstance();
         wiggleDir = 0;
         errorInt = 0;
         sc = supplementary::SystemConfig::getInstance();

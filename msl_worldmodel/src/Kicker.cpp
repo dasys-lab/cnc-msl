@@ -117,8 +117,7 @@ namespace msl
 			return nullptr;
 		}
 		validGoalPoints.clear();
-		MSLFootballField* field = MSLFootballField::getInstance();
-		double x = field->FieldLength / 2;
+		double x = wm->field.getFieldLength() / 2;
 		double y = -1000 + preciseShotMaxTolerance;
 		shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
 		double samplePoints = 4;

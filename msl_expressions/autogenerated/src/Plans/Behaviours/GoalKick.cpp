@@ -14,7 +14,6 @@ namespace alica
             DomainBehaviour("GoalKick")
     {
         /*PROTECTED REGION ID(con1415205565589) ENABLED START*/ //Add additional options here
-        field = nullptr;
         alloLeftAimPoint = nullptr;
         alloMidAimPoint = nullptr;
         alloRightAimPoint = nullptr;
@@ -122,12 +121,11 @@ namespace alica
     void GoalKick::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > (field->FieldLength / 2 + 250, field->posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
-        alloMidAimPoint = make_shared < geometry::CNPoint2D > (field->FieldLength / 2 + 250, 0);
+                > (wm->field.getFieldLength() / 2 + 250, wm->field.posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+        alloMidAimPoint = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + 250, 0);
         alloRightAimPoint = make_shared < geometry::CNPoint2D
-                > (field->FieldLength / 2 + 250, field->posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
+                > (wm->field.getFieldLength() / 2 + 250, wm->field.posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
         alloAimPoint = nullptr;
         angleTolerance = 0.075;
         minKickPower = 1500.0;
