@@ -44,11 +44,9 @@ namespace alica
 
         auto goaltoball = alloBallPos - goalPos;
         auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
-        if (defenderRange->x
-                < -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100)
+        if (defenderRange->x < -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100)
         {
-            defenderRange->x = -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength()
-                    + 100;
+            defenderRange->x = -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100;
         }
 
         /*

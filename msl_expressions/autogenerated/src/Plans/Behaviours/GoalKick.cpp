@@ -122,10 +122,12 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
         alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + 250, wm->field.posLeftOppGoalPost()->y - wm->ball.getBallDiameter() * 1.5);
+                > (wm->field.getFieldLength() / 2 + 250, wm->field.posLeftOppGoalPost()->y
+                        - wm->ball.getBallDiameter() * 1.5);
         alloMidAimPoint = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + 250, 0);
         alloRightAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + 250, wm->field.posRightOppGoalPost()->y + wm->ball.getBallDiameter() * 1.5);
+                > (wm->field.getFieldLength() / 2 + 250, wm->field.posRightOppGoalPost()->y
+                        + wm->ball.getBallDiameter() * 1.5);
         alloAimPoint = nullptr;
         angleTolerance = 0.075;
         minKickPower = 1500.0;

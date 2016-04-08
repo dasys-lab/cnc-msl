@@ -162,7 +162,7 @@ namespace alica
 
         if (gs == msl::GameState::OppBallPossession)
         {
-        	//TODO if we set this to 0 it works in the simulator
+            //TODO if we set this to 0 it works in the simulator
             vel = make_shared < geometry::CNPoint2D > (0, 0);
         }
         else
@@ -275,7 +275,7 @@ namespace alica
         }
         else
         {
-        	mc.motion.translation = min(maxVel, vel->length());
+            mc.motion.translation = min(maxVel, vel->length());
         }
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());

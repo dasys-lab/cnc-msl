@@ -266,7 +266,8 @@ namespace alica
 
                         currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field.getFieldWidth();
 
-                        currPassUtility += (wm->field.getFieldLength() / 2.0 + passPoint->x) / wm->field.getFieldLength();
+                        currPassUtility += (wm->field.getFieldLength() / 2.0 + passPoint->x)
+                                / wm->field.getFieldLength();
 
                         if (currPassUtility > bestPassUtility)
                         {
