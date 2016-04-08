@@ -53,10 +53,13 @@ namespace alica
         }
         // the only teammate in the corresponding task/ entrypoint
         auto teammates = robotsInEntryPointOfHigherPlan(ep);
-        for (int mateId : *teammates)
+        if (teammates)
         {
-            this->teamMateId = mateId;
-            break;
+            for (int mateId : *teammates)
+            {
+                this->teamMateId = mateId;
+                break;
+            }
         }
         shared_ptr < geometry::CNPosition > attackerPos = nullptr;
         // determine the best reference point
@@ -64,23 +67,22 @@ namespace alica
         { // take the teammate as reference point
             attackerPos = wm->robots.teammates.getTeamMatePosition(teamMateId);
         }
+
         if (attackerPos == nullptr)
         {
             mc.motion.angle = 0;
             mc.motion.translation = 0;
             mc.motion.rotation = 0;
+
             send(mc);
             return;
         }
-        bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
-        cout << "BEH " << this->getRunningPlan()->getPlan()->getName() << ": Solver found valid solution: " << ret
-                << endl;
 
-        if (ret)
-        {
-            lastResultFound = wm->getTime();
-        }
-        else
+        bool ret = query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result);
+        cout << "BEH " << this->getRunningPlan()->getPlan()->getName() << ": Solver found valid solution: "
+                << (ret ? "true" : "false") << endl;
+
+        if (false == ret)
         {
             if (wm->getTime() - lastResultFound > failTimeThreshold)
             {
@@ -90,37 +92,62 @@ namespace alica
             mc.motion.translation = 0;
             mc.motion.rotation = 0;
             send(mc);
+
             return;
         }
-        if (result.size() > 1)
+
+        lastResultFound = wm->getTime();
+
+        auto driveTo = make_shared < geometry::CNPoint2D > (result.at(0), result.at(1));
+
+        auto ownRelativePos = ownPos->getPoint()->alloToEgo(*attackerPos);
+        auto relativeGoalPos = driveTo->alloToEgo(*attackerPos);
+
+        if (relativeGoalPos->x < -250 && // block only targets which are in driving direction of attacker
+                ownRelativePos->length() > relativeGoalPos->length() + 1000) // i'm more than 1 meter away from the blocking position, i failed, better set status to success
         {
-            shared_ptr < geometry::CNPoint2D > driveTo = make_shared < geometry::CNPoint2D
-                    > (result.at(0), result.at(1))->alloToEgo(*ownPos);
-
-            shared_ptr < geometry::CNPoint2D > ownRelativePos = ownPos->getPoint()->alloToEgo(*attackerPos);
-            shared_ptr < geometry::CNPoint2D > relativeGoalPos = driveTo->alloToEgo(*attackerPos);
-
-            if (relativeGoalPos->x < -250 && ownRelativePos->length() > relativeGoalPos->length() + 1000)
-            {
-                this->success = true;
-                return;
-            }
-
-            if (avoidBall)
-            {
-                mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
-            }
-            else
-            {
-                mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
-            }
+            this->success = true;
+            return;
         }
+
+        // Sending debug message for visualization
+        msl_helper_msgs::DebugMsg debugMsg;
+        debugMsg.topic = "OneGenericInGameBlocker";
+        debugMsg.senderID = this->getOwnId();
+        debugMsg.validFor = 2000000000;
+
+        msl_helper_msgs::DebugPoint point;
+
+        point.radius = 0.12;
+        point.point.x = driveTo->x;
+        point.point.y = driveTo->y;
+        point.red = 0;
+        point.green = 0;
+        point.blue = 255;
+
+        debugMsg.points.push_back(point);
+        this->send(debugMsg);
+        // ---------------------------------------
+
+        // ego centric
+        driveTo = driveTo->alloToEgo(*ownPos);
+
+        if (avoidBall)
+        {
+            mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+        }
+        else
+        {
+            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+        }
+
         send(mc);
         /*PROTECTED REGION END*/
     }
     void OneGernericInGameBlocker::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1458034268108) ENABLED START*/ //Add additional options here
+        this->lastResultFound = wm->getTime();
         query->clearStaticVariables();
         query->addVariable(getVariablesByName("X"));
         query->addVariable(getVariablesByName("Y"));
@@ -131,7 +158,7 @@ namespace alica
         try
         {
             string tmp = "";
-            success &= getParameter("FailTimeTreshold", tmp);
+            success &= getParameter("FailTimeTresholdMS", tmp);
             if (success)
             {
                 this->failTimeThreshold = stol(tmp) * 1000000;
@@ -142,6 +169,7 @@ namespace alica
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> avoidBall;
             }
+
             success &= getParameter("TeamMatePlanName", teamMatePlanName);
             success &= getParameter("TeamMateTaskName", teamMateTaskName);
             cout << teamMatePlanName << " : " << teamMateTaskName << endl;
@@ -152,6 +180,7 @@ namespace alica
             avoidBall = false;
             failTimeThreshold = 250000000;
         }
+
         if (!success)
         {
             cerr << "OneGenericInGameBlocker: Parameter does not exist" << endl;

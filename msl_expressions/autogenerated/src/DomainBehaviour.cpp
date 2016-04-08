@@ -30,7 +30,7 @@ namespace alica
 		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
 		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
-
+		__maxTranslation = (*sc)["Globals"]->get<double>("Globals", "Team", sc->getHostname().c_str(), "AverageTranslation", NULL);
 	}
 
 	DomainBehaviour::~DomainBehaviour()
@@ -39,8 +39,10 @@ namespace alica
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
 	{
+//        this->wm->prediction.monitoring();
 		mc.senderID = ownID;
 		mc.timestamp = wm->getTime();
+		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
 		motionControlPub.publish(mc);
 		wm->rawSensorData.processMotionControlMessage(mc);
 	}
@@ -59,6 +61,7 @@ namespace alica
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
+                wm->kicker.processKickConstrolMsg(kc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
@@ -66,6 +69,13 @@ namespace alica
 		ssc.senderID = ownID;
 		shovelSelectPublisher.publish(ssc);
 		this->wm->kicker.lowShovelSelected = ssc.passing;
+	}
+
+	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)
+	{
+		pm.senderID = senderID;
+		passMsgPublisher.publish(pm);
+		passMsgPublisher.publish(pm);
 	}
 
 	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm)

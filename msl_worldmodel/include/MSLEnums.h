@@ -48,7 +48,15 @@ namespace msl
 
 	enum EntityType
 	{
-		Opponent = -1, ArtificialObstacle = -2, Obstacle = -3
+		/**
+		 * ArtificialObstacles are:
+		 * - the artificial field surrounding
+		 * - the artificial blocking obstacles (like around the 3m radius)
+		 *
+		 * Obstacles are:
+		 * - real obstacles, which are not robots, e.g., the ball
+		 */
+		Opponent = -1, ArtificialObstacle = -2, Obstacle = -3, UndefinedEntity = -4
 	};
 }
 

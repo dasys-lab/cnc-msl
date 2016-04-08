@@ -11,9 +11,19 @@ using namespace std;
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
+<<<<<<< HEAD
 #include  "Plans/Behaviours/AttackOpp.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
+=======
+#include  "Plans/Penalty/DriveToPenaltyStart.h"
+
+#include  "Plans/GenericBehaviours/Parking.h"
+
+#include  "Plans/Standards/Own/Corner/BouncePassShoot.h"
+
+#include  "Plans/GenericBehaviours/DriveToPoint.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Behaviours/PositionReceiver.h"
 
@@ -31,7 +41,13 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
+<<<<<<< HEAD
 #include  "Plans/Behaviours/Actuate.h"
+=======
+#include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
+
+#include  "Plans/GenericStandards/StandardShieldBall.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Behaviours/Joystick.h"
 
@@ -45,9 +61,15 @@ using namespace std;
 
 #include  "Plans/Behaviours/Pos2Defenders.h"
 
+<<<<<<< HEAD
 #include  "Plans/Behaviours/Duel.h"
 
 #include  "Plans/Defence/ReleaseMid.h"
+=======
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+
+#include  "Plans/Attack/AlignAndPassRapid.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
@@ -55,7 +77,13 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardPass.h"
 
+<<<<<<< HEAD
 #include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
+=======
+#include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
@@ -69,7 +97,13 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
+<<<<<<< HEAD
 #include  "Plans/Behaviours/DriveForward.h"
+=======
+#include  "Plans/Behaviours/Intercept.h"
+
+#include  "Plans/Attack/DribbleToAttackPointConservative.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
@@ -103,9 +137,17 @@ using namespace std;
 
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
+#include  "Plans/Behaviours/GoalieExtension.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
+<<<<<<< HEAD
 #include  "Plans/Attack/Tackle.h"
+=======
+#include  "Plans/Behaviours/DefendGoal.h"
+
+#include  "Plans/Behaviours/MoveToPointDynamic.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
@@ -115,7 +157,13 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
+<<<<<<< HEAD
 #include  "Plans/GenericStandards/StandardActuate.h"
+=======
+#include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
+
+#include  "Plans/Defence/ReleaseMid.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
@@ -157,7 +205,13 @@ namespace alica
 
             case 1441107270872:
 
+<<<<<<< HEAD
                 return make_shared<SearchForPassPoint>();
+=======
+            case 1459456566595:
+
+                return make_shared<StandardAlignAndGrab>();
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
                 break;
 
             case 1417620730939:
@@ -177,7 +231,16 @@ namespace alica
                 return make_shared<PenaltyAlignAndShoot>();
                 break;
 
+<<<<<<< HEAD
             case 1430324680117:
+=======
+            case 1459609537461:
+
+                return make_shared<DriveToPenaltyStart>();
+                break;
+
+            case 1429111645834:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<AttackOpp>();
                 break;
@@ -195,6 +258,11 @@ namespace alica
             case 1415205578139:
 
                 return make_shared<GoalKick>();
+                break;
+
+            case 1459357188003:
+
+                return make_shared<BouncePassShoot>();
                 break;
 
             case 1417620583364:
@@ -260,7 +328,18 @@ namespace alica
 
             case 1436269080263:
 
+<<<<<<< HEAD
             case 1441108023281:
+=======
+            case 1459354990329:
+
+            case 1459357015987:
+
+                return make_shared<BounceShotAlignPasser>();
+                break;
+
+            case 1455888715611:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<AlignAndPassRapid>();
                 break;
@@ -295,7 +374,23 @@ namespace alica
                 return make_shared<DriveToGoal>();
                 break;
 
+<<<<<<< HEAD
             case 1436855860607:
+=======
+            case 1459355025721:
+
+            case 1459356753335:
+
+                return make_shared<BounceShotAlignWall>();
+                break;
+
+            case 1436269080263:
+
+            case 1441108023281:
+
+                return make_shared<AlignAndPassRapid>();
+                break;
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
             case 1437391438054:
 
@@ -312,7 +407,16 @@ namespace alica
                 return make_shared<WatchBall>();
                 break;
 
+<<<<<<< HEAD
             case 1415205285582:
+=======
+            case 1459357089325:
+
+                return make_shared<BouncePassFinishAlign>();
+                break;
+
+            case 1457532300654:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<AlignToGoal>();
                 break;
@@ -344,7 +448,16 @@ namespace alica
                 return make_shared<Parking>();
                 break;
 
+<<<<<<< HEAD
             case 1417017580650:
+=======
+            case 1458757193843:
+
+                return make_shared<Intercept>();
+                break;
+
+            case 1458132905432:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<DriveForward>();
                 break;
@@ -437,12 +550,28 @@ namespace alica
                 return make_shared<AdvancdeSimplePass>();
                 break;
 
+            case 1459249287791:
+
+                return make_shared<GoalieExtension>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
                 break;
 
+<<<<<<< HEAD
             case 1434807680165:
+=======
+            case 1459249336699:
+
+                return make_shared<DefendGoal>();
+                break;
+
+            case 1456997097907:
+
+            case 1458033795798:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<Tackle>();
                 break;
@@ -472,7 +601,18 @@ namespace alica
                 return make_shared<StandardActuate>();
                 break;
 
+<<<<<<< HEAD
             case 1447863503279:
+=======
+            case 1459355071258:
+
+            case 1459356685875:
+
+                return make_shared<StandardDefendPos>();
+                break;
+
+            case 1458033497042:
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
                 return make_shared<DriveToBall>();
                 break;

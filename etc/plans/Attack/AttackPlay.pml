@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434045709191" name="AttackPlay" comment="" masterPlan="false" utilityFunction="" utilityThreshold="1.0E-7" destinationPath="Plans/Attack" priority="0.0" minCardinality="2" maxCardinality="4">
-  <conditions xsi:type="alica:RuntimeCondition" id="1434112519736" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin">
+  <conditions xsi:type="alica:RuntimeCondition" id="1434112519736" name="NewRuntimeCondition" comment="true" conditionString="" pluginName="DefaultPlugin">
     <vars>#1457002241973</vars>
     <vars>#1457002247256</vars>
   </conditions>
@@ -104,8 +104,8 @@
     <task>../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1434045709193</state>
   </entryPoints>
-  <entryPoints id="1434045719840" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1225115536468</task>
+  <entryPoints id="1434045719840" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1432209050494</task>
     <state>#1434045868018</state>
   </entryPoints>
   <entryPoints id="1434045723977" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">

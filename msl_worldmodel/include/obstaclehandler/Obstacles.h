@@ -73,12 +73,10 @@ namespace msl
 		double DFLT_ROB_RADIUS;
 		double OBSTACLE_MAP_OUT_TOLERANCE;
 		double LOCALIZATION_SUCCESS_CONFIDENCE;
-		MSLFootballField* field;
 		MSLWorldModel* wm;
 		AnnotatedObstacleClusterPool* pool;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
-		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;

@@ -20,7 +20,6 @@ namespace alica
         dRot = 0.0;
         iter = 0;
         kicked = false;
-        field = MSLFootballField::getInstance();
         lastRotError = 0;
         /*PROTECTED REGION END*/
     }
@@ -33,7 +32,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1415205272843) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity()->clone();
+        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < vector<double> > dstscan = wm->rawSensorData.getDistanceScan();
 
@@ -49,6 +48,10 @@ namespace alica
         else if (ballVel->length() > 5000)
         {
             ballVel = ballVel->normalize() * 5000;
+        }
+        else
+        {
+            ballVel = ballVel->clone();
         }
 
         shared_ptr < geometry::CNPoint2D > aimPoint;
@@ -75,7 +78,7 @@ namespace alica
         double aimAngle = aimPoint->angleTo();
         double ballAngle = wm->kicker.kickerAngle;
 
-        double deltaAngle = -geometry::deltaAngle(ballAngle, aimAngle);
+        double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballAngle, 200, dstscan);
@@ -127,7 +130,6 @@ namespace alica
         iter = 0;
         kicked = false;
         lastRotError = 0;
-        field = MSLFootballField::getInstance();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
         if (ownPos == nullptr)
         {
@@ -150,7 +152,7 @@ namespace alica
         geometry::CNPoint2D hitVector = geometry::CNPoint2D();
         hitVector.x = cos(egoAngle + ownPos->theta);
         hitVector.y = sin(egoAngle + ownPos->theta);
-        double t = (field->FieldLength / 2 - ownPos->x) / hitVector.x;
+        double t = (wm->field.getFieldLength() / 2 - ownPos->x) / hitVector.x;
         if (t < 0)
         {
             return numeric_limits<double>::max();
@@ -202,7 +204,7 @@ namespace alica
             return nullptr;
         }
         vector < shared_ptr < geometry::CNPoint2D >> validGoalPoints;
-        double x = field->FieldLength / 2;
+        double x = wm->field.getFieldLength() / 2;
         //TODO add config param
         double y = -1000 + 150;
         shared_ptr < geometry::CNPoint2D > aim = make_shared < geometry::CNPoint2D > (x, y);

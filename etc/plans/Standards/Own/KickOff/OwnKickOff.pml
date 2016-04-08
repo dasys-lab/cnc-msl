@@ -2,6 +2,7 @@
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1438785376159" name="OwnKickOff" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/KickOff" priority="0.0" minCardinality="2" maxCardinality="4">
   <states id="1438785376160" name="PosExec" comment="" entryPoint="1438785376161">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/PositionExecutor.beh#1438790487994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1440675383814</outTransitions>
   </states>
   <states id="1438785501838" name="PosRecv" comment="" entryPoint="1438785392109">
@@ -9,24 +10,23 @@
     <outTransitions>#1440772549851</outTransitions>
   </states>
   <states id="1440675376134" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/StdExecutorGrabBall.beh#1441209089978</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1459456566595</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1440675383814</inTransitions>
     <inTransitions>#1440772442289</inTransitions>
     <outTransitions>#1440772545631</outTransitions>
   </states>
   <states id="1440772305591" name="Pass" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/KickOffPassDefault.beh#1438778223495</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardPass.beh#1435760175843</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1440772545631</inTransitions>
     <outTransitions>#1440772442289</outTransitions>
     <outTransitions>#1441811700499</outTransitions>
   </states>
   <states id="1440772454611" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/GetBall.beh#1414840399972</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/CheckPassMsg.beh#1457441499013</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1440772549851</inTransitions>
     <outTransitions>#1440772873418</outTransitions>
   </states>
@@ -49,7 +49,7 @@
     <inState>#1440772305591</inState>
     <outState>#1440675376134</outState>
   </transitions>
-  <transitions id="1440772545631" name="MISSING_NAME" comment="grabbed ball" msg="">
+  <transitions id="1440772545631" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1440772549250" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1440675376134</inState>
     <outState>#1440772305591</outState>

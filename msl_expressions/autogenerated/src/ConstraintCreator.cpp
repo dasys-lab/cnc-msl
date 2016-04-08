@@ -7,7 +7,15 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
+<<<<<<< HEAD
 #include  "Plans/Defence/constraints/BackroomDefence1454507425037Constraints.h"
+=======
+#include  "Plans/Standards/Own/Corner/constraints/CornerPosBounceShot1459361999064Constraints.h"
+
+#include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
+
+#include  "Plans/Attack/TestPlans/constraints/DuelTestMaster1454506180437Constraints.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
@@ -29,7 +37,13 @@
 
 #include  "Plans/Defence/constraints/MidfieldDefense1458033329973Constraints.h"
 
+<<<<<<< HEAD
 #include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
+=======
+#include  "Plans/Standards/Own/Corner/constraints/CornerBounceShot1459361887233Constraints.h"
+
+#include  "Plans/Defence/constraints/ReleaseOwnHalf1458033644590Constraints.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
 
@@ -39,13 +53,25 @@
 
 #include  "Plans/Attack/constraints/PassPlay1436268896671Constraints.h"
 
+<<<<<<< HEAD
 #include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"
+=======
+#include  "Plans/GameStrategy/Other/constraints/WanderPlan1458553921358Constraints.h"
+
+#include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/Defence/constraints/ReleaseOwnHalf1458033644590Constraints.h"
 
 #include  "Plans/GenericStandards/constraints/DummyMasterPlan1432139066765Constraints.h"
 
+<<<<<<< HEAD
 #include  "Plans/constraints/CarpetCalibrator1435159127771Constraints.h"
+=======
+#include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
+
+#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
+>>>>>>> 06483db7e813f5fb8ed4700ac31bd1099da22aa8
 
 #include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
 

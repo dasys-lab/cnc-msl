@@ -67,7 +67,14 @@ namespace alica
                 {
                     // get receiver position by id
                     auto pos = wm->robots.teammates.getTeamMatePosition(ids->at(0));
-                    receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    if (pos != nullptr)
+                    {
+                        receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    }
+                    else
+                    {
+                        receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
+                    }
                 }
                 MotionControl mc;
                 shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
@@ -131,7 +138,6 @@ namespace alica
     void StandardAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);

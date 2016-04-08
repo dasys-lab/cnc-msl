@@ -25,21 +25,19 @@ namespace alica
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
-        if (me == nullptr || egoBallPos == nullptr || vNet == nullptr)
+        if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
-        auto obstacles = wm->obstacles.getEgoVisionObstacles();
+        auto obstacles = wm->obstacles.getAlloObstaclePoints();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         if (obstacles != nullptr)
         {
             for (int i = 0; i < obstacles->size(); i++)
             {
-                if (wm->pathPlanner.corridorCheck(
-                        vNet, make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
-                        make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
+                if (wm->pathPlanner.corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
+                                                  egoBallPos->egoToAllo(*me), obstacles->at(i)))
                 {
                     blocked = true;
                     break;
@@ -61,6 +59,7 @@ namespace alica
                 isMovingCloserIter = 0;
                 this->success = true;
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
+                mc.motion.translation = 500;
                 send(mc);
                 return;
             }
@@ -78,6 +77,7 @@ namespace alica
                 isMovingAwayIter++;
                 isMovingCloserIter = 0;
             }
+
             if (isMovingAwayIter >= maxIter || egoBallVelocity->length() <= 250)
             {
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
@@ -131,15 +131,6 @@ namespace alica
         mc.motion.translation = movement;
         mc.motion.angle = egoBallPos->angleTo();
         mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
-
-        if (egoBallPos->length() < 1500)
-        {
-
-            bhc.leftMotor = -30;
-            bhc.rightMotor = -30;
-
-            this->send(bhc);
-        }
         return mc;
     }
 
@@ -153,16 +144,6 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
         mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
-
-        if (egoBallPos->length() < 500)
-        {
-
-            bhc.leftMotor = -30;
-            bhc.rightMotor = -30;
-
-            this->send(bhc);
-        }
-
         return mc;
     }
 /*PROTECTED REGION END*/

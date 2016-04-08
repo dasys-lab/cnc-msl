@@ -31,36 +31,37 @@ namespace msl
 		// Set own Team Color
 		sc = SystemConfig::getInstance();
 		string tmpOwnTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
-		if (tmpOwnTeamColor.compare("cyan"))
+		if (tmpOwnTeamColor.compare("cyan") == 0)
 		{
+			cout << "MSL-WM::Game: Own team color is CYAN" << endl;
 			ownTeamColor = Color::Cyan;
 		}
-		else if (tmpOwnTeamColor.compare("magenta"))
+		else if (tmpOwnTeamColor.compare("magenta") == 0)
 		{
 			ownTeamColor = Color::Magenta;
+			cout << "MSL-WM::Game: Own team color is MAGENTA" << endl;
 		}
 		else
 		{
-			cerr << "MSL-WM::Game: Own team color is unknown!" << endl;
 			ownTeamColor = Color::UnknownColor;
+			cerr << "MSL-WM::Game: Own team color is UNKNOWN!" << endl;
 		}
 
 		// Set own Goal Color
 		string tmpeOwnGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
-		cout << tmpeOwnGoalColor << endl;
 		if (tmpeOwnGoalColor.find("b") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Blue;
-			cout << "OwnGoal is Blue" << endl;
+			cout << "MSL-WM::Game: OwnGoal is BLUE" << endl;
 		}
 		else if (tmpeOwnGoalColor.find("y") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Yellow;
-			cout << "OwnGoal is Yellow" << endl;
+			cout << "MSL-WM::Game: OwnGoal is YELLOW" << endl;
 		}
 		else
 		{
-			cerr << "MSL-WM::Game: Own goal color is unknown!" << endl;
+			cerr << "MSL-WM::Game: Own goal color is UNKNOWN!" << endl;
 			exit(0);
 			ownGoalColor = Color::UnknownColor;
 		}

@@ -22,7 +22,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1449076008755) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPosition> ownPos;
         shared_ptr<geometry::CNPoint2D> egoBallPos;
-        msl::MSLFootballField* field;
         double minObsDistGoal;
         double minOwnDistGoal;
         double minOppYDist;
@@ -33,7 +32,8 @@ namespace alica
         double minKeeperDistBallTrajectory;
         double minKickPower;
 
-        long startKickTime;
+        bool usePrediction;
+        int predictionTime;
 
         // testing variables for console output
         double cout_distBall2HitPoint;

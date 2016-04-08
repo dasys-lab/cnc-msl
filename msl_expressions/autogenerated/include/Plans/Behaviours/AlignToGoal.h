@@ -23,7 +23,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1415205272843) ENABLED START*/ //Add additional protected methods here
-        MSLFootballField* field;
         double maxVel;
         double lastRotError;
         double maxRot;

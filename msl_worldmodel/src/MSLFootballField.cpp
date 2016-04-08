@@ -1,33 +1,35 @@
 #include <MSLFootballField.h>
 #include <iostream>
+#include "MSLWorldModel.h"
 
 namespace msl
 {
 
-	double MSLFootballField::FieldLength = 11200.0;
-	double MSLFootballField::FieldWidth = 8000.0;
-	double MSLFootballField::PenaltyAreaWidth = 1200.0;
-	double MSLFootballField::PenaltyAreaLength = 4000.0;
-	double MSLFootballField::GoalAreaWidth = 3000.0;
-	double MSLFootballField::GoalAreaLength = 700.0;
-	double MSLFootballField::CornerCircleRadius = 350.0;
-	double MSLFootballField::MiddleCircleRadius = 1000.0;
-	double MSLFootballField::LineWidth = 75.0;
-	double MSLFootballField::GoalWidth = 2000.0;
-	double MSLFootballField::PenaltySpot = 3000.0;
-	double MSLFootballField::Surrounding = 1500.0;
-	bool MSLFootballField::GoalInnerAreaExists = false;
-	bool MSLFootballField::CornerCircleExists = false;
-	double MSLFootballField::PenaltyAreaMappingTolerance = 300;
-	double MSLFootballField::MaxDistanceSqr = 12000*12000+18000*18000;
-	double MSLFootballField::MaxDistance = sqrt(12000*12000+18000*18000);
-	MSLFootballField * MSLFootballField::instance = NULL;
+//	double MSLFootballField::FieldLength = 11200.0;
+//	double MSLFootballField::FieldWidth = 8000.0;
+//	double MSLFootballField::PenaltyAreaWidth = 1200.0;
+//	double MSLFootballField::PenaltyAreaLength = 4000.0;
+//	double MSLFootballField::GoalAreaWidth = 3000.0;
+//	double MSLFootballField::GoalAreaLength = 700.0;
+//	double MSLFootballField::CornerCircleRadius = 350.0;
+//	double MSLFootballField::MiddleCircleRadius = 1000.0;
+//	double MSLFootballField::LineWidth = 75.0;
+//	double MSLFootballField::GoalWidth = 2000.0;
+//	double MSLFootballField::PenaltySpot = 3000.0;
+//	double MSLFootballField::Surrounding = 1500.0;
+//	bool MSLFootballField::GoalInnerAreaExists = false;
+//	bool MSLFootballField::CornerCircleExists = false;
+//	double MSLFootballField::PenaltyAreaMappingTolerance = 300;
+//	double MSLFootballField::MaxDistanceSqr = 12000*12000+18000*18000;
+//	double MSLFootballField::MaxDistance = sqrt(12000*12000+18000*18000);
+//	MSLFootballField * MSLFootballField::instance = NULL;
 
-	MSLFootballField::MSLFootballField()
+	MSLFootballField::MSLFootballField(MSLWorldModel* wm)
 	{
 
 		this->sc = SystemConfig::getInstance();
-
+		this->wm = wm;
+		MiddleCircleRadius = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "MiddleCircleRadius", NULL);
 		FieldLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldLength", NULL);
 		FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldWidth", NULL);
 		PenaltyAreaLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "PenaltyAreaXSize", NULL);
@@ -67,22 +69,22 @@ namespace msl
 
 	}
 
-	MSLFootballField * MSLFootballField::getInstance()
-	{
+//	MSLFootballField* MSLFootballField::getInstance()
+//	{
+//		static MSLFootballField instance;
+//		return &instance;
+//	}
 
-		if (instance == NULL)
-		{
-			instance = new MSLFootballField();
-		}
-
-		return instance;
-
-	}
-
+        /// <summary>Checks whether a given point is inside the field</summary>
 	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance)
 	{
 		return abs(point->x) < FieldLength / 2 + tolerance && abs(point->y) < FieldWidth / 2 + tolerance;
 	}
+
+        bool MSLFootballField::isInsideField(double x, double y, double tolerance)
+        {
+                return abs(x) < FieldLength / 2 + tolerance && abs(y) < FieldWidth / 2 + tolerance;
+        }
 
 	bool MSLFootballField::isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
@@ -99,12 +101,6 @@ namespace msl
 	bool MSLFootballField::isInsidePenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance)
 	{
 		return isInsideOwnPenalty(p, tolerance) || isInsideEnemyPenalty(p, tolerance);
-	}
-
-	/// <summary>Checks whether a given point is inside the field</summary>
-	bool MSLFootballField::isInsideField(shared_ptr<geometry::CNPoint2D> p)
-	{
-		return abs(p->x) < FieldLength / 2 && abs(p->y) < FieldWidth / 2;
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp)
@@ -667,6 +663,91 @@ namespace msl
 		// t = (x-origin.x)/dir.x;
 		// y= origin.y+dir.y*(x-origin.x)/dir.x;
 		return origin->y + dir->y * (x - origin->x) / dir->x;
+	}
+
+	bool MSLFootballField::cornerCircleExists()
+	{
+		return CornerCircleExists;
+	}
+
+	double MSLFootballField::getCornerCircleRadius()
+	{
+		return CornerCircleRadius;
+	}
+
+	double MSLFootballField::getFieldLength()
+	{
+		return FieldLength;
+	}
+
+	double MSLFootballField::getFieldWidth()
+	{
+		return FieldWidth;
+	}
+
+	double MSLFootballField::getGoalAreaLength()
+	{
+		return GoalAreaLength;
+	}
+
+	double MSLFootballField::getGoalAreaWidth()
+	{
+		return GoalAreaWidth;
+	}
+
+	bool MSLFootballField::isGoalInnerAreaExists()
+	{
+		return GoalInnerAreaExists;
+	}
+
+	double MSLFootballField::getGoalWidth()
+	{
+		return GoalWidth;
+	}
+
+	double MSLFootballField::getLineWidth()
+	{
+		return LineWidth;
+	}
+
+	double MSLFootballField::getMaxDistance()
+	{
+		return MaxDistance;
+	}
+
+	double MSLFootballField::getMaxDistanceSqr()
+	{
+		return MaxDistanceSqr;
+	}
+
+	double MSLFootballField::getMiddleCircleRadius()
+	{
+		return MiddleCircleRadius;
+	}
+
+	double MSLFootballField::getPenaltyAreaLength()
+	{
+		return PenaltyAreaLength;
+	}
+
+	double MSLFootballField::getPenaltyAreaMappingTolerance()
+	{
+		return PenaltyAreaMappingTolerance;
+	}
+
+	double MSLFootballField::getPenaltyAreaWidth()
+	{
+		return PenaltyAreaWidth;
+	}
+
+	double MSLFootballField::getPenaltySpot()
+	{
+		return PenaltySpot;
+	}
+
+	double MSLFootballField::getSurrounding()
+	{
+		return Surrounding;
 	}
 
 	double MSLFootballField::projectVectorOntoY(shared_ptr<geometry::CNPoint2D> origin,

@@ -25,7 +25,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1436855838589) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPoint2D> alloTargetPoint;
         shared_ptr<geometry::CNPoint2D> egoTargetPoint;
-        msl::MSLFootballField* field;
         supplementary::SystemConfig* sc;
         int wheelSpeed;
         shared_ptr<geometry::CNPoint2D> lastClosesOpp;

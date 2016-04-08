@@ -145,7 +145,7 @@ namespace msl
 	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index)
 	{
 		auto x = joystickCommands.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > 250000000)
 		{
 			return nullptr;
 		}
@@ -264,6 +264,7 @@ namespace msl
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
 
+
 			//Motion
 			/*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
@@ -280,19 +281,17 @@ namespace msl
 			ownVelocityMotion.add(vMotion);*/
 		}
 
-		if (data->ball.confidence > 0)
-		{
-			shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-			                                                                           data->ball.point.y);
-			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-			                                                                                 data->ball.velocity.vy);
+		shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x,
+																				   data->ball.point.y,data->ball.point.z);
+		shared_ptr<geometry::CNPoint3D> ballVel = make_shared<geometry::CNPoint3D>(data->ball.velocity.vx,
+																						 data->ball.velocity.vy, data->ball.velocity.vz);
 
-			//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
-			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
-		} else {
-			wm->ball.updateHaveBall();
-			wm->ball.updateSharedBall();
-		}
+		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
+		if (data->ball.confidence < 0.00000001)
+		        this->wm->ball.updateBallPos(nullptr, nullptr, data->ball.confidence);
+		else
+	                this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
 

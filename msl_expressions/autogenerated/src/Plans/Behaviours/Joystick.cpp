@@ -31,13 +31,17 @@ namespace alica
         auto joy = wm->rawSensorData.getJoystickCommand();
         if (!joy)
         {
+            msl_actuator_msgs::MotionControl mc;
+            send(mc);
             return;
         }
 
-        if (lastProcessedCmd == joy) // only process new commands from WM
-        {
-            return;
-        }
+//		if (lastProcessedCmd == joy) // only process new commands from WM
+//		{
+//			msl_actuator_msgs::MotionControl mc;
+//			send(mc);
+//			return;
+//		}
 
         //cout << "Joystick-Beh: " << *joy << endl;
         if (!std::isnan(joy->motion.translation) && !std::isnan(joy->motion.rotation) && !std::isnan(joy->motion.angle))
@@ -46,13 +50,16 @@ namespace alica
             mc.motion = joy->motion;
             send(mc);
         }
-//        else
-//        {
-//        	cout << "Joystick: Some Motion Value is NaN!" << endl;
-//        }
+        else
+        {
+            msl_actuator_msgs::MotionControl mc;
+            send(mc);
+            //cout << "Joystick: Some Motion Value is NaN!" << endl;
+        }
 
         if (joy->ballHandleState == msl_msgs::JoystickCommand::BALL_HANDLE_ON)
         {
+        //cout << "Joy Ball handle on" << endl;
             msl_actuator_msgs::BallHandleCmd bhc;
             bhc.leftMotor = joy->ballHandleLeftMotor;
             bhc.rightMotor = joy->ballHandleRightMotor;

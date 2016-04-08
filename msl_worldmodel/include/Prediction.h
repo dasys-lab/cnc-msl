@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <container/CNPosition.h>
 
 namespace msl
 {
@@ -23,7 +24,7 @@ public:
 
   double rotationVelocity(int ms);
   double angle(int ms);
-  std::unique_ptr<std::array<double,4>> angleAndPosition(int ms);
+  std::unique_ptr<std::pair<std::shared_ptr<geometry::CNPosition>,double>> angleAndPosition(int ms);
   void monitoring();
 
 private:

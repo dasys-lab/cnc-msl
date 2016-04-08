@@ -13,13 +13,12 @@ namespace alica
             DomainBehaviour("Wander")
     {
         /*PROTECTED REGION ID(con1434716215423) ENABLED START*/ //Add additional options here
-        msl::MSLFootballField* field = msl::MSLFootballField::getInstance();
-        fieldLength = field->FieldLength;
-        fieldWidth = field->FieldWidth;
+        fieldLength = wm->field.getFieldLength();
+        fieldWidth = wm->field.getFieldWidth();
         distToCorner = 2500;
         distToOutLine = 4000;
         firstTargetSet = false;
-        EPSILON_RADIUS = 300.0;
+        EPSILON_RADIUS = 1000.0;
         SLOW_DOWN_DISTANCE = 1200.0;
         maxTranslation = 4000.0;
         translation = 0.0;
@@ -53,16 +52,16 @@ namespace alica
         //drive to both own penaltyarea corners
         targetPointsOwnGoalKick.resize(2);
         targetPointsOwnGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - field->GoalAreaLength), field->GoalAreaWidth / 2);
+                > (-(fieldLength / 2 - wm->field.getGoalAreaLength()), wm->field.getGoalAreaWidth() / 2);
         targetPointsOwnGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (-(fieldLength / 2 - field->GoalAreaLength), -field->GoalAreaWidth / 2);
+                > (-(fieldLength / 2 - wm->field.getGoalAreaLength()), -wm->field.getGoalAreaWidth() / 2);
 
         //drive to both opp penaltyarea corners
         targetPointsOppGoalKick.resize(2);
         targetPointsOppGoalKick[0] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - field->GoalAreaLength, field->GoalAreaWidth / 2);
+                > (fieldLength / 2 - wm->field.getGoalAreaLength(), wm->field.getGoalAreaWidth() / 2);
         targetPointsOppGoalKick[1] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 2 - field->GoalAreaLength, -field->GoalAreaWidth / 2);
+                > (fieldLength / 2 - wm->field.getGoalAreaLength(), -wm->field.getGoalAreaWidth() / 2);
 
         //points on side lines (distToOutline away)
         targetPointsThrowIn.resize(6);

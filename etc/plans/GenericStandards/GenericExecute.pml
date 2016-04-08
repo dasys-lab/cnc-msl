@@ -11,9 +11,9 @@
     </quantifiers>
   </conditions>
   <states id="1431522155979" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1433949706015</inTransitions>
     <inTransitions>#1435761866545</inTransitions>
     <outTransitions>#1431522782044</outTransitions>
@@ -33,7 +33,7 @@
   </states>
   <states id="1431522912251" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
   </states>
@@ -85,12 +85,12 @@
     <inState>#1431522763494</inState>
     <outState>#1431522155979</outState>
   </transitions>
-  <entryPoints id="1431522155980" name="StandardExecuter" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601692867</task>
+  <entryPoints id="1431522155980" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1433949667740</state>
   </entryPoints>
-  <entryPoints id="1431522269326" name="StandardReceiver" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1238601842183</task>
+  <entryPoints id="1431522269326" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1431522297705</state>
   </entryPoints>
   <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">

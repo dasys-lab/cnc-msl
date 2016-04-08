@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1459355002202" name="BounceShotAlignWall" comment="" destinationPath="Plans/Standards/Own/Corner">
+  <configurations id="1459355025721" name="BounceShotAlignWallCornerKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1459355148906" name="MISSING_NAME" comment="" key="planName" value="CornerPosBounceShot"/>
+    <parameters id="1459355174842" name="MISSING_NAME" comment="" key="RealignWall" value="false"/>
+  </configurations>
+  <configurations id="1459356753335" name="BounceShotRealignWall" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1459359337002" name="MISSING_NAME" comment="" key="planName" value="CornerExecBounceShot"/>
+    <parameters id="1459359348739" name="MISSING_NAME" comment="" key="RealignWall" value="true"/>
+  </configurations>
+</alica:Behaviour>

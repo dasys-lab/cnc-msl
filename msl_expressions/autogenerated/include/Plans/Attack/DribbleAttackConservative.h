@@ -18,7 +18,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1457967322925) ENABLED START*/ //Add additional protected methods here
-        msl::MSLFootballField* field;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
         bool before;
 

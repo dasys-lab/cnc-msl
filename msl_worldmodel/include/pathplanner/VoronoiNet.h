@@ -28,8 +28,9 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include <iostream>
 
 #include "container/CNPoint2D.h"
+#include "container/CNRobot.h"
 #include "pathplanner/SearchNode.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include "pathplanner/evaluator/IPathEvaluator.h"
 #include "MSLFootballField.h"
 #include "MSLEnums.h"
 
@@ -59,37 +60,27 @@ namespace msl
 		 * @param points vector<shared_ptr<geometry::CNPoint2D>>
 		 * @return shared_ptr<VoronoiDiagram>
 		 */
-		shared_ptr<VoronoiDiagram> generateVoronoiDiagram(vector<shared_ptr<geometry::CNPoint2D>> points, bool ownPosAvail);
+		void generateVoronoiDiagram(bool ownPosAvail);
 		/**
 		 * gets the SearchNode with lowest dist to goal
 		 * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
 		 * @return shared_ptr<SearchNode>
 		 */
-		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
+//		shared_ptr<SearchNode> getMin(shared_ptr<vector<shared_ptr<SearchNode>>> open);
 		/**
 		 * gets the closest vertex to a given point
 		 * @param ownPos shared_ptr<geometry::CNPoint2D>
 		 * @return shared_ptr<VoronoiDiagram::Vertex>
 		 */
-		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> ownPos);
-		/**
-		 * expands a SearchNode
-		 * @param currentNode shared_ptr<SearchNode>
-		 * @param open shared_ptr<vector<shared_ptr<SearchNode>>>
-		 * @param closed shared_ptr<vector<shared_ptr<SearchNode>>>
-		 * @param startPos shared_ptr<geometry::CNPoint2D>
-		 * @param goal shared_ptr<geometry::CNPoint2D>
-		 * @param eval shared_ptr<PathEvaluator>
-		 */
-		void expandNode(shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<SearchNode>>> open,
-							shared_ptr<vector<shared_ptr<SearchNode>>> closed, shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<PathEvaluator> eval);
+//		shared_ptr<VoronoiDiagram::Vertex> findClosestVertexToOwnPos(shared_ptr<geometry::CNPoint2D> ownPos);
+
 		/**
 		 * return the sites near an egde defined by 2 points
 		 * @param v1 shared_ptr<geometry::CNPoint2D>
 		 * @param v2 shared_ptr<geometry::CNPoint2D>
 		 * @return pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>>
 		 */
-		pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
+		//pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> getSitesNextToHalfEdge(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
 		/**
 		 * print the voronoi diagrams sites
 		 */
@@ -120,13 +111,7 @@ namespace msl
 		 * insert additional points into the voronoi diagram
 		 * @param points shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
-		void insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
-
-		/**
-		 * insert additional points into the voronoi diagram
-		 * @param points shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
-		 */
-		void insertAdditionalPoints(shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+		void insertAdditionalPoints(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > points, EntityType type);
 
 		/**
 		 * deletes sites from voronoi net and clears pointRobotKindMapping
@@ -143,15 +128,6 @@ namespace msl
 		 */
 		void setVoronoi(shared_ptr<VoronoiDiagram> voronoi);
 		/**
-		 * calculates distance between two points
-		 * @param pos shared_ptr<geometry::CNPoint2D>
-		 * @param vertexPoint shared_ptr<geometry::CNPoint2D>
-		 * @return double
-		 */
-		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<Vertex> vertexPoint);
-
-		double calcDist(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<geometry::CNPoint2D> vertexPoint);
-		/**
 		 * find the face in which the point is situated
 		 * @param point VoronoiDiagram::Point_2
 		 * @return shared_ptr<VoronoiDiagram::Site_2>
@@ -165,38 +141,46 @@ namespace msl
 		 * @param nextNode shared_ptr<SearchNode>
 		 * @return bool
 		 */
-		bool isOwnCellEdge(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
+//		bool isOwnCellEdge(shared_ptr<geometry::CNPoint2D> pos, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode);
 
 		/**
 		 * return the teammate positions
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
+		//shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getTeamMatePositions();
 
 		/**
 		 * return the obstacle positions
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getObstaclePositions();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePositions();
 
 		/**
 		 * return the Opponent positions
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getOpponentPositions();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getOpponentPositions();
 
 		/**
 		 * return the site positions
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > >
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
+//		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int> > > getSitePositions();
+
+		// DATA for constructing this voronoi net
+		shared_ptr<vector<shared_ptr<geometry::CNRobot> > > getAlloClusteredObsWithMe();
+
+		// DATA for constructing this voronoi net
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getArtificialObstacles();
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getAdditionalObstacles();
 
 		/**
 		 * return vertices teammates voronoi face
 		 * @param teamMateId int
 		 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
-		shared_ptr<vector<shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
+//		shared_ptr<vector<shared_ptr<Vertex>>> getTeamMateVertices(int teamMateId);
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > getTeamMateVerticesCNPoint2D(int teamMateId);
 		/**
@@ -215,31 +199,31 @@ namespace msl
 		 * bolck opponent penalty area
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOppPenaltyArea();
+		void blockOppPenaltyArea();
 
 		/**
 		 * bolck opponent goal area
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOppGoalArea();
+		void blockOppGoalArea();
 
 		/**
 		 * bolck own penalty area
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOwnPenaltyArea();
+		void blockOwnPenaltyArea();
 
 		/**
 		 * bolck own goal area
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockOwnGoalArea();
+		void  blockOwnGoalArea();
 
 		/**
 		 * bolck 3 meters around the ball
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockThreeMeterAroundBall();
+		void blockThreeMeterAroundBall();
 
 		/**
 		 * bolck circle shaped area
@@ -247,7 +231,7 @@ namespace msl
 		 * @param radious double
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
+		void blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius);
 
 		/**
 		 * bolck opponent penalty area
@@ -255,15 +239,11 @@ namespace msl
 		 * @param lowRightCorner shared_ptr<geometry::CNPoint2D>
 		 * @return shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
 		 */
-		shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
+		void blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner, shared_ptr<geometry::CNPoint2D> lowRightCorner);
+
+		int getTypeOfSite(Site_2 site);
 
 	private:
-		/**
-		 * gets Vertices connected to SeachNode vertex
-		 * @param currentNode shared_ptr<SearchNode>
-		 * @return vector<shared_ptr<SearchNode>>
-		 */
-		//vector<shared_ptr<SearchNode>> getNeighboredVertices(shared_ptr<SearchNode> currentNode);
 		/**
 		 * checks if a SearchNode is part of a vector
 		 * @param vector shared_ptr<vector<shared_ptr<SearchNode>>>
@@ -271,7 +251,6 @@ namespace msl
 		 * @return bool
 		 */
 		bool contains(shared_ptr<vector<shared_ptr<SearchNode>>> vector, shared_ptr<SearchNode> vertex);
-
 
 
 	protected:
@@ -282,12 +261,17 @@ namespace msl
 		shared_ptr<VoronoiDiagram> voronoi;
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
-		MSLFootballField* field;
 		mutex netMutex;
 		/**
 		 * team = robot id, obstacle = -1, artificial obstacle = -2
 		 */
-		map<shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
+		//map<shared_ptr<geometry::CNPoint2D>, int> pointRobotKindMapping;
+		map<Site_2, int> pointRobotKindMapping;
+
+		// DATA for constructing this voronoi net
+		shared_ptr<vector<shared_ptr<geometry::CNRobot> > > alloClusteredObsWithMe;
+                shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > artificialObstacles;
+                shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > additionalObstacles;
 	};
 
 } /* namespace msl */

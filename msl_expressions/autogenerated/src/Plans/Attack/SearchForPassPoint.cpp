@@ -41,7 +41,7 @@ namespace alica
         /*PROTECTED REGION ID(run1436269017402) ENABLED START*/ //Add additional options here
         if (eps.size() <= 0)
         {
-            cout << "S4PP: All EPs is null" << endl;
+//            cout << "S4PP: All EPs is null" << endl;
             return;
         }
 
@@ -131,7 +131,7 @@ namespace alica
                     shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
                     double rcv2PassPointDist = rcv2PassPoint->length();
                     double factor = closerFactor;
-                    if (factor * rcv2PassPointDist > minCloserOffset)
+                    if (factor * rcv2PassPointDist < minCloserOffset)
                     {
                         factor = factor * rcv2PassPointDist;
                     }
@@ -160,7 +160,7 @@ namespace alica
                         bool opponentTooClose = false;
                         for (int i = 0; i < obs->size(); i++)
                         {
-                            if (obs->at(i).first->distanceTo(passPoint) < minOppDist)
+                            if (obs->at(i)->distanceTo(passPoint) < minOppDist)
                             {
                                 opponentTooClose = true;
                                 break;
@@ -183,7 +183,7 @@ namespace alica
 //						}
 
                         //small angle to turn to pass point
-                        if (geometry::GeometryCalculator::absDeltaAngle(
+                        if (geometry::absDeltaAngle(
                                 alloPos->theta + M_PI,
                                 (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
                                 > maxTurnAngle)
@@ -345,11 +345,11 @@ namespace alica
     /*PROTECTED REGION ID(methods1436269017402) ENABLED START*/ //Add additional methods here
     bool SearchForPassPoint::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
                                               shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                              shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
+                                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i).first->x, points->at(i).first->y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
             < passCorridorWidth)
             {
                 return false;
@@ -365,7 +365,7 @@ namespace alica
     {
         for (int i = 0; i < points->size(); i++)
         {
-            if (geometry::GeometryCalculator::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
+            if (geometry::distancePointToLineSegment(points->at(i)->x, points->at(i)->y, ball, passPoint)
             < passCorridorWidth && ball->distanceTo(points->at(i)) < ball->distanceTo(passPoint) - 100)
             {
                 return false;
@@ -376,7 +376,7 @@ namespace alica
 
     bool SearchForPassPoint::outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                              shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                             shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points)
+                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)
                                          {
                                              shared_ptr<geometry::CNPoint2D> a2b = b - a;
                                              shared_ptr<geometry::CNPoint2D> b2c = c - b;
@@ -387,7 +387,7 @@ namespace alica
                                              shared_ptr<geometry::CNPoint2D> p;
                                              for (int i = 0; i < points->size(); i++)
                                              {
-                                                 p = points->at(i).first;
+                                                 p = points->at(i);
                                                  a2p = p - a;
                                                  b2p = p - b;
                                                  c2p = p - c;

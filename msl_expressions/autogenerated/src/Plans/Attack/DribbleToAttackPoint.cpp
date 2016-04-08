@@ -18,7 +18,6 @@ namespace alica
         /*PROTECTED REGION ID(con1436855838589) ENABLED START*/ //Add additional options here
         this->wheelSpeed = -50;
         this->sc = nullptr;
-        this->field = nullptr;
         this->maxVel = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxVel", NULL);
         this->maxOppDist = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.maxOppDist", NULL);
         this->oppVectorWeight = (*this->sc)["Dribble"]->get<double>("DribbleToAttackPoint.oppVectorWeight", NULL);
@@ -77,7 +76,7 @@ namespace alica
         double dist = 0;
         for (int i = 0; i < opponents->size(); i++)
         {
-            auto opp = opponents->at(i).first;
+            auto opp = opponents->at(i);
             dist = opp->distanceTo(ownPoint);
             if (dist < maxOppDist)
             {
@@ -201,7 +200,6 @@ namespace alica
     void DribbleToAttackPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1436855838589) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         sc = supplementary::SystemConfig::getInstance();
         eval = make_shared<msl::PathEvaluator>();
         bool success = true;
@@ -229,11 +227,11 @@ namespace alica
         }
         if (!ownPenalty)
         {
-            alloTargetPoint = field->posOppPenaltyMarker();
+            alloTargetPoint = wm->field.posOppPenaltyMarker();
         }
         else
         {
-            alloTargetPoint = field->posOwnPenaltyMarker();
+            alloTargetPoint = wm->field.posOwnPenaltyMarker();
         }
         wheelSpeed = -80;
         lastClosesOpp = nullptr;
