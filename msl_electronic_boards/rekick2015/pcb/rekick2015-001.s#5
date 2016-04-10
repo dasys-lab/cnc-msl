@@ -19488,8 +19488,8 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 </part>
 <part name="R105" library="rcl" deviceset="R-EU_" device="R0805" value="750"/>
 <part name="FRAME6" library="frames" deviceset="A4L-LOC" device=""/>
-<part name="R2" library="resistor-power" deviceset="R" device="HS25" value="47"/>
-<part name="R3" library="resistor-power" deviceset="R" device="HS25" value="47"/>
+<part name="R2" library="resistor-power" deviceset="R" device="HS25" value="100"/>
+<part name="R3" library="resistor-power" deviceset="R" device="HS25" value="100"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="R6" library="rcl" deviceset="R-EU_" device="R0805" value="12k, 1%"/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="R0805" value="10k, 1%"/>
@@ -20715,13 +20715,13 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <wire x1="134.62" y1="124.46" x2="134.62" y2="121.92" width="0.1524" layer="91"/>
 <junction x="134.62" y="121.92"/>
 <wire x1="154.94" y1="121.92" x2="167.64" y2="121.92" width="0.1524" layer="91"/>
-<wire x1="167.64" y1="121.92" x2="180.34" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="121.92" x2="175.26" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="121.92" x2="175.26" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="121.92" x2="167.64" y2="119.38" width="0.1524" layer="91"/>
 <junction x="167.64" y="121.92"/>
 <pinref part="L3" gate="G$1" pin="1"/>
-<wire x1="180.34" y1="121.92" x2="180.34" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="L7" gate="G$1" pin="3"/>
-<wire x1="180.34" y1="111.76" x2="185.42" y2="111.76" width="0.1524" layer="91"/>
+<pinref part="L7" gate="G$1" pin="4"/>
+<wire x1="175.26" y1="116.84" x2="185.42" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -20875,9 +20875,9 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <wire x1="175.26" y1="99.06" x2="180.34" y2="99.06" width="0.1524" layer="91"/>
 <junction x="175.26" y="99.06"/>
 <pinref part="L4" gate="G$1" pin="1"/>
-<pinref part="L7" gate="G$1" pin="2"/>
-<wire x1="185.42" y1="106.68" x2="180.34" y2="106.68" width="0.1524" layer="91"/>
-<wire x1="180.34" y1="106.68" x2="180.34" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="121.92" x2="180.34" y2="99.06" width="0.1524" layer="91"/>
+<pinref part="L7" gate="G$1" pin="5"/>
+<wire x1="180.34" y1="121.92" x2="185.42" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -21022,6 +21022,7 @@ Source: http://www.onsemi.co.jp .. LM317M-D.PDF</description>
 <segment>
 <pinref part="D13" gate="G$1" pin="A"/>
 <wire x1="190.5" y1="165.1" x2="182.88" y2="165.1" width="0.1524" layer="91"/>
+<pinref part="T3" gate="G$1" pin="C"/>
 </segment>
 </net>
 <net name="N$56" class="0">
