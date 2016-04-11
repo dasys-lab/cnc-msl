@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -22136,7 +22136,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <label x="127" y="121.92" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="RF" class="0">
+<net name="D2A/KICK_VOLTAGE" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PC7"/>
 <wire x1="129.54" y1="124.46" x2="124.46" y2="124.46" width="0.1524" layer="91"/>
@@ -23080,13 +23080,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="167.64" y1="152.4" x2="175.26" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="RF" class="0">
-<segment>
-<pinref part="RF_MAX" gate="G$1" pin="1"/>
-<wire x1="25.4" y1="99.06" x2="25.4" y2="104.14" width="0.1524" layer="91"/>
-<label x="25.4" y="99.06" size="1.778" layer="95" rot="R270" xref="yes"/>
-</segment>
-</net>
 <net name="N$74" class="0">
 <segment>
 <pinref part="R46" gate="G$1" pin="1"/>
@@ -23104,6 +23097,13 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="55.88" y1="106.68" x2="55.88" y2="111.76" width="0.1524" layer="91"/>
 <junction x="55.88" y="111.76"/>
 <label x="53.34" y="111.76" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="AN-AUSGANG-ODER-MCU-KOPPELN" class="0">
+<segment>
+<pinref part="RF_MAX" gate="G$1" pin="1"/>
+<wire x1="25.4" y1="104.14" x2="25.4" y2="96.52" width="0.1524" layer="91"/>
+<label x="25.4" y="96.52" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -24194,7 +24194,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <label x="78.74" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$29" class="0">
+<net name="D2A/KICK_VOLTAGE" class="0">
 <segment>
 <pinref part="R21" gate="G$1" pin="2"/>
 <pinref part="R5" gate="G$1" pin="1"/>
@@ -24206,6 +24206,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <pinref part="C36" gate="G$1" pin="1"/>
 <wire x1="96.52" y1="71.12" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
 <junction x="96.52" y="71.12"/>
+<wire x1="88.9" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
+<label x="78.74" y="71.12" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$50" class="0">

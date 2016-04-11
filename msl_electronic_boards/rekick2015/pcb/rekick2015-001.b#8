@@ -3343,8 +3343,8 @@ design rules under a new name.</description>
 <attribute name="FARNELL" value="2396016" x="109.093" y="95.377" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="R105" library="rcl" package="R0805" value="750" x="85.852" y="96.52"/>
-<element name="R2" library="resistor-power" package="HS25" value="47" x="144.907" y="74.041" rot="R270"/>
-<element name="R3" library="resistor-power" package="HS25" value="47" x="144.399" y="26.543" rot="R270"/>
+<element name="R2" library="resistor-power" package="HS25" value="100" x="144.907" y="74.041" rot="R270"/>
+<element name="R3" library="resistor-power" package="HS25" value="100" x="144.399" y="26.543" rot="R270"/>
 <element name="C15" library="rcl" package="C0603" value="100p" x="65.278" y="83.82"/>
 <element name="R6" library="rcl" package="R0805" value="12k, 1%" x="130.175" y="94.361"/>
 <element name="R4" library="rcl" package="R0805" value="10k, 1%" x="129.54" y="93.853"/>
