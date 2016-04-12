@@ -14,8 +14,8 @@ namespace alica
         /*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
         wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
         translation = (*this->sc)["Behaviour"]->get<double>("Duel.Velocity", NULL);
-        fieldLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL);
-        fieldWidth = (*this->sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL);
+        fieldLength = wm->field.getFieldLength();
+        fieldWidth = wm->field.getFieldWidth();
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
         radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);
         ;

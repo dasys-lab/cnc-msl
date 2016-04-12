@@ -16,7 +16,7 @@ namespace alica
         // Aiming/Rotation Stuff
         angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
         ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        goalLineLength = (*this->sc)["Globals"]->get<double>("Globals.FootballField.GoalWidth", NULL);
+        goalLineLength = wm->field.getGoalWidth();
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
         wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
         aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
