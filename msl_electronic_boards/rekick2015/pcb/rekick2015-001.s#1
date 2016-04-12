@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -22075,15 +22075,15 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 </net>
 <net name="MOSI" class="0">
 <segment>
-<wire x1="124.46" y1="132.08" x2="129.54" y2="132.08" width="0.1524" layer="91"/>
-<label x="129.54" y="132.08" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="132.08" x2="134.62" y2="132.08" width="0.1524" layer="91"/>
+<label x="134.62" y="132.08" size="1.27" layer="95" xref="yes"/>
 <pinref part="U$2" gate="G$1" pin="PB1"/>
 </segment>
 </net>
 <net name="MISO" class="0">
 <segment>
-<wire x1="124.46" y1="129.54" x2="129.54" y2="129.54" width="0.1524" layer="91"/>
-<label x="129.54" y="129.54" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="129.54" x2="134.62" y2="129.54" width="0.1524" layer="91"/>
+<label x="134.62" y="129.54" size="1.27" layer="95" xref="yes"/>
 <pinref part="U$2" gate="G$1" pin="PB0"/>
 </segment>
 </net>
@@ -22096,23 +22096,23 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 </net>
 <net name="SCK" class="0">
 <segment>
-<wire x1="124.46" y1="147.32" x2="129.54" y2="147.32" width="0.1524" layer="91"/>
-<label x="129.54" y="147.32" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="147.32" x2="134.62" y2="147.32" width="0.1524" layer="91"/>
+<label x="134.62" y="147.32" size="1.27" layer="95" xref="yes"/>
 <pinref part="U$2" gate="G$1" pin="(SCK)PB7"/>
 </segment>
 </net>
-<net name="ADC2" class="0">
+<net name="RF_MAX" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PD5"/>
-<wire x1="124.46" y1="96.52" x2="127" y2="96.52" width="0.1524" layer="91"/>
-<label x="127" y="96.52" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="96.52" x2="129.54" y2="96.52" width="0.1524" layer="91"/>
+<label x="129.54" y="96.52" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ADC3/INT0" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PD6"/>
-<wire x1="124.46" y1="99.06" x2="127" y2="99.06" width="0.1524" layer="91"/>
-<label x="127" y="99.06" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="99.06" x2="144.78" y2="99.06" width="0.1524" layer="91"/>
+<label x="144.78" y="99.06" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ADC_CAP" class="0">
@@ -22125,18 +22125,18 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <net name="ADC9" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PC5"/>
-<wire x1="127" y1="119.38" x2="124.46" y2="119.38" width="0.1524" layer="91"/>
-<label x="127" y="119.38" size="1.27" layer="95" xref="yes"/>
+<wire x1="144.78" y1="119.38" x2="124.46" y2="119.38" width="0.1524" layer="91"/>
+<label x="144.78" y="119.38" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ADC10" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PC6"/>
-<wire x1="127" y1="121.92" x2="124.46" y2="121.92" width="0.1524" layer="91"/>
-<label x="127" y="121.92" size="1.27" layer="95" xref="yes"/>
+<wire x1="144.78" y1="121.92" x2="124.46" y2="121.92" width="0.1524" layer="91"/>
+<label x="144.78" y="121.92" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="RF" class="0">
+<net name="D2A/KICK_VOLTAGE" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PC7"/>
 <wire x1="129.54" y1="124.46" x2="124.46" y2="124.46" width="0.1524" layer="91"/>
@@ -22181,8 +22181,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <net name="OC1A/MISO_A" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="(MISO_A)PD2"/>
-<wire x1="124.46" y1="88.9" x2="129.54" y2="88.9" width="0.1524" layer="91"/>
-<label x="129.54" y="88.9" size="1.27" layer="95" xref="yes"/>
+<wire x1="124.46" y1="88.9" x2="132.08" y2="88.9" width="0.1524" layer="91"/>
+<label x="132.08" y="88.9" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SV1" gate="G$1" pin="9"/>
@@ -22193,8 +22193,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <net name="OC0A/MOSI_A" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="(MOSI_A/TXD)PD3"/>
-<wire x1="129.54" y1="91.44" x2="124.46" y2="91.44" width="0.1524" layer="91"/>
-<label x="129.54" y="91.44" size="1.27" layer="95" xref="yes"/>
+<wire x1="132.08" y1="91.44" x2="124.46" y2="91.44" width="0.1524" layer="91"/>
+<label x="132.08" y="91.44" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SV1" gate="G$1" pin="1"/>
@@ -22205,8 +22205,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <net name="ADC1/SCK_A" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="(RXD)PD4"/>
-<wire x1="129.54" y1="93.98" x2="124.46" y2="93.98" width="0.1524" layer="91"/>
-<label x="129.54" y="93.98" size="1.27" layer="95" xref="yes"/>
+<wire x1="132.08" y1="93.98" x2="124.46" y2="93.98" width="0.1524" layer="91"/>
+<label x="132.08" y="93.98" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="SV1" gate="G$1" pin="7"/>
@@ -23080,13 +23080,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="167.64" y1="152.4" x2="175.26" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="RF" class="0">
-<segment>
-<pinref part="RF_MAX" gate="G$1" pin="1"/>
-<wire x1="25.4" y1="99.06" x2="25.4" y2="104.14" width="0.1524" layer="91"/>
-<label x="25.4" y="99.06" size="1.778" layer="95" rot="R270" xref="yes"/>
-</segment>
-</net>
 <net name="N$74" class="0">
 <segment>
 <pinref part="R46" gate="G$1" pin="1"/>
@@ -23104,6 +23097,13 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="55.88" y1="106.68" x2="55.88" y2="111.76" width="0.1524" layer="91"/>
 <junction x="55.88" y="111.76"/>
 <label x="53.34" y="111.76" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="RF_MAX" class="0">
+<segment>
+<pinref part="RF_MAX" gate="G$1" pin="1"/>
+<wire x1="25.4" y1="104.14" x2="25.4" y2="96.52" width="0.1524" layer="91"/>
+<label x="25.4" y="96.52" size="1.778" layer="95" rot="R270" xref="yes"/>
 </segment>
 </net>
 </nets>
@@ -24194,7 +24194,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <label x="78.74" y="76.2" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$29" class="0">
+<net name="D2A/KICK_VOLTAGE" class="0">
 <segment>
 <pinref part="R21" gate="G$1" pin="2"/>
 <pinref part="R5" gate="G$1" pin="1"/>
@@ -24206,6 +24206,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <pinref part="C36" gate="G$1" pin="1"/>
 <wire x1="96.52" y1="71.12" x2="88.9" y2="71.12" width="0.1524" layer="91"/>
 <junction x="96.52" y="71.12"/>
+<wire x1="88.9" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
+<label x="78.74" y="71.12" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$50" class="0">
