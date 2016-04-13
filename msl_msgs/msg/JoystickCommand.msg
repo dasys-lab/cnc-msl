@@ -6,6 +6,6 @@ int32 robotId
 MotionInfo motion
 uint16 kickPower
 int8 shovelIdx
-int8 ballHandleLeftMotor
-int8 ballHandleRightMotor
+int32 ballHandleLeftMotor
+int32 ballHandleRightMotor
 int8 ballHandleState
