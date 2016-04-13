@@ -83,7 +83,8 @@ ParticleFilterGoalie::ParticleFilterGoalie(int nParticles_) : sc() {
 	printf("++++++++ System isGoalie %d\n", isGoalie);
 	printf("++++++++ System isGoalie2 %d\n", isGoalie2);
 
-	yellowGoalDirection = (*this->sc)["Globals"]->get<int>("Globals", "FootballField", "YellowGoalDirection", NULL);
+	string currentField = (*this->sc)["FootballField"]->get<string>("FootballField", "CurrentField", NULL);
+	yellowGoalDirection = (*this->sc)["FootballField"]->get<int>("FootballField", currentField.c_str(), "YellowGoalDirection", NULL);
 
 	printf("++++++++ YellowGoalDirection %d\n", yellowGoalDirection);
 

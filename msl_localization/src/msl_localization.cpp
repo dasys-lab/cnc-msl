@@ -92,7 +92,8 @@ msl_localization::msl_localization(int nParticles_) {
 	startParticle.heading = localization->get<double>("Localization","InitialPosition", SystemConfig::getHostname().c_str(),"Heading",NULL);
 	startParticle.weight = 1.0;
 
-	yellowGoalDirection = (*sc)["Globals"]->get<double>("Globals", "FootballField", "YellowGoalDirection", NULL);
+	string currentField = (*sc)["FootballField"]->get<string>("FootballField", "CurrentField", NULL);
+	yellowGoalDirection = (*sc)["FootballField"]->get<int>("FootballField", currentField.c_str(), "YellowGoalDirection", NULL);
 	int XcompassMinValue = (*sc)["Compass"]->get<double>("Compass", "xMinValue", NULL);
 	int XcompassMaxValue = (*sc)["Compass"]->get<double>("Compass", "xMaxValue", NULL);
 	xShift = -XcompassMinValue - (XcompassMaxValue-XcompassMinValue)/2;

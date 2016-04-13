@@ -33,10 +33,6 @@ PositionHelper *  PositionHelper::instance = NULL;
 
 PositionHelper::PositionHelper() {
 
-// 	this->sc = SystemConfig::getInstance();
-
-// 	FieldLength = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldLength", NULL);
-// 	FieldWidth = (*this->sc)["Globals"]->get<double>("Globals", "FootballField", "FieldWidth", NULL);
 /*	this->MX=640/2; //images size
 	this->MY=480/2;
 
