@@ -52,6 +52,7 @@ class FootballField{
 		SystemConfig* sc;
 
 		static FootballField * instance;
+		static string CurrentField;
 		FootballField();
 		~FootballField();
 		
