@@ -17,7 +17,6 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1458033482289) ENABLED START*/ //Add additional protected methods here
-        msl::MSLFootballField* field;
         string teamMateTaskName;
         string teamMatePlanName;
         EntryPoint* ep;

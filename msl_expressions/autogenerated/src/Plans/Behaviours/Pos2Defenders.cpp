@@ -107,7 +107,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1444834678756) ENABLED START*/ //Add additional options here
         // get the teammate which is the closest to the own goal mid (hopefully it is the keeper)
         auto positions = this->wm->robots.teammates.getPositionsOfTeamMates();
-        auto ownGoalMid = msl::MSLFootballField::getInstance()->posOwnGoalMid();
+        auto ownGoalMid = wm->field.posOwnGoalMid();
         double smallestDist = std::numeric_limits<double>::max();
         for (auto pos : *positions)
         {

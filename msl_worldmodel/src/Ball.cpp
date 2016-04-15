@@ -880,8 +880,8 @@ namespace msl
 				alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
 				alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
 
-				if (fabs(alloBallPosX) < MSLFootballField::FieldLength / 2.0 + relFactor
-						&& fabs(alloBallPosY) < MSLFootballField::FieldWidth / 2.0 + relFactor)
+				if (fabs(alloBallPosX) < wm->field.getFieldLength() / 2.0 + relFactor
+						&& fabs(alloBallPosY) < wm->field.getFieldWidth() / 2.0 + relFactor)
 				{
 					inField = true;
 				}

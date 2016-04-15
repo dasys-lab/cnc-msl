@@ -73,7 +73,6 @@ namespace msl
 		double DFLT_ROB_RADIUS;
 		double OBSTACLE_MAP_OUT_TOLERANCE;
 		double LOCALIZATION_SUCCESS_CONFIDENCE;
-		MSLFootballField* field;
 		MSLWorldModel* wm;
 		AnnotatedObstacleClusterPool* pool;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;

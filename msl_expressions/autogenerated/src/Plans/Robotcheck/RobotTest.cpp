@@ -231,15 +231,16 @@ namespace alica
 
         if (finished())
         {
-        	if (repeat)
-        	{
-        		cout << "restart test..." << endl;
-        		initialiseParameters();
-        	}else
-        	{
-        		cout << "finished testing" << endl;
-        		this->success = true;
-        	}
+            if (repeat)
+            {
+                cout << "restart test..." << endl;
+                initialiseParameters();
+            }
+            else
+            {
+                cout << "finished testing" << endl;
+                this->success = true;
+            }
 
         }
         /*PROTECTED REGION END*/

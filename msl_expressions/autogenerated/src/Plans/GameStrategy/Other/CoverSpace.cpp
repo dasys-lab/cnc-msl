@@ -54,13 +54,13 @@ namespace alica
         }
 
         //Go closer towards own goal according to position percentage
-        alloTarget->x = (alloTarget->x + msl::MSLFootballField::FieldLength / 2) * positionPercentage
-                - msl::MSLFootballField::FieldLength / 2;
+        alloTarget->x = (alloTarget->x + wm->field.getFieldLength() / 2) * positionPercentage
+                - wm->field.getFieldLength() / 2;
 
         //Be sure that the robot is not inside the own penalty area
-        if (alloTarget->x < -msl::MSLFootballField::FieldLength / 2 + msl::MSLFootballField::PenaltyAreaLength + 260)
+        if (alloTarget->x < -wm->field.getFieldLength() / 2 + wm->field.getPenaltyAreaLength() + 260)
         {
-            alloTarget->x = -msl::MSLFootballField::FieldLength / 2 + msl::MSLFootballField::PenaltyAreaLength + 260;
+            alloTarget->x = -wm->field.getFieldLength() / 2 + wm->field.getPenaltyAreaLength() + 260;
         }
 
         auto egoTarget = alloTarget->alloToEgo(*ownPos);

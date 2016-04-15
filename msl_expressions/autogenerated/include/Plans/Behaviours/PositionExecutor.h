@@ -36,7 +36,6 @@ namespace alica
                                          double ballDistanceEx;
                                          EntryPoint* receiverEp;
                                          shared_ptr<geometry::CNPoint2D> alloTarget;
-                                         msl::MSLFootballField* field;
                                          /*PROTECTED REGION END*/};
                                  }
                                  /* namespace alica */

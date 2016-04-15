@@ -45,10 +45,10 @@ using namespace BlackLib;
 			direction_desired = static_cast<BlackLib::digitalValue>(right);
 		}
 
-		// Check that value is in range from -100 to 100
-		if (value > 100) { value = 100; }
-		if (value < -100) { value = -100; }
-		speed_desired = abs(value) * period / 100;
+		// Check that value is in range from -period to period
+		if (value > period) { value = period; }
+		if (value < -period) { value = -period; }
+		speed_desired = abs(value);
 
 		gettimeofday(&last_ping, NULL);
 	}

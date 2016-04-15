@@ -11,7 +11,6 @@ namespace alica
             DomainBehaviour("Intercept")
     {
         /*PROTECTED REGION ID(con1458757170147) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         maxVel = 2500;
 
         sc = supplementary::SystemConfig::getInstance();
@@ -87,9 +86,9 @@ namespace alica
             ballVel = ballVel->normalize() * 7000;
         }
         auto alloBall = ballPos->egoToAllo(*ownPos);
-        if (!field->isInsideField(alloBall))
+        if (!wm->field.isInsideField(alloBall))
         {
-            auto egoTarget = field->mapInsideField(alloBall)->alloToEgo(*ownPos);
+            auto egoTarget = wm->field.mapInsideField(alloBall)->alloToEgo(*ownPos);
             //cout << "Intercept return 3 begin" << endl;
             mc = msl::RobotMovement::placeRobotCareBall(egoTarget, ballPos, maxVel);
             //cout << "Intercept return 3 end" << endl;
@@ -163,7 +162,7 @@ namespace alica
 
         if (gs == msl::GameState::OppBallPossession)
         {
-        	//TODO if we set this to 0 it works in the simulator
+            //TODO if we set this to 0 it works in the simulator
             vel = make_shared < geometry::CNPoint2D > (0, 0);
         }
         else
@@ -248,9 +247,9 @@ namespace alica
 //Console.WriteLine("3vel2 {0} {1} {2}",vel2.Angle(),vel2.X,vel2.Y);
 //			Console.WriteLine("curMaxTrans " + curMaxTrans + " vel.Distance " + vel.Distance());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-        if (field->isInsideField(alloBall, -150) && !field->isInsideField(alloDest))
+        if (wm->field.isInsideField(alloBall, -150) && !wm->field.isInsideField(alloDest))
         {
-            pathPlanningPoint = field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
+            pathPlanningPoint = wm->field.mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
         }
 
         shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
@@ -276,7 +275,7 @@ namespace alica
         }
         else
         {
-        	mc.motion.translation = min(maxVel, vel->length());
+            mc.motion.translation = min(maxVel, vel->length());
         }
 
 //		double angleGoal = KickHelper.KickerToUse(ballPos.Angle());

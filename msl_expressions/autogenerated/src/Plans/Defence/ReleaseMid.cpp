@@ -14,7 +14,6 @@ namespace alica
             DomainBehaviour("ReleaseMid")
     {
         /*PROTECTED REGION ID(con1458033482289) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         teamMateTaskName = "";
         teamMatePlanName = "";
         ep = nullptr;

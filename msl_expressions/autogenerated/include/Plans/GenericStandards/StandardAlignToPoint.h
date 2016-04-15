@@ -25,7 +25,6 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> oldBallPos;
         shared_ptr<geometry::CNPoint2D> oldAlloTarget;
         bool isReceiver;
-        msl::MSLFootballField* field;
         string taskName;
         /*PROTECTED REGION END*/
     private:

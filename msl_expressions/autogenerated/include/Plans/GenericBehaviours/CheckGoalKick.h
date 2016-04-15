@@ -22,7 +22,6 @@ namespace alica
         /*PROTECTED REGION ID(prv1449076008755) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPosition> ownPos;
         shared_ptr<geometry::CNPoint2D> egoBallPos;
-        msl::MSLFootballField* field;
         double minObsDistGoal;
         double minOwnDistGoal;
         double minOppYDist;

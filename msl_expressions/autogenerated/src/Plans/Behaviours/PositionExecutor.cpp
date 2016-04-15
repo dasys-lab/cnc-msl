@@ -146,7 +146,6 @@ namespace alica
         }
 
         // set some static member variables
-        field = msl::MSLFootballField::getInstance();
         alloTarget = make_shared < geometry::CNPoint2D > (-500, 0);
         /*PROTECTED REGION END*/
     }

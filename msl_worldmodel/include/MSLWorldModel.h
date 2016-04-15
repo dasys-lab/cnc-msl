@@ -37,6 +37,7 @@
 #include "Game.h"
 #include "Kicker.h"
 #include "WhiteBoard.h"
+#include "MSLFootballField.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
@@ -94,6 +95,7 @@ namespace msl
 		Robots robots;
 		Ball ball;
 		Game game;
+		MSLFootballField field;
 		PathPlanner pathPlanner;
 		Kicker kicker;
 		WhiteBoard whiteBoard;

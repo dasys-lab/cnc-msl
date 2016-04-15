@@ -36,7 +36,6 @@ namespace alica
     void DefendGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459249294699) ENABLED START*/ //Add additional options here
-        msl::MSLFootballField* field = msl::MSLFootballField::getInstance();
         auto ownPos = wm->rawSensorData.getOwnPositionVision();
         //List<TrackedOpponent> opponents = WM.GetTrackedOpponents();
         msl_actuator_msgs::MotionControl mc;
@@ -44,7 +43,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > destEgo = make_shared<geometry::CNPoint2D>();
 
         destAllo->y = 0;
-        destAllo->x = -field->FieldLength / 2.0 + fieldOffset;
+        destAllo->x = -wm->field.getFieldLength() / 2.0 + fieldOffset;
 
         if (ownPos == nullptr)
         {
@@ -53,7 +52,7 @@ namespace alica
         }
 
         destEgo = destAllo->alloToEgo(*ownPos);
-        if (ownPos->x > -field->FieldLength / 2.0 + field->PenaltyAreaLength)
+        if (ownPos->x > -wm->field.getFieldLength() / 2.0 + wm->field.getPenaltyAreaLength())
         {
 
             auto alignPoint = make_shared<geometry::CNPoint2D>()->alloToEgo(*ownPos);
@@ -105,7 +104,7 @@ namespace alica
         destAllo = applyBoundaries4Pos(destAllo, postOffset);
 
         destEgo = destAllo->alloToEgo(*ownPos);
-        if (destEgo->length() < field->PenaltyAreaLength)
+        if (destEgo->length() < wm->field.getPenaltyAreaLength())
         {
 //			mc = DriveHelper.DriveToPointAndAlignCareObstacles(destEgo,ballPos, KeeperHelper.GetSpeed(destEgo),WM);
             mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
@@ -155,11 +154,10 @@ namespace alica
     {
         shared_ptr < geometry::CNPoint2D > newP = make_shared < geometry::CNPoint2D > (*dest);
         //boundaries for position
-        msl::MSLFootballField* field = msl::MSLFootballField::getInstance();
-        if (dest->y > (field->posLeftOwnGoalPost()->y - postOffset))
-            newP->y = (field->posLeftOwnGoalPost()->y - postOffset);
-        if (dest->y < (field->posRightOwnGoalPost()->y + postOffset))
-            newP->y = (field->posRightOwnGoalPost()->y + postOffset);
+        if (dest->y > (wm->field.posLeftOwnGoalPost()->y - postOffset))
+            newP->y = (wm->field.posLeftOwnGoalPost()->y - postOffset);
+        if (dest->y < (wm->field.posRightOwnGoalPost()->y + postOffset))
+            newP->y = (wm->field.posRightOwnGoalPost()->y + postOffset);
         return newP;
     }
 
