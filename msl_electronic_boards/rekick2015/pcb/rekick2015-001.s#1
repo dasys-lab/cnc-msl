@@ -21933,9 +21933,9 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 </net>
 <net name="ADC_CAP" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="PC4"/>
-<wire x1="124.46" y1="116.84" x2="129.54" y2="116.84" width="0.1524" layer="91"/>
-<label x="129.54" y="116.84" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PD6"/>
+<wire x1="124.46" y1="99.06" x2="129.54" y2="99.06" width="0.1524" layer="91"/>
+<label x="129.54" y="99.06" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="INT_ETH" class="0">
@@ -21961,16 +21961,9 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 </net>
 <net name="RESET_NOTAUS" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="PB5"/>
-<wire x1="129.54" y1="142.24" x2="124.46" y2="142.24" width="0.1524" layer="91"/>
-<label x="129.54" y="142.24" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="ACTIVATE_SERVO" class="0">
-<segment>
-<pinref part="U$2" gate="G$1" pin="PB6"/>
-<wire x1="124.46" y1="144.78" x2="129.54" y2="144.78" width="0.1524" layer="91"/>
-<label x="129.54" y="144.78" size="1.27" layer="95" xref="yes"/>
+<label x="129.54" y="139.7" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PB4"/>
+<wire x1="124.46" y1="139.7" x2="129.54" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="OC1A/MISO_A" class="0">
@@ -22002,13 +21995,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <pinref part="SV1" gate="G$1" pin="7"/>
 <wire x1="215.9" y1="147.32" x2="210.82" y2="147.32" width="0.1524" layer="91"/>
 <label x="210.82" y="147.32" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="ACTIVATE_BOOSTER" class="0">
-<segment>
-<label x="129.54" y="139.7" size="1.27" layer="95" xref="yes"/>
-<pinref part="U$2" gate="G$1" pin="PB4"/>
-<wire x1="124.46" y1="139.7" x2="129.54" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="KICK" class="0">
@@ -22043,32 +22029,60 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <wire x1="129.54" y1="91.44" x2="124.46" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="BURST" class="0">
+<net name="FREI" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="PD6"/>
-<wire x1="124.46" y1="99.06" x2="129.54" y2="99.06" width="0.1524" layer="91"/>
-<label x="129.54" y="99.06" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PB2"/>
+<wire x1="129.54" y1="134.62" x2="124.46" y2="134.62" width="0.1524" layer="91"/>
+<label x="129.54" y="134.62" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="NOTAUS" class="0">
+<net name="ACTIVATE_BOOSTER" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="PD7"/>
-<wire x1="124.46" y1="101.6" x2="129.54" y2="101.6" width="0.1524" layer="91"/>
-<label x="129.54" y="101.6" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PB5"/>
+<wire x1="129.54" y1="142.24" x2="124.46" y2="142.24" width="0.1524" layer="91"/>
+<label x="129.54" y="142.24" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="STBY" class="0">
+<net name="FREI2" class="0">
+<segment>
+<pinref part="U$2" gate="G$1" pin="PB6"/>
+<wire x1="124.46" y1="144.78" x2="129.54" y2="144.78" width="0.1524" layer="91"/>
+<label x="129.54" y="144.78" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="ACTIVATE_SERVO" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PD5"/>
 <wire x1="124.46" y1="96.52" x2="129.54" y2="96.52" width="0.1524" layer="91"/>
 <label x="129.54" y="96.52" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="FREI" class="0">
+<net name="FREI3" class="0">
 <segment>
-<pinref part="U$2" gate="G$1" pin="PB2"/>
-<wire x1="129.54" y1="134.62" x2="124.46" y2="134.62" width="0.1524" layer="91"/>
-<label x="129.54" y="134.62" size="1.27" layer="95" xref="yes"/>
+<pinref part="U$2" gate="G$1" pin="PD7"/>
+<wire x1="124.46" y1="101.6" x2="129.54" y2="101.6" width="0.1524" layer="91"/>
+<label x="129.54" y="101.6" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="NOTAUS" class="0">
+<segment>
+<pinref part="U$2" gate="G$1" pin="PC6"/>
+<wire x1="129.54" y1="121.92" x2="124.46" y2="121.92" width="0.1524" layer="91"/>
+<label x="129.54" y="121.92" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="BURST" class="0">
+<segment>
+<pinref part="U$2" gate="G$1" pin="PC5"/>
+<wire x1="124.46" y1="119.38" x2="129.54" y2="119.38" width="0.1524" layer="91"/>
+<label x="129.54" y="119.38" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="STBY" class="0">
+<segment>
+<pinref part="U$2" gate="G$1" pin="PC4"/>
+<wire x1="124.46" y1="116.84" x2="129.54" y2="116.84" width="0.1524" layer="91"/>
+<label x="129.54" y="116.84" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>

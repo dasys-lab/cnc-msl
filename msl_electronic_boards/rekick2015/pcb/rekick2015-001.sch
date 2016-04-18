@@ -21284,7 +21284,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="GND32" library="supply1" deviceset="GND" device=""/>
 <part name="R27" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
 <part name="R28" library="rcl" deviceset="R-EU_" device="R0805" value="10k"/>
-<part name="SUPPLY18" library="supply2" deviceset="GND1" device=""/>
 <part name="P+20" library="supply1" deviceset="+5V" device=""/>
 <part name="C36" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="C37" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
@@ -21298,7 +21297,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="SUPPLY7" library="supply2" deviceset="+5V/3" device=""/>
 <part name="SUPPLY23" library="supply2" deviceset="+5V/3" device=""/>
 <part name="SUPPLY24" library="supply2" deviceset="+5V/3" device=""/>
-<part name="P+17" library="supply1" deviceset="+12V" device=""/>
 <part name="C39" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="D14" library="diode" deviceset="BZX84CSMD" device="" value="BZX84-A5V1"/>
 <part name="R30" library="rcl" deviceset="R-EU_" device="R0805" value="1k"/>
@@ -21379,6 +21377,9 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="R53" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
 <part name="R54" library="rcl" deviceset="R-EU_" device="R0805" value="100k"/>
 <part name="SUPPLY30" library="supply2" deviceset="+5V/1" device=""/>
+<part name="C46" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
+<part name="GND38" library="supply1" deviceset="GND" device=""/>
+<part name="P+17" library="supply1" deviceset="+24V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -22475,14 +22476,12 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="GND32" gate="1" x="116.84" y="96.52"/>
 <instance part="R27" gate="G$1" x="99.06" y="38.1" rot="R90"/>
 <instance part="R28" gate="G$1" x="99.06" y="17.78" rot="R90"/>
-<instance part="SUPPLY18" gate="G$1" x="88.9" y="7.62"/>
 <instance part="P+20" gate="1" x="109.22" y="86.36"/>
 <instance part="C36" gate="G$1" x="96.52" y="68.58"/>
 <instance part="C37" gate="G$1" x="101.6" y="17.78"/>
 <instance part="C38" gate="G$1" x="91.44" y="17.78"/>
 <instance part="SUPPLY23" gate="G$1" x="88.9" y="93.98"/>
 <instance part="SUPPLY24" gate="G$1" x="99.06" y="48.26"/>
-<instance part="P+17" gate="1" x="10.16" y="129.54"/>
 <instance part="C39" gate="G$1" x="17.78" y="99.06"/>
 <instance part="D14" gate="G$1" x="10.16" y="99.06" rot="R90"/>
 <instance part="R30" gate="G$1" x="10.16" y="119.38" rot="R90"/>
@@ -22496,6 +22495,8 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="C44" gate="G$1" x="114.3" y="73.66"/>
 <instance part="C45" gate="G$1" x="15.24" y="157.48"/>
 <instance part="R52" gate="G$1" x="81.28" y="71.12"/>
+<instance part="GND38" gate="1" x="88.9" y="7.62"/>
+<instance part="P+17" gate="1" x="10.16" y="129.54"/>
 </instances>
 <busses>
 </busses>
@@ -22598,6 +22599,14 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <pinref part="IC2" gate="A" pin="R1"/>
 <wire x1="134.62" y1="152.4" x2="129.54" y2="152.4" width="0.1524" layer="91"/>
 <junction x="129.54" y="152.4"/>
+</segment>
+<segment>
+<pinref part="R13" gate="G$1" pin="1"/>
+<wire x1="88.9" y1="12.7" x2="88.9" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="C38" gate="G$1" pin="2"/>
+<wire x1="91.44" y1="12.7" x2="88.9" y2="12.7" width="0.1524" layer="91"/>
+<junction x="88.9" y="12.7"/>
+<pinref part="GND38" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="+5V" class="0">
@@ -22807,16 +22816,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <junction x="99.06" y="22.86"/>
 </segment>
 </net>
-<net name="GND1" class="0">
-<segment>
-<pinref part="R13" gate="G$1" pin="1"/>
-<pinref part="SUPPLY18" gate="G$1" pin="GND1"/>
-<wire x1="88.9" y1="12.7" x2="88.9" y2="10.16" width="0.1524" layer="91"/>
-<pinref part="C38" gate="G$1" pin="2"/>
-<wire x1="91.44" y1="12.7" x2="88.9" y2="12.7" width="0.1524" layer="91"/>
-<junction x="88.9" y="12.7"/>
-</segment>
-</net>
 <net name="+5V/3" class="0">
 <segment>
 <pinref part="R5" gate="G$1" pin="2"/>
@@ -22840,13 +22839,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <wire x1="17.78" y1="101.6" x2="17.78" y2="104.14" width="0.1524" layer="91"/>
 <junction x="17.78" y="104.14"/>
 <pinref part="SUPPLY25" gate="G$1" pin="+5V/3"/>
-</segment>
-</net>
-<net name="+12V" class="0">
-<segment>
-<wire x1="10.16" y1="124.46" x2="10.16" y2="127" width="0.1524" layer="91"/>
-<pinref part="R30" gate="G$1" pin="2"/>
-<pinref part="P+17" gate="1" pin="+12V"/>
 </segment>
 </net>
 <net name="RESET_NOTAUS" class="0">
@@ -22895,6 +22887,13 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <pinref part="R52" gate="G$1" pin="1"/>
 <wire x1="76.2" y1="71.12" x2="73.66" y2="71.12" width="0.1524" layer="91"/>
 <label x="73.66" y="71.12" size="1.778" layer="95" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="+24V" class="0">
+<segment>
+<wire x1="10.16" y1="124.46" x2="10.16" y2="127" width="0.1524" layer="91"/>
+<pinref part="R30" gate="G$1" pin="2"/>
+<pinref part="P+17" gate="1" pin="+24V"/>
 </segment>
 </net>
 </nets>
@@ -23822,6 +23821,7 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="R50" gate="G$1" x="78.74" y="144.78" rot="R90"/>
 <instance part="C42" gate="G$1" x="12.7" y="149.86"/>
 <instance part="C43" gate="G$1" x="162.56" y="152.4"/>
+<instance part="C46" gate="G$1" x="149.86" y="71.12"/>
 </instances>
 <busses>
 </busses>
@@ -23915,7 +23915,11 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <wire x1="144.78" y1="78.74" x2="144.78" y2="86.36" width="0.1524" layer="91"/>
 <junction x="144.78" y="78.74"/>
 <pinref part="IC1" gate="B" pin="-IN"/>
-<wire x1="152.4" y1="78.74" x2="144.78" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="152.4" y1="78.74" x2="149.86" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="C46" gate="G$1" pin="1"/>
+<wire x1="149.86" y1="78.74" x2="144.78" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="73.66" x2="149.86" y2="78.74" width="0.1524" layer="91"/>
+<junction x="149.86" y="78.74"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -23974,11 +23978,15 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <wire x1="129.54" y1="63.5" x2="129.54" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="63.5" x2="144.78" y2="63.5" width="0.1524" layer="91"/>
 <junction x="129.54" y="63.5"/>
-<wire x1="144.78" y1="63.5" x2="182.88" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="63.5" x2="149.86" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="63.5" x2="182.88" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="63.5" x2="182.88" y2="76.2" width="0.1524" layer="91"/>
 <junction x="144.78" y="63.5"/>
 <pinref part="OK2" gate="A" pin="C"/>
 <wire x1="182.88" y1="76.2" x2="187.96" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="C46" gate="G$1" pin="2"/>
+<wire x1="149.86" y1="66.04" x2="149.86" y2="63.5" width="0.1524" layer="91"/>
+<junction x="149.86" y="63.5"/>
 </segment>
 <segment>
 <pinref part="U$4" gate="G$1" pin="0V"/>

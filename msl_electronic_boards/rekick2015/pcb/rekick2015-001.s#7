@@ -21442,7 +21442,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="H2" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="H3" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="H4" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
-<part name="GND35" library="supply1" deviceset="GND" device=""/>
 <part name="CAP_330V" library="mywirepad" deviceset="WIREPAD" device="SMD5-5"/>
 <part name="CAP_0V" library="mywirepad" deviceset="WIREPAD" device="SMD5-5"/>
 <part name="RJ_2" library="ownParts" deviceset="RJ10" device=""/>
@@ -21501,6 +21500,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <part name="GND37" library="supply1" deviceset="GND" device=""/>
 <part name="C41" library="rcl" deviceset="C-EU" device="C1210K" value="2.2µ / 100V"/>
 <part name="R51" library="rcl" deviceset="R-EU_" device="R0805" value="12k"/>
+<part name="C42" library="rcl" deviceset="CPOL-EU" device="D" value="47µF/35V"/>
 </parts>
 <sheets>
 <sheet>
@@ -21546,7 +21546,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <instance part="H2" gate="G$1" x="193.04" y="50.8"/>
 <instance part="H3" gate="G$1" x="193.04" y="43.18"/>
 <instance part="H4" gate="G$1" x="193.04" y="35.56"/>
-<instance part="GND35" gate="1" x="185.42" y="27.94"/>
 <instance part="IC3" gate="G$1" x="68.58" y="152.4"/>
 <instance part="P+12" gate="1" x="50.8" y="157.48"/>
 <instance part="U$8" gate="G$1" x="172.72" y="147.32"/>
@@ -21638,24 +21637,6 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="45.72" y1="30.48" x2="45.72" y2="33.02" width="0.1524" layer="91"/>
 <junction x="45.72" y="33.02"/>
 <pinref part="U4" gate="A" pin="GND"/>
-</segment>
-<segment>
-<pinref part="H1" gate="G$1" pin="MOUNT"/>
-<wire x1="190.5" y1="58.42" x2="185.42" y2="58.42" width="0.1524" layer="91"/>
-<wire x1="185.42" y1="58.42" x2="185.42" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="H4" gate="G$1" pin="MOUNT"/>
-<wire x1="185.42" y1="50.8" x2="185.42" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="185.42" y1="43.18" x2="185.42" y2="35.56" width="0.1524" layer="91"/>
-<wire x1="185.42" y1="35.56" x2="185.42" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="185.42" y1="35.56" x2="190.5" y2="35.56" width="0.1524" layer="91"/>
-<junction x="185.42" y="35.56"/>
-<pinref part="H3" gate="G$1" pin="MOUNT"/>
-<wire x1="190.5" y1="43.18" x2="185.42" y2="43.18" width="0.1524" layer="91"/>
-<junction x="185.42" y="43.18"/>
-<pinref part="H2" gate="G$1" pin="MOUNT"/>
-<wire x1="185.42" y1="50.8" x2="190.5" y2="50.8" width="0.1524" layer="91"/>
-<junction x="185.42" y="50.8"/>
-<pinref part="GND35" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="C3" gate="G$1" pin="-"/>
@@ -23894,6 +23875,7 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <instance part="R49" gate="G$1" x="71.12" y="157.48" rot="R180"/>
 <instance part="LED10" gate="G$1" x="73.66" y="139.7" rot="R270"/>
 <instance part="R50" gate="G$1" x="78.74" y="144.78" rot="R90"/>
+<instance part="C42" gate="G$1" x="12.7" y="149.86"/>
 </instances>
 <busses>
 </busses>
@@ -24005,6 +23987,8 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="12.7" y1="139.7" x2="12.7" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="U$4" gate="G$1" pin="GND"/>
 <wire x1="12.7" y1="144.78" x2="17.78" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="C42" gate="G$1" pin="-"/>
+<junction x="12.7" y="144.78"/>
 </segment>
 <segment>
 <pinref part="R10" gate="G$1" pin="1"/>
@@ -24170,6 +24154,9 @@ USE AT YOUR OWN RISK!&lt;p&gt;
 <wire x1="12.7" y1="160.02" x2="12.7" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="U$4" gate="G$1" pin="U_IN"/>
 <wire x1="12.7" y1="154.94" x2="17.78" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="C42" gate="G$1" pin="+"/>
+<wire x1="12.7" y1="152.4" x2="12.7" y2="154.94" width="0.1524" layer="91"/>
+<junction x="12.7" y="154.94"/>
 </segment>
 </net>
 <net name="CAP_-12V" class="0">
