@@ -38,7 +38,7 @@ namespace msl
 		RawSensorData(MSLWorldModel* wm, int ringBufferLength);
 		virtual ~RawSensorData();
 		shared_ptr<vector<double>> getDistanceScan(int index = 0);
-		shared_ptr<bool> getLightBarrier(int index = 0);
+		bool getLightBarrier(int index = 0);
 		shared_ptr<geometry::CNPoint2D> getOpticalFlow(int index = 0);
 		double getOpticalFlowQoS(int index = 0);
 		shared_ptr<geometry::CNPosition> getOwnPositionMotion(int index = 0);

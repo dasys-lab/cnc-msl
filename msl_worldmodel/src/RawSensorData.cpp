@@ -38,14 +38,14 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<bool> RawSensorData::getLightBarrier(int index)
+	bool RawSensorData::getLightBarrier(int index)
 	{
 		auto x = lightBarrier.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
 			return nullptr;
 		}
-		return x->getInformation();
+		return *x->getInformation();
 	}
 
 	shared_ptr<geometry::CNPoint2D> RawSensorData::getOpticalFlow(int index)

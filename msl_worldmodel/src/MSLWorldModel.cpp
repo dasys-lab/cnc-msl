@@ -44,7 +44,7 @@ namespace msl
 	MSLWorldModel::MSLWorldModel() :
 			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), field(this), pathPlanner(
 					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10), monitoring(
-					this), maySendMessages(true)
+					this), lightBarrier(this), maySendMessages(true)
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
