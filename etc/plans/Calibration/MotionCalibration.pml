@@ -6,6 +6,7 @@
   </states>
   <states id="1442919790374" name="MoveToStartCorner" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/SpinSlowly.beh#1435159282996</plans>
     <inTransitions>#1442919801497</inTransitions>
     <outTransitions>#1442921106318</outTransitions>
     <outTransitions>#1446733731468</outTransitions>
