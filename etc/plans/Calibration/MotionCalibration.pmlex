@@ -96,4 +96,8 @@
     <key href="MotionCalibration.pml#1446733731468"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Behaviours/SpinSlowly.beh#1435159282996"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
