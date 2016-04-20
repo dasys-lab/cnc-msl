@@ -288,9 +288,9 @@ namespace msl
 
 		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
 		if (data->ball.confidence < 0.00000001)
-		        this->wm->ball.updateBallPos(nullptr, nullptr, data->ball.confidence);
+		        this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
 		else
-	                this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
+	                this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
 
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
@@ -328,7 +328,7 @@ namespace msl
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
 		ownPositionVision.add(o);
-		this->wm->ball.updateOnLocalizationData(coi->imageTime);
+		this->wm->ball->updateOnLocalizationData(coi->imageTime);
 	}
 
 	void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)
@@ -338,7 +338,7 @@ namespace msl
 				nList, wm->getTime());
 		o->certainty = 1;
 		ballHypothesis.add(o);
-		this->wm->ball.updateOnBallHypothesisList(list->imageTime);
+		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 } /* namespace alica */
 

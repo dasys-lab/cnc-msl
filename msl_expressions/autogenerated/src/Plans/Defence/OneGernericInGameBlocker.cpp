@@ -35,8 +35,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1458034268108) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || ballPos == nullptr)
         {
             mc.motion.angle = 0;
@@ -65,7 +65,7 @@ namespace alica
         // determine the best reference point
         if (this->teamMateId != 0)
         { // take the teammate as reference point
-            attackerPos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+            attackerPos = wm->robots->teammates.getTeamMatePosition(teamMateId);
         }
 
         if (attackerPos == nullptr)

@@ -36,8 +36,8 @@ namespace alica
             return; //give the ball a few milliseconds to leave the kicker
         }
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); //Corrected;
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //Corrected;
         if (ballPos == nullptr)
         {
             return;
@@ -59,7 +59,7 @@ namespace alica
 
             if (robots->size() > 0)
             {
-                matePos = wm->robots.teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
+                matePos = wm->robots->teammates.getTeamMatePosition(robots->at(0)); //SHWM.GetRobotDataByID(rob).PlayerPosition;
             }
             if (matePos != nullptr)
             {

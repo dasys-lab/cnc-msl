@@ -26,7 +26,7 @@ namespace alica
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
 
-        me = wm->rawSensorData.getOwnPositionVision();
+        me = wm->rawSensorData->getOwnPositionVision();
 
         if (me == nullptr)
         {
@@ -51,11 +51,11 @@ namespace alica
 
              }*/
 
-            alloTargetX = wm->field.posOwnGoalMid()->x - 100;
-            alloTargetY = wm->field.posOwnGoalMid()->y;
+            alloTargetX = wm->field->posOwnGoalMid()->x - 100;
+            alloTargetY = wm->field->posOwnGoalMid()->y;
 
             alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
-            alloFieldCenterAlignPoint = wm->field.posCenterMarker();
+            alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
             cout << " Driving to goal" << endl;
             mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),

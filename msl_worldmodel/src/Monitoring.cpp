@@ -53,7 +53,7 @@ namespace msl
 
 	void Monitoring::monitorMotion()
 	{
-		if (this->isUsingSimulator || wm->rawSensorData.getOwnPositionMotion())
+		if (this->isUsingSimulator || wm->rawSensorData->getOwnPositionMotion())
 		{
 			this->setMaySendMessages(true);
 		}

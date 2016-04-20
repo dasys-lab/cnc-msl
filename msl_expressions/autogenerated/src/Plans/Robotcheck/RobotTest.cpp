@@ -22,7 +22,7 @@ namespace alica
     void RobotTest::run(void* msg)
     {
         /*PROTECTED REGION ID(run1456756113767) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
+        auto me = wm->rawSensorData->getOwnPositionVision();
 
         // testing motion ================================================================
 
@@ -354,7 +354,7 @@ namespace alica
 
     bool RobotTest::lightBarrierRobot()
     {
-        auto lbi = wm->rawSensorData.getLightBarrier();
+        auto lbi = wm->rawSensorData->getLightBarrier();
 
         if (lbi)
         {
@@ -381,7 +381,7 @@ namespace alica
 
     bool RobotTest::opticalFlowRobot()
     {
-        auto of = wm->rawSensorData.getOpticalFlow();
+        auto of = wm->rawSensorData->getOpticalFlow();
         if (of != nullptr)
         {
             cout << "receive data from optical flow!" << endl;

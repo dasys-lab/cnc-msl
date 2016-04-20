@@ -31,7 +31,7 @@ namespace msl
 		{
 			if (teamMatePositions->at(i)->first != myId)
 			{
-				if (wm->field.isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
+				if (wm->field->isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
 				{
 					count++;
 				}
@@ -49,7 +49,7 @@ namespace msl
 		{
 			if (teamMatePositions->at(i)->first != myId)
 			{
-				if (wm->field.isInsideEnemyPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
+				if (wm->field->isInsideEnemyPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
 				{
 					count++;
 				}

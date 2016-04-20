@@ -21,7 +21,7 @@ namespace alica
     void DriveInSquare::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433939613017) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (ownPos == nullptr)
         {

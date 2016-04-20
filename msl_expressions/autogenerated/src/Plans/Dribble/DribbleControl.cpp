@@ -43,8 +43,8 @@ namespace alica
         }
 
         // get some data and make some checks
-        auto motion = wm->rawSensorData.getOwnVelocityMotion();
-        shared_ptr < geometry::CNPoint2D > ball = wm->ball.getEgoBallPosition();
+        auto motion = wm->rawSensorData->getOwnVelocityMotion();
+        shared_ptr < geometry::CNPoint2D > ball = wm->ball->getEgoBallPosition();
 
         double l = 0;
         double r = 0;
@@ -57,7 +57,7 @@ namespace alica
         }
 
         // do we have the ball, so that controlling make sense
-        haveBall = wm->ball.haveBall();
+        haveBall = wm->ball->haveBall();
 
         if (haveBall && itcounter++ < 8)
         {

@@ -79,15 +79,15 @@ namespace msl
 	bool AlloSearchArea::isValid()
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
-		if (!wm->field.isInsideField(this->midP, -500))
+		if (!wm->field->isInsideField(this->midP, -500))
 		{
 			return false;
 		}
-		if (wm->field.isInsideOwnPenalty(this->midP, 100))
+		if (wm->field->isInsideOwnPenalty(this->midP, 100))
 		{
 			return false;
 		}
-		if (wm->field.isInsideEnemyKeeperArea(this->midP, 100))
+		if (wm->field->isInsideEnemyKeeperArea(this->midP, 100))
 		{
 			return false;
 		}

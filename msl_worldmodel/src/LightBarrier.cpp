@@ -23,7 +23,7 @@ namespace msl
 
 	bool LightBarrier::getLightBarrier(int index)
 	{
-		return this->wm->rawSensorData.getLightBarrier(index);
+		return this->wm->rawSensorData->getLightBarrier(index);
 	}
 
 	bool LightBarrier::mayUseLightBarrier()

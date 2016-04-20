@@ -76,8 +76,8 @@ namespace alica
     void AlignAndShootTwoHoledWall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620683982) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // stupid variant to be sure, that we have shoot!!!
         if (kicked)

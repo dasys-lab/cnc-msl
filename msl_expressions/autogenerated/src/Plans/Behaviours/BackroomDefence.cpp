@@ -22,8 +22,8 @@ namespace alica
     void BackroomDefence::run(void* msg)
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
-        auto alloBallPos = wm->ball.getAlloBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto alloBallPos = wm->ball->getAlloBallPosition();
         //auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
         shared_ptr < geometry::CNPoint2D > goalPos;
 
@@ -39,14 +39,14 @@ namespace alica
          else
          {*/
         // assume goalie is in the middle of the goal
-        goalPos = wm->field.posOwnGoalMid();
+        goalPos = wm->field->posOwnGoalMid();
         //}
 
         auto goaltoball = alloBallPos - goalPos;
         auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
-        if (defenderRange->x < -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100)
+        if (defenderRange->x < -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100)
         {
-            defenderRange->x = -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100;
+            defenderRange->x = -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100;
         }
 
         /*

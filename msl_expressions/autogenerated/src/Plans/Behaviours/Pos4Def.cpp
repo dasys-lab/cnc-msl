@@ -26,8 +26,8 @@ namespace alica
     void Pos4Def::run(void* msg)
     {
         /*PROTECTED REGION ID(run1445438142979) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || ballPos == nullptr)
         {

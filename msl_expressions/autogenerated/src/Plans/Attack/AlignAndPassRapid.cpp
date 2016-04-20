@@ -48,7 +48,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436269063295) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPosition > alloPos = this->wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPosition > alloPos = this->wm->rawSensorData->getOwnPositionVision();
         if (alloPos == nullptr)
         {
 //			mc = DriveHelper.DriveRandomly(500,WM);
@@ -58,14 +58,14 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
         if (egoBallPos == nullptr)
         {
             cout << "AAPR: Ego Ball is null" << endl;
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = this->wm->ball.getAlloBallPosition();
+        shared_ptr < geometry::CNPoint2D > alloBall = this->wm->ball->getAlloBallPosition();
         if (alloBall == nullptr)
         {
             cout << "AAPR: Allo Ball is null" << endl;
@@ -102,14 +102,14 @@ namespace alica
             return;
         }
 
-        auto vNet = this->wm->pathPlanner.getCurrentVoronoiNet();
+        auto vNet = this->wm->pathPlanner->getCurrentVoronoiNet();
         if (vNet == nullptr)
         {
             cout << "AAPR: VNet is null!" << endl;
             return;
         }
 
-        auto matePoses = wm->robots.teammates.getTeammatesAlloClustered();
+        auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
         if (matePoses == nullptr)
         {
             cout << "matePoses == nullptr" << endl;
@@ -140,7 +140,7 @@ namespace alica
         {
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
                     teamMateId);
-            shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+            shared_ptr < geometry::CNPosition > teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
 
             if (vertices == nullptr || teamMatePos == nullptr)
                 continue;
@@ -170,8 +170,8 @@ namespace alica
                 dbp.radius = 0.3;
                 dbm.points.push_back(dbp);
 #endif
-                if (wm->field.isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                && !wm->field.isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
+                if (wm->field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
+                && !wm->field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
                 && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
                         )
                 {
@@ -264,10 +264,10 @@ namespace alica
                         //Here we have to pick the best one...
                         currPassUtility = 0;
 
-                        currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field.getFieldWidth();
+                        currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field->getFieldWidth();
 
-                        currPassUtility += (wm->field.getFieldLength() / 2.0 + passPoint->x)
-                                / wm->field.getFieldLength();
+                        currPassUtility += (wm->field->getFieldLength() / 2.0 + passPoint->x)
+                                / wm->field->getFieldLength();
 
                         if (currPassUtility > bestPassUtility)
                         {
@@ -299,7 +299,7 @@ namespace alica
             return;
         }
         //Turn to goal...
-        shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball.getVisionBallVelocity();
+        shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball->getVisionBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
         if (ballVel == nullptr)
         {
@@ -349,22 +349,22 @@ namespace alica
             pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
             {
-                km.power = (ushort)wm->kicker.getKickPowerPass(aimPoint->length());
+                km.power = (ushort)wm->kicker->getKickPowerPass(aimPoint->length());
             }
             else
             {
-                km.power = (ushort)wm->kicker.getPassKickpower(dist,
+                km.power = (ushort)wm->kicker->getPassKickpower(dist,
                                                                estimatedTimeForReceiverToArrive + arrivalTimeOffset);
             }
 
             send(km);
-            if (wm->kicker.lowShovelSelected)
+            if (wm->kicker->lowShovelSelected)
             {
                 send(pm);
             }
 
         }
-        auto dstscan = this->wm->rawSensorData.getDistanceScan();
+        auto dstscan = this->wm->rawSensorData->getDistanceScan();
         if (dstscan != nullptr && dstscan->size() != 0)
         {
             double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);

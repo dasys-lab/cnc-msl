@@ -19,17 +19,15 @@
 #include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
+#include <msl_sensor_msgs/SharedWorldInfo.h>
+#include <std_msgs/Bool.h>
+#include <InformationElement.h>
 #include <list>
 #include <iostream>
 #include <tuple>
 #include <mutex>
 #include <ITrigger.h>
 #include "EventTrigger.h"
-
-#include <SystemConfig.h>
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
-#include <MSLEnums.h>
 #include <obstaclehandler/Obstacles.h>
 #include "RawSensorData.h"
 #include "Robots.h"
@@ -44,6 +42,12 @@
 #include "Prediction.h"
 #include "Monitoring.h"
 #include "LightBarrier.h"
+
+#include <SystemConfig.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include <MSLEnums.h>
+
 
 namespace alica
 {
@@ -92,18 +96,18 @@ namespace msl
 
 		bool isUsingSimulator();
 
-		Monitoring monitoring;
-		RawSensorData rawSensorData;
-		Robots robots;
-		Ball ball;
-		Game game;
-		MSLFootballField field;
-		PathPlanner pathPlanner;
-		Kicker kicker;
-		WhiteBoard whiteBoard;
-		Obstacles obstacles;
-		Prediction prediction;
-		LightBarrier lightBarrier;
+		Monitoring* monitoring;
+		RawSensorData* rawSensorData;
+		Robots* robots;
+		Ball* ball;
+		Game* game;
+		MSLFootballField* field;
+		PathPlanner* pathPlanner;
+		Kicker* kicker;
+		WhiteBoard* whiteBoard;
+		Obstacles* obstacles;
+		Prediction* prediction;
+		LightBarrier* lightBarrier;
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
@@ -114,6 +118,7 @@ namespace msl
 		virtual ~MSLWorldModel();
 
 		supplementary::ITrigger* visionDataEventTrigger;
+		supplementary::SystemConfig* sc;
 
 		int ownID;
 		int ringBufferLength;

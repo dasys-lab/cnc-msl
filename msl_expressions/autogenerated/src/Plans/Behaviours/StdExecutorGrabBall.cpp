@@ -22,7 +22,7 @@ namespace alica
     void StdExecutorGrabBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1441209011595) ENABLED START*/ //Add additional options here
-        if (wm->ball.haveBall())
+        if (wm->ball->haveBall())
         {
             this->success = true;
             return;
@@ -32,7 +32,7 @@ namespace alica
             this->success = false;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (egoBallPos == nullptr)

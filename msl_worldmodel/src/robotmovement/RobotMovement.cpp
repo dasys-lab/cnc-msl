@@ -81,7 +81,7 @@ namespace msl
 	msl_actuator_msgs::MotionControl RobotMovement::nearGoalArea(msl_actuator_msgs::MotionControl bm)
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			return bm;
@@ -92,7 +92,7 @@ namespace msl
 
 //		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
-		if (wm->field.isInsideEnemyKeeperArea(dir, 150) || wm->field.isInsideEnemyKeeperArea(ownPos->getPoint(), 1200))
+		if (wm->field->isInsideEnemyKeeperArea(dir, 150) || wm->field->isInsideEnemyKeeperArea(ownPos->getPoint(), 1200))
 		{
 			dir = dir - ownPos;
 //			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
@@ -175,10 +175,10 @@ namespace msl
 		iTrans = 0;
 		lastRotErr = 0;
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		if (wm->rawSensorData.getLastMotionCommand() != nullptr)
+		if (wm->rawSensorData->getLastMotionCommand() != nullptr)
 		{
-			curRot = wm->rawSensorData.getLastMotionCommand()->motion.rotation;
-			curTrans = wm->rawSensorData.getLastMotionCommand()->motion.translation;
+			curRot = wm->rawSensorData->getLastMotionCommand()->motion.rotation;
+			curTrans = wm->rawSensorData->getLastMotionCommand()->motion.translation;
 
 		}
 		else
@@ -193,7 +193,7 @@ namespace msl
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 
-		auto ballPos = wm->ball.getEgoBallPosition();
+		auto ballPos = wm->ball->getEgoBallPosition();
 
 		if (ballPos == nullptr)
 			return nullptr;
@@ -203,7 +203,7 @@ namespace msl
 //		cout << "RobotMovement: dribble allo target: "
 //				<< egoTarget->egoToAllo(*wm->rawSensorData.getOwnPositionVision())->toString() << endl;
 		double pathPlanningMaxTrans = maxVel;
-		double frontAngle = wm->kicker.kickerAngle;
+		double frontAngle = wm->kicker->kickerAngle;
 
 //		cout << "RobotMovement: pathPlanningMaxTrans " << pathPlanningMaxTrans << endl;
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
@@ -244,7 +244,7 @@ namespace msl
 
 		double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
 		double distToOpp;
-		auto opp = wm->robots.opponents.getClosestToBall(distToOpp);
+		auto opp = wm->robots->opponents.getClosestToBall(distToOpp);
 		if (distToOpp < 800)
 		{
 			rotPointDist = 50;
@@ -328,8 +328,8 @@ namespace msl
 		if (lastTurnTime > 0 && (supplementary::DateTime::getUtcNow().getTicks() - lastTurnTime) < 1000 * 10000)
 			return nullptr;
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		auto dstscan = wm->rawSensorData.getDistanceScan();
-		auto oppInFront = wm->robots.opponents.getInCorridor(ballPos->angleTo(), 150);
+		auto dstscan = wm->rawSensorData->getDistanceScan();
+		auto oppInFront = wm->robots->opponents.getInCorridor(ballPos->angleTo(), 150);
 		double distInFront = (oppInFront == nullptr ? std::numeric_limits<double>::max() : oppInFront->length() - 300);
 
 		double minInFrontDist = 800;
@@ -346,12 +346,12 @@ namespace msl
 		else if (ballPos != nullptr && dstscan != nullptr && distInFront < minInFrontDist && distInFront > 300)
 		{
 
-			auto goalMid = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2.0, 0)->alloToEgo(*ownPos);
+			auto goalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2.0, 0)->alloToEgo(*ownPos);
 
-			auto opponentGoal = wm->robots.opponents.getInCorridor(goalMid->angleTo(), 300);
+			auto opponentGoal = wm->robots->opponents.getInCorridor(goalMid->angleTo(), 300);
 			if (opponentGoal != nullptr && opponentGoal->length() > 3000)
 			{
-				return make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2.0, 0);
+				return make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2.0, 0);
 			}
 
 			if (oppInFront != nullptr)
@@ -608,14 +608,14 @@ namespace msl
 	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
 			MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); //OwnPositionCorrected;
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
 		if (ownPos == nullptr)
 		{
 			MotionControl mc;
@@ -625,34 +625,34 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> alloBall = ballPos->egoToAllo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
 
-		if (!wm->field.isInsideField(alloBall, 500))
+		if (!wm->field->isInsideField(alloBall, 500))
 		{ //ball is out, approach it carefully
 		  //Console.WriteLine("CASE B");
 			dest->x = ownPos->x - alloBall->x;
 			dest->y = ownPos->y - alloBall->y;
-			dest = wm->field.mapInsideField(alloBall);
+			dest = wm->field->mapInsideField(alloBall);
 			dest = dest->alloToEgo(*ownPos);
 			return placeRobotCareBall(dest, ballPos, maxVelo);
 		}
-		if (wm->field.isInsideOwnPenalty(alloBall, 0))
+		if (wm->field->isInsideOwnPenalty(alloBall, 0))
 		{ //handle ball in own penalty
-			if (!wm->field.isInsideOwnKeeperArea(alloBall, 200) && wm->field.isInsideOwnPenalty(ownPos->getPoint(), 0))
+			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200) && wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{ //if we are already in, and ball is in safe distance of keeper area, get it
 				MotionControl mc;
 				mc.senderID = -1;
 				return mc;
 			}
-			if (wm->robots.teammates.teamMatesInOwnPenalty() > 1)
+			if (wm->robots->teammates.teamMatesInOwnPenalty() > 1)
 			{ //do not enter penalty if someone besides keeper is already in there
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
-				dest = wm->field.mapOutOfOwnPenalty(alloBall);
+				dest = wm->field->mapOutOfOwnPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
-			if (wm->field.isInsideOwnKeeperArea(alloBall, 200))
+			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
 			{ //ball is dangerously close to keeper area, or even within
-				if (!wm->field.isInsideOwnKeeperArea(alloBall, 50))
+				if (!wm->field->isInsideOwnKeeperArea(alloBall, 50))
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
@@ -670,25 +670,25 @@ namespace msl
 				{
 					dest->y = alloBall->y + 500;
 				}
-				dest = wm->field.mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
 
 		}
-		if (wm->field.isInsideEnemyPenalty(alloBall, 0))
+		if (wm->field->isInsideEnemyPenalty(alloBall, 0))
 		{ //ball is inside enemy penalty area
-			if (wm->robots.teammates.teamMatesInOppPenalty() > 0)
+			if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
 			{ //if there is someone else, do not enter
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
-				dest = wm->field.mapOutOfEnemyPenalty(alloBall);
+				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
-			if (wm->field.isInsideEnemyKeeperArea(alloBall, 50))
+			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
 			{ //ball is inside keeper area
-				dest = wm->field.mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
@@ -717,11 +717,11 @@ namespace msl
 
 			MotionControl mc;
 			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
-			if (wm->ball.getAlloBallPosition() != nullptr)
+			if (wm->ball->getAlloBallPosition() != nullptr)
 			{
 				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
 				vector<shared_ptr<geometry::CNPoint2D>>>();
-				additionalPoints->push_back(wm->ball.getAlloBallPosition());
+				additionalPoints->push_back(wm->ball->getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
 				//cout << "RobotMovement: playeRobotCareBall 1" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
@@ -753,7 +753,7 @@ namespace msl
 			}
 			double angle = headingPoint->angleTo();
 			MSLWorldModel* wm = MSLWorldModel::get();
-			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+			if (abs(angle - wm->kicker->kickerAngle) > rotTol)
 			{
 				return rot;
 			}
@@ -813,7 +813,7 @@ namespace msl
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			MotionControl mc;
@@ -821,7 +821,7 @@ namespace msl
 			return mc;
 		}
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles.getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles->getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
 		fringe->clear();
 		for (int i = 0; i < 16; i++)
 		{
@@ -832,7 +832,7 @@ namespace msl
 				if (s->isValid())
 				{
 
-					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles.getEgoVisionObstaclePoints());
+					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
 					fringe->push_back(s);
 				}
 			}
@@ -866,13 +866,13 @@ namespace msl
 			for (int j = 0; j < next->size(); j++)
 			{
 				next->at(j)->val = evalPointDynamic(next->at(j)->midP, alloPassee, ownPos,
-													wm->obstacles.getEgoVisionObstaclePoints());
+													wm->obstacles->getEgoVisionObstaclePoints());
 				fringe->push_back(next->at(j));
 			}
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
 		}
 		shared_ptr<geometry::CNPoint2D> dest =
-				wm->field.mapOutOfEnemyKeeperArea(wm->field.mapInsideField(best->midP))->alloToEgo(*ownPos);
+				wm->field->mapOutOfEnemyKeeperArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
 
 		mc = placeRobotAggressive(dest, align, maxTrans);
@@ -924,21 +924,21 @@ namespace msl
 		//distance to point:
 		ret -= ownPos->distanceTo(alloP) / 10.0;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2, 0);
+		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2, 0);
 
 		shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
 		//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
 
 		shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
-				-wm->field.getFieldLength() / 2.0 - alloPassee->x, wm->field.getGoalWidth() / 2.0 + 1000 - alloPassee->y);
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x, wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
 		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
-				-wm->field.getFieldLength() / 2.0 - alloPassee->x, -wm->field.getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x, -wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
 
 		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
 		{
 			return numeric_limits<double>::min();
 		}
-		if (wm->field.isInsideEnemyPenalty(alloPassee, 800) && wm->field.isInsideEnemyPenalty(alloP, 600))
+		if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
 		{
 			return numeric_limits<double>::min();
 		}

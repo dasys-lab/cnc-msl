@@ -70,8 +70,8 @@ namespace msl
 		vector<shared_ptr<TVec>> curPoints = points;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double maxFieldDist = std::sqrt(
-				wm->field.getFieldLength() * wm->field.getFieldLength()
-						+ wm->field.getFieldWidth() * wm->field.getFieldWidth());
+				wm->field->getFieldLength() * wm->field->getFieldLength()
+						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -92,7 +92,7 @@ namespace msl
 												vector<shared_ptr<TVec>>& players)
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 
 		if (ownPos == nullptr)
 			return autodiff::Term::FALSE;
@@ -102,11 +102,11 @@ namespace msl
 		for (int i = 0; i < players.size(); ++i)
 		{
 			shared_ptr<TVec> p2p = players.at(i) - point;
-			shared_ptr<Term> rel = (wm->obstacles.getObstacleRadius()
+			shared_ptr<Term> rel = (wm->obstacles->getObstacleRadius()
 					/ autodiff::TermBuilder::power(p2p->normSquared(), 0.5));
 
 			// consider opponents
-			auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+			auto opps = wm->robots->opponents.getOpponentsAlloClustered();
 
 //				List<TrackedOpponent> opps = wm.GetTrackedOpponents();
 
@@ -124,14 +124,14 @@ namespace msl
 											& (oppDistance->getX() < autodiff::TermBuilder::constant(1))),
 									rel
 											< ((make_shared<Abs>(oppDistance->getY())
-													- ((wm->obstacles.getObstacleRadius() + 50.0)
+													- ((wm->obstacles->getObstacleRadius() + 50.0)
 															/ autodiff::TermBuilder::power(p2p->normSquared(), 0.5)))
 													/ oppDistance->getX()));
 				}
 			}
 
 			// consider teammates
-			auto mates = wm->robots.teammates.getTeammatesAlloClustered();
+			auto mates = wm->robots->teammates.getTeammatesAlloClustered();
 			if (mates != nullptr && mates->size() > 0)
 			{
 				for (auto mate : *mates)
@@ -146,7 +146,7 @@ namespace msl
 											& (mateDistance->getX() < autodiff::TermBuilder::constant(1))),
 									rel
 											< ((make_shared<Abs>(mateDistance->getY())
-													- ((wm->obstacles.getObstacleRadius() + 50.0)
+													- ((wm->obstacles->getObstacleRadius() + 50.0)
 															/ autodiff::TermBuilder::power(p2p->normSquared(), 0.5)))
 													/ mateDistance->getX()));
 				}
@@ -165,7 +165,7 @@ namespace msl
 										& (myPosDistance->getX() < autodiff::TermBuilder::constant(1))),
 								rel
 										< ((make_shared<Abs>(myPosDistance->getY())
-												- ((wm->obstacles.getObstacleRadius() + 50.0)
+												- ((wm->obstacles->getObstacleRadius() + 50.0)
 														/ autodiff::TermBuilder::power(p2p->normSquared(), 0.5)))
 												/ myPosDistance->getX()));
 			}
@@ -178,8 +178,8 @@ namespace msl
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double maxFieldDist = std::sqrt(
-				wm->field.getFieldLength() * wm->field.getFieldLength()
-						+ wm->field.getFieldWidth() * wm->field.getFieldWidth());
+				wm->field->getFieldLength() * wm->field->getFieldLength()
+						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -194,8 +194,8 @@ namespace msl
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double maxFieldDist = std::sqrt(
-				wm->field.getFieldLength() * wm->field.getFieldLength()
-						+ wm->field.getFieldWidth() * wm->field.getFieldWidth());
+				wm->field->getFieldLength() * wm->field->getFieldLength()
+						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 		return (1 - (alica::ConstraintBuilder::distanceSqr(destination, point)) / (maxFieldDist * maxFieldDist));
 	}
 
@@ -211,8 +211,8 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
 		double maxFieldDist = std::sqrt(
-				wm->field.getFieldLength() * wm->field.getFieldLength()
-						+ wm->field.getFieldWidth() * wm->field.getFieldWidth());
+				wm->field->getFieldLength() * wm->field->getFieldLength()
+						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -228,8 +228,8 @@ namespace msl
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
 		double maxFieldDist = std::sqrt(
-				wm->field.getFieldLength() * wm->field.getFieldLength()
-						+ wm->field.getFieldWidth() * wm->field.getFieldWidth());
+				wm->field->getFieldLength() * wm->field->getFieldLength()
+						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 
 		for (int i = 0; i < points.size(); i++)
 		{
@@ -504,8 +504,8 @@ namespace msl
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 		shared_ptr<Term> c;
 		shared_ptr<TVec> ballT = nullptr;
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> ball = wm->ball->getEgoBallPosition();
 		//		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
 		if (ball != nullptr && ownPos != nullptr)
 		{
@@ -563,13 +563,13 @@ namespace msl
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 		shared_ptr<Term> c;
 		shared_ptr<TVec> ballT = nullptr;
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getAlloBallPosition();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
+		shared_ptr<geometry::CNPoint2D> ball = wm->ball->getAlloBallPosition();
 		if (ball != nullptr && ownPos != nullptr)
 		{
 			ballT = make_shared<TVec>(initializer_list<double> {ball->x, ball->y});
 		}
-		switch (wm->game.getSituation())
+		switch (wm->game->getSituation())
 		{
 			case Situation::Start:
 			case Situation::Restart:
@@ -610,7 +610,7 @@ namespace msl
 				c = autodiff::LTConstraint::TRUE;
 				break;
 			default:
-				throw new NoSituationFoundException(wm->game.getSituation());
+				throw new NoSituationFoundException(wm->game->getSituation());
 				break;
 		}
 		return c;
@@ -868,37 +868,37 @@ namespace msl
 		switch (area)
 		{
 			case Areas::Surrounding:
-				*lowerRightCorner = wm->field.posLRSurrounding();
+				*lowerRightCorner = wm->field->posLRSurrounding();
 				//TODO was *upperLeftCorner = wm->field.posLeftOppCorner(); but should be with surrounding
-				*upperLeftCorner = wm->field.posULSurrounding();
+				*upperLeftCorner = wm->field->posULSurrounding();
 				break;
 			case Areas::Field:
-				*lowerRightCorner = wm->field.posRightOwnCorner();
-				*upperLeftCorner = wm->field.posLeftOppCorner();
+				*lowerRightCorner = wm->field->posRightOwnCorner();
+				*upperLeftCorner = wm->field->posLeftOppCorner();
 				break;
 			case Areas::OppHalf:
-				*lowerRightCorner = wm->field.posLROppHalf();
-				*upperLeftCorner = wm->field.posLeftOppCorner();
+				*lowerRightCorner = wm->field->posLROppHalf();
+				*upperLeftCorner = wm->field->posLeftOppCorner();
 				break;
 			case Areas::OwnHalf:
-				*lowerRightCorner = wm->field.posRightOwnCorner();
-				*upperLeftCorner = wm->field.posULOwnHalf();
+				*lowerRightCorner = wm->field->posRightOwnCorner();
+				*upperLeftCorner = wm->field->posULOwnHalf();
 				break;
 			case Areas::OppPenaltyArea:
-				*lowerRightCorner = wm->field.posLROppPenaltyArea();
-				*upperLeftCorner = wm->field.posULOppPenaltyArea();
+				*lowerRightCorner = wm->field->posLROppPenaltyArea();
+				*upperLeftCorner = wm->field->posULOppPenaltyArea();
 				break;
 			case Areas::OwnPenaltyArea:
-				*lowerRightCorner = wm->field.posLROwnPenaltyArea();
-				*upperLeftCorner = wm->field.posULOwnPenaltyArea();
+				*lowerRightCorner = wm->field->posLROwnPenaltyArea();
+				*upperLeftCorner = wm->field->posULOwnPenaltyArea();
 				break;
 			case Areas::OwnGoalArea:
-				*lowerRightCorner = wm->field.posLROwnGoalArea();
-				*upperLeftCorner = wm->field.posULOwnGoalArea();
+				*lowerRightCorner = wm->field->posLROwnGoalArea();
+				*upperLeftCorner = wm->field->posULOwnGoalArea();
 				break;
 			case Areas::OppGoalArea:
-				*lowerRightCorner = wm->field.posLROppGoalArea();
-				*upperLeftCorner = wm->field.posULOppGoalArea();
+				*lowerRightCorner = wm->field->posLROppGoalArea();
+				*upperLeftCorner = wm->field->posULOppGoalArea();
 				break;
 			default:
 				throw "Unknown Area!";

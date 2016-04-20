@@ -26,8 +26,8 @@ namespace alica
     void StandardPass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1435760160067) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
@@ -50,7 +50,7 @@ namespace alica
             int id = ids->at(0);
             if (id != -1)
             {
-                auto pos = wm->robots.teammates.getTeamMatePosition(id);
+                auto pos = wm->robots->teammates.getTeamMatePosition(id);
                 egoAlignPoint = pos->getPoint()->alloToEgo(*ownPos);
             }
         }

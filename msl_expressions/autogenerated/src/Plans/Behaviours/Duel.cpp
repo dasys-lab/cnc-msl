@@ -14,8 +14,8 @@ namespace alica
         /*PROTECTED REGION ID(con1450178699265) ENABLED START*/ //Add additional options here
         wheelSpeed = (*this->sc)["Actuation"]->get<double>("Dribble.DuelWheelSpeed", NULL);
         translation = (*this->sc)["Behaviour"]->get<double>("Duel.Velocity", NULL);
-        fieldLength = wm->field.getFieldLength();
-        fieldWidth = wm->field.getFieldWidth();
+        fieldLength = wm->field->getFieldLength();
+        fieldWidth = wm->field->getFieldWidth();
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
         radiusToCheckOpp = (*this->sc)["Behaviour"]->get<double>("Duel.RadiusToCheckOpp", NULL);
         ;
@@ -35,13 +35,13 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1450178699265) ENABLED START*/ //Add additional options here
         // enter plan when !haveBall && enemy haveBall || haveBall && enemy close
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = make_shared < geometry::CNPoint2D
                 > (fieldLength / 2, 0)->alloToEgo(*ownPos);
 //		shared_ptr<geometry::CNPoint2D> oppGoal = make_shared<geometry::CNPoint2D>(fieldLength / 2, 0);
-        shared_ptr < geometry::CNPoint2D > oppGoal = wm->field.posOppGoalMid();
+        shared_ptr < geometry::CNPoint2D > oppGoal = wm->field->posOppGoalMid();
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 
@@ -55,7 +55,7 @@ namespace alica
         }
 
         //Check for Success
-        auto obs = wm->obstacles.getEgoVisionObstaclePoints();
+        auto obs = wm->obstacles->getEgoVisionObstaclePoints();
         if (obs != nullptr)
         {
             double distance = numeric_limits<double>::max();
@@ -118,7 +118,7 @@ namespace alica
         else
         {
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> mostRecentOpps =
-                    wm->robots.opponents.getOpponentsAlloClustered();
+                    wm->robots->opponents.getOpponentsAlloClustered();
             shared_ptr < geometry::CNPoint2D > closestOpponent = nullptr;
 
             if (mostRecentOpps != nullptr)
@@ -136,7 +136,7 @@ namespace alica
                             closestOpponent = opp;
                         }
 
-                        teamMatePositions = wm->robots.teammates.getTeammatesAlloClustered();
+                        teamMatePositions = wm->robots->teammates.getTeammatesAlloClustered();
 
                         // try to find closest team member that isn't blocked for aligning
                         for (int i = 0; i < teamMatePositions->size(); i++)
@@ -264,8 +264,8 @@ namespace alica
                     ballOrth1 = ballOrth1->egoToAllo(*ownPos);
                     ballOrth2 = ballOrth2->egoToAllo(*ownPos);
 
-                    double distance = wm->field.distanceToLine(ownPoint, ballOrth1->egoToAllo(*ownPos)->angleTo());
-                    if (wm->field.distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo()) < distance)
+                    double distance = wm->field->distanceToLine(ownPoint, ballOrth1->egoToAllo(*ownPos)->angleTo());
+                    if (wm->field->distanceToLine(ownPoint, ballOrth2->egoToAllo(*ownPos)->angleTo()) < distance)
                     {
                         //top line
                         egoAlignPoint = make_shared < geometry::CNPoint2D

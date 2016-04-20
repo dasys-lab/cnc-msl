@@ -55,12 +55,12 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
         bool fastIntercept = false;
-        auto ballVel = wm->ball.getVisionBallVelocity();
+        auto ballVel = wm->ball->getVisionBallVelocity();
         double smoothingLength = 1.0;
 
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto ballPos = wm->ball->getEgoBallPosition();
 
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
 //		CorrectedOdometryData od  = WM.OdometryData;
 //		OdometryData odRaw = WM.RawOdometryData;
 
@@ -86,9 +86,9 @@ namespace alica
             ballVel = ballVel->normalize() * 7000;
         }
         auto alloBall = ballPos->egoToAllo(*ownPos);
-        if (!wm->field.isInsideField(alloBall))
+        if (!wm->field->isInsideField(alloBall))
         {
-            auto egoTarget = wm->field.mapInsideField(alloBall)->alloToEgo(*ownPos);
+            auto egoTarget = wm->field->mapInsideField(alloBall)->alloToEgo(*ownPos);
             //cout << "Intercept return 3 begin" << endl;
             mc = msl::RobotMovement::placeRobotCareBall(egoTarget, ballPos, maxVel);
             //cout << "Intercept return 3 end" << endl;
@@ -157,7 +157,7 @@ namespace alica
         /*if (predBall.Distance()> 250) {
          predBall = predBall.Normalize()*(predBall.Distance()-250);
          }*/
-        auto gs = wm->game.getGameState();
+        auto gs = wm->game->getGameState();
         shared_ptr < geometry::CNPoint2D > vel;
 
         if (gs == msl::GameState::OppBallPossession)
@@ -247,9 +247,9 @@ namespace alica
 //Console.WriteLine("3vel2 {0} {1} {2}",vel2.Angle(),vel2.X,vel2.Y);
 //			Console.WriteLine("curMaxTrans " + curMaxTrans + " vel.Distance " + vel.Distance());
         auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
-        if (wm->field.isInsideField(alloBall, -150) && !wm->field.isInsideField(alloDest))
+        if (wm->field->isInsideField(alloBall, -150) && !wm->field->isInsideField(alloDest))
         {
-            pathPlanningPoint = wm->field.mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
+            pathPlanningPoint = wm->field->mapInsideField((alloDest, alloBall - ownPos))->alloToEgo(*ownPos);
         }
 
         shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
@@ -307,7 +307,7 @@ namespace alica
         mc = msl::RobotMovement::nearGoalArea(mc);
         //cout << "Intercept: Translation " << mc.motion.translation << endl;
         send(mc);
-        if (wm->ball.haveBallDribble(false))
+        if (wm->ball->haveBallDribble(false))
         {
             this->success = true;
         }

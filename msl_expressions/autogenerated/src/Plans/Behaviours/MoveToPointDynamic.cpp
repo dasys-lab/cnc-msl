@@ -30,8 +30,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1456997073100) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr)
         {
             return;

@@ -32,14 +32,14 @@ namespace msl
 	{
 		validAngle = false;
 
-		sb = wm->ball.getAlloBallPosition();
-		auto opps = wm->robots.opponents.getOpponentsAlloClustered();
+		sb = wm->ball->getAlloBallPosition();
+		auto opps = wm->robots->opponents.getOpponentsAlloClustered();
 
 		if (sb == nullptr || opps == nullptr)
 			return;
 
 		closestOpp.reset();
-		double minDist = wm->field.getFieldLength() * 2;
+		double minDist = wm->field->getFieldLength() * 2;
 		for (auto& opp : *opps)
 		{
 			double d = sb->distanceTo(opp);
@@ -56,7 +56,7 @@ namespace msl
 			angleBallOpp = atan2(closestOpp->y - sb->y, closestOpp->x - sb->x);
 		}
 
-		this->teammates = wm->robots.teammates.getPositionsOfTeamMates();
+		this->teammates = wm->robots->teammates.getPositionsOfTeamMates();
 	}
 
 	alica::UtilityInterval DistBallRobot::eval(alica::IAssignment* ass)
@@ -92,7 +92,7 @@ namespace msl
 				if (!validAngle)
 				{
 					//if no opp is near ball
-					ui.setMin(max(ui.getMin(), 1 - sb->distanceTo(curPosition) / wm->field.getMaxDistance()));
+					ui.setMin(max(ui.getMin(), 1 - sb->distanceTo(curPosition) / wm->field->getMaxDistance()));
 				}
 				else
 				{
@@ -110,7 +110,7 @@ namespace msl
 
 					ui.setMin(
 							max(ui.getMin(),
-								(1 - sb->distanceTo(curPosition) / wm->field.getMaxDistance()) * scale));
+								(1 - sb->distanceTo(curPosition) / wm->field->getMaxDistance()) * scale));
 				}
 				numAssignedRobots++;
 			}
@@ -126,7 +126,7 @@ namespace msl
 				curPosition = this->getPositionOfTeammate(ass->getUnassignedRobots().at(i));
 				if (curPosition == nullptr)
 					continue;
-				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(sb) / wm->field.getMaxDistance()));
+				ui.setMax(max(ui.getMax(), 1 - curPosition->distanceTo(sb) / wm->field->getMaxDistance()));
 			}
 		}
 		ui.setMin(max(0.0, ui.getMin()));

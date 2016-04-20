@@ -27,8 +27,8 @@ namespace alica
     void StandardAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -66,7 +66,7 @@ namespace alica
                 if (ids->size() > 0 && ids->at(0) != -1)
                 {
                     // get receiver position by id
-                    auto pos = wm->robots.teammates.getTeamMatePosition(ids->at(0));
+                    auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
                     if (pos != nullptr)
                     {
                         receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);

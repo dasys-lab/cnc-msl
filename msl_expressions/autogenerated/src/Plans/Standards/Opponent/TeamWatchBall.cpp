@@ -31,7 +31,7 @@ namespace alica
     void TeamWatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457015532224) ENABLED START*/ //Add additional options here
-        if (wm->whiteBoard.getWatchBallMsg() != nullptr)
+        if (wm->whiteBoard->getWatchBallMsg() != nullptr)
         {
             this->success = true;
             return;
@@ -40,7 +40,7 @@ namespace alica
         if (itcounter < 10)
             return;
 
-        auto egoBall = wm->ball.getVisionBallPosition();
+        auto egoBall = wm->ball->getVisionBallPosition();
 
         if (egoBall == nullptr)
         {
@@ -50,10 +50,10 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > posV = nullptr;
         if (ballPos != nullptr)
         {
-            auto b1 = wm->ball.getVisionBallPosition(0);
+            auto b1 = wm->ball->getVisionBallPosition(0);
             if (b1 != nullptr && b1->length() < 6300)
                 posV = b1->clone();
-            auto b2 = wm->ball.getVisionBallPosition(1);
+            auto b2 = wm->ball->getVisionBallPosition(1);
             if (posV == nullptr && b2 != nullptr && b2->length() < 6300)
             {
                 posV = b2->clone();
@@ -64,7 +64,7 @@ namespace alica
                 posV = posV / 2.0;
             }
 
-            if (wm->ball.getVisionBallPositionAndCertaincy()->second < 0.5)
+            if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.5)
                 posV = nullptr;
             if (ballPos != nullptr && ballPos->length() > 4000)
                 posV = nullptr;
@@ -84,7 +84,7 @@ namespace alica
             ballMovedOccurrences = 0;
         }
         //if((WM.EgoBallPosition.Distance() < 4000 &&WorldHelper.BallMoved(WM)) || (ballMovedOccurrences >= maxBallMovedOccurrences))
-        if ((egoBall->length() < 6000 && wm->ball.ballMovedSiginficantly())
+        if ((egoBall->length() < 6000 && wm->ball->ballMovedSiginficantly())
                 || (ballMovedOccurrences >= maxBallMovedOccurrences))
         {
             //send messages to other whiteboards
@@ -106,10 +106,10 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1457015532224) ENABLED START*/ //Add additional options here
         ballPos = nullptr;
         ballMovedOccurrences = 0;
-        auto b1 = wm->ball.getVisionBallPosition(0);
+        auto b1 = wm->ball->getVisionBallPosition(0);
         if (b1 != nullptr && b1->length() < 6300)
             ballPos = b1->clone();
-        auto b2 = wm->ball.getVisionBallPosition(1);
+        auto b2 = wm->ball->getVisionBallPosition(1);
         if (ballPos == nullptr && b2 != nullptr && b2->length() < 6300)
         {
             ballPos = b2->clone();
@@ -120,7 +120,7 @@ namespace alica
             ballPos = ballPos / 2.0;
         }
 
-        if (wm->ball.getVisionBallPositionAndCertaincy()->second < 0.4)
+        if (wm->ball->getVisionBallPositionAndCertaincy()->second < 0.4)
             ballPos = nullptr;
 
         if (ballPos != nullptr && ballPos->length() > (msl::Rules::getInstance()->getStayAwayRadius() + 750))
