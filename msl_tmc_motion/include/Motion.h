@@ -27,6 +27,7 @@
 #include <thread>
 
 #include <SystemConfig.h>
+#include <Configuration.h>
 
 // serial port stuff
 //#include <termios.h>
@@ -46,6 +47,8 @@ namespace msl_driver
 
 		void initCommunication(int argc, char** argv);
 		void initialize();
+		void logging_goalie_init();
+		void log_goalie();
 		bool open();
 		void start();
 		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);bool isRunning();
@@ -70,6 +73,10 @@ namespace msl_driver
 		int driverOpenAttemptPeriod = 1000;
 		int ownId;
 		int odometryDelay = 0;
+		int isLogging;
+
+		std::string logFile;
+		FILE *lp;
 
 		// ROS STUFF
 		ros::NodeHandle* rosNode;
