@@ -261,7 +261,6 @@ namespace msl
 		shared_ptr<VoronoiDiagram> voronoi;
 		MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
-		MSLFootballField* field;
 		mutex netMutex;
 		/**
 		 * team = robot id, obstacle = -1, artificial obstacle = -2

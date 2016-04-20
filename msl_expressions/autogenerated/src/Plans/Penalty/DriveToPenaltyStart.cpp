@@ -29,7 +29,7 @@ namespace alica
             return;
         }
         auto egoTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0)->alloToEgo(*me);
-        auto egoAlignPoint = msl::MSLFootballField::posOppGoalMid()->alloToEgo(*me);
+        auto egoAlignPoint = wm->field.posOppGoalMid()->alloToEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 

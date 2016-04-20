@@ -4,7 +4,8 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1446033324019) ENABLED START*/ //Add additional includes here
 #define calibSign(a,b) (a > b ? 1: -1)
-
+#include "msl_actuator_msgs/CalibrationCoefficient.h"
+using namespace msl_actuator_msgs;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -33,6 +34,8 @@ namespace alica
         double diffY;
         double lengthVision;
         double lengthSegment;
+
+        CalibrationCoefficient calibCoeff;
 
         int tempyoyo;
         int calibCounter;

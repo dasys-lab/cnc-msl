@@ -12,7 +12,6 @@ namespace alica
             DomainBehaviour("BouncePassShoot")
     {
         /*PROTECTED REGION ID(con1459357144291) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         ownPos = nullptr;
         egoBallPos = nullptr;
         planName = "";
@@ -54,7 +53,7 @@ namespace alica
             break;
         }
         auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
-        auto centerOppGoal = make_shared < geometry::CNPoint2D > (field->FieldLength / 2, 0);
+        auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2, 0);
 
         //this might only need to be WorldHelper.HaveBall
         if (!wm->ball.haveBallDribble(false))

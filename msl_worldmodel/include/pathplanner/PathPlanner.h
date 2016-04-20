@@ -204,7 +204,6 @@ private:
 
 protected:
 	MSLWorldModel* wm;
-	MSLFootballField* field;
 	int currentVoronoiPos;
 	supplementary::SystemConfig* sc;
 	mutex voronoiMutex;

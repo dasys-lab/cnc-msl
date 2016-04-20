@@ -231,15 +231,16 @@ namespace alica
 
         if (finished())
         {
-        	if (repeat)
-        	{
-        		cout << "restart test..." << endl;
-        		initialiseParameters();
-        	}else
-        	{
-        		cout << "finished testing" << endl;
-        		this->success = true;
-        	}
+            if (repeat)
+            {
+                cout << "restart test..." << endl;
+                initialiseParameters();
+            }
+            else
+            {
+                cout << "finished testing" << endl;
+                this->success = true;
+            }
 
         }
         /*PROTECTED REGION END*/
@@ -357,10 +358,10 @@ namespace alica
 
         if (lbi)
         {
-            bool static lb_old = *lbi;
-            if (lb_old != *lbi)
+            bool static lb_old = lbi;
+            if (lb_old != lbi)
             {
-                lb_old = *lbi;
+                lb_old = lbi;
                 cout << "toggle light barrier!" << endl;
                 move++;
             }

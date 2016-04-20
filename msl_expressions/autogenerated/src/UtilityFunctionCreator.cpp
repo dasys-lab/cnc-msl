@@ -81,8 +81,6 @@
 
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
-#include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
-
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
@@ -291,10 +289,6 @@ namespace alica
 
             case 1431522123418:
                 return make_shared<UtilityFunction1431522123418>();
-                break;
-
-            case 1417017436952:
-                return make_shared<UtilityFunction1417017436952>();
                 break;
 
             case 1457015277573:

@@ -311,20 +311,20 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	Update_timer = new QTimer();
 	Update_timer->setInterval(1);
 	connect(Update_timer, SIGNAL(timeout()), this, SLOT(update_robot_info()));
-
-	_FIELD_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldLength", NULL) / 1000;
-	_FIELD_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.FieldWidth", NULL) / 1000;
-	_LINE_THICKNESS = (*sc)["Globals"]->get<double>("Globals.FootballField.LineWidth", NULL) / 1000;
-	_GOAL_AREA_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.GoalAreaXSize", NULL) / 1000;
-	_GOAL_AREA_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.GoalAreaYSize", NULL) / 1000;
-	_PENALTY_AREA_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaXSize", NULL) / 1000;
-	_PENALTY_AREA_WIDTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltyAreaYSize", NULL) / 1000;
-	_CENTER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.MiddleCircleRadius", NULL) / 1000;
+	currentField = (*sc)["FootballField"]->get<string>("FootballField", "CurrentField", NULL);
+	_FIELD_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldLength", NULL) / 1000;
+	_FIELD_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "FieldWidth", NULL) / 1000;
+	_LINE_THICKNESS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "LineWidth", NULL) / 1000;
+	_GOAL_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaXSize", NULL) / 1000;
+	_GOAL_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "GoalAreaYSize", NULL) / 1000;
+	_PENALTY_AREA_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltyAreaXSize", NULL) / 1000;
+	_PENALTY_AREA_WIDTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltyAreaYSize", NULL) / 1000;
+	_CENTER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "MiddleCircleRadius", NULL) / 1000;
 	_BALL_DIAMETER = (*sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2.0 / 1000;
-	_CORNER_CIRCLE_RADIUS = (*sc)["Globals"]->get<double>("Globals.FootballField.CornerCircleRadius", NULL) / 1000;
-	_PENALTY_MARK_DISTANCE = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
+	_CORNER_CIRCLE_RADIUS = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "CornerCircleRadius", NULL) / 1000;
+	_PENALTY_MARK_DISTANCE = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
 	_BLACK_POINT_WIDTH = _FIELD_WIDTH / 4.0;
-	_BLACK_POINT_LENGTH = (*sc)["Globals"]->get<double>("Globals.FootballField.PenaltySpot", NULL) / 1000;
+	_BLACK_POINT_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
 	_ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
 	renderWindow = vtkRenderWindow::New();

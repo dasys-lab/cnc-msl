@@ -33,8 +33,6 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
-#include  "Plans/Behaviours/Actuate.h"
-
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
 #include  "Plans/Standards/Own/Corner/BounceShotAlignPasser.h"
@@ -258,11 +256,6 @@ namespace alica
             case 1440754543898:
 
                 return make_shared<CatchPass>();
-                break;
-
-            case 1417017552846:
-
-                return make_shared<Actuate>();
                 break;
 
             case 1450176216458:

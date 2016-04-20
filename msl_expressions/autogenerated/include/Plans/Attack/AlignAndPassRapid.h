@@ -49,7 +49,6 @@ namespace alica
 
         SystemConfig* sc;
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
-        msl::MSLFootballField* field;
         msl::PathProxy* pathProxy;
         static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                     shared_ptr<geometry::CNPoint2D> c, double tolerance,

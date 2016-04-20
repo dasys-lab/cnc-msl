@@ -23,7 +23,6 @@ namespace alica
         this->minRot = 0;
         this->maxRot = 0;
         this->lastRotError = 0;
-        this->field = msl::MSLFootballField::getInstance();
         /*PROTECTED REGION END*/
     }
     OneEighty::~OneEighty()
@@ -61,7 +60,7 @@ namespace alica
         }
 
         shared_ptr < geometry::CNPoint2D > aimPoint = make_shared < geometry::CNPoint2D
-                > (field->FieldLength / 2.0 - 500, 0);
+                > (wm->field.getFieldLength() / 2.0 - 500, 0);
         aimPoint = msl::PathProxy::getInstance()->getEgoDirection(aimPoint, make_shared<msl::PathEvaluator>());
         shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
         if (aimPoint != nullptr)
@@ -143,7 +142,6 @@ namespace alica
         this->dRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "RotationD", NULL);
         this->minRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MinRotation", NULL);
         this->maxRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MaxRotation", NULL);
-        this->field = msl::MSLFootballField::getInstance();
         this->lastRotError = 0;
         /*PROTECTED REGION END*/
     }

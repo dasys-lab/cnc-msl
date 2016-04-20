@@ -37,11 +37,13 @@
 #include "Game.h"
 #include "Kicker.h"
 #include "WhiteBoard.h"
+#include "MSLFootballField.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
 #include "Prediction.h"
 #include "Monitoring.h"
+#include "LightBarrier.h"
 
 namespace alica
 {
@@ -57,7 +59,8 @@ namespace msl
 	class MSLWorldModel
 	{
 	public:
-		static MSLWorldModel* get();bool setEngine(alica::AlicaEngine* ae);
+		static MSLWorldModel* get();
+		bool setEngine(alica::AlicaEngine* ae);
 		alica::AlicaEngine* getEngine();
 
 		double getKickerVoltage();
@@ -94,11 +97,13 @@ namespace msl
 		Robots robots;
 		Ball ball;
 		Game game;
+		MSLFootballField field;
 		PathPlanner pathPlanner;
 		Kicker kicker;
 		WhiteBoard whiteBoard;
 		Obstacles obstacles;
 		Prediction prediction;
+		LightBarrier lightBarrier;
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
@@ -114,6 +119,7 @@ namespace msl
 		int ringBufferLength;
 		double kickerVoltage;
 		bool maySendMessages;
+
 		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 

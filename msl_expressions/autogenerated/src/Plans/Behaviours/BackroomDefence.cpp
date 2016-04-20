@@ -25,7 +25,6 @@ namespace alica
         auto me = wm->rawSensorData.getOwnPositionVision();
         auto alloBallPos = wm->ball.getAlloBallPosition();
         //auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
-        auto field = msl::MSLFootballField::getInstance();
         shared_ptr < geometry::CNPoint2D > goalPos;
 
         if (!me || !alloBallPos)
@@ -40,16 +39,14 @@ namespace alica
          else
          {*/
         // assume goalie is in the middle of the goal
-        goalPos = field->posOwnGoalMid();
+        goalPos = wm->field.posOwnGoalMid();
         //}
 
         auto goaltoball = alloBallPos - goalPos;
         auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
-        if (defenderRange->x
-                < -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength + 100)
+        if (defenderRange->x < -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100)
         {
-            defenderRange->x = -(msl::MSLFootballField::FieldLength / 2) + msl::MSLFootballField::PenaltyAreaLength
-                    + 100;
+            defenderRange->x = -(wm->field.getFieldLength() / 2) + wm->field.getPenaltyAreaLength() + 100;
         }
 
         /*

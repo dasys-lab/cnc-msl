@@ -80,8 +80,6 @@
 
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
-#include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
-
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
@@ -1039,30 +1037,6 @@ namespace alica
             case 1435761870069:
 
                 return make_shared<TransitionCondition1435761870069>();
-
-                break;
-
-            case 1417017585255:
-
-                return make_shared<TransitionCondition1417017585255>();
-
-                break;
-
-            case 1427721261678:
-
-                return make_shared<TransitionCondition1427721261678>();
-
-                break;
-
-            case 1435321214610:
-
-                return make_shared<TransitionCondition1435321214610>();
-
-                break;
-
-            case 1435321221937:
-
-                return make_shared<TransitionCondition1435321221937>();
 
                 break;
 

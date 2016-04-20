@@ -17,7 +17,6 @@ namespace msl
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
 		this->voronoi = make_shared<VoronoiDiagram>();
-		this->field = MSLFootballField::getInstance();
 		this->ownPosAvail = false;
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
 		this->artificialObstacles = make_shared<vector<shared_ptr<geometry::CNPoint2D> > >();
@@ -29,7 +28,6 @@ namespace msl
 		this->wm = net->wm;
 		this->sc = net->sc;
 		this->voronoi = make_shared<VoronoiDiagram>();
-		this->field = net->field;
 		this->ownPosAvail = net->ownPosAvail;
 
 		this->alloClusteredObsWithMe = make_shared<vector<shared_ptr<geometry::CNRobot> > >();
@@ -225,7 +223,7 @@ namespace msl
 		for(auto point = points->begin(); point != points->end();)
 		{
 
-		   if(!this->field->isInsideField(*point))
+		   if(!wm->field.isInsideField(*point))
 		   {
 		      point = points->erase(point);
 		   }
@@ -579,13 +577,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of opp penalty area
-		auto upLeftCorner = field->posULOppPenaltyArea();
+		auto upLeftCorner = wm->field.posULOppPenaltyArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROppPenaltyArea();
+		auto lowRightCorner = wm->field.posLROppPenaltyArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->GoalAreaWidth;
-		int penaltyLength = field->GoalAreaLength;
+		int penaltyWidth = wm->field.getGoalAreaWidth();
+		int penaltyLength = wm->field.getGoalAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -626,13 +624,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of opp goal area
-		auto upLeftCorner = field->posULOppGoalArea();
+		auto upLeftCorner = wm->field.posULOppGoalArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROppGoalArea();
+		auto lowRightCorner = wm->field.posLROppGoalArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->PenaltyAreaWidth;
-		int penaltyLength = field->PenaltyAreaLength;
+		int penaltyWidth = wm->field.getPenaltyAreaWidth();
+		int penaltyLength = wm->field.getPenaltyAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -673,13 +671,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of own penalty area
-		auto upLeftCorner = field->posULOwnPenaltyArea();
+		auto upLeftCorner = wm->field.posULOwnPenaltyArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROwnPenaltyArea();
+		auto lowRightCorner = wm->field.posLROwnPenaltyArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->GoalAreaWidth;
-		int penaltyLength = field->GoalAreaLength;
+		int penaltyWidth = wm->field.getGoalAreaWidth();
+		int penaltyLength = wm->field.getGoalAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);
@@ -720,13 +718,13 @@ namespace msl
 		auto ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 
 		//get cornerpoints of own goal area
-		auto upLeftCorner = field->posULOwnGoalArea();
+		auto upLeftCorner = wm->field.posULOwnGoalArea();
 		ret->push_back(upLeftCorner);
-		auto lowRightCorner = field->posLROwnGoalArea();
+		auto lowRightCorner = wm->field.posLROwnGoalArea();
 		ret->push_back(lowRightCorner);
 		//get field length and width
-		int penaltyWidth = field->PenaltyAreaWidth;
-		int penaltyLength = field->PenaltyAreaLength;
+		int penaltyWidth = wm->field.getPenaltyAreaWidth();
+		int penaltyLength = wm->field.getPenaltyAreaLength();
 		//calculate missing points
 		auto upRightCorner = make_shared<geometry::CNPoint2D>(upLeftCorner->x, lowRightCorner->y);
 		ret->push_back(upRightCorner);

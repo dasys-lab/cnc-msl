@@ -2,7 +2,6 @@ using namespace std;
 #include "Plans/Dribble/DribbleControl.h"
 
 /*PROTECTED REGION ID(inccpp1449742071382) ENABLED START*/ //Add additional includes here
-
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,8 +27,8 @@ namespace alica
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)
         {
-            bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speedNoBall));
-            bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speedNoBall));
+            bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
+            bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
 
             //If we are close to the ball give more speed
 //            shared_ptr < geometry::CNPoint2D > b = wm->ball.getEgoBallPosition();
@@ -60,12 +59,6 @@ namespace alica
         // do we have the ball, so that controlling make sense
         haveBall = wm->ball.haveBall();
 
-//        if (haveBall && !hadBefore)
-        //      {
-//		cout << "DribbleControl: Reset Counter" << endl;
-        //          itcounter = 0;
-        //}
-
         if (haveBall && itcounter++ < 8)
         {
             cout << "DribbleControl: less than 8 iterations have ball" << endl;
@@ -81,25 +74,25 @@ namespace alica
             cout << "DribbleControl: speedX:\t" << speedX << endl;
             cout << "DribbleControl: speedY:\t" << speedY << endl;
 
-
             //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
             double rotation = motion->rotation;
-			if (rotation < 0)
-			{
-				l = 0;
-				r = abs(rotation) / M_PI * curveRotationFactor;
-			}
-			else
-			{
-				r = 0;
-				l = abs(rotation) / M_PI * curveRotationFactor;
-			}
+            if (rotation < 0)
+            {
+                l = 0;
+                r = abs(rotation) / M_PI * curveRotationFactor;
+            }
+            else
+            {
+                r = 0;
+                l = abs(rotation) / M_PI * curveRotationFactor;
+            }
 
-			//ignor rotation error
-			if(fabs(rotation) < 0.04) {
-				l = 0;
-				r = 0;
-			}
+            //ignor rotation error
+            if (fabs(rotation) < 0.04)
+            {
+                l = 0;
+                r = 0;
+            }
 
             //langsam vorwaerts
             if (speedX > -slowTranslation && speedX < 40)
@@ -114,18 +107,18 @@ namespace alica
             //schnell vor
             else if (speedX <= -slowTranslation)
             {
-            	//0.5 is for correct rounding
-            	speed = max(-100.0, min(100.0, forwardSpeedSpline(speedX)+0.5));
-                //speed = max(-100.0, min(100.0, (handlerSpeedFactor * speedX / 100.0) - handlerSpeedSummand));
-            	if(rotation > -1.0 && rotation < 1.0 && speedX <= -800){
-            		l = 0;
-            		r = 0;
-            	}
+                //0.5 is for correct rounding
+                speed = max(-10000.0, min(10000.0, forwardSpeedSpline(speedX) + 0.5));
+                if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
+                {
+                    l = 0;
+                    r = 0;
+                }
             }
             //schnell rueck
             else
             {
-                speed = max(-100.0, min(100.0, 3 * handlerSpeedFactor * speedX / 100.0));
+                speed = max(-10000.0, min(10000.0, 3 * handlerSpeedFactor * speedX / 100.0));
             }
 
             //geschwindigkeitsanteil fuer orthogonal zum ball
@@ -150,8 +143,8 @@ namespace alica
 
         cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
         cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
-        bhc.leftMotor = (int8_t) - max(-100.0, min(100.0, speed + l + orthoL));
-        bhc.rightMotor = (int8_t) - max(-100.0, min(100.0, speed + r + orthoR));
+        bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speed + l + orthoL));
+        bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speed + r + orthoR));
 
         hadBefore = haveBall;
         if (!hadBefore)
@@ -206,21 +199,22 @@ namespace alica
         curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);
         orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor", NULL);
 
+        supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-
-		shared_ptr<vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
-		vector<double> robotSpeed(speedsSections->size());
-		vector<double> actuatorSpeed(speedsSections->size());
-		int i = 0;
-		for (string subsection : *speedsSections)
-		{
-			robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed", NULL);
-			actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
-			cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
-			i++;
-		}
-		forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
+        shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+        vector<double> robotSpeed(speedsSections->size());
+        vector<double> actuatorSpeed(speedsSections->size());
+        int i = 0;
+        for (string subsection : *speedsSections)
+        {
+            robotSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed",
+                                                            NULL);
+            actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
+                                                               "actuatorSpeed", NULL);
+            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+            i++;
+        }
+        forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

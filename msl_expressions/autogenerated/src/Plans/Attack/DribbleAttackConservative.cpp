@@ -11,8 +11,7 @@ namespace alica
             DomainBehaviour("DribbleAttackConservative")
     {
         /*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
-        alloGoalMid = field->posOppGoalMid();
+        alloGoalMid = wm->field.posOppGoalMid();
         before = false;
         this->setTrigger(wm->getVisionDataEventTrigger());
         /*PROTECTED REGION END*/

@@ -26,7 +26,6 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
         double angleTolerance;
         double minKickPower;
-        msl::MSLFootballField* field;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
