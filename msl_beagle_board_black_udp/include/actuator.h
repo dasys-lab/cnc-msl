@@ -37,12 +37,16 @@ BlackGPIO SW_Power(GPIO_48, input, FastMode);		// P9 15
 BlackI2C myI2C(I2C_2, ADR_G);
 BlackSPI mySpi(SPI0_0, 8, SpiMode0, 2000000);
 
+const char *BH_right_pins[] = { "P8_9", "P8_10", "P8_16", "P8_18" };
+const char *BH_left_pins[] = { "P8_7", "P8_8", "P8_12", "P8_14" };
+const char *IMU_pins[] = { "P8_11", "P8_15", "P8_17", "P8_26" };
+const char *OF_pins[] = { "P9_30", "P9_25", "P9_27", "P9_12" };
 
-BallHandle		BH_right(P8_19, GPIO_69, GPIO_68, GPIO_46, GPIO_65);		/* pwm, dir, reset, ff1, ff2 */
-BallHandle		BH_left(P8_13, GPIO_66, GPIO_67, GPIO_44, GPIO_26);			/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_right(P8_19, BH_right_pins);		/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_left(P8_13, BH_left_pins);			/* pwm, dir, reset, ff1, ff2 */
 IMU				lsm9ds0(GPIO_45, GPIO_47, GPIO_27, GPIO_61, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
-LightBarrier	lightbarrier(AIN0);
 OpticalFlow		adns3080(GPIO_112, GPIO_117, GPIO_115, GPIO_60, &mySpi);	/* ncs, npd, rst, led */
+LightBarrier	lightbarrier(AIN0);
 ShovelSelect	shovel(P9_14);
 
 timeval			time_now;

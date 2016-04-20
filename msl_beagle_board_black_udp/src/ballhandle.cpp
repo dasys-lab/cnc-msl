@@ -10,39 +10,40 @@
 
 using namespace BlackLib;
 
-	BallHandle::BallHandle(pwmName pwm_P, gpioName dir_P, gpioName reset_P, gpioName ff1_P, gpioName ff2_P) {
+	BallHandle::BallHandle(pwmName pwm_P, const char *pin_names[]) {
 		pwm = new BlackPWM(pwm_P);
-		dir = new BlackGPIO(dir_P, output, FastMode);
-		reset = new BlackGPIO(reset_P, output, FastMode);
-		ff1 = new BlackGPIO(ff1_P, input, FastMode);
-		ff2 = new BlackGPIO(ff2_P, input, FastMode);
 
+		gpio = BeagleGPIO::getInstance();
+		pins = gpio->claim((char**) pin_names, 4);
+
+		direction = left;
+		direction_desired = left;
+
+		int outputIdxs[] = { 0, 1};
+		pins->enableOutput(outputIdxs, 2);
 
 		pwm->setPeriodTime(period, nanosecond);
 		pwm->setSpaceRatioTime(0, nanosecond);
 		pwm->setRunState(run);
 
-		dir->setValue(low);
-		reset->setValue(high);
+		pins->clearBit(dir);
+		pins->setBit(rst);
 	}
 
 	BallHandle::~BallHandle() {
 		delete pwm;
-		delete dir;
-		delete reset;
-		delete ff1;
-		delete ff2;
+		delete gpio;
 	}
 
 	void BallHandle::setBallHandling(int8_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
-		if ((value > 0) && (direction == static_cast<digitalValue>(right))) {
-			direction_desired = static_cast<digitalValue>(left);
+		if ((value > 0) && (direction == right)) {
+			direction_desired = left;
 		}
 
-		if ((value < 0) && (direction == static_cast<BlackLib::digitalValue>(left))) {
-			direction_desired = static_cast<BlackLib::digitalValue>(right);
+		if ((value < 0) && (direction == left)) {
+			direction_desired = right;
 		}
 
 		// Check that value is in range from -period to period
@@ -68,7 +69,8 @@ using namespace BlackLib;
 			direction = direction_desired;
 			speed = 0;
 			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-			dir->setValue(direction);						// Time for this Operation: 550us
+			pins->setBit(direction);
+			//dir->setValue(direction);						// Time for this Operation: 550us
 		}
 
 		if (speed != speed_desired) {
@@ -77,10 +79,21 @@ using namespace BlackLib;
 		}
 	}
 
-	int BallHandle::getError() {
-		int ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
+	Error BallHandle::getError() {
+		int pin1 = pins->getBit(ff1);
+		int pin2 = pins->getBit(ff2);
 
-		return ff;
+		if (pin1 < 0 || pin2 < 0)
+			return programming;
+
+		if (!pin1 && !pin2)
+			return none;
+		if (!pin1 && pin2)
+			return bypass;
+		if (pin1 && !pin2)
+			return temperature;
+		if (pin1 && pin2)
+			return voltage;
 	}
 
 
