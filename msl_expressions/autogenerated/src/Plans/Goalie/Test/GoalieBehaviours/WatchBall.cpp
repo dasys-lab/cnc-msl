@@ -112,11 +112,11 @@ namespace alica
 		mc.motion.angle = egoTarget->angleTo();
 		mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
 
-		if (egoBall != nullptr && egoBall->egoToAllo(*ownPos) != nullptr && egoBall->egoToAllo(*ownPos)->x > 1000)
+		/*if (egoBall != nullptr && egoBall->egoToAllo(*ownPos) != nullptr && egoBall->egoToAllo(*ownPos)->x > 1000)
 		{
 			cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
 			pFactor = pFactor / 2;
-		}
+		}*/
 
 		// + (neuDist - altDist) * dfactor
 		if (egoTarget->length() > snapDistance)
