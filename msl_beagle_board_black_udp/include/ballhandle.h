@@ -49,7 +49,7 @@ class BallHandle {
 				~BallHandle();
 
 
-		void	setBallHandling(int8_t value);
+		void	setBallHandling(int32_t value);
 		void	checkTimeout();
 		void	controlBallHandling();
 

@@ -34,7 +34,7 @@ using namespace BlackLib;
 		delete ff2;
 	}
 
-	void BallHandle::setBallHandling(int8_t value) {
+	void BallHandle::setBallHandling(int32_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
 		if ((value > 0) && (direction == static_cast<digitalValue>(right))) {
