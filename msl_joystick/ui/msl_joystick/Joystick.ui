@@ -429,7 +429,7 @@
           <string>0</string>
          </property>
          <property name="maxLength">
-          <number>4</number>
+          <number>5</number>
          </property>
         </widget>
        </item>
@@ -442,10 +442,10 @@
           </size>
          </property>
          <property name="minimum">
-          <number>-100</number>
+          <number>-10000</number>
          </property>
          <property name="maximum">
-          <number>100</number>
+          <number>10000</number>
          </property>
          <property name="tracking">
           <bool>false</bool>
@@ -457,7 +457,7 @@
           <enum>QSlider::TicksBothSides</enum>
          </property>
          <property name="tickInterval">
-          <number>10</number>
+          <number>500</number>
          </property>
         </widget>
        </item>
@@ -486,7 +486,7 @@
           <string>0</string>
          </property>
          <property name="maxLength">
-          <number>4</number>
+          <number>5</number>
          </property>
         </widget>
        </item>
@@ -499,10 +499,10 @@
           </size>
          </property>
          <property name="minimum">
-          <number>-100</number>
+          <number>-10000</number>
          </property>
          <property name="maximum">
-          <number>100</number>
+          <number>10000</number>
          </property>
          <property name="tracking">
           <bool>false</bool>
@@ -514,7 +514,7 @@
           <enum>QSlider::TicksBothSides</enum>
          </property>
          <property name="tickInterval">
-          <number>10</number>
+          <number>500</number>
          </property>
         </widget>
        </item>

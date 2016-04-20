@@ -358,10 +358,10 @@ namespace alica
 
         if (lbi)
         {
-            bool static lb_old = *lbi;
-            if (lb_old != *lbi)
+            bool static lb_old = lbi;
+            if (lb_old != lbi)
             {
-                lb_old = *lbi;
+                lb_old = lbi;
                 cout << "toggle light barrier!" << endl;
                 move++;
             }

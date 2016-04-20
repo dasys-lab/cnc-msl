@@ -23,6 +23,12 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1447863466691) ENABLED START*/ //Add additional protected methods here
+        msl_actuator_msgs::MotionControl mc;
+        shared_ptr<geometry::CNPosition> ownPos;
+        shared_ptr<geometry::CNPoint2D> alloGoalLeft;
+        shared_ptr<geometry::CNPoint2D> alloGoalRight;
+        shared_ptr<geometry::CNPoint2D> alloGoalMid;
+        shared_ptr<geometry::CNPoint2D> prevTarget;
         shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field.posCenterMarker();
         shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
         int maxVariance;
@@ -34,20 +40,12 @@ namespace alica
         double pFactor;
         double dFactor;
         double prevTargetDist;
+        msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
+        double fitTargetY(double targetY);
+        double calcGoalImpactY();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
-        msl_actuator_msgs::MotionControl mc;
-        shared_ptr<geometry::CNPosition> ownPos;
-        msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
-        double fitTargetY(double targetY);
-        void observeBall(shared_ptr<geometry::CNPoint2D> egoBall);
-        double calcGoalImpactY();
-        void moveGoalie(shared_ptr<geometry::CNPoint2D> alloTarget, shared_ptr<geometry::CNPoint2D> egoBall);
-        shared_ptr<geometry::CNPoint2D> alloGoalLeft;
-        shared_ptr<geometry::CNPoint2D> alloGoalRight;
-        shared_ptr<geometry::CNPoint2D> alloGoalMid;
-        shared_ptr<geometry::CNPoint2D> prevTarget;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

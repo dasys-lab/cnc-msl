@@ -399,7 +399,7 @@ namespace msl_joystick
 
 	void Joystick::onBallHandleRightEdited()
 	{
-		this->ballHandleRightMotor = ballHandleRightEdit->text().toShort();
+		this->ballHandleRightMotor = ballHandleRightEdit->text().toInt();
 		if (this->ballHandleRightMotor > this->ballHandleMax)
 			this->ballHandleRightMotor = this->ballHandleMax;
 		if (this->ballHandleRightMotor < this->ballHandleMin)
@@ -413,14 +413,14 @@ namespace msl_joystick
 
 	void Joystick::onBallHandleRightSlided(int value)
 	{
-		this->ballHandleRightMotor = (short)value;
+		this->ballHandleRightMotor = value;
 		ballHandleRightEdit->setText(QString::number(value));
 		this->uiWidget->setFocus();
 	}
 
 	void Joystick::onBallHandleLeftEdited()
 	{
-		this->ballHandleLeftMotor = ballHandleLeftEdit->text().toShort();
+		this->ballHandleLeftMotor = ballHandleLeftEdit->text().toInt();
 		if (this->ballHandleLeftMotor > this->ballHandleMax)
 			this->ballHandleLeftMotor = this->ballHandleMax;
 		if (this->ballHandleLeftMotor < this->ballHandleMin)
@@ -434,7 +434,7 @@ namespace msl_joystick
 
 	void Joystick::onBallHandleLeftSlided(int value)
 	{
-		this->ballHandleLeftMotor = (short)value;
+		this->ballHandleLeftMotor = value;
 		this->ballHandleLeftEdit->setText(QString::number(value));
 		this->uiWidget->setFocus();
 	}
@@ -500,8 +500,8 @@ namespace msl_joystick
 			cout << "Low" << endl;
 		}
 		cout << "BallHandle State:\t" << (msg.ballHandleState ? "On" : "Off") << endl;
-		cout << "BallHandle Left:\t" << (short)msg.ballHandleLeftMotor << "\t Right: "
-				<< (short)msg.ballHandleRightMotor << endl;
+		cout << "BallHandle Left:\t" << (int)msg.ballHandleLeftMotor << "\t Right: "
+				<< (int)msg.ballHandleRightMotor << endl;
 	}
 
 } // namespace msl_keyboard_joystick

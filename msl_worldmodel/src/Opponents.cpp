@@ -16,8 +16,8 @@ namespace msl
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
 		this->ringBufferLength = ringBufferLength;
-		this->opponentProtectAngle = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectAngle", NULL);
-		this->opponentProtectDistance = (*sc)["WorldModel"]->get<double>("WorldModel.OpponentProtectDistance", NULL);
+		this->opponentProtectAngle = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectAngle", NULL);
+		this->opponentProtectDistance = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectDistance", NULL);
 	}
 
 	Opponents::~Opponents()

@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_beagle_board_black_udp)
 
@@ -17,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   msl_actuator_msgs
   msl_black_lib
+  msl_bbb_api
   system_config
   process_manager
 )
