@@ -96,7 +96,7 @@ namespace msl
 	shared_ptr<geometry::CNPoint2D> Ball::getAlloBallPosition()
 	{
 		shared_ptr<geometry::CNPoint2D> p;
-		auto ownPos = this->wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
 		if (ownPos != nullptr)
 		{
 			p = this->getEgoBallPosition();
@@ -120,7 +120,7 @@ namespace msl
 				return lastKnownBallPos->clone();
 			}
 
-			auto pos = wm->rawSensorData.getOwnPositionVision();
+			auto pos = wm->rawSensorData->getOwnPositionVision();
 			if (pos == nullptr)
 			{
 				return nullptr;
@@ -145,7 +145,7 @@ namespace msl
 			if (lsb != nullptr)
 			{
 				//Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates -> Always use rawball!
-				auto pos = wm->rawSensorData.getOwnPositionVision();
+				auto pos = wm->rawSensorData->getOwnPositionVision();
 				if (rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55)
 						|| pos == nullptr)
 				{
@@ -378,7 +378,7 @@ namespace msl
 		double m = 0.5 / (sure - unknown);
 		double t = 1.0 - sure * m;
 
-		for (auto& pair : wm->robots.sharedWolrdModelData)
+		for (auto& pair : wm->robots->sharedWolrdModelData)
 		{
 			if (pair.first == 1) //No Shared ball for goalie!
 			{
@@ -523,9 +523,9 @@ namespace msl
 		}
 
 		// is lightbarrier triggered
-		if (wm->lightBarrier.mayUseLightBarrier())
+		if (wm->lightBarrier->mayUseLightBarrier())
 		{
-			if (!wm->rawSensorData.getLightBarrier())
+			if (!wm->rawSensorData->getLightBarrier())
 			{
 				// if you lost the ball, further pretend that you have it for at most 2 iterations
 				hasBallIteration = max(min(--hasBallIteration, 2), 0);
@@ -558,7 +558,7 @@ namespace msl
 	bool Ball::robotHasBall(int robotId)
 	{
 
-		auto shwmData = wm->robots.getSHWMData(robotId);
+		auto shwmData = wm->robots->getSHWMData(robotId);
 		if (shwmData == nullptr)
 		{
 			return false;
@@ -666,12 +666,12 @@ namespace msl
 	bool Ball::oppHasBall()
 	{
 		bool ret = false;
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
 			return false;
 		}
-		auto ops = wm->robots.opponents.getOpponentsEgoClustered();
+		auto ops = wm->robots->opponents.getOpponentsEgoClustered();
 		if (ops == nullptr)
 		{
 			return false;
@@ -740,7 +740,7 @@ namespace msl
 		}
 
 		bool ret = true;
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
 			return false;
@@ -880,14 +880,14 @@ namespace msl
 		ballPos.confidence = 0.0;
 		ballPos.valid = false;
 		Point3D p;
-		auto ballList = wm->rawSensorData.getBallHypothesisList();
+		auto ballList = wm->rawSensorData->getBallHypothesisList();
 
 		//Its clearly wring that both have the same time but we don't know anything better here! :(
 		TimeHelper::getInstance()->setVisionTimeDirected(ballList->imageTime);
 		TimeHelper::getInstance()->setVisionTimeOmniCam(ballList->imageTime);
 		if (ballList->hypothesis.size() == 0)
 			BallIntegrator::getInstance()->integratePoint(ballPos, 1000.0);
-		auto ownPosition = wm->rawSensorData.getOwnPositionVision();
+		auto ownPosition = wm->rawSensorData->getOwnPositionVision();
 		bool inField;
 
 		for (int i = 0; i < ballList->hypothesis.size(); i++)
@@ -909,8 +909,8 @@ namespace msl
 				alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
 				alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
 
-				if (fabs(alloBallPosX) < wm->field.getFieldLength() / 2.0 + relFactor
-						&& fabs(alloBallPosY) < wm->field.getFieldWidth() / 2.0 + relFactor)
+				if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor
+						&& fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
 				{
 					inField = true;
 				}

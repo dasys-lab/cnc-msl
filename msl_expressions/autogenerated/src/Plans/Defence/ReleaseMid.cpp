@@ -33,8 +33,8 @@ namespace alica
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             mc = msl::RobotMovement::driveRandomly(500);
@@ -63,7 +63,7 @@ namespace alica
         // determine the best reference point
         if (this->teamMateId != 0)
         { // take the teammate as reference point
-            auto teammate = wm->robots.teammates.getTeamMatePosition(teamMateId);
+            auto teammate = wm->robots->teammates.getTeamMatePosition(teamMateId);
             referencePoint = make_shared < geometry::CNPoint2D > (teammate->x, teammate->y);
         }
         else if (egoBallPos != nullptr)

@@ -106,7 +106,7 @@ void BallIntegrator::integratePoint(ObservedPoint p_, double threshold){
 	geometry::CNPoint2D egoPoint;
 	egoPoint.x = p_.x;
 	egoPoint.y = p_.y;
-	auto posPtr = msl::MSLWorldModel::get()->rawSensorData.getOwnPositionVision(); //In a time far far away this was from the motionbuffer!?
+	auto posPtr = msl::MSLWorldModel::get()->rawSensorData->getOwnPositionVision(); //In a time far far away this was from the motionbuffer!?
 	geometry::CNPosition integrationPos;
 	if(posPtr!=nullptr) {
 		integrationPos = *posPtr;

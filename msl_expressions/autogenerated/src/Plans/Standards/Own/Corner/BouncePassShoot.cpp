@@ -29,8 +29,8 @@ namespace alica
     void BouncePassShoot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459357144291) ENABLED START*/ //Add additional options here
-        ownPos = wm->rawSensorData.getOwnPositionVision(); //WM.OwnPositionCorrected;
-        egoBallPos = wm->ball.getEgoBallPosition();
+        ownPos = wm->rawSensorData->getOwnPositionVision(); //WM.OwnPositionCorrected;
+        egoBallPos = wm->ball->getEgoBallPosition();
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 
@@ -49,14 +49,14 @@ namespace alica
         shared_ptr < geometry::CNPosition > matePos = nullptr;
         for (int rob : *robots)
         {
-            matePos = wm->robots.teammates.getTeamMatePosition(rob);
+            matePos = wm->robots->teammates.getTeamMatePosition(rob);
             break;
         }
         auto egoMatePos = matePos->getPoint()->alloToEgo(*ownPos);
-        auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2, 0);
+        auto centerOppGoal = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2, 0);
 
         //this might only need to be WorldHelper.HaveBall
-        if (!wm->ball.haveBallDribble(false))
+        if (!wm->ball->haveBallDribble(false))
         {
             mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
             bhc.leftMotor = 80;
@@ -80,8 +80,8 @@ namespace alica
         //double totalDistance = egoMatePos.Distance() + matePos.DistanceTo(centerOppGoal);
         kc.power = 2800; //(ushort)KickHelper.GetKickPowerPass(totalDistance);
         //kc.Kick.Power*=1.2; //potential loss in energy from ball bouncing, check if this should be included or not
-        kc.kicker = wm->kicker.kickerAngle;
-        if (wm->ball.haveBall() && counter >= 3)
+        kc.kicker = wm->kicker->kickerAngle;
+        if (wm->ball->haveBall() && counter >= 3)
         {
             kc.enabled = true;
             send(kc);

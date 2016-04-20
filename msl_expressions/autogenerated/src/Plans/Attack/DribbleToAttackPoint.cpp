@@ -44,11 +44,11 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436855838589) ENABLED START*/ //Add additional options here
         //get own Pos
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         //get voronoi net
-        auto vNet = wm->pathPlanner.getCurrentVoronoiNet();
+        auto vNet = wm->pathPlanner->getCurrentVoronoiNet();
         //get ego bal pos
-        auto egoBallPos = wm->ball.getEgoBallPosition();
+        auto egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         //check if need information is available
         if (ownPos == nullptr || vNet == nullptr || egoBallPos == nullptr)
@@ -227,11 +227,11 @@ namespace alica
         }
         if (!ownPenalty)
         {
-            alloTargetPoint = wm->field.posOppPenaltyMarker();
+            alloTargetPoint = wm->field->posOppPenaltyMarker();
         }
         else
         {
-            alloTargetPoint = wm->field.posOwnPenaltyMarker();
+            alloTargetPoint = wm->field->posOwnPenaltyMarker();
         }
         wheelSpeed = -80;
         lastClosesOpp = nullptr;

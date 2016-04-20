@@ -22,19 +22,19 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-        if (this->wm->rawSensorData.getOwnPositionVision() != NULL)
+        if (this->wm->rawSensorData->getOwnPositionVision() != NULL)
         {
-            calibPosVisionX = this->wm->rawSensorData.getOwnPositionVision()->x;
-            calibPosVisionY = this->wm->rawSensorData.getOwnPositionVision()->y;
+            calibPosVisionX = this->wm->rawSensorData->getOwnPositionVision()->x;
+            calibPosVisionY = this->wm->rawSensorData->getOwnPositionVision()->y;
         }
 
-        auto calibRotation = this->wm->rawSensorData.getOwnVelocityMotion()->rotation;
-        auto calibAngle = this->wm->rawSensorData.getOwnVelocityMotion()->angle;
-        auto calibTranslation = this->wm->rawSensorData.getOwnVelocityMotion()->translation;
+        auto calibRotation = this->wm->rawSensorData->getOwnVelocityMotion()->rotation;
+        auto calibAngle = this->wm->rawSensorData->getOwnVelocityMotion()->angle;
+        auto calibTranslation = this->wm->rawSensorData->getOwnVelocityMotion()->translation;
 
-        calibPosMotionX = this->wm->rawSensorData.getOwnPositionMotion()->x;
-        calibPosMotionY = this->wm->rawSensorData.getOwnPositionMotion()->y;
-        auto calibPosMotionTheta = this->wm->rawSensorData.getOwnPositionMotion()->theta;
+        calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+        calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+        auto calibPosMotionTheta = this->wm->rawSensorData->getOwnPositionMotion()->theta;
 
         std::cout << "======== CalcCalib ========" << std::endl;
         std::cout << "Motion: " << std::endl;
@@ -112,8 +112,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
         //initializePublisher();
-        diffX = correctedPosX - this->wm->rawSensorData.getOwnPositionVision(0)->x;
-        diffY = correctedPosY - this->wm->rawSensorData.getOwnPositionVision(0)->y;
+        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision(0)->x;
+        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision(0)->y;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -166,26 +166,26 @@ namespace alica
         std::cout << "Y: " << diffY << std::endl;
         std::cout << "Länge: " << length << std::endl;
         std::cout << "Faktor: " << calibCoefficient << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData.getOwnPositionMotion(0)->x << std::endl;
-        std::cout << "posMotionY: " << this->wm->rawSensorData.getOwnPositionMotion(0)->y << std::endl;
+        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion(0)->x << std::endl;
+        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion(0)->y << std::endl;
         std::cout << "correctedWayX : " << correctedPosX << std::endl;
         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-        std::cout << "posVisionX: " << this->wm->rawSensorData.getOwnPositionVision(0)->x << std::endl;
-        std::cout << "posVisionY: " << this->wm->rawSensorData.getOwnPositionVision(0)->y << std::endl;
+        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision(0)->x << std::endl;
+        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
         std::cout << "Faktor2 : "
                 << calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY) / length) + 1 << std::endl;
         std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
         std::cout << "posMotionX: " << calibPosMotionX << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVision << std::endl;
-        std::cout << "ThetaVision: " << this->wm->rawSensorData.getOwnPositionVision(0)->theta << std::endl;
-        std::cout << "ThetaMotion: " << this->wm->rawSensorData.getOwnPositionMotion(0)->theta << std::endl;
+        std::cout << "ThetaVision: " << this->wm->rawSensorData->getOwnPositionVision(0)->theta << std::endl;
+        std::cout << "ThetaMotion: " << this->wm->rawSensorData->getOwnPositionMotion(0)->theta << std::endl;
 
         std::cout << "" << std::endl;
 
         lengthSegment = 0;
-        correctedPosX = this->wm->rawSensorData.getOwnPositionVision(0)->x;
-        correctedPosY = this->wm->rawSensorData.getOwnPositionVision(0)->y;
+        correctedPosX = this->wm->rawSensorData->getOwnPositionVision(0)->x;
+        correctedPosY = this->wm->rawSensorData->getOwnPositionVision(0)->y;
 
         calibCounter++;
 

@@ -36,12 +36,12 @@ namespace alica
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         fastRotation = fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
         ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-        auto tempMid = alloGoalMid = wm->field.posOwnGoalMid();
+        auto tempMid = alloGoalMid = wm->field->posOwnGoalMid();
         alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
         alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field.posLeftOwnGoalPost()->y - goalieSize / 2);
+                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field.posRightOwnGoalPost()->y + goalieSize / 2);
+                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
         prevTargetDist = 0;
         /*PROTECTED REGION END*/
     }
@@ -55,14 +55,14 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
 //		cout << "####### WatchBall #######" << endl;
-        ownPos = wm->rawSensorData.getOwnPositionVision();
+        ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             cout << "[WatchBall]: ownPos is null" << endl;
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
+        shared_ptr < geometry::CNPoint2D > alloBall = wm->ball->getAlloBallPosition();
         if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
         {
             cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
@@ -142,7 +142,7 @@ namespace alica
     void WatchBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1447863466691) ENABLED START*/ //Add additional options here
-        prevTarget = wm->field.posOwnGoalMid();
+        prevTarget = wm->field->posOwnGoalMid();
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1447863466691) ENABLED START*/ //Add additional methods here
@@ -226,7 +226,7 @@ namespace alica
         else
         {
             // TODO: use this as soon as Goalie Vision detects Obstacles better!
-            auto obstacles = wm->obstacles.getAlloObstaclePoints();
+            auto obstacles = wm->obstacles->getAlloObstaclePoints();
             shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
             double minDistBallObs = 20000;
             for (auto currentObs : *obstacles)

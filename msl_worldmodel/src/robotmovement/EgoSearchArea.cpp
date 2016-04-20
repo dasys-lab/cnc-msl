@@ -99,23 +99,23 @@ namespace msl
 	bool EgoSearchArea::checkAlloPoint(shared_ptr<geometry::CNPoint2D> ap)
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
-		if (wm->field.getFieldLength() / 2.0 - 1000 < ap->x)
+		if (wm->field->getFieldLength() / 2.0 - 1000 < ap->x)
 		{
 			return false;
 		}
-		if (-wm->field.getFieldLength() / 2.0 + 1000 > ap->x)
+		if (-wm->field->getFieldLength() / 2.0 + 1000 > ap->x)
 		{
 			return false;
 		}
-		if (wm->field.getFieldWidth() / 2.0 < ap->y)
+		if (wm->field->getFieldWidth() / 2.0 < ap->y)
 		{
 			return false;
 		}
-		if (-wm->field.getFieldWidth() / 2.0 > ap->y)
+		if (-wm->field->getFieldWidth() / 2.0 > ap->y)
 		{
 			return false;
 		}
-		if (wm->field.isInsideEnemyPenalty(ap, 100))
+		if (wm->field->isInsideEnemyPenalty(ap, 100))
 		{
 			return false;
 		}

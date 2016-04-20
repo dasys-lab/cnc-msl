@@ -40,11 +40,11 @@ namespace alica
     void ProtectBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706592232) ENABLED START*/ //Add additional options here
-        auto ballPos = wm->ball.getEgoBallPosition();
-        auto ballVel = wm->ball.getEgoBallVelocity();
+        auto ballPos = wm->ball->getEgoBallPosition();
+        auto ballVel = wm->ball->getEgoBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData.getDistanceScan();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
 
         msl_actuator_msgs::MotionControl mc;
         if (ownPos == nullptr)
@@ -137,8 +137,8 @@ namespace alica
     void ProtectBall::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1457706592232) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || ballPos == nullptr)
         {

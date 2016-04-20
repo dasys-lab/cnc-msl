@@ -36,13 +36,13 @@ Prediction::~Prediction()
 void Prediction::monitoring()
 {
   auto wm = MSLWorldModel::get();
-  auto ownPos = wm->rawSensorData.getOwnPositionVision();
-  auto odo = wm->rawSensorData.getCorrectedOdometryInfo();
+  auto ownPos = wm->rawSensorData->getOwnPositionVision();
+  auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
 
   if(ownPos && odo)
   {
     // plot '/tmp/angle.txt' u 1:2 w l, '/tmp/angle.txt' u 1:3 w l, '/tmp/angle.txt' u ($1 + 150000000):3 w l
-    double angle = wm->prediction.angle(150);
+    double angle = wm->prediction->angle(150);
 
     double alloAngle = ownPos->theta;
     if (alloAngle > M_PI)
@@ -54,7 +54,7 @@ void Prediction::monitoring()
 
       //  plot '/tmp/anglePos.txt' u 1:2 w l, '/tmp/anglePos.txt' u 1:6 w l, '/tmp/anglePos.txt' u ($1 + 150000000):6 w l
       //  plot '/tmp/anglePos.txt' u 1:3 w l, '/tmp/anglePos.txt' u 1:7 w l, '/tmp/anglePos.txt' u ($1 + 150000000):7 w l
-      auto anglePos = wm->prediction.angleAndPosition(150);
+      auto anglePos = wm->prediction->angleAndPosition(150);
 
       if (anglePos)
       {
@@ -74,17 +74,17 @@ double Prediction::rotationVelocity(int ms)
 {
   auto wm = MSLWorldModel::get();
 
-  auto odo = wm->rawSensorData.getCorrectedOdometryInfo();
+  auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
   if (false == odo)
     return 0;
 
   double ret = 0;
-  if (wm->rawSensorData.getLastMotionCommand() == 0)
+  if (wm->rawSensorData->getLastMotionCommand() == 0)
     return odo->motion.rotation;
 
   long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
   int i = 0;
-  auto motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+  auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
   std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>>cmd;
 
   {
@@ -93,7 +93,7 @@ double Prediction::rotationVelocity(int ms)
     while (motionCommand && motionCommand->timestamp > targetTimeMs)
     {
       cmd.push_back(motionCommand);
-      motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+      motionCommand = wm->rawSensorData->getLastMotionCommand(i);
       i++;
     }
   }
@@ -128,19 +128,19 @@ double Prediction::angle(int ms)
 {
   auto wm = MSLWorldModel::get();
 
-  auto odo = wm->rawSensorData.getCorrectedOdometryInfo();
+  auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
   if (false == odo)
     return 0;
 
   double velo = 0;
   double angle = 0;
 
-  if (false == wm->rawSensorData.getLastMotionCommand())
+  if (false == wm->rawSensorData->getLastMotionCommand())
     return odo->position.angle;
 
   long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
   int i = 0;
-  auto motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+  auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
   std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>>cmd;
 
   {
@@ -150,7 +150,7 @@ double Prediction::angle(int ms)
     while (motionCommand && motionCommand->timestamp > targetTimeMs)
     {
       cmd.push_back(motionCommand);
-      motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+      motionCommand = wm->rawSensorData->getLastMotionCommand(i);
       i++;
     }
   }
@@ -188,7 +188,7 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>,double>> Prediction::
 {
   auto wm = MSLWorldModel::get();
 
-  auto odo = wm->rawSensorData.getCorrectedOdometryInfo();
+  auto odo = wm->rawSensorData->getCorrectedOdometryInfo();
   if (false == odo)
     return nullptr;
 
@@ -196,12 +196,12 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>,double>> Prediction::
   double angle = 0;
   double x, y, trans, transX, transY;
 
-  if (wm->rawSensorData.getLastMotionCommand() == 0)
+  if (wm->rawSensorData->getLastMotionCommand() == 0)
     return 0;
 
   long targetTimeMs = wm->getTime() - ms * 1000000; // Converting milli seconds to nano seconds
   int i = 0;
-  auto motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+  auto motionCommand = wm->rawSensorData->getLastMotionCommand(i);
   std::vector<std::shared_ptr<msl_actuator_msgs::MotionControl>>cmd;
 
   {
@@ -211,7 +211,7 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>,double>> Prediction::
     while (motionCommand && motionCommand->timestamp > targetTimeMs)
     {
       cmd.push_back(motionCommand);
-      motionCommand = wm->rawSensorData.getLastMotionCommand(i);
+      motionCommand = wm->rawSensorData->getLastMotionCommand(i);
       i++;
     }
   }

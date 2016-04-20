@@ -66,7 +66,7 @@ namespace msl
 	void PathPlanner::prepareVoronoiDiagram()
 	{
 		lock_guard<mutex> lock(voronoiMutex);
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		currentVoronoiPos = (currentVoronoiPos + 1) % voronoiDiagrams.size();
 		if (ownPos != nullptr)
 		{
@@ -86,18 +86,18 @@ namespace msl
 		//TODO before 2 Meters now field->surrounding * 2
 		vector<VoronoiDiagram::Site_2> toInsert;
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
-		if (wm->field.getFieldLength() / baseSize > 20 || wm->field.getFieldWidth() / baseSize > 20)
+		if (wm->field->getFieldLength() / baseSize > 20 || wm->field->getFieldWidth() / baseSize > 20)
 		{
-			baseSize = (int)max(wm->field.getFieldLength() / 20, wm->field.getFieldWidth() / 20);
+			baseSize = (int)max(wm->field->getFieldLength() / 20, wm->field->getFieldWidth() / 20);
 		}
 		int lengthInterval = (int)(baseSize
-				+ ((int)(wm->field.getFieldLength() + wm->field.getSurrounding() * 2) % baseSize)
-						/ (int)((int)(wm->field.getFieldLength() + wm->field.getSurrounding() * 2) / baseSize));
+				+ ((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) % baseSize)
+						/ (int)((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(wm->field.getFieldWidth() + wm->field.getSurrounding() * 2) % baseSize)
-						/ (int)((int)(wm->field.getFieldWidth() + wm->field.getSurrounding() * 2) / baseSize));
-		int halfFieldLength = (int)wm->field.getFieldLength() / 2 + wm->field.getSurrounding();
-		int halfFieldWidth = (int)wm->field.getFieldWidth() / 2 + wm->field.getSurrounding();
+				+ ((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) % baseSize)
+						/ (int)((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) / baseSize));
+		int halfFieldLength = (int)wm->field->getFieldLength() / 2 + wm->field->getSurrounding();
+		int halfFieldWidth = (int)wm->field->getFieldWidth() / 2 + wm->field->getSurrounding();
 
 		//up right
 		toInsert.push_back(VoronoiDiagram::Site_2(halfFieldLength, -halfFieldWidth));
@@ -337,7 +337,7 @@ namespace msl
 			if (voronoi->getTypeOfSite(incidentHalfEdge->up()->point()) == EntityType::ArtificialObstacle
 					&& voronoi->getTypeOfSite(incidentHalfEdge->down()->point()) == EntityType::ArtificialObstacle)
 			{
-				return !wm->field.isInsideField(startPos);
+				return !wm->field->isInsideField(startPos);
 			}
 
 			double distToEdge = geometry::distancePointToLineSegment(incidentHalfEdge->up()->point().x(),
@@ -556,17 +556,17 @@ namespace msl
 				currentPos->x - (this->robotRadius) * dy, currentPos->y + (this->robotRadius) * dx);
 		shared_ptr<geometry::CNPoint2D> p3 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						+ std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
 				goal->y
-						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						- std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
 		shared_ptr<geometry::CNPoint2D> p4 = make_shared<geometry::CNPoint2D>(
 				goal->x
-						- std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						- std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dy,
 				goal->y
-						+ std::max(wm->ball.getBallDiameter() / 2 + this->additionalBallCorridorWidth,
+						+ std::max(wm->ball->getBallDiameter() / 2 + this->additionalBallCorridorWidth,
 									length / this->corridorWidthDivisorBall + this->additionalBallCorridorWidth) * dx);
 		vector<shared_ptr<geometry::CNPoint2D>> points;
 		points.push_back(p1);
@@ -716,16 +716,16 @@ namespace msl
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > toInsert = make_shared<
 				vector<shared_ptr<geometry::CNPoint2D>>>();
 		int baseSize = (*this->sc)["PathPlanner"]->get<double>("PathPlanner", "artificialObjectBaseSize", NULL);
-		if (wm->field.getFieldLength() / baseSize > 20 || wm->field.getFieldWidth() / baseSize > 20)
+		if (wm->field->getFieldLength() / baseSize > 20 || wm->field->getFieldWidth() / baseSize > 20)
 		{
-			baseSize = (int)max(wm->field.getFieldLength() / 20, wm->field.getFieldWidth() / 20);
+			baseSize = (int)max(wm->field->getFieldLength() / 20, wm->field->getFieldWidth() / 20);
 		}
 		int lengthInterval = (int)(baseSize
-				+ ((int)(wm->field.getFieldLength() + 2000) % baseSize) / (int)((int)(wm->field.getFieldLength() + 2000) / baseSize));
+				+ ((int)(wm->field->getFieldLength() + 2000) % baseSize) / (int)((int)(wm->field->getFieldLength() + 2000) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(wm->field.getFieldWidth() + 2000) % baseSize) / (int)((int)(wm->field.getFieldWidth() + 2000) / baseSize));
-		int halfFieldLength = (int)wm->field.getFieldLength() / 2 + 1000;
-		int halfFieldWidth = (int)wm->field.getFieldWidth() / 2 + 1000;
+				+ ((int)(wm->field->getFieldWidth() + 2000) % baseSize) / (int)((int)(wm->field->getFieldWidth() + 2000) / baseSize));
+		int halfFieldLength = (int)wm->field->getFieldLength() / 2 + 1000;
+		int halfFieldWidth = (int)wm->field->getFieldWidth() / 2 + 1000;
 
 		//up right
 		toInsert->push_back(make_shared<geometry::CNPoint2D>(halfFieldLength, -halfFieldWidth));

@@ -16,7 +16,7 @@ namespace alica
         // Aiming/Rotation Stuff
         angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
         ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        goalLineLength = wm->field.getGoalWidth();
+        goalLineLength = wm->field->getGoalWidth();
         robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
         wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
         aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
@@ -35,8 +35,8 @@ namespace alica
     void PenaltyAlignAndShoot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1431531496053) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -53,15 +53,15 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
         // Create target point next to left/right opp goal post
         shared_ptr < geometry::CNPoint2D > alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + ballDiameter, goalLineLength / 2 - aimOffset * ballDiameter);
+                > (wm->field->getFieldLength() / 2 + ballDiameter, goalLineLength / 2 - aimOffset * ballDiameter);
         shared_ptr < geometry::CNPoint2D > alloRightAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + ballDiameter, -goalLineLength / 2 + aimOffset * ballDiameter);
+                > (wm->field->getFieldLength() / 2 + ballDiameter, -goalLineLength / 2 + aimOffset * ballDiameter);
 
         // Create points for rectangle check
         shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 - robotRadius, goalLineLength / 2);
+                > (wm->field->getFieldLength() / 2 - robotRadius, goalLineLength / 2);
         shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 - robotRadius, -goalLineLength / 2);
+                > (wm->field->getFieldLength() / 2 - robotRadius, -goalLineLength / 2);
 
         // Create back point according to last alignment
         shared_ptr < geometry::CNPoint2D > back = nullptr;
@@ -69,15 +69,15 @@ namespace alica
         // Hysteresis
         if (lastAlignment == 0) // not aligned before (default)
         {
-            back = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + robotRadius, 0);
+            back = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2 + robotRadius, 0);
         }
         else if (lastAlignment == 1) // last alignment left
         {
-            back = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + robotRadius, robotRadius);
+            back = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2 + robotRadius, robotRadius);
         }
         else // last alignment right
         {
-            back = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + robotRadius, -robotRadius);
+            back = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2 + robotRadius, -robotRadius);
         }
 
         int counter = 0;
@@ -86,7 +86,7 @@ namespace alica
 
         for (int i = 0; i < wm->getRingBufferLength(); i++)
         {
-            alloOpps = wm->obstacles.getAlloObstaclePoints(i);
+            alloOpps = wm->obstacles->getAlloObstaclePoints(i);
             if (alloOpps != nullptr)
             {
                 // weighted analysis of past and current obstacles
@@ -126,9 +126,9 @@ namespace alica
         }
         // calculate angle difference between robot and target and ball and target
         double egoTargetAngle = egoTarget->angleTo();
-        double deltaHoleAngle = geometry::deltaAngle(wm->kicker.kickerAngle, egoTargetAngle);
+        double deltaHoleAngle = geometry::deltaAngle(wm->kicker->kickerAngle, egoTargetAngle);
         // calculate passed time
-        unsigned long timePassed = wm->getTime() - wm->game.getTimeSinceStart();
+        unsigned long timePassed = wm->getTime() - wm->game->getTimeSinceStart();
         // if too much time has passed or the robot is aligned, we shoot
         if (timePassed >= waitBeforeBlindKick || fabs(deltaHoleAngle) < this->angleTolerance)
         {

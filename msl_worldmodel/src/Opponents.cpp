@@ -26,7 +26,7 @@ namespace msl
 
 
 	shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double width) {
-		auto opps = wm->robots.opponents.getOpponentsEgoClustered();
+		auto opps = wm->robots->opponents.getOpponentsEgoClustered();
 			//wm.GetCurrentOpponentListMerged();
 		if (opps == nullptr) return nullptr;
 		shared_ptr<geometry::CNPoint2D> closest;
@@ -51,7 +51,7 @@ namespace msl
 		auto obs = getOpponentsEgoClustered();
 			//wm.GetCurrentOpponentListMerged();
 		if (obs==nullptr) return nullptr;
-		auto ball = wm->ball.getEgoBallPosition();
+		auto ball = wm->ball->getEgoBallPosition();
 		if (ball==nullptr) return nullptr;
 		double temp;
 		shared_ptr<geometry::CNPoint2D> res;

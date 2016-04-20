@@ -130,12 +130,12 @@ namespace alica
     void GoalieExtension::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459249216387) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
             return;
 
         //Point2D ballPos = KeeperHelper.GetBall(WM,SHWM);
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto ballPos = wm->ball->getEgoBallPosition();
         if (ballPos == nullptr)
             return;
 
@@ -158,17 +158,17 @@ namespace alica
                 //cout << "[GoalieExtension] KICK!" << endl;
             }
         }
-        if (wm->rawSensorData.getLastMotionCommand() == nullptr)
+        if (wm->rawSensorData->getLastMotionCommand() == nullptr)
             return;
         bm_last = msl_actuator_msgs::MotionControl();
-        bm_last.motion.translation = wm->rawSensorData.getLastMotionCommand()->motion.translation;
-        bm_last.motion.rotation = wm->rawSensorData.getLastMotionCommand()->motion.rotation;
-        bm_last.motion.angle = wm->rawSensorData.getLastMotionCommand()->motion.angle;
+        bm_last.motion.translation = wm->rawSensorData->getLastMotionCommand()->motion.translation;
+        bm_last.motion.rotation = wm->rawSensorData->getLastMotionCommand()->motion.rotation;
+        bm_last.motion.angle = wm->rawSensorData->getLastMotionCommand()->motion.angle;
         auto ballPosAllo = ballPos->egoToAllo(*ownPos);
 //		long now = DateTime.UtcNow.Ticks / 10000;
 //		long now = supplementary::DateTime::getUtcNowC() / 10000;
         long now = wm->getTime() / 1000000;
-        auto ballPos3D = wm->ball.getBallPoint3D();
+        auto ballPos3D = wm->ball->getBallPoint3D();
         if (ballPos3D != nullptr)
         {
             if (ballPos3D->z > 500)
@@ -177,7 +177,7 @@ namespace alica
             }
         }
 
-        auto ballV3D = wm->ball.getBallVel3D();
+        auto ballV3D = wm->ball->getBallVel3D();
         //cout << "[GoalieExtenion] ballV3D " << (ballV3D == nullptr ? "nullptr" : "!nptr") << endl;
         if (ballV3D != nullptr && ballPos != nullptr)
         {
@@ -187,14 +187,14 @@ namespace alica
             if (velo > 1000)
             {
 
-                double diffAngle = abs(wm->rawSensorData.getLastMotionCommand()->motion.angle - bm_last.motion.angle);
+                double diffAngle = abs(wm->rawSensorData->getLastMotionCommand()->motion.angle - bm_last.motion.angle);
                 double diffTrans = abs(
-                        wm->rawSensorData.getLastMotionCommand()->motion.translation - bm_last.motion.translation);
+                        wm->rawSensorData->getLastMotionCommand()->motion.translation - bm_last.motion.translation);
                 double diffRot = abs(
-                        wm->rawSensorData.getLastMotionCommand()->motion.rotation - bm_last.motion.rotation);
+                        wm->rawSensorData->getLastMotionCommand()->motion.rotation - bm_last.motion.rotation);
                 double distBall = ballPos->length();
 
-                double speed = wm->rawSensorData.getLastMotionCommand()->motion.translation;
+                double speed = wm->rawSensorData->getLastMotionCommand()->motion.translation;
                 //Console.WriteLine("gewicht speed " + speed);
                 double g = 0;
 
@@ -213,18 +213,18 @@ namespace alica
                 shared_ptr < geometry::CNPoint3D > ballVelo3DAllo = make_shared < geometry::CNPoint3D
                         > (ballV3DAllo->x, ballV3DAllo->y, ballV3DAllo->z);
 
-                double x = -wm->field.getFieldLength() / 2 + 100;
+                double x = -wm->field->getFieldLength() / 2 + 100;
                 double timeBallToGoal = (x - ballPosAllo->x) / ballVelo3DAllo->x;
                 //Console.WriteLine("ghgh timeBallToGoal " + timeBallToGoal);
                 if (timeBallToGoal > 0)
                 {
                     double y = ballPosAllo->y + ballVelo3DAllo->y * timeBallToGoal;
-                    if (abs(y) < wm->field.getGoalWidth() / 2 + 2000)
+                    if (abs(y) < wm->field->getGoalWidth() / 2 + 2000)
                     {
-                        if (y > wm->field.getGoalWidth() / 2)
-                            y = wm->field.getGoalWidth() / 2;
-                        if (y < -wm->field.getGoalWidth() / 2)
-                            y = -wm->field.getGoalWidth() / 2;
+                        if (y > wm->field->getGoalWidth() / 2)
+                            y = wm->field->getGoalWidth() / 2;
+                        if (y < -wm->field->getGoalWidth() / 2)
+                            y = -wm->field->getGoalWidth() / 2;
                         auto dstPoint = make_shared < geometry::CNPoint2D > (x, y);
                         auto dstPointEgo = dstPoint->alloToEgo(*ownPos);
 
@@ -256,7 +256,7 @@ namespace alica
                         //cout << "[GoalieExtension] break4" << endl;
                         auto ballVeloBuf = ballVelocity->getAvgPoint((int)(ballPos->length() - 2000) / 2000);
                         double veloBuf = sqrt(ballVeloBuf->x * ballVeloBuf->x + ballVeloBuf->y * ballVeloBuf->y);
-                        double timeBallToGoal2 = ballPosAllo->distanceTo(wm->field.posOwnGoalMid()) / veloBuf;
+                        double timeBallToGoal2 = ballPosAllo->distanceTo(wm->field->posOwnGoalMid()) / veloBuf;
                         //Console.WriteLine("ghgh timeBallToGoal2 " + timeBallToGoal2 + "sec");
                         double timeToDstPoint = dstPointEgo->length() / 800;
                         //double timeToDstPoint = dstPointEgo.Distance() / 1000;

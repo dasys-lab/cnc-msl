@@ -11,7 +11,7 @@ namespace alica
             DomainBehaviour("DribbleAttackConservative")
     {
         /*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
-        alloGoalMid = wm->field.posOppGoalMid();
+        alloGoalMid = wm->field->posOppGoalMid();
         before = false;
         this->setTrigger(wm->getVisionDataEventTrigger());
         /*PROTECTED REGION END*/
@@ -25,10 +25,10 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
         //CorrectedOdometryData odom = WM.OdometryData;
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto ballPos = wm->ball->getEgoBallPosition();
 //        auto dstscan = wm->rawSensorData.getDistanceScan();
 
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (ownPos == nullptr)
         {
@@ -37,7 +37,7 @@ namespace alica
 
         auto goalMid = alloGoalMid->alloToEgo(*ownPos);
         //MotionControl bm = DribbleHelper.DribbleToPoint(goalMid,translation,WM);
-        auto corner = wm->obstacles.getBiggestFreeGoalAreaMidPoint();
+        auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
         msl_actuator_msgs::MotionControl bm;
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
         auto tmpMC = msl::RobotMovement::dribbleToPointConservative(goalMid, pathPlanningPoint);

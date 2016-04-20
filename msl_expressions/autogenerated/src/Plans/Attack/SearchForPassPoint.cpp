@@ -45,14 +45,14 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = this->wm->ball.getAlloBallPosition();
+        shared_ptr < geometry::CNPoint2D > alloBall = this->wm->ball->getAlloBallPosition();
         if (alloBall == nullptr)
         {
             cout << "S4PP: Ball is null" << endl;
             return;
         }
 
-        shared_ptr < geometry::CNPosition > alloPos = this->wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPosition > alloPos = this->wm->rawSensorData->getOwnPositionVision();
         if (alloPos == nullptr)
         {
             cout << "S4PP: OwnPos is null" << endl;
@@ -83,14 +83,14 @@ namespace alica
             return;
         }
 
-        shared_ptr < msl::VoronoiNet > vNet = this->wm->pathPlanner.getCurrentVoronoiNet();
+        shared_ptr < msl::VoronoiNet > vNet = this->wm->pathPlanner->getCurrentVoronoiNet();
         if (vNet == nullptr)
         {
             cout << "vnet null " << endl;
             return;
         }
 
-        auto matePoses = wm->robots.teammates.getTeammatesAlloClustered();
+        auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
         if (matePoses == nullptr)
         {
             cout << "matePoses == nullptr" << endl;
@@ -116,7 +116,7 @@ namespace alica
 
                 shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(
                         teamMateId);
-                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots.teammates.getTeamMatePosition(teamMateId);
+                shared_ptr < geometry::CNPosition > teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateId);
 
                 if (vertices == nullptr || teamMatePos == nullptr)
                     continue;

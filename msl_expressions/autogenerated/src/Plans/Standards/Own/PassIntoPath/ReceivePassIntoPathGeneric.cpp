@@ -28,8 +28,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1457531583460) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getAlloBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getAlloBallPosition();
         if (ownPos == nullptr || ballPos == nullptr)
             return;
 
