@@ -460,11 +460,16 @@ void getLightbarrier() {
 
 void getSwitches() {
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
-	enum	button {	bundle = 0,
-						vision = 1,
-						power = 2, };
+	enum	Pin { sw_vision, sw_bundle, sw_power, led_power, led_bundle, led_vision };
 	msl_actuator_msgs::VisionRelocTrigger msg_v;
 	process_manager::ProcessCommand msg_pm;
+
+	const char *pin_names[] = { "P9_11", "P9_13", "P9_15", "P9_23", "P9_41", "P9_42" }; /* sw_vis, sw_bun, sw_pwr, led_pwr, led_bun, led_vis */
+	BeagleGPIO *gpio = BeagleGPIO::getInstance();
+	BeaglePins *pins = gpio->claim((char**) pin_names, 4);
+
+	int outputIdxs[] = { 0, 1, 2 };
+	pins->enableOutput(outputIdxs, 3);
 
 	unique_lock<mutex> l_switches(threw[4].mtx);
 	while(th_activ) {
@@ -473,14 +478,23 @@ void getSwitches() {
 			return;
 
 		static bool		state[3] = {false, false, false};
-
 		bool newstate[3];
 		uint8_t	sw[3] = {1, 1, 1};
 
+
+
+		BlackGPIO LED_Power(GPIO_49, output, FastMode);	// P9 23
+		BlackGPIO LED_Bundle(GPIO_20, output, FastMode);	// P9 41
+		BlackGPIO LED_Vision(GPIO_7, output, FastMode);		// P9 42
+
+		BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
+		BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
+		BlackGPIO SW_Power(GPIO_48, input, FastMode);		// P9 15
 		try {
-			sw[bundle]	= SW_Bundle.getNumericValue();
-			sw[vision]	= SW_Vision.getNumericValue();
-			sw[power]	= SW_Power.getNumericValue();
+			// TODO überprüfen, ob Auslesen mit der API funktioniert
+			sw[sw_vision] = pins->getBit(sw_vision);
+			sw[sw_bundle]	= pins->getBit(sw_bundle);
+			sw[sw_power]	= pins->getBit(sw_power);
 		} catch (exception &e) {
 			cout << "Buttons: " << e.what() << endl;
 		}
@@ -493,10 +507,10 @@ void getSwitches() {
 			}
 		}
 
-		if (newstate[bundle] != state[bundle]) {
-			state[bundle] = newstate[bundle];
+		if (newstate[sw_bundle] != state[sw_bundle]) {
+			state[sw_bundle] = newstate[sw_bundle];
 
-			if (state[bundle]) {
+			if (state[sw_bundle]) {
 				static uint8_t bundle_state = 0;
 
 				msg_pm.receiverId = ownID;
@@ -507,41 +521,41 @@ void getSwitches() {
 				if (bundle_state == 0) {		// Prozesse starten
 					bundle_state = 1;
 					msg_pm.cmd = 0;
-					LED_Bundle.setValue(high);	// LED an
+					pins->setBit(led_bundle);	// LED an
 				} else if (bundle_state == 1) {	// Prozesse stoppen
 					bundle_state = 0;
 					msg_pm.cmd = 1;
-					LED_Bundle.setValue(low);	// LED aus
+					pins->clearBit(led_bundle);	// LED aus
 				}
 				onRosProcessCommand554624761(msg_pm);
 				//brtPub->publish(msg_pm);
 			}
 		}
 
-		if (newstate[vision] != state[vision]) {
-			state[vision] = newstate[vision];
+		if (newstate[sw_vision] != state[sw_vision]) {
+			state[sw_vision] = newstate[sw_vision];
 
-			if (state[vision]) {
+			if (state[sw_vision]) {
 				msg_v.receiverID = ownID;
 				msg_v.usePose = false;
 				onRosVisionRelocTrigger2772566283(msg_v);
 				//vrtPub->publish(msg_v);
-				LED_Vision.setValue(high);
+				pins->setBit(led_vision);	// Vision-LED an
 			} else {
-				LED_Vision.setValue(low);
+				pins->clearBit(led_vision);	// Vision-LED aus
 			}
 		}
 
-		if (newstate[power] != state[power]) {
-			state[power] = newstate[power];
+		if (newstate[sw_power] != state[sw_power]) {
+			state[sw_power] = newstate[sw_power];
 
-			if (state[power]) {
+			if (state[sw_power]) {
 				std_msgs::Empty msg;
 				//TODO not sent yet -> copy from generated code!
 				//flPub->publish(msg);
-				LED_Power.setValue(high);
+				pins->setBit(led_power);	// Power-LED an
 			} else {
-				LED_Power.setValue(low);
+				pins->clearBit(led_power);	// Power-LED aus
 			}
 		}
 
@@ -586,7 +600,6 @@ void getOptical() {
 }*/
 
 void exit_program(int sig) {
-	LED_Power.setValue(low);
 	ex = true;
 	th_activ = false;
 	for (int i=0; i<7; i++)
@@ -634,7 +647,6 @@ int main(int argc, char** argv) {
 	listenForPacket();
 
 	usleep(50000);
-    LED_Power.setValue(high);
 
 	boost::thread iothread(run_udp);
 	std::cout << "Udp connection active..." <<std::endl;

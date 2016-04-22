@@ -10,22 +10,17 @@
 
 using namespace BlackLib;
 
-IMU::IMU(gpioName acc_P, gpioName gyro_P, gpioName mag_P, gpioName temp_P, BlackLib::BlackI2C *i2c_P) {
+IMU::IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
 
-	i_acc = new BlackGPIO(acc_P, input, FastMode);
-	i_gyro = new BlackGPIO(gyro_P, input, FastMode);
-	i_mag = new BlackGPIO(mag_P, input, FastMode);
-	i_temp = new BlackGPIO(temp_P, input, FastMode);
+	gpio = BeagleGPIO::getInstance();
+	pins = gpio->claim((char**) pin_names, 4);
 
 	temperature = 0;
 }
 
 IMU::~IMU() {
-	delete i_acc;
-	delete i_gyro;
-	delete i_mag;
-	delete i_temp;
+	delete gpio;
 }
 
 void IMU::gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {

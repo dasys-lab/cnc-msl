@@ -71,12 +71,17 @@ const float MAG_12GAUSS_SENSE		= 0.48;
 const float TEMP_SENSE				= 0.125;
 
 
+enum IMU_Pin {
+	magnet, accel, temp, gyro
+};
 
 
 class IMU {
 	private:
-		BlackLib::BlackGPIO *i_acc, *i_gyro, *i_mag, *i_temp;
 		BlackLib::BlackI2C *i2c;
+		BeagleGPIO *gpio;
+		BeaglePins *pins;
+
 		timeval		last_sended, last_updated;
 		int16_t		temperature;
 
@@ -95,7 +100,7 @@ class IMU {
 		void		getTemp();
 
 	public:
-					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
+					IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P);
 					~IMU();
 
 

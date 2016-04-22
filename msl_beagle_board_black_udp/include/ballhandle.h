@@ -29,7 +29,7 @@ enum Direction
 	left = 0, right = 1
 };
 
-enum Pin
+enum BH_Pin
 {
 	dir, rst, ff1, ff2
 };

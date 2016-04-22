@@ -19,7 +19,7 @@ using namespace BlackLib;
 		direction = left;
 		direction_desired = left;
 
-		int outputIdxs[] = { 0, 1};
+		int outputIdxs[] = { dir, rst};
 		pins->enableOutput(outputIdxs, 2);
 
 		pwm->setPeriodTime(period, nanosecond);
