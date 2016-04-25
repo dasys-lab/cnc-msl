@@ -69,7 +69,10 @@ using namespace BlackLib;
 			direction = direction_desired;
 			speed = 0;
 			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-			pins->setBit(direction);
+			if (direction)
+				pins->setBit(dir);
+			else
+				pins->clearBit(dir);
 			//dir->setValue(direction);						// Time for this Operation: 550us
 		}
 

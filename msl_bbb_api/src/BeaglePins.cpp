@@ -322,10 +322,6 @@ int BeaglePins::getBit(int bit)
 	if (bit < 0 || bit >= current)
 		return -1;
 
-	uint32_t r = read();
-	return r & masks[bit];
-
-//	if ((r >> (current - bit)) & 0x01)
-//		return true;
-//	return false;
+	uint32_t r = (read() >> bit);
+	return r &= 0x01;
 }

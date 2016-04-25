@@ -468,7 +468,7 @@ void getSwitches() {
 	BeagleGPIO *gpio = BeagleGPIO::getInstance();
 	BeaglePins *pins = gpio->claim((char**) pin_names, 4);
 
-	int outputIdxs[] = { 3, 4, 5 };
+	int outputIdxs[] = { led_power, led_bundle, led_vision };
 	pins->enableOutput(outputIdxs, 3);
 
 	unique_lock<mutex> l_switches(threw[4].mtx);
@@ -479,7 +479,7 @@ void getSwitches() {
 
 		static bool		state[3] = {false, false, false};
 		bool newstate[3];
-		uint8_t	sw[3] = {1, 1, 1};
+		int	sw[3] = {1, 1, 1};
 
 		try {
 			// TODO überprüfen, ob Auslesen mit der API funktioniert
@@ -491,11 +491,12 @@ void getSwitches() {
 		}
 
 		for (int i = 0; i <= 2; i++) {
-			if(sw[i] == 1) {
+			if(sw[i] == 1)
 				newstate[i] = false;
-			} else {
+			else if (sw[i] == 0)
 				newstate[i] = true;
-			}
+			else
+				cout << "Button " << i << " failure" << endl;
 		}
 
 		if (newstate[sw_bundle] != state[sw_bundle]) {
