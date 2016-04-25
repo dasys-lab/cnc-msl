@@ -78,6 +78,8 @@
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
 
+#include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
@@ -995,6 +997,48 @@ namespace alica
             case 1432134618673:
 
                 return make_shared<TransitionCondition1432134618673>();
+
+                break;
+
+            case 1461574228077:
+
+                return make_shared<RunTimeCondition1461574228077>();
+
+                break;
+
+            case 1461237657374:
+
+                return make_shared<TransitionCondition1461237657374>();
+
+                break;
+
+            case 1461237677283:
+
+                return make_shared<TransitionCondition1461237677283>();
+
+                break;
+
+            case 1461237854702:
+
+                return make_shared<TransitionCondition1461237854702>();
+
+                break;
+
+            case 1461572770571:
+
+                return make_shared<TransitionCondition1461572770571>();
+
+                break;
+
+            case 1461584286706:
+
+                return make_shared<TransitionCondition1461584286706>();
+
+                break;
+
+            case 1461584441559:
+
+                return make_shared<TransitionCondition1461584441559>();
 
                 break;
 

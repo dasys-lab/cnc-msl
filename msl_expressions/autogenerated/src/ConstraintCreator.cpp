@@ -79,6 +79,8 @@
 
 #include  "Plans/GenericStandards/constraints/GenericDefend1432133473779Constraints.h"
 
+#include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInNearGoal1461237603689Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
 #include  "Plans/Standards/Opponent/constraints/OppStandardExecution1457015277573Constraints.h"
@@ -146,6 +148,10 @@ namespace alica
 
             case 1457173948942:
                 return make_shared<Constraint1457173948942>();
+                break;
+
+            case 1461574228077:
+                return make_shared<Constraint1461574228077>();
                 break;
 
             case 1457955744730:

@@ -71,6 +71,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/ShovelSelect.h"
 
+#include  "Plans/Standards/Own/ThrowIn/PositionReceiverThrownIn.h"
+
 #include  "Plans/Attack/FetchFromSideLine.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
@@ -116,6 +118,8 @@ using namespace std;
 #include  "Plans/Behaviours/GoalieExtension.h"
 
 #include  "Plans/Attack/OneEighty.h"
+
+#include  "Plans/Behaviours/PosAttacker.h"
 
 #include  "Plans/Behaviours/DefendGoal.h"
 
@@ -177,6 +181,8 @@ namespace alica
             case 1455888617961:
 
             case 1459456566595:
+
+            case 1461583806472:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;
@@ -363,6 +369,11 @@ namespace alica
                 return make_shared<ShovelSelect>();
                 break;
 
+            case 1461584235418:
+
+                return make_shared<PositionReceiverThrownIn>();
+                break;
+
             case 1450175679178:
 
                 return make_shared<FetchFromSideLine>();
@@ -482,6 +493,11 @@ namespace alica
             case 1434650910857:
 
                 return make_shared<OneEighty>();
+                break;
+
+            case 1461574297571:
+
+                return make_shared<PosAttacker>();
                 break;
 
             case 1459249336699:

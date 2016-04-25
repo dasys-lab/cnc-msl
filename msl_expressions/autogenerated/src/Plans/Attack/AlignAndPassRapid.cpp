@@ -354,7 +354,7 @@ namespace alica
             else
             {
                 km.power = (ushort)wm->kicker->getPassKickpower(dist,
-                                                               estimatedTimeForReceiverToArrive + arrivalTimeOffset);
+                                                                estimatedTimeForReceiverToArrive + arrivalTimeOffset);
             }
 
             send(km);

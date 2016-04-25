@@ -37,7 +37,7 @@ namespace alica
             for (int i = 0; i < obstacles->size(); i++)
             {
                 if (wm->pathPlanner->corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
-                                                  egoBallPos->egoToAllo(*me), obstacles->at(i)))
+                                                   egoBallPos->egoToAllo(*me), obstacles->at(i)))
                 {
                     blocked = true;
                     break;

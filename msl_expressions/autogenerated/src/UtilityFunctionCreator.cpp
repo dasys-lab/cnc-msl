@@ -79,6 +79,8 @@
 
 #include  "Plans/GenericStandards/GenericDefend1432133473779.h"
 
+#include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
@@ -285,6 +287,10 @@ namespace alica
 
             case 1432133473779:
                 return make_shared<UtilityFunction1432133473779>();
+                break;
+
+            case 1461237603689:
+                return make_shared<UtilityFunction1461237603689>();
                 break;
 
             case 1431522123418:
