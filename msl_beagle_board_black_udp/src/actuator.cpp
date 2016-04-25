@@ -466,7 +466,7 @@ void getSwitches() {
 
 	const char *pin_names[] = { "P9_11", "P9_13", "P9_15", "P9_23", "P9_41", "P9_42" }; /* sw_vis, sw_bun, sw_pwr, led_pwr, led_bun, led_vis */
 	BeagleGPIO *gpio = BeagleGPIO::getInstance();
-	BeaglePins *pins = gpio->claim((char**) pin_names, 4);
+	BeaglePins *pins = gpio->claim((char**) pin_names, 6);
 
 	int outputIdxs[] = { led_power, led_bundle, led_vision };
 	pins->enableOutput(outputIdxs, 3);
