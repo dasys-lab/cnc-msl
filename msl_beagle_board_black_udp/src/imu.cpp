@@ -42,15 +42,6 @@ void IMU::xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
 	}
 }
 
-void IMU::setDataRateGyro(uint8_t datarate, uint8_t bandwidth) {
-	i2c->setDeviceAddress(ADR_G);
-
-	uint8_t reg = i2c->readByte(CTRL_REG1_G);
-	reg &= ~(0b11110000);
-
-	i2c->writeByte(CTRL_REG1_G, reg | (datarate << 6) | (bandwidth << 4));
-}
-
 void IMU::setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff) {
 	i2c->setDeviceAddress(ADR_G);
 
@@ -72,58 +63,18 @@ void IMU::setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff) {
 	}
 }
 
-void IMU::setScaleGyro(uint8_t scale) {
-	i2c->setDeviceAddress(ADR_G);
-
-	uint8_t reg = i2c->readByte(CTRL_REG4_G);
-	reg &= ~(0b00110000);
-
-	i2c->writeByte(CTRL_REG4_G, reg | scale);
-}
-
-void IMU::enableGyro(bool state) {
-	i2c->setDeviceAddress(ADR_G);
-
-	uint8_t reg = i2c->readByte(CTRL_REG1_G);
-	reg &= ~(0b00001111);
-
-	if(state) {
-		i2c->writeByte(CTRL_REG1_G, reg | 0x0F);
-	} else {
-		i2c->writeByte(CTRL_REG1_G, reg | 0x00);
-	}
-}
-
 bool IMU::init() {
 	// Enable Accel
-	i2c->setDeviceAddress(ADR_XM);
-	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
+//	i2c->setDeviceAddress(ADR_XM);
+//	i2c->writeByte(CTRL_REG1_XM, 0x67);			// Accel Frequecy: 100Hz
 
-	// Enable Magnet & Temp
-	i2c->writeByte(CTRL_REG5_XM, 0x90);			// Magnet Frequecy: 100Hz & high resolution
-	i2c->writeByte(CTRL_REG7_XM, 0xa0);	// high pass & filtered data			// high-pass Filter: Normal Mode & Continuous Conversation
-	
-	i2c->writeByte(0x16, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-	i2c->writeByte(0x17, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-	i2c->writeByte(0x18, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-	i2c->writeByte(0x19, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-	i2c->writeByte(0x1A, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-	i2c->writeByte(0x1B, 0x00);			// high-pass Filter: Normal Mode & Continuous Conversation
-
+	initMagnet(true, MAG_RES_HIGH, MAG_RATE_25HZ, MAG_MFS_2GAUSS);
 
 	// Enable Gyro
-	i2c->setDeviceAddress(ADR_G);
-	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
-	i2c->writeByte(CTRL_REG2_G, 0x20);			// Test HPF-Mode
-	i2c->writeByte(CTRL_REG5_G, 0x10);			// High-Pass Filter enabled
-
-	//TODO Anpassen der Multiplikatoren
-	accel.sense = ACC_16G_SENSE / 1000;
-	this->setupAccel(ACC_AFS_16G);
-	gyro.sense = GYR_2000DPS_SENSE / 1000;
-	this->setupGyro(GYR_FS_2000DPS);
-	magnet.sense = MAG_12GAUSS_SENSE / 1000;
-	this->setupMagnet(MAG_MDR_12GAUSS);
+//	i2c->setDeviceAddress(ADR_G);
+//	i2c->writeByte(CTRL_REG1_G, 0x0F);			// Gyro
+//	i2c->writeByte(CTRL_REG2_G, 0x20);			// Test HPF-Mode
+//	i2c->writeByte(CTRL_REG5_G, 0x10);			// High-Pass Filter enabled
 
 	if(!this->whoami()) {
 		return false;
@@ -145,6 +96,53 @@ bool IMU::whoami() {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void IMU::initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale) {
+	if (i2c->getDeviceAddress() != ADR_XM) {
+		i2c->setDeviceAddress(ADR_XM);
+	}
+
+	uint8_t r;
+
+	// Set CTRL-Reg 5 with magnetic resolution and rate, enable temp sensor
+	r = i2c->readByte(CTRL_REG5_XM);
+	r = (r & ~(0b10000000)) | (temp << 7);
+	r = (r & ~(0b01100000)) | (res << 5);
+	r = (r & ~(0b00011100)) | (rate << 2);
+	i2c->writeByte(CTRL_REG5_XM, r);
+
+	// Set CTRL-Reg 6 with magnetic scale
+	r = i2c->readByte(CTRL_REG6_XM);
+	r = (r & ~(0b01100000)) | (scale << 5);
+	i2c->writeByte(CTRL_REG6_XM, r);
+
+	// Set CTRL-Reg 7
+	r = i2c->readByte(CTRL_REG7_XM);
+
+	i2c->writeByte(CTRL_REG7_XM, r);
+
+	switch (scale) {
+		case MAG_MFS_2GAUSS:
+			magnet.sense = MAG_SENSE_2GAUSS;
+			break;
+
+		case MAG_MFS_4GAUSS:
+			magnet.sense = MAG_SENSE_4GAUSS;
+			break;
+
+		case MAG_MFS_8GAUSS:
+			magnet.sense = MAG_SENSE_8GAUSS;
+			break;
+
+		case MAG_MFS_12GAUSS:
+			magnet.sense = MAG_SENSE_12GAUSS;
+			break;
+
+		default:
+			magnet.sense = MAG_SENSE_2GAUSS;
+			break;
 	}
 }
 
@@ -172,49 +170,6 @@ void IMU::setupGyro(uint8_t scale) {
 	reg &= ~(0b00110000);
 
 	i2c->writeByte(CTRL_REG4_G, reg | scale);
-}
-
-void IMU::setupMagnet(uint8_t scale) {
-	uint8_t reg;
-
-	if (i2c->getDeviceAddress() != ADR_XM) {
-		i2c->setDeviceAddress(ADR_XM);
-	}
-
-	reg = i2c->readByte(CTRL_REG6_XM);
-	reg &= ~(0b01100000);
-
-	i2c->writeByte(CTRL_REG6_XM, reg | scale);
-}
-
-void IMU::setRefAccel() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-	if (i2c->getDeviceAddress() != ADR_XM) {
-		i2c->setDeviceAddress(ADR_XM);
-	}
-	for(int i=0; i<6; i++) {
-		val[i] = i2c->readByte(ACCEL_OUT_X + i);
-	}
-	
-	accel.xr = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense;
-	accel.yr = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense;
-	accel.zr = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense;
-}
-
-void IMU::setRefGyro() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-	if (i2c->getDeviceAddress() != ADR_G) {
-		i2c->setDeviceAddress(ADR_G);
-	}
-	for(int i=0; i<6; i++) {
-		val[i] = i2c->readByte(GYRO_OUT_X + i);
-	}
-
-	gyro.xr = (((int16_t) val[1] << 8) | val[0]) * gyro.sense;
-	gyro.yr = (((int16_t) val[3] << 8) | val[2]) * gyro.sense;
-	gyro.zr = (((int16_t) val[5] << 8) | val[4]) * gyro.sense;
 }
 
 
@@ -284,10 +239,16 @@ void IMU::getTemp() {
 }
 
 void IMU::updateData(timeval time_now) {
-	this->getAccel();
-	this->getGyro();
+	//this->getAccel();
+	//this->getGyro();
 	this->getMagnet();
-	this->getTemp();
+	//this->getTemp();
+
+	std::cout << "X: " << magnet.x << std::endl;
+	std::cout << "Y: " << magnet.y << std::endl;
+	std::cout << "Z: " << magnet.z << std::endl;
+	std::cout << "Sense: " << magnet.sense << std::endl;
+
 
 	last_updated = time_now;
 }

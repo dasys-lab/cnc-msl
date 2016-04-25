@@ -549,7 +549,7 @@ void getSwitches() {
 	}
 }
 
-/*void getIMU() {
+void getIMU() {
 	unique_lock<mutex> l_imu(threw[5].mtx);
 	while(th_activ) {
 		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
@@ -558,7 +558,7 @@ void getSwitches() {
 
 		try {
 			lsm9ds0.updateData(time_now);
-			lsm9ds0.sendData(time_now, imuPub);
+			//lsm9ds0.sendData(time_now, imuPub);
 		} catch (exception &e) {
 			cout << "IMU: " << e.what() << endl;
 		}
@@ -567,7 +567,7 @@ void getSwitches() {
 	}
 }
 
-void getOptical() {
+/*void getOptical() {
 	unique_lock<mutex> l_optical(threw[6].mtx);
 	while(th_activ) {
 		threw[6].cv.wait(l_optical, [&] { return !th_activ || threw[6].notify; }); // protection against spurious wake-ups
@@ -610,14 +610,14 @@ int main(int argc, char** argv) {
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier);
 	thread th_switches(getSwitches);
+	thread th_imu(getIMU); //, &imuPub);
 //	thread th_adns3080(getOptical, &mbcPub);
-//	thread th_imu(getIMU, &imuPub);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
-	/* bool imu = lsm9ds0.init();
-	lsm9ds0.setRefAccel();
+	 bool imu = lsm9ds0.init();
+	/*lsm9ds0.setRefAccel();
 	adns3080.reset();
 	adns3080.adns_init(); */
 
@@ -644,7 +644,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<5; i++) { // TODO remove magic number
+		for (int i=0; i<6; i++) { // TODO remove magic number
 			if (threw[i].notify) {
 				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
 			} else {
@@ -653,8 +653,6 @@ int main(int argc, char** argv) {
 			threw[i].cv.notify_all();
 		}
 
-		//ros::spinOnce();
-		//usleep(30000);
 		loop_rate.sleep();
 	}
 	//LED_Power.setValue(low);

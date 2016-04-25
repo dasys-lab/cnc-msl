@@ -43,6 +43,31 @@ const uint8_t CTRL_REG3_G			= 0x22;
 const uint8_t CTRL_REG4_G			= 0x23;
 const uint8_t CTRL_REG5_G			= 0x24;
 
+
+const uint8_t MAG_RES_LOW			= 0x00;
+const uint8_t MAG_RES_HIGH			= 0x03;
+
+const uint8_t MAG_RATE_3HZ			= 0x00;
+const uint8_t MAG_RATE_6HZ			= 0x01;
+const uint8_t MAG_RATE_12HZ			= 0x02;
+const uint8_t MAG_RATE_25HZ			= 0x03;
+const uint8_t MAG_RATE_50HZ			= 0x04;
+const uint8_t MAG_RATE_100HZ		= 0x05;
+
+const uint8_t MAG_MFS_2GAUSS		= 0x00;
+const uint8_t MAG_MFS_4GAUSS		= 0x01;
+const uint8_t MAG_MFS_8GAUSS		= 0x02;
+const uint8_t MAG_MFS_12GAUSS		= 0x03;
+
+const float MAG_SENSE_2GAUSS		= 0.08;
+const float MAG_SENSE_4GAUSS		= 0.16;
+const float MAG_SENSE_8GAUSS		= 0.32;
+const float MAG_SENSE_12GAUSS		= 0.48;
+const float TEMP_SENSE				= 0.125;
+
+
+
+
 const uint8_t ACC_AFS_2G			= 0x00;
 const uint8_t ACC_AFS_4G			= 0x08;
 const uint8_t ACC_AFS_6G			= 0x10;
@@ -51,10 +76,6 @@ const uint8_t ACC_AFS_16G			= 0x20;
 const uint8_t GYR_FS_245DPS			= 0x00;
 const uint8_t GYR_FS_500DPS			= 0x01;
 const uint8_t GYR_FS_2000DPS		= 0x10;
-const uint8_t MAG_MDR_2GAUSS		= 0x00;
-const uint8_t MAG_MDR_4GAUSS		= 0x20;
-const uint8_t MAG_MDR_8GAUSS		= 0x40;
-const uint8_t MAG_MDR_12GAUSS		= 0x60;
 
 const float ACC_2G_SENSE			= 0.061;
 const float ACC_4G_SENSE			= 0.122;
@@ -64,11 +85,6 @@ const float ACC_16G_SENSE			= 0.732;
 const float GYR_245DPS_SENSE		= 8.75;
 const float GYR_500DPS_SENSE		= 17.5;
 const float GYR_2000DPS_SENSE		= 70;
-const float MAG_2GAUSS_SENSE		= 0.08;
-const float MAG_4GAUSS_SENSE		= 0.16;
-const float MAG_8GAUSS_SENSE		= 0.32;
-const float MAG_12GAUSS_SENSE		= 0.48;
-const float TEMP_SENSE				= 0.125;
 
 
 
@@ -86,6 +102,7 @@ class IMU {
 		} gyro, accel, magnet;
 
 		bool		whoami();
+		void		initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale);
 		void		setupAccel(uint8_t range);
 		void		setupGyro(uint8_t scale);
 		void		setupMagnet(uint8_t scale);
