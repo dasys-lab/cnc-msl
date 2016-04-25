@@ -553,6 +553,7 @@ void getSwitches() {
 
 		threw[4].notify = false;
 	}
+	delete gpio;
 }
 
 /*void getIMU() {
