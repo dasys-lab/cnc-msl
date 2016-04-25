@@ -40,7 +40,7 @@ public:
 	BallHandle(BlackLib::pwmName pwm_P, const char *pin_names[]);
 	~BallHandle();
 
-	void setBallHandling(int8_t value);
+	void setBallHandling(int32_t value);
 	void checkTimeout();
 	void controlBallHandling();
 

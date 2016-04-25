@@ -468,7 +468,7 @@ void getSwitches() {
 	BeagleGPIO *gpio = BeagleGPIO::getInstance();
 	BeaglePins *pins = gpio->claim((char**) pin_names, 4);
 
-	int outputIdxs[] = { 0, 1, 2 };
+	int outputIdxs[] = { 3, 4, 5 };
 	pins->enableOutput(outputIdxs, 3);
 
 	unique_lock<mutex> l_switches(threw[4].mtx);
@@ -481,15 +481,6 @@ void getSwitches() {
 		bool newstate[3];
 		uint8_t	sw[3] = {1, 1, 1};
 
-
-
-		BlackGPIO LED_Power(GPIO_49, output, FastMode);	// P9 23
-		BlackGPIO LED_Bundle(GPIO_20, output, FastMode);	// P9 41
-		BlackGPIO LED_Vision(GPIO_7, output, FastMode);		// P9 42
-
-		BlackGPIO SW_Vision(GPIO_30, input, FastMode);		// P9 11
-		BlackGPIO SW_Bundle(GPIO_31, input, FastMode);		// P9 13
-		BlackGPIO SW_Power(GPIO_48, input, FastMode);		// P9 15
 		try {
 			// TODO überprüfen, ob Auslesen mit der API funktioniert
 			sw[sw_vision] = pins->getBit(sw_vision);

@@ -35,7 +35,7 @@ using namespace BlackLib;
 		delete gpio;
 	}
 
-	void BallHandle::setBallHandling(int8_t value) {
+	void BallHandle::setBallHandling(int32_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
 		if ((value > 0) && (direction == right)) {
