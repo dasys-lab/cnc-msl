@@ -260,32 +260,50 @@ void IMU::getMagnet() {
 }
 
 void IMU::getTemp() {
-	uint8_t val[2] = { 0x00, 0x00 };
+//	uint8_t val[2] = { 0x00, 0x00 };
+//
+//	if (i2c->getDeviceAddress() != ADR_XM)
+//		i2c->setDeviceAddress(ADR_XM);
+//
+//	for(int i=0; i<2; i++)
+//		val[i] = i2c->readByte(TEMP_OUT + i);
+//
+//	// TODO Temperature Offset
+//	// temperature = 21.0 + (float) dof.temperature/8.;
+//	temperature = (((int16_t) val[1] << 12) | val[0] << 4 ) >> 4; // Temperature is a 12-bit signed integer
+//	temperature = (temperature-32)/1.8; // fareinheit -> celsiuis
+
+	uint16_t val = 0x00;
 
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
-	for(int i=0; i<2; i++)
-		val[i] = i2c->readByte(TEMP_OUT + i);
-
-	// TODO Temperature Offset
-	// temperature = 21.0 + (float) dof.temperature/8.;
-	temperature = (((int16_t) val[1] << 12) | val[0] << 4 ) >> 4; // Temperature is a 12-bit signed integer
-	temperature = (temperature-32)/1.8; // fareinheit -> celsiuis 
+	val = i2c->readWord(TEMP_OUT);
+	temperature = (int16_t) val;
+	temperature = (temperature - 32) / 1.8; // fahrenheit -> celsiuis
 }
 
 void IMU::updateData(timeval time_now) {
-	//this->getAccel();
-	//this->getGyro();
+	this->getAccel();
+	this->getGyro();
 	this->getMagnet();
-	//this->getTemp();
+	this->getTemp();
 
-	std::cout << "X: " << magnet.x << std::endl;
-	std::cout << "Y: " << magnet.y << std::endl;
-	std::cout << "Z: " << magnet.z << std::endl;
-	std::cout << "Sense: " << magnet.sense << std::endl;
+	std::cout << "ACC X: " << accel.x << std::endl;
+	std::cout << "ACC Y: " << accel.y << std::endl;
+	std::cout << "ACC Z: " << accel.z << std::endl;
+	std::cout << "ACC Sense: " << accel.sense << std::endl;
 
-	std::cout << "Winkel: " << atan2((double) magnet.y, (double) magnet.x) << std::endl;
+	std::cout << "GYR X: " << gyro.x << std::endl;
+	std::cout << "GYR Y: " << gyro.y << std::endl;
+	std::cout << "GYR Z: " << gyro.z << std::endl;
+	std::cout << "GYR Sense: " << gyro.sense << std::endl;
+
+	std::cout << "MAG X: " << magnet.x << std::endl;
+	std::cout << "MAG Y: " << magnet.y << std::endl;
+	std::cout << "MAG Z: " << magnet.z << std::endl;
+	std::cout << "MAG Sense: " << magnet.sense << std::endl;
+	std::cout << "MAG Angle: " << atan2((double) magnet.y, (double) magnet.x) << std::endl;
 
 	last_updated = time_now;
 }
