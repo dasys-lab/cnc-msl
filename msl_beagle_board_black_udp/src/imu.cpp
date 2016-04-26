@@ -305,6 +305,8 @@ void IMU::updateData(timeval time_now) {
 	std::cout << "MAG Sense: " << magnet.sense << std::endl;
 	std::cout << "MAG Angle: " << atan2((double) magnet.y, (double) magnet.x) << std::endl;
 
+	std::cout << "TEMP: " << temperature << std::endl;
+
 	last_updated = time_now;
 }
 
