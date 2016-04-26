@@ -20,6 +20,11 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1461584204507) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPoint2D> alloTarget;
+        shared_ptr<geometry::CNPoint2D> oldBallPos;
+        shared_ptr<geometry::CNPoint2D> oldAlloTarget;
+        bool isReceiver;
+        string taskName;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

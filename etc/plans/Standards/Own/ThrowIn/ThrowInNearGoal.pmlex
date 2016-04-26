@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237603689"/>
-    <value xPos="7" width="1015" height="659"/>
+    <value xPos="7" width="1147" height="739"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237603691"/>
@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237638988"/>
-    <value xPos="251" yPos="37" width="73" height="67" collapsed="false"/>
+    <value xPos="299" yPos="41" width="270" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237656318"/>
@@ -26,12 +26,12 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237666032"/>
-    <value xPos="466" yPos="43" width="65" height="67" collapsed="false"/>
+    <value xPos="580" yPos="33" width="225" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237676305"/>
     <value>
-      <bendpoints xPos="559" yPos="68"/>
+      <bendpoints xPos="680" yPos="113"/>
     </value>
   </extensions>
   <extensions>
@@ -40,7 +40,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237704581"/>
-    <value xPos="400" yPos="219" width="66" height="67" collapsed="false"/>
+    <value xPos="495" yPos="215" width="232" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237711590"/>
@@ -95,10 +95,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/PosAttacker.beh#1461574297571"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
     <value/>
   </extensions>
@@ -116,11 +112,13 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461584284347"/>
-    <value/>
+    <value>
+      <bendpoints xPos="638" yPos="56"/>
+    </value>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461584409837"/>
-    <value xPos="650" yPos="38" width="81" height="67" collapsed="false"/>
+    <value xPos="769" yPos="22" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
@@ -128,6 +126,10 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461584440317"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PosAlternativePassReceiver.beh#1461674968023"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
