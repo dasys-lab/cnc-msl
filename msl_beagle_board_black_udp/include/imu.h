@@ -59,6 +59,10 @@ const uint8_t MAG_MFS_4GAUSS		= 0x01;
 const uint8_t MAG_MFS_8GAUSS		= 0x02;
 const uint8_t MAG_MFS_12GAUSS		= 0x03;
 
+const uint8_t MAG_MODE_CONTINUOUS	= 0x00;
+const uint8_t MAG_MODE_SINGLE		= 0x01;
+const uint8_t MAG_MODE_POWERDOWN	= 0x02;
+
 const float MAG_SENSE_2GAUSS		= 0.08;
 const float MAG_SENSE_4GAUSS		= 0.16;
 const float MAG_SENSE_8GAUSS		= 0.32;
@@ -66,25 +70,70 @@ const float MAG_SENSE_12GAUSS		= 0.48;
 const float TEMP_SENSE				= 0.125;
 
 
+const uint8_t ACC_RATE_POWERDOWN	= 0x00;
+const uint8_t ACC_RATE_3			= 0x01;
+const uint8_t ACC_RATE_6			= 0x02;
+const uint8_t ACC_RATE_12			= 0x03;
+const uint8_t ACC_RATE_25			= 0x04;
+const uint8_t ACC_RATE_50			= 0x05;
+const uint8_t ACC_RATE_100			= 0x06;
+const uint8_t ACC_RATE_200			= 0x07;
+const uint8_t ACC_RATE_400			= 0x08;
+const uint8_t ACC_RATE_800			= 0x09;
+const uint8_t ACC_RATE_1600			= 0x0A;
 
+const uint8_t ACC_ENABLE_X			= 0x01;
+const uint8_t ACC_ENABLE_Y			= 0x02;
+const uint8_t ACC_ENABLE_Z			= 0x04;
 
 const uint8_t ACC_AFS_2G			= 0x00;
-const uint8_t ACC_AFS_4G			= 0x08;
-const uint8_t ACC_AFS_6G			= 0x10;
-const uint8_t ACC_AFS_8G			= 0x18;
-const uint8_t ACC_AFS_16G			= 0x20;
+const uint8_t ACC_AFS_4G			= 0x01;
+const uint8_t ACC_AFS_6G			= 0x02;
+const uint8_t ACC_AFS_8G			= 0x03;
+const uint8_t ACC_AFS_16G			= 0x04;
+
+const float ACC_SENSE_2G			= 0.061;
+const float ACC_SENSE_4G			= 0.122;
+const float ACC_SENSE_6G			= 0.183;
+const float ACC_SENSE_8G			= 0.244;
+const float ACC_SENSE_16G			= 0.732;
+
+
+const uint8_t GYR_ENABLE_X			= 0x01;
+const uint8_t GYR_ENABLE_Y			= 0x02;
+const uint8_t GYR_ENABLE_Z			= 0x04;
+
+const uint8_t GYR_RATE_95			= 0x00;
+const uint8_t GYR_RATE_190			= 0x01;
+const uint8_t GYR_RATE_380			= 0x02;
+const uint8_t GYR_RATE_760			= 0x03;
+
+const uint8_t GYR_BW_00				= 0x00;
+const uint8_t GYR_BW_01				= 0x01;
+const uint8_t GYR_BW_10				= 0x02;
+const uint8_t GYR_BW_11				= 0x03;
+
+const uint8_t GYR_ENABLE_HPF		= 0x10;
+const uint8_t GYR_DISABLE_HPF		= 0x10;
+
+const uint8_t GYR_HPFMODE_NORMRST	= 0x00;
+const uint8_t GYR_HPFMODE_REF		= 0x01;
+const uint8_t GYR_HPFMODE_NORM		= 0x02;
+const uint8_t GYR_HPFMODE_AUTORST	= 0x03;
+
+//const uint8_t GYR_HPFCUT_		= 0x00;
+//const uint8_t GYR_HPFCUT_		= 0x01;
+//const uint8_t GYR_HPFCUT_		= 0x02;
+//const uint8_t GYR_HPFCUT_		= 0x03;
+
 const uint8_t GYR_FS_245DPS			= 0x00;
 const uint8_t GYR_FS_500DPS			= 0x01;
 const uint8_t GYR_FS_2000DPS		= 0x10;
+const uint8_t GYR_FS_2000DPS2		= 0x11;
 
-const float ACC_2G_SENSE			= 0.061;
-const float ACC_4G_SENSE			= 0.122;
-const float ACC_6G_SENSE			= 0.183;
-const float ACC_8G_SENSE			= 0.244;
-const float ACC_16G_SENSE			= 0.732;
-const float GYR_245DPS_SENSE		= 8.75;
-const float GYR_500DPS_SENSE		= 17.5;
-const float GYR_2000DPS_SENSE		= 70;
+const float GYR_SENSE_245DPS		= 8.75;
+const float GYR_SENSE_500DPS		= 17.5;
+const float GYR_SENSE_2000DPS		= 70;
 
 
 
@@ -102,10 +151,9 @@ class IMU {
 		} gyro, accel, magnet;
 
 		bool		whoami();
+		void		initAccel(uint8_t rate, uint8_t scale);
+		void		initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale);
 		void		initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale);
-		void		setupAccel(uint8_t range);
-		void		setupGyro(uint8_t scale);
-		void		setupMagnet(uint8_t scale);
 		void		getAccel();
 		void		getGyro();
 		void		getMagnet();
