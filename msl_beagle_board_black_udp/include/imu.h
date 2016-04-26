@@ -11,21 +11,21 @@
 #include "includes.h"
 
 
-const uint8_t ADR_G				= 0x6B;		// LSM9DS0
-const uint8_t ADR_XM			= 0x1D;		// LSM9DS0
+const uint8_t ADR_G					= 0x6B;		// LSM9DS0
+const uint8_t ADR_XM				= 0x1D;		// LSM9DS0
 
-const uint8_t WHO_AM_I_G		= 0xD4;
-const uint8_t WHO_AM_I_XM		= 0x49;
+const uint8_t WHO_AM_I_G			= 0xD4;
+const uint8_t WHO_AM_I_XM			= 0x49;
 
-const uint8_t ACCEL_OUT_X			= 0x28;
-const uint8_t ACCEL_OUT_Y			= 0x2A;
-const uint8_t ACCEL_OUT_Z			= 0x2C;
-const uint8_t GYRO_OUT_X			= 0x28;
-const uint8_t GYRO_OUT_Y			= 0x2A;
-const uint8_t GYRO_OUT_Z			= 0x2C;
-const uint8_t MAGNET_OUT_X			= 0x08;
-const uint8_t MAGNET_OUT_Y			= 0x0A;
-const uint8_t MAGNET_OUT_Z			= 0x0C;
+const uint8_t ACC_OUT_X				= 0x28;
+const uint8_t ACC_OUT_Y				= 0x2A;
+const uint8_t ACC_OUT_Z				= 0x2C;
+const uint8_t GYR_OUT_X				= 0x28;
+const uint8_t GYR_OUT_Y				= 0x2A;
+const uint8_t GYR_OUT_Z				= 0x2C;
+const uint8_t MAG_OUT_X				= 0x08;
+const uint8_t MAG_OUT_Y				= 0x0A;
+const uint8_t MAG_OUT_Z				= 0x0C;
 const uint8_t TEMP_OUT				= 0x05;
 
 const uint8_t CTRL_REG0_XM			= 0x1F;
@@ -139,6 +139,15 @@ const float GYR_SENSE_2000DPS		= 70;
 
 
 class IMU {
+	public:
+					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
+					~IMU();
+
+		bool		init();
+		void		updateData(timeval time_now);
+		void		sendData(timeval time_now);
+
+
 	private:
 		BlackLib::BlackGPIO *i_acc, *i_gyro, *i_mag, *i_temp;
 		BlackLib::BlackI2C *i2c;
@@ -147,37 +156,22 @@ class IMU {
 
 		struct Koordinaten {
 			float	x, y, z, sense;
-			float	xr, yr, zr;
+			float	xraw, yraw, zraw;
 		} gyro, accel, magnet;
+
+		struct Kompass {
+			float	angle_rad, angle_deg;
+		} compass;
 
 		bool		whoami();
 		void		initAccel(uint8_t rate, uint8_t scale);
 		void		initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale);
-		void		initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale);
+		void		initMagnet(uint8_t res, uint8_t rate, uint8_t scale);
+		void		initTemp(bool enable);
 		void		getAccel();
 		void		getGyro();
 		void		getMagnet();
 		void		getTemp();
-
-	public:
-					IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P, BlackLib::BlackI2C *i2c_P);
-					~IMU();
-
-
-		void		gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count);
-		void		xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count);
-
-		void		setDataRateGyro(uint8_t datarate, uint8_t bandwidth);
-		void		setHighPassFilterGyro(bool enable, uint8_t mode, uint8_t cutoff);
-		void		setScaleGyro(uint8_t scale);
-		void		enableGyro(bool state);
-
-
-		bool		init();
-		void		setRefAccel();
-		void		setRefGyro();
-		void		updateData(timeval time_now);
-		void		sendData(timeval time_now, ros::Publisher *imuPub);
 };
 
 

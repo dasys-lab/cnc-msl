@@ -29,24 +29,11 @@ IMU::~IMU() {
 	delete i_temp;
 }
 
-void IMU::gReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
-	i2c->setDeviceAddress(ADR_G);
-	for(int i=0; i<count; i++) {
-		dest[i] = i2c->readByte(startAddress + i);
-	}
-}
-
-void IMU::xmReadBytes(uint8_t startAddress, uint8_t *dest, uint8_t count) {
-	i2c->setDeviceAddress(ADR_XM);
-	for(int i=0; i<count; i++) {
-		dest[i] = i2c->readByte(startAddress + i);
-	}
-}
-
 bool IMU::init() {
 	initAccel(ACC_RATE_25, ACC_AFS_2G);
 	initGyro(GYR_RATE_95, GYR_BW_00, GYR_FS_500DPS);
-	initMagnet(true, MAG_RES_LOW, MAG_RATE_12HZ, MAG_MFS_4GAUSS);
+	initMagnet(MAG_RES_LOW, MAG_RATE_12HZ, MAG_MFS_4GAUSS);
+	initTemp(true);
 
 	if(!this->whoami())
 		return false;
@@ -165,15 +152,14 @@ void IMU::initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale) {
 	}
 }
 
-void IMU::initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale) {
+void IMU::initMagnet(uint8_t res, uint8_t rate, uint8_t scale) {
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
 	uint8_t r;
 
-	// Set CTRL-Reg 5 with magnetic resolution and rate, enable temp sensor
+	// Set CTRL-Reg 5 with magnetic resolution and rate
 	r = i2c->readByte(CTRL_REG5_XM);
-	r = (r & ~(0b10000000)) | (temp << 7);
 	r = (r & ~(0b01100000)) | (res << 5);
 	r = (r & ~(0b00011100)) | (rate << 2);
 	i2c->writeByte(CTRL_REG5_XM, r);
@@ -211,68 +197,72 @@ void IMU::initMagnet(bool temp, uint8_t res, uint8_t rate, uint8_t scale) {
 	}
 }
 
+void IMU::initTemp(bool enable) {
+	uint8_t r;
+
+	// enable/disable temperature sensor
+	r = i2c->readByte(CTRL_REG5_XM);
+	r = (r & ~(0b10000000)) | (enable << 7);
+	i2c->writeByte(CTRL_REG5_XM, r);
+}
+
 
 void IMU::getAccel() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
-//	for(int i=0; i<6; i++)
-//		val[i] = i2c->readByte(ACCEL_OUT_X + i);
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | ACC_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	i2c->readBlock(0x80 | ACCEL_OUT_X, val, 6);
+	accel.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	accel.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	accel.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
-	accel.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * 9.81 * accel.sense;// - accel.xr;
-	accel.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * 9.81 * accel.sense;// - accel.yr;
-	accel.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * 9.81 * accel.sense;// - accel.zr;
-
-//	accel.x = ((((int16_t) val[1] << 8) | val[0]) * 9.81 * accel.sense);// - accel.xr;
-//	accel.y = ((((int16_t) val[3] << 8) | val[2]) * 9.81 * accel.sense);// - accel.yr;
-//	accel.z = ((((int16_t) val[5] << 8) | val[4]) * 9.81 * accel.sense);// - accel.zr;
+	// conversion from acceleration of gravity in [mm/s^2] to acceleration in [m/s^2]
+	accel.x = accel.xraw * 9.81 * accel.sense / 1000;
+	accel.y = accel.yraw * 9.81 * accel.sense / 1000;
+	accel.z = accel.zraw * 9.81 * accel.sense / 1000;
 }
 
 
 void IMU::getGyro() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
 	if (i2c->getDeviceAddress() != ADR_G)
 		i2c->setDeviceAddress(ADR_G);
 
-//	for(int i=0; i<6; i++)
-//		val[i] = i2c->readByte(GYRO_OUT_X + i);
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | GYR_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	i2c->readBlock(0x80 | GYRO_OUT_X, val, 6);
+	gyro.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	gyro.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	gyro.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
-	gyro.x = (int16_t)(val[0] | ((int16_t)val[1] << 8)) * gyro.sense;
-	gyro.y = (int16_t)(val[2] | ((int16_t)val[3] << 8)) * gyro.sense;
-	gyro.z = (int16_t)(val[4] | ((int16_t)val[5] << 8)) * gyro.sense;
+	// conversion from milli degree per second in [mdps] to degree per second [dps]
+	gyro.x = gyro.xraw * gyro.sense / 1000;
+	gyro.y = gyro.yraw * gyro.sense / 1000;
+	gyro.z = gyro.zraw * gyro.sense / 1000;
 }
 
 void IMU::getMagnet() {
-	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
-//	for(int i=0; i<6; i++)
-//		val[i] = i2c->readByte(0x80 | (MAGNET_OUT_X + i));
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-
-	i2c->readBlock(0x80 | MAGNET_OUT_X, val, 6);
-
+	magnet.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	magnet.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	magnet.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 	
-	magnet.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	magnet.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	magnet.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	// conversion from milli gauss [mgauss] to radiant and degree
+	compass.angle_rad = atan2((double) magnet.yraw, (double) magnet.xraw);
+	compass.angle_deg = compass.angle_rad * 180 / M_PI;
 }
 
 void IMU::getTemp() {
-	uint8_t val[2] = { 0x00, 0x00 };
-
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
+	uint8_t val[2] = { 0x00, 0x00 };
 	for(int i=0; i<2; i++)
 		val[i] = i2c->readByte(TEMP_OUT + i);
 
@@ -287,28 +277,23 @@ void IMU::updateData(timeval time_now) {
 	this->getMagnet();
 	this->getTemp();
 
-	std::cout << "ACC X: " << accel.x/1000 << std::endl;
-	std::cout << "ACC Y: " << accel.y/1000 << std::endl;
-	std::cout << "ACC Z: " << accel.z/1000 << std::endl;
-	std::cout << "ACC Sense: " << accel.sense << std::endl;
+	std::cout << "ACC X: " << accel.x << std::endl;
+	std::cout << "ACC Y: " << accel.y << std::endl;
+	std::cout << "ACC Z: " << accel.z << std::endl;
 
-	std::cout << "GYR X: " << gyro.x/1000 << std::endl;
-	std::cout << "GYR Y: " << gyro.y/1000 << std::endl;
-	std::cout << "GYR Z: " << gyro.z/1000 << std::endl;
-	std::cout << "GYR Sense: " << gyro.sense << std::endl;
+	std::cout << "GYR X: " << gyro.xraw << std::endl;
+	std::cout << "GYR Y: " << gyro.yraw << std::endl;
+	std::cout << "GYR Z: " << gyro.zraw << std::endl;
 
-	std::cout << "MAG X: " << magnet.x << std::endl;
-	std::cout << "MAG Y: " << magnet.y << std::endl;
-	std::cout << "MAG Z: " << magnet.z << std::endl;
-	std::cout << "MAG Sense: " << magnet.sense << std::endl;
-	std::cout << "MAG Angle: " << atan2((double) magnet.y, (double) magnet.x) << std::endl;
+	std::cout << "Angle rad: " << compass.angle_rad << std::endl;
+	std::cout << "Angle deg: " << compass.angle_deg << std::endl;
 
 	std::cout << "TEMP: " << temperature << std::endl;
 
 	last_updated = time_now;
 }
 
-void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
+void IMU::sendData(timeval time_now){
 	msl_actuator_msgs::IMUData msg;
 
 	msg.acceleration.x = accel.x;
@@ -326,7 +311,6 @@ void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 	msg.temperature = temperature;
 	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 
-//	imuPub->publish(msg);
 	last_sended = time_now;
 }
 
