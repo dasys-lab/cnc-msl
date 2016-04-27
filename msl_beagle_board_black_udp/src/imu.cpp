@@ -270,8 +270,6 @@ void IMU::getMagnet() {
 	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point * mag->sense;
-	if (acc->offset != nullptr)
-		point = point - mag->offset;
 
 	mag->data.push_back(point);
 }

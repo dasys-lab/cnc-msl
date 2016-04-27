@@ -558,7 +558,7 @@ void getIMU() {
 
 		try {
 			lsm9ds0.getData(time_now);
-			//lsm9ds0.sendData(time_now, imuPub);
+			lsm9ds0.sendData(time_now);
 		} catch (exception &e) {
 			cout << "IMU: " << e.what() << endl;
 		}
