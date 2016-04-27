@@ -72,21 +72,21 @@ namespace alica
 				}
 			}
 			MotionControl mc;
-			shared_ptr<geometry::CNPoint2D> alloTarget = nullptr;
+			shared_ptr<geometry::CNPoint2D> alloTarget = make_shared<geometry::CNPoint2D>();
 			shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
 			// if there is a receiver, align to it
 
 			// calculate target 60cm away from the ball and on a line with the receiver
 			if (receiverPos->y > 0)
 			{
-				alloTarget = receiverPos;
-				alloTarget->y = -alloTarget->y + 500;
+				alloTarget->x = receiverPos->x;
+				alloTarget->y = -receiverPos->y + 500;
 				egoTarget = alloTarget->alloToEgo(*ownPos);
 			}
 			else
 			{
-				alloTarget = receiverPos;
-				alloTarget->y = -alloTarget->y - 500;
+				alloTarget->x = receiverPos->x;
+				alloTarget->y = -receiverPos->y - 500;
 				egoTarget = alloTarget->alloToEgo(*ownPos);
 			}
 			// ask the path planner how to get there

@@ -522,8 +522,8 @@ namespace msl
 			return;
 		}
 
-		// is lightbarrier triggered
-		if (wm->lightBarrier->mayUseLightBarrier())
+		// is lightbarrier triggered and its no simulation
+		if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
 		{
 			if (!wm->rawSensorData->getLightBarrier())
 			{
