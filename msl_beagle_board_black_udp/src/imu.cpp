@@ -30,6 +30,9 @@ IMU::~IMU() {
 	delete i_gyro;
 	delete i_mag;
 	delete i_temp;
+	delete acc;
+	delete gyr;
+	delete mag;
 }
 
 bool IMU::init() {
@@ -40,8 +43,6 @@ bool IMU::init() {
 
 	if(!this->whoAmI())
 		return false;
-
-	getOffsets();
 
 	return true;
 }
@@ -209,19 +210,6 @@ void IMU::initTemp(bool enable) {
 	r = i2c->readByte(CTRL_REG5_XM);
 	r = (r & ~(0b10000000)) | (enable << 7);
 	i2c->writeByte(CTRL_REG5_XM, r);
-}
-
-
-void IMU::getOffsets() {
-	// accel.offset = *geometry::calculateMean(accel.data);
-
-//	accel.xoff = accel.xraw * 9.81 * accel.sense / 1000;
-//	accel.yoff = accel.yraw * 9.81 * accel.sense / 1000;
-//	accel.zoff = -9.81 - (accel.zraw * 9.81 * accel.sense / 1000);
-//
-//	gyro.xoff = gyro.xraw * gyro.sense / 1000;
-//	gyro.yoff = gyro.yraw * gyro.sense / 1000;
-//	gyro.zoff = gyro.zraw * gyro.sense / 1000;
 }
 
 void IMU::getAccel() {
