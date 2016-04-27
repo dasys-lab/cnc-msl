@@ -213,9 +213,13 @@ void IMU::getOffsets() {
 	this->getAccel();
 	this->getGyro();
 
-	accel.xoff = accel.xraw;
-	accel.yoff = accel.yraw;
-	accel.zoff = (1000 / accel.sense) - accel.zraw;
+	accel.xoff = accel.xraw * 9.81 * accel.sense / 1000;
+	accel.yoff = accel.yraw * 9.81 * accel.sense / 1000;
+	accel.zoff = -9.81 - (accel.zraw * 9.81 * accel.sense / 1000);
+
+	gyro.xoff = gyro.xraw * gyro.sense / 1000;
+	gyro.yoff = gyro.yraw * gyro.sense / 1000;
+	gyro.zoff = gyro.zraw * gyro.sense / 1000;
 }
 
 void IMU::getAccel() {
@@ -230,9 +234,9 @@ void IMU::getAccel() {
 	accel.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	// conversion from acceleration of gravity in [mm/s^2] to acceleration in [m/s^2]
-	accel.x = (accel.xraw - accel.xoff) * 9.81 * accel.sense / 1000;
-	accel.y = (accel.yraw - accel.yoff) * 9.81 * accel.sense / 1000;
-	accel.z = (accel.zraw - accel.zoff) * 9.81 * accel.sense / 1000;
+	accel.x = accel.xraw * 9.81 * accel.sense / 1000 - accel.xoff;
+	accel.y = accel.yraw * 9.81 * accel.sense / 1000 - accel.yoff;
+	accel.z = accel.zraw * 9.81 * accel.sense / 1000 - accel.zoff;
 }
 
 
@@ -248,9 +252,9 @@ void IMU::getGyro() {
 	gyro.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	// conversion from milli degree per second in [mdps] to degree per second [dps]
-	gyro.x = gyro.xraw * gyro.sense / 1000;
-	gyro.y = gyro.yraw * gyro.sense / 1000;
-	gyro.z = gyro.zraw * gyro.sense / 1000;
+	gyro.x = gyro.xraw * gyro.sense / 1000 - gyro.xoff;
+	gyro.y = gyro.yraw * gyro.sense / 1000 - gyro.yoff;
+	gyro.z = gyro.zraw * gyro.sense / 1000 - gyro.zoff;
 }
 
 void IMU::getMagnet() {
@@ -292,9 +296,9 @@ void IMU::getData(timeval time_now) {
 	std::cout << "ACC Y: " << accel.y << std::endl;
 	std::cout << "ACC Z: " << accel.z << std::endl;
 
-	std::cout << "GYR X: " << gyro.xraw << std::endl;
-	std::cout << "GYR Y: " << gyro.yraw << std::endl;
-	std::cout << "GYR Z: " << gyro.zraw << std::endl;
+	std::cout << "GYR X: " << gyro.x << std::endl;
+	std::cout << "GYR Y: " << gyro.y << std::endl;
+	std::cout << "GYR Z: " << gyro.z << std::endl;
 
 	std::cout << "Angle rad: " << compass.angle_rad << std::endl;
 	std::cout << "Angle deg: " << compass.angle_deg << std::endl;
