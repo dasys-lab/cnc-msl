@@ -56,6 +56,7 @@
   <build_depend>cv_bridge</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>msl_vision</build_depend>
+  <build_depend>alica_ros_proxy</build_depend>
    
   <run_depend>std_msgs</run_depend>
   <run_depend>msl_vision</run_depend>
