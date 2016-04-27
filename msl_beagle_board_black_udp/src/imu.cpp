@@ -7,7 +7,6 @@
 
 
 #include "imu.h"
-#include "math.h"
 
 using namespace BlackLib;
 
@@ -18,6 +17,10 @@ IMU::IMU(gpioName acc_P, gpioName gyro_P, gpioName mag_P, gpioName temp_P, Black
 	i_gyro = new BlackGPIO(gyro_P, input, FastMode);
 	i_mag = new BlackGPIO(mag_P, input, FastMode);
 	i_temp = new BlackGPIO(temp_P, input, FastMode);
+
+	acc = new Sensor();
+	gyr = new Sensor();
+	mag = new Sensor();
 
 	temperature = 0;
 }
@@ -35,7 +38,7 @@ bool IMU::init() {
 	initMagnet(MAG_RES_LOW, MAG_RATE_12HZ, MAG_MFS_4GAUSS);
 	initTemp(true);
 
-	if(!this->whoami())
+	if(!this->whoAmI())
 		return false;
 
 	getOffsets();
@@ -43,7 +46,7 @@ bool IMU::init() {
 	return true;
 }
 
-bool IMU::whoami() {
+bool IMU::whoAmI() {
 	uint8_t g, xm;
 
 	i2c->setDeviceAddress(ADR_G);
@@ -77,27 +80,27 @@ void IMU::initAccel(uint8_t rate, uint8_t scale) {
 
 	switch (scale) {
 		case ACC_AFS_2G:
-			accel.sense = ACC_SENSE_2G;
+			acc->sense = ACC_SENSE_2G;
 			break;
 
 		case ACC_AFS_4G:
-			accel.sense = ACC_SENSE_4G;
+			acc->sense = ACC_SENSE_4G;
 			break;
 
 		case ACC_AFS_6G:
-			accel.sense = ACC_SENSE_6G;
+			acc->sense = ACC_SENSE_6G;
 			break;
 
 		case ACC_AFS_8G:
-			accel.sense = ACC_SENSE_8G;
+			acc->sense = ACC_SENSE_8G;
 			break;
 
 		case ACC_AFS_16G:
-			accel.sense = ACC_SENSE_16G;
+			acc->sense = ACC_SENSE_16G;
 			break;
 
 		default:
-			accel.sense = ACC_SENSE_2G;
+			acc->sense = ACC_SENSE_2G;
 			break;
 	}
 }
@@ -133,23 +136,23 @@ void IMU::initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale) {
 
 	switch (scale) {
 		case GYR_FS_245DPS:
-			gyro.sense = GYR_SENSE_245DPS;
+			gyr->sense = GYR_SENSE_245DPS;
 			break;
 
 		case GYR_FS_500DPS:
-			gyro.sense = GYR_SENSE_500DPS;
+			gyr->sense = GYR_SENSE_500DPS;
 			break;
 
 		case GYR_FS_2000DPS:
-			gyro.sense = GYR_SENSE_2000DPS;
+			gyr->sense = GYR_SENSE_2000DPS;
 			break;
 
 		case GYR_FS_2000DPS2:
-			gyro.sense = GYR_SENSE_2000DPS;
+			gyr->sense = GYR_SENSE_2000DPS;
 			break;
 
 		default:
-			gyro.sense = GYR_SENSE_245DPS;
+			gyr->sense = GYR_SENSE_245DPS;
 			break;
 	}
 }
@@ -178,23 +181,23 @@ void IMU::initMagnet(uint8_t res, uint8_t rate, uint8_t scale) {
 
 	switch (scale) {
 		case MAG_MFS_2GAUSS:
-			magnet.sense = MAG_SENSE_2GAUSS;
+			mag->sense = MAG_SENSE_2GAUSS;
 			break;
 
 		case MAG_MFS_4GAUSS:
-			magnet.sense = MAG_SENSE_4GAUSS;
+			mag->sense = MAG_SENSE_4GAUSS;
 			break;
 
 		case MAG_MFS_8GAUSS:
-			magnet.sense = MAG_SENSE_8GAUSS;
+			mag->sense = MAG_SENSE_8GAUSS;
 			break;
 
 		case MAG_MFS_12GAUSS:
-			magnet.sense = MAG_SENSE_12GAUSS;
+			mag->sense = MAG_SENSE_12GAUSS;
 			break;
 
 		default:
-			magnet.sense = MAG_SENSE_2GAUSS;
+			mag->sense = MAG_SENSE_2GAUSS;
 			break;
 	}
 }
@@ -210,16 +213,15 @@ void IMU::initTemp(bool enable) {
 
 
 void IMU::getOffsets() {
-	this->getAccel();
-	this->getGyro();
+	// accel.offset = *geometry::calculateMean(accel.data);
 
-	accel.xoff = accel.xraw * 9.81 * accel.sense / 1000;
-	accel.yoff = accel.yraw * 9.81 * accel.sense / 1000;
-	accel.zoff = -9.81 - (accel.zraw * 9.81 * accel.sense / 1000);
-
-	gyro.xoff = gyro.xraw * gyro.sense / 1000;
-	gyro.yoff = gyro.yraw * gyro.sense / 1000;
-	gyro.zoff = gyro.zraw * gyro.sense / 1000;
+//	accel.xoff = accel.xraw * 9.81 * accel.sense / 1000;
+//	accel.yoff = accel.yraw * 9.81 * accel.sense / 1000;
+//	accel.zoff = -9.81 - (accel.zraw * 9.81 * accel.sense / 1000);
+//
+//	gyro.xoff = gyro.xraw * gyro.sense / 1000;
+//	gyro.yoff = gyro.yraw * gyro.sense / 1000;
+//	gyro.zoff = gyro.zraw * gyro.sense / 1000;
 }
 
 void IMU::getAccel() {
@@ -229,14 +231,17 @@ void IMU::getAccel() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | ACC_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	accel.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	accel.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	accel.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
 
-	// conversion from acceleration of gravity in [mm/s^2] to acceleration in [m/s^2]
-	accel.x = accel.xraw * 9.81 * accel.sense / 1000 - accel.xoff;
-	accel.y = accel.yraw * 9.81 * accel.sense / 1000 - accel.yoff;
-	accel.z = accel.zraw * 9.81 * accel.sense / 1000 - accel.zoff;
+	// get data and conversion from acceleration of gravity [mm/s^2] to acceleration [m/s^2]
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point * 9.81 / 1000 * acc->sense;
+	point = point - acc->offset;
+
+	acc->data.push_back(point);
 }
 
 
@@ -247,14 +252,17 @@ void IMU::getGyro() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | GYR_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	gyro.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	gyro.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	gyro.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
 
 	// conversion from milli degree per second in [mdps] to degree per second [dps]
-	gyro.x = gyro.xraw * gyro.sense / 1000 - gyro.xoff;
-	gyro.y = gyro.yraw * gyro.sense / 1000 - gyro.yoff;
-	gyro.z = gyro.zraw * gyro.sense / 1000 - gyro.zoff;
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point / 1000 * gyr->sense;
+	point = point - gyr->offset;
+
+	gyr->data.push_back(point);
 }
 
 void IMU::getMagnet() {
@@ -264,13 +272,17 @@ void IMU::getMagnet() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	magnet.xraw = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	magnet.yraw = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	magnet.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
 	
 	// conversion from milli gauss [mgauss] to radiant and degree
-	compass.angle_rad = atan2((double) magnet.yraw, (double) magnet.xraw);
-	compass.angle_deg = compass.angle_rad * 180 / M_PI;
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point * mag->sense;
+	point = point - mag->offset;
+
+	mag->data.push_back(point);
 }
 
 void IMU::getTemp() {
@@ -281,9 +293,10 @@ void IMU::getTemp() {
 	for(int i=0; i<2; i++)
 		val[i] = i2c->readByte(TEMP_OUT + i);
 
-	// TODO Temperature Offset
-	int16_t temp = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	temperature = (temp - 32) / 1.8; // Fahreinheit -> Celsiuis
+	int16_t t = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+
+	// Fahreinheit -> Celsiuis
+	temperature = (t - 32) / 1.8;
 }
 
 void IMU::getData(timeval time_now) {
@@ -292,39 +305,38 @@ void IMU::getData(timeval time_now) {
 	this->getMagnet();
 	this->getTemp();
 
-	std::cout << "ACC X: " << accel.x << std::endl;
-	std::cout << "ACC Y: " << accel.y << std::endl;
-	std::cout << "ACC Z: " << accel.z << std::endl;
-
-	std::cout << "GYR X: " << gyro.x << std::endl;
-	std::cout << "GYR Y: " << gyro.y << std::endl;
-	std::cout << "GYR Z: " << gyro.z << std::endl;
-
-	std::cout << "Angle rad: " << compass.angle_rad << std::endl;
-	std::cout << "Angle deg: " << compass.angle_deg << std::endl;
-
-	std::cout << "TEMP: " << temperature << std::endl;
-
 	last_updated = time_now;
 }
 
 void IMU::sendData(timeval time_now){
-	msl_actuator_msgs::IMUData msg;
+	acc->updateInternalValues();
+	gyr->updateInternalValues();
+	mag->updateInternalValues();
 
-	msg.acceleration.x = accel.x;
-	msg.acceleration.y = accel.y;
-	msg.acceleration.z = accel.z;
-	msg.accelSens = accel.sense;
-	msg.gyro.x = gyro.x;
-	msg.gyro.y = gyro.y;
-	msg.gyro.z = gyro.z;
-	msg.gyroSens = gyro.sense;
-	msg.magnet.x = magnet.x;
-	msg.magnet.y = magnet.y;
-	msg.magnet.z = magnet.z;
-	msg.magnetSens = magnet.sense;
-	msg.temperature = temperature;
-	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
+
+
+	std::cout << "ACC X: " << acc->mean->x << std::endl;
+	std::cout << "ACC Y: " << acc->mean->y << std::endl;
+	std::cout << "ACC Z: " << acc->mean->z << std::endl;
+
+	std::cout << "GYR X: " << gyr->mean->x << std::endl;
+	std::cout << "GYR Y: " << gyr->mean->y << std::endl;
+	std::cout << "GYR Z: " << gyr->mean->z << std::endl;
+
+	std::cout << "Angle rad: " << mag->angle_rad << std::endl;
+	std::cout << "Angle deg: " << mag->angle_deg << std::endl;
+
+	std::cout << "TEMP: " << temperature << std::endl;
+
+//	msl_actuator_msgs::IMUData msg;
+//	msg.acceleration = acc->mean;
+//	msg.accelSens = acc->mean->sense;
+//	msg.gyro = gyr->mean;
+//	msg.gyroSens = gyr->sense;
+//	msg.magnet = mag->mean;
+//	msg.magnetSens = mag->sense;
+//	msg.temperature = temperature;
+//	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 
 	last_sended = time_now;
 }
