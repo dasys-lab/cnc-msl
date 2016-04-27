@@ -227,7 +227,8 @@ void IMU::getAccel() {
 	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point * 9.81 / 1000 * acc->sense;
-	point = point - acc->offset;
+	if (acc->offset != nullptr)
+		point = point - acc->offset;
 
 	acc->data.push_back(point);
 }
@@ -248,7 +249,8 @@ void IMU::getGyro() {
 	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point / 1000 * gyr->sense;
-	point = point - gyr->offset;
+	if (acc->offset != nullptr)
+		point = point - gyr->offset;
 
 	gyr->data.push_back(point);
 }
@@ -268,7 +270,8 @@ void IMU::getMagnet() {
 	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point * mag->sense;
-	point = point - mag->offset;
+	if (acc->offset != nullptr)
+		point = point - mag->offset;
 
 	mag->data.push_back(point);
 }
