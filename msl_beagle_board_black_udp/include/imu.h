@@ -144,7 +144,7 @@ class IMU {
 					~IMU();
 
 		bool		init();
-		void		updateData(timeval time_now);
+		void		getData(timeval time_now);
 		void		sendData(timeval time_now);
 
 
@@ -156,7 +156,7 @@ class IMU {
 
 		struct Koordinaten {
 			float	x, y, z, sense;
-			float	xraw, yraw, zraw;
+			float	xraw, yraw, zraw, xoff, yoff, zoff;
 		} gyro, accel, magnet;
 
 		struct Kompass {
@@ -168,6 +168,7 @@ class IMU {
 		void		initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale);
 		void		initMagnet(uint8_t res, uint8_t rate, uint8_t scale);
 		void		initTemp(bool enable);
+		void		getOffsets();
 		void		getAccel();
 		void		getGyro();
 		void		getMagnet();

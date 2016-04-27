@@ -38,6 +38,8 @@ bool IMU::init() {
 	if(!this->whoami())
 		return false;
 
+	getOffsets();
+
 	return true;
 }
 
@@ -207,6 +209,15 @@ void IMU::initTemp(bool enable) {
 }
 
 
+void IMU::getOffsets() {
+	this->getAccel();
+	this->getGyro();
+
+	accel.xoff = accel.xraw;
+	accel.yoff = accel.yraw;
+	accel.zoff = (1000 / accel.sense) - accel.zraw;
+}
+
 void IMU::getAccel() {
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
@@ -219,9 +230,9 @@ void IMU::getAccel() {
 	accel.zraw = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	// conversion from acceleration of gravity in [mm/s^2] to acceleration in [m/s^2]
-	accel.x = accel.xraw * 9.81 * accel.sense / 1000;
-	accel.y = accel.yraw * 9.81 * accel.sense / 1000;
-	accel.z = accel.zraw * 9.81 * accel.sense / 1000;
+	accel.x = (accel.xraw - accel.xoff) * 9.81 * accel.sense / 1000;
+	accel.y = (accel.yraw - accel.yoff) * 9.81 * accel.sense / 1000;
+	accel.z = (accel.zraw - accel.zoff) * 9.81 * accel.sense / 1000;
 }
 
 
@@ -271,7 +282,7 @@ void IMU::getTemp() {
 	temperature = (temp - 32) / 1.8; // Fahreinheit -> Celsiuis
 }
 
-void IMU::updateData(timeval time_now) {
+void IMU::getData(timeval time_now) {
 	this->getAccel();
 	this->getGyro();
 	this->getMagnet();
