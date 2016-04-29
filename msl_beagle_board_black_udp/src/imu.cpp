@@ -303,7 +303,7 @@ msl_actuator_msgs::IMUData IMU::sendData(timeval time_now){
 	mag->updateInternalValues();
 
 
-
+/*
 	std::cout << "ACC X: " << acc->mean->x << std::endl;
 	std::cout << "ACC Y: " << acc->mean->y << std::endl;
 	std::cout << "ACC Z: " << acc->mean->z << std::endl;
@@ -316,7 +316,7 @@ msl_actuator_msgs::IMUData IMU::sendData(timeval time_now){
 	std::cout << "Angle deg: " << mag->angle_deg << std::endl;
 
 	std::cout << "TEMP: " << temperature << std::endl;
-
+*/
 	msl_actuator_msgs::IMUData msg;
 	msg.acceleration.x = acc->mean->x;
 	msg.acceleration.y = acc->mean->y;
