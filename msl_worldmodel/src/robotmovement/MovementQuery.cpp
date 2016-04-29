@@ -7,16 +7,19 @@
 
 #include "robotmovement/MovementQuery.h"
 
-bool fast = false;
-bool dribble = false;
-
 MovementQuery::MovementQuery()
 {
-	// TODO Auto-generated constructor stub
+	egoAlignPoint = nullptr;
+	egoDestinationPoint = nullptr;
+	additionalPoints = nullptr;
+	fast = false;
+	dribble = false;
+	curRotDribble = 0;
+	lastRotDribbleErr = 0;
 }
 
 MovementQuery::~MovementQuery()
 {
-	// TODO Auto-generated destructor stub
+
 }
 

@@ -33,14 +33,18 @@ namespace msl
 		virtual ~RobotMovement();
 
 		MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> query);
+		MotionControl experimentallyRuleActionForBallGetter();
+		MotionControl experimentallyDriveRandomly(double translation);
+		MotionControl experimantallyMoveToFreeSpace();
+
 
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
-		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+//		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+//												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		//TODO needs to be tested
 		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
@@ -124,6 +128,12 @@ namespace msl
 		static double transDecStep;
 
 		static double lastTurnTime;
+
+		shared_ptr<MovementQuery> query;
+		MotionControl experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
+		double rotationDribblePD(shared_ptr<geometry::CNPoint2D> target);
+		double translationDribblePD(double transOrt);
+		double angleDribblePD(double transOrt);
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
