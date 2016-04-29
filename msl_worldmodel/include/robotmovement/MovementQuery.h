@@ -25,6 +25,15 @@ public:
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
 	bool fast = false;
 	bool dribble = false;
+
+	// PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
+	double curRotDribble;
+	double lastRotDribbleErr;
+
+	// PD variables for RobotMovement::moveToPoint() and RobotMovement::transaltionDribblePD()
+	double curTransDribble;
+	double transControlIntegralDribble;
+
 };
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_MOVEMENTQUERY_H_ */
