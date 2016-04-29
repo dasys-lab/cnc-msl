@@ -459,6 +459,8 @@ void getLightbarrier() {
 }
 
 void getSwitches() {
+	supplementary::SystemConfig* sc;
+	sc = supplementary::SystemConfig::getInstance();
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
@@ -605,6 +607,7 @@ int main(int argc, char** argv) {
 	ros::Time::init();
 	ros::Rate loop_rate(30);		// in Hz
 
+	supplementary::SystemConfig* sc;
 	sc = supplementary::SystemConfig::getInstance();
 
 	thread th_controlBHRight(controlBHRight);
