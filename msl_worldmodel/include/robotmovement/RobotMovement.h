@@ -13,6 +13,7 @@
 #include "GeometryCalculator.h"
 #include "DateTime.h"
 #include "SystemConfig.h"
+#include "robotmovement/MovementQuery.h"
 
 namespace geometry
 {
@@ -30,6 +31,8 @@ namespace msl
 	{
 	public:
 		virtual ~RobotMovement();
+
+		MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> query);
 
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
