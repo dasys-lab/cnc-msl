@@ -145,8 +145,6 @@ namespace alica
             calibCoeff_pub.publish(calibCoeff);
 
         }
-        lengthSegment = 0;
-        lengthVisionSegment = 0;
 
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
@@ -159,18 +157,14 @@ namespace alica
         std::cout << "correctedWayY : " << correctedPosY << std::endl;
         std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision(0)->x << std::endl;
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
-        std::cout << "Faktor2 : "
-                << calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1 << std::endl;
-        std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
-        std::cout << "posMotionX: " << calibPosMotionX << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
-        std::cout << "ThetaVision: " << this->wm->rawSensorData->getOwnPositionVision(0)->theta << std::endl;
-        std::cout << "ThetaMotion: " << this->wm->rawSensorData->getOwnPositionMotion(0)->theta << std::endl;
+
 
         std::cout << "" << std::endl;
 
         lengthSegment = 0;
+        lengthVisionSegment = 0;
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision(0)->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision(0)->y;
 
