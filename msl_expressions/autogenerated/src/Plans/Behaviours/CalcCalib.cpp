@@ -116,51 +116,51 @@ namespace alica
         diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision(0)->x;
         diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision(0)->y;
 
-        string value;
-        string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-        ifstream calibData(filename);
-        if (calibData.is_open())
-        {
-            while (getline(calibData, value))
-            {
-                calibCoefficient = std::stod(value);
-            }
-            calibData.close();
-        }
-
-        if (calibCoefficient == 0)
-        {
-            calibCoefficient = 1;
-        }
-
-        if (length != 0)
-        {
-            if (calibCounter == 3) //GonzalesUpdate
-            {
-
-                calibCoefficient *= calibSign(lengthVision, length)
-                        * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1; //GonzalesUpdate + lengthSegment
-
-                if (calibCoefficient < 0.5)
-                {
-                    calibCoefficient = 1;
-                }
-
-            }
-
-            string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-            ofstream saveToCalibData;
-            saveToCalibData.open(filename);
-            saveToCalibData << calibCoefficient;
-            saveToCalibData.close();
-
-            ros::NodeHandle calibCEP;
-            calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
-
-            calibCoeff.calibCoefficient = calibCoefficient;
-            calibCoeff_pub.publish(calibCoeff);
-
-        }
+//        string value;
+//        string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
+//        ifstream calibData(filename);
+//        if (calibData.is_open())
+//        {
+//            while (getline(calibData, value))
+//            {
+//                calibCoefficient = std::stod(value);
+//            }
+//            calibData.close();
+//        }
+//
+//        if (calibCoefficient == 0)
+//        {
+//            calibCoefficient = 1;
+//        }
+//
+//        if (length != 0)
+//        {
+//            if (calibCounter == 3) //GonzalesUpdate
+//            {
+//
+//                calibCoefficient *= calibSign(lengthVision, length)
+//                        * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1; //GonzalesUpdate + lengthSegment
+//
+//                if (calibCoefficient < 0.5)
+//                {
+//                    calibCoefficient = 1;
+//                }
+//
+//            }
+//
+//            string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
+//            ofstream saveToCalibData;
+//            saveToCalibData.open(filename);
+//            saveToCalibData << calibCoefficient;
+//            saveToCalibData.close();
+//
+//            ros::NodeHandle calibCEP;
+//            calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
+//
+//            calibCoeff.calibCoefficient = calibCoefficient;
+//            calibCoeff_pub.publish(calibCoeff);
+//
+//        }
 
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
