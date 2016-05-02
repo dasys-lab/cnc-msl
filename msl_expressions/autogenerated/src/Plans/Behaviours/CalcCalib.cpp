@@ -36,70 +36,71 @@ namespace alica
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
         auto calibPosMotionTheta = this->wm->rawSensorData->getOwnPositionMotion()->theta;
 
-        std::cout << "======== CalcCalib ========" << std::endl;
-        std::cout << "Motion: " << std::endl;
-        std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
-                << calibPosMotionTheta << std::endl;
-        std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
-                << calibTranslation << std::endl;
-//
-//        correctedWayX = (calibPosMotionX - calibOldPosMotionX)
-//                * cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta
-//                        - this->wm->rawSensorData.getOwnPositionMotion(0)->theta)
-//                - (calibPosMotionY - calibOldPosMotionY)
-//                        * sin(this->wm->rawSensorData.getOwnPositionVision(0)->theta
-//                                - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
-//        correctedWayY = (calibPosMotionX - calibOldPosMotionX)
-//                * sin(this->wm->rawSensorData.getOwnPositionVision(0)->theta
-//                        - this->wm->rawSensorData.getOwnPositionMotion(0)->theta)
-//                + (calibPosMotionY - calibOldPosMotionY)
-//                        * cos(this->wm->rawSensorData.getOwnPositionVision(0)->theta
-//                                - this->wm->rawSensorData.getOwnPositionMotion(0)->theta);
-//
-//        correctedPosX = correctedPosX + correctedWayX;
-//        correctedPosY = correctedPosY + correctedWayY;
-//
-//        lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-//        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-//
-//        calibOldPosMotionX = calibPosMotionX;
-//        calibOldPosMotionY = calibPosMotionY;
-//
-//        if (tempyoyo == 5)
-//        {
-//            static int visionLengthCounter;
-//            lengthVision = lengthVision
-//                    + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
-//                            + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
-//
-//            calibOldPosVisionX = calibPosVisionX;
-//            calibOldPosVisionY = calibPosVisionY;
-//            tempyoyo = 0;
-//
-//        }
-//
-//        tempyoyo++;
-//
-//        static int minusCounter = 0;
-//        static int plusCounter = 0;
-//
-//        if (calibRotation > 0.1 || calibRotation < -0.1)
-//        {
-//
-//            plusCounter++;
-//        }
-//        else
-//        {
-//
-//            minusCounter++;
-//        }
 
-        // std::cout << "correctedWayX : " << correctedPosX << std::endl;
-        // std::cout << "correctedWayY : " << correctedPosY << std::endl;
+        correctedWayX = (calibPosMotionX - calibOldPosMotionX)
+                * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
+                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
+                - (calibPosMotionY - calibOldPosMotionY)
+                        * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
+                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
+        correctedWayY = (calibPosMotionX - calibOldPosMotionX)
+                * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
+                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
+                + (calibPosMotionY - calibOldPosMotionY)
+                        * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
+                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
+
+        correctedPosX = correctedPosX + correctedWayX;
+        correctedPosY = correctedPosY + correctedWayY;
+
+        lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+
+        calibOldPosMotionX = calibPosMotionX;
+        calibOldPosMotionY = calibPosMotionY;
+
+        if (tempyoyo == 5)
+        {
+            static int visionLengthCounter;
+            lengthVision = lengthVision
+                    + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
+                            + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+
+            calibOldPosVisionX = calibPosVisionX;
+            calibOldPosVisionY = calibPosVisionY;
+            tempyoyo = 0;
+
+        }
+
+        tempyoyo++;
+
+        static int minusCounter = 0;
+        static int plusCounter = 0;
+
+        if (calibRotation > 0.1 || calibRotation < -0.1)
+        {
+
+            plusCounter++;
+        }
+        else
+        {
+
+            minusCounter++;
+        }
+
+         std::cout << "correctedWayX : " << correctedPosX << std::endl;
+         std::cout << "correctedWayY : " << correctedPosY << std::endl;
+
+//         std::cout << "======== CalcCalib ========" << std::endl;
+//         std::cout << "Motion: " << std::endl;
+//         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
+//                 << calibPosMotionTheta << std::endl;
+//         std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
+//                 << calibTranslation << std::endl;
         // std::cout << "rotation : " << calibRotation << std::endl;
         // std::cout << "plusCounter : " << plusCounter << std::endl;
         // std::cout << "minusCounter : " << minusCounter << std::endl;
-        // std::cout << "" << std::endl;
+         std::cout << "" << std::endl;
 
         //msl_actuator_msgs::MotionControl mc;
         //mc.motion.translation = 500;
