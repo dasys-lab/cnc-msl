@@ -59,38 +59,23 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        if (tempyoyo == 5)
-        {
-            static int visionLengthCounter;
-            lengthVision = lengthVision
+//        if (tempyoyo == 5)
+//        {
+            lengthVisionSegment = lengthVisionSegment
                     + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
                             + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
             calibOldPosVisionX = calibPosVisionX;
             calibOldPosVisionY = calibPosVisionY;
-            tempyoyo = 0;
-
-        }
-
-        tempyoyo++;
-
-        static int minusCounter = 0;
-        static int plusCounter = 0;
-
-        if (calibRotation > 0.1 || calibRotation < -0.1)
-        {
-
-            plusCounter++;
-        }
-        else
-        {
-
-            minusCounter++;
-        }
-
-         std::cout << "correctedWayX : " << correctedPosX << std::endl;
-         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-
+//            tempyoyo = 0;
+//
+//        }
+//
+//        tempyoyo++;
+//
+//
+//         std::cout << "correctedWayX : " << correctedPosX << std::endl;
+//         std::cout << "correctedWayY : " << correctedPosY << std::endl;
 //         std::cout << "======== CalcCalib ========" << std::endl;
 //         std::cout << "Motion: " << std::endl;
 //         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
@@ -100,7 +85,7 @@ namespace alica
         // std::cout << "rotation : " << calibRotation << std::endl;
         // std::cout << "plusCounter : " << plusCounter << std::endl;
         // std::cout << "minusCounter : " << minusCounter << std::endl;
-         std::cout << "" << std::endl;
+        // std::cout << "" << std::endl;
 
         //msl_actuator_msgs::MotionControl mc;
         //mc.motion.translation = 500;
@@ -116,51 +101,52 @@ namespace alica
         diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision(0)->x;
         diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision(0)->y;
 
-//        string value;
-//        string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-//        ifstream calibData(filename);
-//        if (calibData.is_open())
-//        {
-//            while (getline(calibData, value))
-//            {
-//                calibCoefficient = std::stod(value);
-//            }
-//            calibData.close();
-//        }
-//
-//        if (calibCoefficient == 0)
-//        {
-//            calibCoefficient = 1;
-//        }
-//
-//        if (length != 0)
-//        {
-//            if (calibCounter == 3) //GonzalesUpdate
-//            {
-//
-//                calibCoefficient *= calibSign(lengthVision, length)
-//                        * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1; //GonzalesUpdate + lengthSegment
-//
-//                if (calibCoefficient < 0.5)
-//                {
-//                    calibCoefficient = 1;
-//                }
-//
-//            }
-//
-//            string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-//            ofstream saveToCalibData;
-//            saveToCalibData.open(filename);
-//            saveToCalibData << calibCoefficient;
-//            saveToCalibData.close();
-//
-//            ros::NodeHandle calibCEP;
-//            calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
-//
-//            calibCoeff.calibCoefficient = calibCoefficient;
-//            calibCoeff_pub.publish(calibCoeff);
-//
-//        }
+        string value;
+        string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
+        ifstream calibData(filename);
+        if (calibData.is_open())
+        {
+            while (getline(calibData, value))
+            {
+                calibCoefficient = std::stod(value);
+            }
+            calibData.close();
+        }
+
+        if (calibCoefficient == 0)
+        {
+            calibCoefficient = 1;
+        }
+
+        if (length != 0)
+        {
+                calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
+                        * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1;
+
+                if (calibCoefficient < 0.5)
+                {
+                    calibCoefficient = 0.5;
+                }
+                else if (calibCoefficient > 1.5)
+                {
+                	calibCoefficient = 1.5;
+                }
+
+            string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
+            ofstream saveToCalibData;
+            saveToCalibData.open(filename);
+            saveToCalibData << calibCoefficient;
+            saveToCalibData.close();
+
+            ros::NodeHandle calibCEP;
+            calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
+
+            calibCoeff.calibCoefficient = calibCoefficient;
+            calibCoeff_pub.publish(calibCoeff);
+
+        }
+        lengthSegment = 0;
+        lengthVisionSegment = 0;
 
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
@@ -174,11 +160,11 @@ namespace alica
         std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision(0)->x << std::endl;
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
         std::cout << "Faktor2 : "
-                << calibSign(lengthVision, length) * (sqrt(diffX * diffX + diffY * diffY) / length) + 1 << std::endl;
+                << calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1 << std::endl;
         std::cout << "oldPosMotionX: " << calibOldPosMotionX << std::endl;
         std::cout << "posMotionX: " << calibPosMotionX << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
-        std::cout << "lengthVision: " << lengthVision << std::endl;
+        std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
         std::cout << "ThetaVision: " << this->wm->rawSensorData->getOwnPositionVision(0)->theta << std::endl;
         std::cout << "ThetaMotion: " << this->wm->rawSensorData->getOwnPositionMotion(0)->theta << std::endl;
 
