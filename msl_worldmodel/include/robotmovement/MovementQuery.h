@@ -21,10 +21,13 @@ public:
 	virtual ~MovementQuery();
 	shared_ptr<geometry::CNPoint2D> egoAlignPoint;
 	shared_ptr<geometry::CNPoint2D> egoDestinationPoint;
-//	double angleTolerance;
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
 	bool fast = false;
 	bool dribble = false;
+	double snapDistance;
+//	double translation;
+	double angleTolerance;
+	shared_ptr<geometry::CNPoint2D> teamMatePosition;
 
 	// PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
 	double curRotDribble;

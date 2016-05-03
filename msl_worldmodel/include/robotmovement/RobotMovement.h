@@ -32,10 +32,10 @@ namespace msl
 	public:
 		virtual ~RobotMovement();
 
-		MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> query);
+		MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> m_Query);
 		MotionControl experimentallyRuleActionForBallGetter();
 		MotionControl experimentallyDriveRandomly(double translation);
-		MotionControl experimantallyMoveToFreeSpace();
+		MotionControl experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query);
 
 
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
@@ -131,9 +131,14 @@ namespace msl
 
 		shared_ptr<MovementQuery> query;
 		MotionControl experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
-		double rotationDribblePD(shared_ptr<geometry::CNPoint2D> target);
-		double translationDribblePD(double transOrt);
-		double angleDribblePD(double transOrt);
+		double experimentallyEvalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
+											   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
+
+		// PD regulator methods
+		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> target);
+		double translationPDForDribble(double transOrt);
+		double anglePDForDribble(double transOrt);
+		double anglePDForMoveToPoint();
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
