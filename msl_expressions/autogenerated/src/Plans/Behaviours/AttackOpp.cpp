@@ -24,21 +24,21 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1430324527403) ENABLED START*/
 
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
 
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
 
-        auto obstacles = wm->obstacles.getEgoVisionObstacles();
+        auto obstacles = wm->obstacles->getEgoVisionObstacles();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         for (int i = 0; i < obstacles->size(); i++)
         {
-            if (wm->pathPlanner.corridorCheck(
+            if (wm->pathPlanner->corridorCheck(
                     make_shared < geometry::CNPoint2D > (me->x, me->y), egoBallPos->egoToAllo(*me),
                     make_shared < geometry::CNPoint2D > (obstacles->at(i).x, obstacles->at(i).y)))
             {
@@ -48,12 +48,12 @@ namespace alica
         }
         if (!blocked)
         {
-            auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+            auto egoBallVelocity = wm->ball->getEgoBallVelocity();
             cout << "ego ball vel: " << egoBallVelocity->x << "|" << egoBallVelocity->y << " "
                     << egoBallVelocity->length() << endl;
             auto vector = egoBallVelocity + egoBallPos;
             double vectorLength = vector->length();
-            if (wm->ball.haveBall())
+            if (wm->ball->haveBall())
             {
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;

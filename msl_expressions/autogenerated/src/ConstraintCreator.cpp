@@ -29,8 +29,6 @@
 
 #include  "Plans/Defence/constraints/MidfieldDefense1458033329973Constraints.h"
 
-#include  "Plans/ActuatorTest/constraints/ActuatorTestMaster1417017436952Constraints.h"
-
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
 
 #include  "Plans/GameStrategy/Gameplay/constraints/GamePlay1457173546734Constraints.h"
@@ -72,6 +70,8 @@
 #include  "Plans/Attack/TestPlans/constraints/TestDriveToMiddle1457434329037Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
+
+#include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInNearGoal1461237603689Constraints.h"
 
 #include  "Plans/Standards/Opponent/constraints/OppStandardExecution1457015277573Constraints.h"
 
@@ -156,6 +156,10 @@ namespace alica
 
             case 1457173948942:
                 return make_shared<Constraint1457173948942>();
+                break;
+
+            case 1461574228077:
+                return make_shared<Constraint1461574228077>();
                 break;
 
             case 1457531039142:

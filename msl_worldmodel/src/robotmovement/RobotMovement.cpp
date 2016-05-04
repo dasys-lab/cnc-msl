@@ -78,10 +78,685 @@ namespace msl
 	{
 	}
 
+	// new RobotMovement ===========================================================================================
+
+	/**
+	 * Uses MovementQuery with Parameters
+	 *
+	 * necessary Parameters:
+	 * @param egoDestinationPoint
+	 * @param egoAlignPoint
+	 *
+	 * additional Parameters for adaption:
+	 * @param snapDistance
+	 * @param additionalPoints
+	 * @param fast
+	 * @param dribble
+	 */
+	MotionControl RobotMovement::experimentallyMoveToPoint(shared_ptr<MovementQuery> m_Query)
+	{
+		this->query = m_Query;
+
+		if (m_Query == nullptr)
+		{
+			this->query = make_shared<MovementQuery>();
+		}
+
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(query->egoDestinationPoint,
+																							eval,
+																							query->additionalPoints);
+		// move to point carefully / fast
+
+		double rotation;
+		double translation;
+
+		if (query->fast)
+		{
+			rotation = fastRotation;
+			translation = fastTranslation;
+		}
+		else
+		{
+			rotation = defaultRotateP;
+			translation = defaultTranslation;
+		}
+
+		MotionControl mc;
+
+		if (temp == nullptr)
+		{
+			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
+			temp = query->egoDestinationPoint;
+		}
+		if (query->egoAlignPoint == nullptr)
+		{
+			query->egoAlignPoint = query->egoDestinationPoint;
+		}
+
+		// todo: test with PD
+//		mc.motion.angle = moveToPointAnglePD();
+		mc.motion.angle = temp->angleTo();
+		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * rotation;
+		if (temp->length() > query->snapDistance)
+		{
+			mc.motion.translation = min(temp->length(), translation);
+		}
+		else
+		{
+			mc.motion.translation = 0;
+		}
+
+		// dribble behavior -> using from dribbleToPointConservative ==============================================
+		if (query->dribble)
+		{
+			auto ballPos = wm->ball->getEgoBallPosition();
+
+//			if (ballPos == nullptr)
+//				return nullptr;
+//			if (ballPos->length() > 1000)
+//				return nullptr;
+//			double pathPlanningMaxTrans = maxVel;
+//			double frontAngle = wm->kicker->kickerAngle;
+
+//			msl::PathProxy* pp = msl::PathProxy::getInstance();
+
+			auto target = temp;
+
+//			if (target == nullptr)
+//				return nullptr;
+
+//			double distToOpp;
+//			auto opp = wm->robots->opponents.getClosestToBall(distToOpp);
+//			if (distToOpp < 800)
+//			{
+//				rotPointDist = 50;
+//			}
+
+			double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
+			msl_actuator_msgs::MotionControl bm;
+			// rotation <====
+//			double angleErr = target->rotate(frontAngle)->angleTo();
+//			bm.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr); //Rotation PD
+//
+//			if (bm.motion.rotation > curRot)
+//			{ //limit rotation acceleration
+//				bm.motion.rotation = min(bm.motion.rotation, curRot + rotAccStep);
+//			}
+//			else
+//			{
+//				bm.motion.rotation = max(bm.motion.rotation, curRot - rotAccStep);
+//			}
+//
+//			bm.motion.rotation = min(abs(bm.motion.rotation), maxRot) * (bm.motion.rotation > 0 ? 1 : -1); //clamp rotation
+//			curRot = bm.motion.rotation;
+//
+//			lastRotErr = angleErr;
+			// todo: current work (skipping point)
+			bm.motion.rotation = rotationPDForDribble(target);
+			// transaltion <====
+			double transOrt = bm.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
+
+			bm.motion.translation = translationPDForDribble(transOrt);
+			bm.motion.angle = anglePDForDribble(transOrt);
+
+//			double maxCurTrans = pathPlanningMaxTrans;
+//			double transErr = abs(query->lastRotDribbleErr);
+//			if (transErr > angleDeadBand)
+//			{
+//				transControlIntegral += iTrans * transErr;
+//				transControlIntegral = min(transControlIntegralMax, transControlIntegral);
+//			}
+//			else
+//			{
+//				transControlIntegral = 0; //Math.Max(0,transControlIntegral-Math.PI*5);
+//				transErr = 0;
+//			}
+//			maxCurTrans -= pTrans * transErr + transControlIntegral;
+//			maxCurTrans = max(0.0, maxCurTrans);
+//
+//			double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
+//			if (std::isnan(transTowards) || transTowards < 50)
+//				transTowards = 50;
+//
+//			if (transTowards > curTrans)
+//			{
+//				transTowards = min(transTowards, curTrans + transAccStep);
+//			}
+//			else
+//				transTowards = max(transTowards, curTrans - transDecStep);
+//			curTrans = transTowards;
+
+//			auto dir = ballPos->normalize();
+//			shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
+//			dir = dir * transTowards + ort * transOrt;
+//			bm.motion.angle = dir->angleTo();
+//
+//			bm.motion.translation = sqrt(transTowards * transTowards + transOrt * transOrt);
+
+//			return make_shared<msl_actuator_msgs::MotionControl>(bm);
+		}
+		// dribble <=========================================================
+
+		return mc;
+	}
+
+	/*
+	 * checks if Robot respects the rules
+	 *
+	 * @return motion command if robot breaks the rules
+	 */
+	MotionControl RobotMovement::experimentallyRuleActionForBallGetter()
+	{
+		MSLWorldModel* wm = MSLWorldModel::get();
+		MotionControl mc;
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
+		if (ballPos == nullptr)
+		{
+//			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
+		if (ownPos == nullptr)
+		{
+//			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+		shared_ptr<geometry::CNPoint2D> alloBall = ballPos->egoToAllo(*ownPos);
+		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
+
+		//ball is out, approach it carefully ================================================================
+		if (!wm->field->isInsideField(alloBall, 500))
+		{
+			//Console.WriteLine("CASE B");
+			dest->x = ownPos->x - alloBall->x;
+			dest->y = ownPos->y - alloBall->y;
+			dest = wm->field->mapInsideField(alloBall);
+			dest = dest->alloToEgo(*ownPos);
+//			return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
+			return experimentallyPlaceRobot(dest, ballPos);
+		}
+		//handle ball in own penalty ========================================================================
+		if (wm->field->isInsideOwnPenalty(alloBall, 0))
+		{
+			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200)
+					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
+			{ //if we are already in, and ball is in safe distance of keeper area, get it
+//				MotionControl mc;
+				mc.senderID = -1;
+				return mc;
+			}
+			if (wm->robots->teammates.teamMatesInOwnPenalty() > 1)
+			{ //do not enter penalty if someone besides keeper is already in there
+			  //dest.X = ownPos.X - alloBall.X;
+			  //dest.Y = ownPos.Y - alloBall.Y;
+				dest = wm->field->mapOutOfOwnPenalty(alloBall);
+				dest = dest->alloToEgo(*ownPos);
+//				return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
+				return experimentallyPlaceRobot(dest, ballPos);
+			}
+			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
+			{ //ball is dangerously close to keeper area, or even within
+				if (!wm->field->isInsideOwnKeeperArea(alloBall, 50))
+				{
+					if ((ownPos->x - alloBall->x) < 150)
+					{
+//						MotionControl mc;
+						mc.senderID = -1;
+						return mc;
+					}
+				}
+				dest->x = alloBall->x - 200;
+				if (ownPos->y < alloBall->y)
+				{
+					dest->y = alloBall->y - 500;
+				}
+				else
+				{
+					dest->y = alloBall->y + 500;
+				}
+				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = dest->alloToEgo(*ownPos);
+//				return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
+				return experimentallyPlaceRobot(dest, ballPos);
+			}
+
+		}
+		//ball is inside enemy penalty area ===============================================================
+		if (wm->field->isInsideEnemyPenalty(alloBall, 0))
+		{
+			if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
+			{ //if there is someone else, do not enter
+			  //dest.X = ownPos.X - alloBall.X;
+			  //dest.Y = ownPos.Y - alloBall.Y;
+				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
+				dest = dest->alloToEgo(*ownPos);
+//				return placeRobot(dest, ballPos, maxVelo); // todo: replace!!
+				return experimentallyPlaceRobot(dest, ballPos);
+			}
+			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
+			{ //ball is inside keeper area
+				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = dest->alloToEgo(*ownPos);
+//				return placeRobot(dest, ballPos, maxVelo); // todo: replace!!
+				return experimentallyPlaceRobot(dest, ballPos);
+			}
+
+		}
+//		MotionControl mc;
+		mc.senderID = -1;
+		return mc;
+	}
+
+	/*
+	 * Used in ruleActionForBallGetter()
+	 *
+	 * @return motion command by using moveToPoint() depending on
+	 * 		the distance to the destination and
+	 * 		the ball as additional point
+	 */
+	MotionControl RobotMovement::experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest,
+															shared_ptr<geometry::CNPoint2D> headingPoint)
+	{
+		// TODO: need to be tested!!!!
+		MotionControl mc;
+		//			double rotTol = M_PI / 30.0;
+		double destTol = 100.0;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		auto ballPos = wm->ball->getEgoBallPosition();
+		if (dest->length() < destTol)
+		{
+			// only align to point
+			//				return alignToPointNoBall(dest, ballPos, rotTol);
+			std::shared_ptr<MovementQuery> query = make_shared<MovementQuery>();
+			query->egoDestinationPoint = dest;
+			query->egoAlignPoint = ballPos;
+			query->additionalPoints = nullptr;
+
+			mc = experimentallyMoveToPoint(query);
+			mc.motion.translation = 0;
+
+			return mc;
+		}
+		else
+		{
+			//linear
+			double trans = min(maxVelo, 1.2 * dest->length());
+
+			MotionControl mc;
+			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
+			if (wm->ball->getAlloBallPosition() != nullptr)
+			{
+				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+				vector<shared_ptr<geometry::CNPoint2D>>>();
+				additionalPoints->push_back(wm->ball->getAlloBallPosition());
+				//DriveToPointAndAlignCareObstacles
+				//cout << "RobotMovement: playeRobotCareBall 1" << endl;
+				//					mc = moveToPointCarefully(dest, ballPos, 0 , additionalPoints);
+
+				std::shared_ptr<MovementQuery> query = make_shared<MovementQuery>();
+				query->egoDestinationPoint = dest;
+				query->egoAlignPoint = ballPos;
+				query->additionalPoints = additionalPoints;
+
+				mc = experimentallyMoveToPoint(query);
+			}
+			else
+			{
+				//cout << "RobotMovement: playeRobotCareBall 2" << endl;
+				//					mc = moveToPointCarefully(dest, ballPos, 0 , nullptr);
+
+				std::shared_ptr<MovementQuery> query = make_shared<MovementQuery>();
+				query->egoDestinationPoint = dest;
+				query->additionalPoints = nullptr;
+				query->egoAlignPoint = headingPoint;
+
+				if (headingPoint == nullptr)
+				{
+					query->egoAlignPoint = dest;
+				}
+
+				mc = experimentallyMoveToPoint(query);
+			}
+			//cout << "RobotMovement: placeRobotCareBall return." << endl;
+			return mc;
+		}
+	}
+
+	/*
+	 * @return motion command to a random destination point
+	 */
+	MotionControl RobotMovement::experimentallyDriveRandomly(double translation)
+	{
+		msl::PathProxy* pp = msl::PathProxy::getInstance();
+		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
+		if (randomCounter == 0)
+		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_real_distribution<> dis(0, 1);
+			double ang = (dis(gen) - 0.5) * 2 * M_PI;
+			randomTarget = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
+		}
+
+		auto dest = pp->getEgoDirection(randomTarget, eval);
+
+		if (dest == nullptr)
+		{
+			dest = randomTarget;
+			translation = 100;
+		}
+		msl_actuator_msgs::MotionControl bm;
+		bm.motion.rotation = 0;
+		bm.motion.translation = translation;
+		bm.motion.angle = atan2(dest->y, dest->x);
+		randomCounter = (randomCounter + 1) % 28;
+		return bm;
+	}
+//	todo: current skipping point
+	/**
+	 * Uses MovementQuery with Parameters:
+	 *
+	 * necessary parameters:
+	 * @teamMatePosition
+	 * @translation
+	 *
+	 */
+	MotionControl RobotMovement::experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query)
+	{
+		this->query = m_Query;
+
+		if (m_Query == nullptr)
+		{
+			this->query = make_shared<MovementQuery>();
+		}
+		shared_ptr<geometry::CNPoint2D> teamMatePosition = query->teamMatePosition;
+//		double maxTrans = query->translation;
+
+		MotionControl mc;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
+		if (ownPos == nullptr)
+		{
+			MotionControl mc;
+			mc.senderID = -1;
+			return mc;
+		}
+
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
+		fringe->clear();
+		for (int i = 0; i < 16; i++)
+		{
+			for (int d = 0; d < 8000; d += 2000)
+			{
+				shared_ptr<AlloSearchArea> s = AlloSearchArea::getAnArea(i * M_PI / 8, (i + 1) * M_PI / 8, d, d + 2000,
+																			ownPos->getPoint(), ownPos);
+				if (s->isValid())
+				{
+
+					s->val = evalPointDynamic(s->midP, teamMatePosition, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
+					fringe->push_back(s);
+				}
+			}
+		}
+		stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
+		shared_ptr<SearchArea> best = fringe->at(0);
+		shared_ptr<SearchArea> cur;
+
+		for (int i = 0; i < 100 && fringe->size() > 0; i++)
+		{
+
+			next->clear();
+			for (int j = 0; j < beamSize; j++)
+			{
+				if (fringe->size() == 0)
+				{
+					break;
+				}
+				cur = fringe->at(0);
+				fringe->erase(fringe->begin());
+				if (j == 0 && cur->val > best->val)
+				{
+					best = cur;
+				}
+				shared_ptr<vector<shared_ptr<SearchArea>>> expanded = cur->expand();
+				for (int i = 0; expanded->size(); i++)
+				{
+					next->push_back(expanded->at(i));
+				}
+			}
+			for (int j = 0; j < next->size(); j++)
+			{
+				next->at(j)->val = evalPointDynamic(next->at(j)->midP, teamMatePosition, ownPos,
+													wm->obstacles->getEgoVisionObstaclePoints());
+				fringe->push_back(next->at(j));
+			}
+			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
+		}
+		shared_ptr<geometry::CNPoint2D> dest =
+				wm->field->mapOutOfEnemyKeeperArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
+		shared_ptr<geometry::CNPoint2D> align = teamMatePosition->alloToEgo(*ownPos);
+
+//		mc = placeRobotAggressive(dest, align, maxTrans);
+
+		shared_ptr<MovementQuery> q = make_shared<MovementQuery>();
+		q->egoDestinationPoint = dest;
+		q->egoAlignPoint = align;
+		q->fast = true;
+		// todo: test if experimatallyMoveToPoint() does nearly the same as placeRobotAggressive()
+		mc = experimentallyMoveToPoint(q);
+		return mc;
+	}
+
+	/*
+	 * Used in moveToFreeSpace()
+	 */
+	double RobotMovement::experimentallyEvalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP,
+												shared_ptr<geometry::CNPoint2D> alloPassee,
+												shared_ptr<geometry::CNPosition> ownPos,
+												shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > opponents)
+		{
+			double ret = 0;
+
+			//distance to point:
+			ret -= ownPos->distanceTo(alloP) / 10.0;
+			MSLWorldModel* wm = MSLWorldModel::get();
+			shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2,
+																							0);
+
+			shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
+			//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
+
+			shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
+					-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+					wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
+			shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
+					-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+					-wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+
+			if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
+			{
+				return numeric_limits<double>::min();
+			}
+			if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
+			{
+				return numeric_limits<double>::min();
+			}
+
+			ret += passee2p->x / 9.0;
+			if (alloP->x < 0)
+			{
+				ret += alloP->x / 10.0;
+			}
+
+			if (alloP->y * alloPassee->y < 0)
+			{
+				ret += min(0.0, alloP->x);
+			}
+			if (alloP->angleToPoint(oppGoalMid) > M_PI / 3.0)
+			{
+				ret -= alloP->angleToPoint(oppGoalMid) * 250.0;
+			}
+			//distance to passeee:
+
+			//Point2D p2GoalVec = goalPos - p;
+			double dist2Passee = passee2p->length();
+
+			//nice passing distances: 4000..9000:
+			if (dist2Passee < 2000)
+			{
+				return numeric_limits<double>::min();
+			}
+			if (dist2Passee < 4000)
+			{
+				ret -= 4000 - dist2Passee;
+			}
+			else if (dist2Passee > 9000)
+			{
+				ret -= dist2Passee - 9000;
+			}
+
+			//else if (dist2Ball > 5000) ret -= (dist2Ball-5000)*(dist2Ball - 5000);
+
+			double t, v;
+			double ortX, ortY;
+			double catchFactor = 0;
+
+			//double goalFactor = 0;
+
+			for (int i = 0; i < opponents->size(); i++)
+			{
+				//pass corridor
+				t = ((opponents->at(i)->x - alloPassee->x) * passee2p->x
+						+ (opponents->at(i)->y - alloPassee->y) * passee2p->y)
+						/ (passee2p->x * passee2p->x + passee2p->y * passee2p->y);
+
+				if (t > 0)
+				{
+					if (t < 1.0)
+					{
+
+						ortX = opponents->at(i)->x - (alloPassee->x + t * (passee2p->x));
+						ortY = opponents->at(i)->y - (alloPassee->y + t * (passee2p->y));
+						v = max(0.0, sqrt(ortX * ortX + ortY * ortY) - robotRadius) / dist2Passee;
+
+						if (v / t * interceptQuotient < 1)
+						{
+
+							double cf = 5000 * (1 - ((v / t) * interceptQuotient));
+							catchFactor = max(catchFactor, cf);
+						}
+					}
+					ortX = opponents->at(i)->x - alloP->x;
+					ortY = opponents->at(i)->y - alloP->y;
+					v = sqrt(ortX * ortX + ortY * ortY);
+					if (v < 2500)
+						ret -= (2500 - v) * 10;
+				}
+			}
+			ret -= catchFactor;
+
+			//ret -= goalFactor;
+			return ret;
+		}
+
+	double RobotMovement::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> target)
+	{
+		if (query == nullptr)
+		{
+			this->query = make_shared<MovementQuery>();
+		}
+
+		MSLWorldModel* wm = MSLWorldModel::get();
+		double frontAngle = wm->kicker->kickerAngle;
+		double rot;
+		double angleErr = target->rotate(frontAngle)->angleTo();
+		rot = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - query->lastRotDribbleErr); //Rotation PD
+
+		if (rot > query->curRotDribble)
+		{ //limit rotation acceleration
+			rot = min(rot, query->curRotDribble + rotAccStep);
+		}
+		else
+		{
+			rot = max(rot, query->curRotDribble - rotAccStep);
+		}
+
+		rot = min(abs(rot), maxRot) * (rot > 0 ? 1 : -1); //clamp rotation
+		query->curRotDribble = rot;
+
+		query->lastRotDribbleErr = angleErr;
+		return rot;
+	}
+
+	double RobotMovement::translationPDForDribble(double transOrt)
+	{
+		if (query == nullptr)
+		{
+			this->query = make_shared<MovementQuery>();
+		}
+
+		double maxCurTrans = maxVel;
+		double transErr = abs(query->lastRotDribbleErr);
+		if (transErr > angleDeadBand)
+		{
+			query->transControlIntegralDribble += iTrans * transErr;
+			query->transControlIntegralDribble = min(transControlIntegralMax, query->transControlIntegralDribble);
+		}
+		else
+		{
+			query->transControlIntegralDribble = 0; //Math.Max(0,transControlIntegral-Math.PI*5);
+			transErr = 0;
+		}
+		maxCurTrans -= pTrans * transErr + query->transControlIntegralDribble;
+		maxCurTrans = max(0.0, maxCurTrans);
+
+		double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
+		if (std::isnan(transTowards) || transTowards < 50)
+			transTowards = 50;
+
+		if (transTowards > query->curTransDribble)
+		{
+			transTowards = min(transTowards, query->curTransDribble + transAccStep);
+		}
+		else
+			transTowards = max(transTowards, query->curTransDribble - transDecStep);
+		query->curTransDribble = transTowards;
+
+		return sqrt(transTowards * transTowards + transOrt * transOrt);
+	}
+
+	double RobotMovement::anglePDForDribble(double transOrt)
+	{
+		if (query == nullptr)
+		{
+			this->query = make_shared<MovementQuery>();
+		}
+
+		MSLWorldModel* wm = MSLWorldModel::get();
+		auto ballPos = wm->ball->getEgoBallPosition();
+		auto dir = ballPos->normalize();
+		shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
+		dir = dir * query->curTransDribble + ort * transOrt;
+
+		return dir->angleTo();
+	}
+
+	// todo: use PD for angle calculation -> could be used from alignToPoint
+	double RobotMovement::anglePDForMoveToPoint()
+	{
+		return 0;
+	}
+
+// old RobotMovement <==========================================================================================
+
 	msl_actuator_msgs::MotionControl RobotMovement::nearGoalArea(msl_actuator_msgs::MotionControl bm)
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			return bm;
@@ -92,7 +767,8 @@ namespace msl
 
 //		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
-		if (wm->field.isInsideEnemyKeeperArea(dir, 150) || wm->field.isInsideEnemyKeeperArea(ownPos->getPoint(), 1200))
+		if (wm->field->isInsideEnemyKeeperArea(dir, 150)
+				|| wm->field->isInsideEnemyKeeperArea(ownPos->getPoint(), 1200))
 		{
 			dir = dir - ownPos;
 //			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
@@ -175,10 +851,10 @@ namespace msl
 		iTrans = 0;
 		lastRotErr = 0;
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		if (wm->rawSensorData.getLastMotionCommand() != nullptr)
+		if (wm->rawSensorData->getLastMotionCommand() != nullptr)
 		{
-			curRot = wm->rawSensorData.getLastMotionCommand()->motion.rotation;
-			curTrans = wm->rawSensorData.getLastMotionCommand()->motion.translation;
+			curRot = wm->rawSensorData->getLastMotionCommand()->motion.rotation;
+			curTrans = wm->rawSensorData->getLastMotionCommand()->motion.translation;
 
 		}
 		else
@@ -193,7 +869,7 @@ namespace msl
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
 
-		auto ballPos = wm->ball.getEgoBallPosition();
+		auto ballPos = wm->ball->getEgoBallPosition();
 
 		if (ballPos == nullptr)
 			return nullptr;
@@ -203,7 +879,7 @@ namespace msl
 //		cout << "RobotMovement: dribble allo target: "
 //				<< egoTarget->egoToAllo(*wm->rawSensorData.getOwnPositionVision())->toString() << endl;
 		double pathPlanningMaxTrans = maxVel;
-		double frontAngle = wm->kicker.kickerAngle;
+		double frontAngle = wm->kicker->kickerAngle;
 
 //		cout << "RobotMovement: pathPlanningMaxTrans " << pathPlanningMaxTrans << endl;
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
@@ -244,7 +920,7 @@ namespace msl
 
 		double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
 		double distToOpp;
-		auto opp = wm->robots.opponents.getClosestToBall(distToOpp);
+		auto opp = wm->robots->opponents.getClosestToBall(distToOpp);
 		if (distToOpp < 800)
 		{
 			rotPointDist = 50;
@@ -328,8 +1004,8 @@ namespace msl
 		if (lastTurnTime > 0 && (supplementary::DateTime::getUtcNow().getTicks() - lastTurnTime) < 1000 * 10000)
 			return nullptr;
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-		auto dstscan = wm->rawSensorData.getDistanceScan();
-		auto oppInFront = wm->robots.opponents.getInCorridor(ballPos->angleTo(), 150);
+		auto dstscan = wm->rawSensorData->getDistanceScan();
+		auto oppInFront = wm->robots->opponents.getInCorridor(ballPos->angleTo(), 150);
 		double distInFront = (oppInFront == nullptr ? std::numeric_limits<double>::max() : oppInFront->length() - 300);
 
 		double minInFrontDist = 800;
@@ -346,12 +1022,12 @@ namespace msl
 		else if (ballPos != nullptr && dstscan != nullptr && distInFront < minInFrontDist && distInFront > 300)
 		{
 
-			auto goalMid = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2.0, 0)->alloToEgo(*ownPos);
+			auto goalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2.0, 0)->alloToEgo(*ownPos);
 
-			auto opponentGoal = wm->robots.opponents.getInCorridor(goalMid->angleTo(), 300);
+			auto opponentGoal = wm->robots->opponents.getInCorridor(goalMid->angleTo(), 300);
 			if (opponentGoal != nullptr && opponentGoal->length() > 3000)
 			{
-				return make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2.0, 0);
+				return make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2.0, 0);
 			}
 
 			if (oppInFront != nullptr)
@@ -435,51 +1111,51 @@ namespace msl
 
 		return mc;
 	}
-
-	MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
-	{
-		MotionControl mc;
-		if (egoTarget->length() > 400)
-		{
-			MSLWorldModel* wm = MSLWorldModel::get();
-			shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-			shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-			additionalPoints);
-			if(temp == nullptr)
-			{
-				cout << "RobotMovement::interceptCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
-				temp = egoTarget;
-			}
-			mc.motion.angle = temp->angleTo();
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
-			if (egoTarget->length() > snapDistance)
-			{
-				mc.motion.translation = min(defaultTranslation, temp->length());
-			}
-			else
-			{
-				mc.motion.translation = 0;
-			}
-			return mc;
-		}
-		else
-		{
-			mc.motion.angle = egoTarget->angleTo();
-			mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
-			if (egoTarget->length() > snapDistance)
-			{
-				mc.motion.translation = min(defaultTranslation, egoTarget->length());
-			}
-			else
-			{
-				mc.motion.translation = 0;
-			}
-			return mc;
-		}
-	}
-
+	/*
+	 MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+	 shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
+	 shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
+	 {
+	 MotionControl mc;
+	 if (egoTarget->length() > 400)
+	 {
+	 MSLWorldModel* wm = MSLWorldModel::get();
+	 shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+	 shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
+	 additionalPoints);
+	 if(temp == nullptr)
+	 {
+	 cout << "RobotMovement::interceptCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
+	 temp = egoTarget;
+	 }
+	 mc.motion.angle = temp->angleTo();
+	 mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
+	 if (egoTarget->length() > snapDistance)
+	 {
+	 mc.motion.translation = min(defaultTranslation, temp->length());
+	 }
+	 else
+	 {
+	 mc.motion.translation = 0;
+	 }
+	 return mc;
+	 }
+	 else
+	 {
+	 mc.motion.angle = egoTarget->angleTo();
+	 mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
+	 if (egoTarget->length() > snapDistance)
+	 {
+	 mc.motion.translation = min(defaultTranslation, egoTarget->length());
+	 }
+	 else
+	 {
+	 mc.motion.translation = 0;
+	 }
+	 return mc;
+	 }
+	 }
+	 */
 	MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													double angleTolerance)
@@ -608,14 +1284,14 @@ namespace msl
 	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
 			MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision(); //OwnPositionCorrected;
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
 		if (ownPos == nullptr)
 		{
 			MotionControl mc;
@@ -625,34 +1301,35 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> alloBall = ballPos->egoToAllo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
 
-		if (!wm->field.isInsideField(alloBall, 500))
+		if (!wm->field->isInsideField(alloBall, 500))
 		{ //ball is out, approach it carefully
 		  //Console.WriteLine("CASE B");
 			dest->x = ownPos->x - alloBall->x;
 			dest->y = ownPos->y - alloBall->y;
-			dest = wm->field.mapInsideField(alloBall);
+			dest = wm->field->mapInsideField(alloBall);
 			dest = dest->alloToEgo(*ownPos);
 			return placeRobotCareBall(dest, ballPos, maxVelo);
 		}
-		if (wm->field.isInsideOwnPenalty(alloBall, 0))
+		if (wm->field->isInsideOwnPenalty(alloBall, 0))
 		{ //handle ball in own penalty
-			if (!wm->field.isInsideOwnKeeperArea(alloBall, 200) && wm->field.isInsideOwnPenalty(ownPos->getPoint(), 0))
+			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200)
+					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{ //if we are already in, and ball is in safe distance of keeper area, get it
 				MotionControl mc;
 				mc.senderID = -1;
 				return mc;
 			}
-			if (wm->robots.teammates.teamMatesInOwnPenalty() > 1)
+			if (wm->robots->teammates.teamMatesInOwnPenalty() > 1)
 			{ //do not enter penalty if someone besides keeper is already in there
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
-				dest = wm->field.mapOutOfOwnPenalty(alloBall);
+				dest = wm->field->mapOutOfOwnPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
-			if (wm->field.isInsideOwnKeeperArea(alloBall, 200))
+			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
 			{ //ball is dangerously close to keeper area, or even within
-				if (!wm->field.isInsideOwnKeeperArea(alloBall, 50))
+				if (!wm->field->isInsideOwnKeeperArea(alloBall, 50))
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
@@ -670,25 +1347,25 @@ namespace msl
 				{
 					dest->y = alloBall->y + 500;
 				}
-				dest = wm->field.mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
 
 		}
-		if (wm->field.isInsideEnemyPenalty(alloBall, 0))
+		if (wm->field->isInsideEnemyPenalty(alloBall, 0))
 		{ //ball is inside enemy penalty area
-			if (wm->robots.teammates.teamMatesInOppPenalty() > 0)
+			if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
 			{ //if there is someone else, do not enter
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
-				dest = wm->field.mapOutOfEnemyPenalty(alloBall);
+				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
-			if (wm->field.isInsideEnemyKeeperArea(alloBall, 50))
+			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
 			{ //ball is inside keeper area
-				dest = wm->field.mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
@@ -717,11 +1394,11 @@ namespace msl
 
 			MotionControl mc;
 			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
-			if (wm->ball.getAlloBallPosition() != nullptr)
+			if (wm->ball->getAlloBallPosition() != nullptr)
 			{
 				shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
 				vector<shared_ptr<geometry::CNPoint2D>>>();
-				additionalPoints->push_back(wm->ball.getAlloBallPosition());
+				additionalPoints->push_back(wm->ball->getAlloBallPosition());
 				//DriveToPointAndAlignCareObstacles
 				//cout << "RobotMovement: playeRobotCareBall 1" << endl;
 				mc = moveToPointCarefully(destinationPoint, headingPoint, 0 , additionalPoints);
@@ -753,7 +1430,7 @@ namespace msl
 			}
 			double angle = headingPoint->angleTo();
 			MSLWorldModel* wm = MSLWorldModel::get();
-			if (abs(angle - wm->kicker.kickerAngle) > rotTol)
+			if (abs(angle - wm->kicker->kickerAngle) > rotTol)
 			{
 				return rot;
 			}
@@ -808,12 +1485,16 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
 		return dest;
 	}
-
+// todo: scip point
+	/**
+	 * alloPassee = allo team mate position
+	 * maxTrans = max translation
+	 */
 	MotionControl RobotMovement::moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans)
 	{
 		MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			MotionControl mc;
@@ -821,7 +1502,7 @@ namespace msl
 			return mc;
 		}
 
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ops = wm->obstacles.getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
 		fringe->clear();
 		for (int i = 0; i < 16; i++)
 		{
@@ -832,7 +1513,7 @@ namespace msl
 				if (s->isValid())
 				{
 
-					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles.getEgoVisionObstaclePoints());
+					s->val = evalPointDynamic(s->midP, alloPassee, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
 					fringe->push_back(s);
 				}
 			}
@@ -866,13 +1547,13 @@ namespace msl
 			for (int j = 0; j < next->size(); j++)
 			{
 				next->at(j)->val = evalPointDynamic(next->at(j)->midP, alloPassee, ownPos,
-													wm->obstacles.getEgoVisionObstaclePoints());
+													wm->obstacles->getEgoVisionObstaclePoints());
 				fringe->push_back(next->at(j));
 			}
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
 		}
 		shared_ptr<geometry::CNPoint2D> dest =
-				wm->field.mapOutOfEnemyKeeperArea(wm->field.mapInsideField(best->midP))->alloToEgo(*ownPos);
+				wm->field->mapOutOfEnemyKeeperArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
 
 		mc = placeRobotAggressive(dest, align, maxTrans);
@@ -924,21 +1605,24 @@ namespace msl
 		//distance to point:
 		ret -= ownPos->distanceTo(alloP) / 10.0;
 		MSLWorldModel* wm = MSLWorldModel::get();
-		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field.getFieldLength() / 2, 0);
+		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2,
+																						0);
 
 		shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
 		//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
 
 		shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
-				-wm->field.getFieldLength() / 2.0 - alloPassee->x, wm->field.getGoalWidth() / 2.0 + 1000 - alloPassee->y);
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+				wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
 		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
-				-wm->field.getFieldLength() / 2.0 - alloPassee->x, -wm->field.getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+				-wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
 
 		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
 		{
 			return numeric_limits<double>::min();
 		}
-		if (wm->field.isInsideEnemyPenalty(alloPassee, 800) && wm->field.isInsideEnemyPenalty(alloP, 600))
+		if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
 		{
 			return numeric_limits<double>::min();
 		}

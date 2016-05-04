@@ -26,13 +26,13 @@ namespace alica
     void CatchPass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1440754525537) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             return;
         }
 
-        shared_ptr < msl_helper_msgs::PassMsg > pm = wm->whiteBoard.getPassMsg();
+        shared_ptr < msl_helper_msgs::PassMsg > pm = wm->whiteBoard->getPassMsg();
         msl_actuator_msgs::MotionControl mc;
         mc.senderID = -1;
         if (pm != nullptr)
@@ -40,7 +40,7 @@ namespace alica
             passOrigin = make_shared < geometry::CNPoint2D > (pm->origin.x, pm->origin.y);
             passDestination = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y);
             passVector = make_shared < geometry::CNPoint2D > (pm->destination.x, pm->destination.y) - passOrigin;
-            shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+            shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
             if (ballPos == nullptr)
             {
                 ballPos = passOrigin->alloToEgo(*ownPos);

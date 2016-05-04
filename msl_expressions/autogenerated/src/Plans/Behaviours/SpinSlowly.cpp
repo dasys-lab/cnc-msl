@@ -22,7 +22,7 @@ namespace alica
     void SpinSlowly::run(void* msg)
     {
         /*PROTECTED REGION ID(run1435159253296) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionMotion();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionMotion();
 
         if (ownPos == nullptr)
         {

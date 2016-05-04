@@ -33,8 +33,6 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Stop.h"
 
-#include  "Plans/Behaviours/Actuate.h"
-
 #include  "Plans/Behaviours/Joystick.h"
 
 #include  "Plans/Dribble/DribbleControl.h"
@@ -57,9 +55,9 @@ using namespace std;
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
 
-#include  "Plans/GenericStandards/StandardPass.h"
-
 #include  "Plans/Goalie/Test/GoalieBehaviours/WatchBall.h"
+
+#include  "Plans/GenericStandards/StandardPass.h"
 
 #include  "Plans/Behaviours/AlignToGoal.h"
 
@@ -81,15 +79,15 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
-#include  "Plans/Behaviours/AlignToRobot.h"
-
 #include  "Plans/Attack/Wander.h"
 
 #include  "Plans/Behaviours/DefendGoal.h"
 
-#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
-
 #include  "Plans/Behaviours/Intercept.h"
+
+#include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
+
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
@@ -101,9 +99,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalieExtension.h"
 
-#include  "Plans/Behaviours/AlignExecutor.h"
-
 #include  "Plans/Goalie/Test/GoalieBehaviours/BlockBall.h"
+
+#include  "Plans/Standards/Own/ThrowIn/PositionReceiverThrownIn.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/ReceivePassIntoPathGeneric.h"
 
@@ -143,9 +141,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
-#include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
-
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
+
+#include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
@@ -262,11 +260,6 @@ namespace alica
                 return make_shared<Stop>();
                 break;
 
-            case 1417017552846:
-
-                return make_shared<Actuate>();
-                break;
-
             case 1421854995808:
 
             case 1426695479346:
@@ -330,14 +323,14 @@ namespace alica
                 return make_shared<DribbleToAttackPoint>();
                 break;
 
-            case 1435760175843:
-
-                return make_shared<StandardPass>();
-                break;
-
             case 1447863472667:
 
                 return make_shared<WatchBall>();
+                break;
+
+            case 1435760175843:
+
+                return make_shared<StandardPass>();
                 break;
 
             case 1415205285582:
@@ -394,11 +387,6 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
-            case 1438779292567:
-
-                return make_shared<AlignToRobot>();
-                break;
-
             case 1434716230628:
 
                 return make_shared<Wander>();
@@ -409,16 +397,21 @@ namespace alica
                 return make_shared<DefendGoal>();
                 break;
 
+            case 1458757193843:
+
+                return make_shared<Intercept>();
+                break;
+
+            case 1461674968023:
+
+                return make_shared<PosAlternativePassReceiver>();
+                break;
+
             case 1459355025721:
 
             case 1459356753335:
 
                 return make_shared<BounceShotAlignWall>();
-                break;
-
-            case 1458757193843:
-
-                return make_shared<Intercept>();
                 break;
 
             case 1438778223495:
@@ -452,14 +445,14 @@ namespace alica
                 return make_shared<GoalieExtension>();
                 break;
 
-            case 1440600507552:
-
-                return make_shared<AlignExecutor>();
-                break;
-
             case 1447863463711:
 
                 return make_shared<BlockBall>();
+                break;
+
+            case 1461584235418:
+
+                return make_shared<PositionReceiverThrownIn>();
                 break;
 
             case 1457531594373:
@@ -561,14 +554,14 @@ namespace alica
                 return make_shared<GetBall>();
                 break;
 
-            case 1459357089325:
-
-                return make_shared<BouncePassFinishAlign>();
-                break;
-
             case 1457015565562:
 
                 return make_shared<TeamWatchBall>();
+                break;
+
+            case 1459357089325:
+
+                return make_shared<BouncePassFinishAlign>();
                 break;
 
             case 1459355071258:
@@ -581,6 +574,8 @@ namespace alica
             case 1455888617961:
 
             case 1459456566595:
+
+            case 1461583806472:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

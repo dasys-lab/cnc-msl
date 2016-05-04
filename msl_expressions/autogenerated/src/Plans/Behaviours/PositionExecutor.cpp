@@ -33,8 +33,8 @@ namespace alica
     void PositionExecutor::run(void* msg)
     {
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -70,7 +70,7 @@ namespace alica
             if (id != -1)
             {
                 // get receiver position by id
-                auto pos = wm->robots.teammates.getTeamMatePosition(id);
+                auto pos = wm->robots->teammates.getTeamMatePosition(id);
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
             MotionControl mc;
@@ -88,7 +88,7 @@ namespace alica
             }
 
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-            if (wm->game.getSituation() == msl::Situation::Start)
+            if (wm->game->getSituation() == msl::Situation::Start)
             { // they already pressed start and we are still positioning, so speed up!
                 mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
             }

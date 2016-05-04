@@ -34,7 +34,7 @@ using namespace BlackLib;
 		delete ff2;
 	}
 
-	void BallHandle::setBallHandling(int8_t value) {
+	void BallHandle::setBallHandling(int32_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
 		if ((value > 0) && (direction == static_cast<digitalValue>(right))) {
@@ -45,10 +45,10 @@ using namespace BlackLib;
 			direction_desired = static_cast<BlackLib::digitalValue>(right);
 		}
 
-		// Check that value is in range from -100 to 100
-		if (value > 100) { value = 100; }
-		if (value < -100) { value = -100; }
-		speed_desired = abs(value) * period / 100;
+		// Check that value is in range from -period to period
+		if (value > period) { value = period; }
+		if (value < -period) { value = -period; }
+		speed_desired = abs(value);
 
 		gettimeofday(&last_ping, NULL);
 	}

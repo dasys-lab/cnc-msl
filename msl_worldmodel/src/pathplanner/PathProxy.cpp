@@ -80,8 +80,8 @@ namespace msl
 		lastPathTarget = egoTarget;
 
 		//get voronoi diagram, which is ready to be used
-		shared_ptr<VoronoiNet> net = this->wm->pathPlanner.getCurrentVoronoiNet();
-		shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData.getOwnPositionVision();
+		shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
+		shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData->getOwnPositionVision();
 		if(net == nullptr || !net->ownPosAvail || ownPos == nullptr)
 		{
 			// We are not localized (or have no vNet), so we can't plan a path.
@@ -97,7 +97,7 @@ namespace msl
 		//plan
 		shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
 		auto alloTarget = egoTarget->egoToAllo(*ownPos);
-		auto path = this->wm->pathPlanner.plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
+		auto path = this->wm->pathPlanner->plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
 
 		if (path != nullptr && path->size() > 0)
 		{
@@ -150,12 +150,12 @@ namespace msl
 					continue;
 				}
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner.corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner.getRobotRadius());
+						|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
 			}
 			for (auto current : *net->getAdditionalObstacles())
 			{
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner.corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner.getRobotRadius());
+						|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
 			}
 			if (!shortcutBlocked)
 			{
@@ -239,8 +239,8 @@ namespace msl
 	{
 		//create bounding box around field with additional 3m distance
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > ret = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
-	Iso_rectangle_2 bbox(-wm->field.getFieldLength() / 2 - 3000, -wm->field.getFieldWidth() / 2 - 3000,
-						 wm->field.getFieldLength() / 2 + 3000, wm->field.getFieldWidth() / 2 + 3000);
+	Iso_rectangle_2 bbox(-wm->field->getFieldLength() / 2 - 3000, -wm->field->getFieldWidth() / 2 - 3000,
+						 wm->field->getFieldLength() / 2 + 3000, wm->field->getFieldWidth() / 2 + 3000);
 	//create cropped voronoi
 	Cropped_voronoi_from_delaunay vor(bbox);
 	//get delaunay

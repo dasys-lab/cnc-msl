@@ -200,6 +200,7 @@ namespace msl
 		double getPenaltyAreaWidth();
 		double getPenaltySpot();
 		double getSurrounding();
+		string getCurrentField();
 
 	private:
 
@@ -224,6 +225,7 @@ namespace msl
 		double PenaltyAreaMappingTolerance;
 		double MaxDistance;
 		double MaxDistanceSqr;
+		string CurrentField;
 
 	protected:
 

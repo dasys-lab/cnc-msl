@@ -9,7 +9,7 @@
     <outTransitions>#1430925924151</outTransitions>
   </states>
   <states id="1430925718512" name="OwnThrowIn" comment="">
-    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Own/ThrowIn/ThrowIn.pty#1461672654276</plans>
     <inTransitions>#1430925917001</inTransitions>
     <inTransitions>#1458555879137</inTransitions>
     <outTransitions>#1430925960854</outTransitions>

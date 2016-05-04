@@ -22,14 +22,14 @@ namespace alica
     void DriveToPenaltyStart::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData.getOwnPositionVision();
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getEgoBallPosition();
         if (me == nullptr)
         {
             return;
         }
         auto egoTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0)->alloToEgo(*me);
-        auto egoAlignPoint = wm->field.posOppGoalMid()->alloToEgo(*me);
+        auto egoAlignPoint = wm->field->posOppGoalMid()->alloToEgo(*me);
 
         msl_actuator_msgs::MotionControl mc;
 

@@ -32,7 +32,7 @@ namespace alica
         double correctedPosY;
         double diffX;
         double diffY;
-        double lengthVision;
+        double lengthVisionSegment;
         double lengthSegment;
 
         CalibrationCoefficient calibCoeff;

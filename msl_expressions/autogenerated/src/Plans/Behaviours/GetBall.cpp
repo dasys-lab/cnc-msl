@@ -23,21 +23,21 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
-        auto obstacles = wm->obstacles.getAlloObstaclePoints();
+        auto obstacles = wm->obstacles->getAlloObstaclePoints();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
         if (obstacles != nullptr)
         {
             for (int i = 0; i < obstacles->size(); i++)
             {
-                if (wm->pathPlanner.corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
-                                                  egoBallPos->egoToAllo(*me), obstacles->at(i)))
+                if (wm->pathPlanner->corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
+                                                   egoBallPos->egoToAllo(*me), obstacles->at(i)))
                 {
                     blocked = true;
                     break;
@@ -46,14 +46,14 @@ namespace alica
         }
         if (!blocked)
         {
-            auto egoBallVelocity = wm->ball.getEgoBallVelocity();
+            auto egoBallVelocity = wm->ball->getEgoBallVelocity();
             if (egoBallVelocity == nullptr)
             {
                 egoBallVelocity = make_shared<geometry::CNVelocity2D>();
             }
             auto vector = egoBallVelocity + egoBallPos;
             double vectorLength = vector->length();
-            if (wm->ball.haveBall())
+            if (wm->ball->haveBall())
             {
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
@@ -63,7 +63,7 @@ namespace alica
                 send(mc);
                 return;
             }
-            else if (wm->game.getTimeSinceStart() >= timeForPass)
+            else if (wm->game->getTimeSinceStart() >= timeForPass)
             {
                 this->failure = true;
             }

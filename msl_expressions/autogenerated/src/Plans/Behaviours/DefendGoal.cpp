@@ -36,14 +36,14 @@ namespace alica
     void DefendGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459249294699) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         //List<TrackedOpponent> opponents = WM.GetTrackedOpponents();
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > destAllo = make_shared<geometry::CNPoint2D>();
         shared_ptr < geometry::CNPoint2D > destEgo = make_shared<geometry::CNPoint2D>();
 
         destAllo->y = 0;
-        destAllo->x = -wm->field.getFieldLength() / 2.0 + fieldOffset;
+        destAllo->x = -wm->field->getFieldLength() / 2.0 + fieldOffset;
 
         if (ownPos == nullptr)
         {
@@ -52,7 +52,7 @@ namespace alica
         }
 
         destEgo = destAllo->alloToEgo(*ownPos);
-        if (ownPos->x > -wm->field.getFieldLength() / 2.0 + wm->field.getPenaltyAreaLength())
+        if (ownPos->x > -wm->field->getFieldLength() / 2.0 + wm->field->getPenaltyAreaLength())
         {
 
             auto alignPoint = make_shared<geometry::CNPoint2D>()->alloToEgo(*ownPos);
@@ -65,7 +65,7 @@ namespace alica
             return;
         }
 
-        auto ballPos = wm->ball.getEgoBallPosition();
+        auto ballPos = wm->ball->getEgoBallPosition();
 
         if (ballPos == nullptr)
         {
@@ -76,7 +76,7 @@ namespace alica
         auto alloBall = ballPos->egoToAllo(*ownPos);
 
         // Predict Ball to Goal Line
-        auto ballV3D = wm->ball.getBallVel3D();
+        auto ballV3D = wm->ball->getBallVel3D();
         shared_ptr < geometry::CNPoint3D > ballV3DAllo = nullptr;
         bool hitPointFound = false;
         if (ballV3D != nullptr)
@@ -104,7 +104,7 @@ namespace alica
         destAllo = applyBoundaries4Pos(destAllo, postOffset);
 
         destEgo = destAllo->alloToEgo(*ownPos);
-        if (destEgo->length() < wm->field.getPenaltyAreaLength())
+        if (destEgo->length() < wm->field->getPenaltyAreaLength())
         {
 //			mc = DriveHelper.DriveToPointAndAlignCareObstacles(destEgo,ballPos, KeeperHelper.GetSpeed(destEgo),WM);
             mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
@@ -154,10 +154,10 @@ namespace alica
     {
         shared_ptr < geometry::CNPoint2D > newP = make_shared < geometry::CNPoint2D > (*dest);
         //boundaries for position
-        if (dest->y > (wm->field.posLeftOwnGoalPost()->y - postOffset))
-            newP->y = (wm->field.posLeftOwnGoalPost()->y - postOffset);
-        if (dest->y < (wm->field.posRightOwnGoalPost()->y + postOffset))
-            newP->y = (wm->field.posRightOwnGoalPost()->y + postOffset);
+        if (dest->y > (wm->field->posLeftOwnGoalPost()->y - postOffset))
+            newP->y = (wm->field->posLeftOwnGoalPost()->y - postOffset);
+        if (dest->y < (wm->field->posRightOwnGoalPost()->y + postOffset))
+            newP->y = (wm->field->posRightOwnGoalPost()->y + postOffset);
         return newP;
     }
 

@@ -27,8 +27,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
         //TODO  not allowed in enemy half (rules), new conf for rules
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto egoBallPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
@@ -50,7 +50,7 @@ namespace alica
         MotionControl mc;
 
         msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
-        if (wm->game.getSituation() == msl::Situation::Start)
+        if (wm->game->getSituation() == msl::Situation::Start)
         { // they already pressed start and we are still positioning, so speed up!
             mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
         }

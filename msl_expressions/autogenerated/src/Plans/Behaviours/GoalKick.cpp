@@ -30,8 +30,8 @@ namespace alica
     void GoalKick::run(void* msg)
     {
         /*PROTECTED REGION ID(run1415205565589) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
@@ -45,7 +45,7 @@ namespace alica
 
         alloAimPoint = nullptr;
 
-        auto obs = wm->obstacles.getEgoVisionObstacles();
+        auto obs = wm->obstacles->getEgoVisionObstacles();
         bool leftBlocked = false;
         bool midBlocked = false;
         bool rightBlocked = false;
@@ -55,19 +55,19 @@ namespace alica
             {
                 break;
             }
-            if (wm->pathPlanner.corridorCheckBall(
+            if (wm->pathPlanner->corridorCheckBall(
                     make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloLeftAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
                 leftBlocked = true;
             }
-            if (wm->pathPlanner.corridorCheckBall(
+            if (wm->pathPlanner->corridorCheckBall(
                     make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloMidAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
                 midBlocked = true;
             }
-            if (wm->pathPlanner.corridorCheckBall(
+            if (wm->pathPlanner->corridorCheckBall(
                     make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y), alloRightAimPoint,
                     make_shared < geometry::CNPoint2D > (obs->at(i).x, obs->at(i).y)->egoToAllo(*ownPos)))
             {
@@ -122,12 +122,12 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1415205565589) ENABLED START*/ //Add additional options here
         alloLeftAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + 250, wm->field.posLeftOppGoalPost()->y
-                        - wm->ball.getBallDiameter() * 1.5);
-        alloMidAimPoint = make_shared < geometry::CNPoint2D > (wm->field.getFieldLength() / 2 + 250, 0);
+                > (wm->field->getFieldLength() / 2 + 250, wm->field->posLeftOppGoalPost()->y
+                        - wm->ball->getBallDiameter() * 1.5);
+        alloMidAimPoint = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 2 + 250, 0);
         alloRightAimPoint = make_shared < geometry::CNPoint2D
-                > (wm->field.getFieldLength() / 2 + 250, wm->field.posRightOppGoalPost()->y
-                        + wm->ball.getBallDiameter() * 1.5);
+                > (wm->field->getFieldLength() / 2 + 250, wm->field->posRightOppGoalPost()->y
+                        + wm->ball->getBallDiameter() * 1.5);
         alloAimPoint = nullptr;
         angleTolerance = 0.075;
         minKickPower = 1500.0;

@@ -159,6 +159,7 @@ public:
     double _BLACK_POINT_WIDTH;
     double _BLACK_POINT_LENGTH;
     double _ROBOT_RADIUS;
+    string currentField;
 
     // mutex
     mutex swmMutex;

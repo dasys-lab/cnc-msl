@@ -28,8 +28,6 @@
 
 #include  "Plans/Defence/MidfieldDefense1458033329973.h"
 
-#include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
-
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
 
 #include  "Plans/GameStrategy/Gameplay/GamePlay1457173546734.h"
@@ -71,6 +69,8 @@
 #include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+
+#include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
 
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
@@ -592,30 +592,6 @@ namespace alica
 
                 break;
 
-            case 1417017585255:
-
-                return make_shared<TransitionCondition1417017585255>();
-
-                break;
-
-            case 1427721261678:
-
-                return make_shared<TransitionCondition1427721261678>();
-
-                break;
-
-            case 1435321214610:
-
-                return make_shared<TransitionCondition1435321214610>();
-
-                break;
-
-            case 1435321221937:
-
-                return make_shared<TransitionCondition1435321221937>();
-
-                break;
-
             case 1458033723845:
 
                 return make_shared<RunTimeCondition1458033723845>();
@@ -925,6 +901,48 @@ namespace alica
             case 1441107217606:
 
                 return make_shared<TransitionCondition1441107217606>();
+
+                break;
+
+            case 1461574228077:
+
+                return make_shared<RunTimeCondition1461574228077>();
+
+                break;
+
+            case 1461237657374:
+
+                return make_shared<TransitionCondition1461237657374>();
+
+                break;
+
+            case 1461237677283:
+
+                return make_shared<TransitionCondition1461237677283>();
+
+                break;
+
+            case 1461237854702:
+
+                return make_shared<TransitionCondition1461237854702>();
+
+                break;
+
+            case 1461572770571:
+
+                return make_shared<TransitionCondition1461572770571>();
+
+                break;
+
+            case 1461584286706:
+
+                return make_shared<TransitionCondition1461584286706>();
+
+                break;
+
+            case 1461584441559:
+
+                return make_shared<TransitionCondition1461584441559>();
 
                 break;
 

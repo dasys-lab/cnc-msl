@@ -29,8 +29,6 @@
 
 #include  "Plans/Defence/MidfieldDefense1458033329973.h"
 
-#include  "Plans/ActuatorTest/ActuatorTestMaster1417017436952.h"
-
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
 
 #include  "Plans/GameStrategy/Gameplay/GamePlay1457173546734.h"
@@ -72,6 +70,8 @@
 #include  "Plans/Attack/TestPlans/TestDriveToMiddle1457434329037.h"
 
 #include  "Plans/Attack/TestPlans/PassPlan1441106995954.h"
+
+#include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
 
 #include  "Plans/Standards/Opponent/OppStandardExecution1457015277573.h"
 
@@ -189,10 +189,6 @@ namespace alica
                 return make_shared<UtilityFunction1458033329973>();
                 break;
 
-            case 1417017436952:
-                return make_shared<UtilityFunction1417017436952>();
-                break;
-
             case 1458033620834:
                 return make_shared<UtilityFunction1458033620834>();
                 break;
@@ -275,6 +271,10 @@ namespace alica
 
             case 1441106995954:
                 return make_shared<UtilityFunction1441106995954>();
+                break;
+
+            case 1461237603689:
+                return make_shared<UtilityFunction1461237603689>();
                 break;
 
             case 1457015277573:
