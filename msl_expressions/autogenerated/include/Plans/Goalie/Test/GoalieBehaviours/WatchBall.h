@@ -31,18 +31,19 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> prevTarget;
         shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field->posCenterMarker();
         shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
+        bool alignTowardsBall;
         int maxVariance;
         int goalieSize;
         int nrOfPositions;
         int snapDistance;
-        double fastRotation;
         double alignMaxVel;
-        double pFactor;
-        double dFactor;
-        double prevTargetDist;
+        double pTrans, dTrans, pRot, dRot;
+        double prevTargetDist, lastRotErr;
+        double rotationLimit;
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
         double fitTargetY(double targetY);
         double calcGoalImpactY();
+        void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863466691) ENABLED START*/ //Add additional private methods here
