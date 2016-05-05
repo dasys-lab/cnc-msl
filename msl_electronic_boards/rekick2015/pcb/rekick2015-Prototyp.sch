@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -21304,7 +21304,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="GND33" library="supply1" deviceset="GND" device=""/>
 <part name="C7" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="SUPPLY26" library="supply2" deviceset="+5V/3" device=""/>
-<part name="R31" library="rcl" deviceset="R-EU_" device="R0805" value="20k"/>
 <part name="H1" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="H2" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
 <part name="H3" library="holes" deviceset="MOUNT-PAD-ROUND" device="3.0"/>
@@ -21378,7 +21377,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="C46" library="rcl" deviceset="C-EU" device="C0603" value="100p"/>
 <part name="GND38" library="supply1" deviceset="GND" device=""/>
 <part name="P+17" library="supply1" deviceset="+24V" device=""/>
-<part name="SUPPLY18" library="supply2" deviceset="GND1" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -22957,7 +22955,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="T3" gate="G$1" x="180.34" y="160.02"/>
 <instance part="R24" gate="G$1" x="167.64" y="160.02"/>
 <instance part="C35" gate="G$1" x="157.48" y="147.32"/>
-<instance part="R31" gate="G$1" x="144.78" y="152.4" rot="R90"/>
 <instance part="CAP_330V" gate="G$1" x="254" y="116.84" rot="R180"/>
 <instance part="CAP_0V" gate="G$1" x="254" y="101.6" rot="R180"/>
 <instance part="GND1" gate="1" x="88.9" y="91.44"/>
@@ -22965,7 +22962,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="R46" gate="G$1" x="226.06" y="147.32" rot="R90"/>
 <instance part="R53" gate="G$1" x="144.78" y="124.46"/>
 <instance part="R54" gate="G$1" x="144.78" y="104.14"/>
-<instance part="SUPPLY18" gate="G$1" x="144.78" y="142.24"/>
 </instances>
 <busses>
 </busses>
@@ -23004,11 +23000,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <junction x="167.64" y="142.24"/>
 <pinref part="LED8" gate="G$1" pin="C"/>
 <junction x="231.14" y="147.32"/>
-</segment>
-<segment>
-<pinref part="R31" gate="G$1" pin="1"/>
-<wire x1="144.78" y1="144.78" x2="144.78" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="SUPPLY18" gate="G$1" pin="GND1"/>
 </segment>
 </net>
 <net name="BOOSTER_24V" class="0">
@@ -23344,12 +23335,8 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <net name="ACTIVATE_BOOSTER" class="0">
 <segment>
 <pinref part="R24" gate="G$1" pin="1"/>
-<wire x1="162.56" y1="160.02" x2="144.78" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="160.02" x2="139.7" y2="160.02" width="0.1524" layer="91"/>
 <label x="139.7" y="160.02" size="1.778" layer="95" rot="R180" xref="yes"/>
-<pinref part="R31" gate="G$1" pin="2"/>
-<wire x1="144.78" y1="160.02" x2="139.7" y2="160.02" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="157.48" x2="144.78" y2="160.02" width="0.1524" layer="91"/>
-<junction x="144.78" y="160.02"/>
 </segment>
 </net>
 <net name="N$57" class="0">
