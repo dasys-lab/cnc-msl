@@ -184,15 +184,27 @@ namespace msl_driver
 		string extension = "";
 		if (ks->extTime > 0 && ks->extTime < 10000)
 		{
-			if (ks->extension == 1)
+			/**
+			 *	HARDWARE HACK:
+			 *	From time to time, we had to change the cables of the
+			 *	extensions at the kicker circuit board. We did this without changing
+			 *	the kicker firmware. Therefore, the cases below does not necessarily
+			 *	match the content of the ROS message.
+			 *
+			 *	Currently (May 05, 2016) the configuration is:
+			 *	UEXT == LEFT_EXTENSION
+			 *	REXT == RIGHT_EXTENSION
+			 *	LEXT == UPPER_EXTENSION
+			 */
+			if (ks->extension == msl_actuator_msgs::KickControl::LEFT_EXTENSION)
 			{
 				extension = string("UEXT " + to_string(ks->extTime));
 			}
-			else if (ks->extension == 2)
+			else if (ks->extension == msl_actuator_msgs::KickControl::RIGHT_EXTENSION)
 			{
 				extension = string("REXT " + to_string(ks->extTime));
 			}
-			else if (ks->extension == 3)
+			else if (ks->extension == msl_actuator_msgs::KickControl::UPPER_EXTENSION)
 			{
 				extension = string("LEXT " + to_string(ks->extTime));
 			}
