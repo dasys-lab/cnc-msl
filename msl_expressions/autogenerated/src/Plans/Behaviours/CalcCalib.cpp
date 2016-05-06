@@ -118,6 +118,9 @@ namespace alica
             calibCoefficient = 1;
         }
 
+        ros::NodeHandle calibCEP;
+        calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
+
         if (length != 0)
         {
                 calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
@@ -137,9 +140,6 @@ namespace alica
             saveToCalibData.open(filename);
             saveToCalibData << calibCoefficient;
             saveToCalibData.close();
-
-            ros::NodeHandle calibCEP;
-            calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
 
             calibCoeff.calibCoefficient = calibCoefficient;
             calibCoeff_pub.publish(calibCoeff);
