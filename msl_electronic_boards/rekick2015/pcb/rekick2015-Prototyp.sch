@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.5.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -22505,7 +22505,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <part name="CF" library="rcl" deviceset="C-EU" device="C0603"/>
 <part name="C12" library="rcl" deviceset="C-EU" device="C0603"/>
 <part name="C_BOOT" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
-<part name="R_SS2" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="R_DELAY" library="rcl" deviceset="R-EU_" device="R0805"/>
 <part name="C_DELAY" library="rcl" deviceset="C-EU" device="C0603"/>
 <part name="C11" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
@@ -24302,7 +24301,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <instance part="CF" gate="G$1" x="83.82" y="121.92" rot="R270"/>
 <instance part="C12" gate="G$1" x="55.88" y="104.14"/>
 <instance part="C_BOOT" gate="G$1" x="134.62" y="129.54"/>
-<instance part="R_SS2" gate="G$1" x="78.74" y="142.24" rot="R270"/>
 <instance part="R_DELAY" gate="G$1" x="63.5" y="129.54" rot="R90"/>
 <instance part="C_DELAY" gate="G$1" x="68.58" y="129.54"/>
 <instance part="C11" gate="G$1" x="134.62" y="109.22"/>
@@ -24461,19 +24459,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <junction x="134.62" y="111.76"/>
 </segment>
 </net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="R_SS" gate="G$1" pin="1"/>
-<wire x1="45.72" y1="152.4" x2="45.72" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="CSS" gate="G$1" pin="1"/>
-<wire x1="45.72" y1="152.4" x2="78.74" y2="152.4" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="152.4" x2="88.9" y2="152.4" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="152.4" x2="88.9" y2="149.86" width="0.1524" layer="91"/>
-<pinref part="R_SS2" gate="G$1" pin="1"/>
-<wire x1="78.74" y1="147.32" x2="78.74" y2="152.4" width="0.1524" layer="91"/>
-<junction x="78.74" y="152.4"/>
-</segment>
-</net>
 <net name="N$11" class="0">
 <segment>
 <pinref part="U$3" gate="L6599" pin="CF"/>
@@ -24492,8 +24477,14 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <segment>
 <pinref part="U$3" gate="L6599" pin="CSS"/>
 <wire x1="78.74" y1="132.08" x2="91.44" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="R_SS2" gate="G$1" pin="2"/>
-<wire x1="78.74" y1="132.08" x2="78.74" y2="137.16" width="0.1524" layer="91"/>
+<pinref part="R_SS" gate="G$1" pin="1"/>
+<wire x1="45.72" y1="152.4" x2="45.72" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="CSS" gate="G$1" pin="1"/>
+<wire x1="45.72" y1="152.4" x2="78.74" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="152.4" x2="88.9" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="152.4" x2="88.9" y2="149.86" width="0.1524" layer="91"/>
+<junction x="78.74" y="152.4"/>
+<wire x1="78.74" y1="132.08" x2="78.74" y2="152.4" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$8" class="0">
