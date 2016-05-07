@@ -23480,8 +23480,9 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 </net>
 <net name="BURST" class="0">
 <segment>
-<wire x1="160.02" y1="119.38" x2="162.56" y2="119.38" width="0.1524" layer="91"/>
 <label x="162.56" y="119.38" size="1.27" layer="95" xref="yes"/>
+<pinref part="R56" gate="G$1" pin="2"/>
+<wire x1="157.48" y1="119.38" x2="162.56" y2="119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="STBY" class="0">
@@ -23496,12 +23497,6 @@ Source: http://www.onsemi.co.jp .. LM137M-D.PDF</description>
 <pinref part="U$2" gate="G$1" pin="PD5"/>
 <wire x1="124.46" y1="96.52" x2="132.08" y2="96.52" width="0.1524" layer="91"/>
 <label x="132.08" y="96.52" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="N$45" class="0">
-<segment>
-<pinref part="R56" gate="G$1" pin="2"/>
-<wire x1="157.48" y1="119.38" x2="160.02" y2="119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$51" class="0">
