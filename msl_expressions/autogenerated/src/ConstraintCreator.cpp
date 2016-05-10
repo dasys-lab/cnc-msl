@@ -51,6 +51,8 @@
 
 #include  "Plans/Attack/TestPlans/constraints/AttackOppGoalPlan1437902649389Constraints.h"
 
+#include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInOwnHalf1462360503828Constraints.h"
+
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
 
 #include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
@@ -71,9 +73,9 @@
 
 #include  "Plans/Attack/TestPlans/constraints/PassPlan1441106995954Constraints.h"
 
-#include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInNearGoal1461237603689Constraints.h"
-
 #include  "Plans/Standards/Opponent/constraints/OppStandardExecution1457015277573Constraints.h"
+
+#include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInNearGoal1461237603689Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestCheckGoalKick1449076138236Constraints.h"
 
@@ -81,9 +83,11 @@
 
 #include  "Plans/Attack/TestPlans/constraints/TestDribblePlan1437902404050Constraints.h"
 
-#include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
+#include  "Plans/Standards/Own/Corner/constraints/CornerKick1462373376006Constraints.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/constraints/PassIntoPath1457530916296Constraints.h"
+
+#include  "Plans/GameStrategy/Other/constraints/SimpleDropBall1426696586622Constraints.h"
 
 #include  "Plans/Defence/Test/constraints/TestApproachBallMaster1430324312981Constraints.h"
 
@@ -109,9 +113,9 @@
 
 #include  "Plans/Attack/constraints/Duel1450178655416Constraints.h"
 
-#include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
-
 #include  "Plans/Attack/constraints/Tackle1434116965565Constraints.h"
+
+#include  "Plans/GenericStandards/constraints/GenericOwnStandards1430924951132Constraints.h"
 
 #include  "Plans/Defence/Test/constraints/TestBackroomDefence1455127495970Constraints.h"
 
@@ -156,6 +160,10 @@ namespace alica
 
             case 1457173948942:
                 return make_shared<Constraint1457173948942>();
+                break;
+
+            case 1462361418213:
+                return make_shared<Constraint1462361418213>();
                 break;
 
             case 1461574228077:

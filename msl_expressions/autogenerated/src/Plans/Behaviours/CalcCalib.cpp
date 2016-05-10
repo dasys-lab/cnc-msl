@@ -36,7 +36,6 @@ namespace alica
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
         auto calibPosMotionTheta = this->wm->rawSensorData->getOwnPositionMotion()->theta;
 
-
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
                 * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
                         - this->wm->rawSensorData->getOwnPositionMotion()->theta)
@@ -61,12 +60,12 @@ namespace alica
 
 //        if (tempyoyo == 5)
 //        {
-            lengthVisionSegment = lengthVisionSegment
-                    + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
-                            + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+        lengthVisionSegment = lengthVisionSegment
+                + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
+                        + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
-            calibOldPosVisionX = calibPosVisionX;
-            calibOldPosVisionY = calibPosVisionY;
+        calibOldPosVisionX = calibPosVisionX;
+        calibOldPosVisionY = calibPosVisionY;
 //            tempyoyo = 0;
 //
 //        }
@@ -123,17 +122,17 @@ namespace alica
 
         if (length != 0)
         {
-                calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
-                        * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1;
+            calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
+                    * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1;
 
-                if (calibCoefficient < 0.5)
-                {
-                    calibCoefficient = 0.5;
-                }
-                else if (calibCoefficient > 1.5)
-                {
-                	calibCoefficient = 1.5;
-                }
+            if (calibCoefficient < 0.5)
+            {
+                calibCoefficient = 0.5;
+            }
+            else if (calibCoefficient > 1.5)
+            {
+                calibCoefficient = 1.5;
+            }
 
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
             ofstream saveToCalibData;
@@ -159,7 +158,6 @@ namespace alica
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
-
 
         std::cout << "" << std::endl;
 
