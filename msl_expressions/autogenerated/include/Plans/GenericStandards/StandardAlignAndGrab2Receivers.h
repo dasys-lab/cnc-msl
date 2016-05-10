@@ -20,6 +20,12 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462368682104) ENABLED START*/ //Add additional private methods here
+
+        string teamMateTaskName1;
+        string teamMateTaskName2;
+        shared_ptr<geometry::CNPoint2D> recPos1;
+        shared_ptr<geometry::CNPoint2D> recPos2;
+
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

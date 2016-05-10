@@ -41,7 +41,7 @@
   <states id="1462361373364" name="Block" comment="" entryPoint="1462360612527">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
-  <states id="1462363134771" name="Receivealternative" comment="">
+  <states id="1462363134771" name="ReceiveAlternative" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1462368267461</inTransitions>
     <outTransitions>#1462368201420</outTransitions>
@@ -83,12 +83,12 @@
     <inState>#1462363134771</inState>
     <outState>#1462368161988</outState>
   </transitions>
-  <transitions id="1462368266008" name="MISSING_NAME" comment="align &amp;&amp; executer in wait firstreceiver" msg="">
+  <transitions id="1462368266008" name="MISSING_NAME" comment="pm for own id" msg="">
     <preCondition id="1462368267324" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462361351034</inState>
     <outState>#1462368095616</outState>
   </transitions>
-  <transitions id="1462368267461" name="MISSING_NAME" comment="align &amp;&amp; executer in wait secondreceiver" msg="">
+  <transitions id="1462368267461" name="MISSING_NAME" comment="pm for own id alternative" msg="">
     <preCondition id="1462368269701" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462361358155</inState>
     <outState>#1462363134771</outState>
