@@ -48,6 +48,8 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
+#include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+
 #include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
@@ -108,9 +110,9 @@
 
 #include  "Plans/Attack/Duel1450178655416.h"
 
-#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
-
 #include  "Plans/Attack/Tackle1434116965565.h"
+
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
 #include  "Plans/Defence/Test/TestBackroomDefence1455127495970.h"
 
@@ -667,6 +669,60 @@ namespace alica
             case 1457173948942:
 
                 return make_shared<RunTimeCondition1457173948942>();
+
+                break;
+
+            case 1462361418213:
+
+                return make_shared<RunTimeCondition1462361418213>();
+
+                break;
+
+            case 1462360958757:
+
+                return make_shared<TransitionCondition1462360958757>();
+
+                break;
+
+            case 1462360959862:
+
+                return make_shared<TransitionCondition1462360959862>();
+
+                break;
+
+            case 1462360961688:
+
+                return make_shared<TransitionCondition1462360961688>();
+
+                break;
+
+            case 1462368132067:
+
+                return make_shared<TransitionCondition1462368132067>();
+
+                break;
+
+            case 1462368203054:
+
+                return make_shared<TransitionCondition1462368203054>();
+
+                break;
+
+            case 1462368267324:
+
+                return make_shared<TransitionCondition1462368267324>();
+
+                break;
+
+            case 1462368269701:
+
+                return make_shared<TransitionCondition1462368269701>();
+
+                break;
+
+            case 1462369227764:
+
+                return make_shared<TransitionCondition1462369227764>();
 
                 break;
 

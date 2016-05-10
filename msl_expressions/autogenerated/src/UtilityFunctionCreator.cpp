@@ -49,6 +49,8 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
+#include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+
 #include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
@@ -109,9 +111,9 @@
 
 #include  "Plans/Attack/Duel1450178655416.h"
 
-#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
-
 #include  "Plans/Attack/Tackle1434116965565.h"
+
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
 #include  "Plans/Defence/Test/TestBackroomDefence1455127495970.h"
 
@@ -227,6 +229,10 @@ namespace alica
 
             case 1457173681216:
                 return make_shared<UtilityFunction1457173681216>();
+                break;
+
+            case 1462360503828:
+                return make_shared<UtilityFunction1462360503828>();
                 break;
 
             case 1437902649389:
@@ -349,12 +355,12 @@ namespace alica
                 return make_shared<UtilityFunction1450178655416>();
                 break;
 
-            case 1430924951132:
-                return make_shared<UtilityFunction1430924951132>();
-                break;
-
             case 1434116965565:
                 return make_shared<UtilityFunction1434116965565>();
+                break;
+
+            case 1430924951132:
+                return make_shared<UtilityFunction1430924951132>();
                 break;
 
             case 1455127495970:
