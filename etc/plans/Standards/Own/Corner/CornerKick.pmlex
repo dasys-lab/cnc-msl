@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CornerKick.pml#1462373376007"/>
+    <value xPos="89" yPos="65" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373376006"/>
+    <value width="925" height="587"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373376008"/>
+    <value xPos="-133" yPos="130" width="121" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462373457908"/>
+    <value xPos="-108" yPos="260" width="154" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="CornerKick.pml#1462374515826"/>
+    <value xPos="125" yPos="196" width="65" height="67"/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
