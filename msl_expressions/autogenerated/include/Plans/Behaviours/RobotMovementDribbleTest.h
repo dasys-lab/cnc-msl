@@ -2,6 +2,8 @@
 #define RobotMovementDribbleTest_H_
 
 #include "DomainBehaviour.h"
+#include "robotmovement/MovementQuery.h"
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION ID(inc1462969724089) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica

@@ -79,11 +79,8 @@ namespace alica
 
 		bm = rm.experimentallyRuleActionForBallGetter();
 
-		if (tmpMC != nullptr)
-		{
-			bm = *tmpMC;
+			bm = tmpMC;
 			send(bm);
-		}
 		/*PROTECTED REGION END*/
 	}
 	void RobotMovementDribbleTest::initialiseParameters()
@@ -95,7 +92,7 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1462969724089) ENABLED START*/ //Add additional methods here
-	void DribbleToAttackPointConservative::trueInitialize() // so true and so evil
+	void RobotMovementDribbleTest::trueInitialize() // so true and so evil
 	{
 		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
