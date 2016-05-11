@@ -8,11 +8,11 @@
 #include <GeometryCalculator.h>
 #include "MSLWorldModel.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "RawSensorData.h"
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "engine/AlicaEngine.h"
 #include "engine/IAlicaClock.h"
 #include "tf/tf.h"
+
 
 namespace msl
 {
@@ -41,14 +41,15 @@ namespace msl
 		return this->alicaEngine;
 	}
 
-	MSLWorldModel::MSLWorldModel() :
-			ringBufferLength(10), rawSensorData(this, 10), robots(this, 10), ball(this, 10), game(this, 10), pathPlanner(
-					this, 10), kicker(this), alicaEngine(nullptr), whiteBoard(this), obstacles(this, 10)
+	MSLWorldModel::MSLWorldModel()
 	{
 		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
+		sc = supplementary::SystemConfig::getInstance();
+
+		visionDataEventTrigger = new supplementary::EventTrigger();
 		rawOdomSub = n.subscribe("/RawOdometry", 10, &MSLWorldModel::onRawOdometryInfo, (MSLWorldModel*)this);
 
 		joystickSub = n.subscribe("/Joystick", 10, &MSLWorldModel::onJoystickCommand, (MSLWorldModel*)this);
@@ -74,6 +75,8 @@ namespace msl
 										(MSLWorldModel*)this);
 
 		passMsgSub = n.subscribe("/WorldModel/PassMsg", 10, &MSLWorldModel::onPassMsg, (MSLWorldModel*)this);
+		watchBallMsgSub = n.subscribe("/WorldModel/WatchBallMsg", 10, &MSLWorldModel::onWatchBallMsg,
+										(MSLWorldModel*)this);
 
 		correctedOdometrySub = n.subscribe("/CorrectedOdometryInfo", 10, &MSLWorldModel::onCorrectedOdometryInfo,
 											(MSLWorldModel*)this);
@@ -82,11 +85,31 @@ namespace msl
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
+		this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);
+		this->maySendMessages = (*this->sc)["WorldModel"]->get<bool>("WorldModel", "MaySendMessages", NULL);
+		//initialize ringbuffers
+		this->field = new MSLFootballField(this);
+		this->ball = new Ball(this, ringBufferLength);
+		this->lightBarrier = new LightBarrier(this);
+		this->rawSensorData = new RawSensorData(this, ringBufferLength);
+		this->robots = new Robots(this, ringBufferLength);
+		this->game = new Game(this, ringBufferLength);
+		this->pathPlanner = new PathPlanner(this, ringBufferLength);
+		this->kicker = new Kicker(this);
+		this->alicaEngine = nullptr;
+		this->whiteBoard = new WhiteBoard(this);
+		this->obstacles = new Obstacles(this, ringBufferLength);
+		this->prediction = new Prediction();
+		this->monitoring = new Monitoring(this);
+	}
+	supplementary::ITrigger* MSLWorldModel::getVisionDataEventTrigger()
+	{
+		return this->visionDataEventTrigger;
 	}
 
 	void MSLWorldModel::onJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{
-		this->rawSensorData.processJoystickCommand(msg);
+		this->rawSensorData->processJoystickCommand(msg);
 	}
 
 	void MSLWorldModel::onSimWorldModel(msl_sensor_msgs::SimulatorWorldModelDataPtr msg)
@@ -99,8 +122,16 @@ namespace msl
 		}
 	}
 
+	bool MSLWorldModel::isUsingSimulator()
+	{
+		return this->timeLastSimMsgReceived > 10;
+	}
+
 	void MSLWorldModel::onGazeboModelState(gazebo_msgs::ModelStatesPtr msg)
 	{
+		if (this->timeLastSimMsgReceived == 0)
+			cout << "MSLWorldModel: Did you forget to start the base with '-sim'?" << endl;
+
 		alica::AlicaTime now = this->alicaEngine->getIAlicaClock()->now();
 
 		this->timeLastSimMsgReceived = now;
@@ -133,30 +164,28 @@ namespace msl
 								+ msg->twist[i].linear.y * msg->twist[i].linear.y) * 1000.0;
 				wmsim->odometry.motion.rotation = msg->twist[i].angular.z;
 			}
-			else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0 && msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0 && msg->name[i].compare("football") != 0)
+			else if (msg->name[i].compare("ground_plane") != 0 && msg->name[i].compare("field") != 0
+					&& msg->name[i].compare("left_goal") != 0 && msg->name[i].compare("right_goal") != 0
+					&& msg->name[i].compare("football") != 0)
 			{
 				msl_sensor_msgs::ObstacleInfo obsInfo;
 				obsInfo.diameter = 500.0;
 				obsInfo.x = msg->pose[i].position.x * 1000.0;
 				obsInfo.y = msg->pose[i].position.y * 1000.0;
 
-				//only if obstacle is closer than 6m
-				if(sqrt(obsInfo.x*obsInfo.x + obsInfo.y*obsInfo.y) < 6000) {
-					wmsim->obstacles.push_back(obsInfo);
-				}
+				wmsim->obstacles.push_back(obsInfo);
 			}
-
 
 			if (msg->name[i] == "football")
 			{
-					wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
-					wmsim->ball.confidence = 1.0;
-					wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
-					wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
-					wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
-					wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
-					wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
-					wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
+				wmsim->ball.ballType = 1; // TODO: introduce constants for Type in BallInfo-Msg.
+				wmsim->ball.confidence = 1.0;
+				wmsim->ball.point.x = msg->pose[i].position.x * 1000.0;
+				wmsim->ball.point.y = msg->pose[i].position.y * 1000.0;
+				wmsim->ball.point.z = msg->pose[i].position.z * 1000.0;
+				wmsim->ball.velocity.vx = msg->twist[i].linear.x * 1000.0;
+				wmsim->ball.velocity.vy = msg->twist[i].linear.y * 1000.0;
+				wmsim->ball.velocity.vz = msg->twist[i].linear.z * 1000.0;
 			}
 		}
 
@@ -172,72 +201,82 @@ namespace msl
 		wmsim->ball.point.y = sin(angle) * dist;
 
 		//Only if ball is closer than 7m
-		if(dist > 7000) {
+		if (dist > 7000)
+		{
 			wmsim->ball.point.x = 0;
 			wmsim->ball.point.y = 0;
 			wmsim->ball.confidence = 0;
 		}
 
-		for (int i=0; i < 60; i++)
+		for (int i = 0; i < 60; i++)
 		{
 			wmsim->distanceScan.sectors.push_back(20000);
 		}
 
-
-		for (auto& obs : wmsim->obstacles)
+		for (int i = 0; i < wmsim->obstacles.size(); ++i)
 		{
+			auto& obs = wmsim->obstacles.at(i);
+
 			double x = obs.x - wmsim->odometry.position.x;
 			double y = obs.y - wmsim->odometry.position.y;
-
-			double angle = atan2(y, x) - wmsim->odometry.position.angle;
 			double dist = sqrt(x * x + y * y);
 
-			int sector = (int)(angle/(2*M_PI/60.0)) % 60;
+			//only if obstacle is closer than 6m
+			if (dist > 6000)
+			{
+				wmsim->obstacles.erase(wmsim->obstacles.begin() + i);
+				i--;
+				continue;
+			}
+
+			double angle = atan2(y, x) - wmsim->odometry.position.angle;
+
+			int sector = (int)(angle / (2 * M_PI / 60.0)) % 60;
 			if (sector < 0)
 				sector += 60;
 			wmsim->distanceScan.sectors[sector] = dist;
 
 			obs.x = cos(angle) * dist;
 			obs.y = sin(angle) * dist;
-
-
 		}
-
 
 		onWorldModelData(wmsim);
 	}
 
 	void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 	{
-		rawSensorData.processRawOdometryInfo(msg);
+		rawSensorData->processRawOdometryInfo(msg);
 	}
 
 	void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 	{
-		if(game.ownGoalColor == Color::Yellow) {
+		if (game->ownGoalColor != Color::Yellow)
+		{
 			msg->odometry.position.x = -msg->odometry.position.x;
 			msg->odometry.position.y = -msg->odometry.position.y;
 			msg->odometry.position.angle += M_PI;
-			while(msg->odometry.position.angle > M_PI) {
-				msg->odometry.position.angle -= 2*M_PI;
+			while (msg->odometry.position.angle > M_PI)
+			{
+				msg->odometry.position.angle -= 2 * M_PI;
 			}
 			msg->odometry.motion.angle += M_PI;
-			while(msg->odometry.motion.angle > M_PI) {
-				msg->odometry.motion.angle -= 2*M_PI;
+			while (msg->odometry.motion.angle > M_PI)
+			{
+				msg->odometry.motion.angle -= 2 * M_PI;
 			}
 		}
 
 		lock_guard<mutex> lock(wmMutex);
-		rawSensorData.processWorldModelData(msg);
-		obstacles.processWorldModelData(msg);
-		pathPlanner.processWorldModelData(msg);
+		rawSensorData->processWorldModelData(msg);
+		obstacles->processWorldModelData(msg);
+		pathPlanner->prepareVoronoiDiagram();
 		visionTrigger.run();
 	}
 
 	void msl::MSLWorldModel::onMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
 	{
 		lock_guard<mutex> lock(motionBurstMutex);
-		rawSensorData.processMotionBurst(msg);
+		rawSensorData->processMotionBurst(msg);
 	}
 
 	MSLWorldModel::~MSLWorldModel()
@@ -245,6 +284,18 @@ namespace msl
 		spinner->stop();
 		delete spinner;
 		delete this->sharedWorldModel;
+		delete this->ball;
+		delete this->field;
+		delete this->monitoring;
+		delete this->lightBarrier;
+		delete this->rawSensorData;
+		delete this->robots;
+		delete this->game;
+		delete this->pathPlanner;
+		delete this->kicker;
+		delete this->whiteBoard;
+		delete this->obstacles;
+		delete this->prediction;
 	}
 
 	double MSLWorldModel::getKickerVoltage()
@@ -274,12 +325,26 @@ namespace msl
 		}
 	}
 
+	bool MSLWorldModel::isMaySendMessages() const
+	{
+		return this->maySendMessages;
+	}
+
+	void MSLWorldModel::setMaySendMessages(bool maySendMessages)
+	{
+		this->maySendMessages = maySendMessages;
+	}
+
 	void MSLWorldModel::sendSharedWorldModelData()
 	{
+		if (!this->maySendMessages)
+		{
+			return;
+		}
 		msl_sensor_msgs::SharedWorldInfo msg;
 		msg.senderID = this->ownID;
-		auto ball = this->ball.getVisionBallPositionAndCertaincy();
-		auto pos = rawSensorData.getOwnPositionVision();
+		auto ball = this->ball->getVisionBallPositionAndCertaincy();
+		auto pos = rawSensorData->getOwnPositionVision();
 		if (pos == nullptr)
 		{
 			return;
@@ -291,9 +356,35 @@ namespace msl
 			msg.ball.point.x = p->x;
 			msg.ball.point.y = p->y;
 			msg.ball.confidence = ball->second;
+			msg.ballInPossession = this->ball->closeToTheBall();
+		}
+		else
+		{
+			msg.ballInPossession = false;
 		}
 
-		auto ballVel = this->ball.getVisionBallVelocity();
+		auto sb = this->ball->getAlloSharedBallPositionAndCertaincy();
+		if (sb != nullptr && sb->first != nullptr && this->ball->getSharedBallSupporter() > 1)
+		{
+			msg.sharedBall.point.x = sb->first->x;
+			msg.sharedBall.point.y = sb->first->y;
+			msg.sharedBall.confidence = sb->second;
+			msg.sharedBall.evidence = this->ball->getSharedBallSupporter();
+		}
+		else if (sb == nullptr || sb->first == nullptr)
+		{
+			//if sb == nullptr send ballguess
+			auto guess = this->ball->getAlloBallGuessPosition();
+			if (guess != nullptr)
+			{
+				msg.sharedBall.point.x = guess->x;
+				msg.sharedBall.point.y = guess->y;
+				msg.sharedBall.confidence = 0.1;
+				msg.sharedBall.evidence = 1;
+			}
+		}
+
+		auto ballVel = this->ball->getVisionBallVelocity();
 		if (ballVel != nullptr)
 		{
 
@@ -301,7 +392,7 @@ namespace msl
 			msg.ball.velocity.vy = ballVel->y;
 		}
 
-		auto ownPos = rawSensorData.getOwnPositionVisionAndCertaincy();
+		auto ownPos = rawSensorData->getOwnPositionVisionAndCertaincy();
 		if (ownPos != nullptr)
 		{
 			msg.odom.position.x = ownPos->first->x;
@@ -310,7 +401,7 @@ namespace msl
 			msg.odom.certainty = ownPos->second;
 		}
 
-		auto ownVel = rawSensorData.getOwnVelocityVision();
+		auto ownVel = rawSensorData->getOwnVelocityVision();
 		if (ownVel != nullptr)
 		{
 			msg.odom.motion.angle = ownVel->angle;
@@ -318,7 +409,7 @@ namespace msl
 			msg.odom.motion.translation = ownVel->translation;
 		}
 
-		auto obs = obstacles.getObstacles();
+		auto obs = obstacles->getEgoVisionObstacles();
 		{
 			if (obs != nullptr)
 			{
@@ -343,7 +434,9 @@ namespace msl
 
 	void MSLWorldModel::onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg)
 	{
-		robots.processSharedWorldModelData(msg);
+		robots->processSharedWorldModelData(msg);
+		ball->processSharedWorldModelData(*msg);
+		game->updateGameState();
 	}
 
 	int MSLWorldModel::getRingBufferLength()
@@ -353,18 +446,23 @@ namespace msl
 
 	void MSLWorldModel::onPassMsg(msl_helper_msgs::PassMsgPtr msg)
 	{
-		whiteBoard.processPassMsg(msg);
+		whiteBoard->processPassMsg(msg);
+	}
+
+	void MSLWorldModel::onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg)
+	{
+		whiteBoard->processWatchBallMsg(msg);
 	}
 
 	void MSLWorldModel::onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg)
 	{
 		lock_guard<mutex> lock(correctedOdemetryMutex);
-		rawSensorData.processCorrectedOdometryInfo(msg);
+		rawSensorData->processCorrectedOdometryInfo(msg);
 	}
 
 	void MSLWorldModel::onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg)
 	{
-		rawSensorData.processBallHypothesisList(msg);
+		rawSensorData->processBallHypothesisList(msg);
 	}
 
 	int MSLWorldModel::getOwnId()
@@ -374,8 +472,7 @@ namespace msl
 
 	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
 	{
-		rawSensorData.processLightBarrier(msg);
+		rawSensorData->processLightBarrier(msg);
 	}
 } /* namespace msl */
-
 

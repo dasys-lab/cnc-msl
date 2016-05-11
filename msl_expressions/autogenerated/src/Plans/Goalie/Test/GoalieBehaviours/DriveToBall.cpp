@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 /*PROTECTED REGION ID(inccpp1447863493623) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,10 +22,43 @@ namespace alica
     void DriveToBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863493623) ENABLED START*/ //Add additional options here
-        /*cout << "inside drive to ball" << endl;
-         auto egoTarget = make_shared<geometry::CNPoint2D>(targetX, targetY);
-         mc = RobotMovement::moveToPointFast(egoTarget, goalMid, 100, 0);
-         /*PROTECTED REGION END*/
+        // TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
+        /*cout << "### DriveToBall ###" << endl;
+         me = wm->rawSensorData.getOwnPositionVision();
+         alloFieldCenter = MSLFootballField::posCenterMarker();
+         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball.getAlloBallPosition();
+
+         int goalieHalfSize;
+         if (simulating > 0)
+         goalieHalfSize = 410; // goalie size in simulator
+         else if (simulating < 0)
+         goalieHalfSize = 315; // 630mm/2 + 140mm = 445mm
+
+         if (alloBall == nullptr)
+         {
+         cout << "alloTarget null!" << endl;
+         return;
+         }
+         else if (me == nullptr)
+         {
+         cout << "me null!" << endl;
+         return;
+         }
+
+         alloTarget = alloBall;
+         shared_ptr < geometry::CNPoint2D > alloAlignPoint = MSLFootballField::posCenterMarker();
+
+         //egoAlignPoint = make_shared<geometry::CNPoint2D>(-me->x, me->y);
+         cout << "ownPosition : " << me->toString();
+         cout << "alignPoint  : " << alloAlignPoint->egoToAllo(*me)->toString();
+         cout << "targetPoint : " << alloTarget->toString();
+         cout << "ballPosition: " << alloBall->toString();
+
+         mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me), alloAlignPoint->alloToEgo(*me), 100);
+         send (mc);
+
+         cout << "### DriveToBall ###\n" << endl;*/
+        /*PROTECTED REGION END*/
     }
     void DriveToBall::initialiseParameters()
     {

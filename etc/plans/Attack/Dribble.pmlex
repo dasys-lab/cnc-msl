@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434049476066"/>
-    <value width="991" height="709"/>
+    <value xPos="-10" yPos="70" width="1012" height="712"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434049476068"/>
@@ -14,11 +14,7 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050474119"/>
-    <value xPos="101" yPos="526" width="96" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050491040"/>
-    <value xPos="603" yPos="521" width="65" height="67" collapsed="false"/>
+    <value xPos="352" yPos="465" width="211" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050502701"/>
@@ -34,18 +30,6 @@
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050619363"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050621017"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050622698"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Dribble.pml#1434050628706"/>
     <value/>
   </extensions>
   <extensions>
@@ -95,13 +79,13 @@
   <extensions>
     <key href="Dribble.pml#1434050681521"/>
     <value>
-      <bendpoints xPos="735" yPos="236"/>
+      <bendpoints xPos="696" yPos="240"/>
     </value>
   </extensions>
   <extensions>
     <key href="Dribble.pml#1434050686620"/>
     <value>
-      <bendpoints xPos="780" yPos="232"/>
+      <bendpoints xPos="737" yPos="235"/>
     </value>
   </extensions>
   <extensions>
@@ -134,6 +118,46 @@
   </extensions>
   <extensions>
     <key href="../Dribble/DribbleControl.beh#1449742099555"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.pml#1449151802193"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ProtectBall.beh#1457706612268"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleEmergencyKick.beh#1457706826895"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleEmergencyKick.beh#1457706895442"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleAttackConservative.beh#1457967385543"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleToAttackPointConservative.beh#1458132905432"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

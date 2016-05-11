@@ -11,6 +11,9 @@
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
 #include "GeometryCalculator.h"
+#include "DateTime.h"
+#include "SystemConfig.h"
+#include "robotmovement/MovementQuery.h"
 
 namespace geometry
 {
@@ -28,13 +31,20 @@ namespace msl
 	{
 	public:
 		virtual ~RobotMovement();
+
+		MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> m_Query);
+		MotionControl experimentallyRuleActionForBallGetter();
+		MotionControl experimentallyDriveRandomly(double translation);
+		MotionControl experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query);
+
+
 		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
-		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+//		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+//												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		//TODO needs to be tested
 		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
@@ -65,6 +75,18 @@ namespace msl
 		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
+		static MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
+	                                                         double translation, bool alignSlow);
+		static MotionControl driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation);
+//		static MotionControl align(MotionControl bm, shared_ptr<geometry::CNPoint2D> alignPoint, double rotTol, bool slow);
+
+		static msl_actuator_msgs::MotionControl driveRandomly(int translation);
+		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);
+		static shared_ptr<geometry::CNPoint2D> dribbleNeedToTurn(shared_ptr<geometry::CNPosition> own, shared_ptr<geometry::CNPoint2D> ballPos, shared_ptr<geometry::CNPoint2D> pathPlanningPoint);
+		static msl_actuator_msgs::MotionControl nearGoalArea(msl_actuator_msgs::MotionControl bm);
+		static void reset();
+		static void updateLastTurnTime();
+
 		static shared_ptr<geometry::CNPoint2D> getRandomTarget();
 		static void readConfigParameters();
 		static double defaultTranslation;
@@ -72,6 +94,7 @@ namespace msl
 		static double fastTranslation;
 		static double fastRotation;
 		static double interceptCarfullyRotateP;
+		static double maxVel;
 
 	private:
 		static double lastRotError;
@@ -88,6 +111,33 @@ namespace msl
 		static shared_ptr<vector<shared_ptr<SearchArea>>> fringe;
 		static shared_ptr<vector<shared_ptr<SearchArea>>> next;
 		static shared_ptr<geometry::CNPoint2D> randomTarget;
+
+		static double lastRotErr;
+		static double curRot;
+		static double curTrans;
+		static double pRot;
+		static double dRot;
+		static double rotAccStep;
+		static double maxRot;
+		static double angleDeadBand;
+		static double transControlIntegral;
+		static double transControlIntegralMax;
+		static double iTrans;
+		static double pTrans;
+		static double transAccStep;
+		static double transDecStep;
+
+		static double lastTurnTime;
+
+		shared_ptr<MovementQuery> query;
+		MotionControl experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
+		double experimentallyEvalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
+											   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
+
+		// PD regulator methods
+		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> target);
+		double translationPDForDribble(double transOrt);
+		double anglePDForDribble(double transOrt);
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,

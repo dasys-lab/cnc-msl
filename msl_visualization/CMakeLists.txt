@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_visualization)
-
+ 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
@@ -22,7 +22,8 @@ find_package(catkin REQUIRED COMPONENTS
   system_config
   roscpp
   message_generation
-  msl_msgs)
+  msl_msgs
+  msl_helper_msgs)
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)
@@ -240,7 +241,6 @@ INCLUDE_DIRECTORIES(
         .
         src/tools/basestation/FieldWidget
         src/tools/basestation/FullWindow
-        src/tools/basestation/LogWidget
         src/tools/basestation/MainWindow
         src/tools/basestation/RefBoxWidget
         src/tools/basestation/RobotInfoWidget
@@ -254,7 +254,6 @@ SET( BASESTATION_SRCS
         src/tools/basestation/FieldWidget/RobotInfo.cpp
         src/tools/basestation/RobotVisualization/RobotVisualization.cpp
         src/tools/basestation/FullWindow/FullWindow.cpp
-        src/tools/basestation/LogWidget/LogWidget.cpp
         src/tools/basestation/MainWindow/MainWindow.cpp
         src/tools/basestation/RefBoxWidget/RefBoxWidget.cpp
         src/tools/basestation/RobotInfoWidget/RobotInfoWidget.cpp
@@ -267,7 +266,6 @@ SET( BASESTATION_MOC_HDRS
         src/tools/basestation/FieldWidget/RobotInfo.h
         src/tools/basestation/RobotVisualization/RobotVisualization.h
         src/tools/basestation/FullWindow/FullWindow.h
-        src/tools/basestation/LogWidget/LogWidget.h
         src/tools/basestation/MainWindow/MainWindow.h
         src/tools/basestation/RefBoxWidget/RefBoxWidget.h
 #       src/tools/basestation/RefBoxWidget/RefBoxXML.h
@@ -278,7 +276,6 @@ SET( BASESTATION_MOC_HDRS
 # some .ui files
 SET( BASESTATION_UIS
         src/tools/basestation/FullWindow/FullWindow.ui
-        src/tools/basestation/LogWidget/LogWidget.ui
         src/tools/basestation/MainWindow/MainWindow.ui
         src/tools/basestation/RefBoxWidget/RefBoxWG.ui
         src/tools/basestation/RobotInfoWidget/RobotInfoWG.ui

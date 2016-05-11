@@ -2,9 +2,9 @@
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434049476066" name="Dribble" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <conditions xsi:type="alica:RuntimeCondition" id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
-    <plans xsi:type="alica:BehaviourConfiguration">DribbleToAttackPoint.beh#1436855860607</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
-    <inTransitions>#1434050622698</inTransitions>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleAttackConservative.beh#1457967385543</plans>
     <inTransitions>#1434050639119</inTransitions>
     <inTransitions>#1434050649347</inTransitions>
     <outTransitions>#1434050619363</outTransitions>
@@ -15,21 +15,14 @@
   <states id="1434050474119" name="AlignToGoal" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AlignToGoal.beh#1415205285582</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
     <inTransitions>#1434050619363</inTransitions>
-    <outTransitions>#1434050621017</outTransitions>
     <outTransitions>#1434050630827</outTransitions>
   </states>
-  <states id="1434050491040" name="Kick" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GoalKick.beh#1415205578139</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
-    <inTransitions>#1434050621017</inTransitions>
-    <outTransitions>#1434050622698</outTransitions>
-    <outTransitions>#1434050628706</outTransitions>
-  </states>
   <states id="1434050502701" name="AttackAgain" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/GetBall.beh#1414840399972</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
-    <inTransitions>#1434050628706</inTransitions>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleToAttackPointConservative.beh#1458132905432</plans>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>
     <inTransitions>#1434050656332</inTransitions>
@@ -39,8 +32,9 @@
     <outTransitions>#1434050686620</outTransitions>
   </states>
   <states id="1434050522682" name="ProtectBall" comment="">
-    <plans xsi:type="alica:Plan">ProtectBall.pml#1449151802193</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">ProtectBall.beh#1457706612268</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706895442</plans>
     <inTransitions>#1434050674494</inTransitions>
     <inTransitions>#1434050686620</inTransitions>
     <outTransitions>#1434050681521</outTransitions>
@@ -53,27 +47,12 @@
     <outTransitions>#1434050649347</outTransitions>
     <outTransitions>#1434050650481</outTransitions>
   </states>
-  <transitions id="1434050619363" name="MISSING_NAME" comment="In enemy half &amp;&amp; Goal closer than PreciseShot.MaxDistance &amp;&amp; freeGoalVector exists &amp;&amp; noobstacle in turn radius &amp;&amp; Distance to goal larger than PrecideShot.MinDistance &amp;&amp; AngleToGoal larger than 10degrees" msg="">
+  <transitions id="1434050619363" name="MISSING_NAME" comment="may score &amp;&amp; Goal closer than PreciseShot.MaxDistance &amp;&amp; freeGoalVector exists &amp;&amp; noobstacle in turn radius &amp;&amp; Distance to goal larger than PrecideShot.MinDistance &amp;&amp; AngleToGoal larger than 10degrees" msg="">
     <preCondition id="1434050620829" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050474119</outState>
   </transitions>
-  <transitions id="1434050621017" name="MISSING_NAME" comment="Success" msg="">
-    <preCondition id="1434050622353" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434050474119</inState>
-    <outState>#1434050491040</outState>
-  </transitions>
-  <transitions id="1434050622698" name="MISSING_NAME" comment="Success" msg="">
-    <preCondition id="1434050626634" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434050491040</inState>
-    <outState>#1434049476067</outState>
-  </transitions>
-  <transitions id="1434050628706" name="MISSING_NAME" comment="Fail" msg="">
-    <preCondition id="1434050630537" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1434050491040</inState>
-    <outState>#1434050502701</outState>
-  </transitions>
-  <transitions id="1434050630827" name="MISSING_NAME" comment="Fail" msg="">
+  <transitions id="1434050630827" name="MISSING_NAME" comment="Fail || couldn't kick" msg="">
     <preCondition id="1434050638814" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050474119</inState>
     <outState>#1434050502701</outState>
@@ -83,12 +62,12 @@
     <inState>#1434050502701</inState>
     <outState>#1434049476067</outState>
   </transitions>
-  <transitions id="1434050647042" name="MISSING_NAME" comment="Success &amp;&amp; Angle to goal &lt; 90 degrees" msg="">
+  <transitions id="1434050647042" name="MISSING_NAME" comment="Fail" msg="">
     <preCondition id="1434050649090" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434049476067</inState>
     <outState>#1434050541225</outState>
   </transitions>
-  <transitions id="1434050649347" name="MISSING_NAME" comment="Fail" msg="">
+  <transitions id="1434050649347" name="MISSING_NAME" comment="Success &amp;&amp; Angle to goal &lt; 90 degrees" msg="">
     <preCondition id="1434050650300" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050541225</inState>
     <outState>#1434049476067</outState>
@@ -113,7 +92,7 @@
     <inState>#1434049476067</inState>
     <outState>#1434050522682</outState>
   </transitions>
-  <transitions id="1434050681521" name="MISSING_NAME" comment="ProtectionDone" msg="">
+  <transitions id="1434050681521" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1434050685640" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1434050522682</inState>
     <outState>#1434050502701</outState>

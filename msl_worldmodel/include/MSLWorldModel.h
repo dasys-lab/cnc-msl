@@ -16,17 +16,18 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/WatchBallMsg.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
+#include <msl_sensor_msgs/SharedWorldInfo.h>
+#include <std_msgs/Bool.h>
+#include <InformationElement.h>
 #include <list>
 #include <iostream>
 #include <tuple>
 #include <mutex>
-
-#include <SystemConfig.h>
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
-#include <MSLEnums.h>
+#include <ITrigger.h>
+#include "EventTrigger.h"
 #include <obstaclehandler/Obstacles.h>
 #include "RawSensorData.h"
 #include "Robots.h"
@@ -34,9 +35,19 @@
 #include "Game.h"
 #include "Kicker.h"
 #include "WhiteBoard.h"
+#include "MSLFootballField.h"
 #include "pathplanner/PathPlanner.h"
 #include "EventTrigger.h"
 #include "InformationElement.h"
+#include "Prediction.h"
+#include "Monitoring.h"
+#include "LightBarrier.h"
+
+#include <SystemConfig.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include <MSLEnums.h>
+
 
 namespace alica
 {
@@ -52,7 +63,8 @@ namespace msl
 	class MSLWorldModel
 	{
 	public:
-		static MSLWorldModel* get();bool setEngine(alica::AlicaEngine* ae);
+		static MSLWorldModel* get();
+		bool setEngine(alica::AlicaEngine* ae);
 		alica::AlicaEngine* getEngine();
 
 		double getKickerVoltage();
@@ -67,8 +79,12 @@ namespace msl
 		void onGazeboModelState(gazebo_msgs::ModelStatesPtr msg);
 		void onSharedWorldInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onPassMsg(msl_helper_msgs::PassMsgPtr msg);
+		void onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 		void onLightBarrierInfo(std_msgs::BoolPtr msg);
+
+		bool isMaySendMessages() const;
+		void setMaySendMessages(bool maySendMessages);
 
 		MSLSharedWorldModel* getSharedWorldModel();
 		InfoTime getTime();
@@ -76,26 +92,39 @@ namespace msl
 
 		int getRingBufferLength();
 		int getOwnId();
+		supplementary::ITrigger* getVisionDataEventTrigger();
 
-		RawSensorData rawSensorData;
-		Robots robots;
-		Ball ball;
-		Game game;
-		PathPlanner pathPlanner;
-		Kicker kicker;
-		WhiteBoard whiteBoard;
+		bool isUsingSimulator();
+
+		Monitoring* monitoring;
+		RawSensorData* rawSensorData;
+		Robots* robots;
+		Ball* ball;
+		Game* game;
+		MSLFootballField* field;
+		PathPlanner* pathPlanner;
+		Kicker* kicker;
+		WhiteBoard* whiteBoard;
+		Obstacles* obstacles;
+		Prediction* prediction;
+		LightBarrier* lightBarrier;
+
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-		Obstacles obstacles;
 
 	private:
 
 		MSLWorldModel();
 		virtual ~MSLWorldModel();
 
+		supplementary::ITrigger* visionDataEventTrigger;
+		supplementary::SystemConfig* sc;
+
 		int ownID;
 		int ringBufferLength;
 		double kickerVoltage;
+		bool maySendMessages;
+
 		MSLSharedWorldModel* sharedWorldModel;
 		alica::AlicaEngine* alicaEngine;
 
@@ -110,6 +139,7 @@ namespace msl
 		ros::Subscriber gazeboWorldModelSub;
 		ros::Subscriber sharedWorldSub;
 		ros::Subscriber passMsgSub;
+		ros::Subscriber watchBallMsgSub;
 		ros::Publisher sharedWorldPub;
 		ros::Subscriber correctedOdometrySub;
 		ros::Subscriber lightBarrierSub;

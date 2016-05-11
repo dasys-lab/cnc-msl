@@ -27,8 +27,8 @@ namespace alica
     void StandardAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision(); // actually ownPosition corrected
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball.getEgoBallPosition();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -66,8 +66,15 @@ namespace alica
                 if (ids->size() > 0 && ids->at(0) != -1)
                 {
                     // get receiver position by id
-                    auto pos = wm->robots.teammates.getTeamMatePosition(ids->at(0));
-                    receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+                    if (pos != nullptr)
+                    {
+                        receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
+                    }
+                    else
+                    {
+                        receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
+                    }
                 }
                 MotionControl mc;
                 shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
@@ -98,8 +105,20 @@ namespace alica
         else // receiver
         {
             //calculate point on a line with ball and mid on a distance of 2,3m
-            shared_ptr < geometry::CNPoint2D > egoTarget =
-                    (alloBall + ((alloBall - alloTarget)->normalize() * -2300))->alloToEgo(*ownPos);
+            if (oldBallPos == nullptr)
+                oldBallPos = alloBall;
+
+            if (oldAlloTarget == nullptr || oldBallPos->distanceTo(alloBall) > 1000)
+            {
+                oldBallPos = alloBall;
+                oldAlloTarget = (alloBall + ((alloBall - alloTarget)->normalize() * -2300));
+                if (oldAlloTarget->x > -800 && oldAlloTarget->x < 1000)
+                {
+                    auto shiftPt = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
+                    oldAlloTarget = (alloBall + ((alloBall - alloTarget + shiftPt)->normalize() * -2300));
+                }
+            }
+            shared_ptr < geometry::CNPoint2D > egoTarget = oldAlloTarget->alloToEgo(*ownPos);
 
             MotionControl mc;
 
@@ -119,10 +138,11 @@ namespace alica
     void StandardAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
-        field = msl::MSLFootballField::getInstance();
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
+        oldBallPos.reset();
+        oldAlloTarget.reset();
         success &= getParameter("X", tmp);
         try
         {

@@ -25,13 +25,13 @@ namespace alica
     void CoverSpace::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
-        auto alloBallPos = wm->ball.getAlloBallPosition();
+        auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
             alloBallPos = make_shared < geometry::CNPoint2D > (0, 0);
         }
 
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             cerr << "No own Position!!!! Initiating Selfdestruction !!!" << endl;
@@ -54,13 +54,13 @@ namespace alica
         }
 
         //Go closer towards own goal according to position percentage
-        alloTarget->x = (alloTarget->x + msl::MSLFootballField::FieldLength / 2) * positionPercentage
-                - msl::MSLFootballField::FieldLength / 2;
+        alloTarget->x = (alloTarget->x + wm->field->getFieldLength() / 2) * positionPercentage
+                - wm->field->getFieldLength() / 2;
 
         //Be sure that the robot is not inside the own penalty area
-        if (alloTarget->x < -msl::MSLFootballField::FieldLength / 2 + msl::MSLFootballField::PenaltyAreaLength + 260)
+        if (alloTarget->x < -wm->field->getFieldLength() / 2 + wm->field->getPenaltyAreaLength() + 260)
         {
-            alloTarget->x = -msl::MSLFootballField::FieldLength / 2 + msl::MSLFootballField::PenaltyAreaLength + 260;
+            alloTarget->x = -wm->field->getFieldLength() / 2 + wm->field->getPenaltyAreaLength() + 260;
         }
 
         auto egoTarget = alloTarget->alloToEgo(*ownPos);

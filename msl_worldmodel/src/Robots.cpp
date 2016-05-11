@@ -51,6 +51,19 @@ namespace msl
 		sharedWolrdModelData.at(data->senderID)->add(infosh);
 	}
 
+	shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(int robotID, int index) {
+		auto shwm = sharedWolrdModelData.at(robotID);
+		if(shwm != nullptr) {
+			auto x = shwm->getLast(index);
+			if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+			{
+				return nullptr;
+			}
+			return x->getInformation();
+		}
+		return nullptr;
+	}
+
 
 }
 

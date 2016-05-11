@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="PassIntoPath.pml#1457530916297"/>
+    <value xPos="134" yPos="65" width="284" height="113" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457530916296"/>
+    <value width="1153" height="534"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457530916298"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457530953060"/>
+    <value xPos="-37" yPos="229"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531039142"/>
+    <value xPos="250" yPos="365"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531047960"/>
+    <value xPos="-8" yPos="218"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531111752"/>
+    <value xPos="175" yPos="205" width="315" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531122593"/>
+    <value xPos="213" yPos="343" width="172" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531267822"/>
+    <value xPos="280" yPos="5" width="212" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531281152"/>
+    <value xPos="491" yPos="20" width="233" height="138" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531293259"/>
+    <value xPos="694" yPos="15" width="146" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531303657"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531307265"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531315807"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531324804"/>
+    <value xPos="502" yPos="201" width="146" height="88" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531340791"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531345727"/>
+    <value xPos="685" yPos="236"/>
+  </extensions>
+  <extensions>
+    <key href="PassIntoPath.pml#1457531350730"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAlignToGeneric.beh#1457531639350"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ReceivePassIntoPathGeneric.beh#1457531594373"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PassKickIntoPath.beh#1457531685581"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardAlignToPassPos.beh#1457532300654"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

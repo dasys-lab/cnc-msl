@@ -20,42 +20,30 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1449076008755) ENABLED START*/ //Add additional private methods here
-        shared_ptr<geometry::CNPoint2D> ownPos;
+        shared_ptr<geometry::CNPosition> ownPos;
         shared_ptr<geometry::CNPoint2D> egoBallPos;
-        shared_ptr<geometry::CNPoint2D> goalPosLeft;
-        shared_ptr<geometry::CNPoint2D> goalPosRight;
-        shared_ptr<geometry::CNPoint2D> goalPosMiddle;
-        shared_ptr<geometry::CNPoint2D> egoAlignPoint;
-//		shared_ptr<geometry::CNPoint2D> alloTargetPoint;
-//		shared_ptr<geometry::CNPoint2D> egoTargetPoint;
-        shared_ptr<geometry::CNPoint2D> alloLeftAimPoint;
-        shared_ptr<geometry::CNPoint2D> alloRightAimPoint;
-        shared_ptr<geometry::CNPoint2D> alloMidAimPoint;
-        msl::MSLFootballField* field;
         double minObsDistGoal;
         double minOwnDistGoal;
+        double minOppYDist;
         double closeGoalDist;
         double farGoalDist;
-//        double obsDistGoal;
-//        double ownDistGoal;
         double minOwnDistObs;
         double keeperDistGoal;
-        double toleranceAngle;
+        double minKeeperDistBallTrajectory;
         double minKickPower;
-        double waitingIter;
-        double wheelSpeedLeft;
-        double wheelSpeedRight;
-        bool checkGoalLine();
-        bool checkShootPossibility();
-        void readConfigParameters();
-        double calcToleranceAngle();
-        void kicking();
-        bool checkGoalKeeper();
+
+        bool usePrediction;
+        int predictionTime;
 
         // testing variables for console output
-        double cout_kickpower;
-        bool cout_kicking;
-        shared_ptr<vector<geometry::CNPoint2D>> getObstacles();
+        double cout_distBall2HitPoint;
+
+        void readConfigParameters();
+        double getKickPower(shared_ptr<geometry::CNPoint2D> hitPoint);
+        void kick(double kickpower);
+        bool checkGoalKeeper(shared_ptr<geometry::CNPoint2D> hitPoint);
+        bool checkShootPossibility(shared_ptr<geometry::CNPoint2D> hitPoint, double& kickPower);
+        shared_ptr<geometry::CNPoint2D> computeHitPoint(double posX, double posY, double alloAngle);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

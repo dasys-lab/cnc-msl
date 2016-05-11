@@ -21,8 +21,8 @@ namespace alica
     void DribbleToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414752367688) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        auto egoBallPos = wm->ball.getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
         {
             return;

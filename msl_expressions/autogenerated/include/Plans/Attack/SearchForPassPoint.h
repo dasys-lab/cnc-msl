@@ -44,12 +44,12 @@ namespace alica
         msl::PathProxy* pathProxy;
         static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                                     shared_ptr<geometry::CNPoint2D> c, double tolerance,
-                                    shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
                                 static bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
                                 shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
-                                shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
                                 static bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D> passPoint,
-                                     double passCorridorWidth, shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>> points);
+                                     double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
         /*PROTECTED REGION END*/				private:
 				/*PROTECTED REGION ID(prv1436269017402) ENABLED START*/ //Add additional private methods here

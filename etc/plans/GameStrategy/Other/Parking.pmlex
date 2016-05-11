@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="Parking.pml#1426695119331"/>
-    <value xPos="160" yPos="202" width="161" height="86" collapsed="false"/>
+    <value xPos="204" yPos="206" width="164" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Parking.pml#1426695119330"/>

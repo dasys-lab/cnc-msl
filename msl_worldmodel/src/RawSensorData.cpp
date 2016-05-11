@@ -38,14 +38,14 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<bool> RawSensorData::getLightBarrier(int index)
+	bool RawSensorData::getLightBarrier(int index)
 	{
 		auto x = lightBarrier.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
-			return nullptr;
+			return false;
 		}
-		return x->getInformation();
+		return *x->getInformation();
 	}
 
 	shared_ptr<geometry::CNPoint2D> RawSensorData::getOpticalFlow(int index)
@@ -145,7 +145,7 @@ namespace msl
 	shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index)
 	{
 		auto x = joystickCommands.getLast(index);
-		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
+		if (x == nullptr || wm->getTime() - x->timeStamp > 250000000)
 		{
 			return nullptr;
 		}
@@ -227,6 +227,7 @@ namespace msl
 		mc->motion.angle = cmd.motion.angle;
 		mc->motion.translation = cmd.motion.translation;
 		mc->motion.rotation = cmd.motion.rotation;
+		mc->timestamp = cmd.timestamp;
 		shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<
 				InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
 		smc->certainty = 1;
@@ -263,6 +264,7 @@ namespace msl
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
 
+
 			//Motion
 			/*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
 					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
@@ -279,23 +281,44 @@ namespace msl
 			ownVelocityMotion.add(vMotion);*/
 		}
 
-		if (data->ball.confidence > 0)
-		{
-			shared_ptr<geometry::CNPoint2D> ballPos = make_shared<geometry::CNPoint2D>(data->ball.point.x,
-			                                                                           data->ball.point.y);
-			shared_ptr<geometry::CNVelocity2D> ballVel = make_shared<geometry::CNVelocity2D>(data->ball.velocity.vx,
-			                                                                                 data->ball.velocity.vy);
-			this->wm->ball.updateBallPos(ballPos, ballVel, data->ball.confidence);
-		} else {
-			wm->ball.updateHaveBall();
-			wm->ball.updateSharedBall();
-		}
+		shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x,
+																				   data->ball.point.y,data->ball.point.z);
+		shared_ptr<geometry::CNPoint3D> ballVel = make_shared<geometry::CNPoint3D>(data->ball.velocity.vx,
+																						 data->ball.velocity.vy, data->ball.velocity.vz);
+
+		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
+		if (data->ball.confidence < 0.00000001)
+		        this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
+		else
+	                this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
+
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
-		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist,
-				time);
+
+		// TODO This is a Taker workaround, should be removed when real error was found
+		int count = 0;
+		while (dist.use_count() == 0)
+		{
+		        if (count > 5)
+		              return;
+		        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+		        ++count;
+		}
+
+		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist, time);
+
+                // TODO This is a Taker workaround, should be removed when real error was found
+		count = 0;
+		while (dist.use_count() == 1)
+                {
+                        if (count > 5)
+                              return;
+                        dist = make_shared<vector<double>>(data->distanceScan.sectors);
+                        ++count;
+                }
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
+		wm->getVisionDataEventTrigger()->run();
 	}
 
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
@@ -305,7 +328,7 @@ namespace msl
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
 		ownPositionVision.add(o);
-		this->wm->ball.updateOnLocalizationData(coi->imageTime);
+		this->wm->ball->updateOnLocalizationData(coi->imageTime);
 	}
 
 	void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)
@@ -315,7 +338,7 @@ namespace msl
 				nList, wm->getTime());
 		o->certainty = 1;
 		ballHypothesis.add(o);
-		this->wm->ball.updateOnBallHypothesisList(list->imageTime);
+		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 } /* namespace alica */
 

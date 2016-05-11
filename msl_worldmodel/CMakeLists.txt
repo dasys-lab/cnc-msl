@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_worldmodel) 
+ 
    
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -19,7 +20,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
  
-catkin_package(
+catkin_package( 
   INCLUDE_DIRS include
   LIBRARIES msl_worldmodel
   CATKIN_DEPENDS 
@@ -46,6 +47,7 @@ catkin_package(
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/robotmovement/RobotMovement.cpp
+   src/robotmovement/MovementQuery.cpp
    src/robotmovement/SearchArea.cpp
    src/robotmovement/EgoSearchArea.cpp
    src/robotmovement/AlloSearchArea.cpp
@@ -59,7 +61,11 @@ catkin_package(
    src/Opponents.cpp
    src/Teammates.cpp
    src/WhiteBoard.cpp
+   src/Monitoring.cpp
    src/Rules.cpp
+   src/Prediction.cpp
+   src/LightBarrier.cpp
+   src/CubicSplineInterpolation/Spline.cpp
    src/pathplanner/PathPlanner.cpp
    src/pathplanner/SearchNode.cpp
    src/pathplanner/VoronoiNet.cpp

@@ -851,44 +851,20 @@
       <iconset resource="../basestation.qrc">
        <normaloff>:/icons/debug.png</normaloff>:/icons/debug.png</iconset>
      </property>
-     <widget class="QMenu" name="menuObstacle_Points">
-      <property name="title">
-       <string>Obstacle Points</string>
-      </property>
-      <addaction name="actionAll_On_Off"/>
-      <addaction name="actionAgent_0"/>
-      <addaction name="actionAgent_1"/>
-      <addaction name="actionAgent_2"/>
-      <addaction name="actionAgent_3"/>
-      <addaction name="actionAgent_4"/>
-      <addaction name="actionAgent_5"/>
-      <addaction name="actionAgent_6"/>
-     </widget>
-     <widget class="QMenu" name="menuDebug_Points">
-      <property name="title">
-       <string>Debug Points</string>
-      </property>
-      <addaction name="actionDebug_All_On_Off"/>
-      <addaction name="separator"/>
-      <addaction name="actionDebug_Agent_0"/>
-      <addaction name="actionDebugAgent_1"/>
-      <addaction name="actionDebugAgent_2"/>
-      <addaction name="actionDebugAgent_3"/>
-      <addaction name="actionDebugAgent_4"/>
-      <addaction name="actionDebugAgent_5"/>
-      <addaction name="actionDebugAgent_6"/>
-     </widget>
-     <addaction name="menuDebug_Points"/>
+     <addaction name="actionShow_All"/>
      <addaction name="separator"/>
-     <addaction name="menuObstacle_Points"/>
+     <addaction name="actionDebug_All_On_Off"/>
     </widget>
-    <widget class="QMenu" name="menuHeight_Map">
+    <widget class="QMenu" name="menuPathPlanner">
      <property name="title">
-      <string>Height Map</string>
+      <string>PathPlanner</string>
      </property>
-     <addaction name="actionVisible"/>
-     <addaction name="action3D"/>
-     <addaction name="actionColor"/>
+     <addaction name="actionShow_All_PathPlanner_Components"/>
+     <addaction name="separator"/>
+     <addaction name="actionShow_PathPlanner_Path"/>
+     <addaction name="actionShow_Corridor_Check"/>
+     <addaction name="actionShow_Voronoi_Diagram"/>
+     <addaction name="actionShow_Sites"/>
     </widget>
     <addaction name="actionTop_View"/>
     <addaction name="actionLock"/>
@@ -897,12 +873,7 @@
     <addaction name="separator"/>
     <addaction name="menuDebug"/>
     <addaction name="actionTaxi_Follow_Mode"/>
-    <addaction name="menuHeight_Map"/>
-    <addaction name="actionShow_PathPlanner_Path"/>
-    <addaction name="actionShow_Voronoi_Diagram"/>
-    <addaction name="actionShow_Corridor_Check"/>
-    <addaction name="actionShow_Sites"/>
-    <addaction name="actionShow_All_PagthPlanner_Components"/>
+    <addaction name="menuPathPlanner"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>
@@ -1031,7 +1002,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>All On/Off</string>
+    <string>Show Points</string>
    </property>
   </action>
   <action name="actionDebug_Agent_0">
@@ -1142,28 +1113,56 @@
    </property>
   </action>
   <action name="actionShow_PathPlanner_Path">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show PathPlanner Path</string>
+    <string>Show Path</string>
    </property>
   </action>
   <action name="actionShow_Voronoi_Diagram">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Voronoi Diagram</string>
    </property>
   </action>
   <action name="actionShow_Corridor_Check">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Corridor Check</string>
    </property>
   </action>
   <action name="actionShow_Sites">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Show Sites</string>
    </property>
   </action>
-  <action name="actionShow_All_PagthPlanner_Components">
+  <action name="actionShow_All_PathPlanner_Components">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Show All PagthPlanner Components</string>
+    <string>Show All</string>
+   </property>
+  </action>
+  <action name="actionTut">
+   <property name="text">
+    <string>tut</string>
+   </property>
+  </action>
+  <action name="actionShow_All">
+   <property name="text">
+    <string>Show All</string>
    </property>
   </action>
  </widget>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459362049516"/>
+    <value xPos="80" yPos="123" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459362028865"/>
+    <value yPos="-18" width="870" height="607"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459362049517"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365278157"/>
+    <value xPos="82" yPos="269" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365280181"/>
+    <value xPos="451" yPos="121" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365281222"/>
+    <value xPos="390" yPos="-4" width="254" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365282539"/>
+    <value xPos="100" yPos="4" width="287" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365284057"/>
+    <value xPos="420" yPos="246" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365285847"/>
+    <value xPos="233" yPos="259" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365287615"/>
+    <value xPos="223" yPos="439" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365294648"/>
+    <value xPos="582" yPos="207"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365296108"/>
+    <value xPos="552" yPos="216"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365297570"/>
+    <value xPos="565" yPos="227"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365320409"/>
+    <value xPos="-42" yPos="355"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365322922"/>
+    <value xPos="-57" yPos="333"/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365391425"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365392554"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365394266"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365401604"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365407849"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365410825"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365411957"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="CornerExecBounceShot.pml#1459365412813"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BounceShotAlignPasser.beh#1459357015987"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BouncePassFinishAlign.beh#1459357089325"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BounceShotAlignWall.beh#1459356753335"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StandardDefendPos.beh#1459356685875"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BouncePassShoot.beh#1459357188003"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

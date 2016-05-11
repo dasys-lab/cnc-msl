@@ -12,7 +12,7 @@ namespace msl
 
 	double Kicker::kickerAngle = M_PI;
 
-	Kicker::Kicker(MSLWorldModel* wm)
+	Kicker::Kicker(MSLWorldModel* wm) : kickControlMsgs(10)
 	{
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
@@ -79,19 +79,19 @@ namespace msl
 
 	bool Kicker::mayShoot()
 	{
-		if (!wm->game.isMayScore())
+		if (!wm->game->isMayScore())
 		{
 			return false;
 		}
 		//DistanceScan ds = wm.DistanceScan;
 		//if (ds == null) return false;
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles.getObstacles();
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> obs = wm->obstacles->getEgoVisionObstacles();
 		if (obs == nullptr)
 		{
 			return false;
 		}
-		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball.getEgoBallPosition();
-		if (ballPos == nullptr || !wm->ball.haveBall())
+		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
+		if (ballPos == nullptr || !wm->ball->haveBall())
 		{
 			return false;
 		}
@@ -100,7 +100,7 @@ namespace msl
 		{
 			if (make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->length() > 550)
 				continue;
-			if (abs(geometry::GeometryCalculator::deltaAngle(make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->angleTo(), dang)) < 15.0 * M_PI / 180.0)
+			if (abs(geometry::deltaAngle(make_shared<geometry::CNPoint2D>(obs->at(i).x, obs->at(i).y)->angleTo(), dang)) < 15.0 * M_PI / 180.0)
 			{
 				return false;
 			}
@@ -110,15 +110,14 @@ namespace msl
 
 	shared_ptr<geometry::CNPoint2D> Kicker::getFreeGoalVector()
 	{
-		auto ownPos = wm->rawSensorData.getOwnPositionVision();
-		auto dstscan = wm->rawSensorData.getDistanceScan();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
+		auto dstscan = wm->rawSensorData->getDistanceScan();
 		if (ownPos == nullptr || dstscan == nullptr)
 		{
 			return nullptr;
 		}
 		validGoalPoints.clear();
-		MSLFootballField* field = MSLFootballField::getInstance();
-		double x = field->FieldLength / 2;
+		double x = wm->field->getFieldLength() / 2;
 		double y = -1000 + preciseShotMaxTolerance;
 		shared_ptr<geometry::CNPoint2D> aim = make_shared<geometry::CNPoint2D>(x, y);
 		double samplePoints = 4;
@@ -226,6 +225,63 @@ namespace msl
 		return temp * 1000.0;
 	}
 
+	/**
+	 * This method is primarily for kicking a lob shot over a robot. So it will return kick powers between 1200 and 2800.
+	 *
+	 * If it returns -1 the tolerance in height is not matched.
+	 *
+	 * @param dist is the distance in mm
+	 * @param height is the height of the center of the ball in mm
+	 * @param heightTolerance is the tolerance for the height in mm (30.0mm is the minimum tolerance)
+	 */
+	double Kicker::getKickPowerForLobShot(double dist, double height, double heightTolerance )
+	{
+		// scale to meter :)
+		dist = dist/1000.0;
+		height = (height-120)/1000.0;
+		heightTolerance = heightTolerance/1000.0;
+
+		double g = 9.81;
+		double vSample = 6.5;
+		double vOptimal = 0;
+		double heightErr = 100000.0;
+
+		for (int i = 0; i < 143; i++)
+		{
+			double initialShootAngle = 2.676119513 * vSample + 12.70950743;
+			initialShootAngle *=  M_PI / 180;
+			double y = dist * tan(initialShootAngle)
+					- (g * dist * dist) / (2 * vSample * vSample * cos(initialShootAngle) * cos(initialShootAngle));
+			double curHeightErr = abs(height - y);
+			if (curHeightErr < heightErr)
+			{
+				heightErr = curHeightErr;
+				vOptimal = vSample;
+			}
+			else
+			{
+				break;
+			}
+
+			vSample += 0.035; // 100 steps until 11,5m/s
+		}
+
+		if(heightErr > heightTolerance)
+		{
+			cout << "Kicker: HeightErr: " << heightErr << endl;
+			return -1;
+		}
+
+		// function to map v0 to kickPower
+		double f2 = 350.0;
+		double f3 = 11.5;
+		double f4 = 850.0;
+
+		double kickPower = (-log(1 - (vOptimal/f3)) * f2) + f4;
+
+		return kickPower;
+	}
+
 	double Kicker::getPreciseShotMaxDistance()
 	{
 		return preciseShotMaxDistance;
@@ -258,5 +314,27 @@ namespace msl
 			return z;
 		}
 	}
+
+	void Kicker::processKickConstrolMsg(msl_actuator_msgs::KickControl& km)
+	{
+		shared_ptr<msl_actuator_msgs::KickControl> cmd = make_shared<msl_actuator_msgs::KickControl>();
+
+		*cmd = km;
+		shared_ptr<InformationElement<msl_actuator_msgs::KickControl>> jcmd = make_shared<
+				InformationElement<msl_actuator_msgs::KickControl>>(cmd, wm->getTime());
+		jcmd->certainty = 1.0;
+		kickControlMsgs.add(jcmd);
+	}
+
+	shared_ptr<msl_actuator_msgs::KickControl> Kicker::getKickConstrolMsg(int index) {
+		auto x = kickControlMsgs.getLast(index);
+		if (x == nullptr || wm->getTime() - x->timeStamp > 1000000000)
+		{
+			return nullptr;
+		}
+		return x->getInformation();
+	}
+
+
 
 } /* namespace msl */

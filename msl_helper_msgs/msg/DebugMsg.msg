@@ -1,6 +1,5 @@
+string topic
 int32 senderID
 uint32 validFor
-msl_msgs/Point2dInfo[] points
-float64[] values
+msl_helper_msgs/DebugPoint[] points
 Edge[] edges
-msl_msgs/Point2dInfo aimPoint

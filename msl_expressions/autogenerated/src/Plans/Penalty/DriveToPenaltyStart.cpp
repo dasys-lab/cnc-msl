@@ -1,0 +1,53 @@
+using namespace std;
+#include "Plans/Penalty/DriveToPenaltyStart.h"
+
+/*PROTECTED REGION ID(inccpp1459609457478) ENABLED START*/ //Add additional includes here
+#include "robotmovement/RobotMovement.h"
+/*PROTECTED REGION END*/
+namespace alica
+{
+    /*PROTECTED REGION ID(staticVars1459609457478) ENABLED START*/ //initialise static variables here
+    /*PROTECTED REGION END*/
+    DriveToPenaltyStart::DriveToPenaltyStart() :
+            DomainBehaviour("DriveToPenaltyStart")
+    {
+        /*PROTECTED REGION ID(con1459609457478) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    DriveToPenaltyStart::~DriveToPenaltyStart()
+    {
+        /*PROTECTED REGION ID(dcon1459609457478) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+    void DriveToPenaltyStart::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
+        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto ballPos = wm->ball->getEgoBallPosition();
+        if (me == nullptr)
+        {
+            return;
+        }
+        auto egoTarget = make_shared < geometry::CNPoint2D > (0.0, 0.0)->alloToEgo(*me);
+        auto egoAlignPoint = wm->field->posOppGoalMid()->alloToEgo(*me);
+
+        msl_actuator_msgs::MotionControl mc;
+
+        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 0);
+
+        if (egoTarget->length() < 250)
+        {
+            this->success = true;
+        }
+
+        send(mc);
+        /*PROTECTED REGION END*/
+    }
+    void DriveToPenaltyStart::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1459609457478) ENABLED START*/ //Add additional options here
+        /*PROTECTED REGION END*/
+    }
+/*PROTECTED REGION ID(methods1459609457478) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
+} /* namespace alica */

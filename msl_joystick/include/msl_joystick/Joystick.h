@@ -75,18 +75,18 @@ namespace msl_joystick
 		vector<bool> keyPressed;
 
 		// for filling a joystick message
-		short ballHandleLeftMotor;
-		short ballHandleRightMotor;
+		int ballHandleLeftMotor;
+		int ballHandleRightMotor;
 		short kickPower;
 		int robotId;
-		bool ballHandleState;
+		bool useBallHandle;
 		short shovelIdx;
 		double translation;
 		double rotation;
 
 		// min max values from config
-		short ballHandleMin;
-		short ballHandleMax;
+		int ballHandleMin;
+		int ballHandleMax;
 		short kickPowerMin;
 		short kickPowerMax;
 		double translationMin;

@@ -31,36 +31,37 @@ namespace msl
 		// Set own Team Color
 		sc = SystemConfig::getInstance();
 		string tmpOwnTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
-		if (tmpOwnTeamColor.compare("cyan"))
+		if (tmpOwnTeamColor.compare("cyan") == 0)
 		{
+			cout << "MSL-WM::Game: Own team color is CYAN" << endl;
 			ownTeamColor = Color::Cyan;
 		}
-		else if (tmpOwnTeamColor.compare("magenta"))
+		else if (tmpOwnTeamColor.compare("magenta") == 0)
 		{
 			ownTeamColor = Color::Magenta;
+			cout << "MSL-WM::Game: Own team color is MAGENTA" << endl;
 		}
 		else
 		{
-			cerr << "MSL-WM::Game: Own team color is unknown!" << endl;
 			ownTeamColor = Color::UnknownColor;
+			cerr << "MSL-WM::Game: Own team color is UNKNOWN!" << endl;
 		}
 
 		// Set own Goal Color
 		string tmpeOwnGoalColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnGoalColour", NULL);
-		cout << tmpeOwnGoalColor << endl;
 		if (tmpeOwnGoalColor.find("b") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Blue;
-			cout << "OwnGoal is Blue" << endl;
+			cout << "MSL-WM::Game: OwnGoal is BLUE" << endl;
 		}
 		else if (tmpeOwnGoalColor.find("y") != tmpeOwnGoalColor.npos)
 		{
 			ownGoalColor = Color::Yellow;
-			cout << "OwnGoal is Yellow" << endl;
+			cout << "MSL-WM::Game: OwnGoal is YELLOW" << endl;
 		}
 		else
 		{
-			cerr << "MSL-WM::Game: Own goal color is unknown!" << endl;
+			cerr << "MSL-WM::Game: Own goal color is UNKNOWN!" << endl;
 			exit(0);
 			ownGoalColor = Color::UnknownColor;
 		}
@@ -357,10 +358,10 @@ namespace msl
 	void Game::updateGameState()
 	{
 // Find robot closest to ball
-		auto robots = this->wm->robots.teammates.getPositionsOfTeamMates();
-		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot = nullptr;
+		auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
+		shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot;
 		double minDist = numeric_limits<double>::max();
-		auto sharedBallPosition = wm->ball.getAlloSharedBallPosition();
+		auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
 		if (sharedBallPosition == nullptr)
 		{
 			return;
@@ -370,40 +371,53 @@ namespace msl
 		{
 			double currDist = shwmData->second->distanceTo(sharedBallPosition);
 			if(closestRobot == nullptr || currDist < minDist)
-			{	closestRobot = shwmData;
+			{
+				closestRobot = shwmData;
 				minDist = currDist;
 			}
-			ballPossession |= *(wm->ball.getTeamMateBallPossession(shwmData->first));
+
+			auto realShwm = wm->robots->getSHWMData(shwmData->first);
+
+			//auto hasball = (  ball.getTeamMateBallPossession(shwmData->first));
+			if(realShwm != nullptr) {
+				ballPossession |= realShwm->ballInPossession;
+			}
 		}
 
 		if (closestRobot == nullptr)
 		{
+			cout << "Game::updateGameState(): closestRobot == nullptr -> is this even possible?" << endl;
 			return;
 		}
-		bool oppBallPossession = *wm->ball.getOppBallPossession();
+		auto oppposs = wm->ball->getOppBallPossession();
+		bool oppBallPossession = false;
+		if(oppposs!=nullptr) {
+			oppBallPossession = *oppposs;
+		}
+
 		GameState gs = getGameState();
 
 		if (gs != GameState::Duel && ballPossession && oppBallPossession)
 		{
-			//cout << "State changed: Melee state" << endl;
+			cout << "Game::updateGameState(): State changed: Duel state" << endl;
 			gs = GameState::Duel;
 			this->teamMateWithBall = 0;
 		}
 		else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
 		{
-			//cout << "State changed: Attack state" << endl;
+			cout << "Game::updateGameState(): State changed: OwnBallPossession state" << endl;
 			gs = GameState::OwnBallPossession;
 			setMayScore();
 		}
 		else if (gs != GameState::OppBallPossession && !ballPossession && oppBallPossession)
 		{
-			//cout << "State changed: Defend state" << endl;
+			cout << "Game::updateGameState(): State changed: OppBallPossession state" << endl;
 			gs = GameState::OppBallPossession;
 			this->teamMateWithBall = 0;
 		}
 		else if (gs != GameState::NobodyInBallPossession && !ballPossession && !oppBallPossession)
 		{
-			//cout << "State changed: Conflict state" << endl;
+			cout << "Game::updateGameState(): State changed: NobodyInBallPossession state" << endl;
 			gs = GameState::NobodyInBallPossession;
 		}
 
@@ -419,24 +433,31 @@ namespace msl
 	{
 		shared_ptr<geometry::CNPosition> capturePos = nullptr;
 		int teamMateWithBallNow = 0;
-		for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *(this->wm->robots.teammates.getPositionsOfTeamMates()))
-		{
-			if (*(wm->ball.getTeamMateBallPossession(shwmData->first)))
+		auto robotPoses = this->wm->robots->teammates.getPositionsOfTeamMates();
+		if(robotPoses!=nullptr) {
+			for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
 			{
-				capturePos = shwmData->second;
-				teamMateWithBallNow = shwmData->first;
+				if(shwmData!=nullptr) {
+					auto ptr = wm->ball->getTeamMateBallPossession(shwmData->first);
+					if (ptr!=nullptr && *ptr)
+					{
+						capturePos = shwmData->second;
+						teamMateWithBallNow = shwmData->first;
+					}
+				}
 			}
 		}
 
-		if (capturePos == nullptr || capturePos->x < 0)
+		if (capturePos == nullptr || capturePos->x < 0) {
 			mayScore = false;
-
-		if (capturePos->x > 50 && teamMateWithBall != teamMateWithBallNow)
+		} else if (capturePos->x > 50 && teamMateWithBall != teamMateWithBallNow)
 		{
 			mayScore = true;
 		}
 
-		teamMateWithBall = teamMateWithBallNow;
+		if(teamMateWithBallNow != 0) {
+			teamMateWithBall = teamMateWithBallNow;
+		}
 	}
 
 } /* namespace alica */

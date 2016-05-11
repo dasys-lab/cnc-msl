@@ -39,7 +39,6 @@ namespace msl
 	protected:
 		SearchArea();
 		SearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center, shared_ptr<geometry::CNPosition> ownPos);
-		MSLFootballField* field = MSLFootballField::getInstance();
 		static int counter;
 		static int maxNum;
 	};

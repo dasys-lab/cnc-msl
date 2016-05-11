@@ -23,7 +23,6 @@ namespace alica
         this->minRot = 0;
         this->maxRot = 0;
         this->lastRotError = 0;
-        this->field = msl::MSLFootballField::getInstance();
         /*PROTECTED REGION END*/
     }
     OneEighty::~OneEighty()
@@ -34,11 +33,11 @@ namespace alica
     void OneEighty::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434650892176) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
-        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball.getEgoBallVelocity();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
+        shared_ptr < geometry::CNVelocity2D > ballVel = wm->ball->getEgoBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr<vector<double>> dstscan = wm->rawSensorData.getDistanceScan();
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr<vector<double>> dstscan = wm->rawSensorData->getDistanceScan();
 
         msl_actuator_msgs::MotionControl mc;
         if (ballPos == nullptr || ownPos == nullptr)
@@ -61,7 +60,7 @@ namespace alica
         }
 
         shared_ptr < geometry::CNPoint2D > aimPoint = make_shared < geometry::CNPoint2D
-                > (field->FieldLength / 2.0 - 500, 0);
+                > (wm->field->getFieldLength() / 2.0 - 500, 0);
         aimPoint = msl::PathProxy::getInstance()->getEgoDirection(aimPoint, make_shared<msl::PathEvaluator>());
         shared_ptr < geometry::CNPoint2D > alloAimPoint = nullptr;
         if (aimPoint != nullptr)
@@ -84,7 +83,7 @@ namespace alica
 
         double ballAngle = ballPos->angleTo();
 
-        double deltaAngle = geometry::GeometryCalculator::deltaAngle(ballAngle, aimAngle);
+        double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
             this->success = true;
@@ -143,7 +142,6 @@ namespace alica
         this->dRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "RotationD", NULL);
         this->minRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MinRotation", NULL);
         this->maxRot = (*this->sc)["Dribble"]->get<double>("OneEighty", "MaxRotation", NULL);
-        this->field = msl::MSLFootballField::getInstance();
         this->lastRotError = 0;
         /*PROTECTED REGION END*/
     }

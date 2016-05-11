@@ -40,12 +40,17 @@ namespace msl
 		void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> clusterPoint2D (shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstacles, double varianceThreshold);
 		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstaclesWithMe(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getEgoObstacles(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoObstaclePoints(int index = 0);
 		//TODO change to raw
-		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getObstacles(int index = 0);
-		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getObstaclePoints(int index = 0);
+		shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getEgoVisionObstacles(int index = 0);
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoVisionObstaclePoints(int index = 0);
+		double getObstacleRadius();
+
+		shared_ptr<geometry::CNPoint2D> getBiggestFreeGoalAreaMidPoint();
+		double  getDistanceToObstacle(shared_ptr<geometry::CNPoint2D> target);
 
 	private:
 		void clusterAnnotatedObstacles();
@@ -68,14 +73,13 @@ namespace msl
 		double DFLT_ROB_RADIUS;
 		double OBSTACLE_MAP_OUT_TOLERANCE;
 		double LOCALIZATION_SUCCESS_CONFIDENCE;
-		MSLFootballField* field;
 		MSLWorldModel* wm;
 		AnnotatedObstacleClusterPool* pool;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> clusterArray;
 		shared_ptr<vector<AnnotatedObstacleCluster*>> newClusterArray;
-		double distance(msl_msgs::Point2dInfo point, msl_msgs::PositionInfo pos);
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
 		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
+		RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
 		unsigned long maxInformationAge = 1000000000;
 	};
 

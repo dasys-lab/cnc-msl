@@ -21,8 +21,16 @@ namespace alica
         double fieldLength;
         double fieldWidth;
         double translation;
+        double robotRadius;
+        double radiusToCheckOpp;
+        double radiusToCheckOwn;
         int direction;
-        int itCounter;
+        int itcounter;
+        unsigned long entryTime;
+        signed long long freeTime;
+        unsigned long duelMaxTime;
+        bool friendlyBlocked;
+        vector<bool> hadClosestOpp;
         bool pointLeftOfVec(shared_ptr<geometry::CNPoint2D> lineVector, shared_ptr<geometry::CNPoint2D> pointToCheck);
         /*PROTECTED REGION END*/
     private:

@@ -26,8 +26,8 @@ namespace alica
     void Pos4Def::run(void* msg)
     {
         /*PROTECTED REGION ID(run1445438142979) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData.getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball.getEgoBallPosition();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
 
         if (ownPos == nullptr || ballPos == nullptr)
         {
@@ -36,7 +36,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
 
         MotionControl mc;
-        if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result))
+        if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
         {
             cout << "Pos4Def: FOUND a solution!" << endl;
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
@@ -55,7 +55,8 @@ namespace alica
         }
         else
         {
-            cout << "Pos4Def: Did not find a solution!" << endl;
+
+            cout << "Pos4Def: Did not get a filled result vector!" << endl;
         }
         send(mc);
         /*PROTECTED REGION END*/

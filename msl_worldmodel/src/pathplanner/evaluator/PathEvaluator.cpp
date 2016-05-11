@@ -8,6 +8,7 @@
 #include <pathplanner/evaluator/PathEvaluator.h>
 #include "GeometryCalculator.h"
 #include "msl_msgs/VoronoiNetInfo.h"
+#include "MSLEnums.h"
 namespace msl
 {
 
@@ -32,25 +33,22 @@ namespace msl
 	{
 	}
 
-	/**
-	 * Calculates the cost for a voronoi vertex
-	 */
-	double PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal,
-								shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
-								VoronoiNet* voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > lastPath, shared_ptr<geometry::CNPoint2D> lastTarget)
+	pair<double, double> PathEvaluator::evalInitial(shared_ptr<geometry::CNPoint2D> startPos,
+														shared_ptr<geometry::CNPoint2D> goal,
+														shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi,
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath, shared_ptr<geometry::CNPoint2D> lastTarget)
 	{
+		auto curPoint = nextNode->getPoint();
 
-		// add the cost of current node to return
-		double ret = currentNode->getCost();
-		// add weighted distance to return
-		ret += pathLengthWeight * distanceTo(nextNode->getVertex(), currentNode->getVertex());
-		//if we are in the first node, there has been a path before und the goal changed
-		if (currentNode->getPredecessor() == nullptr && lastPath != nullptr && lastPath->size() > 1 && lastTarget != nullptr
-				&& lastTarget->distanceTo(goal) > 250)
+		double cost = pathLengthWeight * startPos->distanceTo(curPoint);
+		double heuristic = pathLengthWeight * curPoint->distanceTo(goal);
+
+		//if we are in the first node, there has been a path before and the goal changed
+		if (lastPath != nullptr && lastPath->size() > 1	&& lastTarget != nullptr && lastTarget->distanceTo(goal) < 250)
 		{
-			//claculate agle between the first edge of the current path and the last path
-			double a = startPos->x - currentNode->getVertex()->point().x();
-			double b = startPos->y - currentNode->getVertex()->point().y();
+			//calculate angle between the first edge of the current path and the last path
+			double a = startPos->x - curPoint->x;
+			double b = startPos->y - curPoint->y;
 			double c = lastPath->at(0)->x - lastPath->at(1)->x;
 			double d = lastPath->at(0)->y - lastPath->at(1)->y;
 
@@ -60,90 +58,82 @@ namespace msl
 			double cos_angle = (a * c + b * d) / (mag_v1 * mag_v2);
 			double theta = acos(cos_angle);
 
-			// if the angle is higher then M_PI / 2 use M_PI - angle
-			if (theta > M_PI / 2)
-			{
-				theta = M_PI - theta;
-			}
-			//if there is a valid angle add weighted angle to return
 			if (theta != NAN)
 			{
-				ret += pathDeviationWeight * theta;
+				cost += pathDeviationWeight * theta;
 			}
 		}
-		/*
-		 * can be null so check it
-		 */
+		return pair<double,double>(cost, heuristic);
+	}
+
+	/**
+	 * Calculates the cost for a voronoi vertex
+	 */
+	pair<double, double> PathEvaluator::eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode,
+												shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi)
+	{
+		auto curPoint = currentNode->getPoint();
+		auto nextPoint = nextNode->getPoint();
+
+		double cost = currentNode->getCost();
+		double heuristic = pathLengthWeight * nextPoint->distanceTo(goal);
+
+		cost += pathLengthWeight * nextPoint->distanceTo(curPoint);
+
 		if (voronoi != nullptr)
 		{
 			//get sites next to voronoi edge
-			pair<pair<shared_ptr<geometry::CNPoint2D>, int>, pair<shared_ptr<geometry::CNPoint2D>, int>> obs =
-					voronoi->getSitesNextToHalfEdge(currentNode->getVertex(), nextNode->getVertex());
+			int upType = voronoi->getTypeOfSite(nextNode->getEdge()->up()->point());
+			int downType = voronoi->getTypeOfSite(nextNode->getEdge()->down()->point());
 
-			if (obs.first.first != nullptr && obs.second.first != nullptr)
+			if (upType == EntityType::UndefinedEntity || downType == EntityType::UndefinedEntity)
 			{
-				// Both are artificial sites, so dont expand
-				if(obs.first.second == -2 && obs.second.second == -2)
-				{
-					return -1.0;
-				}
-				// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
-				double distobs = geometry::GeometryCalculator::distancePointToLineSegment(obs.first.first->x, obs.first.first->y,
-																						  make_shared<geometry::CNPoint2D>(currentNode->getVertex()->point().x(),
-																														   currentNode->getVertex()->point().y()),
-																							make_shared<geometry::CNPoint2D>(nextNode->getVertex()->point().x(),
-																															 nextNode->getVertex()->point().y()));
-				//calculate weighted dist to both objects
+				return pair<double, double>(-1.0, -1.0);
+			}
 
-				//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
-				if((obs.first.second > 0 && obs.second.second > 0) || (obs.first.second > 0 && obs.second.second != -1) || (obs.second.second > 0 && obs.first.second != -1))
-				{
-					ret += (obstacleDistanceWeight * (1.0 / distobs));
-				}
-				//One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
-				if(obs.first.second == -1 || obs.second.second == -1)
-				{
-					ret += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
-				}
+			// calculate distance to one obstacle, you dont need to second one because dist is euqal by voronoi definition
+			double distobs = geometry::distancePointToLineSegment(nextNode->getEdge()->up()->point().x(),
+																	nextNode->getEdge()->up()->point().y(), curPoint->x,
+																	curPoint->y, nextPoint->x, nextPoint->y);
+			//calculate weighted dist to both objects
 
-
-				//if the distance to the obstacles is too small return -1 to not expand this node
-				if ((distobs * 2)
-						< (robotDiameter * 2 + additionalCorridorWidth))
-				{
-					return -1.0;
-				}
+			//Both sites are teammates (relax costs) || Teammate & artificial (ignorable & not ignorable) (relax costs)
+			if ((upType > 0 && downType > 0) || (upType > 0 && downType != EntityType::ArtificialObstacle) // TODO war aus irgend einem grund -1
+					|| (downType > 0 && upType != EntityType::ArtificialObstacle))
+			{
+				cost += (obstacleDistanceWeight * (1.0 / distobs));
+			}
+			//One of both sites is an opp (classic) || Both are opponents (classic) || Opp & artificial (classic)
+			if (upType == -1 || downType == -1)
+			{
+				cost += (obstacleDistanceWeight * (1.0 / distobs)) * 2;
 			}
 		}
+
 		//if the path is longer then one vertex add cost for the angle
 		if (currentNode->getPredecessor() != nullptr)
 		{
-			double dx21 = nextNode->getVertex()->point().x() - currentNode->getVertex()->point().x();
-			double dx31 = currentNode->getPredecessor()->getVertex()->point().x() - currentNode->getVertex()->point().x();
-			double dy21 = nextNode->getVertex()->point().y() - currentNode->getVertex()->point().y();
-			double dy31 = currentNode->getPredecessor()->getVertex()->point().y() - currentNode->getVertex()->point().y();
+			double dx21 = nextPoint->x - curPoint->x;
+			double dx31 = currentNode->getPredecessor()->getPoint()->x - curPoint->x;
+			double dy21 = nextPoint->y - curPoint->y;
+			double dy31 = currentNode->getPredecessor()->getPoint()->y - curPoint->y;
 			double m12 = sqrt(dx21 * dx21 + dy21 * dy21);
 			double m13 = sqrt(dx31 * dx31 + dy31 * dy31);
 			double theta = acos((dx21 * dx31 + dy21 * dy31) / (m12 * m13));
-			// if the angle is higher then M_PI / 2 use M_PI - angle
 
-			if (theta > M_PI / 2)
-			{
-				theta = M_PI - theta;
-			}
 			//if there is a valid angle add weighted angle to return
 			if (theta != NAN)
 			{
-				ret += pathAngleWeight * theta;
+				cost += pathAngleWeight * theta;
 			}
 		}
-		return ret;
+		return pair<double, double>(cost, heuristic);
 	}
 
-	double PathEvaluator::distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
-	{
-		return sqrt(pow(v2->point().x() - v1->point().x(), 2) + pow(v2->point().y() - v1->point().y(), 2));
-	}
+//	double PathEvaluator::distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2)
+//	{
+//		return sqrt(pow(v2->point().x() - v1->point().x(), 2) + pow(v2->point().y() - v1->point().y(), 2));
+//	}
 
 } /* namespace msl */
 

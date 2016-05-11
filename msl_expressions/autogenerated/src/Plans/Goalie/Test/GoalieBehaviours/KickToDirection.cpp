@@ -21,6 +21,7 @@ namespace alica
     void KickToDirection::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863478260) ENABLED START*/ //Add additional options here
+        // TODO: DELETE THIS BECAUSE NOT USED IN GoalieDefault PLAN!!!
         /*PROTECTED REGION END*/
     }
     void KickToDirection::initialiseParameters()

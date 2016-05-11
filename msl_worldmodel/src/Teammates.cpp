@@ -26,13 +26,12 @@ namespace msl
 	{
 		int count = 0;
 		int myId = wm->getOwnId();
-		MSLFootballField* field = MSLFootballField::getInstance();
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> teamMatePositions = getPositionsOfTeamMates();
 		for (int i = 0; i < teamMatePositions->size(); i++)
 		{
 			if (teamMatePositions->at(i)->first != myId)
 			{
-				if (field->isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
+				if (wm->field->isInsideOwnPenalty(teamMatePositions->at(i)->second->getPoint(), 0.0))
 				{
 					count++;
 				}
@@ -45,13 +44,12 @@ namespace msl
 	{
 		int count = 0;
 		int myId = wm->getOwnId();
-		MSLFootballField* field = MSLFootballField::getInstance();
 		shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> >> teamMatePositions = getPositionsOfTeamMates();
 		for (int i = 0; i < teamMatePositions->size(); i++)
 		{
 			if (teamMatePositions->at(i)->first != myId)
 			{
-				if (field->isInsideEnemyPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
+				if (wm->field->isInsideEnemyPenalty(teamMatePositions->at(i)->second->getPoint(), 100.0))
 				{
 					count++;
 				}

@@ -22,46 +22,55 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData.getOwnPositionVision();
+        cout << "### DriveToGoal ###" << endl;
+        shared_ptr < geometry::CNPosition > me;
+        double alloTargetX, alloTargetY;
 
-        msl_actuator_msgs::MotionControl mc;
+        me = wm->rawSensorData->getOwnPositionVision();
+
         if (me == nullptr)
         {
             mc.motion.angle = 0;
             mc.motion.rotation = 0;
             mc.motion.translation = 0;
 
-            cout << " Stop!" << endl;
+            cout << " [DriveToGoal] Stop!" << endl;
             cout << "### DriveToGoal ###\n" << endl;
         }
         else
         {
+            /*if (simulating < 0)
+             {
+             alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
+             alloTargetY = MSLFootballField::posOwnGoalMid()->y;
+             }
+             else
+             {
+             alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
+             alloTargetY = MSLFootballField::posOppGoalMid()->y;
 
-            double egoX = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->x;
-            double egoY = MSLFootballField::posOwnGoalMid()->alloToEgo(*me)->y;
-            shared_ptr < geometry::CNPoint2D > fieldCenterTarget = MSLFootballField::posCenterMarker()->alloToEgo(*me);
+             }*/
+
+            alloTargetX = wm->field->posOwnGoalMid()->x - 100;
+            alloTargetY = wm->field->posOwnGoalMid()->y;
+
+            alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
+            alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
             cout << " Driving to goal" << endl;
-            mc = RobotMovement::moveToPointCarefully(make_shared < geometry::CNPoint2D > (egoX - 100, egoY),
-                                                     fieldCenterTarget, 100, 0);
+            mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+                                                     alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+
+            if (me->distanceTo(alloTarget) <= 100)
+            {
+                this->success = true;
+            }
+            else
+            {
+                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
+                send (mc);
+            }
             cout << "### DriveToGoal ###\n" << endl;
-        }
-
-        shared_ptr < geometry::CNPoint2D > goalPos = MSLFootballField::posOwnGoalMid();
-        goalPos->x += 100;
-
-        /*
-         * if goalie's position (+- 1cm)
-         * equals to middle of goal position
-         * + 10cm towards field center
-         */
-        if (me->distanceTo(goalPos) < 100)
-        {
-            this->success = true;
-        }
-        else
-        {
-            send(mc);
         }
         /*PROTECTED REGION END*/
     }

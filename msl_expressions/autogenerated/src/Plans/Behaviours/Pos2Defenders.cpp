@@ -27,7 +27,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1444834678756) ENABLED START*/ //Add additional options here
         shared_ptr < geometry::CNPoint2D > alloBallPos = nullptr;
-        alloBallPos = wm->ball.getAlloBallPosition();
+        alloBallPos = wm->ball->getAlloBallPosition();
 
         if (alloBallPos == nullptr)
         {
@@ -40,19 +40,19 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBallPos);
 
-        this->keeperPos = wm->robots.teammates.getTeamMatePosition(keeperId);
+        this->keeperPos = wm->robots->teammates.getTeamMatePosition(keeperId);
         int ownId = this->wm->getOwnId();
         auto ownEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getEntryPointOfRobot(ownId);
         auto robotsInOwnEp = this->getRunningPlan()->getParent().lock()->getAssignment()->getRobotsWorking(ownEp);
         auto firstDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-2500, -600);
         auto secondDefPos = alloBallPos + make_shared < geometry::CNPoint2D > (-4000, 2300);
-        auto firstDef = wm->robots.teammates.getTeamMatePosition((*robotsInOwnEp)[0]);
+        auto firstDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[0]);
         msl_actuator_msgs::MotionControl mc;
 
         if (robotsInOwnEp->size() == 2)
         {
 
-            auto secondDef = wm->robots.teammates.getTeamMatePosition((*robotsInOwnEp)[1]);
+            auto secondDef = wm->robots->teammates.getTeamMatePosition((*robotsInOwnEp)[1]);
             //first Defender is closer to first position
             if (firstDef->distanceTo(firstDefPos) < secondDef->distanceTo(firstDefPos))
             {
@@ -61,13 +61,15 @@ namespace alica
                 {
 
                     mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
-                                                                  alloBallPos->alloToEgo(*firstDef), 0);
+                                                                  alloBallPos->alloToEgo(*firstDef), 0,
+                                                                  additionalPoints);
 
                 }
                 else
                 {
                     mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
-                                                                  alloBallPos->alloToEgo(*secondDef), 0);
+                                                                  alloBallPos->alloToEgo(*secondDef), 0,
+                                                                  additionalPoints);
                 }
 
             }
@@ -104,8 +106,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1444834678756) ENABLED START*/ //Add additional options here
         // get the teammate which is the closest to the own goal mid (hopefully it is the keeper)
-        auto positions = this->wm->robots.teammates.getPositionsOfTeamMates();
-        auto ownGoalMid = msl::MSLFootballField::getInstance()->posOwnGoalMid();
+        auto positions = this->wm->robots->teammates.getPositionsOfTeamMates();
+        auto ownGoalMid = wm->field->posOwnGoalMid();
         double smallestDist = std::numeric_limits<double>::max();
         for (auto pos : *positions)
         {

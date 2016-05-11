@@ -45,10 +45,10 @@ using namespace BlackLib;
 			direction_desired = static_cast<BlackLib::digitalValue>(right);
 		}
 
-		// Check that value is in range from -100 to 100
-		if (value > 100) { value = 100; }
-		if (value < -100) { value = -100; }
-		speed_desired = abs(value) * period / 100;
+		// Check that value is in range from -period to period
+		if (value > period) { value = period; }
+		if (value < -period) { value = -period; }
+		speed_desired = abs(value);
 
 		gettimeofday(&last_ping, NULL);
 	}
@@ -64,26 +64,21 @@ using namespace BlackLib;
 
 	void BallHandle::controlBallHandling() {
 		checkTimeout();
-		if (speed_desired == 0) {
+		if (direction != direction_desired && speed_desired != 0) {
+			direction = direction_desired;
 			speed = 0;
-			pwm->setSpaceRatioTime(speed, nanosecond);			// Time for this Operation: 900us
-		} else {
-			if (direction != direction_desired) {
-				direction = direction_desired;
-				speed = 0;
-				pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-				dir->setValue(direction);						// Time for this Operation: 550us
-			}
+			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
+			dir->setValue(direction);						// Time for this Operation: 550us
+		}
 
-			if (speed != speed_desired) {
-				speed = speed_desired;
-				pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-			}
+		if (speed != speed_desired) {
+			speed = speed_desired;
+			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
 		}
 	}
 
-	uint8_t BallHandle::getError() {
-		uint8_t ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
+	int BallHandle::getError() {
+		int ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
 
 		return ff;
 	}
