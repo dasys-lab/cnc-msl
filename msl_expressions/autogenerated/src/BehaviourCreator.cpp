@@ -5,9 +5,9 @@ using namespace std;
 
 #include  "Plans/Attack/SearchForPassPoint.h"
 
-#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
-
 #include  "Plans/Behaviours/MoveToPointDynamic.h"
+
+#include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 #include  "Plans/Penalty/PenaltyAlignAndShoot.h"
 
@@ -20,6 +20,8 @@ using namespace std;
 #include  "Plans/Behaviours/PositionReceiver.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
+
+#include  "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
 
 #include  "Plans/Attack/DribbleToAttackPointConservative.h"
 
@@ -43,9 +45,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionExecutor.h"
 
-#include  "Plans/GenericBehaviours/CheckGoalKick.h"
-
 #include  "Plans/Behaviours/Pos2Defenders.h"
+
+#include  "Plans/GenericBehaviours/CheckGoalKick.h"
 
 #include  "Plans/Penalty/DriveToPenaltyStart.h"
 
@@ -81,6 +83,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
+
 #include  "Plans/Attack/Wander.h"
 
 #include  "Plans/Behaviours/DefendGoal.h"
@@ -100,6 +104,8 @@ using namespace std;
 #include  "Plans/Behaviours/StdExecutorGrabBall.h"
 
 #include  "Plans/Behaviours/GoalieExtension.h"
+
+#include  "Plans/Standards/Own/ThrowIn/ReceiveInOppHalf.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/BlockBall.h"
 
@@ -178,16 +184,16 @@ namespace alica
                 return make_shared<SearchForPassPoint>();
                 break;
 
-            case 1417620730939:
-
-                return make_shared<AlignAndShootTwoHoledWall>();
-                break;
-
             case 1456997097907:
 
             case 1458033795798:
 
                 return make_shared<MoveToPointDynamic>();
+                break;
+
+            case 1417620730939:
+
+                return make_shared<AlignAndShootTwoHoledWall>();
                 break;
 
             case 1431531542052:
@@ -226,6 +232,11 @@ namespace alica
             case 1436961206415:
 
                 return make_shared<DriveToPoint>();
+                break;
+
+            case 1462368748899:
+
+                return make_shared<StandardAlignAndGrab2Receivers>();
                 break;
 
             case 1458132905432:
@@ -293,14 +304,14 @@ namespace alica
                 return make_shared<PositionExecutor>();
                 break;
 
-            case 1449076029919:
-
-                return make_shared<CheckGoalKick>();
-                break;
-
             case 1444835591397:
 
                 return make_shared<Pos2Defenders>();
+                break;
+
+            case 1449076029919:
+
+                return make_shared<CheckGoalKick>();
                 break;
 
             case 1459609537461:
@@ -394,6 +405,11 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
+            case 1462363309950:
+
+                return make_shared<ThrowInPass>();
+                break;
+
             case 1434716230628:
 
                 return make_shared<Wander>();
@@ -450,6 +466,11 @@ namespace alica
             case 1459249287791:
 
                 return make_shared<GoalieExtension>();
+                break;
+
+            case 1462370388995:
+
+                return make_shared<ReceiveInOppHalf>();
                 break;
 
             case 1447863463711:
