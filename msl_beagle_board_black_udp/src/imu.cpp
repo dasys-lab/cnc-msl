@@ -297,13 +297,13 @@ void IMU::getData(timeval time_now) {
 	last_updated = time_now;
 }
 
-void IMU::sendData(timeval time_now){
+msl_actuator_msgs::IMUData IMU::sendData(timeval time_now){
 	acc->updateInternalValues();
 	gyr->updateInternalValues();
 	mag->updateInternalValues();
 
 
-
+/*
 	std::cout << "ACC X: " << acc->mean->x << std::endl;
 	std::cout << "ACC Y: " << acc->mean->y << std::endl;
 	std::cout << "ACC Z: " << acc->mean->z << std::endl;
@@ -316,18 +316,26 @@ void IMU::sendData(timeval time_now){
 	std::cout << "Angle deg: " << mag->angle_deg << std::endl;
 
 	std::cout << "TEMP: " << temperature << std::endl;
-
-//	msl_actuator_msgs::IMUData msg;
-//	msg.acceleration = acc->mean;
-//	msg.accelSens = acc->mean->sense;
-//	msg.gyro = gyr->mean;
-//	msg.gyroSens = gyr->sense;
-//	msg.magnet = mag->mean;
-//	msg.magnetSens = mag->sense;
-//	msg.temperature = temperature;
-//	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
+*/
+	msl_actuator_msgs::IMUData msg;
+	msg.acceleration.x = acc->mean->x;
+	msg.acceleration.y = acc->mean->y;
+	msg.acceleration.z = acc->mean->z;
+	msg.accelSens = acc->sense;
+	msg.gyro.x = gyr->mean->x;
+	msg.gyro.y = gyr->mean->y;
+	msg.gyro.z = gyr->mean->z;
+	msg.gyroSens = gyr->sense;
+	msg.magnet.x = mag->mean->x;
+	msg.magnet.y = mag->mean->y;
+	msg.magnet.z = mag->mean->z;
+	msg.magnetSens = mag->sense;
+	msg.temperature = temperature;
+	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 
 	last_sended = time_now;
+
+	return msg;
 }
 
 

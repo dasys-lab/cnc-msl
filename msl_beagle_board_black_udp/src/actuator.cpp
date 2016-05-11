@@ -459,6 +459,8 @@ void getLightbarrier() {
 }
 
 void getSwitches() {
+	supplementary::SystemConfig* sc;
+	sc = supplementary::SystemConfig::getInstance();
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	enum	button {	bundle = 0,
 						vision = 1,
@@ -556,9 +558,11 @@ void getIMU() {
 		if (!th_activ)
 			return;
 
+		msl_actuator_msgs::IMUData msg;
 		try {
 			lsm9ds0.getData(time_now);
-			lsm9ds0.sendData(time_now);
+			msg = lsm9ds0.sendData(time_now);
+			onRosIMUData3455796956(msg);
 		} catch (exception &e) {
 			cout << "IMU: " << e.what() << endl;
 		}
@@ -603,6 +607,7 @@ int main(int argc, char** argv) {
 	ros::Time::init();
 	ros::Rate loop_rate(30);		// in Hz
 
+	supplementary::SystemConfig* sc;
 	sc = supplementary::SystemConfig::getInstance();
 
 	thread th_controlBHRight(controlBHRight);

@@ -141,7 +141,7 @@ public:
 
 	bool init();
 	void getData(timeval time_now);
-	void sendData(timeval time_now);
+	msl_actuator_msgs::IMUData sendData(timeval time_now);
 
 private:
 	BlackLib::BlackGPIO* i_acc;

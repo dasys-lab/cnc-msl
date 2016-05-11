@@ -39,23 +39,9 @@ namespace alica
                 vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-        if (oldBallPos == nullptr)
-        {
-            oldBallPos = alloBall;
-        }
-        if (oldAlloTarget == nullptr || oldBallPos->distanceTo(alloBall) > 1000)
-        {
-            oldBallPos = alloBall;
-            //oldAlloTarget = (alloBall + ((alloBall - alloTarget)->normalize() * -2300));
-            oldAlloTarget = alloBall;
-            oldAlloTarget->x -= 2300;
-            if (oldAlloTarget->x > -800 && oldAlloTarget->x < 1000)
-            {
-                auto shiftPt = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
-                oldAlloTarget = (alloBall + ((alloBall - alloTarget + shiftPt)->normalize() * -2300));
-            }
-        }
-        shared_ptr < geometry::CNPoint2D > egoTarget = oldAlloTarget->alloToEgo(*ownPos);
+        alloTarget->y = alloBall->y;
+        alloTarget->x = alloBall->x - 2300;
+        shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
         MotionControl mc;
 
@@ -77,8 +63,6 @@ namespace alica
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
-        oldBallPos.reset();
-        oldAlloTarget.reset();
         try
         {
             success &= getParameter("TeamMateTaskName", tmp);

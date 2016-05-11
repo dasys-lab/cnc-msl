@@ -43,7 +43,7 @@ namespace msl
 		auto x = lightBarrier.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
-			return nullptr;
+			return false;
 		}
 		return *x->getInformation();
 	}

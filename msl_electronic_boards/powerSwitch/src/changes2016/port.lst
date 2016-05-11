@@ -1,0 +1,125 @@
+   1               		.file	"port.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   8               		.text
+   9               	.Ltext0:
+ 102               	.global	read_adc
+ 104               	read_adc:
+   1:port.c        **** 
+   2:port.c        **** #include <avr/io.h>
+   3:port.c        **** #include "port.h"
+   4:port.c        **** 
+   5:port.c        **** uint16_t read_adc(void) {
+ 106               	.LM0:
+ 107               	.LFBB1:
+ 108               	/* prologue: function */
+ 109               	/* frame size = 0 */
+ 110               	/* stack size = 0 */
+ 111               	.L__stack_usage = 0
+ 112               	.L3:
+   6:port.c        **** 
+   7:port.c        ****         uint8_t i;
+   8:port.c        ****         uint16_t res = 0;
+   9:port.c        **** 
+  10:port.c        ****         // wait for end of last (test-) conversion
+  11:port.c        ****         while (ADCSRA & (1 << ADSC));
+ 114               	.LM1:
+ 115 0000 8091 7A00 		lds r24,122
+ 116 0004 86FD      		sbrc r24,6
+ 117 0006 00C0      		rjmp .L3
+ 119               	.LM2:
+ 120 0008 43E0      		ldi r20,lo8(3)
+ 121 000a 80E0      		ldi r24,0
+ 122 000c 90E0      		ldi r25,0
+ 123               	.L7:
+  12:port.c        **** 
+  13:port.c        ****         // read channel
+  14:port.c        ****         for (i = 0; i < 3; i++) {
+  15:port.c        ****                 ADCSRA |= (1 << ADSC);
+ 125               	.LM3:
+ 126 000e 2091 7A00 		lds r18,122
+ 127 0012 2064      		ori r18,lo8(64)
+ 128 0014 2093 7A00 		sts 122,r18
+ 129               	.L5:
+  16:port.c        ****                 while (ADCSRA & (1 << ADSC));
+ 131               	.LM4:
+ 132 0018 2091 7A00 		lds r18,122
+ 133 001c 26FD      		sbrc r18,6
+ 134 001e 00C0      		rjmp .L5
+  17:port.c        ****                 res += ADCW;
+ 136               	.LM5:
+ 137 0020 2091 7800 		lds r18,120
+ 138 0024 3091 7900 		lds r19,120+1
+ 139 0028 820F      		add r24,r18
+ 140 002a 931F      		adc r25,r19
+ 141 002c 4150      		subi r20,lo8(-(-1))
+  14:port.c        ****         for (i = 0; i < 3; i++) {
+ 143               	.LM6:
+ 144 002e 01F4      		brne .L7
+  18:port.c        ****         }
+  19:port.c        ****         res /= 3;
+ 146               	.LM7:
+ 147 0030 63E0      		ldi r22,lo8(3)
+ 148 0032 70E0      		ldi r23,0
+ 149 0034 0E94 0000 		call __udivmodhi4
+ 150 0038 CB01      		movw r24,r22
+  20:port.c        **** 
+  21:port.c        ****         return res;
+  22:port.c        **** }
+ 152               	.LM8:
+ 153 003a 0895      		ret
+ 155               	.Lscope1:
+ 158               	.global	select_adc_channel
+ 160               	select_adc_channel:
+  23:port.c        **** 
+  24:port.c        **** void select_adc_channel(uint8_t mux) {
+ 162               	.LM9:
+ 163               	.LFBB2:
+ 164               	/* prologue: function */
+ 165               	/* frame size = 0 */
+ 166               	/* stack size = 0 */
+ 167               	.L__stack_usage = 0
+  25:port.c        **** 
+  26:port.c        ****         uint8_t last_channel, new_channel;
+  27:port.c        **** 
+  28:port.c        ****         last_channel = ADMUX;
+ 169               	.LM10:
+ 170 003c 9091 7C00 		lds r25,124
+  29:port.c        ****         new_channel = (1 << REFS0) | mux;
+ 172               	.LM11:
+ 173 0040 8064      		ori r24,lo8(64)
+  30:port.c        **** 
+  31:port.c        ****         // change channel
+  32:port.c        ****         if (last_channel != new_channel) {
+ 175               	.LM12:
+ 176 0042 9817      		cp r25,r24
+ 177 0044 01F0      		breq .L9
+  33:port.c        ****                 ADMUX = new_channel;
+ 179               	.LM13:
+ 180 0046 8093 7C00 		sts 124,r24
+  34:port.c        ****                 // start a test-conversion, but do not wait
+  35:port.c        ****                 ADCSRA |= (1 << ADSC);
+ 182               	.LM14:
+ 183 004a 8091 7A00 		lds r24,122
+ 184 004e 8064      		ori r24,lo8(64)
+ 185 0050 8093 7A00 		sts 122,r24
+ 186               	.L9:
+ 187 0054 0895      		ret
+ 193               	.Lscope2:
+ 195               	.Letext0:
+ 196               		.ident	"GCC: (GNU) 4.8.2"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 port.c
+     /tmp/cc53Ad8a.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc53Ad8a.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc53Ad8a.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc53Ad8a.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc53Ad8a.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc53Ad8a.s:104    .text:0000000000000000 read_adc
+     /tmp/cc53Ad8a.s:160    .text:000000000000003c select_adc_channel
+
+UNDEFINED SYMBOLS
+__udivmodhi4
