@@ -17,9 +17,13 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1462969724089) ENABLED START*/ //Add additional protected methods here
+        void trueInitialize();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462969724089) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPoint2D> currentTarget;
+        vector<double> attackPosY;
+        shared_ptr<MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
