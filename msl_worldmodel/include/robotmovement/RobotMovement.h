@@ -10,14 +10,13 @@
 
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
-#include "GeometryCalculator.h"
 #include "DateTime.h"
 #include "SystemConfig.h"
-#include "robotmovement/MovementQuery.h"
 
 namespace geometry
 {
 	class CNPoint2D;
+	class CNPosition;
 }
 
 using namespace std;
@@ -26,6 +25,7 @@ using namespace msl_actuator_msgs;
 namespace msl
 {
 
+	class MovementQuery;
 	class SearchArea;
 	class RobotMovement
 	{

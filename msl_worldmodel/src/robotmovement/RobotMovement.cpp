@@ -14,6 +14,7 @@
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "robotmovement/SearchArea.h"
 #include "robotmovement/AlloSearchArea.h"
+#include "robotmovement/MovementQuery.h"
 
 #include <SystemConfig.h>
 

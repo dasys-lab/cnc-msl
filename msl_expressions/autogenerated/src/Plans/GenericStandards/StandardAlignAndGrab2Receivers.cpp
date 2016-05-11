@@ -16,7 +16,7 @@ namespace alica
             DomainBehaviour("StandardAlignAndGrab2Receivers")
     {
         /*PROTECTED REGION ID(con1462368682104) ENABLED START*/ //Add additional options here
-		this->maxPassDist = 0;
+        this->maxPassDist = 0;
         this->ratio = 0;
         this->minPassDist = 0;
         this->closerFactor = 0;
