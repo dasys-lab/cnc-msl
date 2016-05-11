@@ -20,7 +20,7 @@ MovementQuery::MovementQuery()
 //	translation = 0;
 	angleTolerance = 0;
 	teamMatePosition = nullptr;
-
+	cout << "set parameters to default!" << endl;
 }
 
 MovementQuery::~MovementQuery()

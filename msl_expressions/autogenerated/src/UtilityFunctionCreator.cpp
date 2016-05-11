@@ -23,6 +23,8 @@
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
 
+#include  "Plans/Attack/TestPlans/RobotMovementTestPlan1462969665131.h"
+
 #include  "Plans/Standards/Opponent/FreeKick/OppFreeKick1445411471122.h"
 
 #include  "Plans/TestPlans/KickCurveTuning/KickCurveTuning1457698586746.h"
@@ -109,9 +111,9 @@
 
 #include  "Plans/Attack/Duel1450178655416.h"
 
-#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
-
 #include  "Plans/Attack/Tackle1434116965565.h"
+
+#include  "Plans/GenericStandards/GenericOwnStandards1430924951132.h"
 
 #include  "Plans/Defence/Test/TestBackroomDefence1455127495970.h"
 
@@ -175,6 +177,10 @@ namespace alica
 
             case 1436960675873:
                 return make_shared<UtilityFunction1436960675873>();
+                break;
+
+            case 1462969665131:
+                return make_shared<UtilityFunction1462969665131>();
                 break;
 
             case 1445411471122:
@@ -349,12 +355,12 @@ namespace alica
                 return make_shared<UtilityFunction1450178655416>();
                 break;
 
-            case 1430924951132:
-                return make_shared<UtilityFunction1430924951132>();
-                break;
-
             case 1434116965565:
                 return make_shared<UtilityFunction1434116965565>();
+                break;
+
+            case 1430924951132:
+                return make_shared<UtilityFunction1430924951132>();
                 break;
 
             case 1455127495970:
