@@ -138,7 +138,6 @@ namespace msl
 		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> target);
 		double translationPDForDribble(double transOrt);
 		double anglePDForDribble(double transOrt);
-		double anglePDForMoveToPoint();
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,

@@ -39,6 +39,8 @@ using namespace std;
 
 #include  "Plans/Dribble/DribbleControl.h"
 
+#include  "Plans/Behaviours/RobotMovementDribbleTest.h"
+
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
 #include  "Plans/Behaviours/PositionExecutor.h"
@@ -285,6 +287,11 @@ namespace alica
             case 1450175539163:
 
                 return make_shared<DribbleControl>();
+                break;
+
+            case 1462969753310:
+
+                return make_shared<RobotMovementDribbleTest>();
                 break;
 
             case 1436269080263:

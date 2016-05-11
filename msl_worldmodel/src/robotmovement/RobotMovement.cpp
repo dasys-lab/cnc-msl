@@ -85,9 +85,9 @@ namespace msl
 	 *
 	 * necessary Parameters:
 	 * @param egoDestinationPoint
-	 * @param egoAlignPoint
 	 *
 	 * additional Parameters for adaption:
+	 * @param egoAlignPoint
 	 * @param snapDistance
 	 * @param additionalPoints
 	 * @param fast
@@ -99,6 +99,7 @@ namespace msl
 
 		if (m_Query == nullptr)
 		{
+			cout << "query == nullptr, gernerating new query!" << endl;
 			this->query = make_shared<MovementQuery>();
 		}
 
@@ -135,8 +136,6 @@ namespace msl
 			query->egoAlignPoint = query->egoDestinationPoint;
 		}
 
-		// todo: test with PD
-//		mc.motion.angle = moveToPointAnglePD();
 		mc.motion.angle = temp->angleTo();
 		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * rotation;
 		if (temp->length() > query->snapDistance)
@@ -238,7 +237,9 @@ namespace msl
 //			return make_shared<msl_actuator_msgs::MotionControl>(bm);
 		}
 		// dribble <=========================================================
-
+		cout << "translation = " << mc.motion.translation << endl;
+		cout << "rotation = " << mc.motion.rotation << endl;
+		cout << "angle = " << mc.motion.angle << endl;
 		return mc;
 	}
 
@@ -743,12 +744,6 @@ namespace msl
 		dir = dir * query->curTransDribble + ort * transOrt;
 
 		return dir->angleTo();
-	}
-
-	// todo: use PD for angle calculation -> could be used from alignToPoint
-	double RobotMovement::anglePDForMoveToPoint()
-	{
-		return 0;
 	}
 
 // old RobotMovement <==========================================================================================
