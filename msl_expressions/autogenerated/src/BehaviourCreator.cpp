@@ -89,9 +89,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/Intercept.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+
 #include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
-#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+#include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
@@ -418,16 +420,21 @@ namespace alica
                 return make_shared<Intercept>();
                 break;
 
-            case 1461674968023:
-
-                return make_shared<PosAlternativePassReceiver>();
-                break;
-
             case 1459355025721:
 
             case 1459356753335:
 
                 return make_shared<BounceShotAlignWall>();
+                break;
+
+            case 1461674968023:
+
+                return make_shared<PosAlternativePassReceiver>();
+                break;
+
+            case 1462978671719:
+
+                return make_shared<PositionAlternativeReceiver>();
                 break;
 
             case 1438778223495:

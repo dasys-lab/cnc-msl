@@ -20,7 +20,7 @@ namespace alica
 	class BallXIntervall : public USummand
 	{
 	public:
-		BallXIntervall(double weight, string name, long id, vector<long> relevantEntryPointIds, double minX, double maxX);
+		BallXIntervall(double weight, string name, long id, vector<long> relevantEntryPointIds, double minX, double maxX, double tolerance);
 		virtual ~BallXIntervall();
 
 		void cacheEvalData();
@@ -30,8 +30,8 @@ namespace alica
 	private:
 		double minX;
 		double maxX;
+		double tolerance;
 		shared_ptr< geometry::CNPoint2D > alloBall;
-		double halfFieldLength;
 	};
 
 } /* namespace msl */

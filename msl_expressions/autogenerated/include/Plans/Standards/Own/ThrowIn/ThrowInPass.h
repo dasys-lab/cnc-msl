@@ -6,20 +6,55 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class ThrowInPass : public DomainBehaviour
-    {
-    public:
-        ThrowInPass();
-        virtual ~ThrowInPass();
-        virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1462363192018) ENABLED START*/ //Add additional public methods here
-        /*PROTECTED REGION END*/
-    protected:
-        virtual void initialiseParameters();
-        /*PROTECTED REGION ID(pro1462363192018) ENABLED START*/ //Add additional protected methods here
-        /*PROTECTED REGION END*/
-    private:
-        /*PROTECTED REGION ID(prv1462363192018) ENABLED START*/ //Add additional private methods here
+	class ThrowInPass : public DomainBehaviour
+	{
+	public:
+		ThrowInPass();
+		virtual ~ThrowInPass();
+		virtual void run(void* msg);
+		/*PROTECTED REGION ID(pub1462363192018) ENABLED START*/ //Add additional public methods here
+		/*PROTECTED REGION END*/
+	protected:
+		virtual void initialiseParameters();
+		/*PROTECTED REGION ID(pro1462363192018) ENABLED START*/ //Add additional protected methods here
+		/*PROTECTED REGION END*/
+	private:
+		/*PROTECTED REGION ID(prv1462363192018) ENABLED START*/ //Add additional private methods here
+		bool canPass;
+		string teamMateTaskName1;
+		string teamMateTaskName2;
+		shared_ptr<geometry::CNPoint2D> recPos1;
+		shared_ptr<geometry::CNPoint2D> recPos2;
+		double freeOppAngle;
+		double ratio;
+		double ballRadius;
+		double passCorridorWidth;
+		double maxTurnAngle;
+		double minOppDist;
+		double minPassDist;
+		double maxPassDist;
+		double distToFieldBorder;
+		double minCloserOffset;
+		double closerFactor;
+		double maxVel;
+		double pRot;
+		double dRot;
+		double lastRotError;
+		double minRot;
+		double maxRot;
+		double accel;
+		double arrivalTimeOffset;
+		shared_ptr<geometry::CNPoint2D> alloAimPoint;
+		bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
+								shared_ptr<geometry::CNPoint2D> c, double tolerance,
+								shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+							bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
+							shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
+							shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+							bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D>passPoint,
+        							  double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+							double minFree(double angle, double width, shared_ptr<vector<double> > dstscan);
+									int mod(int x, int y);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

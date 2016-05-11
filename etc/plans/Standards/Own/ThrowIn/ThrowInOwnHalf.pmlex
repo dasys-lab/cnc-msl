@@ -152,4 +152,8 @@
     <key href="ReceiveInOppHalf.beh#1462370388995"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="PositionAlternativeReceiver.beh#1462978671719"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
