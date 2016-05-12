@@ -266,9 +266,9 @@ int BeaglePWM::setPrescaleDiv(PwmModul modul, uint32_t rqst_div)
 {
 	uint16_t clkdiv, hsclkdiv, prescale;
 
-	for (clkdiv = 0; clkdiv++; clkdiv <= CLKDIV_MAX)
+	for (clkdiv = 0; clkdiv <= CLKDIV_MAX; clkdiv++)
 	{
-		for (hsclkdiv = 0; hsclkdiv++; hsclkdiv <= HSPCLKDIV_MAX)
+		for (hsclkdiv = 0; hsclkdiv <= HSPCLKDIV_MAX; hsclkdiv++)
 		{
 			prescale = (1 << clkdiv) * (hsclkdiv ? (hsclkdiv * 2) : 1);
 			if (prescale > rqst_div)
