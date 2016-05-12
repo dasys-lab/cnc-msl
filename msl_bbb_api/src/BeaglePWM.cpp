@@ -150,9 +150,9 @@ class BeaglePWM* BeaglePWM::getInstance()
 }
 
 
-int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long us)
+int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long ns)
 {
-	// Berechnung der Periodenzyklen
+	// Calculate cycles
 	unsigned long duty_cycles = ns * 0.1;
 
 	duty_cycles = duty_cycles / pwmPrescale;
@@ -165,56 +165,98 @@ int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long us)
 	return 0;
 }
 
-int BeaglePWM::setRunState(PwmModul modul, bool enable)
+int BeaglePWM::setRunState(PwmPin pin, bool enable)
 {
-	/* Changes to shadow mode */
-	//ehrpwm_modify(pc->mmio_base, AQSFRC, AQSFRC_RLDCSF_MASK, AQSFRC_RLDCSF_ZRO);
-	//ehrpwm_modify(pc->mmio_base, AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
+	uint16_t aqcsfrc, aqcsfrc_mask, aqcsfrc_val;
+	uint16_t aqctl, aqctl_mask, aqctl_val;
+	int modul = pwmInfos[pin].pwmChip;
 
-	/* Enable TBCLK before enabling PWM device */
-	//ret = clk_enable(pc->tbclk);
+	if (enable)
+	{
+		if (pwmInfos[pin].pwmPin == 0)
+		{
+			aqcsfrc = AQCSFRC_CSFA_MASK;
+			aqcsfrc_mask = AQCSFRC_CSFA_MASK;
+			aqcsfrc_val = AQCSFRC_CSFA_FRCDIS;
+			aqctl = AQCTLA;
+			aqctl_mask = AQCTL_CAU_MASK;
+			aqctl_val = AQCTL_CHANA_POLNORMAL;
+		}
+		else
+		{
+			aqcsfrc = AQCSFRC_CSFB_MASK;
+			aqcsfrc_mask = AQCSFRC_CSFB_MASK;
+			aqcsfrc_val = AQCSFRC_CSFB_FRCDIS;
+			aqctl = AQCTLB;
+			aqctl_mask = AQCTL_CBU_MASK;
+			aqctl_val = AQCTL_CHANB_POLNORMAL;
+		}
+		// Configure Action-Qualifier - Software Force Register
+		modifyReg(pwmRegs[modul], AQSFRC, AQSFRC_RLDCSF_MASK, AQSFRC_RLDCSF_ZRO);
+		modifyReg(pwmRegs[modul], aqcsfrc, aqcsfrc_mask, aqcsfrc_val);
 
-	/* Enable time counter for free_run */
-	modifyReg(pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
+		// Configure Action-Qualifier Control Register (TODO: change this, if you want to implement polarity)
+		aqctl_mask |= AQCTL_PRD_MASK | AQCTL_ZRO_MASK;
+		modifyReg(pwmRegs[modul], aqctl, aqctl_mask, aqctl_val);
 
-	return -1;
+		/* Enable TBCLK before enabling PWM device */
+		//ret = clk_enable(pc->tbclk);
+
+		/* Enable time counter for free_run */
+		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
+	} else
+	{
+		if (pwmInfos[pin].pwmPin == 0)
+		{
+			aqcsfrc = AQCSFRC_CSFA_MASK;
+			aqmask = AQCSFRC_CSFA_MASK;
+			aqval = AQCSFRC_CSFA_FRCLOW;
+		}
+		else
+		{
+			aqcsfrc = AQCSFRC_CSFB_MASK;
+			aqmask = AQCSFRC_CSFB_MASK;
+			aqval = AQCSFRC_CSFA_FRCLOW;
+		}
+
+
+		/*
+		 * Changes to immediate action on Action Qualifier. This puts
+		 * Action Qualifier control on PWM output from next TBCLK
+		 */
+		modifyReg(pwmRegs[modul], AQSFRC, AQSFRC_RLDCSF_MASK,AQSFRC_RLDCSF_IMDT);
+		modifyReg(pwmRegs[modul], AQCSFRC, aqmask, aqval);
+
+		/* Disabling TBCLK on PWM disable */
+		//clk_disable(pc->tbclk);
+
+		/* Stop Time base counter */
+		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
+
+		/* Disable clock on PWM disable */
+		//pm_runtime_put_sync(chip->dev);
+	}
+
+	return 0;
 }
 
-int BeaglePWM::setPeriod(PwmModul modul, unsigned long ns)
+int BeaglePWM::setPeriod(PwmPin pin, unsigned long ns)
 {
 	// TODO: Überprüfung ob in Gültigkeitsbereich
 
+	PwmModul modul = pwmInfos[pin].pwmChip;
+
 	// Berechnung der Periodenzyklen
 	unsigned long period_cycles = ns * 0.1;
-
 	setPrescaleDiv(modul, period_cycles/PERIOD_MAX);
-
 	period_cycles = period_cycles / pwmPrescale;
 
-	modifyReg(pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2], TBCTL, TBCTL_PRDLD_MASK, TBCTL_PRDLD_SHDW);
-
-	// TBPRD schreiben
+	modifyReg(pwmRegs[modul], TBCTL, TBCTL_PRDLD_MASK, TBCTL_PRDLD_SHDW);
 	pwmRegs[modul][(PWM_ADR_OFFSET + TBPRD) / 2] = period_cycles;
-
-	// TBCTL UpCountMode
-	modifyReg(pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2], TBCTL, TBCTL_CTRMODE_MASK, TBCTL_CTRMODE_UP);
+	modifyReg(pwmRegs[modul], TBCTL, TBCTL_CTRMODE_MASK, TBCTL_CTRMODE_UP);
 
 	// TODO: DutyCycle neu setzen?
 	// ggf einfach auf 0 setzen
-
-
-	// Prescaler
-		// set CLKDIV & HSCLKDIV
-
-	// update periodcycles with new prescaler
-
-	// shadow loading on period register
-
-	// set TBPRD
-
-	// set CTR Mode (up, down, updown, freeze)
-
-	// set cmp
 
 	return 0;
 }
@@ -232,10 +274,7 @@ int BeaglePWM::setPrescaleDiv(PwmModul modul, uint32_t rqst_div)
 			{
 				pwmPrescale[modul] = prescale;
 				// TODO Phileas fragen
-				modifyReg(pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2], TBCTL, TBCTL_CLKDIV_MASK, TBCTL_CLKDIV_SHIFT | TBCTL_HSPCLKDIV_SHIFT);
-//				uint16_t tbctl = pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2] & ~(TBCTL_CLKDIV_MASK);
-//				tbctl |= (clkdiv << TBCTL_CLKDIV_SHIFT) | (hsclkdiv << TBCTL_HSPCLKDIV_SHIFT);
-//				pwmRegs[modul][(PWM_ADR_OFFSET + TBCTL) / 2] = tbctl;
+				modifyReg(pwmRegs[modul], TBCTL, TBCTL_CLKDIV_MASK, TBCTL_CLKDIV_SHIFT | TBCTL_HSPCLKDIV_SHIFT);
 				return 0;
 			}
 		}
@@ -244,11 +283,11 @@ int BeaglePWM::setPrescaleDiv(PwmModul modul, uint32_t rqst_div)
 	return -1;
 }
 
-int BeaglePWM::modifyReg(unsigned short &reg, unsigned short address, unsigned short mask, unsigned short value)
+int BeaglePWM::modifyReg(uint16_t *reg, uint16_t address, uint16_t mask, uint16_t value)
 {
-	uint16_t tempreg;
-	tempreg = reg & ~(mask);
-	tempreg |= value;
+	uint16_t tempreg = reg[(PWM_ADR_OFFSET + address) / 2];
+	tempreg &= ~mask;
+	tempreg |= value & mask;
 	reg = tempreg;
 
 	return 0;

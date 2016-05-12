@@ -15,6 +15,9 @@ class BeaglePWM
 		BeaglePWM(void *pwm_addr);
 		virtual ~BeaglePWM();
 
+		// use singleton?
+		static BeaglePWM *getInstance();
+
 		enum PwmPin {
 			P8_13                   = 0,
 			P8_19                   = 1,
@@ -38,8 +41,8 @@ class BeaglePWM
 		};
 
 		int setDutyCycle(PwmPin pin, unsigned long ns);
-		int setRunState(PwmModul modul, bool enable);
-		int setPeriod(PwmModul modul, unsigned long ns);
+		int setRunState(PwmPin pin, bool enable);
+		int setPeriod(PwmPin pin, unsigned long ns);
 
 	private:
 		struct PWMInfo
@@ -54,11 +57,7 @@ class BeaglePWM
 		static struct PWMInfo pwmInfos[];
 
 		int setPrescaleDiv(PwmModul modul, uint32_t rqst_div);
-		int modifyReg(unsigned short &reg, unsigned short address, unsigned short mask, unsigned short value);	// TODO Phileas fragen, ob das so möglich ist
-
-
-		// use singleton?
-		//static BeaglePWM *getInstance();
+		int modifyReg(uint16_t *reg, uint16_t address, uint16_t mask, uint16_t value);	// TODO Phileas fragen, ob das so möglich ist
 };
 
 #endif /* BEAGLEPWM_H_ */

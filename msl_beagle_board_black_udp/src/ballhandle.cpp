@@ -10,27 +10,29 @@
 
 using namespace BlackLib;
 
-	BallHandle::BallHandle(pwmName pwm_P, const char *pin_names[]) {
-		pwm = new BlackPWM(pwm_P);
-
+	BallHandle::BallHandle(BeaglePWM::PwmPin pwm_name, const char *pin_names[]) {
 		gpio = BeagleGPIO::getInstance();
+		pwm = BeaglePWM::getInstance();
 		pins = gpio->claim((char**) pin_names, 4);
 
 		direction = left;
 		direction_desired = left;
+		speed = 0;
+		speed_desired = 0;
 
 		int outputIdxs[] = { dir, rst};
 		pins->enableOutput(outputIdxs, 2);
 
-		pwm->setPeriodTime(period, nanosecond);
-		pwm->setSpaceRatioTime(0, nanosecond);
-		pwm->setRunState(run);
-
 		pins->clearBit(dir);
 		pins->setBit(rst);
+
+		pwm_pin = pwm_name;
+		pwm->setPeriod(pwm_pin, period);
+		pwm->setRunState(pwm_pin, true);
 	}
 
 	BallHandle::~BallHandle() {
+		pwm->setRunState(pwm_pin, false);
 		delete pwm;
 		delete gpio;
 	}
@@ -68,17 +70,16 @@ using namespace BlackLib;
 		if (direction != direction_desired && speed_desired != 0) {
 			direction = direction_desired;
 			speed = 0;
-			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
+			pwm->setDutyCycle(pwm_pin, speed);
 			if (direction)
 				pins->setBit(dir);
 			else
 				pins->clearBit(dir);
-			//dir->setValue(direction);						// Time for this Operation: 550us
 		}
 
 		if (speed != speed_desired) {
 			speed = speed_desired;
-			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
+			pwm->setDutyCycle(pwm_pin, speed);
 		}
 	}
 

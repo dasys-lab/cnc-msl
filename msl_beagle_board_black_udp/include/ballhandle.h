@@ -18,6 +18,7 @@
 
 #include <BeagleGPIO.h>
 #include <BeaglePins.h>
+#include <BeaglePWM.h>
 
 enum Error
 {
@@ -37,7 +38,7 @@ enum BH_Pin
 class BallHandle
 {
 public:
-	BallHandle(BlackLib::pwmName pwm_P, const char *pin_names[]);
+	BallHandle(BeaglePWM::PwmPin pwm_name, const char *pin_names[]);
 	~BallHandle();
 
 	void setBallHandling(int32_t value);
@@ -47,18 +48,20 @@ public:
 	Error getError();
 
 private:
-	BlackLib::BlackPWM *pwm;
 	BeagleGPIO *gpio;
 	BeaglePins *pins;
+	BeaglePWM *pwm;
+	BeaglePWM::PwmPin pwm_pin;
+
+	const int period = 10000;
+	bool enabled = false;
 
 	Direction direction;
 	Direction direction_desired;
+	int speed;
+	int speed_desired;
 
-	bool enabled = false;
-	const int period = 10000;
-	int speed = 0, speed_desired = 0;
 	timeval last_ping;
-
 };
 
 #endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_BALLHANDLE_H_ */

@@ -33,8 +33,8 @@ const char *BH_left_pins[] = { "P8_7", "P8_8", "P8_12", "P8_14" };
 const char *IMU_pins[] = { "P8_11", "P8_15", "P8_17", "P8_26" };
 const char *OF_pins[] = { "P9_30", "P9_25", "P9_27", "P9_12" };
 
-BallHandle		BH_right(P8_19, BH_right_pins);		/* pwm, dir, reset, ff1, ff2 */
-BallHandle		BH_left(P8_13, BH_left_pins);			/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_right(BeaglePWM::P8_19, BH_right_pins);		/* pwm, dir, reset, ff1, ff2 */
+BallHandle		BH_left(BeaglePWM::P8_13, BH_left_pins);			/* pwm, dir, reset, ff1, ff2 */
 IMU				lsm9ds0(IMU_pins, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
 OpticalFlow		adns3080(OF_pins, &mySpi);	/* ncs, npd, rst, led */
 LightBarrier	lightbarrier(AIN0);
