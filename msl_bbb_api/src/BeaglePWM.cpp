@@ -154,7 +154,11 @@ class BeaglePWM* BeaglePWM::getInstance()
 int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long ns)
 {
 	unsigned short modul = pwmInfos[pin].pwmChip;
-	unsigned short cmp = (pwmInfos[pin].pwmPin ? CMPB : CMPA);
+	unsigned short cmp;
+	if (pwmInfos[pin].pwmPin == 0)
+		cmp = CMPA;
+	else
+		cmp = CMPB;
 
 	// Calculate cycles
 	unsigned long duty_cycles = ns * 0.1;
