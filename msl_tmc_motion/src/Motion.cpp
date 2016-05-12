@@ -91,7 +91,7 @@ void Motion::initialize() {
 			"MinCycleTime", NULL);
 
 	this->device = (*sc)["Motion"]->get<string>("Motion", "CNMC", "Device",
-			NULL);
+	NULL);
 
 	this->initReadTimeout = (*sc)["Motion"]->tryGet<int>(1500, "Motion", "CNMC",
 			"InitReadTimeout", NULL);
@@ -101,7 +101,7 @@ void Motion::initialize() {
 			"WriteTimeout", NULL);
 
 	this->radius = (*sc)["Motion"]->get<double>("Motion", "CNMC", "RobotRadius",
-			NULL);
+	NULL);
 	if (this->radius < 10) {
 		std::cerr << "ROBOT RADIUS TOO LOW!!!" << std::endl;
 	}
@@ -564,6 +564,71 @@ bool Motion::isRunning() {
 	return Motion::running;
 }
 
+void Motion::calcOdoPosition() {
+
+	//calc position and angle since Motion has been initialised, initial: (0,0,0)
+	int newX, newY;
+	double newAngle, trans, transX, transY, rot;
+	double rawOdoAngle;
+
+	//determine old position
+	double lastAngle = lastOdoInfo.position.angle;
+	int lastX = lastOdoInfo.position.x;
+	int lastY = lastOdoInfo.position.y;
+	shared_ptr<geometry::CNPoint2D> lastPos = make_shared<geometry::CNPoint2D>(
+			lastX, lastY);
+
+	// determine time driven
+	ros::Time currTime = ros::Time::now();
+	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
+
+	unsigned long timeSinceLastOdo = currNanoSeconds - lastOdoInfo.timestamp;
+
+	//determine new position from last odo info
+	rawOdoAngle = lastOdoInfo.motion.angle;
+	trans = lastOdoInfo.motion.translation;
+	rot = lastOdoInfo.motion.rotation;
+	transX = cos(rawOdoAngle) * trans;
+	transY = sin(rawOdoAngle) * trans;
+	shared_ptr<geometry::CNPoint2D> translation = make_shared<
+			geometry::CNPoint2D>(transX, transY);
+	shared_ptr<geometry::CNPoint2D> radiusVect =
+			translation->normalize()->rotate(M_PI);
+	shared_ptr<geometry::CNPoint2D> middle;
+	shared_ptr<geometry::CNPoint2D> newPos;
+
+	//angle:
+
+	newAngle = lastAngle + rot * timeSinceLastOdo;
+
+	//position: calc distance driven on a circular path
+
+	double angleDriven = rot * timeSinceLastOdo;
+
+	//there is a rotational velocity, so we are driving on a circular path
+	if (rot != 0) {
+		double radiusLength = sqrt(transX * transX + transY * transY) / rot;
+
+		middle = lastPos
+				- (translation->normalize() * radiusLength)->rotate(M_PI);
+
+		newPos = middle + radiusVect->rotate(angleDriven);
+	} else {
+		newPos = lastPos + translation*timeSinceLastOdo;
+	}
+
+	newX = newPos->x;
+	newY = newPos->y;
+
+	//update position
+	rawOdoInfo.position.x = newX;
+	rawOdoInfo.position.y = newY;
+	rawOdoInfo.position.angle = newAngle;
+
+	lastOdoInfo = rawOdoInfo;
+
+}
+
 void Motion::run() {
 	MotionSet* requestOld = nullptr;
 	MotionSet* request = nullptr;
@@ -617,6 +682,7 @@ void Motion::run() {
 			requestOld = request;
 		}
 
+		calcOdoPosition();
 		// send raw odometry info
 		this->rawOdometryInfoPub.publish(this->rawOdoInfo);
 		log_goalie();
@@ -678,6 +744,7 @@ void Motion::executeRequest(MotionSet* ms) {
 		ros::Time t = ros::Time::now();
 		uint64_t timestamp = (t.sec * 1000000000UL + t.nsec);
 		rawOdoInfo.timestamp = timestamp;
+
 	}
 }
 

@@ -52,6 +52,7 @@ namespace msl_driver
 		bool open();
 		void start();
 		void handleMotionControl(msl_actuator_msgs::MotionControlPtr mc);bool isRunning();
+		void calcOdoPosition();
 
 		static void pmSigintHandler(int sig);
 		static void pmSigTermHandler(int sig);
@@ -85,6 +86,7 @@ namespace msl_driver
 		ros::Publisher rawOdometryInfoPub;
 		ros::Publisher motionStatInfoPub;
 		msl_actuator_msgs::RawOdometryInfo rawOdoInfo;
+		msl_actuator_msgs::RawOdometryInfo lastOdoInfo;
 
 		static bool running;
 		thread runThread;
@@ -108,7 +110,8 @@ namespace msl_driver
 		chrono::steady_clock::time_point cycleLastTimestamp;
 		chrono::steady_clock::time_point deltaTime;
 		double radius;
-		double maxVelocity;bool logOdometry;
+		double maxVelocity;
+		bool logOdometry;
 		shared_ptr<vector<string>> logTypes;
 		shared_ptr<vector<string>> logTypesAvailable;bool controllerIsActive = false;
 
