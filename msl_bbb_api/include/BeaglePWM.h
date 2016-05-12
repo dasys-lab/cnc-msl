@@ -12,7 +12,7 @@ class BeaglePWM
 {
 
 	public:
-		BeaglePWM(void *pwm_addr);
+		BeaglePWM();
 		virtual ~BeaglePWM();
 
 		// use singleton?

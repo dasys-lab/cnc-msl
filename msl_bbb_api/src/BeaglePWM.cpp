@@ -1,6 +1,8 @@
 #include "BeaglePWM.h"
 #include "debug.h"
 
+#include <stdio.h>
+#include <unistd.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -97,7 +99,7 @@
    addresses for epwmss0, epwmss1, epwmss2 
    see: your device tree file
 */
-const uint32_t BeaglePWM::pwmAddr[] = { 0x48300200, 0x48302200, 0x48304200 };
+const uint32_t pwmAddr[] = { 0x48300200, 0x48302200, 0x48304200 };
 
 struct BeaglePWM::PWMInfo BeaglePWM::pwmInfos[] =
 {
@@ -123,8 +125,7 @@ BeaglePWM::BeaglePWM()
 	//PWM mapping
 
 	for (int i = 0; i < NUM_PWMS; i++) {
-		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN,
-			PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i] - PWM_ADR_OFFSET);
+		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i] - PWM_ADR_OFFSET);
 
 		if (pwmRegs[i] == MAP_FAILED )
 		{
@@ -137,7 +138,7 @@ BeaglePWM::BeaglePWM()
 //Destructor
 BeaglePWM::~BeaglePWM()
 {
-	active = false;
+	// active = false;
 	for (int i = 0; i < 4; i++)
 		munmap(pwmRegs[i], PWM_MMAPLEN);
 	close(memFd);
@@ -152,13 +153,13 @@ class BeaglePWM* BeaglePWM::getInstance()
 
 int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long ns)
 {
+	unsigned short modul = pwmInfos[pin].pwmChip;
+	unsigned short cmp = (pwmInfos[pin].pwmPin ? CMPB : CMPA);
+
 	// Calculate cycles
 	unsigned long duty_cycles = ns * 0.1;
 
-	duty_cycles = duty_cycles / pwmPrescale;
-
-	unsigned short modul = pwmInfos[pin].pwmChip;
-	unsigned short cmp = (pwmInfos[pin].pwmPin ? CMPB : CMPA);
+	duty_cycles = duty_cycles / pwmPrescale[modul];
 	
 	pwmRegs[modul][(PWM_ADR_OFFSET + cmp) / 2] = duty_cycles;
 
@@ -209,14 +210,14 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		if (pwmInfos[pin].pwmPin == 0)
 		{
 			aqcsfrc = AQCSFRC_CSFA_MASK;
-			aqmask = AQCSFRC_CSFA_MASK;
-			aqval = AQCSFRC_CSFA_FRCLOW;
+			aqcsfrc_mask = AQCSFRC_CSFA_MASK;
+			aqcsfrc_val = AQCSFRC_CSFA_FRCLOW;
 		}
 		else
 		{
 			aqcsfrc = AQCSFRC_CSFB_MASK;
-			aqmask = AQCSFRC_CSFB_MASK;
-			aqval = AQCSFRC_CSFA_FRCLOW;
+			aqcsfrc_mask = AQCSFRC_CSFB_MASK;
+			aqcsfrc_val = AQCSFRC_CSFA_FRCLOW;
 		}
 
 
@@ -225,7 +226,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		 * Action Qualifier control on PWM output from next TBCLK
 		 */
 		modifyReg(pwmRegs[modul], AQSFRC, AQSFRC_RLDCSF_MASK,AQSFRC_RLDCSF_IMDT);
-		modifyReg(pwmRegs[modul], AQCSFRC, aqmask, aqval);
+		modifyReg(pwmRegs[modul], AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
 
 		/* Disabling TBCLK on PWM disable */
 		//clk_disable(pc->tbclk);
@@ -244,12 +245,12 @@ int BeaglePWM::setPeriod(PwmPin pin, unsigned long ns)
 {
 	// TODO: Überprüfung ob in Gültigkeitsbereich
 
-	PwmModul modul = pwmInfos[pin].pwmChip;
+	PwmModul modul = (PwmModul) pwmInfos[pin].pwmChip;
 
 	// Berechnung der Periodenzyklen
 	unsigned long period_cycles = ns * 0.1;
 	setPrescaleDiv(modul, period_cycles/PERIOD_MAX);
-	period_cycles = period_cycles / pwmPrescale;
+	period_cycles = period_cycles / pwmPrescale[modul];
 
 	modifyReg(pwmRegs[modul], TBCTL, TBCTL_PRDLD_MASK, TBCTL_PRDLD_SHDW);
 	pwmRegs[modul][(PWM_ADR_OFFSET + TBPRD) / 2] = period_cycles;
@@ -288,7 +289,7 @@ int BeaglePWM::modifyReg(uint16_t *reg, uint16_t address, uint16_t mask, uint16_
 	uint16_t tempreg = reg[(PWM_ADR_OFFSET + address) / 2];
 	tempreg &= ~mask;
 	tempreg |= value & mask;
-	reg = tempreg;
+	reg[(PWM_ADR_OFFSET + address) / 2] = tempreg;
 
 	return 0;
 }

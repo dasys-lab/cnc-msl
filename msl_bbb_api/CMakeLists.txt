@@ -21,5 +21,6 @@ include_directories(
 add_library(msl_bbb_api
   src/BeagleGPIO.cpp
   src/BeaglePins.cpp
+  src/BeaglePWM.cpp
 )
 
