@@ -82,6 +82,7 @@ namespace msl
 											(MSLWorldModel*)this);
 		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
 										(MSLWorldModel*)this);
+		imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
@@ -277,6 +278,11 @@ namespace msl
 	{
 		lock_guard<mutex> lock(motionBurstMutex);
 		rawSensorData->processMotionBurst(msg);
+	}
+
+	void MSLWorldModel::onIMUData(msl_actuator_msgs::IMUDataPtr msg)
+	{
+		rawSensorData->processIMUData(msg);
 	}
 
 	MSLWorldModel::~MSLWorldModel()

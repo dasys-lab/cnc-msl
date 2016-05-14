@@ -42,6 +42,7 @@
 #include "Prediction.h"
 #include "Monitoring.h"
 #include "LightBarrier.h"
+#include "msl_actuator_msgs/IMUData.h"
 
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
@@ -82,6 +83,7 @@ namespace msl
 		void onWatchBallMsg(msl_helper_msgs::WatchBallMsgPtr msg);
 		void onCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr msg);
 		void onLightBarrierInfo(std_msgs::BoolPtr msg);
+		void onIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
 		bool isMaySendMessages() const;
 		void setMaySendMessages(bool maySendMessages);
@@ -143,6 +145,7 @@ namespace msl
 		ros::Publisher sharedWorldPub;
 		ros::Subscriber correctedOdometrySub;
 		ros::Subscriber lightBarrierSub;
+		ros::Subscriber imuDataSub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

@@ -24,7 +24,7 @@
 #include "msl_sensor_msgs/BallHypothesisList.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "std_msgs/Bool.h"
-
+#include "msl_actuator_msgs/IMUData.h"
 
 using namespace std;
 
@@ -59,6 +59,7 @@ namespace msl
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
+		void processIMUData(msl_actuator_msgs::IMUDataPtr& msg);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
@@ -73,6 +74,7 @@ namespace msl
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
 		RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
+		RingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
 		MSLWorldModel* wm;
 
 		unsigned long maxInformationAge;

@@ -17,7 +17,7 @@ namespace msl
 					ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(ringbufferLength), ownPositionVision(
 					ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(ringbufferLength), compass(
 					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(
-					ringbufferLength), ballHypothesis(ringbufferLength)
+					ringbufferLength), ballHypothesis(ringbufferLength), imuData(ringbufferLength)
 	{
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -340,5 +340,23 @@ namespace msl
 		ballHypothesis.add(o);
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
+
+	void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr& msg)
+	{
+		shared_ptr<msl_actuator_msgs::IMUData> cmd = shared_ptr<msl_actuator_msgs::IMUData>();
+		cmd->accelSens = msg->accelSens;
+		cmd->acceleration = msg->acceleration;
+		cmd->gyro = msg->gyro;
+		cmd->gyroSens = msg->gyroSens;
+		cmd->magnet = msg->magnet;
+		cmd->magnetSens = msg->magnetSens;
+		cmd->temperature = msg->temperature;
+		cmd->time = msg->time;
+		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(
+				cmd, wm->getTime());
+		o->certainty = 1;
+		imuData.add(o);
+	}
 } /* namespace alica */
+
 

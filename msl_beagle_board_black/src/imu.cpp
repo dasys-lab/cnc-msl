@@ -310,7 +310,7 @@ void IMU::sendData(timeval time_now, ros::Publisher *imuPub){
 	msg.temperature = temperature;
 	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 
-//	imuPub->publish(msg);
+	imuPub->publish(msg);
 	last_sended = time_now;
 }
 
