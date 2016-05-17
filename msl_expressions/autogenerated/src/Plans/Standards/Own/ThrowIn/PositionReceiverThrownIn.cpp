@@ -17,6 +17,7 @@ namespace alica
             DomainBehaviour("PositionReceiverThrownIn")
     {
         /*PROTECTED REGION ID(con1461584204507) ENABLED START*/ //Add additional options here
+    	this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
         /*PROTECTED REGION END*/
     }
     PositionReceiverThrownIn::~PositionReceiverThrownIn()
@@ -60,6 +61,10 @@ namespace alica
     void PositionReceiverThrownIn::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1461584204507) ENABLED START*/ //Add additional options here
+        query->clearDomainVariables();
+        query->addVariable(wm->getOwnId(), "x");
+        query->addVariable(wm->getOwnId(), "y");
+        result.clear();
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);

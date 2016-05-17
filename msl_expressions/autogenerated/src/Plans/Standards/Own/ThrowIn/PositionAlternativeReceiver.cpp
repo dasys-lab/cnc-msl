@@ -44,7 +44,15 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> alloTarget = make_shared<geometry::CNPoint2D>();
 		shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
 
-		alloTarget->y = alloBall->y + 2300.0;
+		if(ownPos->y < 0)
+		{
+			alloTarget->y = alloBall->y + 2300.0;
+		}
+		else
+		{
+			alloTarget->y = alloBall->y - 2300.0;
+		}
+
 		alloTarget->x = alloBall->x;
 
 		egoTarget = alloTarget->alloToEgo(*ownPos);
