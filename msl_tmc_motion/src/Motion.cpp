@@ -143,7 +143,7 @@ void Motion::logging_goalie_init() {
 
 void Motion::log_goalie() {
 	if (isLogging) {
-		fprintf(lp, "%f\t%f\t%f%f%f\n", rawOdoInfo.position.angle,
+		fprintf(lp, "%f\t%f\t%f\t%f\t%lu\n", rawOdoInfo.position.angle,
 				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation, rawOdoInfo.timestamp);
 	}
 }
