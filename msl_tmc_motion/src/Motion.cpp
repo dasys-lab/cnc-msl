@@ -744,9 +744,9 @@ void Motion::executeRequest(MotionSet* ms) {
 		std::ios state(NULL);
 		state.copyfmt(std::cout);
 		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << endl;
-		cout << "Hex: " << hex << static_cast<int>(data->at(0)) << " " << static_cast<int>(data->at(1)) << " " << static_cast<int>(data->at(2))
-				<< " " << static_cast<int>(data->at(3)) << " " << static_cast<int>(data->at(4)) << " "
-				<< static_cast<int>(data->at(5)) << endl;
+		cout << "Hex: " << hex << static_cast<int>(data->at(3)) << " " << static_cast<int>(data->at(4)) << " " << static_cast<int>(data->at(5))
+				<< " " << static_cast<int>(data->at(6)) << " " << static_cast<int>(data->at(7)) << " "
+				<< static_cast<int>(data->at(8)) << endl;
 		std::cout.copyfmt(state);
 
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
