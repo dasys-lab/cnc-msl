@@ -721,12 +721,14 @@ void Motion::executeRequest(MotionSet* ms) {
 	if (ms->translation < 0)
 		trans *= -1;
 
+
 	shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
 	packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
 			(short) (cos(ms->angle) * trans), (short) (sin(ms->angle) * trans),
 			(short) (rot * 64));
 
+	cout << "Motion: first Rotation: " << (rot*64) << endl;
 	sendData(packet);
 
 	// reading from motion
@@ -746,7 +748,9 @@ void Motion::executeRequest(MotionSet* ms) {
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
 		double translation = sqrt(x1 * x1 + x2 * x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
-		double rotation = ((double) 1/3*(x1+x2+x3)) / 64.0d;
+		double rotation = (double) x3 / 64.0d;
+
+		cout << "Motion: Second Rotation: " << rotation << endl;
 
 		rawOdoInfo.motion.angle = angle;
 		rawOdoInfo.motion.translation = translation;
