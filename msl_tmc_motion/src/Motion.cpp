@@ -741,10 +741,10 @@ void Motion::executeRequest(MotionSet* ms) {
 		short x2 = read->convertByteToShort(2);
 		short x3 = read->convertByteToShort(4);
 
-		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << ", data: "
-				<< data->at(0) << " " << data->at(1) << " " << data->at(2)
-				<< " " << data->at(3) << " " << data->at(4) << " "
-				<< data->at(5) << endl;
+		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << endl;
+		cout << "Hex: " << hex << static_cast<int>(data->at(0)) << " " << static_cast<int>(data->at(1)) << " " << static_cast<int>(data->at(2))
+				<< " " << static_cast<int>(data->at(3)) << " " << static_cast<int>(data->at(4)) << " "
+				<< static_cast<int>(data->at(5)) << endl;
 
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
 		double angle = atan2(x2, x1);
