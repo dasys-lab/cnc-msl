@@ -144,7 +144,7 @@ void Motion::logging_goalie_init() {
 void Motion::log_goalie() {
 	if (isLogging) {
 		fprintf(lp, "%f\t%f\t%f\n", rawOdoInfo.position.angle,
-				rawOdoInfo.position.y, rawOdoInfo.position.x);
+				rawOdoInfo.position.x, rawOdoInfo.position.y);
 	}
 }
 
@@ -614,7 +614,7 @@ void Motion::calcOdoPosition() {
 
 		newPos = middle + radiusVect->rotate(angleDriven);
 	} else {
-		newPos = lastPos + translation*timeSinceLastOdo;
+		newPos = lastPos + translation * timeSinceLastOdo;
 	}
 
 	newX = newPos->x;
