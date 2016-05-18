@@ -741,7 +741,10 @@ void Motion::executeRequest(MotionSet* ms) {
 		short x2 = read->convertByteToShort(2);
 		short x3 = read->convertByteToShort(4);
 
-		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << endl;
+		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << ", data: "
+				<< data->at(0) << " " << data->at(1) << " " << data->at(2)
+				<< " " << data->at(3) << " " << data->at(4) << " "
+				<< data->at(5) << endl;
 
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
 		double angle = atan2(x2, x1);
@@ -749,7 +752,6 @@ void Motion::executeRequest(MotionSet* ms) {
 		double translation = sqrt(x1 * x1 + x2 * x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
 		double rotation = (double) x3 / 64.0d;
-
 
 		rawOdoInfo.motion.angle = angle;
 		rawOdoInfo.motion.translation = translation;
