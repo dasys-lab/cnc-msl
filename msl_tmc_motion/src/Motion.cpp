@@ -582,7 +582,9 @@ void Motion::calcOdoPosition() {
 	ros::Time currTime = ros::Time::now();
 	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
 
-	unsigned long timeSinceLastOdo = currNanoSeconds - lastOdoInfo.timestamp;
+	double timeSinceLastOdo = (currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
+
+
 
 	//determine new position from last odo info
 	rawOdoAngle = lastOdoInfo.motion.angle;
