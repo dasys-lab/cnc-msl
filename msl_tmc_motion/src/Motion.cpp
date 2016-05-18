@@ -142,9 +142,16 @@ void Motion::logging_goalie_init() {
 }
 
 void Motion::log_goalie() {
+
+	ros::Time currTime = ros::Time::now();
+	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
+
+	double timeSinceLastOdo = (currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
+
+
 	if (isLogging) {
-		fprintf(lp, "%f\t%f\t%f\t%f\t%lu\n", rawOdoInfo.position.angle,
-				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation, rawOdoInfo.timestamp);
+		fprintf(lp, "%f\t%f\t%f\t%f\t%f\n", rawOdoInfo.position.angle,
+				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation, timeSinceLastOdo);
 	}
 }
 
