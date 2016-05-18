@@ -8,7 +8,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
 #define PWM_MMAPLEN 1024
 
 // align for mmap pagesize
@@ -18,7 +17,15 @@
 #define BIT(n) (1 << n)
 
 
-/* Time base module registers */
+/* Clk control registers */
+#define CLKCONFIG		0x08
+#define CLKSTATUS		0x0C
+
+#define EPWM_CLKSTOP	BIT(9)
+#define EPWM_CLK_EN		BIT(8)
+
+
+/* Time base module registers and masks */
 #define TBCTL			0x00
 #define TBPRD			0x0A
 
@@ -99,7 +106,7 @@
    addresses for epwmss0, epwmss1, epwmss2 
    see: your device tree file
 */
-const uint32_t pwmAddr[] = { 0x48300200, 0x48302200, 0x48304200 };
+const uint32_t pwmAddr[] = { 0x48300000, 0x48302000, 0x48304000 };
 
 struct BeaglePWM::PWMInfo BeaglePWM::pwmInfos[] =
 {
@@ -125,7 +132,7 @@ BeaglePWM::BeaglePWM()
 	//PWM mapping
 
 	for (int i = 0; i < NUM_PWMS; i++) {
-		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i] - PWM_ADR_OFFSET);
+		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i]);
 
 		if (pwmRegs[i] == MAP_FAILED )
 		{
@@ -155,17 +162,20 @@ int BeaglePWM::setDutyCycle(PwmPin pin, unsigned long ns)
 {
 	unsigned short modul = pwmInfos[pin].pwmChip;
 	unsigned short cmp;
-	if (pwmInfos[pin].pwmPin == 0)
-		cmp = CMPA;
-	else
-		cmp = CMPB;
+
+	pwmRegs[modul][(PWM_ADR_OFFSET + TBPRD) / 2] = pwmPeriod[modul];
 
 	// Calculate cycles
 	unsigned long duty_cycles = ns * 0.1;
-
 	duty_cycles = duty_cycles / pwmPrescale[modul];
-	
-	pwmRegs[modul][(PWM_ADR_OFFSET + cmp) / 2] = duty_cycles;
+	if (pwmInfos[pin].pwmPin == 0)
+	{
+		pwmRegs[modul][(PWM_ADR_OFFSET + CMPA) / 2] = duty_cycles;
+	}
+	else
+	{
+		pwmRegs[modul][(PWM_ADR_OFFSET + CMPB) / 2] = duty_cycles;
+	}
 
 	return 0;
 }
@@ -254,10 +264,10 @@ int BeaglePWM::setPeriod(PwmPin pin, unsigned long ns)
 	// Berechnung der Periodenzyklen
 	unsigned long period_cycles = ns * 0.1;
 	setPrescaleDiv(modul, period_cycles/PERIOD_MAX);
-	period_cycles = period_cycles / pwmPrescale[modul];
+	pwmPeriod[modul] = period_cycles / pwmPrescale[modul];
 
 	modifyReg(pwmRegs[modul], TBCTL, TBCTL_PRDLD_MASK, TBCTL_PRDLD_SHDW);
-	pwmRegs[modul][(PWM_ADR_OFFSET + TBPRD) / 2] = period_cycles;
+	pwmRegs[modul][(PWM_ADR_OFFSET + TBPRD) / 2] = pwmPeriod[modul];
 	modifyReg(pwmRegs[modul], TBCTL, TBCTL_CTRMODE_MASK, TBCTL_CTRMODE_UP);
 
 	// TODO: DutyCycle neu setzen?

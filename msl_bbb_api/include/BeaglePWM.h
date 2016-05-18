@@ -54,6 +54,7 @@ class BeaglePWM
 		int memFd; /* file descriptor for /dev/mem */
 		uint16_t *pwmRegs[NUM_PWMS]; /** 3 mmaped pwm registers */
 		uint16_t pwmPrescale[NUM_PWMS];
+		uint16_t pwmPeriod[NUM_PWMS];
 		static struct PWMInfo pwmInfos[];
 
 		int setPrescaleDiv(PwmModul modul, uint32_t rqst_div);
