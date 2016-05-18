@@ -144,13 +144,15 @@ void Motion::logging_goalie_init() {
 void Motion::log_goalie() {
 
 	if (isLogging) {
-		fprintf(lp, "%f\t%f\t%f\t%f\t\n", rawOdoInfo.position.angle,
-				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation);
+		fprintf(lp, "%f\t%f\t%f\t%f\t%f\t%f\t\n", rawOdoInfo.position.angle,
+				rawOdoInfo.position.x, rawOdoInfo.position.y,
+				rawOdoInfo.motion.angle, rawOdoInfo.motion.rotation,
+				rawOdoInfo.motion.translation);
 	}
 }
 
 bool Motion::open() {
-	// TODO: make baudrate a parameter
+// TODO: make baudrate a parameter
 	this->my_serial = new serial::Serial(this->device, 57600,
 			serial::Timeout::simpleTimeout(this->initReadTimeout));
 
@@ -164,10 +166,10 @@ bool Motion::open() {
 	this->my_serial->setTimeout(serial::Timeout::max(), this->readTimeout, 0,
 			this->writeTimeout, 0);
 
-	//### SEND MOTOR CONFIG
+//### SEND MOTOR CONFIG
 	this->sendMotorConfig();
 
-	//### READY
+//### READY
 	this->controllerIsActive = true;
 
 	return true;
@@ -232,7 +234,7 @@ void Motion::checkSuccess(shared_ptr<CNMCPacket> cmd) {
 void Motion::sendMotorConfig() {
 	shared_ptr<CNMCPacketConfigure> configPacket;
 
-	//gear ratio
+//gear ratio
 	configPacket = make_shared<CNMCPacketConfigure>();
 	shared_ptr<vector<uint8_t>> values = make_shared<vector<uint8_t>>();
 	values->push_back(1);
@@ -241,28 +243,28 @@ void Motion::sendMotorConfig() {
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//encoder ticks per (half) rotation
+//encoder ticks per (half) rotation
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::EncoderTicksPerRot,
 			(short) this->mc.resolution);
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//wheel Radius
+//wheel Radius
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::WheelRadius,
 			(short) (this->mc.wheelRadius * 10));
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//Robot Radius
+//Robot Radius
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::RobotRadius,
 			(short) this->radius);
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//maxRPM
+//maxRPM
 	int result = (int) (this->mc.maxSpeed / this->mc.gearReduction);
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::MaxRPM, (short) result);
@@ -272,63 +274,63 @@ void Motion::sendMotorConfig() {
 	shared_ptr<CNMCPacketCtrlConfigure> ctrlPacket;
 	short tmp;
 
-	//PIDKp
+//PIDKp
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.pidKd)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKp, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//PIDKb
+//PIDKb
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.pidB)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDb, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//PIDKi
+//PIDKi
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.pidKi)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKi, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//PIDKd
+//PIDKd
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.pidKd)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKd, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//PIDKdi
+//PIDKdi
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.pidKdi)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::PIDKdi, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//linFactor
+//linFactor
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.linFactor)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::LinearFactor, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//smoothFactor
+//smoothFactor
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(8192 * fmin(3, fmax(-3, this->mc.smoothFactor)));
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::SmoothFactor, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//maxErrorInt
+//maxErrorInt
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::MaxErrorInt,
 			(short) this->mc.maxErrorInt);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Rotation Error Weight
+//Rotation Error Weight
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(
 			8192 * fmin(3, fmax(-3, this->mc.rotationErrorWeight)));
@@ -350,35 +352,35 @@ void Motion::sendMotorConfig() {
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//DeadBand
+//DeadBand
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::DeadBand,
 			(short) this->mc.deadBand);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Lower Accel Bound
+//Lower Accel Bound
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::LowerAccelBound,
 			(short) this->mc.accelBoundMin);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Higher Accel Bound
+//Higher Accel Bound
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::HigherAccelBound,
 			(short) this->mc.accelBoundMax);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Max Rotation Acceleration
+//Max Rotation Acceleration
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	tmp = (short) std::round(64 * this->mc.rotationAccelBound);
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::MaxRotationAccel, tmp);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Fail Safe
+//Fail Safe
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	shared_ptr<vector<short>> vals = make_shared<vector<short>>();
 	vals->push_back((short) this->mc.failSafeRPMBound);
@@ -388,7 +390,7 @@ void Motion::sendMotorConfig() {
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//Current Control:
+//Current Control:
 	if (this->mc.controlCurrent) {
 		ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 		ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::CurrentErrorBound,
@@ -432,25 +434,25 @@ void Motion::sendMotorConfig() {
 		this->checkSuccess(configPacket);
 	}
 
-	//cycle time
+//cycle time
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::CycleTime, (short) 5);
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//COMMIT
+//COMMIT
 	ctrlPacket = make_shared<CNMCPacketCtrlConfigure>();
 	ctrlPacket->setData(CNMCPacket::CtrlConfigureCmd::Commit);
 	this->sendData(ctrlPacket);
 	this->checkSuccess(ctrlPacket);
 
-	//cycle time
+//cycle time
 	configPacket = make_shared<CNMCPacketConfigure>();
 	configPacket->setData(CNMCPacket::ConfigureCmd::Mode, (short) 1);
 	this->sendData(configPacket);
 	this->checkSuccess(configPacket);
 
-	//Toggle Logging
+//Toggle Logging
 	configPacket = make_shared<CNMCPacketConfigure>();
 	shared_ptr<vector<uint8_t>> valByte = make_shared<vector<uint8_t>>();
 	valByte->push_back(this->logOdometry ? (uint8_t) 1 : (uint8_t) 0);
@@ -473,7 +475,7 @@ void Motion::getMotorConfig() {
 	this->mc.gearReduction = (*sc)["Motion"]->get<short>("Motion", "CNMC",
 			"Motors", "GearReduction", NULL);
 
-	//Controller values
+//Controller values
 	this->mc.pidKp = (*sc)["Motion"]->get<double>("Motion", "CNMC",
 			"Controller", "PIDKp", NULL);
 	this->mc.pidB = (*sc)["Motion"]->get<double>("Motion", "CNMC", "Controller",
@@ -567,27 +569,26 @@ bool Motion::isRunning() {
 
 void Motion::calcOdoPosition() {
 
-	//calc position and angle since Motion has been initialised, initial: (0,0,0)
+//calc position and angle since Motion has been initialised, initial: (0,0,0)
 	int newX, newY;
 	double newAngle, trans, transX, transY, rot;
 	double rawOdoAngle;
 
-	//determine old position
+//determine old position
 	double lastAngle = lastOdoInfo.position.angle;
 	int lastX = lastOdoInfo.position.x;
 	int lastY = lastOdoInfo.position.y;
 	shared_ptr<geometry::CNPoint2D> lastPos = make_shared<geometry::CNPoint2D>(
 			lastX, lastY);
 
-	// determine time driven
+// determine time driven
 	ros::Time currTime = ros::Time::now();
 	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
 
-	double timeSinceLastOdo = (double)(currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
+	double timeSinceLastOdo = (double) (currNanoSeconds - lastOdoInfo.timestamp)
+			/ 1000000000;
 
-
-
-	//determine new position from last odo info
+//determine new position from last odo info
 	rawOdoAngle = lastOdoInfo.motion.angle;
 	trans = lastOdoInfo.motion.translation;
 	rot = lastOdoInfo.motion.rotation;
@@ -595,28 +596,27 @@ void Motion::calcOdoPosition() {
 	transY = sin(rawOdoAngle) * trans;
 	shared_ptr<geometry::CNPoint2D> translation = make_shared<
 			geometry::CNPoint2D>(transX, transY);
-	shared_ptr<geometry::CNPoint2D> radiusVect =
-			translation->normalize()->rotate(M_PI);
 	shared_ptr<geometry::CNPoint2D> middle;
 	shared_ptr<geometry::CNPoint2D> newPos;
 
-	//angle:
+//angle:
 
 	newAngle = lastAngle + rot * timeSinceLastOdo;
 
-    if (newAngle > M_PI) {
-        newAngle -= 2*M_PI;
-    } else if (newAngle < -M_PI) {
-        newAngle += 2*M_PI;
-    }
+	if (newAngle > M_PI) {
+		newAngle -= 2 * M_PI;
+	} else if (newAngle < -M_PI) {
+		newAngle += 2 * M_PI;
+	}
 
-
-	//position: calc distance driven on a circular path
+//position: calc distance driven on a circular path
 
 	double angleDriven = rot * timeSinceLastOdo;
 
-	//there is a rotational velocity, so we are driving on a circular path
+//there is a rotational velocity, so we are driving on a circular path
 	if (rot != 0) {
+		shared_ptr<geometry::CNPoint2D> radiusVect =
+				translation->normalize()->rotate(M_PI);
 		double radiusLength = sqrt(transX * transX + transY * transY) / rot;
 
 		middle = lastPos
@@ -630,7 +630,7 @@ void Motion::calcOdoPosition() {
 	newX = newPos->x;
 	newY = newPos->y;
 
-	//update position
+//update position
 	rawOdoInfo.position.x = newX;
 	rawOdoInfo.position.y = newY;
 	rawOdoInfo.position.angle = newAngle;
@@ -646,7 +646,7 @@ void Motion::run() {
 	chrono::steady_clock::time_point lastCommandTimestamp =
 			std::chrono::steady_clock::now();
 
-	// Loop until the driver is closed
+// Loop until the driver is closed
 	while (Motion::running) {
 		// 1 Tick = 100ns, 10 Ticks = 1us
 		// remember the time, processing was last triggered
@@ -721,20 +721,18 @@ void Motion::executeRequest(MotionSet* ms) {
 	if (ms->translation < 0)
 		trans *= -1;
 
-
 	shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
 	packet->setData(CNMCPacket::ControlCmd::SetMotionVector,
 			(short) (cos(ms->angle) * trans), (short) (sin(ms->angle) * trans),
 			(short) (rot * 64));
 
-	cout << "Motion: first Rotation: " << (rot*64) << endl;
 	sendData(packet);
 
-	// reading from motion
+// reading from motion
 	auto read = readData();
 
-	// check type
+// check type
 	if (read->cmd == CNMCPacket::RequestCmd::PathVector
 			&& read->cmdgrp == CNMCPacket::CommandGroup::RequestResponse) {
 		auto data = read->getBytes();
@@ -750,7 +748,6 @@ void Motion::executeRequest(MotionSet* ms) {
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
 		double rotation = (double) x3 / 64.0d;
 
-		cout << "Motion: Second Rotation: " << rotation << endl;
 
 		rawOdoInfo.motion.angle = angle;
 		rawOdoInfo.motion.translation = translation;
@@ -764,7 +761,7 @@ void Motion::executeRequest(MotionSet* ms) {
 
 void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc) {
 	std::lock_guard<std::mutex> lck(this->motionValueMutex);
-	// Create a new driver command
+// Create a new driver command
 	if (this->motionValue == nullptr) {
 		this->motionValue = new MotionSet();
 	}
@@ -773,7 +770,7 @@ void Motion::handleMotionControl(msl_actuator_msgs::MotionControlPtr mc) {
 	this->motionValue->translation = mc->motion.translation;
 	this->motionValue->rotation = mc->motion.rotation;
 
-	// Apply the slip control if enabled
+// Apply the slip control if enabled
 	if ((this->slipControlEnabled)
 			&& (mc->motion.translation > this->slipControlMinSpeed)) {
 		this->motionValue->translation *= this->slipControlFactor;
@@ -789,7 +786,7 @@ void Motion::pmSigintHandler(int sig) {
 	cout << endl << "Motion: Caught SIGINT! Terminating ..." << endl;
 	Motion::running = false;
 
-	// Call the ros signal handler method
+// Call the ros signal handler method
 	ros::shutdown();
 }
 /**
@@ -800,7 +797,7 @@ void Motion::pmSigTermHandler(int sig) {
 	cout << endl << "Motion: Caught SIGTERM! Terminating ..." << endl;
 	Motion::running = false;
 
-	// Call the ros signal handler method
+// Call the ros signal handler method
 	ros::shutdown();
 }
 
@@ -809,7 +806,7 @@ void Motion::pmSigTermHandler(int sig) {
 int main(int argc, char** argv) {
 	msl_driver::Motion* motion = new msl_driver::Motion(argc, argv);
 	motion->initCommunication(argc, argv);
-	// has to be set after Motion::initCommunication , in order to override the ROS signal handler
+// has to be set after Motion::initCommunication , in order to override the ROS signal handler
 	signal(SIGINT, msl_driver::Motion::pmSigintHandler);
 	signal(SIGTERM, msl_driver::Motion::pmSigTermHandler);
 	motion->initialize();
