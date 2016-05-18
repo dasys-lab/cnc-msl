@@ -143,15 +143,9 @@ void Motion::logging_goalie_init() {
 
 void Motion::log_goalie() {
 
-	ros::Time currTime = ros::Time::now();
-	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
-
-	unsigned long timeSinceLastOdo = (double)(currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
-
-
 	if (isLogging) {
-		fprintf(lp, "%f\t%f\t%f\t%f\t%lu\n", rawOdoInfo.position.angle,
-				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation, timeSinceLastOdo);
+		fprintf(lp, "%f\t%f\t%f\t%f\t\n", rawOdoInfo.position.angle,
+				rawOdoInfo.position.x, rawOdoInfo.position.y,rawOdoInfo.motion.rotation);
 	}
 }
 
@@ -752,7 +746,7 @@ void Motion::executeRequest(MotionSet* ms) {
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
 		double translation = sqrt(x1 * x1 + x2 * x2);
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
-		double rotation = ((double) x3) / 64.0d;
+		double rotation = ((double) 1/3*(x1+x2+x3)) / 64.0d;
 
 		rawOdoInfo.motion.angle = angle;
 		rawOdoInfo.motion.translation = translation;
