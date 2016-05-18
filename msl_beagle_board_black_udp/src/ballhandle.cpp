@@ -29,6 +29,7 @@ using namespace BlackLib;
 		pwm_pin = pwm_name;
 		pwm->setPeriod(pwm_pin, period);
 		pwm->setRunState(pwm_pin, true);
+		pwm->setDutyCycle(pwm_pin, 0);
 	}
 
 	BallHandle::~BallHandle() {
