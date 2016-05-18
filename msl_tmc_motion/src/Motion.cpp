@@ -146,7 +146,7 @@ void Motion::log_goalie() {
 	ros::Time currTime = ros::Time::now();
 	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
 
-	unsigned long timeSinceLastOdo = (currNanoSeconds - lastOdoInfo.timestamp);
+	unsigned long timeSinceLastOdo = (double)(currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
 
 
 	if (isLogging) {
@@ -589,7 +589,7 @@ void Motion::calcOdoPosition() {
 	ros::Time currTime = ros::Time::now();
 	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
 
-	double timeSinceLastOdo = (currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
+	double timeSinceLastOdo = (double)(currNanoSeconds - lastOdoInfo.timestamp) / 1000000000;
 
 
 
@@ -609,6 +609,13 @@ void Motion::calcOdoPosition() {
 	//angle:
 
 	newAngle = lastAngle + rot * timeSinceLastOdo;
+
+    if (newAngle > M_PI) {
+        newAngle -= 2*M_PI;
+    } else if (newAngle < -M_PI) {
+        newAngle += 2*M_PI;
+    }
+
 
 	//position: calc distance driven on a circular path
 
