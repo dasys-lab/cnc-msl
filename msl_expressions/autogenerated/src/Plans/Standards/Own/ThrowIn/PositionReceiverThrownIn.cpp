@@ -20,7 +20,7 @@ namespace alica
             DomainBehaviour("PositionReceiverThrownIn")
     {
         /*PROTECTED REGION ID(con1461584204507) ENABLED START*/ //Add additional options here
-    	this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
         /*PROTECTED REGION END*/
     }
     PositionReceiverThrownIn::~PositionReceiverThrownIn()

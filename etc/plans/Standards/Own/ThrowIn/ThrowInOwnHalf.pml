@@ -5,6 +5,10 @@
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
+    <quantifiers xsi:type="alica:ForallAgents" id="1463566399682" name="MISSING_NAME" comment="" scope="1462360607517">
+      <sorts>x</sorts>
+      <sorts>y</sorts>
+    </quantifiers>
   </conditions>
   <states id="1462360503829" name="Align" comment="" entryPoint="1462360503830">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
@@ -30,7 +34,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1462360960031</inTransitions>
   </states>
-  <states id="1462361351034" name="Align" comment="" entryPoint="1462360607517">
+  <states id="1462361351034" name="AlignReceive" comment="" entryPoint="1462360607517">
     <plans xsi:type="alica:BehaviourConfiguration">ReceiveInOppHalf.beh#1462370388995</plans>
     <outTransitions>#1462368266008</outTransitions>
   </states>

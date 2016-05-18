@@ -8,7 +8,6 @@ using namespace std;
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1462969724089) ENABLED START*/ //initialise static variables here
-
     /*PROTECTED REGION END*/
     RobotMovementDribbleTest::RobotMovementDribbleTest() :
             DomainBehaviour("RobotMovementDribbleTest")
