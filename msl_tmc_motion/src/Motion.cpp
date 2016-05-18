@@ -741,6 +741,8 @@ void Motion::executeRequest(MotionSet* ms) {
 		short x2 = read->convertByteToShort(2);
 		short x3 = read->convertByteToShort(4);
 
+		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << endl;
+
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
 		double angle = atan2(x2, x1);
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
