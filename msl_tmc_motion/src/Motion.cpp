@@ -616,16 +616,15 @@ void Motion::calcOdoPosition() {
 //there is a rotational velocity, so we are driving on a circular path
 	if (rot != 0) {
 
-		double radiusLength = trans/rot;
+		double radiusLength = trans / rot;
 
-
-		shared_ptr<geometry::CNPoint2D> transOrth = make_shared<geometry::CNPoint2D>(transX,0)->rotate(-lastAngle);
+		shared_ptr<geometry::CNPoint2D> transOrth = make_shared<
+				geometry::CNPoint2D>(transX, 0);
 
 		shared_ptr<geometry::CNPoint2D> radiusVect =
-				transOrth->normalize()->rotate(M_PI);
+				transOrth->normalize()->rotate(M_PI)*radiusLength;
 
-		middle = lastPos
-				- (transOrth->normalize() * radiusLength)->rotate(M_PI);
+		middle = lastPos - radiusVect;
 
 		newPos = middle + radiusVect->rotate(angleDriven);
 	} else {
@@ -721,7 +720,7 @@ void Motion::executeRequest(MotionSet* ms) {
 //		trans = Math.Sign(ms.translation)*Math.Min(Math.Abs(ms.translation),this.maxVelocity);
 	double trans = min(abs(ms->translation), this->maxVelocity);
 	if (ms->translation < 0)
-			trans *= -1;
+		trans *= -1;
 //		rot = Math.Max(-8*Math.PI, Math.Min(8*Math.PI,ms.rotation));
 	double rot = max(-8 * M_PI, min(8 * M_PI, ms->rotation));
 
@@ -745,7 +744,6 @@ void Motion::executeRequest(MotionSet* ms) {
 		short x2 = read->convertByteToShort(2);
 		short x3 = read->convertByteToShort(4);
 
-
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
 		double angle = atan2(x2, x1);
 //			mr.translation = Math.Sqrt(rawMotorValues[0]*rawMotorValues[0]+rawMotorValues[1]*rawMotorValues[1]);
@@ -753,17 +751,16 @@ void Motion::executeRequest(MotionSet* ms) {
 //			mr.rotation = ((double)rawMotorValues[2])/64.0;
 		double rotation = (double) x3 / 64.0d;
 
-
 		rawOdoInfo.motion.angle = angle;
 
 		//workaround for faulty bytes in data
-		if(!(abs(translation) > maxVelocity)) {
-		rawOdoInfo.motion.translation = translation;
+		if (!(abs(translation) > maxVelocity)) {
+			rawOdoInfo.motion.translation = translation;
 		}
 
 		//workaround for faulty bytes in data
-		if(!(abs(rotation) > 10)) {
-		rawOdoInfo.motion.rotation = rotation;
+		if (!(abs(rotation) > 10)) {
+			rawOdoInfo.motion.rotation = rotation;
 		}
 
 		ros::Time t = ros::Time::now();
