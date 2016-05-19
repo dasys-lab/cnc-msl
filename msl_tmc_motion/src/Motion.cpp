@@ -622,7 +622,7 @@ void Motion::calcOdoPosition() {
 				geometry::CNPoint2D>(transX, 0);
 
 		shared_ptr<geometry::CNPoint2D> radiusVect =
-				transOrth->normalize()->rotate(M_PI)*radiusLength;
+				transOrth->normalize()->rotate(-M_PI)*radiusLength;
 
 		middle = lastPos - radiusVect;
 
