@@ -756,7 +756,7 @@ void Motion::executeRequest(MotionSet* ms) {
 		}
 
 		//workaround for faulty bytes in data
-		if(!(abs(rotation) > 400)) {
+		if(!(abs(rotation) > 10)) {
 		rawOdoInfo.motion.rotation = rotation;
 		}
 
