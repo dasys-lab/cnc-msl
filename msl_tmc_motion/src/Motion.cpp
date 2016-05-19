@@ -615,14 +615,14 @@ void Motion::calcOdoPosition() {
 
 //there is a rotational velocity, so we are driving on a circular path
 	if (rot != 0) {
-		shared_ptr<geometry::CNPoint2D> radiusVect =
-				translation->normalize()->rotate(M_PI);
 
 		double radiusLength = trans/rot;
 
 
 		shared_ptr<geometry::CNPoint2D> transOrth = make_shared<geometry::CNPoint2D>(transX,0)->rotate(-lastAngle);
 
+		shared_ptr<geometry::CNPoint2D> radiusVect =
+				transOrth->normalize()->rotate(M_PI);
 
 		middle = lastPos
 				- (transOrth->normalize() * radiusLength)->rotate(M_PI);
