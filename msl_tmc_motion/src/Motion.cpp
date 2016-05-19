@@ -751,12 +751,12 @@ void Motion::executeRequest(MotionSet* ms) {
 		rawOdoInfo.motion.angle = angle;
 
 		//workaround for faulty bytes in data
-		if(!(translation > maxVelocity)) {
+		if(!(abs(translation) > maxVelocity)) {
 		rawOdoInfo.motion.translation = translation;
 		}
 
 		//workaround for faulty bytes in data
-		if(!(rotation > 400)) {
+		if(!(abs(rotation) > 400)) {
 		rawOdoInfo.motion.rotation = rotation;
 		}
 
