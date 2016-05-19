@@ -715,11 +715,10 @@ void Motion::executeRequest(MotionSet* ms) {
 
 //		trans = Math.Sign(ms.translation)*Math.Min(Math.Abs(ms.translation),this.maxVelocity);
 	double trans = min(abs(ms->translation), this->maxVelocity);
+	if (ms->translation < 0)
+			trans *= -1;
 //		rot = Math.Max(-8*Math.PI, Math.Min(8*Math.PI,ms.rotation));
 	double rot = max(-8 * M_PI, min(8 * M_PI, ms->rotation));
-
-	if (ms->translation < 0)
-		trans *= -1;
 
 	shared_ptr<CNMCPacketControl> packet = make_shared<CNMCPacketControl>();
 
@@ -741,13 +740,6 @@ void Motion::executeRequest(MotionSet* ms) {
 		short x2 = read->convertByteToShort(2);
 		short x3 = read->convertByteToShort(4);
 
-		std::ios state(NULL);
-		state.copyfmt(std::cout);
-		cout << "x1, x2, x3: " << x1 << ", " << x2 << ", " << x3 << endl;
-		cout << "Hex: " << hex << static_cast<int>(data->at(3)) << " " << static_cast<int>(data->at(4)) << " " << static_cast<int>(data->at(5))
-				<< " " << static_cast<int>(data->at(6)) << " " << static_cast<int>(data->at(7)) << " "
-				<< static_cast<int>(data->at(8)) << endl;
-		std::cout.copyfmt(state);
 
 //			mr.angle = Math.Atan2(rawMotorValues[1],rawMotorValues[0]);
 		double angle = atan2(x2, x1);
@@ -757,8 +749,17 @@ void Motion::executeRequest(MotionSet* ms) {
 		double rotation = (double) x3 / 64.0d;
 
 		rawOdoInfo.motion.angle = angle;
+
+		//workaround for faulty bytes in data
+		if(!(translation > maxVelocity)) {
 		rawOdoInfo.motion.translation = translation;
+		}
+
+		//workaround for faulty bytes in data
+		if(!(rotation > 400)) {
 		rawOdoInfo.motion.rotation = rotation;
+		}
+
 		ros::Time t = ros::Time::now();
 		uint64_t timestamp = (t.sec * 1000000000UL + t.nsec);
 		rawOdoInfo.timestamp = timestamp;
