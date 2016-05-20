@@ -10,12 +10,13 @@
 
 using namespace BlackLib;
 
-	ShovelSelect::ShovelSelect(pwmName pwm_P) {
-		pwm = new BlackPWM(pwm_P);
+	ShovelSelect::ShovelSelect(BeaglePWM::PwmPin pwm_name) {
+		pwm = BeaglePWM::getInstance();
 
-		pwm->setPeriodTime(period, nanosecond);
-		pwm->setSpaceRatioTime(0, microsecond);
-		pwm->setRunState(stop);
+		pwm_pin = pwm_name;
+		pwm->setPeriod(pwm_pin, period);
+		pwm->setRunState(pwm_pin, false);
+		pwm->setDutyCycle(pwm_pin, 0);
 
 		auto sc = supplementary::SystemConfig::getInstance();
 		this->kickPWM = (*sc)["bbb"]->get<int>("BBB.shovelKick", NULL);
@@ -32,7 +33,7 @@ using namespace BlackLib;
 
 	bool ShovelSelect::checkTimeout(timeval time) {
 		if ((TIMEDIFFMS(time, ping) > timeout) && enabled) {
-			pwm->setRunState(stop);
+			pwm->setRunState(pwm_pin, false);
 			enabled = false;
 
 			return true;
@@ -50,12 +51,12 @@ using namespace BlackLib;
 		ping = time_now;
 		statePassing = passing;
 		if (passing) {
-			pwm->setSpaceRatioTime(passPWM, microsecond);
+			pwm->setDutyCycle(pwm_pin, passPWM * 1000);	// * 1000 because ns needed and passPWM is in us
 		} else {
-			pwm->setSpaceRatioTime(kickPWM, microsecond);
+			pwm->setDutyCycle(pwm_pin, kickPWM * 1000);	// * 1000 because ns needed and kickPWM is in us
 		}
 		if (!enabled) {
-			pwm->setRunState(run);
+			pwm->setRunState(pwm_pin, true);
 			enabled = true;
 		}
 
