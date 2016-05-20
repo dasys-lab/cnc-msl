@@ -43,7 +43,7 @@ namespace alica
 
         if (abs(startAngle - alpha) < epsilon && counter > 90)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         else
         {

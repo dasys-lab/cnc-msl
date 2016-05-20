@@ -86,7 +86,7 @@ namespace alica
         {
             if (wm->getTime() - lastResultFound > failTimeThreshold)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             mc.motion.angle = 0;
             mc.motion.translation = 0;
@@ -106,7 +106,7 @@ namespace alica
         if (relativeGoalPos->x < -250 && // block only targets which are in driving direction of attacker
                 ownRelativePos->length() > relativeGoalPos->length() + 1000) // i'm more than 1 meter away from the blocking position, i failed, better set status to success
         {
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
 

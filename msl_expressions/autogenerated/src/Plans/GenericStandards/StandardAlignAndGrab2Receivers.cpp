@@ -315,7 +315,7 @@ namespace alica
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
                 //                cout << "SAAG2R: haveBall" << endl;
-                this->success = true;
+                this->setSuccess(true);
             }
             else if (haveBallCounter > 6
                     && ((runningTimeMS <= 4000.0 && fabs(dangle) < this->minTol)
@@ -327,7 +327,7 @@ namespace alica
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
                 //                cout << "SAAG2R: haveBall esle if" << endl;
-                this->success = true;
+                this->setSuccess(true);
             }
         }
         cout << "SAAG2R: last mc ROT: \t" << mc.motion.rotation << endl;

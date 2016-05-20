@@ -97,7 +97,7 @@ namespace alica
                 // if we reach the point and are aligned, the behavior is successful
                 if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 send(mc);
             }
@@ -128,7 +128,7 @@ namespace alica
             // if we reach the point and are aligned, the behavior is successful
             if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             send(mc);
 

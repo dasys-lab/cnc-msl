@@ -2,11 +2,11 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503829"/>
-    <value xPos="35" yPos="18" width="81" height="67" collapsed="false"/>
+    <value xPos="24" yPos="58" width="225" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503828"/>
-    <value width="1093" height="726"/>
+    <value width="1145" height="657"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503830"/>
@@ -26,15 +26,15 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360912906"/>
-    <value xPos="309" yPos="13" width="73" height="67" collapsed="false"/>
+    <value xPos="162" yPos="1" width="321" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360919387"/>
-    <value xPos="544" yPos="15" width="65" height="67" collapsed="false"/>
+    <value xPos="478" yPos="-3" width="201" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360928236"/>
-    <value xPos="773" yPos="16" width="142" height="86" collapsed="false"/>
+    <value xPos="696" yPos="-1" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360957397"/>
@@ -43,7 +43,7 @@
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360958905"/>
     <value>
-      <bendpoints xPos="639" yPos="107"/>
+      <bendpoints xPos="578" yPos="77"/>
     </value>
   </extensions>
   <extensions>
@@ -52,11 +52,11 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361351034"/>
-    <value xPos="168" yPos="172" width="65" height="67" collapsed="false"/>
+    <value xPos="88" yPos="177" width="230" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361358155"/>
-    <value xPos="186" yPos="325" width="265" height="86" collapsed="false"/>
+    <value xPos="79" yPos="325" width="298" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361373364"/>
@@ -88,7 +88,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462363134771"/>
-    <value xPos="477" yPos="333" width="232" height="86" collapsed="false"/>
+    <value xPos="380" yPos="329" width="232" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInPass.beh#1462363309950"/>
@@ -100,7 +100,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462368095616"/>
-    <value xPos="476" yPos="176" width="232" height="110" collapsed="false"/>
+    <value xPos="421" yPos="176" width="232" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462368130262"/>
@@ -133,7 +133,7 @@
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462369226508"/>
     <value>
-      <bendpoints xPos="634" yPos="54"/>
+      <bendpoints xPos="558" yPos="57"/>
     </value>
   </extensions>
   <extensions>

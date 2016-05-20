@@ -37,7 +37,7 @@ namespace alica
 
         if (egoTarget->length() < 250)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
 
         send(mc);

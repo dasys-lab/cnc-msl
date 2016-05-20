@@ -101,7 +101,7 @@ namespace alica
             if (mc.motion.translation == 0.0
                     && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             send(mc);
         }

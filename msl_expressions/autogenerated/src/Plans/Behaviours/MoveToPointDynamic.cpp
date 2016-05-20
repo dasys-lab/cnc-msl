@@ -56,11 +56,11 @@ namespace alica
             }
             if (driveTo->length() < 150)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             else
             {
-                this->success = false;
+                this->setSuccess(false);
             }
 
         }

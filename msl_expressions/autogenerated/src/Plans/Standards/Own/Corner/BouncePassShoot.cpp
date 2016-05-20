@@ -85,7 +85,7 @@ namespace alica
         {
             kc.enabled = true;
             send(kc);
-            this->success = true;
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

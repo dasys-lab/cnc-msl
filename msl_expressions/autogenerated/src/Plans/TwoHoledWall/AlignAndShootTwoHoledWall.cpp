@@ -95,7 +95,7 @@ namespace alica
                 {
                     useLowerHole = !useLowerHole;
                 }
-                this->success = true;
+                this->setSuccess(true);
             }
 
             return;

@@ -77,22 +77,22 @@ namespace alica
         }
         if (!leftBlocked && alloAimPoint == nullptr)
         {
-            cout << "aimig left" << endl;
+            cout << "aiming left" << endl;
             alloAimPoint = alloLeftAimPoint;
         }
         if (!midBlocked && alloAimPoint == nullptr)
         {
-            cout << "aimig mid" << endl;
+            cout << "aiming mid" << endl;
             alloAimPoint = alloMidAimPoint;
         }
         if (!rightBlocked && alloAimPoint == nullptr)
         {
-            cout << "aimig right" << endl;
+            cout << "aiming right" << endl;
             alloAimPoint = alloRightAimPoint;
         }
         if (leftBlocked && midBlocked && rightBlocked && alloAimPoint == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
         }
         if (alloAimPoint != nullptr)
         {
@@ -113,7 +113,7 @@ namespace alica
                 kc.kicker = egoBallPos->angleTo();
                 kc.power = min(minKickPower, egoAimPoint->length());
                 send(kc);
-                this->success = true;
+                this->setSuccess(true);
             }
         }
         /*PROTECTED REGION END*/

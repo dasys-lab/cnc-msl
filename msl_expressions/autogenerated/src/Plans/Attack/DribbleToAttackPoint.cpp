@@ -185,7 +185,7 @@ namespace alica
         //check if goal is reached
         if (egoTargetPoint->length() < 250)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         //save last error
         lastRotError = egoAlignPoint->rotate(M_PI)->angleTo();

@@ -83,7 +83,7 @@ namespace alica
         pm.receiverID = id;
         send(pm);
 
-        this->success = true;
+        this->setSuccess(true);
 
         /*PROTECTED REGION END*/
     }

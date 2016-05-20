@@ -138,7 +138,7 @@ namespace alica
             kc.kicker = egoBallPos->angleTo();
             kc.power = kickPower;
             send(kc);
-            this->success = true;
+            this->setSuccess(true);
 
         }
         // Create Motion Command for aiming

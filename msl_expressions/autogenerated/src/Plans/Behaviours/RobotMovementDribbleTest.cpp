@@ -42,7 +42,7 @@ namespace alica
         auto egoTarget = currentTarget->alloToEgo(*ownPos);
         if (egoTarget->length() < 1200)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
 
         msl_actuator_msgs::MotionControl bm;

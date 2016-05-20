@@ -310,7 +310,7 @@ namespace alica
         {
             double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 250)
-                this->failure = true;
+                this->setFailure(true);
         }
         mc = msl_actuator_msgs::MotionControl();
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

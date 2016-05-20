@@ -62,7 +62,7 @@ namespace alica
         // if we reach the point and are aligned, the behavior is successful
         if (mc.motion.translation == 0 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         send(mc);
         /*PROTECTED REGION END*/

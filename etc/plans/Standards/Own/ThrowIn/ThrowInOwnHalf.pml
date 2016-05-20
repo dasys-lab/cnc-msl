@@ -106,11 +106,11 @@
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1462360503829</state>
   </entryPoints>
-  <entryPoints id="1462360607517" name="ReceiveStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1462360607517" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1462361351034</state>
   </entryPoints>
-  <entryPoints id="1462360610006" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1462360610006" name="MISSING_NAME" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1462360858945</task>
     <state>#1462361358155</state>
   </entryPoints>

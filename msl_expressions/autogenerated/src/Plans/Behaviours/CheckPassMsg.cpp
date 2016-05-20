@@ -28,7 +28,7 @@ namespace alica
         {
             receivedMsg = true;
 
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/

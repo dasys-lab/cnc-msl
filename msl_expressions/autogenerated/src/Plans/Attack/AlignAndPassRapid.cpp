@@ -173,8 +173,8 @@ namespace alica
 #endif
         if (!found)
         { // No Pass point found, so return everything
-            this->success = true;
-            cout << "AAPR: No valid pass point found! SuccessStatus: " << this->success << endl;
+            this->setSuccess(true);
+            cout << "AAPR: No valid pass point found! SuccessStatus: " << this->isSuccess() << endl;
             return;
         }
         //Turn to goal...
@@ -248,7 +248,7 @@ namespace alica
         {
             double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 250)
-                this->failure = true;
+                this->setFailure(true);
         }
         mc = msl_actuator_msgs::MotionControl();
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

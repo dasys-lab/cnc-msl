@@ -76,7 +76,7 @@ namespace alica
                 }
                 if (wm->getTime() - freeTime > 330000000ul)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
             }
             else
@@ -294,7 +294,7 @@ namespace alica
         if (wm->getTime() - entryTime > duelMaxTime)
         {
             cout << "Duel: time over " << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/
