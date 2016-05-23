@@ -58,7 +58,7 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        if (tempyoyo == 5)
+        if (tempyoyo >= 5)
         {
         lengthVisionSegment = lengthVisionSegment
                 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
