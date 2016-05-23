@@ -13,10 +13,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="RobotMovementTestPlan.pml#1462969698097"/>
-    <value xPos="376" yPos="205" width="302" height="86" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="../../Behaviours/RobotMovementDribbleTest.beh#1462969753310"/>
     <value/>
   </extensions>
@@ -32,15 +28,7 @@
   </extensions>
   <extensions>
     <key href="RobotMovementTestPlan.pml#1462969884284"/>
-    <value xPos="190" yPos="53" width="93" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="RobotMovementTestPlan.pml#1462969917381"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="RobotMovementTestPlan.pml#1462969919287"/>
-    <value/>
+    <value xPos="190" yPos="53" width="93" height="67"/>
   </extensions>
   <extensions>
     <key href="../../Behaviours/GetBall.beh#1414840399972"/>
