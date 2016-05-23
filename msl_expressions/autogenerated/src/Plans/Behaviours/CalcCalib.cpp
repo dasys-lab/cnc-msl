@@ -124,7 +124,7 @@ namespace alica
         ros::NodeHandle calibCEP;
         calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
 
-        if (length != 0)
+        if (length >= 1)
         {
             calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
                     * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1;
