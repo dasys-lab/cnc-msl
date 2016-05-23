@@ -66,6 +66,10 @@ namespace alica
 
         calibOldPosVisionX = calibPosVisionX;
         calibOldPosVisionY = calibPosVisionY;
+
+        std::cout << "correctedWayX : " << correctedPosX << std::endl;
+        std::cout << "correctedWayY : " << correctedPosY << std::endl;
+
 //            tempyoyo = 0;
 //
 //        }
