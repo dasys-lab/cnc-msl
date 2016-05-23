@@ -58,8 +58,8 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-//        if (tempyoyo == 5)
-//        {
+        if (tempyoyo == 5)
+        {
         lengthVisionSegment = lengthVisionSegment
                 + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
                         + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
@@ -67,16 +67,12 @@ namespace alica
         calibOldPosVisionX = calibPosVisionX;
         calibOldPosVisionY = calibPosVisionY;
 
-        std::cout << "correctedWayX : " << correctedPosX << std::endl;
-        std::cout << "correctedWayY : " << correctedPosY << std::endl;
+        tempyoyo = 0;
+        }
 
-//            tempyoyo = 0;
-//
-//        }
-//
-//        tempyoyo++;
-//
-//
+        tempyoyo++;
+
+
 //         std::cout << "correctedWayX : " << correctedPosX << std::endl;
 //         std::cout << "correctedWayY : " << correctedPosY << std::endl;
 //         std::cout << "======== CalcCalib ========" << std::endl;
