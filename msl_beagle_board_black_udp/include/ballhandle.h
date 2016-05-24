@@ -12,10 +12,6 @@
 
 #include <sys/time.h>
 
-#include <BlackDef.h>
-#include <BlackGPIO.h>
-#include <BlackPWM.h>
-
 #include <BeagleGPIO.h>
 #include <BeaglePins.h>
 #include <BeaglePWM.h>

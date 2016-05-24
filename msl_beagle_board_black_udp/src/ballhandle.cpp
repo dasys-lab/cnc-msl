@@ -8,8 +8,6 @@
 
 #include "ballhandle.h"
 
-using namespace BlackLib;
-
 	BallHandle::BallHandle(BeaglePWM::PwmPin pwm_name, const char *pin_names[]) {
 		gpio = BeagleGPIO::getInstance();
 		pwm = BeaglePWM::getInstance();

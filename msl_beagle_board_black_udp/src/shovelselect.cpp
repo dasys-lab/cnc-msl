@@ -8,8 +8,6 @@
 #include "shovelselect.h"
 #include <SystemConfig.h>
 
-using namespace BlackLib;
-
 	ShovelSelect::ShovelSelect(BeaglePWM::PwmPin pwm_name) {
 		pwm = BeaglePWM::getInstance();
 
