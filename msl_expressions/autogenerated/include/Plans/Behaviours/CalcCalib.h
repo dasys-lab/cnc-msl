@@ -24,7 +24,8 @@ namespace alica
         double calibPosVisionX;
         double calibOldPosVisionX;
         double calibOldPosVisionY;
-        double calibCoefficient;
+        double calibCoefficientX;
+        double calibCoefficientY;
         double length;
         double correctedWayX;
         double correctedWayY;
@@ -36,7 +37,6 @@ namespace alica
         double lengthSegment;
 
         CalibrationCoefficient calibCoeff;
-
         int tempyoyo;
         int calibCounter = 0;
 
