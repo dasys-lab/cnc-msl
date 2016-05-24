@@ -62,14 +62,14 @@ namespace alica
 			return ui;
 		}
 
-		if (x <= this->minX - this->tolerance)
+		if (x <= (this->minX - this->tolerance))
 		{
 			this->ui.setMin(-1.0);
 			this->ui.setMax(-1.0);
 			return ui;
 		}
 
-		if (x >= this->maxX + this->tolerance)
+		if (x >= (this->maxX + this->tolerance))
 		{
 			this->ui.setMin(-1.0);
 			this->ui.setMax(-1.0);
@@ -77,12 +77,12 @@ namespace alica
 		}
 
 		double val = 0.0;
-		if (x > this->minX - this->tolerance && x < this->minX)
+		if (x > (this->minX - this->tolerance) && x < this->minX)
 		{
 			val = x / this->minX;
 		}
 
-		if (x > this->maxX && x < this->maxX + tolerance)
+		if (x > this->maxX && x < (this->maxX + tolerance))
 		{
 			val = 1 - ((x - this->maxX) / (this->maxX + tolerance - this->maxX));
 		}

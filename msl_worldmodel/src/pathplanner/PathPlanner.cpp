@@ -463,7 +463,7 @@ namespace msl
 	{
 		auto g2opp = obstaclePoint-goal;
 		double angle2BallOppLine = abs(geometry::deltaAngle(currentPos->angleTo(),g2opp->angleTo()));
-		cout << "PathPlanner: angle2BallOppLine: \t" << angle2BallOppLine << endl;
+		//cout << "PathPlanner: angle2BallOppLine: \t" << angle2BallOppLine << endl;
 		if (angle2BallOppLine > M_PI/2.0 && angle2BallOppLine < M_PI * 2.0/3.0)
 		{
 			return true;

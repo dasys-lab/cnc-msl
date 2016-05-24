@@ -3,10 +3,10 @@
   <plans id="1461672761055" name="MISSING_NAME" comment="" activated="true">
     <plan>ThrowInNearGoal.pml#1461237603689</plan>
   </plans>
-  <plans id="1461672756110" name="MISSING_NAME" comment="" activated="false">
-    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
-  </plans>
   <plans id="1462984300596" name="MISSING_NAME" comment="" activated="true">
     <plan>ThrowInOwnHalf.pml#1462360503828</plan>
+  </plans>
+  <plans id="1461672756110" name="MISSING_NAME" comment="" activated="false">
+    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
   </plans>
 </alica:PlanType>

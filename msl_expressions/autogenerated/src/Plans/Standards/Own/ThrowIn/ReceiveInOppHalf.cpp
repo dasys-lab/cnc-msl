@@ -66,6 +66,10 @@ namespace alica
     void ReceiveInOppHalf::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ //Add additional options here
+    	query->clearDomainVariables();
+		query->addVariable(wm->getOwnId(), "x");
+		query->addVariable(wm->getOwnId(), "y");
+		result.clear();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1462370340143) ENABLED START*/ //Add additional methods here
