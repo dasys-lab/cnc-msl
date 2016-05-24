@@ -97,8 +97,24 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
         //initializePublisher();
-        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+    	if(calibCounter == 1)
+    	{
+    		diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+    		diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+    	}
+
+    	if(calibCounter == 2)
+    	{
+    		diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
+    		diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+    	}
+
+    	if(calibCounter == 3)
+    	{
+    		diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+    		diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
+    	}
+
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -158,6 +174,7 @@ namespace alica
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
+        std::cout << "calibCounter: " << calibCounter << std::endl;
 
         std::cout << "" << std::endl;
 

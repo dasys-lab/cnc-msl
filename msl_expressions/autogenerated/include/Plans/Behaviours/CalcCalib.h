@@ -38,7 +38,7 @@ namespace alica
         CalibrationCoefficient calibCoeff;
 
         int tempyoyo;
-        int calibCounter;
+        int calibCounter = 0;
 
         /*PROTECTED REGION END*/
     protected:
