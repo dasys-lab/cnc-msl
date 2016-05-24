@@ -33,52 +33,67 @@ namespace alica
         auto ballPos = wm->ball->getEgoBallPosition();
         auto dstscan = wm->rawSensorData->getDistanceScan();
 
-        if (ownPos == nullptr)
-            return;
-        if (currentTarget == nullptr)
-            trueInitialize();
-        if (currentTarget == nullptr)
-            return;
-        auto egoTarget = currentTarget->alloToEgo(*ownPos);
-        if (egoTarget->length() < 1200)
-        {
-            this->success = true;
-        }
-
+        // move to ball
         msl_actuator_msgs::MotionControl bm;
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
-        //bm = DribbleHelper.DribbleToPoint(egoTarget,this.dribbleVel,WM,out pathPlanningPoint);
-//		auto tmpMC = msl::RobotMovement::dribbleToPointConservative(egoTarget, pathPlanningPoint);
-        query->egoDestinationPoint = egoTarget;
-        query->dribble = true;
-        auto tmpMC = rm.experimentallyMoveToPoint(query);
+        query = make_shared<msl::MovementQuery>();
+        query->egoDestinationPoint = ballPos;
+        query->dribble = false;
 
-        /*Point2D oppInFront = ObstacleHelper.ClosestOpponentInCorridor(WM,ballPos.Angle(),300);
-         double distInFront = (oppInFront==null?Double.MaxValue:oppInFront.Distance()-300);
+        if (wm->ball->haveBall())
+        {
+            query->dribble = true;
+            query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
+        }
+        bm = rm.experimentallyMoveToPoint(query);
 
-         double minInFrontDist = 1800;
-         if (od!=null && od.Motion!=null) {
-         minInFrontDist = Math.Max(minInFrontDist,Math.Min(2800,od.Motion.Translation+800));
+        // dribble
+        /*
+         if (ownPos == nullptr)
+         return;
+         if (currentTarget == nullptr)
+         trueInitialize();
+         if (currentTarget == nullptr)
+         return;
+         auto egoTarget = currentTarget->alloToEgo(*ownPos);
+         if (egoTarget->length() < 1200)
+         {
+         this->setSuccess(true);
          }
-         if (ballPos != null && pathPlanningPoint!=null && Math.Abs(HHelper.DeltaAngle(pathPlanningPoint.Angle(),ballPos.Angle())) > Math.PI *4.75/6.0) {
-         HHelper.SetTargetPoint(WorldHelper.Ego2Allo(pathPlanningPoint,ownPos));
-         this.FailureStatus = true;
-         } else if (ballPos!=null && dstscan!=null && distInFront < minInFrontDist && distInFront > 800){
-         if(oppInFront!=null) HHelper.SetTargetPoint(WorldHelper.Ego2Allo(oppInFront.Rotate(Math.PI),ownPos));
-         this.FailureStatus = true;
-         }*/
-//		shared_ptr<geometry::CNPoint2D> turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
-//																						pathPlanningPoint);
-        //		if (turnTo!=nullptr) {
-        //			HHelper.SetTargetPoint(turnTo);
-        //			this->failure = true;
-        //		}
-        //if i drive in to the enemy goal area
-//		bm = msl::RobotMovement::nearGoalArea(bm);
-        //        bm = DriveHelper.NearGoalArea(WM,bm);
-        bm = rm.experimentallyRuleActionForBallGetter();
 
-        bm = tmpMC;
+         msl_actuator_msgs::MotionControl bm;
+         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
+         //bm = DribbleHelper.DribbleToPoint(egoTarget,this.dribbleVel,WM,out pathPlanningPoint);
+         //		auto tmpMC = msl::RobotMovement::dribbleToPointConservative(egoTarget, pathPlanningPoint);
+         query->egoDestinationPoint = egoTarget;
+         query->dribble = true;
+         auto tmpMC = rm.experimentallyMoveToPoint(query);
+
+         //        Point2D oppInFront = ObstacleHelper.ClosestOpponentInCorridor(WM,ballPos.Angle(),300);
+         //         double distInFront = (oppInFront==null?Double.MaxValue:oppInFront.Distance()-300);
+         //
+         //         double minInFrontDist = 1800;
+         //         if (od!=null && od.Motion!=null) {
+         //         minInFrontDist = Math.Max(minInFrontDist,Math.Min(2800,od.Motion.Translation+800));
+         //         }
+         //         if (ballPos != null && pathPlanningPoint!=null && Math.Abs(HHelper.DeltaAngle(pathPlanningPoint.Angle(),ballPos.Angle())) > Math.PI *4.75/6.0) {
+         //         HHelper.SetTargetPoint(WorldHelper.Ego2Allo(pathPlanningPoint,ownPos));
+         //         this.FailureStatus = true;
+         //         } else if (ballPos!=null && dstscan!=null && distInFront < minInFrontDist && distInFront > 800){
+         //         if(oppInFront!=null) HHelper.SetTargetPoint(WorldHelper.Ego2Allo(oppInFront.Rotate(Math.PI),ownPos));
+         //         this.FailureStatus = true;
+         //         }
+         //		shared_ptr<geometry::CNPoint2D> turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
+         //																						pathPlanningPoint);
+         //		if (turnTo!=nullptr) {
+         //			HHelper.SetTargetPoint(turnTo);
+         //			this->failure = true;
+         //		}
+         //if i drive in to the enemy goal area
+         //		bm = msl::RobotMovement::nearGoalArea(bm);
+         //        bm = DriveHelper.NearGoalArea(WM,bm);
+         bm = rm.experimentallyRuleActionForBallGetter();
+
+         bm = tmpMC;*/
         send(bm);
         /*PROTECTED REGION END*/
     }

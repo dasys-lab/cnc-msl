@@ -63,7 +63,7 @@ namespace alica
 
             if (me->distanceTo(alloTarget) <= 100)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             else
             {

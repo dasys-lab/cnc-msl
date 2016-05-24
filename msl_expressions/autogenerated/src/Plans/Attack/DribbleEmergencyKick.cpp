@@ -59,7 +59,7 @@ namespace alica
          }
          }*/
 
-        this->success = true;
+        this->setSuccess(true);
 
         if (!haveKicked)
             send(km);

@@ -57,7 +57,7 @@ namespace alica
             {
                 isMovingAwayIter = 0;
                 isMovingCloserIter = 0;
-                this->success = true;
+                this->setSuccess(true);
                 mc = driveToMovingBall(egoBallPos, egoBallVelocity);
                 mc.motion.translation = 500;
                 send(mc);
@@ -65,7 +65,7 @@ namespace alica
             }
             else if (wm->game->getTimeSinceStart() >= timeForPass)
             {
-                this->failure = true;
+                this->setFailure(true);
             }
             else if (vectorLength < egoBallPos->length() && egoBallVelocity->length() > 250)
             {

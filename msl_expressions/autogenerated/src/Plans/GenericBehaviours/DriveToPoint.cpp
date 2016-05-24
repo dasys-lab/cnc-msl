@@ -46,7 +46,7 @@ namespace alica
         if (egoTarget->length() < 250)
         {
             cout << "DriveToPoint: Success" << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         send(mc);

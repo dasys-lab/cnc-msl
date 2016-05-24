@@ -309,7 +309,7 @@ namespace alica
         send(mc);
         if (wm->ball->haveBallDribble(false))
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

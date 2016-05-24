@@ -133,17 +133,17 @@ namespace alica
 
                     if (passPossible(this->closerFactor, passPoint, receiver, vNet))
                     {
-                        this->success = true;
+                        this->setSuccess(true);
                     }
                     if (passPossible(this->closerFactor2, passPoint, receiver, vNet))
                     {
-                        this->success = true;
+                        this->setSuccess(true);
                     }
 
                 }
                 if (passPossible(0.0, teamMatePos->getPoint(), teamMatePos->getPoint(), vNet))
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
             }
 #ifdef DBM_DEBUG

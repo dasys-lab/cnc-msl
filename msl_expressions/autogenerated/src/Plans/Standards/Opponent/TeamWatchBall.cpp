@@ -33,7 +33,7 @@ namespace alica
         /*PROTECTED REGION ID(run1457015532224) ENABLED START*/ //Add additional options here
         if (wm->whiteBoard->getWatchBallMsg() != nullptr)
         {
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
         itcounter++;
@@ -97,7 +97,7 @@ namespace alica
                 send(msg);
             }
 
-            this->success = true;
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

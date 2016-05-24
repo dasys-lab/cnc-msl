@@ -70,7 +70,7 @@ namespace alica
 
         if (aimPoint == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             cout << "AlignToGoal: no aimPoint" << endl;
             return;
         }
@@ -85,7 +85,7 @@ namespace alica
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
                 cout << "AlignToGoal: failure!" << endl;
-                this->failure = true;
+                this->setFailure(true);
             }
         }
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

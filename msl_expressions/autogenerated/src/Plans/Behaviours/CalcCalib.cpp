@@ -58,21 +58,20 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-//        if (tempyoyo == 5)
-//        {
-        lengthVisionSegment = lengthVisionSegment
-                + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
-                        + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
+        if (tempyoyo >= 5)
+        {
+            lengthVisionSegment = lengthVisionSegment
+                    + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
+                            + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
-        calibOldPosVisionX = calibPosVisionX;
-        calibOldPosVisionY = calibPosVisionY;
-//            tempyoyo = 0;
-//
-//        }
-//
-//        tempyoyo++;
-//
-//
+            calibOldPosVisionX = calibPosVisionX;
+            calibOldPosVisionY = calibPosVisionY;
+
+            tempyoyo = 0;
+        }
+
+        tempyoyo++;
+
 //         std::cout << "correctedWayX : " << correctedPosX << std::endl;
 //         std::cout << "correctedWayY : " << correctedPosY << std::endl;
 //         std::cout << "======== CalcCalib ========" << std::endl;
@@ -97,8 +96,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
         //initializePublisher();
-        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision(0)->x;
-        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision(0)->y;
+        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -120,9 +119,9 @@ namespace alica
         ros::NodeHandle calibCEP;
         calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
 
-        if (length != 0)
+        if (length >= 1)
         {
-            calibCoefficient *= calibSign(lengthVisionSegment, lengthSegment)
+            calibCoefficient = calibSign(lengthVisionSegment, lengthSegment)
                     * (sqrt(diffX * diffX + diffY * diffY) / lengthSegment) + 1;
 
             if (calibCoefficient < 0.5)

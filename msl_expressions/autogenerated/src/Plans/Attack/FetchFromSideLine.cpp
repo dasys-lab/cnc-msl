@@ -28,14 +28,14 @@ namespace alica
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
         if (ownPos == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             return;
         }
 
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
         if (ballPos == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             return;
         }
         msl_actuator_msgs::MotionControl bm = msl::RobotMovement::ruleActionForBallGetter();
@@ -55,7 +55,7 @@ namespace alica
             {
                 if (ownPos->y < alloBall->y - behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x;
                 dest->y = alloBall->y - behindDistance;
@@ -64,7 +64,7 @@ namespace alica
             {
                 if (ownPos->y > alloBall->y + behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x;
                 dest->y = alloBall->y + behindDistance;
@@ -82,7 +82,7 @@ namespace alica
             {
                 if (ownPos->x < alloBall->x - behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x - behindDistance;
                 dest->y = alloBall->y;
@@ -91,7 +91,7 @@ namespace alica
             {
                 if (ownPos->x > alloBall->x + behindDistance)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
                 dest->x = alloBall->x + behindDistance;
                 dest->y = alloBall->y;

@@ -127,7 +127,7 @@ namespace alica
     void DefendGoal::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1459249294699) ENABLED START*/ //Add additional options here
-        success = true;
+        bool success = true;
         string tmp;
         try
         {

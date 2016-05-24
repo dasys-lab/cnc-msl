@@ -239,7 +239,7 @@ namespace alica
             else
             {
                 cout << "finished testing" << endl;
-                this->success = true;
+                this->setSuccess(true);
             }
 
         }
