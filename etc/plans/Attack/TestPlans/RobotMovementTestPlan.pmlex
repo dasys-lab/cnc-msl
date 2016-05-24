@@ -28,7 +28,7 @@
   </extensions>
   <extensions>
     <key href="RobotMovementTestPlan.pml#1462969884284"/>
-    <value xPos="190" yPos="53" width="93" height="67"/>
+    <value xPos="190" yPos="53" width="93" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../../Behaviours/GetBall.beh#1414840399972"/>
@@ -36,6 +36,10 @@
   </extensions>
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
