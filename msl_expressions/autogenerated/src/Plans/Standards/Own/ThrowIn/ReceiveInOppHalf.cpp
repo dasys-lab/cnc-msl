@@ -31,45 +31,67 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ //Add additional options here
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
-
-        if (ownPos == nullptr || ballPos == nullptr)
-        {
+        auto alloBallPose = wm->ball->getAlloBallPosition();
+        if (!ownPos || !alloBallPose)
             return;
-        }
-        shared_ptr < geometry::CNPoint2D > alloBall = ballPos->egoToAllo(*ownPos);
 
-        MotionControl mc;
-        if (query->getSolution(SolverType::GRADIENTSOLVER, runningPlan, result) || result.size() > 1)
+        double yCordOfReceiver = 0.0;
+        if (alloBallPose->y < 0.0) // right side line
         {
-            cout << "ReceiveInOppHalf: FOUND a solution!" << endl;
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                    vector<shared_ptr<geometry::CNPoint2D>>>();
-            additionalPoints->push_back(alloBall);
-            shared_ptr < geometry::CNPoint2D > alloTarget = make_shared < geometry::CNPoint2D
-                    > (result.at(0), result.at(1));
-
-            cout << "ReceiveInOppHalf: Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
-
-            shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
-
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 100.0,
-                                                          additionalPoints);
+            // place the receiver 1m outside the sideline
+            yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
         }
-        else
+        else // left side line
         {
-            cout << "ReceiveInOppHalf: Did not get a filled result vector!" << endl;
+            // place the receiver 1m outside the sideline
+            yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
         }
+
+        double lowestX = wm->field->getFieldLength() / 2;
+        auto opps = wm->robots->opponents.getOpponentsAlloClustered();
+        for (auto opp : *opps)
+        {
+            double distToLine = geometry::distancePointToLineSegment(opp->x, opp->y, 2000, yCordOfReceiver,
+                                                                     wm->field->getFieldLength() / 2 - 2000,
+                                                                     yCordOfReceiver);
+            if (distToLine > 3000)
+            {
+                continue;
+            }
+
+            if (lowestX > opp->x)
+            {
+                lowestX = opp->x;
+            }
+        }
+
+        auto alloTarget = make_shared < geometry::CNPoint2D > (wm->field->getFieldLength() / 4, yCordOfReceiver);
+
+        if (lowestX < wm->field->getFieldLength() / 2 - 2000)
+        { // opponent close to pass line
+            alloTarget->x = min(alloTarget->x, max(lowestX - 2000, 2000.0));
+        }
+
+        // Create additional points for path planning
+        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
+                vector<shared_ptr<geometry::CNPoint2D>>>();
+
+        // add alloBall to path planning
+        additionalPoints->push_back(alloBallPose);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos),
+                                                                                       alloBallPose->alloToEgo(*ownPos),
+                                                                                       100.0, additionalPoints);
+
         send(mc);
         /*PROTECTED REGION END*/
     }
     void ReceiveInOppHalf::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ //Add additional options here
-    	query->clearDomainVariables();
-		query->addVariable(wm->getOwnId(), "x");
-		query->addVariable(wm->getOwnId(), "y");
-		result.clear();
+        query->clearDomainVariables();
+        query->addVariable(wm->getOwnId(), "x");
+        query->addVariable(wm->getOwnId(), "y");
+        result.clear();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1462370340143) ENABLED START*/ //Add additional methods here

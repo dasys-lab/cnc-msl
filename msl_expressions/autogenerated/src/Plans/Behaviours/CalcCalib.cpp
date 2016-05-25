@@ -96,24 +96,23 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
         //initializePublisher();
-    	if(calibCounter == 1)
-    	{
-    		diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-    		diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-    	}
+        if (calibCounter == 1)
+        {
+            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        }
 
-    	if(calibCounter == 2)
-    	{
-    		diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
-    		diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-    	}
+        if (calibCounter == 2)
+        {
+            diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
+            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        }
 
-    	if(calibCounter == 3)
-    	{
-    		diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-    		diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
-    	}
-
+        if (calibCounter == 3)
+        {
+            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+            diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
+        }
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");

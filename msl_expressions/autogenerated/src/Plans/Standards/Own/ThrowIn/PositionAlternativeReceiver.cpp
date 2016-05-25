@@ -44,7 +44,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
-        if (ownPos->y < 0)
+        if (alloBall->y < 0)
         {
             alloTarget->y = alloBall->y + 2300.0;
         }
@@ -58,6 +58,7 @@ namespace alica
         egoTarget = alloTarget->alloToEgo(*ownPos);
 
         mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        send(mc);
 
         /*PROTECTED REGION END*/
     }

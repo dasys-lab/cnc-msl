@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503829"/>
-    <value xPos="24" yPos="58" width="225" height="110" collapsed="false"/>
+    <value xPos="31" yPos="78" width="225" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503828"/>
@@ -52,7 +52,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361351034"/>
-    <value xPos="88" yPos="177" width="230" height="86" collapsed="false"/>
+    <value xPos="119" yPos="227" width="230" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361358155"/>
