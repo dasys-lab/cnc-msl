@@ -59,7 +59,7 @@ namespace msl
 		void processMotionControlMessage(msl_actuator_msgs::MotionControl& mc);
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
-		void processIMUData(msl_actuator_msgs::IMUDataPtr& msg);
+		void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
