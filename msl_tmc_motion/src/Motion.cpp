@@ -586,7 +586,7 @@ void Motion::calcOdoPosition() {
 	uint64_t currNanoSeconds = (currTime.sec * 1000000000UL + currTime.nsec);
 
 	double timeSinceLastOdo = (double) (currNanoSeconds - lastOdoInfo.timestamp)
-			/ 1000000000;
+			/ 1000000000.0;
 
 //determine new position from last odo info
 	rawOdoAngle = lastOdoInfo.motion.angle;
@@ -616,14 +616,14 @@ void Motion::calcOdoPosition() {
 //there is a rotational velocity, so we are driving on a circular path
 	if (rot != 0) {
 
-		double radiusLength = trans / rot;
+		double radiusLength = abs(trans / rot);
 
 		shared_ptr<geometry::CNPoint2D> radiusVect;
 
 		if (rot < 0) {
-			radiusVect = translation->normalize()->rotate(M_PI/2) * radiusLength;
-		} else {
 			radiusVect = translation->normalize()->rotate(-M_PI/2) * radiusLength;
+		} else {
+			radiusVect = translation->normalize()->rotate(M_PI/2) * radiusLength;
 		}
 
 		middle = lastPos - radiusVect;
