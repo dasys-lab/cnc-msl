@@ -19,9 +19,9 @@ namespace alica
         /*PROTECTED REGION ID(dcon1446033324019) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
-//    void CalcCalib::run(void* msg)
-//    {
-//        /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
+    void CalcCalib::run(void* msg)
+    {
+        /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
 //        if (this->wm->rawSensorData->getOwnPositionVision() != NULL)
 //        {
 //            calibPosVisionX = this->wm->rawSensorData->getOwnPositionVision()->x;
@@ -92,11 +92,60 @@ namespace alica
 //
 //        }
 //
-//        /*PROTECTED REGION END*/
-//    }
-//    void CalcCalib::initialiseParameters()
-//    {
-//        /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
+        if (this->wm->rawSensorData->getOwnPositionVision() != NULL)
+        {
+            calibPosVisionX = this->wm->rawSensorData->getOwnPositionVision()->x;
+            calibPosVisionY = this->wm->rawSensorData->getOwnPositionVision()->y;
+        }
+
+        calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+        calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+
+        correctedWayX = (calibPosMotionX - calibOldPosMotionX)
+                * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
+                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
+                - (calibPosMotionY - calibOldPosMotionY)
+                        * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
+                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
+        correctedWayY = (calibPosMotionX - calibOldPosMotionX)
+                * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
+                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
+                + (calibPosMotionY - calibOldPosMotionY)
+                        * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
+                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
+
+        correctedPosX = correctedPosX + correctedWayX;
+        correctedPosY = correctedPosY + correctedWayY;
+
+        lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
+
+        calibOldPosMotionX = calibPosMotionX;
+        calibOldPosMotionY = calibPosMotionY;
+
+        /*        std::cout << "correctedWayX : " << correctedPosX << std::endl;
+         std::cout << "correctedWayY : " << correctedPosY << std::endl;
+         std::cout << "======== CalcCalib ========" << std::endl;
+         std::cout << "Motion: " << std::endl;
+         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
+         << calibPosMotionTheta << std::endl;
+         std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
+         << calibTranslation << std::endl;
+         std::cout << "rotation : " << calibRotation << std::endl;
+         std::cout << "plusCounter : " << plusCounter << std::endl;
+         std::cout << "minusCounter : " << minusCounter << std::endl;
+         std::cout << "" << std::endl;
+
+         msl_actuator_msgs::MotionControl mc;
+         mc.motion.translation = 500;
+         send(mc);
+         */
+
+        /*PROTECTED REGION END*/
+    }
+    void CalcCalib::initialiseParameters()
+    {
+        /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
 //        //initializePublisher();
 //    	if(calibCounter == 1)
 //    	{
@@ -185,90 +234,26 @@ namespace alica
 //        correctedPosY = this->wm->rawSensorData->getOwnPositionVision(0)->y;
 //
 //        calibCounter++;
-//        /*PROTECTED REGION END*/
-//    }
-
-
-    void CalcCalib::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-        if (this->wm->rawSensorData->getOwnPositionVision() != NULL)
-        {
-            calibPosVisionX = this->wm->rawSensorData->getOwnPositionVision()->x;
-            calibPosVisionY = this->wm->rawSensorData->getOwnPositionVision()->y;
-        }
-
-        calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
-        calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
-
-        correctedWayX = (calibPosMotionX - calibOldPosMotionX)
-                * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
-                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
-                - (calibPosMotionY - calibOldPosMotionY)
-                        * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
-                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
-        correctedWayY = (calibPosMotionX - calibOldPosMotionX)
-                * sin(this->wm->rawSensorData->getOwnPositionVision()->theta
-                        - this->wm->rawSensorData->getOwnPositionMotion()->theta)
-                + (calibPosMotionY - calibOldPosMotionY)
-                        * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
-                                - this->wm->rawSensorData->getOwnPositionMotion()->theta);
-
-        correctedPosX = correctedPosX + correctedWayX;
-        correctedPosY = correctedPosY + correctedWayY;
-
-        lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-
-        calibOldPosMotionX = calibPosMotionX;
-        calibOldPosMotionY = calibPosMotionY;
-
-
- /*        std::cout << "correctedWayX : " << correctedPosX << std::endl;
-         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-         std::cout << "======== CalcCalib ========" << std::endl;
-         std::cout << "Motion: " << std::endl;
-         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
-                 << calibPosMotionTheta << std::endl;
-         std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
-                 << calibTranslation << std::endl;
-         std::cout << "rotation : " << calibRotation << std::endl;
-         std::cout << "plusCounter : " << plusCounter << std::endl;
-         std::cout << "minusCounter : " << minusCounter << std::endl;
-         std::cout << "" << std::endl;
-
-        msl_actuator_msgs::MotionControl mc;
-        mc.motion.translation = 500;
-        send(mc);
-*/
-
-        /*PROTECTED REGION END*/
-    }
-    void CalcCalib::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
         //initializePublisher();
-
-    	diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-    	diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-
+        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
         ifstream calibData(filename);
         if (calibData.is_open())
         {
-            for (int lineno = 0; getline (calibData,value) && lineno < 2; lineno++)
+            for (int lineno = 0; getline(calibData, value) && lineno < 2; lineno++)
             {
-              if (lineno == 0)
-              {
-            	  calibCoefficientX = std::stod(value);
-              }
+                if (lineno == 0)
+                {
+                    calibCoefficientX = std::stod(value);
+                }
 
-              if (lineno == 1)
-              {
-            	  calibCoefficientY = std::stod(value);
-              }
+                if (lineno == 1)
+                {
+                    calibCoefficientY = std::stod(value);
+                }
             }
             calibData.close();
         }
@@ -287,11 +272,11 @@ namespace alica
 
         if (length >= 1)
         {
-            calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment)
-                    * (sqrt(diffX * diffX) / lengthSegment) + 1;
+            calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX) / lengthSegment)
+                    + 1;
 
-            calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment)
-                                * (sqrt(diffY * diffY) / lengthSegment) + 1;
+            calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffY * diffY) / lengthSegment)
+                    + 1;
 
             if (calibCoefficientX < 0.5)
             {
@@ -315,7 +300,7 @@ namespace alica
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
             ofstream saveToCalibData;
             saveToCalibData.open(filename);
-            saveToCalibData << calibCoefficientX <<"\n";
+            saveToCalibData << calibCoefficientX << "\n";
             saveToCalibData << calibCoefficientY;
             saveToCalibData.close();
 
@@ -351,17 +336,6 @@ namespace alica
         calibCounter++;
         /*PROTECTED REGION END*/
     }
-
-
-
-
-
-
-
-
-
-
-
 /*PROTECTED REGION ID(methods1446033324019) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
