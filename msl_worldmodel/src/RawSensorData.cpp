@@ -341,9 +341,9 @@ namespace msl
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 
-	void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr& msg)
+	void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
 	{
-		shared_ptr<msl_actuator_msgs::IMUData> cmd = shared_ptr<msl_actuator_msgs::IMUData>();
+		shared_ptr<msl_actuator_msgs::IMUData> cmd = make_shared<msl_actuator_msgs::IMUData>();
 		cmd->accelSens = msg->accelSens;
 		cmd->acceleration = msg->acceleration;
 		cmd->gyro = msg->gyro;
