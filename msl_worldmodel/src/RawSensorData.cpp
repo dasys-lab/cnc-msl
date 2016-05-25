@@ -356,9 +356,6 @@ namespace msl
 				InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
-		cout << "RawSensorData: IMU: " << cmd->accelSens << " " << cmd->acceleration << " " << cmd->gyro << " "
-				<< cmd->gyroSens << " " << cmd->magnet << " " << cmd->magnetSens << " " << cmd->temperature << " "
-				<< cmd->time << endl;
 	}
 } /* namespace alica */
 
