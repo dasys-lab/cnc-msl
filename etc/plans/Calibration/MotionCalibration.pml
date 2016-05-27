@@ -42,22 +42,22 @@
     <inTransitions>#1464350167678</inTransitions>
     <outTransitions>#1464350170546</outTransitions>
   </states>
-  <transitions id="1442919801497" name="MISSING_NAME" comment="Situation==start" msg="">
+  <transitions id="1442919801497" name="1" comment="Situation==start" msg="">
     <preCondition id="1442919804925" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1442919721162</inState>
     <outState>#1442919790374</outState>
   </transitions>
-  <transitions id="1442921106318" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1442921106318" name="2" comment="Situation1" msg="">
     <preCondition id="1442921109582" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1442919790374</inState>
     <outState>#1442921032957</outState>
   </transitions>
-  <transitions id="1443003805912" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1443003805912" name="3" comment="Situation2" msg="">
     <preCondition id="1443003809289" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1442921032957</inState>
     <outState>#1443003793160</outState>
   </transitions>
-  <transitions id="1443003845234" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1443003845234" name="s3" comment="situation==stop" msg="">
     <preCondition id="1443003847207" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1443003793160</inState>
     <outState>#1443003834928</outState>
@@ -67,22 +67,22 @@
     <inState>#1443003834928</inState>
     <outState>#1443522242711</outState>
   </transitions>
-  <transitions id="1446733729802" name="MISSING_NAME" comment="situation==stop" msg="">
+  <transitions id="1446733729802" name="s2" comment="situation==stop" msg="">
     <preCondition id="1446733731395" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1442921032957</inState>
     <outState>#1443003834928</outState>
   </transitions>
-  <transitions id="1446733731468" name="MISSING_NAME" comment="situation==stop" msg="">
+  <transitions id="1446733731468" name="s1" comment="situation==stop" msg="">
     <preCondition id="1446733733995" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1442919790374</inState>
     <outState>#1443003834928</outState>
   </transitions>
-  <transitions id="1464350167678" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1464350167678" name="4" comment="Situation3" msg="">
     <preCondition id="1464350170265" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1443003793160</inState>
     <outState>#1464350100818</outState>
   </transitions>
-  <transitions id="1464350170546" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1464350170546" name="5" comment="situation==stop_finish" msg="">
     <preCondition id="1464350172193" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464350100818</inState>
     <outState>#1443003834928</outState>
