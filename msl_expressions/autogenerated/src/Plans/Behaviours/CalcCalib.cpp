@@ -344,12 +344,12 @@ namespace alica
         std::cout << "Länge: " << length << std::endl;
         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion(0)->x << std::endl;
-        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion(0)->y << std::endl;
+        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
+        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
         std::cout << "correctedWayX : " << correctedPosX << std::endl;
         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision(0)->x << std::endl;
-        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
+        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
+        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
         std::cout << "calibCounter: " << calibCounter << std::endl;
@@ -358,8 +358,8 @@ namespace alica
 
         lengthSegment = 0;
         lengthVisionSegment = 0;
-        correctedPosX = this->wm->rawSensorData->getOwnPositionVision(0)->x;
-        correctedPosY = this->wm->rawSensorData->getOwnPositionVision(0)->y;
+        correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+        correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
         calibCounter++;
         /*PROTECTED REGION END*/
