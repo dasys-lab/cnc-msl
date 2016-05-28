@@ -35,7 +35,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">ReceiveInOppHalf.beh#1462370388995</plans>
     <outTransitions>#1462368266008</outTransitions>
   </states>
-  <states id="1462361358155" name="Align" comment="" entryPoint="1462360610006">
+  <states id="1462361358155" name="AlignAlternative" comment="" entryPoint="1462360610006">
     <plans xsi:type="alica:BehaviourConfiguration">PositionAlternativeReceiver.beh#1462978671719</plans>
     <outTransitions>#1462368267461</outTransitions>
   </states>

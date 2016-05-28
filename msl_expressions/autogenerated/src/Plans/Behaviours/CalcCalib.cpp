@@ -150,9 +150,9 @@ namespace alica
         // std::cout << "minusCounter : " << minusCounter << std::endl;
         // std::cout << "" << std::endl;
 
-         msl_actuator_msgs::MotionControl mc;
-         mc.motion.translation = 500;
-         send(mc);
+        msl_actuator_msgs::MotionControl mc;
+        mc.motion.translation = 500;
+        send(mc);
 
         /*PROTECTED REGION END*/
     }

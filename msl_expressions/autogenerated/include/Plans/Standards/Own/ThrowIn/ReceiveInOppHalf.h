@@ -14,15 +14,17 @@ namespace alica
         virtual ~ReceiveInOppHalf();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1462370340143) ENABLED START*/ //Add additional public methods here
-        vector<double> result;
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1462370340143) ENABLED START*/ //Add additional protected methods here
+        vector<double> result;
         shared_ptr<alica::ConstraintQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462370340143) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPoint2D> alloTarget;
+        string taskName;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

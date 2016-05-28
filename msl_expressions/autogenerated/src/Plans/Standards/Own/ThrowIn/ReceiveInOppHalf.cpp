@@ -36,15 +36,32 @@ namespace alica
             return;
 
         double yCordOfReceiver = 0.0;
+        double securityReceiver = 40.0;
         if (alloBallPose->y < 0.0) // right side line
         {
             // place the receiver 1m outside the sideline
-            yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
+            if (wm->field->getSurrounding() > 1300)
+            {
+                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
+            }
+            else
+            {
+                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - wm->field->getSurrounding()
+                        + wm->pathPlanner->getRobotRadius() + securityReceiver;
+            }
         }
         else // left side line
         {
             // place the receiver 1m outside the sideline
-            yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
+            if (wm->field->getSurrounding() > 1300)
+            {
+                yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
+            }
+            else
+            {
+                yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + wm->field->getSurrounding()
+                        - wm->pathPlanner->getRobotRadius() - securityReceiver;
+            }
         }
 
         double lowestX = wm->field->getFieldLength() / 2;
@@ -92,6 +109,25 @@ namespace alica
         query->addVariable(wm->getOwnId(), "x");
         query->addVariable(wm->getOwnId(), "y");
         result.clear();
+        string tmp;
+        bool success = true;
+        alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
+        try
+        {
+            success &= getParameter("TeamMateTaskName", tmp);
+            if (success)
+            {
+                taskName = tmp;
+            }
+        }
+        catch (exception& e)
+        {
+            cerr << "Could not cast the parameter properly" << endl;
+        }
+        if (!success)
+        {
+            cerr << "PRT: Parameter does not exist" << endl;
+        }
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1462370340143) ENABLED START*/ //Add additional methods here
