@@ -239,7 +239,7 @@ namespace alica
             bestReceiverId = aRecId;
             bestAoc = make_shared < geometry::CNPoint2D > (alloTarget->x, alloTarget->y);
         }
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNVelocity2D > ballVel = this->wm->ball->getVisionBallVelocity();
         shared_ptr < geometry::CNPoint2D > ballVel2;
         if (ballVel == nullptr)

@@ -18,6 +18,8 @@
 
 #include <SystemConfig.h>
 
+//#define RM_DEBUG
+
 namespace msl
 {
 	double RobotMovement::defaultTranslation;
@@ -75,6 +77,12 @@ namespace msl
 	double RobotMovement::maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>(
 			"DribbleWater", "MaxVelocity", NULL);
 
+	RobotMovement::RobotMovement()
+	{
+		this->wm = MSLWorldModel::get();
+		this->pp = PathProxy::getInstance();
+	}
+
 	RobotMovement::~RobotMovement()
 	{
 	}
@@ -94,153 +102,58 @@ namespace msl
 	 * @param fast
 	 * @param dribble
 	 */
-	MotionControl RobotMovement::experimentallyMoveToPoint(shared_ptr<MovementQuery> m_Query)
+	msl_actuator_msgs::MotionControl RobotMovement::experimentallyMoveToPoint(shared_ptr<MovementQuery> const query)
 	{
-		this->query = m_Query;
-
-		if (m_Query == nullptr)
-		{
-			cout << "query == nullptr, gernerating new query!" << endl;
-			this->query = make_shared<MovementQuery>();
-		}
-
-		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(query->egoDestinationPoint,
-																							eval,
-																							query->additionalPoints);
-		// move to point carefully / fast
-
-		double rotation;
-		double translation;
-
-		if (query->fast)
+		shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, eval,
+																				query->additionalPoints);
+		if (egoTarget == nullptr)
 		{
-			rotation = fastRotation;
-			translation = fastTranslation;
-		}
-		else
-		{
-			rotation = defaultRotateP;
-			translation = defaultTranslation;
+			egoTarget = query->egoDestinationPoint;
 		}
 
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 
-		if (temp == nullptr)
-		{
-			cout << "RobotMovement::moveToPointCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
-			temp = query->egoDestinationPoint;
-		}
-		if (query->egoAlignPoint == nullptr)
-		{
-			query->egoAlignPoint = query->egoDestinationPoint;
-		}
+		// ANGLE
+		mc.motion.angle = egoTarget->angleTo();
 
-		mc.motion.angle = temp->angleTo();
-		mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * rotation;
-		if (temp->length() > query->snapDistance)
+		// TRANSLATION
+		if (egoTarget->length() > query->snapDistance)
 		{
-			mc.motion.translation = min(temp->length(), translation);
+			mc.motion.translation = min(egoTarget->length(), (query->fast ? this->fastTranslation : this->defaultTranslation));
 		}
 		else
 		{
 			mc.motion.translation = 0;
 		}
 
-		// dribble behavior -> using from dribbleToPointConservative ==============================================
+		// ROTATION
+		if (query->egoAlignPoint != nullptr)
+		{
+			mc.motion.rotation = query->egoAlignPoint->rotate(M_PI)->angleTo() * (query->fast ? this->fastRotation : this->defaultRotateP);
+		}
+
+		// dribble behavior -> used from dribbleToPointConservative ==============================================
 		if (query->dribble)
 		{
-			auto ballPos = wm->ball->getEgoBallPosition();
-
-//			if (ballPos == nullptr)
-//				return nullptr;
-//			if (ballPos->length() > 1000)
-//				return nullptr;
-//			double pathPlanningMaxTrans = maxVel;
-//			double frontAngle = wm->kicker->kickerAngle;
-
-//			msl::PathProxy* pp = msl::PathProxy::getInstance();
-
-			auto target = temp;
-
-//			if (target == nullptr)
-//				return nullptr;
-
-//			double distToOpp;
-//			auto opp = wm->robots->opponents.getClosestToBall(distToOpp);
-//			if (distToOpp < 800)
-//			{
-//				rotPointDist = 50;
-//			}
-
-			double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
-			msl_actuator_msgs::MotionControl bm;
-			// rotation <====
-//			double angleErr = target->rotate(frontAngle)->angleTo();
-//			bm.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr); //Rotation PD
-//
-//			if (bm.motion.rotation > curRot)
-//			{ //limit rotation acceleration
-//				bm.motion.rotation = min(bm.motion.rotation, curRot + rotAccStep);
-//			}
-//			else
-//			{
-//				bm.motion.rotation = max(bm.motion.rotation, curRot - rotAccStep);
-//			}
-//
-//			bm.motion.rotation = min(abs(bm.motion.rotation), maxRot) * (bm.motion.rotation > 0 ? 1 : -1); //clamp rotation
-//			curRot = bm.motion.rotation;
-//
-//			lastRotErr = angleErr;
 			// todo: current work (skipping point)
-			bm.motion.rotation = rotationPDForDribble(target);
-			// transaltion <====
-			double transOrt = bm.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
+			mc.motion.rotation = rotationPDForDribble(query, egoTarget);
+			double rotPointDist = 350.0;
+			if (auto ballPos = wm->ball->getEgoBallPosition())
+			{
+				rotPointDist = min(350.0, ballPos->length()); //the point around which we rotate
+			}
 
-			bm.motion.translation = translationPDForDribble(transOrt);
-			bm.motion.angle = anglePDForDribble(transOrt);
+			double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 
-//			double maxCurTrans = pathPlanningMaxTrans;
-//			double transErr = abs(query->lastRotDribbleErr);
-//			if (transErr > angleDeadBand)
-//			{
-//				transControlIntegral += iTrans * transErr;
-//				transControlIntegral = min(transControlIntegralMax, transControlIntegral);
-//			}
-//			else
-//			{
-//				transControlIntegral = 0; //Math.Max(0,transControlIntegral-Math.PI*5);
-//				transErr = 0;
-//			}
-//			maxCurTrans -= pTrans * transErr + transControlIntegral;
-//			maxCurTrans = max(0.0, maxCurTrans);
-//
-//			double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
-//			if (std::isnan(transTowards) || transTowards < 50)
-//				transTowards = 50;
-//
-//			if (transTowards > curTrans)
-//			{
-//				transTowards = min(transTowards, curTrans + transAccStep);
-//			}
-//			else
-//				transTowards = max(transTowards, curTrans - transDecStep);
-//			curTrans = transTowards;
-
-//			auto dir = ballPos->normalize();
-//			shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
-//			dir = dir * transTowards + ort * transOrt;
-//			bm.motion.angle = dir->angleTo();
-//
-//			bm.motion.translation = sqrt(transTowards * transTowards + transOrt * transOrt);
-
-//			return make_shared<msl_actuator_msgs::MotionControl>(bm);
+			mc.motion.translation = translationPDForDribble(query, transOrt);
+			mc.motion.angle = anglePDForDribble(query, transOrt);
 		}
 		// dribble <=========================================================
-		cout << "translation = " << mc.motion.translation << endl;
-		cout << "rotation = " << mc.motion.rotation << endl;
-		cout << "angle = " << mc.motion.angle << endl;
+
+#ifdef RM_DEBUG
+		cout << "RobotMovement: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
+#endif
 		return mc;
 	}
 
@@ -249,10 +162,10 @@ namespace msl
 	 *
 	 * @return motion command if robot breaks the rules
 	 */
-	MotionControl RobotMovement::experimentallyRuleActionForBallGetter()
+	msl_actuator_msgs::MotionControl RobotMovement::experimentallyRuleActionForBallGetter()
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
@@ -360,11 +273,11 @@ namespace msl
 	 * 		the distance to the destination and
 	 * 		the ball as additional point
 	 */
-	MotionControl RobotMovement::experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest,
+	msl_actuator_msgs::MotionControl RobotMovement::experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest,
 															shared_ptr<geometry::CNPoint2D> headingPoint)
 	{
 		// TODO: need to be tested!!!!
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		//			double rotTol = M_PI / 30.0;
 		double destTol = 100.0;
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -388,7 +301,7 @@ namespace msl
 			//linear
 			double trans = min(maxVelo, 1.2 * dest->length());
 
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
 			if (wm->ball->getAlloBallPosition() != nullptr)
 			{
@@ -431,7 +344,7 @@ namespace msl
 	/*
 	 * @return motion command to a random destination point
 	 */
-	MotionControl RobotMovement::experimentallyDriveRandomly(double translation)
+	msl_actuator_msgs::MotionControl RobotMovement::experimentallyDriveRandomly(double translation)
 	{
 		msl::PathProxy* pp = msl::PathProxy::getInstance();
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
@@ -467,23 +380,14 @@ namespace msl
 	 * @translation
 	 *
 	 */
-	MotionControl RobotMovement::experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query)
+	msl_actuator_msgs::MotionControl RobotMovement::experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> query)
 	{
-		this->query = m_Query;
+		auto teamMatePosition = query->teamMatePosition;
 
-		if (m_Query == nullptr)
-		{
-			this->query = make_shared<MovementQuery>();
-		}
-		shared_ptr<geometry::CNPoint2D> teamMatePosition = query->teamMatePosition;
-//		double maxTrans = query->translation;
-
-		MotionControl mc;
-		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
@@ -499,7 +403,8 @@ namespace msl
 				if (s->isValid())
 				{
 
-					s->val = evalPointDynamic(s->midP, teamMatePosition, ownPos, wm->obstacles->getEgoVisionObstaclePoints());
+					s->val = evalPointDynamic(s->midP, teamMatePosition, ownPos,
+												wm->obstacles->getEgoVisionObstaclePoints());
 					fringe->push_back(s);
 				}
 			}
@@ -549,163 +454,153 @@ namespace msl
 		q->egoAlignPoint = align;
 		q->fast = true;
 		// todo: test if experimatallyMoveToPoint() does nearly the same as placeRobotAggressive()
-		mc = experimentallyMoveToPoint(q);
+		msl_actuator_msgs::MotionControl mc = experimentallyMoveToPoint(q);
 		return mc;
 	}
 
 	/*
 	 * Used in moveToFreeSpace()
 	 */
-	double RobotMovement::experimentallyEvalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP,
-												shared_ptr<geometry::CNPoint2D> alloPassee,
-												shared_ptr<geometry::CNPosition> ownPos,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > opponents)
+	double RobotMovement::experimentallyEvalPointDynamic(
+			shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
+			shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > opponents)
+	{
+		double ret = 0;
+
+		//distance to point:
+		ret -= ownPos->distanceTo(alloP) / 10.0;
+		MSLWorldModel* wm = MSLWorldModel::get();
+		shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2,
+																						0);
+
+		shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
+		//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
+
+		shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+				wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
+		shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
+				-wm->field->getFieldLength() / 2.0 - alloPassee->x,
+				-wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+
+		if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
 		{
-			double ret = 0;
+			return numeric_limits<double>::min();
+		}
+		if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
+		{
+			return numeric_limits<double>::min();
+		}
 
-			//distance to point:
-			ret -= ownPos->distanceTo(alloP) / 10.0;
-			MSLWorldModel* wm = MSLWorldModel::get();
-			shared_ptr<geometry::CNPoint2D> oppGoalMid = make_shared<geometry::CNPoint2D>(wm->field->getFieldLength() / 2,
-																							0);
+		ret += passee2p->x / 9.0;
+		if (alloP->x < 0)
+		{
+			ret += alloP->x / 10.0;
+		}
 
-			shared_ptr<geometry::CNPoint2D> passee2p = alloP - alloPassee;
-			//if (passee2p.X < 0 && Math.Abs(alloP.Y) < 1000) return Double.MinValue;
+		if (alloP->y * alloPassee->y < 0)
+		{
+			ret += min(0.0, alloP->x);
+		}
+		if (alloP->angleToPoint(oppGoalMid) > M_PI / 3.0)
+		{
+			ret -= alloP->angleToPoint(oppGoalMid) * 250.0;
+		}
+		//distance to passeee:
 
-			shared_ptr<geometry::CNPoint2D> passee2LeftOwnGoal = make_shared<geometry::CNPoint2D>(
-					-wm->field->getFieldLength() / 2.0 - alloPassee->x,
-					wm->field->getGoalWidth() / 2.0 + 1000 - alloPassee->y);
-			shared_ptr<geometry::CNPoint2D> passee2RightOwnGoal = make_shared<geometry::CNPoint2D>(
-					-wm->field->getFieldLength() / 2.0 - alloPassee->x,
-					-wm->field->getGoalWidth() / 2.0 - 1000 - alloPassee->y);
+		//Point2D p2GoalVec = goalPos - p;
+		double dist2Passee = passee2p->length();
 
-			if (!geometry::leftOf(passee2LeftOwnGoal, passee2p) && geometry::leftOf(passee2RightOwnGoal, passee2p))
+		//nice passing distances: 4000..9000:
+		if (dist2Passee < 2000)
+		{
+			return numeric_limits<double>::min();
+		}
+		if (dist2Passee < 4000)
+		{
+			ret -= 4000 - dist2Passee;
+		}
+		else if (dist2Passee > 9000)
+		{
+			ret -= dist2Passee - 9000;
+		}
+
+		//else if (dist2Ball > 5000) ret -= (dist2Ball-5000)*(dist2Ball - 5000);
+
+		double t, v;
+		double ortX, ortY;
+		double catchFactor = 0;
+
+		//double goalFactor = 0;
+
+		for (int i = 0; i < opponents->size(); i++)
+		{
+			//pass corridor
+			t = ((opponents->at(i)->x - alloPassee->x) * passee2p->x
+					+ (opponents->at(i)->y - alloPassee->y) * passee2p->y)
+					/ (passee2p->x * passee2p->x + passee2p->y * passee2p->y);
+
+			if (t > 0)
 			{
-				return numeric_limits<double>::min();
-			}
-			if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
-			{
-				return numeric_limits<double>::min();
-			}
-
-			ret += passee2p->x / 9.0;
-			if (alloP->x < 0)
-			{
-				ret += alloP->x / 10.0;
-			}
-
-			if (alloP->y * alloPassee->y < 0)
-			{
-				ret += min(0.0, alloP->x);
-			}
-			if (alloP->angleToPoint(oppGoalMid) > M_PI / 3.0)
-			{
-				ret -= alloP->angleToPoint(oppGoalMid) * 250.0;
-			}
-			//distance to passeee:
-
-			//Point2D p2GoalVec = goalPos - p;
-			double dist2Passee = passee2p->length();
-
-			//nice passing distances: 4000..9000:
-			if (dist2Passee < 2000)
-			{
-				return numeric_limits<double>::min();
-			}
-			if (dist2Passee < 4000)
-			{
-				ret -= 4000 - dist2Passee;
-			}
-			else if (dist2Passee > 9000)
-			{
-				ret -= dist2Passee - 9000;
-			}
-
-			//else if (dist2Ball > 5000) ret -= (dist2Ball-5000)*(dist2Ball - 5000);
-
-			double t, v;
-			double ortX, ortY;
-			double catchFactor = 0;
-
-			//double goalFactor = 0;
-
-			for (int i = 0; i < opponents->size(); i++)
-			{
-				//pass corridor
-				t = ((opponents->at(i)->x - alloPassee->x) * passee2p->x
-						+ (opponents->at(i)->y - alloPassee->y) * passee2p->y)
-						/ (passee2p->x * passee2p->x + passee2p->y * passee2p->y);
-
-				if (t > 0)
+				if (t < 1.0)
 				{
-					if (t < 1.0)
+
+					ortX = opponents->at(i)->x - (alloPassee->x + t * (passee2p->x));
+					ortY = opponents->at(i)->y - (alloPassee->y + t * (passee2p->y));
+					v = max(0.0, sqrt(ortX * ortX + ortY * ortY) - robotRadius) / dist2Passee;
+
+					if (v / t * interceptQuotient < 1)
 					{
 
-						ortX = opponents->at(i)->x - (alloPassee->x + t * (passee2p->x));
-						ortY = opponents->at(i)->y - (alloPassee->y + t * (passee2p->y));
-						v = max(0.0, sqrt(ortX * ortX + ortY * ortY) - robotRadius) / dist2Passee;
-
-						if (v / t * interceptQuotient < 1)
-						{
-
-							double cf = 5000 * (1 - ((v / t) * interceptQuotient));
-							catchFactor = max(catchFactor, cf);
-						}
+						double cf = 5000 * (1 - ((v / t) * interceptQuotient));
+						catchFactor = max(catchFactor, cf);
 					}
-					ortX = opponents->at(i)->x - alloP->x;
-					ortY = opponents->at(i)->y - alloP->y;
-					v = sqrt(ortX * ortX + ortY * ortY);
-					if (v < 2500)
-						ret -= (2500 - v) * 10;
 				}
+				ortX = opponents->at(i)->x - alloP->x;
+				ortY = opponents->at(i)->y - alloP->y;
+				v = sqrt(ortX * ortX + ortY * ortY);
+				if (v < 2500)
+					ret -= (2500 - v) * 10;
 			}
-			ret -= catchFactor;
-
-			//ret -= goalFactor;
-			return ret;
 		}
+		ret -= catchFactor;
 
-	double RobotMovement::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> target)
+		//ret -= goalFactor;
+		return ret;
+	}
+
+	double RobotMovement::rotationPDForDribble(shared_ptr<MovementQuery> query, shared_ptr<geometry::CNPoint2D> egoTarget)
 	{
-		if (query == nullptr)
-		{
-			this->query = make_shared<MovementQuery>();
-		}
+		double angleErr = egoTarget->rotate(wm->kicker->kickerAngle)->angleTo();
+		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - query->lastRotDribbleErr); //Rotation PD
 
-		MSLWorldModel* wm = MSLWorldModel::get();
-		double frontAngle = wm->kicker->kickerAngle;
-		double rot;
-		double angleErr = target->rotate(frontAngle)->angleTo();
-		rot = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - query->lastRotDribbleErr); //Rotation PD
-
+		// limit rotation acceleration
 		if (rot > query->curRotDribble)
-		{ //limit rotation acceleration
-			rot = min(rot, query->curRotDribble + rotAccStep);
+		{
+			rot = min(rot, query->curRotDribble + this->rotAccStep);
 		}
 		else
 		{
-			rot = max(rot, query->curRotDribble - rotAccStep);
+			rot = max(rot, query->curRotDribble - this->rotAccStep);
 		}
 
-		rot = min(abs(rot), maxRot) * (rot > 0 ? 1 : -1); //clamp rotation
+		// clamp rotation
+		rot = min(abs(rot), this->maxRot) * (rot > 0 ? 1 : -1);
+
+		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our rot value
 		query->curRotDribble = rot;
 
 		query->lastRotDribbleErr = angleErr;
 		return rot;
 	}
 
-	double RobotMovement::translationPDForDribble(double transOrt)
+	double RobotMovement::translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt)
 	{
-		if (query == nullptr)
-		{
-			this->query = make_shared<MovementQuery>();
-		}
-
-		double maxCurTrans = maxVel;
+		double maxCurTrans = this->maxVel;
 		double transErr = abs(query->lastRotDribbleErr);
-		if (transErr > angleDeadBand)
+		if (transErr > this->angleDeadBand)
 		{
-			query->transControlIntegralDribble += iTrans * transErr;
+			query->transControlIntegralDribble += this->iTrans * transErr;
 			query->transControlIntegralDribble = min(transControlIntegralMax, query->transControlIntegralDribble);
 		}
 		else
@@ -713,7 +608,7 @@ namespace msl
 			query->transControlIntegralDribble = 0; //Math.Max(0,transControlIntegral-Math.PI*5);
 			transErr = 0;
 		}
-		maxCurTrans -= pTrans * transErr + query->transControlIntegralDribble;
+		maxCurTrans -= this->pTrans * transErr + query->transControlIntegralDribble;
 		maxCurTrans = max(0.0, maxCurTrans);
 
 		double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
@@ -722,27 +617,26 @@ namespace msl
 
 		if (transTowards > query->curTransDribble)
 		{
-			transTowards = min(transTowards, query->curTransDribble + transAccStep);
+			transTowards = min(transTowards, query->curTransDribble + this->transAccStep);
 		}
 		else
-			transTowards = max(transTowards, query->curTransDribble - transDecStep);
+		{
+			transTowards = max(transTowards, query->curTransDribble - this->transDecStep);
+		}
+
+		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our trans value
 		query->curTransDribble = transTowards;
 
 		return sqrt(transTowards * transTowards + transOrt * transOrt);
 	}
 
-	double RobotMovement::anglePDForDribble(double transOrt)
+	double RobotMovement::anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt)
 	{
-		if (query == nullptr)
-		{
-			this->query = make_shared<MovementQuery>();
-		}
-
-		MSLWorldModel* wm = MSLWorldModel::get();
 		auto ballPos = wm->ball->getEgoBallPosition();
 		auto dir = ballPos->normalize();
-		shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
+		auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
 		dir = dir * query->curTransDribble + ort * transOrt;
+		// TODO: This is not a PD controller, currently it only calculates the direction to drive during dribble
 
 		return dir->angleTo();
 	}
@@ -806,7 +700,7 @@ namespace msl
 																			double translation)
 	{
 		//motion message
-		MotionControl bm;
+		msl_actuator_msgs::MotionControl bm;
 		// Angle
 		bm.motion.angle = egoDest->angleTo();
 		// Translation
@@ -1043,11 +937,11 @@ namespace msl
 
 	}
 
-	MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+	msl_actuator_msgs::MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
 		shared_ptr<geometry::CNPoint2D> temp = PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
@@ -1074,7 +968,7 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+	msl_actuator_msgs::MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														double snapDistance,
 														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
@@ -1152,11 +1046,11 @@ namespace msl
 	 }
 	 }
 	 */
-	MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+	msl_actuator_msgs::MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													double angleTolerance)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 
 		//What is the sense of an ego target if translation is 0 anyways?
 		double egoTargetAngle = egoTarget->angleTo();
@@ -1181,11 +1075,11 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+	msl_actuator_msgs::MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														shared_ptr<geometry::CNPoint2D> egoBallPos,
 														double angleTolerance, double ballAngleTolerance)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double egoTargetAngle = egoAlignPoint->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
@@ -1220,11 +1114,11 @@ namespace msl
 		return mc;
 	}
 
-	MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+	msl_actuator_msgs::MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 															shared_ptr<geometry::CNPoint2D> egoBallPos,
 															double angleTolerance, double ballAngleTolerance)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		double egoTargetAngle = egoAlignPoint->angleTo();
 		double egoBallAngle = egoBallPos->angleTo();
@@ -1283,14 +1177,14 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
 		if (ownPos == nullptr)
 		{
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
@@ -1311,7 +1205,7 @@ namespace msl
 			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200)
 					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{ //if we are already in, and ball is in safe distance of keeper area, get it
-				MotionControl mc;
+				msl_actuator_msgs::MotionControl mc;
 				mc.senderID = -1;
 				return mc;
 			}
@@ -1329,7 +1223,7 @@ namespace msl
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
-						MotionControl mc;
+						msl_actuator_msgs::MotionControl mc;
 						mc.senderID = -1;
 						return mc;
 					}
@@ -1367,12 +1261,12 @@ namespace msl
 			}
 
 		}
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		mc.senderID = -1;
 		return mc;
 	}
 
-	MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
+	msl_actuator_msgs::MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
 													shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
 		double rotTol = M_PI / 30.0;
@@ -1388,7 +1282,7 @@ namespace msl
 			//linear
 			double trans = min(translation, 1.2 * destinationPoint->length());
 
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			//DriveHelper.DriveToPointAndAlignCareBall(destinationPoint, headingPoint, trans, wm);
 			if (wm->ball->getAlloBallPosition() != nullptr)
 			{
@@ -1409,7 +1303,7 @@ namespace msl
 		}
 	}
 
-	MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint,
+	msl_actuator_msgs::MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint,
 											shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
 		double rotTol = M_PI / 30.0;
@@ -1418,7 +1312,7 @@ namespace msl
 		if (destinationPoint->length() < destTol)
 		{
 			// DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, translation, wm);
-			MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
+			msl_actuator_msgs::MotionControl rot = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
 			rot.motion.translation = 0.0;
 			if (headingPoint == nullptr)
 			{
@@ -1432,7 +1326,7 @@ namespace msl
 			}
 			else
 			{
-				MotionControl bm;
+				msl_actuator_msgs::MotionControl bm;
 
 				bm.motion.rotation = 0.0;
 				bm.motion.translation = 0.0;
@@ -1446,13 +1340,13 @@ namespace msl
 			//linear
 			double trans = min(translation, 1.2 * destinationPoint->length());
 
-			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
+			msl_actuator_msgs::MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr);
 
 			return bm;
 		}
 	}
 
-	MotionControl RobotMovement::driveRandomly(double translation)
+	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(double translation)
 	{
 		if (randomCounter == 0)
 		{
@@ -1467,7 +1361,7 @@ namespace msl
 			dest = randomTarget;
 			translation = 100;
 		}
-		MotionControl bm;
+		msl_actuator_msgs::MotionControl bm;
 		bm.motion.rotation = 0;
 		bm.motion.translation = translation;
 		bm.motion.angle = atan2(dest->y, dest->x);
@@ -1486,14 +1380,14 @@ namespace msl
 	 * alloPassee = allo team mate position
 	 * maxTrans = max translation
 	 */
-	MotionControl RobotMovement::moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans)
+	msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans)
 	{
-		MotionControl mc;
+		msl_actuator_msgs::MotionControl mc;
 		MSLWorldModel* wm = MSLWorldModel::get();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
-			MotionControl mc;
+			msl_actuator_msgs::MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
@@ -1571,7 +1465,7 @@ namespace msl
 		maxVelo = (*sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
 	}
 
-	MotionControl RobotMovement::placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint,
+	msl_actuator_msgs::MotionControl RobotMovement::placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint,
 														shared_ptr<geometry::CNPoint2D> headingPoint,
 														double translation)
 	{
@@ -1586,7 +1480,7 @@ namespace msl
 		{
 			//linear
 			double trans = min(translation, 1.6 * destinationPoint->length());
-			MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr); //DriveHelper.DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, trans, wm);
+			msl_actuator_msgs::MotionControl bm = moveToPointCarefully(destinationPoint, headingPoint, 0, nullptr); //DriveHelper.DriveToPointAndAlignCareObstacles(destinationPoint, headingPoint, trans, wm);
 			return bm;
 		}
 	}

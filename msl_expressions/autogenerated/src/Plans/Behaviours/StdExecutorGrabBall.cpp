@@ -40,7 +40,7 @@ namespace alica
             return;
         }
 
-        MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, catchRadius, nullptr);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, catchRadius, nullptr);
 
         send(mc);
         /*PROTECTED REGION END*/

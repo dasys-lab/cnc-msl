@@ -17,11 +17,12 @@
 #include "GameState.h"
 #include "RingBuffer.h"
 #include "InformationElement.h"
-#include "SystemConfig.h"
-
-using namespace supplementary;
 
 using namespace std;
+
+namespace supplementary{
+	class SystemConfig;
+}
 
 namespace msl
 {
@@ -60,7 +61,7 @@ namespace msl
 		mutex refereeMutex;
 		mutex situationChecker;
 		mutex goalMutex;
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
 		int ownGoal;
 		int oppGoal;
 		unsigned long timeSinceStart;

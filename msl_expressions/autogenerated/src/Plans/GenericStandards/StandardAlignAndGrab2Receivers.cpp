@@ -217,7 +217,7 @@ namespace alica
             alloTarget = recPos2;
         }
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         if (egoBallPos->length() > 900)
         {
             // Drive close to the ball, until dist < 900

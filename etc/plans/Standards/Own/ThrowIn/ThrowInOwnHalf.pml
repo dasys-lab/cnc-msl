@@ -59,7 +59,7 @@
   <states xsi:type="alica:SuccessState" id="1462368161988" name="Successalternative" comment="">
     <inTransitions>#1462368201420</inTransitions>
   </states>
-  <transitions id="1462360957397" name="MISSING_NAME" comment="aligned exec" msg="">
+  <transitions id="1462360957397" name="Align2GrabBall" comment="(child success &amp;&amp; start) || (start &amp;&amp; timeSinceStart > timeUntilEmergencyExecute)" msg="">
     <preCondition id="1462360958757" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462360503829</inState>
     <outState>#1462360912906</outState>

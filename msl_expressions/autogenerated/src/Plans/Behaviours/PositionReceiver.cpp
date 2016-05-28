@@ -47,7 +47,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoTarget = make_shared < geometry::CNPoint2D
                 > (0, -ballDistanceRec)->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
         if (wm->game->getSituation() == msl::Situation::Start)

@@ -8,6 +8,10 @@
 #include "GameState.h"
 #include "pathplanner/PathProxy.h"
 #define DBM_DEBUG 1
+namespace supplementary
+{
+    class SystemConfig;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -60,7 +64,7 @@ namespace alica
     double maxRot;
     double accel;
 
-    SystemConfig* sc;
+    supplementary::SystemConfig* sc;
     shared_ptr<geometry::CNPoint2D> alloAimPoint;
     msl::PathProxy* pathProxy;
     static bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,

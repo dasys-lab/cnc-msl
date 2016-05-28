@@ -73,7 +73,7 @@ namespace alica
                 auto pos = wm->robots->teammates.getTeamMatePosition(id);
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
             if (receiverPos != nullptr)

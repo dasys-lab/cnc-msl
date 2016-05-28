@@ -7,6 +7,7 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
+#include <SystemConfig.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
