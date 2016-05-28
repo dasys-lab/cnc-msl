@@ -19,6 +19,8 @@
 
 #include  "Plans/constraints/WM161413992564408Constraints.h"
 
+#include  "Plans/TestPlans/GoalieMotionTuning/constraints/DriveToPost1464189637940Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"

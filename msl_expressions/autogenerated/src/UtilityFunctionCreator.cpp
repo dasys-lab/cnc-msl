@@ -19,6 +19,8 @@
 
 #include  "Plans/WM161413992564408.h"
 
+#include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost1464189637940.h"
+
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
@@ -173,6 +175,10 @@ namespace alica
 
             case 1413992564408:
                 return make_shared<UtilityFunction1413992564408>();
+                break;
+
+            case 1464189637940:
+                return make_shared<UtilityFunction1464189637940>();
                 break;
 
             case 1417621468963:

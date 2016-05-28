@@ -15,9 +15,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalKick.h"
 
-#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
-
 #include  "Plans/Behaviours/PositionReceiver.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
@@ -66,6 +66,8 @@ using namespace std;
 #include  "Plans/Behaviours/AlignToGoal.h"
 
 #include  "Plans/Behaviours/Pos4Def.h"
+
+#include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
@@ -213,14 +215,14 @@ namespace alica
                 return make_shared<GoalKick>();
                 break;
 
-            case 1457532300654:
-
-                return make_shared<StandardAlignToPassPos>();
-                break;
-
             case 1439379352605:
 
                 return make_shared<PositionReceiver>();
+                break;
+
+            case 1457532300654:
+
+                return make_shared<StandardAlignToPassPos>();
                 break;
 
             case 1417620583364:
@@ -361,6 +363,11 @@ namespace alica
             case 1445438204426:
 
                 return make_shared<Pos4Def>();
+                break;
+
+            case 1464189840525:
+
+                return make_shared<DriveToPost>();
                 break;
 
             case 1457531639350:

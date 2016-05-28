@@ -39,6 +39,10 @@ namespace alica
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
 
+        cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
+                << endl;
+        cout << "ego Ball Pos: x: " << ballPos->x << " y: " << ballPos->y << endl;
+
         if (wm->ball->haveBall())
         {
             query->dribble = true;

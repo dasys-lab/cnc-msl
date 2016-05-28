@@ -18,6 +18,8 @@
 
 #include  "Plans/WM161413992564408.h"
 
+#include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost1464189637940.h"
+
 #include  "Plans/TwoHoledWall/TwoHoledWallMaster1417621468963.h"
 
 #include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
@@ -481,6 +483,24 @@ namespace alica
             case 1426692655810:
 
                 return make_shared<TransitionCondition1426692655810>();
+
+                break;
+
+            case 1464189727040:
+
+                return make_shared<TransitionCondition1464189727040>();
+
+                break;
+
+            case 1464189738685:
+
+                return make_shared<TransitionCondition1464189738685>();
+
+                break;
+
+            case 1464189740469:
+
+                return make_shared<TransitionCondition1464189740469>();
 
                 break;
 
@@ -1417,6 +1437,18 @@ namespace alica
             case 1446733733995:
 
                 return make_shared<TransitionCondition1446733733995>();
+
+                break;
+
+            case 1464350170265:
+
+                return make_shared<TransitionCondition1464350170265>();
+
+                break;
+
+            case 1464350172193:
+
+                return make_shared<TransitionCondition1464350172193>();
 
                 break;
 
