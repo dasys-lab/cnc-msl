@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503828"/>
-    <value width="1145" height="657"/>
+    <value width="1145" height="622"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462360503830"/>
@@ -52,15 +52,15 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361351034"/>
-    <value xPos="119" yPos="227" width="230" height="86" collapsed="false"/>
+    <value xPos="79" yPos="225" width="230" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361358155"/>
-    <value xPos="79" yPos="325" width="298" height="86" collapsed="false"/>
+    <value xPos="83" yPos="329" width="298" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361373364"/>
-    <value xPos="123" yPos="474" width="167" height="86" collapsed="false"/>
+    <value xPos="87" yPos="445" width="167" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462361418213"/>
@@ -88,7 +88,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462363134771"/>
-    <value xPos="380" yPos="329" width="232" height="86" collapsed="false"/>
+    <value xPos="502" yPos="329" width="232" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInPass.beh#1462363309950"/>
@@ -100,7 +100,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462368095616"/>
-    <value xPos="421" yPos="176" width="232" height="110" collapsed="false"/>
+    <value xPos="390" yPos="162" width="232" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInOwnHalf.pml#1462368130262"/>
