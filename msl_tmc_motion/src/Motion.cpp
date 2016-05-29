@@ -619,9 +619,9 @@ void Motion::calcOdoPosition() {
 		shared_ptr<geometry::CNPoint2D> radiusVect;
 
 		if (rot < 0) {
-			radiusVect = translation->normalize()->rotate(-M_PI/2) * radiusLength;
-		} else {
 			radiusVect = translation->normalize()->rotate(M_PI/2) * radiusLength;
+		} else {
+			radiusVect = translation->normalize()->rotate(-M_PI/2) * radiusLength;
 		}
 
 		middle = lastPos - radiusVect;
@@ -630,11 +630,6 @@ void Motion::calcOdoPosition() {
 	} else {
 		newPos = lastPos + translation * timeSinceLastOdo;
 	}
-
-	cout << "newX: " << newPos->x << endl;
-	cout << "transX: " << transX << endl;
-	cout << "motion.angle: " << lastOdoInfo.motion.angle << endl;
-	cout << "rot: " << rot << endl;
 
 	newX = newPos->x;
 	newY = newPos->y;
