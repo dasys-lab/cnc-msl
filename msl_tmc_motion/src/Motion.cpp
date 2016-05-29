@@ -576,10 +576,8 @@ void Motion::calcOdoPosition() {
 
 //determine old position
 	double lastAngle = lastOdoInfo.position.angle;
-	int lastX = lastOdoInfo.position.x;
-	int lastY = lastOdoInfo.position.y;
 	shared_ptr<geometry::CNPoint2D> lastPos = make_shared<geometry::CNPoint2D>(
-			lastX, lastY);
+			lastOdoInfo.position.x, lastOdoInfo.position.y);
 
 // determine time driven
 	ros::Time currTime = ros::Time::now();
