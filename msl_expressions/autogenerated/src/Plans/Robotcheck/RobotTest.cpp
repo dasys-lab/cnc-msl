@@ -356,24 +356,16 @@ namespace alica
     {
         auto lbi = wm->rawSensorData->getLightBarrier();
 
-        if (lbi)
+        bool static lb_old = lbi;
+        if (lb_old != lbi)
         {
-            bool static lb_old = lbi;
-            if (lb_old != lbi)
-            {
-                lb_old = lbi;
-                cout << "toggle light barrier!" << endl;
-                move++;
-            }
-            if (move > 5)
-            {
-                move = 0;
-                return false;
-            }
+            lb_old = lbi;
+            cout << "toggle light barrier!" << endl;
+            move++;
         }
-        else
+        if (move > 5)
         {
-            std::cout << "light barrier = nullPtr " << std::endl;
+            move = 0;
             return false;
         }
         return true;
