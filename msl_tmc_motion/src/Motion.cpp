@@ -631,6 +631,10 @@ void Motion::calcOdoPosition() {
 		newPos = lastPos + translation * timeSinceLastOdo;
 	}
 
+	cout << "transX: " << transX << endl;
+	cout << "motion.angle: " << angleDriven << endl;
+	cout << "newX: " << newPos->x << endl;
+
 	newX = newPos->x;
 	newY = newPos->y;
 
