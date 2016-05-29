@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

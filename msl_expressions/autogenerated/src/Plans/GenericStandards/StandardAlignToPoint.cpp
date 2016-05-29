@@ -5,6 +5,8 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "robotmovement/MovementQuery.h"
 #include "engine/RunningPlan.h"
+#include <container/CNPosition.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,6 +30,7 @@ namespace alica
         this->receiverBallMovedThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
                                                                                          "receiverBallMovedThreshold",
                                                                                          NULL);
+        this->movementQuery = make_shared<MovementQuery>();
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint::~StandardAlignToPoint()
@@ -68,35 +71,34 @@ namespace alica
             }
 
             // get the plan in which the behavior is running
-            auto parent = this->runningPlan->getParent().lock();
-            if (parent == nullptr)
-            {
-                return;
-            }
+            auto receiverPos = this->getTeammatesPosition(ep);
 
-            // get robot ids of robots in found entry point
-            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-            if (ids->empty() || ids->at(0) == -1)
-            {
-                return;
-            }
 
-            // get receiver position by id
-            auto receiverPos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-            if (receiverPos == nullptr)
+            if (receiverPos != nullptr)
             {
-                return;
+            	/**
+				 * Calculate egoTarget "executerDistanceToBall" millimeter away
+				 * from the ball and on a line from the receiver towards the ball.
+				 */
+				egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
+									*ownPos);
+            }else{
+            	/**
+				 * Calculate egoTarget "executerDistanceToBall" millimeter away
+				 * from the ball and on a line from the center of the field
+				 * towards the ball.
+				 *
+				 * This lets the executer drive closer to the ball,
+				 * although we temporary don't know about a receiver.
+				 */
+            	egoTarget = (alloBall + (alloBall->normalize() * this->executerDistanceToBall))->alloToEgo(*ownPos);
             }
-
-            // calculate target executerDistanceToBall away from the ball and on a line with the receiver
-            egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
-                    *ownPos);
 
             // ask the path planner how to get there
-            this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
-            this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            this->movementQuery->egoDestinationPoint = egoTarget;
+            this->movementQuery->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            this->movementQuery->additionalPoints = additionalPoints;
+            mc = rm.experimentallyMoveToPoint(movementQuery);
         }
         else
         { // robot is receiver
@@ -119,10 +121,10 @@ namespace alica
             }
 
             // ask the path planner how to get there
-            this->m_Query->egoDestinationPoint = alloReceiverTarget->alloToEgo(*ownPos);
-            this->m_Query->egoAlignPoint = egoBallPos;
-            this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            this->movementQuery->egoDestinationPoint = alloReceiverTarget->alloToEgo(*ownPos);
+            this->movementQuery->egoAlignPoint = egoBallPos;
+            this->movementQuery->additionalPoints = additionalPoints;
+            mc = rm.experimentallyMoveToPoint(movementQuery);
         }
 
         // if we reach the point and are aligned, the behavior is successful
@@ -138,7 +140,7 @@ namespace alica
     void StandardAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
-        this->m_Query = make_shared<MovementQuery>();
+        this->movementQuery.reset();
         this->alloReceiverTarget.reset();
         this->oldBallPos.reset();
 

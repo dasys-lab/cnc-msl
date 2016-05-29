@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/Intercept.h"
 
 /*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
+#include <pathplanner/PathProxy.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -53,7 +53,7 @@ namespace msl_refbox
 		connect(Joystick_bot, SIGNAL(clicked()), gameData, SLOT(JoystickPressed()));
 
 		// debug
-        connect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
+        	connect(chk_debug, SIGNAL(toggled(bool)), this, SLOT(onDebugToggled(bool)));
 
 		//Connect Information
 		connect(rbtn_local, SIGNAL(toggled(bool)), gameData, SLOT(onLocalToggled(bool)));

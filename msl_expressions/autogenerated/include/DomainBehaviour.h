@@ -3,21 +3,30 @@
 
 #include "engine/BasicBehaviour.h"
 #include "ros/ros.h"
-#include "SystemConfig.h"
-#include "MSLWorldModel.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/KickControl.h"
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_helper_msgs/PassMsg.h"
 #include "msl_helper_msgs/WatchBallMsg.h"
-#include "pathplanner/PathProxy.h"
 #include "msl_helper_msgs/DebugMsg.h"
+
+namespace msl{
+	class MSLWorldModel;
+}
+
+namespace supplementary{
+	class SystemConfig;
+}
+namespace geometry{
+	class CNPosition;
+}
 
 namespace alica
 {
-class DomainBehaviour : public BasicBehaviour
-{
+	class EntryPoint;
+	class DomainBehaviour : public BasicBehaviour
+	{
 	public:
 		DomainBehaviour(string name);
 		virtual ~DomainBehaviour();
@@ -29,9 +38,10 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_helper_msgs::PassMsg& pm, int senderID);
 		void send(msl_helper_msgs::WatchBallMsg& wb);
 		void send(msl_helper_msgs::DebugMsg& dbm);
-		msl::MSLWorldModel* wm;
+		shared_ptr<geometry::CNPosition> getTeammatesPosition(EntryPoint* ep);
 
 	protected:
+		msl::MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
 
 	private:

@@ -29,8 +29,8 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloGoalRight;
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
         shared_ptr<geometry::CNPoint2D> prevTarget;
-        shared_ptr<geometry::CNPoint2D> alloFieldCntr = MSLWorldModel::get()->field->posCenterMarker();
-        shared_ptr<geometry::CNPoint2D> alloAlignPt = alloFieldCntr;
+        shared_ptr<geometry::CNPoint2D> alloFieldCntr;
+        shared_ptr<geometry::CNPoint2D> alloAlignPt;
         bool alignTowardsBall;
         int maxVariance;
         int goalieSize;

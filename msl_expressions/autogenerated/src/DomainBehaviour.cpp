@@ -1,100 +1,127 @@
 #include "DomainBehaviour.h"
+#include <engine/RunningPlan.h>
+#include <SystemConfig.h>
+#include <MSLWorldModel.h>
 
 namespace alica
 {
-	msl::MSLWorldModel* wm;
-
-	DomainBehaviour::DomainBehaviour(string name) :
-			BasicBehaviour(name)
+	DomainBehaviour::DomainBehaviour(string name) : BasicBehaviour(name)
 	{
-		sc = supplementary::SystemConfig::getInstance();
-		ownID = sc->getOwnRobotID();
-		ros::NodeHandle n;
-		wm = msl::MSLWorldModel::get();
+		this->sc = supplementary::SystemConfig::getInstance();
+		this->ownID = sc->getOwnRobotID();
+		this->wm = msl::MSLWorldModel::get();
 
-		if (wm->timeLastSimMsgReceived > 0)
+		ros::NodeHandle n;
+		if (this->wm->timeLastSimMsgReceived > 0)
 		{
-			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
-			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
-			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(supplementary::SystemConfig::getHostname() + "/KickControl", 10);
-			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
+			this->motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>(
+					supplementary::SystemConfig::getHostname() + "/MotionControl", 10);
+			this->ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>(
+					supplementary::SystemConfig::getHostname() + "/BallHandleControl", 10);
+			this->kickControlPub = n.advertise<msl_actuator_msgs::KickControl>(
+					supplementary::SystemConfig::getHostname() + "/KickControl", 10);
+			this->shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>(
+					supplementary::SystemConfig::getHostname() + "/ShovelSelectControl", 10);
 		}
 		else
 		{
-			motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
-			ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
-			kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
-			shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
+			this->motionControlPub = n.advertise<msl_actuator_msgs::MotionControl>("MotionControl", 10);
+			this->ballHandlePub = n.advertise<msl_actuator_msgs::BallHandleCmd>("BallHandleControl", 10);
+			this->kickControlPub = n.advertise<msl_actuator_msgs::KickControl>("KickControl", 10);
+			this->shovelSelectPublisher = n.advertise<msl_actuator_msgs::ShovelSelectCmd>("ShovelSelectControl", 10);
 		}
-		passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
-		watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
-		debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
+		this->passMsgPublisher = n.advertise<msl_helper_msgs::PassMsg>("WorldModel/PassMsg", 10);
+		this->watchBallMsgPublisher = n.advertise<msl_helper_msgs::WatchBallMsg>("/WorldModel/WatchBallMsg", 10);
+		this->debugMsgPublisher = n.advertise<msl_helper_msgs::DebugMsg>("/DebugMsg", 10);
 
-		__maxTranslation = (*sc)["Globals"]->get<double>("Globals", "Team", sc->getHostname().c_str(), "AverageTranslation", NULL);
+		this->__maxTranslation = (*sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
 	}
 
 	DomainBehaviour::~DomainBehaviour()
 	{
 	}
 
-	void alica::DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
+	void DomainBehaviour::send(msl_actuator_msgs::MotionControl& mc)
 	{
-//        this->wm->prediction.monitoring();
+//      this->wm->prediction.monitoring();
 		mc.senderID = ownID;
 		mc.timestamp = wm->getTime();
 		mc.motion.translation = min(__maxTranslation, mc.motion.translation);
-		motionControlPub.publish(mc);
-		wm->rawSensorData->processMotionControlMessage(mc);
+		this->motionControlPub.publish(mc);
+		this->wm->rawSensorData->processMotionControlMessage(mc);
 	}
 
-	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
+	void DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
 	{
 		bh.enabled = true;
 		bh.senderID = ownID;
-		ballHandlePub.publish(bh);
+		this->ballHandlePub.publish(bh);
 	}
 
-	void alica::DomainBehaviour::send(msl_actuator_msgs::KickControl& kc)
+	void DomainBehaviour::send(msl_actuator_msgs::KickControl& kc)
 	{
 		kc.enabled = true;
 		kc.senderID = ownID;
-		kickControlPub.publish(kc);
-		kickControlPub.publish(kc);
-		kickControlPub.publish(kc);
-                wm->kicker->processKickConstrolMsg(kc);
+		this->kickControlPub.publish(kc);
+		this->kickControlPub.publish(kc);
+		this->kickControlPub.publish(kc);
+		this->wm->kicker->processKickConstrolMsg(kc);
 	}
 
-	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
+	void DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
 	{
 		ssc.senderID = ownID;
-		shovelSelectPublisher.publish(ssc);
+		this->shovelSelectPublisher.publish(ssc);
 		this->wm->kicker->lowShovelSelected = ssc.passing;
 	}
 
-	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)
+	void DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)
 	{
 		pm.senderID = senderID;
-		passMsgPublisher.publish(pm);
-		passMsgPublisher.publish(pm);
+		this->passMsgPublisher.publish(pm);
+		this->passMsgPublisher.publish(pm);
 	}
 
-	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm)
+	void DomainBehaviour::send(msl_helper_msgs::PassMsg& pm)
 	{
-		pm.senderID = ownID;
-		passMsgPublisher.publish(pm);
-		passMsgPublisher.publish(pm);
+		send(pm, ownID);
 	}
 
-	void alica::DomainBehaviour::send(msl_helper_msgs::WatchBallMsg& wb)
+	void DomainBehaviour::send(msl_helper_msgs::WatchBallMsg& wb)
 	{
 		wb.senderID = ownID;
-		watchBallMsgPublisher.publish(wb);
+		this->watchBallMsgPublisher.publish(wb);
 	}
 
-	void alica::DomainBehaviour::send(msl_helper_msgs::DebugMsg& dbm)
+	void DomainBehaviour::send(msl_helper_msgs::DebugMsg& dbm)
 	{
 		dbm.senderID = ownID;
-		debugMsgPublisher.publish(dbm);
+		this->debugMsgPublisher.publish(dbm);
+	}
+
+	/**
+	 * Returns the current position of the first teammate,
+	 * allocated to the given EntryPoint.
+	 * @param EntryPoint* ep
+	 * @return Position of the teammate, or nullptr.
+	 */
+	shared_ptr<geometry::CNPosition> DomainBehaviour::getTeammatesPosition(EntryPoint* ep)
+	{
+		// get the plan in which the behavior is running
+		auto parent = this->runningPlan->getParent().lock();
+		if (parent == nullptr)
+		{
+			return nullptr;
+		}
+		// get robot ids of robots in found entry point
+		shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+		// exactly one robot is receiver
+		if (ids->empty() || ids->at(0) == -1)
+		{
+			return nullptr;
+		}
+		// get receiver position by id
+		return this->wm->robots->teammates.getTeamMatePosition(ids->at(0));
 	}
 } /* namespace alica */
 

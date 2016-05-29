@@ -2,7 +2,12 @@
 #define StandardAlignAndGrab_H_
 
 #include "DomainBehaviour.h"
+
 /*PROTECTED REGION ID(inc1455888574532) ENABLED START*/ //Add additional includes here
+#include <InformationElement.h>
+namespace geometry{
+	class CNPoint2D;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {

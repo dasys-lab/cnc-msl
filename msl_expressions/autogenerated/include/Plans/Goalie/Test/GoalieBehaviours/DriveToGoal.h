@@ -3,10 +3,6 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1447863424939) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-
-using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -24,9 +20,6 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1447863424939) ENABLED START*/ //Add additional private methods here
-        msl_actuator_msgs::MotionControl mc;
-        shared_ptr<geometry::CNPoint2D> alloFieldCenterAlignPoint;
-        shared_ptr<geometry::CNPoint2D> alloTarget;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

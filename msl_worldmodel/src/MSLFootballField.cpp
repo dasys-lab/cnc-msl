@@ -254,43 +254,6 @@ namespace msl
 		return cur;
 	}
 
-	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp)
-	{
-		double tolerance = 150;
-		if (isInsideField(inp))
-		{
-			return inp;
-		}
-		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
-		double xline = FieldLength / 2.0 + tolerance;
-		double yline = FieldWidth / 2.0 + tolerance;
-		if (inp->x < -xline)
-		{
-			ret->x = -xline;
-		}
-		else if (inp->x > xline)
-		{
-			ret->x = xline;
-		}
-		else
-		{
-			ret->x = inp->x;
-		}
-		if (inp->y < -yline)
-		{
-			ret->y = -yline;
-		}
-		else if (inp->y > yline)
-		{
-			ret->y = yline;
-		}
-		else
-		{
-			ret->y = inp->y;
-		}
-		return ret;
-	}
-
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,
 																		double tolerance)
 	{
@@ -366,37 +329,7 @@ namespace msl
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp)
 	{
-		double toleranceCheck = 0;
-		double tolerance = PenaltyAreaMappingTolerance;
-		if (isInsideOwnPenalty(inp, toleranceCheck))
-		{
-			return inp;
-		}
-		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
-		double xline = -FieldLength / 2.0 + PenaltyAreaLength - tolerance;
-		double yline = PenaltyAreaWidth / 2.0 - tolerance;
-		//if (inp.X < -xline) ret.X = -xline;
-		if (inp->x > xline)
-		{
-			ret->x = xline;
-		}
-		else
-		{
-			ret->x = inp->x;
-		}
-		if (inp->y < -yline)
-		{
-			ret->y = -yline;
-		}
-		else if (inp->y > yline)
-		{
-			ret->y = yline;
-		}
-		else
-		{
-			ret->y = inp->y;
-		}
-		return ret;
+		return this->mapInsideOwnPenaltyArea(inp, this->PenaltyAreaMappingTolerance);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,
