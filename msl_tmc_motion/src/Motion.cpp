@@ -753,6 +753,10 @@ void Motion::executeRequest(MotionSet* ms) {
 
 		rawOdoInfo.motion.angle = angle;
 
+		cout << "x1: " << x1 << endl;
+		cout << "x2: " << x2 << endl;
+		cout << "angle: " << angle << endl;
+
 		//workaround for faulty bytes in data
 		if (!(abs(translation) > maxVelocity)) {
 			rawOdoInfo.motion.translation = translation;
