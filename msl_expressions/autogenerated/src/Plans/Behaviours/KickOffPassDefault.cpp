@@ -7,8 +7,6 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
-#include <container/CNPoint2D.h>
-#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

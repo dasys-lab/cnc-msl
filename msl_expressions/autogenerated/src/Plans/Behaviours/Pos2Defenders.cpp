@@ -5,8 +5,8 @@ using namespace std;
 #include <limits>
 #include <engine/RunningPlan.h>
 #include <robotmovement/RobotMovement.h>
-#include <container/CNPoint2D.h>
-#include <MSLWorldModel.h>
+using namespace std;
+
 /*PROTECTED REGION END*/
 namespace alica
 {

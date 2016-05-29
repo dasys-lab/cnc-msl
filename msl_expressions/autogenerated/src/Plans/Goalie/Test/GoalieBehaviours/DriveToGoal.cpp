@@ -3,7 +3,6 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
-#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -23,24 +22,57 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (ownPos == nullptr)
+        cout << "### DriveToGoal ###" << endl;
+        shared_ptr < geometry::CNPosition > me;
+        double alloTargetX, alloTargetY;
+
+        me = wm->rawSensorData->getOwnPositionVision();
+
+        if (me == nullptr)
         {
-        	return;
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+
+            cout << " [DriveToGoal] Stop!" << endl;
+            cout << "### DriveToGoal ###\n" << endl;
         }
+        else
+        {
+            /*if (simulating < 0)
+             {
+             alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
+             alloTargetY = MSLFootballField::posOwnGoalMid()->y;
+             }
+             else
+             {
+             alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
+             alloTargetY = MSLFootballField::posOppGoalMid()->y;
 
-		auto alloTarget = make_shared<geometry::CNPoint2D>(wm->field->posOwnGoalMid()->x - 100,  wm->field->posOwnGoalMid()->y);
-		if (ownPos->distanceTo(alloTarget) <= 100)
-		{
-			this->setSuccess(true);
-			return;
-		}
+             }*/
 
-		auto mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos),
-													  this->wm->field->posCenterMarker()->alloToEgo(*ownPos),
-													  100, 0);
-		send (mc);
-		/*PROTECTED REGION END*/
+            alloTargetX = wm->field->posOwnGoalMid()->x - 100;
+            alloTargetY = wm->field->posOwnGoalMid()->y;
+
+            alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
+            alloFieldCenterAlignPoint = wm->field->posCenterMarker();
+
+            cout << " Driving to goal" << endl;
+            mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+                                                     alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+
+            if (me->distanceTo(alloTarget) <= 100)
+            {
+                this->setSuccess(true);
+            }
+            else
+            {
+                cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
+                send (mc);
+            }
+            cout << "### DriveToGoal ###\n" << endl;
+        }
+        /*PROTECTED REGION END*/
     }
     void DriveToGoal::initialiseParameters()
     {

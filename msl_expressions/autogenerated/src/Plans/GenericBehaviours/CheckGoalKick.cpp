@@ -8,7 +8,6 @@ using namespace std;
 #include "engine/AlicaEngine.h"
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/DebugPoint.h>
-#include <MSLWorldModel.h>
 
 #include <Rules.h>
 /*PROTECTED REGION END*/

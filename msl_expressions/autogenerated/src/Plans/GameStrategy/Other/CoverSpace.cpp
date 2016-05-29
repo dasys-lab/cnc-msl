@@ -4,7 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1455537892946) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
-#include <MSLWorldModel.h>
+
+using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -6,7 +6,6 @@ using namespace std;
 #include <container/CNPoint2D.h>
 #include <robotmovement/MovementQuery.h>
 #include <robotmovement/RobotMovement.h>
-#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,7 +21,7 @@ namespace alica
 		this->distanceToParkingPositionTolerance = (*this->sc)["Parking"]->get<double>("ParkingPositions","distanceToParkingPositionTolerance", NULL);
 		this->rm = new msl::RobotMovement();
 		this->movementQuery = make_shared<msl::MovementQuery>();
-		this->parkingPosition = make_shared<geometry::CNPoint2D>(this->parkingSlotIdx*-this->offset, this->wm->field->getFieldWidth() / 2.0);
+		this->parkingPosition = make_shared<geometry::CNPoint2D>(this->parkingSlotIdx*-this->offset, wm->field->getFieldWidth() / 2.0);
 		/*PROTECTED REGION END*/
 	}
 	Parking::~Parking()
@@ -33,7 +32,7 @@ namespace alica
 	void Parking::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1429111623710) ENABLED START*/ //Add additional options here
-		auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
 			return;
@@ -46,7 +45,7 @@ namespace alica
 
 		this->movementQuery->egoDestinationPoint = this->parkingPosition->alloToEgo(*ownPos);
 		this->movementQuery->egoAlignPoint = (this->parkingPosition+make_shared<geometry::CNPoint2D>(0,-1000.0))->alloToEgo(*ownPos);
-		msl_actuator_msgs::MotionControl mc = this->rm->experimentallyMoveToPoint(movementQuery);
+		msl_actuator_msgs::MotionControl mc = rm->experimentallyMoveToPoint(movementQuery);
 		send(mc);
 		/*PROTECTED REGION END*/
 	}
@@ -54,7 +53,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(initialiseParameters1429111623710) ENABLED START*/ //Add additional options here
 		this->parkingSlotIdx = (*this->sc)["Parking"]->get<double>("ParkingPositions",to_string(this->getOwnId()).c_str(), NULL);
-		this->parkingPosition = make_shared<geometry::CNPoint2D>(this->parkingSlotIdx*-this->offset, this->wm->field->getFieldWidth() / 2.0);
+		this->parkingPosition = make_shared<geometry::CNPoint2D>(this->parkingSlotIdx*-this->offset, wm->field->getFieldWidth() / 2.0);
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1429111623710) ENABLED START*/ //Add additional methods here

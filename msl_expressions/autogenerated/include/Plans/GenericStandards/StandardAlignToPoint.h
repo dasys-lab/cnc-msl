@@ -37,7 +37,7 @@ namespace alica
         double executerDistanceToBall;
         double receiverDistanceToBall;
         double receiverBallMovedThreshold;
-        shared_ptr<MovementQuery> movementQuery;
+        shared_ptr<MovementQuery> m_Query;
         shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
         shared_ptr<geometry::CNPoint2D> oldBallPos;
         /*PROTECTED REGION END*/};
