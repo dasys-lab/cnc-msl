@@ -631,9 +631,10 @@ void Motion::calcOdoPosition() {
 		newPos = lastPos + translation * timeSinceLastOdo;
 	}
 
-	cout << "transX: " << transX << endl;
-	cout << "motion.angle: " << angleDriven << endl;
 	cout << "newX: " << newPos->x << endl;
+	cout << "transX: " << transX << endl;
+	cout << "motion.angle: " << lastOdoInfo.motion.angle << endl;
+	cout << "rot: " << rot << endl;
 
 	newX = newPos->x;
 	newY = newPos->y;
@@ -756,10 +757,6 @@ void Motion::executeRequest(MotionSet* ms) {
 		double rotation = (double) x3 / 64.0d;
 
 		rawOdoInfo.motion.angle = angle;
-
-		cout << "x1: " << x1 << endl;
-		cout << "x2: " << x2 << endl;
-		cout << "angle: " << angle << endl;
 
 		//workaround for faulty bytes in data
 		if (!(abs(translation) > maxVelocity)) {
