@@ -9,12 +9,15 @@
 #include "GeometryCalculator.h"
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "MSLEnums.h"
+#include "pathplanner/SearchNode.h"
+#include "pathplanner/VoronoiNet.h"
+#include <SystemConfig.h>
 namespace msl
 {
 
 	PathEvaluator::PathEvaluator()
 	{
-		this->sc = SystemConfig::getInstance();
+		this->sc = supplementary::SystemConfig::getInstance();
 		voronoiPub = n.advertise<msl_msgs::VoronoiNetInfo>("/PathPlanner/VoronoiNet", 10);
 		this->additionalCorridorWidth = (*this->sc)["PathPlanner"]->get<double>("PathPlanner",
 																				"additionalCorridorWidth", NULL);

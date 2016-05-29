@@ -47,7 +47,7 @@ namespace alica
         alloTarget->x = alloBall->x - 2300;
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         // ask the path planner how to get there
         mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);

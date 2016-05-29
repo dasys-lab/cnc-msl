@@ -3,6 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1462368682104) ENABLED START*/ //Add additional includes here
+namespace geometry{
+	class CNPoint2D;
+}
+#include <InformationElement.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,8 +26,8 @@ namespace alica
         /*PROTECTED REGION ID(prv1462368682104) ENABLED START*/ //Add additional private methods here
         string teamMateTaskName1;
         string teamMateTaskName2;
-        shared_ptr<geometry::CNPoint2D> recPos1;
-        shared_ptr<geometry::CNPoint2D> recPos2;
+        shared_ptr<geometry::CNPosition> recPos1;
+        shared_ptr<geometry::CNPosition> recPos2;
         double freeOppAngle;
         double ratio;
         double ballRadius;

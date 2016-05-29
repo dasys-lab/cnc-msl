@@ -22,7 +22,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1439379316897) ENABLED START*/ //Add additional private methods here
-        static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+        static msl_actuator_msgs::MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
                                              shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
                                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 

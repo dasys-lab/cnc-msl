@@ -136,7 +136,7 @@ namespace alica
             translation = targetDistance;
         }
 
-        MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
         send(mc);
 
         /*PROTECTED REGION END*/

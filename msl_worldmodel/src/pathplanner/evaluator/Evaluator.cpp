@@ -6,6 +6,7 @@
  */
 
 #include <pathplanner/evaluator/Evaluator.h>
+#include <SystemConfig.h>
 
 namespace msl
 {

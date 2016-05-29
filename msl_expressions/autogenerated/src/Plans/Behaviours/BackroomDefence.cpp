@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1454507752863) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -59,7 +60,7 @@ namespace alica
 
          }
          */
-        MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
                                                                alloBallPos->alloToEgo(*me), 100, nullptr);
 
         send(mc);

@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863466691) ENABLED START*/ //Add additional includes here
 #include <cmath>
 #include <vector>
+#include <SystemConfig.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,27 +29,29 @@ namespace alica
             DomainBehaviour("WatchBall")
     {
         /*PROTECTED REGION ID(con1447863466691) ENABLED START*/ //Add additional options here
-        alignTowardsBall = (*this->sc)["Behaviour"]->get<bool>("Goalie.AlignTowardsBall", NULL);
-        rotationLimit = (*this->sc)["Behaviour"]->get<double>("Goalie.RotationLimit", NULL);
-        maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
-        goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
-        nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
+    	this->alignTowardsBall = (*this->sc)["Behaviour"]->get<bool>("Goalie.AlignTowardsBall", NULL);
+        this->rotationLimit = (*this->sc)["Behaviour"]->get<double>("Goalie.RotationLimit", NULL);
+        this->maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
+        this->goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
+        this->nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
 
-        pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
-        dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
-        pRot = (*this->sc)["Behaviour"]->get<double>("Goalie.pRot", NULL);
-        dRot = (*this->sc)["Behaviour"]->get<double>("Goalie.dRot", NULL);
-        lastRotErr = 0;
-        prevTargetDist = 0;
+        this->pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
+        this->dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
+        this->pRot = (*this->sc)["Behaviour"]->get<double>("Goalie.pRot", NULL);
+        this->dRot = (*this->sc)["Behaviour"]->get<double>("Goalie.dRot", NULL);
+        this->lastRotErr = 0;
+        this->prevTargetDist = 0;
 
-        snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
-        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
+        this->snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
+        this->alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+        this->ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
+        this->alloFieldCntr = wm->field->posCenterMarker();
+        this->alloAlignPt = alloFieldCntr;
         auto tempMid = alloGoalMid = wm->field->posOwnGoalMid();
-        alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
-        alloGoalLeft = make_shared < geometry::CNPoint2D
+        this->alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
+        this->alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
-        alloGoalRight = make_shared < geometry::CNPoint2D
+        this->alloGoalRight = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
         /*PROTECTED REGION END*/
     }
@@ -60,11 +64,9 @@ namespace alica
     void WatchBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863466691) ENABLED START*/ //Add additional options here
-//		cout << "####### WatchBall #######" << endl;
         ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
-            cout << "[WatchBall]: ownPos is null" << endl;
             return;
         }
 
@@ -75,8 +77,6 @@ namespace alica
             /*
              * Goalie drives to last known target and rotates towards mirrored own position
              */
-
-            cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
             mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
             rotate(make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y));
             mc.motion.translation = std::min(
@@ -108,10 +108,9 @@ namespace alica
             targetY = alloTarget->y;
         }
 
-//		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
         auto egoBall = alloBall->alloToEgo(*ownPos);
         auto egoTarget = alloTarget->alloToEgo(*ownPos);
-//		cout << egoTarget->toString() << endl;
+
 
         /*
          * Goalie drives to target
@@ -126,7 +125,6 @@ namespace alica
             if (egoBall != nullptr && egoBall->egoToAllo(*ownPos) != nullptr
                     && egoBall->egoToAllo(*ownPos)->x > alloFieldCntr->x + 1000)
             {
-//				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
                 tempPFactor = pTrans / 2;
             }
             else
@@ -136,18 +134,13 @@ namespace alica
             mc.motion.translation = std::min(
                     alignMaxVel,
                     (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dTrans));
-//			cout << "[WatchBall] targetDistance: " << egoTarget->length() << endl;
-//			cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl << endl;
         }
         else
         {
             mc.motion.translation = 0;
-            //			cout << "[WatchBall] arrived at target!" << endl;
         }
 
-        //prevTargetDist = egoTarget->length();
         send (mc);
-
         /*PROTECTED REGION END*/
     }
     void WatchBall::initialiseParameters()
@@ -187,7 +180,6 @@ namespace alica
                 {
                     if (!(diffpp >= diffp || diffpp + buffer >= diffp || diffpp - buffer >= diffp))
                     {
-//						cout << "[WatchBall] corner detected! cond1" << endl;
                         break;
                     }
                 }
@@ -195,7 +187,6 @@ namespace alica
                 {
                     if (!(diffpp <= diffp || diffpp + buffer <= diffp || diffpp - buffer <= diffp))
                     {
-//						cout << "[WatchBall] corner detected! cond2" << endl;
                         break;
                     }
                 }
@@ -217,7 +208,6 @@ namespace alica
                 - 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
         if (nPoints > 1 && variance > maxVariance)
         {
-//			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
             for (int i = 0; i < nPoints; i++)
             {
                 auto curBall = ballPositions->getLast(i);
@@ -226,13 +216,11 @@ namespace alica
             }
             if (denom < 1e-3)
             {
-//				cout << "[WatchBall] LinearRegression: prevTarget, cause no hitPoint " << endl;
                 return prevTarget->y;
             }
             _slope = nomi / denom;
             _yInt = avgBall->y - _slope * avgBall->x;
             calcTargetY = _slope * alloGoalMid->x + _yInt;
-//			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
         }
         else
         {
@@ -242,8 +230,6 @@ namespace alica
             double minDistBallObs = 20000;
             for (auto currentObs : *obstacles)
             {
-//				cout << "[WatchBall] obstacles: " << currentObs->toString();
-
                 double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
                 if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
                         || currentDistBallObs > 1000)
@@ -259,7 +245,6 @@ namespace alica
 
             if (closestObstacle != nullptr)
             {
-//				cout << "[WatchBall] Obstacle Variance: " << variance << endl;
                 _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
                         / (closestObstacle->x - ballPositions->getLast(0)->x);
                 _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
@@ -267,7 +252,6 @@ namespace alica
             }
             else
             {
-//				cout << "[WatchBall] BallY Variance: " << variance << endl;
                 calcTargetY = ballPositions->getLast(0)->y;
             }
         }
@@ -279,17 +263,14 @@ namespace alica
 
         if (targetY > alloGoalLeft->y)
         {
-//			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
             return alloGoalLeft->y;
         }
         else if (targetY < alloGoalRight->y)
         {
-//			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
             return alloGoalRight->y;
         }
         else
         {
-//			cout << "[WatchBall] fitTarget else: " << targetY << endl;
             return targetY;
         }
     }
@@ -326,16 +307,6 @@ namespace alica
         double angleErr = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
         mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
         lastRotErr = angleErr;
-
-//		double angleAlignPoint = ownPos->getPoint()->angleToPoint(alignPoint) / M_PI * 180;
-//		cout << "[WatchBall] alignPAngle: " << angleAlignPoint << endl;
-//		cout << "[WatchBall] ballAngle  : " << ballAngle << endl;
-//		cout << "[WatchBall] rotationLim: " << rotationLimit << endl;
-//		cout << "[WatchBall] alloBall   : " << alloBall->x << " " << alloBall->y << endl;
-//		cout << "[WatchBall] alloAPoint : " << alignPoint->x << " " << alignPoint->y << endl;
-//		cout << "[WatchBall] alloOwnPos : " << ownPos->x << " " << ownPos->y << endl;
-//		cout << "[WatchBall] rotation   : " << mc.motion.rotation << endl;
-//		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -3,6 +3,9 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <MSLWorldModel.h>
+#include <container/CNPosition.h>
+#include <container/CNPoint2D.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,7 +43,7 @@ namespace alica
             receiver = getHigherEntryPoint(planName, teamMateTaskName);
         }
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         if (egoBallPos->length() > 900)
         {
             // Drive close to the ball, until dist < 900

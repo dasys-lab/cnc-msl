@@ -18,15 +18,16 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
-#include "SystemConfig.h"
-
-using namespace supplementary;
 
 using namespace std;
 
+namespace supplementary{
+	class SystemConfig;
+}
+
 namespace msl
 {
-
+	class MSLWorldModel;
 
 	class BallVoting
 	{
@@ -37,7 +38,7 @@ namespace msl
 	};
 
 
-	class MSLWorldModel;
+
 	class Ball
 	{
 	public:
@@ -103,7 +104,7 @@ namespace msl
 		double haveBallDistanceDynamic;
 		unsigned long maxInformationAge = 1000000000;
 		MSLWorldModel* wm;
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
 		map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
 		RingBuffer<InformationElement<bool>> oppBallPossession;
 		map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;

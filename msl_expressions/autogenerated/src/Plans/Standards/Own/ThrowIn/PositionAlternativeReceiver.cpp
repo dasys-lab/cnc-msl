@@ -40,7 +40,7 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 

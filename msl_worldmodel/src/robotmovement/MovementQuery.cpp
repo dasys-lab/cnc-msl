@@ -18,10 +18,10 @@ namespace msl
 		curRotDribble = 0;
 		lastRotDribbleErr = 0;
 		snapDistance = 0;
-//	translation = 0;
 		angleTolerance = 0;
 		teamMatePosition = nullptr;
-		cout << "set parameters to default!" << endl;
+		curTransDribble = 0;
+		transControlIntegralDribble = 0;
 	}
 
 	MovementQuery::~MovementQuery()

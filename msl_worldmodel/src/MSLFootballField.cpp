@@ -1,33 +1,13 @@
 #include <MSLFootballField.h>
 #include <iostream>
 #include "MSLWorldModel.h"
+#include <SystemConfig.h>
 
 namespace msl
 {
-
-//	double MSLFootballField::FieldLength = 11200.0;
-//	double MSLFootballField::FieldWidth = 8000.0;
-//	double MSLFootballField::PenaltyAreaWidth = 1200.0;
-//	double MSLFootballField::PenaltyAreaLength = 4000.0;
-//	double MSLFootballField::GoalAreaWidth = 3000.0;
-//	double MSLFootballField::GoalAreaLength = 700.0;
-//	double MSLFootballField::CornerCircleRadius = 350.0;
-//	double MSLFootballField::MiddleCircleRadius = 1000.0;
-//	double MSLFootballField::LineWidth = 75.0;
-//	double MSLFootballField::GoalWidth = 2000.0;
-//	double MSLFootballField::PenaltySpot = 3000.0;
-//	double MSLFootballField::Surrounding = 1500.0;
-//	bool MSLFootballField::GoalInnerAreaExists = false;
-//	bool MSLFootballField::CornerCircleExists = false;
-//	double MSLFootballField::PenaltyAreaMappingTolerance = 300;
-//	double MSLFootballField::MaxDistanceSqr = 12000*12000+18000*18000;
-//	double MSLFootballField::MaxDistance = sqrt(12000*12000+18000*18000);
-//	MSLFootballField * MSLFootballField::instance = NULL;
-
 	MSLFootballField::MSLFootballField(MSLWorldModel* wm)
 	{
-
-		this->sc = SystemConfig::getInstance();
+		this->sc = supplementary::SystemConfig::getInstance();
 		this->wm = wm;
 		this->CurrentField = (*this->sc)["FootballField"]->get<string>("FootballField", "CurrentField", NULL);
 		MiddleCircleRadius = (*this->sc)["FootballField"]->get<double>("FootballField", CurrentField.c_str(), "MiddleCircleRadius", NULL);
@@ -274,43 +254,6 @@ namespace msl
 		return cur;
 	}
 
-	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp)
-	{
-		double tolerance = 150;
-		if (isInsideField(inp))
-		{
-			return inp;
-		}
-		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
-		double xline = FieldLength / 2.0 + tolerance;
-		double yline = FieldWidth / 2.0 + tolerance;
-		if (inp->x < -xline)
-		{
-			ret->x = -xline;
-		}
-		else if (inp->x > xline)
-		{
-			ret->x = xline;
-		}
-		else
-		{
-			ret->x = inp->x;
-		}
-		if (inp->y < -yline)
-		{
-			ret->y = -yline;
-		}
-		else if (inp->y > yline)
-		{
-			ret->y = yline;
-		}
-		else
-		{
-			ret->y = inp->y;
-		}
-		return ret;
-	}
-
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,
 																		double tolerance)
 	{
@@ -386,37 +329,7 @@ namespace msl
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp)
 	{
-		double toleranceCheck = 0;
-		double tolerance = PenaltyAreaMappingTolerance;
-		if (isInsideOwnPenalty(inp, toleranceCheck))
-		{
-			return inp;
-		}
-		shared_ptr<geometry::CNPoint2D> ret = make_shared<geometry::CNPoint2D>();
-		double xline = -FieldLength / 2.0 + PenaltyAreaLength - tolerance;
-		double yline = PenaltyAreaWidth / 2.0 - tolerance;
-		//if (inp.X < -xline) ret.X = -xline;
-		if (inp->x > xline)
-		{
-			ret->x = xline;
-		}
-		else
-		{
-			ret->x = inp->x;
-		}
-		if (inp->y < -yline)
-		{
-			ret->y = -yline;
-		}
-		else if (inp->y > yline)
-		{
-			ret->y = yline;
-		}
-		else
-		{
-			ret->y = inp->y;
-		}
-		return ret;
+		return this->mapInsideOwnPenaltyArea(inp, this->PenaltyAreaMappingTolerance);
 	}
 
 	shared_ptr<geometry::CNPoint2D> MSLFootballField::mapInsideField(shared_ptr<geometry::CNPoint2D> inp,

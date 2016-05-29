@@ -26,8 +26,6 @@
 #include <SystemConfig.h>
 #include <GeometryCalculator.h>
 
-using namespace supplementary;
-
 //                   T  H  E    E  N  E  M  Y  `  S    S  I  D  E
 //
 //30---------------------------------------------------------------------------+
@@ -117,14 +115,13 @@ namespace msl
 
 		MSLFootballField(MSLWorldModel* wm);
 		virtual ~MSLFootballField();
-//		static MSLFootballField * getInstance();
 
 		bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance = 0);
         bool isInsideField(double x, double y, double tolerance = 0);
 
-		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
+		bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
+		bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
 
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
@@ -132,14 +129,13 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance = 150);
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
+		bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
+		bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance = 0);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from, shared_ptr<geometry::CNPoint2D> to);
@@ -204,22 +200,21 @@ namespace msl
 
 	private:
 
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
 		MSLWorldModel* wm;
-//		static MSLFootballField * instance;
 
 		double FieldLength;
 		double FieldWidth;
 		double PenaltyAreaWidth;
 		double PenaltyAreaLength;
+		bool GoalInnerAreaExists;
 		double GoalAreaLength;
 		double GoalAreaWidth;
+		bool CornerCircleExists;
 		double CornerCircleRadius;
 		double MiddleCircleRadius;
 		double LineWidth;
 		double GoalWidth;
-		bool GoalInnerAreaExists;
-		bool CornerCircleExists;
 		double PenaltySpot;
 		double Surrounding;
 		double PenaltyAreaMappingTolerance;

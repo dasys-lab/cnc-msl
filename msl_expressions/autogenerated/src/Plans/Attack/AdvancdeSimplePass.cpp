@@ -15,7 +15,7 @@ namespace alica
         maxVel = 2000;
         minDistToMate = 2000;
         gotMessage = false;
-        sc = supplementary::SystemConfig::getInstance();
+        this->sc = supplementary::SystemConfig::getInstance();
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;

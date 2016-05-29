@@ -5,6 +5,8 @@ using namespace std;
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include "robotmovement/RobotMovement.h"
+#include <container/CNPoint2D.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

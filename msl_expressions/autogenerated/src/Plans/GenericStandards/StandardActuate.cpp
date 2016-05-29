@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/GenericStandards/StandardActuate.h"
 
 /*PROTECTED REGION ID(inccpp1435766212595) ENABLED START*/ //Add additional includes here
+#include <SystemConfig.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -71,7 +71,7 @@ namespace alica
                     receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
                 }
             }
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
             // if there is a receiver, align to it
