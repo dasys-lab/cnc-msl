@@ -11,7 +11,10 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 
-using namespace std;
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <Game.h>
 
 /*PROTECTED REGION END*/
 namespace alica

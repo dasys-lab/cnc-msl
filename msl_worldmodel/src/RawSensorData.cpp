@@ -6,6 +6,8 @@
  */
 
 #include <SystemConfig.h>
+#include <container/CNPoint3D.h>
+#include "Ball.h"
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
 

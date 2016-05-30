@@ -8,6 +8,11 @@
 #include "MSLConstraintBuilder.h"
 #include "Rules.h"
 #include "MSLWorldModel.h"
+#include "RawSensorData.h"
+#include "obstaclehandler/Obstacles.h"
+#include "Robots.h"
+#include "Ball.h"
+#include "Game.h"
 
 namespace msl
 {

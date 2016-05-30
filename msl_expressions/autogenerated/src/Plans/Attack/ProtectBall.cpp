@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/ProtectBall.h"
 
 /*PROTECTED REGION ID(inccpp1457706592232) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

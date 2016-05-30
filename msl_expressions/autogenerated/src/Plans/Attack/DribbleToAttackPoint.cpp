@@ -7,6 +7,9 @@ using namespace std;
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

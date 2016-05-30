@@ -6,6 +6,7 @@ using namespace std;
 #include <container/CNPoint2D.h>
 #include <robotmovement/MovementQuery.h>
 #include <robotmovement/RobotMovement.h>
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

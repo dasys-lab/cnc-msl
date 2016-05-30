@@ -12,8 +12,10 @@
 #include <vector>
 
 #include <msl_actuator_msgs/MotionControl.h>
+#include "RawSensorData.h"
 #include "MSLWorldModel.h"
 #include "SystemConfig.h"
+#include "GeometryCalculator.h"
 
 namespace msl
 {

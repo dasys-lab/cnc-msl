@@ -5,9 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#include <Game.h>
-#include "MSLWorldModel.h"
+#include "Game.h"
 #include <SystemConfig.h>
+#include "MSLWorldModel.h"
+#include "Robots.h"
+#include "Ball.h"
 
 namespace msl
 {

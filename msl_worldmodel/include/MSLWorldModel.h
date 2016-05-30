@@ -8,58 +8,71 @@
 #ifndef MSLWORLDMODEL_H_
 #define MSLWORLDMODEL_H_
 
-#include <ros/ros.h>
-#include "msl_actuator_msgs/RawOdometryInfo.h"
-#include <msl_sensor_msgs/WorldModelData.h>
-#include <msl_msgs/JoystickCommand.h>
-#include <msl_actuator_msgs/MotionBurst.h>
-#include <msl_sensor_msgs/SimulatorWorldModelData.h>
-#include <gazebo_msgs/ModelStates.h>
-#include <msl_helper_msgs/PassMsg.h>
-#include <msl_helper_msgs/WatchBallMsg.h>
-#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
-#include <msl_sensor_msgs/BallHypothesisList.h>
-#include <msl_sensor_msgs/SharedWorldInfo.h>
-#include <std_msgs/Bool.h>
-#include <InformationElement.h>
+using namespace std;
+
 #include <list>
 #include <iostream>
 #include <tuple>
 #include <mutex>
-#include <ITrigger.h>
-#include "EventTrigger.h"
-#include <obstaclehandler/Obstacles.h>
-#include "RawSensorData.h"
-#include "Robots.h"
-#include "Ball.h"
-#include "Game.h"
-#include "Kicker.h"
-#include "WhiteBoard.h"
-#include "MSLFootballField.h"
-#include "pathplanner/PathPlanner.h"
-#include "EventTrigger.h"
-#include "InformationElement.h"
-#include "Prediction.h"
-#include "Monitoring.h"
-#include "LightBarrier.h"
-#include "msl_actuator_msgs/IMUData.h"
 
-#include <SystemConfig.h>
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
+#include <ros/ros.h>
+
+#include <InformationElement.h>
+#include <ITrigger.h>
+#include <EventTrigger.h>
 #include <MSLEnums.h>
 
-
-namespace alica
-{
+namespace std_msgs{
+	ROS_DECLARE_MESSAGE(Bool)
+}
+namespace msl_msgs{
+	ROS_DECLARE_MESSAGE(JoystickCommand)
+}
+namespace msl_actuator_msgs{
+	ROS_DECLARE_MESSAGE(IMUData)
+	ROS_DECLARE_MESSAGE(RawOdometryInfo)
+	ROS_DECLARE_MESSAGE(MotionBurst)
+}
+namespace msl_sensor_msgs{
+	ROS_DECLARE_MESSAGE(WorldModelData)
+	ROS_DECLARE_MESSAGE(SimulatorWorldModelData)
+	ROS_DECLARE_MESSAGE(CorrectedOdometryInfo)
+	ROS_DECLARE_MESSAGE(SharedWorldInfo)
+	ROS_DECLARE_MESSAGE(BallHypothesisList)
+}
+namespace gazebo_msgs{
+	ROS_DECLARE_MESSAGE(ModelStates)
+}
+namespace msl_helper_msgs{
+	ROS_DECLARE_MESSAGE(PassMsg)
+		ROS_DECLARE_MESSAGE(WatchBallMsg)
+}
+namespace alica{
 	class AlicaEngine;
 }
+namespace supplementary{
+	class SystemConfig;
+}
+namespace geometry{
+	class CNPoint2D;
+	class CNPosition;
+}
 
-using namespace std;
 
 namespace msl
 {
-
+	class RawSensorData;
+	class Robots;
+	class Ball;
+	class Game;
+	class Kicker;
+	class WhiteBoard;
+	class MSLFootballField;
+	class Prediction;
+	class Monitoring;
+	class LightBarrier;
+	class Obstacles;
+	class PathPlanner;
 	class MSLSharedWorldModel;
 	class MSLWorldModel
 	{

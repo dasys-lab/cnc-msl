@@ -5,7 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#include <Ball.h>
+#include "Ball.h"
 #include "MSLWorldModel.h"
 
 #include "container/CNPoint3D.h"
@@ -18,6 +18,9 @@
 #include "ballTracking/EgoMotionEstimator.h"
 #include "ballTracking/SharedMemoryHelper.h"
 #include "MSLFootballField.h"
+#include "RawSensorData.h"
+#include "LightBarrier.h"
+#include "Robots.h"
 
 namespace msl
 {

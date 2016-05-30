@@ -10,6 +10,10 @@ using namespace std;
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

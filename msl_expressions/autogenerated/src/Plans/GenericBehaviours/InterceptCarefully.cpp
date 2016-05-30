@@ -5,6 +5,8 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

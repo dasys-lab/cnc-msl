@@ -4,6 +4,9 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863466691) ENABLED START*/ //Add additional includes here
 #include <cmath>
 #include <vector>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

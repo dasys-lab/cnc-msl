@@ -6,6 +6,10 @@
  */
 
 #include "DistBallRobot.h"
+#include <Ball.h>
+#include <Robots.h>
+#include <MSLFootballField.h>
+#include <container/CNPosition.h>
 
 namespace msl
 {

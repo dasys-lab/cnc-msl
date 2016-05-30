@@ -6,6 +6,9 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

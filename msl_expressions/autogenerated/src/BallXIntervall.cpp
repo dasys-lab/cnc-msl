@@ -7,6 +7,7 @@
 
 #include <BallXIntervall.h>
 #include <MSLWorldModel.h>
+#include <Ball.h>
 
 namespace alica
 {

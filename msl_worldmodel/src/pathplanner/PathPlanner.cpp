@@ -8,6 +8,8 @@
 #include <pathplanner/PathPlanner.h>
 #include "MSLWorldModel.h"
 #include "GeometryCalculator.h"
+#include "RawSensorData.h"
+#include "Ball.h"
 
 namespace msl
 {

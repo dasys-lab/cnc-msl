@@ -7,6 +7,11 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

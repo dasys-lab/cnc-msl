@@ -6,6 +6,9 @@ using namespace std;
 #include "MSLWorldModel.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

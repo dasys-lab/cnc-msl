@@ -8,6 +8,11 @@ using namespace std;
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
 #include <SystemConfig.h>
+#include <RawSensorData.h>
+#include <Kicker.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

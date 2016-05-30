@@ -11,6 +11,8 @@ using namespace std;
 #include "engine/constraintmodul/ConstraintQuery.h"
 #include "GSolver.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

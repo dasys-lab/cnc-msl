@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/StdExecutorGrabBall.h"
 
 /*PROTECTED REGION ID(inccpp1441209011595) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -15,6 +15,11 @@
 #include "robotmovement/SearchArea.h"
 #include "robotmovement/AlloSearchArea.h"
 #include "robotmovement/MovementQuery.h"
+#include "Ball.h"
+#include "RawSensorData.h"
+#include "Robots.h"
+#include "obstaclehandler/Obstacles.h"
+#include "Kicker.h"
 
 #include <SystemConfig.h>
 
