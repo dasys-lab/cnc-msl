@@ -15,13 +15,9 @@ namespace msl
 		additionalPoints = nullptr;
 		fast = false;
 		dribble = false;
-		curRotDribble = 0;
-		lastRotDribbleErr = 0;
 		snapDistance = 0;
 		angleTolerance = 0;
 		teamMatePosition = nullptr;
-		curTransDribble = 0;
-		transControlIntegralDribble = 0;
 		wm = MSLWorldModel::get();
 
 		resetAllPDParameters();
@@ -126,9 +122,7 @@ namespace msl
 		readConfigParameters();
 	}
 
-//	void MovementQuery::resetAnglePDParameters()
-//	{
-//	}
+//	void MovementQuery::resetAnglePDParameters() {}
 
 	void MovementQuery::readConfigParameters()
 	{
