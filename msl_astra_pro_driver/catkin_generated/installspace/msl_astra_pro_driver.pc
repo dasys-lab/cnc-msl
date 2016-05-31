@@ -1,0 +1,8 @@
+prefix=/home/tobi/workspace/robot/install
+
+Name: msl_astra_pro_driver
+Description: Description of msl_astra_pro_driver
+Version: 0.0.0
+Cflags: -I/home/tobi/workspace/robot/install/include
+Libs: -L/home/tobi/workspace/robot/install/lib 
+Requires: 

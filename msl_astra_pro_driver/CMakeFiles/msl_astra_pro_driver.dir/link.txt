@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++11 -g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2  -frounding-math -O3 -DNDEBUG   -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--as-needed CMakeFiles/msl_astra_pro_driver.dir/src/msl_astra_pro_driver_node.cpp.o  -o /home/tobi/workspace/robot/devel/lib/msl_astra_pro_driver/msl_astra_pro_driver -rdynamic 
