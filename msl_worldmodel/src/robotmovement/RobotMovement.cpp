@@ -141,8 +141,7 @@ namespace msl
 		// dribble behavior -> used from dribbleToPointConservative ==============================================
 		if (query->dribble)
 		{
-			// todo: current work (skipping point)
-			mc.motion.rotation = rotationPDForDribble(query, egoTarget);
+			mc.motion.rotation = query->rotationPDForDribble(egoTarget);
 			double rotPointDist = 350.0;
 			if (auto ballPos = wm->ball->getEgoBallPosition())
 			{
@@ -151,10 +150,9 @@ namespace msl
 
 			double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 
-			mc.motion.translation = translationPDForDribble(query, transOrt);
-			mc.motion.angle = anglePDForDribble(query, transOrt);
+			mc.motion.translation = query->translationPDForDribble(transOrt);
+			mc.motion.angle = query->anglePDForDribble(transOrt);
 		}
-		// dribble <=========================================================
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -174,14 +172,12 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> ballPos = wm->ball->getEgoBallPosition();
 		if (ballPos == nullptr)
 		{
-//			MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
 		if (ownPos == nullptr)
 		{
-//			MotionControl mc;
 			mc.senderID = -1;
 			return mc;
 		}
@@ -196,7 +192,6 @@ namespace msl
 			dest->y = ownPos->y - alloBall->y;
 			dest = wm->field->mapInsideField(alloBall);
 			dest = dest->alloToEgo(*ownPos);
-//			return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
 			return experimentallyPlaceRobot(dest, ballPos);
 		}
 		//handle ball in own penalty ========================================================================
@@ -215,7 +210,6 @@ namespace msl
 			  //dest.Y = ownPos.Y - alloBall.Y;
 				dest = wm->field->mapOutOfOwnPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
-//				return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
 				return experimentallyPlaceRobot(dest, ballPos);
 			}
 			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
@@ -224,7 +218,6 @@ namespace msl
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
-//						MotionControl mc;
 						mc.senderID = -1;
 						return mc;
 					}
@@ -240,7 +233,6 @@ namespace msl
 				}
 				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
-//				return placeRobotCareBall(dest, ballPos, maxVelo); // todo: replace!!
 				return experimentallyPlaceRobot(dest, ballPos);
 			}
 
@@ -254,19 +246,16 @@ namespace msl
 			  //dest.Y = ownPos.Y - alloBall.Y;
 				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
-//				return placeRobot(dest, ballPos, maxVelo); // todo: replace!!
 				return experimentallyPlaceRobot(dest, ballPos);
 			}
 			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
 			{ //ball is inside keeper area
 				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
-//				return placeRobot(dest, ballPos, maxVelo); // todo: replace!!
 				return experimentallyPlaceRobot(dest, ballPos);
 			}
 
 		}
-//		MotionControl mc;
 		mc.senderID = -1;
 		return mc;
 	}
@@ -281,7 +270,6 @@ namespace msl
 	msl_actuator_msgs::MotionControl RobotMovement::experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest,
 															shared_ptr<geometry::CNPoint2D> headingPoint)
 	{
-		// TODO: need to be tested!!!!
 		msl_actuator_msgs::MotionControl mc;
 		//			double rotTol = M_PI / 30.0;
 		double destTol = 100.0;
@@ -376,7 +364,7 @@ namespace msl
 		randomCounter = (randomCounter + 1) % 28;
 		return bm;
 	}
-//	todo: current skipping point
+
 	/**
 	 * Uses MovementQuery with Parameters:
 	 *
@@ -572,78 +560,6 @@ namespace msl
 
 		//ret -= goalFactor;
 		return ret;
-	}
-
-	double RobotMovement::rotationPDForDribble(shared_ptr<MovementQuery> query, shared_ptr<geometry::CNPoint2D> egoTarget)
-	{
-		double angleErr = egoTarget->rotate(wm->kicker->kickerAngle)->angleTo();
-		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - query->lastRotDribbleErr); //Rotation PD
-
-		// limit rotation acceleration
-		if (rot > query->curRotDribble)
-		{
-			rot = min(rot, query->curRotDribble + this->rotAccStep);
-		}
-		else
-		{
-			rot = max(rot, query->curRotDribble - this->rotAccStep);
-		}
-
-		// clamp rotation
-		rot = min(abs(rot), this->maxRot) * (rot > 0 ? 1 : -1);
-
-		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our rot value
-		query->curRotDribble = rot;
-
-		query->lastRotDribbleErr = angleErr;
-		return rot;
-	}
-
-	double RobotMovement::translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt)
-	{
-		double maxCurTrans = this->maxVel;
-		double transErr = abs(query->lastRotDribbleErr);
-		if (transErr > this->angleDeadBand)
-		{
-			query->transControlIntegralDribble += this->iTrans * transErr;
-			query->transControlIntegralDribble = min(transControlIntegralMax, query->transControlIntegralDribble);
-		}
-		else
-		{
-			query->transControlIntegralDribble = 0; //Math.Max(0,transControlIntegral-Math.PI*5);
-			transErr = 0;
-		}
-		maxCurTrans -= this->pTrans * transErr + query->transControlIntegralDribble;
-		maxCurTrans = max(0.0, maxCurTrans);
-
-		double transTowards = sqrt(maxCurTrans * maxCurTrans - transOrt * transOrt);
-		if (std::isnan(transTowards) || transTowards < 50)
-			transTowards = 50;
-
-		if (transTowards > query->curTransDribble)
-		{
-			transTowards = min(transTowards, query->curTransDribble + this->transAccStep);
-		}
-		else
-		{
-			transTowards = max(transTowards, query->curTransDribble - this->transDecStep);
-		}
-
-		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our trans value
-		query->curTransDribble = transTowards;
-
-		return sqrt(transTowards * transTowards + transOrt * transOrt);
-	}
-
-	double RobotMovement::anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt)
-	{
-		auto ballPos = wm->ball->getEgoBallPosition();
-		auto dir = ballPos->normalize();
-		auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
-		dir = dir * query->curTransDribble + ort * transOrt;
-		// TODO: This is not a PD controller, currently it only calculates the direction to drive during dribble
-
-		return dir->angleTo();
 	}
 
 // old RobotMovement <==========================================================================================
