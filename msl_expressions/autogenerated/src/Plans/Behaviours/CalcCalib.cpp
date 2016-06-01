@@ -287,15 +287,24 @@ namespace alica
 
         if (length >= 1)
         {
-        	if(calibCounter == 1 || calibCounter == 2)
+        	if(calibCounter == 1)
         	{
-        		calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX) / lengthSegment)
+        		calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX) * (sqrt(diffX * diffX) / lengthSegment)
         		                    + 1;
         	}
-
-        	if(calibCounter == 3 || calibCounter == 4)
+        	if(calibCounter == 2)
         	{
-        		calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffY * diffY) / lengthSegment)
+        		calibCoefficientX *= calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x) * (sqrt(diffX * diffX) / lengthSegment)
+        		                    + 1;
+        	}
+        	if(calibCounter == 3)
+        	{
+        		calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedWayY) * (sqrt(diffY * diffY) / lengthSegment)
+        		                    + 1;
+        	}
+        	if(calibCounter == 4)
+        	{
+        		calibCoefficientY *= calibSign(correctedWayY, this->wm->rawSensorData->getOwnPositionVision()->y) * (sqrt(diffY * diffY) / lengthSegment)
         		                    + 1;
         	}
 
