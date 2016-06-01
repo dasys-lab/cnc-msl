@@ -251,7 +251,7 @@ namespace alica
 
 
             diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-            diffY = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
