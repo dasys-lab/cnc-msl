@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1464531946023" name="OwnFreeKickInOppHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1464531946023" name="OwnFreeKickInOppHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/FreeKick" priority="0.0" minCardinality="2" maxCardinality="4">
   <states id="1464535161175" name="PositionExecutor" comment="" entryPoint="1464531946025">
     <outTransitions>#1464778510115</outTransitions>
   </states>
@@ -42,19 +42,19 @@
     <inState>#1464535253598</inState>
     <outState>#1464535263395</outState>
   </transitions>
-  <entryPoints id="1464531946025" name="ExecuteStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464531946025" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1464535161175</state>
   </entryPoints>
-  <entryPoints id="1464532126334" name="ReceiveStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464532126334" name="ReceiveStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1464535169536</state>
   </entryPoints>
-  <entryPoints id="1464532128302" name="StandInsideOppPenalty" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464532128302" name="StandInsideOppPenalty" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1464532449309</task>
     <state>#1464535682818</state>
   </entryPoints>
-  <entryPoints id="1464532130252" name="StandOutsideOppPenalty" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464532130252" name="StandOutsideOppPenalty" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1464535706293</state>
   </entryPoints>

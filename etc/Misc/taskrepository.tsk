@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:TaskRepository xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1226672409680" name="" comment="" defaultTask="1225112227903">
-  <tasks id="1225112227903" name="StandOutsideOppPenalty" comment="" description="DefaultTask"/>
+  <tasks id="1225112227903" name="DefaultTask" comment="" description="DefaultTask"/>
   <tasks id="1225115536468" name="AttackSupport" comment="" description=""/>
   <tasks id="1222690027997" name="Support" comment="" description="Support"/>
   <tasks id="1221754402444" name="Keeper" comment="" description="Keeper"/>
