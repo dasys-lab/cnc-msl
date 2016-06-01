@@ -46,7 +46,7 @@ namespace alica
         snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-        auto tempMid = alloGoalMid = wm->field->posOwnGoalMid();
+        auto tempMid = wm->field->posOwnGoalMid();
         alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);

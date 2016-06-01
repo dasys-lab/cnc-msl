@@ -151,10 +151,6 @@ namespace alica
         // std::cout << "minusCounter : " << minusCounter << std::endl;
         // std::cout << "" << std::endl;
 
-        msl_actuator_msgs::MotionControl mc;
-        mc.motion.translation = 500;
-        send(mc);
-
         /*PROTECTED REGION END*/
     }
     void CalcCalib::initialiseParameters()
@@ -249,23 +245,10 @@ namespace alica
 //
 //        calibCounter++;
         //initializePublisher();
-        if (calibCounter == 1)
-        {
-            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-        }
-
-        if (calibCounter == 2)
-        {
-            diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
-            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-        }
-
-        if (calibCounter == 3)
-        {
-            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-            diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
-        }
+//________________________________________________________________________________________________________________
+//________________________________________________________________________________________________________________
+        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -301,11 +284,26 @@ namespace alica
 
         if (length >= 1)
         {
-            calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX) / lengthSegment)
-                    + 1;
-
-            calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffY * diffY) / lengthSegment)
-                    + 1;
+            if (calibCounter == 1)
+            {
+                calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX)
+                        * (sqrt(diffX * diffX) / lengthSegment) + 1;
+            }
+            if (calibCounter == 2)
+            {
+                calibCoefficientX *= calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x)
+                        * (sqrt(diffX * diffX) / lengthSegment) + 1;
+            }
+            if (calibCounter == 3)
+            {
+                calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedWayY)
+                        * (sqrt(diffY * diffY) / lengthSegment) + 1;
+            }
+            if (calibCounter == 4)
+            {
+                calibCoefficientY *= calibSign(correctedWayY, this->wm->rawSensorData->getOwnPositionVision()->y)
+                        * (sqrt(diffY * diffY) / lengthSegment) + 1;
+            }
 
             if (calibCoefficientX < 0.5)
             {
@@ -316,14 +314,14 @@ namespace alica
                 calibCoefficientY = 0.3;
             }
 
-            if (calibCoefficientX > 1.5)
+            if (calibCoefficientX > 2)
             {
-                calibCoefficientX = 1.5;
+                calibCoefficientX = 2;
             }
 
-            if (calibCoefficientY > 1.5)
+            if (calibCoefficientY > 2)
             {
-                calibCoefficientY = 1.5;
+                calibCoefficientY = 2;
             }
 
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");

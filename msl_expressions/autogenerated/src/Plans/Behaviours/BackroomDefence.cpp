@@ -62,7 +62,8 @@ namespace alica
          }
          */
         msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
-                                                               alloBallPos->alloToEgo(*me), 100, nullptr);
+                                                                                  alloBallPos->alloToEgo(*me), 100,
+                                                                                  nullptr);
 
         send(mc);
 

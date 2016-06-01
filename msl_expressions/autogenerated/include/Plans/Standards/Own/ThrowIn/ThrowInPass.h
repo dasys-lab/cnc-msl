@@ -30,8 +30,6 @@ namespace alica
         double passCorridorWidth;
         double maxTurnAngle;
         double minOppDist;
-        double distToFieldBorder;
-        double minCloserOffset;
         double closerFactor;
         double maxVel;
         double pRot;
@@ -41,7 +39,6 @@ namespace alica
         double maxRot;
         double accel;
         double arrivalTimeOffset;
-        shared_ptr<geometry::CNPoint2D> alloAimPoint;
         bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                              shared_ptr<geometry::CNPoint2D> c, double tolerance,
                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);

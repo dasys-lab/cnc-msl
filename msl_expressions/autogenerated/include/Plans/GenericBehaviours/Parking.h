@@ -3,15 +3,18 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1429111623710) ENABLED START*/ //Add additional includes here
-namespace supplementary{
-	class SystemConfig;
+namespace supplementary
+{
+    class SystemConfig;
 }
-namespace geometry{
-	class CNPoint2D;
+namespace geometry
+{
+    class CNPoint2D;
 }
-namespace msl{
-	class MovementQuery;
-	class RobotMovement;
+namespace msl
+{
+    class MovementQuery;
+    class RobotMovement;
 }
 /*PROTECTED REGION END*/
 namespace alica

@@ -51,9 +51,11 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
-#include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
+#include  "Plans/Standards/Own/FreeKick/FreekickOwnHalf1464779892293.h"
 
 #include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
+
+#include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
 
 #include  "Plans/Attack/Dribble1434049476066.h"
 
@@ -81,13 +83,15 @@
 
 #include  "Plans/Standards/Own/Corner/CornerKick1462373376006.h"
 
-#include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
-
 #include  "Plans/Standards/Own/PassIntoPath/PassIntoPath1457530916296.h"
+
+#include  "Plans/GameStrategy/Other/SimpleDropBall1426696586622.h"
 
 #include  "Plans/Defence/Test/TestApproachBallMaster1430324312981.h"
 
 #include  "Plans/Attack/TestPlans/DuelTestMaster1454506180437.h"
+
+#include  "Plans/Standards/Own/FreeKick/OwnFreeKickInOppHalf1464531946023.h"
 
 #include  "Plans/Standards/Own/KickOff/OwnKickOff1438785376159.h"
 
@@ -100,6 +104,8 @@
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"
 
 #include  "Plans/TwoHoledWall/ShootTwoHoledWall1417620189234.h"
+
+#include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
 #include  "Plans/Calibration/MotionCalibration1442919721161.h"
 
@@ -229,12 +235,16 @@ namespace alica
                 return make_shared<UtilityFunction1457173681216>();
                 break;
 
-            case 1462360503828:
-                return make_shared<UtilityFunction1462360503828>();
+            case 1464779892293:
+                return make_shared<UtilityFunction1464779892293>();
                 break;
 
             case 1437902649389:
                 return make_shared<UtilityFunction1437902649389>();
+                break;
+
+            case 1462360503828:
+                return make_shared<UtilityFunction1462360503828>();
                 break;
 
             case 1434049476066:
@@ -289,12 +299,12 @@ namespace alica
                 return make_shared<UtilityFunction1462373376006>();
                 break;
 
-            case 1426696586622:
-                return make_shared<UtilityFunction1426696586622>();
-                break;
-
             case 1457530916296:
                 return make_shared<UtilityFunction1457530916296>();
+                break;
+
+            case 1426696586622:
+                return make_shared<UtilityFunction1426696586622>();
                 break;
 
             case 1430324312981:
@@ -303,6 +313,10 @@ namespace alica
 
             case 1454506180437:
                 return make_shared<UtilityFunction1454506180437>();
+                break;
+
+            case 1464531946023:
+                return make_shared<UtilityFunction1464531946023>();
                 break;
 
             case 1438785376159:
@@ -327,6 +341,10 @@ namespace alica
 
             case 1417620189234:
                 return make_shared<UtilityFunction1417620189234>();
+                break;
+
+            case 1464532006730:
+                return make_shared<UtilityFunction1464532006730>();
                 break;
 
             case 1442919721161:
