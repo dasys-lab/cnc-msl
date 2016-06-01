@@ -66,4 +66,5 @@
   <tasks id="1462360639087" name="MISSING_NAME" comment="" description=""/>
   <tasks id="1462360858945" name="AlternativeReceive" comment="" description=""/>
   <tasks id="1464532449309" name="StandInsideOppPenalty" comment="" description=""/>
+  <tasks id="1464780384447" name="StandCloseToOppPenalty" comment="" description=""/>
 </alica:TaskRepository>
