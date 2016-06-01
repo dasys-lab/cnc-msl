@@ -15,9 +15,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalKick.h"
 
-#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
-
 #include  "Plans/Behaviours/PositionReceiver.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
@@ -35,9 +35,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/Joystick.h"
 
-#include  "Plans/Dribble/DribbleControl.h"
-
 #include  "Plans/Behaviours/RobotMovementDribbleTest.h"
+
+#include  "Plans/Dribble/DribbleControl.h"
 
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
@@ -52,6 +52,8 @@ using namespace std;
 #include  "Plans/Behaviours/Duel.h"
 
 #include  "Plans/Defence/ReleaseMid.h"
+
+#include  "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
@@ -155,6 +157,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
+#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
+
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
@@ -213,14 +217,14 @@ namespace alica
                 return make_shared<GoalKick>();
                 break;
 
-            case 1457532300654:
-
-                return make_shared<StandardAlignToPassPos>();
-                break;
-
             case 1439379352605:
 
                 return make_shared<PositionReceiver>();
+                break;
+
+            case 1457532300654:
+
+                return make_shared<StandardAlignToPassPos>();
                 break;
 
             case 1417620583364:
@@ -277,16 +281,16 @@ namespace alica
                 return make_shared<Joystick>();
                 break;
 
+            case 1462969753310:
+
+                return make_shared<RobotMovementDribbleTest>();
+                break;
+
             case 1449742099555:
 
             case 1450175539163:
 
                 return make_shared<DribbleControl>();
-                break;
-
-            case 1462969753310:
-
-                return make_shared<RobotMovementDribbleTest>();
                 break;
 
             case 1436269080263:
@@ -324,6 +328,11 @@ namespace alica
             case 1458033497042:
 
                 return make_shared<ReleaseMid>();
+                break;
+
+            case 1464780824372:
+
+                return make_shared<PositionReceiverFreeKickOppHalf>();
                 break;
 
             case 1447863442558:
@@ -597,6 +606,11 @@ namespace alica
             case 1459357089325:
 
                 return make_shared<BouncePassFinishAlign>();
+                break;
+
+            case 1464787692697:
+
+                return make_shared<FreeKickOppHalfShootRapid>();
                 break;
 
             case 1459355071258:
