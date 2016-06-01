@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle n;
 
 	ros::Rate loop_rate(10);
-	ros::Publisher pub = n.advertise<sensor_msgs::PointCloud>("depthCloud", 10000);
+	ros::Publisher pub = n.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10000);
 
 
 	Status rc = OpenNI::initialize();
