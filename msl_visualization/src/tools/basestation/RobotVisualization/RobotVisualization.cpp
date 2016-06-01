@@ -221,7 +221,7 @@ void RobotVisualization::remove(vtkRenderer *renderer)
         this->ballVelocityActor->SetVisibility(false);
         this->sharedBall->SetVisibility(false);
 
-        for (vtkSmartPointer<vtkActor> actor : obstacles)
+        for (vtkSmartPointer<vtkActor> actor : obstaclesBottom)
         {
                 actor->SetVisibility(false);
         }
@@ -497,6 +497,48 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
         this->sharedBall->SetVisibility(true);
 }
 
+// hier!!!
+
+void RobotVisualization::drawOpponentTop(vtkRenderer *renderer, double x, double y, double z)
+{
+    float p0[3] = {0.26, 0, 0.0};
+    float p1[3] = {-0.26, 0.26, 0.0};
+    float p2[3] = {-0.26, -0.26, 0.0};
+    float p3[3] = {0.0, 0.0, 0.4};
+
+    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    points->InsertNextPoint(p0);
+    points->InsertNextPoint(p1);
+    points->InsertNextPoint(p2);
+    points->InsertNextPoint(p3);
+
+    vtkSmartPointer<vtkTetra> tetra = vtkSmartPointer<vtkTetra>::New();
+    tetra->GetPointIds()->SetId(0, 0);
+    tetra->GetPointIds()->SetId(1, 1);
+    tetra->GetPointIds()->SetId(2, 2);
+    tetra->GetPointIds()->SetId(3, 3);
+
+    vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
+    cells->InsertNextCell(tetra);
+
+    vtkSmartPointer<vtkUnstructuredGrid> ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
+    ug->SetPoints(points);
+    ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
+
+    vtkSmartPointer<vtkDataSetMapper> obstacleTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    obstacleTopMapper->SetInput(ug);
+
+    vtkSmartPointer<vtkActor> obstacleTop = vtkSmartPointer<vtkActor>::New();
+    obstacleTop->SetMapper(obstacleTopMapper);
+    obstacleTop->SetPosition(x, y, z);
+    auto c = Color::getColor(this->robot->getId());
+    obstacleTop->GetProperty()->SetColor(c[0], c[1], c[2]);
+    obstacleTop->GetProperty()->SetDiffuse(0.4);
+    obstacleTop->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(obstacleTop);
+    obstaclesTop.push_back(obstacleTop);
+}
+
 void RobotVisualization::updateOpponents(vtkRenderer *renderer)
 {
         bool found = false;
@@ -508,61 +550,67 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                 auto pos = this->field->transformToGuiCoords(x.x, x.y);
                 for (auto member : *this->field->getRobots())
                 {
-                        auto mb = member->getVisualization()->getBottom();
-                        if (mb == nullptr)
-                          continue;
+                    auto mb = member->getVisualization()->getBottom();
+                    if (mb == nullptr)
+                      continue;
 
-                        if (abs(mb->GetPosition()[0] - pos.first) < 0.25
-                                        && abs(mb->GetPosition()[1] - pos.second) < 0.25)
-                        {
-                                found = true;
-                                break;
-                        }
+                    if (abs(mb->GetPosition()[0] - pos.first) < 0.25
+                                    && abs(mb->GetPosition()[1] - pos.second) < 0.25)
+                    {
+                            found = true;
+                            break;
+                    }
+
                 }
 
                 if (found)
                         continue;
 
-                if (obstacleCount < this->obstacles.size())
+                if (obstacleCount < this->obstaclesBottom.size())
                 {
-                        this->obstacles.at(obstacleCount)->SetPosition(pos.first, pos.second, 0);
-                        this->obstacles.at(obstacleCount)->SetVisibility(true);
+                        this->obstaclesBottom.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.2);
+                        this->obstaclesBottom.at(obstacleCount)->SetVisibility(true);
+                        this->obstaclesTop.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.4);
+						this->obstaclesTop.at(obstacleCount)->SetVisibility(true);
                 }
                 else
                 {
                         drawOpponent(renderer, pos.first, pos.second, 0);
+                        drawOpponentTop(renderer, pos.first, pos.second, 0);
                 }
                 obstacleCount++;
         }
 
-        if (obstacleCount < this->obstacles.size())
+        if (obstacleCount < this->obstaclesBottom.size())
         {
-                for (int i = obstacleCount; i < this->obstacles.size(); ++i)
+                for (int i = obstacleCount; i < this->obstaclesBottom.size(); ++i)
                 {
-                          this->obstacles.at(i)->SetVisibility(false);
+                          this->obstaclesBottom.at(i)->SetVisibility(false);
                 }
         }
 }
 
 void RobotVisualization::drawOpponent(vtkRenderer *renderer, double x, double y, double z)
 {
-        vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
-        cubeSrc->SetXLength(0.52);
-        cubeSrc->SetYLength(0.52);
-        cubeSrc->SetZLength(0.8);
+    vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
+    cubeSrc->SetXLength(0.52);
+    cubeSrc->SetYLength(0.52);
+    cubeSrc->SetZLength(0.4);
 
-        vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
+    vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
 
-        vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
-        obstacleBottom->SetMapper(obstacleBottomMapper);
-        obstacleBottom->SetPosition(x, y, z + 0.2);
-        obstacleBottom->GetProperty()->SetColor(0, 0, 0);
-        obstacleBottom->GetProperty()->SetDiffuse(0.4);
-        obstacleBottom->GetProperty()->SetAmbient(0.8);
-        renderer->AddActor(obstacleBottom);
+    vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
+    obstacleBottom->SetMapper(obstacleBottomMapper);
+    obstacleBottom->SetPosition(x, y, z);
+    auto c = Color::getColor(this->robot->getId());
+    //obstacleBottom->GetProperty()->SetColor(c[0], c[1], c[2]);
+    obstacleBottom->GetProperty()->SetColor(0, 0, 0);
+    obstacleBottom->GetProperty()->SetDiffuse(0.4);
+    obstacleBottom->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(obstacleBottom);
 
-        obstacles.push_back(obstacleBottom);
+    obstaclesBottom.push_back(obstacleBottom);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)
