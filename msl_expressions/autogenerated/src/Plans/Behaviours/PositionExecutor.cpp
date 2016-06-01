@@ -11,7 +11,10 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 
-using namespace std;
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <Game.h>
 
 /*PROTECTED REGION END*/
 namespace alica
@@ -73,7 +76,7 @@ namespace alica
                 auto pos = wm->robots->teammates.getTeamMatePosition(id);
                 receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
             }
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
             if (receiverPos != nullptr)
@@ -101,7 +104,7 @@ namespace alica
             if (mc.motion.translation == 0.0
                     && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * alignTolerance)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             send(mc);
         }

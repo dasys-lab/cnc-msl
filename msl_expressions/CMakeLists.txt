@@ -1,7 +1,7 @@
-  
+    
 cmake_minimum_required(VERSION 2.8.3 )
 project(msl_expressions)
-                                                  
+                                                   
 ## Use c++ 11x std  
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
@@ -12,7 +12,6 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
   
 ## Enable exception handling for segfaults
 set(CMAKE_CXX_FLAGS "-rdynamic -g -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
- 
 
 
 ## Find catkin macros and libraries

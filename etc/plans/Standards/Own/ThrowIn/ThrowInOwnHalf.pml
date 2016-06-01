@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462360503828" name="ThrowInOwnHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/ThrowIn" priority="0.0" minCardinality="0" maxCardinality="2147483647">
-  <conditions xsi:type="alica:RuntimeCondition" id="1462361418213" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462360503828" name="ThrowInOwnHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/ThrowIn" priority="0.0" minCardinality="3" maxCardinality="4">
+  <conditions xsi:type="alica:RuntimeCondition" id="1462361418213" name="ThrownInOwnHalf - RuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1462361435925" name="MISSING_NAME" comment="" scope="1462360612527">
       <sorts>x</sorts>
       <sorts>y</sorts>
@@ -9,6 +9,7 @@
   <states id="1462360503829" name="Align" comment="" entryPoint="1462360503830">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
     <outTransitions>#1462360957397</outTransitions>
   </states>
   <states id="1462360912906" name="GrabBall" comment="">
@@ -30,12 +31,12 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1462360960031</inTransitions>
   </states>
-  <states id="1462361351034" name="Align" comment="" entryPoint="1462360607517">
+  <states id="1462361351034" name="AlignReceive" comment="" entryPoint="1462360607517">
     <plans xsi:type="alica:BehaviourConfiguration">ReceiveInOppHalf.beh#1462370388995</plans>
     <outTransitions>#1462368266008</outTransitions>
   </states>
-  <states id="1462361358155" name="Align" comment="" entryPoint="1462360610006">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1433950043262</plans>
+  <states id="1462361358155" name="AlignAlternative" comment="" entryPoint="1462360610006">
+    <plans xsi:type="alica:BehaviourConfiguration">PositionAlternativeReceiver.beh#1462978671719</plans>
     <outTransitions>#1462368267461</outTransitions>
   </states>
   <states id="1462361373364" name="Block" comment="" entryPoint="1462360612527">
@@ -58,7 +59,7 @@
   <states xsi:type="alica:SuccessState" id="1462368161988" name="Successalternative" comment="">
     <inTransitions>#1462368201420</inTransitions>
   </states>
-  <transitions id="1462360957397" name="MISSING_NAME" comment="aligned exec" msg="">
+  <transitions id="1462360957397" name="Align2GrabBall" comment="(child success &amp;&amp; start) || (start &amp;&amp; timeSinceStart > timeUntilEmergencyExecute)" msg="">
     <preCondition id="1462360958757" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462360503829</inState>
     <outState>#1462360912906</outState>
@@ -98,19 +99,19 @@
     <inState>#1462360919387</inState>
     <outState>#1462360912906</outState>
   </transitions>
-  <entryPoints id="1462360503830" name="ExecuteStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1462360503830" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1462360503829</state>
   </entryPoints>
-  <entryPoints id="1462360607517" name="ReceiveStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1462360607517" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1462361351034</state>
   </entryPoints>
-  <entryPoints id="1462360610006" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1462360610006" name="MISSING_NAME" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1462360858945</task>
     <state>#1462361358155</state>
   </entryPoints>
-  <entryPoints id="1462360612527" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1462360612527" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1461237765109</task>
     <state>#1462361373364</state>
   </entryPoints>

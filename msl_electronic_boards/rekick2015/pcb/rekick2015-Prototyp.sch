@@ -25951,15 +25951,15 @@ EAGLE CAD Libraries on element14&lt;/a&gt;</description>
 <part name="CF" library="rcl" deviceset="C-EU" device="C0603" value="470p"/>
 <part name="C12" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
 <part name="C_BOOT" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
-<part name="R_DELAY" library="rcl" deviceset="R-EU_" device="R0805"/>
-<part name="C_DELAY" library="rcl" deviceset="C-EU" device="C0603" value="10µ/10V"/>
+<part name="R_DELAY" library="rcl" deviceset="R-EU_" device="R0805" value="33k"/>
+<part name="C_DELAY" library="rcl" deviceset="C-EU" device="C0603" value="1µ/10V"/>
 <part name="C11" library="rcl" deviceset="C-EU" device="C0603" value="100n"/>
-<part name="C_ISEN_A" library="rcl" deviceset="C-EU" device="C0603" value="22n/50V"/>
+<part name="C_ISEN_A" library="rcl" deviceset="C-EU" device="C0603" value="10n/50V"/>
 <part name="R_ISEN_A" library="rcl" deviceset="R-EU_" device="R0805" value="33k"/>
 <part name="D3" library="diode" deviceset="MBR0520LT" device=""/>
 <part name="D4" library="diode" deviceset="MBR0520LT" device=""/>
-<part name="R_ISEN_B" library="rcl" deviceset="R-EU_" device="R0805" value="2k"/>
-<part name="C_ISEN_B" library="rcl" deviceset="C-EU" device="C0603" value="62n/10V"/>
+<part name="R_ISEN_B" library="rcl" deviceset="R-EU_" device="R0805" value="6,8k"/>
+<part name="C_ISEN_B" library="rcl" deviceset="C-EU" device="C0603" value="24nF/10V"/>
 <part name="L3" library="Panasonic-ELL" deviceset="ELL" device="-ATP-B" technology="ATP3R3NB" value=" 3.3UH "/>
 <part name="L4" library="EagleLibrary_Wuerth_Elektronik_eiSos_rev16a" deviceset="WE-HCI" device="_1890" value="820n"/>
 <part name="C13" library="rcl" deviceset="C-EU" device="C2220K" value="2.2µ/250V"/>

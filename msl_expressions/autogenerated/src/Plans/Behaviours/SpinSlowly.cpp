@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/SpinSlowly.h"
 
 /*PROTECTED REGION ID(inccpp1435159253296) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -43,7 +44,7 @@ namespace alica
 
         if (abs(startAngle - alpha) < epsilon && counter > 90)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         else
         {

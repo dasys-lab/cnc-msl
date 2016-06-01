@@ -1,3 +1,0 @@
-messages_robocup_ssl_detection frame
-string refbox_cmd
-

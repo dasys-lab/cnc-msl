@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1434716215423) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -136,7 +138,7 @@ namespace alica
             translation = targetDistance;
         }
 
-        MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
         send(mc);
 
         /*PROTECTED REGION END*/

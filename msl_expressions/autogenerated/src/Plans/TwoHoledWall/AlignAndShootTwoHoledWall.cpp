@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417620683982) ENABLED START*/ //Add additional includes here
 #include <math.h>
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -95,7 +97,7 @@ namespace alica
                 {
                     useLowerHole = !useLowerHole;
                 }
-                this->success = true;
+                this->setSuccess(true);
             }
 
             return;

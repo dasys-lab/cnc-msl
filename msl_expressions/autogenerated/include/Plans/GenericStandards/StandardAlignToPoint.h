@@ -3,10 +3,15 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1433949970592) ENABLED START*/ //Add additional includes here
-#include "MSLFootballField.h"
-
 using namespace msl;
-
+namespace geometry
+{
+    class CNPoint2D;
+}
+namespace msl
+{
+    class MovementQuery;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,14 +26,20 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1433949970592) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<geometry::CNPoint2D> alloTarget;
-        shared_ptr<geometry::CNPoint2D> oldBallPos;
-        shared_ptr<geometry::CNPoint2D> oldAlloTarget;
-        bool isReceiver;
-        string taskName;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1433949970592) ENABLED START*/ //Add additional private methods here
+        bool isReceiver;
+        string taskName;
+
+        double alignAngleTolerance;
+        double positionDistanceTolerance;
+        double executerDistanceToBall;
+        double receiverDistanceToBall;
+        double receiverBallMovedThreshold;
+        shared_ptr<MovementQuery> m_Query;
+        shared_ptr<geometry::CNPoint2D> alloReceiverTarget;
+        shared_ptr<geometry::CNPoint2D> oldBallPos;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

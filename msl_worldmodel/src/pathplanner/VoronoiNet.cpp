@@ -8,6 +8,10 @@
 #include "pathplanner/VoronoiNet.h"
 #include "MSLWorldModel.h"
 #include <SystemConfig.h>
+#include "obstaclehandler/Obstacles.h"
+#include "pathplanner/PathPlanner.h"
+#include "Robots.h"
+#include "Ball.h"
 
 namespace msl
 {

@@ -9,6 +9,7 @@ using namespace std;
 #include <msl_actuator_msgs/KickControl.h>
 #include <msl_actuator_msgs/ShovelSelectCmd.h>
 #include "MSLWorldModel.h"
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

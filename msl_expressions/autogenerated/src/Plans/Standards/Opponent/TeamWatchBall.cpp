@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1457015532224) ENABLED START*/ //Add additional includes here
 #include <Rules.h>
+#include <Ball.h>
+#include <WhiteBoard.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -33,7 +35,7 @@ namespace alica
         /*PROTECTED REGION ID(run1457015532224) ENABLED START*/ //Add additional options here
         if (wm->whiteBoard->getWatchBallMsg() != nullptr)
         {
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
         itcounter++;
@@ -97,7 +99,7 @@ namespace alica
                 send(msg);
             }
 
-            this->success = true;
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

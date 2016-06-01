@@ -20,13 +20,34 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1462368682104) ENABLED START*/ //Add additional private methods here
-
         string teamMateTaskName1;
         string teamMateTaskName2;
         shared_ptr<geometry::CNPoint2D> recPos1;
         shared_ptr<geometry::CNPoint2D> recPos2;
+        double ratio;
+        double ballRadius;
+        double passCorridorWidth;
+        double maxTurnAngle;
+        double minOppDist;
+        double minCloserOffset;
+        bool canPass;
+        int haveBallCounter;
+        double trans;
+        double angleIntErr;
+        double oldAngleErr;
+        double minTol;
+        double tol;
+        msl::InfoTime startTime;
+        bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
+                             shared_ptr<geometry::CNPoint2D> c, double tolerance,
+                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+                         bool outsideCorridoreTeammates(shared_ptr<geometry::CNPoint2D> ball,
+                         shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
+                         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
+                         bool outsideCorridore(shared_ptr<geometry::CNPoint2D> ball, shared_ptr<geometry::CNPoint2D>passPoint,
+							  double passCorridorWidth, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);
 
-        /*PROTECTED REGION END*/};
-} /* namespace alica */
+        /*PROTECTED REGION END*/			};
+		} /* namespace alica */
 
 #endif /* StandardAlignAndGrab2Receivers_H_ */

@@ -3,6 +3,9 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1415205272843) ENABLED START*/ //Add additional includes here
 #include "GeometryCalculator.h"
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -70,7 +73,7 @@ namespace alica
 
         if (aimPoint == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             cout << "AlignToGoal: no aimPoint" << endl;
             return;
         }
@@ -85,7 +88,7 @@ namespace alica
             if (deltaAngle < 20 * M_PI / 180 && distBeforeBall < 1000)
             {
                 cout << "AlignToGoal: failure!" << endl;
-                this->failure = true;
+                this->setFailure(true);
             }
         }
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

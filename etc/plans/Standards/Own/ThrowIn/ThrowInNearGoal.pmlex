@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237638988"/>
-    <value xPos="299" yPos="41" width="270" height="134" collapsed="false"/>
+    <value xPos="310" yPos="45" width="270" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237656318"/>
@@ -31,16 +31,16 @@
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237676305"/>
     <value>
-      <bendpoints xPos="680" yPos="113"/>
+      <bendpoints xPos="683" yPos="87"/>
     </value>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237695900"/>
-    <value xPos="167" yPos="223" width="65" height="67" collapsed="false"/>
+    <value xPos="194" yPos="247" width="285" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237704581"/>
-    <value xPos="495" yPos="215" width="232" height="110" collapsed="false"/>
+    <value xPos="500" yPos="226" width="232" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="ThrowInNearGoal.pml#1461237711590"/>
@@ -113,7 +113,7 @@
   <extensions>
     <key href="ThrowInNearGoal.pml#1461584284347"/>
     <value>
-      <bendpoints xPos="638" yPos="56"/>
+      <bendpoints xPos="671" yPos="135"/>
     </value>
   </extensions>
   <extensions>

@@ -3,6 +3,19 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1429111623710) ENABLED START*/ //Add additional includes here
+namespace supplementary
+{
+    class SystemConfig;
+}
+namespace geometry
+{
+    class CNPoint2D;
+}
+namespace msl
+{
+    class MovementQuery;
+    class RobotMovement;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,6 +33,13 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1429111623710) ENABLED START*/ //Add additional private methods here
+        supplementary::SystemConfig* sc;
+        shared_ptr<geometry::CNPoint2D> parkingPosition;
+        shared_ptr<msl::MovementQuery> movementQuery;
+        msl::RobotMovement* rm;
+        double offset;
+        int parkingSlotIdx;
+        double distanceToParkingPositionTolerance;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

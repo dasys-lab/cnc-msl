@@ -10,10 +10,12 @@
 #include <memory>
 
 using namespace std;
-
+namespace geometry{
+	class CNPoint2D;
+}
 namespace msl
 {
-
+	class SearchNode;
 	class VoronoiNet;
 	/**
 	 * Interface class for Pathplanning evaluators

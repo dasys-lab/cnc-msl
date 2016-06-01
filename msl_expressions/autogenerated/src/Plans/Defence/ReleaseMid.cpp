@@ -5,6 +5,9 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
+#include <Robots.h>
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

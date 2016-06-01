@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1441106724156" name="TestPassPointMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack/TestPlans" priority="0.0" minCardinality="1" maxCardinality="1">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1441106724156" name="TestPassPointMaster" comment="" masterPlan="true" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack/TestPlans" priority="0.0" minCardinality="3" maxCardinality="3">
   <states id="1441106914297" name="Stop" comment="" entryPoint="1441106724159">
     <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1441106955404</inTransitions>
@@ -20,7 +20,7 @@
     <inState>#1441106916517</inState>
     <outState>#1441106914297</outState>
   </transitions>
-  <entryPoints id="1441106724159" name="MISSING_NAME" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1441106724159" name="MISSING_NAME" comment="" successRequired="false" minCardinality="3" maxCardinality="3">
     <task>../../../Misc/taskrepository.tsk#1225112227903</task>
     <state>#1441106914297</state>
   </entryPoints>

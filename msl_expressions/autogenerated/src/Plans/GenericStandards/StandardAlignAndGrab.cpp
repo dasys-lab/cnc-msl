@@ -3,6 +3,11 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <GeometryCalculator.h>
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,7 +45,7 @@ namespace alica
             receiver = getHigherEntryPoint(planName, teamMateTaskName);
         }
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         if (egoBallPos->length() > 900)
         {
             // Drive close to the ball, until dist < 900
@@ -160,7 +165,7 @@ namespace alica
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
 //                cout << "SAAG: haveBall" << endl;
-                this->success = true;
+                this->setSuccess(true);
             }
             else if (haveBallCounter > 6
                     && ((runningTimeMS <= 4000.0 && fabs(dangle) < this->minTol)
@@ -172,7 +177,7 @@ namespace alica
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
 //                cout << "SAAG: haveBall esle if" << endl;
-                this->success = true;
+                this->setSuccess(true);
             }
         }
         cout << "SAAG: last mc ROT: \t" << mc.motion.rotation << endl;

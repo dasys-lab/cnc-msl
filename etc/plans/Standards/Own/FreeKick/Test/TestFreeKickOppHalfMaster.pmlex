@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extension>
+    <key href="TestFreeKickOppHalfMaster.pml#1464532006731"/>
+    <value xPos="312" yPos="243" width="81" height="67" collapsed="false" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestFreeKickOppHalfMaster.pml#1464532006730"/>
+    <value xPos="-11" yPos="14" width="946" height="648" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="TestFreeKickOppHalfMaster.pml#1464532006732"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+  <extension>
+    <key href="../../OwnFreeKickInOppHalf.pml#1464531946023"/>
+    <value width="-1" height="-1" collapsed="true" visible="true"/>
+  </extension>
+</uiextensionmodel:PmlUiExtensionMap>

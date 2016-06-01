@@ -8,6 +8,11 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include "engine/constraintmodul/ConstraintQuery.h"
+#include "GSolver.h"
+#include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +22,7 @@ namespace alica
             DomainBehaviour("PositionReceiverThrownIn")
     {
         /*PROTECTED REGION ID(con1461584204507) ENABLED START*/ //Add additional options here
+        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
         /*PROTECTED REGION END*/
     }
     PositionReceiverThrownIn::~PositionReceiverThrownIn()
@@ -43,7 +49,7 @@ namespace alica
         alloTarget->x = alloBall->x - 2300;
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         // ask the path planner how to get there
         mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
@@ -51,7 +57,7 @@ namespace alica
         // if we reach the point and are aligned, the behavior is successful
         if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         send(mc);
 
@@ -60,6 +66,10 @@ namespace alica
     void PositionReceiverThrownIn::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1461584204507) ENABLED START*/ //Add additional options here
+        query->clearDomainVariables();
+        query->addVariable(wm->getOwnId(), "x");
+        query->addVariable(wm->getOwnId(), "y");
+        result.clear();
         string tmp;
         bool success = true;
         alloTarget = make_shared < geometry::CNPoint2D > (0, 0);

@@ -10,6 +10,8 @@
 #include "container/CNPosition.h"
 #include "msl_msgs/PathPlanner.h"
 #include "msl_msgs/VoronoiNetInfo.h"
+#include "pathplanner/PathPlanner.h"
+#include "RawSensorData.h"
 
 namespace msl
 {

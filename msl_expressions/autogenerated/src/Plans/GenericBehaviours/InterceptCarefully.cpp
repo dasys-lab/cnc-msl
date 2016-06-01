@@ -5,6 +5,8 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,7 +28,7 @@ namespace alica
         /*PROTECTED REGION ID(run1427703218101) ENABLED START*/ //Add additional options here
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto egoBallPos = wm->ball->getEgoBallPosition();
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         if (me == nullptr || egoBallPos == nullptr)
         {
             send(mc);

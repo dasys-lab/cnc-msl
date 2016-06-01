@@ -4,6 +4,9 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863466691) ENABLED START*/ //Add additional includes here
 #include <cmath>
 #include <vector>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -43,7 +46,7 @@ namespace alica
         snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-        auto tempMid = alloGoalMid = wm->field->posOwnGoalMid();
+        auto tempMid = wm->field->posOwnGoalMid();
         alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);

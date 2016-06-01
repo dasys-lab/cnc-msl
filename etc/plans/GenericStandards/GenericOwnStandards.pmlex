@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="GenericOwnStandards.pml#1430924951133"/>
-    <value xPos="118" yPos="151" width="81" height="67"/>
+    <value xPos="16" yPos="137" width="81" height="67"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430924951132"/>
@@ -14,27 +14,27 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925718512"/>
-    <value xPos="117" yPos="1" width="99" height="67" collapsed="false"/>
+    <value xPos="22" yPos="5" width="114" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925736746"/>
-    <value xPos="434" yPos="26" width="164" height="110" collapsed="false"/>
+    <value xPos="307" yPos="12" width="164" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925743739"/>
-    <value xPos="245" yPos="141" width="164" height="86" collapsed="false"/>
+    <value xPos="530" yPos="15" width="164" height="103" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925751875"/>
-    <value xPos="239" yPos="338" width="103" height="67" collapsed="false"/>
+    <value xPos="415" yPos="226" width="164" height="103" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925759928"/>
-    <value xPos="70" yPos="337" width="119" height="67" collapsed="false"/>
+    <value xPos="207" yPos="292" width="164" height="103" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925774870"/>
-    <value xPos="216" yPos="222" width="123" height="67" collapsed="false"/>
+    <value xPos="198" yPos="429" width="140" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1430925917001"/>
@@ -98,7 +98,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1431523938514"/>
-    <value xPos="175" yPos="461" width="80" height="67" collapsed="false"/>
+    <value xPos="49" yPos="457" width="153" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
@@ -118,7 +118,7 @@
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1458555183582"/>
-    <value xPos="571" yPos="409" width="146" height="88" collapsed="false"/>
+    <value xPos="246" yPos="174" width="146" height="88" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
@@ -151,31 +151,31 @@
   <extensions>
     <key href="GenericOwnStandards.pml#1458555788972"/>
     <value>
-      <bendpoints xPos="276" yPos="468"/>
+      <bendpoints xPos="202" yPos="312"/>
     </value>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1458555819730"/>
     <value>
-      <bendpoints xPos="375" yPos="413"/>
+      <bendpoints xPos="289" yPos="251"/>
     </value>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1458555853125"/>
     <value>
-      <bendpoints xPos="346" yPos="355"/>
+      <bendpoints xPos="433" yPos="135"/>
     </value>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1458555879137"/>
     <value>
-      <bendpoints xPos="332" yPos="258"/>
+      <bendpoints xPos="162" yPos="181"/>
     </value>
   </extensions>
   <extensions>
     <key href="GenericOwnStandards.pml#1458555896457"/>
     <value>
-      <bendpoints xPos="489" yPos="279"/>
+      <bendpoints xPos="247" yPos="169"/>
     </value>
   </extensions>
   <extensions>

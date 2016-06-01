@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1430924951132" name="GenericOwnStandards" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/GenericStandards" priority="0.0" minCardinality="1" maxCardinality="2147483647">
-  <states id="1430924951133" name="Dummy" comment="" entryPoint="1430925626532">
+  <states id="1430924951133" name="DummyOwnStd" comment="" entryPoint="1430925626532">
     <outTransitions>#1430925917001</outTransitions>
     <outTransitions>#1430925918585</outTransitions>
     <outTransitions>#1430925919866</outTransitions>
@@ -59,7 +59,7 @@
   <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444">
     <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
   </states>
-  <states id="1458555183582" name="Wander" comment="">
+  <states id="1458555183582" name="WanderOwnStd" comment="">
     <plans xsi:type="alica:Plan">../GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
     <inTransitions>#1458555205351</inTransitions>
     <inTransitions>#1458555207649</inTransitions>
@@ -102,7 +102,7 @@
     <inState>#1430924951133</inState>
     <outState>#1430925759928</outState>
   </transitions>
-  <transitions id="1430925960854" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1430925960854" name="trns" comment="any child task success  &amp;&amp; situation==start" msg="">
     <preCondition id="1430925962659" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925718512</inState>
     <outState>#1430925945981</outState>
@@ -112,22 +112,22 @@
     <inState>#1430925736746</inState>
     <outState>#1430925945981</outState>
   </transitions>
-  <transitions id="1430925965662" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1430925965662" name="MISSING_NAME" comment="any child success &amp;&amp; situation==start" msg="">
     <preCondition id="1430925967520" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925743739</inState>
     <outState>#1430925945981</outState>
   </transitions>
-  <transitions id="1430925967608" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1430925967608" name="MISSING_NAME" comment="any child success &amp;&amp; situation==start" msg="">
     <preCondition id="1430925970967" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925774870</inState>
     <outState>#1430925945981</outState>
   </transitions>
-  <transitions id="1430925971330" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1430925971330" name="MISSING_NAME" comment="any child success &amp;&amp; situation==start" msg="">
     <preCondition id="1430925972838" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925751875</inState>
     <outState>#1430925945981</outState>
   </transitions>
-  <transitions id="1430925973111" name="MISSING_NAME" comment="any child success" msg="">
+  <transitions id="1430925973111" name="MISSING_NAME" comment="any child success &amp;&amp; situation==start" msg="">
     <preCondition id="1430925975558" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1430925759928</inState>
     <outState>#1430925945981</outState>

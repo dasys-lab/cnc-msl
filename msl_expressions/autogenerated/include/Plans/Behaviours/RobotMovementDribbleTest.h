@@ -2,9 +2,8 @@
 #define RobotMovementDribbleTest_H_
 
 #include "DomainBehaviour.h"
-#include "robotmovement/MovementQuery.h"
-#include "robotmovement/RobotMovement.h"
 /*PROTECTED REGION ID(inc1462969724089) ENABLED START*/ //Add additional includes here
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -25,7 +24,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1462969724089) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPoint2D> currentTarget;
         vector<double> attackPosY;
-        shared_ptr<MovementQuery> query;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

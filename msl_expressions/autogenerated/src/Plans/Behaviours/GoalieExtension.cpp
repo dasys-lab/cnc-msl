@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/GoalieExtension.h"
 
 /*PROTECTED REGION ID(inccpp1459249216387) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

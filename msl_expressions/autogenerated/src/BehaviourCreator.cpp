@@ -29,8 +29,6 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
-#include  "Plans/Example/DriveInSquare.h"
-
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
@@ -67,6 +65,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/Pos4Def.h"
 
+#include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
+
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
 #include  "Plans/Behaviours/ShovelSelect.h"
@@ -91,9 +91,11 @@ using namespace std;
 
 #include  "Plans/Behaviours/Intercept.h"
 
+#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+
 #include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
-#include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
+#include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
@@ -256,11 +258,6 @@ namespace alica
                 return make_shared<StandardAlignToPoint>();
                 break;
 
-            case 1433939634320:
-
-                return make_shared<DriveInSquare>();
-                break;
-
             case 1457706826895:
 
             case 1457706895442:
@@ -361,6 +358,11 @@ namespace alica
                 return make_shared<Pos4Def>();
                 break;
 
+            case 1464189840525:
+
+                return make_shared<DriveToPost>();
+                break;
+
             case 1457531639350:
 
                 return make_shared<StandardAlignToGeneric>();
@@ -425,16 +427,21 @@ namespace alica
                 return make_shared<Intercept>();
                 break;
 
-            case 1461674968023:
-
-                return make_shared<PosAlternativePassReceiver>();
-                break;
-
             case 1459355025721:
 
             case 1459356753335:
 
                 return make_shared<BounceShotAlignWall>();
+                break;
+
+            case 1461674968023:
+
+                return make_shared<PosAlternativePassReceiver>();
+                break;
+
+            case 1462978671719:
+
+                return make_shared<PositionAlternativeReceiver>();
                 break;
 
             case 1438778223495:

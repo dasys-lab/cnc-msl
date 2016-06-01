@@ -16,6 +16,5 @@ fi
 ./install_packages.sh "${apt_options}"
 ./setup_ros.sh "${apt_options}"
 ./download_repos.sh
-./install_vartypes.sh
 ./setup_env.sh
 

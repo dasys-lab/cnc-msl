@@ -7,11 +7,13 @@
 
 #include <BallXIntervall.h>
 #include <MSLWorldModel.h>
+#include <Ball.h>
 
 namespace alica
 {
 
-	BallXIntervall::BallXIntervall(double weight, string name, long id, vector<long> relevantEntryPointIds, double minX, double maxX)
+	BallXIntervall::BallXIntervall(double weight, string name, long id, vector<long> relevantEntryPointIds, double minX,
+									double maxX, double tolerance)
 	{
 		this->weight = weight;
 		this->name = name;
@@ -19,8 +21,8 @@ namespace alica
 		this->minX = minX;
 		this->maxX = maxX;
 		this->alloBall = nullptr;
-		this->halfFieldLength = 0;
 		this->relevantEntryPointIds = relevantEntryPointIds;
+		this->tolerance = tolerance;
 	}
 
 	BallXIntervall::~BallXIntervall()
@@ -39,8 +41,6 @@ namespace alica
 			this->alloBall = nullptr;
 		}
 
-		this->halfFieldLength = msl::MSLWorldModel::get()->field->getFieldLength() / 2;
-
 	}
 
 	UtilityInterval BallXIntervall::eval(IAssignment* ass)
@@ -48,20 +48,29 @@ namespace alica
 		this->ui.setMin(0.0);
 		this->ui.setMax(0.0);
 
-		if(alloBall == nullptr) {
+		if (alloBall == nullptr)
+		{
+			this->ui.setMin(0.0);
 			this->ui.setMax(0.0);
 			return ui;
 		}
 
 		double x = alloBall->x;
-		if(x >= this->minX && x <= this->maxX)
+		if (x >= this->minX && x <= this->maxX)
 		{
 			this->ui.setMin(1.0);
 			this->ui.setMax(1.0);
 			return ui;
 		}
 
-		if(x <= 0.0)
+		if (x <= (this->minX - this->tolerance))
+		{
+			this->ui.setMin(-1.0);
+			this->ui.setMax(-1.0);
+			return ui;
+		}
+
+		if (x >= (this->maxX + this->tolerance))
 		{
 			this->ui.setMin(-1.0);
 			this->ui.setMax(-1.0);
@@ -69,14 +78,14 @@ namespace alica
 		}
 
 		double val = 0.0;
-		if(x > 0 && x < this->minX)
+		if (x > (this->minX - this->tolerance) && x < this->minX)
 		{
 			val = x / this->minX;
 		}
 
-		if(x > this->maxX && x < this->halfFieldLength)
+		if (x > this->maxX && x < (this->maxX + tolerance))
 		{
-			val = 1 - ((x - this->maxX) / (this->halfFieldLength - this->maxX));
+			val = 1 - ((x - this->maxX) / (this->maxX + tolerance - this->maxX));
 		}
 		this->ui.setMin(val);
 		this->ui.setMax(val);

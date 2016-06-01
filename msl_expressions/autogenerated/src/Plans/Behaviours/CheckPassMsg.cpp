@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/CheckPassMsg.h"
 
 /*PROTECTED REGION ID(inccpp1457441479350) ENABLED START*/ //Add additional includes here
+#include <WhiteBoard.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,7 +29,7 @@ namespace alica
         {
             receivedMsg = true;
 
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/

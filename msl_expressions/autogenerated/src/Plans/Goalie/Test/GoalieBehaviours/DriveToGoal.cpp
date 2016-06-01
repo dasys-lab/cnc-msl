@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -63,7 +64,7 @@ namespace alica
 
             if (me->distanceTo(alloTarget) <= 100)
             {
-                this->success = true;
+                this->setSuccess(true);
             }
             else
             {
