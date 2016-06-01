@@ -12,7 +12,6 @@
   </states>
   <states id="1442921032957" name="MoveToMiddle" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1431527260342</plans>
     <inTransitions>#1442921106318</inTransitions>
     <outTransitions>#1443003805912</outTransitions>
     <outTransitions>#1446733729802</outTransitions>
