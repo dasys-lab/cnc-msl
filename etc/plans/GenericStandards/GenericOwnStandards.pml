@@ -30,7 +30,7 @@
     <outTransitions>#1458555214716</outTransitions>
   </states>
   <states id="1430925751875" name="OwnFreeKick" comment="">
-    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Own/FreeKick/FreeKick.pty#1464783134585</plans>
     <inTransitions>#1430925922843</inTransitions>
     <inTransitions>#1458555819730</inTransitions>
     <outTransitions>#1430925971330</outTransitions>
