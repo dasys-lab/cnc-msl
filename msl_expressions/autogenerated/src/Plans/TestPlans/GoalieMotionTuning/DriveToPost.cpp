@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
 /*PROTECTED REGION ID(inccpp1464189819779) ENABLED START*/ //Add additional includes here
+#include "RawSensorData.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
