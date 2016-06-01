@@ -245,23 +245,13 @@ namespace alica
 //
 //        calibCounter++;
         //initializePublisher();
-        if (calibCounter == 1)
-        {
-            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-        }
 
-        if (calibCounter == 2)
-        {
-            diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
-            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
-        }
+//________________________________________________________________________________________________________________
+//________________________________________________________________________________________________________________
 
-        if (calibCounter == 3)
-        {
+
             diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-            diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
-        }
+            diffY = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -319,14 +309,14 @@ namespace alica
                 calibCoefficientY = 0.3;
             }
 
-            if (calibCoefficientX > 1.5)
+            if (calibCoefficientX > 2)
             {
-                calibCoefficientX = 1.5;
+                calibCoefficientX = 2;
             }
 
-            if (calibCoefficientY > 1.5)
+            if (calibCoefficientY > 2)
             {
-                calibCoefficientY = 1.5;
+                calibCoefficientY = 2;
             }
 
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
