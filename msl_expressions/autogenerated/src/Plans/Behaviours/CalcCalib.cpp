@@ -297,11 +297,18 @@ namespace alica
 
         if (length >= 1)
         {
-            calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX) / lengthSegment)
-                    + 1;
+        	if(calibCounter == 1 || calibCounter == 2)
+        	{
+        		calibCoefficientX = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffX * diffX) / lengthSegment)
+        		                    + 1;
+        	}
 
-            calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffY * diffY) / lengthSegment)
-                    + 1;
+        	if(calibCounter == 3 || calibCounter == 4)
+        	{
+        		calibCoefficientY = calibSign(lengthVisionSegment, lengthSegment) * (sqrt(diffY * diffY) / lengthSegment)
+        		                    + 1;
+        	}
+
 
             if (calibCoefficientX < 0.5)
             {
