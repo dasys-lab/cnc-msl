@@ -8,6 +8,9 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -71,7 +74,7 @@ namespace alica
                     receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
                 }
             }
-            MotionControl mc;
+            msl_actuator_msgs::MotionControl mc;
             shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
             shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
             // if there is a receiver, align to it

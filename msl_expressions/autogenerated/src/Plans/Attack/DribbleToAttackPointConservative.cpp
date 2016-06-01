@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/DribbleToAttackPointConservative.h"
 
 /*PROTECTED REGION ID(inccpp1458132872550) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

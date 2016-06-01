@@ -5,6 +5,10 @@ using namespace std;
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/MotionControl.h"
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -2,6 +2,10 @@ using namespace std;
 #include "Plans/Behaviours/Intercept.h"
 
 /*PROTECTED REGION ID(inccpp1458757170147) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <Game.h>
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

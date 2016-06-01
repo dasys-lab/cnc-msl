@@ -3,11 +3,11 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
-#include "engine/model/EntryPoint.h"
+#include "robotmovement/MovementQuery.h"
 #include "engine/RunningPlan.h"
-#include "engine/Assignment.h"
-#include "engine/model/Plan.h"
-
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +17,20 @@ namespace alica
             DomainBehaviour("StandardAlignToPoint")
     {
         /*PROTECTED REGION ID(con1433949970592) ENABLED START*/ //Add additional options here
+        this->taskName = "";
+        this->isReceiver = false;
+        this->alignAngleTolerance = (M_PI / 180)
+                * (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint", "alignAngleTolerance", NULL);
+        this->positionDistanceTolerance = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                        "positionDistanceTolerance",
+                                                                                        NULL);
+        this->executerDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                     "executerDistanceToBall", NULL);
+        this->receiverDistanceToBall = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                     "receiverDistanceToBall", NULL);
+        this->receiverBallMovedThreshold = (*this->sc)["StandardSituation"]->get<double>("StandardAlignToPoint",
+                                                                                         "receiverBallMovedThreshold",
+                                                                                         NULL);
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint::~StandardAlignToPoint()
@@ -27,7 +41,7 @@ namespace alica
     void StandardAlignToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1433949970592) ENABLED START*/ //Add additional options here
-        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
+        shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
 
         // return if necessary information is missing
@@ -40,149 +54,115 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
         // Create additional points for path planning
-        shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
-                vector<shared_ptr<geometry::CNPoint2D>>>();
+        auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
-
-        // robot is executor
+        shared_ptr < geometry::CNPoint2D > egoTarget;
+        MotionControl mc;
+        RobotMovement rm;
         if (!isReceiver)
-        {
+        { // robot is executor
+
             // get entry point of task name to locate robot with task name
             EntryPoint* ep = getParentEntryPoint(taskName);
-            if (ep != nullptr)
+            if (ep == nullptr)
             {
-                // get the plan in which the behavior is running
-                auto parent = this->runningPlan->getParent().lock();
-                if (parent == nullptr)
-                {
-                    cout << "parent null" << endl;
-                    return;
-                }
-                // get robot ids of robots in found entry point
-                shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
-                shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
-                // exactly one robot is receiver
-                if (ids->size() > 0 && ids->at(0) != -1)
-                {
-                    // get receiver position by id
-                    auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
-                    if (pos != nullptr)
-                    {
-                        receiverPos = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
-                    }
-                    else
-                    {
-                        receiverPos = make_shared < geometry::CNPoint2D > (0, 0);
-                    }
-                }
-                MotionControl mc;
-                shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
-                // if there is a receiver, align to it
-                if (receiverPos != nullptr)
-                {
-                    // calculate target 60cm away from the ball and on a line with the receiver
-                    egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * 600))->alloToEgo(*ownPos);
-                    // ask the path planner how to get there
-                    mc = RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-                                                             additionalPoints);
-                }
-                else
-                {
-                    // if there is no receiver, align to middle looking towards the ball
-                    egoTarget = (alloBall + ((alloBall - alloTarget)->normalize() * 600))->alloToEgo(*ownPos);
-                    mc = RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 0,
-                                                             additionalPoints);
-                }
-                // if we reach the point and are aligned, the behavior is successful
-                if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
-                {
-                    this->setSuccess(true);
-                }
-                send(mc);
+                return;
             }
-        }
-        else // receiver
-        {
-            //calculate point on a line with ball and mid on a distance of 2,3m
-            if (oldBallPos == nullptr)
-                oldBallPos = alloBall;
 
-            if (oldAlloTarget == nullptr || oldBallPos->distanceTo(alloBall) > 1000)
+            // get the plan in which the behavior is running
+            auto parent = this->runningPlan->getParent().lock();
+            if (parent == nullptr)
             {
-                oldBallPos = alloBall;
-                oldAlloTarget = (alloBall + ((alloBall - alloTarget)->normalize() * -2300));
-                if (oldAlloTarget->x > -800 && oldAlloTarget->x < 1000)
-                {
-                    auto shiftPt = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
-                    oldAlloTarget = (alloBall + ((alloBall - alloTarget + shiftPt)->normalize() * -2300));
-                }
+                return;
             }
-            shared_ptr < geometry::CNPoint2D > egoTarget = oldAlloTarget->alloToEgo(*ownPos);
 
-            MotionControl mc;
+            // get robot ids of robots in found entry point
+            shared_ptr<vector<int>> ids = parent->getAssignment()->getRobotsWorking(ep);
+            if (ids->empty() || ids->at(0) == -1)
+            {
+                return;
+            }
+
+            // get receiver position by id
+            auto receiverPos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
+            if (receiverPos == nullptr)
+            {
+                return;
+            }
+
+            // calculate target executerDistanceToBall away from the ball and on a line with the receiver
+            egoTarget = (alloBall + ((alloBall - receiverPos)->normalize() * this->executerDistanceToBall))->alloToEgo(
+                    *ownPos);
 
             // ask the path planner how to get there
-            mc = RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
-
-            // if we reach the point and are aligned, the behavior is successful
-            if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
-            {
-                this->setSuccess(true);
-            }
-            send(mc);
-
+            this->m_Query->egoDestinationPoint = egoTarget;
+            this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            this->m_Query->additionalPoints = additionalPoints;
+            mc = rm.experimentallyMoveToPoint(m_Query);
         }
+        else
+        { // robot is receiver
+            /**
+             * This is the default positioning of the receiver, if don't have a more clever behaviour.
+             * Therefore, this part of this behaviour should be deleted the moment
+             * we don't need the default positioning anymore.
+             * -- Greetings Stopfer :P
+             */
+            if (oldBallPos == nullptr)
+            {
+                oldBallPos = alloBall;
+            }
+            if (alloReceiverTarget == nullptr || oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
+            { // recalculate alloReceiverTarget if the ball moved more than "receiverBallMovedThreshold" mm
+
+                oldBallPos = alloBall;
+
+                //calculate a point that is "receiverDistanceToBall" away from ball towards field mid (0,0).
+                alloReceiverTarget = (alloBall + (alloBall->normalize() * -this->receiverDistanceToBall));
+            }
+
+            // ask the path planner how to get there
+            egoTarget = alloReceiverTarget->alloToEgo(*ownPos);
+            this->m_Query->egoDestinationPoint = egoTarget;
+            this->m_Query->egoAlignPoint = egoBallPos;
+            this->m_Query->additionalPoints = additionalPoints;
+            mc = rm.experimentallyMoveToPoint(m_Query);
+        }
+
+        // if we reach the point and are aligned, the behavior is successful
+        if (egoTarget->length() < this->positionDistanceTolerance
+                && fabs(egoBallPos->rotate(M_PI)->angleTo()) < this->alignAngleTolerance)
+        {
+            this->setSuccess(true);
+        }
+
+        send(mc);
         /*PROTECTED REGION END*/
     }
     void StandardAlignToPoint::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1433949970592) ENABLED START*/ //Add additional options here
-        string tmp;
-        bool success = true;
-        alloTarget = make_shared < geometry::CNPoint2D > (0, 0);
-        oldBallPos.reset();
-        oldAlloTarget.reset();
-        success &= getParameter("X", tmp);
-        try
+        this->m_Query = make_shared<MovementQuery>();
+        this->alloReceiverTarget.reset();
+        this->oldBallPos.reset();
+
+        string tmp = "";
+        if (getParameter("TaskName", tmp))
         {
-            if (success)
+            taskName = tmp;
+        }
+
+        if (getParameter("Receiver", tmp))
+        {
+            if (tmp.find("true") != string::npos)
             {
-                alloTarget->x = stod(tmp);
+                isReceiver = true;
             }
             else
             {
-                alloTarget->x = 0;
+                isReceiver = false;
             }
-            success = true;
-            success &= getParameter("Y", tmp);
-            if (success)
-            {
-                alloTarget->y = stod(tmp);
-            }
-            else
-            {
-                alloTarget->y = 0;
-            }
-            success = true;
-            success &= getParameter("Receiver", tmp);
-            if (success)
-            {
-                isReceiver = (stoi(tmp) != 0);
-            }
-            success &= getParameter("TaskName", tmp);
-            if (success)
-            {
-                taskName = tmp;
-            }
-        }
-        catch (exception& e)
-        {
-            cerr << "Could not cast the parameter properly" << endl;
-        }
-        if (!success)
-        {
-            cerr << "SA2P: Parameter does not exist" << endl;
         }
         /*PROTECTED REGION END*/
     }

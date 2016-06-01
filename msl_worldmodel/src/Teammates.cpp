@@ -7,6 +7,7 @@
 
 #include "Teammates.h"
 #include "MSLWorldModel.h"
+#include "MSLFootballField.h"
 
 namespace msl
 {

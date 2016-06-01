@@ -6,6 +6,9 @@ using namespace std;
 #include "MSLWorldModel.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -47,7 +50,7 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > egoTarget = make_shared < geometry::CNPoint2D
                 > (0, -ballDistanceRec)->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
         if (wm->game->getSituation() == msl::Situation::Start)

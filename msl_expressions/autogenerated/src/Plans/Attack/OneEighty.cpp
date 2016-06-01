@@ -7,6 +7,8 @@ using namespace std;
 #include "GeometryCalculator.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -7,6 +7,7 @@
 
 #include <DistXContour.h>
 #include "MSLWorldModel.h"
+#include <Ball.h>
 
 namespace alica
 {

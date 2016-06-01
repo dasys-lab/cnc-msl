@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1446033324019) ENABLED START*/ //Add additional includes here
 ros::Publisher calibCoeff_pub;
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -123,23 +124,36 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
-        /*        std::cout << "correctedWayX : " << correctedPosX << std::endl;
-         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-         std::cout << "======== CalcCalib ========" << std::endl;
-         std::cout << "Motion: " << std::endl;
-         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
-         << calibPosMotionTheta << std::endl;
-         std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
-         << calibTranslation << std::endl;
-         std::cout << "rotation : " << calibRotation << std::endl;
-         std::cout << "plusCounter : " << plusCounter << std::endl;
-         std::cout << "minusCounter : " << minusCounter << std::endl;
-         std::cout << "" << std::endl;
+        if (tempyoyo >= 5)
+        {
+            lengthVisionSegment = lengthVisionSegment
+                    + sqrt((calibOldPosVisionX - calibPosVisionX) * (calibOldPosVisionX - calibPosVisionX)
+                            + (calibOldPosVisionY - calibPosVisionY) * (calibOldPosVisionY - calibPosVisionY));
 
-         msl_actuator_msgs::MotionControl mc;
-         mc.motion.translation = 500;
-         send(mc);
-         */
+            calibOldPosVisionX = calibPosVisionX;
+            calibOldPosVisionY = calibPosVisionY;
+
+            tempyoyo = 0;
+        }
+
+        tempyoyo++;
+
+//         std::cout << "correctedWayX : " << correctedPosX << std::endl;
+//         std::cout << "correctedWayY : " << correctedPosY << std::endl;
+//         std::cout << "======== CalcCalib ========" << std::endl;
+//         std::cout << "Motion: " << std::endl;
+//         std::cout << "Position: \tX: " << calibPosMotionX << "\tY: " << calibPosMotionY << "\tTheta: "
+//                 << calibPosMotionTheta << std::endl;
+//         std::cout << "Velocity: \tRot: " << calibRotation << "\tAngle: " << calibAngle << "\tTrans: "
+//                 << calibTranslation << std::endl;
+        // std::cout << "rotation : " << calibRotation << std::endl;
+        // std::cout << "plusCounter : " << plusCounter << std::endl;
+        // std::cout << "minusCounter : " << minusCounter << std::endl;
+        // std::cout << "" << std::endl;
+
+        msl_actuator_msgs::MotionControl mc;
+        mc.motion.translation = 500;
+        send(mc);
 
         /*PROTECTED REGION END*/
     }
@@ -235,8 +249,23 @@ namespace alica
 //
 //        calibCounter++;
         //initializePublisher();
-        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        if (calibCounter == 1)
+        {
+            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        }
+
+        if (calibCounter == 2)
+        {
+            diffX = this->wm->rawSensorData->getOwnPositionVision()->x - correctedPosX;
+            diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        }
+
+        if (calibCounter == 3)
+        {
+            diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
+            diffY = this->wm->rawSensorData->getOwnPositionVision()->y - correctedPosY;
+        }
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
@@ -316,12 +345,12 @@ namespace alica
         std::cout << "Länge: " << length << std::endl;
         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion(0)->x << std::endl;
-        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion(0)->y << std::endl;
+        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
+        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
         std::cout << "correctedWayX : " << correctedPosX << std::endl;
         std::cout << "correctedWayY : " << correctedPosY << std::endl;
-        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision(0)->x << std::endl;
-        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision(0)->y << std::endl;
+        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
+        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "lengthVision: " << lengthVisionSegment << std::endl;
         std::cout << "calibCounter: " << calibCounter << std::endl;
@@ -330,8 +359,8 @@ namespace alica
 
         lengthSegment = 0;
         lengthVisionSegment = 0;
-        correctedPosX = this->wm->rawSensorData->getOwnPositionVision(0)->x;
-        correctedPosY = this->wm->rawSensorData->getOwnPositionVision(0)->y;
+        correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+        correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
         calibCounter++;
         /*PROTECTED REGION END*/

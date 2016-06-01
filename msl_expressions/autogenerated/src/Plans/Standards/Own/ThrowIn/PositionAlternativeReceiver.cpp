@@ -8,6 +8,8 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,11 +42,11 @@ namespace alica
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > alloTarget = make_shared<geometry::CNPoint2D>();
         shared_ptr < geometry::CNPoint2D > egoTarget = nullptr;
 
-        if (ownPos->y < 0)
+        if (alloBall->y < 0)
         {
             alloTarget->y = alloBall->y + 2300.0;
         }
@@ -58,6 +60,7 @@ namespace alica
         egoTarget = alloTarget->alloToEgo(*ownPos);
 
         mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        send(mc);
 
         /*PROTECTED REGION END*/
     }

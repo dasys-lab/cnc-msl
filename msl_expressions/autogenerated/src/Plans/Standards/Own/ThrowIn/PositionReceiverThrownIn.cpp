@@ -11,6 +11,8 @@ using namespace std;
 #include "engine/constraintmodul/ConstraintQuery.h"
 #include "GSolver.h"
 #include "SolverType.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -47,7 +49,7 @@ namespace alica
         alloTarget->x = alloBall->x - 2300;
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
 
         // ask the path planner how to get there
         mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);

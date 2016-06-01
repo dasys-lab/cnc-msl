@@ -7,6 +7,12 @@ using namespace std;
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
+#include "obstaclehandler/Obstacles.h"
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -16,17 +22,12 @@ namespace alica
             DomainBehaviour("StandardAlignAndGrab2Receivers")
     {
         /*PROTECTED REGION ID(con1462368682104) ENABLED START*/ //Add additional options here
-        this->maxPassDist = 0;
         this->ratio = 0;
-        this->minPassDist = 0;
-        this->closerFactor = 0;
         this->ballRadius = 0;
         this->minOppDist = 0;
-        this->distToFieldBorder = 0;
         this->sc = nullptr;
         this->minCloserOffset = 0;
         this->passCorridorWidth = 0;
-        this->freeOppAngle = 0;
         this->maxTurnAngle = 0;
         this->canPass = false;
         this->startTime = 0;
@@ -57,8 +58,6 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
-        int recId = -1;
-        int aRecId = -1;
         EntryPoint* ep = getParentEntryPoint(teamMateTaskName1);
         if (ep != nullptr)
         {
@@ -78,7 +77,6 @@ namespace alica
                 auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
                 if (pos != nullptr)
                 {
-                    recId = ids->at(0);
                     recPos1 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
                 else
@@ -107,7 +105,6 @@ namespace alica
                 auto pos = wm->robots->teammates.getTeamMatePosition(ids->at(0));
                 if (pos != nullptr)
                 {
-                    aRecId = ids->at(0);
                     recPos2 = make_shared < geometry::CNPoint2D > (pos->x, pos->y);
                 }
                 else
@@ -120,109 +117,75 @@ namespace alica
         {
             return;
         }
-        if (recId != -1)
+        // make the passpoints closer to the receiver
+        shared_ptr < geometry::CNPoint2D > passPoint = nullptr;
+        if (recPos1->y < 0.0)
         {
-            auto vNet = this->wm->pathPlanner->getCurrentVoronoiNet();
-            shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> vertices = vNet->getTeamMateVerticesCNPoint2D(recId);
-            shared_ptr < geometry::CNPosition > teamMatePos = wm->robots->teammates.getTeamMatePosition(recId);
+            passPoint = make_shared < geometry::CNPoint2D > (recPos1->x, -wm->field->getFieldWidth() / 2 + 1000.0);
+        }
+        else
+        {
+            passPoint = make_shared < geometry::CNPoint2D > (recPos1->x, wm->field->getFieldWidth() / 2 - 1000.0);
+        }
+        if (!wm->field->isInsidePenalty(passPoint, 0.0))
+        {
 
-            if (vertices == nullptr || teamMatePos == nullptr)
+            // min dist to opponent
+            auto obs = wm->robots->opponents.getOpponentsAlloClustered();
+            bool opponentTooClose = false;
+            for (int i = 0; i < obs->size(); i++)
             {
-                cout << "SAAG2R: vertices or teamMatePos == nullptr!" << endl;
-                return;
+                if (obs->at(i)->distanceTo(passPoint) < minOppDist)
+                {
+                    opponentTooClose = true;
+                    break;
+                }
             }
-            for (int i = 0; i < vertices->size(); i++)
+            if (opponentTooClose)
             {
-                // make the passpoints closer to the receiver
-                shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
+                canPass = false;
+            }
+            if (geometry::absDeltaAngle(
+                    ownPos->theta + M_PI,
+                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
+            {
+                canPass = false;
+            }
 
-                shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
-                        > (teamMatePos->x, teamMatePos->y);
-                shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
-                double rcv2PassPointDist = rcv2PassPoint->length();
-                double factor = closerFactor;
-                if (factor * rcv2PassPointDist < minCloserOffset)
-                {
-                    factor = factor * rcv2PassPointDist;
-                }
-                else
-                {
-                    factor = rcv2PassPointDist - minCloserOffset;
-                }
-                factor = max(factor, 0.0);
-                passPoint = receiver + rcv2PassPoint->normalize() * factor;
-                if (wm->field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                && !wm->field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
-                && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
-                        )
-                {
-
-                    // min dist to opponent
-                    auto obs = vNet->getOpponentPositions();
-                    bool opponentTooClose = false;
-                    for (int i = 0; i < obs->size(); i++)
-                    {
-                        if (obs->at(i)->distanceTo(passPoint) < minOppDist)
-                        {
-                            opponentTooClose = true;
-                            break;
-                        }
-                    }
-                    if (opponentTooClose)
-                    {
-                        continue;
-                    }
-                    if (geometry::absDeltaAngle(
-                            ownPos->theta + M_PI,
-                            (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo())
-                            > maxTurnAngle)
-                    {
-                        continue;
-                    }
-
-                    // some calculation to check whether any opponent is inside the pass vector triangle
-                    shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
-                    double passLength = ball2PassPoint->length();
-                    shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                            > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
-                    shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
-                    shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-                    if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                            && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
-                                                 vNet->getObstaclePositions()))
-                    {
-                        continue;
-                    }
-
-                    // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-                    auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
-                    if (matePoses != nullptr
-                            && !outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        canPass = true;
-                    }
-                }
+            // some calculation to check whether any obstacle is inside the pass vector triangle
+            shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
+            double passLength = ball2PassPoint->length();
+            shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
+                    > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
+            shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
+            shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
+            if (!outsideTriangle(alloBall, right, left, ballRadius, obs)
+                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
+            {
+                canPass = false;
+            }
+            else
+            {
+                canPass = true;
             }
         }
         if (canPass)
         {
+            cout << "SAAG2R: aiming to receiver" << endl;
             alloTarget = recPos1;
         }
         else
         {
+            cout << "SAAG2R: aiming to alternative receiver" << endl;
             alloTarget = recPos2;
         }
 
-        MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         if (egoBallPos->length() > 900)
         {
             // Drive close to the ball, until dist < 900
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
-            cout << "SAAG2R: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
+//			cout << "SAAG2R: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
         }
@@ -239,15 +202,12 @@ namespace alica
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
-            cout << "SAAG2R: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
+//			cout << "SAAG2R: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
         }
 
-        double radian = egoBallPos->length();
-        double rot = this->trans / radian;
-
-        shared_ptr < geometry::CNPosition > matePos;
+        double rot = this->trans / egoBallPos->length();
 
         shared_ptr < geometry::CNPoint2D > egoMatePos = alloTarget->alloToEgo(*ownPos);
 
@@ -272,8 +232,8 @@ namespace alica
             mc.motion.angle = direction->angleTo();
             mc.motion.translation = direction->length() * 1.6;
             mc.motion.rotation = fac * rot * 1.6;
-            cout << "SAAG2R: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
-                    << mc.motion.rotation << endl;
+//			cout << "SAAG2R: egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0 ROT: \t"
+//					<< mc.motion.rotation << endl;
             send(mc);
             return;
         }
@@ -285,7 +245,7 @@ namespace alica
                 mc.motion.rotation = (balldangle > 0 ? 1 : -1) * 0.8;
                 mc.motion.angle = M_PI;
                 mc.motion.translation = 100;
-                cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
+//				cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 ROT: \t" << mc.motion.rotation << endl;
                 send(mc);
                 return;
             }
@@ -294,7 +254,7 @@ namespace alica
                 mc.motion.rotation = balldangle * 0.5;
                 mc.motion.angle = egoBallPos->angleTo();
                 mc.motion.translation = egoBallPos->length() * 1.5;
-                cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
+//				cout << "SAAG2R: fabs(balldangle) > 20.0 * M_PI / 180.0 else ROT: \t" << mc.motion.rotation << endl;
                 send(mc);
                 return;
             }
@@ -314,10 +274,10 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-                //                cout << "SAAG2R: haveBall" << endl;
+                cout << "SAAG2R: haveBall" << endl;
                 this->setSuccess(true);
             }
-            else if (haveBallCounter > 6
+            else if (haveBallCounter > 3
                     && ((runningTimeMS <= 4000.0 && fabs(dangle) < this->minTol)
                             || fabs(dangle)
                                     < this->minTol
@@ -326,11 +286,11 @@ namespace alica
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
                 mc.motion.translation = 100.0;
-                //                cout << "SAAG2R: haveBall esle if" << endl;
+                cout << "SAAG2R: haveBall esle if" << endl;
                 this->setSuccess(true);
             }
         }
-        cout << "SAAG2R: last mc ROT: \t" << mc.motion.rotation << endl;
+//		cout << "SAAG2R: last mc ROT: \t" << mc.motion.rotation << endl;
         send(mc);
 
         /*PROTECTED REGION END*/
@@ -344,17 +304,15 @@ namespace alica
         this->haveBallCounter = 0;
         this->startTime = wm->getTime();
         auto sc = supplementary::SystemConfig::getInstance();
+        this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);
+        this->tol = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignTolerance", NULL);
         this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
-        this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
         this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
-        this->freeOppAngle = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2;
-        this->ratio = tan(this->freeOppAngle);
+        this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
         this->passCorridorWidth = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "passCorridorWidth", NULL);
         this->maxTurnAngle = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "maxTurnAngle", NULL);
         this->minOppDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "minOppDist", NULL);
-        this->minPassDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "minPassDist", NULL);
-        this->maxPassDist = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "maxPassDist", NULL);
-        this->distToFieldBorder = (*this->sc)["Behaviour"]->get<double>("ThrowIn", "distToFieldBorder", NULL);
+        this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         string tmp;
         bool success = true;
         try
@@ -365,7 +323,7 @@ namespace alica
                 teamMateTaskName1 = tmp;
             }
 
-            success &= getParameter("TeamMateTaskName", tmp);
+            success &= getParameter("TeamMateTaskName2", tmp);
             if (success)
             {
                 teamMateTaskName2 = tmp;

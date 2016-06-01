@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/StdExecutorGrabBall.h"
 
 /*PROTECTED REGION ID(inccpp1441209011595) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -40,7 +41,8 @@ namespace alica
             return;
         }
 
-        MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, catchRadius, nullptr);
+        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos,
+                                                                                       catchRadius, nullptr);
 
         send(mc);
         /*PROTECTED REGION END*/

@@ -7,6 +7,7 @@
 
 #include <LightBarrier.h>
 #include "MSLWorldModel.h"
+#include "RawSensorData.h"
 namespace msl
 {
 

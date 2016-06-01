@@ -4,6 +4,10 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1430324527403) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include <cmath>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

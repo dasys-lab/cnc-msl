@@ -6,6 +6,8 @@
  */
 
 #include <SystemConfig.h>
+#include <container/CNPoint3D.h>
+#include "Ball.h"
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
 
@@ -13,11 +15,11 @@ namespace msl
 {
 
 	RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
-			distanceScan(ringbufferLength), lightBarrier(
-					ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(ringbufferLength), ownPositionVision(
-					ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(ringbufferLength), compass(
-					ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(ringbufferLength), lastMotionCommand(
-					ringbufferLength), ballHypothesis(ringbufferLength), imuData(ringbufferLength)
+			distanceScan(ringbufferLength), lightBarrier(ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(
+					ringbufferLength), ownPositionVision(ringbufferLength), ownVelocityMotion(ringbufferLength), ownVelocityVision(
+					ringbufferLength), compass(ringbufferLength), joystickCommands(ringbufferLength), ownOdometry(
+					ringbufferLength), lastMotionCommand(ringbufferLength), ballHypothesis(ringbufferLength), imuData(
+					ringbufferLength)
 	{
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
@@ -116,7 +118,6 @@ namespace msl
 		return x->getInformation();
 	}
 
-
 	shared_ptr<int> RawSensorData::getCompassOrientation(int index)
 	{
 		auto x = compass.getLast(index);
@@ -162,7 +163,8 @@ namespace msl
 		return x->getInformation();
 	}
 
-	shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesisList(int index) {
+	shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesisList(int index)
+	{
 		auto x = ballHypothesis.getLast(index);
 		if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
 		{
@@ -215,8 +217,7 @@ namespace msl
 	void RawSensorData::processLightBarrier(std_msgs::BoolPtr msg)
 	{
 		shared_ptr<bool> lb = make_shared<bool>(msg->data);
-		shared_ptr<InformationElement<bool>> l = make_shared<InformationElement<bool>>(
-				lb, wm->getTime());
+		shared_ptr<InformationElement<bool>> l = make_shared<InformationElement<bool>>(lb, wm->getTime());
 		l->certainty = 1.0;
 		lightBarrier.add(l);
 	}
@@ -264,34 +265,34 @@ namespace msl
 			v->certainty = data->odometry.certainty;
 			ownVelocityVision.add(v);
 
-
 			//Motion
 			/*shared_ptr<geometry::CNPosition> posMotion = make_shared<geometry::CNPosition>(
-					data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
-			shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
-					InformationElement<geometry::CNPosition>>(posMotion, time);
-		    odometryMotion->certainty = data->odometry.certainty;
-	        ownPositionMotion.add(odometryMotion);
+			 data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
+			 shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion = make_shared<
+			 InformationElement<geometry::CNPosition>>(posMotion, time);
+			 odometryMotion->certainty = data->odometry.certainty;
+			 ownPositionMotion.add(odometryMotion);
 
-			// TODO: this is the same motion as for vision motion !?
-			shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
-			shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
-					InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
-			vMotion->certainty = data->odometry.certainty;
-			ownVelocityMotion.add(vMotion);*/
+			 // TODO: this is the same motion as for vision motion !?
+			 shared_ptr<msl_msgs::MotionInfo> velMotion = make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
+			 shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
+			 InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
+			 vMotion->certainty = data->odometry.certainty;
+			 ownVelocityMotion.add(vMotion);*/
 		}
 
 		shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x,
-																				   data->ball.point.y,data->ball.point.z);
+																					data->ball.point.y,
+																					data->ball.point.z);
 		shared_ptr<geometry::CNPoint3D> ballVel = make_shared<geometry::CNPoint3D>(data->ball.velocity.vx,
-																						 data->ball.velocity.vy, data->ball.velocity.vz);
+																					data->ball.velocity.vy,
+																					data->ball.velocity.vz);
 
 		//cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
 		if (data->ball.confidence < 0.00000001)
-		        this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
+			this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
 		else
-	                this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
-
+			this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
 
 		shared_ptr<vector<double>> dist = make_shared<vector<double>>(data->distanceScan.sectors);
 
@@ -299,23 +300,23 @@ namespace msl
 		int count = 0;
 		while (dist.use_count() == 0)
 		{
-		        if (count > 5)
-		              return;
-		        dist = make_shared<vector<double>>(data->distanceScan.sectors);
-		        ++count;
+			if (count > 5)
+				return;
+			dist = make_shared<vector<double>>(data->distanceScan.sectors);
+			++count;
 		}
 
 		shared_ptr<InformationElement<vector<double>>> distance = make_shared<InformationElement<vector<double>>>(dist, time);
 
-                // TODO This is a Taker workaround, should be removed when real error was found
+		// TODO This is a Taker workaround, should be removed when real error was found
 		count = 0;
 		while (dist.use_count() == 1)
-                {
-                        if (count > 5)
-                              return;
-                        dist = make_shared<vector<double>>(data->distanceScan.sectors);
-                        ++count;
-                }
+		{
+			if (count > 5)
+				return;
+			dist = make_shared<vector<double>>(data->distanceScan.sectors);
+			++count;
+		}
 		distance->certainty = data->ball.confidence;
 		distanceScan.add(distance);
 		wm->getVisionDataEventTrigger()->run();
@@ -323,7 +324,8 @@ namespace msl
 
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
 	{
-		shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y, coi->position.angle);
+		shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y,
+																					coi->position.angle);
 		shared_ptr<InformationElement<geometry::CNPosition>> o = make_shared<InformationElement<geometry::CNPosition>>(
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
@@ -334,8 +336,8 @@ namespace msl
 	void RawSensorData::processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list)
 	{
 		shared_ptr<msl_sensor_msgs::BallHypothesisList> nList = make_shared<msl_sensor_msgs::BallHypothesisList>(*list);
-		shared_ptr<InformationElement<msl_sensor_msgs::BallHypothesisList>> o = make_shared<InformationElement<msl_sensor_msgs::BallHypothesisList>>(
-				nList, wm->getTime());
+		shared_ptr<InformationElement<msl_sensor_msgs::BallHypothesisList>> o = make_shared<
+				InformationElement<msl_sensor_msgs::BallHypothesisList>>(nList, wm->getTime());
 		o->certainty = 1;
 		ballHypothesis.add(o);
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
@@ -352,11 +354,10 @@ namespace msl
 		cmd->magnetSens = msg->magnetSens;
 		cmd->temperature = msg->temperature;
 		cmd->time = msg->time;
-		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(
-				cmd, wm->getTime());
+		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<
+				InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
 	}
 } /* namespace alica */
-
 

@@ -24,17 +24,12 @@ namespace alica
         string teamMateTaskName2;
         shared_ptr<geometry::CNPoint2D> recPos1;
         shared_ptr<geometry::CNPoint2D> recPos2;
-        double freeOppAngle;
         double ratio;
         double ballRadius;
         double passCorridorWidth;
         double maxTurnAngle;
         double minOppDist;
-        double minPassDist;
-        double maxPassDist;
-        double distToFieldBorder;
         double minCloserOffset;
-        double closerFactor;
         bool canPass;
         int haveBallCounter;
         double trans;

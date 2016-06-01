@@ -3,6 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1450176193656) ENABLED START*/ //Add additional includes here
+namespace supplementary
+{
+    class SystemConfig;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,7 +24,7 @@ namespace alica
         double maxVel;
         double minDistToMate;
         bool gotMessage;
-        SystemConfig* sc;
+        supplementary::SystemConfig* sc;
         string teamMateTaskName;
         EntryPoint* receiver;
         int itcounter;

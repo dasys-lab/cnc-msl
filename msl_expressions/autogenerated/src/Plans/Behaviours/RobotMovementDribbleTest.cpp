@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1462969724089) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -38,6 +40,10 @@ namespace alica
         query = make_shared<msl::MovementQuery>();
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
+
+        cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
+                << endl;
+        cout << "ego Ball Pos: x: " << ballPos->x << " y: " << ballPos->y << endl;
 
         if (wm->ball->haveBall())
         {

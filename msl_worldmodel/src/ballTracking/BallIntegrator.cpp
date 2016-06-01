@@ -27,6 +27,8 @@
 #include <sys/time.h>
 
 #include "MSLWorldModel.h"
+#include <container/CNPoint2D.h>
+#include "RawSensorData.h"
 
 BallIntegrator * BallIntegrator::instance_ = NULL;
 

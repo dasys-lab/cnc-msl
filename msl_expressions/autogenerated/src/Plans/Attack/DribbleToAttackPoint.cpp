@@ -7,6 +7,9 @@ using namespace std;
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
+#include <Ball.h>
+#include <RawSensorData.h>
+#include <pathplanner/PathPlanner.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -60,7 +63,7 @@ namespace alica
         auto opponents = vNet->getOpponentPositions();
 
         //Constant ball handle wheel speed for testing
-        BallHandleCmd bhc;
+        msl_actuator_msgs::BallHandleCmd bhc;
         bhc.leftMotor = (int8_t)this->wheelSpeed;
         bhc.rightMotor = (int8_t)this->wheelSpeed;
         send(bhc);
