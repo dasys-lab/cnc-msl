@@ -5,7 +5,6 @@
   </states>
   <states id="1442919790374" name="MoveInX" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1442921078802</plans>
     <inTransitions>#1442919801497</inTransitions>
     <outTransitions>#1442921106318</outTransitions>
     <outTransitions>#1446733731468</outTransitions>
