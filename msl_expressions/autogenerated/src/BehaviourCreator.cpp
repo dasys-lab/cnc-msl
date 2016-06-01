@@ -612,10 +612,6 @@ namespace alica
 
             case 1461583806472:
 
-            case 1464534544475:
-
-            case 1464534653134:
-
                 return make_shared<StandardAlignAndGrab>();
                 break;
 
