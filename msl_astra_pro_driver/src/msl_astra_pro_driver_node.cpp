@@ -1,6 +1,9 @@
 #include "ros/ros.h"
 #include <OpenNI.h>
 #include "OniSampleUtilities.h"
+#include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/ChannelFloat32.h>
+#include <geometry_msgs/Point32.h>
 
 #define MIN_NUM_CHUNKS(data_size, chunk_size)   ((((data_size)-1) / (chunk_size) + 1))
 #define MIN_CHUNKS_SIZE(data_size, chunk_size)  (MIN_NUM_CHUNKS(data_size, chunk_size) * (chunk_size))
@@ -15,6 +18,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle n;
 
 	ros::Rate loop_rate(10);
+	ros::Publisher pub = n.advertise<sensor_msgs::PointCloud>("depthCloud", 10000);
 
 
 	Status rc = OpenNI::initialize();
@@ -37,12 +41,23 @@ int main(int argc, char **argv) {
     rc = depth.create(device, openni::SENSOR_DEPTH);
     if (rc == openni::STATUS_OK)
     {
-            rc = depth.start();
-            if (rc != openni::STATUS_OK)
-            {
-                    printf("SimpleViewer: Couldn't start depth stream:\n%s\n", openni::OpenNI::getExtendedError());
-                    depth.destroy();
-            }
+
+
+        for(int i = 0;  i < device.getSensorInfo(SENSOR_DEPTH)->getSupportedVideoModes().getSize(); i++) {
+        	VideoMode mode = device.getSensorInfo(SENSOR_DEPTH)->getSupportedVideoModes()[i];
+        	cout << i << ": " << mode.getResolutionX() << " x " << mode.getResolutionY() << " " << mode.getFps() << " " << mode.getPixelFormat() <<  endl;
+
+        }
+        rc = depth.setVideoMode(device.getSensorInfo(SENSOR_DEPTH)->getSupportedVideoModes()[4]); // 4 -> 1_MM 5 -> 100_UM
+        depth.setMirroringEnabled(false);
+        rc = depth.start();
+
+//            rc = depth.start();
+		if (rc != openni::STATUS_OK)
+		{
+				printf("SimpleViewer: Couldn't start depth stream:\n%s\n", openni::OpenNI::getExtendedError());
+				depth.destroy();
+		}
     }
     else
     {
@@ -53,14 +68,16 @@ int main(int argc, char **argv) {
     openni::VideoFrameRef depthFrame;
     openni::VideoMode depthVideoMode;
 
-    int width;
-    int height;
-    const long MAX_DEPTH = 10000;
+    double width;
+    double height;
+    const long MAX_DEPTH = 100000;
     const long TEXTURE_SIZE = 512;
     float pDepthHist[MAX_DEPTH];
     openni::RGB888Pixel* pTexMap;
     unsigned int nTexMapX;
     unsigned int nTexMapY;
+    double horDegree = 60;
+    double verDegree = 49.5;
 
     nTexMapX = MIN_CHUNKS_SIZE(width, TEXTURE_SIZE);
     nTexMapY = MIN_CHUNKS_SIZE(height, TEXTURE_SIZE);
@@ -96,11 +113,21 @@ int main(int argc, char **argv) {
 
 
         const openni::DepthPixel* pDepthRow = (const openni::DepthPixel*)depthFrame.getData();
+
         openni::RGB888Pixel* pTexRow = pTexMap + depthFrame.getCropOriginY() * nTexMapX;
         int rowSize = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel);
 
         openni::CoordinateConverter coorConverter;
 
+        sensor_msgs::PointCloud pcl;
+
+        vector< geometry_msgs::Point32> points;
+
+
+        vector< sensor_msgs::ChannelFloat32> channel;
+
+        sensor_msgs::ChannelFloat32 depthChannel;
+        depthChannel.name = "depth";
 
         for (int y = 0; y < depthFrame.getHeight(); ++y)
         {
@@ -113,15 +140,28 @@ int main(int argc, char **argv) {
                 	float worldX, worldY, worldZ = 0.0;
                         if (*pDepth != 0)
                         {
+//                        	cout << *pDepth << " " ;
+
 
                                 int nHistValue = pDepthHist[*pDepth];
 
-                                pTex->r = nHistValue;
-                                pTex->g = nHistValue;
-                                pTex->b = 0;
-                                coorConverter.convertDepthToWorld(depth,x,y,nHistValue,&worldX,&worldY,&worldZ);
+                                double roh = (((double)y/height * verDegree)-verDegree/2) * M_PI / 180;
 
-//                                cout <<  " x" << worldX << " y" << worldY << " z" << worldZ;
+                                double phi = (((double)x/width * horDegree)-horDegree/2) * M_PI / 180;
+
+                                geometry_msgs::Point32 p;
+
+                                double depthM = (*pDepth) / (double)1000;
+
+                                p.z = (sin(roh) * depthM) * -1;
+
+                                p.y = sin(phi) * depthM;
+
+                                p.x = depthM;
+
+                                points.push_back(p);
+                                depthChannel.values.push_back(nHistValue);
+
                         }
 
                 }
@@ -129,6 +169,14 @@ int main(int argc, char **argv) {
                 pDepthRow += rowSize;
                 pTexRow += nTexMapX;
         }
+
+        channel.push_back(depthChannel);
+        pcl.channels = channel;
+        pcl.points = points;
+        pcl.header.frame_id = "camera_frame";
+        pcl.header.stamp = ros::Time::now();
+
+        pub.publish(pcl);
 	}
 
 	return 0;

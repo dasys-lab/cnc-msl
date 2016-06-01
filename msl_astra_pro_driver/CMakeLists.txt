@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp)
+find_package(catkin REQUIRED roscpp sensor_msgs geometry_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -100,7 +100,7 @@ find_package(catkin REQUIRED roscpp)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_astra_pro_driver
-#  CATKIN_DEPENDS 
+  CATKIN_DEPENDS sensor_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
