@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462360503828" name="ThrowInOwnHalf" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/ThrowIn" priority="0.0" minCardinality="3" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1462361418213" name="ThrownInOwnHalf - RuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
-    <quantifiers xsi:type="alica:ForallAgents" id="1462361435925" name="MISSING_NAME" comment="" scope="1462361373364">
+    <quantifiers xsi:type="alica:ForallAgents" id="1462361435925" name="MISSING_NAME" comment="" scope="1462360612527">
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
