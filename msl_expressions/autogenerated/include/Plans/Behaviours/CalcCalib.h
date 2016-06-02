@@ -20,10 +20,6 @@ namespace alica
         double calibPosMotionX;
         double calibOldPosMotionX;
         double calibOldPosMotionY;
-        double calibPosVisionY;
-        double calibPosVisionX;
-        double calibOldPosVisionX;
-        double calibOldPosVisionY;
         double calibCoefficientX;
         double calibCoefficientY;
         double length;
@@ -31,13 +27,12 @@ namespace alica
         double correctedWayY;
         double correctedPosX;
         double correctedPosY;
+        double oldCorrectedPosX;
+        double oldCorrectedPosY;
         double diffX;
         double diffY;
-        double lengthVisionSegment;
         double lengthSegment;
-
         CalibrationCoefficient calibCoeff;
-        int tempyoyo;
         int calibCounter = 0;
 
         /*PROTECTED REGION END*/
