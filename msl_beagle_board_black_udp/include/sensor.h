@@ -9,11 +9,7 @@
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_UDP_INCLUDE_SENSOR_H_
 
 #include "GeometryCalculator.h"
-<<<<<<< HEAD
 #include <math.h>
-=======
-#include "math.h"
->>>>>>> master
 
 class Sensor
 {

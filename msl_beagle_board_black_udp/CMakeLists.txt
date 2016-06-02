@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   cnc_geometry
   msl_actuator_msgs
+  msl_bbb_api
   msl_black_lib
   system_config
   process_manager

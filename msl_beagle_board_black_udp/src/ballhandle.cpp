@@ -10,7 +10,6 @@
 
 #include "ballhandle.h"
 
-<<<<<<< HEAD
 	BallHandle::BallHandle(BeaglePWM::PwmPin pwm_name, const char *pin_names[]) {
 		gpio = BeagleGPIO::getInstance();
 		pwm = BeaglePWM::getInstance();
@@ -31,44 +30,23 @@
 		pwm->setPeriod(pwm_pin, period);
 		pwm->setRunState(pwm_pin, true);
 		pwm->setDutyCycle(pwm_pin, 0);
-=======
-using namespace BlackLib;
-
-	BallHandle::BallHandle(pwmName pwm_P, gpioName dir_P, gpioName reset_P, gpioName ff1_P, gpioName ff2_P) {
-		pwm = new BlackPWM(pwm_P);
-		dir = new BlackGPIO(dir_P, output, FastMode);
-		reset = new BlackGPIO(reset_P, output, FastMode);
-		ff1 = new BlackGPIO(ff1_P, input, FastMode);
-		ff2 = new BlackGPIO(ff2_P, input, FastMode);
-
-
-		pwm->setPeriodTime(period, nanosecond);
-		pwm->setSpaceRatioTime(0, nanosecond);
-		pwm->setRunState(run);
-
-		dir->setValue(low);
-		reset->setValue(high);
->>>>>>> master
 	}
 
 	BallHandle::~BallHandle() {
 		pwm->setRunState(pwm_pin, false);
 		delete pwm;
-		delete dir;
-		delete reset;
-		delete ff1;
-		delete ff2;
+		delete gpio;
 	}
 
 	void BallHandle::setBallHandling(int32_t value) {
 		// value > 0 -> left
 		// value < 0 -> right
-		if ((value > 0) && (direction == static_cast<digitalValue>(right))) {
-			direction_desired = static_cast<digitalValue>(left);
+		if ((value > 0) && (direction == right)) {
+			direction_desired = left;
 		}
 
-		if ((value < 0) && (direction == static_cast<BlackLib::digitalValue>(left))) {
-			direction_desired = static_cast<BlackLib::digitalValue>(right);
+		if ((value < 0) && (direction == left)) {
+			direction_desired = right;
 		}
 
 		// Check that value is in range from -period to period
@@ -93,16 +71,11 @@ using namespace BlackLib;
 		if (direction != direction_desired && speed_desired != 0) {
 			direction = direction_desired;
 			speed = 0;
-<<<<<<< HEAD
 			pwm->setDutyCycle(pwm_pin, speed);
 			if (direction)
 				pins->setBit(dir);
 			else
 				pins->clearBit(dir);
-=======
-			pwm->setSpaceRatioTime(speed, nanosecond);		// Time for this Operation: 900us
-			dir->setValue(direction);						// Time for this Operation: 550us
->>>>>>> master
 		}
 
 		if (speed != speed_desired) {
@@ -111,10 +84,21 @@ using namespace BlackLib;
 		}
 	}
 
-	int BallHandle::getError() {
-		int ff = (ff1->getNumericValue() << 1) | ff2->getNumericValue();
+	Error BallHandle::getError() {
+		int pin1 = pins->getBit(ff1);
+		int pin2 = pins->getBit(ff2);
 
-		return ff;
+		if (pin1 < 0 || pin2 < 0)
+			return programming;
+
+		if (!pin1 && !pin2)
+			return none;
+		if (!pin1 && pin2)
+			return bypass;
+		if (pin1 && !pin2)
+			return temperature;
+		if (pin1 && pin2)
+			return voltage;
 	}
 
 
