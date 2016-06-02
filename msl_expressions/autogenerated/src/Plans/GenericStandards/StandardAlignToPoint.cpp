@@ -110,8 +110,9 @@ namespace alica
              * -- Greetings Stopfer :P
              */
             if (oldBallPos == nullptr)
+            {
                 oldBallPos = alloBall;
-
+            }
             if (alloReceiverTarget == nullptr || oldBallPos->distanceTo(alloBall) > this->receiverBallMovedThreshold)
             { // recalculate alloReceiverTarget if the ball moved more than "receiverBallMovedThreshold" mm
 
@@ -122,7 +123,8 @@ namespace alica
             }
 
             // ask the path planner how to get there
-            this->m_Query->egoDestinationPoint = alloReceiverTarget->alloToEgo(*ownPos);
+            egoTarget = alloReceiverTarget->alloToEgo(*ownPos);
+            this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
             mc = rm.experimentallyMoveToPoint(m_Query);

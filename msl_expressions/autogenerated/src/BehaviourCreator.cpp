@@ -15,9 +15,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalKick.h"
 
-#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
-
 #include  "Plans/Behaviours/PositionReceiver.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 #include  "Plans/GenericBehaviours/DriveToPoint.h"
 
@@ -35,9 +35,9 @@ using namespace std;
 
 #include  "Plans/Behaviours/Joystick.h"
 
-#include  "Plans/Dribble/DribbleControl.h"
-
 #include  "Plans/Behaviours/RobotMovementDribbleTest.h"
+
+#include  "Plans/Dribble/DribbleControl.h"
 
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
@@ -53,6 +53,8 @@ using namespace std;
 
 #include  "Plans/Defence/ReleaseMid.h"
 
+#include  "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
@@ -67,9 +69,9 @@ using namespace std;
 
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
-#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
-
 #include  "Plans/Behaviours/ShovelSelect.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
 #include  "Plans/Attack/ProtectBall.h"
 
@@ -155,11 +157,15 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
+#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
+
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/KickToDirection.h"
+
+#include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
 
 #include  "Plans/GenericStandards/StandardShieldBall.h"
 
@@ -213,14 +219,14 @@ namespace alica
                 return make_shared<GoalKick>();
                 break;
 
-            case 1457532300654:
-
-                return make_shared<StandardAlignToPassPos>();
-                break;
-
             case 1439379352605:
 
                 return make_shared<PositionReceiver>();
+                break;
+
+            case 1457532300654:
+
+                return make_shared<StandardAlignToPassPos>();
                 break;
 
             case 1417620583364:
@@ -277,16 +283,16 @@ namespace alica
                 return make_shared<Joystick>();
                 break;
 
+            case 1462969753310:
+
+                return make_shared<RobotMovementDribbleTest>();
+                break;
+
             case 1449742099555:
 
             case 1450175539163:
 
                 return make_shared<DribbleControl>();
-                break;
-
-            case 1462969753310:
-
-                return make_shared<RobotMovementDribbleTest>();
                 break;
 
             case 1436269080263:
@@ -326,6 +332,11 @@ namespace alica
                 return make_shared<ReleaseMid>();
                 break;
 
+            case 1464780824372:
+
+                return make_shared<PositionReceiverFreeKickOppHalf>();
+                break;
+
             case 1447863442558:
 
                 return make_shared<DriveToGoal>();
@@ -363,16 +374,16 @@ namespace alica
                 return make_shared<DriveToPost>();
                 break;
 
-            case 1457531639350:
-
-                return make_shared<StandardAlignToGeneric>();
-                break;
-
             case 1435156714286:
 
             case 1435156811453:
 
                 return make_shared<ShovelSelect>();
+                break;
+
+            case 1457531639350:
+
+                return make_shared<StandardAlignToGeneric>();
                 break;
 
             case 1457706612268:
@@ -599,6 +610,11 @@ namespace alica
                 return make_shared<BouncePassFinishAlign>();
                 break;
 
+            case 1464787692697:
+
+                return make_shared<FreeKickOppHalfShootRapid>();
+                break;
+
             case 1459355071258:
 
             case 1459356685875:
@@ -618,6 +634,11 @@ namespace alica
             case 1447863487000:
 
                 return make_shared<KickToDirection>();
+                break;
+
+            case 1464787549220:
+
+                return make_shared<Pos4ReceiverCornerKick>();
                 break;
 
             case 1455888715611:

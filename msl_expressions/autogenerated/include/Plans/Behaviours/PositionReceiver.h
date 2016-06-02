@@ -23,16 +23,17 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1439379316897) ENABLED START*/ //Add additional private methods here
         static msl_actuator_msgs::MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
-                                             shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-                                             shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+                                                                shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                                double snapDistance,
+                                                                shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
 
-                                         void readConfigParameters();
-                                         double fastCatchRadius;
-                                         double slowCatchRadius;
-                                         double alignTolerance;
-                                         double ballDistanceRec;
-                                         /*PROTECTED REGION END*/};
-                                 }
-                                 /* namespace alica */
+                                                            void readConfigParameters();
+                                                            double fastCatchRadius;
+                                                            double slowCatchRadius;
+                                                            double alignTolerance;
+                                                            double ballDistanceRec;
+                                                            /*PROTECTED REGION END*/};
+                                                    }
+                                                    /* namespace alica */
 
 #endif /* PositionReceiver_H_ */
