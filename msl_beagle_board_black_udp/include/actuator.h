@@ -45,8 +45,6 @@ timeval			last_ping;
 
 CV				threw[7];
 
-supplementary::SystemConfig*	sc;
-
 bool			ex = false;
 
 

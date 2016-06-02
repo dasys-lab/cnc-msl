@@ -14,6 +14,13 @@
 
 class ShovelSelect
 {
+public:
+	ShovelSelect(BeaglePWM::PwmPin pwm_name);
+	~ShovelSelect();
+
+	bool checkTimeout(timeval time);
+	bool setShovel(bool passing, timeval time_now);
+
 private:
 	BeaglePWM *pwm;
 	BeaglePWM::PwmPin pwm_pin;
@@ -26,13 +33,6 @@ private:
 	int passPWM = 1300000;
 	int timeout;
 	timeval ping;
-
-public:
-	ShovelSelect(BeaglePWM::PwmPin pwm_name);
-	~ShovelSelect();
-
-	bool checkTimeout(timeval time);
-	bool setShovel(bool passing, timeval time_now);
 };
 
 #endif /* INCLUDE_SHOVELSELECT_H_ */

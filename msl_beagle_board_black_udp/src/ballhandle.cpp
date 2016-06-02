@@ -5,6 +5,8 @@
  *      Author: Lukas Will
  */
 
+#include <stdlib.h>
+#include <sys/time.h>
 
 #include "ballhandle.h"
 
