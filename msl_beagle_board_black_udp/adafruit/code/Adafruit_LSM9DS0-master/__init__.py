@@ -1,1 +1,0 @@
-from Adafruit_LSM9DS0 import Adafruit_LSM9DS0
