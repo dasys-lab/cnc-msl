@@ -3,9 +3,9 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1414828300860) ENABLED START*/ //Add additional includes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include <container/CNVelocity2D.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica

@@ -3,6 +3,10 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450178699265) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -76,7 +80,7 @@ namespace alica
                 }
                 if (wm->getTime() - freeTime > 330000000ul)
                 {
-                    this->success = true;
+                    this->setSuccess(true);
                 }
             }
             else
@@ -294,7 +298,7 @@ namespace alica
         if (wm->getTime() - entryTime > duelMaxTime)
         {
             cout << "Duel: time over " << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         /*PROTECTED REGION END*/

@@ -3,6 +3,8 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417620568675) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -46,7 +48,7 @@ namespace alica
         if (egoTarget->length() < 250)
         {
             cout << "DriveToPoint: Success" << endl;
-            this->success = true;
+            this->setSuccess(true);
         }
 
         send(mc);

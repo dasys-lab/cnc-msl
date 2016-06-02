@@ -1,5 +1,8 @@
 #include "DomainBehaviour.h"
 
+#include <RawSensorData.h>
+#include <Kicker.h>
+
 namespace alica
 {
 	msl::MSLWorldModel* wm;

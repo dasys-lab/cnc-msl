@@ -461,7 +461,10 @@ void getLightbarrier() {
 void getSwitches() {
 	supplementary::SystemConfig* sc;
 	sc = supplementary::SystemConfig::getInstance();
+<<<<<<< HEAD
 	enum	Pin { sw_vision, sw_bundle, sw_power, led_power, led_bundle, led_vision };
+=======
+>>>>>>> master
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
 	msl_actuator_msgs::VisionRelocTrigger msg_v;
 	process_manager::ProcessCommand msg_pm;
@@ -621,13 +624,22 @@ int main(int argc, char** argv) {
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier);
 	thread th_switches(getSwitches);
+<<<<<<< HEAD
 	thread th_imu(getIMU);
 //	thread th_imu(getIMU, &imuPub);
+=======
+	thread th_imu(getIMU); //, &imuPub);
+//	thread th_adns3080(getOptical, &mbcPub);
+>>>>>>> master
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
+<<<<<<< HEAD
 	bool imu = lsm9ds0.init();
+=======
+	 bool imu = lsm9ds0.init();
+>>>>>>> master
 	/*lsm9ds0.setRefAccel();
 	adns3080.reset();
 	adns3080.adns_init(); */

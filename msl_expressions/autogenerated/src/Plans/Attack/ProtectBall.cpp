@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Attack/ProtectBall.h"
 
 /*PROTECTED REGION ID(inccpp1457706592232) ENABLED START*/ //Add additional includes here
+#include <Ball.h>
+#include <RawSensorData.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -83,8 +85,7 @@ namespace alica
 
         if (aimPoint == nullptr)
         {
-            //this->failure = true;
-            this->success = true;
+            this->setSuccess(true);
             return;
         }
 
@@ -97,15 +98,14 @@ namespace alica
 
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
 
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 600)
-                //this->failure = true;
-                this->success = true;
+                this->setSuccess(true);
         }
 
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

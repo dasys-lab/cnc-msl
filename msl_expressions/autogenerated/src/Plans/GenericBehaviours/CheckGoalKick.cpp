@@ -8,8 +8,14 @@ using namespace std;
 #include "engine/AlicaEngine.h"
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/DebugPoint.h>
-
+#include <Game.h>
 #include <Rules.h>
+#include <RawSensorData.h>
+#include <Prediction.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
+#include <Kicker.h>
+#include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

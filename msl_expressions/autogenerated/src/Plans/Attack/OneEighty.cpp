@@ -7,6 +7,8 @@ using namespace std;
 #include "GeometryCalculator.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
 #include "pathplanner/PathProxy.h"
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -76,7 +78,7 @@ namespace alica
 
         if (aimPoint == nullptr)
         {
-            this->failure = true;
+            this->setFailure(true);
             return;
         }
         double aimAngle = aimPoint->angleTo();
@@ -86,13 +88,13 @@ namespace alica
         double deltaAngle = geometry::deltaAngle(ballAngle, aimAngle);
         if (abs(deltaAngle) < 20 * M_PI / 180)
         {
-            this->success = true;
+            this->setSuccess(true);
         }
         if (dstscan != nullptr)
         {
             double distBeforeBall = minFree(ballPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 600)
-                this->failure = true;
+                this->setFailure(true);
         }
 
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;

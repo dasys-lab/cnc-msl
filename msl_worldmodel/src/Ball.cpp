@@ -5,7 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#include <Ball.h>
+#include "Ball.h"
 #include "MSLWorldModel.h"
 
 #include "container/CNPoint3D.h"
@@ -18,6 +18,9 @@
 #include "ballTracking/EgoMotionEstimator.h"
 #include "ballTracking/SharedMemoryHelper.h"
 #include "MSLFootballField.h"
+#include "RawSensorData.h"
+#include "LightBarrier.h"
+#include "Robots.h"
 
 namespace msl
 {
@@ -359,7 +362,22 @@ namespace msl
 		else if (myEgoBall->length() < 450 /*in c# before: 400 changed for simulator*/
 		|| (this->selfInBallPossesion && myEgoBall->length() < 600))
 		{
-			this->selfInBallPossesion = true;
+			if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
+			{
+				if (wm->rawSensorData->getLightBarrier())
+				{
+
+					this->selfInBallPossesion = true;
+				}
+				else
+				{
+					this->selfInBallPossesion = false;
+				}
+			}
+			else
+			{
+				this->selfInBallPossesion = true;
+			}
 		}
 		else
 		{
@@ -522,8 +540,8 @@ namespace msl
 			return;
 		}
 
-		// is lightbarrier triggered
-		if (wm->lightBarrier->mayUseLightBarrier())
+		// is lightbarrier triggered and its no simulation
+		if (wm->lightBarrier->mayUseLightBarrier() && !wm->isUsingSimulator())
 		{
 			if (!wm->rawSensorData->getLightBarrier())
 			{

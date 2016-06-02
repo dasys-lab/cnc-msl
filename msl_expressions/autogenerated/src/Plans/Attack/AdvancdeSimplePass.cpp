@@ -3,6 +3,9 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1450176193656) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <Robots.h>
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,7 +18,7 @@ namespace alica
         maxVel = 2000;
         minDistToMate = 2000;
         gotMessage = false;
-        sc = supplementary::SystemConfig::getInstance();
+        this->sc = supplementary::SystemConfig::getInstance();
         teamMateTaskName = "";
         itcounter = 0;
         receiver = nullptr;

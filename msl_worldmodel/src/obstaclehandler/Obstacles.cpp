@@ -9,7 +9,9 @@
 #include "MSLFootballField.h"
 #include "obstaclehandler/SimpleCluster.h"
 #include "MSLWorldModel.h"
+#include "RawSensorData.h"
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
+#include "Robots.h"
 
 namespace msl
 {

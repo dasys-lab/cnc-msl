@@ -3,6 +3,10 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1459357144291) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include <Ball.h>
+#include <Robots.h>
+#include <RawSensorData.h>
+#include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -85,7 +89,7 @@ namespace alica
         {
             kc.enabled = true;
             send(kc);
-            this->success = true;
+            this->setSuccess(true);
         }
         /*PROTECTED REGION END*/
     }

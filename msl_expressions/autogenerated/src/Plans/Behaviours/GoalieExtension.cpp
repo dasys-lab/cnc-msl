@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Behaviours/GoalieExtension.h"
 
 /*PROTECTED REGION ID(inccpp1459249216387) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -38,12 +40,10 @@ namespace alica
                     tmp = tmp + buffer.at(pos) * gewichte.at(pos);
                     ++count2;
                     sum_gewichte += gewichte.at(pos);
-                    //Console.WriteLine("ring2 " + buffer[pos].X + " " + buffer[pos].Y + " " + gewichte[pos]);
                 }
             }
             catch (const std::out_of_range& e)
             {
-                //cout << "[GoalieExtension] Out of Range error in getAvgPoint! Index: " << pos << endl;;
             }
 
         }
@@ -85,7 +85,6 @@ namespace alica
         }
         catch (const std::out_of_range& e)
         {
-            //cout << "[GoalieExtension] Out of Range error." << endl;
             buffer.push_back(p);
         }
 
@@ -99,7 +98,6 @@ namespace alica
         }
         catch (const std::out_of_range& e)
         {
-            //cout << "[GoalieExtension] Out of Range error." << endl;
             gewichte.push_back(g);
         }
 
@@ -110,10 +108,10 @@ namespace alica
             DomainBehaviour("GoalieExtension")
     {
         /*PROTECTED REGION ID(con1459249216387) ENABLED START*/ //Add additional options here
-        useExt1 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt1", NULL);
-        useExt2 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt2", NULL);
-        useExt3 = (*this->sc)["Behaviour"]->get<int>("Goalie.UseExt3", NULL);
-        useKicker = (*this->sc)["Behaviour"]->get<int>("Goalie.UseKicker", NULL);
+        useExt1 = (*this->sc)["Behaviour"]->get<bool>("Goalie.UseExt1", NULL);
+        useExt2 = (*this->sc)["Behaviour"]->get<bool>("Goalie.UseExt2", NULL);
+        useExt3 = (*this->sc)["Behaviour"]->get<bool>("Goalie.UseExt3", NULL);
+        useKicker = (*this->sc)["Behaviour"]->get<bool>("Goalie.UseKicker", NULL);
         KICKER_WAIT_TIME = 40000000000;
         lastKickerTime = wm->getTime();
         ballGoalProjection = new ExperimentalRingbuffer(20);
@@ -134,7 +132,6 @@ namespace alica
         if (ownPos == nullptr)
             return;
 
-        //Point2D ballPos = KeeperHelper.GetBall(WM,SHWM);
         auto ballPos = wm->ball->getEgoBallPosition();
         if (ballPos == nullptr)
             return;
@@ -144,8 +141,7 @@ namespace alica
         long currentTime = wm->getTime();
         if (currentTime - lastKickerTime >= KICKER_WAIT_TIME)
         {
-            //cout << "[GoalieExtension] can kick..." << endl;
-            if (useKicker > 0 && ballPos != nullptr && ballPos->length() < 420
+            if (useKicker == true && ballPos != nullptr && ballPos->length() < 420
                     && (abs(ballPos->angleTo()) - M_PI) < 0.52)
             {
 
@@ -154,8 +150,6 @@ namespace alica
                 km.power = 100;
                 send(km);
                 lastKickerTime = wm->getTime();
-                //			Node.MainNode.RosInfo("Kick it");
-                //cout << "[GoalieExtension] KICK!" << endl;
             }
         }
         if (wm->rawSensorData->getLastMotionCommand() == nullptr)
@@ -165,8 +159,6 @@ namespace alica
         bm_last.motion.rotation = wm->rawSensorData->getLastMotionCommand()->motion.rotation;
         bm_last.motion.angle = wm->rawSensorData->getLastMotionCommand()->motion.angle;
         auto ballPosAllo = ballPos->egoToAllo(*ownPos);
-//		long now = DateTime.UtcNow.Ticks / 10000;
-//		long now = supplementary::DateTime::getUtcNowC() / 10000;
         long now = wm->getTime() / 1000000;
         auto ballPos3D = wm->ball->getBallPoint3D();
         if (ballPos3D != nullptr)
@@ -178,7 +170,6 @@ namespace alica
         }
 
         auto ballV3D = wm->ball->getBallVel3D();
-        //cout << "[GoalieExtenion] ballV3D " << (ballV3D == nullptr ? "nullptr" : "!nptr") << endl;
         if (ballV3D != nullptr && ballPos != nullptr)
         {
 
@@ -195,7 +186,6 @@ namespace alica
                 double distBall = ballPos->length();
 
                 double speed = wm->rawSensorData->getLastMotionCommand()->motion.translation;
-                //Console.WriteLine("gewicht speed " + speed);
                 double g = 0;
 
                 double g1 = 1.0 / (1.0 + exp(0.03 * (speed - 100.0))); //speed
@@ -208,8 +198,6 @@ namespace alica
                 double g5 = 1.0 / (1.0 + exp(0.0006 * (distBall - 6000)));
                 g = g1 * g2 * g3 * g4 * g5;
 
-                //Console.WriteLine("gewicht: " +g1+ " " +g2+ " " +g3+ " " +g4+ " " +g5+ " = " + g);
-//				Point3D ballVelo3DAllo = new Point3D(ballV3DAllo.Vx, ballV3DAllo.Vy, ballV3DAllo.Vz) ;
                 shared_ptr < geometry::CNPoint3D > ballVelo3DAllo = make_shared < geometry::CNPoint3D
                         > (ballV3DAllo->x, ballV3DAllo->y, ballV3DAllo->z);
 
@@ -233,13 +221,8 @@ namespace alica
                         double lookAtAngle = lookAtEgo->angleTo() + M_PI;
 
                         ballVelo3DAllo = ballVelo3DAllo->normalize();
-                        //Console.WriteLine("ghgh dstPoint " + dstPoint.X + " " + dstPoint.Y);
-                        //Console.WriteLine("ghgh ballVelo3DAllo " + ballVelo3DAllo.X + " " + ballVelo3DAllo.Y + " " + ballVelo3DAllo.Z);
-                        //Console.WriteLine("ghgh ballPosAllo " + ballPosAllo.X + " " + ballPosAllo.Y);
 
-                        //cout << "[GoalieExtension] break1" << endl;
                         ballGoalProjection->overWrite(dstPoint, g);
-                        //cout << "[GoalieExtension] break2" << endl;
                         ballVelocity->overWrite(make_shared < geometry::CNPoint2D > (ballV3DAllo->x, ballV3DAllo->y),
                                                 g);
 
@@ -248,55 +231,35 @@ namespace alica
                         {
                             count = 3;
                         }
-                        //cout << "[GoalieExtension] break3" << endl;
                         dstPoint = ballGoalProjection->getAvgPoint(count);
-                        //Console.WriteLine("ghgh dstPoint postbuffer " + dstPoint.X + " " + dstPoint.Y + " buffercount " + count);
                         dstPointEgo = dstPoint->alloToEgo(*ownPos);
 
-                        //cout << "[GoalieExtension] break4" << endl;
                         auto ballVeloBuf = ballVelocity->getAvgPoint((int)(ballPos->length() - 2000) / 2000);
                         double veloBuf = sqrt(ballVeloBuf->x * ballVeloBuf->x + ballVeloBuf->y * ballVeloBuf->y);
                         double timeBallToGoal2 = ballPosAllo->distanceTo(wm->field->posOwnGoalMid()) / veloBuf;
-                        //Console.WriteLine("ghgh timeBallToGoal2 " + timeBallToGoal2 + "sec");
                         double timeToDstPoint = dstPointEgo->length() / 800;
-                        //double timeToDstPoint = dstPointEgo.Distance() / 1000;
-                        //cout << "[GoalieExtension] timeToDstPoint < TimeBallToGoal2  | " << timeToDstPoint << " < "
-                        //		<< timeBallToGoal2 << " ball dist " << ballPos->length() << endl;
                         if (timeToDstPoint > timeBallToGoal2 && ballPos->length() < 5000)
                         {
-                            if (useExt3 > 0 && dstPointEgo->angleTo() < 0)
+                            if (useExt3 == true && dstPointEgo->angleTo() < 0)
                             {
-                                // Extension1 and Extension3 is switched on goalies hardware
-                                //km.extension = 3;
-                                km.extension = 1;
-//								Node.MainNode.RosInfo("FIRE EXT 3");
-                                //cout << "[GoalieExtension] Ext1!" << endl;
+                                km.extension = msl_actuator_msgs::KickControl::LEFT_EXTENSION;
                             }
-                            else if (useExt2 > 0)
+                            else if (useExt2 == true)
                             {
-                                km.extension = 2;
-//								Node.MainNode.RosInfo("FIRE EXT 2");
-                                //cout << "[GoalieExtension] Ext2!" << endl;
+                                km.extension = msl_actuator_msgs::KickControl::RIGHT_EXTENSION;
                             }
-                            if (useExt3 > 0 || useExt2 > 0)
+                            if (useExt3 == true || useExt2 == true)
                             {
                                 km.extTime = 1000;
                                 send(km);
                             }
                         }
-                        else if (useExt1 > 0 && timeBallToGoal2 < 1.0 && abs(dstPointEgo->y - ownPos->y) < 400
+                        else if (useExt1 == true && timeBallToGoal2 < 1.0 && abs(dstPointEgo->y - ownPos->y) < 400
                                 && ballInAirTimestamp + 3000 > now)
                         {
-                            //cout << "[GoalieExtension] abs(dstPointEgo->y - ownPos->y) < 400 | " << abs(dstPointEgo->y - ownPos->y) << " < " << 400 << endl;
-                            //cout << "                  ballInAirTimestamp + 3000 > now | " << ballInAirTimestamp + 3000 << " > " << now << endl;
-
-                            // Extension1 and Extension3 is switched on goalies hardware
-                            //km.extension = 1;
-                            km.extension = 3;
+                            km.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
                             km.extTime = 1000;
                             send(km);
-                            //Node.MainNode.RosInfo("FIRE EXT 1");
-                            //cout << "[GoalieExtension] Ext3 (Top)" << endl;
                         }
 
                     }

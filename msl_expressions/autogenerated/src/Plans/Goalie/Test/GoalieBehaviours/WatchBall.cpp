@@ -4,6 +4,9 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863466691) ENABLED START*/ //Add additional includes here
 #include <cmath>
 #include <vector>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,22 +30,28 @@ namespace alica
             DomainBehaviour("WatchBall")
     {
         /*PROTECTED REGION ID(con1447863466691) ENABLED START*/ //Add additional options here
+        alignTowardsBall = (*this->sc)["Behaviour"]->get<bool>("Goalie.AlignTowardsBall", NULL);
+        rotationLimit = (*this->sc)["Behaviour"]->get<double>("Goalie.RotationLimit", NULL);
         maxVariance = (*this->sc)["Behaviour"]->get<int>("Goalie.MaxVariance", NULL);
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
         nrOfPositions = (*this->sc)["Behaviour"]->get<int>("Goalie.NrOfPositions", NULL);
-        pFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.pFactor", NULL);
-        dFactor = (*this->sc)["Behaviour"]->get<double>("Goalie.dFactor", NULL);
+
+        pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
+        dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
+        pRot = (*this->sc)["Behaviour"]->get<double>("Goalie.pRot", NULL);
+        dRot = (*this->sc)["Behaviour"]->get<double>("Goalie.dRot", NULL);
+        lastRotErr = 0;
+        prevTargetDist = 0;
+
         snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
-        fastRotation = fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
         ballPositions = new RingBuffer<geometry::CNPoint2D>(nrOfPositions);
-        auto tempMid = alloGoalMid = wm->field->posOwnGoalMid();
+        auto tempMid = wm->field->posOwnGoalMid();
         alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
-        prevTargetDist = 0;
         /*PROTECTED REGION END*/
     }
     WatchBall::~WatchBall()
@@ -65,14 +74,19 @@ namespace alica
         shared_ptr < geometry::CNPoint2D > alloBall = wm->ball->getAlloBallPosition();
         if (alloBall == nullptr || abs(alloBall->x) > abs(alloGoalMid->x) + 50)
         {
+
+            /*
+             * Goalie drives to last known target and rotates towards mirrored own position
+             */
+
             cout << "[WatchBall]: Goalie can't see ball! Moving to prevTarget" << endl;
             mc.motion.angle = prevTarget->alloToEgo(*ownPos)->angleTo();
-            // TODO: set Rotation a little towards ball (not fieldCntr)
-            mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
+            rotate(make_shared < geometry::CNPoint2D > (-ownPos->x, ownPos->y));
             mc.motion.translation = std::min(
                     alignMaxVel,
-                    (prevTarget->alloToEgo(*ownPos)->length() * pFactor)
-                            + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dFactor));
+                    (prevTarget->alloToEgo(*ownPos)->length() * pTrans)
+                            + ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
+            send (mc);
             return;
         }
 
@@ -83,9 +97,10 @@ namespace alica
          */
 
         shared_ptr < geometry::CNPoint2D > alloTarget;
+        double targetY;
         if (ballPositions->getSize() > 0)
         {
-            double targetY = calcGoalImpactY();
+            targetY = calcGoalImpactY();
             targetY = fitTargetY(targetY);
             alloTarget = make_shared < geometry::CNPoint2D > (alloGoalMid->x, targetY);
             prevTarget = alloTarget;
@@ -93,6 +108,7 @@ namespace alica
         else
         {
             alloTarget = prevTarget;
+            targetY = alloTarget->y;
         }
 
 //		cout << "[WatchBall] alloBall:" << wm->ball.getAlloBallPosition()->toString();
@@ -105,36 +121,34 @@ namespace alica
          */
 
         mc.motion.angle = egoTarget->angleTo();
-        // TODO: set Rotation a little towards ball (not fieldCntr)
-        mc.motion.rotation = alloFieldCntr->alloToEgo(*ownPos)->rotate(M_PI)->angleTo() * fastRotation;
+        rotate (alloBall);
 
         if (egoTarget->length() > snapDistance)
         {
-            auto tempPFactor = pFactor;
+            auto tempPFactor = pTrans;
             if (egoBall != nullptr && egoBall->egoToAllo(*ownPos) != nullptr
                     && egoBall->egoToAllo(*ownPos)->x > alloFieldCntr->x + 1000)
             {
 //				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
-                tempPFactor = pFactor / 2;
+                tempPFactor = pTrans / 2;
             }
             else
             {
-                tempPFactor = pFactor;
+                tempPFactor = pTrans;
             }
             mc.motion.translation = std::min(
                     alignMaxVel,
-                    (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dFactor));
+                    (egoTarget->length() * tempPFactor) + ((egoTarget->length() - prevTargetDist) * dTrans));
 //			cout << "[WatchBall] targetDistance: " << egoTarget->length() << endl;
-//			cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl;
-//			cout << endl;
+//			cout << "[WatchBall] TRANSLATION: " << mc.motion.translation << endl << endl;
         }
         else
         {
             mc.motion.translation = 0;
-//			cout << "[WatchBall] arrived at target!" << endl;
+            //			cout << "[WatchBall] arrived at target!" << endl;
         }
 
-        prevTargetDist = egoTarget->length();
+        //prevTargetDist = egoTarget->length();
         send (mc);
 
         /*PROTECTED REGION END*/
@@ -225,7 +239,7 @@ namespace alica
         }
         else
         {
-            // TODO: use this as soon as Goalie Vision detects Obstacles better!
+            // TODO: use this when Goalie Vision detects Obstacles better?!
             auto obstacles = wm->obstacles->getAlloObstaclePoints();
             shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
             double minDistBallObs = 20000;
@@ -268,19 +282,63 @@ namespace alica
 
         if (targetY > alloGoalLeft->y)
         {
-            //cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
+//			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
             return alloGoalLeft->y;
         }
         else if (targetY < alloGoalRight->y)
         {
-            //cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
+//			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
             return alloGoalRight->y;
         }
         else
         {
-            //cout << "[WatchBall] fitTarget else: " << targetY << endl;
+//			cout << "[WatchBall] fitTarget else: " << targetY << endl;
             return targetY;
         }
+    }
+
+    void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
+    {
+        shared_ptr < geometry::CNPoint2D > alignPoint;
+        double ballAngle = ownPos->getPoint()->angleToPoint(alloTarget) / M_PI * 180;
+
+        if (alignTowardsBall == true)
+        {
+            double radRotLim = rotationLimit * M_PI / 180.0;
+            // todo: only allow smaller rotationLimit when close to posts?
+            if (ballAngle <= -rotationLimit)
+            {
+                alignPoint = make_shared < geometry::CNPoint2D
+                        > (ownPos->x + 1000, -((tan(radRotLim) * 1000) - ownPos->y));
+            }
+            else if (ballAngle >= rotationLimit)
+            {
+                alignPoint = make_shared < geometry::CNPoint2D
+                        > (ownPos->x + 1000, (tan(radRotLim) * 1000) + ownPos->y);
+            }
+            else
+            {
+                alignPoint = alloTarget;
+            }
+        }
+        else
+        {
+            alignPoint = alloFieldCntr;
+        }
+
+        double angleErr = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+        mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
+        lastRotErr = angleErr;
+
+//		double angleAlignPoint = ownPos->getPoint()->angleToPoint(alignPoint) / M_PI * 180;
+//		cout << "[WatchBall] alignPAngle: " << angleAlignPoint << endl;
+//		cout << "[WatchBall] ballAngle  : " << ballAngle << endl;
+//		cout << "[WatchBall] rotationLim: " << rotationLimit << endl;
+//		cout << "[WatchBall] alloBall   : " << alloBall->x << " " << alloBall->y << endl;
+//		cout << "[WatchBall] alloAPoint : " << alignPoint->x << " " << alignPoint->y << endl;
+//		cout << "[WatchBall] alloOwnPos : " << ownPos->x << " " << ownPos->y << endl;
+//		cout << "[WatchBall] rotation   : " << mc.motion.rotation << endl;
+//		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

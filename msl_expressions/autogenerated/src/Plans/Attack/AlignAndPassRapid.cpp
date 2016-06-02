@@ -5,7 +5,14 @@ using namespace std;
 #include "msl_helper_msgs/PassMsg.h"
 #include "pathplanner/VoronoiNet.h"
 #include "pathplanner/PathProxy.h"
-#define DBM_DEBUG 1
+#include "msl_helper_msgs/DebugMsg.h"
+#include "msl_helper_msgs/DebugPoint.h"
+#include <SystemConfig.h>
+#include <RawSensorData.h>
+#include <Kicker.h>
+#include <Robots.h>
+#include <pathplanner/PathPlanner.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,6 +33,7 @@ namespace alica
         this->distToFieldBorder = NAN;
         this->minCloserOffset = NAN;
         this->closerFactor = NAN;
+        this->closerFactor2 = NAN;
         this->arrivalTimeOffset = NAN;
         this->maxVel = 2000;
         this->pRot = 2.1;
@@ -37,6 +45,13 @@ namespace alica
         this->sc = supplementary::SystemConfig::getInstance();
         this->alloAimPoint = nullptr;
         this->pathProxy = msl::PathProxy::getInstance();
+        this->alloBall = nullptr;
+        this->alloPos = nullptr;
+        this->bestAoc = nullptr;
+        this->bestPassUtility = numeric_limits<double>::min();
+        this->bestTeamMateId = -1;
+        this->found = false;
+        this->best_point = -1;
         /*PROTECTED REGION END*/
     }
     AlignAndPassRapid::~AlignAndPassRapid()
@@ -48,7 +63,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1436269063295) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        shared_ptr < geometry::CNPosition > alloPos = this->wm->rawSensorData->getOwnPositionVision();
+        alloPos = this->wm->rawSensorData->getOwnPositionVision();
         if (alloPos == nullptr)
         {
 //			mc = DriveHelper.DriveRandomly(500,WM);
@@ -65,7 +80,7 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > alloBall = this->wm->ball->getAlloBallPosition();
+        alloBall = this->wm->ball->getAlloBallPosition();
         if (alloBall == nullptr)
         {
             cout << "AAPR: Allo Ball is null" << endl;
@@ -85,7 +100,7 @@ namespace alica
 
             if (teammates == nullptr)
             {
-                cout << "S4PP: No Teammate for entry point " << ep->toString() << endl;
+                cout << "AAPR: No Teammate for entry point " << ep->toString() << endl;
                 return;
             }
 
@@ -109,7 +124,7 @@ namespace alica
             return;
         }
 
-        auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
+        matePoses = wm->robots->teammates.getTeammatesAlloClustered();
         if (matePoses == nullptr)
         {
             cout << "matePoses == nullptr" << endl;
@@ -124,17 +139,15 @@ namespace alica
             }
         }
 
-        double bestPassUtility = numeric_limits<double>::min();
-        double currPassUtility = 0;
-        int bestTeamMateId = -1;
-        shared_ptr < geometry::CNPoint2D > bestPassVNode = nullptr;
-        shared_ptr < geometry::CNPoint2D > bestAoc = nullptr;
-        bool found = false;
+        bestPassUtility = numeric_limits<double>::min();
+        bestTeamMateId = -1;
+        bestAoc = nullptr;
+        found = false;
 
 #ifdef DBM_DEBUG
-        int best_point = -1;
-        msl_helper_msgs::DebugMsg dbm;
-        dbm.topic = "Pass";
+        best_point = -1;
+        dbm = make_shared<msl_helper_msgs::DebugMsg>();
+        dbm->topic = "Pass";
 #endif
         for (int teamMateId : this->teamMateIds)
         {
@@ -150,152 +163,24 @@ namespace alica
                 shared_ptr < geometry::CNPoint2D > passPoint = vertices->at(i);
                 shared_ptr < geometry::CNPoint2D > receiver = make_shared < geometry::CNPoint2D
                         > (teamMatePos->x, teamMatePos->y);
-                shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
-                double rcv2PassPointDist = rcv2PassPoint->length();
-                double factor = closerFactor;
-                if (factor * rcv2PassPointDist < minCloserOffset)
-                {
-                    factor = factor * rcv2PassPointDist;
-                }
-                else
-                {
-                    factor = rcv2PassPointDist - minCloserOffset;
-                }
-                factor = max(factor, 0.0);
-                passPoint = receiver + rcv2PassPoint->normalize() * factor;
-#ifdef DBM_DEBUG
-                msl_helper_msgs::DebugPoint dbp;
-                dbp.point.x = passPoint->x;
-                dbp.point.y = passPoint->y;
-                dbp.radius = 0.3;
-                dbm.points.push_back(dbp);
-#endif
-                if (wm->field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
-                && !wm->field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
-                && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
-                        )
-                {
+                findBestPassPoint(this->closerFactor, passPoint, receiver, vNet, teamMatePos, teamMateId);
+                findBestPassPoint(this->closerFactor2, passPoint, receiver, vNet, teamMatePos, teamMateId);
+                findBestPassPoint(0.0, receiver, receiver, vNet, teamMatePos, teamMateId);
 
-                    // min dist to opponent
-                    auto obs = vNet->getOpponentPositions();
-                    bool opponentTooClose = false;
-                    if (obs != nullptr)
-                    {
-                        for (int i = 0; i < obs->size(); i++)
-                        {
-                            if (obs->at(i) != nullptr && obs->at(i)->distanceTo(passPoint) < minOppDist)
-                            {
-                                opponentTooClose = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (opponentTooClose)
-                    {
-#ifdef DBM_DEBUG
-                        dbm.points.at(dbm.points.size() - 1).red = 0.2 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).green = 0.2 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).blue = 0.2 * 255.0;
-#endif
-                        continue;
-                    }
-//						if ((vNodes[i].tri.p[0].ident == -1 && vNodes[i].tri.p[0].DistanceTo(passPoint) < minOppDist)
-//								|| (vNodes[i].tri.p[1].ident == -1
-//										&& vNodes[i].tri.p[1].DistanceTo(passPoint) < minOppDist)
-//								|| (vNodes[i].tri.p[2].ident == -1
-//										&& vNodes[i].tri.p[2].DistanceTo(passPoint) < minOppDist))
-//						{
-//							continue;
-//						}
-
-                    //small angle to turn to pass point
-                    if (geometry::absDeltaAngle(
-                            alloPos->theta + M_PI,
-                            (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
-                            > maxTurnAngle)
-                    {
-#ifdef DBM_DEBUG
-                        dbm.points.at(dbm.points.size() - 1).red = 0.4 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).green = 0.4 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).blue = 0.4 * 255.0;
-#endif
-                        continue;
-                    }
-                    // some calculation to check whether any opponent is inside the pass vector triangle
-                    shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
-                    double passLength = ball2PassPoint->length();
-                    shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
-                            > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
-                    shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
-                    shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-                    if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
-                            && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth,
-                                                 vNet->getObstaclePositions()))
-                    {
-#ifdef DBM_DEBUG
-                        dbm.points.at(dbm.points.size() - 1).red = 0.6 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).green = 0.6 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).blue = 0.6 * 255.0;
-#endif
-                        continue;
-                    }
-
-                    // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
-                    if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
-                    {
-#ifdef DBM_DEBUG
-                        dbm.points.at(dbm.points.size() - 1).red = 0.8 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).green = 0.8 * 255.0;
-                        dbm.points.at(dbm.points.size() - 1).blue = 0.8 * 255.0;
-#endif
-                        continue;
-                    }
-                    else
-                    {
-                        found = true;
-
-#ifdef DBM_DEBUG
-                        dbm.points.at(dbm.points.size() - 1).red = 255;
-                        dbm.points.at(dbm.points.size() - 1).green = 255;
-                        dbm.points.at(dbm.points.size() - 1).blue = 255;
-#endif
-
-                        //this.SuccessStatus = true;
-                        //Here we have to pick the best one...
-                        currPassUtility = 0;
-
-                        currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field->getFieldWidth();
-
-                        currPassUtility += (wm->field->getFieldLength() / 2.0 + passPoint->x)
-                                / wm->field->getFieldLength();
-
-                        if (currPassUtility > bestPassUtility)
-                        {
-#ifdef DBM_DEBUG
-                            best_point = dbm.points.size() - 1;
-#endif
-                            alloAimPoint = passPoint;
-                            bestPassUtility = currPassUtility;
-                            bestAoc = make_shared < geometry::CNPoint2D > (teamMatePos->x, teamMatePos->y);
-                            bestTeamMateId = teamMateId;
-                        }
-
-                    }
-                }
             }
         }
 #ifdef DBM_DEBUG
         if (best_point >= 0)
         {
-            dbm.points.at(best_point).red = 0;
-            dbm.points.at(best_point).green = 0;
+            dbm->points.at(best_point).red = 0;
+            dbm->points.at(best_point).green = 0;
         }
-        send(dbm);
+        send(*dbm);
 #endif
         if (!found)
         { // No Pass point found, so return everything
-            this->success = true;
-            cout << "AAPR: No valid pass point found! SuccessStatus: " << this->success << endl;
+            this->setSuccess(true);
+            cout << "AAPR: No valid pass point found! SuccessStatus: " << this->isSuccess() << endl;
             return;
         }
         //Turn to goal...
@@ -354,7 +239,7 @@ namespace alica
             else
             {
                 km.power = (ushort)wm->kicker->getPassKickpower(dist,
-                                                               estimatedTimeForReceiverToArrive + arrivalTimeOffset);
+                                                                estimatedTimeForReceiverToArrive + arrivalTimeOffset);
             }
 
             send(km);
@@ -369,7 +254,7 @@ namespace alica
         {
             double distBeforeBall = minFree(egoBallPos->angleTo(), 200, dstscan);
             if (distBeforeBall < 250)
-                this->failure = true;
+                this->setFailure(true);
         }
         mc = msl_actuator_msgs::MotionControl();
         mc.motion.rotation = deltaAngle * pRot + (deltaAngle - lastRotError) * dRot;
@@ -474,6 +359,7 @@ namespace alica
             }
             this->minCloserOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "MinCloserOffset", NULL);
             this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
+            this->closerFactor2 = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor2", NULL);
             this->arrivalTimeOffset = (*this->sc)["Behaviour"]->get<double>("Pass", "ArrivalTimeOffset", NULL);
 
             //Align Params
@@ -497,6 +383,142 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1436269063295) ENABLED START*/ //Add additional methods here
+    void AlignAndPassRapid::findBestPassPoint(double cf, shared_ptr<geometry::CNPoint2D> passPoint,
+                                              shared_ptr<geometry::CNPoint2D> receiver,
+                                              shared_ptr<msl::VoronoiNet> vNet,
+                                              shared_ptr<geometry::CNPosition> teamMatePos, int teamMateId)
+    {
+        double currPassUtility = 0;
+        shared_ptr < geometry::CNPoint2D > rcv2PassPoint = passPoint - receiver;
+        double rcv2PassPointDist = rcv2PassPoint->length();
+        double factor = closerFactor;
+        if (factor * rcv2PassPointDist < minCloserOffset)
+        {
+            factor = factor * rcv2PassPointDist;
+        }
+        else
+        {
+            factor = rcv2PassPointDist - minCloserOffset;
+        }
+        factor = max(factor, 0.0);
+        if (rcv2PassPoint->x != 0 && rcv2PassPoint->y != 0)
+        {
+            passPoint = receiver + rcv2PassPoint->normalize() * factor;
+        }
+        else
+        {
+            passPoint = receiver;
+        }
+#ifdef DBM_DEBUG
+        msl_helper_msgs::DebugPoint dbp;
+        dbp.point.x = passPoint->x;
+        dbp.point.y = passPoint->y;
+        dbp.radius = 0.3;
+        dbm->points.push_back(dbp);
+#endif
+        if (wm->field->isInsideField(passPoint, distToFieldBorder) // pass point must be inside the field with distance to side line of 1.5 metre
+        && !wm->field->isInsidePenalty(passPoint, 0.0) && alloBall->distanceTo(passPoint) < maxPassDist // max dist to pass point
+        && alloBall->distanceTo(passPoint) > minPassDist // min dist to pass point
+                )
+        {
+
+            // min dist to opponent
+            auto obs = vNet->getOpponentPositions();
+            bool opponentTooClose = false;
+            if (obs != nullptr)
+            {
+                for (int i = 0; i < obs->size(); i++)
+                {
+                    if (obs->at(i) != nullptr && obs->at(i)->distanceTo(passPoint) < minOppDist)
+                    {
+                        opponentTooClose = true;
+                        break;
+                    }
+                }
+            }
+            if (opponentTooClose)
+            {
+#ifdef DBM_DEBUG
+                dbm->points.at(dbm->points.size() - 1).red = 0.2 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).green = 0.2 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).blue = 0.2 * 255.0;
+#endif
+                return;
+            }
+            //small angle to turn to pass point
+            if (geometry::absDeltaAngle(
+                    alloPos->theta + M_PI,
+                    (passPoint - make_shared < geometry::CNPoint2D > (alloPos->x, alloPos->y))->angleTo())
+                    > maxTurnAngle)
+            {
+#ifdef DBM_DEBUG
+                dbm->points.at(dbm->points.size() - 1).red = 0.4 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).green = 0.4 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).blue = 0.4 * 255.0;
+#endif
+                return;
+            }
+            // some calculation to check whether any opponent is inside the pass vector triangle
+            shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
+            double passLength = ball2PassPoint->length();
+            shared_ptr < geometry::CNPoint2D > ball2PassPointOrth = make_shared < geometry::CNPoint2D
+                    > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
+            shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
+            shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
+            if (!outsideTriangle(alloBall, right, left, ballRadius, vNet->getObstaclePositions())
+                    && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, vNet->getObstaclePositions()))
+            {
+#ifdef DBM_DEBUG
+                dbm->points.at(dbm->points.size() - 1).red = 0.6 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).green = 0.6 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).blue = 0.6 * 255.0;
+#endif
+                return;
+            }
+
+            // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
+            if (!outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
+            {
+#ifdef DBM_DEBUG
+                dbm->points.at(dbm->points.size() - 1).red = 0.8 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).green = 0.8 * 255.0;
+                dbm->points.at(dbm->points.size() - 1).blue = 0.8 * 255.0;
+#endif
+                return;
+            }
+            else
+            {
+                found = true;
+
+#ifdef DBM_DEBUG
+                dbm->points.at(dbm->points.size() - 1).red = 255;
+                dbm->points.at(dbm->points.size() - 1).green = 255;
+                dbm->points.at(dbm->points.size() - 1).blue = 255;
+#endif
+
+                //this.SuccessStatus = true;
+                //Here we have to pick the best one...
+                currPassUtility = 0;
+
+                currPassUtility += 1.0 - 2.0 * abs(passPoint->y) / wm->field->getFieldWidth();
+
+                currPassUtility += (wm->field->getFieldLength() / 2.0 + passPoint->x) / wm->field->getFieldLength();
+
+                if (currPassUtility > bestPassUtility)
+                {
+#ifdef DBM_DEBUG
+                    best_point = dbm->points.size() - 1;
+#endif
+                    alloAimPoint = passPoint;
+                    bestPassUtility = currPassUtility;
+                    bestAoc = make_shared < geometry::CNPoint2D > (teamMatePos->x, teamMatePos->y);
+                    bestTeamMateId = teamMateId;
+                }
+
+            }
+        }
+    }
+
     bool AlignAndPassRapid::outsideCorridore(shared_ptr<geometry::CNPoint2D> ball,
                                              shared_ptr<geometry::CNPoint2D> passPoint, double passCorridorWidth,
                                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points)

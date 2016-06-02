@@ -7,6 +7,9 @@
 
 #include "Opponents.h"
 #include "MSLWorldModel.h"
+#include "Robots.h"
+#include "GeometryCalculator.h"
+#include "Ball.h"
 
 namespace msl
 {

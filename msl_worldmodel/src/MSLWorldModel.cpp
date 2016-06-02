@@ -12,6 +12,36 @@
 #include "engine/AlicaEngine.h"
 #include "engine/IAlicaClock.h"
 #include "tf/tf.h"
+#include <std_msgs/Bool.h>
+#include <msl_msgs/JoystickCommand.h>
+#include <msl_actuator_msgs/IMUData.h>
+#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include <msl_actuator_msgs/MotionBurst.h>
+#include <gazebo_msgs/ModelStates.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/WatchBallMsg.h>
+#include <msl_sensor_msgs/SimulatorWorldModelData.h>
+#include <msl_sensor_msgs/WorldModelData.h>
+#include <msl_sensor_msgs/CorrectedOdometryInfo.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
+#include <msl_sensor_msgs/SharedWorldInfo.h>
+#include <container/CNPoint2D.h>
+#include <container/CNPosition.h>
+#include "RawSensorData.h"
+#include "Robots.h"
+#include "Ball.h"
+#include "Game.h"
+#include "Kicker.h"
+#include "WhiteBoard.h"
+#include "MSLFootballField.h"
+#include "EventTrigger.h"
+#include "InformationElement.h"
+#include "Prediction.h"
+#include "Monitoring.h"
+#include "LightBarrier.h"
+#include "obstaclehandler/Obstacles.h"
+#include "pathplanner/PathPlanner.h"
+
 
 
 namespace msl
@@ -82,6 +112,7 @@ namespace msl
 											(MSLWorldModel*)this);
 		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
 										(MSLWorldModel*)this);
+		imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel*)this);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
@@ -277,6 +308,11 @@ namespace msl
 	{
 		lock_guard<mutex> lock(motionBurstMutex);
 		rawSensorData->processMotionBurst(msg);
+	}
+
+	void MSLWorldModel::onIMUData(msl_actuator_msgs::IMUDataPtr msg)
+	{
+		rawSensorData->processIMUData(msg);
 	}
 
 	MSLWorldModel::~MSLWorldModel()

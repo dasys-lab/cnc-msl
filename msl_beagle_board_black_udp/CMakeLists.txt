@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_beagle_board_black_udp)
 
@@ -19,9 +18,9 @@ find_package(catkin REQUIRED COMPONENTS
   cnc_geometry
   msl_actuator_msgs
   msl_black_lib
-  msl_bbb_api
   system_config
   process_manager
+  cnc_geometry
 )
 
 
@@ -123,6 +122,7 @@ add_executable(msl_beagle_board_black_udp
 	src/opticalflow.cpp
 	src/sensor.cpp
 	src/shovelselect.cpp
+	src/sensor.cpp
 )
 add_executable(debug_udp src/debug.cpp)
 

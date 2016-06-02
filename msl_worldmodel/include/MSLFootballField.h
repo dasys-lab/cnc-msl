@@ -26,8 +26,6 @@
 #include <SystemConfig.h>
 #include <GeometryCalculator.h>
 
-using namespace supplementary;
-
 //                   T  H  E    E  N  E  M  Y  `  S    S  I  D  E
 //
 //30---------------------------------------------------------------------------+
@@ -204,22 +202,21 @@ namespace msl
 
 	private:
 
-		SystemConfig* sc;
+		supplementary::SystemConfig* sc;
 		MSLWorldModel* wm;
-//		static MSLFootballField * instance;
 
 		double FieldLength;
 		double FieldWidth;
 		double PenaltyAreaWidth;
 		double PenaltyAreaLength;
+		bool GoalInnerAreaExists;
 		double GoalAreaLength;
 		double GoalAreaWidth;
+		bool CornerCircleExists;
 		double CornerCircleRadius;
 		double MiddleCircleRadius;
 		double LineWidth;
 		double GoalWidth;
-		bool GoalInnerAreaExists;
-		bool CornerCircleExists;
 		double PenaltySpot;
 		double Surrounding;
 		double PenaltyAreaMappingTolerance;

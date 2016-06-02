@@ -2,6 +2,8 @@ using namespace std;
 #include "Plans/Dribble/DribbleControl.h"
 
 /*PROTECTED REGION ID(inccpp1449742071382) ENABLED START*/ //Add additional includes here
+#include <RawSensorData.h>
+#include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

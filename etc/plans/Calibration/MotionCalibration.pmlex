@@ -2,11 +2,11 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="MotionCalibration.pml#1442919721162"/>
-    <value xPos="78" yPos="57" width="81" height="67" collapsed="false"/>
+    <value xPos="102" yPos="21" width="172" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1442919721161"/>
-    <value xPos="-22" yPos="-1" width="720" height="435"/>
+    <value xPos="-47" yPos="64" width="915" height="458"/>
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1442919721163"/>
@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1442919790374"/>
-    <value xPos="248" yPos="61" collapsed="false"/>
+    <value xPos="311" yPos="7" width="172" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1442919801497"/>
@@ -30,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1442921032957"/>
-    <value xPos="308" yPos="232" width="193" height="86" collapsed="false"/>
+    <value xPos="534" yPos="57" width="193" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../GenericBehaviours/DriveToPoint.beh#1442921078802"/>
@@ -50,7 +50,7 @@
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1443003793160"/>
-    <value xPos="122" yPos="237" width="158" height="86" collapsed="false"/>
+    <value xPos="509" yPos="265" width="172" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1443003805912"/>
@@ -58,7 +58,7 @@
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1443003834928"/>
-    <value xPos="-2" yPos="151" width="142" height="86" collapsed="false"/>
+    <value xPos="52" yPos="165" width="172" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1443003845234"/>
@@ -98,6 +98,18 @@
   </extensions>
   <extensions>
     <key href="../Behaviours/SpinSlowly.beh#1435159282996"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1464350100818"/>
+    <value xPos="259" yPos="292" width="172" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1464350167678"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1464350170546"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

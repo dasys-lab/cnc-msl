@@ -20,18 +20,32 @@ IMU::IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P) {
 	gyr = new Sensor();
 	mag = new Sensor();
 
+	acc = new Sensor();
+	gyr = new Sensor();
+	mag = new Sensor();
+
 	temperature = 0;
 }
 
 IMU::~IMU() {
+<<<<<<< HEAD
 	delete gpio;
+=======
+	delete i_acc;
+	delete i_gyro;
+	delete i_mag;
+	delete i_temp;
+>>>>>>> master
 	delete acc;
 	delete gyr;
 	delete mag;
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 bool IMU::init() {
 	initAccel(ACC_RATE_25, ACC_AFS_2G);
 	initGyro(GYR_RATE_95, GYR_BW_00, GYR_FS_500DPS);
@@ -158,6 +172,7 @@ void IMU::initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale) {
 void IMU::initMagnet(uint8_t res, uint8_t rate, uint8_t scale) {
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
+<<<<<<< HEAD
 
 	uint8_t r;
 
@@ -250,12 +265,85 @@ void IMU::getGyro() {
 		point = point - gyr->offset;
 
 	gyr->data.push_back(point);
+=======
+
+	uint8_t r;
+
+	// Set CTRL-Reg 5 with magnetic resolution and rate
+	r = i2c->readByte(CTRL_REG5_XM);
+	r = (r & ~(0b01100000)) | (res << 5);
+	r = (r & ~(0b00011100)) | (rate << 2);
+	i2c->writeByte(CTRL_REG5_XM, r);
+
+	// Set CTRL-Reg 6 with magnetic scale
+	r = i2c->readByte(CTRL_REG6_XM);
+	r = (r & ~(0b01100000)) | (scale << 5);
+	i2c->writeByte(CTRL_REG6_XM, r);
+
+	// Set CTRL-Reg 7 with continuous conversion mode
+	r = i2c->readByte(CTRL_REG7_XM);
+	r = (r & ~(0b00000011)) | MAG_MODE_CONTINUOUS;
+	i2c->writeByte(CTRL_REG7_XM, r);
+
+	switch (scale) {
+		case MAG_MFS_2GAUSS:
+			mag->sense = MAG_SENSE_2GAUSS;
+			break;
+
+		case MAG_MFS_4GAUSS:
+			mag->sense = MAG_SENSE_4GAUSS;
+			break;
+
+		case MAG_MFS_8GAUSS:
+			mag->sense = MAG_SENSE_8GAUSS;
+			break;
+
+		case MAG_MFS_12GAUSS:
+			mag->sense = MAG_SENSE_12GAUSS;
+			break;
+
+		default:
+			mag->sense = MAG_SENSE_2GAUSS;
+			break;
+	}
+}
+
+void IMU::initTemp(bool enable) {
+	uint8_t r;
+
+	// enable/disable temperature sensor
+	r = i2c->readByte(CTRL_REG5_XM);
+	r = (r & ~(0b10000000)) | (enable << 7);
+	i2c->writeByte(CTRL_REG5_XM, r);
+}
+
+void IMU::getAccel() {
+	if (i2c->getDeviceAddress() != ADR_XM)
+		i2c->setDeviceAddress(ADR_XM);
+
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | ACC_OUT_X, val, 6);		// 0x80 needed for readBlock() function
+
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+
+	// get data and conversion from acceleration of gravity [mm/s^2] to acceleration [m/s^2]
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point * 9.81 / 1000 * acc->sense;
+	if (acc->offset != nullptr)
+		point = point - acc->offset;
+
+	acc->data.push_back(point);
+>>>>>>> master
 }
 
 void IMU::getMagnet() {
 	if (i2c->getDeviceAddress() != ADR_XM)
 		i2c->setDeviceAddress(ADR_XM);
 
+<<<<<<< HEAD
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
@@ -268,6 +356,45 @@ void IMU::getMagnet() {
 
 	point = point * mag->sense;
 
+=======
+void IMU::getGyro() {
+	if (i2c->getDeviceAddress() != ADR_G)
+		i2c->setDeviceAddress(ADR_G);
+
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | GYR_OUT_X, val, 6);		// 0x80 needed for readBlock() function
+
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+
+	// conversion from milli degree per second in [mdps] to degree per second [dps]
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point / 1000 * gyr->sense;
+	if (acc->offset != nullptr)
+		point = point - gyr->offset;
+
+	gyr->data.push_back(point);
+}
+
+void IMU::getMagnet() {
+	if (i2c->getDeviceAddress() != ADR_XM)
+		i2c->setDeviceAddress(ADR_XM);
+
+	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
+
+	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+	
+	// conversion from milli gauss [mgauss] to radiant and degree
+	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+
+	point = point * mag->sense;
+
+>>>>>>> master
 	mag->data.push_back(point);
 }
 

@@ -5,8 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#include <Game.h>
+#include "Game.h"
+#include <SystemConfig.h>
 #include "MSLWorldModel.h"
+#include "Robots.h"
+#include "Ball.h"
 
 namespace msl
 {
@@ -29,7 +32,7 @@ namespace msl
 		robotCommandSub = n.subscribe("/RobotCommand", 10, &Game::onRobotCommand, (Game*)this);
 
 		// Set own Team Color
-		sc = SystemConfig::getInstance();
+		this->sc = supplementary::SystemConfig::getInstance();
 		string tmpOwnTeamColor = (*this->sc)["Globals"]->get<string>("Globals", "OwnTeamColour", NULL);
 		if (tmpOwnTeamColor.compare("cyan") == 0)
 		{

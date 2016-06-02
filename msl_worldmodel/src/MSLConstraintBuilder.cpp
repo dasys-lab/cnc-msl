@@ -8,6 +8,11 @@
 #include "MSLConstraintBuilder.h"
 #include "Rules.h"
 #include "MSLWorldModel.h"
+#include "RawSensorData.h"
+#include "obstaclehandler/Obstacles.h"
+#include "Robots.h"
+#include "Ball.h"
+#include "Game.h"
 
 namespace msl
 {
@@ -233,6 +238,9 @@ namespace msl
 
 		for (int i = 0; i < points.size(); i++)
 		{
+			if (robots[i] == nullptr)
+				continue;
+
 			auto value = 1
 					- (alica::ConstraintBuilder::distanceSqr(points[i], robots[i]) / (maxFieldDist * maxFieldDist));
 			util = util + value;
@@ -718,7 +726,6 @@ namespace msl
 		appliedRules = appliedRules & outsideArea(Areas::OwnGoalArea, fieldPlayers);
 		appliedRules = appliedRules & outsideArea(Areas::OppGoalArea, fieldPlayers);
 		vector<shared_ptr<TVec>> receivers;
-
 		if (executerIdx >= 0)
 		{
 			std::copy_if(std::begin(fieldPlayers), std::end(fieldPlayers), std::back_inserter(receivers),

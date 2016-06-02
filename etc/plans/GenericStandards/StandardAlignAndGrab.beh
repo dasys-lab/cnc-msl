@@ -8,4 +8,8 @@
     <parameters id="1459456574779" name="MISSING_NAME" comment="" key="planName" value="OwnKickOff"/>
     <parameters id="1459456584448" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
   </configurations>
+  <configurations id="1461583806472" name="StandardAlignAndGrabThrowIn" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1461583832320" name="MISSING_NAME" comment="" key="planName" value="ThrowInNearGoal"/>
+    <parameters id="1461583841747" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
 </alica:Behaviour>

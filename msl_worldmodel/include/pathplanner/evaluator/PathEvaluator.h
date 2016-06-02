@@ -23,15 +23,20 @@ typedef VoronoiDiagram::Vertex Vertex;
 
 #include <vector>
 #include <memory>
-#include "container/CNPoint2D.h"
-#include "pathplanner/VoronoiNet.h"
-#include <SystemConfig.h>
 #include <ros/ros.h>
-#include "msl_msgs/VoronoiNetInfo.h"
+
 #include "pathplanner/evaluator/IPathEvaluator.h"
+
+namespace supplementary{
+	class SystemConfig;
+}
+namespace geometry{
+	class CNPoint2D;
+}
 namespace msl
 {
 	class VoronoiNet;
+	class SearchNode;
 	class PathEvaluator : public IPathEvaluator
 	{
 	public:
@@ -74,9 +79,6 @@ namespace msl
 		ros::Publisher voronoiPub;
 		ros::NodeHandle n;
 		supplementary::SystemConfig* sc;
-
-//		double distanceTo(shared_ptr<Vertex> v1, shared_ptr<Vertex> v2);
-
 	};
 
 }/* namespace msl */

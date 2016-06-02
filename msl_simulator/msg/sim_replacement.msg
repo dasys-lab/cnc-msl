@@ -1,3 +1,0 @@
-sim_ball_replacement ball
-sim_robot_replacement robots
-

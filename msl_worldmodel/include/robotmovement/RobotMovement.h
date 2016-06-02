@@ -10,42 +10,51 @@
 
 #include <memory>
 #include "msl_actuator_msgs/MotionControl.h"
-#include "GeometryCalculator.h"
 #include "DateTime.h"
 #include "SystemConfig.h"
 
 namespace geometry
 {
 	class CNPoint2D;
+	class CNPosition;
 }
 
 using namespace std;
-using namespace msl_actuator_msgs;
 
 namespace msl
 {
 
+	class MovementQuery;
 	class SearchArea;
+	class MSLWorldModel;
+	class PathProxy;
 	class RobotMovement
 	{
 	public:
+		RobotMovement();
 		virtual ~RobotMovement();
 
-		static MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
-												shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
-											static MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
+		msl_actuator_msgs::MotionControl experimentallyMoveToPoint(shared_ptr<MovementQuery> const m_Query);
+		msl_actuator_msgs::MotionControl experimentallyRuleActionForBallGetter();
+		msl_actuator_msgs::MotionControl experimentallyDriveRandomly(double translation);
+		msl_actuator_msgs::MotionControl experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query);
+
+		static msl_actuator_msgs::MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
+																shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+																double snapDistance,
+																shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints);
+		static msl_actuator_msgs::MotionControl moveToPointCarefully(shared_ptr<geometry::CNPoint2D>egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
-		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+//		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
+//												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		//TODO needs to be tested
-		static MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+		static msl_actuator_msgs::MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
-		static MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+		static msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
 													double ballAngleTolerance);
 		//TODO needs to be tested
-		static MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+		static msl_actuator_msgs::MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
 													double ballAngleTolerance);
 
@@ -53,25 +62,25 @@ namespace msl
 		static msl_actuator_msgs::MotionControl ruleActionForBallGetter();
 
 		//TODO needs to be implemented
-		static MotionControl driveRandomly(double translation);
+		static msl_actuator_msgs::MotionControl driveRandomly(double translation);
 
 		//TODO needs to be tested
-		static MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+		static msl_actuator_msgs::MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
-		static MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+		static msl_actuator_msgs::MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
-		static MotionControl placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+		static msl_actuator_msgs::MotionControl placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
-		static MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
+		static msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
-		static MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
+		static msl_actuator_msgs::MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
 	                                                         double translation, bool alignSlow);
-		static MotionControl driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation);
-//		static MotionControl align(MotionControl bm, shared_ptr<geometry::CNPoint2D> alignPoint, double rotTol, bool slow);
+		static msl_actuator_msgs::MotionControl driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation);
+//		static msl_actuator_msgs::MotionControl align(MotionControl bm, shared_ptr<geometry::CNPoint2D> alignPoint, double rotTol, bool slow);
 
 		static msl_actuator_msgs::MotionControl driveRandomly(int translation);
 		static shared_ptr<msl_actuator_msgs::MotionControl> dribbleToPointConservative(shared_ptr<geometry::CNPoint2D> goalMid, shared_ptr<geometry::CNPoint2D>& ppp);
@@ -121,6 +130,18 @@ namespace msl
 		static double transDecStep;
 
 		static double lastTurnTime;
+
+		//shared_ptr<MovementQuery> query;
+		MSLWorldModel* wm;
+		PathProxy* pp;
+		msl_actuator_msgs::MotionControl experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
+		double experimentallyEvalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
+											   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
+
+		// PD regulator methods
+		double rotationPDForDribble(shared_ptr<MovementQuery> query, shared_ptr<geometry::CNPoint2D> target);
+		double translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt);
+		double anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt);
 
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,

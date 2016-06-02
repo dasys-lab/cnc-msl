@@ -29,11 +29,14 @@
 #include "BlackPWM.h"
 #include "BlackSPI.h"
 
+<<<<<<< HEAD
 // BBB C++ API
 #include <BeagleGPIO.h>
 #include <BeaglePins.h>
 #include <BeaglePWM.h>
 
+=======
+>>>>>>> master
 // ROS
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
