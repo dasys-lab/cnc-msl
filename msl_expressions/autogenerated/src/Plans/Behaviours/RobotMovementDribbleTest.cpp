@@ -40,6 +40,7 @@ namespace alica
         msl_actuator_msgs::MotionControl bm;
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
+        query->egoAlignPoint = query->egoDestinationPoint;
 
         cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
                 << endl;
@@ -49,7 +50,6 @@ namespace alica
         {
             query->dribble = true;
             query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
-            query->egoAlignPoint = query->egoDestinationPoint;
         }
         bm = rm.experimentallyMoveToPoint(query);
 
