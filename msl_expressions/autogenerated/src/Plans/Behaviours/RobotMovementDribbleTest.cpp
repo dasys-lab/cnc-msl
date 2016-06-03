@@ -19,6 +19,7 @@ namespace alica
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     RobotMovementDribbleTest::~RobotMovementDribbleTest()
@@ -37,7 +38,6 @@ namespace alica
 
         // move to ball
         msl_actuator_msgs::MotionControl bm;
-        query = make_shared<msl::MovementQuery>();
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
 
@@ -49,6 +49,7 @@ namespace alica
         {
             query->dribble = true;
             query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
+            query->egoAlignPoint = query->egoDestinationPoint;
         }
         bm = rm.experimentallyMoveToPoint(query);
 
