@@ -17,6 +17,8 @@
 #define BIT(n) (1 << n)
 
 
+#define PWMSS_CTRL 664	// Offset for pwmss_control register to enable tbclk for each pwm module
+
 /* Clk control registers */
 #define CLKCONFIG		0x08
 #define CLKSTATUS		0x0C
@@ -102,6 +104,9 @@
 #define NUM_PWM_CHANNEL		2	/* EHRPWM channels */
 
 
+
+const uint32_t ctrlAddr = 0x44E10000;	// Address for Control Module
+
 /*
    addresses for epwmss0, epwmss1, epwmss2 
    see: your device tree file
@@ -133,10 +138,17 @@ BeaglePWM::BeaglePWM()
 
 	for (int i = 0; i < NUM_PWMS; i++) {
 		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i]);
+		ctrlRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, ctrlAddr);
 
 		if (pwmRegs[i] == MAP_FAILED )
 		{
 			debug(0, "PWM Mapping failed for PWM Module %i\n", i);
+			return;
+		}
+
+		if (ctrlRegs == MAP_FAILED )
+		{
+			debug(0, "CTRL Mapping failed for PWM Module %i\n", i);
 			return;
 		}
 	}
@@ -148,6 +160,7 @@ BeaglePWM::~BeaglePWM()
 	// active = false;
 	for (int i = 0; i < 4; i++)
 		munmap(pwmRegs[i], PWM_MMAPLEN);
+	munmap(ctrlRegs, PWM_MMAPLEN);
 	close(memFd);
 }
 
@@ -216,6 +229,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 
 		/* Enable TBCLK before enabling PWM device */
 		//ret = clk_enable(pc->tbclk);
+		ctrlRegs[PWMSS_CTRL / 2] |= BIT(modul);
 
 		/* Enable time counter for free_run */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
@@ -244,6 +258,8 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 
 		/* Disabling TBCLK on PWM disable */
 		//clk_disable(pc->tbclk);
+		uint16_t tempreg = ctrlRegs[PWMSS_CTRL / 2] & ~(BIT(modul));
+		ctrlRegs[PWMSS_CTRL / 2] = tempreg | BIT(modul);
 
 		/* Stop Time base counter */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
