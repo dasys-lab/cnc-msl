@@ -9,8 +9,8 @@
 #define CNC_MSLDRIVER_MSL_DIRECTED_DEPTH_VISION_SRC_DIRECTEDDEPTHVISIONNODELET_H_
 
 
-#include "msl_directed_depth_vision/FloorCalibrator.h"
-#include "msl_directed_depth_vision/ClusterTracker.h"
+#include "FloorCalibrator.h"
+#include "ClusterTracker.h"
 
 #include <ros/ros.h>
 #include <nodelet/nodelet.h>

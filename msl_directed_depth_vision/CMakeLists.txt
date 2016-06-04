@@ -110,28 +110,11 @@ link_directories(
 )
 add_definitions(${PCL_DEFINITIONS})
 
-
-
-add_executable(msl_astra
-	src/msl_astra_pro_driver_node.cpp
-)
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(msl_astra
-	${catkin_LIBRARIES}
-)
-## Specify libraries to link a library or executable target against
-target_link_libraries(msl_astra
-	${catkin_LIBRARIES}
-	OpenNI2
-	rt
-)
-
-
-add_executable(msl_directed_depth_vision_node
+add_executable(depth_vision
         src/DirectedDepthVisionNode.cpp
+        src/DepthVision.cpp
 )
-add_dependencies(msl_directed_depth_vision_node
+add_dependencies(depth_vision
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ${PCL_LIBRARIES}
@@ -139,12 +122,14 @@ add_dependencies(msl_directed_depth_vision_node
   ${MRPT_LIBS}
 )
 ## Specify libraries to link a library or executable target against
-target_link_libraries(msl_directed_depth_vision_node
+target_link_libraries(depth_vision
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ${PCL_LIBRARIES}
   ${PCL_CONVERSIONS_LIBRARIES}
   ${MRPT_LIBS}
+  OpenNI2
+  rt
 )
 #############
 ## Install ##

@@ -12,7 +12,7 @@
 #include <pcl-1.7/pcl/segmentation/conditional_euclidean_clustering.h>
 #include <pcl-1.7/pcl/point_types.h>
 
-#include "msl_directed_depth_vision/Cluster.h"
+#include "Cluster.h"
 
 using namespace std;
 

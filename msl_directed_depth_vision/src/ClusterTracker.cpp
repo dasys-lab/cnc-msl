@@ -5,7 +5,7 @@
  *      Author: Tobias Schellien
  */
 
-#include "msl_directed_depth_vision/ClusterTracker.h"
+#include "ClusterTracker.h"
 
 namespace msl_vision{
 

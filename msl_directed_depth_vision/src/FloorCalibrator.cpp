@@ -5,7 +5,7 @@
  *      Author: tobi
  */
 
-#include "msl_directed_depth_vision/FloorCalibrator.h"
+#include "FloorCalibrator.h"
 
 namespace msl_vision
 {
