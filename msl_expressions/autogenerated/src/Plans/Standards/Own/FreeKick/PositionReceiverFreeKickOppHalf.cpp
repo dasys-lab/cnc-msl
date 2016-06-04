@@ -42,7 +42,7 @@ namespace alica
 
         auto alloGoalMid = this->wm->field->posOppGoalMid();
 
-        auto lineVect = alloGoalMid - alloBall;
+        auto lineVect = alloBall - alloGoalMid;
 
         alloTarget = alloBall + lineVect->normalize() * 2300;
 

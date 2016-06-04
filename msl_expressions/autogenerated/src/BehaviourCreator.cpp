@@ -69,9 +69,9 @@ using namespace std;
 
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
-#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
-
 #include  "Plans/Behaviours/ShovelSelect.h"
+
+#include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
 #include  "Plans/Attack/ProtectBall.h"
 
@@ -164,6 +164,8 @@ using namespace std;
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/KickToDirection.h"
+
+#include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
 
 #include  "Plans/GenericStandards/StandardShieldBall.h"
 
@@ -372,16 +374,16 @@ namespace alica
                 return make_shared<DriveToPost>();
                 break;
 
-            case 1457531639350:
-
-                return make_shared<StandardAlignToGeneric>();
-                break;
-
             case 1435156714286:
 
             case 1435156811453:
 
                 return make_shared<ShovelSelect>();
+                break;
+
+            case 1457531639350:
+
+                return make_shared<StandardAlignToGeneric>();
                 break;
 
             case 1457706612268:
@@ -632,6 +634,11 @@ namespace alica
             case 1447863487000:
 
                 return make_shared<KickToDirection>();
+                break;
+
+            case 1464787549220:
+
+                return make_shared<Pos4ReceiverCornerKick>();
                 break;
 
             case 1455888715611:
