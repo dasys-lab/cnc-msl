@@ -58,7 +58,9 @@ namespace alica
             auto alignPoint = make_shared<geometry::CNPoint2D>()->alloToEgo(*ownPos);
             // attention: use care obstacles if the goalie sees the obstacles fine...
 
+            // removed with new method
             mc = msl::RobotMovement::driveToPointAlignNoAvoidance(destEgo, alignPoint, 900, false);
+
             //mc.Motion.Rotation = 0.0;
             //Console.WriteLine("wonPos.X : " + ownPos.X + " " + -field.FieldLength/2.0 + field.PenaltyAreaXSize);
             send(mc);
