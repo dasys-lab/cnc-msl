@@ -132,4 +132,8 @@
     <key href="Pos4ReceiverCornerKick.beh#1464787549220"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
