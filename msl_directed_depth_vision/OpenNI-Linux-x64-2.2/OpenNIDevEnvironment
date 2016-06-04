@@ -1,0 +1,2 @@
+export OPENNI2_INCLUDE=/home/len/OpenNI2/OpenNI-Linux-x64-2.2/Include
+export OPENNI2_REDIST=/home/len/OpenNI2/OpenNI-Linux-x64-2.2/Redist

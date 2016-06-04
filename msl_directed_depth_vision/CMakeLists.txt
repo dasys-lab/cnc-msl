@@ -94,39 +94,40 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS} ${MRPT_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
+include_directories(include
+    ${catkin_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
+    ${MRPT_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/OpenNI-Linux-x64-2.2/Include
+	${CMAKE_CURRENT_SOURCE_DIR}/OpenNI-Linux-x64-2.2/Samples/Common
+)
+
+
+link_directories(
+    ${PCL_LIBRARY_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/OpenNI-Linux-x64-2.2/Redist
+)
 add_definitions(${PCL_DEFINITIONS})
 
-## Specify additional locations of header files
-## Declare a cpp library
-add_library(msl_directed_depth_vision
-   src/DirectedDepthVisionNodelet.cpp
-   src/FloorCalibrator.cpp
-   src/ClusterTracker.cpp
-   src/Cluster.cpp
-)
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_directed_depth_vision
-  ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARiIES}
-  ${MRPT_LIBS}
-  msl_directed_depth_vision_generate_messages_cpp
+
+add_executable(msl_astra
+	src/msl_astra_pro_driver_node.cpp
+)
+## Add cmake target dependencies of the executable
+## same as for the library above
+add_dependencies(msl_astra
+	${catkin_LIBRARIES}
 )
 ## Specify libraries to link a library or executable target against
-target_link_libraries(msl_directed_depth_vision
-  ${catkin_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${PCL_LIBRARIES}
-  ${PCL_CONVERSIONS_LIBRARIES}
-  ${MRPT_LIBS}
+target_link_libraries(msl_astra
+	${catkin_LIBRARIES}
+	OpenNI2
+	rt
 )
 
-## Declare a cpp executable
+
 add_executable(msl_directed_depth_vision_node
         src/DirectedDepthVisionNode.cpp
 )
