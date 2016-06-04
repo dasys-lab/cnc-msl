@@ -33,6 +33,8 @@ namespace alica
     void AdvancdeSimplePass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450176193656) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
+
         if (itcounter < 3)
         {
             itcounter++;
@@ -48,7 +50,7 @@ namespace alica
         if (ownPos == nullptr)
         {
 
-            mc = msl::RobotMovement::driveRandomly(1000);
+            mc = rm.driveRandomly(1000);
             send(mc);
             return;
         }

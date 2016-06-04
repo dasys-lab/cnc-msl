@@ -44,7 +44,7 @@ namespace alica
 
         if (ownPos == nullptr)
         {
-            mc = msl::RobotMovement::driveRandomly(2000.0);
+            mc = rm.driveRandomly(2000.0);
             send(mc);
             return;
         }

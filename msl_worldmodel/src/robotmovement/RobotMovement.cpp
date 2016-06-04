@@ -322,7 +322,7 @@ namespace msl
 	/*
 	 * @return motion command to a random destination point
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::experimentallyDriveRandomly(double translation)
+	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(double translation)
 	{
 		msl::PathProxy* pp = msl::PathProxy::getInstance();
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
@@ -620,6 +620,7 @@ namespace msl
 		}
 	}
 */
+	/*
 	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest,
 																			double translation)
 	{
@@ -632,6 +633,8 @@ namespace msl
 
 		return bm;
 	}
+	*/
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(int translation)
 	{
 		msl::PathProxy* pp = msl::PathProxy::getInstance();
@@ -659,7 +662,7 @@ namespace msl
 		randomCounter = (randomCounter + 1) % 28;
 		return bm;
 	}
-
+*/
 	void RobotMovement::reset()
 	{
 		iTrans = 0;
@@ -1269,7 +1272,7 @@ namespace msl
 			return bm;
 		}
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(double translation)
 	{
 		if (randomCounter == 0)
@@ -1292,7 +1295,7 @@ namespace msl
 		randomCounter = (randomCounter + 1) % 28;
 		return bm;
 	}
-
+*/
 	shared_ptr<geometry::CNPoint2D> RobotMovement::getRandomTarget()
 	{
 		double ang = (rand() - 0.5) * 2 * M_PI;
