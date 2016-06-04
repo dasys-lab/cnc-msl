@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1439379316897) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
+#include "robotmovement/MovementQuery.h"
 using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
@@ -32,6 +33,7 @@ namespace alica
                                                             double slowCatchRadius;
                                                             double alignTolerance;
                                                             double ballDistanceRec;
+													        shared_ptr<msl::MovementQuery> query;
                                                             /*PROTECTED REGION END*/};
                                                     }
                                                     /* namespace alica */

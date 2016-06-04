@@ -863,7 +863,7 @@ namespace msl
 		return nullptr;
 
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
 													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints)
@@ -894,7 +894,7 @@ namespace msl
 		}
 		return mc;
 	}
-
+*/
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														double snapDistance,
