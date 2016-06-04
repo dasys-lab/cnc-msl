@@ -143,6 +143,8 @@ namespace msl
 		double translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt);
 		double anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt);
 
+		msl_actuator_msgs::MotionControl setNAN(msl_actuator_msgs::MotionControl mc);
+
 	protected:
 		static double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
 									   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);

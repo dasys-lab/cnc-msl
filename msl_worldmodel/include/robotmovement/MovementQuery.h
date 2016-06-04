@@ -34,11 +34,13 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> teamMatePosition;
 		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
 		double translationPDForDribble(double transOrt);
-		double anglePDForDribble(double transOrt);
+		double angleCalcForDribble(double transOrt);
 		void resetAllPDParameters();
 		void resetRotationPDParameters();
 		void resetTransaltionPDParameters();
-//		void resetAnglePDParameters();
+
+		double curRotDribble;
+		double curTransDribble;
 
 	private:
 		MSLWorldModel* wm;
@@ -48,7 +50,6 @@ namespace msl
 		double dRot;
 		double rotAccStep;
 		double maxRot;
-		double curRotDribble;
 		double lastRotDribbleErr;
 
 // PD variables for RobotMovement::moveToPoint() and RobotMovement::translationDribblePD()
@@ -59,7 +60,6 @@ namespace msl
 		double pTrans;
 		double transAccStep;
 		double transDecStep;
-		double curTransDribble;
 		double transControlIntegralDribble;
 
 		void readConfigParameters();
