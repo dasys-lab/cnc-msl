@@ -597,7 +597,7 @@ namespace msl
 		}
 		return bm;
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::driveToPointAlignNoAvoidance(
 			shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint, double translation,
 			bool alignSlow)
@@ -619,7 +619,7 @@ namespace msl
 
 		}
 	}
-
+*/
 	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest,
 																			double translation)
 	{
