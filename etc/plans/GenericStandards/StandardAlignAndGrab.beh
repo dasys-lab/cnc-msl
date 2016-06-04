@@ -12,4 +12,8 @@
     <parameters id="1461583832320" name="MISSING_NAME" comment="" key="planName" value="ThrowInNearGoal"/>
     <parameters id="1461583841747" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
   </configurations>
+  <configurations id="1465038982091" name="StandardAlignAndGrabCornerKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1465039005917" name="MISSING_NAME" comment="" key="planName" value="CornerKick"/>
+    <parameters id="1465039021874" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
 </alica:Behaviour>
