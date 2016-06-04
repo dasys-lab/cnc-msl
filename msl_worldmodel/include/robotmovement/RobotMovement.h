@@ -77,8 +77,8 @@ namespace msl
 		static msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
-		static msl_actuator_msgs::MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
-	                                                         double translation, bool alignSlow);
+//		static msl_actuator_msgs::MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,
+//	                                                         double translation, bool alignSlow);
 		static msl_actuator_msgs::MotionControl driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest, double translation);
 //		static msl_actuator_msgs::MotionControl align(MotionControl bm, shared_ptr<geometry::CNPoint2D> alignPoint, double rotTol, bool slow);
 
