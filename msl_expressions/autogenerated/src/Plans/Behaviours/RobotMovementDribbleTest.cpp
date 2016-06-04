@@ -52,7 +52,7 @@ namespace alica
             query->dribble = true;
             query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
         }
-        bm = rm.experimentallyMoveToPoint(query);
+        bm = rm.moveToPoint(query);
 
         // dribble
         /*

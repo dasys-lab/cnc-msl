@@ -113,7 +113,7 @@ namespace msl
 	 * query->curRotDribble
 	 *
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::experimentallyMoveToPoint(shared_ptr<MovementQuery> const query)
+	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> const query)
 	{
 		msl_actuator_msgs::MotionControl mc;
 
@@ -278,7 +278,7 @@ namespace msl
 			query->egoAlignPoint = ballPos;
 			query->additionalPoints = nullptr;
 
-			mc = experimentallyMoveToPoint(query);
+			mc = moveToPoint(query);
 			mc.motion.translation = 0;
 
 			return mc;
@@ -296,7 +296,7 @@ namespace msl
 				query->egoAlignPoint = ballPos;
 				query->additionalPoints = additionalPoints;
 
-				mc = experimentallyMoveToPoint(query);
+				mc = moveToPoint(query);
 			}
 			else
 			{
@@ -310,7 +310,7 @@ namespace msl
 					query->egoAlignPoint = dest;
 				}
 
-				mc = experimentallyMoveToPoint(query);
+				mc = moveToPoint(query);
 			}
 #ifdef RM_DEBUG
 		cout << "RobotMovement::placeRobot: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
@@ -434,7 +434,7 @@ namespace msl
 		q->egoAlignPoint = align;
 		q->fast = true;
 		// todo: test if experimatallyMoveToPoint() does nearly the same as placeRobotAggressive()
-		mc = experimentallyMoveToPoint(q);
+		mc = moveToPoint(q);
 #ifdef RM_DEBUG
 		cout << "RobotMovementmoveToFreeSpace: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
 #endif
@@ -619,6 +619,7 @@ namespace msl
 
 		}
 	}
+
 	msl_actuator_msgs::MotionControl RobotMovement::driveToPointNoAvoidance(shared_ptr<geometry::CNPoint2D> egoDest,
 																			double translation)
 	{
