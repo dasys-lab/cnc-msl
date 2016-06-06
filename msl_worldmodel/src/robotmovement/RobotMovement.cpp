@@ -171,7 +171,7 @@ namespace msl
 	 *
 	 * @return motion command if robot breaks the rules
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::experimentallyRuleActionForBallGetter()
+	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
 		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball->getEgoBallPosition();
@@ -443,7 +443,7 @@ namespace msl
 	/*
 	 * Used in moveToFreeSpace()
 	 */
-	double RobotMovement::experimentallyEvalPointDynamic(
+	double RobotMovement::evalPointDynamic(
 			shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
 			shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > opponents)
 	{
@@ -975,6 +975,18 @@ namespace msl
 	 }
 	 }
 	 */
+
+	/**
+	 * could be replaced with
+	 * query->egoDestinationPoint = egoTerget
+	 * query->egoAlignPoint = egoAlignPoint
+	 * query->angleTolerance = angletolerance
+	 * mc = rm.moveToPoint(query);
+	 * mc.motion.translation = 0;
+	 *
+	 * and maybe use PID controller
+	 * mc.motion.rotation = PID controller
+	 */
 	msl_actuator_msgs::MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													double angleTolerance)
@@ -1042,7 +1054,7 @@ namespace msl
 		}
 		return mc;
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 															shared_ptr<geometry::CNPoint2D> egoBallPos,
 															double angleTolerance, double ballAngleTolerance)
@@ -1099,7 +1111,8 @@ namespace msl
 		}
 		return mc;
 	}
-
+	*/
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
 		MSLWorldModel* wm = MSLWorldModel::get();
@@ -1194,7 +1207,7 @@ namespace msl
 		mc.senderID = -1;
 		return mc;
 	}
-
+*/
 	msl_actuator_msgs::MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
 													shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
@@ -1298,12 +1311,14 @@ namespace msl
 		return bm;
 	}
 */
+	/*
 	shared_ptr<geometry::CNPoint2D> RobotMovement::getRandomTarget()
 	{
 		double ang = (rand() - 0.5) * 2 * M_PI;
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
 		return dest;
 	}
+	*/
 	/**
 	 * alloPassee = allo team mate position
 	 * maxTrans = max translation
@@ -1413,7 +1428,7 @@ namespace msl
 			return bm;
 		}
 	}
-
+/*
 	double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP,
 											shared_ptr<geometry::CNPoint2D> alloPassee,
 											shared_ptr<geometry::CNPosition> ownPos,
@@ -1522,5 +1537,6 @@ namespace msl
 		//ret -= goalFactor;
 		return ret;
 	}
+	*/
 }
 
