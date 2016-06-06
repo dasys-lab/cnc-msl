@@ -146,7 +146,7 @@ namespace msl
 
 		// dribble behavior -> used from dribbleToPointConservative ==============================================
 		if (query->dribble)
-		{
+		{ //todo
 			mc.motion.rotation = query->rotationPDForDribble(egoTarget);
 			double rotPointDist = 350.0;
 			if (auto ballPos = wm->ball->getEgoBallPosition())
@@ -681,7 +681,7 @@ namespace msl
 			curTrans = 0;
 		}
 	}
-
+/*// todo:
 	shared_ptr<msl_actuator_msgs::MotionControl> RobotMovement::dribbleToPointConservative(
 			shared_ptr<geometry::CNPoint2D> egoTarget, shared_ptr<geometry::CNPoint2D>& ppp)
 	{
@@ -713,28 +713,28 @@ namespace msl
 //		double angleErr = geometry::deltaAngle(frontAngle, target->angleTo()); //the current error
 
 //		cout << "RobotMovement: angleErr " << angleErr << endl;
-		/*if(Math.Abs(angleErr)>0.8) {
-		 double minAngle=300;
-		 double ang=0;
-		 bool found = false;
-		 Position ownPos = wm.OwnPositionCorrected;
-		 List<TrackedOpponent> topl = wm.GetTrackedOpponents();
-		 if(ownPos != null && topl!=null) {
-		 foreach(TrackedOpponent t in  topl) {
-		 Point2D op = WorldHelper.Allo2Ego(t.Pos, ownPos);
-		 if(op.Distance() < 1500) {
-		 ang = op.Angle()-frontAngle;
-		 if(ang>Math.PI) ang -= 2*Math.PI;
-		 if(ang<-Math.PI) ang += 2*Math.PI;
-		 found = true;
-		 if(Math.Abs(minAngle) > Math.Abs(ang)) minAngle = ang;
-		 }
-		 }
-		 if(found && Math.Abs(minAngle) < Math.Abs(angleErr) && minAngle*angleErr>0) {
-		 angleErr += 2.0*Math.PI*Math.Sign(-angleErr);
-		 }
-		 }
-		 }*/
+//		if(Math.Abs(angleErr)>0.8) {
+//		 double minAngle=300;
+//		 double ang=0;
+//		 bool found = false;
+//		 Position ownPos = wm.OwnPositionCorrected;
+//		 List<TrackedOpponent> topl = wm.GetTrackedOpponents();
+//		 if(ownPos != null && topl!=null) {
+//		 foreach(TrackedOpponent t in  topl) {
+//		 Point2D op = WorldHelper.Allo2Ego(t.Pos, ownPos);
+//		 if(op.Distance() < 1500) {
+//		 ang = op.Angle()-frontAngle;
+//		 if(ang>Math.PI) ang -= 2*Math.PI;
+//		 if(ang<-Math.PI) ang += 2*Math.PI;
+//		 found = true;
+//		 if(Math.Abs(minAngle) > Math.Abs(ang)) minAngle = ang;
+//		 }
+//		 }
+//		 if(found && Math.Abs(minAngle) < Math.Abs(angleErr) && minAngle*angleErr>0) {
+//		 angleErr += 2.0*Math.PI*Math.Sign(-angleErr);
+//		 }
+//		 }
+//		 }
 
 		double rotPointDist = max(200.0, min(350.0, ballPos->length())); //the point around which we rotate
 		double distToOpp;
@@ -797,12 +797,12 @@ namespace msl
 			transTowards = max(transTowards, curTrans - transDecStep);
 		curTrans = transTowards;
 
-		/**/
+
 		auto dir = ballPos->normalize();
 		shared_ptr<geometry::CNPoint2D> ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
 		dir = dir * transTowards + ort * transOrt;
 		bm.motion.angle = dir->angleTo();
-		/**/
+
 		bm.motion.translation = sqrt(transTowards * transTowards + transOrt * transOrt);
 
 //		cout << "RobotMovement: " << bm.motion.translation << " " << bm.motion << endl;
@@ -810,6 +810,7 @@ namespace msl
 		return make_shared<msl_actuator_msgs::MotionControl>(bm);
 
 	}
+*/
 	double RobotMovement::lastTurnTime = -1;
 	void RobotMovement::updateLastTurnTime()
 	{

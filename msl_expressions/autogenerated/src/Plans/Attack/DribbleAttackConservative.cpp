@@ -8,58 +8,67 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1457967322925) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    DribbleAttackConservative::DribbleAttackConservative() :
-            DomainBehaviour("DribbleAttackConservative")
-    {
-        /*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
-        alloGoalMid = wm->field->posOppGoalMid();
-        before = false;
-        this->setTrigger(wm->getVisionDataEventTrigger());
-        /*PROTECTED REGION END*/
-    }
-    DribbleAttackConservative::~DribbleAttackConservative()
-    {
-        /*PROTECTED REGION ID(dcon1457967322925) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void DribbleAttackConservative::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
-        //CorrectedOdometryData odom = WM.OdometryData;
-        auto ballPos = wm->ball->getEgoBallPosition();
+	/*PROTECTED REGION ID(staticVars1457967322925) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	DribbleAttackConservative::DribbleAttackConservative() :
+			DomainBehaviour("DribbleAttackConservative")
+	{
+		/*PROTECTED REGION ID(con1457967322925) ENABLED START*/ //Add additional options here
+		alloGoalMid = wm->field->posOppGoalMid();
+		before = false;
+		this->setTrigger(wm->getVisionDataEventTrigger());
+		query = make_shared<msl::MovementQuery>();
+		/*PROTECTED REGION END*/
+	}
+	DribbleAttackConservative::~DribbleAttackConservative()
+	{
+		/*PROTECTED REGION ID(dcon1457967322925) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void DribbleAttackConservative::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
+		msl::RobotMovement rm;
+		//CorrectedOdometryData odom = WM.OdometryData;
+		auto ballPos = wm->ball->getEgoBallPosition();
 //        auto dstscan = wm->rawSensorData.getDistanceScan();
 
-        auto ownPos = wm->rawSensorData->getOwnPositionVision();
+		auto ownPos = wm->rawSensorData->getOwnPositionVision();
 
-        if (ownPos == nullptr)
-        {
-            return;
-        }
+		if (ownPos == nullptr)
+		{
+			return;
+		}
 
-        auto goalMid = alloGoalMid->alloToEgo(*ownPos);
-        //MotionControl bm = DribbleHelper.DribbleToPoint(goalMid,translation,WM);
-        auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
-        msl_actuator_msgs::MotionControl bm;
-        shared_ptr < geometry::CNPoint2D > pathPlanningPoint = make_shared<geometry::CNPoint2D>();
-        auto tmpMC = msl::RobotMovement::dribbleToPointConservative(goalMid, pathPlanningPoint);
+		auto goalMid = alloGoalMid->alloToEgo(*ownPos);
+		//MotionControl bm = DribbleHelper.DribbleToPoint(goalMid,translation,WM);
+		auto corner = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
+		msl_actuator_msgs::MotionControl bm;
+		shared_ptr<geometry::CNPoint2D> pathPlanningPoint = make_shared<geometry::CNPoint2D>();
+//		auto tmpMC = msl::RobotMovement::dribbleToPointConservative(goalMid, pathPlanningPoint);
+		query->egoDestinationPoint = goalMid;
+		query->dribble = true;
 
-        if (corner == nullptr && tmpMC != nullptr)
-        {
-            bm = *tmpMC;
-        }
-        else
-        {
-            tmpMC = msl::RobotMovement::dribbleToPointConservative(corner, pathPlanningPoint);
-            if (tmpMC != nullptr)
-            {
-                corner =
-                        (corner->egoToAllo(*ownPos) + make_shared < geometry::CNPoint2D > (-800, 0)->alloToEgo(*ownPos));
-                bm = *tmpMC;
-            }
-        }
+		auto tmpMC = rm.moveToPoint(query);
+
+		if (corner == nullptr && tmpMC.motion.translation != NAN)
+		{
+			bm = tmpMC;
+		}
+		else
+		{
+//			tmpMC = msl::RobotMovement::dribbleToPointConservative(corner, pathPlanningPoint);
+			query->egoDestinationPoint = corner;
+			query->dribble = true;
+
+			auto tmpMC = rm.moveToPoint(query);
+
+			if (tmpMC.motion.translation != NAN)
+			{
+				corner = (corner->egoToAllo(*ownPos) + make_shared<geometry::CNPoint2D>(-800, 0)->alloToEgo(*ownPos));
+				bm = tmpMC;
+			}
+		}
 
 //        shared_ptr < geometry::CNPoint2D > turnTo;
 //        if (ballPos != nullptr)
@@ -70,20 +79,20 @@ namespace alica
 //            this->failure = true;
 //        }
 
-        //if i drive into the enemy goal area
-        // replaced with new method
+		//if i drive into the enemy goal area
+		// replaced with new method
 //        bm = msl::RobotMovement::nearGoalArea(bm);
-        bm = rm.ruleActionForBallGetter();
-        send(bm);
+		bm = rm.ruleActionForBallGetter();
+		send(bm);
 
-        /*PROTECTED REGION END*/
-    }
-    void DribbleAttackConservative::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement::reset();
-        /*PROTECTED REGION END*/
-    }
+		/*PROTECTED REGION END*/
+	}
+	void DribbleAttackConservative::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1457967322925) ENABLED START*/ //Add additional options here
+		msl::RobotMovement::reset();
+		/*PROTECTED REGION END*/
+	}
 /*PROTECTED REGION ID(methods1457967322925) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */
