@@ -585,7 +585,8 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
         {
                 for (int i = obstacleCount; i < this->obstaclesBottom.size(); ++i)
                 {
-                          this->obstaclesBottom.at(i)->SetVisibility(false);
+                    this->obstaclesBottom.at(i)->SetVisibility(false);
+                    this->obstaclesTop.at(i)->SetVisibility(false);
                 }
         }
 }
