@@ -1,8 +1,6 @@
 #include "BeaglePWM.h"
 #include "debug.h"
 
-#include <Timer.h>
-
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/mman.h>
