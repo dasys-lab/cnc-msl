@@ -565,7 +565,7 @@ namespace msl
 	}
 
 // old RobotMovement <==========================================================================================
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::nearGoalArea(msl_actuator_msgs::MotionControl bm)
 	{
 		msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
@@ -597,6 +597,7 @@ namespace msl
 		}
 		return bm;
 	}
+	*/
 /*
 	msl_actuator_msgs::MotionControl RobotMovement::driveToPointAlignNoAvoidance(
 			shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint, double translation,

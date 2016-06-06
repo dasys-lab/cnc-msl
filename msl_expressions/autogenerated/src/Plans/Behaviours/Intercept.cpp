@@ -309,7 +309,9 @@ namespace alica
             }
         }
         mc.motion.rotation = controlRot;
-        mc = msl::RobotMovement::nearGoalArea(mc);
+        // replaced with new method
+//        mc = msl::RobotMovement::nearGoalArea(mc);
+        mc = rm.ruleActionForBallGetter();
         //cout << "Intercept: Translation " << mc.motion.translation << endl;
         send(mc);
         if (wm->ball->haveBallDribble(false))

@@ -27,6 +27,7 @@ namespace alica
     void DribbleAttackConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         //CorrectedOdometryData odom = WM.OdometryData;
         auto ballPos = wm->ball->getEgoBallPosition();
 //        auto dstscan = wm->rawSensorData.getDistanceScan();
@@ -70,8 +71,9 @@ namespace alica
 //        }
 
         //if i drive into the enemy goal area
-        bm = msl::RobotMovement::nearGoalArea(bm);
-
+        // replaced with new method
+//        bm = msl::RobotMovement::nearGoalArea(bm);
+        bm = rm.ruleActionForBallGetter();
         send(bm);
 
         /*PROTECTED REGION END*/
