@@ -51,6 +51,8 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
+#include  "Plans/Standards/Own/FreeKick/FreekickOwnHalf1464779892293.h"
+
 #include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInOwnHalf1462360503828.h"
@@ -231,6 +233,10 @@ namespace alica
 
             case 1457173681216:
                 return make_shared<UtilityFunction1457173681216>();
+                break;
+
+            case 1464779892293:
+                return make_shared<UtilityFunction1464779892293>();
                 break;
 
             case 1437902649389:

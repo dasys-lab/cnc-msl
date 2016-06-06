@@ -27,6 +27,8 @@ int main(void) {
 	RESET(KICK);
 	SET_OUTPUT(RESET_NOTAUS);
 	RESET(RESET_NOTAUS);
+	SET_OUTPUT(CS_ETH);
+	RESET(CS_ETH);
 
 	// enable interrupts
 	// sei();
@@ -49,7 +51,9 @@ int main(void) {
 	RESET(ACTIVATE_BOOSTER);
 	
 	while(1) {
-
+		for(int i = 0; i <= 1000; i++)
+			_delay_ms(1);
+		TOGGLE(KICK);
 	}
 	return 0;
 }

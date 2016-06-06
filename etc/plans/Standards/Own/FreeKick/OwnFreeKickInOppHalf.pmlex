@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="-110" yPos="-19" width="1177" height="754"/>
+    <value xPos="-110" yPos="-19" width="1405" height="754"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>
@@ -22,27 +22,27 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535161175"/>
-    <value xPos="46" yPos="39" width="131" height="67"/>
+    <value xPos="46" yPos="39" width="131" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535169536"/>
-    <value xPos="58" yPos="246" width="128" height="67"/>
+    <value xPos="58" yPos="246" width="128" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535201681"/>
-    <value xPos="347" yPos="40" width="73" height="67"/>
+    <value xPos="347" yPos="40" width="73" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535219397"/>
-    <value xPos="487" yPos="42" width="81" height="67"/>
+    <value xPos="584" yPos="42" width="203" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535253598"/>
-    <value xPos="362" yPos="227" width="81" height="67"/>
+    <value xPos="593" yPos="241" width="225" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535263395"/>
-    <value xPos="521" yPos="224" width="96" height="67"/>
+    <value xPos="804" yPos="239" width="169" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535682818"/>
@@ -66,6 +66,61 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464778515443"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="PositionReceiverFreeKickOppHalf.beh#1464780824372"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1464783504464"/>
+    <value>
+      <bendpoints xPos="602" yPos="48"/>
+      <bendpoints xPos="567" yPos="62"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/GoalKick.beh#1415205578139"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1464785222776"/>
+    <value xPos="1129" yPos="386" width="67" height="32"/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1464785237103"/>
+    <value xPos="740" yPos="41" width="161" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1464785250936"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1464785278735"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="FreeKickOppHalfShootRapid.beh#1464787692697"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

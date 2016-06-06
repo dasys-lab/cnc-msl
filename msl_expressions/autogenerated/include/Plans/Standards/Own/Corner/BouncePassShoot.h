@@ -2,6 +2,8 @@
 #define BouncePassShoot_H_
 
 #include "DomainBehaviour.h"
+#include "robotmovement/MovementQuery.h"
+
 /*PROTECTED REGION ID(inc1459357144291) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
@@ -24,6 +26,7 @@ namespace alica
         EntryPoint* receiver;
         int counter;
         double driveSlowSpeed;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1459357144291) ENABLED START*/ //Add additional private methods here

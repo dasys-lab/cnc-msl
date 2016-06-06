@@ -56,4 +56,4 @@ target_link_libraries(msl_base ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_base ${catkin_LIBRARIES})
+#add_dependencies(msl_base ${catkin_LIBRARIES})

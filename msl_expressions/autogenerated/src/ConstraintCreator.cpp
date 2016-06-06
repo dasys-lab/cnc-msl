@@ -51,6 +51,8 @@
 
 #include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
 
+#include  "Plans/Standards/Own/FreeKick/constraints/FreekickOwnHalf1464779892293Constraints.h"
+
 #include  "Plans/Attack/TestPlans/constraints/AttackOppGoalPlan1437902649389Constraints.h"
 
 #include  "Plans/Standards/Own/ThrowIn/constraints/ThrowInOwnHalf1462360503828Constraints.h"
@@ -158,12 +160,20 @@ namespace alica
                 return make_shared<Constraint1457173948942>();
                 break;
 
+            case 1464780785574:
+                return make_shared<Constraint1464780785574>();
+                break;
+
             case 1462361418213:
                 return make_shared<Constraint1462361418213>();
                 break;
 
             case 1461574228077:
                 return make_shared<Constraint1461574228077>();
+                break;
+
+            case 1464793807994:
+                return make_shared<Constraint1464793807994>();
                 break;
 
             case 1457531039142:
