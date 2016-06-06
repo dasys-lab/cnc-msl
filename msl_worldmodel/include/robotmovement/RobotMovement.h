@@ -37,7 +37,7 @@ namespace msl
 		msl_actuator_msgs::MotionControl moveToPoint(shared_ptr<MovementQuery> const m_Query);
 		msl_actuator_msgs::MotionControl experimentallyRuleActionForBallGetter();
 		msl_actuator_msgs::MotionControl driveRandomly(double translation);
-		msl_actuator_msgs::MotionControl experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> m_Query);
+		msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<MovementQuery> m_Query);
 
 //		static msl_actuator_msgs::MotionControl moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 //																shared_ptr<geometry::CNPoint2D> egoAlignPoint,
@@ -74,7 +74,7 @@ namespace msl
 		static msl_actuator_msgs::MotionControl placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
-		static msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
+//		static msl_actuator_msgs::MotionControl moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans);
 
 
 //		static msl_actuator_msgs::MotionControl driveToPointAlignNoAvoidance(shared_ptr<geometry::CNPoint2D> destination, shared_ptr<geometry::CNPoint2D> alignPoint,

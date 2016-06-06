@@ -31,7 +31,7 @@ namespace msl
 		bool dribble;
 		double snapDistance;
 		double angleTolerance;
-		shared_ptr<geometry::CNPoint2D> teamMatePosition;
+		shared_ptr<geometry::CNPoint2D> alloTeamMatePosition;
 		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
 		double translationPDForDribble(double transOrt);
 		double angleCalcForDribble(double transOrt);

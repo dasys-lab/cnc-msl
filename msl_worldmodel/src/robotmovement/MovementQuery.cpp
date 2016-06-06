@@ -17,7 +17,7 @@ namespace msl
 		dribble = false;
 		snapDistance = 0;
 		angleTolerance = 0;
-		teamMatePosition = nullptr;
+		alloTeamMatePosition = nullptr;
 		wm = MSLWorldModel::get();
 
 		resetAllPDParameters();

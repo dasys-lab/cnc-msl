@@ -358,12 +358,11 @@ namespace msl
 	 *
 	 * necessary parameters:
 	 * @teamMatePosition
-	 * @translation
 	 *
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::experimantallyMoveToFreeSpace(shared_ptr<MovementQuery> query)
+	msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(shared_ptr<MovementQuery> query)
 	{
-		auto teamMatePosition = query->teamMatePosition;
+		auto teamMatePosition = query->alloTeamMatePosition;
 		msl_actuator_msgs::MotionControl mc;
 
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
@@ -816,6 +815,7 @@ namespace msl
 	{
 		lastTurnTime = supplementary::DateTime::getUtcNow().getTicks();
 	}
+
 	shared_ptr<geometry::CNPoint2D> RobotMovement::dribbleNeedToTurn(
 			shared_ptr<geometry::CNPosition> ownPos, shared_ptr<geometry::CNPoint2D> ballPos,
 			shared_ptr<geometry::CNPoint2D> pathPlanningPoint)
@@ -1304,11 +1304,11 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
 		return dest;
 	}
-// todo: scip point
 	/**
 	 * alloPassee = allo team mate position
 	 * maxTrans = max translation
 	 */
+	/*
 	msl_actuator_msgs::MotionControl RobotMovement::moveToFreeSpace(shared_ptr<geometry::CNPoint2D> alloPassee, double maxTrans)
 	{
 		msl_actuator_msgs::MotionControl mc;
@@ -1378,7 +1378,7 @@ namespace msl
 		mc = placeRobotAggressive(dest, align, maxTrans);
 		return mc;
 	}
-
+*/
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();

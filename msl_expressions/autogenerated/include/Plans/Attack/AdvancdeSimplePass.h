@@ -2,6 +2,7 @@
 #define AdvancdeSimplePass_H_
 
 #include "DomainBehaviour.h"
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION ID(inc1450176193656) ENABLED START*/ //Add additional includes here
 namespace supplementary
 {
@@ -29,6 +30,7 @@ namespace alica
         EntryPoint* receiver;
         int itcounter;
         shared_ptr<geometry::CNPosition> oldMatePos;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450176193656) ENABLED START*/ //Add additional private methods here
