@@ -144,7 +144,7 @@ BeaglePWM::BeaglePWM()
 
 	for (int i = 0; i < NUM_PWMS; i++) {
 		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i]);
-		ctrlRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, ctrlAddr);
+//		ctrlRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, ctrlAddr);
 		clkRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, cmperAddr);
 
 		if (pwmRegs[i] == MAP_FAILED )
@@ -153,12 +153,12 @@ BeaglePWM::BeaglePWM()
 			return;
 		}
 
-		if (ctrlRegs == MAP_FAILED )
+/*		if (ctrlRegs == MAP_FAILED )
 		{
 			debug(0, "CTRL Mapping failed for PWM Module %i\n", i);
 			return;
 		}
-
+*/
 		if (clkRegs == MAP_FAILED )
 		{
 			debug(0, "CLOCK Mapping failed for PWM Module %i\n", i);
@@ -173,7 +173,7 @@ BeaglePWM::~BeaglePWM()
 	// active = false;
 	for (int i = 0; i < 4; i++)
 		munmap(pwmRegs[i], PWM_MMAPLEN);
-	munmap(ctrlRegs, PWM_MMAPLEN);
+//	munmap(ctrlRegs, PWM_MMAPLEN);
 	munmap(clkRegs, PWM_MMAPLEN);
 	close(memFd);
 }
@@ -244,7 +244,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		/* Enable TBCLK before enabling PWM device */
 		//ret = clk_enable(pc->tbclk);
 		// ctrlRegs[PWMSS_CTRL / 2] |= BIT(modul);
-		clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = PWM_CLOCK_ENABLE;
+	//	clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] |= PWM_CLOCK_ENABLE;
 
 		/* Enable time counter for free_run */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
@@ -275,7 +275,8 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		//clk_disable(pc->tbclk);
 		// uint16_t tempreg = ctrlRegs[PWMSS_CTRL / 2] & ~(BIT(modul));
 		// ctrlRegs[PWMSS_CTRL / 2] = tempreg | BIT(modul);
-		clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = PWM_CLOCK_DISABLE;
+	//	uint16_t tempreg = clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] & ~(BIT(1) | BIT(0));
+	//	clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = tempreg;
 
 		/* Stop Time base counter */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
