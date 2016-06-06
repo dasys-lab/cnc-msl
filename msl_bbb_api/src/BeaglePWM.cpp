@@ -244,7 +244,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		/* Enable TBCLK before enabling PWM device */
 		//ret = clk_enable(pc->tbclk);
 		// ctrlRegs[PWMSS_CTRL / 2] |= BIT(modul);
-		clkRegs[cm_per_epwmss_clk_offsets[modul]] = PWM_CLOCK_ENABLE;
+		clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = PWM_CLOCK_ENABLE;
 
 		/* Enable time counter for free_run */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
@@ -275,7 +275,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		//clk_disable(pc->tbclk);
 		// uint16_t tempreg = ctrlRegs[PWMSS_CTRL / 2] & ~(BIT(modul));
 		// ctrlRegs[PWMSS_CTRL / 2] = tempreg | BIT(modul);
-		clkRegs[cm_per_epwmss_clk_offsets[modul]] = PWM_CLOCK_DISABLE;
+		clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = PWM_CLOCK_DISABLE;
 
 		/* Stop Time base counter */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
