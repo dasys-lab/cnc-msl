@@ -99,7 +99,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            mc = rm.moveToPoint(m_Query);
         }
         else
         { // robot is receiver
@@ -127,7 +127,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            mc = rm.moveToPoint(m_Query);
         }
 
         // if we reach the point and are aligned, the behavior is successful

@@ -14,6 +14,7 @@ namespace alica
             DomainBehaviour("BackroomDefence")
     {
         /*PROTECTED REGION ID(con1454507752863) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     BackroomDefence::~BackroomDefence()
@@ -24,6 +25,8 @@ namespace alica
     void BackroomDefence::run(void* msg)
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPos = wm->ball->getAlloBallPosition();
         //auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
@@ -61,9 +64,15 @@ namespace alica
 
          }
          */
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
-                                                                                  alloBallPos->alloToEgo(*me), 100,
-                                                                                  nullptr);
+        // removed with new moveToPoint method
+//        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
+//                                                                                  alloBallPos->alloToEgo(*me), 100,
+//                                                                                  nullptr);
+        query->egoDestinationPoint = defenderRange->alloToEgo(*me);
+        query->egoAlignPoint = alloBallPos->alloToEgo(*me);
+        query->snapDistance = 100;
+        query->fast = true;
+        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);
 

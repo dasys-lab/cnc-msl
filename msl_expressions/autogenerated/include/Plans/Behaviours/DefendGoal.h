@@ -4,6 +4,8 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1459249294699) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint3D.h"
+#include "robotmovement/MovementQuery.h"
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +23,7 @@ namespace alica
         double postOffset;
         double fieldOffset;
         double ownPosAngleMin;
-
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1459249294699) ENABLED START*/ //Add additional private methods here#

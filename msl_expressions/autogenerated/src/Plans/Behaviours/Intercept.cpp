@@ -58,6 +58,7 @@ namespace alica
     void Intercept::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458757170147) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         bool fastIntercept = false;
         auto ballVel = wm->ball->getVisionBallVelocity();
         double smoothingLength = 1.0;
@@ -71,7 +72,7 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
         if (ownPos == nullptr)
         {
-            mc = msl::RobotMovement::driveRandomly(500);
+            mc = rm.driveRandomly(500);
             send(mc);
             return;
         }
@@ -308,7 +309,9 @@ namespace alica
             }
         }
         mc.motion.rotation = controlRot;
-        mc = msl::RobotMovement::nearGoalArea(mc);
+        // replaced with new method
+//        mc = msl::RobotMovement::nearGoalArea(mc);
+        mc = rm.ruleActionForBallGetter();
         //cout << "Intercept: Translation " << mc.motion.translation << endl;
         send(mc);
         if (wm->ball->haveBallDribble(false))

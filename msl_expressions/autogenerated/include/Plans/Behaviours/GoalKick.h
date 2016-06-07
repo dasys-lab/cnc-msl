@@ -26,6 +26,12 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
         double angleTolerance;
         double minKickPower;
+        double alignMaxVel;
+        double alignToPointRapidMaxRotation;
+        double lastRotErrorWithBallRapid;
+        msl_actuator_msgs::MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                                   shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                                   double angleTolerance, double ballAngleTolerance);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

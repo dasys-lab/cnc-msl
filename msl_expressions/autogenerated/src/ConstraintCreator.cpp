@@ -113,6 +113,8 @@
 
 #include  "Plans/Attack/TestPlans/constraints/TestPassPointMaster1441106724156Constraints.h"
 
+#include  "Plans/Standards/Own/FreeKick/constraints/FreekickOwnHalf1464779892293Constraints.h"
+
 #include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"
 
 using namespace std;
@@ -158,6 +160,10 @@ namespace alica
                 return make_shared<Constraint1457955744730>();
                 break;
 
+//            case 1464793807994:
+//                return make_shared<Constraint1464793807994>();
+//                break;
+
             case 1462361418213:
                 return make_shared<Constraint1462361418213>();
                 break;
@@ -168,6 +174,10 @@ namespace alica
 
             case 1458033723845:
                 return make_shared<Constraint1458033723845>();
+                break;
+
+            case 1464780785574:
+                return make_shared<Constraint1464780785574>();
                 break;
 
             default:

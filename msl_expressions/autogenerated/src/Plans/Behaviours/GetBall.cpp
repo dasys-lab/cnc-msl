@@ -27,6 +27,8 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (me == nullptr || egoBallPos == nullptr)
@@ -99,7 +101,9 @@ namespace alica
         {
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
         }
-        mc = msl::RobotMovement::nearGoalArea(mc);
+        // replaced with new method
+//        mc = msl::RobotMovement::nearGoalArea(mc);
+        mc = rm.ruleActionForBallGetter();
 //        cout <<"GetBall: " << mc.motion.angle << " " << mc.motion.translation << " " << endl;
         send(mc);
         /*PROTECTED REGION END*/

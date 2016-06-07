@@ -113,6 +113,8 @@
 
 #include  "Plans/Attack/TestPlans/TestPassPointMaster1441106724156.h"
 
+#include  "Plans/Standards/Own/FreeKick/FreekickOwnHalf1464779892293.h"
+
 #include  "Plans/Attack/StandardKickOff1438777024734.h"
 
 using namespace std;
@@ -355,6 +357,10 @@ namespace alica
 
             case 1441106724156:
                 return make_shared<UtilityFunction1441106724156>();
+                break;
+
+            case 1464779892293:
+                return make_shared<UtilityFunction1464779892293>();
                 break;
 
             case 1438777024734:

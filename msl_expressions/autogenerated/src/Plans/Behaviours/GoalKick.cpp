@@ -24,6 +24,9 @@ namespace alica
         alloAimPoint = nullptr;
         angleTolerance = 0.05;
         minKickPower = 1500.0;
+        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+        alignToPointRapidMaxRotation = 2 * M_PI;
+        lastRotErrorWithBallRapid = 0;
         /*PROTECTED REGION END*/
     }
     GoalKick::~GoalKick()
@@ -101,8 +104,8 @@ namespace alica
         if (alloAimPoint != nullptr)
         {
             auto egoAimPoint = alloAimPoint->alloToEgo(*ownPos);
-            msl_actuator_msgs::MotionControl mc = msl::RobotMovement::rapidAlignToPointWithBall(
-                    egoAimPoint->rotate(M_PI), egoBallPos, this->angleTolerance, this->angleTolerance);
+            msl_actuator_msgs::MotionControl mc = rapidAlignToPointWithBall(egoAimPoint->rotate(M_PI), egoBallPos,
+                                                                            this->angleTolerance, this->angleTolerance);
 
             if (fabs(geometry::deltaAngle(egoAimPoint->angleTo(), M_PI)) > this->angleTolerance)
             {

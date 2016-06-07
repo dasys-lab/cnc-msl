@@ -59,6 +59,7 @@ public:
 
 private:
         void drawOpponent(vtkRenderer *renderer, double x, double y, double z);
+        void drawOpponentTop(vtkRenderer *renderer, double x, double y, double z);
         std::array<double,3>& getColor();
         int getDashedPattern();
 
@@ -80,7 +81,10 @@ private:
         vtkSmartPointer<vtkLineSource> pass = nullptr;
         vtkSmartPointer<vtkActor> passActor = nullptr;
         vtkSmartPointer<vtkActor> passPointActor = nullptr;
-	std::vector<vtkSmartPointer<vtkActor>> obstacles;
+	std::vector<vtkSmartPointer<vtkActor>> obstaclesBottom;
+
+	std::vector<vtkSmartPointer<vtkActor>> obstaclesTop;
+
         std::vector<vtkSmartPointer<vtkActor>> pathLines;
         std::vector<std::shared_ptr<Line>> netLines;
         std::shared_ptr<Line> corridorLine1;

@@ -18,6 +18,7 @@ namespace alica
             DomainBehaviour("PositionReceiver")
     {
         /*PROTECTED REGION ID(con1439379316897) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -30,6 +31,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1439379316897) ENABLED START*/ //Add additional options here
         //TODO  not allowed in enemy half (rules), new conf for rules
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         auto egoBallPos = wm->ball->getEgoBallPosition();
 
@@ -55,7 +57,14 @@ namespace alica
         msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
         if (wm->game->getSituation() == msl::Situation::Start)
         { // they already pressed start and we are still positioning, so speed up!
-            mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
+          // remeoved with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoBallPos;
+            query->snapDistance = fastCatchRadius;
+            query->additionalPoints = additionalPoints;
+            query->fast = true;
+            mc = rm.moveToPoint(query);
         }
         else
         { // still enough time to position ...

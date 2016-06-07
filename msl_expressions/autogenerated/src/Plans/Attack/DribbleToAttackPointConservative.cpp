@@ -17,6 +17,7 @@ namespace alica
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DribbleToAttackPointConservative::~DribbleToAttackPointConservative()
@@ -27,6 +28,8 @@ namespace alica
     void DribbleToAttackPointConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458132872550) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
         auto dstscan = wm->rawSensorData->getDistanceScan();
@@ -46,7 +49,11 @@ namespace alica
         msl_actuator_msgs::MotionControl bm;
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         //bm = DribbleHelper.DribbleToPoint(egoTarget,this.dribbleVel,WM,out pathPlanningPoint);
-        auto tmpMC = msl::RobotMovement::dribbleToPointConservative(egoTarget, pathPlanningPoint);
+//        auto tmpMC = msl::RobotMovement::dribbleToPointConservative(egoTarget, pathPlanningPoint);
+        query->egoDestinationPoint = egoTarget;
+        query->dribble = true;
+
+        auto tmpMC = rm.moveToPoint(query);
 
         /*Point2D oppInFront = ObstacleHelper.ClosestOpponentInCorridor(WM,ballPos.Angle(),300);
          double distInFront = (oppInFront==null?Double.MaxValue:oppInFront.Distance()-300);
@@ -70,12 +77,14 @@ namespace alica
 //		}
 
         //if i drive in to the enemy goal area
-        bm = msl::RobotMovement::nearGoalArea(bm);
+        // replaced with new method
+//        bm = msl::RobotMovement::nearGoalArea(bm);
+        bm = rm.ruleActionForBallGetter();
 //        bm = DriveHelper.NearGoalArea(WM,bm);
 
-        if (tmpMC != nullptr)
+        if (tmpMC.motion.translation != NAN)
         {
-            bm = *tmpMC;
+            bm = tmpMC;
             send(bm);
         }
 

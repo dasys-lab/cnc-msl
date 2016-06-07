@@ -10,6 +10,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
+#include "Kicker.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -37,7 +38,6 @@ namespace alica
             return;
         }
 
-        // TODO Pass message
         shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
         EntryPoint* ep = getParentEntryPoint(taskName);
         int id = -1;
@@ -70,7 +70,7 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.kicker = 1;
-        kc.power = 560; //wm->kicker.getKickPowerPass(egoAlignPoint->length());
+        kc.power = wm->kicker->getKickPowerPass(egoAlignPoint->length());
         send(kc);
 
         msl_helper_msgs::PassMsg pm;

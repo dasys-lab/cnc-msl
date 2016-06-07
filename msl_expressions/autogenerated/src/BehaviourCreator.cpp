@@ -85,6 +85,8 @@ using namespace std;
 
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
+#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
+
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
 #include  "Plans/Behaviours/GoalKick.h"
@@ -125,6 +127,10 @@ using namespace std;
 
 #include  "Plans/Standards/Own/ThrowIn/ReceiveInOppHalf.h"
 
+#include  "Plans/GenericStandards/GenericExecutePass.h"
+
+#include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
+
 #include  "Plans/Behaviours/DefendGoal.h"
 
 #include  "Plans/Behaviours/MoveToPointDynamic.h"
@@ -152,6 +158,8 @@ using namespace std;
 #include  "Plans/TwoHoledWall/AlignAndShootTwoHoledWall.h"
 
 #include  "Plans/Attack/DribbleAttackConservative.h"
+
+#include  "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
 
@@ -184,6 +192,8 @@ namespace alica
             case 1459456566595:
 
             case 1461583806472:
+
+            case 1465038982091:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;
@@ -410,6 +420,11 @@ namespace alica
                 return make_shared<OneGernericInGameBlocker>();
                 break;
 
+//            case 1464787692697:
+//
+//                return make_shared<FreeKickOppHalfShootRapid>();
+//                break;
+
             case 1433950043262:
 
             case 1435155363994:
@@ -516,6 +531,16 @@ namespace alica
                 return make_shared<ReceiveInOppHalf>();
                 break;
 
+//            case 1465040471344:
+//
+//                return make_shared<GenericExecutePass>();
+//                break;
+//
+//            case 1464787549220:
+//
+//                return make_shared<Pos4ReceiverCornerKick>();
+//                break;
+
             case 1459249336699:
 
                 return make_shared<DefendGoal>();
@@ -595,6 +620,11 @@ namespace alica
 
                 return make_shared<DribbleAttackConservative>();
                 break;
+
+//            case 1464780824372:
+//
+//                return make_shared<PositionReceiverFreeKickOppHalf>();
+//                break;
 
             case 1436855860607:
 
