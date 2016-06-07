@@ -25,7 +25,7 @@ namespace alica
             DomainBehaviour("PositionExecutor")
     {
         /*PROTECTED REGION ID(con1438790362133) ENABLED START*/ //Add additional options here
-		query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -37,7 +37,7 @@ namespace alica
     void PositionExecutor::run(void* msg)
     {
         /*PROTECTED REGION ID(run1438790362133) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
@@ -96,7 +96,7 @@ namespace alica
             msl::MSLWorldModel* wm = msl::MSLWorldModel::get();
             if (wm->game->getSituation() == msl::Situation::Start)
             { // they already pressed start and we are still positioning, so speed up!
-            	// removed with new moveToPoint method
+              // removed with new moveToPoint method
 //                mc = msl::RobotMovement::moveToPointFast(egoTarget, egoBallPos, fastCatchRadius, additionalPoints);
                 query->egoDestinationPoint = egoTarget;
                 query->egoAlignPoint = egoBallPos;

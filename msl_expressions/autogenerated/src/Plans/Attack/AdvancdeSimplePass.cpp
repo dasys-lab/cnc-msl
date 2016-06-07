@@ -34,7 +34,7 @@ namespace alica
     void AdvancdeSimplePass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450176193656) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         if (itcounter < 3)
         {
@@ -83,10 +83,10 @@ namespace alica
 
         if (egoMatePos != nullptr)
         {
-        	// replaced with new method
+            // replaced with new method
 //            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
-        	query->alloTeamMatePosition = egoMatePos->egoToAllo(*ownPos);
-        	rm.moveToFreeSpace(query);
+            query->alloTeamMatePosition = egoMatePos->egoToAllo(*ownPos);
+            rm.moveToFreeSpace(query);
             send(mc);
         }
         /*PROTECTED REGION END*/

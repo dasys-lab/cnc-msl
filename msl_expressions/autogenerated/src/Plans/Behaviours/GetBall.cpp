@@ -27,7 +27,7 @@ namespace alica
     void GetBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();

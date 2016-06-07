@@ -28,7 +28,7 @@ namespace alica
     void DribbleToAttackPointConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458132872550) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();

@@ -24,6 +24,7 @@ namespace alica
         shared_ptr<geometry::CNPosition> ownPos;
         double pTrans, dTrans, alignMaxVel, prevTargetDist;
         int snapDistance, goalieSize;
+        long int startTime;
         string post;
         /*PROTECTED REGION END*/
     private:

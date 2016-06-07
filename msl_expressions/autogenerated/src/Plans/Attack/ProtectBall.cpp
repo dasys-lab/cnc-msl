@@ -42,7 +42,7 @@ namespace alica
     void ProtectBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457706592232) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         auto ballPos = wm->ball->getEgoBallPosition();
         auto ballVel = wm->ball->getEgoBallVelocity();

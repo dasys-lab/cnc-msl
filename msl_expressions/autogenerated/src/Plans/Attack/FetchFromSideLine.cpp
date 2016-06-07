@@ -27,7 +27,7 @@ namespace alica
     void FetchFromSideLine::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450175655102) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
         if (ownPos == nullptr)
         {

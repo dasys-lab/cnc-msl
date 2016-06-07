@@ -33,7 +33,7 @@ namespace alica
                                                             double slowCatchRadius;
                                                             double alignTolerance;
                                                             double ballDistanceRec;
-													        shared_ptr<msl::MovementQuery> query;
+                                                            shared_ptr<msl::MovementQuery> query;
                                                             /*PROTECTED REGION END*/};
                                                     }
                                                     /* namespace alica */

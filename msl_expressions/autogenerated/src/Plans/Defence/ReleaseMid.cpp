@@ -34,7 +34,7 @@ namespace alica
     void ReleaseMid::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
