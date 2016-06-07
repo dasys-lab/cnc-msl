@@ -17,20 +17,6 @@
 #define BIT(n) (1 << n)
 
 
-#define PWMSS_CTRL 664	// Offset for pwmss_control register to enable tbclk for each pwm module
-
-
-#define PWM_CLOCK_ENABLE	0x02
-#define PWM_CLOCK_DISABLE	0x00
-
-/* Clk control registers */
-#define CLKCONFIG		0x08
-#define CLKSTATUS		0x0C
-
-#define EPWM_CLKSTOP	BIT(9)
-#define EPWM_CLK_EN		BIT(8)
-
-
 /* Time base module registers and masks */
 #define TBCTL			0x00
 #define TBPRD			0x0A
@@ -108,11 +94,6 @@
 #define NUM_PWM_CHANNEL		2	/* EHRPWM channels */
 
 
-
-const uint32_t ctrlAddr = 0x44E10000;	// Address for Control Module
-const uint32_t cmperAddr = 0x44E00000;	// Address for Clock Module Registers
-const uint8_t cm_per_epwmss_clk_offsets[] = {0xD4, 0xCC, 0xD8};
-
 /*
    addresses for epwmss0, epwmss1, epwmss2 
    see: your device tree file
@@ -141,27 +122,12 @@ BeaglePWM::BeaglePWM()
 	}
 
 	//PWM mapping
-
 	for (int i = 0; i < NUM_PWMS; i++) {
 		pwmRegs[i] = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, pwmAddr[i]);
-//		ctrlRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, ctrlAddr);
-		clkRegs = (uint16_t *) mmap(NULL, PWM_MMAPLEN, PROT_READ | PROT_WRITE, MAP_SHARED, memFd, cmperAddr);
 
 		if (pwmRegs[i] == MAP_FAILED )
 		{
 			debug(0, "PWM Mapping failed for PWM Module %i\n", i);
-			return;
-		}
-
-/*		if (ctrlRegs == MAP_FAILED )
-		{
-			debug(0, "CTRL Mapping failed for PWM Module %i\n", i);
-			return;
-		}
-*/
-		if (clkRegs == MAP_FAILED )
-		{
-			debug(0, "CLOCK Mapping failed for PWM Module %i\n", i);
 			return;
 		}
 	}
@@ -170,11 +136,8 @@ BeaglePWM::BeaglePWM()
 //Destructor
 BeaglePWM::~BeaglePWM()
 {
-	// active = false;
 	for (int i = 0; i < 4; i++)
 		munmap(pwmRegs[i], PWM_MMAPLEN);
-//	munmap(ctrlRegs, PWM_MMAPLEN);
-	munmap(clkRegs, PWM_MMAPLEN);
 	close(memFd);
 }
 
@@ -241,11 +204,6 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		aqctl_mask |= AQCTL_PRD_MASK | AQCTL_ZRO_MASK;
 		modifyReg(pwmRegs[modul], aqctl, aqctl_mask, aqctl_val);
 
-		/* Enable TBCLK before enabling PWM device */
-		//ret = clk_enable(pc->tbclk);
-		// ctrlRegs[PWMSS_CTRL / 2] |= BIT(modul);
-	//	clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] |= PWM_CLOCK_ENABLE;
-
 		/* Enable time counter for free_run */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_FREE_RUN);
 	} else
@@ -271,18 +229,10 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 		modifyReg(pwmRegs[modul], AQSFRC, AQSFRC_RLDCSF_MASK,AQSFRC_RLDCSF_IMDT);
 		modifyReg(pwmRegs[modul], AQCSFRC, aqcsfrc_mask, aqcsfrc_val);
 
-		/* Disabling TBCLK on PWM disable */
-		//clk_disable(pc->tbclk);
-		// uint16_t tempreg = ctrlRegs[PWMSS_CTRL / 2] & ~(BIT(modul));
-		// ctrlRegs[PWMSS_CTRL / 2] = tempreg | BIT(modul);
-	//	uint16_t tempreg = clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] & ~(BIT(1) | BIT(0));
-	//	clkRegs[cm_per_epwmss_clk_offsets[modul] / 2] = tempreg;
+		setDutyCycle(pin, 0);
 
 		/* Stop Time base counter */
 		modifyReg(pwmRegs[modul], TBCTL, TBCTL_RUN_MASK, TBCTL_STOP_NEXT);
-
-		/* Disable clock on PWM disable */
-		//pm_runtime_put_sync(chip->dev);
 	}
 
 	return 0;
@@ -291,6 +241,7 @@ int BeaglePWM::setRunState(PwmPin pin, bool enable)
 int BeaglePWM::setPeriod(PwmPin pin, unsigned long ns)
 {
 	// TODO: Überprüfung ob in Gültigkeitsbereich
+	// Duty_cycle darf nicht größer als period sein
 
 	PwmModul modul = (PwmModul) pwmInfos[pin].pwmChip;
 
@@ -321,7 +272,6 @@ int BeaglePWM::setPrescaleDiv(PwmModul modul, uint32_t rqst_div)
 			if (prescale > rqst_div)
 			{
 				pwmPrescale[modul] = prescale;
-				// TODO Phileas fragen
 				modifyReg(pwmRegs[modul], TBCTL, TBCTL_CLKDIV_MASK, TBCTL_CLKDIV_SHIFT | TBCTL_HSPCLKDIV_SHIFT);
 				return 0;
 			}
