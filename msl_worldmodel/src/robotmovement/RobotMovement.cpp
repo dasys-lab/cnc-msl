@@ -1209,6 +1209,18 @@ namespace msl
 		return mc;
 	}
 */
+	/**
+	 * could be replaced with:
+	 * movQuery->egoDestinationPoint = destinationPoint;
+     * movQuery->egoAlignPoint = headingPoint;
+     * mc = rm.moveToPoint(movQuery);
+     *
+     * if (destinationPoint->length() < 100)
+     * {
+     * 		mc.motion.translation = 0;
+     * }
+	 */
+	/*
 	msl_actuator_msgs::MotionControl RobotMovement::placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint,
 													shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
@@ -1245,6 +1257,7 @@ namespace msl
 			return mc;
 		}
 	}
+	*/
 /*
 	msl_actuator_msgs::MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint,
 											shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
