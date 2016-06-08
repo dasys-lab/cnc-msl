@@ -134,14 +134,14 @@ namespace msl
 		//shared_ptr<MovementQuery> query;
 		MSLWorldModel* wm;
 		PathProxy* pp;
-		msl_actuator_msgs::MotionControl experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
+		msl_actuator_msgs::MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> dest, shared_ptr<geometry::CNPoint2D> headingPoint);
 		double evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP, shared_ptr<geometry::CNPoint2D> alloPassee,
 											   shared_ptr<geometry::CNPosition> ownPos, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponents);
 
 		// PD regulator methods
-		double rotationPDForDribble(shared_ptr<MovementQuery> query, shared_ptr<geometry::CNPoint2D> target);
-		double translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt);
-		double anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt);
+//		double rotationPDForDribble(shared_ptr<MovementQuery> query, shared_ptr<geometry::CNPoint2D> target);
+//		double translationPDForDribble(shared_ptr<MovementQuery> query, double transOrt);
+//		double anglePDForDribble(shared_ptr<MovementQuery> query, double transOrt);
 
 		msl_actuator_msgs::MotionControl setNAN(msl_actuator_msgs::MotionControl mc);
 

@@ -189,7 +189,7 @@ namespace msl
 			dest = ownPos - alloBall;
 			dest = wm->field->mapInsideField(alloBall);
 			dest = dest->alloToEgo(*ownPos);
-			return experimentallyPlaceRobot(dest, egoBallPos);
+			return placeRobot(dest, egoBallPos);
 		}
 		//handle ball in own penalty ========================================================================
 		if (wm->field->isInsideOwnPenalty(alloBall, 0))
@@ -205,7 +205,7 @@ namespace msl
 				//do not enter penalty if someone besides keeper is already in there
 				dest = wm->field->mapOutOfOwnPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
-				return experimentallyPlaceRobot(dest, egoBallPos);
+				return placeRobot(dest, egoBallPos);
 			}
 			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
 			{
@@ -228,7 +228,7 @@ namespace msl
 				}
 				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
-				return experimentallyPlaceRobot(dest, egoBallPos);
+				return placeRobot(dest, egoBallPos);
 			}
 
 		}
@@ -240,14 +240,14 @@ namespace msl
 				//if there is someone else, do not enter
 				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
-				return experimentallyPlaceRobot(dest, egoBallPos);
+				return placeRobot(dest, egoBallPos);
 			}
 			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
 			{
 				//ball is inside keeper area
 				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
-				return experimentallyPlaceRobot(dest, egoBallPos);
+				return placeRobot(dest, egoBallPos);
 			}
 
 		}
@@ -264,7 +264,7 @@ namespace msl
 	 * 		the distance to the destination and
 	 * 		the ball as additional point
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::experimentallyPlaceRobot(shared_ptr<geometry::CNPoint2D> dest,
+	msl_actuator_msgs::MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> dest,
 															shared_ptr<geometry::CNPoint2D> headingPoint)
 	{
 		msl_actuator_msgs::MotionControl mc;
@@ -1244,7 +1244,7 @@ namespace msl
 			return mc;
 		}
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint,
 											shared_ptr<geometry::CNPoint2D> headingPoint, double translation)
 	{
@@ -1287,6 +1287,7 @@ namespace msl
 			return bm;
 		}
 	}
+	*/
 /*
 	msl_actuator_msgs::MotionControl RobotMovement::driveRandomly(double translation)
 	{
