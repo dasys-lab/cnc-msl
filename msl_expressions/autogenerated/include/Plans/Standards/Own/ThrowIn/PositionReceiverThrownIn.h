@@ -4,6 +4,9 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1461584204507) ENABLED START*/ //Add additional includes here
 #include <engine/constraintmodul/ConstraintQuery.h>
+namespace geometry{
+	class CNPoint2D;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {

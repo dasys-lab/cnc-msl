@@ -11,6 +11,7 @@ using namespace std;
 #include "engine/model/Plan.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>

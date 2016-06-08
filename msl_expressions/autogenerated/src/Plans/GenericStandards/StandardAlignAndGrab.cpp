@@ -8,6 +8,7 @@ using namespace std;
 #include <Robots.h>
 #include <GeometryCalculator.h>
 #include <Kicker.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

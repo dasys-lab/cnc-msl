@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1446033324019) ENABLED START*/ //Add additional includes here
 ros::Publisher calibCoeff_pub;
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <SystemConfig.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

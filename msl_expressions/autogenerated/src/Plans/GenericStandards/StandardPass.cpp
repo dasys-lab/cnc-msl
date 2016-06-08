@@ -10,7 +10,9 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
-#include "Kicker.h"
+#include <msl_helper_msgs/PassMsg.h>
+#include <Kicker.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

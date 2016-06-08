@@ -16,6 +16,7 @@ using namespace std;
 #include <obstaclehandler/Obstacles.h>
 #include <Kicker.h>
 #include <Robots.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

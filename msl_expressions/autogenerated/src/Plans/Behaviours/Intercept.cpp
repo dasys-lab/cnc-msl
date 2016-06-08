@@ -6,6 +6,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Game.h>
 #include <Kicker.h>
+#include <pathplanner/PathProxy.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

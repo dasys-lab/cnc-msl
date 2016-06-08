@@ -5,7 +5,9 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

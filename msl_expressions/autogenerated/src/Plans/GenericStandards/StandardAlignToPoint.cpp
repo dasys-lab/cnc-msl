@@ -4,7 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "robotmovement/MovementQuery.h"
-#include "engine/RunningPlan.h"
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>

@@ -6,6 +6,7 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Game.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

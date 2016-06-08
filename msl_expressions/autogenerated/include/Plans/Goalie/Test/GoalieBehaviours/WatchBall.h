@@ -7,7 +7,9 @@
 #include "container/CNPosition.h"
 #include <string>
 #include <RingBuffer.h>
-
+#include <msl_actuator_msgs/MotionControl.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica

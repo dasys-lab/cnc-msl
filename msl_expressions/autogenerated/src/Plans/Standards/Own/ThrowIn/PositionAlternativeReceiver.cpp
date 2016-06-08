@@ -9,6 +9,7 @@ using namespace std;
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica

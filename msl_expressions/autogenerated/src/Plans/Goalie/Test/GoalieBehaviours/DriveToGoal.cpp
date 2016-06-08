@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -67,7 +69,7 @@ namespace alica
             alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
             cout << " Driving to goal" << endl;
-            mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
                                                      alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
 
             if (me->distanceTo(alloTarget) <= 100)

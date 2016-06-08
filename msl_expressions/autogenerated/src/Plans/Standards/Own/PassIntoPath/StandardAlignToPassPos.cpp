@@ -5,6 +5,7 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
+#include <msl_helper_msgs/PassMsg.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
