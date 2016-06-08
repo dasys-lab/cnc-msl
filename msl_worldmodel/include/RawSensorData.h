@@ -77,9 +77,10 @@ namespace msl
 		RingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
 		MSLWorldModel* wm;
 
+
 		unsigned long maxInformationAge;
 		int ownID;
-
+		bool loggingEnabled;
 	};
 
 } /* namespace alica */
