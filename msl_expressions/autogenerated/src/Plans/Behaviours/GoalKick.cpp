@@ -140,7 +140,7 @@ namespace alica
         minKickPower = 1500.0;
         /*PROTECTED REGION END*/
     }
-
+/*PROTECTED REGION ID(methods1415205565589) ENABLED START*/ //Add additional methods here
 	msl_actuator_msgs::MotionControl GoalKick::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 															shared_ptr<geometry::CNPoint2D> egoBallPos,
 															double angleTolerance, double ballAngleTolerance)
@@ -196,6 +196,5 @@ namespace alica
 		}
 		return mc;
 	}
-/*PROTECTED REGION ID(methods1415205565589) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

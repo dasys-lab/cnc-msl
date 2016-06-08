@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205565589) ENABLED START*/ //Add additional includes here
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
