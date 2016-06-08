@@ -2,6 +2,7 @@
 #define AdvancdeSimplePass_H_
 
 #include "DomainBehaviour.h"
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION ID(inc1450176193656) ENABLED START*/ //Add additional includes here
 namespace supplementary
 {

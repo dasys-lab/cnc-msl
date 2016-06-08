@@ -2,6 +2,7 @@
 #define BouncePassShoot_H_
 
 #include "DomainBehaviour.h"
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION ID(inc1459357144291) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
