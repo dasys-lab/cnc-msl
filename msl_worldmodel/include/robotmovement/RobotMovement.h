@@ -65,7 +65,7 @@ namespace msl
 //		static msl_actuator_msgs::MotionControl driveRandomly(double translation);
 
 		//TODO needs to be tested
-		static msl_actuator_msgs::MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
+//		static msl_actuator_msgs::MotionControl placeRobotCareBall(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);
 
 		//TODO needs to be tested
 //		static msl_actuator_msgs::MotionControl placeRobot(shared_ptr<geometry::CNPoint2D> destinationPoint, shared_ptr<geometry::CNPoint2D> headingPoint, double translation);

@@ -52,7 +52,15 @@ namespace alica
 					*ownPos);
 			if (avoidBall)
 			{
-				mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+				// replace method with new moveToPoint method
+//				mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+				movQuery->egoDestinationPoint = driveTo;
+				movQuery->egoAlignPoint = ballPos;
+				mc = rm.moveToPoint(movQuery);
+				if (driveTo->length() < 100)
+				{
+					mc.motion.translation = 0;
+				}
 			}
 			else
 			{
