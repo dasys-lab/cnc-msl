@@ -23,7 +23,7 @@
     <outTransitions>#1458555218949</outTransitions>
   </states>
   <states id="1430925743739" name="OwnGoalKick" comment="">
-    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080</plans>
     <inTransitions>#1430925919866</inTransitions>
     <inTransitions>#1458555853125</inTransitions>
     <outTransitions>#1430925965662</outTransitions>
@@ -37,7 +37,7 @@
     <outTransitions>#1458555205351</outTransitions>
   </states>
   <states id="1430925759928" name="OwnCornerKick" comment="">
-    <plans xsi:type="alica:Plan">GenericExecute.pml#1431522123418</plans>
+    <plans xsi:type="alica:PlanType">../Standards/Own/Corner/OwnCorner.pty#1465397117125</plans>
     <inTransitions>#1430925924151</inTransitions>
     <inTransitions>#1458555788972</inTransitions>
     <outTransitions>#1430925973111</outTransitions>

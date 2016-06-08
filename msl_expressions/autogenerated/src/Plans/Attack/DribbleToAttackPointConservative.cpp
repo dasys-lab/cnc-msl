@@ -69,8 +69,8 @@ namespace alica
          if(oppInFront!=null) HHelper.SetTargetPoint(WorldHelper.Ego2Allo(oppInFront.Rotate(Math.PI),ownPos));
          this.FailureStatus = true;
          }*/
-        shared_ptr < geometry::CNPoint2D > turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
-                                                                                          pathPlanningPoint);
+//        shared_ptr < geometry::CNPoint2D > turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
+//                                                                                          pathPlanningPoint);
 //		if (turnTo!=nullptr) {
 //			HHelper.SetTargetPoint(turnTo);
 //			this->failure = true;
