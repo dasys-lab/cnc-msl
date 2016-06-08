@@ -27,6 +27,7 @@ namespace alica
         teamMatePlanName = "";
         ep = nullptr;
         teamMateId = 0;
+        movQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     OneGernericInGameBlocker::~OneGernericInGameBlocker()
@@ -37,6 +38,7 @@ namespace alica
     void OneGernericInGameBlocker::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458034268108) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
@@ -141,7 +143,12 @@ namespace alica
         }
         else
         {
-            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+        	// replaced method with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+        	movQuery->egoDestinationPoint = driveTo;
+        	movQuery->egoAlignPoint = ballPos;
+        	movQuery->fast = true;
+        	mc = rm.moveToPoint(movQuery);
         }
 
         send(mc);

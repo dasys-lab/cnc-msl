@@ -815,7 +815,7 @@ namespace msl
 	{
 		lastTurnTime = supplementary::DateTime::getUtcNow().getTicks();
 	}
-
+/*
 	shared_ptr<geometry::CNPoint2D> RobotMovement::dribbleNeedToTurn(
 			shared_ptr<geometry::CNPosition> ownPos, shared_ptr<geometry::CNPoint2D> ballPos,
 			shared_ptr<geometry::CNPoint2D> pathPlanningPoint)
@@ -828,9 +828,9 @@ namespace msl
 		double distInFront = (oppInFront == nullptr ? std::numeric_limits<double>::max() : oppInFront->length() - 300);
 
 		double minInFrontDist = 800;
-		/*if (od!=null && od.Motion!=null) {
-		 minInFrontDist = Math.Max(minInFrontDist,Math.Min(2000,od.Motion.Translation+800));
-		 }*/
+//		if (od!=null && od.Motion!=null) {
+//		 minInFrontDist = Math.Max(minInFrontDist,Math.Min(2000,od.Motion.Translation+800));
+//		 }
 		if (ballPos != nullptr && pathPlanningPoint != nullptr
 				&& abs(geometry::deltaAngle(ballPos->angleTo(), pathPlanningPoint->angleTo())) > M_PI * 4.65 / 6.0)
 		{
@@ -865,6 +865,7 @@ namespace msl
 		return nullptr;
 
 	}
+	*/
 /*
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPointFast(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
@@ -1409,7 +1410,7 @@ namespace msl
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
 		maxVelo = (*sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);
 	}
-
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::placeRobotAggressive(shared_ptr<geometry::CNPoint2D> destinationPoint,
 														shared_ptr<geometry::CNPoint2D> headingPoint,
 														double translation)
@@ -1429,6 +1430,7 @@ namespace msl
 			return bm;
 		}
 	}
+	*/
 /*
 	double RobotMovement::evalPointDynamic(shared_ptr<geometry::CNPoint2D> alloP,
 											shared_ptr<geometry::CNPoint2D> alloPassee,

@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1456997073100) ENABLED START*/ //Add additional includes here
 #include "engine/constraintmodul/ConstraintQuery.h"
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -23,6 +24,7 @@ namespace alica
         bool avoidBall;
         vector<double> result;
         ulong lastResult;
+        shared_ptr<msl::MovementQuery> movQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1456997073100) ENABLED START*/ //Add additional private methods here
