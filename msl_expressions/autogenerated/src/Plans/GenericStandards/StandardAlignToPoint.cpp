@@ -97,7 +97,7 @@ namespace alica
 
             // ask the path planner how to get there
             this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
             mc = rm.moveToPoint(m_Query);
         }
