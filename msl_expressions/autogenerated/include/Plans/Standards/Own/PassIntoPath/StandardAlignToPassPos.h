@@ -27,7 +27,7 @@ namespace alica
         double maxVel;
         int iterationCount;
         shared_ptr<msl::MovementQuery> movQuery;
-    /*PROTECTED REGION END*/};
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* StandardAlignToPassPos_H_ */

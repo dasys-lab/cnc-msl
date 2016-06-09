@@ -76,7 +76,6 @@ namespace alica
 //			HHelper.SetTargetPoint(turnTo);
 //			this->failure = true;
 //		}
-
         //if i drive in to the enemy goal area
         // replaced with new method
 //        bm = msl::RobotMovement::nearGoalArea(bm);

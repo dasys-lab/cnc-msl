@@ -6,8 +6,9 @@
 #include "DateTime.h"
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_actuator_msgs/KickControl.h>
-namespace geometry{
-	class CNPoint2D;
+namespace geometry
+{
+    class CNPoint2D;
 }
 namespace alica
 {

@@ -70,7 +70,7 @@ namespace alica
 
             cout << " Driving to goal" << endl;
             mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-                                                     alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
 
             if (me->distanceTo(alloTarget) <= 100)
             {
