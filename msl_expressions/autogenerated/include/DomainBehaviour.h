@@ -3,16 +3,27 @@
 
 #include "engine/BasicBehaviour.h"
 #include "ros/ros.h"
-#include "SystemConfig.h"
-#include "MSLWorldModel.h"
-#include "msl_actuator_msgs/MotionControl.h"
-#include "msl_actuator_msgs/BallHandleCmd.h"
-#include "msl_actuator_msgs/KickControl.h"
-#include "msl_actuator_msgs/ShovelSelectCmd.h"
-#include "msl_helper_msgs/PassMsg.h"
-#include "msl_helper_msgs/WatchBallMsg.h"
-#include "pathplanner/PathProxy.h"
-#include "msl_helper_msgs/DebugMsg.h"
+
+namespace msl_helper_msgs{
+	ROS_DECLARE_MESSAGE(WatchBallMsg)
+	ROS_DECLARE_MESSAGE(PassMsg)
+	ROS_DECLARE_MESSAGE(DebugMsg)
+}
+
+namespace msl_actuator_msgs{
+	ROS_DECLARE_MESSAGE(MotionControl)
+	ROS_DECLARE_MESSAGE(BallHandleCmd)
+	ROS_DECLARE_MESSAGE(KickControl)
+	ROS_DECLARE_MESSAGE(ShovelSelectCmd)
+}
+
+namespace supplementary {
+	class SystemConfig;
+}
+
+namespace msl{
+	class MSLWorldModel;
+}
 
 namespace alica
 {

@@ -20,6 +20,7 @@ namespace alica
         avoidBall = false;
         result = vector<double>();
         lastResult = 0;
+        movQuery = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -31,6 +32,7 @@ namespace alica
     void MoveToPointDynamic::run(void* msg)
     {
         /*PROTECTED REGION ID(run1456997073100) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
@@ -50,11 +52,24 @@ namespace alica
                     > (result[0], result[1])->alloToEgo(*ownPos);
             if (avoidBall)
             {
-                mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+                // replace method with new moveToPoint method
+//				mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+                movQuery->egoDestinationPoint = driveTo;
+                movQuery->egoAlignPoint = ballPos;
+                mc = rm.moveToPoint(movQuery);
+                if (driveTo->length() < 100)
+                {
+                    mc.motion.translation = 0;
+                }
             }
             else
             {
-                mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+                // replaced with new moveToPoint method
+//                mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+                movQuery->egoDestinationPoint = driveTo;
+                movQuery->egoAlignPoint = ballPos;
+                movQuery->fast = true;
+                mc = rm.moveToPoint(movQuery);
             }
             if (driveTo->length() < 150)
             {

@@ -7,6 +7,8 @@ using namespace std;
 #include <robotmovement/MovementQuery.h>
 #include <robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

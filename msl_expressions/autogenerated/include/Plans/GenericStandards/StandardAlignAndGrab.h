@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1455888574532) ENABLED START*/ //Add additional includes here
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

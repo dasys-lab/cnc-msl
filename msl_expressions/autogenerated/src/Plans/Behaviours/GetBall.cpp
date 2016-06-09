@@ -7,6 +7,8 @@ using namespace std;
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
 #include <pathplanner/PathPlanner.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <MSLWorldModel.h>
 #include <Game.h>
 /*PROTECTED REGION END*/
 namespace alica

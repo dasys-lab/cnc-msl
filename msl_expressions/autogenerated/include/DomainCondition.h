@@ -5,6 +5,7 @@
 
 namespace msl{
 	class MSLWorldModel;
+	class Rules;
 }
 
 namespace supplementary {
@@ -21,6 +22,7 @@ namespace alica
 
 		msl::MSLWorldModel* wm;
 		supplementary::SystemConfig* sc;
+		msl::Rules* rules;
 
 		/* The time that can pass since the last start command
 		 * until we need to skip proper positioning and execute

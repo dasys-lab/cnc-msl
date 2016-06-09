@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1458132872550) ENABLED START*/ //Add additional includes here
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -69,13 +70,12 @@ namespace alica
          if(oppInFront!=null) HHelper.SetTargetPoint(WorldHelper.Ego2Allo(oppInFront.Rotate(Math.PI),ownPos));
          this.FailureStatus = true;
          }*/
-        shared_ptr < geometry::CNPoint2D > turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
-                                                                                          pathPlanningPoint);
+//        shared_ptr < geometry::CNPoint2D > turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
+//                                                                                          pathPlanningPoint);
 //		if (turnTo!=nullptr) {
 //			HHelper.SetTargetPoint(turnTo);
 //			this->failure = true;
 //		}
-
         //if i drive in to the enemy goal area
         // replaced with new method
 //        bm = msl::RobotMovement::nearGoalArea(bm);

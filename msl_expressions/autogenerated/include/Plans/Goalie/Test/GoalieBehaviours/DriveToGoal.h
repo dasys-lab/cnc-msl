@@ -5,8 +5,7 @@
 /*PROTECTED REGION ID(inc1447863424939) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
-
-using namespace msl;
+#include <msl_actuator_msgs/MotionControl.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

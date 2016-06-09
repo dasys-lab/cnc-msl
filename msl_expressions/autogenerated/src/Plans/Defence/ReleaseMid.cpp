@@ -7,6 +7,7 @@ using namespace std;
 #include "engine/model/AbstractPlan.h"
 #include <Robots.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica

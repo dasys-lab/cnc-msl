@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1459249216387) ENABLED START*/ //Add additional includes here
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

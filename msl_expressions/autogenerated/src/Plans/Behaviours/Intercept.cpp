@@ -6,6 +6,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Game.h>
 #include <Kicker.h>
+#include <pathplanner/PathProxy.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -48,6 +49,7 @@ namespace alica
 
         maxVel = (*sc)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
 
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Intercept::~Intercept()
@@ -95,7 +97,16 @@ namespace alica
         {
             auto egoTarget = wm->field->mapInsideField(alloBall)->alloToEgo(*ownPos);
             //cout << "Intercept return 3 begin" << endl;
-            mc = msl::RobotMovement::placeRobotCareBall(egoTarget, ballPos, maxVel);
+
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(egoTarget, ballPos, maxVel);
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(query);
+            if (egoTarget->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
             //cout << "Intercept return 3 end" << endl;
             send(mc);
             return;

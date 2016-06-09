@@ -12,6 +12,8 @@ using namespace std;
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
 #include <Kicker.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

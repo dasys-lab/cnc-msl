@@ -7,6 +7,8 @@ using namespace std;
 #include <Robots.h>
 #include <RawSensorData.h>
 #include <Kicker.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

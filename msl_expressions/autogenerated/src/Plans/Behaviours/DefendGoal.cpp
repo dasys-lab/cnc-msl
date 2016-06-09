@@ -116,7 +116,16 @@ namespace alica
         if (destEgo->length() < wm->field->getPenaltyAreaLength())
         {
 //			mc = DriveHelper.DriveToPointAndAlignCareObstacles(destEgo,ballPos, KeeperHelper.GetSpeed(destEgo),WM);
-            mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
+
+            // replaced method with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
+            query->egoDestinationPoint = destEgo;
+            query->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(query);
+            if (destEgo->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
             //Console.WriteLine("Angle: " + mc.Motion.Angle + " Trans: " + mc.Motion.Translation + " Rotation: " + mc.Motion.Rotation);
         }
         else

@@ -6,6 +6,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <WhiteBoard.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

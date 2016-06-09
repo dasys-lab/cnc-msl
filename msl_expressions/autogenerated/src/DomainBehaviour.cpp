@@ -2,11 +2,18 @@
 
 #include <RawSensorData.h>
 #include <Kicker.h>
+#include <SystemConfig.h>
+#include <MSLWorldModel.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/ShovelSelectCmd.h>
+#include <msl_helper_msgs/DebugMsg.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/WatchBallMsg.h>
 
 namespace alica
 {
-	msl::MSLWorldModel* wm;
-
 	DomainBehaviour::DomainBehaviour(string name) :
 			BasicBehaviour(name)
 	{
