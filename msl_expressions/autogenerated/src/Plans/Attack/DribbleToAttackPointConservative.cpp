@@ -47,7 +47,7 @@ namespace alica
             this->setSuccess(true);
         }
 
-        msl_actuator_msgs::MotionControl bm;
+
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
         query->dribble = true;

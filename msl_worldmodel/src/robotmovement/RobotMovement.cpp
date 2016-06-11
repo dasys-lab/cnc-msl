@@ -119,7 +119,7 @@ namespace msl
 
 		if (query == nullptr || query->egoDestinationPoint == nullptr)
 		{
-			return setNAN(mc);
+			return setNAN();
 		}
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
 		shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, eval,
@@ -177,12 +177,11 @@ namespace msl
 	{
 		// TODO introduce destination method-parameter for improving this method...
 		// TODO add config parameters for all static numbers in here!
-		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball->getEgoBallPosition();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
 		if (egoBallPos == nullptr || ownPos == nullptr)
 		{
-			return setNAN(mc);
+			return setNAN();
 		}
 		shared_ptr<geometry::CNPoint2D> alloBall = egoBallPos->egoToAllo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> dest = make_shared<geometry::CNPoint2D>();
@@ -202,7 +201,7 @@ namespace msl
 					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{
 				//if we are already in, and ball is in safe distance of keeper area, get it
-				return setNAN(mc);
+				return setNAN();
 			}
 			if (wm->robots->teammates.teamMatesInOwnPenalty() > 1)
 			{
@@ -218,7 +217,7 @@ namespace msl
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
-						return setNAN(mc);
+						return setNAN();
 					}
 				}
 				dest->x = alloBall->x - 200;
@@ -258,7 +257,7 @@ namespace msl
 #ifdef RM_DEBUG
 		cout << "RobotMovement::ruleActionForBallGetter: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
 #endif
-		return mc;
+		return setNAN();
 	}
 
 	/*
@@ -372,7 +371,7 @@ namespace msl
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
-			return setNAN(mc);
+			return setNAN();
 		}
 
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getEgoVisionObstaclePoints(); //WM.GetTrackedOpponents();
@@ -558,8 +557,9 @@ namespace msl
 		return ret;
 	}
 
-	msl_actuator_msgs::MotionControl RobotMovement::setNAN(msl_actuator_msgs::MotionControl mc)
+	msl_actuator_msgs::MotionControl RobotMovement::setNAN()
 	{
+		msl_actuator_msgs::MotionControl mc;
 		mc.motion.rotation = NAN;
 		mc.motion.translation = NAN;
 		mc.motion.angle = NAN;

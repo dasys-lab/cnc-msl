@@ -205,61 +205,7 @@ namespace alica
 
 		/*PROTECTED REGION END*/
 	}
+
 	/*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
-	bool Intercept::interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel,
-									double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo)
-	{
-		t = 0;
-		interceptVelo = nullptr;
-		if (ballVel->length() < 10)
-		{
-			return false;
-		}
-		double denum = egoBall->length() * egoBall->length();
-		double p = 2 * (-egoBall->y * egoBall->y * ballVel->x + egoBall->x * egoBall->y * ballVel->y);
-		double q = -egoBall->x * egoBall->x * maxVel * maxVel + egoBall->y * egoBall->y * ballVel->x * ballVel->x
-				+ egoBall->x * egoBall->x * ballVel->y * ballVel->y
-				- 2 * egoBall->x * egoBall->y * ballVel->y * ballVel->y;
-
-		p /= denum;
-		q /= denum;
-
-		double sq = p * p / 4 - q;
-		if (sq < 0)
-		{
-			return false; //cant reach
-		}
-		double vx1 = -p / 2 - sqrt(sq);
-		double vx2 = -p / 2 + sqrt(sq);
-
-		double t1 = -egoBall->x / (ballVel->x - vx1);
-		double t2 = -egoBall->x / (ballVel->x - vx2);
-		double vx = 0, vy = 0;
-
-		if ((t2 < 0 && t1 > 0) || (t1 > 0 && t1 < t2))
-		{
-			vx = vx1;
-			t = t1;
-		}
-		else if (t2 > 0)
-		{
-			vx = vx2;
-			t = t2;
-		}
-		else
-		{
-			return false; //can't reach
-		}
-		vy = (egoBall->y + t * ballVel->y) / t;
-
-		interceptVelo->x = vx;
-		interceptVelo->y = vy;
-
-		if (interceptVelo->length() > maxVel)
-		{
-			interceptVelo = interceptVelo->normalize() * maxVel;
-		}
-		return true;
-	}
-/*PROTECTED REGION END*/
+	/*PROTECTED REGION END*/
 } /* namespace alica */
