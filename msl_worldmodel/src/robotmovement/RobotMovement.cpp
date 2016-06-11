@@ -198,7 +198,7 @@ namespace msl
 		//handle ball in own penalty ========================================================================
 		if (wm->field->isInsideOwnPenalty(alloBall, 0))
 		{
-			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200)
+			if (!wm->field->isInsideOwnGoalArea(alloBall, 200)
 					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{
 				//if we are already in, and ball is in safe distance of keeper area, get it
@@ -211,10 +211,10 @@ namespace msl
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, egoBallPos);
 			}
-			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
+			if (wm->field->isInsideOwnGoalArea(alloBall, 200))
 			{
 				//ball is dangerously close to keeper area, or even within
-				if (!wm->field->isInsideOwnKeeperArea(alloBall, 50))
+				if (!wm->field->isInsideOwnGoalArea(alloBall, 50))
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
@@ -230,26 +230,26 @@ namespace msl
 				{
 					dest->y = alloBall->y + 500;
 				}
-				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = wm->field->mapOutOfOwnGoalArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, egoBallPos);
 			}
 
 		}
 		//ball is inside enemy penalty area ===============================================================
-		if (wm->field->isInsideEnemyPenalty(alloBall, 0))
+		if (wm->field->isInsideOppPenalty(alloBall, 0))
 		{
 			if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
 			{
 				//if there is someone else, do not enter
-				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
+				dest = wm->field->mapOutOfOppPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, egoBallPos);
 			}
-			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
+			if (wm->field->isInsideOppGoalArea(alloBall, 50))
 			{
 				//ball is inside keeper area
-				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = wm->field->mapOutOfOppGoalArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, egoBallPos);
 			}
@@ -427,7 +427,7 @@ namespace msl
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
 		}
 		shared_ptr<geometry::CNPoint2D> dest =
-				wm->field->mapOutOfEnemyKeeperArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
+				wm->field->mapOutOfOppGoalArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> align = teamMatePosition->alloToEgo(*ownPos);
 
 //		mc = placeRobotAggressive(dest, align, maxTrans);
@@ -473,7 +473,7 @@ namespace msl
 		{
 			return numeric_limits<double>::min();
 		}
-		if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
+		if (wm->field->isInsideOppPenalty(alloPassee, 800) && wm->field->isInsideOppPenalty(alloP, 600))
 		{
 			return numeric_limits<double>::min();
 		}
@@ -583,8 +583,8 @@ namespace msl
 
 //		cout << "RobotMovement: ego dir  " << dir->x << " " << dir->y << endl;
 		dir = dir->egoToAllo(*ownPos);
-		if (wm->field->isInsideEnemyKeeperArea(dir, 150)
-				|| wm->field->isInsideEnemyKeeperArea(ownPos->getPoint(), 1200))
+		if (wm->field->isInsideOppGoalArea(dir, 150)
+				|| wm->field->isInsideOppGoalArea(ownPos->getPoint(), 1200))
 		{
 			dir = dir - ownPos;
 //			cout << "RobotMovement: allo dir  " << dir->x << " " << dir->y << endl;
@@ -596,7 +596,7 @@ namespace msl
 
 			bm.motion.angle = dir->angleTo();
 			bm.motion.translation = dir->length();
-//			cout << "RobotMovement: insideEnemyArea \t" << bm.motion.angle << "\t" << bm.motion.translation << "\t" << bm.motion.rotation << endl;
+//			cout << "RobotMovement: insideOppArea \t" << bm.motion.angle << "\t" << bm.motion.translation << "\t" << bm.motion.rotation << endl;
 		}
 		return bm;
 	}
@@ -1149,7 +1149,7 @@ namespace msl
 		}
 		if (wm->field->isInsideOwnPenalty(alloBall, 0))
 		{ //handle ball in own penalty
-			if (!wm->field->isInsideOwnKeeperArea(alloBall, 200)
+			if (!wm->field->isInsideOwnGoalArea(alloBall, 200)
 					&& wm->field->isInsideOwnPenalty(ownPos->getPoint(), 0))
 			{ //if we are already in, and ball is in safe distance of keeper area, get it
 				msl_actuator_msgs::MotionControl mc;
@@ -1164,9 +1164,9 @@ namespace msl
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
-			if (wm->field->isInsideOwnKeeperArea(alloBall, 200))
+			if (wm->field->isInsideOwnGoalArea(alloBall, 200))
 			{ //ball is dangerously close to keeper area, or even within
-				if (!wm->field->isInsideOwnKeeperArea(alloBall, 50))
+				if (!wm->field->isInsideOwnGoalArea(alloBall, 50))
 				{
 					if ((ownPos->x - alloBall->x) < 150)
 					{
@@ -1184,25 +1184,25 @@ namespace msl
 				{
 					dest->y = alloBall->y + 500;
 				}
-				dest = wm->field->mapOutOfOwnKeeperArea(dest); //drive to the closest side of the ball and hope to get it somehow
+				dest = wm->field->mapOutOfOwnGoalArea(dest); //drive to the closest side of the ball and hope to get it somehow
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobotCareBall(dest, ballPos, maxVelo);
 			}
 
 		}
-		if (wm->field->isInsideEnemyPenalty(alloBall, 0))
-		{ //ball is inside enemy penalty area
+		if (wm->field->isInsideOppPenalty(alloBall, 0))
+		{ //ball is inside Opp penalty area
 			if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
 			{ //if there is someone else, do not enter
 			  //dest.X = ownPos.X - alloBall.X;
 			  //dest.Y = ownPos.Y - alloBall.Y;
-				dest = wm->field->mapOutOfEnemyPenalty(alloBall);
+				dest = wm->field->mapOutOfOppPenalty(alloBall);
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
-			if (wm->field->isInsideEnemyKeeperArea(alloBall, 50))
+			if (wm->field->isInsideOppGoalArea(alloBall, 50))
 			{ //ball is inside keeper area
-				dest = wm->field->mapOutOfEnemyKeeperArea(alloBall); //just drive as close to the ball as you can
+				dest = wm->field->mapOutOfOppGoalArea(alloBall); //just drive as close to the ball as you can
 				dest = dest->alloToEgo(*ownPos);
 				return placeRobot(dest, ballPos, maxVelo);
 			}
@@ -1406,7 +1406,7 @@ namespace msl
 			stable_sort(fringe->begin(), fringe->end(), SearchArea::compareTo);
 		}
 		shared_ptr<geometry::CNPoint2D> dest =
-				wm->field->mapOutOfEnemyKeeperArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
+				wm->field->mapOutOfOppGoalArea(wm->field->mapInsideField(best->midP))->alloToEgo(*ownPos);
 		shared_ptr<geometry::CNPoint2D> align = alloPassee->alloToEgo(*ownPos);
 
 		mc = placeRobotAggressive(dest, align, maxTrans);
@@ -1476,7 +1476,7 @@ namespace msl
 		{
 			return numeric_limits<double>::min();
 		}
-		if (wm->field->isInsideEnemyPenalty(alloPassee, 800) && wm->field->isInsideEnemyPenalty(alloP, 600))
+		if (wm->field->isInsideOppPenalty(alloPassee, 800) && wm->field->isInsideOppPenalty(alloP, 600))
 		{
 			return numeric_limits<double>::min();
 		}

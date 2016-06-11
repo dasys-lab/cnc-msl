@@ -87,7 +87,7 @@ namespace msl
 		{
 			return false;
 		}
-		if (wm->field->isInsideEnemyKeeperArea(this->midP, 100))
+		if (wm->field->isInsideOppGoalArea(this->midP, 100))
 		{
 			return false;
 		}

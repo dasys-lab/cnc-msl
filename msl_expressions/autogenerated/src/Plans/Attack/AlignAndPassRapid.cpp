@@ -14,6 +14,8 @@ using namespace std;
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
 #include <Ball.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/Assignment.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
