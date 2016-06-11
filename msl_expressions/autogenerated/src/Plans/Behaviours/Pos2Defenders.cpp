@@ -7,6 +7,7 @@ using namespace std;
 #include <robotmovement/RobotMovement.h>
 #include <Ball.h>
 #include <Robots.h>
+#include <engine/Assignment.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
