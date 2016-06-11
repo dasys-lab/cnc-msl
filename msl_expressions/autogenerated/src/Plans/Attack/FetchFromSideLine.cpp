@@ -5,6 +5,8 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,6 +29,7 @@ namespace alica
     void FetchFromSideLine::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450175655102) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
         if (ownPos == nullptr)
         {
@@ -40,7 +43,7 @@ namespace alica
             this->setFailure(true);
             return;
         }
-        msl_actuator_msgs::MotionControl bm = msl::RobotMovement::ruleActionForBallGetter();
+        auto bm = rm.ruleActionForBallGetter();
 
         if (bm.senderID == -1)
         {

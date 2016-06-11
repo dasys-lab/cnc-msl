@@ -4,8 +4,10 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1464780799716) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "SystemConfig.h"
-#include<RawSensorData.h>
-#include<Ball.h>
+#include <RawSensorData.h>
+#include <Ball.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -42,7 +44,7 @@ namespace alica
 
         auto alloGoalMid = this->wm->field->posOppGoalMid();
 
-        auto lineVect = alloGoalMid - alloBall;
+        auto lineVect = alloBall - alloGoalMid;
 
         alloTarget = alloBall + lineVect->normalize() * 2300;
 

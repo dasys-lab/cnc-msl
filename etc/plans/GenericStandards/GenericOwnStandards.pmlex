@@ -190,4 +190,12 @@
     <key href="../Standards/Own/FreeKick/FreeKick.pty#1464783134585"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Standards/Own/Corner/OwnCorner.pty#1465397117125"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

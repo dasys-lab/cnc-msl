@@ -81,12 +81,12 @@
     <inState>#1413992564409</inState>
     <outState>#1426692210342</outState>
   </transitions>
-  <transitions id="1426692306144" name="MISSING_NAME" comment="anyChildSuccess ||  moreThen10SecondsInStart" msg="">
-    <preCondition id="1426692307991" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+  <transitions id="1426692306144" name="From Own Standard to GamePlay" comment="anyChildSuccess ||  moreThen7SecondsInStart" msg="">
+    <preCondition id="1426692307991" name="Condition an &quot;From OwnStandard to GamePlay&quot;" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426691966433</inState>
     <outState>#1426691835473</outState>
   </transitions>
-  <transitions id="1426692308143" name="MISSING_NAME" comment="anyChildSuccess || moreThen10SecondsInStart" msg="">
+  <transitions id="1426692308143" name="MISSING_NAME" comment="anyChildSuccess || moreThen7SecondsInStart" msg="">
     <preCondition id="1426692309848" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426691842031</inState>
     <outState>#1426691835473</outState>
@@ -121,7 +121,7 @@
     <inState>#1426692157956</inState>
     <outState>#1413992564409</outState>
   </transitions>
-  <transitions id="1426692653093" name="MISSING_NAME" comment="anyChildSuccess || moreThen10SecondsInStart" msg="">
+  <transitions id="1426692653093" name="MISSING_NAME" comment="anyChildSuccess || moreThen7SecondsInStart" msg="">
     <preCondition id="1426692655810" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1426692210342</inState>
     <outState>#1426691835473</outState>

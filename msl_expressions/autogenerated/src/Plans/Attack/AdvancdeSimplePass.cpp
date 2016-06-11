@@ -23,6 +23,7 @@ namespace alica
         itcounter = 0;
         receiver = nullptr;
         shared_ptr < geometry::CNPosition > oldMatePos = nullptr;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     AdvancdeSimplePass::~AdvancdeSimplePass()
@@ -33,6 +34,8 @@ namespace alica
     void AdvancdeSimplePass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1450176193656) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         if (itcounter < 3)
         {
             itcounter++;
@@ -48,7 +51,7 @@ namespace alica
         if (ownPos == nullptr)
         {
 
-            mc = msl::RobotMovement::driveRandomly(1000);
+            mc = rm.driveRandomly(1000);
             send(mc);
             return;
         }
@@ -80,7 +83,10 @@ namespace alica
 
         if (egoMatePos != nullptr)
         {
-            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
+            // replaced with new method
+//            mc = msl::RobotMovement::moveToFreeSpace(egoMatePos->egoToAllo(*ownPos), maxVel);
+            query->alloTeamMatePosition = egoMatePos->egoToAllo(*ownPos);
+            rm.moveToFreeSpace(query);
             send(mc);
         }
         /*PROTECTED REGION END*/

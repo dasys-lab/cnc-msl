@@ -6,6 +6,8 @@ using namespace std;
 #include "container/CNPoint2D.h"
 #include <Ball.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica

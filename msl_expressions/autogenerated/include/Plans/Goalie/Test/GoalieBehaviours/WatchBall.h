@@ -7,7 +7,9 @@
 #include "container/CNPosition.h"
 #include <string>
 #include <RingBuffer.h>
-
+#include <msl_actuator_msgs/MotionControl.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -19,6 +21,7 @@ namespace alica
         virtual ~WatchBall();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1447863466691) ENABLED START*/ //Add additional public methods here
+        double fitTargetY(double targetY);
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
@@ -41,7 +44,6 @@ namespace alica
         double prevTargetDist, lastRotErr;
         double rotationLimit;
         msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
-        double fitTargetY(double targetY);
         double calcGoalImpactY();
         void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
         /*PROTECTED REGION END*/

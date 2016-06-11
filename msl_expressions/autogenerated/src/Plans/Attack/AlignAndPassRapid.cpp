@@ -7,6 +7,7 @@ using namespace std;
 #include "pathplanner/PathProxy.h"
 #include "msl_helper_msgs/DebugMsg.h"
 #include "msl_helper_msgs/DebugPoint.h"
+#include <engine/model/EntryPoint.h>
 #include <SystemConfig.h>
 #include <RawSensorData.h>
 #include <Kicker.h>

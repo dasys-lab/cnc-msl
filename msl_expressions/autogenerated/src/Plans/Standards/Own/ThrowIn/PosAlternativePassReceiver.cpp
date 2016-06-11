@@ -10,6 +10,7 @@ using namespace std;
 #include "engine/model/Plan.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 #include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica

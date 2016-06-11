@@ -4,7 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
 #include "robotmovement/RobotMovement.h"
 #include "robotmovement/MovementQuery.h"
-#include "engine/RunningPlan.h"
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
@@ -98,9 +99,9 @@ namespace alica
 
             // ask the path planner how to get there
             this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            mc = rm.moveToPoint(m_Query);
         }
         else
         { // robot is receiver
@@ -128,7 +129,7 @@ namespace alica
             this->m_Query->egoDestinationPoint = egoTarget;
             this->m_Query->egoAlignPoint = egoBallPos;
             this->m_Query->additionalPoints = additionalPoints;
-            mc = rm.experimentallyMoveToPoint(m_Query);
+            mc = rm.moveToPoint(m_Query);
         }
 
         // if we reach the point and are aligned, the behavior is successful

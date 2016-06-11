@@ -5,6 +5,7 @@ using namespace std;
 #include "GeometryCalculator.h"
 #include <Ball.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica

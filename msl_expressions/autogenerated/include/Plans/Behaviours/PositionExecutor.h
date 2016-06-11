@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1438790362133) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
 #include "robotmovement/RobotMovement.h"
+#include "robotmovement/MovementQuery.h"
 #include <vector>
 
 using namespace std;
@@ -37,6 +38,8 @@ namespace alica
                                                             double ballDistanceEx;
                                                             EntryPoint* receiverEp;
                                                             shared_ptr<geometry::CNPoint2D> alloTarget;
+                                                            shared_ptr<msl::MovementQuery> query;
+
                                                             /*PROTECTED REGION END*/};
                                                     }
                                                     /* namespace alica */

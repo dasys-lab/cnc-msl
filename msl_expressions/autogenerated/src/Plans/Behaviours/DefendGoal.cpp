@@ -26,6 +26,7 @@ namespace alica
         postOffset = 550.0;
         fieldOffset = 500.0;
         ownPosAngleMin = 2.2;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DefendGoal::~DefendGoal()
@@ -36,6 +37,8 @@ namespace alica
     void DefendGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459249294699) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         //List<TrackedOpponent> opponents = WM.GetTrackedOpponents();
         msl_actuator_msgs::MotionControl mc;
@@ -58,7 +61,13 @@ namespace alica
             auto alignPoint = make_shared<geometry::CNPoint2D>()->alloToEgo(*ownPos);
             // attention: use care obstacles if the goalie sees the obstacles fine...
 
-            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(destEgo, alignPoint, 900, false);
+            // removed with new method using the Query-Object
+//            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(destEgo, alignPoint, 900, false);
+            query->egoDestinationPoint = destEgo;
+            query->egoAlignPoint = alignPoint;
+            mc = rm.moveToPoint(query);
+            mc.motion.translation = 900;
+
             //mc.Motion.Rotation = 0.0;
             //Console.WriteLine("wonPos.X : " + ownPos.X + " " + -field.FieldLength/2.0 + field.PenaltyAreaXSize);
             send(mc);
@@ -107,12 +116,27 @@ namespace alica
         if (destEgo->length() < wm->field->getPenaltyAreaLength())
         {
 //			mc = DriveHelper.DriveToPointAndAlignCareObstacles(destEgo,ballPos, KeeperHelper.GetSpeed(destEgo),WM);
-            mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
+
+            // replaced method with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(destEgo, ballPos, getSpeed(ballPos));
+            query->egoDestinationPoint = destEgo;
+            query->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(query);
+            if (destEgo->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
             //Console.WriteLine("Angle: " + mc.Motion.Angle + " Trans: " + mc.Motion.Translation + " Rotation: " + mc.Motion.Rotation);
         }
         else
         {
-            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(destEgo, ballPos, getSpeed(destEgo), false);
+            // removed with new method using the Query-Object
+//            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(destEgo, ballPos, getSpeed(destEgo), false);
+            query->egoDestinationPoint = destEgo;
+            query->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(query);
+            mc.motion.translation = getSpeed(destEgo);
+
             cout << "DefendGoal: 2 - " << mc.motion.angle << " " << mc.motion.rotation << " " << mc.motion.translation
                     << endl;
             mc = applyBoundaries4Heading(mc, ownPos, ballPos, ownPosAngleMin);

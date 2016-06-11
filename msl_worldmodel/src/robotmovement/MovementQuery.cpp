@@ -17,7 +17,7 @@ namespace msl
 		dribble = false;
 		snapDistance = 0;
 		angleTolerance = 0;
-		teamMatePosition = nullptr;
+		alloTeamMatePosition = nullptr;
 		wm = MSLWorldModel::get();
 
 		resetAllPDParameters();
@@ -47,7 +47,6 @@ namespace msl
 		// clamp rotation
 		rot = min(abs(rot), this->maxRot) * (rot > 0 ? 1 : -1);
 
-		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our rot value
 		this->curRotDribble = rot;
 
 		this->lastRotDribbleErr = angleErr;
@@ -84,20 +83,17 @@ namespace msl
 			transTowards = max(transTowards, this->curTransDribble - this->transDecStep);
 		}
 
-		// TODO: should be set by the behaviour, not here, because we don't know whether the behaviour accepts our trans value
 		this->curTransDribble = transTowards;
 
 		return sqrt(transTowards * transTowards + transOrt * transOrt);
 	}
 
-	double MovementQuery::anglePDForDribble(double transOrt)
+	double MovementQuery::angleCalcForDribble(double transOrt)
 	{
 		auto ballPos = wm->ball->getEgoBallPosition();
 		auto dir = ballPos->normalize();
 		auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
 		dir = dir * this->curTransDribble + ort * transOrt;
-		// TODO: This is not a PD controller, currently it only calculates the direction to drive during dribble
-
 		return dir->angleTo();
 	}
 
@@ -105,41 +101,39 @@ namespace msl
 	{
 		resetRotationPDParameters();
 		resetTransaltionPDParameters();
-//		resetAnglePDParameters();
 	}
 
 	void MovementQuery::resetRotationPDParameters()
 	{
-		curRotDribble = 0;
-		lastRotDribbleErr = 0;
+		this->curRotDribble = 0;
+		this->lastRotDribbleErr = 0;
 		readConfigParameters();
 	}
 
 	void MovementQuery::resetTransaltionPDParameters()
 	{
-		curTransDribble = 0;
-		transControlIntegralDribble = 0;
+		this->curTransDribble = 0;
+		this->transControlIntegralDribble = 0;
 		readConfigParameters();
 	}
 
-//	void MovementQuery::resetAnglePDParameters() {}
 
 	void MovementQuery::readConfigParameters()
 	{
 		supplementary::SystemConfig* supplementary = supplementary::SystemConfig::getInstance();
 		// load rotation config parameters
-		pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot", NULL);
-		dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot", NULL);
-		rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotationAcceleration", NULL);
-		maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotation", NULL);
+		this->pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot", NULL);
+		this->dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot", NULL);
+		this->rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotationAcceleration", NULL);
+		this->maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotation", NULL);
 
 		// load translation config patamerters
-		transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxAcceleration", NULL);
-		transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxDecceleration", NULL);
-		iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans", NULL) / M_PI;
-		pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans", NULL) / M_PI;
-		transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "maxTransIntegral", NULL);
-		angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "angleDeadBand", NULL) / 180 * M_PI;
-		maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxVelocity", NULL);
+		this->transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxAcceleration", NULL);
+		this->transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxDecceleration", NULL);
+		this->iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans", NULL) / M_PI;
+		this->pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans", NULL) / M_PI;
+		this->transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "maxTransIntegral", NULL);
+		this->angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "angleDeadBand", NULL) / 180 * M_PI;
+		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxVelocity", NULL);
 	}
 }

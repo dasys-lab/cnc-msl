@@ -5,6 +5,7 @@ using namespace std;
 #include "robotmovement/RobotMovement.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
+#include <msl_helper_msgs/PassMsg.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -29,6 +30,7 @@ namespace alica
     void StandardAlignToPassPos::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457532279657) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getAlloBallPosition();
@@ -58,7 +60,15 @@ namespace alica
         if (result.size() > 0)
         {
             auto driveTo = p->alloToEgo(*ownPos);
-            mc = msl::RobotMovement::placeRobotCareBall(driveTo, egoBall, maxVel);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(driveTo, egoBall, maxVel);
+            movQuery->egoDestinationPoint = driveTo;
+            movQuery->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(movQuery);
+            if (driveTo->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
         }
         else
         {

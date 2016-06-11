@@ -13,6 +13,7 @@ using namespace std;
 #include <pathplanner/PathPlanner.h>
 #include "obstaclehandler/Obstacles.h"
 #include <Kicker.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

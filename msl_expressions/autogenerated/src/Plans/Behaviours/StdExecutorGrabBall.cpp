@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1441209011595) ENABLED START*/ //Add additional includes here
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

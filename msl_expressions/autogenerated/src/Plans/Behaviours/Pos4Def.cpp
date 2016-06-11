@@ -8,6 +8,7 @@ using namespace std;
 #include "SolverType.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

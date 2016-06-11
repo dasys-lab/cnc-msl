@@ -30,6 +30,7 @@ namespace alica
     void ReceivePassIntoPathGeneric::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457531583460) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getAlloBallPosition();
@@ -56,7 +57,15 @@ namespace alica
         if (result.size() > 0)
         {
             auto driveTo = p->alloToEgo(*ownPos);
-            mc = msl::RobotMovement::placeRobotCareBall(driveTo, passGoal->alloToEgo(*ownPos), maxVel);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(driveTo, passGoal->alloToEgo(*ownPos), maxVel);
+            movQuery->egoDestinationPoint = driveTo;
+            movQuery->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(movQuery);
+            if (driveTo->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
         }
         else
         {

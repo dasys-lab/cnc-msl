@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1458034268108) ENABLED START*/ //Add additional includes here
 #include "engine/constraintmodul/ConstraintQuery.h"
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -28,6 +29,7 @@ namespace alica
         string teamMatePlanName;
         EntryPoint* ep;
         int teamMateId;
+        shared_ptr<msl::MovementQuery> movQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458034268108) ENABLED START*/ //Add additional private methods here

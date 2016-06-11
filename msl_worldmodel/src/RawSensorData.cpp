@@ -24,6 +24,7 @@ namespace msl
 		this->wm = wm;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		maxInformationAge = 1000000000;
+		loggingEnabled = false;
 	}
 
 	RawSensorData::~RawSensorData()
@@ -354,8 +355,7 @@ namespace msl
 		cmd->magnetSens = msg->magnetSens;
 		cmd->temperature = msg->temperature;
 		cmd->time = msg->time;
-		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<
-				InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
+		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
 	}

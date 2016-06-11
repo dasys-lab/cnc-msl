@@ -35,8 +35,8 @@ namespace alica
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoTarget;
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint;
+        shared_ptr < geometry::CNPoint2D > egoTarget = egoBallPos;
+        shared_ptr < geometry::CNPoint2D > egoAlignPoint = egoBallPos;
         double snapDistance;
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
 

@@ -7,6 +7,7 @@ using namespace std;
 #include "engine/model/AbstractPlan.h"
 #include <Robots.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -34,13 +35,15 @@ namespace alica
     void ReleaseMid::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
-            mc = msl::RobotMovement::driveRandomly(500);
+            mc = rm.driveRandomly(500);
             send(mc);
             cout << "AAPR: OwnPos is null" << endl;
             return;

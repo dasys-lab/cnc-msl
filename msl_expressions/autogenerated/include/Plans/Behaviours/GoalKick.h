@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1415205565589) ENABLED START*/ //Add additional includes here
+#include "robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,6 +27,12 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloAimPoint;
         double angleTolerance;
         double minKickPower;
+        double alignMaxVel;
+        double alignToPointRapidMaxRotation;
+        double lastRotErrorWithBallRapid;
+        msl_actuator_msgs::MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                                   shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                                   double angleTolerance, double ballAngleTolerance);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

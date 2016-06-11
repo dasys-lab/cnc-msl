@@ -4,7 +4,12 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1459249216387) ENABLED START*/ //Add additional includes here
 #include "DateTime.h"
-
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/KickControl.h>
+namespace geometry
+{
+    class CNPoint2D;
+}
 namespace alica
 {
     /**

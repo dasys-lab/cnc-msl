@@ -87,6 +87,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
 
+#include  "Plans/GenericStandards/GenericExecutePass.h"
+
 #include  "Plans/Attack/Wander.h"
 
 #include  "Plans/Behaviours/DefendGoal.h"
@@ -139,11 +141,11 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
+#include  "Plans/Behaviours/SpinSlowly.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
-
-#include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
@@ -423,6 +425,11 @@ namespace alica
                 return make_shared<ThrowInPass>();
                 break;
 
+            case 1465040471344:
+
+                return make_shared<GenericExecutePass>();
+                break;
+
             case 1434716230628:
 
                 return make_shared<Wander>();
@@ -563,6 +570,11 @@ namespace alica
                 return make_shared<CatchPass>();
                 break;
 
+            case 1435159282996:
+
+                return make_shared<SpinSlowly>();
+                break;
+
             case 1447863503279:
 
                 return make_shared<DriveToBall>();
@@ -571,11 +583,6 @@ namespace alica
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
-                break;
-
-            case 1435159282996:
-
-                return make_shared<SpinSlowly>();
                 break;
 
             case 1456756164754:
@@ -627,6 +634,8 @@ namespace alica
             case 1459456566595:
 
             case 1461583806472:
+
+            case 1465038982091:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;
