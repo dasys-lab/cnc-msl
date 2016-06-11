@@ -104,9 +104,11 @@ namespace alica
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
         }
         // replaced with new method
-//        mc = msl::RobotMovement::nearGoalArea(mc);
-        mc = rm.ruleActionForBallGetter();
-//        cout <<"GetBall: " << mc.motion.angle << " " << mc.motion.translation << " " << endl;
+        auto tmpMC = rm.ruleActionForBallGetter();
+        if (!std::isnan(tmpMC.motion.translation))
+        {
+        	send(tmpMC);
+        }
         send(mc);
         /*PROTECTED REGION END*/
     }

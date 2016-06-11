@@ -52,6 +52,7 @@ namespace alica
                                     int ms, shared_ptr<geometry::CNPoint2D>& predBall,
                                     shared_ptr<geometry::CNPoint2D>& predPos);
 
+        msl::RobotMovement rm;
         shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:

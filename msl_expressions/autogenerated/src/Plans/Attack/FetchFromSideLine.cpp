@@ -45,7 +45,7 @@ namespace alica
         }
         auto bm = rm.ruleActionForBallGetter();
 
-        if (bm.senderID == -1)
+        if (!std::isnan(bm.motion.translation))
         {
             send(bm);
             return;

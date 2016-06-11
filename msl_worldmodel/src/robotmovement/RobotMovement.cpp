@@ -167,12 +167,16 @@ namespace msl
 	}
 
 	/*
-	 * checks if Robot respects the rules
+	 * Checks if Robot respects the rules.
+	 * If everything is fine, translation, rotation and angle are set to NaN.
+	 * Don't use the return value without checking.
 	 *
-	 * @return motion command if robot breaks the rules
+	 * @return msl_actuator_msgs::MotionControl
 	 */
 	msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
 	{
+		// TODO introduce destination method-parameter for improving this method...
+		// TODO add config parameters for all static numbers in here!
 		msl_actuator_msgs::MotionControl mc;
 		shared_ptr<geometry::CNPoint2D> egoBallPos = wm->ball->getEgoBallPosition();
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision(); //OwnPositionCorrected;
