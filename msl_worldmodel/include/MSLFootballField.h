@@ -100,21 +100,21 @@ namespace msl
 
 		bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOppPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 
-		bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOwnGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOppGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 
 		shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
 																shared_ptr<geometry::CNPoint2D> alongVec);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
 
-		shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOwnGoalArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppGoalArea(shared_ptr<geometry::CNPoint2D> inp);
 
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
@@ -207,6 +207,8 @@ namespace msl
 		double MaxDistance;
 		double MaxDistanceSqr;
 		string CurrentField;
+		shared_ptr<geometry::CNPoint2D> mapInsideArea(shared_ptr<geometry::CNPoint2D> inp , double xline, double yline);
+		shared_ptr<geometry::CNPoint2D> mapOutsideArea(shared_ptr<geometry::CNPoint2D> inp , double xline, double yline);
 
 	protected:
 

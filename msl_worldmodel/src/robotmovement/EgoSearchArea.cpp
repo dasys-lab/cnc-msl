@@ -115,7 +115,7 @@ namespace msl
 		{
 			return false;
 		}
-		if (wm->field->isInsideEnemyPenalty(ap, 100))
+		if (wm->field->isInsideOppPenalty(ap, 100))
 		{
 			return false;
 		}
