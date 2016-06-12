@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Attack/DribbleToAttackPoint.h"
 
 /*PROTECTED REGION ID(inccpp1436855838589) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "msl_msgs/PathPlanner.h"
 #include "msl_msgs/VoronoiNetInfo.h"
 #include "pathplanner/evaluator/PathEvaluator.h"

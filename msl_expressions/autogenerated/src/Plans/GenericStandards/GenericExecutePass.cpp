@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/GenericStandards/GenericExecutePass.h"
 
 /*PROTECTED REGION ID(inccpp1465040441324) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
@@ -10,7 +10,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/

@@ -5,6 +5,7 @@ using namespace std;
 #include <obstaclehandler/Obstacles.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

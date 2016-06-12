@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Attack/FetchFromSideLine.h"
 
 /*PROTECTED REGION ID(inccpp1450175655102) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>

@@ -5,8 +5,10 @@
  *      Author: Stefan Jakob
  */
 
-#include "robotmovement/EgoSearchArea.h"
-#include "MSLWorldModel.h"
+using namespace std;
+
+#include "msl_robot/robotmovement/EgoSearchArea.h"
+#include <MSLWorldModel.h>
 
 namespace msl
 {

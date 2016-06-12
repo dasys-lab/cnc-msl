@@ -46,18 +46,11 @@ catkin_package(
    src/MSLConstraintBuilder.cpp
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
-   src/robotmovement/RobotMovement.cpp
-   src/robotmovement/MovementQuery.cpp
-   src/robotmovement/SearchArea.cpp
-   src/robotmovement/EgoSearchArea.cpp
-   src/robotmovement/AlloSearchArea.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
    src/RawSensorData.cpp
    src/Robots.cpp
    src/Ball.cpp
    src/Game.cpp
-   src/Kicker.cpp
-   src/KickCurve.cpp
    src/Opponents.cpp
    src/Teammates.cpp
    src/WhiteBoard.cpp

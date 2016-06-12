@@ -2,11 +2,12 @@ using namespace std;
 #include "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 /*PROTECTED REGION ID(inccpp1457532279657) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

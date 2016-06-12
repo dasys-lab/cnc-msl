@@ -14,7 +14,8 @@ using namespace std;
 #include <Prediction.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/MSLRobot.h>
 #include <Robots.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
@@ -262,7 +263,7 @@ namespace alica
         auto alloBallPos = egoBallPos->egoToAllo(*this->ownPos);
         double dist2Obs = alloBallPos->distanceTo(closestObs);
         cout << "Evil Obs: X:" << closestObs->x << ", Y:" << closestObs->y << ", Dist:" << dist2Obs << endl;
-        kickPower = this->wm->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
+        kickPower = this->robot->kicker->getKickPowerForLobShot(dist2Obs, 1100.0);
         if (kickPower == -1)
         {
             return false;
@@ -285,7 +286,7 @@ namespace alica
         }
         else
         {
-            return this->wm->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
         }
     }
 

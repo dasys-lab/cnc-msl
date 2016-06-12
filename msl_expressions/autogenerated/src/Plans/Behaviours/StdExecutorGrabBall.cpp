@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/StdExecutorGrabBall.h"
 
 /*PROTECTED REGION ID(inccpp1441209011595) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <Ball.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/

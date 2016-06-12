@@ -2,12 +2,13 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 /*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <GeometryCalculator.h>
-#include <Kicker.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -104,7 +105,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(wm->kicker->kickerAngle, egoMatePos->angleTo());
+        double dangle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoMatePos->angleTo());
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
         double fac = -(cross > 0 ? 1 : -1);
@@ -117,7 +118,7 @@ namespace alica
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans;
         }
 
-        double balldangle = geometry::deltaAngle(wm->kicker->kickerAngle, egoBallPos->angleTo());
+        double balldangle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoBallPos->angleTo());
         if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
         {
             mc.motion.angle = direction->angleTo();

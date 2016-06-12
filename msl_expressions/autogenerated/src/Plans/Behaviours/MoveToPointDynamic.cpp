@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Behaviours/MoveToPointDynamic.h"
 
 /*PROTECTED REGION ID(inccpp1456997073100) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

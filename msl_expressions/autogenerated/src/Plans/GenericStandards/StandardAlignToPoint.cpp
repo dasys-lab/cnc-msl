@@ -2,14 +2,15 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
-#include "robotmovement/MovementQuery.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <engine/Assignment.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

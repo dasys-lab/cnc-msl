@@ -5,7 +5,7 @@ using namespace std;
 #include <limits>
 #include <engine/RunningPlan.h>
 #include <engine/Assignment.h>
-#include <robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <MSLWorldModel.h>

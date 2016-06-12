@@ -11,14 +11,15 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "GeometryCalculator.h"
 #include "SystemConfig.h"
-#include "MSLWorldModel.h"
 #include "Ball.h"
-#include "Kicker.h"
+
 
 using namespace std;
 using namespace msl_actuator_msgs;
 namespace msl
 {
+	class MSLWorldModel;
+	class MSLRobot;
 	class MovementQuery
 	{
 	public:
@@ -44,6 +45,7 @@ namespace msl
 
 	private:
 		MSLWorldModel* wm;
+		MSLRobot* robot;
 
 // PD variables for RobotMovement::moveToPoint() and RobotMovement::rotationDribblePD()
 		double pRot;

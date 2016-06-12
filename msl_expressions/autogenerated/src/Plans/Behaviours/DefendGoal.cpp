@@ -8,7 +8,7 @@ using namespace std;
 #include <msl_actuator_msgs/MotionControl.h>
 #include <MSLFootballField.h>
 #include <MSLWorldModel.h>
-#include <robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include <exception>
 #include <iostream>

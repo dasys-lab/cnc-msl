@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Defence/ReleaseMid.h"
 
 /*PROTECTED REGION ID(inccpp1458033482289) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include <Robots.h>

@@ -8,11 +8,11 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_SEARCHAREA_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_ROBOTMOVEMENT_SEARCHAREA_H_
 
+using namespace std;
+
 #include <memory>
 #include <GeometryCalculator.h>
 #include <MSLFootballField.h>
-
-using namespace std;
 
 namespace msl
 {

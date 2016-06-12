@@ -2,13 +2,16 @@ using namespace std;
 #include "Plans/Standards/Own/Corner/BouncePassShoot.h"
 
 /*PROTECTED REGION ID(inccpp1459357144291) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/MSLRobot.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <RawSensorData.h>
-#include <Kicker.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLFootballField.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -96,7 +99,7 @@ namespace alica
         //double totalDistance = egoMatePos.Distance() + matePos.DistanceTo(centerOppGoal);
         kc.power = 2800; //(ushort)KickHelper.GetKickPowerPass(totalDistance);
         //kc.Kick.Power*=1.2; //potential loss in energy from ball bouncing, check if this should be included or not
-        kc.kicker = wm->kicker->kickerAngle;
+        kc.kicker = this->robot->kicker->kickerAngle;
         if (wm->ball->haveBall() && counter >= 3)
         {
             kc.enabled = true;

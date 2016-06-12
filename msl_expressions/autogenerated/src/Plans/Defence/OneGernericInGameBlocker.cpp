@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Defence/OneGernericInGameBlocker.h"
 
 /*PROTECTED REGION ID(inccpp1458034268108) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include "SolverType.h"
@@ -10,6 +10,7 @@ using namespace std;
 #include <Ball.h>
 #include <Robots.h>
 #include <msl_helper_msgs/DebugMsg.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/RobotMovementDribbleTest.h"
 
 /*PROTECTED REGION ID(inccpp1462969724089) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
