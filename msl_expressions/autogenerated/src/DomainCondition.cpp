@@ -11,7 +11,7 @@ namespace alica
 		this->wm = msl::MSLWorldModel::get();
 		this->rules = msl::Rules::getInstance();
 		this->sc = supplementary::SystemConfig::getInstance();
-		this->timeUntilEmergencyExecute = (*this->sc)["StandardSituation"]->get<double>("Times","timeUntilEmergencyExecute", NULL);
+		this->timeUntilEmergencyExecute = this->rules->getStandbyTime() *0.8;
 	}
 
 	DomainCondition::~DomainCondition()
