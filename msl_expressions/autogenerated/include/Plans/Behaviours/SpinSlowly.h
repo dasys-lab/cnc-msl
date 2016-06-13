@@ -6,7 +6,7 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "math.h"
 /*PROTECTED REGION END*/
 namespace alica

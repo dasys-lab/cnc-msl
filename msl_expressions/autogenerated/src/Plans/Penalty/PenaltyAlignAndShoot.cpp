@@ -2,11 +2,12 @@ using namespace std;
 #include "Plans/Penalty/PenaltyAlignAndShoot.h"
 
 /*PROTECTED REGION ID(inccpp1431531496053) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
-#include <Kicker.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <Game.h>
 #include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
@@ -132,7 +133,7 @@ namespace alica
         }
         // calculate angle difference between robot and target and ball and target
         double egoTargetAngle = egoTarget->angleTo();
-        double deltaHoleAngle = geometry::deltaAngle(wm->kicker->kickerAngle, egoTargetAngle);
+        double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // calculate passed time
         unsigned long timePassed = wm->getTime() - wm->game->getTimeSinceStart();
         // if too much time has passed or the robot is aligned, we shoot

@@ -25,6 +25,10 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
+
+	string tmp;
+        getParameter("X-Direction", tmp);
+
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
 
@@ -48,20 +52,7 @@ namespace alica
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         calibOldPosMotionX = calibPosMotionX;
-        calibOldPosMotionY = calibPosMotionY;
-
-        std::cout << "sin"
-                << sin(this->wm->rawSensorData->getOwnPositionVision()->theta
-                        - this->wm->rawSensorData->getOwnPositionMotion()->theta) << std::endl;
-        std::cout << "cos"
-                << cos(this->wm->rawSensorData->getOwnPositionVision()->theta
-                        - this->wm->rawSensorData->getOwnPositionMotion()->theta) << std::endl;
-
-        std::cout << "CorrectedWayX: " << correctedWayX << std::endl;
-        std::cout << "CorrectedWayY: " << correctedWayY << std::endl;
-        std::cout << "correctedPosX: " << correctedPosX << std::endl;
-        std::cout << "correctedPosY: " << correctedPosY << std::endl;
-        std::cout << "" << std::endl;
+        calibOldPosMotionY = calibPosMotionY;	
 
         /*PROTECTED REGION END*/
     }

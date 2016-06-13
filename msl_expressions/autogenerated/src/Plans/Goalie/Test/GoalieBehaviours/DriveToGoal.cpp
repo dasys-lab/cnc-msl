@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
@@ -70,7 +70,7 @@ namespace alica
 
             cout << " Driving to goal" << endl;
             mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-                                                     alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
 
             if (me->distanceTo(alloTarget) <= 100)
             {

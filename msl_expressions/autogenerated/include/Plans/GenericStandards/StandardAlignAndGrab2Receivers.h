@@ -4,8 +4,9 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1462368682104) ENABLED START*/ //Add additional includes here
 #include <MSLWorldModel.h>
-namespace geometry{
-	class CNPoint2D;
+namespace geometry
+{
+    class CNPoint2D;
 }
 /*PROTECTED REGION END*/
 namespace alica

@@ -5,8 +5,11 @@
  *      Author: Stefan Jakob
  */
 
-#include "robotmovement/AlloSearchArea.h"
-#include "MSLWorldModel.h"
+using namespace std;
+
+#include "msl_robot/robotmovement/AlloSearchArea.h"
+#include <MSLWorldModel.h>
+
 
 namespace msl
 {
@@ -87,7 +90,7 @@ namespace msl
 		{
 			return false;
 		}
-		if (wm->field->isInsideEnemyKeeperArea(this->midP, 100))
+		if (wm->field->isInsideOppGoalArea(this->midP, 100))
 		{
 			return false;
 		}

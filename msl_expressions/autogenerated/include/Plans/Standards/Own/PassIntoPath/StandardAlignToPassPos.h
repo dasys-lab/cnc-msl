@@ -4,7 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457532279657) ENABLED START*/ //Add additional includes here
 #include "engine/constraintmodul/ConstraintQuery.h"
-#include "robotmovement/MovementQuery.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,7 +27,7 @@ namespace alica
         double maxVel;
         int iterationCount;
         shared_ptr<msl::MovementQuery> movQuery;
-    /*PROTECTED REGION END*/};
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* StandardAlignToPassPos_H_ */

@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/Duel.h"
 
 /*PROTECTED REGION ID(inccpp1450178699265) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>

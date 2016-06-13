@@ -4,8 +4,8 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1438790362133) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
-#include "robotmovement/RobotMovement.h"
-#include "robotmovement/MovementQuery.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 #include <vector>
 
 using namespace std;

@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/GetBall.h"
 
 /*PROTECTED REGION ID(inccpp1414828300860) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
@@ -104,9 +104,11 @@ namespace alica
             mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
         }
         // replaced with new method
-//        mc = msl::RobotMovement::nearGoalArea(mc);
-        mc = rm.ruleActionForBallGetter();
-//        cout <<"GetBall: " << mc.motion.angle << " " << mc.motion.translation << " " << endl;
+        auto tmpMC = rm.ruleActionForBallGetter();
+        if (!std::isnan(tmpMC.motion.translation))
+        {
+        	send(tmpMC);
+        }
         send(mc);
         /*PROTECTED REGION END*/
     }

@@ -22,6 +22,7 @@ namespace supplementary {
 }
 
 namespace msl{
+	class MSLRobot;
 	class MSLWorldModel;
 }
 
@@ -40,6 +41,7 @@ class DomainBehaviour : public BasicBehaviour
 		void send(msl_helper_msgs::PassMsg& pm, int senderID);
 		void send(msl_helper_msgs::WatchBallMsg& wb);
 		void send(msl_helper_msgs::DebugMsg& dbm);
+		msl::MSLRobot* robot;
 		msl::MSLWorldModel* wm;
 
 	protected:

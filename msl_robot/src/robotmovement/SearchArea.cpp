@@ -5,7 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#include "robotmovement/SearchArea.h"
+#include "msl_robot/robotmovement/SearchArea.h"
 
 namespace msl
 {

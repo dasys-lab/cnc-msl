@@ -5,8 +5,10 @@
  *      Author: Stefan Jakob
  */
 
-#include "robotmovement/EgoSearchArea.h"
-#include "MSLWorldModel.h"
+using namespace std;
+
+#include "msl_robot/robotmovement/EgoSearchArea.h"
+#include <MSLWorldModel.h>
 
 namespace msl
 {
@@ -115,7 +117,7 @@ namespace msl
 		{
 			return false;
 		}
-		if (wm->field->isInsideEnemyPenalty(ap, 100))
+		if (wm->field->isInsideOppPenalty(ap, 100))
 		{
 			return false;
 		}

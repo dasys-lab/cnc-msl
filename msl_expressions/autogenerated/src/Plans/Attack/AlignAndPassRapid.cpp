@@ -10,10 +10,14 @@ using namespace std;
 #include <engine/model/EntryPoint.h>
 #include <SystemConfig.h>
 #include <RawSensorData.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <Robots.h>
 #include <pathplanner/PathPlanner.h>
 #include <Ball.h>
+#include <engine/model/EntryPoint.h>
+#include <engine/Assignment.h>
+#include <msl_robot/MSLRobot.h>
+
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -235,16 +239,16 @@ namespace alica
             pm.validFor = (unsigned long long)(estimatedTimeForReceiverToArrive * 1000000000.0 + 300000000.0); // this is sparta!
             if (closerFactor < 0.01)
             {
-                km.power = (ushort)wm->kicker->getKickPowerPass(aimPoint->length());
+                km.power = (ushort)this->robot->kicker->getKickPowerPass(aimPoint->length());
             }
             else
             {
-                km.power = (ushort)wm->kicker->getPassKickpower(dist,
+                km.power = (ushort)this->robot->kicker->getPassKickpower(dist,
                                                                 estimatedTimeForReceiverToArrive + arrivalTimeOffset);
             }
 
             send(km);
-            if (wm->kicker->lowShovelSelected)
+            if (this->robot->kicker->lowShovelSelected)
             {
                 send(pm);
             }

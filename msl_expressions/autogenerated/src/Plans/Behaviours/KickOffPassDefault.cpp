@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/KickOffPassDefault.h"
 
 /*PROTECTED REGION ID(inccpp1438778042140) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
@@ -11,9 +11,11 @@ using namespace std;
 #include <Ball.h>
 #include <Robots.h>
 #include <Game.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <MSLWorldModel.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -96,11 +98,11 @@ namespace alica
             kc.kicker = 1;
             if (wm->game->getTimeSinceStart() < waitBeforeBlindKick)
             {
-                kc.power = wm->kicker->getPassKickpower(egoAlignPoint->length(), 1);
+                kc.power = this->robot->kicker->getPassKickpower(egoAlignPoint->length(), 1);
             }
             else
             {
-                kc.power = wm->kicker->getKickPowerSlowPass(egoAlignPoint->length());
+                kc.power = this->robot->kicker->getKickPowerSlowPass(egoAlignPoint->length());
             }
 
             send(kc);

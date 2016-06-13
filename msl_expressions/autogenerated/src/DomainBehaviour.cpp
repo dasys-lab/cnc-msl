@@ -1,7 +1,7 @@
 #include "DomainBehaviour.h"
 
 #include <RawSensorData.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <msl_actuator_msgs/MotionControl.h>
@@ -11,16 +11,18 @@
 #include <msl_helper_msgs/DebugMsg.h>
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
+#include <msl_robot/MSLRobot.h>
 
 namespace alica
 {
 	DomainBehaviour::DomainBehaviour(string name) :
 			BasicBehaviour(name)
 	{
-		sc = supplementary::SystemConfig::getInstance();
-		ownID = sc->getOwnRobotID();
+		this->sc = supplementary::SystemConfig::getInstance();
+		this->ownID = sc->getOwnRobotID();
 		ros::NodeHandle n;
-		wm = msl::MSLWorldModel::get();
+		this->wm = msl::MSLWorldModel::get();
+		this->robot = msl::MSLRobot::get();
 
 		if (wm->timeLastSimMsgReceived > 0)
 		{
@@ -71,14 +73,14 @@ namespace alica
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
 		kickControlPub.publish(kc);
-                wm->kicker->processKickConstrolMsg(kc);
+        this->robot->kicker->processKickConstrolMsg(kc);
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::ShovelSelectCmd& ssc)
 	{
 		ssc.senderID = ownID;
 		shovelSelectPublisher.publish(ssc);
-		this->wm->kicker->lowShovelSelected = ssc.passing;
+		this->robot->kicker->lowShovelSelected = ssc.passing;
 	}
 
 	void alica::DomainBehaviour::send(msl_helper_msgs::PassMsg& pm, int senderID)

@@ -4,9 +4,10 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1464189819779) ENABLED START*/ //Add additional includes here
 #include <msl_actuator_msgs/MotionControl.h>
-namespace geometry{
-	class CNPoint2D;
-	class CNPosition;
+namespace geometry
+{
+    class CNPoint2D;
+    class CNPosition;
 }
 /*PROTECTED REGION END*/
 namespace alica

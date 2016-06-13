@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 /*PROTECTED REGION ID(inccpp1455537841488) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <Ball.h>
 #include <RawSensorData.h>

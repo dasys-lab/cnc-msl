@@ -5,6 +5,7 @@
 
 namespace msl{
 	class MSLWorldModel;
+	class MSLRobot;
 	class Rules;
 }
 
@@ -21,6 +22,7 @@ namespace alica
 		virtual ~DomainCondition();
 
 		msl::MSLWorldModel* wm;
+		msl::MSLRobot* robot;
 		supplementary::SystemConfig* sc;
 		msl::Rules* rules;
 

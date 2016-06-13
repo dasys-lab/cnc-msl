@@ -5,7 +5,11 @@
  *      Author: Carpe Noctem
  */
 
-#include "robotmovement/MovementQuery.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
+#include "msl_robot/MSLRobot.h"
+#include "msl_robot/kicker/Kicker.h"
+#include <MSLWorldModel.h>
+
 namespace msl
 {
 	MovementQuery::MovementQuery()
@@ -31,7 +35,7 @@ namespace msl
 
 	double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
 	{
-		double angleErr = egoTarget->rotate(wm->kicker->kickerAngle)->angleTo();
+		double angleErr = egoTarget->rotate(robot->kicker->kickerAngle)->angleTo();
 		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); //Rotation PD
 
 		// limit rotation acceleration
