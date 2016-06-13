@@ -36,7 +36,7 @@
   MIT license, all text above must be included in any redistribution
  ***************************************************************************/
 
-#include "RTIMUBNO055.h"
+#include "IMUDrivers/RTIMUBNO055.h"
 #include "RTIMUSettings.h"
 
 RTIMUBNO055::RTIMUBNO055(RTIMUSettings *settings) : RTIMU(settings)

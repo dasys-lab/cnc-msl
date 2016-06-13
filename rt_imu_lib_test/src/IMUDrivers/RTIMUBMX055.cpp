@@ -76,7 +76,7 @@
 **************************************************************************/
 /****************************************************************************/
 
-#include "RTIMUBMX055.h"
+#include "IMUDrivers/RTIMUBMX055.h"
 #include "RTIMUSettings.h"
 
 //  this sets the learning rate for compass running average calculation

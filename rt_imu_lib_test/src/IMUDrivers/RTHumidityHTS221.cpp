@@ -21,8 +21,8 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "RTHumidityHTS221.h"
-#include "RTHumidityDefs.h"
+#include "IMUDrivers/RTHumidityHTS221.h"
+#include "IMUDrivers/RTHumidityDefs.h"
 
 RTHumidityHTS221::RTHumidityHTS221(RTIMUSettings *settings) : RTHumidity(settings)
 {

@@ -22,7 +22,7 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTIMUGD20M303DLHC.h"
+#include "IMUDrivers/RTIMUGD20M303DLHC.h"
 #include "RTIMUSettings.h"
 
 //  this sets the learning rate for compass running average calculation

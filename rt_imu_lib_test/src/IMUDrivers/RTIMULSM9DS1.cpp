@@ -22,7 +22,7 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTIMULSM9DS1.h"
+#include "IMUDrivers/RTIMULSM9DS1.h"
 #include "RTIMUSettings.h"
 
 //  this sets the learning rate for compass running average calculation

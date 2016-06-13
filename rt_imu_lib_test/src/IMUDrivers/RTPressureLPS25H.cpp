@@ -21,8 +21,8 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "RTPressureLPS25H.h"
-#include "RTPressureDefs.h"
+#include "IMUDrivers/RTPressureLPS25H.h"
+#include "IMUDrivers/RTPressureDefs.h"
 
 RTPressureLPS25H::RTPressureLPS25H(RTIMUSettings *settings) : RTPressure(settings)
 {

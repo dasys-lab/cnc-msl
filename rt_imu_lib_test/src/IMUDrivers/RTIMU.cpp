@@ -22,20 +22,20 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTIMU.h"
+#include "IMUDrivers/RTIMU.h"
 #include "RTFusionKalman4.h"
 #include "RTFusionRTQF.h"
 
-#include "RTIMUNull.h"
-#include "RTIMUMPU9150.h"
-#include "RTIMUMPU9250.h"
-#include "RTIMUGD20HM303D.h"
-#include "RTIMUGD20M303DLHC.h"
-#include "RTIMUGD20HM303DLHC.h"
-#include "RTIMULSM9DS0.h"
-#include "RTIMULSM9DS1.h"
-#include "RTIMUBMX055.h"
-#include "RTIMUBNO055.h"
+#include "IMUDrivers/RTIMUNull.h"
+#include "IMUDrivers/RTIMUMPU9150.h"
+#include "IMUDrivers/RTIMUMPU9250.h"
+#include "IMUDrivers/RTIMUGD20HM303D.h"
+#include "IMUDrivers/RTIMUGD20M303DLHC.h"
+#include "IMUDrivers/RTIMUGD20HM303DLHC.h"
+#include "IMUDrivers/RTIMULSM9DS0.h"
+#include "IMUDrivers/RTIMULSM9DS1.h"
+#include "IMUDrivers/RTIMUBMX055.h"
+#include "IMUDrivers/RTIMUBNO055.h"
 
 //  this sets the learning rate for compass running average calculation
 

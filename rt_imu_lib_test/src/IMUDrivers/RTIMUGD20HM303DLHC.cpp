@@ -22,27 +22,27 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTIMUGD20HM303D.h"
+#include "IMUDrivers/RTIMUGD20HM303DLHC.h"
 #include "RTIMUSettings.h"
 
 //  this sets the learning rate for compass running average calculation
 
 #define COMPASS_ALPHA 0.2f
 
-RTIMUGD20HM303D::RTIMUGD20HM303D(RTIMUSettings *settings) : RTIMU(settings)
+RTIMUGD20HM303DLHC::RTIMUGD20HM303DLHC(RTIMUSettings *settings) : RTIMU(settings)
 {
     m_sampleRate = 100;
 }
 
-RTIMUGD20HM303D::~RTIMUGD20HM303D()
+RTIMUGD20HM303DLHC::~RTIMUGD20HM303DLHC()
 {
 }
 
-bool RTIMUGD20HM303D::IMUInit()
+bool RTIMUGD20HM303DLHC::IMUInit()
 {
     unsigned char result;
 
-#ifdef GD20HM303D_CACHE_MODE
+#ifdef GD20HM303DLHC_CACHE_MODE
     m_firstTime = true;
     m_cacheIn = m_cacheOut = m_cacheCount = 0;
 #endif
@@ -60,16 +60,8 @@ bool RTIMUGD20HM303D::IMUInit()
     //  configure IMU
 
     m_gyroSlaveAddr = m_settings->m_I2CSlaveAddress;
-
-    // work out accel/mag address
-
-    if (m_settings->HALRead(LSM303D_ADDRESS0, LSM303D_WHO_AM_I, 1, &result, "")) {
-        if (result == LSM303D_ID) {
-            m_accelCompassSlaveAddr = LSM303D_ADDRESS0;
-        }
-    } else {
-        m_accelCompassSlaveAddr = LSM303D_ADDRESS1;
-    }
+    m_accelSlaveAddr = LSM303DLHC_ACCEL_ADDRESS;
+    m_compassSlaveAddr = LSM303DLHC_COMPASS_ADDRESS;
 
     setCalibrationData();
 
@@ -103,36 +95,30 @@ bool RTIMUGD20HM303D::IMUInit()
     if (!setGyroCTRL4())
             return false;
 
-    //  Set up the accel/compass
-
-    if (!m_settings->HALRead(m_accelCompassSlaveAddr, LSM303D_WHO_AM_I, 1, &result, "Failed to read LSM303D id"))
-        return false;
-
-    if (result != LSM303D_ID) {
-        HAL_ERROR1("Incorrect LSM303D id %d\n", result);
-        return false;
-    }
+    //  Set up the accel
 
     if (!setAccelCTRL1())
         return false;
 
-    if (!setAccelCTRL2())
+    if (!setAccelCTRL4())
         return false;
 
-    if (!setCompassCTRL5())
+    //  Set up the compass
+
+    if (!setCompassCRA())
         return false;
 
-    if (!setCompassCTRL6())
+    if (!setCompassCRB())
         return false;
 
-    if (!setCompassCTRL7())
+    if (!setCompassCRM())
         return false;
 
-#ifdef GD20HM303D_CACHE_MODE
+#ifdef GD20HM303DLHC_CACHE_MODE
 
     //  turn on gyro fifo
 
-    if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_FIFO_CTRL, 0x3f, "Failed to set L3GD20H FIFO mode"))
+    if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20_FIFO_CTRL, 0x3f, "Failed to set L3GD20 FIFO mode"))
         return false;
 #endif
 
@@ -141,16 +127,16 @@ bool RTIMUGD20HM303D::IMUInit()
 
     gyroBiasInit();
 
-    HAL_INFO("GD20HM303D init complete\n");
+    HAL_INFO("GD20HM303DLHC init complete\n");
     return true;
 }
 
-bool RTIMUGD20HM303D::setGyroSampleRate()
+bool RTIMUGD20HM303DLHC::setGyroSampleRate()
 {
     unsigned char ctrl1;
     unsigned char lowOdr = 0;
 
-    switch (m_settings->m_GD20HM303DGyroSampleRate) {
+    switch (m_settings->m_GD20HM303DLHCGyroSampleRate) {
     case L3GD20H_SAMPLERATE_12_5:
         ctrl1 = 0x0f;
         lowOdr = 1;
@@ -190,13 +176,13 @@ bool RTIMUGD20HM303D::setGyroSampleRate()
         break;
 
     default:
-        HAL_ERROR1("Illegal L3GD20H sample rate code %d\n", m_settings->m_GD20HM303DGyroSampleRate);
+        HAL_ERROR1("Illegal L3GD20H sample rate code %d\n", m_settings->m_GD20HM303DLHCGyroSampleRate);
         return false;
     }
 
     m_sampleInterval = (uint64_t)1000000 / m_sampleRate;
 
-    switch (m_settings->m_GD20HM303DGyroBW) {
+    switch (m_settings->m_GD20HM303DLHCGyroBW) {
     case L3GD20H_BANDWIDTH_0:
         ctrl1 |= 0x00;
         break;
@@ -221,20 +207,20 @@ bool RTIMUGD20HM303D::setGyroSampleRate()
     return (m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_CTRL1, ctrl1, "Failed to set L3GD20H CTRL1"));
 }
 
-bool RTIMUGD20HM303D::setGyroCTRL2()
+bool RTIMUGD20HM303DLHC::setGyroCTRL2()
 {
-    if ((m_settings->m_GD20HM303DGyroHpf < L3GD20H_HPF_0) || (m_settings->m_GD20HM303DGyroHpf > L3GD20H_HPF_9)) {
-        HAL_ERROR1("Illegal L3GD20H high pass filter code %d\n", m_settings->m_GD20HM303DGyroHpf);
+    if ((m_settings->m_GD20HM303DLHCGyroHpf < L3GD20H_HPF_0) || (m_settings->m_GD20HM303DLHCGyroHpf > L3GD20H_HPF_9)) {
+        HAL_ERROR1("Illegal L3GD20H high pass filter code %d\n", m_settings->m_GD20HM303DLHCGyroHpf);
         return false;
     }
-    return m_settings->HALWrite(m_gyroSlaveAddr,  L3GD20H_CTRL2, m_settings->m_GD20HM303DGyroHpf, "Failed to set L3GD20H CTRL2");
+    return m_settings->HALWrite(m_gyroSlaveAddr,  L3GD20H_CTRL2, m_settings->m_GD20HM303DLHCGyroHpf, "Failed to set L3GD20H CTRL2");
 }
 
-bool RTIMUGD20HM303D::setGyroCTRL4()
+bool RTIMUGD20HM303DLHC::setGyroCTRL4()
 {
     unsigned char ctrl4;
 
-    switch (m_settings->m_GD20HM303DGyroFsr) {
+    switch (m_settings->m_GD20HM303DLHCGyroFsr) {
     case L3GD20H_FSR_245:
         ctrl4 = 0x00;
         m_gyroScale = (RTFLOAT)0.00875 * RTMATH_DEGREE_TO_RAD;
@@ -251,7 +237,7 @@ bool RTIMUGD20HM303D::setGyroCTRL4()
         break;
 
     default:
-        HAL_ERROR1("Illegal L3GD20H FSR code %d\n", m_settings->m_GD20HM303DGyroFsr);
+        HAL_ERROR1("Illegal L3GD20H FSR code %d\n", m_settings->m_GD20HM303DLHCGyroFsr);
         return false;
     }
 
@@ -259,7 +245,7 @@ bool RTIMUGD20HM303D::setGyroCTRL4()
 }
 
 
-bool RTIMUGD20HM303D::setGyroCTRL5()
+bool RTIMUGD20HM303DLHC::setGyroCTRL5()
 {
     unsigned char ctrl5;
 
@@ -267,7 +253,7 @@ bool RTIMUGD20HM303D::setGyroCTRL5()
 
     ctrl5 = 0x10;
 
-#ifdef GD20HM303D_CACHE_MODE
+#ifdef GD20HM303DLHC_CACHE_MODE
     //  turn on fifo
 
     ctrl5 |= 0x40;
@@ -277,128 +263,135 @@ bool RTIMUGD20HM303D::setGyroCTRL5()
 }
 
 
-bool RTIMUGD20HM303D::setAccelCTRL1()
+bool RTIMUGD20HM303DLHC::setAccelCTRL1()
 {
     unsigned char ctrl1;
 
-    if ((m_settings->m_GD20HM303DAccelSampleRate < 0) || (m_settings->m_GD20HM303DAccelSampleRate > 10)) {
-        HAL_ERROR1("Illegal LSM303D accel sample rate code %d\n", m_settings->m_GD20HM303DAccelSampleRate);
+    if ((m_settings->m_GD20HM303DLHCAccelSampleRate < 1) || (m_settings->m_GD20HM303DLHCAccelSampleRate > 7)) {
+        HAL_ERROR1("Illegal LSM303DLHC accel sample rate code %d\n", m_settings->m_GD20HM303DLHCAccelSampleRate);
         return false;
     }
 
-    ctrl1 = (m_settings->m_GD20HM303DAccelSampleRate << 4) | 0x07;
+    ctrl1 = (m_settings->m_GD20HM303DLHCAccelSampleRate << 4) | 0x07;
 
-    return m_settings->HALWrite(m_accelCompassSlaveAddr,  LSM303D_CTRL1, ctrl1, "Failed to set LSM303D CTRL1");
+    return m_settings->HALWrite(m_accelSlaveAddr,  LSM303DLHC_CTRL1_A, ctrl1, "Failed to set LSM303D CTRL1");
 }
 
-bool RTIMUGD20HM303D::setAccelCTRL2()
+bool RTIMUGD20HM303DLHC::setAccelCTRL4()
 {
-    unsigned char ctrl2;
+    unsigned char ctrl4;
 
-    if ((m_settings->m_GD20HM303DAccelLpf < 0) || (m_settings->m_GD20HM303DAccelLpf > 3)) {
-        HAL_ERROR1("Illegal LSM303D accel low pass fiter code %d\n", m_settings->m_GD20HM303DAccelLpf);
-        return false;
-    }
-
-    switch (m_settings->m_GD20HM303DAccelFsr) {
-    case LSM303D_ACCEL_FSR_2:
-        m_accelScale = (RTFLOAT)0.000061;
+    switch (m_settings->m_GD20HM303DLHCAccelFsr) {
+    case LSM303DLHC_ACCEL_FSR_2:
+        m_accelScale = (RTFLOAT)0.001 / (RTFLOAT)16;
         break;
 
-    case LSM303D_ACCEL_FSR_4:
-        m_accelScale = (RTFLOAT)0.000122;
+    case LSM303DLHC_ACCEL_FSR_4:
+        m_accelScale = (RTFLOAT)0.002 / (RTFLOAT)16;
         break;
 
-    case LSM303D_ACCEL_FSR_6:
-        m_accelScale = (RTFLOAT)0.000183;
+    case LSM303DLHC_ACCEL_FSR_8:
+        m_accelScale = (RTFLOAT)0.004 / (RTFLOAT)16;
         break;
 
-    case LSM303D_ACCEL_FSR_8:
-        m_accelScale = (RTFLOAT)0.000244;
-        break;
-
-    case LSM303D_ACCEL_FSR_16:
-        m_accelScale = (RTFLOAT)0.000732;
+    case LSM303DLHC_ACCEL_FSR_16:
+        m_accelScale = (RTFLOAT)0.012 / (RTFLOAT)16;
         break;
 
     default:
-        HAL_ERROR1("Illegal LSM303D accel FSR code %d\n", m_settings->m_GD20HM303DAccelFsr);
+        HAL_ERROR1("Illegal LSM303DLHC accel FSR code %d\n", m_settings->m_GD20HM303DLHCAccelFsr);
         return false;
     }
 
-    ctrl2 = (m_settings->m_GD20HM303DAccelLpf << 6) | (m_settings->m_GD20HM303DAccelFsr << 3);
+    ctrl4 = 0x80 + (m_settings->m_GD20HM303DLHCAccelFsr << 4);
 
-    return m_settings->HALWrite(m_accelCompassSlaveAddr,  LSM303D_CTRL2, ctrl2, "Failed to set LSM303D CTRL2");
+    return m_settings->HALWrite(m_accelSlaveAddr,  LSM303DLHC_CTRL4_A, ctrl4, "Failed to set LSM303DLHC CTRL4");
 }
 
 
-bool RTIMUGD20HM303D::setCompassCTRL5()
+bool RTIMUGD20HM303DLHC::setCompassCRA()
 {
-    unsigned char ctrl5;
+    unsigned char cra;
 
-    if ((m_settings->m_GD20HM303DCompassSampleRate < 0) || (m_settings->m_GD20HM303DCompassSampleRate > 5)) {
-        HAL_ERROR1("Illegal LSM303D compass sample rate code %d\n", m_settings->m_GD20HM303DCompassSampleRate);
+    if ((m_settings->m_GD20HM303DLHCCompassSampleRate < 0) || (m_settings->m_GD20HM303DLHCCompassSampleRate > 7)) {
+        HAL_ERROR1("Illegal LSM303DLHC compass sample rate code %d\n", m_settings->m_GD20HM303DLHCCompassSampleRate);
         return false;
     }
 
-    ctrl5 = (m_settings->m_GD20HM303DCompassSampleRate << 2);
+    cra = (m_settings->m_GD20HM303DLHCCompassSampleRate << 2);
 
-#ifdef GD20HM303D_CACHE_MODE
-    //  enable fifo
-
-    ctrl5 |= 0x40;
-#endif
-
-    return m_settings->HALWrite(m_accelCompassSlaveAddr,  LSM303D_CTRL5, ctrl5, "Failed to set LSM303D CTRL5");
+    return m_settings->HALWrite(m_compassSlaveAddr,  LSM303DLHC_CRA_M, cra, "Failed to set LSM303DLHC CRA_M");
 }
 
-bool RTIMUGD20HM303D::setCompassCTRL6()
+bool RTIMUGD20HM303DLHC::setCompassCRB()
 {
-    unsigned char ctrl6;
+    unsigned char crb;
 
     //  convert FSR to uT
 
-    switch (m_settings->m_GD20HM303DCompassFsr) {
-    case LSM303D_COMPASS_FSR_2:
-        ctrl6 = 0;
-        m_compassScale = (RTFLOAT)0.008;
+    switch (m_settings->m_GD20HM303DLHCCompassFsr) {
+    case LSM303DLHC_COMPASS_FSR_1_3:
+        crb = 0x20;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)1100;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)980;
         break;
 
-    case LSM303D_COMPASS_FSR_4:
-        ctrl6 = 0x20;
-        m_compassScale = (RTFLOAT)0.016;
+    case LSM303DLHC_COMPASS_FSR_1_9:
+        crb = 0x40;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)855;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)760;
+       break;
+
+    case LSM303DLHC_COMPASS_FSR_2_5:
+        crb = 0x60;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)670;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)600;
         break;
 
-    case LSM303D_COMPASS_FSR_8:
-        ctrl6 = 0x40;
-        m_compassScale = (RTFLOAT)0.032;
+    case LSM303DLHC_COMPASS_FSR_4:
+        crb = 0x80;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)450;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)400;
         break;
 
-    case LSM303D_COMPASS_FSR_12:
-        ctrl6 = 0x60;
-        m_compassScale = (RTFLOAT)0.0479;
+    case LSM303DLHC_COMPASS_FSR_4_7:
+        crb = 0xa0;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)400;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)355;
+        break;
+
+    case LSM303DLHC_COMPASS_FSR_5_6:
+        crb = 0xc0;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)330;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)295;
+        break;
+
+    case LSM303DLHC_COMPASS_FSR_8_1:
+        crb = 0xe0;
+        m_compassScaleXY = (RTFLOAT)100 / (RTFLOAT)230;
+        m_compassScaleZ = (RTFLOAT)100 / (RTFLOAT)205;
         break;
 
     default:
-        HAL_ERROR1("Illegal LSM303D compass FSR code %d\n", m_settings->m_GD20HM303DCompassFsr);
+        HAL_ERROR1("Illegal LSM303DLHC compass FSR code %d\n", m_settings->m_GD20HM303DLHCCompassFsr);
         return false;
     }
 
-    return m_settings->HALWrite(m_accelCompassSlaveAddr,  LSM303D_CTRL6, ctrl6, "Failed to set LSM303D CTRL6");
+    return m_settings->HALWrite(m_compassSlaveAddr,  LSM303DLHC_CRB_M, crb, "Failed to set LSM303DLHC CRB_M");
 }
 
-bool RTIMUGD20HM303D::setCompassCTRL7()
+bool RTIMUGD20HM303DLHC::setCompassCRM()
 {
-     return m_settings->HALWrite(m_accelCompassSlaveAddr,  LSM303D_CTRL7, 0x60, "Failed to set LSM303D CTRL7");
+     return m_settings->HALWrite(m_compassSlaveAddr,  LSM303DLHC_CRM_M, 0x00, "Failed to set LSM303DLHC CRM_M");
 }
 
 
-int RTIMUGD20HM303D::IMUGetPollInterval()
+int RTIMUGD20HM303DLHC::IMUGetPollInterval()
 {
     return (400 / m_sampleRate);
 }
 
-bool RTIMUGD20HM303D::IMURead()
+bool RTIMUGD20HM303DLHC::IMURead()
 {
     unsigned char status;
     unsigned char gyroData[6];
@@ -406,21 +399,21 @@ bool RTIMUGD20HM303D::IMURead()
     unsigned char compassData[6];
 
 
-#ifdef GD20HM303D_CACHE_MODE
+#ifdef GD20HM303DLHC_CACHE_MODE
     int count;
 
-    if (!m_settings->HALRead(m_gyroSlaveAddr, L3GD20H_FIFO_SRC, 1, &status, "Failed to read L3GD20H fifo status"))
+    if (!m_settings->HALRead(m_gyroSlaveAddr, L3GD20H_FIFO_SRC, 1, &status, "Failed to read L3GD20 fifo status"))
         return false;
 
     if ((status & 0x40) != 0) {
-        HAL_INFO("L3GD20H fifo overrun\n");
-        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_CTRL5, 0x10, "Failed to set L3GD20H CTRL5"))
+        HAL_INFO("L3GD20 fifo overrun\n");
+        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_CTRL5, 0x10, "Failed to set L3GD20 CTRL5"))
             return false;
 
-        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_FIFO_CTRL, 0x0, "Failed to set L3GD20H FIFO mode"))
+        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_FIFO_CTRL, 0x0, "Failed to set L3GD20 FIFO mode"))
             return false;
 
-        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_FIFO_CTRL, 0x3f, "Failed to set L3GD20H FIFO mode"))
+        if (!m_settings->HALWrite(m_gyroSlaveAddr, L3GD20H_FIFO_CTRL, 0x3f, "Failed to set L3GD20 FIFO mode"))
             return false;
 
         if (!setGyroCTRL5())
@@ -433,16 +426,16 @@ bool RTIMUGD20HM303D::IMURead()
     // get count of samples in fifo
     count = status & 0x1f;
 
-    if ((m_cacheCount == 0) && (count > 0) && (count < GD20HM303D_FIFO_THRESH)) {
+    if ((m_cacheCount == 0) && (count > 0) && (count < GD20HM303DLHC_FIFO_THRESH)) {
         // special case of a small fifo and nothing cached - just handle as simple read
 
-        if (!m_settings->HALRead(m_gyroSlaveAddr, 0x80 | L3GD20H_OUT_X_L, 6, gyroData, "Failed to read L3GD20H data"))
+        if (!m_settings->HALRead(m_gyroSlaveAddr, 0x80 | L3GD20H_OUT_X_L, 6, gyroData, "Failed to read L3GD20 data"))
             return false;
 
-        if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_A, 6, accelData, "Failed to read LSM303D accel data"))
+        if (!m_settings->HALRead(m_accelSlaveAddr, 0x80 | LSM303DLHC_OUT_X_L_A, 6, accelData, "Failed to read LSM303DLHC accel data"))
             return false;
 
-        if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_M, 6, compassData, "Failed to read LSM303D compass data"))
+        if (!m_settings->HALRead(m_compassSlaveAddr, 0x80 | LSM303DLHC_OUT_X_H_M, 6, compassData, "Failed to read LSM303DLHC compass data"))
             return false;
 
         if (m_firstTime)
@@ -452,34 +445,34 @@ bool RTIMUGD20HM303D::IMURead()
 
         m_firstTime = false;
     } else {
-        if (count >=  GD20HM303D_FIFO_THRESH) {
+        if (count >=  GD20HM303DLHC_FIFO_THRESH) {
             // need to create a cache block
 
-            if (m_cacheCount == GD20HM303D_CACHE_BLOCK_COUNT) {
+            if (m_cacheCount == GD20HM303DLHC_CACHE_BLOCK_COUNT) {
                 // all cache blocks are full - discard oldest and update timestamp to account for lost samples
                 m_imuData.timestamp += m_sampleInterval * m_cache[m_cacheOut].count;
-                if (++m_cacheOut == GD20HM303D_CACHE_BLOCK_COUNT)
+                if (++m_cacheOut == GD20HM303DLHC_CACHE_BLOCK_COUNT)
                     m_cacheOut = 0;
                 m_cacheCount--;
             }
 
-            if (!m_settings->HALRead(m_gyroSlaveAddr, 0x80 | L3GD20H_OUT_X_L, GD20HM303D_FIFO_CHUNK_SIZE * GD20HM303D_FIFO_THRESH,
-                         m_cache[m_cacheIn].data, "Failed to read L3GD20H fifo data"))
+            if (!m_settings->HALRead(m_gyroSlaveAddr, 0x80 | L3GD20H_OUT_X_L, GD20HM303DLHC_FIFO_CHUNK_SIZE * GD20HM303DLHC_FIFO_THRESH,
+                         m_cache[m_cacheIn].data, "Failed to read L3GD20 fifo data"))
                 return false;
 
-            if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_A, 6,
-                         m_cache[m_cacheIn].accel, "Failed to read LSM303D accel data"))
+            if (!m_settings->HALRead(m_accelSlaveAddr, 0x80 | LSM303DLHC_OUT_X_L_A, 6,
+                         m_cache[m_cacheIn].accel, "Failed to read LSM303DLHC accel data"))
                 return false;
 
-            if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_M, 6,
-                         m_cache[m_cacheIn].compass, "Failed to read LSM303D compass data"))
+            if (!m_settings->HALRead(m_compassSlaveAddr, 0x80 | LSM303DLHC_OUT_X_H_M, 6,
+                         m_cache[m_cacheIn].compass, "Failed to read LSM303DLHC compass data"))
                 return false;
 
-            m_cache[m_cacheIn].count = GD20HM303D_FIFO_THRESH;
+            m_cache[m_cacheIn].count = GD20HM303DLHC_FIFO_THRESH;
             m_cache[m_cacheIn].index = 0;
 
             m_cacheCount++;
-            if (++m_cacheIn == GD20HM303D_CACHE_BLOCK_COUNT)
+            if (++m_cacheIn == GD20HM303DLHC_CACHE_BLOCK_COUNT)
                 m_cacheIn = 0;
 
         }
@@ -489,16 +482,16 @@ bool RTIMUGD20HM303D::IMURead()
         if (m_cacheCount == 0)
             return false;
 
-        memcpy(gyroData, m_cache[m_cacheOut].data + m_cache[m_cacheOut].index, GD20HM303D_FIFO_CHUNK_SIZE);
+        memcpy(gyroData, m_cache[m_cacheOut].data + m_cache[m_cacheOut].index, GD20HM303DLHC_FIFO_CHUNK_SIZE);
         memcpy(accelData, m_cache[m_cacheOut].accel, 6);
         memcpy(compassData, m_cache[m_cacheOut].compass, 6);
 
-        m_cache[m_cacheOut].index += GD20HM303D_FIFO_CHUNK_SIZE;
+        m_cache[m_cacheOut].index += GD20HM303DLHC_FIFO_CHUNK_SIZE;
 
         if (--m_cache[m_cacheOut].count == 0) {
             //  this cache block is now empty
 
-            if (++m_cacheOut == GD20HM303D_CACHE_BLOCK_COUNT)
+            if (++m_cacheOut == GD20HM303DLHC_CACHE_BLOCK_COUNT)
                 m_cacheOut = 0;
             m_cacheCount--;
         }
@@ -522,17 +515,20 @@ bool RTIMUGD20HM303D::IMURead()
 
     m_imuData.timestamp = RTMath::currentUSecsSinceEpoch();
 
-    if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_A, 6, accelData, "Failed to read LSM303D accel data"))
+    if (!m_settings->HALRead(m_accelSlaveAddr, 0x80 | LSM303DLHC_OUT_X_L_A, 6, accelData, "Failed to read LSM303DLHC accel data"))
         return false;
 
-    if (!m_settings->HALRead(m_accelCompassSlaveAddr, 0x80 | LSM303D_OUT_X_L_M, 6, compassData, "Failed to read LSM303D compass data"))
+    if (!m_settings->HALRead(m_compassSlaveAddr, 0x80 | LSM303DLHC_OUT_X_H_M, 6, compassData, "Failed to read LSM303DLHC compass data"))
         return false;
 
 #endif
 
     RTMath::convertToVector(gyroData, m_imuData.gyro, m_gyroScale, false);
     RTMath::convertToVector(accelData, m_imuData.accel, m_accelScale, false);
-    RTMath::convertToVector(compassData, m_imuData.compass, m_compassScale, false);
+
+    m_imuData.compass.setX((RTFLOAT)((int16_t)(((uint16_t)compassData[0] << 8) | (uint16_t)compassData[1])) * m_compassScaleXY);
+    m_imuData.compass.setY((RTFLOAT)((int16_t)(((uint16_t)compassData[2] << 8) | (uint16_t)compassData[3])) * m_compassScaleXY);
+    m_imuData.compass.setZ((RTFLOAT)((int16_t)(((uint16_t)compassData[4] << 8) | (uint16_t)compassData[5])) * m_compassScaleZ);
 
     //  sort out gyro axes
 
@@ -546,8 +542,11 @@ bool RTIMUGD20HM303D::IMURead()
 
     //  sort out compass axes
 
-    m_imuData.compass.setY(-m_imuData.compass.y());
-    m_imuData.compass.setZ(-m_imuData.compass.z());
+    RTFLOAT temp;
+
+    temp = m_imuData.compass.z();
+    m_imuData.compass.setZ(-m_imuData.compass.y());
+    m_imuData.compass.setY(-temp);
 
     //  now do standard processing
 

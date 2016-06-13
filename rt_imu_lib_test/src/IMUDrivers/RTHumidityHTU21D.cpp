@@ -21,8 +21,8 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "RTHumidityHTU21D.h"
-#include "RTHumidityDefs.h"
+#include "IMUDrivers/RTHumidityHTU21D.h"
+#include "IMUDrivers/RTHumidityDefs.h"
 
 #define HTU21D_STATE_IN_RESET           0                   // reset in progress
 #define HTU21D_STATE_IDLE               1                   // nothing happening

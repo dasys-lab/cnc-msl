@@ -24,7 +24,7 @@
 //  The MPU-9250 and SPI driver code is based on code generously supplied by
 //  staslock@gmail.com (www.clickdrive.io)
 
-#include "RTIMUMPU9250.h"
+#include "IMUDrivers/RTIMUMPU9250.h"
 #include "RTIMUSettings.h"
 
 RTIMUMPU9250::RTIMUMPU9250(RTIMUSettings *settings) : RTIMU(settings)

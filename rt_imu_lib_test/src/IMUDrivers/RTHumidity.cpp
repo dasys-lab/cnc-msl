@@ -22,10 +22,10 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTHumidity.h"
+#include "IMUDrivers/RTHumidity.h"
 
-#include "RTHumidityHTS221.h"
-#include "RTHumidityHTU21D.h"
+#include "IMUDrivers/RTHumidityHTS221.h"
+#include "IMUDrivers/RTHumidityHTU21D.h"
 
 RTHumidity *RTHumidity::createHumidity(RTIMUSettings *settings)
 {

@@ -22,7 +22,7 @@
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#include "RTIMUMPU9150.h"
+#include "IMUDrivers/RTIMUMPU9150.h"
 #include "RTIMUSettings.h"
 
 RTIMUMPU9150::RTIMUMPU9150(RTIMUSettings *settings) : RTIMU(settings)

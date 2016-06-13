@@ -21,7 +21,7 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 //  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include "RTPressureMS5637.h"
+#include "IMUDrivers/RTPressureMS5637.h"
 
 RTPressureMS5637::RTPressureMS5637(RTIMUSettings *settings) : RTPressure(settings)
 {
