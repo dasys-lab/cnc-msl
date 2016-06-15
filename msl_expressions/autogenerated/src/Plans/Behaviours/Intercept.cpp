@@ -64,7 +64,8 @@ namespace alica
 		}
 
 		auto egoBallPos = this->wm->ball->getEgoBallPosition();
-		if (!egoBallPos)
+		auto od = this->wm->rawSensorData->getCorrectedOdometryInfo();
+		if (!egoBallPos || !od)
 		{
 			return;
 		}
@@ -87,6 +88,9 @@ namespace alica
 
 			this->query->egoDestinationPoint = egoTarget;
 			this->query->egoAlignPoint = egoBallPos;
+			auto additonalPopints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+			additonalPopints->push_back(alloBall);
+			this->query->additionalPoints = additonalPopints;
 			mc = this->robot->robotMovement->moveToPoint(query);
 			if (egoTarget->length() < catchRadius)
 			{
@@ -97,8 +101,32 @@ namespace alica
 			return;
 		}
 
+		shared_ptr<geometry::CNPoint2D> predBall = make_shared<geometry::CNPoint2D>(egoBallPos->x, egoBallPos->y);
+		shared_ptr<geometry::CNPosition> predPos = make_shared<geometry::CNPosition>(0.0, 0.0, 0.0);
+		double timestep = 33;
+		double rot = od->motion.rotation * timestep / 1000.0;
+		for (int i = 1; i * timestep < 160; i++)
+		{
+			if (i > 6)
+			{
+				break;
+			}
+			predPos->x += cos(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+			predPos->y += sin(od->motion.angle + predPos->theta) * od->motion.translation * timestep / 1000.0;
+			predPos->theta += rot;
+
+			predBall->x += egoBallVel->x * timestep / 1000.0;
+			predBall->y += egoBallVel->y * timestep / 1000.0;
+
+			if (predBall->distanceTo(predPos) < 250 + 110) //robotRadius+ballRadius
+			{
+				break;
+			}
+		}
+
+		predBall->alloToEgo(*predPos);
 		// PID controller for minimizing the distance between ball and me
-		double distErr = egoBallPos->length();
+		double distErr = predBall->length();
 		double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
 		distIntErr += distErr;
@@ -115,10 +143,10 @@ namespace alica
 		{
 			egoVelocity = egoBallVel->getPoint();
 		}
-		egoVelocity->x += controlDist * cos(egoBallPos->angleTo());
-		egoVelocity->y += controlDist * sin(egoBallPos->angleTo());
+		egoVelocity->x += controlDist * cos(predBall->angleTo());
+		egoVelocity->y += controlDist * sin(predBall->angleTo());
 
-		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), egoBallPos->length());
+		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
 		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
 		if (this->wm->field->isInsideField(alloBall, -150) && !this->wm->field->isInsideField(alloDest))
 		{
@@ -146,7 +174,7 @@ namespace alica
 			mc.motion.translation = min(this->maxVel, pathPlanningPoint->length());
 		}
 
-		// PID controller for minimizing the kicker angle to ball
+// PID controller for minimizing the kicker angle to ball
 		double angleGoal = msl::Kicker::kickerAngle;
 		double rotErr = geometry::deltaAngle(angleGoal, egoBallPos->angleTo());
 		double controlRot = rotErr * prot + rotIntErr * pirot + (rotErr - lastRotErr) * pdrot;
@@ -156,9 +184,10 @@ namespace alica
 		rotIntErr = max(-2 * M_PI, min(2 * M_PI, rotIntErr));
 		lastRotErr = rotErr;
 
-		// this is nice stuff but only when we are not approaching the opponent
+// this is nice stuff but only when we are not approaching the opponent
 		if (egoBallPos->length() < 700
-				&& (currentGameState == msl::GameState::OwnBallPossession || currentGameState == msl::GameState::NobodyInBallPossession))
+				&& (currentGameState == msl::GameState::OwnBallPossession
+						|| currentGameState == msl::GameState::NobodyInBallPossession))
 		{
 			controlRot *= 2.3;
 			//we probably translate to fast and cannot rotate anymore: So translate slower
@@ -169,7 +198,7 @@ namespace alica
 		}
 		mc.motion.rotation = controlRot;
 
-		// Special handling for things around critical areas
+// Special handling for things around critical areas
 		auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
 		if (!std::isnan(tmpMC.motion.translation))
 		{
@@ -197,6 +226,6 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 
-	/*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
-	/*PROTECTED REGION END*/
+/*PROTECTED REGION ID(methods1458757170147) ENABLED START*/ //Add additional methods here
+/*PROTECTED REGION END*/
 } /* namespace alica */
