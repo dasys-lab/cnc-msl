@@ -370,9 +370,8 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	lockCam = false;
 	top = false;
 
+	// Cast like that
 	MWind *mwindow = reinterpret_cast<MWind*>(parent);
-	mwindow->RobotVisCombo->add
-
 
 	Update_timer->start(33);
 }
