@@ -370,6 +370,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	lockCam = false;
 	top = false;
 
+	MWind *mwindow = reinterpret_cast<MWind*>(parent);
+	mwindow->RobotVisCombo->add
+
+
 	Update_timer->start(33);
 }
 
@@ -1044,7 +1048,10 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
 {
         lock_guard<mutex> lock(swmMutex);
 
+
+
         auto robot = this->getRobotById(info->senderID);
+
         robot->setSharedWorldInfo(info);
         robot->updateTimeStamp();
 }
