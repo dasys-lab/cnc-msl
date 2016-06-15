@@ -48,11 +48,11 @@ namespace msl
 //		static MotionControl interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 //												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 		//TODO needs to be tested
-		static msl_actuator_msgs::MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
-												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
-		static msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
-													double ballAngleTolerance);
+//		static msl_actuator_msgs::MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+//												shared_ptr<geometry::CNPoint2D> egoAlignPoint, double angleTolerance);
+//		static msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+//													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,
+//													double ballAngleTolerance);
 		//TODO needs to be tested
 //		static msl_actuator_msgs::MotionControl rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 //													shared_ptr<geometry::CNPoint2D> egoBallPos, double angleTolerance,

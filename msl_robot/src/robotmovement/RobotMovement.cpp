@@ -902,6 +902,7 @@ namespace msl
 		return mc;
 	}
 */
+
 	msl_actuator_msgs::MotionControl RobotMovement::moveToPointCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														double snapDistance,
@@ -935,6 +936,7 @@ namespace msl
 
 		return mc;
 	}
+
 	/*
 	 MotionControl RobotMovement::interceptCarefully(shared_ptr<geometry::CNPoint2D> egoTarget,
 	 shared_ptr<geometry::CNPoint2D> egoAlignPoint, double snapDistance,
@@ -992,6 +994,7 @@ namespace msl
 	 * and maybe use PID controller
 	 * mc.motion.rotation = PID controller
 	 */
+	/*
 	msl_actuator_msgs::MotionControl RobotMovement::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
 													shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 													double angleTolerance)
@@ -1019,8 +1022,8 @@ namespace msl
 			lastRotError = deltaTargetAngle;
 		}
 		return mc;
-	}
-
+	}*/
+/*
 	msl_actuator_msgs::MotionControl RobotMovement::alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 														shared_ptr<geometry::CNPoint2D> egoBallPos,
 														double angleTolerance, double ballAngleTolerance)
@@ -1059,6 +1062,7 @@ namespace msl
 		}
 		return mc;
 	}
+	*/
 /*
 	msl_actuator_msgs::MotionControl RobotMovement::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
 															shared_ptr<geometry::CNPoint2D> egoBallPos,
