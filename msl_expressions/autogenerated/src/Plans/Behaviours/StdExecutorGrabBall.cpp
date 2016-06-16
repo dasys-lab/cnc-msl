@@ -14,7 +14,7 @@ namespace alica
             DomainBehaviour("StdExecutorGrabBall")
     {
         /*PROTECTED REGION ID(con1441209011595) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -26,7 +26,7 @@ namespace alica
     void StdExecutorGrabBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1441209011595) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         if (wm->ball->haveBall())
         {
             this->setSuccess(true);
@@ -56,10 +56,11 @@ namespace alica
 
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
-        } else
+            send(mc);
+        }
+        else
         {
-        	cout << "Motion command is NaN!" << endl;
+            cout << "Motion command is NaN!" << endl;
         }
         /*PROTECTED REGION END*/
     }

@@ -36,7 +36,7 @@ namespace alica
     void ReceiveInOppHalf::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPose = wm->ball->getAlloBallPosition();
         if (!ownPos || !alloBallPose)

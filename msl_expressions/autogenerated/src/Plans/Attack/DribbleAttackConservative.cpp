@@ -84,7 +84,7 @@ namespace alica
     void DribbleAttackConservative::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1457967322925) ENABLED START*/ //Add additional methods here

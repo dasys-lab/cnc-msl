@@ -134,7 +134,7 @@ namespace alica
         mc.motion.translation = driveTo->length();
 
         send(mc);
-        msl::RobotMovement::updateLastTurnTime();
+//        msl::RobotMovement::updateLastTurnTime();
         /*PROTECTED REGION END*/
     }
     void ProtectBall::initialiseParameters()

@@ -34,7 +34,7 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
@@ -90,9 +90,10 @@ namespace alica
             {
                 cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
                 send (mc);
-            } else
+            }
+            else
             {
-            	cout << "Motion command is NaN!" << endl;
+                cout << "Motion command is NaN!" << endl;
             }
             cout << "### DriveToGoal ###\n" << endl;
         }

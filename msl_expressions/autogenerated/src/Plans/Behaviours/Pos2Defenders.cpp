@@ -19,7 +19,7 @@ namespace alica
             DomainBehaviour("Pos2Defenders")
     {
         /*PROTECTED REGION ID(con1444834678756) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos2Defenders::~Pos2Defenders()
@@ -30,7 +30,7 @@ namespace alica
     void Pos2Defenders::run(void* msg)
     {
         /*PROTECTED REGION ID(run1444834678756) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPoint2D > alloBallPos = nullptr;
         alloBallPos = wm->ball->getAlloBallPosition();
 
@@ -68,10 +68,10 @@ namespace alica
 //                    mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
 //                                                                  alloBallPos->alloToEgo(*firstDef), 0,
 //                                                                  additionalPoints);
-                	query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
-                	query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
-                	query->additionalPoints = additionalPoints;
-                	mc = rm.moveToPoint(query);
+                    query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
+                    query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
+                    query->additionalPoints = additionalPoints;
+                    mc = rm.moveToPoint(query);
 
                 }
                 else
@@ -79,10 +79,10 @@ namespace alica
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
 //                                                                  alloBallPos->alloToEgo(*secondDef), 0,
 //                                                                  additionalPoints);
-                	query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
-                	query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
-                	query->additionalPoints = additionalPoints;
-                	mc = rm.moveToPoint(query);
+                    query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
+                    query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
+                    query->additionalPoints = additionalPoints;
+                    mc = rm.moveToPoint(query);
                 }
 
             }
@@ -95,18 +95,18 @@ namespace alica
 
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*firstDef),
 //                                                                  alloBallPos->alloToEgo(*firstDef), 0);
-                	query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
-                	query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
-                	mc = rm.moveToPoint(query);
+                    query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
+                    query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
+                    mc = rm.moveToPoint(query);
 
                 }
                 else
                 {
 //                    mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*secondDef),
 //                                                                  alloBallPos->alloToEgo(*secondDef), 0);
-                	query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
-                	query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
-                	mc = rm.moveToPoint(query);
+                    query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
+                    query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
+                    mc = rm.moveToPoint(query);
                 }
 
             }
@@ -116,17 +116,18 @@ namespace alica
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(firstDefPos->alloToEgo(*firstDef),
 //                                                          alloBallPos->alloToEgo(*firstDef), 0);
-        	query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
-        	query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
-        	mc = rm.moveToPoint(query);
+            query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
+            query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
+            mc = rm.moveToPoint(query);
         }
 
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
-        } else
+            send(mc);
+        }
+        else
         {
-        	cout << "Motion command is NaN!" << endl;
+            cout << "Motion command is NaN!" << endl;
         }
         /*PROTECTED REGION END*/
     }

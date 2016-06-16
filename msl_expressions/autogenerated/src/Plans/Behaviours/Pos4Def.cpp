@@ -69,10 +69,11 @@ namespace alica
         }
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
-        } else
+            send(mc);
+        }
+        else
         {
-        	cout << "Motion command is NaN!" << endl;
+            cout << "Motion command is NaN!" << endl;
         }
         /*PROTECTED REGION END*/
     }

@@ -18,7 +18,7 @@ namespace alica
             DomainBehaviour("DropBallAttackerPos")
     {
         /*PROTECTED REGION ID(con1455537841488) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DropBallAttackerPos::~DropBallAttackerPos()
@@ -57,10 +57,11 @@ namespace alica
 
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
-        } else
+            send(mc);
+        }
+        else
         {
-        	cout << "Motion command is NaN!" << endl;
+            cout << "Motion command is NaN!" << endl;
         }
 
         /*PROTECTED REGION END*/

@@ -99,24 +99,24 @@ namespace alica
             }
         }
         // repaced moveToPointCarefully with new moveToPoint method
-        	query->egoDestinationPoint = targetPoint->alloToEgo(*ownPos);
-        	query->snapDistance = 50;
+        query->egoDestinationPoint = targetPoint->alloToEgo(*ownPos);
+        query->snapDistance = 50;
         if (egoBallPos != nullptr)
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
-        	query->egoAlignPoint = egoBallPos;
-        	mc = rm.moveToPoint(query);
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
         }
         else
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
 //                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
-        	query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
-        	mc = rm.moveToPoint(query);
+            query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
+            mc = rm.moveToPoint(query);
         }
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
+            send(mc);
         }
         /*PROTECTED REGION END*/
     }

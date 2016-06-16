@@ -90,8 +90,7 @@ namespace alica
     void Wander::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
-
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
 
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData->getOwnPositionVision();
         if (ownPosition == nullptr)
@@ -152,10 +151,11 @@ namespace alica
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
-        } else
+            send(mc);
+        }
+        else
         {
-        	cout << "motion commant is NaN" << endl;
+            cout << "motion commant is NaN" << endl;
         }
 
         /*PROTECTED REGION END*/

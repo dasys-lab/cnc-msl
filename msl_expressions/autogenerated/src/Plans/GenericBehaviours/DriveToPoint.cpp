@@ -15,7 +15,7 @@ namespace alica
             DomainBehaviour("DriveToPoint")
     {
         /*PROTECTED REGION ID(con1417620568675) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToPoint::~DriveToPoint()
@@ -26,7 +26,7 @@ namespace alica
     void DriveToPoint::run(void* msg)
     {
         /*PROTECTED REGION ID(run1417620568675) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
         if (!me.operator bool())
@@ -60,7 +60,7 @@ namespace alica
 
         if (!std::isnan(mc.motion.translation))
         {
-        	send(mc);
+            send(mc);
         }
 
         /*PROTECTED REGION END*/

@@ -19,7 +19,7 @@ namespace alica
             DomainBehaviour("GetBall")
     {
         /*PROTECTED REGION ID(con1414828300860) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     GetBall::~GetBall()
@@ -103,9 +103,9 @@ namespace alica
         else
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
-        	query->egoDestinationPoint = egoBallPos;
-        	query->egoAlignPoint = egoBallPos;
-        	mc = rm.moveToPoint(query);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
         }
         // replaced with new method
         auto tmpMC = rm.ruleActionForBallGetter();
@@ -113,9 +113,10 @@ namespace alica
         {
             send(tmpMC);
             send(mc);
-        } else
+        }
+        else
         {
-        	cout << "Motin command is NaN!" << endl;
+            cout << "Motin command is NaN!" << endl;
         }
         /*PROTECTED REGION END*/
     }

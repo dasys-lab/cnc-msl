@@ -21,7 +21,7 @@ namespace alica
             DomainBehaviour("PosAlternativePassReceiver")
     {
         /*PROTECTED REGION ID(con1461674942156) ENABLED START*/ //Add additional options here
-    	query = make_shared<msl::MovementQuery>();
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PosAlternativePassReceiver::~PosAlternativePassReceiver()
@@ -32,7 +32,7 @@ namespace alica
     void PosAlternativePassReceiver::run(void* msg)
     {
         /*PROTECTED REGION ID(run1461674942156) ENABLED START*/ //Add additional options here
-    	msl::RobotMovement rm;
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -110,10 +110,11 @@ namespace alica
             }
             if (!std::isnan(mc.motion.translation))
             {
-            	send(mc);
-            } else
+                send(mc);
+            }
+            else
             {
-            	cout << "Motion command is NaN!" << endl;
+                cout << "Motion command is NaN!" << endl;
             }
         }
         /*PROTECTED REGION END*/

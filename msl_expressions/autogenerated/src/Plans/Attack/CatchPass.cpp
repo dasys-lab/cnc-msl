@@ -34,7 +34,7 @@ namespace alica
         /*PROTECTED REGION ID(run1440754525537) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-    	auto ownPos = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
             return;
@@ -82,9 +82,10 @@ namespace alica
         if (!std::isnan(mc.motion.rotation))
         {
             send(mc);
-        } else
+        }
+        else
         {
-        	cout << "motion command is NaN" << endl;
+            cout << "motion command is NaN" << endl;
         }
         /*PROTECTED REGION END*/
     }
