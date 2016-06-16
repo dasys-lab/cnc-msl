@@ -402,6 +402,12 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
                 robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
                 robot->getVisualization()->updatePassMsg(this->renderer);
+
+                // TODO: add new combobox item if robot doesnt exist yet, remove if it was removed...
+                QString robotStr;
+                robotStr.setNum(robot->getSharedWorldInfo()->senderID, 10);
+                QVariant robotNum(robot->getSharedWorldInfo()->senderID);
+                mainWindow->robotSelector->addItem(robotStr, robotNum);
 	}
 
 	if (!this->GetRenderWindow()->CheckInRenderStatus())
@@ -1045,6 +1051,7 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
         lock_guard<mutex> lock(swmMutex);
 
         auto robot = this->getRobotById(info->senderID);
+
         robot->setSharedWorldInfo(info);
         robot->updateTimeStamp();
 }
