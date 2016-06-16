@@ -25,8 +25,7 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-
-	string tmp;
+        string tmp;
         getParameter("X-Direction", tmp);
 
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
@@ -52,7 +51,7 @@ namespace alica
         length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         calibOldPosMotionX = calibPosMotionX;
-        calibOldPosMotionY = calibPosMotionY;	
+        calibOldPosMotionY = calibPosMotionY;
 
         /*PROTECTED REGION END*/
     }

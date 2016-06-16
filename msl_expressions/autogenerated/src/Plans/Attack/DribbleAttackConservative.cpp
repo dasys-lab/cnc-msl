@@ -29,7 +29,8 @@ namespace alica
     void DribbleAttackConservative::run(void* msg)
     {
         /*PROTECTED REGION ID(run1457967322925) ENABLED START*/ //Add additional options here
-        msl::RobotMovement rm;;
+        msl::RobotMovement rm;
+        ;
         auto ballPos = wm->ball->getEgoBallPosition();
 
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
@@ -71,11 +72,11 @@ namespace alica
         msl_actuator_msgs::MotionControl mc = rm.ruleActionForBallGetter();
         if (!std::isnan(mc.motion.translation))
         {
-        	send (mc);
+            send(mc);
         }
         else
         {
-			send(bm);
+            send(bm);
         }
 
         /*PROTECTED REGION END*/

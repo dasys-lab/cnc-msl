@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1459609457478) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/MovementQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +18,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1459609457478) ENABLED START*/ //Add additional protected methods here
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1459609457478) ENABLED START*/ //Add additional private methods here

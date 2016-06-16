@@ -6,6 +6,7 @@
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include <msl_actuator_msgs/MotionControl.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -29,6 +30,7 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> alloGoalMid, alloGoalRight, alloGoalLeft;
         int goalieSize;
         string goalInitPos;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

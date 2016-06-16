@@ -17,6 +17,7 @@ namespace alica
             DomainBehaviour("PositionReceiverFreeKickOppHalf")
     {
         /*PROTECTED REGION ID(con1464780799716) ENABLED START*/ //Add additional options here
+    	query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PositionReceiverFreeKickOppHalf::~PositionReceiverFreeKickOppHalf()
@@ -27,6 +28,7 @@ namespace alica
     void PositionReceiverFreeKickOppHalf::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464780799716) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -56,14 +58,24 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
 
         // ask the path planner how to get there
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        query->egoDestinationPoint = egoTarget;
+        query->egoAlignPoint = egoBallPos;
+        query->additionalPoints = additionalPoints;
+        mc = rm.moveToPoint(query);
 
         // if we reach the point and are aligned, the behavior is successful
         if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
         {
             this->setSuccess(true);
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+        	send(mc);
+        } else
+        {
+        	cout << "Motion command is NaN!" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void PositionReceiverFreeKickOppHalf::initialiseParameters()

@@ -41,8 +41,8 @@ namespace alica
                                                                  shared_ptr<geometry::CNPoint2D> ballPos,
                                                                  double ownPosAngleMin);
         msl_actuator_msgs::MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
-        																		shared_ptr<geometry::CNPoint2D> egoAlignPoint,
-        																		double angleTolerance);
+                                                            shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                            double angleTolerance);
         void readConfigParameters();
         /*PROTECTED REGION END*/};
 } /* namespace alica */

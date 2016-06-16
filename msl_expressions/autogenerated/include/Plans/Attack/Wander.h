@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1434716215423) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <MSLEnums.h>
 namespace geometry
 {
@@ -39,6 +40,7 @@ namespace alica
         int distToCorner;
         int distToOutLine;
         bool firstTargetSet;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1434716215423) ENABLED START*/ //Add additional private methods here

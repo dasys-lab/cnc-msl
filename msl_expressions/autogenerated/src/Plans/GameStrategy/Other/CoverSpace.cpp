@@ -18,6 +18,7 @@ namespace alica
             DomainBehaviour("CoverSpace")
     {
         /*PROTECTED REGION ID(con1455537892946) ENABLED START*/ //Add additional options here
+    	query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     CoverSpace::~CoverSpace()
@@ -28,6 +29,7 @@ namespace alica
     void CoverSpace::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
@@ -70,8 +72,19 @@ namespace alica
         auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
-        send(mc);
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
+        query->egoDestinationPoint = egoTarget;
+        query->egoAlignPoint = egoAlignPoint;
+        query->snapDistance = 100;
+        mc = rm.moveToPoint(query);
+
+        if (!std::isnan(mc.motion.translation))
+        {
+        	send(mc);
+        } else
+        {
+        	cout << "Motion command is NaN!" << endl;
+        }
 
         /*PROTECTED REGION END*/
     }

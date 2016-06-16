@@ -24,6 +24,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1461584204507) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PositionReceiverThrownIn::~PositionReceiverThrownIn()
@@ -34,6 +35,7 @@ namespace alica
     void PositionReceiverThrownIn::run(void* msg)
     {
         /*PROTECTED REGION ID(run1461584204507) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -53,14 +55,25 @@ namespace alica
         msl_actuator_msgs::MotionControl mc;
 
         // ask the path planner how to get there
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        // replaced with new moveToPoint method
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        mQuery->egoDestinationPoint = egoTarget;
+        mQuery->egoAlignPoint = egoBallPos;
+        mQuery->additionalPoints = additionalPoints;
+        mc = rm.moveToPoint(mQuery);
 
         // if we reach the point and are aligned, the behavior is successful
         if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
         {
             this->setSuccess(true);
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+        	send(mc);
+        } else
+        {
+        	cout << "Motion command is NaN!" << endl;
+        }
 
         /*PROTECTED REGION END*/
     }

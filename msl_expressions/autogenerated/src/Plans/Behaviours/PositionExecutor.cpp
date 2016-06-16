@@ -107,7 +107,13 @@ namespace alica
             }
             else
             { // still enough time to position ...
-                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+//                mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+            	query->egoDestinationPoint = egoTarget;
+            	query->egoAlignPoint = egoBallPos;
+            	query->snapDistance = slowCatchRadius;
+            	query->additionalPoints = additionalPoints;
+            	query->fast = false;
+            	mc = rm.moveToPoint(query);
             }
 
             // if we reached the point and are aligned, the behavior is successful
@@ -116,7 +122,13 @@ namespace alica
             {
                 this->setSuccess(true);
             }
-            send(mc);
+            if (!std::isnan(mc.motion.translation))
+            {
+            	send(mc);
+            } else
+            {
+            	cout << "Motion command is NaN!" << endl;
+            }
         }
         /*PROTECTED REGION END*/
     }

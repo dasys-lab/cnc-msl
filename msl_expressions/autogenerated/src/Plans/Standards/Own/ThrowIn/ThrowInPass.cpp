@@ -252,8 +252,8 @@ namespace alica
             }
             else
             {
-                km.power = (ushort)this->robot->kicker->getPassKickpower(dist,
-                                                                estimatedTimeForReceiverToArrive + arrivalTimeOffset);
+                km.power = (ushort)this->robot->kicker->getPassKickpower(
+                        dist, estimatedTimeForReceiverToArrive + arrivalTimeOffset);
             }
 
             send(km);

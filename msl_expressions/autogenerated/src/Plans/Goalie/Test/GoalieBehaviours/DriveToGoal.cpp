@@ -22,6 +22,8 @@ namespace alica
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToGoal::~DriveToGoal()
@@ -32,6 +34,8 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
+
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
@@ -69,17 +73,26 @@ namespace alica
             alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
             cout << " Driving to goal" << endl;
-            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+//                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+            query->egoDestinationPoint = alloTarget->alloToEgo(*me);
+            query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
+            query->snapDistance = 100;
+
+            mc = rm.moveToPoint(query);
 
             if (me->distanceTo(alloTarget) <= 100)
             {
                 this->setSuccess(true);
             }
-            else
+            else if (!std::isnan(mc.motion.translation))
             {
                 cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
                 send (mc);
+            } else
+            {
+            	cout << "Motion command is NaN!" << endl;
             }
             cout << "### DriveToGoal ###\n" << endl;
         }

@@ -25,6 +25,7 @@ namespace alica
         threshold = 0.0;
         yHysteresis = 0.0;
         vMax = 0.0;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     ReleaseMid::~ReleaseMid()
@@ -97,16 +98,26 @@ namespace alica
                 targetPoint->y = referencePoint->y + 500.0;
             }
         }
+        // repaced moveToPointCarefully with new moveToPoint method
+        	query->egoDestinationPoint = targetPoint->alloToEgo(*ownPos);
+        	query->snapDistance = 50;
         if (egoBallPos != nullptr)
         {
-            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
+//            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
+        	query->egoAlignPoint = egoBallPos;
+        	mc = rm.moveToPoint(query);
         }
         else
         {
-            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
-                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
+//            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
+//                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
+        	query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
+        	mc = rm.moveToPoint(query);
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+        	send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void ReleaseMid::initialiseParameters()

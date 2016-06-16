@@ -6,6 +6,7 @@
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <container/CNVelocity2D.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -33,6 +34,7 @@ namespace alica
         int isMovingCloserIter;
         int isMovingAwayIter;
         int maxIter;
+        shared_ptr<msl::MovementQuery> query;
         msl_actuator_msgs::MotionControl ballGetsCloser(shared_ptr<geometry::CNPosition> robotPosition,
                                                         shared_ptr<geometry::CNVelocity2D> ballVelocity,
                                                         shared_ptr<geometry::CNPoint2D> egoBallPos);

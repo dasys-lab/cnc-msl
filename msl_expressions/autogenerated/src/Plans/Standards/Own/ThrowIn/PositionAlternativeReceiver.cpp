@@ -20,6 +20,7 @@ namespace alica
             DomainBehaviour("PositionAlternativeReceiver")
     {
         /*PROTECTED REGION ID(con1462978634990) ENABLED START*/ //Add additional options here
+    	query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PositionAlternativeReceiver::~PositionAlternativeReceiver()
@@ -30,6 +31,7 @@ namespace alica
     void PositionAlternativeReceiver::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462978634990) ENABLED START*/ //Add additional options here
+    	msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -60,8 +62,20 @@ namespace alica
 
         egoTarget = alloTarget->alloToEgo(*ownPos);
 
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
-        send(mc);
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
+        query->egoDestinationPoint = egoTarget;
+        query->egoAlignPoint = egoBallPos;
+        query->additionalPoints = additionalPoints;
+        mc = rm.moveToPoint(query);
+
+        if (!std::isnan(mc.motion.translation))
+        {
+        	send(mc);
+        } else
+        {
+        	cout << "Motion command is NaN!" << endl;
+        }
+
 
         /*PROTECTED REGION END*/
     }
