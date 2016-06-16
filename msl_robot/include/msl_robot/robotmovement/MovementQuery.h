@@ -36,6 +36,7 @@ namespace msl
 		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
 		double translationPDForDribble(double transOrt);
 		double angleCalcForDribble(double transOrt);
+		void reset();
 		void resetAllPDParameters();
 		void resetRotationPDParameters();
 		void resetTransaltionPDParameters();

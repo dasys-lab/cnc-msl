@@ -101,6 +101,22 @@ namespace msl
 		return dir->angleTo();
 	}
 
+	void MovementQuery::reset()
+	{
+		egoAlignPoint = nullptr;
+		egoDestinationPoint = nullptr;
+		additionalPoints = nullptr;
+		fast = false;
+		dribble = false;
+		snapDistance = 0;
+		angleTolerance = 0;
+		alloTeamMatePosition = nullptr;
+		wm = MSLWorldModel::get();
+
+		resetAllPDParameters();
+		readConfigParameters();
+	}
+
 	void MovementQuery::resetAllPDParameters()
 	{
 		resetRotationPDParameters();
@@ -121,23 +137,36 @@ namespace msl
 		readConfigParameters();
 	}
 
-
 	void MovementQuery::readConfigParameters()
 	{
 		supplementary::SystemConfig* supplementary = supplementary::SystemConfig::getInstance();
 		// load rotation config parameters
-		this->pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot", NULL);
-		this->dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot", NULL);
-		this->rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotationAcceleration", NULL);
-		this->maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxRotation", NULL);
+		this->pRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pRot",
+																							NULL);
+		this->dRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "dRot",
+																							NULL);
+		this->rotAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>(
+				"DribbleWater", "MaxRotationAcceleration", NULL);
+		this->maxRot = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																								"MaxRotation", NULL);
 
 		// load translation config patamerters
-		this->transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxAcceleration", NULL);
-		this->transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxDecceleration", NULL);
-		this->iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans", NULL) / M_PI;
-		this->pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans", NULL) / M_PI;
-		this->transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "maxTransIntegral", NULL);
-		this->angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "angleDeadBand", NULL) / 180 * M_PI;
-		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "MaxVelocity", NULL);
+		this->transAccStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"MaxAcceleration",
+																									NULL);
+		this->transDecStep = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"MaxDecceleration",
+																									NULL);
+		this->iTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "iTrans",
+																								NULL) / M_PI;
+		this->pTrans = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater", "pTrans",
+																								NULL) / M_PI;
+		this->transControlIntegralMax = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>(
+				"DribbleWater", "maxTransIntegral", NULL);
+		this->angleDeadBand = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																									"angleDeadBand",
+																									NULL) / 180 * M_PI;
+		this->maxVel = (*supplementary::SystemConfig::getInstance())["Dribble"]->get<double>("DribbleWater",
+																								"MaxVelocity", NULL);
 	}
 }
