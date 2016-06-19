@@ -1,0 +1,2 @@
+export OPENNI2_INCLUDE=/home/cn/cnws/src/cnc-msldriver/msl_flying_ball_detection/OpenNI-Linux-x64-2.2/Include
+export OPENNI2_REDIST=/home/cn/cnws/src/cnc-msldriver/msl_flying_ball_detection/OpenNI-Linux-x64-2.2/Redist
