@@ -10,6 +10,7 @@
 
 #include <OpenNI.h>
 #include "ros/ros.h"
+#include <pcl-1.7/pcl/visualization/pcl_visualizer.h>
 
 namespace msl
 {

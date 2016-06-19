@@ -16,6 +16,7 @@ using namespace std;
 #include <sensor_msgs/ChannelFloat32.h>
 #include <geometry_msgs/Point32.h>
 
+#include <pcl-1.7/pcl/visualization/pcl_visualizer.h>
 #include <pcl-1.7/pcl/console/parse.h>
 #include <pcl-1.7/pcl/point_cloud.h>
 #include <pcl-1.7/pcl/filters/extract_indices.h>
@@ -40,50 +41,70 @@ namespace msl
 	void FrameListener::onNewFrame(openni::VideoStream& vidStream)
 	{
 		// initialize PointClouds
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-		pcl::PointCloud<pcl::PointXYZ>::Ptr final (new pcl::PointCloud<pcl::PointXYZ>);
+		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
+		pcl::PointCloud<pcl::PointXYZ>::Ptr rawCloud(new pcl::PointCloud<pcl::PointXYZ>);
+		rawCloud->width = vidStream.getVideoMode().getResolutionX();
+		rawCloud->height = vidStream.getVideoMode().getResolutionY();
+		rawCloud->is_dense = false;
+		rawCloud->points.resize(rawCloud->width * rawCloud->height);
 
-		float pDepthHist[vidStream.getMaxPixelValue()];
+		// read depth image
 		openni::VideoFrameRef depthFrame;
 		vidStream.readFrame(&depthFrame);
 
-		if (depthFrame.isValid())
-		{
-			calculateHistogram(pDepthHist, vidStream.getMaxPixelValue(), depthFrame);
-		}
-		else
+		if (!depthFrame.isValid())
 		{
 			cout << "error! depthFrame is not valid!!!" << endl;
+			return;
 		}
 
+		float pDepthHist[vidStream.getMaxPixelValue()];
+		calculateHistogram(pDepthHist, vidStream.getMaxPixelValue(), depthFrame);
+
 		int rowSize = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel);
+		const openni::DepthPixel* depthPixel = (const openni::DepthPixel*) depthFrame.getData();
+		int x, y = 0;
+
+		for (int i = 0; i < rawCloud->points.size(); i++)
+		{
+			if (*depthPixel != 0)
+			{
+				x = i % rowSize;
+				y = i / rowSize;
+				float wX, wY, wZ;
+				openni::CoordinateConverter::convertDepthToWorld(vidStream, y, x, *depthPixel, &wX, &wY, &wZ);
+
+				rawCloud->points[i].x = wX/1000.0;
+				rawCloud->points[i].y = wY/1000.0;
+				rawCloud->points[i].z = wZ/1000.0;
+			}
+			depthPixel++;
+		}
+
+		pcl::SampleConsensusModelSphere<pcl::PointXYZ>::Ptr sphere_model(
+				new pcl::SampleConsensusModelSphere<pcl::PointXYZ>(rawCloud));
+		sphere_model->setRadiusLimits(0.12, 0.12);
+		pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sphere_model, 0.01);
+		ransac.computeModel();
+		std::vector<int> inliers;
+		ransac.getInliers(inliers);
+
+		// copies all inliers of the model computed to another PointCloud
+		pcl::copyPointCloud<pcl::PointXYZ>(*rawCloud, inliers, *ballCloud);
+
 		sensor_msgs::PointCloud pcl;
 		vector<geometry_msgs::Point32> points;
 		vector<sensor_msgs::ChannelFloat32> channel;
 		sensor_msgs::ChannelFloat32 depthChannel;
 		depthChannel.name = "depth";
 
-		const openni::DepthPixel* pDepthRow = (const openni::DepthPixel*)depthFrame.getData();
-
-		for (int y = 0; y < depthFrame.getHeight(); ++y)
+		for (int i = 0; i < rawCloud->points.size(); i++)
 		{
-			const openni::DepthPixel* pDepth = pDepthRow;
-
-			for (int x = 0; x < depthFrame.getWidth(); ++x, ++pDepth)
-			{
-				if (*pDepth != 0)
-				{
-					geometry_msgs::Point32 p;
-					openni::CoordinateConverter::convertDepthToWorld(vidStream, y, x, *pDepth, &p.x, &p.y, &p.z);
-					p.x = p.x / 1000.0;
-					p.y = p.y / 1000.0;
-					p.z = p.z / 1000.0;
-					points.push_back(p);
-					depthChannel.values.push_back(pDepthHist[*pDepth]);
-				}
-			}
-
-			pDepthRow += rowSize;
+			geometry_msgs::Point32 p;
+			p.x = rawCloud->points[i].x;
+			p.y = rawCloud->points[i].y;
+			p.z = rawCloud->points[i].z;
+			points.push_back(p);
 		}
 
 		channel.push_back(depthChannel);
@@ -91,22 +112,9 @@ namespace msl
 		pcl.points = points;
 		pcl.header.frame_id = "camera_frame";
 		pcl.header.stamp = ros::Time::now();
-
-		std::vector<int> inliers;
-
-		// created RandomSampleConsensus object and compute the appropriated model
-		pcl::SampleConsensusModelSphere<pcl::PointXYZ>::Ptr model_s(new pcl::SampleConsensusModelSphere<pcl::PointXYZ>(cloud));
-
-		pcl::RandomSampleConsensus < pcl::PointXYZ > ransac(model_s,.01);
-		//ransac.setDistanceThreshold(.01);
-		ransac.computeModel();
-		ransac.getInliers(inliers);
-
-		// copies all inliers of the model computed to another PointCloud
-		pcl::copyPointCloud < pcl::PointXYZ > (*cloud, inliers, *final);
-
-
 		this->pub.publish(pcl);
 	}
+
+
 
 } /* namespace msl */
