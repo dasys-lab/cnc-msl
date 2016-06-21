@@ -25,6 +25,7 @@ namespace msl
 	private:
 		ros::NodeHandle rosNode;
 		ros::Publisher pub;
+		ros::Publisher pubBall;
 	};
 
 } /* namespace msl */
