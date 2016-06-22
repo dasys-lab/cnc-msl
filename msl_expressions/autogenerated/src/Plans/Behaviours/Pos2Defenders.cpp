@@ -79,7 +79,7 @@ namespace alica
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*secondDef),
 //                                                                  alloBallPos->alloToEgo(*secondDef), 0,
 //                                                                  additionalPoints);
-                    query->egoDestinationPoint = firstDefPos->alloToEgo(*secondDef);
+                    query->egoDestinationPoint = secondDefPos->alloToEgo(*secondDef);
                     query->egoAlignPoint = alloBallPos->alloToEgo(*secondDef);
                     query->additionalPoints = additionalPoints;
                     mc = rm.moveToPoint(query);
@@ -95,7 +95,7 @@ namespace alica
 
 //                    mc = msl::RobotMovement::moveToPointCarefully(secondDefPos->alloToEgo(*firstDef),
 //                                                                  alloBallPos->alloToEgo(*firstDef), 0);
-                    query->egoDestinationPoint = firstDefPos->alloToEgo(*firstDef);
+                    query->egoDestinationPoint = secondDefPos->alloToEgo(*firstDef);
                     query->egoAlignPoint = alloBallPos->alloToEgo(*firstDef);
                     mc = rm.moveToPoint(query);
 
