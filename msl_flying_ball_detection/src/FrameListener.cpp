@@ -26,6 +26,22 @@ using namespace std;
 #include <pcl-1.7/pcl/sample_consensus/sac.h>
 #include <pcl-1.7/pcl/sample_consensus/ransac.h>
 #include <pcl-1.7/pcl/sample_consensus/sac_model_sphere.h>
+#include <pcl-1.7/pcl/sample_consensus/model_types.h>
+#include <pcl-1.7/pcl/filters/voxel_grid.h>
+#include <pcl-1.7/pcl/sample_consensus/method_types.h>
+#include <pcl-1.7/pcl/kdtree/kdtree.h>
+
+#include <pcl-1.7/pcl/ModelCoefficients.h>
+#include <pcl-1.7/pcl/point_types.h>
+#include <pcl-1.7/pcl/io/pcd_io.h>
+#include <pcl-1.7/pcl/filters/extract_indices.h>
+#include <pcl-1.7/pcl/filters/voxel_grid.h>
+#include <pcl-1.7/pcl/features/normal_3d.h>
+#include <pcl-1.7/pcl/kdtree/kdtree.h>
+#include <pcl-1.7/pcl/sample_consensus/method_types.h>
+#include <pcl-1.7/pcl/sample_consensus/model_types.h>
+#include <pcl-1.7/pcl/segmentation/sac_segmentation.h>
+#include <pcl-1.7/pcl/segmentation/extract_clusters.h>
 
 namespace msl
 {
@@ -45,9 +61,9 @@ namespace msl
 		// initialize PointClouds
 		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr rawCloud(new pcl::PointCloud<pcl::PointXYZ>);
+		pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud(new pcl::PointCloud<pcl::PointXYZ>);
 //		pcl::PCDReader reader;
 //		reader.read ("/home/emmeda/test_1.pcd", *rawCloud);
-
 		rawCloud->width = vidStream.getVideoMode().getResolutionX();
 		rawCloud->height = vidStream.getVideoMode().getResolutionY();
 		rawCloud->is_dense = false;
@@ -63,11 +79,12 @@ namespace msl
 			return;
 		}
 
+		// Fill the raw Cloud with the depth image from the Astra S Pro
 		float pDepthHist[vidStream.getMaxPixelValue()];
 		calculateHistogram(pDepthHist, vidStream.getMaxPixelValue(), depthFrame);
 
 		int rowSize = depthFrame.getStrideInBytes() / sizeof(openni::DepthPixel);
-		const openni::DepthPixel* depthPixel = (const openni::DepthPixel*) depthFrame.getData();
+		const openni::DepthPixel* depthPixel = (const openni::DepthPixel*)depthFrame.getData();
 		int x, y = 0;
 
 		for (int i = 0; i < rawCloud->points.size(); i++)
@@ -79,87 +96,82 @@ namespace msl
 				float wX, wY, wZ;
 				openni::CoordinateConverter::convertDepthToWorld(vidStream, y, x, *depthPixel, &wX, &wY, &wZ);
 
-				rawCloud->points[i].x = wX/1000.0;
-				rawCloud->points[i].y = wY/1000.0;
-				rawCloud->points[i].z = wZ/1000.0;
+				// depth image comes within [mm], so make it to [m]
+				rawCloud->points[i].x = wX / 1000.0;
+				rawCloud->points[i].y = wY / 1000.0;
+				rawCloud->points[i].z = wZ / 1000.0;
 			}
 			depthPixel++;
 		}
 
+		// Create the filtering object
+		pcl::VoxelGrid<pcl::PointXYZ> sor;
+		sor.setInputCloud(rawCloud);
+		sor.setLeafSize(0.05f, 0.05f, 0.05f); // voxel size 5 cm
+		sor.filter(*voxelCloud);
+		this->publishCloud(voxelCloud, this->pub);
 
-		// Version 1
-		/*pcl::SampleConsensusModelSphere<pcl::PointXYZ>::Ptr sphere_model(
-				new pcl::SampleConsensusModelSphere<pcl::PointXYZ>(rawCloud));
-		sphere_model->setRadiusLimits(0.12, 0.12);
-		pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(sphere_model, 0.01);
-		ransac.computeModel();
-		std::vector<int> inliers;
-		ransac.getInliers(inliers);
+		// Creating the KdTree object for the search method of the extraction
+		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+		tree->setInputCloud(voxelCloud);
 
-		// copies all inliers of the model computed to another PointCloud
-		pcl::copyPointCloud<pcl::PointXYZ>(*rawCloud, inliers, *ballCloud);
-		*/
+		std::vector<pcl::PointIndices> cluster_indices;
+		pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+		ec.setClusterTolerance(0.08); // m
+		ec.setMinClusterSize(20);
+		ec.setMaxClusterSize(50);
+		ec.setSearchMethod(tree);
+		ec.setInputCloud(voxelCloud);
+		ec.extract(cluster_indices);
 
-		// Version 2
-		pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
-		pcl::PointIndices::Ptr inliers(new pcl::PointIndices());
-		// Create the segmentation object
-		pcl::SACSegmentation<pcl::PointXYZ> seg;
-		// Optional
-		seg.setOptimizeCoefficients(true);
-		// Mandatory
-		seg.setModelType(pcl::SACMODEL_CIRCLE2D);
-		seg.setMethodType(pcl::SAC_RANSAC);
-		seg.setMaxIterations(1000);
-		seg.setDistanceThreshold(0.005);
-		seg.setRadiusLimits(0.1,0.15);
-
-		seg.setInputCloud (rawCloud);
-		seg.segment (*inliers, *coefficients);
-		if (inliers->indices.size () == 0)
+		for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
 		{
-		  std::cerr << "Could not estimate a sphere model for the given dataset." << std::endl;
-		}
-		else
-		{
-			pcl::copyPointCloud<pcl::PointXYZ>(*rawCloud, inliers->indices, *ballCloud);
-
-			sensor_msgs::PointCloud pcl;
-			vector<geometry_msgs::Point32> points;
-			vector<sensor_msgs::ChannelFloat32> channel;
-			sensor_msgs::ChannelFloat32 depthChannel;
-			depthChannel.name = "depth";
-
-			for (int i = 0; i < ballCloud->points.size(); i++)
+			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
+			for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
 			{
-				geometry_msgs::Point32 p;
-				p.x = rawCloud->points[i].x;
-				p.y = rawCloud->points[i].y;
-				p.z = rawCloud->points[i].z;
-				points.push_back(p);
+				cloud_cluster->points.push_back(voxelCloud->points[*pit]);
+			}
+			cloud_cluster->width = cloud_cluster->points.size();
+			cloud_cluster->height = 1;
+			cloud_cluster->is_dense = true;
+
+			Eigen::Vector4d centroid;
+			pcl::compute3DCentroid(*cloud_cluster, centroid);
+
+			bool ballFound = true;
+			for (int i = 0; i < cloud_cluster->points.size(); i++)
+			{
+				if (sqrt((centroid.x() - cloud_cluster->points[i].x)*(centroid.x() - cloud_cluster->points[i].x)
+					 +(centroid.y() - cloud_cluster->points[i].y)*(centroid.y() - cloud_cluster->points[i].y)
+					 +(centroid.z() - cloud_cluster->points[i].z)*(centroid.z() - cloud_cluster->points[i].z))> 0.14) // some point is further away from the centroid than 14cm
+				{
+					ballFound = false;
+					break;
+				}
 			}
 
-			channel.push_back(depthChannel);
-			pcl.channels = channel;
-			pcl.points = points;
-			pcl.header.frame_id = "camera_frame";
-			pcl.header.stamp = ros::Time::now();
-			this->pubBall.publish(pcl);
+			if (ballFound)
+			{
+				cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+				this->publishCloud(cloud_cluster, this->pubBall);
+			}
 		}
+	}
 
-
+	void FrameListener::publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub)
+	{
 		sensor_msgs::PointCloud pcl;
 		vector<geometry_msgs::Point32> points;
 		vector<sensor_msgs::ChannelFloat32> channel;
 		sensor_msgs::ChannelFloat32 depthChannel;
 		depthChannel.name = "depth";
 
-		for (int i = 0; i < rawCloud->points.size(); i++)
+		for (int i = 0; i < voxelCloud->points.size(); i++)
 		{
 			geometry_msgs::Point32 p;
-			p.x = rawCloud->points[i].x;
-			p.y = rawCloud->points[i].y;
-			p.z = rawCloud->points[i].z;
+			p.x = voxelCloud->points[i].x;
+			p.y = voxelCloud->points[i].y;
+			p.z = voxelCloud->points[i].z;
 			points.push_back(p);
 		}
 
@@ -168,9 +180,8 @@ namespace msl
 		pcl.points = points;
 		pcl.header.frame_id = "camera_frame";
 		pcl.header.stamp = ros::Time::now();
-		this->pub.publish(pcl);
+		pub.publish(pcl);
 	}
 
-
-
 } /* namespace msl */
+

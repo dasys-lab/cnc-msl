@@ -26,6 +26,8 @@ namespace msl
 		ros::NodeHandle rosNode;
 		ros::Publisher pub;
 		ros::Publisher pubBall;
+
+		void publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub);
 	};
 
 } /* namespace msl */
