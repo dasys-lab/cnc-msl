@@ -109,6 +109,7 @@ RobotVisualization::RobotVisualization(RobotInfo* robot, FieldWidget3D* field) :
 RobotVisualization::~RobotVisualization()
 {
 	// nothing to do here
+	// test
 }
 
 vtkSmartPointer<vtkActor> RobotVisualization::getBottom()
