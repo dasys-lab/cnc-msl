@@ -99,6 +99,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
+#include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
+
 #include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
@@ -156,8 +158,6 @@ using namespace std;
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
-
-#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
 
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
@@ -455,6 +455,11 @@ namespace alica
                 return make_shared<PosAlternativePassReceiver>();
                 break;
 
+            case 1465474190742:
+
+                return make_shared<Pos2Penalty>();
+                break;
+
             case 1462978671719:
 
                 return make_shared<PositionAlternativeReceiver>();
@@ -610,11 +615,6 @@ namespace alica
                 return make_shared<BouncePassFinishAlign>();
                 break;
 
-            case 1464787692697:
-
-                return make_shared<FreeKickOppHalfShootRapid>();
-                break;
-
             case 1459355071258:
 
             case 1459356685875:
@@ -629,6 +629,8 @@ namespace alica
             case 1461583806472:
 
             case 1465038982091:
+
+            case 1466348438844:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

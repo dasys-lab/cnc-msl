@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="-110" yPos="-19" width="1405" height="754"/>
+    <value xPos="-30" width="1405" height="737"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>
@@ -46,11 +46,11 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535682818"/>
-    <value xPos="28" yPos="386" width="190" height="67"/>
+    <value xPos="28" yPos="386" width="190" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535706293"/>
-    <value xPos="28" yPos="529" width="203" height="67"/>
+    <value xPos="28" yPos="529" width="203" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464778510115"/>
@@ -120,7 +120,39 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="FreeKickOppHalfShootRapid.beh#1464787692697"/>
+    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Pos2Penalty.beh#1465474190742"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1465474610518"/>
+    <value xPos="517" yPos="662"/>
+  </extensions>
+  <extensions>
+    <key href="PosInOppPenArea.beh#1466259879629"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="BlockNearOppPenArea.beh#1466259925988"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1466342186872"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466348438844"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

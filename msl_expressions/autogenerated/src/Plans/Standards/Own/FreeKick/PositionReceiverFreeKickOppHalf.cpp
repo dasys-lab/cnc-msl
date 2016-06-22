@@ -8,6 +8,7 @@ using namespace std;
 #include <Ball.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
+#include <obstaclehandler/Obstacles.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -39,6 +40,7 @@ namespace alica
         // Create additional points for path planning
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                 vector<shared_ptr<geometry::CNPoint2D>>>();
+        shared_ptr < geometry::CNPoint2D > egoAlignPoint;
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
@@ -53,6 +55,11 @@ namespace alica
 //		alloTarget->y = alloBall->y;
 //		alloTarget->x = alloBall->x - 2300;
 
+        egoAlignPoint = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
+        if (!egoAlignPoint)
+        {
+            egoAlignPoint = egoBallPos;
+        }
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
@@ -60,7 +67,7 @@ namespace alica
         // ask the path planner how to get there
 //        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
         query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoBallPos;
+        query->egoAlignPoint = egoAlignPoint;
         query->additionalPoints = additionalPoints;
         mc = rm.moveToPoint(query);
 
