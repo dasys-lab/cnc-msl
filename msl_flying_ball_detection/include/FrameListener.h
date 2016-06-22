@@ -11,6 +11,8 @@
 #include <OpenNI.h>
 #include "ros/ros.h"
 #include <pcl-1.7/pcl/visualization/pcl_visualizer.h>
+#include <InformationElement.h>
+#include <RingBuffer.h>
 
 namespace msl
 {
@@ -28,6 +30,9 @@ namespace msl
 		ros::Publisher pubBall;
 
 		void publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub);
+		RingBuffer<InformationElement<Eigen::Vector4d> > flyingBallPositions;
+		void checkBallTrajectory(unsigned long  time);
+
 	};
 
 } /* namespace msl */

@@ -46,7 +46,7 @@ using namespace std;
 namespace msl
 {
 
-	FrameListener::FrameListener()
+	FrameListener::FrameListener() : flyingBallPositions(10)
 	{
 		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 10000);
 		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10000);
@@ -58,6 +58,8 @@ namespace msl
 
 	void FrameListener::onNewFrame(openni::VideoStream& vidStream)
 	{
+		ros::Time time = ros::Time::now();
+		unsigned long  timeStamp = time.sec * 1000000000 + time.nsec;
 		// initialize PointClouds
 		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr rawCloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -152,9 +154,50 @@ namespace msl
 
 			if (ballFound)
 			{
-				cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+				//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+				boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
+				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<InformationElement<Eigen::Vector4d> >(
+						opt, timeStamp);
+				o->certainty = 1;
+				flyingBallPositions.add(o);
 				this->publishCloud(cloud_cluster, this->pubBall);
 			}
+		}
+
+		this->checkBallTrajectory(timeStamp);
+	}
+
+	void FrameListener::checkBallTrajectory(unsigned long time)
+	{
+		int hitCounter = 0;
+		for (int i = 0; i < this->flyingBallPositions.getSize(); i++)
+		{
+			boost::shared_ptr<InformationElement<Eigen::Vector4d> > curBall = this->flyingBallPositions.getLast(i);
+			boost::shared_ptr<InformationElement<Eigen::Vector4d> > lastBall = this->flyingBallPositions.getLast(i+1);
+			if (!curBall || !lastBall)
+			{
+				continue;
+			}
+
+			if (curBall->timeStamp < time - 500000000 || lastBall->timeStamp < time - 500000000) // older than 0.5 sec
+			{
+				return;
+			}
+
+			double diffZ = curBall->getInformation()->z() -lastBall->getInformation()->z();
+			double diffY = curBall->getInformation()->y() -lastBall->getInformation()->y();
+
+			double resultY = curBall->getInformation()->y() + diffY * lastBall->getInformation()->z()/diffZ;
+			if (abs(resultY) < 0.35)
+			{
+				hitCounter++;
+			}
+		}
+
+		if (hitCounter > 2)
+		{
+			// fire upper extension
+			cout << "----->>>> FIRE <<<< -----" << endl;
 		}
 	}
 

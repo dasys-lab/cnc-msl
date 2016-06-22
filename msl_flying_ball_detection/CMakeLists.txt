@@ -7,7 +7,7 @@ find_package(PCL 1.7  REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_astra_pro_driver
-  CATKIN_DEPENDS sensor_msgs geometry_msgs
+  CATKIN_DEPENDS sensor_msgs geometry_msgs cnc_geometry
 #  DEPENDS system_lib
 )
 
