@@ -25,6 +25,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     ReceiveInOppHalf::~ReceiveInOppHalf()
@@ -35,6 +36,7 @@ namespace alica
     void ReceiveInOppHalf::run(void* msg)
     {
         /*PROTECTED REGION ID(run1462370340143) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPose = wm->ball->getAlloBallPosition();
         if (!ownPos || !alloBallPose)
@@ -100,9 +102,14 @@ namespace alica
 
         // add alloBall to path planning
         additionalPoints->push_back(alloBallPose);
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos),
-                                                                                       alloBallPose->alloToEgo(*ownPos),
-                                                                                       100.0, additionalPoints);
+//        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*ownPos),
+//                                                                                       alloBallPose->alloToEgo(*ownPos),
+//                                                                                       100.0, additionalPoints);
+        mQuery->egoDestinationPoint = alloTarget->alloToEgo(*ownPos);
+        mQuery->egoAlignPoint = alloBallPose->alloToEgo(*ownPos);
+        mQuery->snapDistance = 100;
+        mQuery->additionalPoints = additionalPoints;
+        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(mQuery);
 
         send(mc);
         /*PROTECTED REGION END*/

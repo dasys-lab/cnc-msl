@@ -24,6 +24,13 @@ namespace alica
         double fieldOffset;
         double ownPosAngleMin;
         shared_ptr<msl::MovementQuery> query;
+
+        // PID variables for alignToPointNoBall
+        double defaultRotateP;
+        double alignToPointpRot;
+        double lastRotError;
+        double alignToPointMaxRotation;
+        double alignToPointMinRotation;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1459249294699) ENABLED START*/ //Add additional private methods here#
@@ -33,6 +40,10 @@ namespace alica
                                                                  shared_ptr<geometry::CNPosition> ownPos,
                                                                  shared_ptr<geometry::CNPoint2D> ballPos,
                                                                  double ownPosAngleMin);
+        msl_actuator_msgs::MotionControl alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+                                                            shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                            double angleTolerance);
+        void readConfigParameters();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

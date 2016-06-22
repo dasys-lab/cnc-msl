@@ -16,6 +16,7 @@ namespace alica
             DomainBehaviour("DriveToPenaltyStart")
     {
         /*PROTECTED REGION ID(con1459609457478) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToPenaltyStart::~DriveToPenaltyStart()
@@ -26,6 +27,7 @@ namespace alica
     void DriveToPenaltyStart::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459609457478) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         auto me = wm->rawSensorData->getOwnPositionVision();
         auto ballPos = wm->ball->getEgoBallPosition();
         if (me == nullptr)
@@ -37,14 +39,26 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
 
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 0);
+        // repalced with new moveToPoint method
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 0);
+        query->egoDestinationPoint = egoTarget;
+        query->egoAlignPoint = egoAlignPoint;
+
+        mc = rm.moveToPoint(query);
 
         if (egoTarget->length() < 250)
         {
             this->setSuccess(true);
         }
 
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "Motion command is NaN!" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void DriveToPenaltyStart::initialiseParameters()

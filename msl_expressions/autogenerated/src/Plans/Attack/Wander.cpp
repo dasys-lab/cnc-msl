@@ -78,6 +78,8 @@ namespace alica
         targetPointsThrowIn[4] = make_shared < geometry::CNPoint2D > (0.0, -(fieldWidth / 2 - distToOutLine));
         targetPointsThrowIn[5] = make_shared < geometry::CNPoint2D
                 > (-fieldLength / 4, -(fieldWidth / 2 - distToOutLine));
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Wander::~Wander()
@@ -88,6 +90,8 @@ namespace alica
     void Wander::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData->getOwnPositionVision();
         if (ownPosition == nullptr)
             return;
@@ -139,8 +143,20 @@ namespace alica
             translation = targetDistance;
         }
 
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
-        send(mc);
+        // replaced with new moveToPoint method
+//        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
+        query->egoDestinationPoint = targetPoint;
+        query->egoAlignPoint = targetPoint;
+
+        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "motion commant is NaN" << endl;
+        }
 
         /*PROTECTED REGION END*/
     }

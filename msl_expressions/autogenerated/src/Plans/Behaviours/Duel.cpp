@@ -30,6 +30,7 @@ namespace alica
         duelMaxTime = (*this->sc)["Behaviour"]->get<unsigned long>("Duel.DuelMaxTime", NULL);
         ;
         freeTime = 0;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Duel::~Duel()
@@ -290,10 +291,24 @@ namespace alica
             {
                 egoTarget = (make_shared < geometry::CNPoint2D > (0, 0))->alloToEgo(*ownPos);
             }
-
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 100);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoTarget, 100);
             //mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100);
-            send(mc);
+            msl::RobotMovement rm;
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoTarget;
+            query->snapDistance = 100;
+
+            mc = rm.moveToPoint(query);
+
+            if (!std::isnan(mc.motion.translation))
+            {
+                send(mc);
+            }
+            else
+            {
+                cout << "Motion command is NaN!" << endl;
+            }
         }
 
         // too much time has passed, we don't want to stay in duel for too long (rules says sth like 10s until ball dropped)

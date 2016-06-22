@@ -387,7 +387,8 @@ void FieldWidget3D::update_robot_info(void)
 
 	for (auto robot : robots)
 	{
-		if (robot->isTimeout())
+		QString selectedRobot = mainWindow->robotSelector->currentText();
+		if (robot->isTimeout() || robot->getId() != selectedRobot.toInt())
 		{
 		        robot->getVisualization()->remove(this->renderer);
                         continue;
@@ -402,9 +403,10 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
                 robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
                 robot->getVisualization()->updatePassMsg(this->renderer);
+
 	}
 
-	if (!this->GetRenderWindow()->CheckInRenderStatus())
+    if (!this->GetRenderWindow()->CheckInRenderStatus())
 	{
 		this->GetRenderWindow()->Render();
 	}
@@ -1016,6 +1018,7 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
                 {
                         return element;
                 }
+
         }
 
         shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>(this);
@@ -1023,6 +1026,12 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         robots.push_back(robotInfo);
 
         robotInfo->getVisualization()->init(this->renderer, id);
+
+        // TODO: add new combobox item if robot doesnt exist yet, remove if it was removed...
+        QString robotStr;
+        robotStr.setNum(robotInfo->getId());
+        QVariant robotNum(robotInfo->getId());
+        mainWindow->robotSelector->addItem(robotStr, robotNum);
 
         return robotInfo;
 }
@@ -1045,6 +1054,7 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
         lock_guard<mutex> lock(swmMutex);
 
         auto robot = this->getRobotById(info->senderID);
+
         robot->setSharedWorldInfo(info);
         robot->updateTimeStamp();
 }

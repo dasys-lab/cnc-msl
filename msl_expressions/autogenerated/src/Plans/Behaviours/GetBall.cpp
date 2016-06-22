@@ -19,6 +19,7 @@ namespace alica
             DomainBehaviour("GetBall")
     {
         /*PROTECTED REGION ID(con1414828300860) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     GetBall::~GetBall()
@@ -101,15 +102,22 @@ namespace alica
         }
         else
         {
-            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
+//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
         }
         // replaced with new method
         auto tmpMC = rm.ruleActionForBallGetter();
         if (!std::isnan(tmpMC.motion.translation))
         {
-        	send(tmpMC);
+            send(tmpMC);
+            send(mc);
         }
-        send(mc);
+        else
+        {
+            cout << "Motin command is NaN!" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void GetBall::initialiseParameters()
@@ -155,7 +163,12 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
-        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
+//        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
+        msl::RobotMovement rm;
+        query->egoDestinationPoint = interPoint;
+        query->egoAlignPoint = egoBallPos;
+        query->snapDistance = 100;
+        mc = rm.moveToPoint(query);
         return mc;
     }
 /*PROTECTED REGION END*/

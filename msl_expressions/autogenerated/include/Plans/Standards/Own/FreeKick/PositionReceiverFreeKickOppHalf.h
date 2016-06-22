@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1464780799716) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/MovementQuery.h>
 namespace geometry
 {
     class CNPoint2D;
@@ -25,6 +26,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1464780799716) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPoint2D> alloTarget;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

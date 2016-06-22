@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1450175655102) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/MovementQuery.h>
 namespace geometry
 {
     class CNPoint2D;
@@ -27,6 +28,7 @@ namespace alica
         bool nearSideLine(shared_ptr<geometry::CNPoint2D> alloBall);
         bool nearXLine(shared_ptr<geometry::CNPoint2D> alloBall);
 
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1450175655102) ENABLED START*/ //Add additional private methods here

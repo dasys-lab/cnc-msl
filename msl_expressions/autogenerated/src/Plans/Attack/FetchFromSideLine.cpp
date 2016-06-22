@@ -19,6 +19,8 @@ namespace alica
         threshold = 400;
         behindDistance = 300;
         maxVel = 3000;
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     FetchFromSideLine::~FetchFromSideLine()
@@ -77,8 +79,15 @@ namespace alica
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                     vector<shared_ptr<geometry::CNPoint2D>>>();
             additionalPoints->push_back(alloBall);
-            bm = msl::RobotMovement::moveToPointCarefully(dest->alloToEgo(*ownPos), dest->alloToEgo(*ownPos), 0,
-                                                          additionalPoints);
+
+            // replaced with new moveToPoint method
+//            bm = msl::RobotMovement::moveToPointCarefully(dest->alloToEgo(*ownPos), dest->alloToEgo(*ownPos), 0,
+//                                                          additionalPoints);
+            query->egoDestinationPoint = dest->alloToEgo(*ownPos);
+            query->egoAlignPoint = dest->alloToEgo(*ownPos);
+            query->additionalPoints = additionalPoints;
+            bm = rm.moveToPoint(query);
+
             //DriveHelper.DriveToPointAndAlignCareBall(WorldHelper.Allo2Ego(dest, ownPos), ballPos, maxVel, WM);
         }
         if (nearXLine (alloBall))
@@ -104,15 +113,28 @@ namespace alica
             shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                     vector<shared_ptr<geometry::CNPoint2D>>>();
             additionalPoints->push_back(alloBall);
-            bm = msl::RobotMovement::moveToPointCarefully(dest->alloToEgo(*ownPos), dest->alloToEgo(*ownPos), 0,
-                                                          additionalPoints);
+
+            // replaced with new moveToPointMethod
+//            bm = msl::RobotMovement::moveToPointCarefully(dest->alloToEgo(*ownPos), dest->alloToEgo(*ownPos), 0,
+//                                                          additionalPoints);
+            query->egoDestinationPoint = dest->alloToEgo(*ownPos);
+            query->egoAlignPoint = dest->alloToEgo(*ownPos);
+            query->additionalPoints = additionalPoints;
+            bm = rm.moveToPoint(query);
             //DriveHelper.DriveToPointAndAlignCareBall(WorldHelper.Allo2Ego(dest, ownPos), ballPos, maxVel, WM);
         }
 //		if (mc == nullptr)
 //		{
 //			return;
 //		}
-        send(bm);
+        if (!std::isnan(bm.motion.translation))
+        {
+            send(bm);
+        }
+        else
+        {
+            cout << "motion command is Nan" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void FetchFromSideLine::initialiseParameters()

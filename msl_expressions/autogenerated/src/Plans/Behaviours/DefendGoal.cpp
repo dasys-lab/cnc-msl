@@ -27,6 +27,10 @@ namespace alica
         fieldOffset = 500.0;
         ownPosAngleMin = 2.2;
         query = make_shared<msl::MovementQuery>();
+
+        // variables for alignToPointNoBall
+        lastRotError = 0;
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     DefendGoal::~DefendGoal()
@@ -210,10 +214,9 @@ namespace alica
                                                                          double ownPosAngleMin)
     {
         //boundaries for angles
-        mc.motion.rotation = msl::RobotMovement::alignToPointNoBall(ballPos, ballPos, 0.085).motion.rotation;
-        mc.motion.angle = msl::RobotMovement::alignToPointNoBall(ballPos, ballPos, 0.085).motion.angle;
-
-//		mc.motion.rotation = DriveHelper.GetRotation(ballPos,0.085,true);
+        // added new alignToPointMethod
+        mc.motion.rotation = alignToPointNoBall(ballPos, ballPos, 0.085).motion.rotation;
+        mc.motion.angle = alignToPointNoBall(ballPos, ballPos, 0.085).motion.angle;
 
         if (ownPos->theta > -ownPosAngleMin && mc.motion.rotation > 0 && ownPos->theta < 0)
         {
@@ -225,6 +228,43 @@ namespace alica
         }
 
         return mc;
+    }
+
+    msl_actuator_msgs::MotionControl DefendGoal::alignToPointNoBall(shared_ptr<geometry::CNPoint2D> egoTarget,
+                                                                    shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                                    double angleTolerance)
+    {
+        msl_actuator_msgs::MotionControl mc;
+
+        //What is the sense of an ego target if translation is 0 anyways?
+        double egoTargetAngle = egoTarget->angleTo();
+        double deltaTargetAngle = geometry::deltaAngle(egoAlignPoint->angleTo(), M_PI);
+        if (fabs(egoTargetAngle) < angleTolerance)
+        {
+            mc.motion.angle = egoTargetAngle;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+
+        }
+        else
+        {
+            mc.motion.angle = egoTargetAngle;
+            mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
+                    + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+            mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+                    * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+            mc.motion.translation = 0;
+            lastRotError = deltaTargetAngle;
+        }
+        return mc;
+    }
+
+    void DefendGoal::readConfigParameters()
+    {
+        defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+        alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
+        alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+        alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

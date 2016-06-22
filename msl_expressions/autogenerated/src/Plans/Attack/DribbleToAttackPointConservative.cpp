@@ -48,7 +48,6 @@ namespace alica
             this->setSuccess(true);
         }
 
-
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
         query->egoDestinationPoint = egoTarget;
         query->dribble = true;
@@ -58,7 +57,7 @@ namespace alica
 
         if (!std::isnan(tmpMC.motion.translation))
         {
-        	send(tmpMC);
+            send(tmpMC);
         }
         send(bm);
         /*PROTECTED REGION END*/
@@ -67,7 +66,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1458132872550) ENABLED START*/ //Add additional options here
         currentTarget = nullptr;
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
     }

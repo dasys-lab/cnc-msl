@@ -111,7 +111,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1462969724089) ENABLED START*/ //Add additional options here
         currentTarget = nullptr;
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
     }

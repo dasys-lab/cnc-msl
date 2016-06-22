@@ -19,6 +19,7 @@ namespace alica
             DomainBehaviour("AttackOpp")
     {
         /*PROTECTED REGION ID(con1430324527403) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     AttackOpp::~AttackOpp()
@@ -29,6 +30,7 @@ namespace alica
     void AttackOpp::run(void* msg)
     {
         /*PROTECTED REGION ID(run1430324527403) ENABLED START*/
+        msl::RobotMovement rm;
 
         shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
 
@@ -95,7 +97,11 @@ namespace alica
         }
         else
         {
-            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
+//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoBallPos;
+
+            mc = rm.moveToPoint(query);
         }
         send(mc);
 
@@ -157,7 +163,12 @@ namespace alica
 
         msl_actuator_msgs::MotionControl mc;
         // TODO : remove later
-        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
+//        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 300);
+        msl::RobotMovement rm;
+        query->egoDestinationPoint = interPoint;
+        query->egoAlignPoint = egoBallPos;
+
+        mc = rm.moveToPoint(query);
 
         return mc;
     }
