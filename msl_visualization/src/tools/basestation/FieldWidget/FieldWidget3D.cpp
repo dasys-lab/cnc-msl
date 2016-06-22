@@ -387,24 +387,13 @@ void FieldWidget3D::update_robot_info(void)
 
 	for (auto robot : robots)
 	{
-		if (robot->isTimeout())
+		QString selectedRobot = mainWindow->robotSelector->currentText();
+		if (robot->isTimeout() || robot->getId() != selectedRobot.toInt())
 		{
 		        robot->getVisualization()->remove(this->renderer);
                         continue;
 		}
 
-		QString selectedRobot = mainWindow->robotSelector->currentText();
-		if (robot->getId() != selectedRobot.toInt())
-		{
-
-		}
-
-			/*		if (robot->getId() == mainWindow->robotSelector->currentIndex())
-		{
-		        robot->getVisualization()->init(this->renderer, mainWindow->robotSelector->currentIndex());
-                        continue;
-		}
-*/
 		robot->getVisualization()->updatePosition(this->renderer);
                 robot->getVisualization()->updateBall(this->renderer);
                 robot->getVisualization()->updateSharedBall(this->renderer);
