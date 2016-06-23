@@ -43,6 +43,8 @@ using namespace std;
 #include <pcl-1.7/pcl/segmentation/sac_segmentation.h>
 #include <pcl-1.7/pcl/segmentation/extract_clusters.h>
 
+#include "msl_actuator_msgs/KickControl.h"
+
 namespace msl
 {
 
@@ -50,6 +52,7 @@ namespace msl
 	{
 		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 10000);
 		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10000);
+		this->kickControlPub = rosNode.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
 	}
 
 	FrameListener::~FrameListener()
@@ -198,6 +201,12 @@ namespace msl
 		{
 			// fire upper extension
 			cout << "----->>>> FIRE <<<< -----" << endl;
+			msl_actuator_msgs::KickControl kc;
+            kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
+            kc.extTime = 1000;
+            kc.enabled = true;
+    		kc.senderID = 0;
+    		kickControlPub.publish(kc);
 		}
 	}
 

@@ -32,6 +32,7 @@ namespace msl
 		void publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub);
 		RingBuffer<InformationElement<Eigen::Vector4d> > flyingBallPositions;
 		void checkBallTrajectory(unsigned long  time);
+		ros::Publisher kickControlPub;
 
 	};
 
