@@ -118,7 +118,8 @@ namespace msl
 		sor.setInputCloud(rawCloud);
 		sor.setLeafSize(0.05f, 0.05f, 0.05f); // voxel size 5 cm
 		sor.filter(*voxelCloud);
-		this->publishCloud(voxelCloud, this->pub);
+		this->kick();
+//		this->publishCloud(voxelCloud, this->pub);
 
 //		// Creating the KdTree object for the search method of the extraction
 //		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
@@ -144,9 +145,9 @@ namespace msl
 
 		pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
 		reg.setMinClusterSize(30);
-		reg.setMaxClusterSize(1000000);
+		reg.setMaxClusterSize(1000);
 		reg.setSearchMethod(tree);
-		reg.setNumberOfNeighbours(30);
+		reg.setNumberOfNeighbours(15);
 		reg.setInputCloud(voxelCloud);
 		//reg.setIndices (indices);
 		reg.setInputNormals(normals);
@@ -199,11 +200,13 @@ namespace msl
 						InformationElement<Eigen::Vector4d> >(opt, timeStamp);
 				o->certainty = 1;
 				flyingBallPositions.add(o);
-				this->publishCloud(cloud_cluster, this->pubBall);
+//				this->publishCloud(cloud_cluster, this->pubBall);
 			}
 		}
 
 		this->checkBallTrajectory(timeStamp);
+		ros::Time end = ros::Time::now();
+		
 	}
 
 	void FrameListener::checkBallTrajectory(unsigned long time)
@@ -235,15 +238,20 @@ namespace msl
 
 		if (hitCounter > 1)
 		{
-			// fire upper extension
-			cout << "----->>>> FIRE <<<< -----" << endl;
-			msl_actuator_msgs::KickControl kc;
-			kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
-			kc.extTime = 1000;
-			kc.enabled = true;
-			kc.senderID = 0;
-			kickControlPub.publish(kc);
+                	cout << "----->>>> FIRE <<<<-----" << endl;
+			this->kick();
 		}
+	}
+
+	void FrameListener::kick()
+	{
+		// fire upper extension
+                msl_actuator_msgs::KickControl kc;
+                kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
+                kc.extTime = 1000;
+                kc.enabled = true;
+                kc.senderID = 0;
+                kickControlPub.publish(kc);
 	}
 
 	void FrameListener::publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub)
