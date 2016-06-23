@@ -233,7 +233,7 @@ namespace msl
 			}
 		}
 
-		if (hitCounter > 2)
+		if (hitCounter > 1)
 		{
 			// fire upper extension
 			cout << "----->>>> FIRE <<<< -----" << endl;
