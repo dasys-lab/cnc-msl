@@ -28,12 +28,12 @@ namespace msl
 		ros::NodeHandle rosNode;
 		ros::Publisher pub;
 		ros::Publisher pubBall;
-		ros::Publisher kickControlPub;
 
 		void publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub);
 		RingBuffer<InformationElement<Eigen::Vector4d> > flyingBallPositions;
 		void checkBallTrajectory(unsigned long  time);
-		void kick();	
+		ros::Publisher kickControlPub;
+
 	};
 
 } /* namespace msl */

@@ -31,9 +31,6 @@ using namespace std;
 #include <pcl-1.7/pcl/sample_consensus/method_types.h>
 #include <pcl-1.7/pcl/kdtree/kdtree.h>
 
-
-#include <pcl-1.7/pcl/segmentation/region_growing.h>
-
 #include <pcl-1.7/pcl/ModelCoefficients.h>
 #include <pcl-1.7/pcl/point_types.h>
 #include <pcl-1.7/pcl/io/pcd_io.h>
@@ -51,8 +48,7 @@ using namespace std;
 namespace msl
 {
 
-	FrameListener::FrameListener() :
-			flyingBallPositions(10)
+	FrameListener::FrameListener() : flyingBallPositions(10)
 	{
 		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 10000);
 		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10000);
@@ -66,7 +62,7 @@ namespace msl
 	void FrameListener::onNewFrame(openni::VideoStream& vidStream)
 	{
 		ros::Time time = ros::Time::now();
-		unsigned long timeStamp = time.sec * 1000000000 + time.nsec;
+		unsigned long  timeStamp = time.sec * 1000000000 + time.nsec;
 		// initialize PointClouds
 		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr rawCloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -112,39 +108,33 @@ namespace msl
 			}
 			depthPixel++;
 		}
+		
 
+		ros::Time end = ros::Time::now();
+		cout << "Time: "  << end - time << endl;
 		// Create the filtering object
 		pcl::VoxelGrid<pcl::PointXYZ> sor;
 		sor.setInputCloud(rawCloud);
-		sor.setLeafSize(0.12f, 0.12f, 0.12f); // voxel size 5 cm
+		sor.setLeafSize(0.14f, 0.14f, 0.14f); // voxel size 5 cm
 		sor.filter(*voxelCloud);
-		this->publishCloud(voxelCloud, pub);
+		this->publishCloud(voxelCloud, this->pub);
 
-		pcl::search::Search<pcl::PointXYZ>::Ptr tree = boost::shared_ptr<pcl::search::Search<pcl::PointXYZ> >(
-				new pcl::search::KdTree<pcl::PointXYZ>);
-		pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
-		pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimator;
-		normal_estimator.setSearchMethod(tree);
-		normal_estimator.setInputCloud(voxelCloud);
-		normal_estimator.setKSearch(50);
-		normal_estimator.compute(*normals);
-
-		pcl::RegionGrowing<pcl::PointXYZ, pcl::Normal> reg;
-		reg.setMinClusterSize(5);
-		reg.setMaxClusterSize(20);
-		reg.setSearchMethod(tree);
-		reg.setNumberOfNeighbours(30);
-		reg.setInputCloud(voxelCloud);
-		reg.setInputNormals(normals);
-		reg.setSmoothnessThreshold(30.0 / 180.0 * M_PI);
-		reg.setCurvatureThreshold(10.0);
+		// Creating the KdTree object for the search method of the extraction
+		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+		tree->setInputCloud(voxelCloud);
 
 		std::vector<pcl::PointIndices> cluster_indices;
-		reg.extract(cluster_indices);
-
-		for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end();
-				++it)
-		
+		pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+		ec.setClusterTolerance(0.10); // m
+		ec.setMinClusterSize(6);
+		ec.setMaxClusterSize(15);
+		ec.setSearchMethod(tree);
+		ec.setInputCloud(voxelCloud);
+		ec.extract(cluster_indices);
+		ros::Time end2 = ros::Time::now();
+		cout << "Time Voxel+Cluster: "  << end2 - end << endl;
+                
+		for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
 		{
 			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
 			for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
@@ -161,12 +151,9 @@ namespace msl
 			bool ballFound = true;
 			for (int i = 0; i < cloud_cluster->points.size(); i++)
 			{
-				if (sqrt(
-						(centroid.x() - cloud_cluster->points[i].x) * (centroid.x() - cloud_cluster->points[i].x)
-								+ (centroid.y() - cloud_cluster->points[i].y)
-								* (centroid.y() - cloud_cluster->points[i].y)
-								+ (centroid.z() - cloud_cluster->points[i].z)
-								* (centroid.z() - cloud_cluster->points[i].z)) > 0.14) // some point is further away from the centroid than 14cm
+				if (sqrt((centroid.x() - cloud_cluster->points[i].x)*(centroid.x() - cloud_cluster->points[i].x)
+					 +(centroid.y() - cloud_cluster->points[i].y)*(centroid.y() - cloud_cluster->points[i].y)
+					 +(centroid.z() - cloud_cluster->points[i].z)*(centroid.z() - cloud_cluster->points[i].z))> 0.16) // some point is further away from the centroid than 14cm
 				{
 					ballFound = false;
 					break;
@@ -177,16 +164,15 @@ namespace msl
 			{
 				//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
 				boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
-				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<
-						InformationElement<Eigen::Vector4d> >(opt, timeStamp);
+				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<InformationElement<Eigen::Vector4d> >(
+						opt, timeStamp);
 				o->certainty = 1;
 				flyingBallPositions.add(o);
 				this->publishCloud(cloud_cluster, this->pubBall);
 			}
 		}
 
-		ros::Time end = ros::Time::now();
-		cout << "Time: " << end-time << endl;
+
 		this->checkBallTrajectory(timeStamp);
 	}
 
@@ -196,7 +182,7 @@ namespace msl
 		for (int i = 0; i < this->flyingBallPositions.getSize(); i++)
 		{
 			boost::shared_ptr<InformationElement<Eigen::Vector4d> > curBall = this->flyingBallPositions.getLast(i);
-			boost::shared_ptr<InformationElement<Eigen::Vector4d> > lastBall = this->flyingBallPositions.getLast(i + 1);
+			boost::shared_ptr<InformationElement<Eigen::Vector4d> > lastBall = this->flyingBallPositions.getLast(i+1);
 			if (!curBall || !lastBall)
 			{
 				continue;
@@ -207,11 +193,11 @@ namespace msl
 				return;
 			}
 
-			double diffZ = curBall->getInformation()->z() - lastBall->getInformation()->z();
-			double diffY = curBall->getInformation()->y() - lastBall->getInformation()->y();
+			double diffZ = curBall->getInformation()->z() -lastBall->getInformation()->z();
+			double diffY = curBall->getInformation()->y() -lastBall->getInformation()->y();
 
-			double resultY = curBall->getInformation()->y() + diffY * lastBall->getInformation()->z() / diffZ;
-			if (abs(resultY) < 0.35)
+			double resultY = curBall->getInformation()->y() + diffY * lastBall->getInformation()->z()/diffZ;
+			if (abs(resultY) < 0.45)
 			{
 				hitCounter++;
 			}
@@ -219,20 +205,15 @@ namespace msl
 
 		if (hitCounter > 1)
 		{
-		        cout << "----->>>> FIRE <<<<-----" << endl;
-			this->kick();
+			// fire upper extension
+			cout << "----->>>> FIRE <<<< -----" << endl;
+			msl_actuator_msgs::KickControl kc;
+            kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
+            kc.extTime = 1000;
+            kc.enabled = true;
+    		kc.senderID = 0;
+    		kickControlPub.publish(kc);
 		}
-	}
-
-	void FrameListener::kick()
-	{
-		// fire upper extension
-                msl_actuator_msgs::KickControl kc;
-                kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
-                kc.extTime = 1000;
-                kc.enabled = true;
-                kc.senderID = 0;
-                kickControlPub.publish(kc);
 	}
 
 	void FrameListener::publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub)
