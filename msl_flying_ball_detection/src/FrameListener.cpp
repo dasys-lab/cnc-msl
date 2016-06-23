@@ -116,7 +116,7 @@ namespace msl
 		// Create the filtering object
 		pcl::VoxelGrid<pcl::PointXYZ> sor;
 		sor.setInputCloud(rawCloud);
-		sor.setLeafSize(0.10f, 0.10f, 0.10f); // voxel size 5 cm
+		sor.setLeafSize(0.12f, 0.12f, 0.12f); // voxel size 5 cm
 		sor.filter(*voxelCloud);
 		this->publishCloud(voxelCloud, pub);
 
