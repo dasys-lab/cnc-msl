@@ -119,20 +119,6 @@ namespace msl
 		sor.setLeafSize(0.05f, 0.05f, 0.05f); // voxel size 5 cm
 		sor.filter(*voxelCloud);
 		this->kick();
-//		this->publishCloud(voxelCloud, this->pub);
-
-//		// Creating the KdTree object for the search method of the extraction
-//		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
-//		tree->setInputCloud(voxelCloud);
-//
-//		std::vector<pcl::PointIndices> cluster_indices;
-//		pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-//		ec.setClusterTolerance(0.08); // m
-//		ec.setMinClusterSize(20);
-//		ec.setMaxClusterSize(50);
-//		ec.setSearchMethod(tree);
-//		ec.setInputCloud(voxelCloud);
-//		ec.extract(cluster_indices);
 
 		pcl::search::Search<pcl::PointXYZ>::Ptr tree = boost::shared_ptr<pcl::search::Search<pcl::PointXYZ> >(
 				new pcl::search::KdTree<pcl::PointXYZ>);
@@ -149,7 +135,6 @@ namespace msl
 		reg.setSearchMethod(tree);
 		reg.setNumberOfNeighbours(15);
 		reg.setInputCloud(voxelCloud);
-		//reg.setIndices (indices);
 		reg.setInputNormals(normals);
 		reg.setSmoothnessThreshold(10.0 / 180.0 * M_PI);
 		reg.setCurvatureThreshold(1.0);
@@ -160,53 +145,63 @@ namespace msl
 		for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end();
 				++it)
 		{
-			if (it->indices.size() > 60) // ball as max 60 points
+			if (it->indices.size() > 50) // ball as max 60 points
 			{
 				continue;
 			}
-
-			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
-			for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
+			else
 			{
-				cloud_cluster->points.push_back(voxelCloud->points[*pit]);
-			}
-			cloud_cluster->width = cloud_cluster->points.size();
-			cloud_cluster->height = 1;
-			cloud_cluster->is_dense = true;
-
-			Eigen::Vector4d centroid;
-			pcl::compute3DCentroid(*cloud_cluster, centroid);
-
-			bool ballFound = true;
-			for (int i = 0; i < cloud_cluster->points.size(); i++)
-			{
-				if (sqrt(
-						(centroid.x() - cloud_cluster->points[i].x) * (centroid.x() - cloud_cluster->points[i].x)
-								+ (centroid.y() - cloud_cluster->points[i].y)
-										* (centroid.y() - cloud_cluster->points[i].y)
-								+ (centroid.z() - cloud_cluster->points[i].z)
-										* (centroid.z() - cloud_cluster->points[i].z)) > 0.14) // some point is further away from the centroid than 14cm
+				pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
+				for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
 				{
-					ballFound = false;
-					break;
+					cloud_cluster->points.push_back(voxelCloud->points[*pit]);
 				}
-			}
+				cloud_cluster->width = cloud_cluster->points.size();
+				cloud_cluster->height = 1;
+				cloud_cluster->is_dense = true;
 
-			if (ballFound)
-			{
-				//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+				this->publishCloud(cloud_cluster, pubBall);
+
+				Eigen::Vector4d centroid;
+				pcl::compute3DCentroid(*cloud_cluster, centroid);
+				cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
 				boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
 				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<
 						InformationElement<Eigen::Vector4d> >(opt, timeStamp);
 				o->certainty = 1;
 				flyingBallPositions.add(o);
-//				this->publishCloud(cloud_cluster, this->pubBall);
 			}
+
+//			bool ballFound = true;
+//			for (int i = 0; i < cloud_cluster->points.size(); i++)
+//			{
+//				if (sqrt(
+//						(centroid.x() - cloud_cluster->points[i].x) * (centroid.x() - cloud_cluster->points[i].x)
+//								+ (centroid.y() - cloud_cluster->points[i].y)
+//										* (centroid.y() - cloud_cluster->points[i].y)
+//								+ (centroid.z() - cloud_cluster->points[i].z)
+//										* (centroid.z() - cloud_cluster->points[i].z)) > 0.14) // some point is further away from the centroid than 14cm
+//				{
+//					ballFound = false;
+//					break;
+//				}
+//			}
+//
+//			if (ballFound)
+//			{
+//				//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+//				boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
+//				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<
+//						InformationElement<Eigen::Vector4d> >(opt, timeStamp);
+//				o->certainty = 1;
+//				flyingBallPositions.add(o);
+////				this->publishCloud(cloud_cluster, this->pubBall);
+//			}
 		}
 
-		this->checkBallTrajectory(timeStamp);
 		ros::Time end = ros::Time::now();
-		
+		cout << "Time: " << end-time << endl;
+		this->checkBallTrajectory(timeStamp);
 	}
 
 	void FrameListener::checkBallTrajectory(unsigned long time)
@@ -238,7 +233,7 @@ namespace msl
 
 		if (hitCounter > 1)
 		{
-                	cout << "----->>>> FIRE <<<<-----" << endl;
+            cout << "----->>>> FIRE <<<<-----" << endl;
 			this->kick();
 		}
 	}
