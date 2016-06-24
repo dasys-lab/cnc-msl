@@ -54,8 +54,8 @@ namespace msl
 	FrameListener::FrameListener() :
 			flyingBallPositions(10), mayKick(false)
 	{
-		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 1);
-		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 1);
+		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 10);
+		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10);
 		this->kickControlPub = rosNode.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
 		refBoxCommandSub = this->rosNode.subscribe("/RefereeBoxInfoBody", 10, &FrameListener::onRefBoxCommand, (FrameListener*)this);
 	}
@@ -80,7 +80,7 @@ namespace msl
 		this->createVoxelCloud(rawCloud, 0.10f, voxelCloud);
 #ifdef FLYBALL_DEBUG
 		ros::Time end = ros::Time::now();
-		cout << "Voxel Time: " << end - start << endl;
+//		cout << "Voxel Time: " << end - start << endl;
 #endif
 
 		// Creating the KdTree object for the search method of the extraction
@@ -150,6 +150,7 @@ namespace msl
 					InformationElement<Eigen::Vector4d> >(opt, timeStamp);
 			o->certainty = 1;
 			flyingBallPositions.add(o);
+			this->checkBallTrajectory(timeStamp);
 		}
 		else
 		{
@@ -158,10 +159,9 @@ namespace msl
 
 #ifdef FLYBALL_DEBUG
 		ros::Time end2 = ros::Time::now();
-		cout << "Full Time: " << end2-start << endl;
+//		cout << "Full Time: " << end2-start << endl;
 		this->publishCloud(ballCloud, this->pubBall);
 #endif
-		this->checkBallTrajectory(timeStamp);
 	}
 
 	void FrameListener::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
@@ -269,7 +269,7 @@ namespace msl
 
 			if (curBall->timeStamp < time - 500000000 || lastBall->timeStamp < time - 500000000) // older than 0.5 sec
 			{
-				return;
+				break;
 			}
 
 			double diffZ = curBall->getInformation()->z() - lastBall->getInformation()->z();
