@@ -12,6 +12,7 @@ using namespace std;
 #include <OpenNI.h>
 #include "OniSampleUtilities.h"
 
+#include <msl_msgs/RefBoxCommand.h>
 #include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/ChannelFloat32.h>
 #include <geometry_msgs/Point32.h>
@@ -45,14 +46,18 @@ using namespace std;
 
 #include "msl_actuator_msgs/KickControl.h"
 
+#define FLYBALL_DEBUG
+
 namespace msl
 {
 
-	FrameListener::FrameListener() : flyingBallPositions(10)
+	FrameListener::FrameListener() :
+			flyingBallPositions(10), mayKick(false)
 	{
-		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 10000);
-		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 10000);
+		pubBall = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/ball", 1);
+		pub = this->rosNode.advertise<sensor_msgs::PointCloud>("/astra/depthCloud", 1);
 		this->kickControlPub = rosNode.advertise<msl_actuator_msgs::KickControl>("/KickControl", 10);
+		refBoxCommandSub = this->rosNode.subscribe("/RefereeBoxInfoBody", 10, &FrameListener::onRefBoxCommand, (FrameListener*)this);
 	}
 
 	FrameListener::~FrameListener()
@@ -61,18 +66,156 @@ namespace msl
 
 	void FrameListener::onNewFrame(openni::VideoStream& vidStream)
 	{
-		ros::Time time = ros::Time::now();
-		unsigned long  timeStamp = time.sec * 1000000000 + time.nsec;
+		ros::Time start = ros::Time::now();
+		unsigned long timeStamp = start.sec * 1000000000 + start.nsec;
 		// initialize PointClouds
-		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr rawCloud(new pcl::PointCloud<pcl::PointXYZ>);
+		if (!this->fillCloudFromDepth(vidStream, rawCloud))
+		{
+			// vidStream depth image wasn't valid
+			return;
+		}
+
 		pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud(new pcl::PointCloud<pcl::PointXYZ>);
-//		pcl::PCDReader reader;
-//		reader.read ("/home/emmeda/test_1.pcd", *rawCloud);
-		rawCloud->width = vidStream.getVideoMode().getResolutionX();
-		rawCloud->height = vidStream.getVideoMode().getResolutionY();
-		rawCloud->is_dense = false;
-		rawCloud->points.resize(rawCloud->width * rawCloud->height);
+		this->createVoxelCloud(rawCloud, 0.10f, voxelCloud);
+#ifdef FLYBALL_DEBUG
+		ros::Time end = ros::Time::now();
+		cout << "Voxel Time: " << end - start << endl;
+#endif
+
+		// Creating the KdTree object for the search method of the extraction
+		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+		tree->setInputCloud(voxelCloud);
+
+		int currentIdx;
+		bool foundBall = false;
+		vector<int> indices;
+		vector<float> squareDistances;
+
+		for (int y = 0; y < voxelCloud->height; y += 2)
+		{
+			for (int x = 0; x < voxelCloud->width; x += 2)
+			{
+				currentIdx = y * voxelCloud->width + x;
+				tree->radiusSearch(voxelCloud->points[currentIdx], 0.5, indices, squareDistances, 30);
+				if (indices.size() > 6 && indices.size() < 20)
+				{
+					// found matching ball cluster
+					foundBall = true;
+					break;
+				}
+			}
+			if (foundBall)
+				break;
+		}
+
+		pcl::PointCloud<pcl::PointXYZ>::Ptr ballCloud(new pcl::PointCloud<pcl::PointXYZ>);
+		if (!foundBall)
+		{
+#ifdef FLYBALL_DEBUG
+			this->publishCloud(ballCloud, this->pubBall);
+#endif
+			return;
+		}
+
+		for (std::vector<int>::const_iterator pit = indices.begin(); pit != indices.end(); ++pit)
+		{
+			ballCloud->points.push_back(voxelCloud->points[*pit]);
+		}
+
+		ballCloud->width = ballCloud->points.size();
+		ballCloud->height = 1;
+		ballCloud->is_dense = true;
+
+		Eigen::Vector4d centroid;
+		pcl::compute3DCentroid(*ballCloud, centroid);
+
+		for (int i = 0; i < ballCloud->points.size(); i++)
+		{
+			if (sqrt(
+					(centroid.x() - ballCloud->points[i].x) * (centroid.x() - ballCloud->points[i].x)
+							+ (centroid.y() - ballCloud->points[i].y) * (centroid.y() - ballCloud->points[i].y)
+							+ (centroid.z() - ballCloud->points[i].z) * (centroid.z() - ballCloud->points[i].z)) > 0.16) // some point is further away from the centroid than 14cm
+			{
+				foundBall = false;
+				break;
+			}
+		}
+
+		if (foundBall)
+		{
+			//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
+			boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
+			boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<
+					InformationElement<Eigen::Vector4d> >(opt, timeStamp);
+			o->certainty = 1;
+			flyingBallPositions.add(o);
+		}
+		else
+		{
+			ballCloud->clear();
+		}
+
+#ifdef FLYBALL_DEBUG
+		ros::Time end2 = ros::Time::now();
+		cout << "Full Time: " << end2-start << endl;
+		this->publishCloud(ballCloud, this->pubBall);
+#endif
+		this->checkBallTrajectory(timeStamp);
+	}
+
+	void FrameListener::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
+	{
+		if (msg->cmd ==msl_msgs::RefBoxCommand::START )
+		{
+			this->mayKick = true;
+		}
+		else
+		{
+			this->mayKick = false;
+		}
+	}
+
+	void FrameListener::kick()
+	{
+#ifndef FLYBALL_DEBUG
+		if (!mayKick)
+		{
+			return;
+		}
+#endif
+
+		// fire upper extension
+#ifdef FLYBALL_DEBUG
+		cout << "----->>>> FIRE <<<< -----" << endl;
+#endif
+		msl_actuator_msgs::KickControl kc;
+		kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
+		kc.extTime = 1000;
+		kc.enabled = true;
+		kc.senderID = 0;
+		kickControlPub.publish(kc);
+	}
+
+	void FrameListener::createVoxelCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float leafSize,
+											pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud)
+	{
+		// Create the filtering object
+		pcl::VoxelGrid<pcl::PointXYZ> sor;
+		sor.setInputCloud(cloud);
+		sor.setLeafSize(leafSize, leafSize, leafSize);
+		sor.filter(*voxelCloud);
+#ifdef FLYBALL_DEBUG
+		this->publishCloud(voxelCloud, this->pub);
+#endif
+	}
+
+	bool FrameListener::fillCloudFromDepth(openni::VideoStream& vidStream, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+	{
+		cloud->width = vidStream.getVideoMode().getResolutionX();
+		cloud->height = vidStream.getVideoMode().getResolutionY();
+		cloud->is_dense = false;
+		cloud->points.resize(cloud->width * cloud->height);
 
 		// read depth image
 		openni::VideoFrameRef depthFrame;
@@ -80,8 +223,8 @@ namespace msl
 
 		if (!depthFrame.isValid())
 		{
-			cout << "error! depthFrame is not valid!!!" << endl;
-			return;
+			cerr << "error! depthFrame is not valid!!!" << endl;
+			return false;
 		}
 
 		// Fill the raw Cloud with the depth image from the Astra S Pro
@@ -92,7 +235,7 @@ namespace msl
 		const openni::DepthPixel* depthPixel = (const openni::DepthPixel*)depthFrame.getData();
 		int x, y = 0;
 
-		for (int i = 0; i < rawCloud->points.size(); i++)
+		for (int i = 0; i < cloud->points.size(); i++)
 		{
 			if (*depthPixel != 0)
 			{
@@ -102,78 +245,14 @@ namespace msl
 				openni::CoordinateConverter::convertDepthToWorld(vidStream, y, x, *depthPixel, &wX, &wY, &wZ);
 
 				// depth image comes within [mm], so make it to [m]
-				rawCloud->points[i].x = wX / 1000.0;
-				rawCloud->points[i].y = wY / 1000.0;
-				rawCloud->points[i].z = wZ / 1000.0;
+				cloud->points[i].x = wX / 1000.0;
+				cloud->points[i].y = wY / 1000.0;
+				cloud->points[i].z = wZ / 1000.0;
 			}
 			depthPixel++;
 		}
-		
 
-		ros::Time end = ros::Time::now();
-		cout << "Time: "  << end - time << endl;
-		// Create the filtering object
-		pcl::VoxelGrid<pcl::PointXYZ> sor;
-		sor.setInputCloud(rawCloud);
-		sor.setLeafSize(0.14f, 0.14f, 0.14f); // voxel size 5 cm
-		sor.filter(*voxelCloud);
-		this->publishCloud(voxelCloud, this->pub);
-
-		// Creating the KdTree object for the search method of the extraction
-		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
-		tree->setInputCloud(voxelCloud);
-
-		std::vector<pcl::PointIndices> cluster_indices;
-		pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-		ec.setClusterTolerance(0.10); // m
-		ec.setMinClusterSize(6);
-		ec.setMaxClusterSize(15);
-		ec.setSearchMethod(tree);
-		ec.setInputCloud(voxelCloud);
-		ec.extract(cluster_indices);
-		ros::Time end2 = ros::Time::now();
-		cout << "Time Voxel+Cluster: "  << end2 - end << endl;
-                
-		for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
-		{
-			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
-			for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
-			{
-				cloud_cluster->points.push_back(voxelCloud->points[*pit]);
-			}
-			cloud_cluster->width = cloud_cluster->points.size();
-			cloud_cluster->height = 1;
-			cloud_cluster->is_dense = true;
-
-			Eigen::Vector4d centroid;
-			pcl::compute3DCentroid(*cloud_cluster, centroid);
-
-			bool ballFound = true;
-			for (int i = 0; i < cloud_cluster->points.size(); i++)
-			{
-				if (sqrt((centroid.x() - cloud_cluster->points[i].x)*(centroid.x() - cloud_cluster->points[i].x)
-					 +(centroid.y() - cloud_cluster->points[i].y)*(centroid.y() - cloud_cluster->points[i].y)
-					 +(centroid.z() - cloud_cluster->points[i].z)*(centroid.z() - cloud_cluster->points[i].z))> 0.16) // some point is further away from the centroid than 14cm
-				{
-					ballFound = false;
-					break;
-				}
-			}
-
-			if (ballFound)
-			{
-				//cout << "Ball is at: " << centroid.x() << ", " << centroid.y() << ", " << centroid.z() << endl;
-				boost::shared_ptr<Eigen::Vector4d> opt = boost::make_shared<Eigen::Vector4d>(centroid);
-				boost::shared_ptr<InformationElement<Eigen::Vector4d> > o = boost::make_shared<InformationElement<Eigen::Vector4d> >(
-						opt, timeStamp);
-				o->certainty = 1;
-				flyingBallPositions.add(o);
-				this->publishCloud(cloud_cluster, this->pubBall);
-			}
-		}
-
-
-		this->checkBallTrajectory(timeStamp);
+		return true;
 	}
 
 	void FrameListener::checkBallTrajectory(unsigned long time)
@@ -182,7 +261,7 @@ namespace msl
 		for (int i = 0; i < this->flyingBallPositions.getSize(); i++)
 		{
 			boost::shared_ptr<InformationElement<Eigen::Vector4d> > curBall = this->flyingBallPositions.getLast(i);
-			boost::shared_ptr<InformationElement<Eigen::Vector4d> > lastBall = this->flyingBallPositions.getLast(i+1);
+			boost::shared_ptr<InformationElement<Eigen::Vector4d> > lastBall = this->flyingBallPositions.getLast(i + 1);
 			if (!curBall || !lastBall)
 			{
 				continue;
@@ -193,11 +272,11 @@ namespace msl
 				return;
 			}
 
-			double diffZ = curBall->getInformation()->z() -lastBall->getInformation()->z();
-			double diffY = curBall->getInformation()->y() -lastBall->getInformation()->y();
+			double diffZ = curBall->getInformation()->z() - lastBall->getInformation()->z();
+			double diffY = curBall->getInformation()->y() - lastBall->getInformation()->y();
 
-			double resultY = curBall->getInformation()->y() + diffY * lastBall->getInformation()->z()/diffZ;
-			if (abs(resultY) < 0.45)
+			double resultY = curBall->getInformation()->y() + diffY * lastBall->getInformation()->z() / diffZ;
+			if (abs(resultY) < 0.55)
 			{
 				hitCounter++;
 			}
@@ -205,14 +284,7 @@ namespace msl
 
 		if (hitCounter > 1)
 		{
-			// fire upper extension
-			cout << "----->>>> FIRE <<<< -----" << endl;
-			msl_actuator_msgs::KickControl kc;
-            kc.extension = msl_actuator_msgs::KickControl::UPPER_EXTENSION;
-            kc.extTime = 1000;
-            kc.enabled = true;
-    		kc.senderID = 0;
-    		kickControlPub.publish(kc);
+			this->kick();
 		}
 	}
 

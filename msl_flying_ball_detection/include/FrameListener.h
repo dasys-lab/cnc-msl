@@ -14,6 +14,10 @@
 #include <InformationElement.h>
 #include <RingBuffer.h>
 
+namespace msl_msgs{
+	ROS_DECLARE_MESSAGE(RefBoxCommand)
+}
+
 namespace msl
 {
 
@@ -28,11 +32,17 @@ namespace msl
 		ros::NodeHandle rosNode;
 		ros::Publisher pub;
 		ros::Publisher pubBall;
+		ros::Publisher kickControlPub;
+		ros::Subscriber refBoxCommandSub;
+		RingBuffer<InformationElement<Eigen::Vector4d> > flyingBallPositions;
+		bool mayKick;
 
 		void publishCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud, ros::Publisher pub);
-		RingBuffer<InformationElement<Eigen::Vector4d> > flyingBallPositions;
 		void checkBallTrajectory(unsigned long  time);
-		ros::Publisher kickControlPub;
+		bool fillCloudFromDepth(openni::VideoStream& vidStream, pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud);
+		void createVoxelCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float leafSize, pcl::PointCloud<pcl::PointXYZ>::Ptr voxelCloud);
+		void onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg);
+		void kick();
 
 	};
 

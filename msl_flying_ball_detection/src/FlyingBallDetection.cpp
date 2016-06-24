@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 				<< mode.getPixelFormat() << endl;
 	}
 
-	if (openni::STATUS_OK != depth.setVideoMode(device.getSensorInfo(openni::SENSOR_DEPTH)->getSupportedVideoModes()[4]))// 4 -> 1_MM 5 -> 100_UM
+	if (openni::STATUS_OK != depth.setVideoMode(device.getSensorInfo(openni::SENSOR_DEPTH)->getSupportedVideoModes()[2]))// 4 -> 1_MM 5 -> 100_UM
 	{
 		cout << "FlyingBallDetection: Couldn't set video mode:" << endl << openni::OpenNI::getExtendedError() << endl;
 		depth.destroy();
