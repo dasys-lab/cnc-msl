@@ -281,6 +281,11 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 //########################################## Stuff ###############################################
 //################################################################################################
 
+bool robotIsVisible[7] = {false};
+int robotIndex[101] = {0};
+string robotNames[101] = {};
+int selectedRobot = 0;
+
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
@@ -371,6 +376,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	top = false;
 
 	Update_timer->start(33);
+
 }
 
 pair<double, double> FieldWidget3D::transformToGuiCoords(double x, double y)
@@ -387,12 +393,40 @@ void FieldWidget3D::update_robot_info(void)
 
 	for (auto robot : robots)
 	{
-		QString selectedRobot = mainWindow->robotSelector->currentText();
-		if (robot->isTimeout() || robot->getId() != selectedRobot.toInt())
+		int selectedIndex = mainWindow->robotSelector->currentIndex();
+
+		if (selectedRobot != selectedIndex)
+		{
+			selectedRobot = selectedIndex;
+			if (selectedIndex == 0)
+			{
+				robotIsVisible[0] = true;
+				for (int i=1;i<mainWindow->robotSelector->count();i++)
+				{
+					if (!robotIsVisible[i]) robotIsVisible[0] = false;
+				}
+			}
+			mainWindow->checkVisible->setChecked(robotIsVisible[selectedIndex]);
+		}
+
+		if (robotIsVisible[selectedIndex] != mainWindow->checkVisible->checkState())
+		{
+			if (selectedIndex == 0)
+			{
+				for (int i=0;i<7;i++) robotIsVisible[i] = mainWindow->checkVisible->checkState();
+			} else
+			robotIsVisible[selectedIndex] = mainWindow->checkVisible->checkState();
+
+		}
+
+        if (robot->isTimeout() || !robotIsVisible[robotIndex[robot->getId()]])
 		{
 		        robot->getVisualization()->remove(this->renderer);
+
                         continue;
 		}
+
+//        robotIsVisible
 
 		robot->getVisualization()->updatePosition(this->renderer);
                 robot->getVisualization()->updateBall(this->renderer);
@@ -1027,11 +1061,30 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
 
         robotInfo->getVisualization()->init(this->renderer, id);
 
-        // TODO: add new combobox item if robot doesnt exist yet, remove if it was removed...
-        QString robotStr;
-        robotStr.setNum(robotInfo->getId());
-        QVariant robotNum(robotInfo->getId());
-        mainWindow->robotSelector->addItem(robotStr, robotNum);
+        int robotCount = mainWindow->robotSelector->count();
+        if (robotCount == 0)
+        {
+        	robotNames[0]= "ALL";
+        	robotNames[1]= "Mops";
+        	robotNames[8]= "Hairy";
+        	robotNames[9]= "Nase";
+        	robotNames[10]= "Savvy";
+        	robotNames[11]= "Myo";
+        	robotNames[100]= "Brain";
+
+        	mainWindow->robotSelector->addItem(QString::fromStdString(robotNames[0]), 0);
+        	mainWindow->robotSelector->setCurrentIndex(0);
+        	robotIsVisible[0] = true;
+			mainWindow->checkVisible->setChecked(true);
+        	robotIndex[0] = 0;
+            robotCount++;
+        }
+
+        robotIndex[id] = robotCount;
+        string robotName = robotNames[id];
+        QString robotStr = QString::fromStdString(robotName+" ("+boost::lexical_cast<std::string>(id)+")");
+        mainWindow->robotSelector->addItem(robotStr, id);
+        robotIsVisible[robotCount] = true;
 
         return robotInfo;
 }

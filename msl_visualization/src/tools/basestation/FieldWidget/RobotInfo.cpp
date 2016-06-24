@@ -31,6 +31,17 @@ void RobotInfo::setId(int id)
 }
 
 
+std::string RobotInfo::getName() const
+{
+	return name;
+}
+
+void RobotInfo::setName(std::string name)
+{
+	this->name = name;
+}
+
+
 std::shared_ptr<RobotVisualization> RobotInfo::getVisualization()
 {
         return this->visualization;
