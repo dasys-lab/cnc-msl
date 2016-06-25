@@ -128,31 +128,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnFreeKickInOppHalf.pml#1465474610518"/>
-    <value xPos="517" yPos="662"/>
-  </extensions>
-  <extensions>
-    <key href="PosInOppPenArea.beh#1466259879629"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="BlockNearOppPenArea.beh#1466259925988"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnFreeKickInOppHalf.pml#1466342186872"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466348438844"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="FreeKickOppHalfShootRapid.beh#1464787692697"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
