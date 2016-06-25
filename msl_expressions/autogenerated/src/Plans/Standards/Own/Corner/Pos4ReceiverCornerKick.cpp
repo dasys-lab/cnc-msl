@@ -23,6 +23,8 @@ namespace alica
             DomainBehaviour("Pos4ReceiverCornerKick")
     {
         /*PROTECTED REGION ID(con1464787469281) ENABLED START*/ //Add additional options here
+        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos4ReceiverCornerKick::~Pos4ReceiverCornerKick()
