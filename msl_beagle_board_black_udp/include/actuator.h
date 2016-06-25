@@ -28,13 +28,9 @@ struct CV {
 BlackI2C myI2C(I2C_2, ADR_G);
 BlackSPI mySpi(SPI0_0, 8, SpiMode0, 2000000);
 
-const char *BH_right_pins[] = { "P8_9", "P8_10", "P8_16", "P8_18" };
-const char *BH_left_pins[] = { "P8_7", "P8_8", "P8_12", "P8_14" };
 const char *IMU_pins[] = { "P8_11", "P8_15", "P8_17", "P8_26" };
 const char *OF_pins[] = { "P9_30", "P9_25", "P9_27", "P9_12" };
 
-BallHandle		BH_right(BeaglePWM::P8_19, BH_right_pins);		/* pwm, dir, reset, ff1, ff2 */
-BallHandle		BH_left(BeaglePWM::P8_13, BH_left_pins);			/* pwm, dir, reset, ff1, ff2 */
 IMU				lsm9ds0(IMU_pins, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
 OpticalFlow		adns3080(OF_pins, &mySpi);	/* ncs, npd, rst, led */
 LightBarrier	lightbarrier(AIN0);

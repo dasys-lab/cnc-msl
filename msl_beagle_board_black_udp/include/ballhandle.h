@@ -10,50 +10,49 @@
 #define TIMEDIFFMS(n,o) (((n).tv_sec-(o).tv_sec)*1000+((n).tv_usec-(o).tv_usec)/1000)
 #define BallHandle_TIMEOUT 1000
 
-#include <BeagleGPIO.h>
-#include <BeaglePins.h>
-#include <BeaglePWM.h>
+#include "motor.h"
+#include "Spline.h"
 
-enum Error
-{
-	none, bypass, temperature, voltage, programming
-};
-
-enum Direction
-{
-	left = 0, right = 1
-};
-
-enum BH_Pin
-{
-	dir, rst, ff1, ff2
-};
 
 class BallHandle
 {
 public:
-	BallHandle(BeaglePWM::PwmPin pwm_name, const char *pin_names[]);
+	BallHandle();
 	~BallHandle();
 
-	void setBallHandling(int32_t value);
+	void readConfigParameters();
+	void setOdometryData(double newAngle, double newTranslation);
+	void setRotation(double newRotation);
+	void dribbleControl();
+	void setBallHandling(int32_t left, int32_t right);
+	void ping();
 	void checkTimeout();
-	void controlBallHandling();
-
-	Error getError();
+	uint8_t getMode();
+	void setMode(uint8_t newMode);
 
 private:
-	BeagleGPIO *gpio;
-	BeaglePins *pins;
-	BeaglePWM *pwm;
-	BeaglePWM::PwmPin pwm_pin;
+	Motor *rightMotor;
+	Motor *leftMotor;
 
-	const int period = 10000;
-	bool enabled = false;
+	uint8_t mode = 1;
 
-	Direction direction;
-	Direction direction_desired;
-	int speed;
-	int speed_desired;
+	double angle = 0.0;
+	double translation = 0.0;
+	double rotation = 0.0;
+
+	const int minSpeed = 1800;
+	const int maxSpeed = 10000;
+	double speedX = 0;
+	double speedY = 0;
+
+	double handlerSpeedSummand = 0;
+	double handlerSpeedFactor = 0.0;
+	double speedNoBall = 0.0;
+	double slowTranslation = 0.0;
+	double slowTranslationWheelSpeed = 0.0;
+	double curveRotationFactor = 0.0;
+	double orthoDriveFactor = 0;
+	splines::spline forwardSpeedSpline;
 
 	timeval last_ping;
 };
