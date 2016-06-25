@@ -55,7 +55,6 @@ void BallHandle::readConfigParameters() {
 }
 
 void BallHandle::setOdometryData(double newAngle, double newTranslation) {
-	printf("OdometryInfo is set\n");
 	angle = newAngle;
 	translation = newTranslation;
 }
@@ -137,8 +136,8 @@ void BallHandle::dribbleControl() {
 	speedL = speedDC + l + orthoL;
 	speedR = speedDC + r + orthoR;
 
-	leftMotor->setSpeed(speedL);
-	rightMotor->setSpeed(speedR);
+	//leftMotor->setSpeed(speedL);
+	//rightMotor->setSpeed(speedR);
 
 	printf("DribbleControl:  Left: %i  -  Right: %i\n", speedL, speedR);
 }

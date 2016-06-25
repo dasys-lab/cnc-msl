@@ -8,6 +8,8 @@
 #include "shovelselect.h"
 #include <SystemConfig.h>
 
+using namespace BlackLib;
+/* API
 	ShovelSelect::ShovelSelect(BeaglePWM::PwmPin pwm_name) {
 		pwm = BeaglePWM::getInstance();
 
@@ -20,19 +22,39 @@
 		this->kickPWM = (*sc)["bbb"]->get<int>("BBB.shovelKick", NULL);
 		this->passPWM = (*sc)["bbb"]->get<int>("BBB.shovelPass", NULL);
 		this->timeout = (*sc)["bbb"]->get<int>("BBB.timeout", NULL);
-std::cout << "INIT: " << kickPWM << " - " << passPWM << std::endl;		
+		
 		enabled = false;
 		init = false;
-	}
+	}*/
+
+        ShovelSelect::ShovelSelect(pwmName pwm_P) {
+                pwm = new BlackPWM(pwm_P);
+
+                pwm->setPeriodTime(period, nanosecond);
+                pwm->setSpaceRatioTime(0, microsecond);
+                pwm->setRunState(stop);
+
+                auto sc = supplementary::SystemConfig::getInstance();
+                this->kickPWM = (*sc)["bbb"]->get<int>("BBB.shovelKick", NULL);
+                this->passPWM = (*sc)["bbb"]->get<int>("BBB.shovelPass", NULL);
+                this->timeout = (*sc)["bbb"]->get<int>("BBB.timeout", NULL);
+
+                enabled = false;
+                init = false;
+        }
+
 
 	ShovelSelect::~ShovelSelect() {
-		pwm->setRunState(pwm_pin, false);
+/* API
+		pwm->setRunState(pwm_pin, false);*/
 		delete pwm;
 	}
 
 	bool ShovelSelect::checkTimeout(timeval time) {
 		if ((TIMEDIFFMS(time, ping) > timeout) && enabled) {
-			pwm->setDutyCycle(pwm_pin, 0);
+/* API
+			pwm->setDutyCycle(pwm_pin, 0);*/
+			pwm->setRunState(stop);
 			enabled = false;
 
 			return true;
@@ -43,27 +65,25 @@ std::cout << "INIT: " << kickPWM << " - " << passPWM << std::endl;
 
 	bool ShovelSelect::setShovel(bool passing, timeval time_now) {
 		if (statePassing == passing && init) {
-std::cout << "1" << std::endl;
 			return false;
 		}
 
-std::cout << "setShovel: " << passing << std::endl;		
 		init = true;
 		ping = time_now;
 		statePassing = passing;
 		if (passing) {
-std::cout << "pass " << passPWM * 1000 << std::endl;
-			pwm->setDutyCycle(pwm_pin, passPWM * 1000);	// * 1000 because ns needed and passPWM is in us
+/* API		
+			pwm->setDutyCycle(pwm_pin, passPWM * 1000);	// * 1000 because ns needed and passPWM is in us */
+			pwm->setSpaceRatioTime(passPWM, microsecond);
 		} else {
-std::cout << "kick " << kickPWM * 1000 << std::endl;
-			pwm->setDutyCycle(pwm_pin, kickPWM * 1000);	// * 1000 because ns needed and kickPWM is in us
+/* API
+			pwm->setDutyCycle(pwm_pin, kickPWM * 1000);	// * 1000 because ns needed and kickPWM is in us */
+			pwm->setSpaceRatioTime(kickPWM, microsecond);
 		}
 		if (!enabled) {
-std::cout << "en" << std::endl;
 			enabled = true;
 		}
 
-std::cout << "2" << std::endl;
 		return true;
 	}
 

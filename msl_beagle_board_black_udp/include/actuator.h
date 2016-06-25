@@ -34,7 +34,8 @@ const char *OF_pins[] = { "P9_30", "P9_25", "P9_27", "P9_12" };
 IMU				lsm9ds0(IMU_pins, &myI2C);		/* magnet, accel, temp, gyro Interrupt-Pins */
 OpticalFlow		adns3080(OF_pins, &mySpi);	/* ncs, npd, rst, led */
 LightBarrier	lightbarrier(AIN0);
-ShovelSelect	shovel(BeaglePWM::P9_14);
+ShovelSelect	shovel(P9_14);
+//ShovelSelect	shovel(BeaglePWM::P9_14);
 
 timeval			time_now;
 timeval			last_ping;

@@ -12,18 +12,24 @@
 #include <sys/time.h>
 #include <BeaglePWM.h>
 
+#include "BlackDef.h"
+#include "BlackPWM.h"
+
 class ShovelSelect
 {
 public:
-	ShovelSelect(BeaglePWM::PwmPin pwm_name);
+	ShovelSelect(BlackLib::pwmName pwm_P);
+// API Stuff	ShovelSelect(BeaglePWM::PwmPin pwm_name);
 	~ShovelSelect();
 
 	bool checkTimeout(timeval time);
 	bool setShovel(bool passing, timeval time_now);
 
 private:
+/* API
 	BeaglePWM *pwm;
-	BeaglePWM::PwmPin pwm_pin;
+	BeaglePWM::PwmPin pwm_pin; */
+	BlackLib::BlackPWM* pwm;
 
 	bool enabled;
 	bool init;
