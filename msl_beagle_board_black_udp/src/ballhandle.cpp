@@ -123,11 +123,14 @@ void BallHandle::dribbleControl() {
 
 	leftMotor->setSpeed(speedL);
 	rightMotor->setSpeed(speedR);
+
+	printf("DribbleControl:  Left: %i  -  Right: %i", speedL, speedR);
 }
 
 void BallHandle::setBallHandling(int32_t speedL, int32_t speedR) {
 	leftMotor->setSpeed(speedL);
 	rightMotor->setSpeed(speedR);
+	printf("REMOTE:  Left: %i  -  Right: %i", speedL, speedR);
 }
 
 void BallHandle::ping() {
@@ -138,7 +141,7 @@ void BallHandle::checkTimeout() {
 	// Deactivates the BallHandling when controlBallHandling() is called next time
 	timeval	t;
 	gettimeofday(&t, NULL);
-	if (TIMEDIFFMS(t, last_ping) > BallHandle_TIMEOUT) {
+	if (TIMEDIFFMS(t, last_ping) > timeout) {
 		this->setBallHandling(0, 0);
 	}
 }

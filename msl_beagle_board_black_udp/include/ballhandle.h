@@ -45,6 +45,7 @@ private:
 	double speedX = 0;
 	double speedY = 0;
 
+	int timeout = 1000;
 	double handlerSpeedSummand = 0;
 	double handlerSpeedFactor = 0.0;
 	double speedNoBall = 0.0;
