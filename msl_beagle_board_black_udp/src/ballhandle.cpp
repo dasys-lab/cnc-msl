@@ -55,6 +55,7 @@ void BallHandle::readConfigParameters() {
 }
 
 void BallHandle::setOdometryData(double newAngle, double newTranslation) {
+	printf("OdometryInfo is set\n");
 	angle = newAngle;
 	translation = newTranslation;
 }

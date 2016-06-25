@@ -42,7 +42,7 @@
 #include "std_msgs/Bool.h"
 #include "msl_actuator_msgs/CanMsg.h"
 #include "msl_actuator_msgs/IMUData.h"
-#include "msl_actuator_msgs/OdometryInfo.h"
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 
 using boost::asio::ip::udp;
 
@@ -101,7 +101,7 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 	}
 }
 
-void handleOdometryInfo(const msl_actuator_msgs::OdometryInfo msg) {
+void handleRawOdometryInfo(const msl_actuator_msgs::RawOdometryInfo msg) {
 	ballHandle.setOdometryData(msg.motion.angle, msg.motion.translation);
 }
 
@@ -128,16 +128,14 @@ uint8_t* buffer = NULL;
 	}
 	if(buffer!=NULL) delete[] buffer;
 }
-void onRosBallHandleMode297244167(const ros::MessageEvent<msl_actuator_msgs::BallHandleMode>& event) {
-	if(0 == event.getPublisherName().compare(ownRosName)) return;
+void onRosBallHandleMode297244167(msl_actuator_msgs::BallHandleMode& message) {
 uint8_t* buffer = NULL;
-	const msl_actuator_msgs::BallHandleMode::ConstPtr& message = event.getMessage();
 	try{
-		uint32_t serial_size = ros::serialization::serializationLength(*message);
+		uint32_t serial_size = ros::serialization::serializationLength(message);
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
 		*((uint32_t*)buffer) = 297244167u;
-		ros::serialization::serialize(stream, *message);
+		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
 	} catch(std::exception& e) {
@@ -235,16 +233,14 @@ uint8_t* buffer = NULL;
 	}
 	if(buffer!=NULL) delete[] buffer;
 }
-void onRosOdometryInfo333787094(const ros::MessageEvent<msl_actuator_msgs::OdometryInfo>& event) {
-	if(0 == event.getPublisherName().compare(ownRosName)) return;
+void onRosRawOdometryInfo3134514216(msl_actuator_msgs::RawOdometryInfo& message) {
 uint8_t* buffer = NULL;
-	const msl_actuator_msgs::OdometryInfo::ConstPtr& message = event.getMessage();
 	try{
-		uint32_t serial_size = ros::serialization::serializationLength(*message);
+		uint32_t serial_size = ros::serialization::serializationLength(message);
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
-		*((uint32_t*)buffer) = 333787094u;
-		ros::serialization::serialize(stream, *message);
+		*((uint32_t*)buffer) = 3134514216u;
+		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
 	} catch(std::exception& e) {
@@ -388,10 +384,10 @@ void handleUdpPacket(const boost::system::error_code& error,   std::size_t bytes
 //				ros::serialization::Serializer<std_msgs::Bool>::read(stream, m2802967882);
 //				pub2802967882.publish<std_msgs::Bool>(m2802967882);
 				break; }
-				case 333787094ul: {
-				msl_actuator_msgs::OdometryInfo m333787094;
-				ros::serialization::Serializer<msl_actuator_msgs::OdometryInfo>::read(stream, m333787094);
-				handleOdometryInfo(m333787094);
+				case 3134514216ul: {
+				msl_actuator_msgs::RawOdometryInfo m3134514216;
+				ros::serialization::Serializer<msl_actuator_msgs::RawOdometryInfo>::read(stream, m3134514216);
+				handleRawOdometryInfo(m3134514216);
 				break; }
 				case 1267609526ul: {
 //				msl_actuator_msgs::CanMsg m1267609526;
