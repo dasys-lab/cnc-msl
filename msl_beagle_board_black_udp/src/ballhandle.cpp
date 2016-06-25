@@ -39,6 +39,19 @@ void BallHandle::readConfigParameters() {
 	slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
 	curveRotationFactor = (*sys)["Actuation"]->get<double>("Dribble.CurveRotationFactor", NULL);
 	orthoDriveFactor = (*sys)["Actuation"]->get<double>("Dribble.OrthoDriveFactor", NULL);
+
+	shared_ptr < vector<string> > speedsSections = (*sys)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+	vector<double> robotSpeed(speedsSections->size());
+	vector<double> actuatorSpeed(speedsSections->size());
+	int i = 0;
+	for (string subsection : *speedsSections)
+	{
+		robotSpeed[i] = (*sys)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed", NULL);
+		actuatorSpeed[i] = (*sys)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "actuatorSpeed", NULL);
+		cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+		i++;
+	}
+	forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
 }
 
 void BallHandle::setOdometryData(double newAngle, double newTranslation) {
