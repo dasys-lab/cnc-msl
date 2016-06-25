@@ -576,7 +576,6 @@
           <property name="acceptDrops">
            <bool>true</bool>
           </property>
-          <zorder>Group_RobotFilter</zorder>
          </widget>
         </item>
        </layout>
@@ -689,16 +688,37 @@
             <widget class="QComboBox" name="robotSelector"/>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkVisible">
+            <widget class="QCheckBox" name="checkVis">
              <property name="text">
-              <string>Visible</string>
+              <string>Visualization</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkPathPlaner">
+            <widget class="QCheckBox" name="checkPp">
              <property name="text">
               <string>PathPlanner</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkCorr">
+             <property name="text">
+              <string>Corridor</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkVoronoi">
+             <property name="text">
+              <string>Voronoi</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkSites">
+             <property name="text">
+              <string>Sites</string>
              </property>
             </widget>
            </item>
