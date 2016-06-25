@@ -21,6 +21,8 @@ BallHandle::BallHandle() {
 
 	rightMotor = new Motor(BeaglePWM::P8_19, BH_right_pins, maxSpeed);
 	leftMotor = new Motor(BeaglePWM::P8_13, BH_left_pins, maxSpeed);
+	
+	readConfigParameters();
 }
 
 BallHandle::~BallHandle() {
@@ -124,13 +126,13 @@ void BallHandle::dribbleControl() {
 	leftMotor->setSpeed(speedL);
 	rightMotor->setSpeed(speedR);
 
-	printf("DribbleControl:  Left: %i  -  Right: %i", speedL, speedR);
+	printf("DribbleControl:  Left: %i  -  Right: %i\n", speedL, speedR);
 }
 
 void BallHandle::setBallHandling(int32_t speedL, int32_t speedR) {
 	leftMotor->setSpeed(speedL);
 	rightMotor->setSpeed(speedR);
-	printf("REMOTE:  Left: %i  -  Right: %i", speedL, speedR);
+	printf("REMOTE:  Left: %i  -  Right: %i\n", speedL, speedR);
 }
 
 void BallHandle::ping() {

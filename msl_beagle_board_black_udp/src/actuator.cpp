@@ -468,9 +468,9 @@ void controlBallHandle() {
 }
 
 void contolShovelSelect() {
-	unique_lock<mutex> l_shovel(threw[2].mtx);
+	unique_lock<mutex> l_shovel(threw[1].mtx);
 	while(th_activ) {
-		threw[2].cv.wait(l_shovel, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
+		threw[1].cv.wait(l_shovel, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -480,15 +480,15 @@ void contolShovelSelect() {
 			cout << "Shovel: " << e.what() << endl;
 		}
 
-		threw[2].notify = false;
+		threw[1].notify = false;
 	}
 }
 
 void getLightbarrier() {
 	std_msgs::Bool msg;
-	unique_lock<mutex> l_light(threw[3].mtx);
+	unique_lock<mutex> l_light(threw[2].mtx);
 	while(th_activ) {
-		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
+		threw[2].cv.wait(l_light, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -500,7 +500,7 @@ void getLightbarrier() {
 			cout << "ADC: " << e.what() << endl;
 		}
 
-		threw[3].notify = false;
+		threw[2].notify = false;
 	}
 }
 
@@ -519,9 +519,9 @@ void getSwitches() {
 	int outputIdxs[] = { led_power, led_bundle, led_vision };
 	pins->enableOutput(outputIdxs, 3);
 
-	unique_lock<mutex> l_switches(threw[4].mtx);
+	unique_lock<mutex> l_switches(threw[3].mtx);
 	while(th_activ) {
-		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
+		threw[3].cv.wait(l_switches, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -599,15 +599,15 @@ void getSwitches() {
 			}
 		}
 
-		threw[4].notify = false;
+		threw[3].notify = false;
 	}
 	delete gpio;
 }
 
 void getIMU() {
-	unique_lock<mutex> l_imu(threw[5].mtx);
+	unique_lock<mutex> l_imu(threw[4].mtx);
 	while(th_activ) {
-		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
+		threw[4].cv.wait(l_imu, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -620,7 +620,7 @@ void getIMU() {
 			cout << "IMU: " << e.what() << endl;
 		}
 
-		threw[5].notify = false;
+		threw[4].notify = false;
 	}
 }
 
@@ -692,7 +692,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<6; i++) { // TODO remove magic number
+		for (int i=0; i<5; i++) { // TODO remove magic number
 			if (threw[i].notify) {
 				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
 			} else {
