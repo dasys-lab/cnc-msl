@@ -14,7 +14,7 @@
 #include "clock/AlicaROSClock.h"
 #include "communication/AlicaRosCommunication.h"
 #include "SigFault.h"
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "SolverType.h"
 #include "CGSolver.h"
 

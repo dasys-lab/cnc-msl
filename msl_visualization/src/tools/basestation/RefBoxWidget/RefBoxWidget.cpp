@@ -64,7 +64,7 @@ RefBoxWidget::RefBoxWidget(QWidget * parent)
 	connect(Their_Penalty_bot, SIGNAL(clicked()), this, SLOT(TheirPenaltyPressed()));
 
 	connect(Joystick_bot, SIGNAL(clicked()), this, SLOT(JoystickPressed()));
-	
+
 
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(updateStateInfo()));
 

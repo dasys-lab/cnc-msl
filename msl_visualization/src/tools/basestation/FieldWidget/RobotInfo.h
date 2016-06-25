@@ -47,6 +47,8 @@ public:
 
 	int getId() const;
 	void setId(int id);
+	std::string getName() const;
+	void setName(std::string name);
 
 	std::shared_ptr<RobotVisualization> getVisualization();
 
@@ -79,6 +81,7 @@ public:
 
 private:
 	int id;
+	std::string name;
 	unsigned long timeStamp;
         unsigned long pathPlannerMsgTimeStamp;
         unsigned long voronoiNetMsgTimeStamp;

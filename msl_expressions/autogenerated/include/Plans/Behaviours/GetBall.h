@@ -6,6 +6,7 @@
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include <container/CNVelocity2D.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
 using namespace msl;
 /*PROTECTED REGION END*/
 namespace alica
@@ -29,6 +30,7 @@ namespace alica
         int isMovingAwayIter;
         int maxIter;
         double timeForPass;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1414828300860) ENABLED START*/ //Add additional private methods here

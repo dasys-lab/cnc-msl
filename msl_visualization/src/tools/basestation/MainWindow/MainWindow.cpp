@@ -38,7 +38,7 @@ MWind::MWind(QMainWindow *parent)
 
 	plt.setColor(QPalette::Foreground, color);
 
-	Group_T->setPalette(plt);
+	Group_RobotFilter->setPalette(plt);
 	Group_RB->setPalette(plt);
 
 	fullinfowindow = new QMainWindow;
@@ -46,8 +46,6 @@ MWind::MWind(QMainWindow *parent)
 	/* inicialização das variáveis */
 	mwind = parent;
 	fullscreenflag = 0;
-
-	GoalColorCombo->setCurrentIndex(1);
 
 	QString str;
 	QString rm = "Role";
@@ -59,8 +57,6 @@ MWind::MWind(QMainWindow *parent)
 	connect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
 	connect(actionQuit, SIGNAL(triggered()), parent, SLOT(close()));
 	connect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
-	connect(TeamColorCombo, SIGNAL(activated ( int)), this, SLOT(TeamColorChanged(int)));
-	connect(GoalColorCombo, SIGNAL(activated ( int)), this, SLOT(GoalColorChanged(int)));
 	connect(actionLock, SIGNAL(toggled(bool)), FieldW, SLOT(lock(bool)));
 	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameTime()));
 	connect(RefBoxWG, SIGNAL(changeGoalColor (int)), this, SLOT(GoalColorChanged(int)));
@@ -76,10 +72,14 @@ MWind::MWind(QMainWindow *parent)
 	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
 	connect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 
+	// Robot filtering
+
+
 	/* instalar o filtro de eventos */
 	parent->installEventFilter(this);
 
 	TeamColorChanged(0);
+	RobotVisChanged(0, 1);
 	GoalColorChanged(1);
 
 	UpdateTimer->start(10);
@@ -126,8 +126,6 @@ MWind::~MWind()
 	// Disconnect
 	disconnect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
 	disconnect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
-	disconnect(TeamColorCombo, SIGNAL(activated ( int)), this, SLOT(TeamColorChanged(int)));
-	disconnect(GoalColorCombo, SIGNAL(activated ( int)), this, SLOT(GoalColorChanged(int)));
 	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
 	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
 	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
@@ -163,8 +161,22 @@ void MWind::TeamColorChanged(int team)
 		plt.setColor(QPalette::Button, Cy);
 	}
 
-	TeamColorCombo->setPalette(plt);
 
+}
+
+void MWind::RobotVisChanged(int team, int robot_id)
+{
+	QColor Mag = QColor::fromRgb(222, 111, 161, 255); //Qt::magenta;//
+	QColor Cy = QColor::fromRgb(128, 160, 191, 255);
+	QPalette plt;
+
+/*	for (int robots = 0; robots < robotCount; robots++)
+	{
+		plt.setColor(QPalette::Button, robots);
+	}
+
+	RobotVisCombo->setPalette(plt);
+*/
 }
 
 void MWind::GoalColorChanged(int goal)
@@ -183,8 +195,6 @@ void MWind::GoalColorChanged(int goal)
 		plt.setColor(QPalette::Button, Bl);
 	}
 
-	GoalColorCombo->setPalette(plt);
-	GoalColorCombo->setCurrentIndex(goal);
 }
 
 bool MWind::eventFilter(QObject *obj, QEvent *event)

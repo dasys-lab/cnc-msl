@@ -5,7 +5,9 @@ using namespace std;
 #include "GeometryCalculator.h"
 #include <Ball.h>
 #include <RawSensorData.h>
-#include <Kicker.h>
+#include <MSLWorldModel.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -79,7 +81,7 @@ namespace alica
         }
 
         double aimAngle = aimPoint->angleTo();
-        double ballAngle = wm->kicker->kickerAngle;
+        double ballAngle = this->robot->kicker->kickerAngle;
 
         double deltaAngle = -geometry::deltaAngle(aimAngle, ballAngle);
         if (dstscan != nullptr)

@@ -1,25 +1,3 @@
-/*
- * $Id: FootballField.h 1531 2006-08-01 21:36:57Z phbaer $
- *
- *
- * Copyright 2005,2006 Carpe Noctem, Distributed Systems Group,
- * University of Kassel. All right reserved.
- *
- * The code is derived from the software contributed to Carpe Noctem by
- * the Carpe Noctem Team.
- *
- * The code is licensed under the Carpe Noctem Userfriendly BSD-Based
- * License (CNUBBL). Redistribution and use in source and binary forms,
- * with or without modification, are permitted provided that the
- * conditions of the CNUBBL are met.
- *
- * You should have received a copy of the CNUBBL along with this
- * software. The license is also available on our website:
- * http://carpenoctem.das-lab.net/license.txt
- *
- *
- * <description>
- */
 #ifndef MSLFootballField_H
 #define MSLFootballField_H
 
@@ -69,9 +47,10 @@
 //                                                                    Y            T
 //                             O  U  R    S  I  D  E                 < W I D T H > v
 //
-// OppGoal angle 0
-// truning left positive angle
-// turning right negative angle
+// OppGoal angle 0°
+// turning left/counter-clock wise -> positive angle
+// turning right/clock wise -> negative angle
+//
 // Point2D 0    = PosCenterMarker
 // Point2D 1    = PosLeftOwnFieldPost
 // Point2D 2    = PosRightOwnFieldPost
@@ -115,35 +94,40 @@ namespace msl
 
 		MSLFootballField(MSLWorldModel* wm);
 		virtual ~MSLFootballField();
-//		static MSLFootballField * getInstance();
 
 		bool isInsideField(shared_ptr<geometry::CNPoint2D> point, double tolerance = 0);
         bool isInsideField(double x, double y, double tolerance = 0);
 
-		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 		bool isInsidePenalty (shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOwnPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOppPenalty(shared_ptr<geometry::CNPoint2D> p, double tolerance);
 
+		bool isInsideGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOwnGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+		bool isInsideOppGoalArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
+
+		shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp);
 		shared_ptr<geometry::CNPoint2D> mapOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> inp,
 																shared_ptr<geometry::CNPoint2D> alongVec);
-		shared_ptr<geometry::CNPoint2D> mapOutOfPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppPenalty(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppPenalty(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
+
+		shared_ptr<geometry::CNPoint2D> mapOutOfOwnGoalArea(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapOutOfOppGoalArea(shared_ptr<geometry::CNPoint2D> inp);
+
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
 		shared_ptr<geometry::CNPoint2D> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPoint2D> inp);
+
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp);
+		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, double tolerance);
 		shared_ptr<geometry::CNPoint2D> mapInsideField(shared_ptr<geometry::CNPoint2D> inp, shared_ptr<geometry::CNPoint2D> alongVec);
-		bool isInsideOwnKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		bool isInsideKeeperArea(shared_ptr<geometry::CNPoint2D> p, double tolerance);
-		shared_ptr<geometry::CNPoint2D> mapOutOfOwnKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
-		shared_ptr<geometry::CNPoint2D> mapOutOfEnemyKeeperArea(shared_ptr<geometry::CNPoint2D> inp);
+
 		shared_ptr<geometry::CNPoint2D> keepOutOfOwnPenalty(shared_ptr<geometry::CNPoint2D> from, shared_ptr<geometry::CNPoint2D> to);
 		double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle);
 		double distanceToLine(shared_ptr<geometry::CNPoint2D> from, double angle, double extendFieldLines);
 
+		//  --------- POINTS ---------
 
 		shared_ptr<geometry::CNPoint2D> posCenterMarker(); // see no. 0
 
@@ -223,6 +207,8 @@ namespace msl
 		double MaxDistance;
 		double MaxDistanceSqr;
 		string CurrentField;
+		shared_ptr<geometry::CNPoint2D> mapInsideArea(shared_ptr<geometry::CNPoint2D> inp , double xline, double yline);
+		shared_ptr<geometry::CNPoint2D> mapOutsideArea(shared_ptr<geometry::CNPoint2D> inp , double xline, double yline);
 
 	protected:
 

@@ -22,7 +22,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1427703218101) ENABLED START*/ //Add additional private methods here
         double interceptCarfullyRotateP;
         double defaultTranslation;
-        void readConfigParameters();
+        double catchRadius;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

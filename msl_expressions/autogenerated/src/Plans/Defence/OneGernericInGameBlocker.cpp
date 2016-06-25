@@ -2,13 +2,15 @@ using namespace std;
 #include "Plans/Defence/OneGernericInGameBlocker.h"
 
 /*PROTECTED REGION ID(inccpp1458034268108) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
+#include <msl_helper_msgs/DebugMsg.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,6 +29,7 @@ namespace alica
         teamMatePlanName = "";
         ep = nullptr;
         teamMateId = 0;
+        movQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     OneGernericInGameBlocker::~OneGernericInGameBlocker()
@@ -37,6 +40,7 @@ namespace alica
     void OneGernericInGameBlocker::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458034268108) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > ballPos = wm->ball->getEgoBallPosition();
@@ -137,11 +141,26 @@ namespace alica
 
         if (avoidBall)
         {
-            mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotCareBall(driveTo, ballPos, maxVel);
+
+            movQuery->egoDestinationPoint = driveTo;
+            movQuery->egoAlignPoint = ballPos;
+            mc = rm.moveToPoint(movQuery);
+            if (driveTo->length() < 100)
+            {
+                mc.motion.translation = 0;
+            }
+
         }
         else
         {
-            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+            // replaced method with new moveToPoint method
+//            mc = msl::RobotMovement::placeRobotAggressive(driveTo, ballPos, maxVel);
+            movQuery->egoDestinationPoint = driveTo;
+            movQuery->egoAlignPoint = ballPos;
+            movQuery->fast = true;
+            mc = rm.moveToPoint(movQuery);
         }
 
         send(mc);

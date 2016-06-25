@@ -2,9 +2,9 @@ using namespace std;
 #include "Plans/GenericBehaviours/InterceptCarefully.h"
 
 /*PROTECTED REGION ID(inccpp1427703218101) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
-#include "pathplanner/PathProxy.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <pathplanner/PathProxy.h>
+#include <pathplanner/evaluator/PathEvaluator.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
@@ -16,6 +16,9 @@ namespace alica
             DomainBehaviour("InterceptCarefully")
     {
         /*PROTECTED REGION ID(con1427703218101) ENABLED START*/ //Add additional options here
+        interceptCarfullyRotateP = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
+        defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
+        catchRadius = (*sc)["Drive"]->get<double>("Drive.Carefully.CatchRadius", NULL);
         /*PROTECTED REGION END*/
     }
     InterceptCarefully::~InterceptCarefully()
@@ -26,61 +29,32 @@ namespace alica
     void InterceptCarefully::run(void* msg)
     {
         /*PROTECTED REGION ID(run1427703218101) ENABLED START*/ //Add additional options here
-        auto me = wm->rawSensorData->getOwnPositionVision();
-        auto egoBallPos = wm->ball->getEgoBallPosition();
-        msl_actuator_msgs::MotionControl mc;
-        if (me == nullptr || egoBallPos == nullptr)
+        auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
+        auto egoTarget = this->wm->ball->getEgoBallPosition();
+
+        if (ownPos == nullptr || egoTarget == nullptr)
         {
-            send(mc);
             return;
         }
 
-        shared_ptr < geometry::CNPoint2D > egoTarget;
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint;
-        double snapDistance;
+        auto eval = make_shared<msl::PathEvaluator>();
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
-
-//		MotionControl mc;
-        if (egoTarget->length() > 400)
+        if (auto pathPlanningResult = msl::PathProxy::getInstance()->getEgoDirection(egoTarget, eval, additionalPoints))
         {
-//			MSLWorldModel* wm = MSLWorldModel::get();
+            egoTarget = pathPlanningResult;
+        }
 
-            shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
-            shared_ptr < geometry::CNPoint2D > temp = msl::PathProxy::getInstance()->getEgoDirection(egoTarget, eval,
-                                                                                                     additionalPoints);
-            if (temp == nullptr)
-            {
-                cout << "InterceptCarefully::getEgoDirection == nullptr => ownPos not available" << endl;
-                temp = egoTarget;
-            }
-            mc.motion.angle = temp->angleTo();
-            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
-            if (egoTarget->length() > snapDistance)
-            {
-                mc.motion.translation = min(defaultTranslation, temp->length());
-            }
-            else
-            {
-                mc.motion.translation = 0;
-            }
-//			return mc;
+        msl_actuator_msgs::MotionControl mc;
+        mc.motion.angle = egoTarget->angleTo();
+        mc.motion.rotation = egoTarget->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
+        if (egoTarget->length() > this->catchRadius)
+        {
+            mc.motion.translation = min(defaultTranslation, egoTarget->length());
         }
         else
         {
-            mc.motion.angle = egoTarget->angleTo();
-            mc.motion.rotation = egoAlignPoint->rotate(M_PI)->angleTo() * interceptCarfullyRotateP;
-            if (egoTarget->length() > snapDistance)
-            {
-                mc.motion.translation = min(defaultTranslation, egoTarget->length());
-            }
-            else
-            {
-                mc.motion.translation = 0;
-            }
-//			return mc;
+            mc.motion.translation = 0;
         }
-
-//        mc = msl::RobotMovement::interceptCarefully(egoBallPos, egoBallPos, 100, nullptr);
 
         send(mc);
         /*PROTECTED REGION END*/
@@ -90,12 +64,6 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1427703218101) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
-    /*PROTECTED REGION ID(methods1427703218101) ENABLED START*/ //Add additional methods here
-    void InterceptCarefully::readConfigParameters()
-    {
-        interceptCarfullyRotateP = (*sc)["Drive"]->get<double>("Drive.Carefully.RotateP", NULL);
-        defaultTranslation = (*sc)["Drive"]->get<double>("Drive.Default.Velocity", NULL);
-    }
-
+/*PROTECTED REGION ID(methods1427703218101) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

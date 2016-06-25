@@ -3,6 +3,9 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1464189819779) ENABLED START*/ //Add additional includes here
 #include "RawSensorData.h"
+#include "Game.h"
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,8 +20,7 @@ namespace alica
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
         post = (*this->sc)["Behaviour"]->get < string > ("Goalie.PostSide", NULL);
 
-        auto tempMid = wm->field->posOwnGoalMid();
-        alloGoalMid = make_shared < geometry::CNPoint2D > (tempMid->x, tempMid->y);
+        alloGoalMid = wm->field->posOwnGoalMid();
         alloGoalLeft = make_shared < geometry::CNPoint2D
                 > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
         alloGoalRight = make_shared < geometry::CNPoint2D
@@ -28,6 +30,7 @@ namespace alica
         dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
 
         prevTargetDist = 0;
+        startTime = -1;
         /*PROTECTED REGION END*/
     }
     DriveToPost::~DriveToPost()
@@ -38,16 +41,20 @@ namespace alica
     void DriveToPost::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464189819779) ENABLED START*/ //Add additional options here
+        if (wm->game->checkSituation(msl::Situation::Start) && startTime == -1)
+        {
+            startTime = wm->getTime();
+        }
         shared_ptr < geometry::CNPoint2D > targetPost;
         ownPos = wm->rawSensorData->getOwnPositionVision();
         if (post.compare("Left") == 0)
         {
-            cout << "[DriveToPost] driving to left Post.";
+//			cout << "[DriveToPost] driving to left Post.";
             targetPost = alloGoalLeft;
         }
         else if (post.compare("Right") == 0)
         {
-            cout << "[DriveToPost] driving to right Post.";
+//			cout << "[DriveToPost] driving to right Post.";
             targetPost = alloGoalRight;
         }
         else
@@ -56,24 +63,33 @@ namespace alica
             return;
         }
 
-        cout << "Remaining distance: " << prevTargetDist << endl;
         if (targetPost->alloToEgo(*ownPos)->length() > snapDistance)
         {
+            cout << "### [DriveToPost] ###" << endl;
+            cout << "Remaining distance: " << prevTargetDist << endl;
+
             ownPos = wm->rawSensorData->getOwnPositionVision();
             mc.motion.angle = targetPost->alloToEgo(*ownPos)->angleTo();
-            //rotate(make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y));
             mc.motion.translation = std::min(
                     alignMaxVel,
                     (targetPost->alloToEgo(*ownPos)->length() * pTrans)
                             + ((targetPost->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
             prevTargetDist = targetPost->alloToEgo(*ownPos)->length();
+            cout << endl;
         }
         else
         {
-            cout << "[DriveToPost] Arrived at" << post << "post" << endl;
             mc.motion.translation = 0;
-            this->setSuccess(true);
-            // TODO: goalie should stop!
+            long int endTime = wm->getTime();
+            long int time = endTime - startTime;
+
+            if (time > 0)
+            {
+                cout << "[DriveToPost] Arrived at" << post << "post" << endl;
+                cout << "[DriveToPost] startTime: " << startTime << " endTime: " << endTime << endl;
+                cout << "[DriveToPost] Time to Post: " << time / 1000000000.0 << endl;
+            }
+            startTime = -1;
         }
         send (mc);
         /*PROTECTED REGION END*/

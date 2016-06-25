@@ -281,6 +281,11 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 //########################################## Stuff ###############################################
 //################################################################################################
 
+bool robotIsVisible[7] = {false};
+int robotIndex[101] = {0};
+string robotNames[101] = {};
+int selectedRobot = 0;
+
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
 		QVTKWidget(parent)
 {
@@ -371,6 +376,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	top = false;
 
 	Update_timer->start(33);
+
 }
 
 pair<double, double> FieldWidget3D::transformToGuiCoords(double x, double y)
@@ -387,11 +393,40 @@ void FieldWidget3D::update_robot_info(void)
 
 	for (auto robot : robots)
 	{
-		if (robot->isTimeout())
+		int selectedIndex = mainWindow->robotSelector->currentIndex();
+
+		if (selectedRobot != selectedIndex)
+		{
+			selectedRobot = selectedIndex;
+			if (selectedIndex == 0)
+			{
+				robotIsVisible[0] = true;
+				for (int i=1;i<mainWindow->robotSelector->count();i++)
+				{
+					if (!robotIsVisible[i]) robotIsVisible[0] = false;
+				}
+			}
+			mainWindow->checkVisible->setChecked(robotIsVisible[selectedIndex]);
+		}
+
+		if (robotIsVisible[selectedIndex] != mainWindow->checkVisible->checkState())
+		{
+			if (selectedIndex == 0)
+			{
+				for (int i=0;i<7;i++) robotIsVisible[i] = mainWindow->checkVisible->checkState();
+			} else
+			robotIsVisible[selectedIndex] = mainWindow->checkVisible->checkState();
+
+		}
+
+        if (robot->isTimeout() || !robotIsVisible[robotIndex[robot->getId()]])
 		{
 		        robot->getVisualization()->remove(this->renderer);
+
                         continue;
 		}
+
+//        robotIsVisible
 
 		robot->getVisualization()->updatePosition(this->renderer);
                 robot->getVisualization()->updateBall(this->renderer);
@@ -402,9 +437,10 @@ void FieldWidget3D::update_robot_info(void)
                 robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
                 robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
                 robot->getVisualization()->updatePassMsg(this->renderer);
+
 	}
 
-	if (!this->GetRenderWindow()->CheckInRenderStatus())
+    if (!this->GetRenderWindow()->CheckInRenderStatus())
 	{
 		this->GetRenderWindow()->Render();
 	}
@@ -1016,6 +1052,7 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
                 {
                         return element;
                 }
+
         }
 
         shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>(this);
@@ -1023,6 +1060,31 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         robots.push_back(robotInfo);
 
         robotInfo->getVisualization()->init(this->renderer, id);
+
+        int robotCount = mainWindow->robotSelector->count();
+        if (robotCount == 0)
+        {
+        	robotNames[0]= "ALL";
+        	robotNames[1]= "Mops";
+        	robotNames[8]= "Hairy";
+        	robotNames[9]= "Nase";
+        	robotNames[10]= "Savvy";
+        	robotNames[11]= "Myo";
+        	robotNames[100]= "Brain";
+
+        	mainWindow->robotSelector->addItem(QString::fromStdString(robotNames[0]), 0);
+        	mainWindow->robotSelector->setCurrentIndex(0);
+        	robotIsVisible[0] = true;
+			mainWindow->checkVisible->setChecked(true);
+        	robotIndex[0] = 0;
+            robotCount++;
+        }
+
+        robotIndex[id] = robotCount;
+        string robotName = robotNames[id];
+        QString robotStr = QString::fromStdString(robotName+" ("+boost::lexical_cast<std::string>(id)+")");
+        mainWindow->robotSelector->addItem(robotStr, id);
+        robotIsVisible[robotCount] = true;
 
         return robotInfo;
 }
@@ -1045,6 +1107,7 @@ void FieldWidget3D::onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedW
         lock_guard<mutex> lock(swmMutex);
 
         auto robot = this->getRobotById(info->senderID);
+
         robot->setSharedWorldInfo(info);
         robot->updateTimeStamp();
 }

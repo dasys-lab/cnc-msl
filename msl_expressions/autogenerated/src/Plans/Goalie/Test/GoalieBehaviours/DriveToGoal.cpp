@@ -2,8 +2,10 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 /*PROTECTED REGION ID(inccpp1447863424939) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -13,6 +15,15 @@ namespace alica
             DomainBehaviour("DriveToGoal")
     {
         /*PROTECTED REGION ID(con1447863424939) ENABLED START*/ //Add additional options here
+        goalInitPos = (*this->sc)["Behaviour"]->get < string > ("Goalie.GoalInitPosition", NULL);
+        goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
+        alloGoalMid = wm->field->posOwnGoalMid();
+        alloGoalLeft = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+        alloGoalRight = make_shared < geometry::CNPoint2D
+                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     DriveToGoal::~DriveToGoal()
@@ -23,6 +34,8 @@ namespace alica
     void DriveToGoal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1447863424939) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         cout << "### DriveToGoal ###" << endl;
         shared_ptr < geometry::CNPosition > me;
         double alloTargetX, alloTargetY;
@@ -40,36 +53,47 @@ namespace alica
         }
         else
         {
-            /*if (simulating < 0)
-             {
-             alloTargetX = MSLFootballField::posOwnGoalMid()->x - 100;
-             alloTargetY = MSLFootballField::posOwnGoalMid()->y;
-             }
-             else
-             {
-             alloTargetX = MSLFootballField::posOppGoalMid()->x + 100;
-             alloTargetY = MSLFootballField::posOppGoalMid()->y;
-
-             }*/
-
-            alloTargetX = wm->field->posOwnGoalMid()->x - 100;
-            alloTargetY = wm->field->posOwnGoalMid()->y;
+            if (goalInitPos.compare("Left") == 0)
+            {
+                alloTargetX = alloGoalLeft->x - 100;
+                alloTargetY = alloGoalLeft->y;
+            }
+            else if (goalInitPos.compare("Right") == 0)
+            {
+                alloTargetX = alloGoalRight->x - 100;
+                alloTargetY = alloGoalRight->y;
+            }
+            else
+            {
+                alloTargetX = alloGoalMid->x - 100;
+                alloTargetY = alloGoalMid->y;
+            }
 
             alloTarget = make_shared < geometry::CNPoint2D > (alloTargetX, alloTargetY);
             alloFieldCenterAlignPoint = wm->field->posCenterMarker();
 
             cout << " Driving to goal" << endl;
-            mc = RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
-                                                     alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointCarefully(alloTarget->alloToEgo(*me),
+//                                                          alloFieldCenterAlignPoint->alloToEgo(*me), 100, 0);
+            query->egoDestinationPoint = alloTarget->alloToEgo(*me);
+            query->egoAlignPoint = alloFieldCenterAlignPoint->alloToEgo(*me);
+            query->snapDistance = 100;
+
+            mc = rm.moveToPoint(query);
 
             if (me->distanceTo(alloTarget) <= 100)
             {
                 this->setSuccess(true);
             }
-            else
+            else if (!std::isnan(mc.motion.translation))
             {
                 cout << "Distance left: " << me->distanceTo(alloTarget) << endl;
                 send (mc);
+            }
+            else
+            {
+                cout << "Motion command is NaN!" << endl;
             }
             cout << "### DriveToGoal ###\n" << endl;
         }

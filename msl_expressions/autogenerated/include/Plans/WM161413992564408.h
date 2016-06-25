@@ -5,13 +5,7 @@
 #include "engine/BasicUtilityFunction.h"
 #include "engine/UtilityFunction.h"
 #include "engine/DefaultUtilityFunction.h"
-/*PROTECTED REGION ID(incl1413992564408) ENABLED START*/
-//Add inlcudes here
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-#include <MSLWorldModel.h>
-
-using namespace msl;
+/*PROTECTED REGION ID(incl1413992564408) ENABLED START*/ //Add inlcudes here
 /*PROTECTED REGION END*/
 using namespace alica;
 

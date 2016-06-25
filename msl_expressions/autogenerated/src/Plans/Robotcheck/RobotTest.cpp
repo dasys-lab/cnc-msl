@@ -2,8 +2,12 @@ using namespace std;
 #include "Plans/Robotcheck/RobotTest.h"
 
 /*PROTECTED REGION ID(inccpp1456756113767) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/KickControl.h>
+#include <msl_actuator_msgs/ShovelSelectCmd.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

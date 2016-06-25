@@ -104,10 +104,12 @@ namespace msl_refbox
 		tmp = msg->odom.position.x;
 		msg->odom.position.x = -msg->odom.position.y / 1000.0;
 		msg->odom.position.y = tmp / 1000.0;
-		msg->odom.position.angle += M_PI / 2.0;
-		normalizeAngle(msg->odom.position.angle);
-		msg->odom.motion.angle += M_PI / 2.0;
-		normalizeAngle(msg->odom.motion.angle);
+
+		if (msg->odom.position.angle > M_PI)
+			msg->odom.position.angle -= M_PI;
+		else
+			msg->odom.position.angle += M_PI;
+
 		msg->odom.motion.translation /= 1000.0;
 
 		tmp = msg->negotiatedBall.point.x;

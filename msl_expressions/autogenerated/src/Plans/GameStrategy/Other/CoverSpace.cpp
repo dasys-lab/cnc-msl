@@ -2,10 +2,12 @@ using namespace std;
 #include "Plans/GameStrategy/Other/CoverSpace.h"
 
 /*PROTECTED REGION ID(inccpp1455537892946) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <Ball.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
@@ -16,6 +18,7 @@ namespace alica
             DomainBehaviour("CoverSpace")
     {
         /*PROTECTED REGION ID(con1455537892946) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     CoverSpace::~CoverSpace()
@@ -26,6 +29,7 @@ namespace alica
     void CoverSpace::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455537892946) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         auto alloBallPos = wm->ball->getAlloBallPosition();
         if (alloBallPos == nullptr)
         {
@@ -68,8 +72,20 @@ namespace alica
         auto egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
 
         msl_actuator_msgs::MotionControl mc;
-        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
-        send(mc);
+//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoAlignPoint, 100, nullptr);
+        query->egoDestinationPoint = egoTarget;
+        query->egoAlignPoint = egoAlignPoint;
+        query->snapDistance = 100;
+        mc = rm.moveToPoint(query);
+
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "Motion command is NaN!" << endl;
+        }
 
         /*PROTECTED REGION END*/
     }

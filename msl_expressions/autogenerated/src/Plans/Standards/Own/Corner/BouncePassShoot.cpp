@@ -2,11 +2,16 @@ using namespace std;
 #include "Plans/Standards/Own/Corner/BouncePassShoot.h"
 
 /*PROTECTED REGION ID(inccpp1459357144291) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include <msl_robot/robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <msl_robot/MSLRobot.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <RawSensorData.h>
-#include <Kicker.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <MSLFootballField.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -23,6 +28,8 @@ namespace alica
         receiver = nullptr;
         counter = 0;
         driveSlowSpeed = 200.0;
+        query = make_shared<msl::MovementQuery>();
+
         /*PROTECTED REGION END*/
     }
     BouncePassShoot::~BouncePassShoot()
@@ -33,6 +40,8 @@ namespace alica
     void BouncePassShoot::run(void* msg)
     {
         /*PROTECTED REGION ID(run1459357144291) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         ownPos = wm->rawSensorData->getOwnPositionVision(); //WM.OwnPositionCorrected;
         egoBallPos = wm->ball->getEgoBallPosition();
         msl_actuator_msgs::MotionControl mc;
@@ -40,7 +49,7 @@ namespace alica
 
         if (ownPos == nullptr)
         {
-            mc = msl::RobotMovement::driveRandomly(2000.0);
+            mc = rm.driveRandomly(2000.0);
             send(mc);
             return;
         }
@@ -62,7 +71,13 @@ namespace alica
         //this might only need to be WorldHelper.HaveBall
         if (!wm->ball->haveBallDribble(false))
         {
-            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
+            // removed method with new  moveToPoint method with Query-Object
+//            mc = msl::RobotMovement::driveToPointAlignNoAvoidance(egoBallPos, egoMatePos, driveSlowSpeed, true);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoMatePos;
+            mc = rm.moveToPoint(query);
+            mc.motion.translation = driveSlowSpeed;
+
             bhc.leftMotor = 80;
             bhc.rightMotor = 80;
             send(bhc);
@@ -84,7 +99,7 @@ namespace alica
         //double totalDistance = egoMatePos.Distance() + matePos.DistanceTo(centerOppGoal);
         kc.power = 2800; //(ushort)KickHelper.GetKickPowerPass(totalDistance);
         //kc.Kick.Power*=1.2; //potential loss in energy from ball bouncing, check if this should be included or not
-        kc.kicker = wm->kicker->kickerAngle;
+        kc.kicker = this->robot->kicker->kickerAngle;
         if (wm->ball->haveBall() && counter >= 3)
         {
             kc.enabled = true;

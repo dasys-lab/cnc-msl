@@ -2,11 +2,12 @@ using namespace std;
 #include "Plans/Defence/ReleaseMid.h"
 
 /*PROTECTED REGION ID(inccpp1458033482289) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/RunningPlan.h"
 #include "engine/model/AbstractPlan.h"
 #include <Robots.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -24,6 +25,7 @@ namespace alica
         threshold = 0.0;
         yHysteresis = 0.0;
         vMax = 0.0;
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     ReleaseMid::~ReleaseMid()
@@ -34,13 +36,15 @@ namespace alica
     void ReleaseMid::run(void* msg)
     {
         /*PROTECTED REGION ID(run1458033482289) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         shared_ptr < geometry::CNPoint2D > referencePoint = nullptr; // Point we want to align and pos to
         msl_actuator_msgs::MotionControl mc;
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
-            mc = msl::RobotMovement::driveRandomly(500);
+            mc = rm.driveRandomly(500);
             send(mc);
             cout << "AAPR: OwnPos is null" << endl;
             return;
@@ -94,16 +98,26 @@ namespace alica
                 targetPoint->y = referencePoint->y + 500.0;
             }
         }
+        // repaced moveToPointCarefully with new moveToPoint method
+        query->egoDestinationPoint = targetPoint->alloToEgo(*ownPos);
+        query->snapDistance = 50;
         if (egoBallPos != nullptr)
         {
-            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
+//            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos), egoBallPos, 50, nullptr);
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
         }
         else
         {
-            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
-                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
+//            mc = msl::RobotMovement::moveToPointCarefully(targetPoint->alloToEgo(*ownPos),
+//                                                          referencePoint->alloToEgo(*ownPos), 50, nullptr);
+            query->egoAlignPoint = referencePoint->alloToEgo(*ownPos);
+            mc = rm.moveToPoint(query);
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void ReleaseMid::initialiseParameters()
