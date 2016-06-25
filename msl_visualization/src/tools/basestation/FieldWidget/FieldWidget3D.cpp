@@ -281,7 +281,9 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 //########################################## Stuff ###############################################
 //################################################################################################
 
-bool robotIsVisible[7] = {false};
+bool robotVisActive[7] = {false};
+bool robotPpActive[7] = {false};
+bool robotCorrActive[7] = {false};
 int robotIndex[101] = {0};
 string robotNames[101] = {};
 int selectedRobot = 0;
@@ -393,50 +395,74 @@ void FieldWidget3D::update_robot_info(void)
 
 	for (auto robot : robots)
 	{
+		int myId = robot->getId();
 		int selectedIndex = mainWindow->robotSelector->currentIndex();
 
+		// detect change on robot selector
 		if (selectedRobot != selectedIndex)
 		{
 			selectedRobot = selectedIndex;
-			if (selectedIndex == 0)
+			if (selectedIndex == 0) // if selector is changed to ALL
 			{
-				robotIsVisible[0] = true;
+				robotVisActive[0] = true;
+				robotPpActive[0] = true;
 				for (int i=1;i<mainWindow->robotSelector->count();i++)
 				{
-					if (!robotIsVisible[i]) robotIsVisible[0] = false;
+					if (!robotVisActive[i]) robotVisActive[0] = false;
+					if (!robotPpActive[i]) robotPpActive[0] = false;
 				}
 			}
-			mainWindow->checkVisible->setChecked(robotIsVisible[selectedIndex]);
+
+			// adjust the checkbox accordingly
+			mainWindow->checkVis->setChecked(robotVisActive[selectedIndex]);
+			mainWindow->checkPp->setChecked(robotPpActive[selectedIndex]);
 		}
 
-		if (robotIsVisible[selectedIndex] != mainWindow->checkVisible->checkState())
+		// detect change on visible checkbox
+		bool visCheckBoxState = mainWindow->checkVis->checkState();
+		if (robotVisActive[selectedIndex] != visCheckBoxState)
 		{
-			if (selectedIndex == 0)
+			if (selectedIndex == 0) // all robots' visualization checkboxes are changed
 			{
-				for (int i=0;i<7;i++) robotIsVisible[i] = mainWindow->checkVisible->checkState();
-			} else
-			robotIsVisible[selectedIndex] = mainWindow->checkVisible->checkState();
+				for (int i=0;i<7;i++) robotVisActive[i] = visCheckBoxState;
+			} else // only one robot's visualization checkbox is changed
+			robotVisActive[selectedIndex] = visCheckBoxState;
 
+			//deactivating visible caused pathplanner deactivated
+			if (!robotVisActive[selectedIndex]) robotPpActive[selectedIndex] = false;
 		}
 
-        if (robot->isTimeout() || !robotIsVisible[robotIndex[robot->getId()]])
+		// detect change on pathplanner checkbox
+		bool ppCheckBoxState = mainWindow->checkPp->checkState();
+		if (robotPpActive[selectedIndex] != ppCheckBoxState)
+		{
+			if (selectedIndex == 0) // all robots' pathplanner checkboxes are changed
+			{
+				for (int i=0;i<7;i++) robotPpActive[i] = ppCheckBoxState;
+			} else // only one robot's pathplanner checkbox is changed
+				robotPpActive[selectedIndex] = ppCheckBoxState;
+		}
+
+        if (robot->isTimeout() || !robotVisActive[robotIndex[myId]])
 		{
 		        robot->getVisualization()->remove(this->renderer);
 
                         continue;
 		}
 
-//        robotIsVisible
+        if (robotPpActive[robotIndex[myId]])
+            robot->getVisualization()->updatePathPlannerDebug(this->renderer, this->showPath);
+        else
+            robot->getVisualization()->updatePathPlannerDebug(this->renderer, false);
 
 		robot->getVisualization()->updatePosition(this->renderer);
-                robot->getVisualization()->updateBall(this->renderer);
-                robot->getVisualization()->updateSharedBall(this->renderer);
-                robot->getVisualization()->updateOpponents(this->renderer);
-                robot->getVisualization()->updatePathPlannerDebug(this->renderer, this->showPath);
-                robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridorCheck);
-                robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
-                robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
-                robot->getVisualization()->updatePassMsg(this->renderer);
+        robot->getVisualization()->updateBall(this->renderer);
+        robot->getVisualization()->updateSharedBall(this->renderer);
+        robot->getVisualization()->updateOpponents(this->renderer);
+        robot->getVisualization()->updateCorridorDebug(this->renderer, this->showCorridorCheck);
+        robot->getVisualization()->updateVoronoiNetDebug(this->renderer, this->showVoronoiNet, this->showSitePoints);
+        robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
+        robot->getVisualization()->updatePassMsg(this->renderer);
 
 	}
 
@@ -1074,8 +1100,9 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
 
         	mainWindow->robotSelector->addItem(QString::fromStdString(robotNames[0]), 0);
         	mainWindow->robotSelector->setCurrentIndex(0);
-        	robotIsVisible[0] = true;
-			mainWindow->checkVisible->setChecked(true);
+        	robotVisActive[0] = true;
+        	robotPpActive[0] = true;
+			mainWindow->checkVis->setChecked(true);
         	robotIndex[0] = 0;
             robotCount++;
         }
@@ -1084,7 +1111,7 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         string robotName = robotNames[id];
         QString robotStr = QString::fromStdString(robotName+" ("+boost::lexical_cast<std::string>(id)+")");
         mainWindow->robotSelector->addItem(robotStr, id);
-        robotIsVisible[robotCount] = true;
+        robotVisActive[robotCount] = true;
 
         return robotInfo;
 }
