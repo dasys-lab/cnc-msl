@@ -87,6 +87,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
 
+#include  "Plans/GenericStandards/GenericExecutePass.h"
+
 #include  "Plans/Attack/Wander.h"
 
 #include  "Plans/Behaviours/DefendGoal.h"
@@ -96,6 +98,8 @@ using namespace std;
 #include  "Plans/Standards/Own/Corner/BounceShotAlignWall.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
+
+#include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
@@ -127,8 +131,6 @@ using namespace std;
 
 #include  "Plans/Attack/OneEighty.h"
 
-#include  "Plans/Attack/Tackle.h"
-
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
@@ -139,11 +141,11 @@ using namespace std;
 
 #include  "Plans/Attack/CatchPass.h"
 
+#include  "Plans/Behaviours/SpinSlowly.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 #include  "Plans/GenericStandards/StandardActuate.h"
-
-#include  "Plans/Behaviours/SpinSlowly.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
@@ -156,8 +158,6 @@ using namespace std;
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
-
-#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
 
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
@@ -423,6 +423,11 @@ namespace alica
                 return make_shared<ThrowInPass>();
                 break;
 
+            case 1465040471344:
+
+                return make_shared<GenericExecutePass>();
+                break;
+
             case 1434716230628:
 
                 return make_shared<Wander>();
@@ -448,6 +453,11 @@ namespace alica
             case 1461674968023:
 
                 return make_shared<PosAlternativePassReceiver>();
+                break;
+
+            case 1465474190742:
+
+                return make_shared<Pos2Penalty>();
                 break;
 
             case 1462978671719:
@@ -531,11 +541,6 @@ namespace alica
                 return make_shared<OneEighty>();
                 break;
 
-            case 1434807680165:
-
-                return make_shared<Tackle>();
-                break;
-
             case 1458034300406:
 
                 return make_shared<OneGernericInGameBlocker>();
@@ -563,6 +568,11 @@ namespace alica
                 return make_shared<CatchPass>();
                 break;
 
+            case 1435159282996:
+
+                return make_shared<SpinSlowly>();
+                break;
+
             case 1447863503279:
 
                 return make_shared<DriveToBall>();
@@ -571,11 +581,6 @@ namespace alica
             case 1435766278023:
 
                 return make_shared<StandardActuate>();
-                break;
-
-            case 1435159282996:
-
-                return make_shared<SpinSlowly>();
                 break;
 
             case 1456756164754:
@@ -610,11 +615,6 @@ namespace alica
                 return make_shared<BouncePassFinishAlign>();
                 break;
 
-            case 1464787692697:
-
-                return make_shared<FreeKickOppHalfShootRapid>();
-                break;
-
             case 1459355071258:
 
             case 1459356685875:
@@ -627,6 +627,10 @@ namespace alica
             case 1459456566595:
 
             case 1461583806472:
+
+            case 1465038982091:
+
+            case 1466348438844:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

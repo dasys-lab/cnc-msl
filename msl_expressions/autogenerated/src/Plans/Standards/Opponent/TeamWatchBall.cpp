@@ -5,6 +5,7 @@ using namespace std;
 #include <Rules.h>
 #include <Ball.h>
 #include <WhiteBoard.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

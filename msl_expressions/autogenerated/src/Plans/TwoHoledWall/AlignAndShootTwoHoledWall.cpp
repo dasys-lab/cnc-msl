@@ -5,6 +5,9 @@ using namespace std;
 #include <math.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -155,7 +158,7 @@ namespace alica
                 send(kc);
                 kicked = true;
                 iterationsAfterKick = 0;
-                voltage = wm->getKickerVoltage();
+                voltage = this->robot->kicker->getKickerVoltage();
             }
             else
             {

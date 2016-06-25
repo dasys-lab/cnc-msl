@@ -6,6 +6,10 @@
 #include "MSLFootballField.h"
 #include "SystemConfig.h"
 #include <ros/ros.h>
+namespace msl
+{
+    class PathEvaluator;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {

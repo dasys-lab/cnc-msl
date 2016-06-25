@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Goalie/Test/GoalieBehaviours/DriveToBall.h"
 
 /*PROTECTED REGION ID(inccpp1447863493623) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 /*PROTECTED REGION END*/
 namespace alica
 {

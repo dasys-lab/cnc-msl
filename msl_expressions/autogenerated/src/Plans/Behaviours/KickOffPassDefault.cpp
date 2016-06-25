@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/KickOffPassDefault.h"
 
 /*PROTECTED REGION ID(inccpp1438778042140) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
@@ -11,7 +11,11 @@ using namespace std;
 #include <Ball.h>
 #include <Robots.h>
 #include <Game.h>
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <MSLWorldModel.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,6 +25,10 @@ namespace alica
             DomainBehaviour("KickOffPassDefault")
     {
         /*PROTECTED REGION ID(con1438778042140) ENABLED START*/ //Add additional options here
+        // for alignToPointWithBall
+        lastRotError = 0;
+        lastRotErrorWithBall = 0;
+        readConfigParameters();
         /*PROTECTED REGION END*/
     }
     KickOffPassDefault::~KickOffPassDefault()
@@ -75,8 +83,7 @@ namespace alica
             egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         }
 
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005,
-                                                                                       0.075);
+        msl_actuator_msgs::MotionControl mc = alignToPointWithBall(egoAlignPoint, egoBallPos, 0.005, 0.075);
 
         double angleTolerance = 0;
 
@@ -94,11 +101,11 @@ namespace alica
             kc.kicker = 1;
             if (wm->game->getTimeSinceStart() < waitBeforeBlindKick)
             {
-                kc.power = wm->kicker->getPassKickpower(egoAlignPoint->length(), 1);
+                kc.power = this->robot->kicker->getPassKickpower(egoAlignPoint->length(), 1);
             }
             else
             {
-                kc.power = wm->kicker->getKickPowerSlowPass(egoAlignPoint->length());
+                kc.power = this->robot->kicker->getKickPowerSlowPass(egoAlignPoint->length());
             }
 
             send(kc);
@@ -148,6 +155,52 @@ namespace alica
         }
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1438778042140) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1438778042140) ENABLED START*/ //Add additional methods here
+    msl_actuator_msgs::MotionControl KickOffPassDefault::alignToPointWithBall(
+            shared_ptr<geometry::CNPoint2D> egoAlignPoint, shared_ptr<geometry::CNPoint2D> egoBallPos,
+            double angleTolerance, double ballAngleTolerance)
+    {
+        msl_actuator_msgs::MotionControl mc;
+        double egoTargetAngle = egoAlignPoint->angleTo();
+        double egoBallAngle = egoBallPos->angleTo();
+        double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+        double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
+
+        if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
+        {
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+        }
+        else
+        {
+            mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
+                    + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+            mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+                    * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+
+            lastRotErrorWithBall = deltaTargetAngle;
+
+            // crate the motion orthogonal to the ball
+            shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+            driveTo = driveTo * mc.motion.rotation;
+
+            // add the motion towards the ball
+            driveTo = driveTo + egoBallPos->normalize() * 10;
+
+            mc.motion.angle = driveTo->angleTo();
+            mc.motion.translation = min(alignMaxVel, driveTo->length());
+        }
+        return mc;
+    }
+
+    void KickOffPassDefault::readConfigParameters()
+    {
+        defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+        alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
+        alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+        alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
+        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

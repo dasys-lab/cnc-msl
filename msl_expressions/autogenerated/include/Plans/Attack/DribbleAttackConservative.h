@@ -3,7 +3,8 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457967322925) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,7 +21,7 @@ namespace alica
         /*PROTECTED REGION ID(pro1457967322925) ENABLED START*/ //Add additional protected methods here
         shared_ptr<geometry::CNPoint2D> alloGoalMid;
         bool before;
-
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457967322925) ENABLED START*/ //Add additional private methods here

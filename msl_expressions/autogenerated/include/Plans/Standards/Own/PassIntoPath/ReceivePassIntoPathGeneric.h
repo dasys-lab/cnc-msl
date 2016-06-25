@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457531583460) ENABLED START*/ //Add additional includes here
 #include "engine/constraintmodul/ConstraintQuery.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -25,6 +26,7 @@ namespace alica
         vector<double> result;
         double sign;
         double maxVel;
+        shared_ptr<msl::MovementQuery> movQuery;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

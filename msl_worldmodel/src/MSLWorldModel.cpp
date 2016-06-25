@@ -42,8 +42,6 @@
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 
-
-
 namespace msl
 {
 
@@ -73,7 +71,6 @@ namespace msl
 
 	MSLWorldModel::MSLWorldModel()
 	{
-		kickerVoltage = 0;
 		ownID = supplementary::SystemConfig::getOwnRobotID();
 		spinner = new ros::AsyncSpinner(4);
 		spinner->start();
@@ -126,7 +123,7 @@ namespace msl
 		this->robots = new Robots(this, ringBufferLength);
 		this->game = new Game(this, ringBufferLength);
 		this->pathPlanner = new PathPlanner(this, ringBufferLength);
-		this->kicker = new Kicker(this);
+		//this->kicker = new Kicker(this); // TODO: delete this line
 		this->alicaEngine = nullptr;
 		this->whiteBoard = new WhiteBoard(this);
 		this->obstacles = new Obstacles(this, ringBufferLength);
@@ -328,20 +325,10 @@ namespace msl
 		delete this->robots;
 		delete this->game;
 		delete this->pathPlanner;
-		delete this->kicker;
+		//delete this->kicker; // TODO: delete this line
 		delete this->whiteBoard;
 		delete this->obstacles;
 		delete this->prediction;
-	}
-
-	double MSLWorldModel::getKickerVoltage()
-	{
-		return this->kickerVoltage;
-	}
-
-	void MSLWorldModel::setKickerVoltage(double voltage)
-	{
-		this->kickerVoltage = voltage;
 	}
 
 	MSLSharedWorldModel* MSLWorldModel::getSharedWorldModel()

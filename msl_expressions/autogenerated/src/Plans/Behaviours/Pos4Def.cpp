@@ -2,12 +2,13 @@ using namespace std;
 #include "Plans/Behaviours/Pos4Def.h"
 
 /*PROTECTED REGION ID(inccpp1445438142979) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/constraintmodul/ConstraintQuery.h"
 #include "GSolver.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,6 +19,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1445438142979) ENABLED START*/ //Add additional options here
         this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Pos4Def::~Pos4Def()
@@ -51,16 +53,28 @@ namespace alica
 
             shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 100.0,
-                                                          additionalPoints);
-
+//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, alloBall->alloToEgo(*ownPos), 100.0,
+//                                                          additionalPoints);
+            msl::RobotMovement rm;
+            mQuery->egoDestinationPoint = egoTarget;
+            mQuery->egoAlignPoint = alloBall->alloToEgo(*ownPos);
+            mQuery->snapDistance = 100;
+            mQuery->additionalPoints = additionalPoints;
+            mc = rm.moveToPoint(mQuery);
         }
         else
         {
 
             cout << "Pos4Def: Did not get a filled result vector!" << endl;
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "Motion command is NaN!" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void Pos4Def::initialiseParameters()

@@ -3,6 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1417017564406) ENABLED START*/ //Add additional includes here
 #include "math.h"
+#include <msl_actuator_msgs/MotionControl.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

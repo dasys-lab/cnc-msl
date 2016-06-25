@@ -24,6 +24,7 @@
   <states id="1464783052747" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091</plans>
     <inTransitions>#1464784050959</inTransitions>
     <inTransitions>#1464787998856</inTransitions>
     <outTransitions>#1464787987943</outTransitions>
@@ -54,7 +55,7 @@
   <states id="1464793641082" name="Defend" comment="" entryPoint="1464793619930">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
-  <transitions id="1464784050959" name="MISSING_NAME" comment="Executor is align" msg="">
+  <transitions id="1464784050959" name="MISSING_NAME" comment="(child success &amp;&amp; start) || (start &amp;&amp; timeSinceStart > timeUntilEmergencyExecute)" msg="">
     <preCondition id="1464784053079" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462373376007</inState>
     <outState>#1464783052747</outState>
@@ -69,17 +70,17 @@
     <inState>#1464787959998</inState>
     <outState>#1464783052747</outState>
   </transitions>
-  <transitions id="1464788058735" name="MISSING_NAME" comment="Pass the Ball" msg="">
+  <transitions id="1464788058735" name="MISSING_NAME" comment="executed" msg="">
     <preCondition id="1464788060652" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464787959998</inState>
     <outState>#1464788034326</outState>
   </transitions>
-  <transitions id="1464792274211" name="MISSING_NAME" comment="Reciever is align" msg="">
+  <transitions id="1464792274211" name="MISSING_NAME" comment="pm for own id" msg="">
     <preCondition id="1464792277148" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1462374515826</inState>
     <outState>#1464792231235</outState>
   </transitions>
-  <transitions id="1464796134632" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1464796134632" name="MISSING_NAME" comment="success" msg="">
     <preCondition id="1464796139312" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464792231235</inState>
     <outState>#1464792294365</outState>
@@ -88,7 +89,7 @@
     <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1462373376007</state>
   </entryPoints>
-  <entryPoints id="1462373457908" name="ReceiveStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1462373457908" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1462374515826</state>
   </entryPoints>

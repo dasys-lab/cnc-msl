@@ -2,12 +2,14 @@ using namespace std;
 #include "Plans/Penalty/PenaltyAlignAndShoot.h"
 
 /*PROTECTED REGION ID(inccpp1431531496053) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
-#include <Kicker.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
 #include <Game.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -29,6 +31,11 @@ namespace alica
         timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         lastAlignment = 0;
         waitBeforeBlindKick = timeForPenaltyShot - 1000000000;
+
+        // for alignToPointWithBall
+        lastRotError = 0;
+        lastRotErrorWithBall = 0;
+        readConfigParameters();
 
         /*PROTECTED REGION END*/
     }
@@ -131,7 +138,7 @@ namespace alica
         }
         // calculate angle difference between robot and target and ball and target
         double egoTargetAngle = egoTarget->angleTo();
-        double deltaHoleAngle = geometry::deltaAngle(wm->kicker->kickerAngle, egoTargetAngle);
+        double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // calculate passed time
         unsigned long timePassed = wm->getTime() - wm->game->getTimeSinceStart();
         // if too much time has passed or the robot is aligned, we shoot
@@ -147,8 +154,7 @@ namespace alica
 
         }
         // Create Motion Command for aiming
-        MotionControl mc = msl::RobotMovement::alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance,
-                                                                    this->angleTolerance);
+        MotionControl mc = alignToPointWithBall(egoTarget, egoBallPos, this->angleTolerance, this->angleTolerance);
         send(mc);
         /*PROTECTED REGION END*/
     }
@@ -158,6 +164,53 @@ namespace alica
         lastAlignment = 0;
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1431531496053) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1431531496053) ENABLED START*/ //Add additional methods here
+    msl_actuator_msgs::MotionControl PenaltyAlignAndShoot::alignToPointWithBall(
+            shared_ptr<geometry::CNPoint2D> egoAlignPoint, shared_ptr<geometry::CNPoint2D> egoBallPos,
+            double angleTolerance, double ballAngleTolerance)
+    {
+        msl_actuator_msgs::MotionControl mc;
+        double egoTargetAngle = egoAlignPoint->angleTo();
+        double egoBallAngle = egoBallPos->angleTo();
+        double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+        double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
+
+        if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
+        {
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+        }
+        else
+        {
+            mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
+                    + (deltaTargetAngle - lastRotError) * alignToPointpRot);
+            mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+                    * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+
+            lastRotErrorWithBall = deltaTargetAngle;
+
+            // crate the motion orthogonal to the ball
+            shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+            driveTo = driveTo * mc.motion.rotation;
+
+            // add the motion towards the ball
+            driveTo = driveTo + egoBallPos->normalize() * 10;
+
+            mc.motion.angle = driveTo->angleTo();
+            mc.motion.translation = min(alignMaxVel, driveTo->length());
+        }
+        return mc;
+    }
+
+    void PenaltyAlignAndShoot::readConfigParameters()
+    {
+        defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
+        alignToPointpRot = (*sc)["Drive"]->get<double>("Drive", "AlignToPointpRot", NULL);
+        alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
+        alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
+        alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+    }
+
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -4,9 +4,11 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1429111623710) ENABLED START*/ //Add additional includes here
 #include <SystemConfig.h>
 #include <container/CNPoint2D.h>
-#include <robotmovement/MovementQuery.h>
-#include <robotmovement/RobotMovement.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+#include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -49,7 +51,7 @@ namespace alica
         this->movementQuery->egoDestinationPoint = this->parkingPosition->alloToEgo(*ownPos);
         this->movementQuery->egoAlignPoint =
                 (this->parkingPosition + make_shared < geometry::CNPoint2D > (0, -1000.0))->alloToEgo(*ownPos);
-        msl_actuator_msgs::MotionControl mc = rm->experimentallyMoveToPoint(movementQuery);
+        msl_actuator_msgs::MotionControl mc = rm->moveToPoint(movementQuery);
         send(mc);
         /*PROTECTED REGION END*/
     }

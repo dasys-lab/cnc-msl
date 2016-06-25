@@ -2,10 +2,12 @@ using namespace std;
 #include "Plans/Behaviours/RobotMovementDribbleTest.h"
 
 /*PROTECTED REGION ID(inccpp1462969724089) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,6 +21,7 @@ namespace alica
         attackPosY.push_back(wm->field->getFieldWidth() / 3.0 - 700);
         attackPosY.push_back(0);
         attackPosY.push_back(-wm->field->getFieldWidth() / 3.0 + 700);
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     RobotMovementDribbleTest::~RobotMovementDribbleTest()
@@ -37,9 +40,10 @@ namespace alica
 
         // move to ball
         msl_actuator_msgs::MotionControl bm;
-        query = make_shared<msl::MovementQuery>();
         query->egoDestinationPoint = ballPos;
         query->dribble = false;
+        query->egoAlignPoint = query->egoDestinationPoint;
+        query->fast = true;
 
         cout << "allo Ball Pos: x: " << ballPos->egoToAllo(*ownPos)->x << " y: " << ballPos->egoToAllo(*ownPos)->y
                 << endl;
@@ -50,7 +54,7 @@ namespace alica
             query->dribble = true;
             query->egoDestinationPoint = make_shared < geometry::CNPoint2D > (1, 1)->alloToEgo(*ownPos);
         }
-        bm = rm.experimentallyMoveToPoint(query);
+        bm = rm.moveToPoint(query);
 
         // dribble
         /*
@@ -107,7 +111,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1462969724089) ENABLED START*/ //Add additional options here
         currentTarget = nullptr;
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
     }

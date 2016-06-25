@@ -73,6 +73,7 @@ protected:
 
 public Q_SLOTS:
 	void TeamColorChanged(int team);
+	void RobotVisChanged(int team, int robot_id);
 	void GoalColorChanged(int goal);
 
 
