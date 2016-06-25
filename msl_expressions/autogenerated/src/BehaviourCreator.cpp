@@ -159,8 +159,6 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
-#include  "Plans/Standards/Own/FreeKick/FreeKickOppHalfShootRapid.h"
-
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab.h"
@@ -615,11 +613,6 @@ namespace alica
             case 1459357089325:
 
                 return make_shared<BouncePassFinishAlign>();
-                break;
-
-            case 1464787692697:
-
-                return make_shared<FreeKickOppHalfShootRapid>();
                 break;
 
             case 1459355071258:
