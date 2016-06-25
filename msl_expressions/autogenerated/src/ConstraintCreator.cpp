@@ -180,10 +180,6 @@ namespace alica
                 return make_shared<Constraint1457531039142>();
                 break;
 
-            case 1465474610518:
-                return make_shared<Constraint1465474610518>();
-                break;
-
             default:
                 cerr << "ConstraintCreator: Unknown constraint requested: " << constraintConfId << endl;
                 throw new exception();

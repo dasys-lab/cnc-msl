@@ -237,7 +237,7 @@ public Q_SLOTS:
     // Debug
     void showDebugPointsToggle(void);
 
-    // PAth Planner
+    // Path Planner
     void showPathToggle(void);
     void showVoronoiNetToggle(void);
     void showCorridorCheckToggle(void);
