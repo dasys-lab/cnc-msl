@@ -31,7 +31,6 @@
     <outTransitions>#1464778515443</outTransitions>
   </states>
   <states id="1464535263395" name="Shoot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">FreeKickOppHalfShootRapid.beh#1464787692697</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
   </states>
