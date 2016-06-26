@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="InGamePenalty.pml#1466936775182"/>
+    <value xPos="66" yPos="52" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936775181"/>
+    <value width="887" height="513"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936775183"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936786859"/>
+    <value xPos="383" yPos="53" width="232" height="134"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936788188"/>
+    <value xPos="190" yPos="54" width="201" height="110"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936790118"/>
+    <value xPos="582" yPos="46" width="201" height="110" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936792646"/>
+    <value xPos="92" yPos="300" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936799335"/>
+    <value xPos="388" yPos="227"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936848368"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936849764"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936850672"/>
+    <value>
+      <bendpoints xPos="682" yPos="126"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936851417"/>
+    <value>
+      <bendpoints xPos="662" yPos="106"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936854348"/>
+    <value xPos="723" yPos="227"/>
+  </extensions>
+  <extensions>
+    <key href="InGamePenalty.pml#1466936861165"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../PenaltyShoot.beh#1466940268216"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../PenaltyPosExecuter.beh#1466940432683"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StayAwayInGamePenalty.beh#1466940636644"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
