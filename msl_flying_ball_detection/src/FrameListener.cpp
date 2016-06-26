@@ -282,7 +282,7 @@ namespace msl
 			}
 		}
 
-		if (hitCounter > 1)
+		if (hitCounter > 0)
 		{
 			this->kick();
 		}
