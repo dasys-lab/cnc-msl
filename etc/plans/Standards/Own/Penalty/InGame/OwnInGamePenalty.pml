@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1466936775181" name="InGamePenalty" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1466936775181" name="OwnInGamePenalty" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/Penalty/InGame" priority="0.0" minCardinality="1" maxCardinality="4">
   <states id="1466936775182" name="MoveBehindBall" comment="" entryPoint="1466936775183">
     <plans xsi:type="alica:BehaviourConfiguration">../PenaltyPosExecuter.beh#1466940432683</plans>
     <outTransitions>#1466936848368</outTransitions>
@@ -25,43 +25,50 @@
     <outTransitions>#1466936851417</outTransitions>
     <outTransitions>#1466936861165</outTransitions>
   </states>
-  <states id="1466936792646" name="StayAway" comment="" entryPoint="1466936799335">
-    <plans xsi:type="alica:BehaviourConfiguration">StayAwayInGamePenalty.beh#1466940636644</plans>
+  <states id="1466936792646" name="Pos4Rebounce" comment="" entryPoint="1466936799335">
+    <plans xsi:type="alica:BehaviourConfiguration">Pos4PenaltyRebounce.beh#1466976004315</plans>
   </states>
   <states xsi:type="alica:SuccessState" id="1466936854348" name="PenaltySuccess" comment="">
     <inTransitions>#1466936861165</inTransitions>
   </states>
-  <transitions id="1466936848368" name="MISSING_NAME" comment="" msg="">
+  <states id="1466972478368" name="Defend" comment="" entryPoint="1466972404622">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../../Behaviours/BackroomDefence.beh#1454507819086</plans>
+  </states>
+  <transitions id="1466936848368" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1466936849620" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1466936775182</inState>
     <outState>#1466936788188</outState>
   </transitions>
-  <transitions id="1466936849764" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1466936849764" name="MISSING_NAME" comment="situation = start" msg="">
     <preCondition id="1466936850439" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1466936788188</inState>
     <outState>#1466936786859</outState>
   </transitions>
-  <transitions id="1466936850672" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1466936850672" name="MISSING_NAME" comment="have ball" msg="">
     <preCondition id="1466936851265" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1466936786859</inState>
     <outState>#1466936790118</outState>
   </transitions>
-  <transitions id="1466936851417" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1466936851417" name="MISSING_NAME" comment="!have ball" msg="">
     <preCondition id="1466936852075" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1466936790118</inState>
     <outState>#1466936786859</outState>
   </transitions>
-  <transitions id="1466936861165" name="MISSING_NAME" comment="" msg="">
+  <transitions id="1466936861165" name="MISSING_NAME" comment="any child success" msg="">
     <preCondition id="1466936862234" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1466936790118</inState>
     <outState>#1466936854348</outState>
   </transitions>
-  <entryPoints id="1466936775183" name="ExecuteStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1466936775183" name="ExecuteStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
     <task>../../../../../Misc/taskrepository.tsk#1439997010902</task>
     <state>#1466936775182</state>
   </entryPoints>
-  <entryPoints id="1466936799335" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../../Misc/taskrepository.tsk#1225112227903</task>
+  <entryPoints id="1466936799335" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+    <task>../../../../../Misc/taskrepository.tsk#1225115536468</task>
     <state>#1466936792646</state>
+  </entryPoints>
+  <entryPoints id="1466972404622" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2">
+    <task>../../../../../Misc/taskrepository.tsk#1225115406909</task>
+    <state>#1466972478368</state>
   </entryPoints>
 </alica:Plan>

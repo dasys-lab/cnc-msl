@@ -28,56 +28,28 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1454507752863) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
-
-        auto me = wm->rawSensorData->getOwnPositionVision();
+        auto ownPos = wm->rawSensorData->getOwnPositionVision();
         auto alloBallPos = wm->ball->getAlloBallPosition();
-        //auto goaliePos = wm->robots.teammates.getTeamMatePosition(1, 0);
-        shared_ptr < geometry::CNPoint2D > goalPos;
 
-        if (!me || !alloBallPos)
+        if (!ownPos || !alloBallPos)
         {
             return;
         }
 
-        /*if (goaliePos)
-         {
-         goalPos = goaliePos->getPoint();
-         }
-         else
-         {*/
         // assume goalie is in the middle of the goal
-        goalPos = wm->field->posOwnGoalMid();
-        //}
+        auto ownGoalMid = wm->field->posOwnGoalMid();
 
-        auto goaltoball = alloBallPos - goalPos;
-        auto defenderRange = goalPos + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
-        if (defenderRange->x < -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100)
-        {
-            defenderRange->x = -(wm->field->getFieldLength() / 2) + wm->field->getPenaltyAreaLength() + 100;
-        }
+        auto goaltoball = alloBallPos - ownGoalMid;
+        auto defenderPos = ownGoalMid + (goaltoball->normalize()) * min(4300.0, goaltoball->length() - 1750.0);
+        defenderPos = wm->field->mapOutOfOwnPenalty(defenderPos, goaltoball);
 
-        /*
-         if (alloBallPos->y <= 0)
-         {
-
-         }
-         else
-         {
-
-         }
-         */
-        // removed with new moveToPoint method
-//        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointFast(defenderRange->alloToEgo(*me),
-//                                                                                  alloBallPos->alloToEgo(*me), 100,
-//                                                                                  nullptr);
-        query->egoDestinationPoint = defenderRange->alloToEgo(*me);
-        query->egoAlignPoint = alloBallPos->alloToEgo(*me);
-        query->snapDistance = 100;
+        query->egoDestinationPoint = defenderPos->alloToEgo(*ownPos);
+        query->egoAlignPoint = alloBallPos->alloToEgo(*ownPos);
+        query->snapDistance = 1000;
         query->fast = true;
         msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
 
         send(mc);
-
         /*PROTECTED REGION END*/
     }
     void BackroomDefence::initialiseParameters()

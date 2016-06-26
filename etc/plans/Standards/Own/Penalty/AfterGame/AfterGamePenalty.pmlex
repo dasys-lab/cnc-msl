@@ -57,14 +57,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="AfterGamePenalty.pml#1466934479510"/>
-    <value xPos="655" yPos="216"/>
-  </extensions>
-  <extensions>
-    <key href="AfterGamePenalty.pml#1466934487527"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../../GenericBehaviours/DriveToPoint.beh#1431527260342"/>
     <value/>
   </extensions>
@@ -90,6 +82,26 @@
   </extensions>
   <extensions>
     <key href="StayAwayAfterGamePenalty.beh#1466940600117"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AfterGamePenalty.pml#1466934479510"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AfterGamePenalty.pml#1466934487527"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AfterGamePenalty.pml#1466973000329"/>
+    <value xPos="727" yPos="248"/>
+  </extensions>
+  <extensions>
+    <key href="AfterGamePenalty.pml#1466973019163"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

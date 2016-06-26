@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132312429"/>
-    <value xPos="258" yPos="265" width="126" height="68"/>
+    <value xPos="248" yPos="254" width="126" height="68" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GenericOppStandards.pml#1432132325758"/>
@@ -91,10 +91,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="GenericDefend.pml#1432133473779"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="GenericOppStandards.pml#1432209594646"/>
     <value xPos="704" yPos="337"/>
   </extensions>
@@ -115,7 +111,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="GenericDefend.pml#1432133473779"/>
+    <key href="../Standards/Opponent/Penalty/OppInGamePenalty.pml#1466968232004"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
