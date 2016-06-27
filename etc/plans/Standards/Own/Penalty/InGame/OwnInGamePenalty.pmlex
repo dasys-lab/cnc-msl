@@ -108,4 +108,8 @@
     <key href="../../../../Behaviours/AlignToGoal.beh#1415205285582"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

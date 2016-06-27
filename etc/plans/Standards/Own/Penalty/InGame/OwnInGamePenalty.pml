@@ -22,6 +22,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../../Behaviours/GoalKick.beh#1415205578139</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../../Behaviours/AlignToGoal.beh#1415205285582</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1466936850672</inTransitions>
     <outTransitions>#1466936851417</outTransitions>
     <outTransitions>#1466936861165</outTransitions>
