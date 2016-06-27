@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="OwnPenalty.pml#1431526917231"/>
-    <value xPos="36" yPos="178" width="142" height="86"/>
+    <value xPos="36" yPos="178" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../GenericBehaviours/Stop.beh#1413992626194"/>

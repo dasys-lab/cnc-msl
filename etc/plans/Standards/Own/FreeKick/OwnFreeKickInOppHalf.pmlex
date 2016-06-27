@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="-30" width="1405" height="737"/>
+    <value xPos="-24" yPos="-2" width="1405" height="737"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>
@@ -42,7 +42,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535263395"/>
-    <value xPos="804" yPos="239" width="169" height="86" collapsed="false"/>
+    <value xPos="927" yPos="171" width="169" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535682818"/>
@@ -128,27 +128,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnFreeKickInOppHalf.pml#1465474610518"/>
-    <value xPos="517" yPos="662"/>
-  </extensions>
-  <extensions>
-    <key href="PosInOppPenArea.beh#1466259879629"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="BlockNearOppPenArea.beh#1466259925988"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="OwnFreeKickInOppHalf.pml#1466342186872"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466348438844"/>
     <value/>
   </extensions>
   <extensions>

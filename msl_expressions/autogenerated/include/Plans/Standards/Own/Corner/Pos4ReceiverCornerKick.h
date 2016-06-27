@@ -3,6 +3,12 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1464787469281) ENABLED START*/ //Add additional includes here
+#include <engine/constraintmodul/ConstraintQuery.h>
+#include <msl_robot/robotmovement/MovementQuery.h>
+namespace geometry
+{
+    class CNPoint2D;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,9 +23,14 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1464787469281) ENABLED START*/ //Add additional protected methods here
+        vector<double> result;
+        shared_ptr<alica::ConstraintQuery> query;
+        shared_ptr<msl::MovementQuery> mQuery;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1464787469281) ENABLED START*/ //Add additional private methods here
+        shared_ptr<geometry::CNPoint2D> alloTarget;
+        string taskName;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

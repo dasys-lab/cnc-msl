@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1466972686566" name="Pos4PenaltyRebounce" comment="" destinationPath="Plans/Standards/Own/Penalty/InGame">
+  <configurations id="1466975991599" name="OppPenaltyRebounce" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1466976035267" name="MISSING_NAME" comment="" key="OwnPenalty" value="false"/>
+  </configurations>
+  <configurations id="1466976004315" name="OwnPenaltyRebounce" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1466976015862" name="MISSING_NAME" comment="" key="OwnPenalty" value="true"/>
+  </configurations>
+</alica:Behaviour>
