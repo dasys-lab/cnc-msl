@@ -32,7 +32,7 @@ namespace alica
         double maxVel;
         double angleTolerance;
         double ballDiameter;
-        double goalLineLength;
+        double goalWidth;
         double robotRadius;
         double wheelSpeed;
         double aimOffset;
