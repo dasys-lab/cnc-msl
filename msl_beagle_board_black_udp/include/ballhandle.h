@@ -10,51 +10,52 @@
 #define TIMEDIFFMS(n,o) (((n).tv_sec-(o).tv_sec)*1000+((n).tv_usec-(o).tv_usec)/1000)
 #define BallHandle_TIMEOUT 1000
 
-#include <sys/time.h>
-
-#include "BlackDef.h"
-#include "BlackGPIO.h"
-#include "BlackPWM.h"
+#include "motor.h"
+#include "Spline.h"
 
 
+class BallHandle
+{
+public:
+	BallHandle();
+	~BallHandle();
 
-class BallHandle {
-	private:
-		BlackLib::BlackPWM	*pwm;
-		BlackLib::BlackGPIO	*dir, *reset, *ff1, *ff2;
+	void readConfigParameters();
+	void setOdometryData(double newAngle, double newTranslation);
+	void setRotation(double newRotation);
+	void dribbleControl();
+	void setBallHandling(int32_t left, int32_t right);
+	void ping();
+	void checkTimeout();
+	uint8_t getMode();
+	void setMode(uint8_t newMode);
 
-		BlackLib::digitalValue	direction			= static_cast<BlackLib::digitalValue>(left);
-		BlackLib::digitalValue	direction_desired	= static_cast<BlackLib::digitalValue>(left);
+private:
+	Motor *rightMotor;
+	Motor *leftMotor;
 
-		bool			enabled = false;
-		const int		period = 10000;
-		int				speed = 0, speed_desired = 0;
-		timeval			last_ping;
+	uint8_t mode = 1;
 
-	public:
-		enum errorList {
-			none			= 0,
-			bypass			= 1,
-			temperature		= 2,
-			voltage			= 3
-		};
+	double angle = 0.0;
+	double translation = 0.0;
+	double rotation = 0.0;
 
-		enum directionList {
-			left			= 0,
-			right			= 1
-		};
+	const int minSpeed = 1800;
+	const int maxSpeed = 10000;
+	double speedX = 0;
+	double speedY = 0;
 
+	int timeout = 1000;
+	double handlerSpeedSummand = 0;
+	double handlerSpeedFactor = 0.0;
+	double speedNoBall = 0.0;
+	double slowTranslation = 0.0;
+	double slowTranslationWheelSpeed = 0.0;
+	double curveRotationFactor = 0.0;
+	double orthoDriveFactor = 0;
+	splines::spline forwardSpeedSpline;
 
-				BallHandle(BlackLib::pwmName pwm_P, BlackLib::gpioName dir_P, BlackLib::gpioName reset_P, BlackLib::gpioName ff1_P, BlackLib::gpioName ff2_P);
-				~BallHandle();
-
-
-		void	setBallHandling(int32_t value);
-		void	checkTimeout();
-		void	controlBallHandling();
-
-		int		getError();
+	timeval last_ping;
 };
-
 
 #endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_BALLHANDLE_H_ */

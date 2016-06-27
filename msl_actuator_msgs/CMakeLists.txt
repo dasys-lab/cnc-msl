@@ -49,6 +49,7 @@ add_message_files(
   FILES
   BallCatchCmd.msg
   BallHandleCmd.msg
+  BallHandleMode.msg
   HaveBallInfo.msg
   JoystickControl.msg
   CanMsg.msg

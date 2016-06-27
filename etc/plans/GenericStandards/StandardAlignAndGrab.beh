@@ -16,4 +16,8 @@
     <parameters id="1465039005917" name="MISSING_NAME" comment="" key="planName" value="CornerKick"/>
     <parameters id="1465039021874" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
   </configurations>
+  <configurations id="1466861369486" name="StandardAlignAndGrabOFKIOH" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1466861405145" name="MISSING_NAME" comment="" key="planName" value="OwnFreeKickInOppHalf"/>
+    <parameters id="1466863721270" name="MISSING_NAME" comment="" key="teamMateTaskName" value="ReceiveStandard"/>
+  </configurations>
 </alica:Behaviour>

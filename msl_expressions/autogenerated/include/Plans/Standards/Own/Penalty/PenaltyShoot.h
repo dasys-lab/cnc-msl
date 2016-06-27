@@ -32,7 +32,7 @@ namespace alica
         double maxVel;
         double angleTolerance;
         double ballDiameter;
-        double goalLineLength;
+        double goalWidth;
         double robotRadius;
         double wheelSpeed;
         double aimOffset;
@@ -48,7 +48,7 @@ namespace alica
         double lastRotError;
         double alignToPointMaxRotation;
         double alignToPointMinRotation;
-        double lastRotErrorWithBall;
+//        double lastRotErrorWithBall;
         double alignMaxVel;
         /*PROTECTED REGION END*/
     private:

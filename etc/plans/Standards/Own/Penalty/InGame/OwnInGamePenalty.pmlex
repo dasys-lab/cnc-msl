@@ -97,11 +97,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="Pos4PenaltyRebounce.beh#1466972698535"/>
+    <key href="Pos4PenaltyRebounce.beh#1466976004315"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="Pos4PenaltyRebounce.beh#1466976004315"/>
+    <key href="../../../../Behaviours/GoalKick.beh#1415205578139"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../../GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -109,7 +109,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785237103"/>
-    <value xPos="740" yPos="41" width="161" height="67"/>
+    <value xPos="740" yPos="41" width="161" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785250936"/>
@@ -128,6 +128,39 @@
     <value/>
   </extensions>
   <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1465474610518"/>
+    <value xPos="517" yPos="662"/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466861369486"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AlignFreeGoalSpace.beh#1467039882734"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/DriveToPoint.beh#1443003717671"/>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
