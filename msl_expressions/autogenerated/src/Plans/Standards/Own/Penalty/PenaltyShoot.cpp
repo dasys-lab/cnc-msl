@@ -28,9 +28,9 @@ namespace alica
         wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
         aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
         kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
-        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
+        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL);
         lastAlignment = 0;
-        waitBeforeBlindKick = timeForPenaltyShot - 1000000000;
+        waitBeforeBlindKick = timeForPenaltyShot / 2;
 
         // for alignToPointWithBall
         lastRotError = 0;
@@ -141,6 +141,8 @@ namespace alica
         double deltaHoleAngle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoTargetAngle);
         // calculate passed time
         unsigned long timePassed = wm->getTime() - wm->game->getTimeSinceStart();
+        cout << "TimePassed " << timePassed << " waitBeforeBlindKick " << waitBeforeBlindKick << " deltaHoleAngle "
+                << deltaHoleAngle << " AngleTolerance " << this->angleTolerance << endl;
         // if too much time has passed or the robot is aligned, we shoot
         if (timePassed >= waitBeforeBlindKick || fabs(deltaHoleAngle) < this->angleTolerance)
         {
