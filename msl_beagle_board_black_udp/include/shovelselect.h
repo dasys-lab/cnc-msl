@@ -18,7 +18,7 @@
 class ShovelSelect
 {
 public:
-	ShovelSelect(BlackLib::pwmName pwm_P);
+	ShovelSelect(BlackLib::pwmName pwm_P);	// Delete if using API
 // API Stuff	ShovelSelect(BeaglePWM::PwmPin pwm_name);
 	~ShovelSelect();
 
@@ -29,14 +29,14 @@ private:
 /* API
 	BeaglePWM *pwm;
 	BeaglePWM::PwmPin pwm_pin; */
-	BlackLib::BlackPWM* pwm;
+	BlackLib::BlackPWM* pwm;	// Delete if using API
 
 	bool enabled;
 	bool init;
 	bool statePassing;
 	const int period = 20000000;
-	int kickPWM = 1600000;
-	int passPWM = 1300000;
+	int kickPWM = 1600;
+	int passPWM = 1300;
 	int timeout;
 	timeval ping;
 };

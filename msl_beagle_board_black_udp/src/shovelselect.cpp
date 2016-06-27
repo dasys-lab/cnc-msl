@@ -27,6 +27,7 @@ using namespace BlackLib;
 		init = false;
 	}*/
 
+		// Delete Constructor if using API
         ShovelSelect::ShovelSelect(pwmName pwm_P) {
                 pwm = new BlackPWM(pwm_P);
 
@@ -54,7 +55,7 @@ using namespace BlackLib;
 		if ((TIMEDIFFMS(time, ping) > timeout) && enabled) {
 /* API
 			pwm->setDutyCycle(pwm_pin, 0);*/
-			pwm->setRunState(stop);
+			pwm->setRunState(stop);	// Delete if using API
 			enabled = false;
 
 			return true;
@@ -74,13 +75,14 @@ using namespace BlackLib;
 		if (passing) {
 /* API		
 			pwm->setDutyCycle(pwm_pin, passPWM * 1000);	// * 1000 because ns needed and passPWM is in us */
-			pwm->setSpaceRatioTime(passPWM, microsecond);
+			pwm->setSpaceRatioTime(passPWM, microsecond);	// Delete if using API
 		} else {
 /* API
 			pwm->setDutyCycle(pwm_pin, kickPWM * 1000);	// * 1000 because ns needed and kickPWM is in us */
-			pwm->setSpaceRatioTime(kickPWM, microsecond);
+			pwm->setSpaceRatioTime(kickPWM, microsecond);	// Delete if using API
 		}
 		if (!enabled) {
+			pwm->setRunState(run);	// Delete if using API
 			enabled = true;
 		}
 
