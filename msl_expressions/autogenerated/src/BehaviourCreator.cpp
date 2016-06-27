@@ -35,8 +35,6 @@ using namespace std;
 
 #include  "Plans/Behaviours/Joystick.h"
 
-#include  "Plans/SimplePlan/DriveCircle.h"
-
 #include  "Plans/Behaviours/RobotMovementDribbleTest.h"
 
 #include  "Plans/Dribble/DribbleControl.h"
@@ -295,11 +293,6 @@ namespace alica
             case 1426695479346:
 
                 return make_shared<Joystick>();
-                break;
-
-            case 1465650338485:
-
-                return make_shared<DriveCircle>();
                 break;
 
             case 1462969753310:
