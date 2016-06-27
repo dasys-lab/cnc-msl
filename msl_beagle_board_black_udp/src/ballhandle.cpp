@@ -32,6 +32,7 @@ BallHandle::~BallHandle() {
 void BallHandle::readConfigParameters() {
 	supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 
+	timeout = (*sys)["Actuation"]->get<double>("Actuation.PingInterval", NULL);
 	handlerSpeedFactor = (*sys)["Actuation"]->get<double>("Dribble.SpeedFactor", NULL);
 	speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
 	handlerSpeedSummand = (*sys)["Actuation"]->get<double>("Dribble.SpeedSummand", NULL);
