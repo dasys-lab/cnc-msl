@@ -89,6 +89,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Standards/Own/FreeKick/AlignFreeGoalSpace.h"
+
 #include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
@@ -440,6 +442,11 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
+            case 1467039882734:
+
+                return make_shared<AlignFreeGoalSpace>();
+                break;
+
             case 1457698689219:
 
                 return make_shared<LaserBallTracking>();
@@ -673,6 +680,8 @@ namespace alica
             case 1461583806472:
 
             case 1465038982091:
+
+            case 1466861369486:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;
