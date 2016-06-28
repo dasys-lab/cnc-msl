@@ -24,7 +24,7 @@
   <states id="1464535201681" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1466348438844</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1466861369486</plans>
     <inTransitions>#1464778510115</inTransitions>
     <inTransitions>#1464783504464</inTransitions>
     <outTransitions>#1464778511430</outTransitions>
@@ -38,13 +38,13 @@
   <states id="1464535253598" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Intercept.beh#1458757193843</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1464778513652</inTransitions>
     <outTransitions>#1464778515443</outTransitions>
-    <outTransitions>#1466342186872</outTransitions>
   </states>
   <states id="1464535263395" name="Shoot" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
   </states>
@@ -56,7 +56,6 @@
   </states>
   <states xsi:type="alica:SuccessState" id="1464785222776" name="Success" comment="">
     <inTransitions>#1464785278735</inTransitions>
-    <inTransitions>#1466342186872</inTransitions>
   </states>
   <states id="1464785237103" name="Wait/MoveOutOfWay" comment="">
     <inTransitions>#1464785250936</inTransitions>
@@ -94,11 +93,6 @@
   <transitions id="1464785278735" name="MISSING_NAME" comment="shot successfully" msg="">
     <preCondition id="1464785280406" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1464535263395</inState>
-    <outState>#1464785222776</outState>
-  </transitions>
-  <transitions id="1466342186872" name="MISSING_NAME" comment="intercept fail" msg="">
-    <preCondition id="1466342189221" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1464535253598</inState>
     <outState>#1464785222776</outState>
   </transitions>
   <entryPoints id="1464531946025" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
