@@ -42,7 +42,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535263395"/>
-    <value xPos="927" yPos="171" width="169" height="86" collapsed="false"/>
+    <value xPos="917" yPos="235" width="209" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535682818"/>
@@ -128,10 +128,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="OwnFreeKickInOppHalf.pml#1465474610518"/>
-    <value xPos="517" yPos="662"/>
-  </extensions>
-  <extensions>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
@@ -160,7 +156,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/DriveToPoint.beh#1443003717671"/>
     <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
