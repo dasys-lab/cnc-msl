@@ -18,7 +18,7 @@ namespace alica
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
         snapDistance = (*this->sc)["Behaviour"]->get<int>("Goalie.SnapDistance", NULL);
         goalieSize = (*this->sc)["Behaviour"]->get<int>("Goalie.GoalieSize", NULL);
-        post = (*this->sc)["Behaviour"]->get < string > ("Goalie.PostSide", NULL);
+        startPost = (*this->sc)["Behaviour"]->get < string > ("Goalie.PostSide", NULL);
 
         alloGoalMid = wm->field->posOwnGoalMid();
         alloGoalLeft = make_shared < geometry::CNPoint2D
@@ -31,6 +31,7 @@ namespace alica
 
         prevTargetDist = 0;
         startTime = -1;
+        driveToPost = 0;
         /*PROTECTED REGION END*/
     }
     DriveToPost::~DriveToPost()
@@ -47,26 +48,31 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > targetPost;
         ownPos = wm->rawSensorData->getOwnPositionVision();
-        if (post.compare("Left") == 0)
-        {
-//			cout << "[DriveToPost] driving to left Post.";
-            targetPost = alloGoalLeft;
-        }
-        else if (post.compare("Right") == 0)
-        {
-//			cout << "[DriveToPost] driving to right Post.";
-            targetPost = alloGoalRight;
-        }
-        else
-        {
-            cout << "[DriveToPost] no goalPost selected!" << endl;
-            return;
+//        if (startPost.compare("Left") == 0)
+//        {
+//            targetPost = alloGoalLeft;
+//        }
+//        else if (startPost.compare("Right") == 0)
+//        {
+//            targetPost = alloGoalRight;
+//        }
+//        else
+//        {
+//            cout << "[DriveToPost] no goalPost selected!" << endl;
+//            return;
+//        }
+        if(driveToPost == 0) {
+        	targetPost = alloGoalLeft;
+        } else if(driveToPost == 1) {
+        	targetPost = alloGoalRight;
+        } else {
+        	cout << "[DriveToPost] shouldn't happen!" << endl;
         }
 
         if (targetPost->alloToEgo(*ownPos)->length() > snapDistance)
         {
-            cout << "### [DriveToPost] ###" << endl;
-            cout << "Remaining distance: " << prevTargetDist << endl;
+//            cout << "### [DriveToPost] ###" << endl;
+//            cout << "Remaining distance: " << prevTargetDist << endl;
 
             ownPos = wm->rawSensorData->getOwnPositionVision();
             mc.motion.angle = targetPost->alloToEgo(*ownPos)->angleTo();
@@ -75,7 +81,7 @@ namespace alica
                     (targetPost->alloToEgo(*ownPos)->length() * pTrans)
                             + ((targetPost->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
             prevTargetDist = targetPost->alloToEgo(*ownPos)->length();
-            cout << endl;
+//            cout << endl;
         }
         else
         {
@@ -83,11 +89,18 @@ namespace alica
             long int endTime = wm->getTime();
             long int time = endTime - startTime;
 
-            if (time > 0)
+            if (time > 0.2)
             {
-                cout << "[DriveToPost] Arrived at" << post << "post" << endl;
-                cout << "[DriveToPost] startTime: " << startTime << " endTime: " << endTime << endl;
+//                cout << "[DriveToPost] Arrived at startPost" << endl;
+//                cout << "[DriveToPost] startTime: " << startTime << " endTime: " << endTime << endl;
                 cout << "[DriveToPost] Time to Post: " << time / 1000000000.0 << endl;
+            }
+
+            // change target to other post side
+            if(driveToPost == 1) {
+            	driveToPost--;
+            } else {
+            	driveToPost++;
             }
             startTime = -1;
         }
