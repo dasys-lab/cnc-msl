@@ -30,6 +30,7 @@ typedef Kernel::Line_2 Line_2;
 #include <memory>
 #include "container/CNPoint2D.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
+#include <pathplanner/PathPlannerQuery.h>
 #include "MSLWorldModel.h"
 #include <ros/ros.h>
 #include "VoronoiNet.h"
@@ -54,7 +55,18 @@ namespace msl
 		 */
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<IPathEvaluator> pathEvaluator,
-														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints= nullptr);
+														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
+
+		/**
+		 * get ego direction form path planner
+		 * @param egoTarget shared_ptr<geometry::CNPoint2D>
+		 * @param eval shared_ptr<PathEvaluator>
+		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
+		 * @return shared_ptr<geometry::CNPoint2D>
+		 */
+		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
+														shared_ptr<IPathEvaluator> pathEvaluator,
+														shared_ptr<PathPlannerQuery> query);
 
 		/**
 		 * get the path proxy instacne
