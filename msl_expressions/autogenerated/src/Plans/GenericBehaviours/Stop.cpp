@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/GenericBehaviours/Stop.h"
 
 /*PROTECTED REGION ID(inccpp1413992604875) ENABLED START*/ //Add additional includes here
+#include <msl_actuator_msgs/MotionControl.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

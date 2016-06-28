@@ -46,18 +46,11 @@ catkin_package(
    src/MSLConstraintBuilder.cpp
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
-   src/robotmovement/RobotMovement.cpp
-   src/robotmovement/MovementQuery.cpp
-   src/robotmovement/SearchArea.cpp
-   src/robotmovement/EgoSearchArea.cpp
-   src/robotmovement/AlloSearchArea.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
    src/RawSensorData.cpp
    src/Robots.cpp
    src/Ball.cpp
    src/Game.cpp
-   src/Kicker.cpp
-   src/KickCurve.cpp
    src/Opponents.cpp
    src/Teammates.cpp
    src/WhiteBoard.cpp
@@ -72,6 +65,7 @@ catkin_package(
    src/pathplanner/PathProxy.cpp
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
+   src/pathplanner/PathPlannerQuery.cpp
    src/ballTracking/BallIntegrator.cpp  
    src/ballTracking/BallZTracker.cpp  
    src/ballTracking/EgoMotionEstimator.cpp  
@@ -88,8 +82,6 @@ catkin_package(
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(msl_worldmodel 
-  ${catkin_LIBRARIES} 
-  msl_worldmodel_generate_messages_cpp 
   msl_sensor_msgs_generate_messages_cpp  
   msl_actuator_msgs_generate_messages_cpp 
   geometry_msgs_generate_messages_cpp

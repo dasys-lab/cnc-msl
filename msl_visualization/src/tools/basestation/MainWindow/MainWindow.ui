@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>925</width>
+    <width>850</width>
     <height>692</height>
    </rect>
   </property>
@@ -509,16 +509,7 @@
       </property>
       <item>
        <layout class="QGridLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <property name="spacing">
@@ -599,16 +590,7 @@
           <property name="spacing">
            <number>0</number>
           </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
+          <property name="margin">
            <number>0</number>
           </property>
           <item>
@@ -685,7 +667,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="Group_T">
+         <widget class="QGroupBox" name="Group_RobotFilter">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -703,103 +685,42 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <layout class="QHBoxLayout">
-             <property name="spacing">
-              <number>0</number>
+            <widget class="QComboBox" name="robotSelector"/>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkVis">
+             <property name="text">
+              <string>Visualization</string>
              </property>
-             <property name="leftMargin">
-              <number>0</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkPp">
+             <property name="text">
+              <string>PathPlanner</string>
              </property>
-             <property name="topMargin">
-              <number>0</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkCorr">
+             <property name="text">
+              <string>Corridor</string>
              </property>
-             <property name="rightMargin">
-              <number>0</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkVoronoi">
+             <property name="text">
+              <string>Voronoi</string>
              </property>
-             <property name="bottomMargin">
-              <number>0</number>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="checkSites">
+             <property name="text">
+              <string>Sites</string>
              </property>
-             <item>
-              <widget class="QComboBox" name="GoalColorCombo">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Sans Serif</family>
-                 <pointsize>7</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                 <underline>false</underline>
-                 <strikeout>false</strikeout>
-                </font>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Yellow</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Blue</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="TeamColorCombo">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>Sans Serif</family>
-                 <pointsize>7</pointsize>
-                 <weight>50</weight>
-                 <italic>false</italic>
-                 <bold>false</bold>
-                 <underline>false</underline>
-                 <strikeout>false</strikeout>
-                </font>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <item>
-                <property name="text">
-                 <string>Magenta</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Cyan</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-            </layout>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -815,7 +736,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>925</width>
+     <width>850</width>
      <height>25</height>
     </rect>
    </property>

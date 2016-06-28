@@ -2,12 +2,14 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignAndGrab.h"
 
 /*PROTECTED REGION ID(inccpp1455888574532) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
 #include <GeometryCalculator.h>
-#include <Kicker.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,6 +23,8 @@ namespace alica
         this->tol = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignTolerance", NULL);
         this->trans = (*sc)["Behaviour"]->get<double>("StandardAlign.AlignSpeed", NULL);
         this->minTol = (*sc)["Behaviour"]->get<double>("StandardAlign.MinAlignTolerance", NULL);
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     StandardAlignAndGrab::~StandardAlignAndGrab()
@@ -31,6 +35,7 @@ namespace alica
     void StandardAlignAndGrab::run(void* msg)
     {
         /*PROTECTED REGION ID(run1455888574532) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision(); // actually ownPosition corrected
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         // return if necessary information is missing
@@ -49,7 +54,12 @@ namespace alica
         if (egoBallPos->length() > 900)
         {
             // Drive close to the ball, until dist < 900
-            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            // replaced with new moveToPointMethod
+//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
+
             cout << "SAAG: egoBallPos->length() > 900 ROT: \t" << mc.motion.rotation << endl;
             send(mc);
             return;
@@ -64,7 +74,12 @@ namespace alica
         if (egoBallPos->length() > 450)
         {
             // Drive closer to the ball, but don't rotate
-            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0, nullptr);
+            query->egoDestinationPoint = egoBallPos;
+            query->egoAlignPoint = egoBallPos;
+            mc = rm.moveToPoint(query);
+
             mc.motion.rotation = 0;
             mc.motion.translation = min(600.0, egoBallPos->length() / 1.66);
             cout << "SAAG: egoBallPos->length() > 450 ROT: \t" << mc.motion.rotation << endl;
@@ -103,7 +118,7 @@ namespace alica
 
         shared_ptr < geometry::CNPoint2D > direction = nullptr;
 
-        double dangle = geometry::deltaAngle(wm->kicker->kickerAngle, egoMatePos->angleTo());
+        double dangle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoMatePos->angleTo());
 
         double cross = egoMatePos->x * egoBallPos->y - egoMatePos->y * egoBallPos->x;
         double fac = -(cross > 0 ? 1 : -1);
@@ -116,7 +131,7 @@ namespace alica
             direction = egoBallPos->rotate(-fac * M_PI / 2.0)->normalize() * this->trans;
         }
 
-        double balldangle = geometry::deltaAngle(wm->kicker->kickerAngle, egoBallPos->angleTo());
+        double balldangle = geometry::deltaAngle(this->robot->kicker->kickerAngle, egoBallPos->angleTo());
         if (egoBallPos->length() > 350 && fabs(dangle) > 35.0 * M_PI / 180.0)
         {
             mc.motion.angle = direction->angleTo();

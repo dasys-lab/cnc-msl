@@ -2,10 +2,12 @@ using namespace std;
 #include "Plans/Behaviours/RobotMovementDribbleTest.h"
 
 /*PROTECTED REGION ID(inccpp1462969724089) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "container/CNPoint2D.h"
 #include <RawSensorData.h>
+#include <MSLWorldModel.h>
 #include <Ball.h>
+#include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -109,7 +111,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1462969724089) ENABLED START*/ //Add additional options here
         currentTarget = nullptr;
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
     }

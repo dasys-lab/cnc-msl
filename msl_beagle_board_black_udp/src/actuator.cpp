@@ -33,6 +33,7 @@
 
 
 #include "msl_actuator_msgs/BallHandleCmd.h"
+#include "msl_actuator_msgs/BallHandleMode.h"
 #include "msl_actuator_msgs/ShovelSelectCmd.h"
 #include "msl_actuator_msgs/MotionLight.h"
 #include "process_manager/ProcessCommand.h"
@@ -41,6 +42,7 @@
 #include "std_msgs/Bool.h"
 #include "msl_actuator_msgs/CanMsg.h"
 #include "msl_actuator_msgs/IMUData.h"
+#include "msl_actuator_msgs/RawOdometryInfo.h"
 
 using boost::asio::ip::udp;
 
@@ -65,15 +67,21 @@ mutex		mtx;
 uint8_t		th_count;
 bool		th_activ = true;
 
+BallHandle	ballHandle;
+
 
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
-	if (msg.enabled) {
-		BH_right.setBallHandling(msg.rightMotor);
-		BH_left.setBallHandling(msg.leftMotor);
-	} else {
-		BH_right.setBallHandling(0);
-		BH_left.setBallHandling(0);
+	const msl_actuator_msgs::BallHandleMode mode;
+
+	ballHandle.ping();
+	if (ballHandle.getMode() == mode.REMOTE_CONTROL) {
+		ballHandle.setBallHandling(msg.leftMotor, msg.rightMotor);
 	}
+}
+
+void handleBallHandleMode(const msl_actuator_msgs::BallHandleMode msg) {
+	ballHandle.ping();
+	ballHandle.setMode(msg.mode);
 }
 
 void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg) {
@@ -93,6 +101,10 @@ void handleMotionLight(const msl_actuator_msgs::MotionLight msg) {
 	}
 }
 
+void handleRawOdometryInfo(const msl_actuator_msgs::RawOdometryInfo msg) {
+	ballHandle.setOdometryData(msg.motion.angle, msg.motion.translation);
+}
+
 
 
 
@@ -108,6 +120,21 @@ uint8_t* buffer = NULL;
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
 		*((uint32_t*)buffer) = 1334345447u;
+		ros::serialization::serialize(stream, message);
+		// write message to UDP
+		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
+	} catch(std::exception& e) {
+		ROS_ERROR_STREAM_THROTTLE(2,"Exception while sending UDP message:"<<e.what()<< " Discarding message!");
+	}
+	if(buffer!=NULL) delete[] buffer;
+}
+void onRosBallHandleMode297244167(msl_actuator_msgs::BallHandleMode& message) {
+uint8_t* buffer = NULL;
+	try{
+		uint32_t serial_size = ros::serialization::serializationLength(message);
+		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
+		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
+		*((uint32_t*)buffer) = 297244167u;
 		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
@@ -198,6 +225,21 @@ uint8_t* buffer = NULL;
 		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
 		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
 		*((uint32_t*)buffer) = 2802967882u;
+		ros::serialization::serialize(stream, message);
+		// write message to UDP
+		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
+	} catch(std::exception& e) {
+		ROS_ERROR_STREAM_THROTTLE(2,"Exception while sending UDP message:"<<e.what()<< " Discarding message!");
+	}
+	if(buffer!=NULL) delete[] buffer;
+}
+void onRosRawOdometryInfo3134514216(msl_actuator_msgs::RawOdometryInfo& message) {
+uint8_t* buffer = NULL;
+	try{
+		uint32_t serial_size = ros::serialization::serializationLength(message);
+		buffer = new uint8_t[serial_size+sizeof(uint32_t)];
+		ros::serialization::OStream stream(buffer+sizeof(uint32_t), serial_size);
+		*((uint32_t*)buffer) = 3134514216u;
 		ros::serialization::serialize(stream, message);
 		// write message to UDP
 		insocket->send_to(boost::asio::buffer((void*)buffer,serial_size+sizeof(uint32_t)),destEndPoint);
@@ -304,6 +346,12 @@ void handleUdpPacket(const boost::system::error_code& error,   std::size_t bytes
 
 				handleBallHandleControl(m1334345447);
 				break; }
+				case 297244167ul: {
+				msl_actuator_msgs::BallHandleMode m297244167;
+				ros::serialization::Serializer<msl_actuator_msgs::BallHandleMode>::read(stream, m297244167);
+
+				handleBallHandleMode(m297244167);
+				break; }
 				case 1418208429ul: {
 				msl_actuator_msgs::ShovelSelectCmd m1418208429;
 				ros::serialization::Serializer<msl_actuator_msgs::ShovelSelectCmd>::read(stream, m1418208429);
@@ -335,6 +383,11 @@ void handleUdpPacket(const boost::system::error_code& error,   std::size_t bytes
 //				std_msgs::Bool m2802967882;
 //				ros::serialization::Serializer<std_msgs::Bool>::read(stream, m2802967882);
 //				pub2802967882.publish<std_msgs::Bool>(m2802967882);
+				break; }
+				case 3134514216ul: {
+				msl_actuator_msgs::RawOdometryInfo m3134514216;
+				ros::serialization::Serializer<msl_actuator_msgs::RawOdometryInfo>::read(stream, m3134514216);
+				handleRawOdometryInfo(m3134514216);
 				break; }
 				case 1267609526ul: {
 //				msl_actuator_msgs::CanMsg m1267609526;
@@ -387,7 +440,8 @@ void run_udp() {
 
 
 
-void controlBHLeft() {
+void controlBallHandle() {
+	const msl_actuator_msgs::BallHandleMode msg;
 	unique_lock<mutex> l_bhl(threw[0].mtx);
 	while(th_activ) {
 		threw[0].cv.wait(l_bhl, [&] { return !th_activ || threw[0].notify; }); // protection against spurious wake-ups
@@ -395,7 +449,12 @@ void controlBHLeft() {
 			return;
 
 		try {
-			BH_left.controlBallHandling();
+			if (ballHandle.getMode() == msg.REMOTE_CONTROL) {
+				ballHandle.checkTimeout();
+			}
+			if (ballHandle.getMode() == msg.AUTONOMOUS_CONTROL) {
+				ballHandle.dribbleControl();
+			}
 		} catch (exception &e) {
 			cout << "BallHanlde left: " << e.what() << endl;
 		}
@@ -404,27 +463,10 @@ void controlBHLeft() {
 	}
 }
 
-void controlBHRight() {
-	unique_lock<mutex> l_bhr(threw[1].mtx);
-	while(th_activ) {
-		threw[1].cv.wait(l_bhr, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
-		if (!th_activ)
-			return;
-
-		try {
-			BH_right.controlBallHandling();
-		} catch (exception &e) {
-			cout << "BallHanlde right: " << e.what() << endl;
-		}
-
-		threw[1].notify = false;
-	}
-}
-
 void contolShovelSelect() {
-	unique_lock<mutex> l_shovel(threw[2].mtx);
+	unique_lock<mutex> l_shovel(threw[1].mtx);
 	while(th_activ) {
-		threw[2].cv.wait(l_shovel, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
+		threw[1].cv.wait(l_shovel, [&] { return !th_activ || threw[1].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -434,15 +476,15 @@ void contolShovelSelect() {
 			cout << "Shovel: " << e.what() << endl;
 		}
 
-		threw[2].notify = false;
+		threw[1].notify = false;
 	}
 }
 
 void getLightbarrier() {
 	std_msgs::Bool msg;
-	unique_lock<mutex> l_light(threw[3].mtx);
+	unique_lock<mutex> l_light(threw[2].mtx);
 	while(th_activ) {
-		threw[3].cv.wait(l_light, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
+		threw[2].cv.wait(l_light, [&] { return !th_activ || threw[2].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -454,51 +496,57 @@ void getLightbarrier() {
 			cout << "ADC: " << e.what() << endl;
 		}
 
-		threw[3].notify = false;
+		threw[2].notify = false;
 	}
 }
 
 void getSwitches() {
 	supplementary::SystemConfig* sc;
 	sc = supplementary::SystemConfig::getInstance();
+	enum	Pin { sw_vision, sw_bundle, sw_power, led_power, led_bundle, led_vision };
 	int		ownID = (*sc)["bbb"]->get<int>("BBB.robotID",NULL);
-	enum	button {	bundle = 0,
-						vision = 1,
-						power = 2, };
 	msl_actuator_msgs::VisionRelocTrigger msg_v;
 	process_manager::ProcessCommand msg_pm;
 
-	unique_lock<mutex> l_switches(threw[4].mtx);
+	const char *pin_names[] = { "P9_11", "P9_13", "P9_15", "P9_23", "P9_41", "P9_42" }; /* sw_vis, sw_bun, sw_pwr, led_pwr, led_bun, led_vis */
+	BeagleGPIO *gpio = BeagleGPIO::getInstance();
+	BeaglePins *pins = gpio->claim((char**) pin_names, 6);
+
+	int outputIdxs[] = { led_power, led_bundle, led_vision };
+	pins->enableOutput(outputIdxs, 3);
+
+	unique_lock<mutex> l_switches(threw[3].mtx);
 	while(th_activ) {
-		threw[4].cv.wait(l_switches, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
+		threw[3].cv.wait(l_switches, [&] { return !th_activ || threw[3].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
 		static bool		state[3] = {false, false, false};
-
 		bool newstate[3];
-		uint8_t	sw[3] = {1, 1, 1};
+		int	sw[3] = {1, 1, 1};
 
 		try {
-			sw[bundle]	= SW_Bundle.getNumericValue();
-			sw[vision]	= SW_Vision.getNumericValue();
-			sw[power]	= SW_Power.getNumericValue();
+			// TODO überprüfen, ob Auslesen mit der API funktioniert
+			sw[sw_vision] = pins->getBit(sw_vision);
+			sw[sw_bundle]	= pins->getBit(sw_bundle);
+			sw[sw_power]	= pins->getBit(sw_power);
 		} catch (exception &e) {
 			cout << "Buttons: " << e.what() << endl;
 		}
 
 		for (int i = 0; i <= 2; i++) {
-			if(sw[i] == 1) {
+			if(sw[i] == 1)
 				newstate[i] = false;
-			} else {
+			else if (sw[i] == 0)
 				newstate[i] = true;
-			}
+			else
+				cout << "Button " << i << " failure" << endl;
 		}
 
-		if (newstate[bundle] != state[bundle]) {
-			state[bundle] = newstate[bundle];
+		if (newstate[sw_bundle] != state[sw_bundle]) {
+			state[sw_bundle] = newstate[sw_bundle];
 
-			if (state[bundle]) {
+			if (state[sw_bundle]) {
 				static uint8_t bundle_state = 0;
 
 				msg_pm.receiverId = ownID;
@@ -509,52 +557,53 @@ void getSwitches() {
 				if (bundle_state == 0) {		// Prozesse starten
 					bundle_state = 1;
 					msg_pm.cmd = 0;
-					LED_Bundle.setValue(high);	// LED an
+					pins->setBit(led_bundle);	// LED an
 				} else if (bundle_state == 1) {	// Prozesse stoppen
 					bundle_state = 0;
 					msg_pm.cmd = 1;
-					LED_Bundle.setValue(low);	// LED aus
+					pins->clearBit(led_bundle);	// LED aus
 				}
 				onRosProcessCommand554624761(msg_pm);
 				//brtPub->publish(msg_pm);
 			}
 		}
 
-		if (newstate[vision] != state[vision]) {
-			state[vision] = newstate[vision];
+		if (newstate[sw_vision] != state[sw_vision]) {
+			state[sw_vision] = newstate[sw_vision];
 
-			if (state[vision]) {
+			if (state[sw_vision]) {
 				msg_v.receiverID = ownID;
 				msg_v.usePose = false;
 				onRosVisionRelocTrigger2772566283(msg_v);
 				//vrtPub->publish(msg_v);
-				LED_Vision.setValue(high);
+				pins->setBit(led_vision);	// Vision-LED an
 			} else {
-				LED_Vision.setValue(low);
+				pins->clearBit(led_vision);	// Vision-LED aus
 			}
 		}
 
-		if (newstate[power] != state[power]) {
-			state[power] = newstate[power];
+		if (newstate[sw_power] != state[sw_power]) {
+			state[sw_power] = newstate[sw_power];
 
-			if (state[power]) {
+			if (state[sw_power]) {
 				std_msgs::Empty msg;
 				//TODO not sent yet -> copy from generated code!
 				//flPub->publish(msg);
-				LED_Power.setValue(high);
+				pins->setBit(led_power);	// Power-LED an
 			} else {
-				LED_Power.setValue(low);
+				pins->clearBit(led_power);	// Power-LED aus
 			}
 		}
 
-		threw[4].notify = false;
+		threw[3].notify = false;
 	}
+	delete gpio;
 }
 
 void getIMU() {
-	unique_lock<mutex> l_imu(threw[5].mtx);
+	unique_lock<mutex> l_imu(threw[4].mtx);
 	while(th_activ) {
-		threw[5].cv.wait(l_imu, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
+		threw[4].cv.wait(l_imu, [&] { return !th_activ || threw[4].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
@@ -567,7 +616,7 @@ void getIMU() {
 			cout << "IMU: " << e.what() << endl;
 		}
 
-		threw[5].notify = false;
+		threw[4].notify = false;
 	}
 }
 
@@ -590,7 +639,6 @@ void getIMU() {
 }*/
 
 void exit_program(int sig) {
-	LED_Power.setValue(low);
 	ex = true;
 	th_activ = false;
 	for (int i=0; i<7; i++)
@@ -601,30 +649,22 @@ void exit_program(int sig) {
 
 
 int main(int argc, char** argv) {
-	// ROS Init
-//	ros::init(argc, argv, "ActuatorController");
-//	ros::NodeHandle node;
 	ros::Time::init();
 	ros::Rate loop_rate(30);		// in Hz
 
 	supplementary::SystemConfig* sc;
 	sc = supplementary::SystemConfig::getInstance();
 
-	thread th_controlBHRight(controlBHRight);
-	thread th_controlBHLeft(controlBHLeft);
+	thread th_controlBallHandle(controlBallHandle);
 	thread th_controlShovel(contolShovelSelect);
 	thread th_lightbarrier(getLightbarrier);
 	thread th_switches(getSwitches);
-	thread th_imu(getIMU); //, &imuPub);
-//	thread th_adns3080(getOptical, &mbcPub);
+	thread th_imu(getIMU);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
-	 bool imu = lsm9ds0.init();
-	/*lsm9ds0.setRefAccel();
-	adns3080.reset();
-	adns3080.adns_init(); */
+	bool imu = lsm9ds0.init();
 
 
 	supplementary::Configuration *proxyconf = (*sc)["msl_bbb_proxy"];
@@ -639,7 +679,6 @@ int main(int argc, char** argv) {
 	listenForPacket();
 
 	usleep(50000);
-    LED_Power.setValue(high);
 
 	boost::thread iothread(run_udp);
 	std::cout << "Udp connection active..." <<std::endl;
@@ -649,7 +688,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<6; i++) { // TODO remove magic number
+		for (int i=0; i<5; i++) { // TODO remove magic number
 			if (threw[i].notify) {
 				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
 			} else {
@@ -660,7 +699,6 @@ int main(int argc, char** argv) {
 
 		loop_rate.sleep();
 	}
-	//LED_Power.setValue(low);
     io_service.stop();
     iothread.join();
 

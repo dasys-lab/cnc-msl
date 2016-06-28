@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Attack/CatchPass.h"
 
 /*PROTECTED REGION ID(inccpp1440754525537) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <WhiteBoard.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,6 +20,8 @@ namespace alica
         field = nullptr;
         maxVel = 0;
         sc = nullptr;
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     CatchPass::~CatchPass()
@@ -29,6 +32,8 @@ namespace alica
     void CatchPass::run(void* msg)
     {
         /*PROTECTED REGION ID(run1440754525537) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         auto ownPos = wm->rawSensorData->getOwnPositionVision();
         if (ownPos == nullptr)
         {
@@ -58,7 +63,13 @@ namespace alica
                 trans = maxVel;
             }
             trans = min(maxVel, trans);
-            mc = msl::RobotMovement::moveToPointCarefully(egoDest, ballPos, 100);
+            // replaced with new moveToPoint method
+//            mc = msl::RobotMovement::moveToPointCarefully(egoDest, ballPos, 100);
+            query->egoDestinationPoint = egoDest;
+            query->egoAlignPoint = ballPos;
+            query->snapDistance = 100;
+            mc = rm.moveToPoint(query);
+
             mc.motion.translation = min(mc.motion.translation, trans);
 
             if (egoDest->length() < 100)
@@ -68,9 +79,13 @@ namespace alica
 
         }
 
-        if (mc.senderID != -1)
+        if (!std::isnan(mc.motion.rotation))
         {
             send(mc);
+        }
+        else
+        {
+            cout << "motion command is NaN" << endl;
         }
         /*PROTECTED REGION END*/
     }

@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
 /*PROTECTED REGION ID(inccpp1461674942156) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "SystemConfig.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
@@ -10,6 +10,7 @@ using namespace std;
 #include "engine/model/Plan.h"
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 #include <Robots.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -20,6 +21,7 @@ namespace alica
             DomainBehaviour("PosAlternativePassReceiver")
     {
         /*PROTECTED REGION ID(con1461674942156) ENABLED START*/ //Add additional options here
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     PosAlternativePassReceiver::~PosAlternativePassReceiver()
@@ -30,6 +32,7 @@ namespace alica
     void PosAlternativePassReceiver::run(void* msg)
     {
         /*PROTECTED REGION ID(run1461674942156) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
         shared_ptr < geometry::CNPosition > ownPos = wm->rawSensorData->getOwnPositionVision();
         shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
         if (ownPos == nullptr || egoBallPos == nullptr)
@@ -93,15 +96,26 @@ namespace alica
                 egoTarget = alloTarget->alloToEgo(*ownPos);
             }
             // ask the path planner how to get there
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
-                                                          additionalPoints);
+//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, receiverPos->alloToEgo(*ownPos), 0,
+//                                                          additionalPoints);
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            query->additionalPoints = additionalPoints;
+            mc = rm.moveToPoint(query);
 
             // if we reach the point and are aligned, the behavior is successful
             if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
             {
                 this->setSuccess(true);
             }
-            send(mc);
+            if (!std::isnan(mc.motion.translation))
+            {
+                send(mc);
+            }
+            else
+            {
+                cout << "Motion command is NaN!" << endl;
+            }
         }
         /*PROTECTED REGION END*/
     }

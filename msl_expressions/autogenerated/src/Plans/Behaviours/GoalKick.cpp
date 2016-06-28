@@ -4,11 +4,13 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1415205565589) ENABLED START*/ //Add additional includes here
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/MotionControl.h"
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <obstaclehandler/Obstacles.h>
 #include <pathplanner/PathPlanner.h>
+#include <MSLWorldModel.h>
+#include  <msl_actuator_msgs/KickControl.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -140,6 +142,62 @@ namespace alica
         minKickPower = 1500.0;
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1415205565589) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1415205565589) ENABLED START*/ //Add additional methods here
+    msl_actuator_msgs::MotionControl GoalKick::rapidAlignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                                         shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                                         double angleTolerance,
+                                                                         double ballAngleTolerance)
+    {
+        msl_actuator_msgs::MotionControl mc;
+        double egoTargetAngle = egoAlignPoint->angleTo();
+        double egoBallAngle = egoBallPos->angleTo();
+        double deltaTargetAngle = geometry::deltaAngle(egoTargetAngle, M_PI);
+        double deltaBallAngle = geometry::deltaAngle(egoBallAngle, M_PI);
+
+        if (fabs(deltaBallAngle) < ballAngleTolerance && fabs(deltaTargetAngle) < angleTolerance)
+        {
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+        }
+        else
+        {
+            if (egoAlignPoint->angleTo() > M_PI / 2)
+            {
+                mc.motion.rotation = alignToPointRapidMaxRotation;
+            }
+            else if (egoAlignPoint->angleTo() < -M_PI / 2)
+            {
+                mc.motion.rotation = -alignToPointRapidMaxRotation;
+            }
+            else
+            {
+                double clausenValue = 0.0;
+                for (int i = 1; i < 10; i++)
+                {
+                    clausenValue += sin(i * egoAlignPoint->angleTo()) / pow(i, 2);
+                }
+                mc.motion.rotation = egoAlignPoint->angleTo() * abs(clausenValue) * 8;
+
+            }
+//			mc.motion.rotation = -(deltaTargetAngle * defaultRotateP
+//					+ (deltaTargetAngle - lastRotError) * alignToPointpRot);
+//			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
+//					* min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
+
+            lastRotErrorWithBallRapid = deltaTargetAngle;
+
+            // crate the motion orthogonal to the ball
+            shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
+            driveTo = driveTo * mc.motion.rotation;
+
+            // add the motion towards the ball
+            driveTo = driveTo + egoBallPos->normalize() * 10;
+
+            mc.motion.angle = driveTo->angleTo();
+            mc.motion.translation = min(alignMaxVel, driveTo->length());
+        }
+        return mc;
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

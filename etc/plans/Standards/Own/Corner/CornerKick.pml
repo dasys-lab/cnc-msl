@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462373376006" name="CornerKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/Corner" priority="0.0" minCardinality="2" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1462373376006" name="CornerKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/Corner" priority="0.0" minCardinality="2" maxCardinality="4">
   <conditions xsi:type="alica:RuntimeCondition" id="1464793807994" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1464793819347" name="MISSING_NAME" comment="" scope="1464793576624">
       <sorts>x</sorts>
@@ -93,11 +93,11 @@
     <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1462374515826</state>
   </entryPoints>
-  <entryPoints id="1464793555239" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464793555239" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1432209050494</task>
     <state>#1464793576624</state>
   </entryPoints>
-  <entryPoints id="1464793619930" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+  <entryPoints id="1464793619930" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1225115406909</task>
     <state>#1464793641082</state>
   </entryPoints>

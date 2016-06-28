@@ -2,10 +2,11 @@ using namespace std;
 #include "Plans/Attack/AdvancdeSimplePass.h"
 
 /*PROTECTED REGION ID(inccpp1450176193656) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <Robots.h>
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

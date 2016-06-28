@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1450176193656) ENABLED START*/ //Add additional includes here
+#include "msl_robot/robotmovement/MovementQuery.h"
 namespace supplementary
 {
     class SystemConfig;

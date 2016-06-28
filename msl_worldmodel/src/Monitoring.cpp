@@ -10,6 +10,7 @@
 #include "MSLWorldModel.h"
 #include <engine/AlicaEngine.h>
 #include "RawSensorData.h"
+#include <chrono>
 
 namespace msl
 {
@@ -39,6 +40,7 @@ namespace msl
 		{
 			this->monitorSimulator();
 			this->monitorMotion();
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 	}
 

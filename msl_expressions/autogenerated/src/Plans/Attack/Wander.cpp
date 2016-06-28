@@ -3,9 +3,10 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1434716215423) ENABLED START*/ //Add additional includes here
 #include "MSLFootballField.h"
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include <RawSensorData.h>
 #include <Game.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,8 +18,8 @@ namespace alica
         /*PROTECTED REGION ID(con1434716215423) ENABLED START*/ //Add additional options here
         fieldLength = wm->field->getFieldLength();
         fieldWidth = wm->field->getFieldWidth();
-        distToCorner = 2500;
-        distToOutLine = 4000;
+        distToCorner = (2500.0 / 18000.0) * fieldLength;
+        distToOutLine = (3000.0 / 12000.0) * fieldWidth;
         firstTargetSet = false;
         EPSILON_RADIUS = 1000.0;
         SLOW_DOWN_DISTANCE = 1200.0;
@@ -68,15 +69,17 @@ namespace alica
         //points on side lines (distToOutline away)
         targetPointsThrowIn.resize(6);
         //left
-        targetPointsThrowIn[0] = make_shared < geometry::CNPoint2D > (fieldLength / 4, fieldWidth / 2 - distToOutLine);
+        targetPointsThrowIn[0] = make_shared < geometry::CNPoint2D > (fieldLength / 3, fieldWidth / 2 - distToOutLine);
         targetPointsThrowIn[1] = make_shared < geometry::CNPoint2D > (0.0, fieldWidth / 2 - distToOutLine);
-        targetPointsThrowIn[2] = make_shared < geometry::CNPoint2D > (-fieldLength / 4, fieldWidth / 2 - distToOutLine);
+        targetPointsThrowIn[2] = make_shared < geometry::CNPoint2D > (-fieldLength / 3, fieldWidth / 2 - distToOutLine);
         //right
         targetPointsThrowIn[3] = make_shared < geometry::CNPoint2D
-                > (fieldLength / 4, -(fieldWidth / 2 - distToOutLine));
+                > (fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
         targetPointsThrowIn[4] = make_shared < geometry::CNPoint2D > (0.0, -(fieldWidth / 2 - distToOutLine));
         targetPointsThrowIn[5] = make_shared < geometry::CNPoint2D
-                > (-fieldLength / 4, -(fieldWidth / 2 - distToOutLine));
+                > (-fieldLength / 3, -(fieldWidth / 2 - distToOutLine));
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     Wander::~Wander()
@@ -87,6 +90,8 @@ namespace alica
     void Wander::run(void* msg)
     {
         /*PROTECTED REGION ID(run1434716215423) ENABLED START*/ //Add additional options here
+        msl::RobotMovement rm;
+
         shared_ptr < geometry::CNPosition > ownPosition = wm->rawSensorData->getOwnPositionVision();
         if (ownPosition == nullptr)
             return;
@@ -138,8 +143,20 @@ namespace alica
             translation = targetDistance;
         }
 
-        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
-        send(mc);
+        // replaced with new moveToPoint method
+//        msl_actuator_msgs::MotionControl mc = msl::RobotMovement::moveToPointCarefully(targetPoint, targetPoint, 0);
+        query->egoDestinationPoint = targetPoint;
+        query->egoAlignPoint = targetPoint;
+
+        msl_actuator_msgs::MotionControl mc = rm.moveToPoint(query);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "motion commant is NaN" << endl;
+        }
 
         /*PROTECTED REGION END*/
     }

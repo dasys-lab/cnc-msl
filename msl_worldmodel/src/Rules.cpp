@@ -2,7 +2,7 @@
  * Rules.cpp
  *
  *  Created on: Aug 27, 2015
- *      Author: labpc1
+ *      Author: Lisa Martmann
  */
 
 #include "Rules.h"
@@ -17,6 +17,11 @@ namespace msl
 
 	Rules::Rules()
 	{
+		/**
+		 * Note: We need to read in the times with double, because the
+		 * scientific notation is not supported for unsigned long.
+		 */
+
 		sc = SystemConfig::getInstance();
 		ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);
 		robotRadius = (*this->sc)["Rules"]->get<double>("Rules", "MaxRobotRadius", NULL);
@@ -31,7 +36,6 @@ namespace msl
 
 	Rules::~Rules()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	double Rules::getBallRadius()
@@ -44,7 +48,7 @@ namespace msl
 		return robotRadius;
 	}
 
-	double Rules::getStandbyTime()
+	unsigned long Rules::getStandbyTime()
 	{
 		return standbyTime;
 	}
@@ -74,7 +78,7 @@ namespace msl
 		return kickDistance;
 	}
 
-	double Rules::getPenaltyTimeForShot()
+	unsigned long Rules::getPenaltyTimeForShot()
 	{
 		return penaltyTimeForShot;
 	}

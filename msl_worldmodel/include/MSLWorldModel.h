@@ -65,7 +65,6 @@ namespace msl
 	class Robots;
 	class Ball;
 	class Game;
-	class Kicker;
 	class WhiteBoard;
 	class MSLFootballField;
 	class Prediction;
@@ -80,9 +79,6 @@ namespace msl
 		static MSLWorldModel* get();
 		bool setEngine(alica::AlicaEngine* ae);
 		alica::AlicaEngine* getEngine();
-
-		double getKickerVoltage();
-		void setKickerVoltage(double voltage);
 
 		void onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg);
 		void onBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr msg);
@@ -118,7 +114,6 @@ namespace msl
 		Game* game;
 		MSLFootballField* field;
 		PathPlanner* pathPlanner;
-		Kicker* kicker;
 		WhiteBoard* whiteBoard;
 		Obstacles* obstacles;
 		Prediction* prediction;
@@ -137,7 +132,6 @@ namespace msl
 
 		int ownID;
 		int ringBufferLength;
-		double kickerVoltage;
 		bool maySendMessages;
 
 		MSLSharedWorldModel* sharedWorldModel;

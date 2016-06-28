@@ -1,0 +1,4 @@
+uint8 AUTONOMOUS_CONTROL = 0
+uint8 REMOTE_CONTROL = 1
+
+uint8 mode

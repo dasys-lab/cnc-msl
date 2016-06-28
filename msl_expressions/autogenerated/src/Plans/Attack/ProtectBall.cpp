@@ -4,6 +4,7 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1457706592232) ENABLED START*/ //Add additional includes here
 #include <Ball.h>
 #include <RawSensorData.h>
+#include <pathplanner/PathProxy.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -133,7 +134,7 @@ namespace alica
         mc.motion.translation = driveTo->length();
 
         send(mc);
-        msl::RobotMovement::updateLastTurnTime();
+//        msl::RobotMovement::updateLastTurnTime();
         /*PROTECTED REGION END*/
     }
     void ProtectBall::initialiseParameters()

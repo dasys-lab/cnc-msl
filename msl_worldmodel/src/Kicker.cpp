@@ -5,7 +5,7 @@
  *      Author: Stefan Jakob
  */
 
-#include <Kicker.h>
+#include <msl_robot/kicker/Kicker.h>>
 #include "MSLWorldModel.h"
 #include "Game.h"
 #include "msl_sensor_msgs/ObstacleInfo.h"

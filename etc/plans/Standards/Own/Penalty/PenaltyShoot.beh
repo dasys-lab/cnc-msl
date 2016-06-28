@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1466940246275" name="PenaltyShoot" comment="" destinationPath="Plans/Standards/Own/Penalty">
+  <configurations id="1466940268216" name="PenaltyShootDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
+</alica:Behaviour>

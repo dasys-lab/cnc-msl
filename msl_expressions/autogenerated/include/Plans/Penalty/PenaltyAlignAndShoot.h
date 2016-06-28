@@ -42,9 +42,22 @@ namespace alica
         //0 = not alignt, 1 = left, 2 = right
         int lastAlignment;
         unsigned long waitBeforeBlindKick;
+
+        // PID variables for alignToPointWithBall
+        double defaultRotateP;
+        double alignToPointpRot;
+        double lastRotError;
+        double alignToPointMaxRotation;
+        double alignToPointMinRotation;
+//        double lastRotErrorWithBall;
+        double alignMaxVel;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1431531496053) ENABLED START*/ //Add additional private methods here
+        msl_actuator_msgs::MotionControl alignToPointWithBall(shared_ptr<geometry::CNPoint2D> egoAlignPoint,
+                                                              shared_ptr<geometry::CNPoint2D> egoBallPos,
+                                                              double angleTolerance, double ballAngleTolerance);
+        void readConfigParameters();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

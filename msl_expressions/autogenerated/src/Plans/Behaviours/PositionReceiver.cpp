@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/Behaviours/PositionReceiver.h"
 
 /*PROTECTED REGION ID(inccpp1439379316897) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "MSLWorldModel.h"
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/evaluator/PathEvaluator.h"
@@ -68,7 +68,13 @@ namespace alica
         }
         else
         { // still enough time to position ...
-            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+//            mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, slowCatchRadius, additionalPoints);
+            query->egoDestinationPoint = egoTarget;
+            query->egoAlignPoint = egoBallPos;
+            query->snapDistance = slowCatchRadius;
+            query->additionalPoints = additionalPoints;
+            query->fast = false;
+            mc = rm.moveToPoint(query);
         }
 
         // if we reach the point and are aligned, the behavior is successful
@@ -76,7 +82,14 @@ namespace alica
         {
             this->setSuccess(true);
         }
-        send(mc);
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
+        else
+        {
+            cout << "Motion command is NaN!" << endl;
+        }
         /*PROTECTED REGION END*/
     }
     void PositionReceiver::initialiseParameters()

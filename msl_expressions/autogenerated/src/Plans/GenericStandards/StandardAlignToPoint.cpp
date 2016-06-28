@@ -2,12 +2,15 @@ using namespace std;
 #include "Plans/GenericStandards/StandardAlignToPoint.h"
 
 /*PROTECTED REGION ID(inccpp1433949970592) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
-#include "robotmovement/MovementQuery.h"
-#include "engine/RunningPlan.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
+#include <engine/RunningPlan.h>
+#include <engine/Assignment.h>
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
+#include <engine/Assignment.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -97,7 +100,7 @@ namespace alica
 
             // ask the path planner how to get there
             this->m_Query->egoDestinationPoint = egoTarget;
-            this->m_Query->egoAlignPoint = receiverPos->alloToEgo(*ownPos);
+            this->m_Query->egoAlignPoint = receiverPos->getPoint()->alloToEgo(*ownPos);
             this->m_Query->additionalPoints = additionalPoints;
             mc = rm.moveToPoint(m_Query);
         }

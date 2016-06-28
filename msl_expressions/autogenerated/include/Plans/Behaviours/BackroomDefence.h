@@ -5,7 +5,7 @@
 /*PROTECTED REGION ID(inc1454507752863) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
-#include "robotmovement/MovementQuery.h"
+#include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {

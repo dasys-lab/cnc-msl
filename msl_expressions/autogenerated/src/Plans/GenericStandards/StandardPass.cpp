@@ -2,7 +2,7 @@ using namespace std;
 #include "Plans/GenericStandards/StandardPass.h"
 
 /*PROTECTED REGION ID(inccpp1435760160067) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
+#include "msl_robot/robotmovement/RobotMovement.h"
 #include "engine/model/EntryPoint.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
@@ -10,7 +10,10 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <Robots.h>
-#include "Kicker.h"
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_robot/MSLRobot.h>
+#include <msl_robot/kicker/Kicker.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -70,7 +73,7 @@ namespace alica
         msl_actuator_msgs::KickControl kc;
         kc.enabled = true;
         kc.kicker = 1;
-        kc.power = wm->kicker->getKickPowerPass(egoAlignPoint->length());
+        kc.power = this->robot->kicker->getKickPowerPass(egoAlignPoint->length());
         send(kc);
 
         msl_helper_msgs::PassMsg pm;

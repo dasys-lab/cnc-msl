@@ -3,6 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1440754525537) ENABLED START*/ //Add additional includes here
+#include <msl_robot/robotmovement/MovementQuery.h>
 #include <MSLFootballField.h>
 /*PROTECTED REGION END*/
 namespace alica
@@ -27,6 +28,7 @@ namespace alica
         shared_ptr<geometry::CNPoint2D> passOrigin;
         shared_ptr<geometry::CNPoint2D> passVector;
         shared_ptr<geometry::CNPoint2D> passDestination;
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

@@ -4,6 +4,8 @@ using namespace std;
 /*PROTECTED REGION ID(inccpp1458132872550) ENABLED START*/ //Add additional includes here
 #include <RawSensorData.h>
 #include <Ball.h>
+#include <MSLFootballField.h>
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -46,55 +48,25 @@ namespace alica
             this->setSuccess(true);
         }
 
-        msl_actuator_msgs::MotionControl bm;
         shared_ptr < geometry::CNPoint2D > pathPlanningPoint;
-        //bm = DribbleHelper.DribbleToPoint(egoTarget,this.dribbleVel,WM,out pathPlanningPoint);
-//        auto tmpMC = msl::RobotMovement::dribbleToPointConservative(egoTarget, pathPlanningPoint);
         query->egoDestinationPoint = egoTarget;
         query->dribble = true;
 
-        auto tmpMC = rm.moveToPoint(query);
+        auto bm = rm.moveToPoint(query);
+        auto tmpMC = rm.ruleActionForBallGetter();
 
-        /*Point2D oppInFront = ObstacleHelper.ClosestOpponentInCorridor(WM,ballPos.Angle(),300);
-         double distInFront = (oppInFront==null?Double.MaxValue:oppInFront.Distance()-300);
-
-         double minInFrontDist = 1800;
-         if (od!=null && od.Motion!=null) {
-         minInFrontDist = Math.Max(minInFrontDist,Math.Min(2800,od.Motion.Translation+800));
-         }
-         if (ballPos != null && pathPlanningPoint!=null && Math.Abs(HHelper.DeltaAngle(pathPlanningPoint.Angle(),ballPos.Angle())) > Math.PI *4.75/6.0) {
-         HHelper.SetTargetPoint(WorldHelper.Ego2Allo(pathPlanningPoint,ownPos));
-         this.FailureStatus = true;
-         } else if (ballPos!=null && dstscan!=null && distInFront < minInFrontDist && distInFront > 800){
-         if(oppInFront!=null) HHelper.SetTargetPoint(WorldHelper.Ego2Allo(oppInFront.Rotate(Math.PI),ownPos));
-         this.FailureStatus = true;
-         }*/
-        shared_ptr < geometry::CNPoint2D > turnTo = msl::RobotMovement::dribbleNeedToTurn(ownPos, ballPos,
-                                                                                          pathPlanningPoint);
-//		if (turnTo!=nullptr) {
-//			HHelper.SetTargetPoint(turnTo);
-//			this->failure = true;
-//		}
-
-        //if i drive in to the enemy goal area
-        // replaced with new method
-//        bm = msl::RobotMovement::nearGoalArea(bm);
-        bm = rm.ruleActionForBallGetter();
-//        bm = DriveHelper.NearGoalArea(WM,bm);
-
-        if (tmpMC.motion.translation != NAN)
+        if (!std::isnan(tmpMC.motion.translation))
         {
-            bm = tmpMC;
-            send(bm);
+            send(tmpMC);
         }
-
+        send(bm);
         /*PROTECTED REGION END*/
     }
     void DribbleToAttackPointConservative::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1458132872550) ENABLED START*/ //Add additional options here
         currentTarget = nullptr;
-        msl::RobotMovement::reset();
+//        msl::RobotMovement::reset();
         trueInitialize();
         /*PROTECTED REGION END*/
     }

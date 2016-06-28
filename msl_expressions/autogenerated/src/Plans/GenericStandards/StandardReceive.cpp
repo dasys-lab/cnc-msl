@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/GenericStandards/StandardReceive.h"
 
 /*PROTECTED REGION ID(inccpp1428509505186) ENABLED START*/ //Add additional includes here
+#include <msl_actuator_msgs/MotionControl.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

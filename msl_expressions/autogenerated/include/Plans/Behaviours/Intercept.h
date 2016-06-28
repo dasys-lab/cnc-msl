@@ -3,8 +3,17 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1458757170147) ENABLED START*/ //Add additional includes here
-#include "robotmovement/RobotMovement.h"
-#include "container/CNVelocity2D.h"
+namespace geometry
+{
+    class CNVelocity2D;
+    class CNPoint2D;
+    class CNPosition;
+}
+namespace msl
+{
+    class MovementQuery;
+    class PathProxy;
+}
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,9 +28,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1458757170147) ENABLED START*/ //Add additional protected methods here
-        double maxVel = 2500;
-
-        bool useZmachine;
+        double maxVel;
 
         supplementary::SystemConfig* sc;
         msl::PathProxy* pp;
@@ -33,8 +40,6 @@ namespace alica
         double lastDistErr;
         double distIntErr;
 
-        double aheadWeight;
-
         double prot;
         double pirot;
         double pdrot;
@@ -42,7 +47,8 @@ namespace alica
         double lastRotErr;
         double rotIntErr;
 
-        bool predictByRawOdo;
+        double maxBallVelocity;
+        double catchRadius;
 
         bool interceptPoint(shared_ptr<geometry::CNPoint2D> egoBall, shared_ptr<geometry::CNPoint2D> ballVel,
                             double maxVel, double& t, shared_ptr<geometry::CNPoint2D>& interceptVelo);
@@ -50,6 +56,8 @@ namespace alica
                                     shared_ptr<geometry::CNPoint2D> ballVel, shared_ptr<geometry::CNPosition> ownPos,
                                     int ms, shared_ptr<geometry::CNPoint2D>& predBall,
                                     shared_ptr<geometry::CNPoint2D>& predPos);
+
+        shared_ptr<msl::MovementQuery> query;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1458757170147) ENABLED START*/ //Add additional private methods here

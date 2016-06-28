@@ -2,6 +2,7 @@ using namespace std;
 #include "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
 
 /*PROTECTED REGION ID(inccpp1457531616421) ENABLED START*/ //Add additional includes here
+#include <MSLWorldModel.h>
 /*PROTECTED REGION END*/
 namespace alica
 {

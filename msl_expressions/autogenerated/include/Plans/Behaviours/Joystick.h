@@ -3,6 +3,10 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1421854975890) ENABLED START*/ //Add additional includes here
+namespace msl_msgs
+{
+    ROS_DECLARE_MESSAGE (JoystickCommand)
+}
 /*PROTECTED REGION END*/
 namespace alica
 {

@@ -25,26 +25,26 @@ namespace msl
 		static Rules* getInstance();
 		double getBallRadius();
 		double getRobotRadius();
-		double getStandbyTime();
+		unsigned long getStandbyTime();
 		double getStayAwayRadius();
 		double getStayAwayRadiusOpp();
 		double getStayAwayRadiusDropBall();
 		double getPushDistance();
 		double getKickDistance();
-		double getPenaltyTimeForShot();
+		unsigned long getPenaltyTimeForShot();
 
 	private:
 		SystemConfig* sc;
 
 		double ballRadius;
 		double robotRadius;
-		double standbyTime;
+		unsigned long standbyTime;
 		double stayAwayRadius;
 		double stayAwayRadiusOpp;
 		double stayAwayRadiusDropBall;
 		double pushDistance;
 		double kickDistance;
-		double penaltyTimeForShot;
+		unsigned long penaltyTimeForShot;
 
 		Rules();
 		virtual ~Rules();

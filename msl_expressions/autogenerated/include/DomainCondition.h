@@ -5,6 +5,8 @@
 
 namespace msl{
 	class MSLWorldModel;
+	class MSLRobot;
+	class Rules;
 }
 
 namespace supplementary {
@@ -20,7 +22,9 @@ namespace alica
 		virtual ~DomainCondition();
 
 		msl::MSLWorldModel* wm;
+		msl::MSLRobot* robot;
 		supplementary::SystemConfig* sc;
+		msl::Rules* rules;
 
 		/* The time that can pass since the last start command
 		 * until we need to skip proper positioning and execute

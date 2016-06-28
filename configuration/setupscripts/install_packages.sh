@@ -25,8 +25,8 @@ fi
 msg "Allgemeine Pakete zur Entwicklung werden installiert"
 
 packages='git vim gitk meld bison re2c libode-dev gnuplot-qt
- libxv-dev libtbb-dev libcgal-demo libcgal-dev
- xsdcxx libxerces-c-dev freeglut3-dev libvtk5-dev libvtk5-qt4-dev'
+ libxv-dev libtbb-dev libcgal-demo libcgal-dev ssh
+ xsdcxx libxerces-c-dev freeglut3-dev libvtk5-dev libvtk5-qt4-dev mrpt-apps'
 
 
 echo $packages
