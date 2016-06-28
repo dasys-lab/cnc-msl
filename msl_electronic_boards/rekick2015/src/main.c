@@ -43,9 +43,28 @@ int main(void) {
 	for(int i = 0; i <= 5000; i++)
 		_delay_ms(1);
 
-	SET(ACTIVATE_BOOSTER);
+	SET(RESET_NOTAUS);
+
+	for(int i = 0; i <= 500; i++)
+		_delay_ms(1);
+
+	RESET(RESET_NOTAUS);
+
+	for(int i = 0; i <= 5000; i++)
+		_delay_ms(1);
+/*
+	TOGGLE(KICK);
+	for(int i = 0; i <= 200; i++)
+		_delay_ms(1);
+	TOGGLE(KICK);
 
 	for(int i = 0; i <= 200; i++)
+		_delay_ms(1);
+*/
+
+	SET(ACTIVATE_BOOSTER);
+
+	for(int i = 0; i <= 10000; i++)
 			_delay_ms(1);
 
 	RESET(ACTIVATE_BOOSTER);
