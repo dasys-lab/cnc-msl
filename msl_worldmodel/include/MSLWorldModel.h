@@ -65,7 +65,6 @@ namespace msl
 	class Robots;
 	class Ball;
 	class Game;
-	//class Kicker; // TODO: delete this line
 	class WhiteBoard;
 	class MSLFootballField;
 	class Prediction;
@@ -115,7 +114,6 @@ namespace msl
 		Game* game;
 		MSLFootballField* field;
 		PathPlanner* pathPlanner;
-		//Kicker* kicker; // TODO: delete this line
 		WhiteBoard* whiteBoard;
 		Obstacles* obstacles;
 		Prediction* prediction;

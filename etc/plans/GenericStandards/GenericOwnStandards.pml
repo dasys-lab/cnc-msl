@@ -44,7 +44,7 @@
     <outTransitions>#1458555207649</outTransitions>
   </states>
   <states id="1430925774870" name="OwnPenaltyKick" comment="">
-    <plans xsi:type="alica:Plan">../Penalty/OwnPenalty.pml#1431525185678</plans>
+    <plans xsi:type="alica:Plan">../Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181</plans>
     <inTransitions>#1430925921331</inTransitions>
     <outTransitions>#1430925967608</outTransitions>
   </states>

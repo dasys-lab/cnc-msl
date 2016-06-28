@@ -55,6 +55,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
 
+#include  "Plans/Standards/Own/Penalty/PenaltyPosExecuter.h"
+
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
@@ -69,6 +71,8 @@ using namespace std;
 
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
 
+#include  "Plans/Standards/Opponent/Penalty/Pos4OppPenaltyIntercept.h"
+
 #include  "Plans/Behaviours/ShovelSelect.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToGeneric.h"
@@ -77,13 +81,15 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/Parking.h"
 
+#include  "Plans/Standards/Own/Penalty/AfterGame/StayAwayAfterGamePenalty.h"
+
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/Behaviours/CheckPassMsg.h"
 
-#include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
-
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
+
+#include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
 
@@ -100,6 +106,8 @@ using namespace std;
 #include  "Plans/Standards/Own/ThrowIn/PosAlternativePassReceiver.h"
 
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
+
+#include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
@@ -131,6 +139,8 @@ using namespace std;
 
 #include  "Plans/Attack/OneEighty.h"
 
+#include  "Plans/Standards/Own/Penalty/PenaltyShoot.h"
+
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/Behaviours/BackroomDefence.h"
@@ -149,15 +159,17 @@ using namespace std;
 
 #include  "Plans/Robotcheck/RobotTest.h"
 
+#include  "Plans/Standards/Opponent/Penalty/Pos4OppPenaltyRebounce.h"
+
 #include  "Plans/GameStrategy/Other/DropBallAttackerPos.h"
 
 #include  "Plans/Standards/Own/PassIntoPath/PassKickIntoPath.h"
 
 #include  "Plans/Behaviours/GetBall.h"
 
-#include  "Plans/Standards/Opponent/TeamWatchBall.h"
-
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
+
+#include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
 #include  "Plans/Standards/Own/Corner/StandardDefendPos.h"
 
@@ -337,6 +349,11 @@ namespace alica
                 return make_shared<PositionReceiverFreeKickOppHalf>();
                 break;
 
+            case 1466940432683:
+
+                return make_shared<PenaltyPosExecuter>();
+                break;
+
             case 1447863442558:
 
                 return make_shared<DriveToGoal>();
@@ -374,6 +391,11 @@ namespace alica
                 return make_shared<DriveToPost>();
                 break;
 
+            case 1466975764775:
+
+                return make_shared<Pos4OppPenaltyIntercept>();
+                break;
+
             case 1435156714286:
 
             case 1435156811453:
@@ -396,6 +418,11 @@ namespace alica
                 return make_shared<Parking>();
                 break;
 
+            case 1466940600117:
+
+                return make_shared<StayAwayAfterGamePenalty>();
+                break;
+
             case 1417017580650:
 
                 return make_shared<DriveForward>();
@@ -406,16 +433,16 @@ namespace alica
                 return make_shared<CheckPassMsg>();
                 break;
 
-            case 1457698689219:
-
-                return make_shared<LaserBallTracking>();
-                break;
-
             case 1455537928849:
 
             case 1455537979559:
 
                 return make_shared<CoverSpace>();
+                break;
+
+            case 1457698689219:
+
+                return make_shared<LaserBallTracking>();
                 break;
 
             case 1462363309950:
@@ -458,6 +485,13 @@ namespace alica
             case 1465474190742:
 
                 return make_shared<Pos2Penalty>();
+                break;
+
+            case 1466975991599:
+
+            case 1466976004315:
+
+                return make_shared<Pos4PenaltyRebounce>();
                 break;
 
             case 1462978671719:
@@ -541,6 +575,11 @@ namespace alica
                 return make_shared<OneEighty>();
                 break;
 
+            case 1466940268216:
+
+                return make_shared<PenaltyShoot>();
+                break;
+
             case 1458034300406:
 
                 return make_shared<OneGernericInGameBlocker>();
@@ -588,6 +627,11 @@ namespace alica
                 return make_shared<RobotTest>();
                 break;
 
+            case 1466975723661:
+
+                return make_shared<Pos4OppPenaltyRebounce>();
+                break;
+
             case 1455537879822:
 
                 return make_shared<DropBallAttackerPos>();
@@ -605,14 +649,14 @@ namespace alica
                 return make_shared<GetBall>();
                 break;
 
-            case 1457015565562:
-
-                return make_shared<TeamWatchBall>();
-                break;
-
             case 1459357089325:
 
                 return make_shared<BouncePassFinishAlign>();
+                break;
+
+            case 1457015565562:
+
+                return make_shared<TeamWatchBall>();
                 break;
 
             case 1459355071258:
@@ -629,8 +673,6 @@ namespace alica
             case 1461583806472:
 
             case 1465038982091:
-
-            case 1466348438844:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

@@ -14,15 +14,20 @@ namespace msl
 {
 	MovementQuery::MovementQuery()
 	{
-		egoAlignPoint = nullptr;
-		egoDestinationPoint = nullptr;
-		additionalPoints = nullptr;
-		fast = false;
-		dribble = false;
-		snapDistance = 0;
-		angleTolerance = 0;
-		alloTeamMatePosition = nullptr;
-		wm = MSLWorldModel::get();
+		this->egoAlignPoint = nullptr;
+		this->egoDestinationPoint = nullptr;
+		this->additionalPoints = nullptr;
+		this->fast = false;
+		this->dribble = false;
+		this->blockOppPenaltyArea = false;
+		this->blockOppGoalArea = false;
+		this->blockOwnPenaltyArea = false;
+		this->blockOwnGoalArea = false;
+		this->block3MetersAroundBall = false;
+		this->snapDistance = 0;
+		this->angleTolerance = 0;
+		this->alloTeamMatePosition = nullptr;
+		this->wm = MSLWorldModel::get();
 
 		resetAllPDParameters();
 		readConfigParameters();
@@ -35,7 +40,7 @@ namespace msl
 
 	double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
 	{
-		double angleErr = egoTarget->rotate(robot->kicker->kickerAngle)->angleTo();
+		double angleErr = egoTarget->rotate(this->robot->kicker->kickerAngle)->angleTo();
 		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); //Rotation PD
 
 		// limit rotation acceleration
@@ -64,7 +69,7 @@ namespace msl
 		if (transErr > this->angleDeadBand)
 		{
 			this->transControlIntegralDribble += this->iTrans * transErr;
-			this->transControlIntegralDribble = min(transControlIntegralMax, this->transControlIntegralDribble);
+			this->transControlIntegralDribble = min(this->transControlIntegralMax, this->transControlIntegralDribble);
 		}
 		else
 		{
@@ -94,7 +99,7 @@ namespace msl
 
 	double MovementQuery::angleCalcForDribble(double transOrt)
 	{
-		auto ballPos = wm->ball->getEgoBallPosition();
+		auto ballPos = this->wm->ball->getEgoBallPosition();
 		auto dir = ballPos->normalize();
 		auto ort = make_shared<geometry::CNPoint2D>(dir->y, -dir->x);
 		dir = dir * this->curTransDribble + ort * transOrt;
@@ -103,15 +108,20 @@ namespace msl
 
 	void MovementQuery::reset()
 	{
-		egoAlignPoint = nullptr;
-		egoDestinationPoint = nullptr;
-		additionalPoints = nullptr;
-		fast = false;
-		dribble = false;
-		snapDistance = 0;
-		angleTolerance = 0;
-		alloTeamMatePosition = nullptr;
-		wm = MSLWorldModel::get();
+		this->egoAlignPoint = nullptr;
+		this->egoDestinationPoint = nullptr;
+		this->additionalPoints = nullptr;
+		this->fast = false;
+		this->dribble = false;
+		this->blockOppPenaltyArea = false;
+		this->blockOppGoalArea = false;
+		this->blockOwnPenaltyArea = false;
+		this->blockOwnGoalArea = false;
+		this->block3MetersAroundBall = false;
+		this->snapDistance = 0;
+		this->angleTolerance = 0;
+		this->alloTeamMatePosition = nullptr;
+		this->wm = MSLWorldModel::get();
 
 		resetAllPDParameters();
 		readConfigParameters();
