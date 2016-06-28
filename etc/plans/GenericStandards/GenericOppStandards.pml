@@ -27,6 +27,7 @@
     <outTransitions>#1432132434174</outTransitions>
   </states>
   <states id="1432132312429" name="OppPenaltyKick" comment="">
+    <plans xsi:type="alica:Plan">../Standards/Opponent/Penalty/OppInGamePenalty.pml#1466968232004</plans>
     <inTransitions>#1432132371135</inTransitions>
     <outTransitions>#1432132436499</outTransitions>
   </states>
@@ -63,7 +64,7 @@
     <inState>#1432132075123</inState>
     <outState>#1432132299937</outState>
   </transitions>
-  <transitions id="1432132371135" name="MISSING_NAME" comment="Sitaution= OppPenaltyKick" msg="">
+  <transitions id="1432132371135" name="MISSING_NAME" comment="Situation= OppPenaltyKick" msg="">
     <preCondition id="1432132372365" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1432132075123</inState>
     <outState>#1432132312429</outState>

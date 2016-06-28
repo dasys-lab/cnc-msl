@@ -198,4 +198,8 @@
     <key href="../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

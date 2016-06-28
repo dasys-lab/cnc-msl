@@ -15,7 +15,9 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  cnc_geometry
   msl_actuator_msgs
+  msl_bbb_api
   msl_black_lib
   system_config
   process_manager
@@ -118,9 +120,12 @@ add_executable(msl_beagle_board_black_udp
 	src/ballhandle.cpp
 	src/imu.cpp
 	src/lightbarrier.cpp
+	src/motor.cpp
 	src/opticalflow.cpp
+	src/sensor.cpp
 	src/shovelselect.cpp
 	src/sensor.cpp
+	src/Spline.cpp
 )
 add_executable(debug_udp src/debug.cpp)
 

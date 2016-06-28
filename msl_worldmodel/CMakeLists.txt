@@ -81,8 +81,6 @@ catkin_package(
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(msl_worldmodel 
-  ${catkin_LIBRARIES} 
-  msl_worldmodel_generate_messages_cpp 
   msl_sensor_msgs_generate_messages_cpp  
   msl_actuator_msgs_generate_messages_cpp 
   geometry_msgs_generate_messages_cpp
