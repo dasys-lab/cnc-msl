@@ -48,7 +48,7 @@ namespace alica
         double lastRotError;
         double alignToPointMaxRotation;
         double alignToPointMinRotation;
-        double lastRotErrorWithBall;
+//        double lastRotErrorWithBall;
         double alignMaxVel;
         /*PROTECTED REGION END*/
     private:

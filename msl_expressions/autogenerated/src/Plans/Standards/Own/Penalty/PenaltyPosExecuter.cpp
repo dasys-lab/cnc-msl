@@ -39,6 +39,13 @@ namespace alica
             return;
         }
         auto egoTarget = alloTarget->alloToEgo(*ownPos);
+        auto alloBall = wm->ball->getAlloBallPosition();
+        if(alloBall != nullptr)
+        {
+        	auto additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+        	additionalPoints->push_back(alloBall);
+        	query->additionalPoints = additionalPoints;
+        }
 
         msl_actuator_msgs::MotionControl mc;
         query->egoDestinationPoint = egoTarget;

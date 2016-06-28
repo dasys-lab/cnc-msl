@@ -19,22 +19,10 @@ namespace alica
 			DomainBehaviour("PenaltyShoot")
 	{
 		/*PROTECTED REGION ID(con1466940246275) ENABLED START*/ //Add additional options here
-		maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
-		// Aiming/Rotation Stuff
-		angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
-		ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-		goalWidth = wm->field->getGoalWidth();
-		robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-		wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
-		aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
-		kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
-		timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL);
 		lastAlignment = 0;
-		waitBeforeBlindKick = timeForPenaltyShot / 3;
-
 		// for alignToPointWithBall
 		lastRotError = 0;
-		lastRotErrorWithBall = 0;
+//		lastRotErrorWithBall = 0;
 		readConfigParameters();
 
 		/*PROTECTED REGION END*/
@@ -192,7 +180,8 @@ namespace alica
 			mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
 					* min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 
-			lastRotErrorWithBall = deltaTargetAngle;
+			//lastRotErrorWithBall = deltaTargetAngle;
+			lastRotError = deltaTargetAngle;
 
 			// crate the motion orthogonal to the ball
 			shared_ptr<geometry::CNPoint2D> driveTo = egoBallPos->rotate(-M_PI / 2.0);
@@ -214,6 +203,17 @@ namespace alica
 		alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
 		alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
 		alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+		maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
+		// Aiming/Rotation Stuff
+		angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
+		ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+		goalWidth = wm->field->getGoalWidth();
+		robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
+		wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
+		aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
+		kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+		timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.InGamePenaltyRimeForShoot", NULL);
+		waitBeforeBlindKick = (*this->sc)["Rules"]->get<double>("Rules.Standards.InGamePenaltyWaitBeforeBlindKick", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
