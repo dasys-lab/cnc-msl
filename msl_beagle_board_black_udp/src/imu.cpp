@@ -10,13 +10,11 @@
 
 using namespace BlackLib;
 
-IMU::IMU(gpioName acc_P, gpioName gyro_P, gpioName mag_P, gpioName temp_P, BlackLib::BlackI2C *i2c_P) {
+IMU::IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
 
-	i_acc = new BlackGPIO(acc_P, input, FastMode);
-	i_gyro = new BlackGPIO(gyro_P, input, FastMode);
-	i_mag = new BlackGPIO(mag_P, input, FastMode);
-	i_temp = new BlackGPIO(temp_P, input, FastMode);
+	gpio = BeagleGPIO::getInstance();
+	pins = gpio->claim((char**) pin_names, 4);
 
 	acc = new Sensor();
 	gyr = new Sensor();
@@ -26,14 +24,13 @@ IMU::IMU(gpioName acc_P, gpioName gyro_P, gpioName mag_P, gpioName temp_P, Black
 }
 
 IMU::~IMU() {
-	delete i_acc;
-	delete i_gyro;
-	delete i_mag;
-	delete i_temp;
+	delete gpio;
 	delete acc;
 	delete gyr;
 	delete mag;
 }
+
+
 
 bool IMU::init() {
 	initAccel(ACC_RATE_25, ACC_AFS_2G);
@@ -263,7 +260,7 @@ void IMU::getMagnet() {
 	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
 	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
-	
+
 	// conversion from milli gauss [mgauss] to radiant and degree
 	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
 	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));

@@ -19,22 +19,12 @@ namespace alica
             DomainBehaviour("PenaltyAlignAndShoot")
     {
         /*PROTECTED REGION ID(con1431531496053) ENABLED START*/ //Add additional options here
-        maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
-        // Aiming/Rotation Stuff
-        angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
-        ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
-        goalLineLength = wm->field->getGoalWidth();
-        robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-        wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
-        aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
-        kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
-        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
         lastAlignment = 0;
         waitBeforeBlindKick = timeForPenaltyShot - 1000000000;
 
         // for alignToPointWithBall
         lastRotError = 0;
-        lastRotErrorWithBall = 0;
+//        lastRotErrorWithBall = 0;
         readConfigParameters();
 
         /*PROTECTED REGION END*/
@@ -71,9 +61,9 @@ namespace alica
 
         // Create points for rectangle check
         shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 - robotRadius, goalLineLength / 2);
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, goalLineLength / 2);
         shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 - robotRadius, -goalLineLength / 2);
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, -goalLineLength / 2);
 
         // Create back point according to last alignment
         shared_ptr < geometry::CNPoint2D > back = nullptr;
@@ -188,7 +178,7 @@ namespace alica
             mc.motion.rotation = (mc.motion.rotation < 0 ? -1 : 1)
                     * min(alignToPointMaxRotation, max(fabs(mc.motion.rotation), alignToPointMinRotation));
 
-            lastRotErrorWithBall = deltaTargetAngle;
+            lastRotError = deltaTargetAngle;
 
             // crate the motion orthogonal to the ball
             shared_ptr < geometry::CNPoint2D > driveTo = egoBallPos->rotate(-M_PI / 2.0);
@@ -210,6 +200,16 @@ namespace alica
         alignToPointMaxRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMaxRotation", NULL);
         alignToPointMinRotation = (*sc)["Drive"]->get<double>("Drive", "AlignToPointMinRotation", NULL);
         alignMaxVel = (*sc)["Drive"]->get<double>("Drive", "MaxSpeed", NULL);
+        maxVel = (*this->sc)["Penalty"]->get<double>("Penalty.MaxSpeed", NULL);
+        // Aiming/Rotation Stuff
+        angleTolerance = (*this->sc)["Penalty"]->get<double>("Penalty.AngleTolerance", NULL);
+        ballDiameter = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL) * 2;
+        goalLineLength = wm->field->getGoalWidth();
+        robotRadius = (*this->sc)["Rules"]->get<double>("Rules.RobotRadius", NULL);
+        wheelSpeed = (*this->sc)["Penalty"]->get<double>("Penalty.WheelSpeed", NULL);
+        aimOffset = (*this->sc)["Penalty"]->get<double>("Penalty.AimOffset", NULL);
+        kickPower = (*this->sc)["Penalty"]->get<double>("Penalty.KickPower", NULL);
+        timeForPenaltyShot = (*this->sc)["Rules"]->get<double>("Rules.Standards.PenaltyTimeForShot", NULL) * 1000000;
     }
 
 /*PROTECTED REGION END*/

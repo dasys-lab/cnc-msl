@@ -135,8 +135,7 @@ const float GYR_SENSE_2000DPS = 70;
 class IMU
 {
 public:
-	IMU(BlackLib::gpioName acc_P, BlackLib::gpioName gyro_P, BlackLib::gpioName mag_P, BlackLib::gpioName temp_P,
-		BlackLib::BlackI2C *i2c_P);
+	IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P);
 	~IMU();
 
 	bool init();
@@ -144,11 +143,10 @@ public:
 	msl_actuator_msgs::IMUData sendData(timeval time_now);
 
 private:
-	BlackLib::BlackGPIO* i_acc;
-	BlackLib::BlackGPIO* i_gyro;
-	BlackLib::BlackGPIO* i_mag;
-	BlackLib::BlackGPIO* i_temp;
-	BlackLib::BlackI2C* i2c;
+	BlackLib::BlackI2C *i2c;
+	BeagleGPIO *gpio;
+	BeaglePins *pins;
+
 	timeval last_updated;
 	timeval last_sended;
 

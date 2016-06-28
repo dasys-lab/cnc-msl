@@ -9,13 +9,14 @@
 
 using namespace BlackLib;
 
-OpticalFlow::OpticalFlow(gpioName ncs_P, gpioName npd_P, gpioName rst_P, gpioName led_P, BlackSPI *spi_P) {
-	ncs = new BlackGPIO(ncs_P, output, FastMode);
-	npd = new BlackGPIO(npd_P, output, FastMode);
-	rst = new BlackGPIO(rst_P, output, FastMode);
-	led = new BlackGPIO(led_P, output, FastMode);
+OpticalFlow::OpticalFlow(const char *pin_names[], BlackSPI *spi_P) {
 	spi = spi_P;
 
+	gpio = BeagleGPIO::getInstance();
+	pins = gpio->claim((char**) pin_names, 4);
+
+	int outputIdxs[] = { ncs, npd, of_rst, led };
+	pins->enableOutput(outputIdxs, 4);
 
 	x = 0;
 	y = 0;
@@ -25,50 +26,51 @@ OpticalFlow::OpticalFlow(gpioName ncs_P, gpioName npd_P, gpioName rst_P, gpioNam
 }
 
 OpticalFlow::~OpticalFlow() {
-	delete ncs;
-	delete npd;
-	delete rst;
-	delete led;
+	delete gpio;
 }
 
 void OpticalFlow::adns_init(void) {
 	//init of sensor
 
-	ncs->setValue(high);
+	pins->setBit(ncs);
 	reset();
 
 	usleep(4000);
 
 	setConfigurationBits(0x00);		// set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
-	led->setValue(high);
+	pins->setBit(led);
 }
 
 void OpticalFlow::controlLED(bool enabled) {
-	led->setValue(static_cast<digitalValue>(enabled));
+	if (enabled)
+		pins->setBit(led);
+	else
+		pins->clearBit(led);
 }
 
 uint8_t OpticalFlow::read(uint8_t address) {
-	ncs->setValue(low);
+	pins->clearBit(ncs);
 	spi->transfer(address, 75);		// wait t_SRAD
 
 	uint8_t ret = spi->transfer(0x00);
-	ncs->setValue(high);
+	pins->setBit(ncs);
 
 	return ret;
 }
 
 void OpticalFlow::reset(void) {
-	rst->setValue(high);
-	rst->setValue(low);
-	usleep(500);
+	pins->setBit(of_rst);
+	usleep(1);
+	pins->clearBit(of_rst);
+	usleep(10);
 }
 
 void OpticalFlow::write(uint8_t address, uint8_t value) {
-	ncs->setValue(low);
+	pins->clearBit(ncs);
 	spi->transfer(address | 0x80, 50);
 
 	spi->transfer(value);
-	ncs->setValue(high);
+	pins->setBit(ncs);
 }
 
 uint8_t OpticalFlow::getConfigurationBits(void) {
@@ -122,7 +124,7 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size) {
 	// min frame speed is 2000 frames/second so 1 frame = 500 us.  so 500 x 3 + 10 = 1510
 	usleep(1510);					// wait t_CAPTURE
 
-	ncs->setValue(low);
+	pins->clearBit(ncs);
 	spi->transfer(PIXEL_BURST);
 	usleep(50);						// wait t_SRAD
 
@@ -131,7 +133,7 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size) {
 		image[i] = (read_arr[i] << 2);
 	}
 
-	ncs->setValue(high);
+	pins->setBit(ncs);
 }
 
 uint8_t OpticalFlow::getInverseProductId(void) {
@@ -142,7 +144,7 @@ void OpticalFlow::getMotionBurst(int8_t *burst) {
 	uint8_t	write[7] = {0};
 	uint8_t	read[7];
 
-	ncs->setValue(low);
+	pins->clearBit(ncs);
 
 	spi->transfer(MOTION_BURST);
 	usleep(75);
@@ -153,7 +155,7 @@ void OpticalFlow::getMotionBurst(int8_t *burst) {
 		motionBurst[i] = read[i];
 	}
 
-	ncs->setValue(high);
+	pins->setBit(ncs);
 }
 
 uint8_t OpticalFlow::getProductId(void) {
