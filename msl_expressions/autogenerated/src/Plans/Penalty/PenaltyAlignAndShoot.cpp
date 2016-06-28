@@ -61,9 +61,9 @@ namespace alica
 
         // Create points for rectangle check
         shared_ptr < geometry::CNPoint2D > frontLeft = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 - robotRadius, goalLineLength / 2);
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, goalLineLength / 2);
         shared_ptr < geometry::CNPoint2D > frontRight = make_shared < geometry::CNPoint2D
-                > (wm->field->getFieldLength() / 2 - robotRadius, -goalLineLength / 2);
+                > ((wm->field->getFieldLength() - (4 * robotRadius)) / 2, -goalLineLength / 2);
 
         // Create back point according to last alignment
         shared_ptr < geometry::CNPoint2D > back = nullptr;
