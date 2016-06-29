@@ -41,7 +41,6 @@
 #include "LightBarrier.h"
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
-#include "msl_msgs/Lolmsg.h"
 
 namespace msl
 {
