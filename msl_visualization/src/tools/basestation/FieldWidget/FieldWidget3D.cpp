@@ -517,7 +517,11 @@ void FieldWidget3D::update_robot_info(void)
 				robotSidesActive[selectedIndex] = sidesCheckBoxState;
 		}
 
-        if (robot->isTimeout() || !robotVisActive[robotIndex[myId]])
+		if (!robotVisActive[robotIndex[myId]]) robot->setVisStatus(false);
+			else robot->setVisStatus(true);
+
+		// test for inactivated robot
+        if (robot->isTimeout()) // || !robotVisActive[robotIndex[myId]])
 		{
 		        robot->getVisualization()->remove(this->renderer);
                         continue;
@@ -531,7 +535,7 @@ void FieldWidget3D::update_robot_info(void)
         robot->getVisualization()->updatePosition(this->renderer);
         robot->getVisualization()->updateBall(this->renderer);
         robot->getVisualization()->updateSharedBall(this->renderer);
-        robot->getVisualization()->updateOpponents(this->renderer);
+        robot->getVisualization()->updateObjects(this->renderer);
         robot->getVisualization()->updateDebugPoints(this->renderer, this->showDebugPoints);
 
 	}
@@ -1160,11 +1164,11 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
 
         }
 
-        shared_ptr<RobotInfo> robotInfo = make_shared<RobotInfo>(this);
-        robotInfo->setId(id);
-        robots.push_back(robotInfo);
+        shared_ptr<RobotInfo> robot = make_shared<RobotInfo>(this);
+        robot->setId(id);
+        robots.push_back(robot);
 
-        robotInfo->getVisualization()->init(this->renderer, id);
+        robot->getVisualization()->init(this->renderer, id);
 
         int robotCount = mainWindow->robotSelector->count();
         if (robotCount == 0)
@@ -1189,9 +1193,10 @@ std::shared_ptr<RobotInfo> FieldWidget3D::getRobotById(int id)
         string robotName = robotNames[id];
         QString robotStr = QString::fromStdString(robotName+" ("+boost::lexical_cast<std::string>(id)+")");
         mainWindow->robotSelector->addItem(robotStr, id);
-        robotVisActive[robotCount] = true;
+        robot->setVisStatus(true);
+		robotVisActive[robotCount] = true;
 
-        return robotInfo;
+        return robot;
 }
 
 //################################################################################################
