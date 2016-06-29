@@ -64,6 +64,8 @@ namespace alica
 		{
 			ownPos = wm->rawSensorData->getOwnPositionVision();
 			mc.motion.angle = targetPost->alloToEgo(*ownPos)->angleTo();
+			shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
+			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
 			mc.motion.translation = std::min(
 					alignMaxVel,
 					(targetPost->alloToEgo(*ownPos)->length() * pTrans)
@@ -77,7 +79,8 @@ namespace alica
 
 			if (time > 1000000000)
 			{
-				if(avgTime == 0) {
+				if (avgTime == 0)
+				{
 					avgTime = time;
 				}
 				avgTime = (avgTime + time) / 2.0;
