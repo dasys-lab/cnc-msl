@@ -147,8 +147,8 @@ namespace alica
 		{
 			egoVelocity = egoBallVel->getPoint();
 		}
-		egoVelocity->x += controlDist * cos(predBall->angleTo());
-		egoVelocity->y += controlDist * sin(predBall->angleTo());
+		egoVelocity->x += controlDist * cos(predBall->angleTo() + M_PI);
+		egoVelocity->y += controlDist * sin(predBall->angleTo() + M_PI);
 
 		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
 		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
