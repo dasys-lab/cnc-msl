@@ -173,10 +173,13 @@ namespace alica
 
 		if (pathPlanningResult->distanceTo(pathPlanningPoint) > 10.0)
 		{
+
+			cout << "Intercept: Normal-Trans" << endl;
 			mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
 		}
 		else
 		{
+			cout << "Intercept: PathPlanning-Only" << endl;
 			mc.motion.translation = min(this->maxVel, pathPlanningPoint->length());
 		}
 
