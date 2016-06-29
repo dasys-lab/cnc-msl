@@ -129,7 +129,6 @@ namespace msl
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-		ros::Publisher lolpublisher;
 	private:
 
 		MSLWorldModel();

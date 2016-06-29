@@ -112,8 +112,6 @@ namespace msl
 										(MSLWorldModel*)this);
 		imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel*)this);
 
-		lolpublisher = n.advertise<msl_msgs::Lolmsg>("/Lolpenis", 10);
-
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
 		this->ringBufferLength = (*this->sc)["WorldModel"]->get<int>("WorldModel", "RingBufferLength", NULL);

@@ -11,10 +11,11 @@
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
 #include <math.h>
-#include "msl_msgs/Lolmsg.h"
 
 namespace msl
 {
+	std::string logFile = "/home/cn/IMU.log";
+	FILE *lp= fopen(logFile.c_str(), "a");
 
 	RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
 			distanceScan(ringbufferLength), lightBarrier(ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(
@@ -346,6 +347,12 @@ namespace msl
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 
+	void log(float value)
+	{
+		fprintf(lp, "%f\n", value);
+
+	}
+
 	void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
 	{
 		shared_ptr<msl_actuator_msgs::IMUData> cmd = make_shared<msl_actuator_msgs::IMUData>();
@@ -362,9 +369,7 @@ namespace msl
 		imuData.add(o);
 
 		// räumen wir noch auf
-		msl_msgs::Lolmsg lolmsg;
-		lolmsg.peeenis =  atan2(cmd->magnet.y, cmd->magnet.x);
-		wm->lolpublisher.publish(lolmsg);
+		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
 
 	}
 } /* namespace alica */
