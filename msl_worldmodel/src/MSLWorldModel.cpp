@@ -41,6 +41,7 @@
 #include "LightBarrier.h"
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
+#include "msl_msgs/Lolmsg.h"
 
 namespace msl
 {
@@ -110,6 +111,8 @@ namespace msl
 		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
 										(MSLWorldModel*)this);
 		imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel*)this);
+
+		lolpublisher = n.advertise<msl_msgs::Lolmsg>("/Lolpenis", 10);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
