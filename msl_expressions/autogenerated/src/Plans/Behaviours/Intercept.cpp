@@ -147,8 +147,10 @@ namespace alica
 		{
 			egoVelocity = egoBallVel->getPoint();
 		}
-		egoVelocity->x += -1 * controlDist * cos(predBall->angleTo());
-		egoVelocity->y += -1 * controlDist * sin(predBall->angleTo());
+		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+		egoVelocity->x += controlDist * cos(predBall->angleTo());
+		egoVelocity->y += controlDist * sin(predBall->angleTo());
+		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
 		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
 		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
