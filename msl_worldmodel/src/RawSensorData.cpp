@@ -10,6 +10,8 @@
 #include "Ball.h"
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
+#include <math.h>
+#include "msl_msgs/Lolmsg.h"
 
 namespace msl
 {
@@ -358,6 +360,12 @@ namespace msl
 		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
+
+		// räumen wir noch auf
+		msl_msgs::Lolmsg lolmsg;
+		lolmsg.peeenis =  atan2(cmd->magnet.y, cmd->magnet.x);
+		wm->lolpublisher.publish(lolmsg);
+
 	}
 } /* namespace alica */
 

@@ -131,6 +131,7 @@ namespace alica
 		// PID controller for minimizing the distance between ball and me
 		double distErr = max(predBall->length(), 1000.0);
 		double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
+		cout << "Intercept: ControlDist: " << controlDist << endl;
 
 		distIntErr += distErr;
 		distIntErr = max(-1500.0, min(1500.0, distIntErr));
