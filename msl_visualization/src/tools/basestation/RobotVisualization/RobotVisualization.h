@@ -53,9 +53,9 @@ public:
 	void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
 	void updateCorridorDebug(vtkRenderer *renderer, bool show);
 	void updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi,
-			bool showSitePoints);
+			bool showSidePoints);
 	void updateDebugPoints(vtkRenderer *renderer, bool showDebugPoints);
-	void updatePassMsg(vtkRenderer *renderer);
+	void updatePassMsg(vtkRenderer *renderer, bool showPassing);
 
 private:
 	void drawOpponent(vtkRenderer *renderer, double x, double y, double z);
@@ -91,7 +91,7 @@ private:
 	std::shared_ptr<Line> corridorLine2;
 	std::shared_ptr<Line> corridorLine3;
 	std::shared_ptr<Line> corridorLine4;
-	std::vector<vtkSmartPointer<vtkActor>> sitePoints;
+	std::vector<vtkSmartPointer<vtkActor>> sidePoints;
 	std::vector<vtkSmartPointer<vtkActor>> debugPoints;
 };
 

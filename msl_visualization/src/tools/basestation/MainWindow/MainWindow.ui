@@ -702,6 +702,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="checkPassing">
+             <property name="text">
+              <string>Passing</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QCheckBox" name="checkCorr">
              <property name="text">
               <string>Corridor</string>
@@ -716,9 +723,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkSites">
+            <widget class="QCheckBox" name="checkSides">
              <property name="text">
-              <string>Sites</string>
+              <string>Sides</string>
              </property>
             </widget>
            </item>
@@ -776,17 +783,6 @@
      <addaction name="separator"/>
      <addaction name="actionDebug_All_On_Off"/>
     </widget>
-    <widget class="QMenu" name="menuPathPlanner">
-     <property name="title">
-      <string>PathPlanner</string>
-     </property>
-     <addaction name="actionShow_All_PathPlanner_Components"/>
-     <addaction name="separator"/>
-     <addaction name="actionShow_PathPlanner_Path"/>
-     <addaction name="actionShow_Corridor_Check"/>
-     <addaction name="actionShow_Voronoi_Diagram"/>
-     <addaction name="actionShow_Sites"/>
-    </widget>
     <addaction name="actionTop_View"/>
     <addaction name="actionLock"/>
     <addaction name="actionFlip"/>
@@ -794,7 +790,6 @@
     <addaction name="separator"/>
     <addaction name="menuDebug"/>
     <addaction name="actionTaxi_Follow_Mode"/>
-    <addaction name="menuPathPlanner"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuField_Config"/>

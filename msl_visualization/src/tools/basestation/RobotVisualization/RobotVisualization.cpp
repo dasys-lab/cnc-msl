@@ -98,6 +98,8 @@ struct Color{
 };
 
 std::map<std::string, std::array<double,3>> Color::map =  Color::create_map();
+float robotPos[101][2];
+int robotIds [6] = {1, 8, 9, 10, 11, 100};
 
 RobotVisualization::RobotVisualization(RobotInfo* robot, FieldWidget3D* field) : robot(robot), field(field)
 {
@@ -215,6 +217,9 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 {
         this->visible = false;
 
+        robotPos[this->id][0] = -1;
+        robotPos[this->id][1] = -1;
+
         this->top->SetVisibility(false);
         this->bottom->SetVisibility(false);
         this->nameActor->SetVisibility(false);
@@ -253,14 +258,14 @@ void RobotVisualization::remove(vtkRenderer *renderer)
                 this->netLines.at(i)->actor->SetVisibility(false);
         }
 
-        for (vtkSmartPointer<vtkActor> actor : sitePoints)
+        for (vtkSmartPointer<vtkActor> actor : sidePoints)
         {
                 if (actor != nullptr)
                 {
                         renderer->RemoveActor(actor);
                 }
         }
-        sitePoints.clear();
+        sidePoints.clear();
 
         // debug points
         for (vtkSmartPointer<vtkActor> actor : this->debugPoints)
@@ -455,6 +460,9 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
 {
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->odom.position.x, robot->getSharedWorldInfo()->odom.position.y);
 
+        robotPos[id][0]=pos.first;
+        robotPos[id][1]=pos.second;
+
         this->top->SetPosition(pos.first, pos.second, 0.4);
         this->bottom->SetPosition(pos.first, pos.second, 0.2);
         this->nameActor->SetPosition(pos.first, pos.second, 1);
@@ -508,10 +516,10 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
         bool found = false;
         int obstacleCount = 0;
 
-        for (auto x : robot->getSharedWorldInfo()->obstacles)
+        for (auto myObstacle: robot->getSharedWorldInfo()->obstacles)
         {
                 bool found = false;
-                auto pos = this->field->transformToGuiCoords(x.x, x.y);
+                auto pos = this->field->transformToGuiCoords(myObstacle.x, myObstacle.y);
                 for (auto member : *this->field->getRobots())
                 {
                     auto mb = member->getVisualization()->getBottom();
@@ -530,19 +538,27 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                 if (found)
                         continue;
 
-                if (obstacleCount < this->obstaclesBottom.size())
+                bool teammate = false;
+                for (int i=0;i<6;i++)
+                	if (abs(robotPos[robotIds[i]][0]-pos.first) < 0.4 && abs(robotPos[robotIds[i]][1]-pos.second) < 0.4) teammate = true;
+
+                if (!teammate)
                 {
+
+                	if (obstacleCount < this->obstaclesBottom.size())
+                	{
                         this->obstaclesBottom.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.2);
                         this->obstaclesBottom.at(obstacleCount)->SetVisibility(true);
                         this->obstaclesTop.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.4);
 						this->obstaclesTop.at(obstacleCount)->SetVisibility(true);
-                }
-                else
-                {
+                	}
+                	else
+                	{
                         drawOpponent(renderer, pos.first, pos.second, 0);
                         drawOpponentTop(renderer, pos.first, pos.second, 0);
+                	}
+                	obstacleCount++;
                 }
-                obstacleCount++;
         }
 
         if (obstacleCount < this->obstaclesBottom.size())
@@ -576,8 +592,6 @@ void RobotVisualization::drawOpponent(vtkRenderer *renderer, double x, double y,
 
     obstaclesBottom.push_back(obstacleBottom);
 }
-
-// hier!!!
 
 void RobotVisualization::drawOpponentTop(vtkRenderer *renderer, double x, double y, double z)
 {
@@ -707,7 +721,7 @@ void RobotVisualization::updateCorridorDebug(vtkRenderer *renderer, bool show)
         this->corridorLine4->actor->SetVisibility(true);
 }
 
-void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSitePoints)
+void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showVoronoi, bool showSidePoints)
 {
         // Check last message
         boost::shared_ptr<msl_msgs::VoronoiNetInfo> vni;
@@ -722,14 +736,14 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         }
 
         // Remove old stuff
-        for (vtkSmartPointer<vtkActor> actor : sitePoints)
+        for (vtkSmartPointer<vtkActor> actor : sidePoints)
         {
                 if (actor != nullptr)
                 {
                         renderer->RemoveActor(actor);
                 }
         }
-        sitePoints.clear();
+        sidePoints.clear();
 
         if (false == showVoronoi || timeout)
         {
@@ -739,7 +753,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
                 }
         }
 
-        if ((false == showVoronoi && false == showSitePoints) || timeout)
+        if ((false == showVoronoi && false == showSidePoints) || timeout)
                 return;
 
         int used = 0;
@@ -783,16 +797,16 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
         }
 
         // Draw side points
-        if(showSitePoints)
+        if(showSidePoints)
         {
-                for (vtkSmartPointer<vtkActor> actor : sitePoints)
+                for (vtkSmartPointer<vtkActor> actor : sidePoints)
                 {
                         if (actor != nullptr)
                         {
                                 renderer->RemoveActor(actor);
                         }
                 }
-                sitePoints.clear();
+                sidePoints.clear();
 
                 for (int i = 0; i < vni->sites.size(); i++)
                 {
@@ -800,7 +814,7 @@ void RobotVisualization::updateVoronoiNetDebug(vtkRenderer *renderer, bool showV
 
                         vtkSmartPointer<vtkActor> actor = FieldWidget3D::createDot(point.first, point.second, 0.3,
                                                                                    Color::getColor(this->robot->getId()));
-                        sitePoints.push_back(actor);
+                        sidePoints.push_back(actor);
                         renderer->AddActor(actor);
                 }
         }
@@ -849,7 +863,7 @@ void RobotVisualization::updateDebugPoints(vtkRenderer *renderer, bool showDebug
         }
 }
 
-void RobotVisualization::updatePassMsg(vtkRenderer *renderer)
+void RobotVisualization::updatePassMsg(vtkRenderer *renderer, bool showPassing)
 {
         // Check last message
         boost::shared_ptr<msl_helper_msgs::PassMsg> passMsg;
@@ -869,15 +883,18 @@ void RobotVisualization::updatePassMsg(vtkRenderer *renderer)
         }
 
         // Draw debug points
-        this->passActor->SetVisibility(true);
-        this->passPointActor->SetVisibility(true);
-        auto origin = this->field->transformToGuiCoords(passMsg->origin.x, passMsg->origin.y);
-        auto dest = this->field->transformToGuiCoords(passMsg->destination.x, passMsg->destination.y);
+        if (showPassing)
+        {
+            this->passActor->SetVisibility(true);
+            this->passPointActor->SetVisibility(true);
+            auto origin = this->field->transformToGuiCoords(passMsg->origin.x, passMsg->origin.y);
+            auto dest = this->field->transformToGuiCoords(passMsg->destination.x, passMsg->destination.y);
 
-        this->pass->SetPoint1(origin.first, origin.second, 0.01);
-        this->pass->SetPoint2(dest.first, dest.second, 0.01);
+            this->pass->SetPoint1(origin.first, origin.second, 0.01);
+            this->pass->SetPoint2(dest.first, dest.second, 0.01);
 
-        this->passPointActor->SetPosition(dest.first, dest.second, 0.01);
+            this->passPointActor->SetPosition(dest.first, dest.second, 0.01);
+        }
 }
 
 int RobotVisualization::getDashedPattern()

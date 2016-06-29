@@ -195,7 +195,7 @@ private:
     ros::AsyncSpinner* spinner;
     ros::Subscriber sharedWorldInfoSubscriber;
     ros::Subscriber pathPlannerSubscriber;
-    ros::Subscriber voronoiSitesSubscriber;
+    ros::Subscriber voronoiSidesSubscriber;
     ros::Subscriber corridorCheckSubscriber;
     ros::Subscriber debugMsgSubscriber;
     ros::Subscriber passMsgSubscriber;
@@ -207,11 +207,11 @@ private:
     bool showDebugPoints;
 
     // path planner stuff
-    bool showPath;
-    bool showVoronoiNet;
-    bool showCorridorCheck;
-    bool showSitePoints;
-    bool showPathPlannerAll;
+    // bool showPath;
+    // bool showVoronoiNet;
+    // bool showCorridorCheck;
+    // bool showSitePoints;
+    // bool showPathPlannerAll;
 
     // ui stuff
     QWidget* parent;
@@ -238,12 +238,12 @@ public Q_SLOTS:
     void showDebugPointsToggle(void);
 
     // Path Planner
-    void showPathToggle(void);
-    void showVoronoiNetToggle(void);
-    void showCorridorCheckToggle(void);
-    void showSitePointsToggle(void);
-    void showPathPlannerAllToggle(void);
-    void updatePathPlannerAll(void);
+    //void showPathToggle(void);
+    //void showVoronoiNetToggle(void);
+    //void showCorridorCheckToggle(void);
+    //void showSidePointsToggle(void);
+    //void showPathPlannerAllToggle(void);
+    //void updatePathPlannerAll(void);
 
 
 //    void obstacles_point_flip(unsigned int Robot_no, bool on_off);
