@@ -81,6 +81,8 @@ namespace alica
 
             //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
             double rotation = motion->rotation;
+            // todo: remove when finished testing
+            rotation = 0;
             if (rotation < 0)
             {
                 l = 0;
