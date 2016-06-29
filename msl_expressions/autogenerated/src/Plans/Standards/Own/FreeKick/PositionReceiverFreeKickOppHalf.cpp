@@ -90,9 +90,11 @@ namespace alica
         } // only allo
         else if (alloAlignPoint)
         {
+//			alloTarget = alloBall + alloAlignPoint->normalize() * 2300;
             egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         } // else egoalignpoint should be set
 
+        alloTarget = this->wm->field->mapInsideField(alloTarget);
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
         msl_actuator_msgs::MotionControl mc;
         query->egoDestinationPoint = egoTarget;

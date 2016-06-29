@@ -123,6 +123,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/GoalieExtension.h"
 
+#include  "Plans/GenericStandards/StandardAlignToPoint2Receivers.h"
+
 #include  "Plans/Standards/Own/ThrowIn/ReceiveInOppHalf.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/BlockBall.h"
@@ -535,6 +537,11 @@ namespace alica
             case 1459249287791:
 
                 return make_shared<GoalieExtension>();
+                break;
+
+            case 1467229016494:
+
+                return make_shared<StandardAlignToPoint2Receivers>();
                 break;
 
             case 1462370388995:
