@@ -49,6 +49,8 @@ public:
 	void setId(int id);
 	std::string getName() const;
 	void setName(std::string name);
+	bool getVisStatus() const;
+	void setVisStatus(bool vis);
 
 	std::shared_ptr<RobotVisualization> getVisualization();
 
@@ -80,6 +82,7 @@ public:
         bool isPassMsgTimeout();
 
 private:
+   	bool myVis;
 	int id;
 	std::string name;
 	unsigned long timeStamp;

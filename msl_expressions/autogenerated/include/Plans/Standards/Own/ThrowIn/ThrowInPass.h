@@ -43,6 +43,7 @@ namespace alica
         double maxRot;
         double accel;
         double arrivalTimeOffset;
+        bool sentPm;
         bool outsideTriangle(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b,
                              shared_ptr<geometry::CNPoint2D> c, double tolerance,
                              shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> points);

@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="-24" yPos="-2" width="1405" height="737"/>
+    <value xPos="67" yPos="10" width="1415" height="737"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>
@@ -162,5 +162,13 @@
   <extensions>
     <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1467206311808"/>
+    <value xPos="838" yPos="546"/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

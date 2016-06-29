@@ -44,6 +44,9 @@ namespace alica
 	void DriveToPost::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1464189819779) ENABLED START*/ //Add additional options here
+		if(ownPos == nullptr) {
+			return;
+		}
 		if (wm->game->checkSituation(msl::Situation::Start) && startTime == -1)
 		{
 			startTime = wm->getTime();
