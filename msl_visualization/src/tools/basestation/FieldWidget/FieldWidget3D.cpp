@@ -417,14 +417,14 @@ void FieldWidget3D::update_robot_info(void)
 				{
 					if (!robotVisActive[i]) robotVisActive[0] = false;
 					if (!robotPpActive[i]) robotPpActive[0] = false;
-					if (!robotPassingActive[i]) robotPpActive[0] = false;
+					if (!robotPassingActive[i]) robotPassingActive[0] = false;
 					if (!robotCorrActive[i]) robotCorrActive[0] = false;
 					if (!robotVoronoiActive[i]) robotVoronoiActive[0] = false;
 					if (!robotSidesActive[i]) robotSidesActive[0] = false;
 				}
 			}
 
-			// adjust the checkbox accordingly
+			// adjust the checkboxes accordingly
 			mainWindow->checkVis->setChecked(robotVisActive[selectedIndex]);
 			mainWindow->checkPp->setChecked(robotPpActive[selectedIndex]);
 			mainWindow->checkPassing->setChecked(robotPassingActive[selectedIndex]);
@@ -452,11 +452,13 @@ void FieldWidget3D::update_robot_info(void)
 				robotVoronoiActive[selectedIndex] = false;
 				robotSidesActive[selectedIndex] = false;
 
-				//showPathPlannerAll = false;
-				//showCorridorCheck = false;
-				//showPath = false;
-				//showSitePoints = false;
-				//showVoronoiNet = false;
+				// turn off all checkboxes
+				mainWindow->checkVis->setChecked(false);
+				mainWindow->checkPp->setChecked(false);
+				mainWindow->checkPassing->setChecked(false);
+				mainWindow->checkCorr->setChecked(false);
+				mainWindow->checkVoronoi->setChecked(false);
+				mainWindow->checkSides->setChecked(false);
 			}
 		}
 
