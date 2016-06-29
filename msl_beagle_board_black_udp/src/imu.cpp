@@ -327,6 +327,7 @@ msl_actuator_msgs::IMUData IMU::sendData(timeval time_now){
 	msg.magnet.y = mag->mean->y;
 	msg.magnet.z = mag->mean->z;
 	msg.magnetSens = mag->sense;
+	msg.bearing = mag->angle_rad;
 	msg.temperature = temperature;
 	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
 

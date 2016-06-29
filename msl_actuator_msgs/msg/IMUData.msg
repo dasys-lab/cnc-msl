@@ -4,6 +4,9 @@
 #Magnetic Compass: X,Y,Z [raw data]
 msl_msgs/Point3dInfo magnet
 
+#Magnetic bearing
+float32 bearing
+
 #Magnetic Sensivity: Magnetic Compass.(X|Y|Z) * Magnetic Sensitivity = [MilliGauss]
 float32 magnetSens
 
