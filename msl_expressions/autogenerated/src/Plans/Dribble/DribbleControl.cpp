@@ -81,8 +81,7 @@ namespace alica
 
             //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
             double rotation = motion->rotation;
-            // todo: remove when finished testing
-            //rotation = 0;
+
             if (rotation < 0)
             {
                 l = 0;
@@ -133,12 +132,12 @@ namespace alica
             {
                 //nach rechts fahren
                 orthoR = speedY * orthoDriveFactor;
-                orthoL = -speedY * orthoDriveFactor / 2.0;
+                orthoL = -speedY * orthoDriveFactor / 2.0; // replace with higher Denominator
             }
             else
             {
                 //nach links fahren
-                orthoR = speedY * orthoDriveFactor / 2.0;
+                orthoR = speedY * orthoDriveFactor / 2.0; // replace with higher Denominator
                 orthoL = -speedY * orthoDriveFactor;
             }
         }
