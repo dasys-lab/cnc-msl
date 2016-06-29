@@ -1,3 +1,4 @@
+#define IMULOG false
 /*
  * RawSensorData.cpp
  *
@@ -370,7 +371,8 @@ namespace msl
 
 		// räumen wir noch auf
 		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
-		log(bearing + '\n');
+		if(IMULOG)
+			log(bearing + '\n');
 
 	}
 } /* namespace alica */
