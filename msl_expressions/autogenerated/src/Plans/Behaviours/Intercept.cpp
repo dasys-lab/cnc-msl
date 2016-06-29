@@ -131,7 +131,7 @@ namespace alica
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr;
-        distIntErr = max(-1000.0, min(1000.0, distIntErr));
+        distIntErr = max(-1500.0, min(1500.0, distIntErr));
         lastDistErr = distErr;
 
         shared_ptr < geometry::CNPoint2D > egoVelocity;
