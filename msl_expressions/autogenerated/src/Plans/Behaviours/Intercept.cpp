@@ -102,8 +102,8 @@ namespace alica
 		}
 
 		shared_ptr<geometry::CNPoint2D> predBall = make_shared<geometry::CNPoint2D>(egoBallPos->x, egoBallPos->y);
-		if (egoBallVel->length() > 4000.0)
-		{
+//		if (egoBallVel->length() > 4000.0)
+//		{
 			shared_ptr<geometry::CNPosition> predPos = make_shared<geometry::CNPosition>(0.0, 0.0, 0.0);
 			double timestep = 33;
 			double rot = od->motion.rotation * timestep / 1000.0;
@@ -127,11 +127,10 @@ namespace alica
 			}
 
 			predBall->alloToEgo(*predPos);
-		}
+//		}
 		// PID controller for minimizing the distance between ball and me
 		double distErr = max(predBall->length(), 1000.0);
 		double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
-		cout << "Intercept: ControlDist: " << controlDist << endl;
 
 		distIntErr += distErr;
 		distIntErr = max(-1500.0, min(1500.0, distIntErr));
@@ -147,10 +146,10 @@ namespace alica
 		{
 			egoVelocity = egoBallVel->getPoint();
 		}
-		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+//		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 		egoVelocity->x += controlDist * cos(predBall->angleTo());
 		egoVelocity->y += controlDist * sin(predBall->angleTo());
-		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
+//		cout << "Intercept: egoVelocity: " << egoVelocity->toString() << endl;
 
 		auto pathPlanningPoint = egoVelocity->normalize() * min(egoVelocity->length(), predBall->length());
 		auto alloDest = pathPlanningPoint->egoToAllo(*ownPos);
@@ -194,9 +193,7 @@ namespace alica
 			//we probably translate to fast and cannot rotate anymore: So translate slower
 			if (abs(rotErr) > M_PI / 6)
 			{
-				cout << "Intercept: Orient 1" << mc.motion.translation << endl;
 				mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
-				cout << "Intercept: Orient 2" << mc.motion.translation << endl;
 			}
 		}
 		mc.motion.rotation = controlRot;
@@ -205,7 +202,6 @@ namespace alica
 		auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
 		if (!std::isnan(tmpMC.motion.translation))
 		{
-
 			send(tmpMC);
 			cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
 		}
