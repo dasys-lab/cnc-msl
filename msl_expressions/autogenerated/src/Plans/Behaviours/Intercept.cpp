@@ -199,7 +199,9 @@ namespace alica
 			//we probably translate to fast and cannot rotate anymore: So translate slower
 			if (abs(rotErr) > M_PI / 6)
 			{
+				cout << "Intercept: Orient 1" << mc.motion.translation << endl;
 				mc.motion.translation *= min((abs(rotErr) - M_PI / 6) / (M_PI * 5.0 / 6.0), egoBallVel->length());
+				cout << "Intercept: Orient 2" << mc.motion.translation << endl;
 			}
 		}
 		mc.motion.rotation = controlRot;
