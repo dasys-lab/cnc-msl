@@ -46,7 +46,7 @@ using namespace std;
 
 #include "msl_actuator_msgs/KickControl.h"
 
-#define FLYBALL_DEBUG
+//#define FLYBALL_DEBUG
 
 namespace msl
 {
