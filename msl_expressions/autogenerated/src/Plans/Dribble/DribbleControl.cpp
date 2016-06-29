@@ -32,15 +32,15 @@ namespace alica
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)
         {
-            bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
-            bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
+            bhc.leftMotor = (int) - max(-10000.0, min(10000.0, speedNoBall));
+            bhc.rightMotor = (int) - max(-10000.0, min(10000.0, speedNoBall));
 
             //If we are close to the ball give more speed
 //            shared_ptr < geometry::CNPoint2D > b = wm->ball.getEgoBallPosition();
 //            if (b != nullptr && b->length() < 400)
 //            {
-//                bhc.leftMotor = max(bhc.leftMotor, (int8_t) - 80);
-//                bhc.rightMotor = max(bhc.rightMotor, (int8_t) - 80);
+//                bhc.leftMotor = max(bhc.leftMotor, (int) - 80);
+//                bhc.rightMotor = max(bhc.rightMotor, (int) - 80);
 //            }
 
             send(bhc);
@@ -148,8 +148,8 @@ namespace alica
 
         cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
         cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
-        bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speed + l + orthoL));
-        bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speed + r + orthoR));
+        bhc.leftMotor = (int) - max(-10000.0, min(10000.0, speed + l + orthoL));
+        bhc.rightMotor = (int) - max(-10000.0, min(10000.0, speed + r + orthoR));
 
         hadBefore = haveBall;
         if (!hadBefore)
