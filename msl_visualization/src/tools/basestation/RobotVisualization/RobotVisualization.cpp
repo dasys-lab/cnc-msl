@@ -99,6 +99,7 @@ struct Color{
 
 std::map<std::string, std::array<double,3>> Color::map =  Color::create_map();
 float robotPos[101][2];
+bool activeRobot[101] = {false};
 int robotIds [6] = {1, 8, 9, 10, 11, 100};
 
 RobotVisualization::RobotVisualization(RobotInfo* robot, FieldWidget3D* field) : robot(robot), field(field)
@@ -217,8 +218,9 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 {
         this->visible = false;
 
-        robotPos[this->id][0] = -1;
-        robotPos[this->id][1] = -1;
+        activeRobot[this->id] = false;
+        robotPos[this->id][0] = -1000;
+        robotPos[this->id][1] = -1000;
 
         this->top->SetVisibility(false);
         this->bottom->SetVisibility(false);
@@ -290,6 +292,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         this->setName(std::to_string(id));
         this->setBall(nullptr);
 
+        activeRobot[id] = true;
         vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
         float p0[3] = {0.26, 0, 0};
@@ -460,8 +463,8 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
 {
         auto pos = this->field->transformToGuiCoords(robot->getSharedWorldInfo()->odom.position.x, robot->getSharedWorldInfo()->odom.position.y);
 
-        robotPos[id][0]=pos.first;
-        robotPos[id][1]=pos.second;
+        robotPos[this->id][0]=pos.first;
+        robotPos[this->id][1]=pos.second;
 
         this->top->SetPosition(pos.first, pos.second, 0.4);
         this->bottom->SetPosition(pos.first, pos.second, 0.2);
@@ -538,11 +541,13 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                 if (found)
                         continue;
 
-                bool teammate = false;
+                bool activeTeammate = false;
                 for (int i=0;i<6;i++)
-                	if (abs(robotPos[robotIds[i]][0]-pos.first) < 0.4 && abs(robotPos[robotIds[i]][1]-pos.second) < 0.4) teammate = true;
+                	if (activeRobot[robotIds[i]] &&
+                			abs(robotPos[robotIds[i]][0]-pos.first) < 0.3 &&
+							abs(robotPos[robotIds[i]][1]-pos.second) < 0.3) activeTeammate = true;
 
-                if (!teammate)
+                if (!activeTeammate)
                 {
 
                 	if (obstacleCount < this->obstaclesBottom.size())
