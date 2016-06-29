@@ -171,17 +171,9 @@ namespace alica
 			mc.motion.angle = pathPlanningResult->angleTo();
 		}
 
-		if (pathPlanningResult->distanceTo(pathPlanningPoint) > 10.0)
-		{
 
-			cout << "Intercept: Normal-Trans" << endl;
-			mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
-		}
-		else
-		{
-			cout << "Intercept: PathPlanning-Only" << endl;
-			mc.motion.translation = min(this->maxVel, pathPlanningPoint->length());
-		}
+		mc.motion.translation = min(this->maxVel, max(pathPlanningResult->length(), egoVelocity->length()));
+
 
 // PID controller for minimizing the kicker angle to ball
 		double angleGoal = msl::Kicker::kickerAngle;
