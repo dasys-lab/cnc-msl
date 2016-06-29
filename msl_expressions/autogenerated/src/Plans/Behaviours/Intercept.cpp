@@ -210,11 +210,14 @@ namespace alica
 		auto tmpMC = this->robot->robotMovement->ruleActionForBallGetter();
 		if (!std::isnan(tmpMC.motion.translation))
 		{
+
 			send(tmpMC);
+			cout << "Intercept: RuleAction: " << tmpMC.motion.translation << endl;
 		}
 		else
 		{
 			send(mc);
+			cout << "Intercept: Normal: " << mc.motion.translation << endl;
 		}
 
 		if (this->wm->ball->haveBallDribble(false))
