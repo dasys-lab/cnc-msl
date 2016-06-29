@@ -270,6 +270,8 @@ namespace alica
         }
         else
         {
+        	//WM16 tuning
+        	kickPower *= 0.87;
             return true;
         }
     }
@@ -286,7 +288,9 @@ namespace alica
         }
         else
         {
-            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+        	// WM16: tuning
+//            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 700.0, 100.0);
         }
     }
 
