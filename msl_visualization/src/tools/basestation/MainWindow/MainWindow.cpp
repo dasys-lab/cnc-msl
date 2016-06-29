@@ -66,11 +66,11 @@ MWind::MWind(QMainWindow *parent)
 	connect(actionDebug_All_On_Off, SIGNAL(triggered()), FieldW, SLOT(showDebugPointsToggle()));
 
 	// Path planner
-	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
-	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
-	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
-	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
-	connect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
+//	connect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
+//	connect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
+//	connect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
+//	connect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
+//	connect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 
 	// Robot filtering
 
@@ -126,12 +126,11 @@ MWind::~MWind()
 	// Disconnect
 	disconnect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
 	disconnect(actionConnect, SIGNAL(triggered()), RefBoxWG, SLOT(detailsBotPressed()));
-	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
-	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
-	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
-	disconnect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
-	disconnect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
-	// Destroy "Gustavo" Threads
+//	disconnect(actionShow_PathPlanner_Path, SIGNAL(triggered()), FieldW, SLOT(showPathToggle()));
+//	disconnect(actionShow_Corridor_Check, SIGNAL(triggered()), FieldW, SLOT(showCorridorCheckToggle()));
+//	disconnect(actionShow_Voronoi_Diagram, SIGNAL(triggered()), FieldW, SLOT(showVoronoiNetToggle()));
+//	disconnect(actionShow_Sites, SIGNAL(triggered()), FieldW, SLOT(showSitePointsToggle()));
+//	disconnect(actionShow_All_PathPlanner_Components, SIGNAL(triggered()), FieldW, SLOT(showPathPlannerAllToggle()));
 
 	//Delete
 	if (UpdateTimer != NULL)
