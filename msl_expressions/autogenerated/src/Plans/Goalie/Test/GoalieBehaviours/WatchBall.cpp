@@ -220,7 +220,7 @@ namespace alica
                 - 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
         if (nPoints > 1 && variance > maxVariance)
         {
-//			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
+			cout << "[WatchBall] LinearRegression: Variance: " << variance << endl;
             for (int i = 0; i < nPoints; i++)
             {
                 auto curBall = ballPositions->getLast(i);
@@ -235,44 +235,44 @@ namespace alica
             _slope = nomi / denom;
             _yInt = avgBall->y - _slope * avgBall->x;
             calcTargetY = _slope * alloGoalMid->x + _yInt;
-//			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
+			cout << "[WatchBall] LinearRegression: calcTargetY   : " << calcTargetY << endl;
         }
         else
         {
             // TODO: use this when Goalie Vision detects Obstacles better?!
-            auto obstacles = wm->obstacles->getAlloObstaclePoints();
-            shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
-            double minDistBallObs = 20000;
-            for (auto currentObs : *obstacles)
-            {
+//            auto obstacles = wm->obstacles->getAlloObstaclePoints();
+//            shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
+//            double minDistBallObs = 20000;
+//            for (auto currentObs : *obstacles)
+//            {
 //				cout << "[WatchBall] obstacles: " << currentObs->toString();
-
-                double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
-                if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
-                        || currentDistBallObs > 1000)
-                {
-                    continue;
-                }
-                if (currentDistBallObs < minDistBallObs)
-                {
-                    closestObstacle = currentObs;
-                    minDistBallObs = currentDistBallObs;
-                }
-            }
-
-            if (closestObstacle != nullptr)
-            {
+//
+//                double currentDistBallObs = currentObs->distanceTo(ballPositions->getLast(0));
+//                if (currentObs->distanceTo(ownPos) < ballPositions->getLast(0)->distanceTo(ownPos)
+//                        || currentDistBallObs > 1000)
+//                {
+//                    continue;
+//                }
+//                if (currentDistBallObs < minDistBallObs)
+//                {
+//                    closestObstacle = currentObs;
+//                    minDistBallObs = currentDistBallObs;
+//                }
+//            }
+//
+//            if (closestObstacle != nullptr)
+//            {
 //				cout << "[WatchBall] Obstacle Variance: " << variance << endl;
-                _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
-                        / (closestObstacle->x - ballPositions->getLast(0)->x);
-                _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
-                calcTargetY = _slope * alloGoalMid->x + _yInt;
-            }
-            else
-            {
-//				cout << "[WatchBall] BallY Variance: " << variance << endl;
+//                _slope = (closestObstacle->y - ballPositions->getLast(0)->y)
+//                        / (closestObstacle->x - ballPositions->getLast(0)->x);
+//                _yInt = ballPositions->getLast(0)->y - _slope * ballPositions->getLast(0)->x;
+//                calcTargetY = _slope * alloGoalMid->x + _yInt;
+//            }
+//            else
+//            {
+				cout << "[WatchBall] BallY Variance: " << variance << endl;
                 calcTargetY = ballPositions->getLast(0)->y;
-            }
+//            }
         }
         return calcTargetY;
     }
