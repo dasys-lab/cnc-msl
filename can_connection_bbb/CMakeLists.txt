@@ -91,11 +91,11 @@ catkin_package(
 include_directories(include)
 
 ## canconnection
-add_library(can_connection 
+add_library(can_connection_bbb
   src/usbcanconnection.cpp
   src/udpcanconnection.cpp
 )
-set_target_properties(can_connection PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC -lpthread")
+set_target_properties(can_connection_bbb PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC -lpthread")
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
