@@ -57,13 +57,16 @@ namespace alica
 
         if (alloBall->y > 0)
         {
-            alloAlignPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->getFieldLength()/2 + wm->ball->getBallDiameter(), wm->field->posRightOppGoalPost()->y + 450);
+            alloAlignPoint =
+                    make_shared < geometry::CNPoint2D
+                            > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posRightOppGoalPost()->y
+                                    + 450);
         } // align right-ish first to turn left later
         else
         {
             alloAlignPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->getFieldLength()/2 + wm->ball->getBallDiameter(), wm->field->posLeftOppGoalPost()->y - 450);
+                    > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posLeftOppGoalPost()->y
+                            - 450);
         }
 //        else // standing in the middle so get biggest free area
 //        {
