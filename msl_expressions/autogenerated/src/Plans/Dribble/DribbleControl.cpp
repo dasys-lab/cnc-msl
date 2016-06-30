@@ -115,7 +115,8 @@ namespace alica
             {
                 //0.5 is for correct rounding
                 speed = max(-10000.0, min(10000.0, forwardSpeedSpline(speedX) + 0.5));
-                if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
+                // if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
+                if (rotation > -1.0 && rotation < 1.0)
                 {
                     l = 0;
                     r = 0;
@@ -132,12 +133,12 @@ namespace alica
             {
                 //nach rechts fahren
                 orthoR = speedY * orthoDriveFactor;
-                orthoL = -speedY * orthoDriveFactor / 2.0; // replace with higher Denominator
+                orthoL = -speedY * orthoDriveFactor / 2.0; // replaced with higher Denominator ... was 2
             }
             else
             {
                 //nach links fahren
-                orthoR = speedY * orthoDriveFactor / 2.0; // replace with higher Denominator
+                orthoR = speedY * orthoDriveFactor / 2.0; // replaced with higher Denominator .. was 2
                 orthoL = -speedY * orthoDriveFactor;
             }
         }
