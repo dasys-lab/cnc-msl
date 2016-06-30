@@ -45,37 +45,36 @@ namespace alica
         additionalPoints->push_back(alloBall);
 
         shared_ptr < geometry::CNPoint2D > alloAlignPoint = nullptr;
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint = nullptr;
+//		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
 
         //the receiver should stand on a line with the middle of the goal with minimum allowed distance to ball in opp half
 
-        shared_ptr < geometry::CNPoint2D > alloGoalMid = wm->field->posOppGoalMid();
-        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloGoalMid;
-        alloTarget = alloBall + lineVect->normalize() * 2300;
+//        shared_ptr < geometry::CNPoint2D > alloGoalMid = wm->field->posOppGoalMid();
+//        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloGoalMid;
 
 //		alloTarget->y = alloBall->y;
 //		alloTarget->x = alloBall->x - 2300;
 
-        if (alloBall->y > wm->field->posLeftOppGoalPost()->y)
+        if (alloBall->y > 0)
         {
             alloAlignPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->posLeftOppGoalPost()->x, wm->field->posLeftOppGoalPost()->y - 500);
+                    > (wm->field->getFieldLength()/2 + wm->ball->getBallDiameter(), wm->field->posRightOppGoalPost()->y + 450);
         } // align right-ish first to turn left later
-        else if (alloBall->y < wm->field->posRightOppGoalPost()->y)
+        else
         {
             alloAlignPoint = make_shared < geometry::CNPoint2D
-                    > (wm->field->posRightOppGoalPost()->x, wm->field->posRightOppGoalPost()->y + 500);
+                    > (wm->field->getFieldLength()/2 + wm->ball->getBallDiameter(), wm->field->posLeftOppGoalPost()->y - 450);
         }
-        else // standing in the middle so get biggest free area
-        {
-            if (wm->obstacles->getBiggestFreeGoalAreaMidPoint() != nullptr)
-            {
-                egoAlignPoint =
-                        make_shared < geometry::CNPoint2D
-                                > (wm->obstacles->getBiggestFreeGoalAreaMidPoint()->x, wm->obstacles->getBiggestFreeGoalAreaMidPoint()->y);
-            }
-
-        }
+//        else // standing in the middle so get biggest free area
+//        {
+//            if (wm->obstacles->getBiggestFreeGoalAreaMidPoint() != nullptr)
+//            {
+//                egoAlignPoint =
+//                        make_shared < geometry::CNPoint2D
+//                                > (wm->obstacles->getBiggestFreeGoalAreaMidPoint()->x, wm->obstacles->getBiggestFreeGoalAreaMidPoint()->y);
+//            }
+//
+//        }
 
 //        egoAlignPoint = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
 //        if (!egoAlignPoint)
@@ -84,21 +83,24 @@ namespace alica
 //        }
 
         //neither set
-        if (!alloAlignPoint && !egoAlignPoint)
-        {
-            egoAlignPoint = egoBallPos;
-        } // only allo
-        else if (alloAlignPoint)
-        {
-//			alloTarget = alloBall + alloAlignPoint->normalize() * 2300;
-            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
-        } // else egoalignpoint should be set
+//        if (!alloAlignPoint && !egoAlignPoint)
+//        {
+//            egoAlignPoint = egoBallPos;
+//        } // only allo
+//        else if (alloAlignPoint)
+//        {
+////			alloTarget = alloBall + alloAlignPoint->normalize() * 2300;
+//            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+//        } // else egoalignpoint should be set
 
+        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloAlignPoint;
+
+        alloTarget = alloBall + lineVect->normalize() * 2300;
         alloTarget = this->wm->field->mapInsideField(alloTarget);
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
         msl_actuator_msgs::MotionControl mc;
         query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoAlignPoint;
+        query->egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         query->additionalPoints = additionalPoints;
         mc = rm.moveToPoint(query);
 

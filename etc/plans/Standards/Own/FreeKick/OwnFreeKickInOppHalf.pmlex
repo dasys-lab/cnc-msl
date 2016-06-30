@@ -171,4 +171,8 @@
     <key href="OwnFreeKickInOppHalf.pml#1467206311808"/>
     <value xPos="838" yPos="546"/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1467265292648"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
