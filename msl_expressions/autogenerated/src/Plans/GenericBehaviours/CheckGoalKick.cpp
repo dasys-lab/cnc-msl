@@ -162,7 +162,7 @@ namespace alica
 
         checkGoalie = true;
         string tmp = "";
-        if (getParameter("CheckGoalKeeper", tmp))
+        if (getParameter("CheckGoalie", tmp))
         {
             if (tmp.find("false") != string::npos)
             {
