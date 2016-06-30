@@ -29,7 +29,7 @@ namespace alica
 //		auto egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
         msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = egoBallPos->angleTo();
+        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo();
 
         int tolerance = 20;
         if (egoBallPos->y < 0 + tolerance)
