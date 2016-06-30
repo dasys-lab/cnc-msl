@@ -78,7 +78,7 @@ namespace alica
 			mc.motion.translation = 0;
 			shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
 			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
-			send(mc);
+			// todo: uncomment	send(mc);
 			cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
 			return;
 		}
@@ -98,7 +98,7 @@ namespace alica
 					alignMaxVel,
 					(prevTarget->alloToEgo(*ownPos)->length() * pTrans)
 							+ ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
-			send(mc);
+		// todo: uncomment	send(mc);
 			return;
 		}
 
@@ -156,7 +156,7 @@ namespace alica
 			mc.motion.translation = 0;
 		}
 
-		send(mc);
+		// todo: uncomment	send(mc);
 
 		/*PROTECTED REGION END*/
 	}
