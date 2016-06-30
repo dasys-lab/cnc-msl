@@ -330,6 +330,8 @@ namespace alica
 
             case 1449076029919:
 
+            case 1467265292648:
+
                 return make_shared<CheckGoalKick>();
                 break;
 

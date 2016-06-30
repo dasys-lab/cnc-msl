@@ -37,6 +37,10 @@ namespace alica
         double minKeeperDistBallTrajectory;
         double minKickPower;
 
+        //WM16 experiments---
+        bool checkGoalie;
+        //---
+
         bool usePrediction;
         int predictionTime;
 
