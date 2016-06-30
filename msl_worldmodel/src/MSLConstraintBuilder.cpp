@@ -838,9 +838,9 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
 		resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
 		shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(
-				initializer_list<double> {lowerRightCornerP->x + AREA_TOL, lowerRightCornerP->y + AREA_TOL});
+				initializer_list<double> {lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
 		shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(
-				initializer_list<double> {upperLeftCornerP->x - AREA_TOL, upperLeftCornerP->y - AREA_TOL});
+				initializer_list<double> {upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
 		return outsideRectangle(lowerRightCorner, upperLeftCorner, points);
 	}
 
