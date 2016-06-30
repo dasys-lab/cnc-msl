@@ -16,7 +16,7 @@
 
 namespace msl
 {
-	double MSLConstraintBuilder::AREA_TOL = 100.0;
+	double MSLConstraintBuilder::AREA_TOL = 180.0;
 	double MSLConstraintBuilder::ON_LINE_TOL = 50.0;
 	double MSLConstraintBuilder::BLOCK_PASS_WIDTH_TOL = 100.0;
 	double MSLConstraintBuilder::BLOCK_MIN_RADIUS = 600.0;

@@ -31,7 +31,7 @@ namespace alica
         this->minCloserOffset = 0;
         this->passCorridorWidth = 0;
         this->maxTurnAngle = 0;
-        this->canPass = false;
+        this->canPass = true;
         this->startTime = 0;
         this->tol = 0;
         this->minTol = 0;
@@ -59,7 +59,7 @@ namespace alica
         {
             return;
         }
-        canPass = false;
+        canPass = true;
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
@@ -146,16 +146,16 @@ namespace alica
                     break;
                 }
             }
-            if (opponentTooClose)
+            if (opponentTooClose && canPass)
             {
                 canPass = false;
             }
-            if (geometry::absDeltaAngle(
-                    ownPos->theta + M_PI,
-                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
-            {
-                canPass = false;
-            }
+//            if ( canPass && geometry::absDeltaAngle(
+//                    ownPos->theta + M_PI,
+//                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
+//            {
+//                canPass = false;
+//            }
 
             // some calculation to check whether any obstacle is inside the pass vector triangle
             shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
@@ -164,14 +164,10 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, obs)
+            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, obs)
                     && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
             {
                 canPass = false;
-            }
-            else
-            {
-                canPass = true;
             }
         }
         if (canPass)
@@ -299,7 +295,7 @@ namespace alica
         {
             haveBallCounter++;
             double runningTimeMS = (double)((wm->getTime() - startTime) / 1000000ul);
-            if (runningTimeMS > 9000)
+            if (runningTimeMS > 6000)
             {
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
@@ -308,10 +304,10 @@ namespace alica
                 this->setSuccess(true);
             }
             else if (haveBallCounter > 3
-                    && ((runningTimeMS <= 4000.0 && fabs(dangle) < this->minTol)
+                    && ((runningTimeMS <= 3000.0 && fabs(dangle) < this->minTol)
                             || fabs(dangle)
                                     < this->minTol
-                                            + max(0.0, (this->tol - this->minTol) / (5000.0 / (runningTimeMS - 4000.0)))))
+                                            + max(0.0, (this->tol - this->minTol) / (3000.0 / (runningTimeMS - 3000.0)))))
             {
                 mc.motion.angle = M_PI;
                 mc.motion.rotation = 0.0;
