@@ -43,9 +43,9 @@
     <outTransitions>#1464778515443</outTransitions>
   </states>
   <states id="1464535263395" name="Shoot" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">AlignFreeGoalSpace.beh#1467039882734</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/CheckGoalKick.beh#1467265292648</plans>
     <inTransitions>#1464778515443</inTransitions>
     <outTransitions>#1464785278735</outTransitions>
   </states>

@@ -77,8 +77,7 @@ namespace alica
 		{
 			mc.motion.translation = 0;
 			shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
-			rotate(alignPoint);
-//			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
 			send(mc);
 			cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
 			return;
@@ -139,6 +138,7 @@ namespace alica
 			auto tempPFactor = pTrans;
 			if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
 			{
+
 //				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
 				tempPFactor = pTrans / 2;
 			}
