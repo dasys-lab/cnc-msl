@@ -77,7 +77,8 @@ namespace alica
 		{
 			mc.motion.translation = 0;
 			shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
-			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+			rotate(alignPoint);
+//			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
 			send(mc);
 			cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
 			return;
