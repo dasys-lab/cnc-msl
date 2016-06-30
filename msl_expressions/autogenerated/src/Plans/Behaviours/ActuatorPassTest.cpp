@@ -29,7 +29,7 @@ namespace alica
 //		auto egoBallPos = wm->ball->getEgoBallPosition();
         shared_ptr < geometry::CNPoint2D > egoBallPos = this->wm->ball->getEgoBallPosition();
         msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 2;
+        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * 4;
 
         int tolerance = 20;
         if (egoBallPos->y < 0 + tolerance)
@@ -51,6 +51,7 @@ namespace alica
         bhc.leftMotor = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
         bhc.leftMotor = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
         send(mc);
+        send(bhc);
         /*PROTECTED REGION END*/
     }
     void ActuatorPassTest::initialiseParameters()
