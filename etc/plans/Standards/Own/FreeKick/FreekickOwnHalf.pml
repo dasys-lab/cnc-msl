@@ -6,7 +6,7 @@
   <states id="1464779892294" name="AlginExec" comment="" entryPoint="1464779892295">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494</plans>
     <outTransitions>#1464781040324</outTransitions>
   </states>
   <states id="1464780728003" name="AlginRec" comment="" entryPoint="1464780621150">
