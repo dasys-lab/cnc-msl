@@ -1,6 +1,9 @@
 #!/bin/bash
 robots=(mops myo nase savvy hairy)
 
+title="allrobots"
+echo -e '\033]2;'allrobots'\007'
+
 # help?
 if [[ $1 == "--help" ]]; then
 	echo "Launches separate terminals for each robot, connects via SSH and lets you execute commands simultanously."
@@ -13,6 +16,8 @@ if [[ $1 == "--help" ]]; then
 	echo "--setup     installs screen, copies the robot's SSH ids and adds an alias for running the script to your .bashrc"
 	exit
 fi
+
+pullmake="cd ~/cnws;if [[ \$(mr up | tee /dev/tty | grep failed | wc -l) = 0 ]]; then catkin_make; fi"
 
 # check for online robots
 onlineRobots=()
@@ -33,7 +38,7 @@ fi
 
 # launch parameter set?
 if [[ $1 == "--setup" ]]; then
-	sudo apt-get -y --force-yes install screen
+	sudo apt-get -y --force-yes install screen wmctrl
 	if [[ $(cat ~/.bashrc | grep allrobots | wc -l) = 0 ]]; then
 		echo "alias allrobots='~/cnws/src/cnc-msl/shell-scripts/allrobots.sh'" >> ~/.bashrc
 	fi
@@ -61,6 +66,9 @@ do
 	fi
 done
 
+# give focus back to the allrobots terminal
+wmctrl -a allrobots
+
 # wait for screens to start and print connecting message
 for robot in "${onlineRobots[@]}"
 do
@@ -76,18 +84,24 @@ do
 
 	if [[ $1 == "--pullmake" ]]; then
 		screen -S "$robot" -X stuff "cd cnws^M"
-		screen -S "$robot" -X stuff "if [[ \$(mr up | tee /dev/tty | grep failed | wc -l) = 0 ]]; then catkin_make; fi^M"
+		screen -S "$robot" -X stuff "$pullmake^M"
 	fi
 done
 
 # command input loop
 echo ""
 echo "Every command you enter will be executed on ALL remote shells. "
-echo "Type exit to close all terminals."
-cmd="hello"
-while [ "$cmd" != "exit" ]
+echo "Ctrl+D closes all shells, Ctrl+C leaves them open and only quits this script."
+returnval=0
+while [ "$returnval" -eq 0 ]
 do
 	read -e -p ">  " cmd
+	returnval=$?
+	
+	if [[ "$cmd" == "pullmake" ]]; then
+		cmd="$pullmake"
+	fi
+	
 	for robot in "${onlineRobots[@]}"
 	do
 		screen -S "$robot" -X stuff "$cmd^M"
@@ -95,6 +109,9 @@ do
 done
 
 # exit screens
-if [[ "$cmd" == "exit" ]]; then
+if [[ "$cmd" == "exit" || "$returnval" -eq 1 ]]; then
 	killall screen
 fi
+
+
+echo -e '\033]2;'Terminal'\007'
