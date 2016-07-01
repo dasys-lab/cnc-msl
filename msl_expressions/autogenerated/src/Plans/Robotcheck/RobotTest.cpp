@@ -62,7 +62,7 @@ namespace alica
             out = outPut("rotateForward", out);
             setParms(false);
             rotateForward = true;
-            rotateForward = translationRotationRobot(-2, false, 3000);
+            rotateForward = translationRotationRobot(-2, false, rotationTime);
             if (!rotateForward)
             {
                 out = true;
@@ -75,7 +75,7 @@ namespace alica
             out = outPut("rotateBack", out);
             setParms(false);
             rotateBack = true;
-            rotateBack = translationRotationRobot(2, false, 3000);
+            rotateBack = translationRotationRobot(2, false, rotationTime);
             if (!rotateBack)
             {
                 out = true;
@@ -444,6 +444,7 @@ namespace alica
         kickPower = (*sc)["Robotcheck"]->get<double>("Robotcheck.Default.kickPower", NULL);
         startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.startAll", NULL);
         repeat = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.repeat", NULL);
+        rotationTime = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Robot.rotationTime", NULL);
 
         if (startAll)
         {

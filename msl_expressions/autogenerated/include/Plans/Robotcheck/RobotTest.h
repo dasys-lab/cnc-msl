@@ -55,6 +55,7 @@ namespace alica
         bool finShovelSelectLow;
         bool finShovelSelectHigh;
 
+        int rotationTime;
         bool repeat;
         bool out;
 
