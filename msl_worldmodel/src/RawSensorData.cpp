@@ -376,7 +376,7 @@ namespace msl
 		if(IMULOG)
 		{
 			log(0, atan2(cmd->magnet.y, cmd->magnet.x));
-			log(1, imuData.getAverageMod());
+			//log(1, imuData.getAverageMod());
 		}
 	}
 } /* namespace alica */
