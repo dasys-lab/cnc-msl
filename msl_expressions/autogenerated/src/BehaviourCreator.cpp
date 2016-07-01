@@ -31,6 +31,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/ActuatorPassTest.h"
 
+#include  "Plans/Calibration/RotateOnce.h"
+
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
@@ -285,6 +287,11 @@ namespace alica
             case 1467309206305:
 
                 return make_shared<ActuatorPassTest>();
+                break;
+
+            case 1467398000539:
+
+                return make_shared<RotateOnce>();
                 break;
 
             case 1457706826895:

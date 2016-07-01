@@ -1,4 +1,3 @@
-#define IMULOG true
 /*
 
  * RawSensorData.cpp
@@ -192,6 +191,10 @@ namespace msl
 		ownVelocityMotion.add(vel);
 	}
 
+	double RawSensorData::getAverageBearing() {
+		return imuData.getAverageMod();
+	}
+
 	void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 	{
 		if (msg->robotId == this->ownID)
@@ -370,14 +373,6 @@ namespace msl
 		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
-
-		// TODO IMU-Baustelle Kai/Marci
-		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
-		if(IMULOG)
-		{
-			//log(0, atan2(cmd->magnet.y, cmd->magnet.x));
-			log(1, imuData.getAverageMod());
-		}
 	}
 } /* namespace alica */
 

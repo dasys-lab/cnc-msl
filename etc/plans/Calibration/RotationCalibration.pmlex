@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396438734"/>
-    <value xPos="216" yPos="15" width="65" height="64"/>
+    <value xPos="216" yPos="15" width="65" height="64" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396616225"/>
@@ -27,5 +27,9 @@
     <value>
       <bendpoints xPos="316" yPos="151"/>
     </value>
+  </extensions>
+  <extensions>
+    <key href="RotateOnce.beh#1467398000539"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

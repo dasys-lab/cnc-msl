@@ -62,6 +62,7 @@ namespace msl
 		void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi);
 		void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr& list);
 		void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
+		double getAverageBearing();
 
 	private:
 		RingBuffer<InformationElement<vector<double>>> distanceScan;
