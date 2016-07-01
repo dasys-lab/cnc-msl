@@ -21,9 +21,9 @@ namespace alica
 
         alloGoalMid = wm->field->posOwnGoalMid();
         alloGoalLeft = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+                > (alloGoalMid->x + 200, wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
         alloGoalRight = make_shared < geometry::CNPoint2D
-                > (alloGoalMid->x, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
+                > (alloGoalMid->x + 200, wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 
         pTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.pTrans", NULL);
         dTrans = (*this->sc)["Behaviour"]->get<double>("Goalie.dTrans", NULL);
@@ -44,16 +44,19 @@ namespace alica
     void DriveToPost::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464189819779) ENABLED START*/ //Add additional options here
+	ownPos = wm->rawSensorData->getOwnPositionVision();
+
         if (ownPos == nullptr)
         {
+		cout << "[DriveToPost] ownPos null!" << endl;
             return;
         }
+
         if (wm->game->checkSituation(msl::Situation::Start) && startTime == -1)
         {
             startTime = wm->getTime();
         }
         shared_ptr < geometry::CNPoint2D > targetPost;
-        ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (driveToPost == 0)
         {
@@ -103,6 +106,7 @@ namespace alica
             }
             startTime = -1;
         }
+	cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
         send (mc);
         /*PROTECTED REGION END*/
     }

@@ -49,7 +49,7 @@ namespace alica
 		auto tempMid = wm->field->posOwnGoalMid();
 		alloGoalMid = make_shared<geometry::CNPoint2D>(tempMid->x, tempMid->y);
 		alloGoalLeft = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
-														wm->field->posLeftOwnGoalPost()->y - goalieSize / 2);
+														wm->field->posLeftOwnGoalPost()->y - goalieSize / 2 + 375);
 		alloGoalRight = make_shared<geometry::CNPoint2D>(alloGoalMid->x,
 															wm->field->posRightOwnGoalPost()->y + goalieSize / 2);
 		/*PROTECTED REGION END*/
@@ -66,6 +66,10 @@ namespace alica
 		ownPos = wm->rawSensorData->getOwnPositionVision();
 		if (ownPos == nullptr)
 		{
+			mc.motion.translation = 0;
+			mc.motion.angle = 0;
+			mc.motion.rotation = 0;
+			send(mc);
 			cout << "[WatchBall]: ownPos is null" << endl;
 			return;
 		}
@@ -73,12 +77,12 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> alloBall = wm->ball->getAlloBallPosition();
 
 		// TODO: Keep?
-		if (alloBall != nullptr && alloBall->x > -1000)
+		if (alloBall != nullptr && alloBall->x > -250)
 		{
 			mc.motion.translation = 0;
 			shared_ptr<geometry::CNPoint2D> alignPoint = make_shared<geometry::CNPoint2D>(-ownPos->x, ownPos->y); // align to mirrored ownPos
 			mc.motion.rotation = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
-			// todo: uncomment	send(mc);
+			send(mc);
 			cout << "[WatchBall] ball is far away from goal! BallX: " << alloBall->x << endl;
 			return;
 		}
@@ -98,7 +102,7 @@ namespace alica
 					alignMaxVel,
 					(prevTarget->alloToEgo(*ownPos)->length() * pTrans)
 							+ ((prevTarget->alloToEgo(*ownPos)->length() - prevTargetDist) * dTrans));
-		// todo: uncomment	send(mc);
+			send(mc);
 			return;
 		}
 
@@ -114,7 +118,7 @@ namespace alica
 		{
 			targetY = calcGoalImpactY();
 			targetY = fitTargetY(targetY);
-			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x, targetY);
+			alloTarget = make_shared<geometry::CNPoint2D>(alloGoalMid->x + 200, targetY);
 			prevTarget = alloTarget;
 		}
 		else
@@ -138,7 +142,7 @@ namespace alica
 			auto tempPFactor = pTrans;
 			if (egoBall != nullptr && alloBall->x > alloFieldCntr->x + 1000)
 			{
-
+				// todo: remove
 //				cout << "[WatchBall] Ball in opp side, goalie moves with half translation" << endl;
 				tempPFactor = pTrans / 2;
 			}
@@ -156,7 +160,7 @@ namespace alica
 			mc.motion.translation = 0;
 		}
 
-		// todo: uncomment	send(mc);
+		send(mc);
 
 		/*PROTECTED REGION END*/
 	}
@@ -262,7 +266,7 @@ namespace alica
 			_slope = nomi / denom;
 			_yInt = avgBall->y - _slope * avgBall->x;
 			calcTargetY = _slope * alloGoalMid->x + _yInt;
-			cout << "[WatchBall] -LinearRegression- calcTargetY: " << calcTargetY << endl;
+//			cout << "[WatchBall] -LinearRegression- calcTargetY: " << calcTargetY << endl;
 		}
 		else
 		{
@@ -308,8 +312,7 @@ namespace alica
 
 			cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
 			calcTargetY = ballPositions->getLast(0)->y;
-			cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
-//            }
+			//cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
 		}
 		return calcTargetY;
 	}
