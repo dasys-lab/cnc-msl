@@ -45,6 +45,8 @@
 
 #include  "Plans/Attack/constraints/PassPlay1436268896671Constraints.h"
 
+#include  "Plans/Calibration/constraints/RotationCalibration1467396347588Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerPosBounceShot1459361999064Constraints.h"
 
 #include  "Plans/Attack/constraints/StandardKickOff1438777024734Constraints.h"

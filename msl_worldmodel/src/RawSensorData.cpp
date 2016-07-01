@@ -375,7 +375,7 @@ namespace msl
 		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
 		if(IMULOG)
 		{
-			log(0, atan2(cmd->magnet.y, cmd->magnet.x));
+			//log(0, atan2(cmd->magnet.y, cmd->magnet.x));
 			log(1, imuData.getAverageMod());
 		}
 	}

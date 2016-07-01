@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347589"/>
+    <value xPos="102" yPos="104" width="65" height="64"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347588"/>
+    <value width="616" height="292"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396347590"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396438734"/>
+    <value xPos="216" yPos="15" width="65" height="64"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396616225"/>
+    <value>
+      <bendpoints xPos="273" yPos="110"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1467396705635"/>
+    <value>
+      <bendpoints xPos="316" yPos="151"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

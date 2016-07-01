@@ -44,6 +44,8 @@
 
 #include  "Plans/Attack/PassPlay1436268896671.h"
 
+#include  "Plans/Calibration/RotationCalibration1467396347588.h"
+
 #include  "Plans/Standards/Own/Corner/CornerPosBounceShot1459361999064.h"
 
 #include  "Plans/Attack/StandardKickOff1438777024734.h"
@@ -735,6 +737,18 @@ namespace alica
             case 1436268945305:
 
                 return make_shared<TransitionCondition1436268945305>();
+
+                break;
+
+            case 1467396619848:
+
+                return make_shared<TransitionCondition1467396619848>();
+
+                break;
+
+            case 1467396709878:
+
+                return make_shared<TransitionCondition1467396709878>();
 
                 break;
 
