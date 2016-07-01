@@ -84,6 +84,11 @@ namespace alica
 
             if (me->distanceTo(alloTarget) <= 100)
             {
+                msl_actuator_msgs::MotionControl mcStop;
+                mcStop.motion.translation = 0;
+                mcStop.motion.rotation = 0;
+                mcStop.motion.angle = 0;
+                send(mcStop);
                 this->setSuccess(true);
             }
             else if (!std::isnan(mc.motion.translation))

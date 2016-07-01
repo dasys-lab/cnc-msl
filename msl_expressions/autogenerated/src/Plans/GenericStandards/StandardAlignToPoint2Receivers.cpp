@@ -34,6 +34,7 @@ namespace alica
                                                                                          "receiverBallMovedThreshold",
                                                                                          NULL);
         this->ratio = tan((*this->sc)["Behaviour"]->get<double>("ThrowIn", "freeOppAngle", NULL) / 2);
+        this->canPass = true;
         /*PROTECTED REGION END*/
     }
     StandardAlignToPoint2Receivers::~StandardAlignToPoint2Receivers()
@@ -52,7 +53,7 @@ namespace alica
         {
             return;
         }
-
+        this->canPass = true;
         // Create allo ball
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
@@ -147,16 +148,16 @@ namespace alica
                     break;
                 }
             }
-            if (opponentTooClose)
+            if (canPass && opponentTooClose)
             {
                 canPass = false;
             }
-            if (geometry::absDeltaAngle(
-                    ownPos->theta + M_PI,
-                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
-            {
-                canPass = false;
-            }
+//            if (canPass && geometry::absDeltaAngle(
+//                    ownPos->theta + M_PI,
+//                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
+//            {
+//                canPass = false;
+//            }
 
             // some calculation to check whether any obstacle is inside the pass vector triangle
             shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
@@ -165,15 +166,12 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, obs)
+            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, obs)
                     && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
             {
                 canPass = false;
             }
-            else
-            {
-                canPass = true;
-            }
+
         }
         shared_ptr < geometry::CNPoint2D > receiverPos = nullptr;
         if (canPass)

@@ -7,6 +7,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Attack/TestPlans/ActuatorPassTest1467309055366.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
@@ -149,6 +151,10 @@ namespace alica
 
             case 1432132075122:
                 return make_shared<UtilityFunction1432132075122>();
+                break;
+
+            case 1467309055366:
+                return make_shared<UtilityFunction1467309055366>();
                 break;
 
             case 1431522123418:

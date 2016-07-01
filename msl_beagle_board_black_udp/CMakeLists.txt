@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
   system_config
   process_manager
   cnc_geometry
+  can_connection_bbb
 )
 
 
