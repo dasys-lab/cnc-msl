@@ -327,7 +327,7 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd bhc;
         if (move < (30 * duration) / 1000)
         {
-            if (power < 100 && power > -100)
+            if (power < 10000 && power > -10000)
             {
                 if (right)
                 {
