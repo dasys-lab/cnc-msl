@@ -29,6 +29,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
+#include  "Plans/Behaviours/ActuatorPassTest.h"
+
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
@@ -278,6 +280,11 @@ namespace alica
             case 1435155363994:
 
                 return make_shared<StandardAlignToPoint>();
+                break;
+
+            case 1467309206305:
+
+                return make_shared<ActuatorPassTest>();
                 break;
 
             case 1457706826895:
