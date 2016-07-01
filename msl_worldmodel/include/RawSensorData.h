@@ -1,3 +1,5 @@
+
+
 /*
  * RawSensorData.h
  *
@@ -8,7 +10,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
 #define CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
 
-#include "RingBuffer.h"
 #include "InformationElement.h"
 #include <vector>
 #include "msl_sensor_msgs/BallInfo.h"
@@ -25,6 +26,7 @@
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "std_msgs/Bool.h"
 #include "msl_actuator_msgs/IMUData.h"
+#include "AverageRingBuffer.h"
 
 using namespace std;
 
@@ -74,7 +76,7 @@ namespace msl
 		RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
 		RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
 		RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
-		RingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
+		AverageRingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
 		MSLWorldModel* wm;
 
 
