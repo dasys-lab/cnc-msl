@@ -10,6 +10,7 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
+<<<<<<< HEAD
 	/*PROTECTED REGION ID(staticVars1447863466691) ENABLED START*/ //initialise static variables here
 	/*
 	 *
@@ -203,14 +204,15 @@ namespace alica
 					if (!(diffpp >= diffp || diffpp + buffer >= diffp || diffpp - buffer >= diffp))
 					{
 //						cout << "[WatchBall] corner detected! cond1" << endl;
-						break;
-					}
-				}
-				else
-				{
-					if (!(diffpp <= diffp || diffpp + buffer <= diffp || diffpp - buffer <= diffp))
-					{
+                        break;
+                    }
+                }
+                else
+                {
+                    if (!(diffpp <= diffp || diffpp + buffer <= diffp || diffpp - buffer <= diffp))
+                    {
 //						cout << "[WatchBall] corner detected! cond2" << endl;
+<<<<<<< HEAD
 						break;
 					}
 				}
@@ -271,6 +273,68 @@ namespace alica
 		else
 		{
 			// TODO: use this when Goalie Vision detects Obstacles better?!
+=======
+                        break;
+                    }
+                }
+            }
+
+            avgBall->x += currentBall->x;
+            avgBall->y += currentBall->y;
+            sumXY = sumXY + (currentBall->y * currentBall->x);
+            sumX2 = sumX2 + (currentBall->x * currentBall->x);
+            sumX2Y2 = sumX2Y2 + (currentBall->x * currentBall->x + currentBall->y * currentBall->y);
+            nPoints = nPoints + 1;
+        }
+
+        double sumX = avgBall->x;
+        double sumY = avgBall->y;
+        avgBall = avgBall / nPoints;
+        double denom = 0;
+        double nomi = 0;
+        double calcTargetY;
+        double variance = (sumX2Y2 + nPoints * ((avgBall->x * avgBall->x) + (avgBall->y * avgBall->y))
+                - 2 * ((avgBall->x * sumX) + (avgBall->y * sumY))) / nPoints;
+
+        // TODO: Keep?
+        std::shared_ptr < geometry::CNVelocity2D > alloBallVel = wm->ball->getEgoBallVelocity();
+
+        if (alloBallVel != nullptr)
+        {
+            alloBallVel = alloBallVel->egoToAllo(*ownPos);
+        }
+
+        if (alloBallVel != nullptr && alloBallVel->x < -1000)
+        {
+            cout << "[WatchBall] alloBallVelX: " << alloBallVel->x << endl;
+            calcTargetY = prevTarget->y;
+        } // TODO: Keep?
+        else if (nPoints > 1 && variance > maxVariance)
+        {
+            /*
+             * Ball is moving, so that its variance is greater than maxVariance
+             */
+            cout << "[WatchBall] -LinearRegression- Variance   : " << variance << endl;
+            for (int i = 0; i < nPoints; i++)
+            {
+                auto curBall = ballPositions->getLast(i);
+                nomi = nomi + ((curBall->x - avgBall->x) * (curBall->y - avgBall->y));
+                denom = denom + ((curBall->x - avgBall->x) * (curBall->x - avgBall->x));
+            }
+            if (denom < 1e-3)
+            {
+                // return prev, cause denom no valid value
+                return prevTarget->y;
+            }
+            _slope = nomi / denom;
+            _yInt = avgBall->y - _slope * avgBall->x;
+            calcTargetY = _slope * alloGoalMid->x + _yInt;
+            cout << "[WatchBall] -LinearRegression- calcTargetY: " << calcTargetY << endl;
+        }
+        else
+        {
+            // TODO: use this when Goalie Vision detects Obstacles better?!
+>>>>>>> 097ab1fa4f8b35990b4c4a6bd92c4294d8aaeb76
 //            auto obstacles = wm->obstacles->getAlloObstaclePoints();
 //            shared_ptr < geometry::CNPoint2D > closestObstacle; // = make_shared<geometry::CNPoint2D>(0.0, 0.0);
 //            double minDistBallObs = 20000;
@@ -310,63 +374,75 @@ namespace alica
 //			 * Goalie drives to ball x position, meaning he just follows the ball
 //			 */
 
+<<<<<<< HEAD
 			cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
 			calcTargetY = ballPositions->getLast(0)->y;
 			//cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
 		}
 		return calcTargetY;
 	}
+=======
+            cout << "[WatchBall] -BallY- Variance   : " << variance << endl;
+            calcTargetY = ballPositions->getLast(0)->y;
+            cout << "[WatchBall] -BallY- calcTargetY: " << calcTargetY << endl;
+//            }
+        }
+        return calcTargetY;
+    }
+>>>>>>> 097ab1fa4f8b35990b4c4a6bd92c4294d8aaeb76
 
-	double WatchBall::fitTargetY(double targetY)
-	{
+    double WatchBall::fitTargetY(double targetY)
+    {
 
-		if (targetY > alloGoalLeft->y)
-		{
+        if (targetY > alloGoalLeft->y)
+        {
 //			cout << "[WatchBall] fitTarget left: " << alloGoalLeft->y << endl;
-			return alloGoalLeft->y;
-		}
-		else if (targetY < alloGoalRight->y)
-		{
+            return alloGoalLeft->y;
+        }
+        else if (targetY < alloGoalRight->y)
+        {
 //			cout << "[WatchBall] fitTarget right: " << alloGoalRight->y << endl;
-			return alloGoalRight->y;
-		}
-		else
-		{
+            return alloGoalRight->y;
+        }
+        else
+        {
 //			cout << "[WatchBall] fitTarget else: " << targetY << endl;
-			return targetY;
-		}
-	}
+            return targetY;
+        }
+    }
 
-	void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
-	{
-		shared_ptr<geometry::CNPoint2D> alignPoint;
-		double ballAngle = ownPos->getPoint()->angleToPoint(alloTarget) / M_PI * 180;
+    void WatchBall::rotate(shared_ptr<geometry::CNPoint2D> alloTarget)
+    {
+        shared_ptr < geometry::CNPoint2D > alignPoint;
+        double ballAngle = ownPos->getPoint()->angleToPoint(alloTarget) / M_PI * 180;
 
-		if (alignTowardsBall == true)
-		{
-			double radRotLim = rotationLimit * M_PI / 180.0;
-			// todo: only allow smaller rotationLimit when close to posts?
-			if (ballAngle <= -rotationLimit)
-			{
-				alignPoint = make_shared<geometry::CNPoint2D>(ownPos->x + 1000, -((tan(radRotLim) * 1000) - ownPos->y));
-			}
-			else if (ballAngle >= rotationLimit)
-			{
-				alignPoint = make_shared<geometry::CNPoint2D>(ownPos->x + 1000, (tan(radRotLim) * 1000) + ownPos->y);
-			}
-			else
-			{
-				alignPoint = alloTarget;
-			}
-		}
-		else
-		{
-			alignPoint = alloFieldCntr;
-		}
+        if (alignTowardsBall == true)
+        {
+            double radRotLim = rotationLimit * M_PI / 180.0;
+            // todo: only allow smaller rotationLimit when close to posts?
+            if (ballAngle <= -rotationLimit)
+            {
+                alignPoint = make_shared < geometry::CNPoint2D
+                        > (ownPos->x + 1000, -((tan(radRotLim) * 1000) - ownPos->y));
+            }
+            else if (ballAngle >= rotationLimit)
+            {
+                alignPoint = make_shared < geometry::CNPoint2D
+                        > (ownPos->x + 1000, (tan(radRotLim) * 1000) + ownPos->y);
+            }
+            else
+            {
+                alignPoint = alloTarget;
+            }
+        }
+        else
+        {
+            alignPoint = alloFieldCntr;
+        }
 
-		double angleErr = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
-		mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
-		lastRotErr = angleErr;
+        double angleErr = alignPoint->alloToEgo(*ownPos)->rotate(M_PI)->angleTo();
+        mc.motion.rotation = pRot * angleErr + dRot * geometry::normalizeAngle(angleErr - lastRotErr);
+        lastRotErr = angleErr;
 
 //		double angleAlignPoint = ownPos->getPoint()->angleToPoint(alignPoint) / M_PI * 180;
 //		cout << "[WatchBall] alignPAngle: " << angleAlignPoint << endl;
@@ -377,6 +453,6 @@ namespace alica
 //		cout << "[WatchBall] alloOwnPos : " << ownPos->x << " " << ownPos->y << endl;
 //		cout << "[WatchBall] rotation   : " << mc.motion.rotation << endl;
 //		cout << "[WatchBall] theta      :" << ownPos->theta / M_PI * 180 << endl << endl;
-	}
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

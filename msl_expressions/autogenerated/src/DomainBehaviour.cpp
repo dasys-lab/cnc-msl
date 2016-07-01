@@ -63,7 +63,14 @@ namespace alica
 	{
 		bh.enabled = true;
 		bh.senderID = ownID;
+		// this is only for nase and his new left motor
+		if (ownID == 0)
+		{
+			int sgn = bh.rightMotor >= 0 ? 1 : -1;
+			bh.rightMotor = (int)max(1700.0, abs(bh.rightMotor / 2.0)) * sgn;
+		}	
 		ballHandlePub.publish(bh);
+		
 	}
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::KickControl& kc)
