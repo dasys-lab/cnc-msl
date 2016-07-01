@@ -164,6 +164,11 @@ template<typename T>
     int bufferSize; /**< number of stored elements */
     ulong identifierCounter; /**< Counter of elements added to the ring buffer */
     long index; /**< Current index of the last added element */
+
+  protected:
+    std::shared_ptr<T> getElement(int i) {
+    	return ringBuffer[i];
+    }
   };
 
 } /* namespace ice */
