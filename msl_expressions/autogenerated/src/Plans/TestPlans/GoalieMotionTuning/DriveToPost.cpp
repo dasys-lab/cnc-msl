@@ -106,7 +106,7 @@ namespace alica
             }
             startTime = -1;
         }
-	cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
+	//cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
         send (mc);
         /*PROTECTED REGION END*/
     }
