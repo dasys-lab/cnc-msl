@@ -283,6 +283,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
 
 bool robotVisActive[7] = {false};
 bool robotPpActive[7] = {false};
+bool robotBallOnlyActive[7] = {false};
 bool robotPassingActive[7] = {false};
 bool robotCorrActive[7] = {false};
 bool robotVoronoiActive[7] = {false};
@@ -409,6 +410,7 @@ void FieldWidget3D::update_robot_info(void)
 			{
 				robotVisActive[0] = true;
 				robotPpActive[0] = true;
+				robotBallOnlyActive[0] = true;
 				robotPassingActive[0] = true;
 				robotCorrActive[0] = true;
 				robotVoronoiActive[0] = true;
@@ -417,6 +419,7 @@ void FieldWidget3D::update_robot_info(void)
 				{
 					if (!robotVisActive[i]) robotVisActive[0] = false;
 					if (!robotPpActive[i]) robotPpActive[0] = false;
+					if (!robotBallOnlyActive[i]) robotBallOnlyActive[0] = false;
 					if (!robotPassingActive[i]) robotPassingActive[0] = false;
 					if (!robotCorrActive[i]) robotCorrActive[0] = false;
 					if (!robotVoronoiActive[i]) robotVoronoiActive[0] = false;
@@ -427,6 +430,7 @@ void FieldWidget3D::update_robot_info(void)
 			// adjust the checkboxes accordingly
 			mainWindow->checkVis->setChecked(robotVisActive[selectedIndex]);
 			mainWindow->checkPp->setChecked(robotPpActive[selectedIndex]);
+			mainWindow->checkBallOnly->setChecked(robotBallOnlyActive[selectedIndex]);
 			mainWindow->checkPassing->setChecked(robotPassingActive[selectedIndex]);
 			mainWindow->checkCorr->setChecked(robotCorrActive[selectedIndex]);
 			mainWindow->checkVoronoi->setChecked(robotVoronoiActive[selectedIndex]);
@@ -447,6 +451,7 @@ void FieldWidget3D::update_robot_info(void)
 			if (!robotVisActive[selectedIndex])
 			{
 				robotPpActive[selectedIndex] = false;
+				robotBallOnlyActive[selectedIndex] = false;
 				robotPassingActive[selectedIndex] = false;
 				robotCorrActive[selectedIndex] = false;
 				robotVoronoiActive[selectedIndex] = false;
@@ -471,6 +476,18 @@ void FieldWidget3D::update_robot_info(void)
 				for (int i=0;i<7;i++) robotPpActive[i] = ppCheckBoxState;
 			} else // only one robot's pathplanner checkbox is changed
 				robotPpActive[selectedIndex] = ppCheckBoxState;
+		}
+
+		// detect change on ballonly checkbox
+		bool ballOnlyCheckBoxState = mainWindow->checkBallOnly->checkState();
+		if (robotBallOnlyActive[selectedIndex] != ballOnlyCheckBoxState)
+		{
+			if (selectedIndex == 0) // all robots' pathplanner checkboxes are changed
+			{
+				for (int i=0;i<7;i++) robotBallOnlyActive[i] = ballOnlyCheckBoxState;
+			} else // only one robot's pathplanner checkbox is changed
+				robotBallOnlyActive[selectedIndex] = ballOnlyCheckBoxState;
+			robot->setBallOnly(robotBallOnlyActive[robotIndex[myId]]);
 		}
 
 		// detect change on passing checkbox
