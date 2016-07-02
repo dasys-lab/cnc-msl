@@ -72,7 +72,7 @@ namespace alica
 		{
 			cout << "rotation for nase" << endl;
 			double p = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL) -1;
-			bh.rightMotor = (int)(bh.rightMotor - (bh.rightMotor * p))* sgnR ;
+			bh.rightMotor = (int)(bh.rightMotor * (1 - p));
 			bh.leftMotor = (int)((max(minRotation, abs(bh.rightMotor * 1.0))) * sgnL / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL));
 		} else if (!(bh.rightMotor == 0) && !(bh.leftMotor == 0))
 		{
