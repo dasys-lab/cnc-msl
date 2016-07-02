@@ -49,6 +49,8 @@ public:
 	void setId(int id);
 	std::string getName() const;
 	void setName(std::string name);
+	bool getBallOnly() const;
+	void setBallOnly(bool ballOnly);
 	bool getVisStatus() const;
 	void setVisStatus(bool vis);
 
@@ -85,6 +87,7 @@ private:
    	bool myVis;
 	int id;
 	std::string name;
+	bool ballOnly;
 	unsigned long timeStamp;
         unsigned long pathPlannerMsgTimeStamp;
         unsigned long voronoiNetMsgTimeStamp;

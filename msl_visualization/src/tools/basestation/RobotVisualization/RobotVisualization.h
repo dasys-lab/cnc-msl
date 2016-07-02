@@ -32,6 +32,8 @@ public:
 	void setId(int id);
 	std::string getName();
 	void setName(std::string name);
+	bool getBallOnly();
+	void setBallOnly(bool ballOnly);
 	int getSenderId();
 	void setSenderId(int senderId);
 	vtkActor* getBall();

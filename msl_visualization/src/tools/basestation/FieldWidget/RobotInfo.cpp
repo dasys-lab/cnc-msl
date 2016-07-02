@@ -51,6 +51,16 @@ void RobotInfo::setName(std::string name)
 }
 
 
+bool RobotInfo::getBallOnly() const
+{
+	return ballOnly;
+}
+
+void RobotInfo::setBallOnly(bool ballOnly)
+{
+	this->ballOnly = ballOnly;
+}
+
 std::shared_ptr<RobotVisualization> RobotInfo::getVisualization()
 {
         return this->visualization;
