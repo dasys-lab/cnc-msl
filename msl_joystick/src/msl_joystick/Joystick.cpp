@@ -137,9 +137,6 @@ namespace msl_joystick
 		if (this->useBallHandle)
 		{
 			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
-		} else
-		{
-			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
 		}
 		else
 		{
