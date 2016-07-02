@@ -7,6 +7,8 @@
 
 #include  "Plans/GenericStandards/constraints/GenericOppStandards1432132075122Constraints.h"
 
+#include  "Plans/Attack/TestPlans/constraints/ActuatorPassTest1467309055366Constraints.h"
+
 #include  "Plans/GenericStandards/constraints/GenericExecute1431522123418Constraints.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/constraints/PenaltyMaster1466973051873Constraints.h"
@@ -182,6 +184,10 @@ namespace alica
 
             case 1457531039142:
                 return make_shared<Constraint1457531039142>();
+                break;
+
+            case 1467206311808:
+                return make_shared<Constraint1467206311808>();
                 break;
 
             case 1466975666362:

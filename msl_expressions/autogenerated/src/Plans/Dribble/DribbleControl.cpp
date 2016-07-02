@@ -32,15 +32,15 @@ namespace alica
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)
         {
-            bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
-            bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speedNoBall));
+            bhc.leftMotor = (int)-max(-10000.0, min(10000.0, speedNoBall));
+            bhc.rightMotor = (int)-max(-10000.0, min(10000.0, speedNoBall));
 
             //If we are close to the ball give more speed
 //            shared_ptr < geometry::CNPoint2D > b = wm->ball.getEgoBallPosition();
 //            if (b != nullptr && b->length() < 400)
 //            {
-//                bhc.leftMotor = max(bhc.leftMotor, (int8_t) - 80);
-//                bhc.rightMotor = max(bhc.rightMotor, (int8_t) - 80);
+//                bhc.leftMotor = max(bhc.leftMotor, (int) - 80);
+//                bhc.rightMotor = max(bhc.rightMotor, (int) - 80);
 //            }
 
             send(bhc);
@@ -72,7 +72,7 @@ namespace alica
         else if (haveBall || controlNoMatterWhat || itcounter >= 8)
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
-
+	    cout << "haveBall = " << haveBall << endl;
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
             cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
@@ -81,15 +81,16 @@ namespace alica
 
             //geschwindigkeitsanteil fuer rotation nur beachten, falls rotation größer bzw kleiner 1/-1
             double rotation = motion->rotation;
+
             if (rotation < 0)
             {
                 l = 0;
-                r = abs(rotation) / M_PI * curveRotationFactor;
+                r = fabs(rotation) * curveRotationFactor / M_PI;
             }
             else
             {
                 r = 0;
-                l = abs(rotation) / M_PI * curveRotationFactor;
+                l = fabs(rotation) * curveRotationFactor / M_PI;
             }
 
             //ignor rotation error
@@ -114,11 +115,13 @@ namespace alica
             {
                 //0.5 is for correct rounding
                 speed = max(-10000.0, min(10000.0, forwardSpeedSpline(speedX) + 0.5));
-                if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
-                {
-                    l = 0;
-                    r = 0;
-                }
+		speed = speed * (1-rotation / 4.0);
+                // if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
+//                if (rotation > -1.0 && rotation < 1.0)
+//                {
+//                    l = 0;
+//                    r = 0;
+//                }
             }
             //schnell rueck
             else
@@ -131,12 +134,12 @@ namespace alica
             {
                 //nach rechts fahren
                 orthoR = speedY * orthoDriveFactor;
-                orthoL = -speedY * orthoDriveFactor / 2.0;
+                orthoL = -speedY * orthoDriveFactor / 3.0; // replaced with higher Denominator ... was 2
             }
             else
             {
                 //nach links fahren
-                orthoR = speedY * orthoDriveFactor / 2.0;
+                orthoR = speedY * orthoDriveFactor / 3.0; // replaced with higher Denominator .. was 2
                 orthoL = -speedY * orthoDriveFactor;
             }
         }
@@ -148,8 +151,8 @@ namespace alica
 
         cout << "DribbleControl: Left: speed: \t" << speed << " orthoL: \t" << orthoL << " l: \t" << l << endl;
         cout << "DribbleControl: Right: speed: \t" << speed << " orthoR: \t" << orthoR << " r: \t" << r << endl;
-        bhc.leftMotor = (int8_t) - max(-10000.0, min(10000.0, speed + l + orthoL));
-        bhc.rightMotor = (int8_t) - max(-10000.0, min(10000.0, speed + r + orthoR));
+        bhc.leftMotor = (int)-max(-10000.0, min(10000.0, speed + l + orthoL));
+        bhc.rightMotor = (int)-max(-10000.0, min(10000.0, speed + r + orthoR));
 
         hadBefore = haveBall;
         if (!hadBefore)

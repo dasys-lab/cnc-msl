@@ -102,14 +102,18 @@ namespace alica
         this->send(debugMsg);
         // ---------------------------------------
 
-        if (!this->checkGoalKeeper(hitPoint))
-        { // we hit the goal keeper
-            cout << "check goal keeper: false" << endl;
-            return;
-        }
-        else
+        //WM16 experiments
+        if (checkGoalie)
         {
-            cout << "check goal keeper: true" << endl;
+            if (!this->checkGoalKeeper(hitPoint))
+            { // we hit the goal keeper
+                cout << "check goal keeper: false" << endl;
+                return;
+            }
+            else
+            {
+                cout << "check goal keeper: true" << endl;
+            }
         }
 
         double kickPowerObs = 0;
@@ -155,6 +159,16 @@ namespace alica
         auto rules = msl::Rules::getInstance();
         // space required to miss a robot (no offset because robots are pyramids)
         minOppYDist = rules->getBallRadius() + rules->getRobotRadius();
+
+        checkGoalie = true;
+        string tmp = "";
+        if (getParameter("CheckGoalie", tmp))
+        {
+            if (tmp.find("false") != string::npos)
+            {
+                checkGoalie = false;
+            }
+        }
 
         readConfigParameters();
         /*PROTECTED REGION END*/
@@ -270,6 +284,8 @@ namespace alica
         }
         else
         {
+            //WM16 tuning
+            kickPower *= 0.87;
             return true;
         }
     }
@@ -286,7 +302,9 @@ namespace alica
         }
         else
         {
-            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+            // WM16: tuning
+//            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 400.0, 100.0);
+            return this->robot->kicker->getKickPowerForLobShot(dist2HitPoint, 700.0, 100.0);
         }
     }
 

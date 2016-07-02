@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946023"/>
-    <value xPos="-24" yPos="-2" width="1405" height="737"/>
+    <value xPos="67" yPos="10" width="1415" height="737"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464531946025"/>
@@ -42,7 +42,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535263395"/>
-    <value xPos="927" yPos="171" width="169" height="86" collapsed="false"/>
+    <value xPos="917" yPos="235" width="209" height="110" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464535682818"/>
@@ -109,7 +109,7 @@
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785237103"/>
-    <value xPos="740" yPos="41" width="161" height="67"/>
+    <value xPos="740" yPos="41" width="161" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnFreeKickInOppHalf.pml#1464785250936"/>
@@ -133,6 +133,46 @@
   </extensions>
   <extensions>
     <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466861369486"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="AlignFreeGoalSpace.beh#1467039882734"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnFreeKickInOppHalf.pml#1467206311808"/>
+    <value xPos="838" yPos="546"/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1467265292648"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

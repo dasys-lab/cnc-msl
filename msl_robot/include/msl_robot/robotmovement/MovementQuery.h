@@ -44,6 +44,13 @@ namespace msl
 		double curRotDribble;
 		double curTransDribble;
 
+		//for Voronoi Stuff
+		bool blockOppPenaltyArea;
+		bool blockOppGoalArea;
+		bool blockOwnPenaltyArea;
+		bool blockOwnGoalArea;
+		bool block3MetersAroundBall;
+
 	private:
 		MSLWorldModel* wm;
 		MSLRobot* robot;

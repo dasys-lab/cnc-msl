@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="FreekickOwnHalf.pml#1464779892293"/>
-    <value xPos="-78" yPos="9" width="1374" height="675"/>
+    <value xPos="-67" yPos="57" width="1374" height="675"/>
   </extensions>
   <extensions>
     <key href="FreekickOwnHalf.pml#1464779892295"/>
@@ -144,6 +144,10 @@
   </extensions>
   <extensions>
     <key href="FreekickOwnHalf.pml#1464781583908"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -53,16 +53,23 @@ namespace alica
                     > (result.at(0), result.at(1));
 
             //if solution is inside pen area and another robot is inside pen area already, map solution out of pen area
-
             if (wm->field->isInsideOppPenalty(alloTarget, 10) && wm->robots->teammates.teamMatesInOppPenalty() > 0)
             {
                 alloTarget = wm->field->mapOutOfOppPenalty(alloTarget);
             }
+
+            //if solution is inside pen area, make sure not to block path of ball to goal
+
+//			shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> trianglePoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+//			trianglePoints->push_back(wm->field->posLeftOppGoalPost());
+//			trianglePoints->push_back(wm->field->posRightOppGoalPost());
+//			trianglePoints->push_back(alloBall);
+
             cout << "Target x,y: " << alloTarget->x << " " << alloTarget->y << endl;
 
             shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
 
-            moveQuery->fast = false;
+//            moveQuery->fast = false;
             moveQuery->egoDestinationPoint = egoTarget;
             moveQuery->egoAlignPoint = alloBall->alloToEgo(*ownPos);
             moveQuery->snapDistance = 100.0;
@@ -75,7 +82,11 @@ namespace alica
         {
             cout << "Pos2Penalty: Did not get a filled result vector!" << endl;
         }
-        send(mc);
+
+        if (!std::isnan(mc.motion.translation))
+        {
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void Pos2Penalty::initialiseParameters()

@@ -29,6 +29,8 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
+#include  "Plans/Behaviours/ActuatorPassTest.h"
+
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
 #include  "Plans/GenericBehaviours/Stop.h"
@@ -89,6 +91,8 @@ using namespace std;
 
 #include  "Plans/GameStrategy/Other/CoverSpace.h"
 
+#include  "Plans/Standards/Own/FreeKick/AlignFreeGoalSpace.h"
+
 #include  "Plans/TestPlans/KickCurveTuning/LaserBallTracking.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInPass.h"
@@ -120,6 +124,8 @@ using namespace std;
 #include  "Plans/Behaviours/StdExecutorGrabBall.h"
 
 #include  "Plans/Behaviours/GoalieExtension.h"
+
+#include  "Plans/GenericStandards/StandardAlignToPoint2Receivers.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ReceiveInOppHalf.h"
 
@@ -276,6 +282,11 @@ namespace alica
                 return make_shared<StandardAlignToPoint>();
                 break;
 
+            case 1467309206305:
+
+                return make_shared<ActuatorPassTest>();
+                break;
+
             case 1457706826895:
 
             case 1457706895442:
@@ -325,6 +336,8 @@ namespace alica
                 break;
 
             case 1449076029919:
+
+            case 1467265292648:
 
                 return make_shared<CheckGoalKick>();
                 break;
@@ -440,6 +453,11 @@ namespace alica
                 return make_shared<CoverSpace>();
                 break;
 
+            case 1467039882734:
+
+                return make_shared<AlignFreeGoalSpace>();
+                break;
+
             case 1457698689219:
 
                 return make_shared<LaserBallTracking>();
@@ -528,6 +546,11 @@ namespace alica
             case 1459249287791:
 
                 return make_shared<GoalieExtension>();
+                break;
+
+            case 1467229016494:
+
+                return make_shared<StandardAlignToPoint2Receivers>();
                 break;
 
             case 1462370388995:
@@ -673,6 +696,8 @@ namespace alica
             case 1461583806472:
 
             case 1465038982091:
+
+            case 1466861369486:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

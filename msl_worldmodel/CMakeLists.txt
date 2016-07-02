@@ -65,6 +65,7 @@ catkin_package(
    src/pathplanner/PathProxy.cpp
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
+   src/pathplanner/PathPlannerQuery.cpp
    src/ballTracking/BallIntegrator.cpp  
    src/ballTracking/BallZTracker.cpp  
    src/ballTracking/EgoMotionEstimator.cpp  
@@ -98,4 +99,4 @@ catkin_add_gtest(${PROJECT_NAME}-test src/pathplanner/test/test_path_planner.cpp
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
-
+ 

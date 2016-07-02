@@ -16,7 +16,7 @@
 
 namespace msl
 {
-	double MSLConstraintBuilder::AREA_TOL = 100.0;
+	double MSLConstraintBuilder::AREA_TOL = 180.0;
 	double MSLConstraintBuilder::ON_LINE_TOL = 50.0;
 	double MSLConstraintBuilder::BLOCK_PASS_WIDTH_TOL = 100.0;
 	double MSLConstraintBuilder::BLOCK_MIN_RADIUS = 600.0;
@@ -838,9 +838,9 @@ namespace msl
 		shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
 		resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
 		shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(
-				initializer_list<double> {lowerRightCornerP->x + AREA_TOL, lowerRightCornerP->y + AREA_TOL});
+				initializer_list<double> {lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
 		shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(
-				initializer_list<double> {upperLeftCornerP->x - AREA_TOL, upperLeftCornerP->y - AREA_TOL});
+				initializer_list<double> {upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
 		return outsideRectangle(lowerRightCorner, upperLeftCorner, points);
 	}
 

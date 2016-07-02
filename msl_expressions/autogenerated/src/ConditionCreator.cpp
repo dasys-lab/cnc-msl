@@ -6,6 +6,8 @@
 
 #include  "Plans/GenericStandards/GenericOppStandards1432132075122.h"
 
+#include  "Plans/Attack/TestPlans/ActuatorPassTest1467309055366.h"
+
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
@@ -214,9 +216,27 @@ namespace alica
 
                 break;
 
+            case 1467309116799:
+
+                return make_shared<TransitionCondition1467309116799>();
+
+                break;
+
+            case 1467309134723:
+
+                return make_shared<TransitionCondition1467309134723>();
+
+                break;
+
             case 1457955744730:
 
                 return make_shared<RunTimeCondition1457955744730>();
+
+                break;
+
+            case 1467224612376:
+
+                return make_shared<PreCondition1467224612376>();
 
                 break;
 
@@ -1381,6 +1401,12 @@ namespace alica
             case 1458135843050:
 
                 return make_shared<TransitionCondition1458135843050>();
+
+                break;
+
+            case 1467206311808:
+
+                return make_shared<RunTimeCondition1467206311808>();
 
                 break;
 

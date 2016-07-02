@@ -31,6 +31,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <usbcanconnection.h>
 
 #include "msl_actuator_msgs/BallHandleCmd.h"
 #include "msl_actuator_msgs/BallHandleMode.h"
@@ -43,6 +44,7 @@
 #include "msl_actuator_msgs/CanMsg.h"
 #include "msl_actuator_msgs/IMUData.h"
 #include "msl_actuator_msgs/RawOdometryInfo.h"
+#include "../include/CanHandler.h"
 
 using boost::asio::ip::udp;
 
@@ -69,6 +71,8 @@ bool		th_activ = true;
 
 BallHandle	ballHandle;
 
+// Can hack
+CanHandler canHandler;
 
 void handleBallHandleControl(const msl_actuator_msgs::BallHandleCmd msg) {
 	const msl_actuator_msgs::BallHandleMode mode;
@@ -105,12 +109,10 @@ void handleRawOdometryInfo(const msl_actuator_msgs::RawOdometryInfo msg) {
 	ballHandle.setOdometryData(msg.motion.angle, msg.motion.translation);
 }
 
-
-
-
-
-
-
+void handleCanSub(const msl_actuator_msgs::CanMsg &msg) {
+	// Nachricht an ueber can verschicken
+	canHandler.sendCanMsg(msg);
+}
 
 
 void onRosBallHandleCmd1334345447(msl_actuator_msgs::BallHandleCmd& message) {
@@ -390,9 +392,11 @@ void handleUdpPacket(const boost::system::error_code& error,   std::size_t bytes
 				handleRawOdometryInfo(m3134514216);
 				break; }
 				case 1267609526ul: {
-//				msl_actuator_msgs::CanMsg m1267609526;
-//				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m1267609526);
-//				pub1267609526.publish<msl_actuator_msgs::CanMsg>(m1267609526);
+				// CanSub
+				msl_actuator_msgs::CanMsg m1267609526;
+				ros::serialization::Serializer<msl_actuator_msgs::CanMsg>::read(stream, m1267609526);
+				handleCanSub(m1267609526);
+
 				break; }
 				case 217678336ul: {
 //				msl_actuator_msgs::CanMsg m217678336;
@@ -666,7 +670,6 @@ int main(int argc, char** argv) {
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
 
-
 	supplementary::Configuration *proxyconf = (*sc)["msl_bbb_proxy"];
 	std::string baddress = proxyconf->get<std::string>("UdpProxy","MulticastAddress",NULL);
 	unsigned short port = (unsigned short)proxyconf->get<int>("UdpProxy","Port",NULL);
@@ -679,6 +682,9 @@ int main(int argc, char** argv) {
 	listenForPacket();
 
 	usleep(50000);
+
+	// CAN hack
+	canHandler.Start();
 
 	boost::thread iothread(run_udp);
 	std::cout << "Udp connection active..." <<std::endl;
@@ -701,6 +707,7 @@ int main(int argc, char** argv) {
 	}
     io_service.stop();
     iothread.join();
+    canHandler.Stop();
 
 	return 0;
 }

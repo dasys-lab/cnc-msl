@@ -20,6 +20,16 @@ RobotInfo::~RobotInfo()
 	// TODO Auto-generated destructor stub
 }
 
+bool RobotInfo::getVisStatus() const
+{
+	return myVis;
+}
+
+void RobotInfo::setVisStatus(bool vis)
+{
+	this->myVis = vis;
+}
+
 int RobotInfo::getId() const
 {
 	return id;
@@ -29,7 +39,6 @@ void RobotInfo::setId(int id)
 {
 	this->id = id;
 }
-
 
 std::string RobotInfo::getName() const
 {

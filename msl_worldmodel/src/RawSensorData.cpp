@@ -1,4 +1,6 @@
+#define IMULOG false
 /*
+
  * RawSensorData.cpp
  *
  *  Created on: Feb 18, 2015
@@ -10,9 +12,12 @@
 #include "Ball.h"
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
+#include <math.h>
 
 namespace msl
 {
+	std::string logFile = "/home/cn/cnws/IMU.log";
+	FILE *lp= fopen(logFile.c_str(), "a");
 
 	RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
 			distanceScan(ringbufferLength), lightBarrier(ringbufferLength), opticalFlow(ringbufferLength), ownPositionMotion(
@@ -344,6 +349,13 @@ namespace msl
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 
+	void log(int index, float value)
+	{
+		fprintf(lp, "%d:%f\n", index, value);
+		fflush(lp);
+
+	}
+
 	void RawSensorData::processIMUData(msl_actuator_msgs::IMUDataPtr msg)
 	{
 		shared_ptr<msl_actuator_msgs::IMUData> cmd = make_shared<msl_actuator_msgs::IMUData>();
@@ -358,6 +370,14 @@ namespace msl
 		shared_ptr<InformationElement<msl_actuator_msgs::IMUData>> o = make_shared<InformationElement<msl_actuator_msgs::IMUData>>(cmd, wm->getTime());
 		o->certainty = 1;
 		imuData.add(o);
+
+		// TODO IMU-Baustelle Kai/Marci
+		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
+		if(IMULOG)
+		{
+			log(0, atan2(cmd->magnet.y, cmd->magnet.x));
+			//log(1, imuData.getAverageMod());
+		}
 	}
 } /* namespace alica */
 

@@ -36,46 +36,77 @@ namespace alica
         {
             return;
         }
+
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
         // Create additional points for path planning
         shared_ptr < vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = make_shared<
                 vector<shared_ptr<geometry::CNPoint2D>>>();
-        shared_ptr < geometry::CNPoint2D > egoAlignPoint;
         // add alloBall to path planning
         additionalPoints->push_back(alloBall);
 
+        shared_ptr < geometry::CNPoint2D > alloAlignPoint = nullptr;
+//		shared_ptr<geometry::CNPoint2D> egoAlignPoint = nullptr;
+
         //the receiver should stand on a line with the middle of the goal with minimum allowed distance to ball in opp half
 
-        auto alloGoalMid = this->wm->field->posOppGoalMid();
-
-        auto lineVect = alloBall - alloGoalMid;
-
-        alloTarget = alloBall + lineVect->normalize() * 2300;
+//        shared_ptr < geometry::CNPoint2D > alloGoalMid = wm->field->posOppGoalMid();
+//        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloGoalMid;
 
 //		alloTarget->y = alloBall->y;
 //		alloTarget->x = alloBall->x - 2300;
 
-        egoAlignPoint = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
-        if (!egoAlignPoint)
+        if (alloBall->y > 0)
         {
-            egoAlignPoint = egoBallPos;
+            alloAlignPoint =
+                    make_shared < geometry::CNPoint2D
+                            > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posRightOppGoalPost()->y
+                                    + 450);
+        } // align right-ish first to turn left later
+        else
+        {
+            alloAlignPoint = make_shared < geometry::CNPoint2D
+                    > (wm->field->getFieldLength() / 2 + wm->ball->getBallDiameter(), wm->field->posLeftOppGoalPost()->y
+                            - 450);
         }
+//        else // standing in the middle so get biggest free area
+//        {
+//            if (wm->obstacles->getBiggestFreeGoalAreaMidPoint() != nullptr)
+//            {
+//                egoAlignPoint =
+//                        make_shared < geometry::CNPoint2D
+//                                > (wm->obstacles->getBiggestFreeGoalAreaMidPoint()->x, wm->obstacles->getBiggestFreeGoalAreaMidPoint()->y);
+//            }
+//
+//        }
+
+//        egoAlignPoint = wm->obstacles->getBiggestFreeGoalAreaMidPoint();
+//        if (!egoAlignPoint)
+//        {
+//            egoAlignPoint = egoBallPos;
+//        }
+
+        //neither set
+//        if (!alloAlignPoint && !egoAlignPoint)
+//        {
+//            egoAlignPoint = egoBallPos;
+//        } // only allo
+//        else if (alloAlignPoint)
+//        {
+////			alloTarget = alloBall + alloAlignPoint->normalize() * 2300;
+//            egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
+//        } // else egoalignpoint should be set
+
+        shared_ptr < geometry::CNPoint2D > lineVect = alloBall - alloAlignPoint;
+
+        alloTarget = alloBall + lineVect->normalize() * 2300;
+        alloTarget = this->wm->field->mapInsideField(alloTarget);
         shared_ptr < geometry::CNPoint2D > egoTarget = alloTarget->alloToEgo(*ownPos);
-
         msl_actuator_msgs::MotionControl mc;
-
-        // ask the path planner how to get there
-//        mc = msl::RobotMovement::moveToPointCarefully(egoTarget, egoBallPos, 0, additionalPoints);
         query->egoDestinationPoint = egoTarget;
-        query->egoAlignPoint = egoAlignPoint;
+        query->egoAlignPoint = alloAlignPoint->alloToEgo(*ownPos);
         query->additionalPoints = additionalPoints;
         mc = rm.moveToPoint(query);
 
-        // if we reach the point and are aligned, the behavior is successful
-        if (egoTarget->length() < 250 && fabs(egoBallPos->rotate(M_PI)->angleTo()) < (M_PI / 180) * 5)
-        {
-            this->setSuccess(true);
-        }
         if (!std::isnan(mc.motion.translation))
         {
             send(mc);

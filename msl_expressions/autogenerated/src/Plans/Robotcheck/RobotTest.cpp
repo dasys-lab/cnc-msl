@@ -62,7 +62,7 @@ namespace alica
             out = outPut("rotateForward", out);
             setParms(false);
             rotateForward = true;
-            rotateForward = translationRotationRobot(-2, false, 3000);
+            rotateForward = translationRotationRobot(-2, false, rotationTime);
             if (!rotateForward)
             {
                 out = true;
@@ -75,7 +75,7 @@ namespace alica
             out = outPut("rotateBack", out);
             setParms(false);
             rotateBack = true;
-            rotateBack = translationRotationRobot(2, false, 3000);
+            rotateBack = translationRotationRobot(2, false, rotationTime);
             if (!rotateBack)
             {
                 out = true;
@@ -91,7 +91,7 @@ namespace alica
             out = outPut("actuator -> pushing left", out);
             setParms(false);
             actuatorPushLeft = true;
-            actuatorPushLeft = actuatorRobot(3000, 30, false);
+            actuatorPushLeft = actuatorRobot(3000, 3000, false);
             if (!actuatorPushLeft)
             {
                 out = true;
@@ -105,7 +105,7 @@ namespace alica
             out = outPut("actuator -> pushing right", out);
             setParms(false);
             actuatorPushRight = true;
-            actuatorPushRight = actuatorRobot(3000, 30, true);
+            actuatorPushRight = actuatorRobot(3000, 3000, true);
             if (!actuatorPushRight)
             {
                 out = true;
@@ -119,7 +119,7 @@ namespace alica
             out = outPut("actuator -> pulling left", out);
             setParms(false);
             actuatorPullLeft = true;
-            actuatorPullLeft = actuatorRobot(3000, -30, false);
+            actuatorPullLeft = actuatorRobot(3000, -3000, false);
             if (!actuatorPullLeft)
             {
                 out = true;
@@ -133,7 +133,7 @@ namespace alica
             out = outPut("actuator -> pulling right", out);
             setParms(false);
             actuatorPullRight = true;
-            actuatorPullRight = actuatorRobot(3000, -30, true);
+            actuatorPullRight = actuatorRobot(3000, -3000, true);
             if (!actuatorPullRight)
             {
                 out = true;
@@ -327,7 +327,7 @@ namespace alica
         msl_actuator_msgs::BallHandleCmd bhc;
         if (move < (30 * duration) / 1000)
         {
-            if (power < 100 && power > -100)
+            if (power < 10000 && power > -10000)
             {
                 if (right)
                 {
@@ -444,6 +444,7 @@ namespace alica
         kickPower = (*sc)["Robotcheck"]->get<double>("Robotcheck.Default.kickPower", NULL);
         startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.startAll", NULL);
         repeat = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.repeat", NULL);
+        rotationTime = (*sc)["Robotcheck"]->get<double>("Robotcheck.Robot.rotationTime", NULL);
 
         if (startAll)
         {

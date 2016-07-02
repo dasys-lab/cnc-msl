@@ -57,6 +57,12 @@ namespace alica
         {
             return;
         }
+
+        if (sentPm && !wm->ball->haveBall())
+        {
+            this->setSuccess(true);
+        }
+
         canPass = false;
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
@@ -260,6 +266,7 @@ namespace alica
             if (this->robot->kicker->lowShovelSelected)
             {
                 send(pm);
+                this->sentPm = true;
             }
 
         }
@@ -294,6 +301,7 @@ namespace alica
     void ThrowInPass::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1462363192018) ENABLED START*/ //Add additional options here
+        this->sentPm = false;
         auto sc = supplementary::SystemConfig::getInstance();
         this->closerFactor = (*this->sc)["Behaviour"]->get<double>("Pass", "CloserFactor", NULL);
         this->ballRadius = (*this->sc)["Rules"]->get<double>("Rules.BallRadius", NULL);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309055367"/>
+    <value xPos="95" yPos="240" width="65" height="64" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309055366"/>
+    <value width="939" height="626"/>
+  </extensions>
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309055368"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309076558"/>
+    <value xPos="381" yPos="284" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309114647"/>
+    <value>
+      <bendpoints xPos="376" yPos="381"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="ActuatorPassTest.pml#1467309132307"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../Behaviours/ActuatorPassTest.beh#1467309206305"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
