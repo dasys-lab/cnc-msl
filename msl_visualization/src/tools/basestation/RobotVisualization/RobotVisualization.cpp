@@ -530,6 +530,7 @@ void RobotVisualization::updateObjects(vtkRenderer *renderer)
         bool found = false;
         int objectCount = 0;
 
+        if(!robot->getBallOnly())
         for (auto myObject: robot->getSharedWorldInfo()->obstacles)
         {
                 found = false;
