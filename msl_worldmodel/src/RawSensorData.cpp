@@ -1,5 +1,6 @@
 #define IMULOG false
 /*
+
  * RawSensorData.cpp
  *
  *  Created on: Feb 18, 2015
@@ -15,7 +16,7 @@
 
 namespace msl
 {
-	std::string logFile = "/home/cn/IMU.log";
+	std::string logFile = "/home/cn/cnws/IMU.log";
 	FILE *lp= fopen(logFile.c_str(), "a");
 
 	RawSensorData::RawSensorData(MSLWorldModel* wm, int ringbufferLength) :
@@ -348,9 +349,10 @@ namespace msl
 		this->wm->ball->updateOnBallHypothesisList(list->imageTime);
 	}
 
-	void log(float value)
+	void log(int index, float value)
 	{
-		fprintf(lp, "%f\n", value);
+		fprintf(lp, "%d:%f\n", index, value);
+		fflush(lp);
 
 	}
 
@@ -369,11 +371,13 @@ namespace msl
 		o->certainty = 1;
 		imuData.add(o);
 
-		// räumen wir noch auf
+		// TODO IMU-Baustelle Kai/Marci
 		double bearing = atan2(cmd->magnet.y, cmd->magnet.x);
 		if(IMULOG)
-			log(bearing + '\n');
-
+		{
+			log(0, atan2(cmd->magnet.y, cmd->magnet.x));
+			//log(1, imuData.getAverageMod());
+		}
 	}
 } /* namespace alica */
 

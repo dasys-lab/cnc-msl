@@ -92,12 +92,13 @@ namespace msl
 		{
 			baseSize = (int)max(wm->field->getFieldLength() / 20, wm->field->getFieldWidth() / 20);
 		}
+		//TODO was time 2 before
 		int lengthInterval = (int)(baseSize
-				+ ((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) % baseSize)
-						/ (int)((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 2) / baseSize));
+				+ ((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 1.5) % baseSize)
+						/ (int)((int)(wm->field->getFieldLength() + wm->field->getSurrounding() * 1.5) / baseSize));
 		int widthInterval = (int)(baseSize
-				+ ((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) % baseSize)
-						/ (int)((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 2) / baseSize));
+				+ ((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 1.5) % baseSize)
+						/ (int)((int)(wm->field->getFieldWidth() + wm->field->getSurrounding() * 1.5) / baseSize));
 		int halfFieldLength = (int)wm->field->getFieldLength() / 2 + wm->field->getSurrounding();
 		int halfFieldWidth = (int)wm->field->getFieldWidth() / 2 + wm->field->getSurrounding();
 

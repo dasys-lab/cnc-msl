@@ -31,7 +31,7 @@ namespace alica
         this->sc = nullptr;
         this->passCorridorWidth = 0;
         this->maxTurnAngle = 0;
-        this->canPass = false;
+        this->canPass = true;
         this->maxVel = 2000;
         this->pRot = 2.1;
         this->dRot = 0.0;
@@ -63,7 +63,7 @@ namespace alica
             this->setSuccess(true);
         }
 
-        canPass = false;
+        canPass = true;
         shared_ptr < geometry::CNPoint2D > alloTarget = nullptr;
         shared_ptr < geometry::CNPoint2D > alloBall = egoBallPos->egoToAllo(*ownPos);
 
@@ -156,16 +156,16 @@ namespace alica
                     break;
                 }
             }
-            if (opponentTooClose)
+            if (canPass && opponentTooClose)
             {
                 canPass = false;
             }
-            if (geometry::absDeltaAngle(
-                    ownPos->theta + M_PI,
-                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
-            {
-                canPass = false;
-            }
+//            if (canPass && geometry::absDeltaAngle(
+//                    ownPos->theta + M_PI,
+//                    (passPoint - make_shared < geometry::CNPoint2D > (ownPos->x, ownPos->y))->angleTo()) > maxTurnAngle)
+//            {
+//                canPass = false;
+//            }
 
             // some calculation to check whether any opponent is inside the pass vector triangle
             shared_ptr < geometry::CNPoint2D > ball2PassPoint = passPoint - alloBall;
@@ -174,7 +174,7 @@ namespace alica
                     > (-ball2PassPoint->y, ball2PassPoint->x)->normalize() * ratio * passLength;
             shared_ptr < geometry::CNPoint2D > left = passPoint + ball2PassPointOrth;
             shared_ptr < geometry::CNPoint2D > right = passPoint - ball2PassPointOrth;
-            if (!outsideTriangle(alloBall, right, left, ballRadius, obs)
+            if (canPass && !outsideTriangle(alloBall, right, left, ballRadius, obs)
                     && !outsideCorridore(alloBall, passPoint, this->passCorridorWidth, obs))
             {
                 canPass = false;
@@ -182,15 +182,12 @@ namespace alica
 
             // no opponent was in dangerous distance to our pass vector, now check our teammates with other parameters
             auto matePoses = wm->robots->teammates.getTeammatesAlloClustered();
-            if (matePoses != nullptr
+            if (canPass && matePoses != nullptr
                     && !outsideCorridoreTeammates(alloBall, passPoint, this->ballRadius * 4, matePoses))
             {
                 canPass = false;
             }
-            else
-            {
-                canPass = true;
-            }
+
         }
         int bestReceiverId = -1;
         if (canPass)
