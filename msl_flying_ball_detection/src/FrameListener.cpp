@@ -46,7 +46,7 @@ using namespace std;
 
 #include "msl_actuator_msgs/KickControl.h"
 
-//#define FLYBALL_DEBUG
+#define FLYBALL_DEBUG
 
 namespace msl
 {
@@ -118,6 +118,8 @@ namespace msl
 			return;
 		}
 
+		//ros::spin();
+
 		for (std::vector<int>::const_iterator pit = indices.begin(); pit != indices.end(); ++pit)
 		{
 			ballCloud->points.push_back(voxelCloud->points[*pit]);
@@ -168,22 +170,22 @@ namespace msl
 	{
 		if (msg->cmd ==msl_msgs::RefBoxCommand::START )
 		{
+			cout << "[FrameListener] Start" << endl;
 			this->mayKick = true;
 		}
 		else
 		{
+			cout << "[FrameListener] Else" << endl;
 			this->mayKick = false;
 		}
 	}
 
 	void FrameListener::kick()
 	{
-#ifndef FLYBALL_DEBUG
 		if (!mayKick)
 		{
 			return;
 		}
-#endif
 
 		// fire upper extension
 #ifdef FLYBALL_DEBUG
@@ -195,6 +197,7 @@ namespace msl
 		kc.enabled = true;
 		kc.senderID = 0;
 		kickControlPub.publish(kc);
+		cout << "[FrameListener] kc: " << kc.extension  << endl;
 	}
 
 	void FrameListener::createVoxelCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, float leafSize,
