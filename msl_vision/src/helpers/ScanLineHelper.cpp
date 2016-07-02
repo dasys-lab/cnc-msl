@@ -113,7 +113,7 @@ void ScanLineHelper::init( ){
 	short ex = 0;
 	short ey = 0;
 
-	numberOfCircles = 16;
+	numberOfCircles = 29;
 
 	innerLines = (short *) malloc(nLines/2 * maxPoints * 2 * sizeof(short));
 	innerLinesN = (short *) malloc(nLines/2 * sizeof(short));
