@@ -141,6 +141,10 @@ namespace msl_joystick
 		{
 			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
 		}
+		else
+		{
+			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
+		}
 
 		// kicker stuff
 		msg.kickPower = this->kickPower;
@@ -447,11 +451,13 @@ namespace msl_joystick
 		switch (checkState)
 		{
 			case Qt::CheckState::Checked:
+				std::cout << "BHC: set to true" << endl;
 				this->useBallHandle = true;
 				break;
 			case Qt::CheckState::Unchecked:
 			case Qt::CheckState::PartiallyChecked:
 			default:
+				std::cout << "BHC: set to false" << endl;
 				this->useBallHandle = false;
 				break;
 		}
