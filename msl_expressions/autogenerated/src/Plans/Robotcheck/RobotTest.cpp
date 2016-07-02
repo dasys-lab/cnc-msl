@@ -444,7 +444,7 @@ namespace alica
         kickPower = (*sc)["Robotcheck"]->get<double>("Robotcheck.Default.kickPower", NULL);
         startAll = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.startAll", NULL);
         repeat = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Global.repeat", NULL);
-        rotationTime = (*sc)["Robotcheck"]->get<bool>("Robotcheck.Robot.rotationTime", NULL);
+        rotationTime = (*sc)["Robotcheck"]->get<double>("Robotcheck.Robot.rotationTime", NULL);
 
         if (startAll)
         {
