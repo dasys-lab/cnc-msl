@@ -62,7 +62,7 @@ namespace alica
 	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-		double minRotation = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL);
+		double minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
 		bh.enabled = true;
 		bh.senderID = ownID;
 		// this is only for nase and his new left motor
