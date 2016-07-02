@@ -10,6 +10,7 @@
       <sorts>y</sorts>
     </quantifiers>
   </conditions>
+  <conditions xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation free kick" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
   <states id="1431522155979" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
@@ -34,6 +35,7 @@
   <states id="1431522912251" name="Receive" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
   </states>

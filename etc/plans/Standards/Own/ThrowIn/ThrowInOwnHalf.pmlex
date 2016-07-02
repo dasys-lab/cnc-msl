@@ -160,4 +160,8 @@
     <key href="../../../GenericStandards/GenericExecutePass.beh#1465040471344"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignToPoint2Receivers.beh#1467229016494"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

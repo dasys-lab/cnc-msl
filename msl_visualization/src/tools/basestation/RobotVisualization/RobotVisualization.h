@@ -22,8 +22,8 @@ class RobotVisualization {
 public:
 	RobotVisualization(RobotInfo* robot, FieldWidget3D* field);
 	virtual ~RobotVisualization();
-	vtkSmartPointer<vtkActor> getBottom();
-	void setBottom(vtkSmartPointer<vtkActor> bottom);
+	vtkSmartPointer<vtkActor> getObject();
+	void setObject(vtkSmartPointer<vtkActor> object);
 	vtkSmartPointer<vtkActor> getTop();
 	void setTop(vtkSmartPointer<vtkActor> top);
 	void setNameActor(vtkSmartPointer<vtkActor> nameActor);
@@ -48,7 +48,7 @@ public:
 	void updatePosition(vtkRenderer *renderer);
 	void updateBall(vtkRenderer *renderer);
 	void updateSharedBall(vtkRenderer *renderer);
-	void updateOpponents(vtkRenderer *renderer);
+	void updateObjects(vtkRenderer *renderer);
 
 	void updatePathPlannerDebug(vtkRenderer *renderer, bool show);
 	void updateCorridorDebug(vtkRenderer *renderer, bool show);
@@ -58,8 +58,8 @@ public:
 	void updatePassMsg(vtkRenderer *renderer, bool showPassing);
 
 private:
-	void drawOpponent(vtkRenderer *renderer, double x, double y, double z);
-	void drawOpponentTop(vtkRenderer *renderer, double x, double y, double z);
+	void drawObjectBox(vtkRenderer *renderer, double x, double y, double z, bool teammate);
+	void drawObjectTop(vtkRenderer *renderer, double x, double y, double z);
 	std::array<double, 3>& getColor();
 	int getDashedPattern();
 
@@ -72,7 +72,7 @@ private:
 	int id = 0;
 	int senderId = 0;
 	vtkSmartPointer<vtkActor> top = nullptr;
-	vtkSmartPointer<vtkActor> bottom = nullptr;
+	vtkSmartPointer<vtkActor> object = nullptr;
 	vtkSmartPointer<vtkActor> nameActor = nullptr;
 	vtkSmartPointer<vtkActor> ball = nullptr;
 	vtkSmartPointer<vtkLineSource> ballVelocity = nullptr;
@@ -81,9 +81,8 @@ private:
 	vtkSmartPointer<vtkLineSource> pass = nullptr;
 	vtkSmartPointer<vtkActor> passActor = nullptr;
 	vtkSmartPointer<vtkActor> passPointActor = nullptr;
-	std::vector<vtkSmartPointer<vtkActor>> obstaclesBottom;
-
-	std::vector<vtkSmartPointer<vtkActor>> obstaclesTop;
+	std::vector<vtkSmartPointer<vtkActor>> objectsBox;
+	std::vector<vtkSmartPointer<vtkActor>> objectsTop;
 
 	std::vector<vtkSmartPointer<vtkActor>> pathLines;
 	std::vector<std::shared_ptr<Line>> netLines;

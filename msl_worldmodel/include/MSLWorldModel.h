@@ -22,42 +22,50 @@ using namespace std;
 #include <EventTrigger.h>
 #include <MSLEnums.h>
 
-namespace std_msgs{
+namespace std_msgs
+{
 	ROS_DECLARE_MESSAGE(Bool)
 }
-namespace msl_msgs{
+namespace msl_msgs
+{
 	ROS_DECLARE_MESSAGE(JoystickCommand)
 }
-namespace msl_actuator_msgs{
+namespace msl_actuator_msgs
+{
 	ROS_DECLARE_MESSAGE(IMUData)
 	ROS_DECLARE_MESSAGE(RawOdometryInfo)
 	ROS_DECLARE_MESSAGE(MotionBurst)
 }
-namespace msl_sensor_msgs{
+namespace msl_sensor_msgs
+{
 	ROS_DECLARE_MESSAGE(WorldModelData)
 	ROS_DECLARE_MESSAGE(SimulatorWorldModelData)
 	ROS_DECLARE_MESSAGE(CorrectedOdometryInfo)
 	ROS_DECLARE_MESSAGE(SharedWorldInfo)
 	ROS_DECLARE_MESSAGE(BallHypothesisList)
 }
-namespace gazebo_msgs{
+namespace gazebo_msgs
+{
 	ROS_DECLARE_MESSAGE(ModelStates)
 }
-namespace msl_helper_msgs{
+namespace msl_helper_msgs
+{
 	ROS_DECLARE_MESSAGE(PassMsg)
-		ROS_DECLARE_MESSAGE(WatchBallMsg)
+	ROS_DECLARE_MESSAGE(WatchBallMsg)
 }
-namespace alica{
+namespace alica
+{
 	class AlicaEngine;
 }
-namespace supplementary{
+namespace supplementary
+{
 	class SystemConfig;
 }
-namespace geometry{
+namespace geometry
+{
 	class CNPoint2D;
 	class CNPosition;
 }
-
 
 namespace msl
 {
@@ -121,7 +129,6 @@ namespace msl
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
-
 	private:
 
 		MSLWorldModel();

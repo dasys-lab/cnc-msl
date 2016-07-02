@@ -99,7 +99,6 @@ struct Color{
 
 std::map<std::string, std::array<double,3>> Color::map =  Color::create_map();
 float robotPos[101][2];
-bool activeRobot[101] = {false};
 int robotIds [6] = {1, 8, 9, 10, 11, 100};
 
 RobotVisualization::RobotVisualization(RobotInfo* robot, FieldWidget3D* field) : robot(robot), field(field)
@@ -115,14 +114,14 @@ RobotVisualization::~RobotVisualization()
 	// test
 }
 
-vtkSmartPointer<vtkActor> RobotVisualization::getBottom()
+vtkSmartPointer<vtkActor> RobotVisualization::getObject()
 {
-	return bottom;
+	return object;
 }
 
-void RobotVisualization::setBottom(vtkSmartPointer<vtkActor> bottom)
+void RobotVisualization::setObject(vtkSmartPointer<vtkActor> object)
 {
-	this->bottom = bottom;
+	this->object = object;
 }
 
 void RobotVisualization::setNameActor(vtkSmartPointer<vtkActor> nameActor)
@@ -218,23 +217,22 @@ void RobotVisualization::remove(vtkRenderer *renderer)
 {
         this->visible = false;
 
-        activeRobot[this->id] = false;
-        robotPos[this->id][0] = -1000;
-        robotPos[this->id][1] = -1000;
+        robotPos[this->id][0] = -100000;
+        robotPos[this->id][1] = -100000;
 
         this->top->SetVisibility(false);
-        this->bottom->SetVisibility(false);
+        this->object->SetVisibility(false);
         this->nameActor->SetVisibility(false);
         this->ball->SetVisibility(false);
         this->ballVelocityActor->SetVisibility(false);
         this->sharedBall->SetVisibility(false);
 
-        for (vtkSmartPointer<vtkActor> actor : obstaclesTop)
+        for (vtkSmartPointer<vtkActor> actor : objectsTop)
         {
                 actor->SetVisibility(false);
         }
 
-        for (vtkSmartPointer<vtkActor> actor : obstaclesBottom)
+        for (vtkSmartPointer<vtkActor> actor : objectsBox)
         {
                 actor->SetVisibility(false);
         }
@@ -292,7 +290,6 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         this->setName(std::to_string(id));
         this->setBall(nullptr);
 
-        activeRobot[id] = true;
         vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 
         float p0[3] = {0.26, 0, 0};
@@ -326,16 +323,29 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         cubeSrc->SetYLength(0.52);
         cubeSrc->SetZLength(0.4);
 
-        vtkSmartPointer<vtkPolyDataMapper> teamBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        teamBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
+        vtkSmartPointer<vtkPolyDataMapper> teamBoxMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        teamBoxMapper->SetInputConnection(cubeSrc->GetOutputPort());
 
-        vtkSmartPointer<vtkActor> teamBottom = vtkSmartPointer<vtkActor>::New();
-        teamBottom->SetMapper(teamBottomMapper);
-        teamBottom->SetPosition(0, 0, 0.2);
-        teamBottom->GetProperty()->SetColor(1, 1, 1);
-        teamBottom->GetProperty()->SetDiffuse(0.4);
-        teamBottom->GetProperty()->SetAmbient(0.8);
-        renderer->AddActor(teamBottom);
+        vtkSmartPointer<vtkActor> teamBox = vtkSmartPointer<vtkActor>::New();
+        teamBox->SetMapper(teamBoxMapper);
+        teamBox->SetPosition(0, 0, 0.2);
+
+        float rColor = 1.0, gColor = 1.0, bColor = 1.0;
+
+        // unfinished business: inactive teammate has slightly different box color
+        /*
+        if (!this->robot->getVisStatus())
+        {
+        	rColor = 0.7;
+        	gColor = 0.7;
+        	bColor = 1.0;
+        }
+        */
+
+        teamBox->GetProperty()->SetColor(rColor, gColor, bColor);
+        teamBox->GetProperty()->SetDiffuse(0.4);
+        teamBox->GetProperty()->SetAmbient(0.8);
+        renderer->AddActor(teamBox);
 
         vtkSmartPointer<vtkActor> teamTop = vtkSmartPointer<vtkActor>::New();
         teamTop->SetMapper(teamTopMapper);
@@ -368,11 +378,11 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         nameActor->SetCamera( renderer->GetActiveCamera() );
 
         this->top = teamTop;
-        this->bottom = teamBottom;
+        this->object = teamBox;
         this->nameActor = nameActor;
 
         this->top->SetVisibility(false);
-        this->bottom->SetVisibility(false);
+        this->object->SetVisibility(false);
         this->nameActor->SetVisibility(false);
 
         // ball
@@ -467,21 +477,22 @@ void RobotVisualization::updatePosition(vtkRenderer *renderer)
         robotPos[this->id][1]=pos.second;
 
         this->top->SetPosition(pos.first, pos.second, 0.4);
-        this->bottom->SetPosition(pos.first, pos.second, 0.2);
+        this->object->SetPosition(pos.first, pos.second, 0.2);
         this->nameActor->SetPosition(pos.first, pos.second, 1);
 
         this->top->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
-        this->bottom->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
+        this->object->SetOrientation(0, 0, robot->getSharedWorldInfo()->odom.position.angle * (180.0 / (double)M_PI) + 90);
 
-        this->top->SetVisibility(true);
-        this->bottom->SetVisibility(true);
+        if (this->robot->getVisStatus()) this->top->SetVisibility(true);
+        	else this->top->SetVisibility(false);
+        this->object->SetVisibility(true);
         this->nameActor->SetVisibility(true);
 }
 
 
 void RobotVisualization::updateBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->ball.confidence <= 0.0001)
+        if (!robot->getVisStatus() || robot->getSharedWorldInfo()->ball.confidence <= 0.0001)
         {
                 this->ball->SetVisibility(false);
                 this->ballVelocityActor->SetVisibility(false);
@@ -503,7 +514,7 @@ void RobotVisualization::updateBall(vtkRenderer *renderer)
 
 void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
 {
-        if (robot->getSharedWorldInfo()->sharedBall.confidence <= 0.0001)
+        if (!robot->getVisStatus() || robot->getSharedWorldInfo()->sharedBall.confidence <= 0.0001)
         {
                 this->sharedBall->SetVisibility(false);
                 return;
@@ -514,18 +525,18 @@ void RobotVisualization::updateSharedBall(vtkRenderer *renderer)
         this->sharedBall->SetVisibility(true);
 }
 
-void RobotVisualization::updateOpponents(vtkRenderer *renderer)
+void RobotVisualization::updateObjects(vtkRenderer *renderer)
 {
         bool found = false;
-        int obstacleCount = 0;
+        int objectCount = 0;
 
-        for (auto myObstacle: robot->getSharedWorldInfo()->obstacles)
+        for (auto myObject: robot->getSharedWorldInfo()->obstacles)
         {
-                bool found = false;
-                auto pos = this->field->transformToGuiCoords(myObstacle.x, myObstacle.y);
+                found = false;
+                auto pos = this->field->transformToGuiCoords(myObject.x, myObject.y);
                 for (auto member : *this->field->getRobots())
                 {
-                    auto mb = member->getVisualization()->getBottom();
+                    auto mb = member->getVisualization()->getObject();
                     if (mb == nullptr)
                       continue;
 
@@ -535,70 +546,70 @@ void RobotVisualization::updateOpponents(vtkRenderer *renderer)
                             found = true;
                             break;
                     }
-
                 }
 
                 if (found)
                         continue;
 
-                bool activeTeammate = false;
+
+                bool aTeammate = false;
                 for (int i=0;i<6;i++)
-                	if (activeRobot[robotIds[i]] &&
-                			abs(robotPos[robotIds[i]][0]-pos.first) < 0.3 &&
-							abs(robotPos[robotIds[i]][1]-pos.second) < 0.3) activeTeammate = true;
-
-                if (!activeTeammate)
                 {
+                	if (abs(robotPos[robotIds[i]][0]-pos.first) < 0.4 &&
+							abs(robotPos[robotIds[i]][1]-pos.second) < .4) aTeammate = true;
+                }
 
-                	if (obstacleCount < this->obstaclesBottom.size())
+                if (!aTeammate && this->robot->getVisStatus())
+                {
+                	if (objectCount < this->objectsBox.size())
                 	{
-                        this->obstaclesBottom.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.2);
-                        this->obstaclesBottom.at(obstacleCount)->SetVisibility(true);
-                        this->obstaclesTop.at(obstacleCount)->SetPosition(pos.first, pos.second, 0.4);
-						this->obstaclesTop.at(obstacleCount)->SetVisibility(true);
+                        this->objectsBox.at(objectCount)->SetPosition(pos.first, pos.second, 0.2);
+                        this->objectsBox.at(objectCount)->SetVisibility(true);
+                        this->objectsTop.at(objectCount)->SetPosition(pos.first, pos.second, 0.4);
+    					this->objectsTop.at(objectCount)->SetVisibility(true);
                 	}
                 	else
                 	{
-                        drawOpponent(renderer, pos.first, pos.second, 0);
-                        drawOpponentTop(renderer, pos.first, pos.second, 0);
+                        drawObjectBox(renderer, pos.first, pos.second, 0, aTeammate);
+                        drawObjectTop(renderer, pos.first, pos.second, 0);
                 	}
-                	obstacleCount++;
+                	objectCount++;
                 }
         }
 
-        if (obstacleCount < this->obstaclesBottom.size())
+        if (objectCount < this->objectsBox.size())
         {
-                for (int i = obstacleCount; i < this->obstaclesBottom.size(); ++i)
+                for (int i = objectCount; i < this->objectsBox.size(); ++i)
                 {
-                    this->obstaclesBottom.at(i)->SetVisibility(false);
-                    this->obstaclesTop.at(i)->SetVisibility(false);
+                    this->objectsBox.at(i)->SetVisibility(false);
+                    this->objectsTop.at(i)->SetVisibility(false);
                 }
         }
 }
 
-void RobotVisualization::drawOpponent(vtkRenderer *renderer, double x, double y, double z)
+void RobotVisualization::drawObjectBox(vtkRenderer *renderer, double x, double y, double z, bool teammate)
 {
     vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
     cubeSrc->SetXLength(0.52);
     cubeSrc->SetYLength(0.52);
     cubeSrc->SetZLength(0.4);
 
-    vtkSmartPointer<vtkPolyDataMapper> obstacleBottomMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    obstacleBottomMapper->SetInputConnection(cubeSrc->GetOutputPort());
+    vtkSmartPointer<vtkPolyDataMapper> objectBoxMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    objectBoxMapper->SetInputConnection(cubeSrc->GetOutputPort());
 
-    vtkSmartPointer<vtkActor> obstacleBottom = vtkSmartPointer<vtkActor>::New();
-    obstacleBottom->SetMapper(obstacleBottomMapper);
-    obstacleBottom->SetPosition(x, y, z);
-    auto c = Color::getColor(this->robot->getId());
-    obstacleBottom->GetProperty()->SetColor(0, 0, 0);
-    obstacleBottom->GetProperty()->SetDiffuse(0.4);
-    obstacleBottom->GetProperty()->SetAmbient(0.8);
-    renderer->AddActor(obstacleBottom);
+    vtkSmartPointer<vtkActor> objectBox = vtkSmartPointer<vtkActor>::New();
+    objectBox->SetMapper(objectBoxMapper);
+    objectBox->SetPosition(x, y, z);
 
-    obstaclesBottom.push_back(obstacleBottom);
+    objectBox->GetProperty()->SetColor(0, 0, 0);
+    objectBox->GetProperty()->SetDiffuse(0.4);
+    objectBox->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(objectBox);
+
+    objectsBox.push_back(objectBox);
 }
 
-void RobotVisualization::drawOpponentTop(vtkRenderer *renderer, double x, double y, double z)
+void RobotVisualization::drawObjectTop(vtkRenderer *renderer, double x, double y, double z)
 {
     float p0[3] = {0.26, 0, 0.0};
     float p1[3] = {-0.26, 0.26, 0.0};
@@ -624,18 +635,18 @@ void RobotVisualization::drawOpponentTop(vtkRenderer *renderer, double x, double
     ug->SetPoints(points);
     ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
 
-    vtkSmartPointer<vtkDataSetMapper> obstacleTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    obstacleTopMapper->SetInput(ug);
+    vtkSmartPointer<vtkDataSetMapper> objectTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+    objectTopMapper->SetInput(ug);
 
-    vtkSmartPointer<vtkActor> obstacleTop = vtkSmartPointer<vtkActor>::New();
-    obstacleTop->SetMapper(obstacleTopMapper);
-    obstacleTop->SetPosition(x, y, z);
+    vtkSmartPointer<vtkActor> objectTop = vtkSmartPointer<vtkActor>::New();
+    objectTop->SetMapper(objectTopMapper);
+    objectTop->SetPosition(x, y, z);
     auto c = Color::getColor(this->robot->getId());
-    obstacleTop->GetProperty()->SetColor(c[0], c[1], c[2]);
-    obstacleTop->GetProperty()->SetDiffuse(0.4);
-    obstacleTop->GetProperty()->SetAmbient(0.8);
-    renderer->AddActor(obstacleTop);
-    obstaclesTop.push_back(obstacleTop);
+    objectTop->GetProperty()->SetColor(c[0], c[1], c[2]);
+    objectTop->GetProperty()->SetDiffuse(0.4);
+    objectTop->GetProperty()->SetAmbient(0.8);
+    renderer->AddActor(objectTop);
+    objectsTop.push_back(objectTop);
 }
 
 void RobotVisualization::updatePathPlannerDebug(vtkRenderer *renderer, bool show)

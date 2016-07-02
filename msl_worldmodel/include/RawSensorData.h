@@ -1,3 +1,5 @@
+
+
 /*
  * RawSensorData.h
  *
@@ -8,7 +10,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
 #define CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
 
-#include "RingBuffer.h"
 #include "InformationElement.h"
 #include <vector>
 #include "msl_sensor_msgs/BallInfo.h"
@@ -25,6 +26,7 @@
 #include "msl_actuator_msgs/RawOdometryInfo.h"
 #include "std_msgs/Bool.h"
 #include "msl_actuator_msgs/IMUData.h"
+#include "RingBuffer.h"
 
 using namespace std;
 
