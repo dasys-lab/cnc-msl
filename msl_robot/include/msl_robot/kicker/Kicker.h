@@ -71,6 +71,8 @@ namespace msl
 		double preciseShotMaxTolerance;
 		int shortPassPower;
 
+		double kickerAngleOffset;
+
 		KickCurve* kick2GoalCurve;
 		KickCurve* kickHighPass;
 		KickCurve* kickLowPass;

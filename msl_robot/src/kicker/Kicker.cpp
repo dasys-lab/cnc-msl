@@ -34,6 +34,8 @@ namespace msl
 		this->preciseShotMinDistance = (*this->sc)["KickHelper"]->get<double>("PreciseShot", "MinDistance", NULL);
 		this->preciseShotMaxTolerance = (*this->sc)["KickHelper"]->get<double>("PreciseShot", "MaxTolerance", NULL);
 		this->shortPassPower = (*this->sc)["KickHelper"]->get<double>("StandardPass", "ShortPassPower", NULL);
+		this->kickerAngleOffset = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "KickerAngleOffset", NULL);
+		this->kickerAngle = kickerAngle + (kickerAngleOffset / M_PI * 180);
 		kick2GoalCurve = nullptr;
 		kickHighPass = nullptr;
 		kickLowPass = nullptr;
