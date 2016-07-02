@@ -63,14 +63,17 @@ int main(int argc, char **argv)
 	}
 
 	ros::init(argc, argv, "flying_ball_detection");
+	ros::AsyncSpinner spinner(4);
+	spinner.start();
 	msl::FrameListener* fl = new msl::FrameListener();
 	depth.addNewFrameListener(fl);
 
 	while (ros::ok())
 	{
 		boost::this_thread::sleep (boost::posix_time::microseconds (500000));
-		//std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
+
+	spinner.stop();
 
 	delete fl;
 	return 0;
