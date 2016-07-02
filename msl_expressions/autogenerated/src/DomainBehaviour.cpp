@@ -68,8 +68,8 @@ namespace alica
 		// this is only for nase and his new left motor
 		int sgnR = bh.rightMotor >= 0 ? 1 : -1;
 		int sgnL = bh.leftMotor >= 0 ? 1 : -1;
-		bh.rightMotor = (int)max(minRotation, abs(bh.rightMotor / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL))) * sgnR;
-		bh.leftMotor = (int)max(minRotation, abs(bh.leftMotor / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL))) * sgnL;
+		bh.rightMotor = (int)(max(minRotation, abs(bh.rightMotor * 1.0))) * sgnR / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL);
+		bh.leftMotor = (int)(max(minRotation, abs(bh.leftMotor * 1.0))) * sgnL / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL);
 		ballHandlePub.publish(bh);
 		
 	}
