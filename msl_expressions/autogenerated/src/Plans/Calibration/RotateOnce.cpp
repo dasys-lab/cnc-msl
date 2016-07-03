@@ -28,7 +28,7 @@ namespace alica
 //    	msl_actuator_msgs::MotionControl mc;
 //    	mc.motion.rotation = 1;
 //		send(mc);
-    	cout << "segment " << getCurrentRotationSegment << ", bearing " << wm->rawSensorData->getAverageBearing() << endl;
+    	cout << "segment " << getCurrentRotationSegment() << ", bearing " << wm->rawSensorData->getAverageBearing() << endl;
 
         /*PROTECTED REGION END*/
     }
@@ -37,8 +37,8 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
         initialBearing = wm->rawSensorData->getAverageBearing();
         segments[0] = initialBearing;
-        segments[1] = (segments[0] + 2.0/3 * M_PI+ M_PI) % (2*M_PI) - M_PI;
-        segments[2] = (segments[0] + 4.0/3 * M_PI+ M_PI) % (2*M_PI) - M_PI;
+        segments[1] = fmod(segments[0] + 2.0/3 * M_PI+ M_PI, (2*M_PI)) - M_PI;
+        segments[2] = fmod(segments[0] + 4.0/3 * M_PI+ M_PI, (2*M_PI)) - M_PI;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
