@@ -26,9 +26,10 @@
 #include <stdio.h>
 
 
-ScanLineHelper::ScanLineHelper() : sc() {
-
-	this->sc = SystemConfig::getInstance();
+ScanLineHelper::ScanLineHelper() : sc()
+{
+    this->sc = supplementary::SystemConfig::getInstance();
+    this->ownId = this->sc->getOwnRobotID();
 
 	Configuration *vision = (*this->sc)["Vision"];
 
@@ -54,8 +55,6 @@ ScanLineHelper::ScanLineHelper() : sc() {
 	scHEIGHT = imHeight;
 
 	init();
-
-
 }
 
 
@@ -112,8 +111,16 @@ void ScanLineHelper::init( ){
 	short ay = 0;
 	short ex = 0;
 	short ey = 0;
-
-	numberOfCircles = 29;
+    
+    // Mops need less scanlines due to his smaler camera resolution
+    if( this->ownId == 1)
+    {
+	    numberOfCircles = 16;
+    }
+    else
+    {
+	    numberOfCircles = 29;
+    }
 
 	innerLines = (short *) malloc(nLines/2 * maxPoints * 2 * sizeof(short));
 	innerLinesN = (short *) malloc(nLines/2 * sizeof(short));

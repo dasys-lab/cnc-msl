@@ -59,6 +59,8 @@ class ScanLineHelper{
 		void init();
 		void DrawLine(short * line, short * nPoints, short ax, short ay, short ex, short ey);
 		void initCircles();
+
+        int ownId;
 		
 		short mx;
 		short my;
