@@ -22,6 +22,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
         double segments[3];
+        bool visitedSegments[3];
         int getCurrentRotationSegment();
         double circularDiff(double a, double b);
         /*PROTECTED REGION END*/};
