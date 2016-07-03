@@ -1,0 +1,8 @@
+iface wlan0 inet static
+wireless-essid MSL_FIELD_B_a
+address 172.16.40.19
+netmask 255.255.255.0
+gateway 172.16.40.1
+broadcast 172.16.40.255
+#dns-nameservers 8.8.8.8 # this is useful for our lab
+
