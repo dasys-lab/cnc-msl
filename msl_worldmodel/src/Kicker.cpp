@@ -23,7 +23,6 @@ namespace msl
 		this->wm = wm;
 		this->sc = supplementary::SystemConfig::getInstance();
 		this->TWO_THIRD_PI = 2 * M_PI / 3;
-		this->kickerCount = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "KickerCount", NULL);
 		this->ballisticCurveOffset = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "BallisticCurveOffset",
 		NULL);
 		this->minVoltage = (*this->sc)["KickHelper"]->get<double>("KickConfiguration", "MinVoltage", NULL);
@@ -71,11 +70,6 @@ namespace msl
 	int Kicker::getKickPowerSlowPass(double dist)
 	{
 		return shortPassPower;
-	}
-
-	int Kicker::getKickerCount()
-	{
-		return kickerCount;
 	}
 
 	int Kicker::getKickPower(double dist, double height, double velo)

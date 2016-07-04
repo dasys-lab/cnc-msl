@@ -28,7 +28,6 @@ namespace msl
 		bool init();
 		int getKickPowerPass(double dist);
 		int getKickPowerSlowPass(double dist);
-		int getKickerCount();
 		int getKickPower(double dist, double height, double velo);
 		bool mayShoot();
 		shared_ptr<geometry::CNPoint2D> getFreeGoalVector();
@@ -51,7 +50,6 @@ namespace msl
 	protected:
 		supplementary::SystemConfig* sc ;
 		double TWO_THIRD_PI;
-		int kickerCount;
 		double ballisticCurveOffset;
 		double minVoltage;
 		double maxVoltage;
