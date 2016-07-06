@@ -137,7 +137,8 @@ namespace msl_joystick
 		if (this->useBallHandle)
 		{
 			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_ON;
-		} else
+		}
+		else
 		{
 			msg.ballHandleState = msl_msgs::JoystickCommand::BALL_HANDLE_OFF;
 		}
@@ -447,11 +448,13 @@ namespace msl_joystick
 		switch (checkState)
 		{
 			case Qt::CheckState::Checked:
+				std::cout << "BHC: set to true" << endl;
 				this->useBallHandle = true;
 				break;
 			case Qt::CheckState::Unchecked:
 			case Qt::CheckState::PartiallyChecked:
 			default:
+				std::cout << "BHC: set to false" << endl;
 				this->useBallHandle = false;
 				break;
 		}

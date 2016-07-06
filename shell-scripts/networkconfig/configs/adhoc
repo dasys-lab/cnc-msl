@@ -1,0 +1,9 @@
+iface wlan0 inet static 
+wireless-channel 1
+wireless-essid nase
+wireless-mode ad-hoc
+address 172.16.40.19
+netmask 255.255.255.0
+gateway 172.16.40.1
+broadcast 172.16.40.255
+

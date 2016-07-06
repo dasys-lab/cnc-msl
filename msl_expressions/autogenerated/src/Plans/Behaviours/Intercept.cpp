@@ -11,6 +11,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+#include <pathplanner/PathPlannerQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -169,7 +170,10 @@ namespace alica
 		}
 
 		shared_ptr<msl::PathEvaluator> eval = make_shared<msl::PathEvaluator>();
-		auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval);
+		shared_ptr<msl::PathPlannerQuery> query = make_shared<msl::PathPlannerQuery>();
+		query->blockOppGoalArea = true;
+		query->blockOwnGoalArea = true;
+		auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval, query);
 		if (pathPlanningResult == nullptr)
 		{
 			mc.motion.angle = pathPlanningPoint->angleTo();
