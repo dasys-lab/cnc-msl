@@ -64,7 +64,7 @@ int main(void) {
 
 	SET(ACTIVATE_BOOSTER);
 
-	for(int i = 0; i <= 10000; i++)
+	for(int i = 0; i <= 25000; i++)
 			_delay_ms(1);
 
 	RESET(ACTIVATE_BOOSTER);
