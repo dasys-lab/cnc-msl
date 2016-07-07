@@ -9,7 +9,9 @@ set(MRPT_DONT_USE_DBG_LIBS 1)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED system_config nodelet roscpp pcl_conversions msl_pcl_filters)
- 
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake CACHE INTERNAL "" FORCE)
+
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(MRPT REQUIRED base maps)
@@ -26,9 +28,9 @@ find_package(PCL 1.7  REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES mrpt mrpt-maps mrpt_maps
+#  LIBRARIES
   CATKIN_DEPENDS system_config msl_pcl_filters
-#  DEPENDS system_lib
+#  DEPENDS 
 )
 
 ###########
