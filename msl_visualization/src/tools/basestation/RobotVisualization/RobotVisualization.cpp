@@ -316,7 +316,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
 
         vtkSmartPointer<vtkDataSetMapper> teamTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-        teamTopMapper->SetInput(ug);
+        teamTopMapper->SetInputData(ug);
 
         vtkSmartPointer<vtkCubeSource> cubeSrc = vtkSmartPointer<vtkCubeSource>::New();
         cubeSrc->SetXLength(0.52);
@@ -389,7 +389,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
         sphereSrc->SetRadius(field->_BALL_DIAMETER / 2);
         vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        sphereMapper->SetInput(sphereSrc->GetOutput());
+        sphereMapper->SetInputData(sphereSrc->GetOutput());
         this->ball = vtkSmartPointer<vtkActor>::New();
         this->ball->SetMapper(sphereMapper);
         this->ball->GetProperty()->SetRepresentationToSurface();
@@ -402,7 +402,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         this->ballVelocity->SetPoint2(0, 0, 0);
 
         vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        velocityMapper->SetInput(this->ballVelocity->GetOutput());
+        velocityMapper->SetInputData(this->ballVelocity->GetOutput());
         this->ballVelocityActor = vtkSmartPointer<vtkActor>::New();
         this->ballVelocityActor->SetMapper(velocityMapper);
         this->ballVelocityActor->GetProperty()->SetLineWidth(this->field->_LINE_THICKNESS / 2);
@@ -637,7 +637,7 @@ void RobotVisualization::drawObjectTop(vtkRenderer *renderer, double x, double y
     ug->InsertNextCell(tetra->GetCellType(), tetra->GetPointIds());
 
     vtkSmartPointer<vtkDataSetMapper> objectTopMapper = vtkSmartPointer<vtkDataSetMapper>::New();
-    objectTopMapper->SetInput(ug);
+    objectTopMapper->SetInputData(ug);
 
     vtkSmartPointer<vtkActor> objectTop = vtkSmartPointer<vtkActor>::New();
     objectTop->SetMapper(objectTopMapper);

@@ -205,7 +205,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radiu
         dot->SetHeight(0.001);
         dot->SetResolution(32);
         vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        dotMapper->SetInput(dot->GetOutput());
+        dotMapper->SetInputData(dot->GetOutput());
 
         vtkSmartPointer<vtkActor> coloredDot = vtkSmartPointer<vtkActor>::New();
         coloredDot->SetMapper(dotMapper);
@@ -266,7 +266,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
         vtkSmartPointer<vtkVectorText> txt = vtkSmartPointer<vtkVectorText>::New();
         txt->SetText(text.toStdString().c_str());
         vtkSmartPointer<vtkPolyDataMapper> txtRobotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        txtRobotMapper->SetInput(txt->GetOutput());
+        txtRobotMapper->SetInputData(txt->GetOutput());
         actor->SetMapper(txtRobotMapper);
         actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
         actor->GetProperty()->SetAmbient(1.0);
@@ -368,7 +368,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	readerCbd->SetFileName("../config/3DModels/cambada_base.obj");
 
 	vtkSmartPointer<vtkPolyDataMapper> actorMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	actorMapper->SetInput(readerCbd->GetOutput());
+	actorMapper->SetInputData(readerCbd->GetOutput());
 
 	// WIPFIX renderer->Render();
 
@@ -739,10 +739,10 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 	cubeSrc2->SetZLength(post);
 
 	vtkSmartPointer<vtkPolyDataMapper> goalMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	goalMapper->SetInput(cubeSrc->GetOutput());
+	goalMapper->SetInputData(cubeSrc->GetOutput());
 
 	vtkSmartPointer<vtkPolyDataMapper> goalMapper2 = vtkSmartPointer<vtkPolyDataMapper>::New();
-	goalMapper2->SetInput(cubeSrc2->GetOutput());
+	goalMapper2->SetInputData(cubeSrc2->GetOutput());
 
 	vtkSmartPointer<vtkActor> goalBlue = vtkSmartPointer<vtkActor>::New();
 	goalBlue->SetMapper(goalMapper);
@@ -801,7 +801,7 @@ void FieldWidget3D::drawField(vtkRenderer* renderer)
 	planeSrc->SetPoint1(_FIELD_WIDTH + 2.0, 0, 0);
 	planeSrc->SetPoint2(0, _FIELD_LENGTH + 2.0, 0);
 	vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	planeMapper->SetInput(planeSrc->GetOutput());
+	planeMapper->SetInputData(planeSrc->GetOutput());
 	this->field = vtkActor::New();
 	this->field->SetMapper(planeMapper);
 	this->field->GetProperty()->SetColor(0.278, 0.64, 0.196);
@@ -925,7 +925,7 @@ void FieldWidget3D::drawFieldLine(vtkRenderer* renderer, float x1, float y1, flo
           planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
           planeSrc->SetPoint2(0, abs(y2 - y1), 0);
           vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-          planeMapper->SetInput(planeSrc->GetOutput());
+          planeMapper->SetInputData(planeSrc->GetOutput());
           vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
           lineActor->SetMapper(planeMapper);
           lineActor->GetProperty()->SetColor(1, 1, 1);
@@ -945,7 +945,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createObstacle()
 	cylinder->SetHeight(OBSTACLE_HEIGHT);
 	cylinder->SetResolution(12);
 	vtkSmartPointer<vtkPolyDataMapper> cylinderMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	cylinderMapper->SetInput(cylinder->GetOutput());
+	cylinderMapper->SetInputData(cylinder->GetOutput());
 
 	vtkSmartPointer<vtkActor> obstacleActor = vtkSmartPointer<vtkActor>::New();
 	obstacleActor->SetMapper(cylinderMapper);
@@ -994,7 +994,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDebugPt()
 
 	// Create a mapper and actor
 	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInput(polygonPolyData);
+	mapper->SetInputData(polygonPolyData);
 
 	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
@@ -1033,7 +1033,7 @@ void FieldWidget3D::updateGridView()
 	}
 
 	heightPolyData->SetPoints(heightPoints);
-	heightDelaunay->SetInput(heightPolyData);
+	heightDelaunay->SetInputData(heightPolyData);
 	heightDelaunay->Update();
 	heightPolyDataAfterInterp = heightDelaunay->GetOutput();
 
@@ -1096,7 +1096,7 @@ void FieldWidget3D::initGridView()
 	}
 
 	heightPolyData->SetPoints(heightPoints); // Add the grid points to a polydata object
-	heightDelaunay->SetInput(heightPolyData);
+	heightDelaunay->SetInputData(heightPolyData);
 
 	// Triangulate the grid points
 	heightDelaunay->Update();
@@ -1104,7 +1104,8 @@ void FieldWidget3D::initGridView()
 
 	// Create a mapper and actor
 	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	mapper->SetInputConnection(heightPolyDataAfterInterp->GetProducerPort());
+	//mapper->SetInputConnection(heightPolyDataAfterInterp->GetProducerPort());
+	mapper->SetInputData(heightPolyDataAfterInterp);
 	heightActor = vtkActor::New();
 	heightActor->SetMapper(mapper);
 	heightActor->SetVisibility(0);
