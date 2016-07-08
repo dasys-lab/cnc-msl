@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_flying_ball_detection)
 
-find_package(catkin REQUIRED roscpp sensor_msgs geometry_msgs pcl_conversions)
+find_package(catkin REQUIRED roscpp sensor_msgs geometry_msgs pcl_conversions msl_actuator_msgs)
 find_package(PCL 1.7  REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES msl_astra_pro_driver
-  CATKIN_DEPENDS sensor_msgs geometry_msgs cnc_geometry
+  CATKIN_DEPENDS sensor_msgs geometry_msgs cnc_geometry msl_actuator_msgs
 #  DEPENDS system_lib
 )
 
@@ -29,9 +29,9 @@ add_executable(msl_flying_ball_detection
 	src/FrameListener.cpp
 )
 
-#add_dependencies(msl_flying_ball_detection
-#	${catkin_LIBRARIES}
-#)
+add_dependencies(msl_flying_ball_detection
+	msl_actuator_msgs_generator_messages_cpp
+)
 
 target_link_libraries(msl_flying_ball_detection
 	${catkin_LIBRARIES}

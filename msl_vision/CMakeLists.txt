@@ -16,7 +16,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED std_msgs msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs system_config freenect roscpp)
+find_package(catkin REQUIRED std_msgs msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs system_config roscpp)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -36,7 +36,7 @@ find_package(SSE)
 catkin_package(
   INCLUDE_DIRS src src/filters src/helpers 
   LIBRARIES lib_msl_vision #lib_msl_vision_3d
-  CATKIN_DEPENDS system_config msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs std_msgs freenect
+  CATKIN_DEPENDS system_config msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs std_msgs 
   DEPENDS ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} pthread m Xv X11 Xext ICE SM dc1394 raw1394
 )
 
@@ -107,7 +107,7 @@ FILE(GLOB lib_msl_vision_SOURCES
 	src/helpers/BallHelper.cpp 
 	src/helpers/BallHelperDirected2.cpp 
 	src/helpers/BallHelperDirectedGoalie.cpp 
-	src/helpers/BallHelperKinect.cpp
+#	src/helpers/BallHelperKinect.cpp
 	src/helpers/BallIntegrator.cpp 
 	src/helpers/BallZTracker.cpp
 #	src/helpers/blobber.cpp
@@ -242,9 +242,9 @@ set_target_properties(msl_cn_cct PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-ve
 
 ## Vision Kinect
 
-add_executable(msl_vision_kinect src/VisionPlayerKinect.cpp)
-target_link_libraries(msl_vision_kinect pthread stdc++ m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-set_target_properties(msl_vision_kinect PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
+#add_executable(msl_vision_kinect src/VisionPlayerKinect.cpp)
+#target_link_libraries(msl_vision_kinect pthread stdc++ m Xv X11 Xext ICE SM dc1394 raw1394 lib_msl_vision ${Boost_LIBRARIES} ${catkin_LIBRARIES})
+#set_target_properties(msl_vision_kinect PROPERTIES COMPILE_FLAGS "-DSWITCHLOC -ftree-vectorize ${SSE_FLAGS} -ffast-math -O3 -funroll-loops -fomit-frame-pointer -g -Wall -Wunused")
 
 ## Camera Model Test
 

@@ -4,8 +4,6 @@
   <version>0.0.0</version>
   <description>The msl_flying_ball_detection package</description>
   
-  <author email="tobias@todo.com">Tobias Schellien</author>
-
   <maintainer email="opfer@vs.uni-kasel.de">Stephan Opfer</maintainer>
 
   <license>MIT</license>
@@ -18,6 +16,7 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>cnc_geometry</build_depend>
+  <build_depend>msl_actuator_msgs</build_depend>
 
   <run_depend>roslib</run_depend>
   <run_depend>rospack</run_depend>
@@ -25,6 +24,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>cnc_geometry</run_depend>
+  <run_depend>msl_actuator_msgs</run_depend>
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
