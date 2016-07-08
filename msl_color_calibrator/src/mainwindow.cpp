@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsPixmapItem>
-#include <QtGui/QPixmap>
-#include <QtGui/QRgb>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsPixmapItem>
+#include <QPixmap>
+#include <QRgb>
 
-#include <QtGui/QDesktopWidget>
+#include <QDesktopWidget>
 
 #include <QFileDialog>
 #include <QFile>

@@ -31,7 +31,7 @@ add_executable(msl_flying_ball_detection
 
 add_dependencies(msl_flying_ball_detection
 	msl_msgs_generate_messages_cpp
-	msl_actuator_msgs_generator_messages_cpp
+	msl_actuator_msgs_generate_messages_cpp
 )
 
 target_link_libraries(msl_flying_ball_detection
