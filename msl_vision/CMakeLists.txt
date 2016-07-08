@@ -36,7 +36,7 @@ find_package(SSE)
 catkin_package(
   INCLUDE_DIRS src src/filters src/helpers 
   LIBRARIES lib_msl_vision #lib_msl_vision_3d
-  CATKIN_DEPENDS system_config msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs std_msgs
+  CATKIN_DEPENDS system_config msl_actuator_msgs msl_sensor_msgs msl_msgs msl_helper_msgs std_msgs 
   DEPENDS ${OpenCV_LIBRARIES} ${Boost_LIBRARIES} pthread m Xv X11 Xext ICE SM dc1394 raw1394
 )
 
@@ -107,7 +107,7 @@ FILE(GLOB lib_msl_vision_SOURCES
 	src/helpers/BallHelper.cpp 
 	src/helpers/BallHelperDirected2.cpp 
 	src/helpers/BallHelperDirectedGoalie.cpp 
-	src/helpers/BallHelperKinect.cpp
+#	src/helpers/BallHelperKinect.cpp
 	src/helpers/BallIntegrator.cpp 
 	src/helpers/BallZTracker.cpp
 #	src/helpers/blobber.cpp
