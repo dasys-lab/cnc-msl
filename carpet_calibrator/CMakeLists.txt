@@ -9,7 +9,7 @@ if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
 endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
-find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bridge msl_actuator_msgs msl_vision)
+find_package(catkin REQUIRED system_config nodelet roscpp image_transport cv_bridge msl_actuator_msgs msl_vision alica_ros_proxy)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
@@ -19,6 +19,7 @@ catkin_package(
   CATKIN_DEPENDS system_config 
   msl_actuator_msgs
   msl_vision
+  alica_ros_proxy
   #DEPENDS ${Boost_LIBRARIES} 
 )
 
