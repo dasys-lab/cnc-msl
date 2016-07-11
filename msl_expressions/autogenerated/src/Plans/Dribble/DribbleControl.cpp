@@ -28,7 +28,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449742071382) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
-	cout << "in DribbleControl!!!!!!" << endl;
+        cout << "in DribbleControl!!!!!!" << endl;
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)
         {
@@ -72,7 +72,7 @@ namespace alica
         else if (haveBall || controlNoMatterWhat || itcounter >= 8)
         {
             // we have the ball to control it, or want to control ignoring the have ball flag, or we tried to pull it for < X iterations
-	    cout << "haveBall = " << haveBall << endl;
+            cout << "haveBall = " << haveBall << endl;
             double speedX = cos(motion->angle) * motion->translation;
             double speedY = sin(motion->angle) * motion->translation;
             cout << "DribbleControl: angle:\t" << motion->angle << " trans:\t" << motion->translation << endl;
@@ -115,7 +115,7 @@ namespace alica
             {
                 //0.5 is for correct rounding
                 speed = max(-10000.0, min(10000.0, forwardSpeedSpline(speedX) + 0.5));
-		speed = speed * (1-rotation / 4.0);
+                speed = speed * (1 - rotation / 4.0);
                 // if (rotation > -1.0 && rotation < 1.0 && speedX <= -800)
 //                if (rotation > -1.0 && rotation < 1.0)
 //                {

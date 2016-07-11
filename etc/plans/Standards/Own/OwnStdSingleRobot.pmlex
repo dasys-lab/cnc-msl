@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384083266"/>
+    <value xPos="155" yPos="233" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467383326416"/>
+    <value xPos="131" yPos="242" width="1448" height="644"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384083267"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384130052"/>
+    <value xPos="430" yPos="231" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384133137"/>
+    <value xPos="772" yPos="237" width="65" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384202351"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384215357"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384222671"/>
+    <value xPos="1314" yPos="303"/>
+  </extensions>
+  <extensions>
+    <key href="OwnStdSingleRobot.pml#1467384963126"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="StdAlignSingleRobot.beh#1467385818398"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../GenericStandards/StandardAlignAndGrab.beh#1467436134025"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="SingleRobotKickIntoOppHalf.beh#1467436318706"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

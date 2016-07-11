@@ -33,6 +33,8 @@ using namespace std;
 
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
+#include  "Plans/Standards/Own/StdAlignSingleRobot.h"
+
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Joystick.h"
@@ -40,6 +42,8 @@ using namespace std;
 #include  "Plans/Behaviours/RobotMovementDribbleTest.h"
 
 #include  "Plans/Dribble/DribbleControl.h"
+
+#include  "Plans/Standards/Own/SingleRobotKickIntoOppHalf.h"
 
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
@@ -294,6 +298,11 @@ namespace alica
                 return make_shared<DribbleEmergencyKick>();
                 break;
 
+            case 1467385818398:
+
+                return make_shared<StdAlignSingleRobot>();
+                break;
+
             case 1413992626194:
 
                 return make_shared<Stop>();
@@ -316,6 +325,11 @@ namespace alica
             case 1450175539163:
 
                 return make_shared<DribbleControl>();
+                break;
+
+            case 1467436318706:
+
+                return make_shared<SingleRobotKickIntoOppHalf>();
                 break;
 
             case 1436269080263:
@@ -698,6 +712,8 @@ namespace alica
             case 1465038982091:
 
             case 1466861369486:
+
+            case 1467436134025:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;

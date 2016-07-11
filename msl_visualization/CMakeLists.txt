@@ -23,7 +23,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   message_generation
   msl_msgs
-  msl_helper_msgs)
+  msl_helper_msgs
+  msl_sensor_msgs)
 find_package(XSD REQUIRED)
 find_package(XERCESC REQUIRED)
 find_package(EIGEN3 REQUIRED)
