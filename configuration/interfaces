@@ -25,20 +25,25 @@ auto eth1
 #auto can0
 
 #for MSL_FIELD_A_a
-#iface wlan0 inet static
-#address 172.16.40.19
-#netmask 255.255.255.0
-#gateway 172.16.40.1
-#broadcast 172.16.40.255
-#dns-nameservers 8.8.8.8 # this is useful for our lab
-#wireless-essid MSL_FIELD_A_a
-
-#for RoboDevNet
-iface wlan0 inet dhcp
-wireless-essid RoboDevNet
-wpa-psk 4436e2f4287e26c6b4a6ca86606183b1153c46175dd0de2fdb84137d9c1866b4
+iface wlan0 inet static
+address 172.16.40.19
+netmask 255.255.255.0
+gateway 172.16.40.1
+broadcast 172.16.40.255
+dns-nameservers 8.8.8.8 # this is useful for our lab
+wireless-essid MSL_FIELD_A_a
+wpa-psk a6031759f5af8f39bde8fa5d0fc97c6cd3785e179450dfae8c26c8af058b1f34
 wp-driver wext
 wpa-key-mgmt WPA-PSK
 wpa-proto WPA
-wpa-ssid RoboDevNet
+wpa-ssid MSL_FIELD_A_a
+
+#for RoboDevNet
+#iface wlan0 inet dhcp
+#wireless-essid RoboDevNet
+#wpa-psk 4436e2f4287e26c6b4a6ca86606183b1153c46175dd0de2fdb84137d9c1866b4
+#wp-driver wext
+#wpa-key-mgmt WPA-PSK
+#wpa-proto WPA
+#wpa-ssid RoboDevNet
 auto wlan0
