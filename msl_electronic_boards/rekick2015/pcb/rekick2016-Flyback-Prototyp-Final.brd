@@ -4207,6 +4207,7 @@ design rules under a new name.</description>
 <via x="103.632" y="32.639" extent="1-16" drill="0.6"/>
 <via x="106.426" y="34.417" extent="1-16" drill="0.6"/>
 <via x="106.426" y="32.639" extent="1-16" drill="0.6"/>
+<via x="34.925" y="32.258" extent="1-16" drill="0.6"/>
 </signal>
 <signal name="SCK_3V">
 <contactref element="JP1" pad="1"/>
@@ -4833,9 +4834,6 @@ design rules under a new name.</description>
 <contactref element="C47" pad="2"/>
 <contactref element="R9" pad="2"/>
 <contactref element="H2" pad="B3,0"/>
-<wire x1="132.715" y1="64.77" x2="140.589" y2="64.77" width="3.81" layer="1"/>
-<wire x1="140.589" y1="64.77" x2="143.637" y2="61.722" width="3.81" layer="1"/>
-<wire x1="143.637" y1="61.722" x2="146.304" y2="61.722" width="3.81" layer="1"/>
 <wire x1="146.304" y1="67.808" x2="146.304" y2="63.373" width="1.4224" layer="16"/>
 <via x="146.304" y="63.373" extent="1-16" drill="1"/>
 <wire x1="146.304" y1="63.373" x2="146.304" y2="61.722" width="1.4224" layer="1"/>
@@ -4899,6 +4897,9 @@ design rules under a new name.</description>
 </polygon>
 <via x="75.184" y="78.359" extent="1-16" drill="0.6"/>
 <via x="65.913" y="71.628" extent="1-16" drill="0.6"/>
+<wire x1="132.715" y1="64.77" x2="140.589" y2="64.77" width="2.54" layer="1"/>
+<wire x1="140.589" y1="64.77" x2="143.637" y2="61.722" width="2.54" layer="1"/>
+<wire x1="143.637" y1="61.722" x2="146.304" y2="61.722" width="2.54" layer="1"/>
 </signal>
 <signal name="CAP_+12V">
 <contactref element="U$4" pad="6"/>
@@ -5054,8 +5055,8 @@ design rules under a new name.</description>
 <contactref element="IC1" pad="4"/>
 <contactref element="LED11" pad="C"/>
 <wire x1="50.927" y1="46.924" x2="50.866" y2="46.924" width="0.3048" layer="1"/>
-<wire x1="50.866" y1="46.924" x2="48.1965" y2="49.5935" width="0.3048" layer="1"/>
-<wire x1="47.0535" y1="50.7365" x2="46.355" y2="51.435" width="0.3048" layer="1"/>
+<wire x1="50.866" y1="46.924" x2="47.752" y2="50.038" width="0.3048" layer="1"/>
+<wire x1="47.752" y1="50.038" x2="46.355" y2="51.435" width="0.3048" layer="1"/>
 <wire x1="46.355" y1="51.435" x2="41.783" y2="51.435" width="0.3048" layer="1"/>
 <wire x1="41.783" y1="51.435" x2="28.575" y2="51.435" width="0.3048" layer="1"/>
 <wire x1="28.575" y1="51.435" x2="27.498" y2="52.512" width="0.3048" layer="1"/>
@@ -5065,13 +5066,12 @@ design rules under a new name.</description>
 <wire x1="59.69" y1="42.733" x2="59.69" y2="49.022" width="0.3048" layer="1"/>
 <wire x1="59.69" y1="49.022" x2="59.055" y2="49.657" width="0.3048" layer="1"/>
 <via x="59.055" y="49.657" extent="1-16" drill="0.6"/>
-<wire x1="59.055" y1="49.657" x2="48.26" y2="49.657" width="0.3048" layer="16"/>
-<wire x1="48.26" y1="49.657" x2="48.1965" y2="49.5935" width="0.3048" layer="16"/>
-<via x="48.1965" y="49.5935" extent="1-16" drill="0.6"/>
-<wire x1="48.1965" y1="49.5935" x2="47.0535" y2="50.7365" width="0.3048" layer="1"/>
+<wire x1="59.055" y1="49.657" x2="48.133" y2="49.657" width="0.3048" layer="16"/>
 <wire x1="69.977" y1="60.391" x2="69.977" y2="50.419" width="0.3048" layer="16"/>
 <wire x1="69.977" y1="50.419" x2="69.215" y2="49.657" width="0.3048" layer="16"/>
 <wire x1="69.215" y1="49.657" x2="59.055" y2="49.657" width="0.3048" layer="16"/>
+<wire x1="48.133" y1="49.657" x2="47.752" y2="50.038" width="0.3048" layer="16"/>
+<via x="47.752" y="50.038" extent="1-16" drill="0.6"/>
 </signal>
 <signal name="N$40">
 <contactref element="R14" pad="2"/>
@@ -5137,13 +5137,13 @@ design rules under a new name.</description>
 <contactref element="R20" pad="2"/>
 <contactref element="COIL_IN" pad="P$1"/>
 <contactref element="U$7" pad="A"/>
-<wire x1="132.715" y1="70.358" x2="138.938" y2="70.358" width="3.81" layer="1"/>
-<wire x1="138.938" y1="70.358" x2="146.304" y2="70.358" width="3.81" layer="1"/>
 <wire x1="132.715" y1="59.182" x2="128.905" y2="59.182" width="0.8128" layer="16"/>
 <wire x1="128.905" y1="59.182" x2="127.635" y2="60.452" width="0.8128" layer="16"/>
 <wire x1="127.635" y1="60.452" x2="127.635" y2="69.088" width="0.8128" layer="16"/>
 <wire x1="127.635" y1="69.088" x2="128.905" y2="70.358" width="0.8128" layer="16"/>
 <wire x1="128.905" y1="70.358" x2="132.715" y2="70.358" width="0.8128" layer="16"/>
+<wire x1="138.938" y1="70.358" x2="146.304" y2="70.358" width="2.54" layer="1"/>
+<wire x1="138.938" y1="70.358" x2="132.715" y2="70.358" width="2.54" layer="1"/>
 </signal>
 <signal name="ACTIVATE_BOOSTER">
 <contactref element="R24" pad="1"/>
@@ -6196,10 +6196,10 @@ design rules under a new name.</description>
 <approved hash="19,1,bcc9a9b5af1fba63"/>
 <approved hash="19,1,8b5b0bdaba21365f"/>
 <approved hash="19,1,1313d3e8672dab29"/>
-<approved hash="19,1,fc68a69f31c1c25d"/>
 <approved hash="19,1,a8c287a4ba843c89"/>
-<approved hash="19,1,c063bf9bb6b6c94e"/>
+<approved hash="19,1,fc68a69f31c1c25d"/>
 <approved hash="19,1,43ddbc25bf1740ef"/>
+<approved hash="19,1,c063bf9bb6b6c94e"/>
 </errors>
 </board>
 </drawing>
