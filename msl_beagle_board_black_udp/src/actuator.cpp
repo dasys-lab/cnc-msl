@@ -624,23 +624,25 @@ void getIMU() {
 	}
 }
 
-/*void getOptical() {
-	unique_lock<mutex> l_optical(threw[6].mtx);
+void getOptical() {
+	unique_lock<mutex> l_optical(threw[5].mtx);
 	while(th_activ) {
-		threw[6].cv.wait(l_optical, [&] { return !th_activ || threw[6].notify; }); // protection against spurious wake-ups
+		threw[5].cv.wait(l_optical, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
 		if (!th_activ)
 			return;
 
+		msl_actuator_msgs::MotionBurst msg;
 		try {
-			adns3080.update_motion_burst(time_now);
-			adns3080.send_motion_burst(time_now, mbcPub);
+			adns3080.update_motion_burst();
+			msg = adns3080.getMotionBurstMsg();
+			onRosMotionBurst1028144660(msg);
 		} catch (exception &e) {
 			cout << "Optical Flow: " << e.what() << endl;
 		}
 
-		threw[6].notify = false;
+		threw[5].notify = false;
 	}
-}*/
+}
 
 void exit_program(int sig) {
 	ex = true;
@@ -694,7 +696,7 @@ int main(int argc, char** argv) {
 		gettimeofday(&time_now, NULL);
 
 		// Thread Notify
-		for (int i=0; i<5; i++) { // TODO remove magic number
+		for (int i=0; i<6; i++) { // TODO remove magic number
 			if (threw[i].notify) {
 				cerr << "Thread " << i << " requires to much time, iteration is skipped" << endl;
 			} else {

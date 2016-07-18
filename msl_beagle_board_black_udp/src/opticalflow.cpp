@@ -166,9 +166,7 @@ void OpticalFlow::setConfigurationBits(uint8_t conf) {
 	write(CONFIGURATION_BITS, conf);
 }
 
-void OpticalFlow::update_motion_burst(timeval time_now) {
-	last_updated = time_now;
-
+void OpticalFlow::update_motion_burst() {
 	getMotionBurst(motionBurst);
 	x += motionBurst[1];
 	y += motionBurst[2];
@@ -180,11 +178,8 @@ void OpticalFlow::update_motion_burst(timeval time_now) {
 }
 
 
-void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
+msl_actuator_msgs::MotionBurst OpticalFlow::getMotionBurstMsg() {
 	msl_actuator_msgs::MotionBurst msg;
-	uint8_t mData[6];
-
-	last_sended = time_now;
 
 	int16_t tqos = 0;
 	if( vQos != 0 ) {
@@ -194,11 +189,12 @@ void OpticalFlow::send_motion_burst(timeval time_now, ros::Publisher *mbcPub) {
 	msg.x = x;
 	msg.y = y;
 	msg.qos = tqos;
-	mbcPub->publish(msg);
 
 	x = 0;
 	y = 0;
 	qos = 0;
 	vQos = 0;
+
+	return msg;
 }
 
