@@ -44,11 +44,11 @@ namespace alica
     void DriveToPost::run(void* msg)
     {
         /*PROTECTED REGION ID(run1464189819779) ENABLED START*/ //Add additional options here
-	ownPos = wm->rawSensorData->getOwnPositionVision();
+        ownPos = wm->rawSensorData->getOwnPositionVision();
 
         if (ownPos == nullptr)
         {
-		cout << "[DriveToPost] ownPos null!" << endl;
+            cout << "[DriveToPost] ownPos null!" << endl;
             return;
         }
 
@@ -106,7 +106,7 @@ namespace alica
             }
             startTime = -1;
         }
-	//cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
+        //cout << "[DriveToPost] translation: " << mc.motion.translation << endl;
         send (mc);
         /*PROTECTED REGION END*/
     }

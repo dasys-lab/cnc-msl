@@ -45,7 +45,7 @@ namespace alica
         else
         {
         }
-            mc.motion.translation = 0;
+        mc.motion.translation = 0;
 
         msl_actuator_msgs::BallHandleCmd bhc;
         bhc.leftMotor = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);

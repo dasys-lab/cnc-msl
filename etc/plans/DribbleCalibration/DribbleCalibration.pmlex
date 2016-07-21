@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108805290"/>
+    <value xPos="105" yPos="395" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108805289"/>
+    <value width="1025" height="610"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108805291"/>
+    <value xPos="-119" yPos="413" width="121" height="19"/>
+  </extensions>
+  <extensions>
+    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108950942"/>
+    <value xPos="105" yPos="86" width="150" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108971711"/>
+    <value xPos="305" yPos="92" width="167" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108982128"/>
+    <value xPos="592" yPos="109" width="170" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469108996737"/>
+    <value xPos="602" yPos="256" width="152" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109046400"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109050223"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109053820"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109061857"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109064014"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109066452"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109142048"/>
+    <value xPos="777" yPos="472"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109160465"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109218874"/>
+    <value xPos="14" yPos="180" width="145" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109261763"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109264181"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109277626"/>
+    <value>
+      <bendpoints xPos="220" yPos="375"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1469109279849"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalibrationTakeBall.beh#1469109486033"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

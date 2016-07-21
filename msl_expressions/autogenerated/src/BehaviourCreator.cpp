@@ -173,6 +173,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/GetBall.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleForward.h"
+
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
@@ -186,6 +188,8 @@ using namespace std;
 #include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
 
 #include  "Plans/GenericStandards/StandardShieldBall.h"
+
+#include  "Plans/DribbleCalibration/Behaviours/CalibrationTakeBall.h"
 
 namespace alica
 {
@@ -672,6 +676,11 @@ namespace alica
                 return make_shared<GetBall>();
                 break;
 
+            case 1469116891409:
+
+                return make_shared<CalibrationDribbleForward>();
+                break;
+
             case 1459357089325:
 
                 return make_shared<BouncePassFinishAlign>();
@@ -715,6 +724,11 @@ namespace alica
             case 1455888715611:
 
                 return make_shared<StandardShieldBall>();
+                break;
+
+            case 1469109486033:
+
+                return make_shared<CalibrationTakeBall>();
                 break;
 
             default:
