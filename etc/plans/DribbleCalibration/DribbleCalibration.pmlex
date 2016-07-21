@@ -18,7 +18,7 @@
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108950942"/>
-    <value xPos="105" yPos="86" width="150" height="67"/>
+    <value xPos="105" yPos="86" width="150" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108971711"/>
@@ -88,6 +88,10 @@
   </extensions>
   <extensions>
     <key href="Behaviours/CalibrationTakeBall.beh#1469109486033"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalibrationDribbleForward.beh#1469116891409"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -10,6 +10,7 @@
     <outTransitions>#1469109261763</outTransitions>
   </states>
   <states id="1469108950942" name="Calibration Forward" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleForward.beh#1469116891409</plans>
     <inTransitions>#1469109264181</inTransitions>
     <outTransitions>#1469109046400</outTransitions>
     <outTransitions>#1469109279849</outTransitions>
