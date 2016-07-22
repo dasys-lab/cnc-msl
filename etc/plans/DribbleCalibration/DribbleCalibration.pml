@@ -16,16 +16,19 @@
     <outTransitions>#1469109279849</outTransitions>
   </states>
   <states id="1469108971711" name="Calibaration Backward" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleBackward.beh#1469196312911</plans>
     <inTransitions>#1469109046400</inTransitions>
     <outTransitions>#1469109050223</outTransitions>
     <outTransitions>#1469109061857</outTransitions>
   </states>
   <states id="1469108982128" name="Calibration Orthogonal" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleOrthogonal.beh#1469196345947</plans>
     <inTransitions>#1469109050223</inTransitions>
     <outTransitions>#1469109053820</outTransitions>
     <outTransitions>#1469109064014</outTransitions>
   </states>
   <states id="1469108996737" name="Calibration Rotation" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleRotation.beh#1469196377758</plans>
     <inTransitions>#1469109053820</inTransitions>
     <outTransitions>#1469109066452</outTransitions>
     <outTransitions>#1469109160465</outTransitions>

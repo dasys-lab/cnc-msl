@@ -3,7 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1469109429392) ENABLED START*/ //Add additional includes here
-#include "msl_robot/robotmovement/MovementQuery.h"
+#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -18,7 +18,9 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<msl::MovementQuery> query;
+        DribbleCalibrationContainer dcc;
+
+        bool ballRotateCorrect;
 
         double speedNoBall;
         double slowTranslationWheelSpeed;
@@ -27,13 +29,13 @@ namespace alica
         double dribbleFactorLeft;
         double dribbleFactorRight;
 
-        void getBall();
         void readConfigParameters();
         void writeConfigParameters();
 
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
+        bool checkBallRotation();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

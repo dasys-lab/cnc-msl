@@ -22,15 +22,15 @@
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108971711"/>
-    <value xPos="305" yPos="92" width="167" height="67"/>
+    <value xPos="305" yPos="92" width="167" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108982128"/>
-    <value xPos="592" yPos="109" width="170" height="67"/>
+    <value xPos="592" yPos="109" width="170" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469108996737"/>
-    <value xPos="602" yPos="256" width="152" height="67"/>
+    <value xPos="602" yPos="256" width="152" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469109046400"/>
@@ -92,6 +92,18 @@
   </extensions>
   <extensions>
     <key href="Behaviours/CalibrationDribbleForward.beh#1469116891409"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalibrationDribbleBackward.beh#1469196312911"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalibrationDribbleOrthogonal.beh#1469196345947"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/CalibrationDribbleRotation.beh#1469196377758"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

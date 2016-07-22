@@ -33,6 +33,8 @@ using namespace std;
 
 #include  "Plans/Attack/DribbleEmergencyKick.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleOrthogonal.h"
+
 #include  "Plans/GenericBehaviours/Stop.h"
 
 #include  "Plans/Behaviours/Joystick.h"
@@ -85,6 +87,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/StayAwayAfterGamePenalty.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleBackward.h"
+
 #include  "Plans/Behaviours/DriveForward.h"
 
 #include  "Plans/Behaviours/CheckPassMsg.h"
@@ -112,6 +116,8 @@ using namespace std;
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
 
 #include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
+
+#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleRotation.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PositionAlternativeReceiver.h"
 
@@ -298,6 +304,11 @@ namespace alica
                 return make_shared<DribbleEmergencyKick>();
                 break;
 
+            case 1469196345947:
+
+                return make_shared<CalibrationDribbleOrthogonal>();
+                break;
+
             case 1413992626194:
 
                 return make_shared<Stop>();
@@ -440,6 +451,11 @@ namespace alica
                 return make_shared<StayAwayAfterGamePenalty>();
                 break;
 
+            case 1469196312911:
+
+                return make_shared<CalibrationDribbleBackward>();
+                break;
+
             case 1417017580650:
 
                 return make_shared<DriveForward>();
@@ -514,6 +530,11 @@ namespace alica
             case 1466976004315:
 
                 return make_shared<Pos4PenaltyRebounce>();
+                break;
+
+            case 1469196377758:
+
+                return make_shared<CalibrationDribbleRotation>();
                 break;
 
             case 1462978671719:
