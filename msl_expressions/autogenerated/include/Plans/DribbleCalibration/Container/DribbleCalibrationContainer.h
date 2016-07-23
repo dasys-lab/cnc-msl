@@ -14,9 +14,14 @@
 using namespace msl;
 namespace alica
 {
+	#define FORWARD 100
+	#define BACKWARD 200
+	#define LEFT 300
+	#define RIGHT 400
+
 	struct subsection
 	{
-		string section;
+		string name;
 		double robotSpeed;
 		double actuatorSpeed;
 	};
@@ -28,9 +33,12 @@ namespace alica
 		virtual ~DribbleCalibrationContainer();
 
 		msl_actuator_msgs::MotionControl getBall();
+		msl_actuator_msgs::MotionControl move(int movement, int translation);
+
 
 		double readConfigParameter(const char *path);
-		void writeConfigParameters(shared_ptr<vector<subsection>> sections);
+//		void writeConfigParameters(shared_ptr<vector<subsection>> sections);
+		void writeConfigParameters(vector<subsection> sections);
 	private:
 		msl::MSLWorldModel* wm;
 

@@ -28,6 +28,7 @@ namespace alica
 
     msl_actuator_msgs::MotionControl DribbleCalibrationContainer::getBall()
 	{
+    	query->reset();
 		msl::RobotMovement rm;
 		msl_actuator_msgs::MotionControl mc;
 		auto me = wm->rawSensorData->getOwnPositionVision();
@@ -40,15 +41,57 @@ namespace alica
 		return mc;
 	}
 
+    /**
+     * movement may be: FORWARD, BACKWARD, LEFT, RIGHT
+     *
+     * @return MotionControl to drive in a direction while using PathPlaner and avoid obstacles
+     */
+    msl_actuator_msgs::MotionControl DribbleCalibrationContainer::move(int movement, int translation)
+    {
+    	msl_actuator_msgs::MotionControl mc;
+
+    	if (movement != FORWARD && movement != BACKWARD && movement != LEFT && movement  != RIGHT)
+    	{
+    		cout << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
+    		mc.senderID = -1;
+    		mc.motion.translation = NAN;
+    		mc.motion.rotation = NAN;
+    		mc.motion.angle = NAN;
+    		return mc;
+    	}
+
+    	query->reset();
+    	msl::RobotMovement rm;
+
+    	shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0) ;
+    	double distance = 300;
+    	// drive forward
+    	egoDestination = movement == FORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
+    	// drive backward
+    	egoDestination = movement == BACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
+    	// drive left
+    	egoDestination = movement == LEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
+    	// drive right
+    	egoDestination = movement == RIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+
+    	query->egoDestinationPoint = egoDestination;
+    	query->egoAlignPoint = egoDestination;
+
+    	mc = rm.moveToPoint(query);
+
+    	mc.motion.translation = translation;
+    	return mc;
+    }
+
 	double DribbleCalibrationContainer::readConfigParameter(const char *path)
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		return (*sys)["Actuation"]->get<double>(path, NULL);
 	}
 
-	void DribbleCalibrationContainer::writeConfigParameters(shared_ptr<vector<subsection>> sections)
+	void DribbleCalibrationContainer::writeConfigParameters(vector<subsection> sections)
 	{
-		for (subsection section : *sections)
+		for (subsection section : sections)
 		{
 
 		}

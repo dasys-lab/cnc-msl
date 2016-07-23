@@ -27,14 +27,15 @@ namespace alica
     void CalibrationDribbleRotation::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196350730) ENABLED START*/ //Add additional options here
-    	if (wm->ball->haveBall())
-    	{
-    		// rotate left and check
-    	} else
-    	{
-    		MotionControl mc = dcc.getBall();
-    		send(mc);
-    	}
+        if (wm->ball->haveBall())
+        {
+            // rotate left and check
+        }
+        else
+        {
+            MotionControl mc = dcc.getBall();
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void CalibrationDribbleRotation::initialiseParameters()
@@ -42,10 +43,10 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1469196350730) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1469196350730) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1469196350730) ENABLED START*/ //Add additional methods here
     void CalibrationDribbleRotation::readConfigParameters()
     {
-    	curveRotationfactor = dcc.readConfigParameter("Dribble.CurveRotationFactor");
+        curveRotationfactor = dcc.readConfigParameter("Dribble.CurveRotationFactor");
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

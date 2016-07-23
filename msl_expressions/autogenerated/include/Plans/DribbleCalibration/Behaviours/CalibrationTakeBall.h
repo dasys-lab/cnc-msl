@@ -21,7 +21,9 @@ namespace alica
         DribbleCalibrationContainer dcc;
 
         bool ballRotateCorrect;
+        bool ballHoldCorrect;
 
+        // config parameters
         double speedNoBall;
         double slowTranslationWheelSpeed;
         double minRotation;
@@ -29,13 +31,19 @@ namespace alica
         double dribbleFactorLeft;
         double dribbleFactorRight;
 
+        // for correctRightWheelSpeed function
+        double dribbleFactorRightOld;
+        double changingFactor;
+        int defectWheel;
+
+        int checkBallRotation();
+        void correctWheelSpeed(int wheel);
         void readConfigParameters();
         void writeConfigParameters();
 
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
-        bool checkBallRotation();
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

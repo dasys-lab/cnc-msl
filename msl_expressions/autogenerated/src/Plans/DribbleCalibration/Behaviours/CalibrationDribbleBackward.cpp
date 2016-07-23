@@ -28,23 +28,25 @@ namespace alica
     void CalibrationDribbleBackward::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196252478) ENABLED START*/ //Add additional options here
-    	if (wm->ball->haveBall())
-    	{
-    		// try to follow the forward calibration
-    		// => adapt backward calibration with new parameters
-    		// => create new subsection in Actuation config for BackwardDribbleSpeed
+        if (wm->ball->haveBall())
+        {
+            // try to follow the forward calibration
+            // => adapt backward calibration with new parameters
+            // => create new subsection in Actuation config for BackwardDribbleSpeed
 
-    		// if ball is in kicker
-    		// drive backward start slowly
-    		// start with 300 speed
-    		// use optical flow and light barrier data to analyze the the ball movement
-    		// adapt actuatorSpeed by specific robotSpeed
-    		// if robot can handle ball at this speed -> increase the speed and repeat
-    	} else {
-    		DribbleCalibrationContainer dcc;
-    		MotionControl mc = dcc.getBall();
-    		send(mc);
-    	}
+            // if ball is in kicker
+            // drive backward start slowly
+            // start with 300 speed
+            // use optical flow and light barrier data to analyze the the ball movement
+            // adapt actuatorSpeed by specific robotSpeed
+            // if robot can handle ball at this speed -> increase the speed and repeat
+        }
+        else
+        {
+            DribbleCalibrationContainer dcc;
+            MotionControl mc = dcc.getBall();
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void CalibrationDribbleBackward::initialiseParameters()
@@ -52,7 +54,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1469196252478) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1469196252478) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1469196252478) ENABLED START*/ //Add additional methods here
     void CalibrationDribbleBackward::readConfigParameters()
     {
 

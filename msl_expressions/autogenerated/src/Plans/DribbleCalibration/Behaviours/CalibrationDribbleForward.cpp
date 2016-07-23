@@ -8,6 +8,11 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include "container/CNPoint2D.h"
+
+#define MAX_SPEED 4000
+#define SECTIONS_SIZE 10
+
+#define DEBUG
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +22,12 @@ namespace alica
             DomainBehaviour("CalibrationDribbleForward")
     {
         /*PROTECTED REGION ID(con1469116853584) ENABLED START*/ //Add additional options here
+        sections.reserve(SECTIONS_SIZE);
+#ifdef DEBUG
+        cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
+#endif
+
+        haveBallCount = 0;
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -28,18 +39,27 @@ namespace alica
     void CalibrationDribbleForward::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469116853584) ENABLED START*/ //Add additional options here
-        if (wm->ball->haveBall())
+        MotionControl mc;
+
+        if (wm->rawSensorData->getLightBarrier())
         {
+            haveBallCount++;
             // if ball is in kicker
             // drive forward start slowly
-            // start with 300 speed
+            // start with 400 speed
+            for (int i = 0; i < SECTIONS_SIZE; i++)
+            {
+                int translation = 400;
+                dcc.move(FORWARD, translation);
+            }
             // use optical flow and light barrier data to analyze the the ball movement
             // adapt actuatorSpeed by specific robotSpeed
             // if robot can handle ball at this speed -> increase the speed and repeat
         }
         else
         {
-            MotionControl mc = dcc.getBall();
+            haveBallCount = 0;
+            mc = dcc.getBall();
             send(mc);
         }
         writeConfigParameters();
@@ -51,38 +71,59 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1469116853584) ENABLED START*/ //Add additional methods here
+    void CalibrationDribbleForward::fillSections(shared_ptr<vector<string> > speedsSections)
+    {
+        int i = 0;
+        for (string subsection : *speedsSections)
+        {
+            sections[i].name = subsection.c_str();
+            sections[i].robotSpeed = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
+                                                                     "robotSpeed", NULL);
+            sections[i].actuatorSpeed = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
+                                                                        "actuatorSpeed", NULL);
+            cout << "RobotSpeed: " << sections[i].robotSpeed << "actuatorSpeed: " << sections[i].actuatorSpeed << endl;
+            i++;
+        }
+
+    }
+
+    void CalibrationDribbleForward::createSections()
+    {
+        double speedFactor = MAX_SPEED / SECTIONS_SIZE;
+        for (int i = 0; i < SECTIONS_SIZE; i++)
+        {
+            sections[i].name = "P" + std::to_string(i + 1);
+            sections[i].robotSpeed = i * speedFactor;
+            sections[i].actuatorSpeed = i * speedFactor;
+        }
+    }
+
     void CalibrationDribbleForward::readConfigParameters()
     {
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
         shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
-        vector<double> robotSpeed2(speedsSections->size());
-        vector<double> actuatorSpeed2(speedsSections->size());
-        int i = 0;
-        for (string subsection : *speedsSections)
-        {
-            robotSpeed2[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(), "robotSpeed",
-                                                             NULL);
-            actuatorSpeed2[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
-                                                                "actuatorSpeed", NULL);
-            cout << "RobotSpeed: " << robotSpeed2[i] << "actuatorSpeed: " << actuatorSpeed2[i] << endl;
-            i++;
-        }
 
-        this->robotSpeed = robotSpeed2;
-        this->actuatorSpeed = actuatorSpeed2;
+        if (speedsSections->size() == SECTIONS_SIZE)
+        {
+            fillSections (speedsSections);
+        }
+        else
+        {
+            createSections();
+        }
 
     }
 
     void CalibrationDribbleForward::writeConfigParameters()
     {
-    	// as an example -> improve later!
-    	subsection s1;
-    	s1.section = "P9";
-        s1.actuatorSpeed = 300;
-        s1.robotSpeed = 400;
-        shared_ptr<vector<subsection>> sections;
-        sections->push_back(s1);
+        // as an example -> improve later!
+//		subsection s1;
+//		s1.name = "P9";
+//		s1.actuatorSpeed = 300;
+//		s1.robotSpeed = 400;
+//		shared_ptr<vector<subsection>> sections;
+//		sections->push_back(s1);
 
         dcc.writeConfigParameters(sections);
     }

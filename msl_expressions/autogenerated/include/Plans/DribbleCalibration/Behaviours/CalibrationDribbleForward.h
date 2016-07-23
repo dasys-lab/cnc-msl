@@ -20,9 +20,13 @@ namespace alica
         /*PROTECTED REGION ID(pro1469116853584) ENABLED START*/ //Add additional protected methods here
         DribbleCalibrationContainer dcc;
 
-        vector<double> robotSpeed;
-        vector<double> actuatorSpeed;
+        vector<subsection> sections;
 
+        int haveBallCount;
+        bool increaseSpeed;
+
+        void fillSections(shared_ptr<vector<string> > speedsSections);
+        void createSections();
         void readConfigParameters();
         void writeConfigParameters();
         /*PROTECTED REGION END*/

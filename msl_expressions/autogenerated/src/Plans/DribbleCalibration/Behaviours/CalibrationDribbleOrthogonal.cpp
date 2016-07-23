@@ -27,33 +27,35 @@ namespace alica
     void CalibrationDribbleOrthogonal::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196321064) ENABLED START*/ //Add additional options here
-    	if (wm->ball->haveBall())
-    	{
-    		// check code and maybe add a new parameter for the orthogonal calculation
+        if (wm->ball->haveBall())
+        {
+            // check code and maybe add a new parameter for the orthogonal calculation
 
-    		// if ball is in kicker
-    		// drive to the left
-    		// check sensor data -> optical flow should say, that the ball isn't moving
-    		// correct data if the robot is loosing the ball
-    		// drive to the right
-    		// check sensor data -> optical flow should say, that the ball isn't moving
-    		// correct data if the robot is loosing the ball
+            // if ball is in kicker
+            // drive to the left
+            // check sensor data -> optical flow should say, that the ball isn't moving
+            // correct data if the robot is loosing the ball
+            // drive to the right
+            // check sensor data -> optical flow should say, that the ball isn't moving
+            // correct data if the robot is loosing the ball
 
-    	} else {
-    		MotionControl mc = dcc.getBall();
-    		send(mc);
-    	}
+        }
+        else
+        {
+            MotionControl mc = dcc.getBall();
+            send(mc);
+        }
         /*PROTECTED REGION END*/
     }
     void CalibrationDribbleOrthogonal::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1469196321064) ENABLED START*/ //Add additional options here
-    	/*PROTECTED REGION END*/
+        /*PROTECTED REGION END*/
     }
-/*PROTECTED REGION ID(methods1469196321064) ENABLED START*/ //Add additional methods here
+    /*PROTECTED REGION ID(methods1469196321064) ENABLED START*/ //Add additional methods here
     void CalibrationDribbleOrthogonal::readConfigParameters()
     {
-    	orthoDriveFactor = dcc.readConfigParameter("Dribble.OrthoDriveFactor");
+        orthoDriveFactor = dcc.readConfigParameter("Dribble.OrthoDriveFactor");
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -7,28 +7,32 @@
     <inTransitions>#1469109066452</inTransitions>
     <inTransitions>#1469109277626</inTransitions>
     <inTransitions>#1469109279849</inTransitions>
+    <inTransitions>#1469284197329</inTransitions>
     <outTransitions>#1469109261763</outTransitions>
   </states>
   <states id="1469108950942" name="Calibration Forward" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleForward.beh#1469116891409</plans>
-    <inTransitions>#1469109264181</inTransitions>
+    <inTransitions>#1469284199867</inTransitions>
     <outTransitions>#1469109046400</outTransitions>
     <outTransitions>#1469109279849</outTransitions>
   </states>
   <states id="1469108971711" name="Calibaration Backward" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleBackward.beh#1469196312911</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1469109046400</inTransitions>
     <outTransitions>#1469109050223</outTransitions>
     <outTransitions>#1469109061857</outTransitions>
   </states>
   <states id="1469108982128" name="Calibration Orthogonal" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleOrthogonal.beh#1469196345947</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1469109050223</inTransitions>
     <outTransitions>#1469109053820</outTransitions>
     <outTransitions>#1469109064014</outTransitions>
   </states>
   <states id="1469108996737" name="Calibration Rotation" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationDribbleRotation.beh#1469196377758</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1469109053820</inTransitions>
     <outTransitions>#1469109066452</outTransitions>
     <outTransitions>#1469109160465</outTransitions>
@@ -38,9 +42,17 @@
   </states>
   <states id="1469109218874" name="Calibration Take Ball" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationTakeBall.beh#1469109486033</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
     <inTransitions>#1469109261763</inTransitions>
     <outTransitions>#1469109264181</outTransitions>
     <outTransitions>#1469109277626</outTransitions>
+  </states>
+  <states id="1469284166290" name="Calibration Ball Holding" comment="">
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/CalibrationBallHolding.beh#1469284324012</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <inTransitions>#1469109264181</inTransitions>
+    <outTransitions>#1469284197329</outTransitions>
+    <outTransitions>#1469284199867</outTransitions>
   </states>
   <transitions id="1469109046400" name="MISSING_NAME" comment="Calibration Forward finished" msg="">
     <preCondition id="1469109050023" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -85,7 +97,7 @@
   <transitions id="1469109264181" name="MISSING_NAME" comment="Calibration Take Ball finished" msg="">
     <preCondition id="1469109265377" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1469109218874</inState>
-    <outState>#1469108950942</outState>
+    <outState>#1469284166290</outState>
   </transitions>
   <transitions id="1469109277626" name="MISSING_NAME" comment="Stop" msg="">
     <preCondition id="1469109279649" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -96,6 +108,16 @@
     <preCondition id="1469109281934" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1469108950942</inState>
     <outState>#1469108805290</outState>
+  </transitions>
+  <transitions id="1469284197329" name="MISSING_NAME" comment="Stop" msg="">
+    <preCondition id="1469284199355" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1469284166290</inState>
+    <outState>#1469108805290</outState>
+  </transitions>
+  <transitions id="1469284199867" name="MISSING_NAME" comment="Calibration Ball Holding finished" msg="">
+    <preCondition id="1469284201761" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1469284166290</inState>
+    <outState>#1469108950942</outState>
   </transitions>
   <entryPoints id="1469108805291" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
