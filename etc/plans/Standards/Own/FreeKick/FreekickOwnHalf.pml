@@ -42,7 +42,7 @@
     <outTransitions>#1464781044679</outTransitions>
     <outTransitions>#1464781328367</outTransitions>
   </states>
-  <states id="1464781012255" name="Wait" comment="">
+  <states id="1464781012255" name="Block" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
     <inTransitions>#1464781044679</inTransitions>
   </states>
