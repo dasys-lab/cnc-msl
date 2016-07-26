@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1469521732930" name="GoalKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" priority="0.0" minCardinality="0" maxCardinality="2147483647">
+<alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1469521732930" name="GoalKick" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Standards/Own/GoalKick" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <conditions xsi:type="alica:RuntimeCondition" id="1469522753378" name="NewRuntimeCondition" comment="" conditionString="" pluginName="DefaultPlugin">
     <quantifiers xsi:type="alica:ForallAgents" id="1469522849862" name="MISSING_NAME" comment="" scope="1469522047745">
       <sorts>x</sorts>
@@ -34,6 +34,8 @@
     <inTransitions>#1469522460547</inTransitions>
   </states>
   <states id="1469522490708" name="AlignRec" comment="" entryPoint="1469522042827">
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../ThrowIn/ReceiveInOppHalf.beh#1462370388995</plans>
     <outTransitions>#1469522683853</outTransitions>
   </states>
   <states id="1469522492956" name="Receive" comment="">

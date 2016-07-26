@@ -64,7 +64,7 @@
   </extensions>
   <extensions>
     <key href="GoalKick.pml#1469522490708"/>
-    <value xPos="124" yPos="170" width="81" height="67"/>
+    <value xPos="124" yPos="170" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="GoalKick.pml#1469522492956"/>
@@ -132,6 +132,10 @@
   </extensions>
   <extensions>
     <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
