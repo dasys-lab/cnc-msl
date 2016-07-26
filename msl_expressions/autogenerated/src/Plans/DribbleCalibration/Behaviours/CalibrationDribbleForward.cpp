@@ -50,7 +50,7 @@ namespace alica
             for (int i = 0; i < SECTIONS_SIZE; i++)
             {
                 int translation = 400;
-                dcc.move(FORWARD, translation);
+                dcc.move(DRIBBLEFORWARD, translation);
             }
             // use optical flow and light barrier data to analyze the the ball movement
             // adapt actuatorSpeed by specific robotSpeed

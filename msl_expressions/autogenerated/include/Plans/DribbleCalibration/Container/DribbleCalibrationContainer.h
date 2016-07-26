@@ -14,10 +14,10 @@
 using namespace msl;
 namespace alica
 {
-	#define FORWARD 100
-	#define BACKWARD 200
-	#define LEFT 300
-	#define RIGHT 400
+	#define DRIBBLEFORWARD 100
+	#define DRIBBLEBACKWARD 200
+	#define DRIBBLELEFT 300
+	#define DRIBBLERIGHT 400
 
 	struct subsection
 	{

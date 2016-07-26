@@ -50,7 +50,7 @@ namespace alica
     {
     	msl_actuator_msgs::MotionControl mc;
 
-    	if (movement != FORWARD && movement != BACKWARD && movement != LEFT && movement  != RIGHT)
+    	if (movement != DRIBBLEFORWARD && movement != DRIBBLEBACKWARD && movement != DRIBBLELEFT && movement  != DRIBBLERIGHT)
     	{
     		cout << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
     		mc.senderID = -1;
@@ -66,13 +66,13 @@ namespace alica
     	shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0) ;
     	double distance = 300;
     	// drive forward
-    	egoDestination = movement == FORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
+    	egoDestination = movement == DRIBBLEFORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
     	// drive backward
-    	egoDestination = movement == BACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
+    	egoDestination = movement == DRIBBLEBACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
     	// drive left
-    	egoDestination = movement == LEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
+    	egoDestination = movement == DRIBBLELEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
     	// drive right
-    	egoDestination = movement == RIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+    	egoDestination = movement == DRIBBLERIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
 
     	query->egoDestinationPoint = egoDestination;
     	query->egoAlignPoint = egoDestination;
