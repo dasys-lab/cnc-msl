@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 #include <vector>
-#include <QtGui>
+#include <QtWidgets>
 #include <QWidget>
 #include <QDialog>
 

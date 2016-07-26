@@ -513,4 +513,3 @@ namespace msl_joystick
 } // namespace msl_keyboard_joystick
 
 PLUGINLIB_EXPORT_CLASS(msl_joystick::Joystick, rqt_gui_cpp::Plugin)
-
