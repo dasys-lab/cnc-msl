@@ -5,6 +5,10 @@
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
+    <quantifiers xsi:type="alica:ForallAgents" id="1469533565421" name="MISSING_NAME" comment="" scope="1464781012255">
+      <sorts>x</sorts>
+      <sorts>y</sorts>
+    </quantifiers>
   </conditions>
   <states id="1464779892294" name="AlginExec" comment="" entryPoint="1464779892295">
     <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
@@ -39,7 +43,7 @@
     <outTransitions>#1464781328367</outTransitions>
   </states>
   <states id="1464781012255" name="Wait" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
     <inTransitions>#1464781044679</inTransitions>
   </states>
   <states id="1464781391707" name="Receive" comment="">
