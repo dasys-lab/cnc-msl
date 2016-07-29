@@ -7,44 +7,52 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class CalibrationTakeBall : public DomainBehaviour
-    {
-    public:
-        CalibrationTakeBall();
-        virtual ~CalibrationTakeBall();
-        virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1469109429392) ENABLED START*/ //Add additional public methods here
-        /*PROTECTED REGION END*/
-    protected:
-        virtual void initialiseParameters();
-        /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
-        DribbleCalibrationContainer dcc;
+	class CalibrationTakeBall : public DomainBehaviour
+	{
+	public:
+		CalibrationTakeBall();
+		virtual ~CalibrationTakeBall();
+		virtual void run(void* msg);
+		/*PROTECTED REGION ID(pub1469109429392) ENABLED START*/ //Add additional public methods here
+		/*PROTECTED REGION END*/
+	protected:
 
-        bool ballRotateCorrect;
-        bool ballHoldCorrect;
+		// consts for checkBallRotation()
+		static const int ROTATE_CORRECT = 0;
+		static const int ROTATE_LEFT = 10;
+		static const int ROTATE_RIGHT = 20;
+		//static const int ROTATE_BACKWARDS = 30;
+		static const int ROTATE_TOO_SLOW = 40;
+		static const int ROTATE_ERR = -10;
 
-        // config parameters
-        double speedNoBall;
-        double slowTranslationWheelSpeed;
-        double minRotation;
-        // left and right are swapped
-        double dribbleFactorLeft;
-        double dribbleFactorRight;
+		virtual void initialiseParameters();
+		/*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
+		DribbleCalibrationContainer dcc;
 
-        // for correctRightWheelSpeed function
-        double dribbleFactorRightOld;
-        double changingFactor;
-        int defectWheel;
+		bool ballRotateCorrect;bool ballHoldCorrect;
 
-        int checkBallRotation();
-        void correctWheelSpeed(int wheel);
-        void readConfigParameters();
-        void writeConfigParameters();
+		// config parameters
+		double speedNoBall;
+		double slowTranslationWheelSpeed;
+		double minRotation;
+		// left and right are swapped
+		double dribbleFactorLeft;
+		double dribbleFactorRight;
 
-        /*PROTECTED REGION END*/
-    private:
-        /*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
-        /*PROTECTED REGION END*/};
+		// for correctRightWheelSpeed function
+		double dribbleFactorRightOld;
+		double changingFactor;
+		int defectWheel;
+
+		int checkBallRotation();
+		void correctWheelSpeed(int wheel);
+		void readConfigParameters();
+		void writeConfigParameters();
+
+		/*PROTECTED REGION END*/
+	private:
+		/*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
+		/*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* CalibrationTakeBall_H_ */
