@@ -30,7 +30,7 @@ namespace alica
 		send(mc);
 		int currentSegment = getCurrentRotationSegment();
 		double currentBearing = wm->rawSensorData->getAverageBearing();
-		//cout << "segment " << currentSegment << ", bearing " << currentBearing << endl;
+		cout << "segment " << currentSegment << ", bearing " << currentBearing << endl;
     	visitedSegments[currentSegment] = true;
 
     	if(visitedSegments[0] && visitedSegments[1] && visitedSegments[2] && circularDiff(currentBearing, initialBearing) < 0.02)
