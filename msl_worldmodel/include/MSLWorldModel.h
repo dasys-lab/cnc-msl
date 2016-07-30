@@ -126,6 +126,7 @@ namespace msl
 		Obstacles* obstacles;
 		Prediction* prediction;
 		LightBarrier* lightBarrier;
+		msl_actuator_msgs::RawOdometryInfoPtr rawOdometry;
 
 		supplementary::EventTrigger visionTrigger;
 		InfoTime timeLastSimMsgReceived;
