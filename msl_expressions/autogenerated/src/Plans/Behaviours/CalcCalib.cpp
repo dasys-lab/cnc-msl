@@ -65,17 +65,27 @@ namespace alica
 		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
 		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
-		if(errorCounter == 10)
+		if(errorCounter == 30)
 		{
 			if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
 					(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
 					(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-					(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>1000)
+					(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>75)
 			{
 				std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
 													(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
 													(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
 													(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
+				errorCounter++;
+
+				if(errorCounter >= 3)
+				{
+					std::cout << "error detected" <<std::endl;
+				}
+			}
+			else
+			{
+				errorCounter = 0;
 			}
 
 			std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
@@ -89,10 +99,10 @@ namespace alica
 			oldErrorTestVisionPosY = errorTestVisionPosY;
 
 
-			errorCounter = 0;
+			timeCounter = 0;
 		}
 
-		errorCounter++;
+		timeCounter++;
 
 
         /*PROTECTED REGION END*/

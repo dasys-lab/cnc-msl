@@ -46,6 +46,7 @@ namespace alica
 		double oldErrorTestVisionPosX = 0;
 		double oldErrorTestVisionPosY = 0;
 		int errorCounter = 0;
+		int timeCounter = 0;
 
         /*PROTECTED REGION END*/
     protected:
