@@ -49,11 +49,13 @@ namespace alica
         query->egoAlignPoint = make_shared < geometry::CNPoint2D > (-1000.0, 0.0);
         mc = rm.moveToPoint(query);
         //mc.motion.translation = 500;
-        //mc.motion.rotation = 0.3;
         //}
 
         if (egoTarget->length() < 250)
         {
+            //mc.motion.translation = 0;
+            //send(mc);
+            //sleep(1);
             cout << "DriveToPoint: Success" << endl;
             this->setSuccess(true);
         }
