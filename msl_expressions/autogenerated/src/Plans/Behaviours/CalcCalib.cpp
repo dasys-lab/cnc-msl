@@ -65,7 +65,7 @@ namespace alica
 		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
 		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
-		if(errorCounter == 30)
+		if(timeCounter == 30)
 		{
 			if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
 					(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
