@@ -55,11 +55,15 @@ namespace alica
 
         //----------------------------------------------------------------------------------------------------------
 
-        errorTestMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
-		errorTestMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+//        errorTestMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+//		errorTestMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+//		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+//		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+
+        errorTestMotionPosX = correctedPosX;
+		errorTestMotionPosY = correctedPosY;
 		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
 		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
-
 
 		if(errorCounter == 10)
 		{
