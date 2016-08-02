@@ -666,6 +666,7 @@ int main(int argc, char** argv) {
 	thread th_lightbarrier(getLightbarrier);
 	thread th_switches(getSwitches);
 	thread th_imu(getIMU);
+	thread th_optical(getOptical);
 
 	// I2C
 	bool i2c = myI2C.open(ReadWrite);
