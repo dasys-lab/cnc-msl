@@ -15,7 +15,7 @@ namespace alica
         /*PROTECTED REGION ID(pub1467397900274) ENABLED START*/ //Add additional public methods here
         // this data comes from the IMU
         double initialBearing;
-        // this data comes from the Motion
+        // this data comes from the motion
         double initialAngle;
         /*PROTECTED REGION END*/
     protected:

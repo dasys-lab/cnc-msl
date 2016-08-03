@@ -114,6 +114,7 @@ namespace msl
 		supplementary::ITrigger* getVisionDataEventTrigger();
 
 		bool isUsingSimulator();
+		void sendKillMotionCommand();
 
 		Monitoring* monitoring;
 		RawSensorData* rawSensorData;
@@ -161,6 +162,7 @@ namespace msl
 		ros::Subscriber correctedOdometrySub;
 		ros::Subscriber lightBarrierSub;
 		ros::Subscriber imuDataSub;
+		ros::Publisher processCommandPub;
 
 		list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

@@ -25,6 +25,7 @@
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/BallHypothesisList.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
+#include "process_manager/ProcessCommand.h"
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
 #include "RawSensorData.h"
@@ -110,6 +111,7 @@ namespace msl
 		lightBarrierSub = n.subscribe("/LightBarrierInfo", 10, &MSLWorldModel::onLightBarrierInfo,
 										(MSLWorldModel*)this);
 		imuDataSub = n.subscribe("/IMUData", 10, &MSLWorldModel::onIMUData, (MSLWorldModel*)this);
+		processCommandPub = n.advertise<process_manager::ProcessCommand>("/process_manager/ProcessCommand", 10);
 
 		this->sharedWorldModel = new MSLSharedWorldModel(this);
 		this->timeLastSimMsgReceived = 0;
@@ -497,6 +499,11 @@ namespace msl
 	void msl::MSLWorldModel::onLightBarrierInfo(std_msgs::BoolPtr msg)
 	{
 		rawSensorData->processLightBarrier(msg);
+	}
+
+	void msl::MSLWorldModel::sendKillMotionCommand()
+	{
+		//processCommandPub
 	}
 } /* namespace msl */
 
