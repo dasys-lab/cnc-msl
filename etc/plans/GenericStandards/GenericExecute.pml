@@ -9,8 +9,12 @@
       <sorts>x</sorts>
       <sorts>y</sorts>
     </quantifiers>
+    <quantifiers xsi:type="alica:ForallAgents" id="1469451326158" name="MISSING_NAME" comment="" scope="1431522155980">
+      <sorts>x</sorts>
+      <sorts>y</sorts>
+    </quantifiers>
   </conditions>
-  <conditions xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation free kick" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+  <conditions xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation not start" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
   <states id="1431522155979" name="GrabBall" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
@@ -49,7 +53,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1431524769489" name="SpatialDefend" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Pos4Def.beh#1445438204426</plans>
     <inTransitions>#1431524869870</inTransitions>
   </states>
   <states id="1433949667740" name="AlignExecutor" comment="" entryPoint="1431522155980">

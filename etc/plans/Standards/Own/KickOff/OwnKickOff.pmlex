@@ -93,7 +93,7 @@
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1441811642575"/>
-    <value xPos="739" yPos="140" width="66" height="67"/>
+    <value xPos="739" yPos="140" width="66" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="OwnKickOff.pml#1441811700499"/>
@@ -138,5 +138,13 @@
   <extensions>
     <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
     <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="OwnKickOff.pml#1469455112199"/>
+    <value xPos="484" yPos="523"/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

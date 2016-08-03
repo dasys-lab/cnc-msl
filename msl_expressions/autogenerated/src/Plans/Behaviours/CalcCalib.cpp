@@ -53,6 +53,58 @@ namespace alica
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
 
+        //----------------------------------------------------------------------------------------------------------
+
+//        errorTestMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+//		errorTestMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+//		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+//		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+
+        errorTestMotionPosX = correctedPosX;
+		errorTestMotionPosY = correctedPosY;
+		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+
+		if(timeCounter == 30)
+		{
+			if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
+					(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
+					(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
+					(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>75)
+			{
+				std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
+													(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
+													(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
+													(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
+				errorCounter++;
+
+				if(errorCounter >= 3)
+				{
+					std::cout << "error detected" <<std::endl;
+				}
+			}
+			else
+			{
+				errorCounter = 0;
+			}
+
+			std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
+																			(errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
+																			(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
+																			(errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
+
+			oldErrorTestMotionPosX = errorTestMotionPosX;
+			oldErrorTestMotionPosY = errorTestMotionPosY;
+			oldErrorTestVisionPosX = errorTestVisionPosX;
+			oldErrorTestVisionPosY = errorTestVisionPosY;
+
+
+			timeCounter = 0;
+		}
+
+		timeCounter++;
+
+
         /*PROTECTED REGION END*/
     }
     void CalcCalib::initialiseParameters()

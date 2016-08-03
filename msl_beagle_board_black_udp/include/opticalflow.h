@@ -53,8 +53,8 @@ class OpticalFlow {
 
 		void 		adns_init(void);
 		void		controlLED(bool enabled);
-		void 		update_motion_burst(timeval time_now);
-		void 		send_motion_burst(timeval time_now, ros::Publisher *mbcPub);
+		void 		update_motion_burst();
+		msl_actuator_msgs::MotionBurst getMotionBurstMsg();
 
 		uint8_t 	getInverseProductId(void);
 		uint8_t 	getProductId(void);

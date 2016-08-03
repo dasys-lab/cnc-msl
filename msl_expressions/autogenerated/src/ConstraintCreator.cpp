@@ -25,6 +25,8 @@
 
 #include  "Plans/TestPlans/GoalieMotionTuning/constraints/DriveToPost1464189637940Constraints.h"
 
+#include  "Plans/DribbleCalibration/constraints/DribbleCalibration1469108805289Constraints.h"
+
 #include  "Plans/TwoHoledWall/constraints/TwoHoledWallMaster1417621468963Constraints.h"
 
 #include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"
@@ -99,6 +101,8 @@
 
 #include  "Plans/Standards/Own/FreeKick/constraints/OwnFreeKickInOppHalf1464531946023Constraints.h"
 
+#include  "Plans/Standards/Own/GoalKick/constraints/GoalKick1469521732930Constraints.h"
+
 #include  "Plans/Standards/Own/KickOff/constraints/OwnKickOff1438785376159Constraints.h"
 
 #include  "Plans/GameStrategy/Other/constraints/DropBallExecution1455537039421Constraints.h"
@@ -107,11 +111,11 @@
 
 #include  "Plans/GameStrategy/Other/constraints/WanderPlan1458553921358Constraints.h"
 
-#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
-
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 
 #include  "Plans/TwoHoledWall/constraints/ShootTwoHoledWall1417620189234Constraints.h"
+
+#include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
 
 #include  "Plans/Calibration/constraints/MotionCalibration1442919721161Constraints.h"
 
@@ -188,6 +192,14 @@ namespace alica
 
             case 1467206311808:
                 return make_shared<Constraint1467206311808>();
+                break;
+
+            case 1469522753378:
+                return make_shared<Constraint1469522753378>();
+                break;
+
+            case 1469455112199:
+                return make_shared<Constraint1469455112199>();
                 break;
 
             case 1466975666362:
