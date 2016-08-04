@@ -501,9 +501,45 @@ namespace msl
 		rawSensorData->processLightBarrier(msg);
 	}
 
+	void msl::MSLWorldModel::writeBiggerRobotRadius()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		supplementary::Configuration *motion = (*sc)["Motion"];
+
+		int currentRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
+
+		motion->set(boost::lexical_cast<string>(currentRadius+1),"Motion.MotionControl.RobotRadius",NULL);
+	}
+
+	void msl::MSLWorldModel::writeSmallerRobotRadius()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		supplementary::Configuration *motion = (*sc)["Motion"];
+		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+
+		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
+
+		int currentRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
+
+		motion->set(boost::lexical_cast<string>(currentRadius-1),"Motion.MotionControl.RobotRadius",NULL);
+	}
+
 	void msl::MSLWorldModel::sendKillMotionCommand()
 	{
-		//processCommandPub
+		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
+		std::vector<int> ownRobotId;
+		ownRobotId.push_back(this->getOwnId());
+		std::vector<int> pKeys;
+		pKeys.push_back(processId);
+		process_manager::ProcessCommand command;
+		command.cmd = 1;
+		command.receiverId = 0;
+		command.robotIds = ownRobotId;
+		command.processKeys = pKeys;
+		processCommandPub.publish(command);
 	}
 } /* namespace msl */
 

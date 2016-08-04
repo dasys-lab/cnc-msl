@@ -13,6 +13,7 @@ namespace alica
         virtual ~RotateOnce();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1467397900274) ENABLED START*/ //Add additional public methods here
+    	double const CALIB_ERROR_THRESHOLD = 0.02;
         // this data comes from the IMU
         double initialBearing;
         // this data comes from the motion
@@ -26,6 +27,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
         double segments[3];
         bool visitedSegments[3];
+        double lastRotationCalibError;
         int getCurrentRotationSegment();
         double circularDiff(double a, double b);
         /*PROTECTED REGION END*/};

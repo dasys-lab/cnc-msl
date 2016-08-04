@@ -83,8 +83,6 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardPass.h"
 
-#include  "Plans/Calibration/IncreaseRobotRadius.h"
-
 #include  "Plans/Behaviours/ShovelSelect.h"
 
 #include  "Plans/Standards/Own/ThrowIn/PositionReceiverThrownIn.h"
@@ -178,8 +176,6 @@ using namespace std;
 #include  "Plans/Attack/DribbleAttackConservative.h"
 
 #include  "Plans/Standards/Own/FreeKick/PositionReceiverFreeKickOppHalf.h"
-
-#include  "Plans/Calibration/DecreaseRobotRadius.h"
 
 #include  "Plans/Attack/DribbleToAttackPoint.h"
 
@@ -441,11 +437,6 @@ namespace alica
                 return make_shared<StandardPass>();
                 break;
 
-            case 1470228172330:
-
-                return make_shared<IncreaseRobotRadius>();
-                break;
-
             case 1435156714286:
 
             case 1435156811453:
@@ -697,11 +688,6 @@ namespace alica
             case 1464780824372:
 
                 return make_shared<PositionReceiverFreeKickOppHalf>();
-                break;
-
-            case 1470228198807:
-
-                return make_shared<DecreaseRobotRadius>();
                 break;
 
             case 1436855860607:
