@@ -58,6 +58,7 @@ namespace alica
             }
 
             this->setSuccess(false);
+            this->setFailure(true);
 
         }
         /*PROTECTED REGION END*/
