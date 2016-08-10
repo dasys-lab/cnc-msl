@@ -399,7 +399,7 @@ static void drawConvex (float *_planes,unsigned int _planecount,
     {
       unsigned int pointcount=_polygons[polyindex];
       polyindex++;
-      glBegin (GL_POLYGON);      
+      glBegin (GL_POLYGON);
        glNormal3f(_planes[(i*4)+0],
 		  _planes[(i*4)+1],
 		  _planes[(i*4)+2]);
@@ -998,7 +998,7 @@ static void drawSky (float view_xyz[3])
 
 static void drawGround()
 {
-  
+
   glDisable (GL_LIGHTING);
   glShadeModel (GL_FLAT);
   glEnable (GL_DEPTH_TEST);
@@ -1130,7 +1130,7 @@ void dsDrawFrame (int width, int height)
   color[2] = 1;
   color[3] = 1;
   tnum = 0;
-  
+
   //if (fn->step) fn->step (pause);
 }
 
@@ -1164,7 +1164,7 @@ void dsSetTextures (int a)
 // sets lighting and texture modes, sets current color
 static void setupDrawingMode()
 {
-  glEnable (GL_LIGHTING);
+  glDepthFunc (GL_LESS);
   if (tnum) {
     if (use_textures) {
       glEnable (GL_TEXTURE_2D);
@@ -1622,6 +1622,3 @@ void dsPrint (const char *msg, ...)
   va_start (ap,msg);
   vprintf (msg,ap);
 }
-
-
-

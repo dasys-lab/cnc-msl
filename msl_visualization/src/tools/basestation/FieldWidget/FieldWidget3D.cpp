@@ -205,7 +205,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createDot(float x, float y, float radiu
         dot->SetHeight(0.001);
         dot->SetResolution(32);
         vtkSmartPointer<vtkPolyDataMapper> dotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        dotMapper->SetInputData(dot->GetOutput());
+        dotMapper->SetInputConnection(dot->GetOutputPort());
 
         vtkSmartPointer<vtkActor> coloredDot = vtkSmartPointer<vtkActor>::New();
         coloredDot->SetMapper(dotMapper);
@@ -266,7 +266,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createText(QString text)
         vtkSmartPointer<vtkVectorText> txt = vtkSmartPointer<vtkVectorText>::New();
         txt->SetText(text.toStdString().c_str());
         vtkSmartPointer<vtkPolyDataMapper> txtRobotMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        txtRobotMapper->SetInputData(txt->GetOutput());
+        txtRobotMapper->SetInputConnection(txt->GetOutputPort());
         actor->SetMapper(txtRobotMapper);
         actor->GetProperty()->SetColor(0.0, 0.0, 0.0);
         actor->GetProperty()->SetAmbient(1.0);
@@ -339,8 +339,11 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	_ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
 	renderWindow = vtkRenderWindow::New();
+	renderWindow->SetAlphaBitPlanes(1);
 	renderer = vtkRenderer::New();
 	renderer->SetBackground(72.0 / 255.0, 72.0 / 255.0, 72.0 / 255.0);
+
+	renderer->SetUseDepthPeeling(true);
 
 	renderWindow->AddRenderer(renderer);
 	this->SetRenderWindow(renderWindow);
@@ -368,7 +371,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	readerCbd->SetFileName("../config/3DModels/cambada_base.obj");
 
 	vtkSmartPointer<vtkPolyDataMapper> actorMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	actorMapper->SetInputData(readerCbd->GetOutput());
+	actorMapper->SetInputConnection(readerCbd->GetOutputPort());
 
 	// WIPFIX renderer->Render();
 
@@ -739,10 +742,10 @@ void FieldWidget3D::drawGoals(vtkRenderer* renderer)
 	cubeSrc2->SetZLength(post);
 
 	vtkSmartPointer<vtkPolyDataMapper> goalMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	goalMapper->SetInputData(cubeSrc->GetOutput());
+	goalMapper->SetInputConnection(cubeSrc->GetOutputPort());
 
 	vtkSmartPointer<vtkPolyDataMapper> goalMapper2 = vtkSmartPointer<vtkPolyDataMapper>::New();
-	goalMapper2->SetInputData(cubeSrc2->GetOutput());
+	goalMapper2->SetInputConnection(cubeSrc2->GetOutputPort());
 
 	vtkSmartPointer<vtkActor> goalBlue = vtkSmartPointer<vtkActor>::New();
 	goalBlue->SetMapper(goalMapper);
@@ -801,7 +804,7 @@ void FieldWidget3D::drawField(vtkRenderer* renderer)
 	planeSrc->SetPoint1(_FIELD_WIDTH + 2.0, 0, 0);
 	planeSrc->SetPoint2(0, _FIELD_LENGTH + 2.0, 0);
 	vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	planeMapper->SetInputData(planeSrc->GetOutput());
+	planeMapper->SetInputConnection(planeSrc->GetOutputPort());
 	this->field = vtkActor::New();
 	this->field->SetMapper(planeMapper);
 	this->field->GetProperty()->SetColor(0.278, 0.64, 0.196);
@@ -925,7 +928,7 @@ void FieldWidget3D::drawFieldLine(vtkRenderer* renderer, float x1, float y1, flo
           planeSrc->SetPoint1(abs(x2 - x1), 0, 0);
           planeSrc->SetPoint2(0, abs(y2 - y1), 0);
           vtkSmartPointer<vtkPolyDataMapper> planeMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-          planeMapper->SetInputData(planeSrc->GetOutput());
+          planeMapper->SetInputConnection(planeSrc->GetOutputPort());
           vtkSmartPointer<vtkActor> lineActor = vtkActor::New();
           lineActor->SetMapper(planeMapper);
           lineActor->GetProperty()->SetColor(1, 1, 1);
@@ -945,7 +948,7 @@ vtkSmartPointer<vtkActor> FieldWidget3D::createObstacle()
 	cylinder->SetHeight(OBSTACLE_HEIGHT);
 	cylinder->SetResolution(12);
 	vtkSmartPointer<vtkPolyDataMapper> cylinderMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-	cylinderMapper->SetInputData(cylinder->GetOutput());
+	cylinderMapper->SetInputConnection(cylinder->GetOutputPort());
 
 	vtkSmartPointer<vtkActor> obstacleActor = vtkSmartPointer<vtkActor>::New();
 	obstacleActor->SetMapper(cylinderMapper);

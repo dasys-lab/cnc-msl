@@ -389,7 +389,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         vtkSmartPointer<vtkSphereSource> sphereSrc = vtkSmartPointer<vtkSphereSource>::New();
         sphereSrc->SetRadius(field->_BALL_DIAMETER / 2);
         vtkSmartPointer<vtkPolyDataMapper> sphereMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        sphereMapper->SetInputData(sphereSrc->GetOutput());
+        sphereMapper->SetInputConnection(sphereSrc->GetOutputPort());
         this->ball = vtkSmartPointer<vtkActor>::New();
         this->ball->SetMapper(sphereMapper);
         this->ball->GetProperty()->SetRepresentationToSurface();
@@ -402,7 +402,7 @@ void RobotVisualization::init(vtkRenderer *renderer, int id)
         this->ballVelocity->SetPoint2(0, 0, 0);
 
         vtkSmartPointer<vtkPolyDataMapper> velocityMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        velocityMapper->SetInputData(this->ballVelocity->GetOutput());
+        velocityMapper->SetInputConnection(this->ballVelocity->GetOutputPort());
         this->ballVelocityActor = vtkSmartPointer<vtkActor>::New();
         this->ballVelocityActor->SetMapper(velocityMapper);
         this->ballVelocityActor->GetProperty()->SetLineWidth(this->field->_LINE_THICKNESS / 2);
