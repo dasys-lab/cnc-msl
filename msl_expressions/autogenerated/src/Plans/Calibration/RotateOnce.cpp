@@ -26,7 +26,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = 0.1;
+        mc.motion.rotation = 1;
         send(mc);
         int currentSegment = getCurrentRotationSegment();
         double currentBearing = wm->rawSensorData->getAverageBearing();
@@ -40,26 +40,34 @@ namespace alica
 			cout << "end angle: " << endAngle;
 			lastRotationCalibError = circularDiff(initialAngle, endAngle);
 
-
             if(lastRotationCalibError > CALIB_ERROR_THRESHOLD)
             {
             	// rotated too far => increase robot radius
-            	wm->writeBiggerRobotRadius();
+            	cout << endl << "hoch" << endl << endl;
+            	wm->adjustRobotRadius(1);
             	wm->sendKillMotionCommand();
             }
             else if(lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
             {
             	// rotated not far enough => decrease robot radius
-            	wm->writeSmallerRobotRadius();
+            	cout << endl << "runter" << endl << endl;
+            	wm->adjustRobotRadius(-1);
             	wm->sendKillMotionCommand();
-            } else {
+            }
+
+            if(abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
+            {
+            	cout << endl << "success" << endl << endl;
             	this->setSuccess(true);
             	return;
             }
-
-            this->setSuccess(false);
-            this->setFailure(true);
-
+            else
+            {
+            	// start new rotation
+            	cout << endl << "failure" << endl << endl;
+				this->setSuccess(false);
+				this->setFailure(true);
+            }
         }
         /*PROTECTED REGION END*/
     }
@@ -84,7 +92,7 @@ namespace alica
         int segment = -1;
         for (int i = 0; i < 3; i++)
         {
-            double diff = circularDiff(segments[i], currentBearing);
+            double diff = abs(circularDiff(segments[i], currentBearing));
             if (diff < minDiff)
             {
                 segment = i;

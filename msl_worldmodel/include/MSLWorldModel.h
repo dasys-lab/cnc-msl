@@ -115,8 +115,7 @@ namespace msl
 
 		bool isUsingSimulator();
 		void sendKillMotionCommand();
-		void writeBiggerRobotRadius();
-		void writeSmallerRobotRadius();
+		void adjustRobotRadius(int difference);
 
 		Monitoring* monitoring;
 		RawSensorData* rawSensorData;
