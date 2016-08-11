@@ -142,7 +142,7 @@ namespace alica
 
         if (length >= 1)
         {
-            if (abs(correctedPosX - oldCorrectedPosX) > 1000)
+            if (abs(correctedPosX - oldCorrectedPosX) > 500)
             {
                 if (correctedPosX > oldCorrectedPosX)
                 {
@@ -155,7 +155,7 @@ namespace alica
                             * (sqrt(diffX * diffX) / lengthSegment) + 1;
                 }
             }
-            if (abs(correctedPosY - oldCorrectedPosY) > 1000)
+            if (abs(correctedPosY - oldCorrectedPosY) > 500)
             {
                 if (correctedPosY > oldCorrectedPosY)
                 {
@@ -214,6 +214,12 @@ namespace alica
         std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
+        std::cout << "calibCoeffX 1: " << calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX)
+                                    * (sqrt(diffX * diffX) / lengthSegment) + 1 << std::endl;
+        std::cout << "calibCoeffX 2: " << calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x)
+                                    * (sqrt(diffX * diffX) / lengthSegment) + 1 << std::endl;
+        std::cout << "oldCorrectedPosX: " << oldCorrectedPosX << std::endl;
+        std::cout << "oldCorrectedPosY: " << oldCorrectedPosY << std::endl;
 
         std::cout << "" << std::endl;
 
