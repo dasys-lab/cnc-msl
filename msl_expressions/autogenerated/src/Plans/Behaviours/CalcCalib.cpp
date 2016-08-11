@@ -54,12 +54,7 @@ namespace alica
         calibOldPosMotionY = calibPosMotionY;
 
         //----------------------------------------------------------------------------------------------------------
-
-//        errorTestMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
-//		errorTestMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
-//		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-//		errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
-
+/*
         errorTestMotionPosX = correctedPosX;
 		errorTestMotionPosY = correctedPosY;
 		errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
@@ -103,7 +98,7 @@ namespace alica
 		}
 
 		timeCounter++;
-
+*/
 
         /*PROTECTED REGION END*/
     }
@@ -216,22 +211,18 @@ namespace alica
         std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
         std::cout << "correctedPosX : " << correctedPosX << std::endl;
         std::cout << "correctedPosY : " << correctedPosY << std::endl;
-        std::cout << "correctedWayX : " << correctedWayX << std::endl;
-        std::cout << "correctedWayY : " << correctedWayY << std::endl;
         std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
-        std::cout << "calibCounter: " << calibCounter << std::endl;
 
         std::cout << "" << std::endl;
 
         lengthSegment = 0;
-        oldCorrectedPosX = correctedPosX;
-        oldCorrectedPosY = correctedPosY;
+        oldCorrectedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+        oldCorrectedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
-        calibCounter++;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1446033324019) ENABLED START*/ //Add additional methods here
