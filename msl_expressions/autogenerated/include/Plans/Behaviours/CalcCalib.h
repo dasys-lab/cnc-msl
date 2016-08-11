@@ -27,8 +27,8 @@ namespace alica
         double correctedWayY = 0;
         double correctedPosX = 0;
         double correctedPosY = 0;
-        double oldCorrectedPosX;
-        double oldCorrectedPosY;
+        double oldCorrectedPosX = 0;
+        double oldCorrectedPosY = 0;
         double diffX;
         double diffY;
         double lengthSegment = 0;
