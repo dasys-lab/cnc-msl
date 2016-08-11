@@ -146,12 +146,12 @@ namespace alica
             {
                 if (correctedPosX > oldCorrectedPosX)
                 {
-                    calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX)
+                    calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
                             * (sqrt(diffX * diffX) / lengthSegment) + 1;
                 }
                 if (correctedPosX < oldCorrectedPosX)
                 {
-                    calibCoefficientX *= calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x)
+                    calibCoefficientX *= calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
                             * (sqrt(diffX * diffX) / lengthSegment) + 1;
                 }
             }
@@ -159,12 +159,12 @@ namespace alica
             {
                 if (correctedPosY > oldCorrectedPosY)
                 {
-                    calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedWayY)
+                    calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
                             * (sqrt(diffY * diffY) / lengthSegment) + 1;
                 }
                 if (correctedPosY < oldCorrectedPosY)
                 {
-                    calibCoefficientY *= calibSign(correctedWayY, this->wm->rawSensorData->getOwnPositionVision()->y)
+                    calibCoefficientY *= calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
                             * (sqrt(diffY * diffY) / lengthSegment) + 1;
                 }
             }
