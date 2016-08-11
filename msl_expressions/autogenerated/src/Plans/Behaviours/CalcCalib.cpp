@@ -128,15 +128,6 @@ namespace alica
             calibData.close();
         }
 
-        if (calibCoefficientX == 0)
-        {
-            calibCoefficientX = 1;
-        }
-        if (calibCoefficientY == 0)
-        {
-            calibCoefficientY = 1;
-        }
-
         ros::NodeHandle calibCEP;
         calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
 
@@ -147,12 +138,12 @@ namespace alica
                 if (correctedPosX > oldCorrectedPosX)
                 {
                     calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
-                            * (sqrt(diffX * diffX) / lengthSegment) + 1;
+                            * (diffX / lengthSegment) + 1;
                 }
                 if (correctedPosX < oldCorrectedPosX)
                 {
                     calibCoefficientX *= calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
-                            * (sqrt(diffX * diffX) / lengthSegment) + 1;
+                            * (diffX / lengthSegment) + 1;
                 }
             }
             if (abs(correctedPosY - oldCorrectedPosY) > 500)
@@ -160,18 +151,18 @@ namespace alica
                 if (correctedPosY > oldCorrectedPosY)
                 {
                     calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
-                            * (sqrt(diffY * diffY) / lengthSegment) + 1;
+                            * (diffY / lengthSegment) + 1;
                 }
                 if (correctedPosY < oldCorrectedPosY)
                 {
                     calibCoefficientY *= calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
-                            * (sqrt(diffY * diffY) / lengthSegment) + 1;
+                            * (diffY / lengthSegment) + 1;
                 }
             }
 
-            if (calibCoefficientX < 0.5)
+            if (calibCoefficientX < 0.3)
             {
-                calibCoefficientX = 0.5;
+                calibCoefficientX = 0.3;
             }
             if (calibCoefficientY < 0.3)
             {
@@ -215,11 +206,10 @@ namespace alica
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "calibCoeffX 1: " << calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX)
-                                    * (sqrt(diffX * diffX) / lengthSegment) + 1 << std::endl;
+                                    * (diffX / lengthSegment) + 1 << std::endl;
         std::cout << "calibCoeffX 2: " << calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x)
-                                    * (sqrt(diffX * diffX) / lengthSegment) + 1 << std::endl;
-        std::cout << "oldCorrectedPosX: " << oldCorrectedPosX << std::endl;
-        std::cout << "oldCorrectedPosY: " << oldCorrectedPosY << std::endl;
+                                    * (diffX / lengthSegment) + 1 << std::endl;
+
 
         std::cout << "" << std::endl;
 
