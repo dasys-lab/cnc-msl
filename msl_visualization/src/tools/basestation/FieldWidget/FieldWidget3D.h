@@ -292,7 +292,7 @@ public Q_SLOTS:
         heightColor = v;
     }
 
-    
+
 };
 
 #endif // FIELDWIDGET3D_H

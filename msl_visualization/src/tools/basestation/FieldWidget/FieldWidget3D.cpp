@@ -313,10 +313,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 												(FieldWidget3D*)this);
 	corridorCheckSubscriber = rosNode->subscribe("/PathPlanner/CorridorCheck", 10, &FieldWidget3D::onCorridorCheckMsg,
 													(FieldWidget3D*)this);
-        debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,  (FieldWidget3D*)this);
-        passMsgSubscriber = rosNode->subscribe("/WorldModel/PassMsg", 10, &FieldWidget3D::onPassMsg,  (FieldWidget3D*)this);
+	debugMsgSubscriber = rosNode->subscribe("/DebugMsg", 10, &FieldWidget3D::onDebugMsg,  (FieldWidget3D*)this);
+	passMsgSubscriber = rosNode->subscribe("/WorldModel/PassMsg", 10, &FieldWidget3D::onPassMsg,  (FieldWidget3D*)this);
 
-        spinner = new ros::AsyncSpinner(1);
+	spinner = new ros::AsyncSpinner(1);
 	spinner->start();
 	supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 	Update_timer = new QTimer();
@@ -340,10 +340,13 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 
 	renderWindow = vtkRenderWindow::New();
 	renderWindow->SetAlphaBitPlanes(1);
+	renderWindow->SetMultiSamples(0);
+
 	renderer = vtkRenderer::New();
 	renderer->SetBackground(72.0 / 255.0, 72.0 / 255.0, 72.0 / 255.0);
-
-	renderer->SetUseDepthPeeling(true);
+	renderer->SetUseDepthPeeling(1);
+	renderer->SetMaximumNumberOfPeels(100);
+	renderer->SetOcclusionRatio(0.1);
 
 	renderWindow->AddRenderer(renderer);
 	this->SetRenderWindow(renderWindow);
