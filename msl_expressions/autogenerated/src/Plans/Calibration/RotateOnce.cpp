@@ -34,7 +34,7 @@ namespace alica
         visitedSegments[currentSegment] = true;
 
         if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2]
-                && abs(circularDiff(currentBearing, initialBearing)) < 0.02)
+                && abs(circularDiff(currentBearing, initialBearing)) < CALIB_ERROR_THRESHOLD)
         {
 			double endAngle = wm->rawOdometry->position.angle;
 			cout << "end angle: " << endAngle;
@@ -75,6 +75,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
         initialBearing = wm->rawSensorData->getAverageBearing();
+
         initialAngle = wm->rawOdometry->position.angle;
         //robotRadius = wm->
         segments[0] = initialBearing;
