@@ -9,7 +9,6 @@ using namespace std;
 #include <RawSensorData.h>
 #include "container/CNPoint2D.h"
 
-#define DEBUG_CDF
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,8 +18,9 @@ namespace alica
 			DomainBehaviour("CalibrationDribbleForward")
 	{
 		/*PROTECTED REGION ID(con1469116853584) ENABLED START*/ //Add additional options here
-		sections.reserve(SECTIONS_SIZE);
-#ifdef DEBUG_CDF
+		vector<subsection> vec (SECTIONS_SIZE);
+		sections = vec;
+#ifdef DEBUG_DC
 		cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
 
@@ -39,7 +39,8 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1469116853584) ENABLED START*/ //Add additional options here
 		MotionControl mc;
-
+		writeConfigParameters();
+		return;
 		if (wm->rawSensorData->getLightBarrier())
 		{
 			haveBallCount++;
@@ -85,7 +86,7 @@ namespace alica
 			mc = dcc.getBall();
 			send(mc);
 		}
-		writeConfigParameters();
+
 		/*PROTECTED REGION END*/
 	}
 	void CalibrationDribbleForward::initialiseParameters()
@@ -130,9 +131,15 @@ namespace alica
 		return false;
 	}
 
+	/**
+	 * fill class variable sections with config parameters
+	 */
 	void CalibrationDribbleForward::fillSections(shared_ptr<vector<string> > speedsSections)
 	{
 		int i = 0;
+#ifdef DEBUG_DC
+		cout << "speedSections size: " << speedsSections->size() << endl;
+#endif
 		for (string subsection : *speedsSections)
 		{
 			sections[i].name = subsection.c_str();
@@ -140,27 +147,42 @@ namespace alica
 																		"robotSpeed", NULL);
 			sections[i].actuatorSpeed = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
 																		"actuatorSpeed", NULL);
-			cout << "RobotSpeed: " << sections[i].robotSpeed << "actuatorSpeed: " << sections[i].actuatorSpeed << endl;
+#ifdef DEBUG_DC
+			cout << "Name: " << sections[i].name << " | RobotSpeed: " << sections[i].robotSpeed << " | ActuatorSpeed: " << sections[i].actuatorSpeed << endl;
+			sections[i].robotSpeed += 100;
+			sections[i].actuatorSpeed += 100;
+#endif
 			i++;
 		}
 
 	}
 
+	/**
+	 * fills class variable sections with default parameters
+	 */
 	void CalibrationDribbleForward::createSections()
 	{
-		double speedFactor = MAX_SPEED / SECTIONS_SIZE;
+		double speedFactor = MAX_SPEED / (SECTIONS_SIZE - 1);
+		double rotationFactor = MAX_ROTATION / (SECTIONS_SIZE - 1);
+
 		for (int i = 0; i < SECTIONS_SIZE; i++)
 		{
 			sections[i].name = "P" + std::to_string(i + 1);
-			sections[i].robotSpeed = i * speedFactor;
-			sections[i].actuatorSpeed = i * speedFactor;
+			sections[i].robotSpeed = MAX_SPEED - i * speedFactor;
+			// don't fall under the minRotation
+			sections[i].actuatorSpeed = (MAX_ROTATION - i * rotationFactor) < minRotation ? minRotation : MAX_ROTATION - i * rotationFactor;
 		}
 	}
 
 	void CalibrationDribbleForward::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		DribbleCalibrationContainer dcc;
 
+		// config Params
+		minRotation = dcc.readConfigParameter("Dribble.MinRotation");
+
+		// sections
 		shared_ptr<vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
 
 		if (speedsSections->size() == SECTIONS_SIZE)
@@ -169,6 +191,7 @@ namespace alica
 		}
 		else
 		{
+			// currently not used
 			createSections();
 		}
 
@@ -187,7 +210,7 @@ namespace alica
 //		shared_ptr<vector<subsection>> sections;
 //		sections->push_back(s1);
 
-		dcc.writeConfigParameters(sections);
+		dcc.writeConfigParameters(sections, "ForwardDribbleSpeeds");
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

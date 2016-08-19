@@ -36,6 +36,10 @@ namespace alica
     }
     void CalibrationTakeBall::run(void* msg)
     {
+    	// TODO: remove when finished testing
+    	this->setSuccess(true);
+    	return;
+
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
 //		BallHandleCmd bhc;
         // check if robot has the ball

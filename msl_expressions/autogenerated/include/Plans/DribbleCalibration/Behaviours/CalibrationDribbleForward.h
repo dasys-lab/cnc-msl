@@ -23,7 +23,8 @@ namespace alica
 		vector<subsection> sections;
 
 		static const int MAX_SPEED = 4000;
-		static const int SECTIONS_SIZE = 10;
+		static const int MAX_ROTATION = 5000;
+		static const int SECTIONS_SIZE = 11;
 		static const int MIN_ROTATE_NUMBER = 300;
 
 		//const for checkBallRotation
@@ -37,6 +38,9 @@ namespace alica
 		int changingFactor;
 
 		int moveCount;
+
+		// config Params
+		double minRotation;
 
 		void adaptWheelSpeed(int err);
 		int checkBallRotation();

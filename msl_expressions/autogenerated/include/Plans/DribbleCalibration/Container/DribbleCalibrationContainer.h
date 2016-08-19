@@ -11,6 +11,8 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
 
+#define DEBUG_DC
+
 using namespace msl;
 namespace alica
 {
@@ -43,7 +45,7 @@ namespace alica
 
 		double readConfigParameter(const char *path);
 //		void writeConfigParameters(shared_ptr<vector<subsection>> sections);
-		void writeConfigParameters(vector<subsection> sections);
+		void writeConfigParameters(vector<subsection> sections, const char* path);
 	private:
 		msl::MSLWorldModel* wm;
 

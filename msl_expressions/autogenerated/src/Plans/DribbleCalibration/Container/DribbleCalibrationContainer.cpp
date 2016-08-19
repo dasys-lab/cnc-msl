@@ -89,12 +89,23 @@ namespace alica
 		return (*sys)["Actuation"]->get<double>(path, NULL);
 	}
 
-	void DribbleCalibrationContainer::writeConfigParameters(vector<subsection> sections)
+	void DribbleCalibrationContainer::writeConfigParameters(vector<subsection> sections, const char* path)
 	{
+#ifdef DEBUG_DC
+		cout << "write sections to config!" << endl;
+#endif
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		for (subsection section : sections)
 		{
+			string s(path);
+			s += "." + section.name;
 
+			(*sys)["Actuation"]->set(boost::lexical_cast < std::string > (section.actuatorSpeed), (s + ".actuatorSpeed").c_str() , NULL);
+#ifdef DEBUG_DC
+			cout << "wrote: " << s.append(".actuatorSpeed").c_str() << " with value " << section.actuatorSpeed << endl;
+#endif
+			(*sys)["Actuation"]->set(boost::lexical_cast < std::string > (section.robotSpeed), (s + ".robotSpeed").c_str() , NULL);
 		}
-
+		(*sys)["Actuation"]->store();
 	}
 } /* namespace alica */
