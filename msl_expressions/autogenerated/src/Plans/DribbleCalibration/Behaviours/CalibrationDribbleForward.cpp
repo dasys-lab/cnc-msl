@@ -149,8 +149,8 @@ namespace alica
 																		"actuatorSpeed", NULL);
 #ifdef DEBUG_DC
 			cout << "Name: " << sections[i].name << " | RobotSpeed: " << sections[i].robotSpeed << " | ActuatorSpeed: " << sections[i].actuatorSpeed << endl;
-			sections[i].robotSpeed += 100;
-			sections[i].actuatorSpeed += 100;
+//			sections[i].robotSpeed += 100;
+//			sections[i].actuatorSpeed += 100;
 #endif
 			i++;
 		}
@@ -202,14 +202,6 @@ namespace alica
 
 	void CalibrationDribbleForward::writeConfigParameters()
 	{
-		// as an example -> improve later!
-//		subsection s1;
-//		s1.name = "P9";
-//		s1.actuatorSpeed = 300;
-//		s1.robotSpeed = 400;
-//		shared_ptr<vector<subsection>> sections;
-//		sections->push_back(s1);
-
 		dcc.writeConfigParameters(sections, "ForwardDribbleSpeeds");
 	}
 /*PROTECTED REGION END*/
