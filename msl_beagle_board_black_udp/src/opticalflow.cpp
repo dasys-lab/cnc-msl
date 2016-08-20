@@ -50,6 +50,8 @@ void OpticalFlow::controlLED(bool enabled) {
 
 uint8_t OpticalFlow::read(uint8_t address) {
 	pins->clearBit(ncs);
+	usleep(1);
+
 	spi->transfer(address, 75);		// wait t_SRAD
 
 	uint8_t ret = spi->transfer(0x00);
@@ -67,9 +69,11 @@ void OpticalFlow::reset(void) {
 
 void OpticalFlow::write(uint8_t address, uint8_t value) {
 	pins->clearBit(ncs);
-	spi->transfer(address | 0x80, 50);
+	usleep(1);
 
+	spi->transfer(address | 0x80, 50);
 	spi->transfer(value);
+
 	pins->setBit(ncs);
 }
 
@@ -125,6 +129,8 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size) {
 	usleep(1510);					// wait t_CAPTURE
 
 	pins->clearBit(ncs);
+	usleep(1);
+
 	spi->transfer(PIXEL_BURST);
 	usleep(50);						// wait t_SRAD
 
@@ -145,6 +151,7 @@ void OpticalFlow::getMotionBurst(int8_t *burst) {
 	uint8_t	read[7];
 
 	pins->clearBit(ncs);
+	usleep(1);
 
 	spi->transfer(MOTION_BURST);
 	usleep(75);
