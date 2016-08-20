@@ -83,12 +83,23 @@ namespace alica
     	return mc;
     }
 
+    /**
+     * helps to read config parameters out of the Actuation.conf
+     *
+     * @path in Actuation config to the needed config parameter
+     */
 	double DribbleCalibrationContainer::readConfigParameter(const char *path)
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		return (*sys)["Actuation"]->get<double>(path, NULL);
 	}
 
+	/**
+	 * writes sections to config file
+	 *
+	 * @sections are the sections
+	 * @path is the path to the section e.g. "ForwardDribbleSpeeds"
+	 */
 	void DribbleCalibrationContainer::writeConfigParameters(vector<subsection> sections, const char* path)
 	{
 #ifdef DEBUG_DC
