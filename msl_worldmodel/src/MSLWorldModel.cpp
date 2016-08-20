@@ -507,6 +507,7 @@ namespace msl
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
 		int currentRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
+		cout<<"#### WRite OUT ### " << (currentRadius+difference) << "######" << endl;
 		motion->set(boost::lexical_cast<string>(currentRadius + difference),"Motion.MotionControl.RobotRadius",NULL);
 		motion->store();
 	}
