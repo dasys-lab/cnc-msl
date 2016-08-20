@@ -73,14 +73,14 @@ namespace alica
 			cout << "end angle: " << endAngle;
 			lastRotationCalibError = circularDiff(initialAngle, endAngle);
 
-            if(lastRotationCalibError > CALIB_ERROR_THRESHOLD)
+            if(lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
             {
             	// rotated too far => increase robot radius
             	cout << endl << "hoch" << endl << endl;
             	wm->adjustRobotRadius(1);
             	wm->sendKillMotionCommand();
             }
-            else if(lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
+            else if(lastRotationCalibError > CALIB_ERROR_THRESHOLD)
             {
             	// rotated not far enough => decrease robot radius
             	cout << endl << "runter" << endl << endl;
