@@ -18,10 +18,13 @@ namespace alica
         double initialBearing;
         // this data comes from the motion
         double initialAngle;
+
+        bool initialized = false;
         /*PROTECTED REGION END*/
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1467397900274) ENABLED START*/ //Add additional protected methods here
+        int uninitialzedCounter;
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here

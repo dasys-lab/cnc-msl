@@ -517,7 +517,6 @@ namespace msl
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
 		std::vector<int> ownRobotId;
-		cout << "PROCESS ID" << processId << " ##############" << endl;
 		ownRobotId.push_back(this->getOwnId());
 		std::vector<int> pKeys;
 		pKeys.push_back(processId);
@@ -530,8 +529,27 @@ namespace msl
 		paramsets.push_back(0);
 		command.paramSets = paramsets;
 		processCommandPub.publish(command);
-		//command.cmd = 0;
-		//processCommandPub.publish(command);
+		setMaySendMessages(false);
+	}
+
+	void msl::MSLWorldModel::sendStartMotionCommand()
+	{
+		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
+
+		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
+		std::vector<int> ownRobotId;
+		ownRobotId.push_back(this->getOwnId());
+		std::vector<int> pKeys;
+		pKeys.push_back(processId);
+		process_manager::ProcessCommand command;
+		command.cmd = 0;
+		command.receiverId = this->getOwnId();
+		command.robotIds = ownRobotId;
+		command.processKeys = pKeys;
+		std::vector<int> paramsets;
+		paramsets.push_back(0);
+		command.paramSets = paramsets;
+		processCommandPub.publish(command);
 	}
 } /* namespace msl */
 

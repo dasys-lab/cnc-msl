@@ -25,6 +25,27 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
+    	if(initialized == false) {
+    		if (wm->isMaySendMessages())
+    		{
+				initialBearing = wm->rawSensorData->getAverageBearing();
+
+				initialAngle = wm->rawOdometry->position.angle;
+				//robotRadius = wm->
+				segments[0] = initialBearing;
+				segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+				segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+				visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
+				cout << "starting angle: " << initialAngle;
+    		} else
+    		{
+    			uninitialzedCounter++;
+    		}
+    		if (uninitialzedCounter == 200)
+    		{
+    			wm->sendStartMotionCommand();
+    		}
+    	}
         msl_actuator_msgs::MotionControl mc;
         mc.motion.rotation = 1;
         send(mc);
@@ -74,15 +95,24 @@ namespace alica
     void RotateOnce::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
-        initialBearing = wm->rawSensorData->getAverageBearing();
+    	if(wm->isMaySendMessages())
+    	{
 
-        initialAngle = wm->rawOdometry->position.angle;
-        //robotRadius = wm->
-        segments[0] = initialBearing;
-        segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-        segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-        visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
-        cout << "starting angle: " << initialAngle;
+            initialBearing = wm->rawSensorData->getAverageBearing();
+
+            initialAngle = wm->rawOdometry->position.angle;
+            //robotRadius = wm->
+            segments[0] = initialBearing;
+            segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+            segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+            visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
+            cout << "starting angle: " << initialAngle;
+    	}
+    	else
+    	{
+    		uninitialzedCounter = 0;
+    		initialized = false;
+    	}
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
