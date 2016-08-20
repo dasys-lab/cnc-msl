@@ -39,7 +39,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1469116853584) ENABLED START*/ //Add additional options here
 		MotionControl mc;
-		writeConfigParameters();
+//		writeConfigParameters();
 		return;
 		if (wm->rawSensorData->getLightBarrier())
 		{
