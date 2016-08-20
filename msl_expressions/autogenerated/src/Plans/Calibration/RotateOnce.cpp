@@ -59,7 +59,7 @@ namespace alica
 			initialized = true;
 		}
     	msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = 1;
+        mc.motion.rotation = 0.5;
         send(mc);
         int currentSegment = getCurrentRotationSegment();
         double currentBearing = wm->rawSensorData->getAverageBearing();
