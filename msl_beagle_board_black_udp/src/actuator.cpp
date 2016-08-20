@@ -672,6 +672,7 @@ int main(int argc, char** argv) {
 	bool i2c = myI2C.open(ReadWrite);
 	bool spi = mySpi.open(ReadWrite);
 	bool imu = lsm9ds0.init();
+	adns3080.adns_init();
 
 	supplementary::Configuration *proxyconf = (*sc)["msl_bbb_proxy"];
 	std::string baddress = proxyconf->get<std::string>("UdpProxy","MulticastAddress",NULL);
