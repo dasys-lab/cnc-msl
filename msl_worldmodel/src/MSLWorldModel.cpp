@@ -529,7 +529,6 @@ namespace msl
 		paramsets.push_back(0);
 		command.paramSets = paramsets;
 		processCommandPub.publish(command);
-		setMaySendMessages(false);
 	}
 
 	void msl::MSLWorldModel::sendStartMotionCommand()
