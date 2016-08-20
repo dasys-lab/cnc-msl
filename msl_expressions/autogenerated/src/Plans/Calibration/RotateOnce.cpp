@@ -35,12 +35,12 @@ namespace alica
 			wm->sendStartMotionCommand();
 			return;
 		}
-    	else if (initialized == false)
+    	else if (initialized == false && uninitialzedCounter < 200)
     	{
     		return;
     	}
 
-    	if (initialized == false && uninitialzedCounter == 400)
+    	if (initialized == false && uninitialzedCounter != 400)
 		{
 			return;
 		}
