@@ -517,6 +517,7 @@ namespace msl
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
 		std::vector<int> ownRobotId;
+		cout << "PROCESS ID" << processId << " ##############" << endl;
 		ownRobotId.push_back(this->getOwnId());
 		std::vector<int> pKeys;
 		pKeys.push_back(processId);
