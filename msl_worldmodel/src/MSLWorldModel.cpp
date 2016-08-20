@@ -530,8 +530,8 @@ namespace msl
 		paramsets.push_back(0);
 		command.paramSets = paramsets;
 		processCommandPub.publish(command);
-		command.cmd = 0;
-		processCommandPub.publish(command);
+		//command.cmd = 0;
+		//processCommandPub.publish(command);
 	}
 } /* namespace msl */
 
