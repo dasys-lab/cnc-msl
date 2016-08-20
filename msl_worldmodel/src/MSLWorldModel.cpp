@@ -507,7 +507,6 @@ namespace msl
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
 		int currentRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
-		cout<<"#### WRite OUT ### " << (currentRadius+difference) << "######" << endl;
 		motion->set(boost::lexical_cast<string>(currentRadius + difference),"Motion.MotionControl.RobotRadius",NULL);
 		motion->store();
 	}
@@ -523,9 +522,14 @@ namespace msl
 		pKeys.push_back(processId);
 		process_manager::ProcessCommand command;
 		command.cmd = 1;
-		command.receiverId = 0;
+		command.receiverId = this->getOwnId();
 		command.robotIds = ownRobotId;
 		command.processKeys = pKeys;
+		std::vector<int> paramsets;
+		paramsets.push_back(0);
+		command.paramSets = paramsets;
+		processCommandPub.publish(command);
+		command.cmd = 0;
 		processCommandPub.publish(command);
 	}
 } /* namespace msl */
