@@ -10,12 +10,12 @@
     <parameters id="1440849476842" name="MISSING_NAME" comment="" key="PassCorridorWidth" value="1000"/>
     <parameters id="1440849496542" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="AttackPlay"/>
     <parameters id="1440849505103" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="AttackPlay"/>
-    <parameters id="1440849514834" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="InGamePassReceiver"/>
-    <parameters id="1440849527880" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="AttackSupport"/>
+    <parameters id="1440849514834" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
+    <parameters id="1440849527880" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="SupportAttack"/>
   </configurations>
   <configurations id="1441108023281" name="AlignAndPassRapidTest" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1441108074571" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="InGamePassReceiver"/>
-    <parameters id="1441108081318" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="AttackSupport"/>
+    <parameters id="1441108074571" name="MISSING_NAME" comment="" key="TeamMateTaskName0" value="ReceivePassInGame"/>
+    <parameters id="1441108081318" name="MISSING_NAME" comment="" key="TeamMateTaskName1" value="SupportAttack"/>
     <parameters id="1441108097352" name="MISSING_NAME" comment="" key="TeamMatePlanName0" value="PassPlan"/>
     <parameters id="1441108118537" name="MISSING_NAME" comment="" key="TeamMatePlanName1" value="PassPlan"/>
     <parameters id="1441108154549" name="MISSING_NAME" comment="" key="DistToFieldBorder" value="-500"/>

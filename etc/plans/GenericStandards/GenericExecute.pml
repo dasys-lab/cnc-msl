@@ -99,8 +99,8 @@
     <task>../../Misc/taskrepository.tsk#1439997023446</task>
     <state>#1431522297705</state>
   </entryPoints>
-  <entryPoints id="1431523395534" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1432209050494</task>
+  <entryPoints id="1431523395534" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+    <task>../../Misc/taskrepository.tsk#1461237765109</task>
     <state>#1431523482646</state>
   </entryPoints>
   <entryPoints id="1431523422152" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">

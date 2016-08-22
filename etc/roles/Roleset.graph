@@ -4,22 +4,7 @@
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.47" outEdge="//@edges.0 //@edges.1 //@edges.2 //@edges.3 //@edges.4 //@edges.5 //@edges.6 //@edges.7 //@edges.8 //@edges.9 //@edges.10 //@edges.11 //@edges.12 //@edges.13 //@edges.14 //@edges.15 //@edges.16 //@edges.17 //@edges.18 //@edges.19 //@edges.20 //@edges.21 //@edges.22 //@edges.23 //@edges.24 //@edges.25 //@edges.26 //@edges.27 //@edges.28 //@edges.29 //@edges.30 //@edges.31 //@edges.32 //@edges.33 //@edges.34 //@edges.35 //@edges.36 //@edges.37 //@edges.38 //@edges.39 //@edges.40 //@edges.41 //@edges.42 //@edges.43 //@edges.44 //@edges.45 //@edges.46">
     <task href="../Misc/taskrepository.tsk#1225112227903"/>
     <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
-    <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -36,23 +21,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.0 //@edges.1 //@edges.4 //@edges.33 //@edges.40 //@edges.42">
     <task href="../Misc/taskrepository.tsk#1222613952469"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.6">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -69,23 +39,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.2 //@edges.5 //@edges.11 //@edges.35 //@edges.39">
     <task href="../Misc/taskrepository.tsk#1432209050494"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -102,23 +57,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.3 //@edges.6 //@edges.12 //@edges.23 //@edges.36 //@edges.38 //@edges.45">
     <task href="../Misc/taskrepository.tsk#1225115406909"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -135,23 +75,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.7 //@edges.20 //@edges.34">
     <task href="../Misc/taskrepository.tsk#1307185798142"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -168,23 +93,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.8 //@edges.37 //@edges.41 //@edges.46">
     <task href="../Misc/taskrepository.tsk#1221754402444"/>
-    <mappings priority="-1.0">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="-1.0">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="-1.0">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="-1.0">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="-1.0">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -201,23 +111,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.9 //@edges.13 //@edges.17 //@edges.21 //@edges.24 //@edges.25 //@edges.29">
     <task href="../Misc/taskrepository.tsk#1439997010902"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -234,23 +129,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.10 //@edges.14 //@edges.18 //@edges.22 //@edges.26 //@edges.30">
     <task href="../Misc/taskrepository.tsk#1439997023446"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.6">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -268,22 +148,7 @@
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.15 //@edges.31">
     <task href="../Misc/taskrepository.tsk#1462360858945"/>
     <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
-    <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -301,22 +166,7 @@
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.16 //@edges.19 //@edges.32">
     <task href="../Misc/taskrepository.tsk#1461237765109"/>
     <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
-    <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -334,22 +184,7 @@
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.27">
     <task href="../Misc/taskrepository.tsk#1464532449309"/>
     <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
-    <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -367,22 +202,7 @@
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.28">
     <task href="../Misc/taskrepository.tsk#1464864263733"/>
     <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
-    <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -399,23 +219,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.43">
     <task href="../Misc/taskrepository.tsk#1225115536468"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
@@ -432,23 +237,8 @@
   </nodes>
   <nodes xsi:type="alica:TaskWrapper" inEdge="//@edges.44">
     <task href="../Misc/taskrepository.tsk#1225116131298"/>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297047"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297049"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297051"/>
-    </mappings>
     <mappings priority="-1.0">
       <role href="rolesDefinition.rdefset#1222973297052"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297054"/>
-    </mappings>
-    <mappings priority="0.5">
-      <role href="rolesDefinition.rdefset#1222973297056"/>
     </mappings>
     <mappings priority="0.5">
       <role href="rolesDefinition.rdefset#1301084991775"/>
