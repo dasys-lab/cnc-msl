@@ -23,6 +23,8 @@ namespace alica
 		ballHoldCorrect = false;
 
 		adaptWheel = 0;
+		operation = ADD;
+		oldOperation = ADD;
 
 		// for output
 		queueFilled = false;
