@@ -16,10 +16,6 @@
 using namespace msl;
 namespace alica
 {
-//	#define DRIBBLEFORWARD 100
-//	#define DRIBBLEBACKWARD 200
-//	#define DRIBBLELEFT 300
-//	#define DRIBBLERIGHT 400
 
 	struct subsection
 	{
@@ -37,6 +33,11 @@ namespace alica
 		msl_actuator_msgs::MotionControl getBall();
 		msl_actuator_msgs::MotionControl move(int movement, int translation);
 
+		// opticalFlow stuff
+		double getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
+		double getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
+		double getAverageOpticalFlowQOSValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
+
 		static const int DRIBBLE_FORWARD = 100;
 		static const int DRIBBLE_BACKWARD = 200;
 		static const int DRIBBLE_LEFT = 300;
@@ -44,12 +45,16 @@ namespace alica
 
 
 		double readConfigParameter(const char *path);
-//		void writeConfigParameters(shared_ptr<vector<subsection>> sections);
 		void writeConfigParameters(vector<subsection> sections, const char* path);
 	private:
 		msl::MSLWorldModel* wm;
 
 		shared_ptr<msl::MovementQuery> query;
+
+		static const int XVALUE = 34;
+		static const int YVALUE = 35;
+		static const int QOSVALUE = 36;
+		double getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue);
 	};
 
 } /* namespace alica */

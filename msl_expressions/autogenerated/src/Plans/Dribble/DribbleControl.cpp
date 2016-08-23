@@ -28,6 +28,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449742071382) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
+        readConfigParameters();
 //        cout << "in DribbleControl!!!!!!" << endl;
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)

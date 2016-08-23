@@ -13,198 +13,227 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1469109429392) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    CalibrationTakeBall::CalibrationTakeBall() :
-            DomainBehaviour("CalibrationTakeBall")
-    {
-        /*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
-        ballRotateCorrect = false;
-        ballHoldCorrect = false;
+	/*PROTECTED REGION ID(staticVars1469109429392) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	CalibrationTakeBall::CalibrationTakeBall() :
+			DomainBehaviour("CalibrationTakeBall")
+	{
+		/*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
+		ballRotateCorrect = false;
+		ballHoldCorrect = false;
 
-        dribbleFactorRightOld = 0;
+		adaptWheel = 0;
 
-        defectWheel = 0;
+		readConfigParameters();
+		/*PROTECTED REGION END*/
+	}
+	CalibrationTakeBall::~CalibrationTakeBall()
+	{
+		/*PROTECTED REGION ID(dcon1469109429392) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void CalibrationTakeBall::run(void* msg)
+	{
+		// TODO: remove when finished testing
+//    	this->setSuccess(true);
+//    	return;
 
-        readConfigParameters();
-        /*PROTECTED REGION END*/
-    }
-    CalibrationTakeBall::~CalibrationTakeBall()
-    {
-        /*PROTECTED REGION ID(dcon1469109429392) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void CalibrationTakeBall::run(void* msg)
-    {
-    	// TODO: remove when finished testing
-    	this->setSuccess(true);
-    	return;
-
-        /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION ID(run1469109429392) ENABLED START*///Add additional options here
 //		BallHandleCmd bhc;
-        // check if robot has the ball
-        if (wm->rawSensorData->getLightBarrier())
-        {
-            // check if ball is rotating correctly
-            if (!this->ballRotateCorrect)
-            {
-                // let ball continuously rotate with speedNoBall (should be by 4000)
-//				bhc.leftMotor = this->speedNoBall;
-//				bhc.rightMotor = this->speedNoBall;
-//				send(bhc);
-                int ballRotation = checkBallRotation();
+		// check if robot has the ball
+		if (wm->rawSensorData->getLightBarrier())
+		{
+			// check if ball is rotating correctly
+			if (!this->ballRotateCorrect)
+			{
+				// let ball continuously rotate with speedNoBall (should be by 4000)
 
-                if (ballRotation == ROTATE_ERR)
-                {
-                    return;
-                }
-                else if (ballRotation == ROTATE_CORRECT)
-                {
-                    this->ballRotateCorrect = true;
-                }
-                else if (ballRotation == ROTATE_LEFT)
-                {
-                    // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                    correctWheelSpeed(ROTATE_LEFT);
-                    writeConfigParameters();
-                }
-                else if (ballRotation == ROTATE_RIGHT)
-                {
-                    // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                    correctWheelSpeed(ROTATE_RIGHT);
-                    writeConfigParameters();
-                }
-                return;
-            }
+				if (!opQueueFilled())
+				{
+					return;
+				}
 
-        }
-        else
-        {
-            MotionControl mc = dcc.getBall();
-            send(mc);
-            return;
-        }
+				int ballRotation = checkBallRotation();
 
-        this->setSuccess(true);
+				if (ballRotation == ROTATE_ERR)
+				{
+					return;
+				}
+				else if (ballRotation == ROTATE_CORRECT)
+				{
+					this->ballRotateCorrect = true;
+				}
+				else if (ballRotation == ROTATE_LEFT)
+				{
+					// ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
+					correctWheelSpeed(ROTATE_LEFT);
+					writeConfigParameters();
+				}
+				else if (ballRotation == ROTATE_RIGHT)
+				{
+					// ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
+					correctWheelSpeed(ROTATE_RIGHT);
+					writeConfigParameters();
+				}
+				return;
+			}
 
-        /*PROTECTED REGION END*/
-    }
-    void CalibrationTakeBall::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1469109429392) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    /*PROTECTED REGION ID(methods1469109429392) ENABLED START*/ //Add additional methods here
-    int CalibrationTakeBall::checkBallRotation()
-    {
-        // read optical flow value
-        shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
+		}
+		else
+		{
+//			MotionControl mc = dcc.getBall();
+//			send(mc);
+			return;
+		}
+		cout << "successfully calibrated the ball taking!" << endl;
+		this->setSuccess(true);
 
-        if (wm->rawSensorData->getOpticalFlow(10) == nullptr)
-        {
-            return ROTATE_ERR;
-        }
+		/*PROTECTED REGION END*/
+	}
+	void CalibrationTakeBall::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1469109429392) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	/*PROTECTED REGION ID(methods1469109429392) ENABLED START*/ //Add additional methods here
+	bool CalibrationTakeBall::opQueueFilled()
+	{
+		// 10s of rotating the ball
+		int queueSize = 285;
 
-        shared_ptr < geometry::CNPoint2D > opticalFlowValuesOld = wm->rawSensorData->getOpticalFlow(10);
+		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
+		{
+			this->setFailure(true);
+		}
 
-        // if ball isn't rotating straight -> correct values in config values of dribbleFactor left and right
-        // values should be:
-        // -> high negativ y
-        // -> x near 0
-        double yDifference = opticalFlowValues->y - opticalFlowValuesOld->y;
-        double xDifference = fabs(opticalFlowValues->x) - fabs(opticalFlowValuesOld->x);
-        double yToleranceValue = 100;
-        double xToleranceValue = 100;
+		if (opQueue.size() >= queueSize)
+		{
+			return true;
+		}
 
-        // decide if ball is rotating straight
+		opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
 
-        // check if ball if rotating with the correct speed, when the robot is holding the ball with speedNoBall (getBall)
-        if (yDifference > -yToleranceValue)
-        {
-            // ball is rotating to slow
-            return ROTATE_TOO_SLOW;
-        }
+		return false;
+	}
 
-        if (opticalFlowValues->x > 0)
-        {
-            if (opticalFlowValues->x > xToleranceValue)
-            {
-                //decrease speed of left actuator
-                // -> increase DribbleFactorLeft
-                return ROTATE_RIGHT;
-            }
-        }
-        else
-        {
-            if (opticalFlowValues->x < xToleranceValue)
-            {
-                //decrease speed of right actuator
-                // -> increase DribbleFactorRight
-                return ROTATE_LEFT;
-            }
-        }
+	int CalibrationTakeBall::checkBallRotation()
+	{
 
-        return ROTATE_CORRECT;
-    }
+		int minX = 125;
+		double maxY = 0.99999;
 
-    void CalibrationTakeBall::correctWheelSpeed(int wheel)
-    {
-        if (wheel != ROTATE_RIGHT && wheel != ROTATE_LEFT)
-        {
-            cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
-            return;
-        }
-        // check which wheel need to be corrected and safes it so we know in further iterations which wheel we need to fixed
-        if (defectWheel == 0)
-        {
-            defectWheel = wheel;
-        }
+		// average x value should be on max (128)
+		// average y value should be at 0 (between 0.99999 and -0.99999)
+		// average qos (quality of service) should be existent ... normally between 30 and 40
 
-        // check if the defect wheel is too fast or to slow
-        if (wheel == defectWheel)
-        {
-            dribbleFactorLeft = defectWheel == ROTATE_RIGHT ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
-            dribbleFactorRight = defectWheel == ROTATE_LEFT ? dribbleFactorRight + changingFactor : dribbleFactorRight;
-        }
-        else
-        {
-            dribbleFactorLeft = defectWheel == ROTATE_RIGHT ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
-            dribbleFactorRight = defectWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
-        }
+		double xValue = dcc.getAverageOpticalFlowXValue(opQueue);
+		double yValue = dcc.getAverageOpticalFlowYValue(opQueue);
+		double qosValue = dcc.getAverageOpticalFlowQOSValue(opQueue);
 
-        changingFactor = changingFactor / 2;
+		if (qosValue == 0)
+		{
+			return ROTATE_ERR;
+		}
 
-    }
+//		if (xValue > minX && yValue < maxY && yValue > -maxY)
+		if (yValue < maxY && yValue > -maxY)
+		{
+			return ROTATE_CORRECT;
 
-    void CalibrationTakeBall::readConfigParameters()
-    {
-        supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-        DribbleCalibrationContainer dcc;
-        speedNoBall = dcc.readConfigParameter("Dribble.SpeedNoBall");
-        slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
-        minRotation = dcc.readConfigParameter("Dribble.MinRotation");
-        // left and right are swapped!!!!
-        dribbleFactorLeft = dcc.readConfigParameter("Dribble.DribbleFactorRight");
-        dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
+		}
+		else if (yValue > maxY)
+		{
+			// right wheel is too fast so the ball is rotating to the left
+			return ROTATE_LEFT;
 
-        // maybe put in config
-        changingFactor = 1;
-    }
+		}
+		else if (yValue < -maxY)
+		{
+			// left wheel is too fast
+			return ROTATE_RIGHT;
+		}
 
-    void CalibrationTakeBall::writeConfigParameters()
-    {
-        supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (speedNoBall), "Dribble.SpeedNoBall", NULL);
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (slowTranslationWheelSpeed),
-                                 "Dribble.SlowTranslationWheelSpeed", NULL);
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (minRotation), "Dribble.MinRotation", NULL);
-        // left and right are swapped!!
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorLeft), "Dribble.DribbleFactorRight",
-                                 NULL);
-        (*sys)["Actuation"]->set(boost::lexical_cast < std::string > (dribbleFactorRight), "Dribble.DribbleFactorLeft",
-                                 NULL);
+		return ROTATE_ERR;
+	}
 
-        (*sys)["Actuation"]->store();
-    }
+	/**
+	 * saves the currently changing wheel for further adaption
+	 * if the ball is rotation right the left wheel need to be slowed
+	 * if the ball is rotation left the right wheel need to be slowed
+	 * if the ball is rotation to slow the dribbleFactor of both wheels need to be adapted
+	 */
+	void CalibrationTakeBall::correctWheelSpeed(int rotation)
+	{
+		if (rotation != ROTATE_RIGHT && rotation != ROTATE_LEFT && rotation != ROTATE_TOO_SLOW)
+		{
+			cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
+			return;
+		}
+
+		else if (rotation == ROTATE_TOO_SLOW)
+		{
+			// increase booth wheels speed (decrease dribbleFactor)
+			return;
+		}
+
+		// check which wheel need to be corrected and safes it so we know in further iterations which wheel we need to fixed
+		if (adaptWheel == 0)
+		{
+			adaptWheel = rotation;
+		}
+
+		// check if the defect wheel is too fast or to slow
+		if (rotation == adaptWheel)
+		{
+			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
+			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight + changingFactor : dribbleFactorRight;
+		}
+		else
+		{
+			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
+			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
+		}
+
+		changingFactor = changingFactor / 2;
+		opQueue.empty();
+	}
+
+	void CalibrationTakeBall::readConfigParameters()
+	{
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+		DribbleCalibrationContainer dcc;
+		speedNoBall = dcc.readConfigParameter("Dribble.SpeedNoBall");
+		slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
+		minRotation = dcc.readConfigParameter("Dribble.MinRotation");
+		// left and right are swapped!!!!
+		dribbleFactorLeft = dcc.readConfigParameter("Dribble.DribbleFactorRight");
+		dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
+
+		// maybe put in config
+		changingFactor = 0.1;
+	}
+
+	void CalibrationTakeBall::writeConfigParameters()
+	{
+		cout << "writing config parameters" << endl;
+		cout << "speedNoBall:               " << speedNoBall << endl;
+		cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
+		cout << "minRotation:               " << minRotation << endl;
+		cout << "dribbleFactorRight:        " << dribbleFactorLeft << endl;
+		cout << "dribbleFlactorLeft:        " << dribbleFactorLeft << endl;
+
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(speedNoBall), "Dribble.SpeedNoBall", NULL);
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(slowTranslationWheelSpeed),
+									"Dribble.SlowTranslationWheelSpeed", NULL);
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(minRotation), "Dribble.MinRotation", NULL);
+		// left and right are swapped!!
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(dribbleFactorLeft), "Dribble.DribbleFactorRight",
+		NULL);
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(dribbleFactorRight), "Dribble.DribbleFactorLeft",
+		NULL);
+
+		(*sys)["Actuation"]->store();
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

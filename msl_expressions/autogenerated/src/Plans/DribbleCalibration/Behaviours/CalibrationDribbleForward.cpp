@@ -27,7 +27,7 @@ namespace alica
 		moveCount = 0;
 		correctRotationCount = 0;
 		haveBallCount = 0;
-		readConfigParameters();
+//		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	CalibrationDribbleForward::~CalibrationDribbleForward()

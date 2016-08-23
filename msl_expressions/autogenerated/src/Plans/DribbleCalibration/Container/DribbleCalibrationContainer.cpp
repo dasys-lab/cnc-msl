@@ -83,6 +83,49 @@ namespace alica
     	return mc;
     }
 
+    double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+    {
+    	return getAverageOpticalFlowValue(XVALUE, queue);
+    }
+
+    double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+    {
+    	return getAverageOpticalFlowValue(YVALUE, queue);
+    }
+
+    double DribbleCalibrationContainer::getAverageOpticalFlowQOSValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+    {
+    	return getAverageOpticalFlowValue(QOSVALUE, queue);
+    }
+
+    double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue)
+    {
+    	if (value != XVALUE || value != YVALUE || value != QOSVALUE)
+    	{
+    		return -1;
+    	}
+
+    	int sum;
+
+    	for (shared_ptr<geometry::CNPoint2D> val : queue)
+    	{
+    		if (value == XVALUE)
+    		{
+    			sum += val->x;
+    		} else if (value == YVALUE)
+    		{
+    			sum += val->y;
+    		} else
+    		{
+    			sum += val->z;
+    		}
+    	}
+    	double ret = fabs(sum) / queue.size();
+    	return sum < 0 ? -ret : ret;
+
+    }
+
+
     /**
      * helps to read config parameters out of the Actuation.conf
      *
