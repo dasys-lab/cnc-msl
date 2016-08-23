@@ -51,6 +51,9 @@ namespace alica
         void readConfigParameters();
         void writeConfigParameters();
 
+        // for output
+        bool queueFilled;
+
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
