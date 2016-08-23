@@ -40,6 +40,10 @@ namespace alica
 
         // for correctWheelSpeed function
         double changingFactor;
+        int operation;
+        int oldOperation;
+        static const int ADD = 10000;
+        static const int SUB = 20000;
         int adaptWheel;
 
         // for opticalFlow stuff

@@ -188,22 +188,22 @@ namespace alica
 		// check if the defect wheel is too fast or to slow
 		if (rotation == adaptWheel)
 		{
-			cout << "adaptWheel: " << adaptWheel << " 10 = left | 20 = right" << endl;
-			cout << "dribbleFactorLeft: " << dribbleFactorLeft << endl;
-			cout << "dribbleFactorRight: " << dribbleFactorRight << endl;
 			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
 			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight + changingFactor : dribbleFactorRight;
-			cout << "dribbleFactorLeft: " << dribbleFactorLeft << endl;
-			cout << "dribbleFactorRight: " << dribbleFactorRight << endl;
+			operation = ADD;
 		}
 		else
 		{
-			cout << "crazy stuff is going on if you can read this!" << endl;
 			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
 			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
+			operation = SUB;
 		}
-
-		changingFactor = changingFactor / 2;
+		if (operation != oldOperation)
+		{
+			changingFactor = changingFactor / 2;
+ 			oldOperation = operation == ADD ? SUB : ADD;
+		}
+		oldOperation = operation;
 		opQueue.clear();
 		queueFilled = false;
 	}
@@ -220,7 +220,7 @@ namespace alica
 		dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
 		// maybe put in config
-		changingFactor = 0.1;
+		changingFactor = 0.5;
 	}
 
 	void CalibrationTakeBall::writeConfigParameters()
@@ -230,7 +230,7 @@ namespace alica
 		cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
 		cout << "minRotation:               " << minRotation << endl;
 		cout << "dribbleFactorRight:        " << dribbleFactorLeft << endl;
-		cout << "dribbleFlactorLeft:        " << dribbleFactorLeft << endl;
+		cout << "dribbleFlactorLeft:        " << dribbleFactorRight << endl;
 
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(speedNoBall), "Dribble.SpeedNoBall", NULL);
