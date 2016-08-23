@@ -62,13 +62,13 @@ namespace alica
                 else if (ballRotation == ROTATE_LEFT)
                 {
                     // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                    correctWheelSpeed (ROTATE_LEFT);
+                    correctWheelSpeed(ROTATE_LEFT);
                     writeConfigParameters();
                 }
                 else if (ballRotation == ROTATE_RIGHT)
                 {
                     // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                    correctWheelSpeed (ROTATE_RIGHT);
+                    correctWheelSpeed(ROTATE_RIGHT);
                     writeConfigParameters();
                 }
                 return;
@@ -194,6 +194,7 @@ namespace alica
             dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
         }
 
+        cout << "changing changingFactor!" << endl;
         changingFactor = changingFactor / 2;
         cout << "clear queue!" << endl;
         opQueue.clear();
