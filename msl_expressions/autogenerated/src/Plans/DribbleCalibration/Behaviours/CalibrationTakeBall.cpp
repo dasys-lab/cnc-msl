@@ -195,7 +195,9 @@ namespace alica
         }
 
         changingFactor = changingFactor / 2;
+        cout << "clear queue!" << endl;
         opQueue.clear();
+        cout << "queue size: " << opQueue.size() << endl;
     }
 
     void CalibrationTakeBall::readConfigParameters()
