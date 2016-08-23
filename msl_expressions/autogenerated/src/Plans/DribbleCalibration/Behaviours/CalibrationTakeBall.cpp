@@ -114,6 +114,7 @@ namespace alica
         if (!queueFilled)
         {
         	cout << "filling optical flow queue!" << endl;
+        	queueFilled = true;
         }
         opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
 
