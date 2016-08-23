@@ -163,25 +163,26 @@ namespace alica
      */
     void CalibrationTakeBall::correctWheelSpeed(int rotation)
     {
+    	cout << "in correctWheelSpeed!" << endl;
         if (rotation != ROTATE_RIGHT && rotation != ROTATE_LEFT && rotation != ROTATE_TOO_SLOW)
         {
             cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
             return;
         }
-
-        else if (rotation == ROTATE_TOO_SLOW)
+        cout << "1";
+        if (rotation == ROTATE_TOO_SLOW)
         {
             // increase booth wheels speed (decrease dribbleFactor)
         	cout << "ball is rotating too slow!" << endl;
             return;
         }
-
+        cout << "2";
         // check which wheel need to be corrected and safes it so we know in further iterations which wheel we need to fixed
         if (adaptWheel == 0)
         {
             adaptWheel = rotation;
         }
-
+        cout << "3" << endl;
         // check if the defect wheel is too fast or to slow
         if (rotation == adaptWheel)
         {
