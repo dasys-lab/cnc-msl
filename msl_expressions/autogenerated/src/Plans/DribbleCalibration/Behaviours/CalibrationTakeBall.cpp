@@ -99,7 +99,9 @@ namespace alica
 
         if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
         {
+        	cout << "no OpticalFLow signal!" << endl;
             this->setFailure(true);
+            return false;
         }
 
         if (opQueue.size() >= queueSize)
@@ -107,6 +109,7 @@ namespace alica
             return true;
         }
 
+        cout << "filling optical flow queue!" << endl;
         opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
 
         return false;
@@ -169,6 +172,7 @@ namespace alica
         else if (rotation == ROTATE_TOO_SLOW)
         {
             // increase booth wheels speed (decrease dribbleFactor)
+        	cout << "ball is rotating too slow!" << endl;
             return;
         }
 
