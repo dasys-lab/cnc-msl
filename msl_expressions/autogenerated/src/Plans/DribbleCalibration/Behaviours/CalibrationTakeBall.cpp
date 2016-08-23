@@ -24,6 +24,9 @@ namespace alica
 
         adaptWheel = 0;
 
+        // for output
+        queueFilled = false;
+
         readConfigParameters();
         /*PROTECTED REGION END*/
     }
@@ -37,21 +40,16 @@ namespace alica
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
 //		BallHandleCmd bhc;
         // check if robot has the ball
-    	cout << "start" << endl;
         if (wm->rawSensorData->getLightBarrier())
         {
-        	cout << "lightBarrier == true" << endl;
         	// check if ball is rotating correctly
             if (!this->ballRotateCorrect)
             {
                 // let ball continuously rotate with speedNoBall (should be by 4000)
-            	cout << "ballRotateCorrect == false" << endl;
                 if (!opQueueFilled())
                 {
-                	cout << "queueFilled == false" << endl;
                     return;
                 }
-                cout << "checkBallRotation" << endl;
                 int ballRotation = checkBallRotation();
 
                 if (ballRotation == ROTATE_ERR)
@@ -67,14 +65,12 @@ namespace alica
                 else if (ballRotation == ROTATE_LEFT)
                 {
                     // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                	cout << "ROTATE_LEFT" << endl;
                 	correctWheelSpeed(ROTATE_LEFT);
                     writeConfigParameters();
                 }
                 else if (ballRotation == ROTATE_RIGHT)
                 {
                     // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                	cout << "ROTATE_RIGHT" << endl;
                 	correctWheelSpeed(ROTATE_RIGHT);
                     writeConfigParameters();
                 }
@@ -115,8 +111,10 @@ namespace alica
         {
             return true;
         }
-
-        cout << "filling optical flow queue!" << endl;
+        if (!queueFilled)
+        {
+        	cout << "filling optical flow queue!" << endl;
+        }
         opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
 
         return false;
@@ -206,6 +204,7 @@ namespace alica
         changingFactor = changingFactor / 2;
         cout << "clear queue!" << endl;
         opQueue.clear();
+        queueFilled = false;
         cout << "queue size: " << opQueue.size() << endl;
     }
 
