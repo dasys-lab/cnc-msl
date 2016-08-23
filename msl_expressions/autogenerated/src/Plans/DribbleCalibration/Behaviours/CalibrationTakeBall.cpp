@@ -37,38 +37,45 @@ namespace alica
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
 //		BallHandleCmd bhc;
         // check if robot has the ball
+    	cout << "start" << endl;
         if (wm->rawSensorData->getLightBarrier())
         {
-            // check if ball is rotating correctly
+        	cout << "lightBarrier == true" << endl;
+        	// check if ball is rotating correctly
             if (!this->ballRotateCorrect)
             {
                 // let ball continuously rotate with speedNoBall (should be by 4000)
-
+            	cout << "ballRotateCorrect == false" << endl;
                 if (!opQueueFilled())
                 {
+                	cout << "queueFilled == false" << endl;
                     return;
                 }
-
+                cout << "checkBallRotation" << endl;
                 int ballRotation = checkBallRotation();
 
                 if (ballRotation == ROTATE_ERR)
                 {
+                	cout << "ROTATE_ERR" << endl;
                     return;
                 }
                 else if (ballRotation == ROTATE_CORRECT)
                 {
+                	cout << "ROTATE_CORRECT" << endl;
                     this->ballRotateCorrect = true;
                 }
                 else if (ballRotation == ROTATE_LEFT)
                 {
                     // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                    correctWheelSpeed(ROTATE_LEFT);
+                	cout << "ROTATE_LEFT" << endl;
+                	correctWheelSpeed(ROTATE_LEFT);
                     writeConfigParameters();
                 }
                 else if (ballRotation == ROTATE_RIGHT)
                 {
                     // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                    correctWheelSpeed(ROTATE_RIGHT);
+                	cout << "ROTATE_RIGHT" << endl;
+                	correctWheelSpeed(ROTATE_RIGHT);
                     writeConfigParameters();
                 }
                 return;
