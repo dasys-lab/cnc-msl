@@ -220,7 +220,7 @@ namespace alica
                                                             NULL);
             actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
                                                                "actuatorSpeed", NULL);
-            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+//            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
             i++;
         }
         forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
