@@ -202,6 +202,8 @@ namespace alica
 			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
 			operation = SUB;
 		}
+		cout << "operation: " << operation << endl;
+		cout << "oldOperation: " << oldOperation << endl;
 		if (operation != oldOperation)
 		{
 			changingFactor = changingFactor / 2;
