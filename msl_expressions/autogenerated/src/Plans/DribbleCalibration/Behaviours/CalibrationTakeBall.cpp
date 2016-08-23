@@ -203,9 +203,12 @@ namespace alica
 		if (operation != oldOperation)
 		{
 			changingFactor = changingFactor / 2;
- 			oldOperation = operation == ADD ? SUB : ADD;
+			oldOperation = operation == ADD ? SUB : ADD;
 		}
-		oldOperation = operation;
+		else
+		{
+			oldOperation = operation;
+		}
 		opQueue.clear();
 		queueFilled = false;
 	}
