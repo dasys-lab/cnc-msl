@@ -188,7 +188,7 @@ namespace alica
 		// check if the defect wheel is too fast or to slow
 		if (rotation == adaptWheel)
 		{
-			cout << "adaptWheel: " << adaptWheel << "10 = left | 20 = right" << endl;
+			cout << "adaptWheel: " << adaptWheel << " 10 = left | 20 = right" << endl;
 			cout << "dribbleFactorLeft: " << dribbleFactorLeft << endl;
 			cout << "dribbleFactorRight: " << dribbleFactorRight << endl;
 			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
@@ -198,6 +198,7 @@ namespace alica
 		}
 		else
 		{
+			cout << "crazy stuff is going on if you can read this!" << endl;
 			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
 			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
 		}
