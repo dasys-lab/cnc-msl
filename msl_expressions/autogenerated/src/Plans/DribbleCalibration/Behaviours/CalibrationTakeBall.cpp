@@ -195,7 +195,7 @@ namespace alica
         }
 
         changingFactor = changingFactor / 2;
-        opQueue.empty();
+        opQueue.clear();
     }
 
     void CalibrationTakeBall::readConfigParameters()
