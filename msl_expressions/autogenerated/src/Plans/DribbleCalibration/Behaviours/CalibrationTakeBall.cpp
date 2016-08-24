@@ -40,7 +40,7 @@ namespace alica
 	void CalibrationTakeBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
-//		BallHandleCmd bhc;
+
 		// check if robot has the ball
 		if (wm->rawSensorData->getLightBarrier())
 		{
@@ -202,8 +202,6 @@ namespace alica
 			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
 			operation = SUB;
 		}
-		cout << "operation: " << operation << endl;
-		cout << "oldOperation: " << oldOperation << endl;
 		if (operation != oldOperation)
 		{
 			changingFactor = changingFactor / 2;

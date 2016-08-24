@@ -114,6 +114,7 @@ namespace alica
     			sum += val->x;
     		} else if (value == YVALUE)
     		{
+    			cout << val->y << endl;
     			sum += val->y;
     		} else
     		{
