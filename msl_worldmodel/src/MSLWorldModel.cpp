@@ -513,6 +513,7 @@ namespace msl
 
 	void msl::MSLWorldModel::sendKillMotionCommand()
 	{
+		cout << "killing motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
@@ -533,6 +534,7 @@ namespace msl
 
 	void msl::MSLWorldModel::sendStartMotionCommand()
 	{
+		cout << "starting motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
