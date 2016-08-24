@@ -140,7 +140,7 @@ namespace alica
 		double yValue = dcc.getAverageOpticalFlowYValue(opQueue);
 		double qosValue = dcc.getAverageOpticalFlowQOSValue(opQueue);
 
-		cout << "y: " << yValue << endl;
+		cout << "checkBallRotation y: " << yValue << endl;
 
 		if (qosValue == 0)
 		{

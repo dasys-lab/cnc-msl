@@ -106,7 +106,7 @@ namespace alica
     	}
 
     	int sum;
-
+    	cout << "in getAverageOpticalFlowValue() " << endl;
     	for (shared_ptr<geometry::CNPoint2D> val : queue)
     	{
     		if (value == XVALUE)
