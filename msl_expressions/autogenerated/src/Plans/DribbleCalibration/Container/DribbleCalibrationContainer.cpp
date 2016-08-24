@@ -100,8 +100,9 @@ namespace alica
 
     double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue)
     {
-    	if (value != XVALUE || value != YVALUE || value != QOSVALUE)
+    	if (value != XVALUE && value != YVALUE && value != QOSVALUE)
     	{
+    		cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
     		return -1;
     	}
 
