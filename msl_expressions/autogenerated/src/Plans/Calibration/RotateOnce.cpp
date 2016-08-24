@@ -25,7 +25,6 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-    	cout << "starting run()" << endl;
     	if(initialized == false)
     	{
 			uninitialzedCounter++;
@@ -64,7 +63,7 @@ namespace alica
         send(mc);
         int currentSegment = getCurrentRotationSegment();
         double currentBearing = wm->rawSensorData->getAverageBearing();
-        cout << "segment " << currentSegment << ", bearing " << currentBearing << endl;
+        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << endl;
         visitedSegments[currentSegment] = true;
 
         if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2]
