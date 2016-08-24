@@ -13,7 +13,6 @@
 #include <vtkSphereSource.h>
 #include <vtkProperty.h>
 #include <vtkProperty2D.h>
-#include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkTextSource.h>
 #include <vtkCylinderSource.h>

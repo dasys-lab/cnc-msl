@@ -35,7 +35,7 @@
 #include <atomic>
 #include <math.h>
 
-#include <QVTKWidget.h>
+#include <QVTKWidget2.h>
 
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
@@ -44,6 +44,7 @@
 #include <vtkProperty.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderWindow.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkTextSource.h>
 #include <vtkCylinderSource.h>
@@ -114,7 +115,7 @@ struct Line {
        vtkSmartPointer<vtkLineSource> source;
 };
 
-class FieldWidget3D : public QVTKWidget
+class FieldWidget3D : public QVTKWidget2
 {
     Q_OBJECT
 public:
@@ -131,7 +132,6 @@ public:
     pair<double, double> transformToGuiCoords(double x, double y);
 
     MWind* mainWindow;
-    vtkRenderWindow *renderWindow = nullptr;
     vtkRenderer *renderer = nullptr;
     vtkCamera* camera = nullptr;
     vtkActor* field = nullptr;

@@ -293,7 +293,7 @@ string robotNames[101] = {};
 int selectedRobot = 0;
 
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
-		QVTKWidget(parent)
+		QVTKWidget2(parent)
 {
 	// showPath = true;
 	// showVoronoiNet = false;
@@ -338,18 +338,20 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	_BLACK_POINT_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
 	_ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
-	renderWindow = vtkRenderWindow::New();
-	renderWindow->SetAlphaBitPlanes(1);
-	renderWindow->SetMultiSamples(0);
+	vtkRenderWindow *renderWindow = vtkRenderWindow::New();
+
+	vtkGenericOpenGLRenderWindow* glRenderWindow = vtkGenericOpenGLRenderWindow::SafeDownCast(renderWindow);
+
+	this->SetRenderWindow(glRenderWindow);
+	renderWindow->Delete();
+	glRenderWindow = NULL;
 
 	renderer = vtkRenderer::New();
 	renderer->SetBackground(72.0 / 255.0, 72.0 / 255.0, 72.0 / 255.0);
-	renderer->SetUseDepthPeeling(1);
+/*	renderer->SetUseDepthPeeling(1);
 	renderer->SetMaximumNumberOfPeels(100);
-	renderer->SetOcclusionRatio(0.1);
-
-	renderWindow->AddRenderer(renderer);
-	this->SetRenderWindow(renderWindow);
+	renderer->SetOcclusionRatio(0.1);*/
+	this->GetRenderWindow()->AddRenderer(renderer);
 
 	drawField(renderer);
 	drawGoals(renderer);
@@ -366,7 +368,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	vtkSmartPointer<MouseInteractorStyle> intStyle = vtkSmartPointer<MouseInteractorStyle>::New();
 	intStyle->setParent(this);
 	iren->SetInteractorStyle(intStyle);
-	renderWindow->SetInteractor(iren);
+	this->GetRenderWindow()->SetInteractor(iren);
 	// WIPFIX renderer->Render();
 
 	/* Read CAMBADA model */
