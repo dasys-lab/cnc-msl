@@ -25,6 +25,7 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
+    	cout << "starting run()" << endl;
     	if(initialized == false)
     	{
 			uninitialzedCounter++;
@@ -90,17 +91,19 @@ namespace alica
 
             if(abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
             {
-            	cout << endl << "success" << endl << endl;
+            	cout << "success" << endl;
             	this->setSuccess(true);
             	return;
             }
             else
             {
             	// start new rotation
-            	cout << endl << "failure" << endl << endl;
+            	cout << "failure" << endl;
 				this->setSuccess(false);
 				this->setFailure(true);
             }
+
+            cout << "finished run()" << endl;
         }
         /*PROTECTED REGION END*/
     }
@@ -109,6 +112,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
 		uninitialzedCounter = 0;
 		initialized = false;
+		cout << "initialized parameters" << endl;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
