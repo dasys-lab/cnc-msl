@@ -112,13 +112,10 @@ namespace alica
     		if (value == XVALUE)
     		{
     			sum += val->x;
-    		} else if (value == YVALUE)
+    		} else
     		{
     			cout << val->y << endl;
     			sum += val->y;
-    		} else
-    		{
-    			sum += val->z;
     		}
     	}
     	double ret = fabs(sum) / queue.size();

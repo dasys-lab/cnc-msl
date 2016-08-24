@@ -108,9 +108,9 @@ namespace alica
 			this->setFailure(true);
 			return false;
 		}
-		cout << "opticalFlow x: " << wm->rawSensorData->getOpticalFlow(0)->x << endl;
-		cout << "opticalFlow y: " << wm->rawSensorData->getOpticalFlow(0)->z << endl;
-		cout << "opticalFlow z: " << wm->rawSensorData->getOpticalFlow(0)->y << endl;
+//		cout << "opticalFlow x: " << wm->rawSensorData->getOpticalFlow(0)->x << endl;
+//		cout << "opticalFlow y: " << wm->rawSensorData->getOpticalFlow(0)->y << endl;
+//		cout << "opticalFlow z: " << wm->rawSensorData->getOpticalFlow(0)->z << endl;
 
 		if (opQueue.size() >= queueSize)
 		{
