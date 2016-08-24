@@ -138,14 +138,14 @@ namespace alica
 
 		double xValue = dcc.getAverageOpticalFlowXValue(opQueue);
 		double yValue = dcc.getAverageOpticalFlowYValue(opQueue);
-		double qosValue = dcc.getAverageOpticalFlowQOSValue(opQueue);
+//		double qosValue = dcc.getAverageOpticalFlowQOSValue(opQueue);
 
 		cout << "checkBallRotation y: " << yValue << endl;
 
-		if (qosValue == 0)
-		{
-			return ROTATE_ERR;
-		}
+//		if (qosValue == 0)
+//		{
+//			return ROTATE_ERR;
+//		}
 
 //		if (xValue > minX && yValue < maxY && yValue > -maxY)
 		if (yValue < maxY && yValue > -maxY)
@@ -239,8 +239,8 @@ namespace alica
 		cout << "speedNoBall:               " << speedNoBall << endl;
 		cout << "slowTranslationWheelSpeed: " << slowTranslationWheelSpeed << endl;
 		cout << "minRotation:               " << minRotation << endl;
-		cout << "dribbleFactorRight:        " << dribbleFactorLeft << endl;
-		cout << "dribbleFlactorLeft:        " << dribbleFactorRight << endl;
+		cout << "dribbleFactorRight:        " << dribbleFactorRight << endl;
+		cout << "dribbleFlactorLeft:        " << dribbleFactorLeft << endl;
 
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(speedNoBall), "Dribble.SpeedNoBall", NULL);
