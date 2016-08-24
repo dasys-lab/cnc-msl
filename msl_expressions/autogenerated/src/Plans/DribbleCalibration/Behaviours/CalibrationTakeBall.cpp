@@ -231,7 +231,7 @@ namespace alica
 		dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
 		// maybe put in config
-		changingFactor = 0.5;
+		changingFactor = 0.2;
 	}
 
 	void CalibrationTakeBall::writeConfigParameters()
