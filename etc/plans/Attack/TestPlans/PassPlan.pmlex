@@ -22,11 +22,11 @@
   </extensions>
   <extensions>
     <key href="PassPlan.pml#1441107086220"/>
-    <value xPos="124" yPos="132" width="81" height="67"/>
+    <value xPos="124" yPos="132" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="PassPlan.pml#1441107089085"/>
-    <value xPos="113" yPos="249" width="142" height="86"/>
+    <value xPos="113" yPos="249" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>

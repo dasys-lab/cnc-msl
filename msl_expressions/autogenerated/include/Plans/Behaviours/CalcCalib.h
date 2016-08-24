@@ -39,14 +39,14 @@ namespace alica
 
         double errorTestMotionPosX = 0;
         double errorTestMotionPosY = 0;
-		double errorTestVisionPosX = 0;
-		double errorTestVisionPosY = 0;
-		double oldErrorTestMotionPosX = 0;
-		double oldErrorTestMotionPosY = 0;
-		double oldErrorTestVisionPosX = 0;
-		double oldErrorTestVisionPosY = 0;
-		int errorCounter = 0;
-		int timeCounter = 0;
+        double errorTestVisionPosX = 0;
+        double errorTestVisionPosY = 0;
+        double oldErrorTestMotionPosX = 0;
+        double oldErrorTestMotionPosY = 0;
+        double oldErrorTestVisionPosX = 0;
+        double oldErrorTestVisionPosY = 0;
+        int errorCounter = 0;
+        int timeCounter = 0;
 
         /*PROTECTED REGION END*/
     protected:

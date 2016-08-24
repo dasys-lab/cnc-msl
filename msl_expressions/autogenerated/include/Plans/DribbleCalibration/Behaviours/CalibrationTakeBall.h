@@ -38,15 +38,25 @@ namespace alica
         double dribbleFactorLeft;
         double dribbleFactorRight;
 
-        // for correctRightWheelSpeed function
-        double dribbleFactorRightOld;
+        // for correctWheelSpeed function
         double changingFactor;
-        int defectWheel;
+        int operation;
+        int oldOperation;
+        static const int ADD = 10000;
+        static const int SUB = 20000;
+        int adaptWheel;
+
+        // for opticalFlow stuff
+        vector<shared_ptr<geometry::CNPoint2D>> opQueue;
+        bool opQueueFilled();
 
         int checkBallRotation();
-        void correctWheelSpeed(int wheel);
+        void correctWheelSpeed(int rotation);
         void readConfigParameters();
         void writeConfigParameters();
+
+        // for output
+        bool queueFilled;
 
         /*PROTECTED REGION END*/
     private:

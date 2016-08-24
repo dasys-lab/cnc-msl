@@ -28,6 +28,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1449742071382) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::BallHandleCmd bhc;
+        readConfigParameters();
 //        cout << "in DribbleControl!!!!!!" << endl;
         // for anticipated pass perception, testing, or what you like
         if (pullNoMatterWhat)
@@ -219,7 +220,7 @@ namespace alica
                                                             NULL);
             actuatorSpeed[i] = (*sc)["Actuation"]->get<double>("ForwardDribbleSpeeds", subsection.c_str(),
                                                                "actuatorSpeed", NULL);
-            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
+//            cout << "RobotSpeed: " << robotSpeed[i] << "actuatorSpeed: " << actuatorSpeed[i] << endl;
             i++;
         }
         forwardSpeedSpline.set_points(robotSpeed, actuatorSpeed, false);
