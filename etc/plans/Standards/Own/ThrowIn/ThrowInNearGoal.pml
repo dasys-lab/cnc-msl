@@ -97,7 +97,7 @@
     <task>../../../../Misc/taskrepository.tsk#1461237765109</task>
     <state>#1461237711590</state>
   </entryPoints>
-  <entryPoints id="1461237748826" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1461237748826" name="ReceivePassInGame" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1461237728343</state>
   </entryPoints>

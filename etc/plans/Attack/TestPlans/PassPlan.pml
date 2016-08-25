@@ -34,7 +34,7 @@
     <task>../../../Misc/taskrepository.tsk#1225115536468</task>
     <state>#1441107086220</state>
   </entryPoints>
-  <entryPoints id="1441107040804" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
+  <entryPoints id="1441107040804" name="ReceivePassInGame" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1441107089085</state>
   </entryPoints>

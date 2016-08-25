@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="GoalKick.pml#1469521732931"/>
+    <value xPos="97" yPos="31" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469521732930"/>
+    <value xPos="-155" yPos="-2" width="1061" height="691"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469521732932"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522042827"/>
+    <value xPos="5" yPos="236"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522045842"/>
+    <value xPos="-4" yPos="245"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522047745"/>
+    <value xPos="-12" yPos="269"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522259560"/>
+    <value xPos="102" yPos="491" width="167" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522367640"/>
+    <value xPos="374" yPos="12" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522370067"/>
+    <value xPos="647" yPos="5" width="201" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522371971"/>
+    <value xPos="734" yPos="114" width="142" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522458021"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522459411"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522460547"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522461468"/>
+    <value>
+      <bendpoints xPos="562" yPos="54"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522490708"/>
+    <value xPos="124" yPos="170" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522492956"/>
+    <value xPos="392" yPos="176" width="81" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522494669"/>
+    <value xPos="88" yPos="331" width="148" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522496824"/>
+    <value xPos="345" yPos="359" width="141" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522586732"/>
+    <value xPos="955" yPos="211"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522588381"/>
+    <value xPos="926" yPos="243"/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522683853"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522685570"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522688609"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522690355"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="GoalKick.pml#1469522753378"/>
+    <value xPos="543" yPos="417"/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../ThrowIn/PositionAlternativeReceiver.beh#1462978671719"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

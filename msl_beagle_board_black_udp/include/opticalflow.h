@@ -37,34 +37,10 @@
 #define RESOLUTION 30
 
 
-enum Pin
-{
-	ncs, npd, of_rst, led
-};
-
-
 class OpticalFlow {
-	public:
-		void		reset(void);
-		uint8_t		read(uint8_t address);
-
-					OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P);
-					~OpticalFlow();
-
-		void 		adns_init(void);
-		void		controlLED(bool enabled);
-		void 		update_motion_burst(timeval time_now);
-		void 		send_motion_burst(timeval time_now, ros::Publisher *mbcPub);
-
-		uint8_t 	getInverseProductId(void);
-		uint8_t 	getProductId(void);
-
-
 	private:
+		BlackLib::BlackGPIO *ncs, *npd, *rst, *led;
 		BlackLib::BlackSPI *spi;
-		BeagleGPIO *gpio;
-		BeaglePins *pins;
-
 		uint8_t 	img[1536];
 
 		int16_t		x, y;
@@ -75,6 +51,7 @@ class OpticalFlow {
 		timeval		last_updated, last_sended;
 
 
+
 		void		write(uint8_t address, uint8_t value);
 
 		uint8_t		getConfigurationBits(void);
@@ -83,6 +60,26 @@ class OpticalFlow {
 		void 		getMotionBurst(int8_t *burst);
 
 		void		setConfigurationBits(uint8_t conf);
+
+
+	public:
+		void		reset(void);
+		uint8_t		read(uint8_t address);
+
+					OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P);
+					~OpticalFlow();
+
+		void 		adns_init(void);
+		void		controlLED(bool enabled);
+		void 		update_motion_burst();
+		msl_actuator_msgs::MotionBurst getMotionBurstMsg();
+
+		uint8_t 	getInverseProductId(void);
+		uint8_t 	getProductId(void);
+
+
+
+
 };
 
 

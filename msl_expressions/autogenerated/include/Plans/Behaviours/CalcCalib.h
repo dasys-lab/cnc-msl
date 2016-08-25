@@ -22,18 +22,31 @@ namespace alica
         double calibOldPosMotionY = 0;
         double calibCoefficientX;
         double calibCoefficientY;
-        double length;
+        double length = 0;
         double correctedWayX = 0;
         double correctedWayY = 0;
         double correctedPosX = 0;
         double correctedPosY = 0;
-        double oldCorrectedPosX;
-        double oldCorrectedPosY;
+        double oldCorrectedPosX = 0;
+        double oldCorrectedPosY = 0;
         double diffX;
         double diffY;
         double lengthSegment = 0;
         CalibrationCoefficient calibCoeff;
         int calibCounter = 0;
+
+        //------------------------------
+
+        double errorTestMotionPosX = 0;
+        double errorTestMotionPosY = 0;
+        double errorTestVisionPosX = 0;
+        double errorTestVisionPosY = 0;
+        double oldErrorTestMotionPosX = 0;
+        double oldErrorTestMotionPosY = 0;
+        double oldErrorTestVisionPosX = 0;
+        double oldErrorTestVisionPosY = 0;
+        int errorCounter = 0;
+        int timeCounter = 0;
 
         /*PROTECTED REGION END*/
     protected:

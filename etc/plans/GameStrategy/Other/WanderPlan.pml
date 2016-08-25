@@ -16,12 +16,12 @@
     <task>../../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1458553921359</state>
   </entryPoints>
-  <entryPoints id="1458553931557" name="InGamePassReceiver" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1458553931557" name="ReceivePassInGame" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1307185798142</task>
     <state>#1458553960488</state>
   </entryPoints>
-  <entryPoints id="1458553934246" name="Blocker" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../Misc/taskrepository.tsk#1432209050494</task>
+  <entryPoints id="1458553934246" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
+    <task>../../../Misc/taskrepository.tsk#1461237765109</task>
     <state>#1458553962697</state>
   </entryPoints>
   <entryPoints id="1458553937231" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
