@@ -338,16 +338,10 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	_BLACK_POINT_LENGTH = (*sc)["FootballField"]->get<double>("FootballField", currentField.c_str(), "PenaltySpot", NULL) / 1000;
 	_ROBOT_RADIUS = (*sc)["Rules"]->get<double>("Rules.RobotRadius", NULL) * 2 / 1000; // this was diameter before, although the variable's name is _ROBOT_RADIUS
 
-	vtkRenderWindow *renderWindow = vtkRenderWindow::New();
-
-//	vtkGenericOpenGLRenderWindow* glRenderWindow = vtkGenericOpenGLRenderWindow::SafeDownCast(renderWindow);
-//
-//	this->SetRenderWindow(glRenderWindow);
-//	renderWindow->Delete();
-//	glRenderWindow = NULL;
-
+	renderWindow = vtkRenderWindow::New();
 	renderer = vtkRenderer::New();
 	renderer->SetBackground(72.0 / 255.0, 72.0 / 255.0, 72.0 / 255.0);
+
 	renderer->SetUseDepthPeeling(1);
 	renderer->SetMaximumNumberOfPeels(100);
 	renderer->SetOcclusionRatio(0.1);
@@ -357,7 +351,7 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 	drawGoals(renderer);
 
 	// Camera properties
-	camera = vtkCamera::New();
+	camera = vtkOpenGLCamera::New();
 	camera->SetPosition(_FIELD_WIDTH, 0, 22);
 	camera->SetFocalPoint(0, 0, 0);
 	camera->SetViewUp(0, 0, 1);

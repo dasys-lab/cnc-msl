@@ -1,4 +1,4 @@
-#include "QVTKWidget3.h".h"
+#include "QVTKWidget3.h"
 
 #include "vtkRenderWindowInteractor.h"
 #include "vtkInteractorStyle.h"

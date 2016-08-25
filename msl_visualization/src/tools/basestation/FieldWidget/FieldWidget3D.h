@@ -51,7 +51,7 @@
 #include <vtkVectorText.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkCamera.h>
+#include <vtkOpenGLCamera.h>
 #include <vtkInteractorStyleSwitch.h>
 #include <vtkInteractorStyleTerrain.h>
 #include <vtkOBJReader.h>
@@ -132,8 +132,9 @@ public:
     pair<double, double> transformToGuiCoords(double x, double y);
 
     MWind* mainWindow;
+    vtkRenderWindow *renderWindow = nullptr;
     vtkRenderer *renderer = nullptr;
-    vtkCamera* camera = nullptr;
+    vtkOpenGLCamera* camera = nullptr;
     vtkActor* field = nullptr;
 
     bool heightVisible;
