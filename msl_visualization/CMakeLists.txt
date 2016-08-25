@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_visualization)
- 
+  
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 	set(CMAKE_CXX_COMPILER_ARG1 "-std=c++11" CACHE STRING "C++ version for eclipse" FORCE)
@@ -104,6 +104,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 
 SET( BASESTATION_SRCS 
         src/tools/basestation/FieldWidget/FieldWidget3D.cpp
+        src/tools/basestation/FieldWidget/QVTKWidget3.cpp
         src/tools/basestation/FieldWidget/RobotInfo.cpp
         src/tools/basestation/RobotVisualization/RobotVisualization.cpp
         src/tools/basestation/FullWindow/FullWindow.cpp
@@ -116,6 +117,7 @@ SET( BASESTATION_SRCS
 # another list, this time it includes all header files that should be treated with moc
 SET( BASESTATION_MOC_HDRS
         src/tools/basestation/FieldWidget/FieldWidget3D.h
+        src/tools/basestation/FieldWidget/QVTKWidget3.h
         src/tools/basestation/FieldWidget/RobotInfo.h
         src/tools/basestation/RobotVisualization/RobotVisualization.h
         src/tools/basestation/FullWindow/FullWindow.h

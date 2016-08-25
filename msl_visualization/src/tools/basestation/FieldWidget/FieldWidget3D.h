@@ -35,7 +35,7 @@
 #include <atomic>
 #include <math.h>
 
-#include <QVTKWidget2.h>
+#include <src/tools/basestation/FieldWidget/QVTKWidget3.h>
 
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
@@ -115,7 +115,7 @@ struct Line {
        vtkSmartPointer<vtkLineSource> source;
 };
 
-class FieldWidget3D : public QVTKWidget2
+class FieldWidget3D : public QVTKWidget3
 {
     Q_OBJECT
 public:

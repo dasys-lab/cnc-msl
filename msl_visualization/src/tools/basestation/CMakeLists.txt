@@ -20,6 +20,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 SET( BASESTATION_SRCS 
 	FieldWidget/FieldWidget.cpp
 	FieldWidget/FieldWidget3D.cpp
+	FieldWidget/QVTKWidget3.cpp
 	FullInfoWindow/FullInfoWindow.cpp
 	FullWindow/FullWindow.cpp
 	MainWindow/MainWindow.cpp
@@ -37,6 +38,7 @@ SET( BASESTATION_SRCS
 SET( BASESTATION_MOC_HDRS
 	FieldWidget/FieldWidget.h
 	FieldWidget/FieldWidget3D.h
+	FieldWidget/QVTKWidget3.h
 	FullInfoWindow/FullInfoWindow.h
 	FullWindow/FullWindow.h
 	MainWindow/MainWindow.h

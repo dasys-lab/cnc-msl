@@ -293,7 +293,7 @@ string robotNames[101] = {};
 int selectedRobot = 0;
 
 FieldWidget3D::FieldWidget3D(QWidget *parent) :
-		QVTKWidget2(parent)
+		QVTKWidget3(parent)
 {
 	// showPath = true;
 	// showVoronoiNet = false;
@@ -340,17 +340,17 @@ FieldWidget3D::FieldWidget3D(QWidget *parent) :
 
 	vtkRenderWindow *renderWindow = vtkRenderWindow::New();
 
-	vtkGenericOpenGLRenderWindow* glRenderWindow = vtkGenericOpenGLRenderWindow::SafeDownCast(renderWindow);
-
-	this->SetRenderWindow(glRenderWindow);
-	renderWindow->Delete();
-	glRenderWindow = NULL;
+//	vtkGenericOpenGLRenderWindow* glRenderWindow = vtkGenericOpenGLRenderWindow::SafeDownCast(renderWindow);
+//
+//	this->SetRenderWindow(glRenderWindow);
+//	renderWindow->Delete();
+//	glRenderWindow = NULL;
 
 	renderer = vtkRenderer::New();
 	renderer->SetBackground(72.0 / 255.0, 72.0 / 255.0, 72.0 / 255.0);
-/*	renderer->SetUseDepthPeeling(1);
+	renderer->SetUseDepthPeeling(1);
 	renderer->SetMaximumNumberOfPeels(100);
-	renderer->SetOcclusionRatio(0.1);*/
+	renderer->SetOcclusionRatio(0.1);
 	this->GetRenderWindow()->AddRenderer(renderer);
 
 	drawField(renderer);
