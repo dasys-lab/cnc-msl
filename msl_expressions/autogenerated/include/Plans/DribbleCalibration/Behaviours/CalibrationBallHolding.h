@@ -23,9 +23,16 @@ namespace alica
         double minRotation;
         double slowTranslationWheelSpeed;
 
+        bool ballWasStanding;
+        bool ballWasRotating;
+
         bool ballIsRotating();
         void readConfigParameters();
         void writeConfigParameters();
+
+        vector<shared_ptr<geometry::CNPoint2D>> opQueue;
+        bool queueFilled;
+        bool opQueueFilled();
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1469284294147) ENABLED START*/ //Add additional private methods here
