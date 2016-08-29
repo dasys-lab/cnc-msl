@@ -40,7 +40,9 @@ namespace alica
 	void CalibrationTakeBall::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
-
+		// TODO: remove when finished testing!
+		this->success = true;
+		return;
 		// check if robot has the ball
 		if (wm->rawSensorData->getLightBarrier())
 		{
