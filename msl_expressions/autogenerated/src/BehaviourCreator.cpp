@@ -135,6 +135,8 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.h"
 
+#include  "Plans/Standards/Own/StdAlignSingleRobot.h"
+
 #include  "Plans/Attack/AlignAndPassRapid.h"
 
 #include  "Plans/Goalie/Test/GoalieBehaviours/DriveToGoal.h"
@@ -199,6 +201,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/RobotMovementDribbleTest.h"
 
+#include  "Plans/Standards/Own/SingleRobotKickIntoOppHalf.h"
+
 namespace alica
 {
 
@@ -224,6 +228,8 @@ namespace alica
             case 1465038982091:
 
             case 1466861369486:
+
+            case 1467436134025:
 
                 return make_shared<StandardAlignAndGrab>();
                 break;
@@ -585,6 +591,11 @@ namespace alica
                 return make_shared<Pos4PenaltyRebounce>();
                 break;
 
+            case 1467385818398:
+
+                return make_shared<StdAlignSingleRobot>();
+                break;
+
             case 1436269080263:
 
             case 1441108023281:
@@ -757,6 +768,11 @@ namespace alica
             case 1462969753310:
 
                 return make_shared<RobotMovementDribbleTest>();
+                break;
+
+            case 1467436318706:
+
+                return make_shared<SingleRobotKickIntoOppHalf>();
                 break;
 
             default:

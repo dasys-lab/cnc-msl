@@ -3,6 +3,8 @@
 
 #include  "Plans/GameStrategy/Other/constraints/DropBallPositioning1455537014534Constraints.h"
 
+#include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
+
 #include  "Plans/Attack/TestPlans/constraints/DribbleToPointPlan1436960829485Constraints.h"
 
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"

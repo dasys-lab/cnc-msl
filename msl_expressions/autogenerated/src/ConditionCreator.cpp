@@ -2,6 +2,8 @@
 
 #include  "Plans/GameStrategy/Other/DropBallPositioning1455537014534.h"
 
+#include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
+
 #include  "Plans/Attack/TestPlans/DribbleToPointPlan1436960829485.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
@@ -141,6 +143,24 @@ namespace alica
     {
         switch (conditionConfId)
         {
+
+            case 1467384214949:
+
+                return make_shared<TransitionCondition1467384214949>();
+
+                break;
+
+            case 1467384216416:
+
+                return make_shared<TransitionCondition1467384216416>();
+
+                break;
+
+            case 1467384969800:
+
+                return make_shared<TransitionCondition1467384969800>();
+
+                break;
 
             case 1437390979726:
 

@@ -3,6 +3,8 @@
 
 #include  "Plans/GameStrategy/Other/DropBallPositioning1455537014534.h"
 
+#include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
+
 #include  "Plans/Attack/TestPlans/DribbleToPointPlan1436960829485.h"
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
@@ -147,6 +149,10 @@ namespace alica
 
             case 1455537014534:
                 return make_shared<UtilityFunction1455537014534>();
+                break;
+
+            case 1467383326416:
+                return make_shared<UtilityFunction1467383326416>();
                 break;
 
             case 1436960829485:
