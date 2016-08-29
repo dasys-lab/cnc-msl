@@ -59,8 +59,8 @@ namespace alica
 		}
 		else
 		{
-			MotionControl mc = dcc.getBall();
-			send(mc);
+//			MotionControl mc = dcc.getBall();
+//			send(mc);
 		}
 
 		if (ballWasRotating && ballWasStanding && !ballIsRotating())
