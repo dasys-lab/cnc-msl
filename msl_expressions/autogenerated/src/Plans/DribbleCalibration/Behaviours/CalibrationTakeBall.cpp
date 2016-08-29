@@ -41,7 +41,7 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
 		// TODO: remove when finished testing!
-		this->success = true;
+		this->setSuccess(true);
 		return;
 		// check if robot has the ball
 		if (wm->rawSensorData->getLightBarrier())
