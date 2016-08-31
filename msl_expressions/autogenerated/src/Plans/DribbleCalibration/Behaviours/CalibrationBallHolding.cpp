@@ -36,28 +36,30 @@ namespace alica
 			{
 				return;
 			}
-
-			// check if ball is not rotating
-			if (ballIsRotating())
+			if (dcc.fillOpticalFlowQueue(queueSize, opQueue))
 			{
-				slowTranslationWheelSpeed = slowTranslationWheelSpeed - 50;
-				ballWasRotating = true;
-
-			}
-			else
-			{
-				if (!ballWasRotating)
+				// check if ball is not rotating
+				if (ballIsRotating())
 				{
-					slowTranslationWheelSpeed = slowTranslationWheelSpeed + 50;
-				}
-				ballWasStanding = true;
-			}
+					slowTranslationWheelSpeed = slowTranslationWheelSpeed - changingFactor;
+					ballWasRotating = true;
 
-			if (this->minRotation > this->slowTranslationWheelSpeed)
-			{
-				this->minRotation = this->slowTranslationWheelSpeed;
+				}
+				else
+				{
+					if (!ballWasRotating)
+					{
+						slowTranslationWheelSpeed = slowTranslationWheelSpeed + changingFactor;
+					}
+					ballWasStanding = true;
+				}
+
+				if (this->minRotation > this->slowTranslationWheelSpeed)
+				{
+					this->minRotation = this->slowTranslationWheelSpeed;
+				}
+				writeConfigParameters();
 			}
-			writeConfigParameters();
 		}
 		else
 		{
@@ -77,7 +79,10 @@ namespace alica
 		/*PROTECTED REGION ID(initialiseParameters1469284294147) ENABLED START*/ //Add additional options here
 		cout << "starting ball holding calibration..." << endl;
 		readConfigParameters();
+
 		ballWasStanding = false;
+		opQueue = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+
 		if (this->minRotation > this->slowTranslationWheelSpeed)
 		{
 			this->minRotation = this->slowTranslationWheelSpeed;
@@ -87,15 +92,23 @@ namespace alica
 	/*PROTECTED REGION ID(methods1469284294147) ENABLED START*/ //Add additional methods here
 	bool CalibrationBallHolding::ballIsRotating()
 	{
-		shared_ptr<geometry::CNPoint2D> opticalFlow = wm->rawSensorData->getOpticalFlow(0);
-		cout << "opticalFlow->x: " << opticalFlow->x << endl;
-		return opticalFlow->x > 0 ? true : false;
+//		shared_ptr<geometry::CNPoint2D> opticalFlow = wm->rawSensorData->getOpticalFlow(0);
+		double averageXValue = dcc.getAverageOpticalFlowXValue(opQueue);
+
+		cout << "opticalFlow->x: " << averageXValue << endl;
+
+		opQueue->clear();
+		return averageXValue > 0 ? true : false;
 	}
 
 	void CalibrationBallHolding::readConfigParameters()
 	{
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		this->minRotation = dcc.readConfigParameter("Dribble.MinRotation");
 		this->slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
+
+		queueSize = (*sys)["DribbleCalibration"]->get<int>("BallHolding.QueueSize", NULL);
+		changingFactor = (*sys)["DribbleCalibration"]->get<int>("BallHolding.ChangingFactor", NULL);
 	}
 
 	void CalibrationBallHolding::writeConfigParameters()
@@ -105,7 +118,8 @@ namespace alica
 		cout << "minRotation: " << minRotation << endl;
 
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(slowTranslationWheelSpeed), "Dribble.SlowTranslationWheelSpeed", NULL);
+		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(slowTranslationWheelSpeed),
+									"Dribble.SlowTranslationWheelSpeed", NULL);
 		(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(minRotation), "Dribble.MinRotation", NULL);
 	}
 /*PROTECTED REGION END*/

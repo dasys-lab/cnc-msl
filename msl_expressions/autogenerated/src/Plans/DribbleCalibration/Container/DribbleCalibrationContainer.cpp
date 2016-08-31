@@ -101,6 +101,9 @@ namespace alica
 		return mc;
 	}
 
+	/**
+	 * @return true if opQueue is filled
+	 */
 	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
 															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
@@ -127,18 +130,18 @@ namespace alica
 		return false;
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
 		return getAverageOpticalFlowValue(XVALUE, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
 		return getAverageOpticalFlowValue(YVALUE, queue);
 	}
 
 	double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value,
-																	vector<shared_ptr<geometry::CNPoint2D>> queue)
+																   shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
 		if (value != XVALUE && value != YVALUE && value != QOSVALUE)
 		{
@@ -148,7 +151,7 @@ namespace alica
 
 		int sum = 0;
 		cout << "in getAverageOpticalFlowValue() " << endl;
-		for (shared_ptr<geometry::CNPoint2D> val : queue)
+		for (shared_ptr<geometry::CNPoint2D> val : *queue)
 		{
 			if (value == XVALUE)
 			{
@@ -160,7 +163,7 @@ namespace alica
 				sum += val->y;
 			}
 		}
-		double ret = fabs(sum) / queue.size();
+		double ret = fabs(sum) / queue->size();
 		return sum < 0 ? -ret : ret;
 
 	}

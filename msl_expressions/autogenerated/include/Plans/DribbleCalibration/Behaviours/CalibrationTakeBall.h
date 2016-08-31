@@ -47,8 +47,8 @@ namespace alica
         int adaptWheel;
 
         // for opticalFlow stuff
-        vector<shared_ptr<geometry::CNPoint2D>> opQueue;
-        bool opQueueFilled();
+        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
+        int queueSize;
 
         int checkBallRotation();
         void correctWheelSpeed(int rotation);

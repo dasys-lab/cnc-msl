@@ -34,8 +34,8 @@ namespace alica
 		msl_actuator_msgs::MotionControl move(int movement, int translation);
 
 		// opticalFlow stuff
-		double getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
-		double getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
+		double getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
+		double getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 
 		static const int DRIBBLE_FORWARD = 100;
 		static const int DRIBBLE_BACKWARD = 200;
@@ -56,7 +56,7 @@ namespace alica
 		static const int XVALUE = 34;
 		static const int YVALUE = 35;
 		static const int QOSVALUE = 36;
-		double getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue);
+		double getAverageOpticalFlowValue(int value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 	};
 
 } /* namespace alica */

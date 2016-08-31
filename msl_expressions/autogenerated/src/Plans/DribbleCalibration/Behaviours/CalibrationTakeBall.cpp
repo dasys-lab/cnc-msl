@@ -25,6 +25,7 @@ namespace alica
 		adaptWheel = 0;
 		operation = ADD;
 		oldOperation = ADD;
+		queueSize = 0;
 
 		// for output
 		queueFilled = false;
@@ -50,7 +51,7 @@ namespace alica
 			if (!this->ballRotateCorrect)
 			{
 				// let ball continuously rotate with speedNoBall (should be by 4000)
-				if (!opQueueFilled())
+				if (!dcc.fillOpticalFlowQueue(queueSize, opQueue))
 				{
 					return;
 				}
@@ -99,31 +100,6 @@ namespace alica
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1469109429392) ENABLED START*/ //Add additional methods here
-	bool CalibrationTakeBall::opQueueFilled()
-	{
-		// 10s of rotating the ball
-		int queueSize = 285;
-
-		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
-		{
-			cout << "no OpticalFLow signal!" << endl;
-			this->setFailure(true);
-			return false;
-		}
-
-		if (opQueue.size() >= queueSize)
-		{
-			return true;
-		}
-		if (!queueFilled)
-		{
-			cout << "filling optical flow queue!" << endl;
-			queueFilled = true;
-		}
-		opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
-
-		return false;
-	}
 
 	int CalibrationTakeBall::checkBallRotation()
 	{
@@ -214,7 +190,7 @@ namespace alica
 		{
 			oldOperation = operation;
 		}
-		opQueue.clear();
+		opQueue->clear();
 		queueFilled = false;
 	}
 
@@ -230,7 +206,8 @@ namespace alica
 		dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
 		// maybe put in config
-		changingFactor = 0.2;
+		changingFactor = (*sys)["DribbleCalibration"]->get<int>("TakeBall.ChangingFactor", NULL);
+		queueSize = (*sys)["DribbleCalibration"]->get<int>("TakeBall.QueueSize", NULL);
 	}
 
 	void CalibrationTakeBall::writeConfigParameters()
