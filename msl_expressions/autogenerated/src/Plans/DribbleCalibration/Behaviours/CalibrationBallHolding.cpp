@@ -65,6 +65,7 @@ namespace alica
 
 		if (ballWasRotating && ballWasStanding && !ballIsRotating())
 		{
+			cout << "finished ball holding calibration!" << endl;
 			this->setSuccess(true);
 		}
 		/*PROTECTED REGION END*/
@@ -72,6 +73,7 @@ namespace alica
 	void CalibrationBallHolding::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1469284294147) ENABLED START*/ //Add additional options here
+		cout << "starting ball holding calibration..." << endl;
 		readConfigParameters();
 		ballWasStanding = false;
 		if (this->minRotation > this->slowTranslationWheelSpeed)

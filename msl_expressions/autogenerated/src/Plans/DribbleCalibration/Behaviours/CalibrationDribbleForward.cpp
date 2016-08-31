@@ -40,14 +40,14 @@ namespace alica
         /*PROTECTED REGION ID(run1469116853584) ENABLED START*/ //Add additional options here
         MotionControl mc;
 //		writeConfigParameters();
-        return;
+//        return;
         if (wm->rawSensorData->getLightBarrier())
         {
             haveBallCount++;
             // if ball is in kicker
             // drive forward start slowly
             // start with 400 speed
-            while (moveCount < SECTIONS_SIZE)
+            if (moveCount < SECTIONS_SIZE)
             {
                 int translation = 400;
                 dcc.move(dcc.DRIBBLE_FORWARD, (moveCount + 1) * translation);
@@ -72,6 +72,10 @@ namespace alica
                     moveCount++;
                     correctRotationCount = 0;
                 }
+            } else
+            {
+            	cout << "finished dribble forward calibration!" << endl;
+            	this->setSuccess(true);
             }
         }
         else
@@ -92,6 +96,7 @@ namespace alica
     void CalibrationDribbleForward::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1469116853584) ENABLED START*/ //Add additional options here
+    	cout << "starting dribble forward calibration..." << endl;
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1469116853584) ENABLED START*/ //Add additional methods here
