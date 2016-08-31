@@ -78,6 +78,7 @@ namespace msl
 
 		if (query == nullptr || query->egoDestinationPoint == nullptr)
 		{
+			cerr << "RobotMovement::moveToPoint() -> egoDestinationPoint == nullptr or query = nullptr" << endl;
 			return setNAN();
 		}
 		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();

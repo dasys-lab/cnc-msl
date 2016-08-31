@@ -88,7 +88,13 @@ namespace alica
             }
             haveBallCount = 0;
             mc = dcc.getBall();
-            send(mc);
+            if (mc.motion.translation != NAN)
+            {
+            	send(mc);
+            } else
+            {
+            	cerr << "motion command is NAN!" << endl;
+            }
         }
 
         /*PROTECTED REGION END*/
