@@ -118,12 +118,13 @@ namespace alica
     int CalibrationDribbleForward::checkBallRotation()
     {
         // read optical flow value
-        shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
         if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
         {
+        	cout << "couldn't read optical flow value!" << endl;
             return ROTATE_ERR;
         }
+        shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
         // too slow or not moving
         if (opticalFlowValues->x == 0)

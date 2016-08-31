@@ -25,6 +25,7 @@ namespace alica
 	void CalibrationBallHolding::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1469284294147) ENABLED START*/ //Add additional options here
+		return;
 		if (wm->rawSensorData->getLightBarrier())
 		{
 			// if ball is in kicker

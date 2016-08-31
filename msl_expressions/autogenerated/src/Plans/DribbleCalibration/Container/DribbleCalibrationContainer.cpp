@@ -49,6 +49,7 @@ namespace alica
     msl_actuator_msgs::MotionControl DribbleCalibrationContainer::move(int movement, int translation)
     {
     	msl_actuator_msgs::MotionControl mc;
+    	msl::RobotMovement rm;
 
     	if (movement != DRIBBLE_FORWARD && movement != DRIBBLE_BACKWARD && movement != DRIBBLE_LEFT && movement  != DRIBBLE_RIGHT)
     	{
@@ -61,7 +62,6 @@ namespace alica
     	}
 
     	query->reset();
-    	msl::RobotMovement rm;
 
     	shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0) ;
     	double distance = 300;
