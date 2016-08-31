@@ -12,7 +12,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
-            DomainBehaviour("RotateOnce")
+            DomainBehaviour("RotateOnce"), precisionBuffer(10)
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/

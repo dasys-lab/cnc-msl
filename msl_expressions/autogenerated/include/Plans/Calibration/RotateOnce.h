@@ -28,7 +28,7 @@ namespace alica
     private:
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
         //Buffer holding precision values of current rotation
-        msl::RingBuffer<double> precisionBuffer(10);
+        msl::RingBuffer<double> precisionBuffer;
         double segments[3];
         bool visitedSegments[3];
         double lastRotationCalibError;

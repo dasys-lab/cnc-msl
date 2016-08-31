@@ -49,7 +49,6 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1472657511112) ENABLED START*/ //Add additional options here
         wm->sendKillMotionCommand();
         uninitialzedCounter = 0;
-        initialized = false;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1472657511112) ENABLED START*/ //Add additional methods here
