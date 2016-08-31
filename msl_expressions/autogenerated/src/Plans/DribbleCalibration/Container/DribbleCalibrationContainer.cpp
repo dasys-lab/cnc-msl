@@ -83,6 +83,31 @@ namespace alica
     	return mc;
     }
 
+    bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
+	{
+		// 10s of rotating the ball
+//		int queueSize = 285;
+
+		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
+		{
+			cout << "no OpticalFLow signal!" << endl;
+			return nullptr;
+		}
+
+		if (opQueue->size() >= queueSize)
+		{
+			return true;
+		}
+		if (!queueFilled)
+		{
+			cout << "filling optical flow queue!" << endl;
+			queueFilled = true;
+		}
+		opQueue->push_back(wm->rawSensorData->getOpticalFlow(0));
+
+		return false;
+	}
+
     double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
     {
     	return getAverageOpticalFlowValue(XVALUE, queue);
@@ -91,11 +116,6 @@ namespace alica
     double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
     {
     	return getAverageOpticalFlowValue(YVALUE, queue);
-    }
-
-    double DribbleCalibrationContainer::getAverageOpticalFlowQOSValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
-    {
-    	return getAverageOpticalFlowValue(QOSVALUE, queue);
     }
 
     double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue)

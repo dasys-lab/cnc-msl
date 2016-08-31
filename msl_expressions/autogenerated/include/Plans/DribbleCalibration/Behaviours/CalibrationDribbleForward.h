@@ -25,23 +25,33 @@ namespace alica
         static const int MAX_SPEED = 4000;
         static const int MAX_ROTATION = 5000;
         static const int SECTIONS_SIZE = 11;
-        static const int MIN_ROTATE_NUMBER = 300;
+//        static const int MIN_ROTATE_NUMBER = 300;
 
         //const for checkBallRotation
         static const int TOO_SLOW = 2;
         static const int TOO_FAST = 3;
         static const int CORRECT = 4;
         static const int ROTATE_ERR = -10;
+//        static const int WAITING = 5;
 
+        // counter
         int haveBallCount;
-        bool increaseSpeed;
         int correctRotationCount;
-        int changingFactor;
+
+        bool increaseSpeed;
+
+        // own config params
+        double changingFactor;
+        int minRotationNumber;
 
         int moveCount;
 
-        // config Params
+        // actuation config Params
         double minRotation;
+
+        // queue with optical flow sensor data
+//        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
+//        int queueSize;
 
         void adaptWheelSpeed(int err);
         int checkBallRotation();

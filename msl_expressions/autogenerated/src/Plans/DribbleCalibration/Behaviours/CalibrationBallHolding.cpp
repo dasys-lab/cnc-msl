@@ -59,8 +59,8 @@ namespace alica
 		}
 		else
 		{
-//			MotionControl mc = dcc.getBall();
-//			send(mc);
+			MotionControl mc = dcc.getBall();
+			send(mc);
 		}
 
 		if (ballWasRotating && ballWasStanding && !ballIsRotating())
@@ -86,32 +86,6 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> opticalFlow = wm->rawSensorData->getOpticalFlow(0);
 		cout << "opticalFlow->x: " << opticalFlow->x << endl;
 		return opticalFlow->x > 0 ? true : false;
-	}
-
-	bool CalibrationBallHolding::opQueueFilled()
-	{
-// 10s of rotating the ball
-		int queueSize = 285;
-
-		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
-		{
-			cout << "no OpticalFLow signal!" << endl;
-			this->setFailure(true);
-			return false;
-		}
-
-		if (opQueue.size() >= queueSize)
-		{
-			return true;
-		}
-		if (!queueFilled)
-		{
-			cout << "filling optical flow queue!" << endl;
-			queueFilled = true;
-		}
-		opQueue.push_back(wm->rawSensorData->getOpticalFlow(0));
-
-		return false;
 	}
 
 	void CalibrationBallHolding::readConfigParameters()

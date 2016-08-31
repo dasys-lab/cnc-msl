@@ -67,7 +67,7 @@ namespace alica
                 }
 
                 // if robot can handle ball at this speed -> increase the speed and repeat
-                if (correctRotationCount > MIN_ROTATE_NUMBER)
+                if (correctRotationCount > minRotationNumber)
                 {
                     moveCount++;
                     correctRotationCount = 0;
@@ -115,20 +115,20 @@ namespace alica
         // read optical flow value
         shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
-        if (wm->rawSensorData->getOpticalFlow(10) == nullptr)
+        if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
         {
             return ROTATE_ERR;
         }
 
-        shared_ptr < geometry::CNPoint2D > opticalFlowValuesOld = wm->rawSensorData->getOpticalFlow(10);
-
-        double yDifference = opticalFlowValues->y - opticalFlowValuesOld->y;
-
-        // TODO check optical flow
-
         // too slow or not moving
+        if (opticalFlowValues->x == 0)
+        {
+//        	opQueue->clear();
+        	return TOO_SLOW;
+        }
+
         // correct
-        return false;
+        return CORRECT;
     }
 
     /**
@@ -180,7 +180,7 @@ namespace alica
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         DribbleCalibrationContainer dcc;
 
-        // config Params
+        // actuation config Params
         minRotation = dcc.readConfigParameter("Dribble.MinRotation");
 
         // sections
@@ -196,8 +196,11 @@ namespace alica
             createSections();
         }
 
-        // maybe move to config file later
-        changingFactor = 100;
+        // own config parameters
+        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor", NULL);
+        minRotationNumber = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.MinRotationNumber");
+//        queueSize = 285;
+
 
     }
 

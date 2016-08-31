@@ -36,13 +36,15 @@ namespace alica
 		// opticalFlow stuff
 		double getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
 		double getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
-		double getAverageOpticalFlowQOSValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
 
 		static const int DRIBBLE_FORWARD = 100;
 		static const int DRIBBLE_BACKWARD = 200;
 		static const int DRIBBLE_LEFT = 300;
 		static const int DRIBBLE_RIGHT = 400;
 
+
+		bool queueFilled;
+		bool fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue);
 
 		double readConfigParameter(const char *path);
 		void writeConfigParameters(vector<subsection> sections, const char* path);
