@@ -19,6 +19,7 @@ namespace alica
 	DribbleCalibrationContainer::DribbleCalibrationContainer()
 	{
 		this->wm = msl::MSLWorldModel::get();
+		this->query = make_shared<MovementQuery>();
 	}
 
 	DribbleCalibrationContainer::~DribbleCalibrationContainer()
@@ -26,13 +27,29 @@ namespace alica
 
 	}
 
-    msl_actuator_msgs::MotionControl DribbleCalibrationContainer::getBall()
+	msl_actuator_msgs::MotionControl DribbleCalibrationContainer::getBall()
 	{
 		msl::RobotMovement rm;
-    	query->reset();
+		query->reset();
 		msl_actuator_msgs::MotionControl mc;
-		auto me = wm->rawSensorData->getOwnPositionVision();
-		auto egoBallPos = wm->ball->getAlloBallPosition()->alloToEgo(*me);
+		shared_ptr<geometry::CNPosition> me;
+		if (wm->rawSensorData->getOwnPositionVision() != nullptr)
+		{
+			me = wm->rawSensorData->getOwnPositionVision();
+		}
+		else
+		{
+			cerr << "DribbleCalibrationContainer::getBall() -> couldn't get vision data" << endl;
+		}
+		shared_ptr<geometry::CNPoint2D> egoBallPos;
+		if (wm->ball->getAlloBallPosition()->alloToEgo(*me) != nullptr)
+		{
+			egoBallPos = wm->ball->getAlloBallPosition()->alloToEgo(*me);
+		}
+		else
+		{
+			cerr << "DribbleCalibrationContainer::getBall() -> couldn't get own position" << endl;
+		}
 
 		query->egoDestinationPoint = egoBallPos;
 		query->egoAlignPoint = egoBallPos;
@@ -41,49 +58,51 @@ namespace alica
 		return mc;
 	}
 
-    /**
-     * movement may be: FORWARD, BACKWARD, LEFT, RIGHT
-     *
-     * @return MotionControl to drive in a direction while using PathPlaner and avoid obstacles
-     */
-    msl_actuator_msgs::MotionControl DribbleCalibrationContainer::move(int movement, int translation)
-    {
-    	msl_actuator_msgs::MotionControl mc;
-    	msl::RobotMovement rm;
+	/**
+	 * movement may be: FORWARD, BACKWARD, LEFT, RIGHT
+	 *
+	 * @return MotionControl to drive in a direction while using PathPlaner and avoid obstacles
+	 */
+	msl_actuator_msgs::MotionControl DribbleCalibrationContainer::move(int movement, int translation)
+	{
+		msl_actuator_msgs::MotionControl mc;
+		msl::RobotMovement rm;
 
-    	if (movement != DRIBBLE_FORWARD && movement != DRIBBLE_BACKWARD && movement != DRIBBLE_LEFT && movement  != DRIBBLE_RIGHT)
-    	{
-    		cout << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
-    		mc.senderID = -1;
-    		mc.motion.translation = NAN;
-    		mc.motion.rotation = NAN;
-    		mc.motion.angle = NAN;
-    		return mc;
-    	}
+		if (movement != DRIBBLE_FORWARD && movement != DRIBBLE_BACKWARD && movement != DRIBBLE_LEFT
+				&& movement != DRIBBLE_RIGHT)
+		{
+			cerr << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
+			mc.senderID = -1;
+			mc.motion.translation = NAN;
+			mc.motion.rotation = NAN;
+			mc.motion.angle = NAN;
+			return mc;
+		}
 
-    	query->reset();
+		query->reset();
 
-    	shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0) ;
-    	double distance = 300;
-    	// drive forward
-    	egoDestination = movement == DRIBBLE_FORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
-    	// drive backward
-    	egoDestination = movement == DRIBBLE_BACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
-    	// drive left
-    	egoDestination = movement == DRIBBLE_LEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
-    	// drive right
-    	egoDestination = movement == DRIBBLE_RIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+		shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0);
+		double distance = 300;
+		// drive forward
+		egoDestination = movement == DRIBBLE_FORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
+		// drive backward
+		egoDestination = movement == DRIBBLE_BACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
+		// drive left
+		egoDestination = movement == DRIBBLE_LEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
+		// drive right
+		egoDestination = movement == DRIBBLE_RIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
 
-    	query->egoDestinationPoint = egoDestination;
-    	query->egoAlignPoint = egoDestination;
+		query->egoDestinationPoint = egoDestination;
+		query->egoAlignPoint = egoDestination;
 
-    	mc = rm.moveToPoint(query);
+		mc = rm.moveToPoint(query);
 
-    	mc.motion.translation = translation;
-    	return mc;
-    }
+		mc.motion.translation = translation;
+		return mc;
+	}
 
-    bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
+	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
+															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
 		// 10s of rotating the ball
 //		int queueSize = 285;
@@ -108,48 +127,49 @@ namespace alica
 		return false;
 	}
 
-    double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
-    {
-    	return getAverageOpticalFlowValue(XVALUE, queue);
-    }
+	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	{
+		return getAverageOpticalFlowValue(XVALUE, queue);
+	}
 
-    double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
-    {
-    	return getAverageOpticalFlowValue(YVALUE, queue);
-    }
+	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	{
+		return getAverageOpticalFlowValue(YVALUE, queue);
+	}
 
-    double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue)
-    {
-    	if (value != XVALUE && value != YVALUE && value != QOSVALUE)
-    	{
-    		cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
-    		return -1;
-    	}
+	double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value,
+																	vector<shared_ptr<geometry::CNPoint2D>> queue)
+	{
+		if (value != XVALUE && value != YVALUE && value != QOSVALUE)
+		{
+			cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
+			return -1;
+		}
 
-    	int sum = 0;
-    	cout << "in getAverageOpticalFlowValue() " << endl;
-    	for (shared_ptr<geometry::CNPoint2D> val : queue)
-    	{
-    		if (value == XVALUE)
-    		{
-    			sum += val->x;
-    		} else
-    		{
+		int sum = 0;
+		cout << "in getAverageOpticalFlowValue() " << endl;
+		for (shared_ptr<geometry::CNPoint2D> val : queue)
+		{
+			if (value == XVALUE)
+			{
+				sum += val->x;
+			}
+			else
+			{
 //    			cout << val->y << endl;s
-    			sum += val->y;
-    		}
-    	}
-    	double ret = fabs(sum) / queue.size();
-    	return sum < 0 ? -ret : ret;
+				sum += val->y;
+			}
+		}
+		double ret = fabs(sum) / queue.size();
+		return sum < 0 ? -ret : ret;
 
-    }
+	}
 
-
-    /**
-     * helps to read config parameters out of the Actuation.conf
-     *
-     * @path in Actuation config to the needed config parameter
-     */
+	/**
+	 * helps to read config parameters out of the Actuation.conf
+	 *
+	 * @path in Actuation config to the needed config parameter
+	 */
 	double DribbleCalibrationContainer::readConfigParameter(const char *path)
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
@@ -173,11 +193,13 @@ namespace alica
 			string s(path);
 			s += "." + section.name;
 
-			(*sys)["Actuation"]->set(boost::lexical_cast < std::string > (section.actuatorSpeed), (s + ".actuatorSpeed").c_str() , NULL);
+			(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(section.actuatorSpeed),
+										(s + ".actuatorSpeed").c_str(), NULL);
 #ifdef DEBUG_DC
 			cout << "wrote: " << s.append(".actuatorSpeed").c_str() << " with value " << section.actuatorSpeed << endl;
 #endif
-			(*sys)["Actuation"]->set(boost::lexical_cast < std::string > (section.robotSpeed), (s + ".robotSpeed").c_str() , NULL);
+			(*sys)["Actuation"]->set(boost::lexical_cast<std::string>(section.robotSpeed), (s + ".robotSpeed").c_str(),
+										NULL);
 		}
 		(*sys)["Actuation"]->store();
 	}
