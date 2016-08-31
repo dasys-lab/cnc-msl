@@ -71,6 +71,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/PositionReceiver.h"
 
+#include  "Plans/Calibration/RestartMotion.h"
+
 #include  "Plans/Behaviours/Pos2Defenders.h"
 
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
@@ -405,6 +407,11 @@ namespace alica
             case 1439379352605:
 
                 return make_shared<PositionReceiver>();
+                break;
+
+            case 1472657588489:
+
+                return make_shared<RestartMotion>();
                 break;
 
             case 1444835591397:

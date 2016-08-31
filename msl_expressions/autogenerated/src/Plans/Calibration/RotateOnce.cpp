@@ -25,40 +25,7 @@ namespace alica
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-    	if(initialized == false)
-    	{
-			uninitialzedCounter++;
-    	}
-
-    	if (initialized == false && uninitialzedCounter == 200)
-		{
-			wm->sendStartMotionCommand();
-			return;
-		}
-    	else if (initialized == false && uninitialzedCounter < 200)
-    	{
-    		return;
-    	}
-
-    	if (initialized == false && uninitialzedCounter != 400)
-		{
-			return;
-		}
-
-
-    	if(initialized == false) {
-			initialBearing = wm->rawSensorData->getAverageBearing();
-
-			initialAngle = wm->rawOdometry->position.angle;
-			//robotRadius = wm->
-			segments[0] = initialBearing;
-			segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-			segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-			visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
-			cout << "starting angle: " << initialAngle;
-			initialized = true;
-		}
-    	msl_actuator_msgs::MotionControl mc;
+        msl_actuator_msgs::MotionControl mc;
         mc.motion.rotation = 0.5;
         send(mc);
         int currentSegment = getCurrentRotationSegment();
@@ -66,40 +33,49 @@ namespace alica
         cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << endl;
         visitedSegments[currentSegment] = true;
 
+        if(visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
+        {
+        	if(rotationSpeed > 0.1) {
+        		rotationSpeed-= 0.05;
+        	}
+
+        	// fill ringbuffer here
+
+
+        }
+
         if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2]
                 && abs(circularDiff(currentBearing, initialBearing)) < CALIB_ERROR_THRESHOLD)
         {
-			double endAngle = wm->rawOdometry->position.angle;
-			cout << "end angle: " << endAngle;
-			lastRotationCalibError = circularDiff(initialAngle, endAngle);
+            double endAngle = wm->rawOdometry->position.angle;
+            cout << "end angle: " << endAngle;
+            lastRotationCalibError = circularDiff(initialAngle, endAngle);
 
-            if(lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
+            if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
             {
-            	// rotated too far => increase robot radius
-            	cout << endl << "hoch" << endl << endl;
-            	wm->adjustRobotRadius(1);
-            	wm->sendKillMotionCommand();
+                // rotated too far => increase robot radius
+                cout << endl << "hoch" << endl << endl;
+                wm->adjustRobotRadius(1);
             }
-            else if(lastRotationCalibError > CALIB_ERROR_THRESHOLD)
+            else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
             {
-            	// rotated not far enough => decrease robot radius
-            	cout << endl << "runter" << endl << endl;
-            	wm->adjustRobotRadius(-1);
-            	wm->sendKillMotionCommand();
+                // rotated not far enough => decrease robot radius
+                cout << endl << "runter" << endl << endl;
+                wm->adjustRobotRadius(-1);
             }
 
-            if(abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
+            if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
             {
-            	cout << "success" << endl;
-            	this->setSuccess(true);
-            	return;
+                cout << "success" << endl;
+                this->setSuccess(true);
+                return;
             }
             else
             {
-            	// start new rotation
-            	cout << "failure" << endl;
-				this->setSuccess(false);
-				this->setFailure(true);
+                // start new rotation
+                cout << "failure" << endl;
+                this->setSuccess(false);
+                this->setFailure(true);
             }
 
             cout << "finished run()" << endl;
@@ -109,9 +85,17 @@ namespace alica
     void RotateOnce::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
-		uninitialzedCounter = 0;
-		initialized = false;
-		cout << "initialized parameters" << endl;
+    	rotationSpeed = 1;
+        initialBearing = wm->rawSensorData->getAverageBearing();
+
+        initialAngle = wm->rawOdometry->position.angle;
+        //robotRadius = wm->
+        segments[0] = initialBearing;
+        segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+        segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
+        visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
+        cout << "starting angle: " << initialAngle;
+
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1467397900274) ENABLED START*/ //Add additional methods here
@@ -134,11 +118,11 @@ namespace alica
 
     double RotateOnce::circularDiff(double a, double b)
     {
-    	double diff = a - b;
-    	double sign = diff / abs(diff);
-    	double absDiff = abs(diff);
-    	double atMost180 = min(2*M_PI - absDiff, absDiff);
-    	return atMost180 * sign;
+        double diff = a - b;
+        double sign = diff / abs(diff);
+        double absDiff = abs(diff);
+        double atMost180 = min(2 * M_PI - absDiff, absDiff);
+        return atMost180 * sign;
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

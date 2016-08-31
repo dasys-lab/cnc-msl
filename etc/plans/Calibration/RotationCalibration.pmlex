@@ -14,7 +14,7 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396438734"/>
-    <value xPos="172" yPos="248" width="190" height="86" collapsed="false"/>
+    <value xPos="521" yPos="255" width="190" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396616225"/>
@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470227765155"/>
-    <value xPos="476" yPos="279" width="71" height="67" collapsed="false"/>
+    <value xPos="695" yPos="254" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470227878581"/>
@@ -37,27 +37,23 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="IncreaseRobotRadius.beh#1470228172330"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DecreaseRobotRadius.beh#1470228198807"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="RotationCalibration.pml#1470237789517"/>
-    <value xPos="249" yPos="59" width="65" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
-    <key href="RotationCalibration.pml#1470237801758"/>
-    <value>
-      <bendpoints xPos="338" yPos="214"/>
-    </value>
+    <value xPos="251" yPos="255" width="209" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470237803234"/>
     <value>
-      <bendpoints xPos="424" yPos="236"/>
+      <bendpoints xPos="509" yPos="295"/>
     </value>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1472656456600"/>
+    <value>
+      <bendpoints xPos="505" yPos="354"/>
+    </value>
+  </extensions>
+  <extensions>
+    <key href="RestartMotion.beh#1472657588489"/>
+    <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -5,38 +5,39 @@
   </states>
   <states id="1467396438734" name="Rotating" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">RotateOnce.beh#1467398000539</plans>
-    <inTransitions>#1467396616225</inTransitions>
     <inTransitions>#1470237803234</inTransitions>
     <outTransitions>#1470227878581</outTransitions>
-    <outTransitions>#1470237801758</outTransitions>
+    <outTransitions>#1472656456600</outTransitions>
   </states>
   <states id="1470227765155" name="Finished" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1470227878581</inTransitions>
   </states>
   <states id="1470237789517" name="Return" comment="">
-    <inTransitions>#1470237801758</inTransitions>
+    <plans xsi:type="alica:BehaviourConfiguration">RestartMotion.beh#1472657588489</plans>
+    <inTransitions>#1467396616225</inTransitions>
+    <inTransitions>#1472656456600</inTransitions>
     <outTransitions>#1470237803234</outTransitions>
   </states>
   <transitions id="1467396616225" name="MISSING_NAME" comment="Status Start?" msg="">
     <preCondition id="1467396619848" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1467396347589</inState>
-    <outState>#1467396438734</outState>
+    <outState>#1470237789517</outState>
   </transitions>
   <transitions id="1470227878581" name="MISSING_NAME" comment="Finished Rotation? and Error smaller than 0.02?" msg="">
     <preCondition id="1470227880114" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1467396438734</inState>
     <outState>#1470227765155</outState>
   </transitions>
-  <transitions id="1470237801758" name="MISSING_NAME" comment="finished rotation &amp;&amp; error too large" msg="">
-    <preCondition id="1470237803034" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1467396438734</inState>
-    <outState>#1470237789517</outState>
-  </transitions>
   <transitions id="1470237803234" name="MISSING_NAME" comment="INSTANT SUCCESS!!!" msg="">
     <preCondition id="1470237805501" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1470237789517</inState>
     <outState>#1467396438734</outState>
+  </transitions>
+  <transitions id="1472656456600" name="MISSING_NAME" comment="finished rotation &amp;&amp; error too large" msg="">
+    <preCondition id="1472656460039" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1467396438734</inState>
+    <outState>#1470237789517</outState>
   </transitions>
   <entryPoints id="1467396347590" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
