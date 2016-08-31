@@ -28,8 +28,8 @@ namespace alica
 
     msl_actuator_msgs::MotionControl DribbleCalibrationContainer::getBall()
 	{
-    	query->reset();
 		msl::RobotMovement rm;
+    	query->reset();
 		msl_actuator_msgs::MotionControl mc;
 		auto me = wm->rawSensorData->getOwnPositionVision();
 		auto egoBallPos = wm->ball->getAlloBallPosition()->alloToEgo(*me);
