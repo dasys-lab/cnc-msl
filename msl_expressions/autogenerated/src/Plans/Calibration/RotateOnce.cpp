@@ -30,7 +30,7 @@ namespace alica
         send(mc);
         int currentSegment = getCurrentRotationSegment();
         double currentBearing = wm->rawSensorData->getAverageBearing();
-        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << endl;
+        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
         visitedSegments[currentSegment] = true;
 
         if(visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
@@ -38,7 +38,7 @@ namespace alica
     		double circDiff = circularDiff(currentBearing, initialBearing);
 			precisionBuffer.add(make_shared<double>(circDiff));
 
-			rotationSpeed = getLimitedRotationSpeed(-circDiff*10);
+			rotationSpeed = getLimitedRotationSpeed(-circDiff);
 
         	if(precisionBuffer.getSize() == PRECISION_BUFFER_SIZE) {
         		double diffSum = 0;
@@ -80,7 +80,7 @@ namespace alica
 						this->setFailure(true);
 					}
         		} else {
-        			cout << "diffSum=" << diffSum << ", muss noch" << endl;
+        			// cout << "diffSum=" << diffSum << ", muss noch" << endl;
         		}
         	}
         }
@@ -89,9 +89,9 @@ namespace alica
     void RotateOnce::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
-    	rotationSpeed = 1;
+    	rotationSpeed = MAX_ROTATION_SPEED;
         initialBearing = wm->rawSensorData->getAverageBearing();
-
+	precisionBuffer.clear(true);
         initialAngle = wm->rawOdometry->position.angle;
         //robotRadius = wm->
         segments[0] = initialBearing;
