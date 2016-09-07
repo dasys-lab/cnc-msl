@@ -19,18 +19,6 @@ namespace alica
 			DomainBehaviour("CalibrationTakeBall")
 	{
 		/*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
-		ballRotateCorrect = false;
-		ballHoldCorrect = false;
-
-		adaptWheel = 0;
-		operation = ADD;
-		oldOperation = ADD;
-		queueSize = 0;
-
-		// for output
-		queueFilled = false;
-
-		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	CalibrationTakeBall::~CalibrationTakeBall()
@@ -55,28 +43,28 @@ namespace alica
 				{
 					return;
 				}
-				int ballRotation = checkBallRotation();
+				Rotation ballRotation = checkBallRotation();
 
-				if (ballRotation == ROTATE_ERR)
+				if (ballRotation == RotateErr)
 				{
 					cout << "ROTATE_ERR" << endl;
 					return;
 				}
-				else if (ballRotation == ROTATE_CORRECT)
+				else if (ballRotation == RotateCorrect)
 				{
 					cout << "ROTATE_CORRECT" << endl;
 					this->ballRotateCorrect = true;
 				}
-				else if (ballRotation == ROTATE_LEFT)
+				else if (ballRotation == RotateLeft)
 				{
 					// ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-					correctWheelSpeed(ROTATE_LEFT);
+					correctWheelSpeed(RotateLeft);
 					writeConfigParameters();
 				}
-				else if (ballRotation == ROTATE_RIGHT)
+				else if (ballRotation == RotateRight)
 				{
 					// ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-					correctWheelSpeed(ROTATE_RIGHT);
+					correctWheelSpeed(RotateRight);
 					writeConfigParameters();
 				}
 				return;
@@ -97,11 +85,22 @@ namespace alica
 	void CalibrationTakeBall::initialiseParameters()
 	{
 		/*PROTECTED REGION ID(initialiseParameters1469109429392) ENABLED START*/ //Add additional options here
+		ballRotateCorrect = false;
+		ballHoldCorrect = false;
+
+		adaptWheel = 0;
+		operation = Add;
+		oldOperation = Add;
+		queueSize = 0;
+
+		// for output
+		queueFilled = false;
+
+		readConfigParameters();
 		/*PROTECTED REGION END*/
 	}
 	/*PROTECTED REGION ID(methods1469109429392) ENABLED START*/ //Add additional methods here
-
-	int CalibrationTakeBall::checkBallRotation()
+	CalibrationTakeBall::Rotation CalibrationTakeBall::checkBallRotation()
 	{
 
 		int minX = 125;
@@ -126,22 +125,22 @@ namespace alica
 //		if (xValue > minX && yValue < maxY && yValue > -maxY)
 		if (yValue < maxY && yValue > -maxY)
 		{
-			return ROTATE_CORRECT;
+			return RotateCorrect;
 
 		}
 		else if (yValue > maxY)
 		{
 			// right wheel is too fast so the ball is rotating to the left
-			return ROTATE_LEFT;
+			return RotateLeft;
 
 		}
 		else if (yValue < -maxY)
 		{
 			// left wheel is too fast
-			return ROTATE_RIGHT;
+			return RotateRight;
 		}
 
-		return ROTATE_ERR;
+		return RotateErr;
 	}
 
 	/**
@@ -150,14 +149,14 @@ namespace alica
 	 * if the ball is rotation left the right wheel need to be slowed
 	 * if the ball is rotation to slow the dribbleFactor of both wheels need to be adapted
 	 */
-	void CalibrationTakeBall::correctWheelSpeed(int rotation)
+	void CalibrationTakeBall::correctWheelSpeed(Rotation rotation)
 	{
-		if (rotation != ROTATE_RIGHT && rotation != ROTATE_LEFT && rotation != ROTATE_TOO_SLOW)
+		if (rotation != RotateRight && rotation != RotateLeft && rotation != RotateTooSlow)
 		{
 			cout << "CalibrationTakeBall::correctWheelSpeed(int wheel) -> wrong input!" << endl;
 			return;
 		}
-		if (rotation == ROTATE_TOO_SLOW)
+		if (rotation == RotateTooSlow)
 		{
 			// increase booth wheels speed (decrease dribbleFactor)
 			cout << "ball is rotating too slow!" << endl;
@@ -171,20 +170,20 @@ namespace alica
 		// check if the defect wheel is too fast or to slow
 		if (rotation == adaptWheel)
 		{
-			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
-			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight + changingFactor : dribbleFactorRight;
-			operation = ADD;
+			dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
+			dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight + changingFactor : dribbleFactorRight;
+			operation = Add;
 		}
 		else
 		{
-			dribbleFactorLeft = adaptWheel == ROTATE_RIGHT ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
-			dribbleFactorRight = adaptWheel == ROTATE_LEFT ? dribbleFactorRight - changingFactor : dribbleFactorRight;
-			operation = SUB;
+			dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
+			dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight - changingFactor : dribbleFactorRight;
+			operation = Sub;
 		}
 		if (operation != oldOperation)
 		{
 			changingFactor = changingFactor / 2;
-			oldOperation = operation == ADD ? SUB : ADD;
+			oldOperation = operation == Add ? Sub : Add;
 		}
 		else
 		{

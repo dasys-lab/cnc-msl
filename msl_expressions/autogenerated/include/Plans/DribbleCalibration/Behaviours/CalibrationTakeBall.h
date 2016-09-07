@@ -19,12 +19,14 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
         // consts for checkBallRotation()
-        static const int ROTATE_CORRECT = 0;
-        static const int ROTATE_LEFT = 10;
-        static const int ROTATE_RIGHT = 20;
-        //static const int ROTATE_BACKWARDS = 30;
-        static const int ROTATE_TOO_SLOW = 40;
-        static const int ROTATE_ERR = -10;
+        enum Rotation
+		{
+        	RotateCorrect,
+			RotateLeft,
+			RotateRight,
+			RotateTooSlow,
+			RotateErr
+		};
         DribbleCalibrationContainer dcc;
 
         bool ballRotateCorrect;
@@ -40,18 +42,22 @@ namespace alica
 
         // for correctWheelSpeed function
         double changingFactor;
-        int operation;
-        int oldOperation;
-        static const int ADD = 10000;
-        static const int SUB = 20000;
+        enum Operation
+		{
+        	Add,
+			Sub
+		};
+        Operation operation;
+        Operation oldOperation;
+
         int adaptWheel;
 
         // for opticalFlow stuff
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
         int queueSize;
 
-        int checkBallRotation();
-        void correctWheelSpeed(int rotation);
+        Rotation checkBallRotation();
+        void correctWheelSpeed(Rotation rotation);
         void readConfigParameters();
         void writeConfigParameters();
 
