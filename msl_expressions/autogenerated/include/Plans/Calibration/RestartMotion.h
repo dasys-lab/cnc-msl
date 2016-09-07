@@ -20,7 +20,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1472657511112) ENABLED START*/ //Add additional private methods here
-        int uninitialzedCounter;
+        int uninitializedCounter;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

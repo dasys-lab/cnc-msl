@@ -158,6 +158,10 @@ template<typename T>
       return &typeid(T);
     }
 
+    T getActualElement(int index) {
+    	return *getElement(index).get();
+    }
+
   private:
     mutex mtx_;
     std::unique_ptr<std::shared_ptr<T>[]> ringBuffer; /**< Ring buffer of elements */

@@ -12,7 +12,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
-            DomainBehaviour("RotateOnce"), precisionBuffer(10)
+			DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
@@ -26,7 +26,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
         msl_actuator_msgs::MotionControl mc;
-        mc.motion.rotation = 0.5;
+        mc.motion.rotation = rotationSpeed;
         send(mc);
         int currentSegment = getCurrentRotationSegment();
         double currentBearing = wm->rawSensorData->getAverageBearing();
@@ -35,50 +35,54 @@ namespace alica
 
         if(visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
         {
-        	if(rotationSpeed > 0.1) {
-        		rotationSpeed-= 0.05;
+    		double circDiff = circularDiff(currentBearing, initialBearing);
+			precisionBuffer.add(make_shared<double>(circDiff));
+
+			rotationSpeed = getLimitedRotationSpeed(-circDiff*10);
+
+        	if(precisionBuffer.getSize() == PRECISION_BUFFER_SIZE) {
+        		double diffSum = 0;
+        		for(int i = 0; i < PRECISION_BUFFER_SIZE; i++) {
+        			diffSum += precisionBuffer.getActualElement(i);
+        		}
+        		
+        		if(diffSum >= 0) {
+        			cout << "diffSum=" << diffSum << ", hier könnten wir aufhören" << endl;
+
+					double endAngle = wm->rawOdometry->position.angle;
+					cout << "end angle: " << endAngle;
+					lastRotationCalibError = circularDiff(initialAngle, endAngle);
+
+					if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
+					{
+						// rotated too far => increase robot radius
+						cout << endl << "hoch" << endl << endl;
+						wm->adjustRobotRadius(1);
+					}
+					else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
+					{
+						// rotated not far enough => decrease robot radius
+						cout << endl << "runter" << endl << endl;
+						wm->adjustRobotRadius(-1);
+					}
+
+					if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
+					{
+						cout << "success" << endl;
+						this->setSuccess(true);
+						return;
+					}
+					else
+					{
+						// start new rotation
+						cout << "failure" << endl;
+						this->setSuccess(false);
+						this->setFailure(true);
+					}
+        		} else {
+        			cout << "diffSum=" << diffSum << ", muss noch" << endl;
+        		}
         	}
-
-        	// fill ringbuffer here
-
-
-        }
-
-        if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2]
-                && abs(circularDiff(currentBearing, initialBearing)) < CALIB_ERROR_THRESHOLD)
-        {
-            double endAngle = wm->rawOdometry->position.angle;
-            cout << "end angle: " << endAngle;
-            lastRotationCalibError = circularDiff(initialAngle, endAngle);
-
-            if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
-            {
-                // rotated too far => increase robot radius
-                cout << endl << "hoch" << endl << endl;
-                wm->adjustRobotRadius(1);
-            }
-            else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
-            {
-                // rotated not far enough => decrease robot radius
-                cout << endl << "runter" << endl << endl;
-                wm->adjustRobotRadius(-1);
-            }
-
-            if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
-            {
-                cout << "success" << endl;
-                this->setSuccess(true);
-                return;
-            }
-            else
-            {
-                // start new rotation
-                cout << "failure" << endl;
-                this->setSuccess(false);
-                this->setFailure(true);
-            }
-
-            cout << "finished run()" << endl;
         }
         /*PROTECTED REGION END*/
     }
@@ -123,6 +127,10 @@ namespace alica
         double absDiff = abs(diff);
         double atMost180 = min(2 * M_PI - absDiff, absDiff);
         return atMost180 * sign;
+    }
+
+    double RotateOnce::getLimitedRotationSpeed(double desiredSpeed) {
+		return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
     }
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -22,19 +22,19 @@ namespace alica
     void RestartMotion::run(void* msg)
     {
         /*PROTECTED REGION ID(run1472657511112) ENABLED START*/ //Add additional options here
-		uninitialzedCounter++;
+		uninitializedCounter++;
 
-		if (uninitialzedCounter == 200)
+		if (uninitializedCounter == 200)
 		{
 			wm->sendStartMotionCommand();
 			return;
 		}
-		else if (uninitialzedCounter < 200)
+		else if (uninitializedCounter < 200)
 		{
 			return;
 		}
 
-		if (uninitialzedCounter != 400)
+		if (uninitializedCounter != 400)
 		{
 			return;
 		}
@@ -48,7 +48,7 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1472657511112) ENABLED START*/ //Add additional options here
         wm->sendKillMotionCommand();
-        uninitialzedCounter = 0;
+        uninitializedCounter = 0;
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1472657511112) ENABLED START*/ //Add additional methods here

@@ -29,14 +29,18 @@ namespace alica
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
         //Buffer holding precision values of current rotation
         msl::RingBuffer<double> precisionBuffer;
+		static const int PRECISION_BUFFER_SIZE = 10;
+		static constexpr double MAX_ROTATION_SPEED = 2.0;
         double segments[3];
         bool visitedSegments[3];
         double lastRotationCalibError;
 
         // rotation speed varies
         double rotationSpeed;
+
         int getCurrentRotationSegment();
         double circularDiff(double a, double b);
+        double getLimitedRotationSpeed(double desiredSpeed);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
