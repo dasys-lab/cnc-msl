@@ -34,13 +34,20 @@ namespace alica
 		msl_actuator_msgs::MotionControl move(int movement, int translation);
 
 		// opticalFlow stuff
-		double getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
-		double getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue);
+		double getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
+		double getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 
-		static const int DRIBBLE_FORWARD = 100;
-		static const int DRIBBLE_BACKWARD = 200;
-		static const int DRIBBLE_LEFT = 300;
-		static const int DRIBBLE_RIGHT = 400;
+		enum Dribble
+		{
+			DribbleForward,
+			DribbleBackward,
+			DribbleLeft,
+			DribbleRight
+		};
+//		static const int DRIBBLE_FORWARD = 100;
+//		static const int DRIBBLE_BACKWARD = 200;
+//		static const int DRIBBLE_LEFT = 300;
+//		static const int DRIBBLE_RIGHT = 400;
 
 
 		bool queueFilled;
@@ -53,10 +60,16 @@ namespace alica
 
 		shared_ptr<msl::MovementQuery> query;
 
-		static const int XVALUE = 34;
-		static const int YVALUE = 35;
-		static const int QOSVALUE = 36;
-		double getAverageOpticalFlowValue(int value, vector<shared_ptr<geometry::CNPoint2D>> queue);
+		enum OPValue
+		{
+			XValue,
+			YValue,
+			QOSValue
+		};
+//		static const int XVALUE = 34;
+//		static const int YVALUE = 35;
+//		static const int QOSVALUE = 36;
+		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 	};
 
 } /* namespace alica */

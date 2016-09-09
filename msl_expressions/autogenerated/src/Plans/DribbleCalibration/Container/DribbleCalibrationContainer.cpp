@@ -68,8 +68,8 @@ namespace alica
 		msl_actuator_msgs::MotionControl mc;
 		msl::RobotMovement rm;
 
-		if (movement != DRIBBLE_FORWARD && movement != DRIBBLE_BACKWARD && movement != DRIBBLE_LEFT
-				&& movement != DRIBBLE_RIGHT)
+		if (movement != DribbleForward && movement != DribbleBackward && movement != DribbleLeft
+				&& movement != DribbleRight)
 		{
 			cerr << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
 			mc.senderID = -1;
@@ -84,13 +84,13 @@ namespace alica
 		shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0);
 		double distance = 300;
 		// drive forward
-		egoDestination = movement == DRIBBLE_FORWARD ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
+		egoDestination = movement == DribbleForward ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
 		// drive backward
-		egoDestination = movement == DRIBBLE_BACKWARD ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
+		egoDestination = movement == DribbleBackward ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
 		// drive left
-		egoDestination = movement == DRIBBLE_LEFT ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
+		egoDestination = movement == DribbleLeft ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
 		// drive right
-		egoDestination = movement == DRIBBLE_RIGHT ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+		egoDestination = movement == DribbleRight ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
 
 		query->egoDestinationPoint = egoDestination;
 		query->egoAlignPoint = egoDestination;
@@ -101,6 +101,9 @@ namespace alica
 		return mc;
 	}
 
+	/**
+	 * @return true if opQueue is filled
+	 */
 	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
 															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
@@ -109,7 +112,7 @@ namespace alica
 
 		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
 		{
-			cout << "no OpticalFLow signal!" << endl;
+			cerr << "no OpticalFLow signal!" << endl;
 			return nullptr;
 		}
 
@@ -127,30 +130,32 @@ namespace alica
 		return false;
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
-		return getAverageOpticalFlowValue(XVALUE, queue);
+		return getAverageOpticalFlowValue(XValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(vector<shared_ptr<geometry::CNPoint2D>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
-		return getAverageOpticalFlowValue(YVALUE, queue);
+		return getAverageOpticalFlowValue(YValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowValue(int value,
-																	vector<shared_ptr<geometry::CNPoint2D>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value,
+																   shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
-		if (value != XVALUE && value != YVALUE && value != QOSVALUE)
+		if (value != XValue && value != YValue /*&& value != QOSValue*/)
 		{
 			cerr << "DribbleCalibrationContainer::getAverageOpticalFlowValue -> wrong method input!" << endl;
 			return -1;
 		}
 
 		int sum = 0;
+#ifdef DEBUG_DC
 		cout << "in getAverageOpticalFlowValue() " << endl;
-		for (shared_ptr<geometry::CNPoint2D> val : queue)
+#endif
+		for (shared_ptr<geometry::CNPoint2D> val : *queue)
 		{
-			if (value == XVALUE)
+			if (value == XValue)
 			{
 				sum += val->x;
 			}
@@ -160,7 +165,7 @@ namespace alica
 				sum += val->y;
 			}
 		}
-		double ret = fabs(sum) / queue.size();
+		double ret = fabs(sum) / queue->size();
 		return sum < 0 ? -ret : ret;
 
 	}

@@ -108,7 +108,7 @@ namespace msl
 
 		// dribble behavior -> used from dribbleToPointConservative ==============================================
 		if (query->dribble)
-		{ //todo
+		{
 			mc.motion.rotation = query->rotationPDForDribble(egoTarget);
 			double rotPointDist = 350.0;
 			if (auto ballPos = wm->ball->getEgoBallPosition())
