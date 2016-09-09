@@ -18,17 +18,17 @@ int main(void) {
 	DDRD = 0x00;
 
 
-	// Configure Output-Pins
+	
 	SET_OUTPUT(ACTIVATE_BOOSTER);
 	RESET(ACTIVATE_BOOSTER);
-	SET_OUTPUT(CHARGE);
-	RESET(CHARGE);
 	SET_OUTPUT(ACTIVATE_SERVO);
 	RESET(ACTIVATE_SERVO);
 	SET_OUTPUT(KICK);
 	RESET(KICK);
 	SET_OUTPUT(RESET_NOTAUS);
 	RESET(RESET_NOTAUS);
+	SET_OUTPUT(CS_ETH);
+	RESET(CS_ETH);
 
 	// enable interrupts
 	// sei();
@@ -40,17 +40,17 @@ int main(void) {
 	// BOOSTER
 	// KICKER
 
-	for(int i = 0; i <= 2000; i++)
+	for(int i = 0; i <= 5000; i++)
 		_delay_ms(1);
 
 	SET(RESET_NOTAUS);
 
-	for(int i = 0; i <= 50; i++)
+	for(int i = 0; i <= 500; i++)
 		_delay_ms(1);
 
 	RESET(RESET_NOTAUS);
 
-	for(int i = 0; i <= 2000; i++)
+	for(int i = 0; i <= 5000; i++)
 		_delay_ms(1);
 /*
 	TOGGLE(KICK);
@@ -64,22 +64,15 @@ int main(void) {
 
 	SET(ACTIVATE_BOOSTER);
 
-	for(int i = 0; i <= 50; i++)
+	for(int i = 0; i <= 25000; i++)
 			_delay_ms(1);
-
-	SET(CHARGE);
-
-	for(int i = 0; i <= 50000; i++)
-			_delay_ms(1);
-
-	RESET(CHARGE);
-
 
 	RESET(ACTIVATE_BOOSTER);
 	
 	while(1) {
 		for(int i = 0; i <= 1000; i++)
 			_delay_ms(1);
+		TOGGLE(KICK);
 	}
 	return 0;
 }
