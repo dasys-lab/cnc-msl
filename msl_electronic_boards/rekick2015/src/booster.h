@@ -1,0 +1,13 @@
+/*
+ * booster.h
+ *
+ *  Created on: Sep 12, 2016
+ *      Author: Carpe Noctem
+ */
+
+#ifndef CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_
+#define CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_
+
+
+
+#endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_ */

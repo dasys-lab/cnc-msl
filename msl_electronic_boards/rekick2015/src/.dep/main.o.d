@@ -6,7 +6,8 @@ main.o: main.c /usr/lib/avr/include/avr/io.h \
  /usr/lib/avr/include/avr/fuse.h /usr/lib/avr/include/avr/lock.h \
  /usr/lib/avr/include/util/delay.h \
  /usr/lib/avr/include/util/delay_basic.h /usr/lib/avr/include/math.h \
- defaults.h global.h
+ defaults.h global.h messages.h can_lib.h can_drv.h config.h \
+ /usr/lib/avr/include/avr/interrupt.h
 
 /usr/lib/avr/include/avr/io.h:
 
@@ -39,3 +40,13 @@ main.o: main.c /usr/lib/avr/include/avr/io.h \
 defaults.h:
 
 global.h:
+
+messages.h:
+
+can_lib.h:
+
+can_drv.h:
+
+config.h:
+
+/usr/lib/avr/include/avr/interrupt.h:

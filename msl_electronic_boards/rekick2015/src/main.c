@@ -5,11 +5,17 @@
 //
 // Author: Lukas Will <lukas.will@gmail.com>
 
+
+// set fuse bits with:
+// -U lfuse:w:0xff:m -U hfuse:w:0xd9:m -U efuse:w:0xff:m
+// 16 MHz external Oscilator, rest default
+
 #include <avr/io.h>
 #include <util/delay.h>
 
 #include "defaults.h"
 #include "global.h"
+#include "messages.h"
 
 
 int main(void) {
@@ -35,6 +41,7 @@ int main(void) {
 
 	// ADC
 	// CAN
+	communication_init();
 	// ETHERNET
 
 	// BOOSTER
@@ -52,33 +59,23 @@ int main(void) {
 
 	for(int i = 0; i <= 2000; i++)
 		_delay_ms(1);
-/*
-	TOGGLE(KICK);
-	for(int i = 0; i <= 200; i++)
-		_delay_ms(1);
-	TOGGLE(KICK);
 
-	for(int i = 0; i <= 200; i++)
-		_delay_ms(1);
-*/
-
+	/*
 	SET(ACTIVATE_BOOSTER);
-
 	for(int i = 0; i <= 50; i++)
 			_delay_ms(1);
 
 	SET(CHARGE);
-
 	for(int i = 0; i <= 50000; i++)
 			_delay_ms(1);
 
 	RESET(CHARGE);
-
-
 	RESET(ACTIVATE_BOOSTER);
+	*/
 	
 	while(1) {
-		for(int i = 0; i <= 1000; i++)
+		message_handler();
+		for(int i = 0; i <= 30; i++)
 			_delay_ms(1);
 	}
 	return 0;

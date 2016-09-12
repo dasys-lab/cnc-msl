@@ -15,7 +15,7 @@
 
 #define FAULT			C,4
 #define CHARGE			C,6
-#define DONE			C,7		// Didn't work. Change R_BG from LT3751
+#define DONE			C,7		// Is not implemented. Change R_BG from 0 to a value you calculate -> datasheet(LT3751)
 
 #define ACTIVATE_BOOSTER	C,5
 #define ACTIVATE_SERVO		D,7
