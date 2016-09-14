@@ -11,6 +11,10 @@
 #include "global.h"
 
 
+
+#include <util/delay.h>
+
+
 uint8_t can_buffer_head = 0;
 uint8_t can_buffer_tail = 0;
 
@@ -46,7 +50,7 @@ void message_handler()
 {
 	static uint8_t iterations = 0;
 
-	if (iterations > 100)
+	if (++iterations > 50)
 	{
 		iterations = 0;
 		debug("Test Message");
@@ -66,6 +70,14 @@ void message_receive_handler()
 				parse_data(rx_msg.pt_data, rx_msg.dlc);
 			}
 			rx_msg.status = 0;	// clear status
+
+			SET(RESET_NOTAUS);
+
+					for(int i = 0; i <= 50; i++)
+						_delay_ms(1);
+
+					RESET(RESET_NOTAUS);
+
 			break;
 			
 		case CAN_STATUS_NOT_COMPLETED:
@@ -88,6 +100,20 @@ void message_receive_handler()
 
 void message_transmit_handler()
 {
+	can_buffer[0].data[0] = CMD_MSG;
+	can_buffer[0].data[1] = "T";
+	can_buffer[0].data[2] = "\n";
+
+
+	uint8_t id[4] = {0x00, PRIORITY_NORM, REKICK_ID, ETH2CAN_ID};
+	generate_extCAN_ID(id, &can_buffer[0].id);
+
+	can_buffer[0].length = 3;
+
+	sendMsg(&can_buffer[0]);
+
+
+	/*
 	if (can_buffer_head == can_buffer_tail)
 		return;
 
@@ -105,15 +131,15 @@ void message_transmit_handler()
 
 		// Some more Error handling?
 		// CAN ERROR HANDLING
-	}
+	}*/
 }
 
 void generate_extCAN_ID(uint8_t *bytes, uint32_t *result)
 {
-	result = (bytes[0] << 3) | (bytes[1] >> 5);
-	result = ((bytes[1] & 0x03) | 0x0C | ((bytes[1] & 0xFC) << 3)) << 8;
-	result = bytes[2] << 16;
-	result = bytes[3] << 24;
+	*result = (bytes[0] << 3) | (bytes[1] >> 5);
+	*result |= (uint32_t) ((bytes[1] & 0x03) | 0x0C | ((bytes[1] & 0xFC) << 3)) << 8;
+	*result |= (uint32_t) bytes[2] << 16;
+	*result |= (uint32_t) bytes[3] << 24;
 }
 
 void configureRxMOb()
@@ -142,8 +168,11 @@ int8_t sendMsg(tExtendedCAN *message)
 	while(can_cmd(&tx_msg) != CAN_CMD_ACCEPTED); // Wait for MOb to configure (Must re-configure MOb for every transaction) and send request
 	while(can_get_status(&tx_msg) == CAN_STATUS_NOT_COMPLETED);	// Wait for Tx to complete
 
-	if (rx_msg.status == CAN_STATUS_COMPLETED)
+	if (tx_msg.status == CAN_STATUS_COMPLETED)
+	{
+
 		return 1;
+	}
 	else
 		return -1;
 }
@@ -162,7 +191,7 @@ int8_t prepareMsg(uint8_t cmd, uint8_t* data, uint8_t length, uint8_t priority)
 
 	// 0x00, priority, sender, receiver
 	uint8_t id[4] = {0x00, priority, REKICK_ID, ETH2CAN_ID};
-	generate_extCAN_ID(id, message.id);
+	generate_extCAN_ID(id, &message.id);
 
 	if (length > 7)
 		length = 7;
