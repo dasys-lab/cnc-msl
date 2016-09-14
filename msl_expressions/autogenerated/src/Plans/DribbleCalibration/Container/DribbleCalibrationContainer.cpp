@@ -115,7 +115,8 @@ namespace alica
 			cerr << "no OpticalFLow signal!" << endl;
 			return nullptr;
 		}
-
+		cout << "queueSize = " << queueSize << endl;
+		cout << "opQueue.size() = " << opQueue->size() << endl;
 		if (opQueue->size() >= queueSize)
 		{
 			return true;
