@@ -25,8 +25,8 @@ namespace alica
 	void CalibrationBallHolding::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1469284294147) ENABLED START*/ //Add additional options here
-		this->setSuccess(true);
-		return;
+		//this->setSuccess(true);
+		//return;
 		if (wm->rawSensorData->getLightBarrier())
 		{
 			// if ball is in kicker
@@ -107,8 +107,8 @@ namespace alica
 		this->minRotation = dcc.readConfigParameter("Dribble.MinRotation");
 		this->slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
 
-		queueSize = (*sys)["DribbleCalibration"]->get<int>("BallHolding.QueueSize", NULL);
-		changingFactor = (*sys)["DribbleCalibration"]->get<int>("BallHolding.ChangingFactor", NULL);
+		queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.QueueSize", NULL);
+		changingFactor = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.ChangingFactor", NULL);
 	}
 
 	void CalibrationBallHolding::writeConfigParameters()

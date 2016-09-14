@@ -30,8 +30,8 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
 		// TODO: remove when finished testing!
-		this->setSuccess(true);
-		return;
+		//this->setSuccess(true);
+		//return;
 		// check if robot has the ball
 		if (wm->rawSensorData->getLightBarrier())
 		{
@@ -205,8 +205,8 @@ namespace alica
 		dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
 		// maybe put in config
-		changingFactor = (*sys)["DribbleCalibration"]->get<int>("TakeBall.ChangingFactor", NULL);
-		queueSize = (*sys)["DribbleCalibration"]->get<int>("TakeBall.QueueSize", NULL);
+		changingFactor = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.ChangingFactor", NULL);
+		queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
 	}
 
 	void CalibrationTakeBall::writeConfigParameters()
