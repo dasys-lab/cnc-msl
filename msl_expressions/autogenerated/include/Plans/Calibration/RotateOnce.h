@@ -34,6 +34,7 @@ namespace alica
         double segments[3];
         bool visitedSegments[3];
         double lastRotationCalibError;
+        static constexpr double ACCELERATION = 0.05;
 
         // rotation speed varies
         double rotationSpeed;
@@ -41,6 +42,7 @@ namespace alica
         int getCurrentRotationSegment();
         double circularDiff(double a, double b);
         double getLimitedRotationSpeed(double desiredSpeed);
+        void logCalibrationResult(double calibError);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

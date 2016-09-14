@@ -501,12 +501,12 @@ namespace msl
 		rawSensorData->processLightBarrier(msg);
 	}
 
-	void msl::MSLWorldModel::adjustRobotRadius(int difference)
+	void msl::MSLWorldModel::adjustRobotRadius(double difference)
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
-		int currentRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
+		double currentRadius = motion->get<double>("Motion","MotionControl","RobotRadius",NULL);
 		motion->set(boost::lexical_cast<string>(currentRadius + difference),"Motion.MotionControl.RobotRadius",NULL);
 		motion->store();
 	}
