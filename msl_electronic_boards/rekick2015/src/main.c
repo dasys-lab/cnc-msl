@@ -10,6 +10,24 @@
 // -U lfuse:w:0xff:m -U hfuse:w:0xd9:m -U efuse:w:0xff:m
 // 16 MHz external Oscilator, rest default
 
+/*
+iface can0 inet manual
+address 127.42.23.180
+netmask 255.255.255.0
+##ideally use this:
+pre-up ip link set can0 up txqueuelen 1000 type can bitrate 1000000
+##use this if dmesg show error 'no bittiming available' (kernel flag)
+#up ip link set can0 up txqueuelen 1000 type can tq 125 prop-seg 2 phase-seg1 3 phase-seg2 2 sjw 1
+##Taker Fix: adding pre-up instead of up, working on nase
+#pre-up ip link set can0 type can bitrate 1000000 triple-sampling on
+#down ifconfig $IFACE down
+
+## Lukas Test für neue Kickerplatine
+#ip link set can0 type can bitrate 125000 triple-sampling on
+
+auto can0
+*/
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -36,6 +54,9 @@ int main(void) {
 	SET_OUTPUT(RESET_NOTAUS);
 	RESET(RESET_NOTAUS);
 
+	SET_OUTPUT(CAN_TX);
+	RESET(CAN_TX);
+
 	// enable interrupts
 	// sei();
 
@@ -56,9 +77,6 @@ int main(void) {
 		_delay_ms(1);
 
 	RESET(RESET_NOTAUS);
-
-	for(int i = 0; i <= 2000; i++)
-		_delay_ms(1);
 
 	/*
 	SET(ACTIVATE_BOOSTER);
