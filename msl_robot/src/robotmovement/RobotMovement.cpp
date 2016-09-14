@@ -396,7 +396,6 @@ namespace msl
 		q->egoDestinationPoint = dest;
 		q->egoAlignPoint = align;
 		q->fast = true;
-		// todo: test if experimatallyMoveToPoint() does nearly the same as placeRobotAggressive()
 		mc = moveToPoint(q);
 #ifdef RM_DEBUG
 		cout << "RobotMovementmoveToFreeSpace: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
