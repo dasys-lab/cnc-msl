@@ -93,6 +93,8 @@ namespace alica
 		oldOperation = Add;
 		queueSize = 0;
 
+		opQueue = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+
 		// for output
 		queueFilled = false;
 
