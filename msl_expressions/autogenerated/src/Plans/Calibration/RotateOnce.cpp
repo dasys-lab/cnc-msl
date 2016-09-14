@@ -152,7 +152,7 @@ namespace alica
 		double currentRadius = motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
 
 		ostringstream stream;
-		ofstream os(supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log"), ios_base::app);
+		ofstream os(supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log"),ios_base::out | ios_base::app);
 		std::time_t result = std::time(nullptr);
 		os << currentRadius << ";" << calibError << ";" << ctime(&result) << endl;
 	}
