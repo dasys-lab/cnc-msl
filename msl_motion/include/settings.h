@@ -38,7 +38,7 @@ typedef struct {
     //int gear_denum;
     //int gear_num;
     int wheelRadius;
-    int robotRadius;
+    double robotRadius;
 
 	int odometrySamplingTime;
 	int controllerLoopTime;

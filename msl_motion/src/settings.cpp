@@ -100,7 +100,7 @@ void settings_init() {
 
 
     default_settings.wheelRadius = motion->get<int>("Motion","MotionControl","WheelRadius",NULL);
-    default_settings.robotRadius = motion->get<int>("Motion","MotionControl","RobotRadius",NULL);
+    default_settings.robotRadius = motion->get<double>("Motion","MotionControl","RobotRadius",NULL);
 
 
 
