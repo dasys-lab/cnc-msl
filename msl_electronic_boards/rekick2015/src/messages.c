@@ -27,6 +27,11 @@ void (*parse_data)(uint8_t *, uint8_t) = parse_default;
 
 int8_t communication_init()
 {
+	SET_OUTPUT(CAN_TX);
+	RESET(CAN_TX);
+	SET_INPUT(CAN_RX);
+	RESET(CAN_RX);
+
 	can_init(0);
 
 	// Interrupts aktivieren?
@@ -90,20 +95,6 @@ void message_receive_handler()
 
 void message_transmit_handler()
 {
-	can_buffer[0].data[0] = CMD_MSG;
-	can_buffer[0].data[1] = 'T';
-	can_buffer[0].data[2] = '\n';
-
-
-	uint8_t id[4] = {0x00, PRIORITY_NORM, REKICK_ID, ETH2CAN_ID};
-	generate_extCAN_ID(id, &can_buffer[0].id);
-
-	can_buffer[0].length = 3;
-
-	sendMsg(&can_buffer[0]);
-
-
-	/*
 	if (can_buffer_head == can_buffer_tail)
 		return;
 
@@ -121,7 +112,7 @@ void message_transmit_handler()
 
 		// Some more Error handling?
 		// CAN ERROR HANDLING
-	}*/
+	}
 }
 
 void generate_extCAN_ID(uint8_t *bytes, uint32_t *result)
@@ -160,35 +151,21 @@ int8_t sendMsg(tExtendedCAN *message)
 
 	switch (tx_msg.status)
 	{
-		case MOB_NOT_COMPLETED:
-			break;
-
-		case MOB_RX_COMPLETED:
-		case MOB_RX_COMPLETED_DLCW:
+		case MOB_TX_COMPLETED:
 			break;
 
 		case MOB_ACK_ERROR:
-			SET(RESET_NOTAUS);
-
-			for(int i = 0; i <= 50; i++)
-				_delay_ms(1);
-
-			RESET(RESET_NOTAUS);
+		case MOB_FORM_ERROR:
+		case MOB_CRC_ERROR:
+		case MOB_STUFF_ERROR:
+		case MOB_BIT_ERROR:
+			// Error Handling
 			break;
 
-
-/*
-#define MOB_FORM_ERROR          (1<<FERR)                                           // 0x02
-#define MOB_CRC_ERROR           (1<<CERR)                                           // 0x04
-#define MOB_STUFF_ERROR         (1<<SERR)                                           // 0x08
-#define MOB_BIT_ERROR           (1<<BERR)                                           // 0x10
-#define MOB_PENDING            ((1<<RXOK)|(1<<TXOK))                                // 0x60
-#define MOB_NOT_REACHED        ((1<<AERR)|(1<<FERR)|(1<<CERR)|(1<<SERR)|(1<<BERR))  // 0x1F
-#define MOB_DISABLE               0xFF                                              // 0xFF
-*/
 		default:
 			break;
 	}
+	return 1;
 }
 
 /**
