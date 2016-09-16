@@ -29,6 +29,8 @@ namespace msl
 		this->alloTeamMatePosition = nullptr;
 		this->wm = MSLWorldModel::get();
 
+		this->rotateAroundTheBall = false;
+
 		resetAllPDParameters();
 		readConfigParameters();
 	}

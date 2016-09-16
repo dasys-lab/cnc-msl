@@ -28,10 +28,6 @@
 
 namespace msl
 {
-	double RobotMovement::defaultTranslation;
-	double RobotMovement::defaultRotateP;
-	double RobotMovement::fastTranslation;
-	double RobotMovement::fastRotation;
 	int RobotMovement::randomCounter = 0;
 	int RobotMovement::beamSize = 3;
 	shared_ptr<geometry::CNPoint2D> RobotMovement::randomTarget = nullptr;
@@ -46,6 +42,16 @@ namespace msl
 	{
 		this->wm = MSLWorldModel::get();
 		this->pp = PathProxy::getInstance();
+
+		double defaultTranslation = 0;
+		double defaultRotateP = 0;
+		double fastTranslation = 0;
+		double fastRotation = 0;
+
+		double rotationP = 0;
+		double rotationD = 0;
+		double transP = 0;
+		double transI = 0;
 	}
 
 	RobotMovement::~RobotMovement()
@@ -113,18 +119,66 @@ namespace msl
 			double rotPointDist = 350.0;
 			if (auto ballPos = wm->ball->getEgoBallPosition())
 			{
-				rotPointDist = min(350.0, ballPos->length()); //the point around which we rotate
+				rotPointDist = min(rotPointDist, ballPos->length()); //the point around which we rotate
 			}
 
 			double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 
 			mc.motion.translation = query->translationPDForDribble(transOrt);
+			double toleranceDist = 500;
 			mc.motion.angle = query->angleCalcForDribble(transOrt);
 		}
 
 #ifdef RM_DEBUG
 		cout << "RobotMovement::moveToPoint: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
 #endif
+		return mc;
+	}
+
+	msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
+	{
+		if (m_Query == nullptr)
+		{
+			cerr << "RobotMovement::alignTo() -> MovementQuery == nullptr" << endl;
+			return setNAN();
+		}
+
+		if (m_Query->egoAlignPoint == nullptr)
+		{
+			cerr << "RobotMovement::alignTo() -> egoAlignPoint -> nullptr" << endl;
+			return setNAN();
+		}
+
+		MotionControl mc;
+
+		mc.motion.translation = 0;
+		mc.motion.angle = 0;
+		mc.motion.rotation = m_Query->rotationPDForDribble(m_Query->egoAlignPoint);
+
+		if (m_Query->rotateAroundTheBall)
+		{
+			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+			{
+				m_Query->additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
+				m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
+				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval,
+				m_Query->additionalPoints);
+				mc.motion.rotation = m_Query->rotationPDForDribble(egoTarget);
+				double rotPointDist = 350.0;
+				if (auto ballPos = wm->ball->getEgoBallPosition())
+				{
+					rotPointDist = min(rotPointDist, ballPos->length()); //the point around which we rotate
+				}
+
+				double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
+
+				mc.motion.translation = m_Query->translationPDForDribble(transOrt);
+//				double toleranceDist = 500;
+				mc.motion.angle = m_Query->egoAlignPoint->angleTo() < 0 ? M_PI/2 : (M_PI + M_PI/4);
+//			mc.motion.angle = m_Query->angleCalcForDribble(transOrt);
+			}
+		}
 		return mc;
 	}
 
@@ -215,9 +269,9 @@ namespace msl
 			}
 
 		}
-#ifdef RM_DEBUG
-		cout << "RobotMovement::ruleActionForBallGetter: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
-#endif
+//#ifdef RM_DEBUG
+//		cout << "RobotMovement::ruleActionForBallGetter: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
+//#endif
 		return setNAN();
 	}
 
@@ -312,7 +366,7 @@ namespace msl
 		bm.motion.angle = atan2(dest->y, dest->x);
 		randomCounter = (randomCounter + 1) % 28;
 #ifdef RM_DEBUG
-		cout << "RobotMovement::driveRandomly: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
+		cout << "RobotMovement::driveRandomly: Angle = " << bm.motion.angle << " Trans = " << bm.motion.translation << " Rot = " << bm.motion.rotation << endl;
 #endif
 		return bm;
 	}
@@ -513,7 +567,7 @@ namespace msl
 
 		//ret -= goalFactor;
 #ifdef RM_DEBUG
-		cout << "RobotMovement::evalPointDynamic: Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
+		cout << "RobotMovement::evalPointDynamic: ret = " << ret << endl;
 #endif
 		return ret;
 	}
@@ -528,7 +582,6 @@ namespace msl
 		return mc;
 	}
 
-
 	void RobotMovement::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
@@ -536,6 +589,12 @@ namespace msl
 		defaultRotateP = (*sc)["Drive"]->get<double>("Drive.Default.RotateP", NULL);
 		fastTranslation = (*sc)["Drive"]->get<double>("Drive.Fast.Velocity", NULL);
 		fastRotation = (*sc)["Drive"]->get<double>("Drive.Fast.RotateP", NULL);
+
+		//for alignTo()
+		rotationD = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.RotationD", NULL);
+		rotationP = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.RotationP", NULL);
+		transI = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.TranslationI", NULL);
+		transP = (*sc)["Drive"]->get<double>("Drive.RobotMovement.AlignTo.TranslationP", NULL);
 	}
 
 }

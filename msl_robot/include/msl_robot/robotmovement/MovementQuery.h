@@ -51,6 +51,9 @@ namespace msl
 		bool blockOwnGoalArea;
 		bool block3MetersAroundBall;
 
+		//for RobotMovement::alignTo() stuff
+		bool rotateAroundTheBall;
+
 	private:
 		MSLWorldModel* wm;
 		MSLRobot* robot;
