@@ -50,8 +50,6 @@ namespace msl
 		}
 		wm->setEngine(ae);
 
-		RobotMovement::readConfigParameters();
-
 		ae->init(bc, cc, uc, crc, roleSetName, masterPlanName, roleSetDir, false);
 	}
 
