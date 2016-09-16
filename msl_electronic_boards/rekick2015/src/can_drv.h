@@ -148,6 +148,16 @@
 #       error This CAN_BAUDRATE value is not in "can_drv.h" file
 #   endif
 
+// Carpe Noctem Cassel - own can conf
+#elif FOSC == 1000              //!< Fclkio = 16 MHz, Tclkio = 62.5 ns
+#   if CAN_BAUDRATE == 1000      //!< -- 1 Mb/s, 16x Tscl, sampling at 75%
+#       define CONF_CANBT1  0x00
+#       define CONF_CANBT2  0x4C
+#       define CONF_CANBT3  0x28
+#   else
+#       error This CAN_BAUDRATE value is not in "can_drv.h" file
+#   endif
+
 #else
 #   error This FOSC value is not in "can_drv.h" file
 #endif

@@ -37,12 +37,26 @@ auto can0
 
 
 int main(void) {
+	// 0 - Eingang
+	// 1 - Ausgang
 	DDRB = 0x00;
 	DDRC = 0x00;
 	DDRD = 0x00;
 
+	// 0 - 0V / Pull-up deaktiviert
+	// 1 - 5V / Pull-up aktiviert
+	PORTB = 0x00;
+	PORTC = 0x00;
+	PORTD = 0x00;
+
 
 	// Configure Output-Pins
+
+	DDRB |= (1 << PB4);		// Reset Notaus als Ausgang
+	DDRC |= (1 << PC2);		// CAN_TX als Ausgang
+
+
+	/*
 	SET_OUTPUT(ACTIVATE_BOOSTER);
 	RESET(ACTIVATE_BOOSTER);
 	SET_OUTPUT(CHARGE);
@@ -53,12 +67,13 @@ int main(void) {
 	RESET(KICK);
 	SET_OUTPUT(RESET_NOTAUS);
 	RESET(RESET_NOTAUS);
+	*/
 
-	SET_OUTPUT(CAN_TX);
-	RESET(CAN_TX);
+	for(int i = 0; i <= 2000; i++)
+		_delay_ms(1);
 
 	// enable interrupts
-	// sei();
+	sei();
 
 	// ADC
 	// CAN
@@ -70,14 +85,14 @@ int main(void) {
 
 	for(int i = 0; i <= 2000; i++)
 		_delay_ms(1);
-
+/*
 	SET(RESET_NOTAUS);
 
 	for(int i = 0; i <= 50; i++)
 		_delay_ms(1);
 
 	RESET(RESET_NOTAUS);
-
+*/
 	/*
 	SET(ACTIVATE_BOOSTER);
 	for(int i = 0; i <= 50; i++)

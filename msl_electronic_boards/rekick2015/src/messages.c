@@ -27,11 +27,6 @@ void (*parse_data)(uint8_t *, uint8_t) = parse_default;
 
 int8_t communication_init()
 {
-	SET_OUTPUT(CAN_TX);
-	RESET(CAN_TX);
-	SET_INPUT(CAN_RX);
-	RESET(CAN_RX);
-
 	can_init(0);
 
 	// Interrupts aktivieren?
@@ -71,12 +66,7 @@ void message_receive_handler()
 			}
 			rx_msg.status = 0;	// clear status
 
-			SET(RESET_NOTAUS);
 
-					for(int i = 0; i <= 50; i++)
-						_delay_ms(1);
-
-					RESET(RESET_NOTAUS);
 
 			break;
 			
@@ -101,8 +91,8 @@ void message_receive_handler()
 void message_transmit_handler()
 {
 	can_buffer[0].data[0] = CMD_MSG;
-	can_buffer[0].data[1] = "T";
-	can_buffer[0].data[2] = "\n";
+	can_buffer[0].data[1] = 'T';
+	can_buffer[0].data[2] = '\n';
 
 
 	uint8_t id[4] = {0x00, PRIORITY_NORM, REKICK_ID, ETH2CAN_ID};
@@ -168,13 +158,37 @@ int8_t sendMsg(tExtendedCAN *message)
 	while(can_cmd(&tx_msg) != CAN_CMD_ACCEPTED); // Wait for MOb to configure (Must re-configure MOb for every transaction) and send request
 	while(can_get_status(&tx_msg) == CAN_STATUS_NOT_COMPLETED);	// Wait for Tx to complete
 
-	if (tx_msg.status == CAN_STATUS_COMPLETED)
+	switch (tx_msg.status)
 	{
+		case MOB_NOT_COMPLETED:
+			break;
 
-		return 1;
+		case MOB_RX_COMPLETED:
+		case MOB_RX_COMPLETED_DLCW:
+			break;
+
+		case MOB_ACK_ERROR:
+			SET(RESET_NOTAUS);
+
+			for(int i = 0; i <= 50; i++)
+				_delay_ms(1);
+
+			RESET(RESET_NOTAUS);
+			break;
+
+
+/*
+#define MOB_FORM_ERROR          (1<<FERR)                                           // 0x02
+#define MOB_CRC_ERROR           (1<<CERR)                                           // 0x04
+#define MOB_STUFF_ERROR         (1<<SERR)                                           // 0x08
+#define MOB_BIT_ERROR           (1<<BERR)                                           // 0x10
+#define MOB_PENDING            ((1<<RXOK)|(1<<TXOK))                                // 0x60
+#define MOB_NOT_REACHED        ((1<<AERR)|(1<<FERR)|(1<<CERR)|(1<<SERR)|(1<<BERR))  // 0x1F
+#define MOB_DISABLE               0xFF                                              // 0xFF
+*/
+		default:
+			break;
 	}
-	else
-		return -1;
 }
 
 /**
