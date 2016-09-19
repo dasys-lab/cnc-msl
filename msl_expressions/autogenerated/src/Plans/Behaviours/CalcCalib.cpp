@@ -137,47 +137,48 @@ namespace alica
             {
                 if (correctedPosX > oldCorrectedPosX)
                 {
-                	oldCalibCoefficientX = (oldCalibCoefficientX + calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
-                	                                * (diffX / lengthSegment) + 1)/2;
-
                 	if (oldCalibCoefficientX > 0)
                 	{
                 		calibCoefficientX *= oldCalibCoefficientX;
                 	}
 
+                	oldCalibCoefficientX = (oldCalibCoefficientX + calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
+                	                                * (diffX / lengthSegment) + 1)/2;
+
                 }
                 if (correctedPosX < oldCorrectedPosX)
                 {
-                	oldCalibCoefficientX = (oldCalibCoefficientX +calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
-                            * (diffX / lengthSegment) + 1)/2;
-
                   	if (oldCalibCoefficientX > 0)
                     {
                   		calibCoefficientX *= oldCalibCoefficientX;
                     }
+
+                	oldCalibCoefficientX = (oldCalibCoefficientX +calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
+                            * (diffX / lengthSegment) + 1)/2;
                 }
             }
             if (abs(correctedPosY - oldCorrectedPosY) > 500)
             {
                 if (correctedPosY > oldCorrectedPosY)
                 {
-                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
-                            * (diffY / lengthSegment) + 1)/2;
-
                   	if (oldCalibCoefficientY > 0)
                     {
                   		calibCoefficientY *= oldCalibCoefficientY;
                     }
+
+                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
+                            * (diffY / lengthSegment) + 1)/2;
                 }
                 if (correctedPosY < oldCorrectedPosY)
                 {
-                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
-                            * (diffY / lengthSegment) + 1)/2;
-
                 	if (oldCalibCoefficientY > 0)
                 	{
                 	    calibCoefficientY *= oldCalibCoefficientY;
                 	}
+
+                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
+                            * (diffY / lengthSegment) + 1)/2;
+
                 }
             }
 
