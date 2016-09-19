@@ -133,7 +133,7 @@ namespace alica
 
         if (length >= 1)
         {
-        	/*
+
             if (abs(correctedPosX - oldCorrectedPosX) > 500)
             {
                 if (correctedPosX > oldCorrectedPosX)
@@ -200,9 +200,9 @@ namespace alica
                 	}
 
                 }
-            }*/
+            }
 
-        	if (abs(correctedPosX - oldCorrectedPosX) > 500)
+        	/*if (abs(correctedPosX - oldCorrectedPosX) > 500)
         	            {
         	                if (correctedPosX > oldCorrectedPosX)
         	                {
@@ -230,7 +230,7 @@ namespace alica
                 	                                        * (diffY / lengthSegment) + 1;
 
         	                }
-        	            }
+        	            }*/
 
             if (calibCoefficientX < 0.3)
             {
