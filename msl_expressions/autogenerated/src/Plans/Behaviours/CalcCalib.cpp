@@ -105,8 +105,8 @@ namespace alica
     void CalcCalib::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1446033324019) ENABLED START*/ //Add additional options here
-        diffX = correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x;
-        diffY = correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y;
+        diffX = abs(correctedPosX - this->wm->rawSensorData->getOwnPositionVision()->x);
+        diffY = abs(correctedPosY - this->wm->rawSensorData->getOwnPositionVision()->y);
 
         string value;
         string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
