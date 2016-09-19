@@ -51,7 +51,7 @@ namespace alica
     	        mc.motion.translation = 500;
     	        //}
 
-    	        if (egoTarget->length() < 250)
+    	        if (egoTarget->length() < 100)
     	        {
     	            mc.motion.translation = 0;
     	            send(mc);

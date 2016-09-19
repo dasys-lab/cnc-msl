@@ -65,7 +65,7 @@ namespace alica
          if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
          (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
          (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>75)
+         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>750)
          {
          std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
          (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
@@ -137,26 +137,47 @@ namespace alica
             {
                 if (correctedPosX > oldCorrectedPosX)
                 {
-                    calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
-                            * (diffX / lengthSegment) + 1;
+                	oldCalibCoefficientX = (oldCalibCoefficientX + calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
+                	                                * (diffX / lengthSegment) + 1)/2;
+
+                	if (oldCalibCoefficientX > 0)
+                	{
+                		calibCoefficientX *= oldCalibCoefficientX;
+                	}
+
                 }
                 if (correctedPosX < oldCorrectedPosX)
                 {
-                    calibCoefficientX *= calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
-                            * (diffX / lengthSegment) + 1;
+                	oldCalibCoefficientX = (oldCalibCoefficientX +calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
+                            * (diffX / lengthSegment) + 1)/2;
+
+                  	if (oldCalibCoefficientX > 0)
+                    {
+                  		calibCoefficientX *= oldCalibCoefficientX;
+                    }
                 }
             }
             if (abs(correctedPosY - oldCorrectedPosY) > 500)
             {
                 if (correctedPosY > oldCorrectedPosY)
                 {
-                    calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
-                            * (diffY / lengthSegment) + 1;
+                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
+                            * (diffY / lengthSegment) + 1)/2;
+
+                  	if (oldCalibCoefficientY > 0)
+                    {
+                  		calibCoefficientY *= oldCalibCoefficientY;
+                    }
                 }
                 if (correctedPosY < oldCorrectedPosY)
                 {
-                    calibCoefficientY *= calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
-                            * (diffY / lengthSegment) + 1;
+                	oldCalibCoefficientY = (oldCalibCoefficientY + calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
+                            * (diffY / lengthSegment) + 1)/2;
+
+                	if (oldCalibCoefficientY > 0)
+                	{
+                	    calibCoefficientY *= oldCalibCoefficientY;
+                	}
                 }
             }
 
