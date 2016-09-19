@@ -5,21 +5,19 @@
   </states>
   <states id="1442919790374" name="MoveInX" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1442921078802</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278292264</plans>
     <inTransitions>#1442919801497</inTransitions>
     <outTransitions>#1442921106318</outTransitions>
-    <outTransitions>#1446733731468</outTransitions>
   </states>
   <states id="1442921032957" name="MoveToMiddle" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1431527260342</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278926472</plans>
     <inTransitions>#1442921106318</inTransitions>
     <outTransitions>#1443003805912</outTransitions>
-    <outTransitions>#1446733729802</outTransitions>
   </states>
   <states id="1443003793160" name="MoveInY" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1443003717671</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278968035</plans>
     <inTransitions>#1443003805912</inTransitions>
     <outTransitions>#1443003845234</outTransitions>
     <outTransitions>#1464350167678</outTransitions>
@@ -28,8 +26,6 @@
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
     <inTransitions>#1443003845234</inTransitions>
-    <inTransitions>#1446733729802</inTransitions>
-    <inTransitions>#1446733731468</inTransitions>
     <inTransitions>#1464350170546</inTransitions>
     <outTransitions>#1443522261454</outTransitions>
   </states>
@@ -37,8 +33,8 @@
     <inTransitions>#1443522261454</inTransitions>
   </states>
   <states id="1464350100818" name="MoveToMiddle2" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/DriveToPoint.beh#1431527260342</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/CalcCalib.beh#1446033354004</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">DriveToPointCalib.beh#1474278926472</plans>
     <inTransitions>#1464350167678</inTransitions>
     <outTransitions>#1464350170546</outTransitions>
   </states>
@@ -66,16 +62,6 @@
     <preCondition id="1443522265673" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1443003834928</inState>
     <outState>#1443522242711</outState>
-  </transitions>
-  <transitions id="1446733729802" name="s2" comment="situation==stop" msg="">
-    <preCondition id="1446733731395" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1442921032957</inState>
-    <outState>#1443003834928</outState>
-  </transitions>
-  <transitions id="1446733731468" name="s1" comment="situation==stop" msg="">
-    <preCondition id="1446733733995" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1442919790374</inState>
-    <outState>#1443003834928</outState>
   </transitions>
   <transitions id="1464350167678" name="4" comment="Situation3" msg="">
     <preCondition id="1464350170265" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>

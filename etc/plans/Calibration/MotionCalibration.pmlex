@@ -89,14 +89,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="MotionCalibration.pml#1446733729802"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="MotionCalibration.pml#1446733731468"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="../Behaviours/SpinSlowly.beh#1435159282996"/>
     <value/>
   </extensions>
@@ -110,6 +102,18 @@
   </extensions>
   <extensions>
     <key href="MotionCalibration.pml#1464350170546"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToPointCalib.beh#1474278292264"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToPointCalib.beh#1474278926472"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DriveToPointCalib.beh#1474278968035"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
