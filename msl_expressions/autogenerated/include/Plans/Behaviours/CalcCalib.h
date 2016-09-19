@@ -22,8 +22,8 @@ namespace alica
         double calibOldPosMotionY = 0;
         double calibCoefficientX;
         double calibCoefficientY;
-        double oldCalibCoefficientX;
-        double oldCalibCoefficientY;
+        double oldCalibCoefficientX = 0;
+        double oldCalibCoefficientY = 0;
         double length = 0;
         double correctedWayX = 0;
         double correctedWayY = 0;
