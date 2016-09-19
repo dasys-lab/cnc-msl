@@ -116,4 +116,12 @@
     <key href="DriveToPointCalib.beh#1474278968035"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1474288535134"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="MotionCalibration.pml#1474288537777"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
