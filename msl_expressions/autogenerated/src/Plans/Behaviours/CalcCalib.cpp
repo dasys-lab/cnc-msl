@@ -227,12 +227,8 @@ namespace alica
         std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
-        std::cout << "calibCoeffX 1: "
-                << calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedWayX)
-                        * (diffX / lengthSegment) + 1 << std::endl;
-        std::cout << "calibCoeffX 2: "
-                << calibSign(correctedWayX, this->wm->rawSensorData->getOwnPositionVision()->x)
-                        * (diffX / lengthSegment) + 1 << std::endl;
+        std::cout << "oldCoeffX: " << oldCalibCoefficientX<<std::endl;
+        std::cout << "oldCoeffY: " << oldCalibCoefficientY<<std::endl;
 
         std::cout << "" << std::endl;
 
