@@ -33,6 +33,8 @@
 
 #include  "Plans/Attack/TestPlans/RobotMovementTestPlan1462969665131.h"
 
+#include  "Plans/TestPlans/RobotMovement/RobotMovementTest1473862711641.h"
+
 #include  "Plans/Standards/Opponent/FreeKick/OppFreeKick1445411471122.h"
 
 #include  "Plans/TestPlans/KickCurveTuning/KickCurveTuning1457698586746.h"
@@ -207,6 +209,10 @@ namespace alica
 
             case 1462969665131:
                 return make_shared<UtilityFunction1462969665131>();
+                break;
+
+            case 1473862711641:
+                return make_shared<UtilityFunction1473862711641>();
                 break;
 
             case 1445411471122:

@@ -33,6 +33,8 @@
 
 #include  "Plans/Attack/TestPlans/constraints/RobotMovementTestPlan1462969665131Constraints.h"
 
+#include  "Plans/TestPlans/RobotMovement/constraints/RobotMovementTest1473862711641Constraints.h"
+
 #include  "Plans/Standards/Opponent/FreeKick/constraints/OppFreeKick1445411471122Constraints.h"
 
 #include  "Plans/TestPlans/KickCurveTuning/constraints/KickCurveTuning1457698586746Constraints.h"
