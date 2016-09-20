@@ -20,13 +20,9 @@ namespace alica
         /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
         // consts for checkBallRotation()
         enum Rotation
-		{
-        	RotateCorrect,
-			RotateLeft,
-			RotateRight,
-			RotateTooSlow,
-			RotateErr
-		};
+        {
+            RotateCorrect, RotateLeft, RotateRight, RotateTooSlow, RotateErr
+        };
         DribbleCalibrationContainer dcc;
 
         bool ballRotateCorrect;
@@ -43,10 +39,9 @@ namespace alica
         // for correctWheelSpeed function
         double changingFactor;
         enum Operation
-		{
-        	Add,
-			Sub
-		};
+        {
+            Add, Sub
+        };
         Operation operation;
         Operation oldOperation;
 
@@ -54,20 +49,20 @@ namespace alica
 
         // for opticalFlow stuff
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-        int queueSize;
+    int queueSize;
 
-        Rotation checkBallRotation();
-        void correctWheelSpeed(Rotation rotation);
-        void readConfigParameters();
-        void writeConfigParameters();
+    Rotation checkBallRotation();
+    void correctWheelSpeed(Rotation rotation);
+    void readConfigParameters();
+    void writeConfigParameters();
 
-        // for output
-        bool queueFilled;
+    // for output
+    bool queueFilled;
 
-        /*PROTECTED REGION END*/
-    private:
-        /*PROTECTED REGION ID(prv1469109429392) ENABLED START*/ //Add additional private methods here
-        /*PROTECTED REGION END*/};
-} /* namespace alica */
+    /*PROTECTED REGION END*/private:
+    /*PROTECTED REGION ID(prv1469109429392) ENABLED START*///Add additional private methods here
+    /*PROTECTED REGION END*/};
+}
+/* namespace alica */
 
 #endif /* CalibrationTakeBall_H_ */

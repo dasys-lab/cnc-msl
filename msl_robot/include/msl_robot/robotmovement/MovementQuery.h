@@ -34,12 +34,15 @@ namespace msl
 		double angleTolerance;
 		shared_ptr<geometry::CNPoint2D> alloTeamMatePosition;
 		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
-		double translationPDForDribble(double transOrt);
+		double translationPIForDribble(double transOrt);
 		double angleCalcForDribble(double transOrt);
 		void reset();
-		void resetAllPDParameters();
+		void resetAllPIDParameters();
 		void resetRotationPDParameters();
-		void resetTransaltionPDParameters();
+		void resetTransaltionPIParameters();
+
+		void setRotationPDParameters(double pParam, double dParam);
+		void setTranslationPIParameters(double pParam, double iParam);
 
 		double curRotDribble;
 		double curTransDribble;
@@ -50,6 +53,9 @@ namespace msl
 		bool blockOwnPenaltyArea;
 		bool blockOwnGoalArea;
 		bool block3MetersAroundBall;
+
+		//for RobotMovement::alignTo() stuff
+		bool rotateAroundTheBall;
 
 	private:
 		MSLWorldModel* wm;

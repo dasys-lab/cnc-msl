@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="RobotMovementTest.pml#1473862711642"/>
+    <value xPos="86" yPos="200" width="81" height="67"/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTest.pml#1473862711641"/>
+    <value width="888" height="553"/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTest.pml#1473862711643"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTest.pml#1473862820126"/>
+    <value xPos="379" yPos="248" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/RobotMovementTest.beh#1473862892543"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTest.pml#1473862896106"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RobotMovementTest.pml#1473865277226"/>
+    <value>
+      <bendpoints xPos="394" yPos="316"/>
+    </value>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>
