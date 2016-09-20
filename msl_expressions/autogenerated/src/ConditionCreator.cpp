@@ -32,6 +32,8 @@
 
 #include  "Plans/Attack/TestPlans/RobotMovementTestPlan1462969665131.h"
 
+#include  "Plans/TestPlans/RobotMovement/RobotMovementTest1473862711641.h"
+
 #include  "Plans/Standards/Opponent/FreeKick/OppFreeKick1445411471122.h"
 
 #include  "Plans/TestPlans/KickCurveTuning/KickCurveTuning1457698586746.h"
@@ -721,6 +723,18 @@ namespace alica
             case 1462969788458:
 
                 return make_shared<TransitionCondition1462969788458>();
+
+                break;
+
+            case 1473862897803:
+
+                return make_shared<TransitionCondition1473862897803>();
+
+                break;
+
+            case 1473865278666:
+
+                return make_shared<TransitionCondition1473865278666>();
 
                 break;
 

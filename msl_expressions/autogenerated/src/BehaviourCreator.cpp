@@ -113,6 +113,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/AttackOpp.h"
 
+#include  "Plans/TestPlans/RobotMovement/Behaviours/RobotMovementTest.h"
+
 #include  "Plans/Standards/Own/PassIntoPath/StandardAlignToPassPos.h"
 
 #include  "Plans/GenericStandards/StandardAlignAndGrab2Receivers.h"
@@ -512,6 +514,11 @@ namespace alica
             case 1430324680117:
 
                 return make_shared<AttackOpp>();
+                break;
+
+            case 1473862892543:
+
+                return make_shared<RobotMovementTest>();
                 break;
 
             case 1457532300654:
