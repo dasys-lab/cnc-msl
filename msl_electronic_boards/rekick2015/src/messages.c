@@ -11,10 +11,6 @@
 #include "global.h"
 
 
-
-#include <util/delay.h>
-
-
 uint8_t can_buffer_head = 0;
 uint8_t can_buffer_tail = 0;
 
@@ -25,7 +21,7 @@ void parse_manual(uint8_t *data, uint8_t length);
 void (*parse_data)(uint8_t *, uint8_t) = parse_default;
 
 
-int8_t communication_init()
+void communication_init()
 {
 	SET_OUTPUT(CAN_TX);
 	RESET(CAN_TX);
@@ -36,28 +32,24 @@ int8_t communication_init()
 
 	// Interrupts aktivieren?
 
+	// Receive-Buffer
 	rx_msg.pt_data = &rx_buffer[0];		// Point Rx MOb to first element of buffer
 	rx_msg.status = 0;					// clear status
 	configureRxMOb();
 	
+	// Transmit-Buffer
 	tx_msg.pt_data = &tx_buffer[0];		// Point Tx MOb to first element of buffer
 	tx_msg.status = 0;					// clear status
-
-	return 1;
 }
 
 void message_handler()
 {
 	static uint8_t iterations = 0;
 
-	if (++iterations > 50)
-	{
-		iterations = 0;
-		debug("Test Message");
-	}
-
 	message_receive_handler();
 	message_transmit_handler();
+
+	// if(debug_flag)
 }
 
 void message_receive_handler()
@@ -65,14 +57,12 @@ void message_receive_handler()
 	switch (can_get_status(&rx_msg)) {
 		case CAN_STATUS_COMPLETED:
 			// Message received
-			if ((rx_msg.id.ext & 0x0000FF00) == (REKICK_ID << 8)) {
+			if ((rx_msg.id.ext & 0x000000FF) == REKICK_ID) {
 				// ID Filter
+				debug("Filter");
 				parse_data(rx_msg.pt_data, rx_msg.dlc);
 			}
 			rx_msg.status = 0;	// clear status
-
-
-
 			break;
 			
 		case CAN_STATUS_NOT_COMPLETED:
@@ -317,9 +307,13 @@ void error(char *str) {
 void print_voltage(void) {
 
 	char str[20];
+	sprintf(str, "L: %.0fV", booster_getLogicVoltage());
+	debug(str);
 
-//	sprintf(str, "%dV", get_capacitors_voltage());
-	sprintf(str, "Testi");
+	sprintf(str, "B: %.0fV", booster_getBoosterVoltage());
+	debug(str);
+
+	sprintf(str, "C: %.0fV", booster_getCapacitorVoltage());
 	debug(str);
 }
 
@@ -341,51 +335,56 @@ void parse_default(uint8_t *data, uint8_t length) {
 //			last_heartbeat = timer_get_ms();
 			prepareMsg(CMD_PONG, placeholder, 0, PRIORITY_NORM);
 			break;
+
 		case CMD_KICK:
 			if (1) {//timer_get_ms() > 1000) {
 				tmpa = data[1] + (data[2] << 8);
-//				if (length == 3)
-//					kicker_add_kick_job(tmpa);
-//				else if (length == 4)
-//					kicker_add_kick_job_forced(tmpa, data[3]);
+				if (length == 3)
+					kicker_add_kick_job(tmpa);
+				else if (length == 4)
+					kicker_add_kick_job_forced(tmpa, data[3]);
 			}
 			break;
-		case CMD_SET_MAX_VOLTAGE:
-			
-			if (length == 3) {
 
+		case CMD_SET_MAX_VOLTAGE:
+			if (length == 3) {
 				tmpa = data[1] + (data[2]<<8);
 //				booster_set_max_voltage(tmpa);
 
 			} else if (length == 2) {
 				tmpa = ((uint16_t)(data[1])) & 0xFF;
 //				booster_set_max_voltage(tmpa);
-
 			}
 			break;
+
 		case CMD_ROTATE:
 			// old command for robot generation 1
 			// no longer used in robot generation 2
 			break;
+
 		case CMD_GET_VERSION:
 			{
-				char *version = "Ver: 0.2";	//"RK" XSTRING(MAJOR) "." XSTRING(MINOR);
+				char *version = "v0.2";	//"RK" XSTRING(MAJOR) "." XSTRING(MINOR);
 				uint8_t len = strlen(version);
 				if (len > 7) len = 7;
 				prepareMsg(CMD_VERSION, (uint8_t*) version, len, PRIORITY_NORM);
 			}
 			break;
+
 		case CMD_GET_STATE:
 //			booster_send_info();
 			break;
+
 		case CMD_SET_PULSE_WIDTH: //silently ignore
 			break;
+
 		case 'm':
 			debug("manual");
 //			timer_register(print_voltage, 1000);
 //			manual_mode = true;
 			parse_data = parse_manual;
 			break;
+
 		default:
 			error("Command not implemented");
 			break;

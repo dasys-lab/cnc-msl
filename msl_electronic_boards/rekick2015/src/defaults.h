@@ -21,9 +21,9 @@
 #define ACTIVATE_SERVO		D,7
 #define SERVO_PWM			C,1
 
-#define ADC_24V_LOGIC		D,4
-#define ADC_24V_BOOSTER		D,5
-#define ADC_CAP				D,6
+#define ADC_24V_LOGIC		0x01	// ADC1 / D,4
+#define ADC_24V_BOOSTER		0x02	// ADC2 / D,5
+#define ADC_CAP				0x03	// ADC3 / D,6
 
 
 #define CAN_TX			C,2

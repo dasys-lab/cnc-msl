@@ -33,7 +33,7 @@ auto can0
 
 #include "defaults.h"
 #include "global.h"
-#include "messages.h"
+//#include "messages.h"
 
 
 int main(void) {
@@ -49,34 +49,13 @@ int main(void) {
 	PORTC = 0x00;
 	PORTD = 0x00;
 
-
-	// Configure Output-Pins
-
-	DDRB |= (1 << PB4);		// Reset Notaus als Ausgang
-	DDRC |= (1 << PC2);		// CAN_TX als Ausgang
-
-
-	/*
-	SET_OUTPUT(ACTIVATE_BOOSTER);
-	RESET(ACTIVATE_BOOSTER);
-	SET_OUTPUT(CHARGE);
-	RESET(CHARGE);
-	SET_OUTPUT(ACTIVATE_SERVO);
-	RESET(ACTIVATE_SERVO);
-	SET_OUTPUT(KICK);
-	RESET(KICK);
-	SET_OUTPUT(RESET_NOTAUS);
-	RESET(RESET_NOTAUS);
-	*/
-
 	for(int i = 0; i <= 2000; i++)
 		_delay_ms(1);
 
 	// enable interrupts
 	sei();
 
-	// ADC
-	// CAN
+	adc_init();
 	communication_init();
 	// ETHERNET
 
@@ -106,9 +85,21 @@ int main(void) {
 	RESET(ACTIVATE_BOOSTER);
 	*/
 	
+	debug("-------");
+
 	while(1) {
 		message_handler();
-		for(int i = 0; i <= 30; i++)
+		adc_handler();
+		booster_ctrl();
+		// kicker_kick_handler();
+
+		static uint8_t test = 0;
+		if(++test > 50)
+		{
+			print_voltage();
+		}
+
+		for(int i=0; i<=30; i++)
 			_delay_ms(1);
 	}
 	return 0;

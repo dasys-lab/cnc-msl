@@ -21,7 +21,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c can_drv.c can_lib.c messages.c
+SRC = $(TARGET).c adc.c booster.c can_drv.c can_lib.c kicker.c messages.c timer.c
 
 
 # List Assembler source files here.
