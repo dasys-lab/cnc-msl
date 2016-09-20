@@ -31,7 +31,7 @@ namespace msl
 
 		this->rotateAroundTheBall = false;
 
-		resetAllPDParameters();
+		resetAllPIDParameters();
 		readConfigParameters();
 	}
 
@@ -64,7 +64,7 @@ namespace msl
 		return rot;
 	}
 
-	double MovementQuery::translationPDForDribble(double transOrt)
+	double MovementQuery::translationPIForDribble(double transOrt)
 	{
 		double maxCurTrans = this->maxVel;
 		double transErr = abs(this->lastRotDribbleErr);
@@ -125,14 +125,14 @@ namespace msl
 		this->alloTeamMatePosition = nullptr;
 		this->wm = MSLWorldModel::get();
 
-		resetAllPDParameters();
+		resetAllPIDParameters();
 		readConfigParameters();
 	}
 
-	void MovementQuery::resetAllPDParameters()
+	void MovementQuery::resetAllPIDParameters()
 	{
 		resetRotationPDParameters();
-		resetTransaltionPDParameters();
+		resetTransaltionPIParameters();
 	}
 
 	void MovementQuery::resetRotationPDParameters()
@@ -142,11 +142,23 @@ namespace msl
 		readConfigParameters();
 	}
 
-	void MovementQuery::resetTransaltionPDParameters()
+	void MovementQuery::resetTransaltionPIParameters()
 	{
 		this->curTransDribble = 0;
 		this->transControlIntegralDribble = 0;
 		readConfigParameters();
+	}
+
+	void MovementQuery::setRotationPDParameters(double pParam, double dParam)
+	{
+		this->pRot = pParam;
+		this->dRot = dParam;
+	}
+
+	void MovementQuery::setTranslationPIParameters(double pParam, double iParam)
+	{
+		this->pTrans = pParam;
+		this->iTrans = iParam;
 	}
 
 	void MovementQuery::readConfigParameters()

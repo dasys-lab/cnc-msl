@@ -52,6 +52,8 @@ namespace msl
 		double rotationD = 0;
 		double transP = 0;
 		double transI = 0;
+
+		readConfigParameters();
 	}
 
 	RobotMovement::~RobotMovement()
@@ -124,7 +126,7 @@ namespace msl
 
 			double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 
-			mc.motion.translation = query->translationPDForDribble(transOrt);
+			mc.motion.translation = query->translationPIForDribble(transOrt);
 			double toleranceDist = 500;
 			mc.motion.angle = query->angleCalcForDribble(transOrt);
 		}
@@ -159,6 +161,10 @@ namespace msl
 		{
 			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
 			{
+				// setting parameters for controller
+				m_Query->setRotationPDParameters(rotationP, rotationD);
+				m_Query->setTranslationPIParameters(transP, transI);
+
 				m_Query->additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 				m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
 				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
@@ -173,7 +179,7 @@ namespace msl
 
 				double transOrt = mc.motion.rotation * rotPointDist; //the translation corresponding to the curve we drive
 
-				mc.motion.translation = m_Query->translationPDForDribble(transOrt);
+				mc.motion.translation = m_Query->translationPIForDribble(transOrt);
 //				double toleranceDist = 500;
 				mc.motion.angle = m_Query->egoAlignPoint->angleTo() < 0 ? M_PI/2 : (M_PI + M_PI/4);
 //			mc.motion.angle = m_Query->angleCalcForDribble(transOrt);

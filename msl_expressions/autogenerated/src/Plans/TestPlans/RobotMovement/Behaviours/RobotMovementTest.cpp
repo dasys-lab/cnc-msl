@@ -97,7 +97,8 @@ namespace alica
                 query->egoAlignPoint = egoBallPos;
                 mc = rm.moveToPoint(query);
             }
-            cout << "angle to goal = " << egoGoalPos->angleTo() << endl;
+//            cout << "angle to goal = " << egoGoalPos->angleTo() << endl;
+            cout << "Angle = " << mc.motion.angle << " Trans = " << mc.motion.translation << " Rot = " << mc.motion.rotation << endl;
             send(mc);
 
         }
