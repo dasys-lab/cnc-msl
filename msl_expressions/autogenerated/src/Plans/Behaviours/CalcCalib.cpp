@@ -222,7 +222,7 @@ namespace alica
              * (diffX / lengthSegment) + 1;
              }
              }
-             if (abs(correctedPosY - oldCorrectedPosY) > 500)
+             if (abs(correctedPosY - oldCorrectedPosY) > 300)
              {
              if (correctedPosY > oldCorrectedPosY)
              {
