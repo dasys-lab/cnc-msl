@@ -127,6 +127,10 @@ namespace alica
             }
             calibData.close();
         }
+        else
+        {
+        	std::cout << "keine CalibData!" << std::endl;
+        }
 
         ros::NodeHandle calibCEP;
         calibCoeff_pub = calibCEP.advertise < CalibrationCoefficient > ("CalibrationCoefficient", 1);
@@ -238,25 +242,6 @@ namespace alica
              }
              }
 
-            if (calibCoefficientX < 0.3)
-            {
-                calibCoefficientX = 0.3;
-            }
-            if (calibCoefficientY < 0.3)
-            {
-                calibCoefficientY = 0.3;
-            }
-
-            if (calibCoefficientX > 2)
-            {
-                calibCoefficientX = 2;
-            }
-
-            if (calibCoefficientY > 2)
-            {
-                calibCoefficientY = 2;
-            }
-
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
             ofstream saveToCalibData;
             saveToCalibData.open(filename);
@@ -268,6 +253,25 @@ namespace alica
             calibCoeff.calibCoefficientY = calibCoefficientY;
             calibCoeff_pub.publish(calibCoeff);
 
+        }
+
+        if (calibCoefficientX < 0.3)
+        {
+            calibCoefficientX = 0.3;
+        }
+        if (calibCoefficientY < 0.3)
+        {
+            calibCoefficientY = 0.3;
+        }
+
+        if (calibCoefficientX > 2)
+        {
+            calibCoefficientX = 2;
+        }
+
+        if (calibCoefficientY > 2)
+        {
+            calibCoefficientY = 2;
         }
 
         std::cout << "Differenzen: " << std::endl;
