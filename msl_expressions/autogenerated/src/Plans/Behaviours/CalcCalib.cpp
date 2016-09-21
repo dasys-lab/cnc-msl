@@ -273,10 +273,10 @@ namespace alica
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
         std::cout << "Y: " << diffY << std::endl;
-        std::cout << "Länge: " << length << std::endl;
+        //std::cout << "Länge: " << length << std::endl;
         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
+        /*std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
         std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
         std::cout << "correctedPosX : " << correctedPosX << std::endl;
         std::cout << "correctedPosY : " << correctedPosY << std::endl;
@@ -284,7 +284,7 @@ namespace alica
         std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "oldCoeffX: " << oldCalibCoefficientX << std::endl;
-        std::cout << "oldCoeffY: " << oldCalibCoefficientY << std::endl;
+        std::cout << "oldCoeffY: " << oldCalibCoefficientY << std::endl;*/
 
         std::cout << "" << std::endl;
 

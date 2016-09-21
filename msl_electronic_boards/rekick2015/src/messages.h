@@ -58,13 +58,13 @@ typedef struct
 
 tExtendedCAN can_buffer[CAN_MSG_BUFFER_LENGTH];
 uint8_t tx_buffer[DATA_BUFFER_SIZE];
-uint8_t rx_buffer[DATA_BUFFER_SIZE];	// buffer to hold payload from Sensor Nodes
+uint8_t rx_buffer[DATA_BUFFER_SIZE];	// buffer to hold data from ipc
 
 st_cmd_t tx_msg; // Tx MOb (MOb to Tranceive Data)
 st_cmd_t rx_msg; // Rx Mob (MOb for Receiving Data)
 
 
-int8_t communication_init();
+void communication_init();
 void message_handler();
 void message_receive_handler();
 void message_transmit_handler();

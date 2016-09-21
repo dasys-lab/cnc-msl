@@ -9,10 +9,10 @@
 #define CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_ADC_H_
 
 
-int8_t adc_init();
+void adc_init();
 int8_t adc_start_conversion(int8_t muxMode);
 int8_t adc_read(int8_t muxMode);
-ISR(ADC_vect);
+// ISR(ADC_vect);
 
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_ADC_H_ */
