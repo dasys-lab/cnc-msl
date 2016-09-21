@@ -42,7 +42,7 @@ namespace alica
         int getCurrentRotationSegment();
         double circularDiff(double a, double b);
         double getLimitedRotationSpeed(double desiredSpeed);
-        void logCalibrationResult(double calibError);
+        void logCalibrationResult(double currentRadius, double calibError);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

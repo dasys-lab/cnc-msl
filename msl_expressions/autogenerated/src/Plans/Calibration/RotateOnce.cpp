@@ -62,20 +62,18 @@ namespace alica
         			double endAngle = wm->rawOdometry->position.angle;
 					cout << "end angle: " << endAngle << " => " ;
 					lastRotationCalibError = circularDiff(initialAngle, endAngle);
-
-					logCalibrationResult(lastRotationCalibError);
-
+					double currentRadius;
 					if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
 					{
 						// rotated too far => increase robot radius
-						cout << "hoch" << endl;
-						wm->adjustRobotRadius(0.1);
+						cout << "hoch auf ";
+						currentRadius = wm->adjustRobotRadius(0.1);
 					}
 					else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
 					{
 						// rotated not far enough => decrease robot radius
-						cout <<  "runter" << endl;
-						wm->adjustRobotRadius(-0.1);
+						cout <<  "runter auf ";
+						currentRadius = wm->adjustRobotRadius(-0.1);
 					}
 
 					if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
@@ -87,10 +85,12 @@ namespace alica
 					else
 					{
 						// start new rotation
-						cout << endl << "failure" << endl;
+						// cout << endl << "failure" << endl;
 //						this->setSuccess(false);
+						logCalibrationResult(currentRadius, lastRotationCalibError);
 						this->setFailure(true);
 					}
+					cout << endl;
         		} else {
         			// cout << "diffSum=" << diffSum << ", muss noch" << endl;
         		}
@@ -110,7 +110,7 @@ namespace alica
         segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
-        cout << "starting angle: " << initialAngle;
+        cout << "starting angle: " << initialAngle << ", ";
 
         /*PROTECTED REGION END*/
     }
@@ -144,16 +144,10 @@ namespace alica
     double RotateOnce::getLimitedRotationSpeed(double desiredSpeed) {
 		return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
 	}
-	void RotateOnce::logCalibrationResult(double calibError)
+	void RotateOnce::logCalibrationResult(double currentRadius, double calibError)
 	{
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		supplementary::Configuration *motion = (*sc)["Motion"];
-
-		double currentRadius = motion->get<double>("Motion", "MotionControl", "RobotRadius", NULL);
-
-//		ostringstream stream;
+		cout << currentRadius;
 		std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
-		cout << "logfile path: " << logfilePath << endl;
 		ofstream os(logfilePath, ios_base::out | ios_base::app);
 		std::time_t result = std::time(nullptr);
 		os << currentRadius << ";" << calibError << ";" << ctime(&result) << endl;

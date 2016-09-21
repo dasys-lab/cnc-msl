@@ -501,19 +501,21 @@ namespace msl
 		rawSensorData->processLightBarrier(msg);
 	}
 
-	void msl::MSLWorldModel::adjustRobotRadius(double difference)
+	double msl::MSLWorldModel::adjustRobotRadius(double difference)
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		supplementary::Configuration *motion = (*sc)["Motion"];
 
 		double currentRadius = motion->get<double>("Motion","MotionControl","RobotRadius",NULL);
-		motion->set(boost::lexical_cast<string>(currentRadius + difference),"Motion.MotionControl.RobotRadius",NULL);
+		double newRadius = currentRadius + difference;
+		motion->set(boost::lexical_cast<string>(newRadius),"Motion.MotionControl.RobotRadius",NULL);
 		motion->store();
+		return newRadius;
 	}
 
 	void msl::MSLWorldModel::sendKillMotionCommand()
 	{
-		cout << "killing motion" << endl;
+		// cout << "killing motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
@@ -534,7 +536,7 @@ namespace msl
 
 	void msl::MSLWorldModel::sendStartMotionCommand()
 	{
-		cout << "starting motion" << endl;
+		// cout << "starting motion" << endl;
 		supplementary::Configuration *processManaging = (*sc)["ProcessManaging"];
 
 		int processId = processManaging->get<int>("Processes","ProcessDescriptions","Motion","id",NULL);
