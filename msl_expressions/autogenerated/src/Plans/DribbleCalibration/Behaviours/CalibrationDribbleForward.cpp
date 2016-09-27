@@ -96,8 +96,6 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1469116853584) ENABLED START*/ //Add additional options here
         cout << "starting dribble forward calibration..." << endl;
         readConfigParameters();
-        vector < subsection > vec(sectionSize);
-        sections = vec;
 #ifdef DEBUG_DC
         cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
@@ -196,19 +194,19 @@ namespace alica
         DribbleCalibrationContainer dcc;
 
         // own config parameters
-        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor",
-                                                                  NULL);
-        minRotationNumber = (*sc)["DribbleCalibration"]->get<int>(
-                "DribbleCalibration.DribbleForward.MinRotationNumber");
-        maxSpeed = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.MaxSpeed");
-        maxRotation = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.MaxRotation");
-        sectionSize = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.SectionSize");
+        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor", NULL);
+        minRotationNumber = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
+        maxSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxSpeed", NULL);
+        maxRotation = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxRotation", NULL);
+        sectionSize = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.SectionSize", NULL);
 
         // actuation config Params
         minRotation = dcc.readConfigParameter("Dribble.MinRotation");
 
-        // sections
-        shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+        // sections 
+        vector < subsection > vec(sectionSize);
+        sections = vec;
+	shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
 
         if (speedsSections->size() == sectionSize)
         {
