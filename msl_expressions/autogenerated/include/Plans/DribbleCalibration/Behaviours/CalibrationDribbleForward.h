@@ -42,9 +42,9 @@ namespace alica
 
         // actuation config Params
         double minRotation;
-        int maxSpeed;
-        int maxRotation;
-        int sectionSize;
+        double maxSpeed;
+        double maxRotation;
+        double sectionSize;
 
         // queue with optical flow sensor data
 //        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;

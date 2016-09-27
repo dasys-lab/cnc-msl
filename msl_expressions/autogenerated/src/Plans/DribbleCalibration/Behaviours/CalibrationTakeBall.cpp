@@ -30,8 +30,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
         // TODO: remove when finished testing!
-        //this->setSuccess(true);
-        //return;
+        this->setSuccess(true);
+        return;
         // check if robot has the ball
         if (wm->rawSensorData->getLightBarrier())
         {
@@ -58,13 +58,13 @@ namespace alica
                 else if (ballRotation == RotateLeft)
                 {
                     // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                    correctWheelSpeed (RotateLeft);
+                    correctWheelSpeed(RotateLeft);
                     writeConfigParameters();
                 }
                 else if (ballRotation == RotateRight)
                 {
                     // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                    correctWheelSpeed (RotateRight);
+                    correctWheelSpeed(RotateRight);
                     writeConfigParameters();
                 }
                 return;
