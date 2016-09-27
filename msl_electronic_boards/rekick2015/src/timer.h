@@ -9,12 +9,10 @@
 #define CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_TIMER_H_
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
-#define TIMER_RES	16		// in us
+#define TIMER_PRESCALER		1
+#define TIMER_RES			10					// in us
 
-
-volatile uint32_t ticks = 0;
-volatile int16_t kicker_ticks_16us = -1;
+extern volatile int16_t kicker_ticks;
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_TIMER_H_ */

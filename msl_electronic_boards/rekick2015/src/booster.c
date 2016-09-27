@@ -11,14 +11,18 @@
 #include "global.h"
 
 #include <util/delay.h>
+#include <string.h>
 
 
+volatile uint16_t adc_logic_raw = 0;
+volatile uint16_t adc_booster_raw = 0;
+volatile uint16_t adc_capacitor_raw = 0;
 
+bool software_controled_boost = 0;
+double desired_voltage = 330.0;
+uint8_t manual_mode = false;
+uint32_t last_heartbeat = 0;
 
-void __inline__ delay_ms(uint32_t ms) {
-	for (uint32_t i=0; i < ms; i++)
-		_delay_ms(1);
-}
 
 void booster_init()
 {
@@ -50,21 +54,17 @@ void booster_reset()
 
 
 	SET(RESET_NOTAUS);
-	delay_ms(1);
+	_delay_ms(1);
 	RESET(RESET_NOTAUS);
 }
 
 int8_t booster_getState()
 {
-	if(!IS_SET(NOTAUS)) {
-		error("Emergency Shutdown");
+	if(!IS_SET(NOTAUS))
 		return State_EmergencyShutdown;
-	}
 
-	if(IS_SET(RESET_NOTAUS)) {
-		error("Resetting");
+	if(IS_SET(RESET_NOTAUS))
 		return State_Reset;
-	}
 
 	bool active = IS_SET(ACTIVATE_BOOSTER);
 	bool kick = IS_SET(KICK);
@@ -139,7 +139,7 @@ void booster_deactivate()
 double booster_getLogicVoltage()
 {
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5 * 556/56 / 1024;
+	static double factor = 5.0 * 556/56 / 1024;
 	double calc = factor * adc_logic_raw;
 
 	return calc;
@@ -148,7 +148,7 @@ double booster_getLogicVoltage()
 double booster_getBoosterVoltage()
 {
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5 * 556/56 / 1024;
+	static double factor = 5.0 * 556/56 / 1024;
 	double calc = factor * adc_booster_raw;
 
 	return calc;
@@ -157,10 +157,29 @@ double booster_getBoosterVoltage()
 double booster_getCapacitorVoltage()
 {
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5 * 12587/187 / 1024;
-	double calc = factor * adc_capacitor_raw;
+	static double factor = 5.0 * 12587/187 / 1024;
+	double calc = 0.32866 * adc_capacitor_raw;//factor * adc_capacitor_raw;
+
+	char str[20];
+	sprintf(str, "CAP-V: %.2lf", calc);
+	debug(str);
 
 	return calc;
+}
+
+void booster_setLogicRawVoltage(uint16_t voltage)
+{
+	adc_logic_raw = voltage;
+}
+
+void booster_setBoosterRawVoltage(uint16_t voltage)
+{
+	adc_booster_raw = voltage;
+}
+
+void booster_setCapacitorRawVoltage(uint16_t voltage)
+{
+	adc_capacitor_raw = voltage;
 }
 
 void booster_setMaxVoltage(double voltage)
@@ -177,7 +196,12 @@ void booster_setMaxVoltage(double voltage)
 void booster_ctrl()
 {
 	uint32_t time_now = timer_get_ms();
-	switch(booster_getState())
+	char message[30];
+
+	uint8_t state = booster_getState();
+	static uint8_t state_old = 0xFF;
+
+	switch(state)
 	{
 		case State_Deactivated:
 			break;
@@ -201,33 +225,36 @@ void booster_ctrl()
 			break;
 
 		case State_Kicking:
-			debug("Kicking");
+			sprintf(message, "Kicking");
 			break;
 
 		case State_VoltageLow:
-			debug("Voltage Low.");
-			booster_charge(0);
+			sprintf(message, "Voltage Low");
+			booster_deactivate();
 			break;
 
 		case State_VoltageLowLogic:
-			debug("Logic Voltage Low.");
-			booster_charge(0);
+			sprintf(message, "Logic Voltage Low");
+			booster_deactivate();
 			break;
 
 		case State_VoltageLowBooster:
-			debug("Booster Voltage Low.");
-			booster_charge(0);
+			sprintf(message, "Booster Voltage Low");
+			booster_deactivate();
 			break;
 
 		case State_TriggeredEmergency:
-			error(">T-ES<");
+			sprintf(message, ">T-ES<");
+			booster_deactivate();
+			break;
+
 		case State_EmergencyShutdown:
-			error(">ES<");
+			sprintf(message, ">ES<");
 			booster_deactivate();
 			break;
 
 		case State_Reset:
-			debug("Reset");
+			sprintf(message, "Reset");
 			booster_deactivate();
 			break;
 
@@ -235,13 +262,30 @@ void booster_ctrl()
 		// Should never be reached
 		case State_False:
 		case State_FalseKick:
-			error("State should not be reached.");
+			sprintf(message, "State should not be reached");
 			booster_deactivate();
 			break;
 
 		default:
-			error("Unknown State");
+			sprintf(message, "Unknown State");
 			booster_deactivate();
 			break;
 	}
+
+
+	if(state == state_old) {
+		static uint32_t last_sended = 0;
+		char str[40];
+		sprintf(str, "Zeit: %d, ZeitDiff: %d", time_now, time_now - last_sended);
+		debug(str);
+		if(time_now - last_sended > 1000)	// Send same Message once every Second
+		{
+			debug(message);
+			last_sended = time_now;
+		}
+	} else {
+		debug(message);
+		state_old = state;
+	}
+
 }

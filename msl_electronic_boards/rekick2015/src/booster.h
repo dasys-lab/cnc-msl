@@ -8,7 +8,7 @@
 #ifndef CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_
 #define CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_
 
-#include "global.h"
+//#include "global.h"
 
 #include <avr/io.h>
 
@@ -30,15 +30,9 @@
 #define MAX_VOLTAGE					330		// Only change this value, if you have changed Hardware
 #define PING_TIMEOUT				1000	// ms
 
-
-bool software_controled_boost = 0;
-double desired_voltage = 330.0;
-uint8_t manual_mode = false;
-uint32_t last_heartbeat = 0;
-
-volatile uint16_t adc_logic_raw = 0;
-volatile uint16_t adc_booster_raw = 0;
-volatile uint16_t adc_capacitor_raw = 0;
+extern volatile uint16_t adc_logic_raw;
+extern volatile uint16_t adc_booster_raw;
+extern volatile uint16_t adc_capacitor_raw;
 
 void booster_init();
 void booster_reset();

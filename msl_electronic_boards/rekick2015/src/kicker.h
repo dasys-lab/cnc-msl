@@ -8,7 +8,7 @@
 #ifndef CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_KICKER_H_
 #define CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_KICKER_H_
 
-#include "global.h"
+//#include "global.h"
 
 #include <avr/io.h>
 
@@ -16,11 +16,10 @@
 #define KICK_TASK_EXPIRE		2000	// time in which the kick task expires
 #define TIME_BETWEEN_TWO_SHOTS	200		// ms
 
-struct KICK_STRUCT {
-	uint32_t timestamp;
-	uint32_t last_kick;
-	uint16_t  release_time;
-	uint8_t  at_voltage;
-} kick_job = {0, 0, 0, 0};
+void kicker_init();
+void kicker_add_kick_job(uint16_t us10);
+void kicker_add_kick_job_forced(uint16_t us10, uint8_t forceVoltage);
+void kicker_kick(uint16_t us10);
+void kicker_kick_handler();
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_KICKER_H_ */

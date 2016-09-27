@@ -48,7 +48,7 @@ typedef uint8_t Bool;
 //_____ D E F I N I T I O N S __________________________________________________
 
     // -------------- MCU LIB CONFIGURATION
-#define FOSC           1000
+#define FOSC           16000
 //#define F_CPU          (FOSC*1000) // Need for AVR GCC
 
     // -------------- CAN LIB CONFIGURATION

@@ -5,8 +5,8 @@
  *      Author: cn
  */
 
+#include "adc.h"
 
-#include "booster.h"
 #include "defaults.h"
 #include "global.h"
 
@@ -105,26 +105,25 @@ ISR(ADC_vect)
 {
 	cli();
 	adc_muxMode = ADMUX & 0x1F;
+	adc_value = (ADCH << 8) | ADCL;
 	adc_ready = true;
+	sei();
 
 	switch(adc_muxMode)
 	{
 		case ADC_24V_LOGIC:
-			adc_logic_raw = (ADCH << 8) | ADCL;
+			booster_setLogicRawVoltage(adc_value);
 			break;
 
 		case ADC_24V_BOOSTER:
-			adc_booster_raw = (ADCH << 8) | ADCL;
+			booster_setBoosterRawVoltage(adc_value);
 			break;
 
 		case ADC_CAP:
-			adc_capacitor_raw = (ADCH << 8) | ADCL;
+			booster_setCapacitorRawVoltage(adc_value);
 			break;
 
 		default:
-			adc_value = (ADCH << 8) | ADCL;
 			break;
 	}
-
-	sei();
 }

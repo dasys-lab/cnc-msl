@@ -11,6 +11,14 @@
 #include "global.h"
 
 
+tExtendedCAN can_buffer[CAN_MSG_BUFFER_LENGTH];
+uint8_t tx_buffer[DATA_BUFFER_SIZE];
+uint8_t rx_buffer[DATA_BUFFER_SIZE];	// buffer to hold data from ipc
+
+st_cmd_t tx_msg; // Tx MOb (MOb to Tranceive Data)
+st_cmd_t rx_msg; // Rx Mob (MOb for Receiving Data)
+
+
 uint8_t can_buffer_head = 0;
 uint8_t can_buffer_tail = 0;
 
@@ -305,16 +313,17 @@ void error(char *str) {
  * Callback function which prints the actual capacitors message
  */
 void print_voltage(void) {
+	char str1[20];
+	sprintf(str1, "L: %.0lfV", booster_getLogicVoltage());
+	debug(str1);
 
-	char str[20];
-	sprintf(str, "L: %.0fV", booster_getLogicVoltage());
-	debug(str);
+	char str2[20];
+	sprintf(str2, "B: %.0lfV", booster_getBoosterVoltage());
+	debug(str2);
 
-	sprintf(str, "B: %.0fV", booster_getBoosterVoltage());
-	debug(str);
-
-	sprintf(str, "C: %.0fV", booster_getCapacitorVoltage());
-	debug(str);
+	char str3[20];
+	sprintf(str3, "C: %.0lfV", booster_getCapacitorVoltage());
+	debug(str3);
 }
 
 /**

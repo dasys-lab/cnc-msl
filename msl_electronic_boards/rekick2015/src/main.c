@@ -28,6 +28,7 @@ pre-up ip link set can0 up txqueuelen 1000 type can bitrate 1000000
 auto can0
 */
 
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -49,58 +50,53 @@ int main(void) {
 	PORTC = 0x00;
 	PORTD = 0x00;
 
-	for(int i = 0; i <= 2000; i++)
-		_delay_ms(1);
 
 	// enable interrupts
 	sei();
 
-	adc_init();
 	communication_init();
+
+	//adc_init();
+	//booster_init();
+	//kicker_init();
+	timer_init();
 	// ETHERNET
 
 	// BOOSTER
 	// KICKER
 
-	for(int i = 0; i <= 2000; i++)
-		_delay_ms(1);
-/*
-	SET(RESET_NOTAUS);
-
-	for(int i = 0; i <= 50; i++)
-		_delay_ms(1);
-
-	RESET(RESET_NOTAUS);
-*/
-	/*
-	SET(ACTIVATE_BOOSTER);
-	for(int i = 0; i <= 50; i++)
-			_delay_ms(1);
-
-	SET(CHARGE);
-	for(int i = 0; i <= 50000; i++)
-			_delay_ms(1);
-
-	RESET(CHARGE);
-	RESET(ACTIVATE_BOOSTER);
-	*/
-	
-	debug("-------");
-
 	while(1) {
 		message_handler();
-		adc_handler();
-		booster_ctrl();
+		//adc_handler();
 		// kicker_kick_handler();
 
-		static uint8_t test = 0;
-		if(++test > 50)
-		{
-			print_voltage();
+
+		// TEST
+		char str1[20], str2[20];
+		sprintf(str1, "Ticks: %d", timer_get_ticks());
+		debug(str1);
+		sprintf(str2, "ms: %d", 2);//timer_get_ms());
+		debug(str2);
+
+		for(uint8_t i = 0; i<=200; i++) {
+			message_handler();
+			_delay_ms(5);
 		}
 
-		for(int i=0; i<=30; i++)
-			_delay_ms(1);
+		/*
+
+		static uint16_t test = 0;
+		test++;
+		if(test >= 5000)
+		{
+			char str[20];
+			sprintf(str, "Ticks: %d", timer_get_ticks());
+			debug(str);
+
+			booster_ctrl();
+			print_voltage();
+			test = 0;
+		}*/
 	}
 	return 0;
 }

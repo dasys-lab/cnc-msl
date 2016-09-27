@@ -5,14 +5,21 @@
  *      Author: Carpe Noctem
  */
 
-
-#include "kicker.h"
-
 #include "defaults.h"
 #include "global.h"
+#include "kicker.h"
 #include "timer.h"
 
+#include <avr/interrupt.h>
 #include <util/delay.h>
+
+
+struct KICK_STRUCT {
+	uint32_t timestamp;
+	uint32_t last_kick;
+	uint16_t  release_time;
+	uint8_t  at_voltage;
+} kick_job = {0, 0, 0, 0};
 
 
 void kicker_init(void)
@@ -51,15 +58,14 @@ void kicker_add_kick_job_forced(uint16_t us10, uint8_t forceVoltage)
 
 void kicker_kick(uint16_t us10)
 {
-	int16_t kick_ticks = us10 / 1.6;
 	booster_deactivate();
 
 	cli();
-	kicker_ticks_16us = kick_ticks;
+	kicker_ticks = us10;
 	sei();
 
 	SET(KICK);
-	while(kicker_ticks_16us > 0);
+	while(kicker_ticks > 0);
 	RESET(KICK);
 
 	booster_activate();

@@ -45,7 +45,7 @@
 #define PRIORITY_LOW	0x80
 
 
-#define CAN_MSG_BUFFER_LENGTH	5 // max 255
+#define CAN_MSG_BUFFER_LENGTH	20 // max 255
 #define DATA_BUFFER_SIZE 8
 
 typedef struct
@@ -54,15 +54,6 @@ typedef struct
 	uint8_t data[8];
 	uint8_t length;
 } tExtendedCAN;
-
-
-tExtendedCAN can_buffer[CAN_MSG_BUFFER_LENGTH];
-uint8_t tx_buffer[DATA_BUFFER_SIZE];
-uint8_t rx_buffer[DATA_BUFFER_SIZE];	// buffer to hold data from ipc
-
-st_cmd_t tx_msg; // Tx MOb (MOb to Tranceive Data)
-st_cmd_t rx_msg; // Rx Mob (MOb for Receiving Data)
-
 
 void communication_init();
 void message_handler();

@@ -7,15 +7,29 @@
 
 #include "timer.h"
 
+#include <avr/interrupt.h>
+#include <avr/io.h>
+
+volatile uint32_t ticks = 0;
+volatile int16_t kicker_ticks = -1;
+
 
 void timer_init(void)
 {
 	TCCR0A = 0x00;
+	TCCR0A |= (1<<WGM01);	// CTC-Mode
 	TCCR0B = 0x00;
 	TCCR0B |= (1<<CS00);	// Prescaler: 1
 
-	TIMSK0 = 0x00;
-	TIMSK0 |= (1<<TOIE0);
+	TIMSK0 = TIMSK0 & ~0x07;		// TODO: irgendwas stimmt mit dem TIMSK register nicht
+	TIMSK0 |= (1<<OCIE0A);	// Compare Match Interrupt Enable
+
+
+	uint8_t ocr = 79;		// ocr = F_CPU/1000000 * TIMER_RES / 2 / TIMER_PRESCALER - 1
+	OCR0A = ocr;
+	char str[20];
+	sprintf(str, "OCR0A: %d", ocr);
+	debug(str);
 }
 
 /**
@@ -45,8 +59,9 @@ uint32_t timer_get_ms(void)
 }
 
 
-ISR(TIMER0_OVF_vect) {
+ISR(TIMER0_COMPA_vect) {
 	ticks++;
-	if(kicker_ticks_16us > 0)
-		kicker_ticks_16us--;
+
+	if(kicker_ticks > 0)
+		kicker_ticks--;
 }
