@@ -16,20 +16,27 @@ volatile int16_t kicker_ticks = -1;
 
 void timer_init(void)
 {
-	TCCR0A = 0x00;
-	TCCR0A |= (1<<WGM01);	// CTC-Mode
-	TCCR0B = 0x00;
-	TCCR0B |= (1<<CS00);	// Prescaler: 1
+	TCCR1A = 0x00;
 
-	TIMSK0 = TIMSK0 & ~0x07;		// TODO: irgendwas stimmt mit dem TIMSK register nicht
-	TIMSK0 |= (1<<OCIE0A);	// Compare Match Interrupt Enable
+	TCCR1B = 0x00;
+	TCCR1B |= (1<<WGM12) | (1<<CS10);	// Prescaler: 1 & CTC
+	char str1[20];
+	sprintf(str1, "1");
+	debug(str1);
+
+//	TIMSK0 = TIMSK0 & ~0x07;		// TODO: irgendwas stimmt mit dem TIMSK register nicht
+	TIMSK1 |= (1<<OCIE1A);	// Compare Match Interrupt Enable  - OCIE0A
 
 
 	uint8_t ocr = 79;		// ocr = F_CPU/1000000 * TIMER_RES / 2 / TIMER_PRESCALER - 1
-	OCR0A = ocr;
+	OCR1A = ocr;
 	char str[20];
-	sprintf(str, "OCR0A: %d", ocr);
+	sprintf(str, "2");
 	debug(str);
+
+	message_handler();
+	message_handler();
+	message_handler();
 }
 
 /**
