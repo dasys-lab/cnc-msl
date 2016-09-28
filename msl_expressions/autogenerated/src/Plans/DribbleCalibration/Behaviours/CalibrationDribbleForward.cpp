@@ -33,15 +33,26 @@ namespace alica
 //        return;
         if (wm->rawSensorData->getLightBarrier())
         {
+	    // TODO: set in 60 in config file -> waiting duration for getting the ball
+	    if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < 60))
+	    {
+		haveBallCount++; 
+		getBallCount++;
+		return;
+	    } else 
+	    {
+	    	getBallCount = 0;
+	    }
             haveBallCount++;
             // if ball is in kicker
             // drive forward start slowly
             // start with 400 speed
             if (moveCount < sectionSize)
             {
+//		cout << "moveCount < sectionSize" << endl;
                 int translation = 400;
-                dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
-
+                mc = dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
+		send(mc);
                 // use optical flow and light barrier data to analyze the the ball movement
                 Rotation ballMovement = checkBallRotation();
 
@@ -99,7 +110,8 @@ namespace alica
 #ifdef DEBUG_DC
         cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
-
+	
+	getBallCount;
         moveCount = 0;
         correctRotationCount = 0;
         haveBallCount = 0;
@@ -114,11 +126,14 @@ namespace alica
             return;
         }
 
+	int counter = sectionSize - (moveCount + 1);
         if (err == TooFast)
-            sections[moveCount].actuatorSpeed = sections[moveCount].actuatorSpeed - changingFactor;
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingFactor * 10);
 
         if (err == TooSlow)
-            sections[moveCount].actuatorSpeed = sections[moveCount].actuatorSpeed + changingFactor;
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingFactor;
+	cout << "sections[" << counter << "].actuatorSpeed = " << sections[counter].actuatorSpeed << endl;
+	writeConfigParameters();
     }
 
     CalibrationDribbleForward::Rotation CalibrationDribbleForward::checkBallRotation()
@@ -132,14 +147,18 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
+	cout << "opticalFlowValue x: " << opticalFlowValues->x;
+
         // too slow or not moving
         if (opticalFlowValues->x == 0)
         {
 //        	opQueue->clear();
+	    cout << " -> Too Slow" << endl;
             return TooSlow;
         }
 
         // correct
+	cout << " -> Correct" << endl;
         return Correct;
     }
 
@@ -194,8 +213,10 @@ namespace alica
         DribbleCalibrationContainer dcc;
 
         // own config parameters
-        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor", NULL);
-        minRotationNumber = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
+        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor",
+                                                                  NULL);
+        minRotationNumber = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
         maxSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxSpeed", NULL);
         maxRotation = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxRotation", NULL);
         sectionSize = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.SectionSize", NULL);
@@ -206,7 +227,7 @@ namespace alica
         // sections 
         vector < subsection > vec(sectionSize);
         sections = vec;
-	shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+        shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
 
         if (speedsSections->size() == sectionSize)
         {
