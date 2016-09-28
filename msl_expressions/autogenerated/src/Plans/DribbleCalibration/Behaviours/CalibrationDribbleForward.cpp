@@ -202,8 +202,10 @@ namespace alica
         DribbleCalibrationContainer dcc;
 
         // own config parameters
-        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor", NULL);
-        minRotationNumber = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
+        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor",
+                                                                  NULL);
+        minRotationNumber = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
         maxSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxSpeed", NULL);
         maxRotation = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxRotation", NULL);
         sectionSize = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.SectionSize", NULL);
@@ -214,7 +216,7 @@ namespace alica
         // sections 
         vector < subsection > vec(sectionSize);
         sections = vec;
-	shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
+        shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);
 
         if (speedsSections->size() == sectionSize)
         {

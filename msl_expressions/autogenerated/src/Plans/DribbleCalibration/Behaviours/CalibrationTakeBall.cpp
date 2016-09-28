@@ -58,13 +58,13 @@ namespace alica
                 else if (ballRotation == RotateLeft)
                 {
                     // ROTATE_LEFT means that the right wheel is spinning too fast so we need to correct the right wheel
-                    correctWheelSpeed(RotateLeft);
+                    correctWheelSpeed (RotateLeft);
                     writeConfigParameters();
                 }
                 else if (ballRotation == RotateRight)
                 {
                     // ROTATE_RIGHT means that the left wheel is spinning too fast so we need to correct the left wheel
-                    correctWheelSpeed(RotateRight);
+                    correctWheelSpeed (RotateRight);
                     writeConfigParameters();
                 }
                 return;
