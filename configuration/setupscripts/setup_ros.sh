@@ -6,7 +6,7 @@ source ./funcs.sh
 
 ## Installiere ROS
 
-msg "ROS Repository wird eingerichtet"
+msg "ROS Repository wird eingerichtet..."
 
 # Distributionsversion auslesen
 codename=`lsb_release -cs`
@@ -20,7 +20,7 @@ case "${codename}" in
         codename=xenial
         ;;
 esac
-    
+
 
 
 add_to "deb http://packages.ros.org/ros/ubuntu ${codename} main" "/etc/apt/sources.list.d/ros-latest.list" "as_root"
@@ -30,14 +30,14 @@ wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
 wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
 
 
-msg "ROS Pakete werden installiert und eingerichtet"
+msg "ROS Pakete werden installiert und eingerichtet..."
 
-rospackages='ros-indigo-desktop ros-indigo-gazebo5-ros-pkgs ros-indigo-qt-gui-core ros-indigo-qt-build python-rosinstall ros-indigo-pcl-conversions ros-indigo-mrpt-map'
+rospackages='ros-kinetic-desktop-full ros-kinetic-qt-gui-core ros-kinetic-qt-build ros-kinetic-serial python-catkin-tools ros-kinetic-mrpt-map ros-kinetic-serial'
 
 
 sudo apt-get update
 if [ -z "$1" ]
-then 
+then
    eval sudo apt-get install $rospackages
 else
    eval sudo apt-get "${1}" install $rospackages
@@ -49,11 +49,11 @@ rosdep update
 rosdep fix-permissions
 set -e
 
-msg "ROS Workspace wird angelegt und eingerichtet"
+msg "ROS Workspace wird angelegt und eingerichtet..."
 
-add_to "source /opt/ros/indigo/setup.bash" ~/.bashrc
+add_to "source /opt/ros/kinetic/setup.bash" ~/.bashrc
 
-source /opt/ros/indigo/setup.bash
+source /opt/ros/kinetic/setup.bash
 
 mkdir -p ~/cnws/src
 cd ~/cnws/src
@@ -61,4 +61,3 @@ if [ ! -f ~/cnws/src/CMakeLists.txt ];
 then
   catkin_init_workspace
 fi
-

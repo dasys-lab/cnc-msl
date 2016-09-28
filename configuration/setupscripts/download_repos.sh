@@ -6,9 +6,9 @@ source ./funcs.sh
 
 ## SSH-Key erstellen
 
-msg "SSH Key wird erstellt, falls nicht vorhanden" 
+msg "SSH Key wird erstellt, falls nicht vorhanden"
 
-if [ ! -f ~/.ssh/id_rsa.pub ]; then 
+if [ ! -f ~/.ssh/id_rsa.pub ]; then
     msg "SSH Key erstellen ..."
     ssh-keygen -b 4096
     msg "SSH Key wurde erstellt"
@@ -43,7 +43,7 @@ done
 
 # Git einrichten
 ## gitconfig in Benutzerverzeichniss kopieren wenn noch nicht vorhanden oder übername gewünscht ist
-if [ ! -f ~/.gitconfig ] || askSure "Gitconfig von CarpeNoctemCassel  übernehmen? (Bestehende ~/.gitconfig wird überschreiben!"; then
+if [ ! -f ~/.gitconfig ] || askSure "Gitconfig von CarpeNoctemCassel  übernehmen? (Bestehende ~/.gitconfig wird überschrieben!)"; then
     cp ~/cnws/src/cnc-msl/configuration/gitconfig ~/.gitconfig
 fi
 
@@ -52,9 +52,8 @@ if askSure "GIT-E-Mail und -Name einrichten?"; then
     getInput "E-Mail Adresse für GIT eingeben" "email"
     sed -i "/email/c\\\temail = ${email}" ~/.gitconfig
     msg "E-Mail Adresse gesetzt"
-    
+
     getInput "Vollen Namen für GIT eingeben" "name"
     sed -i "/name/c\\\tname = ${name}" ~/.gitconfig
     msg "Benutzername gesetzt"
 fi
-

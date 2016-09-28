@@ -5,7 +5,7 @@ source ./funcs.sh
 
 ## Add .bashrc source command for workspace
 
-msg ".bashrc Einträge werden gemacht"
+msg ".bashrc Einträge werden angelegt..."
 
 add_to "source ~/cnws/devel/setup.bash" ~/.bashrc
 

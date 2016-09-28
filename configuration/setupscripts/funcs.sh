@@ -54,4 +54,3 @@ function getInput
         fi
     done
 }
-
