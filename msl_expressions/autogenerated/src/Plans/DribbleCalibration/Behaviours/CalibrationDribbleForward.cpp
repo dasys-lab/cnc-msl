@@ -39,9 +39,10 @@ namespace alica
             // start with 400 speed
             if (moveCount < sectionSize)
             {
+//		cout << "moveCount < sectionSize" << endl;
                 int translation = 400;
-                dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
-
+                mc = dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
+		send(mc);
                 // use optical flow and light barrier data to analyze the the ball movement
                 Rotation ballMovement = checkBallRotation();
 
@@ -114,11 +115,14 @@ namespace alica
             return;
         }
 
+	int counter = sectionSize - (moveCount + 1);
         if (err == TooFast)
-            sections[moveCount].actuatorSpeed = sections[moveCount].actuatorSpeed - changingFactor;
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + changingFactor;
 
         if (err == TooSlow)
-            sections[moveCount].actuatorSpeed = sections[moveCount].actuatorSpeed + changingFactor;
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingFactor;
+	cout << "sections[" << counter << "].actuatorSpeed = " << sections[counter].actuatorSpeed << endl;
+	writeConfigParameters();
     }
 
     CalibrationDribbleForward::Rotation CalibrationDribbleForward::checkBallRotation()
@@ -132,14 +136,18 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
+	cout << "opticalFlowValue x: " << opticalFlowValues->x;
+
         // too slow or not moving
         if (opticalFlowValues->x == 0)
         {
 //        	opQueue->clear();
+	    cout << " -> Too Slow" << endl;
             return TooSlow;
         }
 
         // correct
+	cout << " -> Correct" << endl;
         return Correct;
     }
 
