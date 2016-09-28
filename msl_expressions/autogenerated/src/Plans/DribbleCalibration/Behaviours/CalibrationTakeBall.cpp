@@ -30,8 +30,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
         // TODO: remove when finished testing!
-        this->setSuccess(true);
-        return;
+//        this->setSuccess(true);
+//        return;
         // check if robot has the ball
         if (wm->rawSensorData->getLightBarrier())
         {
@@ -169,6 +169,7 @@ namespace alica
         {
             adaptWheel = rotation;
         }
+	cout << "changinFactor: " << changingFactor << endl;
         // check if the defect wheel is too fast or to slow
         if (rotation == adaptWheel)
         {
@@ -207,7 +208,7 @@ namespace alica
         dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
         // maybe put in config
-        changingFactor = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.ChangingFactor", NULL);
+        changingFactor = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingFactor", NULL);
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
     }
 

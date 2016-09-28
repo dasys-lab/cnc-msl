@@ -39,6 +39,7 @@ namespace alica
         int minRotationNumber;
 
         int moveCount;
+	int getBallCount;
 
         // actuation config Params
         double minRotation;

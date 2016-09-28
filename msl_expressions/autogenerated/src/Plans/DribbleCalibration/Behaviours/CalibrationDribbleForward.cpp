@@ -33,6 +33,16 @@ namespace alica
 //        return;
         if (wm->rawSensorData->getLightBarrier())
         {
+	    // TODO: set in 60 in config file -> waiting duration for getting the ball
+	    if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < 60))
+	    {
+		haveBallCount++; 
+		getBallCount++;
+		return;
+	    } else 
+	    {
+	    	getBallCount = 0;
+	    }
             haveBallCount++;
             // if ball is in kicker
             // drive forward start slowly
@@ -100,7 +110,8 @@ namespace alica
 #ifdef DEBUG_DC
         cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
-
+	
+	getBallCount;
         moveCount = 0;
         correctRotationCount = 0;
         haveBallCount = 0;
@@ -117,7 +128,7 @@ namespace alica
 
 	int counter = sectionSize - (moveCount + 1);
         if (err == TooFast)
-            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + changingFactor;
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingFactor * 10);
 
         if (err == TooSlow)
             sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingFactor;
