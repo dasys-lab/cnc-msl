@@ -6,7 +6,7 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396347588"/>
-    <value xPos="-1" yPos="2" width="1000" height="639"/>
+    <value xPos="-1" yPos="2" width="1048" height="639"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396347590"/>
@@ -26,7 +26,7 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470227765155"/>
-    <value xPos="695" yPos="254" width="142" height="86" collapsed="false"/>
+    <value xPos="696" yPos="159" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1470227878581"/>
@@ -54,6 +54,18 @@
   </extensions>
   <extensions>
     <key href="RestartMotion.beh#1472657588489"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1475074211872"/>
+    <value xPos="601" yPos="211" width="319" height="86" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationCalculation.beh#1475074454339"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibration.pml#1475074486547"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

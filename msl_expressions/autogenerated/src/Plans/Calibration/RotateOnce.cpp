@@ -1,10 +1,3 @@
-#include <msl_msgs/MotionInfo.h>
-#include <msl_msgs/PositionInfo.h>
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <memory>
-
 using namespace std;
 #include "Plans/Calibration/RotateOnce.h"
 
@@ -22,7 +15,7 @@ namespace alica
     /*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
-			DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
+            DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
@@ -45,63 +38,68 @@ namespace alica
 //        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
         visitedSegments[currentSegment] = true;
 
-        if(visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
+        if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
         {
-    		double circDiff = circularDiff(currentBearing, initialBearing);
-			precisionBuffer.add(make_shared<double>(circDiff));
+            double circDiff = circularDiff(currentBearing, initialBearing);
+            precisionBuffer.add(make_shared<double>(circDiff));
 
-			rotationSpeed = getLimitedRotationSpeed(-circDiff);
+            rotationSpeed = getLimitedRotationSpeed(-circDiff);
 
-        	if(precisionBuffer.getSize() == PRECISION_BUFFER_SIZE) {
-        		double diffSum = 0;
-        		for(int i = 0; i < PRECISION_BUFFER_SIZE; i++) {
-        			diffSum += precisionBuffer.getActualElement(i);
-        		}
-        		
-        		if(diffSum >= 0) {
-        			double endAngle = wm->rawOdometry->position.angle;
-					cout << "end angle: " << endAngle << " => " ;
-					lastRotationCalibError = circularDiff(initialAngle, endAngle);
-					double currentRadius;
-					if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
-					{
-						// rotated too far => increase robot radius
-						cout << "hoch auf ";
-						currentRadius = wm->adjustRobotRadius(0.1);
-					}
-					else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
-					{
-						// rotated not far enough => decrease robot radius
-						cout <<  "runter auf ";
-						currentRadius = wm->adjustRobotRadius(-0.1);
-					}
+            if (precisionBuffer.getSize() == PRECISION_BUFFER_SIZE)
+            {
+                double diffSum = 0;
+                for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
+                {
+                    diffSum += precisionBuffer.getActualElement(i);
+                }
 
-					if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
-					{
-						cout << endl << "success" << endl;
-						this->setSuccess(true);
-						return;
-					}
-					else
-					{
-						// start new rotation
-						// cout << endl << "failure" << endl;
+                if (diffSum >= 0)
+                {
+                    double endAngle = wm->rawOdometry->position.angle;
+                    cout << "end angle: " << endAngle << " => ";
+                    lastRotationCalibError = circularDiff(initialAngle, endAngle);
+                    double currentRadius;
+                    if (lastRotationCalibError < -CALIB_ERROR_THRESHOLD)
+                    {
+                        // rotated too far => increase robot radius
+                        cout << "hoch auf ";
+                        currentRadius = wm->adjustRobotRadius(0.1);
+                    }
+                    else if (lastRotationCalibError > CALIB_ERROR_THRESHOLD)
+                    {
+                        // rotated not far enough => decrease robot radius
+                        cout << "runter auf ";
+                        currentRadius = wm->adjustRobotRadius(-0.1);
+                    }
+
+                    if (abs(lastRotationCalibError) < CALIB_ERROR_THRESHOLD)
+                    {
+                        cout << endl << "success" << endl;
+                        this->setSuccess(true);
+                        return;
+                    }
+                    else
+                    {
+                        // start new rotation
+                        // cout << endl << "failure" << endl;
 //						this->setSuccess(false);
-						logCalibrationResult(currentRadius, lastRotationCalibError);
-						this->setFailure(true);
-					}
-					cout << endl;
-        		} else {
-        			// cout << "diffSum=" << diffSum << ", muss noch" << endl;
-        		}
-        	}
+                        logCalibrationResult(currentRadius, lastRotationCalibError);
+                        this->setFailure(true);
+                    }
+                    cout << endl;
+                }
+                else
+                {
+                    // cout << "diffSum=" << diffSum << ", muss noch" << endl;
+                }
+            }
         }
         /*PROTECTED REGION END*/
     }
     void RotateOnce::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
-    	rotationSpeed = ACCELERATION;
+        rotationSpeed = ACCELERATION;
         initialBearing = wm->rawSensorData->getAverageBearing();
         precisionBuffer.clear(true);
         initialAngle = wm->rawOdometry->position.angle;
@@ -141,18 +139,19 @@ namespace alica
         return atMost180 * sign;
     }
 
-    double RotateOnce::getLimitedRotationSpeed(double desiredSpeed) {
-		return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
-	}
-	void RotateOnce::logCalibrationResult(double currentRadius, double calibError)
-	{
-		cout << currentRadius;
-		std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
-		ofstream os(logfilePath, ios_base::out | ios_base::app);
-		std::time_t result = std::time(nullptr);
-		os << currentRadius << ";" << calibError << ";" << ctime(&result) << endl;
+    double RotateOnce::getLimitedRotationSpeed(double desiredSpeed)
+    {
+        return min(MAX_ROTATION_SPEED, max(-MAX_ROTATION_SPEED, desiredSpeed));
+    }
+    void RotateOnce::logCalibrationResult(double currentRadius, double calibError)
+    {
+        cout << currentRadius;
+        std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+        ofstream os(logfilePath, ios_base::out | ios_base::app);
+        std::time_t result = std::time(nullptr);
+        os << currentRadius << ";" << calibError << ";" << ctime(&result) << endl;
         os.flush();
         os.close();
-	}
+    }
 /*PROTECTED REGION END*/
 } /* namespace alica */

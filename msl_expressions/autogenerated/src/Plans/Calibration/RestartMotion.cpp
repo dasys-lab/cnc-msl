@@ -22,25 +22,24 @@ namespace alica
     void RestartMotion::run(void* msg)
     {
         /*PROTECTED REGION ID(run1472657511112) ENABLED START*/ //Add additional options here
-		uninitializedCounter++;
+        uninitializedCounter++;
 
-		if (uninitializedCounter == 200)
-		{
-			wm->sendStartMotionCommand();
-			return;
-		}
-		else if (uninitializedCounter < 200)
-		{
-			return;
-		}
+        if (uninitializedCounter == 200)
+        {
+            wm->sendStartMotionCommand();
+            return;
+        }
+        else if (uninitializedCounter < 200)
+        {
+            return;
+        }
 
-		if (uninitializedCounter != 400)
-		{
-			return;
-		}
+        if (uninitializedCounter != 400)
+        {
+            return;
+        }
 
-		this->setSuccess(true);
-
+        this->setSuccess(true);
 
         /*PROTECTED REGION END*/
     }
