@@ -37,6 +37,9 @@ auto can0
 //#include "messages.h"
 
 
+//TESTS
+#include "timer.h"
+
 int main(void) {
 	// 0 - Eingang
 	// 1 - Ausgang
@@ -73,12 +76,12 @@ int main(void) {
 
 		// TEST
 		char str1[20], str2[20];
-		sprintf(str1, "Ticks: %d", timer_get_ticks());
-		debug(str1);
-		sprintf(str2, "ms: %d", 2);//timer_get_ms());
-		debug(str2);
+	//	sprintf(str1, "%d", t32);
+	//	debug(str1);
+	//	sprintf(str2, "t[1]: %d", ticks[1]);
+	//	debug(str2);
 
-		for(uint8_t i = 0; i<=200; i++) {
+		for(uint8_t i = 0; i<=100; i++) {
 			message_handler();
 			_delay_ms(5);
 		}

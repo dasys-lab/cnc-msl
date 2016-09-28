@@ -10,33 +10,29 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
-volatile uint32_t ticks = 0;
+volatile uint8_t ticks[4] = {0,0,0,0};
+volatile uint16_t t16 = 0;
+volatile uint32_t t32 = 0;
 volatile int16_t kicker_ticks = -1;
 
 
 void timer_init(void)
 {
-	TCCR1A = 0x00;
+
+/*	TCCR1A = 0x00;
 
 	TCCR1B = 0x00;
-	TCCR1B |= (1<<WGM12) | (1<<CS10);	// Prescaler: 1 & CTC
-	char str1[20];
-	sprintf(str1, "1");
-	debug(str1);
+	TCCR1B |= (1<<CS10);	// Prescaler: 1 & CTC
+
 
 //	TIMSK0 = TIMSK0 & ~0x07;		// TODO: irgendwas stimmt mit dem TIMSK register nicht
-	TIMSK1 |= (1<<OCIE1A);	// Compare Match Interrupt Enable  - OCIE0A
+	TIMSK1 |= (1<<TOIE1);	// Compare Match Interrupt Enable  - OCIE0A
+*/
 
+	TCCR0A = 0x00;
 
-	uint8_t ocr = 79;		// ocr = F_CPU/1000000 * TIMER_RES / 2 / TIMER_PRESCALER - 1
-	OCR1A = ocr;
-	char str[20];
-	sprintf(str, "2");
-	debug(str);
-
-	message_handler();
-	message_handler();
-	message_handler();
+	TCCR0B = 0x00;
+	TCCR0B |= (1<<CS00);	// Prescaler: 1
 }
 
 /**
@@ -46,13 +42,13 @@ void timer_init(void)
  */
 uint32_t timer_get_ticks(void)
 {
-	uint32_t ret = 0;
+	uint32_t ret = ((uint32_t) ticks[2] << 16) | ((uint16_t) ticks[1] << 8) | ticks[0];
 
-	cli();
+/*	cli();
 	ret = ticks;
-	sei();
+	sei(); */
 
-	return ret;
+	return ret;//ret;
 }
 
 /**
@@ -65,10 +61,42 @@ uint32_t timer_get_ms(void)
 	return timer_get_ticks() * TIMER_RES / 1000;
 }
 
+ISR( TIMER0_OVF_vect ) {
+	// löst alle 16us aus
 
-ISR(TIMER0_COMPA_vect) {
+
+	ticks[0]++;
+	t32++;
+
+	/*if(ticks[0] >= 100) {
+		ticks[0] = 0;
+		ticks[1]++;
+		if(ticks[1] > 100) {
+			ticks[1] = 0;
+			ticks[2]++;
+		}
+	}*/
+
+	if(ticks[0] == 0) {
+		ticks[1]++;
+
+		if(ticks[1] == 0) {
+			debug("ovf 1");
+			char str1[20];
+			sprintf(str1, "%lu", t32);
+			debug(str1);
+		}
+	}
+	t16++;
+
+//	if(kicker_ticks > 0)
+//		kicker_ticks--;
+}
+/*
+ISR(TIMER1_COMPA_vect) {
 	ticks++;
 
 	if(kicker_ticks > 0)
 		kicker_ticks--;
 }
+*/
