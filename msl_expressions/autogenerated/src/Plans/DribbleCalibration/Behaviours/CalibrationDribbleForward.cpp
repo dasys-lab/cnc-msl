@@ -29,6 +29,7 @@ namespace alica
     	haveBallCount = 0;
     	maxRotation = 0;
     	getBallCount = 0;
+	lastOpticalFlowValue = 1;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -60,11 +61,27 @@ namespace alica
             // start with 400 speed
             if (moveCount < sectionSize)
             {
-//		cout << "moveCount < sectionSize" << endl;
-                int translation = 400;
+		if (sections[sectionSize - (moveCount + 1)].robotSpeed > (-1700))
+		{
+			cout << "sections[" << sectionSize - (moveCount + 1) << "].robotSpeed = " << sections[sectionSize - (moveCount + 1)].robotSpeed << endl;
+			cout << "robot Speed is too small to calibrate! continou with next step..." << endl;
+			moveCount++;
+			haveBallCount = 0;
+			getBallCount = 0;
+			return;
+		}
+                
+		int translation = 400;
                 mc = dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
 		send(mc);
-                // use optical flow and light barrier data to analyze the the ball movement
+		
+		// waiting some time
+		if (haveBallCount < 90) 
+		{
+			return;
+		}
+
+		// use optical flow and light barrier data to analyze the the ball movement
                 Rotation ballMovement = checkBallRotation();
 
                 // adapt actuatorSpeed at specific robotSpeed
@@ -136,13 +153,14 @@ namespace alica
             cout << "CalibrationDribbleForward::correctWheelSpeed -> wrong input!" << endl;
             return;
         }
-
+	cout << "moveCount = " << moveCount << endl;
 	int counter = sectionSize - (moveCount + 1);
         if (err == TooFast)
-            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingFactor * 10);
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingFactor * 20);
 
         if (err == TooSlow)
             sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingFactor;
+	cout << "sections[" << counter << "].robotSpeed = " << sections[counter].robotSpeed << endl;
 	cout << "sections[" << counter << "].actuatorSpeed = " << sections[counter].actuatorSpeed << endl;
 	writeConfigParameters();
     }
@@ -161,13 +179,14 @@ namespace alica
 	cout << "opticalFlowValue x: " << opticalFlowValues->x;
 
         // too slow or not moving
-        if (opticalFlowValues->x == 0)
+        if (opticalFlowValues->x == 0 && lastOpticalFlowValue == 0)
         {
 //        	opQueue->clear();
 	    cout << " -> Too Slow" << endl;
             return TooSlow;
         }
 
+	lastOpticalFlowValue = opticalFlowValues->x;
         // correct
 	cout << " -> Correct" << endl;
         return Correct;

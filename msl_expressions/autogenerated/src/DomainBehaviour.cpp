@@ -72,8 +72,8 @@ namespace alica
 		int sgnL = bh.leftMotor >= 0 ? 1 : -1;
 		if (!(bh.rightMotor == 0) && !(bh.leftMotor == 0))
 		{
-			bh.rightMotor = (int)((max(minRotationLeft, abs(bh.rightMotor * 1.0))) * sgnR / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL));
-			bh.leftMotor = (int)((max(minRotationRight, abs(bh.leftMotor * 1.0))) * sgnL / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL));
+			bh.rightMotor = (int)(max(minRotationRight, (abs(bh.rightMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL))) * sgnR;
+			bh.leftMotor = (int)(max(minRotationLeft, (abs(bh.leftMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL))) * sgnL;
 		}
 		ballHandlePub.publish(bh);
 		
