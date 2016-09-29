@@ -18,6 +18,7 @@ namespace alica
 
 	DribbleCalibrationContainer::DribbleCalibrationContainer()
 	{
+		queueFilled = false;
 		this->wm = msl::MSLWorldModel::get();
 		this->query = make_shared<MovementQuery>();
 	}

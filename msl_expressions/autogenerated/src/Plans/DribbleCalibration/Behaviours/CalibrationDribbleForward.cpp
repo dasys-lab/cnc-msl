@@ -18,6 +18,17 @@ namespace alica
             DomainBehaviour("CalibrationDribbleForward")
     {
         /*PROTECTED REGION ID(con1469116853584) ENABLED START*/ //Add additional options here
+    	increaseSpeed = false;
+    	correctRotationCount = 0;
+    	changingFactor = 0;
+    	maxSpeed = 0;
+    	moveCount = 0;
+    	minRotation = 0;
+    	sectionSize = 0;
+    	minRotationNumber = 0;
+    	haveBallCount = 0;
+    	maxRotation = 0;
+    	getBallCount = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -111,7 +122,7 @@ namespace alica
         cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
 	
-	getBallCount;
+        getBallCount = 0;
         moveCount = 0;
         correctRotationCount = 0;
         haveBallCount = 0;
