@@ -34,7 +34,7 @@ cd ~/cnws/src
 for r in $repos; do
     if [ ! -d $r ]; then
         msg "Cloning repository $r"
-        git clone --depth 1 $ghurl$r'.git'
+        git clone $ghurl$r'.git'
     else
         msg "$r already exists!"
     fi

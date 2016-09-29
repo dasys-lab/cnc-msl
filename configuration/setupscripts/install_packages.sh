@@ -24,7 +24,7 @@ fi
 ## Installiere allgemeine Pakete fuer Entwicklung
 msg "Allgemeine Pakete zur Entwicklung werden installiert..."
 
-packages='sudo apt-get install git vim gitk mrpt-apps meld bison re2c libode-dev libcgal-qt5-dev libcgal-dev gnuplot-x11 libxv-dev libtbb-dev libdc1394-22-dev
+packages='git mr vim gitk mrpt-apps meld bison re2c libode-dev libcgal-qt5-dev libcgal-dev gnuplot-x11 libxv-dev libtbb-dev libdc1394-22-dev
   xsdcxx libxerces-c-dev freeglut3-dev libvtk5-dev libvtk5-qt4-dev' ## this line is needed for cambada stuff
 
 
