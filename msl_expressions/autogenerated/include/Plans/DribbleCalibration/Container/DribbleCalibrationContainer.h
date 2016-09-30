@@ -33,12 +33,15 @@ namespace alica
 		//  movement stuff
 		enum Movement
 		{
-			Forward, Backward, Left, Right
+			Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight, BackwardLeft
 		};
 		msl_actuator_msgs::MotionControl getBall();
 		msl_actuator_msgs::MotionControl move(Movement movement, int translation);
-		bool checkObstacles(Movement movement);
+		bool checkObstacles(Movement movement, double distance);
 		shared_ptr<geometry::CNPoint2D> calcNewAlignPoint();
+		double robotRadius;
+		// used in checkObstacles and calcNewAlignPoint to decide where to drive if there is an obstacle in our way
+		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
 
 
 		// opticalFlow stuff
@@ -61,6 +64,7 @@ namespace alica
 		};
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement);
+		void readOwnConfigParameter();
 };
 
 }

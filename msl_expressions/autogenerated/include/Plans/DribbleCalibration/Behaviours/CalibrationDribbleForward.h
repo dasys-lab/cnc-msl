@@ -34,16 +34,17 @@ namespace alica
         int haveBallCount;
         int correctRotationCount;
 	
-	double lastOpticalFlowValue;
+        double lastOpticalFlowValue;
 
         bool increaseSpeed;
 
         // own config params
-        double changingFactor;
+        double changingValue;
         int minRotationNumber;
         int minCalibrationSpeed;
         int haveBallWaitingDuration;
         int collectDataWaitingDuration;
+        int startTrans;
 
         int moveCount;
         int getBallCount;
@@ -57,10 +58,6 @@ namespace alica
         double maxSpeed;
         double maxRotation;
         double sectionSize;
-
-        // queue with optical flow sensor data
-//        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-//        int queueSize;
 
         void adaptWheelSpeed(Rotation err);
         Rotation checkBallRotation();

@@ -23,6 +23,8 @@ namespace alica
 		queueFilled = false;
 		this->wm = msl::MSLWorldModel::get();
 		this->query = make_shared<MovementQuery>();
+		robotRadius = 0;
+		potentialAlignPoint = nullptr;
 	}
 
 	DribbleCalibrationContainer::~DribbleCalibrationContainer()
@@ -91,8 +93,6 @@ namespace alica
 
 		mc = rm.moveToPoint(query);
 
-//		mc = movement == AvoidObstacels ? calcNewPath(movement) : mc;
-
 		mc.motion.translation = translation;
 		return mc;
 	}
@@ -100,8 +100,15 @@ namespace alica
 	/**
 	 * @return true if there is an obstacle in movement direction
 	 */
-	bool DribbleCalibrationContainer::checkObstacles(Movement movement)
+	bool DribbleCalibrationContainer::checkObstacles(Movement movement, double distance)
 	{
+		if (movement != Forward && movement != Backward && movement != Left && movement != Right
+				&& movement != ForwardRight && movement != ForwardLeft && movement != BackwardRight
+				&& movement != BackwardLeft)
+		{
+			cerr << "DribbleCalibrationContainer::checkObstacles() -> wrong input" << endl;
+			return true;
+		}
 		// check field lines
 
 		// egoDestinationPoint to allo
@@ -114,7 +121,7 @@ namespace alica
 		double fieldWidth = wm->field->getFieldWidth();
 
 		if (fabs(alloDestination->x) > (fieldLength / 2) || fabs(alloDestination->y) > (fieldWidth / 2))
-			return false;
+			return true;
 
 		// check obstacles on the field
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getAlloObstaclePoints();
@@ -122,29 +129,90 @@ namespace alica
 		{
 			shared_ptr<geometry::CNPoint2D> egoOp = op->alloToEgo(*wm->rawSensorData->getOwnPositionVision());
 			// check if obstacle is in destination direction
-			double distance;
+			double beta = 45;
+			double a = distance * cos(beta);
+			double b = sqrt(((distance * distance) - (a * a)));
+			shared_ptr<geometry::CNPoint2D> egoA;
+			shared_ptr<geometry::CNPoint2D> egoB;
+			shared_ptr<geometry::CNPoint2D> alloA;
+			shared_ptr<geometry::CNPoint2D> alloB;
 
-			if (movement == Forward)
-				if (egoOp->x > distance && (fabs(egoOp->y) < distance)) // check if correct (first is left coordinate system on whiteboard)
-//				if (egoOp->x < -distance && (fabs(egoOp->y) < distance))
-					return false;
+			switch (movement)
+			{
+				case Forward:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(-distance, 0);
+					if (egoOp->x < -distance && (fabs(egoOp->y) < distance))
+						return true;
+					break;
 
-			if (movement == Backward)
-				if (egoOp->x < -distance && (fabs(egoOp->y) < distance))
-//				if (egoOp->x > distance && (fabs(egoOp->y) < distance))
-					return false;
+				case Backward:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(distance, 0);
+					if (egoOp->x > distance && (fabs(egoOp->y) < distance))
+						return true;
+					break;
 
-			if (movement == Right)
-				if (egoOp->y < -distance && (fabs(egoOp->x) < distance))
-//				if (egoOp->y > distance && (fabs(egoOp->y) < distance))
-					return false;
+				case Right:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(0, distance);
+					if (egoOp->y > distance && (fabs(egoOp->y) < distance))
+						return true;
+					break;
 
-			if (movement == Left)
-				if (egoOp->y > distance && (fabs(egoOp->y) < distance))
-//				if (egoOp->y < -distance && (fabs(egoOp->x) < distance))
-					return false;
+				case Left:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(0, -distance);
+					if (egoOp->y < -distance && (fabs(egoOp->x) < distance))
+						return true;
+					break;
+
+				case ForwardRight:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(-b, a);
+					egoA = make_shared<geometry::CNPoint2D>(-b - 2 * robotRadius, a);
+					egoB = make_shared<geometry::CNPoint2D>(
+							2 * robotRadius * cos(beta), 2 * robotRadius * cos(beta));
+
+					alloA = egoA->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+					alloB = egoB->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+
+					return geometry::isInsideRectangle(alloA, alloB, op);
+					break;
+
+				case ForwardLeft:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(-b, -a);
+					egoA = make_shared<geometry::CNPoint2D>(-b - 2 * robotRadius, -a);
+					egoB = make_shared<geometry::CNPoint2D>(
+							2 * robotRadius * cos(beta), -(2 * robotRadius * cos(beta)));
+
+					alloA = egoA->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+					alloB = egoB->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+
+					return geometry::isInsideRectangle(alloA, alloB, op);
+					break;
+
+				case BackwardRight:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(b, a);
+					egoA = make_shared<geometry::CNPoint2D>(b + 2 * robotRadius, a);
+					egoB = make_shared<geometry::CNPoint2D>(
+							-(2 * robotRadius * cos(beta)), (2 * robotRadius * cos(beta)));
+
+					alloA = egoA->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+					alloB = egoB->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+
+					return geometry::isInsideRectangle(alloA, alloB, op);
+					break;
+
+				case BackwardLeft:
+					potentialAlignPoint = make_shared<geometry::CNPoint2D>(b, -a);
+					egoA = make_shared<geometry::CNPoint2D>(b + 2 * robotRadius, -a);
+					egoB = make_shared<geometry::CNPoint2D>(
+							-(2 * robotRadius * cos(beta)), -(2 * robotRadius * cos(beta)));
+
+					alloA = egoA->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+					alloB = egoB->egoToAllo(*wm->rawSensorData->getOwnPositionVision());
+
+					return geometry::isInsideRectangle(alloA, alloB, op);
+					break;
+			}
 		}
-		return true;
+		return false;
 	}
 
 	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::getEgoDestinationPoint(Movement movement)
@@ -172,11 +240,22 @@ namespace alica
 	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::calcNewAlignPoint()
 	{
 		// use checkObstacels to choose a new direction
-		// move distance parameter to method parameters
-		// return egoAlignPoint
+		vector<Movement> movement = {Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight,
+										BackwardLeft};
+		double distance = 3000;
+		shared_ptr<geometry::CNPoint2D> alignPoint;
+		double beta = 45;
+		double a = distance * cos(beta);
+		double b = sqrt(((distance * distance) - (a * a)));
+		for (Movement dir : movement)
+		{
+			if (!checkObstacles(dir, distance))
+			{
+				alignPoint = potentialAlignPoint;
+			}
+		}
 
-
-		return nullptr;
+		return alignPoint;
 	}
 
 	/**
@@ -286,5 +365,11 @@ namespace alica
 			NULL);
 		}
 		(*sys)["Actuation"]->store();
+	}
+
+	void DribbleCalibrationContainer::readOwnConfigParameter()
+	{
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+		robotRadius = (*sys)["Rules"]->get<double>("Rules.RobotRadius", NULL);
 	}
 } /* namespace alica */
