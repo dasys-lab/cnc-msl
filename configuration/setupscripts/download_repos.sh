@@ -25,7 +25,7 @@ msg "GITHUB Repositories werden heruntergeladen, falls noch nicht vorhanden"
 
 ghurl='git@github.com:carpe-noctem-cassel/'
 # Repos to clone
-repos='alica alica-plan-designer supplementary cnc-msl msl_gazebo_simulator'
+repos='alica alica-plan-designer supplementary cnc-msl msl_gazebo_simulator cnc-msldriver'
 
 ## Ordnerstruktur erstellen, falls nicht vorhanden
 mkdir -p ~/cnws/src
