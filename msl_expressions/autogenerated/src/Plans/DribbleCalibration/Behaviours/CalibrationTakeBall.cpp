@@ -19,19 +19,19 @@ namespace alica
             DomainBehaviour("CalibrationTakeBall")
     {
         /*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
-    	changingValue = 0;
-    	queueSize = 0;
-    	oldOperation = Add;
-    	queueFilled = false;
-    	operation = Add;
-    	minRotation = 0;
-    	adaptWheel = 0;
-    	ballRotateCorrect = false;
-    	ballHoldCorrect = false;
-    	slowTranslationWheelSpeed = 0;
-    	dribbleFactorRight = 0;
-    	dribbleFactorLeft = 0;
-    	speedNoBall = 0;
+        changingValue = 0;
+        queueSize = 0;
+        oldOperation = Add;
+        queueFilled = false;
+        operation = Add;
+        minRotation = 0;
+        adaptWheel = 0;
+        ballRotateCorrect = false;
+        ballHoldCorrect = false;
+        slowTranslationWheelSpeed = 0;
+        dribbleFactorRight = 0;
+        dribbleFactorLeft = 0;
+        speedNoBall = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationTakeBall::~CalibrationTakeBall()
@@ -182,7 +182,7 @@ namespace alica
         {
             adaptWheel = rotation;
         }
-	cout << "changinFactor: " << changingValue << endl;
+        cout << "changinFactor: " << changingValue << endl;
         // check if the defect wheel is too fast or to slow
         if (rotation == adaptWheel)
         {

@@ -31,9 +31,9 @@ namespace alica
         void writeConfigParameters();
 
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-        int queueSize;
+    int queueSize;
 
-        int changingValue;
+    int changingValue;
 
     /*PROTECTED REGION END*/private:
     /*PROTECTED REGION ID(prv1469284294147) ENABLED START*/ //Add additional private methods here

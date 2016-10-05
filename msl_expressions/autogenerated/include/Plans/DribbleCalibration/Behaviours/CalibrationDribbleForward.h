@@ -33,7 +33,7 @@ namespace alica
         // counter
         int haveBallCount;
         int correctRotationCount;
-	
+
         double lastOpticalFlowValue;
 
         bool increaseSpeed;

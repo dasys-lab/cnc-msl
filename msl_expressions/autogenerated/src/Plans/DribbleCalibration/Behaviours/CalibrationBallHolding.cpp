@@ -15,12 +15,12 @@ namespace alica
             DomainBehaviour("CalibrationBallHolding")
     {
         /*PROTECTED REGION ID(con1469284294147) ENABLED START*/ //Add additional options here
-    	changingValue = 0;
-    	queueSize = 0;
-    	ballWasRotating = false;
-    	minRotation = 0;
-    	slowTranslationWheelSpeed = 0;
-    	ballWasStanding = false;
+        changingValue = 0;
+        queueSize = 0;
+        ballWasRotating = false;
+        minRotation = 0;
+        slowTranslationWheelSpeed = 0;
+        ballWasStanding = false;
         /*PROTECTED REGION END*/
     }
     CalibrationBallHolding::~CalibrationBallHolding()
