@@ -31,8 +31,11 @@ namespace alica
         msl::RingBuffer<double> precisionBuffer;
         static const int PRECISION_BUFFER_SIZE = 10;
         static constexpr double MAX_ROTATION_SPEED = 2.0;
+        static constexpr double STEP_SIZE = 1;
+        static const int NUMBER_OF_STEPS = 7;
         double segments[3];
         bool visitedSegments[3];
+        double initialRadiusOffset;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
 

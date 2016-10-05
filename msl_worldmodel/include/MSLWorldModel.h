@@ -116,6 +116,8 @@ namespace msl
 		bool isUsingSimulator();
 		void sendKillMotionCommand();
 		void sendStartMotionCommand();
+		double getRobotRadius();
+		void setRobotRadius(double newRadius);
 		double adjustRobotRadius(double difference);
 
 		Monitoring* monitoring;
