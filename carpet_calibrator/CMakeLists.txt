@@ -34,8 +34,8 @@ add_executable(carpet_calibrator_line_points
    src/FilterLinePointsNode.cpp
 )
 
-add_dependencies(carpet_calibrator msl_actuator_msgs_generate_messages_cpp)
-add_dependencies(carpet_calibrator_line_points msl_actuator_msgs_generate_messages_cpp)
+
+
 
 target_link_libraries(carpet_calibrator
   ${catkin_LIBRARIES}

@@ -40,4 +40,4 @@ add_executable(${PROJECT_NAME} src/CircleTrace.cpp src/Motion.cpp src/CNMCPacket
 
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)
+
