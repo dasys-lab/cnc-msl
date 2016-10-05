@@ -13,11 +13,21 @@ using namespace std;
 namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
+	double RotateOnce::initialRadius;
+	double RotateOnce::minRadius;
+	double RotateOnce::maxRadius;
+	double RotateOnce::radiusOffset;
+	bool RotateOnce::hasInitialConfigurationBeenSet;
 	/*PROTECTED REGION END*/
 	RotateOnce::RotateOnce() :
 			DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
 	{
 		/*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
+                initialRadius = wm->getRobotRadius();
+                radiusOffset = (NUMBER_OF_STEPS - 1) / 2 * STEP_SIZE;
+                minRadius = initialRadius - radiusOffset;
+                maxRadius = initialRadius + radiusOffset;
+		hasInitialConfigurationBeenSet = false;
 		/*PROTECTED REGION END*/
 	}
 	RotateOnce::~RotateOnce()
@@ -28,6 +38,15 @@ namespace alica
 	void RotateOnce::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
+		if(!hasInitialConfigurationBeenSet)
+		{
+			cout << "Kill Motion first" << endl;
+			wm->setRobotRadius(minRadius);
+			hasInitialConfigurationBeenSet = true;
+			this->setFailure(true);
+			return;
+		}
+
 		msl_actuator_msgs::MotionControl mc;
 		rotationSpeed = getLimitedRotationSpeed(rotationSpeed + ACCELERATION); // accelerate in each iteration until max rotation speed is reached
 		mc.motion.rotation = rotationSpeed;
@@ -61,7 +80,7 @@ namespace alica
 					logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
 					wm->adjustRobotRadius(STEP_SIZE);
 
-					if (initialRadiusOffset + NUMBER_OF_STEPS * STEP_SIZE <= wm->getRobotRadius())
+					if (maxRadius <= wm->getRobotRadius())
 					{
 						cout << endl << "success" << endl;
 						this->setSuccess(true);
@@ -83,8 +102,6 @@ namespace alica
 		initialBearing = wm->rawSensorData->getAverageBearing();
 		precisionBuffer.clear(true);
 		initialAngle = wm->rawOdometry->position.angle;
-		initialRadiusOffset = -(NUMBER_OF_STEPS - 1) / 2 * STEP_SIZE;
-		wm->adjustRobotRadius(initialRadiusOffset);
 
 		segments[0] = initialBearing;
 		segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
@@ -128,10 +145,11 @@ namespace alica
 	void RotateOnce::logCalibrationResult(double currentRadius, double calibError)
 	{
 		cout << currentRadius << endl;
+		// TODO why don't we use the already defined sc for adjusting the robot radius?
 		std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
 		ofstream os(logfilePath, ios_base::out | ios_base::app);
 		std::time_t result = std::time(nullptr);
-		os << currentRadius << ";" << calibError << ";" << ctime(&result) << endl;
+		os << currentRadius << "\t" << calibError << "\t" << ctime(&result) << endl;
 		os.flush();
 		os.close();
 	}

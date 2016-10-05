@@ -6,6 +6,8 @@ using namespace std;
 #include <sstream>
 #include <MSLWorldModel.h>
 #include "ConsoleCommandHelper.h"
+#include <SystemConfig.h>
+#include <FileSystem.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -26,13 +28,20 @@ namespace alica
 	{
 		/*PROTECTED REGION ID(run1475074396562) ENABLED START*/ //Add additional options here
 		// call gnuplot for maximum convenience!!
-		string cmd =
-				"gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"sampleRotCalibLog.csv\\\" u 1:2 via a,b; plot \\\"sampleRotCalibLog.csv\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
-		string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.c_str());
+		stringstream cmd;
+		string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+		cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
+		cmd << logfile;
+		cmd << "\\\" u 1:2 via a,b; plot \\\"";
+		cmd << logfile;
+		cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
+
+		cout << cmd.str() << endl;
+		string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
 		// match plotted value
 		regex regex(".*robotRadius=(.*)");
 		match_results < string::const_iterator > match;
-		string matchedValue = match[1];
+		string matchedValue = match[2];
 		double calculatedValue;
 		// here we omit the unnecessary '=' that is captured by the regex
 		if (matchedValue.at(0) == '=')
