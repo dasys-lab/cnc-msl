@@ -38,6 +38,9 @@ for r in $repos; do
     else
         msg "$r already exists!"
     fi
+
+    # add repo to mr
+    mr register $r
 done
 
 
