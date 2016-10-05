@@ -35,6 +35,7 @@ namespace alica
 		{
 			Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight, BackwardLeft
 		};
+		const char* movementToString[8] = {"Forward", "Backward", "Left", "Right", "Forward right", "Forward left", "Backward right", "Backward left"};
 		msl_actuator_msgs::MotionControl getBall();
 		msl_actuator_msgs::MotionControl move(Movement movement, int translation);
 		bool checkObstacles(Movement movement, double distance);

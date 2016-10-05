@@ -121,7 +121,10 @@ namespace alica
 		double fieldWidth = wm->field->getFieldWidth();
 
 		if (fabs(alloDestination->x) > (fieldLength / 2) || fabs(alloDestination->y) > (fieldWidth / 2))
+		{
+			cout << "Field line in front of me!" << endl;
 			return true;
+		}
 
 		// check obstacles on the field
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ops = wm->obstacles->getAlloObstaclePoints();
@@ -142,25 +145,37 @@ namespace alica
 				case Forward:
 					potentialAlignPoint = make_shared<geometry::CNPoint2D>(-distance, 0);
 					if (egoOp->x < -distance && (fabs(egoOp->y) < distance))
+					{
+						cout << "Obstacle in front of me!" << endl;
 						return true;
+					}
 					break;
 
 				case Backward:
 					potentialAlignPoint = make_shared<geometry::CNPoint2D>(distance, 0);
 					if (egoOp->x > distance && (fabs(egoOp->y) < distance))
+					{
+						cout << "Obstacle behind me!" << endl;
 						return true;
+					}
 					break;
 
 				case Right:
 					potentialAlignPoint = make_shared<geometry::CNPoint2D>(0, distance);
 					if (egoOp->y > distance && (fabs(egoOp->y) < distance))
+					{
+						cout << "Obstacle on the right site!" << endl;
 						return true;
+					}
 					break;
 
 				case Left:
 					potentialAlignPoint = make_shared<geometry::CNPoint2D>(0, -distance);
 					if (egoOp->y < -distance && (fabs(egoOp->x) < distance))
+					{
+						cout << "Obstacle on the left site!" << endl;
 						return true;
+					}
 					break;
 
 				case ForwardRight:
@@ -221,7 +236,7 @@ namespace alica
 		{
 			return nullptr;
 		}
-
+		
 		shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0);
 		// 1000 = 1m
 		double distance = 1000;
@@ -239,6 +254,8 @@ namespace alica
 
 	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::calcNewAlignPoint()
 	{
+		cout << "choose new direction..." << endl;
+
 		// use checkObstacels to choose a new direction
 		vector<Movement> movement = {Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight,
 										BackwardLeft};
@@ -251,6 +268,7 @@ namespace alica
 		{
 			if (!checkObstacles(dir, distance))
 			{
+				cout << "New align point in " << movementToString[dir] << " direction..." << endl;
 				alignPoint = potentialAlignPoint;
 			}
 		}
