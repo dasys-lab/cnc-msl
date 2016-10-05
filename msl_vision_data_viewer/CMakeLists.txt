@@ -27,5 +27,5 @@ FILE(GLOB SRCFILES_CPP src/helpers/*.cpp)
 add_executable(msl_vision_data_viewer src/DataView.cpp ${SRCFILES_CPP})
 set_target_properties(msl_vision_data_viewer PROPERTIES COMPILE_FLAGS "-O3 -fpermissive")
 target_link_libraries(msl_vision_data_viewer m util ${catkin_LIBRARIES} ${Boost_LIBRARIES})
-add_dependencies(msl_vision_data_viewer msl_sensor_msgs_generate_messages_cpp)
+
 

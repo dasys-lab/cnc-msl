@@ -31,7 +31,7 @@ add_executable(analyse_kick src/analyse.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(analyse_kick ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} msl_msgs_generate_messages_cpp)
+
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(analyse_kick

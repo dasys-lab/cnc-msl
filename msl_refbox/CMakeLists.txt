@@ -41,7 +41,7 @@ set(msl_refbox_INCLUDE_DIRECTORIES
 )
 
 catkin_package(
-  INCLUDE_DIRS ${msl_refbox_INCLUDE_DIRECTORIES}
+  INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS rqt_gui rqt_gui_cpp
 )
@@ -53,7 +53,7 @@ qt4_wrap_ui(msl_refbox_UIS_H ${msl_refbox_UIS})
 include_directories(${msl_refbox_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${msl_refbox_SRCS} ${msl_refbox_MOCS} ${msl_refbox_UIS_H})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY})
-add_dependencies(${PROJECT_NAME} msl_msgs_generate_messages_cpp)
+
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})

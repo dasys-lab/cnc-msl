@@ -65,7 +65,7 @@ if ( SWIG_FOUND AND PYTHONLIBS_FOUND AND PYTHONINTERP_FOUND )
           DEPENDS ${CMAKE_BINARY_DIR}/doc/xml/ftdi_8c.xml
       )
       add_custom_target ( doc_i DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/ftdi1_doc.i )
-      add_dependencies( ${SWIG_MODULE_ftdi1_REAL_NAME} doc_i )
+
 
   endif ()
 

@@ -35,10 +35,10 @@ add_executable(msl_beagle_board_black
 	src/opticalflow.cpp
 	src/shovelselect.cpp
 )
-add_dependencies(msl_beagle_board_black msl_actuator_msgs_generate_messages_cpp)
+
 target_link_libraries(msl_beagle_board_black ${catkin_LIBRARIES})
 
 add_executable(debug src/debug.cpp)
-add_dependencies(debug msl_actuator_msgs_generate_messages_cpp)
+
 target_link_libraries(debug ${catkin_LIBRARIES})
 
