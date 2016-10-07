@@ -15,6 +15,12 @@ namespace alica
             DomainBehaviour("CalibrationBallHolding")
     {
         /*PROTECTED REGION ID(con1469284294147) ENABLED START*/ //Add additional options here
+        changingValue = 0;
+        queueSize = 0;
+        ballWasRotating = false;
+        minRotation = 0;
+        slowTranslationWheelSpeed = 0;
+        ballWasStanding = false;
         /*PROTECTED REGION END*/
     }
     CalibrationBallHolding::~CalibrationBallHolding()
@@ -41,7 +47,7 @@ namespace alica
                 // check if ball is not rotating
                 if (ballIsRotating())
                 {
-                    slowTranslationWheelSpeed = slowTranslationWheelSpeed - changingFactor;
+                    slowTranslationWheelSpeed = slowTranslationWheelSpeed - changingValue;
                     ballWasRotating = true;
 
                 }
@@ -49,7 +55,7 @@ namespace alica
                 {
                     if (!ballWasRotating)
                     {
-                        slowTranslationWheelSpeed = slowTranslationWheelSpeed + changingFactor;
+                        slowTranslationWheelSpeed = slowTranslationWheelSpeed + changingValue;
                     }
                     ballWasStanding = true;
                 }
@@ -108,7 +114,7 @@ namespace alica
         this->slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
 
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.QueueSize", NULL);
-        changingFactor = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.ChangingFactor", NULL);
+        changingValue = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.ChangingValue", NULL);
     }
 
     void CalibrationBallHolding::writeConfigParameters()

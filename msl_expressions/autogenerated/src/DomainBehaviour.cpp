@@ -63,6 +63,8 @@ namespace alica
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		double minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
+		double minRotationLeft = (*sys)["Actuation"]->get<double>("Dribble.MinRotationLeft", NULL);
+		double minRotationRight = (*sys)["Actuation"]->get<double>("Dribble.MinRotationRight", NULL);
 		bh.enabled = true;
 		bh.senderID = ownID;
 		// this is only for nase and his new left motor
@@ -70,8 +72,8 @@ namespace alica
 		int sgnL = bh.leftMotor >= 0 ? 1 : -1;
 		if (!(bh.rightMotor == 0) && !(bh.leftMotor == 0))
 		{
-			bh.rightMotor = (int)((max(minRotation, abs(bh.rightMotor * 1.0))) * sgnR / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL));
-			bh.leftMotor = (int)((max(minRotation+400, abs(bh.leftMotor * 1.0))) * sgnL / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL));
+			bh.rightMotor = (int)(max(minRotationRight, (abs(bh.rightMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL))) * sgnR;
+			bh.leftMotor = (int)(max(minRotationLeft, (abs(bh.leftMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL))) * sgnL;
 		}
 		ballHandlePub.publish(bh);
 		

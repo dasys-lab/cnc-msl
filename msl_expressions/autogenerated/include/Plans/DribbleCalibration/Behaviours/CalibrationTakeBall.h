@@ -37,7 +37,7 @@ namespace alica
         double dribbleFactorRight;
 
         // for correctWheelSpeed function
-        double changingFactor;
+        double changingValue;
         enum Operation
         {
             Add, Sub

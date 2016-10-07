@@ -19,6 +19,19 @@ namespace alica
             DomainBehaviour("CalibrationTakeBall")
     {
         /*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
+        changingValue = 0;
+        queueSize = 0;
+        oldOperation = Add;
+        queueFilled = false;
+        operation = Add;
+        minRotation = 0;
+        adaptWheel = 0;
+        ballRotateCorrect = false;
+        ballHoldCorrect = false;
+        slowTranslationWheelSpeed = 0;
+        dribbleFactorRight = 0;
+        dribbleFactorLeft = 0;
+        speedNoBall = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationTakeBall::~CalibrationTakeBall()
@@ -30,8 +43,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
         // TODO: remove when finished testing!
-//        this->setSuccess(true);
-//        return;
+        this->setSuccess(true);
+        return;
         // check if robot has the ball
         if (wm->rawSensorData->getLightBarrier())
         {
@@ -169,23 +182,23 @@ namespace alica
         {
             adaptWheel = rotation;
         }
-	cout << "changinFactor: " << changingFactor << endl;
+        cout << "changinFactor: " << changingValue << endl;
         // check if the defect wheel is too fast or to slow
         if (rotation == adaptWheel)
         {
-            dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft + changingFactor : dribbleFactorLeft;
-            dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight + changingFactor : dribbleFactorRight;
+            dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft + changingValue : dribbleFactorLeft;
+            dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight + changingValue : dribbleFactorRight;
             operation = Add;
         }
         else
         {
-            dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft - changingFactor : dribbleFactorLeft;
-            dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight - changingFactor : dribbleFactorRight;
+            dribbleFactorLeft = adaptWheel == RotateRight ? dribbleFactorLeft - changingValue : dribbleFactorLeft;
+            dribbleFactorRight = adaptWheel == RotateLeft ? dribbleFactorRight - changingValue : dribbleFactorRight;
             operation = Sub;
         }
         if (operation != oldOperation)
         {
-            changingFactor = changingFactor / 2;
+            changingValue = changingValue / 2;
             oldOperation = operation == Add ? Sub : Add;
         }
         else
@@ -208,7 +221,7 @@ namespace alica
         dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
 
         // maybe put in config
-        changingFactor = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingFactor", NULL);
+        changingValue = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingValue", NULL);
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
     }
 

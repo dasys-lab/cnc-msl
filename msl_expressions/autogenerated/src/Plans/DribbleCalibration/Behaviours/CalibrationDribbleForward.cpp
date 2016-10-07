@@ -18,6 +18,25 @@ namespace alica
             DomainBehaviour("CalibrationDribbleForward")
     {
         /*PROTECTED REGION ID(con1469116853584) ENABLED START*/ //Add additional options here
+        increaseSpeed = false;
+        correctRotationCount = 0;
+        changingValue = 0;
+        maxSpeed = 0;
+        moveCount = 0;
+        minRotation = 0;
+        sectionSize = 0;
+        minRotationNumber = 0;
+        haveBallCount = 0;
+        maxRotation = 0;
+        getBallCount = 0;
+        lastOpticalFlowValue = 1;
+        haveBallWaitingDuration = 0;
+        minCalibrationSpeed = 0;
+        collectDataWaitingDuration = 0;
+        changeDirections = false;
+        newAlignPoint = nullptr;
+        query = nullptr;
+        startTrans = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -29,31 +48,80 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1469116853584) ENABLED START*/ //Add additional options here
         MotionControl mc;
+        msl::RobotMovement rm;
 //		writeConfigParameters();
 //        return;
         if (wm->rawSensorData->getLightBarrier())
         {
-	    // TODO: set in 60 in config file -> waiting duration for getting the ball
-	    if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < 60))
-	    {
-		haveBallCount++; 
-		getBallCount++;
-		return;
-	    } else 
-	    {
-	    	getBallCount = 0;
-	    }
+            // waiting so we definitely have the ball when we start with the calibration
+            if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < haveBallWaitingDuration))
+            {
+                haveBallCount++;
+                getBallCount++;
+                return;
+            }
+            else
+            {
+                getBallCount = 0;
+            }
             haveBallCount++;
             // if ball is in kicker
             // drive forward start slowly
             // start with 400 speed
             if (moveCount < sectionSize)
             {
-//		cout << "moveCount < sectionSize" << endl;
-                int translation = 400;
-                mc = dcc.move(dcc.DribbleForward, (moveCount + 1) * translation);
-		send(mc);
-                // use optical flow and light barrier data to analyze the the ball movement
+                // checking if we drive fast enough ... if we drive to slowly we won't be able to calibrate correctly
+                if (sections[sectionSize - (moveCount + 1)].robotSpeed > (-minCalibrationSpeed))
+                {
+                    cout << "sections[" << sectionSize - (moveCount + 1) << "].robotSpeed = "
+                            << sections[sectionSize - (moveCount + 1)].robotSpeed << endl;
+                    cout << "robot Speed is too small to calibrate! Continue with next step..." << endl;
+                    moveCount++;
+                    haveBallCount = 0;
+                    getBallCount = 0;
+                    return;
+                }
+
+                // check if there is an obstacle
+                if (!changeDirections)
+                    changeDirections = dcc.checkObstacles(dcc.Forward, 1000);
+
+                // if there is an obstacle find a new way to drive and turn around
+                if (changeDirections)
+                {
+                    if (newAlignPoint == nullptr)
+                        newAlignPoint = dcc.calcNewAlignPoint();
+
+                    query->egoAlignPoint = newAlignPoint;
+                    query->rotateAroundTheBall = true;
+                    query->angleTolerance = 0, 2;
+
+                    mc = rm.alignTo(query);
+
+                    if (newAlignPoint->angleTo() > query->angleTolerance)
+                    {
+                        send(mc);
+                        return;
+                    }
+                    else
+                    {
+                        changeDirections = false;
+                        newAlignPoint = nullptr;
+                    }
+                }
+                else
+                {
+                    mc = dcc.move(dcc.Forward, (moveCount + 1) * startTrans);
+                    send(mc);
+                }
+
+                // waiting some time till we can be sure to only collect correct values
+                if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
+                {
+                    return;
+                }
+
+                // use optical flow and light barrier data to analyze the ball movement
                 Rotation ballMovement = checkBallRotation();
 
                 // adapt actuatorSpeed at specific robotSpeed
@@ -71,6 +139,7 @@ namespace alica
                 if (correctRotationCount > minRotationNumber)
                 {
                     moveCount++;
+                    haveBallCount = 0;
                     correctRotationCount = 0;
                 }
             }
@@ -83,7 +152,7 @@ namespace alica
         else
         {
             // if we lose the ball -> our actuator are rotating to fast
-            if (haveBallCount > 0)
+            if (haveBallCount > 0 && !changeDirections)
             {
                 adaptWheelSpeed (TooFast);
                 correctRotationCount = 0;
@@ -110,14 +179,16 @@ namespace alica
 #ifdef DEBUG_DC
         cout << "CalibrationDribbleForward: sections.size() = " << sections.size() << endl;
 #endif
-	
-	getBallCount;
-        moveCount = 0;
-        correctRotationCount = 0;
-        haveBallCount = 0;
+
+        query = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1469116853584) ENABLED START*/ //Add additional methods here
+    /**
+     * @parm err can be TooFast or TooSlow
+     *
+     * The method will adapt the actuator speed in sections
+     */
     void CalibrationDribbleForward::adaptWheelSpeed(Rotation err)
     {
         if (err != TooFast && err != TooSlow)
@@ -125,17 +196,22 @@ namespace alica
             cout << "CalibrationDribbleForward::correctWheelSpeed -> wrong input!" << endl;
             return;
         }
-
-	int counter = sectionSize - (moveCount + 1);
+        cout << "moveCount = " << moveCount << endl;
+        int counter = sectionSize - (moveCount + 1);
         if (err == TooFast)
-            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingFactor * 10);
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed + (changingValue * 20);
 
         if (err == TooSlow)
-            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingFactor;
-	cout << "sections[" << counter << "].actuatorSpeed = " << sections[counter].actuatorSpeed << endl;
-	writeConfigParameters();
+            sections[counter].actuatorSpeed = sections[counter].actuatorSpeed - changingValue;
+        cout << "sections[" << counter << "].robotSpeed = " << sections[counter].robotSpeed << endl;
+        cout << "sections[" << counter << "].actuatorSpeed = " << sections[counter].actuatorSpeed << endl;
+        writeConfigParameters();
     }
 
+    /**
+     * @return TooSlow if the ball isn't rotating (OpticalFlow->x = 0)
+     * @return Correct if the ball is rotating
+     */
     CalibrationDribbleForward::Rotation CalibrationDribbleForward::checkBallRotation()
     {
         // read optical flow value
@@ -147,18 +223,19 @@ namespace alica
         }
         shared_ptr < geometry::CNPoint2D > opticalFlowValues = wm->rawSensorData->getOpticalFlow(0);
 
-	cout << "opticalFlowValue x: " << opticalFlowValues->x;
+        cout << "opticalFlowValue x: " << opticalFlowValues->x;
 
         // too slow or not moving
-        if (opticalFlowValues->x == 0)
+        if (opticalFlowValues->x == 0 && lastOpticalFlowValue == 0)
         {
 //        	opQueue->clear();
-	    cout << " -> Too Slow" << endl;
+            cout << " -> Too Slow" << endl;
             return TooSlow;
         }
 
+        lastOpticalFlowValue = opticalFlowValues->x;
         // correct
-	cout << " -> Correct" << endl;
+        cout << " -> Correct" << endl;
         return Correct;
     }
 
@@ -213,18 +290,25 @@ namespace alica
         DribbleCalibrationContainer dcc;
 
         // own config parameters
-        changingFactor = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingFactor",
-                                                                  NULL);
+        changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingValue",
+                                                                 NULL);
         minRotationNumber = (*sc)["DribbleCalibration"]->get<double>(
                 "DribbleCalibration.DribbleForward.MinRotationNumber", NULL);
         maxSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxSpeed", NULL);
         maxRotation = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.MaxRotation", NULL);
         sectionSize = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.SectionSize", NULL);
+        haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.DribbleForward.HaveBallWaitingDuration", NULL);
+        minCalibrationSpeed = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.DribbleForward.minCalibrationSpeed", NULL);
+        collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
+                "DribbleCalibration.DribbleForward.CollectDataWaitingDuration", NULL);
+        startTrans = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.StartTranslation", NULL);
 
         // actuation config Params
         minRotation = dcc.readConfigParameter("Dribble.MinRotation");
 
-        // sections 
+        // sections
         vector < subsection > vec(sectionSize);
         sections = vec;
         shared_ptr < vector<string> > speedsSections = (*sc)["Actuation"]->getSections("ForwardDribbleSpeeds", NULL);

@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1469116853584) ENABLED START*/ //Add additional includes here
 #include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
+#include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -19,6 +20,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469116853584) ENABLED START*/ //Add additional protected methods here
         DribbleCalibrationContainer dcc;
+        shared_ptr<msl::MovementQuery> query;
 
         vector<subsection> sections;
 
@@ -32,24 +34,30 @@ namespace alica
         int haveBallCount;
         int correctRotationCount;
 
+        double lastOpticalFlowValue;
+
         bool increaseSpeed;
 
         // own config params
-        double changingFactor;
+        double changingValue;
         int minRotationNumber;
+        int minCalibrationSpeed;
+        int haveBallWaitingDuration;
+        int collectDataWaitingDuration;
+        int startTrans;
 
         int moveCount;
-	int getBallCount;
+        int getBallCount;
+
+        // for obstacle avoiding
+        bool changeDirections;
+        shared_ptr<geometry::CNPoint2D> newAlignPoint;
 
         // actuation config Params
         double minRotation;
         double maxSpeed;
         double maxRotation;
         double sectionSize;
-
-        // queue with optical flow sensor data
-//        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-//        int queueSize;
 
         void adaptWheelSpeed(Rotation err);
         Rotation checkBallRotation();
