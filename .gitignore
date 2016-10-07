@@ -7,13 +7,16 @@ log/temp/
 *.swp
 *.swo
 
-# eagle-files
+# ignoring eagle-files
 *.b#*
 *.s#*
+*.brd.lck
+*.sch.lck
 
-# avr-gcc files
+# ignoring avr-gcc generated files
 *.o
 *.lst
+*.elf
 *.hex
 *.map
 .dep/
