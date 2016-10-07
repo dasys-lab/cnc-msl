@@ -6,6 +6,7 @@
  */
 
 #include "booster.h"
+#include "messages.h"
 
 #include "defaults.h"
 #include "global.h"
@@ -13,14 +14,43 @@
 #include <util/delay.h>
 #include <string.h>
 
+enum eState {
+	State_Deactivated = 0x00,
+	State_Error = 0x01,
+	State_Error_CAP_OVLO = 0x02,		// Over Voltage Lock Out
+	State_Activated = 0x10,
+	State_ActivatedHold = 0x11,
+	State_ActivatedKicking = 0x12,
+	State_VoltageLow = 0x20,
+	State_VoltageLowLogic = 0x21,
+	State_VoltageLowBooster = 0x22,
+	State_EmergencyShutdown = 0xE0,
+	State_EmergencyTriggered = 0xE1,
+	State_EmergencyReset = 0xEE,
+
+	// These States should never be reached
+	State_False = 0xF0,
+	State_FalseKick = 0xF1,
+};
+
+/**
+ * This structure builds the info message
+ *
+ * 5 bytes long
+ */
+struct BOOSTER_INFO {
+	enum eState state;					//< the state of the booster
+	uint16_t supply_voltage;		//< the adc value of the supply voltage (Volt)
+	uint16_t capacitors_voltage;	//< the adc voltage of the capacitors (Volt)
+};
+
 
 volatile uint16_t adc_logic_raw = 0;
 volatile uint16_t adc_booster_raw = 0;
 volatile uint16_t adc_capacitor_raw = 0;
 
-bool software_controled_boost = 0;
-double desired_voltage = 330.0;
-uint8_t manual_mode = false;
+enum eMode mode;
+uint16_t desired_voltage = 330.0;
 uint32_t last_heartbeat = 0;
 
 
@@ -41,6 +71,7 @@ void booster_init()
 	RESET(DONE);
 
 	booster_reset();
+	mode = Mode_Automatic;
 }
 
 void booster_reset()
@@ -58,26 +89,35 @@ void booster_reset()
 	RESET(RESET_NOTAUS);
 }
 
-int8_t booster_getState()
+enum eState booster_getState()
 {
 	if(!IS_SET(NOTAUS))
 		return State_EmergencyShutdown;
 
 	if(IS_SET(RESET_NOTAUS))
-		return State_Reset;
+		return State_EmergencyReset;
+
+	switch(mode) {
+		case Mode_Error:
+			return State_Error;
+			break;
+
+		case Mode_ErrorCap:
+			return State_Error_CAP_OVLO;
+			break;
+	}
 
 	bool active = IS_SET(ACTIVATE_BOOSTER);
 	bool kick = IS_SET(KICK);
 	bool fault = IS_SET(FAULT);
 	bool charge = IS_SET(CHARGE);
-	// bool done = IS_SET(DONE);		// Not Implemented
 
 	if(fault)
 	{
 		uint16_t logicVoltage = booster_getLogicVoltage();
 		uint16_t boosterVoltage = booster_getBoosterVoltage();
 
-		if(logicVoltage < 9 || logicVoltage > 17)
+		if(logicVoltage < 18 || logicVoltage > 29)
 			return State_VoltageLowLogic;
 
 		if(boosterVoltage < 18 || logicVoltage > 29)
@@ -87,16 +127,20 @@ int8_t booster_getState()
 	}
 
 	if(active != charge) // Should be the same. Otherwise emergency shutdown is triggered
-		return State_TriggeredEmergency;
+		return State_EmergencyTriggered;
 
-	if(!active & !kick)
-		return State_Deactivated;
+	if(!active & !kick) {
+		if (mode == Mode_SoftwareControlledHold)
+			return State_ActivatedHold;
+		else
+			return State_Deactivated;
+	}
 
 	if(active & !kick)
 		return State_Activated;
 
 	if(!active & kick)
-		return State_Kicking;
+		return State_ActivatedKicking;
 
 	if(active & kick)		// Should never be reached
 		return State_FalseKick;
@@ -109,15 +153,19 @@ int8_t booster_activate()
 	switch (booster_getState())
 	{
 		case State_Activated:
-			debug("Booster already activated.");
+		case State_ActivatedHold:
+			SET(ACTIVATE_BOOSTER);
+			return 1;
+			break;
+
 		case State_Deactivated:
 			SET(ACTIVATE_BOOSTER);
 			return 1;
 			break;
 
-		case State_Kicking:
+		case State_ActivatedKicking:
 			RESET(ACTIVATE_BOOSTER);
-			return -1;
+			return 0;
 			break;
 
 		default:
@@ -136,35 +184,74 @@ void booster_deactivate()
 	RESET(KICK);
 }
 
-double booster_getLogicVoltage()
-{
-	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5.0 * 556/56 / 1024;
-	double calc = factor * adc_logic_raw;
+uint8_t booster_canKick() {
+	switch (booster_getState()) {
+		case State_Activated:
+		case State_ActivatedHold:
+			return 1;
+			break;
 
-	return calc;
+		case State_ActivatedKicking:
+			booster_reset();
+			debug("Asked for Kick while Kicking");
+			return 0;
+			break;
+
+		default:
+			return 0;
+			break;
+	}
 }
 
-double booster_getBoosterVoltage()
+uint16_t booster_getLogicVoltage()
 {
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5.0 * 556/56 / 1024;
-	double calc = factor * adc_booster_raw;
+	static double factor = 0.048479; // 5.0 * 556/56 / 1024;
 
-	return calc;
+	return adc_logic_raw * factor;
 }
 
-double booster_getCapacitorVoltage()
+uint16_t booster_getBoosterVoltage()
 {
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
-	static double factor = 5.0 * 12587/187 / 1024;
-	double calc = 0.32866 * adc_capacitor_raw;//factor * adc_capacitor_raw;
+	static double factor = 0.048479; // 5.0 * 556/56 / 1024;
 
-	char str[20];
-	sprintf(str, "CAP-V: %.2lf", calc);
-	debug(str);
+	return adc_booster_raw * factor;
+}
 
-	return calc;
+uint16_t booster_getCapacitorVoltage()
+{
+	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
+	static double factor = 0.328664; // 5.0 * 12587/187 / 1024;
+
+	return adc_capacitor_raw * factor;
+}
+
+/**
+ * Callback function which prints the actual capacitors message
+ */
+void booster_printVoltage() {
+	char str1[20];
+	sprintf(str1, "L: %d V", booster_getLogicVoltage());
+	debug(str1);
+
+	char str2[20];
+	sprintf(str2, "B: %d V", booster_getBoosterVoltage());
+	debug(str2);
+
+	char str3[20];
+	sprintf(str3, "C: %d V", booster_getCapacitorVoltage());
+	debug(str3);
+}
+
+void booster_sendInfo() {
+	struct BOOSTER_INFO info;
+
+	info.state = booster_getState();
+	info.supply_voltage = booster_getBoosterVoltage();
+	info.capacitors_voltage = booster_getCapacitorVoltage();
+
+	prepareMsg(CMD_STATE, (uint8_t *)&info, 5, PRIORITY_NORM);
 }
 
 void booster_setLogicRawVoltage(uint16_t voltage)
@@ -182,12 +269,12 @@ void booster_setCapacitorRawVoltage(uint16_t voltage)
 	adc_capacitor_raw = voltage;
 }
 
-void booster_setMaxVoltage(double voltage)
+void booster_setMaxVoltage(uint16_t voltage)
 {
-	if(voltage > (double) MAX_VOLTAGE)
+	if(voltage > MAX_VOLTAGE)
 	{
 		error("Voltage to high");
-		voltage = (double) MAX_VOLTAGE;
+		voltage = MAX_VOLTAGE;
 	}
 
 	desired_voltage = voltage;
@@ -195,11 +282,14 @@ void booster_setMaxVoltage(double voltage)
 
 void booster_ctrl()
 {
-	uint32_t time_now = timer_get_ms();
+	uint32_t time_now;
+	timer_get_ms(&time_now);
 	char message[30];
 
-	uint8_t state = booster_getState();
-	static uint8_t state_old = 0xFF;
+	enum eState state = booster_getState();
+	static enum eState state_old;
+
+	bool errorFlag = false;
 
 	switch(state)
 	{
@@ -207,53 +297,56 @@ void booster_ctrl()
 			break;
 
 		case State_Activated:
-			if (time_now - last_heartbeat < PING_TIMEOUT || manual_mode)
-			{
-				if (!software_controled_boost)
-					return;
-
-				double capacitor_voltage = booster_getCapacitorVoltage();
-
-				if (capacitor_voltage >= desired_voltage + 0.5)
+		case State_ActivatedHold:
+			if (time_now - last_heartbeat < PING_TIMEOUT || mode == Mode_Manual) {
+				uint16_t capacitor_voltage = booster_getCapacitorVoltage();
+				if (booster_getCapacitorVoltage() > MAX_VOLTAGE + 15) {
+					errorFlag = true;
+					sprintf(message, "Overvoltage. Software detected.");
 					booster_deactivate();
-				else if (capacitor_voltage <= desired_voltage - 0.5)
+					mode = Mode_ErrorCap;
+				}
+
+				if (mode == Mode_SoftwareControlled || mode == Mode_SoftwareControlledHold) {
+					if (capacitor_voltage >= desired_voltage + 0.5)
+						booster_deactivate();
+					else if (capacitor_voltage <= desired_voltage - 0.5)
+						booster_activate();
+				} else {
 					booster_activate();
-			}
-			else {
+				}
+			} else {
 				booster_deactivate();
 			}
 			break;
 
-		case State_Kicking:
+		case State_ActivatedKicking:
 			sprintf(message, "Kicking");
 			break;
 
 		case State_VoltageLow:
-			sprintf(message, "Voltage Low");
-			booster_deactivate();
-			break;
-
 		case State_VoltageLowLogic:
-			sprintf(message, "Logic Voltage Low");
-			booster_deactivate();
-			break;
-
 		case State_VoltageLowBooster:
-			sprintf(message, "Booster Voltage Low");
+			sprintf(message, "Voltage: 0x%02X", state);
 			booster_deactivate();
 			break;
 
-		case State_TriggeredEmergency:
-			sprintf(message, ">T-ES<");
+		case State_Error:
+		case State_Error_CAP_OVLO:
+			errorFlag = true;
+			sprintf(message, ">>Error: 0x%02X", state);
 			booster_deactivate();
 			break;
 
+		case State_EmergencyTriggered:
 		case State_EmergencyShutdown:
-			sprintf(message, ">ES<");
+			errorFlag = true;
+			sprintf(message, ">>ES: 0x%02X", state);
 			booster_deactivate();
 			break;
 
-		case State_Reset:
+		case State_EmergencyReset:
+			errorFlag = true;
 			sprintf(message, "Reset");
 			booster_deactivate();
 			break;
@@ -262,30 +355,37 @@ void booster_ctrl()
 		// Should never be reached
 		case State_False:
 		case State_FalseKick:
-			sprintf(message, "State should not be reached");
+			errorFlag = true;
+			sprintf(message, "State should not be reached: 0x%02X", state);
 			booster_deactivate();
 			break;
 
 		default:
+			errorFlag = true;
 			sprintf(message, "Unknown State");
 			booster_deactivate();
 			break;
 	}
 
 
+	// Handler that Messages don't Spam on CAN
+	static uint32_t time_msgLastSended = 0;
 	if(state == state_old) {
-		static uint32_t last_sended = 0;
-		char str[40];
-		sprintf(str, "Zeit: %d, ZeitDiff: %d", time_now, time_now - last_sended);
-		debug(str);
-		if(time_now - last_sended > 1000)	// Send same Message once every Second
-		{
-			debug(message);
-			last_sended = time_now;
+		if(time_now - time_msgLastSended > 1000) {
+			// Send same Message once every Second
+			if(errorFlag)
+				error(message);
+			else
+				debug(message);
+			time_msgLastSended = time_now;
 		}
 	} else {
-		debug(message);
+		if(errorFlag)
+			error(message);
+		else
+			debug(message);
 		state_old = state;
+		time_msgLastSended = time_now;
 	}
 
 }

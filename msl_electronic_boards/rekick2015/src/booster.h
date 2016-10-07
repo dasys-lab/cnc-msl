@@ -12,37 +12,37 @@
 
 #include <avr/io.h>
 
-#define State_Deactivated			0x00
-#define State_Activated				0x01
-#define State_Kicking				0x02
-#define State_VoltageLow			0x10
-#define State_VoltageLowLogic		0x11
-#define State_VoltageLowBooster		0x12
-#define State_EmergencyShutdown		0xE0
-#define State_TriggeredEmergency	0xE1
-#define State_Reset					0xD0
-
-// Should never be reached
-#define State_False					0xF0
-#define State_FalseKick				0xF1
-
-
 #define MAX_VOLTAGE					330		// Only change this value, if you have changed Hardware
 #define PING_TIMEOUT				1000	// ms
+
+enum eMode {
+	Mode_Automatic,
+	Mode_SoftwareControlled,
+	Mode_SoftwareControlledHold,
+	Mode_Manual,
+	Mode_Stop,
+	Mode_Error,
+	Mode_ErrorCap,
+};
 
 extern volatile uint16_t adc_logic_raw;
 extern volatile uint16_t adc_booster_raw;
 extern volatile uint16_t adc_capacitor_raw;
 
+extern enum eMode mode;
+extern uint32_t last_heartbeat;
+
 void booster_init();
 void booster_reset();
-int8_t booster_getState();
+enum eState booster_getState();
 int8_t booster_activate();
 void booster_deactivate();
-double booster_getLogicVoltage();
-double booster_getBoosterVoltage();
-double booster_getCapacitorVoltage();
-void booster_setMaxVoltage(double voltage);
+uint16_t booster_getLogicVoltage();
+uint16_t booster_getBoosterVoltage();
+uint16_t booster_getCapacitorVoltage();
+void booster_printVoltage();
+void booster_sendInfo();
+void booster_setMaxVoltage(uint16_t voltage);
 void booster_ctrl();
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_BOOSTER_H_ */

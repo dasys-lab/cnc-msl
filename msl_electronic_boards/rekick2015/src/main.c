@@ -28,6 +28,18 @@ pre-up ip link set can0 up txqueuelen 1000 type can bitrate 1000000
 auto can0
 */
 
+
+
+/* TODO
+ * Verbesserungen für das Layout:
+ *
+ * - Andere Lastwiderstände (Metaldraht, KEINE Dickschicht)
+ * - MCU kann NOTAUS auslösen
+ *
+ * - MCU kann Laden ein- und ausschalten (unabhängig von activate_booster)
+ *
+ */
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
@@ -35,6 +47,8 @@ auto can0
 #include "defaults.h"
 #include "global.h"
 //#include "messages.h"
+
+//#include "booster.h"
 
 
 //TESTS
@@ -59,9 +73,9 @@ int main(void) {
 
 	communication_init();
 
-	//adc_init();
-	//booster_init();
-	//kicker_init();
+	adc_init();
+	booster_init();
+	kicker_init();
 	timer_init();
 	// ETHERNET
 
@@ -70,36 +84,22 @@ int main(void) {
 
 	while(1) {
 		message_handler();
-		//adc_handler();
-		// kicker_kick_handler();
+		adc_handler();
+		kicker_ctrl();
+		booster_ctrl();
 
 
-		// TEST
-		char str1[20], str2[20];
-	//	sprintf(str1, "%d", t32);
-	//	debug(str1);
-	//	sprintf(str2, "t[1]: %d", ticks[1]);
-	//	debug(str2);
 
 		for(uint8_t i = 0; i<=100; i++) {
 			message_handler();
-			_delay_ms(5);
+			_delay_us(10);
 		}
 
-		/*
-
-		static uint16_t test = 0;
-		test++;
-		if(test >= 5000)
-		{
-			char str[20];
-			sprintf(str, "Ticks: %d", timer_get_ticks());
-			debug(str);
-
-			booster_ctrl();
-			print_voltage();
-			test = 0;
-		}*/
+		static uint16_t cnt_printVoltage = 0;
+		if (++cnt_printVoltage >= 1000) {
+			booster_printVoltage();
+			cnt_printVoltage = 0;
+		}
 	}
 	return 0;
 }

@@ -67,7 +67,6 @@ void split_message(uint8_t cmd, char *str);
 void debug(char *str);
 void warning(char *str);
 void error(char *str);
-void print_voltage(void);
 
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_MESSAGES_H_ */

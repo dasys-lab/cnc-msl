@@ -30,9 +30,9 @@ void kicker_init(void)
 
 // save the message
 // the kick is done by kicker_task_handler
-void kicker_add_kick_job(uint16_t us10)
+void kicker_addKickJob(uint16_t us10)
 {
-	kick_job.timestamp = timer_get_ms();
+	timer_get_ms(&kick_job.timestamp);
 	kick_job.release_time = us10;
 
 	return;
@@ -40,7 +40,7 @@ void kicker_add_kick_job(uint16_t us10)
 
 // save the message
 // the kick is done by kicker_task_handler
-void kicker_add_kick_job_forced(uint16_t us10, uint8_t forceVoltage)
+void kicker_addKickJobForced(uint16_t us10, uint8_t forceVoltage)
 {
 	uint16_t voltage = booster_getCapacitorVoltage();
 
@@ -49,19 +49,26 @@ void kicker_add_kick_job_forced(uint16_t us10, uint8_t forceVoltage)
 		return;
 	}
 
-	kick_job.timestamp = timer_get_ms();
+	timer_get_ms(&kick_job.timestamp);
 	kick_job.release_time = us10;
 	kick_job.at_voltage = forceVoltage;
 
 	return;
 }
 
-void kicker_kick(uint16_t us10)
-{
+void kicker_kick(uint16_t us10) {
 	booster_deactivate();
 
+	if(us10 > (MAX_KICK_TIME * 100)) {
+		us10 = MAX_KICK_TIME * 100;
+		char message[30];
+		sprintf(message, "Kicktime to long! Set to %dms", MAX_KICK_TIME);
+		error(message);
+	}
+
+	uint16_t us16 = us10 / 1.6;
 	cli();
-	kicker_ticks = us10;
+	kicker_ticks = us16;
 	sei();
 
 	SET(KICK);
@@ -73,17 +80,25 @@ void kicker_kick(uint16_t us10)
 
 // handle the kick job
 // _not_ thread safe
-void kicker_kick_handler(void) {
+void kicker_ctrl(void) {
 	uint8_t sreg;
-	uint32_t time_now = 0;//timer_get_ms();
+	uint32_t time_now;
+	timer_get_ms(&time_now);
 
-	// no job to do if timestamp is 0
+	// check for a job: no job to do if timestamp is 0
 	if (kick_job.timestamp == 0)
 		return;
 
-	// time between shots
+	// check time between shots
 	if (time_now - kick_job.last_kick < TIME_BETWEEN_TWO_SHOTS) {
 		// invalidate data
+		kick_job.timestamp = 0;
+		return;
+	}
+
+	// check for timeout: the job expires after 2 seconds
+	if (time_now - kick_job.timestamp > KICK_TASK_EXPIRE) {
+		warning("Kick job expired.");
 		kick_job.timestamp = 0;
 		return;
 	}
@@ -96,34 +111,30 @@ void kicker_kick_handler(void) {
 		kick_job.at_voltage = 0;
 	}
 
-	// the job expires after some milliseconds
-	if (time_now - kick_job.timestamp > KICK_TASK_EXPIRE) {
-		warning("Kick job expired.");
-		kick_job.timestamp = 0;
+	// check if the booster is enabled
+	if (!booster_canKick()) {
+		debug("Can not kick. Booster is in invalid state.");
 		return;
 	}
 
-	// check if the booster is enabled
-	/*if (!booster_can_kick()) {
-		debug("Cannot kick. Booster state is disabled.");
-		return;
-	}*/
+	timer_get_ms(&time_now);
+	uint32_t kickdelay = time_now - kick_job.timestamp;
 
-	uint32_t kickdelay = timer_get_ms() - kick_job.timestamp;
 	kicker_kick(kick_job.release_time);
-	uint32_t kicktime = timer_get_ms() - kickdelay;
 
-
-	//TODO: kickerbenachrichtigung
+	timer_get_ms(&time_now);
+	uint32_t kicktime = time_now - kickdelay;
 
 	// debug time between kicker message and release
-	char out[30];
-	sprintf(out, "Kicktime: %u ms", (uint16_t)kicktime);
-	debug(out);
+	char msg[30];
+	sprintf(msg, "Kickdelay: %lu ms", kickdelay);
+	debug(msg);
+	sprintf(msg, "Kicktime: %lu ms", kicktime);
+	debug(msg);
 
 	// everything fine
 	kick_job.timestamp = 0;
-	kick_job.last_kick = timer_get_ms();
+	timer_get_ms(&kick_job.last_kick);
 
 	return;
 }

@@ -7,9 +7,11 @@
 
 #include "messages.h"
 
+#include "booster.h"
+
 #include "defaults.h"
 #include "global.h"
-
+#include "version.h"
 
 tExtendedCAN can_buffer[CAN_MSG_BUFFER_LENGTH];
 uint8_t tx_buffer[DATA_BUFFER_SIZE];
@@ -52,12 +54,8 @@ void communication_init()
 
 void message_handler()
 {
-	static uint8_t iterations = 0;
-
 	message_receive_handler();
 	message_transmit_handler();
-
-	// if(debug_flag)
 }
 
 void message_receive_handler()
@@ -310,23 +308,6 @@ void error(char *str) {
 }
 
 /**
- * Callback function which prints the actual capacitors message
- */
-void print_voltage(void) {
-	char str1[20];
-	sprintf(str1, "L: %.0lfV", booster_getLogicVoltage());
-	debug(str1);
-
-	char str2[20];
-	sprintf(str2, "B: %.0lfV", booster_getBoosterVoltage());
-	debug(str2);
-
-	char str3[20];
-	sprintf(str3, "C: %.0lfV", booster_getCapacitorVoltage());
-	debug(str3);
-}
-
-/**
  * Parser function for the default state.
  *
  * This is the parser for the normal operation.
@@ -341,7 +322,7 @@ void parse_default(uint8_t *data, uint8_t length) {
 
 	switch (data[0]) {
 		case CMD_PING:
-//			last_heartbeat = timer_get_ms();
+			timer_get_ms(&last_heartbeat);
 			prepareMsg(CMD_PONG, placeholder, 0, PRIORITY_NORM);
 			break;
 
@@ -349,49 +330,47 @@ void parse_default(uint8_t *data, uint8_t length) {
 			if (1) {//timer_get_ms() > 1000) {
 				tmpa = data[1] + (data[2] << 8);
 				if (length == 3)
-					kicker_add_kick_job(tmpa);
+					kicker_addKickJob(tmpa);
 				else if (length == 4)
-					kicker_add_kick_job_forced(tmpa, data[3]);
+					kicker_addKickJobForced(tmpa, data[3]);
 			}
 			break;
 
 		case CMD_SET_MAX_VOLTAGE:
 			if (length == 3) {
 				tmpa = data[1] + (data[2]<<8);
-//				booster_set_max_voltage(tmpa);
+				booster_setMaxVoltage((double) tmpa);
 
 			} else if (length == 2) {
 				tmpa = ((uint16_t)(data[1])) & 0xFF;
-//				booster_set_max_voltage(tmpa);
+				booster_setMaxVoltage((double) tmpa);
 			}
-			break;
-
-		case CMD_ROTATE:
-			// old command for robot generation 1
-			// no longer used in robot generation 2
 			break;
 
 		case CMD_GET_VERSION:
 			{
-				char *version = "v0.2";	//"RK" XSTRING(MAJOR) "." XSTRING(MINOR);
-				uint8_t len = strlen(version);
+				char version[7];
+				sprintf(version, "v%u.%u", VERSION_MAJOR, VERSION_MINOR);
+				uint8_t len = strlen(&version);
 				if (len > 7) len = 7;
 				prepareMsg(CMD_VERSION, (uint8_t*) version, len, PRIORITY_NORM);
 			}
 			break;
 
 		case CMD_GET_STATE:
-//			booster_send_info();
-			break;
-
-		case CMD_SET_PULSE_WIDTH: //silently ignore
+			booster_sendInfo();
 			break;
 
 		case 'm':
 			debug("manual");
-//			timer_register(print_voltage, 1000);
-//			manual_mode = true;
+			mode = Mode_Manual;
 			parse_data = parse_manual;
+			break;
+
+		case CMD_ROTATE:	// Old Command
+			break;
+
+		case CMD_SET_PULSE_WIDTH:	// Old Command
 			break;
 
 		default:
@@ -410,7 +389,7 @@ void parse_default(uint8_t *data, uint8_t length) {
  */
 void parse_manual(uint8_t *data, uint8_t length) {
 
-	static uint16_t release_time = 33;
+	static uint16_t release_time = 200;
 	uint16_t tmp = 0;
 	uint8_t i;
 	char str[8];
@@ -438,33 +417,29 @@ void parse_manual(uint8_t *data, uint8_t length) {
 	}
 	// SPACE release the kicker
 	else if (data[0] == ' ') {
-//		if (release_time > 0)
-//			kicker_add_kick_job(release_time);
+		if (release_time > 0)
+			kicker_addKickJob(release_time);
 		debug("Release");
 	}
 	// enable auto boosting
-	else if (data[0] == 'e') {
-//		auto_boost = true;
+	else if (data[0] == 's') {
+		mode = Mode_SoftwareControlled;
 	}
 	// force boosting. disable the software control
 	// warning this may overload the capacitors if the
 	// hardware disabling function fails
 	else if (data[0] == 'w') {
-//		auto_boost = false;
-//		booster_pwm_enable();
+		mode = Mode_Automatic;
 	}
 	// disable charging but holds the power
 	else if (data[0] == 'q') {
-//		auto_boost = false;
-//		booster_pwm_disable();
+		mode = Mode_Stop;
 	}
 	// switch back to AUTOMATIC MODE
 	// (without the driver the rekick driver
 	// (the one in c#), the system goes into standby mode)
 	else if (data[0] == 'a') {
-		//timer_deregister(print_voltage);
-//		auto_boost = true;
-//		manual_mode = false;
+		mode = Mode_Automatic;
 		parse_data = parse_default;
 	}
 	else {

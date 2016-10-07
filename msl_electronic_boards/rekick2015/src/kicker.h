@@ -14,12 +14,13 @@
 
 #define FORCED_VOLTAGE_RANGE	10		// allow a variance from a forced voltage (in Volt)
 #define KICK_TASK_EXPIRE		2000	// time in which the kick task expires
-#define TIME_BETWEEN_TWO_SHOTS	200		// ms
+#define TIME_BETWEEN_TWO_SHOTS	200		// in ms
+#define MAX_KICK_TIME			50		// in ms
 
 void kicker_init();
-void kicker_add_kick_job(uint16_t us10);
-void kicker_add_kick_job_forced(uint16_t us10, uint8_t forceVoltage);
+void kicker_addKickJob(uint16_t us10);
+void kicker_addKickJobForced(uint16_t us10, uint8_t forceVoltage);
 void kicker_kick(uint16_t us10);
-void kicker_kick_handler();
+void kicker_ctrl();
 
 #endif /* CNC_MSL_MSL_ELECTRONIC_BOARDS_REKICK2015_SRC_KICKER_H_ */
