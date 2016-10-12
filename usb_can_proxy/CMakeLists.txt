@@ -1,25 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(usb_can_proxy)
 
-find_package(catkin REQUIRED 
+find_package(catkin REQUIRED
   can_connection
-  system_config 
-  roscpp 
-  message_generation 
+  system_config
+  roscpp
   msl_actuator_msgs
 )
-
-## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
- #  msl_actuator_msgs
- )
 
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES usb_can_proxy
-  CATKIN_DEPENDS system_config can_connection roscpp message_runtime 
-#msl_actuator_msgs
+  CATKIN_DEPENDS system_config can_connection roscpp message_runtime msl_actuator_msgs
 #  DEPENDS system_lib
 )
 
@@ -28,10 +20,7 @@ include_directories(${catkin_INCLUDE_DIRS})
 add_executable(usb_can_proxy src/UsbCanProxy.cpp)
 target_link_libraries(usb_can_proxy ${catkin_LIBRARIES})
 set_target_properties(usb_can_proxy PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror")
-add_dependencies(usb_can_proxy usb_can_proxy_generate_messages_cpp) 
 
 add_executable(usb_can_console src/UsbCanConsole.cpp)
 target_link_libraries(usb_can_console ${catkin_LIBRARIES})
 set_target_properties(usb_can_console PROPERTIES COMPILE_FLAGS "-O3 -Wall -Werror -fPIC -pthread")
-add_dependencies(usb_can_console usb_can_proxy_generate_messages_cpp) 
-
