@@ -23,6 +23,6 @@ catkin_package(
 include_directories(include ${Boost_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
 add_executable(msl_actuation_control src/ActuationControl.cpp)
 target_link_libraries(msl_actuation_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-
+add_dependencies(msl_actuation_control msl_actuator_msgs_generate_messages_cpp msl_sensor_msgs_generate_messages_cpp)
 
 

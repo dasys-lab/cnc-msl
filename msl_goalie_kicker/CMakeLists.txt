@@ -42,4 +42,4 @@ add_executable(${PROJECT_NAME}
 
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-
+add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)

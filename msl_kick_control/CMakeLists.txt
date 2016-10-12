@@ -106,7 +106,7 @@ include_directories(include ${Boost_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
 ## Declare a cpp executable
 add_executable(msl_kick_control src/Kicker.cpp)
 target_link_libraries(msl_kick_control ${Boost_LIBRARIES} ${catkin_LIBRARIES})
-
+add_dependencies(msl_kick_control msl_actuator_msgs_generate_messages_cpp)
 
 #############
 ## Install ##
