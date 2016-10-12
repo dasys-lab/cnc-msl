@@ -41,9 +41,12 @@ namespace alica
 		// match plotted value
 		regex regex(".*robotRadius=(.*)");
 		match_results < string::const_iterator > match;
-		string matchedValue = match[2];
+		regex_match(gnuplotReturn, match, regex);
+		string matchedValue = match[1];
 		double calculatedValue;
 		// here we omit the unnecessary '=' that is captured by the regex
+		// cout << "MATCHED VALUE=" << matchedValue << endl << "MATCH1=" << match[1] << endl << "MATCH2=" << match[2] << endl;
+		if(matchedValue.size() > 0) {
 		if (matchedValue.at(0) == '=')
 		{
 			matchedValue = matchedValue.substr(1);
@@ -57,7 +60,9 @@ namespace alica
 		else
 		{
 			cout << "OH SHIT CALCULATED VALUE IS " << calculatedValue << "!!! <-- ZHAT SEEMS SUSPICOIUS" << endl;
-		}
+		}}else{
+cout << "OH SHIT GNUPLOT RETURN MATCHING FAILED (did you run ssh -X?)" << endl;
+}
 		this->setSuccess(true);
 
 		/*PROTECTED REGION END*/
