@@ -173,7 +173,7 @@ TARGET_LINK_LIBRARIES( basestation
 ${VTK_LIBRARIES}
 )
 
-
+add_dependencies(basestation msl_msgs_generate_messages_cpp)
 
 ADD_CUSTOM_TARGET( tools DEPENDS
  basestation

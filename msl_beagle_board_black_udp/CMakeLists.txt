@@ -45,8 +45,8 @@ add_executable(msl_beagle_board_black_udp
 	src/Spline.cpp
 )
 target_link_libraries(msl_beagle_board_black_udp ${catkin_LIBRARIES})
-
+add_dependencies(msl_beagle_board_black_udp msl_actuator_msgs_generate_messages_cpp)
 
 add_executable(debug_udp src/debug.cpp)
 target_link_libraries(debug_udp ${catkin_LIBRARIES})
-
+add_dependencies(debug_udp msl_actuator_msgs_generate_messages_cpp)

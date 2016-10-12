@@ -37,7 +37,7 @@ set(msl_joystick_INCLUDE_DIRECTORIES
 )
 
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS ${msl_joystick_INCLUDE_DIRECTORIES}
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS rqt_gui rqt_gui_cpp system_config
 )
