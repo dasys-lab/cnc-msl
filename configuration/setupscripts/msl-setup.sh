@@ -6,7 +6,7 @@ set -e
 step_count=8
 current_step=0
 root_taskfile=.root_done
-ubuntu_packages='git vim gitk meld bison re2c libode-dev gnuplot-qt libxv-dev libtbb-dev libcgal-demo libcgal-dev xsdcxx libxerces-c-dev freeglut3-dev libvtk5-dev libvtk5-qt4-dev libopencv-dev myrepos'
+ubuntu_packages='git vim gitk meld bison re2c libode-dev gnuplot-qt libxv-dev libtbb-dev libcgal-demo libcgal-dev xsdcxx libxerces-c-dev freeglut3-dev libvtk5-dev libvtk5-qt4-dev libopencv-dev myrepos openjdk-8-jdk'
 ubuntu_distro=xenial
 ros_distro=kinetic
 ros_packages="ros-${ros_distro}-desktop-full ros-${ros_distro}-qt-gui-core ros-${ros_distro}-qt-build ros-${ros_distro}-serial python-catkin-tools ros-${ros_distro}-mrpt-map python-catkin-tools"
