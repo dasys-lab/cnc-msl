@@ -27943,20 +27943,17 @@ Kick &amp; Servo</description>
 <pinref part="R25" gate="G$1" pin="2"/>
 <pinref part="R21" gate="G$1" pin="2"/>
 <wire x1="139.7" y1="96.52" x2="139.7" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$23" class="0">
-<segment>
 <pinref part="R29" gate="G$1" pin="2"/>
 <pinref part="R26" gate="G$1" pin="2"/>
 <wire x1="144.78" y1="96.52" x2="144.78" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$25" class="0">
-<segment>
+<wire x1="139.7" y1="93.98" x2="144.78" y2="93.98" width="0.1524" layer="91"/>
+<junction x="139.7" y="93.98"/>
+<junction x="144.78" y="93.98"/>
 <pinref part="R36" gate="G$1" pin="2"/>
 <pinref part="R34" gate="G$1" pin="2"/>
 <wire x1="149.86" y1="96.52" x2="149.86" y2="93.98" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="93.98" x2="149.86" y2="93.98" width="0.1524" layer="91"/>
+<junction x="149.86" y="93.98"/>
 </segment>
 </net>
 </nets>
