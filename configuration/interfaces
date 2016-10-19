@@ -1,16 +1,16 @@
 auto lo
 iface lo inet loopback
 
-#iface eth0 inet static
-#address 192.168.0.5
-#netmask 255.255.255.0
-#auto eth0
+iface enp4s0 inet static
+address 192.168.0.5
+netmask 255.255.255.0
+auto enp4s0
 
-iface eth1 inet static
+iface eno1 inet static
 address 10.0.0.1
 netmask 255.0.0.0
-post-up route add 225.16.32.40 eth1
-auto eth1
+post-up route add 225.16.32.40 eno1
+auto eno1
 
 #iface can0 inet manual
 #address 127.42.23.180

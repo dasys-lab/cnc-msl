@@ -14,9 +14,10 @@ find_package(catkin REQUIRED COMPONENTS roscpp message_generation msl_msgs syste
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-find_package(Qt4 4.4.3 COMPONENTS QtCore QtGui REQUIRED)
 
-include(${QT_USE_FILE})
+
+find_package(Qt5 REQUIRED Core Widgets)
+set(QT_LIBRARIES Qt5::Widgets)
 
 set(msl_joystick_SRCS
   src/msl_joystick/Joystick.cpp
@@ -42,12 +43,14 @@ catkin_package(
 )
 catkin_python_setup()
 
-qt4_wrap_cpp(msl_joystick_MOCS ${msl_joystick_HDRS})
-qt4_wrap_ui(msl_joystick_UIS_H ${msl_joystick_UIS})
+qt5_wrap_cpp(msl_joystick_MOCS ${msl_joystick_HDRS})
+qt5_wrap_ui(msl_joystick_UIS_H ${msl_joystick_UIS})
 
 include_directories(${msl_joystick_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 add_library(${PROJECT_NAME} ${msl_joystick_SRCS} ${msl_joystick_MOCS} ${msl_joystick_UIS_H})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} ${catkin_LIBRARIES})
+
+qt5_use_modules(${PROJECT_NAME} Widgets)
 
 find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})

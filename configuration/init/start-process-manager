@@ -1,7 +1,7 @@
 #!/bin/bash
 
-USER=USERTPL
-WORKSPACE=WORKSPACETPL
+USER=cn
+WORKSPACE=/home/cn/cnws
 WORKSPACE_SETUP=$WORKSPACE/devel/setup.bash
 ROS_SETUP=/opt/ros/kinetic/setup.bash
 

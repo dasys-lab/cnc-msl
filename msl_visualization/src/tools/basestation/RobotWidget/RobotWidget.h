@@ -52,7 +52,7 @@ public:
 		//cerr << cmd.toAscii() << "  :  ";
 		//cerr << system( cmd.toAscii() ) << endl;
 
-		system( cmd.toAscii() );
+		system( cmd.toLatin1() );
 	}
 
 private:

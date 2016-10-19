@@ -35,7 +35,7 @@
 #include <atomic>
 #include <math.h>
 
-#include <QVTKWidget.h>
+#include <src/tools/basestation/FieldWidget/QVTKWidget3.h>
 
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
@@ -44,13 +44,14 @@
 #include <vtkProperty.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderWindow.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkTextSource.h>
 #include <vtkCylinderSource.h>
 #include <vtkVectorText.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkCamera.h>
+#include <vtkOpenGLCamera.h>
 #include <vtkInteractorStyleSwitch.h>
 #include <vtkInteractorStyleTerrain.h>
 #include <vtkOBJReader.h>
@@ -114,7 +115,7 @@ struct Line {
        vtkSmartPointer<vtkLineSource> source;
 };
 
-class FieldWidget3D : public QVTKWidget
+class FieldWidget3D : public QVTKWidget3
 {
     Q_OBJECT
 public:
@@ -133,7 +134,7 @@ public:
     MWind* mainWindow;
     vtkRenderWindow *renderWindow = nullptr;
     vtkRenderer *renderer = nullptr;
-    vtkCamera* camera = nullptr;
+    vtkOpenGLCamera* camera = nullptr;
     vtkActor* field = nullptr;
 
     bool heightVisible;
@@ -292,7 +293,7 @@ public Q_SLOTS:
         heightColor = v;
     }
 
-    
+
 };
 
 #endif // FIELDWIDGET3D_H
