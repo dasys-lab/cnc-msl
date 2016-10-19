@@ -156,15 +156,12 @@ git_setup() {
 clone_git_repos() {
 	msg "Cloning repos \"$repos\" into ${workspace_src}..."
 	
-	# FIXME: temporary branches and repos
-	branch=kinetic
-
 	for r in $repos
 	do
 		if [ ! -d "${workspace_src}/${r}" ]
 		then
 			msg "Cloning repository $r"
-			git clone -b $branch ${github_url}${r}'.git' ${workspace_src}/${r}
+			git  $branch ${github_url}${r}'.git' ${workspace_src}/${r}
 		else
 			msg "$r already exists!"
 		fi
