@@ -13,7 +13,6 @@
 #include <mrpt/math/ransac.h>
 #include <mrpt/math/ransac_applications.h>
 #include <mrpt/math/geometry.h>
-#include <mrpt/math/CVectorTemplate.h>
 #include <fstream>
 #include <iostream>
 #include <SystemConfig.h>

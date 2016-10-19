@@ -67,6 +67,7 @@
   <run_depend>roslib</run_depend>
   <run_depend>rospack</run_depend>
   <run_depend>roscpp</run_depend>
+  <run_depend>alica_ros_proxy</run_depend>
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
