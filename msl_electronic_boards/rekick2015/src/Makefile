@@ -9,7 +9,7 @@ AVRDUDE_MCU = m16M1
 #     processor frequency. You can then use this symbol in your source code to 
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
-F_CPU = 1000000
+F_CPU = 16000000
 
 
 # Output format. (can be srec, ihex, binary)
@@ -21,7 +21,7 @@ TARGET = main
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c
+SRC = $(TARGET).c adc.c booster.c can_drv.c can_lib.c kicker.c messages.c timer.c
 
 
 # List Assembler source files here.
@@ -295,7 +295,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 # Default target.
 all: begin gccversion sizebefore build sizeafter end
 
-build: elf hex eep lss sym
+build: hex #elf hex eep lss sym
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex

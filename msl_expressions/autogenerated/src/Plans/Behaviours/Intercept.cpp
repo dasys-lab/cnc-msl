@@ -11,6 +11,7 @@ using namespace std;
 #include <msl_robot/MSLRobot.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
+#include <pathplanner/PathPlannerQuery.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -128,13 +129,22 @@ namespace alica
         }
 
         predBall->alloToEgo(*predPos);
+        //TODO dirty fix to avoid crashing into the surrounding
+        if (!this->wm->field->isInsideField(predPos->getPoint()))
+        {
+            msl_actuator_msgs::MotionControl mc;
+            mc.motion.angle = 0;
+            mc.motion.rotation = 0;
+            mc.motion.translation = 0;
+            send(mc);
+        }
 //		}
         // PID controller for minimizing the distance between ball and me
         double distErr = max(predBall->length(), 1000.0);
         double controlDist = distErr * pdist + distIntErr * pidist + (distErr - lastDistErr) * pddist;
 
         distIntErr += distErr;
-        distIntErr = max(-1500.0, min(1500.0, distIntErr));
+//      distIntErr = max(-1500.0, min(1500.0, distIntErr));
         lastDistErr = distErr;
 
         shared_ptr < geometry::CNPoint2D > egoVelocity;
@@ -161,7 +171,10 @@ namespace alica
         }
 
         shared_ptr < msl::PathEvaluator > eval = make_shared<msl::PathEvaluator>();
-        auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval);
+        shared_ptr < msl::PathPlannerQuery > query = make_shared<msl::PathPlannerQuery>();
+        query->blockOppGoalArea = true;
+        query->blockOwnGoalArea = true;
+        auto pathPlanningResult = pp->getEgoDirection(pathPlanningPoint, eval, query);
         if (pathPlanningResult == nullptr)
         {
             mc.motion.angle = pathPlanningPoint->angleTo();

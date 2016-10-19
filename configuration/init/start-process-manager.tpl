@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 USER=USERTPL
 WORKSPACE=WORKSPACETPL
-WORKSPACE_SETUP=$WORKSPACE/devel/setup.sh
-ROS_SETUP=/opt/ros/indigo/setup.sh
+WORKSPACE_SETUP=$WORKSPACE/devel/setup.bash
+ROS_SETUP=/opt/ros/kinetic/setup.bash
 
 sudo su - $USER << EOF
 	source $ROS_SETUP

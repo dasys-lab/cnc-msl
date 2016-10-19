@@ -12,6 +12,8 @@ clean:
 install: start-process-manager
 	cp start-process-manager /usr/local/bin/
 	cp keepwlan /usr/local/bin/
-	cp process_manager.conf /etc/init/
-	cp keepwlan.conf /etc/init/
-	initctl reload-configuration
+	cp process_manager.service /lib/systemd/system/
+	cp keepwlan.service /lib/systemd/system/
+	systemctl enable process_manager
+	systemctl enable keepwlan
+	systemctl daemon-reload

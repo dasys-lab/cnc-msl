@@ -20,6 +20,7 @@ INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 SET( BASESTATION_SRCS 
 	FieldWidget/FieldWidget.cpp
 	FieldWidget/FieldWidget3D.cpp
+	FieldWidget/QVTKWidget3.cpp
 	FullInfoWindow/FullInfoWindow.cpp
 	FullWindow/FullWindow.cpp
 	MainWindow/MainWindow.cpp
@@ -37,6 +38,7 @@ SET( BASESTATION_SRCS
 SET( BASESTATION_MOC_HDRS
 	FieldWidget/FieldWidget.h
 	FieldWidget/FieldWidget3D.h
+	FieldWidget/QVTKWidget3.h
 	FullInfoWindow/FullInfoWindow.h
 	FullWindow/FullWindow.h
 	MainWindow/MainWindow.h
@@ -66,9 +68,9 @@ SET( BASESTATION_RCS
 	basestation.qrc
 )
 
-QT4_WRAP_UI( BASESTATION_UI_HDRS ${BASESTATION_UIS} ) #Generate headers using QT UI files
-QT4_WRAP_CPP( BASESTATION_MOC_SRCS ${BASESTATION_MOC_HDRS} ) #Generate CPP files from moh headers
-QT4_ADD_RESOURCES( BASESTATION_RC_SRCS ${BASESTATION_RCS} )
+QT5_WRAP_UI( BASESTATION_UI_HDRS ${BASESTATION_UIS} ) #Generate headers using QT UI files
+QT5_WRAP_CPP( BASESTATION_MOC_SRCS ${BASESTATION_MOC_HDRS} ) #Generate CPP files from moh headers
+QT5_ADD_RESOURCES( BASESTATION_RC_SRCS ${BASESTATION_RCS} )
 
 ADD_EXECUTABLE( basestation EXCLUDE_FROM_ALL
  ${BASESTATION_SRCS} 

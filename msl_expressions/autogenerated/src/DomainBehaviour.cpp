@@ -61,14 +61,20 @@ namespace alica
 
 	void alica::DomainBehaviour::send(msl_actuator_msgs::BallHandleCmd& bh)
 	{
+		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+		double minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
+		double minRotationLeft = (*sys)["Actuation"]->get<double>("Dribble.MinRotationLeft", NULL);
+		double minRotationRight = (*sys)["Actuation"]->get<double>("Dribble.MinRotationRight", NULL);
 		bh.enabled = true;
 		bh.senderID = ownID;
 		// this is only for nase and his new left motor
-		if (ownID == 0)
+		int sgnR = bh.rightMotor >= 0 ? 1 : -1;
+		int sgnL = bh.leftMotor >= 0 ? 1 : -1;
+		if (!(bh.rightMotor == 0) && !(bh.leftMotor == 0))
 		{
-			int sgn = bh.rightMotor >= 0 ? 1 : -1;
-			bh.rightMotor = (int)max(1700.0, abs(bh.rightMotor / 2.0)) * sgn;
-		}	
+			bh.rightMotor = (int)(max(minRotationRight, (abs(bh.rightMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL))) * sgnR;
+			bh.leftMotor = (int)(max(minRotationLeft, (abs(bh.leftMotor * 1.0)) / (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL))) * sgnL;
+		}
 		ballHandlePub.publish(bh);
 		
 	}

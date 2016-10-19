@@ -22,11 +22,12 @@
   <build_depend>msl_sensor_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>msl_sensor_msgs</build_depend>
-  <build_depend>msl_actuator_msgs</build_depend>
+  <build_depend>msl_helper_msgs</build_depend>
   <build_depend>event_handling</build_depend>
   <build_depend>robot_control</build_depend> 
   <build_depend>constraintsolver</build_depend>
-  <build_depend>tf</build_depend>  
+  <build_depend>tf</build_depend>
+  <build_depend>process_manager</build_depend>  
 
   <run_depend>roscpp</run_depend>
   <run_depend>cnc_geometry</run_depend>
@@ -38,11 +39,12 @@
   <run_depend>msl_sensor_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>msl_sensor_msgs</run_depend>
-  <run_depend>msl_actuator_msgs</run_depend>
+  <run_depend>msl_helper_msgs</run_depend>
   <run_depend>event_handling</run_depend>
   <run_depend>robot_control</run_depend>
   <run_depend>constraintsolver</run_depend>
   <run_depend>tf</run_depend>
+  <run_depend>process_manager</run_depend>
 
   <test_depend>gtest</test_depend>
 

@@ -16,11 +16,11 @@
     <task>../../../Misc/taskrepository.tsk#1222613952469</task>
     <state>#1455537014535</state>
   </entryPoints>
-  <entryPoints id="1455537247542" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1455537247542" name="SupportAttack" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1225115536468</task>
     <state>#1455537278849</state>
   </entryPoints>
-  <entryPoints id="1455537250535" name="DefendSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
+  <entryPoints id="1455537250535" name="SupportDefend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
     <task>../../../Misc/taskrepository.tsk#1225116131298</task>
     <state>#1455537281002</state>
   </entryPoints>

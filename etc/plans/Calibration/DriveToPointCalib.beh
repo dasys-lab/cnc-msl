@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1474278265440" name="DriveToPointCalib" comment="" destinationPath="Plans/Calibration">
+  <configurations id="1474278292264" name="DriveToPointCalib(2000,0)" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1474278880948" name="MISSING_NAME" comment="" key="X" value="2000"/>
+    <parameters id="1474278891005" name="MISSING_NAME" comment="" key="Y" value="0"/>
+  </configurations>
+  <configurations id="1474278926472" name="DriveToPointCalib(0,0)" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1474278932254" name="MISSING_NAME" comment="" key="X" value="0"/>
+    <parameters id="1474278937969" name="MISSING_NAME" comment="" key="Y" value="0"/>
+  </configurations>
+  <configurations id="1474278968035" name="DriveToPointCalib(0,2000)" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1474278971283" name="MISSING_NAME" comment="" key="X" value="0"/>
+    <parameters id="1474278977232" name="MISSING_NAME" comment="" key="Y" value="2000"/>
+  </configurations>
+</alica:Behaviour>

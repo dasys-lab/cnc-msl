@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 	Mwind.adjustSize();
    	Mwind.showMaximized();
 
-	QApplication::setStyle(new QPlastiqueStyle); //Descomentar Quando o Qt não se passar...
+	QApplication::setStyle("fusion"); //Descomentar Quando o Qt não se passar...
 
 	int ret =  app->exec();
 

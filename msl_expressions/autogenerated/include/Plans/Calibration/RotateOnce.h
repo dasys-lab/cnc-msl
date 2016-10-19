@@ -27,19 +27,19 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1467397900274) ENABLED START*/ //Add additional private methods here
-        //Buffer holding precision values of current rotation
-        msl::RingBuffer<double> precisionBuffer;
         static const int PRECISION_BUFFER_SIZE = 10;
         static constexpr double MAX_ROTATION_SPEED = 2.0;
         static constexpr double STEP_SIZE = 3.0;
         static const int NUMBER_OF_STEPS = 3;
+        //Buffer holding precision values of current rotation
+        msl::RingBuffer<double> precisionBuffer(PRECISION_BUFFER_SIZE);
         double segments[3];
         bool visitedSegments[3];
-	static bool hasInitialConfigurationBeenSet;
+        static bool hasInitialConfigurationBeenSet;
         static double radiusOffset;
-	static double initialRadius;
-	static double minRadius;
-	static double maxRadius;
+        static double initialRadius;
+        static double minRadius;
+        static double maxRadius;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
 
