@@ -13,5 +13,5 @@ Type=forking
 ExecStart=/usr/local/bin/start-process-manager
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=network-online.target
 
