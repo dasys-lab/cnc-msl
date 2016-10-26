@@ -20,7 +20,7 @@ namespace alica
     bool RotateOnce::hasInitialConfigurationBeenSet;
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
-            DomainBehaviour("RotateOnce")
+            DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         initialRadius = wm->getRobotRadius();
