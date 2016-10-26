@@ -59,6 +59,9 @@ namespace alica
         double maxRotation;
         double sectionSize;
 
+        // output flags
+        bool getBallFlag;
+
         void adaptWheelSpeed(Rotation err);
         Rotation checkBallRotation();
         void fillSections(shared_ptr<vector<string> > speedsSections);

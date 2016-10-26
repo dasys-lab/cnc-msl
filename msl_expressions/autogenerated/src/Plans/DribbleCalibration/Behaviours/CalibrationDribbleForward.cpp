@@ -37,6 +37,7 @@ namespace alica
         newAlignPoint = nullptr;
         query = nullptr;
         startTrans = 0;
+        getBallFlag = true;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -53,7 +54,8 @@ namespace alica
 //        return;
         if (wm->rawSensorData->getLightBarrier())
         {
-            // waiting so we definitely have the ball when we start with the calibration
+        	getBallFlag = true;
+        	// waiting so we definitely have the ball when we start with the calibration
             if (haveBallCount == 0 || (getBallCount > 0 && getBallCount < haveBallWaitingDuration))
             {
                 haveBallCount++;
@@ -151,6 +153,11 @@ namespace alica
         }
         else
         {
+        	if (getBallFlag)
+        	{
+        		cout << "getting ball" << endl;
+        	}
+
             // if we lose the ball -> our actuator are rotating to fast
             if (haveBallCount > 0 && !changeDirections)
             {

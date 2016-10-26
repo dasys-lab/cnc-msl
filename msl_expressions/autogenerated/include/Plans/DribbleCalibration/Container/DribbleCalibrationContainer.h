@@ -59,12 +59,15 @@ namespace alica
 
 		shared_ptr<msl::MovementQuery> query;
 
+		double defaultDistance;
+
 		enum OPValue
 		{
 			XValue, YValue, QOSValue
 		};
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
-		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement);
+		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance = 1000);
+		bool checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest);
 		void readOwnConfigParameter();
 };
 
