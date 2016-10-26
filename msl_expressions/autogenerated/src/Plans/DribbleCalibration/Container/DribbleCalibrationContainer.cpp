@@ -288,7 +288,7 @@ namespace alica
 		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
 		{
 			cerr << "no OpticalFLow signal!" << endl;
-			return nullptr;
+			return false;
 		}
 //		cout << "queueSize = " << queueSize << endl;
 //		cout << "opQueue.size() = " << opQueue->size() << endl;

@@ -161,7 +161,7 @@ clone_git_repos() {
 		if [ ! -d "${workspace_src}/${r}" ]
 		then
 			msg "Cloning repository $r"
-			git  $branch ${github_url}${r}'.git' ${workspace_src}/${r}
+			git clone ${github_url}${r}'.git' ${workspace_src}/${r}
 		else
 			msg "$r already exists!"
 		fi
