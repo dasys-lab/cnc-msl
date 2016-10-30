@@ -38,6 +38,8 @@ namespace alica
 		query = nullptr;
 		startTrans = 0;
 		getBallFlag = true;
+		angleTolerance = 0;
+		rotateAroundTheBall = false;
 		/*PROTECTED REGION END*/
 	}
 	CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -52,8 +54,8 @@ namespace alica
 		msl::RobotMovement rm;
 //		writeConfigParameters();
 //        return;
-//        if (wm->rawSensorData->getLightBarrier())
-		if (1 == 1)
+        if (wm->rawSensorData->getLightBarrier())
+//		if (1 == 1)
 		{
 			getBallFlag = true;
 			// waiting so we definitely have the ball when we start with the calibration
@@ -102,19 +104,14 @@ namespace alica
 
 					shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
 
+//					cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
+//					cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
 
-					cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
-					cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
 					if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
 					{
-
-						// x and y my not be 0 otherwise the angleTo method will return 0
-						newAlignPoint->x = (newAlignPoint->x == 0) ? (newAlignPoint->x = 1) : newAlignPoint->x;
-						newAlignPoint->y = (newAlignPoint->y == 0) ? (newAlignPoint->y = 1) : newAlignPoint->y;
-
 						query->egoAlignPoint = newAlignPoint;
-						query->rotateAroundTheBall = false;
-						query->angleTolerance = 0.2;
+						query->rotateAroundTheBall = rotateAroundTheBall;
+						query->angleTolerance = angleTolerance;
 
 						cout << "aligning to new align point!" << endl;
 						mc = rm.alignTo(query);
@@ -328,6 +325,8 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
 				"DribbleCalibration.DribbleForward.CollectDataWaitingDuration", NULL);
 		startTrans = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.StartTranslation", NULL);
+		angleTolerance = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.AngleTolerance", NULL);
+		rotateAroundTheBall = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.DribbleForward.RotateAroundTheBall", NULL);
 
 		// actuation config Params
 		minRotation = dcc.readConfigParameter("Dribble.MinRotation");

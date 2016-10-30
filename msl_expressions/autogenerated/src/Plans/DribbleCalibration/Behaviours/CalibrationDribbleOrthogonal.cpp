@@ -17,6 +17,7 @@ namespace alica
             DomainBehaviour("CalibrationDribbleOrthogonal")
     {
         /*PROTECTED REGION ID(con1469196321064) ENABLED START*/ //Add additional options here
+    	orthoDriveFactor = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleOrthogonal::~CalibrationDribbleOrthogonal()

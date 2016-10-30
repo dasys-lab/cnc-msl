@@ -27,6 +27,7 @@ namespace alica
 		robotRadius = 0;
 //		potentialAlignPoint = nullptr;
 		defaultDistance = 0;
+		readOwnConfigParameter();
 	}
 
 	DribbleCalibrationContainer::~DribbleCalibrationContainer()
@@ -94,6 +95,7 @@ namespace alica
 		query->egoAlignPoint = egoDestination;
 
 		cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
+//		cout << "egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
 
 		mc = rm.moveToPoint(query);
 
@@ -466,6 +468,6 @@ namespace alica
 	{
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		robotRadius = (*sys)["Rules"]->get<double>("Rules.RobotRadius", NULL);
-		defaultDistance = (*sys)["DribbelCalibration"]->get<double>("Default.DefaultDistance", NULL);
+		defaultDistance = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.Distance", NULL);
 	}
 } /* namespace alica */

@@ -67,7 +67,7 @@ namespace alica
 			XValue, YValue, QOSValue
 		};
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
-		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance = 1000);
+		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance);
 		bool checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest);
 		void readOwnConfigParameter();
 };
