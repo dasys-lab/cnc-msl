@@ -167,11 +167,15 @@ namespace msl
 
 				m_Query->additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 				m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
+
 				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
 				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval,
+
 				m_Query->additionalPoints);
+
 				mc.motion.rotation = m_Query->rotationPDForDribble(egoTarget);
 				double rotPointDist = 350.0;
+
 				if (auto ballPos = wm->ball->getEgoBallPosition())
 				{
 					rotPointDist = min(rotPointDist, ballPos->length()); //the point around which we rotate
