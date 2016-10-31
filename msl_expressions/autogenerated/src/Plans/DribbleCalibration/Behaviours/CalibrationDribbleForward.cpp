@@ -54,10 +54,10 @@ namespace alica
 		MotionControl mc;
 		msl::RobotMovement rm;
 //		writeConfigParameters();
-		this->setSuccess(true);
-        return;
-        if (wm->rawSensorData->getLightBarrier())
-//		if (1 == 1)
+//		this->setSuccess(true);
+//		return;
+//		if (wm->rawSensorData->getLightBarrier())
+		if (1 == 1)
 		{
 			getBallFlag = true;
 			// waiting so we definitely have the ball when we start with the calibration
@@ -89,50 +89,60 @@ namespace alica
 					return;
 				}
 
-				// check if there is an obstacle
-				if (!changeDirections)
-					changeDirections = dcc.checkObstacles(dcc.Forward, distToObs);
-
-				// if there is an obstacle find a new way to drive and turn around
-				if (changeDirections)
+				mc = dcc.move(dcc.Forward, (moveCount + 1) * startTrans);
+				if (mc.motion.translation == NAN)
 				{
-//					cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
-					auto me = wm->rawSensorData->getOwnPositionVision();
-
-					if (alloAlignPoint == nullptr)
-					{
-						alloAlignPoint = dcc.calcNewAlignPoint()->egoToAllo(*me);
-					}
-
-					shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
-
-//					cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
-//					cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
-
-					if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
-					{
-						query->egoAlignPoint = newAlignPoint;
-						query->rotateAroundTheBall = rotateAroundTheBall;
-						query->angleTolerance = angleTolerance;
-
-						cout << "aligning to new align point!" << endl;
-						mc = rm.alignTo(query);
-						send(mc);
-						return;
-					}
-					else if (newAlignPoint != nullptr)
-					{
-						cout << "reset changeDirection flag and newAlignPoint" << endl;
-						alloAlignPoint = nullptr;
-						changeDirections = false;
-						newAlignPoint = nullptr;
-					}
+					cerr << "motion command == NAN" << endl;
 				}
 				else
 				{
-					mc = dcc.move(dcc.Forward, (moveCount + 1) * startTrans);
 					send(mc);
 				}
+
+//				// check if there is an obstacle
+//				if (!changeDirections)
+//					changeDirections = dcc.checkObstacles(dcc.Forward, distToObs);
+//
+//				// if there is an obstacle find a new way to drive and turn around
+//				if (changeDirections)
+//				{
+////					cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
+//					auto me = wm->rawSensorData->getOwnPositionVision();
+//
+//					if (alloAlignPoint == nullptr)
+//					{
+//						alloAlignPoint = dcc.calcNewAlignPoint()->egoToAllo(*me);
+//					}
+//
+//					shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
+//
+////					cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
+////					cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
+//
+//					if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
+//					{
+//						query->egoAlignPoint = newAlignPoint;
+//						query->rotateAroundTheBall = rotateAroundTheBall;
+//						query->angleTolerance = angleTolerance;
+//
+//						cout << "aligning to new align point!" << endl;
+//						mc = rm.alignTo(query);
+//						send(mc);
+//						return;
+//					}
+//					else if (newAlignPoint != nullptr)
+//					{
+//						cout << "reset changeDirection flag and newAlignPoint" << endl;
+//						alloAlignPoint = nullptr;
+//						changeDirections = false;
+//						newAlignPoint = nullptr;
+//					}
+//				}
+//				else
+//				{
+//					mc = dcc.move(dcc.Forward, (moveCount + 1) * startTrans);
+//					send(mc);
+//				}
 
 				// waiting some time till we can be sure to only collect correct values
 				if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
@@ -328,8 +338,10 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
 				"DribbleCalibration.DribbleForward.CollectDataWaitingDuration", NULL);
 		startTrans = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.StartTranslation", NULL);
-		angleTolerance = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.AngleTolerance", NULL);
-		rotateAroundTheBall = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.DribbleForward.RotateAroundTheBall", NULL);
+//		angleTolerance = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.AngleTolerance",
+//																	NULL);
+//		rotateAroundTheBall = (*sc)["DribbleCalibration"]->get<bool>(
+//				"DribbleCalibration.DribbleForward.RotateAroundTheBall", NULL);
 		distToObs = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DistanceToObstacle", NULL);
 
 		// actuation config Params

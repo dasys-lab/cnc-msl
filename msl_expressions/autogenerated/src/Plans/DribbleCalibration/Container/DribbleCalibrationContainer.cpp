@@ -28,6 +28,10 @@ namespace alica
 //		potentialAlignPoint = nullptr;
 		defaultDistance = 0;
 		distToObs = 0;
+		changeDirections = false;
+		rotateAroundTheBall = false;
+		angleTolerance = 0;
+		alloAlignPoint = nullptr;
 		readOwnConfigParameter();
 	}
 
@@ -81,27 +85,65 @@ namespace alica
 		if (movement != Forward && movement != Backward && movement != Left && movement != Right)
 		{
 			cerr << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
-			mc.senderID = -1;
-			mc.motion.translation = NAN;
-			mc.motion.rotation = NAN;
-			mc.motion.angle = NAN;
-			return mc;
+			return setNaN(mc);
 		}
 
-		query->reset();
+		// check if there is an obstacle
+		if (!changeDirections)
+			changeDirections = checkObstacles(Forward, distToObs);
 
-		shared_ptr<geometry::CNPoint2D> egoDestination = getEgoDestinationPoint(movement, defaultDistance);
+		if (changeDirections)
+		{
+			cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
+			auto me = wm->rawSensorData->getOwnPositionVision();
 
-		query->egoDestinationPoint = egoDestination;
-		query->egoAlignPoint = egoDestination;
+			if (alloAlignPoint == nullptr)
+			{
+				alloAlignPoint = calcNewAlignPoint()->egoToAllo(*me);
+			}
+
+			shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
+
+			cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
+			cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
+
+			if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
+			{
+				query->egoAlignPoint = newAlignPoint;
+				query->rotateAroundTheBall = rotateAroundTheBall;
+				query->angleTolerance = angleTolerance;
+
+				cout << "aligning to new align point!" << endl;
+				mc = rm.alignTo(query);
+
+				return mc;
+			}
+			else if (newAlignPoint != nullptr)
+			{
+				cout << "reset changeDirection flag and newAlignPoint" << endl;
+				alloAlignPoint = nullptr;
+				changeDirections = false;
+				newAlignPoint = nullptr;
+			}
+		}
+		else
+		{
+			query->reset();
+
+			shared_ptr<geometry::CNPoint2D> egoDestination = getEgoDestinationPoint(movement, defaultDistance);
+
+			query->egoDestinationPoint = egoDestination;
+			query->egoAlignPoint = egoDestination;
 
 //		cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
 //		cout << "egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
 
-		mc = rm.moveToPoint(query);
+			mc = rm.moveToPoint(query);
 
-		mc.motion.translation = translation;
-		return mc;
+			mc.motion.translation = translation;
+			return mc;
+		}
+		return setNaN(mc);
 	}
 
 	bool DribbleCalibrationContainer::checkObstacles(Movement movement, double distance)
@@ -345,5 +387,17 @@ namespace alica
 		robotRadius = (*sys)["Rules"]->get<double>("Rules.RobotRadius", NULL);
 		defaultDistance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DefaultDistance", NULL);
 		distToObs = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DistanceToObstacle", NULL);
+		rotateAroundTheBall = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.RotateAroundTheBall",
+		NULL);
+		angleTolerance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.AngleTolerance", NULL);
+	}
+
+	MotionControl DribbleCalibrationContainer::setNaN(MotionControl mc)
+	{
+		mc.senderID = -1;
+		mc.motion.translation = NAN;
+		mc.motion.rotation = NAN;
+		mc.motion.angle = NAN;
+		return mc;
 	}
 } /* namespace alica */
