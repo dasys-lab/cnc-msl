@@ -40,6 +40,7 @@ namespace alica
 		getBallFlag = true;
 		angleTolerance = 0;
 		rotateAroundTheBall = false;
+		distToObs = 0;
 		/*PROTECTED REGION END*/
 	}
 	CalibrationDribbleForward::~CalibrationDribbleForward()
@@ -53,7 +54,8 @@ namespace alica
 		MotionControl mc;
 		msl::RobotMovement rm;
 //		writeConfigParameters();
-//        return;
+		this->setSuccess(true);
+        return;
         if (wm->rawSensorData->getLightBarrier())
 //		if (1 == 1)
 		{
@@ -89,12 +91,12 @@ namespace alica
 
 				// check if there is an obstacle
 				if (!changeDirections)
-					changeDirections = dcc.checkObstacles(dcc.Forward, 1000);
+					changeDirections = dcc.checkObstacles(dcc.Forward, distToObs);
 
 				// if there is an obstacle find a new way to drive and turn around
 				if (changeDirections)
 				{
-					cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
+//					cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
 					auto me = wm->rawSensorData->getOwnPositionVision();
 
 					if (alloAlignPoint == nullptr)
@@ -121,6 +123,7 @@ namespace alica
 					else if (newAlignPoint != nullptr)
 					{
 						cout << "reset changeDirection flag and newAlignPoint" << endl;
+						alloAlignPoint = nullptr;
 						changeDirections = false;
 						newAlignPoint = nullptr;
 					}
@@ -327,6 +330,7 @@ namespace alica
 		startTrans = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleForward.StartTranslation", NULL);
 		angleTolerance = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.AngleTolerance", NULL);
 		rotateAroundTheBall = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.DribbleForward.RotateAroundTheBall", NULL);
+		distToObs = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DistanceToObstacle", NULL);
 
 		// actuation config Params
 		minRotation = dcc.readConfigParameter("Dribble.MinRotation");

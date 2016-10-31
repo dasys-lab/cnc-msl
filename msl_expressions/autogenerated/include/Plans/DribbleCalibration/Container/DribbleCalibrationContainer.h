@@ -61,6 +61,7 @@ namespace alica
 		shared_ptr<msl::MovementQuery> query;
 
 		double defaultDistance;
+		double distToObs;
 
 		enum OPValue
 		{
