@@ -36,13 +36,14 @@ namespace alica
 			Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight, BackwardLeft
 		};
 		const char* movementToString[8] = {"Forward", "Backward", "Left", "Right", "Forward right", "Forward left", "Backward right", "Backward left"};
+//		vector<char> movementToString[8] = {"Forward", "Backward", "Left", "Right", "Forward right", "Forward left", "Backward right", "Backward left"};
 		msl_actuator_msgs::MotionControl getBall();
 		msl_actuator_msgs::MotionControl move(Movement movement, int translation);
 		bool checkObstacles(Movement movement, double distance);
 		shared_ptr<geometry::CNPoint2D> calcNewAlignPoint();
 		double robotRadius;
 		// used in checkObstacles and calcNewAlignPoint to decide where to drive if there is an obstacle in our way
-		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
+//		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
 
 
 		// opticalFlow stuff
@@ -66,7 +67,7 @@ namespace alica
 			XValue, YValue, QOSValue
 		};
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
-		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance = 1000);
+		shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance);
 		bool checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest);
 		void readOwnConfigParameter();
 };

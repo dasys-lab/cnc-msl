@@ -51,7 +51,9 @@ namespace alica
 
         // for obstacle avoiding
         bool changeDirections;
-        shared_ptr<geometry::CNPoint2D> newAlignPoint;
+        bool rotateAroundTheBall;
+        double angleTolerance;
+        shared_ptr<geometry::CNPoint2D> alloAlignPoint;
 
         // actuation config Params
         double minRotation;
