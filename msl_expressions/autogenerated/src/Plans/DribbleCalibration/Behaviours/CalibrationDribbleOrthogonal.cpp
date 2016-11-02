@@ -27,6 +27,8 @@ namespace alica
 		getBallFlag = true;
 		haveBallCount = 0;
 		haveBallWaitingDuration = 0;
+		correctRotationCount = 0;
+		collectDataWaitingDuration = 0;
 		/*PROTECTED REGION END*/
 	}
 	CalibrationDribbleOrthogonal::~CalibrationDribbleOrthogonal()
@@ -42,7 +44,7 @@ namespace alica
 		RobotMovement rm;
 
 		// if ball is in kicker
-		if (wm->rawSensorData->getLightBarrier(0))
+		if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
 		{
 			getBallFlag = true;
 			// waiting so we definitely have the ball when we start with the calibration
@@ -59,7 +61,22 @@ namespace alica
 			haveBallCount++;
 
 			// drive to the left
-			dcc.move(dcc.Left, startTrans * moveCount);
+			mc = dcc.move(dcc.Forward, (moveCount + 1) * startTrans);
+			if (mc.motion.translation == NAN)
+			{
+				cerr << "motion command == NAN" << endl;
+			}
+			else
+			{
+				send(mc);
+			}
+
+			// waiting some time till we can be sure to only collect correct values
+			if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
+			{
+				return;
+			}
+
 
 			// check sensor data -> optical flow should say, that the ball isn't moving
 			// correct data if the robot is loosing the ball
@@ -131,6 +148,8 @@ namespace alica
 		speedIter = floor(endTrans / startTrans);
 		haveBallWaitingDuration = (*sc)["DribbleCalibration"]->get<double>(
 				"DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
+		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.DribbleOrthogonal.EndTranslation",
+																			NULL);
 
 	}
 /*PROTECTED REGION END*/

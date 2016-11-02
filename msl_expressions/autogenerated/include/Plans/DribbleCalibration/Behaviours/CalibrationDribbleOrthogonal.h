@@ -37,6 +37,7 @@ namespace alica
 		bool getBallFlag;
 		int haveBallCount;
 		int haveBallWaitingDuration;
+		int collectDataWaitingDuration;
 
 		// rotation stuff
 		int correctRotationCount;

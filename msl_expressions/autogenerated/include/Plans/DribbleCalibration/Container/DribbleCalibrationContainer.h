@@ -77,6 +77,7 @@ private:
 				double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 				shared_ptr<geometry::CNPoint2D> getEgoDestinationPoint(Movement movement, double distance);
 				bool checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest);
+				MotionControl setZero(MotionControl mc);
 				MotionControl setNaN(MotionControl mc);
 				void readOwnConfigParameter();
 			};

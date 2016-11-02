@@ -115,7 +115,6 @@ namespace alica
 
 				cout << "aligning to new align point!" << endl;
 				mc = rm.alignTo(query);
-
 				return mc;
 			}
 			else if (newAlignPoint != nullptr)
@@ -124,6 +123,8 @@ namespace alica
 				alloAlignPoint = nullptr;
 				changeDirections = false;
 				newAlignPoint = nullptr;
+
+				return setZero(mc);
 			}
 		}
 		else
@@ -135,7 +136,7 @@ namespace alica
 			query->egoDestinationPoint = egoDestination;
 			query->egoAlignPoint = egoDestination;
 
-//		cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
+			cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
 //		cout << "egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
 
 			mc = rm.moveToPoint(query);
@@ -143,6 +144,8 @@ namespace alica
 			mc.motion.translation = translation;
 			return mc;
 		}
+//		return mc;
+		cout << "return mc -> NaN!" << endl;
 		return setNaN(mc);
 	}
 
@@ -390,6 +393,14 @@ namespace alica
 		rotateAroundTheBall = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.RotateAroundTheBall",
 		NULL);
 		angleTolerance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.AngleTolerance", NULL);
+	}
+
+	MotionControl DribbleCalibrationContainer::setZero(MotionControl mc)
+	{
+		mc.motion.translation = 0;
+		mc.motion.angle = 0;
+		mc.motion.rotation = 0;
+		return mc;
 	}
 
 	MotionControl DribbleCalibrationContainer::setNaN(MotionControl mc)
