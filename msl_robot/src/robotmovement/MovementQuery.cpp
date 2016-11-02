@@ -129,6 +129,9 @@ namespace msl
 		readConfigParameters();
 	}
 
+	/**
+	 * Reset all Parameters for the methods rotationPDForDribble() and  translationPIForDribble()
+	 */
 	void MovementQuery::resetAllPIDParameters()
 	{
 		resetRotationPDParameters();
@@ -149,18 +152,31 @@ namespace msl
 		readConfigParameters();
 	}
 
+	/**
+	 * Sets P and D parameters for rotationPDForDribble()
+	 * @pParam
+	 * @dParam
+	 */
 	void MovementQuery::setRotationPDParameters(double pParam, double dParam)
 	{
 		this->pRot = pParam;
 		this->dRot = dParam;
 	}
 
+	/**
+	 * Sets P and I parameters for translationPIForDribble()
+	 * @pParam
+	 * @iParam
+	 */
 	void MovementQuery::setTranslationPIParameters(double pParam, double iParam)
 	{
 		this->pTrans = pParam;
 		this->iTrans = iParam;
 	}
 
+	/**
+	 * Reads all necessary parameters from Dribble.conf
+	 */
 	void MovementQuery::readConfigParameters()
 	{
 		supplementary::SystemConfig* supplementary = supplementary::SystemConfig::getInstance();
