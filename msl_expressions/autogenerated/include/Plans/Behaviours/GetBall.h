@@ -5,6 +5,7 @@
 /*PROTECTED REGION ID(inc1414828300860) ENABLED START*/ //Add additional includes here
 #include <container/CNPoint2D.h>
 #include <container/CNPosition.h>
+#include <Geometry.h>
 #include <container/CNVelocity2D.h>
 #include <msl_robot/robotmovement/MovementQuery.h>
 using namespace msl;
@@ -34,10 +35,10 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1414828300860) ENABLED START*/ //Add additional private methods here
-        msl_actuator_msgs::MotionControl driveToApproachingBall(shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                                                                shared_ptr<geometry::CNPoint2D> egoBallPos);
-        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
-                                                           shared_ptr<geometry::CNVelocity2D> egoBallVel);
+        msl_actuator_msgs::MotionControl driveToApproachingBall(shared_ptr<geometry::CNVec2DEgo> ballVelocity,
+                                                                shared_ptr<geometry::CNPoint2DEgo> egoBallPos);
+        msl_actuator_msgs::MotionControl driveToMovingBall(shared_ptr<geometry::CNPoint2DEgo> egoBallPos,
+                                                           shared_ptr<geometry::CNVec2DEgo> egoBallVel);
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

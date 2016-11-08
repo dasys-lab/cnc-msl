@@ -10,6 +10,8 @@ using namespace std;
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <MSLWorldModel.h>
 #include <Game.h>
+
+using namespace geometry;
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -32,12 +34,13 @@ namespace alica
         /*PROTECTED REGION ID(run1414828300860) ENABLED START*/ //Add additional options here
         msl::RobotMovement rm;
 
-        shared_ptr < geometry::CNPosition > me = wm->rawSensorData->getOwnPositionVision();
-        shared_ptr < geometry::CNPoint2D > egoBallPos = wm->ball->getEgoBallPosition();
+        auto me = dynamic_pointer_cast<CNPositionAllo>(wm->rawSensorData->getOwnPositionVision());
+        auto egoBallPos = dynamic_pointer_cast<CNPoint2DEgo>(wm->ball->getEgoBallPosition());
         if (me == nullptr || egoBallPos == nullptr)
         {
             return;
         }
+
         auto obstacles = wm->obstacles->getAlloObstaclePoints();
         bool blocked = false;
         msl_actuator_msgs::MotionControl mc;
@@ -45,8 +48,8 @@ namespace alica
         {
             for (int i = 0; i < obstacles->size(); i++)
             {
-                if (wm->pathPlanner->corridorCheck(make_shared < geometry::CNPoint2D > (me->x, me->y),
-                                                   egoBallPos->egoToAllo(*me), obstacles->at(i)))
+                if (wm->pathPlanner->corridorCheck(make_shared < CNPoint2D > (me->x, me->y),
+												   dynamic_pointer_cast<CNPoint2D>(egoBallPos->toAllo(*me)), obstacles->at(i)))
                 {
                     blocked = true;
                     break;
@@ -55,12 +58,12 @@ namespace alica
         }
         if (!blocked)
         {
-            auto egoBallVelocity = wm->ball->getEgoBallVelocity();
+            auto egoBallVelocity = dynamic_pointer_cast<CNVec2DEgo>(wm->ball->getEgoBallVelocity());
             if (egoBallVelocity == nullptr)
             {
-                egoBallVelocity = make_shared<geometry::CNVelocity2D>();
+                egoBallVelocity = make_shared<CNVec2DEgo>();
             }
-            auto vector = egoBallVelocity + egoBallPos;
+            auto vector = egoBallPos + egoBallVelocity;
             double vectorLength = vector->length();
             if (wm->ball->haveBall())
             {
@@ -103,8 +106,8 @@ namespace alica
         else
         {
 //            mc = msl::RobotMovement::moveToPointCarefully(egoBallPos, egoBallPos, 0);
-            query->egoDestinationPoint = egoBallPos;
-            query->egoAlignPoint = egoBallPos;
+            query->egoDestinationPoint = dynamic_pointer_cast<CNPoint2D>(egoBallPos);
+            query->egoAlignPoint = dynamic_pointer_cast<CNPoint2D>(egoBallPos);
             mc = rm.moveToPoint(query);
         }
         // replaced with new method
@@ -116,7 +119,7 @@ namespace alica
         }
         else
         {
-            cout << "Motin command is NaN!" << endl;
+            cout << "Motion command is NaN!" << endl;
         }
         /*PROTECTED REGION END*/
     }
@@ -135,8 +138,8 @@ namespace alica
         /*PROTECTED REGION END*/
     }
     /*PROTECTED REGION ID(methods1414828300860) ENABLED START*/ //Add additional methods here
-    msl_actuator_msgs::MotionControl GetBall::driveToMovingBall(shared_ptr<geometry::CNPoint2D> egoBallPos,
-                                                                shared_ptr<geometry::CNVelocity2D> egoBallVel)
+    msl_actuator_msgs::MotionControl GetBall::driveToMovingBall(shared_ptr<CNPoint2DEgo> egoBallPos,
+                                                                shared_ptr<CNVec2DEgo> egoBallVel)
     {
 
         msl_actuator_msgs::MotionControl mc;
@@ -149,24 +152,24 @@ namespace alica
         movement += ballSpeed;
 
         mc.motion.translation = movement;
-        mc.motion.angle = egoBallPos->angleTo();
-        mc.motion.rotation = egoBallPos->rotate(M_PI)->angleTo() * rotate_P;
+        mc.motion.angle = egoBallPos->angle();
+        mc.motion.rotation = egoBallPos->rotate(M_PI)->angle() * rotate_P;
         return mc;
     }
 
-    msl_actuator_msgs::MotionControl GetBall::driveToApproachingBall(shared_ptr<geometry::CNVelocity2D> ballVelocity,
-                                                                     shared_ptr<geometry::CNPoint2D> egoBallPos)
+    msl_actuator_msgs::MotionControl GetBall::driveToApproachingBall(shared_ptr<CNVec2DEgo> ballVelocity,
+                                                                     shared_ptr<CNPoint2DEgo> egoBallPos)
     {
         double yIntersection = egoBallPos->y + (-(egoBallPos->x / ballVelocity->x)) * ballVelocity->y;
 
-        shared_ptr < geometry::CNPoint2D > interPoint = make_shared < geometry::CNPoint2D > (0, yIntersection);
+        shared_ptr < CNPoint2DEgo > interPoint = make_shared < CNPoint2DEgo > (0, yIntersection);
 
         msl_actuator_msgs::MotionControl mc;
         msl_actuator_msgs::BallHandleCmd bhc;
 //        mc = RobotMovement::moveToPointCarefully(interPoint, egoBallPos, 100);
         msl::RobotMovement rm;
-        query->egoDestinationPoint = interPoint;
-        query->egoAlignPoint = egoBallPos;
+        query->egoDestinationPoint = dynamic_pointer_cast<CNPoint2D>(interPoint);
+        query->egoAlignPoint = dynamic_pointer_cast<CNPoint2D>(egoBallPos);
         query->snapDistance = 100;
         mc = rm.moveToPoint(query);
         return mc;
