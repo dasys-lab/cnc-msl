@@ -20,7 +20,7 @@ namespace alica
     bool RotateOnce::hasInitialConfigurationBeenSet;
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
-            DomainBehaviour("RotateOnce"), precisionBuffer(PRECISION_BUFFER_SIZE)
+            DomainBehaviour("RotateOnce")
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         initialRadius = wm->getRobotRadius();
@@ -28,11 +28,13 @@ namespace alica
         minRadius = initialRadius - radiusOffset;
         maxRadius = initialRadius + radiusOffset;
         hasInitialConfigurationBeenSet = false;
+        precisionBuffer = new msl::RingBuffer<double>(PRECISION_BUFFER_SIZE);
         /*PROTECTED REGION END*/
     }
     RotateOnce::~RotateOnce()
     {
         /*PROTECTED REGION ID(dcon1467397900274) ENABLED START*/ //Add additional options here
+    	delete precisionBuffer;
         /*PROTECTED REGION END*/
     }
     void RotateOnce::run(void* msg)
@@ -60,16 +62,16 @@ namespace alica
         if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
         {
             double circDiff = circularDiff(currentBearing, initialBearing);
-            precisionBuffer.add(make_shared<double>(circDiff));
+            precisionBuffer->add(make_shared<double>(circDiff));
 
             rotationSpeed = getLimitedRotationSpeed(-circDiff);
 
-            if (precisionBuffer.getSize() == PRECISION_BUFFER_SIZE)
+            if (precisionBuffer->getSize() == PRECISION_BUFFER_SIZE)
             {
                 double diffSum = 0;
                 for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
                 {
-                    diffSum += precisionBuffer.getActualElement(i);
+                    diffSum += precisionBuffer->getActualElement(i);
                 }
 
                 if (diffSum >= 0)
@@ -100,7 +102,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1467397900274) ENABLED START*/ //Add additional options here
         rotationSpeed = ACCELERATION;
         initialBearing = wm->rawSensorData->getAverageBearing();
-        precisionBuffer.clear(true);
+        precisionBuffer->clear(true);
         initialAngle = wm->rawOdometry->position.angle;
 
         segments[0] = initialBearing;

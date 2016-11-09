@@ -38,36 +38,49 @@ namespace alica
 
         cout << cmd.str() << endl;
         string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
+
+        /* I like C! */
         // match plotted value
-        regex regex(".*robotRadius=(.*)");
-        match_results < string::const_iterator > match;
-        regex_match(gnuplotReturn, match, regex);
-        string matchedValue = match[1];
-        double calculatedValue;
-        cout << gnuplotReturn << endl;
-        // here we omit the unnecessary '=' that is captured by the regex
-        // cout << "MATCHED VALUE=" << matchedValue << endl << "MATCH1=" << match[1] << endl << "MATCH2=" << match[2] << endl;
-        if (matchedValue.size() > 0)
-        {
-            if (matchedValue.at(0) == '=')
-            {
-                matchedValue = matchedValue.substr(1);
-            }
-            stringstream str(matchedValue);
-            str >> calculatedValue;
-            if (calculatedValue > 0 && calculatedValue < 1000)
-            {
-                wm->setRobotRadius(calculatedValue);
-            }
-            else
-            {
-                cout << "OH SHIT CALCULATED VALUE IS " << calculatedValue << "!!! <-- ZHAT SEEMS SUSPICOIUS" << endl;
-            }
+        const int max_line_size = 400;
+        const int output_size = gnuplotReturn.size() + 1;
+        const char *ret = gnuplotReturn.c_str();
+        char output[output_size];
+        char *line;
+        char *lastline;
+        char *radiusStr;
+
+        strncpy(output, gnuplotReturn.c_str(), output_size);
+
+        // Get last line
+        line = strtok(output, "\n");
+        while ((line = strtok(NULL, "\n")) != NULL)
+        	lastline = line;
+
+        // Get the radius as string
+        strtok(lastline, "="); // eats robotRadius
+        radiusStr = strtok(NULL, "=");
+        if (radiusStr == NULL) {
+        	cerr << "ERROR parsing gnuplot output" << endl;
+        	this->setSuccess(true); // not really tho
+        	return;
         }
-        else
-        {
-            cout << "OH SHIT GNUPLOT RETURN MATCHING FAILED (did you run ssh -X?)" << endl;
+
+        // Convert it to double
+        double calculatedValue = strtod(radiusStr, NULL);
+        if (calculatedValue <= 0 || calculatedValue > 500) {
+        	// Something went wrong during parsing when value = 0
+        	cerr << "ERROR parsing robot radius OR robot radius not appropriate" << endl;
+            cerr << "Calculated Robot Radius: " << calculatedValue << endl;
+        	this->setSuccess(true); // not really tho
+        	return;
         }
+
+        cout << "SUCCESS!" << endl;
+        cout << "Calculated Robot Radius: " << calculatedValue << endl;
+
+        wm->setRobotRadius(calculatedValue);
+        cout << "OH SHIT IT WORKED!" << endl;
+
         this->setSuccess(true);
 
         /*PROTECTED REGION END*/
