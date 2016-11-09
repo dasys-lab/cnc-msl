@@ -71,6 +71,8 @@
 
 #include  "Plans/Attack/constraints/ProtectBall1449151802193Constraints.h"
 
+#include  "Plans/TestPlans/constraints/TestCalculationPlan1478709817405Constraints.h"
+
 #include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
 
 #include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"

@@ -70,6 +70,8 @@
 
 #include  "Plans/Attack/ProtectBall1449151802193.h"
 
+#include  "Plans/TestPlans/TestCalculationPlan1478709817405.h"
+
 #include  "Plans/Standards/Own/Corner/CornerExecBounceShot1459362028865.h"
 
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"

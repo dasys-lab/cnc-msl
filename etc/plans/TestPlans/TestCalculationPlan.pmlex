@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
+  <extensions>
+    <key href="TestCalculationPlan.pml#1478709817406"/>
+    <value xPos="43" yPos="62" width="82" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="TestCalculationPlan.pml#1478709817405"/>
+    <value width="403" height="214"/>
+  </extensions>
+  <extensions>
+    <key href="TestCalculationPlan.pml#1478709817407"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../Calibration/RotationCalibrationCalculation.beh#1475074454339"/>
+    <value/>
+  </extensions>
+</uiextensionmodel:PmlUiExtensionMap>

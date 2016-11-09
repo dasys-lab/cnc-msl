@@ -44,7 +44,7 @@ namespace alica
         regex_match(gnuplotReturn, match, regex);
         string matchedValue = match[1];
         double calculatedValue;
-	cout << gnuplotReturn << endl;
+        cout << gnuplotReturn << endl;
         // here we omit the unnecessary '=' that is captured by the regex
         // cout << "MATCHED VALUE=" << matchedValue << endl << "MATCH1=" << match[1] << endl << "MATCH2=" << match[2] << endl;
         if (matchedValue.size() > 0)
