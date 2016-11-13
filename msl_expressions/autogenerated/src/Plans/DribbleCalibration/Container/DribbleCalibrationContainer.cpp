@@ -90,7 +90,7 @@ namespace alica
 
 		// check if there is an obstacle
 		if (!changeDirections)
-			changeDirections = checkObstacles(Forward, distToObs);
+			changeDirections = checkObstacles(movement, distToObs);
 
 		if (changeDirections)
 		{
@@ -99,7 +99,7 @@ namespace alica
 
 			if (alloAlignPoint == nullptr)
 			{
-				alloAlignPoint = calcNewAlignPoint()->egoToAllo(*me);
+				alloAlignPoint = calcNewAlignPoint(movement)->egoToAllo(*me);
 			}
 
 			shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
@@ -142,6 +142,7 @@ namespace alica
 			mc = rm.moveToPoint(query);
 
 			mc.motion.translation = translation;
+			mc.motion.rotation = 0;
 			return mc;
 		}
 //		return mc;
@@ -203,8 +204,10 @@ namespace alica
 	bool DribbleCalibrationContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 	{
 		// egoDestinationPoint to allo
+		egoDest->x = egoDest->x == 0 ? 1 : egoDest->x;
 		shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(
 				*wm->rawSensorData->getOwnPositionVision());
+		cout << "alloDestinationPoint = " << alloDestination->toString();
 
 		// check if destinationPoint is inside the field area
 		double fieldLength = wm->field->getFieldLength();
@@ -247,32 +250,63 @@ namespace alica
 		return egoDestination;
 	}
 
-	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::calcNewAlignPoint()
+	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::calcNewAlignPoint(Movement curMove)
 	{
 		cout << "choose new direction..." << endl;
 
 		// use checkObstacels to choose a new direction
-		vector<Movement> movement = {Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight,
-										BackwardLeft};
+//		vector<Movement> movement = {Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight,
+//										BackwardLeft};
+		vector<Movement> movement = {Forward, ForwardRight, Right, BackwardRight, Backward, BackwardLeft, Left, ForwardLeft};
 
 		double distance = 3000;
 		shared_ptr<geometry::CNPoint2D> alignPoint;
-//		double beta = 45;
-//		double a = distance * cos(beta);
-//		double b = sqrt(((distance * distance) - (a * a)));
-		for (Movement dir : movement)
+
+		for (int i = 0; i < movement.size(); i++)
+		{
+			Movement dir = movement.at(i);
+
 			if (!checkObstacles(dir, distance))
 			{
 				{
 					cout << "New align point in " << movementToString[dir] << " direction..." << endl;
-//					shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
+					cout << "curMove = " << movementToString[curMove] << endl;
+
+					dir = curMove == Left ? getNewDirection(i, movement, 2): dir;
+					dir = curMove == Right ? getNewDirection(i, movement, -2): dir;
+
+					cout << "New specific align point in " << movementToString[dir] << " direction..." << endl;
 
 					alignPoint = getEgoDestinationPoint(dir, distance);
 					break;
 				}
 			}
+		}
 
 		return alignPoint;
+	}
+
+	/**
+	 * helper function for calcNewAlignPoint
+	 * uses vector<Movement> movement like a ring list
+	 *
+	 * @return the new align point if the robot is driving in another direction than forward
+	 */
+	DribbleCalibrationContainer::Movement DribbleCalibrationContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
+	{
+		cout << "in getNewDirection!" << endl;
+		if ((curDir - next) >= 0 && (curDir - next) < movement.size())
+		{
+			return movement.at(curDir - next);
+		} else if ((curDir - next) > (movement.size() - 1))
+		{
+			int i = (curDir - next) - (movement.size() - 1);
+			return movement.at(i);
+		} else
+		{
+			int i = (movement.size() - 1) - abs(curDir - next);
+			return movement.at(i);
+		}
 	}
 
 	/**

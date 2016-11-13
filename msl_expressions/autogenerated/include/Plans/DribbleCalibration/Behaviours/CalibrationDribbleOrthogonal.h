@@ -19,7 +19,6 @@ namespace alica
 		virtual void initialiseParameters();
 		/*PROTECTED REGION ID(pro1469196321064) ENABLED START*/ //Add additional protected methods here
 		DribbleCalibrationContainer dcc;
-		double orthoDriveFactor;
 
 		enum Rotation
 		{
@@ -39,8 +38,14 @@ namespace alica
 		int haveBallWaitingDuration;
 		int collectDataWaitingDuration;
 
+		// Actuation.conf parameter
+		double orthoDriveFactor;
+		double changingValue;
+
 		// rotation stuff
-		int correctRotationCount;
+		int minHaveBallIter;
+		double minHaveBallParamPoint;
+		double maxHaveBallParamPoint;
 
 
 		shared_ptr<msl::MovementQuery> query;
