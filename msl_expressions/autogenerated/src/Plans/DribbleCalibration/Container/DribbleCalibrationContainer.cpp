@@ -203,10 +203,13 @@ namespace alica
 	 */
 	bool DribbleCalibrationContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 	{
+		cout << "checkFieldLine egoDestination = " << egoDest->toString();
+		auto me = wm->rawSensorData->getOwnPositionVision();
+		cout << "me->theta = " << me->theta << endl;
+		cout << "me->x = " << me->x << endl;
+		cout << "me->y = " << me->y << endl;
 		// egoDestinationPoint to allo
-		egoDest->x = egoDest->x == 0 ? 1 : egoDest->x;
-		shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(
-				*wm->rawSensorData->getOwnPositionVision());
+		shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(*me);
 		cout << "alloDestinationPoint = " << alloDestination->toString();
 
 		// check if destinationPoint is inside the field area

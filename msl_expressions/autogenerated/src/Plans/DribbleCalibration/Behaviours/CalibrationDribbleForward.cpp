@@ -55,10 +55,10 @@ namespace alica
 		msl::RobotMovement rm;
 //		writeConfigParameters();
 		this->setSuccess(true);
-		cout << "set succes true" << endl;
+//		cout << "set succes true" << endl;
 		return;
-		if (wm->rawSensorData->getLightBarrier())
-//		if (1 == 1)
+//		if (wm->rawSensorData->getLightBarrier())
+		if (1 == 1)
 		{
 			getBallFlag = true;
 			// waiting so we definitely have the ball when we start with the calibration
