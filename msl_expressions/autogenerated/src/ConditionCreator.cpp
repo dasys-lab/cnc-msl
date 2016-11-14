@@ -70,6 +70,8 @@
 
 #include  "Plans/Attack/ProtectBall1449151802193.h"
 
+#include  "Plans/TestPlans/TestCalculationPlan1478709817405.h"
+
 #include  "Plans/Standards/Own/Corner/CornerExecBounceShot1459362028865.h"
 
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"
@@ -1045,6 +1047,12 @@ namespace alica
             case 1457173948942:
 
                 return make_shared<RunTimeCondition1457173948942>();
+
+                break;
+
+            case 1478711356604:
+
+                return make_shared<TransitionCondition1478711356604>();
 
                 break;
 

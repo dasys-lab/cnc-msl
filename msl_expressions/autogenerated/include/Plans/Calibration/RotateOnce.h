@@ -30,9 +30,9 @@ namespace alica
         static const int PRECISION_BUFFER_SIZE = 10;
         static constexpr double MAX_ROTATION_SPEED = 2.0;
         static constexpr double STEP_SIZE = 3.0;
-        static const int NUMBER_OF_STEPS = 3;
+        static const int NUMBER_OF_STEPS = 5;
         //Buffer holding precision values of current rotation
-        msl::RingBuffer<double> precisionBuffer;
+        msl::RingBuffer<double>* precisionBuffer;
         double segments[3];
         bool visitedSegments[3];
         static bool hasInitialConfigurationBeenSet;
