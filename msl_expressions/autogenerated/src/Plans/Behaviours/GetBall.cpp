@@ -63,7 +63,7 @@ namespace alica
             {
                 egoBallVelocity = make_shared<CNVec2DEgo>();
             }
-            auto vector = egoBallPos + egoBallVelocity;
+            auto vector = (egoBallPos + egoBallVelocity) * 2.0;
             double vectorLength = vector->length();
             if (wm->ball->haveBall())
             {
