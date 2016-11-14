@@ -183,7 +183,7 @@ namespace msl
 	{
 		shared_ptr<InformationElement<geometry::CNPosition>> motion = make_shared<
 				InformationElement<geometry::CNPosition>>(
-				make_shared<geometry::CNPosition>(msg->position.x, msg->position.y, msg->position.angle),
+				make_shared<geometry::CNPosition>(msg->position.x, msg->position.y, msg->position.angle), // TODO: rotate?
 				wm->getTime());
 		ownPositionMotion.add(motion);
 		shared_ptr<InformationElement<msl_msgs::MotionInfo>> vel =
@@ -231,9 +231,9 @@ namespace msl
 	void RawSensorData::processMotionControlMessage(msl_actuator_msgs::MotionControl& cmd)
 	{
 		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
-		mc->motion.angle = cmd.motion.angle;
+		mc->motion.angle = cmd.motion.angle; // TODO: rotate
 		mc->motion.translation = cmd.motion.translation;
-		mc->motion.rotation = cmd.motion.rotation;
+		mc->motion.rotation = cmd.motion.rotation; // TODO: rotate?
 		mc->timestamp = cmd.timestamp;
 		shared_ptr<InformationElement<msl_actuator_msgs::MotionControl>> smc = make_shared<
 				InformationElement<msl_actuator_msgs::MotionControl>>(mc, wm->getTime());
@@ -259,7 +259,7 @@ namespace msl
 			//Vision
 			shared_ptr<geometry::CNPosition> pos = make_shared<geometry::CNPosition>(data->odometry.position.x,
 																						data->odometry.position.y,
-																						data->odometry.position.angle);
+																						data->odometry.position.angle); // TODO: rotate?
 			shared_ptr<InformationElement<geometry::CNPosition>> odometry = make_shared<
 					InformationElement<geometry::CNPosition>>(pos, time);
 			odometry->certainty = data->odometry.certainty;
@@ -331,7 +331,7 @@ namespace msl
 	void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr& coi)
 	{
 		shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y,
-																					coi->position.angle);
+																					coi->position.angle); // TODO: rotate?
 		shared_ptr<InformationElement<geometry::CNPosition>> o = make_shared<InformationElement<geometry::CNPosition>>(
 				opt, wm->getTime());
 		o->certainty = coi->position.certainty;
