@@ -208,7 +208,9 @@ uint16_t booster_getLogicVoltage()
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
 	static double factor = 0.048479; // 5.0 * 556/56 / 1024;
 
-	return adc_logic_raw * factor;
+	double ret = adc_logic_raw * factor;
+
+	return (uint16_t) ret; // * factor;
 }
 
 uint16_t booster_getBoosterVoltage()
@@ -216,7 +218,9 @@ uint16_t booster_getBoosterVoltage()
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
 	static double factor = 0.048479; // 5.0 * 556/56 / 1024;
 
-	return adc_booster_raw * factor;
+	double ret = adc_booster_raw * factor;
+
+	return (uint16_t) ret; // * factor;
 }
 
 uint16_t booster_getCapacitorVoltage()
@@ -224,7 +228,9 @@ uint16_t booster_getCapacitorVoltage()
 	// factor = ADC-Ref-Voltage * Voltage-Divider / ADC-Resolution
 	static double factor = 0.328664; // 5.0 * 12587/187 / 1024;
 
-	return adc_capacitor_raw * factor;
+	double ret = adc_capacitor_raw * factor;
+
+	return (uint16_t) ret; // * factor;
 }
 
 /**

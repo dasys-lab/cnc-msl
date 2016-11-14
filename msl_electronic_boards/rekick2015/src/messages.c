@@ -63,9 +63,7 @@ void message_receive_handler()
 	switch (can_get_status(&rx_msg)) {
 		case CAN_STATUS_COMPLETED:
 			// Message received
-			if ((rx_msg.id.ext & 0x000000FF) == REKICK_ID) {
-				// ID Filter
-				debug("Filter");
+			if ((rx_msg.id.ext & 0x000000FF) == REKICK_ID) {	// Ext-ID masked with 0x000000FF
 				parse_data(rx_msg.pt_data, rx_msg.dlc);
 			}
 			rx_msg.status = 0;	// clear status
@@ -422,7 +420,7 @@ void parse_manual(uint8_t *data, uint8_t length) {
 		debug("Release");
 	}
 	// enable auto boosting
-	else if (data[0] == 's') {
+	else if (data[0] == 'e') {
 		mode = Mode_SoftwareControlled;
 	}
 	// force boosting. disable the software control
