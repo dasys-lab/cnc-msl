@@ -54,8 +54,9 @@ namespace alica
 		MotionControl mc;
 		msl::RobotMovement rm;
 //		writeConfigParameters();
-//		this->setSuccess(true);
-//		return;
+		this->setSuccess(true);
+//		cout << "set succes true" << endl;
+		return;
 //		if (wm->rawSensorData->getLightBarrier())
 		if (1 == 1)
 		{

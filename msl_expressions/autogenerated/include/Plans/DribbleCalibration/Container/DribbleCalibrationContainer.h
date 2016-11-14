@@ -41,7 +41,7 @@ namespace alica
 		msl_actuator_msgs::MotionControl getBall();
 		msl_actuator_msgs::MotionControl move(Movement movement, int translation);
 		bool checkObstacles(Movement movement, double distance);
-		shared_ptr<geometry::CNPoint2D> calcNewAlignPoint();
+		shared_ptr<geometry::CNPoint2D> calcNewAlignPoint(Movement curMove);
 		double robotRadius;
 		// used in checkObstacles and calcNewAlignPoint to decide where to drive if there is an obstacle in our way
 //		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
@@ -79,6 +79,7 @@ private:
 				bool checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest);
 				MotionControl setZero(MotionControl mc);
 				MotionControl setNaN(MotionControl mc);
+				Movement getNewDirection(int curDir, vector<Movement> movement, int next);
 				void readOwnConfigParameter();
 			};
 
