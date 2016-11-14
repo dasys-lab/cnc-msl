@@ -238,15 +238,15 @@ uint16_t booster_getCapacitorVoltage()
  */
 void booster_printVoltage() {
 	char str1[20];
-	sprintf(str1, "L: %d V", booster_getLogicVoltage());
+	sprintf(str1, "L: %d, %d V", adc_logic_raw, booster_getLogicVoltage());
 	debug(str1);
 
 	char str2[20];
-	sprintf(str2, "B: %d V", booster_getBoosterVoltage());
+	sprintf(str2, "B: %d, %d V", adc_booster_raw, booster_getBoosterVoltage());
 	debug(str2);
 
 	char str3[20];
-	sprintf(str3, "C: %d V", booster_getCapacitorVoltage());
+	sprintf(str3, "C: %d, %d V", adc_capacitor_raw, booster_getCapacitorVoltage());
 	debug(str3);
 }
 
