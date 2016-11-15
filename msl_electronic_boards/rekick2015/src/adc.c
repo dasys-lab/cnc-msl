@@ -17,6 +17,12 @@ volatile uint16_t adc_value;
 volatile int8_t adc_muxMode;
 volatile bool adc_ready;
 
+enum adcMUX {
+	ADC_24V_LOGIC = 1,
+	ADC_24V_BOOSTER,
+	ADC_CAP,
+};
+
 
 void adc_init()
 {
@@ -24,14 +30,16 @@ void adc_init()
 	ADMUX |= (1 << REFS0);	// AVcc with external capacitor on AREF pin
 
 	ADCSRA = 0x00;
-	ADCSRA |= (1 << ADEN) | (1 << ADIE);		// Enable ADC, Enable Interupt
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);	// Set Prescaler to 128 (16MHz / 128 = 125kHz)
+	ADCSRA |= (1 << ADEN) | (1 << ADIE);		// Enable ADC, Enable Interupt
 
 	ADCSRB = 0x00;
-	ADCSRB |= (1 << AREFEN);
+	//ADCSRB |= (1 << AREFEN);
+
+	adc_start_conversion(ADC_CAP);
 }
 
-int8_t adc_start_conversion(int8_t muxMode)
+int8_t adc_start_conversion(int8_t channel)
 {
 	// Check if there is a conversion running
 	if (ADCSRA & (1 << ADSC)) {
@@ -39,11 +47,10 @@ int8_t adc_start_conversion(int8_t muxMode)
 		return -1;
 	}
 
-	ADMUX = ADMUX & 0xC0;		// Save VRef selection Bits
-	ADMUX |= muxMode & 0x1F;	// Choose muxMode
+	ADMUX = (ADMUX & 0xC0) | (channel & 0x0F);
 
-	ADCSRA |= (1 << ADSC);		// Start Conversion
-	adc_ready = false;
+	// Start Conversion
+	ADCSRA |= (1 << ADSC);
 
 	return 1;
 }
@@ -89,7 +96,7 @@ int16_t adc_read(int8_t muxMode)
 	}
 
 	uint8_t reg = ADMUX & 0xC0;		// Save VRef selection Bits
-	reg |= muxMode & 0x1F;			// Choose muxMode
+	reg |= muxMode & 0x0F;			// Choose muxMode
 
 	ADCSRA |= (1 << ADSC);			// Start Conversion
 
@@ -103,27 +110,28 @@ int16_t adc_read(int8_t muxMode)
 
 ISR(ADC_vect)
 {
-	cli();
-	adc_muxMode = ADMUX & 0x1F;
-	adc_value = (ADCH << 8) | ADCL;
-	adc_ready = true;
-	sei();
+	adc_muxMode = ADMUX & 0x0F;
+	adc_value =  ADCL | (ADCH << 8);
 
 	switch(adc_muxMode)
 	{
 		case ADC_24V_LOGIC:
 			booster_setLogicRawVoltage(adc_value);
+			adc_start_conversion(ADC_24V_BOOSTER);
 			break;
 
 		case ADC_24V_BOOSTER:
 			booster_setBoosterRawVoltage(adc_value);
+			adc_start_conversion(ADC_CAP);
 			break;
 
 		case ADC_CAP:
 			booster_setCapacitorRawVoltage(adc_value);
+			adc_start_conversion(ADC_24V_LOGIC);
 			break;
 
 		default:
+			adc_start_conversion(ADC_24V_LOGIC);
 			break;
 	}
 }

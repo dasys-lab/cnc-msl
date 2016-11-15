@@ -84,7 +84,7 @@ int main(void) {
 
 	while(1) {
 		message_handler();
-		adc_handler();
+		//adc_handler();
 		kicker_ctrl();
 		booster_ctrl();
 
