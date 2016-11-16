@@ -149,6 +149,8 @@ using namespace std;
 
 #include  "Plans/Calibration/RestartMotion.h"
 
+#include  "Plans/Calibration/RotationCalibrationDeleteLogfile.h"
+
 #include  "Plans/Standards/Own/Corner/BouncePassFinishAlign.h"
 
 #include  "Plans/Calibration/RotateOnce.h"
@@ -636,6 +638,11 @@ namespace alica
             case 1472657588489:
 
                 return make_shared<RestartMotion>();
+                break;
+
+            case 1479315306711:
+
+                return make_shared<RotationCalibrationDeleteLogfile>();
                 break;
 
             case 1459357089325:
