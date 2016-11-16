@@ -53,7 +53,7 @@ namespace alica
 
 			int currentSegment = getCurrentRotationSegment();
 			double currentBearing = wm->rawSensorData->getAverageBearing();
-	//        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
+			// cout << "segment status: " << visitedSegments[0] << " " << visitedSegments[1] << " " << visitedSegments[2] << " " << endl; //currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
 			visitedSegments[currentSegment] = true;
 
 			if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
@@ -103,10 +103,13 @@ namespace alica
         precisionBuffer->clear(true);
         initialAngle = wm->rawOdometry->position.angle;
 
-        segments[0] = initialBearing;
+	// TODO this needs an explaining comment
+        segments[0] = fmod(initialBearing + 1.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
-        visitedSegments[2] = visitedSegments[1] = visitedSegments[0] = false;
+        visitedSegments[0] = false;
+	visitedSegments[1] = false;
+	visitedSegments[2] = false;
         cout << "starting angle: " << initialAngle << ", ";
 
         /*PROTECTED REGION END*/
