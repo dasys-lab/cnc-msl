@@ -35,11 +35,11 @@ namespace alica
         msl::RingBuffer<double>* precisionBuffer;
         double segments[3];
         bool visitedSegments[3];
-        static bool hasInitialConfigurationBeenSet;
-        static double radiusOffset;
-        static double initialRadius;
-        static double minRadius;
-        static double maxRadius;
+        bool hasInitialConfigurationBeenSet;
+        double radiusOffset;
+        double initialRadius;
+        double minRadius;
+        double maxRadius;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
 
