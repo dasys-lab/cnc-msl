@@ -2,7 +2,7 @@
 <uiextensionmodel:PmlUiExtensionMap xmlns:uiextensionmodel="http:///de.uni_kassel.vs.cn/planDesigner/pmlextension/uiextensionmodel">
   <extensions>
     <key href="RotationCalibration.pml#1467396347589"/>
-    <value xPos="56" yPos="247" width="65" height="67"/>
+    <value xPos="56" yPos="247" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1467396347588"/>
@@ -66,6 +66,10 @@
   </extensions>
   <extensions>
     <key href="RotationCalibration.pml#1475074486547"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="RotationCalibrationDeleteLogfile.beh#1479315306711"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -29,70 +29,70 @@ namespace alica
     RotateOnce::~RotateOnce()
     {
         /*PROTECTED REGION ID(dcon1467397900274) ENABLED START*/ //Add additional options here
-    	delete precisionBuffer;
+        delete precisionBuffer;
         /*PROTECTED REGION END*/
     }
     void RotateOnce::run(void* msg)
     {
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-    	if (!(this->isSuccess() || this->isFailure()))
-    	{
-			if (!hasInitialConfigurationBeenSet)
-			{
-				cout << "Kill Motion first" << endl;
-				wm->setRobotRadius(minRadius);
-				hasInitialConfigurationBeenSet = true;
-				this->setFailure(true);
-				return;
-			}
+        if (!(this->isSuccess() || this->isFailure()))
+        {
+            if (!hasInitialConfigurationBeenSet)
+            {
+                cout << "Kill Motion first" << endl;
+                wm->setRobotRadius(minRadius);
+                hasInitialConfigurationBeenSet = true;
+                this->setFailure(true);
+                return;
+            }
 
-			msl_actuator_msgs::MotionControl mc;
-			rotationSpeed = getLimitedRotationSpeed(rotationSpeed + ACCELERATION); // accelerate in each iteration until max rotation speed is reached
-			mc.motion.rotation = rotationSpeed;
-			send(mc);
+            msl_actuator_msgs::MotionControl mc;
+            rotationSpeed = getLimitedRotationSpeed(rotationSpeed + ACCELERATION); // accelerate in each iteration until max rotation speed is reached
+            mc.motion.rotation = rotationSpeed;
+            send(mc);
 
-			int currentSegment = getCurrentRotationSegment();
-			double currentBearing = wm->rawSensorData->getAverageBearing();
-	//        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
-			visitedSegments[currentSegment] = true;
+            int currentSegment = getCurrentRotationSegment();
+            double currentBearing = wm->rawSensorData->getAverageBearing();
+            //        cout << "segment " << currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
+            visitedSegments[currentSegment] = true;
 
-			if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
-			{
-				double circDiff = circularDiff(currentBearing, initialBearing);
-				precisionBuffer->add(make_shared<double>(circDiff));
+            if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
+            {
+                double circDiff = circularDiff(currentBearing, initialBearing);
+                precisionBuffer->add(make_shared<double>(circDiff));
 
-				rotationSpeed = getLimitedRotationSpeed(-circDiff);
+                rotationSpeed = getLimitedRotationSpeed(-circDiff);
 
-				if (precisionBuffer->getSize() == PRECISION_BUFFER_SIZE)
-				{
-					double diffSum = 0;
-					for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
-					{
-						diffSum += precisionBuffer->getActualElement(i);
-					}
+                if (precisionBuffer->getSize() == PRECISION_BUFFER_SIZE)
+                {
+                    double diffSum = 0;
+                    for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
+                    {
+                        diffSum += precisionBuffer->getActualElement(i);
+                    }
 
-					if (diffSum >= 0)
-					{
-						double endAngle = wm->rawOdometry->position.angle;
-						cout << "end angle: " << endAngle << " => ";
-						lastRotationCalibError = circularDiff(initialAngle, endAngle);
-						logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
-						wm->adjustRobotRadius(STEP_SIZE);
+                    if (diffSum >= 0)
+                    {
+                        double endAngle = wm->rawOdometry->position.angle;
+                        cout << "end angle: " << endAngle << " => ";
+                        lastRotationCalibError = circularDiff(initialAngle, endAngle);
+                        logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
+                        wm->adjustRobotRadius(STEP_SIZE);
 
-						if (maxRadius <= wm->getRobotRadius())
-						{
-							cout << endl << "success" << endl;
-							this->setSuccess(true);
-							return;
-						}
-						else
-						{
-							this->setFailure(true);
-						}
-					}
-				}
-			}
-    	}
+                        if (maxRadius <= wm->getRobotRadius())
+                        {
+                            cout << endl << "success" << endl;
+                            this->setSuccess(true);
+                            return;
+                        }
+                        else
+                        {
+                            this->setFailure(true);
+                        }
+                    }
+                }
+            }
+        }
         /*PROTECTED REGION END*/
     }
     void RotateOnce::initialiseParameters()
