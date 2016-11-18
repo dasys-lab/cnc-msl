@@ -1,8 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$group__main.html#gad2edb4f30990738fb53001fe0c0f4ee5" title="reacts on measured values e.g. by setting a port High or Low to switch the relais &#45;&#45;&#45; sends a Hn &#160;whe..." alt="" coords="155,5,272,35"/>
-<area shape="rect" id="node5" href="$group__main.html#ga840291bc02cba5474a4cb46a9b9566fe" title="the main method with statemachine loop as follows: statemachine &#45;&#45;&#45;&#45;!!!" alt="" coords="344,136,395,165"/>
-<area shape="rect" id="node7" href="$group__main.html#gad779a6805e18bdf90cf6b30e1bc8fd77" title="send measured data by uart Format: P:n;x y &#160;&#160;&#45;&#45;&#45; n = portnumber, x = value, y = unit" alt="" coords="145,109,281,139"/>
-<area shape="rect" id="node10" href="$group__main.html#gaccfe82780d5e9861fc6f2fba3728b0c3" title="reaction for given commands" alt="" coords="131,163,296,192"/>
-<area shape="rect" id="node13" href="$group__main.html#gae488c7bb1766cf3e179e3b22946e71b0" title="reaction for given commands" alt="" coords="135,216,292,245"/>
-<area shape="rect" id="node16" href="$group__main.html#gac7781a37ca14c5bf42c4fe9de1f4daa8" title="initialize the can driver" alt="" coords="180,269,247,299"/>
-</map>

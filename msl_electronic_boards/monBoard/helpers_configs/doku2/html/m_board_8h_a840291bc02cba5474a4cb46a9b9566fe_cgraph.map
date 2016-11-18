@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$group__uart.html#gac19a76bb7d446125734a67f9f4b68991" title="Initialize UART and set baudrate." alt="" coords="109,5,176,35"/>
-<area shape="rect" id="node5" href="$group__uart.html#gae52facc0a56086a365bb0018160d8d71" title="Put string to ringbuffer for transmitting via UART." alt="" coords="105,59,180,88"/>
-<area shape="rect" id="node7" href="$group__uart.html#gaefaab30a8338ec46a6be35b99b1b4f09" title="Get received byte from ringbuffer." alt="" coords="105,112,180,141"/>
-<area shape="rect" id="node9" href="$group__uart.html#gad975221bc08b901e4c7ad69f9c9a97e2" title="Put byte to ringbuffer for transmitting via UART." alt="" coords="105,165,180,195"/>
-</map>
