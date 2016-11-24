@@ -16,6 +16,7 @@ namespace alica
         virtual ~CalcCalib();
         virtual void run(void* msg);
         /*PROTECTED REGION ID(pub1446033324019) ENABLED START*/ //Add additional public methods here
+	bool isOnlyDouble(const char* str);
         double calibPosMotionY = 0;
         double calibPosMotionX = 0;
         double calibOldPosMotionX = 0;

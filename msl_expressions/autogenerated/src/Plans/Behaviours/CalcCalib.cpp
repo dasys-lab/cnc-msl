@@ -117,12 +117,26 @@ namespace alica
             {
                 if (lineno == 0)
                 {
-                    calibCoefficientX = std::stod(value);
+			if(isOnlyDouble(value.c_str()) == false)
+			{
+	                    std::cout << "calibCoefficientX ist kein double!" << std::endl;
+			}
                 }
+		else
+		{
+			calibCoefficientX = std::stod(value);
+		}
 
                 if (lineno == 1)
                 {
-                    calibCoefficientY = std::stod(value);
+			if(isOnlyDouble(value.c_str()) == false)
+			{
+	                    std::cout << "calibCoefficientY ist kein double!" << std::endl;
+			}
+			else
+			{
+				calibCoefficientY = std::stod(value);
+			}
                 }
             }
             calibData.close();
@@ -301,5 +315,16 @@ namespace alica
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1446033324019) ENABLED START*/ //Add additional methods here
+	bool CalcCalib::isOnlyDouble(const char* str)
+	{
+		char* endptr = 0;
+		strtod(str, &endptr);
+
+		if (*endptr != '\0' || endptr == str)
+			{
+				return false;
+			}
+		return true;
+	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
