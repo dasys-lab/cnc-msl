@@ -29,6 +29,7 @@ namespace alica
         int testRot;
         double testAngle;
         int testCount;
+        int testCount2;
 
         double velToInput;
         double epsilonT;
