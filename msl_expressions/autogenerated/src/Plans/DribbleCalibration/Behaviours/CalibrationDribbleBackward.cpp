@@ -28,8 +28,8 @@ namespace alica
     void CalibrationDribbleBackward::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196252478) ENABLED START*/ //Add additional options here
-    	this->setSuccess(true);
-    	return;
+        this->setSuccess(true);
+        return;
         if (wm->ball->haveBall())
         {
             // try to follow the forward calibration

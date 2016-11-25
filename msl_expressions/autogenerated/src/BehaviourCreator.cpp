@@ -99,6 +99,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
+
 #include  "Plans/Attack/DribbleAttackConservative.h"
 
 #include  "Plans/TestPlans/GoalieMotionTuning/DriveToPost.h"
@@ -491,6 +493,11 @@ namespace alica
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
+                break;
+
+            case 1479905216821:
+
+                return make_shared<DribbleControlMOS>();
                 break;
 
             case 1457967385543:
