@@ -37,36 +37,36 @@ namespace alica
     	motorMsg.motion.translation = testSpeed;
     	send(motorMsg);
     	testCount++;
-    	//---
-//    	auto odom = wm->rawSensorData->getOwnVelocityMotion();
-//
-//    	auto robotAngle = odom->angle;
-//    	auto robotVel = odom->translation;
-//    	auto robotRot = odom->rotation;
-//
-//    	auto ballVel = getBallVelocity(robotAngle,robotVel,robotRot);
-//    	auto ballAngle = getBallAngle(robotAngle,robotVel,robotRot);
-//
-//    	auto right = getRightArmVelocity(ballVel,ballAngle);
-//    	auto left = getLeftArmVelocity(ballVel,ballAngle);
-//
-//    	msl_actuator_msgs::BallHandleCmd msgback;
-//    	msgback.leftMotor = left;
-//    	msgback.rightMotor = right;
-//    	send(msgback);
+  
+    	auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
-    	//cout<<robotAngle<<"  "<<robotVel<<"  "<<robotRot<<"  "<<ballVel<<"  "<<ballAngle<<"  "<<left<<" "<<right<<endl;
+    	auto robotAngle = odom->angle;
+    	auto robotVel = odom->translation;
+    	auto robotRot = odom->rotation;
+
+    	auto ballVel = getBallVelocity(robotAngle,robotVel,robotRot);
+    	auto ballAngle = getBallAngle(robotAngle,robotVel,robotRot);
+
+    	auto right = getRightArmVelocity(ballVel,ballAngle);
+    	auto left = getLeftArmVelocity(ballVel,ballAngle);
+
+    	msl_actuator_msgs::BallHandleCmd msgback;
+    	msgback.leftMotor = left;
+    	msgback.rightMotor = right;
+    	send(msgback);
+
+    	cout<<"DribbleControlMOS: " <<robotAngle<<"  "<<robotVel<<"  "<<robotRot<<"  "<<ballVel<<"  "<<ballAngle<<"  "<<left<<" "<<right<<endl;
         /*PROTECTED REGION END*/
     }
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
-    	testSpeed = 2000;
+    	testSpeed = 1000;
     	testAngle = -M_PI;
     	testRot = 0;
     	testCount= 0;
 
-    	velToInput = -1.77; //calibration desired velocity to input voltage of motors
+    	velToInput = 1.77; //calibration desired velocity to input voltage of motors
     	rBallRobot = 300; //distance between robot rotation axis and ball center
     	epsilonT = 0.1; //change between robot velocity angle and desired ball velocity angle
     	epsilonRot = 0.2; //change between ball velocity angle through rotation and desired ball velocity angle
