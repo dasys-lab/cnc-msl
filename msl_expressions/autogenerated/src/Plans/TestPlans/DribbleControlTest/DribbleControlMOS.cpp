@@ -51,7 +51,7 @@ namespace alica
     	}
     	send(motorMsg);
     	testCount++;
-    	//---
+
     	auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
     	auto robotAngle = odom->angle;
@@ -69,7 +69,9 @@ namespace alica
     	msgback.rightMotor = right;
     	send(msgback);
 
+
     	cout<<"DribbleControlMOS:: "<<robotAngle<<"  "<<robotVel<<"  "<<robotRot<<"  "<<ballVel<<"  "<<ballAngle<<"  "<<left<<" "<<right<<endl;
+
         /*PROTECTED REGION END*/
     }
     void DribbleControlMOS::initialiseParameters()
@@ -81,7 +83,7 @@ namespace alica
     	testCount = 0;
     	testCount = 0;
 
-    	velToInput = -1.77; //calibration desired velocity to input voltage of motors
+    	velToInput = 1.77; //calibration desired velocity to input voltage of motors
     	rBallRobot = 300; //distance between robot rotation axis and ball center
     	epsilonT = 0.1; //change between robot velocity angle and desired ball velocity angle
     	epsilonRot = 0.2; //change between ball velocity angle through rotation and desired ball velocity angle
