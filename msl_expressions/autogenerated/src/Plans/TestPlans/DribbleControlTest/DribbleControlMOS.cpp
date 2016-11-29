@@ -27,17 +27,31 @@ namespace alica
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
 
     	//---
+    	if (testCount2 >= 10){
+    		testCount2=0;
+    		testSpeed=500;
+    		testAngle += M_PI/12;
+    	}
     	if (testCount >= 60) {
     		testCount = 0;
-    		testAngle += M_PI/2 + M_PI/12;
+    		testCount2++;
+    		testAngle += M_PI;
+    		testSpeed += 100;
     	}
     	msl_actuator_msgs::MotionControl motorMsg;
+    	if (testCount < 50){
     	motorMsg.motion.angle = testAngle;
     	motorMsg.motion.rotation = testRot;
     	motorMsg.motion.translation = testSpeed;
+    	}
+    	else {
+    		motorMsg.motion.angle = 0;
+    		motorMsg.motion.rotation = 0;
+    		motorMsg.motion.translation = 0;
+    	}
     	send(motorMsg);
     	testCount++;
-  
+
     	auto odom = wm->rawSensorData->getOwnVelocityMotion();
 
     	auto robotAngle = odom->angle;
@@ -55,16 +69,19 @@ namespace alica
     	msgback.rightMotor = right;
     	send(msgback);
 
-    	cout<<"DribbleControlMOS: " <<robotAngle<<"  "<<robotVel<<"  "<<robotRot<<"  "<<ballVel<<"  "<<ballAngle<<"  "<<left<<" "<<right<<endl;
+
+    	cout<<"DribbleControlMOS:: "<<robotAngle<<"  "<<robotVel<<"  "<<robotRot<<"  "<<ballVel<<"  "<<ballAngle<<"  "<<left<<" "<<right<<endl;
+
         /*PROTECTED REGION END*/
     }
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
-    	testSpeed = 1000;
+    	testSpeed = 500;
     	testAngle = -M_PI;
     	testRot = 0;
-    	testCount= 0;
+    	testCount = 0;
+    	testCount = 0;
 
     	velToInput = 1.77; //calibration desired velocity to input voltage of motors
     	rBallRobot = 300; //distance between robot rotation axis and ball center
