@@ -87,7 +87,7 @@ namespace alica
 			cerr << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
 			return setNaN(mc);
 		}
-
+		cout << "move method -> changeDirections: " << (changeDirections ? "true" : "false") << endl;
 		// check if there is an obstacle
 		if (!changeDirections)
 			changeDirections = checkObstacles(movement, distToObs);
@@ -115,6 +115,7 @@ namespace alica
 
 				cout << "aligning to new align point!" << endl;
 				mc = rm.alignTo(query);
+				cout << "move method -> changeDirections: " << (changeDirections ? "true" : "false") << "rotating to new align point" << endl;
 				return mc;
 			}
 			else if (newAlignPoint != nullptr)
@@ -123,7 +124,7 @@ namespace alica
 				alloAlignPoint = nullptr;
 				changeDirections = false;
 				newAlignPoint = nullptr;
-
+				cout << "move method -> changeDirections: " << (changeDirections ? "true" : "false") << "newAlignPoint == nullptr" << endl;
 				return setZero(mc);
 			}
 		}
@@ -134,7 +135,6 @@ namespace alica
 			shared_ptr<geometry::CNPoint2D> egoDestination = getEgoDestinationPoint(movement, defaultDistance);
 
 			query->egoDestinationPoint = egoDestination;
-			query->egoAlignPoint = egoDestination;
 
 			cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
 //		cout << "egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
@@ -142,7 +142,7 @@ namespace alica
 			mc = rm.moveToPoint(query);
 
 			mc.motion.translation = translation;
-			mc.motion.rotation = 0;
+			cout << "move method -> changeDirections: " << (changeDirections ? "true" : "false") << "drive normally" << endl;
 			return mc;
 		}
 //		return mc;
@@ -205,9 +205,7 @@ namespace alica
 	{
 		cout << "checkFieldLine egoDestination = " << egoDest->toString();
 		auto me = wm->rawSensorData->getOwnPositionVision();
-		cout << "me->theta = " << me->theta << endl;
-		cout << "me->x = " << me->x << endl;
-		cout << "me->y = " << me->y << endl;
+		cout << "me = " << me->toString() << endl;
 		// egoDestinationPoint to allo
 		shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(*me);
 		cout << "alloDestinationPoint = " << alloDestination->toString();
@@ -243,8 +241,8 @@ namespace alica
 		// 1000 = 1m
 		egoDestination = movement == Forward ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
 		egoDestination = movement == Backward ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
-		egoDestination = movement == Left ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
-		egoDestination = movement == Right ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+		egoDestination = movement == Left ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
+		egoDestination = movement == Right ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
 		egoDestination = movement == ForwardRight ? make_shared<geometry::CNPoint2D>(-b, a) : egoDestination;
 		egoDestination = movement == ForwardLeft ? make_shared<geometry::CNPoint2D>(-b, -a) : egoDestination;
 		egoDestination = movement == BackwardRight ? make_shared<geometry::CNPoint2D>(b, a) : egoDestination;
