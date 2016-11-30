@@ -34,6 +34,11 @@ namespace alica
         minHaveBallParamPoint = 0;
         maxHaveBallParamPoint = 0;
         changingValue = 0;
+
+        // output
+        moveLeftFlag = true;
+        moveRightFlag = true;
+
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleOrthogonal::~CalibrationDribbleOrthogonal()
@@ -67,16 +72,22 @@ namespace alica
             haveBallCount++;
 
             // drive to the left
+#ifdef DEBUG_DC
             cout << "haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+#endif
 
-            if (haveBallCount > (minHaveBallIter / 2))
+            if (haveBallCount < (minHaveBallIter / 2))
             {
-                cout << "move left..." << endl;
+            	// output
+                if (moveLeftFlag) {cout << "move left..." << endl; moveLeftFlag = false;}
+
                 mc = dcc.move(dcc.Left, (moveCount + 1) * startTrans);
             }
             else
             {
-                cout << "move right..." << endl;
+            	// output
+            	if (moveRightFlag) {cout << "move right..." << endl; moveRightFlag = false;}
+
                 mc = dcc.move(dcc.Right, (moveCount + 1) * startTrans);
             }
 

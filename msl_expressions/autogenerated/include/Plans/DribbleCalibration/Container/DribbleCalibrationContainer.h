@@ -46,7 +46,10 @@ namespace alica
 		// used in checkObstacles and calcNewAlignPoint to decide where to drive if there is an obstacle in our way
 //		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
 
-// opticalFlow stuff
+		// output variables
+		bool changeDirFlag;
+
+		// opticalFlow stuff
 		double getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 	double getAverageOpticalFlowYValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 

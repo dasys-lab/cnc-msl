@@ -47,6 +47,10 @@ namespace alica
         double minHaveBallParamPoint;
         double maxHaveBallParamPoint;
 
+        // for output
+        bool moveLeftFlag;
+        bool moveRightFlag;
+
         shared_ptr<msl::MovementQuery> query;
 
         void adaptParam();
