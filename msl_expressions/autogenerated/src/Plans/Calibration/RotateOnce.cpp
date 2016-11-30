@@ -13,6 +13,8 @@ using namespace std;
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
+	RotateOnce::measurements[0] = NULL;
+	RotateOnce::measurements[1] = NULL;
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
             DomainBehaviour("RotateOnce")
@@ -64,18 +66,9 @@ namespace alica
                         cout << "end angle: " << endAngle << " => ";
                         lastRotationCalibError = circularDiff(initialAngle, endAngle);
                         logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
-                        wm->adjustRobotRadius(STEP_SIZE);
-
-                        if (maxRadius <= wm->getRobotRadius())
-                        {
-                            cout << endl << "success" << endl;
-                            this->setSuccess(true);
-                            return;
-                        }
-                        else
-                        {
-                            this->setFailure(true);
-                        }
+                        measurements[1] = lastRotationCalibError;
+                        // wm->adjustRobotRadius(STEP_SIZE);
+                        this->setSuccess(true);
                     }
                 }
             }
@@ -89,8 +82,6 @@ namespace alica
         initialBearing = wm->rawSensorData->getAverageBearing();
         precisionBuffer->clear(true);
         initialAngle = wm->rawOdometry->position.angle;
-
-        if ()
 
         // TODO this needs an explaining comment
         segments[0] = fmod(initialBearing + 1.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;

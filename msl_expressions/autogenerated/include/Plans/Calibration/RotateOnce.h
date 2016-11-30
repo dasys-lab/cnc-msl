@@ -38,7 +38,7 @@ namespace alica
         double initialRadius;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
-        static geometry::CNPoint2D measurements[2];
+        static geometry::CNPoint2D* measurements[2];
 
         // rotation speed varies
         double rotationSpeed;
@@ -47,6 +47,7 @@ namespace alica
         double circularDiff(double a, double b);
         double getLimitedRotationSpeed(double desiredSpeed);
         void logCalibrationResult(double currentRadius, double calibError);
+
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

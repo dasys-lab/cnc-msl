@@ -27,64 +27,76 @@ namespace alica
     void RotationCalibrationCalculation::run(void* msg)
     {
         /*PROTECTED REGION ID(run1475074396562) ENABLED START*/ //Add additional options here
-        if (!this->isSuccess())
+        if (!this->isSuccess() && !this->isFailure())
         {
-            // call gnuplot for maximum convenience!!
-            // f(x) = x**3 * a + x**2 * b + x * c + d
-            // fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
-            stringstream cmd;
-            string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
-            cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
-            cmd << logfile;
-            cmd << "\\\" u 1:2 via a,b; plot \\\"";
-            cmd << logfile;
-            cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
+        	if(RotateOnce::measurements[0] == NULL) {
+        		RotateOnce::measurements[0] = RotateOnce::measurements[1];
+        		RotateOnce::measurements[1] = new CNPoint2D(RotateOnce::measurements[0]->x + 10, 0); // TODO x field
+        	} else {
+				// call gnuplot for maximum convenience!!
+				// f(x) = x**3 * a + x**2 * b + x * c + d
+				// fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
 
-            cout << cmd.str() << endl;
-            string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
+        		// TODO use measurements for gnuplot call
+				stringstream cmd;
+				string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+				cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
+				cmd << logfile;
+				cmd << "\\\" u 1:2 via a,b; plot \\\"";
+				cmd << logfile;
+				cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
 
-            /* I like C! */
-            // match plotted value
-            const int max_line_size = 400;
-            const int output_size = gnuplotReturn.size() + 1;
-            const char *ret = gnuplotReturn.c_str();
-            char output[output_size];
-            char *line;
-            char *lastline;
-            char *radiusStr;
+				cout << cmd.str() << endl;
+				string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
 
-            strncpy(output, gnuplotReturn.c_str(), output_size);
+				/* I like C! */
+				// match plotted value
+				const int max_line_size = 400;
+				const int output_size = gnuplotReturn.size() + 1;
+				const char *ret = gnuplotReturn.c_str();
+				char output[output_size];
+				char *line;
+				char *lastline;
+				char *radiusStr;
 
-            // Get last line
-            line = strtok(output, "\n");
-            while ((line = strtok(NULL, "\n")) != NULL)
-                lastline = line;
+				strncpy(output, gnuplotReturn.c_str(), output_size);
 
-            // Get the radius as string
-            strtok(lastline, "="); // eats robotRadius
-            radiusStr = strtok(NULL, "=");
-            if (radiusStr == NULL)
-            {
-                cerr << "ERROR parsing gnuplot output" << endl;
-                this->setSuccess(true); // not really tho
-                return;
-            }
+				// Get last line
+				line = strtok(output, "\n");
+				while ((line = strtok(NULL, "\n")) != NULL)
+					lastline = line;
 
-            // Convert it to double
-            double calculatedValue = strtod(radiusStr, NULL);
-            if (calculatedValue <= 0 || calculatedValue > 500)
-            {
-                // Something went wrong during parsing when value = 0
-                cerr << "ERROR parsing robot radius OR robot radius not appropriate" << endl;
-                cerr << "Calculated Robot Radius: " << calculatedValue << endl;
-                this->setSuccess(true); // not really tho
-                return;
-            }
+				// Get the radius as string
+				strtok(lastline, "="); // eats robotRadius
+				radiusStr = strtok(NULL, "=");
+				if (radiusStr == NULL)
+				{
+					cerr << "ERROR parsing gnuplot output" << endl;
+					this->setSuccess(true); // not really tho
+					return;
+				}
 
+				// Convert it to double
+				double calculatedValue = strtod(radiusStr, NULL);
+				if (calculatedValue <= 0 || calculatedValue > 500)
+				{
+					// Something went wrong during parsing when value = 0
+					cerr << "ERROR parsing robot radius OR robot radius not appropriate" << endl;
+					cerr << "Calculated Robot Radius: " << calculatedValue << endl;
+					this->setSuccess(true); // not really tho
+					return;
+				}
+				CNPoint2D* temp = RotateOnce::measurements[0];
+				RotateOnce::measurements[0] = RotateOnce::measurements[1];
+				RotateOnce::measurements[1] = temp;
+				RotateOnce::measurements[1]-> x = calculatedValue;
+				RotateOnce::measurements[1]-> y = 0;
+
+        	}
             cout << "SUCCESS!" << endl;
             cout << "Calculated Robot Radius: " << calculatedValue << endl;
 
-            wm->setRobotRadius(calculatedValue);
+            wm->setRobotRadius(RotateOnce::measurements[1]->x);
             cout << "OH SHIT IT WORKED!" << endl;
 
             this->setSuccess(true);

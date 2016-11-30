@@ -31,6 +31,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1479315274633) ENABLED START*/ //Add additional options here
         std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
         std::remove(logfilePath.c_str());
+        RotateOnce::measurements[1] = new CNPoint2D(wm->getRobotRadius(), 0);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1479315274633) ENABLED START*/ //Add additional methods here
