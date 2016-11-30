@@ -273,8 +273,8 @@ namespace alica
 					cout << "New align point in " << movementToString[dir] << " direction..." << endl;
 					cout << "curMove = " << movementToString[curMove] << endl;
 
-					dir = curMove == Left ? getNewDirection(i, movement, 2): dir;
-					dir = curMove == Right ? getNewDirection(i, movement, -2): dir;
+					dir = curMove == Left ? getNewDirection(i, movement, 4): dir;
+					dir = curMove == Right ? getNewDirection(i, movement, -4): dir;
 
 					cout << "New specific align point in " << movementToString[dir] << " direction..." << endl;
 
@@ -295,17 +295,24 @@ namespace alica
 	 */
 	DribbleCalibrationContainer::Movement DribbleCalibrationContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
 	{
-		cout << "in getNewDirection!" << endl;
+		curDir = 0;
+		next = 4;
+		cout << "getNewDirection: curDir = " << curDir << " next = " << next << " movement.size = " << movement.size();
 		if ((curDir - next) >= 0 && (curDir - next) < movement.size())
 		{
+			cout << endl;
 			return movement.at(curDir - next);
-		} else if ((curDir - next) > (movement.size() - 1))
+		} else if (((curDir - next) > (movement.size() - 1)))
 		{
 			int i = (curDir - next) - (movement.size() - 1);
+			cout << " i = " << i << " ((curDir - next) > (movement.size() - 1)) = ((" << curDir << " - " << next << ") > ("
+					<< movement.size() << " - 1)) = " << " ((" << curDir - next << ") > (" << movement.size() - 1 << "))"
+					<< endl;
 			return movement.at(i);
 		} else
 		{
 			int i = (movement.size() - 1) - abs(curDir - next);
+			cout << " i = " << i << " abs(curDir - next) = abs(" << curDir << " - " << next << ") = " << abs(curDir - next) << endl;
 			return movement.at(i);
 		}
 	}
