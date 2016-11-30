@@ -68,6 +68,7 @@ namespace alica
 
             // drive to the left
             cout << "haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+
             if (haveBallCount > (minHaveBallIter / 2))
             {
                 cout << "move left..." << endl;
