@@ -274,10 +274,10 @@ namespace msl_refbox
 
 	void GameData::onLocalToggled(bool checked)
 	{
-	        if (checked)
-	            this->refBox->btn_connect->setEnabled(false);
-	        else
-	            this->refBox->btn_connect->setEnabled(true);
+		if (checked)
+			this->refBox->btn_connect->setEnabled(false);
+		else
+			this->refBox->btn_connect->setEnabled(true);
 
 		this->localToggled = checked;
 	}
@@ -463,9 +463,9 @@ namespace msl_refbox
 
 			if (index > 0)
 			{
-			        this->parseXML(buffer.left(index));
-                                buffer.remove(0, index+1);
-                                this->updateGoals();
+				this->parseXML(buffer.left(index));
+				buffer.remove(0, index + 1);
+				this->updateGoals();
 			}
 		}
 		else if (charToggled)
@@ -476,109 +476,108 @@ namespace msl_refbox
 			this->refBox->debugLog("Number of received characters by tcp: " + std::to_string(size));
 			if (size > 0)
 			{
-                                if (size < 4096)
-                                      msg[size] = '\0';
+				if (size < 4096)
+					msg[size] = '\0';
 				processCharacterBasedProtocol(msg);
 			}
 		}
 	}
 
-        void GameData::receiveRefMsgUdp(void)
-        {
-                QByteArray buffer;
-                buffer.resize(udpsocket->pendingDatagramSize());
+	void GameData::receiveRefMsgUdp(void)
+	{
+		QByteArray buffer;
+		buffer.resize(udpsocket->pendingDatagramSize());
 
-                QHostAddress sender;
-                quint16 senderPort;
+		QHostAddress sender;
+		quint16 senderPort;
 
-                udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+		udpsocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 
-                if (buffer.size() > 0)
-                {
-                        if (xmlToggled)
-                        {
-                                this->parseXML(buffer);
-                        }
-                        else if (charToggled)
-                        {
-                                processCharacterBasedProtocol(buffer.data());
-                        }
-                }
+		if (buffer.size() > 0)
+		{
+			if (xmlToggled)
+			{
+				this->parseXML(buffer);
+			}
+			else if (charToggled)
+			{
+				processCharacterBasedProtocol(buffer.data());
+			}
+		}
 
-        }
+	}
 
-        void GameData::parseXML(const QByteArray& data)
-        {
-                if (this->localToggled)
-                        return;
+	void GameData::parseXML(const QByteArray& data)
+	{
+		if (this->localToggled)
+			return;
 
-                tinyxml2::XMLDocument doc;
-                doc.Parse(data);
-                tinyxml2::XMLElement* element = doc.FirstChildElement();
+		tinyxml2::XMLDocument doc;
+		doc.Parse(data);
+		tinyxml2::XMLElement* element = doc.FirstChildElement();
 
+		if (element == nullptr)
+		{
+			std::cerr << "Received bad refbox message: " << buffer.constData() << std::endl;
+		}
+		else
+		{
+			xmlparser->handle(element);
+		}
+	}
 
-                if (element == nullptr)
-                {
-                        std::cerr << "Received bad refbox message: " << buffer.constData() << std::endl;
-                }
-                else
-                {
-                        xmlparser->handle(element);
-                }
-        }
+	void GameData::updateGoals()
+	{
+		std::string goal = std::to_string(this->goalsCyan) + " : " + std::to_string(this->goalsMagenta);
+		this->refBox->lbl_score->setText(QString::fromStdString(goal));
+		this->ref.goalsCyan = this->goalsCyan;
+		this->ref.goalsMagenta = this->goalsMagenta;
+	}
 
-        void GameData::updateGoals()
-        {
-                std::string goal =  std::to_string(this->goalsCyan) + " : " + std::to_string(this->goalsMagenta);
-                this->refBox->lbl_score->setText(QString::fromStdString(goal));
-                this->ref.goalsCyan = this->goalsCyan;
-                this->ref.goalsMagenta = this->goalsMagenta;
-        }
+	void GameData::setGoals(Side side, int value)
+	{
+		if (side == Side::CYAN)
+		{
+			this->goalsCyan = value;
+		}
+		else if (side == Side::MAGENTA)
+		{
+			this->goalsMagenta = value;
+		}
+	}
 
-        void GameData::setGoals(Side side , int value)
-        {
-                if (side == Side::CYAN)
-                {
-                        this->goalsCyan = value;
-                }
-                else if (side == Side::MAGENTA)
-                {
-                        this->goalsMagenta = value;
-                }
-        }
+	int GameData::getGoals(Side side)
+	{
+		if (side == Side::CYAN)
+		{
+			return this->goalsCyan;
+		}
+		else if (side == Side::MAGENTA)
+		{
+			return this->goalsMagenta;
+		}
 
-        int GameData::getGoals(Side side)
-        {
-                if (side == Side::CYAN)
-                {
-                        return this->goalsCyan;
-                }
-                else if (side == Side::MAGENTA)
-                {
-                        return this->goalsMagenta;
-                }
-
-                return -1;
-        }
+		return -1;
+	}
 
 	void GameData::processCharacterBasedProtocol(const char * data)
 	{
-                 if (this->localToggled)
-	                return;
+		if (this->localToggled)
+			return;
 
 		QString Cmd("SsNkKpPfFgGtTcCHaALDdoOiIyYrR");
 		QString valid_cmd;
 
 		QString Msg(data);
 
-                if (Msg.size() > 10)
-                {
-                  printf("Received a to long message from refbox: %s\n", data);
+		if (Msg.size() > 10)
+		{
+			printf("Received a to long message from refbox: %s\n", data);
 
-                  return;
-                }
+			return;
+		}
 
-                this->refBox->debugLog(Msg.toStdString());
+		this->refBox->debugLog(Msg.toStdString());
 
 		/* Comandos Internos */
 		if (Msg.contains("W"))
@@ -591,25 +590,25 @@ namespace msl_refbox
 		{
 			this->sendStop(false);
 			Msg.remove("h");
-                        this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::HALFTIME;
-                        this->log("End first half", false, GameData::Side::ALL);
+			this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::HALFTIME;
+			this->log("End first half", false, GameData::Side::ALL);
 		}
 
 		if (Msg.contains('e'))
 		{
 			this->sendStop(false);
 			Msg.remove("e");
-                        this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::END_GAME;
-                        this->log("End second half", false, GameData::Side::ALL);
+			this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::END_GAME;
+			this->log("End second half", false, GameData::Side::ALL);
 		}
 
 		if (Msg.contains('1'))
 		{
 			//Start First Half
-                        this->setGoals(Side::CYAN, 0);
-                        this->setGoals(Side::MAGENTA, 0);
-                        this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::FIRST_HALF;
-                        this->log("Begin first half", false, GameData::Side::ALL);
+			this->setGoals(Side::CYAN, 0);
+			this->setGoals(Side::MAGENTA, 0);
+			this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::FIRST_HALF;
+			this->log("Begin first half", false, GameData::Side::ALL);
 			Msg.remove("1");
 		}
 
@@ -617,8 +616,8 @@ namespace msl_refbox
 		{
 			//Start Second half
 			Msg.remove("2");
-                        this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::SECOND_HALF;
-                        this->log("Begin second half", false, GameData::Side::ALL);
+			this->ref.gameStage.Stage = msl_msgs::RefBoxCommand::SECOND_HALF;
+			this->log("Begin second half", false, GameData::Side::ALL);
 
 		}
 
@@ -626,14 +625,14 @@ namespace msl_refbox
 		{
 			//Third half
 			Msg.remove("3");
-                        this->log("Begin third half", false, GameData::Side::ALL);
+			this->log("Begin third half", false, GameData::Side::ALL);
 		}
 
 		if (Msg.contains('4'))
 		{
 			//Fourth half
 			Msg.remove("4");
-                        this->log("Begin fourth half", false, GameData::Side::ALL);
+			this->log("Begin fourth half", false, GameData::Side::ALL);
 		}
 
 		/* Proc msg */
@@ -689,32 +688,32 @@ namespace msl_refbox
 					this->sendMagentaCornerKick(false);
 
 				if (valid_cmd == "A")
-                                {
-                                        this->setGoals(Side::CYAN, this->getGoals(Side::CYAN) + 1);
-                                        this->log("Goal", false, GameData::Side::CYAN);
-                                        this->updateGoals();
-                                }
+				{
+					this->setGoals(Side::CYAN, this->getGoals(Side::CYAN) + 1);
+					this->log("Goal", false, GameData::Side::CYAN);
+					this->updateGoals();
+				}
 
 				if (valid_cmd == "a")
 				{
 					this->setGoals(Side::MAGENTA, this->getGoals(Side::MAGENTA) + 1);
-                                        this->log("Goal", false, GameData::Side::MAGENTA);
-                                        this->updateGoals();
+					this->log("Goal", false, GameData::Side::MAGENTA);
+					this->updateGoals();
 				}
 
 				if (valid_cmd == "D")
-                                {
-                                        this->setGoals(Side::CYAN, this->getGoals(Side::CYAN) - 1);
-                                        this->log("Goal removed", false, GameData::Side::CYAN);
-                                        this->updateGoals();
-                                }
+				{
+					this->setGoals(Side::CYAN, this->getGoals(Side::CYAN) - 1);
+					this->log("Goal removed", false, GameData::Side::CYAN);
+					this->updateGoals();
+				}
 
 				if (valid_cmd == "d")
-                                {
-                                        this->setGoals(Side::MAGENTA, this->getGoals(Side::MAGENTA) - 1);
-                                        this->log("Goal removed", false, GameData::Side::MAGENTA);
-                                        this->updateGoals();
-                                }
+				{
+					this->setGoals(Side::MAGENTA, this->getGoals(Side::MAGENTA) - 1);
+					this->log("Goal removed", false, GameData::Side::MAGENTA);
+					this->updateGoals();
+				}
 
 				if (valid_cmd == "N")
 					this->sendDroppedBall(false);
@@ -723,28 +722,28 @@ namespace msl_refbox
 					this->sendParking(false);
 
 				if (valid_cmd == "O")
-				        this->log("Player out", false, Side::CYAN);
+					this->log("Player out", false, Side::CYAN);
 
-                                if (valid_cmd == "o")
-                                        this->log("Player out", false, Side::MAGENTA);
+				if (valid_cmd == "o")
+					this->log("Player out", false, Side::MAGENTA);
 
-                                if (valid_cmd == "I")
-                                        this->log("Player in", false, Side::CYAN);
+				if (valid_cmd == "I")
+					this->log("Player in", false, Side::CYAN);
 
-                                if (valid_cmd == "i")
-                                        this->log("Player in", false, Side::MAGENTA);
+				if (valid_cmd == "i")
+					this->log("Player in", false, Side::MAGENTA);
 
-                                if (valid_cmd == "Y")
-                                        this->log("Yellow Card", false, Side::CYAN);
+				if (valid_cmd == "Y")
+					this->log("Yellow Card", false, Side::CYAN);
 
-                                if (valid_cmd == "y")
-                                        this->log("Yellow Card", false, Side::MAGENTA);
+				if (valid_cmd == "y")
+					this->log("Yellow Card", false, Side::MAGENTA);
 
-                                if (valid_cmd == "R")
-                                        this->log("Red Card", false, Side::CYAN);
+				if (valid_cmd == "R")
+					this->log("Red Card", false, Side::CYAN);
 
-                                if (valid_cmd == "r")
-                                        this->log("Red Card", false, Side::MAGENTA);
+				if (valid_cmd == "r")
+					this->log("Red Card", false, Side::MAGENTA);
 			}
 		}
 	}
@@ -872,7 +871,6 @@ namespace msl_refbox
 		}
 		logString += "}\0";
 
-
 		if (this->tcpsocket == nullptr || !this->tcpsocket->isValid()
 				|| this->tcpsocket->state() != QAbstractSocket::ConnectedState)
 			return;
@@ -891,267 +889,265 @@ namespace msl_refbox
 
 	void GameData::sendCyanPenalty(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Penalty", local, Side::CYAN);
+		this->log("Penalty", local, Side::CYAN);
 	}
 
 	void GameData::sendCyanCornerKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::CORNER_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Corner Kick", local, Side::CYAN);
+		this->log("Corner Kick", local, Side::CYAN);
 	}
 
 	void GameData::sendCyanGoalKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Goal Kick", local, Side::CYAN);
+		this->log("Goal Kick", local, Side::CYAN);
 	}
 
 	void GameData::sendCyanThrowin(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Throw-in", local, Side::CYAN);
+		this->log("Throw-in", local, Side::CYAN);
 	}
 
 	void GameData::sendCyanFreeKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Free Kick", local, Side::CYAN);
+		this->log("Free Kick", local, Side::CYAN);
 	}
 
 	void GameData::sendCyanKickOff(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_CYAN;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Kick Off", local, Side::CYAN);
+		this->log("Kick Off", local, Side::CYAN);
 	}
 
 	void GameData::sendMagentaPenalty(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::PENALTY_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Penalty", local, Side::MAGENTA);
+		this->log("Penalty", local, Side::MAGENTA);
 	}
 
 	void GameData::sendMagentaCornerKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::CORNER_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Corner Kick", local, Side::MAGENTA);
+		this->log("Corner Kick", local, Side::MAGENTA);
 	}
 
 	void GameData::sendMagentaGoalKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::GOALKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Goal Kick", local, Side::MAGENTA);
+		this->log("Goal Kick", local, Side::MAGENTA);
 	}
 
 	void GameData::sendMagentaThrownin(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::THROWIN_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Throw-in", local, Side::MAGENTA);
+		this->log("Throw-in", local, Side::MAGENTA);
 	}
 
 	void GameData::sendMagentaKickOff(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::KICKOFF_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Kick Off", local, Side::MAGENTA);
+		this->log("Kick Off", local, Side::MAGENTA);
 	}
 
 	void GameData::sendMagentaFreeKick(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::FREEKICK_MAGENTA;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Free Kick", local, Side::MAGENTA);
+		this->log("Free Kick", local, Side::MAGENTA);
 	}
 
 	void GameData::sendParking(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::PARK;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Parking", local, Side::ALL);
+		this->log("Parking", local, Side::ALL);
 	}
 
 	void GameData::sendDroppedBall(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::DROPBALL;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Drop Ball", local, Side::ALL);
+		this->log("Drop Ball", local, Side::ALL);
 	}
 
 	void GameData::sendHalt(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::HALT;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Halt", local, Side::ALL);
+		this->log("Halt", local, Side::ALL);
 	}
 
 	void GameData::sendStop(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::STOP;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Stop", local, Side::ALL);
+		this->log("Stop", local, Side::ALL);
 	}
 
 	void GameData::sendStart(bool local)
 	{
-                if ((local && !localToggled) || (!local && localToggled))
-                {
-                        return;
-                }
+		if ((local && !localToggled) || (!local && localToggled))
+		{
+			return;
+		}
 
 		ref.cmd = msl_msgs::RefBoxCommand::START;
 		this->RefereeBoxInfoBodyPublisher.publish(ref);
 
-                this->log("Start", local, Side::ALL);
+		this->log("Start", local, Side::ALL);
 	}
-
-
 
 	void GameData::log(std::string msg, bool local, Side side)
 	{
-	        std::time_t t = std::time(NULL);
-	        char mbstr[100];
-	        std::strftime(mbstr, sizeof(mbstr), "%T", std::localtime(&t));
+		std::time_t t = std::time(NULL);
+		char mbstr[100];
+		std::strftime(mbstr, sizeof(mbstr), "%T", std::localtime(&t));
 
-	        logStream.str("");
-	        logStream << mbstr;
-	        logStream << " ";
-	        std::string sideStr;
+		logStream.str("");
+		logStream << mbstr;
+		logStream << " ";
+		std::string sideStr;
 
-	        switch(side)
-	        {
-                        case ALL:
-                                logStream << "\t\t";
-                                sideStr = "";
-                                break;
-                        case MAGENTA:
-                                logStream << " MAGENTA\t";
-                                sideStr = "Magenta ";
-                                break;
-                        case CYAN:
-                                logStream << " CYAN\t";
-                                sideStr = "Cyan ";
-                                break;
-	        }
+		switch (side)
+		{
+			case ALL:
+				logStream << "\t\t";
+				sideStr = "";
+				break;
+			case MAGENTA:
+				logStream << " MAGENTA\t";
+				sideStr = "Magenta ";
+				break;
+			case CYAN:
+				logStream << " CYAN\t";
+				sideStr = "Cyan ";
+				break;
+		}
 
-	        logStream << msg;
+		logStream << msg;
 
-                if (local)
-                {
-                        this->refBox->lbl_command->setText(QString(std::string(sideStr + msg + " (local)").c_str()));
-                        logStream << " local";
-                }
-                else
-                {
-                        this->refBox->lbl_command->setText(QString(std::string(sideStr + msg).c_str()));
-                }
+		if (local)
+		{
+			this->refBox->lbl_command->setText(QString(std::string(sideStr + msg + " (local)").c_str()));
+			logStream << " local";
+		}
+		else
+		{
+			this->refBox->lbl_command->setText(QString(std::string(sideStr + msg).c_str()));
+		}
 
-                this->refBox->RefLog->append(QString(logStream.str().c_str()));
+		this->refBox->RefLog->append(QString(logStream.str().c_str()));
 	}
 
 	void GameData::onTcpDisconnected()

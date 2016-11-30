@@ -68,11 +68,13 @@ namespace alica
 
             // drive to the left
             cout << "haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
-//			if (haveBallCount > (minHaveBallIter / 2))
-//			{
-//				cout << "move left..." << endl;
-//				mc = dcc.move(dcc.Left, (moveCount + 1) * startTrans);
-//			} else
+
+            if (haveBallCount > (minHaveBallIter / 2))
+            {
+                cout << "move left..." << endl;
+                mc = dcc.move(dcc.Left, (moveCount + 1) * startTrans);
+            }
+            else
             {
                 cout << "move right..." << endl;
                 mc = dcc.move(dcc.Right, (moveCount + 1) * startTrans);

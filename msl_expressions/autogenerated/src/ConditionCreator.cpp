@@ -8,6 +8,8 @@
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
+
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
@@ -251,6 +253,18 @@ namespace alica
             case 1436536161660:
 
                 return make_shared<TransitionCondition1436536161660>();
+
+                break;
+
+            case 1479905164080:
+
+                return make_shared<TransitionCondition1479905164080>();
+
+                break;
+
+            case 1479905468245:
+
+                return make_shared<TransitionCondition1479905468245>();
 
                 break;
 
