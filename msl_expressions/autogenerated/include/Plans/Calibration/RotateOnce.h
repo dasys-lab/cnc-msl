@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467397900274) ENABLED START*/ //Add additional includes here
 #include "RingBuffer.h"
+#include "geometry/CNPoint2D.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -30,18 +31,14 @@ namespace alica
         static const int PRECISION_BUFFER_SIZE = 10;
         static constexpr double MAX_ROTATION_SPEED = 2.0;
         static constexpr double STEP_SIZE = 3.0;
-        static const int NUMBER_OF_STEPS = 5;
         //Buffer holding precision values of current rotation
         msl::RingBuffer<double>* precisionBuffer;
         double segments[3];
         bool visitedSegments[3];
-        bool hasInitialConfigurationBeenSet;
-        double radiusOffset;
         double initialRadius;
-        double minRadius;
-        double maxRadius;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
+        static geometry::CNPoint2D measurements[2];
 
         // rotation speed varies
         double rotationSpeed;

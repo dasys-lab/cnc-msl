@@ -30,8 +30,8 @@ namespace alica
         if (!this->isSuccess())
         {
             // call gnuplot for maximum convenience!!
-        	// f(x) = x**3 * a + x**2 * b + x * c + d
-        	// fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
+            // f(x) = x**3 * a + x**2 * b + x * c + d
+            // fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
             stringstream cmd;
             string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
             cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";

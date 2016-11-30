@@ -19,9 +19,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         initialRadius = wm->getRobotRadius();
-        radiusOffset = (NUMBER_OF_STEPS - 1) / 2 * STEP_SIZE;
-        minRadius = initialRadius - radiusOffset;
-        maxRadius = initialRadius + radiusOffset;
         hasInitialConfigurationBeenSet = false;
         precisionBuffer = new msl::RingBuffer<double>(PRECISION_BUFFER_SIZE);
         /*PROTECTED REGION END*/
@@ -37,24 +34,14 @@ namespace alica
         /*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
         if (!(this->isSuccess() || this->isFailure()))
         {
-            if (!hasInitialConfigurationBeenSet)
-            {
-                cout << "Kill Motion first" << endl;
-                wm->setRobotRadius(minRadius);
-                hasInitialConfigurationBeenSet = true;
-                this->setFailure(true);
-                return;
-            }
-
             msl_actuator_msgs::MotionControl mc;
             rotationSpeed = getLimitedRotationSpeed(rotationSpeed + ACCELERATION); // accelerate in each iteration until max rotation speed is reached
             mc.motion.rotation = rotationSpeed;
             send(mc);
 
-	int currentSegment = getCurrentRotationSegment();
-	double currentBearing = wm->rawSensorData->getAverageBearing();
-	// cout << "segment status: " << visitedSegments[0] << " " << visitedSegments[1] << " " << visitedSegments[2] << " " << endl; //currentSegment << ", bearing " << currentBearing << "/" << initialBearing << ", rotspeed: " << rotationSpeed << endl;
-	visitedSegments[currentSegment] = true;
+            int currentSegment = getCurrentRotationSegment();
+            double currentBearing = wm->rawSensorData->getAverageBearing();
+            visitedSegments[currentSegment] = true;
 
             if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
             {
@@ -103,13 +90,15 @@ namespace alica
         precisionBuffer->clear(true);
         initialAngle = wm->rawOdometry->position.angle;
 
-	// TODO this needs an explaining comment
+        if ()
+
+        // TODO this needs an explaining comment
         segments[0] = fmod(initialBearing + 1.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         segments[1] = fmod(segments[0] + 2.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         segments[2] = fmod(segments[0] + 4.0 / 3 * M_PI + M_PI, (2 * M_PI)) - M_PI;
         visitedSegments[0] = false;
-	visitedSegments[1] = false;
-	visitedSegments[2] = false;
+        visitedSegments[1] = false;
+        visitedSegments[2] = false;
         cout << "starting angle: " << initialAngle << ", ";
 
         /*PROTECTED REGION END*/

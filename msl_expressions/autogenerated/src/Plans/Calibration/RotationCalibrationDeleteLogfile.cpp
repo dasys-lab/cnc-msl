@@ -29,8 +29,8 @@ namespace alica
     void RotationCalibrationDeleteLogfile::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479315274633) ENABLED START*/ //Add additional options here
-	std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
-	std::remove(logfilePath.c_str());
+        std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+        std::remove(logfilePath.c_str());
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1479315274633) ENABLED START*/ //Add additional methods here

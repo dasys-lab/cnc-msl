@@ -7,8 +7,8 @@
   <states id="1467396438734" name="Rotating" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">RotateOnce.beh#1467398000539</plans>
     <inTransitions>#1470237803234</inTransitions>
+    <inTransitions>#1467396616225</inTransitions>
     <outTransitions>#1470227878581</outTransitions>
-    <outTransitions>#1472656456600</outTransitions>
   </states>
   <states id="1470227765155" name="Finished" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
@@ -16,21 +16,21 @@
   </states>
   <states id="1470237789517" name="Return" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">RestartMotion.beh#1472657588489</plans>
-    <inTransitions>#1467396616225</inTransitions>
-    <inTransitions>#1472656456600</inTransitions>
+    <inTransitions>#1480520547022</inTransitions>
     <outTransitions>#1470237803234</outTransitions>
   </states>
   <states id="1475074211872" name="Calculation" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">RotationCalibrationCalculation.beh#1475074454339</plans>
     <inTransitions>#1470227878581</inTransitions>
     <outTransitions>#1475074486547</outTransitions>
+    <outTransitions>#1480520547022</outTransitions>
   </states>
   <transitions id="1467396616225" name="MISSING_NAME" comment="Status Start?" msg="">
     <preCondition id="1467396619848" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1467396347589</inState>
-    <outState>#1470237789517</outState>
+    <outState>#1467396438734</outState>
   </transitions>
-  <transitions id="1470227878581" name="MISSING_NAME" comment="Rotated often enough?" msg="">
+  <transitions id="1470227878581" name="MISSING_NAME" comment="Rotation finished" msg="">
     <preCondition id="1470227880114" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1467396438734</inState>
     <outState>#1475074211872</outState>
@@ -40,15 +40,15 @@
     <inState>#1470237789517</inState>
     <outState>#1467396438734</outState>
   </transitions>
-  <transitions id="1472656456600" name="MISSING_NAME" comment="finished rotation &amp;&amp; error too large" msg="">
-    <preCondition id="1472656460039" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
-    <inState>#1467396438734</inState>
-    <outState>#1470237789517</outState>
-  </transitions>
-  <transitions id="1475074486547" name="MISSING_NAME" comment="Calculated RobotRadius and wrote config?" msg="">
+  <transitions id="1475074486547" name="MISSING_NAME" comment="Robot radius precise enough?" msg="">
     <preCondition id="1475074488561" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1475074211872</inState>
     <outState>#1470227765155</outState>
+  </transitions>
+  <transitions id="1480520547022" name="MISSING_NAME" comment="Calculate to Restart" msg="">
+    <preCondition id="1480520550306" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
+    <inState>#1475074211872</inState>
+    <outState>#1470237789517</outState>
   </transitions>
   <entryPoints id="1467396347590" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
     <task>../../Misc/taskrepository.tsk#1225112227903</task>
