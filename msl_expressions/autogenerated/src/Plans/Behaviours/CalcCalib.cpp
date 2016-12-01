@@ -121,11 +121,11 @@ namespace alica
 			{
 	                    std::cout << "calibCoefficientX ist kein double!" << std::endl;
 			}
+			else
+			{
+				calibCoefficientX = std::stod(value);
+			}
                 }
-		else
-		{
-			calibCoefficientX = std::stod(value);
-		}
 
                 if (lineno == 1)
                 {
