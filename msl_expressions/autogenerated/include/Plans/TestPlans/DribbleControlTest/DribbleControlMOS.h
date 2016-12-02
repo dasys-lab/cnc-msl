@@ -32,6 +32,7 @@ namespace alica
         int testCount2;
 
         double velToInput;
+        double staticNegVelX;
         double epsilonT;
         double epsilonRot;
         double rBallRobot;

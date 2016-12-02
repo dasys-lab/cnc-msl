@@ -83,9 +83,10 @@ namespace alica
     	testCount = 0;
     	testCount = 0;
 
-    	velToInput = 1.77; //calibration desired velocity to input voltage of motors
+    	velToInput = 3; //calibration desired velocity to input voltage of motors
+    	staticNegVelX = 200; //always applied backwards movement of ball
     	rBallRobot = 300; //distance between robot rotation axis and ball center
-    	epsilonT = 0.5; //change between robot velocity angle and desired ball velocity angle
+    	epsilonT = 0.4; //change between robot velocity angle and desired ball velocity angle
     	epsilonRot = 0.2; //change between ball velocity angle through rotation and desired ball velocity angle
     	phi = M_PI/6; //horizontal angle between y and arm
     	forwConst = sqrt((sin(M_PI/2-0.82))*sin(M_PI/2-0.82)+(sin(0.75)*cos(M_PI/2-0.82))*(sin(0.75)*cos(M_PI/2-0.82)))/cos(0.349); //ballVel -> ArmVel for forward
@@ -102,7 +103,7 @@ namespace alica
     	double velX = -cos(angle)*translation;
     	double velY = -sin(angle)*translation + rotation*rBallRobot;
     	//correcting desired ball velocity towards robot to guarantee grib
-    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + 1000;
+    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + staticNegVelX;
 
     	return sqrt(velX*velX+velY*velY);
     }
@@ -112,7 +113,7 @@ namespace alica
     {
         	double velX = -cos(angle)*translation;
         	double velY = -sin(angle)*translation + rotation*rBallRobot;
-        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + 1000;
+        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + staticNegVelX;
 
         	double ballAngle =0;
         	if (velX==0)
