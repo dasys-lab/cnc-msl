@@ -6,6 +6,7 @@ using namespace std;
 #include "RawSensorData.h"
 #include "MSLWorldModel.h"
 #include "math.h"
+#include "SystemConfig.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -15,6 +16,7 @@ namespace alica
             DomainBehaviour("DribbleControlMOS")
     {
         /*PROTECTED REGION ID(con1479905178049) ENABLED START*/ //Add additional options here
+    	this->sc=supplementary::SystemConfig::getInstance();
         /*PROTECTED REGION END*/
     }
     DribbleControlMOS::~DribbleControlMOS()
@@ -83,12 +85,14 @@ namespace alica
     	testCount = 0;
     	testCount = 0;
 
-    	velToInput = 3; //calibration desired velocity to input voltage of motors
-    	staticNegVelX = 200; //always applied backwards movement of ball
-    	rBallRobot = 300; //distance between robot rotation axis and ball center
-    	epsilonT = 0.4; //change between robot velocity angle and desired ball velocity angle
-    	epsilonRot = 0.2; //change between ball velocity angle through rotation and desired ball velocity angle
+    	velToInput = (*sc)["DribbleAround"]->get<double>("DribbleAround.velToInput",NULL);
+    	staticNegVelX = (*sc)["DribbleAround"]->get<double>("DribbleAround.staticNegVelX",NULL);
+    	rBallRobot = (*sc)["DribbleAround"]->get<double>("DribbleAround.rBallRobot",NULL);
+    	epsilonT = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonT",NULL);
+    	epsilonRot = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonRot",NULL);
     	phi = M_PI/6; //horizontal angle between y and arm
+
+    	//very static
     	forwConst = sqrt((sin(M_PI/2-0.82))*sin(M_PI/2-0.82)+(sin(0.75)*cos(M_PI/2-0.82))*(sin(0.75)*cos(M_PI/2-0.82)))/cos(0.349); //ballVel -> ArmVel for forward
     	sidewConst = sin(0.559)/sin(0.438); //ballVel -> ArmVel for sideways
     	diagConst = sin(1.18)/(cos(0.349)*sin(0.82)); //ballVel -> ArmVel for diagonal

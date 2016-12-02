@@ -40,6 +40,9 @@ namespace alica
         double sidewConst;
         double diagConst;
         double phi;
+
+        supplementary::SystemConfig* sc;
+
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 
