@@ -32,7 +32,7 @@ namespace alica
     	if (testCount2 >= 10){
     		testCount2=0;
     		testSpeed=500;
-    		testAngle += M_PI/12;
+    		testRot += M_PI/12;
     	}
     	if (testCount >= 60) {
     		testCount = 0;
@@ -79,17 +79,17 @@ namespace alica
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
-    	testSpeed = 500;
+    	testSpeed = 100;
     	testAngle = -M_PI;
-    	testRot = 0;
+    	testRot = M_PI;
     	testCount = 0;
     	testCount = 0;
 
-    	velToInput = (*sc)["DribbleAround"]->get<double>("DribbleAround.velToInput",NULL);
-    	staticNegVelX = (*sc)["DribbleAround"]->get<double>("DribbleAround.staticNegVelX",NULL);
-    	rBallRobot = (*sc)["DribbleAround"]->get<double>("DribbleAround.rBallRobot",NULL);
-    	epsilonT = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonT",NULL);
-    	epsilonRot = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonRot",NULL);
+    	velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAround.velToInput",NULL);
+    	staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAround.staticNegVelX",NULL);
+    	rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAround.rBallRobot",NULL);
+    	epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAround.epsilonT",NULL);
+    	epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAround.epsilonRot",NULL);
     	phi = M_PI/6; //horizontal angle between y and arm
 
     	//very static
@@ -120,25 +120,8 @@ namespace alica
         	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + staticNegVelX;
 
         	double ballAngle =0;
-        	if (velX==0)
-        	{
-        		if (velY>=0)
-        			ballAngle = M_PI/2;
-        		else
-        			ballAngle = -M_PI/2;
-        	}
-        	else if (velX > 0)
-        	{
-        		ballAngle = atan(velY/velX);
-        	}
-        	else
-        	{
-        		if (velY>=0)
-        			ballAngle = atan(velY/velX)+M_PI;
-        		else
-        			ballAngle = atan(velY/velX)-M_PI;
-        	}
-
+       		ballAngle = atan2(velY,velX);
+        		
         	return ballAngle;
     }
 
