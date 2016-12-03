@@ -25,8 +25,6 @@ namespace alica
     void CalcCalib::run(void* msg)
     {
         /*PROTECTED REGION ID(run1446033324019) ENABLED START*/ //Add additional options here
-        string tmp;
-        getParameter("X-Direction", tmp);
 
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
@@ -55,6 +53,7 @@ namespace alica
 
         //----------------------------------------------------------------------------------------------------------
         /*
+        //Detektion loses/kaputtes Rad
          errorTestMotionPosX = correctedPosX;
          errorTestMotionPosY = correctedPosY;
          errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
@@ -117,26 +116,13 @@ namespace alica
             {
                 if (lineno == 0)
                 {
-			if(isOnlyDouble(value.c_str()) == false)
-			{
-	                    std::cout << "calibCoefficientX ist kein double!" << std::endl;
-			}
-			else
-			{
+
 				calibCoefficientX = std::stod(value);
-			}
                 }
 
                 if (lineno == 1)
                 {
-			if(isOnlyDouble(value.c_str()) == false)
-			{
-	                    std::cout << "calibCoefficientY ist kein double!" << std::endl;
-			}
-			else
-			{
 				calibCoefficientY = std::stod(value);
-			}
                 }
             }
             calibData.close();
@@ -226,6 +212,7 @@ namespace alica
              }
              }*/
 
+        	//
             if (abs(correctedPosX - oldCorrectedPosX) > 500)
             {
                 if (correctedPosX > oldCorrectedPosX)
@@ -255,7 +242,7 @@ namespace alica
 
                 }
             }
-
+//Hinter Abfrage der gültigen calibWerte setzen?!
             string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
             ofstream saveToCalibData;
             saveToCalibData.open(filename);
@@ -291,7 +278,6 @@ namespace alica
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
         std::cout << "Y: " << diffY << std::endl;
-        std::cout << "Länge: " << length << std::endl;
         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
         std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
@@ -315,16 +301,5 @@ namespace alica
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1446033324019) ENABLED START*/ //Add additional methods here
-	bool CalcCalib::isOnlyDouble(const char* str)
-	{
-		char* endptr = 0;
-		strtod(str, &endptr);
-
-		if (*endptr != '\0' || endptr == str)
-			{
-				return false;
-			}
-		return true;
-	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
