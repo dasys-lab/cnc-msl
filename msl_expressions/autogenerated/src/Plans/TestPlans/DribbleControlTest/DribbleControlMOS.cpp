@@ -29,17 +29,64 @@ namespace alica
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
 
     	//---
-    	if (testCount2 >= 10){
-    		testCount2=0;
-    		testSpeed=500;
-    		testRot += M_PI/12;
+    	switch (testBehaviour) {
+		case 1 :
+
+			testSpeed = 0;
+			if (testCount >= 60) {
+				testRot += M_PI/3;
+			}
+			break;
+
+		case 2 :
+			if (testCount2 >= 10){
+				testCount2 = 0;
+				testSpeed -= 1000;
+				testRot += M_PI/3;
+			}
+			if (testCount >= 60) {
+				testCount = 0;
+				testCount2++;
+				testSpeed += 100;
+			}
+			break;
+
+		case 3 :
+
+			if (testCount >= 60) {
+				testAngle += M_PI/8;
+			}
+			break;
+
+		case 4 :
+
+			if (testCount2 >= 2){
+				testCount2=0;
+				testRot += M_PI/12;
+			}
+			if (testCount >= 60) {
+				testCount = 0;
+				testCount2++;
+				testAngle += M_PI;
+			}
+			break;
+
+		case 5 :
+
+			if (testCount >= 60) {
+				testSpeed += 100;
+				testAngle += M_PI;
+			}
+			break;
+
+		default :
+
+			if (testCount >= 60) {
+				testAngle += M_PI;
+			}
+			break;
     	}
-    	if (testCount >= 60) {
-    		testCount = 0;
-    		testCount2++;
-    		testAngle += M_PI;
-    		testSpeed += 100;
-    	}
+
     	msl_actuator_msgs::MotionControl motorMsg;
     	if (testCount < 50){
     	motorMsg.motion.angle = testAngle;
@@ -79,17 +126,20 @@ namespace alica
     void DribbleControlMOS::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1479905178049) ENABLED START*/ //Add additional options her
-    	testSpeed = 100;
-    	testAngle = -M_PI;
-    	testRot = M_PI;
+    	testBehaviour = (*sc)["DribbleAlround"]->get<int>("DribbleAlround.testBehaviour",NULL);
+    	testSpeed = (*sc)["DribbleAlround"]->get<int>("DribbleAlround.testSpeed",NULL);
+    	testAngle = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.testAngle",NULL)*M_PI;
+    	testRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.testRot",NULL)*M_PI;
     	testCount = 0;
     	testCount = 0;
 
-    	velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAround.velToInput",NULL);
-    	staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAround.staticNegVelX",NULL);
-    	rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAround.rBallRobot",NULL);
-    	epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAround.epsilonT",NULL);
-    	epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAround.epsilonRot",NULL);
+    	velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput",NULL);
+    	staticUpperBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticUpperBound",NULL);
+    	staticLowerBound = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticLowerBound",NULL);
+    	staticNegVelX = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.staticNegVelX",NULL);
+    	rBallRobot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.rBallRobot",NULL);
+    	epsilonT = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonT",NULL);
+    	epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot",NULL);
     	phi = M_PI/6; //horizontal angle between y and arm
 
     	//very static
@@ -107,7 +157,9 @@ namespace alica
     	double velX = -cos(angle)*translation;
     	double velY = -sin(angle)*translation + rotation*rBallRobot;
     	//correcting desired ball velocity towards robot to guarantee grib
-    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + staticNegVelX;
+    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
+    	if (velX<=staticUpperBound && velX>=staticLowerBound)
+    		velX-=staticNegVelX;
 
     	return sqrt(velX*velX+velY*velY);
     }
@@ -117,7 +169,9 @@ namespace alica
     {
         	double velX = -cos(angle)*translation;
         	double velY = -sin(angle)*translation + rotation*rBallRobot;
-        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot + staticNegVelX;
+        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
+        	if (velX<=staticUpperBound && velX>=staticLowerBound)
+        		velX-=staticNegVelX;
 
         	double ballAngle =0;
        		ballAngle = atan2(velY,velX);
