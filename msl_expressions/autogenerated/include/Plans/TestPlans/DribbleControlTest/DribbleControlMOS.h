@@ -25,13 +25,17 @@ namespace alica
         virtual double getBallAngle(double angle, double translation, double rotation);
         virtual double getLeftArmVelocity(double ballVelocity, double ballAngle);
         virtual double getRightArmVelocity(double ballVelocity, double ballAngle);
+
+        int testBehaviour;
         int testSpeed;
-        int testRot;
+        double testRot;
         double testAngle;
         int testCount;
         int testCount2;
 
         double velToInput;
+        double staticUpperBound;
+        double staticLowerBound;
         double staticNegVelX;
         double epsilonT;
         double epsilonRot;

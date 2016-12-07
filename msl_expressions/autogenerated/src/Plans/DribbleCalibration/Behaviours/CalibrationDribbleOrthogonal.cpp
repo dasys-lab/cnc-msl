@@ -73,28 +73,32 @@ namespace alica
 
             // drive to the left
 #ifdef DEBUG_DC
-            cout << "haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+            cout << "CalibrationDribbleOrthogonal::run() haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
 #endif
+
+            // translation may not be higher than endTrans
+            int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
 
             if (haveBallCount < (minHaveBallIter / 2))
             {
             	// output
                 if (moveLeftFlag) {cout << "move left..." << endl; moveLeftFlag = false;}
 
-                mc = dcc.move(dcc.Left, (moveCount + 1) * startTrans);
+                mc = dcc.move(dcc.Left, tran);
             }
             else
             {
             	// output
             	if (moveRightFlag) {cout << "move right..." << endl; moveRightFlag = false;}
 
-                mc = dcc.move(dcc.Right, (moveCount + 1) * startTrans);
+                mc = dcc.move(dcc.Right, tran);
             }
 
             // checking for error values
             if (mc.motion.translation == NAN)
             {
                 cerr << "motion command == NAN" << endl;
+                return;
             }
             else
             {
@@ -111,27 +115,23 @@ namespace alica
             if (haveBallCount >= minHaveBallIter)
             {
                 moveCount++;
-                cout << "moveCount = " << moveCount << endl;
+                cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..." << endl;
 
                 haveBallCount = 0;
 
                 if (minHaveBallParamPoint == 0)
                 {
+                	cout << "setting minimum parameter value to " << orthoDriveFactor << "..." << endl;
                     minHaveBallParamPoint = orthoDriveFactor;
                 }
                 else
                 {
+                	cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
                     maxHaveBallParamPoint = orthoDriveFactor;
                 }
 
                 adaptParam();
             }
-
-            // check sensor data -> optical flow should say, that the ball isn't moving
-            // correct data if the robot is loosing the ball
-            // drive to the right
-            // check sensor data -> optical flow should say, that the ball isn't moving
-            // correct data if the robot is loosing the ball
 
         }
         else if (moveCount > speedIter)
@@ -139,7 +139,7 @@ namespace alica
             // choose correct value
             orthoDriveFactor = (minHaveBallParamPoint + maxHaveBallParamPoint) / 2;
             writeConfigParameters();
-            cout << "the best config value for orthogonal driving is " << orthoDriveFactor << endl;
+            cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is " << orthoDriveFactor << endl;
             this->setSuccess(true);
             return;
         }
@@ -153,8 +153,6 @@ namespace alica
             // we need to adapt our weel Speed!
             if (haveBallCount > 0)
             {
-//				adaptWheelSpeed (TooFast);
-//				correctRotationCount = 0;
                 adaptParam();
             }
 
