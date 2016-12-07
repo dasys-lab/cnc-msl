@@ -23,7 +23,7 @@ namespace alica
     void RestartMotion::run(void* msg)
     {
         /*PROTECTED REGION ID(run1472657511112) ENABLED START*/ //Add additional options here
-        if (this->success) {
+        if (this->isSuccess()) {
         	return;
         }
     	uninitializedMotionCounter++;

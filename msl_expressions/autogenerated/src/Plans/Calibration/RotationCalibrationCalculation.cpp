@@ -13,113 +13,117 @@ using namespace std;
 /*PROTECTED REGION END*/
 namespace alica
 {
-    /*PROTECTED REGION ID(staticVars1475074396562) ENABLED START*/ //initialise static variables here
-    /*PROTECTED REGION END*/
-    RotationCalibrationCalculation::RotationCalibrationCalculation() :
-            DomainBehaviour("RotationCalibrationCalculation")
-    {
-        /*PROTECTED REGION ID(con1475074396562) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    RotationCalibrationCalculation::~RotationCalibrationCalculation()
-    {
-        /*PROTECTED REGION ID(dcon1475074396562) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
-    void RotationCalibrationCalculation::run(void* msg)
-    {
-        /*PROTECTED REGION ID(run1475074396562) ENABLED START*/ //Add additional options here
-        if (!this->isSuccess() && !this->isFailure())
-        {
-            if (RotateOnce::measurements[0] == NULL)
-            {
-                RotateOnce::measurements[0] = RotateOnce::measurements[1];
-                RotateOnce::measurements[1] = new geometry::CNPoint2D(RotateOnce::measurements[0]->x + 10, 0); // TODO x field
-                this->setFailure(true);
-                cout << "RCC: Erstes Mal" << endl;
-            }
-            else
-            {
-				if (RotateOnce::measurements[1]->y < ERROR_THRESHOLD) {
-					cout << "RCC: FERRTIG" << endl;
-					this->setSuccess(true);
-				} else {
-					cout << "RCC: Fehler " << RotateOnce::measurements[1]->y << " ist noch nicht gut genug" << endl;
-					// call gnuplot for maximum convenience!!
-					// f(x) = x**3 * a + x**2 * b + x * c + d
-					// fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
+	/*PROTECTED REGION ID(staticVars1475074396562) ENABLED START*/ //initialise static variables here
+	/*PROTECTED REGION END*/
+	RotationCalibrationCalculation::RotationCalibrationCalculation() :
+			DomainBehaviour("RotationCalibrationCalculation")
+	{
+		/*PROTECTED REGION ID(con1475074396562) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	RotationCalibrationCalculation::~RotationCalibrationCalculation()
+	{
+		/*PROTECTED REGION ID(dcon1475074396562) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
+	void RotationCalibrationCalculation::run(void* msg)
+	{
+		/*PROTECTED REGION ID(run1475074396562) ENABLED START*/ //Add additional options here
+		if (this->isSuccess() || this->isFailure())
+		{
+			return;
+		}
+		if (RotateOnce::measurements[0] == NULL)
+		{
+			RotateOnce::measurements[0] = RotateOnce::measurements[1];
+			RotateOnce::measurements[1] = new geometry::CNPoint2D(RotateOnce::measurements[0]->x + 10, 0); // TODO x field
+			this->setFailure(true);
+			cout << "RCC: Erstes Mal" << endl;
+		}
+		else
+		{
+			if (RotateOnce::measurements[1]->y < ERROR_THRESHOLD)
+			{
+				cout << "RCC: FERRTIG" << endl;
+				this->setSuccess(true);
+			}
+			else
+			{
+				cout << "RCC: Fehler " << RotateOnce::measurements[1]->y << " ist noch nicht gut genug" << endl;
+				// call gnuplot for maximum convenience!!
+				// f(x) = x**3 * a + x**2 * b + x * c + d
+				// fit f(x) "RotationCalibration.tsv" using 1:2:3:4 via a,b,c,d
 
-					// TODO use measurements for gnuplot call
-					stringstream cmd;
-					string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
-					cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
-					cmd << logfile;
-					cmd << "\\\" u 1:2 via a,b; plot \\\"";
-					cmd << logfile;
-					cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
+				// TODO use measurements for gnuplot call
+				stringstream cmd;
+				string logfile = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
+				cmd << "gnuplot -persist -e \"f(x) = a*x+b; fit f(x) \\\"";
+				cmd << logfile;
+				cmd << "\\\" u 1:2 via a,b; plot \\\"";
+				cmd << logfile;
+				cmd << "\\\", f(x), 0; print sprintf(\\\"robotRadius=%f\\\",-b/a)\" 2>&1";
 
-					cout << cmd.str() << endl;
-					string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
+				cout << cmd.str() << endl;
+				string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
 
-					/* I like C! */
-					// match plotted value
-					const int max_line_size = 400;
-					const int output_size = gnuplotReturn.size() + 1;
-					const char *ret = gnuplotReturn.c_str();
-					char output[output_size];
-					char *line;
-					char *lastline;
-					char *radiusStr;
+				/* I like C! */
+				// match plotted value
+				const int max_line_size = 400;
+				const int output_size = gnuplotReturn.size() + 1;
+				const char *ret = gnuplotReturn.c_str();
+				char output[output_size];
+				char *line;
+				char *lastline;
+				char *radiusStr;
 
-					strncpy(output, gnuplotReturn.c_str(), output_size);
+				strncpy(output, gnuplotReturn.c_str(), output_size);
 
-					// Get last line
-					line = strtok(output, "\n");
-					while ((line = strtok(NULL, "\n")) != NULL)
-						lastline = line;
+				// Get last line
+				line = strtok(output, "\n");
+				while ((line = strtok(NULL, "\n")) != NULL)
+					lastline = line;
 
-					// Get the radius as string
-					strtok(lastline, "="); // eats robotRadius
-					radiusStr = strtok(NULL, "=");
-					if (radiusStr == NULL)
-					{
-						cerr << "ERROR parsing gnuplot output" << endl;
-						this->setSuccess(true); // not really tho
-						return;
-					}
-
-					// Convert it to double
-					double calculatedValue = strtod(radiusStr, NULL);
-					if (calculatedValue <= 0 || calculatedValue > 500)
-					{
-						// Something went wrong during parsing when value = 0
-						cerr << "ERROR parsing robot radius OR robot radius not appropriate" << endl;
-						cerr << "Calculated Robot Radius: " << calculatedValue << endl;
-						this->setSuccess(true); // not really tho
-						return;
-					}
-					geometry::CNPoint2D* temp = RotateOnce::measurements[0];
-					RotateOnce::measurements[0] = RotateOnce::measurements[1];
-					RotateOnce::measurements[1] = temp;
-
-					RotateOnce::measurements[1]->x = calculatedValue;
-					RotateOnce::measurements[1]->y = 0;
-
-					cout << "SUCCESS!" << endl;
-					cout << "Calculated Robot Radius: " << calculatedValue << endl;
-
-					wm->setRobotRadius(RotateOnce::measurements[1]->x);
-					cout << "OH SHIT IT WORKED!" << endl;
+				// Get the radius as string
+				strtok(lastline, "="); // eats robotRadius
+				radiusStr = strtok(NULL, "=");
+				if (radiusStr == NULL)
+				{
+					cerr << "ERROR parsing gnuplot output" << endl;
+					this->setSuccess(true); // not really tho
+					return;
 				}
-            }
-        }
-        /*PROTECTED REGION END*/
-    }
-    void RotationCalibrationCalculation::initialiseParameters()
-    {
-        /*PROTECTED REGION ID(initialiseParameters1475074396562) ENABLED START*/ //Add additional options here
-        /*PROTECTED REGION END*/
-    }
+
+				// Convert it to double
+				double calculatedValue = strtod(radiusStr, NULL);
+				if (calculatedValue <= 0 || calculatedValue > 500)
+				{
+					// Something went wrong during parsing when value = 0
+					cerr << "ERROR parsing robot radius OR robot radius not appropriate" << endl;
+					cerr << "Calculated Robot Radius: " << calculatedValue << endl;
+					this->setSuccess(true); // not really tho
+					return;
+				}
+				geometry::CNPoint2D* temp = RotateOnce::measurements[0];
+				RotateOnce::measurements[0] = RotateOnce::measurements[1];
+				RotateOnce::measurements[1] = temp;
+
+				RotateOnce::measurements[1]->x = calculatedValue;
+				RotateOnce::measurements[1]->y = 0;
+
+				cout << "SUCCESS!" << endl;
+				cout << "Calculated Robot Radius: " << calculatedValue << endl;
+
+				wm->setRobotRadius(RotateOnce::measurements[1]->x);
+				cout << "OH SHIT IT WORKED!" << endl;
+			}
+		}
+		/*PROTECTED REGION END*/
+	}
+	void RotationCalibrationCalculation::initialiseParameters()
+	{
+		/*PROTECTED REGION ID(initialiseParameters1475074396562) ENABLED START*/ //Add additional options here
+		/*PROTECTED REGION END*/
+	}
 /*PROTECTED REGION ID(methods1475074396562) ENABLED START*/ //Add additional methods here
 /*PROTECTED REGION END*/
 } /* namespace alica */

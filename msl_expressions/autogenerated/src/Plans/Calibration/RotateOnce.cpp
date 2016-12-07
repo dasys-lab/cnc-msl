@@ -36,7 +36,7 @@ namespace alica
 	void RotateOnce::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1467397900274) ENABLED START*/ //Add additional options here
-		if (this->success)
+		if (this->isSuccess())
 		{
 			return;
 		}
