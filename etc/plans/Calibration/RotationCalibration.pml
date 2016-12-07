@@ -45,7 +45,7 @@
     <inState>#1475074211872</inState>
     <outState>#1470227765155</outState>
   </transitions>
-  <transitions id="1480520547022" name="MISSING_NAME" comment="Calculate to Restart" msg="">
+  <transitions id="1480520547022" name="MISSING_NAME" comment="Calculation result not precise enough, back to Restart" msg="">
     <preCondition id="1480520550306" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
     <inState>#1475074211872</inState>
     <outState>#1470237789517</outState>

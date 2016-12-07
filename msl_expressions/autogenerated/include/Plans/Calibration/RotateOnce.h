@@ -4,7 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1467397900274) ENABLED START*/ //Add additional includes here
 #include "RingBuffer.h"
-#include "geometry/CNPoint2D.h"
+#include <container/CNPoint2D.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,6 +20,7 @@ namespace alica
         double initialBearing;
         // this data comes from the motion
         double initialAngle;
+        static geometry::CNPoint2D* measurements[2];
 
         /*PROTECTED REGION END*/
     protected:
@@ -38,7 +39,6 @@ namespace alica
         double initialRadius;
         double lastRotationCalibError;
         static constexpr double ACCELERATION = 0.05;
-        static geometry::CNPoint2D* measurements[2];
 
         // rotation speed varies
         double rotationSpeed;

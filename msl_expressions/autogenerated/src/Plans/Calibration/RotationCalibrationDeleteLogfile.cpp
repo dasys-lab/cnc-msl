@@ -5,6 +5,8 @@ using namespace std;
 #include <cstdio>
 #include <SystemConfig.h>
 #include <FileSystem.h>
+#include <MSLWorldModel.h>
+#include "Plans/Calibration/RotateOnce.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -31,7 +33,7 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1479315274633) ENABLED START*/ //Add additional options here
         std::string logfilePath = supplementary::FileSystem::combinePaths(sc->getLogPath(), "RotationCalibration.log");
         std::remove(logfilePath.c_str());
-        RotateOnce::measurements[1] = new CNPoint2D(wm->getRobotRadius(), 0);
+        RotateOnce::measurements[1] = new geometry::CNPoint2D(wm->getRobotRadius(), 0);
         /*PROTECTED REGION END*/
     }
 /*PROTECTED REGION ID(methods1479315274633) ENABLED START*/ //Add additional methods here

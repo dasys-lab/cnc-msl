@@ -13,15 +13,13 @@ using namespace std;
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
-	RotateOnce::measurements[0] = NULL;
-	RotateOnce::measurements[1] = NULL;
+    geometry::CNPoint2D* RotateOnce::measurements[2] = {NULL, NULL};
     /*PROTECTED REGION END*/
     RotateOnce::RotateOnce() :
             DomainBehaviour("RotateOnce")
     {
         /*PROTECTED REGION ID(con1467397900274) ENABLED START*/ //Add additional options here
         initialRadius = wm->getRobotRadius();
-        hasInitialConfigurationBeenSet = false;
         precisionBuffer = new msl::RingBuffer<double>(PRECISION_BUFFER_SIZE);
         /*PROTECTED REGION END*/
     }
@@ -66,7 +64,7 @@ namespace alica
                         cout << "end angle: " << endAngle << " => ";
                         lastRotationCalibError = circularDiff(initialAngle, endAngle);
                         logCalibrationResult(wm->getRobotRadius(), lastRotationCalibError);
-                        measurements[1] = lastRotationCalibError;
+                        measurements[1]->y = lastRotationCalibError;
                         // wm->adjustRobotRadius(STEP_SIZE);
                         this->setSuccess(true);
                     }
