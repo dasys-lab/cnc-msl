@@ -42,7 +42,8 @@ namespace alica
 		}
 		else
 		{
-			if (RotateOnce::measurements[1]->y < ERROR_THRESHOLD)
+			cout << "Mesurement[1] =  x:" << RotateOnce::measurements[1]->x << "y: " << RotateOnce::measurements[1]->y << endl; 
+			if (abs(RotateOnce::measurements[1]->y) < ERROR_THRESHOLD)
 			{
 				cout << "RCC: FERRTIG" << endl;
 				this->setSuccess(true);
@@ -115,6 +116,7 @@ namespace alica
 
 				wm->setRobotRadius(RotateOnce::measurements[1]->x);
 				cout << "OH SHIT IT WORKED!" << endl;
+				this->setFailure(true);
 			}
 		}
 		/*PROTECTED REGION END*/
