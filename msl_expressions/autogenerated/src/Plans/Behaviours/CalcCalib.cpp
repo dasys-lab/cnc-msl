@@ -137,8 +137,8 @@ namespace alica
 
         if (length >= 1)
         {
-
-            /* if (abs(correctedPosX - oldCorrectedPosX) > 500)
+		// mit Mittelwert
+             if (abs(correctedPosX - oldCorrectedPosX) > 500)
              {
              if (correctedPosX > oldCorrectedPosX)
              {
@@ -210,9 +210,11 @@ namespace alica
              }
 
              }
-             }*/
+             }
+		// mit Mittelwert Ende
 
-        	//
+        	// ohne Mittelwert
+		/*
             if (abs(correctedPosX - oldCorrectedPosX) > 500)
             {
                 if (correctedPosX > oldCorrectedPosX)
@@ -242,8 +244,12 @@ namespace alica
 
                 }
             }
+		*/
+		// Ohne Mittelwert Ende
+
+
 //Hinter Abfrage der gültigen calibWerte setzen?!
-            string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
+        /*    string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
             ofstream saveToCalibData;
             saveToCalibData.open(filename);
             saveToCalibData << calibCoefficientX << "\n";
@@ -253,7 +259,7 @@ namespace alica
             calibCoeff.calibCoefficientX = calibCoefficientX;
             calibCoeff.calibCoefficientY = calibCoefficientY;
             calibCoeff_pub.publish(calibCoeff);
-
+		*/
         }
 
         if (calibCoefficientX < 0.3)
@@ -274,6 +280,16 @@ namespace alica
         {
             calibCoefficientY = 2;
         }
+
+	ofstream saveToCalibData;
+	saveToCalibData.open(filename);
+	saveToCalibData << calibCoefficientX << "\n";
+	saveToCalibData << calibCoefficientY;
+	saveToCalibData.close();
+
+	calibCoeff.calibCoefficientX = calibCoefficientX;
+	calibCoeff.calibCoefficientY = calibCoefficientY;
+	calibCoeff_pub.publish(calibCoeff);
 
         std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
