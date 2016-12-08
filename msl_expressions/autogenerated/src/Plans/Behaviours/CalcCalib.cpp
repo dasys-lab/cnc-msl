@@ -211,35 +211,35 @@ namespace alica
 
         	// ohne Mittelwert
 		/*
-            if (abs(correctedPosX - oldCorrectedPosX) > 500)
-            {
-                if (correctedPosX > oldCorrectedPosX)
-                {
+            //if (abs(correctedPosX - oldCorrectedPosX) > 500){
+                //if (correctedPosX > oldCorrectedPosX){
+              if(calibCounter == 1){
                     calibCoefficientX *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->x, correctedPosX)
                             * (diffX / lengthSegment) + 1;
 
                 }
-                if (correctedPosX < oldCorrectedPosX)
-                {
+
+                //if (correctedPosX < oldCorrectedPosX){
+                  if(calibCounter == 2){
                     calibCoefficientX *= calibSign(correctedPosX, this->wm->rawSensorData->getOwnPositionVision()->x)
                             * (diffX / lengthSegment) + 1;
                 }
-            }
-            if (abs(correctedPosY - oldCorrectedPosY) > 300)
-            {
-                if (correctedPosY > oldCorrectedPosY)
-                {
+            //}
+
+            //if (abs(correctedPosY - oldCorrectedPosY) > 300){
+                //if (correctedPosY > oldCorrectedPosY){
+                  if(calibCounter == 3){
                     calibCoefficientY *= calibSign(this->wm->rawSensorData->getOwnPositionVision()->y, correctedPosY)
                             * (diffY / lengthSegment) + 1;
 
                 }
-                if (correctedPosY < oldCorrectedPosY)
-                {
+                //if (correctedPosY < oldCorrectedPosY){
+                if(calibCounter == 4){
                     calibCoefficientY *= calibSign(correctedPosY, this->wm->rawSensorData->getOwnPositionVision()->y)
                             * (diffY / lengthSegment) + 1;
 
                 }
-            }
+            //}
 		*/
 		// Ohne Mittelwert Ende
 
@@ -300,6 +300,7 @@ namespace alica
         std::cout << "lengthSegment: " << lengthSegment << std::endl;
         std::cout << "oldCoeffX: " << oldCalibCoefficientX << std::endl;
         std::cout << "oldCoeffY: " << oldCalibCoefficientY << std::endl;
+        std::cout << "calibCounter: " << calibCounter << std::endl;
 
         std::cout << "" << std::endl;
 
