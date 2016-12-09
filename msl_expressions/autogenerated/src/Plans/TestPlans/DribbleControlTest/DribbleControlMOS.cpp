@@ -54,6 +54,7 @@ namespace alica
 		case 3 :
 
 			if (testCount >= 60) {
+				testCount = 0;
 				testAngle += M_PI/8;
 			}
 			break;
@@ -74,6 +75,7 @@ namespace alica
 		case 5 :
 
 			if (testCount >= 60) {
+				testCount = 0;
 				testSpeed += 100;
 				testAngle += M_PI;
 			}
@@ -81,14 +83,15 @@ namespace alica
 
 		default :
 
-			if (testCount >= 60) {
+			if (testCount >= 200) {
+				testCount = 0;
 				testAngle += M_PI;
 			}
 			break;
     	}
 
     	msl_actuator_msgs::MotionControl motorMsg;
-    	if (testCount < 50){
+    	if (testCount < 180 && testCount > 5){
     	motorMsg.motion.angle = testAngle;
     	motorMsg.motion.rotation = testRot;
     	motorMsg.motion.translation = testSpeed;
@@ -157,9 +160,9 @@ namespace alica
     	double velX = -cos(angle)*translation;
     	double velY = -sin(angle)*translation + rotation*rBallRobot;
     	//correcting desired ball velocity towards robot to guarantee grib
-    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
     	if (velX<=staticUpperBound && velX>=staticLowerBound)
     		velX-=staticNegVelX;
+    	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
 
     	return sqrt(velX*velX+velY*velY);
     }
@@ -169,9 +172,9 @@ namespace alica
     {
         	double velX = -cos(angle)*translation;
         	double velY = -sin(angle)*translation + rotation*rBallRobot;
-        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
         	if (velX<=staticUpperBound && velX>=staticLowerBound)
         		velX-=staticNegVelX;
+        	velX -= epsilonT*abs(translation) + epsilonRot*abs(rotation)*rBallRobot;
 
         	double ballAngle =0;
        		ballAngle = atan2(velY,velX);
