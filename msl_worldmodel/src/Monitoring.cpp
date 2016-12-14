@@ -16,7 +16,7 @@ namespace msl
 {
 
 	Monitoring::Monitoring(MSLWorldModel* wm) :
-			wm(wm), running(true), isUsingSimulator(false)
+			wm(wm), running(true), isUsingSimulator(false), oldMotionPosX(0), oldMotionPosY(0), oldVisionPosX(0), oldVisionPosY(0), errorCounter(0), timeCounter(0)
 	{
 		this->isUsingSimulator = wm->isUsingSimulator();
 		// TODO make Monitoring.conf configuration
@@ -40,6 +40,7 @@ namespace msl
 		{
 			this->monitorSimulator();
 			this->monitorMotion();
+			this->looseWheel();
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		}
 	}
@@ -78,6 +79,48 @@ namespace msl
 			std::cout << "Mon: " << (maySend ? "Start" : "Stop") << " WM to send messages." << std::endl;
 			wm->setMaySendMessages(maySend);
 		}
+	}
+
+	void Monitoring::looseWheel()
+	{
+
+		         if(timeCounter == 30)
+		         {
+		        	 if(this->looseWheelCalc() > 750)
+		         	 {
+		        	 	 std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
+		         	 	 errorCounter++;
+
+		         	 	 if(errorCounter >= 3)
+		         	 	 {
+		         		 	 std::cout << "error detected" <<std::endl;
+		         	 	 }
+		         	 }
+		        	 else
+		        	 {
+		        		 errorCounter = 0;
+		        	 }
+
+		        	 std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
+
+		        	 oldMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+		        	 oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+		        	 oldVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+		        	 oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+
+
+		        	 timeCounter = 0;
+		         }
+
+		         timeCounter++;
+	}
+
+	double Monitoring::looseWheelCalc()
+	{
+		return sqrt((this->wm->rawSensorData->getOwnPositionMotion()->x-this->wm->rawSensorData->getOwnPositionVision()->x-(oldMotionPosX-oldVisionPosX))*
+				         (this->wm->rawSensorData->getOwnPositionMotion()->x-this->wm->rawSensorData->getOwnPositionVision()->x-(oldMotionPosX-oldVisionPosX))+
+				         (this->wm->rawSensorData->getOwnPositionMotion()->y-this->wm->rawSensorData->getOwnPositionVision()->y-(oldMotionPosY-oldVisionPosY))*
+				         (this->wm->rawSensorData->getOwnPositionMotion()->y-this->wm->rawSensorData->getOwnPositionVision()->y-(oldMotionPosY-oldVisionPosY)));
 	}
 
 } /* namespace msl */
