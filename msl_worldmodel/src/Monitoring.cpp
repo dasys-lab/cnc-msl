@@ -84,7 +84,7 @@ namespace msl
 	void Monitoring::looseWheel()
 	{
 
-		         if(timeCounter == 30)
+		         if(timeCounter == 3)
 		         {
 		        	 if(this->looseWheelCalc() > 750)
 		         	 {
@@ -100,8 +100,7 @@ namespace msl
 		        	 {
 		        		 errorCounter = 0;
 		        	 }
-
-		        	 std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
+		        	 //std::cout << "TESTerrorError: " << this->looseWheelCalc() << std::endl;
 
 		        	 oldMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
 		        	 oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
