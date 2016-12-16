@@ -28,12 +28,22 @@ namespace msl
 		void monitorMotion();
 		void monitorSimulator();
 		void setMaySendMessages(bool maySend);
+		void looseWheel();
+		double looseWheelCalc();
 
 	private:
 		MSLWorldModel* wm;
 		std::thread* monitorThread;
 		bool running;
 		bool isUsingSimulator;
+
+		// Variables for looseWheel detection
+		double oldMotionPosX;
+		double oldMotionPosY;
+		double oldVisionPosX;
+		double oldVisionPosY;
+		int errorCounter;
+		int timeCounter;
 
 	};
 

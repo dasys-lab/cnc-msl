@@ -8,6 +8,7 @@ using namespace std;
 #include <msl_robot/robotmovement/RobotMovement.h>
 #include <RawSensorData.h>
 #include "container/CNPoint2D.h"
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -17,6 +18,7 @@ namespace alica
             DomainBehaviour("CalibrationDribbleRotation")
     {
         /*PROTECTED REGION ID(con1469196350730) ENABLED START*/ //Add additional options here
+    	curveRotationfactor = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleRotation::~CalibrationDribbleRotation()
@@ -27,15 +29,7 @@ namespace alica
     void CalibrationDribbleRotation::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196350730) ENABLED START*/ //Add additional options here
-        if (wm->ball->haveBall())
-        {
-            // rotate left and check
-        }
-        else
-        {
-            MotionControl mc = dcc.getBall();
-            send(mc);
-        }
+
         /*PROTECTED REGION END*/
     }
     void CalibrationDribbleRotation::initialiseParameters()

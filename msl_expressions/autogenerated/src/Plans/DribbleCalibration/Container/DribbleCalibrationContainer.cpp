@@ -25,13 +25,16 @@ namespace alica
 		this->wm = msl::MSLWorldModel::get();
 		this->query = make_shared<MovementQuery>();
 		robotRadius = 0;
-//		potentialAlignPoint = nullptr;
 		defaultDistance = 0;
 		distToObs = 0;
 		changeDirections = false;
 		rotateAroundTheBall = false;
 		angleTolerance = 0;
 		alloAlignPoint = nullptr;
+
+		// for output
+		changeDirFlag = false;
+
 		readOwnConfigParameter();
 	}
 
@@ -88,13 +91,18 @@ namespace alica
 			return setNaN(mc);
 		}
 
+		// for output
+		if (changeDirFlag)  {cout << "changeDirections... " << endl; changeDirFlag = false;}
+
 		// check if there is an obstacle
-		if (!changeDirections)
-			changeDirections = checkObstacles(movement, distToObs);
+		if (!changeDirections && checkObstacles(movement, defaultDistance))
+		{
+			changeDirections = true;
+			changeDirFlag = true;
+		}
 
 		if (changeDirections)
 		{
-			cout << "alloAlignPoint == nullptr : " << (alloAlignPoint == nullptr ? "true" : "false") << endl;
 			auto me = wm->rawSensorData->getOwnPositionVision();
 
 			if (alloAlignPoint == nullptr)
@@ -104,8 +112,10 @@ namespace alica
 
 			shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
 
-			cout << "newAlignPoint: " << newAlignPoint->toString() << endl;
-			cout << "newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
+#ifdef DEBUG_DC
+			cout << "DCC::move() newAlignPoint: " << newAlignPoint->toString() << endl;
+			cout << "DCC::move() newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
+#endif
 
 			if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
 			{
@@ -113,17 +123,19 @@ namespace alica
 				query->rotateAroundTheBall = rotateAroundTheBall;
 				query->angleTolerance = angleTolerance;
 
-				cout << "aligning to new align point!" << endl;
 				mc = rm.alignTo(query);
+
+#ifdef DEBUG_DC
+				cout << "DCC::move() changeDirections: " << (changeDirections ? "true" : "false") << "rotating to new align point" << endl;
+#endif
+
 				return mc;
 			}
 			else if (newAlignPoint != nullptr)
 			{
-				cout << "reset changeDirection flag and newAlignPoint" << endl;
 				alloAlignPoint = nullptr;
 				changeDirections = false;
 				newAlignPoint = nullptr;
-
 				return setZero(mc);
 			}
 		}
@@ -134,22 +146,27 @@ namespace alica
 			shared_ptr<geometry::CNPoint2D> egoDestination = getEgoDestinationPoint(movement, defaultDistance);
 
 			query->egoDestinationPoint = egoDestination;
-			query->egoAlignPoint = egoDestination;
-
-			cout << "egoDestinationPoint = " << egoDestination->toString() << endl;
-//		cout << "egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
+#ifdef DEBUG_DC
+			cout << "DCC::move() egoDestinationPoint = " << egoDestination->toString();
+#endif
 
 			mc = rm.moveToPoint(query);
 
 			mc.motion.translation = translation;
-			mc.motion.rotation = 0;
+#ifdef DEBUNG_DC
+			cout << "DCC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;
+#endif
 			return mc;
 		}
-//		return mc;
-		cout << "return mc -> NaN!" << endl;
+		cerr << "DribbleCalibrationContainer::move() MotionControl mc = NaN!" << endl;
 		return setNaN(mc);
 	}
 
+	/**
+	 * @movement describes the direction in witch you will check for obstacles
+	 *
+	 * @return true if there is an obstacle in movement direction
+	 */
 	bool DribbleCalibrationContainer::checkObstacles(Movement movement, double distance)
 	{
 		if (movement != Forward && movement != Backward && movement != Left && movement != Right
@@ -160,20 +177,16 @@ namespace alica
 			return true;
 		}
 
-		cout << "in check obstacles!" << endl;
-
 		// currenPos 		: CNPoint2D -> ownPos
 		shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
 		// goal				: CNPoint2D -> destPoint
 		shared_ptr<geometry::CNPoint2D> egoDest = getEgoDestinationPoint(movement, distance);
 		// obstacelPoint	: CNPOint2D -> obstacle
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obs = wm->obstacles->getAlloObstaclePoints();
-		// obstacleRadius	: double
-//		double obsRadius;
 
 		if (checkFieldLines(egoDest))
 		{
-//			cout << "field line in front of me" << endl;
+			// field line in front of me
 			return true;
 		}
 
@@ -182,17 +195,11 @@ namespace alica
 			return false;
 		}
 
-//		cout << "found " << obs->size() << " obstacles" << endl;
 		auto me = wm->rawSensorData->getOwnPositionVision();
 
 		for (shared_ptr<geometry::CNPoint2D> ob : *obs)
 		{
-//			cout << "egoObstacle: " << ob->alloToEgo(*me)->toString() << endl;
-//			cout << "egoDestination: " << egoDest->toString() << endl;
-//			cout << "distance: " << distance << endl;
-//			cout << "corridorCheck: " << (wm->pathPlanner->corridorCheck(ownPos->getPoint(), egoDest, ob) ? "true" : "false")<< endl;
-			if (wm->pathPlanner->corridorCheck(ownPos->getPoint(), egoDest, ob->alloToEgo(*me)))
-				return true;
+				return wm->pathPlanner->corridorCheck(ownPos->getPoint(), egoDest, ob->alloToEgo(*me));
 		}
 
 		return false;
@@ -203,14 +210,18 @@ namespace alica
 	 */
 	bool DribbleCalibrationContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 	{
-		cout << "checkFieldLine egoDestination = " << egoDest->toString();
+#ifdef DEBUG_DC
+		cout << "DDC::checkFieldLines egoDestination = " << egoDest->toString();
+#endif
+
 		auto me = wm->rawSensorData->getOwnPositionVision();
-		cout << "me->theta = " << me->theta << endl;
-		cout << "me->x = " << me->x << endl;
-		cout << "me->y = " << me->y << endl;
+
 		// egoDestinationPoint to allo
 		shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(*me);
-		cout << "alloDestinationPoint = " << alloDestination->toString();
+
+#ifdef DEBUG_DC
+		cout << "DCC::checkFieldLines alloDestinationPoint = " << alloDestination->toString();
+#endif
 
 		// check if destinationPoint is inside the field area
 		double fieldLength = wm->field->getFieldLength();
@@ -224,6 +235,12 @@ namespace alica
 		return false;
 	}
 
+	/**
+	 * @movement describes the movement direction
+	 * @distance to the returned ego destination point
+	 *
+	 * @return an ego destination point depending on the movement direction
+	 */
 	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::getEgoDestinationPoint(Movement movement,
 																						double distance)
 	{
@@ -241,25 +258,47 @@ namespace alica
 
 		shared_ptr<geometry::CNPoint2D> egoDestination = make_shared<geometry::CNPoint2D>(0, 0);
 		// 1000 = 1m
-		egoDestination = movement == Forward ? make_shared<geometry::CNPoint2D>(-distance, 0) : egoDestination;
-		egoDestination = movement == Backward ? make_shared<geometry::CNPoint2D>(distance, 0) : egoDestination;
-		egoDestination = movement == Left ? make_shared<geometry::CNPoint2D>(0, distance) : egoDestination;
-		egoDestination = movement == Right ? make_shared<geometry::CNPoint2D>(0, -distance) : egoDestination;
-		egoDestination = movement == ForwardRight ? make_shared<geometry::CNPoint2D>(-b, a) : egoDestination;
-		egoDestination = movement == ForwardLeft ? make_shared<geometry::CNPoint2D>(-b, -a) : egoDestination;
-		egoDestination = movement == BackwardRight ? make_shared<geometry::CNPoint2D>(b, a) : egoDestination;
-		egoDestination = movement == BackwardLeft ? make_shared<geometry::CNPoint2D>(b, -a) : egoDestination;
+
+		switch (movement) {
+			case Forward:
+				egoDestination = make_shared<geometry::CNPoint2D>(-distance, 0);
+				break;
+			case Backward:
+				egoDestination = make_shared<geometry::CNPoint2D>(distance, 0);
+				break;
+			case Left:
+				egoDestination = make_shared<geometry::CNPoint2D>(0, -distance);
+				break;
+			case Right:
+				egoDestination = make_shared<geometry::CNPoint2D>(0, distance);
+				break;
+			case ForwardRight:
+				egoDestination = make_shared<geometry::CNPoint2D>(-b, a);
+				break;
+			case ForwardLeft:
+				egoDestination = make_shared<geometry::CNPoint2D>(-b, -a);
+				break;
+			case BackwardRight:
+				egoDestination = make_shared<geometry::CNPoint2D>(b, a);
+				break;
+			case BackwardLeft:
+				egoDestination = make_shared<geometry::CNPoint2D>(b, -a);
+				break;
+			default:
+				cerr << "DribbleCalibrationContainer::getEgoDestination() wrong movement parameter value!" << endl;
+				break;
+		}
 
 		return egoDestination;
 	}
 
 	shared_ptr<geometry::CNPoint2D> DribbleCalibrationContainer::calcNewAlignPoint(Movement curMove)
 	{
-		cout << "choose new direction..." << endl;
+#ifdef DEBUG_DC
+		cout << "DCC::calcNewAlignPoint choose new direction..." << endl;
+#endif
 
 		// use checkObstacels to choose a new direction
-//		vector<Movement> movement = {Forward, Backward, Left, Right, ForwardRight, ForwardLeft, BackwardRight,
-//										BackwardLeft};
 		vector<Movement> movement = {Forward, ForwardRight, Right, BackwardRight, Backward, BackwardLeft, Left, ForwardLeft};
 
 		double distance = 3000;
@@ -272,14 +311,15 @@ namespace alica
 			if (!checkObstacles(dir, distance))
 			{
 				{
-					cout << "New align point in " << movementToString[dir] << " direction..." << endl;
-					cout << "curMove = " << movementToString[curMove] << endl;
-
-					dir = curMove == Left ? getNewDirection(i, movement, 2): dir;
-					dir = curMove == Right ? getNewDirection(i, movement, -2): dir;
-
-					cout << "New specific align point in " << movementToString[dir] << " direction..." << endl;
-
+#ifdef DEBUG_DC
+					cout << "DCC::calcNewAlignPoint New align point in " << movementToString[dir] << " direction..." << endl;
+					cout << "DCC::calcNewAlignPoint curMove = " << movementToString[curMove] << endl;
+#endif
+					dir = curMove == Left ? getNewDirection(i, movement, 4): dir;
+					dir = curMove == Right ? getNewDirection(i, movement, -4): dir;
+#ifdef DEBUG_DC
+					cout << "DCC::calcNewAlignPoint New specific align point in " << movementToString[dir] << " direction..." << endl;
+#endif
 					alignPoint = getEgoDestinationPoint(dir, distance);
 					break;
 				}
@@ -297,17 +337,31 @@ namespace alica
 	 */
 	DribbleCalibrationContainer::Movement DribbleCalibrationContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
 	{
-		cout << "in getNewDirection!" << endl;
-		if ((curDir - next) >= 0 && (curDir - next) < movement.size())
+#ifdef DEBUG_DC
+		cout << "DDC::getNewDirection: curDir = " << curDir << " next = " << next << " movement.size = " << (int) movement.size() << endl;
+#endif
+
+		if ((curDir - next) >= 0 && (curDir - next) < (int) movement.size())
 		{
+#ifdef DEBUG_DC
+			cout << "DDC::getNewDirection: ((curDir - next) >= 0 && (curDir - next) < (int) movement.size()) -> return movement.at(curDir - next)" << endl;
+#endif
 			return movement.at(curDir - next);
-		} else if ((curDir - next) > (movement.size() - 1))
+
+		} else if ((curDir - next) > ((int) movement.size() - 1))
 		{
-			int i = (curDir - next) - (movement.size() - 1);
+			int i = (curDir - next) - ((int) movement.size() - 1);
+#ifdef DEBUG_DC
+			cout << "DDC::getNewDirection: ((curDir - next) > ((int) movement.size() - 1)) i = " << i << endl;
+#endif
 			return movement.at(i);
+
 		} else
 		{
-			int i = (movement.size() - 1) - abs(curDir - next);
+			int i = ((int) movement.size() - 1) - abs(curDir - next);
+#ifdef DEBUG_DC
+			cout << "DDC::getNewDirection: i = " << i << " abs(curDir - next) = abs(" << curDir << " - " << next << ") = " << abs(curDir - next) << endl;
+#endif
 			return movement.at(i);
 		}
 	}
@@ -318,16 +372,11 @@ namespace alica
 	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
 															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
-		// 10s of rotating the ball
-//		int queueSize = 285;
-
 		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
 		{
 			cerr << "no OpticalFLow signal!" << endl;
 			return false;
 		}
-//		cout << "queueSize = " << queueSize << endl;
-//		cout << "opQueue.size() = " << opQueue->size() << endl;
 		if (opQueue->size() >= queueSize)
 		{
 			return true;
@@ -362,9 +411,11 @@ namespace alica
 		}
 
 		int sum = 0;
+
 #ifdef DEBUG_DC
 		cout << "in getAverageOpticalFlowValue() " << endl;
 #endif
+
 		for (shared_ptr<geometry::CNPoint2D> val : *queue)
 		{
 			if (value == XValue)
@@ -373,7 +424,6 @@ namespace alica
 			}
 			else
 			{
-//    			cout << val->y << endl;s
 				sum += val->y;
 			}
 		}
@@ -426,7 +476,6 @@ namespace alica
 		supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
 		robotRadius = (*sys)["Rules"]->get<double>("Rules.RobotRadius", NULL);
 		defaultDistance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DefaultDistance", NULL);
-		distToObs = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DistanceToObstacle", NULL);
 		rotateAroundTheBall = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.RotateAroundTheBall",
 		NULL);
 		angleTolerance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.AngleTolerance", NULL);
