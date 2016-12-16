@@ -11,7 +11,6 @@
 class ICalibration
 {
 public:
-	virtual ~ICalibration();
 };
 
 
