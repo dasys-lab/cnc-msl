@@ -16,12 +16,13 @@ namespace msl
 {
 
 	Monitoring::Monitoring(MSLWorldModel* wm) :
-			wm(wm), running(true), isUsingSimulator(false), oldMotionPosX(0), oldMotionPosY(0), oldVisionPosX(0), oldVisionPosY(0), errorCounter(0), timeCounter(0)
+			wm(wm), running(true), isUsingSimulator(false), oldMotionPosX(0), oldMotionPosY(0), oldVisionPosX(0), oldVisionPosY(0), errorCounter(0), oldTime(wm->getTime())
 	{
 		this->isUsingSimulator = wm->isUsingSimulator();
 		// TODO make Monitoring.conf configuration
 		this->monitorThread = new std::thread(&Monitoring::run, this);
 	}
+
 
 	Monitoring::~Monitoring()
 	{
@@ -85,7 +86,7 @@ namespace msl
 	{
 		if (!this->isUsingSimulator)
 		{
-		         if(timeCounter == 3)
+		         if(wm->getTime() - oldTime >= 1000000000)
 		         {
 		        	 if(this->looseWheelCalc() > 750)
 		         	 {
@@ -109,9 +110,8 @@ namespace msl
 		        	 oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
 
-		        	 timeCounter = 0;
 		         }
-			timeCounter++;
+			oldTime = wm->getTime();
 		}
 	}
 

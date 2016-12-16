@@ -43,7 +43,7 @@ namespace msl
 		double oldVisionPosX;
 		double oldVisionPosY;
 		int errorCounter;
-		int timeCounter;
+		signed long long oldTime;
 
 	};
 
