@@ -5,7 +5,7 @@ using namespace std;
 #include "msl_robot/robotmovement/RobotMovement.h"
 #include "SystemConfig.h"
 #include "engine/model/EntryPoint.h"
-#include "engine/constraintmodul/ConstraintQuery.h"
+#include "engine/constraintmodul/Query.h"
 #include "engine/RunningPlan.h"
 #include "engine/Assignment.h"
 #include "engine/model/Plan.h"
@@ -24,7 +24,7 @@ namespace alica
             DomainBehaviour("ReceiveInOppHalf")
     {
         /*PROTECTED REGION ID(con1462370340143) ENABLED START*/ //Add additional options here
-        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->query = make_shared < alica::Query > (this->wm->getEngine());
         this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -118,8 +118,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1462370340143) ENABLED START*/ //Add additional options here
         query->clearDomainVariables();
-        query->addVariable(wm->getOwnId(), "x");
-        query->addVariable(wm->getOwnId(), "y");
+        query->addDomainVariable(wm->getOwnId(), "x");
+        query->addDomainVariable(wm->getOwnId(), "y");
         result.clear();
         string tmp;
         bool success = true;

@@ -18,7 +18,7 @@ namespace alica
             DomainBehaviour("CalibrationDribbleRotation")
     {
         /*PROTECTED REGION ID(con1469196350730) ENABLED START*/ //Add additional options here
-    	curveRotationfactor = 0;
+        curveRotationfactor = 0;
         /*PROTECTED REGION END*/
     }
     CalibrationDribbleRotation::~CalibrationDribbleRotation()
@@ -29,7 +29,6 @@ namespace alica
     void CalibrationDribbleRotation::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469196350730) ENABLED START*/ //Add additional options here
-
         /*PROTECTED REGION END*/
     }
     void CalibrationDribbleRotation::initialiseParameters()

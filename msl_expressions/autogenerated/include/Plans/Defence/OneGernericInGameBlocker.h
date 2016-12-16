@@ -3,7 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1458034268108) ENABLED START*/ //Add additional includes here
-#include "engine/constraintmodul/ConstraintQuery.h"
+#include "engine/constraintmodul/Query.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
 /*PROTECTED REGION END*/
 namespace alica
@@ -19,7 +19,7 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1458034268108) ENABLED START*/ //Add additional protected methods here
-        shared_ptr<ConstraintQuery> query;
+        shared_ptr<Query> query;
         double maxVel;
         bool avoidBall;
         vector<double> result;

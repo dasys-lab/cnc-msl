@@ -81,15 +81,23 @@ namespace alica
 
             if (haveBallCount < (minHaveBallIter / 2))
             {
-            	// output
-                if (moveLeftFlag) {cout << "move left..." << endl; moveLeftFlag = false;}
+                // output
+                if (moveLeftFlag)
+                {
+                    cout << "move left..." << endl;
+                    moveLeftFlag = false;
+                }
 
                 mc = dcc.move(dcc.Left, tran);
             }
             else
             {
-            	// output
-            	if (moveRightFlag) {cout << "move right..." << endl; moveRightFlag = false;}
+                // output
+                if (moveRightFlag)
+                {
+                    cout << "move right..." << endl;
+                    moveRightFlag = false;
+                }
 
                 mc = dcc.move(dcc.Right, tran);
             }
@@ -115,18 +123,19 @@ namespace alica
             if (haveBallCount >= minHaveBallIter)
             {
                 moveCount++;
-                cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..." << endl;
+                cout << "Could hold the ball long enough. Increasing speed to" << (moveCount + 1) * startTrans << "..."
+                        << endl;
 
                 haveBallCount = 0;
 
                 if (minHaveBallParamPoint == 0)
                 {
-                	cout << "setting minimum parameter value to " << orthoDriveFactor << "..." << endl;
+                    cout << "setting minimum parameter value to " << orthoDriveFactor << "..." << endl;
                     minHaveBallParamPoint = orthoDriveFactor;
                 }
                 else
                 {
-                	cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
+                    cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
                     maxHaveBallParamPoint = orthoDriveFactor;
                 }
 
@@ -139,7 +148,8 @@ namespace alica
             // choose correct value
             orthoDriveFactor = (minHaveBallParamPoint + maxHaveBallParamPoint) / 2;
             writeConfigParameters();
-            cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is " << orthoDriveFactor << endl;
+            cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is "
+                    << orthoDriveFactor << endl;
             this->setSuccess(true);
             return;
         }

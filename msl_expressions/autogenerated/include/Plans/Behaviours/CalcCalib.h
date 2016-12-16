@@ -32,7 +32,7 @@ namespace alica
         double oldCorrectedPosY = 0;
         double diffX;
         double diffY;
-        double length = 0;  //löschen???
+        double length = 0; //löschen???
         double lengthSegment = 0;
         CalibrationCoefficient calibCoeff;
         int calibCounter = 0; //evtl für Richtung
