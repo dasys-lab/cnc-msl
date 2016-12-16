@@ -83,7 +83,8 @@ namespace msl
 
 	void Monitoring::looseWheel()
 	{
-
+		if (!this->isUsingSimulator)
+		{
 		         if(timeCounter == 3)
 		         {
 		        	 if(this->looseWheelCalc() > 750)
@@ -110,8 +111,8 @@ namespace msl
 
 		        	 timeCounter = 0;
 		         }
-
-		         timeCounter++;
+			timeCounter++;
+		}
 	}
 
 	double Monitoring::looseWheelCalc()
