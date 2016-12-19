@@ -30,6 +30,13 @@ namespace alica
 		DribbleCalibrationContainer();
 		virtual ~DribbleCalibrationContainer();
 
+		enum Parm
+		{
+			DribbleForward, DribbleBackward, DribbleLeft, DribbleRight, RotateLeft, RotateRight
+		};
+
+		void checkParam(Parm parm);
+
 		//  movement stuff
 		enum Movement
 		{

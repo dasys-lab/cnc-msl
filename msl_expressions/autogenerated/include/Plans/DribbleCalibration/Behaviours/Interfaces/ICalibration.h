@@ -11,6 +11,10 @@
 class ICalibration
 {
 public:
+//	virtual ~ICalibration();
+	virtual void move() = 0;
+	virtual void adaptParams() = 0;
+	virtual void writeConfigParameters() = 0;
 };
 
 

@@ -18,3 +18,7 @@ DribbleForward::~DribbleForward()
 	// TODO Auto-generated destructor stub
 }
 
+void DribbleForward::move()
+{
+
+}
