@@ -28,6 +28,15 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
         //---
+
+
+    	// 1 only rotation, increases by pi/3 every time
+    	// 2 rotation with increasing translation speed, rotation increases every ten times
+		// 3 rotation with changing translation angle
+		// 4 changing translation angle
+		// 5 increasing speed
+		// default forth and back
+
         switch (testBehaviour)
         {
             case 1:
@@ -98,8 +107,11 @@ namespace alica
                 break;
         }
 
+        //fill message for MotionControl as defined in switch
+        //drive only in time step 6-49
+        //pause in 1-5 and 50-60, repeat
         msl_actuator_msgs::MotionControl motorMsg;
-        if (testCount < 180 && testCount > 5)
+        if (testCount < 50 && testCount > 5)
         {
             motorMsg.motion.angle = testAngle;
             motorMsg.motion.rotation = testRot;

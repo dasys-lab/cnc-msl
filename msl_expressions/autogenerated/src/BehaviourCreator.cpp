@@ -79,6 +79,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
+#include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
@@ -441,6 +443,11 @@ namespace alica
                 return make_shared<KickOffPassDefault>();
                 break;
 
+            case 1482163995843:
+
+                return make_shared<TestMotorControl>();
+                break;
+
             case 1434650910857:
 
                 return make_shared<OneEighty>();
@@ -786,6 +793,8 @@ namespace alica
                 break;
 
             case 1413992626194:
+
+            case 1482165487602:
 
                 return make_shared<Stop>();
                 break;
