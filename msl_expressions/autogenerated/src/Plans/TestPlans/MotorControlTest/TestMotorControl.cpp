@@ -2,6 +2,9 @@ using namespace std;
 #include "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
 
 /*PROTECTED REGION ID(inccpp1482163964536) ENABLED START*/ //Add additional includes here
+#include "msl_actuator_msgs/MotionControl.h"
+#include "RawSensorData.h"
+#include "MSLWorldModel.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -27,17 +30,21 @@ namespace alica
     		start = wm->rawSensorData->getOwnPositionMotion();
     		if (start == NULL)
     			return;
-    		goal = start + make_shared<geometry::CNPosition>(relGoalX,relGoalY,relGoalRot);
+    		goal = start;
+    		goal->x += relGoalX;
+    		goal->y += relGoalY;
+    		goal->theta += relGoalRot;
     	}
 
     	goalPointer = goal - wm->rawSensorData->getOwnPositionMotion();
-    	goalDistance = sqrt(goalPointer->x*goalPointer->x + goalPointer->y*goalPointer->y + goalPointer->theta*goalPointer->theta*500);
+    	angleDistance = goal->theta - wm->rawSensorData->getOwnPositionMotion()->theta;
+    	goalDistance = sqrt(goalPointer->x*goalPointer->x + goalPointer->y*goalPointer->y + angleDistance*angleDistance*500);
 
     	if (goalDistance > oldGoalDistance)
     	    	{
     	    		if (!terminated)
     	    		{
-    	    			cout<< "TestMotorControl::run Reached closest point to target at "<<count<<" with "<<goalPointer->x<<","<<goalPointer->y<<","<<goalPointer->theta<<endl;
+    	    			cout<< "TestMotorControl::run Reached closest point to target at "<<count<<" with "<<goalPointer->x<<","<<goalPointer->y<<","<<angleDistance<<endl;
     	    			msl_actuator_msgs::MotionControl motorMsg;
     	                motorMsg.motion.angle = 0;
     	                motorMsg.motion.rotation = 0;
