@@ -23,7 +23,6 @@ namespace msl
 		this->monitorThread = new std::thread(&Monitoring::run, this);
 	}
 
-
 	Monitoring::~Monitoring()
 	{
 		this->monitorThread->join();
@@ -86,41 +85,40 @@ namespace msl
 	{
 		if (!this->isUsingSimulator)
 		{
-		         if(wm->getTime() - oldTime >= 1000000000)
-		         {
-		        	 if(this->looseWheelCalc() > 750)
-		         	 {
-		        	 	 std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
-		         	 	 errorCounter++;
+			if (this->wm->rawSensorData->getOwnPositionMotion() == nullptr || this->wm->rawSensorData->getOwnPositionVision() == nullptr)
+			{
+				return;
+			}
+			if (wm->getTime() - oldTime >= 1000000000)
+			{
+				if (this->looseWheelCalc() > 750)
+				{
+					std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
+					errorCounter++;
 
-		         	 	 if(errorCounter >= 3)
-		         	 	 {
-		         		 	 std::cout << "error detected" <<std::endl;
-		         	 	 }
-		         	 }
-		        	 else
-		        	 {
-		        		 errorCounter = 0;
-		        	 }
-		        	 //std::cout << "TESTerrorError: " << this->looseWheelCalc() << std::endl;
+					if (errorCounter >= 3)
+					{
+						std::cout << "error detected" << std::endl;
+					}
+				}
+				else
+				{
+					errorCounter = 0;
+				}
+				//std::cout << "TESTerrorError: " << this->looseWheelCalc() << std::endl;
+				oldMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
+				oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
+				oldVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
+				oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
-		        	 oldMotionPosX = this->wm->rawSensorData->getOwnPositionMotion()->x;
-		        	 oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
-		        	 oldVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-		        	 oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
-
-
-		         }
+			}
 			oldTime = wm->getTime();
 		}
 	}
 
 	double Monitoring::looseWheelCalc()
 	{
-		return sqrt((this->wm->rawSensorData->getOwnPositionMotion()->x-this->wm->rawSensorData->getOwnPositionVision()->x-(oldMotionPosX-oldVisionPosX))*
-				         (this->wm->rawSensorData->getOwnPositionMotion()->x-this->wm->rawSensorData->getOwnPositionVision()->x-(oldMotionPosX-oldVisionPosX))+
-				         (this->wm->rawSensorData->getOwnPositionMotion()->y-this->wm->rawSensorData->getOwnPositionVision()->y-(oldMotionPosY-oldVisionPosY))*
-				         (this->wm->rawSensorData->getOwnPositionMotion()->y-this->wm->rawSensorData->getOwnPositionVision()->y-(oldMotionPosY-oldVisionPosY)));
+		return sqrt((this->wm->rawSensorData->getOwnPositionMotion()->x - this->wm->rawSensorData->getOwnPositionVision()->x - (oldMotionPosX - oldVisionPosX)) * (this->wm->rawSensorData->getOwnPositionMotion()->x - this->wm->rawSensorData->getOwnPositionVision()->x - (oldMotionPosX - oldVisionPosX)) + (this->wm->rawSensorData->getOwnPositionMotion()->y - this->wm->rawSensorData->getOwnPositionVision()->y - (oldMotionPosY - oldVisionPosY)) * (this->wm->rawSensorData->getOwnPositionMotion()->y - this->wm->rawSensorData->getOwnPositionVision()->y - (oldMotionPosY - oldVisionPosY)));
 	}
 
 } /* namespace msl */
