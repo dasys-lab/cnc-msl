@@ -32,14 +32,13 @@ namespace alica
 
 		if (count == 0)
 		{
-			cout<<"TestMotorControl::run started on first round"<<endl;
+			cout<<"TestMotorControl::run started on first round "<<relGoalX<<endl;
 			start = wm->rawSensorData->getOwnPositionMotion();
 			if (start == NULL)
 				return;
-			goal = start;
-			goal->x += relGoalX;
-			goal->y += relGoalY;
-			goal->theta += relGoalRot;
+			goal->x = start->x + relGoalX;
+			goal->y = start->y + relGoalY;
+			goal->theta = start->theta + relGoalRot;
 		}
 
 		goalPointer = goal - wm->rawSensorData->getOwnPositionMotion();
@@ -48,7 +47,7 @@ namespace alica
 				goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
 						+ angleDistance * angleDistance * 500);
 
-		cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance << endl;
+		cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance<<" x "<<goalPointer->x<<" y "<<goalPointer->y<<" goal "<<goal->x<<" "<<goal->y << endl;
 
 		if (goalDistance > oldGoalDistance)
 		{
@@ -129,6 +128,7 @@ namespace alica
 
 		count = 0;
 		terminated = false;
+		goal = make_shared<geometry::CNPosition>();
 		/*PROTECTED REGION END*/
 	}
 /*PROTECTED REGION ID(methods1482163964536) ENABLED START*/ //Add additional methods here
