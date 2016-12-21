@@ -45,17 +45,35 @@ namespace alica
 
 	}
 
-	void DribbleCalibrationContainer::checkParam(Parm parm)
+	MotionControl DribbleCalibrationContainer::callBehavour(MethodParm mParm, Parm parm, int trans)
 	{
 		switch (parm) {
-			case DribbleForward:
-//				DribbleForward df;
-//				df.move();
-				break;
-			default:
+			case DribbleForwardParm:
+				DribbleForward df;
+				if (mParm == Move)
+					return df.move(trans);
+
+				if (mParm == AdaptParams)
+					df.adaptParams();
+				if (mParm == WriteConfigParam)
+					df.writeConfigParameters();
 				break;
 		}
+		MotionControl mc;
+		return mc;
 	}
+
+	MotionControl DribbleCalibrationContainer::parmToMove(Parm parm, int trans)
+	{
+		return callBehavour(MethodParm::Move, parm);
+	}
+
+	void DribbleCalibrationContainer::parmToParmAdapt(Parm parm)
+	{
+
+	}
+
+	// old stuff ========================================================================================
 
 	msl_actuator_msgs::MotionControl DribbleCalibrationContainer::getBall()
 	{

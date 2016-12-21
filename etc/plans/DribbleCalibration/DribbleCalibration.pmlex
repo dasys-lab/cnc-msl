@@ -130,4 +130,16 @@
     <key href="../Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="Behaviours/DribbleCalibration.beh#1482339465166"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/DribbleCalibration.beh#1482339837722"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/DribbleCalibration.beh#1482339937439"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

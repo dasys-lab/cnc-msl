@@ -18,7 +18,19 @@ DribbleForward::~DribbleForward()
 	// TODO Auto-generated destructor stub
 }
 
-void DribbleForward::move()
+MotionControl DribbleForward::move(int trans)
+{
+	MotionControl mc;
+	return mCon.move(mCon.Forward, trans);
+
+}
+
+void DribbleForward::writeConfigParameters()
+{
+
+}
+
+void DribbleForward::adaptParams()
 {
 
 }

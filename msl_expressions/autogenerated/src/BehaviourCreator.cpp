@@ -19,6 +19,8 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/CheckGoalKick.h"
 
+#include  "Plans/DribbleCalibration/Behaviours/DribbleCalibration.h"
+
 #include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleRotation.h"
 
 #include  "Plans/Attack/AdvancdeSimplePass.h"
@@ -285,6 +287,15 @@ namespace alica
             case 1467265292648:
 
                 return make_shared<CheckGoalKick>();
+                break;
+
+            case 1482339465166:
+
+            case 1482339837722:
+
+            case 1482339937439:
+
+                return make_shared<DribbleCalibration>();
                 break;
 
             case 1469196377758:

@@ -2,15 +2,11 @@
 #define TestMotorControl_H_
 
 #include "DomainBehaviour.h"
-
-
+/*PROTECTED REGION ID(inc1482163964536) ENABLED START*/ //Add additional includes here
 #include <SystemConfig.h>
 #include <Configuration.h>
 #include <limits>
 #include "container/CNPosition.h"
-
-
-/*PROTECTED REGION ID(inc1482163964536) ENABLED START*/ //Add additional includes here
 /*PROTECTED REGION END*/
 namespace alica
 {

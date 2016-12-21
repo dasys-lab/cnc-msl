@@ -32,10 +32,16 @@ namespace alica
 
 		enum Parm
 		{
-			DribbleForward, DribbleBackward, DribbleLeft, DribbleRight, RotateLeft, RotateRight
+			DribbleForwardParm, DribbleBackwardParm, DribbleLeftParm, DribbleRightParm, RotateLeftParm, RotateRightPram, ErrParm
 		};
 
-		void checkParam(Parm parm);
+		enum MethodParm
+		{
+			Move, AdaptParams, WriteConfigParam
+		};
+
+		MotionControl parmToMove(Parm parm, int trans);
+		void parmToParmAdapt(Parm parm);
 
 		//  movement stuff
 		enum Movement
@@ -53,7 +59,7 @@ namespace alica
 		// used in checkObstacles and calcNewAlignPoint to decide where to drive if there is an obstacle in our way
 //		shared_ptr<geometry::CNPoint2D> potentialAlignPoint;
 
-		// output variables
+// output variables
 		bool changeDirFlag;
 
 		// opticalFlow stuff
@@ -77,6 +83,8 @@ private:
 	{
 		XValue, YValue, QOSValue
 	};
+
+	MotionControl callBehavour(MethodParm mParm, Parm parm, int trans = 0);
 
 	// movement and obstacle avoiding stuff
 				bool changeDirections;
