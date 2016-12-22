@@ -14,7 +14,7 @@ extern gonzales_state gonz_state;
 
 
 void logging_init();
-void log();
+void logData();
 
 
 

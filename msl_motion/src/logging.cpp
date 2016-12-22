@@ -21,7 +21,7 @@ void logging_init() {
     }
 }
 
-void log() {
+void logData() {
 	cout<<"logging::log was called"<<endl;
     if (isLogging) {
     	cout<<"logging::log isLogging in file "<<logFile<<endl;

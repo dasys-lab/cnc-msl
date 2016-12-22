@@ -152,7 +152,8 @@ int main(int argc, char** argv) {
 				printf("Unknown Mode, doing nothing\n");
 
 		}
-		log();
+		cout<<"EposGonzales::main logging data"<<endl;
+		logData();
 
         gettimeofday(&time_cur,NULL);
 //printf("Sleeping for: %ldus\n",current_settings.controllerLoopTime*1000l-TIMEDIFFMS(time_cur,time_last));

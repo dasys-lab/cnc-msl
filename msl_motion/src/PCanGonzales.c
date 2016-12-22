@@ -13,6 +13,7 @@
 #include "gonzales.h"
 #include "RosHelper.h"
 #include "logging.h"
+#include "iostream"
 
 /*
 typedef struct
@@ -156,7 +157,8 @@ int main(int argc, char** argv) {
 				printf("Unknown Mode, doing nothing\n");
 
 		}
-		log();
+		cout<<"PCanGonzales::main logging data"<<endl;
+		logData();
         mcdc_query_infos();
 
  		usleep(current_settings.controllerLoopTime*1000);
