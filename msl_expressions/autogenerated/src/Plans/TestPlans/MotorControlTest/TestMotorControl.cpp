@@ -32,7 +32,7 @@ namespace alica
 
         if (count == 0)
         {
-            cout << "TestMotorControl::run started on first round " << relGoalX << endl;
+            cout << "TestMotorControl::run started on first round " <<  endl;
             start = wm->rawSensorData->getOwnPositionMotion();
             if (start == NULL)
                 return;
@@ -50,7 +50,7 @@ namespace alica
         cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance << " x "
                 << goalPointer->x << " y " << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
 
-        if (goalDistance > oldGoalDistance)
+        if (goalDistance > oldGoalDistance + 10)
         {
             if (!terminated)
             {
@@ -100,7 +100,7 @@ namespace alica
             motorMsg.motion.rotation = testSpeed * 2 * sin(relGoalRot / 2)
                     / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
         }
-
+	cout<<"TestMotorControl::run motor msg angle: "<<motorMsg.motion.angle<<" rotation: "<<motorMsg.motion.rotation << endl;
         send(motorMsg);
 
         /*PROTECTED REGION END*/
