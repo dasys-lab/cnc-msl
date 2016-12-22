@@ -22,7 +22,9 @@ void logging_init() {
 }
 
 void log() {
+	cout<<"logging::log was called"<<endl;
     if (isLogging) {
+    	cout<<"logging::log isLogging in file "<<logFile<<endl;
         fprintf(lp,"%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%f\n",
             gonz_state.currentPosition.angle,gonz_state.currentPosition.x,gonz_state.currentPosition.y,
             gonz_state.actualMotion.x,gonz_state.actualMotion.y,gonz_state.actualMotion.rotation,

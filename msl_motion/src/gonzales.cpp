@@ -151,6 +151,12 @@ void gonz_control() { //controller comes in here
     gonz_send_cmd();
 }
 void gonz_calc_odometry() { //TODO: Optimise!
+
+	//derived from transformation matrix also used in gonz_control
+	//v1+v2+v3+v4 = 4*rotationVelocity (rotation) * robotRadius
+	//-v1-v2+v3+v4 = 4*vx*cos(phi)
+	//v1-v2-v3+v4 = 4*vy*sin(phi)
+
     unsigned char i;
     gonz_state.actualMotion.rotation = 0;
     for (i=0; i<4; i++) {
@@ -187,14 +193,20 @@ void gonz_calc_odometry() { //TODO: Optimise!
     unsigned long long timediff = TIMEDIFFMS(odotime_cur,odotime_last);//(odotime_cur.tv_sec*1000+odotime_cur.tv_usec/1000)-(odotime_last.tv_sec*1000+odotime_last.tv_usec/1000);
     //printf("time: %llu\n",timediff);
     //Position update:
+    //angle between ego-x-axis and translational velocity
     double angle = atan2(gonz_state.actualMotion.y,gonz_state.actualMotion.x);
+    //distance travelled
     double trans = sqrt(gonz_state.actualMotion.y*gonz_state.actualMotion.y+gonz_state.actualMotion.x*gonz_state.actualMotion.x)*(double)timediff/1000.0;
+    //rotation angle travelled
     double rot = gonz_state.actualMotion.rotation/1024.0*(double)timediff/1000.0;
     double xtemp,ytemp;
 
     if (rot!=0) {
+    	//distance between the center of the robot and the center of the robots rotation (if translation and rotation are seen as a rotation around a distant point)
         double radius = trans / rot;
-        xtemp = abs(sin(rot) * radius) * SIGN(trans);
+        //distance travelled in direction of the translational velocity
+        xtemp = sin(rot) * radius * SIGN(rot);
+        //distance travelled orthogonal to translational velocity
 		ytemp = (radius - (cos(rot)) * radius) * SIGN(rot);
     }
     else {
@@ -202,14 +214,17 @@ void gonz_calc_odometry() { //TODO: Optimise!
         ytemp = 0;
     }
 
+    //angle between world-x-axis and translational velocity
     double h = gonz_state.currentPosition.angle + angle;
     double cos_h = cos(h);
 	double sin_h = sin(h);
+	//distance travelled in world coordinates
 	double xtemp1 = cos_h*xtemp - sin_h*ytemp;
 	double ytemp1 = sin_h*xtemp + cos_h*ytemp;
 
     gonz_state.currentPosition.angle += rot;
 
+    //pi+x -> -pi+x; -pi-x -> pi-x; stay in [-pi,pi]
     if (gonz_state.currentPosition.angle > PI) {
         gonz_state.currentPosition.angle -= TWO_PI;
     } else if (gonz_state.currentPosition.angle < -PI) {
