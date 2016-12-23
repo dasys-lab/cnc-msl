@@ -26,6 +26,7 @@ namespace alica
         /*PROTECTED REGION ID(prv1482163964536) ENABLED START*/ //Add additional private methods here
         shared_ptr<geometry::CNPosition> start;
         shared_ptr<geometry::CNPosition> goal;
+        shared_ptr<geometry::CNPosition> currentPos;
         double relGoalX;
         double relGoalY;
         double relGoalRot;

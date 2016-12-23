@@ -32,7 +32,7 @@ namespace alica
 
         if (count == 0)
         {
-            cout << "TestMotorControl::run started on first round " <<  endl;
+            cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot <<  endl;
             start = wm->rawSensorData->getOwnPositionMotion();
             if (start == NULL)
                 return;
@@ -41,13 +41,14 @@ namespace alica
             goal->theta = start->theta + relGoalRot;
         }
 
-        goalPointer = goal - wm->rawSensorData->getOwnPositionMotion();
-        angleDistance = goal->theta - wm->rawSensorData->getOwnPositionMotion()->theta;
+        currentPos = wm->rawSensorData->getOwnPositionMotion();
+        goalPointer = goal - currentPos;
+        angleDistance = goal->theta - currentPos->theta;
         goalDistance = sqrt(
                 goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
                         + angleDistance * angleDistance * 500);
 
-        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance << " x "
+        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance << "current x " << currentPos->x << "current y " << currentPos->y << " x "
                 << goalPointer->x << " y " << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
 
         if (goalDistance > oldGoalDistance + 10)
@@ -89,7 +90,7 @@ namespace alica
 
         if (straight)
         {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - wm->rawSensorData->getOwnPositionMotion()->theta
+            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - currentPos->theta
                     + start->theta;
             motorMsg.motion.rotation = relGoalRot * testSpeed / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
         }
