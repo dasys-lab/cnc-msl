@@ -6,3 +6,7 @@ log/temp/
 *~
 *.swp
 *.swo
+
+# coala
+*.orig
+
