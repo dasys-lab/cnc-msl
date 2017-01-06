@@ -17,6 +17,7 @@
 #include <pathplanner/PathPlanner.h>
 
 #include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
 
 namespace alica
 {
@@ -47,25 +48,51 @@ namespace alica
 
 	MotionControl DribbleCalibrationContainer::callBehavour(MethodParm mParm, Parm parm, int trans)
 	{
-		switch (parm) {
+		switch (parm)
+		{
 			case DribbleForwardParm:
+			{
+				cout << "Dribble forward..." << endl;
 				DribbleForward df;
 				if (mParm == Move)
+				{
 					return df.move(trans);
-
-				if (mParm == AdaptParams)
+				}
+				else if (mParm == AdaptParams)
+				{
 					df.adaptParams();
-				if (mParm == WriteConfigParam)
+				}
+				else if (mParm == WriteConfigParam)
+				{
 					df.writeConfigParameters();
+				}
 				break;
+			}
+			case DribbleBackwardParm:
+			{
+				DribbleBackward db;
+				if (mParm == Move)
+				{
+					return db.move(trans);
+				}
+				else if (mParm == AdaptParams)
+				{
+					db.adaptParams();
+				}
+				else if (mParm == WriteConfigParam)
+				{
+					db.writeConfigParameters();
+				}
+				break;
+			}
 		}
 		MotionControl mc;
-		return mc;
+		return setNaN(mc);
 	}
 
 	MotionControl DribbleCalibrationContainer::parmToMove(Parm parm, int trans)
 	{
-		return callBehavour(MethodParm::Move, parm);
+		return callBehavour(MethodParm::Move, parm, trans);
 	}
 
 	void DribbleCalibrationContainer::parmToParmAdapt(Parm parm)
@@ -133,7 +160,9 @@ namespace alica
 	 *
 	 * @return the new align point if the robot is driving in another direction than forward
 	 */
-	DribbleCalibrationContainer::Movement DribbleCalibrationContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
+	DribbleCalibrationContainer::Movement DribbleCalibrationContainer::getNewDirection(int curDir,
+																						vector<Movement> movement,
+																						int next)
 	{
 		return movement.at(0);
 	}

@@ -21,10 +21,11 @@ MovementContainer::MovementContainer()
 	rotateAroundTheBall = false;
 	angleTolerance = 0;
 	changeDirections = 0;
-	wm = nullptr;
+	wm = msl::MSLWorldModel::get();
 	defaultDistance = 0;
 	changeDirFlag = false;
-
+	query = make_shared<msl::MovementQuery>();
+	readOwnConfigParameter();
 }
 
 MovementContainer::~MovementContainer()
@@ -73,6 +74,7 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 {
 	msl_actuator_msgs::MotionControl mc;
 	msl::RobotMovement rm;
+	cout << "defaultDistance = " << defaultDistance << endl;
 
 	if (movement != Forward && movement != Backward && movement != Left && movement != Right)
 	{
@@ -106,20 +108,32 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 		shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
 
 #ifdef DEBUG_DC
-		cout << "DCC::move() newAlignPoint: " << newAlignPoint->toString() << endl;
-		cout << "DCC::move() newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
+		cout << "MC::move() newAlignPoint: " << newAlignPoint->toString() << endl;
+		cout << "MC::move() newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
 #endif
 
 		if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
 		{
+
+#ifdef DEBUG_DC
+			cout << "rotateAroundTheBall = " << (rotateAroundTheBall ? "true" : "false") << endl;
+			cout << "angleTolerance = " << angleTolerance << endl;
+#endif
 			query->egoAlignPoint = newAlignPoint;
 			query->rotateAroundTheBall = rotateAroundTheBall;
 			query->angleTolerance = angleTolerance;
 
+			cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
+			cout << "query->rotateAroundTheBall = " << query->rotateAroundTheBall << endl;
+			cout << "query->angleTolerance = " << query->angleTolerance << endl;
 			mc = rm.alignTo(query);
 
 #ifdef DEBUG_DC
-			cout << "DCC::move() changeDirections: " << (changeDirections ? "true" : "false") << "rotating to new align point" << endl;
+			cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false")
+					<< " -> rotating to new align point" << endl;
+			cout << "MC::move() MotionControl translation = " << mc.motion.translation << endl;
+			cout << "MC::move() MotionControl rotation = " << mc.motion.rotation << endl;
+			cout << "MC::move() MotionControl angle = " << mc.motion.angle << endl;
 #endif
 
 			return mc;
@@ -140,14 +154,13 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 
 		query->egoDestinationPoint = egoDestination;
 #ifdef DEBUG_DC
-		cout << "DCC::move() egoDestinationPoint = " << egoDestination->toString();
+		cout << "MC::move() egoDestinationPoint = " << egoDestination->toString();
 #endif
-
 		mc = rm.moveToPoint(query);
-
+		cout << "translation = 0" << translation << endl;
 		mc.motion.translation = translation;
-#ifdef DEBUNG_DC
-		cout << "DCC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;
+#ifdef DEBUG_DC
+		cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;
 #endif
 		return mc;
 	}
@@ -200,7 +213,7 @@ bool MovementContainer::checkObstacles(Movement movement, double distance)
 shared_ptr<geometry::CNPoint2D> MovementContainer::calcNewAlignPoint(Movement curMove)
 {
 #ifdef DEBUG_DC
-	cout << "DCC::calcNewAlignPoint choose new direction..." << endl;
+	cout << "MC::calcNewAlignPoint choose new direction..." << endl;
 #endif
 
 	// use checkObstacels to choose a new direction
@@ -217,20 +230,20 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::calcNewAlignPoint(Movement cu
 		{
 			{
 #ifdef DEBUG_DC
-				cout << "DCC::calcNewAlignPoint New align point in " << movementToString[dir] << " direction..." << endl;
-				cout << "DCC::calcNewAlignPoint curMove = " << movementToString[curMove] << endl;
+				cout << "MC::calcNewAlignPoint curMove = " << movementToString[curMove] << endl;
+				cout << "MC::calcNewAlignPoint New align point in " << movementToString[dir] << " direction..." << endl;
 #endif
 				dir = curMove == Left ? getNewDirection(i, movement, 4) : dir;
 				dir = curMove == Right ? getNewDirection(i, movement, -4) : dir;
 #ifdef DEBUG_DC
-				cout << "DCC::calcNewAlignPoint New specific align point in " << movementToString[dir] << " direction..." << endl;
+				cout << "MC::calcNewAlignPoint New specific align point in " << movementToString[dir] << " direction..."
+						<< endl;
 #endif
 				alignPoint = getEgoDestinationPoint(dir, distance);
 				break;
 			}
 		}
 	}
-
 	return alignPoint;
 }
 
@@ -248,6 +261,8 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::getEgoDestinationPoint(Moveme
 		cout << "DribbleCalibrationContainer::getEgoDestinationPoint -> wrong input!" << endl;
 		return nullptr;
 	}
+
+	cout << "ego distance = " << distance << endl;
 
 	double beta = 45;
 	double a = distance * cos(beta);
@@ -296,7 +311,7 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::getEgoDestinationPoint(Moveme
 bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 {
 #ifdef DEBUG_DC
-	cout << "DDC::checkFieldLines egoDestination = " << egoDest->toString();
+	cout << "MC::checkFieldLines egoDestination = " << egoDest->toString();
 #endif
 
 	auto me = wm->rawSensorData->getOwnPositionVision();
@@ -305,7 +320,7 @@ bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 	shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(*me);
 
 #ifdef DEBUG_DC
-	cout << "DCC::checkFieldLines alloDestinationPoint = " << alloDestination->toString();
+	cout << "MC::checkFieldLines alloDestinationPoint = " << alloDestination->toString();
 #endif
 
 	// check if destinationPoint is inside the field area
@@ -329,13 +344,16 @@ bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
 {
 #ifdef DEBUG_DC
-	cout << "DDC::getNewDirection: curDir = " << curDir << " next = " << next << " movement.size = " << (int) movement.size() << endl;
+	cout << "MC::getNewDirection: curDir = " << curDir << " next = " << next << " movement.size = "
+			<< (int)movement.size() << endl;
 #endif
 
 	if ((curDir - next) >= 0 && (curDir - next) < (int)movement.size())
 	{
 #ifdef DEBUG_DC
-		cout << "DDC::getNewDirection: ((curDir - next) >= 0 && (curDir - next) < (int) movement.size()) -> return movement.at(curDir - next)" << endl;
+		cout
+				<< "MC::getNewDirection: ((curDir - next) >= 0 && (curDir - next) < (int) movement.size()) -> return movement.at(curDir - next)"
+				<< endl;
 #endif
 		return movement.at(curDir - next);
 
@@ -344,7 +362,7 @@ MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vecto
 	{
 		int i = (curDir - next) - ((int)movement.size() - 1);
 #ifdef DEBUG_DC
-		cout << "DDC::getNewDirection: ((curDir - next) > ((int) movement.size() - 1)) i = " << i << endl;
+		cout << "MC::getNewDirection: ((curDir - next) > ((int) movement.size() - 1)) i = " << i << endl;
 #endif
 		return movement.at(i);
 
@@ -353,7 +371,8 @@ MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vecto
 	{
 		int i = ((int)movement.size() - 1) - abs(curDir - next);
 #ifdef DEBUG_DC
-		cout << "DDC::getNewDirection: i = " << i << " abs(curDir - next) = abs(" << curDir << " - " << next << ") = " << abs(curDir - next) << endl;
+		cout << "MC::getNewDirection: i = " << i << " abs(curDir - next) = abs(" << curDir << " - " << next << ") = "
+				<< abs(curDir - next) << endl;
 #endif
 		return movement.at(i);
 	}
@@ -378,5 +397,10 @@ MotionControl MovementContainer::setNaN(MotionControl mc)
 
 void MovementContainer::readOwnConfigParameter()
 {
-
+	supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
+//	robotRadius = (*sys)["Rules"]->get<double>("Rules.RobotRadius", NULL);
+	defaultDistance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.DefaultDistance", NULL);
+	rotateAroundTheBall = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.RotateAroundTheBall",
+	NULL);
+	angleTolerance = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.Default.AngleTolerance", NULL);
 }

@@ -159,8 +159,10 @@ namespace msl
 
 		if (m_Query->rotateAroundTheBall)
 		{
+//			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
 			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
 			{
+				cout << "in rotate around ball" << endl;
 				// setting parameters for controller
 				m_Query->setRotationPDParameters(rotationP, rotationD);
 				m_Query->setTranslationPIParameters(transP, transI);
@@ -169,9 +171,7 @@ namespace msl
 				m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
 
 				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval,
-
-				m_Query->additionalPoints);
+				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval, m_Query->additionalPoints);
 
 				mc.motion.rotation = m_Query->rotationPDForDribble(egoTarget);
 				double rotPointDist = 350.0;

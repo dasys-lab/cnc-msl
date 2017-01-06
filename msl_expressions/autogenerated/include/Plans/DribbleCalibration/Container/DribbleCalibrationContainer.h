@@ -11,7 +11,7 @@
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
 
-//#define DEBUG_DC
+#define DEBUG_DC
 
 using namespace msl;
 namespace alica

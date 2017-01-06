@@ -4,6 +4,7 @@
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1482339434271) ENABLED START*/ //Add additional includes here
 #include "Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h"
+#include "Plans/DribbleCalibration/Container/MovementContainer.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -22,8 +23,10 @@ namespace alica
 	private:
 		/*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
 		bool dribbleForward;
+		bool dribbleBackward;
 		DribbleCalibrationContainer dcc;
 		DribbleCalibrationContainer::Parm parm;
+		MovementContainer moveCont;
 
 		// for speed iterations
 		double startTrans;
@@ -42,6 +45,7 @@ namespace alica
 		int minHaveBallIter;
 		double minHaveBallParamPoint;
 		double maxHaveBallParamPoint;
+		void readConfigParameters();
 		/*PROTECTED REGION END*/};
 } /* namespace alica */
 

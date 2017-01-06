@@ -10,7 +10,6 @@
 DribbleForward::DribbleForward()
 {
 	// TODO Auto-generated constructor stub
-
 }
 
 DribbleForward::~DribbleForward()
