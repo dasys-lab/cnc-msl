@@ -8,45 +8,45 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-	class DribbleCalibration : public DomainBehaviour
-	{
-	public:
-		DribbleCalibration();
-		virtual ~DribbleCalibration();
-		virtual void run(void* msg);
-		/*PROTECTED REGION ID(pub1482339434271) ENABLED START*/ //Add additional public methods here
-		/*PROTECTED REGION END*/
-	protected:
-		virtual void initialiseParameters();
-		/*PROTECTED REGION ID(pro1482339434271) ENABLED START*/ //Add additional protected methods here
-		/*PROTECTED REGION END*/
-	private:
-		/*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
-		bool dribbleForward;
-		bool dribbleBackward;
-		DribbleCalibrationContainer dcc;
-		DribbleCalibrationContainer::Parm parm;
-		MovementContainer moveCont;
+    class DribbleCalibration : public DomainBehaviour
+    {
+    public:
+        DribbleCalibration();
+        virtual ~DribbleCalibration();
+        virtual void run(void* msg);
+        /*PROTECTED REGION ID(pub1482339434271) ENABLED START*/ //Add additional public methods here
+        /*PROTECTED REGION END*/
+    protected:
+        virtual void initialiseParameters();
+        /*PROTECTED REGION ID(pro1482339434271) ENABLED START*/ //Add additional protected methods here
+        /*PROTECTED REGION END*/
+    private:
+        /*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
+        bool dribbleForward;
+        bool dribbleBackward;
+        DribbleCalibrationContainer dcc;
+        DribbleCalibrationContainer::Parm parm;
+        MovementContainer moveCont;
 
-		// for speed iterations
-		double startTrans;
-		double endTrans;
-		int speedIter;
-		int moveCount;
-		int getBallCount;
+        // for speed iterations
+        double startTrans;
+        double endTrans;
+        int speedIter;
+        int moveCount;
+        int getBallCount;
 
-		// for movement
-		bool getBallFlag;
-		int haveBallCount;
-		int haveBallWaitingDuration;
-		int collectDataWaitingDuration;
+        // for movement
+        bool getBallFlag;
+        int haveBallCount;
+        int haveBallWaitingDuration;
+        int collectDataWaitingDuration;
 
-		// rotation stuff
-		int minHaveBallIter;
-		double minHaveBallParamPoint;
-		double maxHaveBallParamPoint;
-		void readConfigParameters();
-		/*PROTECTED REGION END*/};
+        // rotation stuff
+        int minHaveBallIter;
+        double minHaveBallParamPoint;
+        double maxHaveBallParamPoint;
+        void readConfigParameters();
+        /*PROTECTED REGION END*/};
 } /* namespace alica */
 
 #endif /* DribbleCalibration_H_ */

@@ -28,7 +28,6 @@ namespace alica
     {
         /*PROTECTED REGION ID(run1479905178049) ENABLED START*/ //Add additional options here
         //---
-
         // 1 only rotation, increases by pi/3 every time
         // 2 rotation with increasing translation speed, rotation increases every ten times
         // 3 rotation with changing translation angle

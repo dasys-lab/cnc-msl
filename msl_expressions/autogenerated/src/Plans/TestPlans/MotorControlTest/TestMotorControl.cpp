@@ -32,7 +32,8 @@ namespace alica
 
         if (count == 0)
         {
-            cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot <<  endl;
+            cout << "TestMotorControl::run started on first round " << relGoalX << " " << relGoalY << " " << relGoalRot
+                    << endl;
             start = wm->rawSensorData->getOwnPositionMotion();
             if (start == NULL)
                 return;
@@ -48,8 +49,9 @@ namespace alica
                 goalPointer->x * goalPointer->x + goalPointer->y * goalPointer->y
                         + angleDistance * angleDistance * 500);
 
-        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance << "current x " << currentPos->x << "current y " << currentPos->y << " x "
-                << goalPointer->x << " y " << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
+        cout << "TestMotorControl::run old Distance: " << oldGoalDistance << " new Distance: " << goalDistance
+                << "current x " << currentPos->x << "current y " << currentPos->y << " x " << goalPointer->x << " y "
+                << goalPointer->y << " goal " << goal->x << " " << goal->y << endl;
 
         if (goalDistance > oldGoalDistance + 10)
         {
@@ -90,8 +92,7 @@ namespace alica
 
         if (straight)
         {
-            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - currentPos->theta
-                    + start->theta;
+            motorMsg.motion.angle = atan2(relGoalY, relGoalX) - currentPos->theta + start->theta;
             motorMsg.motion.rotation = relGoalRot * testSpeed / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
         }
 
@@ -101,7 +102,8 @@ namespace alica
             motorMsg.motion.rotation = testSpeed * 2 * sin(relGoalRot / 2)
                     / sqrt(relGoalX * relGoalX + relGoalY * relGoalY);
         }
-	cout<<"TestMotorControl::run motor msg angle: "<<motorMsg.motion.angle<<" rotation: "<<motorMsg.motion.rotation << endl;
+        cout << "TestMotorControl::run motor msg angle: " << motorMsg.motion.angle << " rotation: "
+                << motorMsg.motion.rotation << endl;
         send(motorMsg);
 
         /*PROTECTED REGION END*/
