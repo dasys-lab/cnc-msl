@@ -12,6 +12,7 @@
 #include "GeometryCalculator.h"
 #include "SystemConfig.h"
 #include "Ball.h"
+#include "RobotMovement.h"
 
 
 using namespace std;
@@ -22,6 +23,7 @@ namespace msl
 	class MSLRobot;
 	class MovementQuery
 	{
+		friend class msl::RobotMovement;
 	public:
 		MovementQuery();
 		virtual ~MovementQuery();
@@ -33,19 +35,6 @@ namespace msl
 		double snapDistance;
 		double angleTolerance;
 		shared_ptr<geometry::CNPoint2D> alloTeamMatePosition;
-		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
-		double translationPIForDribble(double transOrt);
-		double angleCalcForDribble(double transOrt);
-		void reset();
-		void resetAllPIDParameters();
-		void resetRotationPDParameters();
-		void resetTransaltionPIParameters();
-
-		void setRotationPDParameters(double pParam, double dParam);
-		void setTranslationPIParameters(double pParam, double iParam);
-
-		double curRotDribble;
-		double curTransDribble;
 
 		//for Voronoi Stuff
 		bool blockOppPenaltyArea;
@@ -56,6 +45,22 @@ namespace msl
 
 		//for RobotMovement::alignTo() stuff
 		bool rotateAroundTheBall;
+
+		void reset();
+
+	protected:
+		void resetAllPIDParameters();
+		void resetRotationPDParameters();
+		void resetTransaltionPIParameters();
+		double rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget);
+		double translationPIForDribble(double transOrt);
+		double angleCalcForDribble(double transOrt);
+
+		void setRotationPDParameters(double pParam, double dParam);
+		void setTranslationPIParameters(double pParam, double iParam);
+
+		double curRotDribble;
+		double curTransDribble;
 
 	private:
 		MSLWorldModel* wm;
