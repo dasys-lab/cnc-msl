@@ -16,9 +16,6 @@
 #include <obstaclehandler/Obstacles.h>
 #include <pathplanner/PathPlanner.h>
 
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
-
 namespace alica
 {
 
@@ -46,43 +43,24 @@ namespace alica
 
 	}
 
-	MotionControl DribbleCalibrationContainer::callBehavour(MethodParm mParm, Parm parm, int trans)
+	/**
+	 * @mParm Parameter to choose the method that should be used
+	 * @parm Parameter to call the behavior (something like DribbleForwardParm)
+	 * @trans translation
+	 */
+	MotionControl DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
 	{
 		switch (parm)
 		{
 			case DribbleForwardParm:
 			{
 				cout << "Dribble forward..." << endl;
-				DribbleForward df;
-				if (mParm == Move)
-				{
-					return df.move(trans);
-				}
-				else if (mParm == AdaptParams)
-				{
-					df.adaptParams();
-				}
-				else if (mParm == WriteConfigParam)
-				{
-					df.writeConfigParameters();
-				}
+				return callMethod(&df, mParm, trans);
 				break;
 			}
 			case DribbleBackwardParm:
 			{
-				DribbleBackward db;
-				if (mParm == Move)
-				{
-					return db.move(trans);
-				}
-				else if (mParm == AdaptParams)
-				{
-					db.adaptParams();
-				}
-				else if (mParm == WriteConfigParam)
-				{
-					db.writeConfigParameters();
-				}
+				return callMethod(&db, mParm, trans);
 				break;
 			}
 		}
@@ -90,14 +68,48 @@ namespace alica
 		return setNaN(mc);
 	}
 
-	MotionControl DribbleCalibrationContainer::parmToMove(Parm parm, int trans)
+	MotionControl DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
 	{
-		return callBehavour(MethodParm::Move, parm, trans);
+		switch (parm)
+		{
+			case Move:
+				return behavior->move(trans);
+				break;
+			case AdaptParams:
+				behavior->adaptParams();
+				break;
+			case WriteConfigParam:
+				behavior->writeConfigParameters();
+				break;
+			case ResetParams:
+				behavior->resetParams();
+				break;
+			default:
+				break;
+		}
+
+		MotionControl mc;
+		return setNaN(mc);
 	}
 
-	void DribbleCalibrationContainer::parmToParmAdapt(Parm parm)
+	MotionControl DribbleCalibrationContainer::paramToMove(Param param, int trans)
 	{
+		return callBehaviour(MethodParam::Move, param, trans);
+	}
 
+	void DribbleCalibrationContainer::adaptParam(Param param)
+	{
+		callBehaviour(MethodParam::AdaptParams, param);
+	}
+
+	void DribbleCalibrationContainer::writeConfigParameres(Param parm)
+	{
+		callBehaviour(MethodParam::WriteConfigParam, parm);
+	}
+
+	void DribbleCalibrationContainer::resetParameters(Param parm)
+	{
+		callBehaviour(MethodParam::ResetParams, parm);
 	}
 
 	// old stuff ========================================================================================

@@ -25,7 +25,7 @@ namespace alica
         bool dribbleForward;
         bool dribbleBackward;
         DribbleCalibrationContainer dcc;
-        DribbleCalibrationContainer::Parm parm;
+        DribbleCalibrationContainer::Param param;
         MovementContainer moveCont;
 
         // for speed iterations
@@ -41,10 +41,11 @@ namespace alica
         int haveBallWaitingDuration;
         int collectDataWaitingDuration;
 
-        // rotation stuff
+        // param adaption stuff
         int minHaveBallIter;
         double minHaveBallParamPoint;
         double maxHaveBallParamPoint;
+
         void readConfigParameters();
         /*PROTECTED REGION END*/};
 } /* namespace alica */

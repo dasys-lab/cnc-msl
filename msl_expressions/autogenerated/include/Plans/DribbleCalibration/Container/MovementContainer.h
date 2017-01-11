@@ -10,7 +10,9 @@
 
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
+//#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
+
+//#define DEBUG_MOVE_CONT
 
 class MovementContainer
 {

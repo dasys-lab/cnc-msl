@@ -42,6 +42,8 @@ namespace msl
 
 	double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
 	{
+		cout << "MovementQuery::rotationPDForDribble: egoTarget = " << egoTarget->toString();
+
 		double angleErr = egoTarget->rotate(this->robot->kicker->kickerAngle)->angleTo();
 		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); //Rotation PD
 

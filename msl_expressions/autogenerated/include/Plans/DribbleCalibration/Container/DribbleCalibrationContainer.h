@@ -10,6 +10,9 @@
 
 #include "msl_actuator_msgs/MotionControl.h"
 #include "msl_robot/robotmovement/MovementQuery.h"
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
+#include <Plans/DribbleCalibration/Behaviours/Interfaces/ICalibration.h>
 
 #define DEBUG_DC
 
@@ -30,18 +33,20 @@ namespace alica
 		DribbleCalibrationContainer();
 		virtual ~DribbleCalibrationContainer();
 
-		enum Parm
+		enum Param
 		{
 			DribbleForwardParm, DribbleBackwardParm, DribbleLeftParm, DribbleRightParm, RotateLeftParm, RotateRightPram, ErrParm
 		};
 
-		enum MethodParm
+		enum MethodParam
 		{
-			Move, AdaptParams, WriteConfigParam
+			Move, AdaptParams, WriteConfigParam, ResetParams
 		};
 
-		MotionControl parmToMove(Parm parm, int trans);
-		void parmToParmAdapt(Parm parm);
+		MotionControl paramToMove(Param param, int trans);
+		void adaptParam(Param param);
+		void writeConfigParameres(Param parm);
+		void resetParameters(Param parm);
 
 		//  movement stuff
 		enum Movement
@@ -84,7 +89,12 @@ private:
 		XValue, YValue, QOSValue
 	};
 
-	MotionControl callBehavour(MethodParm mParm, Parm parm, int trans = 0);
+	MotionControl callBehaviour(MethodParam mParm, Param parm, int trans = 0);
+	MotionControl callMethod(ICalibration *behavior, MethodParam parm, int trans = 0);
+
+	// calibration behaviours
+	DribbleForward df;
+	DribbleBackward db;
 
 	// movement and obstacle avoiding stuff
 				bool changeDirections;

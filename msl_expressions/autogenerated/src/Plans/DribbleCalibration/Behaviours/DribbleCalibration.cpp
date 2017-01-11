@@ -19,7 +19,7 @@ namespace alica
         /*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
         dribbleForward = false;
         dribbleBackward = false;
-        parm = DribbleCalibrationContainer::Parm::ErrParm;
+        param = DribbleCalibrationContainer::Param::ErrParm;
         startTrans = 0;
         endTrans = 0;
         speedIter = 0;
@@ -73,9 +73,8 @@ namespace alica
             // translation may not be higher than endTrans
             int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
 
-            mc = dcc.parmToMove(parm, tran);
-            cout << "mc.translation = " << mc.motion.translation << endl;
-            cout << "mc.rotation " << mc.motion.rotation << endl;
+            mc = dcc.paramToMove(param, tran);
+
             // checking for error values
             if (mc.motion.translation == NAN)
             {
@@ -93,7 +92,7 @@ namespace alica
                 return;
             }
 
-            // if the robot could hold the ball for a long time -> adapt othoDriveFactor and remember the Point
+            // if the robot could hold the ball for a long time -> adapt parameter and remember the Point
             if (haveBallCount >= minHaveBallIter)
             {
                 moveCount++;
@@ -121,8 +120,7 @@ namespace alica
         {
             // end
             // choose correct value
-//			orthoDriveFactor = (minHaveBallParamPoint + maxHaveBallParamPoint) / 2;
-//			writeConfigParameters();
+        	dcc.writeConfigParameres(param);
 //			cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is "
 //					<< orthoDriveFactor << endl;
             cout << "finished calibration" << endl;
@@ -140,6 +138,7 @@ namespace alica
             if (haveBallCount > 0)
             {
 //				adaptParam();
+            	dcc.adaptParam(param);
             }
 
             haveBallCount = 0;
@@ -158,7 +157,7 @@ namespace alica
     void DribbleCalibration::initialiseParameters()
     {
         /*PROTECTED REGION ID(initialiseParameters1482339434271) ENABLED START*/ //Add additional options here
-        MovementContainer moveCont;
+//        MovementContainer moveCont;
         readConfigParameters();
 
         bool success = true;
@@ -171,7 +170,7 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleForward;
-                !dribbleForward ? : parm = DribbleCalibrationContainer::Parm::DribbleForwardParm;
+                !dribbleForward ? : param = DribbleCalibrationContainer::Param::DribbleForwardParm;
             }
 
             // dribble backward
@@ -180,7 +179,7 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleBackward;
-                !dribbleBackward ? : parm = DribbleCalibrationContainer::Parm::DribbleBackwardParm;
+                !dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
             }
         }
         catch (exception& e)

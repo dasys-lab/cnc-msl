@@ -34,3 +34,11 @@ void DribbleBackward::adaptParams()
 
 }
 
+void DribbleBackward::readConfigParameters()
+{
+
+}
+
+void DribbleBackward::resetParams()
+{
+}

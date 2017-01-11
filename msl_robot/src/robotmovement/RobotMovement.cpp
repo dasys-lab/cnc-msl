@@ -139,6 +139,7 @@ namespace msl
 
 	msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
 	{
+		cout << "RobotMovement::alignTo()" << endl;
 		if (m_Query == nullptr)
 		{
 			cerr << "RobotMovement::alignTo() -> MovementQuery == nullptr" << endl;
@@ -159,10 +160,19 @@ namespace msl
 
 		if (m_Query->rotateAroundTheBall)
 		{
-//			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
-			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+//			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
 			{
-				cout << "in rotate around ball" << endl;
+//#ifdef RM_DEBUG
+				cout << "RobotMovement::alignTo(): rotate around the ball" << endl;
+//#endif
+
+				if (wm->ball->getEgoBallPosition() == nullptr)
+				{
+					cerr << "RobotMovement::alignTo(): egoBallPosition == nullptr" << endl;
+					return setNAN();
+				}
+
 				// setting parameters for controller
 				m_Query->setRotationPDParameters(rotationP, rotationD);
 				m_Query->setTranslationPIParameters(transP, transI);

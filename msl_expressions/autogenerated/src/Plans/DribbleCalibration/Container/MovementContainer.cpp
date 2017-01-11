@@ -17,6 +17,7 @@
 
 MovementContainer::MovementContainer()
 {
+	cout << "init MovementContainer" << endl;
 	distToObs = 0;
 	rotateAroundTheBall = false;
 	angleTolerance = 0;
@@ -45,7 +46,7 @@ MotionControl MovementContainer::getBall()
 	}
 	else
 	{
-		cerr << "DribbleCalibrationContainer::getBall() -> couldn't get vision data" << endl;
+		cerr << "MovementContainer::getBall() -> couldn't get vision data" << endl;
 	}
 	shared_ptr<geometry::CNPoint2D> egoBallPos;
 	if (wm->ball->getAlloBallPosition()->alloToEgo(*me) != nullptr)
@@ -54,7 +55,7 @@ MotionControl MovementContainer::getBall()
 	}
 	else
 	{
-		cerr << "DribbleCalibrationContainer::getBall() -> couldn't get own position" << endl;
+		cerr << "MovementContainer::getBall() -> couldn't get own position" << endl;
 	}
 
 	query->egoDestinationPoint = egoBallPos;
@@ -78,7 +79,7 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 
 	if (movement != Forward && movement != Backward && movement != Left && movement != Right)
 	{
-		cerr << "DribbleCalibrationContainer::move() -> invalid input parameter" << endl;
+		cerr << "MovementContainer::move() -> invalid input parameter" << endl;
 		return setNaN(mc);
 	}
 
@@ -96,6 +97,7 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 		changeDirFlag = true;
 	}
 
+	// if there is an obstacle or we are in front of a field line, change directions
 	if (changeDirections)
 	{
 		auto me = wm->rawSensorData->getOwnPositionVision();
@@ -107,7 +109,7 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 
 		shared_ptr<geometry::CNPoint2D> newAlignPoint = alloAlignPoint->alloToEgo(*me);
 
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout << "MC::move() newAlignPoint: " << newAlignPoint->toString() << endl;
 		cout << "MC::move() newALignPoint->angleTo() = " << fabs(newAlignPoint->angleTo()) << endl;
 #endif
@@ -115,7 +117,7 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 		if (fabs(newAlignPoint->angleTo()) < (M_PI - query->angleTolerance))
 		{
 
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 			cout << "rotateAroundTheBall = " << (rotateAroundTheBall ? "true" : "false") << endl;
 			cout << "angleTolerance = " << angleTolerance << endl;
 #endif
@@ -123,12 +125,10 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 			query->rotateAroundTheBall = rotateAroundTheBall;
 			query->angleTolerance = angleTolerance;
 
-			cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString() << endl;
-			cout << "query->rotateAroundTheBall = " << query->rotateAroundTheBall << endl;
-			cout << "query->angleTolerance = " << query->angleTolerance << endl;
+			cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString();
 			mc = rm.alignTo(query);
 
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 			cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false")
 					<< " -> rotating to new align point" << endl;
 			cout << "MC::move() MotionControl translation = " << mc.motion.translation << endl;
@@ -153,18 +153,18 @@ msl_actuator_msgs::MotionControl MovementContainer::move(Movement movement, int 
 		shared_ptr<geometry::CNPoint2D> egoDestination = getEgoDestinationPoint(movement, defaultDistance);
 
 		query->egoDestinationPoint = egoDestination;
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout << "MC::move() egoDestinationPoint = " << egoDestination->toString();
 #endif
 		mc = rm.moveToPoint(query);
 		cout << "translation = 0" << translation << endl;
 		mc.motion.translation = translation;
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;
 #endif
 		return mc;
 	}
-	cerr << "DribbleCalibrationContainer::move() MotionControl mc = NaN!" << endl;
+	cerr << "MovementContainer::move() MotionControl mc = NaN!" << endl;
 	return setNaN(mc);
 }
 
@@ -178,7 +178,7 @@ bool MovementContainer::checkObstacles(Movement movement, double distance)
 	if (movement != Forward && movement != Backward && movement != Left && movement != Right && movement != ForwardRight
 			&& movement != ForwardLeft && movement != BackwardRight && movement != BackwardLeft)
 	{
-		cerr << "DribbleCalibrationContainer::checkObstacles() -> wrong input" << endl;
+		cerr << "MovementContainer::checkObstacles() -> wrong input" << endl;
 		return true;
 	}
 
@@ -212,7 +212,7 @@ bool MovementContainer::checkObstacles(Movement movement, double distance)
 
 shared_ptr<geometry::CNPoint2D> MovementContainer::calcNewAlignPoint(Movement curMove)
 {
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 	cout << "MC::calcNewAlignPoint choose new direction..." << endl;
 #endif
 
@@ -229,13 +229,13 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::calcNewAlignPoint(Movement cu
 		if (!checkObstacles(dir, distance))
 		{
 			{
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 				cout << "MC::calcNewAlignPoint curMove = " << movementToString[curMove] << endl;
 				cout << "MC::calcNewAlignPoint New align point in " << movementToString[dir] << " direction..." << endl;
 #endif
 				dir = curMove == Left ? getNewDirection(i, movement, 4) : dir;
 				dir = curMove == Right ? getNewDirection(i, movement, -4) : dir;
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 				cout << "MC::calcNewAlignPoint New specific align point in " << movementToString[dir] << " direction..."
 						<< endl;
 #endif
@@ -258,7 +258,7 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::getEgoDestinationPoint(Moveme
 	if (movement != Forward && movement != Backward && movement != Left && movement != Right && movement != ForwardRight
 			&& movement != ForwardLeft && movement != BackwardRight && movement != BackwardLeft)
 	{
-		cout << "DribbleCalibrationContainer::getEgoDestinationPoint -> wrong input!" << endl;
+		cout << "MovementContainer::getEgoDestinationPoint -> wrong input!" << endl;
 		return nullptr;
 	}
 
@@ -298,7 +298,7 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::getEgoDestinationPoint(Moveme
 			egoDestination = make_shared<geometry::CNPoint2D>(b, -a);
 			break;
 		default:
-			cerr << "DribbleCalibrationContainer::getEgoDestination() wrong movement parameter value!" << endl;
+			cerr << "MovementContainer::getEgoDestination() wrong movement parameter value!" << endl;
 			break;
 	}
 
@@ -310,7 +310,7 @@ shared_ptr<geometry::CNPoint2D> MovementContainer::getEgoDestinationPoint(Moveme
  */
 bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 {
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 	cout << "MC::checkFieldLines egoDestination = " << egoDest->toString();
 #endif
 
@@ -319,7 +319,7 @@ bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
 	// egoDestinationPoint to allo
 	shared_ptr<geometry::CNPoint2D> alloDestination = egoDest->egoToAllo(*me);
 
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 	cout << "MC::checkFieldLines alloDestinationPoint = " << alloDestination->toString();
 #endif
 
@@ -343,14 +343,14 @@ bool MovementContainer::checkFieldLines(shared_ptr<geometry::CNPoint2D> egoDest)
  */
 MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vector<Movement> movement, int next)
 {
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 	cout << "MC::getNewDirection: curDir = " << curDir << " next = " << next << " movement.size = "
 			<< (int)movement.size() << endl;
 #endif
 
 	if ((curDir - next) >= 0 && (curDir - next) < (int)movement.size())
 	{
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout
 				<< "MC::getNewDirection: ((curDir - next) >= 0 && (curDir - next) < (int) movement.size()) -> return movement.at(curDir - next)"
 				<< endl;
@@ -361,7 +361,7 @@ MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vecto
 	else if ((curDir - next) > ((int)movement.size() - 1))
 	{
 		int i = (curDir - next) - ((int)movement.size() - 1);
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout << "MC::getNewDirection: ((curDir - next) > ((int) movement.size() - 1)) i = " << i << endl;
 #endif
 		return movement.at(i);
@@ -370,7 +370,7 @@ MovementContainer::Movement MovementContainer::getNewDirection(int curDir, vecto
 	else
 	{
 		int i = ((int)movement.size() - 1) - abs(curDir - next);
-#ifdef DEBUG_DC
+#ifdef DEBUG_MOVE_CONT
 		cout << "MC::getNewDirection: i = " << i << " abs(curDir - next) = abs(" << curDir << " - " << next << ") = "
 				<< abs(curDir - next) << endl;
 #endif
