@@ -21,8 +21,6 @@ using namespace std;
 
 #include  "Plans/DribbleCalibration/Behaviours/DribbleCalibration.h"
 
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleRotation.h"
-
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
 #include  "Plans/Attack/ProtectBall.h"
@@ -32,8 +30,6 @@ using namespace std;
 #include  "Plans/Standards/Own/PassIntoPath/ReceivePassIntoPathGeneric.h"
 
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
-
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleOrthogonal.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
@@ -60,8 +56,6 @@ using namespace std;
 #include  "Plans/Defence/OneGernericInGameBlocker.h"
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
-
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleForward.h"
 
 #include  "Plans/Behaviours/Duel.h"
 
@@ -191,8 +185,6 @@ using namespace std;
 
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleBackward.h"
-
 #include  "Plans/Behaviours/CalcCalib.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
@@ -304,11 +296,6 @@ namespace alica
                 return make_shared<DribbleCalibration>();
                 break;
 
-            case 1469196377758:
-
-                return make_shared<CalibrationDribbleRotation>();
-                break;
-
             case 1450176216458:
 
                 return make_shared<AdvancdeSimplePass>();
@@ -332,11 +319,6 @@ namespace alica
             case 1465474190742:
 
                 return make_shared<Pos2Penalty>();
-                break;
-
-            case 1469196345947:
-
-                return make_shared<CalibrationDribbleOrthogonal>();
                 break;
 
             case 1435159282996:
@@ -406,11 +388,6 @@ namespace alica
             case 1435155363994:
 
                 return make_shared<StandardAlignToPoint>();
-                break;
-
-            case 1469116891409:
-
-                return make_shared<CalibrationDribbleForward>();
                 break;
 
             case 1450178707835:
@@ -759,11 +736,6 @@ namespace alica
             case 1457015565562:
 
                 return make_shared<TeamWatchBall>();
-                break;
-
-            case 1469196312911:
-
-                return make_shared<CalibrationDribbleBackward>();
                 break;
 
             case 1446033354004:

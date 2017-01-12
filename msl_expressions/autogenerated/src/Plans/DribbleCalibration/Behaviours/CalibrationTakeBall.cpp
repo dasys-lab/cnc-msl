@@ -213,12 +213,12 @@ namespace alica
     {
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         DribbleCalibrationContainer dcc;
-        speedNoBall = dcc.readConfigParameter("Dribble.SpeedNoBall");
-        slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
-        minRotation = dcc.readConfigParameter("Dribble.MinRotation");
+        speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
+        slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
+        minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
         // left and right are swapped!!!!
-        dribbleFactorLeft = dcc.readConfigParameter("Dribble.DribbleFactorRight");
-        dribbleFactorRight = dcc.readConfigParameter("Dribble.DribbleFactorLeft");
+        dribbleFactorLeft = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorRight", NULL);
+        dribbleFactorRight = (*sys)["Actuation"]->get<double>("Dribble.DribbleFactorLeft", NULL);
 
         // maybe put in config
         changingValue = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingValue", NULL);
