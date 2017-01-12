@@ -120,7 +120,7 @@ namespace alica
         {
             // end
             // choose correct value
-        	dcc.writeConfigParameres(param);
+            dcc.writeConfigParameres(param);
 //			cout << "Collected enough data. Depending on this the best configuration value for orthogonal driving is "
 //					<< orthoDriveFactor << endl;
             cout << "finished calibration" << endl;
@@ -138,7 +138,7 @@ namespace alica
             if (haveBallCount > 0)
             {
 //				adaptParam();
-            	dcc.adaptParam(param);
+                dcc.adaptParam(param);
             }
 
             haveBallCount = 0;
