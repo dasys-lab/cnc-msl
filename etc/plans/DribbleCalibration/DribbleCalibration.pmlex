@@ -91,22 +91,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="Behaviours/CalibrationDribbleForward.beh#1469116891409"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/CalibrationDribbleBackward.beh#1469196312911"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/CalibrationDribbleOrthogonal.beh#1469196345947"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="Behaviours/CalibrationDribbleRotation.beh#1469196377758"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="DribbleCalibration.pml#1469284166290"/>
     <value xPos="-38" yPos="67" width="262" height="110" collapsed="false"/>
   </extensions>
