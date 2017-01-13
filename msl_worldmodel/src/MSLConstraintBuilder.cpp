@@ -236,6 +236,7 @@ namespace msl
 				wm->field->getFieldLength() * wm->field->getFieldLength()
 						+ wm->field->getFieldWidth() * wm->field->getFieldWidth());
 
+		cout <<" MSLCB: vector sizes:" << robots.size() << " : " << points.size() <<endl;
 		for (int i = 0; i < points.size(); i++)
 		{
 			if (robots[i] == nullptr)
