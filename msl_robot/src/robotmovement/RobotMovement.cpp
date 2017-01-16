@@ -80,7 +80,7 @@ namespace msl
 	 * query->curRotDribble
 	 *
 	 */
-	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> const query)
+	msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQuery> query)
 	{
 		msl_actuator_msgs::MotionControl mc;
 
@@ -89,9 +89,15 @@ namespace msl
 			cerr << "RobotMovement::moveToPoint() -> egoDestinationPoint == nullptr or query = nullptr" << endl;
 			return setNAN();
 		}
-		shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-		shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, eval,
-																				query->additionalPoints);
+		shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
+		if (query->pathEval == nullptr)
+		{
+			egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, make_shared<PathEvaluator>(), query->getPathPlannerQuery());
+		}
+		else
+		{
+			egoTarget = this->pp->getEgoDirection(query->egoDestinationPoint, query->pathEval, query->getPathPlannerQuery());
+		}
 
 		// ANGLE
 		mc.motion.angle = egoTarget->angleTo();
@@ -180,8 +186,19 @@ namespace msl
 				m_Query->additionalPoints = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
 				m_Query->additionalPoints->push_back(wm->ball->getEgoBallPosition());
 
-				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
-				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval, m_Query->additionalPoints);
+				shared_ptr<geometry::CNPoint2D> egoTarget = nullptr;
+				if (m_Query->pathEval == nullptr)
+				{
+					egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, make_shared<PathEvaluator>(), m_Query->getPathPlannerQuery());
+				}
+				else
+				{
+					egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, m_Query->pathEval, m_Query->getPathPlannerQuery());
+				}
+
+//				shared_ptr<PathEvaluator> eval = make_shared<PathEvaluator>();
+//				shared_ptr<geometry::CNPoint2D> egoTarget = this->pp->getEgoDirection(m_Query->egoAlignPoint, eval,
+//																						m_Query->additionalPoints);
 
 				mc.motion.rotation = m_Query->rotationPDForDribble(egoTarget);
 				double rotPointDist = 350.0;
@@ -195,7 +212,7 @@ namespace msl
 
 				mc.motion.translation = m_Query->translationPIForDribble(transOrt);
 //				double toleranceDist = 500;
-				mc.motion.angle = m_Query->egoAlignPoint->angleTo() < 0 ? M_PI/2 : (M_PI + M_PI/4);
+				mc.motion.angle = m_Query->egoAlignPoint->angleTo() < 0 ? M_PI / 2 : (M_PI + M_PI / 4);
 //			mc.motion.angle = m_Query->angleCalcForDribble(transOrt);
 			}
 		}
@@ -373,7 +390,7 @@ namespace msl
 			randomTarget = make_shared<geometry::CNPoint2D>(cos(ang) * 5000, sin(ang) * 5000);
 		}
 
-		auto dest = pp->getEgoDirection(randomTarget, eval);
+		auto dest = pp->getEgoDirection(randomTarget, eval, make_shared<PathPlannerQuery>());
 
 		if (dest == nullptr)
 		{

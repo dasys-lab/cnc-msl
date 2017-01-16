@@ -20,6 +20,7 @@ namespace msl
 	class PathPlannerQuery
 	{
 	public:
+
 		PathPlannerQuery();
 		virtual ~PathPlannerQuery();
 		bool blockOppPenaltyArea;
@@ -28,6 +29,10 @@ namespace msl
 		bool blockOwnGoalArea;
 		bool block3MetersAroundBall;
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints;
+		double circleRadius;
+		shared_ptr<geometry::CNPoint2D> circleCenterPoint;
+		shared_ptr<geometry::CNPoint2D> rectangleUpperLeftCorner;
+		shared_ptr<geometry::CNPoint2D> rectangleLowerRightCorner;
 	};
 
 } /* namespace msl */
