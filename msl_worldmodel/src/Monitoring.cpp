@@ -89,16 +89,18 @@ namespace msl
 			{
 				return;
 			}
+
 			if (wm->getTime() - oldTime >= 1000000000)
 			{
 				if (this->looseWheelCalc() > 750)
 				{
-					std::cout << "errorError: " << this->looseWheelCalc() << std::endl;
+					//std::cout << "loose wheel error: " << this->looseWheelCalc() << std::endl;
 					errorCounter++;
 
 					if (errorCounter >= 3)
 					{
-						std::cout << "error detected" << std::endl;
+						std::cout << "error detected: check for loose wheel" << std::endl;
+						errorCounter = 0;
 					}
 				}
 				else
@@ -110,9 +112,9 @@ namespace msl
 				oldMotionPosY = this->wm->rawSensorData->getOwnPositionMotion()->y;
 				oldVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
 				oldVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
+				oldTime = wm->getTime();
 
 			}
-			oldTime = wm->getTime();
 		}
 	}
 
