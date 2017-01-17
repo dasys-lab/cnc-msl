@@ -47,28 +47,35 @@ namespace alica
         if (alloBallPose->y < 0.0) // right side line
         {
             // place the receiver 1m outside the sideline
-            if (wm->field->getSurrounding() > 1300)
-            {
-                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
-            }
-            else
-            {
-                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - wm->field->getSurrounding()
-                        + wm->pathPlanner->getRobotRadius() + securityReceiver;
-            }
+//            if (wm->field->getSurrounding() > 1300)
+//            {
+//                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - 1000.0;
+//            }
+//            else
+//            {
+//                yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 - wm->field->getSurrounding()
+//                        + wm->pathPlanner->getRobotRadius() + securityReceiver;
+//            }
+
+            // ^ forbidden with rule changes 2017. place robot on side line instead
+            yCordOfReceiver = -wm->field->getFieldWidth() / 2.0 + securityReceiver;
         }
         else // left side line
         {
             // place the receiver 1m outside the sideline
-            if (wm->field->getSurrounding() > 1300)
-            {
-                yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
-            }
-            else
-            {
-                yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + wm->field->getSurrounding()
-                        - wm->pathPlanner->getRobotRadius() - securityReceiver;
-            }
+//			if (wm->field->getSurrounding() > 1300)
+//			{
+//				yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + 1000.0;
+//			}
+//			else
+//			{
+//				yCordOfReceiver = wm->field->getFieldWidth() / 2.0 + wm->field->getSurrounding()
+//						- wm->pathPlanner->getRobotRadius() - securityReceiver;
+//			}
+
+            // ^ forbidden with rule changes 2017. place robot on side line instead
+
+            yCordOfReceiver = wm->field->getFieldWidth() / 2.0 - securityReceiver;
         }
 
         double lowestX = wm->field->getFieldLength() / 2;
