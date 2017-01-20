@@ -47,47 +47,45 @@ namespace msl
 		PathProxy();
 		virtual ~PathProxy();
 		/**
-		 * get ego direction form path planner
+		 * Get ego direction form path planner
 		 * @param egoTarget shared_ptr<geometry::CNPoint2D>
 		 * @param eval shared_ptr<PathEvaluator>
-		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-		 * @return shared_ptr<geometry::CNPoint2D>
+		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> point to add as artificial obstacles to the Voronoi Diagram
+		 * @return shared_ptr<geometry::CNPoint2D> containing first waypoint of the calculated path
 		 */
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<IPathEvaluator> pathEvaluator,
 														shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> additionalPoints = nullptr);
 
 		/**
-		 * get ego direction form path planner
+		 * Get ego direction form path planner
 		 * @param egoTarget shared_ptr<geometry::CNPoint2D>
 		 * @param eval shared_ptr<PathEvaluator>
-		 * @param additionalPoints shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
-		 * @return shared_ptr<geometry::CNPoint2D>
+		 * @param query shared_ptr<PathPlannerQuery> encalsulates information given to the path planner
+		 * @return shared_ptr<geometry::CNPoint2D> containing first waypoint of the calculated path
 		 */
 		shared_ptr<geometry::CNPoint2D> getEgoDirection(shared_ptr<geometry::CNPoint2D> egoTarget,
 														shared_ptr<IPathEvaluator> pathEvaluator,
 														shared_ptr<PathPlannerQuery> query);
 
 		/**
-		 * get the path proxy instacne
+		 * Get the path proxy instacne
 		 */
 		static PathProxy* getInstance();
 		/**
-		 * send debug msg with pathplanner path
+		 * Send debug msg with pathplanner path
 		 * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>>
 		 */
 		void sendPathPlannerMsg(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path);
 
 		/**
-		 * send debug msg with voroni infos
-		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+		 * Send debug msg with voroni infos
 		 * @param voronoi shared_ptr<VoronoiNet>
 		 */
 		void sendVoronoiNetMsg(shared_ptr<VoronoiNet> voronoi);
 
 		/**
-		 * calculates cropped voronoi for debug msg
-		 * @param sites shared_ptr<vector<pair<shared_ptr<geometry::CNPoint2D>, int>>>
+		 * Calculates cropped voronoi for debug msg
 		 * @param voronoi shared_ptr<VoronoiNet>
 		 */
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > calculateCroppedVoronoi(shared_ptr<VoronoiNet> voronoi);
@@ -101,6 +99,13 @@ namespace msl
 		supplementary::SystemConfig* sc;
 		bool pathPlannerDebug;
 
+		/**
+		 * Calculates possible shortcuts in the path
+		 * @param path shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path returned by the Path Planner
+		 * @param ownPos shared_ptr<geometry::CNPosition>
+		 * @param net shared_ptr<VoronoiNet>
+		 * @return shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path conaining shortcuts
+		 */
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> applyShortcut(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> path, shared_ptr<geometry::CNPosition> ownPos, shared_ptr<VoronoiNet> net);
 
 	};

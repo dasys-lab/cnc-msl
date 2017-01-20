@@ -29,7 +29,9 @@ using namespace std;
 
 namespace msl
 {
-
+	/**
+	 * Node used inside the A*-Algorithm
+	 */
 	class SearchNode
 	{
 	public:
@@ -38,56 +40,64 @@ namespace msl
 		SearchNode(shared_ptr<Vertex> vertex, double cost, double heuristic, shared_ptr<SearchNode> predecessor);
 		virtual ~SearchNode();
 		/**
-		 * gets the cost
+		 * Gets the cost
 		 * @return double
 		 */
 		double getCost();
 		/**
-		 * sets the cost
-		 * @param cost double
+		 * Sets the cost
+		 * @param double cost
 		 */
 		void setCost(double cost);
 
 		/**
-		 * gets the heuristic
+		 * Gets the heuristic vlaue
 		 * @return double
 		 */
 		double getHeuristic();
 		/**
-		 * sets the heuristic
-		 * @param heuristic double
+		 * Sets the heuristic value
+		 * @param double heuristic
 		 */
 		void setHeuristic(double heuristic);
 		/**
-		 * gets the predecessor node
+		 * Gets the predecessor node
 		 * @return shared_ptr<SearchNode>
 		 */
 		shared_ptr<SearchNode> getPredecessor();
 		/**
-		 * sets the predecessor node
-		 * @param predecessor shared_ptr<SearchNode>
+		 * Sets the predecessor node
+		 * @param shared_ptr<SearchNode> predecessor
 		 */
 		void setPredecessor(shared_ptr<SearchNode> predecessor);
 		/**
-		 * gets the vertex
-		 * @return shared_ptr<VoronoiDiagram::Vertex>
+		 * Gets the Voronoi Edge
+		 * @return VoronoiDiagram::Halfedge_around_vertex_circulator
 		 */
 		VoronoiDiagram::Halfedge_around_vertex_circulator getEdge();
 		/**
-		 * sets the vertex
-		 * @param vertex shared_ptr<VoronoiDiagram::Vertex>
+		 * Sets the Voronoi Edge
+		 * @param VoronoiDiagram::Halfedge_around_vertex_circulator
 		 */
 		void setEdge(VoronoiDiagram::Halfedge_around_vertex_circulator edge);
 		/**
-		 * compares two SearchNodes, true if first has lower cost
-		 * @param first shared_ptr<SearchNode>
-		 * @param second shared_ptr<SearchNode>
+		 * Compares two SearchNodes, true if first has lower cost
+		 * @param shared_ptr<SearchNode> first
+		 * @param shared_ptr<SearchNode> second
 		 * @return bool
 		 */
 		static bool compare(shared_ptr<SearchNode> first, shared_ptr<SearchNode> second);
 
+		/**
+		 * Get starting point of the edge
+		 * @return shared_ptr<geometry::CNPoint2D>
+		 */
 		shared_ptr<geometry::CNPoint2D> getPoint();
 
+		/**
+		 * Gets incident edges to the voronoi vertex
+		 * @return VoronoiDiagram::Halfedge_around_vertex_circulator
+		 */
 		VoronoiDiagram::Halfedge_around_vertex_circulator getIncidentEdges();
 
 		bool matches(shared_ptr<Vertex> vertex);
