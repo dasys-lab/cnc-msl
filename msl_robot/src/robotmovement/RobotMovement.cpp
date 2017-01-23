@@ -19,7 +19,7 @@
 #include "RawSensorData.h"
 #include "Robots.h"
 #include "obstaclehandler/Obstacles.h"
-#include "Kicker.h"
+#include "msl_robot/kicker/Kicker.h"
 
 #include <SystemConfig.h>
 

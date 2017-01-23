@@ -45,7 +45,6 @@ namespace msl
 		void setGameState(GameState gameState);
 		void updateGameState();
 		bool isMayScore();
-
 		Color ownTeamColor;
 		Color ownGoalColor;
 		long gameTime;
@@ -67,6 +66,7 @@ namespace msl
 		unsigned long timeSinceStart;
 		GameState gameState;
 		int teamMateWithBall;
+		bool passReceived;
 		bool mayScore;
 		void setMayScore();
 	};
