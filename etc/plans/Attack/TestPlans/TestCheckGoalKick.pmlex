@@ -44,4 +44,8 @@
     <key href="../../Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
+  <extensions>
+    <key href="../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <value/>
+  </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
