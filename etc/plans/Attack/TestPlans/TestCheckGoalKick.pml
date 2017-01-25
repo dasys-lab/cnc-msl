@@ -10,6 +10,7 @@
     <plans xsi:type="alica:BehaviourConfiguration">../../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/ShovelSelect.beh#1435156811453</plans>
     <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/AlignToGoal.beh#1415205285582</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">../../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1449076202114</inTransitions>
     <outTransitions>#1449076203977</outTransitions>
   </states>
