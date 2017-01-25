@@ -20,7 +20,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1475074396562) ENABLED START*/ //Add additional private methods here
-        static constexpr double ERROR_THRESHOLD = 0.05;
+        static constexpr double ERROR_THRESHOLD = 0.01;
         /*PROTECTED REGION END*/};
 } /* namespace alica */
 

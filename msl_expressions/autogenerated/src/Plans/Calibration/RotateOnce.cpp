@@ -47,7 +47,13 @@ namespace alica
 
 		int currentSegment = getCurrentRotationSegment();
 		double currentBearing = wm->rawSensorData->getAverageBearing();
-		visitedSegments[currentSegment] = true;
+
+		if(currentSegment == 0 || visitedSegments[currentSegment - 1])
+		{
+			visitedSegments[currentSegment] = true;
+		}
+
+		// for(int i= 0; i<3; i++) { cout << "seg" << i << ": " << visitedSegments[i] << " "; } cout << endl;
 
 		if (visitedSegments[0] && visitedSegments[1] && visitedSegments[2])
 		{
@@ -58,10 +64,12 @@ namespace alica
 
 			if (precisionBuffer->getSize() == PRECISION_BUFFER_SIZE)
 			{
+				// cout << "buffer" << endl;
 				double diffSum = 0;
 				for (int i = 0; i < PRECISION_BUFFER_SIZE; i++)
 				{
 					diffSum += precisionBuffer->getActualElement(i);
+					// cout << i << ": " << precisionBuffer->getActualElement(i) << endl;
 				}
 
 				if (diffSum >= 0)

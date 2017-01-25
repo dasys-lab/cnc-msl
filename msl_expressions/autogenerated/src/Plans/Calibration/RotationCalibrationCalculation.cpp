@@ -38,6 +38,7 @@ namespace alica
 			RotateOnce::measurements[0] = RotateOnce::measurements[1];
 			RotateOnce::measurements[1] = new geometry::CNPoint2D(RotateOnce::measurements[0]->x + 10, 0); // TODO x field
 			this->setFailure(true);
+			wm->setRobotRadius(RotateOnce::measurements[1]->x);
 			cout << "RCC: Erstes Mal" << endl;
 		}
 		else
@@ -66,6 +67,7 @@ namespace alica
 
 				cout << cmd.str() << endl;
 				string gnuplotReturn = supplementary::ConsoleCommandHelper::exec(cmd.str().c_str());
+				// cout << "gnuplotReturn: " << gnuplotReturn << endl;
 
 				/* I like C! */
 				// match plotted value
