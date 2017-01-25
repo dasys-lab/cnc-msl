@@ -293,6 +293,10 @@ namespace alica
 
             case 1482339937439:
 
+            case 1485355187631:
+
+            case 1485355250017:
+
                 return make_shared<DribbleCalibration>();
                 break;
 

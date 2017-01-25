@@ -166,8 +166,8 @@ namespace msl
 
 		if (m_Query->rotateAroundTheBall)
 		{
-			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
-//			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+//			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
+			if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
 			{
 //#ifdef RM_DEBUG
 				cout << "RobotMovement::alignTo(): rotate around the ball" << endl;

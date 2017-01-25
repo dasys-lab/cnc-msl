@@ -6,39 +6,55 @@
  */
 
 #include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h"
+#include "boost/lexical_cast.hpp"
 
-DribbleBackward::DribbleBackward()
+namespace alica
 {
-	// TODO Auto-generated constructor stub
+	DribbleBackward::DribbleBackward()
+	{
+		epsilonT = 0;
+		changingValue = 0;
+		defaultValue = 0;
+		readConfigParameters();
+	}
 
-}
+	DribbleBackward::~DribbleBackward()
+	{
+		// TODO Auto-generated destructor stub
+	}
 
-DribbleBackward::~DribbleBackward()
-{
-	// TODO Auto-generated destructor stub
-}
+	MotionControl DribbleBackward::move(int trans)
+	{
+		MotionControl mc;
+		return mCon.move(mCon.Backward, trans);
+	}
 
-MotionControl DribbleBackward::move(int trans)
-{
-	MotionControl mc;
-	return mCon.move(mCon.Backward, trans);
-}
+	void DribbleBackward::writeConfigParameters()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonT), "DribbleAround.epsilonT", NULL);
+	}
 
-void DribbleBackward::writeConfigParameters()
-{
+	void DribbleBackward::adaptParams()
+	{
+		epsilonT = -changingValue;
+	}
 
-}
+	void DribbleBackward::readConfigParameters()
+	{
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
-void DribbleBackward::adaptParams()
-{
+		// DribbleAround.conf
+		epsilonT = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonT", NULL);
 
-}
+		// DribbleCalibration.conf
+		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleBackward.ChangingValue",
+		NULL);
+		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleBackward.DefaultValue",
+																NULL);
+	}
 
-void DribbleBackward::readConfigParameters()
-{
-
-}
-
-void DribbleBackward::resetParams()
-{
+	void DribbleBackward::resetParams()
+	{
+	}
 }

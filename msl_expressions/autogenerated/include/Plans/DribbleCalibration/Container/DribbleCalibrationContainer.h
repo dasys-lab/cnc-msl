@@ -12,6 +12,8 @@
 #include "msl_robot/robotmovement/MovementQuery.h"
 #include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
 #include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateLeft.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateRight.h>
 #include <Plans/DribbleCalibration/Behaviours/Interfaces/ICalibration.h>
 
 #define DEBUG_DC
@@ -62,6 +64,9 @@ namespace alica
 		// calibration behaviours
 		DribbleForward df;
 		DribbleBackward db;
+		DribbleRotateLeft drl;
+		DribbleRotateRight drr;
+
 
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
 		MotionControl setNaN(MotionControl mc);

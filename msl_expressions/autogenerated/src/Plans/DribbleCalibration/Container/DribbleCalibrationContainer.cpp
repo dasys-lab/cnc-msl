@@ -50,6 +50,16 @@ namespace alica
 				return callMethod(&db, mParm, trans);
 				break;
 			}
+			case RotateLeftParm:
+			{
+				return callMethod(&drl, mParm, trans);
+				break;
+			}
+			case RotateRightPram:
+			{
+				return callMethod(&drr, mParm, trans);
+				break;
+			}
 		}
 		MotionControl mc;
 		return setNaN(mc);

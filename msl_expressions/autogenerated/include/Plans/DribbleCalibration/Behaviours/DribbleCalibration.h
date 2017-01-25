@@ -24,6 +24,8 @@ namespace alica
         /*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
         bool dribbleForward;
         bool dribbleBackward;
+        bool dribbleRotateLeft;
+        bool dribbleRotateRight;
         DribbleCalibrationContainer dcc;
         DribbleCalibrationContainer::Param param;
         MovementContainer moveCont;

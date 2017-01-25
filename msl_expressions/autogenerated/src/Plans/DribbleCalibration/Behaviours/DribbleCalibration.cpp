@@ -48,8 +48,8 @@ namespace alica
 //		MovementContainer moveCont;
 
         // if ball is in kicker
-//		if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
-        if ((moveCount < speedIter))
+        if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
+//        if ((moveCount < speedIter))
         {
             getBallFlag = true;
             // waiting so we definitely have the ball when we start with the calibration
@@ -67,7 +67,8 @@ namespace alica
 
             // drive to the left
 #ifdef DEBUG_DC
-            cout << "DribbleCalibration::run() haveBallCount = " << haveBallCount << " minHaveBallIter = " << minHaveBallIter << endl;
+            cout << "DribbleCalibration::run() haveBallCount = " << haveBallCount << " minHaveBallIter = "
+            << minHaveBallIter << endl;
 #endif
 
             // translation may not be higher than endTrans
@@ -180,6 +181,24 @@ namespace alica
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleBackward;
                 !dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
+            }
+
+            // Rotate Left
+            success &= getParameter("DribbleRotateLeft", tmp);
+            if (success)
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
+                !dribbleRotateLeft ? : param = DribbleCalibrationContainer::Param::RotateLeftParm;
+            }
+
+            // Rotate Right
+            success &= getParameter("DribbleRotateRight", tmp);
+            if (success)
+            {
+                std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+                istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
+                !dribbleRotateRight ? : param = DribbleCalibrationContainer::Param::RotateRightPram;
             }
         }
         catch (exception& e)

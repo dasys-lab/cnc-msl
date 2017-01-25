@@ -9,4 +9,10 @@
   <configurations id="1482339937439" name="DribbleCalibrationForward" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
     <parameters id="1482339948045" name="MISSING_NAME" comment="" key="DribbleForward" value="true"/>
   </configurations>
+  <configurations id="1485355187631" name="DribbleCalibrationRotateLeft" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1485358191926" name="MISSING_NAME" comment="" key="DribbleRotateLeft" value="true"/>
+  </configurations>
+  <configurations id="1485355250017" name="DribbleCalibrationRotateRight" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
+    <parameters id="1485358201056" name="MISSING_NAME" comment="" key="DribbleRotateRight" value="true"/>
+  </configurations>
 </alica:Behaviour>

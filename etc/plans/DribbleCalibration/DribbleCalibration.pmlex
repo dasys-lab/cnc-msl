@@ -25,31 +25,15 @@
     <value xPos="401" yPos="27" width="301" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="DribbleCalibration.pml#1469108982128"/>
-    <value xPos="592" yPos="109" width="170" height="67" collapsed="false"/>
-  </extensions>
-  <extensions>
     <key href="DribbleCalibration.pml#1469108996737"/>
-    <value xPos="602" yPos="256" width="152" height="67" collapsed="false"/>
+    <value xPos="588" yPos="180" width="270" height="134" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469109046400"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="DribbleCalibration.pml#1469109050223"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DribbleCalibration.pml#1469109053820"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="DribbleCalibration.pml#1469109061857"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="DribbleCalibration.pml#1469109064014"/>
     <value/>
   </extensions>
   <extensions>
@@ -59,10 +43,6 @@
   <extensions>
     <key href="DribbleCalibration.pml#1469109142048"/>
     <value xPos="777" yPos="472"/>
-  </extensions>
-  <extensions>
-    <key href="DribbleCalibration.pml#1469109160465"/>
-    <value/>
   </extensions>
   <extensions>
     <key href="DribbleCalibration.pml#1469109218874"/>
@@ -124,6 +104,34 @@
   </extensions>
   <extensions>
     <key href="Behaviours/DribbleCalibration.beh#1482339937439"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/DribbleCalibration.beh#1485355187631"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="Behaviours/DribbleCalibration.beh#1485355250017"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1485356788982"/>
+    <value xPos="607" yPos="377" width="185" height="67" collapsed="false"/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1485356813423"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1485356815055"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="DribbleCalibration.pml#1485356843859"/>
+    <value/>
+  </extensions>
+  <extensions>
+    <key href="../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>
