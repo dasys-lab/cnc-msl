@@ -9,6 +9,8 @@
 #include "msl_robot/MSLRobot.h"
 #include "msl_robot/kicker/Kicker.h"
 #include <MSLWorldModel.h>
+#include <pathplanner/evaluator/IPathEvaluator.h>
+#include <pathplanner/PathPlannerQuery.h>
 
 namespace msl
 {
@@ -30,6 +32,11 @@ namespace msl
 		this->wm = MSLWorldModel::get();
 
 		this->rotateAroundTheBall = false;
+		this->circleRadius = -1;
+		this->circleCenterPoint = nullptr;
+		this->rectangleUpperLeftCorner = nullptr;
+		this->rectangleLowerRightCorner = nullptr;
+		this->pathEval = nullptr;
 
 		resetAllPIDParameters();
 		readConfigParameters();
@@ -40,8 +47,26 @@ namespace msl
 
 	}
 
+	shared_ptr<PathPlannerQuery> MovementQuery::getPathPlannerQuery()
+	{
+		shared_ptr<PathPlannerQuery> ret = make_shared<PathPlannerQuery>();
+		ret->additionalPoints = this->additionalPoints;
+		ret->block3MetersAroundBall = this->block3MetersAroundBall;
+		ret->blockOppGoalArea = this->blockOppGoalArea;
+		ret->blockOppPenaltyArea = this->blockOppPenaltyArea;
+		ret->blockOwnGoalArea = this->blockOwnGoalArea;
+		ret->blockOwnPenaltyArea = this->blockOwnPenaltyArea;
+		ret->circleCenterPoint = this->circleCenterPoint;
+		ret->circleRadius = this->circleRadius;
+		ret->rectangleLowerRightCorner = this->rectangleLowerRightCorner;
+		ret->rectangleUpperLeftCorner = this->rectangleUpperLeftCorner;
+		return ret;
+	}
+
 	double MovementQuery::rotationPDForDribble(shared_ptr<geometry::CNPoint2D> egoTarget)
 	{
+		cout << "MovementQuery::rotationPDForDribble: egoTarget = " << egoTarget->toString();
+
 		double angleErr = egoTarget->rotate(this->robot->kicker->kickerAngle)->angleTo();
 		double rot = this->pRot * angleErr + this->dRot * geometry::normalizeAngle(angleErr - this->lastRotDribbleErr); //Rotation PD
 
@@ -129,6 +154,22 @@ namespace msl
 		readConfigParameters();
 	}
 
+	void MovementQuery::blockCircle(shared_ptr<geometry::CNPoint2D> centerPoint, double radius)
+	{
+		this->circleCenterPoint = centerPoint;
+		this->circleRadius = radius;
+	}
+
+	void MovementQuery::blockRectangle(shared_ptr<geometry::CNPoint2D> upLeftCorner,
+										shared_ptr<geometry::CNPoint2D> lowRightCorner)
+	{
+		this->rectangleUpperLeftCorner = upLeftCorner;
+		this->rectangleLowerRightCorner =lowRightCorner;
+	}
+
+	/**
+	 * Reset all Parameters for the methods rotationPDForDribble() and  translationPIForDribble()
+	 */
 	void MovementQuery::resetAllPIDParameters()
 	{
 		resetRotationPDParameters();
@@ -149,18 +190,31 @@ namespace msl
 		readConfigParameters();
 	}
 
+	/**
+	 * Sets P and D parameters for rotationPDForDribble()
+	 * @pParam
+	 * @dParam
+	 */
 	void MovementQuery::setRotationPDParameters(double pParam, double dParam)
 	{
 		this->pRot = pParam;
 		this->dRot = dParam;
 	}
 
+	/**
+	 * Sets P and I parameters for translationPIForDribble()
+	 * @pParam
+	 * @iParam
+	 */
 	void MovementQuery::setTranslationPIParameters(double pParam, double iParam)
 	{
 		this->pTrans = pParam;
 		this->iTrans = iParam;
 	}
 
+	/**
+	 * Reads all necessary parameters from Dribble.conf
+	 */
 	void MovementQuery::readConfigParameters()
 	{
 		supplementary::SystemConfig* supplementary = supplementary::SystemConfig::getInstance();
@@ -194,3 +248,4 @@ namespace msl
 																								"MaxVelocity", NULL);
 	}
 }
+

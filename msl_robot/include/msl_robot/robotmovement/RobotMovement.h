@@ -34,7 +34,8 @@ namespace msl
 		RobotMovement();
 		virtual ~RobotMovement();
 
-		msl_actuator_msgs::MotionControl moveToPoint(shared_ptr<MovementQuery> const m_Query);
+		//TODO query was const before check
+		msl_actuator_msgs::MotionControl moveToPoint(shared_ptr<MovementQuery> m_Query);
 		msl_actuator_msgs::MotionControl alignTo(shared_ptr<MovementQuery> m_Query);
 		msl_actuator_msgs::MotionControl ruleActionForBallGetter();
 		msl_actuator_msgs::MotionControl driveRandomly(double translation);

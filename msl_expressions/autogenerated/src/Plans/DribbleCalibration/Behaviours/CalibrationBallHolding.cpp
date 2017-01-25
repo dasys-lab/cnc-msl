@@ -69,7 +69,7 @@ namespace alica
         }
         else
         {
-            MotionControl mc = dcc.getBall();
+            MotionControl mc = moveCont.getBall();
             send(mc);
         }
 
@@ -110,8 +110,8 @@ namespace alica
     void CalibrationBallHolding::readConfigParameters()
     {
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-        this->minRotation = dcc.readConfigParameter("Dribble.MinRotation");
-        this->slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
+        this->minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
+        this->slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
 
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.QueueSize", NULL);
         changingValue = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.ChangingValue", NULL);

@@ -20,7 +20,7 @@ namespace alica
             DomainBehaviour("OneGernericInGameBlocker")
     {
         /*PROTECTED REGION ID(con1458034268108) ENABLED START*/ //Add additional options here
-        query = make_shared < ConstraintQuery > (wm->getEngine());
+        query = make_shared < Query > (wm->getEngine());
         maxVel = 0.0;
         avoidBall = false;
         lastResultFound = 0;
@@ -171,8 +171,8 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1458034268108) ENABLED START*/ //Add additional options here
         this->lastResultFound = wm->getTime();
         query->clearStaticVariables();
-        query->addVariable(getVariablesByName("X"));
-        query->addVariable(getVariablesByName("Y"));
+        query->addStaticVariable(getVariablesByName("X"));
+        query->addStaticVariable(getVariablesByName("Y"));
         result.clear();
         supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
         maxVel = (*this->sc)["Behaviour"]->get<double>("Behaviour", "MaxSpeed", NULL);

@@ -19,7 +19,7 @@ using namespace std;
 
 #include  "Plans/GenericBehaviours/CheckGoalKick.h"
 
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleRotation.h"
+#include  "Plans/DribbleCalibration/Behaviours/DribbleCalibration.h"
 
 #include  "Plans/Attack/AdvancdeSimplePass.h"
 
@@ -30,8 +30,6 @@ using namespace std;
 #include  "Plans/Standards/Own/PassIntoPath/ReceivePassIntoPathGeneric.h"
 
 #include  "Plans/Standards/Own/FreeKick/Pos2Penalty.h"
-
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleOrthogonal.h"
 
 #include  "Plans/Behaviours/SpinSlowly.h"
 
@@ -59,8 +57,6 @@ using namespace std;
 
 #include  "Plans/GenericStandards/StandardAlignToPoint.h"
 
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleForward.h"
-
 #include  "Plans/Behaviours/Duel.h"
 
 #include  "Plans/Calibration/RotationCalibrationCalculation.h"
@@ -81,6 +77,8 @@ using namespace std;
 
 #include  "Plans/Behaviours/KickOffPassDefault.h"
 
+#include  "Plans/TestPlans/MotorControlTest/TestMotorControl.h"
+
 #include  "Plans/Attack/OneEighty.h"
 
 #include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
@@ -100,6 +98,8 @@ using namespace std;
 #include  "Plans/Defence/ReleaseMid.h"
 
 #include  "Plans/Behaviours/DribbleToPoint.h"
+
+#include  "Plans/TestPlans/DribbleControlTest/DribbleControlMOS.h"
 
 #include  "Plans/Attack/DribbleAttackConservative.h"
 
@@ -193,8 +193,6 @@ using namespace std;
 
 #include  "Plans/Standards/Opponent/TeamWatchBall.h"
 
-#include  "Plans/DribbleCalibration/Behaviours/CalibrationDribbleBackward.h"
-
 #include  "Plans/Behaviours/CalcCalib.h"
 
 #include  "Plans/Robotcheck/RobotTest.h"
@@ -271,6 +269,12 @@ namespace alica
 
             case 1436961206415:
 
+            case 1484145108476:
+
+            case 1484145243859:
+
+            case 1484145325268:
+
                 return make_shared<DriveToPoint>();
                 break;
 
@@ -291,9 +295,13 @@ namespace alica
                 return make_shared<CheckGoalKick>();
                 break;
 
-            case 1469196377758:
+            case 1482339465166:
 
-                return make_shared<CalibrationDribbleRotation>();
+            case 1482339837722:
+
+            case 1482339937439:
+
+                return make_shared<DribbleCalibration>();
                 break;
 
             case 1450176216458:
@@ -319,11 +327,6 @@ namespace alica
             case 1465474190742:
 
                 return make_shared<Pos2Penalty>();
-                break;
-
-            case 1469196345947:
-
-                return make_shared<CalibrationDribbleOrthogonal>();
                 break;
 
             case 1435159282996:
@@ -395,11 +398,6 @@ namespace alica
                 return make_shared<StandardAlignToPoint>();
                 break;
 
-            case 1469116891409:
-
-                return make_shared<CalibrationDribbleForward>();
-                break;
-
             case 1450178707835:
 
                 return make_shared<Duel>();
@@ -450,6 +448,11 @@ namespace alica
             case 1438778223495:
 
                 return make_shared<KickOffPassDefault>();
+                break;
+
+            case 1482163995843:
+
+                return make_shared<TestMotorControl>();
                 break;
 
             case 1434650910857:
@@ -504,6 +507,11 @@ namespace alica
             case 1414752423981:
 
                 return make_shared<DribbleToPoint>();
+                break;
+
+            case 1479905216821:
+
+                return make_shared<DribbleControlMOS>();
                 break;
 
             case 1457967385543:
@@ -758,11 +766,6 @@ namespace alica
                 return make_shared<TeamWatchBall>();
                 break;
 
-            case 1469196312911:
-
-                return make_shared<CalibrationDribbleBackward>();
-                break;
-
             case 1446033354004:
 
             case 1446036332071:
@@ -807,6 +810,8 @@ namespace alica
                 break;
 
             case 1413992626194:
+
+            case 1482165487602:
 
                 return make_shared<Stop>();
                 break;

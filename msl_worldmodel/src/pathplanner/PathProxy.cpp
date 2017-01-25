@@ -7,6 +7,7 @@
 
 #include "pathplanner/PathProxy.h"
 #include "pathplanner/VoronoiNet.h"
+#include "pathplanner/PathPlannerQuery.h"
 #include "container/CNPosition.h"
 #include "msl_msgs/PathPlanner.h"
 #include "msl_msgs/VoronoiNetInfo.h"
@@ -143,81 +144,90 @@ namespace msl
 	{
 		lastPathTarget = egoTarget;
 
-				//get voronoi diagram, which is ready to be used
-				shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
-				shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData->getOwnPositionVision();
-				if(net == nullptr || !net->ownPosAvail || ownPos == nullptr)
-				{
-					// We are not localized (or have no vNet), so we can't plan a path.
-					return nullptr;
-				}
+		//get voronoi diagram, which is ready to be used
+		shared_ptr<VoronoiNet> net = this->wm->pathPlanner->getCurrentVoronoiNet();
+		shared_ptr<geometry::CNPosition> ownPos = this->wm->rawSensorData->getOwnPositionVision();
+		if (net == nullptr || !net->ownPosAvail || ownPos == nullptr)
+		{
+			// We are not localized (or have no vNet), so we can't plan a path.
+			return nullptr;
+		}
 
-				//if there are additional points insert them into the voronoi diagram
-				if(query->additionalPoints != nullptr)
-				{
-					net->insertAdditionalPoints(query->additionalPoints, EntityType::Obstacle);
-				}
+		//if there are additional points insert them into the voronoi diagram
+		if (query->additionalPoints != nullptr)
+		{
+			net->insertAdditionalPoints(query->additionalPoints, EntityType::Obstacle);
+		}
 
-				//block specific field areas
-				if(query->block3MetersAroundBall)
-				{
-					net->blockThreeMeterAroundBall();
-				}
-				if(query->blockOppPenaltyArea)
-				{
-					net->blockOppPenaltyArea();
-				}
-				if(query->blockOwnPenaltyArea)
-				{
-					net->blockOwnPenaltyArea();
-				}
-				if(query->blockOppGoalArea && !query->blockOppPenaltyArea)
-				{
-					net->blockOppGoalArea();
-				}
-				if(query->blockOwnGoalArea && !query->blockOwnPenaltyArea)
-				{
-					net->blockOwnGoalArea();
-				}
+		//block specific field areas
+		if (query->block3MetersAroundBall)
+		{
+			net->blockThreeMeterAroundBall();
+		}
+		if (query->blockOppPenaltyArea)
+		{
+			net->blockOppPenaltyArea();
+		}
+		if (query->blockOwnPenaltyArea)
+		{
+			net->blockOwnPenaltyArea();
+		}
+		if (query->blockOppGoalArea && !query->blockOppPenaltyArea)
+		{
+			net->blockOppGoalArea();
+		}
+		if (query->blockOwnGoalArea && !query->blockOwnPenaltyArea)
+		{
+			net->blockOwnGoalArea();
+		}
+		if (query->circleRadius != -1 && query->circleCenterPoint != nullptr)
+		{
+			net->blockCircle(query->circleCenterPoint, query->circleRadius);
+		}
+		if (query->rectangleLowerRightCorner != nullptr && query->rectangleUpperLeftCorner != nullptr)
+		{
+			net->blockRectangle(query->rectangleUpperLeftCorner, query->rectangleLowerRightCorner);
+		}
 
-				//plan
-				shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
-				auto alloTarget = egoTarget->egoToAllo(*ownPos);
-				auto path = this->wm->pathPlanner->plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget, pathEvaluator);
+		//plan
+		shared_ptr<geometry::CNPoint2D> retPoint = nullptr;
+		auto alloTarget = egoTarget->egoToAllo(*ownPos);
+		auto path = this->wm->pathPlanner->plan(net, make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y), alloTarget,
+												pathEvaluator);
 
-				if (path != nullptr && path->size() > 0)
-				{
-					//get first point of returned path
-					if(path->size() < 3)
-					{
-						retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
-					}
-					else
-					{
-						path = applyShortcut(path, ownPos, net);
-						retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
-					}
-		//send debug msgs
-					if(pathPlannerDebug)
-					{
-						path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
-						sendPathPlannerMsg(path);
-						sendVoronoiNetMsg(net);
-					}
-				}
+		if (path != nullptr && path->size() > 0)
+		{
+			//get first point of returned path
+			if (path->size() < 3)
+			{
+				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+			}
+			else
+			{
+				path = applyShortcut(path, ownPos, net);
+				retPoint = make_shared<geometry::CNPoint2D>(path->at(0)->x, path->at(0)->y);
+			}
+			//send debug msgs
+			if (pathPlannerDebug)
+			{
+				path->insert(path->begin(), make_shared<geometry::CNPoint2D>(ownPos->x, ownPos->y));
+				sendPathPlannerMsg(path);
+				sendVoronoiNetMsg(net);
+			}
+		}
 
-				if(retPoint == nullptr)
-				{
-					return nullptr;
-				}
+		if (retPoint == nullptr)
+		{
+			return nullptr;
+		}
 
 		//		cout << "PathProxy: getEgoDirection returns " << retPoint->alloToEgo(*ownPos)->toString() << endl;
-				return retPoint->alloToEgo(*ownPos);
+		return retPoint->alloToEgo(*ownPos);
 	}
 
 	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> PathProxy::applyShortcut(shared_ptr<vector<shared_ptr<geometry::CNPoint2D> > > path,
-																shared_ptr<geometry::CNPosition> ownPos,
-																shared_ptr<VoronoiNet> net)
+			shared_ptr<geometry::CNPosition> ownPos,
+			shared_ptr<VoronoiNet> net)
 	{
 		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ret = path;
 		bool shortcutBlocked = false;
@@ -230,12 +240,12 @@ namespace msl
 					continue;
 				}
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
+				|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current->getPoint(), wm->pathPlanner->getRobotRadius());
 			}
 			for (auto current : *net->getAdditionalObstacles())
 			{
 				shortcutBlocked = shortcutBlocked
-						|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
+				|| wm->pathPlanner->corridorCheck(ownPos->getPoint(), path->at(i), current, wm->pathPlanner->getRobotRadius());
 			}
 			if (!shortcutBlocked)
 			{

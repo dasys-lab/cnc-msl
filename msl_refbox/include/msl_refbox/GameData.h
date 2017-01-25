@@ -24,7 +24,6 @@
 #include <QTimer>
 #include <chrono>
 
-
 using namespace std;
 
 namespace msl_refbox
@@ -33,7 +32,7 @@ namespace msl_refbox
 	class XMLProtocolParser;
 	class GameData : public QObject
 	{
-		Q_OBJECT
+	Q_OBJECT
 	public:
 		void onSharedWorldmodelInfo(msl_sensor_msgs::SharedWorldInfoPtr msg);
 		void onAlicaEngineInfo(alica_ros_proxy::AlicaEngineInfoConstPtr aei);
@@ -58,9 +57,10 @@ namespace msl_refbox
 		void sendCyanPenalty(bool local);
 
 	public:
-                enum Side {
-                        ALL, CYAN, MAGENTA
-                };
+		enum Side
+		{
+			ALL, CYAN, MAGENTA
+		};
 
 		GameData(RefBox* refBox);
 		virtual ~GameData();
@@ -115,45 +115,44 @@ namespace msl_refbox
 
 		/* refbox log send method */
 		void sendRefBoxLog();
-                void log(std::string method, bool local, Side side);
-                void updateGoals();
-                void setGoals(Side, int value);
-                int getGoals(Side);
+		void log(std::string method, bool local, Side side);
+		void updateGoals();
+		void setGoals(Side, int value);
+		int getGoals(Side);
 
 	protected:
-			enum ConnectionState {
-				DISCONNECTING, DISCONNECTED, RECONNECTING,
-				TCP_CONNECTED, UDP_CONNECTED,
-			} connectionState;
+		enum ConnectionState
+		{
+			DISCONNECTING, DISCONNECTED, RECONNECTING, TCP_CONNECTED, UDP_CONNECTED,
+		} connectionState;
 
-			msl_msgs::RefBoxCommand ref;
-			map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
-			map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
-			map<int, chrono::system_clock::time_point> date;
-			mutex shwmMutex, aeiMutex;
-			ros::Publisher RefereeBoxInfoBodyPublisher;
-			ros::Subscriber shwmSub, aliceClientSubscriber;
-			ros::NodeHandle* rosNode;
-			QTcpSocket* tcpsocket;
-			QUdpSocket* udpsocket;
-			int counter;
-			XMLProtocolParser* xmlparser;
-			QTimer* sendRefBoxLogtimer;
-			QTimer* sendRefBoxCmdtimer;
-			QTimer *reconnectTimer;
-		        std::stringstream logStream;
-                        QByteArray buffer;
-                        int goalsMagenta;
-                        int goalsCyan;
+		msl_msgs::RefBoxCommand ref;
+		map<int, msl_sensor_msgs::SharedWorldInfoPtr> shwmData;
+		map<int, alica_ros_proxy::AlicaEngineInfoConstPtr> aeiData;
+		map<int, chrono::system_clock::time_point> date;
+		mutex shwmMutex, aeiMutex;
+		ros::Publisher RefereeBoxInfoBodyPublisher;
+		ros::Subscriber shwmSub, aliceClientSubscriber;
+		ros::NodeHandle* rosNode;
+		QTcpSocket* tcpsocket;
+		QUdpSocket* udpsocket;
+		int counter;
+		XMLProtocolParser* xmlparser;
+		QTimer* sendRefBoxLogtimer;
+		QTimer* sendRefBoxCmdtimer;
+		QTimer *reconnectTimer;
+		std::stringstream logStream;
+		QByteArray buffer;
+		int goalsMagenta;
+		int goalsCyan;
 
-			QTcpSocket* connectTCP(QString host, qint16 port);
-			QUdpSocket* connectUDP(QString host, qint16 port);
+		QTcpSocket* connectTCP(QString host, qint16 port);
+		QUdpSocket* connectUDP(QString host, qint16 port);
 
-			void disconnectTCP();
-			void disconnectUDP();
-			void parseXML(const QByteArray& data);
+		void disconnectTCP();
+		void disconnectUDP();
+		void parseXML(const QByteArray& data);
 	};
-
 
 } /* namespace rqt_pm_control */
 

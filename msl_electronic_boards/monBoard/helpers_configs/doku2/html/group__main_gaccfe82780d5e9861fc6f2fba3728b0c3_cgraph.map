@@ -1,4 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$group__uart.html#gae52facc0a56086a365bb0018160d8d71" title="Put string to ringbuffer for transmitting via UART." alt="" coords="220,5,295,35"/>
-<area shape="rect" id="node5" href="$group__uart.html#gaefaab30a8338ec46a6be35b99b1b4f09" title="Get received byte from ringbuffer." alt="" coords="220,59,295,88"/>
-</map>

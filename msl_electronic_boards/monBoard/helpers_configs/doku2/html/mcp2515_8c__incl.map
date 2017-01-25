@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node9" href="$mcp2515_8h.html" title="mcp2515.h" alt="" coords="253,83,339,112"/>
-<area shape="rect" id="node16" href="$defaults_8h.html" title="DefaultConfig here the pins for the relaispins, SPI, status and error leds and some names are defined..." alt="" coords="363,83,440,112"/>
-<area shape="rect" id="node18" href="$uart_8h_source.html" title="uart.h" alt="" coords="464,83,517,112"/>
-<area shape="rect" id="node14" href="$mcp2515__defs_8h_source.html" title="mcp2515_defs.h" alt="" coords="379,160,496,189"/>
-</map>

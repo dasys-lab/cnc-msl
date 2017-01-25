@@ -9,6 +9,10 @@
 
 #include  "Plans/Attack/AttackPlay1434045709191.h"
 
+#include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
+
+#include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
+
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
 #include  "Plans/GameStrategy/Other/Parking1426695119330.h"
@@ -167,6 +171,14 @@ namespace alica
 
             case 1434045709191:
                 return make_shared<UtilityFunction1434045709191>();
+                break;
+
+            case 1479905043165:
+                return make_shared<UtilityFunction1479905043165>();
+                break;
+
+            case 1482163489121:
+                return make_shared<UtilityFunction1482163489121>();
                 break;
 
             case 1466973051873:

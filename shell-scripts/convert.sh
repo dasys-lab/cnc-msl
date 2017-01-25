@@ -12,3 +12,4 @@ grep -rl '<preCondition' ./ | xargs sed -i 's/<preCondition \(.*\) comment=\"\" 
 grep -rl '<result' ./ | xargs sed -i 's/<result/<postCondition/g'
 
 find . -name "*.pmlex" | xargs sed -i 's/<uiextensionmodel:PmlUiExtensionMap\(.*\)xmi:version="2.0"/<uiextensionmodel:PmlUiExtensionMap\1/g'
+

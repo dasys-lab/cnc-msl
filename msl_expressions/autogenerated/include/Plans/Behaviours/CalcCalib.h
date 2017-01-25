@@ -24,7 +24,6 @@ namespace alica
         double calibCoefficientY;
         double oldCalibCoefficientX = 0;
         double oldCalibCoefficientY = 0;
-        double length = 0;
         double correctedWayX = 0;
         double correctedWayY = 0;
         double correctedPosX = 0;
@@ -33,9 +32,10 @@ namespace alica
         double oldCorrectedPosY = 0;
         double diffX;
         double diffY;
+        double length = 0; //löschen???
         double lengthSegment = 0;
         CalibrationCoefficient calibCoeff;
-        int calibCounter = 0;
+        int calibCounter = 0; //evtl für Richtung
 
         //------------------------------
 

@@ -3,7 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1457531616421) ENABLED START*/ //Add additional includes here
-#include "engine/constraintmodul/ConstraintQuery.h"
+#include "engine/constraintmodul/Query.h"
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -21,7 +21,7 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1457531616421) ENABLED START*/ //Add additional private methods here
-        shared_ptr<ConstraintQuery> query;
+        shared_ptr<Query> query;
         vector<double> result;
         double maxVel;
         int iterationCount;

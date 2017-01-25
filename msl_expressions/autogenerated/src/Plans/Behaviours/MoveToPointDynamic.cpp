@@ -16,7 +16,7 @@ namespace alica
             DomainBehaviour("MoveToPointDynamic")
     {
         /*PROTECTED REGION ID(con1456997073100) ENABLED START*/ //Add additional options here
-        query = make_shared < ConstraintQuery > (wm->getEngine());
+        query = make_shared < Query > (wm->getEngine());
         maxVel = 0;
         avoidBall = false;
         result = vector<double>();
@@ -94,8 +94,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1456997073100) ENABLED START*/ //Add additional options here
         query->clearStaticVariables();
-        query->addVariable(getVariablesByName("X"));
-        query->addVariable(getVariablesByName("Y"));
+        query->addStaticVariable(getVariablesByName("X"));
+        query->addStaticVariable(getVariablesByName("Y"));
         result.clear();
         bool success = true;
         string tmp = "";

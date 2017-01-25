@@ -17,7 +17,7 @@ namespace alica
             DomainBehaviour("StandardAlignToPassPos")
     {
         /*PROTECTED REGION ID(con1457532279657) ENABLED START*/ //Add additional options here
-        query = make_shared < ConstraintQuery > (wm->getEngine());
+        query = make_shared < Query > (wm->getEngine());
 
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
         maxVel = (*sys)["Behaviour"]->get<double>("Behaviour.MaxSpeed", NULL);
@@ -83,8 +83,8 @@ namespace alica
         /*PROTECTED REGION ID(initialiseParameters1457532279657) ENABLED START*/ //Add additional options here
         iterationCount = 0;
         query->clearStaticVariables();
-        query->addVariable(getVariablesByName("X"));
-        query->addVariable(getVariablesByName("Y"));
+        query->addStaticVariable(getVariablesByName("X"));
+        query->addStaticVariable(getVariablesByName("Y"));
         result.clear();
         /*PROTECTED REGION END*/
     }

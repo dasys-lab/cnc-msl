@@ -19,6 +19,7 @@ namespace alica
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469284294147) ENABLED START*/ //Add additional protected methods here
         DribbleCalibrationContainer dcc;
+        MovementContainer moveCont;
 
         double minRotation;
         double slowTranslationWheelSpeed;
@@ -31,11 +32,13 @@ namespace alica
         void writeConfigParameters();
 
         shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-    int queueSize;
+        int queueSize;
 
-    int changingValue;
+        int changingValue;
 
-    /*PROTECTED REGION END*/private:
+    private:
+
+    /*PROTECTED REGION END*/
     /*PROTECTED REGION ID(prv1469284294147) ENABLED START*/ //Add additional private methods here
     /*PROTECTED REGION END*/};
 }
