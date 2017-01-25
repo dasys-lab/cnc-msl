@@ -39,7 +39,7 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
 		// DribbleAround.conf
-		epsilonRot = (*sc)["DribbleAround"]->get<double>("DribbleAround.epsilonRot", NULL);
+		epsilonRot = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.epsilonRot", NULL);
 
 		// DribbleCalibration.conf
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleRotation.ChangingValue",

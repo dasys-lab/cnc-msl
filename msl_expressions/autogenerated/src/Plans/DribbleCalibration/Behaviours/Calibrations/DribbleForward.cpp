@@ -51,7 +51,7 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
 		// DribbleAround.conf
-		velToInput = (*sc)["DribbleAround"]->get<double>("DribbleAround.velToInput", NULL);
+		velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
 
 		// DribbleCalibration.conf
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingValue",
