@@ -472,15 +472,14 @@ namespace msl
 			passReceived = true;
 		}
 
-		cout << "tmwb : " << teamMateWithBall << "tmwbn: " << teamMateWithBallNow
-				<< "=========================================GAME: SETTING MAYSCORE ============================================================="
-				<< endl;
-
 		teamMateWithBall = teamMateWithBallNow;
 
 		auto teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateWithBall);
 		if (teamMatePos != nullptr && teamMatePos->x > 50 && passReceived)
 		{
+			cout << "tmwb : " << teamMateWithBall << "tmwbn: " << teamMateWithBallNow
+					<< "=========================================GAME: SETTING MAYSCORE ============================================================="
+					<< endl;
 			mayScore = true;
 		}
 	}
