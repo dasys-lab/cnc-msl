@@ -10,9 +10,28 @@ ros::Publisher calibCoeff_pub;
 namespace alica
 {
     /*PROTECTED REGION ID(staticVars1446033324019) ENABLED START*/ //initialise static variables here
+	/*calibPosMotionY = 0;
+        calibPosMotionX = 0;
+        calibOldPosMotionX = 0;
+        calibOldPosMotionY = 0;
+        calibCoefficientX;
+        calibCoefficientY;
+        oldCalibCoefficientX = 0;
+        oldCalibCoefficientY = 0;
+        correctedWayX = 0;
+        correctedWayY = 0;
+        correctedPosX = 0;
+        correctedPosY = 0;
+        oldCorrectedPosX = 0;
+        oldCorrectedPosY = 0;
+        diffX;
+        diffY;
+        length = 0; //löschen???
+        lengthSegment = 0;
+        CalibrationCoefficient calibCoeff;
+        calibCounter = 0; //evtl für Richtung*/
     /*PROTECTED REGION END*/
-    CalcCalib::CalcCalib() :
-            DomainBehaviour("CalcCalib")
+    CalcCalib::CalcCalib() : calibPosMotionX(0), calibPosMotionY(0), calibOldPosMotionX(0), calibOldPosMotionY(0), calibCoefficientX(0), calibCoefficientY(0), correctedWayX(0), correctedWayY(0), correctedPosX(0), correctedPosY(0), oldCorrectedPosX(0), oldCorrectedPosY(0), length(0), lengthSegment(0), calibCounter(0), DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
