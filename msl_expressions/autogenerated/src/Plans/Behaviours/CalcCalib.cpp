@@ -31,7 +31,7 @@ namespace alica
         CalibrationCoefficient calibCoeff;
         calibCounter = 0; //evtl für Richtung*/
     /*PROTECTED REGION END*/
-    CalcCalib::CalcCalib() : calibPosMotionX(0), calibPosMotionY(0), calibOldPosMotionX(0), calibOldPosMotionY(0), calibCoefficientX(0), calibCoefficientY(0), correctedWayX(0), correctedWayY(0), correctedPosX(0), correctedPosY(0), oldCorrectedPosX(0), oldCorrectedPosY(0), length(0), lengthSegment(0), calibCounter(0), DomainBehaviour("CalcCalib")
+    CalcCalib::CalcCalib() : calibOldPosMotionX(0), calibOldPosMotionY(0), oldCalibCoefficientX(0), oldCalibCoefficientY(0), correctedPosX(0), correctedPosY(0), calibCounter(0), DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
