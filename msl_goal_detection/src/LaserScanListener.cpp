@@ -12,8 +12,8 @@ namespace msl
 	LaserScanListener::LaserScanListener()
 	{
 		readConfigParameters();
-		publisher = n.advertise<msl_msgs::PositionInfo>(publisher_topic.c_str(), 10);
-		publisher_filtered_max = n.advertise<geometry_msgs::PointStamped>(filter_topic.c_str(), 10);
+		publisher = n.advertise<msl_msgs::Pose2dStamped>(publisher_topic.c_str(), 10);
+//		publisher_filtered_max = n.advertise<geometry_msgs::PointStamped>(filter_topic.c_str(), 10);
 		sub = n.subscribe(scanner_topic.c_str(), 10, &LaserScanListener::onLaserScanReceived, (LaserScanListener*)this);
 
 	}
@@ -26,9 +26,10 @@ namespace msl
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
-		scanner_topic = (*sc)["GoalDetection"]->get < string > ("GoalDetection.Topics.scanner_topic", NULL);
-		publisher_topic = (*sc)["GoalDetection"]->get < string > ("GoalDetection.Topics.publisher_topic", NULL);
-		filter_topic = (*sc)["GoalDetection"]->get < string > ("GoalDetection.Topics.filter_topic", NULL);
+		scanner_topic = (*sc)["GoalDetection"]->get<string>("GoalDetection.Topics.scanner_topic", NULL);
+		publisher_topic = (*sc)["GoalDetection"]->get<string>("GoalDetection.Topics.publisher_topic", NULL);
+		filter_topic = (*sc)["GoalDetection"]->get<string>("GoalDetection.Topics.filter_topic", NULL);
+		frame_id = (*sc)["GoalDetection"]->get<string>("GoalDetection.frame_id", NULL);
 
 		back_width = (*sc)["GoalDetection"]->get<double>("GoalDetection.back_width", NULL);
 		goal_depth = (*sc)["GoalDetection"]->get<double>("GoalDetection.goal_depth", NULL);
@@ -38,27 +39,25 @@ namespace msl
 		max_distance = (*sc)["GoalDetection"]->get<double>("GoalDetection.max_distance", NULL);
 		min_distance = (*sc)["GoalDetection"]->get<double>("GoalDetection.min_distance", NULL);
 		reduction_factor = (*sc)["GoalDetection"]->get<double>("GoalDetection.reduction_factor", NULL);
+		scanner_offset = tf::Vector3(0.2, 0.0, 0);
+		z_axis = tf::Vector3(0, 0, 1);
+		y_axis = tf::Vector3(0, 1, 0);
 
 	}
 
 	void LaserScanListener::onLaserScanReceived(sensor_msgs::LaserScanPtr msg)
 	{
-
-		tf::Vector3 scanner_offset(0.2, 0.0, 0); // x-, y-, z-Offset, Scanner zu Torwartmitte
-
-		tf::Vector3 z_axis(0, 0, 1);
-		tf::Vector3 y_axis(0, 1, 0);
-
 		// reduce points to flatten the points by averaging some of them out
-		vector<double> reduced = reduce_points(msg, reduction_factor);
+//		vector<double> reduced = reduce_points(msg);
 		// cout << "all count: " << msg->ranges.size() << endl;
 
 		// find maximum values of these points
-		vector<pair<int, double>> maximums = find_maximums(msg, max_angle_distance);
+		vector<pair<int, double>> maxima = find_maxima(msg);
+//		vector<pair<int, double>> maxima = find_maxima(reduced);
 		// cout << "Maximum count: " << maximums.size() << endl;
 //
 //		// filter out measurement errors
-		vector<pair<int, double>> okay_points = filter_points(maximums, msg);
+		vector<pair<int, double>> okay_points = filter_points(maxima, msg);
 //		// cout << "okay_points count: " << okay_points.size() << endl;
 //
 //		// convert maximums to cartesian coordinates to find back plane candidates later
@@ -69,8 +68,7 @@ namespace msl
 //		cout.precision(3);
 //
 //		// find candidates for the goal corners by maximums
-		vector<pair<tf::Vector3, tf::Vector3>> corner_candidates = find_back_candidates(points, back_width,
-																						back_width_tolerance);
+		vector<pair<tf::Vector3, tf::Vector3>> corner_candidates = find_back_candidates(points);
 
 		if (corner_candidates.size() > 0)
 		{
@@ -79,14 +77,13 @@ namespace msl
 			std::sort(corner_candidates.begin(), corner_candidates.end(),
 						[](pair<tf::Vector3, tf::Vector3> a, pair<tf::Vector3, tf::Vector3> b)
 						{
-							float a_len = a.first.length() * a.first.length() + a.second.length() * a.second.length();
-							float b_len = b.first.length() * b.first.length() + b.second.length() * b.second.length();
+							double a_len = a.first.length() * a.first.length() + a.second.length() * a.second.length();
+							double b_len = b.first.length() * b.first.length() + b.second.length() * b.second.length();
 							return a_len > b_len;
 						});
 
-			//FIXME
-			vector<msl_msgs::PositionInfo> positions;
-			for (auto &corner_pair : corner_candidates)
+			vector<msl_msgs::Pose2dStamped> positions;
+			for (auto corner_pair : corner_candidates)
 			{
 				auto p1 = corner_pair.first; // corner 1
 				auto p2 = corner_pair.second; // corner 2
@@ -113,7 +110,7 @@ namespace msl
 
 				cout << "(" << p1.getX() << " | " << p1.getY() << ")" << " -> " << "(" << p2.getX() << " | "
 						<< p2.getY() << ")" << "\t" << "[" << back_candidate.length() << "]" << "\t" << "[" << theta
-						<< ", " << rad_to_degree(theta) << "]" << "\t" << "(" << back_center_absolute.getX() << " | "
+						<< ", " << (theta * 180 / M_PI) << "]" << "\t" << "(" << back_center_absolute.getX() << " | "
 						<< back_center_absolute.getY() << ")" << "(" << offset.getX() << " | " << offset.getY() << ")"
 						<< endl;
 
@@ -123,94 +120,99 @@ namespace msl
 				// If so, this is point extremely wrong.
 				// uses the back plane width as a reference value.. just because.
 				if (scanner_center_offset_length > back_width)
+				{
 					continue;
+				}
 
 				// Add this goal center to the potential points list.
-				msl_msgs::PositionInfo pi;
+				msl_msgs::Pose2dStamped pose;
 
-				pi.x = offset.getX();
-				pi.y = offset.getY();
-				pi.angle = theta;
-				pi.certainty = scanner_center_offset_length;
+				pose.pose.x = back_center_absolute.getX();
+				pose.pose.y = back_center_absolute.getY();
+				pose.pose.theta = theta;
+
 //				position_msg le = {.x = offset.getX(), .y = offset.getY(), .theta = theta, .certainty =
 //											scanner_center_offset_length};
-				positions.push_back(pi);
+				positions.push_back(pose);
+				break;
 			}
 
 			if (positions.size() > 0)
 			{
 				// just take the first one and publish it.
-				msl_msgs::PositionInfo pos = positions[0];
+				msl_msgs::Pose2dStamped pose = positions[0];
 
-//				pos->header.frame_id = "laser";
-//				pos->header.stamp = ros::Time::now();
+				pose.header.frame_id = frame_id;
+				pose.header.stamp = ros::Time::now();
 
-				//FIXME missing header bad?
-				publisher.publish(pos);
+				publisher.publish(pose);
 
 //				publish_message(publisher, pos.x, pos.y, pos.theta);
 			}
 		}
 	}
 
-	vector<double> LaserScanListener::reduce_points(sensor_msgs::LaserScanPtr msg, double factor)
+	vector<double> LaserScanListener::reduce_points(sensor_msgs::LaserScanPtr msg)
 	{
-		vector<double> reduced(msg->ranges.size() / factor);
+		vector<double> reduced(msg->ranges.size() / reduction_factor);
 		for (size_t i = 0; i < reduced.size(); ++i)
 		{
 			double sum = 0;
-			for (int j = 0; j < factor; ++j)
+			for (int j = 0; j < reduction_factor; ++j)
 			{
-				sum += msg->ranges[i * factor + j];
+				sum += msg->ranges[i * reduction_factor + j];
 			}
-			sum /= factor;
+			sum /= reduction_factor;
 			reduced[i] = sum;
 		}
 		return reduced;
 	}
 
-	vector<pair<int, double> > LaserScanListener::find_maximums(sensor_msgs::LaserScanPtr msg, double index_distance)
+	vector<pair<int, double> > LaserScanListener::find_maxima(sensor_msgs::LaserScanPtr msg)
 	{
 		vector<pair<int, double>> points_pairs(msg->ranges.size());
 		for (size_t x = 0; x < msg->ranges.size(); ++x)
 		{
 			points_pairs[x] = make_pair(x, msg->ranges[x]);
 		}
-		std::sort(points_pairs.begin(), points_pairs.end(), [](pair<int, double> left, pair<int, double> right)
-		{
-			return left.second < right.second;
-		});
+
+		//TODO check if obsolete?
+//
+//		std::sort(points_pairs.begin(), points_pairs.end(), [](pair<int, double> left, pair<int, double> right)
+//		{
+//			return left.second < right.second;
+//		});
 
 		vector<int> xValues;
-		for (auto &point : points_pairs)
+		for (auto point : points_pairs)
 		{
 			auto x = point.first;
 			auto y = point.second;
 			if (std::find(xValues.begin(), xValues.end(), x) == xValues.end())
 			{
-				if (satisfies_threshold(xValues, x, index_distance))
+				if (satisfies_threshold(xValues, x))
 				{
 					xValues.push_back(x);
 				}
 			}
 		}
 		vector<pair<int, double>> result;
-		for (auto &x : xValues)
+		for (auto x : xValues)
 		{
 			result.push_back(make_pair(x, msg->ranges[x]));
 		}
 		return result;
 	}
 
-	bool LaserScanListener::satisfies_threshold(vector<int> vec, int value, int threshold)
+	bool LaserScanListener::satisfies_threshold(vector<int> vec, int value)
 	{
-		if (vec.size() == 0)
+//		if (vec.size() == 0)
+//		{
+//			return true;
+//		}
+		for (auto x : vec)
 		{
-			return true;
-		}
-		for (auto &x : vec)
-		{
-			if (is_in_range(x, value, threshold))
+			if (is_in_range(x, value))
 			{
 				return false;
 			}
@@ -222,16 +224,15 @@ namespace msl
 																sensor_msgs::LaserScanPtr msg)
 	{
 		vector<pair<int, double>> dest;
-		for (auto &value : polars)
+		for (auto value : polars)
 		{
-			float angle = msg->angle_min + msg->angle_increment * value.first;
-			float length = value.second;
+			double angle = msg->angle_min + msg->angle_increment * value.first;
+			double length = value.second;
 
-			if (length < min_distance || length > max_distance)
-				continue;
-			if (angle > view_area_angle || angle < -view_area_angle)
-				continue;
-			dest.push_back(value);
+			if (!(length < min_distance || length > max_distance || angle > view_area_angle || angle < -view_area_angle))
+			{
+				dest.push_back(value);
+			}
 		}
 		return dest;
 	}
@@ -248,15 +249,6 @@ namespace msl
 																sensor_msgs::LaserScanPtr msg)
 	{
 		vector<tf::Vector3> cartesians(polars.size());
-		if (polars.size() <= 0)
-		{
-			return cartesians;
-		}
-		/*
-		 std::sort(polars.begin(), polars.end(), [](const pair<int, float> &left, const pair<int, float> &right) {
-		 return left.first < right.first;
-		 });
-		 */
 
 		for (size_t i = 0; i < polars.size(); ++i)
 		{
@@ -273,23 +265,18 @@ namespace msl
 		return cartesians;
 	}
 
-	//FIXME params??
-	vector<pair<tf::Vector3, tf::Vector3>> LaserScanListener::find_back_candidates(vector<tf::Vector3> maximums,
-																					double back_width,
-																					double back_width_tolerance)
+	vector<pair<tf::Vector3, tf::Vector3>> LaserScanListener::find_back_candidates(vector<tf::Vector3> maximums)
 	{
 		vector<pair<tf::Vector3, tf::Vector3>> candidates;
-		if (maximums.size() <= 0)
-			return candidates;
 
-		for (auto &point : maximums)
+		for (auto point : maximums)
 		{
 			if (point.getX() < 0 || point.getY() < 0)
 			{
 				continue;
 			}
 
-			for (auto &other : maximums)
+			for (auto other : maximums)
 			{
 				if (other == point)
 				{
@@ -298,7 +285,7 @@ namespace msl
 
 				tf::Vector3 back_candidate = point - other;
 				double distance = back_candidate.length();
-				bool is_ok = is_in_range(back_width, distance, back_width_tolerance);
+				bool is_ok = is_in_range(distance);
 				if (is_ok)
 				{
 					auto pair = make_pair(point, other);
@@ -309,38 +296,20 @@ namespace msl
 		return candidates;
 	}
 
-	bool LaserScanListener::is_in_range(double compare_to, double value, double threshold)
+	bool LaserScanListener::is_in_range(double value)
 	{
-		return (compare_to - threshold) <= value && value <= (compare_to + threshold);
+		return (back_width - back_width_tolerance) <= value && value <= (back_width + back_width_tolerance);
 	}
 
-	bool LaserScanListener::is_in_range(int compare_to, int value, int threshold)
+	bool LaserScanListener::is_in_range(int compare_to, int value)
 	{
-		return (compare_to - threshold) <= value && value <= (compare_to + threshold);
+		return (compare_to - max_angle_distance) <= value && value <= (compare_to + max_angle_distance);
 	}
 
 	double LaserScanListener::calculate_angle(tf::Vector3 a, tf::Vector3 b)
 	{
 		return acos((a.dot(b)) / (a.length() * b.length()));
 	}
-
-	double LaserScanListener::rad_to_degree(double rad)
-	{
-		return rad * 180 / M_PI;
-	}
-
-//FIXME
-//	void publish_message(ros::Publisher pub, double x, double y, double angle, double certainty)
-//	{
-//		msl_msgs::PositionInfo msg;
-//		msg->header.frame_id = "laser";
-//		msg->header.stamp = ros::Time::now();
-//		msg->x = x;
-//		msg->y = y;
-//		msg->angle = angle;
-//		msg->certainty = 0.0;
-//		pub.publish(msg);
-//	}
 
 }
 
