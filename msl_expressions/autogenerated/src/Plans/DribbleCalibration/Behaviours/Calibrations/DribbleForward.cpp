@@ -2,7 +2,7 @@
  * DribbleForward.cpp
  *
  *  Created on: Dec 14, 2016
- *      Author: cn
+ *      Author: Michael Gottesleben
  */
 
 #include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h"
@@ -39,6 +39,11 @@ namespace alica
 	void DribbleForward::adaptParams()
 	{
 		velToInput =- changingValue;
+		if (velToInput < 0)
+		{
+			cerr << redBegin << "DribbleForward::adaptParams(): parameter < 0! parameter will be reset" << redEnd << endl;
+			resetParams();
+		}
 	}
 
 	void DribbleForward::resetParams()
@@ -59,3 +64,4 @@ namespace alica
 		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.DefaultValue", NULL);
 	}
 }
+

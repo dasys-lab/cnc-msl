@@ -2,7 +2,7 @@
  * DribbleBackward.cpp
  *
  *  Created on: Jan 6, 2017
- *      Author: cn
+ *      Author: Michael Gottesleben
  */
 
 #include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h"
@@ -20,7 +20,6 @@ namespace alica
 
 	DribbleBackward::~DribbleBackward()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	MotionControl DribbleBackward::move(int trans)
@@ -38,6 +37,12 @@ namespace alica
 	void DribbleBackward::adaptParams()
 	{
 		epsilonT = -changingValue;
+		if (epsilonT < 0)
+		{
+			cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+					<< endl;
+			resetParams();
+		}
 	}
 
 	void DribbleBackward::readConfigParameters()
@@ -51,10 +56,13 @@ namespace alica
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleBackward.ChangingValue",
 		NULL);
 		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleBackward.DefaultValue",
-																NULL);
+		NULL);
 	}
 
 	void DribbleBackward::resetParams()
 	{
+		epsilonT = defaultValue;
 	}
+
 }
+

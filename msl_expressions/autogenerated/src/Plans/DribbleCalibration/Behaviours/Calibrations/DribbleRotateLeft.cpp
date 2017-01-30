@@ -2,7 +2,7 @@
  * DribbleRotateLeft.cpp
  *
  *  Created on: Jan 25, 2017
- *      Author: cn
+ *      Author: Michael Gottesleben
  */
 
 #include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateLeft.h"
@@ -16,6 +16,7 @@ namespace alica
 		epsilonRot = 0;
 		changingValue = 0;
 		defaultValue = 0;
+		rotationSpeed = 0;
 	}
 
 	DribbleRotateLeft::~DribbleRotateLeft()
@@ -25,6 +26,9 @@ namespace alica
 	MotionControl DribbleRotateLeft::move(int trans)
 	{
 		MotionControl mc;
+
+		mc.motion.rotation = rotationSpeed;
+
 		return mc;
 	}
 
@@ -45,12 +49,22 @@ namespace alica
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleRotation.ChangingValue",
 		NULL);
 		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleRotation.DefaultValue",
-																NULL);
+		NULL);
+
+		rotationSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleRotation.RotationSpeed",
+																	NULL);
 	}
 
 	void DribbleRotateLeft::adaptParams()
 	{
-		epsilonRot =- changingValue;
+		epsilonRot = -changingValue;
+
+		if (epsilonRot < 0)
+		{
+			cerr << redBegin << "DribbleRotateLeft::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+					<< endl;
+			resetParams();
+		}
 	}
 
 	void DribbleRotateLeft::resetParams()

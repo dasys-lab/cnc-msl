@@ -19,6 +19,8 @@ namespace alica
         /*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
         dribbleForward = false;
         dribbleBackward = false;
+        dribbleRotateLeft = false;
+        dribbleRotateRight = false;
         param = DribbleCalibrationContainer::Param::ErrParm;
         startTrans = 0;
         endTrans = 0;
@@ -46,7 +48,7 @@ namespace alica
         MotionControl mc;
         RobotMovement rm;
 //		MovementContainer moveCont;
-
+//        cout << "\033[1;31m" << "test" << "\033[0m\n" << endl;
         // if ball is in kicker
         if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
 //        if ((moveCount < speedIter))
@@ -65,21 +67,24 @@ namespace alica
             }
             haveBallCount++;
 
-            // drive to the left
 #ifdef DEBUG_DC
-            cout << "DribbleCalibration::run() haveBallCount = " << haveBallCount << " minHaveBallIter = "
+            cout << "DribbleCalibration::run(): haveBallCount = " << haveBallCount << " minHaveBallIter = "
             << minHaveBallIter << endl;
 #endif
 
             // translation may not be higher than endTrans
             int tran = ((moveCount + 1) * startTrans) < endTrans ? ((moveCount + 1) * startTrans) : endTrans;
 
+#ifdef DEBUG_DC
+            cout << "DribbleCalibration::run(): translation = " << tran << endl;
+#endif
+
             mc = dcc.paramToMove(param, tran);
 
             // checking for error values
             if (mc.motion.translation == NAN)
             {
-                cerr << "motion command == NAN" << endl;
+                cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
                 return;
             }
             else
@@ -90,6 +95,7 @@ namespace alica
             // waiting some time till we can be sure to only collect correct values
             if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
             {
+            	// if you want to collect sensor data, this is the point you want to call the method
                 return;
             }
 
@@ -112,7 +118,7 @@ namespace alica
 //					cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
 //					maxHaveBallParamPoint = orthoDriveFactor;
 //				}
-//
+
 //				adaptParam();
             }
 
@@ -138,7 +144,6 @@ namespace alica
             // we need to adapt our weel Speed!
             if (haveBallCount > 0)
             {
-//				adaptParam();
                 dcc.adaptParam(param);
             }
 
@@ -150,7 +155,7 @@ namespace alica
             }
             else
             {
-                cerr << "motion command is NAN!" << endl;
+                cerr << "\033[1;31m" << "motion command is NAN!" << "\033[0m\n" << endl;
             }
         }
         /*PROTECTED REGION END*/
@@ -190,6 +195,7 @@ namespace alica
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
                 !dribbleRotateLeft ? : param = DribbleCalibrationContainer::Param::RotateLeftParm;
+                speedIter = moveCount + 1;
             }
 
             // Rotate Right
@@ -199,15 +205,16 @@ namespace alica
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
                 !dribbleRotateRight ? : param = DribbleCalibrationContainer::Param::RotateRightPram;
+                speedIter = moveCount + 1;
             }
         }
         catch (exception& e)
         {
-            cerr << "Could not cast the parameter properly" << endl;
+            cerr << "\033[1;31m" << "Could not cast the parameter properly" << "\033[0m\n" << endl;
         }
         if (!success)
         {
-            cerr << "DC: Parameter does not exist" << endl;
+            cerr << "\033[1;31m" << "DC: Parameter does not exist" << "\033[0m\n" << endl;
         }
 
         /*PROTECTED REGION END*/

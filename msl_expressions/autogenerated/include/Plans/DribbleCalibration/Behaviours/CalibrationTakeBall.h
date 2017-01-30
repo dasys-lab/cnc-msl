@@ -7,61 +7,63 @@
 /*PROTECTED REGION END*/
 namespace alica
 {
-    class CalibrationTakeBall : public DomainBehaviour
-    {
-    public:
-        CalibrationTakeBall();
-        virtual ~CalibrationTakeBall();
-        virtual void run(void* msg);
-        /*PROTECTED REGION ID(pub1469109429392) ENABLED START*/ //Add additional public methods here
-        /*PROTECTED REGION END*/
-    protected:
-        virtual void initialiseParameters();
-        /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
-        // consts for checkBallRotation()
-        enum Rotation
-        {
-            RotateCorrect, RotateLeft, RotateRight, RotateTooSlow, RotateErr
-        };
-        DribbleCalibrationContainer dcc;
+	class CalibrationTakeBall : public DomainBehaviour
+	{
+	public:
+		CalibrationTakeBall();
+		virtual ~CalibrationTakeBall();
+		virtual void run(void* msg);
+		/*PROTECTED REGION ID(pub1469109429392) ENABLED START*/ //Add additional public methods here
+		/*PROTECTED REGION END*/
+	protected:
+		virtual void initialiseParameters();
+		/*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
+		bool runBehaviour;
 
-        bool ballRotateCorrect;
-        bool ballHoldCorrect;
+		// consts for checkBallRotation()
+		enum Rotation
+		{
+			RotateCorrect, RotateLeft, RotateRight, RotateTooSlow, RotateErr
+		};
+		DribbleCalibrationContainer dcc;
 
-        // config parameters
-        double speedNoBall;
-        double slowTranslationWheelSpeed;
-        double minRotation;
-        // left and right are swapped
-        double dribbleFactorLeft;
-        double dribbleFactorRight;
+		bool ballRotateCorrect;
+		bool ballHoldCorrect;
 
-        // for correctWheelSpeed function
-        double changingValue;
-        enum Operation
-        {
-            Add, Sub
-        };
-        Operation operation;
-        Operation oldOperation;
+		// config parameters
+		double speedNoBall;
+		double slowTranslationWheelSpeed;
+		double minRotation;
+		// left and right are swapped
+		double dribbleFactorLeft;
+		double dribbleFactorRight;
 
-        int adaptWheel;
+		// for correctWheelSpeed function
+		double changingValue;
+		enum Operation
+		{
+			Add, Sub
+		};
+		Operation operation;
+		Operation oldOperation;
 
-        // for opticalFlow stuff
-        shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
-    int queueSize;
+		int adaptWheel;
 
-    Rotation checkBallRotation();
-    void correctWheelSpeed(Rotation rotation);
-    void readConfigParameters();
-    void writeConfigParameters();
+		// for opticalFlow stuff
+		shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue;
+	int queueSize;
 
-    // for output
-    bool queueFilled;
+	Rotation checkBallRotation();
+	void correctWheelSpeed(Rotation rotation);
+	void readConfigParameters();
+	void writeConfigParameters();
 
-    /*PROTECTED REGION END*/private:
-    /*PROTECTED REGION ID(prv1469109429392) ENABLED START*///Add additional private methods here
-    /*PROTECTED REGION END*/};
+	// for output
+	bool queueFilled;
+
+	/*PROTECTED REGION END*/private:
+	/*PROTECTED REGION ID(prv1469109429392) ENABLED START*///Add additional private methods here
+	/*PROTECTED REGION END*/};
 }
 /* namespace alica */
 

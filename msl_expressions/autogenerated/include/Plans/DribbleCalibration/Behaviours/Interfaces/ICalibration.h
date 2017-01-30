@@ -17,6 +17,9 @@ namespace alica
 	public:
 //		virtual ~ICalibration();
 
+		std::string redBegin = "\033[1;31m";
+		std::string redEnd = "\033[0m\n";
+
 		/**
 		 * will be called if the robot is able to calibrate
 		 */

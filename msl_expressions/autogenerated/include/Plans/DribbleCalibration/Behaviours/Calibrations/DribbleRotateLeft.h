@@ -35,6 +35,8 @@ namespace alica
 		// calibration parameters
 		double changingValue;
 		double defaultValue;
+
+		double rotationSpeed;
 	};
 
 } /* namespace alica */
