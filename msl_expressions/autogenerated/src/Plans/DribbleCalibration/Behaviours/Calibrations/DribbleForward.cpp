@@ -5,8 +5,15 @@
  *      Author: Michael Gottesleben
  */
 
-#include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h"
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
+#include <Configuration.h>
+#include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
+#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <SystemConfig.h>
+#include <iostream>
+#include <string>
 
 namespace alica
 {
@@ -17,6 +24,7 @@ namespace alica
 		defaultValue = 0;
 		minValue = 0;
 		maxValue = 0;
+		actuatorSpeed = 0;
 		readConfigParameters();
 	}
 
@@ -24,36 +32,41 @@ namespace alica
 	{
 	}
 
-	MotionControl DribbleForward::move(int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleForward::move(int trans)
 	{
 		MotionControl mc;
-		return mCon.move(mCon.Forward, trans);
+		BallHandleCmd bhc;
 
+		shared_ptr<DribbleCalibrationQuery> query;
+		query->setMc(mCon.move(mCon.Forward, trans));
+		bhc.leftMotor = actuatorSpeed;
+		bhc.rightMotor = actuatorSpeed;
+		query->setBhc(bhc);
+		return query;
 	}
 
 	void DribbleForward::writeConfigParameters()
 	{
-		double endValue = (minValue + maxValue) / 2;
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(endValue), "DribbleAround.velToInput", NULL);
+		(*sc)["DribbleCalibration"]->set(boost::lexical_cast<std::string>(actuatorSpeed), "DribbleCalibration.DribbleForward.MeasuredActuatorSpeed", NULL);
 	}
 
 	void DribbleForward::adaptParams()
 	{
-		velToInput = -changingValue;
-		if (velToInput < 0)
+		actuatorSpeed = actuatorSpeed - changingValue;
+		if (actuatorSpeed < 0)
 		{
 			cerr << redBegin << "DribbleForward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
 					<< endl;
 			resetParams();
 		}
-		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(velToInput), "DribbleAround.velToInput", NULL);
+//		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+//		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(velToInput), "DribbleAround.velToInput", NULL);
 	}
 
 	void DribbleForward::resetParams()
 	{
-		velToInput = defaultValue;
+		actuatorSpeed = defaultValue;
 	}
 
 	void DribbleForward::readConfigParameters()
@@ -61,26 +74,27 @@ namespace alica
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
 		// DribbleAround.conf
-		velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
+//		velToInput = (*sc)["DribbleAlround"]->get<double>("DribbleAlround.velToInput", NULL);
 
 		// DribbleCalibration.conf
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingValue",
 		NULL);
 		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.DefaultValue", NULL);
+		resetParams();
 	}
 
 	void DribbleForward::saveParams()
 	{
-		if (maxValue == 0)
-		{
-			cout << "setting minimum parameter value to " << velToInput << "..." << endl;
-			maxValue = velToInput;
-		}
-		else
-		{
-			cout << "setting maximum parameter value to " << velToInput << "..." << endl;
-			minValue = velToInput;
-		}
+//		if (maxValue == 0)
+//		{
+//			cout << "setting minimum parameter value to " << velToInput << "..." << endl;
+//			maxValue = velToInput;
+//		}
+//		else
+//		{
+//			cout << "setting maximum parameter value to " << velToInput << "..." << endl;
+//			minValue = velToInput;
+//		}
 	}
 }
 

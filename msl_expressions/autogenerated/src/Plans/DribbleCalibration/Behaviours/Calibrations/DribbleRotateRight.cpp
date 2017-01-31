@@ -5,8 +5,15 @@
  *      Author: Michael Gottesleben
  */
 
-#include "Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateRight.h"
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
+#include <Configuration.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_msgs/MotionInfo.h>
+#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateRight.h>
+#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <iostream>
+#include <memory>
+#include <string>
 
 namespace alica
 {
@@ -26,11 +33,13 @@ namespace alica
 	{
 	}
 
-	MotionControl DribbleRotateRight::move(int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleRotateRight::move(int trans)
 	{
 		MotionControl mc;
 		mc.motion.rotation = -rotationSpeed;
-		return mc;
+		shared_ptr<DribbleCalibrationQuery> query;
+		query->setMc(mc);
+		return query;
 	}
 
 	void DribbleRotateRight::writeConfigParameters()

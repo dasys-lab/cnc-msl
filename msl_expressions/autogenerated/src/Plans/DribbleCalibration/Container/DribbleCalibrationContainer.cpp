@@ -35,7 +35,7 @@ namespace alica
 	 * @parm Parameter to call the behavior (something like DribbleForwardParm)
 	 * @trans translation
 	 */
-	MotionControl DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
 	{
 		switch (parm)
 		{
@@ -61,11 +61,14 @@ namespace alica
 				break;
 			}
 		}
+		shared_ptr<DribbleCalibrationQuery> query;
 		MotionControl mc;
-		return setNaN(mc);
+		mc = setNaN(mc);
+		query->setMc(mc);
+		return query;
 	}
 
-	MotionControl DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
 	{
 		switch (parm)
 		{
@@ -88,11 +91,13 @@ namespace alica
 				break;
 		}
 
+		shared_ptr<DribbleCalibrationQuery> query;
 		MotionControl mc;
-		return setNaN(mc);
+		query->setMc(setNaN(mc));
+		return query;
 	}
 
-	MotionControl DribbleCalibrationContainer::paramToMove(Param param, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::paramToMove(Param param, int trans)
 	{
 		return callBehaviour(MethodParam::Move, param, trans);
 	}
@@ -119,8 +124,7 @@ namespace alica
 	/**
 	 * @return true if opQueue is filled
 	 */
-	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
-															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
+	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
 		cout << "DribbleContainer::FillOpticalQueue()" << endl;
 		cout << "opticalFlowValue: " << wm->rawSensorData->getOpticalFlow(0) << endl;
@@ -157,8 +161,7 @@ namespace alica
 		return getAverageOpticalFlowValue(YValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value,
-																	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
 		if (value != XValue && value != YValue /*&& value != QOSValue*/)
 		{

@@ -11,7 +11,8 @@ namespace alica
 {
     /*PROTECTED REGION ID(staticVars1446033324019) ENABLED START*/ //initialise static variables here
     /*PROTECTED REGION END*/
-    CalcCalib::CalcCalib() : calibOldPosMotionX(0), calibOldPosMotionY(0), oldCalibCoefficientX(0), oldCalibCoefficientY(0), correctedPosX(0), correctedPosY(0), calibCounter(0), DomainBehaviour("CalcCalib")
+    CalcCalib::CalcCalib() :
+            DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
         /*PROTECTED REGION END*/
@@ -104,7 +105,6 @@ namespace alica
 
             }
 
-
             if (calibCounter == 2)
             {
                 if (oldCalibCoefficientX > 0)
@@ -192,7 +192,6 @@ namespace alica
          //}
          */
         // Ohne Mittelwert Ende
-
         if (calibCoefficientX < 0.3)
         {
             calibCoefficientX = 0.3;

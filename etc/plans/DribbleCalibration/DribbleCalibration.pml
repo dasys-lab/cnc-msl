@@ -12,14 +12,12 @@
   </states>
   <states id="1469108950942" name="Calibration Forward" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleCalibration.beh#1482339937439</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1469284199867</inTransitions>
     <outTransitions>#1469109046400</outTransitions>
     <outTransitions>#1469109279849</outTransitions>
   </states>
   <states id="1469108971711" name="Calibaration Backward" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">Behaviours/DribbleCalibration.beh#1482339837722</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../TestPlans/DribbleControlTest/DribbleControlMOS.beh#1479905216821</plans>
     <inTransitions>#1469109046400</inTransitions>
     <outTransitions>#1469109061857</outTransitions>
     <outTransitions>#1485356843859</outTransitions>
