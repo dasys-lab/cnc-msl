@@ -35,13 +35,14 @@ namespace alica
 
 		enum MethodParam
 		{
-			Move, AdaptParams, WriteConfigParam, ResetParams
+			Move, AdaptParams, WriteConfigParam, ResetParams, SaveParams
 		};
 
 		MotionControl paramToMove(Param param, int trans);
 		void adaptParam(Param param);
 		void writeConfigParameres(Param parm);
 		void resetParameters(Param parm);
+		void saveParameters(Param parm);
 
 		// opticalFlow stuff
 		double getAverageOpticalFlowXValue(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);

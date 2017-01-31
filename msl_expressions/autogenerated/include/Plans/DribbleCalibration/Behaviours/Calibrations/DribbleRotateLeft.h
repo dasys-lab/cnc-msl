@@ -25,6 +25,7 @@ namespace alica
 		void readConfigParameters();
 		void adaptParams();
 		void resetParams();
+		void saveParams();
 
 	private:
 		MovementContainer mCon;
@@ -37,6 +38,10 @@ namespace alica
 		double defaultValue;
 
 		double rotationSpeed;
+
+		// save parameters
+		double maxValue;
+		double minValue;
 	};
 
 } /* namespace alica */

@@ -81,6 +81,9 @@ namespace alica
 			case ResetParams:
 				behavior->resetParams();
 				break;
+			case SaveParams:
+				behavior->saveParams();
+				break;
 			default:
 				break;
 		}
@@ -108,6 +111,10 @@ namespace alica
 	{
 		callBehaviour(MethodParam::ResetParams, parm);
 	}
+	void DribbleCalibrationContainer::saveParameters(Param parm)
+	{
+		callBehaviour(MethodParam::SaveParams, parm);
+	}
 
 	/**
 	 * @return true if opQueue is filled
@@ -122,7 +129,6 @@ namespace alica
 			cerr << "no OpticalFLow signal!" << endl;
 			return false;
 		}
-		cout << "1" << endl;
 		cout << (opQueue == nullptr ? "opQueue nullptr" : "opQueue not a nullptr") << endl;
 		cout << "opQueue->size() = " << opQueue->size() << endl;
 		cout << "queueSize = " << queueSize << endl;
@@ -131,13 +137,11 @@ namespace alica
 			cout << "1.1" << endl;
 			return true;
 		}
-		cout << "2" << endl;
 		if (!queueFilled)
 		{
 			cout << "filling optical flow queue!" << endl;
 			queueFilled = true;
 		}
-		cout << "3" << endl;
 		opQueue->push_back(wm->rawSensorData->getOpticalFlow(0));
 		cout << "4" << endl;
 		return false;

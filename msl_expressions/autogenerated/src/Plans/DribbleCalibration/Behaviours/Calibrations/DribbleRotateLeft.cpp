@@ -17,6 +17,9 @@ namespace alica
 		changingValue = 0;
 		defaultValue = 0;
 		rotationSpeed = 0;
+		minValue = 0;
+		maxValue = 0;
+		readConfigParameters();
 	}
 
 	DribbleRotateLeft::~DribbleRotateLeft()
@@ -34,8 +37,9 @@ namespace alica
 
 	void DribbleRotateLeft::writeConfigParameters()
 	{
+		double endValue = (minValue + maxValue) / 2;
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonRot), "DribbleAround.velToInput", NULL);
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonRot), "DribbleAround.epsilonRot", NULL);
 	}
 
 	void DribbleRotateLeft::readConfigParameters()
@@ -52,7 +56,7 @@ namespace alica
 		NULL);
 
 		rotationSpeed = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleRotation.RotationSpeed",
-																	NULL);
+		NULL);
 	}
 
 	void DribbleRotateLeft::adaptParams()
@@ -65,11 +69,28 @@ namespace alica
 					<< endl;
 			resetParams();
 		}
+
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonRot), "DribbleAround.epsilonRot", NULL);
 	}
 
 	void DribbleRotateLeft::resetParams()
 	{
 		epsilonRot = defaultValue;
+	}
+
+	void DribbleRotateLeft::saveParams()
+	{
+		if (maxValue == 0)
+		{
+			cout << "setting minimum parameter value to " << epsilonRot << "..." << endl;
+			maxValue = epsilonRot;
+		}
+		else
+		{
+			cout << "setting maximum parameter value to " << epsilonRot << "..." << endl;
+			minValue = epsilonRot;
+		}
 	}
 
 } /* namespace alica */

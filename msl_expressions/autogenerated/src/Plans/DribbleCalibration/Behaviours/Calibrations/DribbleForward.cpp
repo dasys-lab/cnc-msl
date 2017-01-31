@@ -15,12 +15,13 @@ namespace alica
 		velToInput = 0;
 		changingValue = 0;
 		defaultValue = 0;
+		minValue = 0;
+		maxValue = 0;
 		readConfigParameters();
 	}
 
 	DribbleForward::~DribbleForward()
 	{
-		// TODO Auto-generated destructor stub
 	}
 
 	MotionControl DribbleForward::move(int trans)
@@ -32,18 +33,22 @@ namespace alica
 
 	void DribbleForward::writeConfigParameters()
 	{
+		double endValue = (minValue + maxValue) / 2;
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(velToInput), "DribbleAround.velToInput", NULL);
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(endValue), "DribbleAround.velToInput", NULL);
 	}
 
 	void DribbleForward::adaptParams()
 	{
-		velToInput =- changingValue;
+		velToInput = -changingValue;
 		if (velToInput < 0)
 		{
-			cerr << redBegin << "DribbleForward::adaptParams(): parameter < 0! parameter will be reset" << redEnd << endl;
+			cerr << redBegin << "DribbleForward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+					<< endl;
 			resetParams();
 		}
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(velToInput), "DribbleAround.velToInput", NULL);
 	}
 
 	void DribbleForward::resetParams()
@@ -60,8 +65,22 @@ namespace alica
 
 		// DribbleCalibration.conf
 		changingValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.ChangingValue",
-																	NULL);
+		NULL);
 		defaultValue = (*sc)["DribbleCalibration"]->get<double>("DribbleCalibration.DribbleForward.DefaultValue", NULL);
+	}
+
+	void DribbleForward::saveParams()
+	{
+		if (maxValue == 0)
+		{
+			cout << "setting minimum parameter value to " << velToInput << "..." << endl;
+			maxValue = velToInput;
+		}
+		else
+		{
+			cout << "setting maximum parameter value to " << velToInput << "..." << endl;
+			minValue = velToInput;
+		}
 	}
 }
 

@@ -48,7 +48,6 @@ namespace alica
         MotionControl mc;
         RobotMovement rm;
 //		MovementContainer moveCont;
-//        cout << "\033[1;31m" << "test" << "\033[0m\n" << endl;
         // if ball is in kicker
         if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
 //        if ((moveCount < speedIter))
@@ -108,17 +107,8 @@ namespace alica
 
                 haveBallCount = 0;
 
-//				if (minHaveBallParamPoint == 0)
-//				{
-//					cout << "setting minimum parameter value to " << orthoDriveFactor << "..." << endl;
-//					minHaveBallParamPoint = orthoDriveFactor;
-//				}
-//				else
-//				{
-//					cout << "setting maximum parameter value to " << orthoDriveFactor << "..." << endl;
-//					maxHaveBallParamPoint = orthoDriveFactor;
-//				}
-
+                dcc.saveParameters(param);
+                dcc.adaptParam(param);
 //				adaptParam();
             }
 

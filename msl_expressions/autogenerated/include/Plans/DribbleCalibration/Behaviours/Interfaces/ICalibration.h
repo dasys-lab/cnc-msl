@@ -33,6 +33,11 @@ namespace alica
 		virtual void resetParams() = 0;
 
 		/**
+		 * will be called if the robot could hold the ball long enough
+		 */
+		virtual void saveParams() = 0;
+
+		/**
 		 * will be called after the parameters has changed or the behaviour finished
 		 */
 		virtual void writeConfigParameters() = 0;

@@ -15,6 +15,8 @@ namespace alica
 		epsilonT = 0;
 		changingValue = 0;
 		defaultValue = 0;
+		minValue = 0;
+		maxValue = 0;
 		readConfigParameters();
 	}
 
@@ -43,6 +45,8 @@ namespace alica
 					<< endl;
 			resetParams();
 		}
+		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
+		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonT), "DribbleAround.epsilonT", NULL);
 	}
 
 	void DribbleBackward::readConfigParameters()
@@ -62,6 +66,20 @@ namespace alica
 	void DribbleBackward::resetParams()
 	{
 		epsilonT = defaultValue;
+	}
+
+	void DribbleBackward::saveParams()
+	{
+		if (maxValue == 0)
+		{
+			cout << "setting minimum parameter value to " << epsilonT << "..." << endl;
+			maxValue = epsilonT;
+		}
+		else
+		{
+			cout << "setting maximum parameter value to " << epsilonT << "..." << endl;
+			minValue = epsilonT;
+		}
 	}
 
 }
