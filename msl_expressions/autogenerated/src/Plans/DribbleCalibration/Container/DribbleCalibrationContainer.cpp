@@ -126,16 +126,11 @@ namespace alica
 	 */
 	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
-		cout << "DribbleContainer::FillOpticalQueue()" << endl;
-		cout << "opticalFlowValue: " << wm->rawSensorData->getOpticalFlow(0) << endl;
 		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
 		{
 			cerr << "no OpticalFLow signal!" << endl;
 			return false;
 		}
-		cout << (opQueue == nullptr ? "opQueue nullptr" : "opQueue not a nullptr") << endl;
-		cout << "opQueue->size() = " << opQueue->size() << endl;
-		cout << "queueSize = " << queueSize << endl;
 		if (opQueue->size() >= queueSize)
 		{
 			cout << "1.1" << endl;
