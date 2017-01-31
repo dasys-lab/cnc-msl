@@ -140,8 +140,8 @@ namespace alica
         msgback.rightMotor = right;
         send(msgback);
 
-        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
-                << ballAngle << "  " << left << " " << right << endl;
+//        cout << "DribbleControlMOS:: " << robotAngle << "  " << robotVel << "  " << robotRot << "  " << ballVel << "  "
+//                << ballAngle << "  " << left << " " << right << endl;
 
         /*PROTECTED REGION END*/
     }

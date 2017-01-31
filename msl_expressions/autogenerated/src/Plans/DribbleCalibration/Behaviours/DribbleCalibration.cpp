@@ -176,55 +176,49 @@ namespace alica
 //        MovementContainer moveCont;
 		readConfigParameters();
 
-		bool success = true;
+		bool success = false;
 		string tmp;
 		try
 		{
 			// dribble forward
-			success &= getParameter("DribbleForward", tmp);
-			if (success)
+			if (getParameter("DribbleForward", tmp))
 			{
 				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 				istringstream(tmp) >> std::boolalpha >> dribbleForward;
 				!dribbleForward ? : param = DribbleCalibrationContainer::Param::DribbleForwardParm;
+				success = true;
 			}
-
-			// dribble backward
-			success &= getParameter("DribbleBackward", tmp);
-			if (success)
+			else if (getParameter("DribbleBackward", tmp))
 			{
 				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 				istringstream(tmp) >> std::boolalpha >> dribbleBackward;
 				!dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
+				success = true;
 			}
-
-			// Rotate Left
-			success &= getParameter("DribbleRotateLeft", tmp);
-			if (success)
+			else if (getParameter("DribbleRotateLeft", tmp))
 			{
 				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 				istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
 				!dribbleRotateLeft ? : param = DribbleCalibrationContainer::Param::RotateLeftParm;
 				speedIter = moveCount + 1;
+				success = true;
 			}
-
-			// Rotate Right
-			success &= getParameter("DribbleRotateRight", tmp);
-			if (success)
+			else if (getParameter("DribbleRotateRight", tmp))
 			{
 				std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
 				istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
 				!dribbleRotateRight ? : param = DribbleCalibrationContainer::Param::RotateRightPram;
 				speedIter = moveCount + 1;
+				success = true;
 			}
 		}
 		catch (exception& e)
 		{
-			cerr << "\033[1;31m" << "Could not cast the parameter properly" << "\033[0m\n" << endl;
+			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Could not cast the parameter properly" << "\033[0m\n" << endl;
 		}
 		if (!success)
 		{
-			cerr << "\033[1;31m" << "DC: Parameter does not exist" << "\033[0m\n" << endl;
+			cerr << "\033[1;31m" << "DribbleCalibration::initialiseParameters: Parameter does not exist!" << "\033[0m\n" << endl;
 		}
 
 		/*PROTECTED REGION END*/

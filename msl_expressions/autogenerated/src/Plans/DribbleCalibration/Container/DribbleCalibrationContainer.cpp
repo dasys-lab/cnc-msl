@@ -142,7 +142,6 @@ namespace alica
 			queueFilled = true;
 		}
 		opQueue->push_back(wm->rawSensorData->getOpticalFlow(0));
-		cout << "4" << endl;
 		return false;
 	}
 
