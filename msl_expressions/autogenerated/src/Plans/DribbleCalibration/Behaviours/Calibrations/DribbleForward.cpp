@@ -37,7 +37,7 @@ namespace alica
 		shared_ptr<MotionControl> mc;
 		shared_ptr<BallHandleCmd> bhc;
 
-		shared_ptr<DribbleCalibrationQuery> query;
+		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
 		MotionControl mc1 = mCon.move(mCon.Forward, trans);
 		mc = make_shared<MotionControl>();
 		mc->motion.translation = mc1.motion.translation;
