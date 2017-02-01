@@ -26,7 +26,7 @@ namespace alica
 		return bhc;
 	}
 
-	void DribbleCalibrationQuery::setBhc(const std::shared_ptr<msl_actuator_msgs::BallHandleCmd>& bhc)
+	void DribbleCalibrationQuery::setBhc(const std::shared_ptr<msl_actuator_msgs::BallHandleCmd> bhc)
 	{
 		this->bhc = bhc;
 	}
@@ -36,7 +36,7 @@ namespace alica
 		return mc;
 	}
 
-	void DribbleCalibrationQuery::setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl>& mc)
+	void DribbleCalibrationQuery::setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl> mc)
 	{
 		this->mc = mc;
 	}

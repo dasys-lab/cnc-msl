@@ -20,9 +20,9 @@ namespace alica
 		virtual ~DribbleCalibrationQuery();
 
 		const std::shared_ptr<msl_actuator_msgs::BallHandleCmd>& getBhc();
-		void setBhc(const std::shared_ptr<msl_actuator_msgs::BallHandleCmd>& bhc);
+		void setBhc(const std::shared_ptr<msl_actuator_msgs::BallHandleCmd> bhc);
 		const std::shared_ptr<msl_actuator_msgs::MotionControl>& getMc();
-		void setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl>& mc);
+		void setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl> mc);
 
 	private:
 		std::shared_ptr<msl_actuator_msgs::MotionControl> mc;
