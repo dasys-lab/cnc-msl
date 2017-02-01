@@ -96,11 +96,13 @@ namespace alica
 			ifstream infile(logfile);
 			string firstLine;
 			std::getline(infile, firstLine);
+			std::getline(infile, firstLine);
 			string fileContent;
 			string line;
-			while (std::getline(infile, line).eof())
+			while (std::getline(infile, line).eof() == false)
 			{
 				fileContent += line;
+				fileContent += "\n";
 			}
 			fileContent += line;
 			infile.close();
