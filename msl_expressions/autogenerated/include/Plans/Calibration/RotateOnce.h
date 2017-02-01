@@ -21,6 +21,7 @@ namespace alica
         // this data comes from the motion
         double initialAngle;
         static geometry::CNPoint2D* measurements[2];
+        static int logCounter;
 
         /*PROTECTED REGION END*/
     protected:

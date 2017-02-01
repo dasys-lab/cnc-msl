@@ -14,6 +14,7 @@ namespace alica
 {
 	/*PROTECTED REGION ID(staticVars1467397900274) ENABLED START*/ //initialise static variables here
 	geometry::CNPoint2D* RotateOnce::measurements[2] = {NULL, NULL};
+	int RotateOnce::logCounter = 0;
 	/*PROTECTED REGION END*/
 	RotateOnce::RotateOnce() :
 			DomainBehaviour("RotateOnce")
@@ -48,7 +49,7 @@ namespace alica
 		int currentSegment = getCurrentRotationSegment();
 		double currentBearing = wm->rawSensorData->getAverageBearing();
 
-		if(currentSegment == 0 || visitedSegments[currentSegment - 1])
+		if (currentSegment == 0 || visitedSegments[currentSegment - 1])
 		{
 			visitedSegments[currentSegment] = true;
 		}
@@ -146,6 +147,8 @@ namespace alica
 		os << currentRadius << "\t" << calibError << "\t" << ctime(&result) << endl;
 		os.flush();
 		os.close();
+
+		RotateOnce::logCounter++;
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
