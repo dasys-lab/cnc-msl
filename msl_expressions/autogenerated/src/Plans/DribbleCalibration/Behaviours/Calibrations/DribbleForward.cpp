@@ -38,7 +38,8 @@ namespace alica
 		shared_ptr<BallHandleCmd> bhc;
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		mc = make_shared<MotionControl>(mCon.move(mCon.Forward, trans));
+		MotionControl mc1 = mCon.move(mCon.Forward, trans);
+		mc = make_shared<MotionControl>(mc1);
 		cout << "mc.translation = " << mc->motion.translation << endl;
 		query->setMc(mc);
 		bhc->leftMotor = actuatorSpeed;
