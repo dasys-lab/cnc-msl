@@ -39,6 +39,7 @@ namespace alica
 
 		shared_ptr<DribbleCalibrationQuery> query;
 		mc = mCon.move(mCon.Forward, trans);
+		cout << "mc.translation = " << mc.motion.translation << endl;
 		query->setMc(mc);
 		bhc.leftMotor = actuatorSpeed;
 		bhc.rightMotor = actuatorSpeed;
