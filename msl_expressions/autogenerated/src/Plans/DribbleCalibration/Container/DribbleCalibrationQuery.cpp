@@ -12,6 +12,8 @@ namespace alica
 {
 	DribbleCalibrationQuery::DribbleCalibrationQuery()
 	{
+		mc = std::make_shared<msl_actuator_msgs::MotionControl>();
+		bhc = std::make_shared<msl_actuator_msgs::BallHandleCmd>();
 	}
 
 	DribbleCalibrationQuery::~DribbleCalibrationQuery()
@@ -19,25 +21,24 @@ namespace alica
 		// TODO Auto-generated destructor stub
 	}
 
-	const msl_actuator_msgs::BallHandleCmd& DribbleCalibrationQuery::getBhc()
+	const std::shared_ptr<msl_actuator_msgs::BallHandleCmd>& DribbleCalibrationQuery::getBhc()
 	{
-		return this->bhc;
+		return bhc;
 	}
 
-	void DribbleCalibrationQuery::setBhc(const msl_actuator_msgs::BallHandleCmd& bhc)
+	void DribbleCalibrationQuery::setBhc(const std::shared_ptr<msl_actuator_msgs::BallHandleCmd>& bhc)
 	{
 		this->bhc = bhc;
 	}
 
-	const msl_actuator_msgs::MotionControl& DribbleCalibrationQuery::getMc()
+	const std::shared_ptr<msl_actuator_msgs::MotionControl>& DribbleCalibrationQuery::getMc()
 	{
 		return mc;
 	}
 
-	void DribbleCalibrationQuery::setMc(const msl_actuator_msgs::MotionControl& mc)
+	void DribbleCalibrationQuery::setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl>& mc)
 	{
-		std::cout << "mc = " << mc.motion.translation << std::endl;
 		this->mc = mc;
-		std::cout << "this->mc = " << mc.motion.translation << std::endl;
 	}
+
 }

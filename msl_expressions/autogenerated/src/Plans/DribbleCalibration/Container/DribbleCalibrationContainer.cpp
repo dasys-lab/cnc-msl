@@ -62,8 +62,9 @@ namespace alica
 			}
 		}
 		shared_ptr<DribbleCalibrationQuery> query;
-		MotionControl mc;
+		shared_ptr<MotionControl> mc;
 		mc = setNaN(mc);
+
 		query->setMc(mc);
 		return query;
 	}
@@ -92,7 +93,7 @@ namespace alica
 		}
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		MotionControl mc;
+		shared_ptr<MotionControl> mc;
 		query->setMc(setNaN(mc));
 		return query;
 	}
@@ -185,12 +186,12 @@ namespace alica
 
 	}
 
-	MotionControl DribbleCalibrationContainer::setNaN(MotionControl mc)
+	shared_ptr<MotionControl> DribbleCalibrationContainer::setNaN(shared_ptr<MotionControl> mc)
 	{
-		mc.senderID = -1;
-		mc.motion.translation = NAN;
-		mc.motion.rotation = NAN;
-		mc.motion.angle = NAN;
+		mc->senderID = -1;
+		mc->motion.translation = NAN;
+		mc->motion.rotation = NAN;
+		mc->motion.angle = NAN;
 		return mc;
 	}
 } /* namespace alica */

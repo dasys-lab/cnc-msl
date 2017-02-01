@@ -80,17 +80,17 @@ namespace alica
 			shared_ptr<DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
 
 			//check input for send methods
-			MotionControl mc = query->getMc();
-			if (mc.motion.translation != 0 && mc.motion.angle != 0 && mc.motion.rotation != 0)
+			shared_ptr<MotionControl> mc = query->getMc();
+			if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
 			{
-				if (mc.motion.translation == NAN)
+				if (mc->motion.translation == NAN)
 				{
 					cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
 					return;
 				}
 				else
 				{
-					send(mc);
+					send(*mc);
 				}
 			}
 			else
@@ -98,19 +98,8 @@ namespace alica
 				cout << "no MotionControl received!" << endl;
 			}
 
-			BallHandleCmd bhc = query->getBhc();
-			send(bhc);
-
-			// checking for error values
-			if (mc.motion.translation == NAN)
-			{
-				cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
-				return;
-			}
-			else
-			{
-				send(mc);
-			}
+			shared_ptr<BallHandleCmd> bhc = query->getBhc();
+			send(*bhc);
 
 			// waiting some time till we can be sure to only collect correct values
 			if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))

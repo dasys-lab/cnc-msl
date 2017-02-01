@@ -35,9 +35,9 @@ namespace alica
 
 	shared_ptr<DribbleCalibrationQuery> DribbleRotateLeft::move(int trans)
 	{
-		MotionControl mc;
+		shared_ptr<MotionControl> mc;
 
-		mc.motion.rotation = rotationSpeed;
+		mc->motion.rotation = rotationSpeed;
 		shared_ptr<DribbleCalibrationQuery> query;
 		query->setMc(mc);
 		return query;

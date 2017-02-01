@@ -34,15 +34,15 @@ namespace alica
 
 	shared_ptr<DribbleCalibrationQuery> DribbleForward::move(int trans)
 	{
-		MotionControl mc;
-		BallHandleCmd bhc;
+		shared_ptr<MotionControl> mc;
+		shared_ptr<BallHandleCmd> bhc;
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		mc = mCon.move(mCon.Forward, trans);
-		cout << "mc.translation = " << mc.motion.translation << endl;
+		mc = make_shared<MotionControl>(mCon.move(mCon.Forward, trans));
+		cout << "mc.translation = " << mc->motion.translation << endl;
 		query->setMc(mc);
-		bhc.leftMotor = actuatorSpeed;
-		bhc.rightMotor = actuatorSpeed;
+		bhc->leftMotor = actuatorSpeed;
+		bhc->rightMotor = actuatorSpeed;
 		query->setBhc(bhc);
 		return query;
 	}

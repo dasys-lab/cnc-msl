@@ -72,7 +72,7 @@ namespace alica
 
 
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
-		MotionControl setNaN(MotionControl mc);
+		shared_ptr<MotionControl> setNaN(shared_ptr<MotionControl> mc);
 	};
 
 }

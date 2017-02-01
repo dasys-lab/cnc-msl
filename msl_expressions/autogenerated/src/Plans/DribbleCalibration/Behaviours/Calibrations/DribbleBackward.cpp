@@ -31,14 +31,14 @@ namespace alica
 
 	shared_ptr<DribbleCalibrationQuery> DribbleBackward::move(int trans)
 	{
-		MotionControl mc;
-		BallHandleCmd bhc;
+		shared_ptr<MotionControl> mc;
+		shared_ptr<BallHandleCmd> bhc;
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		mc = mCon.move(mCon.Forward, trans);
+		mc = make_shared<MotionControl>(mCon.move(mCon.Forward, trans));
 		query->setMc(mc);
-		bhc.leftMotor = actuatorSpeed;
-		bhc.rightMotor = actuatorSpeed;
+		bhc->leftMotor = actuatorSpeed;
+		bhc->rightMotor = actuatorSpeed;
 		query->setBhc(bhc);
 		return query;
 	}
@@ -46,7 +46,8 @@ namespace alica
 	void DribbleBackward::writeConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
-		(*sc)["DribbleCalibration"]->set(boost::lexical_cast<std::string>(actuatorSpeed), "DribbleCalibration.DribbleBackward.MeasuredActuatorSpeed", NULL);
+		(*sc)["DribbleCalibration"]->set(boost::lexical_cast<std::string>(actuatorSpeed),
+											"DribbleCalibration.DribbleBackward.MeasuredActuatorSpeed", NULL);
 	}
 
 	void DribbleBackward::adaptParams()
@@ -54,7 +55,8 @@ namespace alica
 		actuatorSpeed = actuatorSpeed + changingValue;
 		if (epsilonT < 0)
 		{
-			cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd << endl;
+			cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+					<< endl;
 			resetParams();
 		}
 //		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
