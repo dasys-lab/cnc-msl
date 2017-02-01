@@ -61,8 +61,8 @@ namespace alica
 				break;
 			}
 		}
-		shared_ptr<DribbleCalibrationQuery> query;
-		shared_ptr<MotionControl> mc;
+		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
+		shared_ptr<MotionControl> mc = make_shared<MotionControl>();
 		mc = setNaN(mc);
 
 		query->setMc(mc);
@@ -92,8 +92,8 @@ namespace alica
 				break;
 		}
 
-		shared_ptr<DribbleCalibrationQuery> query;
-		shared_ptr<MotionControl> mc;
+		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
+		shared_ptr<MotionControl> mc = make_shared<MotionControl>();
 		query->setMc(setNaN(mc));
 		return query;
 	}
