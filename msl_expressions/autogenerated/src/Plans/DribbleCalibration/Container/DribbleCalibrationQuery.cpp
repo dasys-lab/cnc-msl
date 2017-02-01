@@ -38,6 +38,7 @@ namespace alica
 
 	void DribbleCalibrationQuery::setMc(const std::shared_ptr<msl_actuator_msgs::MotionControl> mc)
 	{
+		std::cout << "this->mc =" << this->mc->motion.translation << std::endl;
 		this->mc = mc;
 	}
 
