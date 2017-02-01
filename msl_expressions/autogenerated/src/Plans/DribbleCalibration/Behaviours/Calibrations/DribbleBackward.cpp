@@ -35,7 +35,8 @@ namespace alica
 		BallHandleCmd bhc;
 
 		shared_ptr<DribbleCalibrationQuery> query;
-		query->setMc(mCon.move(mCon.Backward, trans));
+		mc = mCon.move(mCon.Forward, trans);
+		query->setMc(mc);
 		bhc.leftMotor = actuatorSpeed;
 		bhc.rightMotor = actuatorSpeed;
 		query->setBhc(bhc);
