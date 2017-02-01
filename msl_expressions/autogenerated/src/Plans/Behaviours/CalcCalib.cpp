@@ -45,58 +45,9 @@ namespace alica
         correctedPosY = correctedPosY + correctedWayY;
 
         lengthSegment = lengthSegment + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
-        length = length + sqrt((correctedWayX) * (correctedWayX) + (correctedWayY) * (correctedWayY));
 
         calibOldPosMotionX = calibPosMotionX;
         calibOldPosMotionY = calibPosMotionY;
-
-        //----------------------------------------------------------------------------------------------------------
-        /*
-         //Detektion loses/kaputtes Rad
-         errorTestMotionPosX = correctedPosX;
-         errorTestMotionPosY = correctedPosY;
-         errorTestVisionPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-         errorTestVisionPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
-
-         if(timeCounter == 30)
-         {
-         if(sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY)))>750)
-         {
-         std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
-         errorCounter++;
-
-         if(errorCounter >= 3)
-         {
-         std::cout << "error detected" <<std::endl;
-         }
-         }
-         else
-         {
-         errorCounter = 0;
-         }
-
-         std::cout << "errorError: " << sqrt((errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))*
-         (errorTestMotionPosX-errorTestVisionPosX-(oldErrorTestMotionPosX-oldErrorTestVisionPosX))+
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))*
-         (errorTestMotionPosY-errorTestVisionPosY-(oldErrorTestMotionPosY-oldErrorTestVisionPosY))) << std::endl;
-
-         oldErrorTestMotionPosX = errorTestMotionPosX;
-         oldErrorTestMotionPosY = errorTestMotionPosY;
-         oldErrorTestVisionPosX = errorTestVisionPosX;
-         oldErrorTestVisionPosY = errorTestVisionPosY;
-
-
-         timeCounter = 0;
-         }
-
-         timeCounter++;
-         */
 
         /*PROTECTED REGION END*/
     }
@@ -137,8 +88,6 @@ namespace alica
         if (calibCounter >= 1)
         {
             // mit Mittelwert
-            //if (abs(correctedPosX - oldCorrectedPosX) > 500){
-            //if (correctedPosX > oldCorrectedPosX){
             if (calibCounter == 1)
             {
                 if (oldCalibCoefficientX > 0)
@@ -156,7 +105,6 @@ namespace alica
 
             }
 
-            //if (correctedPosX < oldCorrectedPosX){
             if (calibCounter == 2)
             {
                 if (oldCalibCoefficientX > 0)
@@ -173,9 +121,7 @@ namespace alica
                 }
 
             }
-            //}
-            //if (abs(correctedPosY - oldCorrectedPosY) > 500){
-            // if (correctedPosY > oldCorrectedPosY){
+
             if (calibCounter == 3)
             {
                 if (oldCalibCoefficientY > 0)
@@ -193,7 +139,6 @@ namespace alica
 
             }
 
-            //if (correctedPosY < oldCorrectedPosY){
             if (calibCounter == 4)
             {
                 if (oldCalibCoefficientY > 0)
@@ -247,19 +192,6 @@ namespace alica
          //}
          */
         // Ohne Mittelwert Ende
-//Hinter Abfrage der gültigen calibWerte setzen?!
-        /*    string filename = string(sc->getConfigPath()) + string(sc->getHostname()) + string("/CalibData.txt");
-         ofstream saveToCalibData;
-         saveToCalibData.open(filename);
-         saveToCalibData << calibCoefficientX << "\n";
-         saveToCalibData << calibCoefficientY;
-         saveToCalibData.close();
-
-         calibCoeff.calibCoefficientX = calibCoefficientX;
-         calibCoeff.calibCoefficientY = calibCoefficientY;
-         calibCoeff_pub.publish(calibCoeff);
-         }*/
-
         if (calibCoefficientX < 0.3)
         {
             calibCoefficientX = 0.3;
@@ -309,8 +241,6 @@ namespace alica
 
         lengthSegment = 0;
         calibCounter++;
-        oldCorrectedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
-        oldCorrectedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 

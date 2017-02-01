@@ -18,6 +18,7 @@ namespace alica
             DomainBehaviour("CalibrationTakeBall")
     {
         /*PROTECTED REGION ID(con1469109429392) ENABLED START*/ //Add additional options here
+        runBehaviour = false;
         changingValue = 0;
         queueSize = 0;
         oldOperation = Add;
@@ -31,6 +32,7 @@ namespace alica
         dribbleFactorRight = 0;
         dribbleFactorLeft = 0;
         speedNoBall = 0;
+        opQueue = make_shared<vector<shared_ptr<geometry::CNPoint2D>>>();
         /*PROTECTED REGION END*/
     }
     CalibrationTakeBall::~CalibrationTakeBall()
@@ -41,9 +43,12 @@ namespace alica
     void CalibrationTakeBall::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469109429392) ENABLED START*/ //Add additional options here
-        // TODO: remove when finished testing!
-//        this->setSuccess(true);
-//        return;
+        if (!runBehaviour)
+        {
+            cout << "skipping TakeBall behaviour..." << endl;
+            this->setSuccess(true);
+            return;
+        }
         // check if robot has the ball
         if (wm->rawSensorData->getLightBarrier())
         {
@@ -111,6 +116,7 @@ namespace alica
         dribbleFactorRight = 0;
         dribbleFactorLeft = 0;
         speedNoBall = 0;
+        readConfigParameters();
         cout << "try to synchronize the actuators..." << endl;
         /*PROTECTED REGION END*/
     }
@@ -223,6 +229,8 @@ namespace alica
         // maybe put in config
         changingValue = (*sys)["DribbleCalibration"]->get<double>("DribbleCalibration.TakeBall.ChangingValue", NULL);
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.TakeBall.QueueSize", NULL);
+
+        runBehaviour = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.Run.TakeBall", NULL);
     }
 
     void CalibrationTakeBall::writeConfigParameters()

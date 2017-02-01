@@ -35,7 +35,7 @@ namespace alica
 	 * @parm Parameter to call the behavior (something like DribbleForwardParm)
 	 * @trans translation
 	 */
-	MotionControl DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callBehaviour(MethodParam mParm, Param parm, int trans)
 	{
 		switch (parm)
 		{
@@ -61,11 +61,14 @@ namespace alica
 				break;
 			}
 		}
+		shared_ptr<DribbleCalibrationQuery> query;
 		MotionControl mc;
-		return setNaN(mc);
+		mc = setNaN(mc);
+		query->setMc(mc);
+		return query;
 	}
 
-	MotionControl DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::callMethod(ICalibration* behavior, MethodParam parm, int trans)
 	{
 		switch (parm)
 		{
@@ -81,15 +84,20 @@ namespace alica
 			case ResetParams:
 				behavior->resetParams();
 				break;
+			case SaveParams:
+				behavior->saveParams();
+				break;
 			default:
 				break;
 		}
 
+		shared_ptr<DribbleCalibrationQuery> query;
 		MotionControl mc;
-		return setNaN(mc);
+		query->setMc(setNaN(mc));
+		return query;
 	}
 
-	MotionControl DribbleCalibrationContainer::paramToMove(Param param, int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleCalibrationContainer::paramToMove(Param param, int trans)
 	{
 		return callBehaviour(MethodParam::Move, param, trans);
 	}
@@ -108,38 +116,32 @@ namespace alica
 	{
 		callBehaviour(MethodParam::ResetParams, parm);
 	}
+	void DribbleCalibrationContainer::saveParameters(Param parm)
+	{
+		callBehaviour(MethodParam::SaveParams, parm);
+	}
 
 	/**
 	 * @return true if opQueue is filled
 	 */
-	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize,
-															shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
+	bool DribbleCalibrationContainer::fillOpticalFlowQueue(int queueSize, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opQueue)
 	{
-		cout << "DribbleContainer::FillOpticalQueue()" << endl;
-		cout << "opticalFlowValue: " << wm->rawSensorData->getOpticalFlow(0) << endl;
 		if (wm->rawSensorData->getOpticalFlow(0) == nullptr)
 		{
 			cerr << "no OpticalFLow signal!" << endl;
 			return false;
 		}
-		cout << "1" << endl;
-		cout << (opQueue == nullptr ? "opQueue nullptr" : "opQueue not a nullptr") << endl;
-		cout << "opQueue->size() = " << opQueue->size() << endl;
-		cout << "queueSize = " << queueSize << endl;
 		if (opQueue->size() >= queueSize)
 		{
 			cout << "1.1" << endl;
 			return true;
 		}
-		cout << "2" << endl;
 		if (!queueFilled)
 		{
 			cout << "filling optical flow queue!" << endl;
 			queueFilled = true;
 		}
-		cout << "3" << endl;
 		opQueue->push_back(wm->rawSensorData->getOpticalFlow(0));
-		cout << "4" << endl;
 		return false;
 	}
 
@@ -153,8 +155,7 @@ namespace alica
 		return getAverageOpticalFlowValue(YValue, queue);
 	}
 
-	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value,
-																	shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
+	double DribbleCalibrationContainer::getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue)
 	{
 		if (value != XValue && value != YValue /*&& value != QOSValue*/)
 		{

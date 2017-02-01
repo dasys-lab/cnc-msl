@@ -18,6 +18,8 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469284294147) ENABLED START*/ //Add additional protected methods here
+        bool runBehaviour;
+
         DribbleCalibrationContainer dcc;
         MovementContainer moveCont;
 

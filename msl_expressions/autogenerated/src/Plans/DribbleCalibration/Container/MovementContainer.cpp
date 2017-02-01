@@ -19,7 +19,6 @@ namespace alica
 {
 	MovementContainer::MovementContainer()
 	{
-		cout << "init MovementContainer" << endl;
 		distToObs = 0;
 		rotateAroundTheBall = false;
 		angleTolerance = 0;
@@ -77,7 +76,6 @@ namespace alica
 	{
 		msl_actuator_msgs::MotionControl mc;
 		msl::RobotMovement rm;
-		cout << "defaultDistance = " << defaultDistance << endl;
 
 		if (movement != Forward && movement != Backward && movement != Left && movement != Right)
 		{
@@ -159,7 +157,6 @@ namespace alica
 			cout << "MC::move() egoDestinationPoint = " << egoDestination->toString();
 #endif
 			mc = rm.moveToPoint(query);
-			cout << "translation = 0" << translation << endl;
 			mc.motion.translation = translation;
 #ifdef DEBUG_MOVE_CONT
 			cout << "MC::move() changeDirections: " << (changeDirections ? "true" : "false") << " drive normally" << endl;
@@ -266,8 +263,6 @@ namespace alica
 			cout << "MovementContainer::getEgoDestinationPoint -> wrong input!" << endl;
 			return nullptr;
 		}
-
-		cout << "ego distance = " << distance << endl;
 
 		double beta = 45;
 		double a = distance * cos(beta);
