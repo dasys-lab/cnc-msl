@@ -24,15 +24,15 @@
 #define SharedMemoryHelper_H
 
 #include <string.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/shm.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
+#include <sys/types.h>
 
-#include <SystemConfig.h>
 #include "ballTracking/TrackingTypes.h"
+#include <SystemConfig.h>
 
-//640*480*3 = 614400
+// 640*480*3 = 614400
 
 #define KEY_OP_DIRECTED_SHM 5680
 #define KEY_OP_DIRECTED_SEM 5681
@@ -45,130 +45,133 @@
 
 using namespace supplementary;
 
-class SharedMemoryHelper{
+class SharedMemoryHelper
+{
 
+  public:
+    ~SharedMemoryHelper();
 
-	public:
+    void writeDirectedBallPosition(ObservedPoint *p);
+    ObservedPoint *readDirectedBallPosition();
 
-		~SharedMemoryHelper();
+    void writeKinectBallPosition(ObservedPoint *p);
+    ObservedPoint *readKinectBallPosition();
 
-		void writeDirectedBallPosition(ObservedPoint * p);
-		ObservedPoint * readDirectedBallPosition();
+    void writeCorrectedOdometry(CorrectedOdometry *co);
+    CorrectedOdometry *readCorrectedOdometry();
 
-		void writeKinectBallPosition(ObservedPoint * p);
-		ObservedPoint * readKinectBallPosition();
+    static SharedMemoryHelper *getInstance();
 
-		void writeCorrectedOdometry(CorrectedOdometry *co);
-		CorrectedOdometry *readCorrectedOdometry();
+  protected:
+    SharedMemoryHelper();
 
-		static SharedMemoryHelper * getInstance();
+    static SharedMemoryHelper *instance_;
 
-	protected:
+    SystemConfig *sc;
 
-		SharedMemoryHelper();
+    void init();
+    void cleanup();
 
-		static SharedMemoryHelper * instance_;
+    template <typename T, int SHMKEY, int SEMKEY> struct ShmInfo
+    {
+        int shmid;
+        int semid;
 
-		SystemConfig* sc;
+        T *type;
 
-		void init();
-		void cleanup();
+        struct sembuf *sops;
 
-		template<typename T, int SHMKEY, int SEMKEY>
-			struct ShmInfo {
-				int shmid;
-				int semid;
+        ShmInfo()
+            : shmid(0)
+            , semid(0)
+            , sops(NULL)
+        {
+            std::string es_root(getenv("DOMAIN_CONFIG_FOLDER"));
 
-				T *type;
+            std::string filename = es_root + "/Vision.conf";
 
-				struct sembuf *sops;
+            key_t shmidKey = ftok(filename.c_str(), SHMKEY);
+            key_t semidKey = ftok(filename.c_str(), SEMKEY);
 
-				ShmInfo() :
-					shmid(0), semid(0), sops(NULL)
-				{
-					std::string es_root(getenv("DOMAIN_CONFIG_FOLDER"));
+            if ((shmid = shmget(shmidKey, sizeof(T) * 10, IPC_CREAT | IPC_EXCL | 0666)) < 0)
+            {
+                if ((shmid = shmget(shmidKey, sizeof(T) * 10, IPC_CREAT | 0666)) < 0)
+                {
+                    std::cerr << "Could not get segment " << shmidKey << std::endl;
+                    exit(1);
+                }
+            }
 
-					std::string filename = es_root + "/Vision.conf";
+            if ((type = (T *)shmat(shmid, NULL, 0)) == (T *)-1)
+            {
+                std::cerr << "Could not attach segment for " << shmid << std::endl;
+                exit(1);
+            }
+            bzero(type, sizeof(T) * 10);
 
-					key_t shmidKey = ftok(filename.c_str(), SHMKEY);
-					key_t semidKey = ftok(filename.c_str(), SEMKEY);
+            sops = (struct sembuf *)malloc(2 * sizeof(struct sembuf));
 
-					if ((shmid = shmget(shmidKey, sizeof(T) * 10, IPC_CREAT | IPC_EXCL | 0666)) < 0) {
-						if ((shmid = shmget(shmidKey, sizeof(T) * 10, IPC_CREAT | 0666)) < 0) {
-							std::cerr << "Could not get segment " << shmidKey << std::endl;
-							exit(1);
+            if ((semid = semget(semidKey, 1, IPC_CREAT | IPC_EXCL | 0666)) == -1)
+            {
+                if ((semid = semget(semidKey, 1, IPC_CREAT | 0666)) == -1)
+                {
+                    std::cerr << "Could not get semaphore for " << shmidKey << std::endl;
+                    exit(1);
+                }
+            }
+        }
 
-						}
-					}
+        ~ShmInfo()
+        {
+            free(sops);
+        }
 
-					if ((type = (T *)shmat(shmid, NULL, 0)) == (T *)-1) {
-						std::cerr << "Could not attach segment for " << shmid << std::endl;
-						exit(1);
-					}
-					bzero(type, sizeof(T) * 10);
+        T *get()
+        {
+            return type;
+        }
 
-					sops = (struct sembuf *)malloc(2 * sizeof(struct sembuf));
+        void waitForAndLock()
+        {
 
-					if ((semid = semget(semidKey, 1, IPC_CREAT | IPC_EXCL | 0666)) == -1) {
-						if ((semid = semget(semidKey, 1, IPC_CREAT | 0666)) == -1) {
-							std::cerr << "Could not get semaphore for " << shmidKey << std::endl;
-							exit(1);
-						}
-					}
-				}
+            int nsops = 2;
 
-				~ShmInfo() {
-					free(sops);
-				}
+            /* wait for semaphore to reach zero */
 
-				T *get() {
-					return type;
-				}
+            sops[0].sem_num = 0;        /* We only use one track */
+            sops[0].sem_op = 0;         /* wait for semaphore flag to become zero */
+            sops[0].sem_flg = SEM_UNDO; /* take off semaphore asynchronous  */
 
-				void waitForAndLock() {
+            sops[1].sem_num = 0;
+            sops[1].sem_op = 1;                      /* increment semaphore -- take control of track */
+            sops[1].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
 
-					int nsops = 2;
+            semop(semid, sops, nsops);
+        }
 
-					/* wait for semaphore to reach zero */
+        void unlock()
+        {
 
-					sops[0].sem_num = 0; /* We only use one track */
-					sops[0].sem_op = 0; /* wait for semaphore flag to become zero */
-					sops[0].sem_flg = SEM_UNDO; /* take off semaphore asynchronous  */
+            int nsops = 1;
 
+            /* wait for semaphore to reach zero */
 
-					sops[1].sem_num = 0;
-					sops[1].sem_op = 1; /* increment semaphore -- take control of track */
-					sops[1].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore */
+            sops[0].sem_num = 0;                     /* We only use one track */
+            sops[0].sem_op = -1;                     /* wait for semaphore flag to become zero */
+            sops[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore asynchronous  */
 
-					semop(semid, sops, nsops);
-				}
+            semop(semid, sops, nsops);
+        }
+    };
 
-				void unlock() {
+    ShmInfo<ObservedPoint, KEY_OP_DIRECTED_SHM, KEY_OP_DIRECTED_SEM> opDirectedShmInfo;
+    ObservedPoint opDirected[10];
 
-					int nsops = 1;
+    ShmInfo<ObservedPoint, KEY_OP_KINECT_SHM, KEY_OP_KINECT_SEM> opKinectShmInfo;
+    ObservedPoint opKinect[10];
 
-					/* wait for semaphore to reach zero */
-
-					sops[0].sem_num = 0; /* We only use one track */
-					sops[0].sem_op = -1; /* wait for semaphore flag to become zero */
-					sops[0].sem_flg = SEM_UNDO | IPC_NOWAIT; /* take off semaphore asynchronous  */
-
-					semop(semid, sops, nsops);
-				}
-			};
-
-		ShmInfo<ObservedPoint, KEY_OP_DIRECTED_SHM, KEY_OP_DIRECTED_SEM> opDirectedShmInfo;
-		ObservedPoint opDirected[10];
-
-		ShmInfo<ObservedPoint, KEY_OP_KINECT_SHM, KEY_OP_KINECT_SEM> opKinectShmInfo;
-		ObservedPoint opKinect[10];
-
-		ShmInfo<CorrectedOdometry, KEY_CO_SHM, KEY_CO_SEM> coShmInfo;
-		CorrectedOdometry co[1];
-
+    ShmInfo<CorrectedOdometry, KEY_CO_SHM, KEY_CO_SEM> coShmInfo;
+    CorrectedOdometry co[1];
 };
 
-
-
 #endif
-

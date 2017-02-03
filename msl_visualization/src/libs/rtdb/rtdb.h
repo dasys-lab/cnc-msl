@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-#include "rtdb_user.h"
 #include "rtdb_api.h"
+#include "rtdb_user.h"
 
 #include "HWcomm_rtdb.h"
 

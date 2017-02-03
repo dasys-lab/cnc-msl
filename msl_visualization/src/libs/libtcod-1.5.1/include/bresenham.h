@@ -28,7 +28,7 @@
 #ifndef _TCOD_BRESENHAM_H
 #define _TCOD_BRESENHAM_H
 
-typedef bool (*TCOD_line_listener_t) (int x, int y);
+typedef bool (*TCOD_line_listener_t)(int x, int y);
 
 TCODLIB_API void TCOD_line_init(int xFrom, int yFrom, int xTo, int yTo);
 TCODLIB_API bool TCOD_line_step(int *xCur, int *yCur); /* advance one step. returns true if we reach destination */
@@ -36,16 +36,17 @@ TCODLIB_API bool TCOD_line_step(int *xCur, int *yCur); /* advance one step. retu
 TCODLIB_API bool TCOD_line(int xFrom, int yFrom, int xTo, int yTo, TCOD_line_listener_t listener);
 
 /* thread-safe versions */
-typedef struct {
-	int stepx;
-	int stepy;
-	int e;
-	int deltax;
-	int deltay;
-	int origx; 
-	int origy; 
-	int destx; 
-	int desty; 
+typedef struct
+{
+    int stepx;
+    int stepy;
+    int e;
+    int deltax;
+    int deltay;
+    int origx;
+    int origy;
+    int destx;
+    int desty;
 } TCOD_bresenham_data_t;
 
 TCODLIB_API void TCOD_line_init_mt(int xFrom, int yFrom, int xTo, int yTo, TCOD_bresenham_data_t *data);

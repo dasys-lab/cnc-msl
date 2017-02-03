@@ -8,29 +8,29 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_SRC_SHAREDWORLDMODEL_MSLSHAREDWORLDMODEL_H_
 #define CNC_MSL_MSL_WORLDMODEL_SRC_SHAREDWORLDMODEL_MSLSHAREDWORLDMODEL_H_
 
-#include <ros/ros.h>
 #include "SystemConfig.h"
+#include <ros/ros.h>
 
-
-namespace msl {
+namespace msl
+{
 
 class MSLWorldModel;
-class MSLSharedWorldModel {
+class MSLSharedWorldModel
+{
 
-public:
-	MSLSharedWorldModel(MSLWorldModel* wm);
-	virtual ~MSLSharedWorldModel();
-	void sendSharedWorldModelData(const ros::TimerEvent& e);
+  public:
+    MSLSharedWorldModel(MSLWorldModel *wm);
+    virtual ~MSLSharedWorldModel();
+    void sendSharedWorldModelData(const ros::TimerEvent &e);
 
-private:
-	int ownID;
+  private:
+    int ownID;
 
-	MSLWorldModel* wm;
-	ros::Timer timer;
-	ros::NodeHandle n;
+    MSLWorldModel *wm;
+    ros::Timer timer;
+    ros::NodeHandle n;
 
-
-	supplementary::SystemConfig* sc;
+    supplementary::SystemConfig *sc;
 };
 
 } /* namespace msl */

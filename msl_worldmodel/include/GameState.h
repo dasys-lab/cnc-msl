@@ -10,11 +10,14 @@
 
 namespace msl
 {
-	enum GameState
-	{
-		Duel, OwnBallPossession, OppBallPossession, NobodyInBallPossession
-		//former:  Melee, Attack, Defend, Conflict
-	};
+enum GameState
+{
+    Duel,
+    OwnBallPossession,
+    OppBallPossession,
+    NobodyInBallPossession
+    // former:  Melee, Attack, Defend, Conflict
+};
 }
 
 #endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAMESTATE_H_ */

@@ -59,4 +59,3 @@ TCODLIB_API uint32 TCOD_zip_get_remaining_bytes(TCOD_zip_t zip);
 TCODLIB_API void TCOD_zip_skip_bytes(TCOD_zip_t zip, uint32 nbBytes);
 
 #endif
-

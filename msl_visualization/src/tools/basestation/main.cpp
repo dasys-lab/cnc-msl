@@ -20,54 +20,55 @@
  * along with this package.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
-#include <GL/glut.h>
-#include <signal.h>
 #include "MainWindow.h"
+#include <GL/glut.h>
+#include <QApplication>
 #include <ros/ros.h>
+#include <signal.h>
 
-QApplication* app = NULL;
+QApplication *app = NULL;
 
 void closeMe(int sig)
 {
-	if( sig == SIGINT)
-	{
-		if( app != NULL )
-		{
-			app->closeAllWindows();
-		}
-	}
+    if (sig == SIGINT)
+    {
+        if (app != NULL)
+        {
+            app->closeAllWindows();
+        }
+    }
 }
 
 int main(int argc, char *argv[])
 {
-  	if( signal( SIGINT , closeMe ) == SIG_ERR )
-	{
-		cerr << "basetation :: Register SIGINT Error"<<endl;
-		return 1;
-	}
-  	ros::init(argc, argv, "basestation");
-	app = new QApplication(argc, argv);
-	QMainWindow Mwind;    
-	
-	glutInit(&argc,argv);
+    if (signal(SIGINT, closeMe) == SIG_ERR)
+    {
+        cerr << "basetation :: Register SIGINT Error" << endl;
+        return 1;
+    }
+    ros::init(argc, argv, "basestation");
+    app = new QApplication(argc, argv);
+    QMainWindow Mwind;
 
-	// LMOTA
-	// variable went global
-//	MWind wind(&Mwind);
-	wind = new MWind(&Mwind);
+    glutInit(&argc, argv);
 
+    // LMOTA
+    // variable went global
+    //	MWind wind(&Mwind);
+    wind = new MWind(&Mwind);
 
-	Mwind.adjustSize();
-   	Mwind.showMaximized();
+    Mwind.adjustSize();
+    Mwind.showMaximized();
 
-	QApplication::setStyle("fusion"); //Descomentar Quando o Qt não se passar...
+    QApplication::setStyle("fusion"); // Descomentar Quando o Qt não se passar...
 
-	int ret =  app->exec();
+    int ret = app->exec();
 
-	if (wind != NULL) delete wind; wind=NULL;
+    if (wind != NULL)
+        delete wind;
+    wind = NULL;
 
-//	system("./rtdb_clean");
-//	fprintf(stderr, "fui-me\n");
-	return ret;
+    //	system("./rtdb_clean");
+    //	fprintf(stderr, "fui-me\n");
+    return ret;
 }

@@ -5,31 +5,31 @@
  *      Author: Stefan Jakob
  */
 
-#include <LightBarrier.h>
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
+#include <LightBarrier.h>
 namespace msl
 {
 
-	LightBarrier::LightBarrier(MSLWorldModel* wm)
-	{
-		this->wm = wm;
-		this->sc = supplementary::SystemConfig::getInstance();
-		this->useLightBarrier = (*this->sc)["LightBarrier"]->get<bool>("LightBarrier", "UseLightBarrier", NULL);
-	}
+LightBarrier::LightBarrier(MSLWorldModel *wm)
+{
+    this->wm = wm;
+    this->sc = supplementary::SystemConfig::getInstance();
+    this->useLightBarrier = (*this->sc)["LightBarrier"]->get<bool>("LightBarrier", "UseLightBarrier", NULL);
+}
 
-	LightBarrier::~LightBarrier()
-	{
-	}
+LightBarrier::~LightBarrier()
+{
+}
 
-	bool LightBarrier::getLightBarrier(int index)
-	{
-		return this->wm->rawSensorData->getLightBarrier(index);
-	}
+bool LightBarrier::getLightBarrier(int index)
+{
+    return this->wm->rawSensorData->getLightBarrier(index);
+}
 
-	bool LightBarrier::mayUseLightBarrier()
-	{
-		return this->useLightBarrier;
-	}
+bool LightBarrier::mayUseLightBarrier()
+{
+    return this->useLightBarrier;
+}
 
 } /* namespace msl */

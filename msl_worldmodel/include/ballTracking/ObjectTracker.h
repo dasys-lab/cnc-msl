@@ -23,23 +23,21 @@
 #ifndef ObjectTracker_H
 #define ObjectTracker_H
 
-#include <stdlib.h>
 #include "ballTracking/TrackingTypes.h"
+#include <stdlib.h>
 
-class ObjectTracker {
-	public:
-		ObjectTracker();
-		~ObjectTracker();
-		static ObjectTracker * getInstance();
-		MovingObject trackObject(ObservedPoint * points, int length, int startIndex, int lastIndex, double rotVelocity);
+class ObjectTracker
+{
+  public:
+    ObjectTracker();
+    ~ObjectTracker();
+    static ObjectTracker *getInstance();
+    MovingObject trackObject(ObservedPoint *points, int length, int startIndex, int lastIndex, double rotVelocity);
 
-	private:
-		static ObjectTracker * instance_;
-		void init();
-		void cleanup();
+  private:
+    static ObjectTracker *instance_;
+    void init();
+    void cleanup();
 };
 
 #endif
-
-
-
