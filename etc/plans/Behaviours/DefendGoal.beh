@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1459249294699" name="DefendGoal" comment="" destinationPath="Plans/Behaviours">
-  <configurations id="1459249336699" name="DefendGoalDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1459269352194" name="MISSING_NAME" comment="" key="postOffset" value="550"/>
-    <parameters id="1459269361323" name="MISSING_NAME" comment="" key="positionOffset" value="100"/>
-    <parameters id="1459269367205" name="MISSING_NAME" comment="" key="ownPosAngle" value="2.95"/>
-  </configurations>
-</alica:Behaviour>

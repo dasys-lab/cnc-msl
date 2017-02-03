@@ -5,8 +5,6 @@
 
 #include  "Plans/Standards/Own/constraints/OwnStdSingleRobot1467383326416Constraints.h"
 
-#include  "Plans/Attack/TestPlans/constraints/DribbleToPointPlan1436960829485Constraints.h"
-
 #include  "Plans/Attack/constraints/AttackPlay1434045709191Constraints.h"
 
 #include  "Plans/TestPlans/DribbleControlTest/constraints/TestDribbleControlMaster1479905043165Constraints.h"
@@ -28,8 +26,6 @@
 #include  "Plans/Attack/TestPlans/constraints/DuelTestMaster1454506180437Constraints.h"
 
 #include  "Plans/Standards/Opponent/Penalty/constraints/OppInGamePenalty1466968232004Constraints.h"
-
-#include  "Plans/Attack/TestPlans/constraints/AttackOppGoalPlan1437902649389Constraints.h"
 
 #include  "Plans/Attack/constraints/Duel1450178655416Constraints.h"
 
@@ -71,15 +67,11 @@
 
 #include  "Plans/GameStrategy/Gameplay/constraints/DefendPlay1457173681216Constraints.h"
 
-#include  "Plans/Attack/constraints/ProtectBall1449151802193Constraints.h"
-
 #include  "Plans/Standards/Own/Corner/constraints/CornerExecBounceShot1459362028865Constraints.h"
 
 #include  "Plans/Robotcheck/constraints/Robotcheck1456756058055Constraints.h"
 
 #include  "Plans/Goalie/Test/constraints/GoalieDefault1447254438614Constraints.h"
-
-#include  "Plans/Attack/TestPlans/constraints/TestAttackPlan1436960675873Constraints.h"
 
 #include  "Plans/Attack/constraints/Dribble1434049476066Constraints.h"
 
@@ -112,8 +104,6 @@
 #include  "Plans/Standards/Own/PassIntoPath/constraints/PassIntoPath1457530916296Constraints.h"
 
 #include  "Plans/Defence/constraints/MidfieldBlock1458033620834Constraints.h"
-
-#include  "Plans/Attack/TestPlans/constraints/TestDribblePlan1437902404050Constraints.h"
 
 #include  "Plans/Standards/Own/FreeKick/Test/constraints/TestFreeKickOppHalfMaster1464532006730Constraints.h"
 
