@@ -3,7 +3,7 @@ using namespace std;
 
 /*PROTECTED REGION ID(inccpp1445438142979) ENABLED START*/ //Add additional includes here
 #include "msl_robot/robotmovement/RobotMovement.h"
-#include "engine/constraintmodul/ConstraintQuery.h"
+#include "engine/constraintmodul/Query.h"
 #include "GSolver.h"
 #include "SolverType.h"
 #include <RawSensorData.h>
@@ -18,7 +18,7 @@ namespace alica
             DomainBehaviour("Pos4Def")
     {
         /*PROTECTED REGION ID(con1445438142979) ENABLED START*/ //Add additional options here
-        this->query = make_shared < alica::ConstraintQuery > (this->wm->getEngine());
+        this->query = make_shared < alica::Query > (this->wm->getEngine());
         this->mQuery = make_shared<msl::MovementQuery>();
         /*PROTECTED REGION END*/
     }
@@ -81,8 +81,8 @@ namespace alica
     {
         /*PROTECTED REGION ID(initialiseParameters1445438142979) ENABLED START*/ //Add additional options here
         query->clearDomainVariables();
-        query->addVariable(wm->getOwnId(), "x");
-        query->addVariable(wm->getOwnId(), "y");
+        query->addDomainVariable(wm->getOwnId(), "x");
+        query->addDomainVariable(wm->getOwnId(), "y");
         result.clear();
         /*PROTECTED REGION END*/
     }

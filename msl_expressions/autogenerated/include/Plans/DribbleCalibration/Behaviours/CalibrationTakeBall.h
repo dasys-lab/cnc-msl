@@ -18,6 +18,8 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469109429392) ENABLED START*/ //Add additional protected methods here
+        bool runBehaviour;
+
         // consts for checkBallRotation()
         enum Rotation
         {

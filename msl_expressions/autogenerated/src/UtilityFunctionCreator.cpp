@@ -5,9 +5,11 @@
 
 #include  "Plans/Standards/Own/OwnStdSingleRobot1467383326416.h"
 
-#include  "Plans/Attack/TestPlans/DribbleToPointPlan1436960829485.h"
-
 #include  "Plans/Attack/AttackPlay1434045709191.h"
+
+#include  "Plans/TestPlans/DribbleControlTest/TestDribbleControlMaster1479905043165.h"
+
+#include  "Plans/TestPlans/MotorControlTest/TestMotorControlMaster1482163489121.h"
 
 #include  "Plans/Standards/Own/Penalty/AfterGame/PenaltyMaster1466973051873.h"
 
@@ -24,8 +26,6 @@
 #include  "Plans/Attack/TestPlans/DuelTestMaster1454506180437.h"
 
 #include  "Plans/Standards/Opponent/Penalty/OppInGamePenalty1466968232004.h"
-
-#include  "Plans/Attack/TestPlans/AttackOppGoalPlan1437902649389.h"
 
 #include  "Plans/Attack/Duel1450178655416.h"
 
@@ -67,21 +67,15 @@
 
 #include  "Plans/GameStrategy/Gameplay/DefendPlay1457173681216.h"
 
-#include  "Plans/Attack/ProtectBall1449151802193.h"
-
 #include  "Plans/Standards/Own/Corner/CornerExecBounceShot1459362028865.h"
 
 #include  "Plans/Robotcheck/Robotcheck1456756058055.h"
 
 #include  "Plans/Goalie/Test/GoalieDefault1447254438614.h"
 
-#include  "Plans/Attack/TestPlans/TestAttackPlan1436960675873.h"
-
 #include  "Plans/Attack/Dribble1434049476066.h"
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
-
-#include  "Plans/Attack/TestPlans/ActuatorPassTest1467309055366.h"
 
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
 
@@ -110,8 +104,6 @@
 #include  "Plans/Standards/Own/PassIntoPath/PassIntoPath1457530916296.h"
 
 #include  "Plans/Defence/MidfieldBlock1458033620834.h"
-
-#include  "Plans/Attack/TestPlans/TestDribblePlan1437902404050.h"
 
 #include  "Plans/Standards/Own/FreeKick/Test/TestFreeKickOppHalfMaster1464532006730.h"
 
@@ -157,12 +149,16 @@ namespace alica
                 return make_shared<UtilityFunction1467383326416>();
                 break;
 
-            case 1436960829485:
-                return make_shared<UtilityFunction1436960829485>();
-                break;
-
             case 1434045709191:
                 return make_shared<UtilityFunction1434045709191>();
+                break;
+
+            case 1479905043165:
+                return make_shared<UtilityFunction1479905043165>();
+                break;
+
+            case 1482163489121:
+                return make_shared<UtilityFunction1482163489121>();
                 break;
 
             case 1466973051873:
@@ -195,10 +191,6 @@ namespace alica
 
             case 1466968232004:
                 return make_shared<UtilityFunction1466968232004>();
-                break;
-
-            case 1437902649389:
-                return make_shared<UtilityFunction1437902649389>();
                 break;
 
             case 1450178655416:
@@ -281,10 +273,6 @@ namespace alica
                 return make_shared<UtilityFunction1457173681216>();
                 break;
 
-            case 1449151802193:
-                return make_shared<UtilityFunction1449151802193>();
-                break;
-
             case 1459362028865:
                 return make_shared<UtilityFunction1459362028865>();
                 break;
@@ -297,20 +285,12 @@ namespace alica
                 return make_shared<UtilityFunction1447254438614>();
                 break;
 
-            case 1436960675873:
-                return make_shared<UtilityFunction1436960675873>();
-                break;
-
             case 1434049476066:
                 return make_shared<UtilityFunction1434049476066>();
                 break;
 
             case 1449076138236:
                 return make_shared<UtilityFunction1449076138236>();
-                break;
-
-            case 1467309055366:
-                return make_shared<UtilityFunction1467309055366>();
                 break;
 
             case 1461237603689:
@@ -367,10 +347,6 @@ namespace alica
 
             case 1458033620834:
                 return make_shared<UtilityFunction1458033620834>();
-                break;
-
-            case 1437902404050:
-                return make_shared<UtilityFunction1437902404050>();
                 break;
 
             case 1464532006730:

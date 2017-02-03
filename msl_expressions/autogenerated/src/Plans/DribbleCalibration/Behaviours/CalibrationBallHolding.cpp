@@ -15,6 +15,7 @@ namespace alica
             DomainBehaviour("CalibrationBallHolding")
     {
         /*PROTECTED REGION ID(con1469284294147) ENABLED START*/ //Add additional options here
+        runBehaviour = false;
         changingValue = 0;
         queueSize = 0;
         ballWasRotating = false;
@@ -31,8 +32,12 @@ namespace alica
     void CalibrationBallHolding::run(void* msg)
     {
         /*PROTECTED REGION ID(run1469284294147) ENABLED START*/ //Add additional options here
-        this->setSuccess(true);
-        return;
+        if (!runBehaviour)
+        {
+            cout << "skipping BallHolding behaviour" << endl;
+            this->setSuccess(true);
+            return;
+        }
         if (wm->rawSensorData->getLightBarrier())
         {
             // if ball is in kicker
@@ -69,7 +74,7 @@ namespace alica
         }
         else
         {
-            MotionControl mc = dcc.getBall();
+            MotionControl mc = moveCont.getBall();
             send(mc);
         }
 
@@ -110,11 +115,13 @@ namespace alica
     void CalibrationBallHolding::readConfigParameters()
     {
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-        this->minRotation = dcc.readConfigParameter("Dribble.MinRotation");
-        this->slowTranslationWheelSpeed = dcc.readConfigParameter("Dribble.SlowTranslationWheelSpeed");
+        this->minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);
+        this->slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
 
         queueSize = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.QueueSize", NULL);
         changingValue = (*sys)["DribbleCalibration"]->get<int>("DribbleCalibration.BallHolding.ChangingValue", NULL);
+
+        runBehaviour = (*sys)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.HoldBall", NULL);
     }
 
     void CalibrationBallHolding::writeConfigParameters()

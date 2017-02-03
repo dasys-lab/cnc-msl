@@ -18,7 +18,10 @@ namespace alica
     protected:
         virtual void initialiseParameters();
         /*PROTECTED REGION ID(pro1469284294147) ENABLED START*/ //Add additional protected methods here
+        bool runBehaviour;
+
         DribbleCalibrationContainer dcc;
+        MovementContainer moveCont;
 
         double minRotation;
         double slowTranslationWheelSpeed;
@@ -34,6 +37,8 @@ namespace alica
     int queueSize;
 
     int changingValue;
+
+private:
 
     /*PROTECTED REGION END*/private:
     /*PROTECTED REGION ID(prv1469284294147) ENABLED START*/ //Add additional private methods here

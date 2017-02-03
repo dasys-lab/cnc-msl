@@ -20,6 +20,7 @@ namespace msl
 		this->wm = wm;
 		this->gameState = GameState::NobodyInBallPossession;
 		this->timeSinceStart = 0;
+		this->passReceived = false;
 		this->mayScore = false;
 		this->teamMateWithBall = 0;
 		ownGoal = 0;
@@ -121,6 +122,8 @@ namespace msl
 					timeSinceStart = wm->getTime();
 				}
 				situation = Situation::Start;
+				this->teamMateWithBall = 0;
+				this->passReceived = false;
 				break;
 			case msl_msgs::RefBoxCommand::STOP:
 				situation = Situation::Stop;
@@ -382,7 +385,8 @@ namespace msl
 			auto realShwm = wm->robots->getSHWMData(shwmData->first);
 
 			//auto hasball = (  ball.getTeamMateBallPossession(shwmData->first));
-			if(realShwm != nullptr) {
+			if(realShwm != nullptr)
+			{
 				ballPossession |= realShwm->ballInPossession;
 			}
 		}
@@ -394,7 +398,8 @@ namespace msl
 		}
 		auto oppposs = wm->ball->getOppBallPossession();
 		bool oppBallPossession = false;
-		if(oppposs!=nullptr) {
+		if (oppposs != nullptr)
+		{
 			oppBallPossession = *oppposs;
 		}
 
@@ -405,6 +410,7 @@ namespace msl
 			cout << "Game::updateGameState(): State changed: Duel state" << endl;
 			gs = GameState::Duel;
 			this->teamMateWithBall = 0;
+			passReceived = false;
 		}
 		else if (gs != GameState::OwnBallPossession && ballPossession && !oppBallPossession)
 		{
@@ -417,11 +423,13 @@ namespace msl
 			cout << "Game::updateGameState(): State changed: OppBallPossession state" << endl;
 			gs = GameState::OppBallPossession;
 			this->teamMateWithBall = 0;
+			passReceived = false;
 		}
 		else if (gs != GameState::NobodyInBallPossession && !ballPossession && !oppBallPossession)
 		{
 			cout << "Game::updateGameState(): State changed: NobodyInBallPossession state" << endl;
 			gs = GameState::NobodyInBallPossession;
+			passReceived = false;
 		}
 
 		setGameState(gs);
@@ -437,10 +445,12 @@ namespace msl
 		shared_ptr<geometry::CNPosition> capturePos = nullptr;
 		int teamMateWithBallNow = 0;
 		auto robotPoses = this->wm->robots->teammates.getPositionsOfTeamMates();
-		if(robotPoses!=nullptr) {
+		if (robotPoses != nullptr)
+		{
 			for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robotPoses)
 			{
-				if(shwmData!=nullptr) {
+				if(shwmData!=nullptr)
+				{
 					auto ptr = wm->ball->getTeamMateBallPossession(shwmData->first);
 					if (ptr!=nullptr && *ptr)
 					{
@@ -451,15 +461,26 @@ namespace msl
 			}
 		}
 
-		if (capturePos == nullptr || capturePos->x < 0) {
-			mayScore = false;
-		} else if (capturePos->x > 50 && teamMateWithBall != teamMateWithBallNow)
+		//update to rule changes 2017: goal valid after dribbling to opp side after pass; not valid after winning duel without passing
+
+		if (capturePos == nullptr || capturePos->x < 0 || !passReceived)
 		{
-			mayScore = true;
+			mayScore = false;
+		}
+		if (teamMateWithBall != 0 && teamMateWithBallNow != 0 && teamMateWithBall != teamMateWithBallNow)
+		{
+			passReceived = true;
 		}
 
-		if(teamMateWithBallNow != 0) {
-			teamMateWithBall = teamMateWithBallNow;
+		teamMateWithBall = teamMateWithBallNow;
+
+		auto teamMatePos = wm->robots->teammates.getTeamMatePosition(teamMateWithBall);
+		if (teamMatePos != nullptr && teamMatePos->x > 50 && passReceived)
+		{
+			cout << "tmwb : " << teamMateWithBall << "tmwbn: " << teamMateWithBallNow
+					<< "=========================================GAME: SETTING MAYSCORE ============================================================="
+					<< endl;
+			mayScore = true;
 		}
 	}
 
