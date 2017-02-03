@@ -81,8 +81,6 @@ using namespace std;
 
 #include  "Plans/Standards/Own/Corner/Pos4ReceiverCornerKick.h"
 
-#include  "Plans/Behaviours/ActuatorPassTest.h"
-
 #include  "Plans/Behaviours/DefendGoal.h"
 
 #include  "Plans/Behaviours/MoveToPointDynamic.h"
@@ -454,11 +452,6 @@ namespace alica
             case 1464787549220:
 
                 return make_shared<Pos4ReceiverCornerKick>();
-                break;
-
-            case 1467309206305:
-
-                return make_shared<ActuatorPassTest>();
                 break;
 
             case 1459249336699:

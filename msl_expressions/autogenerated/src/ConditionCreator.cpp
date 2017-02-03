@@ -84,8 +84,6 @@
 
 #include  "Plans/Attack/TestPlans/TestCheckGoalKick1449076138236.h"
 
-#include  "Plans/Attack/TestPlans/ActuatorPassTest1467309055366.h"
-
 #include  "Plans/Standards/Own/ThrowIn/ThrowInNearGoal1461237603689.h"
 
 #include  "Plans/GenericStandards/GenericExecute1431522123418.h"
@@ -1203,18 +1201,6 @@ namespace alica
             case 1449076205925:
 
                 return make_shared<TransitionCondition1449076205925>();
-
-                break;
-
-            case 1467309116799:
-
-                return make_shared<TransitionCondition1467309116799>();
-
-                break;
-
-            case 1467309134723:
-
-                return make_shared<TransitionCondition1467309134723>();
 
                 break;
 
