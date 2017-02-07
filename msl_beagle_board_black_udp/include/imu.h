@@ -9,7 +9,7 @@
 #define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_IMU_H_
 
 #include "includes.h"
-#include "sensor.h"
+#include "Sensor.h"
 
 const uint8_t ADR_G = 0x6B; // LSM9DS0
 const uint8_t ADR_XM = 0x1D; // LSM9DS0

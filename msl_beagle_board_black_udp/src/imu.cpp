@@ -216,7 +216,7 @@ void IMU::getAccel() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | ACC_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+	geometry::CNPointAllo point = geometry::CNPointAllo();
 
 	// get data and conversion from acceleration of gravity [mm/s^2] to acceleration [m/s^2]
 	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));

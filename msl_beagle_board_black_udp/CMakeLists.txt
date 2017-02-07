@@ -39,9 +39,8 @@ add_executable(msl_beagle_board_black_udp
 	src/lightbarrier.cpp
 	src/motor.cpp
 	src/opticalflow.cpp
-	src/sensor.cpp
+	src/Sensor.cpp
 	src/shovelselect.cpp
-	src/sensor.cpp
 	src/Spline.cpp
 )
 target_link_libraries(msl_beagle_board_black_udp ${catkin_LIBRARIES})
