@@ -22,79 +22,87 @@
  */
 #include "ballTracking/SharedMemoryHelper.h"
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 
 #include "ballTracking/TrackingPackets.h"
 
-SharedMemoryHelper * SharedMemoryHelper::instance_ = NULL;
+SharedMemoryHelper *SharedMemoryHelper::instance_ = NULL;
 
-SharedMemoryHelper * SharedMemoryHelper::getInstance(){
-
-	if(instance_ == NULL)
-		instance_ = new SharedMemoryHelper();
-
-	return instance_;
-}
-
-SharedMemoryHelper::SharedMemoryHelper() :
-	opDirectedShmInfo(), opKinectShmInfo(), coShmInfo()
+SharedMemoryHelper *SharedMemoryHelper::getInstance()
 {
-	bzero(opDirected, sizeof(ObservedPoint) * 10);
-	bzero(opKinect, sizeof(ObservedPoint) * 10);
-	init();
+
+    if (instance_ == NULL)
+        instance_ = new SharedMemoryHelper();
+
+    return instance_;
 }
 
-
-SharedMemoryHelper::~SharedMemoryHelper(){
-	cleanup();
+SharedMemoryHelper::SharedMemoryHelper()
+    : opDirectedShmInfo()
+    , opKinectShmInfo()
+    , coShmInfo()
+{
+    bzero(opDirected, sizeof(ObservedPoint) * 10);
+    bzero(opKinect, sizeof(ObservedPoint) * 10);
+    init();
 }
 
-
-
-void SharedMemoryHelper::init() {
+SharedMemoryHelper::~SharedMemoryHelper()
+{
+    cleanup();
 }
 
-
-void SharedMemoryHelper::cleanup() {
+void SharedMemoryHelper::init()
+{
 }
 
-void SharedMemoryHelper::writeDirectedBallPosition(ObservedPoint * p) {
-	this->opDirectedShmInfo.waitForAndLock();
-	memcpy(this->opDirectedShmInfo.get(), p, sizeof(ObservedPoint) * 10);
-	this->opDirectedShmInfo.unlock();
+void SharedMemoryHelper::cleanup()
+{
 }
 
-ObservedPoint *SharedMemoryHelper::readDirectedBallPosition() {
-	this->opDirectedShmInfo.waitForAndLock();
-	memcpy(opDirected, this->opDirectedShmInfo.get(), sizeof(ObservedPoint)*10);
-	this->opDirectedShmInfo.unlock();
-	return opDirected;
+void SharedMemoryHelper::writeDirectedBallPosition(ObservedPoint *p)
+{
+    this->opDirectedShmInfo.waitForAndLock();
+    memcpy(this->opDirectedShmInfo.get(), p, sizeof(ObservedPoint) * 10);
+    this->opDirectedShmInfo.unlock();
 }
 
-void SharedMemoryHelper::writeKinectBallPosition(ObservedPoint * p) {
-	this->opKinectShmInfo.waitForAndLock();
-	memcpy(this->opKinectShmInfo.get(), p, sizeof(ObservedPoint) * 10);
-	this->opKinectShmInfo.unlock();
+ObservedPoint *SharedMemoryHelper::readDirectedBallPosition()
+{
+    this->opDirectedShmInfo.waitForAndLock();
+    memcpy(opDirected, this->opDirectedShmInfo.get(), sizeof(ObservedPoint) * 10);
+    this->opDirectedShmInfo.unlock();
+    return opDirected;
 }
 
-ObservedPoint *SharedMemoryHelper::readKinectBallPosition() {
-	this->opKinectShmInfo.waitForAndLock();
-	memcpy(opKinect, this->opKinectShmInfo.get(), sizeof(ObservedPoint)*10);
-	this->opKinectShmInfo.unlock();
-	return opKinect;
+void SharedMemoryHelper::writeKinectBallPosition(ObservedPoint *p)
+{
+    this->opKinectShmInfo.waitForAndLock();
+    memcpy(this->opKinectShmInfo.get(), p, sizeof(ObservedPoint) * 10);
+    this->opKinectShmInfo.unlock();
 }
 
-void SharedMemoryHelper::writeCorrectedOdometry(CorrectedOdometry *co) {
-	this->coShmInfo.waitForAndLock();
-	memcpy(this->coShmInfo.get(), co, sizeof(CorrectedOdometry));
-	this->coShmInfo.unlock();
+ObservedPoint *SharedMemoryHelper::readKinectBallPosition()
+{
+    this->opKinectShmInfo.waitForAndLock();
+    memcpy(opKinect, this->opKinectShmInfo.get(), sizeof(ObservedPoint) * 10);
+    this->opKinectShmInfo.unlock();
+    return opKinect;
 }
 
-CorrectedOdometry *SharedMemoryHelper::readCorrectedOdometry() {
-	this->coShmInfo.waitForAndLock();
-	memcpy(co, this->coShmInfo.get(), sizeof(CorrectedOdometry));
-	this->coShmInfo.unlock();
-	return co;
+void SharedMemoryHelper::writeCorrectedOdometry(CorrectedOdometry *co)
+{
+    this->coShmInfo.waitForAndLock();
+    memcpy(this->coShmInfo.get(), co, sizeof(CorrectedOdometry));
+    this->coShmInfo.unlock();
+}
+
+CorrectedOdometry *SharedMemoryHelper::readCorrectedOdometry()
+{
+    this->coShmInfo.waitForAndLock();
+    memcpy(co, this->coShmInfo.get(), sizeof(CorrectedOdometry));
+    this->coShmInfo.unlock();
+    return co;
 }

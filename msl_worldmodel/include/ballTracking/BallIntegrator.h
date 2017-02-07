@@ -23,47 +23,43 @@
 #ifndef BallIntegrator_H
 #define BallIntegrator_H
 
-#include <stdlib.h>
-#include "ballTracking/TrackingTypes.h"
 #include "ballTracking/ObjectContainer.h"
+#include "ballTracking/TrackingTypes.h"
+#include <stdlib.h>
 #include <vector>
 
+class BallIntegrator
+{
 
-class BallIntegrator {
+  public:
+    BallIntegrator();
+    ~BallIntegrator();
+    void decreaseDirtyPointCertainty();
+    void integratePoint(ObservedPoint p_, double threshold);
+    ObservedPoint getPoint();
+    ObjectContainer *getContainer();
 
-	public:
+    static BallIntegrator *getInstance();
 
-		BallIntegrator();
-		~BallIntegrator();
-		void decreaseDirtyPointCertainty();
-		void integratePoint(ObservedPoint p_, double threshold);
-		ObservedPoint getPoint();
-		ObjectContainer * getContainer();
+    void setRefPosition(Position pos);
+    Position getRefPosition();
 
-		static BallIntegrator * getInstance();
+  private:
+    void init();
+    void cleanup();
 
-		void setRefPosition(Position pos);
-		Position getRefPosition();
+    static BallIntegrator *instance_;
 
-	private:
-		void init();
-		void cleanup();
+    std::vector<PointHypothesis> points;
+    std::vector<ObjectContainer *> containers;
 
-		static BallIntegrator * instance_;
+    ObservedPoint currPoint;
+    ObjectContainer *currContainer;
 
-		std::vector<PointHypothesis> points;
-		std::vector<ObjectContainer *> containers;
+    Position refPos;
 
-		ObservedPoint currPoint;
-		ObjectContainer * currContainer;
-
-		Position refPos;
-
-		double increaseCertainty(double certainty);
-		double decreaseCertainty(double certainty);
+    double increaseCertainty(double certainty);
+    double decreaseCertainty(double certainty);
 };
 
 #endif
-
-
-

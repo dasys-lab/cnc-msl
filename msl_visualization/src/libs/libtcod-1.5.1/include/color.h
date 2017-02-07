@@ -28,75 +28,78 @@
 #ifndef _TCOD_COLOR_H
 #define _TCOD_COLOR_H
 
-typedef struct {
-	uint8 r,g,b;
+typedef struct
+{
+    uint8 r, g, b;
 } TCOD_color_t;
 
 /* constructors */
 TCODLIB_API TCOD_color_t TCOD_color_RGB(uint8 r, uint8 g, uint8 b);
 TCODLIB_API TCOD_color_t TCOD_color_HSV(float h, float s, float v);
 /* basic operations */
-TCODLIB_API bool TCOD_color_equals (TCOD_color_t c1, TCOD_color_t c2);
-TCODLIB_API TCOD_color_t TCOD_color_add (TCOD_color_t c1, TCOD_color_t c2);
-TCODLIB_API TCOD_color_t TCOD_color_subtract (TCOD_color_t c1, TCOD_color_t c2);
-TCODLIB_API TCOD_color_t TCOD_color_multiply (TCOD_color_t c1, TCOD_color_t c2);
-TCODLIB_API TCOD_color_t TCOD_color_multiply_scalar (TCOD_color_t c1, float value);
-TCODLIB_API TCOD_color_t TCOD_color_lerp (TCOD_color_t c1, TCOD_color_t c2, float coef);
+TCODLIB_API bool TCOD_color_equals(TCOD_color_t c1, TCOD_color_t c2);
+TCODLIB_API TCOD_color_t TCOD_color_add(TCOD_color_t c1, TCOD_color_t c2);
+TCODLIB_API TCOD_color_t TCOD_color_subtract(TCOD_color_t c1, TCOD_color_t c2);
+TCODLIB_API TCOD_color_t TCOD_color_multiply(TCOD_color_t c1, TCOD_color_t c2);
+TCODLIB_API TCOD_color_t TCOD_color_multiply_scalar(TCOD_color_t c1, float value);
+TCODLIB_API TCOD_color_t TCOD_color_lerp(TCOD_color_t c1, TCOD_color_t c2, float coef);
 /* HSV transformations */
-TCODLIB_API void TCOD_color_set_HSV (TCOD_color_t *c,float h, float s, float v);
-TCODLIB_API void TCOD_color_get_HSV (TCOD_color_t c,float * h, float * s, float * v);
-TCODLIB_API float TCOD_color_get_hue (TCOD_color_t c);
-TCODLIB_API void TCOD_color_set_hue (TCOD_color_t *c, float h);
-TCODLIB_API float TCOD_color_get_saturation (TCOD_color_t c);
-TCODLIB_API void TCOD_color_set_saturation (TCOD_color_t *c, float s);
-TCODLIB_API float TCOD_color_get_value (TCOD_color_t c);
-TCODLIB_API void TCOD_color_set_value (TCOD_color_t *c, float v);
-TCODLIB_API void TCOD_color_shift_hue (TCOD_color_t *c, float hshift);
-TCODLIB_API void TCOD_color_scale_HSV (TCOD_color_t *c, float scoef, float vcoef);
+TCODLIB_API void TCOD_color_set_HSV(TCOD_color_t *c, float h, float s, float v);
+TCODLIB_API void TCOD_color_get_HSV(TCOD_color_t c, float *h, float *s, float *v);
+TCODLIB_API float TCOD_color_get_hue(TCOD_color_t c);
+TCODLIB_API void TCOD_color_set_hue(TCOD_color_t *c, float h);
+TCODLIB_API float TCOD_color_get_saturation(TCOD_color_t c);
+TCODLIB_API void TCOD_color_set_saturation(TCOD_color_t *c, float s);
+TCODLIB_API float TCOD_color_get_value(TCOD_color_t c);
+TCODLIB_API void TCOD_color_set_value(TCOD_color_t *c, float v);
+TCODLIB_API void TCOD_color_shift_hue(TCOD_color_t *c, float hshift);
+TCODLIB_API void TCOD_color_scale_HSV(TCOD_color_t *c, float scoef, float vcoef);
 /* color map */
 TCODLIB_API void TCOD_color_gen_map(TCOD_color_t *map, int nb_key, TCOD_color_t const *key_color, int const *key_index);
 
 /* color names */
-enum {
-	TCOD_COLOR_RED,
-	TCOD_COLOR_FLAME,
-	TCOD_COLOR_ORANGE,
-	TCOD_COLOR_AMBER,
-	TCOD_COLOR_YELLOW,
-	TCOD_COLOR_LIME,
-	TCOD_COLOR_CHARTREUSE,
-	TCOD_COLOR_GREEN,
-	TCOD_COLOR_SEA,
-	TCOD_COLOR_TURQUOISE,
-	TCOD_COLOR_CYAN,
-	TCOD_COLOR_SKY,
-	TCOD_COLOR_AZURE,
-	TCOD_COLOR_BLUE,
-	TCOD_COLOR_HAN,
-	TCOD_COLOR_VIOLET,
-	TCOD_COLOR_PURPLE,
-	TCOD_COLOR_FUCHSIA,
-	TCOD_COLOR_MAGENTA,
-	TCOD_COLOR_PINK,
-	TCOD_COLOR_CRIMSON,
-	TCOD_COLOR_NB
+enum
+{
+    TCOD_COLOR_RED,
+    TCOD_COLOR_FLAME,
+    TCOD_COLOR_ORANGE,
+    TCOD_COLOR_AMBER,
+    TCOD_COLOR_YELLOW,
+    TCOD_COLOR_LIME,
+    TCOD_COLOR_CHARTREUSE,
+    TCOD_COLOR_GREEN,
+    TCOD_COLOR_SEA,
+    TCOD_COLOR_TURQUOISE,
+    TCOD_COLOR_CYAN,
+    TCOD_COLOR_SKY,
+    TCOD_COLOR_AZURE,
+    TCOD_COLOR_BLUE,
+    TCOD_COLOR_HAN,
+    TCOD_COLOR_VIOLET,
+    TCOD_COLOR_PURPLE,
+    TCOD_COLOR_FUCHSIA,
+    TCOD_COLOR_MAGENTA,
+    TCOD_COLOR_PINK,
+    TCOD_COLOR_CRIMSON,
+    TCOD_COLOR_NB
 };
 
 /* color levels */
-enum {
-	TCOD_COLOR_DESATURATED,
-	TCOD_COLOR_LIGHTEST,
-	TCOD_COLOR_LIGHTER,
-	TCOD_COLOR_LIGHT,
-	TCOD_COLOR_NORMAL,
-	TCOD_COLOR_DARK,
-	TCOD_COLOR_DARKER,
-	TCOD_COLOR_DARKEST,
-	TCOD_COLOR_LEVELS
+enum
+{
+    TCOD_COLOR_DESATURATED,
+    TCOD_COLOR_LIGHTEST,
+    TCOD_COLOR_LIGHTER,
+    TCOD_COLOR_LIGHT,
+    TCOD_COLOR_NORMAL,
+    TCOD_COLOR_DARK,
+    TCOD_COLOR_DARKER,
+    TCOD_COLOR_DARKEST,
+    TCOD_COLOR_LEVELS
 };
 
 /* color array */
-extern TCODLIB_API const TCOD_color_t  TCOD_colors[TCOD_COLOR_NB][TCOD_COLOR_LEVELS];
+extern TCODLIB_API const TCOD_color_t TCOD_colors[TCOD_COLOR_NB][TCOD_COLOR_LEVELS];
 
 /* grey levels */
 extern TCODLIB_API const TCOD_color_t TCOD_black;

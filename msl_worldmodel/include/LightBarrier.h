@@ -13,21 +13,20 @@
 namespace msl
 {
 
-	class MSLWorldModel;
-	class LightBarrier
-	{
-	public:
-		LightBarrier(MSLWorldModel* wm);
-		virtual ~LightBarrier();
-		bool getLightBarrier(int index = 0);
-		bool mayUseLightBarrier();
+class MSLWorldModel;
+class LightBarrier
+{
+  public:
+    LightBarrier(MSLWorldModel *wm);
+    virtual ~LightBarrier();
+    bool getLightBarrier(int index = 0);
+    bool mayUseLightBarrier();
 
-	private:
-		MSLWorldModel* wm;
-		supplementary::SystemConfig* sc;
-		bool useLightBarrier;
-
-	};
+  private:
+    MSLWorldModel *wm;
+    supplementary::SystemConfig *sc;
+    bool useLightBarrier;
+};
 
 } /* namespace msl */
 

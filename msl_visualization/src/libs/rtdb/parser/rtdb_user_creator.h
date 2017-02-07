@@ -23,8 +23,8 @@
 #ifndef _RTDB_USER_CREATOR_H_
 #define _RTDB_USER_CREATOR_H_
 
-#include "rtdb_structs.h"
 #include "rtdb_configuration.h"
+#include "rtdb_structs.h"
 
 /*
 Function to write the rtdb_user.h file using the Global agents list
