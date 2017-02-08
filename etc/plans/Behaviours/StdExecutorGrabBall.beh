@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1441209011595" name="StdExecutorGrabBall" comment="" destinationPath="Plans/Behaviours">
-  <configurations id="1441209089978" name="StdExecutorGrabBallDefault" comment="This behaviour is for driving to the ball over a small distance  (&lt; 1m), in order to get the ball into the kicker. Therefore, it is recommended to run an extra behaviour for controlling the active ball handling wheels in parallel.&#xA;&#xA;Furthermore, this behaviour expects the robot to be located close the ball. It won't compensate unpositioned executors, therefore guarentee that it is only executed, when the robot is close to the ball." masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false"/>
-</alica:Behaviour>

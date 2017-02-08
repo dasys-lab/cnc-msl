@@ -29,7 +29,6 @@ extern "C" {
 
 #include "rtdb_api.h"
 
-
 //	*************************
 //	DB_comm_put: Escreve na base de dados - apenas para outros agentes!
 //
@@ -42,11 +41,10 @@ extern "C" {
 //		0 = OK
 //		-1 = erro
 //
-int DB_comm_put (int _agent, int _id, int _size, void *_value, int life);
-
+int DB_comm_put(int _agent, int _id, int _size, void *_value, int life);
 
 //	*************************
-//	DB_comm_ini: 
+//	DB_comm_ini:
 //
 //	Entrada:
 //		int _id = array com identificadores da 'variavel'
@@ -61,6 +59,5 @@ int DB_comm_ini(RTDBconf_var *rec);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

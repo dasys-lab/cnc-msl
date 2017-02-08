@@ -23,8 +23,8 @@
 #ifndef _CONFIGXML_H_
 #define _CONFIGXML_H_
 
-#include <libxml++/libxml++.h>
 #include <iostream>
+#include <libxml++/libxml++.h>
 #include <map>
 
 #include "DB_Robot_info.h"
@@ -34,42 +34,41 @@ using namespace std;
 
 class RefBoxXML : public SaxParser
 {
-	private:
-		DB_Coach_Info db_coach_info; // a local copy 
+  private:
+    DB_Coach_Info db_coach_info; // a local copy
 #if 0
 		map<string,PID> ctrlParam;
 		map<string,float> parameter;
 		map<string,int> field;
 #endif
-	public:
-		RefBoxXML();
-		~RefBoxXML();
-	
-		bool parse(string msg, DB_Coach_Info* cip) throw(xmlpp::exception);
-	
-		//map<string,PID> ctrlParam;
-		//map<string,float> parameter;
-		//map<string,int> field;
-		
+  public:
+    RefBoxXML();
+    ~RefBoxXML();
+
+    bool parse(string msg, DB_Coach_Info *cip) throw(xmlpp::exception);
+
+// map<string,PID> ctrlParam;
+// map<string,float> parameter;
+// map<string,int> field;
+
 #if 0
 		bool write(string fileName);
 	
 		void display();
-#endif			
-	protected:
-		virtual void on_start_document() throw(xmlpp::exception);
-		virtual void on_end_document() throw(xmlpp::exception);
-		virtual void on_start_element(const string& name, const AttributeList& properties) throw(xmlpp::exception);
-		virtual void on_end_element(const string& name) throw(xmlpp::exception);
+#endif
+  protected:
+    virtual void on_start_document() throw(xmlpp::exception);
+    virtual void on_end_document() throw(xmlpp::exception);
+    virtual void on_start_element(const string &name, const AttributeList &properties) throw(xmlpp::exception);
+    virtual void on_end_element(const string &name) throw(xmlpp::exception);
 
- 		virtual void on_fatal_error(const std::string& text);
- 		virtual void on_error(const std::string& text);
+    virtual void on_fatal_error(const std::string &text);
+    virtual void on_error(const std::string &text);
 
-	protected:
-		int depth;
-		int branch;
-		bool retValue;
+  protected:
+    int depth;
+    int branch;
+    bool retValue;
 };
 
 #endif //_CONFIGXML_H_
-

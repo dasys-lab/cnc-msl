@@ -22,31 +22,33 @@ THE SOFTWARE.
 
 // NOTE: this example requires blitz++
 
-#include <vector>
 #include <math.h>
+#include <vector>
 
 #define GNUPLOT_ENABLE_PTY
 #include "gnuplot-iostream.h"
 
-int main() {
-	Gnuplot gp;
+int main()
+{
+    Gnuplot gp;
 
-	double mx=0, my=0;
-	int mb=1;
-	while(mb != 3) {
-		std::vector<std::pair<double, double> > xy_pts;
-		xy_pts.push_back(std::make_pair(mx, my));
-		for(double alpha=0; alpha<1; alpha+=1.0/24.0) {
-			double theta = alpha*2.0*3.14159;
-			xy_pts.push_back(std::make_pair(
-				mx+cos(theta), my+sin(theta)));
-		}
+    double mx = 0, my = 0;
+    int mb = 1;
+    while (mb != 3)
+    {
+        std::vector<std::pair<double, double>> xy_pts;
+        xy_pts.push_back(std::make_pair(mx, my));
+        for (double alpha = 0; alpha < 1; alpha += 1.0 / 24.0)
+        {
+            double theta = alpha * 2.0 * 3.14159;
+            xy_pts.push_back(std::make_pair(mx + cos(theta), my + sin(theta)));
+        }
 
-		gp << "set xrange [-2:2]\nset yrange [-2:2]\n";
-		gp << "plot '-' with points title 'circle'\n";
-		gp.send(xy_pts);
+        gp << "set xrange [-2:2]\nset yrange [-2:2]\n";
+        gp << "plot '-' with points title 'circle'\n";
+        gp.send(xy_pts);
 
-		gp.getMouse(mx, my, mb, "Left click to move circle, right click to exit.");
-		printf("You pressed mouse button %d at x=%f y=%f\n", mb, mx, my);
-	}
+        gp.getMouse(mx, my, mb, "Left click to move circle, right click to exit.");
+        printf("You pressed mouse button %d at x=%f y=%f\n", mb, mx, my);
+    }
 }

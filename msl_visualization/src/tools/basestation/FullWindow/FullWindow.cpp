@@ -22,64 +22,54 @@
 
 #include "FullWindow.h"
 
-
 FWind::FWind(QMainWindow *parent)
 {
-	/* Criação da janela */
-	setupUi(parent);
+    /* Criação da janela */
+    setupUi(parent);
 
-	/* Inicialização das variáveis locais */
-	fullscreenflag = 0;
-	fullwindow = parent;
+    /* Inicialização das variáveis locais */
+    fullscreenflag = 0;
+    fullwindow = parent;
 
+    UpdateTimer = new QTimer();
 
-	UpdateTimer = new QTimer();
+    /* Conecções */
+    connect(FullScrBot, SIGNAL(clicked()), this, SLOT(WindowFullScreenMode()));
+    connect(actionQuit, SIGNAL(triggered()), parent, SLOT(close()));
+    connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameInfo()));
 
-	/* Conecções */
-	connect(FullScrBot, SIGNAL(clicked()), this, SLOT(WindowFullScreenMode()));
-	connect(actionQuit, SIGNAL(triggered()), parent, SLOT(close()));
-	connect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameInfo()));
-
-
-	UpdateTimer->start(100);
+    UpdateTimer->start(100);
 }
-	
 
 FWind::~FWind()
 {
-	//disconnect(FullScrBot, SIGNAL(clicked()), this, SLOT(WindowFullScreenMode()));
-	//disconnect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
-	//disconnect(actionQuit, SIGNAL(triggered()), parent, SLOT(close()));
-	//disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameInfo()));
+    // disconnect(FullScrBot, SIGNAL(clicked()), this, SLOT(WindowFullScreenMode()));
+    // disconnect(actionFlip, SIGNAL(triggered()), FieldW, SLOT(flip()));
+    // disconnect(actionQuit, SIGNAL(triggered()), parent, SLOT(close()));
+    // disconnect(UpdateTimer, SIGNAL(timeout()), this, SLOT(UpdateGameInfo()));
 
-	delete UpdateTimer;
+    delete UpdateTimer;
 }
 
-void FWind::WindowFullScreenMode (void)
+void FWind::WindowFullScreenMode(void)
 {
-	if ( fullscreenflag == 0 )
-	{
-		fullscreenflag = 1;
-		fullwindow->showFullScreen();
-		FullScrBot->setText(QString("Leave Full Screen"));
-
-	}
-	else
-	{
-		fullscreenflag = 0;
-		fullwindow->showMaximized();
-		FullScrBot->setText(QString("Full Screen"));
-	}
-
+    if (fullscreenflag == 0)
+    {
+        fullscreenflag = 1;
+        fullwindow->showFullScreen();
+        FullScrBot->setText(QString("Leave Full Screen"));
+    }
+    else
+    {
+        fullscreenflag = 0;
+        fullwindow->showMaximized();
+        FullScrBot->setText(QString("Full Screen"));
+    }
 }
-
 
 void FWind::UpdateGameInfo(void)
 {
 
-QTime GTime;
-int min=0, sec=0;
-
-	
+    QTime GTime;
+    int min = 0, sec = 0;
 }
-

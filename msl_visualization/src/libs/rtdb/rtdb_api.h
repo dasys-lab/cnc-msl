@@ -36,14 +36,12 @@ extern "C" {
 //		0 = OK
 //		-1 = erro
 //
-int DB_init (void);
-
+int DB_init(void);
 
 //	*************************
 //	DB_free: Liberta acesso a base de dados
 //
-void DB_free (void);
-
+void DB_free(void);
 
 //	*************************
 //	DB_put: Escreve na base de dados do proprio agente
@@ -55,8 +53,7 @@ void DB_free (void);
 //		0 = OK
 //		-1 = erro
 //
-int DB_put (int _id, void *_value);
-
+int DB_put(int _id, void *_value);
 
 //	*************************
 //	DB_get: Le da base de dados
@@ -69,8 +66,7 @@ int DB_put (int _id, void *_value);
 //		int life = tempo de vida da 'variavel' em ms
 //			-1 se erro
 //
-int DB_get (int _from_agent, int _id, void *_value);
-
+int DB_get(int _from_agent, int _id, void *_value);
 
 //	*************************
 //	Whoami: identifica o agente onde esta a correr
@@ -94,11 +90,10 @@ int Whoami(void);
 //		int size = size of record data
 //		-1 = erro
 //
-int DB_put_in (int _agent, int _to_agent, int _id, void *_value, int life);
+int DB_put_in(int _agent, int _to_agent, int _id, void *_value, int life);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

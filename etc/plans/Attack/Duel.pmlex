@@ -17,10 +17,6 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/GetBall.beh#1414840399972"/>
-    <value/>
-  </extensions>
-  <extensions>
     <key href="Duel.pml#1458127402884"/>
     <value xPos="162" yPos="178" collapsed="false"/>
   </extensions>
@@ -34,7 +30,7 @@
   </extensions>
   <extensions>
     <key href="Duel.pml#1458662648729"/>
-    <value xPos="171" yPos="353"/>
+    <value xPos="171" yPos="353" collapsed="false"/>
   </extensions>
   <extensions>
     <key href="Duel.pml#1458662674153"/>
