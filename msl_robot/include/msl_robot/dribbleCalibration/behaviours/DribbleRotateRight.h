@@ -29,6 +29,7 @@ namespace msl
 
 	private:
 		MovementContainer mCon;
+		shared_ptr<DribbleCalibrationQuery> query;
 
 		// parameters
 		double epsilonRot;

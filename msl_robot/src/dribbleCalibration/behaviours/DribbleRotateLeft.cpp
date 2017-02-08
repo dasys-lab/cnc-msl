@@ -26,6 +26,7 @@ namespace msl
 		rotationSpeed = 0;
 		minValue = 0;
 		maxValue = 0;
+		query = make_shared<DribbleCalibrationQuery>();
 		readConfigParameters();
 	}
 
@@ -38,7 +39,6 @@ namespace msl
 		shared_ptr<msl_actuator_msgs::MotionControl> mc;
 
 		mc->motion.rotation = rotationSpeed;
-		shared_ptr<DribbleCalibrationQuery> query;
 		query->setMc(mc);
 		return query;
 	}
