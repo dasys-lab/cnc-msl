@@ -9,13 +9,13 @@
 #include <Configuration.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/MotionControl.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleForward.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <SystemConfig.h>
 #include <iostream>
 #include <string>
 
-namespace alica
+namespace msl
 {
 	DribbleForward::DribbleForward()
 	{

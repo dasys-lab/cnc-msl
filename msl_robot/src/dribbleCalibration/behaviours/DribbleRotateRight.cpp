@@ -9,13 +9,13 @@
 #include <Configuration.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_msgs/MotionInfo.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateRight.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleRotateRight.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <iostream>
 #include <memory>
 #include <string>
 
-namespace alica
+namespace msl
 {
 
 	DribbleRotateRight::DribbleRotateRight()

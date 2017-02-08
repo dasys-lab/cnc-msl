@@ -9,13 +9,13 @@
 #include <Configuration.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_msgs/MotionInfo.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateLeft.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleRotateLeft.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <SystemConfig.h>
 #include <iostream>
 #include <string>
 
-namespace alica
+namespace msl
 {
 
 	DribbleRotateLeft::DribbleRotateLeft()
@@ -35,7 +35,7 @@ namespace alica
 
 	shared_ptr<DribbleCalibrationQuery> DribbleRotateLeft::move(int trans)
 	{
-		shared_ptr<MotionControl> mc;
+		shared_ptr<msl_actuator_msgs::MotionControl> mc;
 
 		mc->motion.rotation = rotationSpeed;
 		shared_ptr<DribbleCalibrationQuery> query;

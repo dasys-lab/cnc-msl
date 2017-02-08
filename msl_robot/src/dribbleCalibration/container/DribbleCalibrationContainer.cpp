@@ -5,8 +5,7 @@
  *      Author: Carpe Noctem
  */
 
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
-
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationContainer.h>
 #include <SystemConfig.h>
 #include <Ball.h>
 #include <MSLWorldModel.h>
@@ -16,7 +15,7 @@
 #include <obstaclehandler/Obstacles.h>
 #include <pathplanner/PathPlanner.h>
 
-namespace alica
+namespace msl
 {
 
 	DribbleCalibrationContainer::DribbleCalibrationContainer()
@@ -62,7 +61,7 @@ namespace alica
 			}
 		}
 		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
-		shared_ptr<MotionControl> mc = make_shared<MotionControl>();
+		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
 		mc = setNaN(mc);
 
 		query->setMc(mc);
@@ -93,7 +92,7 @@ namespace alica
 		}
 
 		shared_ptr<DribbleCalibrationQuery> query = make_shared<DribbleCalibrationQuery>();
-		shared_ptr<MotionControl> mc = make_shared<MotionControl>();
+		shared_ptr<msl_actuator_msgs::MotionControl> mc = make_shared<msl_actuator_msgs::MotionControl>();
 		query->setMc(setNaN(mc));
 		return query;
 	}
@@ -186,7 +185,7 @@ namespace alica
 
 	}
 
-	shared_ptr<MotionControl> DribbleCalibrationContainer::setNaN(shared_ptr<MotionControl> mc)
+	shared_ptr<msl_actuator_msgs::MotionControl> DribbleCalibrationContainer::setNaN(shared_ptr<msl_actuator_msgs::MotionControl> mc)
 	{
 		mc->senderID = -1;
 		mc->motion.translation = NAN;

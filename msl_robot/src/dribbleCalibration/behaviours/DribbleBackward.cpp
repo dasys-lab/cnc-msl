@@ -7,13 +7,13 @@
 
 #include <boost/lexical_cast.hpp>
 #include <Configuration.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleBackward.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <SystemConfig.h>
 #include <iostream>
 #include <string>
 
-namespace alica
+namespace msl
 {
 	DribbleBackward::DribbleBackward()
 	{

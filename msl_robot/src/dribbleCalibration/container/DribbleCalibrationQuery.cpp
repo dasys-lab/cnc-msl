@@ -6,9 +6,9 @@
  */
 
 #include <msl_msgs/MotionInfo.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 
-namespace alica
+namespace msl
 {
 	DribbleCalibrationQuery::DribbleCalibrationQuery()
 	{

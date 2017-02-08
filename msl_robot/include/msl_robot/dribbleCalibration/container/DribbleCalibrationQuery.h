@@ -11,7 +11,7 @@
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/MotionControl.h>
 
-namespace alica
+namespace msl
 {
 	class DribbleCalibrationQuery
 	{

@@ -5,6 +5,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/MotionControl.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
@@ -21,7 +22,7 @@ namespace alica
         dribbleBackward = false;
         dribbleRotateLeft = false;
         dribbleRotateRight = false;
-        param = DribbleCalibrationContainer::Param::ErrParm;
+        param = msl::DribbleCalibrationContainer::Param::ErrParm;
         startTrans = 0;
         endTrans = 0;
         speedIter = 0;
@@ -46,7 +47,7 @@ namespace alica
         /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
         // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
         MotionControl mc;
-        RobotMovement rm;
+        msl::RobotMovement rm;
 //		MovementContainer moveCont;
         // if ball is in kicker
         if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
@@ -77,7 +78,7 @@ namespace alica
             cout << "DribbleCalibration::run(): translation = " << tran << endl;
 #endif
             // movement
-            shared_ptr<DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
+            shared_ptr<msl::DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
 
             //check input for send methods
             shared_ptr<MotionControl> mc = query->getMc();
@@ -175,21 +176,21 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleForward;
-                !dribbleForward ? : param = DribbleCalibrationContainer::Param::DribbleForwardParm;
+                !dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
                 success = true;
             }
             else if (getParameter("DribbleBackward", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleBackward;
-                !dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
+                !dribbleBackward ? : param = msl::DribbleCalibrationContainer::Param::DribbleBackwardParm;
                 success = true;
             }
             else if (getParameter("DribbleRotateLeft", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
-                !dribbleRotateLeft ? : param = DribbleCalibrationContainer::Param::RotateLeftParm;
+                !dribbleRotateLeft ? : param = msl::DribbleCalibrationContainer::Param::RotateLeftParm;
                 speedIter = moveCount + 1;
                 success = true;
             }
@@ -197,7 +198,7 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
-                !dribbleRotateRight ? : param = DribbleCalibrationContainer::Param::RotateRightPram;
+                !dribbleRotateRight ? : param = msl::DribbleCalibrationContainer::Param::RotateRightPram;
                 speedIter = moveCount + 1;
                 success = true;
             }
