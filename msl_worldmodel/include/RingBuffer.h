@@ -9,8 +9,8 @@
 #define RINGBUFFER_H_
 
 #include <memory>
-#include <typeinfo>
 #include <mutex>
+#include <typeinfo>
 
 using namespace std;
 
@@ -22,23 +22,22 @@ namespace msl
  * Ring buffer of shared_ptr of a given data type. Not thread save!
  *
  */
-template<typename T>
-  class RingBuffer
-  {
+template <typename T> class RingBuffer
+{
   public:
-  /*!
-   * \brief Default constructor.
-   *
-   * Default constructor.
-   *
-   * \param bufferSize Number of elements which can be stored within the ring buffer
-   */
+    /*!
+     * \brief Default constructor.
+     *
+     * Default constructor.
+     *
+     * \param bufferSize Number of elements which can be stored within the ring buffer
+     */
     inline RingBuffer(const int bufferSize)
     {
-      this->bufferSize = bufferSize;
-      this->identifierCounter = 0;
-      this->index = -1;
-      this->ringBuffer = std::unique_ptr<std::shared_ptr<T>[]>(new std::shared_ptr<T>[this->bufferSize]);
+        this->bufferSize = bufferSize;
+        this->identifierCounter = 0;
+        this->index = -1;
+        this->ringBuffer = std::unique_ptr<std::shared_ptr<T>[]>(new std::shared_ptr<T>[this->bufferSize]);
     }
 
     /*!
@@ -48,7 +47,7 @@ template<typename T>
      */
     inline virtual ~RingBuffer()
     {
-//      delete ringBuffer;
+        //      delete ringBuffer;
     }
 
     /*!
@@ -58,7 +57,7 @@ template<typename T>
      */
     std::shared_ptr<T> getLast()
     {
-      return this->getLast(0);
+        return this->getLast(0);
     }
 
     /*!
@@ -70,19 +69,19 @@ template<typename T>
      */
     std::shared_ptr<T> getLast(int n)
     {
-      std::shared_ptr<T> ptr;
-      lock_guard<mutex> guard(mtx_);
+        std::shared_ptr<T> ptr;
+        lock_guard<mutex> guard(mtx_);
 
-      if (this->index < 0 || this->bufferSize <= n || this->identifierCounter <= n)
-      {
+        if (this->index < 0 || this->bufferSize <= n || this->identifierCounter <= n)
+        {
+            return ptr;
+        }
+
+        int index = (this->index - n) % this->bufferSize;
+
+        ptr = this->ringBuffer[index];
+
         return ptr;
-      }
-
-      int index = (this->index - n) % this->bufferSize;
-
-      ptr = this->ringBuffer[index];
-
-      return ptr;
     }
 
     /*!
@@ -94,13 +93,13 @@ template<typename T>
      */
     int add(std::shared_ptr<T> element)
     {
-      lock_guard<mutex> guard(mtx_);
+        lock_guard<mutex> guard(mtx_);
 
-      int index = (++this->index) % this->bufferSize;
+        int index = (++this->index) % this->bufferSize;
 
-      this->ringBuffer[index] = element;
+        this->ringBuffer[index] = element;
 
-      return this->identifierCounter++;
+        return this->identifierCounter++;
     }
 
     /*!
@@ -110,7 +109,7 @@ template<typename T>
      */
     const int getBufferSize() const
     {
-      return this->bufferSize;
+        return this->bufferSize;
     }
 
     /*!
@@ -120,7 +119,7 @@ template<typename T>
      */
     const int getSize() const
     {
-      return (this->bufferSize < this->identifierCounter) ? this->bufferSize : this->identifierCounter;
+        return (this->bufferSize < this->identifierCounter) ? this->bufferSize : this->identifierCounter;
     }
 
     /*!
@@ -134,18 +133,18 @@ template<typename T>
      */
     int clear(bool cleanBuffer)
     {
-      lock_guard<mutex> guard(mtx_);
-      this->index = -1;
-      this->identifierCounter = 0;
+        lock_guard<mutex> guard(mtx_);
+        this->index = -1;
+        this->identifierCounter = 0;
 
-      if (false == cleanBuffer)
+        if (false == cleanBuffer)
+            return 0;
+
+        std::shared_ptr<T> ptr;
+        for (int i = 0; i < this->bufferSize; ++i)
+            this->ringBuffer[i] = ptr;
+
         return 0;
-
-      std::shared_ptr<T> ptr;
-      for (int i = 0; i < this->bufferSize; ++i)
-        this->ringBuffer[i] = ptr;
-
-      return 0;
     }
 
     /*!
@@ -153,18 +152,18 @@ template<typename T>
      *
      * Returns the type_info of the used template type.
      */
-    const std::type_info* getTypeInfo() const
+    const std::type_info *getTypeInfo() const
     {
-      return &typeid(T);
+        return &typeid(T);
     }
 
   private:
     mutex mtx_;
     std::unique_ptr<std::shared_ptr<T>[]> ringBuffer; /**< Ring buffer of elements */
-    int bufferSize; /**< number of stored elements */
-    ulong identifierCounter; /**< Counter of elements added to the ring buffer */
-    long index; /**< Current index of the last added element */
-  };
+    int bufferSize;                                   /**< number of stored elements */
+    ulong identifierCounter;                          /**< Counter of elements added to the ring buffer */
+    long index;                                       /**< Current index of the last added element */
+};
 
 } /* namespace ice */
 

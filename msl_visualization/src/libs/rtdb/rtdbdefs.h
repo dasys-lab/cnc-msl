@@ -31,7 +31,7 @@ extern "C" {
 
 #define SELF 3333
 
-#define CONFIG_FILE	"../config/rtdb.ini"
+#define CONFIG_FILE "../config/rtdb.ini"
 
 #define SHMEM_KEY 0x2000
 #define SHMEM_SECOND_TEAM_KEY 0x3000
@@ -39,16 +39,16 @@ extern "C" {
 // definicoes hard-coded
 // alterar de acordo com a utilizacao pretendida
 
-#define MAX_AGENTS 7	// numero maximo de agentes
-#define MAX_RECS 100	// numero maximo de 'variaveis' (shared + local)
+#define MAX_AGENTS 7 // numero maximo de agentes
+#define MAX_RECS 100 // numero maximo de 'variaveis' (shared + local)
 
 // fim das definicoes hard-coded
 
 typedef struct
 {
-	int id;				// identificador da 'variavel'
-	int size;			// tamanho de dados
-	int period;			// periodicidade de refrescamento via wireless
+    int id;     // identificador da 'variavel'
+    int size;   // tamanho de dados
+    int period; // periodicidade de refrescamento via wireless
 } RTDBconf_var;
 
 #ifdef __cplusplus

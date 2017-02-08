@@ -28,41 +28,36 @@
 using namespace std;
 //#include "LineDistanceHelper.h"
 
-struct Particle {
+struct Particle
+{
 
-        double posx;
-        double posy;
-        double heading;
-        double weight;
-
+    double posx;
+    double posy;
+    double heading;
+    double weight;
 };
 
-struct LinePoint{
+struct LinePoint
+{
 
-        double x;
-        double y;
-
+    double x;
+    double y;
 };
 
-class LocalizeDebug{
+class LocalizeDebug
+{
 
-	public:
-		LocalizeDebug();
-		~LocalizeDebug();
+  public:
+    LocalizeDebug();
+    ~LocalizeDebug();
 
-		 vector<pair<double,double> > drawFieldForParticle(Particle particle, int number = 0);
+    vector<pair<double, double>> drawFieldForParticle(Particle particle, int number = 0);
 
-	private:
-	
-		double Lines[17][2][2];
+  private:
+    double Lines[17][2][2];
 
-		void init();
-		void cleanup();
-
-
-
+    void init();
+    void cleanup();
 };
-
 
 #endif
-

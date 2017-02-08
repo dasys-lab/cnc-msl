@@ -3,7 +3,7 @@
 
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1469284294147) ENABLED START*/ //Add additional includes here
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationContainer.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationContainer.h>
 /*PROTECTED REGION END*/
 namespace alica
 {
@@ -20,8 +20,8 @@ namespace alica
         /*PROTECTED REGION ID(pro1469284294147) ENABLED START*/ //Add additional protected methods here
         bool runBehaviour;
 
-        DribbleCalibrationContainer dcc;
-        MovementContainer moveCont;
+        msl::DribbleCalibrationContainer dcc;
+        msl::MovementContainer moveCont;
 
         double minRotation;
         double slowTranslationWheelSpeed;

@@ -4,12 +4,12 @@
 namespace msl_ptgrey_camera
 {
 
-	class MSLPtGreyCamera
-	{
-	public:
-		MSLPtGreyCamera();
-		virtual ~MSLPtGreyCamera();
-	};
+class MSLPtGreyCamera
+{
+  public:
+    MSLPtGreyCamera();
+    virtual ~MSLPtGreyCamera();
+};
 
 } /* namespace msl_ptgrey_camera */
 

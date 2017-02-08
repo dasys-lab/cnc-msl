@@ -10,24 +10,24 @@
 
 using namespace std;
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace msl
 {
 
-	class KickCurve
-	{
-	public:
-		KickCurve(string section);
-		virtual ~KickCurve();
-		int getKickPower(double dist, double velocity);
+class KickCurve
+{
+  public:
+    KickCurve(string section);
+    virtual ~KickCurve();
+    int getKickPower(double dist, double velocity);
 
-	protected:
-		vector<double> kickCurvePower;
-		vector<double> kickCurveDistance;
-		double velocityReduction;
-	};
+  protected:
+    vector<double> kickCurvePower;
+    vector<double> kickCurveDistance;
+    double velocityReduction;
+};
 
 } /* namespace msl */
 

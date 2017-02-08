@@ -26,231 +26,227 @@
 #include <stdint.h>
 #include <vector>
 
-struct Particle {
+struct Particle
+{
 
-	double posx;
-	double posy;
-	double heading;
-	double weight;
-
+    double posx;
+    double posy;
+    double heading;
+    double weight;
 };
 
+struct Position
+{
 
-struct Position {
-
-	double x;
-	double y;
-	double heading;
-
+    double x;
+    double y;
+    double heading;
 };
 
-struct WeightedPosition {
+struct WeightedPosition
+{
 
-	double x;
-	double y;
-	double heading;
-	double weight;
+    double x;
+    double y;
+    double heading;
+    double weight;
 };
 
-struct Point {
+struct Point
+{
 
-	double x;
-	double y;
-
+    double x;
+    double y;
 };
 
-struct ObservedPoint {
-	
-	double x;
-	double y;
-	double z;
-	double angleHori;
-	double angleVerti;
-	unsigned long long timestamp;
-	double confidence;
-	bool valid;
+struct ObservedPoint
+{
 
-
+    double x;
+    double y;
+    double z;
+    double angleHori;
+    double angleVerti;
+    unsigned long long timestamp;
+    double confidence;
+    bool valid;
 };
 
-
-struct CorrectedOdometry {
-        double posX;
-        double posY;
-        double posAngle;
-        double posCertainty;
-        double motAngle;
-        double motTranslation;
-        double motRotation;
-        unsigned long long timestamp;
-        double certainty;
+struct CorrectedOdometry
+{
+    double posX;
+    double posY;
+    double posAngle;
+    double posCertainty;
+    double motAngle;
+    double motTranslation;
+    double motRotation;
+    unsigned long long timestamp;
+    double certainty;
 };
 
+struct PointHypothesis
+{
 
-struct PointHypothesis {
-
-	ObservedPoint point;
-	double certainty;
-	bool dirty;
-
+    ObservedPoint point;
+    double certainty;
+    bool dirty;
 };
 
-struct Velocity {
+struct Velocity
+{
 
-	double vx;
-	double vy;
-
+    double vx;
+    double vy;
 };
 
-struct RobotVelocity {
+struct RobotVelocity
+{
 
-	double vx;
-	double vy;
-	double w;
-
+    double vx;
+    double vy;
+    double w;
 };
 
+struct Goal
+{
 
-struct Goal {
-
-	Point leftPost;
-	Point rightPost;
-	double weight;
-
+    Point leftPost;
+    Point rightPost;
+    double weight;
 };
 
-struct FreeArea {
+struct FreeArea
+{
 
-	double angle1;
-	double angle2;
-
+    double angle1;
+    double angle2;
 };
 
-struct MovingObject {
+struct MovingObject
+{
 
-	Point point;
-	Velocity velocity;	
-
-
+    Point point;
+    Velocity velocity;
 };
 
-struct ZEstimate {
-	double z;
-	double vz;
+struct ZEstimate
+{
+    double z;
+    double vz;
 };
 
-struct MovingRobot {
+struct MovingRobot
+{
 
-	Position position;
-	RobotVelocity velocity;	
-
-
+    Position position;
+    RobotVelocity velocity;
 };
 
+struct Point3D
+{
 
-struct Point3D {
-
-	double x;
-	double y;
-	double z;
-	double angleHori;
-	double angleVerti;
-
+    double x;
+    double y;
+    double z;
+    double angleHori;
+    double angleVerti;
 };
 
-typedef struct {
-        int x;
-        int y;
-        int minRadius;
-        int maxRadius;
+typedef struct
+{
+    int x;
+    int y;
+    int minRadius;
+    int maxRadius;
 
-	int err;
-        int balls;
-        int xballsum;
-        int yballsum;
-	int sizeSum;
+    int err;
+    int balls;
+    int xballsum;
+    int yballsum;
+    int sizeSum;
 } ballCluster;
 
+typedef struct
+{
+    short left;
+    short right;
+    short top;
+    short bottom;
 
-
-typedef struct {
-	short left;
-	short right;
-	short top;
-	short bottom;
-
-	short midX;
-	short midY;
+    short midX;
+    short midY;
 } ROIData;
 
-
-struct Holder {
-	double start;
-	double end;
+struct Holder
+{
+    double start;
+    double end;
 };
 
+struct ROI
+{
 
-struct ROI {
-
-	int top;
-	int bottom;
-	int left;
-	int right;
-	double confidence;
-
+    int top;
+    int bottom;
+    int left;
+    int right;
+    double confidence;
 };
 
-struct BlobBounds{
+struct BlobBounds
+{
 
-	int left;
-	int right;
-	int top;
-	int bottom;
-	int count;
-	double minDistance;
-	int minX;
-	int minY;
-
+    int left;
+    int right;
+    int top;
+    int bottom;
+    int count;
+    double minDistance;
+    int minX;
+    int minY;
 };
 
-
-struct SharedBall {
-	double x;
-	double y;
-	double evidence;
-	double confidence;
-	unsigned long long timestamp;
+struct SharedBall
+{
+    double x;
+    double y;
+    double evidence;
+    double confidence;
+    unsigned long long timestamp;
 };
 
-struct Circle {
-	int16_t x;
-	int16_t y;
-	uint16_t radius;
+struct Circle
+{
+    int16_t x;
+    int16_t y;
+    uint16_t radius;
 };
 
 struct ImageSize
 {
-	uint16_t height;
-	uint16_t width;
+    uint16_t height;
+    uint16_t width;
 };
 
-class KinectCluster {
-	public:
-		int clusterID;
+class KinectCluster
+{
+  public:
+    int clusterID;
 
-		std::vector<int> pixels;
-		int north, south, west, east;
-		int height, width;
-		int invHeight, invWidth;
-		int center;
+    std::vector<int> pixels;
+    int north, south, west, east;
+    int height, width;
+    int invHeight, invWidth;
+    int center;
 
-		Point3D position;
-		double confidence;
+    Point3D position;
+    double confidence;
 
-		inline void addPixel(int p) {
-			pixels.push_back(p);
-		}
+    inline void addPixel(int p)
+    {
+        pixels.push_back(p);
+    }
 };
 
 #endif
-

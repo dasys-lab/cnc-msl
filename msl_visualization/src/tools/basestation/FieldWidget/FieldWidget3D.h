@@ -23,119 +23,122 @@
 #ifndef FIELDWIDGET3D_H
 #define FIELDWIDGET3D_H
 
-#include <QTimer>
-#include <QFile>
-#include <QtGui>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
+#include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
+#include <QFile>
+#include <QTimer>
+#include <QtGui>
+#include <atomic>
+#include <list>
+#include <math.h>
 #include <mutex>
 #include <ros/ros.h>
-#include <list>
-#include "src/tools/basestation/RobotVisualization/RobotVisualization.h"
 #include <thread>
-#include <atomic>
-#include <math.h>
 
 #include <src/tools/basestation/FieldWidget/QVTKWidget3.h>
 
-#include <vtkCallbackCommand.h>
-#include <vtkSmartPointer.h>
-#include <vtkLineSource.h>
-#include <vtkSphereSource.h>
-#include <vtkProperty.h>
-#include <vtkProperty2D.h>
-#include <vtkRenderWindow.h>
-#include <vtkGenericOpenGLRenderWindow.h>
-#include <vtkRenderer.h>
-#include <vtkTextSource.h>
-#include <vtkCylinderSource.h>
-#include <vtkVectorText.h>
-#include <vtkPolyDataMapper.h>
 #include <vtkActor.h>
-#include <vtkOpenGLCamera.h>
-#include <vtkInteractorStyleSwitch.h>
-#include <vtkInteractorStyleTerrain.h>
-#include <vtkOBJReader.h>
-#include <vtkTriangleStrip.h>
+#include <vtkArcSource.h>
+#include <vtkCallbackCommand.h>
 #include <vtkCellArray.h>
+#include <vtkCubeSource.h>
+#include <vtkCylinderSource.h>
 #include <vtkDataSetMapper.h>
+#include <vtkDataSetMapper.h>
+#include <vtkDelaunay2D.h>
+#include <vtkDiskSource.h>
 #include <vtkFloatArray.h>
-#include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkTextWidget.h>
-#include <vtkTextActor.h>
-#include <vtkTextProperty.h>
-#include <vtkViewport.h>
-#include <vtkPointWidget.h>
-#include <vtkPolygon.h>
-#include <vtkPNGReader.h>
+#include <vtkFollower.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkImageCanvasSource2D.h>
 #include <vtkImageData.h>
 #include <vtkImageMapper.h>
-#include <vtkPropPicker.h>
-#include <vtkObjectFactory.h>
-#include <vtkPlaneSource.h>
-#include <vtkPropCollection.h>
-#include <vtkDelaunay2D.h>
+#include <vtkInteractorStyleSwitch.h>
+#include <vtkInteractorStyleTerrain.h>
+#include <vtkLineSource.h>
+#include <vtkLineWidget.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
+#include <vtkOBJReader.h>
+#include <vtkObjectFactory.h>
+#include <vtkOpenGLCamera.h>
+#include <vtkPNGReader.h>
+#include <vtkPlaneSource.h>
 #include <vtkPointData.h>
-#include <vtkCubeSource.h>
+#include <vtkPointWidget.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkPolygon.h>
+#include <vtkPropCollection.h>
+#include <vtkPropPicker.h>
+#include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkPyramid.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkDataSetMapper.h>
 #include <vtkRegularPolygonSource.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
 #include <vtkTetra.h>
-#include <vtkLineWidget.h>
-#include <vtkFollower.h>
-#include <vtkDiskSource.h>
-#include <vtkArcSource.h>
+#include <vtkTextActor.h>
+#include <vtkTextProperty.h>
+#include <vtkTextSource.h>
+#include <vtkTextWidget.h>
+#include <vtkTransform.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTriangleStrip.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkVectorText.h>
+#include <vtkViewport.h>
 
 #include <QVTKInteractor.h>
 
 #include "RobotInfo.h"
-#include <msl_msgs/PathPlanner.h>
-#include <msl_msgs/CorridorCheck.h>
-#include <msl_msgs/VoronoiNetInfo.h>
-#include <msl_helper_msgs/PassMsg.h>
 #include <SystemConfig.h>
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_msgs/CorridorCheck.h>
+#include <msl_msgs/PathPlanner.h>
+#include <msl_msgs/VoronoiNetInfo.h>
 #include <vtkArrowSource.h>
 
 #define OBSTACLE_HEIGHT 0.2
 
 class MWind;
 
-struct Line {
-        Line(vtkSmartPointer<vtkActor> actor, vtkSmartPointer<vtkLineSource> source)
-        {
-          this->actor = actor;
-          this->source = source;
-        }
+struct Line
+{
+    Line(vtkSmartPointer<vtkActor> actor, vtkSmartPointer<vtkLineSource> source)
+    {
+        this->actor = actor;
+        this->source = source;
+    }
 
-       vtkSmartPointer<vtkActor> actor;
-       vtkSmartPointer<vtkLineSource> source;
+    vtkSmartPointer<vtkActor> actor;
+    vtkSmartPointer<vtkLineSource> source;
 };
 
 class FieldWidget3D : public QVTKWidget3
 {
     Q_OBJECT
-public:
-    static vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, std::array<double,3> color = {1.0,1.0,1.0});
+  public:
+    static vtkSmartPointer<vtkActor> createLine(float x1, float y1, float z1, float x2, float y2, float z2, float width,
+                                                std::array<double, 3> color = {1.0, 1.0, 1.0});
     static void updateLine(vtkSmartPointer<vtkActor> actor, float x1, float y1, float z1, float x2, float y2, float z2);
-    static std::shared_ptr<Line> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern, std::array<double,3> color = {1.0,1.0,1.0});
-    static vtkSmartPointer<vtkActor> createDot(float x, float y, float radius, std::array<double,3> color = {1.0,1.0,1.0});
+    static std::shared_ptr<Line> createDashedLine(float x1, float y1, float z1, float x2, float y2, float z2, float width, int pattern,
+                                                  std::array<double, 3> color = {1.0, 1.0, 1.0});
+    static vtkSmartPointer<vtkActor> createDot(float x, float y, float radius, std::array<double, 3> color = {1.0, 1.0, 1.0});
     static vtkSmartPointer<vtkActor> addArc(float x, float y, float radius, float startDeg, float endDeg);
     static vtkSmartPointer<vtkActor> addCircle(float x, float y, float outerRadius, float innerRadius);
     static vtkSmartPointer<vtkActor> createText(QString text);
 
-public:
+  public:
     explicit FieldWidget3D(QWidget *parent = 0);
     pair<double, double> transformToGuiCoords(double x, double y);
 
-    MWind* mainWindow;
+    MWind *mainWindow;
     vtkRenderWindow *renderWindow = nullptr;
     vtkRenderer *renderer = nullptr;
-    vtkOpenGLCamera* camera = nullptr;
-    vtkActor* field = nullptr;
+    vtkOpenGLCamera *camera = nullptr;
+    vtkActor *field = nullptr;
 
     bool heightVisible;
     bool heightColor;
@@ -143,7 +146,7 @@ public:
     bool top;
     bool lockCam;
     void setTop(bool top);
-    list<shared_ptr<RobotInfo>>* getRobots();
+    list<shared_ptr<RobotInfo>> *getRobots();
 
     // field configuration
     double _FIELD_LENGTH;
@@ -170,8 +173,7 @@ public:
     mutex debugMutex;
     mutex passMutex;
 
-
-private:
+  private:
     void onSharedWorldInfo(boost::shared_ptr<msl_sensor_msgs::SharedWorldInfo> info);
     void onPathPlannerMsg(boost::shared_ptr<msl_msgs::PathPlanner> info);
     void onVoronoiNetMsg(boost::shared_ptr<msl_msgs::VoronoiNetInfo> info);
@@ -179,9 +181,9 @@ private:
     void onDebugMsg(boost::shared_ptr<msl_helper_msgs::DebugMsg> info);
     void onPassMsg(boost::shared_ptr<msl_helper_msgs::PassMsg> info);
 
-    void drawField(vtkRenderer* renderer);
-    void drawFieldLine(vtkRenderer* renderer, float x1, float y1, float z1, float x2, float y2, float z2);
-    void drawGoals(vtkRenderer* renderer);
+    void drawField(vtkRenderer *renderer);
+    void drawFieldLine(vtkRenderer *renderer, float x1, float y1, float z1, float x2, float y2, float z2);
+    void drawGoals(vtkRenderer *renderer);
     void initGridView();
     void updateGridView();
     void deleteGridView();
@@ -190,10 +192,10 @@ private:
     vtkSmartPointer<vtkActor> createObstacle();
     vtkSmartPointer<vtkActor> createDebugPt();
 
-private:
+  private:
     // ros stuff
-    ros::NodeHandle* rosNode;
-    ros::AsyncSpinner* spinner;
+    ros::NodeHandle *rosNode;
+    ros::AsyncSpinner *spinner;
     ros::Subscriber sharedWorldInfoSubscriber;
     ros::Subscriber pathPlannerSubscriber;
     ros::Subscriber voronoiSidesSubscriber;
@@ -215,13 +217,13 @@ private:
     // bool showPathPlannerAll;
 
     // ui stuff
-    QWidget* parent;
+    QWidget *parent;
 
-    vtkPoints* heightPoints;
-    vtkPolyData* heightPolyData;
-    vtkDelaunay2D* heightDelaunay;
-    vtkPolyData* heightPolyDataAfterInterp;
-    vtkActor* heightActor;
+    vtkPoints *heightPoints;
+    vtkPolyData *heightPolyData;
+    vtkDelaunay2D *heightDelaunay;
+    vtkPolyData *heightPolyDataAfterInterp;
+    vtkActor *heightActor;
 
     // Timer to update objects positions
     QTimer *Update_timer;
@@ -229,8 +231,8 @@ private:
     bool option_draw_debug[10];
     bool option_draw_obstacles[10];
 
-Q_SIGNALS:
-public Q_SLOTS:
+  Q_SIGNALS:
+  public Q_SLOTS:
     void flip(void);
     void lock(bool);
     void update_robot_info(void);
@@ -239,61 +241,61 @@ public Q_SLOTS:
     void showDebugPointsToggle(void);
 
     // Path Planner
-    //void showPathToggle(void);
-    //void showVoronoiNetToggle(void);
-    //void showCorridorCheckToggle(void);
-    //void showSidePointsToggle(void);
-    //void showPathPlannerAllToggle(void);
-    //void updatePathPlannerAll(void);
+    // void showPathToggle(void);
+    // void showVoronoiNetToggle(void);
+    // void showCorridorCheckToggle(void);
+    // void showSidePointsToggle(void);
+    // void showPathPlannerAllToggle(void);
+    // void updatePathPlannerAll(void);
 
+    //    void obstacles_point_flip(unsigned int Robot_no, bool on_off);
+    //    void obstacles_point_flip_r0 (bool on_off)
+    //        {obstacles_point_flip (0, on_off);}
+    //    void obstacles_point_flip_r1 (bool on_off)
+    //        {obstacles_point_flip (1, on_off);}
+    //    void obstacles_point_flip_r2 (bool on_off)
+    //        {obstacles_point_flip (2, on_off);}
+    //    void obstacles_point_flip_r3 (bool on_off)
+    //        {obstacles_point_flip (3, on_off);}
+    //    void obstacles_point_flip_r4 (bool on_off)
+    //        {obstacles_point_flip (4, on_off);}
+    //    void obstacles_point_flip_r5 (bool on_off)
+    //        {obstacles_point_flip (5, on_off);}
+    //    void obstacles_point_flip_r6 (bool on_off)
+    //        {obstacles_point_flip (6, on_off);}
+    //    void obstacles_point_flip_all (bool on_off);
 
-//    void obstacles_point_flip(unsigned int Robot_no, bool on_off);
-//    void obstacles_point_flip_r0 (bool on_off)
-//        {obstacles_point_flip (0, on_off);}
-//    void obstacles_point_flip_r1 (bool on_off)
-//        {obstacles_point_flip (1, on_off);}
-//    void obstacles_point_flip_r2 (bool on_off)
-//        {obstacles_point_flip (2, on_off);}
-//    void obstacles_point_flip_r3 (bool on_off)
-//        {obstacles_point_flip (3, on_off);}
-//    void obstacles_point_flip_r4 (bool on_off)
-//        {obstacles_point_flip (4, on_off);}
-//    void obstacles_point_flip_r5 (bool on_off)
-//        {obstacles_point_flip (5, on_off);}
-//    void obstacles_point_flip_r6 (bool on_off)
-//        {obstacles_point_flip (6, on_off);}
-//    void obstacles_point_flip_all (bool on_off);
-
-    //Debug Points
-//    void debug_point_flip (unsigned int Robot_no, bool on_off);
-//    void debug_point_flip_r0 (bool on_off)
-//        {debug_point_flip (0, on_off);}
-//    void debug_point_flip_r1 (bool on_off)
-//        {debug_point_flip (1, on_off);}
-//    void debug_point_flip_r2 (bool on_off)
-//        {debug_point_flip (2, on_off);}
-//    void debug_point_flip_r3 (bool on_off)
-//        {debug_point_flip (3, on_off);}
-//    void debug_point_flip_r4 (bool on_off)
-//        {debug_point_flip (4, on_off);}
-//    void debug_point_flip_r5 (bool on_off)
-//        {debug_point_flip (5, on_off);}
-//    void debug_point_flip_r6 (bool on_off)
-//        {debug_point_flip (6, on_off);}
-//    void debug_point_flip_all (bool on_off);
+    // Debug Points
+    //    void debug_point_flip (unsigned int Robot_no, bool on_off);
+    //    void debug_point_flip_r0 (bool on_off)
+    //        {debug_point_flip (0, on_off);}
+    //    void debug_point_flip_r1 (bool on_off)
+    //        {debug_point_flip (1, on_off);}
+    //    void debug_point_flip_r2 (bool on_off)
+    //        {debug_point_flip (2, on_off);}
+    //    void debug_point_flip_r3 (bool on_off)
+    //        {debug_point_flip (3, on_off);}
+    //    void debug_point_flip_r4 (bool on_off)
+    //        {debug_point_flip (4, on_off);}
+    //    void debug_point_flip_r5 (bool on_off)
+    //        {debug_point_flip (5, on_off);}
+    //    void debug_point_flip_r6 (bool on_off)
+    //        {debug_point_flip (6, on_off);}
+    //    void debug_point_flip_all (bool on_off);
 
     // Heightmap
-    void setHeightMapVisible(bool v){
+    void setHeightMapVisible(bool v)
+    {
         heightVisible = v;
     }
-    void setHeightMap3D(bool v){
+    void setHeightMap3D(bool v)
+    {
         height3D = v;
     }
-    void setHeightMapColor(bool v){
+    void setHeightMapColor(bool v)
+    {
         heightColor = v;
     }
-
-
 };
 
 #endif // FIELDWIDGET3D_H

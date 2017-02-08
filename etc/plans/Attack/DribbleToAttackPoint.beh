@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<alica:Behaviour xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1436855838589" name="DribbleToAttackPoint" comment="" destinationPath="Plans/Attack">
-  <configurations id="1436855860607" name="DribbleToAttackPointDefault" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1437391471878" name="MISSING_NAME" comment="" key="OwnPenalty" value="false"/>
-  </configurations>
-  <configurations id="1437391438054" name="DribbleToAttackPointOwnPenaltySpot" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="" deferring="0" frequency="30" eventDriven="false">
-    <parameters id="1437391588176" name="MISSING_NAME" comment="" key="OwnPenalty" value="true"/>
-  </configurations>
-</alica:Behaviour>

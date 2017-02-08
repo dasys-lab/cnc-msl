@@ -10,30 +10,30 @@
 #include <memory>
 
 using namespace std;
-namespace geometry{
-	class CNPoint2D;
+namespace geometry
+{
+class CNPoint2D;
 }
 namespace msl
 {
-	class SearchNode;
-	class VoronoiNet;
-	/**
-	 * Interface class for Pathplanning evaluators
-	 */
-	class IPathEvaluator
-	{
-	public:
-		virtual ~IPathEvaluator()
-		{
-		}
-		virtual pair<double, double> eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode,
-											shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi) = 0;
+class SearchNode;
+class VoronoiNet;
+/**
+ * Interface class for Pathplanning evaluators
+ */
+class IPathEvaluator
+{
+  public:
+    virtual ~IPathEvaluator()
+    {
+    }
+    virtual pair<double, double> eval(shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> currentNode, shared_ptr<SearchNode> nextNode,
+                                      VoronoiNet *voronoi) = 0;
 
-		virtual pair<double, double> evalInitial(shared_ptr<geometry::CNPoint2D> startPos,
-													shared_ptr<geometry::CNPoint2D> goal,
-													shared_ptr<SearchNode> nextNode, VoronoiNet* voronoi,
-													shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath, shared_ptr<geometry::CNPoint2D> lastTarget) = 0;
-	};
+    virtual pair<double, double> evalInitial(shared_ptr<geometry::CNPoint2D> startPos, shared_ptr<geometry::CNPoint2D> goal, shared_ptr<SearchNode> nextNode,
+                                             VoronoiNet *voronoi, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> lastPath,
+                                             shared_ptr<geometry::CNPoint2D> lastTarget) = 0;
+};
 
 } /* namespace msl */
 

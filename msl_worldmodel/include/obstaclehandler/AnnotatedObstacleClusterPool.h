@@ -14,17 +14,17 @@ using namespace std;
 
 namespace msl
 {
-	class AnnotatedObstacleCluster;
-	class AnnotatedObstacleClusterPool
-	{
-	public:
-		AnnotatedObstacleClusterPool();
-		virtual ~AnnotatedObstacleClusterPool();
-		void reset();
-		int curIndex;
-		const static int maxCount;
-		vector<AnnotatedObstacleCluster*> daAOCs;
-	};
+class AnnotatedObstacleCluster;
+class AnnotatedObstacleClusterPool
+{
+  public:
+    AnnotatedObstacleClusterPool();
+    virtual ~AnnotatedObstacleClusterPool();
+    void reset();
+    int curIndex;
+    const static int maxCount;
+    vector<AnnotatedObstacleCluster *> daAOCs;
+};
 
 } /* namespace msl */
 

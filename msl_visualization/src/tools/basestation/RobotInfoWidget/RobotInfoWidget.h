@@ -24,28 +24,26 @@
 #define __ROBOTINFOWIGDET_H
 
 #include "ui_RobotInfoWG.h"
-#include <QTimer>
 #include <QEvent>
+#include <QTimer>
 
 class RobotInfoWidget : public QWidget, public Ui::RBInfoWG
 {
-	Q_OBJECT
+    Q_OBJECT
 
-public:
-	RobotInfoWidget(QWidget * parent=0);
-	~RobotInfoWidget();
-	void get_robot_number(int num);
+  public:
+    RobotInfoWidget(QWidget *parent = 0);
+    ~RobotInfoWidget();
+    void get_robot_number(int num);
 
+  private:
+    int my_number;
+    QTimer *UpdateTimer;
+    double Pi;
 
-private:
-	int my_number;
-	QTimer *UpdateTimer;
-	double Pi;
-
-
-public slots:
-	void updateInfo(void);
-	void ChangeTextSize(int size);
+  public slots:
+    void updateInfo(void);
+    void ChangeTextSize(int size);
 };
 
 #endif
