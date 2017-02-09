@@ -5,7 +5,7 @@
  *      Author: paspartout
  */
 
-#include "../include/CanHandler.h"
+#include "CanHandler.h"
 
 CanReceiver::CanReceiver() {
 	// TODO Auto-generated constructor stub

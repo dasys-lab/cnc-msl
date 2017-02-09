@@ -39,7 +39,7 @@ add_executable(msl_beagle_board_black_udp
 	src/IMU.cpp
 	src/LightBarrier.cpp
 	src/Motor.cpp
-	src/Opticalflow.cpp
+	src/OpticalFlow.cpp
 	src/Sensor.cpp
 	src/ShovelSelect.cpp
 	src/Spline.cpp

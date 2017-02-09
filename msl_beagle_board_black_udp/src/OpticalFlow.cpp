@@ -5,7 +5,7 @@
  *      Author: Lukas Will
  */
 
-#include "opticalflow.h"
+#include "OpticalFlow.h"
 
 using namespace BlackLib;
 

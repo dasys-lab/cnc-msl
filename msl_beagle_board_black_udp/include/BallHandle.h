@@ -10,7 +10,7 @@
 #define TIMEDIFFMS(n,o) (((n).tv_sec-(o).tv_sec)*1000+((n).tv_usec-(o).tv_usec)/1000)
 #define BallHandle_TIMEOUT 1000
 
-#include "motor.h"
+#include "Motor.h"
 #include "Spline.h"
 
 

@@ -1,10 +1,6 @@
 #include "Spline.h"
 
 namespace splines {
-// ---------------------------------------------------------------------
-// implementation part, which could be separated into a cpp file
-// ---------------------------------------------------------------------
-
 
 // band_matrix implementation
 // -------------------------

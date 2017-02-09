@@ -1,6 +1,8 @@
 
+#include "RIMUBBB.h"
 
 #include "RTIMULib.h"
+
 
 RTIMUBBB::RTIMUBBB() {
 	int sampleCount = 0;

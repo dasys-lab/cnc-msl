@@ -6,7 +6,7 @@
  */
 
 
-#include "lightbarrier.h"
+#include "LightBarrier.h"
 #include <SystemConfig.h>
 
 using namespace BlackLib;

@@ -1,11 +1,4 @@
-/*
- * shovelselect.cpp
- *
- *  Created on: Mar 7, 2016
- *      Author: Lukas Will
- */
-
-#include "shovelselect.h"
+#include "ShovelSelect.h"
 #include <SystemConfig.h>
 
 using namespace BlackLib;

@@ -1,10 +1,3 @@
-/*
- * sensor.cpp
- *
- *  Created on: Apr 27, 2016
- *      Author: Lukas Will
- */
-
 #include "Sensor.h"
 
 #include <cnc_geometry/Calculator.h>

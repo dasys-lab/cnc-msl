@@ -1,16 +1,8 @@
-/*
- * debug.cpp
- *
- *  Created on: Feb 24, 2016
- *      Author: Lukas Will
- */
-
 
 #include <iostream>
 #include <unistd.h>
 #include <string>
 
-using namespace std;
 
 // ROS
 #include "ros/ros.h"

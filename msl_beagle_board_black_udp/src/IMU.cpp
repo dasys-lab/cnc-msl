@@ -1,14 +1,4 @@
-/*
- * imu.cpp
- *
- *  Created on: Mar 12, 2015
- *      Author: Lukas Will
- */
-
-
-#include "imu.h"
-
-using namespace BlackLib;
+#include "IMU.h"
 
 IMU::IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P) {
 	i2c = i2c_P;
@@ -219,13 +209,13 @@ void IMU::getAccel() {
 	geometry::CNPointAllo point = geometry::CNPointAllo();
 
 	// get data and conversion from acceleration of gravity [mm/s^2] to acceleration [m/s^2]
-	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	point.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point * 9.81 / 1000 * acc->sense;
 	if (acc->offset != nullptr)
-		point = point - acc->offset;
+		point = point - acc->offset.operator *();
 
 	acc->data.push_back(point);
 }
@@ -238,16 +228,16 @@ void IMU::getGyro() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | GYR_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+	geometry::CNPointAllo point = geometry::CNPointAllo();
 
 	// conversion from milli degree per second in [mdps] to degree per second [dps]
-	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	point.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point / 1000 * gyr->sense;
 	if (acc->offset != nullptr)
-		point = point - gyr->offset;
+		point = point - *(gyr->offset.get());
 
 	gyr->data.push_back(point);
 }
@@ -259,12 +249,12 @@ void IMU::getMagnet() {
 	uint8_t val[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	i2c->readBlock(0x80 | MAG_OUT_X, val, 6);		// 0x80 needed for readBlock() function
 
-	shared_ptr<geometry::CNPoint3D> point = make_shared<geometry::CNPoint3D>();
+	geometry::CNPointAllo point = geometry::CNPointAllo();
 
 	// conversion from milli gauss [mgauss] to radiant and degree
-	point->x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
-	point->y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
-	point->z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
+	point.x = (int16_t)(val[0] | ((int16_t)val[1] << 8));
+	point.y = (int16_t)(val[2] | ((int16_t)val[3] << 8));
+	point.z = (int16_t)(val[4] | ((int16_t)val[5] << 8));
 
 	point = point * mag->sense;
 
@@ -315,17 +305,17 @@ msl_actuator_msgs::IMUData IMU::sendData(timeval time_now){
 	std::cout << "TEMP: " << temperature << std::endl;
 */
 	msl_actuator_msgs::IMUData msg;
-	msg.acceleration.x = acc->mean->x;
-	msg.acceleration.y = acc->mean->y;
-	msg.acceleration.z = acc->mean->z;
+	msg.acceleration.x = acc->mean.x;
+	msg.acceleration.y = acc->mean.y;
+	msg.acceleration.z = acc->mean.z;
 	msg.accelSens = acc->sense;
-	msg.gyro.x = gyr->mean->x;
-	msg.gyro.y = gyr->mean->y;
-	msg.gyro.z = gyr->mean->z;
+	msg.gyro.x = gyr->mean.x;
+	msg.gyro.y = gyr->mean.y;
+	msg.gyro.z = gyr->mean.z;
 	msg.gyroSens = gyr->sense;
-	msg.magnet.x = mag->mean->x;
-	msg.magnet.y = mag->mean->y;
-	msg.magnet.z = mag->mean->z;
+	msg.magnet.x = mag->mean.x;
+	msg.magnet.y = mag->mean.y;
+	msg.magnet.z = mag->mean.z;
 	msg.magnetSens = mag->sense;
 	msg.temperature = temperature;
 	msg.time = (unsigned long long)time_now.tv_sec*1000000 + time_now.tv_usec;
