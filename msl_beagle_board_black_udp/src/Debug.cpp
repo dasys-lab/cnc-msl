@@ -65,12 +65,12 @@ int main(int argc, char** argv) {
 
 	usleep(1000000);
 
-	cout << "ShovelSelect: Low Kick (Passing)" << endl;
+	std::cout << "ShovelSelect: Low Kick (Passing)" << std::endl;
 	msg_shovelselect.passing = true;
 	sscPub.publish(msg_shovelselect);
 	usleep(1000000);
 
-	cout << "ShovelSelect: High Kick" << endl;
+	std::cout << "ShovelSelect: High Kick" << std::endl;
 	msg_shovelselect.passing = false;
 	sscPub.publish(msg_shovelselect);
 	usleep(1000000);
@@ -79,58 +79,58 @@ int main(int argc, char** argv) {
 	msg_ballhandle.enabled = true;
 	msg_ballhandle.leftMotor = 0;
 
-	cout << "right Motor: Turning right" << endl;
+	std::cout << "right Motor: Turning right" << std::endl;
 	msg_ballhandle.rightMotor = 50;
 	bhcPub.publish(msg_ballhandle);
 	usleep(1000000);
 
-	cout << "right Motor: Turning left" << endl;
+	std::cout << "right Motor: Turning left" << std::endl;
 	msg_ballhandle.rightMotor = -50;
 	bhcPub.publish(msg_ballhandle);
 	usleep(1000000);
 
 	msg_ballhandle.rightMotor = 0;
 
-	cout << "left Motor: Turning right" << endl;
+	std::cout << "left Motor: Turning right" << std::endl;
 	msg_ballhandle.leftMotor = 50;
 	bhcPub.publish(msg_ballhandle);
 	usleep(1000000);
 
-	cout << "left Motor: Turning left" << endl;
+	std::cout << "left Motor: Turning left" << std::endl;
 	msg_ballhandle.leftMotor = -50;
 	bhcPub.publish(msg_ballhandle);
 	usleep(1000000);
 
 
-	cout << "Press the Buttons!" << endl;
+	std::cout << "Press the Buttons!" << std::endl;
 
 	bool testing = true;
 	while(ros::ok() && testing) {
-		cout << "Bundle:   " << button[0] << endl;
-		cout << "Vision:   " << button[1] << endl;
-		cout << "Motion:   " << mb << endl;
-		cout << "HaveBall: " << hbi << endl;
-		cout << "IMU:      " << imu << endl;
+		std::cout << "Bundle:   " << button[0] << std::endl;
+		std::cout << "Vision:   " << button[1] << std::endl;
+		std::cout << "Motion:   " << mb << std::endl;
+		std::cout << "HaveBall: " << hbi << std::endl;
+		std::cout << "IMU:      " << imu << std::endl;
 
 		if(button[0] && button[1] && mb && hbi && imu) {
 			testing = false;
 		}
 	}
 
-	cout << "Nachrichten empfangen." << endl;
-	cout << "Aktoren erfolgreich angesteuert? (y or n)" << endl;
+	std::cout << "Nachrichten empfangen." << std::endl;
+	std::cout << "Aktoren erfolgreich angesteuert? (y or n)" << std::endl;
 
-	string str;
-	cin >> str;
+	std::string str;
+	std::cin >> str;
 
 	if(str == "y") {
-		cout << "Tests erfolgreich!" << endl;
+		std::cout << "Tests erfolgreich!" << std::endl;
 	} else if(str == "n") {
-		cout << "Nicht erfolgreich!" << endl;
+		std::cout << "Nicht erfolgreich!" << std::endl;
 	} else {
-		cout << "Eingabe nicht erkannt." << endl;
+		std::cout << "Eingabe nicht erkannt." << std::endl;
 	}
-	cout << "Programm ende." << endl;
+	std::cout << "Programm ende." << std::endl;
 
 	return 0;
 }
