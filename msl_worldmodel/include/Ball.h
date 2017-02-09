@@ -12,19 +12,13 @@
 #include "RingBuffer.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPoint3D.h"
-#include "container/CNVelocity2D.h"
+#include <Geometry.h>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <map>
 #include <memory>
+#include <nonstd/optional.h>
 
-using namespace std;
-
-namespace supplementary
-{
-class SystemConfig;
-}
+class supplementary::SystemConfig;
 
 namespace msl
 {
@@ -33,9 +27,9 @@ class MSLWorldModel;
 class BallVoting
 {
   public:
-    shared_ptr<geometry::CNPoint2D> ballPos;
+    geometry::CNPointAllo ballPos;
     double teamConfidence = 0.0;
-    vector<shared_ptr<msl_sensor_msgs::SharedWorldInfo>> supporters;
+    vector<msl_sensor_msgs::SharedWorldInfo> supporters;
 };
 
 class Ball
@@ -46,19 +40,19 @@ class Ball
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    shared_ptr<geometry::CNPoint2D> getVisionBallPosition(int index = 0);
-    shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getVisionBallPositionAndCertaincy(int index = 0);
-    shared_ptr<geometry::CNVelocity2D> getVisionBallVelocity(int index = 0);
+    shared_ptr<geometry::CNPointEgo> getVisionBallPosition(int index = 0);
+    shared_ptr<pair<geometry::CNPointAllo, double>> getVisionBallPositionAndCertaincy(int index = 0);
+    shared_ptr<geometry::CNVecAllo> getVisionBallVelocity(int index = 0);
     double getBallConfidenceVision(int index = 0);
 
-    shared_ptr<geometry::CNPoint3D> getBallPoint3D(int index = 0);
-    shared_ptr<geometry::CNPoint3D> getBallVel3D(int index = 0);
-    shared_ptr<geometry::CNPoint2D> getAlloBallPosition();
-    shared_ptr<geometry::CNPoint2D> getEgoBallPosition();
-    shared_ptr<geometry::CNVelocity2D> getEgoBallVelocity();
-    shared_ptr<geometry::CNPoint2D> getAlloSharedBallPosition(int index = 0);
-    shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
-    shared_ptr<geometry::CNPoint2D> getAlloBallGuessPosition(int index = 0);
+    shared_ptr<geometry::CNPointAllo> getBallPoint3D(int index = 0);
+    shared_ptr<geometry::CNVecAllo> getBallVel3D(int index = 0);
+    shared_ptr<geometry::CNPointAllo> getAlloBallPosition();
+    shared_ptr<geometry::CNPointEgo> getEgoBallPosition();
+    shared_ptr<geometry::CNVecEgo> getEgoBallVelocity();
+    shared_ptr<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
+    shared_ptr<pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
+    shared_ptr<geometry::CNPointAllo> getAlloBallGuessPosition(int index = 0);
     int getSharedBallSupporter();
     bool ballMovedSiginficantly();
 
@@ -66,13 +60,13 @@ class Ball
     void updateOnBallHypothesisList(unsigned long long imageTime);
     void updateOnLocalizationData(unsigned long long imageTime);
     void processHypothesis();
-    void updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel, double certainty);
+    void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecAllo ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
-    shared_ptr<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
-    shared_ptr<bool> getOppBallPossession(int index = 0);
+    bool getTeamMateBallPossession(int teamMateId, int index = 0);
+    bool getOppBallPossession(int index = 0);
     double getBallDiameter();
 
-    shared_ptr<geometry::CNPoint2D> getBallPickupPosition();
+    shared_ptr<geometry::CNPointAllo> getBallPickupPosition();
 
     void updateSharedBall();
     void updateBallGuess();
@@ -92,7 +86,7 @@ class Ball
     ObjectContainer ballBuf;
     MovingObject mv;
     unsigned long long lastUpdateReceived;
-    shared_ptr<geometry::CNPoint2D> lastKnownBallPos;
+    geometry::CNPoint2D lastKnownBallPos;
     double HAVE_BALL_TOLERANCE_DRIBBLE;
     double KICKER_DISTANCE;
     double KICKER_DISTANCE_SIMULATOR;
@@ -108,15 +102,15 @@ class Ball
     supplementary::SystemConfig *sc;
     map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
     RingBuffer<InformationElement<bool>> oppBallPossession;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> ballPositionsByRobot;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> ballVelocitiesByRobot;
-    RingBuffer<InformationElement<geometry::CNPoint2D>> sharedBallPosition;
-    RingBuffer<InformationElement<geometry::CNPoint2D>> ballGuessPosition;
-    RingBuffer<InformationElement<geometry::CNPoint2D>> ballPosition;
-    RingBuffer<InformationElement<geometry::CNVelocity2D>> ballVelocity;
+    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
+    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
+    RingBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
+    RingBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
+    RingBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
+    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
 
-    RingBuffer<InformationElement<geometry::CNPoint3D>> ballPoint3D;
-    RingBuffer<InformationElement<geometry::CNPoint3D>> ballVel3D;
+    RingBuffer<InformationElement<geometry::CNPointAllo>> ballPoint3D;
+    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVel3D;
 
     bool robotHasBall(int robotId);
     bool oppHasBall();
@@ -125,7 +119,7 @@ class Ball
     double haveDistance;
 
     bool selfInBallPossesion;
-    shared_ptr<geometry::CNPoint2D> ballPickupPosition;
+    geometry::CNPoint2D ballPickupPosition;
     void updateBallPossession();
 };
 

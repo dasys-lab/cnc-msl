@@ -18,12 +18,13 @@
 #include "ballTracking/ObjectTracker.h"
 #include "ballTracking/SharedMemoryHelper.h"
 #include "ballTracking/TimeHelper.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPoint3D.h"
-#include "container/CNVelocity2D.h"
+
+using std::atan;
+using std::cos;
 
 namespace msl
 {
+
 Ball::Ball(MSLWorldModel *wm, int ringbufferLength)
     : ballPosition(ringbufferLength)
     , ballVelocity(ringbufferLength)
@@ -57,7 +58,7 @@ Ball::~Ball()
 {
 }
 
-shared_ptr<geometry::CNPoint2D> Ball::getVisionBallPosition(int index)
+shared_ptr<geometry::CNPointAllo> Ball::getVisionBallPosition(int index)
 {
     auto x = ballPosition.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -67,7 +68,7 @@ shared_ptr<geometry::CNPoint2D> Ball::getVisionBallPosition(int index)
     return x->getInformation();
 }
 
-shared_ptr<geometry::CNVelocity2D> Ball::getVisionBallVelocity(int index)
+shared_ptr<geometry::CNVecAllo> Ball::getVisionBallVelocity(int index)
 {
     auto x = ballVelocity.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -77,44 +78,45 @@ shared_ptr<geometry::CNVelocity2D> Ball::getVisionBallVelocity(int index)
     return x->getInformation();
 }
 
-shared_ptr<geometry::CNPoint2D> Ball::getBallPickupPosition()
+shared_ptr<geometry::CNPointAllo> Ball::getBallPickupPosition()
 {
     return this->ballPickupPosition;
 }
 
-shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getVisionBallPositionAndCertaincy(int index)
+shared_ptr<pair<geometry::CNPointAllo, double>> Ball::getVisionBallPositionAndCertaincy(int index)
 {
-    shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<pair<shared_ptr<geometry::CNPoint2D>, double>>();
+    pair<geometry::CNPointAllo, double> ret = pair<geometry::CNPointAllo, double>();
     auto x = ballPosition.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
     {
         return nullptr;
     }
-    ret->first = x->getInformation();
+    ret.first = x->getInformation();
 
-    if (ret->first == nullptr)
+    if (ret.first == nullptr)
         return nullptr;
 
-    ret->second = x->certainty;
+    ret.second = x->certainty;
     return ret;
 }
 
-shared_ptr<geometry::CNPoint2D> Ball::getAlloBallPosition()
+shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
 {
-    shared_ptr<geometry::CNPoint2D> p;
     auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
-    if (ownPos != nullptr)
+    if (ownPos == nullptr)
     {
-        p = this->getEgoBallPosition();
-        if (p != nullptr)
-        {
-            p = p->egoToAllo(*ownPos);
-        }
+    	return nullptr;
     }
-    return p;
+
+	auto p = this->getEgoBallPosition();
+	if (p != nullptr)
+	{
+		p = p->toAllo(*ownPos);
+	}
+	return p;
 }
 
-shared_ptr<geometry::CNPoint2D> Ball::getEgoBallPosition()
+shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()
 {
     auto rawBall = getVisionBallPositionAndCertaincy();
     auto lsb = getAlloSharedBallPosition();
@@ -173,7 +175,7 @@ shared_ptr<geometry::CNPoint2D> Ball::getEgoBallPosition()
     }
 }
 
-shared_ptr<geometry::CNVelocity2D> Ball::getEgoBallVelocity()
+shared_ptr<geometry::CNVecEgo> Ball::getEgoBallVelocity()
 {
     if (getVisionBallVelocity() != nullptr)
         return getVisionBallVelocity();
@@ -239,7 +241,7 @@ bool Ball::ballMovedSiginficantly()
     return false;
 }
 
-void Ball::updateBallPos(shared_ptr<geometry::CNPoint3D> ballPos, shared_ptr<geometry::CNPoint3D> ballVel, double certainty)
+void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecAllo ballVel, double certainty)
 {
     InfoTime time = wm->getTime();
     shared_ptr<geometry::CNPoint2D> ball2d;
