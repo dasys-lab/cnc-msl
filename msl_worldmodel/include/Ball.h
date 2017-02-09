@@ -16,9 +16,12 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <map>
 #include <memory>
-#include <nonstd/optional.h>
+//#include <nonstd/optional.h>
 
-class supplementary::SystemConfig;
+namespace supplementary
+{
+class SystemConfig;
+}
 
 namespace msl
 {
