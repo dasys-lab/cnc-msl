@@ -1,6 +1,7 @@
 #include "Sensor.h"
 
 #include <cnc_geometry/Calculator.h>
+#include <cnc_geometry/CNVecAllo.h>
 
 Sensor::Sensor()
 {
@@ -21,6 +22,6 @@ void Sensor::updateInternalValues()
     this->angle_rad = atan2(this->mean.y, this->mean.x);
     this->angle_deg = this->angle_rad * 180 / M_PI;
 
-    this->offset = this->mean;
+    this->offset = std::make_shared<geometry::CNVecAllo>(this->mean.x, this->mean.y, this->mean.z);
     this->data.clear();
 }
