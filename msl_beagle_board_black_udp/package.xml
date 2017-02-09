@@ -4,7 +4,7 @@
   <version>0.0.0</version>
   <description>The msl_beagle_board_black package</description>
 
-  <maintainer email="luk@todo.todo">luk</maintainer>
+  <maintainer email="lukas.will@gmail.com">Lukas Will</maintainer>
 
   <license>MIT</license>
 
@@ -30,8 +30,4 @@
   <run_depend>system_config</run_depend>
   <run_depend>process_manager</run_depend>
   <run_depend>can_connection_bbb</run_depend>
-
-  <export>
-
-  </export>
 </package>

@@ -32,20 +32,22 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
+# msl_beagle_board_black_udp executable
 add_executable(msl_beagle_board_black_udp 
-	src/actuator.cpp
-	src/ballhandle.cpp
-	src/imu.cpp
-	src/lightbarrier.cpp
-	src/motor.cpp
-	src/opticalflow.cpp
+	src/Actuator.cpp
+	src/BallHandle.cpp
+	src/IMU.cpp
+	src/LightBarrier.cpp
+	src/Motor.cpp
+	src/Opticalflow.cpp
 	src/Sensor.cpp
-	src/shovelselect.cpp
+	src/ShovelSelect.cpp
 	src/Spline.cpp
 )
 target_link_libraries(msl_beagle_board_black_udp ${catkin_LIBRARIES})
 add_dependencies(msl_beagle_board_black_udp msl_actuator_msgs_generate_messages_cpp)
 
-add_executable(debug_udp src/debug.cpp)
+# debug_udp executable
+add_executable(debug_udp src/Debug.cpp)
 target_link_libraries(debug_udp ${catkin_LIBRARIES})
 add_dependencies(debug_udp msl_actuator_msgs_generate_messages_cpp)
