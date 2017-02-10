@@ -1,5 +1,7 @@
 #include "BBB.h"
 
+#include "Communication.h"
+
 #include "CanHandler.h"
 
 #include <Configuration.h>
@@ -230,18 +232,19 @@ BBB::BBB()
     bool i2c = myI2C.open(BlackLib::ReadWrite);
     bool spi = mySpi.open(BlackLib::ReadWrite);
 
-    ;
+    this->comm = new Communication();
 
-
-    // Configure BallHandler Worker
+    // Configure Ball Handler Worker
     this->ballHandler = new BallHandler();
     this->ballHandler->msDelayedStart = std::chrono::milliseconds(0);
     this->ballHandler->msInterval = std::chrono::milliseconds(30);
     this->ballHandler->start();
 
-    this->shovelSelection = new ShovelSelection();
+    // Configure Shovel Selection Worker
+    this->shovelSelection = new ShovelSelection(BlackLib::P9_14);
     this->shovelSelection->start();
 
+    // Configure Optical Flow Sensor Worker
     OF_pins = {"P9_30", "P9_25", "P9_27", "P9_12"};
     this->opticalFlow = new OpticalFlow(OF_pins, &mySpi, comm);
     this->opticalFlow->adns_init();

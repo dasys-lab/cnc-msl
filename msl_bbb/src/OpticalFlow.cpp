@@ -1,9 +1,11 @@
 #include "OpticalFlow.h"
 
+#include "Communication.h"
+
 namespace msl_bbb
 {
 
-OpticalFlow::OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P, Communication *comm)
+OpticalFlow::OpticalFlow(std::vector<char const*>pin_names, BlackLib::BlackSPI *spi_P, Communication *comm)
     : Worker("OpticalFlow")
 {
     this->comm = comm;

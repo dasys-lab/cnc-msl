@@ -2,6 +2,13 @@
 
 #include "Worker.h"
 
+
+#include <BlackLib.h>
+#include <msl_actuator_msgs/MotionLight.h>
+#include <msl_actuator_msgs/MotionBurst.h>
+
+#include <vector>
+
 // ADNS3080 Registers
 #define PRODUCT_ID 0x00
 #define MOTION 0x02
@@ -30,10 +37,11 @@ namespace msl_bbb
 {
 
 class Communication;
-class OpticalFlow : Worker
+
+class OpticalFlow : public Worker
 {
   public:
-    OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P, Communication *comm);
+    OpticalFlow(std::vector<char const*> pin_names, BlackLib::BlackSPI *spi_P, Communication *comm);
     ~OpticalFlow();
 
     void run(); /** < overwrites the workers virtual run method */
