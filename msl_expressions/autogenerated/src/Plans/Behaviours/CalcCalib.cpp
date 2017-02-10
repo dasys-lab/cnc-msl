@@ -15,6 +15,13 @@ namespace alica
             DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
+    	calibOldPosMotionX = 0;
+    	calibOldPosMotionY = 0;
+    	oldCalibCoefficientX = 0;
+    	oldCalibCoefficientY = 0;
+    	correctedPosX = 0;
+    	correctedPosY = 0;
+    	calibCounter = 0;
         /*PROTECTED REGION END*/
     }
     CalcCalib::~CalcCalib()
