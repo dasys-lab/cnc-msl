@@ -15,7 +15,6 @@ class BeaglePWM
 		BeaglePWM();
 		virtual ~BeaglePWM();
 
-		// use singleton?
 		static BeaglePWM *getInstance();
 
 		enum PwmPin {
