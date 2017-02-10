@@ -30,16 +30,19 @@ OpticalFlow::~OpticalFlow()
     delete led;
 }
 
+/**
+ * Initialises the sensor
+ */
 void OpticalFlow::adns_init(void)
 {
-    // init of sensor
 
     ncs->setValue(BlackLib::high);
     reset();
 
     usleep(4000);
 
-    setConfigurationBits(0x00); // set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
+    // set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
+    setConfigurationBits(0x00);
     led->setValue(BlackLib::high);
 }
 
