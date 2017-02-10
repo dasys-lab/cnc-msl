@@ -1,16 +1,6 @@
-/*
- * opticalflow.h
- *
- *  Created on: Mar 26, 2015
- *      Author: Lukas Will
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_OPTICALFLOW_H_
-#define CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_OPTICALFLOW_H_
-
-
-#include "Includes.h"
-
+#include "Worker.h"
 
 // ADNS3080 Registers
 #define PRODUCT_ID 0x00
@@ -36,52 +26,50 @@
 
 #define RESOLUTION 30
 
+namespace msl_bbb
+{
 
-class OpticalFlow {
-	private:
-		BlackLib::BlackGPIO *ncs, *npd, *rst, *led;
-		BlackLib::BlackSPI *spi;
-		uint8_t 	img[1536];
+class Communication;
+class OpticalFlow : Worker
+{
+  public:
+    OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P, Communication *comm);
+    ~OpticalFlow();
 
-		int16_t		x, y;
-		int16_t 	qos, vQos;
-		int8_t 		motionBurst[7];
-		int8_t 		debugOF;
+    void run(); /** < overwrites the workers virtual run method */
+    void handleMotionLight(const msl_actuator_msgs::MotionLight msg);
 
-		timeval		last_updated, last_sended;
+    void reset(void);
+    uint8_t read(uint8_t address);
 
+    void adns_init(void);
+    void controlLED(bool enabled);
+    void update_motion_burst();
+    msl_actuator_msgs::MotionBurst getMotionBurstMsg();
 
+    uint8_t getInverseProductId(void);
+    uint8_t getProductId(void);
 
-		void		write(uint8_t address, uint8_t value);
+  private:
+    void write(uint8_t address, uint8_t value);
 
-		uint8_t		getConfigurationBits(void);
-		void		getFrame(uint8_t *image);
-		void		getFrameBurst(uint8_t *image, uint16_t size);
-		void 		getMotionBurst(int8_t *burst);
+	uint8_t getConfigurationBits(void);
+	void getFrame(uint8_t *image);
+	void getFrameBurst(uint8_t *image, uint16_t size);
+	void getMotionBurst(int8_t *burst);
 
-		void		setConfigurationBits(uint8_t conf);
+	void setConfigurationBits(uint8_t conf);
 
+    BlackLib::BlackGPIO *ncs, *npd, *rst, *led;
+    BlackLib::BlackSPI *spi;
+    uint8_t img[1536];
 
-	public:
-		void		reset(void);
-		uint8_t		read(uint8_t address);
+    int16_t x, y;
+    int16_t qos, vQos;
+    int8_t motionBurst[7];
+    int8_t debugOF;
 
-					OpticalFlow(const char *pin_names[], BlackLib::BlackSPI *spi_P);
-					~OpticalFlow();
-
-		void 		adns_init(void);
-		void		controlLED(bool enabled);
-		void 		update_motion_burst();
-		msl_actuator_msgs::MotionBurst getMotionBurstMsg();
-
-		uint8_t 	getInverseProductId(void);
-		uint8_t 	getProductId(void);
-
-
-
-
+    timeval last_updated, last_sended;
+    Communication* comm;
 };
-
-
-
-#endif /* CNC_MSL_MSL_BEAGLE_BOARD_BLACK_INCLUDE_OPTICALFLOW_H_ */
+}

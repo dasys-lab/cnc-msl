@@ -2,19 +2,10 @@
 
 #include "CanHandler.h"
 
-#include <iostream>
-
-#include <sstream>
-#include <stdio.h>
-#include <string>
-#include <unistd.h>
-
 #include <Configuration.h>
 #include <SystemConfig.h>
-#include <exception>
 
 #include <usbcanconnection.h>
-
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/BallHandleMode.h>
 #include <msl_actuator_msgs/CanMsg.h>
@@ -27,24 +18,17 @@
 #include <process_manager/ProcessCommand.h>
 #include <std_msgs/Bool.h>
 
-mutex mtx;
-uint8_t th_count;
-bool th_activ = true;
+#include <exception>
+#include <iostream>
+#include <sstream>
+#include <stdio.h>
+#include <string>
+#include <unistd.h>
+#include <chrono>
 
-
-
-void handleMotionLight(const msl_actuator_msgs::MotionLight msg)
-{
-    // LED vom Maussensor ansteuern
-    try
-    {
-        adns3080.controlLED(msg.enable);
-    }
-    catch (exception &e)
-    {
-        cout << "MotionLight: " << e.what() << endl;
-    }
-}
+//mutex mtx;
+//uint8_t th_count;
+//bool th_activ = true;
 
 void handleCanSub(const msl_actuator_msgs::CanMsg &msg)
 {
@@ -56,8 +40,6 @@ void run_udp()
 {
     io_service.run();
 }
-
-
 
 void getLightbarrier()
 {
@@ -236,31 +218,6 @@ void getIMU()
     }
 }
 
-void getOptical()
-{
-    unique_lock<mutex> l_optical(threw[5].mtx);
-    while (th_activ)
-    {
-        threw[5].cv.wait(l_optical, [&] { return !th_activ || threw[5].notify; }); // protection against spurious wake-ups
-        if (!th_activ)
-            return;
-
-        msl_actuator_msgs::MotionBurst msg;
-        try
-        {
-            adns3080.update_motion_burst();
-            msg = adns3080.getMotionBurstMsg();
-            onRosMotionBurst1028144660(msg);
-        }
-        catch (exception &e)
-        {
-            cout << "Optical Flow: " << e.what() << endl;
-        }
-
-        threw[5].notify = false;
-    }
-}
-
 namespace msl_bbb
 {
 bool BBB::running = false;
@@ -268,25 +225,35 @@ bool BBB::running = false;
 BBB::BBB()
 {
     ros::Time::init();
-    IMU_pins = {"P8_11", "P8_15", "P8_17", "P8_26"};
-    OF_pins = {"P9_30", "P9_25", "P9_27", "P9_12"};
-
-    // Configure BallHandler Worker
-    this->ballHandler.msDelayedStart = 0;
-    this->ballHandler.msInterval = 30;
-    this->ballHandler.start();
-
-    thread th_controlShovel(controlShovelSelect);
-    thread th_lightbarrier(getLightbarrier);
-    thread th_switches(getSwitches);
-    thread th_imu(getIMU);
-    thread th_optical(getOptical);
 
     // I2C
     bool i2c = myI2C.open(BlackLib::ReadWrite);
     bool spi = mySpi.open(BlackLib::ReadWrite);
+
+    ;
+
+
+    // Configure BallHandler Worker
+    this->ballHandler = new BallHandler();
+    this->ballHandler->msDelayedStart = std::chrono::milliseconds(0);
+    this->ballHandler->msInterval = std::chrono::milliseconds(30);
+    this->ballHandler->start();
+
+    this->shovelSelection = new ShovelSelection();
+    this->shovelSelection->start();
+
+    OF_pins = {"P9_30", "P9_25", "P9_27", "P9_12"};
+    this->opticalFlow = new OpticalFlow(OF_pins, &mySpi, comm);
+    this->opticalFlow->adns_init();
+    this->opticalFlow->start();
+
+    thread th_lightbarrier(getLightbarrier);
+    thread th_switches(getSwitches);
+
+    IMU_pins = {"P8_11", "P8_15", "P8_17", "P8_26"}
+    thread th_imu(getIMU);
+
     bool imu = lsm9ds0.init();
-    adns3080.adns_init();
 }
 
 /**
@@ -335,7 +302,7 @@ void BBB::sigIntHandler(int sig)
 
 int main(int argc, char **argv)
 {
-	// create BBB object
+    // create BBB object
     msl_bbb::BBB beagleBoardControl;
 
     // register ctrl+c handler
