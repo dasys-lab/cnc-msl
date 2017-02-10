@@ -32,4 +32,4 @@ timeval last_ping;
 
 CV threw[7];
 
-bool ex = false;
+bool running = true;

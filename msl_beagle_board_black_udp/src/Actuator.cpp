@@ -792,7 +792,7 @@ void getOptical()
 
 void exit_program(int sig)
 {
-    ex = true;
+    running = false;
     th_activ = false;
     for (int i = 0; i < 7; i++)
         threw[i].cv.notify_all();
@@ -802,9 +802,6 @@ int main(int argc, char **argv)
 {
     ros::Time::init();
     ros::Rate loop_rate(30); // in Hz
-
-    supplementary::SystemConfig *sc;
-    sc = supplementary::SystemConfig::getInstance();
 
     thread th_controlBallHandle(controlBallHandle);
     thread th_controlShovel(contolShovelSelect);
@@ -819,9 +816,11 @@ int main(int argc, char **argv)
     bool imu = lsm9ds0.init();
     adns3080.adns_init();
 
+    supplementary::SystemConfig *sc = supplementary::SystemConfig::getInstance();
     supplementary::Configuration *proxyconf = (*sc)["msl_bbb_proxy"];
     std::string baddress = proxyconf->get<std::string>("UdpProxy", "MulticastAddress", NULL);
     unsigned short port = (unsigned short)proxyconf->get<int>("UdpProxy", "Port", NULL);
+
     multiCastAddress = boost::asio::ip::address::from_string(baddress);
     destEndPoint = udp::endpoint(multiCastAddress, port);
     std::cout << "Opening to " << multiCastAddress << std::endl;
@@ -839,7 +838,7 @@ int main(int argc, char **argv)
     std::cout << "Udp connection active..." << std::endl;
 
     (void)signal(SIGINT, exit_program);
-    while (!ex)
+    while (!running)
     {
         gettimeofday(&time_now, NULL);
 
