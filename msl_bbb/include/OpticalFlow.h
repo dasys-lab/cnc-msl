@@ -41,7 +41,7 @@ class Communication;
 class OpticalFlow : public Worker
 {
   public:
-    OpticalFlow(std::vector<char const*> pin_names, BlackLib::BlackSPI *spi_P, Communication *comm);
+    OpticalFlow(Communication *comm);
     ~OpticalFlow();
 
     void run(); /** < overwrites the workers virtual run method */

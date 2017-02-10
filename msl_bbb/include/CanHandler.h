@@ -1,7 +1,9 @@
+#pragma once
+
 #include "ROSMsgFuncs.h"
 
 #include <Can.h>
-#include <msl_actuator_msgs/CanMsg.h>
+
 #include <ros/ros.h>
 #include <usbcanconnection.h>
 
@@ -10,48 +12,23 @@
 #include <sys/time.h>
 #include <vector>
 
-using msl_actuator_msgs::CanMsg;
+namespace msl_actuator_msgs{
+  ROS_DECLARE_MESSAGE(CanMsg)
+}
 
+namespace msl_bbb
+{
 class CanHandler : public CanListener
 {
 
   public:
-    CanHandler()
-    {
-        us = new UsbCanConnection("can0");
-        us->SetReceiver(this);
+    CanHandler();
+    virtual ~CanHandler();
 
-        // add id's for can devices
-        receivers.push_back(Compass);
-        receivers.push_back(ReKick);
-        receivers.push_back(BallHandler);
-    }
+    void stop();
+    void sendCanMsg(const msl_actuator_msgs::CanMsg &msg);
 
-    void Close()
-    {
-        us->Stop();
-    }
-
-    void sendCanMsg(const msl_actuator_msgs::CanMsg &msg)
-    {
-        printf("write data to can!\n");
-
-        unsigned char *p = (unsigned char *)msg.data.data();
-        us->SendExCanMsg(msg.id, p, msg.data.size());
-    }
-
-    void Start()
-    {
-
-        us->Start();
-        std::cerr << "Staring CanReceiver" << std::endl;
-    }
-
-    void Stop()
-    {
-        us->Stop();
-        std::cerr << "Stopping CanReceiver" << std::endl;
-    }
+    UsbCanConnection *usbCanConnection;
 
   protected:
     // while reading from usb -> publisher
@@ -60,64 +37,10 @@ class CanHandler : public CanListener
 
     // publisher for direct bundle restart trigger
 
-    UsbCanConnection *us;
-    vector<unsigned short> receivers;
+    std::vector<unsigned short> receivers;
 
-    void Receive(unsigned int canid, unsigned char *data, int len)
-    {
-        bool found = false;
-        unsigned int id = ((canid & 0xFF00) >> 8);
-        for (unsigned int i = 0; i < receivers.size(); i++)
-        {
-            // printf("receiver %u\n",receivers[i]);
-            // printf("id is : %u \n",id);
-            if (id == receivers[i])
-            {
-                found = true;
-
-                CanMsg cm;
-                cm.id = id;
-
-                for (int i = 0; i < len; i++)
-                {
-                    cm.data.push_back(data[i]);
-                }
-
-                switch (id)
-                {
-                case Compass:
-                    break;
-                case ReKick:
-                    printf("sending reckick can msg\n");
-                    onRosCanMsg418700403(cm);
-                    break;
-                case BallHandler:
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-
-        if (!found)
-        {
-            fprintf(stderr, "Unkown CAN ID received: 0x%x\n", canid);
-        }
-    }
-
-    void resetInterface()
-    {
-        Close();
-        int e = system("sudo ifdown can0");
-        sleep(1);
-        us = new UsbCanConnection("can0");
-        us->SetReceiver(this);
-        e = system("sudo ifup can0");
-        sleep(1);
-        if (!e)
-            printf("error reseting!\n");
-
-        // lastMotion = ros::Time::now();
-        Start();
-    }
+    void resetInterface();
+    void receive(unsigned int canid, unsigned char *data, int len);
+    void receive();
 };
+}

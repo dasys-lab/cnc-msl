@@ -1,33 +1,33 @@
-/*
- * lightbarrier.h
- *
- *  Created on: Mar 7, 2016
- *      Author: Lukas Will
- */
+#pragma once
 
-#ifndef INCLUDE_LIGHTBARRIER_H_
-#define INCLUDE_LIGHTBARRIER_H_
+#include "Communication.h"
+#include "Worker.h"
 
-#include "BlackDef.h"
-#include "BlackADC.h"
+#include <BlackADC.h>
+#include <BlackDef.h>
 
+namespace BlackLib
+{
+class BlackADC;
+}
 
-class LightBarrier {
-	private:
-		BlackLib::BlackADC	*adc;
+namespace msl_bbb
+{
+class LightBarrier : public Worker
+{
 
-		int		threshold;
+  public:
+    LightBarrier(BlackLib::adcName adc_P, Communication *comm);
+    ~LightBarrier();
 
+    void run(); /** < overwrites the workers virtual run method */
 
-	public:
-				LightBarrier(BlackLib::adcName adc_P);
-				~LightBarrier();
+    bool checkLightBarrier();
+    bool setTreshold(int th);
 
-		bool	checkLightBarrier();
-		bool	setTreshold(int th);
-
+  private:
+    Communication *comm;
+    BlackLib::BlackADC *adc;
+    int threshold;
 };
-
-
-
-#endif /* INCLUDE_LIGHTBARRIER_H_ */
+}

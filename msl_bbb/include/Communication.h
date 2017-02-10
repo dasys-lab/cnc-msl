@@ -1,14 +1,14 @@
 #pragma once
 
+#include "CanHandler.h"
+
 #include <ros/ros.h>
 
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
 #include <arpa/inet.h>
+#include <boost/asio.hpp>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <sys/ioctl.h>
-
 
 // Forward declarations of ROS messages
 
@@ -35,14 +35,27 @@ namespace process_manager
 ROS_DECLARE_MESSAGE(ProcessCommand);
 }
 
+namespace boost
+{
+class thread;
+}
+
 namespace msl_bbb
 {
 
+using boost::asio::ip::udp;
+
+class BallHandler;
+class OpticalFlow;
+class ShovelSelection;
 class Communication
 {
   public:
     Communication();
     virtual ~Communication();
+
+    void run_udp();
+    void handleCanSub(const msl_actuator_msgs::CanMsg &msg);
 
     // methods for sending ROS msgs per udp multicast
     void onRosBallHandleCmd1334345447(msl_actuator_msgs::BallHandleCmd &message);
@@ -63,18 +76,24 @@ class Communication
     void listenForPacket();
     void handleUdpPacket(const boost::system::error_code &error, std::size_t bytes_transferred);
 
+    void setActuators(BallHandler *ballHandler, OpticalFlow *opticalFlow, ShovelSelection *shovelSelection);
 
     boost::array<char, 64000> inBuffer;
     std::string ownRosName;
-    using boost::asio::ip::udp;
+
     udp::socket *insocket;
     udp::endpoint otherEndPoint;
     udp::endpoint destEndPoint;
     boost::asio::ip::address multiCastAddress;
     boost::asio::io_service io_service;
+    boost::thread *iothread;
 
     // Can hack
     CanHandler canHandler;
+
+    BallHandler *ballHandler;
+    OpticalFlow *opticalFlow;
+    ShovelSelection *shovelSelection;
 };
 
 } /* namespace msl_bbb */

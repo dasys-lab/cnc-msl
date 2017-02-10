@@ -1,8 +1,9 @@
 #include "Sensor.h"
 
-#include <cnc_geometry/Calculator.h>
 #include <cnc_geometry/CNVecAllo.h>
-
+#include <cnc_geometry/Calculator.h>
+namespace msl_bbb
+{
 Sensor::Sensor()
 {
     this->angle_deg = 0;
@@ -24,4 +25,5 @@ void Sensor::updateInternalValues()
 
     this->offset = std::make_shared<geometry::CNVecAllo>(this->mean.x, this->mean.y, this->mean.z);
     this->data.clear();
+}
 }

@@ -45,7 +45,8 @@ add_executable(${PROJECT_NAME}
 	src/OpticalFlow.cpp
 	src/Sensor.cpp
 	src/ShovelSelection.cpp
-	src/Spline.cpp
+	src/Switches.cpp
+	src/CanHandler.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)

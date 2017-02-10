@@ -5,15 +5,23 @@
 namespace msl_bbb
 {
 
-OpticalFlow::OpticalFlow(std::vector<char const*>pin_names, BlackLib::BlackSPI *spi_P, Communication *comm)
+OpticalFlow::OpticalFlow(Communication *comm)
     : Worker("OpticalFlow")
 {
     this->comm = comm;
+
+    /* ncs, npd, rst, led */
+    std::vector<char const *> OF_pins = {"P9_30", "P9_25", "P9_27", "P9_12"}; // FIXME: Not needed anymore??
     this->ncs = new BlackLib::BlackGPIO(BlackLib::GPIO_112, BlackLib::output, BlackLib::FastMode);
     this->npd = new BlackLib::BlackGPIO(BlackLib::GPIO_117, BlackLib::output, BlackLib::FastMode);
     this->rst = new BlackLib::BlackGPIO(BlackLib::GPIO_115, BlackLib::output, BlackLib::FastMode);
     this->led = new BlackLib::BlackGPIO(BlackLib::GPIO_60, BlackLib::output, BlackLib::FastMode);
-    this->spi = spi_P;
+
+    this->spi = new BlackLib::BlackSPI(BlackLib::SPI0_0, 8, BlackLib::SpiMode0, 2000000);
+    if (!this->spi->open(BlackLib::ReadWrite))
+    {
+        std::cerr << "OpticalFlow: SPI could not be opened!" << std::endl;
+    }
 
     this->x = 0;
     this->y = 0;

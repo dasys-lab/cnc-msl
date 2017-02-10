@@ -1,7 +1,18 @@
 #pragma once
 
-#include "Includes.h"
-#include "Sensor.h"
+#include "Worker.h"
+#include <BeagleGPIO.h>
+#include <BeaglePins.h>
+#include <sys/time.h>
+#include <vector>
+
+namespace BlackLib
+{
+class BlackI2C;
+}
+
+namespace msl_bbb
+{
 
 const uint8_t ADR_G = 0x6B;  // LSM9DS0
 const uint8_t ADR_XM = 0x1D; // LSM9DS0
@@ -124,17 +135,34 @@ const float GYR_SENSE_245DPS = 8.75;
 const float GYR_SENSE_500DPS = 17.5;
 const float GYR_SENSE_2000DPS = 70;
 
-class IMU
+class Communication;
+class Sensor;
+
+class IMU : public Worker
 {
   public:
-    IMU(const char *pin_names[], BlackLib::BlackI2C *i2c_P);
+    IMU(Communication *comm);
     ~IMU();
 
+    void run(); /** < overwrites the workers virtual run method */
+
     bool init();
-    void getData(timeval time_now);
-    msl_actuator_msgs::IMUData sendData(timeval time_now);
+    void getData();
+    void sendData();
 
   private:
+    bool whoAmI();
+    void initAccel(uint8_t rate, uint8_t scale);
+    void initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale);
+    void initMagnet(uint8_t res, uint8_t rate, uint8_t scale);
+    void initTemp(bool enable);
+    void getOffsets();
+    void getAccel();
+    void getGyro();
+    void getMagnet();
+    void getTemp();
+
+    Communication *comm;
     BlackLib::BlackI2C *i2c;
     BeagleGPIO *gpio;
     BeaglePins *pins;
@@ -146,15 +174,5 @@ class IMU
     Sensor *acc;
     Sensor *mag;
     int16_t temperature;
-
-    bool whoAmI();
-    void initAccel(uint8_t rate, uint8_t scale);
-    void initGyro(uint8_t rate, uint8_t bandwidth, uint8_t scale);
-    void initMagnet(uint8_t res, uint8_t rate, uint8_t scale);
-    void initTemp(bool enable);
-    void getOffsets();
-    void getAccel();
-    void getGyro();
-    void getMagnet();
-    void getTemp();
 };
+}

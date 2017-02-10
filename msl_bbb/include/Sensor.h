@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+namespace msl_bbb
+{
 class Sensor
 {
   public:
@@ -30,3 +32,4 @@ class Sensor
     float angle_deg;
     float temperature;
 };
+}
