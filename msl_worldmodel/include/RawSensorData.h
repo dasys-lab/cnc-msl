@@ -1,34 +1,24 @@
-
-
-/*
- * RawSensorData.h
- *
- *  Created on: Feb 18, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
-#define CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-#include "container/CNVelocity2D.h"
-#include "msl_actuator_msgs/HaveBallInfo.h"
-#include "msl_actuator_msgs/IMUData.h"
-#include "msl_actuator_msgs/MotionBurst.h"
-#include "msl_actuator_msgs/MotionControl.h"
-#include "msl_actuator_msgs/RawOdometryInfo.h"
-#include "msl_msgs/JoystickCommand.h"
-#include "msl_msgs/MotionInfo.h"
-#include "msl_sensor_msgs/BallHypothesisList.h"
-#include "msl_sensor_msgs/BallInfo.h"
-#include "msl_sensor_msgs/WorldModelData.h"
-#include "std_msgs/Bool.h"
-#include <vector>
 
-using namespace std;
+#include <msl_actuator_msgs/HaveBallInfo.h>
+#include <msl_actuator_msgs/IMUData.h>
+#include <msl_actuator_msgs/MotionBurst.h>
+#include <msl_actuator_msgs/MotionControl.h>
+#include <msl_actuator_msgs/RawOdometryInfo.h>
+#include <msl_msgs/JoystickCommand.h>
+#include <msl_msgs/MotionInfo.h>
+#include <msl_sensor_msgs/BallHypothesisList.h>
+#include <msl_sensor_msgs/BallInfo.h>
+#include <msl_sensor_msgs/WorldModelData.h>
+#include <std_msgs/Bool.h>
+
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNVecAllo.h>
+#include <vector>
 
 namespace msl
 {
@@ -41,11 +31,11 @@ class RawSensorData
     virtual ~RawSensorData();
     shared_ptr<vector<double>> getDistanceScan(int index = 0);
     bool getLightBarrier(int index = 0);
-    shared_ptr<geometry::CNPoint2D> getOpticalFlow(int index = 0);
+    shared_ptr<geometry::CNPointAllo> getOpticalFlow(int index = 0);
     double getOpticalFlowQoS(int index = 0);
-    shared_ptr<geometry::CNPosition> getOwnPositionMotion(int index = 0);
-    shared_ptr<geometry::CNPosition> getOwnPositionVision(int index = 0);
-    shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
+    shared_ptr<geometry::CNPositionAllo> getOwnPositionMotion(int index = 0);
+    shared_ptr<geometry::CNPositionAllo> getOwnPositionVision(int index = 0);
+    shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
     shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
     shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
     shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
@@ -66,9 +56,9 @@ class RawSensorData
   private:
     RingBuffer<InformationElement<vector<double>>> distanceScan;
     RingBuffer<InformationElement<bool>> lightBarrier;
-    RingBuffer<InformationElement<geometry::CNPoint2D>> opticalFlow;
-    RingBuffer<InformationElement<geometry::CNPosition>> ownPositionMotion;
-    RingBuffer<InformationElement<geometry::CNPosition>> ownPositionVision;
+    RingBuffer<InformationElement<geometry::CNPointAllo>> opticalFlow;
+    RingBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionMotion;
+    RingBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionVision;
     RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
     RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
     RingBuffer<InformationElement<msl_actuator_msgs::MotionControl>> lastMotionCommand;
@@ -85,5 +75,3 @@ class RawSensorData
 };
 
 } /* namespace alica */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_RAWSENSORDATA_H_ */

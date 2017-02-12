@@ -63,8 +63,8 @@ class SystemConfig;
 }
 namespace geometry
 {
-class CNPoint2D;
-class CNPosition;
+class CNPointAllo;
+class CNPositionAllo;
 }
 
 namespace msl

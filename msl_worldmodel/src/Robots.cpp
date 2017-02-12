@@ -27,12 +27,12 @@ Robots::~Robots()
 
 void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
 {
-    if (sharedWolrdModelData.find(data->senderID) == sharedWolrdModelData.end())
+    if (sharedWorldModelData.find(data->senderID) == sharedWorldModelData.end())
     {
         shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> buffer =
             make_shared<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>(wm->getRingBufferLength());
         pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(data->senderID, buffer);
-        sharedWolrdModelData.insert(pair);
+        sharedWorldModelData.insert(pair);
     }
     if (teammates.robotPositions.find(data->senderID) == teammates.robotPositions.end())
     {
@@ -49,12 +49,12 @@ void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr dat
     *shptr = *data;
     shared_ptr<InformationElement<msl_sensor_msgs::SharedWorldInfo>> infosh =
         make_shared<InformationElement<msl_sensor_msgs::SharedWorldInfo>>(shptr, wm->getTime());
-    sharedWolrdModelData.at(data->senderID)->add(infosh);
+    sharedWorldModelData.at(data->senderID)->add(infosh);
 }
 
 shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(int robotID, int index)
 {
-    auto shwm = sharedWolrdModelData.at(robotID);
+    auto shwm = sharedWorldModelData.at(robotID);
     if (shwm != nullptr)
     {
         auto x = shwm->getLast(index);

@@ -1,20 +1,11 @@
-/*
- * Opponents.h
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_OPPONENTS_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_OPPONENTS_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
-#include <SystemConfig.h>
-#include <container/CNPoint2D.h>
-#include <vector>
 
-using namespace std;
+#include <SystemConfig.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <vector>
 
 namespace msl
 {
@@ -46,5 +37,3 @@ class Opponents
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_OPPONENTS_H_ */

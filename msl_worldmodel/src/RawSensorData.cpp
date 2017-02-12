@@ -1,21 +1,18 @@
 #define IMULOG false
-/*
-
- * RawSensorData.cpp
- *
- *  Created on: Feb 18, 2015
- *      Author: Stefan Jakob
- */
 
 #include "RawSensorData.h"
+
 #include "Ball.h"
 #include "MSLWorldModel.h"
+
 #include <SystemConfig.h>
-#include <container/CNPoint3D.h>
+#include <cnc_geometry/CNPointAllo.h>
+
 #include <math.h>
 
 namespace msl
 {
+  // FIXME replace that absolute path with some config parameter
 std::string logFile = "/home/cn/cnws/IMU.log";
 FILE *lp = fopen(logFile.c_str(), "a");
 
@@ -64,7 +61,7 @@ bool RawSensorData::getLightBarrier(int index)
     return *x->getInformation();
 }
 
-shared_ptr<geometry::CNPoint2D> RawSensorData::getOpticalFlow(int index)
+shared_ptr<geometry::CNPointAllo> RawSensorData::getOpticalFlow(int index)
 {
     auto x = opticalFlow.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -84,7 +81,7 @@ double RawSensorData::getOpticalFlowQoS(int index)
     return x->certainty;
 }
 
-shared_ptr<geometry::CNPosition> RawSensorData::getOwnPositionMotion(int index)
+shared_ptr<geometry::CNPositionAllo> RawSensorData::getOwnPositionMotion(int index)
 {
     auto x = ownPositionMotion.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -94,7 +91,7 @@ shared_ptr<geometry::CNPosition> RawSensorData::getOwnPositionMotion(int index)
     return x->getInformation();
 }
 
-shared_ptr<geometry::CNPosition> RawSensorData::getOwnPositionVision(int index)
+shared_ptr<geometry::CNPositionAllo> RawSensorData::getOwnPositionVision(int index)
 {
     auto x = ownPositionVision.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -142,9 +139,9 @@ shared_ptr<int> RawSensorData::getCompassOrientation(int index)
     return x->getInformation();
 }
 
-shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> RawSensorData::getOwnPositionVisionAndCertaincy(int index)
+shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>> RawSensorData::getOwnPositionVisionAndCertaincy(int index)
 {
-    shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> ret = make_shared<pair<shared_ptr<geometry::CNPosition>, double>>();
+    shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>> ret = make_shared<pair<shared_ptr<geometry::CNPositionAllo>, double>>();
     auto x = ownPositionVision.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
     {
@@ -187,8 +184,8 @@ shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesis
 
 void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 {
-    shared_ptr<InformationElement<geometry::CNPosition>> motion = make_shared<InformationElement<geometry::CNPosition>>(
-        make_shared<geometry::CNPosition>(msg->position.x, msg->position.y, msg->position.angle), wm->getTime());
+    shared_ptr<InformationElement<geometry::CNPositionAllo>> motion = make_shared<InformationElement<geometry::CNPositionAllo>>(
+        make_shared<geometry::CNPositionAllo>(msg->position.x, msg->position.y, msg->position.angle), wm->getTime());
     ownPositionMotion.add(motion);
     shared_ptr<InformationElement<msl_msgs::MotionInfo>> vel =
         make_shared<InformationElement<msl_msgs::MotionInfo>>(make_shared<msl_msgs::MotionInfo>(msg->motion), wm->getTime());
@@ -214,8 +211,8 @@ void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 
 void RawSensorData::processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
 {
-    shared_ptr<geometry::CNPoint2D> opt = make_shared<geometry::CNPoint2D>(msg->x, msg->y);
-    shared_ptr<InformationElement<geometry::CNPoint2D>> o = make_shared<InformationElement<geometry::CNPoint2D>>(opt, wm->getTime());
+    shared_ptr<geometry::CNPointAllo> opt = make_shared<geometry::CNPointAllo>(msg->x, msg->y);
+    shared_ptr<InformationElement<geometry::CNPointAllo>> o = make_shared<InformationElement<geometry::CNPointAllo>>(opt, wm->getTime());
     o->certainty = msg->qos;
     opticalFlow.add(o);
 }
@@ -255,9 +252,9 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         ownOdometry.add(odo);
 
         // Vision
-        shared_ptr<geometry::CNPosition> pos =
-            make_shared<geometry::CNPosition>(data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
-        shared_ptr<InformationElement<geometry::CNPosition>> odometry = make_shared<InformationElement<geometry::CNPosition>>(pos, time);
+        shared_ptr<geometry::CNPositionAllo> pos =
+            make_shared<geometry::CNPositionAllo>(data->odometry.position.x, data->odometry.position.y, data->odometry.position.angle);
+        shared_ptr<InformationElement<geometry::CNPositionAllo>> odometry = make_shared<InformationElement<geometry::CNPositionAllo>>(pos, time);
         odometry->certainty = data->odometry.certainty;
         ownPositionVision.add(odometry);
 
@@ -282,8 +279,8 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
          ownVelocityMotion.add(vMotion);*/
     }
 
-    shared_ptr<geometry::CNPoint3D> ballPos = make_shared<geometry::CNPoint3D>(data->ball.point.x, data->ball.point.y, data->ball.point.z);
-    shared_ptr<geometry::CNPoint3D> ballVel = make_shared<geometry::CNPoint3D>(data->ball.velocity.vx, data->ball.velocity.vy, data->ball.velocity.vz);
+    shared_ptr<geometry::CNPointEgo> ballPos = make_shared<geometry::CNPointEgo>(data->ball.point.x, data->ball.point.y, data->ball.point.z);
+    shared_ptr<geometry::CNVecEgo> ballVel = make_shared<geometry::CNVecEgo>(data->ball.velocity.vx, data->ball.velocity.vy, data->ball.velocity.vz);
 
     // cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
     if (data->ball.confidence < 0.00000001)
@@ -321,8 +318,8 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
 
 void RawSensorData::processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi)
 {
-    shared_ptr<geometry::CNPosition> opt = make_shared<geometry::CNPosition>(coi->position.x, coi->position.y, coi->position.angle);
-    shared_ptr<InformationElement<geometry::CNPosition>> o = make_shared<InformationElement<geometry::CNPosition>>(opt, wm->getTime());
+    shared_ptr<geometry::CNPositionAllo> opt = make_shared<geometry::CNPositionAllo>(coi->position.x, coi->position.y, coi->position.angle);
+    shared_ptr<InformationElement<geometry::CNPositionAllo>> o = make_shared<InformationElement<geometry::CNPositionAllo>>(opt, wm->getTime());
     o->certainty = coi->position.certainty;
     ownPositionVision.add(o);
     this->wm->ball->updateOnLocalizationData(coi->imageTime);

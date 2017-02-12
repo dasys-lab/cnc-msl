@@ -1,18 +1,10 @@
-/*
- * AnnotatedObstacleCluster.h
- *
- *  Created on: Feb 11, 2016
- *      Author: Stefan Jakob
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
 
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
 #include <memory>
 #include <vector>
-using namespace std;
 
 namespace msl
 {
@@ -82,5 +74,3 @@ class AnnotatedObstacleCluster
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTER_H_ */

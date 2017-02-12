@@ -151,7 +151,7 @@ void *UdpCanConnection::readLoop()
                     }
                     else
                     {
-                        listener->Receive(canid, (rxbuf + 5), dlen);
+                        listener->receive(canid, (rxbuf + 5), dlen);
                     }
                 }
             }

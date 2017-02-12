@@ -1,12 +1,4 @@
-/*
- * Ball.h
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
@@ -63,7 +55,7 @@ class Ball
     void updateOnBallHypothesisList(unsigned long long imageTime);
     void updateOnLocalizationData(unsigned long long imageTime);
     void processHypothesis();
-    void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecAllo ballVel, double certainty);
+    void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
     bool getTeamMateBallPossession(int teamMateId, int index = 0);
     bool getOppBallPossession(int index = 0);
@@ -112,9 +104,6 @@ class Ball
     RingBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
     RingBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
 
-    RingBuffer<InformationElement<geometry::CNPointAllo>> ballPoint3D;
-    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVel3D;
-
     bool robotHasBall(int robotId);
     bool oppHasBall();
     Point allo2Ego(Point p, Position pos);
@@ -122,10 +111,8 @@ class Ball
     double haveDistance;
 
     bool selfInBallPossesion;
-    geometry::CNPoint2D ballPickupPosition;
+    geometry::CNPointAllo ballPickupPosition;
     void updateBallPossession();
 };
 
 } /* namespace alica */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_BALL_H_ */

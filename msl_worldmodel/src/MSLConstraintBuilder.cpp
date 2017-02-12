@@ -1,10 +1,3 @@
-/*
- * MSLConstraintBuilder.cpp
- *
- *  Created on: Sep 2, 2014
- *      Author: psp
- */
-
 #include "MSLConstraintBuilder.h"
 #include "Ball.h"
 #include "Game.h"
@@ -13,6 +6,9 @@
 #include "Robots.h"
 #include "Rules.h"
 #include "obstaclehandler/Obstacles.h"
+
+using std::shared_ptr;
+using autodiff::TVec;
 
 namespace msl
 {
@@ -27,44 +23,6 @@ double MSLConstraintBuilder::MIN_POSITION_DIST = 650.0;
 supplementary::SystemConfig *MSLConstraintBuilder::sc = supplementary::SystemConfig::getInstance();
 
 Rules *MSLConstraintBuilder::rules = Rules::getInstance();
-
-// INTERN
-// TODO check
-
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownRightSurCornerP = wm->field.posLRSurrounding();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLeftSurCornerP = wm->field.posULSurrounding();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownRightCornerP = wm->field.posRightOwnCorner();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLeftCornerP = wm->field.posLeftOppCorner();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLRHalfP = wm->field.posLROppHalf();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownULHalfP = wm->field.posULOwnHalf();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLRPenaltyAreaP = wm->field.posLROppPenaltyArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppULPenaltyAreaP = wm->field.posULOppPenaltyArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownLRPenaltyAreaP = wm->field.posLROwnPenaltyArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownULPenaltyAreaP = wm->field.posULOwnPenaltyArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownLRGoalAreaP = wm->field.posLROwnGoalArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownULGoalAreaP = wm->field.posULOwnGoalArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLRGoalAreaP = wm->field.posLROppGoalArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppULGoalAreaP = wm->field.posULOppGoalArea();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::ownGoalMidP = wm->field.posOwnGoalMid();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppGoalMidP = wm->field.posOppGoalMid();
-//	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::centreMarkP = wm->field.posCenterMarker();
-
-//	shared_ptr<TVec> MSLConstraintBuilder::ownRightSurCornerT = make_shared<TVec>(initializer_list<double> {ownRightSurCornerP->x, ownRightSurCornerP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppLeftSurCornerT = make_shared<TVec>(initializer_list<double> {oppLeftSurCornerP->x, oppLeftSurCornerP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownRightCornerT = make_shared<TVec>(initializer_list<double> {ownRightCornerP->x, ownRightCornerP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppLeftCornerT = make_shared<TVec>(initializer_list<double> {oppLeftCornerP->x, oppLeftCornerP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppLRHalfT = make_shared<TVec>(initializer_list<double> {oppLRHalfP->x, oppLRHalfP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownULHalfT = make_shared<TVec>(initializer_list<double> {ownULHalfP->x, ownULHalfP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {oppLRPenaltyAreaP->x, oppLRPenaltyAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {oppULPenaltyAreaP->x, oppULPenaltyAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownLRPenaltyAreaT = make_shared<TVec>(initializer_list<double> {ownLRPenaltyAreaP->x, ownLRPenaltyAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownULPenaltyAreaT = make_shared<TVec>(initializer_list<double> {ownULPenaltyAreaP->x, ownULPenaltyAreaP->x});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownLRGoalAreaT = make_shared<TVec>(initializer_list<double> {ownLRGoalAreaP->x, ownLRGoalAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownULGoalAreaT = make_shared<TVec>(initializer_list<double> {ownULGoalAreaP->x, ownULGoalAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppLRGoalAreaT = make_shared<TVec>(initializer_list<double> {oppLRGoalAreaP->x, oppLRGoalAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppULGoalAreaT = make_shared<TVec>(initializer_list<double> {oppULGoalAreaP->x, oppULGoalAreaP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::ownGoalMidT = make_shared<TVec>(initializer_list<double> {ownGoalMidP->x, ownGoalMidP->y});
-//	shared_ptr<TVec> MSLConstraintBuilder::oppGoalMidT = make_shared<TVec>(initializer_list<double> {oppGoalMidP->x, oppGoalMidP->y});
 shared_ptr<TVec> MSLConstraintBuilder::centreMarkT = make_shared<TVec>(initializer_list<double>{0.0, 0.0});
 
 shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> &points)
@@ -90,7 +48,7 @@ shared_ptr<Term> MSLConstraintBuilder::spreadUtil(vector<shared_ptr<TVec>> &poin
 shared_ptr<Term> MSLConstraintBuilder::see(shared_ptr<TVec> point, bool considerownPos, double detectionRadius, vector<shared_ptr<TVec>> &players)
 {
     msl::MSLWorldModel *wm = msl::MSLWorldModel::get();
-    shared_ptr<geometry::CNPosition> ownPos = wm->rawSensorData->getOwnPositionVision();
+    shared_ptr<geometry::CNPositionAllo> ownPos = wm->rawSensorData->getOwnPositionVision();
 
     if (ownPos == nullptr)
         return autodiff::Term::FALSE;
@@ -185,7 +143,7 @@ shared_ptr<Term> MSLConstraintBuilder::approachUtil(shared_ptr<TVec> destination
  * @param d: d value from hessennormalform
  * @param points: positions from robots
  */
-shared_ptr<Term> MSLConstraintBuilder::lineUpUtil(shared_ptr<geometry::CNPoint2D> norm, double d, vector<shared_ptr<TVec>> &points)
+shared_ptr<Term> MSLConstraintBuilder::lineUpUtil(shared_ptr<geometry::CNPointAllo> norm, double d, vector<shared_ptr<TVec>> &points)
 {
     MSLWorldModel *wm = MSLWorldModel::get();
     shared_ptr<Term> util = autodiff::TermBuilder::constant(0);
@@ -242,7 +200,7 @@ shared_ptr<Term> MSLConstraintBuilder::outsideRectangle(shared_ptr<TVec> lowerRi
     }
     return c;
 }
-shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width,
+shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<geometry::CNPointAllo> a, shared_ptr<geometry::CNPointAllo> b, double width,
                                                        vector<shared_ptr<TVec>> &points)
 {
     shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
@@ -250,19 +208,16 @@ shared_ptr<Term> MSLConstraintBuilder::outsideCorridor(shared_ptr<geometry::CNPo
     return c;
 }
 
-shared_ptr<Term> MSLConstraintBuilder::insideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width,
+shared_ptr<Term> MSLConstraintBuilder::insideCorridor(shared_ptr<geometry::CNPointAllo> a, shared_ptr<geometry::CNPointAllo> b, double width,
                                                       vector<shared_ptr<TVec>> &points)
 {
     shared_ptr<Term> c = autodiff::LTConstraint::TRUE;
 
-    shared_ptr<geometry::CNPoint2D> a2b = b - a;
-    shared_ptr<geometry::CNPoint2D> normal = (a2b->rotate(M_PI / 2))->normalize();
+    shared_ptr<geometry::CNPointAllo> a2b = b - a;
+    shared_ptr<geometry::CNPointAllo> normal = (a2b->rotate(M_PI / 2))->normalize();
 
-    shared_ptr<geometry::CNPoint2D> r1 = a - (normal * width);
-    shared_ptr<geometry::CNPoint2D> r2 = b + (normal * width);
-
-    cout << "MSLCB: r1 x,y: " << r1->x << " " << r1->y << endl;
-    cout << "MSLCB: r2 x,y: " << r2->x << " " << r2->y << endl;
+    shared_ptr<geometry::CNPointAllo> r1 = a - (normal * width);
+    shared_ptr<geometry::CNPointAllo> r2 = b + (normal * width);
 
     shared_ptr<TVec> tvec1 = make_shared<TVec>(initializer_list<double>{r1->x, r1->y});
     shared_ptr<TVec> tvec2 = make_shared<TVec>(initializer_list<double>{r2->x, r2->y});
@@ -450,12 +405,12 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(Situation situation, int speci
     shared_ptr<Term> c;
     shared_ptr<TVec> ballT = nullptr;
     auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    shared_ptr<geometry::CNPoint2D> ball = wm->ball->getEgoBallPosition();
-    //		shared_ptr<geometry::CNPoint2D> ball = wm->ball.getEgoBallPosition()->egoToAllo(*wm->rawSensorData.getOwnPositionVision());
-    if (ball != nullptr && ownPos != nullptr)
+    shared_ptr<geometry::CNPointEgo> egoBall = wm->ball->getEgoBallPosition();
+    shared_ptr<geometry::CNPointAllo> alloBall;
+    if (egoBall != nullptr && ownPos != nullptr)
     {
-        ball = ball->egoToAllo(*ownPos);
-        ballT = make_shared<TVec>(initializer_list<double>{ball->x, ball->x});
+	alloBall = egoBall->toAllo(*ownPos);
+        ballT = make_shared<TVec>(initializer_list<double>{alloBall->x, alloBall->x});
     }
     switch (situation)
     {
@@ -509,7 +464,7 @@ shared_ptr<Term> MSLConstraintBuilder::applyRules(int specialIdx, vector<shared_
     shared_ptr<Term> c;
     shared_ptr<TVec> ballT = nullptr;
     auto ownPos = wm->rawSensorData->getOwnPositionVision();
-    shared_ptr<geometry::CNPoint2D> ball = wm->ball->getAlloBallPosition();
+    shared_ptr<geometry::CNPointAllo> ball = wm->ball->getAlloBallPosition();
     if (ball != nullptr && ownPos != nullptr)
     {
         ballT = make_shared<TVec>(initializer_list<double>{ball->x, ball->y});
@@ -759,8 +714,8 @@ shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, shared_ptr<TVec> 
 
 shared_ptr<Term> MSLConstraintBuilder::outsideArea(Areas area, vector<shared_ptr<TVec>> &points)
 {
-    shared_ptr<geometry::CNPoint2D> lowerRightCornerP;
-    shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
+    shared_ptr<geometry::CNPointAllo> lowerRightCornerP;
+    shared_ptr<geometry::CNPointAllo> upperLeftCornerP;
     resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
     shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
     shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
@@ -779,8 +734,8 @@ shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<
 {
     if (points.size() <= 0)
         return autodiff::Term::TRUE;
-    shared_ptr<geometry::CNPoint2D> lowerRightCornerP;
-    shared_ptr<geometry::CNPoint2D> upperLeftCornerP;
+    shared_ptr<geometry::CNPointAllo> lowerRightCornerP;
+    shared_ptr<geometry::CNPointAllo> upperLeftCornerP;
     resolveArea(area, &lowerRightCornerP, &upperLeftCornerP);
     shared_ptr<TVec> lowerRightCorner = make_shared<TVec>(initializer_list<double>{lowerRightCornerP->x - AREA_TOL, lowerRightCornerP->y - AREA_TOL});
     shared_ptr<TVec> upperLeftCorner = make_shared<TVec>(initializer_list<double>{upperLeftCornerP->x + AREA_TOL, upperLeftCornerP->y + AREA_TOL});
@@ -789,14 +744,13 @@ shared_ptr<Term> MSLConstraintBuilder::insideArea(Areas area, vector<shared_ptr<
 
 //	shared_ptr<geometry::CNPoint2D> MSLConstraintBuilder::oppLeftSurCornerP = wm->field.posULSurrounding();
 
-void MSLConstraintBuilder::resolveArea(Areas area, shared_ptr<geometry::CNPoint2D> *lowerRightCorner, shared_ptr<geometry::CNPoint2D> *upperLeftCorner)
+void MSLConstraintBuilder::resolveArea(Areas area, shared_ptr<geometry::CNPointAllo> *lowerRightCorner, shared_ptr<geometry::CNPointAllo> *upperLeftCorner)
 {
     MSLWorldModel *wm = MSLWorldModel::get();
     switch (area)
     {
     case Areas::Surrounding:
         *lowerRightCorner = wm->field->posLRSurrounding();
-        // TODO was *upperLeftCorner = wm->field.posLeftOppCorner(); but should be with surrounding
         *upperLeftCorner = wm->field->posULSurrounding();
         break;
     case Areas::Field:

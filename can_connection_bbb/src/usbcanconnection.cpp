@@ -163,7 +163,7 @@ void *UsbCanConnection::readLoop()
                     else
                     {
                         if (listener != NULL)
-                            listener->Receive(canid, rx_frame.data, dlen);
+                            listener->receive(canid, rx_frame.data, dlen);
                     }
                 }
             }

@@ -241,16 +241,12 @@ bool Ball::ballMovedSiginficantly()
     return false;
 }
 
-void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecAllo ballVel, double certainty)
+void Ball::updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty)
 {
     InfoTime time = wm->getTime();
-    shared_ptr<geometry::CNPoint2D> ball2d;
-    if (ballPos != nullptr)
-    {
-        ball2d = make_shared<geometry::CNPoint2D>(ballPos->x, ballPos->y);
-    }
+    shared_ptr<geometry::CNPointEgo> sharedBallPos = std::make_shared<geometry::CNPointEgo>(ballPos->x, ballPos->y);
 
-    shared_ptr<InformationElement<geometry::CNPoint2D>> ball = make_shared<InformationElement<geometry::CNPoint2D>>(ball2d, time);
+    shared_ptr<InformationElement<geometry::CNPointEgo>> ball = make_shared<InformationElement<geometry::CNPointEgo>>(sharedBallPos, time);
     ball->certainty = certainty;
     ballPosition.add(ball);
 
@@ -394,7 +390,7 @@ void Ball::updateSharedBall()
     double m = 0.5 / (sure - unknown);
     double t = 1.0 - sure * m;
 
-    for (auto &pair : wm->robots->sharedWolrdModelData)
+    for (auto &pair : wm->robots->sharedWorldModelData)
     {
         if (pair.first == 1) // No Shared ball for goalie!
         {

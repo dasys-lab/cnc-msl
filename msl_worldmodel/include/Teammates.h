@@ -1,17 +1,9 @@
-/*
- * Teammates.h
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
-#include "container/CNPosition.h"
-#include <container/CNPoint2D.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
 #include <memory>
 #include <vector>
 
@@ -46,5 +38,3 @@ class Teammates
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_ */
