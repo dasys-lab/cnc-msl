@@ -40,8 +40,5 @@ class BBB
     LightBarrier *lightbarrier;
     IMU *imu;
     Switches * switches;
-
-//    timeval time_now;
-//    timeval last_ping;
 };
 }

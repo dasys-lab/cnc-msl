@@ -46,30 +46,40 @@ BBB::BBB()
 
     // Configure Ball Handler Worker
     this->ballHandler = new BallHandler();
-    this->ballHandler->msDelayedStart = std::chrono::milliseconds(0);
-    this->ballHandler->msInterval = std::chrono::milliseconds(30);
+    this->ballHandler->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->ballHandler->setIntervalMS(std::chrono::milliseconds(30));
     this->ballHandler->start();
 
     // Configure Shovel Selection Worker
     this->shovelSelection = new ShovelSelection(BlackLib::P9_14);
+    this->shovelSelection->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->shovelSelection->setIntervalMS(std::chrono::milliseconds(30));
     this->shovelSelection->start();
 
     // Configure Optical Flow Sensor Worker
     this->opticalFlow = new OpticalFlow(comm);
     this->opticalFlow->adns_init();
+    this->opticalFlow->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->opticalFlow->setIntervalMS(std::chrono::milliseconds(30));
     this->opticalFlow->start();
 
     // Configure Light Barrier Worker
     this->lightbarrier = new LightBarrier(BlackLib::AIN0, this->comm);
+    this->lightbarrier->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->lightbarrier->setIntervalMS(std::chrono::milliseconds(30));
     this->lightbarrier->start();
 
     // Configure Switches Worker
     this->switches = new Switches(this->comm);
+    this->switches->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->switches->setIntervalMS(std::chrono::milliseconds(30));
     this->switches->start();
 
     // Configure IMU Worker
     this->imu = new IMU(this->comm);
     this->imu->init();
+    this->imu->setDelayedStartMS(std::chrono::milliseconds(0));
+    this->imu->setIntervalMS(std::chrono::milliseconds(30));
     this->imu->start();
 }
 

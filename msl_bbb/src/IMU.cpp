@@ -22,7 +22,7 @@ IMU::IMU(Communication *comm)
     gpio = BeagleGPIO::getInstance();
     /* magnet, accel, temp, gyro Interrupt-Pins */
     std::vector<char const *> IMU_pins = {"P8_11", "P8_15", "P8_17", "P8_26"};
-    pins = gpio->claim((char **)IMU_pins.data(), 4);
+    pins = gpio->claim((char **)IMU_pins.data(), IMU_pins.size());
 
     acc = new Sensor();
     gyr = new Sensor();

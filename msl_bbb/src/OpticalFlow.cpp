@@ -174,7 +174,7 @@ void OpticalFlow::setConfigurationBits(uint8_t conf)
     write(CONFIGURATION_BITS, conf);
 }
 
-void OpticalFlow::getMotionBurst(int8_t *burst)
+void OpticalFlow::getMotionBurst()
 {
     uint8_t write[7] = {0};
     uint8_t read[7];
@@ -196,7 +196,7 @@ void OpticalFlow::getMotionBurst(int8_t *burst)
 
 void OpticalFlow::update_motion_burst()
 {
-    getMotionBurst(motionBurst);
+    getMotionBurst();
     x += motionBurst[1];
     y += motionBurst[2];
     qos += motionBurst[3];
