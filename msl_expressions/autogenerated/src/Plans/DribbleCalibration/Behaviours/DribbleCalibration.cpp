@@ -18,6 +18,7 @@ namespace alica
 			DomainBehaviour("DribbleCalibration")
 	{
 		/*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
+		skipForwardCal = false;
 		dribbleForward = false;
 		dribbleBackward = false;
 		dribbleRotateLeft = false;
@@ -45,6 +46,12 @@ namespace alica
 	void DribbleCalibration::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
+		if (skipForwardCal){
+			cout << "skipping Forward Calibration!" << endl;
+			this->setSuccess(true);
+			return;
+		}
+
 		// check DribbleControl code and maybe add a new parameter for the orthogonal calculation
 		MotionControl mc;
 		msl::RobotMovement rm;
@@ -100,7 +107,7 @@ namespace alica
 			{
 				cout << "no MotionControl received!" << endl;
 			}
-			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 30)
+			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 90)
 			{
 				shared_ptr<BallHandleCmd> bhc = query->getBhc();
 				send(*bhc);
@@ -231,6 +238,7 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
 		NULL);
 		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
+		skipForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.DribbleForward", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */

@@ -22,6 +22,8 @@ namespace alica
         /*PROTECTED REGION END*/
     private:
         /*PROTECTED REGION ID(prv1482339434271) ENABLED START*/ //Add additional private methods here
+        bool skipForwardCal;
+
         bool dribbleForward;
         bool dribbleBackward;
         bool dribbleRotateLeft;
