@@ -238,7 +238,7 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
 		NULL);
 		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
-		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.DribbleForward", NULL);
+		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
