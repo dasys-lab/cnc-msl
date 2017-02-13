@@ -59,16 +59,16 @@ class MSLConstraintBuilder
     static shared_ptr<Term> spreadUtil(vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> approachUtil(shared_ptr<TVec> destination, shared_ptr<TVec> point);
-    static shared_ptr<Term> lineUpUtil(shared_ptr<geometry::CNPoint2D> norm, double d, vector<shared_ptr<TVec>> &points);
+    static shared_ptr<Term> lineUpUtil(shared_ptr<geometry::CNPointAllo> norm, double d, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> lazyUtil(vector<shared_ptr<TVec>> &robots, vector<shared_ptr<TVec>> &points);
 
     static shared_ptr<Term> spread(double minDist, vector<shared_ptr<TVec>> &points);
 
     static shared_ptr<Term> outsideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> &points);
     static shared_ptr<Term> insideRectangle(shared_ptr<TVec> lowerRightCorner, shared_ptr<TVec> upperLeftCorner, vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> outsideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width,
+    static shared_ptr<Term> outsideCorridor(shared_ptr<geometry::CNPointAllo> a, shared_ptr<geometry::CNPointAllo> b, double width,
                                             vector<shared_ptr<TVec>> &points);
-    static shared_ptr<Term> insideCorridor(shared_ptr<geometry::CNPoint2D> a, shared_ptr<geometry::CNPoint2D> b, double width,
+    static shared_ptr<Term> insideCorridor(shared_ptr<geometry::CNPointAllo> a, shared_ptr<geometry::CNPointAllo> b, double width,
                                            vector<shared_ptr<TVec>> &points);
 
     static shared_ptr<Term> outsideSphere(shared_ptr<TVec> point, double distance, vector<shared_ptr<TVec>> &points);

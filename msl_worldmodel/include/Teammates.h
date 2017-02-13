@@ -20,21 +20,21 @@ class Teammates
     virtual ~Teammates();
     int teamMatesInOwnPenalty();
     int teamMatesInOppPenalty();
-    shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered(int index = 0);
-    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);
-    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
+    shared_ptr<geometry::CNPositionAllo> getTeamMatePosition(int teamMateId, int index = 0);
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getTeammatesAlloClustered(int index = 0);
+    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
+    shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> getTeammatesEgoClustered(int index = 0);
+    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
 
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
+    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPositionAllo>>>> robotPositions;
 
   private:
     MSLWorldModel *wm;
     int ringBufferLength;
     unsigned long maxInformationAge = 1000000000;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesEgoClustered;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesAlloClustered;
+    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> teammatesEgoClustered;
+    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> teammatesAlloClustered;
 };
 
 } /* namespace msl */

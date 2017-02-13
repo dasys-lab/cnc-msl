@@ -55,13 +55,13 @@ class Ball
     void updateOnBallHypothesisList(unsigned long long imageTime);
     void updateOnLocalizationData(unsigned long long imageTime);
     void processHypothesis();
-    void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecEgo ballVel, double certainty);
+    void updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
     bool getTeamMateBallPossession(int teamMateId, int index = 0);
     bool getOppBallPossession(int index = 0);
     double getBallDiameter();
 
-    shared_ptr<geometry::CNPointAllo> getBallPickupPosition();
+    geometry::CNPointAllo getBallPickupPosition();
 
     void updateSharedBall();
     void updateBallGuess();
@@ -81,7 +81,7 @@ class Ball
     ObjectContainer ballBuf;
     MovingObject mv;
     unsigned long long lastUpdateReceived;
-    geometry::CNPoint2D lastKnownBallPos;
+    geometry::CNPointEgo lastKnownBallPos;
     double HAVE_BALL_TOLERANCE_DRIBBLE;
     double KICKER_DISTANCE;
     double KICKER_DISTANCE_SIMULATOR;

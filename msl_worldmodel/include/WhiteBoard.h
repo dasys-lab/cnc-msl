@@ -1,20 +1,16 @@
-/*
- * WhiteBoard.h
- *
- *  Created on: Aug 28, 2015
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_WHITEBOARD_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_WHITEBOARD_H_
+#pragma once
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
-#include "container/CNPoint2D.h"
-#include "container/CNVelocity2D.h"
-#include "msl_helper_msgs/PassMsg.h"
-#include "msl_helper_msgs/WatchBallMsg.h"
+
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNVecAllo.h>
+
+#include <msl_helper_msgs/PassMsg.h>
+#include <msl_helper_msgs/WatchBallMsg.h>
+
 #include <memory>
+
 namespace msl
 {
 
@@ -37,5 +33,3 @@ class WhiteBoard
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_WHITEBOARD_H_ */

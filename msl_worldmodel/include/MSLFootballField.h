@@ -93,75 +93,75 @@ class MSLFootballField
     MSLFootballField(MSLWorldModel *wm);
     virtual ~MSLFootballField();
 
-    bool isInsideField(shared_ptr<geometry::CNPointAllo> point, double tolerance = 0);
+    bool isInsideField(geometry::CNPointAllo point, double tolerance = 0);
     bool isInsideField(double x, double y, double tolerance = 0);
 
-    bool isInsidePenalty(shared_ptr<geometry::CNPointAllo> p, double tolerance);
-    bool isInsideOwnPenalty(shared_ptr<geometry::CNPointAllo> p, double tolerance);
-    bool isInsideOppPenalty(shared_ptr<geometry::CNPointAllo> p, double tolerance);
+    bool isInsidePenalty(const geometry::CNPointAllo p, double tolerance) const;
+    bool isInsideOwnPenalty(const geometry::CNPointAllo p, double tolerance) const;
+    bool isInsideOppPenalty(const geometry::CNPointAllo p, double tolerance) const;
 
-    bool isInsideGoalArea(shared_ptr<geometry::CNPointAllo> p, double tolerance);
-    bool isInsideOwnGoalArea(shared_ptr<geometry::CNPointAllo> p, double tolerance);
-    bool isInsideOppGoalArea(shared_ptr<geometry::CNPointAllo> p, double tolerance);
+    bool isInsideGoalArea(geometry::CNPointAllo p, double tolerance);
+    bool isInsideOwnGoalArea(geometry::CNPointAllo p, double tolerance);
+    bool isInsideOppGoalArea(geometry::CNPointAllo p, double tolerance);
 
-    shared_ptr<geometry::CNPointAllo> mapOutOfPenalty(shared_ptr<geometry::CNPointAllo> inp);
-    shared_ptr<geometry::CNPointAllo> mapOutOfOwnPenalty(shared_ptr<geometry::CNPointAllo> inp);
-    shared_ptr<geometry::CNPointAllo> mapOutOfOwnPenalty(shared_ptr<geometry::CNPointAllo> inp, shared_ptr<geometry::CNPointAllo> alongVec);
-    shared_ptr<geometry::CNPointAllo> mapOutOfOppPenalty(shared_ptr<geometry::CNPointAllo> inp);
-    shared_ptr<geometry::CNPointAllo> mapOutOfOppPenalty(shared_ptr<geometry::CNPointAllo> inp, shared_ptr<geometry::CNPointAllo> alongVec);
+    geometry::CNPointAllo mapOutOfPenalty(geometry::CNPointAllo inp);
+    geometry::CNPointAllo mapOutOfOwnPenalty(geometry::CNPointAllo inp);
+    geometry::CNPointAllo mapOutOfOwnPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
+    geometry::CNPointAllo mapOutOfOppPenalty(geometry::CNPointAllo inp);
+    geometry::CNPointAllo mapOutOfOppPenalty(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
 
-    shared_ptr<geometry::CNPointAllo> mapOutOfOwnGoalArea(shared_ptr<geometry::CNPointAllo> inp);
-    shared_ptr<geometry::CNPointAllo> mapOutOfOppGoalArea(shared_ptr<geometry::CNPointAllo> inp);
+    geometry::CNPointAllo mapOutOfOwnGoalArea(geometry::CNPointAllo inp);
+    geometry::CNPointAllo mapOutOfOppGoalArea(geometry::CNPointAllo inp);
 
-    shared_ptr<geometry::CNPointAllo> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPointAllo> inp, double tolerance);
-    shared_ptr<geometry::CNPointAllo> mapInsideOwnPenaltyArea(shared_ptr<geometry::CNPointAllo> inp);
+    geometry::CNPointAllo mapInsideOwnPenaltyArea(geometry::CNPointAllo inp, double tolerance);
+    geometry::CNPointAllo mapInsideOwnPenaltyArea(geometry::CNPointAllo inp);
 
-    shared_ptr<geometry::CNPointAllo> mapInsideField(shared_ptr<geometry::CNPointAllo> inp);
-    shared_ptr<geometry::CNPointAllo> mapInsideField(shared_ptr<geometry::CNPointAllo> inp, double tolerance);
-    shared_ptr<geometry::CNPointAllo> mapInsideField(shared_ptr<geometry::CNPointAllo> inp, shared_ptr<geometry::CNPointAllo> alongVec);
+    geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp);
+    geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp, double tolerance);
+    geometry::CNPointAllo mapInsideField(geometry::CNPointAllo inp, geometry::CNPointAllo alongVec);
 
-    shared_ptr<geometry::CNPointAllo> keepOutOfOwnPenalty(shared_ptr<geometry::CNPointAllo> from, shared_ptr<geometry::CNPointAllo> to);
-    double distanceToLine(shared_ptr<geometry::CNPointAllo> from, double angle);
-    double distanceToLine(shared_ptr<geometry::CNPointAllo> from, double angle, double extendFieldLines);
+    geometry::CNPointAllo keepOutOfOwnPenalty(geometry::CNPointAllo from, geometry::CNPointAllo to);
+    double distanceToLine(geometry::CNPointAllo from, double angle);
+    double distanceToLine(geometry::CNPointAllo from, double angle, double extendFieldLines);
 
     //  --------- POINTS ---------
 
-    shared_ptr<geometry::CNPointAllo> posCenterMarker(); // see no. 0
+    geometry::CNPointAllo posCenterMarker(); // see no. 0
 
     // Corners
-    shared_ptr<geometry::CNPointAllo> posLeftOwnCorner();  // see no. 1
-    shared_ptr<geometry::CNPointAllo> posRightOwnCorner(); // see no. 2
-    shared_ptr<geometry::CNPointAllo> posLeftOppCorner();  // see no. 3
-    shared_ptr<geometry::CNPointAllo> posRightOppCorner(); // see no. 4
+    geometry::CNPointAllo posLeftOwnCorner();  // see no. 1
+    geometry::CNPointAllo posRightOwnCorner(); // see no. 2
+    geometry::CNPointAllo posLeftOppCorner();  // see no. 3
+    geometry::CNPointAllo posRightOppCorner(); // see no. 4
 
     // Goalposts
-    shared_ptr<geometry::CNPointAllo> posLeftOwnGoalPost();  // see no. 5
-    shared_ptr<geometry::CNPointAllo> posRightOwnGoalPost(); // see no. 6
-    shared_ptr<geometry::CNPointAllo> posLeftOppGoalPost();  // see no. 7
-    shared_ptr<geometry::CNPointAllo> posRightOppGoalPost(); // see no. 8
+    geometry::CNPointAllo posLeftOwnGoalPost();  // see no. 5
+    geometry::CNPointAllo posRightOwnGoalPost(); // see no. 6
+    geometry::CNPointAllo posLeftOppGoalPost();  // see no. 7
+    geometry::CNPointAllo posRightOppGoalPost(); // see no. 8
     // Field Points
-    shared_ptr<geometry::CNPointAllo> posOwnPenaltyMarker();      // see no. 9
-    shared_ptr<geometry::CNPointAllo> posRightOwnRestartMarker(); // see no. 10
-    shared_ptr<geometry::CNPointAllo> posLeftOwnRestartMarker();  // see no. 11
-    shared_ptr<geometry::CNPointAllo> posOppPenaltyMarker();      // see no. 12
-    shared_ptr<geometry::CNPointAllo> posRightOppRestartMarker(); // see no. 13
-    shared_ptr<geometry::CNPointAllo> posLeftOppRestartMarker();  // see no. 14
-    shared_ptr<geometry::CNPointAllo> posOppGoalMid();            // see no. 15
-    shared_ptr<geometry::CNPointAllo> posOwnGoalMid();            // see no. 16
-    shared_ptr<geometry::CNPointAllo> posLROppHalf();             // see no. 17
-    shared_ptr<geometry::CNPointAllo> posULOwnHalf();             // see no. 18
-    shared_ptr<geometry::CNPointAllo> posLROwnPenaltyArea();      // see no. 19
-    shared_ptr<geometry::CNPointAllo> posULOwnPenaltyArea();      // see no. 20
-    shared_ptr<geometry::CNPointAllo> posLROppPenaltyArea();      // see no. 21
-    shared_ptr<geometry::CNPointAllo> posULOppPenaltyArea();      // see no. 22
-    shared_ptr<geometry::CNPointAllo> posLROwnGoalArea();         // see no. 23
-    shared_ptr<geometry::CNPointAllo> posULOwnGoalArea();         // see no. 24
-    shared_ptr<geometry::CNPointAllo> posLROppGoalArea();         // see no. 25
-    shared_ptr<geometry::CNPointAllo> posULOppGoalArea();         // see no. 26
-    shared_ptr<geometry::CNPointAllo> posLeftRestartMarker();     // see no. 27
-    shared_ptr<geometry::CNPointAllo> posRightRestartMarker();    // see no. 28
-    shared_ptr<geometry::CNPointAllo> posLRSurrounding();         // see no. 29
-    shared_ptr<geometry::CNPointAllo> posULSurrounding();         // see no. 30
+    geometry::CNPointAllo posOwnPenaltyMarker();      // see no. 9
+    geometry::CNPointAllo posRightOwnRestartMarker(); // see no. 10
+    geometry::CNPointAllo posLeftOwnRestartMarker();  // see no. 11
+    geometry::CNPointAllo posOppPenaltyMarker();      // see no. 12
+    geometry::CNPointAllo posRightOppRestartMarker(); // see no. 13
+    geometry::CNPointAllo posLeftOppRestartMarker();  // see no. 14
+    geometry::CNPointAllo posOppGoalMid();            // see no. 15
+    geometry::CNPointAllo posOwnGoalMid();            // see no. 16
+    geometry::CNPointAllo posLROppHalf();             // see no. 17
+    geometry::CNPointAllo posULOwnHalf();             // see no. 18
+    geometry::CNPointAllo posLROwnPenaltyArea();      // see no. 19
+    geometry::CNPointAllo posULOwnPenaltyArea();      // see no. 20
+    geometry::CNPointAllo posLROppPenaltyArea();      // see no. 21
+    geometry::CNPointAllo posULOppPenaltyArea();      // see no. 22
+    geometry::CNPointAllo posLROwnGoalArea();         // see no. 23
+    geometry::CNPointAllo posULOwnGoalArea();         // see no. 24
+    geometry::CNPointAllo posLROppGoalArea();         // see no. 25
+    geometry::CNPointAllo posULOppGoalArea();         // see no. 26
+    geometry::CNPointAllo posLeftRestartMarker();     // see no. 27
+    geometry::CNPointAllo posRightRestartMarker();    // see no. 28
+    geometry::CNPointAllo posLRSurrounding();         // see no. 29
+    geometry::CNPointAllo posULSurrounding();         // see no. 30
     bool cornerCircleExists();
     double getCornerCircleRadius();
     double getFieldLength();
@@ -203,11 +203,11 @@ class MSLFootballField
     double MaxDistance;
     double MaxDistanceSqr;
     string CurrentField;
-    shared_ptr<geometry::CNPointAllo> mapInsideArea(shared_ptr<geometry::CNPointAllo> inp, double xline, double yline);
-    shared_ptr<geometry::CNPointAllo> mapOutsideArea(shared_ptr<geometry::CNPointAllo> inp, double xline, double yline);
+    geometry::CNPointAllo mapInsideArea(geometry::CNPointAllo inp, double xline, double yline);
+    geometry::CNPointAllo mapOutsideArea(geometry::CNPointAllo inp, double xline, double yline);
 
   protected:
-    double projectVectorOntoX(shared_ptr<geometry::CNPointAllo> origin, shared_ptr<geometry::CNPointAllo> dir, double x);
-    double projectVectorOntoY(shared_ptr<geometry::CNPointAllo> origin, shared_ptr<geometry::CNPointAllo> dir, double y);
+    double projectVectorOntoX(geometry::CNPointAllo origin, geometry::CNPointAllo dir, double x);
+    double projectVectorOntoY(geometry::CNPointAllo origin, geometry::CNPointAllo dir, double y);
 };
 }

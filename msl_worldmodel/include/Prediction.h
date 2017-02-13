@@ -1,14 +1,6 @@
-/*
- * Prediction.h
- *
- *  Created on: Mar 11, 2016
- *      Author: sni
- */
+#pragma once
 
-#ifndef PREDICTION_H_
-#define PREDICTION_H_
-
-#include <container/CNPosition.h>
+#include <cnc_geometry/CNPositionAllo.h>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -24,7 +16,7 @@ class Prediction
 
     double rotationVelocity(int ms);
     double angle(int ms);
-    std::unique_ptr<std::pair<std::shared_ptr<geometry::CNPosition>, double>> angleAndPosition(int ms);
+    std::unique_ptr<std::pair<std::shared_ptr<geometry::CNPositionAllo>, double>> angleAndPosition(int ms);
     void monitoring();
 
   private:
@@ -36,6 +28,4 @@ class Prediction
     double magicNumber;
 };
 
-} /* namespace ice */
-
-#endif /* PREDICTION_H_ */
+} /* namespace msl */
