@@ -46,7 +46,8 @@ namespace alica
 	void DribbleCalibration::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
-		if (!runForwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm){
+		if (!runForwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm)
+		{
 			cout << "skipping Forward Calibration!" << endl;
 			this->setSuccess(true);
 			return;
@@ -108,6 +109,11 @@ namespace alica
 				cout << "no MotionControl received!" << endl;
 			}
 			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 90)
+			{
+				shared_ptr<BallHandleCmd> bhc = query->getBhc();
+				send(*bhc);
+			}
+			else
 			{
 				shared_ptr<BallHandleCmd> bhc = query->getBhc();
 				send(*bhc);
