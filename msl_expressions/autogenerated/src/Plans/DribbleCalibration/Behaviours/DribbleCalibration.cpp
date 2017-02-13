@@ -91,6 +91,8 @@ namespace alica
                 }
                 else
                 {
+                	MotionControl m = *mc;
+                	cout << "m.motion.translation = " << m.motion.translation << endl;
                     send(*mc);
                 }
             }
