@@ -54,7 +54,7 @@ namespace msl
 
     void DribbleBackward::adaptParams()
     {
-        actuatorSpeed = actuatorSpeed - changingValue;
+        actuatorSpeed = actuatorSpeed + changingValue;
 //        if (epsilonT < 0)
 //        {
 //            cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
