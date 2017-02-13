@@ -1,13 +1,8 @@
-/*
- * Teammates.cpp
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
 #include "Teammates.h"
 #include "MSLFootballField.h"
 #include "MSLWorldModel.h"
+
+#include <cnc_geometry/CNPositionAllo.h>
 
 namespace msl
 {
@@ -28,7 +23,7 @@ int Teammates::teamMatesInOwnPenalty()
 {
     int count = 0;
     int myId = wm->getOwnId();
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teamMatePositions = getPositionsOfTeamMates();
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> teamMatePositions = getPositionsOfTeamMates();
     for (int i = 0; i < teamMatePositions->size(); i++)
     {
         if (teamMatePositions->at(i)->first != myId)
@@ -46,7 +41,7 @@ int Teammates::teamMatesInOppPenalty()
 {
     int count = 0;
     int myId = wm->getOwnId();
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> teamMatePositions = getPositionsOfTeamMates();
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> teamMatePositions = getPositionsOfTeamMates();
     for (int i = 0; i < teamMatePositions->size(); i++)
     {
         if (teamMatePositions->at(i)->first != myId)
@@ -60,7 +55,7 @@ int Teammates::teamMatesInOppPenalty()
     return count;
 }
 
-shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(int teamMateId, int index)
+shared_ptr<geometry::CNPositionAllo> Teammates::getTeamMatePosition(int teamMateId, int index)
 {
     if (robotPositions.find(teamMateId) == robotPositions.end())
     {
@@ -74,23 +69,23 @@ shared_ptr<geometry::CNPosition> Teammates::getTeamMatePosition(int teamMateId, 
     return x->getInformation();
 }
 
-shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> Teammates::getPositionsOfTeamMates()
+shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> Teammates::getPositionsOfTeamMates()
 {
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> ret =
-        make_shared<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>>();
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> ret =
+        make_shared<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>>();
     for (auto iter = robotPositions.begin(); iter != robotPositions.end(); iter++)
     {
         if (wm->getTime() - iter->second->getLast()->timeStamp < maxInformationAge)
         {
-            shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> element =
-                make_shared<pair<int, shared_ptr<geometry::CNPosition>>>(iter->first, iter->second->getLast()->getInformation());
+            shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> element =
+                make_shared<pair<int, shared_ptr<geometry::CNPositionAllo>>>(iter->first, iter->second->getLast()->getInformation());
             ret->push_back(element);
         }
     }
     return ret;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesAlloClustered(int index)
+shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> Teammates::getTeammatesAlloClustered(int index)
 {
     auto x = teammatesAlloClustered.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -100,16 +95,16 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesAlloC
     return x->getInformation();
 }
 
-void msl::Teammates::processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered)
+void msl::Teammates::processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(teammatesAlloClustered, wm->getTime());
+    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> o =
+        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>>(teammatesAlloClustered, wm->getTime());
     o->certainty = 1;
 
     this->teammatesAlloClustered.add(o);
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesEgoClustered(int index)
+shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> Teammates::getTeammatesEgoClustered(int index)
 {
     auto x = teammatesEgoClustered.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -119,13 +114,12 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Teammates::getTeammatesEgoCl
     return x->getInformation();
 }
 
-void Teammates::processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered)
+void Teammates::processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(teammatesEgoClustered, wm->getTime());
+    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> o =
+        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(teammatesEgoClustered, wm->getTime());
     o->certainty = 1;
 
     this->teammatesEgoClustered.add(o);
 }
-}
-/* namespace msl */
+} /* namespace msl */

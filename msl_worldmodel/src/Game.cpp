@@ -361,7 +361,7 @@ void Game::updateGameState()
 {
     // Find robot closest to ball
     auto robots = this->wm->robots->teammates.getPositionsOfTeamMates();
-    shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> closestRobot;
+    shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> closestRobot;
     double minDist = numeric_limits<double>::max();
     auto sharedBallPosition = wm->ball->getAlloSharedBallPosition();
     if (sharedBallPosition == nullptr)
@@ -369,9 +369,9 @@ void Game::updateGameState()
         return;
     }
     bool ballPossession = false;
-    for (shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>> shwmData : *robots)
+    for (shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> shwmData : *robots)
     {
-        double currDist = shwmData->second->distanceTo(sharedBallPosition);
+        double currDist = shwmData->second->distanceTo(*sharedBallPosition);
         if (closestRobot == nullptr || currDist < minDist)
         {
             closestRobot = shwmData;

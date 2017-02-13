@@ -1,12 +1,6 @@
-/*
- * SearchNode.h
- *
- *  Created on: Apr 24, 2015
- *      Author: Stefan Jakob
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_SEARCHNODE_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_SEARCHNODE_H_
+#include <cnc_geometry/CNPointAllo.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -21,11 +15,8 @@ typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<Delauna
 typedef CGAL::Voronoi_diagram_2<DelaunayTriangulation, DelaunayAdaptionTraits, DelaunayAdaptionPolicy> VoronoiDiagram;
 typedef VoronoiDiagram::Vertex Vertex;
 
-#include "container/CNPoint2D.h"
 #include <limits.h>
 #include <memory>
-
-using namespace std;
 
 namespace msl
 {
@@ -113,6 +104,4 @@ class SearchNode
     shared_ptr<Vertex> vertex;
 };
 
-} /* namespace alicaTests */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_SEARCHNODE_H_ */
+} /* namespace msl */
