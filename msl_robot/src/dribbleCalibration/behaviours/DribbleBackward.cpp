@@ -39,8 +39,8 @@ namespace msl
         mc = make_shared<MotionControl>(mc1);
         cout << "mc.translation = " << mc->motion.translation << endl;
         query->setMc(mc);
-        bhc->leftMotor = actuatorSpeed;
-        bhc->rightMotor = actuatorSpeed;
+        bhc->leftMotor = -actuatorSpeed;
+        bhc->rightMotor = -actuatorSpeed;
         query->setBhc(bhc);
         return query;
     }
