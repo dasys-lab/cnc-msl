@@ -35,9 +35,6 @@ public:
 
 private:
 
-	std::vector<char const *>BH_right_pins;
-	std::vector<char const *>BH_left_pins;
-
 	Motor *rightMotor;
 	Motor *leftMotor;
 	uint8_t mode; /** < control mode (autonomous or remote) */

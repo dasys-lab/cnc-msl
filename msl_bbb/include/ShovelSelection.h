@@ -27,7 +27,7 @@ class ShovelSelection : public Worker
 
     void run(); /** < overwrites the workers virtual run method */
 
-    void updateTimeOfLastCmd();
+    void updateTimeOfLastPositionChange();
     bool checkTimeout();
     void setShovel(bool passing);
     void handleShovelSelectControl(const msl_actuator_msgs::ShovelSelectCmd msg);
@@ -47,6 +47,6 @@ class ShovelSelection : public Worker
     bool statePassing;
 
     int timeout;
-    timeval timeOfLastCommand;
+    timeval timeOfLastPositionChange;
 };
 }

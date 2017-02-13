@@ -19,11 +19,12 @@ Sensor::~Sensor()
 void Sensor::updateInternalValues()
 {
     this->mean = geometry::calculateMean(this->data);
-
-    this->angle_rad = atan2(this->mean.y, this->mean.x);
-    this->angle_deg = this->angle_rad * 180 / M_PI;
-
-    this->offset = std::make_shared<geometry::CNVecAllo>(this->mean.x, this->mean.y, this->mean.z);
-    this->data.clear();
+	this->angle_rad = atan2(this->mean.y, this->mean.x);
+	this->angle_deg = this->angle_rad * 180 / M_PI;
+	if(this->offset == nullptr)
+	{
+		this->offset = std::make_shared<geometry::CNVecAllo>(this->mean.x, this->mean.y, this->mean.z);
+	}
+	this->data.clear();
 }
 }

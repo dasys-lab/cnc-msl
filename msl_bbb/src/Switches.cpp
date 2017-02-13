@@ -19,9 +19,6 @@ Switches::Switches(Communication *comm)
     , newState{false, false, false}
 {
     this->bundle_state = 0;
-    //    this->sw = {1, 1, 1};
-    //    this->currentState = {false, false, false};
-    //    this->newState = {false, false, false};
     this->comm = comm;
     this->sc = supplementary::SystemConfig::getInstance();
     ownID = (*sc)["bbb"]->get<int>("BBB.robotID", NULL);
@@ -30,6 +27,9 @@ Switches::Switches(Communication *comm)
     /* sw_vis, sw_bun, sw_pwr, led_pwr, led_bun, led_vis */
     std::vector<char const *> SW_pins = {"P9_11", "P9_13", "P9_15", "P9_23", "P9_41", "P9_42"};
     this->pins = this->gpio->claim((char **)SW_pins.data(), 6);
+
+    int outputIdxs[] = {led_power, led_bundle, led_vision};
+    pins->enableOutput(outputIdxs, 3);
 }
 
 Switches::~Switches()
@@ -50,7 +50,7 @@ void Switches::readButtons()
         {
             this->newState[i] = false;
         }
-        else if (sw[i] == 0)
+        else if (this->sw[i] == 0)
         {
             this->newState[i] = true;
         }
@@ -63,8 +63,7 @@ void Switches::readButtons()
 
 void Switches::run()
 {
-    int outputIdxs[] = {led_power, led_bundle, led_vision};
-    pins->enableOutput(outputIdxs, 3);
+	this->readButtons();
 
     // Processes Button
     if (newState[sw_bundle] != currentState[sw_bundle])

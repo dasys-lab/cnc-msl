@@ -2,6 +2,14 @@
 
 #include "Communication.h"
 
+#include <BeagleGPIO.h>
+#include <BeaglePins.h>
+
+enum Pins
+{
+	ncs, npd, of_rst, led
+};
+
 namespace msl_bbb
 {
 
@@ -11,11 +19,12 @@ OpticalFlow::OpticalFlow(Communication *comm)
     this->comm = comm;
 
     /* ncs, npd, rst, led */
-    std::vector<char const *> OF_pins = {"P9_30", "P9_25", "P9_27", "P9_12"}; // FIXME: Not needed anymore??
-    this->ncs = new BlackLib::BlackGPIO(BlackLib::GPIO_112, BlackLib::output, BlackLib::FastMode);
-    this->npd = new BlackLib::BlackGPIO(BlackLib::GPIO_117, BlackLib::output, BlackLib::FastMode);
-    this->rst = new BlackLib::BlackGPIO(BlackLib::GPIO_115, BlackLib::output, BlackLib::FastMode);
-    this->led = new BlackLib::BlackGPIO(BlackLib::GPIO_60, BlackLib::output, BlackLib::FastMode);
+    std::vector<char const *> pin_names = {"P9_30", "P9_25", "P9_27", "P9_12"};
+    gpio = BeagleGPIO::getInstance();
+	pins = gpio->claim((char**) pin_names.data(), pin_names.size());
+
+	int outputIdxs[] = { ncs, npd, of_rst, led };
+	pins->enableOutput(outputIdxs, 4);
 
     this->spi = new BlackLib::BlackSPI(BlackLib::SPI0_0, 8, BlackLib::SpiMode0, 2000000);
     if (!this->spi->open(BlackLib::ReadWrite))
@@ -32,10 +41,8 @@ OpticalFlow::OpticalFlow(Communication *comm)
 
 OpticalFlow::~OpticalFlow()
 {
-    delete ncs;
-    delete npd;
-    delete rst;
-    delete led;
+    delete gpio;
+    delete spi;
 }
 
 /**
@@ -43,47 +50,50 @@ OpticalFlow::~OpticalFlow()
  */
 void OpticalFlow::adns_init(void)
 {
-
-    ncs->setValue(BlackLib::high);
-    reset();
+	pins->setBit(ncs);
+	reset();
 
     usleep(4000);
 
     // set resolution (0x00 = 400 counts per inch, 0x10 = 1600 cpi)
     setConfigurationBits(0x00);
-    led->setValue(BlackLib::high);
+	pins->setBit(led);
 }
 
 void OpticalFlow::controlLED(bool enabled)
 {
-    led->setValue(static_cast<BlackLib::digitalValue>(enabled));
+	if (enabled)
+		pins->setBit(led);
+	else
+		pins->clearBit(led);
 }
 
 uint8_t OpticalFlow::read(uint8_t address)
 {
-    ncs->setValue(BlackLib::low);
+	pins->clearBit(ncs);
     spi->transfer(address, 75); // wait t_SRAD
 
     uint8_t ret = spi->transfer(0x00);
-    ncs->setValue(BlackLib::high);
+	pins->setBit(ncs);
 
     return ret;
 }
 
 void OpticalFlow::reset(void)
 {
-    rst->setValue(BlackLib::high);
-    rst->setValue(BlackLib::low);
+	pins->setBit(of_rst);
+	usleep(1);
+	pins->clearBit(of_rst);
     usleep(500);
 }
 
 void OpticalFlow::write(uint8_t address, uint8_t value)
 {
-    ncs->setValue(BlackLib::low);
+	pins->clearBit(ncs);
     spi->transfer(address | 0x80, 50);
 
     spi->transfer(value);
-    ncs->setValue(BlackLib::high);
+	pins->setBit(ncs);
 }
 
 uint8_t OpticalFlow::getConfigurationBits(void)
@@ -146,7 +156,7 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size)
     // min frame speed is 2000 frames/second so 1 frame = 500 us.  so 500 x 3 + 10 = 1510
     usleep(1510); // wait t_CAPTURE
 
-    ncs->setValue(BlackLib::low);
+	pins->clearBit(ncs);
     spi->transfer(PIXEL_BURST);
     usleep(50); // wait t_SRAD
 
@@ -156,7 +166,7 @@ void OpticalFlow::getFrameBurst(uint8_t *image, uint16_t size)
         image[i] = (read_arr[i] << 2);
     }
 
-    ncs->setValue(BlackLib::high);
+	pins->setBit(ncs);
 }
 
 uint8_t OpticalFlow::getInverseProductId(void)
@@ -179,7 +189,7 @@ void OpticalFlow::getMotionBurst()
     uint8_t write[7] = {0};
     uint8_t read[7];
 
-    ncs->setValue(BlackLib::low);
+	pins->clearBit(ncs);
 
     spi->transfer(MOTION_BURST);
     usleep(75);
@@ -191,7 +201,7 @@ void OpticalFlow::getMotionBurst()
         motionBurst[i] = read[i];
     }
 
-    ncs->setValue(BlackLib::high);
+	pins->setBit(ncs);
 }
 
 void OpticalFlow::update_motion_burst()

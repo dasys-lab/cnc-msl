@@ -57,7 +57,7 @@ bool ShovelSelection::checkTimeout()
 {
     timeval t;
     gettimeofday(&t, NULL);
-    if ((TIMEDIFFMS(t, timeOfLastCommand) > timeout) && enabled)
+    if ((TIMEDIFFMS(t, timeOfLastPositionChange) > timeout) && enabled)
     {
         /* API */
         // pwm->setDutyCycle(pwm_pin, 0);
@@ -82,6 +82,8 @@ void ShovelSelection::setShovel(bool passing)
     {
     	return;
     }
+
+	this->updateTimeOfLastPositionChange();
 
     if (passing)
     {
@@ -116,7 +118,6 @@ void ShovelSelection::handleShovelSelectControl(const msl_actuator_msgs::ShovelS
 {
     try
     {
-    	this->updateTimeOfLastCmd();
         this->setShovel(msg.passing);
     }
     catch (exception &e)
@@ -129,9 +130,9 @@ void ShovelSelection::handleShovelSelectControl(const msl_actuator_msgs::ShovelS
  * Sets current time to timeOfLastCommand. This method is called
  * by every ROS msg receiving method.
  */
-void ShovelSelection::updateTimeOfLastCmd()
+void ShovelSelection::updateTimeOfLastPositionChange()
 {
-    gettimeofday(&timeOfLastCommand, NULL);
+    gettimeofday(&timeOfLastPositionChange, NULL);
 }
 
 void ShovelSelection::run()

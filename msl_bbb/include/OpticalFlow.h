@@ -2,8 +2,7 @@
 
 #include "Worker.h"
 
-
-#include <BlackLib.h>
+#include <BlackSPI.h>
 #include <msl_actuator_msgs/MotionLight.h>
 #include <msl_actuator_msgs/MotionBurst.h>
 
@@ -33,6 +32,8 @@
 
 #define RESOLUTION 30
 
+class BeagleGPIO;
+class BeaglePins;
 namespace msl_bbb
 {
 
@@ -68,8 +69,10 @@ class OpticalFlow : public Worker
 
 	void setConfigurationBits(uint8_t conf);
 
-    BlackLib::BlackGPIO *ncs, *npd, *rst, *led;
     BlackLib::BlackSPI *spi;
+	BeagleGPIO *gpio;
+	BeaglePins *pins;
+
     uint8_t img[1536];
 
     int16_t x, y;

@@ -18,8 +18,9 @@ namespace msl_bbb
 BallHandler::BallHandler()
     : Worker("BallHandler")
 {
-    BH_right_pins = {"P8_9", "P8_10", "P8_16", "P8_18"};
-    BH_left_pins = {"P8_7", "P8_8", "P8_12", "P8_14"};
+
+	std::vector<char const *> BH_right_pins = {"P8_9", "P8_10", "P8_16", "P8_18"};
+    std::vector<char const *> BH_left_pins = {"P8_7", "P8_8", "P8_12", "P8_14"};
 
     rightMotor = new Motor(BeaglePWM::P8_19, BH_right_pins);
     leftMotor = new Motor(BeaglePWM::P8_13, BH_left_pins);

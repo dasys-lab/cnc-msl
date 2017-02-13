@@ -52,6 +52,8 @@ Communication::~Communication()
     this->io_service.stop();
     this->iothread->join();
     this->canHandler.usbCanConnection->Stop();
+	delete iothread;
+	delete insocket;
 }
 
 void Communication::setActuators(BallHandler *ballHandler, OpticalFlow *opticalFlow, ShovelSelection *shovelSelection)
