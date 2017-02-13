@@ -100,7 +100,7 @@ namespace alica
 			{
 				cout << "no MotionControl received!" << endl;
 			}
-			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount < 30)
+			if (param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm && haveBallCount > 30)
 			{
 				shared_ptr<BallHandleCmd> bhc = query->getBhc();
 				send(*bhc);
