@@ -30,10 +30,10 @@ class Worker
     virtual void run() = 0; /** < Meant to be overwritten by derived classes. */
     bool stop();
 	bool start();
+	void setIntervalMS(std::chrono::milliseconds delay);
+	void setDelayedStartMS(std::chrono::milliseconds delayedStartMS);
 
 	std::string name; /** < The name of this worker. */
-    std::chrono::milliseconds msInterval;
-    std::chrono::milliseconds msDelayedStart;
 
   protected:
     std::condition_variable runCV;

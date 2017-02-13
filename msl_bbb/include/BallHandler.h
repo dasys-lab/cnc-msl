@@ -42,8 +42,6 @@ private:
 	Motor *leftMotor;
 	uint8_t mode; /** < control mode (autonomous or remote) */
 
-	//const int minSpeed = 1800;
-
 	int timeout; /** < stop motors after timeout happened */
 	timeval timeOfLastCommand; /** < time of last remote command */
 };

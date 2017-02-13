@@ -64,7 +64,7 @@ class OpticalFlow : public Worker
 	uint8_t getConfigurationBits(void);
 	void getFrame(uint8_t *image);
 	void getFrameBurst(uint8_t *image, uint16_t size);
-	void getMotionBurst(int8_t *burst);
+	void getMotionBurst();
 
 	void setConfigurationBits(uint8_t conf);
 
