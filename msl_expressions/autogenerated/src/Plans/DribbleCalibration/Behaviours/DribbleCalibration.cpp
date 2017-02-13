@@ -46,7 +46,7 @@ namespace alica
 	void DribbleCalibration::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
-		if (!runForwardCal){
+		if (!runForwardCal && param == msl::DribbleCalibrationContainer::Param::DribbleForwardParm){
 			cout << "skipping Forward Calibration!" << endl;
 			this->setSuccess(true);
 			return;
@@ -188,7 +188,6 @@ namespace alica
 				istringstream(tmp) >> std::boolalpha >> dribbleForward;
 				!dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
 				success = true;
-				runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
 			}
 			else if (getParameter("DribbleBackward", tmp))
 			{
@@ -239,7 +238,7 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
 		NULL);
 		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
-
+		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Run.DribbleForward", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
