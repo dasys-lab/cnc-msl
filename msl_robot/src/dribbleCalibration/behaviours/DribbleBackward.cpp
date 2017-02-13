@@ -55,12 +55,12 @@ namespace msl
     void DribbleBackward::adaptParams()
     {
         actuatorSpeed = actuatorSpeed - changingValue;
-        if (epsilonT < 0)
-        {
-            cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
-                    << endl;
-            resetParams();
-        }
+//        if (epsilonT < 0)
+//        {
+//            cerr << redBegin << "DribbleBackward::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+//                    << endl;
+//            resetParams();
+//        }
 //		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 //		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonT), "DribbleAround.epsilonT", NULL);
     }
