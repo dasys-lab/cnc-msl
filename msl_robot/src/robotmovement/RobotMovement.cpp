@@ -143,7 +143,7 @@ msl_actuator_msgs::MotionControl RobotMovement::moveToPoint(shared_ptr<MovementQ
 
 msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery> m_Query)
 {
-    cout << "RobotMovement::alignTo()" << endl;
+//    cout << "RobotMovement::alignTo()" << endl;
     if (m_Query == nullptr)
     {
         cerr << "RobotMovement::alignTo() -> MovementQuery == nullptr" << endl;
@@ -167,9 +167,9 @@ msl_actuator_msgs::MotionControl RobotMovement::alignTo(shared_ptr<MovementQuery
         //			if ((fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
         if (wm->ball->haveBall() && (fabs(m_Query->egoAlignPoint->angleTo()) < (M_PI - m_Query->angleTolerance)))
         {
-            //#ifdef RM_DEBUG
+#ifdef RM_DEBUG
             cout << "RobotMovement::alignTo(): rotate around the ball" << endl;
-            //#endif
+#endif
 
             if (wm->ball->getEgoBallPosition() == nullptr)
             {

@@ -125,7 +125,7 @@ namespace msl
 				query->rotateAroundTheBall = rotateAroundTheBall;
 				query->angleTolerance = angleTolerance;
 
-				cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString();
+//				cout << "query->egoAlignPoint = " << query->egoAlignPoint->toString();
 				mc = rm.alignTo(query);
 
 #ifdef DEBUG_MOVE_CONT

@@ -18,7 +18,7 @@ namespace alica
 			DomainBehaviour("DribbleCalibration")
 	{
 		/*PROTECTED REGION ID(con1482339434271) ENABLED START*/ //Add additional options here
-		skipForwardCal = false;
+		runForwardCal = false;
 		dribbleForward = false;
 		dribbleBackward = false;
 		dribbleRotateLeft = false;
@@ -46,7 +46,7 @@ namespace alica
 	void DribbleCalibration::run(void* msg)
 	{
 		/*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
-		if (skipForwardCal){
+		if (!runForwardCal){
 			cout << "skipping Forward Calibration!" << endl;
 			this->setSuccess(true);
 			return;
@@ -238,7 +238,7 @@ namespace alica
 		collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
 		NULL);
 		minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
-		skipForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.DribbleForward", NULL);
+		runForwardCal = (*sc)["DribbleCalibration"]->get<bool>("DribbleCalibration.Default.DribbleForward", NULL);
 	}
 /*PROTECTED REGION END*/
 } /* namespace alica */
