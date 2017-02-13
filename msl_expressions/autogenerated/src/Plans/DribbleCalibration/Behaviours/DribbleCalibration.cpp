@@ -82,7 +82,7 @@ namespace alica
 
             //check input for send methods
             shared_ptr<MotionControl> mc = query->getMc();
-            if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
+            if (!(mc->motion.translation == 0 && mc->motion.angle == 0 && mc->motion.rotation == 0))
             {
                 if (mc->motion.translation == NAN)
                 {
