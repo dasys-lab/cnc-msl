@@ -8,9 +8,9 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
 
+#include <InfoBuffer.h>
 #include "GameState.h"
 #include "InformationElement.h"
-#include "RingBuffer.h"
 #include <MSLEnums.h>
 #include <msl_msgs/RefBoxCommand.h>
 #include <mutex>
@@ -56,7 +56,7 @@ class Game
     ros::AsyncSpinner *spinner;
     ros::Subscriber refBoxCommandSub;
     ros::Subscriber robotCommandSub;
-    RingBuffer<InformationElement<msl_msgs::RefBoxCommand>> refBoxCommand;
+    InfoBuffer<InformationElement<msl_msgs::RefBoxCommand>> refBoxCommand;
     mutex refereeMutex;
     mutex situationChecker;
     mutex goalMutex;

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "InformationElement.h"
-#include "RingBuffer.h"
-
 #include <msl_actuator_msgs/HaveBallInfo.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -18,6 +16,7 @@
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPositionAllo.h>
 #include <cnc_geometry/CNVecAllo.h>
+#include <InfoBuffer.h>
 #include <vector>
 
 namespace msl
@@ -54,19 +53,19 @@ class RawSensorData
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
   private:
-    RingBuffer<InformationElement<vector<double>>> distanceScan;
-    RingBuffer<InformationElement<bool>> lightBarrier;
-    RingBuffer<InformationElement<geometry::CNPointAllo>> opticalFlow;
-    RingBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionMotion;
-    RingBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionVision;
-    RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
-    RingBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
-    RingBuffer<InformationElement<msl_actuator_msgs::MotionControl>> lastMotionCommand;
-    RingBuffer<InformationElement<int>> compass;
-    RingBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
-    RingBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
-    RingBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
-    RingBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
+    InfoBuffer<InformationElement<vector<double>>> distanceScan;
+    InfoBuffer<InformationElement<bool>> lightBarrier;
+    InfoBuffer<InformationElement<geometry::CNPointAllo>> opticalFlow;
+    InfoBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionMotion;
+    InfoBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionVision;
+    InfoBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
+    InfoBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
+    InfoBuffer<InformationElement<msl_actuator_msgs::MotionControl>> lastMotionCommand;
+    InfoBuffer<InformationElement<int>> compass;
+    InfoBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
+    InfoBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
+    InfoBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
+    InfoBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
     MSLWorldModel *wm;
 
     unsigned long maxInformationAge;

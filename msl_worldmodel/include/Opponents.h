@@ -1,10 +1,9 @@
 #pragma once
 
 #include "InformationElement.h"
-#include "RingBuffer.h"
-
 #include <SystemConfig.h>
 #include <cnc_geometry/CNPointAllo.h>
+#include <InfoBuffer.h>
 #include <vector>
 
 namespace msl
@@ -32,8 +31,8 @@ class Opponents
     double opponentProtectDistance;
     double opponentProtectAngle;
     unsigned long maxInformationAge = 1000000000;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> opponentsEgoClustered;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> opponentsAlloClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> opponentsEgoClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> opponentsAlloClustered;
 };
 
 } /* namespace msl */

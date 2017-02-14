@@ -8,12 +8,12 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_KICKER_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_KICKER_H_
 
+#include <InfoBuffer.h>
 #include "KickCurve.h"
 
 #include <memory>
 
 #include <InformationElement.h>
-#include <RingBuffer.h>
 #include <SystemConfig.h>
 #include <msl_actuator_msgs/KickControl.h>
 
@@ -80,7 +80,7 @@ class Kicker
     KickCurve *kickLowPass;
     vector<shared_ptr<geometry::CNPoint2D>> validGoalPoints;
 
-    RingBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
+    InfoBuffer<InformationElement<msl_actuator_msgs::KickControl>> kickControlMsgs;
     int mod(int x, int y);
 };
 

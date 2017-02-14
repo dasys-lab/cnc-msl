@@ -1,67 +1,32 @@
-/*
- * InformationElement.h
- *
- *  Created on: May 13, 2014
- *      Author: Stefan Niemczyk
- */
-
-#ifndef INFORMATIONELEMENT_H_
-#define INFORMATIONELEMENT_H_
+#pragma once
 
 #include <memory>
 
 namespace msl
 {
-typedef signed long long InfoTime;
+typedef unsigned long long InfoTime;
 
 /**
  * Information element stores one information and provides required meta
- * data. The information can not be changed.
+ * data. The information should not be changed.
  *
  */
 template <typename T> class InformationElement
 {
   public:
-    /*!
-     * \brief Default constructor
-     *
-     * Default constructor
-     *
-     * \param information The information to store.
-     * \param timeStamp time when information is received.
-     */
-    InformationElement(std::shared_ptr<T> information, InfoTime timeStamp)
-        : information(information)
-        , timeStamp(timeStamp)
-    {
-    }
+    InformationElement(std::shared_ptr<T> information, InfoTime creationTime, InfoTime validityTime, double certainty);
+    virtual ~InformationElement();
 
-    /*!
-     * \brief Default destructor
-     *
-     * Default destructor
-     */
-    virtual ~InformationElement()
-    {
-        //
-    }
-
-    /*!
-     * \brief Returns the information stored in this container.
-     *
-     * Returns the information stored in this container.
-     */
-    std::shared_ptr<T> getInformation() const
-    {
-        return this->information;
-    }
-    unsigned long timeStamp; /**< reception time of the information */
-    double certainty;
+    std::shared_ptr<T> getInformation() const;
+    InfoTime getCreationTime() const;
+    InfoTime getValidityTime() const;
+    double getCertainty() const;
 
   private:
     std::shared_ptr<T> information; /**< the stored information */
+    InfoTime creationTime;          /**< reception time of the information */
+    InfoTime validityTime;          /**< the latest time this information is considered to be valid */
+    double certainty;               /**< how certain the information was at the moment it was created */
 };
 
-} /* namespace ice */
-
-#endif /* INFORMATIONELEMENT_H_ */
+} /* namespace msl */

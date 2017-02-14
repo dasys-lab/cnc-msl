@@ -50,6 +50,7 @@ catkin_package(
    src/MSLWorldModel.cpp
    src/MSLFootballField.cpp
    src/sharedworldmodel/MSLSharedWorldModel.cpp
+   src/InformationElement.cpp
    src/RawSensorData.cpp
    src/Robots.cpp
    src/Ball.cpp

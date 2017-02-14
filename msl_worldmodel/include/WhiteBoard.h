@@ -1,10 +1,9 @@
 #pragma once
 
 #include "InformationElement.h"
-#include "RingBuffer.h"
-
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNVecAllo.h>
+#include <InfoBuffer.h>
 
 #include <msl_helper_msgs/PassMsg.h>
 #include <msl_helper_msgs/WatchBallMsg.h>
@@ -28,8 +27,8 @@ class WhiteBoard
   private:
     MSLWorldModel *wm;
     unsigned long maxInformationAge = 1000000000;
-    RingBuffer<InformationElement<msl_helper_msgs::PassMsg>> passMsgs;
-    RingBuffer<InformationElement<msl_helper_msgs::WatchBallMsg>> watchBallMsgs;
+    InfoBuffer<InformationElement<msl_helper_msgs::PassMsg>> passMsgs;
+    InfoBuffer<InformationElement<msl_helper_msgs::WatchBallMsg>> watchBallMsgs;
 };
 
 } /* namespace msl */

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "InformationElement.h"
-#include "RingBuffer.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
 #include <Geometry.h>
+#include <InfoBuffer.h>
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <map>
 #include <memory>
@@ -95,14 +95,14 @@ class Ball
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    map<int, shared_ptr<RingBuffer<InformationElement<bool>>>> ballPossession;
-    RingBuffer<InformationElement<bool>> oppBallPossession;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
-    RingBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
-    RingBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
-    RingBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
-    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
+    map<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> ballPossession;
+    InfoBuffer<InformationElement<bool>> oppBallPossession;
+    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
+    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
+    InfoBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
+    InfoBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
+    InfoBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
+    InfoBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
 
     bool robotHasBall(int robotId);
     bool oppHasBall();

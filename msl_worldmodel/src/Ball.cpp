@@ -579,9 +579,9 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
 {
     if (ballPositionsByRobot.find(data.senderID) == ballPositionsByRobot.end())
     {
-        shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>> buffer =
-            make_shared<RingBuffer<InformationElement<geometry::CNPoint2D>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPoint2D>>>> pair(data.senderID, buffer);
+        shared_ptr<InfoBuffer<InformationElement<geometry::CNPoint2D>>> buffer =
+            make_shared<InfoBuffer<InformationElement<geometry::CNPoint2D>>>(wm->getRingBufferLength());
+        pair<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPoint2D>>>> pair(data.senderID, buffer);
         ballPositionsByRobot.insert(pair);
     }
     shared_ptr<InformationElement<geometry::CNPoint2D>> info =
@@ -589,9 +589,9 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     ballPositionsByRobot.at(data.senderID)->add(info);
     if (ballVelocitiesByRobot.find(data.senderID) == ballVelocitiesByRobot.end())
     {
-        shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>> buffer =
-            make_shared<RingBuffer<InformationElement<geometry::CNVelocity2D>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(data.senderID, buffer);
+        shared_ptr<InfoBuffer<InformationElement<geometry::CNVelocity2D>>> buffer =
+            make_shared<InfoBuffer<InformationElement<geometry::CNVelocity2D>>>(wm->getRingBufferLength());
+        pair<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNVelocity2D>>>> pair(data.senderID, buffer);
         ballVelocitiesByRobot.insert(pair);
     }
     shared_ptr<InformationElement<geometry::CNVelocity2D>> i = make_shared<InformationElement<geometry::CNVelocity2D>>(
@@ -599,8 +599,8 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     ballVelocitiesByRobot.at(data.senderID)->add(i);
     if (ballPossession.find(data.senderID) == ballPossession.end())
     {
-        shared_ptr<RingBuffer<InformationElement<bool>>> buffer = make_shared<RingBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<RingBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
+        shared_ptr<InfoBuffer<InformationElement<bool>>> buffer = make_shared<InfoBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
+        pair<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
         ballPossession.insert(pair);
     }
     shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(make_shared<bool>(data.ballInPossession), wm->getTime());

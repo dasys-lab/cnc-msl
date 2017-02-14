@@ -3,10 +3,9 @@
 #include "InformationElement.h"
 #include "MSLEnums.h"
 #include "MSLFootballField.h"
-#include "RingBuffer.h"
-
 #include <SystemConfig.h>
 #include <cnc_geometry/CNRobot.h>
+#include <InfoBuffer.h>
 
 #include <msl_msgs/Point2dInfo.h>
 #include <msl_msgs/PositionInfo.h>
@@ -52,7 +51,7 @@ class Obstacles
     void processNegSupporter(shared_ptr<geometry::CNPosition> myPosition);
     bool leftOf(double angle1, double angle2);
 
-    RingBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
+    InfoBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 
     supplementary::SystemConfig *sc;
     double DENSITY;
@@ -70,9 +69,9 @@ class Obstacles
     AnnotatedObstacleClusterPool *pool;
     shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray;
     shared_ptr<vector<AnnotatedObstacleCluster *>> newClusterArray;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
     unsigned long maxInformationAge = 1000000000;
 };
 
