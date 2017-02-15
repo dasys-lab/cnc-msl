@@ -54,15 +54,15 @@ namespace msl
 		// find maximum values of these points
 		vector<pair<int, double>> maxima = find_maxima(msg);
 //		vector<pair<int, double>> maxima = find_maxima(reduced);
-		// cout << "Maximum count: " << maximums.size() << endl;
+		 cout << "Maximum count: " << maxima.size() << endl;
 //
 //		// filter out measurement errors
 		vector<pair<int, double>> okay_points = filter_points(maxima, msg);
-//		// cout << "okay_points count: " << okay_points.size() << endl;
+		 cout << "okay_points count: " << okay_points.size() << endl;
 //
 //		// convert maximums to cartesian coordinates to find back plane candidates later
 		vector<tf::Vector3> points = polar_to_cartesian(okay_points, msg);
-//		// cout << "points count: " << points.size() << endl;
+		 cout << "points count: " << points.size() << endl;
 //
 //		// Set precision for debugging purposes
 //		cout.precision(3);
@@ -72,6 +72,7 @@ namespace msl
 
 		if (corner_candidates.size() > 0)
 		{
+			cout << "cc count: " << corner_candidates.size() << endl;
 			// sort candidates by their distance to the scanner.
 			// the more farther away these two points are, the better
 			std::sort(corner_candidates.begin(), corner_candidates.end(),
@@ -199,6 +200,7 @@ namespace msl
 		vector<pair<int, double>> result;
 		for (auto x : xValues)
 		{
+			cout << "adding " << msg->ranges[x] << "at idx " << x << endl;
 			result.push_back(make_pair(x, msg->ranges[x]));
 		}
 		return result;
