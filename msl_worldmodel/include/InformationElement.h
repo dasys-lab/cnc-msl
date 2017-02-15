@@ -30,7 +30,7 @@ class InformationElement
     {
     	if (!information)
     	{
-    		std::cerr << "InformationElement: Dont create an InformationElement with nullptr as information."<< std::endl;
+    		std::cerr << "InformationElement: Don't create an InformationElement with nullptr as information."<< std::endl;
     	}
     }
 
@@ -92,7 +92,7 @@ class InformationElement
     }
 
   private:
-    T information; /**< the stored information */
+    T information;                  /**< the stored information */
     InfoTime creationTime;          /**< time this information was created */
     InfoTime validityTime;          /**< the latest time this information is considered to be valid */
     double certainty;               /**< how certain the information was at the moment it was created */

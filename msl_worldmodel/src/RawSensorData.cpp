@@ -13,6 +13,7 @@
 namespace msl
 {
 using std::make_shared;
+    using std::vector;
 
 // FIXME replace that absolute path with some config parameter
 std::string logFile = "/home/cn/cnws/IMU.log";
@@ -46,152 +47,12 @@ RawSensorData::~RawSensorData()
 {
 }
 
-const InfoBuffer<InformationElement<vector<double>>> const & RawSensorData::getDistanceScanBuffer(){
+const InfoBuffer<vector<double>>& RawSensorData::getDistanceScanBuffer()
+{
 	return this->distanceScan;
 }
 
-// shared_ptr<vector<double>> RawSensorData::getDistanceScan(int index)
-//{
-//    auto x = distanceScan.getLast(index);
-//    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-//    {
-//        return nullptr;
-//    }
-//    return x->getInformation();
-//}
 
-bool RawSensorData::getLightBarrier(int index)
-{
-    auto x = lightBarrier.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return false;
-    }
-    return *x->getInformation();
-}
-
-shared_ptr<geometry::CNPointAllo> RawSensorData::getOpticalFlow(int index)
-{
-    auto x = opticalFlow.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-double RawSensorData::getOpticalFlowQoS(int index)
-{
-    auto x = opticalFlow.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return 0;
-    }
-    return x->certainty;
-}
-
-shared_ptr<geometry::CNPositionAllo> RawSensorData::getOwnPositionMotion(int index)
-{
-    auto x = ownPositionMotion.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<geometry::CNPositionAllo> RawSensorData::getOwnPositionVision(int index)
-{
-    auto x = ownPositionVision.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityMotion(int index)
-{
-    auto x = ownVelocityMotion.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-shared_ptr<msl_actuator_msgs::MotionControl> RawSensorData::getLastMotionCommand(int index)
-{
-    auto x = lastMotionCommand.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-shared_ptr<msl_msgs::MotionInfo> RawSensorData::getOwnVelocityVision(int index)
-{
-    auto x = ownVelocityVision.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<int> RawSensorData::getCompassOrientation(int index)
-{
-    auto x = compass.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>>
-RawSensorData::getOwnPositionVisionAndCertaincy(int index)
-{
-    shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>> ret =
-        make_shared<pair<shared_ptr<geometry::CNPositionAllo>, double>>();
-    auto x = ownPositionVision.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    ret->first = x->getInformation();
-    ret->second = x->certainty;
-    return ret;
-}
-
-shared_ptr<msl_msgs::JoystickCommand> RawSensorData::getJoystickCommand(int index)
-{
-    auto x = joystickCommands.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > 250000000)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> RawSensorData::getCorrectedOdometryInfo(int index)
-{
-    auto x = ownOdometry.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
-
-shared_ptr<msl_sensor_msgs::BallHypothesisList> RawSensorData::getBallHypothesisList(int index)
-{
-    auto x = ballHypothesis.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
-}
 
 void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 {
@@ -207,6 +68,7 @@ void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr
 
 void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 {
+    // TODO: set maxValididititityDuration to 250ms
     if (msg->robotId == this->ownID)
     {
         /*
@@ -225,10 +87,11 @@ void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 
 void RawSensorData::processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg)
 {
-    shared_ptr<geometry::CNPointAllo> opt = make_shared<geometry::CNPointAllo>(msg->x, msg->y);
-    shared_ptr<InformationElement<geometry::CNPointAllo>> o =
-        make_shared<InformationElement<geometry::CNPointAllo>>(opt, wm->getTime());
+    shared_ptr<geometry::CNPointEgo> opt = make_shared<geometry::CNPointEgo>(0, msg->x, msg->y);
+    shared_ptr<InformationElement<geometry::CNPointEgo>> o =
+        make_shared<InformationElement<geometry::CNPointEgo>>(opt, wm->getTime(), this->maxValidity, msg->qos);
     o->certainty = msg->qos;
+
     opticalFlow.add(o);
 }
 
@@ -260,13 +123,11 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
     if (data->odometry.certainty > 0)
     {
         // full odometry
-        msl_sensor_msgs::CorrectedOdometryInfo test = msl_sensor_msgs::CorrectedOdometryInfo(data->odometry);
-        shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> odom =
-            make_shared<msl_sensor_msgs::CorrectedOdometryInfo>(data->odometry);
-        shared_ptr<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> odo =
-            make_shared<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(odom, time);
-        odo->certainty = data->odometry.certainty;
+        auto odo = make_shared<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(data->odometry,
+                                                                                           time, this->maxValidity,
+                                                                                           data->odometry.certainty);
         ownOdometry.add(odo);
+
 
         // Vision
         shared_ptr<geometry::CNPositionAllo> pos = make_shared<geometry::CNPositionAllo>(
@@ -304,9 +165,7 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         make_shared<geometry::CNVecEgo>(data->ball.velocity.vx, data->ball.velocity.vy, data->ball.velocity.vz);
 
     // cout << "RawSensorData: Ball X:" << ballVel->x << ", Y:" << ballVel->y << endl;
-    if (data->ball.confidence < 0.00000001)
-        this->wm->ball->updateBallPos(nullptr, nullptr, data->ball.confidence);
-    else
+    if (data->ball.confidence > 0.00000001)
         this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
 
     auto information = make_shared<vector<double>>(data->distanceScan.sectors);

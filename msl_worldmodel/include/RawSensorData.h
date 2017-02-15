@@ -24,8 +24,6 @@
 
 namespace msl
 {
-using std::shared_ptr;
-using std::vector;
 
 class MSLWorldModel;
 class RawSensorData
@@ -36,20 +34,20 @@ class RawSensorData
     virtual ~RawSensorData();
 
     // access methods
-    shared_ptr<vector<double>> getDistanceScan(int index = 0);
+    std::shared_ptr<std::vector<double>> getDistanceScan(int index = 0);
     bool getLightBarrier(int index = 0);
-    shared_ptr<geometry::CNPointAllo> getOpticalFlow(int index = 0);
+    std::shared_ptr<geometry::CNPointAllo> getOpticalFlow(int index = 0);
     double getOpticalFlowQoS(int index = 0);
-    shared_ptr<geometry::CNPositionAllo> getOwnPositionMotion(int index = 0);
-    shared_ptr<geometry::CNPositionAllo> getOwnPositionVision(int index = 0);
-    shared_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
-    shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
-    shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
-    shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
-    shared_ptr<int> getCompassOrientation(int index = 0);
-    shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
-    shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
-    shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
+    std::shared_ptr<geometry::CNPositionAllo> getOwnPositionMotion(int index = 0);
+    std::shared_ptr<geometry::CNPositionAllo> getOwnPositionVision(int index = 0);
+    std::shared_ptr<std::pair<geometry::CNPositionAllo, double>> getOwnPositionVisionAndCertaincy(int index = 0);
+    std::shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
+    std::shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
+    std::shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
+    std::shared_ptr<int> getCompassOrientation(int index = 0);
+    std::shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
+    std::shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
+    std::shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
 
     // add methods
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
@@ -62,25 +60,31 @@ class RawSensorData
     void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr &list);
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
-    const InfoBuffer<InformationElement<vector<double>>> const & getDistanceScanBuffer();
+    const InfoBuffer<std::vector<double>> &getDistanceScanBuffer();
+    const InfoBuffer<bool> &getLightBarrierBuffer();
+    const InfoBuffer<geometry::CNVecEgo> &getOpticalFlow();
+    const InfoBuffer<geometry::CNPositionAllo> getOwnPositionMotion();
+    const InfoBuffer<geometry::CNPositionAllo> getOwnPositionVision();
+
 
   private:
-    InfoBuffer<InformationElement<vector<double>>> distanceScan;
-    InfoBuffer<InformationElement<bool>> lightBarrier;
-    InfoBuffer<InformationElement<geometry::CNPointAllo>> opticalFlow;
-    InfoBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionMotion;
-    InfoBuffer<InformationElement<geometry::CNPositionAllo>> ownPositionVision;
-    InfoBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityMotion;
-    InfoBuffer<InformationElement<msl_msgs::MotionInfo>> ownVelocityVision;
-    InfoBuffer<InformationElement<msl_actuator_msgs::MotionControl>> lastMotionCommand;
-    InfoBuffer<InformationElement<int>> compass;
-    InfoBuffer<InformationElement<msl_msgs::JoystickCommand>> joystickCommands;
-    InfoBuffer<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>> ownOdometry;
-    InfoBuffer<InformationElement<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
-    InfoBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
+    InfoBuffer<std::vector<double>> distanceScan;
+    InfoBuffer<bool> lightBarrier;
+    InfoBuffer<geometry::CNPointEgo> opticalFlow;
+    InfoBuffer<geometry::CNPositionAllo> ownPositionMotion;
+    InfoBuffer<geometry::CNPositionAllo> ownPositionVision;
+    InfoBuffer<msl_msgs::MotionInfo> ownVelocityMotion;
+    InfoBuffer<msl_msgs::MotionInfo> ownVelocityVision;
+    InfoBuffer<msl_actuator_msgs::MotionControl> lastMotionCommand;
+    InfoBuffer<int> compass;
+    InfoBuffer<msl_msgs::JoystickCommand> joystickCommands;
+    InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> ownOdometry;
+    InfoBuffer<std::shared_ptr<msl_sensor_msgs::BallHypothesisList>> ballHypothesis;
+    InfoBuffer<msl_actuator_msgs::IMUData> imuData;
     MSLWorldModel *wm;
 
     // 1000000000[nsec] -> 1 [sec]
+    // TODO: replace with ?DEFINES? or whatever for each info type
     const InfoTime maxValidity = 1000000000;
     int ownID;
 };

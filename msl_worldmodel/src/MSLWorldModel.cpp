@@ -16,6 +16,7 @@
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
+#include "InformationElement.h"
 
 #include <cnc_geometry/Calculator.h>
 #include <cnc_geometry/CNPointAllo.h>
@@ -37,6 +38,10 @@
 
 namespace msl
 {
+
+using std::make_shared;
+using std::vector;
+    using std::shared_ptr;
 
 MSLWorldModel *MSLWorldModel::get()
 {
@@ -258,8 +263,6 @@ void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 
 void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 {
-	// TODO totest :)
-	//this->rawSensorData->getDistanceScanBuffer().add();
     if (game->ownGoalColor != Color::Yellow)
     {
         msg->odometry.position.x = -msg->odometry.position.x;
