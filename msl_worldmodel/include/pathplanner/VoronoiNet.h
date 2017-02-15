@@ -1,12 +1,12 @@
-/*
- * VoronoiNet.h
- *
- *  Created on: Apr 26, 2015
- *      Author: Stefan Jakob
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_
+#include "MSLEnums.h"
+#include "MSLFootballField.h"
+#include "pathplanner/SearchNode.h"
+#include "pathplanner/evaluator/IPathEvaluator.h"
+
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNRobot.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
@@ -27,19 +27,10 @@ typedef VoronoiDiagram::Vertex Vertex;
 #include <sstream>
 #include <vector>
 
-#include "MSLEnums.h"
-#include "MSLFootballField.h"
-#include "container/CNPoint2D.h"
-#include "container/CNRobot.h"
-#include "pathplanner/SearchNode.h"
-#include "pathplanner/evaluator/IPathEvaluator.h"
-
 namespace supplementary
 {
 class SystemConfig;
 }
-
-using namespace std;
 
 namespace msl
 {
@@ -287,5 +278,3 @@ class VoronoiNet
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_PATHPLANNER_VORONOINET_H_ */

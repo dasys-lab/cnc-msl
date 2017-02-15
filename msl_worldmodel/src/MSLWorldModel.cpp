@@ -1,10 +1,3 @@
-/*
- * MSLWorldModel.cpp
- *
- *  Created on: 27.10.2014
- *      Author: Andreas Witsch
- */
-
 #include "MSLWorldModel.h"
 #include "Ball.h"
 #include "EventTrigger.h"
@@ -23,10 +16,10 @@
 #include "obstaclehandler/Obstacles.h"
 #include "pathplanner/PathPlanner.h"
 #include "sharedworldmodel/MSLSharedWorldModel.h"
-#include "tf/tf.h"
-#include <GeometryCalculator.h>
-#include <container/CNPoint2D.h>
-#include <container/CNPosition.h>
+
+#include <cnc_geometry/Calculator.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -40,6 +33,7 @@
 #include <msl_sensor_msgs/SimulatorWorldModelData.h>
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <std_msgs/Bool.h>
+#include <tf/tf.h>
 
 namespace msl
 {
@@ -264,6 +258,8 @@ void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 
 void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 {
+	// TODO totest :)
+	//this->rawSensorData->getDistanceScanBuffer().add();
     if (game->ownGoalColor != Color::Yellow)
     {
         msg->odometry.position.x = -msg->odometry.position.x;

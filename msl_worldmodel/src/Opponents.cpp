@@ -1,15 +1,10 @@
-/*
- * Opponents.cpp
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
 #include "Opponents.h"
 #include "Ball.h"
-#include "GeometryCalculator.h"
+
 #include "MSLWorldModel.h"
 #include "Robots.h"
+
+#include <cnc_geometry/Calculator.h>
 
 namespace msl
 {
@@ -29,13 +24,12 @@ Opponents::~Opponents()
 {
 }
 
-shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double width)
+std::shared_ptr<geometry::CNPointEgo> Opponents::getInCorridor(double angle, double width)
 {
     auto opps = wm->robots->opponents.getOpponentsEgoClustered();
-    // wm.GetCurrentOpponentListMerged();
     if (opps == nullptr)
         return nullptr;
-    shared_ptr<geometry::CNPoint2D> closest;
+    std::shared_ptr<geometry::CNPointEgo> closest;
     double dist = std::numeric_limits<double>::max();
     double temp;
     for (int i = 0; i < opps->size(); i++)
@@ -43,7 +37,7 @@ shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double wi
         temp = opps->at(i)->length();
         if (temp < dist)
         {
-            double dang = geometry::deltaAngle(angle, opps->at(i)->angleTo());
+            double dang = geometry::deltaAngle(angle, opps->at(i)->angleZ());
             if (abs(dang) < M_PI / 2.0)
             {
                 if (sin(dang) * temp < width + 300)
@@ -56,21 +50,20 @@ shared_ptr<geometry::CNPoint2D> Opponents::getInCorridor(double angle, double wi
     }
     return closest;
 }
-shared_ptr<geometry::CNPoint2D> Opponents::getClosestToBall(double &distance)
+shared_ptr<geometry::CNPointEgo> Opponents::getClosestToBall(double &distance)
 {
     distance = std::numeric_limits<double>::max();
     auto obs = getOpponentsEgoClustered();
-    // wm.GetCurrentOpponentListMerged();
     if (obs == nullptr)
         return nullptr;
     auto ball = wm->ball->getEgoBallPosition();
     if (ball == nullptr)
         return nullptr;
     double temp;
-    shared_ptr<geometry::CNPoint2D> res;
+    shared_ptr<geometry::CNPointEgo> res;
     for (int i = 0; i < obs->size(); i++)
     {
-        temp = obs->at(i)->distanceTo(ball);
+        temp = obs->at(i)->distanceTo(*ball);
         if (temp < distance)
         {
             distance = temp;
@@ -89,7 +82,7 @@ double Opponents::getOpponentProtectAngle()
     return this->opponentProtectAngle;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsAlloClustered(int index)
+shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> Opponents::getOpponentsAlloClustered(int index)
 {
     auto x = opponentsAlloClustered.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -99,16 +92,16 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsAlloC
     return x->getInformation();
 }
 
-void Opponents::processOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsAlloClustered)
+void Opponents::processOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> opponentsAlloClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(opponentsAlloClustered, wm->getTime());
+    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> o =
+        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>>(opponentsAlloClustered, wm->getTime());
     o->certainty = 1;
 
     this->opponentsAlloClustered.add(o);
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsEgoClustered(int index)
+shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> Opponents::getOpponentsEgoClustered(int index)
 {
     auto x = opponentsEgoClustered.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
@@ -118,10 +111,10 @@ shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> Opponents::getOpponentsEgoCl
     return x->getInformation();
 }
 
-void Opponents::processOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> opponentsEgoClustered)
+void Opponents::processOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> opponentsEgoClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>>(opponentsEgoClustered, wm->getTime());
+    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> o =
+        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(opponentsEgoClustered, wm->getTime());
     o->certainty = 1;
 
     this->opponentsEgoClustered.add(o);

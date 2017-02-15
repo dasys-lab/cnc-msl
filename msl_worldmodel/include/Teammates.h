@@ -1,17 +1,9 @@
-/*
- * Teammates.h
- *
- *  Created on: Feb 26, 2016
- *      Author: Stefan Jakob
- */
-
-#ifndef CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_
-#define CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_
+#pragma once
 
 #include "InformationElement.h"
-#include "RingBuffer.h"
-#include "container/CNPosition.h"
-#include <container/CNPoint2D.h>
+#include <cnc_geometry/CNPositionAllo.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <InfoBuffer.h>
 #include <memory>
 #include <vector>
 
@@ -28,23 +20,21 @@ class Teammates
     virtual ~Teammates();
     int teamMatesInOwnPenalty();
     int teamMatesInOppPenalty();
-    shared_ptr<geometry::CNPosition> getTeamMatePosition(int teamMateId, int index = 0);
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPosition>>>>> getPositionsOfTeamMates();
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesAlloClustered(int index = 0);
-    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesAlloClustered);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getTeammatesEgoClustered(int index = 0);
-    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> teammatesEgoClustered);
+    shared_ptr<geometry::CNPositionAllo> getTeamMatePosition(int teamMateId, int index = 0);
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getTeammatesAlloClustered(int index = 0);
+    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
+    shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> getTeammatesEgoClustered(int index = 0);
+    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
 
-    map<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> robotPositions;
+    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>> robotPositions;
 
   private:
     MSLWorldModel *wm;
     int ringBufferLength;
     unsigned long maxInformationAge = 1000000000;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesEgoClustered;
-    RingBuffer<InformationElement<vector<shared_ptr<geometry::CNPoint2D>>>> teammatesAlloClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> teammatesEgoClustered;
+    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> teammatesAlloClustered;
 };
 
 } /* namespace msl */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_SRC_TEAMMATES_H_ */

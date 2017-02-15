@@ -337,7 +337,7 @@ void Obstacles::setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::C
     AnnotatedObstacleCluster *obs = nullptr;
     int velX = 0;
     int velY = 0;
-    for (auto swmd : wm->robots->sharedWolrdModelData)
+    for (auto swmd : wm->robots->sharedWorldModelData)
     {
         auto information = swmd.second->getLast();
         if (information == nullptr)
@@ -441,7 +441,7 @@ void Obstacles::processNegSupporter(shared_ptr<geometry::CNPosition> myPosition)
     shared_ptr<geometry::CNPoint2D> curPoint2 = make_shared<geometry::CNPoint2D>();
     bool sightIsBlocked;
 
-    for (pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> curRobot : wm->robots->sharedWolrdModelData)
+    for (pair<int, shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> curRobot : wm->robots->sharedWorldModelData)
     {
         // cout << "Robot: " << curRobot.first << endl;
         /* Ignore every robot, which is:

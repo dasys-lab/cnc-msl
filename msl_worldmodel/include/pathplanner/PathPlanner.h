@@ -1,12 +1,19 @@
-/*
- * PathPlanner.h
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_
+#include "pathplanner/SearchNode.h"
+#include "pathplanner/VoronoiNet.h"
+#include "pathplanner/evaluator/PathEvaluator.h"
+#include "MSLEnums.h"
+#include "MSLFootballField.h"
+
+#include <SystemConfig.h>
+#include <cnc_geometry/CNPointAllo.h>
+#include <cnc_geometry/CNPositionAllo.h>
+
+#include <ros/ros.h>
+#include <msl_msgs/CorridorCheck.h>
+#include <msl_msgs/Point2dInfo.h>
+#include <msl_sensor_msgs/WorldModelData.h>
 
 // includes for CGAL
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -30,29 +37,12 @@ typedef DelaunayAdaptionTraits::Point_2 Point_2;
 typedef DelaunayAdaptionTraits::Site_2 Site_2;
 typedef VoronoiDiagram::Vertex Vertex;
 
-// other includes
 #include <algorithm>
 #include <limits>
 #include <math.h>
 #include <memory>
 #include <mutex>
-#include <ros/ros.h>
 #include <vector>
-
-#include "MSLEnums.h"
-#include "MSLFootballField.h"
-#include "SystemConfig.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-#include "msl_msgs/CorridorCheck.h"
-#include "msl_msgs/Point2dInfo.h"
-#include "pathplanner/SearchNode.h"
-#include "pathplanner/VoronoiNet.h"
-#include "pathplanner/evaluator/PathEvaluator.h"
-#include <msl_sensor_msgs/WorldModelData.h>
-
-// namespaces
-using namespace std;
 
 /**
  * Calculates path from given startpoint to a given goalpoint, while avoiding Obstacles.
@@ -299,7 +289,4 @@ class PathPlanner
     bool checkGoalReachable(shared_ptr<VoronoiNet> voronoi, shared_ptr<SearchNode> currentNode, shared_ptr<vector<shared_ptr<Vertex>>> closestVerticesToGoal,
                             shared_ptr<geometry::CNPoint2D> goal);
 };
-}
-/* namespace alica */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_PATHPLANNER_H_ */
+} /* namespace msl */

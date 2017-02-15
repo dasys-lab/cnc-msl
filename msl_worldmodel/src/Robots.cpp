@@ -27,34 +27,34 @@ Robots::~Robots()
 
 void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
 {
-    if (sharedWolrdModelData.find(data->senderID) == sharedWolrdModelData.end())
+    if (sharedWorldModelData.find(data->senderID) == sharedWorldModelData.end())
     {
-        shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> buffer =
-            make_shared<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<RingBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(data->senderID, buffer);
-        sharedWolrdModelData.insert(pair);
+        shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> buffer =
+            make_shared<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>(wm->getRingBufferLength());
+        pair<int, shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(data->senderID, buffer);
+        sharedWorldModelData.insert(pair);
     }
     if (teammates.robotPositions.find(data->senderID) == teammates.robotPositions.end())
     {
-        shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>> buffer =
-            make_shared<RingBuffer<InformationElement<geometry::CNPosition>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<RingBuffer<InformationElement<geometry::CNPosition>>>> pair(data->senderID, buffer);
+        shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>> buffer =
+            make_shared<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>(wm->getRingBufferLength());
+        pair<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>> pair(data->senderID, buffer);
         teammates.robotPositions.insert(pair);
     }
-    shared_ptr<InformationElement<geometry::CNPosition>> info = make_shared<InformationElement<geometry::CNPosition>>(
-        make_shared<geometry::CNPosition>(data->odom.position.x, data->odom.position.y, data->odom.position.angle), wm->getTime());
+    shared_ptr<InformationElement<geometry::CNPositionAllo>> info = make_shared<InformationElement<geometry::CNPositionAllo>>(
+        make_shared<geometry::CNPositionAllo>(data->odom.position.x, data->odom.position.y, data->odom.position.angle), wm->getTime());
     teammates.robotPositions.at(data->senderID)->add(info);
 
     shared_ptr<msl_sensor_msgs::SharedWorldInfo> shptr = make_shared<msl_sensor_msgs::SharedWorldInfo>();
     *shptr = *data;
     shared_ptr<InformationElement<msl_sensor_msgs::SharedWorldInfo>> infosh =
         make_shared<InformationElement<msl_sensor_msgs::SharedWorldInfo>>(shptr, wm->getTime());
-    sharedWolrdModelData.at(data->senderID)->add(infosh);
+    sharedWorldModelData.at(data->senderID)->add(infosh);
 }
 
 shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(int robotID, int index)
 {
-    auto shwm = sharedWolrdModelData.at(robotID);
+    auto shwm = sharedWorldModelData.at(robotID);
     if (shwm != nullptr)
     {
         auto x = shwm->getLast(index);

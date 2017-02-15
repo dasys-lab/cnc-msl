@@ -1,21 +1,15 @@
-/*
- * Prediction.cpp
- *
- *  Created on: Mar 11, 2016
- *      Author: sni
- */
-
 #include "Prediction.h"
+
+#include "MSLWorldModel.h"
+#include "RawSensorData.h"
+
+#include <SystemConfig.h>
+#include <cnc_geometry/Calculator.h>
+#include <msl_actuator_msgs/MotionControl.h>
 
 #include <array>
 #include <mutex>
 #include <vector>
-
-#include "GeometryCalculator.h"
-#include "MSLWorldModel.h"
-#include "RawSensorData.h"
-#include "SystemConfig.h"
-#include <msl_actuator_msgs/MotionControl.h>
 
 namespace msl
 {
@@ -188,7 +182,7 @@ double Prediction::angle(int ms)
     return geometry::normalizeAngle(angle);
 }
 
-std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>, double>> Prediction::angleAndPosition(int ms)
+std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> Prediction::angleAndPosition(int ms)
 {
     auto wm = MSLWorldModel::get();
 
@@ -231,7 +225,7 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>, double>> Prediction:
 
     long delta;
     double accel;
-    std::shared_ptr<geometry::CNPoint2D> d = std::make_shared<geometry::CNPoint2D>();
+    geometry::CNPointAllo d;
 
     for (int i = cmd.size() - 1; i >= 0; --i)
     {
@@ -261,37 +255,37 @@ std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>, double>> Prediction:
         velo += accel * deltaS;
 
         // Position by Taker
-        d->x = (cos(ang) * tra - transX) / deltaS;
-        d->y = (sin(ang) * tra - transY) / deltaS;
+        d.x = (cos(ang) * tra - transX) / deltaS;
+        d.y = (sin(ang) * tra - transY) / deltaS;
 
-        if (d->length() > MAX_ACCELERATION)
+        if (d.length() > MAX_ACCELERATION)
         {
-            d = d->normalize() * MAX_ACCELERATION;
+            d = d.normalize() * MAX_ACCELERATION;
         }
 
-        d->x = d->x + transX;
-        d->y = d->y + transY;
+        d.x = d.x + transX;
+        d.y = d.y + transY;
 
-        trans = d->length();
-        transX = d->x;
-        transY = d->y;
+        trans = d.length();
+        transX = d.x;
+        transY = d.y;
 
         double a = atan2(transY, transX);
 
-        d->x = (cos(a) * trans) * deltaS;
-        d->y = (sin(a) * trans) * deltaS;
-        d->rotate(angle);
+        d.x = (cos(a) * trans) * deltaS;
+        d.y = (sin(a) * trans) * deltaS;
+        d = d.rotateZ(angle);
 
-        x += d->x;
-        y += d->y;
+        x += d.x;
+        y += d.y;
 
         targetTimeMs += delta;
     }
 
     angle = geometry::normalizeAngle(angle);
 
-    auto pos = make_shared<geometry::CNPosition>(x, y, angle);
-    std::unique_ptr<std::pair<shared_ptr<geometry::CNPosition>, double>> returnVal(new std::pair<shared_ptr<geometry::CNPosition>, double>(pos, trans));
+    auto pos = make_shared<geometry::CNPositionAllo>(x, y, angle);
+    std::unique_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> returnVal(new std::pair<shared_ptr<geometry::CNPositionAllo>, double>(pos, trans));
 
     return std::move(returnVal);
 }

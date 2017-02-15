@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_beagle_board_black_udp)
+project(msl_bbb)
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -ggdb")
@@ -12,6 +12,7 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  event_handling
   cnc_geometry
   msl_actuator_msgs
   msl_bbb_api
@@ -32,22 +33,25 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-# msl_beagle_board_black_udp executable
-add_executable(msl_beagle_board_black_udp 
-	src/Actuator.cpp
-	src/BallHandle.cpp
+# msl_bbb executable
+add_executable(${PROJECT_NAME} 
+	src/BBB.cpp
+	src/Worker.cpp
+	src/Communication.cpp
+	src/BallHandler.cpp
 	src/IMU.cpp
 	src/LightBarrier.cpp
 	src/Motor.cpp
 	src/OpticalFlow.cpp
 	src/Sensor.cpp
-	src/ShovelSelect.cpp
-	src/Spline.cpp
+	src/ShovelSelection.cpp
+	src/Switches.cpp
+	src/CanHandler.cpp
 )
-target_link_libraries(msl_beagle_board_black_udp ${catkin_LIBRARIES})
-add_dependencies(msl_beagle_board_black_udp msl_actuator_msgs_generate_messages_cpp)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+add_dependencies(${PROJECT_NAME} msl_actuator_msgs_generate_messages_cpp)
 
 # debug_udp executable
-add_executable(debug_udp src/Debug.cpp)
-target_link_libraries(debug_udp ${catkin_LIBRARIES})
-add_dependencies(debug_udp msl_actuator_msgs_generate_messages_cpp)
+add_executable(msl_bbb_debug_udp src/Debug.cpp)
+target_link_libraries(msl_bbb_debug_udp ${catkin_LIBRARIES})
+add_dependencies(msl_bbb_debug_udp msl_actuator_msgs_generate_messages_cpp)

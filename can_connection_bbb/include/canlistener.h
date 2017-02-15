@@ -4,7 +4,7 @@
 class CanListener
 {
   public:
-    virtual void Receive(unsigned int canid, unsigned char *data, int len) = 0;
+    virtual void receive(unsigned int canid, unsigned char *data, int len) = 0;
 };
 
 #endif

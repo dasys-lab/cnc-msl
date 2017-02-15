@@ -1,68 +1,101 @@
-/*
- * InformationElement.h
- *
- *  Created on: May 13, 2014
- *      Author: Stefan Niemczyk
- */
-
-#ifndef INFORMATIONELEMENT_H_
-#define INFORMATIONELEMENT_H_
+#pragma once
 
 #include <memory>
+#include <iostream>
 
 namespace msl
 {
-typedef signed long long InfoTime;
+typedef long long InfoTime;
 
 /**
  * Information element stores one information and provides required meta
- * data. The information can not be changed.
- *
+ * data. The information should not be changed.
  */
-template <typename T> class InformationElement
+template <typename T>
+class InformationElement
 {
   public:
-    /*!
-     * \brief Default constructor
+    /**
      *
-     * Default constructor
-     *
-     * \param information The information to store.
-     * \param timeStamp time when information is received.
+     * @param information
+     * @param creationTime
+     * @param validityDuration
+     * @param certainty
      */
-    InformationElement(std::shared_ptr<T> information, InfoTime timeStamp)
+    InformationElement(T information, InfoTime creationTime, InfoTime validityDuration, double certainty)
         : information(information)
-        , timeStamp(timeStamp)
+        , creationTime(creationTime)
+        , validityTime(creationTime + validityDuration)
+        , certainty(certainty)
     {
-    	this->certainty = 0;
+    	if (!information)
+    	{
+    		std::cerr << "InformationElement: Dont create an InformationElement with nullptr as information."<< std::endl;
+    	}
     }
 
-    /*!
-     * \brief Default destructor
-     *
+    /**
      * Default destructor
      */
     virtual ~InformationElement()
     {
-        //
     }
 
-    /*!
-     * \brief Returns the information stored in this container.
-     *
-     * Returns the information stored in this container.
+    /**
+     * Returns the time when the contained information was created.
+     * For example, when the information entered the system or when
+     * the sensor did record the data.
+     * @return InfoTime time when this information was created
      */
-    std::shared_ptr<T> getInformation() const
+    InfoTime getCreationTime() const
+    {
+        return this->creationTime;
+    }
+
+    /**
+     * Returns the time until this information is considered valid. At
+     * a later time this information is likely to be invalid, e.g.,
+     * the objects position probably has changed.
+     * @return InfoTime time until this information is considered valid
+     */
+    InfoTime getValidityTime() const
+    {
+        return this->validityTime;
+    }
+
+    /**
+     * Returns the certainty about the trueness of the information,
+     * when the information was created.
+     * @return double certainty about the trueness of the information.
+     */
+    double getCertainty() const
+    {
+        return this->certainty;
+    }
+
+    /**
+     * Returns true if the validitiyTime is not over, false otherwise.
+     * @return bool true if the validityTime is not over, false otherwise.
+     */
+    bool isValid() const
+    {
+        return this->validityTime > 0; // TODO: replace 0 with currentTime;
+    }
+
+    /**
+     * Returns the information stored in this container.
+     * @return std::shared_ptr<T> Shared Pointer to the stored information.
+     */
+    T getInformation() const
     {
         return this->information;
     }
-    unsigned long timeStamp; /**< reception time of the information */
-    double certainty;
 
   private:
-    std::shared_ptr<T> information; /**< the stored information */
+    T information; /**< the stored information */
+    InfoTime creationTime;          /**< time this information was created */
+    InfoTime validityTime;          /**< the latest time this information is considered to be valid */
+    double certainty;               /**< how certain the information was at the moment it was created */
 };
 
-} /* namespace ice */
-
-#endif /* INFORMATIONELEMENT_H_ */
+} /* namespace msl */

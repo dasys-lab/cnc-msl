@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(msl_worldmodel) 
- 
-   
+project(msl_worldmodel)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver tf msl_helper_msgs nonstd) 
+find_package(catkin REQUIRED
+  cnc_geometry
+  system_config
+  msl_actuator_msgs
+  msl_sensor_msgs
+  event_handling
+  alica_engine
+  robot_control
+  constraintsolver
+  tf
+  msl_helper_msgs
+  nonstd)
+
 find_package(CGAL REQUIRED COMPONENTS Core)
- include(${CGAL_USE_FILE})
+include(${CGAL_USE_FILE})
 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -19,16 +30,16 @@ endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 ## Enable exception handling for segfaults using SigFault.h
 set(CMAKE_CXX_FLAGS "-rdynamic -fnon-call-exceptions -ggdb ${CMAKE_CXX_FLAGS}")
- 
-catkin_package( 
+
+catkin_package(
   INCLUDE_DIRS include
   LIBRARIES msl_worldmodel
-  CATKIN_DEPENDS 
-    cnc_geometry 
-    system_config 
-    msl_actuator_msgs 
-    msl_sensor_msgs 
-    event_handling 
+  CATKIN_DEPENDS
+    cnc_geometry
+    system_config
+    msl_actuator_msgs
+    msl_sensor_msgs
+    event_handling
     alica_engine
     constraintsolver
     msl_helper_msgs
@@ -42,8 +53,7 @@ catkin_package(
 ## Build ##
 ###########
 
-include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
-
+ include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
 
 ## Declare a cpp library
  add_library(msl_worldmodel
@@ -70,12 +80,12 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
    src/pathplanner/evaluator/PathEvaluator.cpp
    src/pathplanner/evaluator/Evaluator.cpp
    src/pathplanner/PathPlannerQuery.cpp
-   src/ballTracking/BallIntegrator.cpp  
-   src/ballTracking/BallZTracker.cpp  
-   src/ballTracking/EgoMotionEstimator.cpp  
-   src/ballTracking/ObjectContainer.cpp  
-   src/ballTracking/ObjectTracker.cpp  
-   src/ballTracking/SharedMemoryHelper.cpp  
+   src/ballTracking/BallIntegrator.cpp
+   src/ballTracking/BallZTracker.cpp
+   src/ballTracking/EgoMotionEstimator.cpp
+   src/ballTracking/ObjectContainer.cpp
+   src/ballTracking/ObjectTracker.cpp
+   src/ballTracking/SharedMemoryHelper.cpp
    src/ballTracking/TimeHelper.cpp
    src/obstaclehandler/AnnotatedObstacleCluster.cpp
    src/obstaclehandler/Obstacles.cpp
@@ -85,13 +95,14 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(msl_worldmodel 
-  msl_sensor_msgs_generate_messages_cpp  
-  msl_actuator_msgs_generate_messages_cpp 
+add_dependencies(msl_worldmodel
+  msl_sensor_msgs_generate_messages_cpp
+  msl_actuator_msgs_generate_messages_cpp
   geometry_msgs_generate_messages_cpp
 )
 
 ## Specify libraries to link a library or executable target against
+message(">>>>>> catkin_INCLUDE_DIRS: ${catkin_INCLUDE_DIRS}")
 target_link_libraries(msl_worldmodel ${catkin_LIBRARIES})
 
 #############
@@ -103,4 +114,4 @@ catkin_add_gtest(${PROJECT_NAME}-test src/pathplanner/test/test_path_planner.cpp
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
- 
+

@@ -1,14 +1,8 @@
-/*
- * PathPlanner.cpp
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
-
 #include "Ball.h"
-#include "GeometryCalculator.h"
+
 #include "MSLWorldModel.h"
 #include "RawSensorData.h"
+#include <cnc_geometry/Calculator.h>
 #include <pathplanner/PathPlanner.h>
 
 namespace msl
@@ -315,7 +309,7 @@ bool PathPlanner::isAdmissableEdge(VoronoiDiagram::Halfedge_around_vertex_circul
     if (voronoi->getTypeOfSite(incidentHalfEdge->up()->point()) == EntityType::ArtificialObstacle &&
         voronoi->getTypeOfSite(incidentHalfEdge->down()->point()) == EntityType::ArtificialObstacle)
     {
-        return !wm->field->isInsideField(startPos);
+        return !wm->field->isInsideField(*startPos);
     }
 
     double distToEdge = geometry::distancePointToLineSegment(incidentHalfEdge->up()->point().x(), incidentHalfEdge->up()->point().y(),

@@ -1,12 +1,12 @@
 #ifndef WatchBall_H_
 #define WatchBall_H_
 
+#include <InfoBuffer.h>
 #include "DomainBehaviour.h"
 /*PROTECTED REGION ID(inc1447863466691) ENABLED START*/ //Add additional includes here
 #include "container/CNPoint2D.h"
 #include "container/CNPosition.h"
 #include <string>
-#include <RingBuffer.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <MSLWorldModel.h>
 #include <MSLFootballField.h>
@@ -43,7 +43,7 @@ namespace alica
         double pTrans, dTrans, pRot, dRot;
         double prevTargetDist, lastRotErr;
         double rotationLimit;
-        msl::RingBuffer<geometry::CNPoint2D>* ballPositions;
+        msl::InfoBuffer<geometry::CNPoint2D>* ballPositions;
         double calcGoalImpactY();
         void rotate(shared_ptr<geometry::CNPoint2D> alloTarget);
         /*PROTECTED REGION END*/
