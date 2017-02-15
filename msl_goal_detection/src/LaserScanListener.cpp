@@ -48,21 +48,21 @@ namespace msl
 	void LaserScanListener::onLaserScanReceived(sensor_msgs::LaserScanPtr msg)
 	{
 		// reduce points to flatten the points by averaging some of them out
-//		vector<double> reduced = reduce_points(msg);
+		vector<double> reduced = reduce_points(msg);
 		// cout << "all count: " << msg->ranges.size() << endl;
 
 		// find maximum values of these points
 		vector<pair<int, double>> maxima = find_maxima(msg);
 //		vector<pair<int, double>> maxima = find_maxima(reduced);
-		 cout << "Maximum count: " << maxima.size() << endl;
+//		 cout << "Maximum count: " << maxima.size() << endl;
 //
 //		// filter out measurement errors
 		vector<pair<int, double>> okay_points = filter_points(maxima, msg);
-		 cout << "okay_points count: " << okay_points.size() << endl;
+//		 cout << "okay_points count: " << okay_points.size() << endl;
 //
 //		// convert maximums to cartesian coordinates to find back plane candidates later
 		vector<tf::Vector3> points = polar_to_cartesian(okay_points, msg);
-		 cout << "points count: " << points.size() << endl;
+//		 cout << "points count: " << points.size() << endl;
 //
 //		// Set precision for debugging purposes
 //		cout.precision(3);
@@ -72,7 +72,7 @@ namespace msl
 
 		if (corner_candidates.size() > 0)
 		{
-			cout << "cc count: " << corner_candidates.size() << endl;
+//			cout << "cc count: " << corner_candidates.size() << endl;
 			// sort candidates by their distance to the scanner.
 			// the more farther away these two points are, the better
 			std::sort(corner_candidates.begin(), corner_candidates.end(),
@@ -179,10 +179,10 @@ namespace msl
 
 		//TODO check if obsolete?
 //
-//		std::sort(points_pairs.begin(), points_pairs.end(), [](pair<int, double> left, pair<int, double> right)
-//		{
-//			return left.second < right.second;
-//		});
+		std::sort(points_pairs.begin(), points_pairs.end(), [](pair<int, double> left, pair<int, double> right)
+		{
+			return left.second < right.second;
+		});
 
 		vector<int> xValues;
 		for (auto point : points_pairs)
@@ -191,10 +191,10 @@ namespace msl
 			auto y = point.second;
 			if (std::find(xValues.begin(), xValues.end(), x) == xValues.end())
 			{
-				if (satisfies_threshold(xValues, x))
-				{
+//				if (satisfies_threshold(xValues, x))
+//				{
 					xValues.push_back(x);
-				}
+//				}
 			}
 		}
 		vector<pair<int, double>> result;
