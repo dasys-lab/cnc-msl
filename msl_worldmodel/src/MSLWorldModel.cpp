@@ -258,6 +258,8 @@ void MSLWorldModel::onRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
 
 void MSLWorldModel::onWorldModelData(msl_sensor_msgs::WorldModelDataPtr msg)
 {
+	// TODO totest :)
+	//this->rawSensorData->getDistanceScanBuffer().add();
     if (game->ownGoalColor != Color::Yellow)
     {
         msg->odometry.position.x = -msg->odometry.position.x;

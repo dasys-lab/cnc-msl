@@ -16,14 +16,16 @@ class InformationElement
 {
   public:
     /**
-     * Default constructor
-     * @param information The information to store.
-     * @param timeStamp Time when the information was created.
+     *
+     * @param information
+     * @param creationTime
+     * @param validityDuration
+     * @param certainty
      */
-    InformationElement(std::shared_ptr<T> information, InfoTime creationTime, InfoTime validityTime, double certainty)
+    InformationElement(T information, InfoTime creationTime, InfoTime validityDuration, double certainty)
         : information(information)
         , creationTime(creationTime)
-        , validityTime(validityTime)
+        , validityTime(creationTime + validityDuration)
         , certainty(certainty)
     {
     	if (!information)
@@ -84,13 +86,13 @@ class InformationElement
      * Returns the information stored in this container.
      * @return std::shared_ptr<T> Shared Pointer to the stored information.
      */
-    std::shared_ptr<T> getInformation() const
+    T getInformation() const
     {
         return this->information;
     }
 
   private:
-    std::shared_ptr<T> information; /**< the stored information */
+    T information; /**< the stored information */
     InfoTime creationTime;          /**< time this information was created */
     InfoTime validityTime;          /**< the latest time this information is considered to be valid */
     double certainty;               /**< how certain the information was at the moment it was created */

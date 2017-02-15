@@ -34,6 +34,8 @@ class RawSensorData
   public:
     RawSensorData(MSLWorldModel *wm, int ringBufferLength);
     virtual ~RawSensorData();
+
+    // access methods
     shared_ptr<vector<double>> getDistanceScan(int index = 0);
     bool getLightBarrier(int index = 0);
     shared_ptr<geometry::CNPointAllo> getOpticalFlow(int index = 0);
@@ -48,6 +50,8 @@ class RawSensorData
     shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
     shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
     shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
+
+    // add methods
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
     void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
     void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
@@ -57,6 +61,8 @@ class RawSensorData
     void processCorrectedOdometryInfo(msl_sensor_msgs::CorrectedOdometryInfoPtr &coi);
     void processBallHypothesisList(msl_sensor_msgs::BallHypothesisListPtr &list);
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
+
+    const InfoBuffer<InformationElement<vector<double>>> const & getDistanceScanBuffer();
 
   private:
     InfoBuffer<InformationElement<vector<double>>> distanceScan;
@@ -74,9 +80,9 @@ class RawSensorData
     InfoBuffer<InformationElement<msl_actuator_msgs::IMUData>> imuData;
     MSLWorldModel *wm;
 
-    unsigned long maxInformationAge;
+    // 1000000000[nsec] -> 1 [sec]
+    const InfoTime maxValidity = 1000000000;
     int ownID;
-    bool loggingEnabled;
 };
 
-} /* namespace alica */
+} /* namespace msl */

@@ -14,6 +14,8 @@ namespace msl
 template <typename T>
 class InfoBuffer
 {
+    friend class ::msl::RawSensorData;
+
   public:
     /**
      * Default constructor.
@@ -79,27 +81,6 @@ class InfoBuffer
     const std::type_info *getTypeInfo() const
     {
         return &typeid(T);
-    }
-
-    /**
-     * Adds a new element to the information buffer, if it older than the last added element.
-     * @param element The element to add.
-     * @return bool True if the element was added, False otherwise.
-     */
-    bool add(std::shared_ptr<InformationElement<T>> element)
-    {
-        std::lock_guard<std::mutex> guard(mtx_);
-
-        if (element->getCreationTime() < this->ringBuffer[this->index % this->bufferSize]->getCreationTime())
-        {
-            return false;
-        }
-
-        this->infoElementCounter++;
-        this->index = (++this->index) % this->bufferSize;
-        this->ringBuffer[index] = element;
-
-        return true;
     }
 
     /**
@@ -187,6 +168,27 @@ class InfoBuffer
         {
             return true;
         }
+    }
+
+    /**
+         * Adds a new element to the information buffer, if it older than the last added element.
+         * @param element The element to add.
+         * @return bool True if the element was added, False otherwise.
+         */
+    bool add(std::shared_ptr<InformationElement<T>> element)
+    {
+        std::lock_guard<std::mutex> guard(mtx_);
+
+        if (element->getCreationTime() < this->ringBuffer[this->index % this->bufferSize]->getCreationTime())
+        {
+            return false;
+        }
+
+        this->infoElementCounter++;
+        this->index = (++this->index) % this->bufferSize;
+        this->ringBuffer[index] = element;
+
+        return true;
     }
 
   private:
