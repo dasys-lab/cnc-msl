@@ -3,22 +3,27 @@
 #include "MSLWorldModel.h"
 
 #include <cnc_geometry/CNPositionAllo.h>
+#include <nonstd/optional.hpp>
 
 namespace msl
 {
+	using nonstd::optional;
 
 Teammates::Teammates(MSLWorldModel *wm, int ringBufferLength)
     : teammatesEgoClustered(ringBufferLength)
     , teammatesAlloClustered(ringBufferLength)
 {
     this->wm = wm;
-    this->ringBufferLength = ringBufferLength;
 }
 
 Teammates::~Teammates()
 {
 }
 
+/**
+ * Returns the number of teammates in the own penalty area.
+ * @return Number of teammates in own penalty area.
+ */
 int Teammates::teamMatesInOwnPenalty()
 {
     int count = 0;
@@ -37,6 +42,10 @@ int Teammates::teamMatesInOwnPenalty()
     return count;
 }
 
+/**
+ * Returns the number of teammates in the opponents penalty area.
+ * @return Number of teammates in opp penalty area.
+ */
 int Teammates::teamMatesInOppPenalty()
 {
     int count = 0;
@@ -55,18 +64,13 @@ int Teammates::teamMatesInOppPenalty()
     return count;
 }
 
-shared_ptr<geometry::CNPositionAllo> Teammates::getTeamMatePosition(int teamMateId, int index)
+const InfoBuffer<geometry::CNPositionAllo> *Teammates::getTeamMatePositionBuffer(int teamMateId) const
 {
-    if (robotPositions.find(teamMateId) == robotPositions.end())
+    if (this->robotPositions.find(teamMateId) == this->robotPositions.end())
     {
         return nullptr;
     }
-    auto x = robotPositions.at(teamMateId)->getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return robotPositions.at(teamMateId);
 }
 
 shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> Teammates::getPositionsOfTeamMates()

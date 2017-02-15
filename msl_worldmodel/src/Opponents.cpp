@@ -5,6 +5,7 @@
 #include "Robots.h"
 
 #include <cnc_geometry/Calculator.h>
+#include <math.h>
 
 namespace msl
 {
@@ -15,7 +16,6 @@ Opponents::Opponents(MSLWorldModel *wm, int ringBufferLength)
 {
     this->wm = wm;
     this->sc = supplementary::SystemConfig::getInstance();
-    this->ringBufferLength = ringBufferLength;
     this->opponentProtectAngle = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectAngle", NULL);
     this->opponentProtectDistance = (*sc)["Dribble"]->get<double>("Dribble.OpponentProtectDistance", NULL);
 }
@@ -82,40 +82,29 @@ double Opponents::getOpponentProtectAngle()
     return this->opponentProtectAngle;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> Opponents::getOpponentsAlloClustered(int index)
+const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &Opponents::getOpponentsAlloClusteredBuffer() const
 {
-    auto x = opponentsAlloClustered.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->opponentsAlloClustered;
 }
 
-void Opponents::processOpponentsAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> opponentsAlloClustered)
+void Opponents::processOpponentsAlloClustered(
+    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> opponentsAlloClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>>(opponentsAlloClustered, wm->getTime());
-    o->certainty = 1;
+    auto o = std::make_shared<InformationElement<std::vector<std::shared_ptr<geometry::CNPointAllo>>>>(
+        opponentsAlloClustered, wm->getTime(), this->maxValidity, 1);
 
     this->opponentsAlloClustered.add(o);
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> Opponents::getOpponentsEgoClustered(int index)
+const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &Opponents::getOpponentsEgoClusteredBuffer() const
 {
-    auto x = opponentsEgoClustered.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->opponentsEgoClustered;
 }
 
 void Opponents::processOpponentsEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> opponentsEgoClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(opponentsEgoClustered, wm->getTime());
-    o->certainty = 1;
+    auto o = make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(
+        opponentsEgoClustered, wm->getTime(), this->maxValidity, 1);
 
     this->opponentsEgoClustered.add(o);
 }

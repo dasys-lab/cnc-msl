@@ -26,7 +26,7 @@ namespace msl
 {
 
 Ball::Ball(MSLWorldModel *wm, int ringbufferLength)
-    : ballPosition(ringbufferLength)
+    : visionBallPositionBuffer(ringbufferLength)
     , ballVelocity(ringbufferLength)
     , ballBuf(30)
     , oppBallPossession(ringbufferLength)
@@ -56,14 +56,9 @@ Ball::~Ball()
 {
 }
 
-shared_ptr<geometry::CNPointEgo> Ball::getVisionBallPosition(int index)
+const InfoBuffer<geometry::CNPointEgo> &Ball::getVisionBallPositionBuffer() const
 {
-    auto x = ballPosition.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->visionBallPositionBuffer;
 }
 
 shared_ptr<geometry::CNVecAllo> Ball::getVisionBallVelocity(int index)
@@ -103,15 +98,15 @@ shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
     auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
     if (ownPos == nullptr)
     {
-    	return nullptr;
+        return nullptr;
     }
 
-	auto p = this->getEgoBallPosition();
-	if (p != nullptr)
-	{
-		p = p->toAllo(*ownPos);
-	}
-	return p;
+    auto p = this->getEgoBallPosition();
+    if (p != nullptr)
+    {
+        p = p->toAllo(*ownPos);
+    }
+    return p;
 }
 
 shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()
@@ -150,9 +145,11 @@ shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()
         // If we have sharedball AND rawball:
         if (lsb != nullptr)
         {
-            // Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates -> Always use rawball!
+            // Closer than 2m or closer than 4m with good confidence or we cannot transform to sb to egocoordinates ->
+            // Always use rawball!
             auto pos = wm->rawSensorData->getOwnPositionVision();
-            if (rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55) || pos == nullptr)
+            if (rawBall->first->length() < 2000 || (rawBall->first->length() < 4000 && rawBall->second > 0.55) ||
+                pos == nullptr)
             {
 
                 return rawBall->first->clone();
@@ -239,33 +236,38 @@ bool Ball::ballMovedSiginficantly()
     return false;
 }
 
-void Ball::updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel, double certainty)
+void Ball::updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel,
+                         double certainty)
 {
     InfoTime time = wm->getTime();
     shared_ptr<geometry::CNPointEgo> ballPosUpdate;
     if (ballPos != nullptr)
     {
-    	ballPosUpdate = std::make_shared<geometry::CNPointEgo>(ballPos->x, ballPos->y, ballPos->z);
+        ballPosUpdate = std::make_shared<geometry::CNPointEgo>(ballPos->x, ballPos->y, ballPos->z);
     }
 
-    shared_ptr<InformationElement<geometry::CNPointEgo>> ball = make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
+    shared_ptr<InformationElement<geometry::CNPointEgo>> ball =
+        make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
     ball->certainty = certainty;
     ballPosition.add(ball);
 
-    shared_ptr<InformationElement<geometry::CNPointEgo>> ball3D = make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
+    shared_ptr<InformationElement<geometry::CNPointEgo>> ball3D =
+        make_shared<InformationElement<geometry::CNPointEgo>>(ballPosUpdate, time);
     ball->certainty = certainty;
     ballPoint3D.add(ball3D);
 
     shared_ptr<geometry::CNVecEgo> ballVelUpdate;
     if (ballVel != nullptr)
     {
-    	ballVelUpdate = make_shared<geometry::CNVecEgo>(ballVel->x, ballVel->y, ballVel->z);
+        ballVelUpdate = make_shared<geometry::CNVecEgo>(ballVel->x, ballVel->y, ballVel->z);
     }
-    shared_ptr<InformationElement<geometry::CNVecEgo>> ballV = make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
+    shared_ptr<InformationElement<geometry::CNVecEgo>> ballV =
+        make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
     ballV->certainty = certainty;
     ballVelocity.add(ballV);
 
-    shared_ptr<InformationElement<geometry::CNVecEgo>> ballVelInfo3D = make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
+    shared_ptr<InformationElement<geometry::CNVecEgo>> ballVelInfo3D =
+        make_shared<InformationElement<geometry::CNVecEgo>>(ballVelUpdate, time);
     ball->certainty = certainty;
     ballVel3D.add(ballVelInfo3D);
 
@@ -325,7 +327,8 @@ void Ball::updateBallGuess()
         }
     }
 
-    shared_ptr<InformationElement<geometry::CNPoint2D>> bgi = make_shared<InformationElement<geometry::CNPoint2D>>(nguess, time);
+    shared_ptr<InformationElement<geometry::CNPoint2D>> bgi =
+        make_shared<InformationElement<geometry::CNPoint2D>>(nguess, time);
     bgi->certainty = guessConf;
     ballGuessPosition.add(bgi);
 }
@@ -412,18 +415,21 @@ void Ball::updateSharedBall()
         }
 
         auto shwmdata = pair.second->getLast()->getInformation();
-        if (shwmdata == nullptr || shwmdata->ball.confidence < 0.1 || shwmdata->odom.certainty < LOCALIZATION_SUCCESS_CONFIDENCE)
+        if (shwmdata == nullptr || shwmdata->ball.confidence < 0.1 ||
+            shwmdata->odom.certainty < LOCALIZATION_SUCCESS_CONFIDENCE)
         {
             continue;
         }
-        shared_ptr<geometry::CNPoint2D> point = make_shared<geometry::CNPoint2D>(shwmdata->ball.point.x, shwmdata->ball.point.y);
+        shared_ptr<geometry::CNPoint2D> point =
+            make_shared<geometry::CNPoint2D>(shwmdata->ball.point.x, shwmdata->ball.point.y);
         double thresholdSqr = 1000000.0;
 
         bool found = false;
         double distSqr;
         for (auto &bv : sbvotingList)
         {
-            distSqr = (bv.ballPos->x - point->x) * (bv.ballPos->x - point->x) + (bv.ballPos->y - point->y) * (bv.ballPos->y - point->y);
+            distSqr = (bv.ballPos->x - point->x) * (bv.ballPos->x - point->x) +
+                      (bv.ballPos->y - point->y) * (bv.ballPos->y - point->y);
             if (distSqr < thresholdSqr)
             {
                 found = true;
@@ -477,7 +483,8 @@ void Ball::updateSharedBall()
     }
     InfoTime time = wm->getTime();
 
-    shared_ptr<InformationElement<geometry::CNPoint2D>> sbi = make_shared<InformationElement<geometry::CNPoint2D>>(sb, time);
+    shared_ptr<InformationElement<geometry::CNPoint2D>> sbi =
+        make_shared<InformationElement<geometry::CNPoint2D>>(sb, time);
     sbi->certainty = bestVoting == nullptr ? 0.0 : bestVoting->teamConfidence;
     sharedBallPosition.add(sbi);
 }
@@ -518,7 +525,8 @@ void Ball::updateHaveBall()
     {
         // if you lost the ball, further pretend that you have it for at most 2 iterations
         hasBallIteration = max(min(--hasBallIteration, 2), 0);
-        //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() << endl;
+        //			cout << "Ball: Distance Tolerance check failed! EgoBallDist: " << ballPos->length() <<
+        //endl;
         return;
     }
 
@@ -584,8 +592,8 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
         pair<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPoint2D>>>> pair(data.senderID, buffer);
         ballPositionsByRobot.insert(pair);
     }
-    shared_ptr<InformationElement<geometry::CNPoint2D>> info =
-        make_shared<InformationElement<geometry::CNPoint2D>>(make_shared<geometry::CNPoint2D>(data.ball.point.x, data.ball.point.y), wm->getTime());
+    shared_ptr<InformationElement<geometry::CNPoint2D>> info = make_shared<InformationElement<geometry::CNPoint2D>>(
+        make_shared<geometry::CNPoint2D>(data.ball.point.x, data.ball.point.y), wm->getTime());
     ballPositionsByRobot.at(data.senderID)->add(info);
     if (ballVelocitiesByRobot.find(data.senderID) == ballVelocitiesByRobot.end())
     {
@@ -599,14 +607,17 @@ void Ball::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data)
     ballVelocitiesByRobot.at(data.senderID)->add(i);
     if (ballPossession.find(data.senderID) == ballPossession.end())
     {
-        shared_ptr<InfoBuffer<InformationElement<bool>>> buffer = make_shared<InfoBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
+        shared_ptr<InfoBuffer<InformationElement<bool>>> buffer =
+            make_shared<InfoBuffer<InformationElement<bool>>>(wm->getRingBufferLength());
         pair<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> pair(data.senderID, buffer);
         ballPossession.insert(pair);
     }
-    shared_ptr<InformationElement<bool>> in = make_shared<InformationElement<bool>>(make_shared<bool>(data.ballInPossession), wm->getTime());
+    shared_ptr<InformationElement<bool>> in =
+        make_shared<InformationElement<bool>>(make_shared<bool>(data.ballInPossession), wm->getTime());
     ballPossession.at(data.senderID)->add(in);
     bool r = oppHasBall();
-    shared_ptr<InformationElement<bool>> inf = make_shared<InformationElement<bool>>(make_shared<bool>(r), wm->getTime());
+    shared_ptr<InformationElement<bool>> inf =
+        make_shared<InformationElement<bool>>(make_shared<bool>(r), wm->getTime());
     oppBallPossession.add(inf);
 }
 
@@ -646,7 +657,8 @@ shared_ptr<geometry::CNPoint2D> msl::Ball::getAlloSharedBallPosition(int index)
 
 shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> Ball::getAlloSharedBallPositionAndCertaincy(int index)
 {
-    shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret = make_shared<pair<shared_ptr<geometry::CNPoint2D>, double>>();
+    shared_ptr<pair<shared_ptr<geometry::CNPoint2D>, double>> ret =
+        make_shared<pair<shared_ptr<geometry::CNPoint2D>, double>>();
     auto x = sharedBallPosition.getLast(index);
     if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
     {
@@ -913,7 +925,8 @@ void Ball::processHypothesis()
             alloBallPosX += cos(ownPosition->theta) * p.x - sin(ownPosition->theta) * p.y;
             alloBallPosY += sin(ownPosition->theta) * p.x + cos(ownPosition->theta) * p.y;
 
-            if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor && fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
+            if (fabs(alloBallPosX) < wm->field->getFieldLength() / 2.0 + relFactor &&
+                fabs(alloBallPosY) < wm->field->getFieldWidth() / 2.0 + relFactor)
             {
                 inField = true;
             }
@@ -977,16 +990,16 @@ void Ball::processHypothesis()
     currBallBuf->invalidate(400);
 
     double dist = sqrt((op.x - mv.point.x) * (op.x - mv.point.x) + (op.y - mv.point.y) * (op.y - mv.point.y));
-    mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(), currBallBuf->getStartIndex(), currBallBuf->getLastIndex(),
-                                                   0.3E07);
+    mv = ObjectTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+                                                   currBallBuf->getStartIndex(), currBallBuf->getLastIndex(), 0.3E07);
     bool noValidPoint = false;
 
     if (fabs(mv.point.x) > 50000.0 && fabs(mv.point.y) > 50000.0)
     {
         noValidPoint = true;
     }
-    ZEstimate ze =
-        BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(), currBallBuf->getStartIndex(), currBallBuf->getLastIndex());
+    ZEstimate ze = BallZTracker::getInstance()->trackObject(currBallBuf->getPoints(), currBallBuf->getSize(),
+                                                            currBallBuf->getStartIndex(), currBallBuf->getLastIndex());
     geometry::CNPoint3D ballPoint;
     geometry::CNPoint3D ballVelocity;
     MovingObject mv2 = mv;

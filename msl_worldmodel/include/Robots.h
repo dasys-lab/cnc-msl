@@ -36,7 +36,8 @@ class Robots
   private:
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    unsigned long maxInformationAge = 1000000000;
+
+    const InfoTime maxValidity = 1000000000;
 };
 
 } /* namespace alica */

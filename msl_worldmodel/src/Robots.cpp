@@ -1,10 +1,3 @@
-/*
- * Robots.cpp
- *
- *  Created on: Feb 23, 2015
- *      Author: Stefan Jakob
- */
-
 #include "MSLWorldModel.h"
 #include <Robots.h>
 
@@ -17,7 +10,6 @@ Robots::Robots(MSLWorldModel *wm, int ringBufferLength)
 {
     this->wm = wm;
     this->sc = supplementary::SystemConfig::getInstance();
-    maxInformationAge = 1000000000;
 }
 
 Robots::~Robots()

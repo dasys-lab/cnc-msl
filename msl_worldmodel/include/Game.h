@@ -50,6 +50,8 @@ class Game
     long gameTime;
 
   private:
+    void setMayScore();
+
     MSLWorldModel *wm;
     Situation situation;
     ros::NodeHandle n;
@@ -68,7 +70,7 @@ class Game
     int teamMateWithBall;
     bool passReceived;
     bool mayScore;
-    void setMayScore();
+    const InfoTime maxValidity = 1000000000;
 };
 
 } /* namespace alica */

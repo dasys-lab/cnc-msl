@@ -104,9 +104,8 @@ void Game::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
      * we use the conversion suggested in this post:
      * http://stackoverflow.com/questions/12314967/cohabitation-of-boostshared-ptr-and-stdshared-ptr
      */
-    shared_ptr<msl_msgs::RefBoxCommand> cmd = shared_ptr<msl_msgs::RefBoxCommand>(msg.get(), [msg](msl_msgs::RefBoxCommand *) mutable { msg.reset(); });
-    shared_ptr<InformationElement<msl_msgs::RefBoxCommand>> refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime());
-    refBoxCmd->certainty = 1.0;
+    auto cmd = shared_ptr<msl_msgs::RefBoxCommand>(msg.get(), [msg](msl_msgs::RefBoxCommand *) mutable { msg.reset(); });
+    auto refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime(), this->maxValidity, 1);
     refBoxCommand.add(refBoxCmd);
     // Set the current refbox situation
     lock_guard<mutex> lock(refereeMutex);

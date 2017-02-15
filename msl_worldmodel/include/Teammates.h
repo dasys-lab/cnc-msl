@@ -20,21 +20,23 @@ class Teammates
     virtual ~Teammates();
     int teamMatesInOwnPenalty();
     int teamMatesInOppPenalty();
-    shared_ptr<geometry::CNPositionAllo> getTeamMatePosition(int teamMateId, int index = 0);
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
-    shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> getTeammatesAlloClustered(int index = 0);
-    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
-    shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> getTeammatesEgoClustered(int index = 0);
-    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
 
-    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>> robotPositions;
+    const InfoBuffer<geometry::CNPositionAllo> *getTeamMatePositionBuffer(int teamMateId) const;
+    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
+
+    const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &getTeammatesAlloClusteredBuffer();
+    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
+
+    const InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> &getTeammatesEgoClusteredBuffer();
+    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
 
   private:
     MSLWorldModel *wm;
-    int ringBufferLength;
-    unsigned long maxInformationAge = 1000000000;
-    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> teammatesEgoClustered;
-    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNPointAllo>>>> teammatesAlloClustered;
+    // TODO: replace with ?DEFINES? or whatever for each info type
+    const InfoTime maxValidity = 1000000000;
+    InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered;
+    InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered;
+    map<int, shared_ptr<InfoBuffer<geometry::CNPositionAllo>>> robotPositions;
 };
 
 } /* namespace msl */

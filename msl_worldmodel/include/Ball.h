@@ -1,7 +1,7 @@
 #pragma once
 
-#include "InformationElement.h"
 #include "InfoBuffer.h"
+#include "InformationElement.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
 
@@ -38,7 +38,6 @@ class Ball
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    shared_ptr<geometry::CNPointEgo> getVisionBallPosition(int index = 0);
     shared_ptr<pair<geometry::CNPointAllo, double>> getVisionBallPositionAndCertaincy(int index = 0);
     shared_ptr<geometry::CNVecAllo> getVisionBallVelocity(int index = 0);
     double getBallConfidenceVision(int index = 0);
@@ -58,7 +57,8 @@ class Ball
     void updateOnBallHypothesisList(unsigned long long imageTime);
     void updateOnLocalizationData(unsigned long long imageTime);
     void processHypothesis();
-    void updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel, double certainty);
+    void updateBallPos(shared_ptr<geometry::CNPointEgo> ballPos, shared_ptr<geometry::CNVecEgo> ballVel,
+                       double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
     bool getTeamMateBallPossession(int teamMateId, int index = 0);
     bool getOppBallPossession(int index = 0);
@@ -76,7 +76,15 @@ class Ball
         return selfInBallPossesion;
     };
 
+    const InfoBuffer<geometry::CNPointEgo> &getVisionBallPositionBuffer() const;
+
   private:
+    void updateBallPossession();
+    bool robotHasBall(int robotId);
+    bool oppHasBall();
+    Point allo2Ego(Point p, Position pos);
+    Velocity allo2Ego(Velocity vel, Position pos);
+
     std::mutex sbMutex;
     std::vector<BallVoting> sbvotingList;
     int sharedBallSupporters;
@@ -95,27 +103,24 @@ class Ball
     int hasBallIteration;
     bool hasBall; /**< True if the local robot has the ball */
     double haveBallDistanceDynamic;
-    unsigned long maxInformationAge = 1000000000;
+
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    std::map<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> ballPossession;
-    InfoBuffer<InformationElement<bool>> oppBallPossession;
-    std::map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
-    std::map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
-    InfoBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
-    InfoBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
-    InfoBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
-    InfoBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
 
-    bool robotHasBall(int robotId);
-    bool oppHasBall();
-    Point allo2Ego(Point p, Position pos);
-    Velocity allo2Ego(Velocity vel, Position pos);
+    InfoBuffer<bool> oppBallPossession;
+    std::map<int, shared_ptr<InfoBuffer<bool>>> ballPossession;
+    std::map<int, shared_ptr<InfoBuffer<geometry::CNPointAllo>>> ballPositionsByRobot;
+    std::map<int, shared_ptr<InfoBuffer<geometry::CNVecAllo>>> ballVelocitiesByRobot;
+    InfoBuffer<geometry::CNPointAllo> sharedBallPosition;
+    InfoBuffer<geometry::CNPointAllo> ballGuessPosition;
+    InfoBuffer<geometry::CNVecAllo> ballVelocity;
+    InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
+    const InfoTime maxValidity = 1000000000;
+
     double haveDistance;
 
     bool selfInBallPossesion;
     geometry::CNPointAllo ballPickupPosition;
-    void updateBallPossession();
-};
 
-} /* namespace alica */
+};
+} /* namespace msl */
