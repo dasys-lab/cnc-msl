@@ -1,6 +1,8 @@
 #pragma once
 
 #include "InformationElement.h"
+#include "InfoBuffer.h"
+
 #include <msl_actuator_msgs/HaveBallInfo.h>
 #include <msl_actuator_msgs/IMUData.h>
 #include <msl_actuator_msgs/MotionBurst.h>
@@ -16,15 +18,19 @@
 #include <cnc_geometry/CNPointAllo.h>
 #include <cnc_geometry/CNPositionAllo.h>
 #include <cnc_geometry/CNVecAllo.h>
-#include <InfoBuffer.h>
+
 #include <vector>
+#include <memory>
 
 namespace msl
 {
+using std::shared_ptr;
+using std::vector;
 
 class MSLWorldModel;
 class RawSensorData
 {
+
   public:
     RawSensorData(MSLWorldModel *wm, int ringBufferLength);
     virtual ~RawSensorData();
@@ -34,7 +40,7 @@ class RawSensorData
     double getOpticalFlowQoS(int index = 0);
     shared_ptr<geometry::CNPositionAllo> getOwnPositionMotion(int index = 0);
     shared_ptr<geometry::CNPositionAllo> getOwnPositionVision(int index = 0);
-    shared_ptr<pair<shared_ptr<geometry::CNPositionAllo>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
+    shared_ptr<std::pair<shared_ptr<geometry::CNPositionAllo>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
     shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
     shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
     shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);

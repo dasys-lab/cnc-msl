@@ -1,14 +1,15 @@
 #pragma once
 
 #include "InformationElement.h"
+#include "InfoBuffer.h"
 #include "ballTracking/ObjectContainer.h"
 #include "ballTracking/TrackingTypes.h"
+
 #include <Geometry.h>
-#include <InfoBuffer.h>
-#include "msl_sensor_msgs/SharedWorldInfo.h"
+#include <msl_sensor_msgs/SharedWorldInfo.h>
+
 #include <map>
 #include <memory>
-//#include <nonstd/optional.h>
 
 namespace supplementary
 {
@@ -17,6 +18,8 @@ class SystemConfig;
 
 namespace msl
 {
+using std::shared_ptr;
+using std::pair;
 class MSLWorldModel;
 
 class BallVoting
@@ -24,7 +27,7 @@ class BallVoting
   public:
     geometry::CNPointAllo ballPos;
     double teamConfidence = 0.0;
-    vector<msl_sensor_msgs::SharedWorldInfo> supporters;
+    std::vector<msl_sensor_msgs::SharedWorldInfo> supporters;
 };
 
 class Ball
@@ -75,7 +78,7 @@ class Ball
 
   private:
     std::mutex sbMutex;
-    vector<BallVoting> sbvotingList;
+    std::vector<BallVoting> sbvotingList;
     int sharedBallSupporters;
 
     ObjectContainer ballBuf;
@@ -95,10 +98,10 @@ class Ball
     unsigned long maxInformationAge = 1000000000;
     MSLWorldModel *wm;
     supplementary::SystemConfig *sc;
-    map<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> ballPossession;
+    std::map<int, shared_ptr<InfoBuffer<InformationElement<bool>>>> ballPossession;
     InfoBuffer<InformationElement<bool>> oppBallPossession;
-    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
-    map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
+    std::map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPointAllo>>>> ballPositionsByRobot;
+    std::map<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNVecAllo>>>> ballVelocitiesByRobot;
     InfoBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
     InfoBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
     InfoBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
