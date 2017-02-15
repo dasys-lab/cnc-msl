@@ -181,7 +181,7 @@ namespace msl
 //
 		std::sort(points_pairs.begin(), points_pairs.end(), [](pair<int, double> left, pair<int, double> right)
 		{
-			return left.second < right.second;
+			return left.second > right.second;
 		});
 
 		vector<int> xValues;
@@ -200,7 +200,7 @@ namespace msl
 		vector<pair<int, double>> result;
 		for (auto x : xValues)
 		{
-			cout << "adding " << msg->ranges[x] << "at idx " << x << endl;
+			//cout << "adding " << msg->ranges[x] << "at idx " << x << endl;
 			result.push_back(make_pair(x, msg->ranges[x]));
 		}
 		return result;
