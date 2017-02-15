@@ -5,7 +5,7 @@ project(msl_worldmodel)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver tf msl_helper_msgs) 
+find_package(catkin REQUIRED cnc_geometry system_config msl_actuator_msgs msl_sensor_msgs event_handling alica_engine robot_control constraintsolver tf msl_helper_msgs nonstd) 
 find_package(CGAL REQUIRED COMPONENTS Core)
  include(${CGAL_USE_FILE})
 
@@ -42,7 +42,8 @@ catkin_package(
 ## Build ##
 ###########
 
- include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS})
+
 
 ## Declare a cpp library
  add_library(msl_worldmodel

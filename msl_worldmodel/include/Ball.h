@@ -16,7 +16,7 @@
 #include "msl_sensor_msgs/SharedWorldInfo.h"
 #include <map>
 #include <memory>
-//#include <nonstd/optional.h>
+#include <nonstd/optional.hpp>
 
 namespace supplementary
 {
@@ -40,36 +40,35 @@ class Ball
   public:
     Ball(MSLWorldModel *wm, int ringbufferLength);
     virtual ~Ball();
+
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    shared_ptr<geometry::CNPointEgo> getVisionBallPosition(int index = 0);
-    shared_ptr<pair<geometry::CNPointAllo, double>> getVisionBallPositionAndCertaincy(int index = 0);
-    shared_ptr<geometry::CNVecAllo> getVisionBallVelocity(int index = 0);
+    nonstd::optional<geometry::CNPointEgo> getVisionBallPosition(int index = 0);
+    nonstd::optional<std::pair<geometry::CNPointEgo, double>> getVisionBallPositionAndCertaincy(int index = 0);
+    nonstd::optional<geometry::CNVecEgo> getVisionBallVelocity(int index = 0);
     double getBallConfidenceVision(int index = 0);
 
-    shared_ptr<geometry::CNPointAllo> getBallPoint3D(int index = 0);
-    shared_ptr<geometry::CNVecAllo> getBallVel3D(int index = 0);
-    shared_ptr<geometry::CNPointAllo> getAlloBallPosition();
-    shared_ptr<geometry::CNPointEgo> getEgoBallPosition();
-    shared_ptr<geometry::CNVecEgo> getEgoBallVelocity();
-    shared_ptr<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
-    shared_ptr<pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
-    shared_ptr<geometry::CNPointAllo> getAlloBallGuessPosition(int index = 0);
+    nonstd::optional<geometry::CNPointAllo> getAlloBallPosition();
+    nonstd::optional<geometry::CNPointEgo> getEgoBallPosition();
+    nonstd::optional<geometry::CNVecEgo> getEgoBallVelocity();
+    nonstd::optional<geometry::CNPointAllo> getAlloSharedBallPosition(int index = 0);
+    nonstd::optional<std::pair<geometry::CNPointAllo, double>> getAlloSharedBallPositionAndCertaincy(int index = 0);
+    nonstd::optional<geometry::CNPointAllo> getAlloBallGuessPosition(int index = 0);
     int getSharedBallSupporter();
-    bool ballMovedSiginficantly();
+    bool ballMovedSignificantly();
 
     void updateHaveBall();
     void updateOnBallHypothesisList(unsigned long long imageTime);
     void updateOnLocalizationData(unsigned long long imageTime);
     void processHypothesis();
-    void updateBallPos(geometry::CNPointEgo ballPos, geometry::CNVecAllo ballVel, double certainty);
+    void updateBallPos(nonstd::optional<geometry::CNPointEgo> ballPos, nonstd::optional<geometry::CNVecEgo> ballVel, double certainty);
     void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfo &data);
-    bool getTeamMateBallPossession(int teamMateId, int index = 0);
-    bool getOppBallPossession(int index = 0);
+    nonstd::optional<bool> getTeamMateBallPossession(int teamMateId, int index = 0);
+    nonstd::optional<bool> getOppBallPossession(int index = 0);
     double getBallDiameter();
 
-    shared_ptr<geometry::CNPointAllo> getBallPickupPosition();
+    nonstd::optional<geometry::CNPointAllo> getBallPickupPosition();
 
     void updateSharedBall();
     void updateBallGuess();
@@ -89,7 +88,7 @@ class Ball
     ObjectContainer ballBuf;
     MovingObject mv;
     unsigned long long lastUpdateReceived;
-    geometry::CNPoint2D lastKnownBallPos;
+    nonstd::optional<geometry::CNPoint2D> lastKnownBallPos;
     double HAVE_BALL_TOLERANCE_DRIBBLE;
     double KICKER_DISTANCE;
     double KICKER_DISTANCE_SIMULATOR;
@@ -110,10 +109,7 @@ class Ball
     RingBuffer<InformationElement<geometry::CNPointAllo>> sharedBallPosition;
     RingBuffer<InformationElement<geometry::CNPointAllo>> ballGuessPosition;
     RingBuffer<InformationElement<geometry::CNPointEgo>> ballPosition;
-    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVelocity;
-
-    RingBuffer<InformationElement<geometry::CNPointAllo>> ballPoint3D;
-    RingBuffer<InformationElement<geometry::CNVecAllo>> ballVel3D;
+    RingBuffer<InformationElement<geometry::CNVecEgo>> ballVelocity;
 
     bool robotHasBall(int robotId);
     bool oppHasBall();
@@ -122,7 +118,7 @@ class Ball
     double haveDistance;
 
     bool selfInBallPossesion;
-    geometry::CNPoint2D ballPickupPosition;
+    nonstd::optional<geometry::CNPointAllo> ballPickupPosition;
     void updateBallPossession();
 };
 

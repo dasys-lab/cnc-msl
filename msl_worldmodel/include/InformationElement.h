@@ -34,6 +34,7 @@ template <typename T> class InformationElement
         : information(information)
         , timeStamp(timeStamp)
     {
+    	this->certainty = 0;
     }
 
     /*!

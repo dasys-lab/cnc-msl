@@ -12,8 +12,6 @@
 #include <mutex>
 #include <typeinfo>
 
-using namespace std;
-
 namespace msl
 {
 
@@ -47,7 +45,7 @@ template <typename T> class RingBuffer
      */
     inline virtual ~RingBuffer()
     {
-        //      delete ringBuffer;
+        // delete ringBuffer;
     }
 
     /*!
@@ -69,19 +67,16 @@ template <typename T> class RingBuffer
      */
     std::shared_ptr<T> getLast(int n)
     {
-        std::shared_ptr<T> ptr;
-        lock_guard<mutex> guard(mtx_);
+        std::lock_guard<std::mutex> guard(mtx_);
 
         if (this->index < 0 || this->bufferSize <= n || this->identifierCounter <= n)
         {
-            return ptr;
+            return std::shared_ptr<T>();
         }
 
         int index = (this->index - n) % this->bufferSize;
 
-        ptr = this->ringBuffer[index];
-
-        return ptr;
+        return this->ringBuffer[index];
     }
 
     /*!
@@ -93,10 +88,9 @@ template <typename T> class RingBuffer
      */
     int add(std::shared_ptr<T> element)
     {
-        lock_guard<mutex> guard(mtx_);
+        std::lock_guard<std::mutex> guard(mtx_);
 
         int index = (++this->index) % this->bufferSize;
-
         this->ringBuffer[index] = element;
 
         return this->identifierCounter++;
@@ -133,16 +127,17 @@ template <typename T> class RingBuffer
      */
     int clear(bool cleanBuffer)
     {
-        lock_guard<mutex> guard(mtx_);
+        std::lock_guard<std::mutex> guard(mtx_);
+
         this->index = -1;
         this->identifierCounter = 0;
 
-        if (false == cleanBuffer)
-            return 0;
-
-        std::shared_ptr<T> ptr;
-        for (int i = 0; i < this->bufferSize; ++i)
+        if (cleanBuffer)
+        {
+            std::shared_ptr<T> ptr;
+            for (int i = 0; i < this->bufferSize; ++i)
             this->ringBuffer[i] = ptr;
+        }
 
         return 0;
     }
@@ -158,7 +153,7 @@ template <typename T> class RingBuffer
     }
 
   private:
-    mutex mtx_;
+    std::mutex mtx_;
     std::unique_ptr<std::shared_ptr<T>[]> ringBuffer; /**< Ring buffer of elements */
     int bufferSize;                                   /**< number of stored elements */
     ulong identifierCounter;                          /**< Counter of elements added to the ring buffer */

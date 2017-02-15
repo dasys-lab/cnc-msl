@@ -61,11 +61,6 @@ namespace supplementary
 {
 class SystemConfig;
 }
-namespace geometry
-{
-class CNPoint2D;
-class CNPosition;
-}
 
 namespace msl
 {

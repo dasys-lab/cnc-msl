@@ -87,7 +87,7 @@ namespace alica
             ballMovedOccurrences = 0;
         }
         //if((WM.EgoBallPosition.Distance() < 4000 &&WorldHelper.BallMoved(WM)) || (ballMovedOccurrences >= maxBallMovedOccurrences))
-        if ((egoBall->length() < 6000 && wm->ball->ballMovedSiginficantly())
+        if ((egoBall->length() < 6000 && wm->ball->ballMovedSignificantly())
                 || (ballMovedOccurrences >= maxBallMovedOccurrences))
         {
             //send messages to other whiteboards

@@ -12,9 +12,9 @@
 
 #include "InformationElement.h"
 #include "RingBuffer.h"
-#include "container/CNPoint2D.h"
-#include "container/CNPosition.h"
-#include "container/CNVelocity2D.h"
+#include "cnc_geometry/CNPointEgo.h"
+#include "cnc_geometry/CNPositionAllo.h"
+#include "cnc_geometry/CNVecEgo.h"
 #include "msl_actuator_msgs/HaveBallInfo.h"
 #include "msl_actuator_msgs/IMUData.h"
 #include "msl_actuator_msgs/MotionBurst.h"
@@ -27,8 +27,7 @@
 #include "msl_sensor_msgs/WorldModelData.h"
 #include "std_msgs/Bool.h"
 #include <vector>
-
-using namespace std;
+#include <nonstd/optional.hpp>
 
 namespace msl
 {
@@ -39,20 +38,20 @@ class RawSensorData
   public:
     RawSensorData(MSLWorldModel *wm, int ringBufferLength);
     virtual ~RawSensorData();
-    shared_ptr<vector<double>> getDistanceScan(int index = 0);
+    nonstd::optional<vector<double>> getDistanceScan(int index = 0);
     bool getLightBarrier(int index = 0);
-    shared_ptr<geometry::CNPoint2D> getOpticalFlow(int index = 0);
+    nonstd::optional<geometry::CNVecEgo> getOpticalFlow(int index = 0);
     double getOpticalFlowQoS(int index = 0);
-    shared_ptr<geometry::CNPosition> getOwnPositionMotion(int index = 0);
-    shared_ptr<geometry::CNPosition> getOwnPositionVision(int index = 0);
-    shared_ptr<pair<shared_ptr<geometry::CNPosition>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
-    shared_ptr<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
-    shared_ptr<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
-    shared_ptr<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
-    shared_ptr<int> getCompassOrientation(int index = 0);
-    shared_ptr<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
-    shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
-    shared_ptr<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
+    nonstd::optional<geometry::CNPositionAllo> getOwnPositionMotion(int index = 0);
+    nonstd::optional<geometry::CNPositionAllo> getOwnPositionVision(int index = 0);
+    nonstd::optional<pair<nonstd::optional<geometry::CNPositionAllo>, double>> getOwnPositionVisionAndCertaincy(int index = 0);
+    nonstd::optional<msl_msgs::MotionInfo> getOwnVelocityMotion(int index = 0);
+    nonstd::optional<msl_msgs::MotionInfo> getOwnVelocityVision(int index = 0);
+    nonstd::optional<msl_actuator_msgs::MotionControl> getLastMotionCommand(int index = 0);
+    nonstd::optional<int> getCompassOrientation(int index = 0);
+    nonstd::optional<msl_msgs::JoystickCommand> getJoystickCommand(int index = 0);
+    nonstd::optional<msl_sensor_msgs::CorrectedOdometryInfo> getCorrectedOdometryInfo(int index = 0);
+    nonstd::optional<msl_sensor_msgs::BallHypothesisList> getBallHypothesisList(int index = 0);
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
     void processJoystickCommand(msl_msgs::JoystickCommandPtr msg);
     void processMotionBurst(msl_actuator_msgs::MotionBurstPtr msg);
