@@ -14,8 +14,6 @@ namespace msl
 template <typename T>
 class InfoBuffer
 {
-    friend class ::msl::RawSensorData;
-
   public:
     /**
      * Default constructor.
@@ -26,7 +24,7 @@ class InfoBuffer
         this->bufferSize = bufferSize;
         this->infoElementCounter = 0;
         this->index = -1;
-        this->ringBuffer = std::unique_ptr<InformationElement<T>[]>(new InformationElement<T>[this->bufferSize]);
+        this->ringBuffer = new const std::shared_ptr<const InformationElement<T>>[this->bufferSize];
     }
 
     /**
@@ -34,6 +32,7 @@ class InfoBuffer
      */
     virtual ~InfoBuffer()
     {
+        delete[] this->ringBuffer;
     }
 
     /**
@@ -68,7 +67,7 @@ class InfoBuffer
 
         if (cleanBuffer)
         {
-            InformationElement<T> element;
+            std::shared_ptr<const InformationElement<T>> element;
             for (int i = 0; i < this->bufferSize; ++i)
                 this->ringBuffer[i] = element;
         }
@@ -89,49 +88,49 @@ class InfoBuffer
      * @param n States that the n-th last element should be set to the out parameter.
      * @return True if the n-th last element exists, false otherwise.
      */
-    bool getLast(std::shared_ptr<InformationElement<T>> &out, const int n = 0) const
+    const std::shared_ptr<const InformationElement<T>> getLast(const int n = 0) const
     {
         std::lock_guard<std::mutex> guard(mtx_);
 
         if (this->index < 0 || this->bufferSize <= n || this->infoElementCounter <= n)
         {
-            return false;
+            return nullptr;
         }
 
-        out = this->ringBuffer[(this->index - n) % this->bufferSize];
-        return true;
+        return this->ringBuffer[(this->index - n) % this->bufferSize];
     }
 
-    bool getLastValid(std::shared_ptr<InformationElement<T>> &out) const
+    const std::shared_ptr<const InformationElement<T>> getLastValid() const
     {
         std::lock_guard<std::mutex> guard(mtx_);
 
         if (this->index < 0 || this->bufferSize <= 0 || this->infoElementCounter <= 0)
         {
-            return false;
+            return nullptr;
         }
 
         int limit = std::min(this->bufferSize, this->infoElementCounter);
         for (int i = 0; i < limit; i++)
         {
             int index = (this->index - i) % this->bufferSize;
-            if (this->ringBuffer[index].isValid())
+            if (this->ringBuffer[index]->isValid())
             {
-                out = this->ringBuffer[index];
-                return true;
+                return this->ringBuffer[index];
             }
         }
-        return false;
+        return nullptr;
     }
 
-    bool getTemporalCloseTo(std::shared_ptr<InformationElement<T>> &out, const InfoTime time) const
+    const std::shared_ptr<const InformationElement<T>> getTemporalCloseTo(const InfoTime time) const
     {
         std::lock_guard<std::mutex> guard(mtx_);
 
         if (this->index < 0 || this->bufferSize <= 0 || this->infoElementCounter <= 0)
         {
-            return false;
+            return nullptr;
         }
+
+        auto closest = std::make_shared<const InformationElement<T>>;
 
         InfoTime timeDiffOfClosest = std::numeric_limits<long long>::max();
         int numberOfAvailableElements = std::min(this->bufferSize, this->infoElementCounter);
@@ -141,7 +140,7 @@ class InfoBuffer
             InfoTime curTimeDiff = std::abs(time - this->ringBuffer[index]->getCreationTime());
             if (curTimeDiff < timeDiffOfClosest)
             {
-                out = this->ringBuffer[index];
+                closest = this->ringBuffer[index];
                 timeDiffOfClosest = curTimeDiff;
             }
             else
@@ -154,32 +153,37 @@ class InfoBuffer
             }
         }
 
-        return true;
+        return closest;
     }
 
-    bool getTemporalCloseTo(std::shared_ptr<InformationElement<T>> &out, const InfoTime time,
-                            const InfoTime maxTimeDiff) const
+    const std::shared_ptr<const InformationElement<T>> getTemporalCloseTo(const InfoTime time,
+                                                                          const InfoTime maxTimeDiff) const
     {
-        if (!this->getTemporalCloseTo(out, time) || std::abs(time - out->getCreationTime()) > maxTimeDiff)
+        auto closest = this->getTemporalCloseTo(time);
+
+        if (!closest || std::abs(time - closest->getCreationTime()) > maxTimeDiff)
         {
-            return false;
+            return nullptr;
         }
         else
         {
-            return true;
+            return closest;
         }
     }
 
     /**
-         * Adds a new element to the information buffer, if it older than the last added element.
-         * @param element The element to add.
-         * @return bool True if the element was added, False otherwise.
-         */
-    bool add(std::shared_ptr<InformationElement<T>> element)
+     * Adds a new element to the information buffer, if it older than the last added element.
+     * @param element The element to add.
+     * @return bool True if the element was added, False otherwise.
+     */
+    bool add(const std::shared_ptr<const InformationElement<T>> element)
     {
         std::lock_guard<std::mutex> guard(mtx_);
 
-        if (element->getCreationTime() < this->ringBuffer[this->index % this->bufferSize]->getCreationTime())
+        auto last = this->getLast();
+
+        // only allow newer information
+        if(last && element->getCreationTime() < last->getCreationTime())
         {
             return false;
         }
@@ -193,7 +197,7 @@ class InfoBuffer
 
   private:
     std::mutex mtx_;
-    std::unique_ptr<std::shared_ptr<InformationElement<T>>[]> ringBuffer; /**< Ring buffer of elements */
+    std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
     int bufferSize;                                                       /**< number of stored elements */
     int index;                             /**< Current index of the last added element */
     unsigned long long infoElementCounter; /**< Counter of elements added to the buffer */
