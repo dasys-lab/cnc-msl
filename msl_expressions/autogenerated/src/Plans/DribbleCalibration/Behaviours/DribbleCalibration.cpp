@@ -5,6 +5,7 @@ using namespace std;
 #include <RawSensorData.h>
 #include <Ball.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
+#include <msl_actuator_msgs/MotionControl.h>
 #include <SystemConfig.h>
 #include <MSLWorldModel.h>
 #include <msl_robot/robotmovement/RobotMovement.h>
@@ -21,7 +22,7 @@ namespace alica
         dribbleBackward = false;
         dribbleRotateLeft = false;
         dribbleRotateRight = false;
-        param = DribbleCalibrationContainer::Param::ErrParm;
+        param = msl::DribbleCalibrationContainer::Param::ErrParm;
         startTrans = 0;
         endTrans = 0;
         speedIter = 0;
@@ -46,7 +47,7 @@ namespace alica
         /*PROTECTED REGION ID(run1482339434271) ENABLED START*/ //Add additional options here
         // check DribbleControl code and maybe add a new parameter for the orthogonal calculation
         MotionControl mc;
-        RobotMovement rm;
+        msl::RobotMovement rm;
 //		MovementContainer moveCont;
         // if ball is in kicker
         if (wm->rawSensorData->getLightBarrier(0) && (moveCount < speedIter))
@@ -77,20 +78,20 @@ namespace alica
             cout << "DribbleCalibration::run(): translation = " << tran << endl;
 #endif
             // movement
-            shared_ptr < DribbleCalibrationQuery > query = dcc.paramToMove(param, tran);
+            shared_ptr<msl::DribbleCalibrationQuery> query = dcc.paramToMove(param, tran);
 
             //check input for send methods
-            MotionControl mc = query->getMc();
-            if (mc.motion.translation != 0 && mc.motion.angle != 0 && mc.motion.rotation != 0)
+            shared_ptr<MotionControl> mc = query->getMc();
+            if (mc->motion.translation != 0 && mc->motion.angle != 0 && mc->motion.rotation != 0)
             {
-                if (mc.motion.translation == NAN)
+                if (mc->motion.translation == NAN)
                 {
                     cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
                     return;
                 }
                 else
                 {
-                    send(mc);
+                    send(*mc);
                 }
             }
             else
@@ -98,19 +99,8 @@ namespace alica
                 cout << "no MotionControl received!" << endl;
             }
 
-            BallHandleCmd bhc = query->getBhc();
-            send(bhc);
-
-            // checking for error values
-            if (mc.motion.translation == NAN)
-            {
-                cerr << "\033[1;31m" << "motion command == NAN" << "\033[0m\n" << endl;
-                return;
-            }
-            else
-            {
-                send(mc);
-            }
+            shared_ptr<BallHandleCmd> bhc = query->getBhc();
+            send(*bhc);
 
             // waiting some time till we can be sure to only collect correct values
             if (haveBallCount < (haveBallWaitingDuration + collectDataWaitingDuration))
@@ -186,21 +176,21 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleForward;
-                !dribbleForward ? : param = DribbleCalibrationContainer::Param::DribbleForwardParm;
+                !dribbleForward ? : param = msl::DribbleCalibrationContainer::Param::DribbleForwardParm;
                 success = true;
             }
             else if (getParameter("DribbleBackward", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleBackward;
-                !dribbleBackward ? : param = DribbleCalibrationContainer::Param::DribbleBackwardParm;
+                !dribbleBackward ? : param = msl::DribbleCalibrationContainer::Param::DribbleBackwardParm;
                 success = true;
             }
             else if (getParameter("DribbleRotateLeft", tmp))
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateLeft;
-                !dribbleRotateLeft ? : param = DribbleCalibrationContainer::Param::RotateLeftParm;
+                !dribbleRotateLeft ? : param = msl::DribbleCalibrationContainer::Param::RotateLeftParm;
                 speedIter = moveCount + 1;
                 success = true;
             }
@@ -208,7 +198,7 @@ namespace alica
             {
                 std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
                 istringstream(tmp) >> std::boolalpha >> dribbleRotateRight;
-                !dribbleRotateRight ? : param = DribbleCalibrationContainer::Param::RotateRightPram;
+                !dribbleRotateRight ? : param = msl::DribbleCalibrationContainer::Param::RotateRightPram;
                 speedIter = moveCount + 1;
                 success = true;
             }
@@ -239,7 +229,7 @@ namespace alica
                 "DribbleCalibration.Default.HaveBallWaitingDuration", NULL);
 
         collectDataWaitingDuration = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.EndTranslation",
-                                                                           NULL);
+        NULL);
         minHaveBallIter = (*sc)["DribbleCalibration"]->get<int>("DribbleCalibration.Default.MinHaveBallIter", NULL);
     }
 /*PROTECTED REGION END*/

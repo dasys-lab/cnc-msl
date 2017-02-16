@@ -1,5 +1,5 @@
 /*
- * DribbleRotateLeft.cpp
+ * DribbleRotateRight.cpp
  *
  *  Created on: Jan 25, 2017
  *      Author: Michael Gottesleben
@@ -9,16 +9,16 @@
 #include <Configuration.h>
 #include <msl_actuator_msgs/MotionControl.h>
 #include <msl_msgs/MotionInfo.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateLeft.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
-#include <SystemConfig.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleRotateRight.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <iostream>
+#include <memory>
 #include <string>
 
-namespace alica
+namespace msl
 {
 
-	DribbleRotateLeft::DribbleRotateLeft()
+	DribbleRotateRight::DribbleRotateRight()
 	{
 		epsilonRot = 0;
 		changingValue = 0;
@@ -29,28 +29,27 @@ namespace alica
 		readConfigParameters();
 	}
 
-	DribbleRotateLeft::~DribbleRotateLeft()
+	DribbleRotateRight::~DribbleRotateRight()
 	{
 	}
 
-	shared_ptr<DribbleCalibrationQuery> DribbleRotateLeft::move(int trans)
+	shared_ptr<DribbleCalibrationQuery> DribbleRotateRight::move(int trans)
 	{
-		MotionControl mc;
-
-		mc.motion.rotation = rotationSpeed;
+		shared_ptr<MotionControl> mc;
+		mc->motion.rotation = -rotationSpeed;
 		shared_ptr<DribbleCalibrationQuery> query;
 		query->setMc(mc);
 		return query;
 	}
 
-	void DribbleRotateLeft::writeConfigParameters()
+	void DribbleRotateRight::writeConfigParameters()
 	{
 		double endValue = (minValue + maxValue) / 2;
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonRot), "DribbleAround.epsilonRot", NULL);
 	}
 
-	void DribbleRotateLeft::readConfigParameters()
+	void DribbleRotateRight::readConfigParameters()
 	{
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 
@@ -67,27 +66,25 @@ namespace alica
 		NULL);
 	}
 
-	void DribbleRotateLeft::adaptParams()
+	void DribbleRotateRight::adaptParams()
 	{
 		epsilonRot = -changingValue;
-
 		if (epsilonRot < 0)
 		{
-			cerr << redBegin << "DribbleRotateLeft::adaptParams(): parameter < 0! parameter will be reset" << redEnd
+			cerr << redBegin << "DribbleRotateRight::adaptParams(): parameter < 0! parameter will be reset" << redEnd
 					<< endl;
 			resetParams();
 		}
-
 		supplementary::SystemConfig* sc = supplementary::SystemConfig::getInstance();
 		(*sc)["DribbleAround"]->set(boost::lexical_cast<std::string>(epsilonRot), "DribbleAround.epsilonRot", NULL);
 	}
 
-	void DribbleRotateLeft::resetParams()
+	void DribbleRotateRight::resetParams()
 	{
 		epsilonRot = defaultValue;
 	}
 
-	void DribbleRotateLeft::saveParams()
+	void DribbleRotateRight::saveParams()
 	{
 		if (maxValue == 0)
 		{

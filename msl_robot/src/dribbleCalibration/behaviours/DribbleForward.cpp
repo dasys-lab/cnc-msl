@@ -9,13 +9,13 @@
 #include <Configuration.h>
 #include <msl_actuator_msgs/BallHandleCmd.h>
 #include <msl_actuator_msgs/MotionControl.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleForward.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <SystemConfig.h>
 #include <iostream>
 #include <string>
 
-namespace alica
+namespace msl
 {
 	DribbleForward::DribbleForward()
 	{
@@ -25,6 +25,7 @@ namespace alica
 		minValue = 0;
 		maxValue = 0;
 		actuatorSpeed = 0;
+		query = make_shared<DribbleCalibrationQuery>();
 		readConfigParameters();
 	}
 
@@ -34,14 +35,18 @@ namespace alica
 
 	shared_ptr<DribbleCalibrationQuery> DribbleForward::move(int trans)
 	{
-		MotionControl mc;
-		BallHandleCmd bhc;
+		shared_ptr<MotionControl> mc;
+		shared_ptr<BallHandleCmd> bhc = make_shared<BallHandleCmd>();
 
-		shared_ptr<DribbleCalibrationQuery> query;
-		mc = mCon.move(mCon.Forward, trans);
+		MotionControl mc1 = mCon.move(mCon.Forward, trans);
+		mc = make_shared<MotionControl>(mc1);
+//		mc->motion.translation = mc1.motion.translation;
+//		mc->motion.angle = mc1.motion.angle;
+//		mc->motion.rotation = mc1.motion.angle;
+		cout << "mc.translation = " << mc->motion.translation << endl;
 		query->setMc(mc);
-		bhc.leftMotor = actuatorSpeed;
-		bhc.rightMotor = actuatorSpeed;
+		bhc->leftMotor = actuatorSpeed;
+		bhc->rightMotor = actuatorSpeed;
 		query->setBhc(bhc);
 		return query;
 	}

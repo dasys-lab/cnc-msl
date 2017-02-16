@@ -10,18 +10,18 @@
 
 #include <container/CNPoint2D.h>
 #include <msl_actuator_msgs/MotionControl.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleBackward.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleForward.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateLeft.h>
-#include <Plans/DribbleCalibration/Behaviours/Calibrations/DribbleRotateRight.h>
-#include <Plans/DribbleCalibration/Container/DribbleCalibrationQuery.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleBackward.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleForward.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleRotateRight.h>
+#include <msl_robot/dribbleCalibration/behaviours/DribbleRotateLeft.h>
+#include <msl_robot/dribbleCalibration/container/DribbleCalibrationQuery.h>
 #include <memory>
 #include <vector>
 
 //#define DEBUG_DC
 
-using namespace msl;
-namespace alica
+//using namespace msl;
+namespace msl
 {
 	class DribbleCalibrationContainer
 	{
@@ -72,7 +72,7 @@ namespace alica
 
 
 		double getAverageOpticalFlowValue(OPValue value, shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> queue);
-		MotionControl setNaN(MotionControl mc);
+		shared_ptr<msl_actuator_msgs::MotionControl> setNaN(shared_ptr<msl_actuator_msgs::MotionControl> mc);
 	};
 
 }

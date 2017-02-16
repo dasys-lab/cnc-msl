@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(msl_robot)
-
+ 
 ## Use c++ 11x std
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
@@ -35,6 +35,13 @@ add_library(msl_robot
   src/robotmovement/MovementQuery.cpp
   src/robotmovement/RobotMovement.cpp
   src/robotmovement/SearchArea.cpp
+  src/dribbleCalibration/container/DribbleCalibrationContainer.cpp
+  src/dribbleCalibration/container/DribbleCalibrationQuery.cpp
+  src/dribbleCalibration/container/MovementContainer.cpp
+  src/dribbleCalibration/behaviours/DribbleBackward.cpp
+  src/dribbleCalibration/behaviours/DribbleForward.cpp
+  src/dribbleCalibration/behaviours/DribbleRotateLeft.cpp
+  src/dribbleCalibration/behaviours/DribbleRotateRight.cpp
 )
 
 #message ("msl_robot - catkin_LIBRARIES: ${catkin_LIBRARIES}")

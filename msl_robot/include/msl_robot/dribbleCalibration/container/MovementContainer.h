@@ -14,7 +14,7 @@
 
 //#define DEBUG_MOVE_CONT
 
-namespace alica
+namespace msl
 {
 	class MovementContainer
 	{

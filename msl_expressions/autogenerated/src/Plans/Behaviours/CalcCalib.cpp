@@ -15,6 +15,13 @@ namespace alica
             DomainBehaviour("CalcCalib")
     {
         /*PROTECTED REGION ID(con1446033324019) ENABLED START*/ //Add additional options here
+    	calibOldPosMotionX = 0;
+    	calibOldPosMotionY = 0;
+    	oldCalibCoefficientX = 0;
+    	oldCalibCoefficientY = 0;
+    	correctedPosX = 0;
+    	correctedPosY = 0;
+    	calibCounter = 0;
         /*PROTECTED REGION END*/
     }
     CalcCalib::~CalcCalib()
@@ -221,23 +228,36 @@ namespace alica
         calibCoeff.calibCoefficientY = calibCoefficientY;
         calibCoeff_pub.publish(calibCoeff);
 
-        std::cout << "Differenzen: " << std::endl;
+	switch (calibCounter)
+	{
+	case 1:
+		std::cout << "Difference X: " << diffX << " (" << (diffX/lengthSegment)*100 << " %)\n" << std::endl;
+		break;
+
+	case 2: 
+		std::cout << "Difference X: " << diffX << " (" << (diffX/lengthSegment)*100 << " %)" << std::endl;
+		std::cout << "new calibration coefficient X: " << calibCoefficientX << "\n" << std::endl;
+		break;
+
+	case 3:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY/lengthSegment)*100 << " %)\n" << std::endl;
+		break;
+
+        case 4:
+                std::cout << "Difference Y: " << diffY << " (" << (diffY/lengthSegment)*100 << " %)" << std::endl;
+                std::cout << "new calibration coefficient Y: " << calibCoefficientY << "\n" << std::endl;
+		break;
+
+	default:
+		std::cout << "\nold calibration coefficient X: " << calibCoefficientX << "\nold calibration coefficient Y: "<< calibCoefficientY << "\n" <<std::endl;
+	}
+       /* std::cout << "Differenzen: " << std::endl;
         std::cout << "X: " << diffX << std::endl;
         std::cout << "Y: " << diffY << std::endl;
         std::cout << "FaktorX: " << calibCoefficientX << std::endl;
         std::cout << "FaktorY: " << calibCoefficientY << std::endl;
-        std::cout << "posMotionX: " << this->wm->rawSensorData->getOwnPositionMotion()->x << std::endl;
-        std::cout << "posMotionY: " << this->wm->rawSensorData->getOwnPositionMotion()->y << std::endl;
-        std::cout << "correctedPosX : " << correctedPosX << std::endl;
-        std::cout << "correctedPosY : " << correctedPosY << std::endl;
-        std::cout << "posVisionX: " << this->wm->rawSensorData->getOwnPositionVision()->x << std::endl;
-        std::cout << "posVisionY: " << this->wm->rawSensorData->getOwnPositionVision()->y << std::endl;
-        std::cout << "lengthSegment: " << lengthSegment << std::endl;
-        std::cout << "oldCoeffX: " << oldCalibCoefficientX << std::endl;
-        std::cout << "oldCoeffY: " << oldCalibCoefficientY << std::endl;
-        std::cout << "calibCounter: " << calibCounter << std::endl;
 
-        std::cout << "" << std::endl;
+        std::cout << "" << std::endl;*/
 
         lengthSegment = 0;
         calibCounter++;
