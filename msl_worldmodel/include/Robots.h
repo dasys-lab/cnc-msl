@@ -1,18 +1,13 @@
 #pragma once
 
-#include "InformationElement.h"
+#include "InfoBuffer.h"
 #include "Opponents.h"
 #include "Teammates.h"
 
-#include <msl_sensor_msgs/ObstacleInfo.h>
 #include <msl_sensor_msgs/SharedWorldInfo.h>
-#include <msl_sensor_msgs/WorldModelData.h>
-#include <SystemConfig.h>
-#include <cnc_geometry/CNPointAllo.h>
-#include <cnc_geometry/CNPositionAllo.h>
-#include <InfoBuffer.h>
+
+#include <memory>
 #include <map>
-#include <vector>
 
 namespace msl
 {
@@ -23,21 +18,20 @@ class Robots
   public:
     Robots(MSLWorldModel *wm, int ringBufferLength);
     virtual ~Robots();
-    void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data);
-    map<int, shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> sharedWorldModelData;
 
-    shared_ptr<msl_sensor_msgs::SharedWorldInfo> getSHWMData(int robotID, int index = 0);
+    // Data Integration Method
+    void processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data, InfoTime creationTime);
+
+    // Data Access Method
+    const InfoBuffer<msl_sensor_msgs::SharedWorldInfo> *getSHWMDataBuffer(int robotID) const;
 
     Teammates teammates;
     Opponents opponents;
 
-    // TODO implement getRobots => teammates + opponents
-
   private:
     MSLWorldModel *wm;
-    supplementary::SystemConfig *sc;
-
     const InfoTime maxValidity = 1000000000;
+    std::map<int, std::shared_ptr<InfoBuffer<msl_sensor_msgs::SharedWorldInfo>>> shwmDataBuffers;
 };
 
 } /* namespace alica */

@@ -156,10 +156,11 @@ class MSLWorldModel
     ros::Subscriber sharedWorldSub;
     ros::Subscriber passMsgSub;
     ros::Subscriber watchBallMsgSub;
-    ros::Publisher sharedWorldPub;
     ros::Subscriber correctedOdometrySub;
     ros::Subscriber lightBarrierSub;
     ros::Subscriber imuDataSub;
+
+    ros::Publisher sharedWorldPub;
 
     list<msl_msgs::JoystickCommandPtr> joystickCommandData;
 

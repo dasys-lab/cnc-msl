@@ -83,32 +83,32 @@ const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityVision()
 
 const InfoBuffer<msl_actuator_msgs::MotionControl> &RawSensorData::getLastMotionCommand()
 {
-    this->lastMotionCommand;
+	return this->lastMotionCommand;
 }
 
 const InfoBuffer<int> &RawSensorData::getCompass()
 {
-    this->compass;
+	return this->compass;
 }
 
 const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &RawSensorData::getOwnOdometry()
 {
-    this->ownOdometry;
+	return this->ownOdometry;
 }
 
 const InfoBuffer<msl_actuator_msgs::IMUData> &RawSensorData::getImuData()
 {
-    this->imuData;
+	return this->imuData;
 }
 
 const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &RawSensorData::getBallHypothesis()
 {
-    this->ballHypothesis;
+	return this->ballHypothesis;
 }
 
 const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommands()
 {
-    this->joystickCommands;
+    return this->joystickCommands;
 }
 
 void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr msg)
@@ -124,9 +124,10 @@ void RawSensorData::processRawOdometryInfo(msl_actuator_msgs::RawOdometryInfoPtr
 
 void RawSensorData::processJoystickCommand(msl_msgs::JoystickCommandPtr msg)
 {
-    // TODO: set maxValididititityDuration to 250ms -> constant?
+
     if (msg->robotId == this->ownID)
     {
+    	// TODO: set maxValididititityDuration to 250ms -> constant?
         auto joyInfo =
             make_shared<InformationElement<msl_msgs::JoystickCommand>>(*msg, wm->getTime(), this->maxValidity, 1.0);
         joystickCommands.add(joyInfo);
@@ -178,25 +179,6 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         auto velInfo = make_shared<InformationElement<msl_msgs::MotionInfo>>(
             data->odometry.motion, time, this->maxValidity, data->odometry.certainty);
         ownVelocityVision.add(velInfo);
-
-        // Motion
-        /*shared_ptr<geometry::CNPosition> posMotion =
-         make_shared<geometry::CNPosition>(
-         data->odometry.position.x, data->odometry.position.y,
-         data->odometry.position.angle);
-         shared_ptr<InformationElement<geometry::CNPosition>> odometryMotion =
-         make_shared<
-         InformationElement<geometry::CNPosition>>(posMotion, time);
-         odometryMotion->certainty = data->odometry.certainty;
-         ownPositionMotion.add(odometryMotion);
-
-         // TODO: this is the same motion as for vision motion !?
-         shared_ptr<msl_msgs::MotionInfo> velMotion =
-         make_shared<msl_msgs::MotionInfo>(data->odometry.motion);
-         shared_ptr<InformationElement<msl_msgs::MotionInfo>> vMotion = make_shared<
-         InformationElement<msl_msgs::MotionInfo>>(velMotion, time);
-         vMotion->certainty = data->odometry.certainty;
-         ownVelocityMotion.add(vMotion);*/
     }
 
     auto ballPos = make_shared<geometry::CNPointEgo>(data->ball.point.x, data->ball.point.y, data->ball.point.z);

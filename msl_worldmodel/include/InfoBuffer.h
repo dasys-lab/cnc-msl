@@ -114,7 +114,6 @@ class InfoBuffer
             return nullptr;
         }
 
-
         int limit = std::min(this->bufferSize, this->infoElementCounter);
         for (int i = 0; i < limit; i++)
         {
@@ -200,7 +199,7 @@ class InfoBuffer
         auto last = this->getLast();
 
         // only allow newer information
-        if(last && element->getCreationTime() < last->getCreationTime())
+        if (last && element->getCreationTime() < last->getCreationTime())
         {
             return false;
         }
@@ -214,10 +213,10 @@ class InfoBuffer
 
   private:
     std::mutex mtx_;
-    std::shared_ptr<const InformationElement<T>> *ringBuffer;     /**< Ring buffer of elements */
-    int bufferSize;                                               /**< number of stored elements */
-    int index;                                                    /**< Current index of the last added element */
-    unsigned long long infoElementCounter;                        /**< Counter of elements added to the buffer */
+    const std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
+    int bufferSize;                                                 /**< number of stored elements */
+    int index;                                                      /**< Current index of the last added element */
+    unsigned long long infoElementCounter;                          /**< Counter of elements added to the buffer */
 };
 
 } /* namespace msl */

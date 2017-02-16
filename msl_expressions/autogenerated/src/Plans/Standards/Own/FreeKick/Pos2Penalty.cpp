@@ -53,7 +53,7 @@ namespace alica
                     > (result.at(0), result.at(1));
 
             //if solution is inside pen area and another robot is inside pen area already, map solution out of pen area
-            if (wm->field->isInsideOppPenalty(alloTarget, 10) && wm->robots->teammates.teamMatesInOppPenalty() > 0)
+            if (wm->field->isInsideOppPenalty(alloTarget, 10) && wm->robots->teammates.teammatesInOppPenalty() > 0)
             {
                 alloTarget = wm->field->mapOutOfOppPenalty(alloTarget);
             }

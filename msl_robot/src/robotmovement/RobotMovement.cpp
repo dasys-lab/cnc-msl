@@ -253,7 +253,7 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
             // if we are already in, and ball is in safe distance of keeper area, get it
             return setNAN();
         }
-        if (wm->robots->teammates.teamMatesInOwnPenalty() > 1)
+        if (wm->robots->teammates.teammatesInOwnPenalty() > 1)
         {
             // do not enter penalty if someone besides keeper is already in there
             dest = wm->field->mapOutOfOwnPenalty(alloBall);
@@ -287,7 +287,7 @@ msl_actuator_msgs::MotionControl RobotMovement::ruleActionForBallGetter()
     // ball is inside enemy penalty area ===============================================================
     if (wm->field->isInsideOppPenalty(alloBall, 0))
     {
-        if (wm->robots->teammates.teamMatesInOppPenalty() > 0)
+        if (wm->robots->teammates.teammatesInOppPenalty() > 0)
         {
             // if there is someone else, do not enter
             dest = wm->field->mapOutOfOppPenalty(alloBall);

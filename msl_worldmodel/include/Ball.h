@@ -39,7 +39,6 @@ class Ball
     bool haveBallDribble(bool hadBefore);
 
     shared_ptr<pair<geometry::CNPointAllo, double>> getVisionBallPositionAndCertaincy(int index = 0);
-    shared_ptr<geometry::CNVecAllo> getVisionBallVelocity(int index = 0);
     double getBallConfidenceVision(int index = 0);
 
     shared_ptr<geometry::CNPointAllo> getBallPoint3D(int index = 0);
@@ -76,6 +75,7 @@ class Ball
         return selfInBallPossesion;
     };
 
+    const InfoBuffer<geometry::CNVecAllo> &getVisionBallVelocityBuffer() const;
     const InfoBuffer<geometry::CNPointEgo> &getVisionBallPositionBuffer() const;
 
   private:
@@ -113,7 +113,7 @@ class Ball
     std::map<int, shared_ptr<InfoBuffer<geometry::CNVecAllo>>> ballVelocitiesByRobot;
     InfoBuffer<geometry::CNPointAllo> sharedBallPosition;
     InfoBuffer<geometry::CNPointAllo> ballGuessPosition;
-    InfoBuffer<geometry::CNVecAllo> ballVelocity;
+    InfoBuffer<geometry::CNVecAllo> visionBallVelocityBuffer;
     InfoBuffer<geometry::CNPointEgo> visionBallPositionBuffer;
     const InfoTime maxValidity = 1000000000;
 

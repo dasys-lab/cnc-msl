@@ -34,7 +34,7 @@ class Game
     Game(MSLWorldModel *wm, int ringBufferLength);
     virtual ~Game();
     void onRobotCommand(robot_control::RobotCommandPtr msg);
-    void onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg);
+    void onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg);
     shared_ptr<msl_msgs::RefBoxCommand> getRefBoxCommand(int index);
     bool checkSituation(Situation situation);
     int getOppGoal();
@@ -58,7 +58,7 @@ class Game
     ros::AsyncSpinner *spinner;
     ros::Subscriber refBoxCommandSub;
     ros::Subscriber robotCommandSub;
-    InfoBuffer<InformationElement<msl_msgs::RefBoxCommand>> refBoxCommand;
+    InfoBuffer<msl_msgs::RefBoxCommand> refBoxCommand;
     mutex refereeMutex;
     mutex situationChecker;
     mutex goalMutex;

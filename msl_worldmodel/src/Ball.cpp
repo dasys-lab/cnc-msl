@@ -27,7 +27,7 @@ namespace msl
 
 Ball::Ball(MSLWorldModel *wm, int ringbufferLength)
     : visionBallPositionBuffer(ringbufferLength)
-    , ballVelocity(ringbufferLength)
+    , visionBallVelocityBuffer(ringbufferLength)
     , ballBuf(30)
     , oppBallPossession(ringbufferLength)
     , sharedBallPosition(ringbufferLength)
@@ -61,14 +61,9 @@ const InfoBuffer<geometry::CNPointEgo> &Ball::getVisionBallPositionBuffer() cons
     return this->visionBallPositionBuffer;
 }
 
-shared_ptr<geometry::CNVecAllo> Ball::getVisionBallVelocity(int index)
+const InfoBuffer<geometry::CNVecAllo> &Ball::getVisionBallVelocityBuffer() const
 {
-    auto x = ballVelocity.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->visionBallVelocityBuffer;
 }
 
 geometry::CNPointAllo Ball::getBallPickupPosition()
@@ -95,18 +90,14 @@ shared_ptr<pair<geometry::CNPointEgo, double>> Ball::getVisionBallPositionAndCer
 
 shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
 {
-    auto ownPos = this->wm->rawSensorData->getOwnPositionVision();
-    if (ownPos == nullptr)
-    {
-        return nullptr;
-    }
+    auto ownPos = this->wm->rawSensorData->getOwnPositionVision().getLast();
 
-    auto p = this->getEgoBallPosition();
-    if (p != nullptr)
+    auto egoBallPos = this->getEgoBallPosition();
+    if (!egoBallPos)
     {
-        p = p->toAllo(*ownPos);
+    	return nullptr;
     }
-    return p;
+    return egoBallPos->toAllo(*ownPos->getInformation());
 }
 
 shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()

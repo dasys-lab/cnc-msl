@@ -96,7 +96,7 @@ void Opponents::processOpponentsAlloClustered(
     this->opponentsAlloClustered.add(o);
 }
 
-const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &Opponents::getOpponentsEgoClusteredBuffer() const
+const InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> &Opponents::getOpponentsEgoClusteredBuffer() const
 {
     return this->opponentsEgoClustered;
 }

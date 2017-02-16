@@ -95,7 +95,7 @@ void Game::onRobotCommand(robot_control::RobotCommandPtr msg)
     }
 }
 
-void Game::onRefBoxCommand(msl_msgs::RefBoxCommandPtr msg)
+void Game::onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg)
 {
     // Put the referee box command into the ringbuffer
 

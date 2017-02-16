@@ -1,13 +1,17 @@
 #pragma once
 
-#include "InformationElement.h"
+#include "InfoBuffer.h"
+
 #include <cnc_geometry/CNPositionAllo.h>
 #include <cnc_geometry/CNPointAllo.h>
-#include <InfoBuffer.h>
+
 #include <memory>
 #include <vector>
+#include <map>
 
-using namespace std;
+namespace msl_sensor_msgs {
+	ROS_DECLARE_MESSAGE(SharedWorldInfo);
+}
 
 namespace msl
 {
@@ -18,25 +22,27 @@ class Teammates
   public:
     Teammates(MSLWorldModel *wm, int ringBufferLength);
     virtual ~Teammates();
-    int teamMatesInOwnPenalty();
-    int teamMatesInOppPenalty();
+    int teammatesInOwnPenalty();
+    int teammatesInOppPenalty();
 
-    const InfoBuffer<geometry::CNPositionAllo> *getTeamMatePositionBuffer(int teamMateId) const;
-    shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
+    const InfoBuffer<geometry::CNPositionAllo> &getTeammatePositionBuffer(int teammateId);
+    std::shared_ptr<std::vector<std::shared_ptr<std::pair<int, std::shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
 
-    const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &getTeammatesAlloClusteredBuffer();
-    void processTeammatesAlloClustered(shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
+    const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointAllo>>> &getTeammatesAlloClusteredBuffer();
+    void integrateTeammatesAlloClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
 
-    const InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> &getTeammatesEgoClusteredBuffer();
-    void processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
+    const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> &getTeammatesEgoClusteredBuffer();
+    void processTeammatesEgoClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
+
+    void integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime);
 
   private:
     MSLWorldModel *wm;
     // TODO: replace with ?DEFINES? or whatever for each info type
     const InfoTime maxValidity = 1000000000;
-    InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered;
-    InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered;
-    map<int, shared_ptr<InfoBuffer<geometry::CNPositionAllo>>> robotPositions;
+    InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered;
+    InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered;
+    std::map<int, std::shared_ptr<InfoBuffer<geometry::CNPositionAllo>>> robotPositions;
 };
 
 } /* namespace msl */

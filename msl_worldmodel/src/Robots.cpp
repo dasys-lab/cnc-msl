@@ -1,63 +1,60 @@
+#include "Robots.h"
+
 #include "MSLWorldModel.h"
-#include <Robots.h>
 
 namespace msl
 {
+
+using std::map;
+using std::shared_ptr;
+using std::make_shared;
 
 Robots::Robots(MSLWorldModel *wm, int ringBufferLength)
     : opponents(wm, ringBufferLength)
     , teammates(wm, ringBufferLength)
 {
     this->wm = wm;
-    this->sc = supplementary::SystemConfig::getInstance();
 }
 
 Robots::~Robots()
 {
-    // TODO Auto-generated destructor stub
 }
 
-void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr data)
+void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime)
 {
-    if (sharedWorldModelData.find(data->senderID) == sharedWorldModelData.end())
-    {
-        shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>> buffer =
-            make_shared<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<InfoBuffer<InformationElement<msl_sensor_msgs::SharedWorldInfo>>>> pair(data->senderID, buffer);
-        sharedWorldModelData.insert(pair);
-    }
-    if (teammates.robotPositions.find(data->senderID) == teammates.robotPositions.end())
-    {
-        shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>> buffer =
-            make_shared<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>(wm->getRingBufferLength());
-        pair<int, shared_ptr<InfoBuffer<InformationElement<geometry::CNPositionAllo>>>> pair(data->senderID, buffer);
-        teammates.robotPositions.insert(pair);
-    }
-    shared_ptr<InformationElement<geometry::CNPositionAllo>> info = make_shared<InformationElement<geometry::CNPositionAllo>>(
-        make_shared<geometry::CNPositionAllo>(data->odom.position.x, data->odom.position.y, data->odom.position.angle), wm->getTime());
-    teammates.robotPositions.at(data->senderID)->add(info);
+    // prepare info element
+    auto shwmMsgPtr = shared_ptr<msl_sensor_msgs::SharedWorldInfo>(
+        msg.get(), [msg](msl_sensor_msgs::SharedWorldInfo *) mutable { msg.reset(); });
+    auto infoElement = make_shared<InformationElement<msl_sensor_msgs::SharedWorldInfo>>(
+        shwmMsgPtr, creationTime, this->maxValidity, msg->odom.certainty);
 
-    shared_ptr<msl_sensor_msgs::SharedWorldInfo> shptr = make_shared<msl_sensor_msgs::SharedWorldInfo>();
-    *shptr = *data;
-    shared_ptr<InformationElement<msl_sensor_msgs::SharedWorldInfo>> infosh =
-        make_shared<InformationElement<msl_sensor_msgs::SharedWorldInfo>>(shptr, wm->getTime());
-    sharedWorldModelData.at(data->senderID)->add(infosh);
+    // find buffer to put element into
+    auto shwmDataBufferIter = this->shwmDataBuffers.find(msg->senderID);
+    if (shwmDataBufferIter == this->shwmDataBuffers.end())
+    {
+        auto buffer = std::make_shared<InfoBuffer<msl_sensor_msgs::SharedWorldInfo>>(wm->getRingBufferLength());
+        this->shwmDataBuffers.emplace(msg->senderID, buffer);
+        buffer->add(infoElement);
+    }
+    else
+    {
+        shwmDataBufferIter->second->add(infoElement);
+    }
+
+    // Forward position to teammates container
+    this->teammates.integrateTeammatesPosition(msg, creationTime);
 }
 
-shared_ptr<msl_sensor_msgs::SharedWorldInfo> Robots::getSHWMData(int robotID, int index)
+const InfoBuffer<msl_sensor_msgs::SharedWorldInfo> *Robots::getSHWMDataBuffer(int robotID) const
 {
-    auto shwm = sharedWorldModelData.at(robotID);
-    if (shwm != nullptr)
+    auto shwmDataBufferIter = this->shwmDataBuffers.find(robotID);
+    if (shwmDataBufferIter == this->shwmDataBuffers.end())
     {
-        auto x = shwm->getLast(index);
-        if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-        {
-            return nullptr;
-        }
-        return x->getInformation();
+        return nullptr;
     }
-    return nullptr;
+    else
+    {
+        return shwmDataBufferIter->second.get();
+    }
 }
-}
-
-/* namespace alica */
+} /* namespace msl */
