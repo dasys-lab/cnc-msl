@@ -32,7 +32,7 @@ class Teammates
     void integrateTeammatesAlloClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
 
     const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> &getTeammatesEgoClusteredBuffer();
-    void processTeammatesEgoClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
+    void integrateTeammatesEgoClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
 
     void integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime);
 

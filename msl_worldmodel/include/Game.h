@@ -1,23 +1,16 @@
-/*
- * Game.h
- *
- *  Created on: Feb 24, 2015
- *      Author: Stefan Jakob
- */
+#pragma once
 
-#ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
-#define CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_
-
-#include <InfoBuffer.h>
+#include "InfoBuffer.h"
 #include "GameState.h"
 #include "InformationElement.h"
-#include <MSLEnums.h>
+#include "MSLEnums.h"
+
 #include <msl_msgs/RefBoxCommand.h>
-#include <mutex>
 #include <robot_control/RobotCommand.h>
 #include <ros/ros.h>
 
-using namespace std;
+#include <mutex>
+#include <memory>
 
 namespace supplementary
 {
@@ -35,7 +28,7 @@ class Game
     virtual ~Game();
     void onRobotCommand(robot_control::RobotCommandPtr msg);
     void onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg);
-    shared_ptr<msl_msgs::RefBoxCommand> getRefBoxCommand(int index);
+    const InfoBuffer<msl_msgs::RefBoxCommand> &getRefBoxCommandBuffer() const;
     bool checkSituation(Situation situation);
     int getOppGoal();
     int getOwnGoal();
@@ -58,10 +51,10 @@ class Game
     ros::AsyncSpinner *spinner;
     ros::Subscriber refBoxCommandSub;
     ros::Subscriber robotCommandSub;
-    InfoBuffer<msl_msgs::RefBoxCommand> refBoxCommand;
-    mutex refereeMutex;
-    mutex situationChecker;
-    mutex goalMutex;
+    InfoBuffer<msl_msgs::RefBoxCommand> refBoxCommandBuffer;
+    std::mutex refereeMutex;
+    std::mutex situationChecker;
+    std::mutex goalMutex;
     supplementary::SystemConfig *sc;
     int ownGoal;
     int oppGoal;
@@ -73,6 +66,4 @@ class Game
     const InfoTime maxValidity = 1000000000;
 };
 
-} /* namespace alica */
-
-#endif /* CNC_MSL_MSL_WORLDMODEL_INCLUDE_GAME_H_ */
+} /* namespace msl */
