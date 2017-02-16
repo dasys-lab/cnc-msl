@@ -15,7 +15,7 @@ namespace msl
 {
 
 Game::Game(MSLWorldModel *wm, int ringBufferLength)
-    : refBoxCommand(ringBufferLength)
+    : refBoxCommandBuffer(ringBufferLength)
 {
     this->wm = wm;
     this->gameState = GameState::NobodyInBallPossession;
@@ -106,7 +106,7 @@ void Game::onRefBoxCommand(msl_msgs::RefBoxCommandConstPtr msg)
      */
     auto cmd = shared_ptr<msl_msgs::RefBoxCommand>(msg.get(), [msg](msl_msgs::RefBoxCommand *) mutable { msg.reset(); });
     auto refBoxCmd = make_shared<InformationElement<msl_msgs::RefBoxCommand>>(cmd, wm->getTime(), this->maxValidity, 1);
-    refBoxCommand.add(refBoxCmd);
+    refBoxCommandBuffer.add(refBoxCmd);
     // Set the current refbox situation
     lock_guard<mutex> lock(refereeMutex);
     switch (msg->cmd)
@@ -314,16 +314,11 @@ unsigned long Game::getTimeSinceStart()
     return timeSinceStart;
 }
 
-shared_ptr<msl_msgs::RefBoxCommand> Game::getRefBoxCommand(int index)
+const InfoBuffer<msl_msgs::RefBoxCommand> &Game::getRefBoxCommandBuffer() const
 {
-    lock_guard<mutex> lock(refereeMutex);
-    auto x = refBoxCommand.getLast(index);
-    if (x == nullptr)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+	return this->refBoxCommandBuffer;
 }
+
 
 bool Game::checkSituation(Situation situation)
 {
@@ -370,7 +365,7 @@ void Game::updateGameState()
     bool ballPossession = false;
     for (shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>> shwmData : *robots)
     {
-        double currDist = shwmData->second->distanceTo(*sharedBallPosition);
+        double currDist = shwmData->second->distanceTo(sharedBallPosition->get());
         if (closestRobot == nullptr || currDist < minDist)
         {
             closestRobot = shwmData;

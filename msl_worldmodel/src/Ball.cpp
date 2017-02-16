@@ -71,23 +71,6 @@ geometry::CNPointAllo Ball::getBallPickupPosition()
     return this->ballPickupPosition;
 }
 
-shared_ptr<pair<geometry::CNPointEgo, double>> Ball::getVisionBallPositionAndCertaincy(int index)
-{
-    pair<geometry::CNPointEgo, double> ret = pair<geometry::CNPointEgo, double>();
-    auto x = ballPosition.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    ret.first = x->getInformation();
-
-    if (ret.first == nullptr)
-        return nullptr;
-
-    ret.second = x->certainty;
-    return ret;
-}
-
 shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
 {
     auto ownPos = this->wm->rawSensorData->getOwnPositionVision().getLast();
@@ -97,12 +80,12 @@ shared_ptr<geometry::CNPointAllo> Ball::getAlloBallPosition()
     {
     	return nullptr;
     }
-    return egoBallPos->toAllo(*ownPos->getInformation());
+    return egoBallPos->toAllo(ownPos->getInformation()->get());
 }
 
 shared_ptr<geometry::CNPointEgo> Ball::getEgoBallPosition()
 {
-    auto rawBall = getVisionBallPositionAndCertaincy();
+    auto rawBall = getVisionBallPositionBuffer().getLast();
     auto lsb = getAlloSharedBallPosition();
     if (rawBall == nullptr)
     {
@@ -790,16 +773,6 @@ bool Ball::simpleHaveBallDribble(bool hadBefore)
         ret = false;
 
     return ret;
-}
-
-double Ball::getBallConfidenceVision(int index)
-{
-    auto x = ballPosition.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return 0;
-    }
-    return x->certainty;
 }
 
 Velocity Ball::allo2Ego(Velocity vel, Position pos)

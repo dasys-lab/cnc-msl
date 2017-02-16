@@ -107,7 +107,6 @@ class InfoBuffer
      */
     const std::shared_ptr<const InformationElement<T>> getLastValid() const
     {
-        // TODO: rename? getBest()?
         std::lock_guard<std::mutex> guard(mtx_);
 
         if (this->index < 0 || this->bufferSize <= 0 || this->infoElementCounter <= 0)
@@ -213,8 +212,8 @@ class InfoBuffer
     }
 
   private:
-    std::mutex mtx_;
-    std::shared_ptr<const InformationElement<T>> *ringBuffer;       /**< Ring buffer of elements */
+    mutable std::mutex mtx_;
+    std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
     int bufferSize;                                                 /**< number of stored elements */
     int index;                                                      /**< Current index of the last added element */
     unsigned long long infoElementCounter;                          /**< Counter of elements added to the buffer */

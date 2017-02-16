@@ -101,14 +101,9 @@ shared_ptr<vector<shared_ptr<pair<int, shared_ptr<geometry::CNPositionAllo>>>>> 
     return ret;
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPointAllo>>> Teammates::getTeammatesAlloClustered(int index)
+const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointAllo>>> &Teammates::getTeammatesAlloClusteredBuffer()
 {
-    auto x = teammatesAlloClustered.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->teammatesAlloClustered;
 }
 
 void msl::Teammates::integrateTeammatesAlloClustered(
@@ -120,23 +115,18 @@ void msl::Teammates::integrateTeammatesAlloClustered(
     this->teammatesAlloClustered.add(infoElement);
 }
 
-shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> Teammates::getTeammatesEgoClustered(int index)
+const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> &Teammates::getTeammatesEgoClusteredBuffer()
 {
-    auto x = teammatesEgoClustered.getLast(index);
-    if (x == nullptr || wm->getTime() - x->timeStamp > maxInformationAge)
-    {
-        return nullptr;
-    }
-    return x->getInformation();
+    return this->teammatesEgoClustered;
 }
 
-void Teammates::processTeammatesEgoClustered(shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered)
+void Teammates::integrateTeammatesEgoClustered(
+    shared_ptr<vector<shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered)
 {
-    shared_ptr<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>> o =
-        make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(teammatesEgoClustered, wm->getTime());
-    o->certainty = 1;
+    auto infoElement = make_shared<InformationElement<vector<shared_ptr<geometry::CNPointEgo>>>>(
+        teammatesEgoClustered, wm->getTime(), this->maxValidity, 1.0);
 
-    this->teammatesEgoClustered.add(o);
+    this->teammatesEgoClustered.add(infoElement);
 }
 
 void Teammates::integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime)

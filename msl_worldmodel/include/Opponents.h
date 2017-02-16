@@ -28,7 +28,7 @@ class Opponents
     shared_ptr<geometry::CNPointEgo> getInCorridor(double angle, double width);
 
     const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &getOpponentsAlloClusteredBuffer() const;
-    const InfoBuffer<vector<shared_ptr<geometry::CNPointAllo>>> &getOpponentsEgoClusteredBuffer() const;
+    const InfoBuffer<vector<shared_ptr<geometry::CNPointEgo>>> &getOpponentsEgoClusteredBuffer() const;
 
   private:
     MSLWorldModel *wm;

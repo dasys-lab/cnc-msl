@@ -38,9 +38,6 @@ class Ball
     bool haveBall();
     bool haveBallDribble(bool hadBefore);
 
-    shared_ptr<pair<geometry::CNPointAllo, double>> getVisionBallPositionAndCertaincy(int index = 0);
-    double getBallConfidenceVision(int index = 0);
-
     shared_ptr<geometry::CNPointAllo> getBallPoint3D(int index = 0);
     shared_ptr<geometry::CNVecAllo> getBallVel3D(int index = 0);
     shared_ptr<geometry::CNPointAllo> getAlloBallPosition();
