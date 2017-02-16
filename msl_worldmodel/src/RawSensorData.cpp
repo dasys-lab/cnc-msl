@@ -33,7 +33,7 @@ RawSensorData::RawSensorData(MSLWorldModel *wm, int ringbufferLength)
     , ownVelocityVision(ringbufferLength)
     , compass(ringbufferLength)
     , joystickCommands(ringbufferLength)
-    , ownOdometry(ringbufferLength)
+    , correctedOdometry(ringbufferLength)
     , lastMotionCommand(ringbufferLength)
     , ballHypothesis(ringbufferLength)
     , imuData(ringbufferLength)
@@ -46,7 +46,7 @@ RawSensorData::~RawSensorData()
 {
 }
 
-const InfoBuffer<shared_ptr<vector<double>>> &RawSensorData::getDistanceScanBuffer()
+const InfoBuffer<shared_ptr<const vector<double>>> &RawSensorData::getDistanceScanBuffer()
 {
     return this->distanceScan;
 }
@@ -56,57 +56,57 @@ const InfoBuffer<bool> &RawSensorData::getLightBarrierBuffer()
     return this->lightBarrier;
 }
 
-const InfoBuffer<geometry::CNVecEgo> &RawSensorData::getOpticalFlow()
+const InfoBuffer<geometry::CNVecEgo> &RawSensorData::getOpticalFlowBuffer()
 {
     return this->opticalFlow;
 }
 
-const InfoBuffer<geometry::CNPositionAllo> &RawSensorData::getOwnPositionMotion()
+const InfoBuffer<geometry::CNPositionAllo> &RawSensorData::getOwnPositionMotionBuffer()
 {
     return this->ownPositionMotion;
 }
 
-const InfoBuffer<geometry::CNPositionAllo> &RawSensorData::getOwnPositionVision()
+const InfoBuffer<geometry::CNPositionAllo> &RawSensorData::getOwnPositionVisionBuffer()
 {
     return this->ownPositionVision;
 }
 
-const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityMotion()
+const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityMotionBuffer()
 {
     return this->ownVelocityMotion;
 }
 
-const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityVision()
+const InfoBuffer<msl_msgs::MotionInfo> &RawSensorData::getOwnVelocityVisionBuffer()
 {
     return this->ownVelocityVision;
 }
 
-const InfoBuffer<msl_actuator_msgs::MotionControl> &RawSensorData::getLastMotionCommand()
+const InfoBuffer<msl_actuator_msgs::MotionControl> &RawSensorData::getLastMotionCommandBuffer()
 {
 	return this->lastMotionCommand;
 }
 
-const InfoBuffer<int> &RawSensorData::getCompass()
+const InfoBuffer<int> &RawSensorData::getCompassBuffer()
 {
 	return this->compass;
 }
 
-const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &RawSensorData::getOwnOdometry()
+const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &RawSensorData::getCorrectedOdometryBuffer()
 {
-	return this->ownOdometry;
+	return this->correctedOdometry;
 }
 
-const InfoBuffer<msl_actuator_msgs::IMUData> &RawSensorData::getImuData()
+const InfoBuffer<msl_actuator_msgs::IMUData> &RawSensorData::getImuDataBuffer()
 {
 	return this->imuData;
 }
 
-const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &RawSensorData::getBallHypothesis()
+const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &RawSensorData::getBallHypothesisBuffer()
 {
 	return this->ballHypothesis;
 }
 
-const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommands()
+const InfoBuffer<msl_msgs::JoystickCommand> &RawSensorData::getJoystickCommandsBuffer()
 {
     return this->joystickCommands;
 }
@@ -167,7 +167,7 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         // full odometry
         auto odo = make_shared<InformationElement<msl_sensor_msgs::CorrectedOdometryInfo>>(
             data->odometry, time, this->maxValidity, data->odometry.certainty);
-        ownOdometry.add(odo);
+        correctedOdometry.add(odo);
 
         // Vision
         auto posData = geometry::CNPositionAllo(data->odometry.position.x, data->odometry.position.y,
@@ -189,7 +189,7 @@ void RawSensorData::processWorldModelData(msl_sensor_msgs::WorldModelDataPtr dat
         this->wm->ball->updateBallPos(ballPos, ballVel, data->ball.confidence);
 
     auto distanceScanData = make_shared<vector<double>>(data->distanceScan.sectors);
-    auto distanceScanInfo = make_shared<InformationElement<shared_ptr<vector<double>>>>(
+    auto distanceScanInfo = make_shared<InformationElement<shared_ptr<const vector<double>>>>(
         distanceScanData, time, this->maxValidity, data->odometry.certainty);
     distanceScan.add(distanceScanInfo);
 

@@ -48,21 +48,21 @@ class RawSensorData
     // Data Access Methods
     const InfoBuffer<std::shared_ptr<std::vector<double>>> &getDistanceScanBuffer();
     const InfoBuffer<bool> &getLightBarrierBuffer();
-    const InfoBuffer<geometry::CNVecEgo> &getOpticalFlow();
-    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionMotion();
-    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionVision();
-    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityMotion();
-    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityVision();
-    const InfoBuffer<msl_actuator_msgs::MotionControl> &getLastMotionCommand();
-    const InfoBuffer<int> &getCompass();
-    const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &getOwnOdometry();
-    const InfoBuffer<msl_actuator_msgs::IMUData> &getImuData();
-    const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &getBallHypothesis();
-    const InfoBuffer<msl_msgs::JoystickCommand> &getJoystickCommands();
+    const InfoBuffer<geometry::CNVecEgo> &getOpticalFlowBuffer();
+    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionMotionBuffer();
+    const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionVisionBuffer();
+    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityMotionBuffer();
+    const InfoBuffer<msl_msgs::MotionInfo> &getOwnVelocityVisionBuffer();
+    const InfoBuffer<msl_actuator_msgs::MotionControl> &getLastMotionCommandBuffer();
+    const InfoBuffer<int> &getCompassBuffer();
+    const InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> &getCorrectedOdometryBuffer();
+    const InfoBuffer<msl_actuator_msgs::IMUData> &getImuDataBuffer();
+    const InfoBuffer<msl_sensor_msgs::BallHypothesisList> &getBallHypothesisBuffer();
+    const InfoBuffer<msl_msgs::JoystickCommand> &getJoystickCommandsBuffer();
 
   private:
     // buffers
-    InfoBuffer<std::shared_ptr<std::vector<double>>> distanceScan;
+    InfoBuffer<std::shared_ptr<const std::vector<double>>> distanceScan;
     InfoBuffer<bool> lightBarrier;
     InfoBuffer<geometry::CNVecEgo> opticalFlow;
     InfoBuffer<geometry::CNPositionAllo> ownPositionMotion;
@@ -72,7 +72,7 @@ class RawSensorData
     InfoBuffer<msl_actuator_msgs::MotionControl> lastMotionCommand;
     InfoBuffer<int> compass;
     InfoBuffer<msl_actuator_msgs::IMUData> imuData;
-    InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> ownOdometry;
+    InfoBuffer<msl_sensor_msgs::CorrectedOdometryInfo> correctedOdometry;
     InfoBuffer<msl_msgs::JoystickCommand> joystickCommands;
     InfoBuffer<msl_sensor_msgs::BallHypothesisList> ballHypothesis;
 

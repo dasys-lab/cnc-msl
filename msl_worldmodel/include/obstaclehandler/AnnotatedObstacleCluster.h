@@ -47,30 +47,30 @@ class AnnotatedObstacleCluster
     // Square Sum
     int squareSum;
     // All teammates which see one of these obstacles
-    shared_ptr<vector<int>> supporter;
+    std::shared_ptr<std::vector<int>> supporter;
     // All teammates which should see one of these obstacles, but does not
-    shared_ptr<vector<int>> opposer;
+    std::shared_ptr<std::vector<int>> opposer;
     void clear();
     void init(int x, int y, double radius, int ident, int supId);
     void init(int x, int y, double radius, int velX, int velY, int ident, int supId);
     void init(int x, int y, double angle, double radius, int velX, int velY, double rotation, double certainty, int ident, int supId);
     double getVariance();
-    void add(shared_ptr<AnnotatedObstacleCluster> obs);
+    void add(std::shared_ptr<AnnotatedObstacleCluster> obs);
     bool checkAndMerge(AnnotatedObstacleCluster *cluster, double varianceThreshold);
-    void remove(shared_ptr<AnnotatedObstacleCluster> obs);
+    void remove(std::shared_ptr<AnnotatedObstacleCluster> obs);
     double distanceTo(AnnotatedObstacleCluster *aoc);
-    double distanceTo(shared_ptr<geometry::CNPosition> pos);
-    double distanceTo(shared_ptr<geometry::CNPoint2D> p);
+    double distanceTo(std::shared_ptr<geometry::CNPositionAllo> pos);
+    double distanceTo(std::shared_ptr<geometry::CNPointAllo> p);
     static bool compareTo(AnnotatedObstacleCluster *first, AnnotatedObstacleCluster *second);
-    bool equals(shared_ptr<AnnotatedObstacleCluster> cl);
+    //bool equals(std::shared_ptr<AnnotatedObstacleCluster> cl);
     static AnnotatedObstacleCluster *getNew(AnnotatedObstacleClusterPool *aocp);
-    string toString();
+    std::string toString();
 
   protected:
-    void addToLinearSum(shared_ptr<AnnotatedObstacleCluster> aoc);
-    void addToSquareSum(shared_ptr<AnnotatedObstacleCluster> aoc);
-    void subFromLinearSum(shared_ptr<AnnotatedObstacleCluster> aoc);
-    void subFromSquareSum(shared_ptr<AnnotatedObstacleCluster> aoc);
+    void addToLinearSum(std::shared_ptr<AnnotatedObstacleCluster> aoc);
+    void addToSquareSum(std::shared_ptr<AnnotatedObstacleCluster> aoc);
+    void subFromLinearSum(std::shared_ptr<AnnotatedObstacleCluster> aoc);
+    void subFromSquareSum(std::shared_ptr<AnnotatedObstacleCluster> aoc);
 };
 
 } /* namespace msl */

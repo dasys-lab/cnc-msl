@@ -8,7 +8,6 @@
 #ifndef CNC_MSL_MSL_WORLDMODEL_INCLUDE_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTERPOOL_H_
 #define CNC_MSL_MSL_WORLDMODEL_INCLUDE_OBSTACLEHANDLER_ANNOTATEDOBSTACLECLUSTERPOOL_H_
 
-using namespace std;
 
 #include <vector>
 
@@ -23,7 +22,7 @@ class AnnotatedObstacleClusterPool
     void reset();
     int curIndex;
     const static int maxCount;
-    vector<AnnotatedObstacleCluster *> daAOCs;
+    std::vector<AnnotatedObstacleCluster *> daAOCs;
 };
 
 } /* namespace msl */

@@ -3,17 +3,17 @@
 #include "InformationElement.h"
 #include "MSLEnums.h"
 #include "MSLFootballField.h"
+#include <InfoBuffer.h>
 #include <SystemConfig.h>
 #include <cnc_geometry/CNRobot.h>
-#include <InfoBuffer.h>
 
+#include <memory>
 #include <msl_msgs/Point2dInfo.h>
 #include <msl_msgs/PositionInfo.h>
 #include <msl_sensor_msgs/CorrectedOdometryInfo.h>
 #include <msl_sensor_msgs/ObstacleInfo.h>
 #include <msl_sensor_msgs/WorldModelData.h>
 #include <obstaclehandler/AnnotatedObstacleCluster.h>
-#include <memory>
 #include <vector>
 
 namespace msl
@@ -29,29 +29,32 @@ class Obstacles
     /// <param name="myObstacles">
     /// A <see cref="List"/> of ego centric obstacles. (usual from the worldmodel).
     /// </param>
-    void handleObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> myObstacles);
+    void handleObstacles(std::shared_ptr<std::vector<geometry::CNPointEgo>> myObstacles);
     void processWorldModelData(msl_sensor_msgs::WorldModelDataPtr data);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> clusterPoint2D(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> obstacles, double varianceThreshold);
-    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstacles(int index = 0);
-    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getAlloObstaclesWithMe(int index = 0);
-    shared_ptr<vector<shared_ptr<geometry::CNRobot>>> getEgoObstacles(int index = 0);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getAlloObstaclePoints(int index = 0);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoObstaclePoints(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNPoint2D>>
+    clusterPoint2D(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPoint2D>>> obstacles,
+                   double varianceThreshold);
+    std::shared_ptr<std::vector<geometry::CNRobot>> getAlloObstacles(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNRobot>> getAlloObstaclesWithMe(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNRobot>> getEgoObstacles(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNPointAllo>> getAlloObstaclePoints(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNPointEgo>> getEgoObstaclePoints(int index = 0);
     // TODO change to raw
-    shared_ptr<vector<msl_sensor_msgs::ObstacleInfo>> getEgoVisionObstacles(int index = 0);
-    shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> getEgoVisionObstaclePoints(int index = 0);
+    std::shared_ptr<std::vector<msl_sensor_msgs::ObstacleInfo>> getEgoVisionObstacles(int index = 0);
+    std::shared_ptr<std::vector<geometry::CNPointEgo>> getEgoVisionObstaclePoints(int index = 0);
     double getObstacleRadius();
 
-    shared_ptr<geometry::CNPoint2D> getBiggestFreeGoalAreaMidPoint();
-    double getDistanceToObstacle(shared_ptr<geometry::CNPoint2D> target);
+    geometry::CNPoint2D getBiggestFreeGoalAreaMidPoint();
+    double getDistanceToObstacle(geometry::CNPoint2D target);
 
   private:
     void clusterAnnotatedObstacles();
-    void setupAnnotatedObstacles(shared_ptr<vector<shared_ptr<geometry::CNPoint2D>>> ownObs, shared_ptr<msl_sensor_msgs::CorrectedOdometryInfo> myOdo);
-    void processNegSupporter(shared_ptr<geometry::CNPosition> myPosition);
+    void setupAnnotatedObstacles(std::shared_ptr<std::vector<geometry::CNPoint2D>> ownObs,
+                                 msl_sensor_msgs::CorrectedOdometryInfo myOdo);
+    void processNegSupporter(geometry::CNPosition myPosition);
     bool leftOf(double angle1, double angle2);
 
-    InfoBuffer<InformationElement<vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
+    InfoBuffer<InformationElement<std::vector<msl_sensor_msgs::ObstacleInfo>>> obstacles;
 
     supplementary::SystemConfig *sc;
     double DENSITY;
@@ -67,11 +70,11 @@ class Obstacles
     double LOCALIZATION_SUCCESS_CONFIDENCE;
     MSLWorldModel *wm;
     AnnotatedObstacleClusterPool *pool;
-    shared_ptr<vector<AnnotatedObstacleCluster *>> clusterArray;
-    shared_ptr<vector<AnnotatedObstacleCluster *>> newClusterArray;
-    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesEgoClustered;
-    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClustered;
-    InfoBuffer<InformationElement<vector<shared_ptr<geometry::CNRobot>>>> obstaclesAlloClusteredWithMe;
+    std::shared_ptr<std::vector<AnnotatedObstacleCluster *>> clusterArray;
+    std::shared_ptr<std::vector<AnnotatedObstacleCluster *>> newClusterArray;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobot>>> obstaclesEgoClustered;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobot>>> obstaclesAlloClustered;
+    InfoBuffer<std::shared_ptr<const std::vector<geometry::CNRobot>>> obstaclesAlloClusteredWithMe;
     unsigned long maxInformationAge = 1000000000;
 };
 

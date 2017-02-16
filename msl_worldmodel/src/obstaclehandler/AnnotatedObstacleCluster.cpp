@@ -8,10 +8,14 @@
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
 #include "MSLEnums.h"
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
-#include <sstream>
 
 namespace msl
 {
+
+using std::shared_ptr;
+using std::make_shared;
+using std::vector;
+using std::string;
 
 AnnotatedObstacleCluster::AnnotatedObstacleCluster()
 {
@@ -113,9 +117,9 @@ void AnnotatedObstacleCluster::add(shared_ptr<AnnotatedObstacleCluster> obs)
     this->addToSquareSum(obs);
 
     // add the id of the new supporter
-    for (int i = 0; i < supporter->size(); i++)
+    for (unsigned long i = 0; i < supporter->size(); i++)
     {
-        this->supporter->push_back(obs->supporter->at(i));
+        this->supporter->push_back((*obs->supporter)[i]);
     }
 }
 
@@ -145,10 +149,10 @@ bool AnnotatedObstacleCluster::checkAndMerge(AnnotatedObstacleCluster *cluster, 
         this->squareSum = tmpSquareSum;
         this->x = (int)avgX;
         this->y = (int)avgY;
-        int range = cluster->supporter->size();
+        unsigned long range = cluster->supporter->size();
         for (int i = 0; i < range; i++)
         {
-            this->supporter->push_back(cluster->supporter->at(i));
+            this->supporter->push_back((*cluster->supporter)[i]);
         }
         if (cluster->ident != EntityType::Opponent)
         {
@@ -184,12 +188,12 @@ double AnnotatedObstacleCluster::distanceTo(AnnotatedObstacleCluster *aoc)
     return sqrt(pow(this->x - aoc->x, 2) + pow(this->y - aoc->y, 2));
 }
 
-double AnnotatedObstacleCluster::distanceTo(shared_ptr<geometry::CNPosition> pos)
+double AnnotatedObstacleCluster::distanceTo(shared_ptr<geometry::CNPositionAllo> pos)
 {
     return sqrt(pow(this->x - pos->x, 2) + pow(this->y - pos->y, 2));
 }
 
-double AnnotatedObstacleCluster::distanceTo(shared_ptr<geometry::CNPoint2D> p)
+double AnnotatedObstacleCluster::distanceTo(shared_ptr<geometry::CNPointAllo> p)
 {
     return sqrt(pow(this->x - p->x, 2) + pow(this->y - p->y, 2));
 }
@@ -219,7 +223,7 @@ bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster *first, Annota
         else
         {
             return false;
-            // TODO sort by hash code
+            // TODO compare by hash code
             //				if (other->GetHashCode() > this->GetHashCode())
             //				{
             //					return 1;
@@ -239,21 +243,22 @@ bool AnnotatedObstacleCluster::compareTo(AnnotatedObstacleCluster *first, Annota
     }
 }
 
-bool AnnotatedObstacleCluster::equals(shared_ptr<AnnotatedObstacleCluster> cl)
+/*bool AnnotatedObstacleCluster::equals(shared_ptr<AnnotatedObstacleCluster> cl)
 {
     if (cl->x == this->x && cl->y == this->y)
     {
-        this->radius = max(this->radius, cl->radius);
+        // TODO: why?
+        this->radius = std::max(this->radius, cl->radius);
         cl->radius = this->radius;
         //				cout << "AOC: found equal!" << endl;
         return true;
     }
     return false;
-}
+}*/
 
 string AnnotatedObstacleCluster::toString()
 {
-    stringstream ss;
+    std::stringstream ss;
     ss << "Ident: " << this->ident << "\nCentroid X: " << this->x << " Y: " << this->y << " Radius: " << this->radius << "\nPoints: " << this->numObs;
 
     ss << "\nSupporters: ";
@@ -295,7 +300,7 @@ AnnotatedObstacleCluster *AnnotatedObstacleCluster::getNew(AnnotatedObstacleClus
 {
     if (aocp->curIndex >= aocp->maxCount)
     {
-        cerr << "max AOC count reached!" << endl;
+        std::cerr << "max AOC count reached!" << std::endl;
     }
     AnnotatedObstacleCluster *ret = aocp->daAOCs[aocp->curIndex++];
     ret->clear();
