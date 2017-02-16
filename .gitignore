@@ -24,3 +24,6 @@ log/temp/
 # coala
 *.orig
 
+# CLion
+.idea/
+
