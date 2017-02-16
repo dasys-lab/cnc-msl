@@ -46,7 +46,7 @@ class RawSensorData
     void processIMUData(msl_actuator_msgs::IMUDataPtr msg);
 
     // Data Access Methods
-    const InfoBuffer<std::shared_ptr<std::vector<double>>> &getDistanceScanBuffer();
+    const InfoBuffer<std::shared_ptr<const std::vector<double>>> &getDistanceScanBuffer();
     const InfoBuffer<bool> &getLightBarrierBuffer();
     const InfoBuffer<geometry::CNVecEgo> &getOpticalFlowBuffer();
     const InfoBuffer<geometry::CNPositionAllo> &getOwnPositionMotionBuffer();
