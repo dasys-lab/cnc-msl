@@ -54,7 +54,7 @@ class InfoBuffer
     }
 
     /**
-     * Clears the buffer. If cleanBuffer is false only the index structure is reseted, but the
+     * Clears the buffer. If cleanBuffer is false only the index structure is reset, but the
      * buffer still exists (old elements are not accessible). If cleanBuffer is true the
      * pointers from the buffer are cleared as well.
      * @param cleanBuffer True to clear the buffer.
@@ -100,6 +100,11 @@ class InfoBuffer
         return this->ringBuffer[(this->index - n) % this->bufferSize];
     }
 
+    /**
+     * Gets the last valid element
+     * @see InformationElement::isValid()
+     * @return a shared_ptr to the element, nullptr if none found
+     */
     const std::shared_ptr<const InformationElement<T>> getLastValid() const
     {
         std::lock_guard<std::mutex> guard(mtx_);
@@ -108,6 +113,7 @@ class InfoBuffer
         {
             return nullptr;
         }
+
 
         int limit = std::min(this->bufferSize, this->infoElementCounter);
         for (int i = 0; i < limit; i++)
@@ -121,6 +127,11 @@ class InfoBuffer
         return nullptr;
     }
 
+    /**
+     * Gets the element closest to the specified time
+     * @param time to search for
+     * @return a shared_ptr to the element if found, else nullptr (empty buffer)
+     */
     const std::shared_ptr<const InformationElement<T>> getTemporalCloseTo(const InfoTime time) const
     {
         std::lock_guard<std::mutex> guard(mtx_);
@@ -156,6 +167,12 @@ class InfoBuffer
         return closest;
     }
 
+    /**
+     * Gets the element closest to the specified time within the given threshold
+     * @param time to search for
+     * @param maxTimeDiff maximum offset to given time
+     * @return a shared_ptr to the element if found, else nullptr
+     */
     const std::shared_ptr<const InformationElement<T>> getTemporalCloseTo(const InfoTime time,
                                                                           const InfoTime maxTimeDiff) const
     {
@@ -174,7 +191,7 @@ class InfoBuffer
     /**
      * Adds a new element to the information buffer, if it older than the last added element.
      * @param element The element to add.
-     * @return bool True if the element was added, False otherwise.
+     * @return True if the element was added, False otherwise.
      */
     bool add(const std::shared_ptr<const InformationElement<T>> element)
     {
@@ -197,10 +214,10 @@ class InfoBuffer
 
   private:
     std::mutex mtx_;
-    std::shared_ptr<const InformationElement<T>> *ringBuffer; /**< Ring buffer of elements */
-    int bufferSize;                                                       /**< number of stored elements */
-    int index;                             /**< Current index of the last added element */
-    unsigned long long infoElementCounter; /**< Counter of elements added to the buffer */
+    std::shared_ptr<const InformationElement<T>> *ringBuffer;     /**< Ring buffer of elements */
+    int bufferSize;                                               /**< number of stored elements */
+    int index;                                                    /**< Current index of the last added element */
+    unsigned long long infoElementCounter;                        /**< Counter of elements added to the buffer */
 };
 
 } /* namespace msl */
