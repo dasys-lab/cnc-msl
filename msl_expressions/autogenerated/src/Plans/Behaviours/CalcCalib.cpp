@@ -35,6 +35,7 @@ namespace alica
         calibPosMotionX = this->wm->rawSensorData->getOwnPositionMotion()->x;
         calibPosMotionY = this->wm->rawSensorData->getOwnPositionMotion()->y;
 
+        //Odometry corrections to compensate the difference between motion and vision angle
         correctedWayX = (calibPosMotionX - calibOldPosMotionX)
                 * cos(this->wm->rawSensorData->getOwnPositionVision()->theta
                         - this->wm->rawSensorData->getOwnPositionMotion()->theta)
@@ -94,7 +95,8 @@ namespace alica
 
         if (calibCounter >= 1)
         {
-            // mit Mittelwert
+        	// with average value
+        	//sequence of the calibCounter corresponds to the sequence of the PlanDesigner states (calibCounter must be adjusted to the changes in the PlanDesigner!)
             if (calibCounter == 1)
             {
                 if (oldCalibCoefficientX > 0)
@@ -164,9 +166,9 @@ namespace alica
 
             }
         }
-        // mit Mittelwert Ende
+        // end: with average value
 
-        // ohne Mittelwert
+        // without average value
         /*
          //if (abs(correctedPosX - oldCorrectedPosX) > 500){
          //if (correctedPosX > oldCorrectedPosX){
@@ -198,7 +200,9 @@ namespace alica
          }
          //}
          */
-        // Ohne Mittelwert Ende
+        // end: without average value
+
+        //limits of the calibCoefficients
         if (calibCoefficientX < 0.3)
         {
             calibCoefficientX = 0.3;
@@ -261,6 +265,8 @@ namespace alica
 
         lengthSegment = 0;
         calibCounter++;
+
+        // to calculate the calibCoefficient only in the current section, the correctedPos is set to the Vision position
         correctedPosX = this->wm->rawSensorData->getOwnPositionVision()->x;
         correctedPosY = this->wm->rawSensorData->getOwnPositionVision()->y;
 
