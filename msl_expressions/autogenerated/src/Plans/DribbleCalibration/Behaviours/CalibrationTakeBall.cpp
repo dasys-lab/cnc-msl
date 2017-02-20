@@ -218,7 +218,7 @@ namespace alica
     void CalibrationTakeBall::readConfigParameters()
     {
         supplementary::SystemConfig* sys = supplementary::SystemConfig::getInstance();
-        DribbleCalibrationContainer dcc;
+        msl::DribbleCalibrationContainer dcc;
         speedNoBall = (*sys)["Actuation"]->get<double>("Dribble.SpeedNoBall", NULL);
         slowTranslationWheelSpeed = (*sys)["Actuation"]->get<double>("Dribble.SlowTranslationWheelSpeed", NULL);
         minRotation = (*sys)["Actuation"]->get<double>("Dribble.MinRotation", NULL);

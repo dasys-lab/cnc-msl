@@ -25,56 +25,61 @@
 
 using namespace std;
 
-
-void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr& msg) {
-	if(msg->senderID != receiverID) return;
-	if(msg->locType.type==msl_sensor_msgs::LocalizationType::ParticleFilter) cout << "P";
-        else cout << "E";
-	linePoints = msg->list;
-	pos = msg->position;
-	distanceScan = msg->distanceScan.sectors;
-	obstacles = msg->obstacles;
-	bi = msg->ball;
-	lpdirty=true;
+void SpicaHelper::handleLinepointData(const msl_sensor_msgs::VisionDebug::ConstPtr &msg)
+{
+    if (msg->senderID != receiverID)
+        return;
+    if (msg->locType.type == msl_sensor_msgs::LocalizationType::ParticleFilter)
+        cout << "P";
+    else
+        cout << "E";
+    linePoints = msg->list;
+    pos = msg->position;
+    distanceScan = msg->distanceScan.sectors;
+    obstacles = msg->obstacles;
+    bi = msg->ball;
+    lpdirty = true;
 }
 
-
-void SpicaHelper::handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr& msg) {
-	if(vidirty) return;
-	if(msg->senderID != receiverID) return;
-	imageData = msg->imageData;
-	height = msg->height;
-	width = msg->width;
-	params = msg->params;
-	vidirty=true;
+void SpicaHelper::handleVisionImage(const msl_sensor_msgs::VisionImage::ConstPtr &msg)
+{
+    if (vidirty)
+        return;
+    if (msg->senderID != receiverID)
+        return;
+    imageData = msg->imageData;
+    height = msg->height;
+    width = msg->width;
+    params = msg->params;
+    vidirty = true;
 }
 
+void SpicaHelper::initialize(const char *nodename, bool imagedata)
+{
+    int argc = 0;
+    char **argv = NULL;
+    ros::init(argc, argv, nodename);
+    lpdirty = false;
+    wmdirty = false;
+    vidirty = false;
 
+    nh = new ros::NodeHandle();
+    sub = nh->subscribe<msl_sensor_msgs::VisionDebug, SpicaHelper>("CNVision/VisionDebug", 1, &SpicaHelper::handleLinepointData, (this),
+                                                                   ros::TransportHints().udp());
+    if (imagedata)
+        viSub = nh->subscribe<msl_sensor_msgs::VisionImage, SpicaHelper>("CNVision/VisionImage", 1, &SpicaHelper::handleVisionImage, (this),
+                                                                         ros::TransportHints().udp());
+    VCPub = nh->advertise<msl_sensor_msgs::VisionControl>("CNVision/VisionControl", 1);
 
-void SpicaHelper::initialize(const char* nodename, bool imagedata) {
-        int argc = 0;
-        char **argv = NULL;
-        ros::init(argc, argv, nodename);
-	lpdirty=false;
-	wmdirty=false;
-	vidirty=false;
-
-        nh = new ros::NodeHandle();
-        sub = nh->subscribe<msl_sensor_msgs::VisionDebug, SpicaHelper>("CNVision/VisionDebug", 1, &SpicaHelper::handleLinepointData, (this), ros::TransportHints().udp());
-	if(imagedata) viSub = nh->subscribe<msl_sensor_msgs::VisionImage, SpicaHelper>("CNVision/VisionImage", 1, &SpicaHelper::handleVisionImage, (this), ros::TransportHints().udp());
-	VCPub = nh->advertise<msl_sensor_msgs::VisionControl>("CNVision/VisionControl", 1);
-
-	spinner = new ros::AsyncSpinner(1);
-        spinner->start();
+    spinner = new ros::AsyncSpinner(1);
+    spinner->start();
 }
 
-void SpicaHelper::sendVisionControl(char key, char debugMode) {
-	msl_sensor_msgs::VisionControl vc;
-	vc.key = key;
-	vc.debugMode = debugMode;
-	vc.receiverID = receiverID;
-	VCPub.publish(vc);
+void SpicaHelper::sendVisionControl(char key, char debugMode)
+{
+    msl_sensor_msgs::VisionControl vc;
+    vc.key = key;
+    vc.debugMode = debugMode;
+    vc.receiverID = receiverID;
+    VCPub.publish(vc);
 }
-
-
-

@@ -12,16 +12,15 @@
 
 namespace msl
 {
-	typedef signed long long InfoTime;
+typedef signed long long InfoTime;
 
 /**
  * Information element stores one information and provides required meta
  * data. The information can not be changed.
  *
  */
-template<typename T>
-  class InformationElement
-  {
+template <typename T> class InformationElement
+{
   public:
     /*!
      * \brief Default constructor
@@ -31,7 +30,9 @@ template<typename T>
      * \param information The information to store.
      * \param timeStamp time when information is received.
      */
-    InformationElement(std::shared_ptr<T> information, InfoTime timeStamp) : information(information), timeStamp(timeStamp)
+    InformationElement(std::shared_ptr<T> information, InfoTime timeStamp)
+        : information(information)
+        , timeStamp(timeStamp)
     {
     }
 
@@ -42,7 +43,7 @@ template<typename T>
      */
     virtual ~InformationElement()
     {
-//
+        //
     }
 
     /*!
@@ -52,14 +53,14 @@ template<typename T>
      */
     std::shared_ptr<T> getInformation() const
     {
-      return this->information;
+        return this->information;
     }
     unsigned long timeStamp; /**< reception time of the information */
     double certainty;
 
   private:
     std::shared_ptr<T> information; /**< the stored information */
-  };
+};
 
 } /* namespace ice */
 

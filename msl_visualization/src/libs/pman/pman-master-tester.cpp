@@ -25,12 +25,12 @@
 
 #include "SharedTimer.h"
 
+#include <assert.h>
+#include <iostream>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
-#include <signal.h>
-#include <assert.h>
 
 using namespace std;
 using namespace cambada::util;
@@ -45,11 +45,11 @@ SharedTimer timer;
 
 void Shutdown()
 {
-	if( fPman ) 
+    if (fPman)
     {
-		cout << "Cleaning PMAN" << endl;
-		PMAN_close(PMAN_CLFREE);
-	}
+        cout << "Cleaning PMAN" << endl;
+        PMAN_close(PMAN_CLFREE);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -61,50 +61,47 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-	/* PMAN master initialization */
-	int pmanstat;
-	if((pmanstat = PMAN_init(SHMEM_OCAM_PMAN_KEY, SEM_OCAM_PMAN_KEY,
-	        (void *)linux_sched_fifo, sizeof(int), PMAN_NEW)))
+    /* PMAN master initialization */
+    int pmanstat;
+    if ((pmanstat = PMAN_init(SHMEM_OCAM_PMAN_KEY, SEM_OCAM_PMAN_KEY, (void *)linux_sched_fifo, sizeof(int), PMAN_NEW)))
     {
-		fprintf( stderr, "ERROR: PMAN_init failed (return code %d)\n", 
-                pmanstat );
-		Shutdown();
-	}
+        fprintf(stderr, "ERROR: PMAN_init failed (return code %d)\n", pmanstat);
+        Shutdown();
+    }
 
     PMAN_print();
 
     /* ???? */
-	fPman = true; // set PMAN cleaning flag
+    fPman = true; // set PMAN cleaning flag
 
     /* open PMAN configuration file */
     FILE *fpPman = NULL;
     char *pmanFileName = argv[1];
-	if(!(fpPman = fopen(pmanFileName, "r"))) 
+    if (!(fpPman = fopen(pmanFileName, "r")))
     {
-		fprintf( stderr, "ERROR: couldn't open configuration file \"%s\" from PMAN\n",
-                pmanFileName );
-		Shutdown();
-	}
+        fprintf(stderr, "ERROR: couldn't open configuration file \"%s\" from PMAN\n", pmanFileName);
+        Shutdown();
+    }
 
     /* load process table */
     char pname[32];
     int pper, ppha, pddln, pprio;
     int nv;
-    while ((nv = fscanf(fpPman,"%s %d %d %d %d", pname, &pper, &ppha, &pddln, &pprio)) == 5)
+    while ((nv = fscanf(fpPman, "%s %d %d %d %d", pname, &pper, &ppha, &pddln, &pprio)) == 5)
     {
         PMAN_procadd(pname, PMAN_NOPID, pper, ppha, pddln, &pprio, sizeof(pprio));
-        #ifdef DEBUG
+#ifdef DEBUG
         fprintf(stderr, "\n[PMAN master]: process %s (Period = %d, Phase = %d"
-                "Deadline = %d, Priority = %d) added\n", 
+                        "Deadline = %d, Priority = %d) added\n",
                 pname, pper, ppha, pddln, pprio);
-        #endif
+#endif
     }
     fclose(fpPman);
 
     PMAN_print();
 
     /* define precedences */
-    PMAN_prec_add((char*)"slave1", (char*)"slave2");
+    PMAN_prec_add((char *)"slave1", (char *)"slave2");
 
     /* install SIGINT Handler */
     void sigHandler(int sigId);
@@ -119,7 +116,7 @@ int main(int argc, char *argv[])
     sleep(2);
 
     /* main cycle */
-    while(running)
+    while (running)
     {
         /* do some work */
         fprintf(stdout, "Master: start of cycle: %d\n", timer.elapsed());
@@ -130,7 +127,10 @@ int main(int argc, char *argv[])
         PMAN_tick();
 
         /* do some more work */
-        for (int i = 0; i < 1000000; i++) { running = running+1-1; }
+        for (int i = 0; i < 1000000; i++)
+        {
+            running = running + 1 - 1;
+        }
         fprintf(stdout, "Master: after busy waiting: %d\n", timer.elapsed());
         usleep(1000 * 1000);
         fprintf(stdout, "Master: end of cycle: %d\n", timer.elapsed());

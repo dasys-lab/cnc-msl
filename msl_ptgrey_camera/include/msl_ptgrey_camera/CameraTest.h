@@ -11,12 +11,12 @@
 namespace msl_ptgrey_camera
 {
 
-	class CameraTest
-	{
-	public:
-		CameraTest();
-		virtual ~CameraTest();
-	};
+class CameraTest
+{
+  public:
+    CameraTest();
+    virtual ~CameraTest();
+};
 
 } /* namespace msl_ptgrey_camera */
 

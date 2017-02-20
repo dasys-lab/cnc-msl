@@ -26,27 +26,25 @@
 #include "ui_FullWindow.h"
 #include <QtGui>
 
-class FWind : public QMainWindow , public Ui::FullWindow
+class FWind : public QMainWindow, public Ui::FullWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
-public:
-	FWind(QMainWindow *parent =0);
-	~FWind();
+  public:
+    FWind(QMainWindow *parent = 0);
+    ~FWind();
 
-private:
-	bool fullscreenflag;
-	QMainWindow *fullwindow;
+  private:
+    bool fullscreenflag;
+    QMainWindow *fullwindow;
 
-	//FieldWidget *Fieldwdg;
+    // FieldWidget *Fieldwdg;
 
-	QTimer *UpdateTimer;
+    QTimer *UpdateTimer;
 
-public slots:
-	void WindowFullScreenMode (void);
-	void UpdateGameInfo(void);
-
+  public slots:
+    void WindowFullScreenMode(void);
+    void UpdateGameInfo(void);
 };
-
 
 #endif

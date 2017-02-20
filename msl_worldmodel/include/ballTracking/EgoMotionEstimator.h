@@ -23,24 +23,21 @@
 #ifndef EgoMotionEstimator_H
 #define EgoMotionEstimator_H
 
-#include <stdlib.h>
 #include "ballTracking/TrackingTypes.h"
+#include <stdlib.h>
 
+class EgoMotionEstimator
+{
+  public:
+    EgoMotionEstimator();
+    ~EgoMotionEstimator();
+    static EgoMotionEstimator *getInstance();
+    MovingRobot trackObject(Position *posBuffer, unsigned long long *timestampBuf, int length, int lastIndex, double timeBack);
 
-class EgoMotionEstimator {
-	public:
-		EgoMotionEstimator();
-		~EgoMotionEstimator();
-		static EgoMotionEstimator * getInstance();
-		MovingRobot trackObject(Position * posBuffer, unsigned long long * timestampBuf, int length, int lastIndex, double timeBack);
-
-	private:
-		static EgoMotionEstimator * instance_;
-		void init();
-		void cleanup();
+  private:
+    static EgoMotionEstimator *instance_;
+    void init();
+    void cleanup();
 };
 
 #endif
-
-
-

@@ -10,38 +10,37 @@
 
 using namespace std;
 
-#include <memory>
 #include <GeometryCalculator.h>
 #include <MSLFootballField.h>
+#include <memory>
 
 namespace msl
 {
 
-	class SearchArea
-	{
-	public:
+class SearchArea
+{
+  public:
+    virtual ~SearchArea();
 
-		virtual ~SearchArea();
+    shared_ptr<geometry::CNPoint2D> midP;
+    double langle;
+    double hangle;
+    double minDist;
+    double maxDist;
+    double val;
+    shared_ptr<geometry::CNPoint2D> center;
+    shared_ptr<geometry::CNPosition> ownPos;
+    // static int compareTo(shared_ptr<SearchArea> a);
+    static bool compareTo(shared_ptr<SearchArea> a, shared_ptr<SearchArea> b);
+    virtual shared_ptr<vector<shared_ptr<SearchArea>>> expand() = 0;
+    virtual bool isValid() = 0;
 
-		shared_ptr<geometry::CNPoint2D> midP;
-		double langle;
-		double hangle;
-		double minDist;
-		double maxDist;
-		double val;
-		shared_ptr<geometry::CNPoint2D> center;
-		shared_ptr<geometry::CNPosition> ownPos;
-		//static int compareTo(shared_ptr<SearchArea> a);
-		static bool compareTo(shared_ptr<SearchArea> a, shared_ptr<SearchArea> b);
-		virtual shared_ptr<vector<shared_ptr<SearchArea>>> expand() = 0;
-		virtual bool isValid() = 0;
-
-	protected:
-		SearchArea();
-		SearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center, shared_ptr<geometry::CNPosition> ownPos);
-		static int counter;
-		static int maxNum;
-	};
+  protected:
+    SearchArea();
+    SearchArea(double langle, double hangle, double minDist, double maxDist, shared_ptr<geometry::CNPoint2D> center, shared_ptr<geometry::CNPosition> ownPos);
+    static int counter;
+    static int maxNum;
+};
 
 } /* namespace msl */
 

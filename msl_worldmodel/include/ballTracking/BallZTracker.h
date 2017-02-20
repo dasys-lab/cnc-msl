@@ -23,25 +23,22 @@
 #ifndef BallZTracker_H
 #define BallZTracker_H
 
-#include <stdlib.h>
 #include "ballTracking/TrackingTypes.h"
+#include <stdlib.h>
 
+class BallZTracker
+{
+  public:
+    BallZTracker();
+    ~BallZTracker();
+    static BallZTracker *getInstance();
+    ZEstimate trackObject(ObservedPoint *points, int length, int startIndex, int lastIndex);
 
-class BallZTracker {
-	public:
-		BallZTracker();
-		~BallZTracker();
-		static BallZTracker * getInstance();
-		ZEstimate trackObject(ObservedPoint * points, int length, int startIndex, int lastIndex);
+  private:
+    static BallZTracker *instance_;
 
-	private:
-		static BallZTracker * instance_;
-
-		void init();
-		void cleanup();
+    void init();
+    void cleanup();
 };
 
 #endif
-
-
-

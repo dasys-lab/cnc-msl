@@ -23,56 +23,49 @@
 #ifndef Packets_H
 #define Packets_H
 
-#define EPOCH_ADJUST    ((unsigned long long)62135596800LL)
+#define EPOCH_ADJUST ((unsigned long long)62135596800LL)
 
-#define MAX_SCANLENGTH 180 
+#define MAX_SCANLENGTH 180
 
 #define BALLPACKET_TYPE 1
 #define DISTANCESCAN_TYPE 6
 
+struct PacketHeader
+{
 
-struct PacketHeader{
-
-	char endian;
-	char version;
-	char origin;
-	char type;
-	unsigned long long timestamp;
-
-
+    char endian;
+    char version;
+    char origin;
+    char type;
+    unsigned long long timestamp;
 };
 
+struct BallPacket
+{
 
-struct BallPacket {
-
-	PacketHeader header;
-	double x;
-	double y;
-
+    PacketHeader header;
+    double x;
+    double y;
 };
 
+struct DistanceScanPacket
+{
 
-struct DistanceScanPacket {
-
-	PacketHeader header;
-	unsigned int length;
-	double values[MAX_SCANLENGTH];
-
+    PacketHeader header;
+    unsigned int length;
+    double values[MAX_SCANLENGTH];
 };
 
-struct OdometryPacket {
+struct OdometryPacket
+{
 
-	PacketHeader header;
-	double x;
-	double y;
-	double heading;
-	double angle;
-	double translation;
-	double rotation;
-
+    PacketHeader header;
+    double x;
+    double y;
+    double heading;
+    double angle;
+    double translation;
+    double rotation;
 };
 
 #endif
-
-
-
