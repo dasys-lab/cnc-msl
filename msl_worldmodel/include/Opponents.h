@@ -22,14 +22,14 @@ class Opponents
     double getOpponentProtectDistance();
     double getOpponentProtectAngle();
 
-    void processOpponentsAlloClustered(shared_ptr<vector<geometry::CNPointAllo>> opponentsAlloClustered);
-    shared_ptr<vector<geometry::CNPointEgo>> getOpponentsEgoClustered(int index = 0);
-    void processOpponentsEgoClustered(shared_ptr<vector<geometry::CNPointEgo>> opponentsEgoClustered);
+    void integrateOpponentsAlloClustered(std::shared_ptr<const std::vector<geometry::CNPointAllo>> opponentsAlloClustered);
+    void integrateOpponentsEgoClustered(std::shared_ptr<const std::vector<geometry::CNPointEgo>> opponentsEgoClustered);
+
     nonstd::optional<geometry::CNPointEgo> getClosestToBall(double &distToOpp);
     nonstd::optional<geometry::CNPointEgo> getInCorridor(double angle, double width);
 
-    const InfoBuffer<vector<geometry::CNPointAllo>> &getOpponentsAlloClusteredBuffer() const;
-    const InfoBuffer<vector<geometry::CNPointEgo>> &getOpponentsEgoClusteredBuffer() const;
+    const InfoBuffer<std::vector<geometry::CNPointAllo>> &getOpponentsAlloClusteredBuffer() const;
+    const InfoBuffer<std::vector<geometry::CNPointEgo>> &getOpponentsEgoClusteredBuffer() const;
 
   private:
     MSLWorldModel *wm;
@@ -38,8 +38,9 @@ class Opponents
     double opponentProtectAngle;
 
     const InfoTime maxValidity = 1000000000;
-    InfoBuffer<vector<geometry::CNPointEgo>> opponentsEgoClustered;
-    InfoBuffer<vector<geometry::CNPointAllo>> opponentsAlloClustered;
+    
+    InfoBuffer<std::vector<geometry::CNPointEgo>> opponentsEgoClustered;
+    InfoBuffer<std::vector<geometry::CNPointAllo>> opponentsAlloClustered;
 };
 
 } /* namespace msl */

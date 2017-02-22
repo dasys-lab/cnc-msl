@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GeometryCalculator.h"
 #include <memory>
+#include <cnc_geometry/CNPointAllo.h>
 
 namespace msl
 {
@@ -9,7 +9,7 @@ namespace msl
 class SimpleCluster
 {
   public:
-    SimpleCluster(shared_ptr<geometry::CNPoint2D> p);
+    SimpleCluster(std::shared_ptr<geometry::CNPointAllo> p); // TODO: allo or ego?
     virtual ~SimpleCluster();
     // FOR CLUSTERING
     int numObs;
@@ -21,8 +21,8 @@ class SimpleCluster
     int x;
     int y;
     double getVariance();
-    bool checkAndMerge(shared_ptr<SimpleCluster> cluster, double varianceThreshold);
-    double distanceTo(shared_ptr<SimpleCluster> cluster);
+    bool checkAndMerge(std::shared_ptr<SimpleCluster> cluster, double varianceThreshold);
+    double distanceTo(std::shared_ptr<SimpleCluster> cluster);
 };
 
 } /* namespace msl */

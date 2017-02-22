@@ -6,8 +6,8 @@
  */
 
 #include "obstaclehandler/AnnotatedObstacleCluster.h"
-#include "MSLEnums.h"
 #include "obstaclehandler/AnnotatedObstacleClusterPool.h"
+#include "MSLEnums.h"
 
 namespace msl
 {

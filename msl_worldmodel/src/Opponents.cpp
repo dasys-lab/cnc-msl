@@ -34,26 +34,29 @@ Opponents::~Opponents()
 
 optional<geometry::CNPointEgo> Opponents::getInCorridor(double angle, double width)
 {
-    auto opps = wm->robots->opponents.getOpponentsEgoClustered();
-    if (opps == nullptr)
-        return nullptr;
+    auto oppsInfo = this->getOpponentsEgoClusteredBuffer().getLastValid();
+    if (oppsInfo == nullptr)
+        return nullopt;
+
+    auto opps = oppsInfo->getInformation();
 
     bool found = false;
     geometry::CNPointEgo closest;
     double bestDist = std::numeric_limits<double>::max();
     double temp;
-    for (unsigned long i = 0; i < opps->size(); i++)
+
+    for (unsigned long i = 0; i < opps.size(); i++)
     {
-        temp = opps->at(i).length();
+        temp = opps.at(i).length();
         if (temp < bestDist)
         {
-            double dang = geometry::deltaAngle(angle, opps->at(i).angleZ());
+            double dang = geometry::deltaAngle(angle, opps.at(i).angleZ());
             if (abs(dang) < M_PI / 2.0)
             {
                 if (sin(dang) * temp < width + 300)
                 { // 300 = robotradius
                     bestDist = temp;
-                    closest = opps->at(i);
+                    closest = opps.at(i);
                     found = true;
                 }
             }
@@ -69,23 +72,27 @@ optional<geometry::CNPointEgo> Opponents::getInCorridor(double angle, double wid
 
 optional<geometry::CNPointEgo> Opponents::getClosestToBall(double &distance)
 {
-    distance = std::numeric_limits<double>::max();
-    auto obs = getOpponentsEgoClustered();
-    if (obs == nullptr)
+    auto oppsInfo = this->getOpponentsEgoClusteredBuffer().getLastValid();
+    if (oppsInfo == nullptr)
         return nullopt;
+
+    auto opps = oppsInfo->getInformation();
+
     auto ball = wm->ball->getEgoBallPosition();
     if (ball == nullptr)
         return nullopt;
 
     bool found = false;
+    distance = std::numeric_limits<double>::max();
     geometry::CNPointEgo closest;
-    for (int i = 0; i < obs->size(); i++)
+
+    for (unsigned long i = 0; i < opps.size(); i++)
     {
-        double curDist = obs->at(i).distanceTo(*ball);
+        double curDist = opps.at(i).distanceTo(*ball);
         if (curDist < distance)
         {
             distance = curDist;
-            closest = obs->at(i);
+            closest = opps.at(i);
             found = true;
         }
     }
@@ -112,7 +119,7 @@ const InfoBuffer<vector<geometry::CNPointAllo>> &Opponents::getOpponentsAlloClus
     return this->opponentsAlloClustered;
 }
 
-void Opponents::processOpponentsAlloClustered(shared_ptr<vector<geometry::CNPointAllo>> opponentsAlloClustered)
+void Opponents::integrateOpponentsAlloClustered(shared_ptr<vector<geometry::CNPointAllo>> opponentsAlloClustered)
 {
     auto o = make_shared<InformationElement<vector<geometry::CNPointAllo>>>(opponentsAlloClustered, wm->getTime(),
                                                                             this->maxValidity, 1);
@@ -125,7 +132,7 @@ const InfoBuffer<vector<geometry::CNPointEgo>> &Opponents::getOpponentsEgoCluste
     return this->opponentsEgoClustered;
 }
 
-void Opponents::processOpponentsEgoClustered(shared_ptr<vector<geometry::CNPointEgo>> opponentsEgoClustered)
+void Opponents::integrateOpponentsEgoClustered(shared_ptr<vector<geometry::CNPointEgo>> opponentsEgoClustered)
 {
     auto o = make_shared<InformationElement<vector<geometry::CNPointEgo>>>(opponentsEgoClustered, wm->getTime(),
                                                                            this->maxValidity, 1);

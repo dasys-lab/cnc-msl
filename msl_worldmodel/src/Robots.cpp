@@ -23,11 +23,11 @@ Robots::~Robots()
 void Robots::processSharedWorldModelData(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime)
 {
     // prepare info element
-    auto shwmMsgPtr = shared_ptr<msl_sensor_msgs::SharedWorldInfo>(
-        msg.get(), [msg](msl_sensor_msgs::SharedWorldInfo *) mutable { msg.reset(); });
+    auto sharedWmMessage = *msg;
     auto infoElement = make_shared<InformationElement<msl_sensor_msgs::SharedWorldInfo>>(
-        shwmMsgPtr, creationTime, this->maxValidity, msg->odom.certainty);
+            sharedWmMessage, creationTime, this->maxValidity, msg->odom.certainty);
 
+    // TODO: check
     // find buffer to put element into
     auto shwmDataBufferIter = this->shwmDataBuffers.find(msg->senderID);
     if (shwmDataBufferIter == this->shwmDataBuffers.end())

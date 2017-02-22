@@ -7,10 +7,13 @@
 
 #include "obstaclehandler/SimpleCluster.h"
 
+
+using std::shared_ptr;
+
 namespace msl
 {
 
-SimpleCluster::SimpleCluster(shared_ptr<geometry::CNPoint2D> p)
+SimpleCluster::SimpleCluster(shared_ptr<geometry::CNPointAllo> p)
 {
     this->x = (int)(p->x + 0.5);
     this->y = (int)(p->y + 0.5);

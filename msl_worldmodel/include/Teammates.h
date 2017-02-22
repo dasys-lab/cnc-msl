@@ -25,23 +25,25 @@ class Teammates
     int teammatesInOwnPenalty();
     int teammatesInOppPenalty();
 
-    const InfoBuffer<geometry::CNPositionAllo> &getTeammatePositionBuffer(int teammateId);
-    std::shared_ptr<std::vector<std::shared_ptr<std::pair<int, std::shared_ptr<geometry::CNPositionAllo>>>>> getPositionsOfTeamMates();
-
-    const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointAllo>>> &getTeammatesAlloClusteredBuffer();
-    void integrateTeammatesAlloClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered);
-
-    const InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> &getTeammatesEgoClusteredBuffer();
-    void integrateTeammatesEgoClustered(std::shared_ptr<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered);
-
+    void integrateTeammatesAlloClustered(std::shared_ptr<std::vector<geometry::CNPointAllo>> teammatesAlloClustered);
+    void integrateTeammatesEgoClustered(std::shared_ptr<std::vector<geometry::CNPointEgo>> teammatesEgoClustered);
     void integrateTeammatesPosition(msl_sensor_msgs::SharedWorldInfoPtr msg, InfoTime creationTime);
+
+    const InfoBuffer<std::vector<geometry::CNPointAllo>> &getTeammatesAlloClusteredBuffer();
+    const InfoBuffer<std::vector<geometry::CNPointEgo>> &getTeammatesEgoClusteredBuffer();
+
+    const InfoBuffer<geometry::CNPositionAllo> &getTeammatePositionBuffer(int teammateId);
+
+    std::shared_ptr<std::vector<std::pair<int, geometry::CNPositionAllo>>> getPositionsOfTeamMates();
 
   private:
     MSLWorldModel *wm;
     // TODO: replace with ?DEFINES? or whatever for each info type
     const InfoTime maxValidity = 1000000000;
-    InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointEgo>>> teammatesEgoClustered;
-    InfoBuffer<std::vector<std::shared_ptr<geometry::CNPointAllo>>> teammatesAlloClustered;
+
+    InfoBuffer<std::vector<geometry::CNPointEgo>> teammatesEgoClustered;
+    InfoBuffer<std::vector<geometry::CNPointAllo>> teammatesAlloClustered;
+
     std::map<int, std::shared_ptr<InfoBuffer<geometry::CNPositionAllo>>> robotPositions;
 };
 
