@@ -7,6 +7,6 @@
     <plan>ThrowInOwnHalf.pml#1462360503828</plan>
   </plans>
   <plans id="1464770651988" name="MISSING_NAME" comment="" activated="true">
-    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
+    <plan>GenericStandards/GenericExecute.pml#1431522123418</plan>
   </plans>
 </alica:PlanType>

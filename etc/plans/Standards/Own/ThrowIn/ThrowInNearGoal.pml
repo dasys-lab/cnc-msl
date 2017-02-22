@@ -11,26 +11,26 @@
     </quantifiers>
   </conditions>
   <states id="1461237603690" name="Align" comment="" entryPoint="1461237603691">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardAlignToPoint.beh#1435155363994</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1461237656318</outTransitions>
   </states>
   <states xsi:type="alica:SuccessState" id="1461237614163" name="Success" comment="">
     <inTransitions>#1461237853423</inTransitions>
   </states>
   <states id="1461237638988" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardAlignAndGrab.beh#1461583806472</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardAlignAndGrab.beh#1461583806472</plans>
     <inTransitions>#1461237656318</inTransitions>
     <inTransitions>#1461584284347</inTransitions>
     <outTransitions>#1461237676305</outTransitions>
   </states>
   <states id="1461237666032" name="Pass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardPass.beh#1435760175843</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardPass.beh#1435760175843</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1461237676305</inTransitions>
     <outTransitions>#1461584284347</outTransitions>
     <outTransitions>#1461584440317</outTransitions>
@@ -40,19 +40,19 @@
     <outTransitions>#1461572769511</outTransitions>
   </states>
   <states id="1461237704581" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
     <inTransitions>#1461572769511</inTransitions>
     <outTransitions>#1461237853423</outTransitions>
   </states>
   <states id="1461237711590" name="Block" comment="" entryPoint="1461237746825">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1461237728343" name="PosAlternativePassReceiver" comment="" entryPoint="1461237748826">
     <plans xsi:type="alica:BehaviourConfiguration">PosAlternativePassReceiver.beh#1461674968023</plans>
   </states>
   <states id="1461584409837" name="Wait" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1461584440317</inTransitions>
   </states>
   <transitions id="1461237656318" name="MISSING_NAME" comment="Aligned" msg="">
@@ -86,19 +86,19 @@
     <outState>#1461584409837</outState>
   </transitions>
   <entryPoints id="1461237603691" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
+    <task>taskrepository.tsk#1439997010902</task>
     <state>#1461237603690</state>
   </entryPoints>
   <entryPoints id="1461237744256" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
+    <task>taskrepository.tsk#1439997023446</task>
     <state>#1461237695900</state>
   </entryPoints>
   <entryPoints id="1461237746825" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1461237765109</task>
+    <task>taskrepository.tsk#1461237765109</task>
     <state>#1461237711590</state>
   </entryPoints>
   <entryPoints id="1461237748826" name="ReceivePassInGame" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1307185798142</task>
+    <task>taskrepository.tsk#1307185798142</task>
     <state>#1461237728343</state>
   </entryPoints>
 </alica:Plan>

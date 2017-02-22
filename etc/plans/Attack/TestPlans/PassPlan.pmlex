@@ -29,7 +29,7 @@
     <value xPos="113" yPos="249" width="142" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
@@ -49,11 +49,11 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../SearchForPassPoint.beh#1441107270872"/>
+    <key href="Attack/SearchForPassPoint.beh#1441107270872"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../AlignAndPassRapid.beh#1441108023281"/>
+    <key href="Attack/AlignAndPassRapid.beh#1441108023281"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

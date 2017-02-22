@@ -16,7 +16,7 @@
     <inTransitions>#1426696641744</inTransitions>
   </states>
   <states id="1455538265766" name="DefendGoal" comment="" entryPoint="1455538209889">
-    <plans xsi:type="alica:Plan">../../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+    <plans xsi:type="alica:Plan">Goalie/Test/GoalieDefault.pml#1447254438614</plans>
   </states>
   <states id="1458562124636" name="Wander" comment="">
     <plans xsi:type="alica:Plan">WanderPlan.pml#1458553921358</plans>
@@ -50,11 +50,11 @@
     <outState>#1426696586623</outState>
   </transitions>
   <entryPoints id="1426696586624" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1426696586623</state>
   </entryPoints>
   <entryPoints id="1455538209889" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1221754402444</task>
+    <task>taskrepository.tsk#1221754402444</task>
     <state>#1455538265766</state>
   </entryPoints>
 </alica:Plan>

@@ -29,7 +29,7 @@
     <value xPos="102" yPos="491" width="167" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <key href="Behaviours/Pos4Def.beh#1445438204426"/>
     <value/>
   </extensions>
   <extensions>
@@ -107,35 +107,35 @@
     <value xPos="543" yPos="417"/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899"/>
+    <key href="GenericStandards/StandardAlignAndGrab2Receivers.beh#1462368748899"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../ThrowIn/PositionAlternativeReceiver.beh#1462978671719"/>
+    <key href="Standards/Own/ThrowIn/PositionAlternativeReceiver.beh#1462978671719"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
+    <key href="Standards/Own/ThrowIn/ReceiveInOppHalf.beh#1462370388995"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

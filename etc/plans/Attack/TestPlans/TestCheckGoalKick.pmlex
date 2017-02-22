@@ -13,7 +13,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
@@ -21,7 +21,7 @@
     <value xPos="279" yPos="241" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <key href="GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
   <extensions>
@@ -37,11 +37,11 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/Joystick.beh#1421854995808"/>
+    <key href="Behaviours/Joystick.beh#1421854995808"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

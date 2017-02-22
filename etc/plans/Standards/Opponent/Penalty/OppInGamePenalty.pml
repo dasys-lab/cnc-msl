@@ -7,24 +7,24 @@
     </quantifiers>
   </conditions>
   <states id="1466968232005" name="Pos4Rebounce" comment="" entryPoint="1466968232006">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Own/Penalty/InGame/Pos4PenaltyRebounce.beh#1466975991599</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.beh#1466975991599</plans>
   </states>
   <states id="1466975612430" name="Pos4Intercept" comment="" entryPoint="1466975602577">
     <plans xsi:type="alica:BehaviourConfiguration">Pos4OppPenaltyIntercept.beh#1466975764775</plans>
   </states>
   <states id="1466975637792" name="Block" comment="" entryPoint="1466975645495">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <entryPoints id="1466968232006" name="AttackSupport" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1225115536468</task>
+    <task>taskrepository.tsk#1225115536468</task>
     <state>#1466968232005</state>
   </entryPoints>
   <entryPoints id="1466975602577" name="Attack" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1222613952469</task>
+    <task>taskrepository.tsk#1222613952469</task>
     <state>#1466975612430</state>
   </entryPoints>
   <entryPoints id="1466975645495" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1461237765109</task>
+    <task>taskrepository.tsk#1461237765109</task>
     <state>#1466975637792</state>
   </entryPoints>
 </alica:Plan>

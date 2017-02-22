@@ -33,7 +33,7 @@
     <value xPos="213" yPos="343" width="172" height="88" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <key href="Behaviours/Pos4Def.beh#1445438204426"/>
     <value/>
   </extensions>
   <extensions>
@@ -77,11 +77,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>

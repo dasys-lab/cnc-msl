@@ -13,7 +13,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
@@ -33,7 +33,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Goalie/Test/GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
+    <key href="Goalie/Test/GoalieBehaviours/DriveToGoal.beh#1447863442558"/>
     <value/>
   </extensions>
   <extensions>

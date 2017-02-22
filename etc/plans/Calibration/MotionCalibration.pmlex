@@ -13,7 +13,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
@@ -25,7 +25,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/DriveToPoint.beh#1431527260342"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1431527260342"/>
     <value/>
   </extensions>
   <extensions>
@@ -33,7 +33,7 @@
     <value xPos="534" yPos="57" width="193" height="110" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/DriveToPoint.beh#1442921078802"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1442921078802"/>
     <value/>
   </extensions>
   <extensions>
@@ -41,11 +41,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1417620583364"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/DriveToPoint.beh#1443003717671"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1443003717671"/>
     <value/>
   </extensions>
   <extensions>
@@ -73,23 +73,23 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/CalcCalib.beh#1446033354004"/>
+    <key href="Behaviours/CalcCalib.beh#1446033354004"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/CalcCalib.beh#1446036332071"/>
+    <key href="Behaviours/CalcCalib.beh#1446036332071"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/CalcCalib.beh#1446036372245"/>
+    <key href="Behaviours/CalcCalib.beh#1446036372245"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/CalcCalib.beh#1446036391317"/>
+    <key href="Behaviours/CalcCalib.beh#1446036391317"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/SpinSlowly.beh#1435159282996"/>
+    <key href="Behaviours/SpinSlowly.beh#1435159282996"/>
     <value/>
   </extensions>
   <extensions>

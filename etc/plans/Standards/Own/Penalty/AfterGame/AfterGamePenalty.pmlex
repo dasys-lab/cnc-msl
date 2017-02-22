@@ -53,31 +53,31 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericBehaviours/DriveToPoint.beh#1431527260342"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1431527260342"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <key href="Dribble/DribbleControl.beh#1450175539163"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../PenaltyShoot.beh#1466940268216"/>
+    <key href="Standards/Own/Penalty/PenaltyShoot.beh#1466940268216"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../PenaltyPosExecuter.beh#1466940432683"/>
+    <key href="Standards/Own/Penalty/PenaltyPosExecuter.beh#1466940432683"/>
     <value/>
   </extensions>
   <extensions>
@@ -85,7 +85,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <key href="Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
   <extensions>

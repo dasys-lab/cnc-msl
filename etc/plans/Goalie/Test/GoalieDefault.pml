@@ -5,7 +5,7 @@
     <outTransitions>#1447255446546</outTransitions>
   </states>
   <states id="1447255061404" name="WatchBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/GoalieExtension.beh#1459249287791</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/GoalieExtension.beh#1459249287791</plans>
     <plans xsi:type="alica:BehaviourConfiguration">GoalieBehaviours/WatchBall.beh#1447863472667</plans>
     <inTransitions>#1447255446546</inTransitions>
   </states>
@@ -15,7 +15,7 @@
     <outState>#1447255061404</outState>
   </transitions>
   <entryPoints id="1447254438616" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1221754402444</task>
+    <task>taskrepository.tsk#1221754402444</task>
     <state>#1447254438615</state>
   </entryPoints>
 </alica:Plan>

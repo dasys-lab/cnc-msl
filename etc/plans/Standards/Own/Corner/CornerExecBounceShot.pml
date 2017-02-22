@@ -18,7 +18,7 @@
     <outTransitions>#1459365411957</outTransitions>
   </states>
   <states id="1459365282539" name="FinishAlign" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericStandards/StandardActuate.beh#1435766278023</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">BouncePassFinishAlign.beh#1459357089325</plans>
     <inTransitions>#1459365407849</inTransitions>
     <outTransitions>#1459365410825</outTransitions>
@@ -28,7 +28,7 @@
     <outTransitions>#1459365392554</outTransitions>
   </states>
   <states id="1459365285847" name="WaitForPass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1459365401604</inTransitions>
     <outTransitions>#1459365412813</outTransitions>
   </states>
@@ -86,15 +86,15 @@
     <outState>#1459365284057</outState>
   </transitions>
   <entryPoints id="1459362049517" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
+    <task>taskrepository.tsk#1439997010902</task>
     <state>#1459362049516</state>
   </entryPoints>
   <entryPoints id="1459365320409" name="ReceiveStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
+    <task>taskrepository.tsk#1439997023446</task>
     <state>#1459365278157</state>
   </entryPoints>
   <entryPoints id="1459365322922" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="2">
-    <task>../../../../Misc/taskrepository.tsk#1225115406909</task>
+    <task>taskrepository.tsk#1225115406909</task>
     <state>#1459365287615</state>
   </entryPoints>
 </alica:Plan>

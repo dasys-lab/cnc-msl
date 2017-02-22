@@ -44,11 +44,11 @@
     </value>
   </extension>
   <extension>
-    <key href="../Behaviours/ShovelSelect.beh#1434199852589"/>
+    <key href="Behaviours/ShovelSelect.beh#1434199852589"/>
     <value width="-1" height="-1" collapsed="true" visible="true"/>
   </extension>
   <extension>
-    <key href="../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value width="-1" height="-1" collapsed="true" visible="true"/>
   </extension>
   <extension>
@@ -56,7 +56,7 @@
     <value width="-1" height="-1" collapsed="true" visible="true"/>
   </extension>
   <extension>
-    <key href="../Defence/MidFieldDefense.pml#1441108604411"/>
+    <key href="Defence/MidFieldDefense.pml#1441108604411"/>
     <value width="-1" height="-1" collapsed="true" visible="true"/>
   </extension>
 </uiextensionmodel:PmlUiExtensionMap>

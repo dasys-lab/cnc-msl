@@ -8,19 +8,19 @@
   <vars id="1458033968280" name="Y" comment="" Type=""/>
   <states id="1458033660892" name="ReleaseOwnHalf" comment="" entryPoint="1458033660893">
     <parametrisation id="1458034180326" name="MISSING_NAME" comment="">
-      <subplan xsi:type="alica:BehaviourConfiguration">../Behaviours/MoveToPointDynamic.beh#1458033795798</subplan>
-      <subvar>../Behaviours/MoveToPointDynamic.beh#1458034153527</subvar>
+      <subplan xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1458033795798</subplan>
+      <subvar>Behaviours/MoveToPointDynamic.beh#1458034153527</subvar>
       <var>#1458033962376</var>
     </parametrisation>
     <parametrisation id="1458034187225" name="MISSING_NAME" comment="">
-      <subplan xsi:type="alica:BehaviourConfiguration">../Behaviours/MoveToPointDynamic.beh#1458033795798</subplan>
-      <subvar>../Behaviours/MoveToPointDynamic.beh#1458034158628</subvar>
+      <subplan xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1458033795798</subplan>
+      <subvar>Behaviours/MoveToPointDynamic.beh#1458034158628</subvar>
       <var>#1458033968280</var>
     </parametrisation>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/MoveToPointDynamic.beh#1458033795798</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/MoveToPointDynamic.beh#1458033795798</plans>
   </states>
   <entryPoints id="1458033660893" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1458033660892</state>
   </entryPoints>
 </alica:Plan>

@@ -11,7 +11,7 @@
     <outTransitions>#1457173604378</outTransitions>
   </states>
   <states id="1457173842758" name="DefendGoal" comment="" entryPoint="1457173833589">
-    <plans xsi:type="alica:Plan">../../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+    <plans xsi:type="alica:Plan">Goalie/Test/GoalieDefault.pml#1447254438614</plans>
   </states>
   <transitions id="1457173602825" name="MISSING_NAME" comment="GameState == (Attack || Melee) " msg="">
     <preCondition id="1457173604049" name="MISSING_NAME" comment="" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
@@ -24,11 +24,11 @@
     <outState>#1457173565462</outState>
   </transitions>
   <entryPoints id="1457173565463" name="MISSING_NAME" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1457173565462</state>
   </entryPoints>
   <entryPoints id="1457173833589" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../Misc/taskrepository.tsk#1221754402444</task>
+    <task>taskrepository.tsk#1221754402444</task>
     <state>#1457173842758</state>
   </entryPoints>
 </alica:Plan>

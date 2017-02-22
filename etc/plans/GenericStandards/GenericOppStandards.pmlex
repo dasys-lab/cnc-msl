@@ -99,19 +99,19 @@
     <value xPos="38" yPos="309"/>
   </extensions>
   <extensions>
-    <key href="../Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925"/>
+    <key href="Standards/Opponent/FreeKick/OppFreeKick.pty#1447870848925"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <key href="Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <key href="Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Opponent/Penalty/OppInGamePenalty.pml#1466968232004"/>
+    <key href="Standards/Opponent/Penalty/OppInGamePenalty.pml#1466968232004"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -13,19 +13,19 @@
     <value xPos="422" yPos="190" width="81" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/DribbleToPoint.beh#1414752423981"/>
+    <key href="Behaviours/DribbleToPoint.beh#1414752423981"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/DriveToPoint.beh#1436961206415"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1436961206415"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../DribbleToAttackPoint.beh#1436855860607"/>
+    <key href="Attack/DribbleToAttackPoint.beh#1436855860607"/>
     <value/>
   </extensions>
   <extensions>
@@ -45,11 +45,7 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../DribbleToAttackPoint.beh#1437391438054"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../Behaviours/Actuate.beh#1417017552846"/>
+    <key href="Attack/DribbleToAttackPoint.beh#1437391438054"/>
     <value/>
   </extensions>
   <extensions>
@@ -85,7 +81,7 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/AttackOpp.beh#1430324680117"/>
+    <key href="Behaviours/AttackOpp.beh#1430324680117"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

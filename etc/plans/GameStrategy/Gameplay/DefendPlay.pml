@@ -11,24 +11,24 @@
     </quantifiers>
   </conditions>
   <states id="1457173750607" name="Attack" comment="" entryPoint="1457173750608">
-    <plans xsi:type="alica:Plan">../../Attack/StandardAttack.pml#1434046634656</plans>
+    <plans xsi:type="alica:Plan">Attack/StandardAttack.pml#1434046634656</plans>
   </states>
   <states id="1457173773492" name="Block" comment="" entryPoint="1457173768386">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1457173775213" name="Defend" comment="" entryPoint="1457173771067">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <entryPoints id="1457173750608" name="Attack" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1222613952469</task>
+    <task>taskrepository.tsk#1222613952469</task>
     <state>#1457173750607</state>
   </entryPoints>
   <entryPoints id="1457173768386" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="2">
-    <task>../../../Misc/taskrepository.tsk#1461237765109</task>
+    <task>taskrepository.tsk#1461237765109</task>
     <state>#1457173773492</state>
   </entryPoints>
   <entryPoints id="1457173771067" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1225115406909</task>
+    <task>taskrepository.tsk#1225115406909</task>
     <state>#1457173775213</state>
   </entryPoints>
 </alica:Plan>

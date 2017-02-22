@@ -9,42 +9,42 @@
     <outTransitions>#1430925924151</outTransitions>
   </states>
   <states id="1430925718512" name="OwnThrowIn" comment="">
-    <plans xsi:type="alica:PlanType">../Standards/Own/ThrowIn/ThrowIn.pty#1461672654276</plans>
+    <plans xsi:type="alica:PlanType">Standards/Own/ThrowIn/ThrowIn.pty#1461672654276</plans>
     <inTransitions>#1430925917001</inTransitions>
     <inTransitions>#1458555879137</inTransitions>
     <outTransitions>#1430925960854</outTransitions>
     <outTransitions>#1458555221149</outTransitions>
   </states>
   <states id="1430925736746" name="OwnKickOff" comment="">
-    <plans xsi:type="alica:PlanType">../Standards/Own/KickOff/OwnKickOff.pty#1438785270887</plans>
+    <plans xsi:type="alica:PlanType">Standards/Own/KickOff/OwnKickOff.pty#1438785270887</plans>
     <inTransitions>#1430925918585</inTransitions>
     <inTransitions>#1458555896457</inTransitions>
     <outTransitions>#1430925962882</outTransitions>
     <outTransitions>#1458555218949</outTransitions>
   </states>
   <states id="1430925743739" name="OwnGoalKick" comment="">
-    <plans xsi:type="alica:PlanType">../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080</plans>
+    <plans xsi:type="alica:PlanType">Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080</plans>
     <inTransitions>#1430925919866</inTransitions>
     <inTransitions>#1458555853125</inTransitions>
     <outTransitions>#1430925965662</outTransitions>
     <outTransitions>#1458555214716</outTransitions>
   </states>
   <states id="1430925751875" name="OwnFreeKick" comment="">
-    <plans xsi:type="alica:PlanType">../Standards/Own/FreeKick/FreeKick.pty#1464783134585</plans>
+    <plans xsi:type="alica:PlanType">Standards/Own/FreeKick/FreeKick.pty#1464783134585</plans>
     <inTransitions>#1430925922843</inTransitions>
     <inTransitions>#1458555819730</inTransitions>
     <outTransitions>#1430925971330</outTransitions>
     <outTransitions>#1458555205351</outTransitions>
   </states>
   <states id="1430925759928" name="OwnCornerKick" comment="">
-    <plans xsi:type="alica:PlanType">../Standards/Own/Corner/OwnCorner.pty#1465397117125</plans>
+    <plans xsi:type="alica:PlanType">Standards/Own/Corner/OwnCorner.pty#1465397117125</plans>
     <inTransitions>#1430925924151</inTransitions>
     <inTransitions>#1458555788972</inTransitions>
     <outTransitions>#1430925973111</outTransitions>
     <outTransitions>#1458555207649</outTransitions>
   </states>
   <states id="1430925774870" name="OwnPenaltyKick" comment="">
-    <plans xsi:type="alica:Plan">../Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181</plans>
+    <plans xsi:type="alica:Plan">Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181</plans>
     <inTransitions>#1430925921331</inTransitions>
     <outTransitions>#1430925967608</outTransitions>
   </states>
@@ -57,10 +57,10 @@
     <inTransitions>#1430925973111</inTransitions>
   </states>
   <states id="1431523938514" name="KeepGoal" comment="" entryPoint="1431523920444">
-    <plans xsi:type="alica:Plan">../Goalie/Test/GoalieDefault.pml#1447254438614</plans>
+    <plans xsi:type="alica:Plan">Goalie/Test/GoalieDefault.pml#1447254438614</plans>
   </states>
   <states id="1458555183582" name="WanderOwnStd" comment="">
-    <plans xsi:type="alica:Plan">../GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
+    <plans xsi:type="alica:Plan">GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
     <inTransitions>#1458555205351</inTransitions>
     <inTransitions>#1458555207649</inTransitions>
     <inTransitions>#1458555214716</inTransitions>
@@ -183,11 +183,11 @@
     <outState>#1430925736746</outState>
   </transitions>
   <entryPoints id="1430925626532" name="NewEntryPoint" comment="" successRequired="true" minCardinality="1" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1430924951133</state>
   </entryPoints>
   <entryPoints id="1431523920444" name="Keeper" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1221754402444</task>
+    <task>taskrepository.tsk#1221754402444</task>
     <state>#1431523938514</state>
   </entryPoints>
 </alica:Plan>

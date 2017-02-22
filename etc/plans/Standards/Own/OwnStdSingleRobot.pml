@@ -5,7 +5,7 @@
     <outTransitions>#1467384202351</outTransitions>
   </states>
   <states id="1467384130052" name="GetBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../GenericStandards/StandardAlignAndGrab.beh#1467436134025</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericStandards/StandardAlignAndGrab.beh#1467436134025</plans>
     <inTransitions>#1467384202351</inTransitions>
     <outTransitions>#1467384215357</outTransitions>
   </states>
@@ -33,7 +33,7 @@
     <outState>#1467384222671</outState>
   </transitions>
   <entryPoints id="1467384083267" name="MISSING_NAME" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1467384083266</state>
   </entryPoints>
 </alica:Plan>

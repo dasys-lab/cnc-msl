@@ -128,7 +128,7 @@
     <outState>#1426691835473</outState>
   </transitions>
   <entryPoints id="1413992564410" name="" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1413992564409</state>
   </entryPoints>
 </alica:Plan>

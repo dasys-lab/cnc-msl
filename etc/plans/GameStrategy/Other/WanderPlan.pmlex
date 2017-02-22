@@ -37,11 +37,11 @@
     <value xPos="210" yPos="438" width="88" height="68" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Attack/Wander.beh#1434716230628"/>
+    <key href="Attack/Wander.beh#1434716230628"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

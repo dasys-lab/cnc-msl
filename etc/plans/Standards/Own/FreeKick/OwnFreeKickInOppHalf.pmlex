@@ -69,15 +69,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
+    <key href="GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
   <extensions>
@@ -85,7 +85,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <key href="GenericStandards/StandardPass.beh#1435760175843"/>
     <value/>
   </extensions>
   <extensions>
@@ -96,11 +96,11 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GoalKick.beh#1415205578139"/>
+    <key href="Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
   <extensions>
@@ -120,7 +120,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <key href="Behaviours/Intercept.beh#1458757193843"/>
     <value/>
   </extensions>
   <extensions>
@@ -128,23 +128,23 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <key href="GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1466861369486"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1466861369486"/>
     <value/>
   </extensions>
   <extensions>
@@ -152,19 +152,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <key href="Behaviours/AlignToGoal.beh#1415205285582"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <key href="GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
+    <key href="Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>
@@ -172,7 +172,7 @@
     <value xPos="838" yPos="546"/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/CheckGoalKick.beh#1467265292648"/>
+    <key href="GenericBehaviours/CheckGoalKick.beh#1467265292648"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -69,27 +69,23 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/GetBall.beh#1414840399972"/>
+    <key href="Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/GoalKick.beh#1415205578139"/>
+    <key href="Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../DribbleToAttackPoint.beh#1437391438054"/>
+    <key href="Attack/DribbleToAttackPoint.beh#1437391438054"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../DribbleToAttackPoint.beh#1436855860607"/>
+    <key href="Attack/DribbleToAttackPoint.beh#1436855860607"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/ShovelSelect.beh#1435156714286"/>
-    <value/>
-  </extensions>
-  <extensions>
-    <key href="../../Behaviours/Actuate.beh#1417017552846"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

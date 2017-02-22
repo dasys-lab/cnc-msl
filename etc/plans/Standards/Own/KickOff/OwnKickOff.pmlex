@@ -21,11 +21,11 @@
     <value xPos="146" yPos="229" width="71" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/PositionExecutor.beh#1438790487994"/>
+    <key href="Behaviours/PositionExecutor.beh#1438790487994"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/PositionReceiver.beh#1439379352605"/>
+    <key href="Behaviours/PositionReceiver.beh#1439379352605"/>
     <value/>
   </extensions>
   <extensions>
@@ -37,7 +37,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
   <extensions>
@@ -68,15 +68,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/AttackOpp.beh#1430324680117"/>
+    <key href="Behaviours/AttackOpp.beh#1430324680117"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/KickOffPassDefault.beh#1438778223495"/>
+    <key href="Behaviours/KickOffPassDefault.beh#1438778223495"/>
     <value/>
   </extensions>
   <extensions>
@@ -84,11 +84,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GetBall.beh#1414840399972"/>
+    <key href="Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
+    <key href="Behaviours/StdExecutorGrabBall.beh#1441209089978"/>
     <value/>
   </extensions>
   <extensions>
@@ -108,39 +108,39 @@
     <value xPos="157" yPos="376" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos2Defenders.beh#1444835591397"/>
+    <key href="Behaviours/Pos2Defenders.beh#1444835591397"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/CheckPassMsg.beh#1457441499013"/>
+    <key href="Behaviours/CheckPassMsg.beh#1457441499013"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1455888617961"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1455888617961"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <key href="GenericStandards/StandardPass.beh#1435760175843"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Dribble/DribbleControl.beh#1449742099555"/>
+    <key href="Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <key href="Dribble/DribbleControl.beh#1450175539163"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1459456566595"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1459456566595"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Intercept.beh#1458757193843"/>
+    <key href="Behaviours/Intercept.beh#1458757193843"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <key href="Behaviours/Pos4Def.beh#1445438204426"/>
     <value/>
   </extensions>
   <extensions>

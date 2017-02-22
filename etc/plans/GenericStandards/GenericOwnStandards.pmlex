@@ -101,15 +101,15 @@
     <value xPos="49" yPos="457" width="153" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <key href="Penalty/OwnPenalty.pml#1431525185678"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/KickOff/OwnKickOff.pty#1438785270887"/>
+    <key href="Standards/Own/KickOff/OwnKickOff.pty#1438785270887"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Goalie/Test/GoalieDefault.pml#1447254438614"/>
+    <key href="Goalie/Test/GoalieDefault.pml#1447254438614"/>
     <value/>
   </extensions>
   <extensions>
@@ -121,7 +121,7 @@
     <value xPos="246" yPos="174" width="146" height="88" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <key href="GameStrategy/Other/WanderPlan.pml#1458553921358"/>
     <value/>
   </extensions>
   <extensions>
@@ -133,7 +133,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Penalty/OwnPenalty.pml#1431525185678"/>
+    <key href="Penalty/OwnPenalty.pml#1431525185678"/>
     <value/>
   </extensions>
   <extensions>
@@ -179,27 +179,27 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../GameStrategy/Other/WanderPlan.pml#1458553921358"/>
+    <key href="GameStrategy/Other/WanderPlan.pml#1458553921358"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/ThrowIn/ThrowIn.pty#1461672654276"/>
+    <key href="Standards/Own/ThrowIn/ThrowIn.pty#1461672654276"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/FreeKick/FreeKick.pty#1464783134585"/>
+    <key href="Standards/Own/FreeKick/FreeKick.pty#1464783134585"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/Corner/OwnCorner.pty#1465397117125"/>
+    <key href="Standards/Own/Corner/OwnCorner.pty#1465397117125"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080"/>
+    <key href="Standards/Own/GoalKick/OwnGoalKick.pty#1465397323080"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181"/>
+    <key href="Standards/Own/Penalty/InGame/OwnInGamePenalty.pml#1466936775181"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

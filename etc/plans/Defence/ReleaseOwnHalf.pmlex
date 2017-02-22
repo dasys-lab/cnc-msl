@@ -17,7 +17,7 @@
     <value xPos="155" yPos="229"/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/MoveToPointDynamic.beh#1458033795798"/>
+    <key href="Behaviours/MoveToPointDynamic.beh#1458033795798"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

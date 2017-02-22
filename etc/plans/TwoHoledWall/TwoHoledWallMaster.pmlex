@@ -45,11 +45,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/DriveToPoint.beh#1417620583364"/>
+    <key href="GenericBehaviours/DriveToPoint.beh#1417620583364"/>
     <value/>
   </extensions>
   <extensions>
@@ -75,7 +75,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/Joystick.beh#1421854995808"/>
+    <key href="Behaviours/Joystick.beh#1421854995808"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

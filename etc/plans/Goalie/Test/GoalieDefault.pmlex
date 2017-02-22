@@ -41,15 +41,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/DefendGoal.beh#1459249336699"/>
+    <key href="Behaviours/DefendGoal.beh#1459249336699"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/GoalieExtension.beh#1459249287791"/>
+    <key href="Behaviours/GoalieExtension.beh#1459249287791"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

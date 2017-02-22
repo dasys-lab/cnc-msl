@@ -5,29 +5,29 @@
     <outTransitions>#1433338525417</outTransitions>
   </states>
   <states id="1431526626723" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1450175539163</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/InterceptCarefully.beh#1427703234654</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1450175539163</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1433337664670</inTransitions>
     <inTransitions>#1433338528647</inTransitions>
     <outTransitions>#1431526790723</outTransitions>
   </states>
   <states id="1431526769660" name="AlignAndShoot" comment="have ball">
     <plans xsi:type="alica:BehaviourConfiguration">PenaltyAlignAndShoot.beh#1431531542052</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1431526790723</inTransitions>
     <outTransitions>#1432744248119</outTransitions>
     <outTransitions>#1433337664670</outTransitions>
   </states>
   <states id="1431526917231" name="Stop" comment="" entryPoint="1431526909013">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
   </states>
   <states xsi:type="alica:SuccessState" id="1432744233327" name="Success" comment="">
     <inTransitions>#1432744248119</inTransitions>
   </states>
   <states id="1433338496106" name="WaitForStart" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/Stop.beh#1413992626194</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <inTransitions>#1433338525417</inTransitions>
     <outTransitions>#1433338528647</outTransitions>
   </states>
@@ -57,11 +57,11 @@
     <outState>#1431526626723</outState>
   </transitions>
   <entryPoints id="1431525245110" name="ExecuteStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1439997010902</task>
+    <task>taskrepository.tsk#1439997010902</task>
     <state>#1431525245109</state>
   </entryPoints>
   <entryPoints id="1431526909013" name="NewEntryPoint" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1431526917231</state>
   </entryPoints>
 </alica:Plan>

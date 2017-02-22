@@ -2,7 +2,7 @@
 <alica:Plan xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:alica="http:///de.uni_kassel.vs.cn" id="1434049476066" name="Dribble" comment="" masterPlan="false" utilityFunction="" utilityThreshold="0.1" destinationPath="Plans/Attack" priority="0.0" minCardinality="0" maxCardinality="2147483647">
   <conditions xsi:type="alica:RuntimeCondition" id="1434116267322" name="NewRuntimeCondition" comment="haveBall" conditionString="" pluginName="DefaultPlugin"/>
   <states id="1434049476067" name="Dribble" comment="" entryPoint="1434049476068">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
     <plans xsi:type="alica:BehaviourConfiguration">DribbleAttackConservative.beh#1457967385543</plans>
     <inTransitions>#1434050639119</inTransitions>
@@ -13,16 +13,16 @@
     <outTransitions>#1434050674494</outTransitions>
   </states>
   <states id="1434050474119" name="AlignToGoal" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/AlignToGoal.beh#1415205285582</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/AlignToGoal.beh#1415205285582</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/CheckGoalKick.beh#1449076029919</plans>
     <inTransitions>#1434050619363</inTransitions>
     <outTransitions>#1434050630827</outTransitions>
   </states>
   <states id="1434050502701" name="AttackAgain" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706826895</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">DribbleToAttackPointConservative.beh#1458132905432</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Attack/DribbleToAttackPointConservative.beh#1458132905432</plans>
     <inTransitions>#1434050630827</inTransitions>
     <inTransitions>#1434050650481</inTransitions>
     <inTransitions>#1434050656332</inTransitions>
@@ -32,7 +32,7 @@
     <outTransitions>#1434050686620</outTransitions>
   </states>
   <states id="1434050522682" name="ProtectBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
     <plans xsi:type="alica:BehaviourConfiguration">ProtectBall.beh#1457706612268</plans>
     <plans xsi:type="alica:BehaviourConfiguration">DribbleEmergencyKick.beh#1457706895442</plans>
     <inTransitions>#1434050674494</inTransitions>
@@ -41,7 +41,7 @@
   </states>
   <states id="1434050541225" name="TurnOneEighty" comment="">
     <plans xsi:type="alica:BehaviourConfiguration">OneEighty.beh#1434650910857</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Dribble/DribbleControl.beh#1449742099555</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Dribble/DribbleControl.beh#1449742099555</plans>
     <inTransitions>#1434050647042</inTransitions>
     <inTransitions>#1434050655141</inTransitions>
     <outTransitions>#1434050649347</outTransitions>
@@ -103,7 +103,7 @@
     <outState>#1434050522682</outState>
   </transitions>
   <entryPoints id="1434049476068" name="Attack" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../Misc/taskrepository.tsk#1222613952469</task>
+    <task>taskrepository.tsk#1222613952469</task>
     <state>#1434049476067</state>
   </entryPoints>
 </alica:Plan>

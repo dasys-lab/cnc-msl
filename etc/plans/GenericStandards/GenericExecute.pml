@@ -16,7 +16,7 @@
   </conditions>
   <conditions xsi:type="alica:PreCondition" id="1467224612376" name="NewPreCondition" comment="situation not start" conditionString="" pluginName="DefaultPlugin" enabled="true"/>
   <states id="1431522155979" name="GrabBall" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignAndGrab.beh#1455888617961</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1433949706015</inTransitions>
@@ -29,7 +29,7 @@
     <outTransitions>#1431522920716</outTransitions>
   </states>
   <states id="1431522763494" name="Pass" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <plans xsi:type="alica:BehaviourConfiguration">GenericExecutePass.beh#1465040471344</plans>
     <inTransitions>#1431522782044</inTransitions>
@@ -37,8 +37,8 @@
     <outTransitions>#1435761866545</outTransitions>
   </states>
   <states id="1431522912251" name="Receive" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156811453</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Intercept.beh#1458757193843</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156811453</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Intercept.beh#1458757193843</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardActuate.beh#1435766278023</plans>
     <inTransitions>#1431522920716</inTransitions>
     <outTransitions>#1431523011459</outTransitions>
@@ -47,18 +47,18 @@
     <inTransitions>#1431523011459</inTransitions>
   </states>
   <states id="1431523482646" name="Block" comment="" entryPoint="1431523395534">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1431524014799" name="Defend" comment="" entryPoint="1431523422152">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1431524769489" name="SpatialDefend" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
     <inTransitions>#1431524869870</inTransitions>
   </states>
   <states id="1433949667740" name="AlignExecutor" comment="" entryPoint="1431522155980">
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPoint.beh#1435155363994</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <outTransitions>#1433949706015</outTransitions>
   </states>
   <transitions id="1431522782044" name="MISSING_NAME" comment="grab ball success" msg="">
@@ -92,19 +92,19 @@
     <outState>#1431522155979</outState>
   </transitions>
   <entryPoints id="1431522155980" name="ExecuteStandard" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1439997010902</task>
+    <task>taskrepository.tsk#1439997010902</task>
     <state>#1433949667740</state>
   </entryPoints>
   <entryPoints id="1431522269326" name="ReceiveStandard" comment="" successRequired="true" minCardinality="1" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1439997023446</task>
+    <task>taskrepository.tsk#1439997023446</task>
     <state>#1431522297705</state>
   </entryPoints>
   <entryPoints id="1431523395534" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1461237765109</task>
+    <task>taskrepository.tsk#1461237765109</task>
     <state>#1431523482646</state>
   </entryPoints>
   <entryPoints id="1431523422152" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../Misc/taskrepository.tsk#1225115406909</task>
+    <task>taskrepository.tsk#1225115406909</task>
     <state>#1431524014799</state>
   </entryPoints>
 </alica:Plan>

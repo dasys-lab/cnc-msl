@@ -23,11 +23,11 @@
     </value>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Duel.pml#1450178655416"/>
+    <key href="Attack/Duel.pml#1450178655416"/>
     <value/>
   </extensions>
   <extensions>

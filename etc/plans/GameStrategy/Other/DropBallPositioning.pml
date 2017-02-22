@@ -10,22 +10,22 @@
     <plans xsi:type="alica:BehaviourConfiguration">CoverSpace.beh#1455537979559</plans>
   </states>
   <states id="1455537283938" name="Defend" comment="" entryPoint="1455537253704">
-    <plans xsi:type="alica:BehaviourConfiguration">../../Behaviours/BackroomDefence.beh#1454507819086</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/BackroomDefence.beh#1454507819086</plans>
   </states>
   <entryPoints id="1455537014536" name="Attack" comment="" successRequired="false" minCardinality="1" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1222613952469</task>
+    <task>taskrepository.tsk#1222613952469</task>
     <state>#1455537014535</state>
   </entryPoints>
   <entryPoints id="1455537247542" name="SupportAttack" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1225115536468</task>
+    <task>taskrepository.tsk#1225115536468</task>
     <state>#1455537278849</state>
   </entryPoints>
   <entryPoints id="1455537250535" name="SupportDefend" comment="" successRequired="false" minCardinality="0" maxCardinality="1">
-    <task>../../../Misc/taskrepository.tsk#1225116131298</task>
+    <task>taskrepository.tsk#1225116131298</task>
     <state>#1455537281002</state>
   </entryPoints>
   <entryPoints id="1455537253704" name="Defend" comment="" successRequired="false" minCardinality="0" maxCardinality="0">
-    <task>../../../Misc/taskrepository.tsk#1225115406909</task>
+    <task>taskrepository.tsk#1225115406909</task>
     <state>#1455537283938</state>
   </entryPoints>
 </alica:Plan>

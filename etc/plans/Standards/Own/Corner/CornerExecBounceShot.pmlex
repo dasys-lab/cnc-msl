@@ -97,7 +97,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
   <extensions>
@@ -109,7 +109,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>

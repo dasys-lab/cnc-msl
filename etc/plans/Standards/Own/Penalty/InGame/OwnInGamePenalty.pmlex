@@ -61,27 +61,27 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Dribble/DribbleControl.beh#1450175539163"/>
+    <key href="Dribble/DribbleControl.beh#1450175539163"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../PenaltyShoot.beh#1466940268216"/>
+    <key href="Standards/Own/Penalty/PenaltyShoot.beh#1466940268216"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../PenaltyPosExecuter.beh#1466940432683"/>
+    <key href="Standards/Own/Penalty/PenaltyPosExecuter.beh#1466940432683"/>
     <value/>
   </extensions>
   <extensions>
@@ -93,7 +93,7 @@
     <value xPos="97" yPos="314" width="234" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../../Behaviours/BackroomDefence.beh#1454507819086"/>
+    <key href="Behaviours/BackroomDefence.beh#1454507819086"/>
     <value/>
   </extensions>
   <extensions>
@@ -101,15 +101,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Behaviours/GoalKick.beh#1415205578139"/>
+    <key href="Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <key href="Behaviours/AlignToGoal.beh#1415205285582"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

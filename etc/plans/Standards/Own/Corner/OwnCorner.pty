@@ -4,6 +4,6 @@
     <plan>CornerKick.pml#1462373376006</plan>
   </plans>
   <plans id="1465397147200" name="MISSING_NAME" comment="" activated="false">
-    <plan>../../../GenericStandards/GenericExecute.pml#1431522123418</plan>
+    <plan>GenericStandards/GenericExecute.pml#1431522123418</plan>
   </plans>
 </alica:PlanType>

@@ -21,7 +21,7 @@
       <subvar>StandardAlignToPassPos.beh#1457532824422</subvar>
       <var>#1457531200123</var>
     </parametrisation>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToPassPos.beh#1457532300654</plans>
     <outTransitions>#1457531303657</outTransitions>
   </states>
@@ -40,7 +40,7 @@
     <outTransitions>#1457531340791</outTransitions>
   </states>
   <states id="1457531122593" name="Block" comment="" entryPoint="1457531047960">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/Pos4Def.beh#1445438204426</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/Pos4Def.beh#1445438204426</plans>
   </states>
   <states id="1457531267822" name="GrabBall" comment="">
     <parametrisation id="1457532876756" name="MISSING_NAME" comment="">
@@ -53,7 +53,7 @@
       <subvar>StandardAlignToGeneric.beh#1457532835258</subvar>
       <var>#1457531200123</var>
     </parametrisation>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">StandardAlignToGeneric.beh#1457531639350</plans>
     <inTransitions>#1457531303657</inTransitions>
     <outTransitions>#1457531307265</outTransitions>
@@ -69,18 +69,18 @@
       <subvar>PassKickIntoPath.beh#1457532845340</subvar>
       <var>#1457531196542</var>
     </parametrisation>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
-    <plans xsi:type="alica:BehaviourConfiguration">../../../Behaviours/ShovelSelect.beh#1435156714286</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">Behaviours/ShovelSelect.beh#1435156714286</plans>
     <plans xsi:type="alica:BehaviourConfiguration">PassKickIntoPath.beh#1457531685581</plans>
     <inTransitions>#1457531307265</inTransitions>
     <outTransitions>#1457531315807</outTransitions>
   </states>
   <states id="1457531293259" name="SpatialDefend" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1457531315807</inTransitions>
   </states>
   <states id="1457531324804" name="ReceiveAtTarget" comment="">
-    <plans xsi:type="alica:BehaviourConfiguration">../../../GenericBehaviours/Stop.beh#1413992626194</plans>
+    <plans xsi:type="alica:BehaviourConfiguration">GenericBehaviours/Stop.beh#1413992626194</plans>
     <inTransitions>#1457531340791</inTransitions>
     <outTransitions>#1457531350730</outTransitions>
   </states>
@@ -113,15 +113,15 @@
     <outState>#1457531345727</outState>
   </transitions>
   <entryPoints id="1457530916298" name="ExecuteStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1439997010902</task>
+    <task>taskrepository.tsk#1439997010902</task>
     <state>#1457530916297</state>
   </entryPoints>
   <entryPoints id="1457530953060" name="ReceiveStandard" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1439997023446</task>
+    <task>taskrepository.tsk#1439997023446</task>
     <state>#1457531111752</state>
   </entryPoints>
   <entryPoints id="1457531047960" name="Block" comment="" successRequired="false" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../../Misc/taskrepository.tsk#1461237765109</task>
+    <task>taskrepository.tsk#1461237765109</task>
     <state>#1457531122593</state>
   </entryPoints>
 </alica:Plan>

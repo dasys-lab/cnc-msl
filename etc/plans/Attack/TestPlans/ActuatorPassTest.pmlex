@@ -17,7 +17,7 @@
     <value xPos="381" yPos="284" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
@@ -31,7 +31,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Behaviours/ActuatorPassTest.beh#1467309206305"/>
+    <key href="Behaviours/ActuatorPassTest.beh#1467309206305"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -97,19 +97,19 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="DribbleToAttackPoint.beh#1436855860607"/>
+    <key href="Attack/DribbleToAttackPoint.beh#1436855860607"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/GetBall.beh#1414840399972"/>
+    <key href="Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/AlignToGoal.beh#1415205285582"/>
+    <key href="Behaviours/AlignToGoal.beh#1415205285582"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/GoalKick.beh#1415205578139"/>
+    <key href="Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
   <extensions>
@@ -117,11 +117,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Dribble/DribbleControl.beh#1449742099555"/>
+    <key href="Dribble/DribbleControl.beh#1449742099555"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
+    <key href="GenericBehaviours/CheckGoalKick.beh#1449076029919"/>
     <value/>
   </extensions>
   <extensions>
@@ -157,7 +157,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="DribbleToAttackPointConservative.beh#1458132905432"/>
+    <key href="Attack/DribbleToAttackPointConservative.beh#1458132905432"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

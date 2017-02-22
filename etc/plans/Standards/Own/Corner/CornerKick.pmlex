@@ -21,15 +21,15 @@
     <value xPos="28" yPos="204" width="224" height="86" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardActuate.beh#1435766278023"/>
+    <key href="GenericStandards/StandardActuate.beh#1435766278023"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156714286"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156714286"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
+    <key href="GenericStandards/StandardAlignToPoint.beh#1435155363994"/>
     <value/>
   </extensions>
   <extensions>
@@ -65,15 +65,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardPass.beh#1435760175843"/>
+    <key href="GenericStandards/StandardPass.beh#1435760175843"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignToPoint.beh#1433950043262"/>
+    <key href="GenericStandards/StandardAlignToPoint.beh#1433950043262"/>
     <value/>
   </extensions>
   <extensions>
@@ -89,7 +89,7 @@
     <value xPos="1019" yPos="224" width="67" height="32"/>
   </extensions>
   <extensions>
-    <key href="../../../GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
+    <key href="GenericBehaviours/InterceptCarefully.beh#1427703234654"/>
     <value/>
   </extensions>
   <extensions>
@@ -109,7 +109,7 @@
     <value xPos="29" yPos="449" width="65" height="67" collapsed="false"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <key href="Behaviours/Pos4Def.beh#1445438204426"/>
     <value/>
   </extensions>
   <extensions>
@@ -117,11 +117,11 @@
     <value xPos="554" yPos="516"/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/ShovelSelect.beh#1435156811453"/>
+    <key href="Behaviours/ShovelSelect.beh#1435156811453"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/GoalKick.beh#1415205578139"/>
+    <key href="Behaviours/GoalKick.beh#1415205578139"/>
     <value/>
   </extensions>
   <extensions>
@@ -133,7 +133,7 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
+    <key href="GenericStandards/StandardAlignAndGrab.beh#1465038982091"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

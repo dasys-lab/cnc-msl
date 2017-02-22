@@ -41,11 +41,11 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../../../Behaviours/Pos4Def.beh#1445438204426"/>
+    <key href="Behaviours/Pos4Def.beh#1445438204426"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../../Own/Penalty/InGame/Pos4PenaltyRebounce.beh#1466975991599"/>
+    <key href="Standards/Own/Penalty/InGame/Pos4PenaltyRebounce.beh#1466975991599"/>
     <value/>
   </extensions>
 </uiextensionmodel:PmlUiExtensionMap>

@@ -9,15 +9,15 @@
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/Duel.beh#1450178707835"/>
+    <key href="Behaviours/Duel.beh#1450178707835"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../GenericBehaviours/Stop.beh#1413992626194"/>
+    <key href="GenericBehaviours/Stop.beh#1413992626194"/>
     <value/>
   </extensions>
   <extensions>
-    <key href="../Behaviours/GetBall.beh#1414840399972"/>
+    <key href="Behaviours/GetBall.beh#1414840399972"/>
     <value/>
   </extensions>
   <extensions>

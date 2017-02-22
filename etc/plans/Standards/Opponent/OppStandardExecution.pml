@@ -18,12 +18,12 @@
     <inTransitions>#1457015478636</inTransitions>
   </states>
   <states id="1458555969546" name="Wander" comment="">
-    <plans xsi:type="alica:Plan">../../GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
+    <plans xsi:type="alica:Plan">GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
     <inTransitions>#1458555987772</inTransitions>
     <outTransitions>#1458555989921</outTransitions>
   </states>
   <states id="1458555971683" name="Wander" comment="">
-    <plans xsi:type="alica:Plan">../../GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
+    <plans xsi:type="alica:Plan">GameStrategy/Other/WanderPlan.pml#1458553921358</plans>
     <inTransitions>#1458555991449</inTransitions>
     <outTransitions>#1458555993363</outTransitions>
   </states>
@@ -58,7 +58,7 @@
     <outState>#1457015292860</outState>
   </transitions>
   <entryPoints id="1457015277576" name="MISSING_NAME" comment="" successRequired="true" minCardinality="0" maxCardinality="2147483647">
-    <task>../../../Misc/taskrepository.tsk#1225112227903</task>
+    <task>taskrepository.tsk#1225112227903</task>
     <state>#1457015277575</state>
   </entryPoints>
 </alica:Plan>
